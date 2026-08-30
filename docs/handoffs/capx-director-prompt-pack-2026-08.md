@@ -1,4 +1,4 @@
-# capx director — prompt pack (revised at refresh #11, 2026-08-30; first issued 2026-08-25)
+# capx director — prompt pack (revised at refresh #13, 2026-08-30; first issued 2026-08-25)
 
 Canonical text of the session prompts live on the capacity-expansion (Forecast Finalization)
 track. Ledger: `docs/handoffs/capx-director-ledger-2026-08.md`. Signatures:
@@ -104,7 +104,7 @@ and an explicit statement of what now stands between NYISO and an open gate. Rep
 
 ---
 
-## D10 — NYISO T1-X crossover (chartered by card A, A-A)
+## D10 — NYISO T1-X crossover (chartered by card A, A-A) — **LANDED PR #4354; historical record, do not re-run**
 
 ```
 You are the D10 NYISO T1-X CROSSOVER session of the capacity-expansion (Forecast Finalization)
@@ -184,7 +184,7 @@ the registered leg, and the leg-(c) verdict. Report to the owner.
 
 ---
 
-## D11-R — the D-1 entry volume rule (re-scoped at director refresh #8; supersedes D11, never run)
+## D11-R — the D-1 entry volume rule (re-scoped at r#8; supersedes D11) — **LANDED PR #4355; arming RULED Q8 HOLD-until-D12; historical record, do not re-run**
 
 *(The original D11 pro-forma-signal prompt, issued 2026-08-25, was superseded BEFORE FIRST RUN by
 the director's refresh-#8 re-scope — ledger §0e.3. The forward-expectation A/B measured trajectory
@@ -462,7 +462,7 @@ Report to the owner.
 
 ---
 
-## Q5-W — NYISO marker withdrawal (new at r#12; governance RECORDS lane, not a capx lane)
+## Q5-W — NYISO marker withdrawal (r#12; governance RECORDS lane) — **LANDED PR #4343; historical record, do not re-run**
 
 ```
 You are the Q5-W NYISO MARKER WITHDRAWAL records session, executing an owner ruling delivered
@@ -549,7 +549,7 @@ one-line statement of what NYISO's gate now reads (expected: (a) fail on marker 
 
 ---
 
-## S-4V — NEISO verification (new at r#11; completes S-4's owed §5)
+## S-4V — NEISO verification (r#11; completes S-4's owed §5) — **LANDED PRs #4337/#4353; historical record, do not re-run**
 
 ```
 You are the S-4V NEISO VERIFICATION session of the capacity-expansion (Forecast Finalization)
@@ -656,7 +656,7 @@ charterable. Report to the owner.
 
 ---
 
-## S-5 — PJM requirement horizon-edge (unblocked by card C, C-A)
+## S-5 — PJM requirement horizon-edge (unblocked by card C, C-A) — **LANDED PR #4340; historical record, do not re-run**
 
 ```
 You are the S-5 PJM REQUIREMENT HORIZON-EDGE session of the capacity-expansion (Forecast
@@ -739,4 +739,295 @@ push (rule 27).
 EXIT: docs/handoffs/FINDING-capx-s5-pjm-horizon-edge-<date>.md — the implemented convention with
 its citation, the D-1 repair, the restated per-year I7/I12 at full magnitude, the cross-ISO scope
 statement, and explicit confirmation that S-6 is now unblocked. Report to the owner.
+```
+
+---
+
+## D13 — board reconcile (new at r#13; records lane executing the Q7 ruling)
+
+```
+You are the D13 BOARD RECONCILE session of the capacity-expansion (Forecast Finalization) track,
+chartered at director refresh #13 (docs/handoffs/capx-director-ledger-2026-08.md §0j, lane D13).
+This is a RECORDS lane: zero solves, zero re-scores. You edit the forecast board and the
+decision-card record so they describe the state that already exists in committed artifacts.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable or Opus (never Sonnet, rule 27).
+BRANCH: claude/capx-d13-board-reconcile — create FRESH off origin/main (git fetch origin main
+first) and rebase before pushing.
+
+READ FIRST: frontend/data/forecast/program-status.json (the board you are editing);
+frontend/data/forecast/ff-verdicts.json (bare keys only — suffixed keys are preserved
+baselines); docs/handoffs/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md §0/§3;
+docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md §3.3/§4/§5;
+docs/handoffs/FINDING-capx-d10-nyiso-t1x-2026-08-30.md; the ledger §0j.3 (the Q7/Q8 rulings);
+docs/forecast-development-plan-2026-07.md §2.1b(2)(c) (the leg-(c) charter text);
+docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md §1.2/§5 (card A-A as signed).
+
+FIVE EDITS, ALL RECORDS, NOTHING ELSE:
+1. EXECUTE Q7 (owner ruling, r#13 sitting, 2026-08-30: "Measured closes the leg"). Gate leg (c)
+   for ERCOT, PJM and MISO moves fail → pass: each has a measured, registered FC-4
+   (ercot-t1x / pjm-2023-2027-crossover-ffr3a3-t1x / miso-2023-2027-crossover-ffr3a4-t1x) and a
+   green readiness battery, which is the charter-literal §2.1b(c) test and the card A-A reading
+   ("leg (c) closes on a measured FC-4 rather than on an unscored cell"). In each cell state the
+   FC-4 FAIL magnitudes AT FULL MAGNITUDE and that the leg passes on measurement, not on the
+   verdict; cite the Q7 ruling (ledger §0j.3/§3) + charter §2.1b(c) + card A-A. NEISO's leg (c)
+   stays fail (genuinely unrun — no neiso-t1x key; lane D14 is chartered to close it). NYISO's
+   PASS stands. Also CORRECT the NYISO leg-(c) cell's claim that the other measured ISOs
+   "read pass" — false when written, true after your edit; annotate rather than silently rewrite.
+2. APPLY the S-5 restatement to the PJM block (its finding is the director's D7-class input):
+   leg (b) and blocking_rows currently say the 2030 I7 miss is 366 MW; restate to 5,858 MW
+   (3.39% of peak) under the signed hold-last-FPR convention (card C-A), with 2029 plausibly
+   joining (flagged as inference — S-6 measures it) and the 2026-2028 checker bars rising
+   0.96/1.83/3.18 pp of peak. Cite FINDING-capx-s5 §3. The leg-(b) STATUS does not move (fail
+   before, fail after).
+3. STAMP D11-R currency on the ERCOT block: entry_margin_exhaustion measured (live arm terminal
+   RM 22.02% vs shipped 25.19, B-2 survives, gas half inert on the live reserve leg), matrix
+   cell O, and the Q8 ruling: arming HELD until D12 adjudicates the scarcity basis (finding §5
+   recommendation, adopted by the owner 2026-08-30). Do NOT touch any FC verdict or flip_config.
+4. REPAIR the stale top-level prose (headline + gate_reading), which currently contradicts the
+   board's own per-ISO blocks: it still says no ISO holds (a)+(b) both (FALSE — NEISO does,
+   since S-4V), that leg (b) passes only for NYISO (FALSE — bare neiso-t1f is
+   PROMOTE-WITH-CAVEATS), and that leg (c) fails for all six (superseded by D10 + Q7). Rewrite
+   those passages to the live state: NEISO (a) PASS · (b) PASS · (c) fail (unrun; D14 chartered)
+   · (d) none — the program lead; NYISO (a) fail on the withdrawn marker · (b) PASS · (c) PASS ·
+   (d) none; leg (c) after Q7 fails ONLY where no T1-X exists (NEISO, CAISO). Preserve the
+   honest-accounting tone: no ISO clears the full gate; leg (d) is none everywhere; nothing in
+   this session opens a gate.
+5. APPEND the Q7/Q8/Q9 rulings to docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md
+   as a dated §6 addendum (question, options presented, ruling verbatim from the ledger §0j.3,
+   consequences, execution lane), so the signature record stays one document.
+
+GUARDRAILS: you re-score NOTHING — every number you write must already exist in a committed
+FINDING or verdict record; cite it in place. Only the three ruled leg-(c) cells change status;
+no gate opens (verify and state this). Touch NO backcast surface (keepers, status/*.js,
+calibration-complete.json), no ff-verdicts.json content (provenance prose in
+program-status.json sources is fine), no src/, no ScenarioConfig. NO out-of-training backcast
+year solved, scored or registered; freeze is TIER-SCOPED (locked test frozen for every ISO;
+validation by `complete` marker + --holdout-authorized — you touch neither). No new GitHub
+Actions workflows. Push per CLAUDE.md Git & Pushing; program-status.json is >300 lines-scale —
+blob-verify after push (rule 27).
+
+EXIT: docs/FINDING-capx-d13-board-reconcile-<date>.md with the per-cell before/after (the Q5-W
+finding is the format model), the no-gate-opened verification, and the corrected D10-cell
+annotation. Report to the owner.
+```
+
+---
+
+## D14 — NEISO T1-X crossover (new at r#13; the D10 analog on the new lead ISO)
+
+```
+You are the D14 NEISO T1-X CROSSOVER session of the capacity-expansion (Forecast Finalization)
+track, chartered at director refresh #13 (docs/handoffs/capx-director-ledger-2026-08.md §0j,
+lane D14) under the owner's Q7 ruling (leg (c) closes on a measured FC-4 — the card A-A reading
+made uniform, 2026-08-30).
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (Opus or Fable, NEVER Sonnet, rule 27).
+BRANCH: claude/capx-d14-neiso-t1x — create FRESH off origin/main (git fetch origin main first)
+and rebase before pushing.
+
+WHY THIS EXISTS. NEISO is the program's lead ISO since S-4V (2026-08-30): (a) PASS (`complete`
+member; CALIBRATED full-span keeper 2026-08-17-neiso-99-joint-p1) · (b) PASS
+(PROMOTE-WITH-CAVEATS on the bare `neiso-t1f` key, re-scored by the S-4V verification pair) ·
+(c) fail — NEISO has NEVER had a T1-X: no `neiso-t1x` key exists and FC-4 reads n/a in every
+NEISO verdict · (d) none. THIS SESSION CLOSES LEG (c) ON MEASUREMENT. If it lands, NEISO
+becomes the FIRST ISO in program history with legs (a)+(b)+(c) all satisfied — leaving only
+leg (d), the explicit owner authorization, which this session does NOT request and cannot grant.
+
+TASK — build, solve, score and register a NEISO T1-X crossover leg.
+- Read docs/handoffs/ffr-3a2-battery-close-2026-08-03.md and
+  docs/handoffs/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md for the crossover harness and its
+  known instrument debts BEFORE building anything;
+  docs/handoffs/FINDING-capx-d10-nyiso-t1x-2026-08-30.md is the direct worked example (D10 built
+  NYISO's from the same precedents: 2023-2027 window, scored 2023-2025, vintage 2023).
+- POSTURE: follow the FFR-3A-4/D10 precedent — omit solve-affecting flags so each inherits its
+  shipped default, and VERIFY THE POSTURE IN THE RESOLVED CONFIG, not in the request. NEISO's
+  FF-2C flip posture is curve-ON (capacity clearing ON). The shipped HEAD carries S-4's sourced
+  hydro accreditation factor (0.7352) — that is the default, not a flag; confirm it resolves.
+- Years sequential within the run (rule 12). NEISO is light (4 zones + HQ import node; T1-F
+  class runtimes) — it does not contend for a heavy slot, but the ≤2 concurrent heavy cap is
+  SHARED with the owner's backcast solves (a MISO heavy solve is running as of charter), so
+  check before launching anything large.
+- COVERAGE HONESTY: benchmark coverage for 2025 fuel volumes may be partial (D10 hit the
+  preliminary EIA-923 vintage; NEISO may differ) — report uncovered rows as uncovered, never
+  proxy them in.
+
+SCORING AND REGISTRATION (rule 15): register on the FORECAST namespace via
+scripts/register_forecast_run.py with the appropriate --kind and verdict_key `neiso-t1x`, and
+COMMIT the bundle's run_config.json — a bundle without one scores FC-7 FAIL. NEVER the backcast
+registry. You are adding a NEW key — nothing is displaced; preserve-then-overwrite applies only
+if you touch an existing key (you should not).
+
+REPORT FC-4 HONESTLY, WHATEVER IT SAYS — the crossover measures the backcast→forecast INPUT
+GAP; it is diagnostic, and the leg closes on MEASUREMENT (Q7), not on a pass. Context: measured
+co2 gaps are ERCOT 43-50%, PJM 43-58%, MISO 63-76%, while NYISO measured ~10% and does NOT
+reproduce the program-wide miss — wherever NEISO lands is evidence for lane D5, not a NEISO
+verdict. Do not tune anything to move FC-4, and do not withhold registration on a miss.
+
+BOARD + GATE STATEMENT: refresh the NEISO block of frontend/data/forecast/program-status.json
+(leg (c) + t1x fields + blocking rows) with your measured record — fetch and rebase first; lane
+D13 (board reconcile) may merge around you, and if it has, keep its Q7 harmonisation intact.
+STATE PLAINLY at the end whether NEISO now holds (a)+(b)+(c), and that leg (d) remains.
+
+MECHANISM MATRIX (rule 28): running an existing instrument on a new ISO tests no mechanism —
+mint no cell verdict. If you arm anything, update ONLY the NEISO shard
+(docs/codebase-site/data/mechanism-matrix/NEISO.js) in this session; a new ScenarioConfig field
+needs its matrix row plus a cell line in EVERY shard in the same PR, and must appear in
+run_config.json (rule 24).
+
+GUARDRAILS: the crossover's 2023-2025 scored window is BACKCAST-tier on the scoring side —
+score ONLY against already-committed benchmark artifacts and solve NO year outside the leg's
+own 2023-2027 definition. NO out-of-training backcast year solved, scored or registered; the
+freeze is TIER-SCOPED (locked test 2019/H1-2026 frozen for every ISO; validation 2020-2022 by
+`complete` marker + --holdout-authorized — this lane touches neither). No measured-outcome
+feedback (rule 13); nothing reverse-engineered to clear an invariant (rule 21). The ≥2026 half
+of the window is forecast-mode by construction — verify the quarantine row (no H1-2026 actual
+read) and report it. Touch NO backcast keeper shard, status/*.js, calibration-complete.json,
+offer curve or commitment bridge. S-4b (the ARA requirement re-vintage) dispatches strictly
+AFTER this lane merges — do not take its scope. No new GitHub Actions workflows, no CI
+offloading. Push per CLAUDE.md Git & Pushing (run payloads over git push; on HTTP 408 set
+http.version HTTP/1.1 and retry); blob-verify any ≥300-line file after push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d14-neiso-t1x-<date>.md with the measured FC-4 at full
+magnitude, the registered leg, the board refresh, and the (a)+(b)+(c) statement. Report to the
+owner.
+```
+
+---
+
+## D12 — scarcity-consistent delta basis (new at r#13; released by D11-R's report)
+
+```
+You are the D12 SCARCITY-CONSISTENT DELTA BASIS session of the capacity-expansion (Forecast
+Finalization) track, chartered at director refresh #13 under the owner-ratified sequencing
+(r#8 sitting: D12 strictly after D11-R reports — it has,
+docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md) and named as the successor by
+docs/FINDING-entry-signal-forward-expectation-2026-08-25.md §4. Your report is the INPUT to the
+owner's held arming decision (Q8, r#13 sitting: entry_margin_exhaustion arming HELD until this
+lane adjudicates the scarcity basis).
+
+DATA PROFILE: ercot
+MODEL ASSIGNMENT: Fable (rule 27).
+BRANCH: claude/capx-d12-scarcity-basis — create FRESH off origin/main (git fetch origin main
+first) and rebase before pushing.
+
+THE OBJECT. The ERCOT entry screen evaluates scarcity through TWO different objects in one
+margin: (i) the SIGNAL side — the lookahead/forward-expectation composition with the model's
+own expected-ORDC adder (runner._lookahead_reprice_signal); (ii) the RESERVE LEG — the prior
+year's REALIZED post-solve ORDC adder r in Σ max(price − vc, r)
+(screen_reserve_value_enabled). The two-scarcity-objects defect is MEASURED: the composed
+entering-2024 signal mean is −$48.22/MWh with solar capture −$185/MWh (fwd-expectation §4 —
+exact arithmetic, a delta crossing bases), and D11-R §4 measured the consequence from the live
+side: the realized-r leg is an inexhaustible floor that keeps the GAS half of the
+margin-exhaustion rule inert (gas builds to caps in both arms). D11-R's within-walk closure
+(r_walk = max(0, r + Δadder)) is deliberately within-year-only and does NOT resolve the
+cross-year basis question. That question — WHICH scarcity basis is the screen's margin — is
+yours.
+
+TASK — adjudicate, with exact arithmetic on existing committed objects; build at most a
+default-OFF construction.
+1. STATE THE CANDIDATE BASES precisely (at minimum: realized prior-year r as shipped; the
+   signal's own expected-ORDC adder evaluated consistently; any composition the committed
+   findings already name). For each: what a developer's pro-forma would actually use, and what
+   it regenerates from in a forecast year (rule 13 admissibility — forward drivers only).
+2. EXACT ARITHMETIC ON EXISTING OBJECTS FIRST (the charter's own words): recompute the
+   committed entry-screen margins/anchors under each candidate basis from the committed dumps
+   and probe artifacts (scripts/probes/entry_signal_l1b_allocator_counterfactual.py,
+   entry_volume_rule_compare.py, results/calibration/entry_volume_rule_ab_ercot.json, the
+   registered t1h-d11r pair). Deliverable: a per-year, per-candidate table of the screen margin
+   and the implied terminal-RM anchor (open-loop reconstruction is sufficient; a live solve is
+   NOT required for adjudication). Pre-declare, before computing, what each basis is expected
+   to do to the gas-inertness result — the honesty test.
+3. If, and only if, the adjudication needs a live A/B to be decisive: ONE arm-vs-control pair
+   on the ERCOT T1-H leg at the registered posture, single run_config delta, registered on the
+   FORECAST namespace with run_config.json (rule 15), years sequential (rule 12; ERCOT T1-H is
+   not heavy, but the ≤2 heavy cap is shared — a MISO heavy solve is running at charter).
+4. Any code you ship is a default-OFF ScenarioConfig field with its matrix row + a cell line in
+   EVERY shard in the same PR (rule 28c) and byte-identical-off proof. You change NO default:
+   the shipped screen behaviour is untouched. Arming ANYTHING is the owner's decision — your
+   exit is a recommendation plus the decision-card material for the Q8 re-decision (options,
+   what each re-opens, your recommendation and its evidence).
+
+GUARDRAILS: no measured-outcome feedback (rule 13) — a basis is chosen for its market/physics
+fidelity and forward reproducibility, never because it lands the RM anchor somewhere pleasing;
+pre-declare directions before looking (S-4 is the model case). Nothing reverse-engineered to
+clear an invariant (rule 21). One mechanism per phenomenon (rule 19): if the unified basis
+supersedes the D11-R within-walk Δadder closure, say so explicitly — never stack. NO
+out-of-training backcast year solved, scored or registered; freeze TIER-SCOPED (locked test
+frozen for every ISO; validation by `complete` marker + --holdout-authorized — you touch
+neither). Touch NO backcast keeper shard, status/*.js, calibration-complete.json, offer curve
+or commitment bridge; the ERCOT backcast lane is active (ercot-239/241) — check
+git ls-remote --heads origin at start and deconflict. Never re-test matrix cells adjudicated
+R/I/G without new evidence; the ERCOT entry_margin_exhaustion cell is O (measured, escalated) —
+your report may move it, but only the owner's ruling arms anything. No new GitHub Actions
+workflows, no CI offloading. Push per CLAUDE.md Git & Pushing; blob-verify any ≥300-line file
+after push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d12-scarcity-basis-<date>.md with the candidate-basis table,
+the exact arithmetic, the pre-declared expectations vs outcomes, the recommendation, and the
+Q8 re-decision card material. Report to the owner; the director folds it into the next sitting.
+```
+
+---
+
+## S-4b — NEISO ARA requirement re-vintage (new at r#13; dispatch strictly AFTER D14 merges)
+
+```
+You are the S-4b NEISO ARA REQUIREMENT RE-VINTAGE session of the capacity-expansion (Forecast
+Finalization) track, chartered at director refresh #13 (ledger §0j; queued at r#10 by S-4's own
+finding §0.4). DO NOT START if lane D14 (claude/capx-d14-neiso-t1x) has not merged — both edit
+ff-verdicts.json and the NEISO board block; check git log origin/main for its merge first.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (rule 27).
+BRANCH: claude/capx-s4b-neiso-ara — create FRESH off origin/main (git fetch origin main first)
+and rebase before pushing.
+
+WHY THIS EXISTS. S-4 (docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md §0.4/§6.3)
+surfaced that ISO-NE's Nov 21 2025 ARA filing implies ≈ +380 MW of Installed Capacity
+Requirement — LARGER than the 218 MW 2028 gap the hydro repair addressed — and rule 23
+[R-FROZEN-DERIVE] requires requirement inputs to re-derive when their SOURCE publishes, never
+because a residual moved. This is an intake on publication. It was blocked inside S-4 on the
+missing ARA-cycle demand-resource companion value (finding §6.3): a requirement re-vintage
+without its consistent DR companion mixes vintages.
+
+TASK:
+1. LOCATE THE COMPANION FIRST. Find the ARA-cycle-consistent DR/passive-demand-resource value
+   that pairs with the Nov 21 2025 requirement filing (ISO-NE ARA filing docs / CELT / FCA
+   result records). If no consistent companion is published, SHIPPING NOTHING IS THE HONEST
+   OUTCOME — record precisely what is missing, where it will publish, and an intake pointer;
+   do not mix vintages and do not estimate the companion (rule 14: a reconciled real value
+   beats a guess, but a fabricated companion is neither).
+2. If the pair is complete: intake it through the NEISO requirement registry the same way S-4's
+   sourcing worked (per-source extract committed, provenance README, reproducible fetch,
+   tests; data-intake conventions), citing the filing. Zero free parameters — the values are
+   the filing's own.
+3. PRE-DECLARED ARITHMETIC (recorded at charter, before you compute): on the D2-B basis the
+   hydro repair cleared 2028 by ≈ +229 MW; a ≈ +380 MW requirement increase therefore plausibly
+   RE-OPENS 2028 by ≈ −151 MW, and NEISO's leg (b) PROMOTE-WITH-CAVEATS may flip back. THAT IS
+   THE HONEST OUTCOME IF IT HAPPENS — report it at full magnitude, never touch the sourced
+   0.7352 hydro factor, never offset or re-tune anything to keep 2028 clear (rules 13/21). A
+   result landing just clear of the gap is the SUSPICIOUS one.
+4. RE-SCORE the NEISO T1-F leg at one HEAD (control = shipped requirement, treatment = re-vintaged
+   pair; single run_config delta), register both on the FORECAST namespace with run_config.json
+   (rule 15), preserve-then-overwrite on the bare `neiso-t1f` key (preserve the S-4V vintage
+   under a suffix, exactly as S-4V preserved its predecessors). Refresh the NEISO board block —
+   fetch/rebase around D13/D14's edits and keep their content intact.
+
+GUARDRAILS: NO out-of-training backcast year solved, scored or registered; freeze TIER-SCOPED
+(locked test frozen for every ISO; validation by `complete` marker + --holdout-authorized —
+this lane touches neither). NEISO holds a `complete` marker on a CALIBRATED keeper — touch NO
+backcast surface (keeper shard, status/*.js, calibration-complete.json). Years sequential
+within a run; the ≤2 heavy cap is shared (a MISO heavy solve is running at charter; NEISO T1-F
+is light). Mechanism matrix (rule 28): a requirement re-vintage is data intake, not a
+mechanism — mint no cell verdict; if the requirement term's representation itself changes, that
+IS a mechanism change and needs its row + cells + a director escalation before promotion. No
+new GitHub Actions workflows, no CI offloading. Push per CLAUDE.md Git & Pushing; blob-verify
+any ≥300-line file after push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-s4b-neiso-ara-<date>.md with the sourced pair (or the honest
+no-ship record), the pre-declared arithmetic vs the measured outcome at full magnitude, the
+re-scored leg, and the board refresh. Report to the owner.
 ```

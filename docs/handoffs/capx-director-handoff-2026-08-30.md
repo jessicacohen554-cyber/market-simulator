@@ -1,4 +1,4 @@
-# Capacity-Expansion Director — successor handoff (2026-08-30, refresh #10)
+# Capacity-Expansion Director — successor handoff (2026-08-30, refresh #13)
 
 Supersedes `capx-director-handoff-2026-08-26.md` as the live handoff. The prompt below is the
 complete session-opening text for the next director session; paste it verbatim. The ledger
@@ -31,8 +31,8 @@ backcast track moves FAST: in one 24h span it promoted keepers in MISO (twice), 
 re-structured ERCOT's keeper, while executing the NYISO winter-intake Leg 1.
 
 READ ON EVERY REFRESH, IN THIS ORDER:
-1. docs/handoffs/capx-director-ledger-2026-08.md — YOUR ledger. §0g (refresh #10) is the most
-   recent entry; §3 has all six owner rulings.
+1. docs/handoffs/capx-director-ledger-2026-08.md — YOUR ledger. §0j (refresh #13) is the most
+   recent entry; §3 has all nine owner rulings.
 2. frontend/data/forecast/program-status.json — the §2.1b gate board.
 3. frontend/data/forecast/ff-verdicts.json — THE LIVE VERDICTS. Read the BARE `<iso>-t1f` /
    `-t1x` / `-t1h` keys. Suffixed keys (`-ff2d`, `-ffr3a2`) are DELIBERATELY PRESERVED baselines.
@@ -48,52 +48,45 @@ READ ON EVERY REFRESH, IN THIS ORDER:
    docs/FINDING-entry-signal-forward-expectation-2026-08-25.md and
    docs/FINDING-entry-signal-l1-2026-08.md §2.
 
-STATE AT HANDOFF (2026-08-30, refresh #10, HEAD 9f73357) — VERIFY, DON'T TRUST. If the
-refresh-#10 director commit is not yet on main, branch claude/capx-director-session-pacv16
-(dc68997) carries the latest ledger + prompt pack; treat its content as current.
-- LANDED: D1, D2-NYISO, D2-NYISO-INTAKE (NYISO cleared FC-1), D2-B, D7 (board re-scored,
-  leg-(c) harmonisation), and S-4 — the NEISO hydro class factor is SOURCED at 0.7352 from
-  ISO-NE's own per-resource August 2026 SCC record (244 assets, 1,396.472/1,899.5 MW, zero free
-  parameters), ABOVE the pre-declared 0.62 threshold that clears 2028 outright. **S-4's T1-F
-  verification pair, FC-1 re-score, forecast-namespace registration and board refresh are STILL
-  OWED** — check whether they landed; if yes, the board refresh is your D7-class work; if the
-  verification contradicts the declaration, report it at full magnitude.
-- RUNNING: D11-R (ERCOT D-1 entry volume rule — productionize the L-1b margin-exhaustion
-  closure, the measured zero-DOF candidate; branch claude/capx-d11r-entry-volume-rule). When it
-  reports: expect a four-anchor terminal-RM comparison (shipped 25.19 / disarm 40.24 / fwd 40.38
-  / offline 18.7 %) and B-2 cobweb survival (if the oscillation died, that flags the
-  implementation, not success). Arming is the OWNER's decision. D12 (scarcity-consistent delta
-  basis) is chartered ONLY AFTER D11-R reports — owner-ratified sequencing, r#8 sitting.
-- UNSTARTED, prompts canonical in docs/handoffs/capx-director-prompt-pack-2026-08.md:
-  D10 (NYISO T1-X — THE HIGHEST-VALUE LIGHT LANE, closes the lead ISO's leg (c); keep
-  re-presenting it until dispatched), S-5 (PJM horizon-edge — heavy re-score self-gates on a
-  free slot; S-6 STRICTLY after), S-123 (MISO adequacy — held on a start-time check you re-run
-  every refresh: no MISO backcast branch in flight; it has failed twice, on miso-188 then
-  miso-190). QUEUED: S-4b (NEISO ARA requirement re-vintage, ≈+380 MW, charter once S-4's
-  verification pair lands), D12 (after D11-R), D3, D4-I3 (half scope), D5 (re-scoped to a
-  three-ISO derivation question), D6, D8 (FC-7 run_config debt — NYISO's only caveat), D9
-  (rides with S-123).
-- OWNER RULINGS AT THE r#8 SITTING (2026-08-30, decision cards — ledger §3, all six questions
-  now answered): Q5 = WAIT FOR WINTER INTAKE (precedent conflict left standing; the nyiso-156
-  intake path is the resolution route; gate (a) stays PASS on the literal test — do NOT re-read
-  it); Q6 = HOLD, NO ACTION (ERCOT sequencing); SIGNAL LANE = D11-R ratified, D12 queued behind
-  it; S-123 = held (now governed by the start-time check).
-- NYISO is the program's lead ISO: (a) PASS · (b) PASS (PROMOTE-WITH-CAVEATS on bare nyiso-t1f)
-  · (c) fail (D10 closes it on measurement) · (d) none. Its keeper is nyiso-155-hydro-repair
-  (NOT-YET) and its backcast lane is mid-repair: Leg 1 (eastern-seam PAR attribution) A/B is
-  registered and restoring the downstate gradient; the winter-face closure is measured to return
-  the keeper to CALIBRATED via the C3c standing rule, dissolving Q5 prospectively.
-- GOVERNANCE (owner sitting 2026-08-26, executed 2026-08-30): the holdout spend freeze is
-  TIER-SCOPED — locked test (2019/H1-2026) frozen for EVERY ISO; validation (2020-2022) governed
-  by the `complete` marker + --holdout-authorized alone. `complete` = {NEISO, NYISO, PJM},
-  `final` EMPTY, with the card-7 standing precondition (touchpoints run + loop quiescent before
-  `final` is even considered). Rubric v3.5 (diurnal amplitude REPORTED-ONLY) verified
+STATE AT HANDOFF (2026-08-30, refresh #13, HEAD f9eb73c) — VERIFY, DON'T TRUST.
+- LANDED (everything ever dispatched has now landed — zero in-flight capx lanes at r#13): D1,
+  D2-NYISO, D2-NYISO-INTAKE, D2-B, D7, S-4, and the r#13 five: Q5-W (NYISO marker WITHDRAWN;
+  `complete` = {NEISO, PJM}), S-4V (bare neiso-t1f HOLD → PROMOTE-WITH-CAVEATS; control also
+  clears 2028 — epoch drift attribution recorded honestly), S-5 (hold-last-FPR + checker
+  repair; PJM I7 restates 366 MW → 5,858 MW, 2029 plausibly joins; board restatement carried by
+  D13), D10 (NYISO's first T1-X: FC-4 measured FAIL at full magnitude, co2 ~10 % — NOT the
+  program-wide miss; leg (c) closed on measurement), D11-R (entry_margin_exhaustion shipped
+  default-OFF; live arm 22.02 % vs shipped 25.19; B-2 survives; gas half inert on the live
+  reserve leg; matrix cell O).
+- THE PROGRAM LEAD IS NEISO: (a) PASS · (b) PASS (bare neiso-t1f PROMOTE-WITH-CAVEATS) ·
+  (c) fail (genuinely unrun — D14 closes it on measurement) · (d) none. NYISO holds (b)+(c) but
+  fails (a) on the withdrawn marker; re-entry = new owner declaration on a CALIBRATED keeper
+  (winter-intake route; nyiso-158 measured C3b-2025 as wholly the two faces, Leg-2-only).
+- ISSUED AT r#13, prompts canonical in docs/handoffs/capx-director-prompt-pack-2026-08.md:
+  D13 (board reconcile — executes Q7 + S-5's PJM restatement + landed-lane currency + the
+  stale headline repair), D14 (NEISO T1-X — THE HIGHEST-VALUE LIGHT LANE; success makes NEISO
+  the first (a)+(b)+(c) ISO), D12 (scarcity basis — released by D11-R's report; feeds the Q8
+  arming re-decision). S-4b's prompt is written — dispatch STRICTLY after D14 merges (shared
+  NEISO surfaces; pre-declared: +380 MW requirement vs +229 MW clearance ⇒ 2028 plausibly
+  re-opens ≈ −151 MW and leg (b) may flip back — honest if so). HELD on the Q9 check you re-run
+  every refresh (miso-190 still running): S-123 (fifth consecutive fail) and S-6 (PJM 8.8 GB
+  solo heavy slot). QUEUED: D3, D4-I3 (half scope), D5 (three-ISO co2 derivation — confirmed by
+  D10's ~10 % NYISO measurement), D6, D8 (FC-7 run_config debt), D9 (rides with S-123).
+- OWNER RULINGS: r#8 sitting (Q5 wait→re-ruled, Q6 hold, D11-R ratified, S-123 check); r#12
+  (Q5 = WITHDRAW, CAISO precedent made uniform — a `complete` marker cannot stand on a NOT-YET
+  keeper); r#13 sitting (Q7 = leg (c) MEASURED-CLOSES, per charter §2.1b(c) + card A-A —
+  ERCOT/PJM/MISO flip fail→pass via D13, NYISO's PASS stands; Q8 = D11-R arming HOLD until D12;
+  Q9 = miso-190 still running). All nine questions answered; ledger §3.
+- GOVERNANCE: freeze TIER-SCOPED (locked test 2019/H1-2026 frozen for EVERY ISO; validation
+  2020-2022 by `complete` marker + --holdout-authorized). `complete` = {NEISO, PJM} (NYISO
+  withdrawn 2026-08-30), `final` EMPTY, card-7 standing precondition intact. Rubric v3.5
   determination-neutral over all six keepers.
-- BACKCAST KEEPERS at handoff: ERCOT is a TWO-CONFIG KEEPER (owner ruling 3: forward
-  234-eastex-identity, 2024-2025, CALIBRATED — "the configuration the model uses going forward,
-  FORECAST LANE INCLUDED" — plus 2023 carve-out 236-swcap-clip-k33); MISO miso-188-rvsscope
-  (NOT-YET on C3a-2025 alone; miso-190 successor in flight); CAISO caiso-220-c1-crosswalk;
-  NEISO neiso-99-joint-p1; NYISO nyiso-155-hydro-repair (NOT-YET); PJM pjm-162-inputclock.
+- BACKCAST KEEPERS at handoff: ERCOT TWO-CONFIG (forward 234-eastex-identity 2024-2025
+  CALIBRATED + 2023 carve-out 236-swcap-clip-k33); MISO miso-188-rvsscope (NOT-YET on
+  C3a-2025; miso-190 successor STILL RUNNING — the only branch in flight); CAISO
+  caiso-220-c1-crosswalk; NEISO neiso-99-joint-p1 (CALIBRATED); NYISO
+  nyiso-157-par-attribution (NOT-YET on {C3a, C3b, C3c}, fail set widened, marker withdrawn);
+  PJM pjm-162-inputclock (CALIBRATED).
 
 STANDING GUARDRAILS every prompt you issue must restate:
 - Forecast-mode 2026+ runs are UNRESTRICTED. NO out-of-training backcast year solved, scored or
