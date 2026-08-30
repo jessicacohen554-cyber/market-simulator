@@ -131,17 +131,30 @@ def main() -> None:
     ap.add_argument("--arm", required=True, type=Path)
     ap.add_argument("--control", required=True, type=Path)
     ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument(
+        "--expect-delta",
+        default="entry_margin_exhaustion",
+        help=(
+            "Comma-separated run_config booleans that must be the EXACT "
+            "arm-vs-control delta, each False -> True. Default is the D11-R "
+            "single field; the D12-C confirmation pair (Q10, capx director "
+            "ledger §0l.2) passes "
+            "entry_margin_exhaustion,entry_forward_reserve_leg — the TWO "
+            "fields as the single logical delta."
+        ),
+    )
     args = ap.parse_args()
     arm = args.arm if args.arm.is_absolute() else REPO / args.arm
     control = args.control if args.control.is_absolute() else REPO / args.control
+    expected = sorted(f for f in args.expect_delta.split(",") if f)
 
     delta = config_delta(arm, control)
-    if list(delta) != ["entry_margin_exhaustion"] or not delta[
-        "entry_margin_exhaustion"
-    ]["arm"]:
+    if sorted(delta) != expected or not all(
+        delta[f]["arm"] is True and delta[f]["control"] is False for f in expected
+    ):
         raise SystemExit(
             "posture verification FAILED — the arms must differ in exactly "
-            f"entry_margin_exhaustion (False -> True); got {json.dumps(delta)}"
+            f"{expected} (each False -> True); got {json.dumps(delta)}"
         )
 
     rows_c = step_rows(read_ledgers(control))
@@ -163,6 +176,7 @@ def main() -> None:
         "iso": ISO,
         "bundles": {"control": str(control), "arm": str(arm)},
         "posture": {
+            "expected_delta": expected,
             "config_delta": delta,
             "cache_keys": {
                 "control": json.loads((control / "meta.json").read_text())[
