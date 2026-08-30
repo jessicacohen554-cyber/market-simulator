@@ -1,0 +1,552 @@
+{
+ "probe": "o7_attribution_harness",
+ "charter": "docs/FINDING-o7-p0-seam-restoration-2026-08-26.md \u00a75 (owner ruling 2026-08-30, Door 2)",
+ "precommit": "docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md",
+ "what_this_is": "A decomposition INSTRUMENT: leg L replays the keeper recipe with the refined ladder de-priced from the P1 objective only, so keeper-vs-L measures the ladder's pricing channel at the keeper's own (hash-proven bit-identical) P0 commitment state. Leg L is never registrable (rule 13); nothing here touches the keeper's artifacts.",
+ "year": 2023,
+ "bundle": "/home/user/market-simulator/results/calibration/ercot236_k33_clip",
+ "git_sha": "7c023a9",
+ "bit_identity_HP1": {
+  "verdict": "PASS",
+  "per_call": [
+   {
+    "call": 1,
+    "p0_composite_equal": true,
+    "p0_dispatch_equal": true,
+    "p0_prices_equal": true,
+    "p0_objective_value_equal": true,
+    "markup_hash_equal": true,
+    "p1_min_gen_hash_equal": true,
+    "mc_base_hash_equal": true,
+    "committed_run_stats_equal": true
+   },
+   {
+    "call": 2,
+    "p0_composite_equal": true,
+    "p0_dispatch_equal": true,
+    "p0_prices_equal": true,
+    "p0_objective_value_equal": true,
+    "markup_hash_equal": true,
+    "p1_min_gen_hash_equal": true,
+    "mc_base_hash_equal": true,
+    "committed_run_stats_equal": true
+   }
+  ]
+ },
+ "deladder": {
+  "rows_targeted": 648,
+  "plants_refined": 108,
+  "rows_equal_asserted": 1672,
+  "rows_bitwise_asserted_candidate": 756,
+  "noncandidate_fp_atol_usd_mwh": 1e-09,
+  "noncandidate_fp_pairs": [
+   {
+    "coarse_row": 879,
+    "refined_row": 1149,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_Houston_p3470_peak"
+   },
+   {
+    "coarse_row": 891,
+    "refined_row": 1161,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_North_p298_peak"
+   },
+   {
+    "coarse_row": 883,
+    "refined_row": 1153,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_North_p6180_peak"
+   },
+   {
+    "coarse_row": 887,
+    "refined_row": 1157,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_North_p7030_peak"
+   },
+   {
+    "coarse_row": 895,
+    "refined_row": 1165,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_Northeast_p6146_peak"
+   },
+   {
+    "coarse_row": 915,
+    "refined_row": 1185,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_South_Central_p56611_peak"
+   },
+   {
+    "coarse_row": 907,
+    "refined_row": 1177,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_South_Central_p6179_peak"
+   },
+   {
+    "coarse_row": 911,
+    "refined_row": 1181,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_South_Central_p7097_peak"
+   },
+   {
+    "coarse_row": 899,
+    "refined_row": 1169,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_South_p6178_peak"
+   },
+   {
+    "coarse_row": 903,
+    "refined_row": 1173,
+    "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+    "unit_id": "COAL_South_p6183_peak"
+   }
+  ],
+  "delta_abs_max_usd_mwh": 17.449250000000006,
+  "delta_capwtd_mean_usd_mwh": -6.512517649277893e-16,
+  "swcap_clip_level": 4999.99,
+  "max_target_row_mc_usd_mwh": 464.04215000000005
+ },
+ "residual_rung_spread_mc_bid": {
+  "keeper_A": {
+   "plants": 108,
+   "capwtd_mean_annual_spread_usd_mwh": 647.8117705684217,
+   "max_hourly_spread_usd_mwh": 4699.587849720812
+  },
+  "delad_L": {
+   "plants": 108,
+   "capwtd_mean_annual_spread_usd_mwh": 646.0834962331472,
+   "max_hourly_spread_usd_mwh": 4697.8822393421115
+  }
+ },
+ "markup_target_rows_nonzero": false,
+ "attribution": {
+  "lw_price_usd_mwh": {
+   "keeper_A": 56.440826539145824,
+   "delad_L": 56.46038262819566,
+   "control_C": 54.202760707338406,
+   "pricing_channel_A_minus_L": -0.019556089049835634,
+   "whole_ab_A_minus_C": 2.2380658318074182,
+   "commitment_plus_interaction_L_minus_C": 2.257621920857254
+  },
+  "shed_mwh": {
+   "keeper_A": 0.0,
+   "delad_L": 0.0,
+   "control_C": 0.0,
+   "pricing_channel_A_minus_L": 0.0,
+   "whole_ab_A_minus_C": 0.0,
+   "commitment_plus_interaction_L_minus_C": 0.0
+  },
+  "price_quantiles": {
+   "keeper_A": {
+    "p50": 24.665881576258624,
+    "p95": 58.375188346980224,
+    "p99": 390.9439183325058,
+    "max": 4999.989999999999
+   },
+   "delad_L": {
+    "p50": 24.70054092989641,
+    "p95": 58.643676905638024,
+    "p99": 391.4429576668898,
+    "max": 4999.989999999999
+   },
+   "control_C": {
+    "p50": 24.763206919295236,
+    "p95": 59.38131403743337,
+    "p99": 312.5086736677039,
+    "max": 4999.989999999999
+   }
+  },
+  "hours_ge_1000": {
+   "keeper_A": 57,
+   "delad_L": 57,
+   "control_C": 45
+  }
+ },
+ "commitment_context_HP3": {
+  "control_vs_keeper_p0": {
+   "committed_rows_shared": 132,
+   "rows_with_moved_commitment": 74,
+   "capacity_mw_with_moved_commitment": 12380.3542,
+   "d_starts": -11,
+   "d_on_hours": -45
+  },
+  "note": "Fresh context at the 236 recipe; the 188-era 73/132-row / 12,474 MW measurement is the finding's record and is cited, not re-derived."
+ },
+ "legs": {
+  "control": {
+   "leg": "control",
+   "year": 2023,
+   "bundle": "/home/user/market-simulator/results/calibration/ercot236_k33_clip",
+   "calls": [
+    {
+     "call": 1,
+     "n_gen": 1780,
+     "mc_base_hash": "811d1ec8c7bf8e3638f2db3a179f080e4fb4bb9ab0aad21051f6e37f999254df",
+     "demand_hash": "35c3759772501e4ec2bd2eaf8014a30f3a18adbee7097533ab5d5c809937fbbb",
+     "p0": {
+      "dispatch": "dcf16194761fe64d6f5a356543d738282d6a778d651ecc980756ca84dce41052",
+      "wind_dispatched": "eba573e4acc9d01273b9486824956eb026581e9a5303beba93da9c895bed52d3",
+      "solar_dispatched": "5863a599bff67cb74d8a5e90222685b43a4554adfe8eb4977ad924f94edd472b",
+      "slack": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "dump": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "prices": "9f9c7242128e9f2cff6bdeb977e340ff4272fae33ecb42271ce91489f3dec114",
+      "storage_charge": "573ec6042a6931ae54ded5b1d52022db0d0a841421aeaa27923c08267031d2cc",
+      "storage_discharge": "18a949dfe691ac6496612ae1d7bb3cced71cb17b29b1cd606859ede69fa42429",
+      "storage_soc": "e849b357ef4c825f537c35de226eb5ba3139aaa5234eb6c9189b465fded8c32f",
+      "flows": "03d073988ac84ac12aa28ccaeb96bc0c6e26e9cce1d7605c7fc25e9bd5afbb8b",
+      "objective_value": "0x1.37e1404eedfb6p+31",
+      "composite": "f540a5b0f73fc3a2b8257b266b5a1258fbdf9af8d8f5d815fee59badb8a7341d"
+     },
+     "markup_hash": "6e7eeb6637547bebad6a4ef5bd2f2253478d4a766574ddc1d652127b719c86da",
+     "p1_min_gen_hash": "14c2ebb20d540dec7d0c73bf178ea7308ca42fabe5a7b940862bce607010ead9",
+     "p1_floored_mwh": 95508648.0161929,
+     "markup_target_rows_nonzero": null,
+     "p0_total_twh": 303.48093353390317,
+     "p1": {
+      "lw_price_usd_mwh": 52.69083083856016,
+      "price_q": {
+       "p50": 24.807826007789146,
+       "p95": 58.65662180815505,
+       "p99": 292.57939137777777,
+       "max": 4999.989999999999
+      },
+      "hours_ge_1000": 42,
+      "shed_mwh": 0.0,
+      "shed_hours": 0,
+      "total_dispatch_twh": 303.63882928461175,
+      "storage_discharge_twh": 0.6635591863587916
+     },
+     "wall_s": 566.6
+    },
+    {
+     "call": 2,
+     "n_gen": 1780,
+     "mc_base_hash": "811d1ec8c7bf8e3638f2db3a179f080e4fb4bb9ab0aad21051f6e37f999254df",
+     "demand_hash": "35c3759772501e4ec2bd2eaf8014a30f3a18adbee7097533ab5d5c809937fbbb",
+     "p0": {
+      "dispatch": "dcf16194761fe64d6f5a356543d738282d6a778d651ecc980756ca84dce41052",
+      "wind_dispatched": "eba573e4acc9d01273b9486824956eb026581e9a5303beba93da9c895bed52d3",
+      "solar_dispatched": "5863a599bff67cb74d8a5e90222685b43a4554adfe8eb4977ad924f94edd472b",
+      "slack": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "dump": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "prices": "9f9c7242128e9f2cff6bdeb977e340ff4272fae33ecb42271ce91489f3dec114",
+      "storage_charge": "573ec6042a6931ae54ded5b1d52022db0d0a841421aeaa27923c08267031d2cc",
+      "storage_discharge": "18a949dfe691ac6496612ae1d7bb3cced71cb17b29b1cd606859ede69fa42429",
+      "storage_soc": "e849b357ef4c825f537c35de226eb5ba3139aaa5234eb6c9189b465fded8c32f",
+      "flows": "03d073988ac84ac12aa28ccaeb96bc0c6e26e9cce1d7605c7fc25e9bd5afbb8b",
+      "objective_value": "0x1.37e1404eedfb6p+31",
+      "composite": "f540a5b0f73fc3a2b8257b266b5a1258fbdf9af8d8f5d815fee59badb8a7341d"
+     },
+     "markup_hash": "6e7eeb6637547bebad6a4ef5bd2f2253478d4a766574ddc1d652127b719c86da",
+     "p1_min_gen_hash": "14c2ebb20d540dec7d0c73bf178ea7308ca42fabe5a7b940862bce607010ead9",
+     "p1_floored_mwh": 95508648.0161929,
+     "markup_target_rows_nonzero": null,
+     "p0_total_twh": 303.48093353390317,
+     "p1": {
+      "lw_price_usd_mwh": 54.202760707338406,
+      "price_q": {
+       "p50": 24.763206919295236,
+       "p95": 59.38131403743337,
+       "p99": 312.5086736677039,
+       "max": 4999.989999999999
+      },
+      "hours_ge_1000": 45,
+      "shed_mwh": 0.0,
+      "shed_hours": 0,
+      "total_dispatch_twh": 303.6190893117842,
+      "storage_discharge_twh": 0.5492091054377374
+     },
+     "wall_s": 635.2
+    }
+   ],
+   "post_step_error": null,
+   "wall_s": 1322.2,
+   "env": {
+    "MARKET_SIM_WARMSTART": "",
+    "MARKET_SIM_WARMSTART_XYEAR": "0",
+    "MARKET_SIM_P1_FLOOR_INPLACE": ""
+   }
+  },
+  "keeper": {
+   "leg": "keeper",
+   "year": 2023,
+   "bundle": "/home/user/market-simulator/results/calibration/ercot236_k33_clip",
+   "calls": [
+    {
+     "call": 1,
+     "n_gen": 2320,
+     "mc_base_hash": "bab511f147963318cecd63c9fe4fcef8fc451ad60f8d0733f4cb23a6c633c365",
+     "demand_hash": "35c3759772501e4ec2bd2eaf8014a30f3a18adbee7097533ab5d5c809937fbbb",
+     "p0": {
+      "dispatch": "dd881ac820bc0877fdb3a2605d8e8a08384d9702a98a82c26c3bc7fe9484e814",
+      "wind_dispatched": "eba573e4acc9d01273b9486824956eb026581e9a5303beba93da9c895bed52d3",
+      "solar_dispatched": "5863a599bff67cb74d8a5e90222685b43a4554adfe8eb4977ad924f94edd472b",
+      "slack": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "dump": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "prices": "1b4b8430d68ed9443055b462e7904cd9b18f1bb76c2d53d7e7c59c1d7cb38b23",
+      "storage_charge": "3e316cd00fa1626dc0bf6a6056dc232d825b942908f59b6a1a3044cf8a90a023",
+      "storage_discharge": "4ad1116dd4aff1d0dc3537a3f40029f4eb330b30193358032652cf12a59662ba",
+      "storage_soc": "0d74242b422e00db7e9bf7427738afbc7c5178d2294518bcf4f666a3946f91c3",
+      "flows": "24c5da9e54a0069a3cadece0bf2b1522a90a702fbc50cac136a35c908dbef8d8",
+      "objective_value": "0x1.37cd0ec2cb262p+31",
+      "composite": "5ee2f2700dfdbebb15d3bff3cc12480b2b82d2725e0554f1989fcebccda569b6"
+     },
+     "markup_hash": "32541bed6090224ff37fc885fd84b855b1e4ecaaf2ea0b304e0506882c18ade3",
+     "p1_min_gen_hash": "d97340f1ef31fb47a5ee4501ca2e516d44038262c0083959414430d9f8436dc3",
+     "p1_floored_mwh": 95457672.91680482,
+     "markup_target_rows_nonzero": false,
+     "p0_total_twh": 303.4808957882242,
+     "p1": {
+      "lw_price_usd_mwh": 55.05692776237379,
+      "price_q": {
+       "p50": 24.68985211220237,
+       "p95": 58.28315153981822,
+       "p99": 321.6063856067155,
+       "max": 4999.989999999999
+      },
+      "hours_ge_1000": 54,
+      "shed_mwh": 0.0,
+      "shed_hours": 0,
+      "total_dispatch_twh": 303.6379922667455,
+      "storage_discharge_twh": 0.6630979228311478
+     },
+     "wall_s": 916.7,
+     "rung_spread_mc_bid": {
+      "plants": 108,
+      "capwtd_mean_annual_spread_usd_mwh": 647.8117705684217,
+      "max_hourly_spread_usd_mwh": 4699.587849720812
+     }
+    },
+    {
+     "call": 2,
+     "n_gen": 2320,
+     "mc_base_hash": "bab511f147963318cecd63c9fe4fcef8fc451ad60f8d0733f4cb23a6c633c365",
+     "demand_hash": "35c3759772501e4ec2bd2eaf8014a30f3a18adbee7097533ab5d5c809937fbbb",
+     "p0": {
+      "dispatch": "dd881ac820bc0877fdb3a2605d8e8a08384d9702a98a82c26c3bc7fe9484e814",
+      "wind_dispatched": "eba573e4acc9d01273b9486824956eb026581e9a5303beba93da9c895bed52d3",
+      "solar_dispatched": "5863a599bff67cb74d8a5e90222685b43a4554adfe8eb4977ad924f94edd472b",
+      "slack": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "dump": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "prices": "1b4b8430d68ed9443055b462e7904cd9b18f1bb76c2d53d7e7c59c1d7cb38b23",
+      "storage_charge": "3e316cd00fa1626dc0bf6a6056dc232d825b942908f59b6a1a3044cf8a90a023",
+      "storage_discharge": "4ad1116dd4aff1d0dc3537a3f40029f4eb330b30193358032652cf12a59662ba",
+      "storage_soc": "0d74242b422e00db7e9bf7427738afbc7c5178d2294518bcf4f666a3946f91c3",
+      "flows": "24c5da9e54a0069a3cadece0bf2b1522a90a702fbc50cac136a35c908dbef8d8",
+      "objective_value": "0x1.37cd0ec2cb262p+31",
+      "composite": "5ee2f2700dfdbebb15d3bff3cc12480b2b82d2725e0554f1989fcebccda569b6"
+     },
+     "markup_hash": "32541bed6090224ff37fc885fd84b855b1e4ecaaf2ea0b304e0506882c18ade3",
+     "p1_min_gen_hash": "d97340f1ef31fb47a5ee4501ca2e516d44038262c0083959414430d9f8436dc3",
+     "p1_floored_mwh": 95457672.91680482,
+     "markup_target_rows_nonzero": false,
+     "p0_total_twh": 303.4808957882242,
+     "p1": {
+      "lw_price_usd_mwh": 56.440826539145824,
+      "price_q": {
+       "p50": 24.665881576258624,
+       "p95": 58.375188346980224,
+       "p99": 390.9439183325058,
+       "max": 4999.989999999999
+      },
+      "hours_ge_1000": 57,
+      "shed_mwh": 0.0,
+      "shed_hours": 0,
+      "total_dispatch_twh": 303.61811749435316,
+      "storage_discharge_twh": 0.5479555311889946
+     },
+     "wall_s": 903.7,
+     "rung_spread_mc_bid": {
+      "plants": 108,
+      "capwtd_mean_annual_spread_usd_mwh": 647.8117705684217,
+      "max_hourly_spread_usd_mwh": 4699.587849720812
+     }
+    }
+   ],
+   "post_step_error": null,
+   "wall_s": 1941.0,
+   "env": {
+    "MARKET_SIM_WARMSTART": "",
+    "MARKET_SIM_WARMSTART_XYEAR": "0",
+    "MARKET_SIM_P1_FLOOR_INPLACE": ""
+   }
+  },
+  "delad": {
+   "leg": "delad",
+   "year": 2023,
+   "bundle": "/home/user/market-simulator/results/calibration/ercot236_k33_clip",
+   "calls": [
+    {
+     "call": 1,
+     "n_gen": 2320,
+     "mc_base_hash": "bab511f147963318cecd63c9fe4fcef8fc451ad60f8d0733f4cb23a6c633c365",
+     "demand_hash": "35c3759772501e4ec2bd2eaf8014a30f3a18adbee7097533ab5d5c809937fbbb",
+     "p0": {
+      "dispatch": "dd881ac820bc0877fdb3a2605d8e8a08384d9702a98a82c26c3bc7fe9484e814",
+      "wind_dispatched": "eba573e4acc9d01273b9486824956eb026581e9a5303beba93da9c895bed52d3",
+      "solar_dispatched": "5863a599bff67cb74d8a5e90222685b43a4554adfe8eb4977ad924f94edd472b",
+      "slack": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "dump": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "prices": "1b4b8430d68ed9443055b462e7904cd9b18f1bb76c2d53d7e7c59c1d7cb38b23",
+      "storage_charge": "3e316cd00fa1626dc0bf6a6056dc232d825b942908f59b6a1a3044cf8a90a023",
+      "storage_discharge": "4ad1116dd4aff1d0dc3537a3f40029f4eb330b30193358032652cf12a59662ba",
+      "storage_soc": "0d74242b422e00db7e9bf7427738afbc7c5178d2294518bcf4f666a3946f91c3",
+      "flows": "24c5da9e54a0069a3cadece0bf2b1522a90a702fbc50cac136a35c908dbef8d8",
+      "objective_value": "0x1.37cd0ec2cb262p+31",
+      "composite": "5ee2f2700dfdbebb15d3bff3cc12480b2b82d2725e0554f1989fcebccda569b6"
+     },
+     "markup_hash": "32541bed6090224ff37fc885fd84b855b1e4ecaaf2ea0b304e0506882c18ade3",
+     "p1_min_gen_hash": "d97340f1ef31fb47a5ee4501ca2e516d44038262c0083959414430d9f8436dc3",
+     "p1_floored_mwh": 95457672.91680482,
+     "markup_target_rows_nonzero": false,
+     "p0_total_twh": 303.4808957882242,
+     "p1": {
+      "lw_price_usd_mwh": 55.07436221291656,
+      "price_q": {
+       "p50": 24.72509367400602,
+       "p95": 58.28315153981823,
+       "p99": 321.38173528583957,
+       "max": 4999.989999999999
+      },
+      "hours_ge_1000": 54,
+      "shed_mwh": 0.0,
+      "shed_hours": 0,
+      "total_dispatch_twh": 303.6380886041599,
+      "storage_discharge_twh": 0.6636438348470112
+     },
+     "wall_s": 908.6,
+     "rung_spread_mc_bid": {
+      "plants": 108,
+      "capwtd_mean_annual_spread_usd_mwh": 646.0834962331472,
+      "max_hourly_spread_usd_mwh": 4697.8822393421115
+     },
+     "deladder": {
+      "rows_targeted": 648,
+      "plants_refined": 108,
+      "rows_equal_asserted": 1672,
+      "rows_bitwise_asserted_candidate": 756,
+      "noncandidate_fp_atol_usd_mwh": 1e-09,
+      "noncandidate_fp_pairs": [
+       {
+        "coarse_row": 879,
+        "refined_row": 1149,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_Houston_p3470_peak"
+       },
+       {
+        "coarse_row": 891,
+        "refined_row": 1161,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_North_p298_peak"
+       },
+       {
+        "coarse_row": 883,
+        "refined_row": 1153,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_North_p6180_peak"
+       },
+       {
+        "coarse_row": 887,
+        "refined_row": 1157,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_North_p7030_peak"
+       },
+       {
+        "coarse_row": 895,
+        "refined_row": 1165,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_Northeast_p6146_peak"
+       },
+       {
+        "coarse_row": 915,
+        "refined_row": 1185,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_South_Central_p56611_peak"
+       },
+       {
+        "coarse_row": 907,
+        "refined_row": 1177,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_South_Central_p6179_peak"
+       },
+       {
+        "coarse_row": 911,
+        "refined_row": 1181,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_South_Central_p7097_peak"
+       },
+       {
+        "coarse_row": 899,
+        "refined_row": 1169,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_South_p6178_peak"
+       },
+       {
+        "coarse_row": 903,
+        "refined_row": 1173,
+        "max_abs_diff_usd_mwh": 8.526512829121202e-14,
+        "unit_id": "COAL_South_p6183_peak"
+       }
+      ],
+      "delta_abs_max_usd_mwh": 17.449250000000006,
+      "delta_capwtd_mean_usd_mwh": -6.512517649277893e-16,
+      "swcap_clip_level": 4999.99,
+      "max_target_row_mc_usd_mwh": 464.04215000000005
+     }
+    },
+    {
+     "call": 2,
+     "n_gen": 2320,
+     "mc_base_hash": "bab511f147963318cecd63c9fe4fcef8fc451ad60f8d0733f4cb23a6c633c365",
+     "demand_hash": "35c3759772501e4ec2bd2eaf8014a30f3a18adbee7097533ab5d5c809937fbbb",
+     "p0": {
+      "dispatch": "dd881ac820bc0877fdb3a2605d8e8a08384d9702a98a82c26c3bc7fe9484e814",
+      "wind_dispatched": "eba573e4acc9d01273b9486824956eb026581e9a5303beba93da9c895bed52d3",
+      "solar_dispatched": "5863a599bff67cb74d8a5e90222685b43a4554adfe8eb4977ad924f94edd472b",
+      "slack": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "dump": "472c1bcdd44d563657b0504f5ff9837d261fe004367aa1d515d653398b96c197",
+      "prices": "1b4b8430d68ed9443055b462e7904cd9b18f1bb76c2d53d7e7c59c1d7cb38b23",
+      "storage_charge": "3e316cd00fa1626dc0bf6a6056dc232d825b942908f59b6a1a3044cf8a90a023",
+      "storage_discharge": "4ad1116dd4aff1d0dc3537a3f40029f4eb330b30193358032652cf12a59662ba",
+      "storage_soc": "0d74242b422e00db7e9bf7427738afbc7c5178d2294518bcf4f666a3946f91c3",
+      "flows": "24c5da9e54a0069a3cadece0bf2b1522a90a702fbc50cac136a35c908dbef8d8",
+      "objective_value": "0x1.37cd0ec2cb262p+31",
+      "composite": "5ee2f2700dfdbebb15d3bff3cc12480b2b82d2725e0554f1989fcebccda569b6"
+     },
+     "markup_hash": "32541bed6090224ff37fc885fd84b855b1e4ecaaf2ea0b304e0506882c18ade3",
+     "p1_min_gen_hash": "d97340f1ef31fb47a5ee4501ca2e516d44038262c0083959414430d9f8436dc3",
+     "p1_floored_mwh": 95457672.91680482,
+     "markup_target_rows_nonzero": false,
+     "p0_total_twh": 303.4808957882242,
+     "p1": {
+      "lw_price_usd_mwh": 56.46038262819566,
+      "price_q": {
+       "p50": 24.70054092989641,
+       "p95": 58.643676905638024,
+       "p99": 391.4429576668898,
+       "max": 4999.989999999999
+      },
+      "hours_ge_1000": 57,
+      "shed_mwh": 0.0,
+      "shed_hours": 0,
+      "total_dispatch_twh": 303.6182073345212,
+      "storage_discharge_twh": 0.5484646254758887
+     },
+     "wall_s": 960.9,
+     "rung_spread_mc_bid": {
+      "plants": 108,
+      "capwtd_mean_annual_spread_usd_mwh": 646.0834962331472,
+      "max_hourly_spread_usd_mwh": 4697.8822393421115
+     }
+    }
+   ],
+   "post_step_error": null,
+   "wall_s": 1992.5,
+   "env": {
+    "MARKET_SIM_WARMSTART": "",
+    "MARKET_SIM_WARMSTART_XYEAR": "0",
+    "MARKET_SIM_P1_FLOOR_INPLACE": ""
+   }
+  }
+ }
+}
