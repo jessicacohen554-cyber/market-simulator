@@ -1,0 +1,13 @@
+{
+  "id": "2026-08-30-run242-room-axis",
+  "label": "run242 room axis",
+  "date": "2026-08-30",
+  "shorthand": "run242-room-axis",
+  "definition": "(REJECTED PROBE \u2014 escalated) ercot-242 Phase-1 armed member: the room-axis extension of the armed RT/SCED wall (ercot_offer_surface_cleared_share_rt_room \u2014 the SAME RT ladder read conditioned per (class x net-load bin x measured RTOLCAP room bin), zero fitted scalars, parent ladders byte-identical to the frozen stepped artifact), one delta on the 2026-08-25-236-swcap-clip-k33 carve-out keeper (control = the committed keeper bundle, V-0k validated zero-solve). MECHANICAL VERDICT: REJECTED-AS-ARMED on K-SPUR (lidless spur 74 -> 75 vs the no-increase bar; churn 12 new / 11 dissolved). Other kills clean (zero new shed; off-season intact; coal +0.32 TWh; CT/ST +0.41/+0.92 TWh). Officials collapse out of PASS: C3a -7.3% -> +7.6% (sign flip to overshoot), C3b 0.102 -> 0.256, C3c 180 -> 190 h; ge-$1,000 tail 59 -> 71 vs actual 61; August lw 221.18 -> 265.42 vs actual 220.16. Declared reach NOT achieved: the 12-hour object family barely moves (2 hours cross $200, to $200/$238 vs actual ~$540-550; one new missed hour h5344 minted; family 14 -> 13) \u2014 the PRECOMMIT-ercot242 section-1.5 double-counting risk realized: the LP's endogenous position already prices the tail state the room axis re-conditions, so tight-hour prices inflate where the model was already at the wall while the storage-carried object hours stay unreached. D-4 FAIL rows inherited-identical (22 = keeper's own, none new). Outcome rule 1 (PRECOMMIT-ercot242-room-axis-phase1 section 3): register + matrix cell R + ESCALATE with the structure case, keeper untouched. A/B record: results/calibration/ercot242_room_ab.json; FINDING-ercot242-room-axis-phase1-2026-08-30.",
+  "years": [
+    2023
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-30-run242-room-axis.js",
+  "bundle": "results/calibration/ercot242_room_armed"
+}
