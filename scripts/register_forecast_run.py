@@ -197,15 +197,21 @@ def classify(run_id: str, meta: dict, has_score: bool) -> tuple[str, str, str]:
     """Return ``(kind, tier, family)`` for a forecast-family run.
 
     ``kind`` is the run family the explorer filters by (t1f/t1x/t1h/ces-poc/
-    adequacy/readiness); ``tier`` places it on the §2.1 ladder (t1f/t1x/t1h/
-    poc/battery); ``family`` distinguishes gate vs baseline within t1f. The
-    schema-ready-but-unpopulated tiers (t2/t3-golden/pb-band) are produced by
-    later, owner-gated waves — no run classifies into them today.
+    adequacy/readiness/t3-golden); ``tier`` places it on the §2.1 ladder
+    (t1f/t1x/t1h/poc/battery/t3); ``family`` distinguishes gate vs baseline
+    within t1f. Of the schema-ready tiers (t2/t3-golden/pb-band), ``t3-golden``
+    is populated by §2.1b-authorized campaigns (the first: the Q13-authorized
+    NEISO 2026–2050 BAU golden, lane T3-NEISO-GOLDEN); t2/pb-band remain
+    unpopulated until their owner-gated waves.
     """
     mk = (meta or {}).get("kind")
     label = (meta or {}).get("label") or ""
     if mk == "readiness":
         return "readiness", "battery", "battery"
+    if mk == "t3":
+        # §2.1b-authorized full-horizon golden campaign (matches the
+        # schema_ready kind "t3-golden" / tier "t3" the explorer already maps).
+        return "t3-golden", "t3", "golden"
     if mk == "crossover":
         return "t1x", "t1x", "crossover"
     if mk == "ces-poc":
@@ -470,7 +476,7 @@ def write_run(sidecar: dict, verdicts: dict, root: Path = REPO) -> str:
 # --------------------------------------------------------------------------- #
 # Assembly — manifest.js + program-status.js (stdlib-only; the deploy step).
 # --------------------------------------------------------------------------- #
-_TIER_ORDER = {"t1f": 0, "t1x": 1, "t1h": 2, "poc": 3, "battery": 4}
+_TIER_ORDER = {"t1f": 0, "t1x": 1, "t1h": 2, "poc": 3, "battery": 4, "t3": 5}
 _KIND_ORDER = {
     "t1f": 0,
     "t1x": 1,
@@ -478,6 +484,7 @@ _KIND_ORDER = {
     "adequacy": 3,
     "ces-poc": 4,
     "readiness": 5,
+    "t3-golden": 6,
 }
 
 
