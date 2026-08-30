@@ -1733,6 +1733,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             and prior_results is not None
         ):
             prior_results.entry_reprice = entry_walks.get(year)
+        # D12: rebind THIS entering year's own forward reserve leg (same
+        # per-entering-year pattern — after a bridge the adder stored for
+        # next_year prices the wrong entering year's scarcity). Unarmed the
+        # dict is empty (byte-identical).
+        if (
+            getattr(config, "entry_forward_reserve_leg", False)
+            and prior_results is not None
+        ):
+            prior_results.entry_reserve_price_signal = entry_reserve_adders.get(year)
 
         # T1-FF Arm R given-weather rebind (FH-1, hindcast-forward plan §2.1):
         # a solved forward year re-seeds the weather base from ITSELF — the
@@ -3483,6 +3492,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # entry screens can walk the SAME instrument that priced their
         # signal. Empty unarmed (byte-identical).
         entry_walks: dict[int, _EntryRepriceWalk] = {}
+        # D12 forward reserve leg, one (T,) expected-ORDC adder per priced
+        # entering year (mirrors entry_walks): captured by _screen_signal_for
+        # when entry_forward_reserve_leg is armed, bound into prior_results so
+        # the ENTRY screens read the entering year's own scarcity expectation
+        # as their hourly reserve legs. Empty unarmed (byte-identical).
+        entry_reserve_adders: dict[int, np.ndarray] = {}
         # ENTRY-SIGNAL forward-expectation state: the S_current evaluation
         # depends only on THIS solved year (its dispatched demand, its stack
         # basis), never on the entering year, so one evaluation serves every
@@ -3620,11 +3635,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # so arming it changes no dispatch or entry outcome. At the
                 # flag's default this expression is byte-identical to the old
                 # ``{} if unified_screens else None``.
+                # D12 forward reserve leg: the leg is the instrument's own
+                # adder, read from the diagnostics dict, so arming the flag
+                # forces the dict on. The npz write below keeps its ORIGINAL
+                # gate (_dump_diag) — arming the leg alone captures the adder
+                # without emitting dump files.
+                _dump_diag = unified_screens or getattr(
+                    config, "entry_screen_diagnostics", False
+                )
                 _diag: dict | None = (
                     {}
                     if (
-                        unified_screens
-                        or getattr(config, "entry_screen_diagnostics", False)
+                        _dump_diag
+                        or getattr(config, "entry_forward_reserve_leg", False)
                     )
                     else None
                 )
@@ -3717,7 +3740,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         float(np.percentile(_fwd_delta, 95)),
                         _zspread,
                     )
-                if _diag:
+                # D12 forward reserve leg (GATED entry_forward_reserve_leg,
+                # default OFF ⇒ dict empty, byte-identical): capture the
+                # entering year's own expected-ORDC adder — the SAME
+                # instrument invocation's scarcity object the energy leg just
+                # priced — as this entering year's entry-screen reserve leg.
+                if getattr(config, "entry_forward_reserve_leg", False) and _diag:
+                    entry_reserve_adders[entering_year] = np.asarray(
+                        _diag["adder_usd_mwh"], dtype=float
+                    )
+                if _diag and _dump_diag:
                     # FFR-8A diagnostic dump: the lookahead stack internals,
                     # next to the year's evolution ledger. Output-only — no
                     # config field, no cache-key term, no solve-path change
@@ -3973,6 +4005,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # the next iteration, mirroring the unified-signal swap). None
             # unarmed — the allocators then keep their bang-bang paths.
             entry_reprice=entry_walks.get(next_year),
+            # D12 forward reserve leg for the same entering year (rebound per
+            # entering year alongside entry_reprice). None unarmed — the
+            # entry screens then keep the shipped realized legs.
+            entry_reserve_price_signal=entry_reserve_adders.get(next_year),
             peak_demand=peak_demand,
             planned_additions=planned_additions,
             procured_vre_additions=procured_vre_additions,

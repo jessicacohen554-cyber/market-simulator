@@ -128,6 +128,16 @@ def test_all_cross_year_keys_present():
         # miso_clean_tier_rows, default OFF ⇒ always None), read by next
         # year's retirement/new-entry screens — a real cross-year field.
         "clean_attribute_price_by_fuel",
+        # D11-R margin-exhaustion walk state (GATED entry_margin_exhaustion,
+        # default OFF ⇒ always None), the per-entering-year repricer both
+        # entry allocators walk — a real cross-year field. (Repair: the field
+        # landed with D11-R but this contract set was not extended then.)
+        "entry_reprice",
+        # D12 scarcity-consistent entry reserve leg (GATED
+        # entry_forward_reserve_leg, default OFF ⇒ always None), the
+        # per-entering-year expected-ORDC adder the entry screens read as
+        # their hourly reserve legs — a real cross-year field.
+        "entry_reserve_price_signal",
     }
     assert set(PriorYearResults._field_names()) == expected
 

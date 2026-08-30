@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-08-30 — capx D12: entry-screen scarcity basis adjudicated (no LP; one default-OFF field; nothing armed)
+
+The two-scarcity-objects question the D11-R finding §4 escalated, answered
+by exact arithmetic on committed objects
+(`docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md`;
+pre-declarations committed verbatim in
+`PREDECL-capx-d12-scarcity-basis-2026-08-30.md`): the shipped thermal ENTRY
+margin's realized-r reserve leg (prior solved year's post-solve ORDC adder)
+is a cross-year phantom that fires exactly at post-tight-year steps —
+entering-2024 control gas margins are NEGATIVE under the entering year's own
+expectation on both committed bounds yet the screen built 6 GW, and the
+D11-R exhaustion arm's entering-2025 repeats it at ≥4× the whole consistent
+forward annuity. Everywhere else the basis choice changes nothing (no
+committed sign moves; the B-walk reproduces the committed r-none L-1b walk
+tranche-for-tranche). Shipped `ScenarioConfig.entry_forward_reserve_leg`
+(GATED default-OFF, cache-key-registered at default — default key
+`603c2498bf71d21d` unmoved, registered keys reconstruct): armed, the entry
+screens' reserve legs read the entering year's OWN expected-ORDC adder from
+the same instrument invocation as the energy leg, and the D11-R walk closure
+`max(0, r + Δadder)` becomes the exact identity `r_walk = adder_current`
+(gas half of `entry_margin_exhaustion` goes live, zero walk-code change).
+Matrix row + all-shard cells added (ERCOT `O`, sisters `U`); Q8 decision
+card in the finding §7 — arming is the owner's. Also repairs the
+pre-existing `test_pipeline_prior` contract-set failure (D11-R's
+`entry_reprice` was never added to it).
+
 ## 2026-08-22 — miso-176: M2M/CMP seam-class intake + binding-reality adjudication (no LP, nothing armed, keeper unchanged)
 
 New curated datatype `miso-m2m-flowgates` (schema-first, data-intake

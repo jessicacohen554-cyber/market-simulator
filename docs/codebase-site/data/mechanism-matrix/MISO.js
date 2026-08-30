@@ -252,6 +252,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     capacity_screen_scarcity_restoration: { cell: "U", fc: "U" },
     entry_forward_expectation_signal: { cell: "U", fc: "U" },
     entry_margin_exhaustion: { cell: "U", fc: "U" },
+    entry_forward_reserve_leg: { cell: "U", fc: "U" },
     entry_vre_capacity_revenue: { cell: "K", fc: "K", ev: "FFR-4B (docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md); evidence FFR-3V §3.3/§7 1a; owner D-2' sitting Addendum O 2026-08-04" },
     vre_procurement_additions: { cell: "O", fc: "O", ev: "FFR-5E (docs/handoffs/ffr-5e-vre-procurement-channel-2026-08-05.md); design FFR-5B (docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md); owner D-18(a) sitting Addendum S.2/S.5 2026-08-05. HINDCAST ARM: FFR-5E-H (docs/handoffs/ffr-5e-hindcast-arm-2026-08-09.md; prereg ffr-5e-hindcast-arm-prereg-2026-08-09.md committed before either solve; runs miso-2021-2025-t1ff-armr-ffr5eh-{control,armed}) — verdict DEFER, netting never exercised; unblocked by FFR-3V-FIX (docs/handoffs/ffr-3v-fix-2026-08-08.md section 6)" },
     smr_available_year: { cell: "U", fc: "U" },
