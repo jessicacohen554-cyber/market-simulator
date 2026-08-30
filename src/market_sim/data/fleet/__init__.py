@@ -179,6 +179,16 @@ class Generator(BaseModel):
     online_month: int = 1
     retirement_month: int | None = None
     is_must_run: bool = False
+    # Provenance: True only on units injected by the leg-1 partial-plant exit
+    # channel (eia860._partial_plant_exit_rows, stamped by
+    # load_retired_within_window under ScenarioConfig.partial_plant_exit_carry;
+    # miso-191, PREREG-miso191-binning-aware-exit-2026-08-30 §1-§2). Read by
+    # exactly one consumer — fleet_to_bins' exit-cohort routing, which gives
+    # these units their own date-scoped bins so the per-unit retirement
+    # survives plant binning and the existing effective_cod seam times each
+    # out at unit grain. Loader-stamped plumbing, not a config tunable (rule
+    # 24): no residual can be closed by it and nothing else reads it.
+    partial_exit_unit: bool = False
 
     # CAMPD operational-bin attributes. Set only for generators built by
     # :func:`bins_to_fleet`; left at defaults for the legacy fleet. These

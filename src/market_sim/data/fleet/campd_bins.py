@@ -2046,15 +2046,37 @@ def fleet_to_bins(
             {c: _duty[c] for c in sorted(_duty)},
         )
     # Aggregate the per-generator fleet to one row per (plant, group): capacity
-    # sums, heat rate is capacity-weighted.
-    agg: dict[tuple[int, str], dict] = {}
+    # sums, heat rate is capacity-weighted. Under partial_plant_exit_carry
+    # (miso-191, PREREG-miso191 §1-§2), a leg-1 partial-exit unit (loader-
+    # stamped provenance + its own EIA-860 retirement) instead aggregates into
+    # a date-scoped EXIT-COHORT bin keyed (plant, group, retirement year,
+    # retirement month): the injected rows form their own bins, so the
+    # per-unit retirement survives plant binning and the existing
+    # cod_ramp.effective_cod per-unit preference (the Homer City seam) times
+    # each cohort out at unit grain while the surviving plant's bin — now
+    # aggregating only surviving units — keeps running. The whole-plant
+    # retiree channel and leg-2 re-carries are deliberately NOT routed (they
+    # keep today's timing; PREREG-miso191 §1 frozen scope).
+    _ppx_cohort = bool(getattr(config, "partial_plant_exit_carry", False))
+    agg: dict[tuple, dict] = {}
     for g in generators:
         if g.plant_group not in BIN_GROUP_TO_FUEL:
             continue  # non-thermal (nuclear / oil / biomass) stays a raw unit
         code = int(g.plant_code)
         if code <= 0:
             continue
-        key = (code, g.plant_group)
+        _ry: int | None = None
+        _rm: int | None = None
+        if (
+            _ppx_cohort
+            and getattr(g, "partial_exit_unit", False)
+            and g.retirement_year is not None
+        ):
+            _ry = int(g.retirement_year)
+            _rm = int(g.retirement_month) if g.retirement_month is not None else 12
+            key: tuple = (code, g.plant_group, _ry, _rm)
+        else:
+            key = (code, g.plant_group)
         a = agg.setdefault(
             key,
             {
@@ -2062,13 +2084,16 @@ def fleet_to_bins(
                 "hr_cap": 0.0,
                 "name": g.name,
                 "zone": g.zone,
+                "ry": _ry,
+                "rm": _rm,
             },
         )
         a["cap"] += float(g.pmax_mw)
         a["hr_cap"] += float(g.pmax_mw) * float(g.heat_rate)
 
     rows: list[dict] = []
-    for (code, group), a in agg.items():
+    for key, a in agg.items():
+        code, group = key[0], key[1]
         cap = a["cap"]
         if cap <= 0.0:
             continue
@@ -2205,6 +2230,12 @@ def fleet_to_bins(
                 "plant_count": 1,
                 "plant_codes": [code],
                 "fuel": BIN_GROUP_TO_FUEL[group],
+                # Exit-cohort timing (miso-191): None on every ordinary plant
+                # row; set only on a date-scoped exit-cohort bin, and stamped
+                # onto its tranche generators by bins_to_fleet so the COD
+                # ramp's per-unit retirement preference applies.
+                "Retirement_Year": a["ry"],
+                "Retirement_Month": a["rm"],
             }
         )
     bins = pd.DataFrame(
@@ -2232,6 +2263,8 @@ def fleet_to_bins(
             "plant_count",
             "plant_codes",
             "fuel",
+            "Retirement_Year",
+            "Retirement_Month",
         ],
     )
     # Per-plant CC capacity reconciliation (ScenarioConfig.cc_capacity_reconcile)

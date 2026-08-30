@@ -5432,6 +5432,22 @@ def solve_and_persist(
             _dispf.to_parquet(
                 run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
             )
+            # Per-unit capacity listing beside the dispatch frame (miso-191,
+            # PREREG-miso191 §4 witness grains): the dispatch parquet is a
+            # plain long table with no FleetContext schema metadata, so a
+            # capacity-grain witness (cohort pmax vs the exited MW; the leg-2
+            # plant capacity deltas) has no committed basis without this.
+            # Tiny (n_gen rows), gitignored with the rest of dispatch/,
+            # written for every pass of every year — pure instrumentation,
+            # nothing in the solve or scoring path reads it.
+            pd.DataFrame(
+                {
+                    "unit_id": [str(u) for u in context.unit_ids],
+                    "pmax_mw": np.asarray(context.pmax_mw, dtype=float),
+                }
+            ).to_parquet(
+                run_dir / "dispatch" / f"{year}_{label}_fleet.parquet", index=False
+            )
             _parquet_s += time.perf_counter() - _t_pq
             # Free the unit-hour frame the moment it is on disk. It is the
             # single largest object this loop builds — MISO 2023 measures

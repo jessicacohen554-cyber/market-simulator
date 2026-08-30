@@ -10992,6 +10992,18 @@ class ScenarioConfig:
     # EIA-860 actual retirement record + vintage status + energy-source
     # codes), ZERO fitted scalars, no size threshold, rule-13
     # forward-regenerable, byte-inert while off, backcast-only.
+    # DELIVERY (miso-191, PREREG-miso191-binning-aware-exit-2026-08-30):
+    # the miso-190 A/B found the plant-binned LP discarded the per-unit
+    # retirement at fleet_to_bins (units pooled into surviving plants'
+    # bins ran past their real deaths — FINDING-miso190 §3). Same field,
+    # binning-aware delivery: a loader-stamped leg-1 partial-exit unit now
+    # aggregates into its own date-scoped EXIT-COHORT bin (plant x group x
+    # retirement month, unit ids `..._p{plant}_r{yyyy}{mm}_{tranche}`),
+    # whose tranches carry the unit's own retirement so the existing
+    # effective_cod per-unit preference times the cohort out while the
+    # surviving plant's bin keeps running. Whole-plant retirees, leg-2
+    # re-carries and announced operable retirements are NOT cohort-routed
+    # (frozen scope, PREREG-miso191 §1).
     partial_plant_exit_carry: bool = False
 
     # PUBLISHED seasonal capability basis for combined cycles

@@ -115,6 +115,113 @@ class TestPartialPlantExitCarry(unittest.TestCase):
         self.assertEqual(coal_supply_class(6090), "prb")
 
 
+class TestExitCohortBinning(unittest.TestCase):
+    """Binning-aware exit-cohort delivery (miso-191, PREREG-miso191 §1-§2).
+
+    The miso-190 A/B found MISO's plant-binned LP discards per-unit
+    retirements at ``fleet_to_bins`` (FINDING-miso190 §3). Form (a), frozen
+    ex ante: a loader-stamped leg-1 partial-exit unit aggregates into its
+    own date-scoped exit-cohort bin, whose tranches carry the unit's own
+    retirement so ``effective_cod``'s per-unit preference times them out.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ic = get_iso_config("MISO")
+        cls.channel = load_retired_within_window(
+            "MISO",
+            cls.ic,
+            year=2023,
+            vintage_status_scope=True,
+            partial_plant_exit_carry=True,
+        )
+
+    def test_loader_stamps_partial_provenance_only(self):
+        by_id = {g.unit_id: g for g in self.channel}
+        # Leg-1 partial-exit units are stamped ...
+        for uid in ("6090_2", "994_ST2", "6137_1", "1702_1A", "4041_5"):
+            self.assertTrue(by_id[uid].partial_exit_unit, uid)
+        # ... the whole-plant channel is NOT (Rush Island keeps today's
+        # plant-collapsed timing; PREREG-miso191 §1 frozen scope).
+        for g in self.channel:
+            if int(g.plant_code) == 6155:
+                self.assertFalse(g.partial_exit_unit)
+
+    def test_loader_off_path_never_stamps(self):
+        off = load_retired_within_window("MISO", self.ic, year=2023)
+        self.assertFalse(any(g.partial_exit_unit for g in off))
+
+    def test_fleet_to_bins_routes_cohorts_when_armed(self):
+        from market_sim.data.fleet import fleet_to_bins
+
+        cfg = ScenarioConfig(
+            mode="backcast", weather_year=2023, partial_plant_exit_carry=True
+        )
+        bins = fleet_to_bins(self.channel, "MISO", cfg)
+        coal = bins[bins["Plant_Group"] == "COAL"]
+        # Sherco-2's cohort: its own row, its own retirement.
+        sherco = coal[(coal["Plant_Code"] == 6090) & (coal["Retirement_Year"].notna())]
+        self.assertEqual(len(sherco), 1)
+        self.assertEqual(int(sherco["Retirement_Year"].iloc[0]), 2023)
+        self.assertEqual(int(sherco["Retirement_Month"].iloc[0]), 12)
+        self.assertAlmostEqual(float(sherco["capacity_mw"].iloc[0]), 682.0, 0)
+        # Karn's four same-month units pool into ONE cohort bin.
+        karn = coal[coal["Plant_Code"] == 1702]
+        self.assertEqual(len(karn), 1)
+        self.assertEqual(int(karn["Retirement_Year"].iloc[0]), 2023)
+        self.assertEqual(int(karn["Retirement_Month"].iloc[0]), 5)
+        self.assertAlmostEqual(float(karn["capacity_mw"].iloc[0]), 486.0, 0)
+        # The whole-plant channel keeps ordinary rows (no retirement carry).
+        rush = bins[bins["Plant_Code"] == 6155]
+        self.assertTrue(rush["Retirement_Year"].isna().all())
+
+    def test_fleet_to_bins_pools_when_flag_off(self):
+        from market_sim.data.fleet import fleet_to_bins
+
+        cfg = ScenarioConfig(mode="backcast", weather_year=2023)
+        bins = fleet_to_bins(self.channel, "MISO", cfg)
+        # No cohort routing: every row's retirement columns are empty even
+        # though the input units carry tags + retirements (the gate is the
+        # config field, so a control build is unchanged).
+        self.assertTrue(bins["Retirement_Year"].isna().all())
+        self.assertTrue(bins["Retirement_Month"].isna().all())
+
+    def test_bins_to_fleet_stamps_cohort_tranches(self):
+        from market_sim.data.fleet import bins_to_fleet, fleet_to_bins
+
+        cfg = ScenarioConfig(
+            mode="backcast", weather_year=2023, partial_plant_exit_carry=True
+        )
+        bins = fleet_to_bins(self.channel, "MISO", cfg)
+        fleet, _ = bins_to_fleet(bins, [z.name for z in self.ic.zones], cfg)
+        cohort = [g for g in fleet if "_p6090_r202312_" in g.unit_id]
+        self.assertTrue(cohort)  # presence, never vacuous (miso-190 §5.1)
+        for g in cohort:
+            self.assertEqual(g.retirement_year, 2023)
+            self.assertEqual(g.retirement_month, 12)
+            self.assertEqual(int(g.plant_code), 6090)
+        # The COD ramp seam: online all 2023, gone all 2024.
+        cod_map = load_cod_map()
+        g = cohort[0]
+        oy, om, ry, rm = effective_cod(
+            int(g.plant_code),
+            g.online_year,
+            g.online_month,
+            g.retirement_year,
+            g.retirement_month,
+            cod_map,
+        )
+        self.assertEqual((ry, rm), (2023, 12))
+        self.assertTrue(monthly_online_mask(oy, om, ry, rm, 2023).all())
+        self.assertFalse(monthly_online_mask(oy, om, ry, rm, 2024).any())
+        # Non-cohort tranches carry no retirement.
+        rush = [g for g in fleet if int(g.plant_code) == 6155]
+        self.assertTrue(rush)
+        for g in rush:
+            self.assertIsNone(g.retirement_year)
+            self.assertNotIn("_r20", g.unit_id)
+
+
 class TestSnapshotStatusWidening(unittest.TestCase):
     """Leg 2 through the real MISO mothball re-carry (committed data)."""
 
