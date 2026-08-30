@@ -8201,3 +8201,38 @@ the nyiso-97 §4 identifiability gate runs BEFORE any mechanism prereg
 (INTAKE-SPEC-nyiso156 §2, fail-closed).
 
 Next shorthand: nyiso-159.
+
+## 2026-08-30 — Q5-W: the `complete` marker WITHDRAWN by owner r#12 ruling (CAISO precedent, uniform) — keeper nyiso-157 UNTOUCHED; records lane, no solve
+
+**What moved and what did not.** The owner re-ruled Q5 at the capx director's
+refresh-#12 decision card (verbatim option label: *"Withdraw the marker (CAISO
+precedent)"*, superseding the r#8 WAIT; `capx-director-ledger-2026-08.md`
+§0i.2/§3 Q5): NYISO's `complete` marker is **withdrawn** — a `complete` marker
+cannot stand on a NOT-YET keeper, applied uniformly — while
+**`2026-08-30-nyiso-157-par-attribution` REMAINS the designated keeper**. The
+structural-integrity formula still governs keeper promotions (nyiso-155/157
+stand); it no longer sustains a marker. Trigger: the recurrence — nyiso-157
+re-keyed the marker onto a second consecutive NOT-YET keeper with the fail set
+widened ({C3a-2025 −12.0 %, C3b-2025 0.203, C3c silenced-lone}).
+
+**The record** (form mirrors the CAISO 2026-08-06 withdrawal):
+`calibration-complete.json` `withdrawn.NYISO` — declared 2026-07-31, withdrawn
+2026-08-30, keeper_at_declaration nyiso-100-silretire preserved, the 11-entry
+`rekey_history` and the prior 2026-07-19 withdrawal nested verbatim, nothing
+erased. **Nothing was ever spent** (verified: all 15 NYISO sidecars ⊂
+{2023, 2024, 2025}; bench 2023–2025 only), so nothing is lost; the
+validation-tier (2020–2022) authorization **lapses** with the marker
+(`holdout_policy.authorized(NYISO, 2022)` → False, verified), the locked test
+was never authorized, `holdout-freeze.json` untouched. Forecast board flipped in
+the same session: gate **(a) fail on the marker · (b) PASS (untouched bare
+verdict) · (c) fail · (d) none** — the lead position is dissolved.
+
+**Re-entry** is a NEW explicit owner declaration once the keeper again scores
+CALIBRATED — the live route is this lane's own successor, **winter intake Leg 2**
+(`INTAKE-SPEC-nyiso156-winter-locational-2026-08-30`, owner-executable AORR
+access; intake needs no marker and is unaffected). `audit_keepers` clean. Full
+record: `docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`; cross-ISO
+entry: `governance.md` 2026-08-30.
+
+Next shorthand: nyiso-159 (unchanged from the nyiso-158 entry above — Q5-W
+is a governance lane, not an nyiso-N session).
