@@ -75,7 +75,33 @@ heavy slot (MISO = 9.6 GB no-co-run). The batch issued this refresh stays delibe
 S-5 stands ready (PJM quiet on the backcast side) for the next free heavy slot; S-6 strictly
 after it.
 
-**5. PACK CORRECTIONS with the reissue:** D10's WHY cited keeper
+**5. OWNER SITTING AT REFRESH #8 (2026-08-30, in-session decision cards) — FOUR RULINGS:**
+- **Q5 → WAIT FOR WINTER INTAKE.** The precedent conflict (CAISO withdrawal vs nyiso-155
+  structural-integrity promotion) is left standing unreconciled; the nyiso-156 winter-intake path
+  is the designated resolution route (measured: winter-face closure alone returns the keeper to
+  CALIBRATED). No marker moves; gate (a) stays PASS on the literal test. If the fact pattern
+  recurs before the intake resolves it, the reconciliation question returns to the owner.
+- **Q6 → HOLD, NO ACTION.** No direction is issued to the ERCOT backcast lane; revisit when it
+  goes quiet. Gate (a) keeps failing on both counts meanwhile — recorded, not escalated further.
+- **SIGNAL LANE → D11-R RATIFIED, D12 QUEUED.** The refresh-#8 re-scope is ratified at the
+  finding's §7 escalation: volume rule first; D12 (scarcity-consistent delta basis) is chartered
+  only after D11-R reports. The §7 escalation is now RESOLVED — (b) first, (a) queued behind it.
+- **S-123 → HOLD UNTIL NEXT REFRESH.** This SUPERSEDES item 4's mid-refresh downgrade to a
+  start-time check: the owner holds S-123 one more cycle to see whether a new MISO backcast
+  session starts. Re-present at r#9.
+
+**5b. POST-SITTING BURST (same day, `212308b` → `5ce92f4`) — two rulings validated within the
+hour:** PR #4298 merged this ledger's refresh-#8 commit; PR #4297 merged the CAISO backcast
+branch (caiso-220 records — CAISO no longer in flight); **PR #4299 merged miso-189** (phase-0
+zero-solve refuting the Illinois scarce delivered-gas candidate) — a NEW MISO backcast session
+did start immediately, exactly what the S-123 hold-until-r#9 ruling anticipated; PR #4301 landed
+an ERCOT governance correction (≥$1,000 band count 59 → 61, owner ruling 2026-08-26); and
+**PR #4300 shows nyiso-156 LEG 1 (the eastern-seam PAR attribution) ALREADY EXECUTING** —
+nyiso-157 filed its A/B gate scorer (K1–K9) before the solves — so the Q5 wait-for-winter-intake
+path is in motion, not hypothetical. ERCOT's backcast branch remains the one still in flight
+alongside the NYISO Leg-1 branch.
+
+**6. PACK CORRECTIONS with the reissue:** D10's WHY cited keeper
 `2026-08-22-nyiso-152-duty-complete, CALIBRATED` — stale since the nyiso-155 promotion; now cites
 the NOT-YET keeper with the Q5 posture stated (gate (a) taken as PASS on the literal test, not
 re-read downward). Its guardrail "CALIBRATED with an owner-ratified frontier" likewise corrected
@@ -261,9 +287,9 @@ the gap.
 | **D2-B I7 LEDGER DECOMPOSITION** | Reproduce/decompose MISO, CAISO, NEISO, PJM | **LANDED** `5dda152` | `capx-d2b-i7-ledger-xaakeu` | Fable | §0.3. Six successor lanes named (S-1..S-6). |
 | **D7-NYISO GATE RE-SCORE** | Refresh the board to the extcap re-score; re-read NYISO's four legs; **apply the card-A leg-(c) harmonisation** (CAISO + NYISO `na`→`fail`, `"c"` into both `closed_on`) | **LANDED** `ca8b749` (PR #4289) | `claude/capx-d7-nyiso-gate` | Opus | §0d.1. Board re-scored, no gate moved, Q5 tension recorded verbatim. |
 | **D10 NYISO T1-X CROSSOVER** | Run NYISO's T1-X so gate leg (c) closes on a measured FC-4 | **REISSUED r#8** (pack corrected for the nyiso-155 keeper state) | `claude/capx-d10-nyiso-t1x` | Fable | The signature's own consequence: the lead ISO's blocker becomes a run rather than an ambiguity. |
-| **D11-R ENTRY VOLUME RULE (D-1)** | Productionize the L-1b margin-exhaustion closure — the measured zero-DOF volume rule — behind a default-OFF field; A/B on ERCOT T1-F | **RE-SCOPED + ISSUED r#8** (was D11 pro-forma signal) | `claude/capx-d11r-entry-volume-rule` | Fable | §0e.3. Trajectory invariance (fwd-expectation §3) + the finding's own §7(b) recommendation. Pro-forma build held in abeyance; B-C object charter intact. |
-| **D12 SCARCITY-CONSISTENT DELTA BASIS** | The fwd-expectation §4 named successor: both `S` evaluations on one scarcity basis, exact arithmetic on existing objects | QUEUED — **only if the owner continues the signal lane** (§7 escalation open) | — | Fable | The two-scarcity-objects defect (composed entering-2024 mean −$48.22/MWh, solar capture −$185/MWh) is its evidence. |
-| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **ISSUED 2026-08-25** | `claude/capx-s123-miso-adequacy` | Fable | D2-B's own top recommendation: three independent published-source terms, none sized against the residual. Rides with **D9** (SOCO forecast fallback). |
+| **D11-R ENTRY VOLUME RULE (D-1)** | Productionize the L-1b margin-exhaustion closure — the measured zero-DOF volume rule — behind a default-OFF field; A/B on ERCOT T1-F | **RE-SCOPED + ISSUED r#8; RATIFIED BY OWNER 2026-08-30** (was D11 pro-forma signal) | `claude/capx-d11r-entry-volume-rule` | Fable | §0e.3/§0e.5. Trajectory invariance (fwd-expectation §3) + the finding's own §7(b) recommendation. Pro-forma build held in abeyance; B-C object charter intact. |
+| **D12 SCARCITY-CONSISTENT DELTA BASIS** | The fwd-expectation §4 named successor: both `S` evaluations on one scarcity basis, exact arithmetic on existing objects | QUEUED — **owner-ratified sequencing (r#8 sitting): charter only after D11-R reports** | — | Fable | §7 escalation RESOLVED: (b) first, (a) behind it. The two-scarcity-objects defect (composed entering-2024 mean −$48.22/MWh, solar capture −$185/MWh) is its evidence. |
+| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **ISSUED 2026-08-25 — HELD until r#9 by owner ruling (r#8 sitting)** | `claude/capx-s123-miso-adequacy` | Fable | D2-B's own top recommendation: three independent published-source terms, none sized against the residual. Rides with **D9** (SOCO forecast fallback). Re-present at r#9 with a fresh MISO-branch check. |
 | **S-4 NEISO HYDRO ACCREDITATION** | Per-resource ISO-NE SCC → class factor, replacing the generic 0.50 | **ISSUED 2026-08-25** | `claude/capx-s4-neiso-hydro` | Fable | Decides NEISO 2028's sign. Until it lands, 2028 reads within-input-uncertainty. |
 | **S-5 PJM REQUIREMENT HORIZON-EDGE** | Implement hold-last-FPR + the D-1 checker repair; re-score PJM's T1-F leg | **UNBLOCKED by card C (C-A), 2026-08-25 — charter next** | — | Fable | Convention is now declared, so this is implementation + a scorer/governance round, not a decision. Expect PJM's I7 miss to restate 366 MW → ~5.9 GW with 2029 plausibly joining. |
 | **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable | QUEUED — **strictly after S-5** | — | Fable | Solo heavy slot (8.8 GB, no co-run). Running it before S-5 would measure against a bar we already know is wrong. |
@@ -295,7 +321,7 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — ALL FOUR NOW ANSWERED
+## 3. Owner-tier questions — ALL SIX NOW ANSWERED (Q5/Q6 ruled at the r#8 sitting, 2026-08-30)
 
 Full signature record and the consequences adopted:
 **`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5.**
@@ -306,13 +332,16 @@ Full signature record and the consequences adopted:
 | ~~Q2~~ | Leg-(c) consistency (card A) | **SIGNED 2026-08-25 — (A-A), at the recommendation.** CAISO + NYISO move `na`→`fail`, `"c"` into both `closed_on`; NEISO unchanged. **NYISO T1-X chartered (D10)** so leg (c) closes on a measured FC-4. No gate opened; leg (d) untouched. |
 | ~~Q3~~ | `entry_lookahead_reprice` disarm default (card B) | **SIGNED 2026-08-25 — (B-C), at the recommendation.** Shipped default HOLDS, cell stays `O`, no verdict minted. **Developer-pro-forma construction chartered (D11).** Neither known-wrong object is ratified. |
 | ~~Q4~~ | PJM beyond-last-FPR convention (card C) | **SIGNED 2026-08-25 — (C-A), at the recommendation.** **Hold-last-FPR adopted**, bundled with the D-1 checker repair. PJM's I7 miss restates **366 MW → ~5.9 GW**, 2029 plausibly joining — a worse reported result, taken as the more honest bar. S-5 unblocked; S-6 strictly after. 2029/30 parameters intaken on publication (rule 23). |
+| ~~Q5~~ | NYISO marker on NOT-YET keeper | **RULED 2026-08-30 (r#8 sitting) — WAIT FOR WINTER INTAKE.** Precedents left unreconciled; the nyiso-156 intake is the resolution route. No marker moves; gate (a) stays PASS on the literal test. Returns to the owner only if the fact pattern recurs first. |
+| ~~Q6~~ | ERCOT CALIBRATED but 2023-only | **RULED 2026-08-30 (r#8 sitting) — HOLD, NO ACTION.** No direction to the ERCOT backcast lane; revisit when it goes quiet. Gate (a) keeps failing on both counts meanwhile. |
 
 **None of the four signatures** touched a backcast keeper, marker or matrix cell, lifted the
 holdout freeze, authorized a §2.1b full-solve, or opened any ISO's gate.
 
-### Q6 (NEW, refresh #7) — ERCOT is CALIBRATED but its keeper is 2023-only
+### Q6 (refresh #7) — ERCOT is CALIBRATED but its keeper is 2023-only
 
-**PENDING — owner.** `2026-08-25-236-swcap-clip-k33` scores **CALIBRATED with an empty failing
+**RULED 2026-08-30 (r#8 sitting): HOLD, NO ACTION** — no direction to the ERCOT backcast lane;
+revisit when it goes quiet. The analysis below is preserved as the record the ruling was made on. `2026-08-25-236-swcap-clip-k33` scores **CALIBRATED with an empty failing
 set**, closing the 2023 price object card Y held open two days earlier. But its registry declares
 `years: [2023]`, so gate (a) fails on **two** counts: ERCOT is absent from `complete`, and
 §2.1b(2)(a) requires a **full-span** keeper (rule 16), which this is not. **Declaring ERCOT
@@ -325,7 +354,10 @@ determination is questioned here.
 
 ### Q5 (refresh #6) — NYISO's `complete` marker now rests on a NOT-YET keeper
 
-**PENDING — owner.** NYISO's keeper moved to `2026-08-25-nyiso-155-hydro-repair` (NOT-YET on
+**RULED 2026-08-30 (r#8 sitting): WAIT FOR WINTER INTAKE** — the precedents are left standing
+unreconciled and the nyiso-156 intake is the designated resolution route; no marker moves and
+gate (a) stays PASS on the literal test. The analysis below is preserved as the record the
+ruling was made on. NYISO's keeper moved to `2026-08-25-nyiso-155-hydro-repair` (NOT-YET on
 price_mean + price_tail) and the marker was re-keyed to it, with the D-5(b) worse-determination
 stop fired, escalated and resolved by an explicit owner ruling on structural integrity over gate
 regression. **On 2026-08-06 the identical fact pattern — a `complete` marker whose keeper scored

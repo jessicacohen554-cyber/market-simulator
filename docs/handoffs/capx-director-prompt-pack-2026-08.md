@@ -10,15 +10,16 @@ RE-SCOPED to D11-R (the D-1 volume rule — ledger §0e.3), never run in its ori
 |---|---|---|---|---|---|
 | **D10** NYISO T1-X crossover | reissued r#8 (corrected) | `claude/capx-d10-nyiso-t1x` | Fable | nyiso | no |
 | **D11-R** D-1 entry volume rule | re-scoped + issued r#8 | `claude/capx-d11r-entry-volume-rule` | Fable | ercot | no (Phase 0 first; A/B is light) |
-| **S-123** MISO adequacy package | issued r#5, not started — releasable after a start-time check (no new MISO backcast branch in flight; miso-188 merged 2026-08-30) | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
+| **S-123** MISO adequacy package | issued r#5, not started — **HELD until r#9 by owner ruling (r#8 sitting, 2026-08-30)** | `claude/capx-s123-miso-adequacy` | Fable | miso | only if it re-measures (MISO = no co-run) |
 | **S-4** NEISO hydro accreditation | reissued r#8 (unchanged) | `claude/capx-s4-neiso-hydro` | Fable | neiso | no |
 | **S-5** PJM requirement horizon-edge | issued r#5, not started — ready when a heavy slot frees | `claude/capx-s5-pjm-horizon-edge` | Fable | pjm | no (S-6 is the heavy one, strictly after) |
 
-**Suggested order (r#8):** D10 + D11-R + S-4 now (all light — CAISO and ERCOT backcast branches
-are in flight and may hold the heavy slots). S-5 and S-123 next as slots free (S-123 with a
-start-time check that no new MISO backcast branch is in flight — miso-188 merged mid-refresh).
-Only S-123's optional re-measure and the later S-6 contend for the ≤2 heavy-solve cap, which is
-SHARED with the owner's concurrent backcast solves.
+**Suggested order (r#8, per the owner sitting 2026-08-30):** D10 + D11-R + S-4 now (all light —
+CAISO and ERCOT backcast branches are in flight and may hold the heavy slots; D11-R re-scope
+RATIFIED). S-5 next as a heavy slot frees. S-123 is HELD until r#9 by owner ruling. D12 is
+chartered only after D11-R reports (owner-ratified sequencing). Only S-123's optional re-measure
+and the later S-6 contend for the ≤2 heavy-solve cap, which is SHARED with the owner's
+concurrent backcast solves.
 
 ---
 
