@@ -37,6 +37,7 @@ EIA_WIDE = REPO / "data" / "raw" / "eia-930-hourly" / "ERCO hourly.parquet"
 CAMPD_UNIT = REPO / "data" / "raw" / "campd-unit-outages.csv"
 ERCOT_HOURLY_OUT = REPO / "data" / "raw" / "ercot-outages.csv"
 ERCOT237_JSON = REPO / "results" / "calibration" / "ercot237_bandswap_phase0.json"
+MEASURED_ORDC = REPO / "data" / "raw" / "ercot" / "ercot_2023_ordc_reserves_hourly.parquet"
 OUT_JSON = REPO / "results" / "calibration" / "ercot239_missedevents_phase0.json"
 
 #: The committed ercot-237 population (FINDING-ercot237 section 3 U1 + h4578)
@@ -187,6 +188,51 @@ def _outage_legs(dates: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     return cu[cu["duration_days"] >= OVERLAY_MIN_DAYS], eo[joined], stats
 
 
+def _measured_reserves_panel(ordc_total: pd.DataFrame | None) -> dict:
+    """Measured RT reserves vs the model room at the 14 hours (Amendment 2).
+
+    Reads the committed ``ercot_2023_ordc_reserves_hourly.parquet``
+    (fetch_ercot_ordc_reserves.py intake): ``rtolcap`` = real-time online
+    reserve capacity (the measured room), ``prc`` = physical responsive
+    capability, published ``rtorpa`` / ``rtordpa``. Report-only.
+    """
+    mo = pd.read_parquet(MEASURED_ORDC).sort_values("hour").reset_index(drop=True)
+    assert len(mo) == 8760, f"measured ORDC rows {len(mo)} != 8760"
+    rtolcap = mo["rtolcap"].to_numpy(float)
+    prc = mo["prc"].to_numpy(float)
+    rtorpa = mo["rtorpa"].to_numpy(float)
+    lam = mo["system_lambda"].to_numpy(float)
+    held = (
+        np.nan_to_num(ordc_total["held_mw"].to_numpy(float))
+        if ordc_total is not None
+        else np.zeros(8760)
+    )
+    return {
+        "source": str(MEASURED_ORDC.relative_to(REPO)),
+        "at_event_hours": {
+            int(h): {
+                "rtolcap": round(float(rtolcap[h]), 0),
+                "rtolcap_pctl_year": _pctl(rtolcap, float(rtolcap[h])),
+                "prc": round(float(prc[h]), 0),
+                "prc_pctl_year": _pctl(prc, float(prc[h])),
+                "rtorpa": round(float(rtorpa[h]), 2),
+                "system_lambda": round(float(lam[h]), 2),
+                "model_ordc_held": round(float(held[h]), 0),
+                "model_minus_measured_room": round(float(held[h] - rtolcap[h]), 0),
+            }
+            for h in EXPECT_HOURS
+        },
+        "year_base": {
+            "rtorpa_hours_ge_100": int((np.nan_to_num(rtorpa) >= 100.0).sum()),
+            "rtorpa_hours_ge_500": int((np.nan_to_num(rtorpa) >= 500.0).sum()),
+            "rtolcap_p5": round(float(np.nanpercentile(rtolcap, 5)), 0),
+            "rtolcap_p50": round(float(np.nanpercentile(rtolcap, 50)), 0),
+            "model_held_p5": round(float(np.percentile(held, 5)), 0),
+            "model_held_p50": round(float(np.percentile(held, 50)), 0),
+        },
+    }
+
+
 def main() -> None:
     m, a = _series()
     pop = np.where((m < 200.0) & (a >= 500.0))[0]
@@ -321,6 +367,11 @@ def main() -> None:
             for h in EXPECT_HOURS
             if "ercot_ordc_total" in fam_wide
         },
+        # Precommit Amendment 2: the committed measured real-time reserve
+        # series (report-only panel; grades nothing, changes no attribution).
+        "measured_reserves": _measured_reserves_panel(
+            fam_wide.get("ercot_ordc_total")
+        ),
         "gap_base_rates_mw": {
             "demand_gap_mean": round(float(np.mean(act_d - mdl["demand"])), 0),
             "demand_gap_p50": round(float(np.median(act_d - mdl["demand"])), 0),
