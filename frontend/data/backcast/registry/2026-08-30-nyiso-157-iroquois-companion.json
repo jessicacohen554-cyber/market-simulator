@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-30-nyiso-157-iroquois-companion",
+  "label": "nyiso 157 iroquois companion",
+  "date": "2026-08-30",
+  "shorthand": "nyiso-157-iroquois-companion",
+  "definition": "nyiso-157 companion arm: seam attribution + iroquois winter spread (nyiso-150 re-open condition; PREREG-nyiso157-iroquois-companion-2026-08-30)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-30-nyiso-157-iroquois-companion.js",
+  "bundle": "results/calibration/nyiso157_iroq_C"
+}
