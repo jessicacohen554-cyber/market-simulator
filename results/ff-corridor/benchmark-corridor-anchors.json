@@ -4,15 +4,15 @@
   "generated_from": "benchmark-corridor clean datatype (FF-0F intake); FC-5 context, never a fit target (rule 13)",
   "iso": null,
   "sources": [
-    "AEO2025"
+    "AEO2025",
+    "ERCOT_CDR_2025",
+    "PJM_LOAD_2026"
   ],
   "missing_sources": [
     "CAISO_IEPR_2025",
-    "ERCOT_CDR_2025",
     "ISONE_CELT_2026",
     "MISO_FUTURES",
     "NYISO_GOLDBOOK_2026",
-    "PJM_LOAD_2026",
     "StdScen2024"
   ],
   "rows": [
@@ -12111,6 +12111,210 @@
       "value": 378.140411,
       "unit": "TWh",
       "note": "AEO EMM region ~ ISO footprint (approximate, not exact); FC-5 context only (rule 13, never a fit target)."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "total",
+      "value": 115501.324585,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "peak_demand",
+      "tech": "total",
+      "value": 132240.459932,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "reserve_margin",
+      "tech": "total",
+      "value": -0.126581,
+      "unit": "fraction",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT planned additions: Coastal Wind",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "wind",
+      "value": 110.742531,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT planned additions: Energy Storage",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "storage",
+      "value": 10506.097531,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT planned additions: Far West Solar Utility-Scale",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "solar",
+      "value": 353.659801,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT planned additions: Other Solar Utility-Scale",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "solar",
+      "value": 3295.276111,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT planned additions: Other Wind",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "wind",
+      "value": 692.36237,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT planned additions: Panhandle Wind",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "wind",
+      "value": 91.667668,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT planned additions: Thermal Resources (Nuclear, Fossil, and Biomass-Fueled)",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "gas",
+      "value": 3308.8,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "ERCOT_CDR_2025",
+      "iso": "ERCOT",
+      "region": "ERCOT planned additions: West Solar Utility-Scale",
+      "scenario": "protocol",
+      "target_year": 2030,
+      "quantity": "capacity",
+      "tech": "solar",
+      "value": 2461.304153,
+      "unit": "MW",
+      "note": "ERCOT CDR Summer peak-load-hour column. Wind/solar/storage capacities are the CDR's PEAK-HOUR CONTRIBUTION (ELCC/seasonal-derated), NOT nameplate \u2014 so they are not directly comparable to AEO's nameplate GW without reconciliation (rule 11: misalignment documented, never silently mixed). The Dec-2025 CDR horizon ends at Summer 2030, so this source anchors 2030 only."
+    },
+    {
+      "source": "PJM_LOAD_2026",
+      "iso": "PJM",
+      "region": "PJM RTO",
+      "scenario": "reference",
+      "target_year": 2030,
+      "quantity": "energy_demand",
+      "tech": "total",
+      "value": 1086262.0,
+      "unit": "GWh",
+      "note": "PJM RTO-total row of the 2026 Load Forecast Report. Summer peak is the coincident RTO summer peak (MW); energy is annual net energy (GWh). The PJM RTO footprint is the model's PJM zone set aggregated, so this is an ISO-total anchor, not a per-zone one."
+    },
+    {
+      "source": "PJM_LOAD_2026",
+      "iso": "PJM",
+      "region": "PJM RTO",
+      "scenario": "reference",
+      "target_year": 2030,
+      "quantity": "peak_demand",
+      "tech": "total",
+      "value": 183008.0,
+      "unit": "MW",
+      "note": "PJM RTO-total row of the 2026 Load Forecast Report. Summer peak is the coincident RTO summer peak (MW); energy is annual net energy (GWh). The PJM RTO footprint is the model's PJM zone set aggregated, so this is an ISO-total anchor, not a per-zone one."
+    },
+    {
+      "source": "PJM_LOAD_2026",
+      "iso": "PJM",
+      "region": "PJM RTO",
+      "scenario": "reference",
+      "target_year": 2035,
+      "quantity": "energy_demand",
+      "tech": "total",
+      "value": 1390749.0,
+      "unit": "GWh",
+      "note": "PJM RTO-total row of the 2026 Load Forecast Report. Summer peak is the coincident RTO summer peak (MW); energy is annual net energy (GWh). The PJM RTO footprint is the model's PJM zone set aggregated, so this is an ISO-total anchor, not a per-zone one."
+    },
+    {
+      "source": "PJM_LOAD_2026",
+      "iso": "PJM",
+      "region": "PJM RTO",
+      "scenario": "reference",
+      "target_year": 2035,
+      "quantity": "peak_demand",
+      "tech": "total",
+      "value": 216872.0,
+      "unit": "MW",
+      "note": "PJM RTO-total row of the 2026 Load Forecast Report. Summer peak is the coincident RTO summer peak (MW); energy is annual net energy (GWh). The PJM RTO footprint is the model's PJM zone set aggregated, so this is an ISO-total anchor, not a per-zone one."
+    },
+    {
+      "source": "PJM_LOAD_2026",
+      "iso": "PJM",
+      "region": "PJM RTO",
+      "scenario": "reference",
+      "target_year": 2040,
+      "quantity": "energy_demand",
+      "tech": "total",
+      "value": 1567228.0,
+      "unit": "GWh",
+      "note": "PJM RTO-total row of the 2026 Load Forecast Report. Summer peak is the coincident RTO summer peak (MW); energy is annual net energy (GWh). The PJM RTO footprint is the model's PJM zone set aggregated, so this is an ISO-total anchor, not a per-zone one."
+    },
+    {
+      "source": "PJM_LOAD_2026",
+      "iso": "PJM",
+      "region": "PJM RTO",
+      "scenario": "reference",
+      "target_year": 2040,
+      "quantity": "peak_demand",
+      "tech": "total",
+      "value": 238817.0,
+      "unit": "MW",
+      "note": "PJM RTO-total row of the 2026 Load Forecast Report. Summer peak is the coincident RTO summer peak (MW); energy is annual net energy (GWh). The PJM RTO footprint is the model's PJM zone set aggregated, so this is an ISO-total anchor, not a per-zone one."
     }
   ]
 }

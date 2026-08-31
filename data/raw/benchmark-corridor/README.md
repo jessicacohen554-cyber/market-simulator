@@ -80,22 +80,45 @@ the sum over that ISO's region rows.
 (no per-renewable-fuel TWh regionally), so the energy-mix rows are
 coal/gas/nuclear/oil/renewables/total; the renewable split is capacity-only.*
 
+## ISO planning documents — fetched (on disk)
+
+Two of rubric §6's ISO sources publish their projection tables as a **directly
+downloadable XLSX**, so they are machine-extracted by
+`python scripts/data/fetch_iso_planning_benchmarks.py` — never hand-transcribed
+(typing hundreds of cells is the rule-5 fat-finger hazard that keeps AEO on a
+deterministic fetcher). The fetcher writes the canonical unified CSV that the
+generic reader already parses, stamping each row's exact sheet/row/column
+locator into `source_page`. The **workbooks themselves are gitignored** with
+their SHA256 recorded (corpus convention, CLAUDE.md "Cloning & session data");
+the small extracted CSVs are committed, so curation still runs offline.
+
+| Source id | Document | Corridor years | What lands |
+|---|---|---|---|
+| `ERCOT_CDR_2025` | ERCOT Capacity, Demand and Reserves Report, **December 2025** | **2030 only** — the CDR horizon ends at Summer 2030 | firm peak load, total capacity, reserve margin, planned additions by tech (Summer peak-load-hour column) |
+| `PJM_LOAD_2026` | PJM **2026** Load Forecast Report tables | 2030 / 2035 / 2040 (horizon 2026-2046) | RTO summer peak load (Table B-1), annual net energy (Table E-1) |
+
+**Basis caveat (rule 11 — real data, misalignment documented).** The CDR's
+wind/solar/storage capacities are **peak-hour contribution** (ELCC/seasonal
+derated), not nameplate, so they are not directly comparable to AEO's nameplate
+GW without reconciliation. This rides in every CDR row's `note`. The CDR's
+`reserve_margin` is a RATIO — `iso_totals()` refuses to sum it across regions.
+
 ## DATA NEEDED — manual downloads (proxy-blocked or table-in-PDF; never guessed)
 
 Filed as intake rows in `docs/handoffs/ff-inputs-currency-audit-2026-07.md` §6.
-Each portal is reachable but the projection tables are in PDF/XLSX or behind a
-proxy-blocked viewer, so they cannot be fetched in-session (rule 5).
+Reachability re-probed 2026-08-31 (D22); a source is listed here only because
+its numbers cannot be reached in-session, never because it was skipped.
 
-| Source id | Document + exact table | Why manual |
+| Source id | Document + exact table | Why still manual (re-probed 2026-08-31) |
 |---|---|---|
-| `StdScen2024` | NREL Standard Scenarios 2024 Mid-case, regional capacity/generation 2030/2035 (Scenario Viewer CSV export) | scenarioviewer.nrel.gov API proxy-blocked (502); OEDI ReEDS S3 has no stable 2024 regional CSV |
-| `ERCOT_CDR_2025` | ERCOT CDR Dec 2025 — planned additions by tech to 2030, peak-load scenarios, reserve margins | table-in-PDF |
-| `PJM_LOAD_2026` | PJM 2026 Load Forecast (peak/energy growth) + 4R at-risk retirement GW by 2030 | table-in-PDF/XLSX |
-| `NYISO_GOLDBOOK_2026` | NYISO 2026 Gold Book — capacity/load forecast tables by zone | table-in-XLSX |
-| `ISONE_CELT_2026` | ISO-NE 2026 CELT — energy/peak incl. winter-flip rows | table-in-XLSX/PDF |
-| `CAISO_IEPR_2025` | CEC IEPR 2025 demand + CPUC PSP (D.24-02-047) / 2025-26 TPP new-build by tech to 2035 | table-in-XLSX/PDF |
-| `MISO_FUTURES` | MISO Futures / OMS-MISO survey capacity outlook | table-in-PDF |
+| `StdScen2024` | NREL Standard Scenarios 2024 Mid-case, regional capacity/generation 2030/2035 (Scenario Viewer CSV export) | **UNREACHABLE, not merely un-fetched.** Every `nrel.gov` host is refused by the egress proxy with a policy denial (`connect_rejected`, 502 to CONNECT): `scenarioviewer.nrel.gov`, `data.nrel.gov`, `www.nrel.gov`. The OEDI S3 mirror carries no Standard Scenarios at all (`nrel-std-scenarios/` returns KeyCount=0; the bucket's top-level prefixes hold ATB, dgen, PR100 … but no ReEDS/StdScen). No in-session route exists. |
+| `NYISO_GOLDBOOK_2026` | NYISO 2026 Gold Book — capacity/load forecast tables by zone | host reachable (200), but the document list is a JavaScript portal (Liferay `/documents/<id>/…`) with no static file URL in the served HTML |
+| `ISONE_CELT_2026` | ISO-NE 2026 CELT — energy/peak incl. winter-flip rows | host reachable (200), but the CELT file list renders client-side ("no results with this choice of filter(s)" in the served HTML); asset paths are not guessable and guessing is not an intake method |
+| `CAISO_IEPR_2025` | CEC IEPR 2025 demand + CPUC PSP (D.24-02-047) / 2025-26 TPP new-build by tech to 2035 | `efiling.energy.ca.gov` and `docs.cpuc.ca.gov` reachable (200), but the forecast tables are proceeding attachments reached through a docket search UI, not a stable file URL |
+| `MISO_FUTURES` | MISO Futures / OMS-MISO survey capacity outlook | `misoenergy.org` returns **403** to this session (bot filtering) on both the root and the MISO Futures page |
 
-When a document is downloaded, transcribe its primary-source table into
+When a document is obtained, prefer **extending
+`scripts/data/fetch_iso_planning_benchmarks.py`** with a machine extractor over
+hand-transcribing. If a table truly must be typed, put it in
 `<subdir>/<subdir>.csv` (canonical columns; cite the exact table/page in
-`source_doc`/`source_page`) and re-run `scripts/curate_benchmark_corridor.py`.
+`source_doc`/`source_page`) and re-run `scripts/data/curate_benchmark_corridor.py`.

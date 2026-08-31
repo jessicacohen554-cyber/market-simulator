@@ -16,3 +16,12 @@
 # Committing it costs 172 KB and makes `curate_benchmark_corridor.py` runnable
 # offline from committed raw, which is what the loader docstring already claims.
 # Re-fetch to refresh: `python scripts/data/fetch_aeo_electricity.py`.
+#
+# The ISO planning WORKBOOKS are the one exception, and for the opposite reason:
+# the ERCOT CDR is ~13 MB of XLSX. Those follow the corpus convention (CLAUDE.md
+# "Cloning & session data"): the bulk payload is untracked, while the small
+# machine-extracted unified CSV, the SHA256SUMS identity record and the README
+# stay tracked — so curation still runs offline from committed raw. Recovery is
+# re-fetch: `python scripts/data/fetch_iso_planning_benchmarks.py`.
+ercot-cdr-2025/*.xlsx
+pjm-load-2026/*.xlsx

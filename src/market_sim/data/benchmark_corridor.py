@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import pandas as pd
 
+from scripts.lib import benchmark_corridor as bc
 from scripts.lib import clean_io
 
 DATATYPE = "benchmark-corridor"
@@ -83,15 +84,48 @@ def load_benchmark_corridor(
 
 
 def iso_totals(df: pd.DataFrame) -> pd.DataFrame:
-    """Sum the region rows to per-ISO totals (capacity/generation/CO2 are extensive).
+    """Sum the region rows to per-ISO totals (extensive quantities only).
 
     Groups by (source, iso, vintage, scenario, target_year, quantity, tech, unit)
     and sums ``value`` — so a multi-region ISO (PJM/MISO/NYISO/CAISO) collapses
     its EMM-subregion rows into one ISO total. ``region`` is replaced with
     ``"<iso> (sum of N regions)"``.
+
+    Capacity, generation, CO2, peak demand and energy demand are extensive, so
+    summing them is meaningful. ``reserve_margin`` is a RATIO
+    (:data:`~scripts.lib.benchmark_corridor.INTENSIVE_QUANTITIES`): summing it
+    across regions is nonsense, so a multi-region intensive group raises rather
+    than returning a silently wrong number. A single-region intensive group is
+    passed through unchanged (the "sum" is an identity there).
     """
     if df.empty:
         return df.copy()
+    intensive = df[df["quantity"].isin(bc.INTENSIVE_QUANTITIES)]
+    df = df[~df["quantity"].isin(bc.INTENSIVE_QUANTITIES)]
+    passthrough = pd.DataFrame(columns=intensive.columns)
+    if not intensive.empty:
+        key = [
+            "source",
+            "iso",
+            "vintage",
+            "scenario",
+            "target_year",
+            "quantity",
+            "tech",
+        ]
+        nreg = intensive.groupby(key, dropna=False)["region"].nunique()
+        bad = nreg[nreg > 1]
+        if not bad.empty:
+            raise ValueError(
+                "cannot sum intensive quantity across regions "
+                f"({sorted(bc.INTENSIVE_QUANTITIES)}); "
+                f"{len(bad)} group(s) span >1 region, e.g.\n{bad.head(3).to_string()}\n"
+                "Filter these rows out before calling iso_totals, or aggregate "
+                "them with a load-weighted method the source actually supports."
+            )
+        passthrough = intensive.copy()
+    if df.empty:
+        return passthrough.reset_index(drop=True)
     grp = [
         "source",
         "iso",
@@ -111,7 +145,10 @@ def iso_totals(df: pd.DataFrame) -> pd.DataFrame:
         + agg["_nregions"].astype(str)
         + " regions)"
     )
-    return agg.drop(columns=["_nregions"])
+    agg = agg.drop(columns=["_nregions"])
+    if passthrough.empty:
+        return agg
+    return pd.concat([agg, passthrough[agg.columns]], ignore_index=True)
 
 
 def corridor_context(

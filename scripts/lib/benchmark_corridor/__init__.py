@@ -59,8 +59,27 @@ CANONICAL_COLUMNS: tuple[str, ...] = (
     "note",
 )
 
-# The FC-5 "metric" axis.
-QUANTITY_VOCAB: frozenset[str] = frozenset({"capacity", "generation", "co2"})
+# The FC-5 "metric" axis. `capacity`/`generation`/`co2` are the outlook-style
+# quantities (AEO, NREL); `peak_demand`/`energy_demand`/`reserve_margin` are the
+# ISO planning-document quantities (D22, 2026-08-31) — an ISO load forecast
+# publishes peak MW and annual GWh, not a capacity mix, so without these three
+# most of rubric §6's ISO sources have nothing they can legally land as.
+QUANTITY_VOCAB: frozenset[str] = frozenset(
+    {
+        "capacity",
+        "generation",
+        "co2",
+        "peak_demand",
+        "energy_demand",
+        "reserve_margin",
+    }
+)
+
+# Quantities that are INTENSIVE (a ratio), so region rows must NOT be summed to
+# an ISO total the way capacity/generation/CO2/peak/energy are. `iso_totals`
+# refuses to aggregate these across regions rather than silently returning a
+# meaningless sum (e.g. two regions each at 0.15 reserve margin are not 0.30).
+INTENSIVE_QUANTITIES: frozenset[str] = frozenset({"reserve_margin"})
 
 # Canonical technology / fuel vocabulary (a UNION covering AEO's granularity and
 # the ISO-document / model granularity). `renewables` is a source's renewable
