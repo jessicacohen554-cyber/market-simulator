@@ -1,0 +1,42 @@
+{
+ "2023": {
+  "actual_tail_hours": 10,
+  "model_shortfall_hours": 20,
+  "overlap": 5,
+  "overlap_share_of_model_shortfall": 0.25,
+  "overlap_share_of_actual_tail": 0.5,
+  "families_short_in_overlap": [
+   "nyc_10min_total",
+   "nyc_30min_total",
+   "seny_30min_total"
+  ],
+  "approx_month_of_overlap": [
+   9
+  ]
+ },
+ "2024": {
+  "actual_tail_hours": 13,
+  "model_shortfall_hours": 7,
+  "overlap": 0,
+  "overlap_share_of_model_shortfall": 0.0,
+  "overlap_share_of_actual_tail": 0.0,
+  "families_short_in_overlap": [],
+  "approx_month_of_overlap": []
+ },
+ "2025": {
+  "actual_tail_hours": 42,
+  "model_shortfall_hours": 24,
+  "overlap": 20,
+  "overlap_share_of_model_shortfall": 0.833,
+  "overlap_share_of_actual_tail": 0.476,
+  "families_short_in_overlap": [
+   "nyc_10min_total",
+   "nyc_30min_total",
+   "seny_30min_total"
+  ],
+  "approx_month_of_overlap": [
+   6,
+   7
+  ]
+ }
+}

@@ -2048,3 +2048,88 @@ owner-queue item 1 (the frontier currency question) by making the marker
 the master: a frontier ratification does not survive its ISO leaving
 CALIBRATED/`complete`; re-entry is a fresh owner ratification on a
 then-current assessment.
+
+## 2026-08-31 — THE C3c SCARCITY PROGRAM OPENED BY OWNER RULING: the cross-ISO "hourly LP cannot form the tail" framing is FALSIFIED as a blanket claim, and two ledger entries are put in question in OPPOSITE directions (zero solve; cross-ISO records lane)
+
+Owner ruling, verbatim: **"Open c3c scarcity question"** — taken in preference to
+ruling the nyiso-161 winter-face waiver card, and immediately after the owner
+permanently closed the NYISO AORR access route (*"I'm not getting new data access
+so just kill that request on 1"*). Scoped and costed before any commitment in
+`docs/CHARTER-c3c-scarcity-program-2026-08-31.md`. **Nothing armed, promoted or
+adjudicated; no keeper, shard, marker, determination or matrix cell moves.**
+
+**(1) The blanket framing is FALSIFIED.** Measured across all six designated
+keepers from committed artifacts: **PJM PASSES C3c** at 0.67 / 0.56 / 0.54× of
+its actual >$200 tail, in the SAME ISO-agnostic LP, solver and code path in which
+**CAISO and NEISO form 0.00× in every year**. ERCOT 0.40/0.42/0.03×, MISO
+0.10/0.16/0.01×, NYISO 0.10/0.00/0.02×. Several ledgers carry "an hourly LP with
+$0 reserve offers cannot form the RT scarcity tail" as though it were uniform; it
+is a spectrum with a working example at the top, and it should stop being written
+as one phenomenon.
+
+**(2) New cross-ISO measurement — the reserve-binding census** (from the
+`reserve_family_<year>.parquet` sidecars, the only artifact in which a family's
+binding is observable). PJM binds on OPPORTUNITY COST with **zero shortfall ever**
+and duals to **$187.90**. NYISO binds only its CHEAP locational families ($25/$40
+caps) while every NYCA-level product ($750/$775) never binds, capping its total
+hourly reserve adder at **$90**. NEISO's three families are **entirely inert** —
+zero duals, zero shortfall, all three years. CAISO has **no reserve family at
+all** (`caiso_reserve_coopt=False`).
+
+**(3) Two ledger entries are now in question, in OPPOSITE directions.**
+* **NYISO's C3c caveat may be WRONGLY INHERITED.** Its lane adopted the
+  cross-ISO probabilistic-premium diagnosis established on CAISO/MISO/ERCOT, but
+  NYISO's own timing does not match it: in 2025 the model goes reserve-short in 24
+  hours and **20 (83 %) are hours reality priced >$300**, in June–July — the
+  summer scarcity days that constitute C3a-2025's summer face. CAISO's closure
+  rests on the exact opposite measurement (caiso-144 §C/§D: 1.6–10.5 GW of model
+  slack in reality's tail hours; overlay-to-reality overlap 1/47, 0/35, 0/8).
+  NYISO is short in the right hours and cannot PRICE them. Artifact:
+  `results/calibration/_nyiso163b_c3c_reserve_timing.json`.
+* **PJM's C3c PASS has never been audited for the ercot-214 phantom signature.**
+  ERCOT's ercot-213 tail gains were measured at ercot-214 to ride an AS-product
+  shortfall-ramp leak — a price-formation channel the market does not have — and
+  were removed at ercot-215, after surviving a promotion. PJM passes on duals to
+  $187.90 with zero shortfall in every hour, and the same audit has not been run.
+  **If that channel is phantom, a CALIBRATED keeper is resting on it.** The
+  charter ranks this Q1, ahead of everything else, precisely because a passing
+  criterion resting on a phantom channel is worse than a failing one.
+
+**(4) What is CLOSED and must not be re-proposed** (rule 26 DO-NOT-REDO). The
+naive program — "port PJM's scarcity formation to the other ISOs" — is dead on
+three independent records: **CAISO** closed on model STATE not mechanism
+granularity (`energy_reserve_coopt` CAISO **I**; caiso-144 §B: ≥854 MW family
+slack in every one of 26,280 hours, so every optimum carries zero shortfall and
+zero duals; §D refuses a backcast overlay ON MEASUREMENT, the LOLP overlay firing
+Apr–Nov when reality was tight on winter mornings; §E identifies CAISO's real tail
+as a winter-morning fuel/cold-snap tail already priced to its input ceiling);
+**ERCOT** closed on the ercot-95…163 / 214…231 exhaustion record with the tail
+established as CONDUCT-made on the energy offer stack (measured RTORPA p50 ~$1–5,
+PRC p50 ~5.8 GW at the missed hours — reality had no reserve scarcity to recover);
+**MISO/NEISO** ledgered to the probabilistic-RT-premium class (miso-101).
+Adjudicated cells: `ordc_scarcity_overlay` CAISO K / NEISO K / PJM G / MISO G /
+ERCOT R / NYISO ·; `energy_reserve_coopt` CAISO I, others K;
+`dynamic_reserve_requirements` NEISO R; `reserve_deliverability_scoping`
+CAISO/PJM I.
+
+**(5) The program as chartered.** **Q1** PJM phantom-channel audit (zero solve;
+may invalidate a CALIBRATED keeper — that is the point). **Q2**, gated on Q1
+returning REAL: is NYISO short on the right PRODUCT, not just the right hour — a
+QUANTITY question (was reality NYCA-level short?) with an explicit kill gate that
+CONFIRMS NYISO's ledger if reality shows no NYCA shortage. **Q3** the
+probabilistic-RT-premium class is an ARCHITECTURE decision colliding with rules 4
+`[R-DUALS]`, 8 `[R-8760]` and the no-MIP constraint — **not recommended as a
+calibration lane**. Q1+Q2 are two zero-solve sessions and will NOT by themselves
+close C3c anywhere; what they settle is whether the C3c ledger is telling the
+truth about PJM and NYISO.
+
+**(6) The standing guard, restated because this lane is where it matters most.**
+No fitted scarcity adder, no tuned VOLL, no raised published demand curve, no
+ORDC offset swept against a residual. NYISO's $25/$40/$750/$775 are SOM-published
+and cited in `model/reserves/spec.py`; changing one to reach a residual is rule
+13 `[R-MEASURED]` / rule 1 `[R-STRUCT]` forbidden and is the exact ERCOT-214
+failure. **Every candidate is timing-checked against reality BEFORE it is
+priced**, on the caiso-144 §D construction. Verdicts stay per-ISO (rule 25): a
+PJM finding enters other shards as `U`.
+
+**(7) Matrix.** No cell moves — nothing was tested, armed or adjudicated.
