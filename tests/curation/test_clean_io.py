@@ -28,8 +28,9 @@ from scripts.lib.clean_io import (
 # Datatypes that must each have a parseable schema (the standardization
 # contract). Frozen snapshot of scripts/regenerate_clean.DATATYPES — extend it
 # when an intake registers a new regenerable datatype (last refreshed
+# 2026-08-31 adding ps-water-state, the caiso-227 intake; before that
 # 2026-08-30 adding miso-m2m-flowgates, which the miso-176 intake registered
-# in DATATYPES without re-freezing this snapshot; before that 2026-08-01 for
+# in DATATYPES without re-freezing this snapshot, and 2026-08-01 for
 # the FFR-PB ATB/IRA intake and 2026-07-26 for the 16 intakes landed since
 # the previous snapshot).
 ALL_DATATYPES = [
@@ -89,6 +90,7 @@ ALL_DATATYPES = [
     "nrel-atb",
     "miso-m2m-flowgates",
     "gas-ofo-events",
+    "ps-water-state",
 ]
 
 

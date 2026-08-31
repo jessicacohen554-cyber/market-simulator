@@ -122,6 +122,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "hydro-plant-modes",
     "miso-m2m-flowgates",
     "gas-ofo-events",
+    "ps-water-state",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -391,6 +392,29 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "it is never a fit target, and no threshold keyed to a price "
             "residual may be derived from it. INTAKE-ONLY \u2014 no mechanism "
             "consumes it."
+        ),
+    },
+    "ps-water-state": {
+        "summary": (
+            "Measured hourly pumped-storage plant operations \u2014 "
+            "generation/pumping energy, powerhouse flows, and reservoir "
+            "water state \u2014 from the operator's own published records "
+            "(caiso-201 Q2(a); intake caiso-227)."
+        ),
+        "reconciles": (
+            "Each plant's published operations record onto one tidy "
+            "`(iso, plant, interval_end_local)` hourly frame. CAISO = the "
+            "Helms Pumped Storage Project (FERC P-2735) Final License "
+            "Application Appendix B1 hydrology workbook on public FERC "
+            "eLibrary (accession 20240418-5301): PG&E HEC-DSS hourly series "
+            "2001-01-01..2022-09-30 \u2014 the public breach of the hourly "
+            "PS water-state wall (FINDING-caiso141). Span limitation stated "
+            "honestly: the record ends 2022-09-30 and does not cover the "
+            "2023\u20132025 training years; what it grounds is measured "
+            "multi-year hourly conduct (rule-13 INPUT-class, the CAMPD-"
+            "history analogy). Helms 2022-10\u2192present, Eastwood, and the "
+            "DWR CDEC share are `DATA NEEDED`. INTAKE-ONLY \u2014 no "
+            "mechanism consumes it."
         ),
     },
     "miso-m2m-flowgates": {
