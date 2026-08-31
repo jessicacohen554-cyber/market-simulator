@@ -312,8 +312,7 @@ screen itself (`:576-577`), gated by `ira_wind_solar_last_year`. **The screen
 already values wind with the PTC and wind still clears negative on the model's
 own duals** (§3.2 item 2). The gap is not a missing credit.
 
-### 5.2 The one structurally-admissible object in the record is measured
-**anti-closing**
+### 5.2 The one structurally-admissible object in the record is measured **anti-closing**
 
 The build-zone routing (`data/renewables.py:219`, both ERCOT wind and solar to
 `"West"`) is a modelling choice that a faithful representation would change —
