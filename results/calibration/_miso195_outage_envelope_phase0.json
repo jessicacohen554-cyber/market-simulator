@@ -1,0 +1,477 @@
+{
+ "probe": "miso-195 phase-0 remove-only measured outage-envelope cap census",
+ "keeper": "2026-08-30-miso-191-bexit",
+ "bundle": "results/calibration/miso191_bax_B",
+ "mechanism_gate": "miso_native_outage_source (semantics: remove-only cap)",
+ "matrix_cell": "campd_outage_windows (MISO)",
+ "cap_basis_cause_types": [
+  "Derated",
+  "Forced",
+  "Unplanned"
+ ],
+ "population_groups": [
+  "CC_CHP",
+  "CC_REGULAR",
+  "COAL",
+  "CT_CHP",
+  "CT_PEAKER",
+  "ST_CHP",
+  "ST_GAS"
+ ],
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "gate_year": 2025,
+ "thresholds": {
+  "W3_bind_line": 0.25,
+  "W4_convert_line": 0.25,
+  "W5_ceiling_pp": 0.3,
+  "W6_max_violation_days": 3,
+  "S_top_hours": 200
+ },
+ "per_year": {
+  "2023": {
+   "population_mw": 115334.6,
+   "n_population_rows": 1104,
+   "annual_mean": {
+    "M_offline_gw": 37.04434758442908,
+    "P_unplanned_gw": 21.763,
+    "P_allcause_gw": 42.353408219178085
+   },
+   "monthly_mean_gw": {
+    "M": [
+     36.70458899495335,
+     40.602081838492985,
+     44.59301967054147,
+     50.699894470277776,
+     43.89000671964689,
+     27.865893900637722,
+     23.68628254316515,
+     23.271893533693657,
+     30.93668574040125,
+     42.85801122712017,
+     42.759287400011935,
+     37.1405757463293
+    ],
+    "P_U": [
+     21.042645161290324,
+     17.8565,
+     15.655838709677418,
+     17.11296666666667,
+     22.621322580645163,
+     22.392066666666665,
+     23.940870967741937,
+     25.248322580645162,
+     24.4818,
+     25.441548387096773,
+     21.973866666666666,
+     22.975
+    ],
+    "P_ALL": [
+     33.53648387096774,
+     32.614464285714284,
+     45.690548387096776,
+     59.63656666666667,
+     54.601451612903226,
+     38.51566666666666,
+     31.79432258064516,
+     32.9951935483871,
+     39.17826666666667,
+     53.56441935483871,
+     48.54196666666667,
+     37.16
+    ]
+   },
+   "bind_share_all_hours": 0.14531963470319634,
+   "bind_share_by_month": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.03225806451612903,
+    0.1,
+    0.5806451612903226,
+    0.8077956989247311,
+    0.2,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "removed_gwh_year": 2705.381080059097,
+   "removed_gw_mean_when_binding": 2.125201162654436,
+   "w6_violation_days": 2,
+   "w6_violations": [
+    {
+     "month_day": "06-30",
+     "capped_avail_gw": 84.55256,
+     "measured_max_gw": 85.254
+    },
+    {
+     "month_day": "08-24",
+     "capped_avail_gw": 91.32256,
+     "measured_max_gw": 92.771
+    }
+   ],
+   "w6_pass": true,
+   "top1pct_netload_bind_share": 0.8068181818181818,
+   "top1pct_netload_mean_deficit_gw": 2.1788959765389833,
+   "rho_deficit_netload": 0.4331472879386111
+  },
+  "2024": {
+   "population_mw": 115334.6,
+   "n_population_rows": 1104,
+   "annual_mean": {
+    "M_offline_gw": 36.4993178627725,
+    "P_unplanned_gw": 24.203290410958903,
+    "P_allcause_gw": 41.82325479452055
+   },
+   "monthly_mean_gw": {
+    "M": [
+     31.633293459686225,
+     41.720840468514645,
+     47.451407316868824,
+     48.86241925359151,
+     41.867979997784694,
+     26.371708088877227,
+     23.79804647472058,
+     22.38264815797468,
+     31.526129419112983,
+     42.11643764143757,
+     43.046472819874325,
+     37.842625640232946
+    ],
+    "P_U": [
+     26.315870967741937,
+     23.818428571428573,
+     20.60974193548387,
+     22.0762,
+     27.462451612903227,
+     23.8052,
+     24.090225806451613,
+     23.400387096774192,
+     22.3055,
+     28.556161290322578,
+     22.379,
+     25.38154838709677
+    ],
+    "P_ALL": [
+     36.09722580645161,
+     36.12932142857143,
+     43.95309677419355,
+     52.30493333333333,
+     50.49148387096774,
+     35.36276666666667,
+     31.248064516129034,
+     30.053,
+     38.74773333333333,
+     61.297645161290326,
+     46.753,
+     39.07929032258065
+    ]
+   },
+   "bind_share_all_hours": 0.14509132420091325,
+   "bind_share_by_month": [
+    0.2903225806451613,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.23333333333333334,
+    0.5887096774193549,
+    0.603494623655914,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "removed_gwh_year": 3603.7858117200035,
+   "removed_gw_mean_when_binding": 2.8353940296774223,
+   "w6_violation_days": 0,
+   "w6_violations": [],
+   "w6_pass": true,
+   "top1pct_netload_bind_share": 0.8863636363636364,
+   "top1pct_netload_mean_deficit_gw": 3.170908242412707,
+   "rho_deficit_netload": 0.465357537766112
+  },
+  "2025": {
+   "population_mw": 115334.6,
+   "n_population_rows": 1104,
+   "annual_mean": {
+    "M_offline_gw": 36.81749162921467,
+    "P_unplanned_gw": 28.05504109589041,
+    "P_allcause_gw": 48.68929589041096
+   },
+   "monthly_mean_gw": {
+    "M": [
+     30.948230046071842,
+     36.37033987664253,
+     46.45964530199477,
+     48.613032145705006,
+     46.465272525113605,
+     32.58432030864098,
+     24.504755735489255,
+     25.803387374411518,
+     32.97849081575615,
+     42.79149494528603,
+     40.24325752852877,
+     34.235017431582556
+    ],
+    "P_U": [
+     25.811451612903227,
+     23.241964285714285,
+     23.034709677419357,
+     27.01653333333333,
+     31.809870967741936,
+     33.69676666666667,
+     31.67925806451613,
+     30.131225806451614,
+     28.9183,
+     27.848193548387098,
+     25.354833333333332,
+     27.74083870967742
+    ],
+    "P_ALL": [
+     34.905741935483874,
+     38.40857142857143,
+     54.39822580645161,
+     63.55206666666667,
+     63.038225806451614,
+     50.9099,
+     40.43883870967742,
+     39.85387096774193,
+     47.822966666666666,
+     58.38187096774193,
+     51.533633333333334,
+     40.647612903225806
+    ]
+   },
+   "bind_share_all_hours": 0.2136986301369863,
+   "bind_share_by_month": [
+    0.12903225806451613,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.6,
+    0.967741935483871,
+    0.8064516129032258,
+    0.0,
+    0.0,
+    0.0,
+    0.03225806451612903
+   ],
+   "removed_gwh_year": 11152.70570192934,
+   "removed_gw_mean_when_binding": 5.957641934791314,
+   "w6_violation_days": 6,
+   "w6_violations": [
+    {
+     "month_day": "06-23",
+     "capped_avail_gw": 79.02356,
+     "measured_max_gw": 81.225
+    },
+    {
+     "month_day": "06-24",
+     "capped_avail_gw": 80.43856,
+     "measured_max_gw": 82.035
+    },
+    {
+     "month_day": "07-23",
+     "capped_avail_gw": 80.18556,
+     "measured_max_gw": 80.756
+    },
+    {
+     "month_day": "07-28",
+     "capped_avail_gw": 81.97556,
+     "measured_max_gw": 86.556
+    },
+    {
+     "month_day": "07-29",
+     "capped_avail_gw": 82.84456,
+     "measured_max_gw": 84.595
+    },
+    {
+     "month_day": "07-30",
+     "capped_avail_gw": 82.31555999999999,
+     "measured_max_gw": 82.942
+    }
+   ],
+   "w6_pass": false,
+   "top1pct_netload_bind_share": 0.9431818181818182,
+   "top1pct_netload_mean_deficit_gw": 5.63140190704803,
+   "rho_deficit_netload": 0.5436289964480083
+  }
+ },
+ "w1": {
+  "rows": [
+   {
+    "field": "outage_source",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "CAMPD >=5-day unit windows \u2014 per-unit measured windows, no published-record level; the envelope the cap composes WITH"
+   },
+   {
+    "field": "unit_outage_short_windows",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "CAMPD 1-5 day coal windows \u2014 per-unit"
+   },
+   {
+    "field": "unit_outage_maxgen_events",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "declared-window revealed derates \u2014 per-unit"
+   },
+   {
+    "field": "unit_outage_fleet_status_scope",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "mothball status scoping \u2014 per-unit"
+   },
+   {
+    "field": "mustrun_layup_window_mask",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "measured layup window mask \u2014 per-unit"
+   },
+   {
+    "field": "summer_wefor_share_override",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "THE SAME-SOURCE MECHANISM, named per rule 19: consumes this record's Jun-Sep/annual unplanned RATIO (1.0599, miso-160) as a seasonal WEFOR share \u2014 a seasonal ratio, NOT the daily level; the cap's deficit is computed net of the armed envelope inclusive of it, so double-count is impossible by construction"
+   },
+   {
+    "field": "gas_st_wefor_base_override",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "flat ST_GAS WEFOR base (0.10) \u2014 statistical"
+   },
+   {
+    "field": "summer_derate_basis_aware",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "summer capability basis \u2014 not a record level"
+   },
+   {
+    "field": "temp_dependent_derate",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "CHP-scoped ambient derate \u2014 not a record level"
+   },
+   {
+    "field": "coal_drop_pof",
+    "armed": true,
+    "writes_population_availability": true,
+    "consumes_published_daily_level": false,
+    "why": "drops coal statistical POF (CAMPD windows own coal maintenance) \u2014 composition fact for the basis settle, no record level"
+   },
+   {
+    "field": "miso_native_outage_source",
+    "armed": false,
+    "writes_population_availability": false,
+    "consumes_published_daily_level": false,
+    "why": "THE GATE UNDER CENSUS \u2014 default off, armed in zero bundles; substitution semantics refuted miso-85/86"
+   },
+   {
+    "field": "historic_outage_overlay",
+    "armed": false,
+    "writes_population_availability": false,
+    "consumes_published_daily_level": false,
+    "why": "legacy plant-level overlay \u2014 off"
+   },
+   {
+    "field": "correlated_forced_outage",
+    "armed": false,
+    "writes_population_availability": false,
+    "consumes_published_daily_level": false,
+    "why": "off; doubly refused in backcast (FF-1B D.5)"
+   },
+   {
+    "field": "unit_partial_outage_windows",
+    "armed": false,
+    "writes_population_availability": false,
+    "consumes_published_daily_level": false,
+    "why": "off"
+   },
+   {
+    "field": "dam_availability_rebasis_family",
+    "armed": false,
+    "writes_population_availability": false,
+    "consumes_published_daily_level": false,
+    "why": "no such field armed; the miso-85/86 R substitution is not re-tested here"
+   },
+   {
+    "field": "nuclear_unit_availability",
+    "armed": true,
+    "writes_population_availability": false,
+    "consumes_published_daily_level": false,
+    "why": "nuclear-only overlay \u2014 outside the population"
+   }
+  ],
+  "n_violations": 0,
+  "violations": [],
+  "pass": true
+ },
+ "w2": {
+  "M_2025_gw": 36.81749162921467,
+  "P_allcause_2025_gw": 48.68929589041096,
+  "pass": true
+ },
+ "w3": {
+  "s_hours": 200,
+  "bind_hours_in_s": 183,
+  "bind_share_in_s": 0.915,
+  "pass": true
+ },
+ "w4": {
+  "n_binding_s_hours": 183,
+  "n_convert": 31,
+  "n_convert_legA_exhaustion": 0,
+  "n_convert_legB_past_peakers": 31,
+  "convert_share": 0.16939890710382513,
+  "median_deficit_gw_in_binding_s": 6.647749803195857,
+  "median_H_gw_in_binding_s": 18.264771735443226,
+  "median_idleCT_gw_in_binding_s": 10.953674336197354,
+  "median_H_gw_in_s": 18.197163646457252,
+  "median_idleCT_gw_in_s": 10.78423176147039,
+  "pass": false
+ },
+ "w5": {
+  "bench_rt_lw": 45.46,
+  "n_binding_hours_2025": 1872,
+  "binding_share_of_annual_demand": 0.24902615560986108,
+  "pp_ceiling_at_actual_all_binding": 11.786571197761212,
+  "pp_ceiling_at_actual_binding_S_only": 4.761804577303573,
+  "adverse_pp_exposure_model_above_actual": 1.8464258441232955,
+  "m160_slope_linear_projection_pp": 0.6227222105423539,
+  "pass": true
+ },
+ "r2_deficit_decomposition_2025": {
+  "P_junsep_mean_gw": 31.103090163934425,
+  "M_junsep_mean_gw": 28.905219427367523,
+  "level_term_P_minus_M_junsep_gw": 2.1978707365669035,
+  "record_increment_at_S_gw": 0.6913498360655722,
+  "model_sag_at_S_gw": 2.943900716285356,
+  "deficit_mean_at_S_gw": 5.942487015856127,
+  "note": "deficit-at-S ~= level + record-increment + model-sag when binding is dense; the record-increment term alone is the miso-161 quantity (+0.69 GW, <=0.11 pp)"
+ },
+ "verdict": {
+  "W1_composition": true,
+  "W2_level_congruence": true,
+  "W3_bind_in_S": true,
+  "W4_conversion": false,
+  "W5_reach_ceiling": true,
+  "W6_feasibility": false,
+  "CHARTER_AB": false
+ }
+}
