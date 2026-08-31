@@ -24,7 +24,10 @@ What these tests hold, in both directions:
 * **the fix** — an explicit default-valued argument now WINS, for every field
   every ISO promotes, so a control arm is expressible;
 * **byte-stability** — a caller that passes nothing still gets the full ISO
-  posture (ERCOT's five stage-B flags armed at ``8d9ef77edb3e44cb``, the global
+  posture (ERCOT's five stage-B flags plus the D12-A entry pair armed at
+  ``68a207068509f2b0`` — the pole was ``8d9ef77edb3e44cb`` until the Q15
+  arming of 2026-08-30 moved it, see
+  ``docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md`` — the global
   pin ``603c2498bf71d21d`` unmoved), and a non-default explicit value still
   wins as it always did. The fix is a strict NARROWING;
 * **cache-key invisibility** — the record is a NON-FIELD attribute, so it can
@@ -60,7 +63,14 @@ STAGE_B = {
     "smr_available_year": 2030,
     "vre_procurement_additions_enabled": True,
 }
-ERCOT_ARMED_KEY = "8d9ef77edb3e44cb"
+# The LIVE resolved ERCOT forecast-lane default key. D-30 declared it at
+# "8d9ef77edb3e44cb"; the D12-A arming (owner ruling Q15, 2026-08-30 —
+# entry_margin_exhaustion + entry_forward_reserve_leg, epoch probe
+# scripts/probes/_d12a_arming_cache_epoch.py) moved it here. This module pins
+# the CURRENT pole; the per-epoch genealogy lives in
+# tests/unit/config/test_ercot_stageb_arming.py, which reconstructs each
+# prior pole explicitly.
+ERCOT_ARMED_KEY = "68a207068509f2b0"
 GLOBAL_PINNED_KEY = "603c2498bf71d21d"
 
 FIELD_DEFAULTS = {
@@ -189,7 +199,8 @@ class TestUnsetStillArms:
         assert {f: getattr(resolved, f) for f in STAGE_B} == STAGE_B
 
     def test_the_declared_ercot_epoch_pole_is_unmoved(self):
-        """D-30's armed pole and the global pin both survive the fix."""
+        """The LIVE declared armed pole (D12-A since 2026-08-30) and the
+        global pin both survive the fix."""
         resolved = apply_iso_scenario_defaults(ScenarioConfig(iso="ERCOT"), "ERCOT")
         assert resolved.cache_key() == ERCOT_ARMED_KEY
         assert ScenarioConfig().cache_key() == GLOBAL_PINNED_KEY

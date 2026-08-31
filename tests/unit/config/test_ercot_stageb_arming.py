@@ -38,6 +38,18 @@ pinned the defective precedence, none of its assertions moved across that fix �
 it pins only the behaviour both sides must preserve, which is exactly why it
 still passes unchanged.
 
+**D12-A (owner ruling Q15, r#18 sitting, 2026-08-30;
+``docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md``)** armed a SECOND
+pair on the same seam — ``entry_margin_exhaustion`` +
+``entry_forward_reserve_leg``, the D12-C confirm-pair's single logical delta,
+judged confirming-in-substance per that finding's §4.3 clause — declaring a
+new ERCOT forecast-lane epoch ``8d9ef77edb3e44cb`` -> ``68a207068509f2b0``
+(probe ``scripts/probes/_d12a_arming_cache_epoch.py``; the registered armed
+bundle ``ercot-2021-2025-realized-t1h-d12c-armed``, key ``f061b2646bfaac8b``,
+is the record of the armed posture). ``TestD12AArming`` below pins it; the
+D-30 pole assertions now strip the D12-A pair first, exactly as the D-30 test
+already reconstructs its own pre-arm pole.
+
 Pure config construction — no solve, no data root (the FFR-1D
 ``test_forecast_mode_guards`` discipline).
 """
@@ -61,6 +73,14 @@ STAGE_B = {
     "entry_pipeline_aware_signal": True,
     "smr_available_year": 2030,
     "vre_procurement_additions_enabled": True,
+}
+
+# The D12-A pair and its Q15 values (the D12-C single logical delta; module
+# docstring). Armed AFTER D-30 on the same seam, so the D-30 pole assertions
+# strip these fields before evaluating the D-30 epoch.
+D12A_PAIR = {
+    "entry_margin_exhaustion": True,
+    "entry_forward_reserve_leg": True,
 }
 
 
@@ -148,13 +168,19 @@ class TestD30Arming:
         The pre-arm pole is reconstructed by ``dataclasses.replace`` on the
         RESOLVED config — passing the default values to the constructor would
         be re-armed by the seam (the FINDING's inexpressibility, not pinned
-        here).
+        here). Since D12-A the live resolution ALSO carries the entry pair,
+        so the D-30 poles are evaluated with the pair stripped first — same
+        reconstruction, one layer later (``TestD12AArming`` pins the live
+        pole).
         """
-        resolved = apply_iso_scenario_defaults(ScenarioConfig(iso="ERCOT"), "ERCOT")
+        live = apply_iso_scenario_defaults(ScenarioConfig(iso="ERCOT"), "ERCOT")
         for field, value in STAGE_B.items():
-            assert getattr(resolved, field) == value, field
+            assert getattr(live, field) == value, field
 
         defaults = ScenarioConfig(iso="ERCOT")
+        resolved = dataclasses.replace(
+            live, **{f: getattr(defaults, f) for f in D12A_PAIR}
+        )
         pre_arm = dataclasses.replace(
             resolved, **{f: getattr(defaults, f) for f in STAGE_B}
         )
@@ -169,6 +195,115 @@ class TestD30Arming:
 
 
 # --------------------------------------------------------------------------- #
+# The D12-A arming (owner ruling Q15, 2026-08-30)
+# --------------------------------------------------------------------------- #
+class TestD12AArming:
+    """Q15 arms the D12-C entry pair as the ERCOT forecast default.
+
+    Same seam, same discipline as D-30 above: the ``ScenarioConfig`` field
+    defaults stay ``False`` (the unarmed pole, so armed runs ENTER the
+    digest), the ISO override is the ONLY arming vehicle, and the declared
+    epoch (``8d9ef77edb3e44cb`` -> ``68a207068509f2b0``) has a test naming
+    it. Probe: ``scripts/probes/_d12a_arming_cache_epoch.py`` (which also
+    reproduces the registered armed bundle's T1-H key ``f061b2646bfaac8b``
+    from the bare harness construction — the registered
+    ``ercot-2021-2025-realized-t1h-d12c-armed`` bundle IS the record of this
+    default posture).
+    """
+
+    def test_ercot_isoconfig_arms_both(self):
+        """The pair moves as ONE unit — the D12-C single logical delta.
+
+        A posture shipping one field without the other was never solved
+        (rule 13 ``[R-MEASURED]``): the confirm-pair measured exactly the
+        two-field delta, and Q15 armed exactly that.
+        """
+        overrides = get_iso_config("ERCOT").default_scenario_overrides
+        for field, value in D12A_PAIR.items():
+            assert overrides.get(field) == value, field
+
+    def test_no_other_iso_arms_the_pair(self):
+        """Rule 25 [R-ISO-SCOPE] — Q15's verdict is ERCOT's and only ERCOT's;
+        sister-ISO matrix cells stay U (rule 26)."""
+        for iso in ALL_ISOS:
+            if iso == "ERCOT":
+                continue
+            overrides = get_iso_config(iso).default_scenario_overrides
+            for field in D12A_PAIR:
+                assert field not in overrides, (iso, field)
+
+    def test_the_arming_seam_is_the_iso_override_not_the_field_defaults(self):
+        """Both field defaults MUST stay ``False`` under Q15 (cache identity:
+        each is a ``_CACHE_KEY_OPTIONAL_FIELDS`` member dropped against the
+        LIVE field default, so the armed values enter the digest and the
+        epoch is a clean re-key instead of a silent collision)."""
+        defaults = ScenarioConfig()
+        for field, armed_value in D12A_PAIR.items():
+            assert field in _CACHE_KEY_OPTIONAL_FIELDS, field
+            assert getattr(defaults, field) != armed_value, field
+
+    def test_the_d12a_arming_moves_the_ercot_forecast_key_and_not_the_pin(self):
+        """The declared D12-A cache epoch, asserted on the live config.
+
+        The pre-arm pole is the D-30 stage-B pole, reconstructed by
+        ``dataclasses.replace`` on the live resolution (constructor-passed
+        ``False`` would be an explicit control arm — valid, but not the
+        "unset" pole the epoch declares).
+        """
+        resolved = apply_iso_scenario_defaults(ScenarioConfig(iso="ERCOT"), "ERCOT")
+        for field, value in D12A_PAIR.items():
+            assert getattr(resolved, field) == value, field
+
+        defaults = ScenarioConfig(iso="ERCOT")
+        pre_arm = dataclasses.replace(
+            resolved, **{f: getattr(defaults, f) for f in D12A_PAIR}
+        )
+        assert resolved.cache_key() == "68a207068509f2b0"
+        assert pre_arm.cache_key() == "8d9ef77edb3e44cb"
+        assert ScenarioConfig().cache_key() == "603c2498bf71d21d"
+
+    def test_the_pair_control_arm_is_expressible(self):
+        """An explicit both-off caller wins over the override (OVERRIDE-FIX
+        precedence) — the D12-C control posture stays reachable."""
+        control = apply_iso_scenario_defaults(
+            ScenarioConfig(
+                iso="ERCOT",
+                entry_margin_exhaustion=False,
+                entry_forward_reserve_leg=False,
+            ),
+            "ERCOT",
+        )
+        assert control.entry_margin_exhaustion is False
+        assert control.entry_forward_reserve_leg is False
+
+    def test_disarming_the_reprice_alone_now_raises(self):
+        """The dependency wall, pinned deliberately (the FFR-8A pattern).
+
+        Turning off ONLY ``entry_lookahead_reprice`` leaves the ISO override
+        arming the pair (both still unset), and ``__post_init__`` refuses
+        exhaustion/reserve-leg without the reprice. An ERCOT leg that disarms
+        the reprice must disarm the pair WITH it — the caller is told the
+        combination is untested instead of silently receiving an armed
+        posture riding a dead instrument.
+        """
+        with pytest.raises(ValueError, match="entry_lookahead_reprice"):
+            apply_iso_scenario_defaults(
+                ScenarioConfig(iso="ERCOT", entry_lookahead_reprice=False),
+                "ERCOT",
+            )
+        resolved = apply_iso_scenario_defaults(
+            ScenarioConfig(
+                iso="ERCOT",
+                entry_lookahead_reprice=False,
+                entry_margin_exhaustion=False,
+                entry_forward_reserve_leg=False,
+            ),
+            "ERCOT",
+        )
+        assert resolved.entry_lookahead_reprice is False
+
+
+# --------------------------------------------------------------------------- #
 # The backcast lane — untouched by the epoch (rule 22)
 # --------------------------------------------------------------------------- #
 class TestBackcastLaneUntouched:
@@ -180,16 +315,19 @@ class TestBackcastLaneUntouched:
         ``default_scenario_overrides`` — that application lives solely in
         ``runner.run_scenario_iso`` (and the forecast-side export tools). So
         the D-30 arming is invisible here and the ERCOT backcast keeper
-        (2026-08-12-run192-arm-coal-peak at declaration) is untouched.
+        (2026-08-12-run192-arm-coal-peak at declaration) is untouched. The
+        D12-A pair is DOUBLY untouched: not applied here, and backcast-coerced
+        off in ``__post_init__`` even where the overrides ARE applied (a
+        backcast runs no capacity evolution).
         """
         cfg = _backcast("ERCOT")
         defaults = ScenarioConfig()
         assert cfg.mode == "backcast"
-        for field in STAGE_B:
+        for field in (*STAGE_B, *D12A_PAIR):
             assert getattr(cfg, field) == getattr(defaults, field), field
 
     def test_backcast_key_is_byte_stable_across_the_arming(self):
-        """No ERCOT backcast cache key is moved by D-30.
+        """No ERCOT backcast cache key is moved by D-30 or D12-A.
 
         Each field sits at its registered ``_CACHE_KEY_OPTIONAL_FIELDS``
         default in the backcast lane, so it is dropped from the hash and every
@@ -198,9 +336,20 @@ class TestBackcastLaneUntouched:
         cfg = _backcast("ERCOT")
         defaults = ScenarioConfig()
         at_default = dataclasses.replace(
-            cfg, **{f: getattr(defaults, f) for f in STAGE_B}
+            cfg, **{f: getattr(defaults, f) for f in (*STAGE_B, *D12A_PAIR)}
         )
         assert cfg.cache_key() == at_default.cache_key()
+
+    def test_a_backcast_resolution_coerces_the_pair_off(self):
+        """Even a backcast config pushed THROUGH the override seam keeps its
+        key: ``with_overrides`` re-runs ``__post_init__``, whose backcast
+        coercion turns the applied pair straight back off (the FF-2A
+        ``entry_lookahead_reprice`` coercion pattern), so the arming cannot
+        reach any backcast posture by any construction path."""
+        cfg = _backcast("ERCOT")
+        resolved = apply_iso_scenario_defaults(cfg, "ERCOT")
+        assert resolved.entry_margin_exhaustion is False
+        assert resolved.entry_forward_reserve_leg is False
 
     def test_an_armed_backcast_would_move_the_cache_key(self):
         """THE HAZARD THE LANE SEPARATION IS PROTECTING — pinned so it cannot
