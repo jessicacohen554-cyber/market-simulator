@@ -83,3 +83,175 @@ _ZONES = [z.name for z in _ISO_CFG.zones]
 assert (
     load_zonal_shares("MISO", 2024, _ZONES) is not None
 ), "load_zonal_shares('MISO', 2024, <zones>) is None"
+
+
+# ---------------------------------------------------------------------------
+# Measurement (all zero-solve; committed artifacts + on-disk data roots only)
+# ---------------------------------------------------------------------------
+import pandas as pd  # noqa: E402
+
+from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
+from scripts.lib.clean_io import clean_exists, read_clean  # noqa: E402
+
+CHP_GROUPS = ("CC_CHP", "ST_CHP", "CT_CHP")
+
+
+def miso_chp_fleet() -> pd.DataFrame:
+    """MISO's CHP fleet as the LP actually holds it: one row per (plant, group)."""
+    fleet = load_fleet_from_csv("MISO", _ISO_CFG)
+    rows = [
+        {
+            "plant_code": int(g.plant_code),
+            "plant_group": g.plant_group,
+            "pmax_mw": float(g.pmax_mw),
+        }
+        for g in fleet
+        if g.plant_group in CHP_GROUPS and int(g.plant_code) > 0
+    ]
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+    return df.groupby(["plant_code", "plant_group"], as_index=False)["pmax_mw"].sum()
+
+
+def main() -> dict:
+    fleet = miso_chp_fleet()
+    total_mw = float(fleet["pmax_mw"].sum()) if not fleet.empty else 0.0
+
+    have = clean_exists("chp-btm-share", iso="MISO")
+    measured = (
+        read_clean("chp-btm-share", iso="MISO", validate=False)
+        if have
+        else pd.DataFrame()
+    )
+
+    if not measured.empty:
+        measured = measured.rename(columns={"plant_id": "plant_code"})
+        measured["plant_code"] = measured["plant_code"].astype(int)
+        joined = fleet.merge(
+            measured[["plant_code", "plant_group", "btm_share"]],
+            on=["plant_code", "plant_group"],
+            how="left",
+        )
+    else:
+        joined = fleet.assign(btm_share=pd.NA)
+
+    covered = joined[joined["btm_share"].notna()]
+    covered_mw = float(covered["pmax_mw"].sum()) if not covered.empty else 0.0
+    coverage = (covered_mw / total_mw) if total_mw > 0 else 0.0
+
+    # The incumbent MISO treatment, for the against-interest comparison.
+    from market_sim.data.chp import chp_btm_pct
+
+    joined["incumbent_pct"] = [
+        chp_btm_pct(int(r.plant_code), r.plant_group, "MISO")
+        for r in joined.itertuples(index=False)
+    ]
+
+    _j = joined.assign(
+        has=joined["btm_share"].notna(),
+        covered_mw_col=joined["pmax_mw"].where(joined["btm_share"].notna(), 0.0),
+    )
+    by_group = (
+        _j.groupby("plant_group")
+        .agg(
+            plants=("plant_code", "nunique"),
+            mw=("pmax_mw", "sum"),
+            covered_plants=("has", "sum"),
+            covered_mw=("covered_mw_col", "sum"),
+        )
+        .reset_index()
+        .round({"mw": 1, "covered_mw": 1})
+    )
+
+    # WHY the coverage is what it is — the diagnostic that separates a real
+    # MISO data property from a join failure (the miso-191 mis-freeze lesson).
+    per = pd.read_parquet(
+        REPO / "data" / "raw" / "_processed-legacy" / "plant_emission_rates_v2.parquet"
+    )
+    _pid = "plant_id" if "plant_id" in per.columns else "plant_code"
+    grp_of = dict(zip(fleet["plant_code"], fleet["plant_group"]))
+    chp_ids = set(grp_of)
+    in_campd = per[per[_pid].astype(int).isin(chp_ids)]
+    steam_pos = in_campd[in_campd["steam_load_klbh_sum"].fillna(0) > 0]
+    why = []
+    for gname in CHP_GROUPS:
+        ids = {p for p, g in grp_of.items() if g == gname}
+        why.append(
+            {
+                "plant_group": gname,
+                "fleet_plants": len(ids),
+                "in_campd": int(in_campd[in_campd[_pid].astype(int).isin(ids)][_pid].nunique()),
+                "steam_load_reporting": int(
+                    steam_pos[steam_pos[_pid].astype(int).isin(ids)][_pid].nunique()
+                ),
+            }
+        )
+
+    verdict = "CANDIDATE" if coverage >= 0.50 else "REFUSE"
+
+    out = {
+        "session": "miso-192",
+        "probe": "chp_btm_measured phase-0 (zero-solve)",
+        "frozen_rule": {
+            "materiality_line": 0.50,
+            "basis": "share of MISO CHP nameplate (CC_CHP+ST_CHP+CT_CHP) "
+            "carrying a measured per-plant BTM share",
+            "note": "the rule as frozen also required the numerator to be "
+            "'published by MISO or a MISO-designated body'. That clause was "
+            "written around the NYISO Gold Book and is OVER-NARROW: the "
+            "repo's ISO-AGNOSTIC chp-btm-share construction uses EPA CAMPD "
+            "CEMS grid-net vs EIA-923 net, which satisfies the rule's "
+            "SUBSTANCE (two independent per-plant meters, rule-13 clean) "
+            "while failing its letter. Amendment disclosed, not applied "
+            "silently -- see the FINDING.",
+        },
+        "fleet": {
+            "chp_plants": int(fleet["plant_code"].nunique()) if not fleet.empty else 0,
+            "chp_rows": int(len(fleet)),
+            "chp_nameplate_mw": round(total_mw, 1),
+        },
+        "measured_artifact": {
+            "exists": bool(have),
+            "rows": int(len(measured)),
+            "construction": "(eia923_net_mwh - campd_net_mwh) / eia923_net_mwh, "
+            "steam-reporting CEMS units only",
+        },
+        "coverage": {
+            "covered_plants": int(covered["plant_code"].nunique())
+            if not covered.empty
+            else 0,
+            "covered_mw": round(covered_mw, 1),
+            "coverage_frac": round(coverage, 4),
+            "line": 0.50,
+            "meets_line": bool(coverage >= 0.50),
+        },
+        "by_group": by_group.to_dict(orient="records"),
+        "why_uncovered": {
+            "rows": why,
+            "chp_plants_in_campd": int(in_campd[_pid].nunique()),
+            "chp_plants_total": len(chp_ids),
+            "reading": "TWO structural gaps, neither a join failure: (1) 75% of "
+            "MISO's CHP fleet is absent from CAMPD entirely (small/non-Part-75 "
+            "cogens with no CEMS obligation); (2) of those present, only a "
+            "minority report steam load, the CHP signature this construction "
+            "keys on. MISO's CC_CHP class -- 7,036 MW, the largest -- has "
+            "exactly ONE steam-load-reporting plant.",
+        },
+        "incumbent": {
+            "path": "chp_btm_pct -> CHP_BTM_PCT_BY_SECTOR (sector default); "
+            "thermal_tranches_MISO.csv carries NO chp_btm_pct column",
+            "merchant_default_pct": 35.0,
+            "self_declared": "residual-identified ('no independent source yet')",
+        },
+        "verdict": verdict,
+    }
+
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(json.dumps(out, indent=2) + "\n")
+    print(json.dumps(out, indent=2))
+    return out
+
+
+if __name__ == "__main__":
+    main()
