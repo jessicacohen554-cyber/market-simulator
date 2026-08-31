@@ -21,6 +21,13 @@ registry, every keeper shard, `calibration-complete.json`,
 default is flipped: ARMING IS AN OWNER DECISION on this record, not this
 lane's** (charter Phase-1; dispatch hard line).
 
+> **STATUS UPDATE 2026-08-31 — ARMING CLOSED, both mechanisms ARMED.** The
+> owner ruled **R-A "Arm both"** on this record at the 2026-08-31 director
+> sitting; both defaults are now ON. The title's "arming open" and the two
+> paragraphs above describe this document's state **as written on 2026-08-30**
+> and are left standing as the record of that moment — see **§7** for what was
+> executed and by whom. Nothing in §§0–6 is revised: no measurement changed.
+
 ---
 
 ## 0. The one-paragraph answer
@@ -231,6 +238,11 @@ Nothing is armed: `storage_entry_availability_gate` and
 default lane is untouched, and the arming decision is the owner's on this
 record.
 
+> **CLOSED 2026-08-31 by owner ruling R-A — see §7.** The arming decision this
+> section left open was taken: both mechanisms are armed, both ERCOT cells
+> moved `O → K` (fc lane). This paragraph is the 2026-08-30 state, kept as
+> written.
+
 Findings the arming decision would weigh — recorded, not recommended:
 
 1. **In the shipped posture the repair is mix-fidelity at zero band cost.**
@@ -330,3 +342,89 @@ probe must run in the session that solved the bundles (it did); the committed
 artifact `results/calibration/storage_entry_repair_ab_ercot.json` carries
 both arms' per-step rows, the posture record, the drift record, the band
 table and the gate verdicts in full.
+
+---
+
+## 7. ARMING NOTE — owner ruling R-A, executed 2026-08-31
+
+_Appended 2026-08-31 by the **T1-H arming lane** (executor of this ruling).
+Nothing in §§0–6 is revised — no measurement changed and no solve was re-run._
+
+**The ruling.** At the 2026-08-31 director sitting the owner ruled **R-A,
+"Arm both"**, on the §4 record: K1 no-fire (every addition-band `|err|` delta
+`0.0000`), K2 no-fire (the storage mix differs in every row), CO2
+−0.49 / −0.52 / +0.34 Mt across 2023–2025, and zero new DOF.
+`storage_entry_availability_gate` and `storage_entry_cost_normalized_rank`
+become **DEFAULT-ON in the T1-H forecast lane**. The §4 "arming open" state is
+closed by this note.
+
+**What was executed.**
+
+1. Both `ScenarioConfig` defaults flipped `False → True`
+   (`config/scenarios.py`). A default change only — no new mechanism, no new
+   parameter, no change to either helper. The CLI flags stay tri-state; omitting
+   one now inherits the **armed** default, and `--no-…` is the way to a
+   disarmed control (both `--help` strings corrected accordingly).
+2. Rule 26 duty (b): both **ERCOT** cells adjudicated **`O → K` (fc lane)** in
+   `docs/codebase-site/data/mechanism-matrix/ERCOT.js`, citing this finding and
+   the ruling. Per rule 25 no verdict transfers — **every other ISO's cells stay
+   `U`**, and the pair is armed as ONE posture (D-2 alone can only worsen the
+   volume band by construction; D-3 is where the li-ion mix returns).
+3. Base rows in `mechanism-matrix.js` updated where they stated the default.
+4. **No hindcast re-run.** The registered repair arm
+   `ercot-2021-2025-realized-t1h-capentry-repair` **is** the armed posture's
+   evidence; a T1-H refresh re-baseline is the forecast program's charter, not
+   this lane's.
+
+**The cache consequence of the flip — measured, not assumed.** Both fields are
+`_CACHE_KEY_OPTIONAL_FIELDS` members, so `cache_key()` drops each at whichever
+value is the **live** default. The flip therefore has two effects, both
+declared in the cache-epoch ledger (`src/market_sim/results/cache.py`, epoch
+2026-08-31):
+
+| lane | key | consequence |
+|---|---|---|
+| forecast (default config) | `603c2498bf71d21d` → **unmoved** | **Silent same-key collision.** An armed default run hashes identically to the pre-arm unarmed bundle it supersedes — concretely this A/B's own **control** arm. Purge pre-arm default-posture forecast bundles before quoting an armed run. |
+| backcast (bare config) | `35b6dc12f97968f1` → **`e027bc248c93c835`** | **Key advances**, paid for at `PINNED_BACKCAST_CACHE_KEY` with a dated cause block. A one-time cache **miss** per backcast config, never a different answer. |
+
+The backcast movement is the flip's one non-obvious consequence and is worth
+stating plainly: `__post_init__` coerces both fields **off** in a backcast, and
+coerced-`False` stopped being the default the moment the default moved, so both
+re-enter the backcast payload. **The coercion is load-bearing and stays** —
+`runner.run_scenario_iso` serves both modes and takes its evolution branch on
+year 2+ of any multi-year span, so coercing to the dataclass default (the D-3a
+repair pattern) would *arm* the screen inside a multi-year backcast rather than
+merely re-label it. The production backcast lane
+(`run_calibration_full.py` → `pipeline.solve`, one config per year) never
+reaches the screen, so that exposure is latent rather than live — and a default
+flip is not licence to spend the guarantee. Backcast dispatch, scores and
+`run_config.json` are **byte-identical** across the flip (both fields serialize
+`False` either side): **no keeper, sidecar, determination or dashboard row
+moves, and nothing needs re-scoring.**
+
+**Gates run before push:** `tests/unit/model/test_storage_entry_gates.py`
+(23 passed) and `scripts/check_mechanism_matrix.py` — both exit `0`;
+`scripts/check_cache_key_registration.py` and
+`tests/regression/test_persisted_identity.py` also green (the declaration and
+the pin advance are what keep them so).
+
+**§4 finding 2 has become live, and is carried for the owner.** That finding
+recorded the armed-`entry_margin_exhaustion` interaction as *not covered by
+this A/B* — the A/B ran at the shipped **unarmed** walk by design. Between the
+A/B and this arming, **D12-A armed `entry_margin_exhaustion` (with
+`entry_forward_reserve_leg`) as the ERCOT forecast default** under ruling Q15
+(2026-08-30, `docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md`). So as of
+this commit **a bare ERCOT T1-H run carries the exhaustion walk AND these two
+gates together** — a combination that **has never been solved**. It composes by
+construction (rule 19: the walk consumes the very same
+`_storage_entry_candidates` / `_storage_entry_rank_score` helpers, which is why
+no code change is needed), and §4 predicted the joint effect there is *smaller
+and different in kind* (that arm builds `iron_air` 3,000 only). Nothing about
+this contradicts R-A, and this lane changed nothing on account of it — but the
+combined posture's numbers are **unmeasured**, and measuring them is the
+forecast program's call, not this lane's. Recorded, not acted on.
+
+**Out of scope, left to their owners:** the §8 ledger entry for ruling R-A is
+the **records lane's** duty (not written here); the combined-posture solve just
+described; the RM-path coupling (§4 finding 3) and the L-6 sequencing note
+(§4 finding 4), which stand unchanged.

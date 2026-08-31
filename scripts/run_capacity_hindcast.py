@@ -1571,11 +1571,12 @@ def main(argv: list[str] | None = None) -> int:
             "EIA-860 energy-storage schedule, fail-closed for a class with "
             "zero national base ever) — the same availability-year gate the "
             "thermal path already carries, on BOTH storage allocation "
-            "rules. OMIT to inherit the shipped ScenarioConfig default "
-            "(GATED OFF — this is a measurement, not an arming); "
-            "--storage-entry-availability-gate arms the treatment and "
-            "--no-storage-entry-availability-gate forces the control "
-            "explicitly."
+            "rules. OMIT to inherit the shipped ScenarioConfig default, "
+            "which is GATED ON since the 2026-08-31 R-A arming (it was OFF "
+            "through the A/B that produced that ruling); "
+            "--storage-entry-availability-gate arms it explicitly and "
+            "--no-storage-entry-availability-gate is now the way to get the "
+            "disarmed control."
         ),
     )
     parser.add_argument(
@@ -1590,10 +1591,12 @@ def main(argv: list[str] | None = None) -> int:
             "(margin / STORAGE_TECHS[tech]['capex_per_kw']) instead of "
             "absolute $/MW-yr, on BOTH storage allocation rules. "
             "Sign-preserving — which technologies clear is unchanged. OMIT "
-            "to inherit the shipped ScenarioConfig default (GATED OFF); "
-            "--storage-entry-cost-normalized-rank arms the treatment and "
-            "--no-storage-entry-cost-normalized-rank forces the control "
-            "explicitly."
+            "to inherit the shipped ScenarioConfig default, which is GATED "
+            "ON since the 2026-08-31 R-A arming (it was OFF through the A/B "
+            "that produced that ruling); "
+            "--storage-entry-cost-normalized-rank arms it explicitly and "
+            "--no-storage-entry-cost-normalized-rank is now the way to get "
+            "the disarmed control."
         ),
     )
     parser.add_argument(

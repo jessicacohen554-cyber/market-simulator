@@ -2,9 +2,11 @@
 
 Charter: ``docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`` Phase-1; defect
 register ``docs/FINDING-entry-screen-t1h-2026-08.md``; census/replay
-``docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md``. Two GATED
-default-OFF mechanisms, each shared by BOTH storage allocation rules through
-one helper (rule 19):
+``docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md``. Two GATED mechanisms
+— **default-ON since owner ruling R-A of the 2026-08-31 director sitting**
+("Arm both", on the A/B record
+``docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md`` §4) — each shared by BOTH
+storage allocation rules through one helper (rule 19):
 
 * ``storage_entry_availability_gate`` (D-2) — the candidate pool admits a
   technology only at/after its measured first-US-operating year
@@ -36,6 +38,21 @@ from market_sim.model.storage import (
 )
 
 HOURS = 8760
+
+
+def _cfg(*, gate: bool = False, rank: bool = False, **kw) -> ScenarioConfig:
+    """A config with BOTH storage-entry mechanisms pinned EXPLICITLY.
+
+    Every mechanism case below isolates one leg, so it must not inherit the
+    other leg's shipped default — which is ON since the 2026-08-31 R-A arming.
+    Pinning both keeps each case meaningful whatever the defaults become; the
+    shipped posture itself is asserted once, in :class:`TestConfigFields`.
+    """
+    return ScenarioConfig(
+        storage_entry_availability_gate=gate,
+        storage_entry_cost_normalized_rank=rank,
+        **kw,
+    )
 
 
 def _high_spread_prices() -> np.ndarray:
@@ -112,19 +129,32 @@ def _mw_by_tech(existing, fleet):
 class TestConfigFields(unittest.TestCase):
     """Field registration, defaults, cache-key stability, backcast coercion."""
 
-    def test_defaults_off_and_cache_key_stable(self):
+    def test_defaults_armed(self):
+        """Both mechanisms ship ON since the 2026-08-31 R-A arming."""
         cfg = ScenarioConfig()
-        self.assertFalse(cfg.storage_entry_availability_gate)
-        self.assertFalse(cfg.storage_entry_cost_normalized_rank)
-        self.assertEqual(cfg.cache_key(), ScenarioConfig().cache_key())
+        self.assertTrue(cfg.storage_entry_availability_gate)
+        self.assertTrue(cfg.storage_entry_cost_normalized_rank)
 
-    def test_armed_moves_cache_key(self):
+    def test_disarmed_moves_cache_key(self):
+        """An EXPLICIT disarm is non-default, so control arms stay separable.
+
+        The post-arming direction of the pre-flip ``test_armed_moves_cache_key``:
+        ``cache_key()`` drops a ``_CACHE_KEY_OPTIONAL_FIELDS`` member at the LIVE
+        default, so it is now the OFF value that hashes distinctly. The armed
+        default deliberately does NOT move the key — that same-key collision is
+        the declared cache epoch (``results/cache.py``, epoch 2026-08-31), not a
+        property this suite can assert away.
+        """
         base = ScenarioConfig().cache_key()
-        k_gate = ScenarioConfig(storage_entry_availability_gate=True).cache_key()
-        k_rank = ScenarioConfig(storage_entry_cost_normalized_rank=True).cache_key()
+        k_gate = ScenarioConfig(storage_entry_availability_gate=False).cache_key()
+        k_rank = ScenarioConfig(storage_entry_cost_normalized_rank=False).cache_key()
         self.assertNotEqual(k_gate, base)
         self.assertNotEqual(k_rank, base)
         self.assertNotEqual(k_gate, k_rank)
+
+    def test_default_key_pin_unmoved_by_the_arming(self):
+        """The global default-config pin is untouched by the flip (measured)."""
+        self.assertEqual(ScenarioConfig().cache_key(), "603c2498bf71d21d")
 
     def test_backcast_coerces_off(self):
         cfg = ScenarioConfig(
@@ -134,6 +164,26 @@ class TestConfigFields(unittest.TestCase):
         )
         self.assertFalse(cfg.storage_entry_availability_gate)
         self.assertFalse(cfg.storage_entry_cost_normalized_rank)
+
+    def test_backcast_key_invariant_to_arming(self):
+        """A backcast hashes the same however the fields are passed.
+
+        The coercion is load-bearing after the R-A arming — the runner reaches
+        the storage-entry screen on year 2+ of ANY multi-year run, so a backcast
+        inheriting the armed default must be pinned off. This asserts the
+        invariant that survives the flip: whatever a caller passes, a backcast
+        lands on ONE key and one behaviour. (The absolute backcast key did move
+        at the arming, since coerced-off is now non-default; that is recorded in
+        the cache-epoch ledger, and is a one-time cache miss, never a different
+        answer.)
+        """
+        bare = ScenarioConfig(mode="backcast")
+        armed = ScenarioConfig(
+            mode="backcast",
+            storage_entry_availability_gate=True,
+            storage_entry_cost_normalized_rank=True,
+        )
+        self.assertEqual(bare.cache_key(), armed.cache_key())
 
 
 class TestAvailabilityYearRegistry(unittest.TestCase):
@@ -179,7 +229,7 @@ class TestCandidatesHelper(unittest.TestCase):
     """_storage_entry_candidates: trivial cases on the synthetic registry."""
 
     def test_gate_off_returns_full_pool_in_registry_order(self):
-        cfg = ScenarioConfig()
+        cfg = _cfg()
         for p in _patch_synth({"big": 2020, "small": None}):
             p.start()
             self.addCleanup(p.stop)
@@ -189,7 +239,7 @@ class TestCandidatesHelper(unittest.TestCase):
         )
 
     def test_gate_admits_only_available_years(self):
-        cfg = ScenarioConfig(storage_entry_availability_gate=True)
+        cfg = _cfg(gate=True)
         for p in _patch_synth({"big": 2020, "small": 2025}):
             p.start()
             self.addCleanup(p.stop)
@@ -201,7 +251,7 @@ class TestCandidatesHelper(unittest.TestCase):
         self.assertEqual(_storage_entry_candidates(2019, cfg), [])
 
     def test_gate_fails_closed_on_none_and_on_missing_entries(self):
-        cfg = ScenarioConfig(storage_entry_availability_gate=True)
+        cfg = _cfg(gate=True)
         # ``small`` has a None entry; ``big`` is missing from the map entirely.
         for p in _patch_synth({"small": None}):
             p.start()
@@ -212,7 +262,7 @@ class TestCandidatesHelper(unittest.TestCase):
         # The Phase-0 anachronism year: iron_air (2024) and the fail-closed
         # compressed_air are out; the three li-ion classes (2012) and
         # flow_battery (2017) are in.
-        cfg = ScenarioConfig(storage_entry_availability_gate=True)
+        cfg = _cfg(gate=True)
         admitted = {t for t, _ in _storage_entry_candidates(2023, cfg)}
         self.assertEqual(
             admitted, {"li_ion_4hr", "li_ion_8hr", "li_ion_12hr", "flow_battery"}
@@ -225,11 +275,11 @@ class TestRankScoreHelper(unittest.TestCase):
     """_storage_entry_rank_score: trivial cases."""
 
     def test_off_is_the_margin_identity(self):
-        cfg = ScenarioConfig()
+        cfg = _cfg()
         self.assertEqual(_storage_entry_rank_score("li_ion_4hr", 123.4, cfg), 123.4)
 
     def test_on_normalizes_by_capex(self):
-        cfg = ScenarioConfig(storage_entry_cost_normalized_rank=True)
+        cfg = _cfg(rank=True)
         capex = float(STORAGE_TECHS["li_ion_4hr"]["capex_per_kw"])
         self.assertAlmostEqual(
             _storage_entry_rank_score("li_ion_4hr", 1000.0, cfg), 1000.0 / capex
@@ -237,7 +287,7 @@ class TestRankScoreHelper(unittest.TestCase):
 
     def test_sign_preserving(self):
         # The flag re-orders clearing techs; it must never flip who clears.
-        cfg = ScenarioConfig(storage_entry_cost_normalized_rank=True)
+        cfg = _cfg(rank=True)
         for margin in (-5.0, 0.0, 5.0):
             self.assertEqual(
                 np.sign(_storage_entry_rank_score("iron_air", margin, cfg)),
@@ -266,7 +316,7 @@ class TestBangBangAllocator(unittest.TestCase):
         for p in _patch_synth():
             p.start()
             self.addCleanup(p.stop)
-        built = self._run(ScenarioConfig())
+        built = self._run(_cfg())
         self.assertAlmostEqual(built["big"], 3000.0, places=6)
         self.assertAlmostEqual(built["small"], 2000.0, places=6)
 
@@ -275,7 +325,7 @@ class TestBangBangAllocator(unittest.TestCase):
         for p in _patch_synth():
             p.start()
             self.addCleanup(p.stop)
-        built = self._run(ScenarioConfig(storage_entry_cost_normalized_rank=True))
+        built = self._run(_cfg(rank=True))
         self.assertAlmostEqual(built["small"], 3000.0, places=6)
         self.assertAlmostEqual(built["big"], 2000.0, places=6)
 
@@ -283,9 +333,7 @@ class TestBangBangAllocator(unittest.TestCase):
         for p in _patch_synth({"big": 2020, "small": 2030}):
             p.start()
             self.addCleanup(p.stop)
-        built = self._run(
-            ScenarioConfig(storage_entry_availability_gate=True), year=2027
-        )
+        built = self._run(_cfg(gate=True), year=2027)
         self.assertNotIn("small", built)
         self.assertAlmostEqual(built["big"], 3000.0, places=6)
 
@@ -293,12 +341,12 @@ class TestBangBangAllocator(unittest.TestCase):
         # The Phase-0 defect case on the live registry: a 2023 decision year
         # must not build iron_air (first US MW 2024) or compressed_air
         # (fail-closed) under the gate; ungated it builds iron_air (D-2).
-        cfg_on = ScenarioConfig(storage_entry_availability_gate=True)
+        cfg_on = _cfg(gate=True)
         built_on = self._run(cfg_on, year=2023)
         self.assertNotIn("iron_air", built_on)
         self.assertNotIn("compressed_air", built_on)
         self.assertGreater(sum(built_on.values()), 0.0)
-        built_off = self._run(ScenarioConfig(), year=2023)
+        built_off = self._run(_cfg(), year=2023)
         self.assertIn("iron_air", built_off)
 
 
@@ -322,9 +370,7 @@ class TestWalkAllocator(unittest.TestCase):
         for p in _patch_synth({"big": 2020, "small": 2030}):
             p.start()
             self.addCleanup(p.stop)
-        built = self._run(
-            ScenarioConfig(storage_entry_availability_gate=True), year=2027
-        )
+        built = self._run(_cfg(gate=True), year=2027)
         self.assertNotIn("small", built)
         self.assertAlmostEqual(built.get("big", 0.0), 3000.0, places=6)
 
@@ -332,7 +378,7 @@ class TestWalkAllocator(unittest.TestCase):
         for p in _patch_synth():
             p.start()
             self.addCleanup(p.stop)
-        built = self._run(ScenarioConfig(storage_entry_cost_normalized_rank=True))
+        built = self._run(_cfg(rank=True))
         # An inert walk reproduces the bang-bang split, so the D-3 flip must
         # match TestBangBangAllocator.test_rank_flag_flips_to_per_capex.
         self.assertAlmostEqual(built["small"], 3000.0, places=6)
@@ -344,7 +390,7 @@ class TestWalkAllocator(unittest.TestCase):
         for p in _patch_synth():
             p.start()
             self.addCleanup(p.stop)
-        cfg = ScenarioConfig()
+        cfg = _cfg()
         iso = get_iso_config("ERCOT")
         existing = build_default_storage(iso, cfg)
         bang = _mw_by_tech(

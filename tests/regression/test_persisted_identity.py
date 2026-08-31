@@ -110,7 +110,62 @@ PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"
 #
 # Same discipline as the pin above: do NOT re-baseline this literal to silence a
 # failure. A genuine advance is recorded here with a dated cause block.
-PINNED_BACKCAST_CACHE_KEY = "35b6dc12f97968f1"
+#
+# ADVANCED 2026-08-31, 35b6dc12f97968f1 -> e027bc248c93c835 — owner ruling R-A
+# of the director sitting ("Arm both"), executed by the T1-H arming lane. This
+# is the DELIBERATE second remedy the sibling property test names, taken with
+# eyes open, not a re-baseline to silence red.
+#
+# CAUSE. `storage_entry_availability_gate` and
+# `storage_entry_cost_normalized_rank` flip default False -> True. Both are
+# `_CACHE_KEY_OPTIONAL_FIELDS` members AND both are coerced OFF in
+# `mode="backcast"`, so coerced-False stopped being the default and both fields
+# re-entered the backcast payload — structurally the same shape as the D-3a
+# near-miss narrated above, and caught by exactly the pin written for it.
+#
+# WHY NOT THE D-3a REPAIR (coerce to the dataclass default). Because here that
+# would ARM the mechanisms in a backcast rather than merely re-label them.
+# `net_cone_forward_escalation` had no live consumer, so coerce-to-default was
+# behaviour-neutral; these two feed `apply_storage_new_entry`, and
+# `runner.run_scenario_iso` — which serves BOTH modes and takes its evolution
+# branch on year 2+ of any multi-year span — would then run the armed screen in
+# a multi-year backcast. The production backcast lane
+# (`run_calibration_full.py` -> `pipeline.solve`, one config per year) never
+# reaches it, so the exposure is latent rather than live; the coercion is what
+# keeps it that way, and a default flip is not licence to spend that guarantee.
+#
+# WHAT THIS COSTS, EXACTLY. A one-time cache MISS per backcast config: every
+# pre-2026-08-31 `results/<ISO>/<key>/` backcast bundle is now addressed by a
+# key nothing computes, so the next backcast re-solves. It is NOT a behaviour
+# change and NOT a scoring change — a backcast's dispatch, its scores and its
+# `run_config.json` are byte-identical across the flip (both fields serialize
+# False either side), so no keeper, sidecar, determination or dashboard row
+# moves and nothing needs re-scoring. Full record: the cache-epoch ledger in
+# `src/market_sim/results/cache.py`, epoch 2026-08-31.
+PINNED_BACKCAST_CACHE_KEY = "e027bc248c93c835"
+
+# Registered cache-key-optional fields whose backcast coercion is KNOWINGLY off
+# their default, each having paid for its re-key in the block above. Only these
+# are exempt from
+# ``test_no_registered_optional_field_is_backcast_coerced_off_its_default``;
+# an undeclared offender still fails it, and a declared entry that stops being
+# coerced fails
+# ``test_declared_backcast_rekeys_are_still_really_coerced_off``.
+#
+# ADD TO THIS LIST ONLY WITH the pin advance in the same commit. It is not a
+# way to make the property test quiet — it is the record of a debt already paid.
+_DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
+    "storage_entry_availability_gate": (
+        "R-A arming 2026-08-31: forecast-only storage entry screen. Coercing to "
+        "the dataclass default would ARM it in a multi-year backcast through "
+        "runner.run_scenario_iso, so the coercion stays and the re-key was paid "
+        "at the pin above"
+    ),
+    "storage_entry_cost_normalized_rank": (
+        "R-A arming 2026-08-31: same posture, same reason — the two are armed "
+        "as one mechanism pair and coerced off together"
+    ),
+}
 
 
 @pytest.mark.parametrize(
@@ -231,6 +286,12 @@ def test_no_registered_optional_field_is_backcast_coerced_off_its_default() -> N
     cache-neutral **at the default only**, so a backcast coercion that lands on
     anything else silently re-keys every backcast bundle. Checking the property
     (rather than only the digest) names the offending field directly.
+
+    A field may leave the property ONLY through
+    :data:`_DECLARED_BACKCAST_COERCION_REKEYS` — the second remedy this test's
+    own message offers — which requires the re-key to have been paid for at
+    ``PINNED_BACKCAST_CACHE_KEY`` with a dated cause block. An UNDECLARED
+    offender still fails, so the silent-re-key hole stays closed.
     """
     from market_sim.config import scenarios as scen
 
@@ -240,13 +301,40 @@ def test_no_registered_optional_field_is_backcast_coerced_off_its_default() -> N
         name: (getattr(defaults, name), getattr(backcast, name))
         for name in scen._CACHE_KEY_OPTIONAL_FIELDS
         if getattr(backcast, name) != getattr(defaults, name)
+        and name not in _DECLARED_BACKCAST_COERCION_REKEYS
     }
     assert not offenders, (
         "registered cache-key-optional field(s) are coerced OFF their default "
         f"in backcast, so they enter the backcast hash: {offenders}. Coerce to "
         "the dataclass default (see net_cone_forward_escalation in "
         "scenarios.py::__post_init__), or accept the re-key deliberately and "
-        "advance PINNED_BACKCAST_CACHE_KEY with a dated cause block."
+        "advance PINNED_BACKCAST_CACHE_KEY with a dated cause block, adding the "
+        "field to _DECLARED_BACKCAST_COERCION_REKEYS with its reason."
+    )
+
+
+def test_declared_backcast_rekeys_are_still_really_coerced_off() -> None:
+    """Every declared exemption must still BE one — no stale allowlist entries.
+
+    The allowlist suppresses a real invariant, so it may only ever name fields
+    that genuinely are coerced off their default today. A field that later
+    stops being coerced (or whose default moves back) must leave the list, or
+    it would silently license a future re-key nobody paid for.
+    """
+    from market_sim.config import scenarios as scen
+
+    defaults = ScenarioConfig()
+    backcast = ScenarioConfig(mode="backcast")
+    stale = [
+        name
+        for name in _DECLARED_BACKCAST_COERCION_REKEYS
+        if name not in scen._CACHE_KEY_OPTIONAL_FIELDS
+        or getattr(backcast, name) == getattr(defaults, name)
+    ]
+    assert not stale, (
+        f"stale _DECLARED_BACKCAST_COERCION_REKEYS entries: {stale}. Each is "
+        "either no longer cache-key-registered or no longer coerced off its "
+        "default, so its exemption is dead and must be removed."
     )
 
 
