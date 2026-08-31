@@ -1,0 +1,180 @@
+{
+ "prereg": "PREREG-miso193-cc-duct-peaking-cap-2026-08-31.md \u00a74-\u00a75",
+ "keeper": "2026-08-30-miso-191-bexit",
+ "control": "miso193_control_A",
+ "arm": "miso193_cap_B",
+ "S0": {
+  "gate": "S-0",
+  "files": [
+   {
+    "file": "class_hourly_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   }
+  ],
+  "passed": true
+ },
+ "S1": {
+  "gate": "S-1",
+  "diffs": {
+   "cc_duct_peaking_cap_pct": [
+    null,
+    8.0
+   ]
+  },
+  "passed": true
+ },
+ "S2": {
+  "gate": "S-2",
+  "years": {
+   "2023": {
+    "total_fall_mw": 1078.17,
+    "clipped_plants": 25,
+    "non_flagged_movers": {},
+    "passed": true
+   },
+   "2024": {
+    "total_fall_mw": 1077.73,
+    "clipped_plants": 25,
+    "non_flagged_movers": {},
+    "passed": true
+   },
+   "2025": {
+    "total_fall_mw": 1013.46,
+    "clipped_plants": 25,
+    "non_flagged_movers": {},
+    "passed": true
+   }
+  },
+  "passed": true
+ },
+ "K1": {
+  "pass_to_fail_flips": {
+   "fuelmix|ST_GAS|2024": "PASS -> FAIL",
+   "fuelmix|CC_REGULAR|2024": "PASS -> FAIL"
+  },
+  "all_flips": {
+   "fuelmix|ST_GAS|2024": "PASS -> FAIL",
+   "fuelmix|CC_REGULAR|2024": "PASS -> FAIL"
+  },
+  "passed": false
+ },
+ "K2": {
+  "c3b_arm_nrmse": {
+   "2023": 0.08,
+   "2024": 0.114,
+   "2025": 0.189
+  },
+  "c3b_control_nrmse": {
+   "2023": 0.081,
+   "2024": 0.108,
+   "2025": 0.182
+  },
+  "over_gate": {},
+  "passed": true
+ },
+ "K3": {
+  "d4_fail_control": [],
+  "d4_fail_arm": [],
+  "new_d4_fails": [],
+  "passed": true
+ },
+ "K4": {
+  "note": "cap identified from engineering practice (F-class supplementary-firing max; the PJM-default constant) \u2014 no residual identification; n_residual stays 2 on the promotion attestation",
+  "passed": true
+ },
+ "scoring": {
+  "c3a_control_pct": {
+   "2023": 0.0913,
+   "2024": -4.5511,
+   "2025": -12.3405
+  },
+  "c3a_arm_pct": {
+   "2023": -0.9741,
+   "2024": -5.8824,
+   "2025": -13.3304
+  },
+  "c3a_adverse_face_pp": {
+   "2023": 0.8828,
+   "2024": 1.3313,
+   "2025": 0.9899
+  },
+  "direction_prediction": "DOWN (conf 0.8, frozen in phase 0)",
+  "direction_observed": {
+   "2023": "DOWN",
+   "2024": "DOWN",
+   "2025": "DOWN"
+  },
+  "determination_control": "NOT-YET",
+  "determination_arm": "NOT-YET"
+ },
+ "_face_exceeded": false,
+ "verdict": "REJECT (kill gate failed)"
+}
