@@ -984,12 +984,21 @@ class TestJointSignalVolumePosture(RunnerTestBase):
         self.assertGreaterEqual(len(captured), 2)
         return captured
 
+    # Ruling Q15 (2026-08-30) arms entry_margin_exhaustion AND
+    # entry_forward_reserve_leg as ERCOT forecast defaults via
+    # ISOConfig.default_scenario_overrides, so a reprice-disarmed ERCOT config
+    # must pin BOTH to express its posture: the D12 leg's own refusal (which
+    # this lane did not touch) makes a disarmed leg carrying it
+    # unconstructible, and an unpinned exhaustion would silently arm and turn
+    # the "disarm alone" control into the joint posture. Same pins the A/B's
+    # two arms carry (charter Amendment 1).
     def test_joint_posture_consumes_duals_and_builds_a_walk(self):
         captured = self._run_capturing_priors(
             ScenarioConfig(
                 iso="ERCOT",
                 entry_lookahead_reprice=False,
                 entry_margin_exhaustion=True,
+                entry_forward_reserve_leg=False,
             )
         )
         for kwargs, _ in captured:
@@ -1006,7 +1015,12 @@ class TestJointSignalVolumePosture(RunnerTestBase):
     def test_disarm_alone_builds_no_walk(self):
         """The widening must not leak into the plain disarm posture."""
         captured = self._run_capturing_priors(
-            ScenarioConfig(iso="ERCOT", entry_lookahead_reprice=False)
+            ScenarioConfig(
+                iso="ERCOT",
+                entry_lookahead_reprice=False,
+                entry_margin_exhaustion=False,
+                entry_forward_reserve_leg=False,
+            )
         )
         for kwargs, obj in captured:
             self.assertIs(kwargs["price_signal"], kwargs["prices"])
