@@ -9394,3 +9394,81 @@ remove-only, never an invented per-unit split.
 Records: `FINDING-miso194-coldsnap-derate-2026-08-31.md`,
 `_miso194_coldsnap_derate_phase0.json`, probe
 `scripts/probes/_miso194_coldsnap_derate_phase0.py`.
+
+## miso-195 (2026-08-31) — the outage-envelope repair adjudicated: the remove-only measured cap is REFUTED at phase 0, zero-solve; every composition of `miso_native_outage_source` at the public record's grain is now closed; keeper unchanged, no LP spent
+
+**Keeper UNCHANGED: `2026-08-30-miso-191-bexit`.** Nothing armed, no field
+re-semanticized, no run registered (rule 15 not engaged). Ask A reproduced at
+session start: NOT-YET on {C3a-2025 −12.3%} alone, C1 16/16 / 12/12 free, C3c
+the single ledgered caveat, C6 attested, C8 PASS (two grounded notes);
+`audit_keepers --iso MISO` PASS 0/0; `build_status --check` in sync; matrix
+integrity OK. Distance to band +2.34 pp.
+
+**Charter.** FINDING-miso194 §7's named successor: the FLEET-GRAIN REMOVE-ONLY
+measured cap on the armed CAMPD envelope, fed by MISO's published MOM unplanned
+record through the already-built `miso_native_outage_source` path, argued from
+the net-load channel. Form charter-forced (miso-176 K-2: no invented
+apportionment; remove-only: the pjm-145 resurrection channel and the miso-85
+coal-resurrection C1 failure unreachable by construction).
+
+**Phase 0, rule frozen in the probe docstring and pushed at `09f70160` before
+any adjudicating quantity** (miso-193/194 pattern; every basis
+satisfiability-checked mechanically on the control first). Cause-type basis
+settled ex ante: **unplanned (D+F+U), never all-cause** — the with-Planned form
+is owner-adjudicated infeasible (miso-85, 12/15/61 days) and the cap equals the
+substitution in every binding hour, so that refutation applies verbatim;
+congruence is best exactly in the target window (July `Planned` 7.9 GW vs 36.4
+April); unplanned is the lineage basis (miso-85/160/161).
+
+| witness | line | result |
+|---|---|---|
+| W1 composition census | 0 armed daily-level consumers | **PASS** (`summer_wefor_share_override` consumes the seasonal RATIO; deficit is net of the full armed envelope — double-count impossible by construction) |
+| W2 level congruence (pjm-161 transfer) | M(2025) < P_all(2025) | **PASS** 36.8 < 48.7 GW |
+| W3 bind in top-200 (2025) | ≥ 25% | **PASS 91.5%** |
+| W4 conversion vs the keeper's own surplus | ≥ 25% of binding S hours | **FAIL 16.9%** (31/183; leg-A exhaustion 0) |
+| W5 reach ceiling at actuals | ≥ +0.30 pp | **PASS +11.79 pp** (S-only +4.76) |
+| W6 physical feasibility | ≤ 3 violation days/yr | **FAIL: 6 in 2025** (2023: 2, 2024: 0) |
+| **charter gate** | all six | **`CHARTER_AB = false`** |
+
+**What the measurement established before it refuted.** The defect is real and
+bigger than the anti-list's bound: the armed envelope's July-2025 monthly mean
+is its own year-MINIMUM (24.5 GW) against the record's 31.7 GW; ρ(deficit, net
+load) +0.43/+0.47/+0.54; top-1% net-load binding 80.7/88.6/94.3%; and the
+scarce-set deficit decomposes (R2) as **5.94 GW = level gap 2.20 + model
+peak-sag 2.94 + the record's own increment 0.69** — ten times the miso-161
+"MOM daily-grain ≲0.11 pp" quantity, which bounded only the third term.
+
+**What refuted it.** (W4) The median binding-hour removal, 6.65 GW, sits
+against 18.3 GW of idle thermal capability (10.95 GW idle CT_PEAKER+ST_GAS
+alone) — the miso-194 absorption regime, milder but standing. (W6) The capped
+availability falls below MISO's own measured EIA-930 daily-max coal+gas output
+on **Jun 23/24 + Jul 23/28/29/30 of 2025 — the heat-event block itself**;
+post-gate attribution: all 8 violation days across years are **CAP-CAUSED**
+(the incumbent is feasible on every one), overshoot 0.57–4.58 GW; on Jul 28
+the real fleet delivered 86.6 GW against the cap's 82.0 GW ceiling — ≥4.6 GW
+of non-population outage MW in the record's numerator on the exact day the
+mechanism exists to reprice. **Coherence: 28 of the 31 converting hours sit ON
+the cap-caused violation days** — the conversion signal is scarcity
+manufactured from provably-excessive removal (rule 1's forbidden path,
+measured before any solve was spent).
+
+**Closure geometry.** Substitution `R` (miso-85/86) + attribution
+refused-at-charter (miso-87) + remove-only refuted (this session) = **every
+admissible composition of `miso_native_outage_source` at the public record's
+aggregate grain is adjudicated**. Envelope repair from this record now needs a
+class-resolved source (the standing data ask; candidates 1–3 closed, candidate
+4 unchanged) or a different family. **NOT closed:** the inversion defect
+itself (real, measured, unrepaired) and `cc_outage_derate_from_top` (tranche
+grain, U, handed on with its declared-adverse face — miso-193 measured
+top-band shrink moves C3a-2025 DOWN).
+
+**Cell stamp:** `campd_outage_windows` stays **K**; its ev note now carries the
+miso-195 adjudication (rule 28(b), same session). §5.4 queue stamp added.
+Queue otherwise unchanged: `egrid_identity_heat_rates` (K@NYISO),
+`tac_load_coverage` (K@CAISO), `lcr_tsl_published` (K@CAISO+NYISO).
+
+Records: `FINDING-miso195-outage-envelope-cap-2026-08-31.md`,
+`_miso195_outage_envelope_phase0.json`, probe
+`scripts/probes/_miso195_outage_envelope_phase0.py` (frozen at `09f70160`).
+Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number:
+**miso-196.**
