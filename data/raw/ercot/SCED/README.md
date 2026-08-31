@@ -167,10 +167,12 @@ tracked here:
 * the **ERCOT-157 window, publications 2023-03 .. 2024-03 (323 shards)** —
   irreplaceable-from-source (restored by hand once already; see Provenance),
   never converted;
-* `README.md`, `SHA256SUMS.txt` (whose post-slim hashes ARE the untracked
-  bytes' hashes — a restore verifies against it), `.gitkeep`, and
-  `rtcb-format-2026/README.md` (the quarantine layout stays load-bearing —
-  see the RTC+B section above; never flatten it).
+* `README.md`, `SHA256SUMS.txt` (whose post-slim hashes ARE the ORIGINAL
+  untracked bytes' hashes — an identity record, but **not** an acceptance
+  instrument for a re-fetch; see route 2 below), `RESTORE-ROWCOUNTS.txt` (the
+  writer-independent restore manifest that IS — ercot-248, 2026-08-31),
+  `.gitkeep`, and `rtcb-format-2026/README.md` (the quarantine layout stays
+  load-bearing — see the RTC+B section above; never flatten it).
 
 Recovery routes for the untracked window:
 
@@ -183,14 +185,48 @@ Recovery routes for the untracked window:
    there, because it is live at tip). `git restore --source=<pin>` cannot
    recover these bytes from this repository. `SHA256SUMS.txt` remains the
    identity record any recovery is verified against.
-2. **Re-fetch from the free MIS path while retention lasts — now the PRIMARY
-   route** (`scripts/data/fetch_ercot_sced_corpus_shards.py`; publications
-   ≥ 2024-03-24 were servable as of 2026-08-09). The MIS window is a rolling
-   ~28 months that shrinks daily: a publication month that ages out is
-   thereafter **unrecoverable from any source** — history-as-archive is no
-   longer true for this corpus. A re-fetch regenerates raw bytes; re-run
-   `slim_ercot_dam_disclosure.py --sced-only` and judge the result against
-   `SHA256SUMS.txt` (the manifest is the byte truth).
+2. **Re-fetch from the free MIS path while retention lasts — the PRIMARY
+   route, EXECUTED AND VERIFIED END TO END on 2026-08-31 (ercot-248).** The
+   whole window came back: 700/700 ordinary publication days in
+   `[2024-04-01 .. 2026-03-01]` listed, 700 parts written, 0 duplicate delivery
+   days, 0 deliveries past 2025-12-31, and the only gap the known
+   2024-01-10..23 one. Command, exactly:
+
+   ```bash
+   python scripts/data/fetch_ercot_sced_corpus_shards.py \
+       --pub-start 2024-04-01 --pub-end 2026-03-01 \
+       --max-delivery-date 2025-12-31 --manifest <scratch>/manifest.json
+   ```
+
+   **`--pub-start` is 2024-04-01, NOT the 2024-03-24 retention floor.** Pubs
+   2024-03-24..31 are already on disk as the tracked `2024-03.part0009-0016`
+   (deliveries 2024-01-24..31), and the fetcher resumes off its own manifest,
+   not off disk — starting at the floor appends 8 duplicate parts that silently
+   double-weight those days in every consumer that streams the corpus.
+   Afterwards **move the 27 HASL-less RTC+B parts into `rtcb-format-2026/`**
+   (the fetcher writes flat): detect them by the missing `HASL` column, never
+   by assumed numbering. `scripts/data/audit_sced_corpus.py` checks all of
+   this, and `--check` verifies the result against `RESTORE-ROWCOUNTS.txt`.
+
+   **CORRECTION (ercot-248): `SHA256SUMS.txt` cannot accept a re-fetch, and the
+   former instruction to "judge the result against it" was not achievable.**
+   Parquet bytes are writer-version specific — the tracked shards were written
+   by `parquet-cpp-arrow 24.0.0`, and a 25.0.1 writer produces a byte-different
+   file from identical content (measured on `2024-04.part0000`: manifest
+   `11c02e4e…` vs re-fetch + `slim_ercot_dam_disclosure.py --sced-only`
+   `93f9d398…`, while the tracked `2024-03.part0016` rehashes to its manifest
+   line exactly, so the manifest itself is sound). `SHA256SUMS.txt` stays the
+   identity record of the ORIGINAL bytes; a restore is judged instead against
+   the writer-independent `RESTORE-ROWCOUNTS.txt` (delivery day, row count,
+   column count per part).
+
+   Retention: the MIS free window is **not** decaying as feared — the earliest
+   listed publication measured `2024-03-24` on 2026-08-04, 2026-08-09 and again
+   on 2026-08-31, i.e. unmoved across four weeks, so the 2024-01-10..23 gap has
+   not grown. Treat that as measured, not guaranteed: re-measure before relying
+   on it, and a publication month that does age out is thereafter
+   **unrecoverable from any source** — history-as-archive is no longer true for
+   this corpus.
 3. **Last-resort salvage:** as of 2026-08-16 the pre-rewrite trees remain
    incidentally reachable through GitHub's `refs/pull/*` retention (e.g.
    `git fetch origin refs/pull/3978/head` reaches the last fully-tracked
@@ -199,7 +235,20 @@ Recovery routes for the untracked window:
 
 Consumers are unaffected at solve/test time (derive-time only, per the
 Consumers note in `docs/bloat-removal-plan-2026-08.md` §3): a rule-23
-re-derivation session restores the window from the pin (or hydrates it under
-a partial clone — the fast-clone profiles derive from the tree at HEAD, so
-these payloads no longer weigh the `ercot` profile) and runs the derives
-against the restored bytes.
+re-derivation session restores the window by **re-fetch** (route 2 — the pin
+route is dead; and a partial clone cannot hydrate what is untracked at HEAD,
+which is also why these payloads no longer weigh the `ercot` profile) and runs
+the derives against the restored bytes.
+
+**A restore lands RAW bytes, and re-slimming is optional.** The 2026-08-31
+restore measured **2,341.5 MiB** un-slimmed (188 columns pre-RTC+B, 193/195
+RTC+B) against the 1,846.9 MiB post-slim figure above — 0.5 GiB of ephemeral
+container disk to keep every published column, including the
+`SCED1 Curve-*` / `Min Gen Cost` / `Start Up * Offer` columns the 108-column
+`SCED_KEEP` projection drops and that a per-unit commitment-state lane wants.
+Since the payload is gitignored either way, re-run
+`slim_ercot_dam_disclosure.py --sced-only` only if the restoring session is
+actually short of disk; the corpus consumers select columns explicitly and
+read the raw shards unchanged (verified 2026-08-31: `derive_ercot_sced_offer_wall
+--years 2023` reproduced its pre-restore output **byte-identically**, sha256
+`6601a821…`, and 2024/2025 derive cleanly off the restored window).
