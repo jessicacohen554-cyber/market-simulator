@@ -3,8 +3,8 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "88baa9d5c71b",
-    "scored_at_date": "2026-08-30T22:25:59Z",
+    "scored_at_sha": "4bdb2d603c68",
+    "scored_at_date": "2026-08-31T04:04:26Z",
     "cache_epoch": "9a7f68fc7dcac931"
   },
   "tier": "t1f",
@@ -13,8 +13,7 @@
   "reasons": [],
   "caveats": [
     "FC-1 structural integrity (I1-I14)",
-    "FC-2 adequacy & equilibrium behavior",
-    "FC-7 provenance & DOF"
+    "FC-2 adequacy & equilibrium behavior"
   ],
   "notes": [],
   "categories": {
@@ -97,7 +96,7 @@
     "FC-7": {
       "label": "FC-7 provenance & DOF",
       "applicability": "required",
-      "status": "CAVEAT",
+      "status": "PASS",
       "rows": [
         {
           "row": "run_config",
@@ -113,8 +112,8 @@
         },
         {
           "row": "dof ledger",
-          "status": "CAVEAT",
-          "detail": "DOF ledger absent (identification unproven)",
+          "status": "PASS",
+          "detail": "7 entries well-formed (0 open residual DOF listed)",
           "gating": true
         }
       ]

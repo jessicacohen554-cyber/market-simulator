@@ -2762,13 +2762,13 @@
       "status": "PASS"
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
+      "detail": "7 entries well-formed (0 open residual DOF listed)",
       "gating": true,
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "PASS"
      }
     ],
-    "status": "CAVEAT"
+    "status": "PASS"
    },
    "FC-8": {
     "applicability": "runtime",
@@ -2786,8 +2786,7 @@
   },
   "caveats": [
    "FC-1 structural integrity (I1-I14)",
-   "FC-2 adequacy & equilibrium behavior",
-   "FC-7 provenance & DOF"
+   "FC-2 adequacy & equilibrium behavior"
   ],
   "determination": "PROMOTE-WITH-CAVEATS",
   "iso": "NEISO",
@@ -2795,9 +2794,9 @@
   "provenance": {
    "cache_epoch": "9a7f68fc7dcac931",
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T22:25:59Z",
-   "scored_at_sha": "88baa9d5c71b",
-   "session": "capx-S4b-neiso-ara (CONTROL arm: the three NEISO requirement registry values locally reverted to the FCA-17 prints \u2014 PRM 30,305/27,298-1, DR 2,940/30,305, import 567.0 \u2014 uncommitted diagnostic for attribution only, never a shippable configuration)"
+   "scored_at_date": "2026-08-31T04:04:26Z",
+   "scored_at_sha": "4bdb2d603c68",
+   "session": "capx-S4b-neiso-ara (CONTROL arm: the three NEISO requirement registry values locally reverted to the FCA-17 prints \u2014 PRM 30,305/27,298-1, DR 2,940/30,305, import 567.0 \u2014 uncommitted diagnostic for attribution only, never a shippable configuration) \u00b7 FC-7 DOF-LEDGER RE-EMISSION 2026-08-31 by lane capx-D8-RE (director r#21): re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-s4b-ara/neiso-control/dof_ledger.json, the capx-D8 instrument's committed ledger \u2014 7 entries, 0 UNIDENTIFIED). ZERO SOLVES. Control: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte, so the ONLY delta is the ledger input. Prior stamp preserved here: scored_at_sha 88baa9d5c71b @ 2026-08-30T22:25:59Z (session capx-S4b-neiso-ara). MOVED: FC-7 'dof ledger' row CAVEAT->PASS, FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired. NOT MOVED: determination (PROMOTE-WITH-CAVEATS, held by the arm's own FC-1/FC-2 caveats) and every other row. The TREATMENT arm's identical re-emission (bare `neiso-t1f`, which WOULD flip PROMOTE-WITH-CAVEATS->PROMOTE) is deliberately NOT landed \u2014 STOPPED under the 2026-08-30 cross-lane re-grade ruling pending lane S-4b's own re-verification, so the two arms' FC-7 rows differ at HEAD for a RECORDS reason, never a control/treatment one (both arms share one run_config and one ledger content). docs/handoffs/FINDING-capx-d8-dof-ledger-2026-08-30.md \u00a78."
   },
   "reasons": [],
   "rubric_version": "1.0",
