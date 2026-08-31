@@ -149,3 +149,18 @@ conduct-corpus intake · (e) the nyiso-161 winter-face waiver card, still unrule
 miso-192's D-4 posture options. **CLOSED since r#21:** caiso-227 arm funding (funded; caiso-228
 executed it and it died at gate D1) and chartering the C3c program's first lane (the charter
 exists and Q1/Q2 are both spent — pjm-164 REAL, nyiso-164 confirms NYISO's ledger).
+
+**r#22 AMENDMENT (same sitting).** **NEISO-RC-R LANDED IN FULL** (PR #4467) — my census missed
+it because I searched by BRANCH STEM and the lane ran on `claude/neiso-rc-repair-fymtkz`.
+Standing lesson: **grade by content (`git log origin/main --grep=<LANE-ID>` + merged PRs),
+never by branch name.** Four owner rulings taken: **Q16** golden re-solve HOLD, fix the t3
+ceiling first (FC-5/FC-6 are required at t3 and neither instrument exists for any ISO, so no
+golden can grade better than HOLD) · **Q17** C3c Q3 NOT opened, so the C3c program CLOSES on
+evidence · **Q18** the ERCOT SCED conduct-corpus intake FUNDED (offered as a backcast prompt) ·
+**Q19** ceiling order = FC-6 then FC-5. Two more lanes issued: **D21** (FC-6 driver battery,
+Fable) and **D22** (FC-5 `benchmark-corridor` datatype + intake, no scorer edit, Opus). Also
+landed: the C3c audit (PR #4466) retracted its own Q2 false positive and found two defects in
+`data/raw/_validation-source/actual_as_reserve_NYISO.parquet` — a nested reserve cascade must
+be MAXED, never SUMMED, a rule now available to five other ISO lanes; and miso-194 (cold-snap
+gas derate REFUTED, cell U→I). In flight after the amendment: D8-V · D4-M · D17 · D18 · D21 ·
+D22.
