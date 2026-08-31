@@ -755,6 +755,106 @@ def _agg_status(records: list[dict]) -> str:
 # --------------------------------------------------------------------------- #
 # (b) Capacity events — reuse score_capacity_hindcast verbatim
 # --------------------------------------------------------------------------- #
+def retirement_decisions_in_window(ledgers: dict, last_scored_year: int) -> dict:
+    """Report-only decided-in-window retirement diagnostic (NEISO-RC-R R4).
+
+    The executed-MW retirement score is blind to LAG CENSORING: a decision the
+    screen takes inside the scored window whose per-fuel execution lag lands
+    the exit past it (coal's 3-year lag can never execute inside a 2023-start
+    window) is invisible — the model "decided the right thing" and still
+    scores a miss. This block reports the DECISION grain alongside the
+    executed grain (the retirement mirror of the signed D-9(ii)
+    decision-basis additions), banded by nothing: per fuel, the MW decided at
+    a ``decided_year <= last_scored_year``, split into executed-in-window,
+    lag-censored (``execute_year > last_scored_year``, still pending at the
+    ledger horizon), and reversed-before-execution. Reads the ledgers'
+    ``pipeline_events`` (the FFR-5A bar decomposition recorder); a bundle
+    whose ledgers carry no pipeline events (pre-recorder, or the legacy
+    retirement rule) degrades to an explicit note — absence is recorded,
+    never fabricated. Requires the crossover bundle to COMMIT its evolution
+    ledgers (the R4 tracked-set change; the capxd14-era bundles committed
+    none, which is why this censoring was unobservable there —
+    FINDING-capx-neiso-rc-phase0-2026-08-30.md §6 R4).
+    """
+    decided: dict[str, dict] = {}
+    outcomes: dict[str, str] = {}
+    any_events = False
+    for year in sorted(ledgers):
+        led = ledgers[year] or {}
+        for e in led.get("pipeline_events", []) or []:
+            any_events = True
+            ev = e.get("event")
+            uid = str(e.get("unit_id"))
+            if ev == "decided" and int(e.get("decided_year", year)) <= last_scored_year:
+                decided[uid] = {
+                    "unit_id": uid,
+                    "fuel": e.get("fuel"),
+                    "mw": float(e.get("mw") or 0.0),
+                    "decided_year": int(e.get("decided_year", year)),
+                    "execute_year": (
+                        int(e["execute_year"])
+                        if e.get("execute_year") is not None
+                        else None
+                    ),
+                }
+            elif ev in ("executed", "retired", "reversed") and uid in decided:
+                outcomes[uid] = "reversed" if ev == "reversed" else "executed"
+    if not any_events:
+        return {
+            "note": (
+                "no pipeline_events in the run's ledgers — either the bundle "
+                "commits no evolution ledgers (the pre-R4 crossover tracked "
+                "set) or the run predates the FFR-5A recorder / used the "
+                "legacy retirement rule; decided-in-window censoring is "
+                "unobservable for it (reported as absent, never fabricated)"
+            ),
+            "per_fuel": None,
+        }
+    per_fuel: dict[str, dict] = {}
+    for uid, d in decided.items():
+        f = d["fuel"] or "?"
+        row = per_fuel.setdefault(
+            f,
+            {
+                "decided_mw": 0.0,
+                "executed_in_window_mw": 0.0,
+                "lag_censored_mw": 0.0,
+                "reversed_mw": 0.0,
+                "n_decided": 0,
+            },
+        )
+        row["decided_mw"] += d["mw"]
+        row["n_decided"] += 1
+        if outcomes.get(uid) == "reversed":
+            row["reversed_mw"] += d["mw"]
+        elif d["execute_year"] is not None and d["execute_year"] > last_scored_year:
+            row["lag_censored_mw"] += d["mw"]
+        else:
+            row["executed_in_window_mw"] += d["mw"]
+    return {
+        "decision": (
+            "NEISO-RC-R R4 (2026-08-31) — report-only decision-grain "
+            "retirement diagnostic; the retirement mirror of the signed "
+            "D-9(ii) decision-basis additions. Nothing bands on it."
+        ),
+        "last_scored_year": last_scored_year,
+        "per_fuel": {
+            f: {k: (round(v, 1) if isinstance(v, float) else v) for k, v in row.items()}
+            for f, row in sorted(per_fuel.items())
+        },
+        "lag_censored_units": sorted(
+            (
+                d
+                for uid, d in decided.items()
+                if outcomes.get(uid) != "reversed"
+                and d["execute_year"] is not None
+                and d["execute_year"] > last_scored_year
+            ),
+            key=lambda d: -d["mw"],
+        )[:25],
+    }
+
+
 def score_capacity_events(
     cache_dir: Path, iso: str, bundle: Path | None = None
 ) -> dict:
@@ -884,6 +984,8 @@ def score_capacity_events(
         "excluded_pre_vintage_rows": int(len(excluded_ret)),
     }
 
+    ret_decisions = retirement_decisions_in_window(ledgers, max(SCORED_YEARS))
+
     add = CH.score_additions(madd, actuals, basis=CH.ADDITIONS_BASIS_DECISION)
     add_cod = CH.score_additions(madd_cod, actuals, basis=CH.ADDITIONS_BASIS_COD)
     add_basis = CH.additions_basis_record(
@@ -899,6 +1001,7 @@ def score_capacity_events(
         "retirements": ret,
         "retirements_vintage_basis": ret_vint,
         "retirement_target_basis": ret_basis,
+        "retirement_decisions_in_window": ret_decisions,
         "additions": add,
         "additions_cod_basis": add_cod,
         "additions_basis": add_basis,

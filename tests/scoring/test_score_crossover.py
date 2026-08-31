@@ -806,3 +806,61 @@ def test_capacity_events_reports_dual_retirement_basis(monkeypatch, tmp_path):
     assert basis["excluded_pre_vintage_mw"] == pytest.approx(500.0)
     assert basis["excluded_pre_vintage_rows"] == 1
     assert "side" in basis["decision"].lower() or "D-9(ii)" in basis["decision"]
+
+
+def test_retirement_decisions_in_window_reports_lag_censoring():
+    """NEISO-RC-R R4: decided-in-window MW split into executed / lag-censored /
+    reversed per fuel — and an explicit degrade note with no pipeline_events."""
+    ledgers = {
+        2024: {
+            "pipeline_events": [
+                # Coal decided 2024, lag-3 execution 2027 — lag-censored.
+                {
+                    "event": "decided",
+                    "unit_id": "COAL_p1_a",
+                    "fuel": "coal",
+                    "mw": 300.0,
+                    "decided_year": 2024,
+                    "execute_year": 2027,
+                },
+                # Gas decided 2024, executes 2025 — in window.
+                {
+                    "event": "decided",
+                    "unit_id": "CC_p2_b",
+                    "fuel": "gas_cc",
+                    "mw": 500.0,
+                    "decided_year": 2024,
+                    "execute_year": 2025,
+                },
+                {
+                    "event": "decided",
+                    "unit_id": "CC_p3_c",
+                    "fuel": "gas_cc",
+                    "mw": 200.0,
+                    "decided_year": 2024,
+                    "execute_year": 2025,
+                },
+            ]
+        },
+        2025: {
+            "pipeline_events": [
+                {"event": "executed", "unit_id": "CC_p2_b", "fuel": "gas_cc"},
+                # The 200 MW decision reverses before execution.
+                {"event": "reversed", "unit_id": "CC_p3_c", "fuel": "gas_cc"},
+            ]
+        },
+    }
+    out = X.retirement_decisions_in_window(ledgers, 2025)
+    pf = out["per_fuel"]
+    assert pf["coal"]["decided_mw"] == 300.0
+    assert pf["coal"]["lag_censored_mw"] == 300.0
+    assert pf["coal"]["executed_in_window_mw"] == 0.0
+    assert pf["gas_cc"]["decided_mw"] == 700.0
+    assert pf["gas_cc"]["executed_in_window_mw"] == 500.0
+    assert pf["gas_cc"]["reversed_mw"] == 200.0
+    censored = {u["unit_id"] for u in out["lag_censored_units"]}
+    assert censored == {"COAL_p1_a"}
+
+    empty = X.retirement_decisions_in_window({2024: {"retirements": []}}, 2025)
+    assert empty["per_fuel"] is None
+    assert "no pipeline_events" in empty["note"]
