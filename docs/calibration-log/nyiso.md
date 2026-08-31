@@ -9020,3 +9020,103 @@ DO-NOT-REDO list is honoured and reinforced, not re-opened: "arming a NYCA-level
 family/requirement so the tail can price" is now refuted twice, independently.
 
 Next shorthand: nyiso-166.
+
+## 2026-08-31 — nyiso-166: the committed RT-reserve calibration reference is REPAIRED — both defects fixed at source, all nine years regenerated, and the artifact now reproduces the measurement of record hour by hour (zero solve)
+
+**Charter:** rule 14 `[R-ACCURATE]`. **Zero solve**, committed artifacts + committed
+raw only. No holdout spend, no mechanism, no prereg, no scalar, no `ScenarioConfig`
+field, no keeper/shard/marker/frontier/determination change, no RCPF value touched.
+The nyiso-161 winter-face waiver card stays **FILED AND UNRULED**; `governance.md`
+untouched. Full record: `docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md`.
+
+**(0) State verified first, and re-verified after.** Keeper
+`2026-08-30-nyiso-159-loss-surface` → **NOT-YET** on exactly {C3a-2025 −11.5 %,
+C3c 2023/24/25}; `audit_keepers.py --iso NYISO` → **PASS 0/0**. Both re-read
+**identically** after the repair. NYISO holds no `complete` marker, is absent from
+`final`, freeze active, {2023,2024,2025} only — all untouched.
+
+**(1) Executed the repair nyiso-165 §3 filed.** `process_nyiso_as.py::build_reference`
+carried two independent defects in every column and every year:
+- **A — cascade summed.** `stack = spin_10 + nonsync_10 + op_30`. The products
+  nest by duration, so the posted prices are **cumulative**: `spin_10 ≥
+  nonsync_10 ≥ op_30` in **100.0000 %** of rows (96,360 / 96,624 / 96,360 rows,
+  11 zones, 2023/24/25), all three exactly equal in 82.73 / 83.56 / 82.11 %. A
+  10-min spinning MW earns `spin_10`, not the sum. **Now the cascade MAX.** The
+  nested-**region** stacking (NYCA + East + SENY + NYC) is real and is already
+  inside each posted zonal price — it is the **duration** products that are not
+  additive.
+- **B — naive positional clock.** The CSV's prevailing-Eastern `Time Stamp` was
+  mapped positionally onto the model's std-time 8760 index; measured disagreement
+  **5,712 / 8,760 h (65.2 %)** in each of the three years — the whole DST season,
+  where the tail sits. **Now localized to `America/New_York` and re-indexed with
+  the repo's own `derive_actual_lmp._std_hour_index` on `Etc/GMT+5`**, the same
+  conversion nyiso-164 uses. Two side effects, both improvements: the per-year
+  CSV's Jan-1-of-next-year boundary-spill row is now dropped (it had been folded
+  onto hour 0), and the DST fall-back hour is honestly NaN (std 7393/7345/7321),
+  matching nyiso-164's coverage exactly at 8,759 mapped hours.
+
+Regenerated for **every year the artifact carries — 2018–2026**, not just the
+training window (rule 22: data prep is unrestricted and applies consistently
+across all years; only *looking at the answer* is the spend, and none was).
+
+**(2) VALIDATION — the mandatory one, and it passes.** The repaired reference
+reproduces `scripts/probes/nyiso164_nyca_shortage_check.py`, which measures the
+same quantity from the raw CSVs by a *different* construction (min across A–E,
+which price identically — max spread 0.000000 $/MW). NYCA tier in the C3c tail:
+**mean $306.74 / $254.62 / $393.31, median $248.22 / $239.96 / $403.74, max
+$761.73 / $552.89 / $1,101.85, ceiling test 0/65** — every figure matched. Beyond
+the tier summaries: **hour-by-hour parity in both tiers, all 8,759 mapped hours ×
+3 years, `allclose(rtol=1e-6, atol=1e-3)` with identical NaN patterns**; residual
+is the reference's float32 storage (max |diff| 1.2e-4 on values to $2,568). The
+probe re-run against the repaired tree returns a byte-identical JSON — it reads
+raw, so it is genuinely independent.
+
+**(3) Magnitude — levels overstated 1.8×–2.9×, incidence untouched.** 2023 NYCA
+mean $2.20 → **$1.25** / NYC $6.37 → **$3.52**; 2024 $2.51 → **$1.02** / $7.64 →
+**$3.59**; 2025 $10.99 → **$3.97** / $28.73 → **$11.69**. Hours >$0 are unchanged
+(629/3,020; 338/3,082; 876/4,007→4,006). **The 2025 NYC max of $5,568 should have
+been the tell** — above any attainable RCPF cascade; corrected to $2,146.50.
+
+**(4) Blast radius re-confirmed nil.** Sole consumer
+`derive_nyiso_rcpf_overlay.py`, and there it feeds **only printed validation
+reports** — checked call-site by call-site; never the written overlay parquet,
+never a parameter, never an LP. Which is why (0) re-reads identically.
+
+**(5) Regression test + two secondary repairs in the same class.**
+`tests/test_nyiso_as_reference_repair.py`, **9 tests passing**, pins the
+cascade-monotonicity invariant, the cascade-MAX end-to-end behaviour on synthetic
+CSVs, the std-clock identity (DST hour lands one hour earlier, winter hour
+unmoved, >60 % disagreement on real data, index injective), and hourly parity
+with nyiso-164; the data-backed half skips without the `nyiso` profile. Also:
+`_actual_zone_reserve`'s raw-CSV **fallback re-implemented both defects** and is
+**deleted** (rule 23 `[R-DELETE]` — a defective duplicate that still parses is a
+re-armable wrong answer); and the emitted column order is now deterministic, so
+the artifact is byte-reproducible (sha256 `60be007f…d0a52156`, identical across
+two regenerations). Names and dtypes unchanged.
+
+**(6) Records corrected.** `docs/nyiso-rcpf-overlay.md`'s "Measured validation"
+section quoted the pre-repair levels; corrected, with a dated note that the
+model-vs-measured mean comparisons earlier in that doc have a **superseded
+measured side** (model side unchanged — the modelled adder is *closer* to the
+measured level than those lines read). `scripts/probes/c3c_q2_nyiso_nyca_shortage.py`'s
+superseded-marker is dated to this repair: re-run at HEAD it no longer reproduces
+its own committed JSON (deliberately **not** re-run — that record stays the frozen
+artifact of the false positive) and it stays superseded regardless, its verdict
+having been wrong on the merits.
+
+**(7) Matrix.** Duty (a) discharged against `mechanism-matrix/NYISO.js`: **no cell
+moves, no shard edited** — a data-reference repair is not a mechanism, so duties
+(b) and (c) are not triggered. `nyiso_ordc_measured_step_span` **K**,
+`nyiso_li_locational_reserve` **K**, `nyiso_east_reserve_families` **I**,
+`energy_reserve_coopt` **K**, `ordc_scarcity_overlay` **·** all stand. The
+twice-refuted lines ("arm a NYCA-level family so the tail can price"; "the model
+lacks tail headroom") are **reinforced, not re-opened** — the corrected reference
+is exactly what nyiso-164 measured.
+
+**(8) Honest EV.** No gate moved; C3a-2025 and C3c are untouched, and NYISO's
+rubric-moving path stays owner-gated on the nyiso-161 card. What is delivered is a
+committed measured input that is now correct, agrees with the measurement of record
+by construction, is byte-reproducible, and is guarded by a test — and the removal of
+a trap that had already walked one audit to the wrong answer.
+
+Next shorthand: nyiso-167.

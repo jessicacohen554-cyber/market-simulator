@@ -15,9 +15,20 @@ with the construction that produced it. **Both defects are in the committed inpu
 it reads, not in this file's arithmetic** — which is the point of §4 of that
 finding:
 
+**THE INPUT WAS REPAIRED 2026-08-31 (nyiso-166,
+``docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md``).** Both defects
+below are described in the PAST tense as of that repair: ``build_reference`` now
+takes the cascade MAX and rides the standard-time clock, and the regenerated
+``actual_as_reserve_NYISO.parquet`` reproduces nyiso-164 hour by hour. So this
+file, re-run at HEAD, no longer reproduces its own committed record
+``results/calibration/_c3c_q2_nyiso_nyca_shortage.json`` — that JSON stays the
+frozen artifact of the false positive, and this probe stays SUPERSEDED (its
+verdict was wrong on the merits of the question, and nyiso-164 is the
+measurement of record whether or not this construction now agrees).
+
 * **Defect A (aggregate).** It reads ``nyca_reserve_adder`` from
   ``data/raw/_validation-source/actual_as_reserve_NYISO.parquet``, which
-  ``scripts/data/process_nyiso_as.py::build_reference`` computes as
+  ``scripts/data/process_nyiso_as.py::build_reference`` computed as
   ``spin_10 + nonsync_10 + op_30``. NYISO's three posted products are a
   **cumulative cascade**, not increments: ``spin_10 >= nonsync_10 >= op_30``
   holds in 100.0000 % of 289,344 rows across all zones and all three years, and
@@ -25,7 +36,7 @@ finding:
   ``spin_10``, NOT the sum. Summing triple-counts one shadow price (exactly 3.0x
   in 28-79 % of priced hours) and is what breaks the opportunity-cost-vs-shortage
   ceiling test below.
-* **Defect B (clock).** ``build_reference`` maps the CSV's naive **prevailing**
+* **Defect B (clock).** ``build_reference`` mapped the CSV's naive **prevailing**
   Eastern ``Time Stamp`` onto the model's 8760 index positionally, while the
   model's NYISO clock is fixed standard time ``Etc/GMT+5``
   (``derive_actual_lmp._STD_TZ``). The two differ through the whole DST season —
@@ -289,9 +300,13 @@ def main() -> None:
     out["SUPERSEDED"] = (
         "DEFECTIVE — do not cite. Charter Q2 is answered CONFIRMED by "
         "scripts/probes/nyiso164_nyca_shortage_check.py; this construction "
-        "inherits two defects from actual_as_reserve_NYISO.parquet (cascade "
+        "inherited two defects from actual_as_reserve_NYISO.parquet (cascade "
         "summed instead of maxed; naive prevailing->8760 positional clock). See "
-        "docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md sections 3-4."
+        "docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md sections 3-4. "
+        "The INPUT was repaired 2026-08-31 (nyiso-166, "
+        "docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md), so a re-run "
+        "at HEAD no longer reproduces the committed record; this probe stays "
+        "superseded regardless."
     )
     Path(args.out).write_text(json.dumps(out, indent=1) + "\n")
     print("*** SUPERSEDED/DEFECTIVE probe — see docstring; do not cite these numbers ***")
