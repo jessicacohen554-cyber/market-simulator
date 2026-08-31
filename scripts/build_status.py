@@ -520,8 +520,16 @@ def build_part(iso: str) -> dict | None:
     # partition read) and on its full registered span (so a NOT-YET half can
     # never be laundered out of view by the partition). The page renders BOTH
     # configs with year spans and their own determinations — never only the
-    # more flattering one. The primary `keeper` verdict above stays the
-    # forward keeper's registered full-span determination, unrestricted.
+    # more flattering one. The ISO-LEVEL determination of a partitioned
+    # keeper is the WORST config determination over the DESIGNATED spans
+    # (owner ruling 2026-08-31, session ercot-246 — the same conservative
+    # ordering the status page's partition accent already used; it
+    # supersedes the ercot-238 "primary verdict stays the forward keeper's
+    # registered full-span determination" convention). The registered
+    # full-span read is preserved at full magnitude in
+    # `registered_determination`/`registered_reasons` and per config below,
+    # and every criterion record keeps reporting its own number — the
+    # ruling moves the headline, never the magnitudes.
     if rec.get("config_partition"):
         cp = rec["config_partition"]
         scored_configs = []
@@ -543,9 +551,36 @@ def build_part(iso: str) -> dict | None:
                     "registered_years": full_v.get("target_years", []),
                 }
             )
+
+        def _det_rank(det: str) -> int:
+            # Worst-first ordering, mirroring the renderer's partition accent.
+            d = (det or "").upper()
+            if "NOT" in d:
+                return 0
+            if "CAVEAT" in d:
+                return 1
+            return 2
+
+        partition_det = min(
+            (c["determination"] for c in scored_configs),
+            key=_det_rank,
+            default=verdict["determination"],
+        )
+        verdict["registered_determination"] = verdict["determination"]
+        verdict["registered_reasons"] = verdict.get("reasons", [])
+        verdict["determination"] = partition_det
+        verdict["reasons"] = [r for c in scored_configs for r in c["reasons"]]
+        verdict["determination_basis"] = (
+            "config-partition: worst config determination over the DESIGNATED "
+            "spans (owner ruling 2026-08-31, session ercot-246). The forward "
+            "keeper's registered full-span determination is preserved in "
+            "registered_determination and per config, at full magnitude."
+        )
         verdict["config_partition"] = {
             "declared": cp.get("declared"),
             "ruling": cp.get("ruling"),
+            "iso_determination": partition_det,
+            "iso_determination_ruling": cp.get("iso_determination_ruling"),
             "coverage_invariant": cp.get("coverage_invariant"),
             "configs": scored_configs,
         }
