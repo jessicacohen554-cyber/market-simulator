@@ -4420,3 +4420,62 @@ No keeper/shard/marker/determination change; no fix; no matrix cell moved (nothi
 governance log deliberately untouched (nyiso-164 possibly parallel).
 
 Next shorthand: **pjm-165.**
+
+## pjm-165 — 2026-08-31 — C3c program Q1 INDEPENDENTLY REPLICATED: REAL, by a different construction (zero solve; keeper untouched)
+
+**Charter:** `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` Q1, under owner ruling R-E
+(which chartered Q1+Q2 in one grant). **Zero solve — committed artifacts + in-repo published
+data only.** Keeper re-verified at open and close: `2026-08-15-pjm-162-inputclock`,
+CALIBRATED. Record: `docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`; probe
+`scripts/probes/c3c_q1_pjm_phantom_audit.py` → `results/calibration/_c3c_q1_pjm_phantom_audit.json`.
+
+**PRIOR ART — this is a REPLICATION, not a first execution.** Q1 was already executed by
+**pjm-164** (`docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`), which returned REAL.
+This lane ran in parallel and did not see that record until after its own measurement. **The
+verdict is pjm-164's first.** This entry records an independent construction reaching the same
+answer, plus four legs their record does not carry.
+
+**Verdict: REAL — agreeing with pjm-164.** Different construction: pjm-164 overlapped the
+model's C3c *tail hours* against the actual RT LMP tail; this overlaps the model's
+*positive-reserve-dual hours* against PJM's *published reserve-market record*
+(`data/raw/PJM-AS/reserve_market_results_<y>.parquet`, service PR, locales PJM_RTO + MAD).
+
+- **Provenance is an EXACT IDENTITY** (new): model `requirement_mw` == published `as_req_mw`
+  + the published 190 MW ORDC outer breakpoint in **8,735/8,735/8,759 covered hours per
+  family — 26,229 family-hours, zero exceptions**, lag scan r = 1.00000 at 0.
+- **Channel census** (new): ORDC shortfall identically **0 in all 52,560 family-hours**; the
+  dual is opportunity cost, bounded by LP construction below the **cheapest published penalty
+  step ($300)** and observed at most **$187.90** (63 % of it). PJM's own curve says that MW is
+  worth $300 to PJM — the model never pays above what the published curve would.
+- **Overlap with published severity tiers** (new, with significance): 2025 `pjm_primary`
+  **18/20** reserve-priced (lift 3.66×, p 1.1e-9), **6/20** on a published ORDC penalty step
+  (lift **75.08×**, p 9.7e-11), **6/20** in hours PJM was actually short (lift **90.61×**,
+  p 2.8e-11). MAD: 22/29, 7/29, 2/29. 2024 is n=2 and **non-discriminating (p 0.379)**;
+  2023 the family never binds at all.
+- **Direction** (new): the model prices **2.7–7× LESS** than PJM posted in the same hours
+  (2025 RTO mean $72.96 vs published $194.50; MAD $31.95 vs $225.23; ceiling $187.90 vs a
+  realized 5-min max of $1,700/$2,550). A phantom over-prices. Consistent with pjm-164's
+  "under-fires ~10×".
+- **Premise correction, same as pjm-164's:** C3c scores the **energy-only** dual (no overlay
+  in any year; `scarcity_price_overlay`/`scarcity_pricing_enabled` both False), and the
+  channel is load-bearing in **2025 only** — 2023: 0 of 4 tail hours have a positive dual;
+  2024: 2 of 10 (max $8.49); 2025: 27 of 32. Cite 2025 as the existence proof.
+- **NEW CAVEAT neither lane carried — an alignment exposure.** PJM's `_dt_ept` is
+  **prevailing** (measured: UTC−`_dt_ept` = 4 h in 409,464 rows, 5 h in 219,528) while the
+  model's PJM clock is `Etc/GMT+5`. The §2 identity proves the model's reserve *requirement*
+  rides the prevailing positional index, so the dual-vs-price comparison is self-consistent —
+  but an offset scan shows the model running **ahead**: energy dual vs actual RT LMP peaks at
+  **lag −1** in 2023 (0.4096 vs 0.3997) and 2025 (0.6529 vs 0.5906), 2024 a tie; and mean
+  published reserve MCP in the model's positive-dual hours by lag is −2 $368 / −1 $303 /
+  0 $175 / +1 $62. **All overlaps are reported at lag 0, which the scan shows is the WEAKEST
+  alignment — the counts are a lower bound and the verdict is robust.** Whether this is a
+  requirement-placement issue against the EST energy clock (the `pjm-162` "inputclock" family)
+  or genuine lead is **NOT diagnosed here** — flagged for a future PJM lane, and the 1–3 h
+  "lead" in the hour table must not be read as established model behaviour.
+
+No keeper/shard/marker/determination change; nothing armed; no `ScenarioConfig` field.
+**No matrix cell moves and no shard edited** — duty (b) not triggered (nothing tested or
+adjudicated; `energy_reserve_coopt` PJM stays **K**), duty (c) not triggered. Rule 25: this
+PJM finding enters no other ISO's shard.
+
+Next shorthand: **pjm-166.**
