@@ -10515,3 +10515,84 @@ Evidence: `results/calibration/FINDING-caiso228-ofo-arm-2026-08-31.md`,
 `scripts/probes/caiso228_ofo_d1_derate.py`.
 
 **Next number: caiso-229.**
+
+## caiso-229 (2026-08-31) — PHASE-0 KILL OF THE caiso-227 §G BELOW-STACK WEDGE: the charter's two doors are BOTH closed from committed artifacts — door A (the marginal CC rung's level / fuel coupling) on **SIGN** (every measured CC band sits AT OR ABOVE its armed value in 2025; the floor-setting `committed` band is 1.030 measured vs 1.000 armed in all three years, so a measured-faithful repair RAISES the floor), on **DEPTH** (reality clears a mean $12.3–26.5 below that floor vs a ~$1.4 largest admissible move — 9–19×, size-independent) and on **COUPLING** (model floor slope 2.18–4.34 MMBtu/MWh vs a measured DAM body coupling of 6.7–7.4 — UNDER-coupled, the affine form already armed); door B (the committed-CC supply state) on **SIZE** (sub-floor supply deficiency 8.5–9.5 GW vs caiso-140's full 2.3–2.6 GW object and caiso-227 §C's 1.2 GW belly wedge). The one new limb — the 2 fitted firm-import prices — is INERT BY CONSTRUCTION. NO candidate, NO PRECOMMIT, NO solve, keeper UNCHANGED. ZERO SOLVES
+
+**Keeper `2026-08-26-caiso-220-c1-crosswalk` UNCHANGED**, re-verified this
+session with `scripts/calibration_verdict.py --run-id` on committed artifacts
+(no solve): NOT-YET, basis *"undocumented out-of-tolerance (FAIL) criteria:
+price_mean"* — **C3a the sole load-bearing FAIL, 2024 +12.5 % / 2025 +15.5 %**
+(2023 passes); C1 12/12 free 8/8; C2/C3b/C4/C6/C8 PASS; C3c the single
+ledgered caveat. No `ScenarioConfig` field, no LP built, no solver called,
+nothing registered, `calibration-complete.json` (no CAISO marker) and
+`holdout-freeze.json` (ACTIVE) untouched; every model and score read stayed
+inside 2023–2025.
+
+**Charter:** the owner's 2026-08-31 caiso-229 handoff — *"PHASE 0, NO LP. Take
+the caiso-227 §G below-stack wedge to a NAMED MECHANISM CANDIDATE or kill
+it."* Instrument
+`scripts/probes/_caiso229_belowstack_decomposition.py` →
+`results/calibration/_caiso229_belowstack_decomposition.json`.
+
+**The frame** (§A): `λ − DA ≡ (λ − cc_min) + (cc_min − DA)`, load-weighted,
+`cc_min` = the model's cheapest AVAILABLE CC offer. The `DA < cc_min` shares
+reproduce caiso-227 §H exactly (44.9 / 42.3 / 55.2 % for 2025) — the validity
+proof. **First result:** Sep–Dec, the 60 % of the 2025 residual, is NOT a
+floor-level problem — the floor sits **$0.97 BELOW** the DA there and the
+whole **+$6.33** gap is the **above-floor** term (**+$7.30**); spring inverts
+(floor **+$9.49** above DA, model **$5.96 BELOW** its own floor). Two seasons,
+not one object.
+
+**Door A killed three ways** (§3–§5 of the FINDING): sign (committed 1.000
+armed vs 1.030 measured, +3.0 % in every year; 2025 all three bands up
++3.0/+1.8/+2.4 %), depth ($12.3–26.5 mean vs ~$1.4 admissible), coupling
+(Theil-Sen 2.18/2.18/4.34 vs measured 6.7–7.4 MMBtu/MWh; the affine
+measured-marginal-HR + fixed-margin form is already armed as
+`gas_offer_net_revenue_margin` — 1,223 tranches at anchor 4.7964 $/MMBtu,
+median fixed margin $14.37/MWh). Per-year measured multipliers are rule-13
+inadmissible, so 2024's −3.7 % `econ_low` sliver is **not** a route.
+
+**Door B killed on size** (§6): the sub-floor supply deficiency in the
+discordant hours, corrected for the must-take firm blocks, is **9,135 / 9,531
+/ 8,549 MW** (Sep–Dec 2023/24/25) and 9,028 MW annual-2025 — vs caiso-140 §C's
+committed-gas object at its FULL measured 2.3–2.6 GW (**27–30 %**) and
+caiso-227 §C's belly wedge at 1.2 GW (**14 %**). A perfect repair of the whole
+already-`R` object leaves the margin on the CC stack. The wedge is a **~9 GW
+gap in the COMPOSITION of CAISO's cheap-supply set** — representation grain,
+terminally rested (caiso-221 §E, caiso-222 §9 Q1). Discordant hours are
+**belly-dominated** (2025 Sep–Dec: 227 h in hod 10–15 vs 75 in 17–21),
+foreclosing any CPUC D.20-06-028 availability-assessment-hour framing.
+
+**New limb, not a lever** (§7): `PNW_hydro_base` $28.00 / `DSW_solar_PV`
+$48.00 — 2 of the 6 live fitted `IMPORT_TRANCHES[CAISO]` binding-path scalars,
+self-labelled *static-fitted-pending-measured* (G-26 / #1350 / audit C-6) —
+sit above the in-state CC floor in every discordant hour of all three years,
+and are **INERT BY CONSTRUCTION** under the armed
+`caiso_firm_import_selfschedule` (`scenarios.py`: they *"can no longer gate
+the flow (never sets the margin at pmin = pmax)"*). A DOF-ledger honesty item,
+never a C3a mechanism; the 4 spot capacities stay live and untouched.
+
+**Charter records item discharged** (§8): `caiso_scarcity_pricing=True` IS
+armed on the keeper (alongside a FALSE `scarcity_price_overlay`), so
+`CHARTER-c3c-scarcity-program-2026-08-31` §4's *"keeps no scarcity overlay"* is
+wrong on the flag and right on the substance — bounded with CAISO's own
+constants (VOLL 2,000 / MCL 1,400 MW / σ 2,500 MW) against caiso-131 §4's
+committed **minimum**-headroom hour (quoted, never re-derived) at a MAXIMUM
+**$0.017 / $0.006 / $0.003 per MWh**.
+
+**Matrix (rule 26b):** `cc_committed_offer_margin` **U → R** (sign
+refutation); evidence appended without verdict change to
+`gas_offer_net_revenue_margin`, `caiso_firm_selfsched_floor`,
+`ordc_scarcity_overlay`.
+
+**DO-NOT-REDO adds** (FINDING §10): never re-derive §A–§G on this keeper; the
+offer-side door is closed at ANY magnitude; never re-argue the CC rung
+over-propagates fuel; never propose re-pricing the firm import tranches as a
+C3a lever; never quote "no scarcity overlay" as a statement about the flag.
+
+Evidence:
+`results/calibration/FINDING-caiso229-belowstack-decomposition-2026-08-31.md`,
+`results/calibration/_caiso229_belowstack_decomposition.json`,
+`scripts/probes/_caiso229_belowstack_decomposition.py`.
+
+**Next number: caiso-230.**

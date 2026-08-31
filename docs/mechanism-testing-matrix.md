@@ -1167,6 +1167,79 @@ rule-13-admissible mechanism available to carry it.
 ### 5.2 CAISO — **LANE RESTED AT `NOT-YET` BY OWNER RULING (caiso-201, 2026-08-17 — Q1 GRANTED: the lane goes quiet, NO further CAISO calibration session without new funded data; NEITHER standing object funded; a RESTING STATE, not a closure — it re-opens on this identical keeper recipe if the owner funds either object);** **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY (EXHAUSTED BY MEASUREMENT at caiso-200: the last named object returned +0.003 TWh); `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-26-caiso-220-c1-crosswalk`** — caiso-220, THE FUNDED caiso-217 REPLAY LANDED: the caiso-200 keeper recipe replayed byte-faithfully at HEAD (`--replay-bundle`, no `--set`) with the measured generator-hub-membership crosswalk (ACTIVE DATA since the caiso-217 intake `f0dd328`; zero free parameters, rule-13 PASS at caiso-216 §F.1) as the ONLY delta — promoted 2026-08-26 ON DIRECT OWNER INSTRUCTION in-session under the committed caiso-216 §G gate table adopted verbatim by `PRECOMMIT-caiso220-c1-crosswalk-replay-2026-08-26.md`; REPAIRS the caiso-217 registration debt (filed item 8). NOT-YET, 8 criteria, ONE load-bearing FAIL — **C3a +4.0/+12.5/+15.5 %** (2023 passes; ALL THREE YEARS IMPROVE vs the caiso-200 +4.1/+12.8/+15.7; the close was NOT achieved, exactly as pre-registered); **C3b PASS 0.100/0.177/0.180** vs the 0.098/0.179/0.182 baseline — the 2025 composition-watch tripwire did NOT fire (margin widens to 0.020), the 2023 +0.002 regression DISCLOSED at full magnitude; C1 12/12 free 8/8; C3c the single ledgered caveat carried (2024 magnitude 1h→0h re-measured; 2025 not gated); C6 attested AT promotion (`gen_caiso220_attestation.py`; DOF **11 entries / 7 residual** = the caiso-200 10/7 + the crosswalk measured-input row, zero new tunables; the stale `offer_curve_by_group` "identification: residual" text ANNOTATED on this bundle — filed item 1 discharged); C8 PASS; D-A essentially unchanged (66.6/72.2/87.8 % vs 67.0/73.3/89.2 %, phase flags identical). SPLIT WITNESS (`_caiso220_zonal_decomp`, committed JSON): model NP15−SP15 > $15 hours **0 → 50/40/17** vs reality 1,310/1,691/1,347 — the Path-15 separation machinery ENGAGES in reality's direction at ~3 % of reality's magnitude; the residual stays the caiso-215 §F H4 strandedness object, both lever routes CEII-blocked (caiso-218/219, filed item 9). The three HARD-STALE CAISO bench parts re-stamped (filed item 5 discharged). Evidence: `results/calibration/FINDING-caiso220-c1-crosswalk-replay-2026-08-26.md`. Superseding **`2026-08-17-caiso-200-h1-memberpanel`** — caiso-200, THE MERIT-PANEL INSTRUMENT ARC COMPLETED: the caiso-197 composed recipe (G-DELTA EMPTY over 717 keys) solved on the fully-identified outage instrument — the caiso-199 Desert Star landing (extract da33e509, CC_REGULAR population 1.000000) plus the caiso-200 fleet-member panel scope (caiso-199 §3b: extract cf156483/layup 4ccae12e, byte-equal to the caiso-198 run-Y pre-flip measurement; membership DERIVED from the fleet registry, {NV: (55077,)}) — promoted 2026-08-17 ON THE OWNER'S IN-SESSION STRUCTURAL-INTEGRITY INSTRUCTION executing the PRECHECK-caiso200 §6 pre-registered tree; NOT-YET, 8 criteria, TWO load-bearing FAILs *(PROMOTION-TIME COUNT, rubric v3.3 — **SUPERSEDED, NOT RETRACTED**: the live count is **ONE**, C3a alone. C1 was RE-SCORED TO PASS (12/12, free 8/8) under the rubric v3.4 owner amendment of 2026-08-18, which floors the C1 volume band at 3 % of actual total generation = ±5.27 TWh, inside which the UNCHANGED −4.243 TWh row sits; keeper shard updated at 568699d, this header and the shard `gates` stamp were not — both corrected at caiso-208, 2026-08-20. The residual below is unchanged as a physical object; the band shift changes what the rubric CHARGES for it, not the physics, and the CC-side lane stays open)* — C1-2023 CC_REGULAR -4.243 TWh vs ±4.15 (entered at the caiso-199 landing; the caiso-200 closure returned only +0.003 TWh, proving it a REAL class residual of the standing CC-side under-dispatch lane, not an instrument artifact) and C3a +4.1/+12.8/+15.7 % (2023 passes) — BOTH costs the measured instrument, not any mechanism; C3c the single ledgered caveat re-measured (0h/47, 1h/35, 2025 PASS); **C3b PASSES at NRMSE 0.098 / 0.179 / 0.182 vs ≤0.20** *(MAGNITUDES CORRECTED 2026-08-21 by caiso-209 — RECORDED, NOT RETRACTED: the lane's standing guardrail triplet **0.097/0.174/0.181 is the SUPERSEDED caiso-197 keeper's**, correctly recorded as caiso-197's own in its superseded block below and in the log, but carried forward into the caiso-200 assessment's scorecard row instead of being measured on caiso-200. Re-scored at HEAD on this keeper's own committed bytes it is 0.098/0.179/0.182 — **PASS in all three years under either reading, NOT in the failing-gate set, so NO DETERMINATION CHANGES**; the damage was to the guardrail, since a Branch-B session checking a fresh solve against the old triplet would read a phantom regression in all three years against a run that no longer exists. 2025's true margin is **0.018**, so the composition watch is live. Four-way evidence for transcription over a moved measurement, and the one check the root-truncated history could not run: `results/calibration/ASSESSMENT-caiso209-rest-continuation-2026-08-21.md` §3)*; C6 attested AT promotion (gen_caiso200_attestation.py); ALL 158 Desert Star windows retained mechanical under the panel that can finally see them — the caiso-199 '9 of the 158' record CORRECTED on measurement (the 9 movers are borderline CA-facility windows). Superseding **`2026-08-16-caiso-197-w2-r5`** — caiso-197, THE CLOSE-OUT CAMPAIGN'S COMPOSED LADDER (control + lane 2 wefor_residual=0.0 {CC_REGULAR} + lane 3 gas_st_wefor_base_override=0.1591 + lane 5 six-plant cited-physical PS), promoted 2026-08-16 C3a-BLIND under the PRE-COMMITTED integration protocol §6 on structural superiority: DOF ledger 11/8 -> 10/7 (the fitted wefor_multiplier RETIRED), the ERCOT-fitted ST_GAS 0.21 replaced by the cited GADS class EFORd, the unrestrained PS aggregate replaced by cited plant physics (zero MW added); NOT-YET, 8 criteria, ONE load-bearing FAIL — C3a +4.0/+12.1/+15.6 % (2023 passes) — the caiso-196 C1-2023 CC_REGULAR flip HEALED (-4.13 TWh in band, C1 12/12); C3b clean (0.097/0.174/0.181); C3c the single ledgered caveat re-measured; C6 attested AT promotion (gen_caiso197_attestation.py); control BIT-ZERO vs the incumbent; no criteria pass->fail flip at any rung; the campaign EXHAUSTED AS CHARTERED with the C3a residual honestly declared. Superseding **`2026-08-15-caiso-196-e1-elsegundo`** — caiso-196, the EL SEGUNDO CEMS-REMAP repair, promoted 2026-08-16 BY OWNER DECISION on structural integrity with ONE DISCLOSED gate regression [C1-2023 CC_REGULAR -4.44 TWh, ACCEPT-WITH-FLIP: the phantom 3.2 TWh/yr this plant contributed is removed and the standing over-import residual becomes visible on the volume side too]; NOT-YET, 8 criteria, 2 load-bearing FAILs — C3a +4.4/+11.7/+14.5 % and C1-2023; C3c the single ledgered caveat; C6 attested AT promotion. Superseding **`2026-08-09-caiso-188-d1-micseam`** — caiso-188, the SEAM-CAP PROVENANCE repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY under rule 14 with **ZERO gate flips either way**: the fitted 7,500 MW `WECC_import_simultaneous` cap the ledger called *superseded* had been binding 764/477/807 h since caiso-175, and the published branch-group MIC (16,055/16,452/16,148 MW) retires it — seam dual now EXACTLY 0.000 in every hour. **NOT-YET**, 8 criteria, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.4 / +12.9 %**. Superseding **`2026-08-09-caiso-184-c1-lpbasis`** — caiso-184, the outage-derate DENOMINATOR repair, promoted 2026-08-09 on STRUCTURAL INTEGRITY with **EVERY pre-registered gate PASSING**; **NOT-YET**, 8 criteria scored, **1 load-bearing FAIL — C3a mean LMP**, now **+3.7 / +10.5 / +13.1 %** having narrowed in all three years against a **ZERO** same-head noise floor). **QUEUE RE-CONFIRMED EMPTY 2026-08-09 by caiso-185: `cc_capacity_reconcile` — the last named un-adjudicated in-model cell — is **REJECTED EX ANTE, NO LP SPENT**, and the open question is now an OWNER SITTING, not a tenth lever.** **THE SITTING IS NOW PREPARED (owner-sitting session, 2026-08-09, `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`): both owner questions are DECIDABLE from committed artifacts, and BOTH ANSWER **NO** — the walled PS water-state intake covers only **62.1 % / 10.4 %** of 2024/2025's required C3a move at its most favourable bound, and a C3a ledger amendment would take TWO rubric changes, inherit to ERCOT (−32.4 %) and MISO (−14.1 %), and flip MISO for free. **THE NON-LEVER WORK IS RE-STATED AND IT IS LARGER THAN THE LEDGER SAYS:** CAISO's ISO-specific residual DOF census is **3, not 4** (the TAC-weights row CLOSED at caiso-172) and CAISO is **TIED WITH ERCOT**, not "the most of any ISO" — but the `IMPORT_TRANCHES[CAISO]` row's "superseded on the binding path" text **DOES NOT CHECK OUT**: split into limbs, **the four spot CAPACITIES (8,800 MW, uncited, and the object FINDING-caiso140 §C measures as pinning the belly λ) and the two firm PRICES (re-armed onto the margin by `caiso_firm_import_selfsched_clip`, 0.97/4.63/5.71 TWh/yr) are LIVE AND FITTED** — ~~7~~ **6 live fitted scalars** on the backcast binding path where the ledger implies ~1 *(count CORRECTED 7 → 6, 2026-08-11 by caiso-189, re-stamping this header to the caiso-188 census block below: 4 spot capacities + 2 firm prices is **6**, and the committed DOF ledger on the keeper bundle carries `n_scalars: 6` on the `IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]` row — `results/calibration/caiso188_d1_micseam/calibration_attestation.json`, `FINDING-caiso188` §1–§2)*.**
 
 
+> **caiso-229 (2026-08-31) — PHASE-0 KILL OF THE caiso-227 §G BELOW-STACK
+> WEDGE. The owner's C3a-2025 lane handoff asked for a NAMED MECHANISM
+> CANDIDATE or a kill: *is the marginal rung's fuel coupling structurally
+> wrong (an offer object), or is the model's committed-CC state wrong (a
+> commitment object)?* **THE ANSWER IS NEITHER**, decided entirely from
+> committed artifacts. NO LP, NO SOLVE, no `ScenarioConfig` field, nothing
+> armed, nothing registered, keeper UNCHANGED at
+> `2026-08-26-caiso-220-c1-crosswalk` (re-verified in-session with
+> `calibration_verdict.py --run-id`: NOT-YET, C3a the sole load-bearing FAIL
+> at +12.5/+15.5, C1 12/12 free 8/8, C3c the single ledgered caveat),
+> markers/freeze untouched, every read inside 2023–2025. **THE FRAME:**
+> `λ − DA ≡ (λ − cc_min) + (cc_min − DA)`, load-weighted, `cc_min` = the
+> model's cheapest AVAILABLE CC offer; the `DA < cc_min` shares reproduce
+> caiso-227 §H exactly (44.9/42.3/55.2 % for 2025), which is the validity
+> proof. **First result:** Sep–Dec — the 60 % of the 2025 residual — is NOT a
+> floor-level problem; the floor sits **$0.97 BELOW** the DA there and the
+> whole +$6.33 gap is the **above-floor** term (+$7.30), while spring inverts
+> (floor +$9.49 above DA, model $5.96 below its own floor). **DOOR A (offer)
+> KILLED THREE WAYS:** (1) **SIGN** — `cc_min` is set by the `committed`
+> band, armed at the fitted Lever-A **1.000** while CAISO's OWN measured value
+> is **1.030**, so a measured-faithful repair RAISES the floor +3.0 % in every
+> year, and in 2025 **all three bands move up** (+3.0/+1.8/+2.4 %); (2)
+> **DEPTH** — reality clears a mean **$12.3–26.5** below that floor against a
+> largest-admissible level move of ~$1.4, i.e. **9–19×**, so the kill is
+> **SIZE-INDEPENDENT** (the caiso-228 §3.3 scale-invariance form at offer-level
+> grain); (3) **COUPLING** — the model floor's Theil-Sen slope on the CA
+> citygate is **2.18–4.34 MMBtu/MWh** vs a MEASURED DAM body coupling of
+> **6.7–7.4**: the model is **UNDER**-coupled, because the affine
+> measured-marginal-HR + fixed-margin form is **already armed**
+> (`gas_offer_net_revenue_margin`, K). Per-year measured multipliers are
+> rule-13 inadmissible, so 2024's −3.7 % `econ_low` sliver is not a route.
+> **DOOR B (commitment / supply state) KILLED ON SIZE:** in an LP `λ < cc_min`
+> iff demand is met entirely below `cc_min`, so the mechanism-free measure is
+> the **sub-floor supply deficiency** in the discordant hours — corrected for
+> the must-take firm blocks, **9,135 / 9,531 / 8,549 MW** (Sep–Dec
+> 2023/24/25), against caiso-140 §C's committed-gas object at its FULL
+> measured **2.3–2.6 GW** (27–30 %) and caiso-227 §C's belly wedge at
+> **1.2 GW** (14 %). A PERFECT repair of the whole already-adjudicated-`R`
+> object closes at most 30 %. The wedge is a **~9 GW gap in the COMPOSITION of
+> CAISO's cheap-supply set** — a representation-grain statement, and that ask
+> is terminally rested (caiso-221 §E, caiso-222 §9 Q1). The discordant hours
+> are **belly-dominated** (2025 Sep–Dec: 227 h in hod 10–15 vs 75 in 17–21),
+> foreclosing any CPUC D.20-06-028 availability-assessment-hour must-offer
+> framing a successor would reach for. **NEW LIMB, NOT A LEVER:** the two
+> fitted firm-import prices ($28.00 `PNW_hydro_base` / $48.00 `DSW_solar_PV`,
+> 2 of the 6 live fitted `IMPORT_TRANCHES[CAISO]` binding-path scalars,
+> self-labelled *static-fitted-pending-measured*, G-26 / #1350 / audit C-6)
+> are **INERT BY CONSTRUCTION** under the armed
+> `caiso_firm_import_selfschedule` — `scenarios.py`: they *"can no longer gate
+> the flow (never sets the margin at pmin = pmax)"*. A DOF-ledger honesty
+> item, never a C3a mechanism; the 4 spot capacities stay live and untouched.
+> **CHARTER RECORDS ITEM DISCHARGED:** `caiso_scarcity_pricing=True` IS armed
+> on the keeper (alongside a FALSE `scarcity_price_overlay`), so
+> `CHARTER-c3c-scarcity-program-2026-08-31` §4's *"keeps no scarcity overlay"*
+> is wrong on the flag and right on the substance — bounded with CAISO's own
+> constants against caiso-131 §4's committed minimum-headroom hour (quoted,
+> never re-derived) at a MAXIMUM **$0.017 / $0.006 / $0.003 per MWh**. **No
+> candidate survives Phase 0, no PRECOMMIT is filed, no solve is earned**; the
+> caiso-227 §H honest null HARDENS — the offer door is closed at any
+> magnitude, the supply-state door needs 3–8× the largest measured CAISO
+> object. NOT-YET stands. Cell moved: `cc_committed_offer_margin` **U → R**
+> (sign refutation); evidence appended without verdict change to
+> `gas_offer_net_revenue_margin`, `caiso_firm_selfsched_floor`,
+> `ordc_scarcity_overlay`. DO-NOT-REDO adds (FINDING §10): never re-derive
+> §A–§G on this keeper; the offer-side door is closed at any magnitude; never
+> re-argue the CC rung over-propagates fuel; never propose re-pricing the firm
+> import tranches as a C3a lever; never quote "no scarcity overlay" as a
+> statement about the flag. Evidence:
+> `results/calibration/FINDING-caiso229-belowstack-decomposition-2026-08-31.md`,
+> `results/calibration/_caiso229_belowstack_decomposition.json`,
+> `scripts/probes/_caiso229_belowstack_decomposition.py`.
+> Next number: caiso-230.**
+
 > **caiso-228 (2026-08-31) — THE SoCalGas OFO GAS-DELIVERABILITY ARM (the
 > caiso-131 A3 mechanism, C3c root-cause) **DIES AT GATE D1 WITH NO SOLVE** —
 > pre-registered outcome 1 of `PRECOMMIT-caiso227-ofo-arm-2026-08-31.md` (the
