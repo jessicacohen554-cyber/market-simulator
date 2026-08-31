@@ -1,0 +1,137 @@
+{
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "scored_at_sha": "54ca19ae0782",
+    "scored_at_date": "2026-08-31T01:17:55Z",
+    "cache_epoch": "587dc5b32ba71ceb"
+  },
+  "tier": "t1f",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+    "FC-1 structural integrity (I1-I14) FAIL"
+  ],
+  "caveats": [
+    "FC-7 provenance & DOF",
+    "FC-8 runtime feasibility: over runtime budget"
+  ],
+  "notes": [],
+  "categories": {
+    "FC-1": {
+      "label": "FC-1 structural integrity (I1-I14)",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "invariants I1-I14",
+          "status": "FAIL",
+          "detail": "FAIL ['I3']: I3: 2029: slack 0.02% of load; 2030: slack 0.03% of load",
+          "gating": true
+        }
+      ]
+    },
+    "FC-2": {
+      "label": "FC-2 adequacy & equilibrium behavior",
+      "applicability": "required",
+      "status": "PASS",
+      "rows": [
+        {
+          "row": "row1",
+          "status": "PASS",
+          "detail": "reserve-margin band (I12 PASS)",
+          "gating": true
+        },
+        {
+          "row": "row3",
+          "status": "PASS",
+          "detail": "no cobweb (I13 PASS)",
+          "gating": true
+        },
+        {
+          "row": "row4",
+          "status": "PASS",
+          "detail": "backstop share 0.0% \u2264 10%",
+          "gating": true
+        }
+      ]
+    },
+    "FC-3": {
+      "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-4": {
+      "label": "FC-4 crossover dispatch skill (T1-X)",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-5": {
+      "label": "FC-5 external corridor",
+      "applicability": "report",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "corridor",
+          "status": "SKIPPED",
+          "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-6": {
+      "label": "FC-6 driver response",
+      "applicability": "optional",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "driver response",
+          "status": "SKIPPED",
+          "detail": "no committed driver-battery or paired-invariant output",
+          "gating": true
+        }
+      ]
+    },
+    "FC-7": {
+      "label": "FC-7 provenance & DOF",
+      "applicability": "required",
+      "status": "CAVEAT",
+      "rows": [
+        {
+          "row": "run_config",
+          "status": "PASS",
+          "detail": "mode=forecast; 765 config keys; gates ['capacity_market_clearing']",
+          "gating": true
+        },
+        {
+          "row": "overlay-off",
+          "status": "PASS",
+          "detail": "no backcast overlay armed (outage_source='statistical')",
+          "gating": true
+        },
+        {
+          "row": "dof ledger",
+          "status": "CAVEAT",
+          "detail": "DOF ledger absent (identification unproven)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-8": {
+      "label": "FC-8 runtime feasibility",
+      "applicability": "runtime",
+      "status": "CAVEAT",
+      "rows": [
+        {
+          "row": "runtime",
+          "status": "CAVEAT",
+          "detail": "peak RSS 9.9 GB \u2265 8.6 GB (no co-run)",
+          "gating": true
+        }
+      ]
+    }
+  }
+}

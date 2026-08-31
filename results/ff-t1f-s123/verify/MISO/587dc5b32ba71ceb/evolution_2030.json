@@ -1,0 +1,189 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [
+    {
+      "from_fuel": "gas_cc",
+      "mw": 226.16399999999996,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-Indiana_p1004_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 72.03699999999999,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-West_p55010_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 133.632,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-East_p55011_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 125.3,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-South_p55075_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 44.929,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-South_p55075_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 313.13840000000005,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-South_p55220_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 452.09999999999997,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-South_p55221_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 200.5326,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-Illinois_p55334_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 146.84120000000001,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-South_p55358_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 147.56940000000006,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-Indiana_p55364_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 449.6092,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-South_p55418_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 17.86,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-Plains_p57953_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 4.1850000000000005,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p58161_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 4.371,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_MISO-East_p58161_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 15.168000000000003,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-South_p58478_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 321.574,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-East_p64020_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 318.98900000000003,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_MISO-South_p67005_econ"
+    }
+  ],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 3000.0
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2032,
+      "decision_year": 2030,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 3000.0,
+      "seq": 1,
+      "tech": "gas_cc",
+      "zone": "MISO-Illinois"
+    }
+  ],
+  "firm_clean_accredited_mw": 1470.336,
+  "firm_clean_mw": 2371.51,
+  "fleet_by_fuel_after": {
+    "biomass": 1849.7,
+    "coal": 41157.908,
+    "gas_cc": 27335.3856,
+    "gas_cc_ccs": 8991.6144,
+    "gas_ct": 24935.663,
+    "gas_st": 12528.8899,
+    "nuclear": 10902.3
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1865.7,
+    "coal": 41157.908,
+    "gas_cc": 30329.3854,
+    "gas_cc_ccs": 5997.6146,
+    "gas_ct": 24935.663,
+    "gas_st": 12528.8899,
+    "nuclear": 11519.3
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "MISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 134637.322,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.3875,
+    "wind": 0.166
+  },
+  "reserve_margin": 0.011656,
+  "retirements": [
+    {
+      "fuel": "nuclear",
+      "mw": 617.0,
+      "reason": "announced",
+      "unit_id": "1922_1"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 9.0,
+      "reason": "announced",
+      "unit_id": "4005_1"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 7.0,
+      "reason": "announced",
+      "unit_id": "4005_2"
+    }
+  ],
+  "rps_dual": 30.0,
+  "solar_cap_mw": 7000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 2797.624,
+  "storage_power_mw": 3216.8,
+  "thermal_additions": [],
+  "wind_cap_mw": 36000.0,
+  "year": 2030
+}

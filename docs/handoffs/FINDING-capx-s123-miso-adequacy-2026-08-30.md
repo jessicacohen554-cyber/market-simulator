@@ -44,6 +44,14 @@ forecast years leave seam rows at their mc=0 build placeholder) is routed to
 the director.
 
 Verification: §6 (the solo MISO T1-F re-measure and FC-1 re-score).
+**VERIFIED 2026-08-31 (S-123-V, run `miso-2026-2030-s123-verify`):** the
++15,380.1 MW pre-solve swing measures **+15,380.2 MW**, every requirement-side
+term lands to the decimal, and **I7 closes in all five years** (FC-2 CAVEAT →
+PASS). **The determination does NOT move: it stays HOLD**, because FC-1 still
+fails — on **I3** (unserved energy 2029/2030), not I7. With the requirement
+corrected the adequacy backstop no longer triggers (0 MW, every year) and the
+un-backstopped fleet thins past the I3 gate. Full magnitude and the measured
+mechanism in §6.
 
 ---
 
@@ -278,10 +286,154 @@ decomposed separately below, the NYISO-lane discipline):
   should fire less or not at all; the 2027 leg's residual is measured by the
   run, not predicted here.
 
-**RESULTS (filled after the run):**
+**RESULTS (filled by session S-123-V, 2026-08-31).**
 
-* TBD — run id, cache key, wall/RSS, per-year ledger table with the intake
-  decomposition, FC re-score, registration references.
+**Headline: the package delivers exactly what it declared — I7 CLOSES in all
+five years and FC-2 goes CAVEAT → PASS — but MISO's T1-F determination does
+NOT move. It stays HOLD, because FC-1 still FAILS on a DIFFERENT invariant:
+I3 unserved energy in 2029-2030. The failure moved, it did not clear.** That
+consequence was not predicted above, and it is reported here at full
+magnitude rather than absorbed: it is an ENDOGENOUS RESPONSE to the package,
+with the mechanism measured (below), not a defect in the three terms.
+
+**Run identity.** `miso-2026-2030-s123-verify` · cache key
+`587dc5b32ba71ceb` · bundle `results/ff-t1f-s123/verify/MISO/587dc5b32ba71ceb`
+· git `54ca19a`, clean tree · `mode=forecast`, 2026-2030, **5/5 years solved**
+· wall **1,451.8 s (24.2 min)**, median year 236.5 s · peak RSS **9,877.6 MB
+(9.65 GB)**, solo, nothing co-run (rule 12). Posture read off the RESOLVED
+config (765 keys), not `args`: `--golden-posture` ⇒
+`capacity_market_clearing_by_iso[MISO]=True`; `retirement_rule="pipeline"`;
+both entry dampers on; `confirmed_exits_enabled=True`; and MISO's three
+`default_scenario_overrides` (`miso_rps_compliance_regions`,
+`miso_clean_tier_rows`, `entry_vre_capacity_revenue`) all inherited True —
+the same posture the prior bare `miso-t1f` carried.
+
+**Per-year adequacy ledger, with the three-term decomposition.** Each year's
+counterfactual is computed on that year's OWN measured peak, so the package
+effect is isolated from any HEAD drift (the NYISO-lane discipline). `pre` =
+the pre-package registry (PRM 0.179, no DR netting, no external tie; ratio
+1.079/1.157 unchanged by the package, verified at `a61b3ec^`).
+
+| year | peak MW | rm | req pre | req post | accr pre | accr post | pos pre | pos post |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2026 | 128,548.6 | 9.11% | 141,341.4 | 129,467.1 | 136,756.8 | 140,262.7 | −4,584.5 | **+10,795.6** |
+| 2027 | 129,880.6 | 7.75% | 142,806.0 | 130,808.7 | 136,445.8 | 139,951.7 | −6,360.1 | **+9,143.1** |
+| 2028 | 131,336.9 | 7.08% | 144,407.1 | 132,275.3 | 137,124.7 | 140,630.6 | −7,282.3 | **+8,355.4** |
+| 2029 | 132,921.1 | 2.93% | 146,149.0 | 133,870.8 | 133,313.9 | 136,819.8 | −12,835.1 | **+2,949.0** |
+| 2030 | 134,637.3 | 1.17% | 148,036.0 | 135,599.3 | 132,700.8 | 136,206.7 | −15,335.3 | **+607.3** |
+
+| year | S-1 (req) | S-3a (req) | S-2 (accr) | total swing |
+|---|---:|---:|---:|---:|
+| 2026 | −2,637.4 | −9,236.8 | +3,505.9 | **+15,380.2** |
+| 2027 | −2,664.7 | −9,332.6 | +3,505.9 | +15,503.2 |
+| 2028 | −2,694.6 | −9,437.2 | +3,505.9 | +15,637.7 |
+| 2029 | −2,727.1 | −9,551.0 | +3,505.9 | +15,784.1 |
+| 2030 | −2,762.3 | −9,674.4 | +3,505.9 | +15,942.6 |
+
+**Against the pre-solve declaration — every requirement-side number lands
+exactly.**
+
+| quantity | pre-declared | measured | Δ |
+|---|---:|---:|---:|
+| 2026 peak | 128,548.607 | 128,548.6 | **0.0** |
+| 2026 requirement | 129,467.1 | 129,467.1 | **0.0** |
+| S-1 term | −2,637.4 | −2,637.4 | **0.0** |
+| S-3a term | −9,236.8 | −9,236.8 | **0.0** |
+| S-2 term | +3,505.9 | +3,505.9 | **0.0** |
+| 2026 accredited | 138,810.3 | 140,262.7 | **+1,452.4** |
+| 2026 position | +9,343.2 | +10,795.6 | **+1,452.4** |
+| I7 2026 | PASS | **PASS** (all 5 yrs, "held") | ✓ |
+| I12 floor | +0.71% | **+0.71%** | 0.0 |
+| I12 rm 2026 | +7.98% | +9.11% | +1.13 pp |
+| 2027 backstop | "fire less or not at all" | **0 MW, every year** | ✓ |
+
+**The single deviation is on the accreditation side, and the demand path has
+ZERO drift.** The 2026 and 2027 pre-package requirements reproduce the prior
+`miso-t1f` vintage's own I7 row (141,341 and 142,806 MW) to the digit, so the
+peak path at HEAD is identical to the FFR-3A-2 epoch (2026-08-03) — the drift
+the charter told us to decompose separately is not in demand at all. It is
++1,452.4 MW of *starting-fleet accreditation* in 2026 (prior 135,304 → 136,756.8
+pre-tie), a year in which this run executes **zero additions and zero
+retirements**, so it is fleet-vintage drift and cannot be a package effect.
+The 2027 comparison is *not* clean drift and is not reported as such: the
+prior vintage's 2027 accredited (139,147) includes the backstop's 2,378 MW net
+close, which this run does not build — −2,378 of the −2,701.2 gap is the absent
+backstop (an endogenous package effect), leaving ≈ −323 MW of residual drift.
+
+**Why I3 fails — the measured mechanism, in five steps.**
+
+1. The backstop is **ARMED**: `reserve_margin_build_enabled=None` resolves ON
+   for MISO (`resolve_reserve_margin_build_enabled` — capacity-market ISO).
+   It is not disarmed; it simply never triggers.
+2. The backstop and the reliability floor share **one** requirement
+   (`resolve_adequacy_requirement_mw`). Pre-package the position was negative
+   in every year (−4,584.5 … −15,335.3), so the backstop had a live trigger;
+   post-package it is positive in every year (+10,795.6 … +607.3), so it does
+   not fire. **Measured: 0 MW of backstop build in all five years.**
+3. Nothing force-builds. Additions are 769.8 MW, all `planned` (EIA-860
+   pipeline); economic entry is 0 MW.
+4. Retirements total **4,318.3 MW** (2027 gas_st 389.5; **2029 oil 3,295.8**;
+   2030 nuclear 617.0 + biomass 16.0) against peak growth of **+6,088.7 MW**.
+   Net fleet change **−3,548.5 MW**. Reserve margin falls 9.11% → 1.17%.
+5. Slack is present from 2026 and grows monotonically with that thinning,
+   crossing the I3 gate (0.01% of load) in 2029:
+
+| year | slack MWh | % of load | hours > 0 | peak slack MW | vs gate |
+|---|---:|---:|---:|---:|---|
+| 2026 | 35,621.1 | 0.0052% | 7 | 7,756.5 | under |
+| 2027 | 45,109.5 | 0.0064% | 8 | 9,008.2 | under |
+| 2028 | 56,098.1 | 0.0077% | 11 | 9,875.9 | under |
+| 2029 | 145,993.2 | **0.0194%** | 31 | 14,567.7 | **FAIL** |
+| 2030 | 231,272.1 | **0.0299%** | 58 | 17,328.8 | **FAIL** |
+
+**Honest limit on the attribution.** Steps 1-4 are directly measured from the
+committed ledgers, and step 2's trigger arithmetic is a property of the shared
+resolver, not an inference. What is NOT measured is the strict counterfactual:
+no HEAD control run with the pre-package constants was solved, because this
+charter authorises zero config change (rule 21) and the year budget was the
+verification leg alone. So the correct claim is bounded: **the package removed
+the backstop's trigger — that is measured — and the un-backstopped fleet thins
+past the I3 gate.** Slack already exists in 2026 at 0.0052% with an unchanged
+fleet, so the package did not *create* unserved energy; it stopped force-building
+against a pre-existing thinning trend. Reading it the other way — that an
+over-stated requirement was masking that trend behind ~2.4 GW/yr of manufactured
+firm MW — is consistent with every number here and with rule 1, but it is an
+interpretation, and a paired control is the instrument that would settle it
+(routed, §7 item 7).
+
+**FC re-score** (`scripts/forecast_verdict.py --tier t1f`, committed artifacts
+only; `forecast_verdict.json` written beside the bundle):
+
+| gate | before (miso-t1f) | after | note |
+|---|---|---|---|
+| **FC-1** | FAIL `['I7']` | **FAIL `['I3']`** | I7 closes; I3 2029/2030 opens |
+| **FC-2** | CAVEAT (I12 WARN 5.3%/7.1% vs floor 10.0%) | **PASS** | I12 in-band, floor +0.71%; I13 PASS; backstop share PASS |
+| FC-3 / FC-4 | n/a | n/a | not scored on a T1-F leg |
+| FC-5 / FC-6 | SKIPPED | SKIPPED | no committed corridor / driver battery |
+| FC-7 | CAVEAT | CAVEAT | DOF ledger absent — the program-wide FC-7 gap D8 is building |
+| FC-8 | CAVEAT | CAVEAT | peak RSS 9.9 GB ≥ 8.6 GB budget |
+| **determination** | **HOLD** | **HOLD** | unchanged; basis moves I7 → I3 |
+
+**Observation (routed, not shipped): the three terms are OUTSIDE the cache-key
+digest.** `ScenarioConfig.cache_key` hashes `asdict(self)` — ScenarioConfig
+fields only — and all three S-123 operands are module-level registry dicts in
+`config/capacity_market.py`, not config fields. A container already holding the
+pre-package bundle at this key would therefore serve a STALE result for a
+post-package run, silently. **This run is unaffected and was verified so before
+launch**: the bundle directory did not exist and all five years solved fresh
+(`solve_counts` present, 24.2 min of real LP). Filed as §7 item 8 in the same
+posture S-123 used for the mc=0 seam defect — named, evidenced, routed, not
+repaired inside a verification lane.
+
+**Registration.** Sidecar `frontend/data/hindcast/miso-2026-2030-s123-verify.json`
+(single path, `register_forecast_run.py --summary`, `--kind t1f --label
+s123-verify`); `run_config.json` + `full_horizon_summary.json` committed (the
+`ff-t1f-s123` slim-vs-heavy gitignore block keeps parquet/npz/hourly out).
+`ff-verdicts.json` merged preserve-then-overwrite: treatment takes the bare
+**`miso-t1f`** key; the pre-package FFR-3A-2 vintage is preserved verbatim
+under **`miso-t1f-pre-s123`**. MISO's `program-status.json` board block
+refreshed (FC-1/FC-2 rows, I7/I12 detail, S-123 provenance); no other ISO's
+block, no backcast surface, no matrix cell touched.
 
 ## 7. Routed items (consolidated)
 
@@ -299,6 +451,23 @@ decomposed separately below, the NYISO-lane discipline):
 5. **Armed-interface mc=0 seam degradation** — the new defect, to the
    director for a mechanism decision (§5).
 6. **`parameters.json` regeneration** — inherited registry lag (§4).
+7. **The paired pre-package control, and MISO's late-horizon adequacy** (S-123-V,
+   §6) — the instrument that would settle whether the pre-package run shows the
+   same I3, i.e. whether the old requirement was masking a real fleet-thinning
+   trend behind ~2.4 GW/yr of backstop build. A one-leg HEAD control with the
+   pre-package constants (2026-2030, same posture) answers it; it needs its own
+   charter because a control arm reverts shipped registry values. The
+   substantive object underneath is MISO's own late-horizon adequacy: 4,318.3 MW
+   retires against +6,088.7 MW of load growth with 769.8 MW of planned entry and
+   zero economic entry, leaving rm at 1.17% and a +607.3 MW position by 2030.
+8. **Registry constants sit outside the cache-key digest** (S-123-V, §6) —
+   `ScenarioConfig.cache_key` hashes ScenarioConfig fields only, so a change to
+   `PLANNING_RESERVE_MARGIN_BY_ISO` / `ADEQUACY_EXTERNAL_TIE_FIRM_MW` /
+   `ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO` does not move the key and a
+   pre-existing bundle would be served stale. Same shape as the §5 mc=0 defect:
+   no default path reaches it in a fresh container, and it wants a mechanism
+   decision (fold the adequacy registries into the digest, or a
+   `assert_cache_key_uncontaminated`-style guard) rather than a lane-local fix.
 
 ## 8. Governance
 
