@@ -1,0 +1,830 @@
+{
+ "charter": "docs/CHARTER-c3c-scarcity-program-2026-08-31.md section 5 Q1",
+ "keeper": "2026-08-15-pjm-162-inputclock",
+ "bundle": "results/calibration/pjm_debugb_inputclock_A",
+ "published_source": "data/raw/PJM-AS/reserve_market_results_<year>.parquet (PJM DataMiner2, Ancillary Services Market Results - Reserve Market Results, RT, 5-minute; service=PR)",
+ "ordc_curve": {
+  "path": "data/raw/_validation-source/pjm_ordc_curve.csv",
+  "outer_breakpoint_offset_mw": 190.0,
+  "penalty_factors": [
+   300.0,
+   850.0
+  ],
+  "citation": "PJM Manual 11 sec 4.3.3 (FERC EL19-58/ER19-1486, in force 2022-10-01)"
+ },
+ "solve": "none \u2014 read-only over committed artifacts and published data",
+ "years": {
+  "2023": {
+   "model_tail_hours_gt200": 4,
+   "payload_ordc_hoursGt200": {
+    "hoursGt200": {
+     "model": 4,
+     "actual": 6
+    }
+   },
+   "c3c_scored_basis": "energy-only LP dual (no overlay in payload)",
+   "families": {
+    "pjm_primary": {
+     "published_locale": "PJM_RTO",
+     "covered_hours": 8735,
+     "requirement_identity": {
+      "claim": "model requirement_mw == published as_req_mw + published ORDC outer offset",
+      "offset_mw": 190.0,
+      "hours_matching_within_1mw": 8735,
+      "hours_compared": 8735,
+      "median_diff_mw": 190.0
+     },
+     "channel_census": {
+      "ordc_shortfall_hours": 0,
+      "dual_max": -0.0,
+      "cheapest_ordc_penalty_step": 300.0,
+      "dual_max_below_cheapest_penalty": true,
+      "channel": "reserve/energy opportunity cost (no shortfall in any hour)"
+     },
+     "model_positive_dual_hours": 0,
+     "overlap": {
+      "reality_reserve_priced_mcp_gt_0": {
+       "reality_hours": 2822,
+       "base_rate": 0.323068,
+       "overlap": 0,
+       "overlap_share_of_model": null,
+       "lift_vs_base_rate": null,
+       "hypergeom_p_ge": null
+      },
+      "reality_ordc_step_5min_mcp_ge_300": {
+       "reality_hours": 14,
+       "base_rate": 0.001603,
+       "overlap": 0,
+       "overlap_share_of_model": null,
+       "lift_vs_base_rate": null,
+       "hypergeom_p_ge": null
+      },
+      "reality_short_total_lt_requirement": {
+       "reality_hours": 14,
+       "base_rate": 0.001603,
+       "overlap": 0,
+       "overlap_share_of_model": null,
+       "lift_vs_base_rate": null,
+       "hypergeom_p_ge": null
+      }
+     },
+     "magnitude": null,
+     "c3c_load_bearing": {
+      "model_tail_hours": 4,
+      "tail_hours_with_positive_dual": 0,
+      "share_of_tail": 0.0
+     },
+     "hour_table": []
+    },
+    "pjm_primary_mad": {
+     "published_locale": "MAD",
+     "covered_hours": 8735,
+     "requirement_identity": {
+      "claim": "model requirement_mw == published as_req_mw + published ORDC outer offset",
+      "offset_mw": 190.0,
+      "hours_matching_within_1mw": 8735,
+      "hours_compared": 8735,
+      "median_diff_mw": 190.0
+     },
+     "channel_census": {
+      "ordc_shortfall_hours": 0,
+      "dual_max": -0.0,
+      "cheapest_ordc_penalty_step": 300.0,
+      "dual_max_below_cheapest_penalty": true,
+      "channel": "reserve/energy opportunity cost (no shortfall in any hour)"
+     },
+     "model_positive_dual_hours": 0,
+     "overlap": {
+      "reality_reserve_priced_mcp_gt_0": {
+       "reality_hours": 2837,
+       "base_rate": 0.324785,
+       "overlap": 0,
+       "overlap_share_of_model": null,
+       "lift_vs_base_rate": null,
+       "hypergeom_p_ge": null
+      },
+      "reality_ordc_step_5min_mcp_ge_300": {
+       "reality_hours": 14,
+       "base_rate": 0.001603,
+       "overlap": 0,
+       "overlap_share_of_model": null,
+       "lift_vs_base_rate": null,
+       "hypergeom_p_ge": null
+      },
+      "reality_short_total_lt_requirement": {
+       "reality_hours": 1,
+       "base_rate": 0.000114,
+       "overlap": 0,
+       "overlap_share_of_model": null,
+       "lift_vs_base_rate": null,
+       "hypergeom_p_ge": null
+      }
+     },
+     "magnitude": null,
+     "c3c_load_bearing": {
+      "model_tail_hours": 4,
+      "tail_hours_with_positive_dual": 0,
+      "share_of_tail": 0.0
+     },
+     "hour_table": []
+    }
+   }
+  },
+  "2024": {
+   "model_tail_hours_gt200": 10,
+   "payload_ordc_hoursGt200": {
+    "hoursGt200": {
+     "model": 10,
+     "actual": 18
+    }
+   },
+   "c3c_scored_basis": "energy-only LP dual (no overlay in payload)",
+   "families": {
+    "pjm_primary": {
+     "published_locale": "PJM_RTO",
+     "covered_hours": 8735,
+     "requirement_identity": {
+      "claim": "model requirement_mw == published as_req_mw + published ORDC outer offset",
+      "offset_mw": 190.0,
+      "hours_matching_within_1mw": 8735,
+      "hours_compared": 8735,
+      "median_diff_mw": 190.0
+     },
+     "channel_census": {
+      "ordc_shortfall_hours": 0,
+      "dual_max": 8.4856,
+      "cheapest_ordc_penalty_step": 300.0,
+      "dual_max_below_cheapest_penalty": true,
+      "channel": "reserve/energy opportunity cost (no shortfall in any hour)"
+     },
+     "model_positive_dual_hours": 2,
+     "overlap": {
+      "reality_reserve_priced_mcp_gt_0": {
+       "reality_hours": 5380,
+       "base_rate": 0.615913,
+       "overlap": 2,
+       "overlap_share_of_model": 1.0,
+       "lift_vs_base_rate": 1.62,
+       "hypergeom_p_ge": 0.379321730379
+      },
+      "reality_ordc_step_5min_mcp_ge_300": {
+       "reality_hours": 18,
+       "base_rate": 0.002061,
+       "overlap": 0,
+       "overlap_share_of_model": 0.0,
+       "lift_vs_base_rate": 0.0,
+       "hypergeom_p_ge": 1.0
+      },
+      "reality_short_total_lt_requirement": {
+       "reality_hours": 14,
+       "base_rate": 0.001603,
+       "overlap": 0,
+       "overlap_share_of_model": 0.0,
+       "lift_vs_base_rate": 0.0,
+       "hypergeom_p_ge": 1.0
+      }
+     },
+     "magnitude": {
+      "n": 2,
+      "model_dual_mean": 4.42,
+      "model_dual_max": 8.49,
+      "published_mcp_hourly_mean": 17.08,
+      "published_mcp_hourly_max": 33.93,
+      "published_mcp_5min_max": 113.05,
+      "model_over_published_mean_ratio": 0.259,
+      "hours_model_exceeds_published": 1
+     },
+     "c3c_load_bearing": {
+      "model_tail_hours": 10,
+      "tail_hours_with_positive_dual": 2,
+      "share_of_tail": 0.2
+     },
+     "hour_table": [
+      {
+       "hour": 5751,
+       "model_dual": 8.49,
+       "published_mcp_hourly_mean": 0.23,
+       "published_mcp_5min_max": 2.29,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5752,
+       "model_dual": 0.35,
+       "published_mcp_hourly_mean": 33.93,
+       "published_mcp_5min_max": 113.05,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      }
+     ]
+    },
+    "pjm_primary_mad": {
+     "published_locale": "MAD",
+     "covered_hours": 8735,
+     "requirement_identity": {
+      "claim": "model requirement_mw == published as_req_mw + published ORDC outer offset",
+      "offset_mw": 190.0,
+      "hours_matching_within_1mw": 8735,
+      "hours_compared": 8735,
+      "median_diff_mw": 190.0
+     },
+     "channel_census": {
+      "ordc_shortfall_hours": 0,
+      "dual_max": 8.0037,
+      "cheapest_ordc_penalty_step": 300.0,
+      "dual_max_below_cheapest_penalty": true,
+      "channel": "reserve/energy opportunity cost (no shortfall in any hour)"
+     },
+     "model_positive_dual_hours": 2,
+     "overlap": {
+      "reality_reserve_priced_mcp_gt_0": {
+       "reality_hours": 5481,
+       "base_rate": 0.627476,
+       "overlap": 2,
+       "overlap_share_of_model": 1.0,
+       "lift_vs_base_rate": 1.59,
+       "hypergeom_p_ge": 0.393698956463
+      },
+      "reality_ordc_step_5min_mcp_ge_300": {
+       "reality_hours": 20,
+       "base_rate": 0.00229,
+       "overlap": 0,
+       "overlap_share_of_model": 0.0,
+       "lift_vs_base_rate": 0.0,
+       "hypergeom_p_ge": 1.0
+      },
+      "reality_short_total_lt_requirement": {
+       "reality_hours": 5,
+       "base_rate": 0.000572,
+       "overlap": 0,
+       "overlap_share_of_model": 0.0,
+       "lift_vs_base_rate": 0.0,
+       "hypergeom_p_ge": 1.0
+      }
+     },
+     "magnitude": {
+      "n": 2,
+      "model_dual_mean": 5.16,
+      "model_dual_max": 8.0,
+      "published_mcp_hourly_mean": 17.08,
+      "published_mcp_hourly_max": 33.93,
+      "published_mcp_5min_max": 113.05,
+      "model_over_published_mean_ratio": 0.302,
+      "hours_model_exceeds_published": 1
+     },
+     "c3c_load_bearing": {
+      "model_tail_hours": 10,
+      "tail_hours_with_positive_dual": 2,
+      "share_of_tail": 0.2
+     },
+     "hour_table": [
+      {
+       "hour": 5751,
+       "model_dual": 2.33,
+       "published_mcp_hourly_mean": 0.23,
+       "published_mcp_5min_max": 2.29,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5752,
+       "model_dual": 8.0,
+       "published_mcp_hourly_mean": 33.93,
+       "published_mcp_5min_max": 113.05,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      }
+     ]
+    }
+   }
+  },
+  "2025": {
+   "model_tail_hours_gt200": 32,
+   "payload_ordc_hoursGt200": {
+    "hoursGt200": {
+     "model": 32,
+     "actual": 59
+    }
+   },
+   "c3c_scored_basis": "energy-only LP dual (no overlay in payload)",
+   "families": {
+    "pjm_primary": {
+     "published_locale": "PJM_RTO",
+     "covered_hours": 8759,
+     "requirement_identity": {
+      "claim": "model requirement_mw == published as_req_mw + published ORDC outer offset",
+      "offset_mw": 190.0,
+      "hours_matching_within_1mw": 8759,
+      "hours_compared": 8759,
+      "median_diff_mw": 190.0001
+     },
+     "channel_census": {
+      "ordc_shortfall_hours": 0,
+      "dual_max": 187.9042,
+      "cheapest_ordc_penalty_step": 300.0,
+      "dual_max_below_cheapest_penalty": true,
+      "channel": "reserve/energy opportunity cost (no shortfall in any hour)"
+     },
+     "model_positive_dual_hours": 20,
+     "overlap": {
+      "reality_reserve_priced_mcp_gt_0": {
+       "reality_hours": 2151,
+       "base_rate": 0.245576,
+       "overlap": 18,
+       "overlap_share_of_model": 0.9,
+       "lift_vs_base_rate": 3.66,
+       "hypergeom_p_ge": 1.123e-09
+      },
+      "reality_ordc_step_5min_mcp_ge_300": {
+       "reality_hours": 35,
+       "base_rate": 0.003996,
+       "overlap": 6,
+       "overlap_share_of_model": 0.3,
+       "lift_vs_base_rate": 75.08,
+       "hypergeom_p_ge": 9.7e-11
+      },
+      "reality_short_total_lt_requirement": {
+       "reality_hours": 29,
+       "base_rate": 0.003311,
+       "overlap": 6,
+       "overlap_share_of_model": 0.3,
+       "lift_vs_base_rate": 90.61,
+       "hypergeom_p_ge": 2.8e-11
+      }
+     },
+     "magnitude": {
+      "n": 18,
+      "model_dual_mean": 72.96,
+      "model_dual_max": 187.9,
+      "published_mcp_hourly_mean": 194.5,
+      "published_mcp_hourly_max": 1212.15,
+      "published_mcp_5min_max": 1700.0,
+      "model_over_published_mean_ratio": 0.375,
+      "hours_model_exceeds_published": 6
+     },
+     "c3c_load_bearing": {
+      "model_tail_hours": 32,
+      "tail_hours_with_positive_dual": 20,
+      "share_of_tail": 0.625
+     },
+     "hour_table": [
+      {
+       "hour": 4167,
+       "model_dual": 42.09,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4168,
+       "model_dual": 66.5,
+       "published_mcp_hourly_mean": 0.43,
+       "published_mcp_5min_max": 5.15,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4169,
+       "model_dual": 51.04,
+       "published_mcp_hourly_mean": 87.48,
+       "published_mcp_5min_max": 198.71,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4170,
+       "model_dual": 19.88,
+       "published_mcp_hourly_mean": 614.47,
+       "published_mcp_5min_max": 849.22,
+       "published_short_intervals": 9,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4189,
+       "model_dual": 12.88,
+       "published_mcp_hourly_mean": 128.35,
+       "published_mcp_5min_max": 236.52,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4190,
+       "model_dual": 64.66,
+       "published_mcp_hourly_mean": 9.07,
+       "published_mcp_5min_max": 68.89,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4191,
+       "model_dual": 106.89,
+       "published_mcp_hourly_mean": 11.61,
+       "published_mcp_5min_max": 77.23,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4192,
+       "model_dual": 138.79,
+       "published_mcp_hourly_mean": 234.3,
+       "published_mcp_5min_max": 784.19,
+       "published_short_intervals": 1,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4193,
+       "model_dual": 187.9,
+       "published_mcp_hourly_mean": 265.69,
+       "published_mcp_5min_max": 677.68,
+       "published_short_intervals": 4,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4194,
+       "model_dual": 81.3,
+       "published_mcp_hourly_mean": 1212.15,
+       "published_mcp_5min_max": 1700.0,
+       "published_short_intervals": 12,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4215,
+       "model_dual": 5.28,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4216,
+       "model_dual": 5.37,
+       "published_mcp_hourly_mean": 12.15,
+       "published_mcp_5min_max": 82.23,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4217,
+       "model_dual": 15.13,
+       "published_mcp_hourly_mean": 239.55,
+       "published_mcp_5min_max": 850.0,
+       "published_short_intervals": 2,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5008,
+       "model_dual": 39.2,
+       "published_mcp_hourly_mean": 66.28,
+       "published_mcp_5min_max": 142.32,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5009,
+       "model_dual": 97.5,
+       "published_mcp_hourly_mean": 26.87,
+       "published_mcp_5min_max": 129.26,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5010,
+       "model_dual": 22.04,
+       "published_mcp_hourly_mean": 142.9,
+       "published_mcp_5min_max": 378.92,
+       "published_short_intervals": 1,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5031,
+       "model_dual": 57.15,
+       "published_mcp_hourly_mean": 72.05,
+       "published_mcp_5min_max": 235.13,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5032,
+       "model_dual": 148.92,
+       "published_mcp_hourly_mean": 69.25,
+       "published_mcp_5min_max": 211.01,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5033,
+       "model_dual": 161.99,
+       "published_mcp_hourly_mean": 93.03,
+       "published_mcp_5min_max": 248.72,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5034,
+       "model_dual": 36.07,
+       "published_mcp_hourly_mean": 215.29,
+       "published_mcp_5min_max": 290.2,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      }
+     ]
+    },
+    "pjm_primary_mad": {
+     "published_locale": "MAD",
+     "covered_hours": 8759,
+     "requirement_identity": {
+      "claim": "model requirement_mw == published as_req_mw + published ORDC outer offset",
+      "offset_mw": 190.0,
+      "hours_matching_within_1mw": 8759,
+      "hours_compared": 8759,
+      "median_diff_mw": 190.0
+     },
+     "channel_census": {
+      "ordc_shortfall_hours": 0,
+      "dual_max": 70.4865,
+      "cheapest_ordc_penalty_step": 300.0,
+      "dual_max_below_cheapest_penalty": true,
+      "channel": "reserve/energy opportunity cost (no shortfall in any hour)"
+     },
+     "model_positive_dual_hours": 29,
+     "overlap": {
+      "reality_reserve_priced_mcp_gt_0": {
+       "reality_hours": 2253,
+       "base_rate": 0.257221,
+       "overlap": 22,
+       "overlap_share_of_model": 0.7586,
+       "lift_vs_base_rate": 2.95,
+       "hypergeom_p_ge": 2.1732e-08
+      },
+      "reality_ordc_step_5min_mcp_ge_300": {
+       "reality_hours": 41,
+       "base_rate": 0.004681,
+       "overlap": 7,
+       "overlap_share_of_model": 0.2414,
+       "lift_vs_base_rate": 51.57,
+       "hypergeom_p_ge": 4.2e-11
+      },
+      "reality_short_total_lt_requirement": {
+       "reality_hours": 8,
+       "base_rate": 0.000913,
+       "overlap": 2,
+       "overlap_share_of_model": 0.069,
+       "lift_vs_base_rate": 75.51,
+       "hypergeom_p_ge": 0.000292748879
+      }
+     },
+     "magnitude": {
+      "n": 22,
+      "model_dual_mean": 31.95,
+      "model_dual_max": 70.49,
+      "published_mcp_hourly_mean": 225.23,
+      "published_mcp_hourly_max": 1384.76,
+      "published_mcp_5min_max": 2550.0,
+      "model_over_published_mean_ratio": 0.142,
+      "hours_model_exceeds_published": 6
+     },
+     "c3c_load_bearing": {
+      "model_tail_hours": 32,
+      "tail_hours_with_positive_dual": 27,
+      "share_of_tail": 0.8438
+     },
+     "hour_table": [
+      {
+       "hour": 4166,
+       "model_dual": 12.45,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4167,
+       "model_dual": 27.33,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4168,
+       "model_dual": 27.25,
+       "published_mcp_hourly_mean": 0.43,
+       "published_mcp_5min_max": 5.15,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4169,
+       "model_dual": 30.47,
+       "published_mcp_hourly_mean": 87.48,
+       "published_mcp_5min_max": 198.71,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4170,
+       "model_dual": 13.71,
+       "published_mcp_hourly_mean": 614.47,
+       "published_mcp_5min_max": 849.22,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4189,
+       "model_dual": 31.74,
+       "published_mcp_hourly_mean": 128.35,
+       "published_mcp_5min_max": 236.52,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4190,
+       "model_dual": 35.54,
+       "published_mcp_hourly_mean": 9.07,
+       "published_mcp_5min_max": 68.89,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4191,
+       "model_dual": 36.4,
+       "published_mcp_hourly_mean": 11.61,
+       "published_mcp_5min_max": 77.23,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4192,
+       "model_dual": 64.11,
+       "published_mcp_hourly_mean": 234.3,
+       "published_mcp_5min_max": 784.19,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4193,
+       "model_dual": 70.49,
+       "published_mcp_hourly_mean": 265.69,
+       "published_mcp_5min_max": 677.68,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4194,
+       "model_dual": 36.29,
+       "published_mcp_hourly_mean": 1384.76,
+       "published_mcp_5min_max": 2550.0,
+       "published_short_intervals": 2,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4195,
+       "model_dual": 10.1,
+       "published_mcp_hourly_mean": 1122.63,
+       "published_mcp_5min_max": 2550.0,
+       "published_short_intervals": 1,
+       "model_tail_hour": false
+      },
+      {
+       "hour": 4213,
+       "model_dual": 3.43,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": false
+      },
+      {
+       "hour": 4214,
+       "model_dual": 20.52,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4215,
+       "model_dual": 33.16,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4216,
+       "model_dual": 33.16,
+       "published_mcp_hourly_mean": 12.15,
+       "published_mcp_5min_max": 82.23,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4217,
+       "model_dual": 24.85,
+       "published_mcp_hourly_mean": 239.55,
+       "published_mcp_5min_max": 850.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4743,
+       "model_dual": 9.94,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 4744,
+       "model_dual": 1.15,
+       "published_mcp_hourly_mean": 0.0,
+       "published_mcp_5min_max": 0.0,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5007,
+       "model_dual": 13.07,
+       "published_mcp_hourly_mean": 90.73,
+       "published_mcp_5min_max": 262.33,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5008,
+       "model_dual": 29.12,
+       "published_mcp_hourly_mean": 66.28,
+       "published_mcp_5min_max": 142.32,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5009,
+       "model_dual": 28.56,
+       "published_mcp_hourly_mean": 26.87,
+       "published_mcp_5min_max": 129.26,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5010,
+       "model_dual": 26.54,
+       "published_mcp_hourly_mean": 142.9,
+       "published_mcp_5min_max": 378.92,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5031,
+       "model_dual": 28.98,
+       "published_mcp_hourly_mean": 72.05,
+       "published_mcp_5min_max": 235.13,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5032,
+       "model_dual": 45.95,
+       "published_mcp_hourly_mean": 69.25,
+       "published_mcp_5min_max": 211.01,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5033,
+       "model_dual": 32.88,
+       "published_mcp_hourly_mean": 93.03,
+       "published_mcp_5min_max": 248.72,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5034,
+       "model_dual": 29.0,
+       "published_mcp_hourly_mean": 215.29,
+       "published_mcp_5min_max": 290.2,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5056,
+       "model_dual": 31.58,
+       "published_mcp_hourly_mean": 2.05,
+       "published_mcp_5min_max": 14.34,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      },
+      {
+       "hour": 5057,
+       "model_dual": 23.21,
+       "published_mcp_hourly_mean": 66.18,
+       "published_mcp_5min_max": 143.66,
+       "published_short_intervals": 0,
+       "model_tail_hour": true
+      }
+     ]
+    }
+   }
+  }
+ }
+}

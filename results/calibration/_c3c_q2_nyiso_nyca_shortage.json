@@ -1,0 +1,379 @@
+{
+ "charter": "docs/CHARTER-c3c-scarcity-program-2026-08-31.md section 5 Q2",
+ "opened_by": "docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md (Q1 = REAL)",
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "bundle": "results/calibration/nyiso159_lossarm_B",
+ "nyca_observable": {
+  "series": "actual_as_reserve_NYISO.parquet::nyca_reserve_adder",
+  "definition": "stacked RT reserve price (spin_10 + nonsync_10 + op_30) at the WEST settlement zone, hourly max over the 5-minute NYISO MIS rtasp postings, on the model's non-leap 8760 clock",
+  "why_it_is_the_nyca_level": "WEST lies outside every locational region (East / SENY / NYC / LI), so its stacked RT reserve price carries the NYCA-level component alone",
+  "builder": "scripts/data/process_nyiso_as.py::build_reference"
+ },
+ "solve": "none \u2014 read-only over committed artifacts and published data",
+ "years": {
+  "2023": {
+   "covered_hours": 8759,
+   "actual_tail_hours_gt300": 10,
+   "kill_gate": {
+    "gt_0": {
+     "threshold_usd_per_mw": 0.01,
+     "meaning": "NYCA reserve constraint priced at all",
+     "reality_hours_in_year": 625,
+     "base_rate": 0.071355,
+     "tail_hours_with_nyca_shortage": 9,
+     "share_of_tail": 0.9,
+     "lift_vs_base_rate": 12.61,
+     "hypergeom_p_ge": 4.26e-10
+    },
+    "ge_40": {
+     "threshold_usd_per_mw": 40.0,
+     "meaning": "first step of the published NYCA 30-min $40..$750 RCPF curve",
+     "reality_hours_in_year": 101,
+     "base_rate": 0.011531,
+     "tail_hours_with_nyca_shortage": 8,
+     "share_of_tail": 0.8,
+     "lift_vs_base_rate": 69.38,
+     "hypergeom_p_ge": 0.0
+    },
+    "ge_100": {
+     "threshold_usd_per_mw": 100.0,
+     "meaning": "well up the published NYCA RCPF curve",
+     "reality_hours_in_year": 38,
+     "base_rate": 0.004338,
+     "tail_hours_with_nyca_shortage": 6,
+     "share_of_tail": 0.6,
+     "lift_vs_base_rate": 138.3,
+     "hypergeom_p_ge": 1e-12
+    },
+    "ge_750": {
+     "threshold_usd_per_mw": 750.0,
+     "meaning": "at/above the NYCA RCPF ceiling (NYISO_RCPF_PRODUCTS)",
+     "reality_hours_in_year": 3,
+     "base_rate": 0.000343,
+     "tail_hours_with_nyca_shortage": 1,
+     "share_of_tail": 0.1,
+     "lift_vs_base_rate": 291.97,
+     "hypergeom_p_ge": 0.003421529904
+    }
+   },
+   "nyca_short_tail_hours_ge40": 8,
+   "model_nyca_families_in_tail_hours": {
+    "hours": 10,
+    "max_dual": -0.0,
+    "hours_any_dual_gt_0": 0,
+    "max_shortfall_mw": 0.0,
+    "hours_any_shortfall": 0,
+    "min_slack_mw": 0.0,
+    "mean_slack_mw": 218.33
+   },
+   "model_nyca_families_in_nyca_short_tail_hours": {
+    "hours": 8,
+    "max_dual": -0.0,
+    "hours_any_dual_gt_0": 0,
+    "max_shortfall_mw": 0.0,
+    "hours_any_shortfall": 0,
+    "min_slack_mw": 0.0,
+    "mean_slack_mw": 218.33
+   },
+   "model_locational_families_in_tail_hours": {
+    "hours": 10,
+    "max_dual": 40.0,
+    "hours_any_dual_gt_0": 5,
+    "max_shortfall_mw": 342.715,
+    "hours_any_shortfall": 5,
+    "min_slack_mw": -342.72,
+    "mean_slack_mw": 131.25
+   },
+   "levels_all_tail": {
+    "n": 10,
+    "actual_rt_mean": 504.7,
+    "actual_rt_max": 1174.9,
+    "published_nyca_adder_mean": 313.8,
+    "published_nyca_adder_max": 1445.1,
+    "model_max_zonal_dual_mean": 126.6,
+    "model_max_zonal_dual_max": 326.4
+   },
+   "levels_nyca_short_subset": {
+    "n": 8,
+    "actual_rt_mean": 551.8,
+    "actual_rt_max": 1174.9,
+    "published_nyca_adder_mean": 390.8,
+    "published_nyca_adder_max": 1445.1,
+    "model_max_zonal_dual_mean": 149.1,
+    "model_max_zonal_dual_max": 326.4
+   },
+   "requirement_attribution": {
+    "nyca_10min_spin": {
+     "requirement_mw_unique": [
+      655.0
+     ],
+     "held_equals_requirement_all_hours": false,
+     "min_slack_mw": 655.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    },
+    "nyca_10min_total": {
+     "requirement_mw_unique": [
+      1310.0
+     ],
+     "held_equals_requirement_all_hours": true,
+     "min_slack_mw": 0.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    },
+    "nyca_30min_total": {
+     "requirement_mw_unique": [
+      2620.0
+     ],
+     "held_equals_requirement_all_hours": true,
+     "min_slack_mw": 0.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    }
+   }
+  },
+  "2024": {
+   "covered_hours": 8759,
+   "actual_tail_hours_gt300": 13,
+   "kill_gate": {
+    "gt_0": {
+     "threshold_usd_per_mw": 0.01,
+     "meaning": "NYCA reserve constraint priced at all",
+     "reality_hours_in_year": 337,
+     "base_rate": 0.038475,
+     "tail_hours_with_nyca_shortage": 10,
+     "share_of_tail": 0.7692,
+     "lift_vs_base_rate": 19.99,
+     "hypergeom_p_ge": 2e-12
+    },
+    "ge_40": {
+     "threshold_usd_per_mw": 40.0,
+     "meaning": "first step of the published NYCA 30-min $40..$750 RCPF curve",
+     "reality_hours_in_year": 105,
+     "base_rate": 0.011988,
+     "tail_hours_with_nyca_shortage": 9,
+     "share_of_tail": 0.6923,
+     "lift_vs_base_rate": 57.75,
+     "hypergeom_p_ge": 0.0
+    },
+    "ge_100": {
+     "threshold_usd_per_mw": 100.0,
+     "meaning": "well up the published NYCA RCPF curve",
+     "reality_hours_in_year": 46,
+     "base_rate": 0.005252,
+     "tail_hours_with_nyca_shortage": 7,
+     "share_of_tail": 0.5385,
+     "lift_vs_base_rate": 102.53,
+     "hypergeom_p_ge": 0.0
+    },
+    "ge_750": {
+     "threshold_usd_per_mw": 750.0,
+     "meaning": "at/above the NYCA RCPF ceiling (NYISO_RCPF_PRODUCTS)",
+     "reality_hours_in_year": 6,
+     "base_rate": 0.000685,
+     "tail_hours_with_nyca_shortage": 2,
+     "share_of_tail": 0.1538,
+     "lift_vs_base_rate": 224.59,
+     "hypergeom_p_ge": 3.0401924e-05
+    }
+   },
+   "nyca_short_tail_hours_ge40": 9,
+   "model_nyca_families_in_tail_hours": {
+    "hours": 13,
+    "max_dual": -0.0,
+    "hours_any_dual_gt_0": 0,
+    "max_shortfall_mw": 0.0,
+    "hours_any_shortfall": 0,
+    "min_slack_mw": 0.0,
+    "mean_slack_mw": 218.33
+   },
+   "model_nyca_families_in_nyca_short_tail_hours": {
+    "hours": 9,
+    "max_dual": -0.0,
+    "hours_any_dual_gt_0": 0,
+    "max_shortfall_mw": 0.0,
+    "hours_any_shortfall": 0,
+    "min_slack_mw": 0.0,
+    "mean_slack_mw": 218.33
+   },
+   "model_locational_families_in_tail_hours": {
+    "hours": 13,
+    "max_dual": -0.0,
+    "hours_any_dual_gt_0": 0,
+    "max_shortfall_mw": 0.0,
+    "hours_any_shortfall": 0,
+    "min_slack_mw": 0.0,
+    "mean_slack_mw": 319.47
+   },
+   "levels_all_tail": {
+    "n": 13,
+    "actual_rt_mean": 516.7,
+    "actual_rt_max": 1064.4,
+    "published_nyca_adder_mean": 274.1,
+    "published_nyca_adder_max": 833.1,
+    "model_max_zonal_dual_mean": 62.7,
+    "model_max_zonal_dual_max": 85.3
+   },
+   "levels_nyca_short_subset": {
+    "n": 9,
+    "actual_rt_mean": 500.4,
+    "actual_rt_max": 964.0,
+    "published_nyca_adder_mean": 395.7,
+    "published_nyca_adder_max": 833.1,
+    "model_max_zonal_dual_mean": 66.2,
+    "model_max_zonal_dual_max": 83.9
+   },
+   "requirement_attribution": {
+    "nyca_10min_spin": {
+     "requirement_mw_unique": [
+      655.0
+     ],
+     "held_equals_requirement_all_hours": false,
+     "min_slack_mw": 655.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    },
+    "nyca_10min_total": {
+     "requirement_mw_unique": [
+      1310.0
+     ],
+     "held_equals_requirement_all_hours": true,
+     "min_slack_mw": 0.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    },
+    "nyca_30min_total": {
+     "requirement_mw_unique": [
+      2620.0
+     ],
+     "held_equals_requirement_all_hours": true,
+     "min_slack_mw": 0.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    }
+   }
+  },
+  "2025": {
+   "covered_hours": 8759,
+   "actual_tail_hours_gt300": 42,
+   "kill_gate": {
+    "gt_0": {
+     "threshold_usd_per_mw": 0.01,
+     "meaning": "NYCA reserve constraint priced at all",
+     "reality_hours_in_year": 876,
+     "base_rate": 0.100011,
+     "tail_hours_with_nyca_shortage": 40,
+     "share_of_tail": 0.9524,
+     "lift_vs_base_rate": 9.52,
+     "hypergeom_p_ge": 0.0
+    },
+    "ge_40": {
+     "threshold_usd_per_mw": 40.0,
+     "meaning": "first step of the published NYCA 30-min $40..$750 RCPF curve",
+     "reality_hours_in_year": 375,
+     "base_rate": 0.042813,
+     "tail_hours_with_nyca_shortage": 39,
+     "share_of_tail": 0.9286,
+     "lift_vs_base_rate": 21.69,
+     "hypergeom_p_ge": 0.0
+    },
+    "ge_100": {
+     "threshold_usd_per_mw": 100.0,
+     "meaning": "well up the published NYCA RCPF curve",
+     "reality_hours_in_year": 188,
+     "base_rate": 0.021464,
+     "tail_hours_with_nyca_shortage": 37,
+     "share_of_tail": 0.881,
+     "lift_vs_base_rate": 41.04,
+     "hypergeom_p_ge": 0.0
+    },
+    "ge_750": {
+     "threshold_usd_per_mw": 750.0,
+     "meaning": "at/above the NYCA RCPF ceiling (NYISO_RCPF_PRODUCTS)",
+     "reality_hours_in_year": 30,
+     "base_rate": 0.003425,
+     "tail_hours_with_nyca_shortage": 21,
+     "share_of_tail": 0.5,
+     "lift_vs_base_rate": 145.98,
+     "hypergeom_p_ge": 0.0
+    }
+   },
+   "nyca_short_tail_hours_ge40": 39,
+   "model_nyca_families_in_tail_hours": {
+    "hours": 42,
+    "max_dual": -0.0,
+    "hours_any_dual_gt_0": 0,
+    "max_shortfall_mw": 0.0,
+    "hours_any_shortfall": 0,
+    "min_slack_mw": 0.0,
+    "mean_slack_mw": 218.33
+   },
+   "model_nyca_families_in_nyca_short_tail_hours": {
+    "hours": 39,
+    "max_dual": -0.0,
+    "hours_any_dual_gt_0": 0,
+    "max_shortfall_mw": 0.0,
+    "hours_any_shortfall": 0,
+    "min_slack_mw": 0.0,
+    "mean_slack_mw": 218.33
+   },
+   "model_locational_families_in_tail_hours": {
+    "hours": 42,
+    "max_dual": 40.0,
+    "hours_any_dual_gt_0": 26,
+    "max_shortfall_mw": 458.672,
+    "hours_any_shortfall": 20,
+    "min_slack_mw": -458.67,
+    "mean_slack_mw": 132.5
+   },
+   "levels_all_tail": {
+    "n": 42,
+    "actual_rt_mean": 658.9,
+    "actual_rt_max": 1981.7,
+    "published_nyca_adder_mean": 925.3,
+    "published_nyca_adder_max": 2933.9,
+    "model_max_zonal_dual_mean": 158.3,
+    "model_max_zonal_dual_max": 313.7
+   },
+   "levels_nyca_short_subset": {
+    "n": 39,
+    "actual_rt_mean": 672.2,
+    "actual_rt_max": 1981.7,
+    "published_nyca_adder_mean": 996.0,
+    "published_nyca_adder_max": 2933.9,
+    "model_max_zonal_dual_mean": 162.0,
+    "model_max_zonal_dual_max": 313.7
+   },
+   "requirement_attribution": {
+    "nyca_10min_spin": {
+     "requirement_mw_unique": [
+      655.0
+     ],
+     "held_equals_requirement_all_hours": false,
+     "min_slack_mw": 655.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    },
+    "nyca_10min_total": {
+     "requirement_mw_unique": [
+      1310.0
+     ],
+     "held_equals_requirement_all_hours": true,
+     "min_slack_mw": 0.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    },
+    "nyca_30min_total": {
+     "requirement_mw_unique": [
+      2620.0
+     ],
+     "held_equals_requirement_all_hours": true,
+     "min_slack_mw": 0.0,
+     "hours_dual_gt_0": 0,
+     "hours_shortfall_gt_0": 0
+    }
+   }
+  }
+ },
+ "SUPERSEDED": "DEFECTIVE \u2014 do not cite. Charter Q2 is answered CONFIRMED by scripts/probes/nyiso164_nyca_shortage_check.py; this construction inherits two defects from actual_as_reserve_NYISO.parquet (cascade summed instead of maxed; naive prevailing->8760 positional clock). See docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md sections 3-4."
+}
