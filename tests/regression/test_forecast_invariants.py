@@ -168,6 +168,63 @@ def test_i1_skips_without_demand():
 
 
 # --------------------------------------------------------------------------- #
+# I3 unserved / dump — and its R-4 reporting grain
+# --------------------------------------------------------------------------- #
+def test_i3_passes_with_no_slack():
+    run = _mk_run([], years={2026: _mk_yeardata(2026)})
+    assert C.check_i3_unserved_dump(run).status == C.PASS
+
+
+def test_i3_grain_reports_hours_gwh_and_peak():
+    """Trivial fixture (1 zone-pair, 24 h): the grain is arithmetic, not a fit.
+
+    Two breach hours of 1,000 and 3,000 MW on a 24 h year → 4.0 GWh, peak
+    3,000 MW, and a slack fraction well over the 1e-4 gate, so I3 FAILs and the
+    detail carries all four numbers (R-4).
+    """
+    yd = _mk_yeardata(2026)
+    yd.result.slack[0, 5] = 1000.0
+    yd.result.slack[1, 9] = 3000.0
+    run = _mk_run([], years={2026: yd})
+    res = C.check_i3_unserved_dump(run)
+    assert res.status == C.FAIL
+    assert "2 h" in res.detail
+    assert "4.0 GWh" in res.detail
+    assert "peak 3,000 MW" in res.detail
+    assert "of load" in res.detail  # the pre-R-4 fraction is still there
+
+
+def test_i3_grain_counts_a_split_hour_once():
+    """Slack in two zones in the SAME hour is one system breach hour."""
+    yd = _mk_yeardata(2026)
+    yd.result.slack[0, 3] = 2000.0
+    yd.result.slack[1, 3] = 2000.0
+    run = _mk_run([], years={2026: yd})
+    res = C.check_i3_unserved_dump(run)
+    assert res.status == C.FAIL
+    assert "1 h" in res.detail
+    assert "peak 4,000 MW" in res.detail
+
+
+def test_i3_reporting_floor_does_not_move_the_gate():
+    """Sub-MW dust is excluded from the hour tally but not from the fraction.
+
+    Guards the one hazard in R-4: the reporting floor must never become a
+    second gate. Here a large breach hour coexists with 24 hours of 0.1 MW
+    dust — the tally counts 1, the FAIL/GWh arithmetic counts everything.
+    """
+    yd = _mk_yeardata(2026)
+    yd.result.slack[0, :] = 0.1
+    yd.result.slack[0, 7] = 5000.0
+    run = _mk_run([], years={2026: yd})
+    res = C.check_i3_unserved_dump(run)
+    assert res.status == C.FAIL
+    assert "1 h" in res.detail
+    # 5000 + 0.1*23 (hour 7 overwritten) = 5002.3 MWh → 5.0 GWh
+    assert "5.0 GWh" in res.detail
+
+
+# --------------------------------------------------------------------------- #
 # I2 no NaN/inf
 # --------------------------------------------------------------------------- #
 def test_i2_passes_clean():

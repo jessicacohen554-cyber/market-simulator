@@ -74,6 +74,13 @@ class Thresholds:
     # I3 unserved / dump.
     slack_frac_of_demand: float = 1e-4  # slack energy / demand energy
     dump_frac_of_renewable: float = 0.02  # dump energy / renewable potential
+    # I3 REPORTING ONLY (R-4, FINDING-capx-d4i3-ercot-slack-2026-08-31 §5.2/§6):
+    # an hour counts toward the reported breach-hour tally when system-wide
+    # slack clears this MW floor. It gates NOTHING — the PASS/FAIL decision is
+    # `slack_frac_of_demand` above and is untouched. 1.0 MW is this file's
+    # standing numerical-noise floor (cf. energy_balance_mw, accounting_close_mw,
+    # reliability_slack_mw), not a new tuned quantity.
+    slack_report_hour_mw: float = 1.0
     # I4 capacity accounting closure, MW.
     accounting_close_mw: float = 1.0
     # I6 single-year economic-retired capacity, fraction of prior thermal MW.
@@ -315,15 +322,49 @@ def check_i2_no_nan_inf(run: Run) -> Result:
     return Result("I2", "no NaN/inf", status, "clean" if not bad else ", ".join(bad))
 
 
+def _slack_grain(slack: np.ndarray, slack_e: float) -> str:
+    """Breach hours / GWh / peak MW for one year's load-slack array.
+
+    R-4 (``FINDING-capx-d4i3-ercot-slack-2026-08-31`` §5.2, §6): the I3 detail
+    used to emit ``% of load`` alone, so a committed sidecar recorded no MW, no
+    hours and no GWh and an ERCOT I3 magnitude could not be compared with the
+    bespoke PJM grain ("31 and 58 hours; 146.0 and 231.3 GWh"). This adds that
+    grain to the *reported string only* — the FAIL threshold is unchanged.
+
+    ``slack`` is the LP load-slack column, shape ``(n_zones, T)``; the tally is
+    system-wide (summed over zones) so one hour short in two zones counts once.
+
+    Args:
+        slack: Per-zone unserved load, MW, shape ``(n_zones, T)``.
+        slack_e: That array's total, MWh (passed in so the caller's PASS/FAIL
+            arithmetic and this report cannot drift apart).
+
+    Returns:
+        A parenthesised suffix, e.g. ``"(31 h, 146.0 GWh, peak 5,900 MW)"``.
+    """
+    per_hour = np.atleast_2d(slack).sum(axis=0)
+    hours = int((per_hour > T.slack_report_hour_mw).sum())
+    peak = float(per_hour.max()) if per_hour.size else 0.0
+    return f"({hours} h, {slack_e / 1e3:,.1f} GWh, peak {peak:,.0f} MW)"
+
+
 def check_i3_unserved_dump(run: Run) -> Result:
-    """I3: slack ≈ 0 and dump below the renewable-potential band."""
+    """I3: slack ≈ 0 and dump below the renewable-potential band.
+
+    The slack leg's detail carries breach hours, slack GWh and peak slack MW
+    alongside ``% of load`` (R-4; see :func:`_slack_grain`). Sidecars committed
+    before that change keep their coarse strings — the grain is not
+    reconstructible from them, so an I3 magnitude stays comparable only within
+    a solve vintage (that finding's §5.1).
+    """
     problems: list[str] = []
     for year, yd in run.years.items():
         if yd.demand is not None:
             slack_e = float(yd.result.slack.sum())
             dem_e = float(yd.demand.sum())
             if dem_e > 0 and slack_e / dem_e > T.slack_frac_of_demand:
-                problems.append(f"{year}: slack {slack_e / dem_e:.2%} of load")
+                grain = _slack_grain(yd.result.slack, slack_e)
+                problems.append(f"{year}: slack {slack_e / dem_e:.2%} of load {grain}")
         if yd.context is not None:
             renew = float(
                 yd.context.wind_potential_mwh + yd.context.solar_potential_mwh
