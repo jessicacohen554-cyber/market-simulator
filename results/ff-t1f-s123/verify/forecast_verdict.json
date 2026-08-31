@@ -5,16 +5,16 @@
     "schema": "forecast-provenance/v1",
     "scored_at_sha": "836e48e1efdc",
     "scored_at_date": "2026-08-31T15:55:17Z",
-    "cache_epoch": "31a19d815fa319a7"
+    "cache_epoch": "587dc5b32ba71ceb"
   },
   "tier": "t1f",
-  "iso": "PJM",
+  "iso": "MISO",
   "determination": "HOLD",
   "reasons": [
-    "FC-1 structural integrity (I1-I14) FAIL",
-    "FC-2 adequacy & equilibrium behavior FAIL"
+    "FC-1 structural integrity (I1-I14) FAIL"
   ],
   "caveats": [
+    "FC-7 provenance & DOF",
     "FC-8 runtime feasibility: over runtime budget"
   ],
   "notes": [],
@@ -27,7 +27,7 @@
         {
           "row": "invariants I1-I14",
           "status": "FAIL",
-          "detail": "FAIL ['I12', 'I7']: I12: requirement-implied floor [-11.9%, 3.1%]..[-9.7%, 5.3%]; out: 2028:-11.7% (band [-9.7%, 5.3%]), 2029:-12.6% (band [-9.7%, 5.3%]), 2030:-13.0% (band [-9.7%, 5.3%]); I7: 2028: accredited firm 147003 < requirement 150263 MW; 2029: accredited firm 148169 < requirement 153001 MW; 2030: accredited firm 150291 < requirement 155946 MW",
+          "detail": "FAIL ['I3']: I3: 2029: slack 0.02% of load; 2030: slack 0.03% of load",
           "gating": true
         }
       ]
@@ -35,12 +35,12 @@
     "FC-2": {
       "label": "FC-2 adequacy & equilibrium behavior",
       "applicability": "required",
-      "status": "FAIL",
+      "status": "PASS",
       "rows": [
         {
           "row": "row1",
-          "status": "FAIL",
-          "detail": "reserve-margin band (I12 FAIL): requirement-implied floor [-11.9%, 3.1%]..[-9.7%, 5.3%]; out: 2028:-11.7% (band [-9.7%, 5.3%]), 2029:-12.6% (band [-9.7%, 5.3%]), 2030:-13.0% (band [-9.7%, 5.3%])",
+          "status": "PASS",
+          "detail": "reserve-margin band (I12 PASS)",
           "gating": true
         },
         {
@@ -51,8 +51,8 @@
         },
         {
           "row": "row4",
-          "status": "CAVEAT",
-          "detail": "backstop share 25.3% in (10%, 30%]",
+          "status": "PASS",
+          "detail": "backstop share 0.0% \u2264 10%",
           "gating": true
         }
       ]
@@ -98,7 +98,7 @@
     "FC-7": {
       "label": "FC-7 provenance & DOF",
       "applicability": "required",
-      "status": "PASS",
+      "status": "CAVEAT",
       "rows": [
         {
           "row": "run_config",
@@ -114,8 +114,8 @@
         },
         {
           "row": "dof ledger",
-          "status": "PASS",
-          "detail": "1 entries well-formed (0 open residual DOF listed)",
+          "status": "CAVEAT",
+          "detail": "DOF ledger present as an UNATTESTED SKELETON: 3 of 4 entries carry identification='unattested' (entry_vre_capacity_revenue, miso_clean_tier_rows, miso_rps_compliance_regions). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
           "gating": true
         }
       ]
@@ -128,7 +128,7 @@
         {
           "row": "runtime",
           "status": "CAVEAT",
-          "detail": "peak RSS 8.8 GB \u2265 8.6 GB (no co-run)",
+          "detail": "peak RSS 9.9 GB \u2265 8.6 GB (no co-run)",
           "gating": true
         }
       ]

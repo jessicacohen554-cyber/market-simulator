@@ -3,17 +3,15 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "88baa9d5c71b",
-    "scored_at_date": "2026-08-30T22:25:51Z",
+    "scored_at_sha": "836e48e1efdc",
+    "scored_at_date": "2026-08-31T15:55:17Z",
     "cache_epoch": "9a7f68fc7dcac931"
   },
   "tier": "t1f",
   "iso": "NEISO",
-  "determination": "PROMOTE-WITH-CAVEATS",
+  "determination": "PROMOTE",
   "reasons": [],
-  "caveats": [
-    "FC-7 provenance & DOF"
-  ],
+  "caveats": [],
   "notes": [],
   "categories": {
     "FC-1": {
@@ -95,7 +93,7 @@
     "FC-7": {
       "label": "FC-7 provenance & DOF",
       "applicability": "required",
-      "status": "CAVEAT",
+      "status": "PASS",
       "rows": [
         {
           "row": "run_config",
@@ -111,8 +109,8 @@
         },
         {
           "row": "dof ledger",
-          "status": "CAVEAT",
-          "detail": "DOF ledger absent (identification unproven)",
+          "status": "PASS",
+          "detail": "7 entries well-formed (0 open residual DOF listed)",
           "gating": true
         }
       ]
