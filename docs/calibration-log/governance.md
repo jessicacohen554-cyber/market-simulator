@@ -2134,6 +2134,190 @@ PJM finding enters other shards as `U`.
 
 **(7) Matrix.** No cell moves — nothing was tested, armed or adjudicated.
 
+## 2026-08-31 — FOUR OWNER RULINGS (director REFRESH sitting, decision cards): R-D C-1 wind TERMINAL REST + MAP · R-E the C3c program's Q1+Q2 CHARTERED AND CHAINED · R-F the nyiso-161 winter-face card DEFERRED with a dated re-serve trigger · R-G nyiso-160/leg2 CLOSED BY ARCHIVE
+
+**Authority.** Owner rulings **2026-08-31**, served as decision cards in the
+program-director REFRESH sitting and answered by the owner. Recorded by the
+dispatched **audit-program rulings-records lane** under the standing recorded
+deviation: **the director pushes nothing; records land through the dispatched
+lane; THE OWNER MERGES.** **ZERO SOLVES** (rule 22 `[R-HOLDOUT]`); **no keeper,
+shard, marker, determination, holdout file, `ScenarioConfig` default or matrix
+**verdict letter** moves** in any of the four. Durable copies: this entry, the
+per-ISO log entries named below, the new decision map, the two ERCOT matrix
+cells' evidence stamps, and the audit plan §8 ledger + board v17.
+
+**Base for every figure below: `d44446e0` (merge of #4464)**, re-derived at that
+pin by the records lane — nothing carried from the dispatch.
+
+---
+
+**Ruling R-D — C-1 WIND: TERMINAL REST AT THIS REPRESENTATION GRAIN + DECISION
+MAP.** On `docs/FINDING-c1-joint-wind-ab-2026-08-31.md` (owner ruling R-B's
+chartered A/B; both kill-gates **PASS**; joint posture **`NON_COMPLEMENTARY`**).
+Executed per the **caiso-222 §1(c) option-3 pattern** (owner ruling R-3,
+2026-08-30): the residual is designated **ATTRIBUTED AND CLOSED at this grain**
+with a map attached rather than an open investigation.
+
+* **The measurement the ruling rests on.** The joint arm builds wind **1.442 GW**
+  — to the megawatt the committed signal-alone arm's number — so it closes
+  **8.87 %** of the **12.313 GW** ERCOT wind entry miss and **the volume rule
+  contributes exactly ZERO wind** on a dual-based level, against a naive sum of
+  the singles of **13.77 %** and a best single of 8.87 %. The walk is **live, not
+  inert**: it changes **exactly one decision** in the whole 2021–2025 window —
+  entering-2023 solar **5,550 MW → 0** — with every other decision byte-identical
+  to the pure disarm arm. The volume rule's own **4.91 %** under the shipped
+  signal is identified as a **shipped-signal artifact** (solar exhausting *below*
+  its cap freed shared queue budget wind cleared into; on the dual level wind
+  already clears on merit in the 2022 step).
+* **The attribution.** A **zone-flat, ORDC-dominated signal at hub grain**:
+  `zonal_mean_range` and `hourly_cross_zone_spread` measured **exactly 0.0**,
+  ~90 % of what dispersion the object carries is the ORDC adder, and the West
+  build zone reads capture **0.494 / 0.805 / 0.927** on the shipped signal
+  against **0.988 / 0.988 / 1.055** on the model's own duals.
+* **What is ruled, and what is NOT.** Further pursuit **at this representation
+  grain** is NOT THE ROUTE. **Nothing is armed** — the ERCOT entry screen keeps
+  its shipped posture (`entry_lookahead_reprice` stays `ScenarioConfig` default
+  `True`, verified in `scenarios.py` at the pin) — and **nothing is rejected**:
+  both cells are **measured and rested unadopted**. **91.1 % of the miss stays
+  OPEN and is published at full magnitude**, as is the dual level's adequacy cost
+  (terminal RM 25.19 → 38.84 %, **+13.65 pp**) and the one band that worsens
+  (solar Δ|err| **+0.1410**). Every addition band still FAILs in both arms.
+* **Re-open conditions, exhaustive:** (1) a **NEW MEASURED DRIVER** admissible
+  under rule 13 `[R-MEASURED]` — never a residual-fitted adder, capture factor or
+  build target (rules 1 `[R-STRUCT]`, 21 `[R-DOF]`); (2) an **OWNER-CHARTERED
+  REPRESENTATION-GRAIN CHANGE** — the caiso-223 class, *a program, not a lever*,
+  earning its arming separately. **Neither route may be opened by re-running a
+  lever at hub grain.**
+* **Records:** `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md` (new) ·
+  `docs/calibration-log/ercot.md` 2026-08-31 R-D entry · R-D ruling stamps
+  appended to the **evidence strings only** of `entry_lookahead_reprice`
+  (**cell K / fc O**) and `entry_margin_exhaustion` (**cell O / fc K**) in
+  `docs/codebase-site/data/mechanism-matrix/ERCOT.js` — **no verdict letter
+  changes**, `check_mechanism_matrix.py` exit 0 after the edit. Retires board v16
+  owner-queue item 2.
+
+---
+
+**Ruling R-E — THE C3c SCARCITY PROGRAM: Q1 + Q2 CHARTERED AND CHAINED; Q3
+UNOPENED AND UNRECOMMENDED.** On `docs/CHARTER-c3c-scarcity-program-2026-08-31.md`
+(filed at nyiso-163 under the owner's *"Open c3c scarcity question"* ruling,
+recorded in this log's 2026-08-31 entry above). **Q1 — the PJM phantom audit —
+first**; **Q2 opens only on Q1 = REAL**; **Q3 (the probabilistic-RT-premium
+class) is an ARCHITECTURE decision colliding with rules 4 `[R-DUALS]`, 8
+`[R-8760]` and the no-MIP constraint, and is NOT opened and NOT recommended as a
+calibration lane.** Executed by its own dispatched lanes, not here.
+
+**🟢 STATE AT THIS PIN, RE-DERIVED RATHER THAN CARRIED: BOTH CHARTERED QUESTIONS
+HAVE ALREADY REPORTED.** The dispatch that produced this record described Q1/Q2
+as pending; at `d44446e0` they are landed findings:
+
+* **Q1 = REAL** — `docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md` (pjm-164,
+  #4456, zero solve). PJM's reserve-dual channel is **not** the ercot-214 phantom:
+  in 2025 the model tail overlaps reality's tail **14 of 32** hours (0.44 of the
+  model tail, 0.24 of the actual), **13** of them with a positive reserve dual,
+  and reality was pricing reserve scarcity through the same mechanism on published
+  DataMiner2 MCPs. 2023–24 have near-zero overlap but near-zero reserve
+  involvement, so the mis-timing there is not the reserve channel's. Three honest
+  caveats recorded, **none determination-level**. **Consequence: the
+  determination-integrity branch does NOT open** — no PJM keeper is resting on a
+  phantom channel, and no PJM card is owed.
+* **Q2 = CONFIRM** — `docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`
+  (nyiso-164, #4459, zero solve). The pre-registered kill gate **fires on both
+  clauses**: reality's NYCA-tier reserve price never exceeds the concurrent LMP in
+  **65/65** tail hours (median 0.54–0.65× LMP; a declared NYCA-wide pick-up covers
+  only **8/65**), and the model carries **5.08 / 3.92 / 2.99 GW** of
+  reserve-carrying thermal headroom (lower bound) against a 2,620 MW NYCA
+  30-minute requirement, with the NYCA families at **zero dual and zero shortfall
+  in all 26,280 hours**. **NYISO's C3c ledger is CONFIRMED on NYISO's own
+  evidence rather than by inheritance**, the nyiso-163b inheritance question is
+  settled, and the lane closes. This does **not** close C3c and does **not** move
+  C3a-2025.
+* **The reversal is reported, not buried** (the charter asked for it): nyiso-163b's
+  timing overlap was not wrong, its *interpretation* was — split by tier, model and
+  reality **agree at the locational tier** (both bind) and **agree at the NYCA
+  tier** (neither is short), and NYCA is the tier that would have to be short for a
+  system-wide price tail to be a reserve phenomenon.
+* **The standing guard held in both lanes:** no SOM-published RCPF value
+  ($25/$40/$750/$775) was proposed for change **in any form, including as a
+  sensitivity** — the exact ercot-214 failure rules 13 `[R-MEASURED]` and 1
+  `[R-STRUCT]` exist to prevent. **No matrix cell moves in either lane** (nothing
+  tested, armed or adjudicated); **no holdout spend** (2023–2025 only).
+
+---
+
+**Ruling R-F — the nyiso-161 WINTER-FACE WAIVER CARD: DEFERRED, WITH A DATED
+RE-SERVE TRIGGER.** **Neither option A (NOT-YET stands) nor option C (CALIBRATED)
+is ruled.** The card **stays filed** and moves from *open-undecided* to **PARKED —
+re-serve when the C3c program's Q1/Q2 report lands** (the R-E lane's finding is
+the trigger; had Q1 returned PHANTOM the re-serve would have happened immediately
+on that finding instead). **NYISO's determination stays NOT-YET on
+{C3a-2025 −11.5 %, C3c} — unchanged, restated, not re-derived downward.**
+
+**🟠 THE TRIGGER IS ALREADY SATISFIED AT THIS PIN.** Q1 (REAL) and Q2 (CONFIRM)
+both landed before this record was written, and Q1 returned REAL rather than
+PHANTOM, so the deferral's *branch* is the ordinary one and its *condition* is
+met. **The card is therefore PARKED-AND-RE-SERVABLE — servable at the next
+sitting, not waiting on a report.** Recording it any other way would leave a
+later reader expecting a report that has already arrived. Nothing about the
+deferral itself is re-opened by this: the owner deferred, and only the owner
+un-defers.
+
+Standing context the card must be read with, unchanged: **the AORR access route
+is PERMANENTLY CLOSED by owner decision** (nyiso-163b, verbatim *"I'm not getting
+new data access so just kill that request on 1"*), so the winter face of
+C3a-2025 is **permanently unidentifiable from obtainable data** and nyiso-97 §5
+re-open **condition 3 is WITHDRAWN** (conditions 1 and 2 remain live passive
+watch items). **Option B (CALIBRATED-WITH-CAVEATS) is dominated** — marker
+re-entry requires CALIBRATED, not CWC (Q5-W) — and **the precedent surface is not
+NYISO-only**: CAISO's standing C3a residual has both lever routes CEII-blocked
+(caiso-218/219) and would have an immediate claim on any access-blocked caveat
+class. Records: `docs/calibration-log/nyiso.md`, continuing its 2026-08-31
+entries.
+
+---
+
+**Ruling R-G — nyiso-160 / leg2: CLOSED BY ARCHIVE.** On
+`docs/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, #4431, executing
+owner ruling R-C zero-solve on committed artifacts), the owner ruled **archive**.
+
+The re-verification dissolved the question it was ordered to answer: **there is
+NO candidate.** The leg2 session produced a **stop with cause at access**, not an
+object — no pre-registration, no armed mechanism, no A/B pair, no control — and
+its sole registered run, `2026-08-30-nyiso-160-tpaudit-replay`, is the keeper's
+own recipe re-established at HEAD. Re-verified against the live keeper on four
+independent legs: **zero solve-affecting levers differ**; **zero record-level
+scorecard differences** across 60 scored records (the only difference anywhere is
+the C6 attestation narrative string); **max |Δ| = 0 over 1,043,280 hourly data
+rows**; `metrics.json` 58 of 60 leaves identical (the 2 are `run_id` and `label`).
+The equality is **structural, not coincidental**. Promotion would have been a
+formal no-op that *weakened* the keeper designation's evidentiary basis; archiving
+costs nothing evidentially, since the touchpoint-prep verdict is durable in the
+committed artifact, the two findings and the log entries.
+
+**The parked session is already archived; this records the closure.** The
+registered runs and the findings **stay on the record**. The promote-or-archive
+item is retired **for good** — it is not re-servable, because the object it named
+does not exist. Keeper `2026-08-30-nyiso-159-loss-surface` and its NOT-YET
+determination are **untouched**; `audit_keepers.py --iso NYISO` PASS 0/0 at the
+pin. **No matrix cell moves** (nothing was tested; `scuc_load_pocket_commitment`
+stays **G** carrying the nyiso-160 access-stop on its evidence line). Records:
+`docs/calibration-log/nyiso.md`, continuing its 2026-08-31 entries.
+
+---
+
+**Matrix (rule 26 `[R-MECH-MATRIX]`).** Duty (b): the only shard touched by this
+sitting's records is `mechanism-matrix/ERCOT.js`, and only the **evidence strings**
+of the two joint-wind cells — R-D adjudicates a *disposition*, not a verdict, so
+**no cell letter moves in any shard**. Duty (c) does not fire: no `ScenarioConfig`
+field was added. `check_mechanism_matrix.py` exit **0** after the edit.
+
+**Gates at the pin, all five re-run with exit codes captured directly:**
+`audit_keepers` **exit 0, PASS 0/0** · `check_registry_payload_parity` **exit 0,
+58 runs / 93 bundle dirs / 0 known-unsynced** · `check_mechanism_matrix` **exit 0,
+194 field + 49 row + 152 path** · `check_forecast_staleness` **exit 0, Δ = 1 of
+10** · `check_bench_freshness` **exit 0, 20 parts, 0 STALE, 19 with engine
+drift**.
+
 ## 2026-08-31 — C3c scarcity program, Q1+Q2 CLOSED: the cross-ISO synthesis both executing lanes deferred — Q1 REAL (twice, independently), Q2 CONFIRMED (twice, the second by a lane that first got it wrong), and the program's honest yield
 
 **Cross-ISO entry, written under owner ruling R-E** (2026-08-31 director refresh

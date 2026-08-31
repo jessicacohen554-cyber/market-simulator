@@ -12953,3 +12953,115 @@ intake with the owner, not an executable lane. Zero solves this
 session; ERCOT surfaces only (rule 25); push integrity per rule 27.
 
 **Next shorthand: ercot-248** (ercot-199 remains unclaimed)
+
+## 2026-08-31 — OWNER RULING R-D (director REFRESH sitting): the C-1 WIND ENTRY MISS is designated TERMINAL REST AT THIS REPRESENTATION GRAIN, with a DECISION MAP attached — nothing armed, nothing rejected, 91.1 % of the miss published OPEN (records act; zero solve)
+
+**Owner ruling, 2026-08-31 REFRESH sitting**, on
+`docs/FINDING-c1-joint-wind-ab-2026-08-31.md` (the A/B owner ruling R-B
+chartered; both kill-gates **PASS**; joint posture **`NON_COMPLEMENTARY`**).
+Recorded by the dispatched audit-program rulings-records lane under the standing
+recorded deviation — the director pushes nothing, records land through the lane,
+the owner merges. **ZERO SOLVE. ERCOT surfaces only (rule 25 `[R-ISO-SCOPE]`).
+No keeper, shard, marker, determination, `ScenarioConfig` default or matrix
+verdict letter moves.** Executed per the **caiso-222 §1(c) option-3 pattern**
+(owner ruling R-3, 2026-08-30) — the residual is designated **ATTRIBUTED AND
+CLOSED at this grain with a map attached**, never an implicit pause.
+
+**(1) The ruling.** Further pursuit of the ERCOT wind entry miss **at this
+representation grain** is **NOT THE ROUTE**. The map is
+`docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md`.
+
+**(2) The measurement it rests on.** The joint arm builds wind **1.442 GW** — to
+the megawatt the committed signal-alone (disarm) arm's number — closing
+**8.87 %** of the **12.313 GW** miss (model 0.350 GW against 12.663 GW actual,
+2023–2025 decision basis), while **the volume rule contributes exactly ZERO
+wind** on a dual-based level. Naive sum of the singles **13.77 %**; best single
+**8.87 %**; joint **8.87 %**, a difference of **0.00 pp** — `NON_COMPLEMENTARY`.
+The walk is **live, not wiring-inert**: it changes **exactly one decision** in
+the entire 2021–2025 window (entering-2023 solar **5,550 MW → 0**), with every
+other entry, storage and technology decision **byte-identical to the pure disarm
+arm** — including the 1,092.2 MW of 2022-bridge wind that is the joint arm's
+entire wind source. The volume rule's **4.91 %** under the *shipped* signal is
+identified as a **shipped-signal artifact**: there, solar exhausted *below* its
+cap and freed shared queue budget wind cleared into; on the dual level wind
+already clears on merit in 2022 and the walk exhausts 2023 solar to zero with
+nothing replacing it.
+
+**(3) The attribution — a zone-flat, ORDC-dominated signal at hub grain.**
+`entry_lookahead_reprice` produces a system-wide MC step with `zonal_mean_range`
+and `hourly_cross_zone_spread` measured **exactly 0.0** (all seven ERCOT model
+zones see one number), of whose dispersion **~90 % is the ORDC adder** — a
+summer-afternoon artifact, not a price any generator is paid. Against each arm's
+own mean the West build zone reads capture **0.494 / 0.805 / 0.927** on the
+shipped object versus **0.988 / 0.988 / 1.055** on the model's own hourly zonal
+LP duals (entering 2023/2024/2025), and the B-3 inversion (wind anti-correlated,
+solar 2.6×-correlated) is **manufactured by the ORDC shape**, not by wind's
+market value.
+
+**(4) What is NOT ruled, published at full magnitude (rule 1 `[R-STRUCT]`).**
+**91.1 % of the miss stays OPEN.** Every addition band still **FAILs in both
+arms** — wind −0.9720 → −0.8860, solar −0.2830 → −0.4240, gas_cc +35.8850
+unchanged, gas_ct +1.0500 → +0.5090, storage −0.6350 → +0.3150 (a **sign flip to
+overshoot**: 5.000 → 18.000 GW against 13.691 actual). The dual level's adequacy
+cost is **terminal RM 25.19 → 38.84 %, +13.65 pp**, on a [13.8 %, 28.7 %] band,
+of which the volume rule damps only **−1.40 pp** off the signal leg's own
+40.24 %. **The one live thing the walk does is the WORSENING one** — it exhausts
+2023 solar to zero and solar is the band that moves away from actuals
+(Δ|err| **+0.1410**); K1 does not fire only because three other bands improve by
+**0.9470** in total. Zero retirements in every step of both arms.
+
+**(5) Nothing is armed; nothing is rejected.** The **ERCOT entry screen keeps its
+shipped posture** — `entry_lookahead_reprice` remains `ScenarioConfig` default
+`True` (`src/market_sim/config/scenarios.py:3919`, verified at the ruling), no
+field flipped, **zero new DOF** in any arm of this program (rule 21 `[R-DOF]`:
+the joint posture is two already-registered fields). The dual-based object is
+**not `R`** — it repairs measured defects on its own evidence and trades them for
+a backward-looking naive-expectations object; neither object is the developer
+pro-forma. Both cells stay as they read: `entry_lookahead_reprice` **cell K /
+fc O**, `entry_margin_exhaustion` **cell O / fc K** — **measured, rested
+unadopted**.
+
+**(6) Re-open conditions, exhaustive.** (a) A **NEW MEASURED DRIVER** reaching
+the signal object and admissible under rule 13 `[R-MEASURED]` (producible for a
+forward year from forward drivers, responsive to changed conditions) — a
+residual-fitted adder, a tuned capture factor, a wind-build target or any
+quantity backed out of the 12.313 GW gap is **forbidden**, not a driver.
+(b) An **OWNER-CHARTERED REPRESENTATION-GRAIN CHANGE** — nodal/sub-zonal entry
+price formation, a locational capture object at the interconnection node, or a
+forward-expectation construction that is neither the zone-flat MC step nor last
+year's realized duals. That is the **caiso-223 class: a program, not a lever**,
+earning its arming separately with its own precommit, and it is an owner act.
+**Neither route may be opened by re-running a lever at hub grain** — rule 26
+`[R-MECH-MATRIX]` DO-NOT-REDO now covers both cells against the wind band.
+
+**(7) Watch item, explicitly NOT a re-open condition — the armed-combination
+measurement gap.** A bare ERCOT T1-H run now resolves **five** solve-affecting
+entry-screen fields ON at once: the shipped `entry_lookahead_reprice`, plus
+`entry_margin_exhaustion` + `entry_forward_reserve_leg` (ERCOT
+`default_scenario_overrides`, D12-A / owner ruling Q15) and both
+`storage_entry_availability_gate` + `storage_entry_cost_normalized_rank`
+(`ScenarioConfig` defaults, owner ruling R-A, 2026-08-31). **Every registered A/B
+measured a strict subset** — the R-A repair arm ran at the unarmed walk by
+design, the D12-C armed pair at the pre-R-A storage defaults, and the C-1 joint
+arm pinned `entry_forward_reserve_leg` **off in both arms** (a reprice-disarmed
+leg carrying it does not construct at all). **The full combination is
+composed-by-construction and UNMEASURED**, and the R-A cache epoch
+(`src/market_sim/results/cache.py`, "Epoch 2026-08-31") leaves the forecast
+default key **`603c2498bf71d21d` UNMOVED**, so a pre-arm bundle and a post-arm
+armed config are the **same key** — purge or re-solve before quoting an armed
+run. Closing that gap is a T1-H re-baseline, the forecast program's charter, not
+a calibration lane's.
+
+**(8) Records and matrix.** New: `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md`.
+R-D ruling stamps appended to the **evidence strings only** of the two joint-wind
+cells in `docs/codebase-site/data/mechanism-matrix/ERCOT.js` — **no verdict
+letter changes** (duty (b): R-D adjudicates a disposition, not a verdict); duty
+(c) does not fire. `check_mechanism_matrix.py` **exit 0** after the edit. Also
+recorded in `docs/calibration-log/governance.md` (the sitting's four-ruling
+entry) and the audit plan §8 ledger + board v17. Zero holdout interaction: the
+T1-H lane is the **forecast** namespace (rule 15 `[R-DASHBOARD]`), the backcast
+registry and CI gates are untouched, and ERCOT's `complete` marker, its
+2026-08-31 frontier declaration and the two-config keeper partition are **not
+touched by this ruling**.
+
+**Next shorthand: ercot-248** (ercot-199 remains unclaimed)

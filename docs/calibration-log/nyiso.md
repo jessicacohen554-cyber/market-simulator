@@ -8813,6 +8813,134 @@ and unsupported by its own evidence" (answered — it is supported).
 
 Next shorthand: nyiso-165.
 
+## 2026-08-31 — OWNER RULINGS R-F and R-G (director REFRESH sitting): the nyiso-161 winter-face waiver card is DEFERRED with a dated re-serve trigger (and the trigger is ALREADY MET at this pin); nyiso-160/leg2 is CLOSED BY ARCHIVE, retiring the promote-or-archive item for good (records act; zero solve)
+
+Two owner rulings from the 2026-08-31 director REFRESH sitting, recorded by the
+dispatched audit-program rulings-records lane under the standing recorded
+deviation (the director pushes nothing; records land through the lane; the owner
+merges). **ZERO SOLVE; NYISO surfaces only (rule 25 `[R-ISO-SCOPE]`). Keeper,
+shard, marker, determination, freeze and every matrix cell UNTOUCHED.** State
+verified at the pin `d44446e0`: keeper **`2026-08-30-nyiso-159-loss-surface`**,
+`audit_keepers.py` **PASS 0 failures / 0 warnings**, NYISO holds **no `complete`
+marker** and is absent from `final`, years read are 2023–2025 only.
+
+---
+
+**RULING R-F — the nyiso-161 WINTER-FACE WAIVER CARD: DEFERRED, WITH A DATED
+RE-SERVE TRIGGER.** **Neither option A (NOT-YET stands) nor option C (declare
+CALIBRATED) is ruled.** The card **stays filed** and its state moves from
+*open-undecided* to **PARKED — re-serve when the C3c program's Q1/Q2 report
+lands.** The R-E lane's finding is the trigger; had Q1 returned **PHANTOM** the
+re-serve would have happened **immediately on that finding** instead of waiting
+for Q2.
+
+**NYISO's determination is UNCHANGED and restated: NOT-YET on {C3a-2025
+−11.5 %, C3c}.** Nothing about the deferral moves it in either direction.
+
+**🟠 RE-DERIVED AT THIS PIN, NOT CARRIED FROM THE DISPATCH: THE TRIGGER IS
+ALREADY SATISFIED.** The dispatch that produced this record described the C3c
+Q1/Q2 report as pending. At `d44446e0` **both questions have already reported**,
+and Q1 returned **REAL**, not PHANTOM:
+
+* **Q1 = REAL** (pjm-164, #4456, `docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`,
+  zero solve) — PJM's reserve-dual channel is **not** the ercot-214 phantom, so
+  the determination-integrity branch does not open and no PJM card is owed.
+* **Q2 = CONFIRM** (nyiso-164, #4459,
+  `docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, zero solve) — the
+  pre-registered kill gate fires on **both** clauses and **NYISO's C3c ledger is
+  CONFIRMED on NYISO's own evidence** rather than by inheritance from
+  CAISO/MISO/ERCOT.
+
+**So the card is PARKED-AND-RE-SERVABLE: servable at the next sitting, not
+waiting on a report.** Recorded this way deliberately — recording it as "waiting"
+would leave a later reader expecting a report that has already arrived. **The
+deferral itself is not re-opened by this**: the owner deferred, and only the
+owner un-defers. **This lane rules nothing and adjudicates neither option.**
+
+**What the re-served card must be read with, unchanged since nyiso-163b.** The
+**AORR access route is PERMANENTLY CLOSED by owner decision** (verbatim: *"I'm
+not getting new data access so just kill that request on 1"*), so the winter face
+of C3a-2025 (−$3.92) is **permanently unidentifiable from obtainable data** —
+nyiso-158 §1.4 measured that no admissible driver in the repo reaches it, and
+nyiso-163 re-confirmed the nyiso-97 content verdict at IN-SPAN vintage from the
+public NYSRC rules layer. **nyiso-97 §5 re-open condition 3 (owner-supplied
+access) is WITHDRAWN by the owner** and its watch line is closed; conditions 1
+and 2 remain live passive watch items. **Option B (CALIBRATED-WITH-CAVEATS) is
+dominated** — marker re-entry requires CALIBRATED, not CWC (Q5-W), so B pays the
+full rubric-amendment and precedent cost and buys nothing downstream. **The
+precedent surface is not NYISO-only**: CAISO's standing C3a residual has both
+lever routes CEII-blocked (caiso-218/219) and would have an immediate claim on
+any access-blocked caveat class.
+
+---
+
+**RULING R-G — nyiso-160 / leg2: CLOSED BY ARCHIVE.** On
+`docs/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, #4431, executing
+owner ruling R-C zero-solve on committed artifacts only), the owner ruled
+**archive**.
+
+**The re-verification dissolved the question it was ordered to answer: THERE IS
+NO CANDIDATE.** The leg2 session (nyiso-160) produced a **stop with cause at
+access**, not an object — **no** pre-registration, **no** armed mechanism, **no**
+`ScenarioConfig` field, **no** A/B pair and **no** control. Its sole registered
+run, **`2026-08-30-nyiso-160-tpaudit-replay`**, is the keeper's own recipe
+re-established at HEAD, and its own records already declared it *"NEVER a keeper
+candidate — it is the keeper itself"*. Re-verified against the **live** keeper on
+four independent legs at that session's pin:
+
+* **R1 scorecard** — 60 scored records each; **ZERO record-level differences**.
+  The single difference anywhere in either scorecard is the **C6 governance
+  attestation narrative string**. `reasons`, `caveats`, `ledger_entries`,
+  `grade_summary`, `free_class_score`, `scorable_years` and `data_blocked_years`
+  are identical objects; determination **NOT-YET {C3a-2025, C3c}** on both.
+* **R2 recipe** — **0 solve-affecting levers differ** (3 candidate-only leaves are
+  post-keeper rule-24 surface widening at registered defaults, all ERCOT/entry-side
+  with no NYISO reach).
+* **R3 hourly sidecars** — **max |Δ| = 0 (exactly zero) over 1,043,280 data rows**,
+  every label column matching element-wise. (The parquet *files* are not
+  byte-identical — a pyarrow writer-version string in the footer — so the identity
+  rests on the decoded value comparison, which is the load-bearing test.)
+* **R4 `metrics.json`** — 60 leaves each, **58 identical**; the 2 that differ are
+  `run_id` and `label`.
+
+**The equality is structural, not coincidental** — it is the keeper's own recipe
+and the keeper's own dispatch. Two strengthening details the re-verification
+added: the value-identity held **across a solver-version change** (HiGHS 1.15.1
+keeper vs 1.14.0 replay, plus pandas/pyarrow/pydantic differences), and the
+ruling's stated staleness premise did **not** hold for this session — nyiso-160
+opened with nyiso-159 already designated and audited against 159 throughout. The
+re-verification stands on its own regardless, as a fresh measurement at head.
+
+**Why archive is the right disposition, on that record.** Promotion would have
+been a **formal no-op** — same config, same dispatch, same determination — that
+**replaced** the keeper designation's evidentiary basis (the nyiso-159 A/B against
+`2026-08-30-nyiso-159-loss-control`, with its prereg, gates JSON and promotion
+note) with an audit replay that has **no control and tests no mechanism**: nothing
+gained, promotion basis weakened. **Archiving costs nothing evidentially** — the
+touchpoint-prep verdict is durable in `results/calibration/_nyiso160_tpaudit.json`,
+the nyiso-160 finding, the nyiso-162 finding and the log entries, none of which
+depend on the run staying registered.
+
+**The parked session is already archived; this entry records the closure.** The
+**registered runs and both findings stay on the record.** The
+**promote-or-archive item is retired FOR GOOD** — it is not re-servable, because
+the object it named does not exist as a candidate.
+
+**No matrix cell moves** (rule 26 duty (b) not triggered — nothing was tested,
+armed or adjudicated; duty (c) not triggered — no `ScenarioConfig` field added).
+`scuc_load_pocket_commitment` stays **G**, already carrying the nyiso-160
+access-stop on its evidence line.
+
+---
+
+**Governance and scope.** Both rulings are recorded cross-ISO in
+`docs/calibration-log/governance.md` (the sitting's four-ruling entry, which also
+carries R-D and R-E), and on the audit plan §8 ledger + board v17. **Zero solve,
+zero holdout spend, zero rubric motion, no scorer change, no keeper/shard/marker/
+determination/matrix movement in this ISO.**
+
+**Next shorthand: nyiso-165.**
+
 ## 2026-08-31 — nyiso-165: charter Q2 re-executed in parallel, reached the OPPOSITE answer, and is WRONG — nyiso-164's CONFIRM reproduced exactly; two live defects found in a committed calibration reference (zero solve)
 
 Executes Q2 of `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` §5 under owner
