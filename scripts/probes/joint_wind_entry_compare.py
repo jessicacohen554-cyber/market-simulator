@@ -187,9 +187,10 @@ def control_vs_committed(control: Path) -> dict:
     for tech in ADDITION_TECHS:
         reg = reg_score["additions"]["by_tech"][tech]
         cur = (ctrl_score or {}).get("additions", {}).get("by_tech", {}).get(tech, {})
-        row_same = cur.get("model_gw") == reg["model_gw"] and cur.get("err_frac") == reg[
-            "err_frac"
-        ]
+        row_same = (
+            cur.get("model_gw") == reg["model_gw"]
+            and cur.get("err_frac") == reg["err_frac"]
+        )
         identical = identical and row_same
         drift_rows[tech] = {
             "registered": {
@@ -310,9 +311,7 @@ def complementarity_read(score_c: dict, score_a: dict) -> dict:
 
     naive_sum_gw = base + sum(gw - base for gw in singles.values())
     naive_pct = share(naive_sum_gw) if singles else None
-    best_single_pct = (
-        max(share(gw) for gw in singles.values()) if singles else None
-    )
+    best_single_pct = max(share(gw) for gw in singles.values()) if singles else None
     joint_pct = share(joint_gw)
 
     # WIRING-INERT is checked on the scored rows of the committed signal arm:
