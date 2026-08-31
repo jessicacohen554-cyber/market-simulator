@@ -263,15 +263,15 @@
    "flip": "curve-ON (capacity clearing) \u2014 enabled cap-market storage entry (+4 GW)",
    "fc": {
     "FC-1": "FAIL",
-    "FC-2": "CAVEAT",
+    "FC-2": "PASS",
     "FC-4": "FAIL",
     "FC-7": "CAVEAT",
     "FC-8": "CAVEAT"
    },
    "blocking_rows": [
-    "FC-1 I7 base-year adequacy: 2026 135,304 < 141,341 MW (6,037 MW); 2027 139,147 < 142,806 MW (3,659 MW) [CORRECTED 2026-08-24: the row also named 'I4 (2029 coal off 1640 MW, A1)', which CLOSES on the live record, and understated I7 as 2026-only]",
+    "FC-1 structural integrity: **I7 IS CLOSED** [S-123-V 2026-08-31, run `miso-2026-2030-s123-verify`]. The S-123 adequacy package (S-1 PRM re-vintage 0.179->0.157, S-2 external ZRC +3,505.9 MW, S-3a DR fraction 0.0665940) swings the position +15,380.2 MW in 2026 -- matching its +15,380.1 pre-declaration -- and I7 reads PASS ('held') in ALL FIVE years 2026-2030 (positions +10,795.6 / +9,143.1 / +8,355.4 / +2,949.0 / +607.3 MW). The former row read '2026 135,304 < 141,341 MW (6,037 MW); 2027 139,147 < 142,806 MW (3,659 MW)'. FC-1 NEVERTHELESS STILL FAILS, on a DIFFERENT invariant: **I3 unserved energy**, 2029 0.0194% and 2030 0.0299% of load (gate 0.01%; 31 and 58 hours; 146.0 and 231.3 GWh). Measured mechanism, not a defect in the three terms: the adequacy backstop is ARMED (reserve_margin_build_enabled=None -> ON for a capacity-market ISO) but with the requirement corrected its trigger never fires -- 0 MW built in every year -- while 4,318.3 MW retires (2029 oil 3,295.8) against +6,088.7 MW of load growth, taking reserve margin 9.11% -> 1.17%. Endogenous response; the strict pre-package control was not run (routed). See FINDING-capx-s123-miso-adequacy-2026-08-30.md \u00a76.",
     "[REMOVED 2026-08-24: 'FC-2 I13 gas_ct cobweb (NEW, flip-induced)'. I13 PASSES on the live record ('no cobweb (I13 PASS)') and FC-2 is CAVEAT, not FAIL -- the cobweb row was the superseded FF-2D vintage]",
-    "FC-2 CAVEAT (non-blocking): I12 WARN, floor [10.0%, 25.0%]; out 2026:5.3%, 2027:7.1%. Backstop share 9.2% PASSES.",
+    "[CLOSED 2026-08-31 by S-123-V: 'FC-2 CAVEAT (non-blocking): I12 WARN, floor [10.0%, 25.0%]; out 2026:5.3%, 2027:7.1%.'] **FC-2 now reads PASS.** The S-3a DR netting and S-1 re-vintage move the requirement-implied floor to +0.71% (band [0.71%, 15.71%]) and every year is in-band on the measured re-run: 2026 9.11%, 2027 7.75%, 2028 7.08%, 2029 2.93%, 2030 1.17%. I13 PASS (no cobweb) and the backstop-share row PASS are unchanged.",
     "FC-4 crossover co2 63.3% / 58.9% / 75.5% and gas_twh 2024 15.1% FAIL; price 13.6% / 13.9% / 27.4% CAVEAT (FFR-3A-4 measurement) [D5-R 2026-08-30 (owner ruling Q12): the co2 63.3/58.9/75.5 % was the PRE-REPAIR scorer's unsplit-COAL drop (97-117 % of the MISO miss \u2014 its fuel volumes are nearly perfect; FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a72.2); the FFR-3A-4 bundle is uncommitted so the row stands as measured, but on the repaired committed re-measure `miso-t1x-ffr2a` co2 reads +1.2/\u22121.8/+13.4 % (2023/24 PASS, 2025 CAVEAT) \u2014 co2 LEAVES MISO's FC-4 FAIL set; FC-4 remains FAIL on its volume rows (gas_twh 2024 15.1 %). Leg (c) does not move. See `d5r_co2_grain_repair`.] [D13 2026-08-30: the FC-4 VERDICT is unchanged and still FAIL; what moved is gate leg (c), fail \u2192 pass, on owner ruling Q7 (measured closes the leg).]"
    ],
    "gate": {
@@ -283,7 +283,7 @@
     },
     "b_t1f_verdict": {
      "status": "fail",
-     "detail": "HOLD \u2014 FC-1 FAIL on I7 alone (2026: 6,037 MW; 2027: 3,659 MW). FC-2 is CAVEAT, not FAIL. Corrected 2026-08-24 from 'FC-1 FAIL I4, I7 + FC-2 FAIL I13 cobweb': I4 CLOSES and I13 PASSES ('no cobweb') on the live record."
+     "detail": "HOLD -- UNCHANGED, but the basis MOVED [S-123-V 2026-08-31]. Was 'FC-1 FAIL on I7 alone (2026: 6,037 MW; 2027: 3,659 MW)'. On the post-package verification re-measure `miso-2026-2030-s123-verify` I7 CLOSES in all five years and FC-2 goes CAVEAT -> PASS; FC-1 still FAILS, now on I3 (unserved 2029/2030). The determination is therefore still HOLD and gate leg (b) still fails -- the adequacy package did NOT flip MISO's T1-F verdict, it relocated the failure. Nothing opened."
     },
     "c_crossover_gap": {
      "status": "pass",
@@ -316,7 +316,8 @@
    "marker_final": false,
    "t1h_determination": "HOLD",
    "t1h_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1",
-   "t1x_provenance": "FFR-3A-4 MEASURED it - the leg FFR-3A-3 launched twice and lost twice to OOM. run miso-2023-2027-crossover-ffr3a4 (vintage 2023, 2023-2027, all six solve-affecting flags omitted so each inherits its shipped default; posture verified in the RESOLVED config, not the request). Determination HOLD on FC-4 FAIL + FC-7 FAIL, the same category pattern as every other leg in the battery. All 10 banded metrics reproduce the pre-fix comparator miso-2023-2027-crossover-ffr3a2 to 3 d.p. (delta +0.0000), so MISO joins ERCOT and PJM: all three T1-X legs are unmoved by the G3 cap-grain fix 2adfb49. PRE-REGISTERED and confirmed by MECHANISM, not just by score: the ledgers execute ZERO economic retirements in 2023/2024/2025 and land 3 exits / 432.8 MW in 2026, a year solved but never scored (rule 22), so the fix's admission-set change has nothing to act on inside the scored window. That is the FFR-3L structural null, now on MISO's OWN evidence (rule 25 clean, nothing imported). NOT an attribution: no control arm ran."
+   "t1x_provenance": "FFR-3A-4 MEASURED it - the leg FFR-3A-3 launched twice and lost twice to OOM. run miso-2023-2027-crossover-ffr3a4 (vintage 2023, 2023-2027, all six solve-affecting flags omitted so each inherits its shipped default; posture verified in the RESOLVED config, not the request). Determination HOLD on FC-4 FAIL + FC-7 FAIL, the same category pattern as every other leg in the battery. All 10 banded metrics reproduce the pre-fix comparator miso-2023-2027-crossover-ffr3a2 to 3 d.p. (delta +0.0000), so MISO joins ERCOT and PJM: all three T1-X legs are unmoved by the G3 cap-grain fix 2adfb49. PRE-REGISTERED and confirmed by MECHANISM, not just by score: the ledgers execute ZERO economic retirements in 2023/2024/2025 and land 3 exits / 432.8 MW in 2026, a year solved but never scored (rule 22), so the fix's admission-set change has nothing to act on inside the scored window. That is the FFR-3L structural null, now on MISO's OWN evidence (rule 25 clean, nothing imported). NOT an attribution: no control arm ran.",
+   "t1f_provenance": "S-123-V 2026-08-31 -- run `miso-2026-2030-s123-verify` (cache key 587dc5b32ba71ceb, forecast mode, 2026-2030, 5/5 years, 24.2 min, 9.65 GB peak, --golden-posture; MISO's three default_scenario_overrides inherited True, retirement_rule=pipeline, both entry dampers on). The verification leg the S-123 package owed: every requirement-side term lands on its pre-declaration to the decimal (2026 requirement 141,341.4 -> 129,467.1; S-1 -2,637.4; S-3a -9,236.8; S-2 +3,505.9), with ZERO demand-path drift vs the FFR-3A-2 epoch (the pre-package 2026/2027 requirements reproduce that vintage's own I7 row to the digit) and +1,452.4 MW of starting-fleet accreditation drift. Supersedes the FFR-3A-2 vintage, preserved at ff-verdicts key `miso-t1f-pre-s123`."
   },
   "NYISO": {
    "tier_reached": "T1",
