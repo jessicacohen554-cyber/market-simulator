@@ -416,6 +416,30 @@ def resolve_reserve_margin_build_enabled(config: ScenarioConfig, iso: str) -> bo
     resolve OFF, so the pre-G-41 default-off behaviour is byte-identical there;
     the capacity-market ISOs are where the backstop newly engages by default.
 
+    **WHERE THE DISABLED BACKSTOP SURFACES — read this before treating an
+    ERCOT I3 breach as a dispatch defect** (audit finding FR-6,
+    ``docs/forecast-readiness-audit-2026-07.md``; measured by lane D4-I3,
+    ``docs/handoffs/FINDING-capx-d4i3-ercot-slack-2026-08-31.md``). Returning
+    ``False`` here is a deliberate market-design choice, not an omission, and
+    it has a deliberate consequence: energy-only ERCOT has no corrective for a
+    year the entry screen under-builds. Capacity evolution is one-pass by rule
+    10 [R-ONE-PASS], so nothing re-opens the build decision within the year,
+    and the LP must still balance every hour — the residual therefore leaves
+    through the one unbounded column that can absorb it, load slack (bounded
+    ``0 <= Slack <= inf`` in :func:`model.lp.bounds.build_variable_bounds` at the
+    ``_slack_off`` seam, priced at ``voll`` in
+    :func:`model.lp.costs.build_cost_vector`). That slack is what forecast invariant
+    I3 (``scripts/check_forecast_invariants.check_i3_unserved_dump``) reports
+    as "slack N % of load". So an ERCOT I3 breach is, by construction, a
+    *capacity-evolution* signal read off the *dispatch* — an under-build made
+    visible — and the D4-I3 measurement bears that out: across eleven
+    committed ERCOT T1-H records the slack is monotone in the year's total
+    build (zero at >= 48.0 GW added, 0.01 % at 39.9 GW, 0.07 % at 27.8 GW)
+    and in the resulting reserve margin. Do NOT repair such a breach by
+    arming this backstop for ERCOT (that is the force-build the paragraph
+    above rules out, rule 1 [R-STRUCT]) and do NOT repair it in the LP; the
+    admissible object is the entry screen that chose the build.
+
     Args:
         config: Scenario config carrying the tri-state override field.
         iso: ISO identifier.
