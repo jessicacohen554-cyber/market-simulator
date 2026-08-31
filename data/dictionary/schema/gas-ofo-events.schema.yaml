@@ -1,0 +1,125 @@
+# Canonical schema: gas-ofo-events (interstate/intrastate gas pipeline
+# Operational Flow Order declarations, at event-day grain).
+#
+# An Operational Flow Order (OFO) is a gas utility's tariff instrument for
+# forcing shippers' daily deliveries into balance with their burn when the
+# pipeline/storage system cannot absorb the imbalance. It is a PHYSICAL
+# gas-system availability event, declared per gas day, with a published
+# tolerance band and an escalating stage. A LOW OFO (under-delivery is
+# penalized; tolerance printed negative) is the winter gas-deliverability
+# instrument -- the one that binds when a cold snap strands gas-fired
+# generation. A HIGH OFO (over-delivery penalized; tolerance positive) is the
+# converse linepack-surplus instrument.
+#
+# Grain: ONE ROW PER (iso, utility, gas_day, side). A utility may declare a
+# high and a low OFO on the SAME gas day (25 such days on the SoCalGas record
+# 1997-2026), which is why `side` is part of the key.
+#
+# Source (data/raw/gas-ofo-events/<iso>/): immutable HTML snapshots of the
+# declaring utility's public event-history ledger. CAISO's snapshots come from
+# the SoCalGas ENVOY public site (no authentication):
+#   low  : /Public/ViewExternalLowOFO.getLowOFOEvent   (2015-2026 on-page)
+#   high : /Public/ViewExternalOFO.getOFOEvent         (1997-2026 on-page)
+# Fetched by scripts/data/fetch_socalgas_ofo_events.py; curated by
+# scripts/data/curate_gas_ofo_events.py. Per-ISO parsing lives in
+# scripts/lib/gas_ofo_events/<iso>.py (registry, no ISO branching in shared
+# code).
+#
+# RULE 13 [R-MEASURED] STATUS: admissible measured INPUT. An OFO declaration is
+# a published physical availability event in the same class as the CAMPD outage
+# windows the model already consumes -- it is an input the gas system produces,
+# not an electricity-market outcome, and it has an exact forward analogue (an
+# OFO-day climatology or a gas-scarcity driver regenerates it for a forecast
+# year). It is NOT a fit target: no threshold, adder or share may be tuned so a
+# price/volume residual closes. See
+# results/calibration/FINDING-caiso226-ofo-intake-2026-08-31.md sections 4-5.
+#
+# NOT YET CONSUMED BY ANY MECHANISM. This datatype is intake-only as of
+# caiso-226; the pre-registered design for a future arm is
+# results/calibration/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md.
+datatype: gas-ofo-events
+schema_version: 1
+title: Gas pipeline Operational Flow Order (OFO) declarations, event-day grain
+description: >-
+  One row per declared Operational Flow Order gas day: the declaring utility,
+  the gas day, the side (low = under-delivery penalized, the winter
+  deliverability instrument; high = over-delivery penalized), the published
+  escalation stage, the published imbalance tolerance band, and whether the
+  utility waived noncompliance charges. Rule-13-admissible measured physical
+  input; never a fit target.
+
+key_columns: [iso, utility, gas_day, side]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ISO/RTO whose generation fleet burns gas delivered on the declaring
+      utility's system (CAISO for SoCalGas). Stamped from the registry spec,
+      not published by the utility.
+  - name: utility
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Declaring gas utility / balancing entity (SOCALGAS). One ISO may be
+      served by several -- the column keeps them separable rather than
+      collapsing them onto the ISO.
+  - name: gas_day
+    dtype: datetime64[ns]
+    unit: local_date
+    nullable: false
+    description: >-
+      The gas day the order applies to, tz-naive date label as the utility
+      publishes it. A SoCalGas gas day runs 07:00-07:00 Pacific, so it is a
+      DATE LABEL and not a midnight-to-midnight electricity day; a consumer
+      mapping it to operating hours must apply that offset itself.
+  - name: side
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      'low' (under-delivery penalized -- the winter gas-deliverability
+      instrument) or 'high' (over-delivery penalized -- linepack surplus).
+  - name: stage
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Published escalation stage as printed: '1', '2', '3', '3.1', '3.2',
+      '3.3', '4', '5', or 'EFO' (an Emergency Flow Order -- a distinct Rule 23
+      instrument the utility prints in the same ledger, NOT an OFO stage, and
+      deliberately left unranked here). NULL for the pre-staging high-OFO
+      vintage (SoCalGas printed high OFOs without a stage before mid-2018).
+  - name: tolerance_pct
+    dtype: float64
+    unit: pct
+    nullable: false
+    description: >-
+      Published daily imbalance tolerance band, SIGNED AS PUBLISHED: negative
+      on the low side (e.g. -5 = deliveries may fall no more than 5 percent
+      short of burn) and positive on the high side (e.g. 10). NOT monotone in
+      `stage`: the two are set independently by the utility -- measured on the
+      low ledger, the WIDEST bands sit at Stage 1 (min -18) while Stage 3.2 is
+      uniformly -5 -- so a consumer must pick the dimension it actually means
+      rather than assuming either one ranks the other.
+  - name: waived
+    dtype: bool
+    unit: none
+    nullable: false
+    description: >-
+      True when the utility waived the gas day's noncompliance charges (the
+      order was declared and then relieved). Published as a '(WAIVED)' suffix
+      on the tolerance and a red cell in the ledger. A waived day is still a
+      declared physical event; a consumer decides whether to count it.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Filename of the immutable raw snapshot under
+      data/raw/gas-ofo-events/<iso>/ the row was parsed from, so every row
+      traces to the exact retrieved document.

@@ -1,0 +1,18 @@
+{
+  "socalgas_low_ofo_events.html": {
+    "url": "https://www.socalgas-envoy.com/Public/ViewExternalLowOFO.getLowOFOEvent",
+    "utility": "SOCALGAS",
+    "side": "low",
+    "retrieved_utc": "2026-08-31T00:17:46+00:00",
+    "bytes": 133823,
+    "sha256": "b78dda8073fda6e3d0353c67fa02fd44de66879decd781ce505410dc8c87ba7b"
+  },
+  "socalgas_high_ofo_events.html": {
+    "url": "https://www.socalgas-envoy.com/Public/ViewExternalOFO.getOFOEvent",
+    "utility": "SOCALGAS",
+    "side": "high",
+    "retrieved_utc": "2026-08-31T00:17:46+00:00",
+    "bytes": 441287,
+    "sha256": "8d193e5364754e2cb4266b834780d116fcd7bee3f597f2314a047e69ff910eda"
+  }
+}
