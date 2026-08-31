@@ -12739,3 +12739,92 @@ licensed `push_files` small-commit path, blob-verified byte-identical);
 no workflows, no CI solves.
 
 **Next shorthand: ercot-245** (ercot-199 remains unclaimed)
+
+## ercot-245 — 2026-08-31 — THE ERCOT-244 NAMED SUCCESSOR CHARTERED AND KILLED AT CENSUS (ZERO-SOLVE, precommitted + Amendment 1): the PER-CLASS commitment-state (slow-start reachability) bound fires THREE kills — K-A on ST (the SCED GS* universe cannot express ST_GAS: 26.1 % 2023 / 30.3 % extract-day mass violation), K-C at saturation in BOTH scored years (transferred union 8,760/8,760 binds, NUC clamped at mass 1.0, CC 3,300–4,272 ordinary vs bar 150), K-T on both gas classes (T-1 CC 0.1935 / ST 0.1849; T-2 p95 3.2/4.1 GW) — and the adjudication lands on BOTH residues: the class-share FORM cannot discriminate (reality's own event shares equal same-bin ordinary shares, D-V5) and the 2023 identification does not transport, so the per-unit route is blocked on the 2024/2025 all-resource SCED corpus intake (owner flag); the A/B license is NOT spent
+
+**Session scope.** The ercot-245 owner handoff was the charter
+FINDING-ercot244 §3 required for the per-unit/per-class commitment-state
+successor. Phase-0 zero-solve only: a per-class availability-shaped
+reachability bound (CC/ST/COAL/NUC; quick-start never capped, rule 18)
+censused against the FORWARD keeper's committed sidecars, with ONE
+forward-span A/B licensed only on a clean pass. Precommit
+`docs/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md` pushed +
+blob-verified before measurement; Amendment 1 (pushed before the census
+re-ran, per the §7 convention) re-declared V-0(d)'s level leg on the
+STORAGE-EXCLUDED all-restype sum after the stop-and-investigate
+decomposition attributed the +4.9 GW raw offset to the published rtolhsl
+series carrying no ESR online HSL. The session was relaunched after the
+original container was lost post-precommit; the probe env was recreated
+on the same pins (python 3.11.15 / pandas 3.0.5 / pyarrow 25.0.1 /
+numpy 2.4.6, venv outside the project dir).
+
+**Construction (fixed a priori, zero fitted scalars).** Measured side:
+the delivery-2023 all-resource NP3-965 corpus (323 shards, ercot-163
+conventions verbatim — `_train`, `_state_of`, `_hoy`, per-train p98
+`_cap_ref`), CAP_k^meas = online (ONLINE/ONTEST/TRANSITION) + startable
+(OFFQS/OFFNS) HSL; the 2025 tail-day extract (11/11 days parsed, 0
+excluded, M_2025 coverage 23/31) as validation-only. Model side: F_k from
+`class_hourly` (CHP excluded, loose-side), AvailModel_k from the
+fidelity-guarded no-LP fleet reconstruction. Transfer: c_k = ratio-of-sums
+CAP/AvailRef over 10 net-load deciles (2023 edges), ĈAP_k,y = c_k(bin) ×
+AvailModel_k,y — no coefficient, margin, trim or grain free.
+
+**Census (probe `scripts/probes/ercot245_commitment_state_phase0.py` →
+`results/calibration/ercot245_commitment_state_phase0.json`).** Every V-0
+anchor passed: populations exact (22/1, 53/31, 36/31/115); corpus recon
+corr 0.9935, storage-excluded median gap +2,371 MW (raw +4,948; storage
+online mean 2,676 MW, the series-composition record); CC cap_ref
+35.260 GW = the ercot-163 commit to 0.003 %; universe anchors all in
+band (CC 1.265, ST 0.874, COAL 1.186, NUC 1.040). Kills: **K-A** — ST
+mass violation 26.1 % of covered 2023 hours (bar 25 %), 30.3 % on
+extract days; C1 passes so it cannot be conduct — the GS* restypes are
+mis-scoped against ST_GAS (ST is the only class whose measured universe
+is smaller than the model's). **K-C** — transferred union binds
+8,760/8,760 in BOTH years (ordinary 8,676/8,692 vs bar 150; away
+6,798/6,260 > ⅓): NUC saturates at mass 1.0 (c_NUC 0.962–0.991 applied
+to a class the model dispatches at its availability bound = a permanent
+102–184 MW clamp — the baseload form artifact), and the kill SURVIVES
+NUC's exclusion (CC alone 3,363/4,333 binds, mass 0.384/0.495, depth p50
+1.2–1.8 GW) — the standing ~11 % aggregate ordinary-hour excess
+concentrates per-class exactly as the precommit's K-C prior warned.
+**K-T** — T-1 fails CC 0.1935 / ST 0.1849 vs 0.15 (COAL/NUC pass ≤
+0.06); T-2 fails on p95 overshoot 3,249/4,096 MW vs 2,000 (frac_over
+passes); T-3 PASSES 0.9565. **K-B does not fire but is VACUOUS** — union
+reach 36/36, 31/31 rides on the NUC 8,760-hour clamp; honest per-class
+reach: CC 29/36, 29/31 attached to ~40 % base-rate binding. D-V1/D-V2
+identical to primary (a saturated union cannot move).
+
+**The structural findings
+(`docs/FINDING-ercot245-commitment-state-phase0-2026-08-31.md`).** (1)
+The per-class grain SEES the event composition skew the aggregate summed
+away: at covered M_2025 hours the model runs ~3 GW more gas-steam and
+~4 GW less CC than ERCOT's measured online mix (D-V4; h342: model ST
+4,283 vs measured 1,236 MW online, model CC 23,872 vs measured 28,029
+MW). (2) But reality carries NO event-conditional class-share signal:
+per-class online shares at events equal same-net-load-bin ordinary
+shares within 0.4–3.6 pp, slightly LOWER in every class (D-V5) — so no
+net-load-conditioned share bound, however identified, discriminates the
+missed events; the discrimination lives in per-unit startup/notice state
+and price formation over the online cushion. The adjudication extends
+ercot-244 one grain down: neither the aggregate NOR the class grain of a
+pure-LP availability-shaped bound expresses headroom-price reachability
+on a composition-correct keeper. OWNER FLAG (charter §8, K-T fired): the
+2024/2025 all-resource SCED conduct corpus intake is the named
+identification unblock — qualified by D-V5: it would buy per-UNIT state
+identification, not a better class-share table. Matrix: evidence NOTEs
+appended to the §5.1 item-9 card and the `energy_online_capability_cap`
+cell (verdict R unchanged — no ScenarioConfig mechanism was built, so no
+new row; the Phase-1 field named in the precommit was never minted). The
+forward span's ledgered C3c (22/53, 1/31) stays the honest record at
+full magnitude.
+
+**Hygiene:** zero solves; the A/B license NOT spent; reads ⊂ {2023,
+2024, 2025}; no `--holdout-authorized`, freeze respected (rule 22);
+ERCOT only (rule 25); no run produced (rule 15 not triggered); zero
+fitted scalars; the ercot-244 DO-NOT-REDO honoured (no aggregate-RHS
+variant; the aggregate series appears only as T-2's declared containment
+reference); ercot-163 distinguished per precommit §0.2, not re-litigated;
+push integrity per rule 27 (blob-verify on every ≥300-line pushed file);
+no workflows, no CI solves.
+
+**Next shorthand: ercot-246** (ercot-199 remains unclaimed)
