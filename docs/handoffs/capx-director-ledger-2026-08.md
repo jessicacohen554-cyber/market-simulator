@@ -6,11 +6,79 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-31 (refresh #20 — the RELAUNCH sitting) ·
-**HEAD at refresh:** `ee75a0b` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-31 (refresh #21) ·
+**HEAD at refresh:** `50fd46c1` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (REWRITTEN at r#16 — the four-lane wave in flight, the Q10 auto-arm authorization, and the standing leg-(d) re-present duty; r#17 amends its in-flight list: D5-R LANDED-VERIFIED)
 
 ---
+
+## 0r. Refresh #21 (2026-08-31, HEAD `50fd46c1`) — the relaunch wave LANDS 3/3 (D12-A-R · S-123-V-R · S-6-R); OWNER CORRECTION: the NEISO golden was NEVER LOST (still running) — T3-GOLDEN-R RECALLED unrun; MISO promotes miso-191; ercot-245 KILLED on its own census
+
+**1. OWNER CORRECTION (this sitting): the T3 NEISO golden is STILL RUNNING.** r#20's grading
+of T3 as "session lost mid-solve" was WRONG — recorded against interest (the branch census
+read 0 unique commits and no registration, which is exactly what a long solve mid-flight
+looks like; absence of landing is not evidence of loss). **T3-GOLDEN-R is RECALLED UNRUN**
+(never dispatched — no branch, no commits; the pack §T3 relaunch annotation is amended to a
+recall notice). NOBODY launches a second golden: the NEISO keys of `ff-verdicts.json` +
+`program-status.json` remain the running session's to write, and the Q13 authorization
+covers ONE campaign. Standing lesson for future relaunch sittings: before grading a
+solve-carrying lane LOST, ask the owner whether its session is still running — a ~1 h+
+solve lands nothing observable until it finishes.
+
+**2. RELAUNCH-WAVE LANDINGS — 3 of the 3 dispatched capx relaunches landed:**
+- **D12-A-R LANDED** (PR #4429): the orphan branch's work re-verified per the r#20 protocol
+  and landed — `entry_margin_exhaustion` + `entry_forward_reserve_leg` armed as ERCOT
+  forecast defaults per Q15, matrix stamped (cells → K-forecast-armed), the re-verification
+  recorded in the finding (`3415f456`).
+- **S-123-V-R LANDED** (PR #4441 + `99ffb2ce`): the verification re-measure run and
+  registered, S-123 finding §6 FILLED with measured results, MISO board refreshed. The
+  S-123 package is now COMPLETE (scoreboard row LANDED-PARTIAL → LANDED).
+- **S-6-R LANDED** (PR #4436): `pjm-2026-2030-s6-ledger` registered, bare `pjm-t1f`
+  re-scored preserve-then-overwrite, PJM board block refreshed. **Headline: PJM's FC-1 FAIL
+  set is {I7, I12}, not I7 alone** — the measured three-year I7 fail set restated onto the
+  board; the finding corrects the prior "I7 is the only FC-1 failure left" reading. (Stray
+  duplicate branch `claude/capx-s6-pjm-ledger-relaunch-p5kb8w` points at already-merged
+  commits, 0 unique — safe to delete.)
+- Model-economy readback (r#20 item 4): S-6-R and S-123-V-R ran their pre-declared charters
+  on **Opus** and landed clean — the doctrine's first confirming instances.
+
+**3. QUEUE RELEASED BY THESE LANDINGS:** **D4-I3 dispatchable** (D12-A-R landed and
+ercot-245 concluded — ERCOT surfaces free) · **D3 dispatchable** (S-123-V-R landed,
+miso-191/192 concluded — MISO surfaces free; start-time collision check vs any new MISO
+branch stays in its prompt) · **D6** next batch as before · **D8's verdict/board
+re-emission stays DEFERRED behind the golden** (the last of the three namespace writers
+still in flight) · **NEISO-RC repair phase** remains a next-batch decision on its landed
+Phase-0 finding.
+
+**4. BACKCAST/AUDIT MOVEMENT (watch only):**
+- **ercot-245 CONCLUDED — KILLED on its own census** (PR #4443): K-A (ST mass), K-C (both
+  years, all legs) and K-T (T-1 CC/ST, T-2 p95) all fire; **Phase-1 NOT licensed, the A/B
+  license never spent** — the precommit's stop rule executed exactly. Per its §8, the
+  2024/2025 all-resource SCED conduct-corpus intake is the named unblock — an owner call.
+- **MISO KEEPER → `2026-08-30-miso-191-bexit`** (PR #4433): the miso-190-named successor
+  executed (binning-aware exit-cohort delivery), A/B registered control + arm, matrix cell
+  `partial_plant_exit_carry` R → K; determination **NOT-YET on {C3a-2025} ALONE**, C6
+  attested. **miso-192 landed** (PRs #4437/#4440): D-4 posture sitting — `chp_btm_measured`
+  REFUTED zero-solve (U → R); the D-4 posture question returns to the owner better-posed
+  (three options, `FINDING-miso192-chp-btm-phase0-2026-08-31.md`).
+- **NYISO:** nyiso-162 re-verified the parked Leg-2 object against the live keeper (R-C;
+  PR #4431); **nyiso-163** (PR #4438) built + pre-validated the on-receipt AORR
+  identifiability gate and verified the Leg-2 access route — winter face stays
+  identification-blocked, determination NOT-YET on {C3a-2025, C3c}; **the owner's action is
+  one request** (the Applications-layer AORR record). Next shorthand: nyiso-164.
+- **CAISO:** **caiso-226 LANDED** (PR #4435) — the A3 OFO intake funded and executed through
+  the full data contract (gas-ofo-events schema + immutable SoCalGas snapshots + rule-13
+  adjudication); **the caiso-227 arm is PRE-REGISTERED and UNFUNDED — an owner call** (filed
+  item 11). Terminal rest otherwise unchanged; next number caiso-227.
+- **T1-H storage-entry Leg A ARMED** (PR #4442, owner ruling R-A). **C-1 joint wind A/B
+  landed** (PRs #4430/#4432/#4439): both kill-gates PASS, joint posture NON-COMPLEMENTARY on
+  wind. Audit records v16 refreshed (PR #4434).
+
+**5. OWNER-TIER ITEMS OPEN AFTER THIS REFRESH:** (a) the nyiso-161 winter-face-waiver card +
+the one-request AORR Applications-layer ask (nyiso-163); (b) miso-192's D-4 posture options
+(i)/(ii)/(iii); (c) caiso-227 arm funding; (d) the ERCOT 2024/2025 SCED conduct-corpus
+intake (ercot-245's named unblock); (e) the NEISO-RC repair-phase decision; (f) D8
+re-emission timing once the golden lands.
 
 ## 0q. Refresh #20 (2026-08-31, HEAD `ee75a0b`) — THE RELAUNCH SITTING: the r#19 wave graded (four lanes LANDED, four sessions LOST); everything unlanded restarts FRESH; model-economy doctrine (Opus for pre-declared execution, Fable for adjudication)
 
@@ -1041,12 +1109,12 @@ the gap.
 | **D12-C ARMING CONFIRMATION PAIR** | ONE arm-vs-control A/B on ERCOT T1-H, the TWO fields as a single logical delta; **arming auto-executes on a confirming record** (Q10); a contradiction returns to the owner unarmed | **CONCLUDED — CONTRADICTION** PR #4406: V-2 cc window missed (0 vs [750, 1,250]); V-1/V-3/V-4/V-5 + G-1/G-2 all pass; divergence = pre-declaration derivation error (offline walk's restricted candidate set; live solar competition ⇒ MORE exhaustion, same mechanism); nothing armed, cells `O`, both bundles registered; tolerance NOT widened (rule 21) | `claude/capx-d12c-confirm-pair-oji8wv` | Fable | §0o.1. **Q15 re-decision card presented at r#18** — the protocol's own "owner may judge confirming-in-substance" clause. |
 | **D13 BOARD RECONCILE** | Q7 execution + S-5 PJM restatement + landed-lane currency + stale-prose repair | **LANDED** PR #4372 — all five edits in; no gate opened; blob verification recorded | `claude/capx-d13-board-reconcile` | Fable/Opus | Board internally consistent again. |
 | **D14 NEISO T1-X CROSSOVER** | NEISO's first-ever T1-X | **LANDED** PR #4376 — FC-4 measured FAIL (price +13.3/+7.9/−21.8 %; co2 +12.8/+10.6/−2.3 % — second no-coal control for D5), quarantine PASS, `neiso-t1x` registered; **NEISO = FIRST (a)+(b)+(c) ISO; leg (d) held for S-4b (Q11)** | `claude/capx-d14-neiso-t1x` | Fable | First T1-X with in-window economic exits: retirement COMPOSITION miss surfaced (recall 2/6) — a real successor object. |
-| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **LANDED-PARTIAL** PRs #4397/#4398/#4402 — three terms SHIPPED from single published operands (S-1 −2,637.4 MW exactly as pre-declared; S-2 +3,505.9; S-3a −9,236.8): 2026 position −6,037 → +9,343 MW, 2.5× overshoot (honest, not fitted); **§6 verification re-measure (MISO 9.6 GB solo) PENDING the heavy slot**; D9 adjudicated UNREACHABLE + routed | `claude/capx-s123-miso-adequacy-ukgiow` | Fable | §0o.3. Routed to director: the armed-interface **mc=0 seam placeholder** defect (→ D16 queued). Verify §6 fills on its next landing. |
+| **S-123 MISO ADEQUACY PACKAGE** | S-1 requirement re-vintage + S-2 external-capacity intake + S-3 ledger differencing | **LANDED (complete)** PRs #4397/#4398/#4402 + **#4441 (S-123-V-R, Opus)** — three terms shipped (S-1 −2,637.4; S-2 +3,505.9; S-3a −9,236.8; 2026 position −6,037 → +9,343 MW, 2.5× overshoot, honest); **§6 verification re-measure LANDED at r#21** (registered, board refreshed, finding §6 filled); D9 adjudicated UNREACHABLE + routed | `claude/capx-s123-miso-adequacy-ukgiow` | Fable | §0o.3. Routed to director: the armed-interface **mc=0 seam placeholder** defect (→ D16 queued). Verify §6 fills on its next landing. |
 | **S-4 NEISO HYDRO ACCREDITATION** | Per-resource ISO-NE SCC → class factor, replacing the generic 0.50 | **LANDED** PR #4312 — verification half chartered as **S-4V** (r#11) | `claude/capx-s4-neiso-hydro-syqu7m` | Fable | Factor 0.7352 sourced, above the pre-declared 0.62 clearing threshold. Finding §5/§8 TBDs are S-4V's to fill. |
 | **S-4V NEISO VERIFICATION** | Complete S-4's owed §5: control/treatment T1-F pair at one HEAD, FC-1 re-score, forecast registration (preserve-then-overwrite on bare `neiso-t1f`), finding TBDs, NEISO `hydro_accreditation` cell re-stamp, NEISO board block refresh | **LANDED** PRs #4337/#4353 — bare `neiso-t1f` HOLD → **PROMOTE-WITH-CAVEATS** (I7 PASS ×5, sole WARN the pre-declared I12-2026); control preserved as `neiso-t1f-s4control`; matrix cell O → K; board block refreshed | `claude/capx-s4v-neiso-verification` | Fable | **Honest attribution: the control ALSO clears 2028 — epoch drift alone flips the year; the factor's isolated effect is exact.** NEISO takes the (a)+(b) lead. |
 | **S-4b NEISO REQUIREMENT RE-VINTAGE** | Adopt the published Nov 21 2025 ARA filing pair | **LANDED** PRs #4392/#4396 — companion LOCATED (2026 CELT 4.1 "Incl. ARA 3"); 4-value zero-DOF intake (factor 1.02861, DR 0.08784, imports 409.31); move +651…686 MW/yr, LARGER than declared; **I7 holds PASS ×5** (floor retains 699.3 MW of gas-CC exits — decomposition ≤0.1 MW, zero-drift control, exact 2026 isolation); **leg (b) STRENGTHENS** (FC-1/FC-2 CAVEAT→PASS); 2028/29 margins floor-dependent, noted at full magnitude | `claude/capx-s4b-neiso-ara-3jhedd` | Fable | §0n.5. Q11's hold RESOLVED ⇒ leg-(d) card presented at r#17 (§3 Q13). |
 | **S-5 PJM REQUIREMENT HORIZON-EDGE** | Implement hold-last-FPR + the D-1 checker repair; re-score PJM's T1-F leg | **LANDED** PR #4340 — hold-last-FPR in `resolve_forecast_pool_requirement` (zero DOF), checker year-threading repaired, **I7 2030 restates 366 MW → 5,858 MW, 2029 plausibly joins**; no solve, no registration; board restatement carried by D13 | `claude/capx-s5-pjm-horizon-edge` | Fable | The worse reported result, produced on purpose (the card's own arithmetic). 2029/30 intake pointer at the table edge (BRA Dec 2026). **S-6 unblocked.** |
-| **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable, against the corrected (hold-last) bar | **SESSION LOST — REISSUED r#20 as S-6-R (Opus)**; pre-declaration landed (PR #4418), solve/registration/verdict keys all owed | `claude/capx-s6-pjm-ledger-r2` | Fable→Opus | §0p.5 + §0q.2. Measures whether 2029 actually joins the fail set and the true 2030 magnitude on the supply side. |
+| **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable, against the corrected (hold-last) bar | **LANDED PR #4436 (S-6-R, Opus)** — `pjm-2026-2030-s6-ledger` registered, `pjm-t1f` re-scored, board refreshed; **FC-1 FAIL = {I7, I12}**, three-year I7 fail set measured | `claude/capx-s6-pjm-ledger-r2` | Fable→Opus | §0q.2 + §0r.2. The corrected supply-side bar is now measured, not extrapolated. |
 | **D5 FC-4 CO2 CROSSOVER** | Attribute the three-ISO crossover CO2 miss | **LANDED** PR #4374 — miss is a SCORING-TAXONOMY DROP (unmapped model-`COAL` → zero scored CO2): MISO 97–117 %, PJM 75–98 %, ERCOT 46–103 % of the miss; rate derivation EXONERATED (±5 %); controls clean → **Q12 ruled: D5-R full fix chartered** | `claude/capx-d5-crossover-co2` | Fable | Third instance of the known class-grain seam. |
 | **D5-R SCORER COAL-GRAIN REPAIR** | Fix the seam at gmModel build (canonical taxonomy chain, rule 19 — also repairs the C1 fuelmix coal-row phantom), zero-solve re-score the committed crossover bundles | **LANDED** PR #4388 — every cell within ±0.2 pp of the §5.2 table; ALL hard controls pass (NYISO byte-identical, family rows deep-equal); PJM+MISO co2 leave the FC-4 FAIL sets, ERCOT 2023/24 stay FAIL honest; fifth bundle (neiso-capxd14) skip adjudicated sound at r#17 (generic-COAL 0.001 TWh ⇒ ~0.004 % bound) | `claude/crossover-co2-grain-repair-oycsy6` + completion `…-t6hoe2` | Fable | §0n.1–2 + §0o.2. **COMPLETION PASS PR #4403**: fifth bundle rescored (+0.49 pp 2024/25 — corrects the director's r#17 one-year-row bound), `neiso-t1x-pre-d5r` preserved, board co2 annotations EXECUTED (§0n.3 records item CLOSED). Live gate keys (ffr3a3/-3a4) still carry the mismeasured rows — bundles never committed, annotated in place. |
 | **D3 MISO RETIREMENT / G3** | G3 cap-grain `retire.total_gw` t1h regression | QUEUED | — | Fable | I13 cobweb half confirmed superseded. |
@@ -1211,10 +1279,10 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-08-30 | **NEISO-RC PHASE-0** | `claude/capx-neiso-rc-phase0` | Fable | code | r#19 — D14 retirement-composition attribution, zero-solve, finding-only. **DISPATCHED** |
 | 2026-08-30 | **D16 SEAM GUARD** | `claude/capx-d16-seam-guard` | Fable | code | r#19 — fail-closed refusal on the mc=0 armed-interface seam (director mechanism decision; fallback price deliberately not built). **DISPATCHED** |
 | 2026-08-30 | **D8 DOF-LEDGER + PROVENANCE** | `claude/capx-d8-dof-ledger` | Fable | code | r#19 — FC-7 both halves; verdict/board re-emission explicitly deferred. **DISPATCHED — LANDED at r#20 (PR #4427; re-emission still deferred)** |
-| 2026-08-31 | **S-6-R (relaunch)** | `claude/capx-s6-pjm-ledger-r2` | **Opus** | pjm | r#20 — session lost mid-lane; the committed pre-declaration (PR #4418) stands BINDING, charter unchanged; execute the solve + FC re-score + registration + preserve-then-overwrite + PJM board refresh |
-| 2026-08-31 | **S-123-V-R (relaunch)** | `claude/capx-s123v-miso-verify-r2` | **Opus** | miso | r#20 — nothing landed; charter unchanged (pack §S-123-V); the original-session stop-at-start check now trivially passes (session confirmed dead) |
-| 2026-08-31 | **T3-GOLDEN-R (relaunch)** | `claude/capx-t3-neiso-golden-r2` | **Opus** | neiso | r#20 — mid-solve loss; Q13 authorization stands; the PR #4408 registration fix is already on main |
-| 2026-08-31 | **D12-A-R (relaunch)** | `claude/capx-d12a-arming-r2` | **Fable** | code | r#20 — orphan branch `…-0ibtzh` (2 commits) is EVIDENCE, never blind-merged; re-verify vs the Q15 ruling + the pack §D12-A charter, then land re-verified or redo clean |
+| 2026-08-31 | **S-6-R (relaunch)** | `claude/capx-s6-pjm-ledger-r2` | **Opus** | pjm | r#20 — pre-declared execution. **LANDED at r#21 (PR #4436): FC-1 FAIL = {I7, I12}** |
+| 2026-08-31 | **S-123-V-R (relaunch)** | `claude/capx-s123v-miso-verify-r2` | **Opus** | miso | r#20 — pre-declared execution. **LANDED at r#21 (PR #4441): §6 filled, S-123 complete** |
+| 2026-08-31 | **T3-GOLDEN-R (relaunch)** | — | **Opus** | neiso | r#20 — **RECALLED UNRUN at r#21 (owner correction: the original golden session is STILL RUNNING; r#20's LOST grading was wrong)**. Never dispatched; the original T3 issuance (r#17) stays the live lane |
+| 2026-08-31 | **D12-A-R (relaunch)** | `claude/capx-d12a-arming-r2` | **Fable** | code | r#20 — orphan-branch adjudication. **LANDED at r#21 (PR #4429): re-verified and armed per Q15, matrix stamped** |
 
 ## 5. History (compacted)
 
