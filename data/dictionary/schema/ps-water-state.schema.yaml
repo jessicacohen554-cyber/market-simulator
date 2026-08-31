@@ -1,0 +1,146 @@
+# Canonical schema: ps-water-state (measured hourly pumped-storage plant
+# operations — generation, pumping, flows, and reservoir water state).
+#
+# THE WALLED OBJECT THIS DATATYPE HOLDS THE PUBLIC BREACH OF: CAISO's hourly
+# split of pumped-storage net output from conventional hydro is non-public at
+# fleet coverage (every public feed nets PS inside a hydro cell, omits PS, is
+# monthly, or covers <= 39.7% of the fleet — FINDING-caiso141 §A/§B, re-verified
+# caiso-186 §a.1 and caiso-227). The Helms Pumped Storage Project (FERC P-2735,
+# 1,080 MW generating per the FLA — the dominant piece of the 1,252.8 MW =
+# 60.3% uninstrumented share of the model's 2,077.6 MW CAISO PS fleet)
+# published its OWN measured hourly operations record
+# in the PUBLIC Final License Application: Appendix B1 (Hydrology), an xlsx of
+# PG&E HEC-DSS records — hourly GENERATION (MWh), PUMPING (MWh), generation and
+# pumping FLOW (cfs), and Courtright (upper) / Wishon (lower) reservoir
+# ELEVATION (ft) and STORAGE (af), 2001-01-01 .. 2022-09-30.
+#
+# Grain: ONE ROW PER (iso, plant, interval_end_local) hour. The source clock is
+# a GAP-FREE fixed-offset local standard clock (190,632 rows = exactly the
+# 7,943 days x 24 h of the span — no DST insertions/deletions), hour-ending.
+# Later vintages carry sub-second float drift on the stamps (HEC-DSS artifacts,
+# e.g. 04:59:59.97 for HE05); curation rounds to the nearest hour.
+#
+# SPAN LIMITATION, stated honestly: the record ENDS 2022-09-30. It does NOT
+# cover the 2023-2025 training years, so it cannot directly overlay the
+# backcast PS water state there. What it grounds is the measured multi-year
+# hourly CONDUCT of the plant (seasonal water state, pump/generate windows,
+# cycle depth, round-trip behaviour) — the same admissibility class as
+# forecast-year emission rates derived from multi-year CAMPD history. Any
+# derived parameter must re-derive from this source data only (rule 23
+# [R-FROZEN-DERIVE]) and never be tuned to a residual (rules 13/24).
+#
+# Source (data/raw/ps-water-state/<iso>/): the immutable xlsx snapshot of FERC
+# eLibrary accession 20240418-5301 (PG&E Helms FLA, April 2024), file
+# "02_Helms FLA_P-2735_PUBLIC_Vol I_App B1 Hydrology.xlsx". Fetched by
+# scripts/data/fetch_helms_ps_water_state.py; curated by
+# scripts/data/curate_ps_water_state.py; per-ISO parsing in
+# scripts/lib/ps_water_state/<iso>.py (registry, no ISO branching in shared
+# code). HEC-DSS missing-value sentinels (-901 "missing", -902 "no record")
+# land as nulls; any other negative value fails curation loudly.
+#
+# RULE 13 [R-MEASURED] STATUS: admissible measured INPUT — a physical plant
+# operations record produced outside the electricity-market model, in the same
+# class as CAMPD unit histories. NOT a fit target: nothing in it may be scaled,
+# shifted or selected so a price/volume residual closes. NOT YET CONSUMED BY
+# ANY MECHANISM (intake-only as of caiso-227; arming is a separate chartered
+# session with its own precommit).
+datatype: ps-water-state
+schema_version: 1
+title: Hourly pumped-storage plant operations and reservoir water state
+description: >-
+  One row per (iso, plant, hour): measured hourly pumped-storage generation and
+  pumping energy, generation/pumping water flow, and upper/lower reservoir
+  elevation and storage, from the operator's own published plant records
+  (CAISO: Helms, FERC P-2735 Final License Application Appendix B1).
+  Rule-13-admissible measured physical input; never a fit target.
+
+key_columns: [iso, plant, interval_end_local]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ISO/RTO whose footprint the plant serves (CAISO for Helms). Stamped from
+      the registry spec, not published by the operator.
+  - name: plant
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Plant key, upper-case (HELMS). One row-set per plant so further plants
+      (Eastwood, the DWR facilities) extend the frame without schema change.
+  - name: interval_end_local
+    dtype: datetime64[ns]
+    unit: local_hour_ending
+    nullable: false
+    description: >-
+      Hour-ending timestamp on the operator's fixed-offset local standard
+      clock, tz-naive, rounded to the hour (the source carries sub-second
+      HEC-DSS float drift). The published series is gap-free on this clock —
+      no DST insertions or deletions.
+  - name: generation_mwh
+    dtype: float64
+    unit: MWh
+    nullable: true
+    description: >-
+      Hourly generating-mode energy (HEC-DSS PER-CUM, so MWh over the hour =
+      average MW). Zero when the plant is idle or pumping; null where the
+      source prints a missing-value sentinel.
+  - name: pumping_mwh
+    dtype: float64
+    unit: MWh
+    nullable: true
+    description: >-
+      Hourly pumping-mode energy consumed (PER-CUM), published positive. Zero
+      when not pumping; null on a missing-value sentinel.
+  - name: flow_generation_cfs
+    dtype: float64
+    unit: cfs
+    nullable: true
+    description: >-
+      Hourly average water flow through the powerhouse in generating mode
+      (PER-AVER). Includes small non-generating releases in some hours (flow
+      can be positive with zero generation).
+  - name: flow_pumping_cfs
+    dtype: float64
+    unit: cfs
+    nullable: true
+    description: >-
+      Hourly average water flow in pumping mode (PER-AVER), SIGNED AS
+      PUBLISHED: the Helms record carries 276 negative hours (-795 .. -0.03
+      cfs, reverse-flow metering during mode changeover). An hour may carry
+      both generation and pumping (mode changeover within the hour).
+  - name: upper_elevation_ft
+    dtype: float64
+    unit: ft
+    nullable: true
+    description: >-
+      Upper reservoir (Courtright) surface elevation, instantaneous at the
+      hour stamp (INST-VAL). Null where the sensor record is missing — the
+      2001-2011 vintage publishes storage without elevation for long spans.
+  - name: upper_storage_af
+    dtype: float64
+    unit: acre_ft
+    nullable: true
+    description: Upper reservoir (Courtright) storage, instantaneous (INST-VAL).
+  - name: lower_elevation_ft
+    dtype: float64
+    unit: ft
+    nullable: true
+    description: Lower reservoir (Wishon) surface elevation, instantaneous.
+  - name: lower_storage_af
+    dtype: float64
+    unit: acre_ft
+    nullable: true
+    description: Lower reservoir (Wishon) storage, instantaneous.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Filename of the immutable raw snapshot under
+      data/raw/ps-water-state/<iso>/ the row was parsed from, so every row
+      traces to the exact retrieved document.

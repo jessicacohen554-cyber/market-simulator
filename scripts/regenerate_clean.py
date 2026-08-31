@@ -85,6 +85,9 @@ DATATYPES: tuple[str, ...] = (
     # caiso-226: SoCalGas OFO/EFO declaration ledgers (gas-deliverability
     # events). Intake-only -- no mechanism consumes it yet.
     "gas-ofo-events",
+    # caiso-227: measured hourly pumped-storage plant operations (Helms FLA
+    # App B1, FERC P-2735). Intake-only -- no mechanism consumes it yet.
+    "ps-water-state",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent

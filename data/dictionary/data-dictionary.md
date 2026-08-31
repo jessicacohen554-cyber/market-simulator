@@ -86,8 +86,9 @@ for the market split.
 | capacity-market-avoidable-cost-rate | — | — | — | — | — | — |
 | benchmark-corridor | — | — | — | — | — | — |
 | hydro-plant-modes | — | — | — | — | — | — |
-| miso-m2m-flowgates | — | — | — | 2023–2025 | — | — |
+| miso-m2m-flowgates | — | — | — | — | — | — |
 | gas-ofo-events | — | — | — | — | — | — |
+| ps-water-state | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -597,11 +598,6 @@ Crosswalk / lookup tables (heterogeneous). Schema:
 - **Keys:** `key` (+ `plant_id`/`iso`/`zone`/`node` when applicable)
 - **Reconciles:** master plant registry, bin assignments, zone/node crosswalks
   — conventions enforced, table-specific columns permitted.
-- **Tables:** `plant-registry`, `bin-assignments`, `coal-region-crosswalk`,
-  `caiso-hub-membership` (measured CAISO plant → `TH_NP15`/`TH_ZP26`/`TH_SP15`
-  trading-hub membership from OASIS `ATL_PNODE_MAP`; table-specific columns
-  `hub`, `tech`, `capacity_mw`, `eff_start`/`eff_end`, `join_method`,
-  `n_evidence`; caiso-217).
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
@@ -1952,3 +1948,37 @@ caiso-226). Schema:
 | `tolerance_pct` | `float64` | `pct` | no | Published daily imbalance tolerance band, SIGNED AS PUBLISHED: negative on the low side (e.g. -5 = deliveries may fall no more than 5 percent short of burn) and positive on the high side (e.g. 10). NOT monotone in `stage`: the two are set independently by the utility -- measured on the low ledger, the WIDEST bands sit at Stage 1 (min -18) while Stage 3.2 is uniformly -5 -- so a consumer must pick the dimension it actually means rather than assuming either one ranks the other. |
 | `waived` | `bool` | `none` | no | True when the utility waived the gas day's noncompliance charges (the order was declared and then relieved). Published as a '(WAIVED)' suffix on the tolerance and a red cell in the ledger. A waived day is still a declared physical event; a consumer decides whether to count it. |
 | `source_doc` | `string` | `none` | no | Filename of the immutable raw snapshot under data/raw/gas-ofo-events/<iso>/ the row was parsed from, so every row traces to the exact retrieved document. |
+
+## ps-water-state
+
+Measured hourly pumped-storage plant operations — generation/pumping energy,
+powerhouse flows, and reservoir water state — from the operator's own published
+records (caiso-201 Q2(a); intake caiso-227). Schema:
+[`schema/ps-water-state.schema.yaml`](schema/ps-water-state.schema.yaml).
+
+- **Keys:** `iso`, `plant`, `interval_end_local`
+- **Reconciles:** Each plant's published operations record onto one tidy `(iso,
+  plant, interval_end_local)` hourly frame. CAISO = the Helms Pumped Storage
+  Project (FERC P-2735) Final License Application Appendix B1 hydrology
+  workbook on public FERC eLibrary (accession 20240418-5301): PG&E HEC-DSS
+  hourly series 2001-01-01..2022-09-30 — the public breach of the hourly PS
+  water-state wall (FINDING-caiso141). Span limitation stated honestly: the
+  record ends 2022-09-30 and does not cover the 2023–2025 training years; what
+  it grounds is measured multi-year hourly conduct (rule-13 INPUT-class, the
+  CAMPD-history analogy). Helms 2022-10→present, Eastwood, and the DWR CDEC
+  share are `DATA NEEDED`. INTAKE-ONLY — no mechanism consumes it.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO whose footprint the plant serves (CAISO for Helms). Stamped from the registry spec, not published by the operator. |
+| `plant` | `string` | `none` | no | Plant key, upper-case (HELMS). One row-set per plant so further plants (Eastwood, the DWR facilities) extend the frame without schema change. |
+| `interval_end_local` | `datetime64[ns]` | `local_hour_ending` | no | Hour-ending timestamp on the operator's fixed-offset local standard clock, tz-naive, rounded to the hour (the source carries sub-second HEC-DSS float drift). The published series is gap-free on this clock — no DST insertions or deletions. |
+| `generation_mwh` | `float64` | `MWh` | yes | Hourly generating-mode energy (HEC-DSS PER-CUM, so MWh over the hour = average MW). Zero when the plant is idle or pumping; null where the source prints a missing-value sentinel. |
+| `pumping_mwh` | `float64` | `MWh` | yes | Hourly pumping-mode energy consumed (PER-CUM), published positive. Zero when not pumping; null on a missing-value sentinel. |
+| `flow_generation_cfs` | `float64` | `cfs` | yes | Hourly average water flow through the powerhouse in generating mode (PER-AVER). Includes small non-generating releases in some hours (flow can be positive with zero generation). |
+| `flow_pumping_cfs` | `float64` | `cfs` | yes | Hourly average water flow in pumping mode (PER-AVER), SIGNED AS PUBLISHED: the Helms record carries 276 negative hours (-795 .. -0.03 cfs, reverse-flow metering during mode changeover). An hour may carry both generation and pumping (mode changeover within the hour). |
+| `upper_elevation_ft` | `float64` | `ft` | yes | Upper reservoir (Courtright) surface elevation, instantaneous at the hour stamp (INST-VAL). Null where the sensor record is missing — the 2001-2011 vintage publishes storage without elevation for long spans. |
+| `upper_storage_af` | `float64` | `acre_ft` | yes | Upper reservoir (Courtright) storage, instantaneous (INST-VAL). |
+| `lower_elevation_ft` | `float64` | `ft` | yes | Lower reservoir (Wishon) surface elevation, instantaneous. |
+| `lower_storage_af` | `float64` | `acre_ft` | yes | Lower reservoir (Wishon) storage, instantaneous. |
+| `source_doc` | `string` | `none` | no | Filename of the immutable raw snapshot under data/raw/ps-water-state/<iso>/ the row was parsed from, so every row traces to the exact retrieved document. |
