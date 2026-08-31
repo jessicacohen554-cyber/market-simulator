@@ -417,22 +417,22 @@
      "detail": "~1.0 h full-horizon (cheapest), ~4.3 GB, pairable."
     },
     "d_owner_auth": {
-     "status": "none",
-     "detail": "no authorization exists."
+     "status": "granted",
+     "detail": "owner ruling Q13, capx r#17 sitting 2026-08-30 (docs/handoffs/capx-director-ledger-2026-08.md \u00a73 Q13 + \u00a70q.9): AUTHORIZED \u2014 the T3 BAU GOLDEN, NEISO, 2026\u20132050, budget ~1.0 h / ~4.3 GB (FF-3E projected table), THIS CAMPAIGN ONLY. The FIRST \u00a72.1b gate opening in program history. No standing authorization: each full-horizon campaign is authorized separately and a gate-condition regression re-closes the gate (charter \u00a72.1b(2)(d)). EXECUTED and SPENT by lane T3-NEISO-GOLDEN (relaunched r#20): the campaign solved 25/25 years at HEAD 9e56f0f, cache epoch a4b11ef4aaa1be35, 29.2 min / 3.50 GB (inside the authorized budget on both axes), registered as neiso-2026-2050-t3-golden-bau with verdict key neiso-t3. The authorization covered THIS campaign only \u2014 it is now spent; any further NEISO full-horizon solve needs a new owner act. docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md.",
+     "scope": "this campaign only (NEISO 2026\u20132050 T3 BAU golden); spent on execution"
     },
-    "open": false,
-    "closed_on": [
-     "d"
-    ],
-    "note": "[UPDATED 2026-08-30, lane S-4b] NEISO REMAINS THE FIRST ISO WITH LEGS (a)+(b)+(c) ALL SATISFIED, and the anticipated S-4b re-tightening is now MEASURED, not pending: the ARA-3 requirement re-vintage (~+651..686 MW/yr of requirement, larger than the charter's ~+380 estimate once the true ARA-cycle DR companion was located) did NOT flip leg (b) back \u2014 bare neiso-t1f re-scores PROMOTE-WITH-CAVEATS with FC-1/FC-2 improving CAVEAT->PASS, because the reliability floor retains 699.3 MW of 2027 gas-CC exits in answer to the higher requirement (full decomposition at full magnitude in FINDING-capx-s4b-neiso-ara-2026-08-30.md). (a) PASS (keeper 2026-08-17-neiso-99-joint-p1, CALIBRATED, complete marker, untouched) - (b) PASS (this re-score) - (c) PASS ON MEASUREMENT (lane D14, verdict key neiso-t1x, kept verbatim). The gate stays closed on leg (d) ALONE \u2014 the explicit per-campaign owner authorization, which no ISO holds; this lane does not request it and cannot grant it. Prior note (D14) superseded by this refresh; its leg-(c) basis is unchanged."
+    "open": true,
+    "closed_on": [],
+    "note": "[UPDATED 2026-08-31, lane T3-NEISO-GOLDEN] NEISO IS THE FIRST AND ONLY ISO TO HOLD ALL FOUR \u00a72.1b LEGS, and leg (d) has now been EXERCISED: (a) PASS (keeper 2026-08-17-neiso-99-joint-p1, CALIBRATED, complete marker \u2014 untouched) \u00b7 (b) PASS (bare neiso-t1f PROMOTE-WITH-CAVEATS, S-4b ARA-3 re-vintage \u2014 kept VERBATIM by this lane) \u00b7 (c) PASS ON MEASUREMENT (lane D14, verdict key neiso-t1x \u2014 kept VERBATIM) \u00b7 (d) GRANTED by owner ruling Q13 and SPENT by this campaign. The gate is OPEN for the scope of that one campaign and for nothing else: the authorization was per-campaign by its own terms, so it does not generalise to a second NEISO golden, to T2, or to any other ISO. THE CAMPAIGN'S OWN RESULT IS A T3 HOLD \u2014 mechanically clean (25/25 years, zero solve error, inside budget) and structurally failing on five gates (FC-1 I3 out-year renewable dump; FC-2 cobweb; FC-3 T1-H bands; FC-4 D14's carried crossover FAIL; FC-7 unattested), with FC-5/FC-6 SKIPPED-required for want of instruments. That is the board's own `readiness` prediction \u2014 'ten hours of compute today would buy a mechanically-clean but structurally-flawed golden run' \u2014 MEASURED rather than hypothesised."
    },
-   "golden": "deferred (\u00a72.1b).",
+   "golden": "MEASURED 2026-08-31 \u2014 neiso-2026-2050-t3-golden-bau (T3 BAU, 25/25 years, cache epoch a4b11ef4aaa1be35, solved at 9e56f0f, 29.2 min / 3.50 GB). Determination HOLD; verdict key neiso-t3. The program's first \u00a72.1b-authorized full-horizon campaign. POSTURE-EPOCH CAVEAT: solved PRE-R-A \u2014 run_config.json records storage_entry_availability_gate=False and storage_entry_cost_normalized_rank=False. Owner ruling R-A (ecf9972; results/cache.py epoch 2026-08-31) flipped both defaults False->True AFTER this solve, and because both are registered in _CACHE_KEY_OPTIONAL_FIELDS the armed and unarmed postures HASH IDENTICALLY (the FFR-3A blocker-4 same-key invalidation) \u2014 so a4b11ef4aaa1be35 does not identify this run's posture on its own; cite solved_at_sha 9e56f0f + run_config.json. The bundle is in the campaign out-dir, not the shared results/<ISO>/<key>/ root the epoch notice names, so silent reuse does not reach it. A re-solve under the armed posture is a SECOND campaign Q13 does not authorize \u2014 routed to the owner, and material because this run builds ZERO storage across all 25 years while R-A armed the storage-ENTRY mechanisms.",
    "candidate": null,
    "keeper": "2026-08-17-neiso-99-joint-p1",
    "marker_complete": true,
    "marker_final": false,
    "t1h_determination": "HOLD",
-   "t1h_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1"
+   "t1h_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1",
+   "t3_determination": "HOLD"
   }
  },
  "honest_unfit": [
@@ -753,6 +753,40 @@
    "gate_reading 'The SMALLEST live miss is now MISO 2027 (3,659 MW)' \u2014 PJM 2028 at 3,260 MW is now smaller. Routed to the director.",
    "gate_reading's 'retirement-screen calibration, PJM's open suspect' is answered by this run in the negative for 2026-2030: the economic screen retired NOTHING and every exit is a confirmed exit. The open suspect is now the ladder-paced backstop, not the retirement screen. Routed to the director.",
    "honest_unfit / open_frontier adequacy rows count PJM but predate the three-year fail set and the I12 failure. Routed to the director."
+  ]
+ },
+ "t3_golden_campaign": {
+  "note": "NEISO-block-only stamp carrying the program's FIRST \u00a72.1b-authorized full-horizon campaign onto the board (lane T3-NEISO-GOLDEN, relaunched at director refresh r#20). The run's provenance stamp lives in ff-verdicts.json (neiso-t3); this block deliberately carries no forecast-provenance/v1 field names so the staleness checker can never read a board edit as a scoring event.",
+  "date": "2026-08-31",
+  "derived_from": [
+   "docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md \u00a7\u00a71\u20134 (pre-declaration, committed before the solve, PR #4405) + \u00a7\u00a75\u20138 (this session's measured record)",
+   "docs/handoffs/capx-director-ledger-2026-08.md \u00a73 Q13 (the authorization) + \u00a70q.2 (the r#20 relaunch)",
+   "ff-verdicts.json: neiso-t3 (NEW key \u2014 nothing displaced, no preserve-then-overwrite needed)",
+   "registered run neiso-2026-2050-t3-golden-bau (committed bundle under results/ff-t3-neiso-golden/bau/)",
+   "src/market_sim/results/cache.py \u2014 cache-epoch entry 'Epoch 2026-08-31, owner ruling R-A' (the posture-epoch caveat's source)"
+  ],
+  "what_changed": [
+   "isos.NEISO.gate.d_owner_auth: none -> granted (Q13 cited verbatim; marked SPENT on execution)",
+   "isos.NEISO.gate.open: false -> true, scope stated (this campaign only); closed_on ['d'] -> []",
+   "isos.NEISO.gate.note: rewritten to the post-campaign state",
+   "isos.NEISO.t3_determination: NEW field, HOLD",
+   "isos.NEISO.golden: 'deferred (\u00a72.1b).' -> the measured campaign record"
+  ],
+  "what_did_NOT_change": [
+   "every other ISO's block (asserted byte-identical before write)",
+   "NEISO gate legs (a) / (b) / (c) \u2014 S-4b's leg-(b) and D14's leg-(c) content kept VERBATIM, asserted byte-identical",
+   "NEISO t1f/t1x/t1h determinations, fc map, blocking_rows, keeper, markers",
+   "every other ISO's leg (d): still none. This authorization was per-campaign and per-ISO by its own terms.",
+   "headline / gate_reading / readiness / tier_ladder / honest_unfit / open_frontier cross-ISO prose (see flagged_not_edited)"
+  ],
+  "flagged_not_edited": [
+   "tier_ladder 'T3 golden' row still reads status 'deferred (\u00a72.1b, Wave 4 withdrawn)' \u2014 now stale for NEISO, which has a registered T3 run. Cross-ISO structure is outside this lane's NEISO-block-only charter (the S-4V flagged_not_edited precedent). Routed to the director.",
+   "readiness prose: 'Ten hours of compute today would buy a mechanically-clean but structurally-flawed golden run' is no longer a projection \u2014 this campaign MEASURED it (29.2 min, not ten hours; mechanically clean; five failing gates). Routed to the director.",
+   "gate_reading / headline: written for a board on which no ISO held leg (d); NEISO now holds and has spent it. Routed to the director."
+  ],
+  "routed_to_director": [
+   "R-A RE-SOLVE DECISION (the substantive one): this golden records the pre-R-A unarmed storage-entry posture; the R-A epoch entry instructs 'purge or re-solve before quoting' for pre-epoch forecast-lane bundles. Re-solving is a second campaign outside Q13's 'this campaign only' scope. Material: the run's headline structural result is ZERO storage entry in 25 years, and R-A armed exactly the storage-entry mechanisms.",
+   "FC-5 / FC-6 INSTRUMENT GAP: both are REQUIRED at tier t3 and neither exists for NEISO (no committed benchmark-corridor table, no driver battery). Until built, NO ISO can score better than HOLD at t3 regardless of model quality \u2014 a rubric-level ceiling, not a NEISO finding. FC-7's golden attestation is the same class."
   ]
  }
 }
