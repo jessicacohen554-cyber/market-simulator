@@ -74,7 +74,39 @@ Phase-0 finding.
   landed** (PRs #4430/#4432/#4439): both kill-gates PASS, joint posture NON-COMPLEMENTARY on
   wind. Audit records v16 refreshed (PR #4434).
 
-**5. OWNER-TIER ITEMS OPEN AFTER THIS REFRESH:** (a) the nyiso-161 winter-face-waiver card +
+**6. DISPATCH RECORD (post-r#21 sitting, owner: "issue prompts"):** THREE lanes issued,
+collision-mapped — **NEISO-RC-R** (the repair phase: R2 curve re-derivation + R1 registry
+intake + R3 scorer trio + R4, per the Phase-0 finding §6/§9; Fable, neiso; golden care lines
+— never the t3 or bare neiso-t1f keys) · **D3** (the MISO t1h `retire.total_gw` PASS→FAIL
+flip, attribution-first, zero-solve Phase 0, precommit-first; the I13 cobweb closure is
+treated as OPEN, not a settled repair; Fable, miso) · **D4-I3** (ERCOT I3 scarcity-slack
+half ONLY, card Y-C boundary respected; zero-solve breach-set measurement + pre-declared
+post-arming expectation + the FR-6 code-comment home; **Opus** under the r#20
+model-economy doctrine — the cause is already characterized, the lane measures and routes).
+**D6 stays HELD one more batch** (its four T1-H curve legs are the natural post-arming
+measurement vehicle and contend with D4-I3's expectation half — sequence D6 after D4-I3
+lands). Charters: the three new pack sections.
+
+**MID-SITTING AMENDMENT (same sitting, before this dispatch pushed):** the **T3 GOLDEN
+LANDED** — the ORIGINAL running session finished its solve and registered the first §2.1b
+full-horizon campaign (PRs #4447/#4452, branch `capx-t3-neiso-golden-r2-74wk0h`; the r#21
+recall stands CORRECT — this is the original campaign completing, not a second launch; the
+R-A posture-epoch caveat is recorded on its own record). Consequences executed here:
+(a) **D8-RE is RELEASED and ISSUED** (fourth prompt this sitting, **Opus**) — all three
+namespace writers (S-6, S-123-V, golden) have landed, so the deferred verdict/board
+re-emission can run; (b) the NEISO-RC-R golden care line relaxes to the standing form
+(never write the t3 or bare `neiso-t1f` keys — they are simply not its keys); (c) **D3's
+start-time collision check has a live object**: `miso-193` (cc_duct_peaking, backcast) is
+mid-A/B with sections pending — distinct namespace (backcast vs D3's forecast board), so
+D3 proceeds but must not touch miso-193's surfaces. Also landed mid-sitting, watch only:
+**ercot-246** (ISO-level determination of a partitioned keeper = worst config over
+designated spans — ERCOT reads CALIBRATED), ercot-245's FINDING/log/matrix records
+(PRs #4448/#4451), **caiso-227** (C3a-2025 root cause measured, honest null; Helms
+ps-water-state intake landed, PR #4450), and **nyiso-163b** (owner ruling: the AORR access
+route is CLOSED permanently and a C3c scarcity program OPENS — the NYISO route question has
+moved; next NYISO lane is that program's, chartered on its own record).
+
+**7. OWNER-TIER ITEMS OPEN AFTER THIS REFRESH:** (a) the nyiso-161 winter-face-waiver card +
 the one-request AORR Applications-layer ask (nyiso-163); (b) miso-192's D-4 posture options
 (i)/(ii)/(iii); (c) caiso-227 arm funding; (d) the ERCOT 2024/2025 SCED conduct-corpus
 intake (ercot-245's named unblock); (e) the NEISO-RC repair-phase decision; (f) D8
@@ -1117,12 +1149,13 @@ the gap.
 | **S-6 PJM T1-F LEDGER RUN** | The minimum run that makes PJM's supply side observable, against the corrected (hold-last) bar | **LANDED PR #4436 (S-6-R, Opus)** — `pjm-2026-2030-s6-ledger` registered, `pjm-t1f` re-scored, board refreshed; **FC-1 FAIL = {I7, I12}**, three-year I7 fail set measured | `claude/capx-s6-pjm-ledger-r2` | Fable→Opus | §0q.2 + §0r.2. The corrected supply-side bar is now measured, not extrapolated. |
 | **D5 FC-4 CO2 CROSSOVER** | Attribute the three-ISO crossover CO2 miss | **LANDED** PR #4374 — miss is a SCORING-TAXONOMY DROP (unmapped model-`COAL` → zero scored CO2): MISO 97–117 %, PJM 75–98 %, ERCOT 46–103 % of the miss; rate derivation EXONERATED (±5 %); controls clean → **Q12 ruled: D5-R full fix chartered** | `claude/capx-d5-crossover-co2` | Fable | Third instance of the known class-grain seam. |
 | **D5-R SCORER COAL-GRAIN REPAIR** | Fix the seam at gmModel build (canonical taxonomy chain, rule 19 — also repairs the C1 fuelmix coal-row phantom), zero-solve re-score the committed crossover bundles | **LANDED** PR #4388 — every cell within ±0.2 pp of the §5.2 table; ALL hard controls pass (NYISO byte-identical, family rows deep-equal); PJM+MISO co2 leave the FC-4 FAIL sets, ERCOT 2023/24 stay FAIL honest; fifth bundle (neiso-capxd14) skip adjudicated sound at r#17 (generic-COAL 0.001 TWh ⇒ ~0.004 % bound) | `claude/crossover-co2-grain-repair-oycsy6` + completion `…-t6hoe2` | Fable | §0n.1–2 + §0o.2. **COMPLETION PASS PR #4403**: fifth bundle rescored (+0.49 pp 2024/25 — corrects the director's r#17 one-year-row bound), `neiso-t1x-pre-d5r` preserved, board co2 annotations EXECUTED (§0n.3 records item CLOSED). Live gate keys (ffr3a3/-3a4) still carry the mismeasured rows — bundles never committed, annotated in place. |
-| **D3 MISO RETIREMENT / G3** | G3 cap-grain `retire.total_gw` t1h regression | QUEUED | — | Fable | I13 cobweb half confirmed superseded. |
-| **D4-I3 ERCOT** | I3 scarcity-slack invariant (net-revenue half HELD) | QUEUED at half scope | — | Fable | Q1 answered: card Y signed **Y-C**, arc stays open. |
+| **D3 MISO RETIREMENT / G3** | G3 cap-grain `retire.total_gw` t1h regression — attribution-first, zero-solve Phase 0 | **ISSUED r#21** | `claude/capx-d3-miso-retire-g3` | Fable | I13 cobweb closure = unattributed SCORER-READ, held open inside the lane; precommit-first. |
+| **D4-I3 ERCOT** | I3 scarcity-slack invariant (net-revenue half HELD under card Y-C) — zero-solve breach-set + pre-declared post-arming expectation + FR-6 code-comment home | **ISSUED r#21** | `claude/capx-d4i3-ercot-slack` | Fable→**Opus** | Post-arming MEASUREMENT deferred to the next T1-H run (D6). |
 | **D6 FC-3 CURVE-ON OVER-FIRE** | Four T1-H curve legs | QUEUED | — | Fable | — |
-| **D8 FORECAST PROVENANCE DEBT + DOF LEDGER** | FC-7's two halves: the DOF-ledger instrument (every T1-F leg's caveat — NEISO's ONLY one) + the seven legacy legs' missing `run_config.json` | **ISSUED r#19** — instrument + artifacts only; verdict/board re-emission explicitly deferred past the in-flight writers | `claude/capx-d8-dof-ledger` | Fable | §0p.2. The instrument is what stands between the program's best ISO and a clean FC map. |
+| **D8 FORECAST PROVENANCE DEBT + DOF LEDGER** | FC-7's two halves: the DOF-ledger instrument (every T1-F leg's caveat — NEISO's ONLY one) + the seven legacy legs' missing `run_config.json` | **LANDED r#21** (PR #4427; instrument + artifacts) — **re-emission half ISSUED r#21 mid-sitting as D8-RE (Opus)**, unblocked by the golden/S-6/S-123-V landings | `claude/capx-d8-dof-ledger` → `claude/capx-d8-re-emission` | Fable→Opus | §0p.2 + §0r.6. The instrument is what stands between the program's best ISO and a clean FC map. |
 | **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | **ADJUDICATED UNREACHABLE at HEAD, ROUTED** (S-123 finding §5 — TVA re-point + data prerequisite named) | — | Fable | Handed in by miso-183; closed as a lane, lives on as a routed intake item. |
 | **D16 ARMED-INTERFACE mc=0 SEAM** | Armed-interface forecast years leave seam rows at their mc=0 build placeholder (S-123 finding §5/§7-5) | **ISSUED r#19** — director mechanism decision: FAIL CLOSED (hard refusal, holdout_policy pattern); fallback-price alternative deliberately not built without its own charter | `claude/capx-d16-seam-guard` | Fable | §0p.2. New defect found on the D9 trace, routed to this track 2026-08-30. |
+| **NEISO-RC-R REPAIR PHASE** | Execute the Phase-0 finding's routed repairs: R2 FCA-curve re-derivation + R1 registry intake + R3 scorer trio + R4 reporting; R5 deferred, R6 standing refusal; PREREG-first verification pair (one T1-X treatment vs the committed capxd14 control) | **ISSUED r#21** | `claude/capx-neiso-rc-repair` | Fable | Golden care lines (t3 / bare neiso-t1f keys untouchable); R1 and R3(iii) land together; cross-lane re-grade ruling applies to any verdict flip. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
 ## 2. Backcast-track watch (last seen 2026-08-30 @ `83c1c5a`, refresh #17)
@@ -1283,6 +1316,10 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-08-31 | **S-123-V-R (relaunch)** | `claude/capx-s123v-miso-verify-r2` | **Opus** | miso | r#20 — pre-declared execution. **LANDED at r#21 (PR #4441): §6 filled, S-123 complete** |
 | 2026-08-31 | **T3-GOLDEN-R (relaunch)** | — | **Opus** | neiso | r#20 — **RECALLED UNRUN at r#21 (owner correction: the original golden session is STILL RUNNING; r#20's LOST grading was wrong)**. Never dispatched; the original T3 issuance (r#17) stays the live lane |
 | 2026-08-31 | **D12-A-R (relaunch)** | `claude/capx-d12a-arming-r2` | **Fable** | code | r#20 — orphan-branch adjudication. **LANDED at r#21 (PR #4429): re-verified and armed per Q15, matrix stamped** |
+| 2026-08-31 | **NEISO-RC-R REPAIR PHASE** | `claude/capx-neiso-rc-repair` | **Fable** | neiso | r#21 batch — R2+R1+R3(+R4) per the Phase-0 finding; PREREG-first verification pair; golden care lines |
+| 2026-08-31 | **D3 MISO RETIREMENT G3** | `claude/capx-d3-miso-retire-g3` | **Fable** | miso | r#21 batch — attribution-first zero-solve Phase 0 on the t1h `retire.total_gw` flip; precommit-first |
+| 2026-08-31 | **D4-I3 ERCOT SLACK HALF** | `claude/capx-d4i3-ercot-slack` | **Opus** | ercot | r#21 batch — zero-solve breach-set + pre-declared post-arming expectation; net-revenue half stays HELD (card Y-C); D6 sequenced after it |
+| 2026-08-31 | **D8-RE VERDICT/BOARD RE-EMISSION** | `claude/capx-d8-re-emission` | **Opus** | code | r#21 batch (mid-sitting release) — the D8-deferred re-emission, unblocked by the golden/S-6/S-123-V landings; records only, zero-solve |
 
 ## 5. History (compacted)
 
