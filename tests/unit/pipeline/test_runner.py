@@ -948,5 +948,79 @@ class TestCapacityMarketClearingWiring(RunnerTestBase):
         self.assertGreater(captured[2027], 0.0)
 
 
+class TestJointSignalVolumePosture(RunnerTestBase):
+    """The C-1 joint posture: dual-based level + margin-exhaustion walk.
+
+    Owner ruling R-B (2026-08-31), charter
+    ``docs/PRECOMMIT-c1-joint-wind-2026-08-31.md`` §1.3. The lookahead seam's
+    AVAILABILITY arms on ``entry_lookahead_reprice or
+    entry_margin_exhaustion``, while every CONSUMPTION of its level stays
+    gated on ``entry_lookahead_reprice`` alone -- so with the reprice
+    disarmed and the walk armed the screens keep the raw prior-year zonal
+    duals as their price object *and* get a live repricer for the walk's
+    within-year delta.
+    """
+
+    def _run_capturing_priors(self, config):
+        """Run a short scenario, returning every PriorYearResults built."""
+        captured = []
+        original = runner.PriorYearResults
+
+        def spy(**kwargs):
+            obj = original(**kwargs)
+            captured.append((kwargs, obj))
+            return obj
+
+        with (
+            patch.object(runner, "END_YEAR", 2027),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
+            patch.object(runner, "PriorYearResults", side_effect=spy),
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+        self.assertGreaterEqual(len(captured), 2)
+        return captured
+
+    def test_joint_posture_consumes_duals_and_builds_a_walk(self):
+        captured = self._run_capturing_priors(
+            ScenarioConfig(
+                iso="ERCOT",
+                entry_lookahead_reprice=False,
+                entry_margin_exhaustion=True,
+            )
+        )
+        for kwargs, _ in captured:
+            # The disarm property is preserved exactly: the screens' price
+            # object IS the prices array, never the repriced level.
+            self.assertIs(kwargs["price_signal"], kwargs["prices"])
+        # ...and the walk is nonetheless live (the whole point of the joint
+        # posture -- lifting the config refusal alone would leave it None).
+        self.assertTrue(
+            any(obj.entry_reprice is not None for _, obj in captured),
+            "joint posture built no margin-exhaustion walk",
+        )
+
+    def test_disarm_alone_builds_no_walk(self):
+        """The widening must not leak into the plain disarm posture."""
+        captured = self._run_capturing_priors(
+            ScenarioConfig(iso="ERCOT", entry_lookahead_reprice=False)
+        )
+        for kwargs, obj in captured:
+            self.assertIs(kwargs["price_signal"], kwargs["prices"])
+            self.assertIsNone(obj.entry_reprice)
+
+    def test_armed_reprice_still_consumes_the_repriced_level(self):
+        """The shipped default posture is untouched by the widening."""
+        captured = self._run_capturing_priors(ScenarioConfig(iso="ERCOT"))
+        self.assertTrue(
+            any(
+                kwargs["price_signal"] is not kwargs["prices"] for kwargs, _ in captured
+            )
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

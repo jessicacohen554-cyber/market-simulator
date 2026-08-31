@@ -3504,8 +3504,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # ``_screen_signal_for`` call this year makes (next_year and the
         # bridge-adjacent year alike).
         _fwd_curr_state: dict = {}
+        # C-1 JOINT POSTURE (owner ruling R-B, docs/PRECOMMIT-c1-joint-wind-
+        # 2026-08-31.md §1.3): the seam is AVAILABLE whenever either the
+        # reprice (which consumes its LEVEL) or the margin-exhaustion walk
+        # (which consumes only its within-year DELTA,
+        # _EntryRepriceWalk.signal = consumed + alpha x (S(state) - S(0))) is
+        # armed. Widening availability is NOT arming: with the reprice
+        # disarmed the seam runs for its WALK and its diagnostic dump only —
+        # every consumption below stays gated on entry_lookahead_reprice, so
+        # the screens keep the raw prior-year zonal duals (price_signal =
+        # econ_prices, set above) that the disarm posture is defined by.
+        # Byte-identical in every previously-reachable posture: armed-reprice
+        # is unchanged, and with BOTH off the gate is False exactly as before.
+        _reprice_level = config.entry_lookahead_reprice
         if (
-            config.entry_lookahead_reprice
+            (_reprice_level or config.entry_margin_exhaustion)
             and config.mode == "forecast"
             and lookahead_next_ok
         ):
@@ -3904,7 +3917,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     )
                 return sig
 
-            price_signal = _screen_signal_for(next_year)
+            # The seam always RUNS for next_year (that call is what builds the
+            # walk); whether its level is CONSUMED is the reprice's question.
+            _sig_next = _screen_signal_for(next_year)
+            if _reprice_level:
+                price_signal = _sig_next
             if unified_screens:
                 # Every entering year this solved year's prior_results will
                 # screen gets its OWN signal: next_year always; the
@@ -3915,9 +3932,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # pre-update EWMA state; pass-through at alpha=1.0.
                 _prev_ewma = price_signal_prev
                 _alpha = float(config.entry_price_signal_alpha)
-                unified_signals[next_year] = _blend_price_signal(
-                    price_signal, _prev_ewma, _alpha
-                )
+                if _reprice_level:
+                    unified_signals[next_year] = _blend_price_signal(
+                        _sig_next, _prev_ewma, _alpha
+                    )
                 _after_bridge = next_year + 1
                 if (
                     is_hindcast_bridge_year(
@@ -3934,9 +3952,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         start_year=start_year,
                     )
                 ):
-                    unified_signals[_after_bridge] = _blend_price_signal(
-                        _screen_signal_for(_after_bridge), _prev_ewma, _alpha
-                    )
+                    # Same split: the call is what builds the bridge-adjacent
+                    # entering year's walk, so it is unconditional; only its
+                    # level's consumption is the reprice's question. Without
+                    # this the joint posture would lose exactly one entering
+                    # year's walk and go silently bang-bang there.
+                    _sig_after = _screen_signal_for(_after_bridge)
+                    if _reprice_level:
+                        unified_signals[_after_bridge] = _blend_price_signal(
+                            _sig_after, _prev_ewma, _alpha
+                        )
         price_signal = _blend_price_signal(
             price_signal, price_signal_prev, float(config.entry_price_signal_alpha)
         )
