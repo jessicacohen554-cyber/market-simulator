@@ -121,6 +121,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "benchmark-corridor",
     "hydro-plant-modes",
     "miso-m2m-flowgates",
+    "gas-ofo-events",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -369,6 +370,27 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "no numeric threshold, frozen against residuals (rule 21). "
             "CAISO-only until another ISO's lane reviews the completion "
             "against its own labeled subset."
+        ),
+    },
+    "gas-ofo-events": {
+        "summary": (
+            "Declared gas-pipeline Operational Flow Orders at event-day grain "
+            "\u2014 the physical gas-deliverability events behind winter "
+            "gas-scarcity days (caiso-131 A3; intake caiso-226)."
+        ),
+        "reconciles": (
+            "Each declaring utility's public event-history ledger, published "
+            "as one year-column HTML table per side, onto one tidy "
+            "`(iso, utility, gas_day, side)` frame carrying the published "
+            "stage, the signed tolerance band (negative low / positive high) "
+            "and the waived flag. CAISO = SoCalGas ENVOY low (2015\u2013) and "
+            "high (1997\u2013) ledgers; PG&E and the other ISOs' pipeline "
+            "analogues are `DATA NEEDED`. Rule-13 line: a declaration is a "
+            "published PHYSICAL availability event with a forward analogue "
+            "(same class as the CAMPD outage windows), so it is INPUT-class; "
+            "it is never a fit target, and no threshold keyed to a price "
+            "residual may be derived from it. INTAKE-ONLY \u2014 no mechanism "
+            "consumes it."
         ),
     },
     "miso-m2m-flowgates": {

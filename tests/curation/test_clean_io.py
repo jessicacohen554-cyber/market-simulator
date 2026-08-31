@@ -88,6 +88,7 @@ ALL_DATATYPES = [
     "ira-credit-parameters",
     "nrel-atb",
     "miso-m2m-flowgates",
+    "gas-ofo-events",
 ]
 
 

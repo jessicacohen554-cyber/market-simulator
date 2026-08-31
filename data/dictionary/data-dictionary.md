@@ -87,6 +87,7 @@ for the market split.
 | benchmark-corridor | — | — | — | — | — | — |
 | hydro-plant-modes | — | — | — | — | — | — |
 | miso-m2m-flowgates | — | — | — | 2023–2025 | — | — |
+| gas-ofo-events | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -1921,3 +1922,33 @@ settlement credits (miso-77 §2a; intake miso-176). Schema:
 | `cp_ffe_mw` | `float64` | `mw` | yes | Counterparty RTO's Firm Flow Entitlement. Populated only on MISO-monitored rows; zero-filled on neighbour-monitored rows. Input-class in kind where populated. |
 | `miso_credit_usd` | `float64` | `usd` | yes | MISO's hourly M2M settlement credit on the flowgate as posted. ANSWER CLASS — validation only. |
 | `cp_credit_usd` | `float64` | `usd` | yes | Counterparty RTO's hourly M2M settlement credit as posted. ANSWER CLASS — validation only. |
+
+## gas-ofo-events
+
+Declared gas-pipeline Operational Flow Orders at event-day grain — the physical
+gas-deliverability events behind winter gas-scarcity days (caiso-131 A3; intake
+caiso-226). Schema:
+[`schema/gas-ofo-events.schema.yaml`](schema/gas-ofo-events.schema.yaml).
+
+- **Keys:** `iso`, `utility`, `gas_day`, `side`
+- **Reconciles:** Each declaring utility's public event-history ledger,
+  published as one year-column HTML table per side, onto one tidy `(iso,
+  utility, gas_day, side)` frame carrying the published stage, the signed
+  tolerance band (negative low / positive high) and the waived flag. CAISO =
+  SoCalGas ENVOY low (2015–) and high (1997–) ledgers; PG&E and the other ISOs'
+  pipeline analogues are `DATA NEEDED`. Rule-13 line: a declaration is a
+  published PHYSICAL availability event with a forward analogue (same class as
+  the CAMPD outage windows), so it is INPUT-class; it is never a fit target,
+  and no threshold keyed to a price residual may be derived from it.
+  INTAKE-ONLY — no mechanism consumes it.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO whose generation fleet burns gas delivered on the declaring utility's system (CAISO for SoCalGas). Stamped from the registry spec, not published by the utility. |
+| `utility` | `string` | `none` | no | Declaring gas utility / balancing entity (SOCALGAS). One ISO may be served by several -- the column keeps them separable rather than collapsing them onto the ISO. |
+| `gas_day` | `datetime64[ns]` | `local_date` | no | The gas day the order applies to, tz-naive date label as the utility publishes it. A SoCalGas gas day runs 07:00-07:00 Pacific, so it is a DATE LABEL and not a midnight-to-midnight electricity day; a consumer mapping it to operating hours must apply that offset itself. |
+| `side` | `string` | `none` | no | 'low' (under-delivery penalized -- the winter gas-deliverability instrument) or 'high' (over-delivery penalized -- linepack surplus). |
+| `stage` | `string` | `none` | yes | Published escalation stage as printed: '1', '2', '3', '3.1', '3.2', '3.3', '4', '5', or 'EFO' (an Emergency Flow Order -- a distinct Rule 23 instrument the utility prints in the same ledger, NOT an OFO stage, and deliberately left unranked here). NULL for the pre-staging high-OFO vintage (SoCalGas printed high OFOs without a stage before mid-2018). |
+| `tolerance_pct` | `float64` | `pct` | no | Published daily imbalance tolerance band, SIGNED AS PUBLISHED: negative on the low side (e.g. -5 = deliveries may fall no more than 5 percent short of burn) and positive on the high side (e.g. 10). NOT monotone in `stage`: the two are set independently by the utility -- measured on the low ledger, the WIDEST bands sit at Stage 1 (min -18) while Stage 3.2 is uniformly -5 -- so a consumer must pick the dimension it actually means rather than assuming either one ranks the other. |
+| `waived` | `bool` | `none` | no | True when the utility waived the gas day's noncompliance charges (the order was declared and then relieved). Published as a '(WAIVED)' suffix on the tolerance and a red cell in the ledger. A waived day is still a declared physical event; a consumer decides whether to count it. |
+| `source_doc` | `string` | `none` | no | Filename of the immutable raw snapshot under data/raw/gas-ofo-events/<iso>/ the row was parsed from, so every row traces to the exact retrieved document. |
