@@ -982,6 +982,34 @@ rule-13-admissible mechanism available to carry it.
    `docs/PRECOMMIT-ercot244-online-cap-phase0-2026-08-30.md` +
    `docs/FINDING-ercot244-online-cap-phase0-2026-08-30.md` +
    `results/calibration/ercot244_online_cap_phase0.json`.
+   **▶ THE SUCCESSOR CHARTERED (the ercot-245 owner handoff = the §3
+   charter) AND KILLED AT CENSUS AT ERCOT-245 (2026-08-31, zero-solve,
+   precommitted + Amendment 1; cell stays `R`, A/B license NOT spent, no
+   ScenarioConfig field minted).** The PER-CLASS grain (CC/ST/COAL/NUC
+   availability-shaped caps; zero-DOF 10-decile net-load share transfer)
+   fires K-A on ST (mass violation 26.1 % of 2023 hours — the SCED GS*
+   universe cannot express ST_GAS), K-C at saturation in BOTH scored
+   years (transferred union 8,760/8,760 binds; NUC clamped at mass 1.0 by
+   any c < 1 on a class dispatched at its availability bound; CC alone
+   3,300/4,272 ordinary binds vs bar 150 — the §2.3 ~11 % ordinary excess
+   CONCENTRATES per-class), and K-T on exactly the gas classes (T-1 CC
+   0.1935 / ST 0.1849 vs 0.15; T-2 p95 3.2/4.1 GW vs 2 GW). Two
+   measurements outlive the kill: (D-V4) at covered 2025 missed events
+   the model runs ~3 GW MORE gas-steam / ~4 GW LESS CC than the measured
+   online mix; (D-V5) reality's per-class online shares at events equal
+   same-net-load-bin ordinary shares (0.4–3.6 pp, LOWER every class) —
+   **no net-load-conditioned class-share bound carries an
+   event-discriminating signal at ANY identification.** Adjudication:
+   the availability-shaped share bound fails at the class grain too —
+   the residue is per-UNIT startup/notice state + price formation over
+   the online cushion, and its identification is BLOCKED on the
+   2024/2025 all-resource SCED conduct corpus intake (the charter's §8
+   owner flag; the decision is the owner's). DO-NOT-REDO adds: no
+   class-grain share/occupancy bound re-test on 2023-identified data —
+   D-V5 is the reality-side null for the whole family. Records:
+   `docs/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md` +
+   `docs/FINDING-ercot245-commitment-state-phase0-2026-08-31.md` +
+   `results/calibration/ercot245_commitment_state_phase0.json`.
 9b. **THE ERCOT-161 PHASE-0 ADJUDICATION OF THE RE-POINTED OBJECT (2026-08-04,
    no LP, no solve, keeper UNCHANGED) — the armed RT wall is EXONERATED on its
    own population, and the object moves to the STORAGE fleet's offer
