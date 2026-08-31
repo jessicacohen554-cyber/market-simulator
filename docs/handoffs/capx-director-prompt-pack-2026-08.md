@@ -1668,6 +1668,14 @@ director stamps the ledger.
 
 ## NEISO-RC-R — the retirement-composition REPAIR phase (r#21; executes the Phase-0 finding's routed repairs R1–R4)
 
+> **r#22 status note (director, 2026-08-31):** nothing from this lane has landed and no
+> branch `claude/capx-neiso-rc-repair` exists on the remote. Under the r#20/r#21 relaunch
+> protocol this is NOT graded lost — a solve-carrying lane lands nothing observable until it
+> finishes, and the T3 golden was wrongly graded on exactly this evidence. The owner has been
+> asked whether the session is still running (ledger §0s.6). This charter stays BINDING and
+> UNCHANGED either way: if the session is gone it relaunches FRESH from this text; if it is
+> running, nobody launches a second one.
+
 **Model: Fable · DATA PROFILE: neiso · branch: `claude/capx-neiso-rc-repair`**
 
 **Binding basis:** `docs/handoffs/FINDING-capx-neiso-rc-phase0-2026-08-30.md` §6 (routed
@@ -1854,4 +1862,318 @@ branch); blob-verify ≥300-line files (rule 27).
 EXIT: docs/handoffs/FINDING-capx-d8-dof-ledger-<date>.md — the instrument's contract, the
 per-bundle ledger tables (UNIDENTIFIED rows highlighted), the legacy-leg
 recovered/irrecoverable table, and the deferred re-emission note. Report to the owner.
+```
+
+---
+
+## D8-V — FC-7 ledger completion: publish the two stopped flips, close PJM + MISO (r#22; executes D8-RE's routed set)
+
+```
+You are the D8-V FC-7 LEDGER COMPLETION session of the capacity-expansion (Forecast
+Finalization) track. Lane D8 built the DOF-ledger instrument; lane D8-RE re-emitted one key
+and STOPPED two committed-verdict flips under the 2026-08-30 cross-lane re-grade rule, routing
+them to the director. You execute the routed set: re-verify and publish those two flips, and
+close the PJM and MISO ledgers D8-RE measured read-only. ZERO SOLVES — every number is
+forecast_verdict.py's own output on committed artifacts.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (two ISO determinations move — adjudication, rule 27 / model economy).
+BRANCH: claude/capx-d8v-fc7-ledger — create FRESH off origin/main (git fetch origin main
+first) and rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d8-dof-ledger-2026-08-30.md §6 (the pre-registration)
+and §8 (D8-RE's completion note: §8.1's byte-for-byte control, the two stops, the measured
+PJM/MISO ledger contents); frontend/data/forecast/program-status.json block `d8_re_emission`
+(`stopped_not_landed` + `routed_to_director`); docs/handoffs/capx-director-ledger-2026-08.md
+§0s.
+
+THE CONTROL COMES FIRST, ON EVERY KEY YOU TOUCH (D8-RE's own protocol, repeated — do not
+skip it because D8-RE already ran it): re-score the key on its committed artifacts WITHOUT
+--dof-ledger and confirm it reproduces the committed record byte-for-byte apart from the
+provenance stamp. If any key fails to reproduce, that is a stop-the-line finding — report it
+and touch nothing.
+
+TASK 1 — NEISO (`neiso-t1f`, affected lane capx-S4b-neiso-ara). Re-derive FC-7 from
+results/ff-t1f-s4b-ara/neiso/ with the documented command
+(`python scripts/forecast_verdict.py --tier t1f --summary <bundle>/full_horizon_summary.json
+--run-config <bundle>/run_config.json --dof-ledger <bundle>/dof_ledger.json`). The
+pre-registered movement is FC-7 'dof ledger' CAVEAT -> PASS and DETERMINATION
+PROMOTE-WITH-CAVEATS -> PROMOTE with caveats []. PUBLISH ONLY IF the re-verification
+reproduces exactly that and NOTHING ELSE MOVES — assert row-by-row that every other FC
+category, row status and detail is byte-identical before writing. Record the re-verification
+in the S-4b lane's own finding (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md, an
+appended addendum) — the cross-lane rule requires the AFFECTED lane's record, not just yours.
+If anything else moves: STOP, publish nothing, report at full magnitude.
+
+TASK 2 — NYISO (`nyiso-t1f`, affected lane capx-D2-extcap-intake). Identical shape on
+results/ff-t1f-extcap/nyiso/. Same publish condition, same stop condition; the addendum goes
+in that lane's finding.
+
+TASK 3 — PJM (`pjm-t1f`). Build the ledger from results/ff-t1f-s6-pjm/ledger/ with
+scripts/build_forecast_dof_ledger.py, COMMIT it into the bundle, and re-score. D8-RE measured
+1 entry / 0 UNIDENTIFIED => FC-7 CAVEAT -> PASS with DETERMINATION UNCHANGED (HOLD, held by
+the FC-1/FC-2 FAILs). That is NOT a stop. If the determination moves anyway, it becomes one:
+stop and report.
+
+TASK 4 — MISO (`miso-t1f`). Same build on results/ff-t1f-s123/verify/, commit the ledger, and
+re-score. D8-RE measured 4 entries with 3 UNIDENTIFIED (entry_vre_capacity_revenue,
+miso_clean_tier_rows, miso_rps_compliance_regions) => FC-7 STAYS CAVEAT, no verdict movement.
+Commit it regardless: the value is the named attestation debt, which is the instrument working
+as designed. Name those three as routed debt in your finding — do NOT attest them, and do NOT
+invent an identification source to clear them (rule 21 [R-DOF]: a residual that can only be
+closed by a tuned value is an open issue, not a parameter).
+
+BOARD. Refresh only the NEISO / NYISO / PJM / MISO FC-7 blocking rows you actually moved, plus
+one `d8_v_ledger_completion` lane block. Assert PROGRAMMATICALLY before commit, exactly as
+D8-RE did: every ISO determination you did not move, every fc map, every keeper/marker/golden
+field, every §2.1b gate cell (status AND detail) and every prior lane block byte-identical.
+
+NOT YOURS — HARD BOUNDARIES. The seven legacy legs' reconstructed run_configs
+(results/run-config-debt/) are a SEPARATE director decision, now ruled (ledger §0s.5): DO NOT
+adopt them and do not touch their FC-7 rows. Do not create a ledger where none exists
+(ercot-t1f, caiso-t1f, neiso-t1f-s4hydro, neiso-t1f-s4control, any -ff2d / -ffr3a2 vintage) —
+D8-RE recorded those as correctly skipped. Never write `neiso-t3`, any crossover/t1x key, or
+the ERCOT block: the NEISO crossover keys belong to NEISO-RC-R if it is in flight, and the
+ERCOT block belongs to lane D4-M, which is dispatched in the same batch. Fetch and rebase
+before every push and leave sibling writes intact.
+
+GUARDRAILS: zero solves. Backcast namespace untouched — no keeper shard, no status/*.js, no
+calibration-complete.json, no registry/runs sidecar. No holdout year of any tier is solved,
+scored or registered. No mechanism, no ScenarioConfig field, no matrix cell (rule 28 not
+triggered — nothing is tested). No new GitHub Actions workflow. Push per CLAUDE.md Git &
+Pushing; blob-verify every ≥300-line file after push (rule 27) — ff-verdicts.json and
+program-status.json both qualify.
+
+EXIT: docs/handoffs/FINDING-capx-d8v-fc7-ledger-<date>.md carrying the four controls, the two
+re-verifications with their published/stopped verdicts, the PJM/MISO ledger contents and the
+MISO attestation debt; the two affected lanes' finding addenda; the board block. Report to the
+director: which determinations moved, and the MISO debt list.
+```
+
+---
+
+## D4-M — ERCOT post-arming T1-H measurement + the I3 instrument grain (r#22; the measurement half D4-I3 pre-declared)
+
+```
+You are the D4-M session of the capacity-expansion (Forecast Finalization) track. Lane D4-I3
+measured the ERCOT I3 breach set zero-solve and FROZE an eight-point pre-declaration for the
+first T1-H run at the newly-armed D12-A posture. You run that measurement and grade the
+pre-declaration. It also lands the cheap instrument repair D4-I3 recommends doing FIRST.
+
+DATA PROFILE: ercot
+MODEL ASSIGNMENT: Opus (the discretion was spent ex ante in D4-I3 §4 — this is EXECUTION under
+the r#20 model-economy doctrine; rule 27's Sonnet floor still bars Sonnet from scripts/).
+BRANCH: claude/capx-d4m-ercot-t1h — create FRESH off origin/main (git fetch origin main first)
+and rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d4i3-ercot-slack-2026-08-31.md — §2 (the
+volume↔slack monotonicity, the load-bearing claim), §4 (P-1..P-8 and F-1..F-4 — FROZEN; you
+grade them, you never restate, widen or reinterpret them), §5.1 (the vintage caveat: an ERCOT
+I3 magnitude is comparable only WITHIN a solve vintage — do not difference your result against
+the 2026-08-22 `refresh` record), §5.2 + §6 R-4 (the instrument gap), §6 R-2 (why the
+entry-volume question comes AFTER this run, never fitted to I3).
+
+STAGE 1 — R-4, the instrument grain (do this first, land it before the run is scored).
+Extend `check_i3_unserved_dump` in scripts/check_forecast_invariants.py so its detail carries
+BREACH HOURS, SLACK GWh and PEAK SLACK MW alongside the existing `% of load`. DO NOT TOUCH the
+1e-4 gate — the threshold is not yours and moving it would be a gate change dressed as a
+reporting change. Existing committed sidecars keep their coarse strings; only newly written
+ones gain the grain. Trivial fixture test first (CLAUDE.md Testing Pattern), then the suite.
+
+STAGE 2 — the run. ONE ERCOT T1-H `ercot-2021-2025-realized` leg at the REGISTERED posture at
+HEAD, years sequential within the invocation (rule 12). The D12-A pair is now the ERCOT
+forecast DEFAULT, so a bare invocation IS the armed posture — assert it from the run's own
+run_config.json (`entry_margin_exhaustion` and `entry_forward_reserve_leg` both True) BEFORE
+grading anything; that assertion is F-1's first clause. The control side is the COMMITTED
+`ercot-2021-2025-realized-t1h-d12c-control` record — zero-solve, no new control run. If your
+solve reproduces `d12c-armed` exactly, SAY SO PLAINLY: that is the confirmation arriving for
+free, not a failure to measure something new, and the new instrument grain is then the run's
+actual novel content.
+
+STAGE 3 — grade P-1..P-8 honestly, one row each, measured vs pre-declared, at full magnitude.
+Report any of F-1..F-4 that fires as a contradiction of the pre-declaration, in its own
+section, and do not repair it in-lane. P-8 is flagged in its own charter as UNBRACKETED — if
+you cannot reach the T1-F horizon zero-solve, record it unmeasured rather than estimating it.
+
+HOW TO READ A WORSE I3 — this is the part that matters, and D4-I3 §4 states it as binding:
+a worse I3 under the armed pair is NOT a regression and MUST NOT be repaired by re-disarming,
+by a volume knob, or by any parameter moved to close the breach. Rules 1 [R-STRUCT] and 14
+[R-ACCURATE]: both levers are structurally-motivated corrections, and I3 rising is a
+pre-existing under-build becoming visible. Your lane's job ends at measuring it.
+
+REGISTRATION (rule 15, forecast namespace): register the run with run_config.json committed,
+and — in the SAME commit as the registration — declare its invariant FAILs in
+frontend/data/hindcast/invariant-failures.json, per that file's own `how_to_update`, naming
+this finding. THAT LINE IS YOURS AND ONLY YOURS: lane D18 is dispatched in the same batch and
+owns exactly the 13 PRE-EXISTING undeclared rows enumerated in its charter. Do not touch a row
+you did not create; rebase and leave D18's sweep intact.
+
+NOT YOURS: the net-revenue half of the I3 object stays HELD under card Y-C (signed) — do not
+touch, measure or re-open it. The R-2 entry-screen volume calibration is a LATER lane and is
+explicitly forbidden here; any volume parameter fitted to close I3 or I12 is inadmissible
+(rule 13 [R-MEASURED]). Do not adjudicate the non-ERCOT I3 rows (MISO, NEISO) — rule 25
+[R-ISO-SCOPE], they belong to their own ISO lanes. Board: the ERCOT block only; lane D8-V is
+writing NEISO/NYISO/PJM/MISO FC-7 rows of the same two files in this batch — distinct
+blocks/keys, rebase-care, leave its writes intact.
+
+GUARDRAILS: no out-of-training backcast year solved, scored or registered (the T1-H hindcast
+window is the forecast namespace, not a backcast holdout — keep it that way). No measured
+outcome fed back (rule 13). Touch no backcast keeper shard, status/*.js,
+calibration-complete.json, offer curve or commitment bridge. No new GitHub Actions workflow,
+no CI offloading — the solve runs in your session. Push per CLAUDE.md Git & Pushing;
+blob-verify every ≥300-line file after push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d4m-ercot-t1h-<date>.md with the R-4 diff, the posture
+assertion, the P-1..P-8 grade table, any fired falsifier, the registration + declaration, and
+the ERCOT board refresh. Report to the director whether the pre-declaration held.
+```
+
+---
+
+## D17 — MISO's missing non-coal economic exit channel (r#22; D3's routed PRIMARY, Phase 0, zero-solve)
+
+```
+You are the D17 session of the capacity-expansion (Forecast Finalization) track, executing the
+PRIMARY repair D3 routed. PHASE 0 ONLY: attribution from committed artifacts, ZERO SOLVES,
+precommit-first. You build nothing and arm nothing.
+
+DATA PROFILE: miso
+MODEL ASSIGNMENT: Fable (novel-object adjudication and mechanism candidacy — rule 27 / model
+economy).
+BRANCH: claude/capx-d17-miso-exit-channel — create FRESH off origin/main (git fetch origin
+main first) and rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d3-miso-retire-g3-2026-08-31.md — §5 (the per-fuel
+table that IS the object) and §6.1 (the four candidate threads, none presumed);
+docs/handoffs/PRECOMMIT-capx-d3-miso-retire-g3-2026-08-31.md (the precommit discipline you
+repeat); docs/handoffs/FINDING-capx-s123-miso-adequacy-2026-08-30.md (the S-1/S-2/S-3
+requirement terms thread (iii) depends on).
+
+THE OBJECT, stated exactly as D3 measured it: over the MISO T1-H window the economic screen
+executes ZERO gas_ct, gas_cc and oil exits — model 0.0 GW against actual 2.435 / 0.521 / 0.502
+GW, i.e. 3.458 GW of real non-coal exits the screen never produces — while it OVER-retires
+coal (+9.1 % after the G3 fix, +18.4 % before). The −16.5 % `retire.total_gw` FAIL is that
+missing channel becoming visible once the G3 cap-grain fix removed the compensating coal
+excess. THE FIX STAYS (rules 1 [R-STRUCT] / 14 [R-ACCURATE]): restoring the decision-year cap
+grain, or reporting a dual basis to recover the old PASS, is REFUSED ON ITS FACE. The pre-fix
+PASS is not a target.
+
+PRECOMMIT FIRST — push it before you measure anything. It names, frozen: the candidate classes
+you will test, the committed evidence for each, the adjudication rule, and the kill that
+retires each candidate. D3 §6.1 offers four threads and presumes none — (i) the attainable
+pro-forma inframarginal margin for MISO gas/oil (whether modelled energy/AS margins
+over-reward these classes against FOM); (ii) per-fuel threshold / execution-lag
+identification for gas_ct/gas_cc/oil against the EIA-860 record; (iii) the admission cap's
+REQUIREMENT side in the hindcast window — S-123 established the t1f requirement basis was
+overstated (PRM 0.179→0.157, external ZRC, DR netting) and the hindcast-window analogue has
+never been measured; (iv) FFR-3F §1.4's recorded open item, that the cap's fleet side stays at
+decision year with no entry crediting, biasing toward retention. Add or drop candidates on
+your own reading of the artifacts — but freeze the set before you look at the answer.
+
+EVIDENCE IS COMMITTED-ARTIFACT ONLY: the evolution ledgers, floor_retention_log attributions,
+score.json / scorecards, the FFR-2B pipeline bundle, the battery-close docs, EIA-860. If a
+question needs a solve, say so and route it — do not run one.
+
+WHAT THIS MUST NEVER BECOME (state it in the precommit and hold to it): no per-fuel FOM
+constant, retirement threshold, execution lag or margin adder identified from the retirement
+residual — rule 21 [R-DOF] and rule 24 [R-REGISTRY]; that is the standing refusal NEISO-RC
+carries as R6 and it binds here identically. A residual that can only be closed by a tuned
+value is an open root-cause issue, not a parameter.
+
+GUARDRAILS: zero solves. No mechanism, no ScenarioConfig field, no matrix cell — nothing is
+tested, so rule 28 duty (b) is not triggered; check the MISO shard and lever queue before you
+propose anything (duty (a)) and never re-test a cell adjudicated R/I/G. No board write, no
+verdict/gate flip, no keeper/shard/marker touch — D3's own §6.3 established the FC-3 verdict
+is correct as it stands. Backcast namespace untouched. No holdout year. No new GitHub Actions
+workflow. Push per CLAUDE.md Git & Pushing; blob-verify every ≥300-line file (rule 27).
+
+COLLISION: the backcast MISO track is the owner's; check `git ls-remote --heads origin` at
+start and stay off any live MISO backcast branch's surfaces. Lane D8-V writes `miso-t1f`'s
+FC-7 row in this same batch — you write no verdict file at all, so there is no contention.
+
+EXIT: docs/handoffs/PRECOMMIT-capx-d17-miso-exit-channel-<date>.md (pushed first) and
+docs/handoffs/FINDING-capx-d17-miso-exit-channel-<date>.md with the attribution, each
+candidate's verdict against its own frozen kill, and the repairs ROUTED — priced, admissibility
+stated per rule 13 / rule 21, and NOT built. Report to the director.
+```
+
+---
+
+## D18 — the invariant declaration ledger sweep (r#22; D4-I3's routed R-6, records only)
+
+```
+You are the D18 session of the capacity-expansion (Forecast Finalization) track. This is a
+RECORDS lane: it makes a standing-red CI job green by declaring what is already committed, and
+it corrects one misattributing line. It adjudicates nothing and fixes no defect.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (enumerated records sweep, no adjudication; rule 27 keeps Sonnet off
+scripts/ and CI-adjacent artifacts).
+BRANCH: claude/capx-d18-invariant-ledger — create FRESH off origin/main (git fetch origin main
+first) and rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d4i3-ercot-slack-2026-08-31.md §5.3 (the routed R-6 and
+its boundary); frontend/data/hindcast/invariant-failures.json — its own `purpose`,
+`how_to_update`, `capentry_note` and `c1joint_note`.
+
+THE OBJECT. `scripts/check_forecast_invariants.py --sidecar-dir frontend/data/hindcast` (CI job
+`forecast-invariant-artifacts`, FR-24) fails when a committed sidecar carries an invariant FAIL
+absent from `declared_failures`. THIRTEEN rows are currently undeclared. The census was
+measured by D4-I3 and INDEPENDENTLY RE-DERIVED by the director from the committed sidecars —
+both agree on exactly these:
+
+  caiso-2021-2025-realized                      I7, I9
+  ercot-2021-2025-realized-t1h-d11r-control     I3
+  ercot-2021-2025-realized-t1h-d11r-exhaustion  I3
+  ercot-2021-2025-realized-t1h-d12c-armed       I3
+  ercot-2021-2025-realized-t1h-d12c-control     I3
+  ercot-2021-2025-realized-t1h-refresh          I3
+  miso-2026-2030-s123-verify                    I3
+  neiso-2021-2025-realized-k99                  I6
+  neiso-2021-2025-realized-mystic-rescore       I6
+  neiso-2026-2050-t3-golden-bau                 I3
+  pjm-2021-2025-realized-exante-control         I7
+  pjm-2021-2025-realized-verified-exits         I7
+  pjm-2026-2030-s6-ledger                       I7, I12
+
+VERIFY IT YOURSELF FIRST by running the checker (this director container lacks numpy; yours
+should not) and reconcile any difference before writing — if your census differs from the list
+above, report the difference rather than silently adopting either.
+
+TASK 1 — declare each row, naming the finding or lane it belongs to, per `how_to_update`. A
+declaration is NOT absolution: the file's own purpose says an invariant FAIL is a root-cause
+finding, so each line must point at a real record. WHERE NO FINDING EXISTS, SAY SO EXPLICITLY
+in the note rather than inventing an attribution — an honest "registered by lane X, cause
+untracked" is correct and useful; a fabricated citation is not. Do not delete a row's sidecar
+and do not touch `cleared`.
+
+TASK 2 — correct `dominant_open_causes.I3`. It currently reads "FR-6 ERCOT energy-only
+scarcity slack, structural and unowned in code", i.e. it treats I3 as ERCOT-only. Two committed
+NON-ERCOT runs now carry an I3 FAIL — `miso-2026-2030-s123-verify` and
+`neiso-2026-2050-t3-golden-bau` — and FR-6's cause CANNOT explain either, because MISO and
+NEISO are capacity-market ISOs where `resolve_reserve_margin_build_enabled` returns True and
+the adequacy backstop is armed. Rewrite the line so it no longer misattributes those rows.
+DO NOT ADJUDICATE THEIR ACTUAL CAUSE: that is each ISO's own lane's work under rule 25
+[R-ISO-SCOPE]. Name the open question; do not answer it.
+
+TASK 3 — run the checker again and report it GREEN, with the command and its output in your
+finding. If it cannot go green without a change outside this charter, stop and report that
+instead of widening scope.
+
+BOUNDARIES. Lane D4-M is dispatched in the same batch and will register a NEW ERCOT T1-H run,
+declaring its own row in this same file in the same commit as its registration. You own ONLY
+the 13 pre-existing rows listed above. If D4-M lands first, rebase and leave its row untouched;
+never re-declare or re-word another lane's line. Touch no verdict file, no board block, no
+keeper/shard/marker, nothing in the backcast namespace, and no invariant THRESHOLD anywhere —
+this lane changes no gate and no scorer behaviour.
+
+GUARDRAILS: zero solves. No mechanism, no ScenarioConfig field, no matrix cell (rule 28 not
+triggered). No holdout year. No new GitHub Actions workflow — you make the existing job pass,
+you do not add one. Push per CLAUDE.md Git & Pushing; blob-verify every ≥300-line file after
+push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d18-invariant-ledger-<date>.md with the verified census, the
+13 declarations and what each cites, the corrected `dominant_open_causes` line, and the green
+checker output. Report to the director: how many declarations point at a real finding and how
+many are honestly untracked.
 ```

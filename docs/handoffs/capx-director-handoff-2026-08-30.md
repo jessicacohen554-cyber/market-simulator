@@ -113,3 +113,39 @@ reminders. Record every issuance in ledger §4 and the scoreboard in the same si
 blob-verified (rule 27) — your ledger and pack are both ≥300-line files. One sitting = one
 refresh entry (§0-series), amendments appended mid-sitting rather than rewritten.
 ```
+
+---
+
+## r#22 DELTA (2026-08-31, main HEAD `d44446e0`) — append, not a rewrite
+
+Everything above still holds except where this section supersedes it. Full record: ledger §0s.
+
+**GRADED AT r#22:** D3 **LANDED** (PRs #4455/#4458) · D4-I3 **LANDED** (PR #4460) · D8-RE
+**LANDED** (PR #4457, and it STOPPED two verdict flips rather than publishing them) ·
+**NEISO-RC-R NOT GRADED** — no branch, no commits, and under the relaunch protocol that is not
+evidence of loss; the owner has been asked whether the session is still running. Nobody
+launches a second one until the answer is in.
+
+**MARKERS (superseding the snapshot above):** `complete` = **{ERCOT, NEISO, PJM}** (ercot-247,
+PR #4454 — the first ERCOT rule-22 marker, resting on the ercot-246 partitioned-keeper ruling);
+`final` still EMPTY; `withdrawn` = {NYISO, CAISO}; freeze still tier-scoped to the locked test.
+ERCOT's forecast gate (a) now passes on the literal test — a board fact no lane has written yet
+(queued as D19).
+
+**IN FLIGHT after the r#22 dispatch:** D8-V (FC-7 ledger completion, Fable) · D4-M (ERCOT
+post-arming T1-H + the R-4 instrument grain, Opus) · D17 (MISO's missing non-coal exit channel,
+Fable) · D18 (invariant declaration ledger, Opus) · NEISO-RC-R (status unknown, see above).
+**QUEUED:** D6 (still uncharted — and re-scoped: it is NOT the ERCOT measurement vehicle,
+ERCOT is curve-OFF) · D19 (board reconcile 2, deliberately after D8-V + D4-M) · D20
+(reconstructed-run_config provenance — director decision taken: adoption-as-original REFUSED,
+the admissible route scores a `reconstruction` label CAVEAT, never PASS).
+
+**OWNER-TIER ITEMS OPEN (replaces the list above):** (a) NEISO-RC-R — still running? · (b) the
+T3 golden's R-A re-solve (a second §2.1b campaign, outside Q13's "this campaign only" scope;
+material because the golden's headline result is ZERO storage entry in 25 years and R-A armed
+exactly the storage-entry mechanisms) · (c) C3c program Q3, the probabilistic RT premium —
+an architecture decision the charter recommends NOT opening · (d) the ERCOT 2024/2025 SCED
+conduct-corpus intake · (e) the nyiso-161 winter-face waiver card, still unruled · (f)
+miso-192's D-4 posture options. **CLOSED since r#21:** caiso-227 arm funding (funded; caiso-228
+executed it and it died at gate D1) and chartering the C3c program's first lane (the charter
+exists and Q1/Q2 are both spent — pjm-164 REAL, nyiso-164 confirms NYISO's ledger).
