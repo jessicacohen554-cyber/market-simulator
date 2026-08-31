@@ -73,8 +73,12 @@ parsed as a fallback) it verifies:
       pointing at its CURRENT designated keeper (M1a), and the determination the
       entry asserts still matches the LIVE verdict of the run it names (M1b), so
       a promotion can never silently transfer a determination onto a run it was
-      never scored against. Costs no solve — ``calibration_verdict`` reads
-      committed artifacts only.
+      never scored against. For an ISO whose keeper shard carries an
+      owner-ruled ``config_partition.iso_determination`` (the ercot-246 ruling,
+      2026-08-31), the live value M1b compares against is the partition rollup
+      — worst config determination over the DESIGNATED spans — recomputed from
+      committed artifacts, never read from the shard's own assertion. Costs no
+      solve — ``calibration_verdict`` reads committed artifacts only.
   S1  the ``status/`` parts are in sync with the current verdicts
       (``build_status.py --check``, scoped to the audited ISOs).
   H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
@@ -226,7 +230,7 @@ def marker_currency_failures(
         asserted = _asserted_determination(entry.get("determination") or "")
         if asserted and marker_keeper:
             try:
-                live = cv.determine(marker_keeper).get("determination")
+                live = _live_iso_determination(iso, marker_keeper)
             except Exception as exc:  # noqa: BLE001 - report, never crash the audit
                 out.append(
                     (
@@ -249,6 +253,45 @@ def marker_currency_failures(
                     )
                 )
     return out
+
+
+def _live_iso_determination(iso: str, run_id: str) -> str | None:
+    """The ISO-level determination a marker is verified against, computed live.
+
+    Default (every single-keeper ISO): the unrestricted registered verdict of
+    ``run_id`` — the original D-5(b) M1b comparison, unchanged.
+
+    For an ISO whose keeper shard carries an owner-declared ``config_partition``
+    WITH the owner-ruled ``iso_determination`` field (the ercot-246 ruling,
+    2026-08-31: a partitioned keeper's ISO-level determination is the WORST
+    config determination over the DESIGNATED spans), the live value is that
+    rollup RECOMPUTED here from the committed artifacts — each config scored on
+    its designated span via ``calibration_verdict.determine(run, years=span)``,
+    worst taken under the conservative ordering (NOT-YET < CAVEATS <
+    CALIBRATED). The shard's own stored ``iso_determination`` is never trusted:
+    a stale stored value is caught because the recomputed rollup is what the
+    marker's assertion must match. Fail-closed on both edges: a partition
+    without the ruling field keeps the plain single-run comparison, and an
+    unscorable config raises (surfacing as an M1b failure), never skips.
+    """
+    shard = keeper_store.load_shard(iso) or {}
+    cp = shard.get("config_partition") or {}
+    if not (cp.get("iso_determination") and cp.get("configs")):
+        return cv.determine(run_id).get("determination")
+
+    def _rank(det: str | None) -> int:
+        d = (det or "").upper()
+        if "NOT" in d:
+            return 0
+        if "CAVEAT" in d:
+            return 1
+        return 2
+
+    span_dets = []
+    for cfg in cp["configs"]:
+        span = [int(y) for y in cfg.get("years", [])]
+        span_dets.append(cv.determine(cfg["run_id"], years=span).get("determination"))
+    return min(span_dets, key=_rank) if span_dets else None
 
 
 def ablation_twin_finding(
