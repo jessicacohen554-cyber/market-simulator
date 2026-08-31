@@ -4381,3 +4381,42 @@ any future 2022 iteration (owner freeze-lift required) measures against the corr
 instrument.
 
 Next shorthand: **pjm-164.**
+
+## pjm-164 — 2026-09-01 — C3c program Q1: the reserve-dual channel is REAL, not the ercot-214 phantom (zero solve; keeper untouched)
+
+**Charter:** `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` Q1 — audit whether the PJM
+keeper's C3c PASS (the program's only existence proof that this LP class can form a scarcity
+tail) rides an ercot-214-shaped phantom channel. **Zero solve — committed artifacts + in-repo
+published data only.** State re-verified first: `2026-08-15-pjm-162-inputclock` CALIBRATED,
+every criterion PASS, `audit_keepers --iso PJM` clean.
+
+**Verdict: REAL — charter Q2 proceeds.** Full record:
+`docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`; per-year counts/shares/hour lists:
+`results/calibration/_pjm164_c3c_overlap.json`.
+
+- **Construction** (caiso-144 §D overlap, replicated to the gated basis): the PJM payload has
+  no `overlay` key, so C3c scores the energy-only fallback — hours where the max-across-zones
+  P1 energy dual > $200. Replication matched the payload exactly (4/10/32 vs actual 6/18/59).
+- **T1 overlap** (model tail ∩ actual RT >$200): **0/4, 1/10, 14/32** (share of actual tail
+  0.00/0.06/**0.24**). 2025 is NYISO-shaped (right hours — the June 23–25/July 28–29 heat
+  events; dual sum $258 in the hour reality printed $1,722); 2023–24 have near-zero overlap
+  but also near-zero reserve involvement (channel fires **0 h in 2023**, 2 h in 2024).
+- **T2 (data in-repo:** `data/raw/PJM-AS/reserve_market_results_<year>.parquet`**):** PJM
+  reality priced hourly-mean reserve MCP >$25 in 92/235/391 h; in the model's 29 binding
+  hours of 2025 the published MCP p50 was **$88** (max $1,614, same days) — versus
+  ercot-214's RTORPA p50 $14.2 in its contaminated hours. The mechanism is the market's own;
+  reality's >$200 tail hours are themselves reserve-priced (2025: 46/59).
+- **T3 load-bearing check:** without the channel the 2025 tail brackets to 5–30 h vs band
+  [29.5, 118] — strict removal FAILs, dual-subtracted passes by one hour. The channel **is**
+  load-bearing for the 2025 PASS; legitimate, since it is real.
+- **Caveats recorded unrewritten** (none determination-level): the 2023 PASS is small-count
+  guard + a mis-timed 4-hour July congestion episode (0 reserve hours — cite **2025**, not
+  2023, as the existence proof); the channel under-fires reality's reserve pricing ~10× and
+  misses the winter-morning face entirely; 2024's tail is congestion-formed and mostly
+  mis-timed. These belong to the program synthesis, not this lane.
+
+No keeper/shard/marker/determination change; no fix; no matrix cell moved (nothing tested —
+`energy_reserve_coopt` PJM stays K, `ordc_scarcity_overlay` PJM stays G). Cross-ISO
+governance log deliberately untouched (nyiso-164 possibly parallel).
+
+Next shorthand: **pjm-165.**
