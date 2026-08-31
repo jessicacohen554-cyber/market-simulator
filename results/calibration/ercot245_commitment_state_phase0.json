@@ -1,0 +1,6086 @@
+{
+ "probe": "ercot245_commitment_state_phase0",
+ "precommit": "docs/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md",
+ "bundle": "results/calibration/ercot234_eastex_identity",
+ "scored_years": [
+  2024,
+  2025
+ ],
+ "universe_anchors": {
+  "CC": {
+   "avail_ref_2023_gw": 31.145,
+   "avail_model_2023_gw": 24.616,
+   "ratio": 1.265,
+   "inside_band": true
+  },
+  "ST": {
+   "avail_ref_2023_gw": 7.263,
+   "avail_model_2023_gw": 8.314,
+   "ratio": 0.874,
+   "inside_band": true
+  },
+  "COAL": {
+   "avail_ref_2023_gw": 11.43,
+   "avail_model_2023_gw": 9.639,
+   "ratio": 1.186,
+   "inside_band": true
+  },
+  "NUC": {
+   "avail_ref_2023_gw": 4.795,
+   "avail_model_2023_gw": 4.611,
+   "ratio": 1.04,
+   "inside_band": true
+  }
+ },
+ "transfer_structure": {
+  "nl_bin_edges_mw": [
+   12398.0,
+   19949.8,
+   23627.6,
+   27138.1,
+   30483.0,
+   33593.0,
+   36806.4,
+   40344.9,
+   45266.2,
+   53735.5,
+   70443.0
+  ],
+  "c_k": {
+   "CC": [
+    0.4037,
+    0.5291,
+    0.6076,
+    0.6754,
+    0.7095,
+    0.7462,
+    0.7669,
+    0.7926,
+    0.8304,
+    0.8752
+   ],
+   "ST": [
+    0.0776,
+    0.1174,
+    0.1627,
+    0.2225,
+    0.3405,
+    0.4553,
+    0.5399,
+    0.6256,
+    0.762,
+    0.9141
+   ],
+   "COAL": [
+    0.7657,
+    0.8198,
+    0.8521,
+    0.8685,
+    0.8926,
+    0.9027,
+    0.9149,
+    0.9259,
+    0.9378,
+    0.9478
+   ],
+   "NUC": [
+    0.989,
+    0.9909,
+    0.9886,
+    0.9852,
+    0.9789,
+    0.9746,
+    0.9716,
+    0.9709,
+    0.9631,
+    0.9623
+   ]
+  }
+ },
+ "transfer_validation": {
+  "T1": {
+   "CC": {
+    "median_rel_err": 0.1935,
+    "n_hours": 264,
+    "pass": false
+   },
+   "ST": {
+    "median_rel_err": 0.1849,
+    "n_hours": 264,
+    "pass": false
+   },
+   "COAL": {
+    "median_rel_err": 0.0574,
+    "n_hours": 264,
+    "pass": true
+   },
+   "NUC": {
+    "median_rel_err": 0.0546,
+    "n_hours": 264,
+    "pass": true
+   }
+  },
+  "T2": {
+   "2024": {
+    "frac_over": 0.0102,
+    "p95_overshoot_mw": 3249.1,
+    "corr_reported": 0.8968,
+    "pass": false
+   },
+   "2025": {
+    "frac_over": 0.0065,
+    "p95_overshoot_mw": 4095.7,
+    "corr_reported": 0.8647,
+    "pass": false
+   }
+  },
+  "T3": {
+   "gradeable": true,
+   "agreement": 0.9565,
+   "pass": true
+  }
+ },
+ "diagnostics": {
+  "DV1_held_attributed_2024": {
+   "union": {
+    "binds": 8760,
+    "binds_missed": 36,
+    "binds_hit": 17,
+    "binds_ordinary": 8676,
+    "away_binds": 6798,
+    "reach_frac_missed": 1.0,
+    "missed_covered": 36,
+    "valid_hours": 8760
+   }
+  },
+  "DV1_held_attributed_2025": {
+   "union": {
+    "binds": 8760,
+    "binds_missed": 31,
+    "binds_hit": 0,
+    "binds_ordinary": 8692,
+    "away_binds": 6260,
+    "reach_frac_missed": 1.0,
+    "missed_covered": 31,
+    "valid_hours": 8760
+   }
+  },
+  "DV2_class_whole_2024": {
+   "union": {
+    "binds": 8760,
+    "binds_missed": 36,
+    "binds_hit": 17,
+    "binds_ordinary": 8676,
+    "away_binds": 6798,
+    "reach_frac_missed": 1.0,
+    "missed_covered": 36,
+    "valid_hours": 8760
+   }
+  },
+  "DV2_class_whole_2025": {
+   "union": {
+    "binds": 8760,
+    "binds_missed": 31,
+    "binds_hit": 0,
+    "binds_ordinary": 8692,
+    "away_binds": 6260,
+    "reach_frac_missed": 1.0,
+    "missed_covered": 31,
+    "valid_hours": 8760
+   }
+  },
+  "DV4_headroom_at_M2025": [
+   {
+    "hour": 342,
+    "actual": 306.04,
+    "model_maxz": 43.6,
+    "classes": {
+     "CC": {
+      "F": 23872.0,
+      "avail_model": 29209.6,
+      "spare_model": 5337.6,
+      "online_meas": 28029.3,
+      "bp_meas": 26831.2,
+      "spare_meas": 1198.1,
+      "cap_meas": 28029.3
+     },
+     "ST": {
+      "F": 4282.7,
+      "avail_model": 8959.6,
+      "spare_model": 4676.9,
+      "online_meas": 1236.0,
+      "bp_meas": 1100.0,
+      "spare_meas": 136.0,
+      "cap_meas": 1236.0
+     },
+     "COAL": {
+      "F": 11145.9,
+      "avail_model": 12695.6,
+      "spare_model": 1549.7,
+      "online_meas": 11278.0,
+      "bp_meas": 10659.8,
+      "spare_meas": 618.2,
+      "cap_meas": 11278.0
+     },
+     "NUC": {
+      "F": 4830.6,
+      "avail_model": 4830.6,
+      "spare_model": -0.0,
+      "online_meas": 5126.8,
+      "bp_meas": 5117.3,
+      "spare_meas": 9.5,
+      "cap_meas": 5126.8
+     }
+    }
+   },
+   {
+    "hour": 343,
+    "actual": 1142.91,
+    "model_maxz": 97.32,
+    "classes": {
+     "CC": {
+      "F": 23797.9,
+      "avail_model": 29118.2,
+      "spare_model": 5320.3,
+      "online_meas": 28096.8,
+      "bp_meas": 27017.8,
+      "spare_meas": 1079.0,
+      "cap_meas": 28096.8
+     },
+     "ST": {
+      "F": 4320.2,
+      "avail_model": 8959.6,
+      "spare_model": 4639.4,
+      "online_meas": 1249.2,
+      "bp_meas": 1160.9,
+      "spare_meas": 88.3,
+      "cap_meas": 1249.2
+     },
+     "COAL": {
+      "F": 11145.9,
+      "avail_model": 12695.6,
+      "spare_model": 1549.7,
+      "online_meas": 11383.5,
+      "bp_meas": 10086.9,
+      "spare_meas": 1296.6,
+      "cap_meas": 11383.5
+     },
+     "NUC": {
+      "F": 4830.6,
+      "avail_model": 4830.6,
+      "spare_model": -0.0,
+      "online_meas": 5126.6,
+      "bp_meas": 5117.3,
+      "spare_meas": 9.4,
+      "cap_meas": 5126.6
+     }
+    }
+   },
+   {
+    "hour": 1194,
+    "actual": 254.68,
+    "model_maxz": 117.53,
+    "classes": {
+     "CC": {
+      "F": 26539.8,
+      "avail_model": 29904.0,
+      "spare_model": 3364.2,
+      "online_meas": 31593.3,
+      "bp_meas": 29734.0,
+      "spare_meas": 1859.3,
+      "cap_meas": 31593.3
+     },
+     "ST": {
+      "F": 8525.2,
+      "avail_model": 9782.0,
+      "spare_model": 1256.8,
+      "online_meas": 8613.8,
+      "bp_meas": 7294.4,
+      "spare_meas": 1319.3,
+      "cap_meas": 8613.8
+     },
+     "COAL": {
+      "F": 12002.4,
+      "avail_model": 12002.4,
+      "spare_model": -0.0,
+      "online_meas": 11962.0,
+      "bp_meas": 10865.5,
+      "spare_meas": 1096.5,
+      "cap_meas": 11962.0
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5125.2,
+      "bp_meas": 5112.8,
+      "spare_meas": 12.4,
+      "cap_meas": 5125.2
+     }
+    }
+   },
+   {
+    "hour": 1195,
+    "actual": 233.54,
+    "model_maxz": 117.5,
+    "classes": {
+     "CC": {
+      "F": 26616.9,
+      "avail_model": 29933.7,
+      "spare_model": 3316.8,
+      "online_meas": 31828.6,
+      "bp_meas": 30260.0,
+      "spare_meas": 1568.6,
+      "cap_meas": 31828.6
+     },
+     "ST": {
+      "F": 8589.7,
+      "avail_model": 9799.8,
+      "spare_model": 1210.1,
+      "online_meas": 8415.7,
+      "bp_meas": 7304.6,
+      "spare_meas": 1111.1,
+      "cap_meas": 8415.7
+     },
+     "COAL": {
+      "F": 12002.4,
+      "avail_model": 12002.4,
+      "spare_model": -0.0,
+      "online_meas": 11971.5,
+      "bp_meas": 11219.1,
+      "spare_meas": 752.4,
+      "cap_meas": 11971.5
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5125.4,
+      "bp_meas": 5112.4,
+      "spare_meas": 13.0,
+      "cap_meas": 5125.4
+     }
+    }
+   },
+   {
+    "hour": 1196,
+    "actual": 353.32,
+    "model_maxz": 117.34,
+    "classes": {
+     "CC": {
+      "F": 26640.5,
+      "avail_model": 29960.6,
+      "spare_model": 3320.2,
+      "online_meas": 31958.6,
+      "bp_meas": 30596.9,
+      "spare_meas": 1361.6,
+      "cap_meas": 31958.6
+     },
+     "ST": {
+      "F": 8590.1,
+      "avail_model": 9800.3,
+      "spare_model": 1210.2,
+      "online_meas": 8413.2,
+      "bp_meas": 7421.1,
+      "spare_meas": 992.0,
+      "cap_meas": 8413.2
+     },
+     "COAL": {
+      "F": 12002.4,
+      "avail_model": 12002.4,
+      "spare_model": -0.0,
+      "online_meas": 11952.0,
+      "bp_meas": 11468.0,
+      "spare_meas": 484.0,
+      "cap_meas": 11952.0
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5125.8,
+      "bp_meas": 5113.1,
+      "spare_meas": 12.7,
+      "cap_meas": 5125.8
+     }
+    }
+   },
+   {
+    "hour": 1197,
+    "actual": 238.48,
+    "model_maxz": 135.05,
+    "classes": {
+     "CC": {
+      "F": 26646.3,
+      "avail_model": 29967.1,
+      "spare_model": 3320.8,
+      "online_meas": 32653.9,
+      "bp_meas": 31487.3,
+      "spare_meas": 1166.6,
+      "cap_meas": 32653.9
+     },
+     "ST": {
+      "F": 8587.9,
+      "avail_model": 9797.8,
+      "spare_model": 1209.9,
+      "online_meas": 8590.6,
+      "bp_meas": 7346.3,
+      "spare_meas": 1244.3,
+      "cap_meas": 8590.6
+     },
+     "COAL": {
+      "F": 12002.4,
+      "avail_model": 12002.4,
+      "spare_model": -0.0,
+      "online_meas": 11958.5,
+      "bp_meas": 11544.8,
+      "spare_meas": 413.7,
+      "cap_meas": 11958.5
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5125.6,
+      "bp_meas": 5113.0,
+      "spare_meas": 12.6,
+      "cap_meas": 5125.6
+     }
+    }
+   },
+   {
+    "hour": 1205,
+    "actual": 213.56,
+    "model_maxz": 115.35,
+    "classes": {
+     "CC": {
+      "F": 28469.9,
+      "avail_model": 31169.4,
+      "spare_model": 2699.5,
+      "online_meas": 32884.7,
+      "bp_meas": 31686.2,
+      "spare_meas": 1198.5,
+      "cap_meas": 32884.7
+     },
+     "ST": {
+      "F": 8482.0,
+      "avail_model": 9564.3,
+      "spare_model": 1082.3,
+      "online_meas": 8492.0,
+      "bp_meas": 7385.7,
+      "spare_meas": 1106.3,
+      "cap_meas": 8492.0
+     },
+     "COAL": {
+      "F": 12137.2,
+      "avail_model": 12137.2,
+      "spare_model": -0.0,
+      "online_meas": 11874.8,
+      "bp_meas": 11285.2,
+      "spare_meas": 589.6,
+      "cap_meas": 11874.8
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5127.5,
+      "bp_meas": 5115.2,
+      "spare_meas": 12.3,
+      "cap_meas": 5127.5
+     }
+    }
+   },
+   {
+    "hour": 1206,
+    "actual": 250.32,
+    "model_maxz": 155.84,
+    "classes": {
+     "CC": {
+      "F": 30138.8,
+      "avail_model": 31169.4,
+      "spare_model": 1030.6,
+      "online_meas": 32549.2,
+      "bp_meas": 31613.0,
+      "spare_meas": 936.2,
+      "cap_meas": 32549.2
+     },
+     "ST": {
+      "F": 8688.1,
+      "avail_model": 9635.3,
+      "spare_model": 947.2,
+      "online_meas": 8516.0,
+      "bp_meas": 7371.5,
+      "spare_meas": 1144.5,
+      "cap_meas": 8516.0
+     },
+     "COAL": {
+      "F": 12135.2,
+      "avail_model": 12135.2,
+      "spare_model": -0.0,
+      "online_meas": 11933.8,
+      "bp_meas": 11472.9,
+      "spare_meas": 460.8,
+      "cap_meas": 11933.8
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5127.6,
+      "bp_meas": 5115.2,
+      "spare_meas": 12.4,
+      "cap_meas": 5127.6
+     }
+    }
+   },
+   {
+    "hour": 3257,
+    "actual": 373.22,
+    "model_maxz": 88.18,
+    "classes": {
+     "CC": {
+      "F": 23561.3,
+      "avail_model": 25152.7,
+      "spare_model": 1591.5,
+      "online_meas": 27870.9,
+      "bp_meas": 26609.4,
+      "spare_meas": 1318.5,
+      "cap_meas": 27927.9
+     },
+     "ST": {
+      "F": 5928.0,
+      "avail_model": 6618.0,
+      "spare_model": 690.0,
+      "online_meas": 5186.0,
+      "bp_meas": 4856.9,
+      "spare_meas": 329.1,
+      "cap_meas": 5186.0
+     },
+     "COAL": {
+      "F": 9411.1,
+      "avail_model": 9411.1,
+      "spare_model": 0.0,
+      "online_meas": 9209.0,
+      "bp_meas": 8948.7,
+      "spare_meas": 260.4,
+      "cap_meas": 9209.0
+     },
+     "NUC": {
+      "F": 4257.4,
+      "avail_model": 4257.4,
+      "spare_model": 0.0,
+      "online_meas": 5078.0,
+      "bp_meas": 4929.8,
+      "spare_meas": 148.2,
+      "cap_meas": 5078.0
+     }
+    }
+   },
+   {
+    "hour": 3258,
+    "actual": 1569.68,
+    "model_maxz": 115.14,
+    "classes": {
+     "CC": {
+      "F": 24428.9,
+      "avail_model": 25256.3,
+      "spare_model": 827.4,
+      "online_meas": 28044.6,
+      "bp_meas": 27502.5,
+      "spare_meas": 542.1,
+      "cap_meas": 28044.6
+     },
+     "ST": {
+      "F": 6014.2,
+      "avail_model": 6618.0,
+      "spare_model": 603.8,
+      "online_meas": 5191.0,
+      "bp_meas": 4967.6,
+      "spare_meas": 223.3,
+      "cap_meas": 5191.0
+     },
+     "COAL": {
+      "F": 9411.1,
+      "avail_model": 9411.1,
+      "spare_model": 0.0,
+      "online_meas": 9171.1,
+      "bp_meas": 9105.0,
+      "spare_meas": 66.1,
+      "cap_meas": 9171.1
+     },
+     "NUC": {
+      "F": 4257.4,
+      "avail_model": 4257.4,
+      "spare_model": 0.0,
+      "online_meas": 5077.3,
+      "bp_meas": 5018.8,
+      "spare_meas": 58.6,
+      "cap_meas": 5077.3
+     }
+    }
+   },
+   {
+    "hour": 3259,
+    "actual": 387.98,
+    "model_maxz": 123.26,
+    "classes": {
+     "CC": {
+      "F": 24479.4,
+      "avail_model": 25315.6,
+      "spare_model": 836.3,
+      "online_meas": 28163.5,
+      "bp_meas": 27634.9,
+      "spare_meas": 528.6,
+      "cap_meas": 28163.5
+     },
+     "ST": {
+      "F": 6014.2,
+      "avail_model": 6618.0,
+      "spare_model": 603.8,
+      "online_meas": 5108.9,
+      "bp_meas": 4914.5,
+      "spare_meas": 194.4,
+      "cap_meas": 5108.9
+     },
+     "COAL": {
+      "F": 9411.1,
+      "avail_model": 9411.1,
+      "spare_model": 0.0,
+      "online_meas": 9168.8,
+      "bp_meas": 9134.5,
+      "spare_meas": 34.3,
+      "cap_meas": 9168.8
+     },
+     "NUC": {
+      "F": 4257.4,
+      "avail_model": 4257.4,
+      "spare_model": 0.0,
+      "online_meas": 5077.8,
+      "bp_meas": 5046.0,
+      "spare_meas": 31.8,
+      "cap_meas": 5077.8
+     }
+    }
+   },
+   {
+    "hour": 3595,
+    "actual": 217.51,
+    "model_maxz": 54.71,
+    "classes": {
+     "CC": {
+      "F": 23111.0,
+      "avail_model": 25626.8,
+      "spare_model": 2515.8,
+      "online_meas": 27125.9,
+      "bp_meas": 26799.8,
+      "spare_meas": 383.1,
+      "cap_meas": 27182.9
+     },
+     "ST": {
+      "F": 6719.7,
+      "avail_model": 7538.8,
+      "spare_model": 819.1,
+      "online_meas": 5468.7,
+      "bp_meas": 5146.5,
+      "spare_meas": 322.2,
+      "cap_meas": 5468.7
+     },
+     "COAL": {
+      "F": 6749.9,
+      "avail_model": 7224.3,
+      "spare_model": 474.4,
+      "online_meas": 6993.2,
+      "bp_meas": 6763.6,
+      "spare_meas": 229.5,
+      "cap_meas": 6993.2
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5056.6,
+      "bp_meas": 5037.4,
+      "spare_meas": 19.2,
+      "cap_meas": 5056.6
+     }
+    }
+   },
+   {
+    "hour": 3596,
+    "actual": 279.63,
+    "model_maxz": 54.56,
+    "classes": {
+     "CC": {
+      "F": 23151.9,
+      "avail_model": 25672.5,
+      "spare_model": 2520.6,
+      "online_meas": 27268.4,
+      "bp_meas": 26920.0,
+      "spare_meas": 405.4,
+      "cap_meas": 27325.4
+     },
+     "ST": {
+      "F": 6719.7,
+      "avail_model": 7538.8,
+      "spare_model": 819.1,
+      "online_meas": 5468.8,
+      "bp_meas": 5070.6,
+      "spare_meas": 398.3,
+      "cap_meas": 5468.8
+     },
+     "COAL": {
+      "F": 6749.9,
+      "avail_model": 7224.3,
+      "spare_model": 474.4,
+      "online_meas": 6865.7,
+      "bp_meas": 6735.7,
+      "spare_meas": 130.0,
+      "cap_meas": 6865.7
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5056.1,
+      "bp_meas": 5036.6,
+      "spare_meas": 19.5,
+      "cap_meas": 5056.1
+     }
+    }
+   },
+   {
+    "hour": 4364,
+    "actual": 216.36,
+    "model_maxz": 79.62,
+    "classes": {
+     "CC": {
+      "F": 25285.6,
+      "avail_model": 27156.5,
+      "spare_model": 1870.9,
+      "online_meas": 29029.1,
+      "bp_meas": 28867.4,
+      "spare_meas": 218.7,
+      "cap_meas": 29086.1
+     },
+     "ST": {
+      "F": 7389.4,
+      "avail_model": 8293.8,
+      "spare_model": 904.4,
+      "online_meas": 6986.7,
+      "bp_meas": 6427.3,
+      "spare_meas": 559.4,
+      "cap_meas": 6986.7
+     },
+     "COAL": {
+      "F": 10667.4,
+      "avail_model": 11412.9,
+      "spare_model": 745.5,
+      "online_meas": 10017.4,
+      "bp_meas": 9878.3,
+      "spare_meas": 139.1,
+      "cap_meas": 10017.4
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5014.1,
+      "bp_meas": 4992.1,
+      "spare_meas": 22.0,
+      "cap_meas": 5014.1
+     }
+    }
+   },
+   {
+    "hour": 4604,
+    "actual": 477.33,
+    "model_maxz": 43.18,
+    "classes": {
+     "CC": {
+      "F": 23855.0,
+      "avail_model": 28205.0,
+      "spare_model": 4350.0,
+      "online_meas": 25146.9,
+      "bp_meas": 24927.3,
+      "spare_meas": 219.6,
+      "cap_meas": 25146.9
+     },
+     "ST": {
+      "F": 3240.8,
+      "avail_model": 7917.9,
+      "spare_model": 4677.1,
+      "online_meas": 3121.0,
+      "bp_meas": 2033.4,
+      "spare_meas": 1087.6,
+      "cap_meas": 3121.0
+     },
+     "COAL": {
+      "F": 8589.6,
+      "avail_model": 9956.4,
+      "spare_model": 1366.9,
+      "online_meas": 8412.8,
+      "bp_meas": 8063.8,
+      "spare_meas": 349.0,
+      "cap_meas": 8412.8
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5019.2,
+      "bp_meas": 4998.1,
+      "spare_meas": 21.1,
+      "cap_meas": 5019.2
+     }
+    }
+   },
+   {
+    "hour": 5058,
+    "actual": 220.42,
+    "model_maxz": 89.61,
+    "classes": {
+     "CC": {
+      "F": 27906.5,
+      "avail_model": 29467.8,
+      "spare_model": 1561.4,
+      "online_meas": 31902.4,
+      "bp_meas": 31155.9,
+      "spare_meas": 775.0,
+      "cap_meas": 31930.9
+     },
+     "ST": {
+      "F": 8052.4,
+      "avail_model": 9017.8,
+      "spare_model": 965.4,
+      "online_meas": 6735.6,
+      "bp_meas": 6255.6,
+      "spare_meas": 480.0,
+      "cap_meas": 6735.6
+     },
+     "COAL": {
+      "F": 8733.8,
+      "avail_model": 8733.8,
+      "spare_model": -0.0,
+      "online_meas": 8995.5,
+      "bp_meas": 8370.7,
+      "spare_meas": 624.8,
+      "cap_meas": 8995.5
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 4986.6,
+      "bp_meas": 4960.5,
+      "spare_meas": 26.1,
+      "cap_meas": 4986.6
+     }
+    }
+   },
+   {
+    "hour": 5059,
+    "actual": 243.48,
+    "model_maxz": 90.88,
+    "classes": {
+     "CC": {
+      "F": 27996.4,
+      "avail_model": 29514.4,
+      "spare_model": 1518.0,
+      "online_meas": 32068.6,
+      "bp_meas": 31446.3,
+      "spare_meas": 622.2,
+      "cap_meas": 32068.6
+     },
+     "ST": {
+      "F": 8052.4,
+      "avail_model": 9017.8,
+      "spare_model": 965.4,
+      "online_meas": 6527.9,
+      "bp_meas": 6234.2,
+      "spare_meas": 293.7,
+      "cap_meas": 6527.9
+     },
+     "COAL": {
+      "F": 8733.8,
+      "avail_model": 8733.8,
+      "spare_model": -0.0,
+      "online_meas": 9008.2,
+      "bp_meas": 8731.6,
+      "spare_meas": 276.6,
+      "cap_meas": 9008.2
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 4983.9,
+      "bp_meas": 4958.0,
+      "spare_meas": 25.9,
+      "cap_meas": 4983.9
+     }
+    }
+   },
+   {
+    "hour": 7049,
+    "actual": 214.08,
+    "model_maxz": 159.34,
+    "classes": {
+     "CC": {
+      "F": 21842.6,
+      "avail_model": 22470.7,
+      "spare_model": 628.1,
+      "online_meas": 23167.8,
+      "bp_meas": 23005.8,
+      "spare_meas": 161.9,
+      "cap_meas": 23167.8
+     },
+     "ST": {
+      "F": 6094.5,
+      "avail_model": 6513.5,
+      "spare_model": 418.9,
+      "online_meas": 4511.4,
+      "bp_meas": 4305.5,
+      "spare_meas": 205.9,
+      "cap_meas": 4511.4
+     },
+     "COAL": {
+      "F": 8214.1,
+      "avail_model": 8214.1,
+      "spare_model": 0.0,
+      "online_meas": 9090.5,
+      "bp_meas": 8852.6,
+      "spare_meas": 237.8,
+      "cap_meas": 9090.5
+     },
+     "NUC": {
+      "F": 3665.2,
+      "avail_model": 3665.2,
+      "spare_model": -0.0,
+      "online_meas": 3731.3,
+      "bp_meas": 3722.0,
+      "spare_meas": 9.3,
+      "cap_meas": 3731.3
+     }
+    }
+   },
+   {
+    "hour": 7050,
+    "actual": 210.14,
+    "model_maxz": 148.9,
+    "classes": {
+     "CC": {
+      "F": 21912.2,
+      "avail_model": 22541.8,
+      "spare_model": 629.5,
+      "online_meas": 23239.2,
+      "bp_meas": 23157.2,
+      "spare_meas": 82.0,
+      "cap_meas": 23239.2
+     },
+     "ST": {
+      "F": 6060.5,
+      "avail_model": 6513.5,
+      "spare_model": 453.0,
+      "online_meas": 4517.1,
+      "bp_meas": 4317.5,
+      "spare_meas": 199.7,
+      "cap_meas": 4517.1
+     },
+     "COAL": {
+      "F": 8214.1,
+      "avail_model": 8214.1,
+      "spare_model": 0.0,
+      "online_meas": 9064.5,
+      "bp_meas": 8881.5,
+      "spare_meas": 182.9,
+      "cap_meas": 9064.5
+     },
+     "NUC": {
+      "F": 3665.2,
+      "avail_model": 3665.2,
+      "spare_model": -0.0,
+      "online_meas": 3731.2,
+      "bp_meas": 3722.0,
+      "spare_meas": 9.2,
+      "cap_meas": 3731.2
+     }
+    }
+   },
+   {
+    "hour": 8036,
+    "actual": 234.41,
+    "model_maxz": 80.74,
+    "classes": {
+     "CC": {
+      "F": 21668.3,
+      "avail_model": 24089.5,
+      "spare_model": 2421.2,
+      "online_meas": 25428.0,
+      "bp_meas": 23916.0,
+      "spare_meas": 1512.0,
+      "cap_meas": 25428.0
+     },
+     "ST": {
+      "F": 6106.1,
+      "avail_model": 7183.2,
+      "spare_model": 1077.1,
+      "online_meas": 5692.9,
+      "bp_meas": 4936.8,
+      "spare_meas": 756.2,
+      "cap_meas": 5692.9
+     },
+     "COAL": {
+      "F": 6791.7,
+      "avail_model": 7098.9,
+      "spare_model": 307.2,
+      "online_meas": 7576.0,
+      "bp_meas": 6941.8,
+      "spare_meas": 634.2,
+      "cap_meas": 7576.0
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5114.7,
+      "bp_meas": 5088.3,
+      "spare_meas": 26.4,
+      "cap_meas": 5114.7
+     }
+    }
+   },
+   {
+    "hour": 8037,
+    "actual": 290.24,
+    "model_maxz": 80.35,
+    "classes": {
+     "CC": {
+      "F": 21681.7,
+      "avail_model": 24104.4,
+      "spare_model": 2422.7,
+      "online_meas": 25597.7,
+      "bp_meas": 24030.7,
+      "spare_meas": 1566.9,
+      "cap_meas": 25597.7
+     },
+     "ST": {
+      "F": 6106.1,
+      "avail_model": 7183.2,
+      "spare_model": 1077.1,
+      "online_meas": 5693.8,
+      "bp_meas": 5166.2,
+      "spare_meas": 527.7,
+      "cap_meas": 5693.8
+     },
+     "COAL": {
+      "F": 6791.7,
+      "avail_model": 7098.9,
+      "spare_model": 307.2,
+      "online_meas": 7617.2,
+      "bp_meas": 7037.7,
+      "spare_meas": 579.6,
+      "cap_meas": 7617.2
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5115.1,
+      "bp_meas": 5085.0,
+      "spare_meas": 30.0,
+      "cap_meas": 5115.1
+     }
+    }
+   },
+   {
+    "hour": 8355,
+    "actual": 211.65,
+    "model_maxz": 46.7,
+    "classes": {
+     "CC": {
+      "F": 21839.1,
+      "avail_model": 25766.8,
+      "spare_model": 3927.7,
+      "online_meas": 24515.8,
+      "bp_meas": 23376.0,
+      "spare_meas": 1139.7,
+      "cap_meas": 24515.8
+     },
+     "ST": {
+      "F": 2997.3,
+      "avail_model": 5782.0,
+      "spare_model": 2784.7,
+      "online_meas": 4281.5,
+      "bp_meas": 3932.5,
+      "spare_meas": 349.0,
+      "cap_meas": 4281.5
+     },
+     "COAL": {
+      "F": 6999.0,
+      "avail_model": 7664.8,
+      "spare_model": 665.7,
+      "online_meas": 8156.8,
+      "bp_meas": 8124.4,
+      "spare_meas": 32.5,
+      "cap_meas": 8156.8
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5119.7,
+      "bp_meas": 5100.0,
+      "spare_meas": 19.7,
+      "cap_meas": 5119.7
+     }
+    }
+   },
+   {
+    "hour": 8359,
+    "actual": 209.36,
+    "model_maxz": 59.5,
+    "classes": {
+     "CC": {
+      "F": 23077.4,
+      "avail_model": 25788.4,
+      "spare_model": 2711.0,
+      "online_meas": 24386.4,
+      "bp_meas": 24259.4,
+      "spare_meas": 127.0,
+      "cap_meas": 24386.4
+     },
+     "ST": {
+      "F": 4643.2,
+      "avail_model": 5782.0,
+      "spare_model": 1138.9,
+      "online_meas": 4278.9,
+      "bp_meas": 4038.6,
+      "spare_meas": 240.2,
+      "cap_meas": 4278.9
+     },
+     "COAL": {
+      "F": 7382.3,
+      "avail_model": 7664.8,
+      "spare_model": 282.5,
+      "online_meas": 7773.8,
+      "bp_meas": 7397.3,
+      "spare_meas": 376.6,
+      "cap_meas": 7773.8
+     },
+     "NUC": {
+      "F": 4980.0,
+      "avail_model": 4980.0,
+      "spare_model": 0.0,
+      "online_meas": 5118.6,
+      "bp_meas": 5099.5,
+      "spare_meas": 19.1,
+      "cap_meas": 5118.6
+     }
+    }
+   }
+  ],
+  "DV5_reality_shares": {
+   "CC": {
+    "event_share_of_capref": 0.805,
+    "samebin_ordinary_share": 0.8069,
+    "n_ordinary_samebin_hours": 83
+   },
+   "ST": {
+    "event_share_of_capref": 0.5529,
+    "samebin_ordinary_share": 0.5889,
+    "n_ordinary_samebin_hours": 83
+   },
+   "COAL": {
+    "event_share_of_capref": 0.7148,
+    "samebin_ordinary_share": 0.7368,
+    "n_ordinary_samebin_hours": 83
+   },
+   "NUC": {
+    "event_share_of_capref": 0.9664,
+    "samebin_ordinary_share": 0.982,
+    "n_ordinary_samebin_hours": 83
+   }
+  }
+ },
+ "verdict": {
+  "K_A": {
+   "fires": true,
+   "per_class": {
+    "CC": {
+     "cap_le0_gt24": false,
+     "mass_gt25pct": false
+    },
+    "ST": {
+     "cap_le0_gt24": false,
+     "mass_gt25pct": true
+    },
+    "COAL": {
+     "cap_le0_gt24": false,
+     "mass_gt25pct": false
+    },
+    "NUC": {
+     "cap_le0_gt24": false,
+     "mass_gt25pct": false
+    }
+   }
+  },
+  "K_B": {
+   "fires": false,
+   "per_year": {
+    "2024": false,
+    "2025": false
+   }
+  },
+  "K_C": {
+   "fires": true,
+   "per_year": {
+    "2024": {
+     "K_B_reach_below_020": false,
+     "K_C_ordinary_gt150": true,
+     "K_C_ordinary_gt_missed": true,
+     "K_C_away_gt_third": true
+    },
+    "2025": {
+     "K_B_reach_below_020": false,
+     "K_C_ordinary_gt150": true,
+     "K_C_ordinary_gt_missed": true,
+     "K_C_away_gt_third": true
+    }
+   }
+  },
+  "K_T": {
+   "fires": true,
+   "T1_pass": false,
+   "T2_pass": false,
+   "T3": {
+    "gradeable": true,
+    "agreement": 0.9565,
+    "pass": true
+   }
+  },
+  "any_kill_fires": true,
+  "phase1_licensed": false
+ },
+ "v0": {
+  "2023": {
+   "model_tail": 72,
+   "actual_tail": 181,
+   "missed": 115,
+   "rtolhsl_evening_gw": 58.87,
+   "demand_lag_corr": {
+    "-1": 0.9863,
+    "0": 0.9997,
+    "1": 0.9865
+   }
+  },
+  "2024": {
+   "model_tail": 22,
+   "actual_tail": 53,
+   "missed": 36,
+   "rtolhsl_evening_gw": 62.64,
+   "demand_lag_corr": {
+    "-1": 0.9828,
+    "0": 0.9996,
+    "1": 0.9848
+   }
+  },
+  "2025": {
+   "model_tail": 1,
+   "actual_tail": 31,
+   "missed": 31,
+   "rtolhsl_evening_gw": 67.81,
+   "demand_lag_corr": {
+    "-1": 0.9807,
+    "0": 0.9998,
+    "1": 0.9829
+   }
+  },
+  "corpus_recon": {
+   "corr": 0.9935,
+   "median_gap_storage_excluded_mw": 2371.1,
+   "median_gap_raw_mw": 4947.6,
+   "storage_online_hsl_mean_mw": 2675.6,
+   "covered_hours": 8759
+  },
+  "cap_ref_totals_gw": {
+   "CC": 35.26,
+   "ST": 10.402,
+   "COAL": 13.468,
+   "NUC": 5.142
+  },
+  "extract": {
+   "days": [
+    "2025-01-15",
+    "2025-02-19",
+    "2025-02-20",
+    "2025-05-16",
+    "2025-05-30",
+    "2025-07-01",
+    "2025-07-11",
+    "2025-07-30",
+    "2025-10-21",
+    "2025-12-01",
+    "2025-12-15"
+   ],
+   "excluded_days": [],
+   "n_days": 11,
+   "covered_hours": 264,
+   "missed_2025_covered": 23
+  }
+ },
+ "census": {
+  "direct_2023_DV3": {
+   "per_class": {
+    "CC": {
+     "binds": 34,
+     "binds_missed": 0,
+     "binds_hit": 0,
+     "binds_ordinary": 34,
+     "depth_missed_p50_mw": NaN,
+     "depth_ordinary_p50_mw": 411.5,
+     "depth_ordinary_p90_mw": 1629.5,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.0039
+    },
+    "ST": {
+     "binds": 2286,
+     "binds_missed": 113,
+     "binds_hit": 66,
+     "binds_ordinary": 2068,
+     "depth_missed_p50_mw": 755.2,
+     "depth_ordinary_p50_mw": 543.5,
+     "depth_ordinary_p90_mw": 1896.8,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.261
+    },
+    "COAL": {
+     "binds": 202,
+     "binds_missed": 36,
+     "binds_hit": 47,
+     "binds_ordinary": 108,
+     "depth_missed_p50_mw": 385.4,
+     "depth_ordinary_p50_mw": 247.3,
+     "depth_ordinary_p90_mw": 768.6,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.0231
+    },
+    "NUC": {
+     "binds": 749,
+     "binds_missed": 7,
+     "binds_hit": 0,
+     "binds_ordinary": 738,
+     "depth_missed_p50_mw": 474.4,
+     "depth_ordinary_p50_mw": 477.4,
+     "depth_ordinary_p90_mw": 975.4,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.0855
+    }
+   },
+   "union": {
+    "binds": 2979,
+    "binds_missed": 115,
+    "binds_hit": 66,
+    "binds_ordinary": 2757,
+    "away_binds": 1814,
+    "reach_frac_missed": 1.0,
+    "missed_covered": 115,
+    "valid_hours": 8759
+   },
+   "bind_hours_missed_hit": [
+    {
+     "hour": 704,
+     "set": "missed",
+     "actual": 218.84,
+     "model_maxz": 36.78,
+     "classes": {
+      "ST": {
+       "F": 5168.5,
+       "cap": 3607.2
+      }
+     }
+    },
+    {
+     "hour": 706,
+     "set": "missed",
+     "actual": 212.66,
+     "model_maxz": 40.89,
+     "classes": {
+      "ST": {
+       "F": 5804.5,
+       "cap": 3208.7
+      }
+     }
+    },
+    {
+     "hour": 2010,
+     "set": "missed",
+     "actual": 212.82,
+     "model_maxz": 60.96,
+     "classes": {
+      "ST": {
+       "F": 5277.8,
+       "cap": 3853.5
+      }
+     }
+    },
+    {
+     "hour": 2011,
+     "set": "missed",
+     "actual": 237.83,
+     "model_maxz": 113.5,
+     "classes": {
+      "ST": {
+       "F": 5279.9,
+       "cap": 3855.6
+      }
+     }
+    },
+    {
+     "hour": 2034,
+     "set": "hit",
+     "actual": 279.07,
+     "model_maxz": 208.32,
+     "classes": {
+      "ST": {
+       "F": 5622.7,
+       "cap": 3605.2
+      }
+     }
+    },
+    {
+     "hour": 2057,
+     "set": "missed",
+     "actual": 402.86,
+     "model_maxz": 50.15,
+     "classes": {
+      "ST": {
+       "F": 4867.9,
+       "cap": 3901.9
+      }
+     }
+    },
+    {
+     "hour": 2058,
+     "set": "missed",
+     "actual": 742.24,
+     "model_maxz": 75.29,
+     "classes": {
+      "ST": {
+       "F": 5278.8,
+       "cap": 3902.1
+      }
+     }
+    },
+    {
+     "hour": 2059,
+     "set": "missed",
+     "actual": 315.78,
+     "model_maxz": 56.35,
+     "classes": {
+      "ST": {
+       "F": 5279.0,
+       "cap": 3901.9
+      }
+     }
+    },
+    {
+     "hour": 2659,
+     "set": "missed",
+     "actual": 249.21,
+     "model_maxz": 126.28,
+     "classes": {
+      "ST": {
+       "F": 4699.5,
+       "cap": 4671.3
+      },
+      "NUC": {
+       "F": 4133.8,
+       "cap": 4086.5
+      }
+     }
+    },
+    {
+     "hour": 2898,
+     "set": "missed",
+     "actual": 440.04,
+     "model_maxz": 42.17,
+     "classes": {
+      "ST": {
+       "F": 3445.0,
+       "cap": 2951.4
+      }
+     }
+    },
+    {
+     "hour": 2899,
+     "set": "missed",
+     "actual": 279.71,
+     "model_maxz": 53.32,
+     "classes": {
+      "ST": {
+       "F": 3443.5,
+       "cap": 3076.8
+      }
+     }
+    },
+    {
+     "hour": 2970,
+     "set": "missed",
+     "actual": 301.49,
+     "model_maxz": 28.0,
+     "classes": {
+      "ST": {
+       "F": 2804.9,
+       "cap": 2384.0
+      }
+     }
+    },
+    {
+     "hour": 2971,
+     "set": "missed",
+     "actual": 685.6,
+     "model_maxz": 35.36,
+     "classes": {
+      "ST": {
+       "F": 3680.5,
+       "cap": 2958.2
+      }
+     }
+    },
+    {
+     "hour": 2991,
+     "set": "missed",
+     "actual": 209.55,
+     "model_maxz": 43.59,
+     "classes": {
+      "ST": {
+       "F": 4862.3,
+       "cap": 3691.1
+      }
+     }
+    },
+    {
+     "hour": 3139,
+     "set": "missed",
+     "actual": 474.56,
+     "model_maxz": 129.36,
+     "classes": {
+      "ST": {
+       "F": 6015.0,
+       "cap": 4412.7
+      }
+     }
+    },
+    {
+     "hour": 3955,
+     "set": "missed",
+     "actual": 310.59,
+     "model_maxz": 71.97,
+     "classes": {
+      "ST": {
+       "F": 8470.2,
+       "cap": 7754.4
+      }
+     }
+    },
+    {
+     "hour": 3998,
+     "set": "missed",
+     "actual": 233.46,
+     "model_maxz": 58.91,
+     "classes": {
+      "ST": {
+       "F": 8385.8,
+       "cap": 8181.4
+      }
+     }
+    },
+    {
+     "hour": 3999,
+     "set": "missed",
+     "actual": 488.1,
+     "model_maxz": 66.62,
+     "classes": {
+      "ST": {
+       "F": 8385.8,
+       "cap": 8177.3
+      }
+     }
+    },
+    {
+     "hour": 4000,
+     "set": "missed",
+     "actual": 311.83,
+     "model_maxz": 68.79,
+     "classes": {
+      "ST": {
+       "F": 8385.8,
+       "cap": 8217.1
+      }
+     }
+    },
+    {
+     "hour": 4001,
+     "set": "missed",
+     "actual": 442.4,
+     "model_maxz": 66.62,
+     "classes": {
+      "ST": {
+       "F": 8385.8,
+       "cap": 8201.2
+      },
+      "NUC": {
+       "F": 4913.7,
+       "cap": 4700.1
+      }
+     }
+    },
+    {
+     "hour": 4002,
+     "set": "missed",
+     "actual": 208.18,
+     "model_maxz": 62.93,
+     "classes": {
+      "ST": {
+       "F": 8385.8,
+       "cap": 8182.3
+      },
+      "NUC": {
+       "F": 4913.7,
+       "cap": 3793.8
+      }
+     }
+    },
+    {
+     "hour": 4050,
+     "set": "missed",
+     "actual": 235.62,
+     "model_maxz": 89.22,
+     "classes": {
+      "ST": {
+       "F": 7958.2,
+       "cap": 7851.7
+      },
+      "COAL": {
+       "F": 12116.3,
+       "cap": 11987.9
+      }
+     }
+    },
+    {
+     "hour": 4093,
+     "set": "missed",
+     "actual": 386.19,
+     "model_maxz": 86.54,
+     "classes": {
+      "ST": {
+       "F": 8420.6,
+       "cap": 8347.1
+      }
+     }
+    },
+    {
+     "hour": 4094,
+     "set": "missed",
+     "actual": 1787.59,
+     "model_maxz": 177.76,
+     "classes": {
+      "ST": {
+       "F": 8986.4,
+       "cap": 8758.2
+      }
+     }
+    },
+    {
+     "hour": 4095,
+     "set": "hit",
+     "actual": 4102.15,
+     "model_maxz": 405.69,
+     "classes": {
+      "ST": {
+       "F": 9047.8,
+       "cap": 8909.4
+      }
+     }
+    },
+    {
+     "hour": 4096,
+     "set": "hit",
+     "actual": 4277.82,
+     "model_maxz": 659.26,
+     "classes": {
+      "ST": {
+       "F": 9060.3,
+       "cap": 8372.8
+      }
+     }
+    },
+    {
+     "hour": 4097,
+     "set": "hit",
+     "actual": 3288.78,
+     "model_maxz": 1074.51,
+     "classes": {
+      "ST": {
+       "F": 9047.8,
+       "cap": 8373.5
+      }
+     }
+    },
+    {
+     "hour": 4098,
+     "set": "hit",
+     "actual": 4869.15,
+     "model_maxz": 984.19,
+     "classes": {
+      "ST": {
+       "F": 9047.8,
+       "cap": 8373.5
+      },
+      "COAL": {
+       "F": 12061.6,
+       "cap": 11329.6
+      }
+     }
+    },
+    {
+     "hour": 4099,
+     "set": "hit",
+     "actual": 3307.46,
+     "model_maxz": 682.5,
+     "classes": {
+      "ST": {
+       "F": 9052.8,
+       "cap": 8370.7
+      },
+      "COAL": {
+       "F": 12061.6,
+       "cap": 11318.4
+      }
+     }
+    },
+    {
+     "hour": 4407,
+     "set": "missed",
+     "actual": 241.04,
+     "model_maxz": 63.7,
+     "classes": {
+      "COAL": {
+       "F": 12252.3,
+       "cap": 11359.6
+      }
+     }
+    },
+    {
+     "hour": 4575,
+     "set": "missed",
+     "actual": 414.53,
+     "model_maxz": 80.88,
+     "classes": {
+      "ST": {
+       "F": 8485.3,
+       "cap": 7823.4
+      }
+     }
+    },
+    {
+     "hour": 4577,
+     "set": "missed",
+     "actual": 496.92,
+     "model_maxz": 86.99,
+     "classes": {
+      "ST": {
+       "F": 8485.3,
+       "cap": 7749.6
+      },
+      "COAL": {
+       "F": 12616.4,
+       "cap": 12488.9
+      }
+     }
+    },
+    {
+     "hour": 4578,
+     "set": "missed",
+     "actual": 2014.26,
+     "model_maxz": 90.17,
+     "classes": {
+      "ST": {
+       "F": 8485.3,
+       "cap": 7740.4
+      },
+      "COAL": {
+       "F": 12710.7,
+       "cap": 12423.9
+      }
+     }
+    },
+    {
+     "hour": 4602,
+     "set": "missed",
+     "actual": 223.43,
+     "model_maxz": 52.46,
+     "classes": {
+      "ST": {
+       "F": 8359.5,
+       "cap": 6557.2
+      }
+     }
+    },
+    {
+     "hour": 4622,
+     "set": "missed",
+     "actual": 238.94,
+     "model_maxz": 46.46,
+     "classes": {
+      "ST": {
+       "F": 7187.8,
+       "cap": 5852.6
+      }
+     }
+    },
+    {
+     "hour": 4623,
+     "set": "missed",
+     "actual": 624.93,
+     "model_maxz": 49.37,
+     "classes": {
+      "ST": {
+       "F": 7306.0,
+       "cap": 5869.3
+      }
+     }
+    },
+    {
+     "hour": 4624,
+     "set": "missed",
+     "actual": 316.47,
+     "model_maxz": 49.37,
+     "classes": {
+      "ST": {
+       "F": 7306.5,
+       "cap": 5876.8
+      }
+     }
+    },
+    {
+     "hour": 4626,
+     "set": "missed",
+     "actual": 594.8,
+     "model_maxz": 58.07,
+     "classes": {
+      "ST": {
+       "F": 7368.9,
+       "cap": 6002.3
+      }
+     }
+    },
+    {
+     "hour": 5081,
+     "set": "missed",
+     "actual": 1177.04,
+     "model_maxz": 91.66,
+     "classes": {
+      "ST": {
+       "F": 9620.9,
+       "cap": 8923.3
+      },
+      "COAL": {
+       "F": 12495.0,
+       "cap": 12076.6
+      }
+     }
+    },
+    {
+     "hour": 5082,
+     "set": "missed",
+     "actual": 2366.08,
+     "model_maxz": 141.72,
+     "classes": {
+      "ST": {
+       "F": 9836.5,
+       "cap": 8922.0
+      },
+      "COAL": {
+       "F": 12495.0,
+       "cap": 12224.6
+      }
+     }
+    },
+    {
+     "hour": 5154,
+     "set": "missed",
+     "actual": 300.01,
+     "model_maxz": 104.78,
+     "classes": {
+      "ST": {
+       "F": 9255.8,
+       "cap": 8762.9
+      },
+      "COAL": {
+       "F": 12533.9,
+       "cap": 12272.7
+      }
+     }
+    },
+    {
+     "hour": 5155,
+     "set": "missed",
+     "actual": 268.99,
+     "model_maxz": 105.35,
+     "classes": {
+      "ST": {
+       "F": 9255.8,
+       "cap": 8759.8
+      },
+      "COAL": {
+       "F": 12533.9,
+       "cap": 12268.4
+      }
+     }
+    },
+    {
+     "hour": 5173,
+     "set": "missed",
+     "actual": 540.4,
+     "model_maxz": 101.64,
+     "classes": {
+      "ST": {
+       "F": 9049.2,
+       "cap": 8428.6
+      }
+     }
+    },
+    {
+     "hour": 5174,
+     "set": "missed",
+     "actual": 959.95,
+     "model_maxz": 102.83,
+     "classes": {
+      "ST": {
+       "F": 9049.2,
+       "cap": 8436.1
+      }
+     }
+    },
+    {
+     "hour": 5175,
+     "set": "missed",
+     "actual": 2099.55,
+     "model_maxz": 102.83,
+     "classes": {
+      "ST": {
+       "F": 9049.2,
+       "cap": 8436.7
+      }
+     }
+    },
+    {
+     "hour": 5176,
+     "set": "missed",
+     "actual": 1246.17,
+     "model_maxz": 94.28,
+     "classes": {
+      "ST": {
+       "F": 9049.2,
+       "cap": 8427.1
+      }
+     }
+    },
+    {
+     "hour": 5177,
+     "set": "missed",
+     "actual": 1347.91,
+     "model_maxz": 98.51,
+     "classes": {
+      "ST": {
+       "F": 9049.2,
+       "cap": 8430.8
+      }
+     }
+    },
+    {
+     "hour": 5178,
+     "set": "missed",
+     "actual": 1302.23,
+     "model_maxz": 181.97,
+     "classes": {
+      "ST": {
+       "F": 9567.5,
+       "cap": 8637.2
+      }
+     }
+    },
+    {
+     "hour": 5179,
+     "set": "missed",
+     "actual": 318.36,
+     "model_maxz": 195.32,
+     "classes": {
+      "ST": {
+       "F": 9483.5,
+       "cap": 8708.8
+      }
+     }
+    },
+    {
+     "hour": 5225,
+     "set": "missed",
+     "actual": 208.16,
+     "model_maxz": 75.19,
+     "classes": {
+      "ST": {
+       "F": 9039.6,
+       "cap": 8538.0
+      }
+     }
+    },
+    {
+     "hour": 5226,
+     "set": "missed",
+     "actual": 1371.83,
+     "model_maxz": 127.74,
+     "classes": {
+      "ST": {
+       "F": 9286.6,
+       "cap": 8426.8
+      }
+     }
+    },
+    {
+     "hour": 5227,
+     "set": "missed",
+     "actual": 493.02,
+     "model_maxz": 105.6,
+     "classes": {
+      "ST": {
+       "F": 9178.5,
+       "cap": 8107.7
+      },
+      "COAL": {
+       "F": 11030.8,
+       "cap": 10993.6
+      }
+     }
+    },
+    {
+     "hour": 5246,
+     "set": "missed",
+     "actual": 521.42,
+     "model_maxz": 141.43,
+     "classes": {
+      "ST": {
+       "F": 9561.5,
+       "cap": 8372.9
+      },
+      "COAL": {
+       "F": 11138.9,
+       "cap": 10665.1
+      }
+     }
+    },
+    {
+     "hour": 5247,
+     "set": "missed",
+     "actual": 1323.39,
+     "model_maxz": 141.43,
+     "classes": {
+      "ST": {
+       "F": 9577.8,
+       "cap": 8190.1
+      },
+      "COAL": {
+       "F": 11138.9,
+       "cap": 10698.4
+      }
+     }
+    },
+    {
+     "hour": 5248,
+     "set": "missed",
+     "actual": 716.61,
+     "model_maxz": 134.37,
+     "classes": {
+      "ST": {
+       "F": 9561.5,
+       "cap": 8212.7
+      },
+      "COAL": {
+       "F": 11138.9,
+       "cap": 10706.9
+      }
+     }
+    },
+    {
+     "hour": 5249,
+     "set": "missed",
+     "actual": 619.1,
+     "model_maxz": 110.95,
+     "classes": {
+      "ST": {
+       "F": 9467.6,
+       "cap": 8223.5
+      },
+      "COAL": {
+       "F": 11138.9,
+       "cap": 10694.6
+      }
+     }
+    },
+    {
+     "hour": 5250,
+     "set": "missed",
+     "actual": 1050.98,
+     "model_maxz": 187.61,
+     "classes": {
+      "ST": {
+       "F": 9830.5,
+       "cap": 8223.8
+      },
+      "COAL": {
+       "F": 11138.9,
+       "cap": 10673.4
+      }
+     }
+    },
+    {
+     "hour": 5269,
+     "set": "missed",
+     "actual": 257.69,
+     "model_maxz": 103.47,
+     "classes": {
+      "ST": {
+       "F": 8554.2,
+       "cap": 8425.4
+      },
+      "COAL": {
+       "F": 11143.1,
+       "cap": 10157.9
+      }
+     }
+    },
+    {
+     "hour": 5270,
+     "set": "missed",
+     "actual": 897.71,
+     "model_maxz": 136.51,
+     "classes": {
+      "ST": {
+       "F": 8788.9,
+       "cap": 8427.0
+      },
+      "COAL": {
+       "F": 11143.1,
+       "cap": 10704.9
+      }
+     }
+    },
+    {
+     "hour": 5271,
+     "set": "missed",
+     "actual": 560.03,
+     "model_maxz": 134.21,
+     "classes": {
+      "ST": {
+       "F": 8788.9,
+       "cap": 8428.3
+      }
+     }
+    },
+    {
+     "hour": 5274,
+     "set": "missed",
+     "actual": 1347.34,
+     "model_maxz": 143.07,
+     "classes": {
+      "ST": {
+       "F": 8857.7,
+       "cap": 8429.2
+      },
+      "COAL": {
+       "F": 11143.1,
+       "cap": 10614.9
+      }
+     }
+    },
+    {
+     "hour": 5275,
+     "set": "missed",
+     "actual": 487.82,
+     "model_maxz": 105.71,
+     "classes": {
+      "ST": {
+       "F": 8554.2,
+       "cap": 8419.4
+      },
+      "COAL": {
+       "F": 11143.1,
+       "cap": 10171.2
+      }
+     }
+    },
+    {
+     "hour": 5297,
+     "set": "missed",
+     "actual": 321.32,
+     "model_maxz": 110.53,
+     "classes": {
+      "ST": {
+       "F": 8845.0,
+       "cap": 8418.3
+      }
+     }
+    },
+    {
+     "hour": 5298,
+     "set": "missed",
+     "actual": 1095.68,
+     "model_maxz": 196.46,
+     "classes": {
+      "ST": {
+       "F": 9202.5,
+       "cap": 8420.5
+      }
+     }
+    },
+    {
+     "hour": 5299,
+     "set": "missed",
+     "actual": 283.09,
+     "model_maxz": 156.99,
+     "classes": {
+      "ST": {
+       "F": 9049.2,
+       "cap": 8413.1
+      }
+     }
+    },
+    {
+     "hour": 5316,
+     "set": "missed",
+     "actual": 238.35,
+     "model_maxz": 89.71,
+     "classes": {
+      "ST": {
+       "F": 8630.7,
+       "cap": 8289.5
+      }
+     }
+    },
+    {
+     "hour": 5317,
+     "set": "missed",
+     "actual": 1532.36,
+     "model_maxz": 156.27,
+     "classes": {
+      "ST": {
+       "F": 9035.7,
+       "cap": 8283.9
+      }
+     }
+    },
+    {
+     "hour": 5318,
+     "set": "hit",
+     "actual": 3236.19,
+     "model_maxz": 227.35,
+     "classes": {
+      "ST": {
+       "F": 9256.4,
+       "cap": 8291.5
+      }
+     }
+    },
+    {
+     "hour": 5319,
+     "set": "hit",
+     "actual": 2920.99,
+     "model_maxz": 240.79,
+     "classes": {
+      "ST": {
+       "F": 9256.4,
+       "cap": 8288.8
+      }
+     }
+    },
+    {
+     "hour": 5320,
+     "set": "hit",
+     "actual": 2019.35,
+     "model_maxz": 256.38,
+     "classes": {
+      "ST": {
+       "F": 9256.4,
+       "cap": 8283.4
+      }
+     }
+    },
+    {
+     "hour": 5321,
+     "set": "hit",
+     "actual": 778.05,
+     "model_maxz": 213.83,
+     "classes": {
+      "ST": {
+       "F": 9223.7,
+       "cap": 8268.0
+      }
+     }
+    },
+    {
+     "hour": 5322,
+     "set": "hit",
+     "actual": 790.31,
+     "model_maxz": 297.57,
+     "classes": {
+      "ST": {
+       "F": 9278.9,
+       "cap": 8247.6
+      }
+     }
+    },
+    {
+     "hour": 5323,
+     "set": "missed",
+     "actual": 268.21,
+     "model_maxz": 164.35,
+     "classes": {
+      "ST": {
+       "F": 9128.2,
+       "cap": 8268.4
+      }
+     }
+    },
+    {
+     "hour": 5342,
+     "set": "missed",
+     "actual": 639.72,
+     "model_maxz": 104.59,
+     "classes": {
+      "ST": {
+       "F": 8500.7,
+       "cap": 7670.2
+      }
+     }
+    },
+    {
+     "hour": 5343,
+     "set": "missed",
+     "actual": 1007.94,
+     "model_maxz": 104.59,
+     "classes": {
+      "ST": {
+       "F": 8500.7,
+       "cap": 7668.6
+      }
+     }
+    },
+    {
+     "hour": 5344,
+     "set": "missed",
+     "actual": 1517.12,
+     "model_maxz": 88.11,
+     "classes": {
+      "ST": {
+       "F": 8500.7,
+       "cap": 7673.4
+      }
+     }
+    },
+    {
+     "hour": 5345,
+     "set": "missed",
+     "actual": 685.85,
+     "model_maxz": 90.72,
+     "classes": {
+      "ST": {
+       "F": 8500.7,
+       "cap": 7661.2
+      }
+     }
+    },
+    {
+     "hour": 5346,
+     "set": "missed",
+     "actual": 988.86,
+     "model_maxz": 157.61,
+     "classes": {
+      "ST": {
+       "F": 8725.0,
+       "cap": 7667.6
+      }
+     }
+    },
+    {
+     "hour": 5367,
+     "set": "missed",
+     "actual": 257.66,
+     "model_maxz": 70.95,
+     "classes": {
+      "ST": {
+       "F": 8425.6,
+       "cap": 8083.0
+      }
+     }
+    },
+    {
+     "hour": 5369,
+     "set": "missed",
+     "actual": 676.07,
+     "model_maxz": 75.97,
+     "classes": {
+      "ST": {
+       "F": 8425.6,
+       "cap": 8084.3
+      }
+     }
+    },
+    {
+     "hour": 5370,
+     "set": "missed",
+     "actual": 1272.87,
+     "model_maxz": 118.6,
+     "classes": {
+      "ST": {
+       "F": 8425.6,
+       "cap": 8087.2
+      },
+      "COAL": {
+       "F": 11823.7,
+       "cap": 11622.1
+      }
+     }
+    },
+    {
+     "hour": 5371,
+     "set": "missed",
+     "actual": 263.88,
+     "model_maxz": 115.17,
+     "classes": {
+      "ST": {
+       "F": 8425.6,
+       "cap": 8086.2
+      }
+     }
+    },
+    {
+     "hour": 5392,
+     "set": "missed",
+     "actual": 212.73,
+     "model_maxz": 87.73,
+     "classes": {
+      "ST": {
+       "F": 8253.7,
+       "cap": 8008.7
+      },
+      "COAL": {
+       "F": 11824.2,
+       "cap": 11739.6
+      }
+     }
+    },
+    {
+     "hour": 5393,
+     "set": "missed",
+     "actual": 284.32,
+     "model_maxz": 105.06,
+     "classes": {
+      "ST": {
+       "F": 8381.4,
+       "cap": 8009.2
+      }
+     }
+    },
+    {
+     "hour": 5394,
+     "set": "missed",
+     "actual": 702.71,
+     "model_maxz": 189.23,
+     "classes": {
+      "ST": {
+       "F": 8765.8,
+       "cap": 8010.6
+      }
+     }
+    },
+    {
+     "hour": 5395,
+     "set": "missed",
+     "actual": 685.64,
+     "model_maxz": 190.44,
+     "classes": {
+      "ST": {
+       "F": 8702.7,
+       "cap": 7896.9
+      }
+     }
+    },
+    {
+     "hour": 5442,
+     "set": "hit",
+     "actual": 303.2,
+     "model_maxz": 206.8,
+     "classes": {
+      "ST": {
+       "F": 8596.5,
+       "cap": 7637.8
+      }
+     }
+    },
+    {
+     "hour": 5484,
+     "set": "missed",
+     "actual": 549.51,
+     "model_maxz": 78.15,
+     "classes": {
+      "COAL": {
+       "F": 12667.3,
+       "cap": 12563.9
+      }
+     }
+    },
+    {
+     "hour": 5485,
+     "set": "hit",
+     "actual": 2409.11,
+     "model_maxz": 228.87,
+     "classes": {
+      "ST": {
+       "F": 8776.9,
+       "cap": 8438.4
+      },
+      "COAL": {
+       "F": 12667.3,
+       "cap": 12571.4
+      }
+     }
+    },
+    {
+     "hour": 5486,
+     "set": "hit",
+     "actual": 2130.3,
+     "model_maxz": 494.01,
+     "classes": {
+      "ST": {
+       "F": 8882.3,
+       "cap": 8447.0
+      },
+      "COAL": {
+       "F": 12667.3,
+       "cap": 12568.6
+      }
+     }
+    },
+    {
+     "hour": 5487,
+     "set": "hit",
+     "actual": 2346.38,
+     "model_maxz": 577.14,
+     "classes": {
+      "ST": {
+       "F": 8890.2,
+       "cap": 8472.9
+      },
+      "COAL": {
+       "F": 12667.3,
+       "cap": 12552.6
+      }
+     }
+    },
+    {
+     "hour": 5488,
+     "set": "hit",
+     "actual": 3753.61,
+     "model_maxz": 865.8,
+     "classes": {
+      "ST": {
+       "F": 8890.2,
+       "cap": 8459.1
+      },
+      "COAL": {
+       "F": 12667.3,
+       "cap": 12535.1
+      }
+     }
+    },
+    {
+     "hour": 5489,
+     "set": "hit",
+     "actual": 1736.55,
+     "model_maxz": 937.32,
+     "classes": {
+      "ST": {
+       "F": 8890.2,
+       "cap": 8457.1
+      },
+      "COAL": {
+       "F": 12667.3,
+       "cap": 12550.6
+      }
+     }
+    },
+    {
+     "hour": 5490,
+     "set": "hit",
+     "actual": 5046.42,
+     "model_maxz": 2586.08,
+     "classes": {
+      "ST": {
+       "F": 8890.2,
+       "cap": 8074.2
+      },
+      "COAL": {
+       "F": 12667.3,
+       "cap": 12551.4
+      }
+     }
+    },
+    {
+     "hour": 5491,
+     "set": "hit",
+     "actual": 3259.43,
+     "model_maxz": 2523.79,
+     "classes": {
+      "ST": {
+       "F": 8882.3,
+       "cap": 8074.2
+      },
+      "COAL": {
+       "F": 12667.3,
+       "cap": 12542.9
+      }
+     }
+    },
+    {
+     "hour": 5561,
+     "set": "missed",
+     "actual": 207.72,
+     "model_maxz": 74.62,
+     "classes": {
+      "ST": {
+       "F": 8839.5,
+       "cap": 7914.7
+      }
+     }
+    },
+    {
+     "hour": 5562,
+     "set": "hit",
+     "actual": 412.49,
+     "model_maxz": 211.4,
+     "classes": {
+      "ST": {
+       "F": 9387.9,
+       "cap": 8165.6
+      }
+     }
+    },
+    {
+     "hour": 5563,
+     "set": "hit",
+     "actual": 1001.54,
+     "model_maxz": 790.99,
+     "classes": {
+      "ST": {
+       "F": 9503.3,
+       "cap": 8165.9
+      }
+     }
+    },
+    {
+     "hour": 5634,
+     "set": "missed",
+     "actual": 285.68,
+     "model_maxz": 129.72,
+     "classes": {
+      "ST": {
+       "F": 9751.2,
+       "cap": 8931.8
+      },
+      "COAL": {
+       "F": 12860.2,
+       "cap": 12777.9
+      }
+     }
+    },
+    {
+     "hour": 5635,
+     "set": "missed",
+     "actual": 216.2,
+     "model_maxz": 183.88,
+     "classes": {
+      "ST": {
+       "F": 10065.0,
+       "cap": 8914.1
+      },
+      "COAL": {
+       "F": 12860.2,
+       "cap": 12781.6
+      }
+     }
+    },
+    {
+     "hour": 5653,
+     "set": "missed",
+     "actual": 923.61,
+     "model_maxz": 109.71,
+     "classes": {
+      "ST": {
+       "F": 9501.4,
+       "cap": 8982.0
+      },
+      "COAL": {
+       "F": 12691.4,
+       "cap": 12180.1
+      }
+     }
+    },
+    {
+     "hour": 5654,
+     "set": "hit",
+     "actual": 1330.76,
+     "model_maxz": 209.75,
+     "classes": {
+      "ST": {
+       "F": 9906.1,
+       "cap": 8988.5
+      },
+      "COAL": {
+       "F": 12691.4,
+       "cap": 12134.2
+      }
+     }
+    },
+    {
+     "hour": 5655,
+     "set": "hit",
+     "actual": 1682.28,
+     "model_maxz": 323.98,
+     "classes": {
+      "ST": {
+       "F": 10036.7,
+       "cap": 8981.2
+      },
+      "COAL": {
+       "F": 12691.4,
+       "cap": 12164.0
+      }
+     }
+    },
+    {
+     "hour": 5656,
+     "set": "hit",
+     "actual": 1730.25,
+     "model_maxz": 416.21,
+     "classes": {
+      "ST": {
+       "F": 10026.6,
+       "cap": 8970.1
+      },
+      "COAL": {
+       "F": 12691.4,
+       "cap": 12357.9
+      }
+     }
+    },
+    {
+     "hour": 5657,
+     "set": "hit",
+     "actual": 1075.56,
+     "model_maxz": 367.25,
+     "classes": {
+      "ST": {
+       "F": 10051.6,
+       "cap": 8972.7
+      },
+      "COAL": {
+       "F": 12691.4,
+       "cap": 12541.4
+      }
+     }
+    },
+    {
+     "hour": 5658,
+     "set": "hit",
+     "actual": 3120.51,
+     "model_maxz": 1005.87,
+     "classes": {
+      "ST": {
+       "F": 10060.6,
+       "cap": 8970.5
+      },
+      "COAL": {
+       "F": 12691.4,
+       "cap": 12436.1
+      }
+     }
+    },
+    {
+     "hour": 5659,
+     "set": "hit",
+     "actual": 945.68,
+     "model_maxz": 933.32,
+     "classes": {
+      "ST": {
+       "F": 10060.6,
+       "cap": 8539.7
+      },
+      "COAL": {
+       "F": 12691.4,
+       "cap": 12436.6
+      }
+     }
+    },
+    {
+     "hour": 5677,
+     "set": "hit",
+     "actual": 660.28,
+     "model_maxz": 215.04,
+     "classes": {
+      "ST": {
+       "F": 9532.6,
+       "cap": 8850.3
+      },
+      "COAL": {
+       "F": 12671.0,
+       "cap": 12357.5
+      }
+     }
+    },
+    {
+     "hour": 5678,
+     "set": "hit",
+     "actual": 847.41,
+     "model_maxz": 243.19,
+     "classes": {
+      "ST": {
+       "F": 9532.6,
+       "cap": 9243.3
+      },
+      "COAL": {
+       "F": 12671.0,
+       "cap": 12356.5
+      }
+     }
+    },
+    {
+     "hour": 5679,
+     "set": "hit",
+     "actual": 891.18,
+     "model_maxz": 259.03,
+     "classes": {
+      "ST": {
+       "F": 9556.5,
+       "cap": 9297.8
+      },
+      "COAL": {
+       "F": 12671.0,
+       "cap": 12358.1
+      }
+     }
+    },
+    {
+     "hour": 5680,
+     "set": "hit",
+     "actual": 1846.08,
+     "model_maxz": 270.42,
+     "classes": {
+      "ST": {
+       "F": 9556.5,
+       "cap": 9300.0
+      },
+      "COAL": {
+       "F": 12671.0,
+       "cap": 12347.4
+      }
+     }
+    },
+    {
+     "hour": 5681,
+     "set": "hit",
+     "actual": 2648.45,
+     "model_maxz": 503.72,
+     "classes": {
+      "ST": {
+       "F": 9565.1,
+       "cap": 9264.2
+      },
+      "COAL": {
+       "F": 12671.0,
+       "cap": 12330.9
+      }
+     }
+    },
+    {
+     "hour": 5682,
+     "set": "hit",
+     "actual": 4314.08,
+     "model_maxz": 2560.07,
+     "classes": {
+      "ST": {
+       "F": 9565.1,
+       "cap": 9169.0
+      },
+      "COAL": {
+       "F": 12671.0,
+       "cap": 12335.5
+      }
+     }
+    },
+    {
+     "hour": 5683,
+     "set": "hit",
+     "actual": 2572.73,
+     "model_maxz": 1301.62,
+     "classes": {
+      "ST": {
+       "F": 9565.1,
+       "cap": 9169.8
+      },
+      "COAL": {
+       "F": 12671.0,
+       "cap": 12193.0
+      }
+     }
+    },
+    {
+     "hour": 5700,
+     "set": "missed",
+     "actual": 364.48,
+     "model_maxz": 96.47,
+     "classes": {
+      "ST": {
+       "F": 9275.9,
+       "cap": 8797.3
+      },
+      "COAL": {
+       "F": 12803.3,
+       "cap": 12647.7
+      }
+     }
+    },
+    {
+     "hour": 5701,
+     "set": "hit",
+     "actual": 2220.19,
+     "model_maxz": 212.96,
+     "classes": {
+      "ST": {
+       "F": 9838.4,
+       "cap": 8801.6
+      },
+      "COAL": {
+       "F": 12803.3,
+       "cap": 12667.5
+      }
+     }
+    },
+    {
+     "hour": 5702,
+     "set": "hit",
+     "actual": 923.76,
+     "model_maxz": 252.48,
+     "classes": {
+      "ST": {
+       "F": 9810.1,
+       "cap": 8800.8
+      },
+      "COAL": {
+       "F": 12803.3,
+       "cap": 12657.7
+      }
+     }
+    },
+    {
+     "hour": 5703,
+     "set": "hit",
+     "actual": 1749.48,
+     "model_maxz": 270.42,
+     "classes": {
+      "ST": {
+       "F": 9810.1,
+       "cap": 8801.2
+      },
+      "COAL": {
+       "F": 12803.3,
+       "cap": 12633.5
+      }
+     }
+    },
+    {
+     "hour": 5704,
+     "set": "hit",
+     "actual": 743.17,
+     "model_maxz": 210.49,
+     "classes": {
+      "ST": {
+       "F": 9810.1,
+       "cap": 8792.2
+      },
+      "COAL": {
+       "F": 12803.3,
+       "cap": 12505.6
+      }
+     }
+    },
+    {
+     "hour": 5705,
+     "set": "hit",
+     "actual": 488.99,
+     "model_maxz": 228.35,
+     "classes": {
+      "ST": {
+       "F": 9810.1,
+       "cap": 8800.3
+      },
+      "COAL": {
+       "F": 12803.3,
+       "cap": 12594.4
+      }
+     }
+    },
+    {
+     "hour": 5706,
+     "set": "hit",
+     "actual": 570.32,
+     "model_maxz": 325.34,
+     "classes": {
+      "ST": {
+       "F": 9833.4,
+       "cap": 8801.7
+      },
+      "COAL": {
+       "F": 12803.3,
+       "cap": 12634.1
+      }
+     }
+    },
+    {
+     "hour": 5707,
+     "set": "hit",
+     "actual": 373.04,
+     "model_maxz": 419.18,
+     "classes": {
+      "ST": {
+       "F": 9833.4,
+       "cap": 8796.2
+      },
+      "COAL": {
+       "F": 12803.3,
+       "cap": 12463.4
+      }
+     }
+    },
+    {
+     "hour": 5726,
+     "set": "hit",
+     "actual": 334.36,
+     "model_maxz": 210.49,
+     "classes": {
+      "ST": {
+       "F": 8997.1,
+       "cap": 8735.4
+      },
+      "COAL": {
+       "F": 12803.8,
+       "cap": 12770.7
+      }
+     }
+    },
+    {
+     "hour": 5727,
+     "set": "hit",
+     "actual": 358.78,
+     "model_maxz": 252.77,
+     "classes": {
+      "ST": {
+       "F": 8997.1,
+       "cap": 8751.9
+      },
+      "COAL": {
+       "F": 12803.8,
+       "cap": 12633.4
+      }
+     }
+    },
+    {
+     "hour": 5728,
+     "set": "hit",
+     "actual": 683.48,
+     "model_maxz": 216.72,
+     "classes": {
+      "ST": {
+       "F": 8997.1,
+       "cap": 8735.0
+      },
+      "COAL": {
+       "F": 12803.8,
+       "cap": 12281.4
+      }
+     }
+    },
+    {
+     "hour": 5730,
+     "set": "hit",
+     "actual": 650.66,
+     "model_maxz": 288.66,
+     "classes": {
+      "ST": {
+       "F": 9018.7,
+       "cap": 8739.9
+      },
+      "COAL": {
+       "F": 12803.8,
+       "cap": 12240.2
+      }
+     }
+    },
+    {
+     "hour": 5753,
+     "set": "missed",
+     "actual": 320.75,
+     "model_maxz": 108.64,
+     "classes": {
+      "ST": {
+       "F": 9017.4,
+       "cap": 8482.7
+      },
+      "COAL": {
+       "F": 11768.3,
+       "cap": 10809.4
+      }
+     }
+    },
+    {
+     "hour": 5754,
+     "set": "hit",
+     "actual": 2262.52,
+     "model_maxz": 238.41,
+     "classes": {
+      "ST": {
+       "F": 9360.3,
+       "cap": 8429.3
+      },
+      "COAL": {
+       "F": 11768.3,
+       "cap": 10802.8
+      }
+     }
+    },
+    {
+     "hour": 5755,
+     "set": "missed",
+     "actual": 721.02,
+     "model_maxz": 187.41,
+     "classes": {
+      "ST": {
+       "F": 9373.0,
+       "cap": 8246.2
+      },
+      "COAL": {
+       "F": 11768.3,
+       "cap": 10814.2
+      }
+     }
+    },
+    {
+     "hour": 5777,
+     "set": "missed",
+     "actual": 538.94,
+     "model_maxz": 83.38,
+     "classes": {
+      "ST": {
+       "F": 9361.7,
+       "cap": 7613.3
+      },
+      "COAL": {
+       "F": 10145.6,
+       "cap": 9274.5
+      }
+     }
+    },
+    {
+     "hour": 5778,
+     "set": "hit",
+     "actual": 1013.34,
+     "model_maxz": 216.82,
+     "classes": {
+      "ST": {
+       "F": 9577.4,
+       "cap": 7712.0
+      },
+      "COAL": {
+       "F": 10589.0,
+       "cap": 9376.2
+      }
+     }
+    },
+    {
+     "hour": 5779,
+     "set": "missed",
+     "actual": 399.32,
+     "model_maxz": 149.4,
+     "classes": {
+      "ST": {
+       "F": 9415.5,
+       "cap": 8132.3
+      },
+      "COAL": {
+       "F": 10589.0,
+       "cap": 9370.2
+      }
+     }
+    },
+    {
+     "hour": 5799,
+     "set": "missed",
+     "actual": 374.45,
+     "model_maxz": 194.73,
+     "classes": {
+      "ST": {
+       "F": 8981.5,
+       "cap": 7955.6
+      },
+      "COAL": {
+       "F": 10248.2,
+       "cap": 9451.0
+      }
+     }
+    },
+    {
+     "hour": 5800,
+     "set": "hit",
+     "actual": 266.68,
+     "model_maxz": 213.48,
+     "classes": {
+      "ST": {
+       "F": 9011.2,
+       "cap": 8087.7
+      },
+      "COAL": {
+       "F": 10248.2,
+       "cap": 9345.8
+      }
+     }
+    },
+    {
+     "hour": 5801,
+     "set": "hit",
+     "actual": 2778.5,
+     "model_maxz": 503.59,
+     "classes": {
+      "ST": {
+       "F": 9039.2,
+       "cap": 8061.0
+      },
+      "COAL": {
+       "F": 10248.2,
+       "cap": 9313.5
+      }
+     }
+    },
+    {
+     "hour": 5802,
+     "set": "hit",
+     "actual": 4844.59,
+     "model_maxz": 2558.17,
+     "classes": {
+      "ST": {
+       "F": 9039.2,
+       "cap": 8068.1
+      },
+      "COAL": {
+       "F": 10248.2,
+       "cap": 9324.0
+      }
+     }
+    },
+    {
+     "hour": 5803,
+     "set": "hit",
+     "actual": 2788.89,
+     "model_maxz": 1320.42,
+     "classes": {
+      "ST": {
+       "F": 9045.1,
+       "cap": 8164.8
+      },
+      "COAL": {
+       "F": 10248.2,
+       "cap": 9362.8
+      }
+     }
+    },
+    {
+     "hour": 5823,
+     "set": "missed",
+     "actual": 611.23,
+     "model_maxz": 174.39,
+     "classes": {
+      "ST": {
+       "F": 8737.0,
+       "cap": 8070.2
+      },
+      "COAL": {
+       "F": 10660.8,
+       "cap": 10201.6
+      }
+     }
+    },
+    {
+     "hour": 5825,
+     "set": "missed",
+     "actual": 390.61,
+     "model_maxz": 191.19,
+     "classes": {
+      "ST": {
+       "F": 8737.0,
+       "cap": 7952.8
+      }
+     }
+    },
+    {
+     "hour": 5826,
+     "set": "hit",
+     "actual": 303.21,
+     "model_maxz": 311.8,
+     "classes": {
+      "ST": {
+       "F": 8861.6,
+       "cap": 7958.1
+      }
+     }
+    },
+    {
+     "hour": 5943,
+     "set": "missed",
+     "actual": 536.53,
+     "model_maxz": 61.07,
+     "classes": {
+      "ST": {
+       "F": 9289.5,
+       "cap": 7864.4
+      }
+     }
+    },
+    {
+     "hour": 5944,
+     "set": "missed",
+     "actual": 340.26,
+     "model_maxz": 89.2,
+     "classes": {
+      "ST": {
+       "F": 9295.7,
+       "cap": 7961.8
+      }
+     }
+    },
+    {
+     "hour": 5945,
+     "set": "missed",
+     "actual": 843.08,
+     "model_maxz": 82.76,
+     "classes": {
+      "ST": {
+       "F": 9295.7,
+       "cap": 7963.0
+      }
+     }
+    },
+    {
+     "hour": 5946,
+     "set": "missed",
+     "actual": 1472.73,
+     "model_maxz": 137.75,
+     "classes": {
+      "ST": {
+       "F": 9423.2,
+       "cap": 7961.0
+      }
+     }
+    },
+    {
+     "hour": 5964,
+     "set": "missed",
+     "actual": 461.83,
+     "model_maxz": 94.15,
+     "classes": {
+      "ST": {
+       "F": 9603.2,
+       "cap": 7999.2
+      }
+     }
+    },
+    {
+     "hour": 5965,
+     "set": "missed",
+     "actual": 545.62,
+     "model_maxz": 154.21,
+     "classes": {
+      "ST": {
+       "F": 9882.0,
+       "cap": 8339.5
+      }
+     }
+    },
+    {
+     "hour": 5966,
+     "set": "hit",
+     "actual": 3540.63,
+     "model_maxz": 416.78,
+     "classes": {
+      "ST": {
+       "F": 10188.6,
+       "cap": 8223.2
+      }
+     }
+    },
+    {
+     "hour": 5967,
+     "set": "hit",
+     "actual": 3892.95,
+     "model_maxz": 963.25,
+     "classes": {
+      "ST": {
+       "F": 10336.8,
+       "cap": 8000.1
+      }
+     }
+    },
+    {
+     "hour": 5968,
+     "set": "hit",
+     "actual": 855.52,
+     "model_maxz": 405.85,
+     "classes": {
+      "ST": {
+       "F": 10336.8,
+       "cap": 8296.3
+      }
+     }
+    },
+    {
+     "hour": 5969,
+     "set": "hit",
+     "actual": 2373.68,
+     "model_maxz": 427.64,
+     "classes": {
+      "ST": {
+       "F": 10336.8,
+       "cap": 8394.9
+      }
+     }
+    },
+    {
+     "hour": 5970,
+     "set": "hit",
+     "actual": 5035.63,
+     "model_maxz": 5024.84,
+     "classes": {
+      "ST": {
+       "F": 10345.6,
+       "cap": 8427.8
+      },
+      "COAL": {
+       "F": 11721.0,
+       "cap": 11692.4
+      }
+     }
+    },
+    {
+     "hour": 5971,
+     "set": "hit",
+     "actual": 1491.14,
+     "model_maxz": 718.04,
+     "classes": {
+      "ST": {
+       "F": 10188.6,
+       "cap": 8467.2
+      },
+      "COAL": {
+       "F": 11721.0,
+       "cap": 11635.6
+      }
+     }
+    },
+    {
+     "hour": 5990,
+     "set": "missed",
+     "actual": 235.91,
+     "model_maxz": 165.54,
+     "classes": {
+      "ST": {
+       "F": 9622.2,
+       "cap": 8443.8
+      }
+     }
+    },
+    {
+     "hour": 5991,
+     "set": "missed",
+     "actual": 1218.51,
+     "model_maxz": 185.7,
+     "classes": {
+      "ST": {
+       "F": 9622.2,
+       "cap": 8444.7
+      }
+     }
+    },
+    {
+     "hour": 5992,
+     "set": "missed",
+     "actual": 476.34,
+     "model_maxz": 185.7,
+     "classes": {
+      "ST": {
+       "F": 9622.2,
+       "cap": 8437.5
+      }
+     }
+    },
+    {
+     "hour": 5993,
+     "set": "hit",
+     "actual": 1770.37,
+     "model_maxz": 429.49,
+     "classes": {
+      "ST": {
+       "F": 9771.8,
+       "cap": 8418.8
+      }
+     }
+    },
+    {
+     "hour": 5994,
+     "set": "hit",
+     "actual": 3641.61,
+     "model_maxz": 1450.62,
+     "classes": {
+      "ST": {
+       "F": 9771.8,
+       "cap": 8410.4
+      }
+     }
+    },
+    {
+     "hour": 6013,
+     "set": "hit",
+     "actual": 202.62,
+     "model_maxz": 214.39,
+     "classes": {
+      "ST": {
+       "F": 9471.4,
+       "cap": 8578.0
+      },
+      "COAL": {
+       "F": 12036.2,
+       "cap": 11899.2
+      }
+     }
+    },
+    {
+     "hour": 6014,
+     "set": "hit",
+     "actual": 677.47,
+     "model_maxz": 234.7,
+     "classes": {
+      "ST": {
+       "F": 9352.0,
+       "cap": 8575.2
+      },
+      "COAL": {
+       "F": 12036.2,
+       "cap": 11858.8
+      }
+     }
+    },
+    {
+     "hour": 6015,
+     "set": "hit",
+     "actual": 3521.59,
+     "model_maxz": 405.69,
+     "classes": {
+      "ST": {
+       "F": 9360.1,
+       "cap": 8567.3
+      },
+      "COAL": {
+       "F": 12036.2,
+       "cap": 11880.6
+      }
+     }
+    },
+    {
+     "hour": 6016,
+     "set": "hit",
+     "actual": 2110.22,
+     "model_maxz": 454.54,
+     "classes": {
+      "ST": {
+       "F": 9360.1,
+       "cap": 8565.5
+      },
+      "COAL": {
+       "F": 12036.2,
+       "cap": 11904.6
+      }
+     }
+    },
+    {
+     "hour": 6017,
+     "set": "hit",
+     "actual": 2014.96,
+     "model_maxz": 410.32,
+     "classes": {
+      "ST": {
+       "F": 9382.0,
+       "cap": 8573.3
+      },
+      "COAL": {
+       "F": 12036.2,
+       "cap": 11942.5
+      }
+     }
+    },
+    {
+     "hour": 6018,
+     "set": "hit",
+     "actual": 499.82,
+     "model_maxz": 428.45,
+     "classes": {
+      "ST": {
+       "F": 9382.0,
+       "cap": 8572.5
+      },
+      "COAL": {
+       "F": 12036.2,
+       "cap": 11937.9
+      }
+     }
+    },
+    {
+     "hour": 6233,
+     "set": "missed",
+     "actual": 481.08,
+     "model_maxz": 58.29,
+     "classes": {
+      "ST": {
+       "F": 8284.8,
+       "cap": 7167.2
+      }
+     }
+    },
+    {
+     "hour": 6305,
+     "set": "missed",
+     "actual": 251.35,
+     "model_maxz": 104.92,
+     "classes": {
+      "ST": {
+       "F": 8556.1,
+       "cap": 8491.7
+      },
+      "COAL": {
+       "F": 12193.0,
+       "cap": 11840.7
+      }
+     }
+    },
+    {
+     "hour": 6377,
+     "set": "missed",
+     "actual": 577.92,
+     "model_maxz": 103.41,
+     "classes": {
+      "ST": {
+       "F": 7979.9,
+       "cap": 7924.8
+      }
+     }
+    },
+    {
+     "hour": 6378,
+     "set": "missed",
+     "actual": 351.94,
+     "model_maxz": 191.79,
+     "classes": {
+      "ST": {
+       "F": 8469.0,
+       "cap": 7971.8
+      }
+     }
+    },
+    {
+     "hour": 6398,
+     "set": "missed",
+     "actual": 239.76,
+     "model_maxz": 72.01,
+     "classes": {
+      "ST": {
+       "F": 8110.6,
+       "cap": 7979.3
+      },
+      "COAL": {
+       "F": 12181.5,
+       "cap": 12016.3
+      }
+     }
+    },
+    {
+     "hour": 6399,
+     "set": "missed",
+     "actual": 590.14,
+     "model_maxz": 72.01,
+     "classes": {
+      "ST": {
+       "F": 8110.6,
+       "cap": 7972.5
+      },
+      "COAL": {
+       "F": 12181.5,
+       "cap": 11992.8
+      }
+     }
+    },
+    {
+     "hour": 6400,
+     "set": "missed",
+     "actual": 300.24,
+     "model_maxz": 72.01,
+     "classes": {
+      "ST": {
+       "F": 8110.6,
+       "cap": 7968.3
+      },
+      "COAL": {
+       "F": 12181.5,
+       "cap": 12053.3
+      }
+     }
+    },
+    {
+     "hour": 6401,
+     "set": "missed",
+     "actual": 230.9,
+     "model_maxz": 124.19,
+     "classes": {
+      "ST": {
+       "F": 8154.7,
+       "cap": 7969.5
+      },
+      "COAL": {
+       "F": 12822.6,
+       "cap": 12667.5
+      }
+     }
+    },
+    {
+     "hour": 6449,
+     "set": "missed",
+     "actual": 228.3,
+     "model_maxz": 173.59,
+     "classes": {
+      "ST": {
+       "F": 8433.2,
+       "cap": 7809.2
+      }
+     }
+    },
+    {
+     "hour": 6761,
+     "set": "missed",
+     "actual": 219.87,
+     "model_maxz": 45.2,
+     "classes": {
+      "ST": {
+       "F": 6704.5,
+       "cap": 3065.8
+      }
+     }
+    },
+    {
+     "hour": 7001,
+     "set": "missed",
+     "actual": 696.48,
+     "model_maxz": 44.41,
+     "classes": {
+      "ST": {
+       "F": 6570.6,
+       "cap": 4865.0
+      },
+      "NUC": {
+       "F": 4332.6,
+       "cap": 3868.2
+      }
+     }
+    },
+    {
+     "hour": 7025,
+     "set": "missed",
+     "actual": 338.36,
+     "model_maxz": 131.93,
+     "classes": {
+      "ST": {
+       "F": 7313.4,
+       "cap": 5831.6
+      },
+      "NUC": {
+       "F": 4332.6,
+       "cap": 3858.2
+      }
+     }
+    },
+    {
+     "hour": 7145,
+     "set": "missed",
+     "actual": 650.12,
+     "model_maxz": 39.31,
+     "classes": {
+      "ST": {
+       "F": 5851.6,
+       "cap": 4262.8
+      },
+      "NUC": {
+       "F": 4332.6,
+       "cap": 3852.0
+      }
+     }
+    },
+    {
+     "hour": 7480,
+     "set": "missed",
+     "actual": 607.34,
+     "model_maxz": 43.39,
+     "classes": {
+      "ST": {
+       "F": 4620.3,
+       "cap": 4607.9
+      }
+     }
+    },
+    {
+     "hour": 7481,
+     "set": "missed",
+     "actual": 387.46,
+     "model_maxz": 74.66,
+     "classes": {
+      "ST": {
+       "F": 4831.6,
+       "cap": 4567.8
+      }
+     }
+    },
+    {
+     "hour": 7590,
+     "set": "missed",
+     "actual": 233.35,
+     "model_maxz": 40.61,
+     "classes": {
+      "ST": {
+       "F": 3819.5,
+       "cap": 3723.9
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 3885.9
+      }
+     }
+    },
+    {
+     "hour": 8118,
+     "set": "missed",
+     "actual": 421.51,
+     "model_maxz": 36.28,
+     "classes": {
+      "ST": {
+       "F": 2818.6,
+       "cap": 133.5
+      }
+     }
+    },
+    {
+     "hour": 8129,
+     "set": "missed",
+     "actual": 221.73,
+     "model_maxz": 37.4,
+     "classes": {
+      "ST": {
+       "F": 2925.3,
+       "cap": 130.2
+      }
+     }
+    }
+   ]
+  },
+  "direct_2025_extract": {
+   "per_class": {
+    "CC": {
+     "binds": 0,
+     "binds_missed": 0,
+     "binds_hit": 0,
+     "binds_ordinary": 0,
+     "depth_missed_p50_mw": NaN,
+     "depth_ordinary_p50_mw": NaN,
+     "depth_ordinary_p90_mw": NaN,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.0
+    },
+    "ST": {
+     "binds": 80,
+     "binds_missed": 19,
+     "binds_hit": 0,
+     "binds_ordinary": 54,
+     "depth_missed_p50_mw": 823.2,
+     "depth_ordinary_p50_mw": 543.1,
+     "depth_ordinary_p90_mw": 1640.7,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.303
+    },
+    "COAL": {
+     "binds": 51,
+     "binds_missed": 11,
+     "binds_hit": 0,
+     "binds_ordinary": 39,
+     "depth_missed_p50_mw": 201.4,
+     "depth_ordinary_p50_mw": 184.8,
+     "depth_ordinary_p90_mw": 620.5,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.1932
+    },
+    "NUC": {
+     "binds": 0,
+     "binds_missed": 0,
+     "binds_hit": 0,
+     "binds_ordinary": 0,
+     "depth_missed_p50_mw": NaN,
+     "depth_ordinary_p50_mw": NaN,
+     "depth_ordinary_p90_mw": NaN,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.0
+    }
+   },
+   "union": {
+    "binds": 111,
+    "binds_missed": 22,
+    "binds_hit": 0,
+    "binds_ordinary": 82,
+    "away_binds": 28,
+    "reach_frac_missed": 0.9565,
+    "missed_covered": 23,
+    "valid_hours": 264
+   },
+   "bind_hours_missed_hit": [
+    {
+     "hour": 342,
+     "set": "missed",
+     "actual": 306.04,
+     "model_maxz": 43.6,
+     "classes": {
+      "ST": {
+       "F": 4282.7,
+       "cap": 1236.0
+      }
+     }
+    },
+    {
+     "hour": 343,
+     "set": "missed",
+     "actual": 1142.91,
+     "model_maxz": 97.32,
+     "classes": {
+      "ST": {
+       "F": 4320.2,
+       "cap": 1249.2
+      }
+     }
+    },
+    {
+     "hour": 1194,
+     "set": "missed",
+     "actual": 254.68,
+     "model_maxz": 117.53,
+     "classes": {
+      "COAL": {
+       "F": 12002.4,
+       "cap": 11962.0
+      }
+     }
+    },
+    {
+     "hour": 1195,
+     "set": "missed",
+     "actual": 233.54,
+     "model_maxz": 117.5,
+     "classes": {
+      "ST": {
+       "F": 8589.7,
+       "cap": 8415.7
+      },
+      "COAL": {
+       "F": 12002.4,
+       "cap": 11971.5
+      }
+     }
+    },
+    {
+     "hour": 1196,
+     "set": "missed",
+     "actual": 353.32,
+     "model_maxz": 117.34,
+     "classes": {
+      "ST": {
+       "F": 8590.1,
+       "cap": 8413.2
+      },
+      "COAL": {
+       "F": 12002.4,
+       "cap": 11952.0
+      }
+     }
+    },
+    {
+     "hour": 1197,
+     "set": "missed",
+     "actual": 238.48,
+     "model_maxz": 135.05,
+     "classes": {
+      "COAL": {
+       "F": 12002.4,
+       "cap": 11958.5
+      }
+     }
+    },
+    {
+     "hour": 1205,
+     "set": "missed",
+     "actual": 213.56,
+     "model_maxz": 115.35,
+     "classes": {
+      "COAL": {
+       "F": 12137.2,
+       "cap": 11874.8
+      }
+     }
+    },
+    {
+     "hour": 1206,
+     "set": "missed",
+     "actual": 250.32,
+     "model_maxz": 155.84,
+     "classes": {
+      "ST": {
+       "F": 8688.1,
+       "cap": 8516.0
+      },
+      "COAL": {
+       "F": 12135.2,
+       "cap": 11933.8
+      }
+     }
+    },
+    {
+     "hour": 3257,
+     "set": "missed",
+     "actual": 373.22,
+     "model_maxz": 88.18,
+     "classes": {
+      "ST": {
+       "F": 5928.0,
+       "cap": 5186.0
+      },
+      "COAL": {
+       "F": 9411.1,
+       "cap": 9209.0
+      }
+     }
+    },
+    {
+     "hour": 3258,
+     "set": "missed",
+     "actual": 1569.68,
+     "model_maxz": 115.14,
+     "classes": {
+      "ST": {
+       "F": 6014.2,
+       "cap": 5191.0
+      },
+      "COAL": {
+       "F": 9411.1,
+       "cap": 9171.1
+      }
+     }
+    },
+    {
+     "hour": 3259,
+     "set": "missed",
+     "actual": 387.98,
+     "model_maxz": 123.26,
+     "classes": {
+      "ST": {
+       "F": 6014.2,
+       "cap": 5108.9
+      },
+      "COAL": {
+       "F": 9411.1,
+       "cap": 9168.8
+      }
+     }
+    },
+    {
+     "hour": 3595,
+     "set": "missed",
+     "actual": 217.51,
+     "model_maxz": 54.71,
+     "classes": {
+      "ST": {
+       "F": 6719.7,
+       "cap": 5468.7
+      }
+     }
+    },
+    {
+     "hour": 3596,
+     "set": "missed",
+     "actual": 279.63,
+     "model_maxz": 54.56,
+     "classes": {
+      "ST": {
+       "F": 6719.7,
+       "cap": 5468.8
+      }
+     }
+    },
+    {
+     "hour": 4364,
+     "set": "missed",
+     "actual": 216.36,
+     "model_maxz": 79.62,
+     "classes": {
+      "ST": {
+       "F": 7389.4,
+       "cap": 6986.7
+      },
+      "COAL": {
+       "F": 10667.4,
+       "cap": 10017.4
+      }
+     }
+    },
+    {
+     "hour": 4604,
+     "set": "missed",
+     "actual": 477.33,
+     "model_maxz": 43.18,
+     "classes": {
+      "ST": {
+       "F": 3240.8,
+       "cap": 3121.0
+      },
+      "COAL": {
+       "F": 8589.6,
+       "cap": 8412.8
+      }
+     }
+    },
+    {
+     "hour": 5058,
+     "set": "missed",
+     "actual": 220.42,
+     "model_maxz": 89.61,
+     "classes": {
+      "ST": {
+       "F": 8052.4,
+       "cap": 6735.6
+      }
+     }
+    },
+    {
+     "hour": 5059,
+     "set": "missed",
+     "actual": 243.48,
+     "model_maxz": 90.88,
+     "classes": {
+      "ST": {
+       "F": 8052.4,
+       "cap": 6527.9
+      }
+     }
+    },
+    {
+     "hour": 7049,
+     "set": "missed",
+     "actual": 214.08,
+     "model_maxz": 159.34,
+     "classes": {
+      "ST": {
+       "F": 6094.5,
+       "cap": 4511.4
+      }
+     }
+    },
+    {
+     "hour": 7050,
+     "set": "missed",
+     "actual": 210.14,
+     "model_maxz": 148.9,
+     "classes": {
+      "ST": {
+       "F": 6060.5,
+       "cap": 4517.1
+      }
+     }
+    },
+    {
+     "hour": 8036,
+     "set": "missed",
+     "actual": 234.41,
+     "model_maxz": 80.74,
+     "classes": {
+      "ST": {
+       "F": 6106.1,
+       "cap": 5692.9
+      }
+     }
+    },
+    {
+     "hour": 8037,
+     "set": "missed",
+     "actual": 290.24,
+     "model_maxz": 80.35,
+     "classes": {
+      "ST": {
+       "F": 6106.1,
+       "cap": 5693.8
+      }
+     }
+    },
+    {
+     "hour": 8359,
+     "set": "missed",
+     "actual": 209.36,
+     "model_maxz": 59.5,
+     "classes": {
+      "ST": {
+       "F": 4643.2,
+       "cap": 4278.9
+      }
+     }
+    }
+   ]
+  },
+  "transferred_2024": {
+   "per_class": {
+    "CC": {
+     "binds": 3363,
+     "binds_missed": 29,
+     "binds_hit": 14,
+     "binds_ordinary": 3300,
+     "depth_missed_p50_mw": 1978.2,
+     "depth_ordinary_p50_mw": 1755.7,
+     "depth_ordinary_p90_mw": 3085.4,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.3839
+    },
+    "ST": {
+     "binds": 1242,
+     "binds_missed": 19,
+     "binds_hit": 14,
+     "binds_ordinary": 1198,
+     "depth_missed_p50_mw": 1194.7,
+     "depth_ordinary_p50_mw": 752.7,
+     "depth_ordinary_p90_mw": 1562.2,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.1418
+    },
+    "COAL": {
+     "binds": 418,
+     "binds_missed": 18,
+     "binds_hit": 17,
+     "binds_ordinary": 373,
+     "depth_missed_p50_mw": 490.8,
+     "depth_ordinary_p50_mw": 164.9,
+     "depth_ordinary_p90_mw": 647.4,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.0477
+    },
+    "NUC": {
+     "binds": 8760,
+     "binds_missed": 36,
+     "binds_hit": 17,
+     "binds_ordinary": 8676,
+     "depth_missed_p50_mw": 131.0,
+     "depth_ordinary_p50_mw": 102.1,
+     "depth_ordinary_p90_mw": 181.6,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 1.0
+    }
+   },
+   "union": {
+    "binds": 8760,
+    "binds_missed": 36,
+    "binds_hit": 17,
+    "binds_ordinary": 8676,
+    "away_binds": 6798,
+    "reach_frac_missed": 1.0,
+    "missed_covered": 36,
+    "valid_hours": 8760
+   },
+   "bind_hours_missed_hit": [
+    {
+     "hour": 341,
+     "set": "hit",
+     "actual": 243.53,
+     "model_maxz": 204.74,
+     "classes": {
+      "COAL": {
+       "F": 13380.5,
+       "cap": 12681.4
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 342,
+     "set": "hit",
+     "actual": 206.09,
+     "model_maxz": 228.73,
+     "classes": {
+      "COAL": {
+       "F": 13380.5,
+       "cap": 12681.4
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 343,
+     "set": "hit",
+     "actual": 242.43,
+     "model_maxz": 232.46,
+     "classes": {
+      "COAL": {
+       "F": 13380.5,
+       "cap": 12681.4
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 366,
+     "set": "missed",
+     "actual": 234.2,
+     "model_maxz": 101.37,
+     "classes": {
+      "CC": {
+       "F": 28471.7,
+       "cap": 27614.2
+      },
+      "COAL": {
+       "F": 12752.7,
+       "cap": 12086.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 367,
+     "set": "missed",
+     "actual": 376.97,
+     "model_maxz": 127.99,
+     "classes": {
+      "CC": {
+       "F": 28952.9,
+       "cap": 27609.9
+      },
+      "COAL": {
+       "F": 12752.7,
+       "cap": 12086.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 377,
+     "set": "missed",
+     "actual": 483.99,
+     "model_maxz": 59.72,
+     "classes": {
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 378,
+     "set": "missed",
+     "actual": 677.47,
+     "model_maxz": 176.87,
+     "classes": {
+      "CC": {
+       "F": 28401.5,
+       "cap": 27567.2
+      },
+      "COAL": {
+       "F": 12752.7,
+       "cap": 12086.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 379,
+     "set": "missed",
+     "actual": 266.75,
+     "model_maxz": 150.35,
+     "classes": {
+      "CC": {
+       "F": 28408.4,
+       "cap": 27573.8
+      },
+      "COAL": {
+       "F": 12752.7,
+       "cap": 12086.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 510,
+     "set": "missed",
+     "actual": 237.45,
+     "model_maxz": 59.38,
+     "classes": {
+      "NUC": {
+       "F": 3680.0,
+       "cap": 3544.0
+      }
+     }
+    },
+    {
+     "hour": 512,
+     "set": "missed",
+     "actual": 245.59,
+     "model_maxz": 125.06,
+     "classes": {
+      "ST": {
+       "F": 5949.8,
+       "cap": 5916.4
+      },
+      "NUC": {
+       "F": 3680.0,
+       "cap": 3544.0
+      }
+     }
+    },
+    {
+     "hour": 1505,
+     "set": "missed",
+     "actual": 232.15,
+     "model_maxz": 39.0,
+     "classes": {
+      "CC": {
+       "F": 17913.2,
+       "cap": 15648.7
+      },
+      "ST": {
+       "F": 6470.9,
+       "cap": 4615.2
+      },
+      "NUC": {
+       "F": 3512.3,
+       "cap": 3410.0
+      }
+     }
+    },
+    {
+     "hour": 1506,
+     "set": "missed",
+     "actual": 721.31,
+     "model_maxz": 84.36,
+     "classes": {
+      "CC": {
+       "F": 18585.9,
+       "cap": 16422.8
+      },
+      "ST": {
+       "F": 6642.2,
+       "cap": 5620.7
+      },
+      "NUC": {
+       "F": 3512.3,
+       "cap": 3382.5
+      }
+     }
+    },
+    {
+     "hour": 1507,
+     "set": "missed",
+     "actual": 213.99,
+     "model_maxz": 108.32,
+     "classes": {
+      "CC": {
+       "F": 18619.3,
+       "cap": 16464.8
+      },
+      "ST": {
+       "F": 6642.2,
+       "cap": 5620.7
+      },
+      "NUC": {
+       "F": 3512.3,
+       "cap": 3382.5
+      }
+     }
+    },
+    {
+     "hour": 2226,
+     "set": "missed",
+     "actual": 235.34,
+     "model_maxz": 66.47,
+     "classes": {
+      "CC": {
+       "F": 16697.2,
+       "cap": 14090.2
+      },
+      "ST": {
+       "F": 5419.6,
+       "cap": 3747.0
+      },
+      "NUC": {
+       "F": 3681.5,
+       "cap": 3574.3
+      }
+     }
+    },
+    {
+     "hour": 2340,
+     "set": "missed",
+     "actual": 265.6,
+     "model_maxz": 57.39,
+     "classes": {
+      "CC": {
+       "F": 14459.5,
+       "cap": 12481.4
+      },
+      "ST": {
+       "F": 4587.1,
+       "cap": 2858.6
+      },
+      "NUC": {
+       "F": 3681.5,
+       "cap": 3577.1
+      }
+     }
+    },
+    {
+     "hour": 2418,
+     "set": "missed",
+     "actual": 276.36,
+     "model_maxz": 94.99,
+     "classes": {
+      "CC": {
+       "F": 16745.9,
+       "cap": 14233.1
+      },
+      "ST": {
+       "F": 4206.8,
+       "cap": 2908.0
+      },
+      "NUC": {
+       "F": 3681.5,
+       "cap": 3574.3
+      }
+     }
+    },
+    {
+     "hour": 2538,
+     "set": "missed",
+     "actual": 958.54,
+     "model_maxz": 161.33,
+     "classes": {
+      "CC": {
+       "F": 17949.5,
+       "cap": 15183.0
+      },
+      "ST": {
+       "F": 5255.1,
+       "cap": 4181.5
+      },
+      "COAL": {
+       "F": 7044.8,
+       "cap": 6606.9
+      },
+      "NUC": {
+       "F": 3681.4,
+       "cap": 3545.4
+      }
+     }
+    },
+    {
+     "hour": 2539,
+     "set": "hit",
+     "actual": 694.18,
+     "model_maxz": 1204.13,
+     "classes": {
+      "CC": {
+       "F": 17975.5,
+       "cap": 15196.8
+      },
+      "ST": {
+       "F": 5255.1,
+       "cap": 4181.5
+      },
+      "COAL": {
+       "F": 7044.8,
+       "cap": 6606.9
+      },
+      "NUC": {
+       "F": 3681.4,
+       "cap": 3545.4
+      }
+     }
+    },
+    {
+     "hour": 2730,
+     "set": "missed",
+     "actual": 217.19,
+     "model_maxz": 61.74,
+     "classes": {
+      "CC": {
+       "F": 14845.0,
+       "cap": 12295.8
+      },
+      "ST": {
+       "F": 3804.6,
+       "cap": 2253.5
+      },
+      "COAL": {
+       "F": 5098.3,
+       "cap": 4938.2
+      },
+      "NUC": {
+       "F": 3671.1,
+       "cap": 3567.0
+      }
+     }
+    },
+    {
+     "hour": 2731,
+     "set": "missed",
+     "actual": 240.73,
+     "model_maxz": 54.78,
+     "classes": {
+      "CC": {
+       "F": 14689.3,
+       "cap": 12300.6
+      },
+      "ST": {
+       "F": 3804.6,
+       "cap": 2253.5
+      },
+      "COAL": {
+       "F": 5098.3,
+       "cap": 4938.2
+      },
+      "NUC": {
+       "F": 3671.1,
+       "cap": 3567.0
+      }
+     }
+    },
+    {
+     "hour": 2779,
+     "set": "missed",
+     "actual": 339.33,
+     "model_maxz": 34.22,
+     "classes": {
+      "CC": {
+       "F": 14677.3,
+       "cap": 12579.3
+      },
+      "ST": {
+       "F": 3331.3,
+       "cap": 1991.1
+      },
+      "COAL": {
+       "F": 4862.4,
+       "cap": 4721.0
+      },
+      "NUC": {
+       "F": 3671.2,
+       "cap": 3577.8
+      }
+     }
+    },
+    {
+     "hour": 2826,
+     "set": "hit",
+     "actual": 911.77,
+     "model_maxz": 1140.09,
+     "classes": {
+      "CC": {
+       "F": 17443.4,
+       "cap": 14028.7
+      },
+      "ST": {
+       "F": 4999.6,
+       "cap": 3227.9
+      },
+      "COAL": {
+       "F": 5796.7,
+       "cap": 5367.3
+      },
+      "NUC": {
+       "F": 3669.9,
+       "cap": 3563.1
+      }
+     }
+    },
+    {
+     "hour": 2827,
+     "set": "hit",
+     "actual": 1259.83,
+     "model_maxz": 3472.18,
+     "classes": {
+      "CC": {
+       "F": 17460.3,
+       "cap": 14713.3
+      },
+      "ST": {
+       "F": 4999.6,
+       "cap": 3931.1
+      },
+      "COAL": {
+       "F": 5796.7,
+       "cap": 5436.4
+      },
+      "NUC": {
+       "F": 3669.9,
+       "cap": 3534.3
+      }
+     }
+    },
+    {
+     "hour": 2828,
+     "set": "hit",
+     "actual": 238.04,
+     "model_maxz": 1068.68,
+     "classes": {
+      "CC": {
+       "F": 17486.3,
+       "cap": 14063.2
+      },
+      "ST": {
+       "F": 5064.7,
+       "cap": 3227.9
+      },
+      "COAL": {
+       "F": 5796.7,
+       "cap": 5367.3
+      },
+      "NUC": {
+       "F": 3669.9,
+       "cap": 3563.1
+      }
+     }
+    },
+    {
+     "hour": 3063,
+     "set": "missed",
+     "actual": 257.43,
+     "model_maxz": 121.92,
+     "classes": {
+      "CC": {
+       "F": 21115.8,
+       "cap": 17984.5
+      },
+      "ST": {
+       "F": 6216.1,
+       "cap": 5050.7
+      },
+      "COAL": {
+       "F": 7340.1,
+       "cap": 6883.8
+      },
+      "NUC": {
+       "F": 3581.3,
+       "cap": 3449.0
+      }
+     }
+    },
+    {
+     "hour": 3064,
+     "set": "hit",
+     "actual": 965.64,
+     "model_maxz": 244.99,
+     "classes": {
+      "CC": {
+       "F": 21413.0,
+       "cap": 18050.6
+      },
+      "ST": {
+       "F": 6350.7,
+       "cap": 5050.7
+      },
+      "COAL": {
+       "F": 7338.0,
+       "cap": 6881.9
+      },
+      "NUC": {
+       "F": 3581.3,
+       "cap": 3449.0
+      }
+     }
+    },
+    {
+     "hour": 3065,
+     "set": "hit",
+     "actual": 996.53,
+     "model_maxz": 2127.4,
+     "classes": {
+      "CC": {
+       "F": 21411.4,
+       "cap": 18080.7
+      },
+      "ST": {
+       "F": 6469.4,
+       "cap": 5050.7
+      },
+      "COAL": {
+       "F": 7338.0,
+       "cap": 6881.9
+      },
+      "NUC": {
+       "F": 3581.3,
+       "cap": 3449.0
+      }
+     }
+    },
+    {
+     "hour": 3066,
+     "set": "hit",
+     "actual": 2450.87,
+     "model_maxz": 4924.65,
+     "classes": {
+      "CC": {
+       "F": 21500.7,
+       "cap": 18124.4
+      },
+      "ST": {
+       "F": 6489.7,
+       "cap": 5050.7
+      },
+      "COAL": {
+       "F": 7338.0,
+       "cap": 6881.9
+      },
+      "NUC": {
+       "F": 3581.3,
+       "cap": 3449.0
+      }
+     }
+    },
+    {
+     "hour": 3067,
+     "set": "hit",
+     "actual": 3048.98,
+     "model_maxz": 5000.0,
+     "classes": {
+      "CC": {
+       "F": 21566.1,
+       "cap": 19160.0
+      },
+      "ST": {
+       "F": 6489.7,
+       "cap": 6059.0
+      },
+      "COAL": {
+       "F": 7338.0,
+       "cap": 6954.6
+      },
+      "NUC": {
+       "F": 3581.3,
+       "cap": 3446.3
+      }
+     }
+    },
+    {
+     "hour": 3084,
+     "set": "missed",
+     "actual": 258.43,
+     "model_maxz": 29.16,
+     "classes": {
+      "CC": {
+       "F": 19161.0,
+       "cap": 17491.2
+      },
+      "ST": {
+       "F": 3988.2,
+       "cap": 3706.3
+      },
+      "NUC": {
+       "F": 3582.9,
+       "cap": 3481.2
+      }
+     }
+    },
+    {
+     "hour": 3379,
+     "set": "missed",
+     "actual": 276.9,
+     "model_maxz": 91.84,
+     "classes": {
+      "CC": {
+       "F": 23547.4,
+       "cap": 22845.2
+      },
+      "COAL": {
+       "F": 9283.7,
+       "cap": 8798.7
+      },
+      "NUC": {
+       "F": 4537.5,
+       "cap": 4366.5
+      }
+     }
+    },
+    {
+     "hour": 3714,
+     "set": "missed",
+     "actual": 346.76,
+     "model_maxz": 70.67,
+     "classes": {
+      "NUC": {
+       "F": 4979.1,
+       "cap": 4791.4
+      }
+     }
+    },
+    {
+     "hour": 3715,
+     "set": "missed",
+     "actual": 281.18,
+     "model_maxz": 70.07,
+     "classes": {
+      "NUC": {
+       "F": 4979.1,
+       "cap": 4791.4
+      }
+     }
+    },
+    {
+     "hour": 4914,
+     "set": "missed",
+     "actual": 223.65,
+     "model_maxz": 38.06,
+     "classes": {
+      "NUC": {
+       "F": 4906.4,
+       "cap": 4721.4
+      }
+     }
+    },
+    {
+     "hour": 5226,
+     "set": "missed",
+     "actual": 271.17,
+     "model_maxz": 130.68,
+     "classes": {
+      "CC": {
+       "F": 27882.4,
+       "cap": 25144.2
+      },
+      "ST": {
+       "F": 9551.0,
+       "cap": 9341.1
+      },
+      "COAL": {
+       "F": 13686.9,
+       "cap": 12971.8
+      },
+      "NUC": {
+       "F": 4892.9,
+       "cap": 4708.5
+      }
+     }
+    },
+    {
+     "hour": 5250,
+     "set": "missed",
+     "actual": 494.09,
+     "model_maxz": 156.41,
+     "classes": {
+      "CC": {
+       "F": 27788.1,
+       "cap": 25060.1
+      },
+      "ST": {
+       "F": 9513.5,
+       "cap": 9281.1
+      },
+      "COAL": {
+       "F": 12942.7,
+       "cap": 12266.6
+      },
+      "NUC": {
+       "F": 4885.4,
+       "cap": 4701.3
+      }
+     }
+    },
+    {
+     "hour": 5538,
+     "set": "missed",
+     "actual": 797.41,
+     "model_maxz": 128.39,
+     "classes": {
+      "CC": {
+       "F": 26875.1,
+       "cap": 24239.1
+      },
+      "COAL": {
+       "F": 12324.9,
+       "cap": 11681.0
+      },
+      "NUC": {
+       "F": 4875.6,
+       "cap": 4691.8
+      }
+     }
+    },
+    {
+     "hour": 5539,
+     "set": "missed",
+     "actual": 404.58,
+     "model_maxz": 134.72,
+     "classes": {
+      "CC": {
+       "F": 26924.9,
+       "cap": 24283.8
+      },
+      "COAL": {
+       "F": 12324.9,
+       "cap": 11681.0
+      },
+      "NUC": {
+       "F": 4875.6,
+       "cap": 4691.8
+      }
+     }
+    },
+    {
+     "hour": 5562,
+     "set": "hit",
+     "actual": 3060.45,
+     "model_maxz": 601.98,
+     "classes": {
+      "CC": {
+       "F": 26485.2,
+       "cap": 23875.0
+      },
+      "ST": {
+       "F": 10447.4,
+       "cap": 10000.3
+      },
+      "COAL": {
+       "F": 12393.3,
+       "cap": 11745.8
+      },
+      "NUC": {
+       "F": 4879.7,
+       "cap": 4695.8
+      }
+     }
+    },
+    {
+     "hour": 5563,
+     "set": "hit",
+     "actual": 1673.98,
+     "model_maxz": 490.92,
+     "classes": {
+      "CC": {
+       "F": 26540.3,
+       "cap": 23924.2
+      },
+      "ST": {
+       "F": 10447.4,
+       "cap": 10000.3
+      },
+      "COAL": {
+       "F": 12393.3,
+       "cap": 11745.8
+      },
+      "NUC": {
+       "F": 4879.7,
+       "cap": 4695.8
+      }
+     }
+    },
+    {
+     "hour": 7073,
+     "set": "missed",
+     "actual": 252.11,
+     "model_maxz": 71.96,
+     "classes": {
+      "CC": {
+       "F": 19280.6,
+       "cap": 18367.8
+      },
+      "COAL": {
+       "F": 9218.1,
+       "cap": 9132.8
+      },
+      "NUC": {
+       "F": 2485.0,
+       "cap": 2391.3
+      }
+     }
+    },
+    {
+     "hour": 7097,
+     "set": "missed",
+     "actual": 241.34,
+     "model_maxz": 66.56,
+     "classes": {
+      "CC": {
+       "F": 19768.4,
+       "cap": 19038.8
+      },
+      "COAL": {
+       "F": 9225.4,
+       "cap": 9139.7
+      },
+      "NUC": {
+       "F": 2485.0,
+       "cap": 2391.3
+      }
+     }
+    },
+    {
+     "hour": 7145,
+     "set": "missed",
+     "actual": 222.23,
+     "model_maxz": 92.4,
+     "classes": {
+      "CC": {
+       "F": 20515.9,
+       "cap": 18840.6
+      },
+      "COAL": {
+       "F": 9507.1,
+       "cap": 9010.4
+      },
+      "NUC": {
+       "F": 2485.0,
+       "cap": 2391.3
+      }
+     }
+    },
+    {
+     "hour": 7169,
+     "set": "missed",
+     "actual": 227.27,
+     "model_maxz": 81.62,
+     "classes": {
+      "CC": {
+       "F": 19929.2,
+       "cap": 18596.0
+      },
+      "COAL": {
+       "F": 9226.8,
+       "cap": 9021.3
+      },
+      "NUC": {
+       "F": 2485.0,
+       "cap": 2391.3
+      }
+     }
+    },
+    {
+     "hour": 7457,
+     "set": "missed",
+     "actual": 241.4,
+     "model_maxz": 43.3,
+     "classes": {
+      "CC": {
+       "F": 16053.4,
+       "cap": 14459.4
+      },
+      "ST": {
+       "F": 5388.4,
+       "cap": 3809.6
+      },
+      "NUC": {
+       "F": 2388.3,
+       "cap": 2318.7
+      }
+     }
+    },
+    {
+     "hour": 7529,
+     "set": "hit",
+     "actual": 298.65,
+     "model_maxz": 292.33,
+     "classes": {
+      "CC": {
+       "F": 17772.2,
+       "cap": 14973.0
+      },
+      "ST": {
+       "F": 5105.6,
+       "cap": 4037.5
+      },
+      "COAL": {
+       "F": 8928.1,
+       "cap": 8373.2
+      },
+      "NUC": {
+       "F": 3307.5,
+       "cap": 3185.3
+      }
+     }
+    },
+    {
+     "hour": 7530,
+     "set": "hit",
+     "actual": 493.49,
+     "model_maxz": 330.42,
+     "classes": {
+      "CC": {
+       "F": 17541.1,
+       "cap": 14974.0
+      },
+      "ST": {
+       "F": 5065.7,
+       "cap": 4037.5
+      },
+      "COAL": {
+       "F": 8928.1,
+       "cap": 8373.2
+      },
+      "NUC": {
+       "F": 3307.5,
+       "cap": 3185.3
+      }
+     }
+    },
+    {
+     "hour": 7531,
+     "set": "hit",
+     "actual": 1108.8,
+     "model_maxz": 240.87,
+     "classes": {
+      "CC": {
+       "F": 17852.6,
+       "cap": 15040.4
+      },
+      "ST": {
+       "F": 5105.6,
+       "cap": 4037.5
+      },
+      "COAL": {
+       "F": 8928.1,
+       "cap": 8373.2
+      },
+      "NUC": {
+       "F": 3307.5,
+       "cap": 3185.3
+      }
+     }
+    },
+    {
+     "hour": 7532,
+     "set": "hit",
+     "actual": 239.52,
+     "model_maxz": 227.74,
+     "classes": {
+      "CC": {
+       "F": 17940.0,
+       "cap": 15113.8
+      },
+      "ST": {
+       "F": 5105.6,
+       "cap": 4037.5
+      },
+      "COAL": {
+       "F": 8928.1,
+       "cap": 8373.2
+      },
+      "NUC": {
+       "F": 3307.5,
+       "cap": 3185.3
+      }
+     }
+    },
+    {
+     "hour": 7694,
+     "set": "missed",
+     "actual": 220.43,
+     "model_maxz": 31.4,
+     "classes": {
+      "CC": {
+       "F": 14455.4,
+       "cap": 12583.6
+      },
+      "ST": {
+       "F": 3906.2,
+       "cap": 3062.0
+      },
+      "NUC": {
+       "F": 3576.0,
+       "cap": 3474.6
+      }
+     }
+    },
+    {
+     "hour": 7695,
+     "set": "missed",
+     "actual": 1473.08,
+     "model_maxz": 32.57,
+     "classes": {
+      "CC": {
+       "F": 14513.6,
+       "cap": 12588.3
+      },
+      "ST": {
+       "F": 4256.6,
+       "cap": 3062.0
+      },
+      "NUC": {
+       "F": 3576.0,
+       "cap": 3474.6
+      }
+     }
+    },
+    {
+     "hour": 7696,
+     "set": "missed",
+     "actual": 1210.68,
+     "model_maxz": 32.51,
+     "classes": {
+      "CC": {
+       "F": 14537.2,
+       "cap": 12608.8
+      },
+      "ST": {
+       "F": 4265.6,
+       "cap": 3062.0
+      },
+      "NUC": {
+       "F": 3576.0,
+       "cap": 3474.6
+      }
+     }
+    },
+    {
+     "hour": 8345,
+     "set": "missed",
+     "actual": 443.05,
+     "model_maxz": 39.31,
+     "classes": {
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4835.0
+      }
+     }
+    }
+   ]
+  },
+  "transferred_2025": {
+   "per_class": {
+    "CC": {
+     "binds": 4333,
+     "binds_missed": 29,
+     "binds_hit": 0,
+     "binds_ordinary": 4272,
+     "depth_missed_p50_mw": 1570.9,
+     "depth_ordinary_p50_mw": 1204.4,
+     "depth_ordinary_p90_mw": 2275.6,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.4946
+    },
+    "ST": {
+     "binds": 544,
+     "binds_missed": 12,
+     "binds_hit": 0,
+     "binds_ordinary": 515,
+     "depth_missed_p50_mw": 764.3,
+     "depth_ordinary_p50_mw": 519.8,
+     "depth_ordinary_p90_mw": 1603.5,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.0621
+    },
+    "COAL": {
+     "binds": 2125,
+     "binds_missed": 19,
+     "binds_hit": 0,
+     "binds_ordinary": 2087,
+     "depth_missed_p50_mw": 485.6,
+     "depth_ordinary_p50_mw": 267.5,
+     "depth_ordinary_p90_mw": 658.7,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 0.2426
+    },
+    "NUC": {
+     "binds": 8760,
+     "binds_missed": 31,
+     "binds_hit": 0,
+     "binds_ordinary": 8692,
+     "depth_missed_p50_mw": 184.0,
+     "depth_ordinary_p50_mw": 106.4,
+     "depth_ordinary_p90_mw": 182.2,
+     "cap_le0_hours": 0,
+     "mass_frac_bind": 1.0
+    }
+   },
+   "union": {
+    "binds": 8760,
+    "binds_missed": 31,
+    "binds_hit": 0,
+    "binds_ordinary": 8692,
+    "away_binds": 6260,
+    "reach_frac_missed": 1.0,
+    "missed_covered": 31,
+    "valid_hours": 8760
+   },
+   "bind_hours_missed_hit": [
+    {
+     "hour": 342,
+     "set": "missed",
+     "actual": 306.04,
+     "model_maxz": 43.6,
+     "classes": {
+      "NUC": {
+       "F": 4830.6,
+       "cap": 4652.1
+      }
+     }
+    },
+    {
+     "hour": 343,
+     "set": "missed",
+     "actual": 1142.91,
+     "model_maxz": 97.32,
+     "classes": {
+      "NUC": {
+       "F": 4830.6,
+       "cap": 4652.1
+      }
+     }
+    },
+    {
+     "hour": 1194,
+     "set": "missed",
+     "actual": 254.68,
+     "model_maxz": 117.53,
+     "classes": {
+      "CC": {
+       "F": 26539.8,
+       "cap": 26173.2
+      },
+      "COAL": {
+       "F": 12002.4,
+       "cap": 11375.4
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 1195,
+     "set": "missed",
+     "actual": 233.54,
+     "model_maxz": 117.5,
+     "classes": {
+      "CC": {
+       "F": 26616.9,
+       "cap": 26199.2
+      },
+      "COAL": {
+       "F": 12002.4,
+       "cap": 11375.4
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 1196,
+     "set": "missed",
+     "actual": 353.32,
+     "model_maxz": 117.34,
+     "classes": {
+      "CC": {
+       "F": 26640.5,
+       "cap": 26222.7
+      },
+      "COAL": {
+       "F": 12002.4,
+       "cap": 11375.4
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 1197,
+     "set": "missed",
+     "actual": 238.48,
+     "model_maxz": 135.05,
+     "classes": {
+      "CC": {
+       "F": 26646.3,
+       "cap": 26228.4
+      },
+      "COAL": {
+       "F": 12002.4,
+       "cap": 11375.4
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 1205,
+     "set": "missed",
+     "actual": 213.56,
+     "model_maxz": 115.35,
+     "classes": {
+      "CC": {
+       "F": 28469.9,
+       "cap": 27280.7
+      },
+      "COAL": {
+       "F": 12137.2,
+       "cap": 11503.1
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 1206,
+     "set": "missed",
+     "actual": 250.32,
+     "model_maxz": 155.84,
+     "classes": {
+      "CC": {
+       "F": 30138.8,
+       "cap": 27280.7
+      },
+      "COAL": {
+       "F": 12135.2,
+       "cap": 11501.2
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 2301,
+     "set": "missed",
+     "actual": 205.6,
+     "model_maxz": 62.48,
+     "classes": {
+      "CC": {
+       "F": 14476.7,
+       "cap": 12905.8
+      },
+      "ST": {
+       "F": 4891.7,
+       "cap": 3691.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4835.0
+      }
+     }
+    },
+    {
+     "hour": 2308,
+     "set": "missed",
+     "actual": 236.62,
+     "model_maxz": 72.34,
+     "classes": {
+      "CC": {
+       "F": 14832.7,
+       "cap": 12700.0
+      },
+      "ST": {
+       "F": 5278.5,
+       "cap": 3691.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4835.0
+      }
+     }
+    },
+    {
+     "hour": 2309,
+     "set": "missed",
+     "actual": 1473.2,
+     "model_maxz": 91.44,
+     "classes": {
+      "CC": {
+       "F": 14805.5,
+       "cap": 12704.3
+      },
+      "ST": {
+       "F": 5316.5,
+       "cap": 3691.5
+      },
+      "COAL": {
+       "F": 6555.2,
+       "cap": 6069.6
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4835.0
+      }
+     }
+    },
+    {
+     "hour": 2310,
+     "set": "missed",
+     "actual": 239.66,
+     "model_maxz": 100.18,
+     "classes": {
+      "CC": {
+       "F": 14816.6,
+       "cap": 12713.8
+      },
+      "ST": {
+       "F": 5316.5,
+       "cap": 3691.5
+      },
+      "COAL": {
+       "F": 6555.2,
+       "cap": 6069.6
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4835.0
+      }
+     }
+    },
+    {
+     "hour": 2636,
+     "set": "missed",
+     "actual": 272.88,
+     "model_maxz": 71.27,
+     "classes": {
+      "CC": {
+       "F": 15463.5,
+       "cap": 13896.6
+      },
+      "ST": {
+       "F": 5698.1,
+       "cap": 4802.4
+      },
+      "COAL": {
+       "F": 7217.1,
+       "cap": 7068.5
+      },
+      "NUC": {
+       "F": 4378.0,
+       "cap": 4216.2
+      }
+     }
+    },
+    {
+     "hour": 3068,
+     "set": "missed",
+     "actual": 432.42,
+     "model_maxz": 72.17,
+     "classes": {
+      "CC": {
+       "F": 21194.9,
+       "cap": 19733.8
+      },
+      "ST": {
+       "F": 4214.8,
+       "cap": 3687.5
+      },
+      "NUC": {
+       "F": 3775.0,
+       "cap": 3635.5
+      }
+     }
+    },
+    {
+     "hour": 3257,
+     "set": "missed",
+     "actual": 373.22,
+     "model_maxz": 88.18,
+     "classes": {
+      "CC": {
+       "F": 23561.3,
+       "cap": 22014.7
+      },
+      "COAL": {
+       "F": 9411.1,
+       "cap": 8919.4
+      },
+      "NUC": {
+       "F": 4257.4,
+       "cap": 4096.9
+      }
+     }
+    },
+    {
+     "hour": 3258,
+     "set": "missed",
+     "actual": 1569.68,
+     "model_maxz": 115.14,
+     "classes": {
+      "CC": {
+       "F": 24428.9,
+       "cap": 22105.3
+      },
+      "COAL": {
+       "F": 9411.1,
+       "cap": 8919.4
+      },
+      "NUC": {
+       "F": 4257.4,
+       "cap": 4096.9
+      }
+     }
+    },
+    {
+     "hour": 3259,
+     "set": "missed",
+     "actual": 387.98,
+     "model_maxz": 123.26,
+     "classes": {
+      "CC": {
+       "F": 24479.4,
+       "cap": 22157.3
+      },
+      "COAL": {
+       "F": 9411.1,
+       "cap": 8919.4
+      },
+      "NUC": {
+       "F": 4257.4,
+       "cap": 4096.9
+      }
+     }
+    },
+    {
+     "hour": 3595,
+     "set": "missed",
+     "actual": 217.51,
+     "model_maxz": 54.71,
+     "classes": {
+      "CC": {
+       "F": 23111.0,
+       "cap": 22429.6
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 3596,
+     "set": "missed",
+     "actual": 279.63,
+     "model_maxz": 54.56,
+     "classes": {
+      "CC": {
+       "F": 23151.9,
+       "cap": 21319.5
+      },
+      "ST": {
+       "F": 6719.7,
+       "cap": 5744.3
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4796.0
+      }
+     }
+    },
+    {
+     "hour": 4364,
+     "set": "missed",
+     "actual": 216.36,
+     "model_maxz": 79.62,
+     "classes": {
+      "CC": {
+       "F": 25285.6,
+       "cap": 23768.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 4604,
+     "set": "missed",
+     "actual": 477.33,
+     "model_maxz": 43.18,
+     "classes": {
+      "CC": {
+       "F": 23855.0,
+       "cap": 23422.6
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4796.0
+      }
+     }
+    },
+    {
+     "hour": 5058,
+     "set": "missed",
+     "actual": 220.42,
+     "model_maxz": 89.61,
+     "classes": {
+      "CC": {
+       "F": 27906.5,
+       "cap": 25791.5
+      },
+      "COAL": {
+       "F": 8733.8,
+       "cap": 8277.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 5059,
+     "set": "missed",
+     "actual": 243.48,
+     "model_maxz": 90.88,
+     "classes": {
+      "CC": {
+       "F": 27996.4,
+       "cap": 25832.2
+      },
+      "COAL": {
+       "F": 8733.8,
+       "cap": 8277.5
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4792.3
+      }
+     }
+    },
+    {
+     "hour": 7049,
+     "set": "missed",
+     "actual": 214.08,
+     "model_maxz": 159.34,
+     "classes": {
+      "CC": {
+       "F": 21842.6,
+       "cap": 19667.3
+      },
+      "ST": {
+       "F": 6094.5,
+       "cap": 5953.8
+      },
+      "COAL": {
+       "F": 8214.1,
+       "cap": 7785.0
+      },
+      "NUC": {
+       "F": 3665.2,
+       "cap": 3527.1
+      }
+     }
+    },
+    {
+     "hour": 7050,
+     "set": "missed",
+     "actual": 210.14,
+     "model_maxz": 148.9,
+     "classes": {
+      "CC": {
+       "F": 21912.2,
+       "cap": 19729.5
+      },
+      "ST": {
+       "F": 6060.5,
+       "cap": 5953.8
+      },
+      "COAL": {
+       "F": 8214.1,
+       "cap": 7785.0
+      },
+      "NUC": {
+       "F": 3665.2,
+       "cap": 3527.1
+      }
+     }
+    },
+    {
+     "hour": 8036,
+     "set": "missed",
+     "actual": 234.41,
+     "model_maxz": 80.74,
+     "classes": {
+      "CC": {
+       "F": 21668.3,
+       "cap": 20004.9
+      },
+      "ST": {
+       "F": 6106.1,
+       "cap": 5473.3
+      },
+      "COAL": {
+       "F": 6791.7,
+       "cap": 6657.7
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4796.0
+      }
+     }
+    },
+    {
+     "hour": 8037,
+     "set": "missed",
+     "actual": 290.24,
+     "model_maxz": 80.35,
+     "classes": {
+      "CC": {
+       "F": 21681.7,
+       "cap": 20017.3
+      },
+      "ST": {
+       "F": 6106.1,
+       "cap": 5473.3
+      },
+      "COAL": {
+       "F": 6791.7,
+       "cap": 6657.7
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4796.0
+      }
+     }
+    },
+    {
+     "hour": 8348,
+     "set": "missed",
+     "actual": 269.78,
+     "model_maxz": 47.23,
+     "classes": {
+      "CC": {
+       "F": 21875.6,
+       "cap": 21473.1
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4796.0
+      }
+     }
+    },
+    {
+     "hour": 8349,
+     "set": "missed",
+     "actual": 281.33,
+     "model_maxz": 47.23,
+     "classes": {
+      "CC": {
+       "F": 21901.4,
+       "cap": 21498.6
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4796.0
+      }
+     }
+    },
+    {
+     "hour": 8355,
+     "set": "missed",
+     "actual": 211.65,
+     "model_maxz": 46.7,
+     "classes": {
+      "CC": {
+       "F": 21839.1,
+       "cap": 21397.8
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4796.0
+      }
+     }
+    },
+    {
+     "hour": 8359,
+     "set": "missed",
+     "actual": 209.36,
+     "model_maxz": 59.5,
+     "classes": {
+      "CC": {
+       "F": 23077.4,
+       "cap": 21415.8
+      },
+      "ST": {
+       "F": 4643.2,
+       "cap": 4405.7
+      },
+      "COAL": {
+       "F": 7382.3,
+       "cap": 7188.3
+      },
+      "NUC": {
+       "F": 4980.0,
+       "cap": 4796.0
+      }
+     }
+    }
+   ]
+  }
+ }
+}
