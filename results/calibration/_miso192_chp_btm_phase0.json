@@ -1,0 +1,80 @@
+{
+  "session": "miso-192",
+  "probe": "chp_btm_measured phase-0 (zero-solve)",
+  "frozen_rule": {
+    "materiality_line": 0.5,
+    "basis": "share of MISO CHP nameplate (CC_CHP+ST_CHP+CT_CHP) carrying a measured per-plant BTM share",
+    "note": "the rule as frozen also required the numerator to be 'published by MISO or a MISO-designated body'. That clause was written around the NYISO Gold Book and is OVER-NARROW: the repo's ISO-AGNOSTIC chp-btm-share construction uses EPA CAMPD CEMS grid-net vs EIA-923 net, which satisfies the rule's SUBSTANCE (two independent per-plant meters, rule-13 clean) while failing its letter. Amendment disclosed, not applied silently -- see the FINDING."
+  },
+  "fleet": {
+    "chp_plants": 113,
+    "chp_rows": 131,
+    "chp_nameplate_mw": 11597.3
+  },
+  "measured_artifact": {
+    "exists": true,
+    "rows": 19,
+    "construction": "(eia923_net_mwh - campd_net_mwh) / eia923_net_mwh, steam-reporting CEMS units only"
+  },
+  "coverage": {
+    "covered_plants": 7,
+    "covered_mw": 673.3,
+    "coverage_frac": 0.0581,
+    "line": 0.5,
+    "meets_line": false
+  },
+  "by_group": [
+    {
+      "plant_group": "CC_CHP",
+      "plants": 24,
+      "mw": 7036.4,
+      "covered_plants": 0,
+      "covered_mw": 0.0
+    },
+    {
+      "plant_group": "CT_CHP",
+      "plants": 52,
+      "mw": 2625.5,
+      "covered_plants": 0,
+      "covered_mw": 0.0
+    },
+    {
+      "plant_group": "ST_CHP",
+      "plants": 55,
+      "mw": 1935.4,
+      "covered_plants": 7,
+      "covered_mw": 673.3
+    }
+  ],
+  "why_uncovered": {
+    "rows": [
+      {
+        "plant_group": "CC_CHP",
+        "fleet_plants": 20,
+        "in_campd": 13,
+        "steam_load_reporting": 1
+      },
+      {
+        "plant_group": "ST_CHP",
+        "fleet_plants": 55,
+        "in_campd": 10,
+        "steam_load_reporting": 7
+      },
+      {
+        "plant_group": "CT_CHP",
+        "fleet_plants": 38,
+        "in_campd": 5,
+        "steam_load_reporting": 3
+      }
+    ],
+    "chp_plants_in_campd": 28,
+    "chp_plants_total": 113,
+    "reading": "TWO structural gaps, neither a join failure: (1) 75% of MISO's CHP fleet is absent from CAMPD entirely (small/non-Part-75 cogens with no CEMS obligation); (2) of those present, only a minority report steam load, the CHP signature this construction keys on. MISO's CC_CHP class -- 7,036 MW, the largest -- has exactly ONE steam-load-reporting plant."
+  },
+  "incumbent": {
+    "path": "chp_btm_pct -> CHP_BTM_PCT_BY_SECTOR (sector default); thermal_tranches_MISO.csv carries NO chp_btm_pct column",
+    "merchant_default_pct": 35.0,
+    "self_declared": "residual-identified ('no independent source yet')"
+  },
+  "verdict": "REFUSE"
+}

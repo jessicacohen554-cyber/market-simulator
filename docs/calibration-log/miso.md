@@ -9169,3 +9169,84 @@ family (miso-186/187/188/191) is at its adjudicated frontier: every named
 membership blind spot is closed.
 
 Finding: `FINDING-miso191-binning-aware-exit-2026-08-31.md`.
+
+---
+
+## miso-192 (2026-08-31) — D-4 posture sitting: the exhaustion premise CORRECTED, one withdrawn charter, and `chp_btm_measured` REFUTED zero-solve
+
+**Keeper UNCHANGED** at `2026-08-30-miso-191-bexit`; determination NOT-YET on
+{C3a-2025 −12.3405 %} alone, reproduced exactly from committed artifacts
+(C1 16/16 / 12/12 free; C3c the single ledgered caveat; C6 attested; C8 PASS
+with its two grounded notes; DOF 37/2). `audit_keepers --iso MISO` PASS 0/0,
+`build_status --iso MISO --check` in sync, matrix integrity OK. **No LP solved;
+no run registered** (rule 15 binds runs — miso-156/189 precedent).
+**Distance to band: $1.06/MWh = +2.34 pp** (model 39.85 vs actual 45.46).
+
+**THE SESSION'S HEADLINE IS A CORRECTION TO THIS LANE'S OWN STANDING RECORD.**
+The owner declined the posture options and asked whether any other option
+really remained. The census that forced showed the queue is empty only of
+**curated names**: MISO's shard carries **40 `U` + 5 `O`** cells (K 68 · R 14 ·
+I 13 · G 7 · · 103 = 250), of which **32 are backcast-touching**, and several
+are **keeper-armed in another ISO and never examined here** — `chp_btm_measured`,
+`cc_duct_peaking`, `egrid_identity_heat_rates`, `gas_st_startup_spread`
+(`K`@NYISO); `gas_coldsnap_derate`, `winter_fuelsec_posture` (`K`@NEISO);
+`tac_load_coverage`, `lcr_tsl_published` (`K`@CAISO/NYISO). **No adjudicated
+`R`/`I`/`G` cell is reopened** — what is corrected is the *claim of exhaustion*,
+which matters because a rubric-v3.0 `model-class` ledger entry is admissible
+only when it cites exhaustion of the within-class mechanism space.
+Against that, the **offer family's exhaustion is real and now has its cause on
+the record**: four ERCOT-`K` per-plant offer cells are structurally blocked here
+because MISO's offer corpus is **masked with no fuel/technology attribute** and
+the class bridge was **refuted at miso-138** — which is exactly why miso-178 §7
+forced the distributional form that miso-179 (`R`) / miso-180 (`I`) adjudicated.
+
+**A CHARTER WITHDRAWN ON EVIDENCE, THE ERROR MINE.** The owner first chartered
+the miso-141 summer-derate double count as a rule-14 repair. It was **already
+repaired**: `summer_derate_basis_aware` (miso-148) is the exact §11.2 successor
+— class-agnostic, zero continuous DOF, `plant_level_fleet`-gated — and is
+**armed on the live keeper**, cell `K`. Its adverse cost is already paid and the
+current −12.34 % is post-repair (miso-148: summer hole closed, Jun–Sep 2025
+`AV_CC−A_CC` −2,296/−2,451/−2,157/−1,560 → −373/−369/−77/+419 MW; C3a
+−0.49/−6.01/−14.15 → −1.98/−8.03/−15.58). I had read the
+`cc_nameplate_summer_derate: U` cell and miso-141's "refused as insufficient"
+note without cross-reading the shard's own `summer_derate_basis_aware: K`.
+Two adjacent checks close the family: **no coal analogue exists**
+(`SUMMER_CLASS_DERATE` has no coal member) and **`unit_outage_lp_capacity_basis`
+(`K`@CAISO) is inert here by construction** (it repairs a denominator raised
+only under `cc_nameplate_summer_derate`, which MISO does not run — arming it
+would *introduce* a mismatch). **Rule-14 summer-basis family CONFIRMED CLOSED.**
+
+**`chp_btm_measured` — CHARTERED, THEN REFUTED AT ITS OWN PRE-FROZEN LINE.**
+Rule committed at `1892bb7` and pushed **before** any adjudicating quantity:
+CANDIDATE iff a per-plant, EIA-923-independent delivered-energy series covers
+**≥50 %** of MISO CHP nameplate (the line miso-141 §11.2 used to refuse a 52 %
+repair). NYISO's Gold Book has no MISO equivalent and transfers nothing
+(rule 25/28(d)), so the object was given its best chance through the repo's
+**ISO-agnostic** `chp-btm-share` construction — `(eia923_net − campd_net)/eia923_net`
+over steam-load-reporting CEMS units. **Measured coverage 5.81 %** (673.3 of
+11,597.3 MW; 7 of 113 plants), **ZERO on the two gas classes holding 83 % of the
+MW**. Not a join failure: **75 % of MISO's CHP fleet is absent from CAMPD
+entirely** (28 of 113 present) and only **11** of those report steam load —
+**CC_CHP, 7,036 MW, has exactly ONE**. Cell `chp_btm_measured` **`U` → `R`** on
+the miso-179 precedent (pre-check refutation, no field created, no solve spent).
+Reported against interest: the frozen rule's two refuse sub-cases both minted
+`G` and did not anticipate this third case (per-plant meter, immaterial
+coverage), so the `R` is this session's judgment, not the rule's; and the
+frozen "published by MISO" clause was **over-narrow** (EPA CAMPD meets its
+substance), an amendment disclosed rather than applied silently.
+**What the refusal leaves standing, named not papered:** `thermal_tranches_MISO.csv`
+carries **no `chp_btm_pct` column**, so all 113 MISO CHP plants sit on
+`CHP_BTM_PCT_BY_SECTOR`, whose `"merchant"` 35.0 is **self-declared
+residual-identified** ("no independent source yet") — a known rule-13 weakness
+kept rather than replaced by an invented apportionment (rule 24 + miso-176 K-2).
+
+**D-4 posture remains the OWNER'S, and is now better posed.** Option (i) needs
+**three** rubric amendments (`LEDGERABLE_CRITERIA`, the v3.0 SUPPORTING-tier
+guard, `MAX_LEDGERED_CAVEATS` 1→2 — fewer leaves NOT-YET with a different reason
+line) and is harder to justify, since v3.0 requires an exhaustion citation the
+census contradicts and miso-178 §3 measured the target **inside deterministic
+reach** (DA→RT wedge **+1.98 pp**, net positive; 2025 deterministic-LP ceiling
+**+1.96 %**). Option (ii) is a **budget** decision with candidates on the table,
+not a frontier. Option (iii) now has named objects.
+
+Finding: `FINDING-miso192-chp-btm-phase0-2026-08-31.md`.
