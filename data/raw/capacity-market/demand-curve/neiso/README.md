@@ -44,3 +44,52 @@ So this is **not** a retrieval gap and there is nothing to intake. How to
 represent ISO-NE past 2027/2028 — hold FCA 18 flat, or encode FCA 19 as an
 explicitly-labelled superseded vintage — is **owner decision FF-G3 D4**
 (`docs/handoffs/ff-g3-net-cone-forward-2026-07.md` §5).
+
+## NEISO-RC-R R2 intake (2026-08-31) — clearing evidence + Net ICR + the FCA 13 published tail
+
+The `reliability_requirement` (Net ICR, MW) and clearing-outcome `curve_point`
+rows added 2026-08-31 re-derive the model's NEISO vintage curves from published
+auction evidence (charter: `docs/handoffs/capx-director-prompt-pack-2026-08.md`
+§NEISO-RC-R, executing `FINDING-capx-neiso-rc-phase0-2026-08-30.md` §6 R2).
+Derivation admissibility (rules 13/14/23): **the FCA clears ON the system-wide
+demand curve**, so each auction's published (cleared MW, clearing price) is a
+measured point on that year's published curve — verified exactly on the two
+FCAs whose curve segments are themselves published: FCA 11 ($5.297 at
+35,835 MW lands on the slide-14 piecewise table's last segment) and FCA 13
+($3.800 at 34,839 MW lands on the ICR-filing tail segment to the third
+decimal: 7.03×(35,713−34,839)/(35,713−34,097) = 3.802). No parameter comes
+from any model residual. The Dynamic De-List Bid Threshold was examined as a
+candidate anchor and NOT used: it is a de-list *review* threshold (a
+supply-side administrative bar — $4.300/kW-month at FCA 15, per the ISO's
+public information filing for FCA 15), not a point on the demand curve;
+clearing prices below it (every FCA 14–17 clear) confirm the auctions cleared
+on the curve with dynamic de-listing active.
+
+Source identity record (sha256 of each retrieved document, accessed 2026-08-31):
+
+| document | sha256 |
+|---|---|
+| `summary_of_historical_icr_values.xlsx` (Net ICR / Net CONE per FCA; "As of December 2025" edition) | `2b54e8b5b4fd8618f95321c8d96adfc5db5e889b2acb06a1c28e85a03978dec1` |
+| `fca-results-report.pdf` (concatenated official FCA 8–18 result reports; clearing prices) | `96efddaa2e941857693007610554d9f96558dc59cbe545372188aed30bde769d` |
+| `icr_filing_fca_13.pdf` (ER19-291-000; FCA 13 transition-tail segment, testimony p.48) | `1c6f1728ec6bd53ea95b69c77908b6e2eea15d66abfce95a845ae756dfc3897b` |
+| `a03_fca18_icr_related_value_calculation_assumptions.pdf` (FCA 18 Net CONE / starting price) | `e041d7dc399fa14c58a1ee213283796f8f4b7f26c9e1524c2083342e4ea4c457` |
+| `20200205_pr_fca14_initial_results.pdf` (33,956 MW; surplus 1,466 ⇒ Net ICR 32,490 ✓) | `7ff5b46ac88d9722f36ba76586c8523932615f0a65dc2d0f733c14ce5cc4e395` |
+| `20210226_pr_fca15_final_results.pdf` (34,621 MW; also tabulates FCA 11/12/13: 35,835/$5.30, 34,828/$4.63, 34,839/$3.80) | `895350ee178de8f8a7182609c6c3869f8c44017e29c7d623d3c09653c9ffc81e` |
+| `20220309_pr_fca16_initial_results.pdf` (32,810 MW; Net ICR 31,645 ✓) | `b28ebc2e1617bea3a21f6ece6727dfdc1e0a12241eaecb3fa2141ccd6acac7d4` |
+| `20230310_pr_fca17_initial_results_final.pdf` (31,370 MW) | `fb7e917640ec9312c1e8c377a010898531179bc8f94c3b274b752f13670f7fc0` |
+| `20240209_pr_fca18_initial_results.pdf` (31,556 MW; Net ICR 30,550 ✓) | `9c355d8059fb1bb0a0f0458f273c3c6f81bc1476d298e3f7488a940483262041` |
+
+Recovery is re-fetch from the URLs in the CSV rows (payloads not committed —
+bloat discipline; the sha256 table above is the identity record).
+
+**What the derived normalized MRI-era clearing points show** (x = cleared MW ÷
+Net ICR, y = clearing price ÷ Net CONE): FCA 18 (1.0329, 0.3944) · FCA 17
+(1.0351, 0.3520) · FCA 16 (1.0368, 0.3469) · FCA 15 (1.0406, 0.2999) · FCA 14
+(1.0451, 0.2444) — five auctions across five years, monotone in normalized
+space, tracing one common curve tail; the published FCA 13 tail zero-crosses at
+35,713/33,750 = 1.0582. This REFUTES the Phase-0 finding's premise that the
+FCA-11-geometry zero-cross at 1.083 underpays at surplus: the measured MRI-era
+curve sits BELOW the linear FCA-11 geometry throughout (1.0, 1.06] and reaches
+zero EARLIER (~1.058–1.065), not later. Real FCAs cleared $2.00–3.58/kW-month
+at 3.3–4.5% surplus — never at the ≥8% surplus positions where the model's
+screens evaluate the curve.

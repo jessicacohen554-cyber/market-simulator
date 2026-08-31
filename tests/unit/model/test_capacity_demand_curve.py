@@ -492,6 +492,105 @@ class TestP0BReconciliation(unittest.TestCase):
             places=2,
         )
 
+    def _neiso_clearing_point(self, dy):
+        # (cleared MW / Net ICR, clearing $/kW-mo / net-CONE) from the R2
+        # intake rows: the clearing outcome is that vintage's curve_point 0.
+        rows = self._rows("NEISO", dy)
+        cp = rows[(rows.metric == "curve_point") & (rows.point_index == 0)]
+        net_icr = self._scalar(rows, "reliability_requirement")
+        net_cone = self._scalar(rows, "net_cone")
+        return (
+            float(cp.x_value.iloc[0]) / net_icr,
+            float(cp.y_value.iloc[0]) / net_cone,
+        )
+
+    def test_neiso_mri_era_shape_reconciles_with_clearing_evidence(self):
+        # NEISO-RC-R R2 (2026-08-31): every MRI-era vintage (FCA 14-18,
+        # delivery years 2023-24..2027-28) carries the pooled measured
+        # clearing-point shape, so each vintage's curve passes through its
+        # OWN auction's published (cleared/Net ICR, price/net-CONE) point —
+        # asserted here against the raw intake rows (rule 13). The shared
+        # zero-cross is FCA 13's published tail zero-quantity divided by its
+        # published Net ICR (the only published zero of the MRI era).
+        mri_years = ("2023-2024", "2024-2025", "2025-2026", "2026-2027", "2027-2028")
+        pooled = {
+            (round(x, 6), round(y, 6))
+            for x, y in (self._neiso_clearing_point(dy) for dy in mri_years)
+        }
+        r13 = self._rows("NEISO", "2022-2023")
+        zero_mw = float(
+            r13[r13.metric == "curve_point"].sort_values("point_index").x_value.iloc[-1]
+        )
+        zero_x = zero_mw / self._scalar(r13, "reliability_requirement")
+        for dy in mri_years:
+            vintage = resolve_demand_curve_vintage("NEISO", int(dy[:4]))
+            self.assertEqual(vintage.delivery_year, dy)
+            verts = {
+                (round(p.reserve_ratio, 6), round(p.price_frac_net_cone, 6))
+                for p in vintage.demand_curve
+            }
+            self.assertTrue(
+                pooled <= verts, f"NEISO {dy} missing measured clearing points"
+            )
+            # Net CONE at the requirement (the MRI design calibration point)
+            # and the published zero-cross close the shape.
+            self.assertIn((1.0, 1.0), verts)
+            self.assertAlmostEqual(
+                vintage.demand_curve[-1].reserve_ratio, zero_x, places=6
+            )
+            self.assertEqual(vintage.demand_curve[-1].price_frac_net_cone, 0.0)
+
+    def test_neiso_fca11_and_fca13_vintages_match_their_published_tables(self):
+        # FCA 11 (2020-2021): the vintage curve is the EXACT published
+        # 4-breakpoint table normalized by the published Net ICR; FCA 12
+        # (2021-2022) shares it (same design family, identical published
+        # 1.600 cap fraction). FCA 13 (2022-2023): the published transition
+        # construction — cap, net-CONE at requirement, then the ICR filing's
+        # tail segment endpoints.
+        r11 = self._rows("NEISO", "2020-2021")
+        icr11 = self._scalar(r11, "reliability_requirement")
+        nc11 = self._scalar(r11, "net_cone")
+        pts11 = r11[r11.metric == "curve_point"].sort_values("point_index")
+        v11 = resolve_demand_curve_vintage("NEISO", 2020)
+        # Published points 1..4 (skip the x=0 cap start — evaluate_demand_curve
+        # flat-extrapolates left of the plateau end).
+        published = [
+            (float(p.x_value) / icr11, float(p.y_value) / nc11)
+            for _, p in pts11.iterrows()
+            if float(p.x_value) > 0
+        ]
+        self.assertEqual(len(v11.demand_curve), len(published))
+        for cp, (x, y) in zip(v11.demand_curve, published):
+            self.assertAlmostEqual(cp.reserve_ratio, x, places=6)
+            self.assertAlmostEqual(cp.price_frac_net_cone, y, places=6)
+        self.assertEqual(
+            resolve_demand_curve_vintage("NEISO", 2021).demand_curve,
+            v11.demand_curve,
+        )
+        r13 = self._rows("NEISO", "2022-2023")
+        icr13 = self._scalar(r13, "reliability_requirement")
+        nc13 = self._scalar(r13, "net_cone")
+        cap13 = self._scalar(r13, "price_cap")
+        pts13 = r13[r13.metric == "curve_point"].sort_values("point_index")
+        v13 = resolve_demand_curve_vintage("NEISO", 2022)
+        self.assertAlmostEqual(
+            v13.demand_curve[0].price_frac_net_cone, cap13 / nc13, places=6
+        )
+        self.assertEqual(v13.demand_curve[1].reserve_ratio, 1.0)
+        for cp, (_, p) in zip(v13.demand_curve[2:], pts13.iterrows()):
+            self.assertAlmostEqual(cp.reserve_ratio, float(p.x_value) / icr13, places=6)
+            self.assertAlmostEqual(
+                cp.price_frac_net_cone, float(p.y_value) / nc13, places=6
+            )
+        # The FCA 13 auction cleared ON the published tail segment: $3.800 at
+        # 34,839 MW (results report / press) = the segment's interpolation to
+        # the third decimal — the fact that licenses reading clearing points
+        # as curve points (README, R2 intake).
+        x0, y0 = pts13.iloc[0].x_value, pts13.iloc[0].y_value
+        x1, y1 = pts13.iloc[1].x_value, pts13.iloc[1].y_value
+        interp = y0 * (x1 - 34_839.0) / (x1 - x0) + y1 * (34_839.0 - x0) / (x1 - x0)
+        self.assertAlmostEqual(interp, 3.802, places=3)
+
     def test_miso_curve_matches_published(self):
         rows = self._rows("MISO", "2025-2026")
         design = MARKET_DESIGN["MISO"]

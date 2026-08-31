@@ -225,8 +225,13 @@ def _neiso_fca11_geometry(rows: list[dict]) -> dict[str, float]:
     """Net-ICR-normalized cap/zero reserve positions from the FCA11 MW curve.
 
     The published FCA11 (2020-2021) curve is in MW; the Net ICR is the MW where
-    price == net-CONE. Positions are MW / Net-ICR — the exact construction the
-    implemented _NEISO_FCA_CURVE used.
+    price == net-CONE. Positions are MW / Net-ICR. NOTE (NEISO-RC-R R2,
+    2026-08-31): the implemented ``_NEISO_FCA_CURVE`` no longer shares this
+    linear FCA-11 geometry — its MRI-era vintages carry the measured
+    clearing-point shape (zero-cross 1.0582, not 1.083). This helper's linear
+    ``YearParams`` remain Pass 1's own position-inversion approximation only;
+    the cap x-position it yields still clamps to the implemented curve's cap
+    plateau, so the 1A shape-reproduction check is unaffected.
     """
     pts: list[tuple[float, float]] = []
     nc = None

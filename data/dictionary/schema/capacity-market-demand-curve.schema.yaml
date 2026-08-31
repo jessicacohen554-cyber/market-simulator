@@ -130,6 +130,12 @@ columns:
       reliability_requirement / reliability_requirement_frr_adj are PJM's
       published RTO Reliability Requirement (UCAP MW) unadjusted and adjusted
       for FRR (the RPM-market requirement the VRR curve is drawn against);
+      ISO-NE reuses bare reliability_requirement for its published Net ICR
+      (QC MW — ICR minus HQICCs, the requirement the system-wide FCA demand
+      curve is developed against; NEISO-RC-R R2 intake 2026-08-31, which
+      also records each FCA's clearing outcome as a measured curve_point on
+      that year's published curve — the auction clears ON the curve, verified
+      exactly on the published FCA 11 table and FCA 13 tail segment);
       ee_addback is PJM's published EE Addback (UCAP MW) — the VRR point MW
       levels divided by (reliability_requirement_frr_adj + ee_addback)
       reproduce PJM's own Manual-18 pct_of_requirement fractions (verified
