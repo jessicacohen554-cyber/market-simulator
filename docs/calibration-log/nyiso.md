@@ -8437,3 +8437,158 @@ object carries no mechanism to adjudicate. `scuc_load_pocket_commitment` stays
 not triggered (no new `ScenarioConfig` field).
 
 Next shorthand: nyiso-163.
+
+## 2026-08-31 — nyiso-163: the Leg-2 access route VERIFIED and sharpened, the on-receipt identifiability gate BUILT AND VALIDATED before use, and the nyiso-97 verdict RE-CONFIRMED at IN-SPAN vintage from a PUBLIC source (zero solve)
+
+Access-retry + harness lane. Zero solve, committed artifacts and public
+documents only. Record:
+`docs/FINDING-nyiso163-aorr-access-and-gate-2026-08-31.md`. **Keeper, shard,
+marker, frontier, determination and matrix all UNTOUCHED; this session rules
+nothing and promotes nothing.** State re-verified in-session, not taken on
+trust: `calibration_verdict --run-id 2026-08-30-nyiso-159-loss-surface` →
+**NOT-YET on exactly {C3a-2025 −11.5 %, C3c}** (C3c not lone, so the rule-22
+standing rule stays silent and both failures stand); `audit_keepers --iso
+NYISO` → **PASS 0/0**. `DECISION-CARD-nyiso161` is **FILED AND UNDECIDED** (no
+ruling commit after `d8b0ea8`), so this proceeds under its §6: the MyNYISO
+stakeholder route needs no ruling.
+
+**(1) The access route holds and is MORE CONCRETE than nyiso-161 recorded.**
+The Salesforce article is a JS shell that returns only a "CSS Error" placeholder
+to a non-browser fetch and could not be read directly; the route was confirmed
+from NYISO's indexed content and the form itself. The correction that matters:
+the **CEII/NDA form IS the account application, not a contingency** — nyiso-161
+had it as conditional ("if the table is CEII-classed"). Actual path: submit the
+CEII Request Form + NDA (`nyiso.com/public/webdocs/markets_operations/services/
+customer_relations/CEII_Request_Form/CEII_Request_Form_and_NDA_complete.pdf`)
+selecting the "MyNYISO.com UserID and Password" option → NYISO **Legal** review →
+on approval, a link to apply for the account → access to the secure sections
+where Operating Committee/Planning documents reside. Contacts:
+`stakeholder_services@nyiso.com` / 518.356.6060;
+`customer_registration@nyiso.com` / 518.356.6060 opt 3. Eligibility to
+**stakeholders**, not only market participants, confirmed. A single ready-to-send
+request is in the finding §2.1, naming the INTAKE-SPEC §2 list (a)–(c) by the
+**current** identifiers plus a new item (d), each with its usability test stated
+so a partial fetch is caught at the counter.
+
+**(2) The gate is built, and it was built BEFORE any current-vintage rows were
+read** — deliberate ordering, recorded, because it is what makes §3 an
+application of a pre-committed test rather than one shaped around its input.
+`scripts/probes/_nyiso163_aorr_gate.py`: seven fail-closed tests (T0 vintage,
+T1 Zone-J pocket, T2 MW/min-units, T3 eligible unit set, T4 observable trigger,
+T5 rule-13 forward story, T6 provenance), PASS iff ≥1 row passes all seven.
+Every test defaults to failure; a missing field, null, unparseable number,
+unrecognised enum, empty input or raising test is a FAIL, never a skip. **The
+anti-inference guard is the substance:** each of the three quantities must carry
+a `quote` that is a **verbatim substring of the row's own published text**, so a
+number absent from the document cannot pass — rule 13 enforced by the program
+rather than by a future session's diligence. `derivation_basis` additionally
+hard-fails conduct / BPCG / make-whole / LBMP / residual / inference **by name**
+(the nyiso-97 §5 bar). Exit 0=PASS, 2=FAIL, 3=unreadable (distinct, so a
+transcription error is never misread as an adjudication).
+
+**(3) Validation — three legs, all required, all passing** (`--self-test`
+exit 0; `results/calibration/_nyiso163_gate_acceptance_negcontrol.json`).
+**Leg 1 negative control:** the public 2008 Appendix B → **FAIL**, and row by
+row for nyiso-97's own reasons, not one blanket cause: LRR 1 {T0,T2,T3,T4,T5},
+LRR 2 {T0,T2,T4,T5}, **LRR 3 {T0 ONLY}**, ARR 37 {T0,T2,T3,T4,T5}, ARR 66
+{T0,T2,T4,T5}, ARR 28 {T0,T1}. The fixture encodes each row **as generously as
+the published text honestly allows** — a control that withheld quantities would
+prove nothing. **LRR 3 failing on vintage alone is the informative result:** it
+is the one 2008 row carrying a load threshold, a min-units count and an
+enumerated unit set, so its current-vintage successor is the likeliest to clear.
+**Leg 2 discrimination:** a synthetic identifying row → **PASS**, without which
+leg 1 would be worthless (a constant-FAIL function also "fails" the control).
+**Leg 3 fail-closed:** 7/7 adversarial cases FAIL, including a fully-specified
+row whose parameter is **not quotable** from its own text, and one with
+`derivation_basis: residual`.
+
+**(4) UNPLANNED AND THE REAL EVIDENTIARY GAIN — nyiso-97 RE-CONFIRMED at
+IN-SPAN vintage from a PUBLIC source.** Verifying the access route surfaced the
+**current Manual 12 (issued July 2026)**, whose Attachment B splits the former
+Appendix B in a way nyiso-97 did not have: **Table B.5 (ARR/AORR) →
+`nyiso.com/reports-information`, still walled**; but **Table B.4 (Local
+Reliability Rules) → the NYSRC Reliability Rules — PUBLIC** (the URL Manual 12
+prints is 404; live successor
+`nysrc.org/documents/nysrc-reliability-rules-compliance-monitoring/`). nyiso-97
+§2 checked NYSRC for an **AORR** posting and correctly found none — the **LRR**
+half lives there, in a different document. Rows fetched, transcribed
+(`scripts/probes/_nyiso163_aorr_current_public_2026.json`) and run
+(`results/calibration/_nyiso163_gate_current_public.json`) from **NYSRC RRC
+Manual V48 (final, 7-17-2026) Section G**. **Vintage established from the
+source's own Version History** — exactly what INTAKE-SPEC §2 item (c) demands of
+a current snapshot: v46 (2022-06-10) in force at span start; v47 (2024-06-14)
+changed only RR B.5/B.1/Tables B-1,B-3; v48 changed only RR A.2; **last Section-G
+change v42 (2018-02-09)**. So the quoted G.1/G.2 text was in force for the whole
+of 2023–2025. **VERDICT FAIL, 5 rows / 0 qualifying, and it fails on CONTENT** —
+every row clears T0/T1/T6 and fails T2/T3/T4/T5. G.1 R2 — *"Unit commitment in
+the New York City (NYC) zone shall be based on second contingency operation…"* —
+**is the row the winter face would need**, in current force, and carries no MW,
+no min-units, no unit set, no observable trigger. G.2 §D is decisive: *"There are
+applications, approved by the NYISO for implementing this Reliability Rule, which
+specify minimum oil burn requirements for select generators in New York City"* —
+the public rules layer states **in terms** that the operative parameters live in
+the **Applications**. **What this settles:** nyiso-97's blocker 2 ("the public
+vintage is not the as-enforced rule") **no longer carries the verdict** — the
+verdict now rests on blocker 1, content, at in-span vintage. **What it does NOT
+settle: Leg 2 is NOT discharged** — the rules layer is not the artifact §2 asks
+for (Applications are, per NYSRC §1.2.8, *"operating procedures"* — the SO3-18
+class), so this is a FAIL on the wrong document. Only the walled Applications
+table can close or open Leg 2; the gate stands ready unchanged.
+
+**(5) One judgment call SURFACED rather than silently made — G.1 R3.2**
+(*"A percentage of the ten (10) minute NYCA operating reserves equal to the ratio
+of the NYC zone peak load to the statewide peak load…"*). The closest the public
+layer comes to identifying, and the one place the verbatim-number requirement
+does real work: it states a **derivation rule**, not a level — no MW in the text,
+and the NYCA reserve it scales is set by another rule. Fails T2/T4. A session
+holding the NYCA constant *could* re-encode it as derived — but it is a
+**locational reserve** requirement, **not** the in-City **commitment** formation
+the winter face needs, and arming it would be a reserve lever, which rule 19
+`[R-ONE-MECH]` and the closed ledgered-C3c queue forbid. **Flagged for the owner;
+nothing armed.**
+
+**(6) A dead end pre-adjudicated so nobody re-walks it.**
+`nyiso.com/documents/20142/3035389/A-B-References-2023.pdf` reads like an
+"Appendix A–B" document; "A-B" is **Accounting and Billing** (Training Reference
+v1.0, 11/18/2024). Useful for one fact — **LRR I-R3 & I-R5 (Min Oil Burn) are
+LIVE settlement charge codes in 2023–2025** (MOB payment daily bill code 328, MOB
+charge 839), so the obligation is enforced today and its requirement genuinely
+exists to be requested — and barred for everything else: it carries only the
+**make-whole OUTCOME**, which rule 13 and the §5 bar exclude as a requirement
+substitute. **Do not mine it for parameters.**
+
+**(7) The standing watch is RECORDED, not re-run** (finding §6): the three
+nyiso-97 re-open conditions, the exact source that would satisfy each, last-checked
+source+date, and a cadence. Condition 1 **not satisfied** (both NYISO URLs are JS
+shells; the reachable public layer is the NYSRC rules, which fail on content;
+NYSRC 2026 postings PRR 157/158/159/161 — no AORR restoration, per nyiso-161
+2026-08-30). Condition 2 **not satisfied** (NY PSC 25-E-0764 planning-genre,
+nyiso-161). Condition 3 **OPEN — the live leg**; route verified, request not yet
+sent. New watch item: the **published MOB dual-fuel unit list** NYSRC G.2 R3
+obliges the NYISO to publish, not locatable publicly as of 2026-08-31 — item (d)
+of the request. Cadence: condition 1 quarterly or on a Manual 12 re-issue /
+NYSRC version bump (the Version History is the cheapest single check); condition
+2 opportunistically only, it has failed twice; condition 3 on the owner's word.
+Three checks on 08-30 and a fourth on 08-31 is already past diminishing returns.
+
+**(8) Not a keeper candidate, and nothing to register.** No run was produced —
+zero solve, no mechanism, no prereg, no A/B, no control. Rule 15 is not triggered
+(no run exists to register); rule 16 is not engaged (no solve years). No holdout
+spend: the freeze is ACTIVE, NYISO holds **no** `complete` marker (withdrawn
+2026-08-30, Q5-W) and is absent from `final`. **Matrix: NO cell moves** — rule 26
+duty (b) is not triggered because no mechanism was tested;
+`scuc_load_pocket_commitment` stays **G** and `diurnal_price_amplitude` stays
+**G**; duty (c) not triggered (no new `ScenarioConfig` field). The §4 evidence
+strengthens the existing `G` justification rather than changing the cell.
+
+**Where the lane stands.** The winter face remains identification-blocked and the
+determination remains **NOT-YET on {C3a-2025, C3c}**. What changed: the block is
+now precisely located (parameters live in the Applications layer; the public
+rules layer has been checked at in-span vintage and does not carry them), the
+owner's action is one request, and the test that will adjudicate whatever comes
+back is committed and pre-validated. If registration succeeds the leg resumes at
+full speed; if the gate then returns FAIL on the real Applications rows, the leg
+closes with cause a second time — a legitimate outcome, to be recorded
+unrewritten.
+
+Next shorthand: nyiso-164.

@@ -1,0 +1,289 @@
+{
+  "gate": "nyiso-163 AORR on-receipt identifiability gate",
+  "spec": "nyiso-97 \u00a71/\u00a74 content test; INTAKE-SPEC-nyiso156 \u00a72",
+  "verdict": "FAIL",
+  "n_rows": 6,
+  "n_qualifying": 0,
+  "qualifying_rows": [],
+  "rows": [
+    {
+      "row_id": "Table B.4 LRR 1 (Con Edison, PSC Directive July 17, 1961)",
+      "qualifies": false,
+      "failed_tests": [
+        "T0_vintage",
+        "T2_parameter",
+        "T3_unit_set",
+        "T4_trigger",
+        "T5_forward_story"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": false,
+          "reason": "superseded 2017-10-31, before the 2023-01-01 span start"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'Con Edison in-City'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": false,
+          "reason": "no eligible unit set (no unit list to derive)"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "trigger depends on an unpublished TO procedure, or the dependence is unstated (fail-closed)"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": false,
+          "reason": "no rule-13 forward story"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "Table B.4 LRR 2 (Con Edison, PSC Order No. 27302)",
+      "qualifies": false,
+      "failed_tests": [
+        "T0_vintage",
+        "T2_parameter",
+        "T4_trigger",
+        "T5_forward_story"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": false,
+          "reason": "superseded 2017-10-31, before the 2023-01-01 span start"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'Con Edison in-City'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": true,
+          "reason": "closed_class set of 2 unit(s), quoted verbatim"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "no stated trigger"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": false,
+          "reason": "no rule-13 forward story"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "Table B.4 LRR 3 (Con Edison gas-burning / minimum oil burn)",
+      "qualifies": false,
+      "failed_tests": [
+        "T0_vintage"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": false,
+          "reason": "superseded 2017-10-31, before the 2023-01-01 span start"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'Con Edison in-City'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": true,
+          "reason": "min_units=2 quoted verbatim from the row"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": true,
+          "reason": "enumerated set of 3 unit(s), quoted verbatim"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": true,
+          "reason": "observable from forecast_load_mw, quoted verbatim"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": true,
+          "reason": "regenerates from forecast_load_mw"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "ARR 37 (Con Edison, in-City fast load pick-up / maximum generation)",
+      "qualifies": false,
+      "failed_tests": [
+        "T0_vintage",
+        "T2_parameter",
+        "T3_unit_set",
+        "T4_trigger",
+        "T5_forward_story"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": false,
+          "reason": "superseded 2017-10-31, before the 2023-01-01 span start"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'Con Edison in-City cable system'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": false,
+          "reason": "no eligible unit set (no unit list to derive)"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "trigger depends on an unpublished TO procedure, or the dependence is unstated (fail-closed)"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": false,
+          "reason": "no rule-13 forward story"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "ARR 66 (Con Edison, LRR I-R1, Gowanus/Narrows quick start)",
+      "qualifies": false,
+      "failed_tests": [
+        "T0_vintage",
+        "T2_parameter",
+        "T4_trigger",
+        "T5_forward_story"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": false,
+          "reason": "superseded 2017-10-31, before the 2023-01-01 span start"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'Greenwood/Staten Island load pocket'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": true,
+          "reason": "enumerated set of 2 unit(s), quoted verbatim"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "trigger depends on an unpublished TO procedure, or the dependence is unstated (fail-closed)"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": false,
+          "reason": "no rule-13 forward story"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "ARR 28 (LIPA, unit-commitment voltage support)",
+      "qualifies": false,
+      "failed_tests": [
+        "T0_vintage",
+        "T1_zone"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": false,
+          "reason": "superseded 2017-10-31, before the 2023-01-01 span start"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": false,
+          "reason": "zone 'K' is not a qualifying NYC pocket zone ('J',) (Zone K already carries the published nyiso_li_lcr_tsl import limit -- nyiso-97 \u00a74)"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": true,
+          "reason": "min_units=2 quoted verbatim from the row"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": true,
+          "reason": "enumerated set of 6 unit(s), quoted verbatim"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": true,
+          "reason": "observable from measured_load_mw, quoted verbatim"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": true,
+          "reason": "regenerates from forecast_load_mw"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    }
+  ]
+}

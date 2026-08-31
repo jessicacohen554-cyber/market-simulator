@@ -1,0 +1,152 @@
+{
+  "control": "2008-vintage NYISO Manual 12 Appendix B (Version 2.1 09/04/2008)",
+  "purpose": "NEGATIVE CONTROL for the nyiso-163 on-receipt AORR identifiability gate. nyiso-97 §4 adjudicated this vintage NON-IDENTIFYING ON CONTENT. The gate MUST return FAIL on it; a gate that passes it is broken and must be fixed, never loosened.",
+  "provenance": "Rows transcribed verbatim from docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md §3, which quotes the publicly mirrored October 2017 Manual 12 (Version 3.4) whose Appendix B pages are stamped Version 2.1 09/04/2008.",
+  "source_urls": [
+    "https://www.ercot.com/files/docs/2011/01/28/nyiso_manual_12___transmission_and_distribution.pdf",
+    "https://www.nysrc.org/wp-content/uploads/2023/04/NYISO-Transmission-and-Dispatching-Manual-Section-2.2.6.pdf"
+  ],
+  "encoding_note": "Each row is encoded as GENEROUSLY as the published text honestly allows -- where the source states a number or a unit list, it is encoded as a claimed quantity with its verbatim quote. This is deliberate: a negative control that withheld quantities would prove nothing. The gate must fail these rows on the merits of the nyiso-97 §4 blockers, not because the fixture starved it.",
+  "rows": [
+    {
+      "row_id": "Table B.4 LRR 1 (Con Edison, PSC Directive July 17, 1961)",
+      "source": "NYISO Manual 12 Appendix B v2.1 09/04/2008, Table B.4",
+      "vintage_effective_start": "2008-09-04",
+      "vintage_effective_end": "2017-10-31",
+      "nyca_zone": "J",
+      "pocket": "Con Edison in-City",
+      "text": "Certain areas of the Con Edison system are designed and operated for the occurrence of a second contingency. Unit Commitment is based on second contingency operation as well as consideration of the Storm Watch Procedure, Loss of Six Lines South of Millwood and the locational requirements for its operating reserves.",
+      "derivation_basis": "published_document",
+      "parameter": null,
+      "eligible_unit_set": null,
+      "trigger": {
+        "observable_from": "to_internal_contingency_analysis",
+        "quote": "designed and operated for the occurrence of a second contingency",
+        "depends_on_unpublished_procedure": true
+      },
+      "forward_story": null,
+      "nyiso97_blocker": "Blocker 1 -- qualitative and condition-triggered; no MW level, no minimum-units table, no eligible-unit list."
+    },
+    {
+      "row_id": "Table B.4 LRR 2 (Con Edison, PSC Order No. 27302)",
+      "source": "NYISO Manual 12 Appendix B v2.1 09/04/2008, Table B.4",
+      "vintage_effective_start": "2008-09-04",
+      "vintage_effective_end": "2017-10-31",
+      "nyca_zone": "J",
+      "pocket": "Con Edison in-City",
+      "text": "Con Edison must maintain its 10 Minute Operating Reserve on in-City steam units and on Fast Start Gas Turbines.",
+      "derivation_basis": "published_document",
+      "parameter": null,
+      "eligible_unit_set": {
+        "kind": "closed_class",
+        "units": ["in-City steam units", "Fast Start Gas Turbines"],
+        "quote": "on in-City steam units and on Fast Start Gas Turbines"
+      },
+      "trigger": null,
+      "forward_story": null,
+      "nyiso97_blocker": "Blocker 1 -- names a class but states no MW level and no trigger; the reserve quantity itself is set elsewhere and is not published here."
+    },
+    {
+      "row_id": "Table B.4 LRR 3 (Con Edison gas-burning / minimum oil burn)",
+      "source": "NYISO Manual 12 Appendix B v2.1 09/04/2008, Table B.4",
+      "vintage_effective_start": "2008-09-04",
+      "vintage_effective_end": "2017-10-31",
+      "nyca_zone": "J",
+      "pocket": "Con Edison in-City",
+      "text": "Above 8000 MW forecast load, two of three Astoria generators shall be placed on minimum oil burn; above 9000 MW forecast load, all Astoria, Ravenswood and East River generators shall be placed on minimum oil burn.",
+      "derivation_basis": "published_document",
+      "parameter": {
+        "kind": "min_units",
+        "value": 2,
+        "quote": "two of three Astoria generators"
+      },
+      "eligible_unit_set": {
+        "kind": "enumerated",
+        "units": ["Astoria", "Ravenswood", "East River"],
+        "quote": "all Astoria, Ravenswood and East River generators"
+      },
+      "trigger": {
+        "observable_from": "forecast_load_mw",
+        "quote": "Above 8000 MW forecast load",
+        "depends_on_unpublished_procedure": false
+      },
+      "forward_story": {
+        "regenerates_from": "forecast_load_mw",
+        "responds_to_changed_conditions": true
+      },
+      "nyiso97_blocker": "Blocker 2 ONLY -- this row is the vintage's most nearly identifying: it carries a load threshold, a min-units count and an enumerated unit set. It fails on vintage alone (2008 text; the 2023-2025 NYC pocket fleet is materially different after the DEC peaker-rule and Astoria/Ravenswood steam retirements). This is the row whose CURRENT-VINTAGE successor (settled today as LRR I-R3/I-R5, Min Oil Burn) is most likely to clear the gate."
+    },
+    {
+      "row_id": "ARR 37 (Con Edison, in-City fast load pick-up / maximum generation)",
+      "source": "NYISO Manual 12 Appendix B v2.1 09/04/2008, Table B.5",
+      "vintage_effective_start": "2008-09-04",
+      "vintage_effective_end": "2017-10-31",
+      "nyca_zone": "J",
+      "pocket": "Con Edison in-City cable system",
+      "text": "In-City fast load pick up and maximum generation are used to operate the cable system at STE ratings if contingency analysis shows that the post contingency loading on the cable system will exceed STE ratings.",
+      "derivation_basis": "published_document",
+      "parameter": null,
+      "eligible_unit_set": null,
+      "trigger": {
+        "observable_from": "to_internal_contingency_analysis",
+        "quote": "if contingency analysis shows that the post contingency loading on the cable system will exceed STE ratings",
+        "depends_on_unpublished_procedure": true
+      },
+      "forward_story": null,
+      "nyiso97_blocker": "Blocker 1 -- the trigger is Con Ed's own real-time contingency analysis on its sub-transmission network, which we cannot observe; no MW level and no eligible-unit list."
+    },
+    {
+      "row_id": "ARR 66 (Con Edison, LRR I-R1, Gowanus/Narrows quick start)",
+      "source": "NYISO Manual 12 Appendix B v2.1 09/04/2008, Table B.5",
+      "vintage_effective_start": "2008-09-04",
+      "vintage_effective_end": "2017-10-31",
+      "nyca_zone": "J",
+      "pocket": "Greenwood/Staten Island load pocket",
+      "text": "Con Edison procedure SO3-18 states: The Gowanus and Narrows gas turbines will be placed in the quick start mode when contingency analysis indicates a post contingency violation to meet n-2 criteria exceeds the LTE rating of a facility in the Greenwood/Staten island load pocket.",
+      "derivation_basis": "published_document",
+      "parameter": null,
+      "eligible_unit_set": {
+        "kind": "enumerated",
+        "units": ["Gowanus", "Narrows"],
+        "quote": "The Gowanus and Narrows gas turbines"
+      },
+      "trigger": {
+        "observable_from": "to_internal_contingency_analysis",
+        "quote": "when contingency analysis indicates a post contingency violation",
+        "depends_on_unpublished_procedure": true
+      },
+      "forward_story": null,
+      "nyiso97_blocker": "Blocker 1 -- names the units but defers the operative parameters to Con Edison System Operation procedure SO3-18, which is TO-internal, NYISO-reviewed, and published nowhere."
+    },
+    {
+      "row_id": "ARR 28 (LIPA, unit-commitment voltage support)",
+      "source": "NYISO Manual 12 Appendix B v2.1 09/04/2008, Table B.5",
+      "vintage_effective_start": "2008-09-04",
+      "vintage_effective_end": "2017-10-31",
+      "nyca_zone": "K",
+      "pocket": "LIPA voltage-support areas",
+      "text": "Any 2 of 4 Northport units shall be committed at peak and at light load; up to 2 Port Jefferson units east of Holbrook; 1 Barrett unit at light load; Far Rockaway, Montauk and South Fork units at stated load levels.",
+      "derivation_basis": "published_document",
+      "parameter": {
+        "kind": "min_units",
+        "value": 2,
+        "quote": "Any 2 of 4 Northport units"
+      },
+      "eligible_unit_set": {
+        "kind": "enumerated",
+        "units": ["Northport", "Port Jefferson", "Barrett", "Far Rockaway", "Montauk", "South Fork"],
+        "quote": "Far Rockaway, Montauk and South Fork units"
+      },
+      "trigger": {
+        "observable_from": "measured_load_mw",
+        "quote": "at peak and at light load",
+        "depends_on_unpublished_procedure": false
+      },
+      "forward_story": {
+        "regenerates_from": "forecast_load_mw",
+        "responds_to_changed_conditions": true
+      },
+      "nyiso97_blocker": "Not an NYC row -- the LIPA rows ARE concrete, but they are voltage-support unit commitments on the 138/69 kV system and the Zone-K side already carries the published nyiso_li_lcr_tsl import limit in the keeper. Fails on zone (and on vintage)."
+    }
+  ]
+}

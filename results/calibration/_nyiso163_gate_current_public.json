@@ -1,0 +1,243 @@
+{
+  "gate": "nyiso-163 AORR on-receipt identifiability gate",
+  "spec": "nyiso-97 \u00a71/\u00a74 content test; INTAKE-SPEC-nyiso156 \u00a72",
+  "verdict": "FAIL",
+  "n_rows": 5,
+  "n_qualifying": 0,
+  "qualifying_rows": [],
+  "rows": [
+    {
+      "row_id": "NYSRC RR V48 G.1 R1 (Con Edison second contingency) -- successor of Table B.4 LRR 1",
+      "qualifies": false,
+      "failed_tests": [
+        "T2_parameter",
+        "T3_unit_set",
+        "T4_trigger",
+        "T5_forward_story"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": true,
+          "reason": "applicable to 2023-2025 (effective 2022-06-10 -> in force)"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'Con Edison in-City'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": false,
+          "reason": "no eligible unit set (no unit list to derive)"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "no stated trigger"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": false,
+          "reason": "no rule-13 forward story"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "NYSRC RR V48 G.1 R2 (NYC zone unit commitment) -- successor of Table B.4 LRR 1 commitment sentence",
+      "qualifies": false,
+      "failed_tests": [
+        "T2_parameter",
+        "T3_unit_set",
+        "T4_trigger",
+        "T5_forward_story"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": true,
+          "reason": "applicable to 2023-2025 (effective 2022-06-10 -> in force)"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'Con Edison in-City / NYC zone'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": false,
+          "reason": "no eligible unit set (no unit list to derive)"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "no stated trigger"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": false,
+          "reason": "no rule-13 forward story"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "NYSRC RR V48 G.1 R3.2 (NYC locational 10-minute reserve share)",
+      "qualifies": false,
+      "failed_tests": [
+        "T2_parameter",
+        "T4_trigger"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": true,
+          "reason": "applicable to 2023-2025 (effective 2022-06-10 -> in force)"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'NYC zone'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": true,
+          "reason": "closed_class set of 1 unit(s), quoted verbatim"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "no stated trigger"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": true,
+          "reason": "regenerates from forecast_load_mw"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "NYSRC RR V48 G.2 R3 (published MOB dual-fuel unit list)",
+      "qualifies": false,
+      "failed_tests": [
+        "T2_parameter",
+        "T3_unit_set",
+        "T4_trigger",
+        "T5_forward_story"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": true,
+          "reason": "applicable to 2023-2025 (effective 2022-06-10 -> in force)"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'New York City / Minimum Oil Burn program'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": false,
+          "reason": "no eligible unit set (no unit list to derive)"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "no stated trigger"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": false,
+          "reason": "no rule-13 forward story"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    },
+    {
+      "row_id": "NYSRC RR V48 G.2 D (Guidelines: where the MOB parameters actually live)",
+      "qualifies": false,
+      "failed_tests": [
+        "T2_parameter",
+        "T3_unit_set",
+        "T4_trigger",
+        "T5_forward_story"
+      ],
+      "tests": [
+        {
+          "test_id": "T0_vintage",
+          "passed": true,
+          "reason": "applicable to 2023-2025 (effective 2022-06-10 -> in force)"
+        },
+        {
+          "test_id": "T1_zone",
+          "passed": true,
+          "reason": "NYC Zone J pocket 'New York City'"
+        },
+        {
+          "test_id": "T2_parameter",
+          "passed": false,
+          "reason": "no MW level or minimum-units-online (qualitative row)"
+        },
+        {
+          "test_id": "T3_unit_set",
+          "passed": false,
+          "reason": "no eligible unit set (no unit list to derive)"
+        },
+        {
+          "test_id": "T4_trigger",
+          "passed": false,
+          "reason": "no stated trigger"
+        },
+        {
+          "test_id": "T5_forward_story",
+          "passed": false,
+          "reason": "no rule-13 forward story"
+        },
+        {
+          "test_id": "T6_provenance",
+          "passed": true,
+          "reason": "published document, source cited"
+        }
+      ]
+    }
+  ]
+}
