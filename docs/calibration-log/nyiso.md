@@ -8360,3 +8360,80 @@ routing: the winter face waits on an identification source that now requires
 a nyiso-97 re-open event; the summer face is the ledgered C3c.
 
 Next shorthand: nyiso-161.
+
+## 2026-08-31 — nyiso-162: owner ruling R-C EXECUTED — the "parked leg2 winter-locational candidate" RE-VERIFIED against the live keeper: NO candidate exists, and the object that does scores IDENTICALLY to keeper 159 on every criterion, every year (zero solve)
+
+Executes owner ruling **R-C** (2026-08-31 director sitting: *re-verify the
+parked leg2 candidate against the LIVE keeper before any promote-or-archive is
+served; nothing promotes on a stale comparison*). Zero-solve, committed
+artifacts only (the Card-3 standing-rule pattern). Record:
+`docs/FINDING-nyiso-leg2-reverify-2026-08-31.md`. **Keeper, shard, marker,
+determination and matrix all UNTOUCHED; this lane rules nothing.**
+
+**(1) There is no candidate.** The named session is **nyiso-160** (branch
+`claude/nyiso-leg2-winter-locational-wymoa4`, #4385 + #4393 — both merged, the
+remote branch deleted, nothing unmerged). Leg 2 stopped with cause **at
+ACCESS, at Step 1, before any mechanism was designed**: no prereg, no armed
+field, no `--set`, no derive, **no A/B pair and no control run**. Its sole
+registered run is `2026-08-30-nyiso-160-tpaudit-replay` — a zero-delta HEAD
+replay of the keeper's own recipe, registered under rule 15 as an audit probe
+and declared in its own records *"NEVER a keeper candidate."* What is parked is
+a **disposition question about an audit registration**, not a promotion
+question about a mechanism.
+
+**(2) The re-verification (four independent legs, no LP solve, all years
+in-training).** Against the live keeper `2026-08-30-nyiso-159-loss-surface`
+(`audit_keepers --iso NYISO` PASS 0/0 at this head): **R1 scorecard** —
+`calibration_verdict --json` on both, 60 records each, diffed on status /
+model / actual / magnitude / classification / share_pp → **ZERO record-level
+differences**; `reasons`, `caveats`, `ledger_entries`, `grade_summary`,
+`free_class_score` identical objects; the only difference anywhere is the C6
+attestation **prose**. **R2 recipe** — recursive flatten of both
+`run_config.json` (978/981 leaves), volatile provenance excluded → **0
+solve-affecting levers differ**; 0 keeper-only leaves; 3 candidate-only leaves
+(`entry_forward_reserve_leg` False, `ercot_offer_surface_cleared_share_rt_room`
+False, `..._path` None — registered ScenarioConfig defaults, rule-24 schema
+growth, all ERCOT/entry-side with no NYISO reach). **R3 hourly** — decoded
+value comparison of every value column of every sidecar, all three years:
+**max |Δ| = 0 over 1,043,280 rows**, label columns matching element-wise.
+**R4 `metrics.json`** — 58/60 leaves identical, the 2 differing being `run_id`
+and `label`.
+
+*Two corrections to the nyiso-160 record, neither material to its verdict:*
+it named **two** post-recording schema-growth keys where there are **three**
+(it omitted `ercot_offer_surface_cleared_share_rt_room_path`); and the two
+bundles also differ in **package versions incl. HiGHS 1.15.1 vs 1.14.0**
+(plus pandas/pyarrow/pydantic) — unreported there, and *strengthening*: the
+value-identity held across a solver-version change. Note also that the parquet
+**files** are not byte-identical (equal sizes, differing hashes — the writer
+version string in the footer), so the identity claim rests on the decoded
+value comparison, not on hashes.
+
+**(3) The verdict: neither improvement, regression, nor mixed — exact
+equality.** C1 all 14/14 free 10/10; C2 PASS; **C3a +2.3 / −1.2 / −11.5 %**;
+C3b NRMSE 0.114 / 0.174 / 0.198; **C3c 1/0/1 h vs actual 10/13/42 h > $300**;
+C4 gas r 0.938 / 0.904 / 0.842; C6 PASS; C8 PASS; determination **NOT-YET on
+{C3a-2025, C3c}** — **identical on both runs, Δ = 0 everywhere**. The equality
+is structural: the run cannot improve or worsen the keeper's scorecard because
+it *is* the keeper's recipe and dispatch, re-established at HEAD. For the
+owner's decision (not made here): promotion would be a formal no-op that swaps
+the nyiso-159 A/B promotion basis for a replay with no control and no
+mechanism; archiving costs nothing evidentially (the audit verdict is durable
+in `_nyiso160_tpaudit.json`, the nyiso-160 finding, this log and the R-C
+finding); the genuine open choice is **dashboard retention, not promotion**.
+
+**(4) R-C's premise, checked.** The ruling's trigger — *the candidate's
+baseline is superseded by the 157 → 159 promotion* — **does not hold for this
+session**: 157 → 159 happened at **nyiso-159, the session before leg2**, and
+nyiso-160 audited **against 159 throughout** (its own finding header names 159
+as the keeper under audit). The keeper has not moved since; nyiso-161 (#4420,
+the winter-face waiver decision card) is records-only. The ruling is executed
+in full regardless and returns a **null candidate on a baseline that was
+already current**; §3's measurement is fresh at today's head either way.
+
+**(5) Matrix.** No cell moves — rule 26 duty (b) is not triggered, because the
+object carries no mechanism to adjudicate. `scuc_load_pocket_commitment` stays
+**G** with the nyiso-160 access-stop already on its evidence line; duty (c)
+not triggered (no new `ScenarioConfig` field).
+
+Next shorthand: nyiso-163.
