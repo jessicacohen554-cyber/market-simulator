@@ -97,6 +97,16 @@ winter-face-waiver card; (b) chartering the nyiso-163b C3c scarcity program's fi
 (c) miso-192's D-4 posture options (i)/(ii)/(iii); (d) caiso-227 arm funding; (e) the ERCOT
 2024/2025 SCED conduct-corpus intake; (f) D6 release once D4-I3 lands.
 
+POST-SNAPSHOT DELTA (landed while this handoff was being written — grade these at your first
+refresh; everything above them still holds): **ercot-247: the owner DECLARED ERCOT complete +
+frontier (2026-08-31, PR #4454) — the first ERCOT rule-22 marker**, so the marker/frontier
+snapshot above is superseded: complete/frontier now include ERCOT (verify the
+calibration-complete.json entry text and its Q5-uniform-rule footing on the ercot-246
+partitioned-keeper CALIBRATED read). **D3 CONCLUDED** (PRs #4455/#4458: precommit + attribution
+— the G3 fix unmasked a compensating error; MISO G3 board row refreshed). **D8-RE EXECUTED**
+(PR #4457). **pjm-164** audited PJM's C3c reserve-dual channel for the ercot-214 phantom
+signature — verdict REAL. In-flight set is therefore: NEISO-RC-R · D4-I3 · miso-193 (watch).
+
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem,
 binding charter citation (pack section or precommit), collision-care lines, and rules 22/27/28
 reminders. Record every issuance in ledger §4 and the scoreboard in the same sitting; push
