@@ -1,0 +1,225 @@
+{
+ "session": "pjm-164",
+ "date": "2026-09-01",
+ "task": "C3c program Q1 \u2014 audit PJM's reserve duals for the ercot-214 phantom-channel signature",
+ "keeper": "2026-08-15-pjm-162-inputclock",
+ "bundle": "results/calibration/pjm_debugb_inputclock_A",
+ "zero_solve": true,
+ "construction": "caiso-144 SD overlap construction. Model tail = hours where max-across-zones P1 energy-balance dual (system_<year>.parquet 'price') > $200, replicating the render fallback the C3c gate scores (payload has NO overlay key \u2014 PJM C3c is gated on the energy-only basis). Actual tail = hours actual RT (da-fallback) > $200 from actual_lmp_hourly_PJM.parquet. Reserve binding from reserve_family_<year>.parquet (P1, dual>0). Published reserve pricing (T2) from data/raw/PJM-AS/reserve_market_results_<year>.parquet (DataMiner2, 5-min grain): per-hour value = max over SR/PR/30MIN x RTO/MAD of the within-hour time-mean MCP. Hour index: k-th real UTC hour after EST midnight Jan 1 (both sides).",
+ "replication_check": "model tail counts 4/10/32 and actual 6/18/59 match the registered payload's ordc.hoursGt200 exactly",
+ "verdict": "REAL",
+ "years": {
+  "2023": {
+   "T1": {
+    "model_tail_h": 4,
+    "actual_tail_h": 6,
+    "overlap_h": 0,
+    "overlap_share_of_model_tail": 0.0,
+    "overlap_share_of_actual_tail": 0.0,
+    "model_tail_h_with_reserve_dual_gt0": 0,
+    "overlap_of_reserve_subset_with_actual_tail": 0,
+    "reserve_bind_hours_all": 0,
+    "reserve_shortfall_hours": 0,
+    "max_family_dual": -0.0,
+    "model_tail_hours_est_hourofyear": [
+     5006,
+     5007,
+     5008,
+     5009
+    ],
+    "overlap_hours_est_hourofyear": []
+   },
+   "T2": {
+    "published_hours_hourlymean_mcp_gt25": 92,
+    "published_hours_hourlymean_mcp_gt100": 12,
+    "published_mcp_in_model_tail": {
+     "n": 4,
+     "p50": 0.1,
+     "max": 3.7,
+     "n_gt25": 0,
+     "n_gt100": 0
+    },
+    "published_mcp_in_model_reserve_bind_hours": {
+     "n": 0,
+     "p50": null,
+     "max": null,
+     "n_gt25": 0,
+     "n_gt100": 0
+    },
+    "published_mcp_in_actual_lmp_tail": {
+     "n": 6,
+     "p50": 171.9,
+     "max": 551.3,
+     "n_gt25": 6,
+     "n_gt100": 5
+    }
+   },
+   "T3": {
+    "tail_strict_removal_of_reserve_bind_hours": 4,
+    "tail_dual_subtracted_recount": 4
+   }
+  },
+  "2024": {
+   "T1": {
+    "model_tail_h": 10,
+    "actual_tail_h": 18,
+    "overlap_h": 1,
+    "overlap_share_of_model_tail": 0.1,
+    "overlap_share_of_actual_tail": 0.056,
+    "model_tail_h_with_reserve_dual_gt0": 2,
+    "overlap_of_reserve_subset_with_actual_tail": 0,
+    "reserve_bind_hours_all": 2,
+    "reserve_shortfall_hours": 0,
+    "max_family_dual": 8.49,
+    "model_tail_hours_est_hourofyear": [
+     4694,
+     4695,
+     4696,
+     4697,
+     4718,
+     4719,
+     4720,
+     4721,
+     5751,
+     5752
+    ],
+    "overlap_hours_est_hourofyear": [
+     4720
+    ]
+   },
+   "T2": {
+    "published_hours_hourlymean_mcp_gt25": 235,
+    "published_hours_hourlymean_mcp_gt100": 25,
+    "published_mcp_in_model_tail": {
+     "n": 10,
+     "p50": 0.0,
+     "max": 28.8,
+     "n_gt25": 1,
+     "n_gt100": 0
+    },
+    "published_mcp_in_model_reserve_bind_hours": {
+     "n": 2,
+     "p50": 21.3,
+     "max": 28.8,
+     "n_gt25": 1,
+     "n_gt100": 0
+    },
+    "published_mcp_in_actual_lmp_tail": {
+     "n": 18,
+     "p50": 42.9,
+     "max": 302.0,
+     "n_gt25": 11,
+     "n_gt100": 5
+    }
+   },
+   "T3": {
+    "tail_strict_removal_of_reserve_bind_hours": 8,
+    "tail_dual_subtracted_recount": 9
+   }
+  },
+  "2025": {
+   "T1": {
+    "model_tail_h": 32,
+    "actual_tail_h": 59,
+    "overlap_h": 14,
+    "overlap_share_of_model_tail": 0.438,
+    "overlap_share_of_actual_tail": 0.237,
+    "model_tail_h_with_reserve_dual_gt0": 27,
+    "overlap_of_reserve_subset_with_actual_tail": 13,
+    "reserve_bind_hours_all": 29,
+    "reserve_shortfall_hours": 0,
+    "max_family_dual": 187.9,
+    "model_tail_hours_est_hourofyear": [
+     4166,
+     4167,
+     4168,
+     4169,
+     4170,
+     4189,
+     4190,
+     4191,
+     4192,
+     4193,
+     4194,
+     4214,
+     4215,
+     4216,
+     4217,
+     4218,
+     4743,
+     4744,
+     5007,
+     5008,
+     5009,
+     5010,
+     5029,
+     5030,
+     5031,
+     5032,
+     5033,
+     5034,
+     5054,
+     5055,
+     5056,
+     5057
+    ],
+    "overlap_hours_est_hourofyear": [
+     4168,
+     4169,
+     4170,
+     4191,
+     4192,
+     4193,
+     4194,
+     4216,
+     4217,
+     5009,
+     5010,
+     5030,
+     5033,
+     5034
+    ]
+   },
+   "T2": {
+    "published_hours_hourlymean_mcp_gt25": 391,
+    "published_hours_hourlymean_mcp_gt100": 53,
+    "published_mcp_in_model_tail": {
+     "n": 32,
+     "p50": 70.7,
+     "max": 1614.4,
+     "n_gt25": 22,
+     "n_gt100": 12
+    },
+    "published_mcp_in_model_reserve_bind_hours": {
+     "n": 29,
+     "p50": 87.5,
+     "max": 1614.4,
+     "n_gt25": 20,
+     "n_gt100": 12
+    },
+    "published_mcp_in_actual_lmp_tail": {
+     "n": 59,
+     "p50": 142.9,
+     "max": 1614.4,
+     "n_gt25": 46,
+     "n_gt100": 37
+    }
+   },
+   "T3": {
+    "tail_strict_removal_of_reserve_bind_hours": 5,
+    "tail_dual_subtracted_recount": 30
+   }
+  }
+ },
+ "T3_band_check": {
+  "2023": "actual 6 < small-count 10: |model-6|<=10 passes at any count 0-16; channel inert (0 bind hours) and irrelevant to the PASS",
+  "2024": "band [9,36] on actual 18: strict 8h FAILs (0.44x), dual-subtracted 9h = exactly 0.50x boundary PASS \u2014 channel marginal, but the 2024 tail is congestion-formed (8/10 hours carry zero dual)",
+  "2025": "band [29.5,118] on actual 59: strict 5h FAILs, dual-subtracted 30h = 0.508x hair's-breadth PASS \u2014 the reserve channel IS load-bearing for the 2025 C3c PASS"
+ },
+ "benchmarks": {
+  "caiso_phantom_shaped_overlap": "1/47, 0/35, 0/8 (caiso-144 SD)",
+  "nyiso_real_shaped_overlap": "5/20, 0/7, 20/24 of model shortfall hours (nyiso-163b)",
+  "pjm_measured_here_overlap_of_model_tail": "0/4, 1/10, 14/32",
+  "ercot214_phantom_signature": "published settled RTORPA p50 $14.2 in the contaminated hours \u2014 no reserve scarcity to recover; PJM 2025 published hourly-mean reserve MCP p50 $87.5 in the model's 29 binding hours, max $1614 \u2014 the opposite"
+ }
+}
