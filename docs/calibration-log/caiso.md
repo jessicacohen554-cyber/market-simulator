@@ -10446,3 +10446,72 @@ ISO's files, and the mechanism matrix (no mechanism was tested).
   work, not an indictment.
 
 **Next number: caiso-228.**
+
+## 2026-08-31 — CAISO — caiso-228: the SoCalGas OFO gas-deliverability ARM DIES AT GATE D1 WITH NO SOLVE (pre-registered outcome 1) — the tariff-identified derate is ≤998 MW against a 12.6–12.8 GW band, and the kill is SIZE-INDEPENDENT because the band's import limb survives any gas-side derate. caiso-131 A3 ANSWERED NEGATIVELY AND CONCLUSIVELY. No `ScenarioConfig` field, no LP run, no registration, no matrix cell minted; keeper UNCHANGED
+
+**Runs:** NONE. Zero solves. Keeper stays `2026-08-26-caiso-220-c1-crosswalk`
+(verified on disk against `frontend/data/backcast/keepers/CAISO.json`): NOT-YET
+on C3a alone (+4.0 PASS / +12.5 / +15.5), C3c the single ledgered caveat
+(budget 1 of 1), C1 12/12 free 8/8, C2/C3b/C4/C6/C8 PASS. Markers and
+`holdout-freeze.json` untouched; all reads 2023–2025.
+
+**Numbering.** This session executes
+`results/calibration/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`, whose "227"
+label is historical (caiso-227 was the C3a root-cause / PS-intake round). The
+owner funded the arm by dispatching its prompt — it was filed item 11,
+"pre-registered and unfunded, an owner call".
+
+**D0 — coverage, trigger frozen ex ante and unchanged by the result.** The
+PRECOMMIT §2 trigger (any SoCalGas `side="low"` OFO gas day, every stage,
+waived included, SP15-scoped, 07:00–07:00 Pacific gas-day offset applied)
+covers **13 of 47 · 22 of 35 · 3 of 8** measured RT tail hours. **2023's 13 h
+is below its own 24 h C3c requirement**, so a *faithful* mechanism confined to
+qualifying gas days cannot produce a compliant 2023 tail; 2024's 63 % rests
+entirely on `2024-01-15` (19 h); the Jan-2023 blowout (Jan 1–3, 14 h) largely
+pre-dates the declarations. The trigger fires on **599 hours of 2025** —
+caiso-226 §5's G2 exposure confirmed as a live hard gate, not inherited.
+
+**D1 — the kill.** The derate identified from the tariff mechanic
+(`|tolerance_pct| × measured SP15 CAMPD burn` at the fleet's own measured heat
+rate; zero free parameters, never the MW needed to move λ) is 5–250 MW
+day-averaged and **≤ 997.5 / 958.7 / 684.2 MW** even under the most
+arm-favourable reading (the whole daily imbalance allowance taken inside a 6 h
+block, aggregated across shippers) — **7.9 % / 7.5 % / 3.2 %** of caiso-131
+§5's committed 12,600 / 12,780 / 21,212 MW (λ, $200] band. **And the kill does
+not depend on that size:** the band's import+hydro limb (**3,411 / 4,431 /
+10,365 MW**) is delivered across the WECC seam and survives a gas-side derate
+of *any* magnitude, so λ lands back on an import tranche ≤ $200. This
+generalises caiso-131 §5 from "the band is too deep for a derate" to **"the
+band's residual limb is not gas at all"** — caiso-129 §3(a) scale-invariance at
+limb grain — closing the whole gas-side quantity family for CAISO's C3c. The
+LOLP-overlay route closes with it: even at the full SP15 gas ceiling
+(~4.0–4.2 GW) the year's *tightest* hour sits 2.69–3.00 σ above MCL, worth
+single dollars/MWh against the $88–150 the tail needs, while the tail hours
+themselves carry 22.6/27.5 GW of headroom.
+
+**What was not done, deliberately.** No `ScenarioConfig` field (the mechanism
+was never built), no LP solve (rules 12/16 never reached), no dashboard
+registration (rule 15 attaches to a completed run; none exists — the
+ercot-175/177 kill-before-build precedent), and **no matrix cell minted** in
+any shard: rule 26(c) owes a row only for a solve-affecting field, and duty (b)
+attaches to a session that *tests* a mechanism, not one that adjudicates a
+pre-registered design ex ante. The record instead lands as a CAISO shard stamp
+block and a `docs/mechanism-testing-matrix.md` §5.2 lane note, both citing the
+FINDING, so the DO-NOT-REDO is discoverable from the matrix without a phantom
+field in every ISO's column.
+
+**Scope (rule 25 `[R-ISO-SCOPE]`).** The result rests on CAISO's own band
+composition and transfers to no other ISO; a northeast pipeline-constraint
+analogue is untouched and enters its own shard as `U`. The `gas-ofo-events`
+datatype stays intaken, rule-13 admissible (caiso-226 §4, unretracted) and
+UNCONSUMED — what is closed is the C3c backcast derate, not the data. Nothing
+here was ever a gate need: a lone ledgered C3c reads `CALIBRATED` under rubric
+v3.3, so this was root-cause work and its result is a closed question.
+
+Evidence: `results/calibration/FINDING-caiso228-ofo-arm-2026-08-31.md`,
+`results/calibration/_caiso228_d0_coverage.json`,
+`results/calibration/_caiso228_d1_derate.json`,
+`scripts/probes/caiso228_ofo_d0_coverage.py`,
+`scripts/probes/caiso228_ofo_d1_derate.py`.
+
+**Next number: caiso-229.**

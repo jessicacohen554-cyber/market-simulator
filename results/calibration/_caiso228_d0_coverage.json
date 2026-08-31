@@ -1,0 +1,214 @@
+{
+  "trigger": "SoCalGas low OFO, any stage, waived INCLUDED (PRECOMMIT \u00a72, frozen)",
+  "tail_threshold_usd_mwh": 200.0,
+  "years": {
+    "2023": {
+      "low_ofo_days_in_year": 43,
+      "tail_hours_actual_rt": 47,
+      "tail_hours_on_qualifying_gas_day": 13,
+      "tail_hours_on_qualifying_calendar_day": 14,
+      "coverage_frac": 0.2766,
+      "c3c_hours_required": 24,
+      "all_hours_on_qualifying_gas_day": 1032,
+      "trigger_duty_frac": 0.1178,
+      "tail_days": {
+        "2023-01-01": {
+          "tail_hours": 3,
+          "qualifying": false
+        },
+        "2023-01-02": {
+          "tail_hours": 5,
+          "qualifying": false
+        },
+        "2023-01-03": {
+          "tail_hours": 6,
+          "qualifying": true
+        },
+        "2023-01-14": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-01-15": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-01-16": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-01-17": {
+          "tail_hours": 2,
+          "qualifying": false
+        },
+        "2023-01-18": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-01-24": {
+          "tail_hours": 1,
+          "qualifying": true
+        },
+        "2023-01-25": {
+          "tail_hours": 1,
+          "qualifying": true
+        },
+        "2023-01-30": {
+          "tail_hours": 2,
+          "qualifying": true
+        },
+        "2023-02-24": {
+          "tail_hours": 2,
+          "qualifying": true
+        },
+        "2023-03-01": {
+          "tail_hours": 1,
+          "qualifying": true
+        },
+        "2023-03-21": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-04-28": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-05-13": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-06-27": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-07-15": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-07-20": {
+          "tail_hours": 2,
+          "qualifying": false
+        },
+        "2023-07-25": {
+          "tail_hours": 5,
+          "qualifying": false
+        },
+        "2023-08-15": {
+          "tail_hours": 2,
+          "qualifying": false
+        },
+        "2023-08-16": {
+          "tail_hours": 2,
+          "qualifying": false
+        },
+        "2023-10-30": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-11-15": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-11-16": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2023-12-12": {
+          "tail_hours": 1,
+          "qualifying": false
+        }
+      }
+    },
+    "2024": {
+      "low_ofo_days_in_year": 34,
+      "tail_hours_actual_rt": 35,
+      "tail_hours_on_qualifying_gas_day": 22,
+      "tail_hours_on_qualifying_calendar_day": 22,
+      "coverage_frac": 0.6286,
+      "c3c_hours_required": 18,
+      "all_hours_on_qualifying_gas_day": 816,
+      "trigger_duty_frac": 0.0932,
+      "tail_days": {
+        "2024-01-12": {
+          "tail_hours": 3,
+          "qualifying": false
+        },
+        "2024-01-13": {
+          "tail_hours": 2,
+          "qualifying": false
+        },
+        "2024-01-15": {
+          "tail_hours": 19,
+          "qualifying": true
+        },
+        "2024-01-16": {
+          "tail_hours": 2,
+          "qualifying": true
+        },
+        "2024-03-23": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2024-05-27": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2024-07-23": {
+          "tail_hours": 2,
+          "qualifying": false
+        },
+        "2024-07-24": {
+          "tail_hours": 2,
+          "qualifying": false
+        },
+        "2024-10-07": {
+          "tail_hours": 2,
+          "qualifying": false
+        },
+        "2024-12-12": {
+          "tail_hours": 1,
+          "qualifying": true
+        }
+      }
+    },
+    "2025": {
+      "low_ofo_days_in_year": 25,
+      "tail_hours_actual_rt": 8,
+      "tail_hours_on_qualifying_gas_day": 3,
+      "tail_hours_on_qualifying_calendar_day": 2,
+      "coverage_frac": 0.375,
+      "c3c_hours_required": 0,
+      "all_hours_on_qualifying_gas_day": 599,
+      "trigger_duty_frac": 0.0684,
+      "tail_days": {
+        "2025-01-21": {
+          "tail_hours": 1,
+          "qualifying": true
+        },
+        "2025-01-22": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2025-03-14": {
+          "tail_hours": 2,
+          "qualifying": true
+        },
+        "2025-03-17": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2025-04-01": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2025-04-02": {
+          "tail_hours": 1,
+          "qualifying": false
+        },
+        "2025-04-25": {
+          "tail_hours": 1,
+          "qualifying": false
+        }
+      }
+    }
+  }
+}
