@@ -1382,7 +1382,7 @@
       "status": "PASS"
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 3 of 4 entries carry identification='unattested' (entry_vre_capacity_revenue, miso_clean_tier_rows, miso_rps_compliance_regions). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
       "gating": true,
       "row": "dof ledger",
       "status": "CAVEAT"
@@ -1415,11 +1415,10 @@
   ],
   "provenance": {
    "cache_epoch": "587dc5b32ba71ceb",
-   "run_id": "miso-2026-2030-s123-verify",
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-31T01:17:55Z",
-   "scored_at_sha": "54ca19ae0782",
-   "session": "S-123-V"
+   "scored_at_date": "2026-08-31T15:55:17Z",
+   "scored_at_sha": "836e48e1efdc",
+   "session": "S-123-V \u00b7 FC-7 DOF LEDGER BUILT+COMMITTED AND RE-SCORED 2026-08-31 by lane capx-D8-V (director r#22, closing the D8 \u00a75.1 records gap D8-RE measured read-only): scripts/build_forecast_dof_ledger.py over the committed run_config wrote results/ff-t1f-s123/verify/dof_ledger.json \u2014 4 entries, 3 UNIDENTIFIED (entry_vre_capacity_revenue, miso_clean_tier_rows, miso_rps_compliance_regions; the identified entry is forecast_xyear_warmstart=False, owner decision D-10) \u2014 and the re-score consumed it. ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field (the key's S-123-V board note is lane-authored, not scorer output, and is preserved verbatim). Prior stamp preserved here: scored_at_sha 54ca19ae0782 @ 2026-08-31T01:17:55Z (session S-123-V). MOVED \u2014 exactly D8-RE's \u00a78.4 measurement: the FC-7 'dof ledger' row DETAIL only, from 'DOF ledger absent' to the UNATTESTED-SKELETON text naming the three entries awaiting attestation. NOT MOVED: the row's CAVEAT status, the FC-7 category (CAVEAT), the caveat list, the DETERMINATION (HOLD, held by FC-1 I3) and every other row \u2014 the scorer treats an unattested-carrying ledger exactly as an absent one (rule 21 [R-DOF]: the three are NAMED attestation debt, deliberately not attested and not cleared by this lane). docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md."
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) FAIL"
@@ -2439,13 +2438,13 @@
       "status": "PASS"
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
+      "detail": "7 entries well-formed (0 open residual DOF listed)",
       "gating": true,
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "PASS"
      }
     ],
-    "status": "CAVEAT"
+    "status": "PASS"
    },
    "FC-8": {
     "applicability": "runtime",
@@ -2461,18 +2460,16 @@
     "status": "PASS"
    }
   },
-  "caveats": [
-   "FC-7 provenance & DOF"
-  ],
-  "determination": "PROMOTE-WITH-CAVEATS",
+  "caveats": [],
+  "determination": "PROMOTE",
   "iso": "NEISO",
   "notes": [],
   "provenance": {
    "cache_epoch": "9a7f68fc7dcac931",
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-30T22:25:51Z",
-   "scored_at_sha": "88baa9d5c71b",
-   "session": "capx-S4b-neiso-ara"
+   "scored_at_date": "2026-08-31T15:55:17Z",
+   "scored_at_sha": "836e48e1efdc",
+   "session": "capx-S4b-neiso-ara \u00b7 FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-s4b-ara/neiso/dof_ledger.json \u2014 the capx-D8 instrument's committed ledger, 7 entries, 0 UNIDENTIFIED). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha 88baa9d5c71b @ 2026-08-30T22:25:51Z (session capx-S4b-neiso-ara). MOVED \u2014 exactly the D8 \u00a76 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('7 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] \u2014 NEISO's first clean FC map. NOT MOVED: every other category, row status and detail. This also closes the S-4b treatment/control FC-7 split D8-RE flagged (both arms now read the same FC-7 rows). docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md."
   },
   "reasons": [],
   "rubric_version": "1.0",
@@ -4426,13 +4423,13 @@
       "status": "PASS"
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
+      "detail": "1 entries well-formed (0 open residual DOF listed)",
       "gating": true,
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "PASS"
      }
     ],
-    "status": "CAVEAT"
+    "status": "PASS"
    },
    "FC-8": {
     "applicability": "runtime",
@@ -4448,18 +4445,16 @@
     "status": "PASS"
    }
   },
-  "caveats": [
-   "FC-7 provenance & DOF"
-  ],
-  "determination": "PROMOTE-WITH-CAVEATS",
+  "caveats": [],
+  "determination": "PROMOTE",
   "iso": "NYISO",
   "notes": [],
   "provenance": {
    "cache_epoch": "fdd84d51e31ffc82",
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-25T01:49:23Z",
-   "scored_at_sha": "ea4e4faf65de",
-   "session": "capx-D2-extcap-intake"
+   "scored_at_date": "2026-08-31T15:55:17Z",
+   "scored_at_sha": "836e48e1efdc",
+   "session": "capx-D2-extcap-intake \u00b7 FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-extcap/nyiso/dof_ledger.json \u2014 the capx-D8 instrument's committed ledger, 1 entry, 0 UNIDENTIFIED: forecast_xyear_warmstart=False, owner decision D-10). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha ea4e4faf65de @ 2026-08-25T01:49:23Z (session capx-D2-extcap-intake). MOVED \u2014 exactly the D8 \u00a76 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('1 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] \u2014 NYISO's first clean FC map. NOT MOVED: every other category, row status and detail. docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md."
   },
   "reasons": [],
   "rubric_version": "1.0",
@@ -5473,13 +5468,13 @@
       "status": "PASS"
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
+      "detail": "1 entries well-formed (0 open residual DOF listed)",
       "gating": true,
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "PASS"
      }
     ],
-    "status": "CAVEAT"
+    "status": "PASS"
    },
    "FC-8": {
     "applicability": "runtime",
@@ -5496,7 +5491,6 @@
    }
   },
   "caveats": [
-   "FC-7 provenance & DOF",
    "FC-8 runtime feasibility: over runtime budget"
   ],
   "determination": "HOLD",
@@ -5505,9 +5499,9 @@
   "provenance": {
    "cache_epoch": "31a19d815fa319a7",
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-31T00:43:56Z",
-   "scored_at_sha": "54ca19ae0782",
-   "session": "capx-S6-pjm-ledger"
+   "scored_at_date": "2026-08-31T15:55:17Z",
+   "scored_at_sha": "836e48e1efdc",
+   "session": "capx-S6-pjm-ledger \u00b7 FC-7 DOF LEDGER BUILT+COMMITTED AND RE-SCORED 2026-08-31 by lane capx-D8-V (director r#22, closing the D8 \u00a75.1 records gap D8-RE measured read-only): scripts/build_forecast_dof_ledger.py over the committed run_config wrote results/ff-t1f-s6-pjm/ledger/dof_ledger.json \u2014 1 entry, 0 UNIDENTIFIED (forecast_xyear_warmstart=False, owner decision D-10) \u2014 and the re-score consumed it. ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 54ca19ae0782 @ 2026-08-31T00:43:56Z (session capx-S6-pjm-ledger). MOVED \u2014 exactly D8-RE's \u00a78.4 measurement, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('1 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired. DETERMINATION UNCHANGED: HOLD, held by the FC-1/FC-2 FAILs (not a committed-verdict flip, so the cross-lane STOP does not bite). NOT MOVED: every other category, row status and detail. docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md."
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) FAIL",

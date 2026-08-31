@@ -5,29 +5,24 @@
     "schema": "forecast-provenance/v1",
     "scored_at_sha": "836e48e1efdc",
     "scored_at_date": "2026-08-31T15:55:17Z",
-    "cache_epoch": "31a19d815fa319a7"
+    "cache_epoch": "fdd84d51e31ffc82"
   },
   "tier": "t1f",
-  "iso": "PJM",
-  "determination": "HOLD",
-  "reasons": [
-    "FC-1 structural integrity (I1-I14) FAIL",
-    "FC-2 adequacy & equilibrium behavior FAIL"
-  ],
-  "caveats": [
-    "FC-8 runtime feasibility: over runtime budget"
-  ],
+  "iso": "NYISO",
+  "determination": "PROMOTE",
+  "reasons": [],
+  "caveats": [],
   "notes": [],
   "categories": {
     "FC-1": {
       "label": "FC-1 structural integrity (I1-I14)",
       "applicability": "required",
-      "status": "FAIL",
+      "status": "PASS",
       "rows": [
         {
           "row": "invariants I1-I14",
-          "status": "FAIL",
-          "detail": "FAIL ['I12', 'I7']: I12: requirement-implied floor [-11.9%, 3.1%]..[-9.7%, 5.3%]; out: 2028:-11.7% (band [-9.7%, 5.3%]), 2029:-12.6% (band [-9.7%, 5.3%]), 2030:-13.0% (band [-9.7%, 5.3%]); I7: 2028: accredited firm 147003 < requirement 150263 MW; 2029: accredited firm 148169 < requirement 153001 MW; 2030: accredited firm 150291 < requirement 155946 MW",
+          "status": "PASS",
+          "detail": "all 14 invariants PASS",
           "gating": true
         }
       ]
@@ -35,12 +30,12 @@
     "FC-2": {
       "label": "FC-2 adequacy & equilibrium behavior",
       "applicability": "required",
-      "status": "FAIL",
+      "status": "PASS",
       "rows": [
         {
           "row": "row1",
-          "status": "FAIL",
-          "detail": "reserve-margin band (I12 FAIL): requirement-implied floor [-11.9%, 3.1%]..[-9.7%, 5.3%]; out: 2028:-11.7% (band [-9.7%, 5.3%]), 2029:-12.6% (band [-9.7%, 5.3%]), 2030:-13.0% (band [-9.7%, 5.3%])",
+          "status": "PASS",
+          "detail": "reserve-margin band (I12 PASS)",
           "gating": true
         },
         {
@@ -51,8 +46,8 @@
         },
         {
           "row": "row4",
-          "status": "CAVEAT",
-          "detail": "backstop share 25.3% in (10%, 30%]",
+          "status": "PASS",
+          "detail": "backstop share 0.0% \u2264 10%",
           "gating": true
         }
       ]
@@ -103,7 +98,7 @@
         {
           "row": "run_config",
           "status": "PASS",
-          "detail": "mode=forecast; 765 config keys; gates ['capacity_market_clearing']",
+          "detail": "mode=forecast; 752 config keys; gates ['capacity_market_clearing']",
           "gating": true
         },
         {
@@ -123,12 +118,12 @@
     "FC-8": {
       "label": "FC-8 runtime feasibility",
       "applicability": "runtime",
-      "status": "CAVEAT",
+      "status": "PASS",
       "rows": [
         {
           "row": "runtime",
-          "status": "CAVEAT",
-          "detail": "peak RSS 8.8 GB \u2265 8.6 GB (no co-run)",
+          "status": "PASS",
+          "detail": "wall 13.1 min within budget",
           "gating": true
         }
       ]

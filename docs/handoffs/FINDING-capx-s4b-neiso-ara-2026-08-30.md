@@ -244,3 +244,56 @@ gitignored (§4's `.gitignore` block). The generated registry/runs/manifest
 namespace files remain gitignored (the Pages deploy is their writer). The backcast
 registry was not written to; no mechanism-matrix cell is minted (data intake, no
 representation change — charter guardrail).
+
+---
+
+## Addendum (2026-08-31) — the routed FC-7 flip RE-VERIFIED AND PUBLISHED (this lane's record, executed by capx-D8-V)
+
+**Executed by:** lane capx-D8-V (director r#22, charter
+`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D8-V), recording here
+because the 2026-08-30 cross-lane re-grade ruling requires the AFFECTED lane's
+own record — this lane, capx-S4b-neiso-ara, owns the bare `neiso-t1f` key whose
+committed determination moves. **Zero solves; committed artifacts only.**
+
+**What was routed.** capx-D8 committed a fully-identified DOF ledger for this
+lane's exact treatment bundle (`results/ff-t1f-s4b-ara/neiso/dof_ledger.json` —
+7 entries, 0 UNIDENTIFIED). capx-D8-RE measured that consuming it flips the
+committed determination (PROMOTE-WITH-CAVEATS → PROMOTE) and STOPPED rather than
+landing it, per the ruling (D8 finding §8.3).
+
+**The D-5(b)-style re-verification, from committed artifacts, never a solve:**
+
+```
+python scripts/forecast_verdict.py --tier t1f \
+  --summary results/ff-t1f-s4b-ara/neiso/full_horizon_summary.json \
+  --run-config results/ff-t1f-s4b-ara/neiso/run_config.json \
+  --dof-ledger results/ff-t1f-s4b-ara/neiso/dof_ledger.json \
+  --json-out results/ff-t1f-s4b-ara/neiso/forecast_verdict.json
+```
+
+1. **Control first** (the D8-RE protocol re-run, not inherited): the same scorer
+   WITHOUT `--dof-ledger` reproduces this lane's committed record —
+   `ff-verdicts.json[neiso-t1f]` AND the committed bundle sidecar — **byte-for-byte
+   on every scorer-derived field** (categories row-by-row: status, detail, gating;
+   determination; reasons; caveats; tier/iso/schema/rubric; cache_epoch
+   `9a7f68fc7dcac931`). The ledger input is provably the only delta.
+2. **Movement, asserted row-by-row:** FC-7 `dof ledger` row CAVEAT → PASS
+   ("7 entries well-formed (0 open residual DOF listed)"), FC-7 category
+   CAVEAT → PASS, caveat `FC-7 provenance & DOF` retired, **DETERMINATION
+   PROMOTE-WITH-CAVEATS → PROMOTE with caveats `[]`** — exactly the D8 §6
+   pre-registration. **Nothing else moved**: every other FC category, row status
+   and row detail byte-identical (programmatic assertion, no exceptions).
+3. **Published**: `ff-verdicts.json[neiso-t1f]` (prior stamp preserved in the
+   provenance session string: `88baa9d5c71b @ 2026-08-30T22:25:51Z`), the bundle
+   sidecar re-emitted, and the NEISO board rows
+   (`t1f_determination`, `fc.FC-7`, `blocking_rows[2]`) refreshed.
+
+**Consequences for this finding's §5–§6:** the FC map's last caveat is retired —
+**NEISO's first clean FC map** (FC-1/FC-2/FC-7/FC-8 all PASS). The
+treatment/control FC-7 split D8-RE flagged (§8.3 consequence) is CLOSED: the
+control arm (`neiso-t1f-s4bcontrol`, re-emitted by D8-RE) and the treatment now
+read identical FC-7 rows. Gate cells were NOT touched (outside the executing
+lane's write scope): `gate.b_t1f_verdict.detail` still opens
+"PROMOTE-WITH-CAVEATS" from the 2026-08-30 scoring and is flagged to the D19
+board reconcile. Full record:
+`docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md`.

@@ -253,3 +253,60 @@ D-1 (the checker's dropped `year` argument for PJM's published-FPR path) and
 D-2 (backstop EFORd sizing vs `_make_new_generator`) remain routed to the
 director; nothing here touched either. Note D-1 is inert for NYISO (no
 published FPR), so this leg's I7/I12 readings are unaffected by it.
+
+---
+
+## Addendum (2026-08-31) — the routed FC-7 flip RE-VERIFIED AND PUBLISHED (this lane's record, executed by capx-D8-V)
+
+**Executed by:** lane capx-D8-V (director r#22, charter
+`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D8-V), recording here
+because the 2026-08-30 cross-lane re-grade ruling requires the AFFECTED lane's
+own record — this lane, capx-D2-extcap-intake, owns the bare `nyiso-t1f` key
+whose committed determination moves. **Zero solves; committed artifacts only.**
+
+**What was routed.** capx-D8 committed a fully-identified DOF ledger for this
+lane's exact bundle (`results/ff-t1f-extcap/nyiso/dof_ledger.json` — 1 entry,
+0 UNIDENTIFIED: `forecast_xyear_warmstart=False`, owner decision D-10).
+capx-D8-RE measured that consuming it flips the committed determination
+(PROMOTE-WITH-CAVEATS → PROMOTE) and STOPPED rather than landing it, per the
+ruling (D8 finding §8.3).
+
+**The D-5(b)-style re-verification, from committed artifacts, never a solve:**
+
+```
+python scripts/forecast_verdict.py --tier t1f \
+  --summary results/ff-t1f-extcap/nyiso/full_horizon_summary.json \
+  --run-config results/ff-t1f-extcap/nyiso/run_config.json \
+  --dof-ledger results/ff-t1f-extcap/nyiso/dof_ledger.json \
+  --json-out results/ff-t1f-extcap/nyiso/forecast_verdict.json
+```
+
+1. **Control first** (the D8-RE protocol re-run, not inherited): the same scorer
+   WITHOUT `--dof-ledger` reproduces this lane's committed record
+   (`ff-verdicts.json[nyiso-t1f]`) **byte-for-byte on every scorer-derived
+   field** (categories row-by-row: status, detail, gating; determination;
+   reasons; caveats; tier/iso/schema/rubric; cache_epoch `fdd84d51e31ffc82`).
+   The ledger input is provably the only delta.
+2. **Movement, asserted row-by-row:** FC-7 `dof ledger` row CAVEAT → PASS
+   ("1 entries well-formed (0 open residual DOF listed)"), FC-7 category
+   CAVEAT → PASS, caveat `FC-7 provenance & DOF` retired, **DETERMINATION
+   PROMOTE-WITH-CAVEATS → PROMOTE with caveats `[]`** — exactly the D8 §6
+   pre-registration. **Nothing else moved**: every other FC category, row status
+   and row detail byte-identical (programmatic assertion, no exceptions).
+3. **Published**: `ff-verdicts.json[nyiso-t1f]` (prior stamp preserved in the
+   provenance session string: `ea4e4faf65de @ 2026-08-25T01:49:23Z`), a bundle
+   verdict sidecar written (`results/ff-t1f-extcap/nyiso/forecast_verdict.json`
+   — the bundle previously carried none), and the NYISO board rows
+   (`t1f_determination`, `fc.FC-7`, `blocking_rows[2]`) refreshed.
+
+**Consequence for this finding's §7:** its closing sentence — "the single
+remaining caveat is FC-7's absent DOF ledger … not addressable by this
+session's charter" — is now DISCHARGED: the ledger exists, is fully identified,
+and its consumption is published. **NYISO's FC map is clean**
+(FC-1/FC-2/FC-7/FC-8 all PASS) and `nyiso-t1f` reads **PROMOTE**. §7's
+"program-wide gap every T1-F leg carries equally" no longer holds and the board
+row now records the per-ISO ledger state instead. Gate cells were NOT touched
+(outside the executing lane's write scope): `gate.b_t1f_verdict.detail` still
+opens "PROMOTE-WITH-CAVEATS" from its 2026-08-30 scoring and is flagged to the
+D19 board reconcile. Full record:
+`docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md`.
