@@ -10310,4 +10310,78 @@ freeze ACTIVE. Method + gates fixed ex ante and pushed first
 - Filed items: 4 carried; 9 carried (its Q2 map now carries this null as
   first execution); **10 NEW** (A3 available+feasible, unfunded).
 
-**Next number: caiso-226.**
+### caiso-226 — the FUNDED caiso-131 A3 SoCalGas OFO intake: `gas-ofo-events` lands; rule-13 verdict ADMISSIBLE-as-input; and the record refutes the arm's assumed 2025 inertness (2026-08-31)
+
+**Charter:** data intake ONLY, zero solves (owner-funded caiso-131 A3, filed by
+caiso-225 as item 10). C3c-side root-cause work, strictly orthogonal to C3a.
+Keeper at session `2026-08-26-caiso-220-c1-crosswalk` — untouched, as are the
+keeper shards, `calibration-complete.json`, `holdout-freeze.json`, every other
+ISO's files, and the mechanism matrix (no mechanism was tested).
+
+- **Landed:** the `gas-ofo-events` clean datatype — schema-first contract
+  (`data/dictionary/schema/gas-ofo-events.schema.yaml`, key
+  `(iso, utility, gas_day, side)`), immutable raw snapshots +
+  `_snapshot.json` (url / retrieved / bytes / sha256) under
+  `data/raw/gas-ofo-events/caiso/` with a README carrying sources and
+  `DATA NEEDED`, `fetch_socalgas_ofo_events.py`, a per-ISO registry package
+  (`scripts/lib/gas_ofo_events/`, no `if iso ==` anywhere; a utility is one
+  `OfoSource`, an ISO one module), `curate_gas_ofo_events.py` writing only via
+  `write_clean`, registration in `regenerate_clean.py`, and 10 tmp-CLEAN_DIR
+  tests. **2,590 rows**: 678 low OFO/EFO days (2015-12-06→2026-03-23) + 1,912
+  high (1997-05-24→2026-08-31). Full published span committed — rule 22 holds
+  out *scores*, never data; solve/score reads stay 2023–2025.
+- **Verified, not merely fetched:** per-year counts match the caiso-225
+  embedded record exactly on both sides, and all 102 of the 2023–2025 low
+  events re-render **byte-identically** from the parquet's parsed fields. The
+  Jan-2023 cluster is present and is in fact a 15-day January.
+- **Three facts the 2023–2025 scan could not show** (why the full span
+  mattered): Stage **4** and **5** exist (2018–2022; a 2023–25-derived
+  allow-list would have rejected the Dec-2022 snap that precedes the Jan-2023
+  cluster); 950 high rows (1997–2018) are **unstaged**, so `stage` is nullable
+  by construction; and `stage`/`tolerance_pct` are **NOT monotone in each
+  other** (widest bands at Stage 1, min −18; Stage 3.2 uniformly −5) — they are
+  two independently-set dials, not one severity scale.
+- **Rule 13 `[R-MEASURED]` adjudication — ADMISSIBLE as a reproducible physical
+  INPUT** (FINDING §4, in writing): an OFO is a *gas* utility's declaration
+  about its own delivery system, generated outside the electricity market —
+  categorically not an outcome; it is the fuel-side member of the CAMPD
+  outage-window class the model already uses; and it responds to conditions
+  (109 low OFOs in 2019 under the Aliso restriction decaying to 43/34/25 in
+  2023–25 as storage was restored). The forward analogue is **named and
+  deliberately left open** (OFO-day climatology, or an OFO hazard on forward
+  gas-system state) — the arm's choice, on the arm's evidence, and
+  pre-registered as gate D3 so no backcast overlay is promoted without one.
+- **THE FINDING THAT CHANGES THE ARM'S DESIGN:** the OFO record **does not
+  inherit the citygate threshold's automatic 2025 inertness**. caiso-131 §6
+  valued a gas trigger partly because 2025's citygate never exceeds
+  $5.61/MMBtu; but SoCalGas declared **25 low OFOs in 2025** (9 in January), so
+  a low-OFO trigger fires in the one year whose C3c already PASSES and whose
+  C3a is CAISO's sole open gate. This specifies the ask rather than sinking it,
+  and becomes hard gate **G2** in the precommit — not satisfiable by a 2025
+  exclusion, which would be a year-keyed fitted term.
+- **Pre-registered, nothing built:**
+  `PRECOMMIT-caiso227-ofo-arm-2026-08-31.md` fixes the arm's trigger ex ante on
+  tariff grounds alone (**any SoCalGas low OFO**; stage NOT used to rank, since
+  it is not a severity scale; waived days included; SP15-scoped because PG&E is
+  `DATA NEEDED`), the backcast/forecast posture, gates D0–D4 and criteria
+  G1–G6, and four acceptable outcomes **including two kills**. D1 is the honest
+  one: caiso-131 §5's 12.6–12.8 GW band may swallow any physically-identified
+  derate, in which case the arm dies **with no solve** and A3 is answered
+  negatively but conclusively. caiso-226 deliberately did **not** measure the
+  trigger's coverage of the measured tail, so the definition is fixed blind
+  (the rule-24 trap caiso-131 §10 warns of).
+- **Discovered, NOT fixed (out of charter):** `tests/curation/test_curate_reference.py`
+  fails 4/4 on `main` — `curate_reference.py:190` reads
+  `caiso-plant-hub-membership.csv` (added by caiso-217) unconditionally, and the
+  test fixture never writes it. Pre-existing; both files untouched here.
+- **DO-NOT-REDO adds** (FINDING §6): the source archaeology is final
+  (caiso-225 §5/§9.2 + this README); do not re-parse or re-measure the counts,
+  stage mix or tolerance/stage relation (committed parquet + test carry them);
+  **never derive a trigger threshold from its coverage of the measured tail**
+  (caiso-131 §10, restated); and **never assume an OFO trigger is inert in
+  2025** — it is not.
+- Filed items: 4 carried; 9 carried; **10 DISCHARGED** for the SoCalGas half
+  (PG&E NP15 ledger remains `DATA NEEDED`); **11 NEW** — the caiso-227 arm,
+  pre-registered and unfunded, an owner call.
+
+**Next number: caiso-227.**
