@@ -1324,7 +1324,7 @@ the owner voided the cross-session heavy-slot queue; sessions run in isolated co
 
 ## T3-NEISO-GOLDEN — the FIRST §2.1b-authorized full-horizon campaign (r#17; owner ruling Q13)
 
-> **RELAUNCHED at r#20 (2026-08-31) as T3-GOLDEN-R, model Opus:** the dispatched session was lost mid-solve; nothing registered, no verdict key or board write happened. This section stays the BINDING charter. Relaunch deltas (ledger §0q.2): the PR #4408 `register_forecast_run.py` fix is already on main; branch fresh from main (`claude/capx-t3-neiso-golden-r2`); the old branch carries 0 unique commits.
+> **r#20 RELAUNCH ANNOTATION RETRACTED at r#21 (2026-08-31, owner correction): the original golden session was NEVER LOST — it is STILL RUNNING its solve.** T3-GOLDEN-R was RECALLED UNRUN (never dispatched). Do NOT launch a second golden: the Q13 authorization covers ONE campaign, and the NEISO keys of ff-verdicts.json + program-status.json are the running session's to write. This section remains the original (r#17) lane's binding charter (ledger §0r.1).
 
 ```
 You are the T3-NEISO-GOLDEN session of the capacity-expansion (Forecast Finalization
@@ -1399,7 +1399,7 @@ refresh.
 
 ## D12-A — arming execution (r#18; executes the Q15 ruling on the D12-C contradiction record)
 
-> **RELAUNCHED at r#20 (2026-08-31) as D12-A-R, model Fable:** the dispatched session was lost with an ORPHAN branch (`claude/capx-d12a-arming-0ibtzh`, 2 unmerged commits arming the pair + stamping the matrix). NOT landed. This section stays the BINDING charter. The relaunch session treats that branch as EVIDENCE only — re-verify its diff against the Q15 ruling and this charter (cache-epoch verification included; rule 27 blob-verify every >=300-line file), then land it re-verified or redo clean. Never blind-merge (ledger §0q.2).
+> **LANDED at r#21 (PR #4429); historical record, do not re-run.** > **RELAUNCHED at r#20 (2026-08-31) as D12-A-R, model Fable:** the dispatched session was lost with an ORPHAN branch (`claude/capx-d12a-arming-0ibtzh`, 2 unmerged commits arming the pair + stamping the matrix). NOT landed. This section stays the BINDING charter. The relaunch session treats that branch as EVIDENCE only — re-verify its diff against the Q15 ruling and this charter (cache-epoch verification included; rule 27 blob-verify every >=300-line file), then land it re-verified or redo clean. Never blind-merge (ledger §0q.2).
 
 ```
 You are the D12-A ARMING EXECUTION session of the capacity-expansion (Forecast Finalization
@@ -1463,7 +1463,7 @@ results. Report to the owner; the director stamps board + ledger on its refresh.
 
 ## S-6 — PJM T1-F ledger run (r#19; the first supply-side measure against the corrected hold-last bar)
 
-> **RELAUNCHED at r#20 (2026-08-31) as S-6-R, model Opus:** the dispatched session was lost AFTER landing the pre-declaration (PR #4418, `FINDING-capx-s6-pjm-ledger-2026-08-30.md` — post-solve sections empty) and BEFORE the solve. The committed pre-declaration + this section stay BINDING: owed are the solve, the FC re-score, registration `pjm-2026-2030-s6-ledger`, the preserve-then-overwrite verdict keys and the PJM board refresh. Branch fresh from main (`claude/capx-s6-pjm-ledger-r2`); the old branch carries 0 unique commits (ledger §0q.2).
+> **LANDED at r#21 (PR #4436); historical record, do not re-run.** > **RELAUNCHED at r#20 (2026-08-31) as S-6-R, model Opus:** the dispatched session was lost AFTER landing the pre-declaration (PR #4418, `FINDING-capx-s6-pjm-ledger-2026-08-30.md` — post-solve sections empty) and BEFORE the solve. The committed pre-declaration + this section stay BINDING: owed are the solve, the FC re-score, registration `pjm-2026-2030-s6-ledger`, the preserve-then-overwrite verdict keys and the PJM board refresh. Branch fresh from main (`claude/capx-s6-pjm-ledger-r2`); the old branch carries 0 unique commits (ledger §0q.2).
 
 ```
 You are the S-6 PJM T1-F LEDGER RUN session of the capacity-expansion (Forecast Finalization
@@ -1527,7 +1527,7 @@ the owner; the director stamps the ledger on its refresh.
 
 ## S-123-V — the MISO verification re-measure (r#19; fills S-123's §6, the lane's owed half)
 
-> **RELAUNCHED at r#20 (2026-08-31) as S-123-V-R, model Opus:** the dispatched session was lost with NOTHING landed. This section stays the BINDING charter unchanged; the stop-at-start check on the original S-123 session now trivially passes (that session is confirmed dead, its A/B long since concluded). Branch fresh from main (`claude/capx-s123v-miso-verify-r2`) (ledger §0q.2).
+> **LANDED at r#21 (PR #4441); historical record, do not re-run.** > **RELAUNCHED at r#20 (2026-08-31) as S-123-V-R, model Opus:** the dispatched session was lost with NOTHING landed. This section stays the BINDING charter unchanged; the stop-at-start check on the original S-123 session now trivially passes (that session is confirmed dead, its A/B long since concluded). Branch fresh from main (`claude/capx-s123v-miso-verify-r2`) (ledger §0q.2).
 
 ```
 You are the S-123-V session of the capacity-expansion (Forecast Finalization Program) track,
