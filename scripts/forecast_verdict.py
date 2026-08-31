@@ -1234,11 +1234,73 @@ def score_fc5(art: dict, tier: str, iso: str) -> list[dict]:
     ]
 
 
+def _battery_series(ladder: dict, metric: object) -> list[float]:
+    """Return the solved-rung values of ``metric`` across a ladder's rungs.
+
+    Mirrors ``run_driver_battery._series_from`` (status=="ok" rungs, finite
+    floats only) so the vacuity check below reads exactly the series the
+    battery's own rule primitives scored.
+    """
+    vals: list[float] = []
+    for r in ladder.get("rungs", []) or []:
+        if not isinstance(r, dict) or r.get("status") != "ok":
+            continue
+        v = (r.get("metrics") or {}).get(metric)
+        try:
+            fv = float(v)
+        except (TypeError, ValueError):
+            continue
+        if fv != fv:  # NaN
+            continue
+        vals.append(fv)
+    return vals
+
+
+#: Battery rule primitives EXEMPT from the all-constant-series vacuity flag.
+#: ``all_equal`` is the negative-control rule (T1.7b: ERCOT retirements
+#: byte-identical across the net-CONE ladder) — constancy IS its claim, so a
+#: constant-series PASS there is the control succeeding, not vacuity. The
+#: ``approx_*`` rules assert a single-endpoint value, not a response across
+#: the sweep, so constancy of the surrounding series does not bear on them.
+_CONSTANT_EXEMPT_RULES = frozenset(
+    {"all_equal", "approx_target_first", "approx_zero_last"}
+)
+
+
+def _vacuous_pass_reason(e: dict, ladder: dict) -> str | None:
+    """Rubric §2 FC-6.2: why a PASSing gate row is vacuous, or ``None``.
+
+    "A gate row that passed on an empty or all-constant series is a CAVEAT,
+    never a PASS" — the T1.6a (empty series, `driver-battery-2026-07-12.md`
+    finding 1) and T1.7a (all-constant series, finding 4) precedents made
+    executable. Checked from the series metadata the battery output itself
+    carries (the ladder's ``rungs[].metrics``); an explicit ``vacuous`` marker
+    on the row is trusted outright; a ladder carrying no rungs metadata is
+    left alone (the row's status stands — there is nothing to check against).
+    Strictly tightening: this can only reclassify PASS → CAVEAT, so no
+    threshold, band, or expectation moves (anti-gaming clause 1 cuts the
+    other way).
+    """
+    if e.get("vacuous"):
+        return "explicit vacuous marker"
+    if "rungs" not in ladder:
+        return None
+    vals = _battery_series(ladder, e.get("metric"))
+    if not vals:
+        return "empty series (0 solved rungs carry the metric)"
+    if len(vals) >= 2 and e.get("rule") not in _CONSTANT_EXEMPT_RULES:
+        if all(v == vals[0] for v in vals):
+            return f"all-constant series {vals}"
+    return None
+
+
 def score_fc6(art: dict, tier: str, iso: str) -> list[dict]:
     """FC-6 driver response — Tier-1 monotonicity battery + paired P1-P3.
 
     Gate rows (``expectations[].gate == True``): a FAIL ⇒ FC-6 FAIL; a SKIP
     (vacuous / insufficient rungs) ⇒ CAVEAT, never PASS (rubric §2 FC-6.2).
+    A gate row that PASSED on an empty or all-constant series is likewise a
+    vacuous CAVEAT, never a PASS (:func:`_vacuous_pass_reason`).
     Report rows (``gate == False``) annotate but never gate. Paired invariants:
     P1/P2 FAIL ⇒ FAIL; P3 WARN ⇒ CAVEAT. Nothing committed ⇒ SKIPPED.
     """
@@ -1261,6 +1323,10 @@ def score_fc6(art: dict, tier: str, iso: str) -> list[dict]:
                         gate_fail.append(f"{label}: {e.get('detail', '')}")
                     elif e.get("status") == I_SKIP:
                         vacuous.append(label)
+                    elif e.get("status") == I_PASS:
+                        why = _vacuous_pass_reason(e, ladder)
+                        if why:
+                            vacuous.append(f"{label} ({why})")
                 elif e.get("status") in (I_FAIL, I_WARN):
                     report.append(f"{label} [{e.get('status')}]")
         if gate_fail:
@@ -1279,7 +1345,8 @@ def score_fc6(art: dict, tier: str, iso: str) -> list[dict]:
                     "FC-6",
                     "battery gate rows",
                     CAVEAT,
-                    f"gate rows PASS but {len(vacuous)} vacuous (SKIP, insufficient rungs): {vacuous}",
+                    f"no gate FAIL but {len(vacuous)} vacuous row(s) "
+                    f"(SKIP, or PASS on an empty/all-constant series): {vacuous}",
                     values={"n_gate": n_gate, "vacuous": vacuous},
                 )
             )
