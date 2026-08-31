@@ -82,6 +82,9 @@ DATATYPES: tuple[str, ...] = (
     "nrel-atb",
     "ira-credit-parameters",
     "miso-m2m-flowgates",
+    # caiso-226: SoCalGas OFO/EFO declaration ledgers (gas-deliverability
+    # events). Intake-only -- no mechanism consumes it yet.
+    "gas-ofo-events",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
