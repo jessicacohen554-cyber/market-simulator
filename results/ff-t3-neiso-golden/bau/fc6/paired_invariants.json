@@ -1,0 +1,20 @@
+[
+  {
+    "ident": "P1",
+    "name": "CO2 monotone vs carbon",
+    "status": "FAIL",
+    "detail": "cumulative CO2 base 210.52 Mt vs high 320.84 Mt"
+  },
+  {
+    "ident": "P2",
+    "name": "merit-order sign",
+    "status": "PASS",
+    "detail": "year 2050: all signs correct"
+  },
+  {
+    "ident": "P3",
+    "name": "perturbation stability",
+    "status": "PASS",
+    "detail": "cumulative builds moved 0.0% (base 39500 MW, pert 39500 MW)"
+  }
+]
