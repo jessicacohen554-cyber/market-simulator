@@ -9115,3 +9115,57 @@ were vacuous in a binned fleet (matched no rows) — the presence witnesses
 failed honestly and the plant-grain drill is the decisive evidence.
 
 Finding: `FINDING-miso190-partial-plant-exit-carry-2026-08-30.md`.
+
+## miso-191 (2026-08-30/31) — the binning-aware exit-cohort delivery WORKS: the miso-190 phantoms are gone, 2023 carries its real coal, and the arm is PROMOTED KEEPER (`2026-08-30-miso-191-bexit`) under the owner's in-session directive; the probe's mechanical kill-2 REJECT stands on the record, fired by two mis-frozen witnesses
+
+**Charter:** the miso-191 handoff — ask A (zero-solve validation, PASS:
+NOT-YET on {C3a-2025 −12.2965%} alone reproduced) and ask B (the
+FINDING-miso190 §4 named successor, granted). **Form (a) frozen ex ante**
+(PREREG-miso191 §1, pushed + blob-verified before any mechanism code and
+merged as PR #4379): date-scoped exit-cohort bins — each loader-stamped
+leg-1 partial-exit unit forms a (plant × group × retirement-month) bin
+whose tranches carry the unit's own EIA-860 retirement, so the EXISTING
+`effective_cod` per-unit seam ages the cohort out at unit grain while the
+surviving plant's bin keeps running. No change to cod_ramp/arrays; unit
+ids `..._p{plant}_r{yyyy}{mm}_{tranche}`; whole-plant retirees (staggered
+non-scope measured ≤395.5 MW / 2 plants), leg-2 re-carries and announced
+operable retirements NOT routed; byte-inert off (13 + 196 tests).
+
+**The A/B** (both registered: `2026-08-30-miso-191-control` /
+`2026-08-30-miso-191-bexit`): S-0 value-identical ×12 sidecars (5th
+straight clean HEAD reproduction). Cohort presence + capacity EXACT at
+all 8 witness plants ×3 years; **cohort dispatch EXACTLY 0 after every
+real exit month** (Karn Jun-2023, Petersburg Jul-2023, Brown Nov-2023,
+Sherco-2 Jan-2024, SOC Jun-2024, …) — **the miso-190 ~10 TWh/yr phantoms
+are GONE**; S-2 +5.3068 TWh coal-2023 with 2024 +0.39 / 2025 +0.017 (no
+phantom inflation); S-4 clean; charter kill 1 silent (C3a-2025 −12.2965 →
+−12.3405, 0.044 vs 0.10 pp); zero PASS→FAIL flips (C3b-2025 stays PASS).
+**C3a-2023 +3.5008 → +0.0913; 2023 coal C1 Σ|err| 8.546 → 3.399 TWh;
+C3a-2024 −4.30 → −4.55 (declared adverse face, in-band).** Determination
+NOT-YET on {C3a-2025} ALONE; C6 attested (DOF ledger 37/2, new entry
+MEASURED); C3c the single ledgered caveat.
+
+**Against interest:** two pre-registered S-1 clauses FAILED AS FROZEN and
+the instrument's mechanical verdict (REJECT, charter kill 2) stands
+unaltered in `_miso191_ab_gates.json`. Both are measured instrument
+mis-freezes: (1) the p4014 post-exit ceiling of 0.0 was impossible — 47 MW
+of operable NG-ICE units (WHT09–13) the phase-0 gas-CT-string filter
+missed, and the CONTROL violates the frozen ceiling byte-identically
+(32.887855529785156 MW both legs); (2) the 6055 leg-2 delta was frozen at
+the snapshot rating +517.0 while the arm's +520.0/+554.1/0.0 equal Big
+Cajun 2-1's year-matched vintage ratings to the decimal — the basis
+PREREG-miso190's own leg-2 design specifies. So the PREREG's promotion
+rule could not fire clean; adjudication rode the pre-registered
+owner-escalation path with the recommendation, resolved by the owner's
+standing in-session instruction (*"Is this a recommended keeper candidate?
+If so plz promote…"*, given twice 2026-08-30/31). **Promoted; cell
+`partial_plant_exit_carry` R → K; keeper-auditor PASS 0 repairs.**
+Reverting `keepers/MISO.json` to `2026-08-30-miso-188-rvsscope` undoes it.
+
+The C3a-2025 object is UNCHANGED — the adjudicated mc-idled/flat-stack
+model-class residual stays in owner D-4 posture court (with the miso-189
+§7.3 marginal-vs-average delivered-cost residue). The fleet-membership
+family (miso-186/187/188/191) is at its adjudicated frontier: every named
+membership blind spot is closed.
+
+Finding: `FINDING-miso191-binning-aware-exit-2026-08-31.md`.
