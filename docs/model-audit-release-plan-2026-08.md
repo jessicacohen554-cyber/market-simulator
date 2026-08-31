@@ -4038,3 +4038,198 @@ your branch when done.
   keeper**; the five other captures remain stale and ERCOT's carve-out
   config still has no golden (WS3 stays parked — this was the scoped
   capture, not a restart).
+- 2026-08-31 — **DIRECTOR RECORDS v16 — the decision-card cycle: all four cards
+  verified EXECUTED, the PJM stage-0 golden captured, four-instrument alignment
+  restored, audit row O7 CLOSED — and two instrument findings that only appeared
+  because the "unchanged" readings were re-derived.** Records lane dispatched by
+  the 2026-08-31 director startup under the standing deviation (the director
+  issues prompts and pushes nothing); board brought to **v16**; this is its §8
+  entry. **PIN `54ca19ae`** (merge of #4428), held stable across **four** polling
+  rounds. The dispatch's base **`ee75a0b`** (merge of #4426) is reachable but 2
+  merged PRs stale (#4427/#4428, both capx) — and the delta was **measured, not
+  assumed**: `git diff ee75a0b..54ca19ae` touches only
+  `docs/handoffs/capx-director-*`, so **no figure differs between the two
+  states**. Cycle window `69ae4dc7..54ca19ae` = **175 commits / 108 non-merge /
+  67 merged PRs (#4360–#4428)** in 4 h 47 min — **the busiest window this board
+  has recorded** (v15: 24, v14: 21). Of the 67: **30 capx** (a different
+  program), **30 calibration**, **7 this program's**. **Zero solves, zero keeper
+  / marker / matrix / registry / freeze edits by this lane; two files pushed.**
+  - **THE FOUR DECISION CARDS, VERIFIED AT THE PIN (the plan's card entries
+    already landed in-session; these are the outcomes, not a re-record).**
+    **Card 1** — `perfb-stage0/manifest.json` `keepers` holds **all six** ISOs;
+    the PJM entry's `keeper_id` **byte-matches the live keeper**, `years`
+    `[2023,2024,2025]`, `content_hashes` present; top-level `git_sha`
+    **`1cfea72`** resolves **and** `merge-base --is-ancestor` places it inside
+    `origin/main`. **WS3 stays PARKED and G2 leg 1 keeps BOTH parks** — the card
+    declined the restart, so this is a scoped capture, not a resumption.
+    **Card 2** — charter `docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` ran
+    end-to-end: Phase-0 (#4369) and Phase-1 Leg A A/B (#4419 + #4426). **Both
+    kill-gates PASS** (K1 had nothing to fire on — every addition band identical
+    to the digit; K2 not inert — the storage-mix rows differ); the arm
+    reproduces the pre-registered signature byte-exact (`iron_air` 3,000 +
+    `flow_battery` 2,000 MW / 64.0 h → `li_ion_4hr` 3,000 + `li_ion_8hr`
+    2,000 MW / 5.6 h, the class ERCOT actually built). ERCOT matrix cells
+    `storage_entry_availability_gate` and `storage_entry_cost_normalized_rank`
+    verified reading **`cell: "O", fc: "O"`** — `U → O`, measured, **ARMING
+    OPEN as an owner decision on the A/B record**; both fields ship default-OFF
+    and only the forecast namespace was registered. **Retires the "homeless
+    three boards" queue item.** **Card 3** — the **RE-VERIFY REQUIRED** standing
+    rule verified in place at `docs/calibration-log/governance.md`, 2026-08-30
+    entry, Ruling 1. **Card 4** — `keepers/NYISO.json` `frontier` carries the
+    append-only `reverted_2026-08-30` key with the owner verbatim, plus the
+    keeper-text-auditor's machine-readable `withdrawn` mirror that makes
+    `calibration-status.js` `frontierActive()` suppress the badge.
+  - **FOUR-INSTRUMENT ALIGNMENT RESTORED — first time since v13.** All four
+    re-derived independently: **CALIBRATED = `complete` = `frontier` = forecast
+    gate-(a) passers = {PJM, NEISO}**. `final` = **EMPTY** (`_note` only);
+    `withdrawn` = {NYISO, CAISO}; `holdout-freeze.json` `active: true`,
+    tier-scoped to `locked_test` alone (scope re-read: `isos: ALL`,
+    `frozen_operations` solve/score/registration; validation 2020–2022
+    explicitly not frozen).
+  - **KEEPER MOTION: ONE, and the other five byte-compared unmoved.** NYISO
+    `157-par-attribution` → **`2026-08-30-nyiso-159-loss-surface`**, `NOT-YET`,
+    **8 scored / 6 target / 2 fails / 0 ledgered** (157 was 8/5/3/0) — **C3b
+    left the fail set**, leaving {C3a-2025, C3c}; C3a(RT) +2.3 / −1.2 /
+    **−11.5 %**. **C3c reads FAIL, not CAVEAT — the standing rule's lone-failure
+    guard working as designed.** **No `complete` re-key was owed** (NYISO's
+    marker is withdrawn); both surviving `complete` entries are re-keyed to
+    their live keepers; `audit_keepers.py` **PASS 0/0**. **NO ISO HAS EVER SPENT
+    A LOCKED-TEST YEAR** — re-verified by walking all **58** sidecars: histogram
+    **{2022: 2, 2023: 56, 2024: 52, 2025: 52}**, the {≤2018, 2019, 2026} scan
+    returns **NONE**, and the only out-of-training rows are the two authorized
+    2022 touchpoints.
+  - **AUDIT ROW O7 CLOSED** (#4377) — the Door-2 attribution harness built **and
+    exercised**: **HP-1 PASS** (a de-laddered leg whose P0, startup markup,
+    bridge min-gen floors and committed-row run stats are hash-provably
+    **bit-identical** to the keeper's, both adaptive passes), and the 2023 A/B
+    decomposed into **pricing −$0.02/MWh vs commitment+interaction +$2.26/MWh of
+    a +$2.24/MWh whole** (74/132 committed rows, 12,380 MW). R1's own arm/off
+    comparison stays whole-solve — carried as the ERCOT keeper's named permanent
+    limitation. Keeper untouched. WS1 **~93 % → ~95 %**; AUDIT-B still gated at
+    G3, which is what caps the row.
+  - **ALL FIVE GATES GREEN at the pin, exit codes captured directly (unpiped):**
+    `audit_keepers` **PASS 0/0** · parity **exit 0, 58 runs / 93 dirs / 0
+    tolerated** · matrix **exit 0** (194 field + 49 row + 151 path anchors — the
+    +2 fields are the T1-H Leg-A pair) · forecast staleness **exit 0, Δ = 1/10**
+    (31 of 47 verdict stamps undated — the WARN carried) · bench **exit 0, 20
+    parts, 0 STALE and 0 engine-drift**.
+  - **🔴 FINDING 1 — v15's six bench engine-drift WARNs cleared, and NOTHING IN
+    THE REPOSITORY CLEARED THEM.** Checked rather than celebrated, per the
+    dispatch. The ERCOT and NYISO bench parts and both
+    `check_bench_freshness.py` / `scripts/lib/bench_stamp.py` are
+    **byte-identical across `69ae4dc7..54ca19ae`** (only MISO's three parts
+    moved, #4370), and re-running the checker's own arithmetic **at the v15 pin
+    in this container reproduces 0 drift for all 20 parts**. The cause is the
+    instrument's day granularity: it reads the part's last-commit date with
+    `--date=short` and filters engine commits with `--since="<date> 23:59:59"`
+    **in the runner's local timezone**, so any window where bench touches and
+    engine commits share one calendar day (here: all of 2026-08-30) reads zero.
+    Corroborating: v15 reported drift on ERCOT+NYISO but **not** CAISO/MISO
+    although all four share last-touch commit `8990eee` — structurally
+    impossible under this checker, so the v15 figure is not reproducible from
+    committed bytes at the sha it was published against. Ungated by design;
+    recorded as a **reading discipline** (restart checklist item 12), and the
+    WARNs should return on the first engine commit dated past the parts'
+    last-touch day.
+  - **🔴 FINDING 2 — the stage-0 provenance defect was OVERWRITTEN, not
+    resolved, and v15's E-7 prune is FIVE-WIDE.** Re-deriving the table that
+    "cannot have changed" (v15's own amendment) found both. (a) `af1ccb6`
+    appears nowhere in the manifest — the Card-1 capture's diff is
+    `-"git_sha": "af1ccb6"` / `+"git_sha": "1cfea72"` against 124 inserted lines
+    adding only the PJM entry. The manifest holds **one** top-level `git_sha`
+    for **six** captures taken at six trees and has **no per-entry provenance
+    field**, so the five older captures now carry a sha that **resolves and is
+    wrong** — harder to notice than one that did not resolve. **This is a schema
+    limitation, not an error by the capture lane.** (b) Testing each capture's
+    `keeper_id` for a committed registry sidecar: **five of six MISSING**
+    (ERCOT, CAISO, MISO, NEISO, NYISO), only PJM's PRESENT — and **all five were
+    already missing at the v15 pin**, so v15 reported the motion where the
+    condition already covered five. The per-file `content_hashes` remain the
+    only sound verification instrument. Restart checklist items 2 and 11 rewritten
+    accordingly (**per-entry** provenance inside the manifest; never by
+    exempting golden runs from retention).
+  - **STAGE-0 COVERAGE: 1 current / 5 stale / 0 without a golden** — up from
+    0-of-6 held for six consecutive cycles. ERCOT still needs **two** captures
+    (forward + carve-out). **Promotion-gap counts are stated as NOT
+    RE-DERIVABLE at this pin and labelled as v15's rather than re-asserted**:
+    the per-ISO keeper shards' git history begins 2026-08-26 (the 2026-08-16
+    rewrite plus the shard split truncated it) while the captures date
+    2026-08-14/15/16, and the shards' embedded supersession chains reach three
+    deep. What is derived: each row's verdict, the registry-presence column, and
+    the motion since v15 (NYISO **+1**, all others **+0**, byte-compared).
+  - **FORECAST BOARD — gate (a) unchanged in membership; legs (b)/(c) SCORED for
+    the first time.** The seed `frontend/data/forecast/program-status.json` was
+    **restructured this window** by the capx desk and its schema was re-read
+    rather than assumed. Gate-(a) passers **{PJM, NEISO}** = the `complete` set.
+    Legs re-derived per ISO: **NEISO holds (a)+(b)+(c) — the first three-leg ISO
+    in program history** — NYISO (b)+(c), PJM (a)+(c), ERCOT (c), MISO (c),
+    CAISO none. **`open` is `false` for all six and leg (d) is `none`
+    everywhere: no ISO's full-solve authorization gate opens.** Two records
+    observations, neither adjudicated (a different program's namespace): seed
+    staleness went **three stale stamps → FOUR** (NYISO re-staled by its own
+    promotion hours after the Q5-W lane re-stamped it), and the seed's top-level
+    prose says *"nobody holds three"* while its per-ISO blocks say NEISO does —
+    the same defect class the D13 reconcile lane was raised to repair.
+  - **CALIBRATION SWEEP (recorded, not adjudicated), with three items PAST the
+    dispatch.** ercot-242 registered · **ercot-243 and ercot-244 both KILLED AT
+    CENSUS** · ercot-245 Phase-0 · the nyiso 158→159→160→161 arc · **caiso-225's
+    watch sweep ALL NULL** (#4425, zero solves; W-1/W-2/W-3 and the F2 derate
+    still blocked, A3's OFO record available+feasible but unfunded, **terminal
+    rest re-affirmed on evidence**) · crossover CO2 grain repair (#4388). **Past
+    the dispatch:** *(i)* **miso-190's registration watch CLOSES** — both
+    sidecars committed (#4370), a third-cycle watch item ends; *(ii)* **miso-191
+    LANDED** (#4379 + #4384), not "in flight"; *(iii)* the **nyiso-leg2**
+    promote-or-archive item **no longer exists in that form** — nyiso-160
+    **STOPPED Leg 2 WITH CAUSE at access** (AORR artifacts never landed; the
+    owner answered *"Cannot produce them"*), leaving C3a-2025's winter face
+    **identification-blocked on both legs** with **no determination consequence
+    and no matrix cell moved**, and **nyiso-161 filed an owner-ordered
+    winter-face waiver card**, which is what is actually pending. nyiso-160 also
+    proved the new keeper replays **bit-identically at HEAD** (max abs
+    divergence 0.0 on every hourly-sidecar value column, all three years) — **no
+    G1-class drift**, the first such evidence since neiso-97 and relevant to the
+    re-stamp-not-re-solve question.
+  - **LANE STATE, derived from `ls-remote` tips ancestry-tested inside
+    `origin/main` plus ONE live `list_pull_requests`** (this lane holds no
+    session-listing authority and ran none): **ONE open PR (#4424, capx D12-A)
+    and ONE branch ahead (`claude/capx-d12a-arming-0ibtzh`, +2)** — the same
+    lane, and **not this program's**. **No audit-program lane is running at the
+    pin.** The capx desk merged **thirty** PRs this window: the exact class of
+    plausible-sounding commits that would fool a commit-list scan, of which two
+    touched surfaces this board reads.
+  - **OWNER QUEUE at cycle end** — three items retired by the cards (frontier
+    currency rule → Card 4; cross-ISO scorer-change precedent → Card 3; the
+    homeless T1-H defect → Card 2), plus the miso-190 watch closed. **Three NEW,
+    all commissioned by the cards themselves:** *(a)* **arm the T1-H
+    storage-entry repair, or don't** — a one-bit call on a complete A/B record,
+    explicitly reserved to the owner; *(b)* **the C-1 wind signal-object call**,
+    with its measured input delivered (the dual-based signal closes **8.87 %**
+    of the wind entry miss and leaves 91.1 % open, while the same run's terminal
+    reserve margin worsens 25.19 → 40.24 %; the lane proposes no lever, and the
+    signal/volume partial closures are **not additive by construction**);
+    *(c)* **the nyiso-161 winter-face waiver card**, filed and unanswered.
+    **Carried:** the freeze/WS3 restart (🆕 **materially smaller — Card 1 took a
+    capture inside a 67-PR window with no freeze at all**, so the question is now
+    only the five stale rows and certification); NEISO `final` **DATA-BLOCKED**
+    on the 2025 EIA-923 FINAL vintage; CAISO **terminal rest + MAP**,
+    re-evidenced by caiso-225's all-NULL sweep, nothing owed; the dormant ERCOT
+    rule-16 waiver qualifier; the nyiso-148 note (its keeper now **six**
+    promotions superseded).
+  - **PROTOCOL.** The 2026-08-30 sitting's records duties were executed
+    **in-session** under an **explicit one-sitting owner supersession** of the
+    standing deviation; **that supersession is spent and the deviation is back
+    in force.** The prior director session **archived before issuing this
+    dispatch**, which the 2026-08-31 director startup caught and repaired —
+    recorded as a **dispatch-vs-launch near-miss caught by startup, NOT a
+    failure streak**, with the checklist question added: *did the last sitting's
+    records duties get dispatched, or did the session end holding them?* (A
+    sitting that executes under a supersession is exactly the shape that leaves
+    the next dispatch unissued, because nothing looks outstanding.) Two protocol
+    amendments recorded on the board: **re-derive the reading that IMPROVED, not
+    just the one that "cannot have changed"** (finding 1 is the instance), and
+    **re-read a restructured file's schema before reading its values** (the
+    forecast seed is the instance). Rule 27 `[R-PUSH]` observed on both files
+    (each ≥300 lines): edited locally, exact on-disk bytes pushed via small-pack
+    `git push` off a branch cut fresh at the pin, blob-verified after push.
+    Rule 26 `[R-MECH-MATRIX]`: this lane tested no mechanism and **touched no
+    matrix shard**.
