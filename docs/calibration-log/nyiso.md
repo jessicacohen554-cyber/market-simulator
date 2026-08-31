@@ -8592,3 +8592,96 @@ closes with cause a second time — a legitimate outcome, to be recorded
 unrewritten.
 
 Next shorthand: nyiso-164.
+
+## 2026-08-31 — nyiso-163b: OWNER CLOSED the AORR access route PERMANENTLY; the nyiso-161 card left UNRULED; and the C3c lane RE-OPENED cross-ISO, where NYISO's own reserve timing CONTRADICTS the ledger it carries (zero solve)
+
+Continuation of nyiso-163 under two in-session owner rulings. **Keeper, shard,
+marker, determination and matrix all UNTOUCHED.**
+
+**(1) OWNER RULING — the MyNYISO/AORR access request is KILLED.** Verbatim:
+*"I'm not getting new data access so just kill that request on 1."* Leg 2 of
+`INTAKE-SPEC-nyiso156` §2 is therefore **PERMANENTLY CLOSED BY OWNER DECISION**,
+not stalled and not awaiting a fetch. The nyiso-163 access package (finding
+§2.1) is **not to be sent**; it stays on the record as the specification of what
+was foregone, never as a pending action. The winter face of C3a-2025 (−$3.92) is
+now **permanently unidentifiable from obtainable data**: nyiso-158 §1.4 measured
+that no admissible driver in the repo reaches it, nyiso-163 re-confirmed the
+nyiso-97 content verdict at IN-SPAN vintage from the public NYSRC rules layer,
+and the only identified route was the walled Applications table. The nyiso-97 §5
+re-open conditions 1 and 2 remain live as passive watch items (finding §6);
+condition 3 (owner-supplied access) is **withdrawn by the owner** and its watch
+line is closed. The nyiso-163 gate (`scripts/probes/_nyiso163_aorr_gate.py`)
+stays committed and validated — it now guards a route nobody is walking, which
+is the correct end state for a pre-committed test whose input never arrives.
+
+**(2) The nyiso-161 winter-face waiver card is UNRULED and STAYS OPEN.** Put to
+the owner with the three options costed (A NOT-YET stands / B CWC / C
+CALIBRATED), plus two findings the card itself does not carry: **B is dominated**
+— marker re-entry requires CALIBRATED not CWC (Q5-W), so B pays the full
+rubric-amendment and precedent cost and buys nothing downstream — and the
+precedent surface is **not NYISO-only**, since CAISO's standing C3a residual has
+both lever routes CEII-blocked (caiso-218/219) and would have an immediate claim
+on any access-blocked caveat class. The owner ruled **neither A nor C**, electing
+instead to open the C3c question. **NYISO's determination therefore stays NOT-YET
+on {C3a-2025 −11.5 %, C3c} by default**, and the card remains filed and
+undecided.
+
+**(3) OWNER RULING — "Open c3c scarcity question."** Scoped and costed, zero
+solve, in `docs/CHARTER-c3c-scarcity-program-2026-08-31.md`. The cross-ISO
+measurement **falsifies the blanket framing** several ledgers carry ("an hourly
+LP with $0 reserve offers cannot form the RT scarcity tail"): **PJM PASSES C3c
+at 0.67/0.56/0.54× in the same LP, same solver, same code path**, while
+CAISO and NEISO form 0.00× in every year. That spread is not one phenomenon.
+
+**(4) THE NYISO-SPECIFIC FINDING — this lane's C3c caveat inherited a diagnosis
+its own evidence does not support.** New measurement from the keeper's committed
+`reserve_family_<year>.parquet` sidecars against
+`actual_lmp_hourly_NYISO.parquet` (artifact
+`results/calibration/_nyiso163b_c3c_reserve_timing.json`): **in 2025 the model
+goes reserve-short in 24 hours and 20 of them (83 %) are hours reality priced
+above $300**, covering 48 % of reality's 42-hour tail; 2023 is 5/20 overlapping
+50 % of the actual tail; 2024 is 0/7. The overlapping hours are **June–July 2025
+and September 2023 — the summer scarcity days that constitute C3a-2025's summer
+face.** This is the OPPOSITE of the CAISO failure mode on which the cross-ISO
+closure rests: caiso-144 §C/§D measured 1.6–10.5 GW of model reserve slack in
+reality's tail hours and an overlay-to-reality overlap of 1/47, 0/35, 0/8.
+**NYISO is short in the right hours; it cannot PRICE them.** Only the cheap
+locational families ever bind (`nyc_10min_total`/`nyc_30min_total` $25/MW,
+`seny_30min_total` $40/MW); the NYCA-level products (`nyca_10min_total` $750,
+`nyca_10min_spin` $775, `east_10min_total` $775) **never bind in any hour of any
+year**, capping the total available reserve adder at **$90** against an actual
+tail mean of $505/$517/$659. The open question is therefore a **quantity**
+question — was reality short at the NYCA level in those hours? — and explicitly
+NOT a price knob: the $25/$40/$750/$775 values are SOM-published and cited in
+`model/reserves/spec.py`, and raising one to reach a residual would be a fitted
+scarcity adder (rule 13 `[R-MEASURED]`, rule 1 `[R-STRUCT]`) of exactly the kind
+ERCOT had to remove at ercot-214/215 when its tail gains were measured to ride a
+phantom AS-product shortfall-ramp channel.
+
+**(5) The charter's ranked questions, both zero-solve, neither run here.** **Q1
+(first):** audit PJM's reserve duals for the ercot-214 phantom signature — PJM
+passes on duals to $187.90 with ZERO shortfall in every hour, and that audit has
+never been run; if the channel is phantom, a CALIBRATED keeper rests on it, which
+outranks everything else in the charter. **Q2 (only if Q1 returns REAL):** the
+NYISO product-level question above, with an explicit kill gate — if reality shows
+no NYCA-level shortage, NYISO's C3c ledger is CONFIRMED rather than corrected.
+**Q3:** the probabilistic-RT-premium class is an ARCHITECTURE decision (it
+collides with rules 4 `[R-DUALS]`, 8 `[R-8760]` and the no-MIP constraint), NOT a
+calibration lane, and is not recommended as one.
+
+**(6) DO-NOT-REDO restated for the next session** (rule 26): the naive "port
+PJM's scarcity formation" program is dead on three records — CAISO closed on
+model STATE (`energy_reserve_coopt` CAISO **I**, caiso-144: ≥854 MW family slack
+in all 26,280 hours; backcast overlay refused on measurement, §D), ERCOT closed
+on its exhaustion record plus the caught phantom, and MISO/NEISO ledgered to the
+probabilistic-premium class. Cells adjudicated: `ordc_scarcity_overlay` CAISO K /
+NEISO K / PJM G / MISO G / ERCOT R; `dynamic_reserve_requirements` NEISO R;
+`reserve_deliverability_scoping` CAISO/PJM I.
+
+**(7) Matrix.** NO cell moves — rule 26 duty (b) is not triggered: nothing was
+tested, armed or adjudicated; §4's finding is a measurement on committed
+artifacts, and the ledger-inheritance question it raises is routed to the
+charter's Q2 rather than settled here. Duty (c) not triggered (no new
+`ScenarioConfig` field).
+
+Next shorthand: nyiso-164.
