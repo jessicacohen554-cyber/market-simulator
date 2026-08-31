@@ -12889,3 +12889,67 @@ remains the owner's to re-open. Zero solves; reads ⊂ {2023, 2024, 2025};
 ERCOT surfaces only (rule 25); push integrity per rule 27.
 
 **Next shorthand: ercot-247** (ercot-199 remains unclaimed)
+
+## ercot-247 — 2026-08-31 — ERCOT DECLARED COMPLETE + FRONTIER (owner declaration, executed in-session, ZERO-SOLVE): the rule-22 `complete` marker lands (VALIDATION tier only — 2022 spendable on the FORWARD config, designated ex ante; locked test never granted, frozen) and the frontier designation is recorded on the keeper shard; `audit_keepers` M1b gains the partition-aware re-verification leg (worst-over-designated-spans recomputed live) so the marker's CALIBRATED assertion is machine-verified against both configs' committed artifacts
+
+**The declaration (owner, 2026-08-31, this session, verbatim):** *"I think
+you can declare it complete / frontier"* — following the same-session
+ercot-246 ruling that fixed the ISO-level determination of the two-config
+keeper at CALIBRATED (worst config determination over designated spans).
+ERCOT had never held a marker (absent even from `withdrawn`); this is its
+first.
+
+**Executed.** (1) `frontend/data/backcast/calibration-complete.json`
+gains the ERCOT `complete` entry: keeper
+`2026-08-25-234-eastex-identity` (M1a: the shard's designated keeper);
+determination = the ISO-level partition rollup CALIBRATED, re-verified
+live from committed artifacts (forward on {2024, 2025} CALIBRATED, lone
+ledgered C3c ×2; carve-out on {2023} CALIBRATED zero caveats), with the
+forward keeper's registered unrestricted NOT-YET carried in the entry at
+full magnitude; **`config_2022_designation` declared EX ANTE — the 2022
+validation touchpoint runs the FORWARD config** (2022 is pre-ECRS; the
+carve-out's two deltas exist solely for the 2023 ECRS-era regime), fixed
+now so the touchpoint can never be config-shopped after its result;
+`tier_authorized` validation ONLY (2022; backward ladder per rule 22);
+`locked_test` NOT AUTHORIZED — never granted, and the tier-scoped freeze
+covers it regardless; `frontier_basis` = the ercot-239→245 arc record
+(two objects closed by measurement/identity, one in-solve rejection,
+three zero-solve census kills with DO-NOT-REDO fences; the lone
+remaining C3c route — per-unit forward-regime identification — blocked
+on the 2024/2025 all-resource SCED conduct corpus intake, an owner data
+decision). (2) `frontend/data/backcast/keepers/ERCOT.json` gains the
+`frontier` block (PJM-precedent format; declared 2026-08-31) and the
+ercot-246 `iso_determination_ruling` text is annotated with the
+same-day supersession of its "not a marker declaration" sentence. (3)
+**`scripts/audit_keepers.py` M1b extended, fail-closed:** for an ISO
+whose keeper shard carries an owner-ruled
+`config_partition.iso_determination`, the live value the marker's
+asserted determination is verified against is the partition rollup —
+each config scored on its designated span via
+`calibration_verdict.determine(run, years=span)`, worst taken — never
+the shard's own stored assertion and never skipped; ISOs without the
+ruling field keep the plain single-run comparison unchanged (NEISO/PJM
+verified untouched). (4) ERCOT status part rebuilt (frontier badge +
+marker-side data).
+
+**Verified:** `audit_keepers.py` full PASS — 0 failures, 0 warnings,
+including the `marker` check re-verifying ERCOT's CALIBRATED assertion
+under the new leg and NEISO/PJM under the old one;
+`holdout_policy.authorized` reads TRUE for ERCOT-2022 (validation tier,
+not frozen — the freeze scope is the locked test alone) and FALSE for
+ERCOT-2019 (locked test: no `final` entry, frozen);
+`check_mechanism_matrix.py` clean; `build_status.py --check` in sync.
+
+**What the marker changes and what it does not.** 2022 may now be
+solved/scored/registered for ERCOT with `--holdout-authorized` on the
+frozen forward-keeper recipe — the iterable rule-22 touchpoint loop
+(diagnose → re-tune on 2023–2025 → re-test; never tune against 2022).
+Nothing else opens: 2021/2020 follow the staged ladder, 2019/H1-2026
+stay locked-test-frozen for every ISO, and `final` remains a separate
+explicit owner act ERCOT does not hold. The forward span's ledgered C3c
+(2024 22/53, 2025 1/31) remains the honest record at full magnitude —
+the frontier designation documents that its remaining route is a data
+intake with the owner, not an executable lane. Zero solves this
+session; ERCOT surfaces only (rule 25); push integrity per rule 27.
+
+**Next shorthand: ercot-248** (ercot-199 remains unclaimed)
