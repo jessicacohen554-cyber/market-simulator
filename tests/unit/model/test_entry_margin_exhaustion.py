@@ -114,9 +114,28 @@ class TestConfigField(unittest.TestCase):
             ScenarioConfig().cache_key(),
         )
 
-    def test_requires_lookahead_reprice(self):
-        with self.assertRaises(ValueError):
-            ScenarioConfig(entry_margin_exhaustion=True, entry_lookahead_reprice=False)
+    def test_composes_with_disarmed_reprice(self):
+        """The C-1 joint posture (owner ruling R-B, 2026-08-31).
+
+        This pair was refused until R-B; the walk is delta-only, so armed
+        without the reprice the screens keep the raw prior-year zonal duals
+        as their level and this rule supplies the capacity response
+        (``docs/PRECOMMIT-c1-joint-wind-2026-08-31.md`` §1.3).
+        """
+        cfg = ScenarioConfig(
+            entry_margin_exhaustion=True, entry_lookahead_reprice=False
+        )
+        self.assertTrue(cfg.entry_margin_exhaustion)
+        self.assertFalse(cfg.entry_lookahead_reprice)
+        # A posture of its own: distinct from both singles and the default.
+        self.assertNotIn(
+            cfg.cache_key(),
+            {
+                ScenarioConfig().cache_key(),
+                ScenarioConfig(entry_lookahead_reprice=False).cache_key(),
+                ScenarioConfig(entry_margin_exhaustion=True).cache_key(),
+            },
+        )
 
     def test_backcast_coerces_off(self):
         cfg = ScenarioConfig(mode="backcast", entry_margin_exhaustion=True)

@@ -4251,10 +4251,16 @@ class ScenarioConfig:
     # state in their live decision order (thermal first, then storage —
     # sequential-with-shared-state reproduces every measured L-1b step).
     # Zero fitted parameters: every quantity in the exhaustion condition
-    # already exists in the screen. Requires entry_lookahead_reprice (the
-    # repricing instrument IS the lookahead stack; with the reprice disarmed
-    # there is nothing to re-price — refused in __post_init__ rather than
-    # silently inert, the FFR-8A pattern). Forecast machinery only; coerced
+    # already exists in the screen. Composable with entry_lookahead_reprice
+    # in EITHER state since the owner's R-B ruling (2026-08-31,
+    # docs/PRECOMMIT-c1-joint-wind-2026-08-31.md): the repricing instrument
+    # is the lookahead stack, but the walk consumes only its within-year
+    # DELTA, so armed WITHOUT the reprice the screens keep the raw prior-year
+    # zonal duals as their level and this rule supplies the capacity
+    # response — the C-1 joint posture. (It was refused in __post_init__
+    # until R-B, on the wiring as it then stood; the seam's availability gate
+    # now arms on either field while every CONSUMPTION stays the reprice's.)
+    # Forecast machinery only; coerced
     # off in a plain backcast alongside entry_lookahead_reprice. Default off
     # is byte-identical (the allocators' bang-bang paths are untouched).
     # FIELD default stays False; ERCOT's ISOConfig.default_scenario_overrides
@@ -13736,22 +13742,27 @@ class ScenarioConfig:
                 "is nothing to re-level."
             )
 
-        # D11-R margin-exhaustion volume rule: the walk's repricing
-        # instrument IS the lookahead stack (runner._lookahead_reprice_signal
-        # re-invoked with the walk's additions). With the reprice disarmed
-        # the screens read raw econ_prices — a fixed array with no
-        # capacity-response instrument — so exhaustion could never bind and
-        # the walk would silently reproduce bang-bang. Refused rather than
-        # silently inert (the FFR-8A refusal pattern; rule 19 [R-ONE-MECH]).
-        if self.entry_margin_exhaustion and not self.entry_lookahead_reprice:
-            raise ValueError(
-                "entry_margin_exhaustion requires entry_lookahead_reprice: "
-                "the margin-exhaustion walk re-prices the lookahead "
-                "instrument's own signal after each tranche "
-                "(docs/FINDING-entry-signal-l1-2026-08.md §2); with the "
-                "reprice disarmed there is no repricing instrument and the "
-                "walk would silently reproduce the bang-bang allocation."
-            )
+        # D11-R margin-exhaustion volume rule + entry_lookahead_reprice: the
+        # pair is the C-1 JOINT POSTURE and is ADMISSIBLE since the owner's
+        # R-B ruling (2026-08-31; docs/PRECOMMIT-c1-joint-wind-2026-08-31.md
+        # §1.3). It was refused here until then, on the reasoning that with
+        # the reprice disarmed "the screens read raw econ_prices — a fixed
+        # array with no capacity-response instrument — so exhaustion could
+        # never bind and the walk would silently reproduce bang-bang". That
+        # was a true statement about the WIRING, not about the arithmetic:
+        # the walk is DELTA-ONLY (_EntryRepriceWalk.signal returns
+        # consumed + alpha x (S(state) - S(0)), runner.py), and the
+        # instrument S = runner._lookahead_reprice_signal is callable whether
+        # or not its LEVEL is consumed. The seam's availability gate is now
+        # (reprice OR exhaustion) with every consumption still gated on the
+        # reprice, so in this posture the screens consume the raw zonal duals
+        # and the walk supplies the capacity response — a real instrument,
+        # not an inert one, which is why the refusal no longer applies. No
+        # new field and no new DOF: the posture is these two registered
+        # fields (rules 19 [R-ONE-MECH], 21 [R-DOF], 24 [R-REGISTRY]).
+        # The entry_forward_expectation_signal and entry_forward_reserve_leg
+        # refusals on this same field are UNTOUCHED — each re-levels or
+        # re-founds the reprice's own output, which this one does not.
 
         # D12 scarcity-consistent entry reserve leg: the leg IS the lookahead
         # instrument's own expected-ORDC adder, and it re-founds the

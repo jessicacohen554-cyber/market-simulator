@@ -374,3 +374,64 @@ Both fields stay at their shipped defaults; no default is flipped.
 - **Rule 27 `[R-PUSH]`** — every edit made locally and pushed as on-disk
   bytes; any push touching a ≥300-line file is followed by blob verification;
   no CI workflow is added (the solves run in this session).
+
+---
+
+## AMENDMENT 1 (2026-08-31, pre-solve) — the base moved: Q15 armed the volume rule under this charter
+
+**Filed before any solve**, as the charter's own §6 requires. The §0 base
+`54ca19a` was superseded while this lane implemented its enabling change; the
+lane refreshed onto `origin/main` @ **`e52b90a`** (which already carries this
+charter — PR #4430, merge `233e782`). What changed, measured at the new base,
+not assumed:
+
+| landed | effect |
+|---|---|
+| **`76c3395` — "Arm `entry_margin_exhaustion` + `entry_forward_reserve_leg` as ERCOT forecast defaults (Q15)"** | **one of the two mechanisms under test is now the ERCOT forecast default**, via `ISOConfig.default_scenario_overrides`, together with the D12 forward reserve leg |
+| R-A (`storage_entry_availability_gate` / `storage_entry_cost_normalized_rank`) | **still NOT landed** — both read `False` at `e52b90a`; §0's R-A row is unchanged |
+
+**The collision, stated plainly and not acted on.** R-B chartered this A/B to
+measure the volume rule's joint value with the signal object and ruled
+"promote nothing yet". Ruling Q15, on the separate D12-C record, armed that
+same field as the ERCOT forecast default in the meantime. This lane does not
+adjudicate that; it records it, and its verdict should be read as speaking to
+a mechanism that is now already armed in the default lane. Arming remains the
+owner's (§6).
+
+**What this amendment changes: the control's INVOCATION only, never its
+substance.** §0 fixed the control as *the registered T1-H posture*, expected
+cache key **`28cef3500ec1fd9e`** — that is unchanged and remains the
+requirement. What no longer produces it is the *bare* invocation: at the new
+base a bare `run_capacity_hindcast.py --iso ERCOT --start-year 2021
+--end-year 2025` resolves to the Q15-armed posture, key `f061b2646bfaac8b`.
+The control is therefore **explicitly pinned** to the pre-Q15 registered
+posture. Verified at the new base through the real CLI path with the ISO
+overrides applied:
+
+| posture | invocation (added to `--iso ERCOT --start-year 2021 --end-year 2025`) | resolved key |
+|---|---|---|
+| bare (the new Q15 default) | *(none)* | `f061b2646bfaac8b` |
+| **CONTROL** | `--no-entry-margin-exhaustion --no-entry-forward-reserve-leg` | **`28cef3500ec1fd9e`** ✓ the §0 target |
+| **JOINT ARM** | `--no-entry-lookahead-reprice --entry-margin-exhaustion --no-entry-forward-reserve-leg` | `0490af522537a67c` |
+| joint with the D12 leg left at its new default | `--no-entry-lookahead-reprice` | **RAISES** — `entry_forward_reserve_leg requires entry_lookahead_reprice` |
+
+`entry_forward_reserve_leg` is pinned **OFF in BOTH arms**, so it is not part
+of the delta: the arm-vs-control `run_config` diff stays **exactly the two
+chartered fields** and the driver's posture gate (§5) is unchanged and still
+binding. The pin is forced rather than chosen — that field's own refusal is
+untouched by this lane's enabling change, so a reprice-disarmed ERCOT leg
+cannot carry it at all (last row above).
+
+**Why the control is NOT moved to the Q15-armed default.** Because
+`entry_margin_exhaustion` is one of the two treatments. A control carrying it
+would leave the arm-vs-control delta as the signal leg alone, measuring
+nothing about the volume rule and destroying comparability with the two
+committed single arms of §3.1 — both of which were measured against
+`28cef3500ec1fd9e`. §0's rule ("the control does NOT move") was written for
+exactly this case and is applied here as written. The §3.1 read, the §4
+predictions, K1 and K2 are **all unchanged**.
+
+**Also amended:** §2's "invocation" row for the control ("bare") is superseded
+by the pinned invocation above; §6 stop rule 1's byte-identity target for the
+control (`28cef3500ec1fd9e`) is unchanged and now applies to the pinned
+invocation. Nothing else in this document changes.
