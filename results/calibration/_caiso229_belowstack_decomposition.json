@@ -1,0 +1,555 @@
+{
+ "A_decomposition": {
+  "2023": {
+   "annual": {
+    "above_floor_lam_minus_ccmin": 1.342,
+    "cc_min_lw": 53.93,
+    "da_below_ccmin_share_pct": 44.02,
+    "floor_level_ccmin_minus_da": -7.755,
+    "gap_lam_minus_da": -6.413
+   },
+   "sepdec": {
+    "above_floor_lam_minus_ccmin": 6.102,
+    "cc_min_lw": 44.25,
+    "da_below_ccmin_share_pct": 39.79,
+    "floor_level_ccmin_minus_da": -7.418,
+    "gap_lam_minus_da": -1.316
+   },
+   "spring": {
+    "above_floor_lam_minus_ccmin": 1.036,
+    "cc_min_lw": 41.39,
+    "da_below_ccmin_share_pct": 47.4,
+    "floor_level_ccmin_minus_da": -6.742,
+    "gap_lam_minus_da": -5.706
+   }
+  },
+  "2024": {
+   "annual": {
+    "above_floor_lam_minus_ccmin": 1.897,
+    "cc_min_lw": 36.57,
+    "da_below_ccmin_share_pct": 46.87,
+    "floor_level_ccmin_minus_da": -1.399,
+    "gap_lam_minus_da": 0.498
+   },
+   "sepdec": {
+    "above_floor_lam_minus_ccmin": 5.325,
+    "cc_min_lw": 36.79,
+    "da_below_ccmin_share_pct": 37.33,
+    "floor_level_ccmin_minus_da": -4.434,
+    "gap_lam_minus_da": 0.891
+   },
+   "spring": {
+    "above_floor_lam_minus_ccmin": -11.296,
+    "cc_min_lw": 34.83,
+    "da_below_ccmin_share_pct": 70.48,
+    "floor_level_ccmin_minus_da": 16.569,
+    "gap_lam_minus_da": 5.273
+   }
+  },
+  "2025": {
+   "annual": {
+    "above_floor_lam_minus_ccmin": 1.727,
+    "cc_min_lw": 37.24,
+    "da_below_ccmin_share_pct": 44.94,
+    "floor_level_ccmin_minus_da": 1.841,
+    "gap_lam_minus_da": 3.568
+   },
+   "sepdec": {
+    "above_floor_lam_minus_ccmin": 7.3,
+    "cc_min_lw": 39.13,
+    "da_below_ccmin_share_pct": 42.29,
+    "floor_level_ccmin_minus_da": -0.965,
+    "gap_lam_minus_da": 6.334
+   },
+   "spring": {
+    "above_floor_lam_minus_ccmin": -5.958,
+    "cc_min_lw": 33.83,
+    "da_below_ccmin_share_pct": 55.22,
+    "floor_level_ccmin_minus_da": 9.488,
+    "gap_lam_minus_da": 3.53
+   }
+  }
+ },
+ "B_depth": {
+  "2023": {
+   "annual": {
+    "lw_share_pct": 44.02,
+    "mean_depth": 20.77,
+    "n_hours": 4105,
+    "p50_depth": 16.78,
+    "p90_depth": 45.12,
+    "wtd_contrib_usd_mwh": 9.144
+   },
+   "measured_level_repair": {
+    "committed": {
+     "armed_mult": 1.0,
+     "measured_mult": 1.03,
+     "rel_move_pct": 3.0
+    },
+    "econ_high": {
+     "armed_mult": 1.072,
+     "measured_mult": 1.06,
+     "rel_move_pct": -1.12
+    },
+    "econ_low": {
+     "armed_mult": 1.066,
+     "measured_mult": 1.063,
+     "rel_move_pct": -0.28
+    },
+    "note": "SIGN of a measured-faithful level repair, per band. Positive = the measured value is ABOVE the armed one, i.e. the repair raises the floor -- the wrong direction for the C3a-2024/2025 overrun."
+   },
+   "sepdec": {
+    "lw_share_pct": 39.79,
+    "mean_depth": 12.68,
+    "n_hours": 1218,
+    "p50_depth": 10.5,
+    "p90_depth": 29.13,
+    "wtd_contrib_usd_mwh": 5.044
+   },
+   "spring": {
+    "lw_share_pct": 47.4,
+    "mean_depth": 24.74,
+    "n_hours": 1068,
+    "p50_depth": 25.23,
+    "p90_depth": 45.38,
+    "wtd_contrib_usd_mwh": 11.726
+   }
+  },
+  "2024": {
+   "annual": {
+    "lw_share_pct": 46.87,
+    "mean_depth": 17.16,
+    "n_hours": 4380,
+    "p50_depth": 12.55,
+    "p90_depth": 45.39,
+    "wtd_contrib_usd_mwh": 8.045
+   },
+   "measured_level_repair": {
+    "committed": {
+     "armed_mult": 1.0,
+     "measured_mult": 1.03,
+     "rel_move_pct": 3.0
+    },
+    "econ_high": {
+     "armed_mult": 1.072,
+     "measured_mult": 1.099,
+     "rel_move_pct": 2.52
+    },
+    "econ_low": {
+     "armed_mult": 1.066,
+     "measured_mult": 1.027,
+     "rel_move_pct": -3.66
+    },
+    "note": "SIGN of a measured-faithful level repair, per band. Positive = the measured value is ABOVE the armed one, i.e. the repair raises the floor -- the wrong direction for the C3a-2024/2025 overrun."
+   },
+   "sepdec": {
+    "lw_share_pct": 37.33,
+    "mean_depth": 12.26,
+    "n_hours": 1133,
+    "p50_depth": 11.43,
+    "p90_depth": 24.55,
+    "wtd_contrib_usd_mwh": 4.577
+   },
+   "spring": {
+    "lw_share_pct": 70.48,
+    "mean_depth": 26.52,
+    "n_hours": 1589,
+    "p50_depth": 26.02,
+    "p90_depth": 55.08,
+    "wtd_contrib_usd_mwh": 18.694
+   }
+  },
+  "2025": {
+   "annual": {
+    "lw_share_pct": 44.94,
+    "mean_depth": 17.5,
+    "n_hours": 4013,
+    "p50_depth": 15.23,
+    "p90_depth": 39.04,
+    "wtd_contrib_usd_mwh": 7.864
+   },
+   "measured_level_repair": {
+    "committed": {
+     "armed_mult": 1.0,
+     "measured_mult": 1.03,
+     "rel_move_pct": 3.0
+    },
+    "econ_high": {
+     "armed_mult": 1.072,
+     "measured_mult": 1.098,
+     "rel_move_pct": 2.43
+    },
+    "econ_low": {
+     "armed_mult": 1.066,
+     "measured_mult": 1.085,
+     "rel_move_pct": 1.78
+    },
+    "note": "SIGN of a measured-faithful level repair, per band. Positive = the measured value is ABOVE the armed one, i.e. the repair raises the floor -- the wrong direction for the C3a-2024/2025 overrun."
+   },
+   "sepdec": {
+    "lw_share_pct": 42.29,
+    "mean_depth": 13.58,
+    "n_hours": 1234,
+    "p50_depth": 13.44,
+    "p90_depth": 24.01,
+    "wtd_contrib_usd_mwh": 5.743
+   },
+   "spring": {
+    "lw_share_pct": 55.22,
+    "mean_depth": 25.58,
+    "n_hours": 1243,
+    "p50_depth": 26.78,
+    "p90_depth": 48.79,
+    "wtd_contrib_usd_mwh": 14.125
+   }
+  }
+ },
+ "C_coupling": {
+  "base_hr_cc": 7.442,
+  "years": {
+   "2023": {
+    "intercept_usd_mwh": 30.82,
+    "n_days": 361,
+    "r": 0.864,
+    "slope_mmbtu_per_mwh": 2.776,
+    "slope_over_base_hr": 0.373
+   },
+   "2024": {
+    "intercept_usd_mwh": 30.46,
+    "n_days": 362,
+    "r": 0.284,
+    "slope_mmbtu_per_mwh": 2.18,
+    "slope_over_base_hr": 0.293
+   },
+   "2025": {
+    "intercept_usd_mwh": 23.98,
+    "n_days": 364,
+    "r": 0.531,
+    "slope_mmbtu_per_mwh": 4.339,
+    "slope_over_base_hr": 0.583
+   }
+  }
+ },
+ "D_deficiency": {
+  "2023": {
+   "annual": {
+    "deficiency_mean_mw": 10893.7,
+    "deficiency_p50_mw": 10886.4,
+    "deficiency_p90_mw": 14911.2,
+    "model_below_floor_pct": 37.75,
+    "n_discordant_hours": 885
+   },
+   "sepdec": {
+    "deficiency_mean_mw": 10244.6,
+    "deficiency_p50_mw": 10515.9,
+    "deficiency_p90_mw": 14787.2,
+    "model_below_floor_pct": 29.04,
+    "n_discordant_hours": 380
+   },
+   "sepdec_belly": {
+    "deficiency_mean_mw": 10268.5,
+    "deficiency_p50_mw": 10661.6,
+    "n_discordant_hours": 136
+   },
+   "spring": {
+    "deficiency_mean_mw": 9435.0,
+    "deficiency_p50_mw": 9785.7,
+    "deficiency_p90_mw": 13038.7,
+    "model_below_floor_pct": 38.59,
+    "n_discordant_hours": 208
+   },
+   "spring_belly": {
+    "deficiency_mean_mw": 5955.2,
+    "deficiency_p50_mw": 6189.0,
+    "n_discordant_hours": 48
+   }
+  },
+  "2024": {
+   "annual": {
+    "deficiency_mean_mw": 12174.5,
+    "deficiency_p50_mw": 11089.5,
+    "deficiency_p90_mw": 16380.6,
+    "model_below_floor_pct": 33.89,
+    "n_discordant_hours": 1470
+   },
+   "sepdec": {
+    "deficiency_mean_mw": 11299.5,
+    "deficiency_p50_mw": 10664.8,
+    "deficiency_p90_mw": 14988.0,
+    "model_below_floor_pct": 23.1,
+    "n_discordant_hours": 477
+   },
+   "sepdec_belly": {
+    "deficiency_mean_mw": 12812.6,
+    "deficiency_p50_mw": 12586.3,
+    "n_discordant_hours": 141
+   },
+   "spring": {
+    "deficiency_mean_mw": 9964.7,
+    "deficiency_p50_mw": 10062.2,
+    "deficiency_p90_mw": 11937.0,
+    "model_below_floor_pct": 59.91,
+    "n_discordant_hours": 377
+   },
+   "spring_belly": {
+    "deficiency_mean_mw": 9299.5,
+    "deficiency_p50_mw": 9503.8,
+    "n_discordant_hours": 20
+   }
+  },
+  "2025": {
+   "annual": {
+    "deficiency_mean_mw": 10605.4,
+    "deficiency_p50_mw": 9904.9,
+    "deficiency_p90_mw": 15443.6,
+    "model_below_floor_pct": 30.11,
+    "n_discordant_hours": 1352
+   },
+   "sepdec": {
+    "deficiency_mean_mw": 9857.0,
+    "deficiency_p50_mw": 9566.7,
+    "deficiency_p90_mw": 14539.0,
+    "model_below_floor_pct": 23.18,
+    "n_discordant_hours": 547
+   },
+   "sepdec_belly": {
+    "deficiency_mean_mw": 10388.0,
+    "deficiency_p50_mw": 9727.3,
+    "n_discordant_hours": 227
+   },
+   "spring": {
+    "deficiency_mean_mw": 9093.8,
+    "deficiency_p50_mw": 8913.2,
+    "deficiency_p90_mw": 11688.5,
+    "model_below_floor_pct": 43.73,
+    "n_discordant_hours": 298
+   },
+   "spring_belly": {
+    "deficiency_mean_mw": 10109.4,
+    "deficiency_p50_mw": 9330.2,
+    "n_discordant_hours": 32
+   }
+  }
+ },
+ "E_envelope": {
+  "2023": {
+   "above_floor_term": 1.36,
+   "c3a_pct": 2.47,
+   "floor_term_ccmin_minus_rt": -0.03,
+   "model_lw": 55.51,
+   "required_move_usd_mwh": 0.0,
+   "rt_lw": 54.17
+  },
+  "2024": {
+   "above_floor_term": 1.9,
+   "c3a_pct": 11.02,
+   "floor_term_ccmin_minus_rt": 1.92,
+   "model_lw": 38.47,
+   "required_move_usd_mwh": -0.35,
+   "rt_lw": 34.65
+  },
+  "2025": {
+   "above_floor_term": 1.73,
+   "c3a_pct": 13.2,
+   "floor_term_ccmin_minus_rt": 2.82,
+   "model_lw": 38.97,
+   "required_move_usd_mwh": -1.1,
+   "rt_lw": 34.42
+  }
+ },
+ "F_import_limb": {
+  "2023": {
+   "annual": {
+    "deficiency_correction_mw": 1490.0,
+    "firm_cap_above_floor_mw": 1490.0,
+    "import_cap_above_floor_mw": 8876.0,
+    "import_cap_below_floor_mw": 3051.0,
+    "n_discordant_hours": 885
+   },
+   "firm_rows_matched": 2,
+   "sepdec": {
+    "deficiency_correction_mw": 1110.0,
+    "firm_cap_above_floor_mw": 1110.0,
+    "import_cap_above_floor_mw": 8334.0,
+    "import_cap_below_floor_mw": 3594.0,
+    "n_discordant_hours": 380
+   },
+   "sepdec_hod_profile": {
+    "0": 10,
+    "1": 12,
+    "2": 14,
+    "3": 13,
+    "4": 5,
+    "5": 2,
+    "6": 16,
+    "7": 16,
+    "8": 37,
+    "9": 31,
+    "10": 27,
+    "11": 26,
+    "12": 29,
+    "13": 25,
+    "14": 20,
+    "15": 9,
+    "16": 0,
+    "17": 0,
+    "18": 8,
+    "19": 8,
+    "20": 10,
+    "21": 11,
+    "22": 23,
+    "23": 28
+   },
+   "sepdec_hod_split": {
+    "belly_10_15": 136,
+    "evening_17_21": 37,
+    "total": 380
+   },
+   "spring": {
+    "deficiency_correction_mw": 1769.0,
+    "firm_cap_above_floor_mw": 1769.0,
+    "import_cap_above_floor_mw": 8514.0,
+    "import_cap_below_floor_mw": 3414.0,
+    "n_discordant_hours": 208
+   }
+  },
+  "2024": {
+   "annual": {
+    "deficiency_correction_mw": 1769.0,
+    "firm_cap_above_floor_mw": 1769.0,
+    "import_cap_above_floor_mw": 9417.0,
+    "import_cap_below_floor_mw": 2510.0,
+    "n_discordant_hours": 1470
+   },
+   "firm_rows_matched": 2,
+   "sepdec": {
+    "deficiency_correction_mw": 1769.0,
+    "firm_cap_above_floor_mw": 1769.0,
+    "import_cap_above_floor_mw": 9359.0,
+    "import_cap_below_floor_mw": 2568.0,
+    "n_discordant_hours": 477
+   },
+   "sepdec_hod_profile": {
+    "0": 25,
+    "1": 26,
+    "2": 27,
+    "3": 24,
+    "4": 15,
+    "5": 9,
+    "6": 19,
+    "7": 53,
+    "8": 50,
+    "9": 35,
+    "10": 32,
+    "11": 30,
+    "12": 25,
+    "13": 26,
+    "14": 20,
+    "15": 8,
+    "16": 6,
+    "17": 4,
+    "18": 4,
+    "19": 4,
+    "20": 4,
+    "21": 6,
+    "22": 9,
+    "23": 16
+   },
+   "sepdec_hod_split": {
+    "belly_10_15": 141,
+    "evening_17_21": 22,
+    "total": 477
+   },
+   "spring": {
+    "deficiency_correction_mw": 1769.0,
+    "firm_cap_above_floor_mw": 1769.0,
+    "import_cap_above_floor_mw": 8931.0,
+    "import_cap_below_floor_mw": 2997.0,
+    "n_discordant_hours": 377
+   }
+  },
+  "2025": {
+   "annual": {
+    "deficiency_correction_mw": 1577.0,
+    "firm_cap_above_floor_mw": 1577.0,
+    "import_cap_above_floor_mw": 8801.0,
+    "import_cap_below_floor_mw": 3127.0,
+    "n_discordant_hours": 1352
+   },
+   "firm_rows_matched": 2,
+   "sepdec": {
+    "deficiency_correction_mw": 1308.0,
+    "firm_cap_above_floor_mw": 1308.0,
+    "import_cap_above_floor_mw": 7968.0,
+    "import_cap_below_floor_mw": 3959.0,
+    "n_discordant_hours": 547
+   },
+   "sepdec_hod_profile": {
+    "0": 4,
+    "1": 3,
+    "2": 4,
+    "3": 5,
+    "4": 3,
+    "5": 3,
+    "6": 16,
+    "7": 64,
+    "8": 55,
+    "9": 48,
+    "10": 42,
+    "11": 39,
+    "12": 37,
+    "13": 40,
+    "14": 38,
+    "15": 31,
+    "16": 13,
+    "17": 14,
+    "18": 15,
+    "19": 15,
+    "20": 15,
+    "21": 16,
+    "22": 13,
+    "23": 14
+   },
+   "sepdec_hod_split": {
+    "belly_10_15": 227,
+    "evening_17_21": 75,
+    "total": 547
+   },
+   "spring": {
+    "deficiency_correction_mw": 1769.0,
+    "firm_cap_above_floor_mw": 1769.0,
+    "import_cap_above_floor_mw": 9525.0,
+    "import_cap_below_floor_mw": 2403.0,
+    "n_discordant_hours": 298
+   }
+  }
+ },
+ "G_overlay_bound": {
+  "params": {
+   "mcl_mw": 1400.0,
+   "shift_sigma": 0.0,
+   "sigma_mw": 2500.0,
+   "voll": 2000.0
+  },
+  "years": {
+   "2023": {
+    "lambda_min_used": -20.0,
+    "max_adder_usd_mwh": 0.0165,
+    "max_lolp": 8.192307433056347e-06,
+    "min_headroom_mw_caiso131_s4": 12173.0
+   },
+   "2024": {
+    "lambda_min_used": -20.38,
+    "max_adder_usd_mwh": 0.0064,
+    "max_lolp": 3.1568871622614096e-06,
+    "min_headroom_mw_caiso131_s4": 12689.0
+   },
+   "2025": {
+    "lambda_min_used": -20.37,
+    "max_adder_usd_mwh": 0.0027,
+    "max_lolp": 1.3343384747065636e-06,
+    "min_headroom_mw_caiso131_s4": 13137.0
+   }
+  }
+ }
+}
