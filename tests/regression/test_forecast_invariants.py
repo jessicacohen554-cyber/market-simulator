@@ -659,6 +659,31 @@ def test_p1_co2_monotone_pass_and_fail():
     assert C.check_p1_co2_monotone(base, worse).status == C.FAIL
 
 
+def test_p1_reconstructs_co2_from_context_rate_when_emissions_absent():
+    # Forecast-path bundles carry no emissions array (a downstream/backcast
+    # step); P1 must reconstruct dispatch x context emission_rate instead of
+    # SKIPping "emissions absent" (the 2026-07-12 weekly's standing gap).
+    def _run_with_rate(scale):
+        run = _mk_run([], years={2026: _mk_yeardata(2026)})
+        yd = run.years[2026]
+        yd.result.emissions = None
+        yd.context.emission_rate = np.full(yd.result.dispatch.shape[0], 0.4 * scale)
+        return run
+
+    base, high = _run_with_rate(1.0), _run_with_rate(0.5)
+    assert C.check_p1_co2_monotone(base, high).status == C.PASS
+    worse = _run_with_rate(2.0)
+    assert C.check_p1_co2_monotone(base, worse).status == C.FAIL
+
+
+def test_p1_still_skips_when_no_emissions_and_no_rate():
+    base = _mk_run([], years={2026: _mk_yeardata(2026)})
+    high = _mk_run([], years={2026: _mk_yeardata(2026)})
+    for run in (base, high):
+        run.years[2026].result.emissions = None  # and _Ctx has no emission_rate
+    assert C.check_p1_co2_monotone(base, high).status == C.SKIP
+
+
 def test_p2_merit_sign():
     base = _mk_run([], years={2026: _mk_yeardata(2026, fuels=("gas_cc", "coal"))})
     gas_up = _mk_run([], years={2026: _mk_yeardata(2026, fuels=("gas_cc", "coal"))})

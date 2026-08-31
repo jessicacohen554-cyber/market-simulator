@@ -614,6 +614,111 @@ class FC6Tests(unittest.TestCase):
             _status(fv.score_fc6(_art(driver_battery=bat), "t2", "ERCOT")), fv.PASS
         )
 
+    @staticmethod
+    def _battery_with_rungs(expectations, rung_metrics):
+        """Battery JSON whose one ladder carries rungs with metric series."""
+        bat = _battery(expectations)
+        bat["ladders"][0]["rungs"] = [
+            {"rung_label": f"r{i}", "status": "ok", "metrics": m}
+            for i, m in enumerate(rung_metrics)
+        ]
+        return bat
+
+    def test_pass_on_constant_series_is_vacuous_caveat(self):
+        # Rubric FC-6.2, the T1.7a precedent: a gate row that PASSED on an
+        # all-constant series is a CAVEAT, never a PASS.
+        bat = self._battery_with_rungs(
+            [
+                {
+                    "expr_id": "T1.6b",
+                    "gate": True,
+                    "status": "PASS",
+                    "metric": "rps_dual_over_acp",
+                    "rule": "monotone_down",
+                    "detail": "↓ [1.0, 1.0]",
+                }
+            ],
+            [{"rps_dual_over_acp": 1.0}, {"rps_dual_over_acp": 1.0}],
+        )
+        self.assertEqual(
+            _status(fv.score_fc6(_art(driver_battery=bat), "t3", "NEISO")), fv.CAVEAT
+        )
+
+    def test_pass_on_moving_series_stays_pass(self):
+        bat = self._battery_with_rungs(
+            [
+                {
+                    "expr_id": "T1.6b",
+                    "gate": True,
+                    "status": "PASS",
+                    "metric": "rps_dual_over_acp",
+                    "rule": "monotone_down",
+                    "detail": "↓ [1.0, 0.4]",
+                }
+            ],
+            [{"rps_dual_over_acp": 1.0}, {"rps_dual_over_acp": 0.4}],
+        )
+        self.assertEqual(
+            _status(fv.score_fc6(_art(driver_battery=bat), "t3", "NEISO")), fv.PASS
+        )
+
+    def test_pass_on_empty_series_is_vacuous_caveat(self):
+        # Rubric FC-6.2, the T1.6a-2026-07-12 precedent: an le_target PASS
+        # over a series no solved rung carries is vacuous.
+        bat = self._battery_with_rungs(
+            [
+                {
+                    "expr_id": "T1.6a",
+                    "gate": True,
+                    "status": "PASS",
+                    "metric": "rps_dual_over_acp",
+                    "rule": "le_target",
+                    "detail": "all ≤ 1.0",
+                }
+            ],
+            [{"other_metric": 1.0}],
+        )
+        self.assertEqual(
+            _status(fv.score_fc6(_art(driver_battery=bat), "t3", "NEISO")), fv.CAVEAT
+        )
+
+    def test_negative_control_constant_pass_is_not_vacuous(self):
+        # all_equal asserts constancy (T1.7b, the ERCOT energy-only negative
+        # control) — a constant-series PASS there is the claim succeeding.
+        bat = self._battery_with_rungs(
+            [
+                {
+                    "expr_id": "T1.7b",
+                    "gate": True,
+                    "status": "PASS",
+                    "metric": "retired_thermal_gw",
+                    "rule": "all_equal",
+                    "detail": "spread 0.0",
+                }
+            ],
+            [{"retired_thermal_gw": 0.0}, {"retired_thermal_gw": 0.0}],
+        )
+        self.assertEqual(
+            _status(fv.score_fc6(_art(driver_battery=bat), "t2", "ERCOT")), fv.PASS
+        )
+
+    def test_explicit_vacuous_marker_is_trusted(self):
+        # No rungs metadata at all — the explicit marker alone reclassifies.
+        bat = _battery(
+            [
+                {
+                    "expr_id": "e1",
+                    "gate": True,
+                    "status": "PASS",
+                    "vacuous": True,
+                    "detail": "",
+                }
+            ]
+        )
+        self.assertEqual(
+            _status(fv.score_fc6(_art(driver_battery=bat), "t2", "ERCOT")), fv.CAVEAT
+        )
+
     def test_paired_p1_fail(self):
         paired = [
             {"ident": "P1", "name": "co2 monotone", "status": "FAIL", "detail": "rose"}
