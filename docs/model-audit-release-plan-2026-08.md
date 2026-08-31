@@ -4264,3 +4264,175 @@ your branch when done.
     part's date with `%ad` (author) but filters engine commits with `--since`
     (committer): a **date-kind mismatch layered on the day-granularity issue**,
     tripping 38 minutes after the commit was authored.
+- 2026-08-31 — **AUDIT-RULINGS REFRESH — the sitting's four remaining rulings
+  (R-D / R-E / R-F / R-G) executed and ledgered; board brought to v17; the
+  dispatch's own three asserted figures re-derived DIFFERENT; and the
+  dispatch-vs-launch check on R-E returned *done*, not *launched*.** Executing
+  lane `claude/audit-program-2026-08-refresh-l13h5f`, dispatched by the
+  2026-08-31 director REFRESH sitting. **Standing recorded deviation, restated:
+  the director pushes NOTHING; records land through this dispatched lane; THE
+  OWNER MERGES** — the one-sitting supersession v16 recorded is **spent** and did
+  not carry forward. **ZERO SOLVES** (rule 22 `[R-HOLDOUT]`); no `src/`, no
+  keeper shard, no marker, no holdout file, no workflow, and **no matrix verdict
+  letter** (R-D adjudicates a *disposition*, not a verdict).
+  **PIN: `d44446e0` (merge of #4464)**, held stable across two polling rounds —
+  and taken under a **FORCED UPDATE** of `main` (`3d8ea013...d44446e0 (forced
+  update)`), recorded because a forced move is the one condition that silently
+  invalidates a carried sha. The director's derivation base **`4bdb2d60` is
+  reachable but 10 merged PRs stale (#4455–#4464), and unlike the v16 sitting
+  that delta MOVES FIGURES** — the MISO keeper, ERCOT's markers, three of five
+  gate readings and both C3c answers all landed inside it.
+  - **(a) R-D EXECUTED — the C-1 WIND ENTRY MISS is TERMINAL REST AT THIS
+    REPRESENTATION GRAIN + DECISION MAP**, the caiso-222 §1(c) option-3 pattern.
+    On `docs/FINDING-c1-joint-wind-ab-2026-08-31.md` (R-B's chartered A/B; both
+    kill-gates PASS; **`NON_COMPLEMENTARY`**): the joint arm builds wind
+    **1.442 GW** — to the megawatt the signal-alone arm's number — closing
+    **8.87 %** of the **12.313 GW** miss while **the volume rule contributes
+    exactly ZERO wind** (naive sum 13.77 %, best single 8.87 %, difference
+    **0.00 pp**); the walk is live but changes **exactly one decision** in
+    2021–2025 (entering-2023 solar **5,550 → 0**), so the volume rule's 4.91 %
+    under the shipped signal is a **shipped-signal artifact**. Attribution: a
+    **zone-flat, ORDC-dominated signal at hub grain** (`zonal_mean_range` and
+    `hourly_cross_zone_spread` measured **exactly 0.0**, ~90 % of dispersion the
+    ORDC adder, West capture 0.494/0.805/0.927 shipped vs 0.988/0.988/1.055 on
+    duals). **NOTHING ARMED** — `entry_lookahead_reprice` verified at
+    `ScenarioConfig` default `True` (`scenarios.py:3919`) — **NOTHING REJECTED**,
+    and **91.1 % of the miss published OPEN** alongside the adequacy cost
+    (terminal RM 25.19 → 38.84 %, **+13.65 pp**) and the one worsening band
+    (solar Δ|err| **+0.1410**). **Re-open conditions, exhaustive:** a NEW
+    MEASURED DRIVER (rule 13 `[R-MEASURED]`), or an OWNER-CHARTERED
+    REPRESENTATION-GRAIN CHANGE (the caiso-223 class — a program, not a lever);
+    **neither is reachable by re-running a lever at hub grain**. **Watch item,
+    NOT a re-open condition:** the armed-combination measurement gap — a bare
+    ERCOT T1-H run now resolves **five** entry-screen fields ON at once and **no
+    registered bundle sits at that posture**, with the R-A cache epoch leaving
+    the forecast default key `603c2498bf71d21d` **unmoved** (silent same-key
+    collision). Records: **NEW**
+    `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md` ·
+    `docs/calibration-log/ercot.md` · `docs/calibration-log/governance.md` ·
+    R-D stamps appended to the **evidence strings only** of the two joint-wind
+    ERCOT cells. **Retires board v16 owner-queue item 2.**
+  - **(b) R-E LEDGERED — the C3c program's Q1+Q2 CHARTERED AND CHAINED, Q3
+    UNOPENED AND UNRECOMMENDED — and BOTH chartered questions have ALREADY
+    REPORTED at this pin.** The dispatch described R-E's execution lane as
+    separately dispatched and instructed a dispatch-vs-launch branch check on it.
+    **Run at the pin, that check returned *done*, not *launched*:** **Q1 = REAL**
+    (pjm-164, **#4456**, `docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`,
+    zero solve — PJM's reserve-dual channel is **not** the ercot-214 phantom;
+    2025 overlap **14 of 32** model tail hours, **13** with a positive reserve
+    dual, against published DataMiner2 MCPs; three honest caveats, none
+    determination-level) and **Q2 = CONFIRM** (nyiso-164, **#4459**,
+    `docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, zero solve — the
+    kill gate fires on **both** clauses: NYCA-tier reserve price never exceeds
+    the concurrent LMP in **65/65** tail hours, and the model carries
+    **5.08/3.92/2.99 GW** of reserve-carrying headroom against a 2,620 MW NYCA
+    30-min requirement with the NYCA families at zero dual and zero shortfall in
+    all **26,280** hours; **NYISO's C3c ledger is CONFIRMED on its own
+    evidence**). **Consequence recorded rather than carried: the PJM
+    determination-integrity card the charter made conditional on Q1 = PHANTOM
+    DOES NOT OPEN.** Neither lane moved a keeper, marker, determination or
+    matrix cell; neither spent a holdout year; and **no SOM-published RCPF value
+    was proposed for change in any form, including as a sensitivity** — the
+    ercot-214 guard, held.
+  - **(c) R-F EXECUTED — the nyiso-161 WINTER-FACE WAIVER CARD is DEFERRED with
+    a DATED RE-SERVE TRIGGER, and the trigger is ALREADY MET.** **Neither A
+    (NOT-YET stands) nor C (declare CALIBRATED) is ruled**; the card stays filed
+    and moves from *open-undecided* to **PARKED — re-serve when the C3c
+    program's Q1/Q2 report lands** (had Q1 returned PHANTOM the re-serve would
+    have fired immediately on that finding). **Re-derived at the pin: the report
+    has landed and Q1 returned REAL, so the card is PARKED-AND-RE-SERVABLE —
+    servable at the next sitting, not waiting on anything.** Recording it as
+    "waiting" would leave the next reader expecting an arrived report. **The
+    deferral itself is untouched: the owner deferred, and only the owner
+    un-defers.** **NYISO stays NOT-YET on {C3a-2025 −11.5 %, C3c} — unchanged,
+    restated.** Standing context carried with the card: the **AORR access route
+    is PERMANENTLY CLOSED by owner decision** and **nyiso-97 §5 re-open
+    condition 3 is WITHDRAWN**; **option B (CWC) is dominated** (marker re-entry
+    needs CALIBRATED); **the precedent surface is not NYISO-only** (CAISO's C3a
+    residual is CEII-blocked on both lever routes). Records:
+    `docs/calibration-log/nyiso.md` + `governance.md`.
+  - **(d) R-G EXECUTED — nyiso-160/leg2 CLOSED BY ARCHIVE, retiring the
+    promote-or-archive item FOR GOOD.** On
+    `docs/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, **#4431**,
+    R-C's zero-solve re-verification), the owner ruled **archive**. The
+    re-verification dissolved its own question: **there is NO candidate** — leg2
+    produced a stop with cause at access, not an object — and the object that
+    does exist scores **identically** to the live keeper: **zero record-level
+    differences across 60 scored records** (sole difference anywhere: the C6
+    attestation narrative string), **0 solve-affecting levers**, **max |Δ| = 0
+    over 1,043,280 hourly rows**, `metrics.json` 58/60 leaves identical — and the
+    identity held **across a solver-version change** (HiGHS 1.15.1 vs 1.14.0).
+    Promotion would have been a formal no-op that **weakened** the designation's
+    evidentiary basis. **The parked session is already archived; the registered
+    runs and both findings STAY on the record**; the item is **not re-servable**,
+    because the object it named does not exist. Keeper
+    `2026-08-30-nyiso-159-loss-surface` and its NOT-YET determination untouched;
+    `audit_keepers --iso NYISO` PASS 0/0; **no matrix cell moves**.
+  - **⚠️ THREE FIGURES THE DISPATCH ASSERTED ARE RE-DERIVED DIFFERENT** — the
+    "trust nothing in this prompt" instruction earning its keep: parity is
+    **58 runs / 93 bundle dirs** (dispatch: 60/95); bench is **0 STALE and 19 of
+    20 parts WITH engine drift** (dispatch: "0 STALE 0 drift"); and the two
+    joint-wind cells read **`entry_lookahead_reprice` cell K / fc O** and
+    **`entry_margin_exhaustion` cell O / fc K** (dispatch: "cells stay O").
+    **The binding instruction — no verdict letter changes — was followed
+    exactly**; both cells are byte-unchanged except for the appended stamp
+    (whole-file diff: 2 lines changed, 2 inserted / 2 deleted). The bench line
+    is the substantive one: v16 **predicted** the WARNs would return "on the
+    first engine commit dated 2026-08-31 or later", and they did; the single
+    non-WARN part (MISO/2023) was **rewritten** by the miso-191 registration
+    rather than repaired.
+  - **BOARD BROUGHT TO v17**, every figure re-derived at the pin. Headline
+    movements beyond the rulings: **ERCOT took the program's FIRST-EVER ERCOT
+    rule-22 `complete` marker AND a `frontier` declaration** (ercot-247, on the
+    ercot-246 partition-rollup ruling), so `complete` = active `frontier` =
+    CALIBRATED = **{ERCOT, NEISO, PJM}** — **while forecast gate-(a) passers
+    remain {PJM, NEISO}, so the four-instrument alignment v16 restored BROKE
+    AGAIN after one cycle, on a STALE STAMP rather than a model fact** (ERCOT's
+    seed stamp names a keeper two promotions old; four of six stamps are stale).
+    **`final` is still EMPTY and no ISO has ever spent a locked-test year** —
+    re-verified by walking all 58 sidecars ({2022: 2, 2023: 56, 2024: 52,
+    2025: 52}; the {≤2018, 2019, 2026} scan returns NONE). **One keeper
+    promotion, MISO** (`188-rvsscope` → `2026-08-30-miso-191-bexit`), which
+    deepened the board's deepest stage-0 gap to two promotions. **NO workstream
+    surface moved at all**: `git diff --name-status` is **empty** for
+    `.github/workflows/`, `results/regression-goldens/` and `docs/audit/` across
+    the whole 93-commit window. **🟢 And a first on the forecast board (a
+    different program's, adjudicated here by nobody): NEISO's full-solve
+    authorization gate is OPEN** — leg (d) **granted**, where v16 recorded leg
+    (d) as `none` for all six.
+  - **ALL FIVE GATES RE-RUN at the pin, exit codes captured directly, unpiped:**
+    `audit_keepers` **exit 0, PASS 0/0** · parity **exit 0, 58 / 93 / 0** ·
+    matrix **exit 0, 194 + 49 + 152** (re-run again *after* this lane's own
+    evidence-string edit: still exit 0) · staleness **exit 0, Δ = 1 of 10**
+    (81 stamped / 49 scored; 31 of 50 stamps undated; **24** config epochs) ·
+    bench **exit 0, 20 parts, 0 STALE, 19 with engine drift**.
+  - **LANE STATE — the quietest this program has recorded: ZERO open PRs and
+    ZERO branches ahead of `main`.** `ls-remote` returns five heads and **all
+    four non-`main` tips PASSED `merge-base --is-ancestor`**, i.e. merged
+    remnants. **No audit-program lane is running at the pin.** ⚠️ **Protocol
+    amendment recorded on the board: a lane's BRANCH NAME is not its program** —
+    three capx lanes carry calibration-shaped branch names this window
+    (`miso-t1h-retire-g3-regression` = capx-D3, `ercot-i3-slack-measure` =
+    capx D4-I3, `calibration-workstream-relaunch` = the capx director's own
+    refresh desk) and v16's branch-name heuristic mis-files all three;
+    classification was done from commit subjects and touched paths. Of 36 merged PRs: **6 this program's
+    (4 lanes), 12 the capx desk's (8 lanes), 18 the calibration program's
+    (10 lanes)** — and **three** capx branch names read as calibration lanes
+    (`miso-t1h-retire-g3-regression`, `ercot-i3-slack-measure`,
+    `calibration-workstream-relaunch`), accounting for **6 of the desk's 12
+    PRs**, so branch-name-only classification would mis-file half of it.
+  - **RECORDS INTEGRITY.** Files touched, and no others: the two program record
+    files (this plan's §8, the board → v17), the **new**
+    `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md`,
+    `docs/calibration-log/governance.md` + `ercot.md` + `nyiso.md`, and the
+    **evidence strings only** of two cells in
+    `docs/codebase-site/data/mechanism-matrix/ERCOT.js`. No `src/`, no
+    `scripts/`, no keeper shard, no `calibration-complete.json`, no
+    `holdout-freeze.json`, no `.github/workflows/`, no other ISO's shard
+    (rule 25 `[R-ISO-SCOPE]`), no session listing. Transport per rule 27
+    `[R-PUSH]`: branch cut fresh at the pin, every edit made **locally** and the
+    exact on-disk bytes pushed via small-pack `git push` (HTTP/1.1 retry tried
+    before any pack-size diagnosis), with **both ≥300-line program files
+    blob-verified after push** (fetched back; line count + SHA-256 compared to
+    local). The §8 append verified **APPEND-ONLY** by diffing the full
+    pre-edit prefix against the prior blob for byte-identity.
