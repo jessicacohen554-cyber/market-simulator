@@ -1,0 +1,178 @@
+{
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "scored_at_sha": "271ad606c3fd",
+    "scored_at_date": "2026-08-31T03:19:28Z",
+    "cache_epoch": "a4b11ef4aaa1be35"
+  },
+  "tier": "t3",
+  "iso": "NEISO",
+  "determination": "HOLD",
+  "reasons": [
+    "FC-1 structural integrity (I1-I14) FAIL",
+    "FC-2 adequacy & equilibrium behavior FAIL",
+    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+    "FC-4 crossover dispatch skill (T1-X) FAIL",
+    "FC-5 external corridor SKIPPED (required, unscored)",
+    "FC-6 driver response SKIPPED (required, unscored)",
+    "FC-7 provenance & DOF FAIL"
+  ],
+  "caveats": [],
+  "notes": [],
+  "categories": {
+    "FC-1": {
+      "label": "FC-1 structural integrity (I1-I14)",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "invariants I1-I14",
+          "status": "FAIL",
+          "detail": "FAIL ['I3']: I3: 2043: dump 2.17% of renewable pot.; 2044: dump 2.59% of renewable pot.; 2045: dump 3.72% of renewable pot.; 2046: dump 4.29% of renewable pot.; 2047: dump 5.63% of renewable pot.; 2048: dump 6.31% of renewable pot.; 2049: dump 7.76% of renewable pot.; 2050: dump 8.50% of renewable pot.",
+          "gating": true
+        }
+      ]
+    },
+    "FC-2": {
+      "label": "FC-2 adequacy & equilibrium behavior",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "row1",
+          "status": "PASS",
+          "detail": "reserve-margin band (I12 PASS)",
+          "gating": true
+        },
+        {
+          "row": "row2",
+          "status": "PASS",
+          "detail": "final RM 6.5% in [3.8%, 38.8%]",
+          "gating": true
+        },
+        {
+          "row": "row3",
+          "status": "FAIL",
+          "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(10)",
+          "gating": true
+        },
+        {
+          "row": "row4",
+          "status": "PASS",
+          "detail": "backstop share 0.0% \u2264 10%",
+          "gating": true
+        }
+      ]
+    },
+    "FC-3": {
+      "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "hindcast bands",
+          "status": "FAIL",
+          "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+          "gating": true
+        }
+      ]
+    },
+    "FC-4": {
+      "label": "FC-4 crossover dispatch skill (T1-X)",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "quarantine",
+          "status": "PASS",
+          "detail": "\u22652026 refusal marker present and clean",
+          "gating": true
+        },
+        {
+          "row": "dispatch skill",
+          "status": "FAIL",
+          "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+          "gating": true
+        },
+        {
+          "row": "input-gap ratio",
+          "status": "PASS",
+          "detail": "forecast/keeper input-gap ratios reported (report-only)",
+          "gating": false
+        }
+      ]
+    },
+    "FC-5": {
+      "label": "FC-5 external corridor",
+      "applicability": "required",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "corridor",
+          "status": "SKIPPED",
+          "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-6": {
+      "label": "FC-6 driver response",
+      "applicability": "required",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "driver response",
+          "status": "SKIPPED",
+          "detail": "no committed driver-battery or paired-invariant output",
+          "gating": true
+        }
+      ]
+    },
+    "FC-7": {
+      "label": "FC-7 provenance & DOF",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "run_config",
+          "status": "PASS",
+          "detail": "mode=forecast; 765 config keys; gates ['capacity_market_clearing']",
+          "gating": true
+        },
+        {
+          "row": "overlay-off",
+          "status": "PASS",
+          "detail": "no backcast overlay armed (outage_source='statistical')",
+          "gating": true
+        },
+        {
+          "row": "dof ledger",
+          "status": "PASS",
+          "detail": "7 entries well-formed (0 open residual DOF listed)",
+          "gating": true
+        },
+        {
+          "row": "attestation",
+          "status": "UNATTESTED",
+          "detail": "no forecast_attestation.json (a golden run cannot be certified unattested)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-8": {
+      "label": "FC-8 runtime feasibility",
+      "applicability": "runtime",
+      "status": "PASS",
+      "rows": [
+        {
+          "row": "runtime",
+          "status": "PASS",
+          "detail": "wall 29.2 min within budget",
+          "gating": true
+        }
+      ]
+    }
+  }
+}
