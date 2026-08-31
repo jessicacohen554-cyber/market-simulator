@@ -105,9 +105,93 @@ dispatched instrument of the standing deviation.
 **Headline, one line: all four refresh rulings executed — the ERCOT wind
 question rested with a map, leg2 closed by archive, the nyiso-161 card parked
 behind a trigger that has ALREADY fired, and the C3c program's Q1 and Q2 both
-already answered (REAL, CONFIRM) — while ERCOT took the program's first-ever
-ERCOT `complete`+`frontier` markers and four-instrument alignment broke again on
-a STALE STAMP rather than on a model fact.**
+already answered (REAL, CONFIRM) and then INDEPENDENTLY REPLICATED post-pin —
+while ERCOT took the program's first-ever ERCOT `complete`+`frontier` markers and
+four-instrument alignment broke again on a STALE STAMP rather than on a model
+fact.**
+
+**⚡ POST-PIN RESOLUTION — ONE labelled follow-up measurement at `54d5772c`
+(merge of #4466), taken under the v14 sanctioned exception because BOTH of
+R-E's answers were INDEPENDENTLY REPLICATED while this board was being written.**
+The pin readings above are NOT re-pinned; this block is the second labelled
+state.
+
+**A THIRD LANE ran R-E's Q1 AND Q2 in parallel, blind to the two that had
+already answered them — and both verdicts SURVIVED.** Read from the landed
+artifacts, not from a listing:
+
+- **Q1 = REAL, replicated by a DIFFERENT CONSTRUCTION** (pjm-165,
+  `docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`). pjm-164 overlapped the
+  model's C3c **tail hours** against the actual RT LMP tail; this lane overlapped
+  the model's **positive-reserve-dual hours** against PJM's **published
+  reserve-market record**. Four legs pjm-164 did not carry: the requirement is an
+  **exact published identity in 26,229 family-hours**; the channel **never
+  touches a penalty step** and is structurally bounded below the published $300
+  one; the positive-dual hours coincide with PJM's posted shortage intervals at
+  **75–91× base rate (p ≤ 9.7e-11)**; and the model **UNDER**-prices reality by
+  **2.7–7×**. **No disagreement on the verdict.** F-2 stands, strengthened.
+- **Q2 = CONFIRMED, and the replication is the more interesting one because it
+  first got the OPPOSITE answer and RETRACTED it** (nyiso-165,
+  `docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`). Running blind, it
+  measured *"reality WAS NYCA-short"*, found nyiso-164's record afterwards,
+  re-derived from the raw CSVs and **reproduced nyiso-164's numbers exactly** —
+  NYCA-tier tail-hour mean **$306.74 / $254.62 / $393.31**, ceiling test **0 of
+  65**. **nyiso-164 is right; the parallel lane's first reading was wrong**, and
+  it says so in its own title. F-3's trigger reading is unaffected.
+- **🔴 AND THE RETRACTION FOUND SOMETHING THIS BOARD SHOULD CARRY: TWO LIVE
+  DEFECTS IN A COMMITTED CALIBRATION REFERENCE.**
+  `data/raw/_validation-source/actual_as_reserve_NYISO.parquet` is wrong on
+  **both** counts — a cascade **sum** where the **max** is correct, and a
+  positional `hoy` map that never localizes prevailing Eastern to the model's
+  standard-time clock — in **every column, every year**. **Blast radius: NO
+  keeper, NO scored result, NO determination** (its only consumer is the
+  post-solve RCPF comparator for co-opt-off runs; `nyiso_rcpf_enabled` is False
+  in the keeper and rule 19 `[R-ONE-MECH]` makes arming it alongside
+  `energy_reserve_coopt` a hard error). **It is a trap for diagnostic sessions,
+  not a defect in any result — and it caught one.** The repair is cheap and
+  regenerable in-session from committed CSVs; the lane deliberately did **not**
+  do it mid-audit and filed it for a data lane or an owner grant. **Recorded on
+  this board's Watch, not adjudicated.**
+- **🟢 The duplication is itself a finding, and the governance log now carries
+  the cross-ISO synthesis both first-execution lanes deliberately deferred.**
+  Three lanes, two questions, each executed twice in parallel by lanes that could
+  not see each other — **and both replications agreed** (Q2 after correction).
+  That is the strongest evidence this program has produced that a zero-solve
+  measurement on committed artifacts reproduces.
+
+**A statement about R-F's card, made by the replicating lane and RULED BY
+NOBODY.** Its §6 records that the corrected Q2 result **strengthens** the
+nyiso-161 card's characterisation of its **summer** half and removes an
+objection to it: had the false positive stood, the summer face would have been a
+published in-representation reserve-shortage quantity the model simply fails to
+bind — a *defect*, not a model-class limitation — contradicting the card's own
+phrase *"the ledgered C3c limitation"*. It does not stand. **Three
+qualifications the lane states itself:** it bears only on the summer half (the
+winter face's AORR identification block is untouched); it is about
+*characterisation*, not arithmetic, caveat budget or the standing rule; and
+**that lane rules nothing on the card**. **Neither does this board** — R-F parked
+it for the DIRECTOR to re-serve, and F-3's reading is unchanged: the trigger is
+met and the card is re-servable.
+
+**Every keeper shard, `calibration-complete.json`, `holdout-freeze.json`, the
+registry, `results/regression-goldens/`, `.github/workflows/` and `docs/audit/`
+are verified BYTE-UNMOVED `d44446e0` → `54d5772c`**, so every keeper-table,
+marker, holdout, stage-0 and workstream figure above stands unchanged.
+
+**ALL FIVE GATES RE-RUN at `54d5772c`** (exit codes captured directly, unpiped):
+audit_keepers **PASS 0/0** · parity **exit 0, 58 / 93 / 0** · matrix **exit 0,
+194 + 49 + 153** (⬅ **+1 path anchor**, the new findings' citations) · staleness
+**exit 0, Δ = 1 → 0**, and **stamped/scored 81/49 → 83/51** · bench **exit 0, 0
+STALE, 19 of 20 with engine drift — unchanged**.
+
+**Lane state at the second reading: FOUR merged PRs** (#4466 the c3c replication
+lane, #4467 NEISO-RC-R Phase B, #4468 miso-194, #4469 the calibration director's
+refresh), **and this lane's own branch is now the only one ahead of `main`.**
+
+**Nothing else changes.** F-1…F-8, the keeper table, the stage-0 table, the
+gates table, the forecast board and the queue are unaffected; **F-2's and F-3's
+verdicts are confirmed rather than rewritten**, and this block reads as what
+happened next.
 
 ## What moved — v17 CYCLE (`54ca19ae..d44446e0`, "the refresh-ruling cycle")
 
@@ -1172,6 +1256,23 @@ compared across two dozen different config identities.
   side reads. The board keeps re-deriving all four every cycle because that is
   the only check there is — and this cycle is the demonstration that a
   one-cycle alignment is not a closed item.
+- **🔴 NEW — TWO LIVE DEFECTS IN A COMMITTED CALIBRATION REFERENCE, FOUND BY A
+  RETRACTION.** `data/raw/_validation-source/actual_as_reserve_NYISO.parquet` is
+  wrong on **both** counts in **every column, every year** — a cascade **sum**
+  where the **max** is correct, and a positional `hoy` map that never localizes
+  prevailing Eastern to the model's standard-time clock (builder
+  `scripts/data/process_nyiso_as.py::build_reference`). **Blast radius: NO
+  keeper, NO scored result, NO determination** — its only consumer is the
+  post-solve RCPF comparator for co-opt-off runs, `nyiso_rcpf_enabled` is False
+  in the NYISO keeper, and rule 19 `[R-ONE-MECH]` makes arming it alongside
+  `energy_reserve_coopt` a hard error. **So it is a trap for DIAGNOSTIC
+  sessions, not a defect in any result — and it caught one**, producing a false
+  positive that survived until the lane re-derived from the raw CSVs. The repair
+  is cheap and regenerable in-session from committed bytes; the finding lane
+  deliberately did not do it mid-audit and **filed it for a data lane or an owner
+  grant**. On watch because **nothing gates it**: no CI check reads a
+  `_validation-source/` reference for internal consistency, and the next
+  diagnostic session will read it exactly as this one did.
 - **🟠 CARRIED — the standing parity-gate hazard.** The gate still reports a
   LIVE lane's pre-registered control/recipe dirs as "dead solve output"; before
   reporting a future parity red, check whether the named dirs belong to a

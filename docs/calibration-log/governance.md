@@ -2317,3 +2317,130 @@ field was added. `check_mechanism_matrix.py` exit **0** after the edit.
 194 field + 49 row + 152 path** · `check_forecast_staleness` **exit 0, Δ = 1 of
 10** · `check_bench_freshness` **exit 0, 20 parts, 0 STALE, 19 with engine
 drift**.
+
+## 2026-08-31 — C3c scarcity program, Q1+Q2 CLOSED: the cross-ISO synthesis both executing lanes deferred — Q1 REAL (twice, independently), Q2 CONFIRMED (twice, the second by a lane that first got it wrong), and the program's honest yield
+
+**Cross-ISO entry, written under owner ruling R-E** (2026-08-31 director refresh
+sitting, which chartered and chained Q1 and Q2 of
+`docs/CHARTER-c3c-scarcity-program-2026-08-31.md` in one grant). **Zero solve
+across every lane below; committed artifacts and published data only; no holdout
+year touched by any of them.** Both executing lanes deliberately left this file
+alone pending the other (`pjm-164`: *"Cross-ISO governance log deliberately
+untouched (nyiso-164 possibly parallel)"*; `nyiso-164`: *"the cross-ISO synthesis
+is a later, separate step"*). This is that step, written by the lane that ran both
+legs and can therefore report the pair.
+
+**(1) Three lanes, two questions, and a duplication worth recording.** Q1 and Q2
+were each executed **twice, in parallel, by lanes that could not see each other**:
+
+| question | first execution | replication | agree? |
+|---|---|---|---|
+| Q1 — is PJM's reserve dual REAL or the ercot-214 phantom? | **pjm-164** (`docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`) → **REAL** | **pjm-165** (`docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`), different construction → **REAL** | **yes** |
+| Q2 — was NYISO reality NYCA-short in its tail hours? | **nyiso-164** (`docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`) → **CONFIRMED (not short)** | **nyiso-165** (`docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`) → first **NOT short-confirmed**, i.e. the OPPOSITE; **retracted** on re-derivation, reproducing nyiso-164 exactly | **yes, after correction** |
+
+The duplication cost sessions and should not recur — a charter chaining two
+questions in one grant needs one lane, or explicit lane assignment per question.
+**It also bought something real:** Q1 now has two independent constructions
+agreeing, and Q2 survived an adversarial attempt that reached the opposite answer
+and had to be refuted on measurement. A CONFIRM that has withstood a genuine
+contrary reading is stronger than one that was never challenged.
+
+**(2) Q1 = REAL, and what it licenses.** PJM forms part of its scarcity tail
+through in-LP energy/reserve co-optimization on a **published requirement** and a
+**published demand curve**, timed to the real market's own posted scarcity
+intervals, at a level **below what that market actually paid**. The four
+independent legs (pjm-165 §2–§5): provenance an exact identity in 26,229
+family-hours; ORDC shortfall identically zero in all 52,560 family-hours so the
+dual is opportunity cost bounded below the published $300 penalty step (observed
+max $187.90); overlap with PJM's posted penalty-step and shortage intervals at
+**75–91× base rate, p ≤ 9.7e-11**; and the model under-pricing reality by 2.7–7×.
+The ercot-214 failure mode — a channel manufacturing price the market does not
+have — is structurally excluded, in the strong sense that the model never buys
+reserve above what PJM's own curve says PJM would pay.
+
+**Narrowed, by both lanes independently:** PJM's C3c is scored on the
+**energy-only** dual (no settlement overlay in any year), and the reserve channel
+is load-bearing in **2025 only** — 2023's tail forms with the family never binding
+all year, 2024's with a maximum dual of $8.49. **Cite 2025, not 2023, as the
+existence proof.** The charter's "PJM's C3c PASS rides reserve duals to $187.90"
+is true of one year in three.
+
+**(3) Q2 = CONFIRMED, and the inheritance question is settled — against the
+charter's own suspicion.** Charter §3 suspected NYISO's C3c caveat had inherited a
+CAISO/MISO diagnosis its own reserve timing did not support. Measured, it had not.
+Split by tier: at the **locational** tier the model binds in reality's tail hours
+and so does reality (agreement — and the genuine difference from CAISO, whose
+model had slack in every family); at the **system (NYCA)** tier neither is short
+(also agreement) — and NYCA is the tier that would have to be short for a
+system-wide price tail to be a reserve phenomenon. **The residual above the
+model's $90 locational adder is not a missing reserve product.** C3c stands as a
+ledgered model-class limitation on NYISO's own evidence rather than by
+inheritance. The decisive instrument is the **ceiling test** — a reserve holder's
+opportunity cost is bounded by LMP, an RCPF shortage price is not; the NYCA-tier
+price never exceeds the concurrent LMP in **0 of 65** tail hours, at a stable
+~0.54–0.65×.
+
+**(4) The one instrument lesson, and it is cross-ISO.** nyiso-165's false positive
+came from two defects in the **committed** reference
+`data/raw/_validation-source/actual_as_reserve_NYISO.parquet`, not from its own
+arithmetic: (A) `process_nyiso_as.py::build_reference` **sums** `spin_10 +
+nonsync_10 + op_30`, but NYISO's products are a **cumulative cascade** —
+`spin_10 ≥ nonsync_10 ≥ op_30` in **100.0000 % of 289,344 rows** — so the sum
+triple-counts one shadow price (exactly 3.0× in 28–79 % of priced hours); and (B)
+it maps naive **prevailing** timestamps positionally onto the model's fixed
+`Etc/GMT+5` 8760 clock, off by an hour in **65.2 % of the year**. **No keeper, no
+scored result and no determination depends on it** (sole consumer:
+`derive_nyiso_rcpf_overlay.py`, the co-opt-off comparator, disarmed in the
+keeper) — it is a trap for diagnostic sessions, and it caught one. Filed for
+repair; not repaired in a zero-solve measurement session.
+
+**The generalizable rule this earns:** *a derived reserve-price reference is not a
+substitute for the ISO's raw posting, and a nested reserve cascade must be
+**maxed**, never summed.* Every ISO here posts nested reserve products
+(PJM PR ⊇ SR; NYISO NYCA ⊃ East ⊃ SENY ⊃ NYC/LI; ISO-NE and MISO likewise), so
+the same error is available in five other lanes. pjm-165 §6(b) records the
+matching exposure on the PJM side — `_dt_ept` is prevailing while the model clock
+is `Etc/GMT+5`, and an offset scan shows the model's series running ahead (best
+lag −1 in 2023/2025); its overlaps are reported at the conservative lag 0 and are
+a lower bound. **That PJM placement question is flagged and NOT diagnosed** — it
+is the `pjm-162` "inputclock" family and belongs to a PJM lane.
+
+**(5) The program's honest yield, against what the charter predicted.** The
+charter said Q1+Q2 "will not, by themselves, close C3c anywhere; what they settle
+is whether the C3c ledger is telling the truth about PJM and NYISO." That is
+exactly what happened. **It is telling the truth about both** — PJM's PASS rests
+on a real channel (narrower than claimed, and correctly cited to 2025), and
+NYISO's caveat is correctly ledgered on its own evidence. **No determination, no
+keeper, no marker, no caveat and no matrix cell moves anywhere as a result of this
+program.** Q3 (the probabilistic-RT-premium model class) is untouched and remains
+what charter §5 called it: an owner-level architecture decision colliding with
+rules 4 `[R-DUALS]` and 8 `[R-8760]` and the no-MIP constraint, **not recommended
+as a calibration lane**.
+
+**(6) Guard compliance, restated because this is the lane where it matters.** No
+fitted scarcity adder, no tuned VOLL, no raised published demand curve, no ORDC
+offset swept against a residual. **No SOM- or Manual-11-published value
+($25/$40/$750/$775; $300/$850/190 MW) was changed, proposed for change, or tested
+as a sensitivity by any of the three lanes.** Every candidate was timing-checked
+against reality before being priced, on the caiso-144 §D construction. Verdicts
+stayed per-ISO (rule 25): the PJM finding entered no other shard, and the NYISO
+finding entered none.
+
+**(7) Matrix.** **No cell moves in any shard, across all three lanes.** Rule 26
+duty (b) is not triggered by any of them — every leg is a measurement on committed
+artifacts and published raw, and none tested, armed or adjudicated a mechanism;
+duty (c) not triggered (no new `ScenarioConfig` field anywhere).
+`energy_reserve_coopt` stays **K** in PJM and NYISO on their existing evidence.
+
+**(8) Open, and whose it is.** (a) The `actual_as_reserve_NYISO.parquet` repair —
+data lane or owner grant, spec in nyiso-165 §4. (b) The PJM prevailing-vs-standard
+requirement placement — a PJM lane, spec in pjm-165 §6(b). (c) The **nyiso-161
+winter-face waiver card** stays FILED AND UNRULED; under ruling R-F it was parked
+on this report and the **DIRECTOR re-serves it**. What our result implies, stated
+and not ruled: the corrected Q2 measurement **strengthens** the card's
+characterisation of its summer face as "the ledgered C3c limitation seen in the
+mean" — had nyiso-165's first reading stood, that half would have been a published
+reserve-shortage quantity the model fails to bind, i.e. a defect contradicting the
+card. It does not stand. This bears on the summer half only, is a statement about
+characterisation rather than arithmetic, caveat budget or the standing rule, and
+**rules nothing**.

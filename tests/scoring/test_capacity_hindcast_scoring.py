@@ -1222,3 +1222,106 @@ def test_d24_vintage_cutoff_follows_the_run():
         ).isoformat()
         == "2023-12-31"
     )
+
+
+# --------------------------------------------------------------------------- #
+# NEISO-RC-R R3 (2026-08-31) — vintage-aware fleet-absence evidence, the
+# committed NEISO decode, and the confirmed_derates ledger key
+# --------------------------------------------------------------------------- #
+def test_r3_vintage_aware_fleet_absence_applies_by_run_vintage():
+    """``absent_from_vintage_year`` evidence excludes iff the RUN's vintage is
+    at/after the absence — independent of the CAMPD-bin applicability gate —
+    and leaves an earlier-vintage run (which still carries the unit) alone."""
+    from datetime import date as _date
+
+    actuals = _reach_actuals(_BIG)
+    dec = _decode("111_1", econ_consistent=True)  # margin-driven: economic open
+    dec["111_1"]["absent_from_vintage_year"] = 2021
+    dec["111_1"]["fleet_note"] = "ABSENT from EIA-860 operable vintages >= 2021"
+    common = dict(decode=dec, instruments={})
+
+    # 2023-vintage run: the unit pre-dates the fleet snapshot -> excluded,
+    # even though use_campd_bins is False (the NEISO fleet construction).
+    later = S.classify_exit_reachability(
+        "NEISO",
+        actuals,
+        vintage_cutoff=_date(2023, 12, 31),
+        solved_config={"use_campd_bins": False},
+        **common,
+    )
+    assert later["members"] == []
+    assert later["excluded"][0]["reason"] == "not_in_fleet_basis"
+
+    # 2020-vintage run: the unit IS in that fleet -> member, untouched.
+    earlier = S.classify_exit_reachability(
+        "NEISO",
+        actuals,
+        vintage_cutoff=S.IS2020_CUTOFF,
+        solved_config={"use_campd_bins": False},
+        **common,
+    )
+    assert earlier["members"] == ["111_1"]
+    assert earlier["excluded"] == []
+
+
+def test_r3_neiso_committed_decode_reachability_at_2023_vintage():
+    """The committed NEISO decode against the committed NEISO target at the
+    capxd14 crossover's vintage (2023): the two pre-vintage >=300 MW exits
+    (Mystic 7, Bridgeport Harbor 3) leave the denominator, the OS-filtered
+    Androscoggin CTs are excluded ungated, and Merrimack 2 / Middletown 4
+    stay members (margin notes are not exclusions — fail-closed)."""
+    from datetime import date as _date
+
+    actuals = S.load_actuals("NEISO")
+    reach = S.classify_exit_reachability(
+        "NEISO",
+        actuals,
+        vintage_cutoff=_date(2023, 12, 31),
+        solved_config={
+            "use_campd_bins": True,  # the capxd14 crossover's own config
+            "forecast_fossil_retirement_economic": True,
+        },
+    )
+    assert reach["applied"] is True
+    excl = {r["unit_id"]: r for r in reach["excluded"]}
+    for uid in ("1588_7", "568_3"):
+        assert excl[uid]["reason"] == "not_in_fleet_basis"
+        assert excl[uid]["gated"] is True
+    for uid in ("55031_CT01", "55031_CT02", "55031_CT03"):
+        assert excl[uid]["reason"] == "not_in_fleet_basis"
+        assert excl[uid]["gated"] is False  # 54.5 MW — never in the gate
+    members = set(reach["members"])
+    assert "2364_2" in members
+    assert "562_4" in members
+    assert "1588_7" not in members and "568_3" not in members
+
+
+def test_r3_model_retirements_reads_confirmed_derates():
+    """A plant-binned confirmed exit lands in ``confirmed_derates`` (a derate
+    in place, invisible to the set-diff); model_retirements must count its MW
+    as a confirmed retirement — and an absent/None key stays a no-op."""
+    ledgers = {
+        2024: {
+            "retirements": [
+                {"unit_id": "a", "fuel": "gas_cc", "mw": 100.0, "reason": "economic"}
+            ],
+            "confirmed_derates": [
+                {
+                    "unit_id": "GAS_CC_p1588_committed",
+                    "fuel": "gas_cc",
+                    "mw_before": 800.0,
+                    "mw_after": 400.0,
+                    "derate_mw": 400.0,
+                }
+            ],
+        },
+        2025: {"retirements": [], "confirmed_derates": None},
+        2026: {"retirements": []},  # pre-FFR-1A ledger: no key at all
+    }
+    out = S.model_retirements(ledgers)
+    assert len(out) == 2
+    derate = out[out["reason"] == "confirmed"]
+    assert len(derate) == 1
+    assert float(derate["mw"].iloc[0]) == 400.0
+    assert int(derate["year"].iloc[0]) == 2024
+    assert out["mw"].sum() == 500.0

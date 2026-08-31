@@ -8940,3 +8940,83 @@ zero holdout spend, zero rubric motion, no scorer change, no keeper/shard/marker
 determination/matrix movement in this ISO.**
 
 **Next shorthand: nyiso-165.**
+
+## 2026-08-31 — nyiso-165: charter Q2 re-executed in parallel, reached the OPPOSITE answer, and is WRONG — nyiso-164's CONFIRM reproduced exactly; two live defects found in a committed calibration reference (zero solve)
+
+Executes Q2 of `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` §5 under owner
+ruling R-E. **Zero solve; committed artifacts and in-repo published data only; no
+holdout year touched (2023–2025).** Keeper re-verified at open and close:
+`2026-08-30-nyiso-159-loss-surface`, NOT-YET on {C3a-2025 −11.5 %, C3c}. Record:
+`docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`.
+
+**CONCESSION, up front. `nyiso-164` had already executed this question at HEAD and
+returned CONFIRMED. This lane ran in parallel, reached the OPPOSITE answer
+("reality WAS NYCA-short"), found their record afterwards, re-derived the
+measurement independently from the raw CSVs, and REPRODUCED THEIR NUMBERS
+EXACTLY** — NYCA-tier tail-hour mean **$306.74 / $254.62 / $393.31**, median
+$248.22 / $239.96 / $403.74, max $761.73 / $552.89 / $1,101.85, and the ceiling
+test **0 of 65**, ratio medians 0.573 / 0.536 / 0.654. **nyiso-164 is right; this
+lane's first reading was wrong. The verdict is theirs and the kill gate FIRES.**
+
+**(1) Why they are right.** A nonzero upstate (A–E) price means the NYCA
+constraint *bound*, not that its demand curve *activated*. A reserve holder's
+opportunity cost is bounded by LMP; an RCPF shortage price is not. The NYCA-tier
+price **never exceeds the concurrent LMP in any of the 65 tail hours**, at a
+stable ~0.54–0.65× — energy scarcity dragging reserve opportunity cost up, not a
+reserve shortage the model misses. Independently confirmed here: A–E price
+identically (max spread 0.000000 $/MW, all hours, all years), and the three NYCA
+families carry zero dual and zero shortfall in all 26,280 hours with `held_mw` at
+exactly the requirement.
+
+**(2) How this lane got it wrong — TWO DEFECTS, BOTH IN A COMMITTED ARTIFACT.**
+The first pass read `data/raw/_validation-source/actual_as_reserve_NYISO.parquet`
+(`nyca_reserve_adder`) instead of the raw CSVs, and reported 40/42 tail hours
+NYCA-priced, 21/42 at ≥$750, tail mean $925. All wrong:
+- **Defect A (aggregate, the substantive one).**
+  `process_nyiso_as.py::build_reference` computes `stack = spin_10 + nonsync_10 +
+  op_30`. NYISO's products are a **cumulative cascade**: `spin_10 ≥ nonsync_10 ≥
+  op_30` holds in **100.0000 % of 289,344 rows** (all 11 zones, all three years),
+  all three exactly equal in 82–84 %. A 10-min spinning MW earns `spin_10`, not
+  the sum; summing triple-counts (exactly 3.0× in 28.1/73.2/79.1 % of priced
+  hours). Worked case 2023-09-05 17:00 EDT WEST: true $661.77, summed $1,985.32.
+  **This is what broke the ceiling test** — on the summed basis the "NYCA price"
+  exceeds LMP in 46/65 hours at median 1.14–1.96; on the correct basis, 0/65.
+- **Defect B (clock).** `build_reference` maps naive **prevailing** timestamps
+  positionally onto the model's 8760 index while the model's NYISO clock is
+  `Etc/GMT+5` — off by one hour in **5,710/8,760 h (65.2 %)**, where every tail
+  hour sits. (nyiso-164 found and repaired this independently, their §3.)
+- Verified in the file: the committed `nyca_reserve_adder` reproduces the naive
+  positional SUM in **8,759/8,759 hours of every year**.
+
+**(3) Blast radius of the defect — NO keeper, NO scored result, NO determination.**
+The sole consumer is `derive_nyiso_rcpf_overlay.py`, the post-solve RCPF comparator
+for co-opt-off runs; `nyiso_rcpf_enabled` is False by default and in the keeper,
+and rule 19 makes enabling it alongside the armed `energy_reserve_coopt` a hard
+error. **It is a trap for diagnostic sessions, not a defect in any result — and it
+caught this one.** A repair is cheap and needs no fetch (`build_reference` reads
+the committed per-year CSVs): take the cascade max, and localize prevailing →
+`Etc/GMT+5` before indexing. **NOT done here** — zero-solve measurement charter,
+and rewriting a committed calibration reference on the strength of the audit it
+misled is scope creep. Filed for a data lane / owner grant (rule 14).
+
+**(4) The probe is kept, marked.** `scripts/probes/c3c_q2_nyiso_nyca_shortage.py`
+ships with a SUPERSEDED/DEFECTIVE docstring, prints a warning, and stamps a
+`SUPERSEDED` key into `results/calibration/_c3c_q2_nyiso_nyca_shortage.json`. Cite
+`scripts/probes/nyiso164_nyca_shortage_check.py` for the correct measurement.
+
+**(5) nyiso-161 waiver card — stated, not ruled** (R-F: parked on this report, the
+DIRECTOR re-serves). Our corrected result **strengthens** the card's
+characterisation of its summer face. Had the first reading stood, the −$3.94
+summer face would have been a published reserve-shortage quantity the model fails
+to bind — a defect, contradicting the card's "the ledgered C3c limitation seen in
+the mean". It does not stand: on the corrected measurement the summer face **is**
+that ledgered limitation. Bears on the summer half only (the winter face's AORR
+block is untouched); it is a statement about characterisation, not arithmetic,
+caveat budget or the standing rule. **We rule nothing and change nothing.**
+
+**(6) Matrix.** **No cell moves, no shard edited** — duty (b) not triggered
+(nothing tested, armed or adjudicated), duty (c) not triggered. nyiso-164's
+DO-NOT-REDO list is honoured and reinforced, not re-opened: "arming a NYCA-level
+family/requirement so the tail can price" is now refuted twice, independently.
+
+Next shorthand: nyiso-166.

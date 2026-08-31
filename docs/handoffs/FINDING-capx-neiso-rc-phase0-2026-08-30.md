@@ -386,3 +386,138 @@ tuned in this session.
    screen on NEISO; a capxd14 ledger regeneration (a solve) is NOT needed for any claim made
    here — every crossover-specific statement that would need one is labeled
    inferred-with-mechanism.
+
+---
+
+## 10. REPAIR-PHASE ADDENDUM (NEISO-RC-R, 2026-08-31) — §6 executed; graded against the pre-registration
+
+*Appended by the NEISO-RC-R repair session (director r#21; charter
+`capx-director-prompt-pack-2026-08.md` §NEISO-RC-R; branch
+`claude/neiso-rc-repair-fymtkz`). §§0–9 above are the Phase-0 record and are
+untouched.*
+
+### 10.1 Phase A — the routed repairs, landed
+
+- **R2 (curve)** — the NEISO FCA vintage curves are re-derived from published
+  MRI-era auction evidence: the FCA clears ON the system demand curve
+  (verified exactly on the published FCA 11 table and the FCA 13 ICR-filing
+  tail segment), so each auction's (cleared MW / Net ICR, clearing price /
+  net-CONE) is a measured curve point. Every MRI-era vintage (2023-24 …
+  2027-28) now passes through its own auction's point; the zero-cross is FCA
+  13's published tail zero-quantity (35,713/33,750 = **1.0582**); FCA 11/12
+  carry the exact published FCA 11 piecewise table; FCA 13 its own published
+  transition construction. Intake rows + sha-256 identity table:
+  `data/raw/capacity-market/demand-curve/neiso/`. **The §3.1 premise "the $0
+  past 8.3 % surplus is a curve-shape artifact" is REFUTED by the intake**:
+  real FCAs cleared $2.00–3.58/kW-mo at 3.3–4.5 % surplus — never at ≥8 % —
+  and the measured curve pays LESS than the old linear FCA-11 geometry
+  throughout (1.0, 1.06] and zeroes EARLIER (1.0582 vs 1.083). §9 item 2's
+  expected R2 direction inherits this correction (see §10.3).
+- **R1 (registry)** — Mystic 8/9: six `rmr_end` rows pinned to 165 FERC
+  ¶ 61,267 (ER18-1639-000, issued 2018-12-20; agreement term end 2024-05-31),
+  admissible at the 2023 vintage. The retirement tracker itself was retrieved
+  (the standing MANUAL-DOWNLOAD blocker resolved; sha256 35075432…): Potter 2
+  CC (1660 CC2/CC3, exit 2025-06), Yarmouth 1/2 = W F Wyman 1507 gens 1/2
+  (exit 2023-06; EIA-spine/actuals conflicts recorded in the rows),
+  Middletown 2 → 562 gens 2+3 (353 MW CNRC = 113.6+239.4 exactly) + 562/10,
+  Waters River 1678/1 (2027-06). Sappi et al adjudicated OUT on the bar
+  (Permanent De-list = capacity-market-only exit, not a retirement). The
+  instrument bar is restated two-regime for CAR-PD (ER26-925: one-year
+  unpriced deactivation notifications from 2026-03-31).
+- **R3 (scorer trio)** — (i) committed NEISO exit decode
+  (`docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json`) with
+  vintage-aware fleet-absence evidence (1588_7, 568_3 leave the ≥300 MW
+  denominator at vintage ≥2021; Androscoggin at ≥2023; margin-noted units
+  stay members fail-closed); (ii) `score_crossover` reports the retirement
+  target on BOTH bases side by side (`retirements_vintage_basis` +
+  `retirement_target_basis`; the default block unchanged); (iii)
+  `model_retirements` reads `confirmed_derates`.
+- **R4** — report-only `retirement_decisions_in_window` block + the
+  tracked-set change (`.gitignore` negation: crossover bundles commit their
+  `evolution_<year>.json`; this bundle does).
+- **R6 upheld**: no FOM constant, lag, threshold or curve parameter was
+  identified from any residual anywhere in Phase A/B.
+
+### 10.2 Phase B — ONE treatment solve vs the committed capxd14 control
+
+`neiso-2023-2027-crossover-rcrepair`, the capxd14 launch verbatim at
+post-repair HEAD (cache key `07e416f3f8072e7c` — identical to the control's,
+proving the repairs are input-level, config-identical). Zero-solve on the
+control side. Scored with the R3 dual-basis scorer; registered
+preserve-then-overwrite (live `neiso-t1x` → this run; control preserved
+verbatim as `neiso-t1x-pre-rcrepair`). Determination **HOLD on both — no
+committed verdict flips** (the cross-lane re-grade ruling is not triggered).
+
+| measure | control (capxd14) | treatment (rcrepair) | actual |
+|---|---|---|---|
+| exits, full-window basis | 3.563 GW (−28.7 %) | 3.635 GW (−27.3 %) | 4.997 GW |
+| exits, vintage-consistent basis (NEW, R3ii) | — (not reported) | 3.635 GW (**+24.2 %**) | 2.926 GW |
+| gas_cc | 3.128 GW | 3.150 GW (of which **1.413 GW confirmed** — Mystic) | 1.884 GW |
+| gas_st | 0.435 GW | 0.435 GW (economic; Middletown exits 2024 ahead of its 2027 instrument — the min(economic, confirmed) rule) | 0.480 GW |
+| gas_ct | 0 | 0.051 GW (confirmed — Potter 2 CC) | 0.319 GW |
+| coal / oil / biomass | 0 | 0 executed (coal **decided** — see below) | 2.316 GW |
+| ≥300 MW recall | 2/6 = 0.333 FAIL | 2/4 = **0.500** FAIL (D-24 now excludes 1588_7, 568_3 on the committed decode — a measurement repair, not mechanism) | — |
+| channel split | 100 % economic | 2,171 MW economic + **1,464 MW confirmed** (706.7 derate 2024 + 706.7 drop 2025 + 50.5 Potter — the derate half visible only through R3(iii)) | — |
+| decided-in-window (NEW, R4) | unobservable (no ledgers committed) | coal **438.5 MW decided** (plant 2364, loss-year 2023, execute 2026) then **REVERSED 2025** | — |
+| FC-4 price 2024 / 2025 | +7.9 % PASS / −21.8 % FAIL | +5.2 % PASS / −21.3 % FAIL | — |
+
+Mechanism reads (from the now-committed treatment ledgers): reserve position
+1.295 (2023) → 1.135 (2024) → **1.034 (2025)** → 1.079 → 1.130. The 2024
+screen (position 1.295) still pays a $0 capacity leg under the re-derived
+curve — both old and new curves are $0 there, exactly as the mechanical
+pre-declaration said. The 2025 coal reversal is driven by **reserve uplift**
+(~$205/kW-yr of the $247/kW-yr net revenue) with the new curve contributing
+$34/kW-yr at 1.034 (the old curve would have paid ~$53 — the reversal
+survives the less generous curve). §7's oscillator note stands, one year
+earlier than the S-4b analog. §4's open question — "whether Merrimack was
+decided in the 2024 screen is unverifiable" — is now ANSWERED by the R4
+block: it was decided, and reversed before execution.
+
+### 10.3 The pre-registration, graded (PRECOMMIT-capx-neiso-rc-repair-phaseB-2026-08-31.md)
+
+- **Charter expectation §2, curve leg — MISS, recorded**: R2 did NOT reduce
+  exits by restoring capacity revenue; the reachable-basis level moved +20.1 %
+  → **+24.2 %** (away from 0, within noise of the target rebuild), and the
+  screen's 2024 capacity leg stayed $0. The §3 mechanical amendment
+  (pre-declared before the solve from the landed intake) called this: the
+  published curve pays less, not more, where the model's positions sit. Per
+  R6 this is a recorded miss — no curve or registry parameter responds to it.
+- **Charter expectation §2, Mystic leg — HIT**: Mystic 8/9 is
+  instrument-driven (confirmed channel, 1,413 MW = the fleet's own QC-basis
+  representation of the plant, over-subscription-capped from the 2,272 MW
+  nameplate registry rows exactly per the FFR-1A schedule).
+- **De-concentration leg — PARTIAL**: composition still concentrates on
+  gas_cc/gas_st (the floor/ladder mechanism §3.2 is intact), but the channel
+  de-concentrates (41 % of the wave now instrument-driven) and gas_ct gains
+  its first exits (Potter, confirmed). Coal now DECIDES in-window and is
+  censored by lag+reversal — visible for the first time.
+- **Level ≈ control (§3.3 mechanical) — HIT** (3.635 vs 3.563 GW; the
+  confirmed exits displaced ≈1:1 of the floor-budgeted economic wave).
+- **Headline-changes-by-measurement (§3.4) — HIT** (dual basis, D-24
+  exclusions, derate visibility all landed as pre-declared).
+
+### 10.4 What this leaves open (for the director)
+
+1. The composition miss's remaining mass is where §5(b)/(d) put it: the
+   FOM-ladder floor allocation + per-fuel lags, now with the curve premise
+   corrected — the R2 lever is SPENT and adjudicated near-inert at long
+   positions (matrix cell updated). Oil/coal/biomass execution remains
+   unreachable in-window by lag/instrument timing, not by margin.
+2. The model's LONG reserve position (1.295 at the 2023 vintage vs the real
+   market's ~1.03–1.05) is now the outstanding structural question the curve
+   evidence sharpens: at real positions the re-derived curve pays $25–43/kW-yr
+   — the degenerate bar is a POSITION artifact, not a curve artifact.
+   Candidate causes (accreditation basis vs Qualified Capacity; units
+   operating outside the FCM counted as accredited) are routed, not adjudicated.
+3. R5 (biomass FOM) stays deferred; R6 stands.
+
+### 10.5 Governance attestation (repair phase)
+
+ONE solve (the pre-registered treatment; years 2023–2027, the crossover's
+rule-22-legal window; no out-of-training year touched, no marker spent, the
+holdout freeze not implicated). The control was not re-solved. No committed
+verdict or determination flipped (HOLD → HOLD); the t3 verdict key and the
+bare `neiso-t1f` key were not written; `ff-verdicts.json` and
+`program-status.json` were edited only on the crossover/capxd14 keys and the
+NEISO rows this lane owns. The charter-expectation miss is recorded at full
+magnitude and nothing was re-tuned in response (R6).

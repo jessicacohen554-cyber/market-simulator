@@ -31,7 +31,15 @@ Three modes, selected by ``--vintage`` / ``--crossover`` / ``--forward-from-base
   Allowed solve years ``{2023, 2024, 2025, 2026, 2027}``. Score with
   ``scripts/score_crossover.py`` (dispatch skill + capacity events 2023-2025;
   years >= 2026 are invariants/plausibility only — the scorer REFUSES to read
-  any bench/actual for a year >= 2026).
+  any bench/actual for a year >= 2026). **Tracked set (NEISO-RC-R R4,
+  2026-08-31): a registered crossover bundle COMMITS its per-year
+  ``evolution_<year>.json`` ledgers alongside meta/run_config/score** — the
+  S-4b T1-F bundles already do, and the capxd14-era crossover bundles' bare
+  three-file set left every mechanism claim about them
+  inferred-with-mechanism (lag-censored retirement decisions unobservable;
+  ``FINDING-capx-neiso-rc-phase0-2026-08-30.md`` §3/§6 R4). The scorer's
+  ``retirement_decisions_in_window`` block degrades to an explicit note when
+  the ledgers are absent.
 
 * **T1-FF full-forward hindcast** (``--forward-from-base``; FH-1, hindcast-
   forward plan §2): the crossover boundary is pointed at the window's OWN

@@ -4436,3 +4436,67 @@ your branch when done.
     blob-verified after push** (fetched back; line count + SHA-256 compared to
     local). The §8 append verified **APPEND-ONLY** by diffing the full
     pre-edit prefix against the prior blob for byte-identity.
+  - **⚡ POST-PIN, ONE LABELLED FOLLOW-UP MEASUREMENT at `54d5772c` (merge of
+    #4466), under the v14 sanctioned exception — BOTH of R-E's answers were
+    INDEPENDENTLY REPLICATED while this entry was being written, and one
+    replication found a live defect worth carrying.** NOT re-pinned.
+    - **Q1 = REAL, replicated by a DIFFERENT CONSTRUCTION** (pjm-165,
+      `docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`): pjm-164 overlapped
+      the model's C3c **tail hours** against the RT LMP tail; this lane overlapped
+      the model's **positive-reserve-dual hours** against PJM's **published
+      reserve-market record**. Four legs pjm-164 did not carry — the requirement
+      is an **exact published identity in 26,229 family-hours**, the channel
+      **never touches a penalty step**, the positive-dual hours coincide with
+      PJM's posted shortage intervals at **75–91× base rate (p ≤ 9.7e-11)**, and
+      the model **UNDER**-prices reality by **2.7–7×**. **No disagreement on the
+      verdict.**
+    - **Q2 = CONFIRMED, by a lane that first reached the OPPOSITE answer and
+      RETRACTED it** (nyiso-165,
+      `docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`): running blind it
+      measured *"reality WAS NYCA-short"*, found nyiso-164's record afterwards,
+      re-derived from the raw CSVs and **reproduced nyiso-164's numbers exactly**
+      (NYCA-tier tail-hour mean $306.74 / $254.62 / $393.31; ceiling test **0 of
+      65**). **nyiso-164 is right and the replication says so in its own title.**
+    - **🔴 THE RETRACTION'S ORIGINAL CONTRIBUTION — TWO LIVE DEFECTS IN A
+      COMMITTED CALIBRATION REFERENCE.**
+      `data/raw/_validation-source/actual_as_reserve_NYISO.parquet` is wrong on
+      **both** counts in **every column, every year** (a cascade **sum** where the
+      **max** is correct; a positional `hoy` map that never localizes prevailing
+      Eastern to the model's standard-time clock). **Blast radius: NO keeper, NO
+      scored result, NO determination** — the only consumer is the post-solve
+      RCPF comparator for co-opt-off runs, `nyiso_rcpf_enabled` is False in the
+      NYISO keeper, and rule 19 `[R-ONE-MECH]` makes arming it alongside
+      `energy_reserve_coopt` a hard error. **A trap for diagnostic sessions, not
+      a defect in any result — and it caught one.** Repair is cheap and
+      regenerable from committed CSVs; the lane deliberately did not do it
+      mid-audit and **filed it for a data lane or an owner grant**. **Added to the
+      board's Watch, adjudicated by nobody** — nothing in CI reads a
+      `_validation-source/` reference for internal consistency.
+    - **On R-F's card, stated by the replicating lane and RULED BY NOBODY:** its
+      §6 records that the corrected Q2 result **strengthens** the nyiso-161 card's
+      characterisation of its **summer** half and removes an objection to it — had
+      the false positive stood, the summer face would have been a published
+      in-representation reserve-shortage quantity the model fails to bind, i.e. a
+      *defect* rather than the *"ledgered C3c limitation"* the card calls it. The
+      lane states three qualifications itself (summer half only; characterisation
+      not arithmetic; it rules nothing), and **neither does this program** — R-F
+      parked the card for the DIRECTOR to re-serve, and that reading is unchanged.
+    - **The duplication is itself a finding:** three lanes, two questions, each
+      executed **twice in parallel by lanes that could not see each other**, and
+      **both replications agreed** (Q2 after correction). The governance log now
+      carries the cross-ISO synthesis both first-execution lanes deliberately
+      deferred.
+    - **Keepers, markers, freeze, registry, `results/regression-goldens/`,
+      `.github/workflows/` and `docs/audit/` all verified BYTE-UNMOVED
+      `d44446e0` → `54d5772c`**, so every keeper-table, marker, holdout, stage-0
+      and workstream figure in this entry stands. **All five gates re-run, exit
+      0:** audit_keepers PASS 0/0 · parity 58/93/0 · matrix 194+49+**153**
+      (+1 path anchor, the new findings' citations) · staleness **Δ 1 → 0**,
+      stamped/scored 81/49 → **83/51** · bench 0 STALE, **19 of 20 with engine
+      drift, unchanged**. Four PRs merged in the window (#4466 the c3c
+      replication lane, #4467 NEISO-RC-R Phase B, #4468 miso-194, #4469 the
+      calibration director's refresh); this lane's branch became the only one
+      ahead of `main`, and its PR **#4465** was brought current by merging
+      `origin/main` and resolving two append-vs-append calibration-log conflicts
+      **keeping BOTH sides byte-exactly** (base prefix and each side's appended
+      tail verified byte-identical after resolution).
