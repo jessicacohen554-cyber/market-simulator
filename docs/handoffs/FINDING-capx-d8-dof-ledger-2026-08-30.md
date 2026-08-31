@@ -241,3 +241,145 @@ UNIDENTIFIED rows keep FC-7's CAVEAT byte-for-byte. No verdict/board/backcast
 write. Tests: trivial fixtures first; 20 new, all passing; no new failures in
 `tests/scoring/`. No new ScenarioConfig field, no new mechanism (matrix
 duties not triggered). Model: Fable (rule 27); pushes blob-verified.
+
+---
+
+## §8 COMPLETION NOTE — capx-D8-RE: the deferred re-emission, executed
+
+**Lane:** capx-D8-RE (director r#21 mid-sitting release; charter:
+`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D8-RE)
+· **Branch:** `claude/capx-d8-re-emission-szo4wt` · **Date:** 2026-08-31 · **HEAD:**
+`4bdb2d603c68` · **Zero solves.**
+
+§6's deferral is discharged: all three writers landed (S-6 PR #4436 · S-123-V PR #4441 ·
+the T3 golden PRs #4447/#4452). **One key was re-emitted. Two were STOPPED as committed-verdict
+flips and routed to the director. Everything else is skipped and recorded below.**
+
+### §8.1 The control that makes the movement readable
+
+Before re-emitting anything, each affected key was re-scored on its own committed artifacts
+**without** `--dof-ledger`. All three reproduced their committed records **byte-for-byte**
+apart from the provenance stamp:
+
+| key | bundle | baseline reproduces committed record |
+|---|---|---|
+| `neiso-t1f` | `results/ff-t1f-s4b-ara/neiso` | **yes, exact** |
+| `neiso-t1f-s4bcontrol` | `results/ff-t1f-s4b-ara/neiso-control` | **yes, exact** |
+| `nyiso-t1f` | `results/ff-t1f-extcap/nyiso` | **yes, exact** |
+
+So the ledger input is provably the *only* delta in everything that follows — no scorer drift,
+no artifact drift, nothing else hiding inside the movement.
+
+### §8.2 What the re-emission measures (all keys, zero solves)
+
+| key | determination | FC-7 `dof ledger` row | disposition |
+|---|---|---|---|
+| `neiso-t1f` | PROMOTE-WITH-CAVEATS **→ PROMOTE** (caveats → `[]`) | CAVEAT → PASS, 7 entries | **STOP — verdict flip** |
+| `nyiso-t1f` | PROMOTE-WITH-CAVEATS **→ PROMOTE** (caveats → `[]`) | CAVEAT → PASS, 1 entry | **STOP — verdict flip** |
+| `neiso-t1f-s4bcontrol` | PROMOTE-WITH-CAVEATS (**unchanged**) | CAVEAT → PASS, 7 entries | **RE-EMITTED** |
+| `neiso-t3` | HOLD (unchanged) | already PASS | skip — golden lane already consumed the ledger |
+| `pjm-t1f` | HOLD (would be unchanged) | would move CAVEAT → PASS | routed — needs a new ledger (§8.4) |
+| `miso-t1f` | HOLD (unchanged) | would **stay** CAVEAT | routed — 3 UNIDENTIFIED (§8.4) |
+| 7 legacy legs | — | `run_config` row FAIL → PASS | routed — §6 names it a director decision |
+| `ercot/caiso-t1f`, `neiso-t1f-s4hydro`, `neiso-t1f-s4control`, all `-ff2d` / `-ffr3a2` | — | — | skip — no committed ledger exists |
+
+**§6's pre-registration was correct on both headline keys**: NEISO's and NYISO's ledgers are
+fully identified, their FC-7 caveat is their *only* caveat, and retiring it yields the
+program's first clean FC map. That is exactly why neither could be landed here.
+
+### §8.3 The two STOPs
+
+Both flip a **committed determination** — `neiso-t1f` and `nyiso-t1f` are the bare LIVE keys
+the board reads, and their determinations are carried on `program-status.json` as
+`isos.<ISO>.t1f_determination`. Under the **2026-08-30 cross-lane re-grade ruling** (standing
+rule; `docs/calibration-log/governance.md`, board v16 F-3) the affected lane's own
+D-5(b)-style re-verification **from committed artifacts, never a solve** must publish such a
+flip — and the D8-RE charter is explicit that this lane reports rather than lands it.
+
+* `neiso-t1f` → affected lane **capx-S4b-neiso-ara**
+* `nyiso-t1f` → affected lane **capx-D2-extcap-intake**
+
+Each re-verification is one command, deterministic on committed inputs:
+
+```
+python scripts/forecast_verdict.py --tier t1f \
+  --summary <bundle>/full_horizon_summary.json \
+  --run-config <bundle>/run_config.json \
+  --dof-ledger <bundle>/dof_ledger.json \
+  --json-out <bundle>/forecast_verdict.json
+```
+
+**One consequence, stated rather than smoothed over:** the S-4b treatment and control arms now
+read *different* FC-7 rows at HEAD. That split is a **records artifact of the held treatment,
+not a control/treatment result** — both arms share one `run_config` and one ledger content, and
+D8 §2 records the two ledgers as identical. Landing the control alone follows the charter's
+stated test (re-emit where the instrument changes the value; stop only on a verdict/gate flip),
+and the S-4b re-verification closes the split. If the director prefers pair-atomicity, reverting
+the one landed key is a one-line change — flagged here so that choice is available.
+
+### §8.4 Routed to the director
+
+1. **The two stopped flips** (§8.3) — each needs its lane's re-verification.
+2. **PJM — §5.1's records gap is UNBLOCKED.** Lane S-6 landed a committed bundle
+   (`results/ff-t1f-s6-pjm/ledger/`, with `run_config.json`), and its own board block says
+   *"lane D8's deferred re-emission owns it, not this lane."* **Measured here, not committed**
+   (building a new ledger is D8 half-1 work, outside D8-RE's charter, which names
+   `forecast_verdict.py` / board tooling only): the ledger carries **1 entry, 0 UNIDENTIFIED**,
+   so `pjm-t1f`'s FC-7 would move CAVEAT → PASS with its **determination unchanged** (HOLD, held
+   by FC-1/FC-2 FAILs) — **not** a stop. One `build_forecast_dof_ledger.py` command plus a
+   re-score closes it.
+3. **MISO — same unblock** (`results/ff-t1f-s123/verify/`, lane S-123-V). **Measured here, not
+   committed:** the ledger carries **4 entries, 3 UNIDENTIFIED** —
+   `entry_vre_capacity_revenue`, `miso_clean_tier_rows`, `miso_rps_compliance_regions` — so
+   `miso-t1f`'s FC-7 would **stay CAVEAT** (the scorer treats an unattested-carrying ledger
+   exactly as an absent one, D8 §1 step 4). No verdict movement; the value is the *named*
+   attestation debt. This is the instrument working as designed, and it is the first evidence
+   that the "tiny T1-F free-parameter surface" of §2 is a NEISO/NYISO property, not a
+   program-wide one.
+4. **The seven legacy legs.** Adopting the RECONSTRUCTED `run_config`s would flip seven
+   committed FC-7 `run_config` rows FAIL → PASS. §6 already names this a **director decision**,
+   and the scorer still has no notion of the `reconstruction` label, so surfacing it is a scorer
+   change that must ride *with* that decision. Not touched.
+
+### §8.5 What landed, and what provably did not
+
+Three files:
+
+* `frontend/data/forecast/ff-verdicts.json` — `neiso-t1f-s4bcontrol` only. Asserted
+  programmatically: **exactly one key differs from HEAD**, every non-FC-7 category inside it is
+  byte-identical, `reasons` unchanged. The S-4b control-arm provenance note is preserved
+  **verbatim**, with the prior stamp (`88baa9d5c71b` @ `2026-08-30T22:25:59Z`) recorded inside
+  the new session string alongside the re-emission's own attribution.
+* `results/ff-t1f-s4b-ara/neiso-control/forecast_verdict.json` — the same re-emission, so the
+  bundle sidecar and the board entry agree.
+* `frontend/data/forecast/program-status.json` — the `d8_re_emission` lane block (the
+  established `what_changed` / `what_did_NOT_change` / `routed_to_director` convention), the
+  capx-D8 finding appended to `sources`, and a **bracketed annotation only** on
+  `isos.NEISO.blocking_rows[2]` and `isos.NYISO.blocking_rows[2]`. Those two rows asserted *"the
+  DOF ledger is absent"*, which is **false at HEAD** — a committed, fully-identified ledger
+  exists for each bundle. The annotation records the fact, the measured movement, and that the
+  status was deliberately not moved. NYISO's row additionally claimed the gap is one *"EVERY
+  T1-F leg in the program carries equally"*; that is corrected in place too.
+
+Asserted programmatically against HEAD before commit: **every ISO's determinations, `fc` map,
+keeper / marker / golden fields and every §2.1b gate cell — status *and* detail — are
+byte-identical**, as are all nine prior lane blocks and every other top-level board field
+(`headline`, `gate_reading`, `readiness`, `honest_unfit`, `open_frontier`, …).
+
+### §8.6 Guardrail compliance
+
+Zero solves; `forecast_verdict.py` and the board files only, on committed inputs
+(`build_forecast_dof_ledger.py` was run **read-only to a scratchpad** for the §8.4 PJM/MISO
+measurements and wrote nothing to the repository). No model surface touched — `src/market_sim/`
+and `scripts/` are unmodified in this lane. No re-grade, no hand-edited status, no widened band
+(rule 1 `[R-STRUCT]`): every value written is the scorer's own output. No measured-outcome
+feedback (rule 13). The ledger reports identification and supplies none (rule 21) — MISO's three
+UNIDENTIFIED rows are carried forward as UNIDENTIFIED, not papered over. Backcast namespace
+untouched (rule 15's forecast/backcast split). No `ScenarioConfig` field, no mechanism, no
+matrix cell (rule 28 duty (a) only; `check_mechanism_matrix.py` clean).
+`check_forecast_staleness.py` reads the new stamp as the board's newest scored evidence and
+raises nothing new (its one WARN — 31 of 50 verdicts carry no scored-at date — is pre-existing
+and unchanged); `register_forecast_run.py --reindex` assembles. The test stack is not installed
+in this `code`-profile session, but nothing under `src/` or `scripts/` was modified, so no
+suite's subject changed.
+Rebased on `origin/main` before push; blob-verified (rule 27).
