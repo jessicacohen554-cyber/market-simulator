@@ -165,13 +165,16 @@ VERDICT_MAP = {
     # other run's score. Chartered by owner card A (A-A, 2026-08-25) so §2.1b
     # leg (c) closes on a MEASURED FC-4 rather than an absent one.
     "nyiso-2023-2027-crossover-capxd10": "nyiso-t1x",
-    # capx-D14 (2026-08-30) measured NEISO's FIRST-EVER T1-X crossover — no
-    # prior `neiso-t1x` key existed anywhere, so the bare per-tier key IS this
-    # run's own verdict (the same LIVE-vintage convention as capx-D10 above)
-    # and cannot contradict any other run's score. Chartered at director
-    # refresh #13 under the owner's Q7 ruling (leg (c) closes on a MEASURED
-    # FC-4, whatever it says).
-    "neiso-2023-2027-crossover-capxd14": "neiso-t1x",
+    # capx-D14 (2026-08-30) measured NEISO's FIRST-EVER T1-X crossover.
+    # NEISO-RC-R Phase B (2026-08-31) re-solved the crossover at post-repair
+    # HEAD (R1 confirmed-registry intake + R2 published-evidence FCA curve +
+    # R3 dual-basis scorer); the bare live key moves to the NEW run (the
+    # LIVE-vintage convention) and the capxd14 control keeps its OWN verdict
+    # under the preserved `-pre-rcrepair` key (the -pre-d5r
+    # preserve-then-overwrite precedent) — a run never renders a verdict its
+    # own score contradicts. Determination HOLD on both, no flip.
+    "neiso-2023-2027-crossover-capxd14": "neiso-t1x-pre-rcrepair",
+    "neiso-2023-2027-crossover-rcrepair": "neiso-t1x",
 }
 
 

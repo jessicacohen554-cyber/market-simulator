@@ -57,21 +57,52 @@ def _load_spine(spine_path: Path) -> dict[tuple[int, str], float]:
 
     The nameplate is the MW cross-check reference. Returns an empty map when the
     spine parquet is absent (spine validation then only checks ``exit_year``).
+
+    The registry's own charter includes units *already offline* (README: "units
+    already offline, or future exits bound by an enforceable public
+    instrument"), and an already-executed exit is by definition gone from the
+    current OPERABLE sheet — so identity is grounded in the union of the
+    operable spine and EIA-860's own retired sheets living beside it
+    (``eia860_generator_retired_within_window.parquet``, canonical columns, and
+    ``eia860_generator_retired_and_canceled.parquet``, raw EIA columns). The
+    NEISO-RC-R R1 intake (2026-08-31) surfaced the gap: Mystic 8/9 (retired
+    2024, in the within-window sheet) and Potter 2 CC (in the
+    retired-and-canceled sheet) are real registry rows whose identities the
+    operable sheet alone can no longer witness. Absent siblings are skipped
+    (test fixtures point ``spine_path`` at a bare fixture parquet).
     """
     if not spine_path.is_file():
         return {}
-    df = pd.read_parquet(
-        spine_path, columns=["plant_id", "generator_id", "nameplate_capacity_mw"]
-    )
     spine: dict[tuple[int, str], float] = {}
-    for row in df.itertuples(index=False):
-        try:
-            pid = int(row.plant_id)
-        except (TypeError, ValueError):
-            continue
-        gid = str(row.generator_id).strip()
-        mw = row.nameplate_capacity_mw
-        spine[(pid, gid)] = float(mw) if pd.notna(mw) else float("nan")
+
+    def _ingest(path: Path, pid_col: str, gid_col: str, mw_col: str) -> None:
+        if not path.is_file():
+            return
+        frame = pd.read_parquet(path, columns=[pid_col, gid_col, mw_col])
+        for row in frame.itertuples(index=False):
+            try:
+                pid = int(getattr(row, row._fields[0]))
+            except (TypeError, ValueError):
+                continue
+            gid = str(getattr(row, row._fields[1])).strip()
+            mw = getattr(row, row._fields[2])
+            # The operable sheet (ingested last) wins on key collisions —
+            # a re-activated identity's current nameplate is the reference.
+            spine[(pid, gid)] = float(mw) if pd.notna(mw) else float("nan")
+
+    _ingest(
+        spine_path.parent / "eia860_generator_retired_and_canceled.parquet",
+        "Plant Code",
+        "Generator ID",
+        "Nameplate Capacity (MW)",
+    )
+    _ingest(
+        spine_path.parent / "eia860_generator_retired_within_window.parquet",
+        "plant_id",
+        "generator_id",
+        "nameplate_capacity_mw",
+    )
+    _ingest(spine_path, "plant_id", "generator_id", "nameplate_capacity_mw")
     return spine
 
 

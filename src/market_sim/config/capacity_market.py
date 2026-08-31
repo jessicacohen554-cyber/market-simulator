@@ -945,19 +945,55 @@ _NYISO_ICAP_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
     CapacityDemandCurvePoint(1.0, 1.0),  # reference point = Net CONE
     CapacityDemandCurvePoint(1.12, 0.0),  # zero (100% + 12% curve length)
 )
-# ISO-NE FCA/MRI curve, modeled ANNUALLY. Price levels from FCA 18 (2027/2028):
-# cap = starting price/net-CONE = 14.525/9.078 = 1.600 ($/kW-month, ratio
-# basis-independent); net-CONE at the requirement (1.0). The reserve-position
-# geometry is taken from the last FCA that published explicit curve points
-# (FCA 11, 2020/2021, in MW): its Net ICR (where price = that year's net-CONE
-# 11.64) ≈ 34,217 MW, so the cap plateau end (33,457 MW) is 0.978 and the
-# zero-cross (37,053 MW) is 1.083 of the requirement. A first-order linear
-# reduction of the MRI slope (skips FCA 11's interior kink); refined in CR-3.
-# Net-CONE anchor 108.94 $/kW-yr (9.078 $/kW-month × 12).
+# ISO-NE FCA/MRI curve, modeled ANNUALLY. Re-derived 2026-08-31 (NEISO-RC-R
+# R2 — the CR-3 refinement the previous comment promised; charter
+# docs/handoffs/capx-director-prompt-pack-2026-08.md §NEISO-RC-R) from
+# PUBLISHED auction evidence only:
+#
+#   * Cap = starting price / net-CONE = 14.525/9.078 = 1.600 (FCA 18,
+#     $/kW-month, ratio basis-independent); cap-plateau end retained at FCA
+#     11's published plateau end normalized by its Net ICR (33,457/34,075 —
+#     the only FCA that ever published the cap x-position).
+#   * Net-CONE at the requirement (1.0): the MRI demand-curve design's
+#     calibration point (price = Net CONE at the Net ICR).
+#   * The interior/tail is the MEASURED MRI-era curve: the FCA clears ON the
+#     system-wide demand curve, so each auction's published (cleared MW,
+#     clearing price), normalized by that FCA's own published Net ICR and
+#     net-CONE, is a point on the published curve. Verified exactly on the
+#     two FCAs whose curve segments are themselves published (FCA 11:
+#     $5.297 @ 35,835 MW on the slide-14 table; FCA 13: $3.800 @ 34,839 MW
+#     on the ICR-filing tail segment, = 3.802 computed). The five pure-MRI-era
+#     clearing points (FCA 14–18, 2020–2024 auctions) are monotone in
+#     normalized space — five years tracing one common tail.
+#   * Zero-cross 35,713/33,750 = 1.0582: the only published zero-quantity of
+#     the MRI era (FCA 13 ICR filing, testimony p.48 — the tail segment ends
+#     at $0 @ 35,713 MW); its published slope (−18.0 in normalized units)
+#     also matches the last measured segment's continuation.
+#
+# This REPLACES the first-order linear FCA-11-geometry reduction (zero-cross
+# 1.083), which OVERPAID the measured curve everywhere in (1.0, 1.083):
+# e.g. 0.457 vs measured 0.244 at x=1.0451. Every number traces to the P-0B
+# datatype rows added by the R2 intake (data/raw/capacity-market/demand-curve/
+# neiso/neiso.csv + README sha-256 identity table); no parameter comes from
+# any model residual (rules 13/14/23 — the FINDING-capx-neiso-rc-phase0 §6 R2
+# admissibility route). Net-CONE anchor 108.94 $/kW-yr (9.078 × 12).
+_NEISO_MRI_CLEARING_POINTS: tuple[CapacityDemandCurvePoint, ...] = (
+    # (cleared MW / Net ICR, clearing price / net-CONE), per-FCA published:
+    CapacityDemandCurvePoint(31_556.0 / 30_550.0, 3.580 / 9.078),  # FCA 18
+    CapacityDemandCurvePoint(31_370.0 / 30_305.0, 2.590 / 7.359),  # FCA 17
+    CapacityDemandCurvePoint(32_810.0 / 31_645.0, 2.591 / 7.468),  # FCA 16
+    CapacityDemandCurvePoint(34_621.0 / 33_270.0, 2.611 / 8.707),  # FCA 15
+    CapacityDemandCurvePoint(33_956.0 / 32_490.0, 2.001 / 8.187),  # FCA 14
+)
 _NEISO_FCA_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
-    CapacityDemandCurvePoint(0.978, 1.600),  # starting price (14.525/9.078)
-    CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
-    CapacityDemandCurvePoint(1.083, 0.0),  # zero-cross (FCA 11 geometry)
+    CapacityDemandCurvePoint(
+        33_457.0 / 34_075.0, 14.525 / 9.078
+    ),  # cap plateau end (FCA 11 published) at the FCA 18 starting price
+    CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement (MRI design)
+    *_NEISO_MRI_CLEARING_POINTS,  # measured MRI-era curve points (FCA 14–18)
+    CapacityDemandCurvePoint(
+        35_713.0 / 33_750.0, 0.0
+    ),  # zero-cross: FCA 13 published tail zero-quantity
 )
 # MISO PRA reliability-based demand curve (RBDC), ANNUAL (single-season)
 # reduction — RETAINED for the P-0B reconciliation test and as the registry
@@ -1309,8 +1345,10 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
         net_cone_curve_per_kw_yr=108.94,
         demand_curve_delivery_year="2027-2028",
         demand_curve_source=(
-            "ISO-NE FCA 18 (2027/2028) Net CONE + starting price; FCA 11 "
-            "(2020/2021) demand-curve points for the reserve-position geometry"
+            "ISO-NE FCA 18 (2027/2028) Net CONE + starting price; MRI-era "
+            "geometry from published FCA 14-18 clearing outcomes on their own "
+            "Net ICRs + the FCA 13 ICR filing's published tail zero-quantity "
+            "(NEISO-RC-R R2, 2026-08-31)"
         ),
     ),
     # MISO runs a SEASONAL Planning Resource Auction (PRA): 4 seasons, clearing
@@ -1401,7 +1439,9 @@ class MarketDesignVintage:
 #   NYISO anchor = NYCA Annual Reference Value ($/kW-yr); first-order straight
 #         line, net-CONE at the requirement, zero at 1 + 12% curve length,
 #         cap = max clearing / reference-point price (both $/kW-month).
-#   NEISO anchor = net-CONE ($/kW-month) × 12; FCA 11 reserve-position geometry,
+#   NEISO anchor = net-CONE ($/kW-month) × 12; per-design-family published
+#         shapes (FCA 11 exact table / FCA 13 transition construction /
+#         measured MRI-era clearing points — NEISO-RC-R R2, 2026-08-31),
 #         cap = starting price / net-CONE (both $/kW-month).
 #   MISO  anchor = North/Central Net CONE ($/MW-yr) / 1000; first-order RBDC.
 # A delivery year that publishes a net-CONE anchor but no normalizable shape
@@ -1488,29 +1528,69 @@ def _nyiso_icap_vintage_curve(
     )
 
 
-# ISO-NE FCA vintages share FCA 11's (2020/2021) reserve-position geometry —
-# its published MW curve normalized by the Net ICR gives cap-plateau end 0.978
-# and zero-cross 1.083 of the requirement (the same first-order construction the
-# registry ``_NEISO_FCA_CURVE`` uses; the interior MRI kink is skipped, refined
-# in CR-3). Each vintage varies only its cap fraction and anchor.
-_NEISO_FCA_CAP_X: float = 0.978
-_NEISO_FCA_ZERO_X: float = 1.083
+# ISO-NE FCA vintages (NEISO-RC-R R2 re-derivation 2026-08-31 — see the
+# ``_NEISO_FCA_CURVE`` comment for the full published-evidence basis). Three
+# published shape families, matched to each delivery year's own auction design:
+#
+#   * 2020-21 / 2021-22 (FCA 11/12): FCA 11's EXACT published piecewise table
+#     (a2_fca11_demand_curves.pdf slide 14), normalized by its published Net
+#     ICR 34,075 MW — replacing the first-order linear reduction that skipped
+#     the interior kink. FCA 12 published no table of its own; it shares the
+#     design family AND the identical cap fraction (both starting prices are
+#     1.600 × net-CONE), so it reuses FCA 11's normalized shape (its own
+#     measured clearing point, 0.576 @ 1.0327, sits 4.9% below the shape's
+#     kink shelf 0.604 — the recorded approximation error).
+#   * 2022-23 (FCA 13): its OWN published transition-period construction
+#     (ICR filing ER19-291-000, testimony p.48): MRI-based region down to
+#     $7.03/kW-month (34,097 MW), then the published linear tail to $0 at
+#     35,713 MW. The FCA 13 clearing ($3.800 @ 34,839 MW) lands on that tail
+#     segment exactly.
+#   * 2023-24 … 2027-28 (FCA 14–18): the pooled measured MRI-era shape
+#     (``_NEISO_MRI_CLEARING_POINTS`` + the FCA 13 published zero-quantity),
+#     so each vintage's curve passes through its OWN auction's measured
+#     point by construction. Per-vintage cap fraction = that FCA's published
+#     starting price / net-CONE.
+_NEISO_FCA_CAP_X: float = 33_457.0 / 34_075.0  # FCA 11 published plateau end
+_NEISO_MRI_ZERO_X: float = 35_713.0 / 33_750.0  # FCA 13 published tail zero
+
+# FCA 11 (2020-2021): the exact published 4-breakpoint piecewise curve,
+# x = MW / Net ICR (34,075), y = $/kW-month / net-CONE (11.64). Note the
+# FCA 11/12 design pays 1.112 × net-CONE AT the requirement (the net-CONE
+# calibration point at the Net ICR arrived with the MRI-era curves).
+_NEISO_FCA11_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(33_457.0 / 34_075.0, 18.624 / 11.64),  # cap end
+    CapacityDemandCurvePoint(34_718.0 / 34_075.0, 7.03 / 11.64),  # kink
+    CapacityDemandCurvePoint(35_437.0 / 34_075.0, 7.03 / 11.64),  # shelf end
+    CapacityDemandCurvePoint(37_053.0 / 34_075.0, 0.0),  # published zero
+)
+
+# FCA 13 (2022-2023): cap (published starting price 13.05 / net-CONE 8.156 =
+# 1.600), net-CONE at the requirement, then the published transition tail.
+_NEISO_FCA13_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(_NEISO_FCA_CAP_X, 13.05 / 8.156),
+    CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
+    CapacityDemandCurvePoint(34_097.0 / 33_750.0, 7.03 / 8.156),  # tail start
+    CapacityDemandCurvePoint(_NEISO_MRI_ZERO_X, 0.0),  # published zero
+)
 
 
 def _neiso_fca_vintage_curve(
     net_cone_month: float, starting_price_month: float
 ) -> tuple[CapacityDemandCurvePoint, ...]:
-    """One ISO-NE FCA delivery-year vintage curve on FCA 11's geometry.
+    """One ISO-NE MRI-era FCA delivery-year vintage curve (FCA 14–18 family).
 
     Cap fraction = ``starting_price_month / net_cone_month`` (both $/kW-month,
-    ratio basis-independent); net-CONE at the requirement; zero at 1.083.
+    ratio basis-independent) at FCA 11's published plateau end; net-CONE at
+    the requirement (the MRI design calibration); the pooled measured MRI-era
+    clearing points; zero at FCA 13's published tail zero-quantity (1.0582).
     """
     return (
         CapacityDemandCurvePoint(
             _NEISO_FCA_CAP_X, starting_price_month / net_cone_month
         ),  # starting (max) price
         CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
-        CapacityDemandCurvePoint(_NEISO_FCA_ZERO_X, 0.0),  # zero-cross
+        *_NEISO_MRI_CLEARING_POINTS,  # measured MRI-era curve (FCA 14–18)
+        CapacityDemandCurvePoint(_NEISO_MRI_ZERO_X, 0.0),  # zero-cross
     )
 
 
@@ -1632,15 +1712,13 @@ MARKET_DESIGN_VINTAGES: dict[str, tuple[MarketDesignVintage, ...]] = {
         MarketDesignVintage("2026-2027", 57.70, _nyiso_icap_vintage_curve(6.53, 22.41)),
     ),
     "NEISO": (
-        MarketDesignVintage(
-            "2020-2021", 11.64 * 12.0, _neiso_fca_vintage_curve(11.64, 18.624)
-        ),
-        MarketDesignVintage(
-            "2021-2022", 8.04 * 12.0, _neiso_fca_vintage_curve(8.04, 12.864)
-        ),
-        MarketDesignVintage(
-            "2022-2023", 8.156 * 12.0, _neiso_fca_vintage_curve(8.156, 13.05)
-        ),
+        # NEISO-RC-R R2 (2026-08-31): per-design-family published shapes — see
+        # the block comment above _NEISO_FCA_CAP_X for the three families.
+        MarketDesignVintage("2020-2021", 11.64 * 12.0, _NEISO_FCA11_CURVE),
+        # FCA 12: same design family and identical published cap fraction
+        # (12.864/8.04 = 18.624/11.64 = 1.600) — reuses FCA 11's exact shape.
+        MarketDesignVintage("2021-2022", 8.04 * 12.0, _NEISO_FCA11_CURVE),
+        MarketDesignVintage("2022-2023", 8.156 * 12.0, _NEISO_FCA13_CURVE),
         MarketDesignVintage(
             "2023-2024", 8.187 * 12.0, _neiso_fca_vintage_curve(8.187, 13.099)
         ),

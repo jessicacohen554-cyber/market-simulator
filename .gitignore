@@ -665,6 +665,13 @@ results/calibration/MISO/_repro_logs/
 # tracked (gitignore never untracks).
 results/hindcast/*/*/*/year_*.parquet
 results/hindcast/*/*/*/evolution_*.json
+# NEISO-RC-R R4 tracked-set change (2026-08-31; FINDING-capx-neiso-rc-phase0
+# §6 R4): a CROSSOVER bundle's per-year evolution ledgers ARE the committed
+# record — the capxd14-era three-file bundles left every mechanism claim
+# about them unverifiable (lag-censored retirement decisions unobservable;
+# the scorer's retirement_decisions_in_window block needs pipeline_events).
+# KB-scale JSON, same class as the committed S-4b T1-F ledgers.
+!results/hindcast/*crossover*/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet

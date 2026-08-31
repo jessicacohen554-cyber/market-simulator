@@ -1,0 +1,208 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "confirmed_derates": [
+    {
+      "derate_mw": 12.019000000000002,
+      "fuel": "gas_ct",
+      "mw_after": 13.0186,
+      "mw_before": 25.0376,
+      "unit_id": "CT_PEAKER_Boston_p1660_committed"
+    },
+    {
+      "derate_mw": 34.946000000000005,
+      "fuel": "gas_ct",
+      "mw_after": 37.852399999999996,
+      "mw_before": 72.7984,
+      "unit_id": "CT_PEAKER_Boston_p1660_econ"
+    },
+    {
+      "derate_mw": 3.535,
+      "fuel": "gas_ct",
+      "mw_after": 3.8289999999999997,
+      "mw_before": 7.364,
+      "unit_id": "CT_PEAKER_Boston_p1660_peak"
+    }
+  ],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 1000.0,
+    "gas_ct": 500.0,
+    "solar": 974.8,
+    "wind": 287.4
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2027,
+      "decision_year": 2025,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 500.0,
+      "seq": 0,
+      "tech": "gas_ct",
+      "zone": "Central"
+    },
+    {
+      "cod_year": 2027,
+      "decision_year": 2025,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 287.4,
+      "seq": 1,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2027,
+      "decision_year": 2025,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 1000.0,
+      "seq": 2,
+      "tech": "gas_cc",
+      "zone": "Central"
+    },
+    {
+      "cod_year": 2027,
+      "decision_year": 2025,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 974.8,
+      "seq": 3,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "firm_clean_accredited_mw": 1396.472,
+  "firm_clean_mw": 1899.5,
+  "fleet_by_fuel_after": {
+    "biomass": 1058.8,
+    "coal": 438.5,
+    "gas_cc": 11022.8526,
+    "gas_ct": 1323.235,
+    "gas_st": 67.55,
+    "nuclear": 3326.9,
+    "oil": 5403.6
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1058.8,
+    "coal": 438.5,
+    "gas_cc": 11729.5526,
+    "gas_ct": 1373.735,
+    "gas_st": 67.55,
+    "nuclear": 3326.9,
+    "oil": 5403.6
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "NEISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 25898.0,
+  "pipeline_events": [
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "hourly_signal",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.8206589008819667,
+      "capacity_revenue_usd": 10528783.163550414,
+      "decided_year": 2023,
+      "energy_margin_usd": 2512949.0511915744,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "going_forward_cost_usd": 17956575.0,
+      "mc_mean_usd_mwh": 71.72154005014015,
+      "mw": 306.95,
+      "net_revenue_usd": 75836236.44342342,
+      "reserve_signal_mean_usd_mwh": 26.229816395300304,
+      "reserve_uplift_usd": 62794504.22868143,
+      "screen_price_max_usd_mwh": 293.3846779161012,
+      "screen_price_mean_usd_mwh": 41.481488346123925,
+      "unit_id": "COAL_North_p2364_committed",
+      "year": 2025
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "hourly_signal",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.8206589008819667,
+      "capacity_revenue_usd": 4211513.265420166,
+      "decided_year": 2023,
+      "energy_margin_usd": 1111237.7621843172,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "going_forward_cost_usd": 7182630.000000001,
+      "mc_mean_usd_mwh": 66.61969410124016,
+      "mw": 122.78000000000002,
+      "net_revenue_usd": 30381856.92112204,
+      "reserve_signal_mean_usd_mwh": 26.229816395300304,
+      "reserve_uplift_usd": 25059105.893517558,
+      "screen_price_max_usd_mwh": 293.3846779161012,
+      "screen_price_mean_usd_mwh": 41.481488346123925,
+      "unit_id": "COAL_North_p2364_econ",
+      "year": 2025
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "hourly_signal",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.8206589008819667,
+      "capacity_revenue_usd": 300822.3761014404,
+      "decided_year": 2023,
+      "energy_margin_usd": 73507.97295169039,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "going_forward_cost_usd": 513044.99999999994,
+      "mc_mean_usd_mwh": 70.57030941754016,
+      "mw": 8.77,
+      "net_revenue_usd": 2167479.169563007,
+      "reserve_signal_mean_usd_mwh": 26.229816395300304,
+      "reserve_uplift_usd": 1793148.8205098761,
+      "screen_price_max_usd_mwh": 293.3846779161012,
+      "screen_price_mean_usd_mwh": 41.481488346123925,
+      "unit_id": "COAL_North_p2364_peak",
+      "year": 2025
+    }
+  ],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.033864,
+  "retirements": [
+    {
+      "fuel": "gas_cc",
+      "mw": 318.015,
+      "reason": "confirmed",
+      "unit_id": "CC_REGULAR_Boston_p1588_committed"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 332.14899999999994,
+      "reason": "confirmed",
+      "unit_id": "CC_REGULAR_Boston_p1588_econ"
+    },
+    {
+      "fuel": "gas_cc",
+      "mw": 56.535999999999994,
+      "reason": "confirmed",
+      "unit_id": "CC_REGULAR_Boston_p1588_peak"
+    }
+  ],
+  "rps_dual": 50.0,
+  "solar_cap_mw": 2765.7,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 1583.84,
+  "storage_power_mw": 1903.2,
+  "thermal_additions": [],
+  "wind_cap_mw": 1538.2,
+  "year": 2025
+}

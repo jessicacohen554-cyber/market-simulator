@@ -1,0 +1,198 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "confirmed_derates": [
+    {
+      "derate_mw": 12.019,
+      "fuel": "gas_ct",
+      "mw_after": 0.999599999999999,
+      "mw_before": 13.0186,
+      "unit_id": "CT_PEAKER_Boston_p1660_committed"
+    },
+    {
+      "derate_mw": 34.946,
+      "fuel": "gas_ct",
+      "mw_after": 2.906399999999997,
+      "mw_before": 37.852399999999996,
+      "unit_id": "CT_PEAKER_Boston_p1660_econ"
+    },
+    {
+      "derate_mw": 3.535,
+      "fuel": "gas_ct",
+      "mw_after": 0.2939999999999997,
+      "mw_before": 3.8289999999999997,
+      "unit_id": "CT_PEAKER_Boston_p1660_peak"
+    }
+  ],
+  "entry_decided_mw_by_tech": {
+    "gas_ct": 277.3089402554491,
+    "solar": 1025.2,
+    "wind": 712.6
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2028,
+      "decision_year": 2026,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 2,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2028,
+      "decision_year": 2026,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1025.2,
+      "seq": 3,
+      "tech": "solar",
+      "zone": "Connecticut"
+    },
+    {
+      "cod_year": 2026,
+      "decision_year": 2024,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2026,
+      "decision_year": 2024,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 1025.2,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "firm_clean_accredited_mw": 1396.472,
+  "firm_clean_mw": 1899.5,
+  "fleet_by_fuel_after": {
+    "biomass": 1058.8,
+    "coal": 438.5,
+    "gas_cc": 11022.8526,
+    "gas_ct": 1550.04394,
+    "gas_st": 67.55,
+    "nuclear": 3326.9,
+    "oil": 5403.6
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1058.8,
+    "coal": 438.5,
+    "gas_cc": 11022.8526,
+    "gas_ct": 1323.235,
+    "gas_st": 67.55,
+    "nuclear": 3326.9,
+    "oil": 5403.6
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "NEISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 26234.674,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 712.6,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "mw": 1025.2,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.079044,
+  "retirements": [],
+  "rps_dual": 50.0,
+  "solar_cap_mw": 3790.9,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [
+    {
+      "duration_h": 100.0,
+      "mw": 144.0,
+      "tech": "iron_air",
+      "unit_id": "North_iron_air_new_2026_0",
+      "zone": "North"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 216.0,
+      "tech": "iron_air",
+      "unit_id": "Central_iron_air_new_2026_0",
+      "zone": "Central"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 151.2,
+      "tech": "iron_air",
+      "unit_id": "Boston_iron_air_new_2026_0",
+      "zone": "Boston"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 208.79999999999998,
+      "tech": "iron_air",
+      "unit_id": "Connecticut_iron_air_new_2026_0",
+      "zone": "Connecticut"
+    },
+    {
+      "duration_h": 4.0,
+      "mw": 96.0,
+      "tech": "li_ion_4hr",
+      "unit_id": "North_li_ion_4hr_new_2026_1",
+      "zone": "North"
+    },
+    {
+      "duration_h": 4.0,
+      "mw": 144.0,
+      "tech": "li_ion_4hr",
+      "unit_id": "Central_li_ion_4hr_new_2026_1",
+      "zone": "Central"
+    },
+    {
+      "duration_h": 4.0,
+      "mw": 100.8,
+      "tech": "li_ion_4hr",
+      "unit_id": "Boston_li_ion_4hr_new_2026_1",
+      "zone": "Boston"
+    },
+    {
+      "duration_h": 4.0,
+      "mw": 139.2,
+      "tech": "li_ion_4hr",
+      "unit_id": "Connecticut_li_ion_4hr_new_2026_1",
+      "zone": "Connecticut"
+    }
+  ],
+  "storage_firm_mw": 2591.84,
+  "storage_power_mw": 3103.2,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_ct",
+      "mw": 277.3089402554491,
+      "source": "reserve_backstop",
+      "unit_id": "gas_ct_adequacy_2026",
+      "zone": "Central"
+    }
+  ],
+  "wind_cap_mw": 2250.8,
+  "year": 2026
+}

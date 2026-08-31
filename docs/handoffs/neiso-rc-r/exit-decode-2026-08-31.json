@@ -1,0 +1,94 @@
+{
+  "decision": "NEISO-RC-R R3(i) — the FFR-7C-style per-unit NEISO exit decode, executing FINDING-capx-neiso-rc-phase0-2026-08-30.md §6 R3(i) under charter docs/handoffs/capx-director-prompt-pack-2026-08.md §NEISO-RC-R",
+  "method": "Fleet-basis facts are measured per EIA-860 vintage from the committed operable sheets (data/raw/eia-860/vintage_<year>/eia860_generators.parquet) against the fleet loader's status=='OP' filter (src/market_sim/data/fleet/eia860.py) — a unit ABSENT from a vintage's operable sheet, or present with status != OP, is not in that vintage's fleet basis and no screen can retire it (D-24 member rule clause (i)). absent_from_vintage_year is the FIRST vintage whose operable-OP fleet lacks the unit; the scorer applies the exclusion only to runs whose own vintage year >= that value, so the evidence is vintage-aware rather than gated on use_campd_bins (the ERCOT decode's CAMPD-bin-sheet gate does not describe NEISO fleet construction). Margin adjudication notes are carried from the Phase-0 finding's committed S-4b evolution-ledger extraction (results/ff-t1f-s4b-ara/neiso/NEISO/9a7f68fc7dcac931/) — reported for the record; none constitutes an economic exclusion (every noted unit FAILS its going-forward bar, so a margin-driven exit is economically consistent and the channel stays open, fail-closed).",
+  "vintages_measured": [2020, 2021, 2022, 2023, 2024],
+  "built": "2026-08-31",
+  "units": {
+    "1588_7": {
+      "name": "Mystic 7",
+      "plant": 1588,
+      "mw": 617.0,
+      "exit_year": 2021,
+      "target_fuel": "oil",
+      "model_bin": "ABSENT from every EIA-860 operable vintage >= 2021 (physically ceased 2021; present OP in vintage 2020 only)",
+      "absent_from_vintage_year": 2021,
+      "note": "Reachable only by a run whose fleet vintage is 2020; unreachable by construction for the 2023-vintage crossover (FINDING-capx-neiso-rc-phase0 §2.1)."
+    },
+    "568_3": {
+      "name": "Bridgeport Harbor 3",
+      "plant": 568,
+      "mw": 400.0,
+      "exit_year": 2021,
+      "target_fuel": "coal",
+      "model_bin": "ABSENT from every EIA-860 operable vintage >= 2021 (physically ceased 2021; present OP in vintage 2020 only)",
+      "absent_from_vintage_year": 2021,
+      "note": "Same class as 1588_7."
+    },
+    "55031_CT01": {
+      "name": "Androscoggin CT01",
+      "plant": 55031,
+      "mw": 54.5,
+      "exit_year": 2023,
+      "target_fuel": "gas_ct",
+      "model_bin": "ABSENT from the OP-filtered fleet basis of vintages >= 2023 (status OS in the 2023 and 2024 operable sheets; OP through vintage 2022)",
+      "absent_from_vintage_year": 2023,
+      "note": "The fleet loader keeps status=='OP' only (eia860.py), so an OS unit is not in the fleet basis even though the sheet lists it."
+    },
+    "55031_CT02": {
+      "name": "Androscoggin CT02",
+      "plant": 55031,
+      "mw": 54.5,
+      "exit_year": 2023,
+      "target_fuel": "gas_ct",
+      "model_bin": "ABSENT from the OP-filtered fleet basis of vintages >= 2023 (status OS in the 2023 and 2024 operable sheets; OP through vintage 2022)",
+      "absent_from_vintage_year": 2023,
+      "note": "See 55031_CT01."
+    },
+    "55031_CT03": {
+      "name": "Androscoggin CT03",
+      "plant": 55031,
+      "mw": 54.5,
+      "exit_year": 2023,
+      "target_fuel": "gas_ct",
+      "model_bin": "ABSENT from the OP-filtered fleet basis of vintages >= 2023 (status OS in the 2023 and 2024 operable sheets; OP through vintage 2022)",
+      "absent_from_vintage_year": 2023,
+      "note": "See 55031_CT01."
+    },
+    "2364_2": {
+      "name": "Merrimack 2",
+      "plant": 2364,
+      "mw": 345.6,
+      "exit_year": 2025,
+      "target_fuel": "coal",
+      "model_bin": "IN FLEET — OP in every measured vintage (2020-2024)",
+      "note": "Adjudicated margin note (no exclusion): coal fails its going-forward bar hardest of all fuels in the committed S-4b twin (net revenue 0.77 vs bar 58.50 $/kW-yr, 2027 screen), so a margin-driven exit is economically CONSISTENT — the in-window miss is coal's 3-year execution lag (decision 2023 -> execution 2026) plus the consent-decree instrument post-dating the 2023 vintage (2024-03-29), a lag/information censoring the D-24 member rule as signed does not model. Stays a member, fail-closed; the R4 decided-in-window diagnostic is where the lag censoring becomes visible."
+    },
+    "562_4": {
+      "name": "Middletown 4",
+      "plant": 562,
+      "mw": 414.9,
+      "exit_year": 2025,
+      "target_fuel": "oil",
+      "model_bin": "IN FLEET — OP in every measured vintage (2020-2024)",
+      "note": "Adjudicated margin note (no exclusion): oil is the screen's most-distressed fuel in the committed S-4b twin (net revenue 0.01 vs bar 25.00 $/kW-yr) — a margin-driven exit is economically consistent; the model's miss is the reliability floor retaining oil wholesale (2nd-cheapest $/firm-MW-yr on the FOM ladder), a mechanism fact, not target unreachability. No tracker instrument exists for this unit (the 2025 deactivation was announced post-vintage); stays a member on the economic channel."
+    },
+    "562_2": {
+      "name": "Middletown 2 (EIA gen 2)",
+      "plant": 562,
+      "mw": 113.6,
+      "exit_year": 2025,
+      "target_fuel": "gas_st",
+      "model_bin": "IN FLEET — OP in every measured vintage (2020-2024)",
+      "note": "Confirmed-registry instrument exists post-R1 (isone-rdb-fca18-middletown2-g2, instrument_date 2023-04-04 <= the 2023 vintage cutoff): instrument-reachable, member. Registry exit 2027-06 (the de-list effective date) vs physical cessation 2025 — a timing fact, not a membership fact."
+    },
+    "562_3": {
+      "name": "Middletown 2 (EIA gen 3)",
+      "plant": 562,
+      "mw": 239.4,
+      "exit_year": 2025,
+      "target_fuel": "gas_st",
+      "model_bin": "IN FLEET — OP in every measured vintage (2020-2024)",
+      "note": "See 562_2 (same market resource, instrument isone-rdb-fca18-middletown2-g3)."
+    }
+  }
+}

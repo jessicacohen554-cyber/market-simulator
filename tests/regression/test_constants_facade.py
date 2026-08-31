@@ -156,9 +156,16 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "_MISO_RBDC_ZERO_X",
         "_MISO_VERTICAL_CURVE",
         "_MISO_VERTICAL_STEP",
+        # NEISO-RC-R R2 (2026-08-31): _NEISO_FCA_ZERO_X (the linear FCA-11
+        # geometry's 1.083) is DELETED, not zeroed (rule 26) — the re-derived
+        # curves carry _NEISO_MRI_ZERO_X (FCA 13's published tail zero) plus
+        # the exact FCA 11/13 published shapes and the measured MRI-era points.
+        "_NEISO_FCA11_CURVE",
+        "_NEISO_FCA13_CURVE",
         "_NEISO_FCA_CAP_X",
         "_NEISO_FCA_CURVE",
-        "_NEISO_FCA_ZERO_X",
+        "_NEISO_MRI_CLEARING_POINTS",
+        "_NEISO_MRI_ZERO_X",
         "_NYISO_ICAP_CURVE",
         "_NYISO_NYCA_CURVE_LENGTH",
         "_PJM_VRR_CURVE",
