@@ -252,11 +252,35 @@ file at all.
 cold-snap gas derate is **REFUTED on W4 absorption** at phase-0 census, cell U → **I** (inert),
 keeper unchanged — a clean negative, and the MISO lever queue is stamped.
 
-**F. TWO BACKCAST-TRACK PROMPTS OFFERED to the owner this sitting** (offered, never chartered
-as capx lanes — the backcast track is the owner's): (1) the **ERCOT 2024/2025 SCED
-conduct-corpus intake** funded by Q18; (2) the **NYISO AS-reserve reference repair** routed by
-the C3c audit — fix `build_reference`'s cascade summation and its timestamp mapping, and carry
-the max-not-sum rule to the other five ISOs' equivalents. Both recorded in §2.
+**F. TWO BACKCAST-TRACK PROMPTS ISSUED to the owner this sitting** (offered and handed over,
+never chartered as capx lanes — the backcast track is the owner's; the ercot-245-R / miso-191
+precedent): **ercot-248**, the ERCOT 2024/2025 ALL-RESOURCE SCED conduct-corpus intake funded
+by Q18; and **nyiso-165**, the AS-reserve reference repair routed by the C3c audit. Both
+recorded in §2. Two things the director checked before writing them, so the prompts rest on
+disk facts rather than on the findings' prose:
+- **ercot-248's gap is exactly one span, and the fetcher already supports it.**
+  `data/raw/ercot/SCED/` holds ALL-RESOURCE delivery 2022-12-31 … 2024-01-09 (315 shards);
+  `SCED-CT/` holds CT-ONLY 2024-01-24 … 2025-12-31. The intake is the second span unscoped —
+  the same `fetch_ercot_60day_sced_gen_resource.py` with `--resource-types` OMITTED. **The
+  prompt is Opus, not the Sonnet an additive intake would normally get** (rule 27): the
+  corpus README's own scope warning is that consumers glob `data/raw/ercot/` and
+  `.../SCED/` and read every parquet found as an all-resource day, so a mis-placed or
+  mis-typed shard SILENTLY understates every class share computed from the corpus — that
+  placement call is infrastructure judgment, and the prompt requires an old-span
+  before/after regression check to discharge it. Two live constraints carried in: MIS
+  retention is a rolling ~2.3 yr so README Gap 1 **grows** and today's reachable boundary
+  must be MEASURED, not assumed; and `--max-delivery-date` (2025-12-31) refuses 2026 days
+  because H1-2026 is the locked-test tier — the prompt forbids overriding it.
+- **nyiso-165 has a written acceptance test, so the repair is verifiable rather than merely
+  plausible.** The corrected re-derivation reproduces $306.74 / $254.62 / $393.31 and 0-of-65
+  tail hours; the prompt makes reproducing those the pass condition and forbids adjusting the
+  target. It also requires the "no keeper depends on this file" claim to be RE-VERIFIED per
+  consumer rather than inherited, with a stop if any committed determination would move
+  (cross-lane re-grade). **The cross-ISO half is corrected from the audit's framing:** NYISO
+  is the ONLY ISO with a committed `actual_as_reserve_*` reference, so there are no five
+  sibling files to fix — the max-not-sum rule becomes a SCAN of the other ISOs' reserve
+  constructions (ISO-NE's TMSR ≥ TMNSR ≥ TMOR the obvious candidate), reported per ISO and
+  repaired in none of them (rule 25).
 
 
 ## 0r. Refresh #21 (2026-08-31, HEAD `50fd46c1`) — the relaunch wave LANDS 3/3 (D12-A-R · S-123-V-R · S-6-R); OWNER CORRECTION: the NEISO golden was NEVER LOST (still running) — T3-GOLDEN-R RECALLED unrun; MISO promotes miso-191; ercot-245 KILLED on its own census
