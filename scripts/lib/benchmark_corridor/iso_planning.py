@@ -83,6 +83,14 @@ _MANUAL_SOURCES: tuple[tuple[str, str, tuple[str, ...], str, str, str], ...] = (
     ),
 )
 
+# Sources whose published workbook IS directly downloadable, so their unified CSV
+# is machine-extracted by `scripts/data/fetch_iso_planning_benchmarks.py` rather
+# than hand-transcribed (D22, 2026-08-31 — hand-typing hundreds of cells is the
+# rule-5 fat-finger hazard that keeps AEO on a deterministic fetcher). The rest
+# stay manual: their projection tables are inside a PDF or behind a JavaScript
+# document portal with no static file URL.
+_FETCHABLE: frozenset[str] = frozenset({"ERCOT_CDR_2025", "PJM_LOAD_2026"})
+
 for _source, _sub, _isos, _vintage, _desc, _cite in _MANUAL_SOURCES:
     bc.register(
         bc.SourceSpec(
@@ -91,8 +99,8 @@ for _source, _sub, _isos, _vintage, _desc, _cite in _MANUAL_SOURCES:
             isos=_isos,
             vintage=_vintage,
             description=_desc,
-            fetchable=False,  # table-in-PDF/XLSX; manual download.
-            parse=None,  # generic unified-CSV reader
+            fetchable=_source in _FETCHABLE,
+            parse=None,  # generic unified-CSV reader (fetcher emits canonical rows)
             citation=_cite,
         )
     )

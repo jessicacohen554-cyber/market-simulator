@@ -106,7 +106,14 @@ columns:
     unit: none
     nullable: false
     description: >-
-      Canonical quantity (the FC-5 "metric" axis): capacity | generation | co2.
+      Canonical quantity (the FC-5 "metric" axis): capacity | generation | co2 |
+      peak_demand | energy_demand | reserve_margin. The first three are the
+      outlook-style quantities (AEO, NREL Standard Scenarios); the last three are
+      the ISO planning-document quantities — an ISO load forecast publishes peak
+      MW and annual GWh rather than a capacity mix. All are extensive (region
+      rows sum to an ISO total) EXCEPT `reserve_margin`, which is a RATIO:
+      `iso_totals()` refuses to sum it across regions rather than returning a
+      meaningless total.
   - name: tech
     dtype: string
     unit: none
@@ -132,8 +139,12 @@ columns:
     nullable: false
     description: >-
       Unit of `value`: GW (capacity) | TWh (generation; AEO BkWh billion-kWh is
-      numerically identical to TWh) | MMst_co2 (million short tons CO2) — or the
+      numerically identical to TWh) | MMst_co2 (million short tons CO2) |
+      MW (peak_demand) | GWh (energy_demand) | fraction (reserve_margin) — or the
       source's own unit where it differs (recorded verbatim, no conversion).
+      Units are NOT normalised across sources: an ISO publishing peak load in MW
+      stays in MW, so a comparison must reconcile units explicitly rather than
+      assuming a common basis.
   - name: source_doc
     dtype: string
     unit: none

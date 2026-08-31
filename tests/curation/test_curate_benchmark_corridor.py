@@ -209,6 +209,94 @@ class TestCurateAndLoad(unittest.TestCase):
         self.assertTrue(all("verdict" not in r for r in payload["rows"]))
 
 
+class TestIsoPlanningQuantities(unittest.TestCase):
+    """The ISO planning-document quantities (peak/energy/reserve margin, D22).
+
+    An ISO load forecast publishes peak MW and annual GWh, not a capacity mix,
+    so these three quantities are what let rubric §6's ISO sources land at all.
+    """
+
+    def test_iso_planning_quantities_are_in_vocab(self) -> None:
+        for q in ("peak_demand", "energy_demand", "reserve_margin"):
+            self.assertIn(q, bc.QUANTITY_VOCAB)
+
+    def test_unified_csv_with_peak_and_energy_parses(self) -> None:
+        with TemporaryDirectory() as td:
+            raw_root = Path(td)
+            _write_manual(
+                raw_root,
+                "PJM_LOAD_2026",
+                "source,iso,region,vintage,scenario,target_year,quantity,tech,"
+                "value,unit,source_doc,source_page,note\n"
+                "PJM_LOAD_2026,PJM,PJM RTO,2026-01,reference,2030,peak_demand,"
+                "total,183008,MW,PJM 2026 Load Report,Table B-1,rto total\n"
+                "PJM_LOAD_2026,PJM,PJM RTO,2026-01,reference,2030,energy_demand,"
+                "total,1086262,GWh,PJM 2026 Load Report,Table E-1,rto total\n",
+            )
+            df = bc.parse_source("PJM_LOAD_2026", raw_root)
+        self.assertEqual(len(df), 2)
+        self.assertEqual(set(df["quantity"]), {"peak_demand", "energy_demand"})
+        self.assertEqual(set(df["unit"]), {"MW", "GWh"})
+
+    def test_iso_totals_sums_extensive_quantities(self) -> None:
+        from market_sim.data.benchmark_corridor import iso_totals
+
+        df = pd.DataFrame(
+            [
+                _corridor_row("PJM", "East", "peak_demand", 100.0, "MW"),
+                _corridor_row("PJM", "West", "peak_demand", 150.0, "MW"),
+            ]
+        )
+        out = iso_totals(df)
+        self.assertEqual(len(out), 1)
+        self.assertAlmostEqual(float(out["value"].iloc[0]), 250.0)
+
+    def test_iso_totals_refuses_to_sum_reserve_margin_across_regions(self) -> None:
+        """A ratio summed across regions is nonsense — fail loud, never return it."""
+        from market_sim.data.benchmark_corridor import iso_totals
+
+        df = pd.DataFrame(
+            [
+                _corridor_row("PJM", "East", "reserve_margin", 0.15, "fraction"),
+                _corridor_row("PJM", "West", "reserve_margin", 0.15, "fraction"),
+            ]
+        )
+        with self.assertRaises(ValueError) as ctx:
+            iso_totals(df)
+        self.assertIn("intensive", str(ctx.exception).lower())
+
+    def test_iso_totals_passes_through_single_region_reserve_margin(self) -> None:
+        from market_sim.data.benchmark_corridor import iso_totals
+
+        df = pd.DataFrame(
+            [_corridor_row("ERCOT", "ERCOT", "reserve_margin", -0.1266, "fraction")]
+        )
+        out = iso_totals(df)
+        self.assertEqual(len(out), 1)
+        self.assertAlmostEqual(float(out["value"].iloc[0]), -0.1266)
+
+
+def _corridor_row(
+    iso: str, region: str, quantity: str, value: float, unit: str
+) -> dict:
+    """One canonical row for the aggregation tests."""
+    return {
+        "source": "TEST",
+        "iso": iso,
+        "region": region,
+        "vintage": "2026-01",
+        "scenario": "reference",
+        "target_year": 2030,
+        "quantity": quantity,
+        "tech": "total",
+        "value": value,
+        "unit": unit,
+        "source_doc": None,
+        "source_page": None,
+        "note": None,
+    }
+
+
 class TestRegistryConsistency(unittest.TestCase):
     def test_loader_inventory_matches_registered_sources(self) -> None:
         from market_sim.data.benchmark_corridor import EXPECTED_SOURCES
@@ -216,10 +304,17 @@ class TestRegistryConsistency(unittest.TestCase):
         registry = bc.load_registry()
         self.assertEqual(set(EXPECTED_SOURCES), set(registry))
 
-    def test_only_aeo_is_fetchable(self) -> None:
+    def test_fetchable_sources_are_exactly_those_with_a_fetcher(self) -> None:
+        """`fetchable` marks the sources an in-repo script can actually land.
+
+        AEO2025 via the EIA API (`fetch_aeo_electricity.py`); ERCOT CDR and the
+        PJM Load Forecast via `fetch_iso_planning_benchmarks.py`, which
+        machine-extracts their published XLSX. The rest have no static file URL
+        (PDF, or a JavaScript document portal) and stay manual downloads.
+        """
         registry = bc.load_registry()
         fetchable = {s for s, spec in registry.items() if spec.fetchable}
-        self.assertEqual(fetchable, {"AEO2025"})
+        self.assertEqual(fetchable, {"AEO2025", "ERCOT_CDR_2025", "PJM_LOAD_2026"})
 
 
 if __name__ == "__main__":

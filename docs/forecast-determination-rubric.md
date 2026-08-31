@@ -485,6 +485,22 @@ Verified against `data/raw/` at authoring time (2026-07-17). FC-5 needs
 vintage, year, quantity, value, unit) — today they do not exist; the corridor
 memo was built from web fetches, which is not reproducible scoring input.
 
+> **STATUS UPDATE — D22, 2026-08-31: the tables now exist.** 1,025 committed
+> anchor rows from **3 of the 8** sources — (1) `AEO2025`, (3)
+> `ERCOT_CDR_2025`, (4) `PJM_LOAD_2026` — at
+> `results/ff-corridor/benchmark-corridor-anchors.json`, with the raw and the
+> curate path committed and sha-pinned. FC-5 now reads 72–294 anchors per ISO
+> as CONTEXT instead of finding no table; it still records `SKIPPED` until a
+> scoring session authors the per-row dispositions, which is the design (anchors
+> are context; the gate is the explanation). Remaining gaps: (2) `StdScen2024`
+> is **UNREACHABLE** in-session — every `nrel.gov` host is an egress-policy
+> denial and the OEDI mirror carries no Standard Scenarios; (5) `NYISO_GOLDBOOK_2026`,
+> (6) `ISONE_CELT_2026`, (7) `CAISO_IEPR_2025` and (8) `MISO_FUTURES` are
+> reachable hosts whose tables sit behind a JavaScript portal, a docket-search
+> UI, or a 403, and land with no new code once the file is in hand. Full record:
+> `docs/handoffs/FINDING-capx-d22-fc5-corridor-2026-08-31.md`. The list below is
+> preserved as the original work order.
+
 **On disk (usable already):**
 - `data/raw/eia-aeo/` — AEO2025 **fuel-price** trajectories only (API-fetched;
   the `eia-aeo-fuel-prices` clean datatype). Usable for FC-5 fuel-path

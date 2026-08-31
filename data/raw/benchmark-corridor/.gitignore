@@ -1,6 +1,27 @@
-# AEO2025 electricity-corridor raw is FETCHED verbatim from the EIA API v2 aeo
-# route (scripts/fetch_aeo_electricity.py) — the deterministic fetcher, not a
-# hand-reproduced copy that could fat-finger a value (rule 5), is the reproducible
-# committed source. Gitignored like other large fetched corpora (pjm-energy-offers);
-# README/template/manual-source CSVs stay tracked.
-aeo2025/
+# Nothing in this raw tree is ignored — every benchmark-corridor source is
+# COMMITTED, including the fetched AEO2025 electricity-corridor CSV.
+#
+# History (D22, 2026-08-31): `aeo2025/` was previously ignored on the reasoning
+# that the deterministic fetcher, not a hand-reproduced copy, is the rule-5-safe
+# reproducible source. The fetcher IS still the source of the bytes — but
+# ignoring the output broke the rubric §0 committed-artifacts contract: with
+# `data/clean/` also gitignored (repo .gitignore §5), NO artifact in the chain
+# was committed, so FC-5 had nothing to read and scored SKIPPED for every ISO
+# with "no committed benchmark-corridor table". The "large fetched corpora
+# (pjm-energy-offers)" precedent cited for the ignore does not apply: this file
+# is 1,009 lines / 172 KB, four orders of magnitude below the corpora that rule
+# exists for, and it needs a (rate-limited) EIA API key to regenerate — so
+# ignoring it made the scoring input strictly less reproducible, not more.
+#
+# Committing it costs 172 KB and makes `curate_benchmark_corridor.py` runnable
+# offline from committed raw, which is what the loader docstring already claims.
+# Re-fetch to refresh: `python scripts/data/fetch_aeo_electricity.py`.
+#
+# The ISO planning WORKBOOKS are the one exception, and for the opposite reason:
+# the ERCOT CDR is ~13 MB of XLSX. Those follow the corpus convention (CLAUDE.md
+# "Cloning & session data"): the bulk payload is untracked, while the small
+# machine-extracted unified CSV, the SHA256SUMS identity record and the README
+# stay tracked — so curation still runs offline from committed raw. Recovery is
+# re-fetch: `python scripts/data/fetch_iso_planning_benchmarks.py`.
+ercot-cdr-2025/*.xlsx
+pjm-load-2026/*.xlsx
