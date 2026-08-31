@@ -248,12 +248,32 @@ The 2023 RT data corroborates both the curve values and the locational
 finding: the per-zone 30-min reserve price cascades from upstate (**WEST**
 max **$662**, nonzero 196 h — right under the $750 NYCA cap) through the
 East/SENY zones up to **N.Y.C.** (max **$727**, nonzero 515 h), and the
-*stacked* reserve price reaches **$2,448** in NYC (how the LMP tail reaches
-$1,147+). The measured NYCA (system-wide) reserve adder is >$0 in 629 h
-(mean $2.20); the downstate NYC cascade in 3,020 h (mean $6.37) — ~5× the
+*cleared* reserve price — the nested-REGION cascade the zone actually
+settles at — reaches **$1,115** in NYC (how the LMP tail reaches $1,147+).
+The measured NYCA (system-wide) reserve adder is >$0 in 629 h
+(mean $1.25); the downstate NYC cascade in 3,020 h (mean $3.52) — ~5× the
 NYCA incidence, i.e. the scarcity is overwhelmingly downstate. The overlay's
 system-wide adder is $0.00 against all of it, which is the quantified,
 measured version of the gating finding above.
+
+> **Repaired 2026-08-31 (nyiso-166, rule 14 [R-ACCURATE]).** The measured
+> levels in this section were previously quoted from a reference that summed
+> NYISO's three *nested duration* products (`spin_10 + nonsync_10 + op_30`)
+> and rode a naive prevailing-Eastern clock. The nested-REGION stacking
+> (NYCA + East + SENY + NYC) is real and is already inside each posted zonal
+> price; the *duration* products are cumulative, so summing them triple-counted
+> one shadow price. The pre-repair figures were NYCA mean $2.20 / NYC mean
+> $6.37 / NYC max **$2,448** — a value above any attainable RCPF cascade, which
+> is what should have flagged it. Incidence counts are unaffected (629 h /
+> 3,020 h are unchanged); only levels move. Same correction for the other
+> years: 2024 NYCA $2.51 → **$1.02**, NYC $7.64 → **$3.59**; 2025 NYCA
+> $10.99 → **$3.97**, NYC $28.73 → **$11.69**. **The model-vs-measured mean
+> comparisons quoted earlier in this doc** (2023 model $5.15 vs measured
+> $6.37; 2024 $4.36 vs $7.64; 2025 $6.06 vs $28.73) **were computed against
+> the pre-repair reference and their measured side is superseded by the
+> figures above** — the model side is unchanged, so the modelled adder is
+> closer to the measured downstate level than those lines suggest. Details:
+> `docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md`.
 
 ## Usage
 

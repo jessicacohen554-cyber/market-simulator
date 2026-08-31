@@ -45,7 +45,7 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
-from market_sim.config.paths import CALIBRATION_DIR, NYISO_AS_DIR  # noqa: E402
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import FUEL_TYPE_NAMES  # noqa: E402
@@ -384,7 +384,9 @@ def _actual_as_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
     """Measured RT reserve adder (NYCA + NYC) for a year, NaN-padded.
 
     From ``actual_as_reserve_NYISO.parquet`` (built by
-    ``scripts/data/process_nyiso_as.py`` from the NYISO OASIS rtasp downloads):
+    ``scripts/data/process_nyiso_as.py`` from the NYISO OASIS rtasp downloads,
+    on the model's standard-time clock and as the CLEARED cascade price rather
+    than the sum of the nested products — nyiso-166):
     ``nyca_reserve_adder`` is the system-wide reserve price the overlay's
     system-wide adder should reproduce; ``nyc_reserve_adder`` is the full
     downstate cascade the (future) locational products target.
@@ -402,10 +404,11 @@ def _actual_as_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
 
 
 # Representative NYISO settlement zone for each model zone's measured RT
-# reserve price (the stacked spin_10 + nonsync_10 + op_30 cascade in
-# NYISO_as_rt_<year>.csv). Each model zone validates against the NYISO zone
-# whose cascade tier it carries (process_nyiso_as.py): A-E share the NYCA
-# tier, F adds East, G-K add SENY, J adds NYC.
+# reserve price (the CLEARED price — the max of the nested spin_10 /
+# nonsync_10 / op_30 cascade, never their sum; nyiso-166). Each model zone
+# validates against the NYISO zone whose cascade tier it carries
+# (process_nyiso_as.py): A-E share the NYCA tier, F adds East, G-K add SENY,
+# J adds NYC.
 _MODEL_ZONE_TO_NYISO_AS = {
     "Upstate_West": "WEST",
     "Capital_Hudson": "CAPITL",
@@ -416,52 +419,36 @@ _MODEL_ZONE_TO_NYISO_AS = {
 
 
 def _actual_zone_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
-    """Measured per-model-zone stacked RT reserve price, NaN-padded.
+    """Measured per-model-zone cleared RT reserve price, NaN-padded.
 
-    Prefers the committed compact reference
+    Read from the committed compact reference
     (``data/raw/_validation-source/actual_as_reserve_NYISO.parquet``, which carries one
     ``reserve_<model_zone>`` column per model zone, built by
-    scripts/data/process_nyiso_as.py); falls back to the raw per-zone RT CSV. The
-    value is the stacked reserve price (10-min spin + 10-min non-sync + 30-min
-    operating) of the settlement zone whose cascade tier the model zone carries
-    — the empirical target the modeled locational adder is validated against.
-    Empty when neither source is available.
+    scripts/data/process_nyiso_as.py). The value is the CLEARED reserve price
+    of the settlement zone whose cascade tier the model zone carries — the
+    empirical target the modeled locational adder is validated against. Empty
+    when the reference is absent, in which case the report prints "-".
+
+    There is deliberately NO raw-CSV fallback. The one that stood here
+    re-implemented both nyiso-166 defects — it summed the nested cascade and
+    mapped the naive prevailing-Eastern ``Time Stamp`` positionally onto the
+    standard-time 8760 clock — so it was a re-armable wrong answer one missing
+    file away from firing (rule 23 [R-DELETE]). Regenerate the reference with
+    ``python scripts/data/process_nyiso_as.py --market rt`` instead.
     """
     ref = CAL_DIR / "actual_as_reserve_NYISO.parquet"
-    if ref.exists():
-        rf = pd.read_parquet(ref)
-        rf = rf[rf["year"] == year]
-        cols = {z: f"reserve_{z}" for z in _MODEL_ZONE_TO_NYISO_AS}
-        if rf.shape[0] and all(c in rf.columns for c in cols.values()):
-            out: dict[str, np.ndarray] = {}
-            for zone, col in cols.items():
-                arr = np.full(hours, np.nan)
-                arr[rf["hour"].to_numpy()] = rf[col].to_numpy()
-                out[zone] = arr
-            return out
-    p = NYISO_AS_DIR / f"NYISO_as_rt_{year}.csv"
-    if not p.exists():
+    if not ref.exists():
         return {}
-    df = pd.read_csv(p)
-    df["stack"] = df[["spin_10", "nonsync_10", "op_30"]].sum(axis=1)
-    ts = pd.to_datetime(df["Time Stamp"], errors="coerce")
-    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
-    df, ts = df[keep], ts[keep]
-    hoy = (
-        _MONTH_START_HOUR[ts.dt.month.to_numpy() - 1]
-        + (ts.dt.day.to_numpy() - 1) * 24
-        + ts.dt.hour.to_numpy()
-    )
-    df = df.assign(hour=hoy)
+    rf = pd.read_parquet(ref)
+    rf = rf[rf["year"] == year]
+    cols = {z: f"reserve_{z}" for z in _MODEL_ZONE_TO_NYISO_AS}
+    if not rf.shape[0] or not all(c in rf.columns for c in cols.values()):
+        return {}
     out: dict[str, np.ndarray] = {}
-    for model_zone, ny_zone in _MODEL_ZONE_TO_NYISO_AS.items():
-        s = (
-            df[df["Name"] == ny_zone]
-            .groupby("hour")["stack"]
-            .max()
-            .reindex(range(hours))
-        )
-        out[model_zone] = s.to_numpy(dtype=float)
+    for zone, col in cols.items():
+        arr = np.full(hours, np.nan)
+        arr[rf["hour"].to_numpy()] = rf[col].to_numpy()
+        out[zone] = arr
     return out
 
 
