@@ -9,6 +9,27 @@ measured pair whose §1.4 execution list this lane runs, under Q15 instead of
 a confirming record) and `FINDING-capx-d12-scarcity-basis-2026-08-30.md` §5–§6
 (the mechanism)._
 
+> **LANDED BY THE D12-A-R RELAUNCH (2026-08-31, r#20 reissuance,
+> `capx-director-ledger-2026-08.md` §0q.2).** The original session was lost
+> after pushing `claude/capx-d12a-arming-0ibtzh` (2 commits, never PR'd).
+> Per the relaunch charter that branch was treated as EVIDENCE, never
+> blind-merged: the relaunch session re-verified its full diff against Q15
+> and the pack §D12-A charter, then cherry-picked both commits onto
+> `claude/capx-d12a-arming-r2-jnwyoc`, fresh off `origin/main` @ `54ca19a`.
+> The one merge resolution: `mechanism-matrix/ERCOT.js` — the T1-H
+> storage-entry Leg A landing (PR #4426) had moved
+> `storage_entry_availability_gate` / `storage_entry_cost_normalized_rank`
+> U → O on adjacent lines; both sides kept (this lane's entry-pair stamps +
+> main's storage rows — no verdict of either lane altered). Everything in
+> §4–§5 was RE-MEASURED on the merged tree at landing, not carried over:
+> both epoch probes ALL READS PASS (bare T1-H `f061b2646bfaac8b`, pair-off
+> control `28cef3500ec1fd9e`, epoch `8d9ef77edb3e44cb` →
+> `68a207068509f2b0`, global pin unmoved, sister ISOs unmoved);
+> `tests/unit/config` + `tests/unit/pipeline` 823 passed / 13 skipped;
+> `test_persisted_identity.py` + both pair field suites 37 passed;
+> `check_mechanism_matrix.py` integrity + anchors clean; `ruff check` +
+> `format --check` clean on every touched file.
+
 ---
 
 ## 0. The one-paragraph answer
