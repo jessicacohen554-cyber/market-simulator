@@ -50,6 +50,18 @@ sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.paths import CALIBRATION_DIR, NYISO_AS_DIR  # noqa: E402
 
+# The model's fixed standard-time 8760 clock and the prevailing-Eastern zone the
+# published NYISO timestamps are written in. Reusing the repo's own helper (never
+# a local re-implementation) is what keeps this reference on the SAME clock as
+# ``actual_lmp_hourly_NYISO.parquet``, which every scorer joins it against.
+sys.path.insert(0, str(REPO))
+
+from scripts.data.derive_actual_lmp import (  # noqa: E402
+    _EASTERN_TZ,
+    _STD_TZ,
+    _std_hour_index,
+)
+
 AS_DIR = NYISO_AS_DIR
 RAW_DIR = AS_DIR / "raw"
 # RAW_DIR (gitignored) is normally populated directly by
@@ -192,18 +204,23 @@ def process(market: str, year: int) -> Path | None:
     return out_path
 
 
-_DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-_MONTH_START_HOUR = list(
-    __import__("numpy").cumsum([0] + [d * 24 for d in _DAYS_IN_MONTH])
-)
+# The three posted reserve products, in CASCADE order. NYISO's requirements
+# NEST by duration — every 10-minute spinning MW also satisfies the 10-minute
+# total and the 30-minute total requirement — so the posted prices are
+# CUMULATIVE, not incremental: ``spin_10 >= nonsync_10 >= op_30`` holds in
+# 100.0000 % of rows in every zone and every year 2018-2026, and all three are
+# exactly equal in 82-84 % of them. The reserve price a MW actually earns is
+# therefore the cascade MAX (== ``spin_10``), never the sum.
+# [R-ACCURATE] nyiso-166; docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md sec 2.
+_CASCADE_PRODUCTS = ("spin_10", "nonsync_10", "op_30")
 
-# NYISO zones whose stacked reserve price tracks each model series: WEST
+# NYISO zones whose cleared reserve price tracks each model series: WEST
 # carries only the NYCA-wide requirement (the system-wide component every
 # zone shares); N.Y.C. carries the full downstate cascade (NYCA + East +
 # SENY + NYC locational), the highest reserve price in the state.
 _REF_ZONES = {"nyca_reserve_adder": "WEST", "nyc_reserve_adder": "N.Y.C."}
 
-# Representative NYISO settlement zone for each MODEL zone's stacked RT reserve
+# Representative NYISO settlement zone for each MODEL zone's cleared RT reserve
 # price (the locational cascade tier the model zone carries): A-E share the
 # NYCA tier, F adds East, G-K add SENY, J adds NYC. These columns let the RCPF
 # overlay validate every model zone's adder against measured data without
@@ -224,14 +241,29 @@ def build_reference(years: list[int]) -> Path | None:
     """Write the compact measured RT reserve-adder calibration reference.
 
     ``data/raw/_validation-source/actual_as_reserve_NYISO.parquet`` — per (year, hour)
-    on the model's non-leap 8760 clock. Two legacy series:
-    ``nyca_reserve_adder`` (the WEST stacked RT reserve price, the system-wide
-    NYCA component) and ``nyc_reserve_adder`` (the N.Y.C. stacked RT reserve
+    on the model's non-leap 8760 STANDARD-time clock. Two legacy series:
+    ``nyca_reserve_adder`` (the WEST cleared RT reserve price, the system-wide
+    NYCA component) and ``nyc_reserve_adder`` (the N.Y.C. cleared RT reserve
     price, the full downstate cascade); plus one ``reserve_<model_zone>``
-    column per model zone (the stacked RT reserve price of the settlement zone
+    column per model zone (the cleared RT reserve price of the settlement zone
     whose cascade tier it carries, ``_MODEL_ZONE_REF``), so the RCPF overlay
     validates every model zone's adder against measured data — the measured
     analogue of ``actual_lmp_hourly_NYISO.parquet``.
+
+    Two conventions, both load-bearing (nyiso-166, rule 14 [R-ACCURATE]):
+
+    * **Cascade MAX, not sum.** The posted products nest by duration and their
+      prices are cumulative (``_CASCADE_PRODUCTS``), so a reserve MW earns the
+      largest of the three, never their sum. Summing triple-counts one shadow
+      price in the 82-84 % of rows where all three are equal.
+    * **Standard-time clock.** The CSV's ``Time Stamp`` is naive PREVAILING
+      Eastern; the model's NYISO clock is fixed ``Etc/GMT+5``. Mapping the
+      former positionally onto the latter mis-indexes 65.2 % of the year (the
+      whole DST season), which is where NYISO's price tail sits. The timestamps
+      are localized to ``America/New_York`` and re-indexed with the repo's own
+      ``_std_hour_index`` — the same conversion
+      ``scripts/probes/nyiso164_nyca_shortage_check.py`` measures with, so the
+      reference and that probe read the same quantity by construction.
     """
     import numpy as np
 
@@ -242,22 +274,25 @@ def build_reference(years: list[int]) -> Path | None:
         if not path.exists():
             continue
         df = pd.read_csv(path)
-        df["stack"] = df[["spin_10", "nonsync_10", "op_30"]].sum(axis=1)
-        ts = pd.to_datetime(df["Time Stamp"])
-        keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
-        df, ts = df[keep], ts[keep]
-        hoy = (
-            np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
-            + (ts.dt.day.to_numpy() - 1) * 24
-            + ts.dt.hour.to_numpy()
+        # Cleared price = the cascade max (== spin_10 wherever the cascade is
+        # intact), NOT the sum of the three nested products.
+        df["cleared"] = df[list(_CASCADE_PRODUCTS)].max(axis=1)
+        ts = pd.DatetimeIndex(pd.to_datetime(df["Time Stamp"])).tz_localize(
+            _EASTERN_TZ, ambiguous=True, nonexistent="shift_forward"
         )
+        # -1 = a boundary spill from the prevailing-year source file, or the
+        # standard-time Feb 29; both are dropped by the helper's contract.
+        hoy = _std_hour_index(ts, year, _STD_TZ["NYISO"])
         df = df.assign(hour=hoy)
+        df = df[df["hour"] >= 0]
         out = {"year": np.int16(year), "hour": np.arange(8760, dtype=np.int32)}
         # One groupby per settlement zone reused across its column aliases.
-        for zone in set(columns.values()):
+        # sorted(), not set(), so the emitted column order is deterministic and
+        # the artifact is byte-reproducible from the same CSVs.
+        for zone in sorted(set(columns.values())):
             s = (
                 df[df["Name"] == zone]
-                .groupby("hour")["stack"]
+                .groupby("hour")["cleared"]
                 .max()
                 .reindex(range(8760))
                 .to_numpy(dtype=np.float32)
@@ -265,14 +300,14 @@ def build_reference(years: list[int]) -> Path | None:
             for col, z in columns.items():
                 if z == zone:
                     out[col] = s
-        frames.append(pd.DataFrame(out))
+        frames.append(pd.DataFrame(out)[["year", "hour", *columns]])
     if not frames:
         return None
     ref = pd.concat(frames, ignore_index=True)
     out_path = CAL_DIR / "actual_as_reserve_NYISO.parquet"
     ref.to_parquet(out_path, index=False)
     print(
-        f"  reference: {out_path.name} — per-(year,hour) stacked RT reserve "
+        f"  reference: {out_path.name} — per-(year,hour) cleared RT reserve "
         f"for {len(_MODEL_ZONE_REF)} model zones + NYCA/NYC aliases:"
     )
     for col in ("nyca_reserve_adder", *_MODEL_ZONE_REF):
