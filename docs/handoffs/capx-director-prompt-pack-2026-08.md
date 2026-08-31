@@ -2177,3 +2177,140 @@ EXIT: docs/handoffs/FINDING-capx-d18-invariant-ledger-<date>.md with the verifie
 checker output. Report to the director: how many declarations point at a real finding and how
 many are honestly untracked.
 ```
+
+---
+
+## D21 — FC-6 driver battery: the t3 ceiling, half 1 (r#22; executes owner rulings Q16/Q19)
+
+```
+You are the D21 session of the capacity-expansion (Forecast Finalization) track. You build half
+of the reason no golden run can currently be graded. FC-5 and FC-6 are REQUIRED at tier t3 and
+neither instrument exists for ANY ISO, so `neiso-t3` scores HOLD regardless of model quality —
+the owner ruled (Q16, 2026-08-31) that the ceiling is fixed BEFORE any second golden campaign,
+FC-6 first because its tooling already exists and the gate is merely UN-RUN.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (the vacuous-pass and ladder-gating calls are judgment on a novel
+object).
+BRANCH: claude/capx-d21-fc6-battery — create FRESH off origin/main (git fetch origin main
+first) and rebase before every push.
+
+READ FIRST: docs/forecast-determination-rubric.md §FC-6 (the four row types and their
+thresholds — that section IS your spec, and you add nothing numeric of your own to it);
+docs/handoffs/driver-battery-2026-07-12.md (the pre-registered ladder expectations and the
+T1.6a/T1.7a vacuous-pass findings); docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md
+(the campaign whose FC-6 row you are filling) + the `t3_golden_campaign` block of
+frontend/data/forecast/program-status.json.
+
+STAGE 1 — PRICE THE LADDER BEFORE YOU RUN IT. `scripts/run_driver_battery.py` solves a rung
+per ladder step; the full Tier-1 battery at a 2026–2050 config vintage could be far larger than
+one session. Measure the cost first (rungs × horizon × per-solve time from the golden's own
+29.2 min record), write it down, and IF THE FULL BATTERY DOES NOT FIT, STOP AND REPORT with the
+priced options rather than running a truncated ladder and calling it the battery. A partial
+battery is a CAVEAT at best and must never be presented as the gate being met.
+
+STAGE 2 — run what you priced: the Tier-1 monotonicity ladders at the golden bundle's config
+vintage, plus the paired invariants P1–P3 (`check_forecast_invariants.py --paired`). Commit the
+machine output into the golden bundle so FC-6 reads a committed artifact, never a session
+transcript.
+
+STAGE 3 — re-score `neiso-t3` and let the rubric's own rows decide. Binding, from §FC-6:
+a `gate`-marked ladder expectation that FAILs ⇒ FC-6 FAIL; **a gate row that passed on an
+empty or all-constant series is a CAVEAT, NEVER a PASS** (check `n_rungs_solved` and the
+constant-series flag; trust an explicit `vacuous` marker otherwise) — the 2026-07-12 report's
+own instruction is that a vacuous pass must not be cited as confirmation; P1 or P2 FAIL ⇒ FAIL;
+P3 WARN ⇒ CAVEAT. Report the outcome at full magnitude. **A FAIL here is a good outcome for the
+program** — it is the instrument working — and must not be softened, re-run for a better draw,
+or tuned toward. Nothing in the model moves in this lane.
+
+WHAT THIS LANE DOES NOT DO: it does not re-solve the golden (Q16 HOLDS that — the campaign
+stands as registered with its posture-epoch caveat visible, and nothing quotes it as a post-R-A
+result), it does not touch FC-5 (lane D22), and it does not change a threshold, band or
+expectation anywhere. If the battery's own pre-registered expectations look wrong to you,
+report that as a finding — do not edit them.
+
+COLLISION: you write `neiso-t3`'s FC-6 row and the golden bundle. Lane D8-V is explicitly
+barred from `neiso-t3`; lane D4-M is ERCOT-only; NEISO-RC-R has LANDED (PR #4467) so its
+`neiso-t1x` preserve-then-overwrite is settled history — rebase onto it, never re-write it.
+Touch no other ISO's block.
+
+GUARDRAILS: no out-of-training backcast year solved, scored or registered. No measured outcome
+fed back (rule 13). Touch no backcast keeper shard, status/*.js, calibration-complete.json,
+offer curve or commitment bridge. No mechanism, no ScenarioConfig field, no matrix cell (rule
+28 not triggered — nothing is tested; check the NEISO shard under duty (a) if you propose
+anything). Rule 12: years sequential within the invocation. No new GitHub Actions workflow —
+the battery runs in your session. Push per CLAUDE.md Git & Pushing; blob-verify every ≥300-line
+file after push (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d21-fc6-battery-<date>.md with the ladder pricing, what was
+run, the committed artifact path, the row-by-row FC-6 verdict (vacuous passes named as such),
+and the re-scored `neiso-t3`. Report to the director whether FC-6 can now grade a golden, and
+what it says about this one.
+```
+
+---
+
+## D22 — FC-5 benchmark corridor: the t3 ceiling, half 2 (r#22; executes owner rulings Q16/Q19)
+
+```
+You are the D22 session of the capacity-expansion (Forecast Finalization) track, building the
+other half of the t3 ceiling. FC-5 scores SKIPPED for every ISO because the benchmark tables it
+reads DO NOT EXIST on disk — the corridor memo was built from web fetches, which is not
+reproducible scoring input. You make them exist.
+
+DATA PROFILE: code (widen if an intake needs it)
+MODEL ASSIGNMENT: Opus (a new curated datatype + fetch/curate scripts is infrastructure; rule
+27 keeps Sonnet off everything but purely additive data-intake).
+BRANCH: claude/capx-d22-fc5-corridor — create FRESH off origin/main (git fetch origin main
+first) and rebase before every push.
+
+READ FIRST: docs/forecast-determination-rubric.md §FC-5 (the metric, the 15 %/opposite-sign
+divergence trigger, the IN CORRIDOR / EXPLAINED DIVERGENCE / UNEXPLAINED row verdicts) and
+**§6, the benchmark inventory — that section is your work order**, listing what is already on
+disk, the eight intake gaps, and the schema in item 9;
+docs/handoffs/cross-model-corridor-2026-07-13.md (the divergence-explanation discipline being
+imported whole). Then the `data-intake` skill, whose contract this lane follows exactly.
+
+SCOPE — DATA CONTRACT AND INTAKE ONLY. Build:
+1. The curated `benchmark-corridor` datatype: `data/dictionary/schema/benchmark-corridor.schema.yaml`
+   with columns {iso, source, vintage, target_year, quantity, tech?, value, unit, note}, the
+   data-dictionary entry, and the curate script through the write_clean/read_clean seam with
+   tmp-CLEAN_DIR tests (per the skill; no `if iso ==` ladders — per-ISO registry modules).
+2. As many of rubric §6's eight sources as land cleanly, STARTING WITH (1) EIA AEO2025 regional
+   electricity projections, which already has an API route — extend
+   `scripts/data/fetch_eia_aeo.py`; the existing `eia-aeo-fuel-prices` datatype is the pattern.
+   Raw downloads are immutable under `data/raw/` and never modified in place.
+3. An honest coverage record: which of the eight are in, which are not, and WHY. Where a source
+   is retrievable only at a coarser grain than the model's ISO regions (§6 flags this risk for
+   NREL Standard Scenarios), **record the limitation in the table rather than downscaling it** —
+   an invented regional split would be a fabricated benchmark.
+
+DO NOT EDIT THE SCORER. `scripts/forecast_verdict.py`'s FC-5 read path is explicitly OUT of
+scope and belongs to a later lane. Two reasons, both binding: lane D8-V is running live
+re-scores through that file in this same batch and its controls are byte-for-byte, so a
+behaviour change under it would confound a determination; and FC-5's current SKIPPED-with-
+missing-source-list behaviour is CORRECT until the tables exist. Land the data; the wiring is
+its own charter.
+
+THE RULE THAT GOVERNS THIS WHOLE LANE: **benchmarks are context, never fit targets** (rule 13
+`[R-MEASURED]`, plan §7.6, rubric §FC-5 rationale). Nothing you intake may become a target any
+model quantity is moved toward, and the rubric deliberately makes conformance non-numeric for
+exactly this reason — what gates is the EXPLANATION discipline, not closeness. Do not add a
+numeric conformance band; do not rank ISOs by corridor distance; do not tune anything, ever, to
+a benchmark row. Also explicitly REJECTED by the rubric's own methodology section and not to be
+imported: ReEDS' practice of adjusting cost coefficients until generation matches history.
+
+GUARDRAILS: zero solves. No mechanism, no ScenarioConfig field, no matrix cell (rule 28 not
+triggered). No verdict file, no board block, no keeper/shard/marker, nothing in the backcast
+namespace. No holdout year. Every intaken value is sha-pinned to its published source with a
+citation (rule 23 / docs/parameter-citations.md discipline) — a benchmark whose provenance you
+cannot state does not go in. No new GitHub Actions workflow; fetches run in your session. Push
+per CLAUDE.md Git & Pushing; blob-verify every ≥300-line file after push (rule 27), and mind
+the pack-size guidance if a raw download is large — a corpus payload may need the gitignored-
+with-README treatment (CLAUDE.md "Cloning & session data").
+
+EXIT: docs/handoffs/FINDING-capx-d22-fc5-corridor-<date>.md with the schema, the per-source
+coverage record (in / out / why), the committed table, and a statement of what FC-5 will be
+able to score once its read path is wired. Report to the director which of the eight sources
+remain, and whether any of them is unreachable rather than merely un-fetched.
+```
