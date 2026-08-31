@@ -8685,3 +8685,130 @@ charter's Q2 rather than settled here. Duty (c) not triggered (no new
 `ScenarioConfig` field).
 
 Next shorthand: nyiso-164.
+
+## 2026-09-01 — nyiso-164: charter Q2 ANSWERED ON MEASUREMENT — reality was NOT NYCA-short in its own price tail, the model is not either, and NYISO's C3c ledger is CONFIRMED on NYISO's own evidence (zero solve)
+
+**Kill gate FIRES on BOTH pre-registered clauses. Determination unchanged; no
+keeper, marker, shard or matrix cell moves.** Records:
+`docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, artifact
+`results/calibration/_nyiso164_nyca_shortage_check.json`, probe
+`scripts/probes/nyiso164_nyca_shortage_check.py`.
+
+**(0) State verified at open and close** (committed artifacts, no solve):
+`calibration_verdict.py --run-id 2026-08-30-nyiso-159-loss-surface` → **NOT-YET**
+on {C3a-2025 −11.5 %, C3c}; `audit_keepers.py --iso NYISO` → **PASS 0/0**. NYISO
+holds no `complete` marker and is absent from `final`; freeze respected, years
+2023–2025 only. The nyiso-161 winter-face card stays filed and unruled; the AORR
+access route stays permanently closed (nyiso-163b).
+
+**(1) The question, and why it was a QUANTITY question.** nyiso-163b found the
+keeper reserve-short *in* the hours reality priced above $300 (overlap 5/10,
+0/13, 20/42) — the opposite of the CAISO measurement the cross-ISO C3c closure
+rests on (caiso-144 §C/§D) — yet only the cheap locational families ever bind
+(`nyc_10min_total`/`nyc_30min_total` $25, `seny_30min_total` $40; max $90/MWh of
+adder against tail means $505/$517/$659), while every NYCA-level product never
+binds. So: in reality's tail hours, was NYISO short at the **NYCA** level, or
+only **locationally**?
+
+**(2) Method — nested differencing on PUBLISHED reserve prices, one tier up from
+the construction `spec.py` already uses.** NYISO's regions nest (NYCA ⊃ East F–K
+⊃ SENY G–K ⊃ NYC J / LI K), so zones **A–E** (WEST, GENESE, CENTRL, NORTH,
+MHK VL) — outside East/SENY/NYC/LI — price the **NYCA tier alone**. Source:
+`data/raw/NYISO-AS/NYISO_as_rt_<year>.csv` (MIS RT AS clearing prices, in-repo,
+nothing fetched), corroborated by the P-35 Real-Time Events feed's NYCA-wide
+**reserve pick-up** declarations (`.../requirements/realtime-events/`). Reserve
+prices are the VALIDATION TARGET only, never an input (rule 13 `[R-MEASURED]`).
+**The construction validates itself:** A–E price identically to
+**0.000000 $/MW** for all three products in all 26,280 hours.
+
+**(3) A clock repair that changes the answer — worth carrying forward.**
+`actual_lmp_hourly_NYISO.parquet` is on the model's fixed **standard-time**
+8760 clock (`derive_actual_lmp._STD_TZ["NYISO"] = Etc/GMT+5`); the NYISO-AS and
+event feeds are naive Eastern **prevailing** wall-clock. They differ by one hour
+through the whole DST season, which is where every tail hour sits — a naive
+positional join is an hour off and gives a materially wrong answer. Timestamps
+are localized to `America/New_York` and re-indexed with the repo's own
+`_std_hour_index`; an offset scan (−3…+3 h) peaks at **0** in every year
+(2023 306.74 vs 65.61/131.97; 2024 254.62 vs 105.66/89.97; 2025 393.31 vs
+307.00/302.35).
+
+**(4) The headline measurement — and why the first reading of it was WRONG.**
+Tail-hour NYCA-tier price means $306.74/$254.62/$393.31, with 10/11/41 of
+10/13/42 tail hours ≥ $40 against an all-year baseline of only 67/45/181 of
+8,760 hours. Read alone that looks like a correction. It is not: a nonzero
+upstate price means the NYCA constraint **bound**, not that its **demand curve
+activated**. Three separations, and all three say opportunity cost:
+**(a) ceiling** — a reserve-holder's opportunity cost is bounded by LMP, an RCPF
+price is not; the NYCA price exceeds the concurrent LMP in **0 of 65** tail
+hours (median ratio 0.573/0.536/0.654, max 0.936);
+**(b) quantization** — demand-curve pricing pins to rungs; tail-hour values are
+**10/10, 13/13, 33/42** distinct with **one** exact rung hit in three years
+(weakened by 5-min→hourly averaging, so reported not relied on alone);
+**(c) the operator record** — a declared NYCA reserve pick-up covers **8 of 65**
+tail hours (pick-ups are frequent, 35/40/26 a year, but are short contingency
+responses spread across all months, not a tail phenomenon).
+A stable ~0.5–0.65 × LMP ratio under a hard sub-LMP ceiling is the signature of
+**energy** scarcity dragging reserve opportunity costs up — not a NYCA reserve
+shortage the model fails to see.
+
+**(5) The model side.** `nyca_10min_spin` / `nyca_10min_total` /
+`nyca_30min_total` carry a **zero dual and zero ORDC shortfall in all 8,760
+hours of every year** (26,280 total). Reserve-carrying thermal headroom in
+reality's tail hours, **lower bound**: **5,078 / 3,915 / 2,986 MW** mean against
+a 2,620 MW NYCA 30-minute requirement (min 0 in the tightest 2023/2025 hour,
+where the bound is uninformative rather than tight). **Method note — the naive
+headroom figure is wrong and was rejected mid-session:** summing per-class
+*annual* peaks gives 26.1/26.5/30.3 GW, badly overstated because the peaks are
+non-coincident (`oil` alone peaks at 11.1 GW on 1.26 TWh/yr in 2025, never with
+the CC peak); the fleet's maximum **simultaneous** thermal output is
+18.3/17.4/18.9 GW and that is what the bound uses. The rejected number is kept
+in the artifact as `sum_of_class_peaks_mw_NOT_USED`.
+
+**(6) THE REVERSAL, reported rather than buried** (the charter asked for this
+explicitly). nyiso-163b's overlap measurement is not wrong; its *interpretation*
+was. Split by tier the picture inverts: at the **locational** tier the model
+binds in reality's tail hours and so does reality (positive NYC increment in
+9/13/42 hours) — **agreement**, and the genuine difference from CAISO, whose
+model had slack in every family; at the **system (NYCA)** tier neither the model
+nor reality is short — **also agreement**, and that is the tier that would have
+to be short for a system-wide price tail to be a reserve phenomenon. NYISO's
+position IS closer to CAISO's than the timing overlap alone implied: it differs
+on *which* tier binds and agrees on the tier that governs the residual.
+
+**(7) Consequence — CONFIRM, and the lane closes.** The residual above the
+model's $90 locational adder is **not a missing reserve product**. C3c stands as
+a ledgered model-class limitation on **NYISO's own evidence** rather than by
+inheritance from CAISO/MISO/ERCOT; the inheritance question is settled. Per the
+charter a CONFIRM is the equally-valuable outcome, and no correction was reached
+for. This does **not** close C3c and does **not** move C3a-2025.
+
+**(8) Governance.** Zero solve, zero holdout spend, no mechanism/prereg/scalar/
+`ScenarioConfig` field. A NYISO mechanism prereg would have required this gate
+cleared **and** pjm-164 (charter Q1) returning REAL; the gate CONFIRMS, so the
+route does not open. **No SOM-published RCPF value ($25/$40/$750/$775) is
+proposed for change in any form, including as a sensitivity** — the ercot-214
+failure that guard exists to prevent (rules 13 `[R-MEASURED]`, 1 `[R-STRUCT]`).
+`docs/calibration-log/governance.md` deliberately untouched (pjm-164 may be
+running in parallel; the cross-ISO synthesis is a later, separate step).
+
+**(9) Limits.** Hourly averaging dilutes the quantization test (a); the headroom
+figure is a lower bound and is 0 MW in the single tightest tail hour of 2023 and
+2025; the NYCA 30-minute curve's 9 interior rungs are not enumerated in-repo
+(model carries a single $750 step), so only $40/$750/$775 were testable; one
+fall-back hour a year is lost to the AS feed's collapsed duplicate hour and one
+spring-forward hour does not exist — neither carries a tail hour in 2023–2025.
+
+**(10) Matrix.** **NO cell moves** — rule 26 duty (b) not triggered (nothing
+tested, armed or adjudicated; this is a measurement on committed artifacts and
+published raw), duty (c) not triggered (no new `ScenarioConfig` field).
+DO-NOT-REDO honoured, none re-tested: `nyiso_ordc_measured_step_span` **K**,
+`nyiso_li_locational_reserve` **K**, `nyiso_east_reserve_families` **I**,
+`energy_reserve_coopt` **K**, `ordc_scarcity_overlay` NYISO **·**,
+`scuc_load_pocket_commitment` **G**, `diurnal_price_amplitude` **G**. Newly
+retired by this session (do not re-open without new evidence): arming a
+NYCA-level family/requirement so the tail can price (refuted — reality's NYCA
+tier was never on its demand curve); "the model lacks tail headroom" (refuted —
+3.0–5.1 GW LB against a 2,620 MW requirement); "NYISO's C3c caveat is inherited
+and unsupported by its own evidence" (answered — it is supported).
+
+Next shorthand: nyiso-165.

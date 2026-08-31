@@ -1,0 +1,311 @@
+{
+ "probe": "nyiso-164",
+ "question": "In the hours NYISO's RT price exceeded $300, was NYISO short at the NYCA level or only locationally (NYC/SENY)?",
+ "method": "Nested differencing on published NYISO RT reserve clearing prices: zones A-E (WEST/GENESE/CENTRL/NORTH/MHK VL) lie outside East/SENY/NYC/LI, so their price is the NYCA-level component alone. Corroborated by the P-35 reserve pick-up event feed.",
+ "keeper": "2026-08-30-nyiso-159-loss-surface (nyiso159_lossarm_B)",
+ "tail_threshold_usd_mwh": 300.0,
+ "nyca_rcpf_first_rung_usd_mw": 40.0,
+ "solve_performed": false,
+ "years": {
+  "2023": {
+   "actual_tail_hours": 10,
+   "actual_tail_mean_lmp": 504.7,
+   "construction_check": {
+    "max_upstate_A_E_price_spread_usd_mw": {
+     "spin_10": 0.0,
+     "nonsync_10": 0.0,
+     "op_30": 0.0
+    },
+    "verdict": "A-E price identically in every hour \u2014 the NYCA-only tier is cleanly observable"
+   },
+   "clock_offset_scan_mean_nyca_price_in_tail": {
+    "-3": 22.64,
+    "-2": 36.46,
+    "-1": 65.61,
+    "0": 306.74,
+    "1": 131.97,
+    "2": 46.98,
+    "3": 23.23
+   },
+   "reality_nyca_level": {
+    "mean_usd_mw": 306.74,
+    "median_usd_mw": 248.22,
+    "max_usd_mw": 761.73,
+    "hours_gt_0": 10,
+    "hours_ge_rcpf_first_rung": 10,
+    "hours_ge_rcpf_top": 0
+   },
+   "reality_nyc_locational": {
+    "nyc_total_mean_usd_mw": 446.31,
+    "nyc_total_max_usd_mw": 1114.53,
+    "local_increment_mean_usd_mw": 139.57,
+    "local_increment_max_usd_mw": 352.81,
+    "hours_local_increment_gt_0": 9
+   },
+   "baseline_all_hours": {
+    "nyca_mean_usd_mw": 1.253,
+    "nyca_hours_gt_0": 629,
+    "nyca_hours_ge_rcpf_first_rung": 67
+   },
+   "reserve_pickup_events": {
+    "hours_with_pickup_all_year": 35,
+    "hours_with_pickup_in_tail": 2,
+    "share_of_tail_hours": 0.2
+   },
+   "shortage_vs_opportunity_cost": {
+    "hours_reserve_price_exceeds_lmp": 0,
+    "nyca_over_lmp_ratio_mean": 0.582,
+    "nyca_over_lmp_ratio_median": 0.573,
+    "nyca_over_lmp_ratio_max": 0.869,
+    "distinct_values": 10,
+    "n_hours": 10,
+    "exact_rcpf_rung_hits": {
+     "$40.00": 0,
+     "$750.00": 0,
+     "$775.00": 0
+    }
+   },
+   "model_nyca_families": {
+    "nyca_10min_spin": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 655.0
+    },
+    "nyca_10min_total": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 1310.0
+    },
+    "nyca_30min_total": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 2620.0
+    }
+   },
+   "model_headroom_lower_bound": {
+    "max_simultaneous_thermal_mw": 18331.8,
+    "sum_of_class_peaks_mw_NOT_USED": 26059.2,
+    "tail_thermal_dispatch_mean_mw": 13253.6,
+    "headroom_lb_mw_tail_mean": 5078.2,
+    "headroom_lb_mw_tail_min": 0.0,
+    "headroom_lb_mw_tail_max": 12560.3,
+    "headroom_lb_mw_allhours_mean": 11150.4,
+    "nyca_30min_requirement_mw": 2620.0
+   }
+  },
+  "2024": {
+   "actual_tail_hours": 13,
+   "actual_tail_mean_lmp": 516.7,
+   "construction_check": {
+    "max_upstate_A_E_price_spread_usd_mw": {
+     "spin_10": 0.0,
+     "nonsync_10": 0.0,
+     "op_30": 0.0
+    },
+    "verdict": "A-E price identically in every hour \u2014 the NYCA-only tier is cleanly observable"
+   },
+   "clock_offset_scan_mean_nyca_price_in_tail": {
+    "-3": 0.02,
+    "-2": 5.72,
+    "-1": 105.66,
+    "0": 254.62,
+    "1": 89.97,
+    "2": 30.25,
+    "3": 17.27
+   },
+   "reality_nyca_level": {
+    "mean_usd_mw": 254.62,
+    "median_usd_mw": 239.96,
+    "max_usd_mw": 552.89,
+    "hours_gt_0": 12,
+    "hours_ge_rcpf_first_rung": 11,
+    "hours_ge_rcpf_top": 0
+   },
+   "reality_nyc_locational": {
+    "nyc_total_mean_usd_mw": 461.39,
+    "nyc_total_max_usd_mw": 876.59,
+    "local_increment_mean_usd_mw": 206.77,
+    "local_increment_max_usd_mw": 564.11,
+    "hours_local_increment_gt_0": 13
+   },
+   "baseline_all_hours": {
+    "nyca_mean_usd_mw": 1.023,
+    "nyca_hours_gt_0": 338,
+    "nyca_hours_ge_rcpf_first_rung": 45
+   },
+   "reserve_pickup_events": {
+    "hours_with_pickup_all_year": 40,
+    "hours_with_pickup_in_tail": 3,
+    "share_of_tail_hours": 0.231
+   },
+   "shortage_vs_opportunity_cost": {
+    "hours_reserve_price_exceeds_lmp": 0,
+    "nyca_over_lmp_ratio_mean": 0.502,
+    "nyca_over_lmp_ratio_median": 0.536,
+    "nyca_over_lmp_ratio_max": 0.936,
+    "distinct_values": 13,
+    "n_hours": 13,
+    "exact_rcpf_rung_hits": {
+     "$40.00": 0,
+     "$750.00": 0,
+     "$775.00": 0
+    }
+   },
+   "model_nyca_families": {
+    "nyca_10min_spin": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 655.0
+    },
+    "nyca_10min_total": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 1310.0
+    },
+    "nyca_30min_total": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 2620.0
+    }
+   },
+   "model_headroom_lower_bound": {
+    "max_simultaneous_thermal_mw": 17358.1,
+    "sum_of_class_peaks_mw_NOT_USED": 26528.4,
+    "tail_thermal_dispatch_mean_mw": 13442.8,
+    "headroom_lb_mw_tail_mean": 3915.3,
+    "headroom_lb_mw_tail_min": 133.6,
+    "headroom_lb_mw_tail_max": 10906.2,
+    "headroom_lb_mw_allhours_mean": 9575.4,
+    "nyca_30min_requirement_mw": 2620.0
+   }
+  },
+  "2025": {
+   "actual_tail_hours": 42,
+   "actual_tail_mean_lmp": 658.9,
+   "construction_check": {
+    "max_upstate_A_E_price_spread_usd_mw": {
+     "spin_10": 0.0,
+     "nonsync_10": 0.0,
+     "op_30": 0.0
+    },
+    "verdict": "A-E price identically in every hour \u2014 the NYCA-only tier is cleanly observable"
+   },
+   "clock_offset_scan_mean_nyca_price_in_tail": {
+    "-3": 134.63,
+    "-2": 228.58,
+    "-1": 307.0,
+    "0": 393.31,
+    "1": 302.35,
+    "2": 242.73,
+    "3": 163.57
+   },
+   "reality_nyca_level": {
+    "mean_usd_mw": 393.31,
+    "median_usd_mw": 403.74,
+    "max_usd_mw": 1101.85,
+    "hours_gt_0": 41,
+    "hours_ge_rcpf_first_rung": 41,
+    "hours_ge_rcpf_top": 3
+   },
+   "reality_nyc_locational": {
+    "nyc_total_mean_usd_mw": 573.51,
+    "nyc_total_max_usd_mw": 2146.51,
+    "local_increment_mean_usd_mw": 180.2,
+    "local_increment_max_usd_mw": 1044.66,
+    "hours_local_increment_gt_0": 42
+   },
+   "baseline_all_hours": {
+    "nyca_mean_usd_mw": 3.974,
+    "nyca_hours_gt_0": 876,
+    "nyca_hours_ge_rcpf_first_rung": 181
+   },
+   "reserve_pickup_events": {
+    "hours_with_pickup_all_year": 26,
+    "hours_with_pickup_in_tail": 3,
+    "share_of_tail_hours": 0.071
+   },
+   "shortage_vs_opportunity_cost": {
+    "hours_reserve_price_exceeds_lmp": 0,
+    "nyca_over_lmp_ratio_mean": 0.606,
+    "nyca_over_lmp_ratio_median": 0.654,
+    "nyca_over_lmp_ratio_max": 0.923,
+    "distinct_values": 33,
+    "n_hours": 42,
+    "exact_rcpf_rung_hits": {
+     "$40.00": 0,
+     "$750.00": 1,
+     "$775.00": 0
+    }
+   },
+   "model_nyca_families": {
+    "nyca_10min_spin": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 655.0
+    },
+    "nyca_10min_total": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 1310.0
+    },
+    "nyca_30min_total": {
+     "hours": 8760,
+     "hours_dual_nonzero": 0,
+     "max_abs_dual": 0.0,
+     "hours_shortfall": 0,
+     "max_shortfall_mw": 0.0,
+     "requirement_mw": 2620.0
+    }
+   },
+   "model_headroom_lower_bound": {
+    "max_simultaneous_thermal_mw": 18936.1,
+    "sum_of_class_peaks_mw_NOT_USED": 30331.2,
+    "tail_thermal_dispatch_mean_mw": 15950.0,
+    "headroom_lb_mw_tail_mean": 2986.1,
+    "headroom_lb_mw_tail_min": 0.0,
+    "headroom_lb_mw_tail_max": 11850.1,
+    "headroom_lb_mw_allhours_mean": 10851.5,
+    "nyca_30min_requirement_mw": 2620.0
+   }
+  }
+ },
+ "kill_gate": {
+  "clause_1_reality_not_nyca_short": {
+   "fires": true,
+   "tail_hours_total": 65,
+   "tail_hours_reserve_price_exceeds_lmp": 0,
+   "tail_hours_with_declared_nyca_reserve_pickup": 8,
+   "basis": "The NYCA-tier reserve price never exceeds the concurrent LMP in 65/65 tail hours and shows no RCPF rung atoms, so it is the opportunity cost of scarce ENERGY, not reserve demand-curve shortage. A declared NYCA-wide reserve pick-up covers only 8/65 tail hours."
+  },
+  "clause_2_model_gw_deep_nyca_headroom": {
+   "fires": true,
+   "min_year_tail_mean_headroom_lb_mw": 2986.1,
+   "basis": "Reserve-carrying thermal headroom lower bound in reality's tail hours, against a 2,620 MW NYCA 30-minute requirement; and the NYCA families carry a zero dual and zero shortfall in all 26,280 solved hours."
+  },
+  "verdict": "CONFIRMED \u2014 NYISO's C3c ledger stands"
+ }
+}
