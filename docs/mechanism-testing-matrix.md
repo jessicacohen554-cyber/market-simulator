@@ -5299,6 +5299,66 @@ loss.
 
 ### 5.4 MISO — **LANE RE-OPENED 2026-08-18 BY OWNER RE-CHARTER (miso-167): "2025 miso needs to be calibrated in summer scarcity it's unacceptable that it doesn't." The miso-163 closure was an OWNER RULING and only the owner can lift it; they did, in writing — unblock condition (C) of the miso-166 gate.** Target: the 2025 SUMMER SCARCITY miss (C3a-2025) — keeper `2026-08-30-miso-191-bexit` (**PROMOTED miso-191, 2026-08-31** under the owner's in-session directive resolving the PREREG-miso191 escalation path — the binning-aware exit-cohort delivery of `partial_plant_exit_carry`, the FINDING-miso190 §4 named successor, single delta vs miso-188. Form (a) frozen ex ante: date-scoped exit-cohort bins (plant × group × retirement month) carry each leg-1 partial-exit unit's own EIA-860 retirement through the existing `effective_cod` per-unit seam — cohort dispatch EXACTLY 0 post-exit at every witness plant, the miso-190 ~10 TWh/yr phantoms gone, surviving plants untouched. S-2 +5.31 TWh coal-2023 (real: 2024 +0.39 / 2025 +0.02); **C3a-2023 +3.5008 → +0.0913**; 2023 coal C1 Σ|err| 8.546 → 3.399 TWh; C3a-2024 −4.30 → −4.55 (declared adverse face, in-band); C3a-2025 −12.2965 → −12.3405 (charter kill 1 silent at 0.044 vs 0.10 pp); zero PASS→FAIL flips; C1 16/16 / 12/12 free; determination **NOT-YET on {C3a-2025} ALONE**, C6 attested (ledger 37/2), C3c the single ledgered caveat. REPORTED AGAINST INTEREST: two pre-registered S-1 witness clauses failed AS FROZEN — both measured instrument mis-freezes (the p4014 post-exit ceiling of 0 that the CONTROL violates byte-identically, 47 MW of operable NG-ICE units the phase-0 tech filter missed; the 6055 leg-2 delta frozen at the snapshot rating +517.0 while the arm's +520.0/+554.1 equal the year-matched vintage ratings to the decimal) — so the PREREG's own rule could not fire clean and the probe's mechanical kill-2 REJECT stands unaltered in `_miso191_ab_gates.json`; promotion went to the pre-registered owner-escalation path and the owner's standing in-session instruction resolved it. Records: `FINDING-miso191-binning-aware-exit-2026-08-31.md`, `PREREG-miso191-binning-aware-exit-2026-08-30.md`, `_miso191_binning_phase0.json`; runs `2026-08-30-miso-191-control` / `2026-08-30-miso-191-bexit`.) Superseding `2026-08-30-miso-188-rvsscope` (**PROMOTED miso-188, 2026-08-30** on the PREREG's own pre-registered rule, PREREG-miso188 §4: S-0/S-1/S-2/S-4 clean + charter kill silent + zero PASS→FAIL flips — the first MISO promotion since miso-160 to clear its own PREREG condition without owner escalation. Single delta `retiree_vintage_status_scope=true`, the retiree-channel vintage-status oracle (NEW field + matrix row): a within-window retiree unit is dropped for solve year Y iff its latest committed EIA-860 vintage ≤ Y status is non-OP, fail-open — removing 28 dark units / 1,434 MW led by Grand Tower (862, 511 MW CC: OS in vintage_2023, CAMPD 0.0 GWh 2022–2024, yet carried in-merit 3.55 TWh 2023 + 1.23 TWh Jan–Apr 2024, exactly the C1 excess window) while keeping Rush Island (OP, really ran). **C1 fuelmix CC_REGULAR-2024 +8.037 FAIL → +6.820 PASS** (the single criterion flip; C1 16/16, free 12/12; S-2 CC fall 1.2114 TWh ≈ the full phantom), C3a-2024 −4.64 → −4.30 %, C3a-2023 +2.40 → +3.50 % (the PREREG's declared in-band adverse face), C3a-2025 −12.3185 → −12.2965 % (no 2025 claim); determination narrows to **NOT-YET on {C3a-2025} ALONE**, C3c the single ledgered caveat, ledger 36/2 (new entry MEASURED). Named-not-built successor: the partial-plant mid-window exit gap (5.93 TWh 2023 / 0.57 TWh 2024 of measured generation from units in neither the operable snapshot nor the whole-plant retiree channel — Sherco-2, SOC 5+6, A B Brown, Karn, Big Cajun 2-1 OS; needs unit-grain COD timing, its own charter). Superseding `2026-08-26-miso-187-nucavail` — **PROMOTED miso-187, 2026-08-26** under the owner's in-session directive resolving the PREREG-miso187 §4 structural-split escalation — S-3 PASS (+0.298 GW toward the measured South outflow, matching the +0.299 ex-ante static reach) with S-2 unchanged (7/47) and C3a-2025 UNCHANGED to 4 dp, ZERO criterion flips; single delta `nuclear_unit_availability=true`, the per-reactor NRC-daily nuclear availability layer over the new 13-reactor `NRC_TO_EIA["MISO"]` crosswalk, monthly energy reconciled to the verified EIA-923 anchor; determination NOT-YET on {C3a-2025 −12.3%, C1 fuelmix CC_REGULAR 2024 +8.04 vs ±8.00 TWh}, C3c the single ledgered caveat, superseding `2026-08-25-miso-186-statusscope` — **PROMOTED miso-186, 2026-08-25** under the owner posture directive: structural S-2/S-3 PASS with the scored regression disclosed at full magnitude; single delta `unit_outage_fleet_status_scope=true`, the CAMPD mothball double-count repair; that keeper had superseded `2026-08-22-miso-177-rho-measured`; that keeper had superseded `2026-08-22-miso-175-hourkey` — the measured-rho re-gate of the same-day owner RHO_CLIP band ruling; the standing miso-169/nyiso-144 floor escalation is CLOSED: refuted, deleted, re-solved), **NOT-YET on C3a-2025 (−11.7 %) ALONE — ZERO D-4 conduct failures**. **LEVER QUEUE EMPTY of named, un-adjudicated candidates: miso-174 (2026-08-21) adjudicated the last named OPEN cell `measured_interface_limits` U → R, miso-175 (2026-08-22) EXECUTED item 1 (the seam-envelope hour-key rotation — now the keeper); miso-176 (2026-08-22) EXECUTED item 3 (the M2M/CMP seam-class intake + binding-reality measurement — `m2m_seam_entitlement_cap` minted `G`, no LP); the remaining two (the coincident-peak seam-response object [OWNER admissibility ruling needed, now holding miso-176's binding evidence], the South under-export) stay NAMED, NOT CHARTERED — see the stamps below and the standing OWNER items. **miso-178 (2026-08-23) delivered the re-charter's measurement: the full C3a-2025 anatomy on the measured-rho keeper + the RANKED lever plan — the queue now carries the D-1 across-unit offer-level-dispersion charter ask (top), the D-2 5(i) seam-response ruling, and the D-3 South under-export evidence charter (FINDING-miso178 §7–§10; its stamp below).** **miso-179 (2026-08-23) EXECUTED the granted D-1 charter and REFUTED it at its own pre-registered no-LP pre-checks — `miso_offer_level_dispersion` minted `R`, no field ever created, keeper unchanged: the model already carries 0.541× the eligible book's across-unit spread at the 2025 summer top-decile margin (kill ≥ 0.5), and the granted rank-mapped LEVEL form statically predicts C3a-2023 +1.28 → −40.1 % (the miso-145 level warning at rank grain; the miso-178 §7 kill-risk (b) population non-identifiability materialized). The queue now carries the D-2 5(i) ruling, the D-3 South evidence charter, and the NEW anchored SPREAD-ONLY successor ask (owner decision — the measured residual is a top-decile tail steepening, +$40 at p95 / +$110 at p99; its stamp below).** **miso-180 (2026-08-23) EXECUTED the granted D-1b successor charter end to end and measured it INERT — `miso_offer_spread_anchored` minted `I` (built, gated default-off, both A/B runs registered), keeper unchanged: the ex-ante-identified anchor (r = 0.875, the model/book H* crossing) grafted the measured above-anchor rise exactly as designed (body untouched to 3 decimals, ceilings respected) and the LP realized only +0.132 pp of the predicted +0.592 on C3a-2025 — Δ₁ did not collapse (+10.50 → +10.45) and the South dipole moved AWAY from zero (+16.96 → +17.15%). The across-unit dispersion family is now fully adjudicated (level R / spread I); the residual is NOT an offer-surface object — the queue carries the D-2 5(i) seam-response ruling (the +2.1 GW binding-hour import excess, now the largest named object) and the D-3 South evidence charter (its stamp below).**
 
+> **QUEUE STAMP miso-194 (2026-08-31) — THE WINTER LEVER PAIR ADJUDICATED:
+> `gas_coldsnap_derate` U -> **I** (measured inert, ZERO-SOLVE),
+> `winter_fuelsec_posture` STAYS **U** (considered, not chartered — no verdict);
+> KEEPER UNCHANGED at `2026-08-30-miso-191-bexit`, no LP spent, no field created.**
+> Lever 2 off the miso-192-corrected queue, aimed at miso-178's Jan-2025 −1.43 pp
+> winter component of C3a-2025. Ask A reproduced exactly as handed off (NOT-YET on
+> {C3a-2025 −12.3%} ALONE; C1 16/16 / 12/12 free; C3c the single ledgered caveat;
+> C6 attested; C8 PASS with its two grounded notes; `audit_keepers` PASS 0/0;
+> `build_status --check` in sync; matrix integrity OK). **Ask B picked the derate**
+> over the fuel-security posture on direction (the posture is a must-run floor, so
+> its price action is DOWNWARD on an under-priced target), on object (the posture is
+> an ISO-NE PROGRAM — the FERC ER14-2407 oil-tank inventory — with no MISO
+> counterpart in kind), and on rule 19 (it would stack a second must-run floor on
+> ST_GAS, already above its C8 budget at 34.2%). Nothing transferred from NEISO:
+> shape only, every MISO number MISO-derived (rules 25 / 28(d)).
+> **Phase-0 rule frozen @ `57645d44`, pushed BEFORE any adjudicating quantity.**
+> W1 PASS — of eleven armed availability-writing mechanisms exactly three are
+> temperature-conditioned and NONE reaches the target population (CC_REGULAR +
+> CT_PEAKER + ST_GAS, non-dual-fuel; every CHP class excluded ex ante because
+> `temp_dependent_derate` is scoped to [CT_CHP, ST_CHP]): the lever does not stack.
+> W2a PASS at 1.691 (line 1.25) — **and the FF-1B D.5 "measured overlays own the
+> events" double-count ground does NOT hold in MISO**: cold-response ratios come
+> back published 1.132/1.441/1.284 vs armed-model 0.926/0.750/0.759, with the model
+> envelope **COLD-INVERTED** (ρ(offline, TMIN) **+0.581** in 2025 against the
+> published **−0.344** — the model asserts the gas fleet is 24% MORE available on the
+> coldest DJF decile). W3 PASS both legs (45,283 MW = 62.4% of MISO gas; zone TMIN
+> in all three years). **W4 FAILS BY 20× AND IS WHAT REFUTES THE LEVER:** at the
+> MISO-derived onset t0 = −7.31 °C (pooled 2023–25 DJF p10, never transferred) the
+> 408 binding hours carry a median measured cold-excess of **1,219 MW against
+> 12,861 MW of the keeper's own standing headroom (10.5×)**, and only **5/408 =
+> 1.2%** of hours are unabsorbed vs the frozen ≥25% line. The directional prereg
+> (C3a-2025 up, confidence **0.35**) named exactly this failure mode against
+> interest — miso-178 §5's 5+ GW of idle real gas — and W4 was its pre-registered
+> test. **REPORTED-ONLY, added after the gate resolved and disclosed as such: (W5)
+> the whole winter-lever family's ceiling — the binding hours are 5.49% of annual
+> demand, so +$1/MWh across every one of them is +0.121 pp of C3a-2025; clearing the
+> declared +0.30 pp materiality line needs +$2.48/MWh in EVERY binding hour and the
+> band needs +$19.36. (W6) THE pjm-161 NET-LOAD INVERSION IS REPRODUCED ON MISO:
+> ρ(model offline MW, net load) = −0.607 / −0.698 / −0.666, and the top-1% net-load
+> hours carry only 0.63 / 0.70 / 0.78× the annual-mean derate — same sign and same
+> defect as PJM's 0.22–0.38×, though materially MILDER.** **THE NAMED SUCCESSOR
+> (not chartered — one lever per session):** repair the envelope rather than stack a
+> mechanism on an inverted one — a **remove-only measured cap** in the pjm-161 shape,
+> fed by MISO's own published Forced+Derated record, which is already built
+> (`data/miso_outages.py`, `data/raw/miso-generation-outages/`, 2023-01-01 on),
+> already rule-13 argued, already gated behind `miso_native_outage_source`
+> (default off) with a paste-ready wiring doc. **Its case must come from the NET-LOAD
+> channel (W6), not the temperature one** — the summer hours own 60% of C3a-2025 and
+> W4 has already measured the winter channel absorbed. Two things it must confront
+> ex ante: MISO's inversion is milder than PJM's (smaller reach), and the published
+> record is AGGREGATE (region × cause, no unit or fuel identity), so the miso-176 K-2
+> apportionment refusal applies — the honest form is fleet-grain remove-only, never
+> an invented per-unit split. The outage-envelope cells were **NOT stamped**: W2b/W6
+> are evidence about them, not verdicts on them. Records:
+> `FINDING-miso194-coldsnap-derate-2026-08-31.md`,
+> `_miso194_coldsnap_derate_phase0.json`, probe
+> `scripts/probes/_miso194_coldsnap_derate_phase0.py`. Queue after this session:
+> `egrid_identity_heat_rates` (K@NYISO), `tac_load_coverage` (K@CAISO),
+> `lcr_tsl_published` (K@CAISO+NYISO).
+
 > **QUEUE STAMP miso-193 (2026-08-31) — cc_duct_peaking EXAMINED (cell U -> K)
 > AND THE ~8% CAP LEG REJECTED ON ITS OWN PREREG; KEEPER UNCHANGED at
 > `2026-08-30-miso-191-bexit`.** The first candidate off the miso-192-corrected

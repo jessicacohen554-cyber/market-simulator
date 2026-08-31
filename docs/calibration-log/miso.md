@@ -9296,3 +9296,101 @@ it the wrong way; the raw gap is already uncapped). Δ₁ stays open through
 other families. Records: `FINDING-miso193-cc-duct-peaking-2026-08-31.md`,
 `PREREG-miso193-cc-duct-peaking-cap-2026-08-31.md`, `_miso193_ab_gates.json`,
 probes `_miso193_duct_peaking_phase0.py` / `_miso193_ab_gates.py`.
+
+---
+
+## miso-194 (2026-08-31) — the winter lever pair adjudicated: `gas_coldsnap_derate` U → **I**, `winter_fuelsec_posture` stays **U**; keeper unchanged, no LP spent
+
+**Keeper:** `2026-08-30-miso-191-bexit` (bundle `results/calibration/miso191_bax_B`),
+**UNCHANGED**. **No LP solved, nothing armed, no `ScenarioConfig` field created,
+no run registered** (rule 15 `[R-DASHBOARD]` not engaged).
+
+**Ask A (zero-solve) reproduced exactly as handed off.** `calibration_verdict`
+returns **NOT-YET on {C3a-2025 −12.3%} ALONE**; C1 16/16 / free 12/12; C2, C3b,
+C4 PASS; C3c the single **ledgered** caveat; C6 attested; C8 PASS carrying its
+two grounded above-budget notes (2023 CT_PEAKER 15.6%, 2025 ST_GAS 34.2%).
+`audit_keepers --iso MISO` PASS 0/0; `build_status --iso MISO --check` in sync;
+`check_mechanism_matrix.py` integrity OK. Distance to band unchanged, +2.34 pp.
+
+**Ask B — one of the two, and why.** Chartered `gas_coldsnap_derate`;
+`winter_fuelsec_posture` stays `U` as *considered, not chartered* (explicitly
+not a verdict, no DO-NOT-REDO). Three grounds: (1) **direction** — the derate
+removes capability and pushes price UP, the sign Jan-2025's −13.8% own-month
+under-price needs, where the posture is a must-run floor adding forced
+inframarginal supply and pushing DOWN; (2) **object** — the posture is an ISO-NE
+*program* (FERC ER14-2407's oil-tank inventory, sized in barrels) with no MISO
+counterpart in kind, while winter gas deliverability lost to heating load is a
+physical driver MISO's own published record measures; (3) **rule 19** — the
+posture would stack a second must-run floor on ST_GAS, already above its C8
+budget. Read NEISO for shape only; every MISO parameter MISO-derived (rules 25 /
+28(d)).
+
+**Phase 0, rule frozen in the probe docstring and pushed at `57645d44` before
+any adjudicating quantity** (miso-193 pattern; mis-freeze lessons applied — every
+witness on the basis the mechanism reads, relations not constants, satisfiability
+checked on the control first).
+
+| witness | line | result |
+|---|---|---|
+| W1 rule-19 exclusivity | 0 violations | **PASS** — of eleven armed availability-writing mechanisms exactly three are temperature-conditioned and none reaches the target (CC_REGULAR + CT_PEAKER + ST_GAS, non-dual-fuel; every CHP class excluded ex ante, `temp_dependent_derate` being scoped to [CT_CHP, ST_CHP]) |
+| W2a double-count gap | ≥ 1.25 | **PASS 1.691** (2023/24: 1.222 / 1.920) |
+| W3a population | ≥ 20% of gas | **PASS 62.4%** (45,283 MW) |
+| W3b satisfiability | TMIN, 3 yrs | **PASS** |
+| W4 LP absorption | ≥ 25% unabsorbed | **FAIL 1.2%** (5 of 408 binding hours) |
+| **charter gate** | all five | **`CHARTER_AB = false`** |
+
+**W2 killed the double-count objection; W4 killed the lever.** The FF-1B D.5
+ground — `apply_correlated_outage_derate` refusing in backcast because "measured
+overlays own the events" — does **not** hold in MISO, exactly as pjm-161 found
+for PJM. Cold-response ratios (coldest DJF decile ÷ mild half): published
+1.132/1.441/1.284 against the armed model envelope's 0.926/0.750/0.759, with the
+envelope **cold-inverted** — ρ(offline MW, TMIN) **+0.581** in 2025 where the
+published record reads **−0.344**, i.e. the model asserts the gas fleet is **24%
+MORE available on the coldest DJF decile than on mild days**. But at the
+MISO-derived onset t0 = −7.31 °C (pooled 2023–25 DJF p10 of the target-weighted
+TMIN — its closeness to NEISO's shipped −7.0 is coincidence, not transfer), the
+408 binding hours carry a median measured cold-excess of **1,219 MW against
+12,861 MW of the keeper's own standing headroom (10.5×)**. The LP absorbs it.
+
+**The directional prereg named its own killer.** Frozen prediction: C3a-2025 up,
+**confidence 0.35** for ≥ +0.30 pp, with the against-interest reason stated ex
+ante that miso-178 §5 measures 5+ GW of *real* gas already idle in the stress
+hours. W4 was the pre-registered test of that reason, and that reason is what
+fired.
+
+**Reported-only, added after the gate resolved and disclosed as such.** (W5) The
+whole winter-lever family's ceiling in the scorer's basis: the binding hours are
+5.49% of annual demand, so +$1/MWh across every one moves C3a-2025 by **+0.121
+pp** — clearing the declared +0.30 pp materiality line needs **+$2.48/MWh in
+every binding hour**, the band needs **+$19.36**; for scale the model already
+prices those hours at $57.81 against its own $39.72 annual load-weighted mean.
+(W6) **The pjm-161 net-load inversion reproduces on MISO**: ρ(model offline MW,
+net load) = **−0.607 / −0.698 / −0.666**, and the top-1% net-load hours carry
+only **0.63 / 0.70 / 0.78×** the annual-mean derate — the same sign and the same
+defect as PJM's 0.22–0.38×, though materially milder.
+
+**Cell stamp:** `gas_coldsnap_derate` **U → I** (measured inert, zero-solve;
+miso-179 / miso-193-cap-leg precedent). Not `R`: the mechanism is admissible,
+unstacked, and addresses a real measured gap — it is the LP's standing surplus
+that makes it inert. Honest limit recorded on the stamp: W4 establishes
+absorption, not a formal proof of zero response; what is bounded is the
+magnitude. The outage-envelope rows (`campd_outage_windows`,
+`historic_outage_overlay`, `miso_native_outage_source`) were **deliberately not
+stamped** — W2b/W6 are evidence about them, not verdicts on them.
+
+**Named successor, not chartered (one lever per session):** repair the envelope
+rather than stack a mechanism on an inverted one — a **remove-only measured cap**
+in the pjm-161 shape fed by MISO's own published Forced+Derated record, already
+built (`data/miso_outages.py`, `data/raw/miso-generation-outages/`, 2023-01-01
+on), already rule-13 argued, already gated behind `miso_native_outage_source`
+(default off) with a paste-ready wiring doc. Its case must come from the
+**net-load** channel (W6), not the temperature one — the summer hours own 60% of
+C3a-2025 and W4 has measured the winter channel absorbed. Two ex-ante
+confrontations for that session: MISO's inversion is milder than PJM's (smaller
+reach), and the published record is **aggregate** (region × cause, no unit or
+fuel identity), so the miso-176 K-2 apportionment refusal applies — fleet-grain
+remove-only, never an invented per-unit split.
+
+Records: `FINDING-miso194-coldsnap-derate-2026-08-31.md`,
+`_miso194_coldsnap_derate_phase0.json`, probe
+`scripts/probes/_miso194_coldsnap_derate_phase0.py`.

@@ -1,0 +1,300 @@
+{
+  "probe": "miso-194 phase-0 cold-snap gas derate census",
+  "keeper": "2026-08-30-miso-191-bexit",
+  "bundle": "results/calibration/miso191_bax_B",
+  "chartered_mechanism": "gas_coldsnap_derate",
+  "not_chartered": "winter_fuelsec_posture (stays U)",
+  "target_groups": [
+    "CC_REGULAR",
+    "CT_PEAKER",
+    "ST_GAS"
+  ],
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "gate_year": 2025,
+  "thresholds": {
+    "W2a_ratio_line": 1.25,
+    "W3a_share_line": 0.2,
+    "W3b_cover_line": 0.5,
+    "W4_unabsorbed_line": 0.25
+  },
+  "per_year": {
+    "2023": {
+      "target_mw": 45286.5,
+      "gas_class_mw": 72534.4,
+      "target_share_of_gas": 0.6243460340726795,
+      "n_target_rows": 508,
+      "w3b_zone_cover_share": 1.0,
+      "w3b_zones": {
+        "MISO-West": 2296.9,
+        "MISO-Plains": 3289.1,
+        "MISO-Illinois": 2743.9,
+        "MISO-Indiana": 5272.7,
+        "MISO-East": 9986.5,
+        "MISO-South": 21697.4
+      },
+      "w3b_ok": true,
+      "published_record_present": true,
+      "R_M": {
+        "n_djf_days": 90,
+        "n_cold": 9,
+        "n_mild": 45,
+        "cold_mean": 11413.032983496967,
+        "mild_mean": 12321.928820410689,
+        "ratio": 0.9262375355221839,
+        "cold_t_max_c": -3.279658282571377,
+        "mild_t_min_c": 1.3547132105919328
+      },
+      "R_P": {
+        "n_djf_days": 90,
+        "n_cold": 9,
+        "n_mild": 45,
+        "cold_mean": 15866.444444444445,
+        "mild_mean": 14013.044444444444,
+        "ratio": 1.1322624792455285,
+        "cold_t_max_c": -3.279658282571377,
+        "mild_t_min_c": 1.3547132105919328
+      },
+      "w2a_gap_ratio": 1.2224320822921457,
+      "w2b_spearman_model_vs_T": 0.22811979397259483,
+      "w2b_spearman_published_vs_T": -0.18855825822117955
+    },
+    "2024": {
+      "target_mw": 45282.6,
+      "gas_class_mw": 72534.4,
+      "target_share_of_gas": 0.6242922664513756,
+      "n_target_rows": 507,
+      "w3b_zone_cover_share": 0.9999999999999999,
+      "w3b_zones": {
+        "MISO-West": 2296.9,
+        "MISO-Plains": 3289.1,
+        "MISO-Illinois": 2741.2,
+        "MISO-Indiana": 5275.7,
+        "MISO-East": 9986.5,
+        "MISO-South": 21693.2
+      },
+      "w3b_ok": true,
+      "published_record_present": true,
+      "R_M": {
+        "n_djf_days": 90,
+        "n_cold": 9,
+        "n_mild": 45,
+        "cold_mean": 10239.355463219315,
+        "mild_mean": 13645.103715469633,
+        "ratio": 0.750405103305358,
+        "cold_t_max_c": -6.952245982124718,
+        "mild_t_min_c": 0.854436667120115
+      },
+      "R_P": {
+        "n_djf_days": 90,
+        "n_cold": 9,
+        "n_mild": 45,
+        "cold_mean": 23528.444444444445,
+        "mild_mean": 16331.355555555556,
+        "ratio": 1.4406914578772123,
+        "cold_t_max_c": -6.952245982124718,
+        "mild_t_min_c": 0.854436667120115
+      },
+      "w2a_gap_ratio": 1.9198849415219927,
+      "w2b_spearman_model_vs_T": 0.5895981495052046,
+      "w2b_spearman_published_vs_T": -0.24845042597851585
+    },
+    "2025": {
+      "target_mw": 45282.6,
+      "gas_class_mw": 72534.4,
+      "target_share_of_gas": 0.6242922664513756,
+      "n_target_rows": 507,
+      "w3b_zone_cover_share": 0.9999999999999999,
+      "w3b_zones": {
+        "MISO-West": 2296.9,
+        "MISO-Plains": 3289.1,
+        "MISO-Illinois": 2741.2,
+        "MISO-Indiana": 5275.7,
+        "MISO-East": 9986.5,
+        "MISO-South": 21693.2
+      },
+      "w3b_ok": true,
+      "published_record_present": true,
+      "R_M": {
+        "n_djf_days": 90,
+        "n_cold": 9,
+        "n_mild": 45,
+        "cold_mean": 10354.820675960964,
+        "mild_mean": 13634.683170425324,
+        "ratio": 0.7594471060700088,
+        "cold_t_max_c": -9.924688224891483,
+        "mild_t_min_c": -2.0823299392438246
+      },
+      "R_P": {
+        "n_djf_days": 90,
+        "n_cold": 9,
+        "n_mild": 45,
+        "cold_mean": 23111.0,
+        "mild_mean": 17994.977777777778,
+        "ratio": 1.2843027807758707,
+        "cold_t_max_c": -9.924688224891483,
+        "mild_t_min_c": -2.0823299392438246
+      },
+      "w2a_gap_ratio": 1.6911023434164996,
+      "w2b_spearman_model_vs_T": 0.5810727448793805,
+      "w2b_spearman_published_vs_T": -0.3443896134927036
+    }
+  },
+  "w1": {
+    "rows": [
+      {
+        "field": "temp_dependent_derate",
+        "armed": true,
+        "temperature_conditioned": true,
+        "writes_target_population": false,
+        "why": "armed but scoped to temp_derate_classes=['CT_CHP', 'ST_CHP']; target groups ['CC_REGULAR', 'CT_PEAKER', 'ST_GAS'] are OUTSIDE the scope"
+      },
+      {
+        "field": "correlated_forced_outage",
+        "armed": false,
+        "temperature_conditioned": true,
+        "writes_target_population": false,
+        "why": "the documented cold-event derate; apply_correlated_outage_derate refuses on mode='backcast' and outage_source='historic' (FF-1B D.5)"
+      },
+      {
+        "field": "gt_ambient_derate",
+        "armed": false,
+        "temperature_conditioned": true,
+        "writes_target_population": false,
+        "why": "hot-ambient GT derate (miso-90 inert); reported"
+      },
+      {
+        "field": "neiso_gas_coldsnap_derate",
+        "armed": false,
+        "temperature_conditioned": true,
+        "writes_target_population": false,
+        "why": "NEISO-gated in inject_neiso_gas_coldsnap_derate (iso != NEISO -> False)"
+      },
+      {
+        "field": "outage_source",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "measured CAMPD window overlay \u2014 not temperature-keyed"
+      },
+      {
+        "field": "unit_outage_short_windows",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "measured CAMPD short windows \u2014 not temp-keyed"
+      },
+      {
+        "field": "unit_outage_maxgen_events",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "measured max-gen events \u2014 not temp-keyed"
+      },
+      {
+        "field": "unit_outage_fleet_status_scope",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "measured fleet-status scoping \u2014 not temp-keyed"
+      },
+      {
+        "field": "mustrun_layup_window_mask",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "measured layup window \u2014 not temp-keyed"
+      },
+      {
+        "field": "summer_derate_basis_aware",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "SUMMER capability basis \u2014 not a winter path"
+      },
+      {
+        "field": "summer_wefor_share_override",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "SUMMER WEFOR share \u2014 not a winter path"
+      },
+      {
+        "field": "gas_st_wefor_base_override",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "flat WEFOR base \u2014 not temp-keyed"
+      },
+      {
+        "field": "dual_fuel_switching",
+        "armed": true,
+        "temperature_conditioned": false,
+        "writes_target_population": false,
+        "why": "re-prices dual-fuel rows; excluded from target"
+      }
+    ],
+    "n_violations": 0,
+    "violations": [],
+    "pass": true
+  },
+  "w4_t0_c_miso_derived": -7.311283639805561,
+  "w4": {
+    "t0_c": -7.311283639805561,
+    "target_share_of_thermal": 0.3926198704013784,
+    "sidecar_classes_missing": [],
+    "n_binding_hours": 408,
+    "n_unabsorbed": 5,
+    "unabsorbed_share": 0.012254901960784314,
+    "median_E_mw": 1219.4860423526902,
+    "median_H_mw": 12861.174376522278,
+    "median_headroom_all_djf_mw": 15324.353508956161,
+    "pass": false
+  },
+  "w5_reported": {
+    "disclosure": "added after the frozen W1-W4 gate resolved; reported only",
+    "n_binding_hours": 408,
+    "binding_share_of_hours": 0.04657534246575343,
+    "binding_share_of_annual_demand": 0.054942448280880074,
+    "bench_rt_lw": 45.46,
+    "model_lw_mean_annual": 39.72187552636785,
+    "model_mean_price_binding_hours": 57.81382392209336,
+    "model_mean_price_jan": 43.14956857507751,
+    "bench_rt_lw_mon_jan": 51.52,
+    "pp_C3a_per_dollar_across_binding_hours": 0.12085888315195793,
+    "dollars_needed_for_0p30pp": 2.4822337603666655,
+    "dollars_needed_for_band_2p34pp": 19.361423330859992
+  },
+  "w6_reported": {
+    "disclosure": "added after the frozen W1-W4 gate resolved; reported only; stamps no cell",
+    "2023": {
+      "spearman_offline_vs_netload": -0.6073758891421562,
+      "annual_mean_offline_mw": 12420.158918086552,
+      "top1pct_netload_mean_offline_mw": 7882.00782265747,
+      "top1pct_over_annual_ratio": 0.6346140878422649
+    },
+    "2024": {
+      "spearman_offline_vs_netload": -0.6983847669841237,
+      "annual_mean_offline_mw": 12493.770444490134,
+      "top1pct_netload_mean_offline_mw": 8688.790438975457,
+      "top1pct_over_annual_ratio": 0.6954498225799636
+    },
+    "2025": {
+      "spearman_offline_vs_netload": -0.6657298886472609,
+      "annual_mean_offline_mw": 13037.21795371897,
+      "top1pct_netload_mean_offline_mw": 10210.392507138538,
+      "top1pct_over_annual_ratio": 0.7831726479824588
+    }
+  },
+  "verdict": {
+    "W1_rule19_exclusivity": true,
+    "W2a_double_count_gap": true,
+    "W3a_population": true,
+    "W3b_satisfiability": true,
+    "W4_lp_absorption": false,
+    "CHARTER_AB": false
+  }
+}
