@@ -208,10 +208,29 @@ def _load_weighted_price(yd: YearData) -> float:
 
 
 def _annual_co2_tons(yd: YearData) -> float | None:
-    """Total CO2 for a year in tons, or ``None`` when emissions are absent."""
-    if yd.result.emissions is None:
-        return None
-    return float(np.asarray(yd.result.emissions).sum())
+    """Total CO2 for a year in tons, or ``None`` when emissions are absent.
+
+    The forecast path's ``DispatchResult`` carries no populated ``emissions``
+    array (a downstream/backcast step), which made P1 SKIP "emissions absent"
+    on every forecast bundle — the 2026-07-12 weekly's standing gap, hit again
+    by the D21 FC-6 run. Mirror ``run_full_horizon._co2_tons`` /
+    golden_forecast_bands: reconstruct from dispatch × the fleet context's
+    per-generator emission rate (tCO2/MWh) when the array is absent. Same
+    arithmetic as the direct sum, no new threshold; ``None`` only when neither
+    source exists, so the SKIP still fires where there is truly nothing to
+    score.
+    """
+    if yd.result.emissions is not None:
+        return float(np.asarray(yd.result.emissions).sum())
+    rate = (
+        getattr(yd.context, "emission_rate", None) if yd.context is not None else None
+    )
+    if rate is not None:
+        rate = np.asarray(rate, dtype=float)
+        gen_mwh = np.asarray(yd.result.dispatch, dtype=float).sum(axis=1)
+        if rate.shape == gen_mwh.shape:
+            return float((gen_mwh * rate).sum())
+    return None
 
 
 def _thermal_mw(fleet_by_fuel: dict[str, float]) -> float:
