@@ -9250,3 +9250,49 @@ reach** (DA→RT wedge **+1.98 pp**, net positive; 2025 deterministic-LP ceiling
 not a frontier. Option (iii) now has named objects.
 
 Finding: `FINDING-miso192-chp-btm-phase0-2026-08-31.md`.
+
+## miso-193 (2026-08-31) — `cc_duct_peaking` examined (cell U → K): already armed uncapped on the keeper, LIVE and material; the ~8% cap leg REJECTED on its own PREREG K-1 as basis-misaligned; keeper UNCHANGED (`2026-08-30-miso-191-bexit`)
+
+First candidate off the miso-192-corrected queue. **Premise correction ex
+ante** (frozen in the phase-0 probe docstring @ `92847a8`, pushed before any
+adjudicating quantity): the keeper already runs `cc_duct_peaking=True`
+uncapped (`cc_duct_peaking_cap_pct=None`) — the handoff's "arm =
+cc_duct_peaking only" was value-identical to its own control; the one
+untested single delta was the charter's own F-class ~8% cap.
+
+**Phase 0** (`_miso193_duct_peaking_phase0.json`): EIA-860 duct-map coverage
+**100.0%** of the 34,706.5 MW CC class (68/68 rows); 41 flagged rows
+18,659.3 MW (gap p50 13.7); 27 explicit-zero rows 16,047.2 MW — the armed
+mechanism removes 724.8 MW of phantom class-default peak band. **Reported
+against interest:** the frozen A1 99% liveness line FAILED at 92.07% — a
+witness mis-freeze, not a seam clobber: all 10 deviating rows are CC_CHP
+where the documented steam-host committed-first clamp (`assembly.py:630`)
+and steam-floor re-banding (`:827`) own the band by design (rule 19;
+verified to the MW on Sabine 10789: 127.7/22.8/0.0 reproduced exactly).
+Amended adjudication LIVE, disclosed.
+
+**A/B** (PREREG pushed + blob-verified before the arm existed; runs
+`2026-08-31-miso-193-control` / `-duct-cap`, both registered): control
+**bit-identical** to the keeper (S-0 max_abs_diff 0.0, 12/12 sidecars); arm
+clips 1,078.2/1,077.7/1,013.5 MW of peak band, confined exactly to flagged
+gap>8 plants (zero non-flagged movers). **The frozen directional prereg
+(DOWN, conf 0.8) verified in all three years**: C3a 2023 +0.09 → −0.97,
+2024 −4.55 → −5.88, 2025 −12.34 → −13.33 % (faces 0.88/1.33/0.99 pp ≤ 1.5).
+K-2/K-3/K-4 silent. **K-1 fired**: 2024 fuelmix CC_REGULAR +6.66 → +11.51
+TWh over and ST_GAS −7.55 → −8.08 under, both PASS→FAIL — the direct shadow
+of re-pricing ~1 GW of expensive top-band MW into econ. The owner's
+in-session posture directive (structural improvement may carry gate
+regression) does NOT carry it: the 8% constant's ~92%-of-NAMEPLATE anchor
+presupposes PJM's nameplate basis; MISO's CC pmax IS the net-summer rating
+(miso-141), where the duct increment lives above 100% of LP capacity —
+rule-14 misalignment, and every scored quantity agrees. The coherent joint
+object (nameplate basis + cap) remains the miso-141 §11 / miso-192
+owner-court basis switch, not a lane charter.
+
+**Quantified for the ledger:** the uncapped duct bands are load-bearing for
+~1.0–1.3 pp of C3a in every year; the top-of-stack expensive-band SIZING
+family is exhausted in both directions for the 2025 level (shrinking moves
+it the wrong way; the raw gap is already uncapped). Δ₁ stays open through
+other families. Records: `FINDING-miso193-cc-duct-peaking-2026-08-31.md`,
+`PREREG-miso193-cc-duct-peaking-cap-2026-08-31.md`, `_miso193_ab_gates.json`,
+probes `_miso193_duct_peaking_phase0.py` / `_miso193_ab_gates.py`.
