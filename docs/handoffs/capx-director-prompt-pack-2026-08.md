@@ -1666,6 +1666,155 @@ unreachability re-verification (the three S-123 lanes), tests. Report to the own
 director stamps the ledger.
 ```
 
+## NEISO-RC-R — the retirement-composition REPAIR phase (r#21; executes the Phase-0 finding's routed repairs R1–R4)
+
+**Model: Fable · DATA PROFILE: neiso · branch: `claude/capx-neiso-rc-repair`**
+
+**Binding basis:** `docs/handoffs/FINDING-capx-neiso-rc-phase0-2026-08-30.md` §6 (routed
+repairs, admissibility per item) + §9 (successor instructions). This charter funds the
+load-bearing trio **R2 + R1 + R3, with R4 riding along**. R5 (biomass FOM) is DEFERRED —
+26 MW in-window, not worth a `ScenarioConfig` field this phase. **R6 stands as the standing
+refusal:** no per-fuel FOM constant, execution lag, threshold, or demand-curve parameter is
+ever tuned against the retirement-composition residual (rules 21/24).
+
+**Phase A — land the repairs (order matters):**
+1. **R2 — FCA sloped-curve re-derivation.** Re-derive the capacity demand curve from ISO-NE's
+   PUBLISHED MRI curve / auction parameters (FCA 15–18 clearing evidence, dynamic de-list
+   threshold), rule 23 + rule 14; sha-pin every source. The current linear FCA-11 geometry
+   pays $0 past 8.3 % surplus where real FCAs cleared $24–43/kW-yr — that $0 is the
+   degenerate bar. REFUSED ON ITS FACE if any parameter is identified from the retirement
+   residual. Applied to every year consistently (an input repair, the neiso-85/86 pattern —
+   not a gated mechanism).
+2. **R1 — confirmed-registry intake completion.** (i) Mystic 8/9 FERC cost-of-service/RMR
+   end — pin the exact public instrument date against the FERC docket (hindcast information
+   gate: applies only where instrument_date ≤ vintage cutoff, per the confirmed-exits
+   rules); (ii) re-attempt the EIA-860 identity matches for the held-out de-list-bid rows;
+   (iii) restate the instrument bar in terms of ISO-NE's one-year deactivation-notification
+   process. NO tunables anywhere in R1.
+3. **R3 — scorer trio (MUST land with R1, especially R3(iii)):** (i) the FFR-7C-style
+   per-unit NEISO exit decode so D-24 operates on positive evidence; (ii) the
+   vintage-consistent crossover retirement target — REPORT BOTH BASES SIDE BY SIDE (the
+   signed D-9(ii) additions pattern), never silently replace the basis; any committed
+   verdict/determination this flips requires a signed decision card AND the affected lane's
+   own re-verification BEFORE the flip publishes (the 2026-08-30 cross-lane re-grade
+   ruling); (iii) close the `confirmed_derates` blind spot — `model_retirements` reads only
+   the `retirements` ledger key (`scripts/score_capacity_hindcast.py:167-187`) and will
+   silently swallow exactly the exits R1 creates on binned NEISO plants.
+4. **R4 — decided-in-window retirement reporting (report-only)** + the tracked-set change so
+   crossover bundles commit their evolution ledgers (the S-4b bundles already do).
+
+**Phase B — verification (PREREG-first, then at most ONE solve):** pre-declare the
+expectation from the finding BEFORE any solve — R2 REDUCES exits by restoring capacity
+revenue (reachable-basis level moves from +20 % toward 0) while DE-CONCENTRATING the
+composition (the screen discriminates; the floor returns to backstop duty); Mystic becomes
+instrument-driven under R1. Then ONE NEISO T1-X crossover treatment run at HEAD against the
+committed capxd14 record as control (zero-solve on the control side), scored on the R3
+dual-basis scorer, registered on the FORECAST namespace preserve-then-overwrite (the
+capxd14-era key preserved under a suffixed name first). Grade the pre-declared expectation
+honestly — a miss is recorded, never re-tuned in-lane (R6).
+
+**Collision care:** the T3 golden LANDED mid-sitting (PRs #4447/#4452) — the standing form
+remains: never write the t3 verdict key or the bare `neiso-t1f` key (not this lane's keys); `ff-verdicts.json` + `program-status.json` edits touch ONLY the
+crossover/capxd14 keys and the NEISO retirement rows they own; rebase before every push and leave the golden's fresh writes intact. Rules 12 (years sequential),
+22 (crossover window is diagnostic; no out-of-training backcast year), 27 (blob-verify every
+≥300-line push), 28 duties as triggered (R2/R1 are input repairs, no new field; if any step
+does add a `ScenarioConfig` field, its matrix row lands in the same PR).
+
+**Exit:** repairs + finding §-updates + verification pair landed and pushed blob-verified;
+report the measured composition/level deltas to the director at full magnitude.
+
+## D3 — MISO retirement G3: the t1h `retire.total_gw` PASS→FAIL flip (r#21; cap-grain regression, attribution-first)
+
+**Model: Fable · DATA PROFILE: miso · branch: `claude/capx-d3-miso-retire-g3`**
+
+**Object:** MISO's T1-H `retire.total_gw` gate flipped PASS→FAIL with FFR-3A-3 and stands
+untouched — a cap-grain regression on its own tier (board note, `program-status.json` MISO
+block). **Charter discipline:** the I13 cobweb closure on the live MISO t1f record is a
+SCORER-READ, not an attribution — no session claims to have fixed it and no control isolates
+what closed it. Treat "why did I13 close" as an OPEN question inside this lane's evidence
+sweep; never cite it as a settled repair. It is NOT the same finding as the G3 flip.
+
+**Phase 0 (zero-solve, precommit-first):** push the precommit (candidate drivers,
+distinguishing evidence, adjudication rule, kills) BEFORE measurement. Then attribute the
+flip from committed artifacts only: the FFR-3A-3-era t1h record vs its predecessor, the
+evolution ledgers where committed, the miso-190/191 unit-vs-bin truths (per-unit exits are
+discarded at `fleet_to_bins` — a cap-grain scorer may be measuring a fleet the LP never
+carried). Candidate classes to distinguish, stated ex ante: (a) scorer-grain artifact
+(cap-grain target vs binned-fleet execution — the miso-191 keeper changed exit delivery); (b)
+real retirement-volume regression introduced by FFR-3A-3; (c) basis/vintage misalignment (the
+NEISO-RC §2.1 class). Disclosure duty: the live ffr3a3/-3a4 gate keys carry known mismeasured
+co2 rows with bundles never committed (D5-R annotation) — work from what is committed and
+name what is not, rather than regenerating history.
+
+**No mechanism, no tuning, no solve in Phase 0.** If attribution requires an A/B, STOP at the
+finding and route it — the solve is a separate director decision. Collision: `miso-193` (cc_duct_peaking, BACKCAST track) is mid-A/B at issuance — distinct
+namespace from this lane's forecast-board object; proceed, but never touch miso-193's
+surfaces (its PREREG, scorer, or backcast registrations); re-run the collision check at
+start for anything newer. Rules 22/25/27/28 as always.
+
+**Exit:** finding with the attributed driver class + routed repair (or a clean adjudicated
+"scorer-grain, repair = R3-style dual-basis reporting"), board note refreshed on the MISO
+G3 row only, pushed blob-verified.
+
+## D4-I3 — ERCOT I3 scarcity-slack invariant, HALF SCOPE (r#21; the net-revenue half stays HELD under card Y-C)
+
+**Model: Opus · DATA PROFILE: ercot · branch: `claude/capx-d4i3-ercot-slack`**
+
+**Scope boundary first:** card Y is signed **Y-C** (hold open) — this lane owns ONLY the I3
+scarcity-slack invariant half. The net-revenue half is HELD; do not touch, measure, or
+re-open it.
+
+**Prior (binding, from `docs/forecast-readiness-audit-2026-07.md` FR-6):** ERCOT I3 slack =
+LP unserved energy at VOLL (`lp/bounds.py:193-194`, `lp/costs.py:127-134`); the adequacy
+backstop is disabled for energy-only ERCOT BY DESIGN (`adequacy.py:258-266`), so a one-pass
+under-build has no corrective and lands as slack (0.01–0.03 % of load, 2027–2030). The cause
+"lives only in memos; no code comment marks it."
+
+**Phase 0 (zero-solve, on committed artifacts only):**
+1. Measure the I3 breach set at each committed ERCOT T1-H record (the D11-R and D12-C A/B
+   bundles carry the arm/control pairs): slack MW/hours by year, attributed to under-build
+   vs entry-timing vs curve shape, control vs arm deltas.
+2. **Pre-declare (not measure) the post-arming expectation:** D12-A armed
+   `entry_margin_exhaustion` + `entry_forward_reserve_leg` as ERCOT forecast defaults —
+   state ex ante, from the committed A/B deltas, what the armed pair should do to I3.
+   The post-arming MEASUREMENT belongs to the next chartered T1-H run (D6 or a director
+   decision) — no solve in this lane.
+3. **Give the cause a code home:** add the FR-6-cited design-intent comment at the
+   `adequacy.py` energy-only seam (comment/docs only, zero behavior change) so the
+   by-design disable stops living only in memos.
+4. Route (never build) the repair options for the director — e.g. an energy-only-aware
+   backstop variant, scarcity-revenue-consistent entry timing — each with its rules-13/21
+   admissibility stated.
+
+Collision: ERCOT surfaces free at issuance (D12-A-R landed, ercot-245 concluded); D6 is held
+partly on contention with this lane — land promptly. Rules 22/25/27/28 as always; matrix
+duty (a) only (no mechanism tested).
+
+**Exit:** finding + breach-set tables + the pre-declared arming expectation + the code
+comment, board I3 row refreshed (ERCOT block only), pushed blob-verified.
+
+## D8-RE — the deferred verdict/board re-emission (r#21 mid-sitting release; records only)
+
+**Model: Opus · DATA PROFILE: code · branch: `claude/capx-d8-re-emission`**
+
+**Basis:** D8 landed its two halves (PR #4427, `FINDING-capx-d8-dof-ledger-2026-08-30.md`)
+with ALL verdict/board re-emission EXPLICITLY DEFERRED because three in-flight lanes wrote
+those files on other keys. All three writers have now LANDED (S-6 PR #4436 · S-123-V
+PR #4441 · the T3 golden PRs #4447/#4452), so the deferral is discharged. Execute exactly
+the re-emission the D8 finding names — no more: re-emit the FC-7/DOF-ledger-touched verdict
+records and board fields from the COMMITTED instrument + artifacts (zero-solve,
+`forecast_verdict.py` / board tooling on committed inputs only), preserving every
+provenance note the finding requires. Take the file state at your HEAD as authoritative —
+the S-6/S-123-V/golden writes are newer than D8's deferral and are NEVER overwritten or
+"restored"; if a key the finding expects to re-emit was since rewritten by one of them,
+re-emit ON TOP of the live value only where the finding's instrument output actually
+changes it, and record any key you therefore skip. Any re-emission that would FLIP a
+committed verdict/gate is a STOP — the cross-lane re-grade ruling (2026-08-30) requires the
+affected lane's re-verification before such a flip publishes; report it to the director
+instead of landing it. Rebase before pushing; rules 22/27 as always; no mechanism, no
+matrix cell (rule 28 duty (a) only). **Exit:** re-emitted records + a short completion note
+appended to the D8 finding, pushed blob-verified.
+
 ## D8 — forecast DOF-ledger instrument + provenance debt (r#19; FC-7's two halves; verdict re-emission DEFERRED)
 
 ```
