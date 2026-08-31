@@ -1491,6 +1491,16 @@ def score_crossover(bundle: Path, report_dir: Path) -> dict:
         "dispatch_skill": dispatch,
         # (b) — TOP LEVEL, hindcast-scorer shape (register_hindcast compatibility)
         "retirements": capacity["retirements"],
+        # NEISO-RC-R R3(ii)/R4 additive blocks (absent on the degrade path).
+        **{
+            k: capacity[k]
+            for k in (
+                "retirements_vintage_basis",
+                "retirement_target_basis",
+                "retirement_decisions_in_window",
+            )
+            if k in capacity
+        },
         "additions": capacity["additions"],
         "additions_cod_basis": capacity["additions_cod_basis"],
         "additions_basis": capacity["additions_basis"],
