@@ -473,13 +473,14 @@
         "builds_storage_mw": 0.0
       }
     ],
-    "started_utc": "2026-08-31T03:20:05Z",
+    "started_utc": "2026-08-31T03:25:30Z",
     "bridged_years": [],
     "verdict_key": "neiso-t3",
     "campaign": "T3-NEISO-GOLDEN (capx r#17 Q13 authorization; relaunched r#20)",
     "authorization": "owner ruling Q13, capx r#17 sitting 2026-08-30 — NEISO 2026-2050 T3 BAU golden, ~1.0 h / ~4.3 GB, THIS CAMPAIGN ONLY",
     "solved_at_sha": "9e56f0f",
-    "gate": "§2.1b leg (d) — first full-solve authorization in program history"
+    "gate": "§2.1b leg (d) — first full-solve authorization in program history",
+    "posture_epoch_caveat": "SOLVED PRE-R-A. This bundle records the shipped posture at HEAD 9e56f0f with storage_entry_availability_gate=False and storage_entry_cost_normalized_rank=False (see the committed run_config.json). Owner ruling R-A (commit ecf9972, cache-epoch entry 2026-08-31 in results/cache.py) flipped both defaults False->True AFTER this solve. Both fields are registered in _CACHE_KEY_OPTIONAL_FIELDS, so the armed and unarmed postures HASH IDENTICALLY (FFR-3A blocker-4 same-key invalidation): the key a4b11ef4aaa1be35 no longer identifies this run posture on its own — cite solved_at_sha 9e56f0f plus run_config.json. The bundle sits in the campaign out-dir, NOT the shared results/<ISO>/<key>/ cache root the epoch notice names, so the silent-reuse half of the hazard does not reach it. Re-solving under the armed posture is a SECOND campaign that Q13 (this campaign only) does not authorize — routed to the owner. Material because this run builds ZERO storage in all 25 years and R-A armed the storage-ENTRY mechanisms."
   },
   "score": null,
   "invariants": [
@@ -568,11 +569,11 @@
       "detail": "in band"
     }
   ],
-  "registered_utc": "2026-08-31T03:20:05Z",
+  "registered_utc": "2026-08-31T03:25:30Z",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "271ad606c3fd",
-    "scored_at_date": "2026-08-31T03:20:05Z",
+    "scored_at_sha": "02b195729d37",
+    "scored_at_date": "2026-08-31T03:25:30Z",
     "cache_epoch": "a4b11ef4aaa1be35"
   }
 }
