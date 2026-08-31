@@ -97,9 +97,12 @@ guard (guards are CLI-level); the paired-arm driver called
 explicitly so the gate was consciously passed, mirroring the golden's own
 `--full-solve-authorized`.
 
-**Measured vs priced:** battery 696.5 s (both rungs, workers=2); base 1998.1 s / 3.57 GB;
-carbon25 655.2 s; gasup150 2003.2 s; gaspm5 in the same band. Total session solve wall
-≈ 2.6 h including the data-vintage re-run — inside the priced envelope.
+**Measured vs priced:** battery 696.5 s (both rungs, workers=2); base 1998.1 s / 3.57 GB
+peak RSS; carbon25 655.2 s; gasup150 2003.2 s; gaspm5 1989.1 s (concurrent-solve wall
+times — the ~2×-of-solo spread is CPU sharing on the 4-core box, not model variance;
+carbon25's 10.9 min is the solo-ish anchor, right at the golden's 29.2-min campd rate
+scaled by contention). Total session solve wall ≈ 2.6 h including the data-vintage re-run
+— inside the priced envelope.
 
 ## 4. Stage 2 — what ran, and the committed artifacts
 
@@ -164,7 +167,7 @@ pre-fix "all 2 gate rows PASS", post-fix "CAVEAT — 2 vacuous rows named".
 |---|---|---|---|
 | **P1** CO2 monotone vs carbon | base vs `carbon_price=25` | **FAIL** | cumulative CO2 base **210.52 Mt** vs high **320.84 Mt** — CO2 RISES +52.4 % under a $25/t carbon price |
 | **P2** merit-order sign | base vs gas ×1.5 | **PASS** | year 2050: all signs correct (gas_cc ↓, LW price ↑, objective ↑; coal leg auto-skipped — no 2050 coal) |
-| **P3** perturbation stability | base vs gas ×1.05 | see committed `paired_invariants.json` | cliff-edge detector, WARN-level |
+| **P3** perturbation stability | base vs gas ×1.05 | **PASS** | cumulative builds moved 0.0 % (base 39,500 MW, pert 39,500 MW) — no cliff edge; note the 0.0 % is consistent with the build path being rate-limit-shaped (the golden's own alternating VRE cadence), an annotation, not a gate matter |
 
 **P1's failure decomposes into two channels, both visible in the committed arm
 summaries:**
@@ -202,13 +205,24 @@ fires when neither source exists). The pre-fix SKIP row is quoted here for the r
 
 Re-scored from committed artifacts only, same inputs as the golden's own scoring (whose
 committed verdict this session first REPRODUCED exactly from those inputs before changing
-anything) plus the two new FC-6 inputs. FC-6: SKIPPED-required → **FAIL** (battery gate
-rows CAVEAT with both vacuous rows named; paired P1 FAIL; P2 PASS; P3 per its row).
-Every other category unchanged (FC-1/2/3/4/7 FAIL, FC-5 SKIPPED-required, FC-8 PASS).
-**Determination: HOLD — unchanged, now on six failing gates and one unscored instrument
+anything) plus the two new FC-6 inputs. **Scored both ways** (the FC-7 dual-scoring
+precedent), so the scorer amendment cannot be an outcome vector:
+
+| | FC-6 battery row | FC-6 paired rows | FC-6 category | Determination |
+|---|---|---|---|---|
+| pre-fix scorer | PASS ("all 2 gate rows PASS") | P1 FAIL / P2 PASS / P3 PASS | **FAIL** | **HOLD** |
+| amended scorer (committed) | **CAVEAT** — both vacuous rows named with their constant series | P1 FAIL / P2 PASS / P3 PASS | **FAIL** | **HOLD** |
+
+Identical category status and determination either way — the amendment changes only
+whether the battery row tells the truth about its vacuity. Every other category is
+unchanged (FC-1/2/3/4 FAIL, FC-7 FAIL/UNATTESTED, FC-5 SKIPPED-required, FC-8 PASS).
+**Determination: HOLD — unchanged, now on six failing gates plus one unscored instrument
 (FC-5, lane D22).** `ff-verdicts.json`: prior verdict preserved at `neiso-t3-pre-fc6`
-(the RC-R preserve-then-overwrite precedent), `neiso-t3` overwritten with the re-score;
-the bundle's `forecast_verdict.json` replaced in place.
+(the RC-R preserve-then-overwrite precedent; its provenance keeps the golden's
+`271ad606c3fd`), `neiso-t3` overwritten with the re-score (scored_at `89dacc4c0343`);
+the bundle's `forecast_verdict.json` replaced in place; `program-status.json` stamped
+(top-level `d21_fc6_battery` + `isos.NEISO.golden` append only — every other block
+asserted byte-identical before write, `t3_determination` stays HOLD).
 
 ## 6. Findings register (all at full magnitude; none actioned in this lane)
 
