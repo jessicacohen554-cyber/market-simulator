@@ -264,25 +264,36 @@ def load_api_key() -> str:
 def _fetch_json(
     aeo_year: int,
     table_id: str,
-    region_id: str,
+    region_id: str | None,
     scenario: str,
     key: str,
     start: int,
     end: int,
     sleep_s: float,
 ) -> list[dict]:
-    """Fetch every series row for one (table, region, scenario) over [start, end]."""
+    """Fetch every series row for one (table, region, scenario) over [start, end].
+
+    ``region_id=None`` omits the ``regionId`` facet, so ONE request returns every
+    EMM region for that (table, scenario, year) — the caller then keeps only the
+    regions in :data:`AEO_EMM_TO_ISO`. That is what makes the corridor fetch
+    reproducible on the public rate-limited ``DEMO_KEY``: it collapses the
+    14 regions x 2 tables = 28 keyed requests into 2 tables x 3 years = 6, which
+    fits inside DEMO_KEY's ~30-requests/hour budget. Values are byte-identical
+    either way — the facet only filters server-side (verified 2026-08-31: a
+    single unfaceted table-62 year returns 3,146 rows spanning all regions).
+    """
     q = {
         "api_key": key,
         "frequency": "annual",
         "facets[tableId][]": table_id,
-        "facets[regionId][]": region_id,
         "facets[scenario][]": scenario,
         "data[0]": "value",
         "start": str(start),
         "end": str(end),
         "length": 5000,
     }
+    if region_id is not None:
+        q["facets[regionId][]"] = region_id
     url = f"{API_BASE}/{aeo_year}/data/?{urlencode(q, doseq=True)}"
     payload = None
     last: Exception | None = None
@@ -301,8 +312,22 @@ def _fetch_json(
         raise RuntimeError(
             f"AEO fetch failed (table {table_id}, region {region_id}): {last}"
         )
+    resp = payload.get("response", {})
+    data = resp.get("data", [])
+    # The API silently truncates at 5,000 JSON rows. An unfaceted request is
+    # well inside that per year (~3.1k for table 62), but refuse to guess if a
+    # future AEO edition grows past it — a truncated fetch would drop regions
+    # or series with no error (rule 5: never a silently incomplete input).
+    total = resp.get("total")
+    if total is not None and int(total) > len(data):
+        raise RuntimeError(
+            f"AEO fetch truncated (table {table_id}, region {region_id}, "
+            f"{start}-{end}): API reports {total} rows, returned {len(data)}. "
+            "Narrow the request (per-year, or re-add the regionId facet) — "
+            "refusing a silently incomplete fetch."
+        )
     time.sleep(sleep_s)
-    return payload.get("response", {}).get("data", [])
+    return data
 
 
 def fetch_raw(
@@ -326,23 +351,28 @@ def fetch_raw(
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / RAW_FILENAME
     key = key or load_api_key()
-    yrs = set(int(y) for y in years)
-    start, end = min(yrs), max(yrs)
+    yrs = sorted(set(int(y) for y in years))
     rows: list[dict] = []
     for scenario in scenarios:
-        for region_id in AEO_EMM_TO_ISO:
-            for table_id in AEO_TABLES:
+        # One request per (table, year) across ALL regions — see _fetch_json:
+        # 6 requests instead of 28, so the fetch completes on the key-free
+        # DEMO_KEY. Regions outside AEO_EMM_TO_ISO are dropped below.
+        for table_id in AEO_TABLES:
+            for year in yrs:
                 print(
-                    f"  AEO2025 table {table_id} region {region_id} scenario {scenario} …"
+                    f"  AEO{aeo_year} table {table_id} scenario {scenario} {year} (all EMM regions) …"
                 )
                 for r in _fetch_json(
-                    aeo_year, table_id, region_id, scenario, key, start, end, sleep_s
+                    aeo_year, table_id, None, scenario, key, year, year, sleep_s
                 ):
                     period = r.get("period")
-                    if period in (None, "") or int(period) not in yrs:
+                    if period in (None, "") or int(period) not in set(yrs):
                         continue
                     if r.get("value") in (None, "", "NA"):
                         continue
+                    region_id = str(r.get("regionId", "")).strip()
+                    if region_id not in AEO_EMM_TO_ISO:
+                        continue  # a region outside our ISO crosswalk
                     # Scope raw to the corridor series the parser maps (the fetch
                     # already scopes regions/years/tables) — keeps raw lean and
                     # purposeful; the fetch and parser share AEO_SERIESNAME_MAP so

@@ -1,0 +1,1009 @@
+source_release,table_id,region_id,region_name,scenario,series_id,series_name,period,value,unit
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_NA_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,173.573059,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_NA_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,210.576721,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_NA_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,240.655548,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_cl_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,5.3476,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_cl_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.785,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_cl_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.785,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_cmc_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,35.815212,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_cmc_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,36.936295,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_cmc_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,39.656082,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_ctd_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,14.709251,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_ctd_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,22.567801,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_ctd_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,27.040625,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_diurn_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,14.917645,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_diurn_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,14.907744,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_diurn_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,14.907744,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_nup_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,4.98,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_nup_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,4.98,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_nup_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,4.98,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_ong_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,13.403999,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_ong_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,13.386,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_ong_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,13.386,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_pst_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,0.0,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_pst_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,0.0,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_pst_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,0.0,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_rnwbsrc_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,84.101776,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_rnwbsrc_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,115.170845,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,cap_NA_elep_NA_rnwbsrc_NA_tre_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,136.350311,GW
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,emi_co2_elep_NA_NA_NA_tre_millton,Electricity : Emissions : Carbon Dioxide,2030,99.76442,MMst
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,emi_co2_elep_NA_NA_NA_tre_millton,Electricity : Emissions : Carbon Dioxide,2035,59.891151,MMst
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,emi_co2_elep_NA_NA_NA_tre_millton,Electricity : Emissions : Carbon Dioxide,2040,52.124184,MMst
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_cl_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,20.644041,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_cl_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,2.7559,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_cl_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,2.764437,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_ng_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,155.080078,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_ng_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,115.802185,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_ng_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,103.881271,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_nuc_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,41.102074,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_nuc_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,41.101597,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_nuc_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,27.064117,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_pet_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.110857,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_pet_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.013016,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_pet_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.016541,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_reb_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,239.772003,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_reb_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,333.871338,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_reb_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,411.68924,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_teg_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,453.889679,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_teg_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,490.940338,BkWh
+aeo2025,62,5-1,Texas Reliability Entity,ref2025,gen_NA_elep_NA_teg_NA_tre_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,543.918762,BkWh
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_geothm_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_geothm_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_geothm_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_hyd_cnv_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,0.5478,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_hyd_cnv_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,0.5478,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_hyd_cnv_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,0.5478,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_munwst_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.076185,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_munwst_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.117804,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_munwst_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.156796,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_ofw_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_ofw_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_ofw_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_slr_phtvl_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,42.329498,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_slr_phtvl_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,51.48703,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_slr_phtvl_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,57.03233,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_slr_therm_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_slr_therm_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_slr_therm_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_wbm_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.1,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_wbm_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.1,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_wbm_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.1,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_wnd_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,41.048298,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_wnd_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,62.918213,GW
+aeo2025,67,5-1,Texas Reliability Entity,ref2025,cap_gen_elep_NA_wnd_NA_tre_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,78.513382,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_NA_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,85.973305,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_NA_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,101.817413,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_NA_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,132.617828,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_cl_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,2.8945,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_cl_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_cl_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_cmc_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,27.320702,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_cmc_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,27.320702,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_cmc_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,27.320702,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_ctd_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,7.426,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_ctd_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,14.502213,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_ctd_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,20.652807,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_diurn_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,4.349801,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_diurn_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,5.462801,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_diurn_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,5.462801,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_nup_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,12.487102,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_nup_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,12.487102,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_nup_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,12.487102,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_ong_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,7.1449,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_ong_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,6.548901,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_ong_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,3.6339,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_pst_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,1.9069,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_pst_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,1.9069,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_pst_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,1.9069,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,22.288403,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,32.989185,GW
+aeo2025,62,5-10,PJM / East,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjme_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,59.827263,GW
+aeo2025,62,5-10,PJM / East,ref2025,emi_co2_elep_NA_NA_NA_pjme_millton,Electricity : Emissions : Carbon Dioxide,2030,88.543823,MMst
+aeo2025,62,5-10,PJM / East,ref2025,emi_co2_elep_NA_NA_NA_pjme_millton,Electricity : Emissions : Carbon Dioxide,2035,70.583588,MMst
+aeo2025,62,5-10,PJM / East,ref2025,emi_co2_elep_NA_NA_NA_pjme_millton,Electricity : Emissions : Carbon Dioxide,2040,44.463718,MMst
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_cl_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,13.61904,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_cl_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,1.170965,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_cl_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_ng_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,167.246368,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_ng_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,156.72789,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_ng_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,98.475594,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_nuc_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,104.00695,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_nuc_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,104.005966,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_nuc_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,104.005966,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_pet_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.069403,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_pet_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.014425,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_pet_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.014425,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_reb_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,71.615135,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_reb_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,102.988983,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_reb_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,189.702499,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_teg_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,356.618378,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_teg_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,364.725555,BkWh
+aeo2025,62,5-10,PJM / East,ref2025,gen_NA_elep_NA_teg_NA_pjme_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,392.17804,BkWh
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_geothm_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_geothm_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_geothm_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_hyd_cnv_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,1.3472,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_hyd_cnv_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,1.3472,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_hyd_cnv_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,1.3472,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_munwst_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.5113,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_munwst_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.537673,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_munwst_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.56238,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_ofw_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,13.02,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_ofw_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,18.213001,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_ofw_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,22.193001,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_slr_phtvl_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,3.1806,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_slr_phtvl_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,8.662006,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_slr_phtvl_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,13.160494,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_slr_therm_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_slr_therm_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_slr_therm_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_wbm_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.0043,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_wbm_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.0043,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_wbm_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.0043,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_wnd_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,4.225,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_wnd_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,4.225,GW
+aeo2025,67,5-10,PJM / East,ref2025,cap_gen_elep_NA_wnd_NA_pjme_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,22.559889,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_NA_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,80.666595,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_NA_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,91.965195,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_NA_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,140.652206,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_cl_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,9.372601,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_cl_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.585,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_cl_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.585,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_cmc_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,26.565235,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_cmc_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,30.272858,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_cmc_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,30.272858,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_ctd_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,17.860571,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_ctd_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,26.872404,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_ctd_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,31.851685,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_diurn_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,0.195377,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_diurn_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,0.195377,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_diurn_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,0.195377,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_nup_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,6.119,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_nup_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,6.119,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_nup_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,6.119,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_ong_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,5.3283,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_ong_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,5.3283,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_ong_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,5.0683,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_pst_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,0.238,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_pst_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,0.238,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_pst_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,0.238,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,14.98751,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,22.237057,GW
+aeo2025,62,5-11,PJM / West,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmw_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,66.122238,GW
+aeo2025,62,5-11,PJM / West,ref2025,emi_co2_elep_NA_NA_NA_pjmw_millton,Electricity : Emissions : Carbon Dioxide,2030,129.112289,MMst
+aeo2025,62,5-11,PJM / West,ref2025,emi_co2_elep_NA_NA_NA_pjmw_millton,Electricity : Emissions : Carbon Dioxide,2035,88.847198,MMst
+aeo2025,62,5-11,PJM / West,ref2025,emi_co2_elep_NA_NA_NA_pjmw_millton,Electricity : Emissions : Carbon Dioxide,2040,62.116955,MMst
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_cl_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,42.044701,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_cl_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,2.082893,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_cl_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,2.090206,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_ng_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,194.20787,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_ng_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,204.793777,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_ng_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,147.156799,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_nuc_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,49.82671,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_nuc_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,49.82671,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_nuc_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,49.82671,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_pet_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.202022,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_pet_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.011453,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_pet_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.011257,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_reb_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,35.265926,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_reb_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,58.168488,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_reb_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,179.046112,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_teg_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,321.473999,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_teg_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,314.857117,BkWh
+aeo2025,62,5-11,PJM / West,ref2025,gen_NA_elep_NA_teg_NA_pjmw_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,378.140411,BkWh
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_geothm_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_geothm_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_geothm_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_hyd_cnv_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,1.191,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_hyd_cnv_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,1.191,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_hyd_cnv_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,1.191,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_munwst_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.13941,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_munwst_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.185354,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_munwst_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.228397,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_ofw_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0204,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_ofw_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0204,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_ofw_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0204,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_slr_phtvl_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,8.997199,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_slr_phtvl_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,8.997199,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_slr_phtvl_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,29.816538,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_slr_therm_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_slr_therm_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_slr_therm_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_wbm_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.0124,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_wbm_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.0124,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_wbm_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.0124,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_wnd_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,4.6271,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_wnd_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,11.830704,GW
+aeo2025,67,5-11,PJM / West,ref2025,cap_gen_elep_NA_wnd_NA_pjmw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,34.853504,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_NA_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,30.379717,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_NA_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,32.083508,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_NA_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,45.020203,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_cl_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_cl_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_cl_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_cmc_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,4.7185,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_cmc_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,4.7185,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_cmc_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,4.7185,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_ctd_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,7.766221,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_ctd_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,9.45272,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_ctd_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,11.12636,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_diurn_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,0.0958,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_diurn_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,0.0958,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_diurn_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,0.0958,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_nup_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,10.517401,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_nup_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,10.517401,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_nup_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,10.517401,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_ong_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_ong_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_ong_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_pst_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_pst_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_pst_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,0.0,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,7.281796,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,7.284062,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmce_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,18.547117,GW
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,emi_co2_elep_NA_NA_NA_pjmce_millton,Electricity : Emissions : Carbon Dioxide,2030,14.378426,MMst
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,emi_co2_elep_NA_NA_NA_pjmce_millton,Electricity : Emissions : Carbon Dioxide,2035,9.814988,MMst
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,emi_co2_elep_NA_NA_NA_pjmce_millton,Electricity : Emissions : Carbon Dioxide,2040,6.949262,MMst
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_cl_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,0.0,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_cl_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_cl_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_ng_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,32.327614,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_ng_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,22.420254,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_ng_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,14.926968,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_nuc_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,90.040321,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_nuc_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,90.039803,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_nuc_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,89.210243,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_pet_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.001233,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_pet_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.0,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_pet_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.0,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_reb_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,21.590677,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_reb_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,21.613045,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_reb_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,56.914898,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_teg_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,143.940125,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_teg_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,134.054703,BkWh
+aeo2025,62,5-12,PJM / Commonwealth Edison,ref2025,gen_NA_elep_NA_teg_NA_pjmce_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,161.030884,BkWh
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_geothm_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_geothm_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_geothm_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_hyd_cnv_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,0.015,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_hyd_cnv_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,0.015,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_hyd_cnv_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,0.015,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_munwst_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.046296,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_munwst_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.048562,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_munwst_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.050685,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_ofw_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_ofw_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_ofw_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_slr_phtvl_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,0.464,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_slr_phtvl_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,0.464,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_slr_phtvl_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,1.428399,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_slr_therm_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_slr_therm_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_slr_therm_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_wbm_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.003,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_wbm_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.003,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_wbm_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.003,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_wnd_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,6.7535,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_wnd_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,6.7535,GW
+aeo2025,67,5-12,PJM / Commonwealth Edison,ref2025,cap_gen_elep_NA_wnd_NA_pjmce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,17.050034,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_NA_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,37.107292,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_NA_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,71.738052,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_NA_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,80.305504,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_cl_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,0.8771,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_cl_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_cl_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_cmc_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,9.600675,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_cmc_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,9.600675,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_cmc_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,9.510274,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_ctd_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,5.811501,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_ctd_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,7.553281,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_ctd_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,7.702035,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_diurn_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,1.776637,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_diurn_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,3.181637,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_diurn_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,5.419684,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_nup_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,3.568,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_nup_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,3.568,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_nup_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,3.568,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_ong_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,0.055,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_ong_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,0.055,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_ong_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,0.055,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_pst_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,3.0151,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_pst_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,3.0151,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_pst_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,3.0151,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,12.403276,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,44.739113,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,cap_NA_elep_NA_rnwbsrc_NA_pjmd_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,50.991802,GW
+aeo2025,62,5-13,PJM / Dominion,ref2025,emi_co2_elep_NA_NA_NA_pjmd_millton,Electricity : Emissions : Carbon Dioxide,2030,24.013628,MMst
+aeo2025,62,5-13,PJM / Dominion,ref2025,emi_co2_elep_NA_NA_NA_pjmd_millton,Electricity : Emissions : Carbon Dioxide,2035,17.662771,MMst
+aeo2025,62,5-13,PJM / Dominion,ref2025,emi_co2_elep_NA_NA_NA_pjmd_millton,Electricity : Emissions : Carbon Dioxide,2040,11.25723,MMst
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_cl_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,1.763633,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_cl_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_cl_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_ng_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,50.081409,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_ng_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,39.716469,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_ng_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,24.671415,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_nuc_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,29.187328,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_nuc_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,29.186852,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_nuc_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,29.186852,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_pet_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.090473,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_pet_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.001566,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_pet_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.001612,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_reb_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,30.589687,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_reb_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,96.769806,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_reb_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,109.865509,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_teg_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,110.93425,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_teg_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,164.471497,BkWh
+aeo2025,62,5-13,PJM / Dominion,ref2025,gen_NA_elep_NA_teg_NA_pjmd_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,161.952866,BkWh
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_geothm_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_geothm_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_geothm_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_hyd_cnv_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,0.6261,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_hyd_cnv_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,0.6261,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_hyd_cnv_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,0.6261,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_munwst_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.108276,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_munwst_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.113031,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_munwst_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.117485,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_ofw_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,3.12,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_ofw_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,5.2,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_ofw_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,5.2,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_slr_phtvl_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,7.7395,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_slr_phtvl_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,37.990582,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_slr_phtvl_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,44.238815,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_slr_therm_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_slr_therm_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_slr_therm_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_wbm_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.0454,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_wbm_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.0454,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_wbm_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.0454,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_wnd_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,0.764,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_wnd_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,0.764,GW
+aeo2025,67,5-13,PJM / Dominion,ref2025,cap_gen_elep_NA_wnd_NA_pjmd_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,0.764,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_NA_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,42.130196,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_NA_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,57.186268,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_NA_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,70.090263,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_cl_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_cl_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_cl_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_cmc_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,10.0907,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_cmc_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,10.0907,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_cmc_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,10.0907,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_ctd_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,7.253601,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_ctd_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,11.639324,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_ctd_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,13.86987,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_diurn_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,2.4973,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_diurn_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,2.4973,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_diurn_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,3.867048,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_nup_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_nup_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_nup_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_ong_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_ong_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_ong_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,0.0,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_pst_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,2.0471,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_pst_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,2.0471,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_pst_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,2.0471,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_rnwbsrc_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,20.071865,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_rnwbsrc_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,30.459028,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_NA_elep_NA_rnwbsrc_NA_wecccan_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,39.337612,GW
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,emi_co2_elep_NA_NA_NA_wecccan_millton,Electricity : Emissions : Carbon Dioxide,2030,19.311289,MMst
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,emi_co2_elep_NA_NA_NA_wecccan_millton,Electricity : Emissions : Carbon Dioxide,2035,19.694475,MMst
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,emi_co2_elep_NA_NA_NA_wecccan_millton,Electricity : Emissions : Carbon Dioxide,2040,13.703917,MMst
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_cl_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,0.0,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_cl_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_cl_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_ng_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,47.872375,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_ng_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,47.532814,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_ng_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,30.935825,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_nuc_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,8.305502,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_nuc_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,0.0,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_nuc_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,0.0,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_pet_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.001122,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_pet_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.000541,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_pet_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.0,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_reb_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,59.135292,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_reb_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,86.951996,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_reb_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,106.927017,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_teg_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,114.675865,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_teg_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,133.81778,BkWh
+aeo2025,62,5-21,Western Electricity Coordinating Council / California North,ref2025,gen_NA_elep_NA_teg_NA_wecccan_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,137.008392,BkWh
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_geothm_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,1.2082,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_geothm_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,1.7322,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_geothm_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,2.1392,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_hyd_cnv_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,8.172307,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_hyd_cnv_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,8.173935,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_hyd_cnv_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,8.181824,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_munwst_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.092859,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_munwst_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.106443,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_munwst_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.119169,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_ofw_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_ofw_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_ofw_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_slr_phtvl_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,8.408299,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_slr_phtvl_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,16.993538,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_slr_phtvl_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,25.203922,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_slr_therm_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_slr_therm_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_slr_therm_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_wbm_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.4045,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_wbm_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.4045,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_wbm_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.4045,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_wnd_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,1.7857,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_wnd_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,3.048413,GW
+aeo2025,67,5-21,Western Electricity Coordinating Council / California North,ref2025,cap_gen_elep_NA_wnd_NA_wecccan_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,3.289,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_NA_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,58.684433,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_NA_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,73.535744,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_NA_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,80.970924,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_cl_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,0.0,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_cl_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_cl_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_cmc_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,9.3871,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_cmc_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,9.285399,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_cmc_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,9.707067,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_ctd_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,12.154263,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_ctd_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,15.977126,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_ctd_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,19.275993,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_diurn_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,7.424201,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_diurn_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,7.424201,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_diurn_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,7.617414,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_nup_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,0.0,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_nup_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,0.0,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_nup_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,0.0,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_ong_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,0.543,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_ong_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,0.543,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_ong_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,0.543,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_pst_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,1.8648,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_pst_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,1.8648,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_pst_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,1.8648,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_rnwbsrc_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,27.154266,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_rnwbsrc_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,37.796494,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_NA_elep_NA_rnwbsrc_NA_wecccas_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,40.928604,GW
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,emi_co2_elep_NA_NA_NA_wecccas_millton,Electricity : Emissions : Carbon Dioxide,2030,14.111715,MMst
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,emi_co2_elep_NA_NA_NA_wecccas_millton,Electricity : Emissions : Carbon Dioxide,2035,14.690598,MMst
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,emi_co2_elep_NA_NA_NA_wecccas_millton,Electricity : Emissions : Carbon Dioxide,2040,11.581629,MMst
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_cl_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,0.0,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_cl_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_cl_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_ng_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,32.114567,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_ng_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,32.17252,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_ng_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,27.577265,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_nuc_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,0.0,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_nuc_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,0.0,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_nuc_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,0.0,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_pet_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.002486,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_pet_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.002486,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_pet_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.001584,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_reb_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,72.084435,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_reb_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,97.938225,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_reb_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,99.65686,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_teg_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,102.375809,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_teg_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,128.544479,BkWh
+aeo2025,62,5-22,Western Electricity Coordinating Council / California South,ref2025,gen_NA_elep_NA_teg_NA_wecccas_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,125.796333,BkWh
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_geothm_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.4938,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_geothm_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.7438,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_geothm_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.9428,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_hyd_cnv_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,1.8284,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_hyd_cnv_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,1.8284,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_hyd_cnv_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,1.8284,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_munwst_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.142367,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_munwst_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.165191,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_munwst_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.186575,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_ofw_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_ofw_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_ofw_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_slr_phtvl_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,18.657799,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_slr_phtvl_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,29.246202,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_slr_phtvl_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,32.157928,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_slr_therm_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.9178,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_slr_therm_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.9178,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_slr_therm_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.9178,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_wbm_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.0268,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_wbm_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.0268,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_wbm_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.0268,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_wnd_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,5.087301,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_wnd_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,4.868302,GW
+aeo2025,67,5-22,Western Electricity Coordinating Council / California South,ref2025,cap_gen_elep_NA_wnd_NA_wecccas_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,4.868302,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_NA_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,67.822952,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_NA_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,100.361153,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_NA_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,102.574989,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_cl_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,5.312901,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_cl_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0237,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_cl_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0237,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_cmc_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,7.607602,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_cmc_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,7.325601,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_cmc_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,8.833156,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_ctd_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,14.323558,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_ctd_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,22.497843,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_ctd_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,25.558901,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_diurn_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,1.387438,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_diurn_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,1.387438,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_diurn_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,1.387438,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_nup_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,2.8436,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_nup_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,2.8436,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_nup_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,2.8436,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_ong_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,6.507101,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_ong_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,6.4845,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_ong_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,4.8344,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_pst_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,0.0,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_pst_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,0.0,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_pst_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,0.0,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,29.812069,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,59.456203,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcw_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,58.45438,GW
+aeo2025,62,5-3,Midcontinent / West,ref2025,emi_co2_elep_NA_NA_NA_mcw_millton,Electricity : Emissions : Carbon Dioxide,2030,57.872749,MMst
+aeo2025,62,5-3,Midcontinent / West,ref2025,emi_co2_elep_NA_NA_NA_mcw_millton,Electricity : Emissions : Carbon Dioxide,2035,17.002844,MMst
+aeo2025,62,5-3,Midcontinent / West,ref2025,emi_co2_elep_NA_NA_NA_mcw_millton,Electricity : Emissions : Carbon Dioxide,2040,15.758661,MMst
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_cl_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,30.574347,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_cl_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,1.894322,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_cl_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.101926,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_ng_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,56.025299,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_ng_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,30.731611,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_ng_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,32.642906,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_nuc_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,23.776369,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_nuc_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,20.674225,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_nuc_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,20.415104,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_pet_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.240539,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_pet_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.118775,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_pet_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.118747,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_reb_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,93.130547,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_reb_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,208.299881,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_reb_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,207.146744,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_teg_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,203.738419,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_teg_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,261.702576,BkWh
+aeo2025,62,5-3,Midcontinent / West,ref2025,gen_NA_elep_NA_teg_NA_mcw_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,260.571655,BkWh
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_geothm_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_geothm_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_geothm_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_hyd_cnv_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,0.9429,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_hyd_cnv_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,0.9429,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_hyd_cnv_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,0.9429,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_munwst_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.133967,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_munwst_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.153583,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_munwst_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.171961,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_ofw_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_ofw_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_ofw_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_slr_phtvl_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,4.932701,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_slr_phtvl_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,4.932701,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_slr_phtvl_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,4.932701,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_slr_therm_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_slr_therm_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_slr_therm_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_wbm_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.1944,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_wbm_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.1944,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_wbm_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.1944,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_wnd_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,23.608101,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_wnd_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,53.232616,GW
+aeo2025,67,5-3,Midcontinent / West,ref2025,cap_gen_elep_NA_wnd_NA_mcw_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,52.212414,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_NA_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,51.239506,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_NA_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,58.069817,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_NA_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,99.0467,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_cl_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,10.028502,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_cl_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.5276,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_cl_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.5276,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_cmc_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,3.575,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_cmc_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,3.575,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_cmc_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,3.575,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_ctd_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,16.394632,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_ctd_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,27.739082,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_ctd_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,35.961445,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_diurn_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,0.38,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_diurn_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,0.38,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_diurn_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,0.38,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_nup_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,2.2402,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_nup_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,2.2402,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_nup_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,1.0502,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_ong_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,5.348401,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_ong_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,5.348401,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_ong_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,0.6464,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_pst_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,0.471,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_pst_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,0.471,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_pst_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,0.471,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,12.801767,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,17.708405,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcc_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,56.340118,GW
+aeo2025,62,5-4,Midcontinent / Central,ref2025,emi_co2_elep_NA_NA_NA_mcc_millton,Electricity : Emissions : Carbon Dioxide,2030,94.574539,MMst
+aeo2025,62,5-4,Midcontinent / Central,ref2025,emi_co2_elep_NA_NA_NA_mcc_millton,Electricity : Emissions : Carbon Dioxide,2035,35.998852,MMst
+aeo2025,62,5-4,Midcontinent / Central,ref2025,emi_co2_elep_NA_NA_NA_mcc_millton,Electricity : Emissions : Carbon Dioxide,2040,11.877011,MMst
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_cl_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,65.296883,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_cl_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,16.276325,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_cl_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,1.888841,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_ng_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,42.985645,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_ng_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,35.143002,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_ng_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,21.751644,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_nuc_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,16.614384,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_nuc_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,16.614384,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_nuc_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,8.613077,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_pet_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.199206,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_pet_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.007536,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_pet_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.007586,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_reb_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,32.839596,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_reb_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,47.035973,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_reb_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,178.712189,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_teg_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,157.806274,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_teg_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,114.954468,BkWh
+aeo2025,62,5-4,Midcontinent / Central,ref2025,gen_NA_elep_NA_teg_NA_mcc_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,210.857712,BkWh
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_geothm_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_geothm_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_geothm_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_hyd_cnv_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,0.5186,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_hyd_cnv_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,0.5186,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_hyd_cnv_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,0.6104,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_munwst_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.078765,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_munwst_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.105423,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_munwst_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.130397,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_ofw_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_ofw_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_ofw_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_slr_phtvl_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,6.070601,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_slr_phtvl_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,6.070601,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_slr_phtvl_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,6.325462,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_slr_therm_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_slr_therm_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_slr_therm_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_wbm_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_wbm_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_wbm_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.0,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_wnd_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,6.1338,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_wnd_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,11.013781,GW
+aeo2025,67,5-4,Midcontinent / Central,ref2025,cap_gen_elep_NA_wnd_NA_mcc_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,49.273861,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_NA_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,34.827778,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_NA_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,42.460842,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_NA_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,54.637028,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_cl_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,1.591,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_cl_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_cl_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_cmc_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,7.259541,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_cmc_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,7.259541,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_cmc_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,7.865273,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_ctd_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,5.088599,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_ctd_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,5.352561,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_ctd_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,6.50781,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_diurn_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,2.877875,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_diurn_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,2.877875,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_diurn_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,2.877875,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_nup_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,1.9095,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_nup_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,1.9095,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_nup_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,1.9095,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_ong_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,1.9848,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_ong_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,1.9848,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_ong_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,1.9848,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_pst_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,2.1856,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_pst_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,2.1856,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_pst_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,2.1856,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,11.892586,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,20.651846,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mce_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,30.748819,GW
+aeo2025,62,5-5,Midcontinent / East,ref2025,emi_co2_elep_NA_NA_NA_mce_millton,Electricity : Emissions : Carbon Dioxide,2030,23.591787,MMst
+aeo2025,62,5-5,Midcontinent / East,ref2025,emi_co2_elep_NA_NA_NA_mce_millton,Electricity : Emissions : Carbon Dioxide,2035,15.235834,MMst
+aeo2025,62,5-5,Midcontinent / East,ref2025,emi_co2_elep_NA_NA_NA_mce_millton,Electricity : Emissions : Carbon Dioxide,2040,9.334259,MMst
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_cl_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,7.979715,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_cl_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_cl_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_ng_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,31.761551,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_ng_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,31.437984,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_ng_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,16.836922,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_nuc_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,15.254974,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_nuc_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,15.250221,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_nuc_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,14.463026,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_pet_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.033178,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_pet_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.000873,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_pet_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.0,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_reb_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,30.910227,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_reb_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,59.03054,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_reb_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,91.923958,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_teg_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,85.236473,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_teg_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,104.974548,BkWh
+aeo2025,62,5-5,Midcontinent / East,ref2025,gen_NA_elep_NA_teg_NA_mce_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,122.444489,BkWh
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_geothm_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_geothm_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_geothm_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_hyd_cnv_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,0.0918,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_hyd_cnv_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,0.0918,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_hyd_cnv_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,0.0918,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_munwst_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.146172,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_munwst_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.151942,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_munwst_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.157347,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_ofw_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_ofw_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_ofw_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_slr_phtvl_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,2.8634,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_slr_phtvl_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,4.778047,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_slr_phtvl_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,5.011714,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_slr_therm_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_slr_therm_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_slr_therm_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_wbm_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.154601,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_wbm_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.154601,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_wbm_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.154601,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_wnd_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,8.636612,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_wnd_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,15.475455,GW
+aeo2025,67,5-5,Midcontinent / East,ref2025,cap_gen_elep_NA_wnd_NA_mce_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,25.333357,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_NA_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,48.553761,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_NA_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,56.124058,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_NA_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,110.352577,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_cl_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,1.6664,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_cl_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_cl_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_cmc_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,16.764002,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_cmc_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,16.764002,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_cmc_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,16.764002,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_ctd_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,8.64513,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_ctd_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,15.79576,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_ctd_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,17.105881,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_diurn_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,0.0608,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_diurn_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,0.0608,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_diurn_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,3.680025,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_nup_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,5.3449,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_nup_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,5.3449,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_nup_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,3.9619,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_ong_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,6.5794,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_ong_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,3.9198,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_ong_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,3.0494,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_pst_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,0.03,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_pst_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,0.03,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_pst_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,0.03,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,9.463132,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,14.011703,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,cap_NA_elep_NA_rnwbsrc_NA_mcs_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,65.481003,GW
+aeo2025,62,5-6,Midcontinent / South,ref2025,emi_co2_elep_NA_NA_NA_mcs_millton,Electricity : Emissions : Carbon Dioxide,2030,63.093292,MMst
+aeo2025,62,5-6,Midcontinent / South,ref2025,emi_co2_elep_NA_NA_NA_mcs_millton,Electricity : Emissions : Carbon Dioxide,2035,48.266895,MMst
+aeo2025,62,5-6,Midcontinent / South,ref2025,emi_co2_elep_NA_NA_NA_mcs_millton,Electricity : Emissions : Carbon Dioxide,2040,28.740597,MMst
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_cl_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,2.877046,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_cl_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0036,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_cl_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_ng_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,132.815475,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_ng_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,108.747147,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_ng_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,64.004654,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_nuc_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,40.588211,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_nuc_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,40.58728,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_nuc_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,30.398363,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_pet_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.012209,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_pet_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.0,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_pet_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.0,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_reb_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,21.510319,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_reb_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,33.546474,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_reb_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,134.314209,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_teg_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,197.774673,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_teg_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,182.939911,BkWh
+aeo2025,62,5-6,Midcontinent / South,ref2025,gen_NA_elep_NA_teg_NA_mcs_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,227.870987,BkWh
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_geothm_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_geothm_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_geothm_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_hyd_cnv_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,0.6413,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_hyd_cnv_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,0.6413,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_hyd_cnv_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,0.6413,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_munwst_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.061446,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_munwst_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.102487,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_munwst_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.140937,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_ofw_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_ofw_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_ofw_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_slr_phtvl_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,8.518287,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_slr_phtvl_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,13.025817,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_slr_phtvl_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,53.786167,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_slr_therm_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_slr_therm_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_slr_therm_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_wbm_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.0576,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_wbm_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.0576,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_wbm_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.0576,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_wnd_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,0.1845,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_wnd_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,0.1845,GW
+aeo2025,67,5-6,Midcontinent / South,ref2025,cap_gen_elep_NA_wnd_NA_mcs_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,10.855,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_NA_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,41.251644,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_NA_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,42.382034,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_NA_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,49.693802,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_cl_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,0.0,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_cl_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_cl_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_cmc_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,12.779657,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_cmc_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,12.779657,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_cmc_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,12.779657,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_ctd_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,3.024201,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_ctd_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,3.823342,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_ctd_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,5.070654,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_diurn_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,1.7592,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_diurn_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,1.7592,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_diurn_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,1.7592,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_nup_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,3.326901,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_nup_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,3.326901,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_nup_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,3.326901,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_ong_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,4.0065,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_ong_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,3.1739,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_ong_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,3.1739,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_pst_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,1.8634,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_pst_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,1.8634,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_pst_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,1.8634,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_rnwbsrc_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,14.377926,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_rnwbsrc_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,15.443234,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_NA_elep_NA_rnwbsrc_NA_npccne_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,21.131819,GW
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,emi_co2_elep_NA_NA_NA_npccne_millton,Electricity : Emissions : Carbon Dioxide,2030,10.21756,MMst
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,emi_co2_elep_NA_NA_NA_npccne_millton,Electricity : Emissions : Carbon Dioxide,2035,11.548499,MMst
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,emi_co2_elep_NA_NA_NA_npccne_millton,Electricity : Emissions : Carbon Dioxide,2040,11.61074,MMst
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_cl_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,0.0,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_cl_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_cl_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_ng_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,23.039061,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_ng_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,25.572142,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_ng_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,24.865236,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_nuc_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,26.609776,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_nuc_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,26.61977,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_nuc_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,26.61977,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_pet_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.011952,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_pet_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.00854,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_pet_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.008066,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_reb_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,46.184799,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_reb_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,50.85474,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_reb_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,72.511864,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_teg_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,96.621902,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_teg_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,103.822868,BkWh
+aeo2025,62,5-7,Northeast Power Coordinating Council / New England,ref2025,gen_NA_elep_NA_teg_NA_npccne_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,124.821106,BkWh
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_geothm_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_geothm_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_geothm_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_hyd_cnv_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,1.926199,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_hyd_cnv_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,1.926199,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_hyd_cnv_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,1.926199,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_munwst_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.312728,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_munwst_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.314237,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_munwst_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.31565,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_ofw_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,6.4043,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_ofw_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,7.4743,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_ofw_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,8.5443,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_slr_phtvl_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,3.607898,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_slr_phtvl_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,3.607898,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_slr_phtvl_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,3.607897,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_slr_therm_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_slr_therm_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_slr_therm_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_wbm_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.5476,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_wbm_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.5476,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_wbm_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.5476,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_wnd_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,1.5792,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_wnd_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,1.573,GW
+aeo2025,67,5-7,Northeast Power Coordinating Council / New England,ref2025,cap_gen_elep_NA_wnd_NA_npccne_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,6.190172,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_NA_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,22.563936,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_NA_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,26.493937,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_NA_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,27.639404,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_cl_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_cl_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_cl_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_cmc_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,4.580501,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_cmc_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,4.5805,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_cmc_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,4.5805,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_ctd_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,4.4806,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_ctd_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,4.4806,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_ctd_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,5.573226,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_diurn_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,0.6351,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_diurn_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,0.6351,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_diurn_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,0.6351,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_nup_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_nup_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_nup_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_ong_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,5.5069,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_ong_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,5.5069,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_ong_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,5.5069,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_pst_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_pst_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_pst_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,0.0,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_rnwbsrc_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,7.303137,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_rnwbsrc_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,11.233136,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_NA_elep_NA_rnwbsrc_NA_nenycli_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,11.232934,GW
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,emi_co2_elep_NA_NA_NA_nenycli_millton,Electricity : Emissions : Carbon Dioxide,2030,13.335739,MMst
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,emi_co2_elep_NA_NA_NA_nenycli_millton,Electricity : Emissions : Carbon Dioxide,2035,8.401191,MMst
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,emi_co2_elep_NA_NA_NA_nenycli_millton,Electricity : Emissions : Carbon Dioxide,2040,8.256507,MMst
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_cl_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,0.0,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_cl_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_cl_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_ng_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,27.176954,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_ng_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,20.109426,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_ng_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,19.577866,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_nuc_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,0.0,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_nuc_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,0.0,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_nuc_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,0.0,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_pet_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.299459,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_pet_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.125579,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_pet_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.104649,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_reb_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,22.842825,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_reb_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,38.278542,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_reb_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,38.897774,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_teg_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,50.66066,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_teg_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,58.801136,BkWh
+aeo2025,62,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,gen_NA_elep_NA_teg_NA_nenycli_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,58.8423,BkWh
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_geothm_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_geothm_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_geothm_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_hyd_cnv_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_hyd_cnv_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_hyd_cnv_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_munwst_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.054,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_munwst_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.054,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_munwst_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.054,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_ofw_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,4.408,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_ofw_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,8.338,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_ofw_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,8.338,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_slr_phtvl_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,2.841137,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_slr_phtvl_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,2.841137,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_slr_phtvl_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,2.840935,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_slr_therm_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_slr_therm_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_slr_therm_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_wbm_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_wbm_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_wbm_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_wnd_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_wnd_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,0.0,GW
+aeo2025,67,5-8,Northeast Power Coordinating Council / New York City and Long Island,ref2025,cap_gen_elep_NA_wnd_NA_nenycli_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,0.0,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_NA_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2030,32.348095,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_NA_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2035,32.523872,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_NA_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Total Capacity,2040,32.556789,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_cl_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Coal,2030,0.0,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_cl_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Coal,2035,0.0,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_cl_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Coal,2040,0.0,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_cmc_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2030,5.3022,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_cmc_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2035,6.291441,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_cmc_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Combined Cycle,2040,6.291441,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_ctd_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2030,0.1248,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_ctd_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2035,0.1248,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_ctd_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Combustion Turbine/Diesel,2040,0.1248,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_diurn_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2030,5.880001,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_diurn_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2035,5.880001,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_diurn_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Diurnal Storage,2040,5.880001,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_nup_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2030,3.3046,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_nup_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2035,3.3046,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_nup_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Nuclear,2040,3.3046,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_ong_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2030,4.169801,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_ong_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2035,3.3628,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_ong_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Fossil Steam,2040,3.3628,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_pst_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2030,1.4051,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_pst_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2035,1.4051,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_pst_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Pumped Storage,2040,1.4051,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_rnwbsrc_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2030,12.161592,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_rnwbsrc_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2035,12.150866,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_NA_elep_NA_rnwbsrc_NA_npccupny_gw,Electricity : Electric Power Sector : Capacity : Renewable Sources,2040,12.170591,GW
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,emi_co2_elep_NA_NA_NA_npccupny_millton,Electricity : Emissions : Carbon Dioxide,2030,4.966817,MMst
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,emi_co2_elep_NA_NA_NA_npccupny_millton,Electricity : Emissions : Carbon Dioxide,2035,4.515886,MMst
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,emi_co2_elep_NA_NA_NA_npccupny_millton,Electricity : Emissions : Carbon Dioxide,2040,4.531713,MMst
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_cl_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2030,0.0,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_cl_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2035,0.0,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_cl_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Coal,2040,0.0,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_ng_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2030,14.951579,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_ng_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2035,20.263145,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_ng_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Natural Gas,2040,22.442654,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_nuc_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2030,27.461359,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_nuc_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2035,27.460875,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_nuc_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Nuclear,2040,27.460875,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_pet_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2030,0.015854,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_pet_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2035,0.007247,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_pet_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Petroleum,2040,0.006868,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_reb_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2030,45.873318,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_reb_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2035,45.908585,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_reb_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Renewable Sources,2040,46.063633,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_teg_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2030,87.810684,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_teg_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2035,92.921227,BkWh
+aeo2025,62,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,gen_NA_elep_NA_teg_NA_npccupny_blnkwh,Electricity : Electric Power Sector : Generation : Total Generation,2040,94.76255,BkWh
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_geothm_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2030,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_geothm_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2035,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_geothm_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Geothermal,2040,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_hyd_cnv_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2030,4.540102,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_hyd_cnv_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2035,4.540102,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_hyd_cnv_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Hydropower,2040,4.540102,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_munwst_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2030,0.108288,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_munwst_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2035,0.109062,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_munwst_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Municipal Waste,2040,0.109786,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_ofw_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2030,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_ofw_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2035,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_ofw_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Offshore Wind,2040,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_slr_phtvl_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2030,3.763001,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_slr_phtvl_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2035,3.763001,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_slr_phtvl_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Photovoltaic,2040,3.763001,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_slr_therm_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2030,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_slr_therm_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2035,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_slr_therm_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Solar Thermal,2040,0.0,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_wbm_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2030,0.055,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_wbm_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2035,0.055,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_wbm_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Wood and Other Biomass,2040,0.074,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_wnd_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2030,3.6952,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_wnd_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2035,3.6837,GW
+aeo2025,67,5-9,Northeast Power Coordinating Council / Upstate New York,ref2025,cap_gen_elep_NA_wnd_NA_npccupny_gw,Renewable Energy : Electric Power Sector : Generating Capacity : Onshore Wind,2040,3.6837,GW
