@@ -4233,3 +4233,34 @@ your branch when done.
     `git push` off a branch cut fresh at the pin, blob-verified after push.
     Rule 26 `[R-MECH-MATRIX]`: this lane tested no mechanism and **touched no
     matrix shard**.
+  - **⚡ POST-PIN, ONE LABELLED FOLLOW-UP MEASUREMENT at `1a8756b` (merge of
+    #4431), under the v14 sanctioned exception — three recorded states resolved
+    while the board was being written, two of them queue items this refresh had
+    just opened.** NOT re-pinned. **A 2026-08-31 director sitting ruled R-A /
+    R-B / R-C:** **R-A ARM Leg A's two mechanisms** (queue item 1) — ruled and
+    **NOT YET LANDED**, both fields still default `False` in `scenarios.py` at
+    `1a8756b` with no lane branch visible; **R-B "Joint charter"** (queue item
+    2) — *promote nothing yet*, A/B the dual-based signal object **together
+    with** the D11-R volume rule, kill-gates ex ante (#4430,
+    `docs/PRECOMMIT-c1-joint-wind-2026-08-31.md`, based on this board's own pin
+    and vindicating the not-additive caution: 8.87 % + 4.91 % naively sums to
+    ~13.8 % and the joint arm is the only untested combination); **R-C
+    re-verify before promote-or-archive** (queue item 7) — nyiso-162 (#4431)
+    ran it zero-solve on committed artifacts and **found NO candidate exists**,
+    the object that does scoring **identically to the live keeper on every
+    criterion, every year**. The one live lane merged (#4429), leaving **zero
+    open PRs** and two branches ahead (R-B's lane; new unmerged miso-191 work).
+    **Keepers, markers, freeze, registry, `results/regression-goldens/` and the
+    forecast seed all verified BYTE-UNMOVED `54ca19ae` → `1a8756b`**, so every
+    keeper-table, marker, holdout, stage-0 and forecast figure stands. **All
+    five gates re-run, exit 0**: audit_keepers PASS 0/0 · parity 58/93/0 ·
+    matrix 194+49+151 · staleness Δ 1 → 2 · bench 0 STALE — **and engine drift
+    0 → 20 of 20.** 🔴 **Finding 1 was CONFIRMED BY PREDICTION within the hour
+    and sharpened**: #4429's `76c3395` landed and every part now WARNs at one
+    engine commit — **6 → 0 → 20 across three consecutive readings with the
+    ERCOT/NYISO bench bytes never touched** — and the mechanism is worse than
+    stated, since that commit's **author** date is 2026-08-30 23:40 UTC while
+    its **committer** date is 2026-08-31 00:18 UTC, and the checker reads the
+    part's date with `%ad` (author) but filters engine commits with `--since`
+    (committer): a **date-kind mismatch layered on the day-granularity issue**,
+    tripping 38 minutes after the commit was authored.

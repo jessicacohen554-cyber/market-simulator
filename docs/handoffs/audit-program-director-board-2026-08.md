@@ -102,6 +102,71 @@ restored, audit row O7 closed, all five gates green — and the stage-0
 provenance problem changed shape rather than closing, in a window where the
 repo merged 67 PRs and this program merged seven of them.**
 
+**⚡ POST-PIN RESOLUTION — ONE labelled follow-up measurement at `1a8756b`
+(merge of #4431), taken under the v14 sanctioned exception because THREE of
+this board's records resolved while it was being written — including two owner
+queue items this very refresh had just opened.** The pin readings above are NOT
+re-pinned; this block is the second labelled state.
+
+**A 2026-08-31 DIRECTOR SITTING RULED R-A / R-B / R-C, and all three land on
+this board's own queue.** Read from the landed artifacts, not from a listing:
+
+- **R-A — ARM Leg A's two mechanisms** (queue item 1). Ruled, **and NOT YET
+  LANDED at this measurement**: `storage_entry_availability_gate` and
+  `storage_entry_cost_normalized_rank` both still read default `False` in
+  `scenarios.py` at `1a8756b`, and no R-A lane branch is visible. Recorded as
+  **ruled-not-executed**, which is the state a later reader needs.
+- **R-B — "Joint charter"** (queue item 2). *Promote nothing yet*; A/B the
+  dual-based signal object **together with** the D11-R volume rule, kill-gates
+  fixed ex ante (#4430, `docs/PRECOMMIT-c1-joint-wind-2026-08-31.md`, pushed
+  before any solve). **Its own arithmetic vindicates the caution this board
+  attached to item 2**: 8.87 % + 4.91 % *naively* sums to ~13.8 %, the two are
+  not additive by construction, and **the joint arm is the only untested
+  combination.** Its base sha is this board's pin, `54ca19ae`.
+- **R-C — re-verify before promote-or-archive** (queue item 7). nyiso-162
+  (#4431) ran it **zero-solve, committed artifacts only** (the Card-3 standing
+  rule's own pattern, one day old) and the answer dissolves the question:
+  **there is NO candidate** — the leg2 session produced a stop, not an object —
+  and the object that does exist **scores IDENTICALLY to the live keeper on
+  every criterion, every year**. Item 7's "promote-or-archive" framing was
+  answered by finding nothing to promote.
+
+**The one live lane this board records has MERGED** — capx D12-A as **#4429**
+(on its r2 branch). At `1a8756b`: **ZERO open PRs** (live `list_pull_requests`)
+and **TWO branches ahead**, both ancestry-tested —
+`claude/joint-wind-charter-ab-58rowa` (+1, R-B's lane) and
+`claude/miso-191-binning-aware-exit-8kloqx` (+2, **new unmerged work** on a
+lane this board correctly recorded as merged-and-deleted at the pin).
+
+**Every keeper shard, `calibration-complete.json`, `holdout-freeze.json`, the
+registry, `results/regression-goldens/` and the forecast seed are verified
+BYTE-UNMOVED `54ca19ae` → `1a8756b`**, so every keeper-table, marker, holdout,
+stage-0 and forecast figure on this board stands unchanged.
+
+**ALL FIVE GATES RE-RUN at `1a8756b`** (exit codes captured directly, unpiped):
+audit_keepers **PASS 0/0** · parity **exit 0, 58 / 93 / 0** · matrix **exit 0,
+194 + 49 + 151** · staleness **exit 0, Δ = 1 → 2** · bench **exit 0, 0 STALE —
+and engine drift 0 → 20 of 20 parts.**
+
+**🔴 THE BENCH FINDING WAS CONFIRMED BY PREDICTION, WITHIN THE HOUR — AND IT IS
+ONE NOTCH WORSE THAN STATED.** The rollup predicted the WARNs return "on the
+first engine commit dated 2026-08-31 or later". #4429's `76c3395` (which arms
+two ERCOT forecast defaults) landed, and **all twenty parts now WARN at one
+engine commit** — **6 → 0 → 20 across three consecutive readings, with the
+ERCOT and NYISO bench bytes never once touched.** The sharpening: `76c3395`'s
+**author date is 2026-08-30 23:40 UTC** while its **committer date is
+2026-08-31 00:18 UTC**, and the checker reads the bench part's date with `%ad`
+(**author**) but filters engine commits with `--since` (**committer**). So it
+is a **date-kind mismatch layered on the day-granularity issue**, and the
+trigger crossed the boundary **38 minutes after the commit was authored**.
+Restart-checklist item 12 stands as written and is now demonstrated rather than
+argued.
+
+**Nothing else changes.** F-1…F-10, the keeper table, the stage-0 table, the
+Watch list and the checklist are unaffected; **queue items 1, 2 and 7 are now
+RULED and are recorded here rather than rewritten above**, so the queue reads
+as it was served and this block reads as what happened next.
+
 ## What moved — v16 CYCLE (`69ae4dc7..54ca19ae`, "the decision-card cycle")
 
 **Read F-1…F-4 as one act.** They are the 2026-08-30 owner **decision-card**
