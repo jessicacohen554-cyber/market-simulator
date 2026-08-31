@@ -3,8 +3,8 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "271ad606c3fd",
-    "scored_at_date": "2026-08-31T03:19:28Z",
+    "scored_at_sha": "89dacc4c0343",
+    "scored_at_date": "2026-08-31T18:38:41Z",
     "cache_epoch": "a4b11ef4aaa1be35"
   },
   "tier": "t3",
@@ -16,7 +16,7 @@
     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
     "FC-4 crossover dispatch skill (T1-X) FAIL",
     "FC-5 external corridor SKIPPED (required, unscored)",
-    "FC-6 driver response SKIPPED (required, unscored)",
+    "FC-6 driver response FAIL",
     "FC-7 provenance & DOF FAIL"
   ],
   "caveats": [],
@@ -120,12 +120,30 @@
     "FC-6": {
       "label": "FC-6 driver response",
       "applicability": "required",
-      "status": "SKIPPED",
+      "status": "FAIL",
       "rows": [
         {
-          "row": "driver response",
-          "status": "SKIPPED",
-          "detail": "no committed driver-battery or paired-invariant output",
+          "row": "battery gate rows",
+          "status": "CAVEAT",
+          "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a (all-constant series [1.0, 1.0])', 'T1.6/T1.6b (all-constant series [1.0, 1.0])']",
+          "gating": true
+        },
+        {
+          "row": "paired P1",
+          "status": "FAIL",
+          "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 210.52 Mt vs high 320.84 Mt",
+          "gating": true
+        },
+        {
+          "row": "paired P2",
+          "status": "PASS",
+          "detail": "P2 merit-order sign: year 2050: all signs correct",
+          "gating": true
+        },
+        {
+          "row": "paired P3",
+          "status": "PASS",
+          "detail": "P3 cumulative builds moved 0.0% (base 39500 MW, pert 39500 MW)",
           "gating": true
         }
       ]
