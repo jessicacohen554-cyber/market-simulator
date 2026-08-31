@@ -10385,3 +10385,64 @@ ISO's files, and the mechanism matrix (no mechanism was tested).
   pre-registered and unfunded, an owner call.
 
 **Next number: caiso-227.**
+
+## caiso-227 (2026-08-31) — THE C3a-2025 ROOT-CAUSE ROUND + THE FUNDED PS WATER-STATE INTAKE: the 2025 DA-basis residual taken to hour × rung × driver grain — reality clears BELOW the cheapest available CC offer in 42.3 % of Sep–Dec-2025 lw-hours vs the model's 23.2 % (flat YoY), on a CC floor that rose +$2.34 lw on measured fuel (model YoY coupling to the CC-offer move +1.23×, reality −0.32×; Oct/Dec CC outage deepening −1.4/−1.3 GW measured) — and the walled hourly PS object has a PUBLIC BREACH, landed: Helms (FERC P-2735) FLA Appendix B1, hourly gen/pump/flows/reservoirs 2001-01-01..2022-09-30, intaken as `ps-water-state` through the full data contract. THE HONEST NULL HOLDS (no admissible lever of the 2025 size at this grain); NOT-YET stands; ZERO SOLVES
+
+- **NUMBERING NOTE (charter-directed):** `PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`
+  is caiso-226's FILED, UNEXECUTED design whose "227" label is historical.
+  THIS session is caiso-227; the OFO arm executes later under its own number.
+- Record: `results/calibration/FINDING-caiso227-c3a-rootcause-ps-intake-2026-08-31.md`
+  + probe `scripts/probes/_caiso227_da2025_rootcause.py` →
+  `_caiso227_da2025_rootcause.json` (§A–§H, committed bytes + the licensed
+  fleet-only recon reused unchanged from `_caiso202_marginal_rung.py`).
+- **Step 1 (root cause):** caiso-202's "standing CC-side supply-state
+  residual" lane attribution made concrete. §A: 2025 vs DA +3.57 (+10.1 %),
+  60 % Sep–Dec, Oct-2025 the worst month (+0.82). §B: the CC econ rung on
+  measured DAM bid multipliers sets 49 % of the DA-positive gap (unmatched
+  storage duals 22 % inherit its level). §C/§C2 (on the honest CEMS basis —
+  the raw 930 NG cell is corrupt for CISO from 2024-05): annual model gas
+  RIGHT (+193 MW mean), shape WRONG — Sep–Dec belly −762 MW, evening
+  +1,235 MW, belly hydro −453 MW (the caiso-140 water wedge), belly imports
+  +1.5 GW. §D–§F: the 2024→2025 growth is the measured autumn fuel rise
+  propagating ~1:1 through the CC rung (Sep–Dec Δcc_mc +3.47 → model +4.25,
+  DA actual −1.11) plus the measured Oct/Dec outage deepening; drivers
+  (demand/renewables) move in parallel — the divergence is price-formation.
+  §G/§H: the below-stack witness IS the root cause — the model cannot push
+  the margin under the gas stack as often as reality's committed/must-flow
+  supply does, and every 2025 escape escapes a higher floor. What would close
+  it: ~15–19 pp more below-stack lw-hours ≈ the caiso-140 2.3–2.6 GW wedge or
+  the caiso-223 sub-zonal grain — every instrument adjudicated R/unfunded/
+  declared-residual; nothing re-tested, nothing armed, no precommit filed.
+- **Step 2 (the FUNDED caiso-201 Q2(a) intake):** re-verified walls (EIA-930's
+  2024-H2 explicit PS columns exist and CISO files NULLS in them, live
+  2026-08-31; helmsrelicensing.com password-walled) — then the breach:
+  PG&E's PUBLIC Final License Application (eLibrary accession 20240418-5301)
+  carries Appendix B1 with the measured HOURLY Helms record, retrieved via
+  the eLibrary `File/DownloadP8File` web API. Landed through the full
+  contract: schema `ps-water-state.schema.yaml`, raw snapshot + sha manifest
+  + README (`data/raw/ps-water-state/`), fetch + registry package
+  (`scripts/lib/ps_water_state/`) + curation + `regenerate_clean` entry, 10
+  tmp-CLEAN_DIR tests. Verified: 190,632 gap-free hours (= 7,943 d × 24 h,
+  fixed standard clock); monthly net vs the independent EIA-923 plant-6100
+  record 0.94–0.97 in high-activity months (~0.90 annual — plant-records vs
+  net-of-station-service basis); fail-loud parsing surfaced and KEPT two
+  source facts (276 publisher-signed negative pumping-flow hours; 1,921 real
+  both-mode changeover hours). **Ceiling stated, not oversold**: caiso-186
+  §a.3 stands (most favourable C3a reach 62.1 % of 2024, **10.4 % of 2025**)
+  and the record ENDS 2022-09-30 — no direct 2023–2025 overlay exists from
+  this source, and fabricating one stays forbidden (rule 13). NOT consumed by
+  any mechanism; arming is a separately chartered session with its own
+  PRECOMMIT. `DATA NEEDED`: Helms 2022-10→present, Eastwood, the DWR 39.7 %
+  (CDEC AF-grain), the SQMD fleet split (owner-DECLINED CEII class).
+- **Matrix NOT touched** (no mechanism tested, no `ScenarioConfig` field —
+  caiso-225/226 precedent); keeper, shards, markers, freeze all UNTOUCHED;
+  no run registered (no solve ran — the caiso-201 rule-15/16 note precedent).
+  The caiso-222 §9 terminal rest stands, its record sharpened.
+- DO-NOT-REDO adds (FINDING §K): the probe carries §A–§H (re-run only against
+  a NEW keeper); the below-stack witness is the root-cause statement of
+  record; never quote raw 930 NG as CAISO measured gas post-2024-05; the PS
+  source archaeology is final; never treat/fabricate Helms coverage of
+  2023–2025; the Oct/Dec outage deepening is the identified instrument at
+  work, not an indictment.
+
+**Next number: caiso-228.**
