@@ -184,6 +184,25 @@ def model_retirements(ledgers: dict) -> pd.DataFrame:
                     "reason": r.get("reason", "economic"),
                 }
             )
+        # NEISO-RC-R R3(iii) (2026-08-31): a confirmed exit on a PLANT-BINNED
+        # fleet derates a surviving unit_id in place rather than dropping it —
+        # the ledger records that MW under ``confirmed_derates`` (evolve.py's
+        # step-0 recorder seam), and reading only ``retirements`` silently
+        # swallowed exactly those exits (harmless while every NEISO exit was
+        # economic; wrong the moment the R1 registry rows land on binned
+        # plants). A derate row and a retirement row never cover the same MW
+        # (partial-in-place vs whole-unit drop), so no double count; an absent
+        # key (pre-FFR-1A bundles) is backward-compatible.
+        for r in led.get("confirmed_derates", []) or []:
+            rows.append(
+                {
+                    "unit_id": r["unit_id"],
+                    "fuel": r["fuel"],
+                    "mw": float(r["derate_mw"]),
+                    "year": year,
+                    "reason": "confirmed",
+                }
+            )
     return pd.DataFrame(rows, columns=["unit_id", "fuel", "mw", "year", "reason"])
 
 
@@ -535,6 +554,21 @@ EXIT_DECODE_EVIDENCE = {
             "docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
         ),
     },
+    # NEISO-RC-R R3(i) (2026-08-31): fleet-basis facts measured per EIA-860
+    # vintage (the decode's ``absent_from_vintage_year``), so the exclusion is
+    # taken vintage-aware — a unit absent from the run's own vintage fleet is
+    # excluded whatever the fleet's binning, and a 2020-vintage run (which
+    # still carries e.g. Mystic 7) is untouched. Margin notes carried from the
+    # Phase-0 finding's committed S-4b ledger extraction record NO economic
+    # exclusion (every noted unit fails its bar — fail-closed, channel open).
+    "NEISO": {
+        "path": "docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json",
+        "citation": (
+            "NEISO-RC-R R3(i) per-vintage fleet-basis measurement — "
+            "docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method "
+            "header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md §6"
+        ),
+    },
 }
 
 # The exit decode's fleet-basis facts are read off the CAMPD per-plant bin sheet
@@ -632,11 +666,20 @@ def load_exit_decode(iso: str) -> dict[str, dict]:
             # Not margin-driven under the bar actually applied AND (where the
             # seam gives a second bar) under the physical one too.
             econ_excluded = (not tgt) and (not phys if isinstance(phys, bool) else True)
+        absent_vint = u.get("absent_from_vintage_year")
         out[str(uid)] = {
             "unit_id": str(uid),
             "name": u.get("name"),
             "mw": u.get("mw"),
             "in_fleet": in_fleet,
+            # Vintage-aware fleet fact (NEISO-RC-R R3(i)): the first EIA-860
+            # vintage whose OP-filtered fleet basis lacks the unit. When set,
+            # the fleet-absence exclusion applies iff the RUN's vintage year
+            # >= this value — replacing the CAMPD-bin-sheet applicability gate
+            # for evidence measured directly off the vintage sheets.
+            "absent_from_vintage_year": (
+                int(absent_vint) if absent_vint is not None else None
+            ),
             "fleet_note": bin_txt or None,
             "economic_excluded": econ_excluded,
             "economic_note": (
@@ -802,7 +845,15 @@ def classify_exit_reachability(
             and inst_date.date() <= cutoff  # the confirmed-exit information gate
         )
         econ_excluded = bool(econ_applies and ev.get("economic_excluded") is True)
-        not_in_fleet = bool(fleet_applies and ev.get("in_fleet") is False)
+        # Fleet-absence: vintage-aware evidence (absent_from_vintage_year —
+        # measured off the EIA-860 vintage sheets, applies iff the run's own
+        # vintage is at/after the absence; NEISO-RC-R R3(i)) takes precedence;
+        # otherwise the CAMPD-bin-sheet fact behind the use_campd_bins gate.
+        absent_vint = ev.get("absent_from_vintage_year")
+        if absent_vint is not None:
+            not_in_fleet = cutoff.year >= int(absent_vint)
+        else:
+            not_in_fleet = bool(fleet_applies and ev.get("in_fleet") is False)
 
         if inst is None:
             driver = (

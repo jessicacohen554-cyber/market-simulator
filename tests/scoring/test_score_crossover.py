@@ -747,3 +747,62 @@ def test_coal_grain_rescore_is_a_noop_without_coal(tmp_path, monkeypatch):
     assert row["forecast_err"] == pytest.approx(0.1013, abs=1e-6)
     assert out["metrics"][0]["forecast_abs_err_frac"] == pytest.approx(0.1013, abs=1e-6)
     assert out["rescore_co2_grain"]["per_year"]["2023"]["unsplit_coal_twh"] == 0.0
+
+
+def test_capacity_events_reports_dual_retirement_basis(monkeypatch, tmp_path):
+    """NEISO-RC-R R3(ii): the crossover reports the plain full-window
+    retirement basis AND the vintage-consistent basis side by side (D-9(ii)
+    pattern) — the default block is unchanged, the vintage block drops actual
+    exits at/before the run's fleet-vintage year, and the provenance block
+    records the excluded MW."""
+    ledgers = {
+        2024: {
+            "retirements": [
+                {"unit_id": "m1", "fuel": "coal", "mw": 400.0, "reason": "economic"}
+            ]
+        }
+    }
+    actuals = pd.DataFrame(
+        [
+            # Pre-vintage exit: physically ceased 2021, cannot exist in a
+            # 2023-vintage fleet.
+            {
+                "kind": "retirement",
+                "unit_id": "9_1",
+                "fuel": "coal",
+                "mw": 500.0,
+                "year": 2021,
+            },
+            {
+                "kind": "retirement",
+                "unit_id": "9_2",
+                "fuel": "coal",
+                "mw": 400.0,
+                "year": 2024,
+            },
+        ]
+    )
+    monkeypatch.setattr(X, "load_ledgers_for_run", lambda p: ledgers)
+    monkeypatch.setattr(X.CH, "load_actuals", lambda iso: actuals)
+    monkeypatch.setattr(X.CH, "model_co2_by_year", lambda p: {2024: 1.0})
+    monkeypatch.setattr(X, "crossover_actual_co2", lambda iso, years: {2024: 2.0})
+    monkeypatch.setattr(
+        X.CH,
+        "load_solved_scenario_config",
+        lambda b: {"eia860_vintage_year": 2023},
+    )
+    monkeypatch.setattr(X.CH, "load_solved_config", lambda b: None)
+    out = X.score_capacity_events(tmp_path, "NEISO", tmp_path)
+
+    # Default basis unchanged: full-window target 900 MW, model 400 -> -55.6%.
+    assert out["retirements"]["total_gw"]["actual"] == pytest.approx(0.9)
+    assert out["retirements"]["total_gw"]["err_frac"] == pytest.approx(-0.5556, abs=1e-3)
+    # Vintage basis: the 2021 exit leaves the target -> 400 vs 400, exact.
+    vint = out["retirements_vintage_basis"]
+    assert vint["total_gw"]["actual"] == pytest.approx(0.4)
+    assert vint["total_gw"]["err_frac"] == pytest.approx(0.0)
+    basis = out["retirement_target_basis"]
+    assert basis["vintage_year"] == 2023
+    assert basis["excluded_pre_vintage_mw"] == pytest.approx(500.0)
+    assert basis["excluded_pre_vintage_rows"] == 1
+    assert "side" in basis["decision"].lower() or "D-9(ii)" in basis["decision"]

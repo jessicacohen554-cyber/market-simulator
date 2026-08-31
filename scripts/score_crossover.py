@@ -840,6 +840,50 @@ def score_capacity_events(
         solved_config=solved,
     )
     ret = CH.score_retirements(mret, actuals, reach)
+
+    # NEISO-RC-R R3(ii) (2026-08-31; FINDING-capx-neiso-rc-phase0 §2.1/§6):
+    # the plain-hindcast retirement target is the FULL actuals window
+    # (2021-2025), which is coherent for a vintage-2020 hindcast but
+    # basis-misaligned for a crossover — a unit that physically ceased at or
+    # before the run's fleet-vintage year does not exist in the run's fleet
+    # and NO channel can exit it. Reported SIDE BY SIDE per the signed
+    # D-9(ii) additions pattern: the default ``retirements`` block above is
+    # NOT replaced (no committed verdict re-bases silently); this block scores
+    # the SAME model events against the vintage-consistent target (actual
+    # retirement rows with physical-cessation year > the vintage year), with
+    # reachability re-classified on that target.
+    vintage_year = CH.vintage_cutoff_of(None, solved).year
+    is_ret = actuals["kind"] == "retirement"
+    act_vint = actuals[~is_ret | (actuals["year"] > vintage_year)]
+    excluded_ret = actuals[is_ret & (actuals["year"] <= vintage_year)]
+    reach_vint = CH.classify_exit_reachability(
+        iso,
+        act_vint,
+        vintage_cutoff=CH.vintage_cutoff_of(None, solved),
+        solved_config=solved,
+    )
+    ret_vint = CH.score_retirements(mret, act_vint, reach_vint)
+    ret_basis = {
+        "decision": (
+            "NEISO-RC-R R3(ii), 2026-08-31 — dual-basis reporting per the "
+            "D-9(ii) additions pattern; executing "
+            "FINDING-capx-neiso-rc-phase0-2026-08-30.md §6 R3(ii)"
+        ),
+        "default_basis": (
+            "full-window actuals (the plain-hindcast target; kept as the "
+            "'retirements' block, unchanged)"
+        ),
+        "vintage_basis": (
+            f"actual retirement rows with physical-cessation year > "
+            f"{vintage_year} (the run's EIA-860 fleet-vintage year: an exit at "
+            f"or before it pre-dates the fleet snapshot and is unreachable by "
+            f"construction)"
+        ),
+        "vintage_year": vintage_year,
+        "excluded_pre_vintage_mw": round(float(excluded_ret["mw"].sum()), 1),
+        "excluded_pre_vintage_rows": int(len(excluded_ret)),
+    }
+
     add = CH.score_additions(madd, actuals, basis=CH.ADDITIONS_BASIS_DECISION)
     add_cod = CH.score_additions(madd_cod, actuals, basis=CH.ADDITIONS_BASIS_COD)
     add_basis = CH.additions_basis_record(
@@ -853,6 +897,8 @@ def score_capacity_events(
     actual_co2 = {str(k): v for k, v in crossover_actual_co2(iso, SCORED_YEARS).items()}
     return {
         "retirements": ret,
+        "retirements_vintage_basis": ret_vint,
+        "retirement_target_basis": ret_basis,
         "additions": add,
         "additions_cod_basis": add_cod,
         "additions_basis": add_basis,
@@ -1222,6 +1268,18 @@ def write_report(score: dict, report_path: Path) -> None:
             f"| unit recall >300MW | {rr['n_big_actual']} units | {rr['matched']} matched | "
             f"{'n/a' if rr.get('n_a') else _fmt(rr['recall'], '.0%')} | {rr['band']} |"
         )
+        # NEISO-RC-R R3(ii): the vintage-consistent retirement basis, side by
+        # side with the plain full-window row above (never replacing it).
+        vb = score.get("retirements_vintage_basis")
+        tb = score.get("retirement_target_basis") or {}
+        if isinstance(vb, dict) and vb.get("total_gw"):
+            vtg = vb["total_gw"]
+            L.append(
+                f"| thermal GW retired (vintage-consistent target, exits > "
+                f"{tb.get('vintage_year', '?')}) | {vtg['actual']} | "
+                f"{vtg['model']} | {_fmt(vtg['err_frac'], '+.0%')} | "
+                f"{vtg['band']} | "
+            )
         L.append(
             f"| total additions | — | {score['additions']['model_total_gw']} GW | "
             f"(actual {score['additions']['actual_total_gw']} GW) | — |"
