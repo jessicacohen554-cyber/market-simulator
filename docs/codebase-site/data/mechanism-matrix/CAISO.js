@@ -473,3 +473,44 @@ window.MECH_MATRIX_SHARDS.CAISO = {
  * results/calibration/FINDING-caiso205-adaptive-ab-2026-08-19.md,
  * results/calibration/caiso205_gates.json, docs/calibration-log/caiso.md.
  */
+
+/* caiso-228 (2026-08-31) — THE SoCalGas OFO GAS-DELIVERABILITY ARM DIES AT
+ * GATE D1 WITH NO SOLVE. NO CELL MINTED ANYWHERE, deliberately: no
+ * ScenarioConfig field was added, so rule 26(c) owes no base row and no
+ * six-shard cell line, and duty (b) attaches to a session that TESTS a
+ * mechanism — this session adjudicated a pre-registered DESIGN ex ante and
+ * never built one. Minting a row for a mechanism that does not exist would
+ * put a phantom field in every ISO's column (the xiso-3 "no cell minted"
+ * precedent). Executing PRECOMMIT-caiso227-ofo-arm-2026-08-31.md (the "227"
+ * label is historical; caiso-228 is the session), trigger definition frozen
+ * ex ante and UNCHANGED by anything measured. D0 (evidence only, coverage
+ * may not revise the trigger): the frozen low-OFO trigger covers 13/47,
+ * 22/35, 3/8 measured RT tail hours (2023's 13 h is BELOW its own 24 h C3c
+ * requirement; 2024's 63 % rests on the single day 2024-01-15 = 19 h), and
+ * fires on 599 hours of 2025 — the caiso-226 §5 G2 exposure confirmed, not
+ * inherited. D1 KILL: the tariff-identified derate (|tolerance_pct| x
+ * measured SP15 CAMPD burn at the fleet's own measured heat rate, zero free
+ * parameters) is 5-250 MW day-averaged and <=997.5/958.7/684.2 MW even
+ * assuming the whole daily imbalance allowance falls in a 6 h block — 7.9 %
+ * / 7.5 % / 3.2 % of caiso-131 §5's 12,600/12,780/21,212 MW (lambda,$200]
+ * band. AND THE KILL IS SIZE-INDEPENDENT: the band's import+hydro limb
+ * (3,411/4,431/10,365 MW) is delivered across the WECC seam and survives a
+ * gas-side derate of ANY magnitude, so lambda lands back on an import
+ * tranche <=$200 — generalising caiso-131 §5 from "the band is too deep" to
+ * "the band's residual limb is not gas at all" (caiso-129 §3(a)
+ * scale-invariance at limb grain). The LOLP-overlay path closes with it:
+ * even at the full SP15 gas ceiling the year's TIGHTEST hour sits 2.69-3.00
+ * sigma above MCL. CAISO-SCOPED (rule 25): it rests on CAISO's own band
+ * composition and transfers to no other ISO; a northeast pipeline-constraint
+ * analogue is untouched and enters its own shard as U. NO LP RUN, no
+ * registration (no run exists), keeper UNCHANGED at
+ * 2026-08-26-caiso-220-c1-crosswalk, markers/freeze untouched, C3c stays the
+ * single ledgered caveat. caiso-131 A3 ANSWERED NEGATIVELY AND CONCLUSIVELY;
+ * the gas-ofo-events datatype stays intaken, admissible and UNCONSUMED.
+ * Records: results/calibration/FINDING-caiso228-ofo-arm-2026-08-31.md,
+ * results/calibration/_caiso228_d0_coverage.json,
+ * results/calibration/_caiso228_d1_derate.json,
+ * scripts/probes/caiso228_ofo_d0_coverage.py,
+ * scripts/probes/caiso228_ofo_d1_derate.py,
+ * docs/calibration-log/caiso.md, docs/mechanism-testing-matrix.md §5.2.
+ */
