@@ -12828,3 +12828,64 @@ push integrity per rule 27 (blob-verify on every ≥300-line pushed file);
 no workflows, no CI solves.
 
 **Next shorthand: ercot-246** (ercot-199 remains unclaimed)
+
+## ercot-246 — 2026-08-31 — OWNER RULING EXECUTED (governance-records, ZERO-SOLVE): the ISO-LEVEL determination of the two-config keeper is the WORST config determination over the DESIGNATED spans — both configs read CALIBRATED on their designated spans, so **ERCOT reads CALIBRATED** (lone ledgered C3c ×2 on the forward span); the forward keeper's registered 3-year NOT-YET stays published at full magnitude, no registered artifact is touched, and NO complete/frontier marker is declared
+
+**The ruling (owner, 2026-08-31, this session, following the ercot-245
+census wrap-up).** Asked why ERCOT read NOT-YET — verbatim: *"Ok why is it
+not yet? The keeper is supposed to be a combined bundle of 2023 config that
+performs best with 2024-2025 config that performs best… pretty sure it's
+calibrated based on those params"* — and ruled, at the recommended option
+of the decision card put in-session: **a partitioned keeper's ISO-level
+determination = the worst config determination over designated spans.**
+The owner's reading of the record was correct on the merits: no criterion
+fails on any designated span (2023 carve-out `2026-08-25-236-swcap-clip-k33`
+CALIBRATED zero caveats; forward `2026-08-25-234-eastex-identity` on
+{2024, 2025} CALIBRATED with the lone ledgered C3c ×2, non-downgrading
+under rubric v3.3). The NOT-YET the primary field carried was the
+ercot-238 status-part convention — the forward config's registered 3-year
+record, whose only failures are C3a-2023/C3b-2023, the exact year the
+carve-out is designated to cover — not a live scoring miss.
+
+**Execution (all committed artifacts read-only; no LP, no re-registration).**
+(1) `scripts/build_status.py` `build_part`: for a partitioned ISO the
+primary determination is now promoted to the worst config determination
+over designated spans (the same conservative ordering the status page's
+partition accent already used), with `registered_determination` /
+`registered_reasons` preserving the forward keeper's full-span read, the
+headline `reasons` set to the union of the configs' span reasons (the C3c
+ledger line stays named on the determination basis), and a
+`determination_basis` provenance string citing this ruling. Supersedes the
+ercot-238 "primary verdict stays the registered full-span determination"
+convention — the ruling moves the HEADLINE, never the magnitudes: every
+criterion record keeps reporting its own number, and the per-config
+`registered_determination` (NOT-YET, C3a-2023 −39.7 % / C3b-2023 0.730)
+renders alongside as before. (2) `frontend/data/backcast/keepers/ERCOT.json`
+`config_partition` gains `iso_determination: CALIBRATED` +
+`iso_determination_ruling` (the ruling verbatim + scope). (3)
+`frontend/data/backcast/status/ERCOT.js` rebuilt (`build_status.py --iso
+ERCOT`): primary determination **CALIBRATED**, `registered_determination`
+NOT-YET, partition block carries both. No renderer change needed — the
+page's partition path already showed per-config badges and the
+worst-over-spans accent; the data layer now agrees with it.
+
+**Verified:** `audit_keepers.py` full PASS (0 failures, 0 warnings);
+`check_mechanism_matrix.py` clean (keeper stamps + §5.1 headers match);
+`build_status.py --check` in sync for all 6 ISOs — the other five parts
+byte-unchanged (the promotion branch fires only under a
+`config_partition`); calibration-keeper-auditor run on the lane.
+
+**What this ruling does NOT do.** It is NOT a `complete`/frontier marker
+declaration: ERCOT still holds no rule-22 marker, the validation ladder
+(2020–2022) stays closed, and the holdout freeze is untouched. The
+registered records of both runs stand exactly as registered (the scorer
+still refuses `--write-metrics --years`, and a span verdict still never
+overwrites a bundle's `metrics.json`). The standing blockers on a marker
+declaration remain as briefed in-session: the marker-on-NOT-YET-keeper
+uniform precedent (Q5 re-ruling 2026-08-30) would need the owner to
+extend the marker to the partition object, and the Q6 HOLD (revisit when
+the lane goes quiet — now satisfied by the ercot-239→245 arc's closure)
+remains the owner's to re-open. Zero solves; reads ⊂ {2023, 2024, 2025};
+ERCOT surfaces only (rule 25); push integrity per rule 27.
+
+**Next shorthand: ercot-247** (ercot-199 remains unclaimed)
