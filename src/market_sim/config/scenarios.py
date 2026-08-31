@@ -1552,8 +1552,34 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by the T1-H capacity-entry Phase-1 lane WITH the fields, in the
     # same commit as their _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119
     # discipline). Shared fields — very end, per HOUSE-3.
-    "storage_entry_availability_gate": "False",
-    "storage_entry_cost_normalized_rank": "False",
+    #
+    # DECLARED FLIP "False" -> "True", owner ruling R-A of the 2026-08-31
+    # director sitting ("Arm both"), executed by the T1-H arming lane. UNLIKE
+    # the D-3a net-CONE flip above this one is **BEHAVIORAL**, so a cache-epoch
+    # entry IS owed and is written: see ``results/cache.py``, epoch 2026-08-31.
+    # Two measured consequences, neither assumed (both re-measurable with
+    # ``ScenarioConfig().cache_key()`` / ``ScenarioConfig(mode="backcast")``):
+    #
+    #   * FORECAST — the classic same-key collision. The default key is
+    #     ``603c2498bf71d21d`` on BOTH sides of the flip, so an armed default
+    #     run hashes identically to the pre-arm unarmed bundle it supersedes
+    #     (concretely: the A/B's own control arm). Purge before quoting.
+    #   * BACKCAST — the key DOES move (``35b6dc12f97968f1`` ->
+    #     ``e027bc248c93c835`` on the bare backcast config), because the
+    #     ``__post_init__`` coercion pins both fields OFF in a backcast and OFF
+    #     is now NON-default, so both fields re-enter the hash. Behaviour is
+    #     unchanged there by construction (the coercion is what guarantees it);
+    #     only the bundle path moves. This is the first flip where a coerced
+    #     field was also cache-optional, and it is why the coercion's own
+    #     byte-stability comment is corrected in place at that site.
+    #
+    # Unlike ``miso_clean_tier_rows`` above, this line MUST follow the field:
+    # there the arming rides MISO's ``default_scenario_overrides`` and the
+    # FIELD default stays False; here the owner flipped the field default
+    # itself, so the declaration tracks it (check 3 compares this entry against
+    # the live default and fails on any drift).
+    "storage_entry_availability_gate": "True",
+    "storage_entry_cost_normalized_rank": "True",
 }
 
 
@@ -4322,7 +4348,15 @@ class ScenarioConfig:
     # arms it as the ERCOT forecast default (owner ruling Q15, 2026-08-30,
     # with entry_margin_exhaustion as one unit — the D12-A citation block in
     # iso_configs.py; rule 25: no other ISO).
-    storage_entry_availability_gate: bool = False  # GATED default-OFF (D-2
+    storage_entry_availability_gate: bool = True  # GATED default-ON since the
+    # owner ruling R-A of the 2026-08-31 director sitting ("Arm both"), on the
+    # A/B record docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md §4: both
+    # kill-gates PASS (K1 no-fire — every addition-band |err| delta 0.0000;
+    # K2 no-fire — the storage mix differs in every row), CO2 -0.49/-0.52/+0.34
+    # Mt across 2023-2025, and zero new DOF. Executed by the T1-H arming lane;
+    # see the flip's cache-epoch entry in results/cache.py (the backcast key
+    # DOES move — measured, not assumed; the coercion note below is corrected
+    # there). Shipped default-OFF from #4386 through the A/B. (D-2
     # storage availability-year gate; charter
     # docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A, defect
     # register docs/FINDING-entry-screen-t1h-2026-08.md D-2/L-3, census
@@ -4348,11 +4382,20 @@ class ScenarioConfig:
     # band WORSE (the −63.5% band can only fall further) — it is proposed
     # because the model must not build technologies that do not exist, never
     # on the residual (rule 1 [R-STRUCT]); the paired D-3 rank repair below
-    # is where the li-ion mix returns. Forecast machinery only (a backcast
-    # runs no capacity evolution); coerced off in a plain backcast for
-    # cache-key byte-stability. Default off is byte-identical (the ungated
-    # helper returns the full STORAGE_TECHS pool in registry order).
-    storage_entry_cost_normalized_rank: bool = False  # GATED default-OFF
+    # is where the li-ion mix returns. Forecast machinery only (the production
+    # backcast lane runs no capacity evolution); coerced off in a plain
+    # backcast to pin backcast BEHAVIOUR — as of the 2026-08-31 arming that
+    # coercion no longer buys cache-key byte-stability there, see the
+    # __post_init__ site and the cache-epoch entry. An explicit disarm is
+    # byte-identical to the pre-arm default (the ungated helper returns the
+    # full STORAGE_TECHS pool in registry order).
+    storage_entry_cost_normalized_rank: bool = True  # GATED default-ON since
+    # the owner ruling R-A of the 2026-08-31 director sitting ("Arm both") —
+    # same record, same executor and same cache-epoch entry as
+    # storage_entry_availability_gate above; the two are armed as ONE posture
+    # (the D-2 gate alone makes the volume band worse by construction, and this
+    # rank repair is where the li-ion mix returns, so neither is armed alone).
+    # Shipped default-OFF from #4386 through the A/B.
     # (D-3 cost-normalized storage tech selection; same charter/defect
     # register as storage_entry_availability_gate above, Phase-0 replay
     # docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §3). The storage
@@ -4375,8 +4418,11 @@ class ScenarioConfig:
     # 1.6-hour-class technology ERCOT actually built — and the
     # cost-normalized pick is invariant to which li-ion durations the gate
     # admits, where the absolute metric is not. Forecast machinery only;
-    # coerced off in a plain backcast for cache-key byte-stability. Default
-    # off is byte-identical (the ungated score IS the margin).
+    # coerced off in a plain backcast to pin backcast BEHAVIOUR (as of the
+    # 2026-08-31 arming that coercion no longer buys cache-key byte-stability
+    # there — see the __post_init__ site and the cache-epoch entry). An
+    # explicit disarm is byte-identical to the pre-arm default (the ungated
+    # score IS the margin).
     vre_procurement_additions_enabled: bool = False  # GATED default-OFF
     # (FFR-5E, owner decision D-18(a), sitting Addendum S.2/S.5 signed
     # 2026-08-05; design docs/handoffs/ffr-5b-procurement-channel-design-
@@ -13717,11 +13763,28 @@ class ScenarioConfig:
             # forecast arming.
             self.entry_forward_reserve_leg = False
             # The two storage-entry-screen repairs (D-2 availability gate,
-            # D-3 cost-normalized rank) touch only apply_storage_new_entry —
-            # screens-only forecast machinery a backcast never calls (a
-            # backcast runs no capacity evolution) — so they coerce off for
-            # the same cache-key byte-stability rationale: a backcast
-            # inheriting a forecast arming stays on its existing key.
+            # D-3 cost-normalized rank) touch only apply_storage_new_entry, so
+            # coercing them off pins a backcast's BEHAVIOUR to the pre-arm
+            # path whatever the field default is — which is exactly why the
+            # coercion stays load-bearing after the 2026-08-31 R-A arming and
+            # must not be removed: the runner's storage-entry call site
+            # (runner.py, the ``prior_results is not None`` branch) is reached
+            # on year 2+ of ANY multi-year run, so a backcast inheriting the
+            # armed default would otherwise run the armed screen.
+            #
+            # CORRECTED 2026-08-31 (measured, R-A arming): this block used to
+            # claim it also kept "a backcast inheriting a forecast arming on
+            # its existing key". That was true only while the field default was
+            # False. Both fields are ``_CACHE_KEY_OPTIONAL_FIELDS`` members, and
+            # cache_key() drops such a field only when it equals the LIVE bare
+            # default (now True) — so the coerced False is now NON-default and
+            # both fields RE-ENTER the hash: the bare backcast key moves
+            # 35b6dc12f97968f1 -> e027bc248c93c835. Byte-stability of a
+            # backcast's cache KEY is therefore not available here; what the
+            # coercion still guarantees, and all it was ever needed for, is
+            # byte-identical backcast BEHAVIOUR and run_config.json (both
+            # fields serialize False before and after). Declared in the
+            # cache-epoch ledger (results/cache.py, epoch 2026-08-31).
             self.storage_entry_availability_gate = False
             self.storage_entry_cost_normalized_rank = False
 

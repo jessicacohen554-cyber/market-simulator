@@ -46,6 +46,57 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-31 — owner ruling R-A, the T1-H storage-entry Leg A arming
+(every ISO's forecast lane).** ``ScenarioConfig.storage_entry_availability_gate``
+and ``ScenarioConfig.storage_entry_cost_normalized_rank`` flip default
+``False`` -> ``True`` (director sitting 2026-08-31, "Arm both", on the A/B
+record ``docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md`` §4: both
+kill-gates PASS, zero new DOF). The armed storage entry screen admits a
+technology only at/after its measured first-US-operating year and ranks
+clearing technologies per unit capital cost, so the storage BUILD MIX differs
+— **behavioral in every forecast year with a storage-entry decision**.
+
+**FORECAST: NO KEY MOVES, AND THAT IS THE HAZARD.** Both fields are
+``_CACHE_KEY_OPTIONAL_FIELDS`` members, so ``cache_key()`` drops them at
+whichever value is the LIVE default — ``cache_key(ScenarioConfig())`` is
+``603c2498bf71d21d`` on both sides of the flip, measured this session. A
+pre-flip UNARMED bundle and a post-flip ARMED config are therefore the same
+key, and the armed run will silently serve the unarmed bundle. This is the
+D-1/D-2 / FFR-3A collision in its pure form — the recurrence that epoch's
+closing note predicted ("it will silently recur on the next default flip").
+The inverse still holds and stays useful: an EXPLICIT
+``storage_entry_availability_gate=False`` is now non-default and hashes
+distinctly, so disarmed control arms remain separable.
+
+**INVALIDATED — purge or re-solve before quoting:** any ``results/<ISO>/<key>/``
+FORECAST-lane bundle solved before this epoch at the shipped (unarmed) default
+whose horizon reaches a storage-entry decision year. Concretely and by
+construction, the A/B's own control arm
+(``ercot-2021-2025-realized-t1h-capentry-control``) is such a bundle: it solved
+at the bare default, so its key is exactly the key an armed default run now
+computes.
+
+**NOT invalidated:** the A/B's REPAIR arm
+(``ercot-2021-2025-realized-t1h-capentry-repair``) — it solved with both fields
+passed EXPLICITLY, which was non-default at the time and hashed distinctly, so
+it sits at its own key and IS the armed posture's registered evidence (no
+re-solve is owed for the arming; a T1-H refresh re-baseline is the forecast
+program's charter, not this lane's). Nor is any committed dashboard artifact:
+sidecars and bundles are files, not cache lookups.
+
+**BACKCAST: the key MOVES, and behaviour does not.** Unlike every prior flip in
+this ledger, these two fields are ALSO coerced off in ``__post_init__`` when
+``mode == "backcast"``. Coerced ``False`` is now NON-default, so both fields
+re-enter the hash and every backcast key shifts (bare backcast config
+``35b6dc12f97968f1`` -> ``e027bc248c93c835``, measured). The coercion is
+load-bearing and stays: the runner reaches the storage-entry screen on year 2+
+of any multi-year run, so without it a multi-year backcast would inherit the
+armed screen. Consequence is a one-time cache MISS per backcast config, never a
+wrong answer — backcast dispatch, scores and ``run_config.json`` are
+byte-identical across the flip (both fields serialize ``False`` either side).
+No backcast keeper, sidecar or determination is affected; nothing needs
+re-scoring.
+
 **Epoch 2026-08-15 — nyiso-136 collapse of the NYISO market-solar in-service
 DATE basis gate to unconditional (NYISO only, both lanes).** The nyiso-133 gate
 ``ScenarioConfig.nyiso_solar_registry_cod_dates`` is DELETED (rule 26
