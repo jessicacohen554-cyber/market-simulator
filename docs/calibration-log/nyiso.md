@@ -9414,3 +9414,60 @@ months, the rest being gitignored/regenerable. Probe:
 `results/calibration/_nyiso169_congestion_gradient_anatomy.json`, **committed at
 `bccf58f4` before it was run** so its decision rule is verifiably
 pre-registered.
+
+## 2026-09-01 — nyiso-169b ZERO SOLVE: the CC_CHP over-run is a low-end dynamics object, NOT the duct-burner band; CT_PEAKER / ST_GAS / hydro measured alongside
+
+Diagnostic addendum to nyiso-169, answering a raised proposal — that CC_CHP's
+duct-burner (`peak`) offer band is priced too low, letting the class over-run at
+high capacity factor. **FALSIFIED, unanimously across 2023–2025.** Keeper
+`2026-08-30-nyiso-159-loss-surface` and its NOT-YET determination unchanged; no
+LP ran, so rule 15 registers nothing. Probe:
+`scripts/probes/nyiso169b_gas_class_dispatch_anatomy.py` →
+`results/calibration/_nyiso169b_gas_class_dispatch_anatomy.json`.
+
+**The test.** A too-cheap peak band can bid a class in only where that band is
+marginal — the **top** of its own duration curve. The over-run is monotonically
+at the **bottom**: 2025 top-1 % **−3.3 %** (model BELOW measured) rising to
+**+37.4 %** in the bottom quartile; 2023 reads **−14.9 %** at the top. Measured
+series = CAMPD combined-cycle units at EIA-860 CHP plants (the model's own CHP
+determination), level-anchored to the committed benchmark so only shape is
+compared.
+
+**Recorded against the adjudication, because the proposal names a real soft spot
+even though it is not this signature's carrier.** NYISO's registered `peak` 2.25
+is an F-class **physical** constant with **no NYISO measurement behind it** —
+`nyiso_campd_marginal_hr_summary.csv` carries committed / econ_low / econ_high
+columns only, **no peak column** — and because the keeper arms `gas_offer_margin`
+with `phys_peak == peak` the band earns **exactly zero markup** at runtime.
+
+**What the signature actually names.** A low-end dynamics object: model CC_CHP
+p05 **869 / 892 / 817 MW** vs measured **531 / 732 / 648** (+63.6 / +21.8 /
++26.1 %), p25 **+26 / +38 / +47 %** — while at p01 the model drops to near zero
+in **96 hours of 2025** where the measured fleet **never falls below ~280 MW and
+is never off**. Both directions are wrong: the model treats CC_CHP as freely
+dispatchable where reality is a steam-host-following resource with a hard floor.
+Successor candidates: the CHP steam-host floor, `chp_layup_duty_curve`, class
+min-gen.
+
+**The frame the other objects belong in.** Total NYISO gas volume is right to
+~1 % while the split inside it is not — 2025 TWh vs benchmark: CC_CHP **+2.77**,
+CC_REGULAR **+2.15**, ST_CHP **+0.69** against CT_PEAKER **−1.82**, ST_GAS
+**−3.92**, CT_CHP **−0.55**. A within-gas **merit-order** object.
+
+**Also measured.** CT_PEAKER **−81.5 / −86.2 / −63.7 %** — a year-round deficit,
+**NOT winter-specific**: in 2025 it is present in eleven months of twelve, worst
+in **May (−93 %)**, mildest in summer, and **December flips to +94 %**. ST_GAS
+**+40.9 / −6.0 / −28.6 %**, the 2025 deficit worst in **October** with a genuine
+cold-season lean. Hydro volume matched (**−0.2 %** in 2025) with hourly
+**r = 0.677 / 0.766 / 0.715** and model dispersion above measured in every year —
+a shape object, and the hour-of-day swing is close (2025: 1,774 vs 1,833 MW).
+
+**Why C1 passes anyway, stated so it is not mistaken for a clean bill.** The
+criterion floors its band at 3 % of total generation, so a −64 % relative miss on
+a 2.9 TWh class is only −1.8 TWh absolute. **The misses are real; the gate does
+not charge for them at this size.**
+
+**Rule 28 (b).** `offer_curve_by_group` stays **`K`**, annotated with the
+falsification and the un-grounded-`peak` record; **no verdict moves** and no band
+value was changed. Guard passes (`check_mechanism_matrix.py` exit 0), shard
+passes `node --check`. Rule 22: every year read is 2023/2024/2025.
