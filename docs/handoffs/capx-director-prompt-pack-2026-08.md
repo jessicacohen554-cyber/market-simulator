@@ -2963,7 +2963,7 @@ a repair-lane charter recommendation, or the D28 handoff), and the honest statem
 the PJM-primary scope could not see.
 ```
 
-## D26-S — the FC-6 arm solves + re-score (r#26; executes the D26 checkpoint's committed runbook)
+## D26-S — the FC-6 arm solves + re-score (r#26) — **RETIRED UNRUN: D26's own session completed the runbook (PR #4522, P1 FAIL→PASS, FC-6 FAIL→CAVEAT) before this was dispatched; historical record, do not run**
 
 ```
 You are the D26-S session of the capacity-expansion track — the SOLVE HALF of lane D26, whose
@@ -3147,4 +3147,178 @@ cleared-vs-qualified reconciliation, the accreditation adjudication, each identi
 with its published source, the filed intake ask if one is needed, and the explicit line the
 golden re-solve card is waiting for: does the position repair change what a second campaign
 would measure?
+```
+
+## T3-NEISO-GOLDEN-2 — the SECOND §2.1b campaign (r#26 amendment; owner ruling Q25)
+
+```
+You are the T3-NEISO-GOLDEN-2 session — the second §2.1b full-horizon campaign in program
+history, authorized by owner ruling Q25 (capx ledger §3, 2026-09-01). The standing golden
+records the PRE-R-A unarmed storage-entry posture and its headline is ZERO storage entry in
+25 years; ruling R-A armed exactly the storage-entry mechanisms, and D25 measured
+zero-storage-entry as the corridor's largest cross-ISO divergence family (−56..−96 %, four
+ISOs). You re-solve the NEISO BAU golden at HEAD with the armed posture and score it on the
+full rubric — the ceiling that made Q16 hold this is gone (FC-5 scores via D25's
+dispositions; FC-6 scores via D26's repaired P1 arm).
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (the program's only golden is re-registered wholesale; determination
+consequences are live and the storage outcome is open — adjudication, not pre-declared
+execution).
+BRANCH: claude/capx-t3-golden-2 — FRESH off origin/main, rebase before every push.
+
+READ FIRST: the pack §T3-NEISO-GOLDEN (the first campaign's charter — your recipe baseline
+and registration pattern) · docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md (what
+the first campaign recorded, its posture-epoch caveat, and the gate-condition caveats
+carried verbatim) · docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md (the
+repaired FC-6 arm construction you now use natively: carbon_price_delta, never a
+carbon_price replace) · docs/handoffs/FINDING-capx-d21-fc6-battery-2026-08-31.md (battery
+mechanics + the data-vintage discipline: score arms from THIS campaign's own bytes) ·
+docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md §4.1 (the t3-required FC-5
+table you re-disposition against the NEW trajectory — authored judgment, benchmarks context
+never targets).
+
+THE CAMPAIGN:
+1. BAU 2026–2050 at HEAD, the current NEISO recipe with the R-A-armed storage-entry posture
+   (the live defaults — do NOT hand-set fields; the posture IS HEAD's defaults) and
+   carbon_price_delta at its 0 default. Budget ~1.0 h / ~4.3 GB (FF-3E) — price and state
+   before launch. D29's trajectory grain is at HEAD, so your summary carries
+   generation-by-fuel + the real storage column — the corridor's energy-mix family becomes
+   scoreable on a golden for the first time.
+2. The FC-6 battery AT THIS CAMPAIGN'S OWN VINTAGE: the Tier-1 ladder + paired P1–P3, P1 via
+   carbon_price_delta (the D26 construction). Price the battery before running it; solves
+   sequential (rule 12). A vacuous rung is a CAVEAT, never a PASS (D21's line).
+3. Score the FULL rubric (FC-1..FC-8, the FC-5 corridor with fresh dispositions for rows the
+   new trajectory moves, FC-6 from step 2) and register PRESERVE-THEN-OVERWRITE: the
+   standing golden's record and bundle stay preserved (dated suffix, posture-epoch caveat
+   intact — it remains the pre-R-A record of note); the bare neiso-t3 key takes this
+   campaign. Control-first: reproduce the committed neiso-t3 record byte-for-byte BEFORE
+   overwriting anything.
+
+WHAT THIS CAMPAIGN IS FOR, stated so the lane cannot drift: the question is whether the
+ARMED storage-entry economics produce entry (and what the full-horizon system then looks
+like) — NOT whether storage entry makes any verdict better. Rule 13/D25 discipline: no
+input, parameter or threshold moves toward any corridor row; the corridor is re-dispositioned
+against the new trajectory, not the other way around. EITHER storage outcome is a valid
+result — zero entry under armed economics would itself be a major finding (route it, don't
+"fix" it in-lane).
+
+GUARDRAILS: rule 22 (forecast-mode 2026+; no measured actuals; no holdout year) · rule 12
+(all solves sequential in-session) · rule 27 (blob-verify ≥300-line pushes) · rule 28 (you
+add NO field and arm NOTHING new — the posture is HEAD's defaults; if you find yourself
+wanting a field, STOP and route) · no keeper/shard/marker · no new workflow. Q13's
+"this campaign only" scope note: Q25 authorizes THIS campaign only, same as before — say so
+in the finding.
+
+COLLISION: D33 (NEISO position lane) writes a position finding — docs only, no shared
+surfaces; its result INFORMS interpretation of your capacity trajectory, cite it if landed.
+D31 is MISO-side. D20 may edit the forecast scorer for the seven LEGACY legs — your keys are
+not in its scope; rebase-care on ff-verdicts.json. D34 edits the carbon_price validation
+guard — no overlap with carbon_price_delta usage.
+
+EXIT: the registered campaign (bare neiso-t3, prior golden preserved), the battery records,
+the re-scored verdict, and docs/handoffs/FINDING-capx-t3-golden2-<date>.md: the storage-entry
+answer (GW by year, which mechanism admitted it), the full gate map vs the first campaign
+side-by-side, what the armed posture changed and what it did not, and the honest list of
+caveats carried forward. Flag to the director anything that moves a surface outside neiso-t3.
+```
+
+## D34 — the carbon_price below-base guard (r#26 amendment; owner ruling Q26)
+
+```
+You are the D34 session of the capacity-expansion track — the EXECUTION of owner ruling Q26:
+ScenarioConfig.carbon_price KEEPS its documented replace semantics, and gains a LOUD
+VALIDATION WARNING when a forecast scenario's carbon_price sits below the resolved base
+carbon trajectory in any horizon year — the exact trap the carbon25 arm fell into (D23: a
+"carbon price increase" that CUT carbon in every year on an ISO whose base carries the RGGI
+trajectory). The warning points authors at carbon_price_delta for increments. No semantics
+change, no field, no default move.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (the ruling spent the discretion; this is a guard + tests).
+BRANCH: claude/capx-d34-carbonprice-guard — FRESH off origin/main, rebase before every push.
+
+READ FIRST: policy/carbon.py::resolve_carbon_price (precedence (i) and its documentation —
+which you do not change) · docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md §2
+(the trap, in the words you should echo in the warning text) ·
+docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md §1–2 (carbon_price_delta —
+what the warning points to, and the rule-13 forecast-only guard pattern to mirror) · how
+ScenarioConfig runs its other validations (__post_init__ patterns) so the guard sits where
+every scenario passes through.
+
+THE GUARD: at scenario validation (or first resolve — pick the seam that fires ONCE per run,
+not per hour), when mode == "forecast" and carbon_price is set nonzero and the resolved BASE
+trajectory (what would resolve with carbon_price unset) exceeds it in ANY year of the span:
+emit one loud, specific warning naming the ISO, the years, both values at the widest gap, and
+the sentence "a replace below the base trajectory REDUCES the carbon signal — for an
+increment use carbon_price_delta". A WARNING, not an error (Q26 verbatim: guard, not
+semantics change) — a deliberate below-base study remains legal and now cannot be silent.
+Backcast mode: untouched. Tests: (i) fires on the exact D21/D23 configuration (NEISO,
+carbon_price=25, RGGI base); (ii) silent when carbon_price exceeds the base everywhere;
+(iii) silent when carbon_price is unset; (iv) silent in backcast mode; (v) the resolver's
+output values are BYTE-UNCHANGED in all four (the guard observes, never alters).
+
+GUARDRAILS: no ScenarioConfig field, no default move, no resolver behavior change ⇒ rule 28
+NOT triggered — but scenarios.py/carbon.py are core ≥300-line files: edit locally, push exact
+bytes, blob-verify (rule 27). Zero solves. No board/verdict/keeper surface. No new workflow.
+
+COLLISION: T3-GOLDEN-2 solves NEISO at HEAD and D31 edits MISO screen code — neither touches
+the validation seam; if scenarios.py moves under you, rebase. Nothing else shares your files.
+
+EXIT: the guard + five tests + a short
+docs/handoffs/FINDING-capx-d34-carbonprice-guard-<date>.md quoting the warning text verbatim
+and citing Q26; note explicitly that R4's semantics question is now CLOSED (replace + guard)
+so no successor re-opens it without a new owner act.
+```
+
+## D20 — the reconstruction-provenance scorer route (r#26 amendment; director decision §0s.5 executed, hold dissolved)
+
+```
+You are the D20 session of the capacity-expansion track — the EXECUTION of the director
+decision taken at r#22 (§0s.5) on the seven legacy forecast legs whose run_config.json is a
+RECONSTRUCTION: adoption-as-original is REFUSED (it would assert provenance the artifacts
+lack); the admissible route is a scorer that recognizes `provenance: "reconstruction"` and
+scores it **CAVEAT, never PASS** on the provenance criterion. The hold on this lane was the
+scorer being a shared surface under active re-scoring lanes — D26 and D27 have both landed,
+so the window is open.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (the decision is taken; execution under control-first + STOP rules).
+BRANCH: claude/capx-d20-reconstruction-provenance — FRESH off origin/main, rebase before
+every push.
+
+READ FIRST: the capx ledger §0s.5 (the decision, verbatim — your charter boundary) · the D8
+DOF-ledger finding + D8-V's finding (which legs are the seven, why D8-V was barred from
+them, and the FC-7 semantics you extend) · the current FC-7 scoring path in the forecast
+verdict instrument (where provenance enters) · the seven legs' committed records in
+frontend/data/forecast/ff-verdicts.json (your control set).
+
+THE WORK: (1) the label — the seven legacy legs' run_config artifacts (or their registry
+sidecars, whichever the scorer reads) carry an explicit `provenance: "reconstruction"`
+marker; nothing else about them is edited, and no reconstruction is upgraded or re-derived;
+(2) the scorer — FC-7 recognizes the label and scores the leg's provenance criterion CAVEAT
+with a named reason ("run_config is a post-hoc reconstruction"), NEVER PASS, whatever else
+the ledger shows; (3) the re-score — control-first: reproduce ALL SEVEN committed records
+byte-for-byte with the unmodified scorer BEFORE applying the change, then re-emit exactly
+those seven keys. STOP AND ROUTE if: any key outside the seven moves, any criterion other
+than FC-7 moves on the seven, or any determination changes in a direction other than the
+label route's own (a FAIL-for-missing-provenance becoming CAVEAT-for-reconstruction is the
+designed effect; anything else is not). Preserved-baseline (suffixed) keys are NOT re-scored.
+
+GUARDRAILS: the scorer edit is cross-lane infrastructure — the cross-lane re-grade rule is
+your operating mode, not a footnote. Rule 27 (scorer files are core; blob-verify). Rule 28
+not triggered (no mechanism, no ScenarioConfig field). No keeper/shard/marker; no backcast
+surface; no solve. No new workflow.
+
+COLLISION: T3-GOLDEN-2 re-registers the bare neiso-t3 key and runs the scorer at its own
+checkout — neiso-t3 is NOT in your seven; rebase-care on ff-verdicts.json and
+program-status.json (distinct keys/blocks). D31 will re-register miso-t1h — the bare key now
+carries D27's REAL run_config and is NOT in your seven either; only dead legacy legs are.
+
+EXIT: the label + scorer + seven re-emitted keys + a short
+docs/handoffs/FINDING-capx-d20-reconstruction-provenance-<date>.md with the control
+reproduction, the per-leg before/after FC-7 rows, any determination movement (expected
+direction only), and the standing rule restated: a reconstruction can reach CAVEAT, never
+PASS — so the only route to a clean FC-7 on those legs is a genuine re-run, which is a
+charter decision, not this lane's.
 ```
