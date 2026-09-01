@@ -1,0 +1,1310 @@
+{
+ "F_verdict": {
+  "any_link_carries_all_three": true,
+  "per_link": {
+   "Capital_Hudson->Lower_Hudson": {
+    "carries_in_all_three": true,
+    "consistently_signed": true,
+    "contributions": {
+     "2023": 1.7458,
+     "2024": 0.3959,
+     "2025": 1.5341
+    },
+    "max_abs": 1.7458,
+    "min_abs": 0.3959
+   },
+   "Lower_Hudson->NYC": {
+    "carries_in_all_three": false,
+    "consistently_signed": true,
+    "contributions": {
+     "2023": -0.0367,
+     "2024": -0.4117,
+     "2025": -0.8661
+    },
+    "max_abs": 0.8661,
+    "min_abs": 0.0367
+   },
+   "NYC->Long_Island": {
+    "carries_in_all_three": true,
+    "consistently_signed": true,
+    "contributions": {
+     "2023": -0.7804,
+     "2024": -0.4321,
+     "2025": -0.3868
+    },
+    "max_abs": 0.7804,
+    "min_abs": 0.3868
+   },
+   "Upstate_West->Capital_Hudson": {
+    "carries_in_all_three": false,
+    "consistently_signed": true,
+    "contributions": {
+     "2023": 0.032,
+     "2024": -1.0468,
+     "2025": -2.6053
+    },
+    "max_abs": 2.6053,
+    "min_abs": 0.032
+   }
+  },
+  "rule": "A link CARRIES the gradient deficit iff its contribution has the same sign in all three years (ignoring |v| <= 0.05 as noise) AND its smallest absolute contribution is >= 0.25 $/MWh. Pre-registered before the numbers were read; the 0.25 floor is ~10% of 2025's -2.32 $/MWh gradient component."
+ },
+ "bind_tolerance_mw": 50.0,
+ "bundle": "results/calibration/nyiso159_lossarm_B",
+ "by_year": {
+  "2023": {
+   "A_B_gradient_per_link": {
+    "gradient_component": 0.9607,
+    "identity_abs_error": 0.0,
+    "identity_holds": true,
+    "identity_reconstructed_gradient": 0.9607,
+    "level_component": -1.6525,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_link_spread": -2.8,
+      "cumulative_downstream_load_share": 0.515241,
+      "gradient_contribution": 1.7458,
+      "model_link_spread": 0.5884,
+      "spread_deficit": 3.3884
+     },
+     "Lower_Hudson->NYC": {
+      "actual_link_spread": 0.37,
+      "cumulative_downstream_load_share": 0.460176,
+      "gradient_contribution": -0.0367,
+      "model_link_spread": 0.2903,
+      "spread_deficit": -0.0797
+     },
+     "NYC->Long_Island": {
+      "actual_link_spread": 6.82,
+      "cumulative_downstream_load_share": 0.13182,
+      "gradient_contribution": -0.7804,
+      "model_link_spread": 0.8995,
+      "spread_deficit": -5.9205
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_link_spread": 10.3,
+      "cumulative_downstream_load_share": 0.65199,
+      "gradient_contribution": 0.032,
+      "model_link_spread": 10.3491,
+      "spread_deficit": 0.0491
+     }
+    },
+    "load_weighted_deficit": -0.6918,
+    "reference_zone": "Upstate_West",
+    "zones": {
+     "Capital_Hudson": {
+      "actual_da": 36.38,
+      "delta": -1.6034,
+      "load_share": 0.136749,
+      "model": 34.7766
+     },
+     "Long_Island": {
+      "actual_da": 40.77,
+      "delta": -4.2152,
+      "load_share": 0.13182,
+      "model": 36.5548
+     },
+     "Lower_Hudson": {
+      "actual_da": 33.58,
+      "delta": 1.785,
+      "load_share": 0.055065,
+      "model": 35.365
+     },
+     "NYC": {
+      "actual_da": 33.95,
+      "delta": 1.7053,
+      "load_share": 0.328356,
+      "model": 35.6553
+     },
+     "Upstate_West": {
+      "actual_da": 26.08,
+      "delta": -1.6525,
+      "load_share": 0.34801,
+      "model": 24.4275
+     }
+    }
+   },
+   "C_components_da": {
+    "E_identity_holds": true,
+    "E_identity_max_spread": 0.02,
+    "basis": "da",
+    "hours_covered": 8760,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_spread": -2.8007,
+      "congestion_half": -3.2282,
+      "congestion_share": 1.1526,
+      "loss_half": 0.4274,
+      "residual": 4.4e-05
+     },
+     "Lower_Hudson->NYC": {
+      "actual_spread": 0.3656,
+      "congestion_half": 0.1376,
+      "congestion_share": 0.3763,
+      "loss_half": 0.2281,
+      "residual": -6e-05
+     },
+     "NYC->Long_Island": {
+      "actual_spread": 6.819,
+      "congestion_half": 6.3263,
+      "congestion_share": 0.9277,
+      "loss_half": 0.4927,
+      "residual": -2.5e-05
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_spread": 10.2969,
+      "congestion_half": 8.9751,
+      "congestion_share": 0.8716,
+      "loss_half": 1.3218,
+      "residual": 0.0
+     }
+    },
+    "zonal_annual_mean": {
+     "Capital_Hudson": 36.3798,
+     "Long_Island": 40.7637,
+     "Lower_Hudson": 33.5792,
+     "NYC": 33.9447,
+     "Upstate_West": 26.0829
+    }
+   },
+   "C_components_rt": {
+    "E_identity_holds": true,
+    "E_identity_max_spread": 0.01,
+    "basis": "rt",
+    "hours_covered": 8760,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_spread": -2.0921,
+      "congestion_half": -2.5247,
+      "congestion_share": 1.2068,
+      "loss_half": 0.4325,
+      "residual": 3e-05
+     },
+     "Lower_Hudson->NYC": {
+      "actual_spread": 0.9784,
+      "congestion_half": 0.784,
+      "congestion_share": 0.8013,
+      "loss_half": 0.1943,
+      "residual": 4.8e-05
+     },
+     "NYC->Long_Island": {
+      "actual_spread": 7.579,
+      "congestion_half": 7.2719,
+      "congestion_share": 0.9595,
+      "loss_half": 0.3072,
+      "residual": -3.5e-05
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_spread": 9.2593,
+      "congestion_half": 8.142,
+      "congestion_share": 0.8793,
+      "loss_half": 1.1173,
+      "residual": -2e-05
+     }
+    },
+    "zonal_annual_mean": {
+     "Capital_Hudson": 34.5763,
+     "Long_Island": 41.0416,
+     "Lower_Hudson": 32.4841,
+     "NYC": 33.4626,
+     "Upstate_West": 25.317
+    }
+   },
+   "D_interface_binding": {
+    "Capital_Hudson->Lower_Hudson": {
+     "UPNY CONED": {
+      "binding_hours": 0,
+      "binding_share": 0.0,
+      "hours": 8760,
+      "mean_congestion_all_hours": -3.2282,
+      "mean_congestion_when_binding": null,
+      "mean_congestion_when_not_binding": -3.2282,
+      "mean_utilisation": 0.4887
+     }
+    },
+    "Lower_Hudson->NYC": {
+     "SPR/DUN-SOUTH": {
+      "binding_hours": 3,
+      "binding_share": 0.0003,
+      "hours": 8760,
+      "mean_congestion_all_hours": 0.1376,
+      "mean_congestion_when_binding": 0.0,
+      "mean_congestion_when_not_binding": 0.1376,
+      "mean_utilisation": 0.3589
+     }
+    },
+    "NYC->Long_Island": {},
+    "Upstate_West->Capital_Hudson": {
+     "CENTRAL EAST - VC": {
+      "binding_hours": 66,
+      "binding_share": 0.0075,
+      "hours": 8760,
+      "mean_congestion_all_hours": 8.9751,
+      "mean_congestion_when_binding": 19.6219,
+      "mean_congestion_when_not_binding": 8.8943,
+      "mean_utilisation": 0.7783
+     },
+     "TOTAL EAST": {
+      "binding_hours": 0,
+      "binding_share": 0.0,
+      "hours": 8760,
+      "mean_congestion_all_hours": 8.9751,
+      "mean_congestion_when_binding": null,
+      "mean_congestion_when_not_binding": 8.9751,
+      "mean_utilisation": 0.4861
+     }
+    }
+   },
+   "E_load_bands": {
+    "bands": [
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -1.615,
+       "deficit": 2.166,
+       "model": 0.551
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 0.268,
+       "deficit": -0.071,
+       "model": 0.197
+      },
+      "NYC->Long_Island": {
+       "actual": 3.05,
+       "deficit": -2.769,
+       "model": 0.281
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 7.917,
+       "deficit": 3.073,
+       "model": 10.99
+      },
+      "band": "0-50",
+      "n": 4380
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -2.828,
+       "deficit": 3.39,
+       "model": 0.562
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 0.372,
+       "deficit": -0.118,
+       "model": 0.254
+      },
+      "NYC->Long_Island": {
+       "actual": 7.731,
+       "deficit": -7.032,
+       "model": 0.698
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 11.33,
+       "deficit": -1.819,
+       "model": 9.511
+      },
+      "band": "50-80",
+      "n": 2628
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -7.115,
+       "deficit": 7.74,
+       "model": 0.625
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 0.381,
+       "deficit": -0.08,
+       "model": 0.301
+      },
+      "NYC->Long_Island": {
+       "actual": 10.625,
+       "deficit": -8.853,
+       "model": 1.773
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 17.276,
+       "deficit": -6.042,
+       "model": 11.233
+      },
+      "band": "80-90",
+      "n": 876
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -4.797,
+       "deficit": 5.511,
+       "model": 0.714
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 0.483,
+       "deficit": -0.09,
+       "model": 0.392
+      },
+      "NYC->Long_Island": {
+       "actual": 11.588,
+       "deficit": -7.519,
+       "model": 4.069
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 11.846,
+       "deficit": -1.642,
+       "model": 10.204
+      },
+      "band": "90-95",
+      "n": 438
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -2.058,
+       "deficit": 2.898,
+       "model": 0.84
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 1.137,
+       "deficit": -0.704,
+       "model": 0.432
+      },
+      "NYC->Long_Island": {
+       "actual": 20.563,
+       "deficit": -17.48,
+       "model": 3.083
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 8.709,
+       "deficit": -0.896,
+       "model": 7.813
+      },
+      "band": "95-99",
+      "n": 350
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -11.071,
+       "deficit": 12.328,
+       "model": 1.257
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 1.249,
+       "deficit": 3.608,
+       "model": 4.857
+      },
+      "NYC->Long_Island": {
+       "actual": 50.877,
+       "deficit": -46.349,
+       "model": 4.528
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 27.058,
+       "deficit": -21.561,
+       "model": 5.497
+      },
+      "band": "99-100",
+      "n": 88
+     }
+    ]
+   },
+   "G_representability": {
+    "Capital_Hudson->Lower_Hudson": {
+     "actual_annual_mean_congestion": -3.2282,
+     "actual_hours_congested_gt_1c": 0.6285,
+     "actual_hours_congested_gt_1d": 0.4611,
+     "model_hours_separated_gt_1c": 0.999,
+     "model_hours_separated_gt_1d": 0.0195,
+     "posted_binding": {
+      "UPNY CONED": {
+       "binding_share": 0.0,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": -0.0
+      }
+     }
+    },
+    "Lower_Hudson->NYC": {
+     "actual_annual_mean_congestion": 0.1376,
+     "actual_hours_congested_gt_1c": 0.4941,
+     "actual_hours_congested_gt_1d": 0.0409,
+     "model_hours_separated_gt_1c": 0.9334,
+     "model_hours_separated_gt_1d": 0.0032,
+     "posted_binding": {
+      "SPR/DUN-SOUTH": {
+       "binding_share": 0.00034,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": 0.0
+      }
+     }
+    },
+    "NYC->Long_Island": {
+     "actual_annual_mean_congestion": 6.3263,
+     "actual_hours_congested_gt_1c": 0.7586,
+     "actual_hours_congested_gt_1d": 0.6408,
+     "model_hours_separated_gt_1c": 0.924,
+     "model_hours_separated_gt_1d": 0.0808,
+     "posted_binding": {}
+    },
+    "Upstate_West->Capital_Hudson": {
+     "actual_annual_mean_congestion": 8.9751,
+     "actual_hours_congested_gt_1c": 0.6605,
+     "actual_hours_congested_gt_1d": 0.5503,
+     "model_hours_separated_gt_1c": 1.0,
+     "model_hours_separated_gt_1d": 0.9869,
+     "posted_binding": {
+      "CENTRAL EAST - VC": {
+       "binding_share": 0.00753,
+       "congestion_from_binding_hours": 0.1478,
+       "share_of_annual_congestion": 0.0165
+      },
+      "TOTAL EAST": {
+       "binding_share": 0.0,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": 0.0
+      }
+     }
+    }
+   }
+  },
+  "2024": {
+   "A_B_gradient_per_link": {
+    "gradient_component": -1.4946,
+    "identity_abs_error": 0.0,
+    "identity_holds": true,
+    "identity_reconstructed_gradient": -1.4946,
+    "level_component": 0.067,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_link_spread": -0.08,
+      "cumulative_downstream_load_share": 0.516834,
+      "gradient_contribution": 0.3959,
+      "model_link_spread": 0.6861,
+      "spread_deficit": 0.7661
+     },
+     "Lower_Hudson->NYC": {
+      "actual_link_spread": 1.35,
+      "cumulative_downstream_load_share": 0.460592,
+      "gradient_contribution": -0.4117,
+      "model_link_spread": 0.4562,
+      "spread_deficit": -0.8938
+     },
+     "NYC->Long_Island": {
+      "actual_link_spread": 3.99,
+      "cumulative_downstream_load_share": 0.13122,
+      "gradient_contribution": -0.4321,
+      "model_link_spread": 0.6974,
+      "spread_deficit": -3.2926
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_link_spread": 4.54,
+      "cumulative_downstream_load_share": 0.653892,
+      "gradient_contribution": -1.0468,
+      "model_link_spread": 2.9391,
+      "spread_deficit": -1.6009
+     }
+    },
+    "load_weighted_deficit": -1.4276,
+    "reference_zone": "Upstate_West",
+    "zones": {
+     "Capital_Hudson": {
+      "actual_da": 38.17,
+      "delta": -1.5338,
+      "load_share": 0.137058,
+      "model": 36.6362
+     },
+     "Long_Island": {
+      "actual_da": 43.43,
+      "delta": -4.9542,
+      "load_share": 0.13122,
+      "model": 38.4758
+     },
+     "Lower_Hudson": {
+      "actual_da": 38.09,
+      "delta": -0.7678,
+      "load_share": 0.056242,
+      "model": 37.3222
+     },
+     "NYC": {
+      "actual_da": 39.44,
+      "delta": -1.6616,
+      "load_share": 0.329372,
+      "model": 37.7784
+     },
+     "Upstate_West": {
+      "actual_da": 33.63,
+      "delta": 0.067,
+      "load_share": 0.346108,
+      "model": 33.697
+     }
+    }
+   },
+   "C_components_da": {
+    "E_identity_holds": true,
+    "E_identity_max_spread": 0.02,
+    "basis": "da",
+    "hours_covered": 8760,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_spread": -0.0786,
+      "congestion_half": -0.8031,
+      "congestion_share": 10.214,
+      "loss_half": 0.7244,
+      "residual": 6.3e-05
+     },
+     "Lower_Hudson->NYC": {
+      "actual_spread": 1.3498,
+      "congestion_half": 0.9704,
+      "congestion_share": 0.7189,
+      "loss_half": 0.3793,
+      "residual": 8.2e-05
+     },
+     "NYC->Long_Island": {
+      "actual_spread": 3.9993,
+      "congestion_half": 3.62,
+      "congestion_share": 0.9052,
+      "loss_half": 0.3793,
+      "residual": -1.9e-05
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_spread": 4.5422,
+      "congestion_half": 2.6892,
+      "congestion_share": 0.5921,
+      "loss_half": 1.853,
+      "residual": -5.4e-05
+     }
+    },
+    "zonal_annual_mean": {
+     "Capital_Hudson": 38.2046,
+     "Long_Island": 43.475,
+     "Lower_Hudson": 38.1259,
+     "NYC": 39.4758,
+     "Upstate_West": 33.6624
+    }
+   },
+   "C_components_rt": {
+    "E_identity_holds": true,
+    "E_identity_max_spread": 0.01,
+    "basis": "rt",
+    "hours_covered": 8760,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_spread": 0.4333,
+      "congestion_half": -0.2083,
+      "congestion_share": -0.4808,
+      "loss_half": 0.6417,
+      "residual": -4.9e-05
+     },
+     "Lower_Hudson->NYC": {
+      "actual_spread": 2.2965,
+      "congestion_half": 2.011,
+      "congestion_share": 0.8757,
+      "loss_half": 0.2854,
+      "residual": 9.6e-05
+     },
+     "NYC->Long_Island": {
+      "actual_spread": 2.7252,
+      "congestion_half": 2.5329,
+      "congestion_share": 0.9294,
+      "loss_half": 0.1923,
+      "residual": -5.5e-05
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_spread": 3.7323,
+      "congestion_half": 2.0436,
+      "congestion_share": 0.5476,
+      "loss_half": 1.6886,
+      "residual": 6.2e-05
+     }
+    },
+    "zonal_annual_mean": {
+     "Capital_Hudson": 36.8046,
+     "Long_Island": 42.2596,
+     "Lower_Hudson": 37.238,
+     "NYC": 39.5345,
+     "Upstate_West": 33.0723
+    }
+   },
+   "D_interface_binding": {
+    "Capital_Hudson->Lower_Hudson": {
+     "UPNY CONED": {
+      "binding_hours": 0,
+      "binding_share": 0.0,
+      "hours": 8760,
+      "mean_congestion_all_hours": -0.8031,
+      "mean_congestion_when_binding": null,
+      "mean_congestion_when_not_binding": -0.8031,
+      "mean_utilisation": 0.494
+     }
+    },
+    "Lower_Hudson->NYC": {
+     "SPR/DUN-SOUTH": {
+      "binding_hours": 0,
+      "binding_share": 0.0,
+      "hours": 8760,
+      "mean_congestion_all_hours": 0.9704,
+      "mean_congestion_when_binding": null,
+      "mean_congestion_when_not_binding": 0.9704,
+      "mean_utilisation": 0.3986
+     }
+    },
+    "NYC->Long_Island": {},
+    "Upstate_West->Capital_Hudson": {
+     "CENTRAL EAST - VC": {
+      "binding_hours": 11,
+      "binding_share": 0.0013,
+      "hours": 8760,
+      "mean_congestion_all_hours": 2.6892,
+      "mean_congestion_when_binding": 37.1496,
+      "mean_congestion_when_not_binding": 2.6459,
+      "mean_utilisation": 0.617
+     },
+     "TOTAL EAST": {
+      "binding_hours": 0,
+      "binding_share": 0.0,
+      "hours": 8760,
+      "mean_congestion_all_hours": 2.6892,
+      "mean_congestion_when_binding": null,
+      "mean_congestion_when_not_binding": 2.6892,
+      "mean_utilisation": 0.4262
+     }
+    }
+   },
+   "E_load_bands": {
+    "bands": [
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": 0.402,
+       "deficit": 0.15,
+       "model": 0.552
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 0.594,
+       "deficit": -0.342,
+       "model": 0.252
+      },
+      "NYC->Long_Island": {
+       "actual": 1.241,
+       "deficit": -1.107,
+       "model": 0.133
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 1.664,
+       "deficit": 0.635,
+       "model": 2.299
+      },
+      "band": "0-50",
+      "n": 4378
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": 0.34,
+       "deficit": 0.353,
+       "model": 0.693
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 1.067,
+       "deficit": -0.707,
+       "model": 0.361
+      },
+      "NYC->Long_Island": {
+       "actual": 3.741,
+       "deficit": -2.809,
+       "model": 0.931
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 4.727,
+       "deficit": -1.133,
+       "model": 3.593
+      },
+      "band": "50-80",
+      "n": 2630
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -0.246,
+       "deficit": 1.158,
+       "model": 0.912
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 3.846,
+       "deficit": -3.24,
+       "model": 0.606
+      },
+      "NYC->Long_Island": {
+       "actual": 5.376,
+       "deficit": -3.716,
+       "model": 1.66
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 10.04,
+       "deficit": -6.303,
+       "model": 3.737
+      },
+      "band": "80-90",
+      "n": 876
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -1.488,
+       "deficit": 2.529,
+       "model": 1.04
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 5.343,
+       "deficit": -4.143,
+       "model": 1.2
+      },
+      "NYC->Long_Island": {
+       "actual": 4.417,
+       "deficit": -2.278,
+       "model": 2.139
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 13.223,
+       "deficit": -9.466,
+       "model": 3.757
+      },
+      "band": "90-95",
+      "n": 438
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -0.637,
+       "deficit": 1.747,
+       "model": 1.111
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 1.776,
+       "deficit": -0.637,
+       "model": 1.14
+      },
+      "NYC->Long_Island": {
+       "actual": 22.765,
+       "deficit": -21.391,
+       "model": 1.374
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 5.173,
+       "deficit": -2.158,
+       "model": 3.016
+      },
+      "band": "95-99",
+      "n": 350
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -25.585,
+       "deficit": 27.015,
+       "model": 1.431
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 0.97,
+       "deficit": 4.586,
+       "model": 5.557
+      },
+      "NYC->Long_Island": {
+       "actual": 58.561,
+       "deficit": -56.251,
+       "model": 2.31
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 41.761,
+       "deficit": -38.838,
+       "model": 2.923
+      },
+      "band": "99-100",
+      "n": 88
+     }
+    ]
+   },
+   "G_representability": {
+    "Capital_Hudson->Lower_Hudson": {
+     "actual_annual_mean_congestion": -0.8031,
+     "actual_hours_congested_gt_1c": 0.1897,
+     "actual_hours_congested_gt_1d": 0.1,
+     "model_hours_separated_gt_1c": 1.0,
+     "model_hours_separated_gt_1d": 0.0847,
+     "posted_binding": {
+      "UPNY CONED": {
+       "binding_share": 0.0,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": -0.0
+      }
+     }
+    },
+    "Lower_Hudson->NYC": {
+     "actual_annual_mean_congestion": 0.9704,
+     "actual_hours_congested_gt_1c": 0.3421,
+     "actual_hours_congested_gt_1d": 0.163,
+     "model_hours_separated_gt_1c": 0.9985,
+     "model_hours_separated_gt_1d": 0.0357,
+     "posted_binding": {
+      "SPR/DUN-SOUTH": {
+       "binding_share": 0.0,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": 0.0
+      }
+     }
+    },
+    "NYC->Long_Island": {
+     "actual_annual_mean_congestion": 3.62,
+     "actual_hours_congested_gt_1c": 0.6435,
+     "actual_hours_congested_gt_1d": 0.4889,
+     "model_hours_separated_gt_1c": 0.8357,
+     "model_hours_separated_gt_1d": 0.0999,
+     "posted_binding": {}
+    },
+    "Upstate_West->Capital_Hudson": {
+     "actual_annual_mean_congestion": 2.6892,
+     "actual_hours_congested_gt_1c": 0.3134,
+     "actual_hours_congested_gt_1d": 0.1554,
+     "model_hours_separated_gt_1c": 0.9999,
+     "model_hours_separated_gt_1d": 0.8411,
+     "posted_binding": {
+      "CENTRAL EAST - VC": {
+       "binding_share": 0.00126,
+       "congestion_from_binding_hours": 0.0466,
+       "share_of_annual_congestion": 0.0173
+      },
+      "TOTAL EAST": {
+       "binding_share": 0.0,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": 0.0
+      }
+     }
+    }
+   }
+  },
+  "2025": {
+   "A_B_gradient_per_link": {
+    "gradient_component": -2.3241,
+    "identity_abs_error": 0.0,
+    "identity_holds": true,
+    "identity_reconstructed_gradient": -2.3241,
+    "level_component": -4.2706,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_link_spread": -2.16,
+      "cumulative_downstream_load_share": 0.518605,
+      "gradient_contribution": 1.5341,
+      "model_link_spread": 0.7981,
+      "spread_deficit": 2.9581
+     },
+     "Lower_Hudson->NYC": {
+      "actual_link_spread": 2.42,
+      "cumulative_downstream_load_share": 0.462192,
+      "gradient_contribution": -0.8661,
+      "model_link_spread": 0.546,
+      "spread_deficit": -1.874
+     },
+     "NYC->Long_Island": {
+      "actual_link_spread": 3.46,
+      "cumulative_downstream_load_share": 0.131652,
+      "gradient_contribution": -0.3868,
+      "model_link_spread": 0.5217,
+      "spread_deficit": -2.9383
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_link_spread": 9.26,
+      "cumulative_downstream_load_share": 0.657804,
+      "gradient_contribution": -2.6053,
+      "model_link_spread": 5.2995,
+      "spread_deficit": -3.9605
+     }
+    },
+    "load_weighted_deficit": -6.5947,
+    "reference_zone": "Upstate_West",
+    "zones": {
+     "Capital_Hudson": {
+      "actual_da": 65.15,
+      "delta": -8.2311,
+      "load_share": 0.139198,
+      "model": 56.9189
+     },
+     "Long_Island": {
+      "actual_da": 68.87,
+      "delta": -10.0852,
+      "load_share": 0.131652,
+      "model": 58.7848
+     },
+     "Lower_Hudson": {
+      "actual_da": 62.99,
+      "delta": -5.273,
+      "load_share": 0.056413,
+      "model": 57.717
+     },
+     "NYC": {
+      "actual_da": 65.41,
+      "delta": -7.147,
+      "load_share": 0.330539,
+      "model": 58.263
+     },
+     "Upstate_West": {
+      "actual_da": 55.89,
+      "delta": -4.2706,
+      "load_share": 0.342196,
+      "model": 51.6194
+     }
+    }
+   },
+   "C_components_da": {
+    "E_identity_holds": true,
+    "E_identity_max_spread": 0.02,
+    "basis": "da",
+    "hours_covered": 8760,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_spread": -2.1588,
+      "congestion_half": -3.1025,
+      "congestion_share": 1.4372,
+      "loss_half": 0.9437,
+      "residual": 5.9e-05
+     },
+     "Lower_Hudson->NYC": {
+      "actual_spread": 2.4228,
+      "congestion_half": 1.8772,
+      "congestion_share": 0.7748,
+      "loss_half": 0.5455,
+      "residual": 0.000133
+     },
+     "NYC->Long_Island": {
+      "actual_spread": 3.4567,
+      "congestion_half": 3.1055,
+      "congestion_share": 0.8984,
+      "loss_half": 0.3513,
+      "residual": -9.4e-05
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_spread": 9.2567,
+      "congestion_half": 6.0374,
+      "congestion_share": 0.6522,
+      "loss_half": 3.2193,
+      "residual": -4.3e-05
+     }
+    },
+    "zonal_annual_mean": {
+     "Capital_Hudson": 65.1465,
+     "Long_Island": 68.8673,
+     "Lower_Hudson": 62.9877,
+     "NYC": 65.4105,
+     "Upstate_West": 55.8898
+    }
+   },
+   "C_components_rt": {
+    "E_identity_holds": true,
+    "E_identity_max_spread": 0.0092,
+    "basis": "rt",
+    "hours_covered": 8758,
+    "links": {
+     "Capital_Hudson->Lower_Hudson": {
+      "actual_spread": -0.2943,
+      "congestion_half": -1.0861,
+      "congestion_share": 3.6902,
+      "loss_half": 0.7918,
+      "residual": 2e-05
+     },
+     "Lower_Hudson->NYC": {
+      "actual_spread": 3.9975,
+      "congestion_half": 3.573,
+      "congestion_share": 0.8938,
+      "loss_half": 0.4245,
+      "residual": 2.7e-05
+     },
+     "NYC->Long_Island": {
+      "actual_spread": 3.1806,
+      "congestion_half": 3.0637,
+      "congestion_share": 0.9633,
+      "loss_half": 0.1169,
+      "residual": -5.5e-05
+     },
+     "Upstate_West->Capital_Hudson": {
+      "actual_spread": 7.9286,
+      "congestion_half": 5.0048,
+      "congestion_share": 0.6312,
+      "loss_half": 2.9237,
+      "residual": 9e-06
+     }
+    },
+    "zonal_annual_mean": {
+     "Capital_Hudson": 63.4411,
+     "Long_Island": 70.3248,
+     "Lower_Hudson": 63.1467,
+     "NYC": 67.1442,
+     "Upstate_West": 55.5125
+    }
+   },
+   "D_interface_binding": {
+    "Capital_Hudson->Lower_Hudson": {
+     "UPNY CONED": {
+      "binding_hours": 0,
+      "binding_share": 0.0,
+      "hours": 8760,
+      "mean_congestion_all_hours": -3.1025,
+      "mean_congestion_when_binding": null,
+      "mean_congestion_when_not_binding": -3.1025,
+      "mean_utilisation": 0.4693
+     }
+    },
+    "Lower_Hudson->NYC": {
+     "SPR/DUN-SOUTH": {
+      "binding_hours": 0,
+      "binding_share": 0.0,
+      "hours": 8760,
+      "mean_congestion_all_hours": 1.8772,
+      "mean_congestion_when_binding": null,
+      "mean_congestion_when_not_binding": 1.8772,
+      "mean_utilisation": 0.4024
+     }
+    },
+    "NYC->Long_Island": {},
+    "Upstate_West->Capital_Hudson": {
+     "CENTRAL EAST - VC": {
+      "binding_hours": 18,
+      "binding_share": 0.0021,
+      "hours": 8760,
+      "mean_congestion_all_hours": 6.0374,
+      "mean_congestion_when_binding": 28.7251,
+      "mean_congestion_when_not_binding": 5.9907,
+      "mean_utilisation": 0.5858
+     },
+     "TOTAL EAST": {
+      "binding_hours": 0,
+      "binding_share": 0.0,
+      "hours": 8760,
+      "mean_congestion_all_hours": 6.0374,
+      "mean_congestion_when_binding": null,
+      "mean_congestion_when_not_binding": 6.0374,
+      "mean_utilisation": 0.4154
+     }
+    }
+   },
+   "E_load_bands": {
+    "bands": [
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": 0.176,
+       "deficit": 0.483,
+       "model": 0.659
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 1.433,
+       "deficit": -1.069,
+       "model": 0.364
+      },
+      "NYC->Long_Island": {
+       "actual": 0.572,
+       "deficit": -0.41,
+       "model": 0.162
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 3.025,
+       "deficit": 2.062,
+       "model": 5.087
+      },
+      "band": "0-50",
+      "n": 4380
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -2.856,
+       "deficit": 3.566,
+       "model": 0.71
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 2.191,
+       "deficit": -1.664,
+       "model": 0.527
+      },
+      "NYC->Long_Island": {
+       "actual": 4.727,
+       "deficit": -4.05,
+       "model": 0.678
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 11.106,
+       "deficit": -5.535,
+       "model": 5.571
+      },
+      "band": "50-80",
+      "n": 2628
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -7.541,
+       "deficit": 8.385,
+       "model": 0.844
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 4.964,
+       "deficit": -4.357,
+       "model": 0.607
+      },
+      "NYC->Long_Island": {
+       "actual": 8.069,
+       "deficit": -6.753,
+       "model": 1.316
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 23.285,
+       "deficit": -16.647,
+       "model": 6.638
+      },
+      "band": "80-90",
+      "n": 876
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -3.684,
+       "deficit": 5.031,
+       "model": 1.347
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 8.357,
+       "deficit": -7.416,
+       "model": 0.941
+      },
+      "NYC->Long_Island": {
+       "actual": 1.681,
+       "deficit": -0.087,
+       "model": 1.594
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 19.034,
+       "deficit": -13.177,
+       "model": 5.857
+      },
+      "band": "90-95",
+      "n": 438
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -3.086,
+       "deficit": 4.758,
+       "model": 1.672
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 0.97,
+       "deficit": 0.194,
+       "model": 1.164
+      },
+      "NYC->Long_Island": {
+       "actual": 12.249,
+       "deficit": -12.123,
+       "model": 0.127
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 10.839,
+       "deficit": -8.555,
+       "model": 2.284
+      },
+      "band": "95-99",
+      "n": 350
+     },
+     {
+      "Capital_Hudson->Lower_Hudson": {
+       "actual": -32.678,
+       "deficit": 36.364,
+       "model": 3.687
+      },
+      "Lower_Hudson->NYC": {
+       "actual": 9.562,
+       "deficit": -4.41,
+       "model": 5.151
+      },
+      "NYC->Long_Island": {
+       "actual": 37.039,
+       "deficit": -34.967,
+       "model": 2.072
+      },
+      "Upstate_West->Capital_Hudson": {
+       "actual": 69.586,
+       "deficit": -65.94,
+       "model": 3.646
+      },
+      "band": "99-100",
+      "n": 88
+     }
+    ]
+   },
+   "G_representability": {
+    "Capital_Hudson->Lower_Hudson": {
+     "actual_annual_mean_congestion": -3.1025,
+     "actual_hours_congested_gt_1c": 0.3082,
+     "actual_hours_congested_gt_1d": 0.2019,
+     "model_hours_separated_gt_1c": 0.9151,
+     "model_hours_separated_gt_1d": 0.3027,
+     "posted_binding": {
+      "UPNY CONED": {
+       "binding_share": 0.0,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": -0.0
+      }
+     }
+    },
+    "Lower_Hudson->NYC": {
+     "actual_annual_mean_congestion": 1.8772,
+     "actual_hours_congested_gt_1c": 0.5273,
+     "actual_hours_congested_gt_1d": 0.2568,
+     "model_hours_separated_gt_1c": 0.9973,
+     "model_hours_separated_gt_1d": 0.0354,
+     "posted_binding": {
+      "SPR/DUN-SOUTH": {
+       "binding_share": 0.0,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": 0.0
+      }
+     }
+    },
+    "NYC->Long_Island": {
+     "actual_annual_mean_congestion": 3.1055,
+     "actual_hours_congested_gt_1c": 0.6413,
+     "actual_hours_congested_gt_1d": 0.465,
+     "model_hours_separated_gt_1c": 0.3992,
+     "model_hours_separated_gt_1d": 0.1185,
+     "posted_binding": {}
+    },
+    "Upstate_West->Capital_Hudson": {
+     "actual_annual_mean_congestion": 6.0374,
+     "actual_hours_congested_gt_1c": 0.389,
+     "actual_hours_congested_gt_1d": 0.2631,
+     "model_hours_separated_gt_1c": 0.9993,
+     "model_hours_separated_gt_1d": 0.8196,
+     "posted_binding": {
+      "CENTRAL EAST - VC": {
+       "binding_share": 0.00205,
+       "congestion_from_binding_hours": 0.059,
+       "share_of_annual_congestion": 0.0098
+      },
+      "TOTAL EAST": {
+       "binding_share": 0.0,
+       "congestion_from_binding_hours": 0.0,
+       "share_of_annual_congestion": 0.0
+      }
+     }
+    }
+   }
+  }
+ },
+ "chain": [
+  "Upstate_West",
+  "Capital_Hudson",
+  "Lower_Hudson",
+  "NYC",
+  "Long_Island"
+ ],
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "link_interfaces": {
+  "Capital_Hudson->Lower_Hudson": [
+   "UPNY CONED"
+  ],
+  "Lower_Hudson->NYC": [
+   "SPR/DUN-SOUTH"
+  ],
+  "NYC->Long_Island": [],
+  "Upstate_West->Capital_Hudson": [
+   "CENTRAL EAST - VC",
+   "TOTAL EAST"
+  ]
+ },
+ "probe": "nyiso169_congestion_gradient_anatomy",
+ "years": [
+  2023,
+  2024,
+  2025
+ ]
+}

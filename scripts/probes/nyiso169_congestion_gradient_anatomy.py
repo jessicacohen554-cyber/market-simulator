@@ -53,6 +53,9 @@ C. COMPONENT DECOMPOSITION of each link's ACTUAL spread into congestion (MCC)
 D. MEASURED BINDING per NYISO interface (flow vs posted limit) and the actual
    congestion conditional on it, mapped onto the model links.
 E. HOURLY BAND STRUCTURE — model vs actual link spread by model-load band.
+G. REPRESENTABILITY — how often the measured congestion is non-zero, how
+   often the model separates, and what share of the measured congestion
+   arises in the hours a posted interface is actually at its limit.
 F. VERDICT — the pre-registered sign-consistency test, per link.
 
 Run: ``PYTHONPATH=.:src python scripts/probes/nyiso169_congestion_gradient_anatomy.py``
@@ -383,6 +386,62 @@ def measure_e(year: int, comps: dict[str, pd.DataFrame]) -> dict:
     return dict(bands=bands)
 
 
+def measure_g(year: int, comps: dict[str, pd.DataFrame]) -> dict:
+    """REPRESENTABILITY: is the measured congestion reachable at five-zone grain?
+
+    A chain link's LP dual can be non-zero only in the hours its own flow is
+    at its TTC, so the model can price congestion on a link only in the hours
+    that link separates. This measures the two shares that decide whether that
+    mechanism can reach the measured object: how often NYISO's posted
+    congestion is actually non-zero on each link, and how much of each link's
+    annual mean congestion arises in the hours its posted interface is within
+    :data:`BIND_TOL_MW` of its limit.
+    """
+    mcc = comps["mcc"]
+    price, _ = keeper_hourly(year)
+    f = pd.read_parquet(FLOWS / f"nyiso-interface-flows_{year}.parquet")
+
+    out = {}
+    for i in range(1, len(CHAIN)):
+        up, dn = CHAIN[i - 1], CHAIN[i]
+        name = f"{up}->{dn}"
+        cong = -(mcc[dn] - mcc[up])
+        m_spread = price[dn] - price[up]
+        annual = float(cong.mean())
+
+        share_from_binding = {}
+        for iface in LINK_INTERFACES[name]:
+            d = f[f["interface"] == iface].copy()
+            if d.empty:
+                continue
+            d["hour"] = _std_hour_index(
+                pd.DatetimeIndex(d["interval_start_utc"]), year, "Etc/GMT+5"
+            )
+            d = d[d["hour"] >= 0].groupby("hour").first()
+            bind = ((d["positive_limit_mw"] - d["flow_mw"]) <= BIND_TOL_MW) & d[
+                "positive_limit_mw"
+            ].notna() & d["flow_mw"].notna()
+            c = cong.reindex(d.index)
+            contrib = float((c * bind).sum() / len(c)) if len(c) else 0.0
+            share_from_binding[iface] = dict(
+                binding_share=round(float(bind.mean()), 5),
+                congestion_from_binding_hours=round(contrib, 4),
+                share_of_annual_congestion=(
+                    round(contrib / annual, 4) if abs(annual) > 1e-9 else None
+                ),
+            )
+
+        out[name] = dict(
+            actual_annual_mean_congestion=round(annual, 4),
+            actual_hours_congested_gt_1c=round(float((cong.abs() > 0.01).mean()), 4),
+            actual_hours_congested_gt_1d=round(float((cong.abs() > 1.0).mean()), 4),
+            model_hours_separated_gt_1c=round(float((m_spread.abs() > 0.01).mean()), 4),
+            model_hours_separated_gt_1d=round(float((m_spread.abs() > 1.0).mean()), 4),
+            posted_binding=share_from_binding,
+        )
+    return out
+
+
 def main() -> int:
     """Run every measurement for 2023-2025 and write the probe record."""
     rec: dict = {
@@ -436,6 +495,20 @@ def main() -> int:
             if kind == "da":
                 year_rec["D_interface_binding"] = measure_d(year, comps)
                 year_rec["E_load_bands"] = measure_e(year, comps)
+                g = measure_g(year, comps)
+                year_rec["G_representability"] = g
+                for k, v in g.items():
+                    pb = v["posted_binding"]
+                    frm = sum(
+                        x["share_of_annual_congestion"] or 0.0 for x in pb.values()
+                    )
+                    print(
+                        f"  G  {k:<32} actual congested"
+                        f" {v['actual_hours_congested_gt_1d']*100:5.1f}% of h,"
+                        f" model separated"
+                        f" {v['model_hours_separated_gt_1d']*100:5.1f}%,"
+                        f" from posted-binding h {frm*100:5.1f}%"
+                    )
         rec["by_year"][str(year)] = year_rec
 
     # --- F: the pre-registered sign-consistency verdict, per link.
