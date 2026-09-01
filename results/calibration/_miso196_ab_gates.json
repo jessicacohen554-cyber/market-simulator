@@ -1,0 +1,188 @@
+{
+ "prereg": "PREREG-miso196-cc-outage-derate-from-top-2026-09-01.md \u00a74-\u00a77",
+ "keeper": "2026-08-30-miso-191-bexit",
+ "control": "miso196_control_A",
+ "arm": "miso196_top_B",
+ "scorer_written_before_any_arm_result": true,
+ "S0": {
+  "gate": "S-0",
+  "files": [
+   {
+    "file": "class_hourly_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   }
+  ],
+  "passed": true
+ },
+ "S1": {
+  "gate": "S-1",
+  "diffs": {
+   "cc_outage_derate_from_top": [
+    false,
+    true
+   ]
+  },
+  "passed": true
+ },
+ "S2": {
+  "gate": "S-2",
+  "years": {
+   "2023": {
+    "basis": "MISSING (per-unit dispatch artifact absent)",
+    "passed": null
+   },
+   "2024": {
+    "basis": "MISSING (per-unit dispatch artifact absent)",
+    "passed": null
+   },
+   "2025": {
+    "basis": "MISSING (per-unit dispatch artifact absent)",
+    "passed": null
+   }
+  },
+  "passed": null,
+  "basis_found": false,
+  "cc_regular_class_energy_shift_TWh": {
+   "2023": 4.9096,
+   "2024": 5.2899,
+   "2025": 4.7397
+  },
+  "note": "per-unit dispatch artifact absent in one or both bundles; S-2 is UNSCORED and reported as such rather than silently passed"
+ },
+ "K1": {
+  "pass_to_fail_flips": {
+   "fuelmix|CC_REGULAR|2024": "PASS -> FAIL",
+   "fuelmix|ST_GAS|2024": "PASS -> FAIL"
+  },
+  "all_flips": {
+   "fuelmix|CC_REGULAR|2024": "PASS -> FAIL",
+   "fuelmix|ST_GAS|2024": "PASS -> FAIL"
+  },
+  "named_ex_ante": {
+   "fuelmix|CC_REGULAR|2024": "PASS -> FAIL",
+   "fuelmix|ST_GAS|2024": "PASS -> FAIL"
+  },
+  "passed": false
+ },
+ "K2": {
+  "c3b_arm": {
+   "2023": 0.081,
+   "2024": 0.115,
+   "2025": 0.19
+  },
+  "c3b_control": {
+   "2023": 0.081,
+   "2024": 0.108,
+   "2025": 0.182
+  },
+  "over_gate": {},
+  "passed": true
+ },
+ "K3": {
+  "d4_control": [],
+  "d4_arm": [],
+  "new_d4_fails": [],
+  "passed": true
+ },
+ "K4": {
+  "n_residual_control": null,
+  "n_residual_arm": null,
+  "note": "boolean application-shape switch over an existing overlay \u2014 ZERO free parameters introduced, so n_residual must not move",
+  "passed": true
+ },
+ "scoring": {
+  "c3a_control_pct": {
+   "2023": 0.0913,
+   "2024": -4.5511,
+   "2025": -12.3405
+  },
+  "c3a_arm_pct": {
+   "2023": -1.0959,
+   "2024": -5.9752,
+   "2025": -13.5504
+  },
+  "c3a_adverse_face_pp": {
+   "2023": 1.0046,
+   "2024": 1.4241,
+   "2025": 1.2099
+  },
+  "direction_prediction": "DOWN (conf 0.75, frozen in phase 0)",
+  "direction_observed": {
+   "2023": "DOWN",
+   "2024": "DOWN",
+   "2025": "DOWN"
+  },
+  "determination_control": "NOT-YET",
+  "determination_arm": "NOT-YET"
+ },
+ "_adverse": true,
+ "verdict": "REJECT \u2014 a pre-registered kill fired (PREREG \u00a76)"
+}

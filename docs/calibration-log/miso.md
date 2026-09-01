@@ -9548,11 +9548,55 @@ safer direction. Real order-dependence, reachable by callers whose order differs
 (this session's harness), **not** reached on the load-bearing path. Not fixed
 here: solve-affecting core code, its own charter.
 
-**Why the A/B is handed on, not closed:** the solve rate in this environment is
-far below the charter's ~11 min/year/leg — 2023 P0 alone ran ~2.5 h on 4 cores
-at ~13 GB RSS. Both legs' commands are in PREREG §9; the pre-registration,
-kills and posture are already fixed and pushed, so a successor session runs the
-A/B against a rule it cannot bend.
+**THE A/B RAN END TO END; THE ARM IS REJECTED ON ITS OWN PRE-REGISTERED KILL.**
+Both legs registered same-session: `2026-09-01-miso-196-control` /
+`-fromtop`. Scorer `_miso196_ab_gates.py`, **committed at `74d92131` while the
+control leg was still solving**, so every kill was evaluated by code written
+blind to the numbers it judges.
+
+**S-0 BIT-IDENTICAL** — 12/12 keeper sidecars, max_abs_diff **0**. That also
+**proves the §-defect above never reached the keeper**: a fresh-process replay
+would have diverged in the first solved year's summer hours if it had.
+**S-1** exact single delta `false -> true`.
+
+**K-1 FIRES on BOTH class-years named EX ANTE in PREREG §6** (band ±8.00 TWh):
+
+| C1 2024 | control | arm |
+|---|---:|---:|
+| `CC_REGULAR` | +6.664 PASS | **+12.013 FAIL** |
+| `ST_GAS` | −7.553 PASS | **−8.092 FAIL** |
+
+**The ex-ante arithmetic verified:** PREREG predicted 7.13 TWh of freed cheap
+capability against 1.336 TWh of headroom, so **>~19% conversion blows the
+band**; measured CC_REGULAR class energy **+4.910 / +5.290 / +4.740 TWh** — a
+2024 conversion of **74%**. The miso-193 K-1 class pair reproduces exactly.
+
+**C3a DOWN in all three years**, as the frozen conf-0.75 prediction said:
++0.0913 → −1.0959, −4.5511 → −5.9752, −12.3405 → **−13.5504** (adverse face
+1.00 / 1.42 / 1.21 pp). Reported, **never weighed** (rule 1). K-2 PASS (C3b
+0.081/0.115/0.190), K-3 PASS.
+
+**Two gates DISCLOSED UNSCORED rather than counted as passes.** **S-2**'s
+frozen tranche-band basis exists in **no persisted artifact** — every dispatch
+artifact aggregates tranche rows back to the physical unit — so the scorer's
+own `None -> UNSCORED` path applies; the defect was that "no band resolved"
+fell through to a spurious FAIL. **K-4** needs a DOF attestation a
+`replay_keeper` bundle never writes (analytically safe: this lever adds ZERO
+free parameters).
+
+**The owner posture does NOT carry this arm.** The escalation branch requires
+the kills **silent**; what regressed is not a magnitude on an already-failing
+criterion but **two classes leaving their C1 band**, on the exact class-years
+named in writing before the solve.
+
+**What the rejection does NOT mean.** W3 is unrefuted — MISO's own record says
+the surviving train keeps ~90% of its loading. Per rules 1/14 this is the
+**compensating-error pattern**: the pro-rata form was **masking a pre-existing
+CC over-dispatch** (the keeper is already +6.664 TWh high on CC_REGULAR-2024),
+and the faithful form exposes it at full size. **The successor is that root
+cause — "why is MISO CC_REGULAR ~+6.7 TWh over at all?" — not a verdict on
+whether this mechanism should exist.** The cell is adjudicated for THIS keeper
+and re-offered after the repair.
 
 **Cell stamp:** `campd_outage_windows` stays **K**; its ev note now carries this
 adjudication of the registered application-shape sub-mechanism (rule 28(b),

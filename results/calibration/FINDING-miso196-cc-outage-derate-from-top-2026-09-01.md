@@ -192,38 +192,109 @@ change there re-bases summer availability and needs its own charter, PREREG and
 A/B — not a side edit in a lever session (one lever per session). Named as a
 successor in §8.
 
-## 7. Verdict
+## 7. THE A/B — RUN, AND REJECTED ON ITS OWN PRE-REGISTERED KILL
 
-**Phase 0 CLEARS: `CHARTER_AB = true`** — W1 LIVE ×3, W2 MATERIAL ×3, W3 PASS
-on MISO's own conduct record, W4 CLEAR (with §5(a)'s disclosed limit), W5 CLEAN
-×3 on the warm basis (Amendment 1, disclosed in the probe docstring — never
-silently applied).
+Both legs solved 2023-2025 in one invocation each, legs sequential (rule 12),
+both registered same-session (rule 15): `2026-09-01-miso-196-control`
+(`miso196_control_A`) and `2026-09-01-miso-196-fromtop` (`miso196_top_B`).
+Scorer `scripts/probes/_miso196_ab_gates.py`, **committed at `74d92131` while
+the control leg was still solving** — every kill was evaluated by code written
+blind to the numbers it judges. Record `_miso196_ab_gates.json`.
 
-**Keeper UNCHANGED at `2026-08-30-miso-191-bexit`.** The cell stays **K**; its
-ev note now carries this adjudication of the registered application-shape
-sub-mechanism (rule 28(b), same session).
+| gate | result |
+|---|---|
+| **S-0** control integrity | **PASS — BIT-IDENTICAL**, 12/12 keeper sidecars, max_abs_diff **0** |
+| **S-1** single delta | **PASS** — exactly `cc_outage_derate_from_top: false -> true` |
+| **S-2** tranche-band liveness | **UNSCORED** (basis absent — see below) |
+| **K-1** PASS->FAIL flip | **KILL — FIRES on both class-years named ex ante** |
+| **K-2** C3b through 0.20 | PASS (arm 0.081 / 0.115 / 0.190) |
+| **K-3** new D-4 | PASS |
+| **K-4** DOF `n_residual` | **UNSCORED** (replay bundles carry no attestation) |
 
-**The A/B is pre-registered and launched.** Directional prereg, declared before
-any solve quantity: **C3a-2025 DOWN, confidence 0.75** — an adverse face on the
-keeper's sole failing criterion, from a lever whose yardstick is the
-marginal-unit identity, D-1 shape and the C8 legs, **not pp of C3a** (rule 1).
-Pre-registered kills K-1 (C1 2024 `CC_REGULAR` named ex ante, `ST_GAS` the
-adjacent second), K-2 (C3b through 0.20), K-3 (any new D-4), K-4 (DOF
-`n_residual` increase). Pre-committed posture: **clean structural gates + an
-adverse C3a face ⇒ OWNER ESCALATION**, never self-promotion and never silent
-rejection on fit; the miso-193 standing owner posture directive is **not**
-assumed to carry here.
+**K-1, the kill, on exactly the two class-years PREREG §6 named before the solve:**
+
+| C1 2024 (band ±8.00 TWh) | control | arm |
+|---|---:|---:|
+| `CC_REGULAR` | +6.664 **PASS** | **+12.013 FAIL** |
+| `ST_GAS` | −7.553 **PASS** | **−8.092 FAIL** |
+
+**The ex-ante arithmetic was validated almost exactly.** PREREG §6 stated the
+arm frees a year-mean +814 MW of cheap `committed` capability = **7.13 TWh** at
+8,760 h against **1.336 TWh** of headroom, so **a realised conversion above
+~19% blows the band**. Measured CC_REGULAR class energy, control -> arm:
+**2023 +4.910, 2024 +5.290, 2025 +4.740 TWh** — a 2024 conversion of **74%**,
+nearly four times the threshold. `ST_GAS` is displaced further out of merit,
+reproducing the miso-193 K-1 class pair exactly.
+
+**C3a — the declared adverse face, verified in direction and magnitude:**
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| control | +0.0913 | −4.5511 | −12.3405 |
+| arm | −1.0959 | −5.9752 | **−13.5504** |
+| adverse face (pp) | 1.0046 | 1.4241 | 1.2099 |
+
+**DOWN in all three years — the frozen prediction (conf 0.75) verifies**, on
+the keeper's sole failing criterion. Per rule 1 this is reported, never
+weighed: it is not why the arm is rejected.
+
+**TWO GATES COULD NOT FIRE, DISCLOSED RATHER THAN COUNTED AS PASSES.**
+**S-2** reads LP tranche-band dispatch, but **every persisted artifact
+aggregates tranche rows back to the physical unit** (ids like `30_1`), so its
+frozen basis exists in no committed artifact. The scorer already carried a
+`None -> UNSCORED` path for exactly this; the defect was that "no band
+resolved" fell through to a spurious FAIL. Corrected to UNSCORED — **not
+passed, never silently** — and the class-grain energy shift above is reported
+as evidence, explicitly **not** substituted for the gate. **K-4** reads the
+DOF ledger, which a `replay_keeper` bundle does not write, so `n_residual` is
+`None` on both legs. Neither changes the outcome: K-1 had already fired.
+(Analytically K-4 is safe by construction — this lever introduces ZERO free
+parameters, being a boolean application-shape switch.)
+
+## 7a. Verdict, and why the owner posture does NOT carry this arm
+
+**REJECT the arm on its own pre-registered kill. Keeper UNCHANGED at
+`2026-08-30-miso-191-bexit`. NOT a keeper candidate. No promotion.**
+
+The pre-committed posture (PREREG §7) routes a clean-gates/adverse-face
+outcome to owner escalation — but that branch requires the **kills silent**,
+and K-1 fired. The standing owner posture ("structural integrity improves but
+gates regress may still be a keeper") does not reach this arm either: what
+regressed is not a magnitude on an already-failing criterion, it is **two
+classes leaving their C1 band outright**, on the exact class-years this
+session named in writing before the solve. Promoting through a kill that was
+pre-registered and then fired would make the pre-registration decorative.
+
+**WHAT THE REJECTION DOES NOT MEAN — the structural reading, stated in the
+lever's favour.** W3 stands unrefuted: MISO's own CAMPD record says a
+partially-out CC plant keeps ~90% of its normal loading on the surviving
+train (ratio 0.9035 against a pro-rata prediction of 0.6036). The mechanism is
+real conduct, and rule 1 forbids concluding "revert it because the fit got
+worse". The honest reading is the rule-14 compensating-error pattern: the
+**pro-rata form was silently masking a pre-existing CC over-dispatch** — the
+keeper already sits +6.664 TWh high on CC_REGULAR-2024 — and arming the
+structurally-faithful form removes the drag that was hiding it, exposing the
+defect at full size. **The open root-cause question this A/B produces is
+therefore "why is MISO CC_REGULAR ~+6.7 TWh over before any of this?", not
+"should `cc_outage_derate_from_top` exist".** That question is handed on; it
+is not a lever this session may adopt.
 
 ## 8. What is handed on
 
-1. **The A/B itself**, fully pre-registered at `64f184f1` with both legs'
-   commands in PREREG §9. The solve rate in this environment is far below the
-   charter's ~11 min/year estimate (2023 P0 alone ran ~2.5 h on 4 cores at
-   ~13 GB RSS), which is the sole reason it is handed on rather than closed.
-2. **The `_CC_PMAX_RECONCILED_PLANTS` order-dependence** (§6) — a real defect,
-   no keeper contaminated, needing its own charter because the repair is
-   solve-affecting core code.
-3. Census queue otherwise unchanged: `egrid_identity_heat_rates` (K@NYISO),
+1. **The CC_REGULAR over-dispatch root cause** (§7a): the keeper is +6.664 TWh
+   high on CC_REGULAR-2024 *before* this lever, and the pro-rata outage
+   application was masking it. A structurally-faithful application form cannot
+   be armed until that is fixed — which is the real successor, and it is a
+   root-cause investigation, not a lever.
+2. **Re-testing `cc_outage_derate_from_top` AFTER that repair.** The cell is
+   adjudicated for THIS keeper only; the mechanism's conduct case (W3) is
+   measured, MISO-native and unrefuted, so it should be re-offered once the CC
+   level defect is closed — not treated as closed itself.
+3. **The `_CC_PMAX_RECONCILED_PLANTS` order-dependence** (§6) — a real defect,
+   **no keeper contaminated** (now proven: S-0 reproduces the keeper
+   bit-identically from a fresh process), needing its own charter because the
+   repair is solve-affecting core code.
+4. Census queue otherwise unchanged: `egrid_identity_heat_rates` (K@NYISO),
    `tac_load_coverage` (K@CAISO), `lcr_tsl_published` (K@CAISO+NYISO).
 
 **Not touched** (charter "not yours to decide"): the D-4 posture ruling; the

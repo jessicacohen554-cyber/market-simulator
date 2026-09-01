@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-23T20:35:45",
+  "timestamp": "2026-09-01T01:48:33",
   "git": {
-    "sha": "21277e3",
-    "basis_sha": "1b8ddaca216576475548a8c7b7634f0de196758c",
-    "branch": "claude/miso-180-anchored-spread-r3qnh2",
+    "sha": "74d92131",
+    "basis_sha": "192460b6eda7fa30b988d3feb1cf1ee08f5c5711",
+    "branch": "claude/miso-196-outage-derate-04ecf4",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-180 ARM: anchored spread-only across-unit dispersion graft above the frozen crossing-rank anchor (single delta)",
+  "model_changes_note": "miso-196 control (replay of miso191_bax_B)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -199,7 +199,10 @@
       "st_gas_mustrun_p25_measured_level": true,
       "mustrun_layup_window_mask": true,
       "miso_seam_envelope_hour_ending_key": true,
-      "miso_offer_spread_anchored": true
+      "unit_outage_fleet_status_scope": true,
+      "nuclear_unit_availability": true,
+      "retiree_vintage_status_scope": true,
+      "partial_plant_exit_carry": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -216,7 +219,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "21277e3"
+    "git_sha": "74d92131"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -460,6 +463,11 @@
     "entry_pipeline_aware_signal": false,
     "capacity_screen_unified_lookahead": false,
     "capacity_screen_scarcity_restoration": false,
+    "entry_forward_expectation_signal": false,
+    "entry_margin_exhaustion": false,
+    "entry_forward_reserve_leg": false,
+    "storage_entry_availability_gate": false,
+    "storage_entry_cost_normalized_rank": false,
     "vre_procurement_additions_enabled": false,
     "interchange_shaping": false,
     "interchange_shaping_export_only": false,
@@ -574,6 +582,7 @@
     "caiso_storage_shape_anchor": false,
     "caiso_ps_plant_params": false,
     "caiso_charge_allocation_schedule": false,
+    "caiso_fsno_subzonal_topology": false,
     "caiso_intertie_reference_price": false,
     "caiso_corridor_atc_forward": false,
     "caiso_reference_price_seam": false,
@@ -763,6 +772,8 @@
     "ercot_offer_surface_cleared_share_rt": false,
     "ercot_offer_surface_cleared_share_rt_path": null,
     "ercot_offer_surface_cleared_share_rt_mode": "replace",
+    "ercot_offer_surface_cleared_share_rt_room": false,
+    "ercot_offer_surface_cleared_share_rt_room_path": null,
     "ercot_faststart_pool_offer": false,
     "ercot_faststart_pool_offer_path": null,
     "ercot_offline_commit_offer": false,
@@ -785,6 +796,7 @@
     "ercot_econ_curve_top_refine": false,
     "ercot_offer_surface_lowcurve": false,
     "ercot_offer_surface_lowcurve_path": null,
+    "ercot_offer_swcap_clip": false,
     "ercot_gas_commitment_bridge": false,
     "ercot_gas_bridge_min_load_frac": 0.574,
     "ercot_gas_bridge_startup": true,
@@ -794,7 +806,7 @@
     "ercot_commitment_posture_min_load_frac": 0.574,
     "ercot_offer_surface_lowcurve_floorscoped": false,
     "ercot_nuclear_unit_availability": false,
-    "nuclear_unit_availability": false,
+    "nuclear_unit_availability": true,
     "ercot_thermal_dam_availability": false,
     "neiso_operable_capacity_availability": false,
     "pjm_dam_availability": false,
@@ -867,6 +879,9 @@
     "commission_year_cod_fallback": true,
     "summer_wefor_share_override": 1.0599,
     "unit_outage_lp_capacity_basis": false,
+    "unit_outage_fleet_status_scope": true,
+    "retiree_vintage_status_scope": true,
+    "partial_plant_exit_carry": true,
     "cc_winter_capability_basis": false,
     "coal_nameplate_summer_derate": false,
     "gt_ambient_derate": false,
@@ -1032,7 +1047,7 @@
       0.9,
       1.0
     ],
-    "miso_offer_spread_anchored": true,
+    "miso_offer_spread_anchored": false,
     "coal_offer_net_revenue_margin": false,
     "coal_offer_margin_anchor": null,
     "coal_offer_margin_level": null,
@@ -1062,6 +1077,7 @@
     "pjm_external_net_position_cut": false,
     "pjm_zonal_loss_surface": false,
     "caiso_zonal_loss_surface": false,
+    "nyiso_zonal_loss_surface": false,
     "ercot_wtx_curtailment_driver": false,
     "ercot_wtx_curtail_depth_wind": 0.1004,
     "ercot_wtx_curtail_depth_solar": 0.1637,
@@ -1136,14 +1152,14 @@
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v21-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v22-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
-      "pydantic": "2.13.4"
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "pydantic": "2.13.5"
     }
   },
   "resolved_inputs": {
