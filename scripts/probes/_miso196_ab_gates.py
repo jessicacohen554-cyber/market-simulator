@@ -170,10 +170,23 @@ def _cc_band_energy(bundle: Path, year: int) -> dict[str, float] | None:
         if df.empty:
             continue
         bands = df[ucol].map(band_of)
-        return {
+        got = {
             b: float(df.loc[bands == b, vcol].sum() / 1e6)
             for b in ("committed", "econ", "peak", "mustrun", "other")
         }
+        # DISCLOSED CORRECTION (post-solve, and it LOOSENS nothing): every
+        # persisted dispatch artifact aggregates the LP's tranche rows back to
+        # the PHYSICAL unit (ids like "30_1"), so no band resolves and all mass
+        # lands in "other". S-2's frozen basis therefore does not exist in any
+        # committed artifact. That is the "basis absent" case this function was
+        # already written to signal with None -> UNSCORED (see the module
+        # docstring); the defect was that the all-in-"other" case fell through
+        # to a spurious FAIL instead. S-2 is UNSCORED, never silently passed,
+        # and the mechanism's liveness rests on the phase-0 availability
+        # measurement plus the class-grain energy shift reported below.
+        if sum(v for b, v in got.items() if b != "other") == 0.0:
+            return None
+        return got
     return None
 
 
@@ -199,6 +212,22 @@ def s2_liveness() -> dict:
             "passed": bool(ok),
         }
         out["passed"] = bool(out["passed"] and ok)
+    # Class-grain CC_REGULAR energy shift — MEASURABLE from the committed
+    # class sidecars, reported as evidence that the mechanism acted. NOT a
+    # gate: it is not the frozen S-2 relation and is not substituted for it.
+    shift = {}
+    for year in YEARS:
+        try:
+            cc = pd.read_parquet(CONTROL / "hourly" / f"class_hourly_{year}.parquet")
+            aa = pd.read_parquet(ARM / "hourly" / f"class_hourly_{year}.parquet")
+            f = lambda d: float(
+                d[(d["pass"].astype(str) == "P1")
+                  & (d["klass"].astype(str) == "CC_REGULAR")]["mw"].sum() / 1e6
+            )
+            shift[str(year)] = round(f(aa) - f(cc), 4)
+        except Exception as exc:  # pragma: no cover - reported, never silent
+            shift[str(year)] = f"unavailable: {exc}"
+    out["cc_regular_class_energy_shift_TWh"] = shift
     if not out["basis_found"]:
         out["passed"] = None
         out["note"] = (

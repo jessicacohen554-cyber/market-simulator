@@ -5476,9 +5476,27 @@ loss.
 > solve log on 2023, the FIRST solved year, KEEPS the derate for all seven
 > reconciled plants; the PREREG declined to assert contamination and the control
 > leg settled it in the safer direction. Not fixed here (solve-affecting core
-> code, own charter). **A/B handed on** because the solve rate here is far below
-> the charter's ~11 min/year (2023 P0 alone ~2.5 h on 4 cores); both legs'
-> commands are in PREREG §9 and the kills/posture are already fixed and pushed.
+> code, own charter). **THE A/B RAN END TO END and the ARM IS REJECTED ON ITS
+> OWN PRE-REGISTERED KILL**; both legs registered (`2026-09-01-miso-196-control`
+> / `-fromtop`), keeper UNCHANGED, NO promotion. S-0 **BIT-IDENTICAL** (12/12
+> sidecars, max_abs_diff 0 — which also PROVES the §6 defect never reached the
+> keeper). **K-1 FIRES on BOTH class-years named EX ANTE**: C1-2024 CC_REGULAR
+> +6.664 PASS → **+12.013 FAIL**, ST_GAS −7.553 PASS → **−8.092 FAIL** (band
+> ±8.00 TWh) — the miso-193 K-1 class pair exactly. **The ex-ante arithmetic
+> verified:** PREREG predicted 7.13 TWh freed vs 1.336 TWh headroom ⇒ >~19%
+> conversion blows the band; measured CC_REGULAR +4.910/+5.290/+4.740 TWh = a
+> 2024 conversion of **74%**. C3a **DOWN all three years** as the frozen
+> conf-0.75 prediction said (face 1.00/1.42/1.21 pp) — reported, never weighed
+> (rule 1). K-2/K-3 PASS. **S-2 and K-4 DISCLOSED UNSCORED, not counted as
+> passes** (S-2's tranche-band basis exists in no persisted artifact — they all
+> aggregate tranches back to the physical unit; K-4 needs a DOF attestation a
+> replay bundle never writes). **The owner posture does NOT carry this arm** —
+> the escalation branch needs the kills silent, and two classes left their C1
+> band. **What the rejection does NOT mean:** W3 is unrefuted, so per rules 1/14
+> this is the COMPENSATING-ERROR pattern — pro-rata was MASKING a pre-existing
+> CC over-dispatch (keeper already +6.664 TWh high on CC_REGULAR-2024) and the
+> faithful form exposes it. Successor = that ROOT CAUSE; this cell is re-offered
+> after the repair, NOT closed.
 > Queue otherwise unchanged (`egrid_identity_heat_rates`, `tac_load_coverage`,
 > `lcr_tsl_published`). FINDING-miso196-cc-outage-derate-from-top-2026-09-01.md;
 > PREREG-miso196-cc-outage-derate-from-top-2026-09-01.md;

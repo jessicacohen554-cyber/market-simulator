@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-23T20:35:45",
+  "timestamp": "2026-09-01T01:48:33",
   "iso": "MISO",
   "years": [
     2023,
@@ -210,7 +210,10 @@
     "st_gas_mustrun_p25_measured_level": true,
     "mustrun_layup_window_mask": true,
     "miso_seam_envelope_hour_ending_key": true,
-    "miso_offer_spread_anchored": true
+    "unit_outage_fleet_status_scope": true,
+    "nuclear_unit_availability": true,
+    "retiree_vintage_status_scope": true,
+    "partial_plant_exit_carry": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -320,7 +323,7 @@
   "caiso_offer_surface_conditional": false,
   "pjm_offer_midcurve_segments": null,
   "ercot_nuclear_unit_availability": false,
-  "nuclear_unit_availability": false,
+  "nuclear_unit_availability": true,
   "ercot_thermal_dam_availability": false,
   "ercot_thermal_dam_availability_hourly": false,
   "ercot_thermal_dam_availability_plant": false,
@@ -454,7 +457,7 @@
   "btm_backfill_year": null,
   "shared_inputs": {
     "eia930": "../_shared/MISO/eia930-a257b22934ed.parquet",
-    "eia923": "../_shared/MISO/eia923-1a5b4475b1f3.parquet",
+    "eia923": "../_shared/MISO/eia923-fa4995bba15c.parquet",
     "campd": "../_shared/MISO/campd-0c8c8860e930.parquet",
     "unit_outages": "../_shared/MISO/unit_outages-5b083f8b739a.parquet",
     "unit_outages_short": "../_shared/MISO/unit_outages_short-ee95f581732c.parquet",
@@ -462,19 +465,19 @@
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "21277e3",
-  "basis_sha": "1b8ddaca216576475548a8c7b7634f0de196758c",
-  "highspy_version": "1.14.0",
+  "git_sha": "74d92131",
+  "basis_sha": "192460b6eda7fa30b988d3feb1cf1ee08f5c5711",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v21-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v22-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
-      "pydantic": "2.13.4"
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "pydantic": "2.13.5"
     }
   }
 }
