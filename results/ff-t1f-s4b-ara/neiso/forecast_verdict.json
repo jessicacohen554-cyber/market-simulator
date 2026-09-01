@@ -3,8 +3,8 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "836e48e1efdc",
-    "scored_at_date": "2026-08-31T15:55:17Z",
+    "scored_at_sha": "7b085947b0ee",
+    "scored_at_date": "2026-09-01T01:10:12Z",
     "cache_epoch": "9a7f68fc7dcac931"
   },
   "tier": "t1f",
@@ -12,7 +12,9 @@
   "determination": "PROMOTE",
   "reasons": [],
   "caveats": [],
-  "notes": [],
+  "notes": [
+    "FC-5 external corridor (report-only): CAVEAT"
+  ],
   "categories": {
     "FC-1": {
       "label": "FC-1 structural integrity (I1-I14)",
@@ -67,12 +69,12 @@
     "FC-5": {
       "label": "FC-5 external corridor",
       "applicability": "report",
-      "status": "SKIPPED",
+      "status": "CAVEAT",
       "rows": [
         {
           "row": "corridor",
-          "status": "SKIPPED",
-          "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+          "status": "CAVEAT",
+          "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030']",
           "gating": true
         }
       ]

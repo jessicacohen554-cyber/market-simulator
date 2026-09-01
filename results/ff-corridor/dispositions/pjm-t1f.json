@@ -1,0 +1,264 @@
+{
+ "schema": "fc5-disposition/v1",
+ "authored_by": "capx-D25 FC-5 disposition session, 2026-09-01 (rubric §FC-5: the per-row disposition table a scoring session must author; anchors are context, the gate is the explanation)",
+ "verdict_key": "pjm-t1f",
+ "iso": "PJM",
+ "tier": "t1f",
+ "convention": "cross-model-corridor-2026-07-13.md §1, imported whole by rubric §FC-5: divergence > 15 % (or opposite sign/direction) requires a written ours-vs-theirs explanation naming the mechanism; verdicts per row are IN CORRIDOR / EXPLAINED DIVERGENCE / UNEXPLAINED; any UNEXPLAINED row fails FC-5 and routes to root cause (the D5 precedent). Divergence is not failure; unexplained divergence is.",
+ "context_never_fit_target": "rule 13 [R-MEASURED] / plan §7.6: nothing in the model moves toward any anchor; no conformance band exists; rows are dispositioned, never ranked by distance.",
+ "model_source": {
+  "summary": "results/ff-t1f-s6-pjm/ledger/full_horizon_summary.json",
+  "run_config": "results/ff-t1f-s6-pjm/ledger/run_config.json",
+  "cache_key": "31a19d815fa319a7",
+  "window": [
+   2026,
+   2030
+  ],
+  "capacity_market_clearing_resolved": true,
+  "posture": {
+   "mode": "forecast",
+   "carbon_price": 0.0,
+   "ccs_retrofit_available_year": 2028,
+   "ira_ccus_45q_last_year": 2032,
+   "offshore_wind_available_year": 2030,
+   "storage_deployment": "mid",
+   "storage_entry_availability_gate": false,
+   "storage_entry_cost_normalized_rank": false,
+   "entry_vre_capacity_revenue": false,
+   "retirement_rule": "pipeline",
+   "confirmed_exits_enabled": true,
+   "state_carbon_pricing": true
+  },
+  "storage_base_fleet_gw": 0.5
+ },
+ "anchor_source": {
+  "table": "results/ff-corridor/benchmark-corridor-anchors.json",
+  "intake": "docs/handoffs/FINDING-capx-d22-fc5-corridor-2026-08-31.md",
+  "missing_sources": [
+   "CAISO_IEPR_2025",
+   "ISONE_CELT_2026",
+   "MISO_FUTURES",
+   "NYISO_GOLDBOOK_2026",
+   "StdScen2024"
+  ],
+  "mmst_to_mt": 0.90718474
+ },
+ "standing_caveats": [
+  "AEO EMM regions approximate ISO footprints (each anchor row's own note); region rows were summed to ISO totals with the loader's extensive-quantity rule.",
+  "D14 measured the shared economic exit screen at recall 2/6 with a gas-concentration bias on the NEISO crossover window (docs/handoffs/FINDING-capx-d14-neiso-t1x-2026-08-30.md §2); the same screen composes every bundle's exits, so every model-side fleet-composition value here carries that measured skill caveat (golden finding §4(ii)).",
+  "AEO2025 reference froze law as of Dec 2024 (pre-OBBBA, CAA §111 in force), so its coal exit path is regulatory-assumption-heavy and its offshore-wind pipeline predates the 2025 federal cancellations — a source-vintage caveat cutting both directions (corridor memo D4 precedent).",
+  "The committed summaries carry NO generation-by-fuel, so the 252 AEO energy-mix (generation) anchors are NOT dispositioned — they remain context; extending the trajectory reporting grain is routed to the director (a reporting gap, not a divergence).",
+  "The trajectory's capacity_by_fuel_mw excludes LP storage resources (batteries and pumped storage) — run_full_horizon._capacity_by_fuel iterates generator fuels only — so the storage rows below quote the model's storage fleet from its registry base (STORAGE_BASE_FLEET_MW, EIA-860 2025 ER, src/market_sim/config/capacity_market.py:487) plus the window's builds_storage_mw ledger (zero in every bundle). AEO pumped-storage anchors are left as context (both sides hold PS roughly flat)."
+ ],
+ "counts": {
+  "in_corridor": 6,
+  "explained": 6,
+  "unexplained": 0,
+  "total": 12
+ },
+ "rows": [
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:total",
+   "model_basis": "sum(capacity_by_fuel_mw) - import + storage base",
+   "anchor_basis": "AEO Total Capacity",
+   "model_value": 210.32,
+   "anchor_value": 234.13,
+   "unit": "GW",
+   "divergence_pct": -10.2,
+   "verdict": "IN CORRIDOR",
+   "explanation": "Inside the corridor; offsetting composition stories on the rows below (coal high vs OSW/storage absent).",
+   "refs": []
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:coal",
+   "model_basis": "capacity_by_fuel_mw[coal]",
+   "anchor_basis": "AEO Coal",
+   "model_value": 31.56,
+   "anchor_value": 13.14,
+   "unit": "GW",
+   "divergence_pct": 140.1,
+   "verdict": "EXPLAINED DIVERGENCE",
+   "explanation": "Ours: 31.56 GW retained — the window's ONLY exits are step-0 confirmed instruments (2029: 2,600 MW Bruce-Mansfield-class coal at p6166 + 702 MW oil; 2030: 530 MW p602 coal) and S6 §7.3 MEASURED the economic screen retiring NOTHING in 2026–2030 (the reliability floor never fired). Under retirement_rule='pipeline' the economic screen retires coal only when the attainable inframarginal margin (energy+AS+capacity legs, spec §5.2) falls below FOM-only going-forward cost, and at these solved margins it does not; the confirmed-exit registry (spec §5.1 step 0 — the ONLY exogenous fossil exit channel) removes just the instrument-bound units. Theirs: AEO2025 reference retires to 13.14 GW by the anchor year, driven by CAA §111 compliance dates frozen into its Dec-2024 law baseline — a regulation the model deliberately does not hard-code (corridor memo D4/D8 precedent: a policy-input choice, not a screen success — and D14's measured exit-recall caveat applies to any claim of retirement skill). AEO2025 reference froze law as of Dec 2024 (pre-OBBBA, CAA §111 in force), so its coal exit path is regulatory-assumption-heavy and its offshore-wind pipeline predates the 2025 federal cancellations — a source-vintage caveat cutting both directions (corridor memo D4 precedent).",
+   "refs": [
+    "docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md §7.3",
+    "docs/handoffs/cross-model-corridor-2026-07-13.md D8"
+   ]
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:gas_cc",
+   "model_basis": "gas_cc + gas_cc_ccs",
+   "anchor_basis": "AEO Combined Cycle",
+   "model_value": 63.72,
+   "anchor_value": 68.21,
+   "unit": "GW",
+   "divergence_pct": -6.6,
+   "verdict": "IN CORRIDOR",
+   "explanation": "Composition note (not the verdict): 9.0 GW of the model's 63.72 GW combined-cycle fleet is CCS-retrofitted by this year — the spec §5.6 retrofit screen converting at its 3 GW/yr/ISO cap from ccs_retrofit_available_year=2028 (ira_ccus_45q_last_year=2032); the resolved carbon signal is zero for this ISO (no armed state carbon program — PJM's partial-footprint RGGI registry is gated off by default, MISO has none), so the 45Q window alone carries the retrofit economics. AEO2025's regional CC rows carry no comparable CCS conversion. The capacity aggregate matches; the emissions consequence is dispositioned on the co2 row. D21 measured this screen's paired-arm behavior; D23 attributed the P1 FAIL to the arm construction (a nonzero carbon_price override REPLACES the resolved signal, so the $25 arm CUT it) — the screen's carbon-price response is sign-correct (docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md).",
+   "refs": []
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:fossil_peaker_steam",
+   "model_basis": "gas_ct + gas_st + oil",
+   "anchor_basis": "AEO CT/Diesel + Fossil Steam",
+   "model_value": 43.5,
+   "anchor_value": 51.39,
+   "unit": "GW",
+   "divergence_pct": -15.4,
+   "verdict": "EXPLAINED DIVERGENCE",
+   "explanation": "Ours: 43.5 GW — CT additions are the adequacy backstop's administrative build (+843/+1,686/+1,371 MW in 2028–2030, S6 §7.2), rate-limited by the BLK-10 entry ladder (ENTRY_GROWTH_LIMIT_MULTIPLE 2.0 × prior-max annual build) seeded at PJM's SMALLEST measured historical gas_ct build rate, plus 2-yr-lagged economic entry sharing the same ladder budget (rule 19, one physical queue). Theirs: AEO adds CT toward 38.9 GW by 2030 en route to 71.3 by 2040 (committed anchor slope) — its data-center-load-driven national gas build (corridor memo D3). The divergence is a measured rate-limit against AEO's build-wave assumption; just past the 15 % trigger (−15.4 %).",
+   "refs": [
+    "docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md §7.2",
+    "docs/handoffs/cross-model-corridor-2026-07-13.md D3"
+   ]
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:nuclear",
+   "model_basis": "capacity_by_fuel_mw[nuclear]",
+   "anchor_basis": "AEO Nuclear",
+   "model_value": 33.49,
+   "anchor_value": 32.69,
+   "unit": "GW",
+   "divergence_pct": 2.4,
+   "verdict": "IN CORRIDOR",
+   "explanation": "Fleet held flat both sides.",
+   "refs": []
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:hydro",
+   "model_basis": "capacity_by_fuel_mw[hydro]",
+   "anchor_basis": "AEO Hydropower",
+   "model_value": 3.3,
+   "anchor_value": 3.18,
+   "unit": "GW",
+   "divergence_pct": 3.8,
+   "verdict": "IN CORRIDOR",
+   "explanation": "Flat both sides.",
+   "refs": []
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:solar",
+   "model_basis": "capacity_by_fuel_mw[solar]",
+   "anchor_basis": "AEO Solar Photovoltaic",
+   "model_value": 20.0,
+   "anchor_value": 20.38,
+   "unit": "GW",
+   "divergence_pct": -1.9,
+   "verdict": "IN CORRIDOR",
+   "explanation": "Model +6.0 GW window build (committed EIA-860 pipeline + entry) lands on AEO's 20.4 GW almost exactly (−1.9 %) — the strongest VRE agreement row in this table.",
+   "refs": []
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:wind_total",
+   "model_basis": "capacity_by_fuel_mw[wind]",
+   "anchor_basis": "AEO Onshore + Offshore Wind",
+   "model_value": 12.5,
+   "anchor_value": 32.53,
+   "unit": "GW",
+   "divergence_pct": -61.6,
+   "verdict": "EXPLAINED DIVERGENCE",
+   "explanation": "Ours: 12.5 GW of generic (onshore-modelled) wind — additions come from the committed EIA-860 pipeline and the RPS-driven entry channel; offshore wind exists as an entry technology (offshore_wind_available_year=2030) but has NEVER been selected by the merchant CONE/net-revenue entry screen in any committed bundle (no 'offshore_wind' key in any capacity_by_fuel_mw through 2050), and the model has NO state-procurement (OREC/PPA) build channel. Theirs: AEO2025 carries 16.37 GW onshore + 16.16 GW OFFSHORE by 2030 — the contracted state OSW pipeline at its Dec-2024 law freeze. The divergence is which instrument builds clean capacity: state procurement (theirs, not represented) vs merchant screen + RPS constraint (ours, which never clears OSW's cost). This bundle additionally records entry_vre_capacity_revenue=false (run_config), so VRE entry sees no capacity-market revenue leg — the BLK-7 posture, checkable in the committed config. AEO's 16.2 GW PJM OSW by 2030 (NJ/MD/VA procurements at Dec-2024 law freeze) is also the anchor most exposed to the pre-OBBBA vintage caveat.",
+   "refs": [
+    "docs/handoffs/cross-model-corridor-2026-07-13.md D9"
+   ]
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:storage",
+   "model_basis": "STORAGE_BASE_FLEET_MW[PJM] mid + builds (0)",
+   "anchor_basis": "AEO Diurnal Storage",
+   "model_value": 0.5,
+   "anchor_value": 6.42,
+   "unit": "GW",
+   "divergence_pct": -92.2,
+   "verdict": "EXPLAINED DIVERGENCE",
+   "explanation": "Ours: 0.5 GW — the EIA-860 2025 ER base fleet (STORAGE_BASE_FLEET_MW['PJM'] mid) plus ZERO storage entry in the window (builds_storage_mw = 0 in every committed year; for the NEISO golden, zero entry in all 25 years — docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md §6.3.1: under curve-ON the arbitrage+RA value stack never clears for storage in any year). Mechanism: the storage entry stack (spec §5.5) at this bundle's solved posture — run_config records storage_entry_availability_gate=false and storage_entry_cost_normalized_rank=false, the pre-R-A shipped defaults; owner ruling R-A (2026-08-31) armed both AFTER these solves and the golden finding §5.1(b)/§8.1 routes the re-solve question. Theirs: AEO2025 builds 6.42 GW of diurnal storage by 2030 on its own capacity-expansion economics.",
+   "refs": [
+    "docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md §6.3.1, §5.1(b)"
+   ]
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "capacity:biomass_waste",
+   "model_basis": "capacity_by_fuel_mw[biomass]",
+   "anchor_basis": "AEO Wood/Biomass + Municipal Waste",
+   "model_value": 1.75,
+   "anchor_value": 0.87,
+   "unit": "GW",
+   "divergence_pct": 101.1,
+   "verdict": "EXPLAINED DIVERGENCE",
+   "explanation": "Ours: 1.75 GW — the EIA-860/eGRID grid-registry biomass+waste fleet, which includes IPP/CHP wood and municipal-waste units that serve the grid. Theirs: AEO's 'Electric Power Sector' capacity excludes end-use/CHP-sector capacity, so its wood+MSW rows (0.87 GW summed) sit structurally below a grid-registry count. Sector-boundary basis mismatch on a class under ~1–2 % of the fleet; documented rather than silently mixed (rule 11 pattern, the D22 CDR-basis precedent, docs/handoffs/FINDING-capx-d22-fc5-corridor-2026-08-31.md §5.3).",
+   "refs": []
+  },
+  {
+   "source": "AEO2025",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "co2",
+   "model_basis": "co2_mt (metric)",
+   "anchor_basis": "AEO power CO2 (MMst × 0.90718474)",
+   "model_value": 387.5832,
+   "anchor_value": 232.28,
+   "unit": "Mt",
+   "divergence_pct": 66.9,
+   "verdict": "EXPLAINED DIVERGENCE",
+   "explanation": "Ours: 387.5832 Mt — dominated by the coal row's mechanism: 31.6 GW of coal operating vs AEO's 13.1 (each retained PJM coal GW-yr contributes roughly 4–6 Mt at solved dispatch), plus load growth served thermally where AEO serves it with the wind/storage the model does not build (those rows). Compound of dispositioned rows, no independent mechanism.",
+   "refs": [
+    "docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md §7.3",
+    "docs/handoffs/cross-model-corridor-2026-07-13.md D8"
+   ]
+  },
+  {
+   "source": "PJM_LOAD_2026",
+   "iso": "PJM",
+   "target_year": 2030,
+   "quantity": "peak_demand",
+   "model_basis": "peak_demand_mw",
+   "anchor_basis": "PJM 2026 Load Forecast Table B-1 RTO coincident summer peak",
+   "model_value": 172.7,
+   "anchor_value": 183.01,
+   "unit": "GW",
+   "divergence_pct": -5.6,
+   "verdict": "IN CORRIDOR",
+   "explanation": "−5.6 % against the ISO's own forecast — the direct ISO-planning anchor D22 landed. Note the model's demand path carries no explicit data-center block for PJM (the growth scalars); PJM's forecast embeds contracted large loads — the corridor memo D7 compensating-omission caveat stands.",
+   "refs": [
+    "docs/handoffs/cross-model-corridor-2026-07-13.md D7"
+   ]
+  }
+ ],
+ "anchors_not_dispositioned": [
+  "generation:* (252 AEO rows) — no committed model generation-by-fuel (standing caveat 4)",
+  "capacity:pumped_storage — model reporting grain excludes PS (standing caveat 5); both sides hold PS ~flat",
+  "capacity:renewables (AEO aggregate) — its parts are dispositioned per-tech",
+  "capacity:geothermal / solar_thermal — ~0 both sides in these ISOs",
+  "PJM_LOAD_2026 energy_demand — no committed model annual-energy field in the trajectory (routed with the generation reporting gap)",
+  "AEO 2035/2040 anchors — outside this bundle's 2026–2030 window; dispositioned for NEISO on the neiso-t3 golden"
+ ]
+}
