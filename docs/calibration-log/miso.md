@@ -9664,3 +9664,90 @@ and the two quotes above. Full record:
 `docs/FINDING-xiso-cascade-scan-2026-09-01.md`. Keeper
 `2026-08-30-miso-191-bexit` untouched; no marker, no shard cell, no holdout
 year, zero solve.
+
+---
+
+## miso-197 (2026-09-01) — the CC_REGULAR over-dispatch ROOT-CAUSED zero-solve: a chronic ~10 TWh/yr out-of-merit gas-steamer/CHP allocation defect, exposed at the CC line in the one year the model's over-elastic gas family lands on the actual level; keeper unchanged, no LP spent
+
+**The miso-196 §7a/§8.1 named successor, executed as chartered — a root-cause
+census, not a lever.** Keeper `2026-08-30-miso-191-bexit` UNCHANGED; zero
+solve; nothing registered (rule 15 not engaged); no matrix cell tested. Probe
+rule frozen and pushed at `251fb0e2` (blob-verified `076e298c`) BEFORE any
+adjudicating quantity — the fifth consecutive session on that pattern, with
+one pre-freeze basis correction disclosed (slice-keyed CC plants →
+per-(plant, class) ceilings).
+
+**The answer.** The +6.664 is the visible face of a CHRONIC intra-gas
+allocation defect, not a CC defect: every year the model under-runs the
+price-insensitive conduct classes (ST_GAS −3.73/−7.55/−6.55, ST_CHP
+−2.96/−2.93/−2.13, CT_CHP −2.82/−2.84/+0.63) ≈ 9–10 TWh/yr, because reality
+dispatches steamers/cogens OUT of merit — W3b: in the 2,190 top-quartile
+ST_GAS hours of 2024 the actual CC class runs at median 83.3% of its own
+p99.5 (the market burns 10.2-HR steam gas while 7.1-HR CC sits idle; the
+strict-merit LP does the opposite) — and the armed `st_gas_mustrun_*` floors
+carry only ~5.15 TWh of it (D-2). The LP hands the difference to the cheapest
+gas class: CC_REGULAR. WHY 2024: the model's scored gas family swings 2.3×
+the measured swing across the $2.54→$2.19→$3.52 gas cycle (model
+187.3→205.5→185.3 TWh vs actual 199.3→207.1→194.5), so its family Δ runs
+−12.0/−1.6/−9.1 — in 2023/2025 the family under-run MASKS the allocation
+defect at the CC line (CC reads −3.7/−2.5), and in 2024 the overshoot crosses
+the actual, the mask drops, and C1 reads +6.664 (W4a: |family Δ| −1.6 <
+|CC Δ| — pure intra-family reallocation). One defect, two faces; the
+family-amplitude overshoot is plausibly the SAME missing price-insensitive
+conduct.
+
+**Ruled OUT on frozen witnesses:** offer level (W3c: model HR ratio 1.524 vs
+CAMPD-measured 1.437, +6.1% inside ±15%; `offer_curve_overrides={}`;
+miso-179's +$15-over-book stands), duct population (31.9% of positive Δ on
+57.2% of capacity), 2024 availability composition (+1.4 pp < 2 pp line),
+availability ceiling (headroom 22.7–35.4 TWh every year), zonal story (spread:
+Plains +2.32 / Indiana +1.91 / South +1.35 / Illinois +1.04, top-2 63.9% <
+70%), single-plant story (top-5 54.2% < 60%; Edwardsport `1004:CC_REGULAR`
++2.59 the largest), diurnal shape (max normalized HOD gap 0.047), HR inputs,
+demand. Excess is LEVEL-LIKE (10/12 months positive, spring-tilted) and the
+model's 2023→24 CC jump (+10.0 TWh vs actual +3.0) is spread across
+upper-Midwest CCs with flat ceilings (Mankato +2.91 vs actual +0.08, Port
+Washington +2.06 vs −0.97, Fox +1.73 vs +0.12). Standing absorbers named:
+wind +4.7/+5.1/+5.1 TWh over EIA-930 every year; imports +2.0 in 2023
+(miso-178 §5's annual face); coal family −3.4/−8.3/−7.7.
+
+**Incidental (disclosed, instrument caveat):** the miso-196-pattern B1 fleet
+chain (`load_or_synthesize_bins → bins_to_fleet`) is NOT the solve's chain at
+one plant — Cottonwood 55358 (probe 580.4 MW vs the solve's own payload
+running 1,061 MW; fresh-process- and year-scope-invariant) — because
+`run_year` synthesizes bins through its own copy
+(`fleet_to_bins(load_fleet_from_csv(...))` → `build_base_fleet` →
+`build_dispatch_fleet`; the nyiso-89 drift class, run_calibration.py:3049).
+Scanned over every CC plant: Cottonwood is the ONLY genuine divergence
+(Riverside 55641 is the 64020 split-identity accounting pair — site closes at
+8.07 vs 8.48; Nine Mile Point 1403 is OTHER_FOSSIL both sides, correctly
+outside the population). Class-grain conclusions survive a fortiori. Handed
+to the `_CC_PMAX_RECONCILED_PLANTS` order-dependence charter (same
+fleet-sourcing family); probes must use run_year's own chain as the fleet
+basis.
+
+**§5 prereg for the successor (frozen for it, not by it):** ground the
+measured out-of-merit conduct of ST_GAS/steam-CHP by RE-IDENTIFYING the
+existing `st_gas_mustrun_*`/steam-host family (rule 19 — never a stacked
+floor); rule-13 admissible (multi-year CAMPD derivation, forward-regenerating).
+Directional: CC-2024 DOWN / ST_GAS-2024 UP toward 0, conf 0.85; materiality:
+≥ ~4 TWh must move off CC-2024 before `cc_outage_derate_from_top` (W3
+unrefuted, re-offered after the repair) can arm inside the band. DECLARED
+ADVERSE FACES: (1) 2023/2025 CC pushed further under — with the
+family-amplitude defect unrepaired, CC-2023 can approach its −8 band edge
+(rule-14 exposure working as intended; pre-register it as a branch, don't
+discover it); (2) C8 — ST_GAS 2025 forced share already 34.2% grounded; a
+bigger floor needs the D-4 window + D-1 shape provenance and a cited
+`D4_WINDOWS` entry, or a bid-side (self-schedule cost-insensitivity) form
+with no C8 exposure; (3) price face is DESIGN-DEPENDENT and must be frozen
+per form: a pure min_gen floor moves C3a DOWN (price-taker), a
+committed-with-real-offer form can move it UP and at the Δ₁ identity — stated
+either way, never the promotion criterion (rule 1).
+
+Records: `FINDING-miso197-cc-overdispatch-anatomy-2026-09-01.md`,
+`_miso197_cc_overdispatch_phase0.json`, probe
+`scripts/probes/_miso197_cc_overdispatch_phase0.py` (frozen at `251fb0e2`).
+Census queue unchanged: `egrid_identity_heat_rates` (K@NYISO),
+`tac_load_coverage` (K@CAISO), `lcr_tsl_published` (K@CAISO+NYISO). Rule 22:
+2023–2025 committed artifacts only; freeze untouched; no marker touched.
+Next number: **miso-198**.

@@ -905,7 +905,7 @@ def main() -> None:
         lines = {
             k: v
             for k, v in (sec.items() if isinstance(sec, dict) else [])
-            if k.endswith("_line") or k.endswith("line")
+            if isinstance(k, str) and k.endswith("line")
         }
         print(w, lines if lines else "(tables)")
 
