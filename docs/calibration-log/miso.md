@@ -9820,8 +9820,11 @@ invisible to CEMS (0.0004/0.0004/0.0022 TWh measured against a −2.96/−2.93/�
 C1 deficit), so no CAMPD-conditioned statistic can identify it; it belongs to
 `chp_steam_following` and its EIA-923 basis (its D-1 `profile_r` is negative in
 every year, −0.809/−0.733/−0.650, ungated). **`CT_CHP` IS visible**
-(9.79/10.46/10.20 TWh, L-2b forward-derivable at 1.00) and is a real candidate
-for the same treatment on its own mechanism.
+(9.79/10.46/10.20 TWh) but through only **5 of 41** model-class plants — 36
+carry no CAMPD series at all, and the L-2b 1.00 stable-energy share describes
+the plants the meter can see, not the class — so it is a real candidate for the
+same treatment on its own mechanism only if the successor prices in that blind
+spot.
 
 **DISCLOSED INSTRUMENT DEFECT, found and repaired before the adjudicating
 record.** The first census run omitted `load_shape`, and the runtime floor block

@@ -53,8 +53,10 @@ capability demonstrably idle. Purely measured: no model dispatch, no price.
 
 **Forward-derivability (M-2) passes for ST_GAS**: stable plants (annual
 `oom_level_mw` spread ≤ 0.35) carry **0.812** of the class's pooled OOM energy
-against a 0.60 line, and 15 of 22 plants are pooled-representative. CT_CHP also
-clears (1.00). **ST_CHP does not, and cannot** — see §6.
+against a 0.60 line — 9 stable of the 17 plants that register any measured OOM
+energy — and 15 of 22 plants are pooled-representative. CT_CHP clears at 1.00
+but on only 5 CAMPD-visible plants of 41 (§6). **ST_CHP does not, and cannot**
+— see §6.
 
 ## 3. WHERE the identification loses it (M-3): the exact partition
 
@@ -172,9 +174,14 @@ CAMPD-conditioned statistic can identify it. Its floor is `chp_steam_following`
 on an EIA-923 delivery-implied basis — a different mechanism under a different
 charter (rule 19). Its D-1 `profile_r` is **negative in every year**
 (−0.809 / −0.733 / −0.650, ungated), which is a standing shape signal for that
-lane. **`CT_CHP` IS visible** (9.79 / 10.46 / 10.20 TWh measured, L-2b
-forward-derivable at a 1.00 stable-energy share) and is a real candidate for
-the same treatment on its own mechanism.
+lane. **`CT_CHP` IS visible, but through a narrow window that must be stated with
+the claim**: its measured energy (9.79 / 10.46 / 10.20 TWh) comes from only
+**5 of 41** model-class plants — 36 carry no CAMPD series at all — and those 5
+are dominated by 50625 (15.61 TWh over three years) and 1391 (9.33). All five
+are stable, which is why the L-2b energy share reads a perfect 1.00; that
+figure describes the plants the meter can see, not the class. On that basis
+CT_CHP is a real candidate for the same treatment on its own mechanism,
+provided the successor prices in the 36-plant blind spot.
 
 ## 7. Handed on
 
