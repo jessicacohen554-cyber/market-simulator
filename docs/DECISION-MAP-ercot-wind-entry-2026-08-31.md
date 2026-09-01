@@ -1,5 +1,29 @@
 # DECISION MAP — the ERCOT wind entry miss: TERMINAL REST at this representation grain
 
+> ### ⚠️ TWO DOCUMENTS EXECUTE RULING R-D. THIS IS ONE OF THEM. NEITHER IS WRONG.
+>
+> **The companion is `docs/MAP-c1-wind-entry-closure-2026-09.md`** (494 lines,
+> the C-1 lane's fuller closure map). Both were produced against R-D in the same
+> window by two different lanes. **That duplication was a DIRECTOR DISPATCH
+> ERROR — the map was dispatched to a lane after the records lane had already
+> executed it — not an error by either lane, and not a disagreement between
+> them.** Neither document is withdrawn or superseded.
+>
+> **Which is canonical for which purpose:**
+>
+> | | this document | `MAP-c1-wind-entry-closure-2026-09.md` |
+> |---|---|---|
+> | **canonical for** | **the R-D RULING RECORD** — what the owner ruled, what TERMINAL REST does and does not mean, and the ruling's companion stamps | **the fuller CLOSURE MAP** — all six measured postures, the residual accounting, and the per-posture matrix-cell verdicts |
+> | cite it when | recording or re-reading the ruling itself | asking what was measured, by which posture, and what stays open |
+>
+> **The two AGREE on every headline figure — re-verified 2026-09-01 by the
+> audit-program repair lane at `origin/main` `6c7f82dac015`, independently of
+> the director's own check:** the entry miss **12.313 GW** (model wind 0.350 GW
+> vs actual 12.663 GW), the best measured posture **1.442 GW**, the share closed
+> **8.87 %** ((1.442 − 0.350)/12.313), the naive sum of the singles **13.77 %**,
+> and the measured joint-vs-signal difference **0.00 pp**. **No figure
+> disagrees between the two documents.**
+
 **Filed:** 2026-08-31, executing owner ruling **R-D** of the 2026-08-31 director
 REFRESH sitting, on `docs/FINDING-c1-joint-wind-ab-2026-08-31.md`. **Pattern:**
 the caiso-222 §1(c) **option 3 — TERMINAL REST + MAP** (owner ruling R-3,

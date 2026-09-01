@@ -1,5 +1,36 @@
 # MAP — the C-1 ERCOT wind-entry closure map: 12.313 GW, six measured postures, one number
 
+> ### ⚠️ TWO DOCUMENTS EXECUTE RULING R-D. THIS IS ONE OF THEM. NEITHER IS WRONG.
+>
+> **The companion is `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md`** (266
+> lines, the records lane's R-D execution). Both were produced against R-D in the
+> same window by two different lanes. **That duplication was a DIRECTOR DISPATCH
+> ERROR — this map was dispatched to the C-1 lane after the records lane had
+> already executed R-D — not an error by either lane, and not a disagreement
+> between them.** Neither document is withdrawn or superseded.
+>
+> This corrects one statement in §Preamble below, which reads *"R-D itself is not
+> yet in the committed record … This document is therefore the first artifact to
+> carry R-D."* **That was true at this document's own base (`54d5772c`) and is
+> false at `6c7f82dac015`:** the companion DECISION-MAP carries R-D, and it
+> landed first. The observation is left in place as the honest record of what
+> this lane could see when it wrote; this header is the correction.
+>
+> **Which is canonical for which purpose:**
+>
+> | | this document | `DECISION-MAP-ercot-wind-entry-2026-08-31.md` |
+> |---|---|---|
+> | **canonical for** | **the fuller CLOSURE MAP** — all six measured postures, the residual accounting, and the per-posture matrix-cell verdicts | **the R-D RULING RECORD** — what the owner ruled, what TERMINAL REST does and does not mean, and the ruling's companion stamps |
+> | cite it when | asking what was measured, by which posture, and what stays open | recording or re-reading the ruling itself |
+>
+> **The two AGREE on every headline figure — re-verified 2026-09-01 by the
+> audit-program repair lane at `origin/main` `6c7f82dac015`, independently of
+> the director's own check:** the entry miss **12.313 GW** (model wind 0.350 GW
+> vs actual 12.663 GW), the best measured posture **1.442 GW**, the share closed
+> **8.87 %** ((1.442 − 0.350)/12.313), the naive sum of the singles **13.77 %**,
+> and the measured joint-vs-signal difference **0.00 pp**. **No figure
+> disagrees between the two documents.**
+
 _2026-08-31 · C-1 ERCOT wind-entry lane, discharging the **MAP** half of owner
 ruling **R-D** (2026-08-31 director sitting), which placed this lane at
 **TERMINAL REST + MAP**. The rest half was executed by
