@@ -50,6 +50,7 @@ Usage: ``python scripts/check_registry_payload_parity.py`` (exit 1 on any gap).
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -65,16 +66,108 @@ from scripts.lib.known_unsynced_keepers import (  # noqa: E402
 REGISTRY_DIR = ba.REGISTRY
 RUNS_DIR = ba.RUNS
 
+# --- the CLASS-LEVEL carve-out (B-8 / audit board checklist item 10) -------
+#
+# Two classes of artifact under `results/calibration/` are SUPPOSED to exist
+# before any sidecar does, so the point-4 sweep fires on them by design:
+# pre-registered campaign POINTS and replay RECIPE dirs. Before this carve-out
+# the only relief was `KEEP_REQUIRED_UNMAPPED_BUNDLES`, a hand-maintained
+# allowlist that grew one to three entries per A/B session (40 entries by
+# 2026-09-01, up from the 26 the audit board last counted) — so the gate's
+# green was a maintenance state, not a property, and its own docstring's
+# warning that a stale entry is "a re-armable hole" was on the way to coming
+# true (`nyiso147_control` was named here after its dir was already gone).
+# `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` §5
+# recommended replacing the enumeration with a structural test; this is it.
+#
+# WHAT IS ADMITTED — both conjuncts required, in both classes:
+#
+#   (1) The dir carries NO SOLVE OUTPUT. Not "few files", not "small": none of
+#       `metrics.json`, `calibration_attestation.json`,
+#       `legitimacy_diagnostics.json`, and no `*.parquet` / `*.npz`. Point 4's
+#       stated target is "dead solve output committed forever with nothing
+#       rendering or scoring it"; a dir holding no solve output is not the
+#       thing the rule is about. This is what keeps the carve-out honest — a
+#       real abandoned bundle always carries solve output and can never enter.
+#   (2) A COMMITTED RECORD names it. Class R (a recipe dir) must be named by
+#       dir name; class P (a campaign point) must have its point-score marker
+#       FILENAME named, because the pre-registration records the campaign and
+#       its record file, not each of ten grid points. This is the "cited by a
+#       committed record" test the `miso170_layup_A/B` entries were already
+#       kept on, promoted from a prose justification to code.
+#
+# The two classes, derived from the allowlist comments' own stated reasons:
+#
+#   * **Class R — replay-recipe dir.** Its ONLY file is `meta.json`.
+#     `run_calibration_full.run_replay_bundle` reads nothing else, so a
+#     one-file dir is a COMPLETE and valid `--replay-bundle` input by
+#     construction — solve INPUT, not truncated output. Committed BEFORE its
+#     arm solves (the NYISO lane's pre-registration discipline) and cited as
+#     the sole input of a reproduction command in a committed PREREG/RESULT.
+#   * **Class P — pre-registered campaign point.** Carries a
+#     `*_point_score.json` marker: the machine-readable per-point record a
+#     kill-gated grid campaign commits for its non-winner points (the winner
+#     registers the ordinary way). The heavy bundle contents are gitignored by
+#     the campaign's own scratch rule, so the marker plus its sibling record
+#     JSONs are the whole committed artifact.
+#
+# WHAT IS NOT ADMITTED, and why a looser rule re-creates the dead-bundle class:
+#
+#   * A dir with solve output — parquet, metrics, an attestation — NEVER
+#     enters, however it is named or cited. Dropping conjunct (1) and keeping
+#     only the citation test would admit every abandoned control and A/B arm
+#     that any doc happens to mention, which is precisely the dead solve
+#     output point 4 exists to sweep.
+#   * A record-free dir NEVER enters. Dropping conjunct (2) would admit any
+#     stray `meta.json` or point-score file, so an abandoned lane's litter
+#     would exempt itself — an allowlist with no keeper of the list.
+#   * A dir is NOT admitted for being named `*_control` / `*_recipe` / for
+#     living under a campaign prefix. Naming patterns are not evidence; a
+#     batch-prune keyed to `_recipe` is what the 2026-08-20 finding was
+#     written to stop.
+#
+# NOT A PRE-MERGE CHECK, deliberately (finding §5.3). Nothing here is made
+# stricter or earlier. A pre-registered artifact is legitimately unmapped for
+# hours or days while its lane is mid-flight, so an earlier gate would block
+# correct pre-registration commits and train lanes to skip it — the opposite
+# of what the program wants. The defect was in the classifier, not the timing.
+
+#: Files that exist only because a solve wrote them. Presence of ANY of these
+#: (or of a `*.parquet` / `*.npz`) makes a dir solve OUTPUT, which no
+#: class-level carve-out admits.
+SOLVE_OUTPUT_NAMES: frozenset[str] = frozenset(
+    {"metrics.json", "calibration_attestation.json", "legitimacy_diagnostics.json"}
+)
+SOLVE_OUTPUT_SUFFIXES: tuple[str, ...] = (".parquet", ".npz")
+
+#: The one file `run_replay_bundle` reads — a dir holding only this is a
+#: complete replay INPUT (class R).
+REPLAY_RECIPE_FILE = "meta.json"
+
+#: Marker naming the per-point record a pre-registered grid campaign commits
+#: (class P): `<campaign>_point_score.json`.
+POINT_SCORE_SUFFIX = "_point_score.json"
+
+#: Committed-record corpus the citation conjunct is tested against. Both roots
+#: hold the program's PREREG / PRECOMMIT / RESULT / FINDING / ASSESSMENT
+#: records; the ERCOT campaign records live under `docs/`, the NYISO lane's
+#: under `results/calibration/`, so both are needed. Read cost measured
+#: 2026-09-01: 1,824 files / 34.9 MB / 0.14 s.
+RECORD_DOC_ROOTS: tuple[tuple[str, str], ...] = (
+    ("results/calibration", "*.md"),
+    ("docs", "**/*.md"),
+)
+
 # Class-E retention rule point 4 (keepers/README.md): keep-required bundle
-# dirs that legitimately hold NO retained sidecar mapping. Admissible classes
-# are the rule's immunity set when a bundle outlives its sidecar — a
-# `keeper_at_declaration` or structural-prior (STATMODE_PROBE_RUNS) bundle
-# whose registry entry was retired — which is the EXCEPTION: the prune
-# immunity (`dashboard_add_run._protected_run_ids`) normally keeps those
-# sidecars alive, so their bundles are mapped the ordinary way. Every entry
-# names the top-level dir and carries a reason comment; a stale entry is a
-# re-armable hole in the gate (delete it when the bundle goes). Empty at
-# adoption (2026-08-16): every non-`_` dir on the tree was sidecar-mapped.
+# dirs that legitimately hold NO retained sidecar mapping, AND that the
+# class-level carve-out above does not already admit. What is left here after
+# the 2026-09-01 classifier repair is the genuinely one-off residue: FULL
+# bundles (solve output present, so conjunct (1) excludes them by design)
+# kept on a case-by-case justification — in-flight controls and bit-identical
+# replication arms. Every entry names the top-level dir and carries a reason
+# comment; a stale entry is a re-armable hole in the gate (delete it when the
+# bundle goes). Empty at adoption (2026-08-16): every non-`_` dir on the tree
+# was sidecar-mapped.
 KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
     {
         # miso-170b independent-replication evidence (2026-08-19): this pair
@@ -88,41 +181,14 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         # MISO-inert), so they legitimately outlive their sidecars.
         "miso170_layup_A",
         "miso170_layup_B",
-        # ercot-235 2023-discrete offer-sweep GRID POINTS (2026-08-25): the
-        # ten non-winner points of the precommitted 4-round kill-gated grid
-        # (PRECOMMIT-ercot235-2023-discrete-offer-sweep-2026-08-25.md; winner
-        # ercot235_r10 IS sidecar-mapped as 2026-08-25-235-2023-discrete-k24).
-        # Each dir keeps exactly one committed file — ercot235_point_score.json,
-        # the record FINDING-ercot235 quotes (heavy contents gitignored by the
-        # ercot235_r[0-9]/ scratch rule). They are the campaign's rejected/
-        # killed evidence (rule 15 spirit) and legitimately outlive sidecars
-        # they never had. Delete these entries when the campaign record is
-        # superseded.
-        "ercot235_r1",
-        "ercot235_r2",
-        "ercot235_r3",
-        "ercot235_r4",
-        "ercot235_r5",
-        "ercot235_r6",
-        "ercot235_r7",
-        "ercot235_r8",
-        "ercot235_r9",
-        "ercot235_r11",
-        # ercot-236 h4097 shed-repair campaign (2026-08-25): the D-1 diagnosis
-        # solve + the three non-winner verification/re-bracket points of the
-        # precommitted chain (PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md;
-        # winner ercot236_k33_clip IS sidecar-mapped as
-        # 2026-08-25-236-swcap-clip-k33). Each dir keeps its committed
-        # ercot236_point_score.json + official_2023.json (the diag dir also
-        # ercot236_d1_diagnosis.json — the D-1 attribution record the FINDING
-        # quotes); heavy contents gitignored by the ercot236_*/ scratch rule.
-        # V-0 (k24_clip) is the clip-inertness identity leg; the diag dir is
-        # the O1-confirmation evidence. Delete these entries when the campaign
-        # record is superseded.
-        "ercot236_diag_k30",
-        "ercot236_k24_clip",
-        "ercot236_k27_clip",
-        "ercot236_k30_clip",
+        # RETIRED 2026-09-01 (audit checklist item 10) — the ercot-235
+        # 2023-discrete offer-sweep grid points (r1-r9, r11) and the ercot-236
+        # h4097 shed-repair points (diag_k30, k24_clip, k27_clip, k30_clip) are
+        # now admitted STRUCTURALLY as class P: each carries a committed
+        # `*_point_score.json` marker, no solve output at all, and its marker
+        # filename is named by the campaign's own committed PRECOMMIT/FINDING.
+        # Their reasons are unchanged; they are simply no longer enumerated.
+        # A future campaign point needs no entry here.
         # caiso-224 FSNO arc, MID-CONCLUSION (2026-08-30) — INTERIM ENTRIES.
         # Both dirs are deliberate artifacts of an arc that has not yet reached
         # its verdict, so they must outlive their absent sidecars until it does.
@@ -144,153 +210,59 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         # re-armable hole in the gate.
         "caiso224_a0_control",
         "caiso224_b1_fsno",
-        # --- NYISO A/B RECIPE DIRS (ws6-parity-repair, 2026-08-20) ----------
-        # A SECOND admissible class, adjudicated on the merits rather than on
-        # the `_recipe` naming pattern: a `--replay-bundle` RECIPE dir. These
-        # hold exactly ONE file, `meta.json`, and NO solve output of any kind
-        # (no metrics/diagnostics/parquet) — `run_replay_bundle` reads only
-        # `meta.json`, so a one-file dir is a COMPLETE and valid replay input
-        # by construction, not a truncated bundle. They are therefore solve
-        # INPUT, and point 4's stated target ("dead solve output committed
-        # forever with nothing rendering or scoring it") does not describe
-        # them. Each is committed BEFORE its arm solves (the NYISO lane's
-        # pre-registration discipline) and is named as the sole input of a
-        # reproduction command in a committed PREREG/RESULT doc, which is the
-        # same ground the miso170 pair above is kept on. Verified 2026-08-20:
-        # each recipe is config-equal to the arm it produced except for
-        # fields that did not yet exist at declaration time, every one of
-        # which the arm records as null — so the cited replay commands are
-        # FAITHFUL, not stale. Retention record and the recommended
-        # structural fix (so this list stops growing one arm at a time):
-        # results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md
+        # --- NYISO A/B CONTROL BUNDLES (ws6-parity-repair, 2026-08-20) -----
+        # RETIRED 2026-09-01 (audit checklist item 10): the SEVENTEEN one-file
+        # `*_recipe` dirs formerly enumerated here (nyiso-144/146/146b/146c/
+        # 147/148/149/150/151/152/153/154) are now admitted STRUCTURALLY as
+        # class R — their only file is `meta.json`, so they carry no solve
+        # output, and each is named by a committed PREREG/RESULT reproduction
+        # command. This is the structural fix
+        # `FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` §5.1 asked for,
+        # and it is why this list stops growing one arm at a time. Their
+        # justifications are unchanged and live in that finding; a future
+        # recipe dir needs no entry here.
         #
-        # SPENT recipes — arm solved and REGISTERED; kept because pruning
-        # them turns the cited reproduction command into a dead reference.
-        # Removable when the citing doc is retired or its reproduction
-        # section is re-pointed at the registered arm bundle.
-        "nyiso144_arm_recipe",  # PREREG/RESULT-nyiso144 -> nyiso144_layup_arm
-        "nyiso146_arm_recipe",  # RESULT-nyiso146 -> nyiso146_perplant_arm
-        "nyiso146b_armB_recipe",  # RESULT-nyiso146bc -> nyiso146b_online_arm
-        "nyiso146b_armC_recipe",  # RESULT-nyiso146bc -> nyiso146b_reserve_arm
-        # -> nyiso146c_state_arm, the CURRENT NYISO KEEPER
-        # (2026-08-19-nyiso-146c-state-scoped): this is the recipe that
-        # reproduces the designated keeper. RESULT-nyiso146bc §"reproduce".
-        "nyiso146c_armB2_recipe",
+        # `nyiso147_control` was ALSO removed — its dir no longer exists on
+        # the tree at all (verified against `origin/main` 2026-09-01), so the
+        # entry was exactly the "re-armable hole in the gate" this list's own
+        # comment warns about.
         #
-        # LIVE — session nyiso-147 (PREREG-nyiso147-chp-btm-measured-
-        # 2026-08-20), arms NOT yet solved at this writing. `nyiso147_control`
-        # is the pre-registered CONTROL, verified byte-identical to the
-        # keeper's committed hourlies (max |dprice| = 0.0) before the PREREG
-        # was written; kill gates A-K1/A-K3/A-K4/A-K5 are all defined *vs the
-        # control*, so deleting it destroys the experiment's reference arm.
-        # DO NOT PRUNE. REMOVAL CONDITION: session nyiso-147 clears these
-        # three when it registers arms A/B (rule 15) — the control registers
-        # with them, exactly as `ercot221_control_A` cleared itself on the
-        # ercot-221 registration. If nyiso-147 is abandoned, the lane that
-        # retires it prunes all three in that commit.
-        "nyiso147_control",
-        "nyiso147_armA_recipe",
-        "nyiso147_armB_recipe",
+        # WHAT REMAINS is the residue the class deliberately does not admit:
+        # FULL A/B control and replication bundles, which DO carry solve
+        # output (hourly parquet + diagnostics) and so fail conjunct (1) by
+        # design. Each is kept on its own case-by-case justification.
         #
-        # LIVE — session nyiso-148 (PREREG-nyiso148-chp-layup-duty-2026-08-21).
-        # `nyiso148_armD_recipe` is the same one-file replay-input class as the
-        # recipe dirs above: committed BEFORE the arm solved, and named as the
-        # sole input of the reproduction command in
-        # RESULT-nyiso148-chp-layup-duty-2026-08-21.md §Reproduction. The arm it
-        # produced IS registered (2026-08-21-nyiso-148-chp-layup), so this is a
-        # SPENT recipe kept only so that citation stays live. REMOVAL
-        # CONDITION: the citing RESULT is retired, or its reproduction section
-        # is re-pointed at the registered arm bundle.
-        "nyiso148_armD_recipe",
-        #
-        # SPENT — session nyiso-149 (PREREG-nyiso149-chp-duty-curve-
-        # 2026-08-22): the one-file replay input committed before ARM F
-        # solved; the arm it produced is REGISTERED and is the CURRENT NYISO
-        # KEEPER (2026-08-22-nyiso-149-duty-curve), whose RESULT §7
-        # reproduction command names this dir as its sole input. Allowlist
-        # entry added at nyiso-150 (the registering session omitted it; the
-        # parity gate surfaced the gap on the next run). REMOVAL CONDITION:
-        # the citing RESULT is retired or its reproduction section re-pointed
-        # at the registered keeper bundle.
-        "nyiso149_armF_recipe",
-        #
-        # SPENT — session nyiso-150 (PREREG-nyiso150-gradient-winter-and-
-        # reserve-rearm-2026-08-22). The two one-file recipe dirs are the same
-        # replay-input class as above: committed BEFORE their arms solved (the
-        # pre-registration discipline) and named as the sole inputs of the
-        # PREREG §7 reproduction commands. Both arms ARE registered
-        # (2026-08-22-nyiso-150-reserve-rearm / -winter-spread, both
-        # REJECTED-AS-ARMED on their pre-registered gates), so these are SPENT
-        # recipes kept only so the citation stays live. `nyiso150_control` is
-        # the A/B reference arm: verified byte-identical to the keeper
-        # (IDENT gate, max |dprice| = 0.0 over every zone-hour ×3 years,
-        # _nyiso150_ab_gates.json) and deliberately NOT registered (the
-        # nyiso-149 base-replay convention); its slim files + hourly sidecars
-        # + regenerated diagnostics (the D-4 vintage-guard live verification)
-        # are committed, and every C-K/W-K gate is defined vs it. REMOVAL
-        # CONDITION: the citing PREREG/ASSESSMENT docs are retired or their
-        # reproduction sections re-pointed at the registered arm bundles.
-        "nyiso150_armC_recipe",
-        "nyiso150_armW_recipe",
+        # `nyiso150_control` (session nyiso-150) is the A/B reference arm:
+        # verified byte-identical to the keeper (IDENT gate, max |dprice| =
+        # 0.0 over every zone-hour ×3 years, _nyiso150_ab_gates.json) and
+        # deliberately NOT registered (the nyiso-149 base-replay convention);
+        # its slim files + hourly sidecars + regenerated diagnostics (the D-4
+        # vintage-guard live verification) are committed, and every C-K/W-K
+        # gate is defined vs it.
         "nyiso150_control",
         #
-        # SPENT — session nyiso-151 (PREREG-nyiso151-egrid-identity-hr-and-
-        # regate-2026-08-22.md). The two one-file recipe dirs are the standard
-        # replay-input class (committed before their arms solved; PREREG §7
-        # reproduction inputs). ARM H is REGISTERED (2026-08-22-nyiso-151-
-        # identity-hr, PROMOTED TO KEEPER on the owner's arm-on-legitimacy
-        # ruling) so its bundle is mapped the ordinary way; ARM HC is
-        # deliberately NOT registered — it is BIT-IDENTICAL to the registered
-        # 2026-08-22-nyiso-150-reserve-rearm (max |dprice| = 0.0 x3 years,
-        # _nyiso151_ab_gates.json) and a second registration of identical
-        # bytes would be a double entry (the nyiso-149 convention); its
-        # committed bundle is the replication record the RESULT cites.
-        # `nyiso151_control` is the IDENT reference arm at the post-merge
-        # HEAD (proven == the 149 keeper), the baseline every H/HC gate is
-        # defined against. REMOVAL CONDITION: the citing PREREG/RESULT docs
-        # are retired or re-pointed at registered bundles.
-        "nyiso151_armH_recipe",
-        "nyiso151_armHC_recipe",
+        # session nyiso-151 (PREREG-nyiso151-egrid-identity-hr-and-regate-
+        # 2026-08-22.md). ARM HC is deliberately NOT registered — it is
+        # BIT-IDENTICAL to the registered 2026-08-22-nyiso-150-reserve-rearm
+        # (max |dprice| = 0.0 x3 years, _nyiso151_ab_gates.json) and a second
+        # registration of identical bytes would be a double entry (the
+        # nyiso-149 convention); its committed bundle is the replication
+        # record the RESULT cites. `nyiso151_control` is the IDENT reference
+        # arm at the post-merge HEAD (proven == the 149 keeper), the baseline
+        # every H/HC gate is defined against. REMOVAL CONDITION: the citing
+        # PREREG/RESULT docs are retired or re-pointed at registered bundles.
         "nyiso151_armHC",
         "nyiso151_control",
         #
-        # SPENT — session nyiso-152 (PREREG-nyiso152-bridge-reserve-duty-
-        # exclusion-2026-08-22.md). The two one-file recipe dirs are the
-        # standard replay-input class (committed before their arms solved;
-        # PREREG §8 reproduction inputs). ARM SE is REGISTERED
-        # (2026-08-22-nyiso-152-duty-complete, PROMOTED TO KEEPER on the
-        # prereg's own §5 rule) so its bundle is mapped the ordinary way.
-        # `nyiso152_control` is the IDENT reference arm at the post-#4203
-        # HEAD (proven == the 151 keeper, max |dprice| = 0.0 x3 years,
-        # _nyiso152_ab_gates.json) and deliberately NOT registered (the
-        # nyiso-149 base-replay convention); its slim files + hourly
-        # sidecars + regenerated diagnostics are committed, and every SE-K
-        # gate is defined vs it. REMOVAL CONDITION: the citing
-        # PREREG/RESULT docs are retired or re-pointed at registered
-        # bundles.
-        "nyiso152_armSE_recipe",
-        "nyiso152_control_recipe",
+        # session nyiso-152 (PREREG-nyiso152-bridge-reserve-duty-exclusion-
+        # 2026-08-22.md). `nyiso152_control` is the IDENT reference arm at the
+        # post-#4203 HEAD (proven == the 151 keeper, max |dprice| = 0.0 x3
+        # years, _nyiso152_ab_gates.json) and deliberately NOT registered (the
+        # nyiso-149 base-replay convention); its slim files + hourly sidecars
+        # + regenerated diagnostics are committed, and every SE-K gate is
+        # defined vs it. REMOVAL CONDITION: the citing PREREG/RESULT docs are
+        # retired or re-pointed at registered bundles.
         "nyiso152_control",
-        #
-        # SPENT — session nyiso-153 (PREREG-nyiso153-incity-obligation-
-        # 2026-08-22.md). The one-file recipe dir is the standard replay-input
-        # class (committed before the arm solved; PREREG §7 reproduction
-        # input). The arm itself is REGISTERED
-        # (2026-08-22-nyiso-153-incity-obligation, REJECTED-AS-ARMED on its
-        # own pre-registered branches) so its bundle is mapped the ordinary
-        # way; the control is the already-registered nyiso-152 keeper (no
-        # re-solve — prereg §3). REMOVAL CONDITION: the citing PREREG/RESULT
-        # docs are retired or re-pointed at registered bundles.
-        "nyiso153_armO_recipe",
-        #
-        # SPENT — session nyiso-154 (PREREG-nyiso154-da-horizon-uncap-
-        # 2026-08-22.md). Same class as nyiso-153: the one-file recipe dir is
-        # the replay input committed before the arm solved; the arm is
-        # REGISTERED (2026-08-22-nyiso-154-da-horizon, measured effectively
-        # inert on its own gates) so its bundle is mapped the ordinary way;
-        # the control is the nyiso-152 keeper (no re-solve). REMOVAL
-        # CONDITION: the citing PREREG/RESULT docs are retired or re-pointed.
-        "nyiso154_armD_recipe",
     }
 )
 
@@ -350,6 +322,113 @@ def check_namespace_boundary(rid: str, rec: dict) -> list[str]:
     return problems
 
 
+def _has_solve_output(bundle: Path) -> bool:
+    """Whether ``bundle`` holds any file only a solve could have written.
+
+    Conjunct (1) of the class-level carve-out. Recursive, because a bundle's
+    hourly sidecars live under ``hourly/``.
+
+    Args:
+        bundle: A top-level ``results/calibration/<name>`` directory.
+
+    Returns:
+        True if any committed file is solve output.
+    """
+    for path in bundle.rglob("*"):
+        if not path.is_file():
+            continue
+        if path.name in SOLVE_OUTPUT_NAMES:
+            return True
+        if path.suffix in SOLVE_OUTPUT_SUFFIXES:
+            return True
+    return False
+
+
+def record_corpus(repo: Path | None = None) -> str:
+    """Read the committed PREREG / PRECOMMIT / RESULT / FINDING record corpus.
+
+    Conjunct (2) of the class-level carve-out is a substring test against this
+    text. Both roots in :data:`RECORD_DOC_ROOTS` are needed: the ERCOT campaign
+    records live under ``docs/``, the NYISO lane's under
+    ``results/calibration/``.
+
+    Args:
+        repo: Repo root override (tests); defaults to this checkout.
+
+    Returns:
+        Every record document's text, concatenated. Unreadable files are
+        skipped — an unreadable doc must never widen the carve-out.
+    """
+    repo = repo or REPO
+    chunks: list[str] = []
+    for root, pattern in RECORD_DOC_ROOTS:
+        base = repo / root
+        if not base.is_dir():
+            continue
+        for path in sorted(base.glob(pattern)):
+            try:
+                chunks.append(path.read_text(errors="replace"))
+            except OSError:
+                continue
+    return "\n".join(chunks)
+
+
+def _is_cited(token: str, corpus: str) -> bool:
+    """Whether ``token`` is named in the record corpus as a whole identifier.
+
+    The delimiter guard matters: without it ``ercot235_r1`` would match inside
+    ``ercot235_r10``, so a pruned point could be excused by its neighbour's
+    citation.
+
+    Args:
+        token: A directory name or a marker filename.
+        corpus: Text from :func:`record_corpus`.
+
+    Returns:
+        True when the corpus names the token exactly.
+    """
+    return re.search(rf"(?<![\w-]){re.escape(token)}(?![\w-])", corpus) is not None
+
+
+def classify_prereg_artifact(bundle: Path, corpus: str) -> str | None:
+    """Class-level carve-out: is ``bundle`` a pre-registered non-output artifact?
+
+    Implements the two admissible classes documented at
+    :data:`KEEP_REQUIRED_UNMAPPED_BUNDLES` — class R (a ``--replay-bundle``
+    recipe dir) and class P (a pre-registered campaign point). Both require
+    that the dir carry NO solve output AND that a committed record name it, so
+    a dead bundle with solve output, or an uncited stray, is never admitted.
+
+    Args:
+        bundle: A top-level ``results/calibration/<name>`` directory.
+        corpus: Text from :func:`record_corpus`.
+
+    Returns:
+        A short reason string naming the class, or ``None`` when the dir is
+        not admitted and must be judged the ordinary way.
+    """
+    files = [p for p in bundle.rglob("*") if p.is_file()]
+    if not files:
+        return None  # an EMPTY dir is litter, not a pre-registered artifact
+    if _has_solve_output(bundle):
+        return None  # conjunct (1): solve output is never carved out
+
+    names = [p.name for p in files]
+
+    # Class R — the only file is `meta.json`, a complete replay INPUT.
+    if names == [REPLAY_RECIPE_FILE] and _is_cited(bundle.name, corpus):
+        return (
+            "class R: replay-recipe dir (meta.json only), named by a committed record"
+        )
+
+    # Class P — a pre-registered campaign point, identified by its marker.
+    markers = sorted(n for n in names if n.endswith(POINT_SCORE_SUFFIX))
+    for marker in markers:
+        if _is_cited(marker, corpus):
+            return f"class P: pre-registered campaign point (carries {marker}, named by a committed record)"
+    return None
+
+
 def check_bundle_retention(
     sidecars: dict[str, dict], *, repo: Path | None = None
 ) -> tuple[list[str], int]:
@@ -367,6 +446,12 @@ def check_bundle_retention(
       references in a `keepers.<ISO>.bundle` field.
     * the documented `KEEP_REQUIRED_UNMAPPED_BUNDLES` allowlist (a
       keep-required bundle that legitimately outlives its sidecar).
+    * the CLASS-LEVEL carve-out (:func:`classify_prereg_artifact`): a
+      pre-registered artifact that carries no solve output AND is named by a
+      committed record — a replay-recipe dir (class R) or a campaign point
+      (class P). This replaced 31 of the allowlist's 39 live entries on
+      2026-09-01; see :data:`KEEP_REQUIRED_UNMAPPED_BUNDLES` for exactly what
+      it does and does not admit.
 
     Out of scope by construction: root-level loose records (files, not
     dirs), and the `results/hindcast/` / `results/regression-goldens/`
@@ -413,6 +498,7 @@ def check_bundle_retention(
 
     problems: list[str] = []
     swept = 0
+    corpus: str | None = None  # read lazily: only an unmapped dir needs it
     for path in sorted(p for p in calib_root.iterdir() if p.is_dir()):
         name = path.name
         if name.startswith("_"):
@@ -421,6 +507,10 @@ def check_bundle_retention(
         if name in mapped or name in golden_refs:
             continue
         if name in KEEP_REQUIRED_UNMAPPED_BUNDLES:
+            continue
+        if corpus is None:
+            corpus = record_corpus(repo)
+        if classify_prereg_artifact(path, corpus) is not None:
             continue
         problems.append(
             f"results/calibration/{name}: bundle dir maps to no retained "
