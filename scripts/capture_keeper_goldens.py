@@ -31,9 +31,31 @@ What this script does, per keeper:
    Keys present only in the golden (new fields added to ``ScenarioConfig`` /
    ``meta`` since the keeper was frozen) are reported, not failed — goldens are
    current-HEAD baselines, not byte-reproductions of the July-3 bundles.
-5. Write a hashes-only ``manifest.json`` (git SHA, env pins, per-file *content*
-   hashes, per-keeper fidelity summary). The multi-GB parquet bundles live under
-   the gitignored goldens dir; only the manifest is committed.
+5. Write a hashes-only ``manifest.json`` (per-file *content* hashes, per-keeper
+   fidelity summary, and a **per-entry** provenance + keeper snapshot). The
+   multi-GB parquet bundles live under the gitignored goldens dir; only the
+   manifest is committed.
+
+Manifest schema v2 — per-entry provenance (2026-09-01). Schema v1 carried ONE
+top-level ``git_sha`` / ``git_dirty`` / ``env`` / ``highspy_version`` block for
+however many captures the manifest held. Because ``write_manifest`` merges a
+single ISO's entry into the existing file, every capture silently RE-STAMPED
+that one block for all the earlier captures — so a manifest with six captures
+taken at six trees ended up asserting one tree for all six, and the five older
+rows carried a sha that was *valid and wrong* (the perfb-stage0 defect;
+``docs/FINDING-stage0-provenance-repair-2026-09.md``). In v2 those four fields
+live inside ``keepers.<ISO>.provenance``, stamped by the capture that wrote the
+entry and never touched again; the top level keeps only what is genuinely
+global to the file (``schema_version``, ``stage_tag``, ``hash_scheme``,
+``note``).
+
+Each entry also carries a ``keeper_snapshot`` copied from the provenance run's
+registry sidecar at capture time. Top-15-per-ISO registry retention will prune
+that sidecar long before the golden is retired — five of the six perfb-stage0
+rows were already orphaned this way, with every gate green — so the entry must
+absorb the sidecar's identity *while it still exists* rather than pointing at
+a file that will vanish. ``scripts/check_golden_manifest.py`` enforces both
+halves in CI.
 
 Determinism note: the manifest hashes the parquet *content* (canonical column
 bytes), not the raw file, because parquet embeds library/version metadata that
@@ -65,6 +87,7 @@ import os
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -172,6 +195,35 @@ def _git_sha() -> str:
         return "unknown"
 
 
+def _git_sha_full() -> str:
+    """Return the full git SHA of HEAD, or ``"unknown"``."""
+    try:
+        out = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True)
+        return out.strip()
+    except Exception:
+        return "unknown"
+
+
+def _basis_sha() -> str:
+    """Return the origin-durable basis of this checkout, or ``"unknown"``.
+
+    Mirrors ``market_sim.pipeline.persist.basis_sha``: ``merge-base(HEAD,
+    origin/main)``, the newest ancestor of this capture that main's history
+    retains, falling back to full ``HEAD`` when ``origin/main`` is not visible.
+    A capture's own ``git_sha`` is routinely a session-local branch commit that
+    is squashed away on merge, so ``basis_sha`` is the anchor that still
+    resolves a month later.
+    """
+    for args in (["merge-base", "HEAD", "origin/main"], ["rev-parse", "HEAD"]):
+        try:
+            out = subprocess.check_output(["git", *args], cwd=REPO, text=True).strip()
+            if out:
+                return out
+        except Exception:
+            continue
+    return "unknown"
+
+
 def _git_dirty() -> bool:
     """Return True if the working tree has uncommitted changes."""
     try:
@@ -181,6 +233,55 @@ def _git_dirty() -> bool:
         return bool(out.strip())
     except Exception:
         return False
+
+
+def _provenance() -> dict:
+    """Return this capture's own provenance block (manifest schema v2).
+
+    Stamped into the ISO entry the capture writes, so a later capture of a
+    different ISO can never re-label it. ``recorded_at`` is the manifest-write
+    instant, which for a single-ISO capture is the moment the solve finished.
+    """
+    import highspy
+
+    return {
+        "git_sha": _git_sha(),
+        "git_sha_full": _git_sha_full(),
+        "basis_sha": _basis_sha(),
+        "git_dirty": _git_dirty(),
+        "recorded_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "env": dict(DETERMINISM_ENV),
+        "highspy_version": getattr(highspy, "__version__", "unknown"),
+        "source": "stamped-at-capture",
+    }
+
+
+def _keeper_snapshot(info: dict) -> dict:
+    """Return the entry's self-contained copy of its provenance run's sidecar.
+
+    Registry retention (top-15 per ISO) prunes the sidecar on its own schedule
+    and knows nothing about this manifest, so an entry that only *references*
+    ``registry/<keeper_id>.json`` becomes unreadable the moment the prune runs.
+    Copying the sidecar's identity here at capture time keeps the entry
+    meaningful afterwards; the prune then costs nothing.
+    """
+    reg = info.get("sidecar") or {}
+    snap = {
+        "id": info["keeper_id"],
+        "iso": reg.get("iso", ""),
+        "label": reg.get("label", ""),
+        "date": reg.get("date", ""),
+        "shorthand": reg.get("shorthand", ""),
+        "definition": reg.get("definition", ""),
+        "years": [int(y) for y in info["years"]],
+        "bundle": str(info["bundle"].relative_to(REPO)),
+        "sidecar_at_capture": (
+            "present"
+            if (REGISTRY_DIR / f"{info['keeper_id']}.json").is_file()
+            else "absent"
+        ),
+    }
+    return snap
 
 
 def resolve_keeper_bundles(only_isos: set[str] | None = None) -> dict[str, dict]:
@@ -218,6 +319,9 @@ def resolve_keeper_bundles(only_isos: set[str] | None = None) -> dict[str, dict]
             "keeper_id": keeper_id,
             "bundle": bundle,
             "years": [int(y) for y in reg["years"]],
+            # Kept whole so ``_keeper_snapshot`` can copy the sidecar's identity
+            # into the manifest entry before retention prunes the sidecar.
+            "sidecar": reg,
         }
     return out
 
@@ -513,6 +617,10 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
             ],
         },
         "content_hashes": _hash_bundle(golden_dir),
+        # Schema v2: provenance belongs to THIS entry. A later capture of a
+        # different ISO merges its own entry and leaves this one untouched.
+        "provenance": _provenance(),
+        "keeper_snapshot": _keeper_snapshot(info),
     }
     return entry
 
@@ -534,10 +642,16 @@ def _run_subprocess(iso: str, stage_tag: str) -> int:
     return subprocess.call(cmd, env=env, cwd=REPO)
 
 
-def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
-    """Write / merge the hashes-only manifest for a stage tag."""
-    import highspy
+MANIFEST_SCHEMA_VERSION = 2
 
+
+def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
+    """Write / merge the hashes-only manifest for a stage tag.
+
+    Only the ISOs in ``entries`` are rewritten. Under schema v2 the top level
+    holds nothing capture-specific, so merging one ISO's entry cannot re-label
+    any other — the v1 failure mode this function used to have.
+    """
     manifest_path = GOLDENS_ROOT / stage_tag / "manifest.json"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     existing = {}
@@ -545,16 +659,16 @@ def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
         existing = json.loads(manifest_path.read_text()).get("keepers", {})
     existing.update(entries)
     payload = {
+        "schema_version": MANIFEST_SCHEMA_VERSION,
         "stage_tag": stage_tag,
-        "git_sha": _git_sha(),
-        "git_dirty": _git_dirty(),
-        "env": DETERMINISM_ENV,
-        "highspy_version": getattr(highspy, "__version__", "unknown"),
         "hash_scheme": "sha256-of-canonical-column-float64-bytes",
         "note": (
             "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions "
             "of the registered July-3 keeper bundles. Multi-GB bundles are "
-            "gitignored; only this manifest is committed."
+            "gitignored; only this manifest is committed. Provenance (git sha, "
+            "basis sha, env pins, timestamp) and the provenance run's identity "
+            "are PER ENTRY under keepers.<ISO>.provenance / .keeper_snapshot — "
+            "there is deliberately no shared top-level git_sha."
         ),
         "keepers": existing,
     }

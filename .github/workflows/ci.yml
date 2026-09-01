@@ -106,6 +106,17 @@ jobs:
       # ids (scripts/lib/known_unsynced_keepers.py); any new gap fails.
       - name: check_registry_payload_parity
         run: uv run python scripts/check_registry_payload_parity.py
+      # Regression-golden manifests: per-entry provenance (no shared top-level
+      # git_sha that one capture re-stamps for every other) + the retention
+      # invariant (an entry whose provenance run retention has pruned must
+      # already carry its own keeper_snapshot). Lives in this job because it is
+      # the same registry-vs-artifact coupling the parity gate above checks —
+      # and it is the leg that was missing when top-15 retention orphaned five
+      # of six stage-0 captures with every gate green. Reads committed
+      # artifacts only; no solve. See
+      # docs/FINDING-stage0-provenance-repair-2026-09.md.
+      - name: check_golden_manifest
+        run: uv run python scripts/check_golden_manifest.py
 
   forecast-invariant-artifacts:
     name: Forecast-invariant artifact audit
