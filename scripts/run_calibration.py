@@ -447,6 +447,7 @@ def run_year(
     pjm_offer_midcurve_conditional: bool = False,
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
     caiso_offer_surface_measured: bool = False,
+    caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     nuclear_unit_availability: bool = False,
@@ -754,6 +755,9 @@ def run_year(
         pjm_da_virtual_bids=pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
         caiso_offer_surface_measured=caiso_offer_surface_measured,
+        caiso_offer_surface_measured_ungrounded=(
+            caiso_offer_surface_measured_ungrounded
+        ),
         caiso_offer_surface_conditional=caiso_offer_surface_conditional,
     )
     if pjm_offer_midcurve_segments is not None:
