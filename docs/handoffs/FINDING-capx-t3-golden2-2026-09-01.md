@@ -441,3 +441,144 @@ the same economic screen D14 measured at exit recall 2/6 with a
 gas-concentration bias; the 25-year composition — including the missing oil
 exits that this solve now RETAINS even longer — inherits that defect, and every
 composition statement in §6.2–6.3 must be read with it.
+
+## 7. FC-6 at this campaign's own vintage, the verdict, and the registration
+
+### 7.1 The FC-6 evidence (all four arms solved sequentially, this vintage, this data)
+
+| leg | wall | result |
+|---|---|---|
+| base (reproduction gate) | 35.0 min | **REPRODUCES THE CAMPAIGN EXACTLY** — 25 years × every trajectory field + the full I1–I14 vector, cache key `706e7ba8e6582d42` both. The perturbed arms were gated on this check (control-first); it is simultaneously the attestation's FF-4B reproducibility evidence. |
+| `carbon_plus25` (`carbon_price_delta=25`) | 34.6 min | key `f7cced798488ddac`; cum CO₂ 229.82 → **196.00 Mt (−14.7 %)**, LW price higher in every year (2026: 52.13 → 62.28; 2050: 79.16 → 84.65) |
+| `gasup150` (`gas_price_factor=1.5`) | 34.1 min | key `65662ca117959ee5`; cum CO₂ 281.46 Mt, 2050 LW $93.95; **builds NO 2050 iron-air** (fleet 2,635 MW — the only arm without the entry) |
+| `gaspm5` (`gas_price_factor=1.05`) | 34.0 min | key `2d017ed9675aa386`; cum builds move 0.0 % |
+| battery | ~0 s | T1.6 is **OUT OF SERVICE** at HEAD (lane T16, 2026-09-01: `renewable_buildout_pace` deleted under rule 26 — a sharper state than §3's pre-declared "vacuous two rows"; same substance, now structural): both gate rows emit SKIP with the out-of-service reason, zero solves |
+
+Total FC-6 solve wall 2.30 h — inside the §3 pricing (2.2–2.7 h). Paired rows
+(assembled from the three checker passes, committed as
+`fc6/paired_invariants.json`):
+
+- **P1 PASS** — cumulative CO₂ base 229.82 vs high 196.00 Mt under the genuine
+  +$25/t; **P1.premise PASS** — strictly +25.00 in all 25 years (the D26
+  construction working natively at its second-ever use).
+- **P2 FAIL — "year 2050: wrong: gas_cc↓" — a NEW finding, root-caused and left
+  standing as scored.** The leg tests unabated-`gas_cc` generation falling
+  under gas ×1.5 at the last common year. Measured: the BASE holds **zero**
+  unabated CC at 2050 (100 % CCS-converted by 2040), while the gas×1.5 world
+  retrofits LESS (CCS stalls at 9,846.8 vs 13,135.4 MW — the retrofit's
+  fuel-cost penalty scales with the gas price) and builds MORE late CC (6,500
+  vs 4,500 MW, the 2039/2045/2047 builds landing after
+  `ira_ccus_45q_last_year=2032` so they never convert) — so the arm holds
+  6,000 MW of unabated CC generating 23.2 TWh against the base's 0, and the
+  per-fuel-key comparison reads as a sign violation. **At the all-gas level
+  the sign is correct** (total gas generation 36.53 → 35.36 TWh at 2050,
+  imports up), and the arm's higher CO₂ (10.90 vs 5.29 Mt at 2050) is the
+  un-abatement composition effect. This is the same instrument family as
+  D23's P1 attribution — a check written for same-fleet dispatch pairs being
+  crossed by a 25-year fuel-CLASS migration (gas_cc → gas_cc_ccs is the same
+  physical fleet under a different label) — **but nothing here is edited**:
+  the FAIL stands in `paired_invariants.json` and the verdict, per the D21
+  charter line (a FAIL is the instrument speaking; whether P2 should compare
+  the all-gas block on evolution pairs is an instrument-scope question ROUTED
+  to the director, §8).
+- **P3 PASS** — cumulative builds move 0.0 % under ±5 % gas (38,220 MW both;
+  rate-limit-shaped, the golden-1 annotation carrying over).
+
+### 7.2 Determination: **T3 HOLD** — pre-declared correctly; the gate map moves in both directions
+
+| gate | golden-1 final (pre-R-A record, D26 re-score) | **golden-2 (this campaign)** | movement |
+|---|---|---|---|
+| FC-1 structural integrity | FAIL (I3 dump) | **FAIL** (I3 dump, onset 2043 identical, terminal 7.74 %) | — |
+| FC-2 adequacy & equilibrium | FAIL (cobweb gas_cc(10)) | **FAIL** (cobweb gas_cc(7)) | — |
+| FC-3 capacity-evolution skill | FAIL (T1-H bands, 9 failing) | **FAIL** (same committed input; no post-R-A NEISO T1-H exists — stated FC-3 evidence limit) | — |
+| FC-4 crossover dispatch skill | FAIL (D14 T1-X) | **FAIL** (same committed input) | — |
+| FC-5 external corridor | CAVEAT (33 rows) | **CAVEAT** (54 rows, 0 UNEXPLAINED — generation family + PS row newly scoreable) | broader evidence, same status |
+| FC-6 driver response | CAVEAT (repaired P1 PASS; vacuous battery) | **FAIL** (P1/P3 PASS, premise PASS; **P2 FAIL** — §7.1; battery CAVEAT out-of-service) | **CAVEAT → FAIL** (new finding) |
+| FC-7 provenance & DOF | FAIL (UNATTESTED) | **PASS** — original artifacts, 7/7-identified DOF ledger, the §3-pre-declared rubric-§5 attestation, all six assertions true with cited evidence | **FAIL → PASS (first FC-7 pass on any golden)** |
+| FC-8 runtime | PASS | **PASS** (35.1 min / 3.48 GB) | — |
+
+**Determination: HOLD on FC-1/FC-2/FC-3/FC-4/FC-6** — §3(4) predicted HOLD and
+named FC-3/FC-4 as carried; FC-6's FAIL arrived through a leg (P2) the
+pre-declaration did not predict, and FC-7's PASS was the declared intent
+executed. Both movements are stated rather than absorbed. The scorer control
+was re-run TWICE against the committed pre-R-A record — at launch HEAD
+`5083e29e` and again after the mid-session D20 scorer amendment landed —
+byte-identical outside provenance both times, so the instrument that graded
+this campaign demonstrably grades the preserved record identically.
+
+### 7.3 Registration + board stamp (preserve-then-overwrite, exactly as Q25 ordered)
+
+- **Bundle:** the campaign lives at `results/ff-t3-neiso-golden/bau/` (slim
+  committed record: config.yaml + 25 evolution checkpoints +
+  full_horizon_summary + run_config + dof_ledger + forecast_attestation +
+  forecast_verdict + `fc6/` arm summaries/run_configs + paired_invariants +
+  battery report). The pre-R-A golden was moved BYTE-IDENTICALLY to
+  `results/ff-t3-neiso-golden/bau-prera-2026-08-31/` in the pre-declaration
+  commit, BEFORE anything wrote to `bau/`. The campaign's fc6 arms solve
+  inside the bundle (unlike D21/D26's out-of-repo arms), so the `.gitignore`
+  campaign block gained one line scoping their solve caches session-local —
+  the committed per-arm record stays exactly D21's (summary + run_config).
+- **Verdict record:** `ff-verdicts.json` — the prior live `neiso-t3` (the D26
+  re-score of the pre-R-A golden) preserved BYTE-EQUAL at
+  **`neiso-t3-prera-2026-08-31`** (asserted in the writer); bare `neiso-t3`
+  now carries this campaign (HOLD; FC map above). The existing preserved chain
+  (`-pre-fc5`, `-pre-fc6`, `-pre-fc6repair`) untouched; every sibling key
+  asserted byte-identical before write.
+- **FC-5 table:** prior table preserved at
+  `dispositions/neiso-t3-prera-2026-08-31.json`; bare `neiso-t3.json`
+  re-authored (54 rows / 28 IC / 26 EX / 0 UNEXPLAINED).
+- **Run explorer:** sidecar `neiso-2026-2050-t3-golden2-bau` (kind t3, label
+  `t3-golden2-bau`); the generated registry/runs/manifest are the Pages
+  deploy's to rebuild. **Backcast namespace untouched** (plan §7.5).
+- **Board:** `program-status.json` — NEISO `gate.d_owner_auth` now carries both
+  grants (Q13 spent → Q25 granted AND spent on this execution, third campaign
+  needs a new owner act); `golden` replaced with this campaign's measured
+  record (pre-R-A pointer preserved inside it); `t3_determination` HOLD;
+  top-level `t3_golden2_campaign` stamp added. Every other ISO block and
+  top-level key asserted byte-identical before write.
+- **Rule 28:** the NEISO lever queue (matrix §5.6) is CLEARED and was read; no
+  mechanism was tested, no `ScenarioConfig` field added, no cell verdict
+  moves (duties b/c/d do not fire). The campaign is posture-execution of
+  already-adjudicated mechanisms (R-A's armed pair), not a lever test.
+
+## 8. Exit state — and what is routed
+
+**Delivered.** The second §2.1b campaign: solved (25/25, 35.1 min / 3.48 GB,
+inside budget), FC-6 evidence at its own vintage (base-reproduction-gated),
+full rubric scored (every category graded, none SKIPPED — the first golden
+scored end-to-end with zero instrument-absence debt AND a passing FC-7),
+registered preserve-then-overwrite, board stamped, finding complete. **Q25's
+scope is spent: this campaign only, executed once; a third campaign needs a
+new owner act** (stated per the Q13-carryover clause).
+
+**Routed to the director — four items, none actionable inside this charter:**
+
+1. **The storage-entry answer (the campaign's object): the armed economics
+   produce 720 MW of 100-h iron-air in 2050 and NOTHING in 2026–2049** — so
+   the corridor's largest divergence family (zero storage at the 2030/35/40
+   anchors, −56.2 %) SURVIVES the arming. The pre-R-A "zero in 25 years"
+   headline is refined, not reversed: entry exists but is late, single-tech,
+   LDES-shaped, cap-bound (0.6 × 1,200 MW), and vanishes under gas ×1.5.
+   Whether the value stack SHOULD clear earlier (AEO has 1.76 GW by 2030) is
+   a mechanism question for a chartered lane — the D25 §6.3 route, now with
+   an armed-posture measurement behind it.
+2. **The P2 instrument-scope question (§7.1):** on 25-year evolution pairs the
+   unabated-`gas_cc` leg crosses the CCS class migration; the all-gas sign is
+   correct while the row FAILs. Same family as D23's P1 attribution; repair
+   (if any) needs its own charter — nothing edited here, the FAIL stands.
+3. **The RC-R capacity-revenue dominance of the golden-2 vs golden-1 delta
+   (§6.2):** the demand-curve intake re-times 3.4 GW of exits and 3 GW of
+   entry through the economic screens' capacity-revenue term — read lane
+   D33's accreditation/position finding against this decomposition when it
+   lands (it had not landed at close).
+4. **FC-3's evidence vintage:** no post-R-A NEISO T1-H exists; FC-3 carries
+   the pre-arming curve-ON leg. Whether to re-run the NEISO capacity hindcast
+   at the armed posture (the D4-M ERCOT pattern) is the capacity-hindcast
+   track's call.
+
+**Carried caveats, restated once:** D14 exit-composition recall 2/6 (every
+composition statement inherits it); the S-4b floor-dependence mechanism
+(§6.3(3) — head-year figures no longer transfer verbatim, the mechanism and
+its sign-dependence do); FC-5 permanently single-source (Q23); the FC-6
+battery leg structurally out of service pending an owner-signed replacement
+lever (T16).

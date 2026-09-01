@@ -1,0 +1,39 @@
+{
+  "iso": "NEISO",
+  "start_year": 2026,
+  "end_year": 2050,
+  "max_rungs": null,
+  "elapsed_s": 0.0,
+  "ladders": [
+    {
+      "test_id": "T1.6",
+      "iso": "NEISO",
+      "driver": "RPS/ACP vs VRE supply (short\u2192long)",
+      "note": "rps_dual_over_acp is the final-year REC dual divided by the ISO's ACP ceiling; \u2264 1 means the ACP escape column caps the dual as designed, and it should fall as physical VRE covers the target.",
+      "out_of_service": "pre-registered driver renewable_buildout_pace was consumed by no model code (capx-D21 \u00a75.1, measured) and was deleted under rule 26 [R-DELETE] by capx-T16; a replacement lever is a plan \u00a72 instrument decision pending owner sign-off",
+      "rungs": [],
+      "expectations": [
+        {
+          "expr_id": "T1.6a",
+          "description": "REC dual \u2264 ACP ceiling",
+          "metric": "rps_dual_over_acp",
+          "rule": "le_target",
+          "gate": true,
+          "status": "SKIP",
+          "detail": "LADDER OUT OF SERVICE \u2014 pre-registered driver renewable_buildout_pace was consumed by no model code (capx-D21 \u00a75.1, measured) and was deleted under rule 26 [R-DELETE] by capx-T16; a replacement lever is a plan \u00a72 instrument decision pending owner sign-off",
+          "vacuous": true
+        },
+        {
+          "expr_id": "T1.6b",
+          "description": "REC dual \u2193 as VRE builds toward the target",
+          "metric": "rps_dual_over_acp",
+          "rule": "monotone_down",
+          "gate": true,
+          "status": "SKIP",
+          "detail": "LADDER OUT OF SERVICE \u2014 pre-registered driver renewable_buildout_pace was consumed by no model code (capx-D21 \u00a75.1, measured) and was deleted under rule 26 [R-DELETE] by capx-T16; a replacement lever is a plan \u00a72 instrument decision pending owner sign-off",
+          "vacuous": true
+        }
+      ]
+    }
+  ]
+}

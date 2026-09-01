@@ -365,6 +365,11 @@ frontend/data/forecast/program-status.js
 /results/ff-t3-neiso-golden/*/*/*/hourly/
 /results/ff-t3-neiso-golden/*/*/*/year_*_floor_retentions.json
 /results/ff-t3-neiso-golden/*.log
+# T3-GOLDEN-2 (2026-09-01): the campaign's own FC-6 paired arms solve INSIDE the
+# bundle (fc6/arms/<arm>/), unlike D21/D26 whose arms ran outside the repo — the
+# committed per-arm record stays exactly the D21 one (full_horizon_summary.json +
+# run_config.json); the whole per-arm solve cache is session-local.
+/results/ff-t3-neiso-golden/*/fc6/arms/*/NEISO/
 
 # capx-S6 PJM T1-F ledger run (run id pjm-2026-2030-s6-ledger, pre-declared in
 # docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md §3) — same class and
