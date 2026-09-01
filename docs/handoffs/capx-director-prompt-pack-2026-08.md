@@ -2588,3 +2588,309 @@ explanation's named mechanism, the FC-5 score per ISO, and the honest count of U
 Report to the director whether the t3 ceiling is now lifted — i.e. whether a golden campaign can
 finally be graded on all required categories.
 ```
+
+## D26 — FC-6 P1 arm construction repair (issued r#24 chat-only; RECONSTRUCTION committed r#25)
+
+**Provenance note:** r#24 issued this lane as a self-contained chat prompt with no committed
+charter (the transport-era habit, repeated without the transport excuse). A running D26 session's
+own prompt governs its run; THIS section is the charter of record for any relaunch, reconstructed
+at r#25 from ledger §0u.1/§0u.3(b) and the D23 finding. If the lane was never dispatched, this
+section is the issuable prompt.
+
+```
+You are the D26 session of the capacity-expansion (Forecast Finalization) track. Lane D23
+attributed the FC-6 paired-P1 "carbon price raises CO2 +52.4%" FAIL to the ARM CONSTRUCTION,
+not the model: a nonzero ScenarioConfig.carbon_price REPLACES the resolved carbon signal
+(policy/carbon.py::resolve_carbon_price precedence (i), documented single-consumer semantics),
+and the NEISO base already carries the projected RGGI trajectory ($26.05/t in 2026 escalating
+at the published 7%/yr CCR rate to $132.16/t by 2050 — the EM-6 seam fix). So carbon25 CUT the
+carbon price in every horizon year (−$1.05 in 2026 widening to −$107.16 in 2050), and P1
+measured the premise of its own pair. You repair the INSTRUMENT so P1 measures the model, then
+re-score neiso-t3's FC-6 under the cross-lane re-grade rule.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (instrument semantics are being adjudicated, and a committed verdict
+may flip).
+BRANCH: claude/capx-d26-p1-arm-construction — create FRESH off origin/main (git fetch origin
+main first) and rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md IN FULL (the
+attribution this lane executes — especially its routed instrument repairs and what it
+deliberately left standing) · docs/handoffs/FINDING-capx-d21-fc6-battery-2026-08-31.md (how
+FC-6 and the paired P1–P3 are constructed and scored; the golden's vintage discipline — D21
+self-caught a data-vintage leak and re-ran from the golden's own raw bytes; you inherit that
+bar) · policy/carbon.py::resolve_carbon_price (the precedence semantics you must NOT silently
+change for model consumers) · scripts/run_driver_battery.py (the instrument you are repairing).
+
+THE REPAIR: the P1 arm must construct a genuine carbon-price INCREASE over the resolved base
+trajectory in EVERY horizon year — a strictly positive delta, stated in the run record
+year-by-year. Design the construction yourself (that is why this lane is Fable); the
+constraint set is: (1) the base leg and the arm leg differ ONLY in the carbon signal; (2)
+resolve_carbon_price's documented precedence semantics stay intact for every non-instrument
+consumer — if the honest fix is a new ScenarioConfig field (e.g. an additive carbon delta),
+that is a solve-affecting mechanism: rule 28 duties fire (matrix row in
+docs/codebase-site/data/mechanism-matrix.js + a cell line in EVERY ISO shard, same PR), it
+ships default-off/neutral, and its existence is justified in the finding; (3) no model
+parameter, threshold, retirement/retrofit economics or expectation moves — D23's line "repairs
+are entirely instrument-side" is your scope fence.
+
+THE RE-SCORE: re-run the paired P1 at the golden's vintage with the repaired arm (forecast-mode
+2026+ solves — permitted under rule 22, no measured actuals), re-score FC-6, and publish under
+the CROSS-LANE RE-GRADE RULE: reproduce the committed FC-6 record byte-for-byte FIRST
+(control-first, the D8-V/D25 pattern), then apply the repaired instrument; if anything beyond
+neiso-t3's FC-6 rows would flip, STOP and report to the director. D21's FC-6 FAIL was
+deliberately left standing by D23 — whether it survives is exactly what your re-score decides,
+and EITHER outcome is a valid result. Do not touch the vacuous-ladder CAVEAT
+(renewable_buildout_pace) — that is a separate, still-true finding.
+
+GUARDRAILS: rules 22 (no holdout year; forecast-mode 2026+ only), 27 (run_driver_battery.py
+and any src/ file you touch are core; edit locally, push exact bytes, blob-verify ≥300-line
+files), 28 (as above — triggered ONLY if a ScenarioConfig field is added). Solves are
+budgeted: price the paired run before launching it (the golden was ~1.0h/~4.3GB; a pair is
+two). No keeper/shard/marker; nothing in the backcast namespace. No new GitHub Actions
+workflow.
+
+COLLISION: D27 writes the MISO t1h key + MISO board block; D29 edits
+scripts/run_full_horizon.py; D24-R edits runner.py/scenarios.py cache plumbing. You share NO
+files with D27/D29; if D24-R's scenarios.py edit lands mid-lane, rebase — your ScenarioConfig
+edit (if any) is additive and distinct. You write neiso-t3's FC-6 rows and the FC-6
+instrument; nothing else on the board.
+
+EXIT: the repaired instrument + the re-scored neiso-t3 FC-6 (published or STOPPED-and-routed,
+per the re-grade rule) + docs/handoffs/FINDING-capx-d26-p1-arm-construction-<date>.md with the
+year-by-year delta table of the repaired arm, the control reproduction, both scores, and the
+verdict consequence honestly stated. Report to the director: the golden re-solve card (ledger
+§0v.6(a)) is decided AFTER you land — say explicitly whether your result changes its terms.
+```
+
+## D27 — MISO T1-H HEAD re-measure (issued r#24 chat-only; RECONSTRUCTION committed r#25)
+
+**Provenance note:** as §D26's. Reconstructed at r#25 from ledger §0u.1 (D17-R grade) and the
+D17 finding. A running D27 session's own prompt governs; this is the relaunch charter of record.
+
+```
+You are the D27 session of the capacity-expansion track — the EXECUTION of D17-R's routed
+PRIMARY. D17-R attributed MISO's missing non-coal exit channel to requirement rationing at the
+admission cap: gas/oil units fail the screen bar en masse and are then blocked at the cap
+(entry_capped 93.0 GW in 2023, 105.5 GW in 2024), whose requirement basis was the pre-S-123
+composite. The S-123 repair is ALREADY SHIPPED AT HEAD (all three operands are registry
+constants read through resolve_adequacy_requirement_mw / accredited_firm_capacity_mw), so the
+committed MISO T1-H numbers simply predate their own fix. You re-solve the MISO T1-H leg at
+HEAD and grade the result against D17's quantified expectation: the corrected basis is worth
+≈14.7 GW of admission headroom at the 2024 screen (≈11.2 GW requirement overstatement + 3.5 GW
+missing external accredited firm) — 3.7–4.3× the entire missing non-coal exit target
+(3.458 GW actual).
+
+DATA PROFILE: miso
+MODEL ASSIGNMENT: Opus (the discretion is spent in D17's finding; this is a pre-quantified
+re-measure).
+BRANCH: claude/capx-d27-miso-t1h-remeasure — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d17-miso-exit-channel-2026-09-01.md IN FULL (the
+attribution, the ≈14.7 GW arithmetic, and the standing refusal: no FOM/threshold/lag was
+identified from the retirement residual — that refusal BINDS you too) ·
+docs/handoffs/PRECOMMIT-capx-d17-miso-exit-channel-2026-09-01.md (the frozen threads) · the
+committed miso-t1h verdict record + its run_config.json (the baseline you re-measure against).
+
+THE RUN: the MISO T1-H hindcast leg at HEAD, unchanged recipe — you are re-measuring a shipped
+repair, not testing a mechanism. Years sequential in-session (rule 12). BEFORE the solve,
+write the expectation down as a short pre-declaration in the branch (the D4-M discipline):
+expected direction and rough magnitude on (i) entry_capped 2023/2024, (ii) executed non-coal
+exits vs the 3.458 GW actual, (iii) retire.total_gw and the G3 row, plus the honest note that
+D17's headroom figure is a screen-side arithmetic, not a dispatch guarantee. Grade every
+prediction at full magnitude afterward — misses included.
+
+REGISTRATION: preserve-then-overwrite (the NEISO-RC-R pattern): preserve the current miso-t1h
+record under a dated suffixed key (a PRESERVED BASELINE, never quoted as current), then
+register the HEAD re-measure to the BARE miso-t1h key via scripts/register_forecast_run.py,
+refresh the MISO board block, and leave every other ISO's rows untouched. If the re-measure
+flips any committed verdict beyond miso-t1h's own rows, STOP and route (cross-lane re-grade).
+
+GUARDRAILS: rule 22 (forecast/hindcast lanes touch no backcast holdout year; nothing scored
+against measured H1-2026), rule 27 (no core-file rewrite; blob-verify ≥300-line pushes), rule
+28 NOT triggered (no mechanism, no ScenarioConfig field — if you find yourself wanting one,
+that is D17's standing refusal talking: STOP). No FOM, threshold, lag, or screen parameter
+moves. No keeper/shard/marker. Solve budget: one T1-H leg, priced before launch.
+
+COLLISION: D26 writes neiso-t3 FC-6 rows + the FC-6 instrument; D29 edits
+scripts/run_full_horizon.py (if its grain lands before your solve starts, your bundle carries
+the new fields — fine either way; do not wait); D24-R edits cache plumbing (your run uses its
+own --out-dir per convention — unaffected). You write the miso-t1h key + MISO board block ONLY.
+
+EXIT: the registered re-measure + graded pre-declaration +
+docs/handoffs/FINDING-capx-d27-miso-t1h-remeasure-<date>.md stating what the corrected basis
+actually bought (entry_capped movement, executed exits vs actual, G3), where D17's ≈14.7 GW
+expectation held or missed, and what remains of the missing-exit object — including whether
+the D28 contributing cause (the bar under-rewarding ~118.5 of 142.6 GW) is now the binding
+residual.
+```
+
+## D28 — capacity revenue at long positions, cross-ISO Phase-0 (issued r#24 chat-only; RECONSTRUCTION committed r#25)
+
+**Provenance note:** as §D26's. Reconstructed at r#25 from ledger §0u.2. A running D28
+session's own prompt governs; this is the relaunch charter of record.
+
+```
+You are the D28 session of the capacity-expansion track — Phase-0 characterization of a
+cross-ISO object two lanes surfaced independently and nobody owns: A MODELLED CAPACITY-DEMAND
+CURVE THAT PAYS NOTHING EXACTLY WHERE THE MODEL SITS. D17-R measured MISO's screen bar
+under-rewarding ~118.5 of 142.6 GW of screened thermal in 2024, chiefly because the modelled
+capacity-revenue leg pays $0 at every long reserve position (RBDC zero-cross at 1.05; $0 on
+every committed capped row) while MISO's real PRAs cleared small positive prices. NEISO-RC-R's
+R2 leg measured the SAME pathology from the other end: the re-derived FCA demand curve pays $0
+past 8.3% surplus ("near-inert at the model's long positions") where real FCAs cleared
+$24–43/kW-yr. Two ISOs, two independently-derived curves, one shape of error.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (novel cross-ISO object; the deliverable is an adjudication-grade
+characterization).
+BRANCH: claude/capx-d28-longposition-capacity-revenue — FRESH off origin/main, rebase before
+every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d17-miso-exit-channel-2026-09-01.md (the MISO half —
+the RBDC zero-cross evidence and the 2024 census) · the NEISO-RC-R record (ledger §1 row +
+PR #4467's finding; the R2 curve re-derivation and its measured miss) · the per-ISO curve
+implementations and their parameter citations (docs/parameter-citations.md) · the published
+auction-clearing record each ISO's curve should be judged against (PRA clearing prices;
+FCA results — use what is already in-repo; this lane FUNDS NO INTAKE).
+
+PHASE-0 SCOPE — CHARACTERIZE, DO NOT REPAIR: (1) reconstruct, for MISO and NEISO, where the
+model's long-run reserve position actually sits year-by-year vs where each modelled curve's
+zero-cross sits — the "pays $0 exactly where the model sits" claim, made exact; (2) compare
+each curve's shape against its ISO's PUBLISHED curve and published clearing outcomes at
+comparable surplus — is the defect the curve's SHAPE, its zero-cross placement, the surplus
+MEASUREMENT feeding it, or real (auctions clearing above a curve that says $0 — sloped-demand
+mechanics, out-of-market effects)?; (3) name, per ISO, what a repair would be identified FROM
+(a published curve parameter, a filing, a clearing record — never the residual); (4) check the
+other two capacity-market ISOs (PJM, NYISO) for the same signature, evidence-level only.
+
+SIGN DISCIPLINE, stated because it is the trap: the fix direction is MORE capacity revenue at
+long positions, which makes retirements HARDER — i.e. it moves D17's headline residual the
+WRONG way. Rule 14 [R-ACCURATE]: never resolve by whichever direction helps a residual; if the
+accurate curve worsens a fit, that is a discovered bug elsewhere, not a reason to keep the
+inaccurate curve. Write this into the finding explicitly wherever it bites.
+
+GUARDRAILS: zero solves. Docs only — no mechanism, no ScenarioConfig field, no matrix cell
+(rule 28 not triggered at Phase-0; the REPAIR lane, if chartered, carries those duties). No
+keeper/board/verdict/marker edit. Rule 25: parameters and verdicts stay per-ISO — one shape of
+error does NOT mean one shared fix. Rule 27 on any ≥300-line push.
+
+COLLISION: none — you write docs only. D27 may re-measure MISO T1-H mid-lane; its result
+changes your D17-residual CONTEXT but not your curve measurements; cite whichever record is
+current when you finish.
+
+EXIT: docs/handoffs/FINDING-capx-d28-longposition-capacity-revenue-<date>.md — the per-ISO
+characterization, the four-ISO signature census, the identification source for each candidate
+repair, and a routed recommendation (repair lane(s), per-ISO, with collision notes) for the
+director. NO repair lands in this lane.
+```
+
+## D24-R — cache-key repair, Q20 execution (r#25)
+
+```
+You are the D24-R session of the capacity-expansion track — the EXECUTION of owner ruling Q20
+(r#25) on lane D24's priced repair options for the cache-key optional-fields defect. The
+ruling: land (c′) + (b′-1), the zero-cost pair, exactly as D24 §7 specifies them. Nothing else
+is licensed — no (a), no (b), no (b′-2), no retroactive re-key of anything.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (the discretion was spent in D24's finding §7; this is execution).
+BRANCH: claude/capx-d24r-cachekey-repair — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md §1 (the mechanism),
+§4 (the two demonstrated collision forms your change must catch — 4.1 differing-common-field,
+4.2 absent-vs-armed-default — and §4.5's twelve designed-case groups your change must NOT
+refuse), §7 (the option definitions — (c′) and (b′-1) verbatim), §8 (what D24 deliberately did
+not touch: that is your work order). Also scripts/check_cache_key_registration.py (the guard
+that must stay green) and the ledger comment above _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS in
+scenarios.py — (b′-1) is the "deeper fix" it already names
+(docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md §4).
+
+THE TWO CHANGES, and nothing else:
+1. (b′-1): cache_key()'s drop comparison reads the DECLARED default from
+   _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS instead of the live field default, and that ledger
+   becomes APPEND-ONLY — a future default flip ADDS a dated declaration, never overwrites the
+   old. Re-baseline at today's declared values: measured a no-op on every current key
+   (0 forecast, 0 backcast). VERIFY the no-op yourself before pushing — recompute the key for
+   every committed run_config.json in both namespaces and assert zero moves; commit the
+   assertion as a test/probe record. THAT ASSERTION IS YOUR MERGE GATE: any key that moves
+   means you have implemented (b′-2), which is not licensed.
+2. (c′): the is_cached seam (runner.py; D24 names the exact call) refuses a hit whose stored
+   config.yaml differs from the requesting config on any COMMON field, OR where the requesting
+   config carries a field ABSENT from the stored config whose value is not that field's
+   registration-time default. Refusal = a logged cache miss naming the differing fields (then
+   re-solve) — never an exception that kills the run. Follow the
+   assert_cache_key_uncontaminated precedent (owner decision D-11) for placement and tone.
+
+TESTS: (i) the §4.1 form refuses; (ii) the §4.2 form refuses; (iii) the twelve designed-case
+groups still HIT — schema growth without a flip must not refuse (this is what distinguishes
+(c′) from strict (c), which refused 14/14 with only 2 true positives); (iv) the append-only
+ledger is enforced (an overwrite attempt fails loudly); (v) check_cache_key_registration.py
+stays green.
+
+GUARDRAILS: cache plumbing is not a mechanism — rule 28 NOT triggered, no matrix row, no
+ScenarioConfig field, no new CLI flag. Zero solves. No committed bundle, sidecar, board,
+keeper, shard or marker is touched; the two historical collision pairs stay unseparated
+(provenance annotation only — D24 §6's NEISO verdict linkage is the affected lane's, not
+yours). runner.py and scenarios.py are ≥300-line core files: edit locally, push exact on-disk
+bytes, blob-verify after push (rule 27). No new GitHub Actions workflow.
+
+COLLISION: D26 may add a ScenarioConfig field on the same file (scenarios.py) — additive and
+distinct regions; rebase-care, never conflict-resolve away its edit. D27/D29 share no files
+with you.
+
+EXIT: both changes + tests + the zero-key-move assertion record +
+docs/handoffs/FINDING-capx-d24r-cachekey-repair-<date>.md stating what landed, the no-op
+verification result, and what deliberately remains open (the historical pairs; the
+provenance-side cache_epoch question D24 §5 reported).
+```
+
+## D29 — trajectory reporting grain (r#25; D25 §6.1 routed)
+
+```
+You are the D29 session of the capacity-expansion track — the reporting-grain fix lane D25
+routed (finding §6.1). run_full_horizon.extract_trajectory carries no generation-by-fuel, and
+its capacity block's storage_mw reads cap.get("storage") over GENERATOR fuels — 0.0 by
+construction even for a 17 GW ERCOT battery fleet. That blocks 252 corridor anchors (the
+energy-mix family) from ever being dispositioned and leaves a standing basis caveat on FC-5.
+You extend the summary schema; you re-run NOTHING.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (the change is specified by D25 §6.1; execution).
+BRANCH: claude/capx-d29-trajectory-grain — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md §6.1 (the routed
+spec) and §2 (what the corridor needs the summary to carry) · scripts/run_full_horizon.py
+(extract_trajectory at ~line 412 and the writer that serializes it) · the committed
+full_horizon_summary.json files of the bundles that have one (the schema you are extending).
+
+THE CHANGE — ADDITIVE ONLY: extract_trajectory (and the summary it writes) gains
+(1) generation-by-fuel per horizon year, read from the same per-year result object the
+capacity block already reads, and (2) a REAL storage column — storage power capacity from the
+storage fleet state, not cap.get("storage") over generator fuels. Every existing key keeps its
+name, type and meaning, so committed summaries remain readable by every current consumer. For
+the defective storage_mw key: enumerate its consumers call-site by call-site; if NOTHING
+committed reads it, repair it in place and say so in the finding — otherwise keep it
+bug-compatible, add the new column beside it, and document the defect at the definition
+(cite this charter).
+
+GUARDRAILS: zero solves — committed summaries are NOT regenerated (they lack the new fields
+until their bundle next re-solves; making the energy-mix rows dispositionable for FUTURE runs
+IS the deliverable). No mechanism, no ScenarioConfig field (rule 28 not triggered). No
+board/verdict/keeper edit; do not touch FC-5 scores or dispositions.
+scripts/run_full_horizon.py is a ≥300-line core run script (rule 27): edit locally, push exact
+on-disk bytes, blob-verify; Opus is licensed for it, Sonnet is not. Tests: a unit test on
+extract_trajectory over a synthetic run object asserting the new fields and a nonzero storage
+value against a fleet with storage (the golden-system helpers in docs/testing.md are the
+pattern). No new GitHub Actions workflow.
+
+COLLISION: D27 (MISO T1-H re-measure, in flight) will write a new summary — if your change
+lands before its solve starts, its bundle carries the new grain (good); if not, also fine. Do
+not coordinate, do not wait, do not touch MISO board surfaces. D26/D24-R share no files with
+you.
+
+EXIT: the extended extractor + tests +
+docs/handoffs/FINDING-capx-d29-trajectory-grain-<date>.md recording the schema addition, the
+storage_mw consumer enumeration and what was done about it, and which committed bundles remain
+on the old grain.
+```

@@ -1,5 +1,16 @@
 # DECISION CARD — nyiso-161: the winter-face determination posture while the AORR wall stands ("waive it?")
 
+> **RULED 2026-09-01 — OPTION A (no amendment); the card is RETIRED, answered by measurement.**
+> Ruled by the owner at the capx-director r#25 sitting (ledger
+> `docs/handoffs/capx-director-ledger-2026-08.md` §0v.2 / §3 ruling **Q22**), on the evidence of
+> `docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`: the probe this card's own §4.5
+> eligibility test (a) called for was run and answers **NO as written** — 87.4 % of the winter
+> face is a year-invariant price-response gain (0.703) present in all 36 training months; the
+> genuinely winter-specific residue is −$0.51/MWh. The blocked AORR input is not the object.
+> NOT-YET stands; no ACCESS-BLOCKED caveat class is created; the successor object is the gain
+> itself (NYISO lane records, nyiso-168+). Do not re-present this card; a new card needs new
+> evidence and a new owner act.
+
 **Filed:** 2026-08-30, session nyiso-161. **Decision owner:** the model owner.
 **Ordered by the owner in-session** (nyiso-161 decision card, Q "Winter face":
 *"Draft a governance card on waiving it"* — chosen over the two access-pursuit
