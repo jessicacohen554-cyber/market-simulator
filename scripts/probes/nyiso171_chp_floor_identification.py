@@ -57,7 +57,7 @@ BENCH = ROOT / "frontend/data/backcast/bench/NYISO"
 TRANCHES = RAW_DATA_DIR / "_processed-legacy/thermal_tranches_NYISO.csv"
 OUT = ROOT / "results/calibration/_nyiso171_chp_floor_identification.json"
 YEARS = (2023, 2024, 2025)
-STD_TZ = "America/New_York"
+STD_TZ = "Etc/GMT+5"  # fixed standard-time clock, as nyiso169b/170 (no DST gap)
 
 # Gate thresholds, fixed before the measurement.
 A3_MIN_COVERAGE = 0.50  # per-plant mins must carry >= half the fleet floor
@@ -311,6 +311,83 @@ def gate_a5(year: int) -> dict:
     }
 
 
+# ---------------------------------------------------------------- A5b
+def gate_a5b(year: int) -> dict:
+    """A5's pre-registered contiguity test is a WEAK instrument — this is the strong one.
+
+    A5 discriminates outage from economics by the temporal SHAPE of the collapse
+    hours, which split 2023/2024 ("scattered") from 2025 ("contiguous"). Shape is
+    only a proxy. The direct discriminator is available on the same committed
+    artifacts and is reported alongside, not instead of, the pre-registered one:
+
+      * an ECONOMIC shutdown happens in CHEAP hours — the class is out of merit,
+        so price sits BELOW the annual mean and the rest of the gas fleet runs;
+      * an AVAILABILITY event happens regardless of price, and derates the whole
+        gas fleet together, so price sits ABOVE the annual mean while total gas
+        output collapses with it.
+
+    ``min_gen`` is clipped to ``pmax x availability``, so a steam floor is
+    INERT by construction in any hour whose collapse is an availability event.
+    """
+    c = pd.read_parquet(KEEPER / f"hourly/class_hourly_{year}.parquet")
+    c = c[c["pass"] == "P1"]
+    s = pd.read_parquet(KEEPER / f"hourly/system_{year}.parquet")
+    s = s[s["pass"] == "P1"]
+    sysh = s.groupby("hour").agg(price=("price", "mean"), demand=("demand", "sum"))
+
+    m = c[c["klass"] == "CC_CHP"].set_index("hour")["mw"].reindex(range(8760)).fillna(0.0)
+    thr = float(np.percentile(m.to_numpy(), 1))
+    idx = np.flatnonzero((m <= max(thr, 1.0)).to_numpy())
+
+    gas_classes = ["CC_CHP", "CC_REGULAR", "CT_PEAKER", "ST_GAS", "ST_CHP", "CT_CHP"]
+    gas = (
+        c[c["klass"].isin(gas_classes)]
+        .groupby("hour")["mw"]
+        .sum()
+        .reindex(range(8760))
+        .fillna(0.0)
+    )
+    blk_price = float(sysh.loc[idx, "price"].mean())
+    yr_price = float(sysh["price"].mean())
+    blk_gas = float(gas.iloc[idx].mean())
+    yr_gas = float(gas.mean())
+    by_class = {
+        k: round(
+            float(
+                c[c["klass"] == k]
+                .set_index("hour")["mw"]
+                .reindex(range(8760))
+                .fillna(0.0)
+                .iloc[idx]
+                .mean()
+            ),
+            1,
+        )
+        for k in gas_classes
+    }
+    price_ratio = blk_price / yr_price if yr_price else float("nan")
+    gas_ratio = blk_gas / yr_gas if yr_gas else float("nan")
+    return {
+        "n_low_hours": int(idx.size),
+        "block_mean_price": round(blk_price, 2),
+        "year_mean_price": round(yr_price, 2),
+        "price_ratio": round(price_ratio, 3),
+        "block_total_gas_mw": round(blk_gas, 1),
+        "year_total_gas_mw": round(yr_gas, 1),
+        "gas_ratio": round(gas_ratio, 4),
+        "block_mean_by_gas_class_mw": by_class,
+        "months": {
+            int(k): int(v)
+            for k, v in pd.Series(idx % 8760 // 730 + 1).value_counts().sort_index().items()
+        },
+        "verdict": (
+            "AVAILABILITY EVENT — a steam floor is INERT here (min_gen <= pmax x availability)"
+            if (price_ratio > 1.0 and gas_ratio < 0.5)
+            else "ECONOMIC — a floor would bind"
+        ),
+    }
+
+
 # ---------------------------------------------------------------- A6
 def gate_a6(year: int, chpset: set[int], a3: dict) -> dict:
     """Sizing, and the honest direction on the p05 over-run and class volume.
@@ -348,6 +425,51 @@ def gate_a6(year: int, chpset: set[int], a3: dict) -> dict:
     }
 
 
+# ---------------------------------------------------------------- A7
+def gate_a7(year: int, chpset: set[int]) -> dict:
+    """Can ANY floor mechanism help — what is the SIGN of the CC_CHP gap?
+
+    Every floor (steam-host, lay-up, commitment bridge, class min-gen) is a
+    lower bound: it can only RAISE output. So a floor can only help in hours
+    where the model runs BELOW the market. This gate measures the sign of the
+    model-minus-measured gap hour by hour, on the level-anchored basis
+    nyiso-170 established (one factor, ``benchmark_TWh / CAMPD_TWh``, which
+    preserves the annual level error exactly and compares shape only).
+
+    Reported both over all hours and with the A5b availability hours removed,
+    because a floor is inert in those by construction.
+    """
+    wide = campd_cc_chp_by_plant(year, chpset)
+    meas = wide.sum(axis=1)
+    twh = float(meas.sum() / 1e6)
+    anchor_f = (bench_cc_chp(year) / twh) if twh > 0 else float("nan")
+    meas_a = meas * anchor_f
+    m = model_cc_chp(year)
+
+    thr = float(np.percentile(m.to_numpy(), 1))
+    low = (m <= max(thr, 1.0)).to_numpy()
+
+    gap = (m - meas_a).to_numpy()
+    keep = ~low
+    return {
+        "campd_twh": round(twh, 4),
+        "bench_twh": round(bench_cc_chp(year), 4),
+        "anchor": round(float(anchor_f), 4),
+        "share_hours_model_above_all": round(float((gap > 0).mean()), 4),
+        "share_hours_model_above_ex_availability": round(
+            float((gap[keep] > 0).mean()), 4
+        ),
+        "mean_gap_mw_all": round(float(gap.mean()), 1),
+        "mean_gap_mw_ex_availability": round(float(gap[keep].mean()), 1),
+        "verdict": (
+            "MODEL OVER-RUNS in the large majority of hours — no floor mechanism "
+            "can address this object, because a floor only raises output"
+            if float((gap[keep] > 0).mean()) > 0.5
+            else "model under-runs in a majority of hours — a floor is directionally right"
+        ),
+    }
+
+
 def main() -> int:
     chpset = chp_plants()
     out: dict = {
@@ -364,7 +486,9 @@ def main() -> int:
         "A2_model_structural_floor": gate_a2(),
         "A3_A4_measured_floor": {},
         "A5_collapse_hours": {},
+        "A5b_outage_vs_economics": {},
         "A6_sizing": {},
+        "A7_gap_sign": {},
     }
 
     print("\n=== A1  rule 19 [R-ONE-MECH] — what already floors CC_CHP ===")
@@ -400,7 +524,9 @@ def main() -> int:
         a3 = gate_a3_a4(y, chpset)
         out["A3_A4_measured_floor"][str(y)] = a3
         out["A5_collapse_hours"][str(y)] = gate_a5(y)
+        out["A5b_outage_vs_economics"][str(y)] = gate_a5b(y)
         out["A6_sizing"][str(y)] = gate_a6(y, chpset, a3)
+        out["A7_gap_sign"][str(y)] = gate_a7(y, chpset)
 
     print("\n=== A3/A4  THE STOP CONDITION — per-plant physics or portfolio artifact? ===")
     for y in YEARS:
@@ -427,6 +553,17 @@ def main() -> int:
             f"{a5['n_distinct_days']} days  -> {a5['verdict']}"
         )
 
+    print("\n=== A5b  the STRONG discriminator: price and total gas in those hours ===")
+    for y in YEARS:
+        b = out["A5b_outage_vs_economics"][str(y)]
+        print(
+            f"  {y}  price ${b['block_mean_price']:7.2f} vs yr ${b['year_mean_price']:6.2f} "
+            f"({b['price_ratio']:.2f}x)   TOTAL GAS {b['block_total_gas_mw']:7.1f} vs yr "
+            f"{b['year_total_gas_mw']:7.1f} MW ({b['gas_ratio']:.3f}x)"
+        )
+        print(f"        by class: {b['block_mean_by_gas_class_mw']}")
+        print(f"        -> {b['verdict']}")
+
     print("\n=== A6  sizing, and the honest direction ===")
     for y in YEARS:
         a6 = out["A6_sizing"][str(y)]
@@ -440,6 +577,17 @@ def main() -> int:
             f"        class volume error {a6['current_volume_error_twh']:+.4f} -> "
             f"{a6['volume_error_after_floor_twh']:+.4f} TWh"
         )
+
+    print("\n=== A7  can ANY floor help — the SIGN of the gap ===")
+    for y in YEARS:
+        g = out["A7_gap_sign"][str(y)]
+        print(
+            f"  {y}  anchor {g['anchor']:.3f}  model above measured in "
+            f"{g['share_hours_model_above_all']*100:5.1f}% of all hours, "
+            f"{g['share_hours_model_above_ex_availability']*100:5.1f}% excluding "
+            f"availability hours   mean gap {g['mean_gap_mw_ex_availability']:+7.1f} MW"
+        )
+        print(f"        -> {g['verdict']}")
 
     OUT.write_text(json.dumps(out, indent=1))
     print(f"\nwrote {OUT.relative_to(ROOT)}")
