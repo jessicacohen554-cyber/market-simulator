@@ -9540,3 +9540,84 @@ degraded output was never committed).
 falsification, the instrument limit and the surviving association; **no verdict
 moves** and no band value was changed. `node --check` passes on the NYISO shard and
 `check_mechanism_matrix.py` exits 0.
+
+## 2026-09-01 — nyiso-171 PHASE 0, ZERO SOLVE: the CC_CHP "hard floor" is a PORTFOLIO ARTIFACT (16 of 17 cogens hit exactly zero), its target hours are an availability event where a floor is inert by construction, and the class OVER-runs in 80 % of 2025 — every floor mechanism refused, four independent ways
+
+Phase 0 of the CC_CHP low-end dynamics object nyiso-169b handed forward and
+nyiso-170 did not touch, opened on the brief's reading that the model treats a
+steam-host-following resource as freely dispatchable (model p05 +63.6/+21.8/
++26.1 % over measured, yet near-zero in 96 hours of 2025 the measured fleet
+never spends off). Keeper `2026-08-30-nyiso-159-loss-surface` and its NOT-YET
+determination on {C3a-2025 −11.5 %, C3c} **unchanged**; no LP ran, so rule 15
+registers nothing. Probe
+`scripts/probes/nyiso171_chp_floor_identification.py` →
+`results/calibration/_nyiso171_chp_floor_identification.json`, committed with
+`PREREG-nyiso171-chp-floor-identification.md` at `138fe2ea` **before** either
+was run. Full record:
+`docs/FINDING-nyiso171-chp-floor-portfolio-artifact-2026-09-01.md`.
+
+**THE STOP CONDITION IS MET.** A fleet floor is a mechanism only if it is a
+per-plant property; the discriminator `Σ_p min_t(gen_p,t)` vs
+`min_t(Σ_p gen_p,t)` was pre-registered at 0.50 coverage in all three years. It
+reads **0.253 / 0.502 / 0.313** — clearing in one year by two thousandths.
+Sum-of-plant-minima is **0.0 / 81.0 / 85.0 MW** against fleet minima of
+**282 / 368 / 184 MW**, and **0 of 17 plants are never off in 2023** (1 of 17 in
+2024/2025). On-shares run from **0.080** (Lockport) to 1.000, and every large
+cogen — Sithe 996 MW, Selkirk 597 MW, Empire 580 MW, Brooklyn Navy Yard 260 MW —
+hits exactly zero. The measured fleet is "never off" only because its plants are
+never all off **at once**, so a per-plant `min_gen` would force machines to run
+in hours their own meters say they were off: rule 17 `[R-FLOOR-WINDOW]` violated
+**by construction**.
+
+**Three further kills, any one sufficient.** (1) **The target hours are an
+availability event, not dispatch** — in all three years they carry price at
+**1.60/2.96/3.00×** the annual mean while **total gas output falls to
+0.428/0.242/0.009×** normal across all six gas classes (2025: one contiguous
+96 h January block, whole gas fleet at 0.0 MW, $168.72 vs $56.19, 70th-percentile
+demand). `min_gen` is clipped to `pmax × availability`, so a steam floor **cannot
+bind in a single hour it was proposed to repair**. This was measured as **A5b
+alongside**, not in place of, A5's weaker pre-registered contiguity proxy, which
+had split the years. (2) **The sign forbids it** — the model **over-runs**
+CC_CHP in **51/69/80 %** of the remaining hours (mean gap **+37.8/+184.1/+347.3
+MW**, nyiso-170 anchored basis); every floor is a lower bound, so **no floor of
+any shape** — steam-host, lay-up, commitment-bridge extension, class min-gen —
+can address an over-run. (3) **Sizing**: the measured candidate floor would force
+**0.013–0.044 %** of class energy.
+
+**Rule 19 `[R-ONE-MECH]` discharged from committed artifacts.** `chp_steam` is
+the **sole** mechanism forcing CC_CHP, at **0.05/0.14/0.10 %** of class energy —
+and its level source measures **zero on every plant CAMPD can see**: 14 of 17
+plants and **77.6 %** of the 4,309 MW class carry `chp_pmin_cf = 0.0`, the whole
+381 MW structural floor being one CEMS-invisible plant (Linden, 360.6 MW). The
+WP-3 repair is separately **provably inert** for NYISO — `thermal_tranches_NYISO.csv`
+is a pre-WP-3 artifact with neither `steam_level_cf` nor `p25_allhr_cf`, so the
+loader returns `{}` and `chp_steam_floor_p25` changes nothing.
+
+**The one genuine exception, and the model already has it.** **East River
+(2493)**, Con Edison's Manhattan steam/electric station, is online **100 %** of
+2025 at a hard **85 MW** minimum — the only NYISO cogen behaving as the brief's
+premise describes. The model floors it, under **ST_CHP** at `chp_pmin_cf 30.0`.
+
+**CARRY-FORWARD (measured, not repaired).** East River is `ST_CHP` in the model
+artifact but lands in **`CC_CHP`** under the CAMPD `unitType` construction
+nyiso-169b/170/171 share, carrying **2.13–2.19 TWh** into the comparison series
+while the model's whole ST_CHP class makes 0.07–0.09 TWh — beside nyiso-170 §3's
+finding that NYISO's five CEMS ST_CHP units report **0.000 TWh**. A
+measurement-construction defect that slightly inflates the measured CC_CHP
+low-end percentiles all three sessions compared against; not repaired here
+because it would change the basis of three committed findings.
+
+**Brief guardrails honoured.** The un-grounded `peak` 2.25 was neither swept nor
+touched; no C3c lever opened; none of the fourteen closed lines re-tested. All
+six inherited probes re-run first — five reproduce directly (gain **0.703**,
+offset **$11.03**, R² **0.910**; deficit **−$6.59 = −$2.32 + −$4.27**; reserve
+ceiling **10.01×**; 169b `False`; 170 `proceed_to_phase_2: false`), and the sixth
+hit the documented trap (b) and was repaired per the brief (36 DA months staged,
+`nyiso-interface-flows` regenerated) before reproducing at **≥98.3 %** off-limit
+congestion. The degraded JSON was never committed.
+
+**Rule 28 (b).** `chp_steam_following` stays **`K`**, annotated with the full
+adjudication and a DO-NOT-REDO; **no verdict moves** and no field was changed.
+Guard passes (`check_mechanism_matrix.py` exit 0), shard passes `node --check`.
+Rule 22: every year read is 2023/2024/2025; NYISO holds no `complete` marker, is
+absent from `final`, and **no marker was requested**.
