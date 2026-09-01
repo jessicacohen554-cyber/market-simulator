@@ -180,6 +180,27 @@ jobs:
       # and runs `git rev-list`, in seconds (repo CI cost policy).
       - name: check_forecast_staleness
         run: python3 scripts/check_forecast_staleness.py
+      # Audit board F-5: four of six gate-(a) rows in program-status.json were
+      # keyed to superseded keepers, and ERCOT's was VERDICT-FLIPPING (it read
+      # complete=False while ERCOT had held the rule-22 `complete` marker).
+      # The step above cannot see any of it — by design: the gate-(a) block
+      # deliberately avoids the forecast-provenance/v1 field names so a
+      # keeper/marker DERIVATION stamp can never be read as a forecast
+      # RE-SCORE. This is a SEPARATE script rather than a leg of that one so
+      # the separation stays structural: staleness reads provenance stamps and
+      # nothing else; this reads the gate-(a) row against the backcast keeper
+      # shards and calibration-complete.json, and touches no provenance stamp.
+      #
+      # HARD GATE (unlike the WARN above): a row citing a keeper that is not
+      # the ISO's designated one is a false statement about committed
+      # artifacts, not a freshness lag, and it is cheap and unambiguous to fix.
+      # It compares IDENTITY and MARKER STATE only — it never reads or
+      # re-derives a DETERMINATION, which is build_status.py's partition-aware
+      # rollup and must have exactly one instrument.
+      #
+      # Stdlib-only, no uv sync, no LP, no data fetch — committed JSON only.
+      - name: check_gate_a_provenance
+        run: python3 scripts/check_gate_a_provenance.py
 
   forecast-parity-guard:
     name: FR-22 backcast->forecast parity

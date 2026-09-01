@@ -135,3 +135,179 @@ def test_missing_calibration_root_sweeps_nothing(tmp_path):
     problems, swept = crpp.check_bundle_retention({}, repo=repo)
     assert problems == []
     assert swept == 0
+
+
+# --- the CLASS-LEVEL carve-out (audit checklist item 10, 2026-09-01) --------
+# `classify_prereg_artifact` replaced 31 hand-maintained allowlist entries with
+# a two-conjunct structural test. These tests pin BOTH conjuncts and, just as
+# importantly, everything the class must REFUSE — a classifier with no
+# refusal tests is how the next 40-entry allowlist starts.
+
+
+def _bundle(repo, name, files):
+    """Write a results/calibration/<name> dir holding ``files`` {relpath: text}."""
+    d = repo / "results" / "calibration" / name
+    d.mkdir(parents=True, exist_ok=True)
+    for rel, text in files.items():
+        target = d / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text)
+    return d
+
+
+def _record(repo, name, text):
+    """Write a committed record doc under results/calibration/."""
+    (repo / "results" / "calibration").mkdir(parents=True, exist_ok=True)
+    (repo / "results" / "calibration" / name).write_text(text)
+
+
+def test_class_r_recipe_dir_is_admitted(tmp_path):
+    """A meta.json-only dir named by a committed record is class R."""
+    repo = _fake_repo(tmp_path)
+    _bundle(repo, "nyiso999_armX_recipe", {"meta.json": "{}"})
+    _record(
+        repo,
+        "PREREG-x.md",
+        "--replay-bundle results/calibration/nyiso999_armX_recipe\n",
+    )
+    problems, swept = crpp.check_bundle_retention({}, repo=repo)
+    assert problems == []
+    assert swept == 1
+    reason = crpp.classify_prereg_artifact(
+        repo / "results" / "calibration" / "nyiso999_armX_recipe",
+        crpp.record_corpus(repo),
+    )
+    assert reason is not None and reason.startswith("class R")
+
+
+def test_class_r_requires_a_citation(tmp_path):
+    """An UNCITED recipe dir still fails — conjunct (2) is load-bearing."""
+    repo = _fake_repo(tmp_path)
+    _bundle(repo, "nyiso999_armX_recipe", {"meta.json": "{}"})
+    problems, _ = crpp.check_bundle_retention({}, repo=repo)
+    assert len(problems) == 1
+    assert "nyiso999_armX_recipe" in problems[0]
+
+
+def test_class_r_refuses_a_dir_holding_more_than_meta(tmp_path):
+    """Class R is `meta.json` ONLY — a second file takes it out of the class."""
+    repo = _fake_repo(tmp_path)
+    _bundle(repo, "nyiso999_armX_recipe", {"meta.json": "{}", "notes.txt": "x"})
+    _record(repo, "PREREG-x.md", "results/calibration/nyiso999_armX_recipe\n")
+    problems, _ = crpp.check_bundle_retention({}, repo=repo)
+    assert len(problems) == 1
+
+
+def test_class_p_campaign_point_is_admitted(tmp_path):
+    """A point-score marker named by a committed record is class P."""
+    repo = _fake_repo(tmp_path)
+    _bundle(
+        repo,
+        "ercot999_r3",
+        {"ercot999_point_score.json": "{}", "official_2023.json": "{}"},
+    )
+    _record(
+        repo, "PRECOMMIT-x.md", "each point keeps its `ercot999_point_score.json`\n"
+    )
+    problems, swept = crpp.check_bundle_retention({}, repo=repo)
+    assert problems == []
+    assert swept == 1
+    reason = crpp.classify_prereg_artifact(
+        repo / "results" / "calibration" / "ercot999_r3", crpp.record_corpus(repo)
+    )
+    assert reason is not None and reason.startswith("class P")
+
+
+def test_class_p_requires_the_marker_to_be_cited(tmp_path):
+    """A point-score marker no committed record names does not admit the dir."""
+    repo = _fake_repo(tmp_path)
+    _bundle(repo, "ercot999_r3", {"ercot999_point_score.json": "{}"})
+    problems, _ = crpp.check_bundle_retention({}, repo=repo)
+    assert len(problems) == 1
+
+
+def test_solve_output_is_never_class_admitted(tmp_path):
+    """Conjunct (1): a cited dir carrying solve output still fails.
+
+    This is what stops the carve-out becoming a blanket exemption — a real
+    abandoned bundle always carries solve output, so it can never enter the
+    class however thoroughly it is cited.
+    """
+    repo = _fake_repo(tmp_path)
+    for name, extra in (
+        ("dead_metrics", {"metrics.json": "{}"}),
+        ("dead_attest", {"calibration_attestation.json": "{}"}),
+        ("dead_diag", {"legitimacy_diagnostics.json": "{}"}),
+        ("dead_parquet", {"hourly/system_2023.parquet": "x"}),
+    ):
+        _bundle(repo, name, {"meta.json": "{}", **extra})
+        _record(repo, f"RESULT-{name}.md", f"results/calibration/{name}\n")
+    problems, swept = crpp.check_bundle_retention({}, repo=repo)
+    assert swept == 4
+    assert len(problems) == 4
+
+
+def test_citation_must_be_a_whole_identifier(tmp_path):
+    """`ercot999_r1` is not excused by a record that only names `ercot999_r10`.
+
+    Without the delimiter guard a pruned grid point would inherit its
+    neighbour's citation.
+    """
+    repo = _fake_repo(tmp_path)
+    _bundle(repo, "ercot999_r1", {"meta.json": "{}"})
+    _record(repo, "PRECOMMIT-x.md", "the winner is results/calibration/ercot999_r10\n")
+    problems, _ = crpp.check_bundle_retention({}, repo=repo)
+    assert len(problems) == 1
+    assert "ercot999_r1:" in problems[0]
+
+
+def test_empty_dir_is_never_class_admitted(tmp_path):
+    """An empty dir is litter, not a pre-registered artifact."""
+    repo = _fake_repo(tmp_path, dirs=["empty_E"])
+    _record(repo, "RESULT-x.md", "results/calibration/empty_E\n")
+    problems, _ = crpp.check_bundle_retention({}, repo=repo)
+    assert len(problems) == 1
+
+
+def test_docs_root_also_counts_as_a_committed_record(tmp_path):
+    """The ERCOT campaign records live under docs/, so that root must count."""
+    repo = _fake_repo(tmp_path)
+    _bundle(repo, "ercot999_r3", {"ercot999_point_score.json": "{}"})
+    (repo / "docs").mkdir(parents=True)
+    (repo / "docs" / "PRECOMMIT-x.md").write_text("`ercot999_point_score.json`\n")
+    problems, _ = crpp.check_bundle_retention({}, repo=repo)
+    assert problems == []
+
+
+def test_live_allowlist_holds_only_uncoverable_residue():
+    """Every remaining named entry must be one the class genuinely cannot cover.
+
+    The point of item 10 is that the allowlist stops absorbing artifacts the
+    classifier can recognise. If an entry here IS class-admissible it should
+    have been retired, and this test says so.
+    """
+    corpus = crpp.record_corpus()
+    calib = crpp.REPO / "results" / "calibration"
+    redundant = [
+        name
+        for name in crpp.KEEP_REQUIRED_UNMAPPED_BUNDLES
+        if (calib / name).is_dir()
+        and crpp.classify_prereg_artifact(calib / name, corpus) is not None
+    ]
+    assert redundant == []
+
+
+def test_live_allowlist_has_no_entry_for_an_absent_dir():
+    """A named dir that no longer exists is the 're-armable hole' the list warns of.
+
+    `nyiso147_control` sat here after its dir was gone; this stops the next one.
+    """
+    calib = crpp.REPO / "results" / "calibration"
+    if not calib.is_dir():  # partial checkout
+        return
+    absent = sorted(
+        name
+        for name in crpp.KEEP_REQUIRED_UNMAPPED_BUNDLES
+        if not (calib / name).is_dir()
+    )
+    assert absent == []
