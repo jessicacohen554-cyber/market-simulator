@@ -28,6 +28,24 @@ Hour key throughout: the model's chronological non-leap 8760 CST calendar, the
 same key ``scripts/data/derive_miso_hub_lmp.py`` writes the validation series on,
 so model and actual are hour-for-hour comparable with no re-alignment.
 
+CORRECTED 2026-09-01 (xiso-cascade, rule 14 [R-ACCURATE]): the original stage-4
+aggregated the three generator ASM MCPs by SUMMING them (``asm_sum``,
+``miso_asm_mcp_sum``, and the ``asm_share_of_energy_gap_pct`` headline computed
+from the sum). MISO's products are a nested cascade (regulating resources clear
+spin, spin clears supplemental — BPM-002 product substitution), so the posted
+prices are CUMULATIVE — ``GENREGMCP >= GENSPINMCP >= GENSUPPMCP`` in 100.0000 %
+of committed cells, all years, both markets (measured:
+``scripts/probes/_xiso1_miso_asm_cascade_check.py``). The price a reserve MW
+earns is the cascade TOP, never the sum; the sum double/triple-counts the
+shared shadow prices (the nyiso-166 §2 instrument rule carried cross-ISO). The
+aggregate is now the per-hour cascade top (``asm_top`` / ``miso_asm_mcp_top``),
+and the share headline follows it. The committed pre-correction record
+(`_miso167_summer_scarcity_instrument.json`) keeps its original fields as the
+frozen record, with a dated CORRECTION key carrying the corrected values —
+$484.87 -> $193.30 in the 2025 scarce set, share 118.8 % -> 47.3 % (2023
+120.9 % -> 48.4 %, 2024 19.2 % -> 10.5 %). See
+docs/FINDING-xiso-cascade-scan-2026-09-01.md.
+
 Run:  .venv/bin/python scripts/probes/_miso167_summer_scarcity_instrument.py
 """
 
@@ -121,6 +139,17 @@ def e930_hourly(year: int) -> pd.DataFrame:
     return w.reset_index()[["hour", "D", "TI", "NG"]]
 
 
+def cascade_top(frame: pd.DataFrame, prods: list[str]) -> pd.Series:
+    """Per-hour top of the nested ASM MCP cascade — the price a reserve MW earns.
+
+    The three generator products nest (BPM-002 substitution), so the posted
+    MCPs are cumulative and the cleared price is their per-hour MAX (equal to
+    ``GENREGMCP`` wherever the cascade is intact, which is everywhere on the
+    committed data). Never sum them.
+    """
+    return frame[list(prods)].max(axis=1)
+
+
 def _est_he_to_cst_hour(frame: pd.DataFrame, year: int, k: pd.Series) -> pd.Series:
     """Map an hour-ending-k EST stamp to the model's CST hour-of-year.
 
@@ -181,7 +210,10 @@ def assemble(year: int) -> pd.DataFrame:
     df["mon"] = month_of(df["hour"].to_numpy())
     df["gap"] = df["rt"] - df["price"]
     prods = [c for c in ("GENREGMCP", "GENSPINMCP", "GENSUPPMCP") if c in df.columns]
-    df["asm_sum"] = df[prods].sum(axis=1) if prods else np.nan
+    # Nested cumulative cascade (reg >= spin >= supp, 100.0000 % of committed
+    # cells): a reserve MW earns the cascade TOP, never the sum of the posted
+    # product prices [R-ACCURATE; nyiso-166 §2 carried by xiso-cascade].
+    df["asm_top"] = cascade_top(df, prods) if prods else np.nan
     return df
 
 
@@ -291,13 +323,13 @@ def stage4_reserves(df: pd.DataFrame) -> dict:
             "model_dual_max": float(sub["dual_max"].max()),
             "miso_cleared_gw": float(sub["miso_cleared_mw"].mean() / 1000),
             "miso_cleared_by_product_gw": {p: float(sub[p].mean() / 1000) for p in cl},
-            "miso_asm_mcp_sum": float(sub["asm_sum"].mean()),
+            "miso_asm_mcp_top": float(sub["asm_top"].mean()),
             "miso_asm_by_product": {p: float(sub[p].mean()) for p in prods},
         }
 
     out = {"summer": blk(su), "summer_scarce": blk(sc)}
     gap = float((sc["rt"] - sc["price"]).mean())
-    out["asm_share_of_energy_gap_pct"] = float(100 * sc["asm_sum"].mean() / gap) if gap else None
+    out["asm_share_of_energy_gap_pct"] = float(100 * sc["asm_top"].mean() / gap) if gap else None
     out["energy_gap_in_scarce_hours"] = gap
     return out
 
@@ -363,7 +395,7 @@ def main() -> int:
               f" net-import err {i['summer_scarce']['import_err_gw']:+.2f} GW")
         print(f" reserves @scarcity: model req {r['summer_scarce']['model_req_gw']:.2f} GW vs MISO cleared"
               f" {r['summer_scarce']['miso_cleared_gw']:.2f} GW | model dual {r['summer_scarce']['model_dual_mean']:.2f}"
-              f" vs MISO ASM MCP {r['summer_scarce']['miso_asm_mcp_sum']:.2f}"
+              f" vs MISO ASM MCP {r['summer_scarce']['miso_asm_mcp_top']:.2f}"
               f" = {r['asm_share_of_energy_gap_pct']:.1f}% of the ${r['energy_gap_in_scarce_hours']:.2f} energy gap")
         for lbl in ("DA_foreseen", "RT_only"):
             b = f[lbl]

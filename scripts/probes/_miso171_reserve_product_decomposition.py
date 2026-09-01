@@ -34,8 +34,14 @@ Stages:
                 market reg+spin, south == South)
   4 mcp       — MISO's own published DA/RT ASM MCP by PRODUCT in the 2025
                 scarce hours, split DA-foreseen vs RT-only (miso-167 §5's
-                DA>$150 line): how much of the published reserve price sits on
-                the synchronised products vs supplemental
+                DA>$150 line): the cascade-top published price and its
+                synchronised-only increment over the supplemental level.
+                (CORRECTED 2026-09-01, xiso-cascade: the original ``regspin``/
+                ``total`` fields SUMMED the posted MCPs of a nested cumulative
+                cascade — see ``cascade_price_stats``. The committed
+                pre-correction record keeps those fields as the frozen record
+                with a dated CORRECTION key;
+                docs/FINDING-xiso-cascade-scan-2026-09-01.md.)
   5 liveness  — per-region aggregate online-headroom precursor (H_on = rho x
                 online output of reserve-eligible ramp-capable units, from the
                 committed miso169_gated_A unit_hourly — bit-identical to the
@@ -181,6 +187,35 @@ def mcp_series(path: Path, products: dict[str, str], year: int, wide_label: str)
     return out
 
 
+def cascade_price_stats(
+    series_map: dict[str, np.ndarray], hours_set: np.ndarray
+) -> dict:
+    """Per-product means plus the nested-cascade aggregates over an hour set.
+
+    CORRECTED 2026-09-01 (xiso-cascade, rule 14 [R-ACCURATE]): the original
+    emitted ``regspin = reg + spin`` and ``total = reg + spin + supp``. MISO's
+    generator ASM MCPs are a nested cumulative cascade (``GENREGMCP >=
+    GENSPINMCP >= GENSUPPMCP`` in 100.0000 % of committed cells, all years,
+    both markets — ``_xiso1_miso_asm_cascade_check.py``), so a reserve MW earns
+    the per-hour cascade TOP, never the sum of the posted product prices; the
+    sum double/triple-counts the shared shadow prices (nyiso-166 §2 carried
+    cross-ISO). Emits instead:
+
+    * ``top`` — mean of the per-hour cascade max (= reg wherever intact): the
+      published price a synchronised reserve MW actually earns.
+    * ``sync_only_increment`` — mean of (top − supp): the part of the top price
+      attributable to constraints only synchronised (reg/spin) resources can
+      relieve, i.e. the structurally gateable share of the published price.
+    """
+    vals = {p: round(float(np.mean(s[hours_set])), 2) for p, s in series_map.items()}
+    top_hourly = np.maximum.reduce([series_map[p][hours_set] for p in series_map])
+    vals["top"] = round(float(np.mean(top_hourly)), 2)
+    vals["sync_only_increment"] = round(
+        float(np.mean(top_hourly - series_map["supp"][hours_set])), 2
+    )
+    return vals
+
+
 def stage4_mcp(scarce: np.ndarray) -> dict:
     """2025 published ASM MCP by product: scarce-47 split DA-foreseen vs RT-only."""
     year = 2025
@@ -201,10 +236,7 @@ def stage4_mcp(scarce: np.ndarray) -> dict:
     for label, hours_set in (("scarce47", scarce), ("da_foreseen", foreseen), ("rt_only", rt_only)):
         rec[label] = {}
         for market, series_map in (("rt_mcp", rt), ("da_mcp", da)):
-            vals = {p: round(float(np.mean(s[hours_set])), 2) for p, s in series_map.items()}
-            vals["regspin"] = round(vals["reg"] + vals["spin"], 2)
-            vals["total"] = round(vals["reg"] + vals["spin"] + vals["supp"], 2)
-            rec[label][market] = vals
+            rec[label][market] = cascade_price_stats(series_map, hours_set)
     return rec
 
 

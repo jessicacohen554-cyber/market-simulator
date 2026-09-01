@@ -1,4 +1,73 @@
 {
+ "CORRECTION_2026-09-01_xiso-cascade": {
+  "statement": "CORRECTED \u2014 the summed ASM-MCP fields (regspin / total) SUM a nested cumulative cascade: GENREGMCP >= GENSPINMCP >= GENSUPPMCP in 100.0000% of committed cells (all years, DA+RT), so a reserve MW earns the cascade TOP (= GENREGMCP here), never the sum; the sum double/triple-counts the shared shadow prices. Per-product fields alongside are correct and unchanged. Cite the corrected values below, not the summed fields. Measured and reproduced independently by scripts/probes/_xiso1_miso_asm_cascade_check.py; see docs/FINDING-xiso-cascade-scan-2026-09-01.md and FINDING-nyiso166 \u00a72 (the instrument rule).",
+  "corrected": {
+   "stage4_published_mcp_by_product": {
+    "scarce47": {
+     "rt_mcp": {
+      "top": 46.44,
+      "was_total": 97.62
+     },
+     "da_mcp": {
+      "top": 32.09,
+      "was_total": 58.99
+     }
+    },
+    "da_foreseen": {
+     "rt_mcp": {
+      "top": 76.88,
+      "was_total": 181.4
+     },
+     "da_mcp": {
+      "top": 39.02,
+      "was_total": 77.78
+     }
+    },
+    "rt_only": {
+     "rt_mcp": {
+      "top": 19.65,
+      "was_total": 23.91
+     },
+     "da_mcp": {
+      "top": 25.98,
+      "was_total": 42.45
+     }
+    }
+   },
+   "stage4_published_mcp_by_product_rt200": {
+    "scarce47": {
+     "rt_mcp": {
+      "top": 93.14,
+      "was_total": 222.37
+     },
+     "da_mcp": {
+      "top": 31.08,
+      "was_total": 56.72
+     }
+    },
+    "da_foreseen": {
+     "rt_mcp": {
+      "top": 131.56,
+      "was_total": 327.44
+     },
+     "da_mcp": {
+      "top": 39.93,
+      "was_total": 81.13
+     }
+    },
+    "rt_only": {
+     "rt_mcp": {
+      "top": 64.68,
+      "was_total": 144.55
+     },
+     "da_mcp": {
+      "top": 24.53,
+      "was_total": 38.64
+     }
+    }
+   }
+  }
+ },
  "session": "miso-171",
  "keeper_bundle": "results/calibration/miso170_layup_B2",
  "loader_contract": {
