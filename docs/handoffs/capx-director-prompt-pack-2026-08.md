@@ -2314,3 +2314,277 @@ coverage record (in / out / why), the committed table, and a statement of what F
 able to score once its read path is wired. Report to the director which of the eight sources
 remain, and whether any of them is unreachable rather than merely un-fetched.
 ```
+
+---
+
+## D19 — board reconcile 2 (r#23; released once D8-V and D4-M landed)
+
+```
+You are the D19 BOARD RECONCILE session of the capacity-expansion (Forecast Finalization)
+track. This is a RECORDS lane, the D13 successor. It makes the board tell the truth about a
+program that has moved under it. It adjudicates nothing, re-scores nothing and solves nothing.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (deciding what a stale cross-ISO sentence should now say is judgment,
+and several touch determinations).
+BRANCH: claude/capx-d19-board-reconcile-2 — create FRESH off origin/main (git fetch origin main
+first) and rebase before every push.
+
+READ FIRST: `docs/handoffs/capx-director-ledger-2026-08.md` §0t (the wave you are reconciling
+to) and §0s · `frontend/data/forecast/program-status.json` blocks `t3_golden_campaign`
+(`flagged_not_edited`), `d8_v_ledger_completion`, `d21_fc6_battery`, `d4i3_ercot_slack` ·
+`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D13 (the precedent: what a reconcile lane
+may and may not touch).
+
+THE SIX STALE FACTS, each with its source. Fix what is stale; verify the rest rather than
+assuming it:
+1. `tier_ladder`'s T3-golden row still reads "deferred (§2.1b, Wave 4 withdrawn)" — NEISO has a
+   registered, now FC-6-scored T3 campaign. (Routed by the golden's own `flagged_not_edited`.)
+2. The `readiness` prose still calls a ten-hour golden a projection. The campaign MEASURED
+   29.2 min. It is no longer a projection and must not read as one.
+3. `gate_reading` / `headline` were written for a board on which NO ISO held §2.1b leg (d).
+   NEISO now holds it and has SPENT it.
+4. **ERCOT's gate (a) now passes on the literal test** — ercot-247 declared ERCOT `complete` +
+   frontier on 2026-08-31, so `complete` = {ERCOT, NEISO, PJM}. No lane has written this to the
+   board. Verify it against `frontend/data/backcast/calibration-complete.json` yourself before
+   writing it.
+5. **The gate cells D8-V deliberately left alone and flagged to you by name.** Read its lane
+   block's own note, and fix exactly what it flagged — no more.
+6. **The two new PROMOTEs.** `neiso-t1f` and `nyiso-t1f` are now PROMOTE with empty caveat
+   lists — the program's first clean FC maps. Any board prose that describes the dominant
+   blocker set, or that says NEISO/NYISO carry FC-7 caveats, is now wrong.
+
+THE ONE THING THIS LANE MUST NOT DO: it must not move a VERDICT. Every number, status and
+determination it writes is COPIED from a committed verdict record or a committed marker file,
+never recomputed and never re-scored. If reconciling a sentence would require deciding what a
+verdict should be, that sentence is not yours — flag it and leave it, exactly as D8-V flagged
+its gate cells to you and as the golden flagged its cross-ISO prose. A reconcile lane that
+starts adjudicating is how a board acquires a fact nobody measured.
+
+ASSERT BEFORE YOU COMMIT, programmatically, in the D8-RE/D8-V pattern: every ISO determination,
+every fc map, every keeper/marker/golden field, every §2.1b gate cell you did not deliberately
+edit, and every prior lane block — byte-identical. List what you changed and what you asserted
+unchanged, in the finding.
+
+GUARDRAILS: zero solves, zero re-scores. No keeper/shard/marker edit, nothing in the backcast
+namespace, no ScenarioConfig field, no mechanism, no matrix cell (rule 28 not triggered). No
+holdout year. No new GitHub Actions workflow. Push per CLAUDE.md Git & Pushing; blob-verify
+every ≥300-line file after push (rule 27) — `program-status.json` qualifies.
+
+COLLISION: lane D25 (FC-5 dispositions) is dispatched in the same batch and writes the FC-5
+rows of the same file. You write cross-ISO prose, the tier ladder, the gate cells and the ISO
+blocks' stale sentences; it writes FC-5. Distinct blocks — rebase before every push and leave
+its writes intact.
+
+EXIT: docs/handoffs/FINDING-capx-d19-board-reconcile-2-<date>.md with a before/after line per
+edit, the byte-identity assertions, and anything you flagged rather than fixed. Report to the
+director: what the board now says that it did not, and what remains flagged.
+```
+
+---
+
+## D23 — the P1 carbon-CO2 sign failure (r#23; D21's routed object, Phase 0)
+
+```
+You are the D23 session of the capacity-expansion (Forecast Finalization) track. Lane D21 made
+the FC-6 paired invariants scoreable for forecast bundles for the first time, and the first
+thing they said is that THE MODEL'S RESPONSE TO A CARBON PRICE HAS THE WRONG SIGN. You attribute
+it. PHASE 0: zero solves beyond what the committed arms already contain, precommit-first, build
+nothing, tune nothing, arm nothing.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (a novel object reaching a shipped mechanism; adjudication).
+BRANCH: claude/capx-d23-p1-carbon-sign — create FRESH off origin/main (git fetch origin main
+first) and rebase before every push.
+
+READ FIRST: `docs/handoffs/FINDING-capx-d21-fc6-battery-*.md` (the P1 row and its decomposition)
+and the committed paired-arm summaries under the golden bundle (base / carbon25, both 25/25
+years at the `9e56f0f` vintage) · `docs/forecast-determination-rubric.md` §FC-6 row 3 · CLAUDE.md
+"Capacity Evolution" step 2 (the CCS retrofit screen: `ccs_retrofit_available_year`,
+`eac_price_gas_cc_ccs`, `ira_ccus_45q_last_year`, `ira_45q_credit_window_years`, valued as the
+**incremental uplift over the best unabated state**, screened jointly with retirement) and
+`model-methodology-spec.md` §5.6.
+
+THE OBJECT: cumulative 2026–2050 CO2 **RISES** 210.52 → 320.84 Mt (**+52.4 %**) under
+`carbon_price=25`. P1 is, in the rubric's own words, the model's economic core, so this is a
+claim about the model's fitness for the policy-scenario purpose the whole forecast program
+exists to serve. Two legs are already visible in the committed summaries and they are NOT the
+same question — keep them apart:
+
+* **CAPACITY-SIDE leg.** The CCS retrofit screen retrofits ~3 GW LESS under the carbon price:
+  2040 base = 13,049 MW gas_cc_ccs / 0 MW unabated CC; carbon arm = 9,993.5 / 4,000 MW.
+  **This leg may not be a bug.** A plausible real mechanism exists: the retrofit is valued as
+  the incremental uplift over the best unabated state, and an unabated CC that runs less under a
+  carbon price offers a smaller uplift, so fewer retrofits clear. Your job is to establish
+  whether that is what is happening — a correct economics result with a surprising sign — or
+  whether the uplift arithmetic mishandles the carbon price (e.g. counts it on one side only,
+  or against the wrong counterfactual). **Do not assume either.**
+* **DISPATCH-SIDE leg.** 2026, the SAME fleet, CO2 +0.21 Mt. **This one is much harder to
+  explain benignly**: with the fleet fixed, a carbon price enters marginal cost as
+  `emission_rate × carbon_price` and merit-order switching should move emissions DOWN, not up.
+  Candidates to test, none presumed: an emission rate that is zero/absent for a class that then
+  looks artificially cheap; the carbon term missing from one branch of the offer path; a
+  storage/renewable interaction; a sign or unit error. Start here — it is the smaller, cleaner
+  object and it constrains the capacity-side story.
+
+PRECOMMIT FIRST — push it before you measure. Freeze: the candidate causes per leg, the
+committed evidence for each, the adjudication rule, and the kill that retires each candidate.
+State explicitly which leg you expect to be a real result and which a defect, BEFORE looking.
+
+EVIDENCE IS THE COMMITTED ARMS plus code reading. The base and carbon25 arms are committed with
+their summaries, run_configs and evolution ledgers. If a question genuinely needs a new solve,
+NAME IT AND ROUTE IT — do not run it in this lane; a third arm is a director decision because
+it changes what this lane costs.
+
+WHAT THIS MUST NEVER BECOME: no parameter moved to make P1 pass. Not the carbon price, not an
+emission rate, not a retrofit cost, not the 45Q window. Rule 13 `[R-MEASURED]` and rule 21
+`[R-DOF]`; and rule 1 `[R-STRUCT]` in its exact sense — if the capacity-side leg turns out to be
+a real mechanism with a surprising sign, THE RESULT STAYS and P1's expectation is what gets
+re-examined, on its own evidence and by its owner, not by you. Report either finding at full
+magnitude.
+
+GUARDRAILS: no new solve (see above). No mechanism, no ScenarioConfig field, no matrix cell
+(rule 28 not triggered — check the NEISO shard under duty (a) before proposing anything). No
+board write, no verdict flip, no keeper/shard/marker touch — D21's FC-6 FAIL and the golden's
+HOLD stand as scored. Backcast namespace untouched. No holdout year. No new GitHub Actions
+workflow. Push per CLAUDE.md Git & Pushing; blob-verify every ≥300-line file (rule 27).
+
+EXIT: docs/handoffs/PRECOMMIT-capx-d23-p1-carbon-sign-<date>.md (pushed FIRST) and
+docs/handoffs/FINDING-capx-d23-p1-carbon-sign-<date>.md with each leg attributed against its own
+frozen kill, the repairs ROUTED (priced, admissibility stated per rules 13/21) and NOT built,
+and an explicit statement of which leg is a defect and which — if either — is the model being
+right in a way we did not expect. Report to the director.
+```
+
+---
+
+## D24 — the cache-key optional-fields defect (r#23; D4-M's R-5 upgrade; characterize, do not fix)
+
+```
+You are the D24 session of the capacity-expansion (Forecast Finalization) track. Lane D4-M
+upgraded R-5 from a hypothesis to a DEMONSTRATED MECHANISM: the results cache can give ONE key
+to TWO different dispatches, by construction. You characterize the blast radius and PROPOSE a
+repair. **YOU DO NOT FIX IT** — see the scope boundary, which is the whole point of this lane.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (a well-characterized mechanical defect; the discretion is spent in the
+boundary below).
+BRANCH: claude/capx-d24-cache-key-defect — create FRESH off origin/main (git fetch origin main
+first) and rebase before every push.
+
+READ FIRST: `docs/handoffs/FINDING-capx-d4m-ercot-t1h-*.md` (the R-5 upgrade and its exact
+demonstration) · `docs/handoffs/FINDING-capx-d4i3-ercot-slack-2026-08-31.md` §5.1 (the original
+observation, which honestly declined to assert a cause) · `src/market_sim/results/cache.py`
+(`cache_key`, `_CACHE_KEY_OPTIONAL_FIELDS`, and the cache-epoch entries).
+
+THE MECHANISM, as demonstrated: `cache_key()` DROPS `_CACHE_KEY_OPTIONAL_FIELDS` members at
+whichever value is the LIVE DEFAULT. So when a default flips — as owner ruling R-A flipped
+`storage_entry_availability_gate` and `storage_entry_cost_normalized_rank` on 2026-08-31 — a run
+solved BEFORE the flip and a run solved AFTER it collide on the same key while their configs
+differ. D4-M's key `f061b264…` is byte-identical to `d12c-armed`'s with both storage fields
+different. This is exactly what D4-I3 §5.1 saw when five committed records shared one key and
+three scored quantities disagreed.
+
+THE MEASUREMENT — that is what this lane delivers:
+1. **Enumerate the exposure.** Which fields are in `_CACHE_KEY_OPTIONAL_FIELDS`, and for each,
+   when did its default last change (git history of the config/ISO-config default)? A field whose
+   default never moved has no exposure; a field whose default moved has exposure for every run
+   solved across that date.
+2. **Enumerate the affected committed runs.** For each registered forecast/hindcast bundle,
+   compare its `run_config.json` values for those fields against the default in force when it
+   was solved. Produce a table: run, key, fields dropped, whether another committed run shares
+   that key at a different posture. **The D4-M / d12c-armed pair is the known-true positive —
+   your method must find it, or your method is wrong.**
+3. **State the consequence honestly per affected pair.** A shared key does not by itself prove a
+   wrong result was served — it proves it COULD be. Distinguish "collides and was re-solved
+   anyway" from "collides and a cached result may have been served".
+4. **Propose repairs with costs.** At minimum: (a) include optional fields unconditionally;
+   (b) fold a defaults-snapshot hash into the key; (c) keep the drop but refuse a cache hit whose
+   stored config differs. For each: correctness, and **how many committed cache entries it
+   invalidates**.
+
+SCOPE BOUNDARY — DO NOT LAND A FIX. Any repair changes cache keys, which invalidates cached
+results across the program and forces re-solves that cost real compute. **That is an owner cost
+decision, not a lane's**, and shipping it inside a characterization lane would spend the owner's
+money on your judgment. Propose, price, stop. Equally: **do not purge or re-solve any existing
+bundle** to "clean up" a collision — a committed record stands until someone decides otherwise.
+
+GUARDRAILS: zero solves. No mechanism, no ScenarioConfig field, no matrix cell (rule 28 not
+triggered). No verdict, board, keeper, shard or marker edit — if you find that a committed
+verdict rests on a possibly-collided cache entry, **report it, do not act on it**; that is a
+cross-lane re-grade question and it belongs to the affected lane. Backcast namespace untouched.
+No holdout year. No new GitHub Actions workflow. Push per CLAUDE.md Git & Pushing; blob-verify
+every ≥300-line file (rule 27).
+
+EXIT: docs/handoffs/FINDING-capx-d24-cache-key-defect-<date>.md with the exposure enumeration,
+the affected-run table (including the known-true positive as a method check), the honest
+per-pair consequence, and the priced repair options. Report to the director: how many committed
+runs are exposed, and whether any committed verdict is among them.
+```
+
+---
+
+## D25 — the FC-5 disposition table: the t3 ceiling's last step (r#23)
+
+```
+You are the D25 session of the capacity-expansion (Forecast Finalization) track. Lane D22 landed
+the benchmark tables FC-5 needs, and FC-5 STILL scores SKIPPED — by design, because the rubric
+requires a per-row DISPOSITION table that a scoring session must AUTHOR. You author it. This is
+judgment work, not intake, and it is the last step before the t3 ceiling owner ruling Q16 named
+is actually lifted.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (every row is a judgment about whether a divergence is explained).
+BRANCH: claude/capx-d25-fc5-dispositions — create FRESH off origin/main (git fetch origin main
+first) and rebase before every push.
+
+READ FIRST: `docs/forecast-determination-rubric.md` §FC-5 IN FULL (the metric, the per-row
+verdicts, the threshold rule) and its §6 status note as D22 updated it ·
+`docs/handoffs/cross-model-corridor-2026-07-13.md` (the divergence-explanation discipline,
+imported whole — read §1 before you write a single disposition) ·
+`docs/handoffs/FINDING-capx-d22-fc5-corridor-*.md` (what landed, what did not, and why).
+
+THE RULE YOU ARE APPLYING, stated so you cannot drift from it: divergence **> 15 % or opposite
+sign/direction** requires a WRITTEN ours-vs-theirs explanation NAMING THE MECHANISM. Each row is
+`IN CORRIDOR` / `EXPLAINED DIVERGENCE` / `UNEXPLAINED`. Any `UNEXPLAINED` row ⇒ FC-5 **FAIL**
+(and routes to root cause — the D5 precedent). All in-corridor ⇒ PASS. Explained divergences
+only ⇒ CAVEAT, each listed with its blocker/mechanism reference.
+
+**"Divergence is not failure; UNEXPLAINED divergence is."** That sentence is the whole design,
+and it cuts against the temptation this lane will actually face — which is not to fudge a number
+but to write a vague explanation that sounds like one. A disposition that says "our higher gas
+build reflects different demand assumptions" NAMES NOTHING. A disposition that says "our 2035
+gas_cc is 31 % above AEO2025 because our entry screen prices the ORDC reserve leg AEO's capacity
+expansion has no analogue for (D12 finding §4)" names a mechanism and can be checked. **If you
+cannot name the mechanism, the row is UNEXPLAINED — write that, and let FC-5 FAIL.** A FAIL that
+routes to a root cause is the instrument working; a corridor full of hand-waving is the
+instrument defeated, and it would be defeated permanently, because nobody re-audits a PASS.
+
+SCOPE: author dispositions for the ISOs whose anchors D22 landed (AEO2025 across the board, plus
+ERCOT CDR and PJM Load Forecast rows), score FC-5 on them, and register the result. Where an ISO
+has too few anchors to score meaningfully, say so and leave it SKIPPED with the reason — do not
+manufacture coverage. Report which of the 5 still-missing sources would most change the picture.
+
+WHAT THIS MUST NEVER BECOME (rule 13 `[R-MEASURED]`, plan §7.6, and the rubric's own rationale):
+benchmarks are CONTEXT, NEVER FIT TARGETS. Nothing in the model moves toward a benchmark row.
+Do not add a numeric conformance band (the rubric deliberately has none, precisely so AEO cannot
+become a target). Do not rank ISOs by corridor distance. Do not adjust a model quantity, an
+input, or a threshold because a row is out of corridor — the row's disposition is the deliverable,
+not its closeness.
+
+GUARDRAILS: zero solves. No mechanism, no ScenarioConfig field, no matrix cell (rule 28 not
+triggered). No keeper/shard/marker, nothing in the backcast namespace. No holdout year. If
+scoring FC-5 moves a committed determination, STOP and report — that is the 2026-08-30 cross-lane
+re-grade rule, and the affected lane re-verifies first. No new GitHub Actions workflow. Push per
+CLAUDE.md Git & Pushing; blob-verify every ≥300-line file (rule 27).
+
+COLLISION: lane D19 is dispatched in the same batch and writes cross-ISO board prose, the tier
+ladder and the gate cells of `program-status.json`; you write the FC-5 rows. Distinct blocks —
+rebase before every push and leave its writes intact.
+
+EXIT: the committed disposition table, and
+docs/handoffs/FINDING-capx-d25-fc5-dispositions-<date>.md with the per-row verdicts, every
+explanation's named mechanism, the FC-5 score per ISO, and the honest count of UNEXPLAINED rows.
+Report to the director whether the t3 ceiling is now lifted — i.e. whether a golden campaign can
+finally be graded on all required categories.
+```
