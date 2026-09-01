@@ -89,13 +89,154 @@
 > written and is REPAIRED at this pin** (#4497). The finding stands; its tense
 > does not (D-9).
 
+> ### 🟢 v19 FULL REFRESH (2026-09-01, pin `72576ebe`) — TWO SITTINGS OF RECORDS DEBT CLEARED IN ONE LANE: **R-J THROUGH R-O ARE ALL ON THE RECORD**, TWO QUEUE ITEMS RETIRE, AND FOUR-INSTRUMENT ALIGNMENT **HOLDS**
+>
+> **This is a FULL refresh, not a delta.** Every figure below — keeper table,
+> markers, sidecar walk, stage-0 table, all seven gates, the forecast board, the
+> queue and the roster — is re-derived at **`72576ebe`**, this lane's own pin.
+> The v18/v18b blocks below it are retained as history and their `d44446e0` /
+> `6c7f82dac015` / `192460b6` figures are **not** carried forward.
+>
+> **THE SITTING'S SIX UNRECORDED RULINGS ARE NOW RECORDED — verified absent
+> first.** `grep` of each label across `docs/` at the pin returned **ZERO
+> occurrences for R-J, R-K, R-M, R-N and R-O**, and R-L existed only in the
+> capture lane's own finding and the capx desk's ledger — never on this board or
+> in plan §8. **G-1 … G-6 record all six.** Two of the six were already
+> *executed* and merely unrecorded (R-J, R-N); two were executed by a dispatched
+> lane (R-L) or superseded (R-K); **R-M is executed by this lane**; and **R-O's
+> chartered lane has not launched** (G-6).
+>
+> ### 🟢 AND THE PROGRAM'S TWO OLDEST GATE DEFECTS ARE **FIXED IN CODE**, NOT MERELY DIAGNOSED
+>
+> R-J's four maintenance items all landed (#4495 ×3, #4502 ×1 — mapping verified
+> from commits, not from the dispatch). The parity allowlist is replaced by a
+> **class-level classifier**; the bench gate's **date-kind mismatch** — diagnosed
+> and re-diagnosed across three board versions — is repaired at source; the
+> stage-0 manifest carries **per-entry provenance (schema v2)** with all six shas
+> recovered from history; and a **hard CI guard** now holds the forecast gate-(a)
+> rows against the backcast store. **Checklist items 2, 10, 11 and 12 are
+> discharged by execution, and queue item Q-1 retires with them.** (G-1.)
+>
+> ### 🟢 AND: STAGE-0 COVERAGE TRIPLED — 1 CURRENT / 5 STALE → **3 CURRENT / 3 STALE**
+>
+> R-L's capture lane took **NEISO and ERCOT-forward** — the owner's verbatim
+> *"Just NEISO and ERCOT"*, deliberately against restart-checklist item 5, which
+> **stands**. Both fidelity oracles **PASS with zero config drift**; schema v2 is
+> proven by the captures (each changed only its own entry); rule 22 is clean.
+> **`results/regression-goldens/` moved for the first time in three cycles**, so
+> WS3's completion figure moves by measurement rather than by assumption (G-3,
+> G-11). **ERCOT's 2023 carve-out config still has no golden** — the object R-O
+> charters a schema lane to make representable.
+>
+> ### 🟢 AND: ALL SIX FORECAST GATE-(a) STAMPS ARE **CURRENT** — THE FIRST TIME IN PROGRAM HISTORY
+>
+> v17 reported four of six stale and the alignment broken *on a stamp*. At this
+> pin **every one of the six `a_keeper_marker` rows names the live keeper**, the
+> R-N micro-supersession having re-keyed the last of them (CAISO, after the new
+> guard's **first real firing**). So **CALIBRATED = `complete` = active
+> `frontier` = gate-(a) passers = {ERCOT, NEISO, PJM}** — four-instrument
+> alignment **HOLDS**, and the three gate-(a) failures are now failures **on the
+> merits** (determination / marker), not stamp artefacts. **This is the first
+> cycle in which the divergence could not have been a bookkeeping lag.** (G-9.)
+>
+> ### 🟠 AND TWO JOBS OF THIS LANE'S OWN DISPATCH CAME BACK **ALREADY DONE OR MOVED**
+>
+> **The anchor repair (job 4) was a NO-OP at the pin**: `--fix-anchors` repairs
+> **0**, the gate carries **0 WARNs**, and the ~243 the dispatch reported at
+> `8462da22` had already been repaired — **digits-only, correctly, and entirely
+> unannounced** — inside an unrelated capx forecast re-score, #4522 (G-8). And
+> **R-M's target moved between dispatch and pin**: `neiso-t3` was re-scored onto a
+> **reachable** sha, and the defective stamp migrated to a *different key*. The
+> annotation was therefore applied **by sha, not by key name** — the dispatch's
+> key list would have annotated one healthy verdict and missed one defective one
+> (G-4). **"Trust nothing in this prompt" earned its place twice in one lane.**
+>
+> ### 🔴 AND THE DISPATCH-VS-LAUNCH CHECK IS NOW **3-FOR-3 ON NON-LAUNCHES IN ONE SITTING**
+>
+> Two prior dispatches of *this* lane never launched (recorded in the protocol
+> section, per the director's re-issue), and **R-O's chartered schema lane shows
+> no branch and no PR at this pin** (G-6). The R-L capture lane's own finding
+> records that **its** first dispatch never launched either. **Four
+> non-launches, one sitting.** The check is no longer a formality on this
+> program; it is the single highest-yield step in the refresh protocol.
+
 > **STATUS: PARKED AT G1** — live rollup maintained by the program-director
 > session, updated on each owner "refresh". Canonical program definition:
 > `docs/model-audit-release-plan-2026-08.md` (its §8 ledger is the durable event
 > record; this board is the at-a-glance state). Completion figures are the
 > director's estimate against each workstream's full DoD (A+B halves).
 
-**Snapshot (v17):** **BASE SHA FOR EVERY FIGURE ON THIS BOARD: `d44446e0`**
+**Snapshot (v19):** **BASE SHA FOR EVERY FIGURE ON THIS BOARD: `72576ebe`**
+(merge of #4527), derived live from `origin/main` on 2026-09-01 17:16 UTC and
+**held stable across two polling rounds** before the pin was taken. **The fetch
+was NOT a forced update** (`main -> FETCH_HEAD`, fast-forward, both polls) —
+recorded because v17's was, and a forced move is the one condition under which a
+carried sha silently stops meaning what it meant. The director's two derivation
+pins are both **REACHABLE and STALE**: `8462da22` (merge of #4520) by **7 merged
+PRs** and `a40cfc68` (merge of #4523) by **4** (#4524–#4527). Every count below
+states the window it was measured over. **Nothing is carried from the dispatch,
+from board v17/v18/v18b, or from any table, unverified — and FOUR figures the
+dispatch asserted are re-derived DIFFERENT (G-12).**
+
+| window | span | commits | non-merge | merged PRs |
+|---|---|--:|--:|---|
+| **since v17's pin** (`d44446e0..72576ebe`) — the v19 cycle | 2026-08-31 04:26 → 2026-09-01 17:0x UTC | **167** | **104** | **62** (#4465–#4527, no #4480) |
+| since the director's first pin (`8462da22..72576ebe`) | same window's tail | **20** | **13** | **7** (#4521–#4527) |
+| since the director's post-pin (`a40cfc68..72576ebe`) — what moved after the prompt was re-issued | same | **11** | **7** | **4** (#4524–#4527) |
+
+**Of the 62 merged PRs, classified per lane from the branch name AND the commits
+AND the touched paths** (all three, per the v17 protocol amendment — and this
+cycle the branch name alone would again have mis-filed six):
+
+- **9 are this program's / 8 lanes**: #4465 (v18 delta), #4472 (the R-D closure
+  map), #4488 (gate-(a) repair), #4495 (R-J's three gate repairs), #4498 (v18b),
+  #4502 (R-J's stage-0 provenance repair), #4509 + #4517 (the R-L capture lane),
+  #4523 (the R-N micro-supersession).
+- **28 are the capx desk's / 18 lanes** — a DIFFERENT program: the 22 `capx-*`
+  PRs, **plus #4467** and **plus the five PRs of `claude/market-sim-calibration-director-lckr9a`**.
+- **25 are the calibration program's / 14 lanes**: MISO 11, NYISO 6, CAISO 5,
+  ERCOT 1, cross-ISO 2 (#4466 the C3c charter audit, #4497 the xiso cascade scan).
+
+⚠️ **THE BRANCH-NAME HAZARD REVERSED DIRECTION THIS CYCLE, AND IT IS WORSE IN
+THIS DIRECTION.** v17 found *capx* branches wearing calibration-shaped names.
+This cycle **`claude/market-sim-calibration-director-lckr9a` IS THE CAPX
+DIRECTOR'S DESK** — every one of its commits is titled `capx-director r#22…r#26`
+and it touches only `capx-director-{handoff,ledger,prompt-pack}` — and
+**`claude/neiso-rc-repair-fymtkz` (#4467) IS A FORECAST/T1-X HINDCAST LANE**, not
+a NEISO backcast lane: it writes `frontend/data/forecast`,
+`frontend/data/hindcast`, `results/hindcast` and `scripts/register_forecast_run.py`.
+Together they are **6 of the capx desk's 28 PRs**. Worse in this direction
+because a *calibration*-shaped name in the calibration column looks correct and
+raises no flag — v17's capx-shaped names at least announced themselves.
+**#4467 is also the lane that minted both of R-M's unverifiable stamps** (G-4).
+
+**Keeper motion: ONE promotion, in CAISO.** Re-derived rather than asserted: all
+six `keeper` fields compared byte-for-byte at `d44446e0` and at the pin —
+**CAISO `2026-08-26-caiso-220-c1-crosswalk` → `2026-09-01-caiso-231-b1-ungrounded`**
+(#4515), the other five byte-identical. **No rule-22 D-5(b) re-key was owed**:
+CAISO sits in the `withdrawn` block, not `complete`, and `audit_keepers.py`
+returns **PASS 0/0** across the promotion. Recorded, **never adjudicated** (G-10).
+
+**ONE open PR and TWO branches ahead of `main`** (live `list_pull_requests` +
+`ls-remote` ancestry test at the pin): **#4530** (`miso-st-gas-steam-chp-calibration`,
+opened 17:25 UTC — *after* the pin) and `capx-director-refresh-0z0e0f`. The R-N
+lane's branch `claude/audit-program-director-irzj4a` is an **ancestry-tested
+merged remnant**, i.e. the supersession is spent and closed. **No other
+audit-program lane is running at this pin**; this records lane is the only one,
+and it is the dispatched instrument of the standing deviation.
+
+**Headline, one line: six rulings recorded for the first time, two queue items
+retired, the program's two oldest gate defects fixed in code, stage-0 coverage
+tripled, all six forecast gate-(a) stamps CURRENT and four-instrument alignment
+holding at {ERCOT, NEISO, PJM} — while two of this lane's own six jobs came back
+already-done or moved-since-dispatch, and the sitting's non-launch count reached
+four.**
+
+*(v17's snapshot block below is retained verbatim as that cycle's record. Its
+`d44446e0` figures are history and are NOT this board's measurement.)*
+
+**Snapshot (v17, RETAINED AS HISTORY):** **BASE SHA FOR EVERY FIGURE IN THIS
+BLOCK: `d44446e0`**
 (merge of #4464), derived live from `origin/main` on 2026-08-31 and **held stable
 across two polling rounds** before the pin was taken. **The fetch that took it
 was a FORCED UPDATE** (`3d8ea013...d44446e0 main -> origin/main (forced
@@ -237,6 +378,418 @@ refresh), **and this lane's own branch is now the only one ahead of `main`.**
 gates table, the forecast board and the queue are unaffected; **F-2's and F-3's
 verdicts are confirmed rather than rewritten**, and this block reads as what
 happened next.
+
+## What moved — v19 CYCLE (`d44446e0..72576ebe`, "the records-debt cycle")
+
+**Every figure in this section is derived at `72576ebe` from committed bytes.**
+Nothing is read from the dispatch, from v17/v18/v18b, or from any table on this
+board. Where a dispatched figure and the pin disagree, the pin wins and the
+disagreement is recorded (G-12).
+
+### G-1 · 🟢 RULING **R-J** — ALL FOUR UNBLOCKED MAINTENANCE ITEMS **EXECUTED AND MERGED**, AND THEY RETIRE QUEUE ITEM Q-1 BY EXECUTION
+
+Recorded here for the first time: **`grep "R-J"` across `docs/` at the pin
+returns ZERO** (the only near-match is the unrelated word `R-JUDGMENT`). The
+ruling authorised the four maintenance items that needed no owner decision. All
+four are **merged and verified in the working tree at the pin** — and the
+commit→PR mapping was **derived by ancestry, not taken from the dispatch**:
+
+| item | commit | PR | verified at the pin |
+|---|---|---|---|
+| **Parity allowlist → class-level carve-out** (checklist item 10, BLOAT B-8) | `76c5eed6` | **#4495** | `KEEP_REQUIRED_UNMAPPED_BUNDLES` is now a **residual** enumeration of **8** entries behind a structural two-conjunct classifier (no solve output **AND** named by a committed PREREG/RESULT reproduction) |
+| **Bench gate date-kind fix** (checklist item 12) | `d5c3178f` | **#4495** | both sides now use the **committer instant in offset-bearing form**; the docstring records that `--since` is inclusive, verified 2026-09-01 |
+| **Stage-0 per-entry provenance** (checklist items 2 + 11) | `362e2771` | **#4502** | manifest **schema v1 → v2**; `provenance` + `keeper_snapshot` per entry; the shared top-level `git_sha`/`git_dirty`/`env` **removed** |
+| **`check_gate_a_provenance` hard CI guard** | `3f5a24ae` | **#4495** | wired at `.github/workflows/ci.yml:213`, `python3` stdlib, **exit 0** at the pin |
+
+**🟠 ONE R-J FIGURE THE DISPATCH ASSERTED IS RE-DERIVED DIFFERENT, AND THE TRUE
+STORY IS BETTER.** The dispatch said the allowlist went **26 → 3**. Measured at
+four shas (`565f555c`, `8462da22`, `a40cfc68`, `72576ebe`) it is **8 at every
+one**, and the pre-repair count at `565f555c^` is **40, not 26** — the 26 was the
+audit board's *last count*, and the enumeration had grown by 14 in the interim,
+exactly as the gate's own docstring warned (*"a stale entry is a re-armable
+hole"*). **So the repair is 40 → 8, a larger win than the dispatch claimed**, and
+the residual 8 are live-lane control/recipe dirs, not dead output.
+
+**🟢 THE STAGE-0 REPAIR ALSO OVERTURNED TWO OF THIS BOARD'S OWN STANDING
+CLAIMS**, and the lane said so in its own commit message rather than quietly
+fixing them: **`af1ccb6` DOES resolve and IS an ancestor of `main`** (it is the
+CAISO capture commit), and **the five "unrecoverable" shas were recoverable all
+along** — every intermediate value had been committed on its way through the
+manifest's history. All six were recovered **with evidence and zero UNKNOWN
+rows**: ERCOT `ec413d20`, NEISO `ebd31a9`, NYISO `2dd9dbc`, CAISO `9f6ff3e`,
+MISO `af1ccb6`, PJM `1cfea72`; the chain **self-corroborates** (CAISO's sha *is*
+the NYISO capture commit, MISO's *is* the CAISO one). **v17's "does not resolve"
+was a shallow-clone artefact** — see G-13, which this lane hit independently.
+
+**Q-1 IS RETIRED BY EXECUTION**, not by ruling: the thing it asked for exists.
+
+### G-2 · 🟢 RULING **R-K** — STAGE-0 CAPTURES **HOLD**; **SPENT**, SUPERSEDED BY R-L
+
+Recorded for the first time (`grep "R-K"` → **ZERO** at the pin). R-K held the
+stage-0 captures. It was superseded within the same sitting by **R-L**, which
+authorised two of them by name. **R-K is spent and is not a live constraint**;
+it is recorded so the hold and its release are both legible, and so a future
+reader does not find R-L acting against an apparently-standing hold.
+
+### G-3 · 🟢 RULING **R-L** — "JUST NEISO AND ERCOT" — **DISCHARGED IN FULL**, WITH ONE DEVIATION THE DIRECTOR ACCEPTED AND THIS BOARD NOW ADOPTS AS STANDING
+
+Owner ruling, verbatim: **"Just NEISO and ERCOT"** — **deliberately against
+restart-checklist item 5** (*capture MISO next*), which **STANDS UNCHANGED**;
+R-L is an exception for this capture, not an amendment. Executed by
+`claude/stage0-capture-neiso-ercot-elgk62` (**#4509** the captures, **#4517** the
+finding), **the audit program's first solve lane**.
+
+**Discharge, verified at the pin against the committed manifest — not read off
+the finding:**
+
+| leg | evidence at `72576ebe` |
+|---|---|
+| **Both fidelity oracles PASS, zero config drift** | `keepers.NEISO.fidelity.scenario_config_drift == []` and `keepers.ERCOT.fidelity.scenario_config_drift == []`; 259 / 271 meta flags matched |
+| **Schema v2 proven** | each capture wrote **only its own entry**: NEISO `provenance.basis_sha 3c1f9642`, ERCOT `3c1f9642` / `git_sha a64cc7aa`, while CAISO/MISO/NYISO/PJM retain `9f6ff3ee` / `af1ccb6c` / `2dd9dbc9` / `1cfea728` untouched. **The v17 defect — one capture silently re-labelling every earlier one — is structurally impossible now, and this is the demonstration** |
+| **Rule 22 clean** | years `[2023, 2024, 2025]` on both entries; no out-of-training year solved, scored or registered |
+| **Coverage** | `check_golden_manifest.py` **exit 0**: **3 CURRENT / 3 STALE** |
+
+**🟢 THE ACCEPTED DEVIATION, AND THIS BOARD'S STANDING READING OF IT.** The
+capture lane **registered nothing on the backcast dashboard**, and the director
+**accepted that**. The reasoning, adopted here as **the program's standing
+reading of the stage-0 table's registry column**:
+
+- **A golden's "provenance run" is the KEEPER it was captured against**, not the
+  capture itself. That is exactly what schema v2 encodes (`keeper_id` +
+  `keeper_snapshot`) and exactly what `check_golden_manifest.py` enforces.
+- **The Card-1 precedent registered nothing either**, and **0 of the 60
+  registered sidecars is a golden capture** — verified by walking the registry at
+  the pin, not asserted.
+- **Registering captures would spend top-15-per-ISO retention on regression
+  baselines** — which is the *precise* fix **E-7 rejected** (*"do not exempt
+  golden runs from retention — that re-creates the parity gate's dead-bundle
+  class"*). Registering them is the same error wearing the opposite sign.
+
+**Consequence for how this table is read, going forward:** the registry column
+of the stage-0 table asks *"is this golden's provenance KEEPER RUN still
+registered?"* — a **retention** question that schema v2's `keeper_snapshot`
+already makes survivable — and **never** *"was the capture registered?"*, which
+would be a category error. **A golden capture is not a dashboard run and rule 15
+`[R-DASHBOARD]` does not reach it.**
+
+### G-4 · 🟢 RULING **R-M** — Q-2's REMEDY **EXECUTED BY THIS LANE**, AND THE TARGET HAD **MOVED** SINCE THE DISPATCH
+
+Recorded for the first time (`grep "R-M"` → **ZERO** at the pin) **and executed
+here**, which is the difference between this entry and a finding that describes a
+repair. The ruling: the two forecast verdicts whose `scored_at_sha` never reached
+`main` are **ANNOTATED AS PERMANENTLY UNVERIFIABLE**.
+
+**🔴 THE DISPATCH'S KEY LIST WAS ALREADY WRONG AT THE PIN, AND FOLLOWING IT WOULD
+HAVE ANNOTATED A HEALTHY VERDICT AND MISSED A DEFECTIVE ONE.** The dispatch named
+`neiso-t3` @ `89dacc4c0343` and `neiso-t3-pre-fc6` @ `271ad606c3fd`. At the pin:
+
+- **`neiso-t3` no longer carries `89dacc4c0343`.** #4522's FC-6 P1 re-score moved
+  it to **`7dffe3341158` @ 2026-09-01T06:12:01Z — REACHABLE in `origin/main`**.
+  `neiso-t3` is healthy and was **not** annotated.
+- **`89dacc4c0343` migrated to a different key**, `neiso-t3-pre-fc5`, when the
+  FC-5 disposition lane preserved the prior verdict under a new name.
+- `neiso-t3-pre-fc6` @ `271ad606c3fd` is unchanged.
+
+**So the annotation was applied by SHA, not by key name** — the two verdicts
+carrying an unreachable stamp at this pin are **`neiso-t3-pre-fc5`** and
+**`neiso-t3-pre-fc6`**. Both are archival *preserved-prior* verdicts; both read
+`HOLD`.
+
+**Unreachability re-established, not inherited** — and against the **remote**,
+because this container's clone is shallow (G-13). All **43** verdict stamps
+carrying a `scored_at_sha` were swept; the four the shallow clone could not see
+but which the GitHub API resolves (`8ba592814d92`, `bd97c6ebaa68`,
+`e2a422c191aa`, `74775c4d661f`, `6fbd3f28eb9a`, `60e19610e454`) are healthy.
+**The strict count is 2 of 43 — the same count v18b reached independently by
+un-shallowing, from a different pin and a different method.**
+
+**What was written, and what deliberately was not:**
+
+- **Two additive keys per verdict**, as **siblings of `provenance`, never inside
+  it**: `scored_at_sha_unverifiable: true` and
+  `scored_at_sha_unverifiable_note` (a one-line cause note citing R-M). Neither
+  is a `forecast-provenance/v1` field name (`schema`, `scored_at_sha`,
+  `scored_at_date`, `cache_epoch`), and `forecast_provenance.read_stamp()` reads
+  only the `provenance` object — **so no instrument can read the annotation as a
+  provenance stamp.**
+- **No sha altered and none fabricated.** Both historical values stand verbatim.
+  Machine-verified: **4 lines added, 0 removed, 0 altered**; both `provenance`
+  blocks **byte-identical** before and after; both determinations **`HOLD` →
+  `HOLD`**; **no other verdict object touched**, key set unchanged at 55.
+- **`check_forecast_staleness.py` re-run after the edit: exit 0**, anchored on
+  **`7dffe3341158`**, which is **reachable in `origin/main`** — the ruling's
+  explicit precondition, tested rather than assumed.
+
+**Q-2 IS RETIRED.**
+
+### G-5 · 🟢 RULING **R-N** — THE ONE-PUSH MICRO-SUPERSESSION IS **SPENT**, AND THE STANDING DEVIATION IS BACK IN FORCE
+
+Recorded for the first time (`grep "R-N"` → **ZERO** at the pin). The records
+path for this sitting was ruled to be **a one-push micro-supersession plus this
+lane**. The director spent the supersession as **#4523** (commit `6d700725`,
+**5 lines**), re-keying CAISO's forecast gate-(a) stamp to
+`2026-09-01-caiso-231-b1-ungrounded`.
+
+**Verified at this pin rather than accepted:** `check_gate_a_provenance.py`
+**exits 0** (6 rows: keeper identity + marker state match the backcast store),
+CAISO's `a_keeper_marker` names the live keeper, and the branch
+`claude/audit-program-director-irzj4a` is an **ancestry-tested merged remnant**.
+
+**Two things worth keeping from how it was executed.** First, it is the **new
+guard's FIRST REAL FIRING** — #4495's `check_gate_a_provenance` went red (exit 1)
+on the caiso-231 promotion and green after the re-key, which is a guard doing the
+job it was built for **eight PRs after it was built**, on a defect class this
+board had re-reported for three cycles with no gate able to see it. Second, the
+push was **rebased onto #4522's disjoint capx edit** to the same shared file
+rather than overwriting it — the shared-surface duty observed in practice, on the
+one file three desks write.
+
+**The supersession is SPENT and does not carry forward.** The standing deviation
+governs again (*"issue prompts, I don't want you doing it from here"*), and **this
+lane is its dispatched instrument**. A future sitting that wants to write
+directly needs its own supersession.
+
+### G-6 · 🟠 RULING **R-O** — THE ERCOT CARVE-OUT GOLDEN IS ANSWERED BY **CHARTERING A SCHEMA LANE**, AND THAT LANE HAS **NOT LAUNCHED** AT THIS PIN
+
+Recorded for the first time (`grep "R-O"` → **ZERO** at the pin). R-L's capture
+answered the ERCOT-forward config and explicitly reported the **2023 carve-out as
+NOT covered and not coverable without a schema change**. R-O's disposition is not
+"capture it anyway" but **charter the schema lane**, scoped to three things:
+
+1. **A config-partition representation in the manifest** — today `keepers` is
+   keyed one entry per ISO, so a two-config ISO has nowhere to put its second
+   golden.
+2. **`live_keeper` partition resolution** — `check_golden_manifest.py` compares
+   one `keeper_id` against one live keeper; under a partition it must resolve
+   *which* config a golden is of before it can call it CURRENT or STALE.
+3. **The carve-out capture itself**, once (1) and (2) exist.
+
+**LANE STATE AT THE PIN — the dispatch-vs-launch check applied, as instructed:
+NOT LAUNCHED.** `ls-remote` returns four heads (`main`,
+`audit-program-director-irzj4a`, `capx-director-refresh-0z0e0f`,
+`miso-st-gas-steam-chp-calibration-9snn32`); **none is a schema lane**, and the
+live PR list shows **one** open PR, unrelated (#4530). No commit in the window
+touches `check_golden_manifest.py`'s partition handling. ⚠️ **The honest limit of
+this evidence, stated because this board's own lane is invisible to it:** an
+unpushed session is indistinguishable from no session — *this* lane's branch was
+also unpushed at the moment of measurement. **What is established is: no branch,
+no PR, no commits at `72576ebe`.**
+
+**Standing consequence while the lane is unlaunched:** ERCOT's stage-0 row is
+CURRENT **for its forward config only**, and full ERCOT coverage remains **two
+captures, not one** — a fact the manifest still cannot express, which is exactly
+what R-O exists to fix. Queue item added; see the queue.
+
+### G-7 · 🟢 SEVEN GATES, NOT FIVE — THE ROSTER IS CORRECTED AND ALL SEVEN EXIT **0**
+
+The board's protocol text and restart-checklist item 0 both said **five**; the
+director's handoff said **six**; **SEVEN is correct**. Two gates were being
+undercounted: **`check_gate_a_provenance.py`** (`ci.yml:213`, a **hard** gate, new
+this window under R-J) and **`check_golden_manifest.py`** (`ci.yml:118`, which has
+existed and been enforced throughout — **the undercounted seventh**, and the
+instrument that now *owns* the stage-0 table). Both the Gates table and
+checklist item 0 are corrected.
+
+**All seven re-run at the pin, exit codes captured directly and never through a
+pipe.** Readings in the Gates table. **Two of the director's seven readings
+re-derive different at this pin**, both benignly: the matrix gate's **+243 anchor
+WARNs are gone** (G-8) and the gate-(a) red is **repaired** (G-5) — the dispatch
+predicted both would need this lane's action; neither did.
+
+### G-8 · 🟠 JOB 4 — THE ANCHOR REPAIR — WAS **ALREADY DISCHARGED**, BY AN UNRELATED LANE, **UNANNOUNCED**
+
+`python3 scripts/check_mechanism_matrix.py --fix-anchors` at the pin: **"repaired
+0 line anchor(s); 0 left in the ratchet"**, `git diff` **empty**, gate **exit 0**
+with **0 WARNs**, anchors **194 field + 49 row + 156 path** (v17: 194/49/152).
+The ~243 WARNs the dispatch measured at `8462da22` were real and are gone.
+
+**Where they went, established by diff rather than inferred:** `scenarios.py` is
+**byte-identical** between `8462da22` and the pin, while
+`docs/codebase-site/data/mechanism-matrix.js` changed by **120 insertions /
+120 deletions** in exactly one commit — **`369c9bb7`, inside #4522**, the capx
+lane whose commit subject is *"Re-score neiso-t3 FC-6 on the repaired P1 arm"*
+and whose message **does not mention the matrix at all**.
+
+**It was done correctly.** Verified post hoc by normalising every `:NNNN` token
+on both sides of that commit: the two files are then **identical** — so the edit
+moved **digits only**. No verdict letter, evidence string, fc posture or keeper
+stamp moved, which is the same constraint this lane was given.
+
+**🟠 THE FINDING IS NOT THE REPAIR — IT IS THE SILENCE.** A shared, CI-gated base
+file was rewritten across 120 line-pairs by a lane whose declared scope was a
+forecast re-score, with no mention in the commit subject or body. It happened to
+be correct and happened to be exactly what this lane was dispatched to do. **The
+class is a lane touching a shared surface without declaring it** — the same class
+#4523 handled *well* one PR later by rebasing rather than overwriting (G-5). On
+watch; not adjudicated, and **not a defect in the repair**.
+
+**Protocol consequence, and it is the generalisable one: re-derive a dispatched
+job's PRECONDITION before executing it, not only its figures.** Running
+`--fix-anchors` blind would have produced an empty commit and a board entry
+claiming a repair this lane did not make.
+
+### G-9 · 🟢 FOUR-INSTRUMENT ALIGNMENT **HOLDS** — AND FOR THE FIRST TIME EVER, ALL SIX GATE-(a) STAMPS ARE CURRENT
+
+Re-derived independently from four sources at the pin, with **fail-closed null
+handling** — an ISO with a missing or unparseable value counts as **NOT** in the
+set, never as a pass:
+
+| instrument | source | membership at `72576ebe` |
+|---|---|---|
+| **Determination = CALIBRATED** | `status/<ISO>.js` `keeper.determination` | **{ERCOT, NEISO, PJM}** |
+| **Rule-22 `complete` marker** | `calibration-complete.json` `complete` block | **{ERCOT, NEISO, PJM}** |
+| **Active `frontier`** | per-ISO `frontier` block, **`withdrawn` honoured, absent block ⇒ NOT active** | **{ERCOT, NEISO, PJM}** — NYISO `withdrawn: 2026-08-30`; CAISO and MISO carry **no** frontier block |
+| **Forecast gate-(a) passers** | `program-status.json` per-ISO `gate.a_keeper_marker.status` | **{ERCOT, NEISO, PJM}** |
+
+**ALL FOUR AGREE. Alignment HOLDS at {ERCOT, NEISO, PJM}.**
+
+**🟢 AND THE STRUCTURAL POINT IS BIGGER THAN THE MEMBERSHIP.** v17 recorded
+**four of six** gate-(a) stamps **stale**, and the alignment break was *entirely*
+that staleness — a bookkeeping lag masquerading as a disagreement. At this pin
+**every one of the six `a_keeper_marker` rows names its ISO's live keeper**
+(ERCOT `234-eastex-identity`, PJM `pjm-162-inputclock`, NEISO `neiso-99-joint-p1`,
+CAISO `caiso-231-b1-ungrounded`, MISO `miso-191-bexit`, NYISO
+`nyiso-159-loss-surface`) — machine-checked by `check_gate_a_provenance.py`,
+**exit 0**. So the three ISOs that fail gate (a) fail it **on the merits**: CAISO
+and MISO are `NOT-YET` and hold no marker; NYISO's marker is `withdrawn`.
+**This is the first cycle in which the divergence could not have been a stale
+stamp** — because a gate now refuses to let one exist.
+
+**The watch item this retires, and the one it does not.** The *stale-stamp*
+mechanism is now **gated in CI** and comes off the watch. **What does not retire
+is the four-instrument comparison itself**: `check_gate_a_provenance` compares
+keeper identity and marker state and **explicitly reads no determination**, and
+nothing in the repo compares `frontier` membership against anything. **Three of
+the four instruments are now cross-checked; the fourth still is not.**
+
+### G-10 · 🟠 KEEPER MOTION — CAISO 220 → 231 (recorded, NOT adjudicated)
+
+The cycle's **only** promotion: **`2026-08-26-caiso-220-c1-crosswalk` →
+`2026-09-01-caiso-231-b1-ungrounded`** (#4515), a rule 25 `[R-ISO-SCOPE]` /
+rule 14 `[R-ACCURATE]` structural-integrity repair replacing three
+ERCOT-lineage-fitted offer bands (CC_CHP / CT_CHP / ST_GAS) that were sitting
+un-grounded on CAISO's binding path. **Determination unchanged at `NOT-YET`;
+grade unchanged at 8 / 6 / 1 / 1.** C3a(RT) moves marginally and **not
+favourably**: 2023 **+4.0 → +4.1 %**, 2025 **+15.5 → +15.6 %**, 2024 unchanged at
+**+12.5 %** — which is rule 1 `[R-STRUCT]` behaving exactly as written, a
+structurally-correct repair kept despite a residual that did not improve.
+
+**No rule-22 re-key was owed** (CAISO is `withdrawn`, not `complete`), and
+`audit_keepers.py` returns **PASS 0/0** across it. **This board takes no position
+on the merits.** Two items in the promotion's own record are noted because they
+bear on this program's rules, not on CAISO's: it records a **standing owner
+directive of 2026-09-01, "NO CONTROL ARMS"** (a single-delta arm is solved once
+and scored against the committed keeper; HEAD drift is not measured with an LP
+run), and it **records rather than drops a pre-registered gate it could not
+satisfy** (G-STRUCT's DOF leg predicted the `offer_curve_by_group` ledger count
+would fall 112 → 103; `build_dof_ledger._count_scalars` is provenance-blind and
+measures surface size, not fitted content). **Both recorded, neither adjudicated.**
+
+### G-11 · 🟢 A WORKSTREAM SURFACE MOVED — THE FIRST TIME IN THREE CYCLES
+
+v17 reported the three workstream surfaces byte-untouched *at once*. Re-measured
+over `d44446e0..72576ebe` with `git diff --name-status`:
+
+- **`results/regression-goldens/`** — **MOVED**: `perfb-stage0/manifest.json`
+  (schema v2 under R-J, then two captures under R-L). **WS3's stage-0 coverage
+  figure moves by measurement**, 1/6 → 3/6.
+- **`.github/workflows/`** — **MOVED**: `ci.yml`, gaining the
+  `check_gate_a_provenance` step.
+- **`docs/audit/`** — **byte-untouched**. WS1 is unchanged, and its blocker is
+  still the G3 gate, not remaining A-half work.
+
+**What this does NOT do is move G2.** PERF-B is still paused by owner decision
+and the golden tier is still parked by owner ruling, so **byte-green cannot be
+CLAIMED for the two new captures any more than for the PJM one**. Leg 1 keeps
+**both** parked dependencies. Coverage improving while the gate stays shut is the
+honest reading.
+
+### G-12 · 🟠 FOUR FIGURES THE DISPATCH ASSERTED ARE RE-DERIVED **DIFFERENT** — WHICH IS THE PROTOCOL WORKING
+
+None was a trap; each is a figure that moved between derivation and pin, or a
+shorthand that did not survive measurement. **All four are recorded because the
+instruction "trust nothing in this prompt" is not ceremonial.**
+
+| dispatch asserted | re-derived at `72576ebe` |
+|---|---|
+| parity allowlist **26 → 3** named entries | **40 → 8** (26 was the board's last count; it had grown to 40 by the repair) — G-1 |
+| **~243 anchor WARNs** to repair with `--fix-anchors` | **0 WARNs, 0 repaired** — already fixed by #4522 — G-8 |
+| gate-(a) **exit 1**, repaired at `a40cfc68` | **exit 0** at the pin ✓ (the repair landed; the *reading* is the post-repair one) — G-5 |
+| R-M targets `neiso-t3` + `neiso-t3-pre-fc6` | **`neiso-t3-pre-fc5` + `neiso-t3-pre-fc6`**; `neiso-t3` was re-scored onto a reachable sha — G-4 |
+
+Also re-derived and different from v17's carried figures, none of them the
+dispatch's fault: registry sidecars **58 → 60**, parity **58/93 → 60/95**,
+staleness **81/49 → 89/57 stamped/scored** and **24 → 25 epochs**, bench engine
+drift **19 of 20 → 20 of 20** at **6** engine commits (still **0 STALE**, still
+ungated), matrix path anchors **152 → 156**.
+
+### G-13 · 🔴 THE SHALLOW-CLONE TRAP, HIT INDEPENDENTLY FOR THE THIRD TIME IN THIS PROGRAM — AND IT HAS NOW PRODUCED ONE PUBLISHED WRONG READING
+
+**This container's clone is SHALLOW** (`git rev-parse --is-shallow-repository`
+→ `true`; earliest reachable commit `e52b90a4`, v16's own landing). Every
+`git cat-file` / `merge-base` test against a sha older than that returns *absent*
+— **indistinguishable, locally, from a sha that never existed.**
+
+Measured here: of the **13** distinct `scored_at_sha` values on the forecast
+board, the shallow clone reports **8 unreachable**; the GitHub API resolves **6
+of those 8**. **The true strict count is 2.** Had this lane trusted the local
+answer it would have annotated **six healthy verdicts** as permanently
+unverifiable and written six fabricated defects onto the record — a strictly
+worse outcome than the defect it was sent to annotate.
+
+**The class already has a published casualty.** v17's stage-0 table asserted
+`af1ccb6` *"does not resolve"* and built a Watch item and a checklist step on it;
+R-J's repair lane found it **resolves and is an ancestor of main**, absent only
+from *its* container's depth-258 clone. **Three sessions, three containers, one
+trap.** The rule, now stated for the third time and worth stating once more
+because it keeps costing:
+
+> **BEFORE REPORTING AN ABSENCE FROM GIT, ESTABLISH THAT THE REPOSITORY COULD
+> HAVE SHOWN YOU THE THING.** Check `--is-shallow-repository` first. Then either
+> `git fetch --filter=tree:0 --unshallow` (measured at ~2 s by the v18b lane) or
+> confirm against the remote API. **A local "not found" is evidence about the
+> clone, not about the repository.**
+
+### G-14 · 🔴 THE DISPATCH-VS-LAUNCH CHECK REACHED **FOUR NON-LAUNCHES IN ONE SITTING** — AND ITS YIELD IS NOW THE HIGHEST OF ANY PROTOCOL STEP
+
+Recorded per the director's re-issue instruction, and extended by this lane's own
+measurement:
+
+1. **The original v19 records dispatch NEVER LAUNCHED** — no branch, no session,
+   confirmed from git and the session roster.
+2. **The FIRST RE-ISSUE of the same dispatch NEVER LAUNCHED** — same evidence.
+   The records debt therefore stood **two sittings deep**; this lane is the third
+   dispatch and the first to run. Both instances are recorded in the protocol
+   section, as instructed.
+3. **R-L's capture lane's first dispatch never launched** — recorded in that
+   lane's own finding (*"Re-issued by the director after the dispatch-vs-launch
+   check found the original R-L dispatch never launched"*).
+4. **R-O's chartered schema lane has not launched at this pin** — no branch, no
+   PR, no commits (G-6).
+
+**Read against v16–v18, the trend is unambiguous.** v16 caught a near-miss; v17's
+check returned *done* rather than *launched* on R-E; **this sitting produced four
+non-launches, one of them twice**. A dispatched job is not a done job and is not
+even a *started* job. **The step costs one `ls-remote` plus one PR list and is
+the only thing standing between a ruling and silent evaporation.**
+
+### G-15 · 🟢 QUEUE ITEM **Q-4** IS **ADOPTED BY THE DIRECTOR** INTO THE REFRESH PROTOCOL
+
+v18b proposed Q-4 and explicitly declined to adopt it (*"the refresh protocol is
+the director desk's"*). **The director has adopted it.** Both halves are now
+standing protocol and both were executed by this lane:
+
+- **`grep` every ruling label of the sitting across `docs/` before a records lane
+  closes.** Run at the pin: R-A…R-I and R-L resolved; **R-J, R-K, R-M, R-N, R-O
+  returned ZERO** — which is precisely how this cycle's five-ruling gap was
+  found, and it is the same instrument that finally caught R-H.
+- **Diff every dispatched job against a CHANGED TARGET FILE.** Run at close; the
+  table is in the protocol section. **It is what caught G-8** — job 4's target
+  file needed no change, so the job was already discharged and a "finding
+  describing the repair" would have been false.
+- **And its rider stands: a parallel lane is not a completeness check.**
+  Redundancy catches measurement error, never scope omission, because both lanes
+  inherit scope from one dispatch.
 
 ## v18 DELTA — the gate-(a) repair lane (`d44446e0` → `6c7f82dac015`, 2026-09-01)
 
@@ -1123,6 +1676,7 @@ failure streak — the check that v14 added as step 0 (*look for the BRANCH, not
 a plausible-sounding commit*) is the same check that catches this class, and
 it worked from the other direction this time: not "was a dispatched lane
 launched?" but "was a completed sitting's dispatch issued at all?"
+
 ## What moved — v15 CYCLE (v15 record, RETAINED as history) (`def338e..69ae4dc7`, "the ruling-execution cycle")
 
 **Read E-1…E-4 as one act.** They are the 2026-08-30 PM sitting's four rulings,
@@ -1326,7 +1880,7 @@ only clean scorecard), and treat every re-capture as re-establishing
 provenance rather than refreshing it.**
 
 
-## Keeper table (read from `frontend/data/backcast/keepers/<ISO>.json` and `status/<ISO>.js` at `d44446e0`)
+## Keeper table (read from `frontend/data/backcast/keepers/<ISO>.json` and `status/<ISO>.js` at `72576ebe`)
 
 Determinations and grade summaries parsed live from the status shards at the
 pin. **C3a(RT) is the load-weighted mean-LMP error against RT actuals, per year
@@ -1335,576 +1889,592 @@ NOT-YET fail set contains, and printing it only for the failures hides how
 narrow the margins are. ERCOT's row is the board's TWO-CONFIG entry (v14 D-2):
 the grade column shows forward-span / carve-out / registered-3-year reads.
 
-**Five of six `keeper` fields are byte-unchanged from v16 and that is a
-re-derivation, not a carry** — all six compared byte-for-byte at `54ca19ae` and
+**Five of six `keeper` fields are byte-unchanged from v17 and that is a
+re-derivation, not a carry** — all six compared byte-for-byte at `d44446e0` and
 at the pin, all six determinations and grade summaries re-parsed, all eighteen
-C3a(RT) magnitudes re-read from the shards. **The sixth, MISO, moved
-(188 → 191)** and its whole row is re-derived (F-7). **ERCOT's determination
-column changed WITHOUT its keeper moving** — the ercot-246 ruling made the
-ISO-level read the worst config over the designated spans, so the shard now
-renders **CALIBRATED** while its grade summary still carries the registered
-3-year read (8 / 5 / **2** / 1). Rubric **v3.5** on every shard.
+C3a(RT) magnitudes re-read from the shards. **The sixth, CAISO, moved
+(220 → 231)** and its whole row is re-derived (G-10). Rubric **v3.5** on every
+shard.
 
 | ISO | Designated keeper | Determination | Grade (scored/target/fails/ledgered) | C3a(RT) 2023 / 2024 / 2025 |
 |-----|-------------------|---------------|---|---|
-| ERCOT | `2026-08-25-234-eastex-identity` (FORWARD, 2024–2025) **+ `2026-08-25-236-swcap-clip-k33`** (2023 carve-out) — TWO-CONFIG | ⬅ **ISO-level `CALIBRATED`** (ercot-246 partition rollup) · forward `CALIBRATED` on span · carve-out `CALIBRATED` · **registered 3-yr `NOT-YET`, published untouched** | 8 / 5 / **2** / 1 (the registered 3-yr read) · forward 8 / 7 / 0 / 1 · carve-out 8 / **8** / 0 / **0** | **−39.7 % F** (the carve-out's year) / −0.2 % / −7.9 % |
-| CAISO | `2026-08-26-caiso-220-c1-crosswalk` | `NOT-YET` | 8 / 6 / **1** / 1 | +4.0 % / **+12.5 % F** / **+15.5 % F** |
+| ERCOT | `2026-08-25-234-eastex-identity` (FORWARD, 2024–2025) **+ `2026-08-25-236-swcap-clip-k33`** (2023 carve-out) — TWO-CONFIG | **ISO-level `CALIBRATED`** (ercot-246 partition rollup) · forward `CALIBRATED` on span · carve-out `CALIBRATED` · **registered 3-yr `NOT-YET`, published untouched** | 8 / 5 / **2** / 1 (the registered 3-yr read) | **−39.7 % F** (the carve-out's year) / −0.2 % / −7.9 % |
+| CAISO | ⬅ **`2026-09-01-caiso-231-b1-ungrounded`** (was `220-c1-crosswalk`) | `NOT-YET` | 8 / 6 / **1** / 1 | ⬅ **+4.1 %** / **+12.5 % F** / ⬅ **+15.6 % F** |
 | PJM | `2026-08-15-pjm-162-inputclock` | **`CALIBRATED`** | 8 / **8** / 0 / **0** | +6.2 % / −0.8 % / −7.7 % |
 | NYISO | `2026-08-30-nyiso-159-loss-surface` | `NOT-YET` | 8 / 6 / **2** / 0 | +2.3 % / −1.2 % / **−11.5 % F** |
 | NEISO | `2026-08-17-neiso-99-joint-p1` | **`CALIBRATED`** | 8 / 7 / 0 / 1 | +3.1 % / +5.7 % / +1.7 % |
-| MISO | ⬅ **`2026-08-30-miso-191-bexit`** (was `188-rvsscope`) | `NOT-YET` | 8 / 6 / **1** / 1 | ⬅ **+0.1 %** / ⬅ **−4.6 %** / **−12.3 % F** |
+| MISO | `2026-08-30-miso-191-bexit` | `NOT-YET` | 8 / 6 / **1** / 1 | +0.1 % / −4.6 % / **−12.3 % F** |
 
-| ISO | v17 cycle (`54ca19ae..d44446e0`) |
+| ISO | v19 cycle (`d44446e0..72576ebe`) |
 |-----|--------------------------------|
-| **ERCOT** | **The window's biggest state change, and it is not a keeper.** ercot-245's Phase-0 census **KILLED the per-class commitment-state bound** (K-A/K-C/K-T all fire; **Phase-1 not licensed**); **ercot-246** ruled that a partitioned keeper's ISO-level determination is the **worst config over the designated spans**; **ercot-247** took the **first ERCOT rule-22 `complete` marker ever, plus a `frontier` declaration**, in one owner utterance (F-5). Keeper **unmoved**. **R-D rested its wind entry question with a map** (F-1). Its **carve-out config still has no stage-0 golden** |
-| **CAISO** | **UNMOVED.** caiso-226 (OFO intake) + **caiso-227** (C3a-2025 root-cause / PS intake) landed; **caiso-228's SoCalGas OFO arm DIED AT GATE D1, no solve.** Terminal rest undisturbed; C3a-2024/2025 stand at +12.5 / +15.5 % |
-| **PJM** | **UNMOVED and untouched for a NINTH consecutive cycle — and this cycle it was AUDITED rather than changed.** pjm-164 ran the C3c program's **Q1 against PJM's own CALIBRATED keeper** and returned **REAL** (F-2) — the audit that could have invalidated it, run and survived. Still the only 8/8 zero-caveat scorecard and the only CURRENT stage-0 row |
-| **NYISO** | **No keeper motion; FOUR records sessions.** nyiso-162 (R-C re-verify) · nyiso-163 + **163b** (the **AORR access route PERMANENTLY CLOSED** by owner decision; nyiso-97 re-open condition 3 **withdrawn**; the C3c program opened) · **nyiso-164 = Q2 CONFIRM** (F-2). **R-F parks the nyiso-161 card behind a trigger that has already fired** (F-3); **R-G closes leg2 by archive** (F-4). Determination unchanged: NOT-YET {C3a-2025 −11.5 %, C3c} |
-| **NEISO** | **UNMOVED and untouched on the backcast.** Its entire residual remains the **`final` grant itself** — still **DATA-BLOCKED** on the 2025 EIA-923 FINAL vintage. Now one of **three** `complete` ISOs, and — on the *forecast* board, a different program's — the **first ISO whose full-solve authorization gate is OPEN** (F-6) |
-| **MISO** | **THE CYCLE'S ONLY PROMOTION: 188 → 191** (binning-aware exit-cohort delivery). C3a 2023 **+3.5 → +0.1 %**, 2024 **−4.3 → −4.6 %**; **C3a-2025 −12.3 % unchanged and still the lone fail**. **miso-192** (D-4 posture) and **miso-193** (`cc_duct_peaking`, registered as a rejected probe with sidecars, cell **U → K**) also landed. Its stage-0 gap is now **two promotions** deep — the deepest on the board |
+| **ERCOT** | **Keeper unmoved — and its stage-0 row went CURRENT for the first time** (R-L, G-3): the forward config's golden is captured at HEAD with the fidelity oracle at **271 flags identical, 0 config drift**. **Its 2023 carve-out config still has no golden and cannot get one** until R-O's schema lane runs (G-6) — so "ERCOT CURRENT" means *forward only*, and full coverage is still two captures. One data-intake lane landed (ercot-248, SCED all-resource). A latent config hazard surfaced in its recorded keeper config — see Watch |
+| **CAISO** | **THE CYCLE'S ONLY PROMOTION: 220 → 231** — the un-grounded-class offer re-grounding, three ERCOT-lineage bands removed from CAISO's binding path (G-10). Determination and grade **unchanged** (NOT-YET, 8/6/1/1); C3a 2023 +4.0 → **+4.1 %**, 2025 +15.5 → **+15.6 %** — kept despite a residual that did not improve, which is rule 1 `[R-STRUCT]` working. Also caiso-229 (C3a belly) and caiso-230 (above-floor decomposition). **Its stage-0 gap deepened by this promotion** |
+| **PJM** | **UNMOVED and untouched for a TENTH consecutive cycle.** Still the only 8/8 zero-caveat scorecard. Its stage-0 row is CURRENT for a third cycle and is now one of **three**, not one |
+| **NYISO** | **No keeper motion; five diagnostic lanes** (nyiso-165/166 AS-reference repair, nyiso-167 C3a-2025 attribution, nyiso-168 supply-curve slope, nyiso-169 congestion-gradient — the last **stopping** rather than arming, its zonal-gradient half found not carried by any binding constraint). Determination unchanged: NOT-YET {C3a-2025 −11.5 %, C3c}. **The nyiso-161 card stays RULED and RETIRED** (R-H, v18b) |
+| **NEISO** | **UNMOVED on the backcast, and its stage-0 row went CURRENT** (R-L, G-3) — fidelity oracle **259 flags identical, 0 drift**; the golden is correctly **P1-only**, matching neiso-99's move off the archived P2 pass (audit row O5). Its backcast residual remains the **`final` grant itself**, still DATA-BLOCKED on the 2025 EIA-923 FINAL vintage. On the *forecast* board — a different program's — it is still the only ISO with an OPEN gate |
+| **MISO** | **No keeper motion, and the busiest calibration column on the board: ELEVEN PRs across five lanes** (miso-195/196 outage-envelope, miso-197/198 CC_REGULAR + ST_GAS conduct, the xiso cascade repair). **Its stage-0 gap is now the joint-deepest** at two promotions past capture — and **restart-checklist item 5 still names MISO next**, unchanged by R-L |
 
-**Markers at `d44446e0`, re-read live this cycle:** `complete` = ⬅ **{ERCOT,
-NEISO, PJM}** (ERCOT NEW) · **`final` = EMPTY (`_note` only)** ·
-**`holdout-freeze.json` `active: true`, TIER-SCOPED to `locked_test` alone** ·
-`withdrawn` = **{NYISO, CAISO}**. All three `complete` entries are **re-keyed to
-their live keepers** (rule 22 D-5(b)); the one ISO that promoted this cycle
-(MISO) **holds no marker**, so **no re-key was owed anywhere**. ERCOT's new entry
-carries a **determination re-verification performed without a solve**
-(`calibration_verdict.py`, committed artifacts, both configs live), and
-`audit_keepers` **M1b was extended in the same commit** to recompute the
-partition rollup live rather than read the shard's own assertion.
-**`audit_keepers.py` returns PASS: 0 failures, 0 warnings** at the pin, run not
-quoted.
+**Markers at `72576ebe`, re-read live this cycle:** `complete` = **{ERCOT,
+NEISO, PJM}** · **`final` = EMPTY (`[]`)** · **`holdout-freeze.json`
+`active: true`, TIER-SCOPED to `locked_test` alone** · `withdrawn` = **{NYISO,
+CAISO}**. All three `complete` entries remain re-keyed to their live keepers
+(rule 22 D-5(b)); **the one ISO that promoted this cycle (CAISO) sits in
+`withdrawn`, holds no `complete` marker, and so owed no re-key** — verified, not
+assumed. **`audit_keepers.py` returns PASS: 0 failures, 0 warnings** at the pin,
+run not quoted.
 
 **NO ISO HAS EVER SPENT A LOCKED-TEST YEAR** — re-verified at the pin by walking
-every registry sidecar, not restated. Across all **58** registered sidecars the
-solve-year histogram is **{2022: 2, 2023: 56, 2024: 52, 2025: 52}** (per-ISO
-sidecar counts: ERCOT 15, MISO 15, NYISO 15, PJM 5, CAISO 4, NEISO 4). The scan
-for any year in {≤2018, 2019, 2026} returns **NONE**. The only out-of-training
-registrations remain the **two authorized 2022 validation touchpoints**
-(`2026-08-05-pjm-2022-touchpoint`, `2026-08-06-neiso-2022-corrected-basis`).
-NEISO's one-shot stays **NEVER GRANTED, not spent** (D-23). *Motion note: the
-sidecar total is flat at 58 — four MISO additions (miso-191 pair, miso-193 pair)
-against four MISO prunes under top-15 retention — so the span did not widen.*
-**ERCOT's new `complete` marker does not change this line**: it authorizes the
-validation tier only, and ERCOT has spent nothing. This line is re-verified and
-republished every cycle because WS5 Job 1 found the public site asserting its
-exact opposite for two weeks.
+every registry sidecar, not restated. Across all **60** registered sidecars
+(v17: 58) the solve-year histogram is **{2022: 2, 2023: 58, 2024: 54, 2025: 54}**
+(per-ISO sidecar counts: ERCOT 15, MISO 15, NYISO 15, **CAISO 6**, PJM 5,
+NEISO 4). The scan for any year in {≤2018, 2019, 2026} returns **NONE**. The only
+out-of-training registrations remain the **two authorized 2022 validation
+touchpoints** (`2026-08-05-pjm-2022-touchpoint`,
+`2026-08-06-neiso-2022-corrected-basis`). NEISO's one-shot stays **NEVER GRANTED,
+not spent** (D-23). *Motion note: the sidecar total rose 58 → 60, both additions
+CAISO's (the caiso-231 pair), so the span widened by one ISO's registrations and
+by no year.* **And 0 of the 60 is a golden capture** — the measurement behind
+G-3's standing reading. This line is re-verified and republished every cycle
+because WS5 Job 1 found the public site asserting its exact opposite for two
+weeks.
 
 **Determinations: ERCOT (ISO-level), PJM, NEISO `CALIBRATED` · CAISO, NYISO,
 MISO `NOT-YET` — with ERCOT's registered 3-year read still NOT-YET and still
 published.** **C3a appears in every NOT-YET fail set, and for CAISO and MISO it
 is the ONLY failing criterion**; NYISO adds only C3c. **The alignment position
-changed again even though the CALIBRATED set only gained one member** — see F-6.
+HOLDS this cycle** — see G-9.
 
 ## Workstream rollup
 
-**NO WORKSTREAM MOVED this cycle — the motion v16 recorded was one window,
-not a trend.** Verified rather than assumed over the full
-`54ca19ae..d44446e0` window (**93 commits, 36 merged PRs**):
-`git diff --name-status` returns **EMPTY for all three workstream surfaces at
-once** — `.github/workflows/`, `results/regression-goldens/` and `docs/audit/`.
-**The workstream-surface diff of this cycle is the empty set**, so every
-completion figure below is carried unchanged by measurement rather than by
-assumption, and every row's blocker is the same blocker.
+**🟢 A WORKSTREAM SURFACE MOVED — the first time in three cycles**, and it moved
+by measurement rather than by assertion. Verified over the full
+`d44446e0..72576ebe` window (**167 commits, 62 merged PRs**) with
+`git diff --name-status`: **`results/regression-goldens/` MOVED** (manifest
+schema v2 + two captures) and **`.github/workflows/` MOVED** (`ci.yml` gained the
+gate-(a) step); **`docs/audit/` is byte-untouched**. So WS3's completion figure
+below changes on evidence, WS1's is carried by measurement, and every row's
+blocker is re-stated rather than re-assumed.
 
 | WS | State | Completion | Blockers / next |
 |----|-------|------------|-----------------|
-| WS1 `AUDIT` | AUDIT-A **completed** (#3991). Rows **O8, O5, O4 CLOSED/RESOLVED**; **O6** is standing policy; 🟢 **O7 CLOSED this window** (#4377) — the Door-2 attribution harness built *and* exercised, HP-1 hash-proven bit-identical, keeper untouched | **In progress ~95 %** (unchanged — `docs/audit/` byte-untouched this window) | **AUDIT-B still gated at G3 — waiting by design, and that gate is what caps this row**, not any remaining A-half work. O7's closure leaves no audit row carrying an owner action this board tracks |
+| WS1 `AUDIT` | AUDIT-A **completed** (#3991). Rows **O8, O5, O4 CLOSED/RESOLVED**; **O6** is standing policy; **O7 CLOSED** (#4377) — the Door-2 attribution harness built *and* exercised, HP-1 hash-proven bit-identical, keeper untouched | **In progress ~95 %** (unchanged — `docs/audit/` byte-untouched this window) | **AUDIT-B still gated at G3 — waiting by design, and that gate is what caps this row**, not any remaining A-half work. No audit row carries an owner action this board tracks |
 | WS2 `DEBUG` | **COMPLETED** — DEBUG-A ✓, DEBUG-B ✓, pjm-162 promoted, landing-verify green on merged main | **Completed** | none; no DEBUG-C continuation chartered |
-| WS3 `PERF` | PERF-A ✓. **PERF-B PAUSED BY OWNER.** 🟢 Stage-0: **6 of 6 ISOs captured** — PJM taken this window under Card 1. Changes (c)/(d)/(e) merged, (a)/(b) unstarted | **Paused ~78 %** (unchanged — `results/regression-goldens/` byte-untouched this window) | **Still paused, and still blocked TWICE at G2.** **1 of 6 goldens matches its keeper** (PJM), unchanged. 🔴 **The provenance defect is unchanged in kind and WORSE in fact**: `af1ccb6` remains *overwritten rather than resolved* (manifest `git_sha` `1cfea72`, `git_dirty: false`, one sha for six captures taken at six trees), **five of six captures' provenance runs are still absent from the registry**, and **MISO's stale row is now TWO promotions deep** (`miso-160-wefor-shape` captured vs `miso-191-bexit` live) |
+| WS3 `PERF` | PERF-A ✓. **PERF-B PAUSED BY OWNER.** 🟢 Stage-0: **6 of 6 ISOs captured, and 3 of 6 now CURRENT** — NEISO + ERCOT-forward taken this window under R-L. Changes (c)/(d)/(e) merged, (a)/(b) unstarted | ⬅ **Paused ~82 %** (was ~78 % — moved on measured surface change, not estimate drift) | **Still paused, and still blocked TWICE at G2.** ⬅ 🟢 **The provenance defect that capped this row for four cycles is FIXED**: manifest **schema v2** carries `provenance` + `keeper_snapshot` **per entry**, the shared top-level `git_sha` is **removed**, and all six historical shas were recovered with evidence (G-1). 🟠 **What remains**: three rows STALE (CAISO/MISO/NYISO, each with a **pruned** provenance run — survivable by design via `keeper_snapshot`), and **ERCOT's carve-out config is still unrepresentable** until R-O's schema lane runs |
 | WS4 `DOCS` | DOCS-A **completed** (#3999 + #4005); DOCS-B held | **In progress ~60 %** | **DOCS-B gated at G2 — waiting by design** |
 | WS5 `SITE` | **Job 1 (site factual repair, pre-G3) COMPLETE ACROSS BOTH PASSES** (#4120/#4121, #4187/#4191). Job 2 = **SITE-A**, not started | **Job 1 COMPLETED · Job 2 not started** | **SITE-A gated at G3 — waiting by design.** Deferral list unchanged |
-| WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED**; **BLOAT-3 ADJUDICATED and EXECUTED** (BLOAT-S2, −444.5 MiB at tip). The chartered work stays completed | **Completed (charter) · gate 🟢 GREEN** | **🟢 GREEN at the pin** — `check_registry_payload_parity.py` **exit 0** (58 runs checked, 93 bundle dirs swept, 0 known-unsynced tolerated), holding across **four MISO registrations and four MISO prunes** this window (net sidecar total flat at 58). The class-level carve-out (B-8) **still does not exist**; allowlist stands at **26** named entries |
-| — `BENCH FRESHNESS` | `check_bench_freshness.py` / audit S1 lineage | **🟢 exit 0 at this pin — 0 STALE of 20 parts, but 19 of 20 WITH ENGINE DRIFT** | 🔴 **The WARNs returned exactly as v16 predicted, and nothing about the instrument was repaired.** v16's rollup predicted their return "on the first engine commit dated 2026-08-31 or later"; its own post-pin block then measured **20 of 20**. At this pin the reading is **19 of 20 at 3 engine commits** — and the one part that does *not* WARN is **MISO/2023**, which the miso-191 registration **rewrote** (`1b419b7b`, 2026-08-31 00:33 UTC), making it newer than those commits rather than fresher in any repaired sense. The mechanism v16 diagnosed stands as diagnosed: day granularity, plus a **date-kind mismatch** — the checker reads a part's date with `%ad` (**author**) and filters engine commits with `--since` (**committer**). **The dispatch asserted "0 STALE 0 drift"; that is not what the checker returns here** (F-8). Not gated either way; regenerate before trusting a *marginal* C1 verdict |
-| — `GOLDEN-TIER-FIX` | **COMPLETED and independently verified** (#4014); first cron RED, diagnosed + fixed same-day (#4071), verified by full local four-step replay | **Completed · tier PARKED** | **🅿️ PARKED BY OWNER RULING 2026-08-22, unchanged.** CI proof **deliberately unspent**. Consequence: byte-green cannot be CLAIMED for G2 while the tier is paused — **and the new PJM capture cannot be certified byte-green either** |
-| — `MATRIX GUARD` | rule 26 `[R-MECH-MATRIX]` CI enforcement | **🟢 GREEN at this pin** | `check_mechanism_matrix.py` **exit 0**, run not quoted: integrity OK across the base file + **6 ISO shards**; anchors **194 field + 49 row + 152 path** (v16: 194/49/151 — one new path anchor, no new `ScenarioConfig` field), 0 unresolvable beyond the ratchet; **keeper stamps AND §5.x prose headers match every `keepers/<ISO>.json`**, held across the MISO promotion **and across this lane's own R-D evidence-string edit** |
+| WS6 `BLOAT` | Prunes B-1..B-8 merged; **BLOAT-2 CLOSED**; **BLOAT-3 ADJUDICATED and EXECUTED** (BLOAT-S2, −444.5 MiB at tip). ⬅ 🟢 **B-8, the class-level parity carve-out, EXISTS** | **Completed (charter) · gate 🟢 GREEN** | **🟢 GREEN at the pin** — `check_registry_payload_parity.py` **exit 0** (60 runs checked, 95 bundle dirs swept, 0 known-unsynced tolerated). ⬅ **The allowlist is no longer the mechanism**: a two-conjunct structural classifier admits pre-registered campaign points and replay recipe dirs, and the residual enumeration stands at **8** entries, down from **40** (G-1). Checklist item 10 is **discharged** |
+| — `BENCH FRESHNESS` | `check_bench_freshness.py` / audit S1 lineage | **🟢 exit 0 at this pin — 0 STALE of 20 parts, 20 of 20 with engine drift at 6 engine commits** | ⬅ 🟢 **THE INSTRUMENT IS REPAIRED** (G-1). The **date-kind mismatch** this board diagnosed across three versions — part date read with `%ad` (author), engine commits filtered with `--since` (committer) — is fixed at source: **both sides now use the committer instant in offset-bearing form**, and `--since`'s inclusivity is verified rather than assumed. The day-granularity artefact goes with it. **So "20 of 20 with drift" is now a TRUE reading of a repaired instrument, not the artefact it was** — and it is the honest one: 6 engine commits under `src/market_sim/{data,config}/` have landed since the parts were committed. **0 STALE is still the reading that matters, and it holds.** Not gated either way; regenerate before trusting a *marginal* C1 verdict |
+| — `GOLDEN-TIER-FIX` | **COMPLETED and independently verified** (#4014); first cron RED, diagnosed + fixed same-day (#4071), verified by full local four-step replay | **Completed · tier PARKED** | **🅿️ PARKED BY OWNER RULING 2026-08-22, unchanged.** CI proof **deliberately unspent**. Consequence, now three-wide: **none of the three CURRENT captures — PJM, NEISO, ERCOT-forward — can be certified byte-green** while the tier is paused |
+| — `MATRIX GUARD` | rule 26 `[R-MECH-MATRIX]` CI enforcement | **🟢 GREEN at this pin** | `check_mechanism_matrix.py` **exit 0**, run not quoted: integrity OK across the base file + **6 ISO shards**; anchors **194 field + 49 row + 156 path** (v17: 194/49/152 — **+4 path anchors, no new `ScenarioConfig` field**), 0 unresolvable beyond the ratchet; keeper stamps AND §5.x prose headers match every `keepers/<ISO>.json`, held across the CAISO promotion. **`--fix-anchors` repairs 0 at this pin** — the ~243 the dispatch reported were already repaired, digits-only, by #4522 (G-8) |
+| — `GATE-(a) PROVENANCE` | 🆕 rule-22 / forecast-seed cross-check | **🟢 NEW GATE, exit 0** | ⬅ Added under R-J (#4495, `ci.yml:213`, **hard**). Holds each `program-status.json` `a_keeper_marker` row against the live backcast keeper + marker state; **reads no determination**. **Fired for real eight PRs after it was built** (the caiso-231 promotion, exit 1 → re-key → exit 0, G-5). It gates the exact defect class this board re-reported for three cycles with no instrument able to see it |
+| — `GOLDEN MANIFEST` | the undercounted seventh gate (`ci.yml:118`) | **🟢 exit 0** | Not new — **enforced throughout, and simply not counted** by this board's five-gate roster (G-7). It is now the **owner of the stage-0 table**: 38 manifests / 70 entries (6 enforced, 64 legacy grandfathered by the ratchet), reporting **3 with a pruned provenance run, 3 stale vs the live keeper**. Its own note is the standing reading: *a pruned provenance run is NOT a failure — top-15 retention is correct policy; it is survivable only because each entry carries its own `keeper_snapshot`* |
 
-## Stage-0 golden staleness (RECOMPUTED at `d44446e0` — never read from a table)
+## Stage-0 golden staleness (RECOMPUTED at `72576ebe` — never read from a table)
 
 Re-derived at the pin from `frontend/data/backcast/keepers/<ISO>.json` and
-`results/regression-goldens/perfb-stage0/manifest.json` (`git_sha`
-**`1cfea72`**, `git_dirty: false` — **byte-unchanged this window**; the whole
-`results/regression-goldens/` tree is untouched across `54ca19ae..d44446e0`).
-Each captured bundle mapped back to its keeper through the manifest's own
-`keeper_id` field, not by name — and every row's registry-presence column
-re-tested at this pin rather than carried.
+`results/regression-goldens/perfb-stage0/manifest.json`, **and cross-checked
+against `check_golden_manifest.py`'s own output (exit 0)** — which, since R-J,
+is the instrument that owns this table rather than a hand recomputation this
+board performs alongside it. Each captured bundle is mapped back to its keeper
+through the manifest's own `keeper_id` field, not by name.
 
-**🟠 THE TABLE DID NOT MOVE, AND ONE ROW GOT DEEPER.** No capture was taken;
-MISO promoted, so its gap widened from one promotion to **two**. Coverage is
-**1 current / 5 stale**, unchanged in count. **The consequence for G2 is
-unchanged: byte-green still cannot be CLAIMED, so G2 leg 1 keeps BOTH parked
-dependencies** — WS3/PERF-B *and* the golden tier.
+**🟢 THE TABLE MOVED, AND IT MOVED THE RIGHT WAY FOR THE FIRST TIME.** Coverage
+is **3 current / 3 stale**, up from 1 / 5 — R-L's two captures (G-3). One row
+also **deepened**: CAISO promoted, so its gap widened.
 
-| ISO | Golden captured against | Provenance run in registry | Designated keeper at `d44446e0` | Verdict |
+**🟢 AND THE MANIFEST IS A DIFFERENT ARTIFACT NOW — schema v1 → v2.** There is
+**deliberately no shared top-level `git_sha`**; every entry carries its own
+`provenance` (`git_sha`, `git_sha_full`, `basis_sha`, `git_dirty`, `recorded_at`,
+`env`, `highspy_version`, `source`, `recovery`) **and** a `keeper_snapshot`
+copied from its provenance run's sidecar. Two consequences, both verified rather
+than assumed: **(1)** the v17 defect — one capture silently re-labelling every
+earlier one — is now structurally impossible, and R-L's two captures are the
+demonstration (each changed only its own entry, the other four byte-identical);
+**(2)** a top-15 retention prune **costs nothing**, because the snapshot outlives
+the sidecar. `basis_sha` adopts the repo's existing durable primitive
+(`pipeline.persist.basis_sha`), since a capture's own `git_sha` is routinely a
+session-local branch commit.
+
+| ISO | Golden captured against | Provenance run in registry | Designated keeper at `72576ebe` | Verdict |
 |-----|-------------------------|---|--------------------------------|---------|
-| **PJM** | 🟢 `2026-08-15-pjm-162-inputclock` (captured in the v16 window, #4369) | ✅ **PRESENT** | `2026-08-15-pjm-162-inputclock` | 🟢 **CURRENT — 0 promotions past capture.** Held a second cycle; PJM's keeper has now been still for **nine** |
-| ERCOT | `2026-08-15-ercot204-rule26-delete` | ❌ MISSING (pruned `e51a8a7d`, #4356) | `2026-08-25-234-eastex-identity` **+ 236 carve-out** | **🔴 STALE**, and full ERCOT coverage still needs **TWO** captures — the carve-out config has none |
-| NEISO | `2026-08-14-neiso-93-envelope` | ❌ MISSING | `2026-08-17-neiso-99-joint-p1` | **STALE.** The re-stamp-not-re-solve shortcut was established for **neiso-97 only**; re-establish before relying on it |
-| CAISO | `2026-08-16-caiso-197-w2-r5` | ❌ MISSING | `2026-08-26-caiso-220-c1-crosswalk` | **🔴 STALE** |
-| MISO | `2026-08-16-miso-160-wefor-shape` | ❌ MISSING | ⬅ `2026-08-30-miso-191-bexit` | **🔴 STALE, and it DEEPENED this window** — the cycle's one promotion; the deepest gap on the board |
-| NYISO | `2026-08-16-nyiso-140-layup-exclusion` | ❌ MISSING | `2026-08-30-nyiso-159-loss-surface` | **🔴 STALE** (deepened in the v16 window, unchanged here) |
+| **PJM** | 🟢 `2026-08-15-pjm-162-inputclock` (v16 window, #4369) | ✅ **PRESENT** | `2026-08-15-pjm-162-inputclock` | 🟢 **CURRENT.** Held a third cycle; PJM's keeper has now been still for **ten** |
+| **ERCOT (forward)** | ⬅ 🟢 `2026-08-25-234-eastex-identity` (**captured this window**, #4509) | ✅ **PRESENT** | `2026-08-25-234-eastex-identity` | ⬅ 🟢 **CURRENT.** Fidelity oracle **PASS**: 271 meta flags identical, `scenario_config_drift == []` |
+| **ERCOT (2023 carve-out)** | ❌ **NONE — and NOT CAPTURABLE at this schema** | — | `2026-08-25-236-swcap-clip-k33` | 🔴 **UNCOVERED.** `keepers` is keyed one entry per ISO, so a two-config ISO has nowhere to put a second golden. **R-O charters the schema lane; it has not launched** (G-6) |
+| **NEISO** | ⬅ 🟢 `2026-08-17-neiso-99-joint-p1` (**captured this window**, #4509) | ✅ **PRESENT** | `2026-08-17-neiso-99-joint-p1` | ⬅ 🟢 **CURRENT.** Oracle **PASS**: 259 flags identical, 0 drift. Correctly **P1-only**, replacing the superseded `neiso-93-envelope` entry's P2 parquets |
+| **CAISO** | `2026-08-16-caiso-197-w2-r5` (`basis_sha 9f6ff3ee`) | ⚠️ **PRUNED — survivable via `keeper_snapshot`** | ⬅ `2026-09-01-caiso-231-b1-ungrounded` | **🔴 STALE, and it DEEPENED this window** — the cycle's one promotion |
+| **MISO** | `2026-08-16-miso-160-wefor-shape` (`basis_sha af1ccb6c`) | ⚠️ **PRUNED — survivable via `keeper_snapshot`** | `2026-08-30-miso-191-bexit` | **🔴 STALE**, two promotions past capture — **joint-deepest on the board, and still restart-checklist item 5's named next capture** |
+| **NYISO** | `2026-08-16-nyiso-140-layup-exclusion` (`basis_sha 2dd9dbc9`) | ⚠️ **PRUNED — survivable via `keeper_snapshot`** | `2026-08-30-nyiso-159-loss-surface` | **🔴 STALE** |
 
-**Count: 1 current / 5 stale / 0 without a golden — 1-of-6 effective coverage,
-unchanged from v16.** *(Coverage counts ISOs, not configs: ERCOT's 2023
-carve-out config has no golden of its own, so **full** coverage is 7 captures,
-not 6.)*
+**Count: 3 current / 3 stale / 0 without a golden — 3-of-6 effective coverage**,
+up from 1-of-6. *(Coverage counts ISOs, not configs: ERCOT's 2023 carve-out has
+no golden of its own, so **full** coverage is 7 captures, not 6, and the row above
+is listed separately so the gap is not rounded away.)*
 
-**On the promotion-gap counts, stated honestly rather than carried:** the
-absolute "N promotions past capture" figures **are not re-derivable from
-committed bytes at this pin**. The per-ISO keeper shards' git history begins
-**2026-08-26** (the 2026-08-16 history rewrite plus the per-ISO shard split
-truncated it), while the captures date 2026-08-14/15/16, and the shards'
-embedded supersession chains reach only three deep. What **is** derived here:
-each row's **verdict** (exact, from `keeper_id` vs the live `keeper`), the
-**registry presence** column, and the **motion since v16** (MISO **+1**, every
-other ISO **+0**, byte-compared). v15's absolute figures — ERCOT six, MISO
-eleven, NYISO ten, CAISO two, NEISO two — are **carried under v15's label, not
-re-asserted as this board's measurement**; NYISO's became v15's ten + 1 at v16
-and is unchanged here, and MISO's becomes **v15's eleven + 1**.
-
-- **PJM's capture keeps paying, and the reason is worth restating:** it was
-  cheap because that keeper had been still for seven cycles — the exact
-  condition the restart checklist says a re-capture pass needs. **The five
-  stale rows are the five whose keepers keep moving**, and MISO — the ISO that
-  promoted this cycle — is the one whose gap grew.
-- **🔴 "Which tree is the golden OF" is now WORSE-POSED, not better.** One
-  top-level `git_sha` serves six captures taken at six trees, and it was
-  rewritten to the newest capture's. **The per-file `content_hashes` remain the
-  verification instrument** — the only one — and a re-capture pass should record
-  provenance **per entry**, inside the manifest (F-5; checklist item 11).
-- **The partition still adds a capture-coverage concept the manifest does not
-  have:** one ISO, two designated configs. **A re-capture pass that takes one
-  ERCOT golden is still not full ERCOT coverage.**
-- 🟢 **The checklist-item-4 evidence was INDEPENDENTLY RE-MEASURED this cycle,
-  and it strengthened.** v16 recorded nyiso-160's bit-identical HEAD replay.
-  R-C's re-verification (F-4) re-derived the same identity from committed bytes
-  at a later head — **max |Δ| = 0 over 1,043,280 hourly data rows**, and, the
-  new part, **the identity held ACROSS A SOLVER-VERSION CHANGE** (HiGHS 1.15.1
-  vs 1.14.0, plus pandas/pyarrow/pydantic differences). That still does not
-  establish the re-stamp-not-re-solve shortcut for any *golden* — a golden is a
-  capture of a config at a tree, not a replay — but it is now a two-session,
-  two-head, cross-solver result rather than a single observation.
+- **🟢 "WHICH TREE IS THE GOLDEN OF" IS NOW A WELL-POSED QUESTION** — per entry,
+  for the first time. The per-file `content_hashes` remain the verification
+  instrument, but they are no longer the *only* sound one.
+- **🟢 THE RETENTION/GOLDEN COLLISION IS RECONCILED ON THE MANIFEST SIDE**, as
+  E-7 required and **not** by exempting golden runs from retention. Three of six
+  entries have a pruned provenance run and the gate reports it as **information,
+  not failure** — the correct posture, because retention is correct policy.
+- **🟠 THE PROMOTION-GAP COUNTS ARE STILL NOT RE-DERIVABLE FROM COMMITTED BYTES**,
+  and are still labelled rather than re-asserted. The per-ISO keeper shards'
+  git history begins 2026-08-26 while the remaining captures date 2026-08-16.
+  What **is** derived here: each row's **verdict** (exact, `keeper_id` vs live
+  `keeper`), the **registry-presence** column, and the **motion since v17**
+  (CAISO **+1**, everyone else **+0**, byte-compared). v15's absolutes are
+  carried **under v15's label**; MISO's stands at v15's eleven + 1, NYISO's at
+  v15's ten + 1.
+- **🟠 THE THREE STALE ROWS ARE THE THREE WHOSE KEEPERS KEEP MOVING**, which is
+  the same reading as v16 and v17 — but the denominator halved, and **R-L proves
+  again what Card 1 proved: a capture does not need a freeze**, only a lane whose
+  keeper is still. The freeze question is now about **three** rows, not five.
 
 ## Gates
 
-**All five re-run at the pin. Exit codes captured directly, never through a
-pipe; outputs read, not quoted from any previous board — and three of the five
-readings differ from what the dispatch asserted (F-8).**
+**SEVEN gates, not five — the roster is corrected at v19 (G-7).** The board's
+protocol text and restart-checklist item 0 said *five*; the director's handoff
+said *six*; **seven is correct**. The two that were being undercounted are
+`check_gate_a_provenance.py` (`ci.yml:213`, **hard**, new this window under R-J)
+and `check_golden_manifest.py` (`ci.yml:118`, enforced throughout and simply
+never counted).
 
-| gate | exit | reading at `d44446e0` |
+**All seven re-run at the pin. Exit codes captured directly, never through a
+pipe; outputs read, not quoted from any previous board — and TWO of the seven
+readings differ from what the dispatch asserted, both in the direction of "the
+work is already done" (G-12).**
+
+| gate | exit | reading at `72576ebe` |
 |---|--:|---|
-| `audit_keepers.py` | **0** | **PASS — 0 failures, 0 warnings**, now over `complete` = **{ERCOT, NEISO, PJM}**, held across the MISO promotion, the new ERCOT marker **and the M1b partition-rollup extension that landed with it** |
-| `check_registry_payload_parity.py` | **0** | **OK — 58 runs checked, 93 bundle dirs swept, 0 known-unsynced tolerated** (**not** the 60/95 the dispatch asserted; held across four MISO registrations and four MISO prunes, net flat) |
-| `check_mechanism_matrix.py` | **0** | integrity OK, base + **6 ISO shards**; anchors **194 field + 49 row + 152 path** (v16: 194/49/151; **no new `ScenarioConfig` field this cycle**); keeper stamps and §5.x headers match every shard. **Re-run after this lane's own R-D evidence-string edit: still exit 0** |
-| `check_forecast_staleness.py` | **0** | **Δ = 1 of 10** (WARN-level, never blocking) · **81 stamped / 49 scored** board-wide (v16: 73/41) · **31 of 50 verdict stamps undated** · **24** distinct config epochs (v16: 20) · board inputs **all present** |
-| `check_bench_freshness.py` | **0** | **20 parts checked, 0 STALE — and 19 of 20 WITH ENGINE DRIFT at 3 engine commits.** The dispatch asserted "0 drift". See F-8 and the BENCH row |
+| `audit_keepers.py` | **0** | **PASS — 0 failures, 0 warnings**, over `complete` = **{ERCOT, NEISO, PJM}**, held across the CAISO promotion. **No D-5(b) re-key was owed** (CAISO is `withdrawn`) — M1 verified that rather than this board asserting it |
+| `check_registry_payload_parity.py` | **0** | **OK — 60 runs checked, 95 bundle dirs swept, 0 known-unsynced tolerated** (v17: 58 / 93). ⬅ **The mechanism changed**: a class-level structural classifier now admits pre-registered points and replay recipes; the residual allowlist is **8**, down from **40** (G-1). ⚠️ The parity **red** the dispatch reported at the previous sitting (`caiso231_a0_control`) **resolved transiently** — the caiso-230/231 lane's own registrations (#4506 2026-09-01, #4515 2026-09-01) mapped the dirs; **no parity fix was needed and none was made** |
+| `check_mechanism_matrix.py` | **0** | integrity OK, base + **6 ISO shards**; anchors **194 field + 49 row + 156 path** (v17: 194/49/152; **no new `ScenarioConfig` field this cycle**); keeper stamps and §5.x headers match every shard. ⬅ **0 WARNs**, and **`--fix-anchors` repairs 0** — the ~243 the dispatch measured at `8462da22` were repaired inside #4522, digits-only, unannounced (G-8) |
+| `check_forecast_staleness.py` | **0** | ⬅ **Δ = 0 of 10** (WARN-level, never blocking) · **89 stamped / 57 scored** board-wide (v17: 81/49) · **31 of 55 verdict stamps undated** · ⬅ **25** distinct config epochs (v17: 24) · board inputs **all present**. **Re-run after this lane's own R-M edit: still exit 0, still anchored on `7dffe3341158`, which is reachable in `origin/main`** |
+| `check_bench_freshness.py` | **0** | **20 parts checked, 0 STALE — and 20 of 20 with engine drift at 6 engine commits.** ⬅ **This is now a repaired instrument's true reading, not the artefact it was**: the `%ad`-vs-`--since` date-kind mismatch is fixed at source (G-1). The v17 exemption (MISO/2023) is gone because it was never a repair — it was a rewrite |
+| `check_gate_a_provenance.py` | **0** | 🆕 **gate-(a) provenance OK — 6 rows checked: keeper identity + marker state match the backcast store; no determination read.** The dispatch's **exit 1** reading is the *pre-repair* one; **R-N's #4523 re-keyed CAISO and the guard has been green since** (G-5) |
+| `check_golden_manifest.py` | **0** | 🆕-to-this-roster. **38 manifests, 70 entries (6 enforced / 64 legacy grandfathered by the ratchet); of the enforced, 3 with a pruned provenance run, 3 stale vs the live keeper.** This is the stage-0 table's instrument, and its own note carries the standing reading: a pruned provenance run **is not a failure** — retention is correct policy, and `keeper_snapshot` is what makes it survivable |
 
-**Two readings moved and both are cross-program, not this program's:** staleness
-**stamped/scored 73/41 → 81/49** and **epochs 20 → 24** (the forecast namespace
-absorbed the capx desk's D3/D4-I3/D8-RE/T3-golden window); bench engine-drift
-**20 of 20 → 19 of 20**, the one exemption being MISO/2023's rewrite rather than
-any repair. **The persistent WARN is unchanged and is not the Δ: 31 of 50
-verdict stamps record no scored-at date**, so their freshness is UNKNOWN
-regardless of what the newest scored one says — and the **24 distinct config
-epochs** line is the one worth reading twice: runs on that board are being
-compared across two dozen different config identities.
+**Three readings moved for reasons worth separating.** Parity **58/93 → 60/95**
+is CAISO's two new registrations, not a policy change; staleness
+**81/49 → 89/57** and **24 → 25 epochs** are the capx desk's D25/D26/D27 window
+absorbed by a different program's namespace; bench **19 → 20 of 20 with drift**
+is a **repaired instrument reporting honestly**, not a degradation. **The
+persistent WARN is unchanged and is not the Δ: 31 of 55 verdict stamps record no
+scored-at date**, so their freshness is UNKNOWN regardless of what the newest
+scored one says — and the **25 distinct config epochs** line is the one worth
+reading twice: runs on that board are being compared across twenty-five different
+config identities.
 
 - **G0** adopted ✓ (2026-08-13) · **G1** DECLARED ✓ (2026-08-16, #4006).
 - **G2 — UNREACHABLE, still behind TWO owner parks.** Leg 1 is *PERF-B merged
   byte-green*; PERF-B is paused by owner decision **and** the golden tier that
   would certify byte-green is parked by owner ruling. The legs:
-  1. **PERF-B merged byte-green** — **still doubly blocked, but the underlying
-     coverage improved for the first time**: 6 of 6 captured (PJM taken under
-     Card 1), **1 current / 5 stale**, (c)/(d)/(e) merged, (a)/(b) unstarted,
-     the golden tier parked so byte-green cannot be claimed for *any* capture
-     including the new one — and the manifest's provenance sha is now
-     resolvable but serves six captures from one field (F-5).
+  1. **PERF-B merged byte-green** — **still doubly blocked, and the underlying
+     coverage improved for the second consecutive cycle and by more**: 6 of 6
+     captured, ⬅ **3 current / 3 stale**, (c)/(d)/(e) merged, (a)/(b) unstarted,
+     the golden tier parked so byte-green cannot be claimed for **any** of the
+     three current captures. 🟢 **The manifest's provenance defect — a standing
+     drag on this leg for four cycles — is FIXED** (schema v2, per-entry, G-1).
+     🟠 **A NEW leg-1 sub-blocker is named**: ERCOT's carve-out config cannot be
+     captured at all until R-O's schema lane runs (G-6).
   2. **One completed fast-tier-green `ci.yml` run** — **🟢 OBTAINABLE AND
-     DECISION-FREE, for a third consecutive cycle.** Both CI guards exit 0 at
-     the pin and have now held green across a 67-PR window, four registrations,
-     three prunes and a golden capture. **This is the one G2 leg closeable
-     today without an owner decision**; re-run the gates rather than trusting
-     this line.
+     DECISION-FREE, for a fourth consecutive cycle**, and now on a wider base:
+     **all seven** guards exit 0 at the pin, having held green across a 62-PR
+     window, two registrations, two golden captures, a keeper promotion and two
+     new CI checks. **This is the one G2 leg closeable today without an owner
+     decision**; re-run the gates rather than trusting this line.
   3. **A keeper freeze** — **owner call, DEFERRED BY OWNER DIRECTION.** 🆕 **The
-     evidence moved again, and this time it cuts back toward v14's reading:**
-     v15's "zero promotions" window was **one data point, not a trend**, exactly
-     as it warned — this window promoted once and ran six calibration lanes and
-     thirty PRs. **But Card 1 proves the freeze is not a precondition for a
-     capture**: one was taken inside a busy window, in a lane whose keeper
-     happened to be still. **The scoped-capture route is demonstrated; the
-     freeze question is now only about the five stale rows.**
+     evidence moved again and it cuts back toward v16's reading, not v17's:**
+     R-L took **two** captures inside a 62-PR window with no freeze at all, in
+     two lanes whose keepers happened to be still. **Two independent
+     demonstrations now** (Card 1, R-L) that the scoped-capture route works. The
+     freeze question is down to **three** stale rows, from five.
   4. **Branch-protection flip** — owner action, memo ready.
 
   On declaration the PM notifies the FFR desk (Q.2 battery).
 - **G3** — unchanged: after G2, **DOCS-B** + the **BLOAT leg**. BLOAT's charter
-  is satisfied (#4031 + #4047) and its parity gate is **green at the pin**, so
-  the leg reads *satisfied-in-charter and gate-green-in-fact* for a third
-  cycle. The golden-tier proof leg is satisfied by #4014 + the green dispatch
-  **as evidence**, though the tier itself remains parked.
+  is satisfied (#4031 + #4047), its parity gate is **green at the pin**, and
+  ⬅ **its last open recommendation (B-8, the class-level carve-out) now EXISTS**,
+  so the leg reads *satisfied-in-charter, gate-green-in-fact, and
+  recommendation-discharged*. The golden-tier proof leg is satisfied by #4014 +
+  the green dispatch **as evidence**, though the tier itself remains parked.
 - **G4** — unchanged: SITE-A + AUDIT-B. **WS5 Job 1 is not a G4 leg.**
 
 ## Watch
 
-- **🅿️ GOLDEN TIER — PARKED BY OWNER RULING 2026-08-22, unchanged for six
+- **🅿️ GOLDEN TIER — PARKED BY OWNER RULING 2026-08-22, unchanged for seven
   cycles.** The #4071 fix is merged and locally replayed green; the CI proof is
-  **deliberately unspent**. Record it as a park, not a blocker — and record the
-  consequence: **the PJM golden — the board's only current row — still cannot be
-  certified byte-green**, because the tier that would certify it is paused. It
-  has now held that status for two cycles.
-- **🔴 SHARPENED — THE STAGE-0 MANIFEST'S PROVENANCE IS ONE FIELD FOR SIX
-  CAPTURES, AND IT WAS OVERWRITTEN THIS WINDOW.** F-5. `af1ccb6` is gone but
-  was never resolved: the Card-1 capture rewrote the single top-level `git_sha`
-  to its own tree (`1cfea72`, resolvable and in main), so the **five older
-  captures now carry a sha that resolves and is wrong** — harder to notice than
-  one that did not resolve. There is **no per-entry provenance sha**. Fix it on
-  the manifest side, per entry.
-- **🔴 SHARPENED — THE RETENTION/GOLDEN COLLISION IS FIVE-WIDE, NOT ONE.**
-  v15's E-7 reported ERCOT; re-deriving found **five of six captures' provenance
-  runs absent from the registry**, all five already absent at the v15 pin
-  (v16 F-5). Only PJM's (taken in the v16 window) has a registered provenance run — re-tested at this pin, unchanged.
-  The registry-retention policy and the WS3 manifest reference the same run ids
-  and **know nothing about each other**; every gate stayed green throughout,
-  which is the point. **Do not "fix" this by exempting golden runs from
-  retention** — that re-creates the parity gate's dead-bundle class.
-- **🔴 CONFIRMED BY PREDICTION — THE BENCH-FRESHNESS ENGINE-DRIFT SIGNAL IS
-  TIMEZONE- AND DAY-BOUNDARY DEPENDENT.** v16 predicted the WARNs return "on the
-  first engine commit dated 2026-08-31 or later"; at this pin **19 of 20 parts
-  WARN at 3 engine commits**, and the one exemption (MISO/2023) is a part the
-  miso-191 registration **rewrote**, not one that was repaired. The v16
-  diagnosis therefore stands **confirmed rather than argued**, and it carries the
-  sharpening its post-pin block added: a **date-kind mismatch** (the checker
-  reads a part's date with `%ad`, author, but filters engine commits with
-  `--since`, committer) layered on the day-granularity issue. The mechanism, as
-  first stated:
-  the checker compares a `--date=short` last-commit date against
-  `--since="<date> 23:59:59"` evaluated in the *runner's* local timezone, so
-  any window in which bench touches and engine commits share one calendar day
-  reads **0 drift**, and the same bytes read differently from a container in a
-  different timezone. The gate is ungated by design and this does not change
-  that — but **do not read "0 engine drift" as evidence the benches are fresh**,
-  and equally **do not read 19 WARNs as evidence they are stale**: 0 STALE is
-  the reading that matters, and it holds. **The dispatch that produced this
-  board asserted "0 STALE 0 drift"; the checker returns 19 of 20 with drift**
-  (F-8).
+  **deliberately unspent**. Record it as a park, not a blocker — and record that
+  ⬅ **the consequence is now THREE-WIDE**: PJM, NEISO and ERCOT-forward are all
+  CURRENT and **none of the three can be certified byte-green**, because the tier
+  that would certify them is paused. The park is costing more each cycle that
+  coverage improves.
+- **🟢 RETIRED — THE STAGE-0 MANIFEST'S SINGLE-SHA PROVENANCE DEFECT.** Carried
+  and sharpened across v15–v18; **FIXED under R-J** (#4502). Schema v2 gives every
+  entry its own `provenance` and `keeper_snapshot`, the shared top-level `git_sha`
+  is **removed**, and R-L's two captures **demonstrated** the fix (each changed
+  only its own entry). Retired on execution, not on argument.
+- **🟢 RETIRED — THE RETENTION/GOLDEN COLLISION.** Also R-J. Reconciled **on the
+  manifest side**, exactly as E-7 required and **not** by exempting golden runs
+  from retention. Three of six entries have a pruned provenance run; the gate
+  reports it as information, and `keeper_snapshot` makes it survivable. The
+  dead-bundle class E-7 warned about was never created.
+- **🟢 RETIRED — THE BENCH-FRESHNESS DATE-KIND / DAY-BOUNDARY ARTEFACT.** Also
+  R-J. Both sides of the comparison now use the **committer instant in
+  offset-bearing form**, and `--since`'s inclusivity is verified in the docstring
+  rather than assumed. **The reading discipline it forced is retired with it** —
+  "20 of 20 with drift" at this pin is a true statement about a repaired
+  instrument. **What is NOT retired is the substantive caution**: 0 STALE is the
+  reading that matters, engine drift is ungated by design, and a *marginal* C1
+  verdict still deserves a bench regeneration first.
+- **🟢 RETIRED — THE STALE FORECAST GATE-(a) STAMP CLASS.** Carried since v15 and
+  the direct cause of two alignment breaks. **Now gated in CI**
+  (`check_gate_a_provenance.py`, hard, `ci.yml:213`) and **proven live**: it went
+  red on the caiso-231 promotion and green after R-N's re-key (G-5). ⚠️ **The
+  narrower half survives and is recorded so the retirement is not read too
+  broadly:** the guard checks **keeper identity + marker state** and **explicitly
+  reads no determination**, and **nothing compares `frontier` membership to
+  anything**. Three of the four instruments are now cross-checked. The fourth is
+  not — see the next item.
+- **🟠 CARRIED, NARROWED — NOTHING IN THE REPO COMPARES ALL FOUR INSTRUMENTS.**
+  At this pin all four agree at **{ERCOT, NEISO, PJM}** (G-9), and the *mechanism*
+  that broke the alignment twice is now gated. But the alignment itself is still
+  established **only by this board re-deriving it every cycle**, and the
+  `frontier` leg has no instrument at all. **A cycle of agreement is not a closed
+  item** — v16 retired this on one cycle's alignment and v17 un-retired it.
+- **🟠 NEW — A KEEPER SETTING ONE FIELD THROUGH TWO CHANNELS: the `ercot_wtx_*`
+  CONFLICT IN THE ERCOT KEEPER'S RECORDED CONFIG.** Surfaced by R-L's capture
+  and recorded verbatim rather than smoothed over: *explicit kwargs
+  `{'ercot_wtx_curtailment_driver': False, …}` are stomped by `prb_overrides`
+  `{'ercot_wtx_curtailment_driver': True}` in the LIVE solve (`run_year` applies
+  `prb_overrides` last); recording the prb values. Pass the driver through ONE
+  channel.* **Three things this is NOT**, each stated so nobody over-reads it: it
+  is **the keeper's own recorded config**, not something the capture introduced;
+  the golden records the `prb` values, i.e. it **reproduces the keeper's live
+  behaviour**, which is what a regression baseline must do; and it is **not a
+  fidelity failure** — the oracle passed at 271 flags identical, 0 drift. **What
+  it IS: a latent rule-24 `[R-REGISTRY]`-adjacent hazard** — a value whose
+  effective setting depends on application order rather than on the registry.
+  **ROUTED TO THE CALIBRATION DESK, which owns ERCOT's config; it is not this
+  program's to fix**, and this board neither adjudicates nor schedules it.
+- **🔴 NEW — DO NOT QUOTE MONITORING NOTIFICATIONS; READ LOGS.** R-L's capture
+  lane disclosed, rather than quietly dropping, that **three streamed progress
+  events its own logs do not corroborate** arrived through session log-tail
+  notifications: `Solve: 163.216s (warm)` and `Solve: 342.735s (cold)` appear in
+  **no log file** (grep count 0) and match none of the twelve real ERCOT solve
+  times — and **ERCOT ran zero warm solves**, so a `(warm)` ERCOT event could not
+  have been genuine; `solving ERCOT 2024` **is** real but was **delivered before
+  it existed in the file**. **Two fabricated, one premature.** This is an
+  **infrastructure observation, not a modelling finding**, and it is on the watch
+  because of what it implies for every session on this program: **a streamed
+  progress notification is not evidence.** Every timing, count and status in a
+  finding must be read from committed logs and artifacts. The capture lane did
+  exactly that, which is why its numbers stand.
+- **🟠 NEW — A SHARED, CI-GATED BASE FILE WAS REWRITTEN BY A LANE THAT DID NOT
+  DECLARE IT.** #4522 (`369c9bb7`) moved **120 line-pairs** of
+  `docs/codebase-site/data/mechanism-matrix.js` inside a commit whose subject and
+  body are entirely about a forecast FC-6 re-score (G-8). **The edit was correct**
+  — verified digits-only by normalisation — and it discharged this lane's job 4.
+  **The class is the silence, not the change.** Recorded beside its own
+  counter-example one PR later: **#4523 handled the same shared surface well**,
+  rebasing onto the disjoint edit rather than overwriting it (G-5). Not
+  adjudicated; the matrix is rule 26's surface and three desks write near it.
+- **🔴 SHARPENED, THIRD INSTANCE — THE SHALLOW-CLONE TRAP, AND IT HAS COST A
+  PUBLISHED READING.** G-13. Three sessions, three containers, one failure: a
+  `git cat-file` absence in a shallow clone is **indistinguishable from a sha
+  that never existed**. It produced **v17's wrong `af1ccb6` reading** (which R-J's
+  lane overturned), and it would have made **this** lane annotate six healthy
+  verdicts as permanently unverifiable had it trusted the local answer. **Nothing
+  gates it.** The discipline: check `--is-shallow-repository` **before** reporting
+  any absence, then `git fetch --filter=tree:0 --unshallow` (~2 s) or confirm
+  against the remote API.
+- **🔴 CARRIED — TWO LIVE DEFECTS IN A COMMITTED CALIBRATION REFERENCE.**
+  `data/raw/_validation-source/actual_as_reserve_NYISO.parquet` — a cascade
+  **sum** where the **max** is correct, and a positional `hoy` map that never
+  localizes prevailing Eastern to the model's standard-time clock — in **every
+  column, every year**. **Blast radius unchanged: NO keeper, NO scored result, NO
+  determination**; its only consumer is the post-solve RCPF comparator for
+  co-opt-off runs, `nyiso_rcpf_enabled` is False in the NYISO keeper, and rule 19
+  `[R-ONE-MECH]` makes arming it alongside `energy_reserve_coopt` a hard error.
+  **A trap for DIAGNOSTIC sessions, not a defect in any result.** Still on watch
+  because **nothing gates it** — no CI check reads a `_validation-source/`
+  reference for internal consistency. ⬅ **The sibling half in MISO is repaired**
+  (#4497, D-9); **the NYISO reference itself is not.**
+- **🟠 CARRIED — THE FORECAST SEED CARRIES TWO READINGS AT ONCE.** Its top-level
+  prose and its per-ISO `gate` blocks disagree about who holds what. **A different
+  program's file; recorded, not adjudicated.** The per-ISO blocks are the
+  authority, and this board derives gate (a) from them plus the live shards,
+  never from the prose. ⬅ **Narrowed in one respect**: the per-ISO blocks' *stamps*
+  are now CI-guarded, so the disagreement can no longer be about which keeper a
+  row names.
+- **🟠 CARRIED — the standing parity-gate hazard, and it recurred this cycle in
+  its mildest form.** The gate reports a LIVE lane's pre-registered control /
+  recipe dirs as "dead solve output". The dispatch carried a parity **red** on
+  `caiso231_a0_control` from the previous sitting; **it resolved transiently when
+  that lane's own registrations landed** (#4506, #4515), with no fix made and
+  none needed. **Before reporting a future parity red, check whether the named
+  dirs belong to a running lane — never recommend pruning a dir a live lane
+  owns.** ⬅ **The structural half is now fixed** (B-8 exists; allowlist 40 → 8),
+  so the gate's green is closer to a property than the maintenance state it was.
+- **🟠 CARRIED — FORECAST-BOARD STALENESS.** Δ = **0** of 10 at the pin (v17: 1).
+  What stays on watch is unchanged and is not the Δ: **31 of 55 verdict stamps
+  are still undated** (freshness UNKNOWN until each passes through the stamped
+  scorer) and **25 config epochs** now sit on the board (v17: 24, v16: 20, v15:
+  14 — grown every cycle this board has measured it); confirm mixed-vintage
+  comparison is intended before reading any cross-run delta as a model effect.
+  ⬅ **Two of those stamps are now annotated as permanently unverifiable** (R-M,
+  G-4) — which does not change the count, and is not meant to: the annotation
+  records that their freshness can never be established, rather than pretending
+  it has been.
 - **🟠 CARRIED, AND PARTLY ANSWERED — EVIDENCE PROSE IS GATE-CHECKED NOWHERE.**
-  The class is unchanged: `check_mechanism_matrix.py` validates `keeper:` stamps
-  and §5.x prose headers and passes while citation text beside them goes stale.
-  🆕 **The first machine-readable answer appeared this window** — Card 4's
-  execution added a `frontier.withdrawn` mirror **specifically so the
-  dashboard's `frontierActive()` suppresses a badge**, i.e. a rendering-drift
-  gap closed at the renderer rather than in prose (v16 F-4). One field, one ISO, by
-  hand. **Whether any gate should read evidence text remains unruled.**
-- **🟠 CARRIED — THE FORECAST SEED CARRIES TWO READINGS AT ONCE.** F-6. Its
-  top-level prose and its own per-ISO `gate` blocks disagree about who holds
-  what — and the gap widened this cycle, since NEISO now holds **four** legs with
-  `open: true` while the prose still leads on the FC-1 blocker. The same class the
-  D13 reconcile lane was raised to repair, re-appearing inside one window
-  because prose and data move at different cadences. **A different program's
-  file; recorded, not adjudicated.** The per-ISO blocks are the authority, and
-  this board derives gate (a) from them plus the live shards, never from the
-  prose.
-- **🔴 SHARPENED — THE LANE THAT MOVES A KEEPER OR A MARKER DOES NOT RE-STAMP
-  THE FORECAST SEED, AND IT NOW COSTS AN INSTRUMENT ALIGNMENT.** F-6. v15
-  praised the inverse pattern; v16 recorded the nyiso-159 promotion re-staling
-  its own stamp. **This cycle the miso-191 promotion took MISO's stamp two
-  promotions behind, and — the new and expensive part — ERCOT's brand-new
-  `complete` marker landed against a stamp naming a keeper two promotions old,
-  so ERCOT fails forecast gate (a) while holding the marker gate (a) is
-  supposed to read.** The four-instrument divergence this board just un-retired
-  is *entirely* this defect. Still not a defect in any lane — **nobody owns the
-  cross-program stamp** — which is exactly why it recurs, and why it should
-  probably be owned.
-- **🔴 UN-RETIRED — the four-instrument divergence is BACK, one cycle after
-  Card 4 closed it.** v16 retired this item on the alignment at {PJM, NEISO}.
-  At this pin **CALIBRATED = `complete` = active `frontier` = {ERCOT, NEISO,
-  PJM}** while **forecast gate-(a) passers = {PJM, NEISO}** (F-6). **The
-  structural half is exactly why it came back and is unchanged: nothing in the
-  repo compares the four.** `audit_keepers.py` checks marker/keeper re-keying,
-  not frontier membership and not the forecast seed's stamps; **the divergence
-  here is a STALE STAMP in a different program's file**, which no gate on either
-  side reads. The board keeps re-deriving all four every cycle because that is
-  the only check there is — and this cycle is the demonstration that a
-  one-cycle alignment is not a closed item.
-- **🔴 NEW — TWO LIVE DEFECTS IN A COMMITTED CALIBRATION REFERENCE, FOUND BY A
-  RETRACTION.** `data/raw/_validation-source/actual_as_reserve_NYISO.parquet` is
-  wrong on **both** counts in **every column, every year** — a cascade **sum**
-  where the **max** is correct, and a positional `hoy` map that never localizes
-  prevailing Eastern to the model's standard-time clock (builder
-  `scripts/data/process_nyiso_as.py::build_reference`). **Blast radius: NO
-  keeper, NO scored result, NO determination** — its only consumer is the
-  post-solve RCPF comparator for co-opt-off runs, `nyiso_rcpf_enabled` is False
-  in the NYISO keeper, and rule 19 `[R-ONE-MECH]` makes arming it alongside
-  `energy_reserve_coopt` a hard error. **So it is a trap for DIAGNOSTIC
-  sessions, not a defect in any result — and it caught one**, producing a false
-  positive that survived until the lane re-derived from the raw CSVs. The repair
-  is cheap and regenerable in-session from committed bytes; the finding lane
-  deliberately did not do it mid-audit and **filed it for a data lane or an owner
-  grant**. On watch because **nothing gates it**: no CI check reads a
-  `_validation-source/` reference for internal consistency, and the next
-  diagnostic session will read it exactly as this one did.
-- **🟠 CARRIED — the standing parity-gate hazard.** The gate still reports a
-  LIVE lane's pre-registered control/recipe dirs as "dead solve output"; before
-  reporting a future parity red, check whether the named dirs belong to a
-  running lane — **never recommend pruning a dir a live lane owns.** It went
-  live in the v16 window (#4401, a caiso-224 parity fix); **no parity fix was
-  needed this cycle** and the gate held exit 0 across four MISO registrations
-  and four MISO prunes. The class-level carve-out (B-8) **still does not
-  exist**; the allowlist stands at **26** named entries.
-- **🟠 CARRIED — FORECAST-BOARD STALENESS.** Δ = 1 of 10 at the pin, unchanged.
-  What stays on watch is unchanged and is not the Δ: **31 of 50 verdict stamps
-  are still undated** (they predate the stamped scorer — freshness UNKNOWN until
-  each passes through it) and **24 config epochs** now sit on the board (v16:
-  20, v15: 14 — the count has grown every cycle this board has measured it);
-  confirm mixed-vintage comparison is intended before reading any cross-run
-  delta as a model effect.
-- **🟢 PARTLY RETIRED — the cross-ISO scorer-change precedent.** Card 3 gave
-  the class a standing rule (v16 F-3), **and this cycle it was exercised
-  correctly without being invoked by name**: ERCOT's `complete` marker carried a
-  determination re-verification from committed artifacts with no solve, and
-  `audit_keepers` M1b was extended in the same commit to recompute the partition
-  rollup live rather than read the shard's assertion. The rule: re-verify from committed artifacts before a
-  cross-lane flip publishes; a disagreeing re-verification stops it. The
-  *instance* v15 attached (#4343) is covered going forward. What is **not**
-  retired is the older nyiso-143 D-4 rider + shared-benchmark flip, which
-  happened before the rule and was never separately adjudicated.
-- **🟠 CARRIED — #4054 / nyiso-140 null-treatment question**, never
-  adjudicated — and now eleven promotions out of reach.
+  `check_mechanism_matrix.py` validates `keeper:` stamps and §5.x prose headers
+  and passes while citation text beside them goes stale. **Whether any gate
+  should read evidence text remains unruled.**
+- **🟠 CARRIED — #4054 / nyiso-140 null-treatment question**, never adjudicated —
+  and now eleven promotions out of reach.
 - **DURABLE LESSON (unchanged; the park makes it sharper):**
   `golden-data-tier.yml` is the ONLY workflow that runs
   `scripts/regenerate_clean.py`, so any curation-time defect under
   `scripts/data/curate_*.py` has NO pre-merge signal while the tier is parked.
   **Treat curate-script changes as unguarded.**
-- **🟢 DURABLE LESSON, earned again — a negative result with a bitwise proof
-  beats a positive one without.** This window: **ercot-243 and ercot-244 both
-  KILLED AT CENSUS** before any solve; **caiso-225's watch sweep ALL NULL**,
-  re-affirming terminal rest with zero solves; **nyiso-160's Leg-2 STOP WITH
-  CAUSE** at access, with no substitute mechanism invented; **T1-H Leg B
-  measuring 8.87 % and proposing nothing**; and **O7 closing on a hash-proven
-  bit-identical leg**. Five negative or zero-solve results, one promotion, and
-  the sharpest measurements of the cycle came from the negatives.
-- **🆕 DURABLE LESSON — RE-DERIVE THE TABLE THAT "CANNOT HAVE CHANGED", AND
-  THEN RE-DERIVE THE ROW THAT DID.** v15 added the first half and it paid again:
-  re-deriving the stage-0 table is what found the five-wide prune (v16 F-5) and the
-  overwritten provenance sha. **The new half is the bench row** — a gate whose
-  reading *improved* was worth the same scepticism as one that degraded, and
-  checking it found an instrument artifact rather than a repair. **A green that
-  arrives without a cause is a measurement you have not made yet.**
+- **🟢 DURABLE LESSON, earned again — a negative or zero-solve result with a
+  proof beats a positive one without.** This window: **nyiso-169's
+  congestion-gradient half found NOT CARRIED by any binding constraint and the
+  lane STOPPED**; **nyiso-168 killed its one new mechanism ex ante**;
+  **miso-195 refuted the remove-only outage-envelope cap at phase 0**; **caiso-231
+  recorded a pre-registered gate it could not satisfy rather than dropping it**;
+  and **R-J's repair lane overturned two of THIS BOARD'S standing claims in its
+  own commit message**. The sharpest measurements of the cycle again came from
+  the negatives and the self-corrections.
+- **🆕 DURABLE LESSON — RE-DERIVE A DISPATCHED JOB'S *PRECONDITION*, NOT ONLY ITS
+  FIGURES.** v15 taught *re-derive the table that cannot have changed*; v16 added
+  *re-derive the reading that improved*; **v19 adds: re-derive that the job still
+  needs doing.** Two of this lane's six jobs came back already-discharged (job 4,
+  G-8) or moved (R-M's target, G-4). Executing either blind would have produced a
+  false record — an empty commit claiming a repair, or an annotation on the wrong
+  verdict. **A dispatch describes the world at derivation time; the pin is the
+  world.**
 
-## Forecast board — re-derived at `d44446e0`: gate (a) membership unchanged while the CALIBRATED set GREW, and leg (d) is GRANTED for the first time
+## Forecast board — re-derived at `72576ebe`: ALL SIX gate-(a) stamps are CURRENT for the first time, and gate (a) equals the `complete` set again
 
 **Re-derived, not carried — and the seed's schema was re-read rather than
 assumed** (the v16 protocol amendment, applied again; this file belongs to a
-different program and was restructured once already). Every
+different program and has been restructured more than once). Every
 `gate.a_keeper_marker` was compared field-by-field against the live
-`keepers/<ISO>.json` and the live `complete` block at the pin; legs (b)/(c)/(d)
-and `open` are read from each ISO's own `gate` block.
+`keepers/<ISO>.json` and the live `complete` block at the pin, **and
+independently against `check_gate_a_provenance.py`, which now machine-checks the
+same identity in CI (exit 0)**. Legs (b)/(c)/(d) and `open` are read from each
+ISO's own `gate` block.
 
 | ISO | Seed names (gate a) | Live keeper | (a) | (b) | (c) | (d) | `open` |
 |---|---|---|---|---|---|---|---|
-| ERCOT | `2026-08-24-231-tie-zone-measured` | ⬅ `234-eastex-identity` (+ 236) | **fail — stamp STALE** *(and ERCOT now HOLDS `complete`)* | fail | pass | none | false |
-| PJM | `pjm-162-inputclock` | same | **pass — current** | fail | pass | none | false |
-| CAISO | `2026-08-17-caiso-200-h1-memberpanel` | `caiso-220-c1-crosswalk` | fail, stamp **STALE** | fail | fail | none | false |
-| NYISO | `nyiso-157-par-attribution` | `nyiso-159-loss-surface` | fail (marker withdrawn), stamp **STALE** | pass | pass | none | false |
-| NEISO | `neiso-99-joint-p1` | same | **pass — current** | pass | pass | ⬅ **granted** | ⬅ **TRUE** |
-| MISO | `2026-08-22-miso-177-rho-measured` | ⬅ `miso-191-bexit` | fail, stamp **STALE — now TWO promotions behind** | fail | pass | none | false |
+| ERCOT | `2026-08-25-234-eastex-identity` | same | ⬅ **pass — CURRENT** | fail | pass | none | false |
+| PJM | `2026-08-15-pjm-162-inputclock` | same | **pass — current** | fail | pass | none | false |
+| NEISO | `2026-08-17-neiso-99-joint-p1` | same | **pass — current** | pass | pass | **granted** | **TRUE** |
+| CAISO | ⬅ `2026-09-01-caiso-231-b1-ungrounded` | same | **fail — ON THE MERITS**, stamp **CURRENT** (`NOT-YET`, absent from `complete`) | fail | fail | none | false |
+| MISO | `2026-08-30-miso-191-bexit` | same | ⬅ **fail — ON THE MERITS**, stamp **CURRENT** (`NOT-YET`, absent from `complete`) | fail | pass | none | false |
+| NYISO | `2026-08-30-nyiso-159-loss-surface` | same | ⬅ **fail — ON THE MERITS**, stamp **CURRENT** (marker **withdrawn**) | pass | pass | none | false |
 
-**Gate (a) passers = {PJM, NEISO} — UNCHANGED in membership for a third
-consecutive cycle. But the `complete` set grew to {ERCOT, NEISO, PJM} this
-cycle, so gate (a) is no longer equal to it**, and the difference is entirely
-ERCOT's **stale stamp**, not a substantive disagreement (F-6). **Four of six
-stamps are stale** — same count as v16, one of them deeper.
+**Gate (a) passers = {ERCOT, PJM, NEISO} = the `complete` set = the CALIBRATED
+set = the active `frontier` set. FOUR-INSTRUMENT ALIGNMENT HOLDS** (G-9).
 
-**🟢 THE FIRST OPEN GATE IN PROGRAM HISTORY.** v16 recorded, in these words,
-*"`open` is `false` for all six and leg (d) is `none` everywhere: NO ISO'S
-FULL-SOLVE AUTHORIZATION GATE OPENS."* At this pin **NEISO holds all four legs
-with `open: true`** — leg (d) **granted**, by the T3-NEISO-GOLDEN lane which
-also measured NEISO's T3 BAU golden (25/25 years). **This board adjudicates none
-of it**: the forecast namespace is a different program's, its legs move on that
-program's rulings (leg (c) moved on owner ruling Q7 about what leg (c)
-*measures*, not on any model improvement), and **every FC-4 behind a passing leg
-(c) is still a FAIL reported at full magnitude**. It is recorded because a leg
-this board has published as `none` for every ISO, every cycle, has moved.
+**🟢 AND THE STRUCTURAL CHANGE IS THE ONE TO KEEP: ZERO STALE STAMPS.** v17
+reported **four of six stale** and recorded that the entire alignment break was
+that staleness — a bookkeeping lag wearing the costume of a disagreement. At this
+pin **every one of the six rows names its ISO's live keeper**. The last of them,
+CAISO's, was re-keyed by R-N's one-push micro-supersession **after the new guard
+fired for real** (G-5). **So the three failures above are failures on the merits,
+and for the first time this board can say that without a caveat** — because a
+hard CI gate now refuses to let a stale stamp exist.
+
+**🟢 THE FIRST OPEN GATE IN PROGRAM HISTORY HOLDS A SECOND CYCLE.** NEISO keeps
+all four legs with `open: true`, leg (d) **granted**. **This board adjudicates
+none of it**: the forecast namespace is a different program's, its legs move on
+that program's rulings, and **every FC-4 behind a passing leg (c) is still a FAIL
+reported at full magnitude**. It is recorded because a leg this board published
+as `none` for every ISO, every cycle, moved — and has now stayed moved.
 
 **🟠 The seed still carries two readings at once** — its top-level prose and its
-per-ISO blocks disagree about who holds what (Watch). Both recorded; **neither
-adjudicated**.
+per-ISO blocks disagree about who holds what (Watch). ⬅ **Narrowed**: the blocks'
+*stamps* are now CI-guarded, so the disagreement can no longer be about which
+keeper a row names. Both recorded; **neither adjudicated**.
+
+**🟠 AND TWO FORECAST VERDICTS ON THIS BOARD NOW CARRY A PERMANENT PROVENANCE
+CAVEAT.** Under R-M (G-4), `neiso-t3-pre-fc5` and `neiso-t3-pre-fc6` are
+annotated as having a `scored_at_sha` that never reached `main` and can never be
+resolved. **Both are archival preserved-prior verdicts, both read `HOLD`, and
+neither determination was touched.** No live gate leg above rests on either.
 
 **No forecast run was solved or re-scored by this lane**; per rule 15
 `[R-DASHBOARD]` the forecast namespace is registered through
 `scripts/register_forecast_run.py` alone, and the backcast CI gates stay blind
-to it.
+to it. **The R-M annotation is a records edit to a committed input, not a
+re-score**: no scorer ran, no determination moved, and
+`check_forecast_staleness.py` exits 0 before and after.
 
 ## Owner queue at cycle end
 
-Re-served and re-verified at **`d44446e0`**, **with item 1 RETIRED BY RULING at
-the v18b pin `192460b6`.** **The 2026-08-31 REFRESH sitting
-retired THREE carried items by ruling** (R-A → item 1, EXECUTED and merged;
-R-D → item 2; R-G → item 7), **and R-H retires a FOURTH — the one R-F had
-parked.** What remains:
+Re-served and re-verified at **`72576ebe`**. **THE 2026-09-01 SITTING RETIRES TWO
+ITEMS — Q-1 by EXECUTION (R-J) and Q-2 by EXECUTION HERE (R-M) — and ADOPTS Q-4
+into the refresh protocol.** What remains:
 
-1. **🟢 ~~PARKED-AND-RE-SERVABLE — THE nyiso-161 WINTER-FACE WAIVER CARD~~ —
-   RETIRED AT v18b: RULED R-H, OPTION A, NOT-YET STANDS. DO NOT RE-SERVE.**
-   ⚠️ **This item was carried as open through two board versions because the
-   ruling that decided it was recorded nowhere** (D-7) — the board was inviting
-   the director to re-serve a card the owner had already decided, which is the
-   exact failure the never-re-serve duty exists to prevent. **Its former text is
-   struck, not deleted, so the error is visible rather than tidied away:**
-   ~~*"the owner ruled neither A nor C and parked the card behind a dated
-   trigger; that trigger is MET, so this item is servable at the next sitting,
-   not waiting on anything."*~~ **The owner subsequently ruled A.**
-
-   **The disposition, exhaustively: no rubric amendment · no new caveat class**
-   (in particular no access-blocked class — CAISO's CEII-blocked C3a residual
-   would have had an immediate claim on one) **· the v3.0 tier guard untouched ·
-   the "only C3c is non-downgrading" line holds · NOT-YET keeps meaning exactly
-   "one identified input missing, everything else clean" · NYISO's determination
-   unchanged at NOT-YET on {C3a-2025, C3c}.** The **MyNYISO stakeholder-account
-   access retry stays OPEN and needs no ruling.**
-
-   **A is better grounded now than when the card was filed: C3c's Q2
-   STRENGTHENED it** — the summer face is evidenced as a genuine model-class
-   limitation on NYISO's own evidence, so the **structural route is intact**:
-   close the winter face → C3a-2025 returns to ≈ **−5.6 %**, in band → C3c
-   becomes the lone failure → the rule-22 standing rule reads **CALIBRATED**.
-   Standing context, unchanged: the **AORR access route is PERMANENTLY CLOSED**
-   and **nyiso-97 re-open condition 3 is WITHDRAWN**, so the winter face is
-   permanently unidentifiable from obtainable data; **option B (CWC) is
-   dominated**. **NOT RE-SERVABLE.** *(This board takes no position on the
-   merits; it records the ruling.)*
-2. **🆕 NEW — THE C3c PROGRAM'S Q3 IS THE ONLY UNANSWERED QUESTION IN IT, AND IT
-   IS AN ARCHITECTURE DECISION, NOT A LANE.** R-E chartered Q1+Q2 chained; both
-   have reported (**REAL**, **CONFIRM**) and **the program's measurement half is
-   spent**. What Q1 and Q2 settled is that the cross-ISO C3c ledger is telling
-   the truth about **both** PJM (its PASS is a real co-optimization channel, not
-   the ercot-214 phantom) and NYISO (its caveat is supported by NYISO's own
-   evidence, not inherited). **Neither closed C3c anywhere**, exactly as the
-   charter predicted. **Q3 — the probabilistic RT premium — is where the
-   residual actually lives for CAISO, MISO, NEISO and ERCOT's conduct variant,
-   and crossing it needs a different model class** (stochastic or
-   multi-settlement), which collides with rules 4 `[R-DUALS]`, 8 `[R-8760]` and
-   the no-MIP constraint. **The charter does not recommend opening it as a
-   calibration lane, and R-E did not open it.** It is on the queue as an
-   *architecture* question so it is not lost, not as a dispatchable session.
-3. **🔴 CALIBRATION FREEZE / WS3 RESTART — THE G2 GATE — DEFERRED BY OWNER
-   DIRECTION, so G2 stays parked BY CHOICE, NOT BY DRIFT.** Unchanged in shape,
-   and this cycle supplies the counter-evidence to its own optimistic reading:
-   v16 argued the question had shrunk to *the five stale rows*, because Card 1
-   proved a capture can be taken without a freeze. **This cycle took no capture,
-   promoted once, and MISO's row got deeper** — so the five stale rows are five
-   because their keepers keep moving, which is the thing a freeze addresses.
-   Standing recommendation unchanged: **a scoped, time-boxed decision taken
-   TOGETHER with the golden tier's disposition**, with the **per-entry
-   provenance** repair attached (one `git_sha` still serves six captures taken
-   at six trees).
-4. **🟠 NEISO `final` GRANT — DATA-BLOCKED.** The 2025 EIA-923 FINAL vintage has
+1. **🟢 ~~Q-1 — THE FOUR UNBLOCKED MAINTENANCE ITEMS~~ — RETIRED AT v19 BY
+   EXECUTION (R-J). DO NOT RE-SERVE.** All four merged and verified in the tree
+   at the pin, with the commit→PR mapping derived by ancestry rather than taken
+   from the dispatch: the **parity class-level carve-out** (`76c5eed6`, #4495),
+   the **bench date-kind fix** (`d5c3178f`, #4495), the **stage-0 per-entry
+   provenance / manifest schema v2** (`362e2771`, #4502) and the
+   **`check_gate_a_provenance` hard CI guard** (`3f5a24ae`, #4495). **Restart-checklist
+   items 2, 10, 11 and 12 are discharged with it.** Retired **by execution, not by
+   ruling** — the thing it asked for exists (G-1).
+2. **🟢 ~~Q-2 — THE `ff-verdicts.json` UNVERIFIABLE PROVENANCE STAMPS~~ — RETIRED
+   AT v19 BY EXECUTION (R-M). DO NOT RE-SERVE.** The ruled remedy — **annotate as
+   permanently unverifiable** — is executed in this lane's own commit, not
+   described. Two verdicts annotated, **by sha rather than by key**, because the
+   target had moved since the dispatch (G-4). No sha altered, none fabricated;
+   both determinations `HOLD`, untouched; both `provenance` blocks byte-identical;
+   `check_forecast_staleness.py` exit 0, anchored on a **reachable** sha.
+3. **🟠 CARRIED, HALF-OPEN AND STAYS MISO'S — Q-3's SECOND HALF.** The repair
+   half landed (#4497: the MISO cascade probe emits `top` + `sync_only_increment`
+   instead of summing published cumulative product prices, with dated corrections
+   at every cite site). **The half that stays open is the one #4485 explicitly
+   flagged and neither the scan nor the repair opened: the fields' DOWNSTREAM USE
+   was never audited.** It stays **MISO's**, per rule 25 `[R-ISO-SCOPE]`; this
+   board opened no cross-ISO audit and this lane repaired nothing. The rule it
+   established stands and is now carried in code as well as prose: **a nested
+   reserve cascade must be MAXED, never SUMMED** — stated on the *provenance* of
+   the number, since summing distinct nested **shadow prices** is correct and is
+   what `results/rcpf.py::rcpf_product_prices` legitimately does.
+4. **🟢 ~~Q-4 — A COMPLETENESS STEP FOR THE REFRESH PROTOCOL~~ — ADOPTED BY THE
+   DIRECTOR AT v19, AND EXECUTED BY THIS LANE.** v18b proposed it and declined to
+   adopt it (*"the refresh protocol is the director desk's"*). **The director has
+   adopted it**; both halves are now standing protocol and both ran here: `grep`
+   every ruling label of the sitting across `docs/` before a records lane closes
+   (**which is how this cycle's five-ruling gap was found**), and diff every
+   dispatched job against a **changed target file** (**which is what caught G-8**).
+   Its rider stands: **a parallel lane is not a completeness check** — redundancy
+   catches measurement error, never scope omission (G-15).
+5. **🆕 NEW — R-O's SCHEMA LANE IS CHARTERED AND HAS NOT LAUNCHED.** The ERCOT
+   carve-out golden is answered by a **schema change, not another capture**:
+   config-partition representation in the manifest, `live_keeper` partition
+   resolution in `check_golden_manifest.py`, then the carve-out capture. **At this
+   pin: no branch, no PR, no commits** (G-6). Until it runs, ERCOT's stage-0 row
+   is CURRENT **for its forward config only** and full ERCOT coverage stays at
+   **two captures the manifest cannot express**. **Owner/director action: confirm
+   the dispatch and check that it launched** — this sitting produced four
+   non-launches (G-14).
+6. **🔴 CALIBRATION FREEZE / WS3 RESTART — THE G2 GATE — DEFERRED BY OWNER
+   DIRECTION, so G2 stays parked BY CHOICE, NOT BY DRIFT.** ⬅ **The question
+   shrank this cycle and the evidence now points the other way from v17's
+   reading.** R-L took **two** captures inside a 62-PR window with no freeze at
+   all — a **second** independent demonstration, after Card 1, that a scoped
+   capture needs only a lane whose keeper is still. **The freeze question is now
+   about THREE stale rows, not five**, and the **per-entry provenance repair that
+   used to be attached to this item is DONE** (R-J). Standing recommendation,
+   narrowed: **a scoped, time-boxed decision taken TOGETHER with the golden
+   tier's disposition** — because coverage improving while the tier stays parked
+   means three CURRENT captures that cannot be certified byte-green.
+7. **🟠 NEISO `final` GRANT — DATA-BLOCKED.** The 2025 EIA-923 FINAL vintage has
    **still not landed**; until it does the grant question is not servable on the
    merits. Standing and re-verified at the pin: **no ISO has ever spent a
-   locked-test year** (58 sidecars walked, {≤2018, 2019, 2026} returns NONE),
+   locked-test year** (60 sidecars walked, {≤2018, 2019, 2026} returns NONE),
    NEISO's one-shot is **NEVER GRANTED, not spent** (D-23), and the freeze is
-   tier-scoped to the locked test. **ERCOT's new `complete` marker does not
-   touch this** — it authorizes the validation tier only, and `final` is still
-   empty. Data intake needs no authorization (rule 22); the block lifts itself
-   when the vintage publishes.
-5. **⚪ DORMANT — the ERCOT rule-16 waiver qualifier.** Unchanged, and now
-   worth re-reading once: ERCOT's `complete` marker rests on the **ercot-246
-   partition rollup**, so the carve-out structure is load-bearing for a marker
-   as well as for a determination. Still **not servable while dormant**;
-   **re-fires only if the carve-out structure changes** — which the marker makes
-   a more expensive change than it was.
-6. **🟠 CARRIED, DISPOSITION UNCHANGED — the CAISO NOT-YET determination.**
-   **TERMINAL REST + MAP** stands (R-3, v15 E-3), re-affirmed on evidence by
-   caiso-225's all-NULL watch sweep. This cycle added two more null results
-   rather than a change: caiso-226/227 landed and **caiso-228's SoCalGas OFO arm
-   DIED AT GATE D1 with no solve** — the A3 route v16 recorded as
-   *available and feasible but unfunded* was attempted and did not clear its own
-   gate. C3a-2024/2025 still fail at **+12.5 % / +15.5 %** and owner ruling 5
-   stands: **C3a must genuinely pass; NOT-YET is the honest fallback.** Nothing
-   is owed here.
-7. **🟠 CARRIED NOTE — the nyiso-148 2025 dear-gas level card**: no signature or
-   decline recorded for it in any window since; its same-day UPDATE block should
-   be read before its numbers (the keeper it names is now **six** promotions
-   superseded, 148 → 152 → 155 → 157 → 159).
-8. **🟢 RETIRED — do not re-serve:**
-   - **🆕 v18b** ~~**the nyiso-161 WINTER-FACE WAIVER CARD** (item 1 above)~~ —
-     **RULED R-H: OPTION A, NOT-YET STANDS.** Full disposition at item 1 and
-     D-7. Retired **for good**: the owner decided it, so there is nothing left
-     to serve. ⚠️ **Read the delay as the lesson it is** — the ruling existed
-     from 2026-08-31 and reached no artifact until v18b, so this card sat on
-     the queue as *"servable at the next sitting"* through two board versions
-     and two independent records lanes (D-8).
-   - *(v17 retirements below.)*
-   - ~~**arm the T1-H storage-entry repair, or don't** (v16 item 1)~~ —
-     **RULED R-A ("Arm both") AND EXECUTED**: both `ScenarioConfig` fields now
-     default `True` (verified in `scenarios.py` at the pin), armed as one
-     posture, **no re-solve**, with a **declared cache epoch** and the
-     **unmeasured combined-posture note** carried (#4442).
-   - ~~**the C-1 wind signal-object call** (v16 item 2)~~ — **RULED R-D:
-     TERMINAL REST + MAP** at this representation grain, with
-     `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md` filed, nothing armed,
-     nothing rejected, and **91.1 % of the miss published open** (F-1).
-   - ~~**the nyiso-leg2 promote-or-archive item** (v16 item 7's other half)~~ —
-     **RULED R-G: CLOSED BY ARCHIVE**, and retired **for good** — it is not
-     re-servable, because the re-verification established the object it named
-     does not exist as a candidate (F-4).
-   - ~~**a PJM determination-integrity card, conditional on Q1 = PHANTOM**~~ —
-     **DOES NOT OPEN.** Q1 returned **REAL**; no PJM keeper rests on a phantom
-     channel. Recorded here so the conditional is visibly discharged rather
-     than silently dropped.
+   tier-scoped to the locked test. Data intake needs no authorization (rule 22);
+   the block lifts itself when the vintage publishes.
+8. **⚪ DORMANT — the ERCOT rule-16 waiver qualifier.** Unchanged, and now with a
+   second load-bearing dependant: ERCOT's `complete` marker rests on the
+   ercot-246 partition rollup, **and R-O's chartered schema work exists only
+   because of the same partition**. Still **not servable while dormant**;
+   **re-fires only if the carve-out structure changes** — which is now a more
+   expensive change than it was.
+9. **🟠 CARRIED, DISPOSITION UNCHANGED — the CAISO NOT-YET determination.**
+   **TERMINAL REST + MAP** stands (R-3, v15 E-3). ⬅ **This cycle CAISO promoted
+   (220 → 231) and the determination did not move** — C3a-2024/2025 still fail at
+   **+12.5 % / +15.6 %**, the 2025 figure marginally *worse* after a
+   structurally-correct repair, which is rule 1 `[R-STRUCT]` working rather than a
+   setback. Owner ruling 5 stands: **C3a must genuinely pass; NOT-YET is the
+   honest fallback.** Nothing is owed here.
+10. **🟠 CARRIED NOTE — the nyiso-148 2025 dear-gas level card**: no signature or
+    decline recorded for it in any window since; its same-day UPDATE block should
+    be read before its numbers (the keeper it names is now **six** promotions
+    superseded, 148 → 152 → 155 → 157 → 159).
+11. **🟢 RETIRED — do not re-serve:**
+    - **v19** ~~Q-1 (four maintenance items)~~ — **EXECUTED, R-J** (item 1).
+    - **v19** ~~Q-2 (ff-verdicts provenance)~~ — **EXECUTED HERE, R-M** (item 2).
+    - **v18b** ~~the **nyiso-161 WINTER-FACE WAIVER CARD**~~ — **RULED R-H:
+      OPTION A, NOT-YET STANDS.** Full disposition at D-7. Retired **for good**:
+      the owner decided it, so there is nothing left to serve. ⚠️ **Read the delay
+      as the lesson it is** — the ruling existed from 2026-08-31 and reached no
+      artifact until v18b, sitting on this queue as *"servable at the next
+      sitting"* through two board versions and two independent records lanes
+      (D-8). **The same failure shape produced this cycle's five-ruling gap.**
+    - *(v17 retirements below.)*
+    - ~~**arm the T1-H storage-entry repair, or don't**~~ — **RULED R-A ("Arm
+      both") AND EXECUTED** (#4442).
+    - ~~**the C-1 wind signal-object call**~~ — **RULED R-D: TERMINAL REST +
+      MAP**, nothing armed, nothing rejected, 91.1 % of the miss published open.
+    - ~~**the nyiso-leg2 promote-or-archive item**~~ — **RULED R-G: CLOSED BY
+      ARCHIVE**, retired for good.
+    - ~~**a PJM determination-integrity card, conditional on Q1 = PHANTOM**~~ —
+      **DOES NOT OPEN.** Q1 returned **REAL**. Recorded so the conditional is
+      visibly discharged rather than silently dropped.
 
 ## Session roster
 
-> **🟠 v17 STATES ITS OWN LIMIT, as v16, v15, v14 and v13 did.** This records
-> lane is **not** the director desk and holds no session-listing authority, so
-> it did **not** run `list_sessions`. Lane state below is derived from **git**
-> (`ls-remote` branch tips, each tip tested for ancestry inside `origin/main`
-> rather than read off the listing) plus one **live `list_pull_requests`** call
-> at the pin. No row is carried from v16 or from the dispatch unverified.
+> **🟠 v19 STATES ITS OWN LIMIT, as v17, v16, v15, v14 and v13 did.** This
+> records lane is **not** the director desk and holds no session-listing
+> authority, so it did **not** run `list_sessions`. Lane state below is derived
+> from **git** (`ls-remote` branch tips, each tip tested for ancestry inside
+> `origin/main` rather than read off the listing) plus one **live
+> `list_pull_requests`** call at the pin. No row is carried from v17/v18 or from
+> the dispatch unverified. ⚠️ **The limit that matters this cycle: it observes
+> BRANCHES, not SESSIONS** — an unpushed lane is invisible to it, this lane's own
+> included (G-6).
 
-### Lane state at `d44446e0`, derived from remote branch tips + live PR list
+### Lane state at `72576ebe`, derived from remote branch tips + live PR list
 
-**ZERO pull requests are open and ZERO branches are ahead of `main`** — the
-quietest lane state this board has recorded. `ls-remote` returns **five** heads;
-**all four non-`main` tips PASSED the `merge-base --is-ancestor` test**, i.e.
-they are merged remnants, not live work. **No audit-program lane is running at
-this pin**; this records lane is the only one, and its branch is not yet pushed
-at the time of measurement.
+**ONE pull request is open and TWO branches are ahead of `main`** (the PR reading
+is live, not inferred). `ls-remote` returns **four** heads; each non-`main` tip
+was **ancestry-tested inside `origin/main`** rather than read off the listing.
 
-**The pin itself was taken under a FORCED UPDATE of `main`**
-(`3d8ea013...d44446e0 (forced update)` on the first fetch, stable on the
-second). Recorded in the roster because a forced move is the one condition that
-silently invalidates a carried sha, and because every figure on this board was
-re-derived *after* it rather than before.
+**The pin was NOT taken under a forced update** — both fetches reported a plain
+fast-forward. Recorded because v17's *was*, and the condition is invisible unless
+the fetch output is read.
+
+**⚠️ `main` MOVED PAST THE PIN WHILE THIS LANE WAS WRITING** — `ls-remote` at
+close reports `main` at **`663605c58e`**. **The pin is NOT moved** (pin once, then
+record motion). Every figure on this board is `72576ebe`; the delta is recorded
+here and re-derived by the next refresh, not absorbed silently.
 
 | Lane | Branch | State at the pin |
 |---|---|---|
-| **Records v17 (this lane)** | `claude/audit-program-2026-08-refresh-l13h5f` | **🟢 WORKING** — the two program record files + the new decision map + the governance/per-ISO log entries + the two ERCOT matrix cells' evidence strings. Branch cut fresh at the pin, so its pack carries only this session's objects |
-| **R-A — T1-H storage-entry arming** | `claude/t1h-storage-entry-arming-0yo1wq` | **MERGED, BRANCH DELETED** — **#4442**. Both fields flipped to `ScenarioConfig` default `True` **as one posture**, **no re-solve** (the registered repair arm IS the evidence), with a **declared cache epoch** and the **unmeasured combined-posture note**. Verified in `scenarios.py` at the pin, not read off the PR |
-| **R-B — C-1 joint wind A/B** | `claude/joint-wind-charter-ab-58rowa` | **MERGED, BRANCH DELETED** — **#4430** (charter, pushed before any solve), **#4432**, **#4439** (both arms solved, registered, finding). Kill-gates PASS; **`NON_COMPLEMENTARY`**; nothing armed. The input R-D ruled on (F-1) |
-| **R-C — nyiso-162 leg2 re-verify** | `claude/nyiso-leg2-reverify-keeper-pudq8n` | **MERGED, BRANCH DELETED** — **#4431**. Zero-solve, committed artifacts only; **found no candidate exists**. The input R-G ruled on (F-4) |
-| **R-E Q1 — pjm-164 C3c phantom audit** | `claude/pjm-164-c3c-phantom-audit-yg0bs6` | **MERGED, BRANCH DELETED** — **#4456**. ⚡ **The dispatch-vs-launch check on R-E's execution lane does not read "dispatched" or "launched" — it reads DONE: verdict REAL** (F-2) |
-| **R-E Q2 — nyiso-164 product-level** | `claude/nyiso-c3c-product-shortage-d2ek0l` | **MERGED, BRANCH DELETED** — **#4459**. Q2 opened *because* Q1 returned REAL, exactly as chained; **verdict CONFIRM**, kill gate fires on both clauses |
-| **Records v16 (predecessor)** | `claude/audit-records-v16-refresh-r3qa3z` | **MERGED, BRANCH DELETED** — **#4434**, inside this window (which is why the v17 cycle span contains v16's own landing) |
-| ERCOT 245/246/247 | `claude/ercot-245-phase0-census-0f5d8h` | **MERGED, BRANCH DELETED** — #4443/#4448/#4451/#4454. Census kills (Phase-1 **not licensed**), the ercot-246 partition-rollup ruling, and **ercot-247's first-ever ERCOT `complete` + `frontier`** (F-5) |
-| NYISO 163 / 163b / AORR gate | `claude/nyiso-163-aorr-access-gate-4hquff` | **MERGED, BRANCH DELETED** — #4438/#4445. The on-receipt identifiability gate built and validated, then the **owner's permanent closure of the AORR access route** and the opening of the C3c program |
-| MISO 191 / 192 / 193 | `claude/miso-191-binning-aware-exit-8kloqx`, `claude/miso-192-d4-posture-6p2jp7`, `claude/miso-cc-duct-peaking-5ww6h1` | **ALL MERGED** — #4433 (191, **the cycle's one promotion**), #4437/#4440 (192 D-4 posture), #4444/#4449/#4463/#4464 (193 `cc_duct_peaking`, registered as a rejected probe, cell `U → K`). The `miso-cc-duct-peaking` tip is one of the four merged remnants |
-| CAISO 226 / 227 / 228 | `claude/caiso-226-ofo-intake-7seccx`, `claude/caiso-227-c3a-2025-4om104`, `claude/caiso-228-ofo-arm-yydzmo` | **ALL MERGED, BRANCHES DELETED** — #4435, #4450, #4462. **caiso-228's arm DIED AT GATE D1, no solve**; keeper and terminal rest unmoved |
-| capx lanes — **A DIFFERENT PROGRAM** | `claude/capx-*`, `claude/miso-t1h-retire-g3-regression-i97mkq`, `claude/ercot-i3-slack-measure-qzh1rh`, `claude/calibration-workstream-relaunch-bml7zm` | **TWELVE merged PRs across EIGHT lanes** — #4429, #4436, #4441, #4446, #4447, #4452, #4453, #4455, #4457, #4458, #4460, #4461. **Not this board's work**, per the standing conflation warning. ⚠️ **THREE of its eight branch names read as calibration lanes** (`miso-t1h-retire-g3-regression` = capx-D3; `ercot-i3-slack-measure` = capx D4-I3; `calibration-workstream-relaunch` = the capx **director's own refresh desk**, r#21) **and were reclassified by reading their commits, not their branches — they are 6 of the desk's 12 PRs**, so the branch-name heuristic v16 relied on would have mis-filed HALF this desk into the calibration column |
+| **Records v19 (this lane)** | `claude/audit-records-v19-stg058` | **🟢 WORKING** — the two program record files + the R-M annotation in `ff-verdicts.json`. Branch cut fresh at the pin, so its pack carries only this session's objects. **Not pushed at the moment of measurement, which is why it does not appear in `ls-remote`** — the same blind spot that makes this board's non-launch findings statements about branches, not about sessions (G-6) |
+| **R-J — the four gate repairs** | `claude/audit-gate-repairs-sbq7km`, `claude/stage0-provenance-repair-jguqmo` | **MERGED, BRANCHES DELETED** — **#4495** (parity classifier `76c5eed6`, bench date-kind `d5c3178f`, gate-(a) guard `3f5a24ae`) and **#4502** (stage-0 schema v2 `362e2771`). ⚡ **The dispatch-vs-launch check on R-J does not read "dispatched" — it reads DONE, all four, verified in the tree** (G-1) |
+| **R-L — the stage-0 capture lane** | `claude/stage0-capture-neiso-ercot-elgk62` | **MERGED, BRANCH DELETED** — **#4509** (the two captures) + **#4517** (the finding). **The audit program's FIRST SOLVE LANE.** Both oracles PASS, 0 config drift; coverage 1/6 → 3/6; **registered nothing, by an accepted deviation this board now adopts as standing** (G-3). ⚡ Its own finding records that **its first dispatch never launched** |
+| **R-N — the one-push micro-supersession** | `claude/audit-program-director-irzj4a` | **MERGED, BRANCH DELETED (ancestry-tested remnant)** — **#4523**, commit `6d700725`, **5 lines**. Re-keyed CAISO's gate-(a) stamp after the new guard's **first real firing**; rebased onto #4522's disjoint edit rather than overwriting it. **SPENT; the standing deviation is back in force** (G-5) |
+| **R-O — the stage-0 schema lane** | *(none)* | 🔴 **NOT LAUNCHED AT THE PIN** — no branch in `ls-remote`, no open PR, no commit in the window touching `check_golden_manifest.py`'s partition handling (G-6) |
+| **Records v18 / v18b (predecessors)** | `claude/audit-gate-a-repair-12ewmv`, `claude/audit-records-v18-repair-zyd5bj` | **MERGED, BRANCHES DELETED** — **#4488** and **#4498**, both inside this window (which is why the v19 span contains both predecessors' landings) |
+| **R-D closure map** | `claude/c1-wind-closure-map-i2kqhr` | **MERGED, BRANCH DELETED** — **#4472**. Classified into **this program's** column by commits (*"Map the C-1 ERCOT wind-entry closure frontier (R-D deliverable)"*), not by its ISO-flavoured branch name |
+| MISO calibration — 195/196/197/198 + xiso | `claude/miso-196-outage-derate-04ecf4`, `claude/miso-cc-regular-overdispatch-qm6d32`, `claude/miso-st-gas-steam-chp-calibration-9snn32`, `claude/miso-outage-envelope-calibration-w8f3j7`, `claude/xiso-cascade-scan-qqh8jc` | **ELEVEN merged PRs across five lanes** — the busiest column on the board. **#4530 is OPEN** on the ST_GAS lane (created 17:25 UTC, *after* the pin). **No keeper motion.** Not this board's work |
+| CAISO calibration — 229/230/231 | `claude/caiso-229-c3a-belly-aeg5cs`, `claude/caiso-230-abovefloor-decomp-t8y4hb` | **ALL MERGED, BRANCHES DELETED** — #4482, #4493, #4499, #4506, **#4515 (the cycle's one promotion, 220 → 231)**. Recorded, not adjudicated (G-10) |
+| NYISO calibration — 165–169 | five branches | **SIX merged PRs** — #4473, #4485, #4504, #4518, #4524, #4527. **No keeper motion**; nyiso-169 **stopped** rather than arming. Not this board's work |
+| ERCOT calibration — 248 | `claude/ercot-248-sced-allresource-intake-xzg2qy` | **MERGED** — #4484, a SCED all-resource data intake. Not this board's work |
+| capx lanes — **A DIFFERENT PROGRAM** | `claude/capx-*` (16 branches), **`claude/neiso-rc-repair-fymtkz`**, **`claude/market-sim-calibration-director-lckr9a`**, `claude/capx-director-refresh-0z0e0f` | **TWENTY-EIGHT merged PRs across EIGHTEEN lanes.** **Not this board's work**, per the standing conflation warning. ⚠️ **The branch-name hazard REVERSED this cycle**: `market-sim-calibration-director` is **the capx director's own desk** (every commit titled `capx-director r#22…r#26`; touches only the capx handoff/ledger/prompt-pack) and `neiso-rc-repair` (#4467) is a **T1-X forecast hindcast lane** (writes `frontend/data/forecast`, `results/hindcast`, `register_forecast_run.py`). Together **6 of the desk's 28 PRs wear calibration-shaped names** — and **#4467 is the lane that minted both of R-M's unverifiable stamps** (G-4). `capx-director-refresh-0z0e0f` is **AHEAD of `main`** at the pin |
 
-**The honest reading: the branch check did its job in both directions, and this
-time its most useful result was a NEGATIVE one.** Every lane this cycle's PRs
-imply was found as a branch or as a deleted branch with merged PRs behind it;
-nothing was assumed launched without one; **and R-E's execution lane, which the
-dispatch described as separately dispatched, was found already MERGED with both
-its findings landed** — the check's whole purpose. The one methodological
-sharpening: **branch names are not lane classification.** Two capx lanes carry
-calibration-shaped branch names this cycle, so the classification was done from
-commit subjects and touched paths instead.
+**The honest reading: the branch check did its job in both directions again, and
+this cycle its most valuable result was a NEGATIVE one.** Every lane this cycle's
+PRs imply was found as a branch or as a deleted branch with merged PRs behind it;
+**nothing was assumed launched without one**; and **R-O's chartered lane was found
+absent**, which is the check's whole purpose (G-6). The methodological sharpening
+v17 added has now been paid for twice, in opposite directions: **a branch name is
+a hint, not a lane classification, and the dangerous direction is a
+calibration-shaped name on a capx lane** — because that one lands in the column
+where it looks correct and raises no flag.
 
-*(v16's own lane table is superseded by the one above rather than duplicated;
-it is recoverable verbatim from this file at `e52b90a4`. The v15 block below is
-retained in place because it carries the "⚡ Post-pin" annotations that document
-how that cycle's live lanes resolved.)*
+*(v17's lane table is superseded by the one above rather than duplicated; it is
+recoverable verbatim from this file at `d44446e0`, and v16's at `e52b90a4`. The
+v15 block below is retained in place because it carries the "⚡ Post-pin"
+annotations that document how that cycle's live lanes resolved.)*
 
 ### v15's lane state, retained as history (at `69ae4dc7`)
 
@@ -1957,214 +2527,251 @@ nothing itself, by standing owner instruction (*"issue prompts, I don't want you
 doing it from here"*). **A refresh is not complete until that lane has landed
 both files.**
 
-**⚠️ THE DEVIATION WAS SUPERSEDED FOR ONE SITTING AND IS BACK IN FORCE.** The
-2026-08-30 decision-card sitting executed its own records duties in-session
-under an **explicit one-sitting owner supersession** (v16 F-10). That supersession
-is **spent**; the standing deviation governs again, and this lane is its
-dispatched instrument. A future sitting that wants to write directly needs its
-own supersession — the 2026-08-30 one does not carry forward.
+**⚠️ THE DEVIATION HAS NOW BEEN SUPERSEDED TWICE, EACH TIME FOR ONE SITTING, AND
+IS BACK IN FORCE.** The 2026-08-30 decision-card sitting executed its own records
+duties in-session under an explicit one-sitting supersession (v16 F-10); the
+2026-09-01 sitting granted a **one-push micro-supersession**, ruling **R-N**,
+spent as **#4523** (5 lines, the CAISO gate-(a) re-key — G-5). **Both are spent
+and neither carries forward.** The standing deviation governs, this lane is its
+dispatched instrument, and a future sitting that wants to write directly needs
+its own supersession.
 
-**v17's protocol record — the dispatch-vs-launch check paid off, and its
-answer was better than "launched":**
+**🟢 Q-4 IS ADOPTED (2026-09-01). Two steps are now MANDATORY before a records
+lane closes**, and both ran here (G-15):
 
-- **🟢 THE 2026-08-31 STARTUP'S DISPATCH-VS-LAUNCH CHECK PASSED 4-FOR-4, AND
-  THE R-E EXTENSION RETURNED *DONE* RATHER THAN *LAUNCHED*.** The dispatch
-  instructed a dispatch-vs-launch branch check on R-E's separately-dispatched
-  execution lane. Run at the pin, it found **both** chartered questions already
-  merged with landed findings — pjm-164 (#4456, Q1 = **REAL**) and nyiso-164
-  (#4459, Q2 = **CONFIRM**) — so the item the board would otherwise have carried
-  as *pending* is carried as *answered* (F-2), and one conditional queue item
-  (the PJM determination-integrity card) is **visibly discharged rather than
-  silently dropped**. **This is the check's whole purpose, and it is the first
-  cycle it returned a resolution rather than a gap.**
-- **🆕 ADDED — A LANE'S BRANCH NAME IS NOT ITS PROGRAM.** v16's classification
-  heuristic was *classify by branch name, not by commit title*, because thirty
-  capx PRs would have fooled a title scan. This cycle **capx lanes carry
-  calibration-shaped branch names** (`miso-t1h-retire-g3-regression` = capx-D3;
-  `ercot-i3-slack-measure` = capx D4-I3) and the branch heuristic alone
-  mis-files both — and a **third**, `calibration-workstream-relaunch`, is the
-  capx **director's own refresh desk**. Together those three are **6 of the
-  desk's 12 PRs**, so branch-name-only classification mis-files **half** of it.
-  **Classify from commit subjects AND touched paths; the branch name is a hint,
-  not the answer.**
-- **🆕 ADDED — RECORD A FORCED UPDATE OF `main` WHEN THE PIN IS TAKEN UNDER ONE.**
-  This pin's first fetch reported `3d8ea013...d44446e0 main -> origin/main
-  (forced update)`. A forced move is the single condition under which a sha
-  carried from a previous board or a dispatch silently stops meaning what it
-  meant, and it is invisible unless the fetch output is read. **Record it in the
-  snapshot, and re-derive after it rather than before.**
-- **🔴 PIN ONCE, THEN RECORD MOTION — held again, and this time the delta was
-  MATERIAL.** `origin/main` was stable across two polling rounds before the pin.
-  But unlike v16, whose dispatch-to-pin delta touched only another desk's
-  handoffs, **this cycle's `4bdb2d60..d44446e0` delta is 10 merged PRs that move
-  real figures on this board** — the MISO keeper, ERCOT's markers, three of five
-  gate readings and both C3c answers. **The dispatch-vs-pin delta must be
-  measured, not assumed small, every cycle; v16's "no figure differs" was a
-  finding about that window, not a rule.**
-- **🆕 ADDED — RE-DERIVE THE DISPATCH'S OWN ASSERTED NUMBERS, NOT JUST THE
-  BOARD'S.** The dispatch carried three figures for this lane to reuse; **all
-  three are wrong at the pin** (parity 60/95 vs **58/93**; bench 0-drift vs
-  **19 of 20**; the two joint-wind cells "stay O" vs **K/O and O/K**) — F-8.
-  None was a trap; each is a figure that moved between derivation and pin, or a
-  shorthand. **The instruction "trust nothing in this prompt" is not
-  ceremonial.**
-- **Carried from v16 and still live:** re-derive the reading that *improved*
-  (the bench WARNs returned this cycle exactly as predicted, confirming the
-  instrument diagnosis rather than any repair); read a restructured file's
-  schema before its values (the forecast seed again — leg (d) moved from `none`
-  to `granted` this cycle, and a field-set assumption would have missed it).
+- **(i) `grep` EVERY ruling label of the sitting across `docs/`.** Not the ones
+  the dispatch highlights — every one, A through the current letter. At this pin
+  it returned **ZERO for R-J, R-K, R-M, R-N and R-O**, which is how a
+  five-ruling, two-sitting gap was found. It is the same instrument that finally
+  caught R-H, and it is mechanical, cheap and unmissable.
+- **(ii) Diff EVERY dispatched job against a CHANGED TARGET FILE.** *A finding
+  that describes a repair is not the repair.* Run at close for this lane:
 
-**Carried, restated in one line each** (full text in v10–v15): run the gates,
+  | job | changed target file at close |
+  |---|---|
+  | 1 · board v19 full refresh | `docs/handoffs/audit-program-director-board-2026-08.md` ✅ |
+  | 2 · stage-0 table + R-L discharge + Watch items | same file, stage-0 / Watch sections ✅ |
+  | 3 · seven gates + roster-count correction | same file, Gates + checklist item 0 ✅ |
+  | 4 · mechanical anchor repair | **NO CHANGED FILE — and that is the correct outcome.** `--fix-anchors` repaired 0; the repair had already landed in #4522 (G-8). **The diff step is exactly what distinguishes "already done" from "not done"** |
+  | 5 · record R-J…R-O + execute R-M | `docs/model-audit-release-plan-2026-08.md` §8 + `frontend/data/forecast/ff-verdicts.json` ✅ |
+  | 6 · queue maintenance | board, Owner-queue section ✅ |
+
+- **And the rider stands: a parallel lane is NOT a completeness check.**
+  Redundancy catches *measurement* error, because two lanes measure
+  independently; it does **not** catch a *scope* omission, because both inherit
+  the scope from one dispatch. Two lanes both omitted R-H; that is the proof.
+
+**v19's protocol record:**
+
+- **🔴 THE DISPATCH-VS-LAUNCH CHECK PRODUCED FOUR NON-LAUNCHES IN ONE SITTING,
+  AND TWO OF THEM WERE THIS LANE.** Recorded at the director's explicit
+  instruction. **(a)** The original v19 records dispatch **never launched** — no
+  branch, no session, confirmed from git and the session roster. **(b)** The
+  **first re-issue of the same dispatch also never launched**, on the same
+  evidence; the records debt therefore stood **two sittings deep**, and this is
+  the **third** dispatch and the first to run. **(c)** R-L's capture lane's first
+  dispatch never launched, recorded in its own finding. **(d)** **R-O's chartered
+  schema lane has not launched at this pin** (G-6). **The step's yield is now the
+  highest of any in this protocol**, and it costs one `ls-remote` plus one PR
+  list. ⚠️ **State its limit honestly**: it observes *branches*, not *sessions* —
+  this lane's own branch was unpushed at measurement time and would have failed
+  its own test.
+- **🆕 ADDED — RE-DERIVE A DISPATCHED JOB'S *PRECONDITION*, NOT ONLY ITS
+  FIGURES.** v15: re-derive the table that cannot have changed. v16: re-derive
+  the reading that improved. **v19: re-derive that the job still needs doing.**
+  **Two of this lane's six jobs came back already-discharged or moved** — job 4's
+  anchors were repaired by an unrelated lane between dispatch and pin (G-8), and
+  R-M's target verdict was re-scored onto a healthy sha so the defect **migrated
+  to a different key** (G-4). Executing either blind produces a *false record*:
+  an empty commit claiming a repair, or an annotation on the wrong verdict. **A
+  dispatch describes the world at derivation time; the pin is the world.**
+- **🆕 ADDED — CHECK `--is-shallow-repository` BEFORE REPORTING ANY ABSENCE FROM
+  GIT.** Third instance in this program, and it has now cost a published reading
+  (G-13). A shallow clone's `git cat-file` miss is **indistinguishable from a sha
+  that never existed**: here it reported 8 of 13 forecast provenance shas
+  unreachable when the true count is **2**, and it is what produced v17's wrong
+  `af1ccb6` claim. Either `git fetch --filter=tree:0 --unshallow` (~2 s) or
+  confirm against the remote API. **Before reporting an absence from git,
+  establish that the repository could have shown you the thing.**
+- **🆕 ADDED — COUNT THE GATES FROM `ci.yml`, NOT FROM THE LAST BOARD.** The
+  roster said five for four cycles, the dispatch said six; **seven is correct**
+  (G-7). `check_golden_manifest.py` had been enforced at `ci.yml:118` the entire
+  time and was simply never counted — and it is the instrument that *owns* the
+  stage-0 table this board recomputes by hand every cycle. **Re-read the
+  workflow, not the predecessor's list.**
+- **🔴 PIN ONCE, THEN RECORD MOTION — held again, in both directions.**
+  `origin/main` was stable across two polling rounds before the pin, and the
+  fetch was **not** a forced update. The director's own two pins were **7** and
+  **4** merged PRs stale by the time this lane ran, and **`main` moved past the
+  pin again while this board was being written** (`663605c58e` at close). **The
+  pin was not moved**; the delta is recorded in the roster.
+- **🆕 SHARPENED — A BRANCH NAME IS NOT A LANE, AND THE DANGEROUS DIRECTION IS
+  THE REVERSE ONE.** v17 found capx branches wearing calibration names. This
+  cycle **`market-sim-calibration-director` IS the capx director's desk** and
+  **`neiso-rc-repair` is a forecast hindcast lane** — 6 of that desk's 28 PRs.
+  **Worse in this direction**, because a calibration-shaped name filed into the
+  calibration column looks correct and raises no flag. **Classify from commit
+  subjects AND touched paths, both, every cycle.**
+- **Carried from v16/v17 and still live:** re-derive the reading that *improved*
+  (the bench gate's WARN count *rose* this cycle and that is the repaired
+  instrument, not a regression); read a restructured file's schema before its
+  values (the stage-0 manifest went v1 → v2 this window — a field-set assumption
+  would have read it as gutted rather than as fixed).
+
+**Carried, restated in one line each** (full text in v10–v17): run the gates,
 never quote them (exit codes captured directly, not through a pipe) · quote no
 cycle count without its base sha, in the dispatch and on the board · trust no
 table, including the dispatch's — re-derive from committed bytes at the pin ·
-**look for the BRANCH, not a plausible-sounding commit** — and then check the
-branch's *commits*, because two capx branch names read as calibration lanes this
-window · a refresh is complete when the sessions exist, not when the prompts
-are written · read a content-addressed identity before inferring · **confirm
-`frontend/data/hindcast/` is present before quoting any stamped/scored count**
-(done this cycle: `check_forecast_staleness.py` reports *board inputs: all
-present*) · **say which figures are derived and which are carried** — this
-board's stage-0 promotion-gap counts are the current instance, and they are
-labelled rather than silently re-asserted.
+**look for the BRANCH, not a plausible-sounding commit**, and then check the
+branch's *commits and paths* · a refresh is complete when the sessions exist, not
+when the prompts are written · read a content-addressed identity before inferring
+· **confirm `frontend/data/hindcast/` is present before quoting any
+stamped/scored count** (done this cycle: *board inputs: all present*) · **say
+which figures are derived and which are carried** — this board's stage-0
+promotion-gap absolutes remain the current instance, labelled rather than
+re-asserted.
 
 **While the program is parked, the refresh cycle is not the live instrument it
-was.** A park-period refresh confirms (a) whether the owner has ruled on
-anything in the queue — **the 2026-08-31 refresh sitting's SEVEN rulings are now
-ALL on the record: R-A/R-B/R-C executed and merged before the v17 lane opened,
-R-D/R-E/R-F/R-G at v17, R-I at the v18 delta, and R-H at v18b (D-7) after being
-unrecorded anywhere for two board versions**; (b) whether the keeper freeze has
-been called — **still deferred, and this cycle cuts back the other way: no
-capture was taken, one ISO promoted, and a stale row got deeper**; and (c)
-whether the golden tier's park has been lifted — **unchanged, and the CI proof
-stays deliberately unspent, which is why even the PJM capture cannot be
-certified byte-green**.
+was.** A park-period refresh confirms (a) whether the owner has ruled on anything
+in the queue — **the 2026-08-31 sitting's nine rulings and the 2026-09-01
+sitting's six are now ALL on the record: R-A/R-B/R-C merged before v17,
+R-D/R-E/R-F/R-G at v17, R-I at the v18 delta, R-H at v18b, and R-J through R-O at
+v19**; (b) whether the keeper freeze has been called — **still deferred, and this
+cycle cuts back toward v16: two captures were taken with no freeze at all, and
+the question is down to three stale rows**; and (c) whether the golden tier's
+park has been lifted — **unchanged, and the CI proof stays deliberately unspent,
+which is why none of the three CURRENT captures can be certified byte-green**.
 
-**🔴 AND A FOURTH THING EVERY RECORDS LANE MUST NOW CONFIRM — ABOUT ITSELF, NOT
-ONLY ABOUT ITS PREDECESSOR: THAT IT RECORDED EVERY RULING OF THE SITTING.**
-D-5(a) named *"landed but incomplete"* and prescribed *diff each dispatched
-lane's jobs against its artifacts* — and the lane that wrote it applied the test
-to **v17** and not to **itself**, omitting R-H; a **second lane running the same
-dispatch in parallel omitted it too** (D-8). **The cheap mechanical step, and it
-is the one that finally worked: `grep` each ruling label of the sitting across
-`docs/` before closing, and diff each dispatched job against a CHANGED TARGET
-FILE — a finding that *describes* a repair is not the repair.** ⚠️ **And do not
-treat a parallel lane as coverage:** redundancy catches measurement error,
-because two lanes measure independently; it does **not** catch a scope omission,
-because both inherit the scope from the same dispatch. **Proposed for adoption as
-Q-4 — this lane records it, the director desk owns the protocol.**
+**🟢 AND THE FOURTH THING EVERY RECORDS LANE MUST CONFIRM ABOUT ITSELF — that it
+recorded every ruling of the sitting — IS NO LONGER A PROPOSAL. It is Q-4,
+adopted, and it is step (i) above.** D-5(a) named *"landed but incomplete"*; the
+lane that named it omitted R-H, and so did a second lane on the same dispatch.
+**This cycle the same shape recurred at five times the scale — five rulings
+unrecorded across two sittings — and the adopted grep is what found them.**
 
 ## RESTART CHECKLIST — for whoever un-parks the program
 
 **Do these in order. Do not start at change (a).**
 
-0. **🟢 `main` IS FULLY GREEN AT THE v17 PIN — re-run at `d44446e0`, exit codes
-   captured directly: ALL FIVE CHECKS EXIT 0.** `audit_keepers.py` **PASS 0/0**
-   (now over `complete` = {ERCOT, NEISO, PJM}) ·
-   `check_registry_payload_parity.py` **exit 0** (58 runs / 93 dirs / 0
+0. **🟢 `main` IS FULLY GREEN AT THE v19 PIN — re-run at `72576ebe`, exit codes
+   captured directly: ALL **SEVEN** CHECKS EXIT 0.** ⚠️ **THE ROSTER IS SEVEN,
+   NOT FIVE** — this item said *five* for four cycles and the v19 dispatch said
+   *six*; both undercounted (G-7). The seven:
+   `audit_keepers.py` **PASS 0/0** (over `complete` = {ERCOT, NEISO, PJM}) ·
+   `check_registry_payload_parity.py` **exit 0** (60 runs / 95 dirs / 0
    tolerated) · `check_mechanism_matrix.py` **exit 0** (194 field + 49 row +
-   **152** path anchors) · `check_forecast_staleness.py` **exit 0, Δ = 1/10**
-   (WARN-level; the undated-stamp WARN persists at **31 of 50**) ·
-   `check_bench_freshness.py` **exit 0, 0 STALE of 20 — and 19 of 20 WITH
-   ENGINE DRIFT**, the WARNs having returned exactly as v16 predicted. Green for
-   a fourth consecutive cycle. **Always re-run all five rather than reading this
-   line**; at this repo's merge cadence (36 PRs in four hours this window) the
-   reading ages in minutes — and the dispatch that produced this board asserted
-   two of these five figures wrongly (F-8).
-0b. **🔴 THE GOLDEN PROVENANCE PROBLEM CHANGED SHAPE AND IS NOW HARDER TO SEE.**
-   The manifest's `git_sha` **resolves** (`1cfea72`, reachable in main) — but it
-   was **overwritten by the PJM capture, not resolved**, and the manifest holds
-   **one** top-level sha for **six** captures taken at six trees, with **no
-   per-entry provenance field**. So the five older captures now carry a sha that
-   is *valid and wrong*. Separately, **five of the six captures' provenance runs
-   are ABSENT from the registry** (only PJM's is present) — a five-wide
-   condition, not the one-off v15 reported (v16 F-5). Neither was caused by error;
-   both are the cost of parking WS3 while the calibration program runs at
-   thirty PRs a window. **The per-file `content_hashes` are unaffected and
-   remain the only sound verification instrument.**
+   **156** path anchors, **0 WARNs**) · `check_forecast_staleness.py` **exit 0,
+   Δ = 0/10** (the undated-stamp WARN persists at **31 of 55**) ·
+   `check_bench_freshness.py` **exit 0, 0 STALE of 20 — 20 of 20 with engine
+   drift, now a REPAIRED instrument's honest reading** ·
+   🆕 `check_gate_a_provenance.py` **exit 0** (`ci.yml:213`, **hard**, 6 rows) ·
+   🆕 `check_golden_manifest.py` **exit 0** (`ci.yml:118` — enforced all along,
+   merely never counted; it is the stage-0 table's instrument). Green for a fifth
+   consecutive cycle. **Always re-run all seven rather than reading this line**,
+   and **count them from `ci.yml`, not from this list** — at this repo's merge
+   cadence (62 PRs in 37 hours this window) the reading ages in minutes.
+0b. **🟢 THE GOLDEN PROVENANCE PROBLEM IS FIXED — DO NOT RE-DO IT.** The
+   condition this item described for four cycles (one top-level `git_sha` for six
+   captures; five provenance runs pruned; `af1ccb6` believed unresolvable) is
+   **closed by R-J** (#4502). The manifest is **schema v2**: `provenance` +
+   `keeper_snapshot` **per entry**, no shared top-level sha, all six historical
+   shas recovered from history **with evidence and zero UNKNOWN rows**, and
+   retention reconciled on the manifest side so a prune costs nothing. **Two of
+   this board's own former claims were overturned in the process**: `af1ccb6`
+   **does** resolve (it is the CAISO capture commit) and the five shas were
+   recoverable all along — the "does not resolve" reading was a **shallow-clone
+   artefact** (G-13). The per-file `content_hashes` are unaffected and remain a
+   sound verification instrument; they are no longer the only one.
 1. **DECIDE THE GOLDEN TIER AND THE FREEZE TOGETHER** — the precondition, not a
    nicety. A freeze buys re-captured goldens; a parked golden tier means those
    captures cannot be certified byte-green, so a freeze alone leaves G2 leg 1
-   blocked. Un-parking costs one `workflow_dispatch` (billed minutes — why it
-   was parked). 🆕 **The question is now smaller: Card 1 took a capture inside
-   a 67-PR window with no freeze at all**, in a lane whose keeper was still. So
-   a freeze is not a precondition for a *scoped* capture; it is a question about
-   **the five stale rows** and about certifying any of them.
-2. **~~RESOLVE THE MANIFEST'S PROVENANCE SHA~~ → RECORD PROVENANCE PER ENTRY.**
-   The old step is overtaken: `af1ccb6` is gone because it was overwritten. The
-   step that replaces it is **give each capture its own provenance sha inside
-   the manifest** — otherwise the next capture silently re-labels every earlier
-   one, exactly as this one did. Verify existing captures against their
-   `content_hashes`, never against the top-level sha.
+   blocked. Un-parking costs one `workflow_dispatch` (billed minutes — why it was
+   parked). 🆕 **The question is smaller again: R-L took TWO captures inside a
+   62-PR window with no freeze**, after Card 1 took one. **Two independent
+   demonstrations.** A freeze is not a precondition for a *scoped* capture; it is
+   a question about **the three remaining stale rows** and about certifying any
+   capture at all.
+2. **🟢 ~~RECORD PROVENANCE PER ENTRY~~ — DONE (R-J, #4502).** Verified in the
+   manifest at the pin. **Do not re-do it**; verify existing captures against
+   their `content_hashes` and their own per-entry `provenance`.
 3. **Re-verify every stage-0 golden against the then-current keepers** before
-   resuming any change. Do not trust this board's staleness table — re-read the
-   keeper shards and the manifest at that HEAD and re-derive it, mapping
-   captured bundles back through the manifest's `keeper_id` fields. **At
-   `d44446e0` the answer is: PJM CURRENT, the other five STALE, ERCOT needing
-   TWO captures (forward + carve-out), five of six capture provenance runs
-   unregistered — and MISO now TWO promotions past its capture.**
-4. **Assume every re-capture is a real solve — and budget the memory.** The
-   Card-1 capture died first on the container's **13.3 GiB cgroup RAM limit**
-   (memcg OOM at 13.9 GB RSS) and succeeded only after a **12 GB swapfile**; it
-   also needed a re-fetch of the converted `pjm-da-virtuals` corpus, whose
-   loader hard-fails rather than no-ops. The **re-stamp-not-re-solve** shortcut
-   was established for **neiso-97 only** — re-establish it before relying on it;
-   re-derive the config diff first. 🆕 nyiso-160's committed-bytes audit (a
-   *keeper* replaying bit-identically at HEAD, max abs divergence 0.0, all three
-   years) is the first fresh evidence of the kind such a shortcut would need,
-   though it proves a replay, not a capture. 🆕 **That evidence was
-   independently re-measured this cycle and strengthened**: R-C's zero-solve
-   re-verification reproduced max |Δ| = 0 over **1,043,280** hourly rows at a
-   later head, **and across a solver-version change** (HiGHS 1.15.1 vs 1.14.0).
-   Two sessions, two heads, one cross-solver result — still a replay, not a
-   capture.
-5. **~~Capture PJM FIRST~~ — DONE (#4369). Capture MISO next — and the case got
-   stronger, not weaker.** MISO carries the deepest gap on the board and it
-   **deepened again this cycle** (188 → 191), so it is now two promotions past
-   its capture. **ERCOT still needs two** — and ERCOT now holds a `complete`
-   marker and a `frontier` declaration resting on the two-config partition, so
-   its uncaptured carve-out config is load-bearing for more than a
-   determination.
+   resuming any change. **Do not trust this board's staleness table — and you no
+   longer have to hand-recompute it**: run `check_golden_manifest.py`, which maps
+   each entry back through its own `keeper_id` and reports CURRENT / STALE and
+   pruned-provenance status directly. **At `72576ebe` the answer is: PJM, NEISO
+   and ERCOT-forward CURRENT; CAISO, MISO and NYISO STALE (all three with a
+   PRUNED provenance run, survivable via `keeper_snapshot`); and ERCOT's 2023
+   carve-out UNCOVERED and not capturable at this schema.**
+4. **Assume every re-capture is a real solve — and budget the memory.** 🆕
+   **R-L's capture lane re-measured this and the picture is container-dependent,
+   not fixed.** Card 1's PJM capture died on a **13.3 GiB cgroup memcg** at
+   13.9 GB RSS and needed a 12 GB swapfile; R-L's container reported an
+   effectively **unbounded** `memory.max`, so the binding constraint was physical
+   RAM: ERCOT peaked at **12.50 GB** against 15 GB and **never paged** (swap
+   usage 0), NEISO at **3.94 GB**. **Budget for ~12.5 GB on ERCOT and check
+   `memory.max` rather than assuming Card 1's limit.** Also: R-L's container had
+   **no Python dependencies at all** and needed a venv built from the pinned
+   `requirements.txt`; hydration was a no-op on its full clone and **no
+   converted-corpus re-fetch was required** (unlike PJM's `pjm-da-virtuals`).
+   The **re-stamp-not-re-solve** shortcut is still established for **neiso-97
+   only** — re-establish before relying on it.
+5. **~~Capture PJM FIRST~~ — DONE (#4369). ~~Capture MISO next~~ — R-L took
+   NEISO and ERCOT instead, BY OWNER RULING, AND THIS ITEM STANDS.** R-L's
+   verbatim *"Just NEISO and ERCOT"* was **deliberately against this item**, for
+   that capture only; it is an exception, **not an amendment** (G-3). **MISO is
+   still the named next capture**, and its case is unchanged: joint-deepest gap
+   on the board at two promotions past capture. **ERCOT still needs a second
+   capture** — its 2023 carve-out — and that one is **blocked on R-O's schema
+   lane, not on a freeze** (G-6).
 6. **Do NOT re-do change (c).** It landed via #3964 and is byte-identical at
    HEAD. Verify the blob (`af34031c`) rather than re-porting it.
-7. **Close the #4054 residual if you want belt-and-braces — but re-derive it,
-   do not inherit it.** The NYISO keeper is **eleven** promotions past the
-   captured nyiso-140 config (v15's ten + v16's one), unchanged this cycle; MISO
-   is v15's eleven + one.
-8. **Then, and only then, resume changes (a)–(e)** — and re-read the G2 leg
-   list, because *merged byte-green* is what the gate wants, not captures.
-   **Card 1 is a capture, and captures do not close leg 1.**
-9b. **🆕 ADD THE SITTING-HANDOFF QUESTION TO THE CHECKLIST** (v16's amendment,
-   restated because it paid off this cycle): *did the last sitting's records
-   duties get dispatched, or did the session end holding them?* The
-   2026-08-31 startup's dispatch-vs-launch check **passed 4-for-4** and, on
-   R-E's lane, returned *done* rather than *launched* — which is what let this
-   board discharge a conditional queue item instead of carrying it.
+7. **Close the #4054 residual if you want belt-and-braces — but re-derive it, do
+   not inherit it.** The NYISO keeper is **eleven** promotions past the captured
+   nyiso-140 config; MISO is v15's eleven + one.
+8. **Then, and only then, resume changes (a)–(e)** — and re-read the G2 leg list,
+   because *merged byte-green* is what the gate wants, not captures. **Three
+   CURRENT captures still do not close leg 1.**
 9. **Confirm the golden tier is green IN CI before claiming any byte-green
-   result** — which requires un-parking it (step 1). A tier that cannot
-   provision `data/clean` cannot prove byte-identity of anything, and a local
-   replay is not the gate. **This applies to the new PJM capture too.**
-10. **🔴 FIX THE PARITY GATE'S CLASSIFIER, NOT ITS SYMPTOM.**
-    `KEEP_REQUIRED_UNMAPPED_BUNDLES` stands at **26 named entries** and the
-    class-level carve-out the 2026-08-20 finding recommended (pre-registered
-    recipes and in-flight controls legitimately precede any sidecar) **still
-    does not exist** (B-8). ~10 lines, and it retires a recurring red for good.
-    Explicitly **not** a pre-merge check, which would penalise correct
-    pre-registration. **Until then, the gate's green is a maintenance state, not
-    a property** — this window needed a dedicated parity fix (#4401) to keep it.
-11. **🔴 RECONCILE RETENTION WITH THE GOLDEN MANIFEST — and note the class is
-    FIVE-WIDE, not the single instance v15 reported.** Top-15 registry retention
-    and the WS3 manifest reference the same run ids and know nothing about each
-    other, so correct prunes have silently left **five of six** captures without
-    a registered provenance run, and **every gate stayed green** throughout. Fix
-    it on the manifest side (self-contained, **per-entry** provenance), **not**
-    by exempting golden runs from retention — that re-creates the dead-bundle
-    class the parity gate already struggles with.
-12. **🆕 CHECK THE BENCH GATE'S DRIFT SIGNAL AGAINST ITS OWN ARITHMETIC BEFORE
-    TRUSTING A GREEN.** `check_bench_freshness.py`'s engine-drift leg compares a
-    `--date=short` last-commit date against `--since="<date> 23:59:59"` in the
-    runner's local timezone, so it reads **0 drift** whenever bench touches and
-    engine commits share a calendar day — and the same bytes can read
-    differently from a container in another timezone. Ungated by design, so this
-    is a reading discipline, not a defect to fix before restarting; but do not
-    cite "0 engine drift" as evidence a bench is fresh.
+   result** — which requires un-parking it (step 1). A tier that cannot provision
+   `data/clean` cannot prove byte-identity of anything, and a local replay is not
+   the gate. **This applies to all three CURRENT captures.**
+9b. **KEEP THE SITTING-HANDOFF QUESTION — it is now the highest-yield step here.**
+   *Did the last sitting's records duties get dispatched, or did the session end
+   holding them — and if they were dispatched, did the lane LAUNCH?* **The
+   2026-09-01 sitting produced FOUR non-launches** (G-14), two of them
+   consecutive dispatches of the same records lane, which is why that debt stood
+   two sittings deep. `ls-remote` + one live PR list. ⚠️ It observes branches, not
+   sessions: an unpushed lane is invisible to it.
+10. **🟢 ~~FIX THE PARITY GATE'S CLASSIFIER~~ — DONE (R-J, #4495).** The
+    class-level carve-out (B-8) **exists**: a two-conjunct structural test admits
+    pre-registered campaign points and replay recipe dirs, and the residual
+    enumeration is **8**, down from **40** (the board's last count of 26 was
+    itself 14 stale). **The gate's green is now closer to a property than the
+    maintenance state it was.** The standing reading discipline survives: before
+    reporting a parity red, check whether the named dirs belong to a **live**
+    lane — this cycle a red on `caiso231_a0_control` resolved transiently when
+    that lane's own registrations landed, and no fix was needed.
+11. **🟢 ~~RECONCILE RETENTION WITH THE GOLDEN MANIFEST~~ — DONE (R-J, #4502),
+    AND DONE THE WAY E-7 REQUIRED.** Each entry carries a `keeper_snapshot`
+    copied from its provenance run's sidecar, so a top-15 prune costs nothing.
+    **Fixed on the manifest side, NOT by exempting golden runs from retention** —
+    the dead-bundle class E-7 warned about was never created. Three of six
+    entries currently have a pruned provenance run and the gate reports it as
+    **information, not failure**.
+12. **🟢 ~~CHECK THE BENCH GATE'S DRIFT ARITHMETIC~~ — DONE (R-J, #4495).** The
+    `%ad`-vs-`--since` **date-kind mismatch** and the day-granularity artefact are
+    fixed at source: both sides now use the **committer instant in offset-bearing
+    form**, with `--since`'s inclusivity verified rather than assumed. **So the
+    reading is trustworthy now, and it reads 20 of 20 with engine drift at 6
+    engine commits — a true statement, not the artefact it used to be.** The
+    substantive discipline survives unchanged: **0 STALE is the reading that
+    matters**, engine drift is ungated by design, and a *marginal* C1 verdict
+    still deserves a bench regeneration first.
+13. **🆕 RUN R-O's SCHEMA LANE BEFORE CLAIMING FULL ERCOT COVERAGE.** The
+    manifest keys `keepers` one entry per ISO, so ERCOT's two-config partition
+    **cannot be represented** and its 2023 carve-out golden cannot be taken at
+    all. Three parts, in order: config-partition representation in the manifest;
+    `live_keeper` partition resolution in `check_golden_manifest.py`; then the
+    capture. **Chartered by R-O and NOT LAUNCHED as of `72576ebe`** (G-6). Until
+    it runs, "ERCOT CURRENT" means *forward config only* and full coverage is
+    **7 captures, not 6**.
