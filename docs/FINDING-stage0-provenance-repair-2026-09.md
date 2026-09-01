@@ -281,7 +281,14 @@ failing at the pin with this branch's changes stashed).
 `scripts/capture_keeper_goldens.py` is ≥300 lines. It was edited locally with the
 Edit tool, never regenerated from response content, and pushed as exact on-disk
 bytes; the pushed blob was fetched back and compared on line count and SHA-256
-before any subsequent commit. Result recorded in §7.
+before any subsequent commit. **Verified — local == pushed, all three source
+files:**
+
+| file | lines | sha256 (first 16) | blob |
+|---|--:|---|---|
+| `scripts/capture_keeper_goldens.py` | 753 | `c57f0676301365ab` | `99f6b1bd973c` |
+| `scripts/check_golden_manifest.py` | 347 | `37fef5a0d4e8f6cc` | `59d99966f1a0` |
+| `tests/scoring/test_golden_manifest_provenance.py` | 293 | `f3310801641802cd` | `c68e80cf9d83` |
 
 ---
 
