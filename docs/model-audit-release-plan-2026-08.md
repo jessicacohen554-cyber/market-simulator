@@ -4500,3 +4500,116 @@ your branch when done.
       `origin/main` and resolving two append-vs-append calibration-log conflicts
       **keeping BOTH sides byte-exactly** (base prefix and each side's appended
       tail verified byte-identical after resolution).
+- 2026-09-01 — **GATE-(a) REPAIR LANE — owner ruling R-I executed, plus three
+  records repairs. Board v18 DELTA** (not a refresh: this lane re-derived only
+  what its four jobs touch; every other board figure still carries the v17 pin
+  `d44446e0`). Branch `claude/audit-gate-a-repair-12ewmv`, pin
+  **`6c7f82dac015`** (merge of #4485), held stable across two polls — **21
+  commits / 2 merged PRs ahead of the dispatching director's `240e80e4`**, and
+  one of those two PRs overturns a finding this lane was dispatched to record.
+  **ZERO SOLVE**: nothing solved, scored or registered on either dashboard; no
+  keeper shard, `calibration-complete.json`, `holdout-freeze.json` or matrix
+  shard touched (rule 26 — this lane tests no mechanism).
+  **(1) R-I's OWED HALF IS DONE — the outstanding gate-(a) alignment.** v17
+  RECORDED this as F-6 and did not repair it. The **backcast half was verified
+  already-satisfied** first (`build_status.py` implements the partition rollup;
+  `status/ERCOT.js` publishes `determination: CALIBRATED` with
+  `registered_determination: NOT-YET` preserved). All six
+  `isos.<ISO>.gate.a_keeper_marker` rows in `frontend/data/forecast/program-status.json`
+  were then re-derived live from `keepers/<ISO>.json` + `calibration-complete.json`;
+  **the director's derivation is confirmed in all six**, keeper ids included.
+  Four of six cited a stale keeper and were re-keyed (ERCOT ⬅ `234-eastex-identity`,
+  CAISO ⬅ `caiso-220-c1-crosswalk`, MISO ⬅ `miso-191-bexit`, NYISO ⬅
+  `nyiso-159-loss-surface`); **PJM and NEISO were already current and are left
+  byte-identical**. **ONE VERDICT MOVES — ERCOT `fail → PASS` — and it moves on
+  the MARKER, not the re-key**: ERCOT entered `complete` on 2026-08-31
+  (ercot-247), so the stale row's "Absent from the `complete` block" assertion
+  was false at this pin and is withdrawn. Per R-I the repaired row cites **BOTH**
+  determination values, neither replacing the other — the ISO-level partition
+  rollup **CALIBRATED** (ercot-246 ruling, `config_partition`; forward keeper on
+  {2024, 2025} and carve-out `236-swcap-clip-k33` on {2023}) **and** the
+  registered run-level **NOT-YET** at full magnitude (C3a-2023 38.75 vs 64.32
+  $/MWh = −39.7 %, tol ±10 %; C3b-2023 NRMSE 0.730, tol ≤0.20), so a reader
+  comparing the two boards sees *why* they differ rather than a contradiction.
+  **Blast radius**: structural diff = **exactly 16 changed leaves**, all inside
+  the four repaired rows + `gate_a_provenance`; **no ISO's `open` changes**
+  (ERCOT is now (a) PASS · (b) fail · (c) pass · (d) `none`, so `open` stays
+  false; NEISO remains the only `open: true`). **Gate-(a) passers are now
+  {ERCOT, PJM, NEISO} = the full `complete` membership**, restoring
+  four-instrument alignment. `gate_a_provenance` keeps its deliberately-distinct
+  `derived_at_*` field names — re-verified by running
+  `check_forecast_staleness.py`, which still classes the seed **1 stamped,
+  0 scored**. **No CI guard for gate-(a) staleness was added** (dispatch
+  instruction); it stays an open owner item.
+  **(2) THE DUPLICATE R-D MAPS ARE CROSS-REFERENCED, NEITHER WITHDRAWN.** Their
+  five headline figures were re-verified independently and **AGREE exactly** —
+  12.313 GW (= 12.663 − 0.350), 1.442 GW, 8.87 % (= 1.092/12.313, arithmetic
+  checked), 13.77 % naive sum, 0.00 pp. A header was added to each naming the
+  other and which is canonical for which purpose (`DECISION-MAP-…-2026-08-31.md`
+  = the **ruling record**; `MAP-c1-wind-entry-closure-2026-09.md` = the **fuller
+  closure map**). The MAP's header also corrects its own preamble claim to be
+  "the first artifact to carry R-D" — true at its base `54d5772c`, false at this
+  pin — leaving the original in place as the honest record of what that lane
+  could see. **The duplication was a DIRECTOR DISPATCH ERROR, not a lane error.**
+  **(3) THE `ff-verdicts.json` PROVENANCE DEFECT IS TWO, NOT ONE.** All 46 sha
+  references tested, since one instance and twenty are different problems.
+  ⚠️ **Method note: this checkout is a SHALLOW CLONE (256 commits, earliest
+  2026-08-30), so `git cat-file -t` reports 39 of 46 unreachable — an ARTIFACT
+  that must not be quoted.** Re-tested against the **remote**: **2 of 46
+  unreachable; 12 distinct shas, 10 reachable** — `neiso-t3`'s `89dacc4c0343`
+  (the one named in the dispatch) **and `neiso-t3-pre-fc6`'s `271ad606c3fd`, a
+  second instance not in the dispatch**. Both NEISO T3, both `scored_at_sha`,
+  both stamped 2026-08-31 from `neiso-rc-repair` branch commits that never
+  reached `main`; all five `solved_at_sha` are reachable; both determinations
+  (HOLD) unaffected. **Sharper than "unverifiable provenance"**: `89dacc4c0343`
+  is the **newest** scored sha on the gate-evidence class, so
+  `check_forecast_staleness.py` cannot measure distance and reports "Staleness is
+  UNKNOWN, which is not the same as fresh" — one bad stamp blinds the board's
+  freshness reading. Same class as the stage-0 manifest's `af1ccb6`. **No sha
+  fabricated, nothing re-scored.** Recorded as an open owner item.
+  **(4) THE CASCADE RULE IS RECORDED — AND ITS NEGATIVE FINDING IS OVERTURNED.**
+  The rule stands, stated on **provenance** rather than on the word "nested":
+  summing the **shadow prices of distinct nested constraints** is CORRECT (what
+  `results/rcpf.py` does to build a cumulative posted price); summing
+  **published cumulative product prices** is WRONG — **a nested reserve cascade
+  must be MAXED, never SUMMED**. **But the dispatch's framing — "a generalizable
+  trap with no evidenced exposure in the other five ISOs at this pin" — DOES NOT
+  SURVIVE**, and recording it would have put a false negative on the board. PR
+  **#4485** (`nyiso-165`), merged into this pin **after** the director's
+  `240e80e4`, ran the scan empirically rather than by inspection and found a
+  **live MISO instance**, verified independently here:
+  `scripts/probes/_miso171_reserve_product_decomposition.py:205–206` sums
+  published `GENREGMCP + GENSPINMCP + GENSUPPMCP` (cascade monotone in
+  **100.0000 %** of rows, every year, both markets); re-derived from the
+  committed `results/calibration/_miso171_reserve_product_decomposition.json`,
+  **12 summed cells at `total/reg` 1.22×–2.49×**, with the finding's two quoted
+  cells reproducing exactly ($181.40 vs $76.88 = 2.36×; $97.62 vs $46.44 =
+  2.10×). Mitigations confirmed: per-product fields recorded alongside and
+  correct, and **no prose cites a summed figure** — ⚠️ a `docs/` grep for
+  `regspin` returns hits that are the model-side `miso_rbdc_regspin` *mechanism*
+  family, **a name collision, not exposure**. PJM/NEISO/CAISO/ERCOT cleared with
+  evidence. **The director's negative finding was right about four of five ISOs
+  and wrong about MISO — the difference is that #4485 measured the data where
+  the director inspected the code.** **Nothing repaired**: rule 25
+  `[R-ISO-SCOPE]`, a NYISO verdict never fills MISO's cell; no intake touched, no
+  cross-ISO audit opened — routed to **MISO's lane / the calibration desk**.
+  **(5) THREE DIRECTOR-DESK DEFECTS recorded on the board (D-5).** (a) **A NEW
+  FAILURE SHAPE, "LANDED BUT INCOMPLETE"** — the v17 records lane launched,
+  landed, wrote a correct finding (F-6) and silently omitted the repair it was
+  dispatched to make, which passes every *never-launched* check the refresh
+  protocol runs; **the dispatch-vs-launch check must now diff each lane's JOBS
+  against its ARTIFACTS**, not merely confirm a branch merged. (b) The duplicate
+  R-D dispatch, **attributed to the director** — same root cause read from the
+  other end: the dispatch ledger did not reflect work already landed. (c) The
+  director's own derivation bug — **a `null` frontier read as ACTIVE via `or {}`**,
+  which nearly reported CAISO and MISO as gaining frontier status; caught before
+  publication, active frontier set was and remains {ERCOT, NEISO, PJM}. Recorded
+  because a derivation that fails **open** on a governance object turns "declared
+  absent" into "not declared", which are opposite facts.
+  **Rule 27 `[R-PUSH]` honoured on every ≥300-line file**: `program-status.json`
+  (938 lines), the two R-D maps (290 / 525) and the board and plan were edited
+  locally with the Edit tool, pushed as exact on-disk bytes, and **blob-verified
+  after each push** (fetch-back content compare + `git hash-object` vs the remote
+  blob sha + empty remote-vs-local tree diff). `program-status.json` was edited
+  through a round-trip proved **byte-identical** on the unchanged file
+  (`json.dumps(indent=1)`), so every untouched block is guaranteed unmoved.
