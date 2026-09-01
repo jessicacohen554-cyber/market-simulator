@@ -1,0 +1,305 @@
+{
+ "what": "D28 Phase-0 evidence extract: scripts/validate_capacity_prices.py Pass-2 (model-ledger reserve positions -> HEAD curve price vs published clearing) run read-only on committed bundles. ZERO solves - committed-code arithmetic on committed inputs (the D17 K2 class).",
+ "head": "3c1f9642",
+ "invocations": [
+  "PYTHONPATH=src python3 -m scripts.validate_capacity_prices --pass2-run MISO=miso-2021-2025-realized-cmc-probe --pass2-run NEISO=neiso-2023-2027-crossover-rcrepair --pass2-adopted-basis --out <scratchpad>/validation-d28-adopted.json",
+  "PYTHONPATH=src python3 -m scripts.validate_capacity_prices --pass2-run MISO=miso-2021-2025-realized-cmc-probe --out <scratchpad>/validation-d28-restated.json  # MISO bracket: identical rows under both bases"
+ ],
+ "pass2_bundles": {
+  "MISO": "results/hindcast/miso-2021-2025-realized-cmc-probe (solved 2026-07-16; ledger firm EXCLUDES the S-2 +3,505.9 MW external tie, so positions are ~2.9 pts CONSERVATIVE vs a HEAD solve)",
+  "NEISO": "results/hindcast/neiso-2023-2027-crossover-rcrepair (solved 2026-08-31, the NEISO-RC-R treatment)",
+  "PJM": "results/hindcast/pjm-2021-2025-realized (script default, solved 2026-07-05; restated on the adopted basis by the instrument)"
+ },
+ "pass2": {
+  "MISO": [
+   {
+    "iso": "MISO",
+    "calendar_year": 2021,
+    "delivery_year": "2021/2022",
+    "locked": false,
+    "peak_demand_mw": 114226.0,
+    "firm_mw": 142456.8,
+    "requirement_mw": 115042.2,
+    "reserve_position": 1.2383,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": null,
+    "cleared_native": null,
+    "native_unit": null,
+    "residual_kw_yr": null,
+    "pct_error": null
+   },
+   {
+    "iso": "MISO",
+    "calendar_year": 2023,
+    "delivery_year": "2023/2024",
+    "locked": false,
+    "peak_demand_mw": 120781.0,
+    "firm_mw": 137774.9,
+    "requirement_mw": 121644.0,
+    "reserve_position": 1.1326,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": 3.65,
+    "cleared_native": 10.0,
+    "native_unit": "usd_per_mw_day",
+    "residual_kw_yr": -3.65,
+    "pct_error": -100.0
+   },
+   {
+    "iso": "MISO",
+    "calendar_year": 2024,
+    "delivery_year": "2024/2025",
+    "locked": false,
+    "peak_demand_mw": 121560.0,
+    "firm_mw": 134984.6,
+    "requirement_mw": 122428.6,
+    "reserve_position": 1.1026,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": 10.95,
+    "cleared_native": 30.0,
+    "native_unit": "usd_per_mw_day",
+    "residual_kw_yr": -10.95,
+    "pct_error": -100.0
+   },
+   {
+    "iso": "MISO",
+    "calendar_year": 2025,
+    "delivery_year": "2025/2026",
+    "locked": false,
+    "peak_demand_mw": 118661.0,
+    "firm_mw": 134994.0,
+    "requirement_mw": 119508.8,
+    "reserve_position": 1.1296,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": 243.273,
+    "cleared_native": 666.5,
+    "native_unit": "usd_per_mw_day",
+    "residual_kw_yr": -243.273,
+    "pct_error": -100.0
+   }
+  ],
+  "NEISO": [
+   {
+    "iso": "NEISO",
+    "calendar_year": 2023,
+    "delivery_year": "2023/2024",
+    "locked": false,
+    "peak_demand_mw": 23475.0,
+    "firm_mw": 30409.9,
+    "requirement_mw": 24146.5,
+    "reserve_position": 1.2594,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": 24.012,
+    "cleared_native": 2.001,
+    "native_unit": "usd_per_kw_month",
+    "residual_kw_yr": -24.012,
+    "pct_error": -100.0
+   },
+   {
+    "iso": "NEISO",
+    "calendar_year": 2024,
+    "delivery_year": "2024/2025",
+    "locked": false,
+    "peak_demand_mw": 24255.0,
+    "firm_mw": 27532.2,
+    "requirement_mw": 24948.9,
+    "reserve_position": 1.1035,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": null,
+    "cleared_native": null,
+    "native_unit": null,
+    "residual_kw_yr": null,
+    "pct_error": null
+   },
+   {
+    "iso": "NEISO",
+    "calendar_year": 2025,
+    "delivery_year": "2025/2026",
+    "locked": false,
+    "peak_demand_mw": 25898.0,
+    "firm_mw": 26775.0,
+    "requirement_mw": 26638.9,
+    "reserve_position": 1.0051,
+    "model_price_kw_yr": 81.192,
+    "cleared_kw_yr": null,
+    "cleared_native": null,
+    "native_unit": null,
+    "residual_kw_yr": null,
+    "pct_error": null
+   },
+   {
+    "iso": "NEISO",
+    "calendar_year": 2026,
+    "delivery_year": "2026/2027",
+    "locked": true,
+    "peak_demand_mw": 26234.7,
+    "firm_mw": 28308.4,
+    "requirement_mw": 26985.2,
+    "reserve_position": 1.049,
+    "model_price_kw_yr": 15.108,
+    "cleared_kw_yr": 31.08,
+    "cleared_native": 2.59,
+    "native_unit": "usd_per_kw_month",
+    "residual_kw_yr": -15.972,
+    "pct_error": -51.4
+   },
+   {
+    "iso": "NEISO",
+    "calendar_year": 2027,
+    "delivery_year": "2027/2028",
+    "locked": true,
+    "peak_demand_mw": 26575.7,
+    "firm_mw": 30019.2,
+    "requirement_mw": 27336.0,
+    "reserve_position": 1.0982,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": null,
+    "cleared_native": null,
+    "native_unit": null,
+    "residual_kw_yr": null,
+    "pct_error": null
+   }
+  ],
+  "PJM": [
+   {
+    "iso": "PJM",
+    "calendar_year": 2021,
+    "delivery_year": "2021/2022",
+    "locked": false,
+    "peak_demand_mw": 149590.0,
+    "firm_mw": 148825.1,
+    "requirement_mw": 130295.4,
+    "reserve_position": 1.1422,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": 51.1,
+    "cleared_native": 140.0,
+    "native_unit": "usd_per_mw_day",
+    "residual_kw_yr": -51.1,
+    "pct_error": -100.0
+   },
+   {
+    "iso": "PJM",
+    "calendar_year": 2023,
+    "delivery_year": "2023/2024",
+    "locked": false,
+    "peak_demand_mw": 147605.0,
+    "firm_mw": 153805.2,
+    "requirement_mw": 128566.4,
+    "reserve_position": 1.1963,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": 12.457,
+    "cleared_native": 34.13,
+    "native_unit": "usd_per_mw_day",
+    "residual_kw_yr": -12.457,
+    "pct_error": -100.0
+   },
+   {
+    "iso": "PJM",
+    "calendar_year": 2024,
+    "delivery_year": "2024/2025",
+    "locked": false,
+    "peak_demand_mw": 153121.0,
+    "firm_mw": 157815.3,
+    "requirement_mw": 133370.9,
+    "reserve_position": 1.1833,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": 10.556,
+    "cleared_native": 28.92,
+    "native_unit": "usd_per_mw_day",
+    "residual_kw_yr": -10.556,
+    "pct_error": -100.0
+   },
+   {
+    "iso": "PJM",
+    "calendar_year": 2025,
+    "delivery_year": "2025/2026",
+    "locked": false,
+    "peak_demand_mw": 160560.0,
+    "firm_mw": 159134.3,
+    "requirement_mw": 144631.8,
+    "reserve_position": 1.1003,
+    "model_price_kw_yr": 0.0,
+    "cleared_kw_yr": 98.521,
+    "cleared_native": 269.92,
+    "native_unit": "usd_per_mw_day",
+    "residual_kw_yr": -98.521,
+    "pct_error": -100.0
+   }
+  ],
+  "NYISO": []
+ },
+ "pass2_miso_restated_identical": true,
+ "miso_seasonal_pass1": {
+  "delivery_year": "2025/2026",
+  "locked": false,
+  "daily_net_cone_mw_day": 218.63013698630138,
+  "seasons": [
+   {
+    "season": "summer",
+    "days": 92,
+    "cleared_mw_day": 666.5,
+    "annualized_if_all_year_kw_yr": 243.2725,
+    "gross_cone_cap_mw_day": 1384.36,
+    "model_cap_frac": 6.331972431077693,
+    "implied_reserve_position": 0.9884740913682392,
+    "model_price_mw_day": 666.4999999999998,
+    "contribution_mw_yr": 61318.0
+   },
+   {
+    "season": "fall",
+    "days": 91,
+    "cleared_mw_day": 91.6,
+    "annualized_if_all_year_kw_yr": 33.434,
+    "gross_cone_cap_mw_day": 1399.58,
+    "model_cap_frac": 6.401587719298245,
+    "implied_reserve_position": 1.0290513784461153,
+    "model_price_mw_day": 91.6000000000002,
+    "contribution_mw_yr": 8335.6
+   },
+   {
+    "season": "winter",
+    "days": 90,
+    "cleared_mw_day": 33.2,
+    "annualized_if_all_year_kw_yr": 12.118000000000002,
+    "gross_cone_cap_mw_day": 1415.13,
+    "model_cap_frac": 6.472712406015038,
+    "implied_reserve_position": 1.0424072681704262,
+    "model_price_mw_day": 33.19999999999971,
+    "contribution_mw_yr": 2988.0000000000005
+   },
+   {
+    "season": "spring",
+    "days": 92,
+    "cleared_mw_day": 69.88,
+    "annualized_if_all_year_kw_yr": 25.506199999999996,
+    "gross_cone_cap_mw_day": 1384.36,
+    "model_cap_frac": 6.331972431077693,
+    "implied_reserve_position": 1.0340186716791981,
+    "model_price_mw_day": 69.87999999999948,
+    "contribution_mw_yr": 6428.959999999999
+   }
+  ],
+  "annual_capacity_revenue_mw_yr": 79070.56,
+  "published_net_cone_mw_yr": 79800.0,
+  "pct_error": -0.9140852130325844
+ },
+ "miso_seasonal_spread": {
+  "2025/2026": {
+   "summer": 243.2725,
+   "fall": 33.434,
+   "winter": 12.118000000000002,
+   "spring": 25.506199999999996
+  },
+  "2024/2025": {
+   "summer": 10.95,
+   "fall": 5.475,
+   "winter": 0.27375,
+   "spring": 12.4465
+  },
+  "2023/2024": {
+   "summer": 3.65,
+   "fall": 21.61165,
+   "winter": 6.8911999999999995,
+   "spring": 3.65
+  }
+ }
+}
