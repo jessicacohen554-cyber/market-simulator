@@ -147,13 +147,26 @@ warnings whose message names `from_yaml`, with a comment recording why. The othe
 stricter warning test in the same class is untouched (its fixture is ERCOT, whose base
 is 0.0/t, so the guard is correctly silent there).
 
-**Regression sweep.** `tests/unit/config` + `tests/unit/policy` +
-`tests/unit/data/test_fuel.py` + `tests/regression/test_scenarios_facade.py` +
-`tests/unit/results/test_cache_config_agreement.py`: **978 passed, 8 failed** — and the
-8 are the **identical set** that fails at `origin/main` with this branch stashed
-(per-ISO cache-key pin tests, plus `test_constants_facade::test_moved_surface_is_complete`
-in `tests/regression`). D34 introduces no new failure. `ruff check` and
-`ruff format --check` pass on all four touched files.
+**Regression sweep — D34 introduces ZERO new failures, established by an A/B on the
+same tree.** The full `tests/unit` + `tests/scoring` + `tests/regression` suite runs
+**5,548 passed / 79 failed / 35 skipped / 2 xfailed** (10m42s) at HEAD+D34. Those 79
+were then re-run as an explicit A/B: the four changed files reverted to `HEAD~1`
+(pre-D34) and re-run over the identical node-id list, ordering and working tree, then
+restored and re-run. **Both arms produce 39 failed / 40 passed, and the two FAILED sets
+are byte-identical** (`comm -13` and `comm -23` both empty). So no failure in the suite
+is attributable to D34.
+
+The 79 decompose into two pre-existing classes, neither touched by this change: (a)
+**~19 cache-key *pin* tests** — `test_default_cache_key_is_unmoved` and relatives across
+`config/`, `data/`, `model/`, `pipeline/`, plus `test_persisted_identity`; they fail at
+`origin/main` too, and D34's own measurement independently confirms the six per-ISO
+default keys are unmoved (§1). (b) **~45 LP smoke / soundness / integration / export /
+scoring tests** which need `data/raw` — this session ran `DATA PROFILE: code` and
+deliberately did not hydrate it. Class (b) is also order- and cache-dependent: 40 of the
+79 PASS when run as a targeted subset and fail in the full-suite ordering, **identically
+in both arms**. `ruff check` and `ruff format --check` pass on all four touched files
+(the tree at large carries 5 pre-existing `ruff check` errors and 46 unformatted files,
+none of them ours).
 
 ## 6. R4 is CLOSED — do not re-open it
 
