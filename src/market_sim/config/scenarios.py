@@ -13840,6 +13840,28 @@ class ScenarioConfig:
                 f"{self.carbon_price_delta!r}"
             )
 
+        # capx-D34, owner ruling Q26: `carbon_price` KEEPS its documented
+        # replace semantics (precedence (1) of policy.carbon.
+        # resolve_carbon_price) — no field, no default move, no resolver
+        # change — and gains this LOUD validation warning instead. The trap
+        # it closes is the D23 premise inversion: `carbon_price=25` on an ISO
+        # whose base already carries the projected RGGI escalator ($26.05/t
+        # in 2026 → $132.16/t in 2050) is a carbon-price CUT in every horizon
+        # year, so the "carbon" arm measured the premise of its own pair
+        # (docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md §2).
+        # A WARNING, never an error: a deliberate below-base study stays
+        # legal, it just can no longer be silent. The guard OBSERVES the
+        # resolution and never alters it; backcast mode is untouched. Import
+        # deferred (policy.carbon imports this module) and reached only on
+        # the rare nonzero-override path, so every other construction pays
+        # nothing.
+        if self.mode == "forecast" and self.carbon_price:
+            from market_sim.policy.carbon import carbon_price_below_base_warning
+
+            _below_base_msg = carbon_price_below_base_warning(self)
+            if _below_base_msg is not None:
+                warnings.warn(_below_base_msg, RuntimeWarning, stacklevel=2)
+
         # The national-CES federal EAC premium is a forecast-only policy
         # lever (national-ces-eac-premium-plan §5.1); rule 13 forbids it ever
         # becoming a backcast tuning channel that lifts clean-resource

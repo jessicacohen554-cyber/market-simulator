@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from market_sim.config.constants import (
     CARBON_PRICE_PATHS,
+    END_YEAR,
+    START_YEAR,
     STATE_CARBON_PRICE_BY_ISO,
 )
 from market_sim.config.scenarios import ScenarioConfig
@@ -92,7 +94,32 @@ def _base_carbon_price(config: ScenarioConfig, year: int) -> float:
     additive ``carbon_price_delta`` stage (see its docstring for the order)."""
     if config.carbon_price != 0:
         return float(config.carbon_price)
+    return resolved_base_trajectory_price(config, year)
 
+
+def resolved_base_trajectory_price(config: ScenarioConfig, year: int) -> float:
+    """The carbon price that would resolve with ``carbon_price`` UNSET.
+
+    Precedence stages (2) and (3) of :func:`resolve_carbon_price` — the
+    cap-and-trade program adder (measured in a backcast, projected in a
+    forecast) and then the :data:`CARBON_PRICE_PATHS` fallback — evaluated
+    without stage (1)'s scenario override and without the additive
+    ``carbon_price_delta``. This is the *base trajectory* a nonzero
+    ``config.carbon_price`` REPLACES, so it is what
+    :func:`carbon_price_below_base_warning` compares an override against.
+
+    Pure extraction from :func:`_base_carbon_price` (capx-D34): the resolver's
+    returned values are unchanged on every path, for every config.
+
+    Args:
+        config: Scenario config supplying ``iso``, ``mode`` and the carbon
+            toggles. ``config.carbon_price`` is deliberately NOT read.
+        year: Simulation year.
+
+    Returns:
+        The base-trajectory carbon price in $/tCO2 (0.0 when neither a program
+        adder nor a configured path applies).
+    """
     # Program adder (measured backcast / projected forecast). Import here to
     # avoid a circular import at module load (cap_and_trade imports scenarios).
     from market_sim.policy.cap_and_trade import resolve_carbon_program
@@ -116,3 +143,105 @@ def _base_carbon_price(config: ScenarioConfig, year: int) -> float:
             frac = (year - lo) / (hi - lo)
             return float(path[lo] + frac * (path[hi] - path[lo]))
     return float(path[knots[-1]])
+
+
+#: The verbatim remedy sentence carried by every below-base warning. Split out
+#: so the guard, its tests and the D34 finding quote ONE string (capx-D34).
+CARBON_PRICE_BELOW_BASE_REMEDY = (
+    "a replace below the base trajectory REDUCES the carbon signal "
+    "— for an increment use carbon_price_delta"
+)
+
+
+def _format_year_runs(years: list[int]) -> str:
+    """Render a sorted year list compactly, collapsing contiguous runs.
+
+    ``[2026, 2027, 2028, 2040]`` renders as ``"2026-2028, 2040"`` so a
+    full-horizon hit reads as one span instead of 25 comma-separated years.
+
+    Args:
+        years: Sorted, de-duplicated simulation years.
+
+    Returns:
+        The compact human-readable rendering ("" for an empty list).
+    """
+    runs: list[tuple[int, int]] = []
+    for year in years:
+        if runs and year == runs[-1][1] + 1:
+            runs[-1] = (runs[-1][0], year)
+        else:
+            runs.append((year, year))
+    return ", ".join(str(lo) if lo == hi else f"{lo}-{hi}" for lo, hi in runs)
+
+
+def carbon_price_below_base_warning(config: ScenarioConfig) -> str | None:
+    """Warn when a forecast ``carbon_price`` override sits BELOW the base.
+
+    Owner ruling Q26 (capx-D34): ``ScenarioConfig.carbon_price`` KEEPS its
+    documented replace semantics — precedence (1) of
+    :func:`resolve_carbon_price` — and gains this loud validation warning
+    instead. The trap it closes is the D23 premise inversion
+    (``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md`` §2): the
+    ``carbon25`` arm set ``carbon_price=25`` on NEISO, whose base already
+    carries the projected RGGI trajectory ($26.05/t in 2026 escalating at the
+    published 7 %/yr CCR rate to $132.16/t by 2050), so a "carbon price
+    increase" silently CUT the carbon signal in every horizon year and the
+    paired experiment measured the premise of its own pair.
+
+    This function OBSERVES only — it never alters a resolved price, and it
+    returns a message rather than raising, because a deliberate below-base
+    study stays legal (Q26 verbatim: guard, not semantics change). It just
+    cannot be silent any more. The remedy it points at is the additive
+    ``carbon_price_delta`` (capx-D26), which shifts the resolved trajectory
+    uniformly and so is a strictly positive increment by construction.
+
+    Silent (returns ``None``) when: ``mode != "forecast"`` (backcast is
+    untouched — a backcast's measured overlays are a different question);
+    ``carbon_price`` is unset/zero (no replacement is happening); or the
+    override is at or above the base trajectory in every horizon year.
+
+    Args:
+        config: The scenario config being validated. The horizon is
+            ``start_year``/``end_year`` when set, else the module defaults
+            :data:`START_YEAR`/:data:`END_YEAR` — the same resolution
+            ``runner.run_full_horizon`` applies.
+
+    Returns:
+        The warning message, or ``None`` when the guard does not fire.
+    """
+    if config.mode != "forecast":
+        return None
+    override = float(config.carbon_price or 0.0)
+    if override == 0.0:
+        return None
+
+    start = config.start_year if config.start_year is not None else START_YEAR
+    end = config.end_year if config.end_year is not None else END_YEAR
+    span = range(int(start), int(end) + 1)
+    if not span:
+        return None
+
+    below = [
+        (year, base)
+        for year in span
+        if (base := resolved_base_trajectory_price(config, year)) > override
+    ]
+    if not below:
+        return None
+
+    worst_year, worst_base = max(below, key=lambda row: row[1] - override)
+    gap = worst_base - override
+    return (
+        f"ScenarioConfig.carbon_price={override:g} is BELOW the {config.iso} "
+        f"base carbon trajectory in {len(below)} of {len(span)} horizon "
+        f"year(s): {_format_year_runs([y for y, _ in below])}. A nonzero "
+        "carbon_price REPLACES the resolved trajectory (documented precedence "
+        "(1)), it does not add to it. Widest gap in "
+        f"{worst_year}: base ${worst_base:,.2f}/tCO2 vs carbon_price "
+        f"${override:,.2f}/tCO2 (a ${gap:,.2f}/tCO2 CUT). This is the D23 "
+        "premise inversion (the FC-6 P1 'carbon price increase' that cut "
+        f"carbon in every horizon year): {CARBON_PRICE_BELOW_BASE_REMEDY}. Set "
+        "carbon_price=0.0 and carbon_price_delta to the increment you want "
+        "on top of the base trajectory, or keep this replacement if a "
+        "below-base carbon signal is the study you intend."
+    )

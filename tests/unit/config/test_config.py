@@ -105,8 +105,19 @@ class TestScenarioConfig(unittest.TestCase):
                 loaded = ScenarioConfig.from_yaml(path)
 
         self.assertEqual(config, loaded)
+        # Scoped to the LOADER's own warning: this config also trips the
+        # capx-D34 below-base carbon guard (CAISO's flat $42/t override sits
+        # under the projected CARB trajectory in the later horizon years),
+        # which is a separate, legitimate signal about the config's economics
+        # rather than about the fidelity of the reload.
         self.assertEqual(
-            [w for w in caught if issubclass(w.category, RuntimeWarning)], []
+            [
+                w
+                for w in caught
+                if issubclass(w.category, RuntimeWarning)
+                and "from_yaml" in str(w.message)
+            ],
+            [],
         )
 
     def test_to_yaml_only_writes_non_defaults(self):
