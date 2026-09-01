@@ -14,7 +14,10 @@ execute it without re-deciding anything, and so its predictions are on record be
 reserve requirement may be backed by the headroom of capacity that is **not synchronised**. In the
 47 actual summer-2025 RT>$200 hours the model meets a 5.21 GW requirement while CT_PEAKER carries
 8.23 GW of idle (45.2 % of available) capacity, and the reserve dual sits at $10.71 against MISO's
-own published ASM MCP of $484.87.
+own published ASM MCP of $484.87. *[Corrected 2026-09-01, xiso-cascade: $484.87 sums a nested
+cumulative cascade; the published price a reserve MW earns is the cascade top, $193.30. Evidence
+context only — every §3/§6 gate below is MW- or criterion-based and none derives from this figure,
+so the pre-registration stands as written. `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.]*
 
 **Falsifiable claim:** the model's reserve constraint is dormant in MISO's tight hours *because*
 reserve supply is unrestricted, not because MISO's system was comfortable. Restricting supply to

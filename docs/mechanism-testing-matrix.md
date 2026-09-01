@@ -6618,7 +6618,13 @@ loss.
 >
 > **WHAT IT IS.** In the 47 hours, MISO's OWN published RT ASM MCP is **$484.87** against an
 > energy gap of **$408.24 — 118.8 % of it** (2023 120.9 %; 2024 the honest exception at 19.2 %),
-> while the model's reserve dual is **$10.71**. Root cause located at a named code site:
+> while the model's reserve dual is **$10.71**. *[Corrected 2026-09-01, xiso-cascade, rule 14:
+> $484.87 SUMS the nested cumulative cascade (`GENREGMCP ≥ GENSPINMCP ≥ GENSUPPMCP`, 100.0000 %
+> of committed cells); the published price a reserve MW earns is the cascade top — **$193.30 =
+> 47.3 % of the gap** (2023 48.4 %, 2024 10.5 %): roughly half the gap, not all of it. The
+> structural root cause below and every gate/adjudication in this cell narrative are MW- or
+> criterion-based and stand; `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.]* Root cause located
+> at a named code site:
 > **`model/reserves/spec.py::_miso_design` never sets `online_gated`**, so MISO's reserve
 > requirement may be backed by UNSYNCHRONISED capacity — the nyiso-83 idle-allowed-headroom
 > misrepresentation, whose fix (`nyiso_spin_reserve_online`) and whose ISO-agnostic LP machinery

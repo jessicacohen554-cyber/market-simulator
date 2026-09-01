@@ -187,6 +187,29 @@ instrument's −1 h CST alignment. The PRODUCT SHARES — the object here — ar
 robust to the alignment: reg+spin 70.7–72.9 %, supp 27.1–29.3 % at every
 shift tested.)
 
+> **[CORRECTED 2026-09-01 — xiso-cascade, rule 14 `[R-ACCURATE]`.]** The "$222.37
+> RT total", the "DA total" column, and the shares just quoted all treat the SUM
+> of the three posted MCPs as "the published reserve price". The products are a
+> nested CUMULATIVE cascade (`GENREGMCP ≥ GENSPINMCP ≥ GENSUPPMCP`, 100.0000 % of
+> committed cells): the price a reserve MW earns is the cascade TOP — **$93.14**
+> in the 47 hours on this alignment (DA-foreseen $131.56, DA side $31.08/$39.93)
+> — and the sum is not a price any MW earns. On the corrected basis the share
+> emphasis INVERTS: the supplemental-LEVEL content (`GENSUPPMCP`, earnable by
+> offline quick-start) is **$63.54 = 68.2 %** of the published price, and the
+> synchronised-ONLY increment (top − supp, the part only reg/spin resources can
+> earn — the phenomenon a sync gate targets) is **$29.60 = 31.8 %** — not the
+> "~71 % synchronised / ~29 % supplemental" split below, which was a share OF THE
+> SUM. The first §5 consequence therefore reads corrected: the sync-only
+> increment, not ~71 % of the price, is the gate's target; and the DA comparison
+> flips sign — the armed gate's DA-foreseen regspin dual $25.81 sits ABOVE the
+> measured DA sync-only increment ($39.93 − $20.50 = **$19.43**), i.e. right
+> order but no longer "conservative". The MW-side requirement split (58.2 %
+> reg+spin / 41.8 % supp) and every H_on/inertness measurement are UNTOUCHED —
+> cleared MW of distinct products genuinely add; only the price aggregation was
+> wrong. `scripts/probes/_xiso1_miso_asm_cascade_check.py`; stage-4 instrument
+> corrected (`cascade_price_stats`), record carries a dated CORRECTION key;
+> `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.
+
 Three consequences:
 
 * **~71 % of MISO's published scarce-hour reserve price sits on the
