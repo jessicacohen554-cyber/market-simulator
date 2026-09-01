@@ -1,0 +1,119 @@
+{
+ "method": {
+  "cap_pctl": 98.0,
+  "scarcity_pctl": 99.9,
+  "cv_max": 0.2,
+  "loyo_max": 0.25,
+  "round_mw": 5.0,
+  "precedent": "scripts/data/derive_neiso_import_tranches.py"
+ },
+ "per_year": {
+  "2023": {
+   "PNW_midC": 1770.0,
+   "DSW_CCGT": 2375.0,
+   "DSW_CT": 2375.0,
+   "WECC_scarcity": 785.0
+  },
+  "2024": {
+   "PNW_midC": 1010.0,
+   "DSW_CCGT": 2275.0,
+   "DSW_CT": 2275.0,
+   "WECC_scarcity": 180.0
+  },
+  "2025": {
+   "PNW_midC": 1145.0,
+   "DSW_CCGT": 2420.0,
+   "DSW_CT": 2420.0,
+   "WECC_scarcity": 1080.0
+  }
+ },
+ "pooled": {
+  "PNW_midC": 1300.0,
+  "DSW_CCGT": 2380.0,
+  "DSW_CT": 2380.0,
+  "WECC_scarcity": 1000.0
+ },
+ "incumbent_2025": {
+  "PNW_midC": 1800.0,
+  "DSW_CCGT": 1800.0,
+  "DSW_CT": 2200.0,
+  "WECC_scarcity": 3000.0
+ },
+ "diagnostics": {
+  "2023": {
+   "WECC_PNW_p98": 2841.0,
+   "WECC_PNW_firm": 1072.0,
+   "WECC_DSW_p98": 6000.52001953125,
+   "WECC_DSW_firm": 1251.0,
+   "total_p99.9": 9630.017578125,
+   "routine_sum": 8843.0
+  },
+  "2024": {
+   "WECC_PNW_p98": 2565.840087890625,
+   "WECC_PNW_firm": 1558.0,
+   "WECC_DSW_p98": 6364.68017578125,
+   "WECC_DSW_firm": 1813.0,
+   "total_p99.9": 9111.666015625,
+   "routine_sum": 8931.0
+  },
+  "2025": {
+   "WECC_PNW_p98": 2713.0,
+   "WECC_PNW_firm": 1566.0,
+   "WECC_DSW_p98": 6645.83984375,
+   "WECC_DSW_firm": 1805.0,
+   "total_p99.9": 10434.921875,
+   "routine_sum": 9356.0
+  },
+  "pooled": {
+   "WECC_PNW_p98": 2698.0,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_DSW_p98": 6382.47998046875,
+   "WECC_DSW_firm": 1623.0,
+   "total_p99.9": 10083.9599609375,
+   "routine_sum": 9081.666666666668
+  }
+ },
+ "gates": {
+  "cv": {
+   "PNW_midC": 0.25304506824706313,
+   "DSW_CCGT": 0.025713803341863996,
+   "DSW_CT": 0.025713803341863996,
+   "WECC_scarcity": 0.5495623339120513
+  },
+  "year_stability": false,
+  "loyo": {
+   "2023": {
+    "worst": 0.4012738853503185,
+    "worst_rung": "WECC_scarcity",
+    "errors": {
+     "PNW_midC": 0.3870056497175141,
+     "DSW_CCGT": 0.014736842105263158,
+     "DSW_CT": 0.014736842105263158,
+     "WECC_scarcity": 0.4012738853503185
+    }
+   },
+   "2024": {
+    "worst": 4.916666666666667,
+    "worst_rung": "WECC_scarcity",
+    "errors": {
+     "PNW_midC": 0.45544554455445546,
+     "DSW_CCGT": 0.06813186813186813,
+     "DSW_CT": 0.06813186813186813,
+     "WECC_scarcity": 4.916666666666667
+    }
+   },
+   "2025": {
+    "worst": 0.5787037037037037,
+    "worst_rung": "WECC_scarcity",
+    "errors": {
+     "PNW_midC": 0.1965065502183406,
+     "DSW_CCGT": 0.028925619834710745,
+     "DSW_CT": 0.028925619834710745,
+     "WECC_scarcity": 0.5787037037037037
+    }
+   }
+  },
+  "loyo_ok": false,
+  "verdict": "FAIL"
+ }
+}
