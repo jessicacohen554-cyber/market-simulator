@@ -8,7 +8,15 @@ model instead of the premise of its own pair, then re-score `neiso-t3`'s FC-6 un
 cross-lane re-grade rule (control-first; STOP if anything beyond neiso-t3's FC-6 rows
 would flip).
 
-**Headline: TBD-HEADLINE**
+**Headline: the repaired experiment PASSES P1 — under a genuine +$25/t increase over the
+resolved RGGI trajectory, cumulative 2026–2050 CO2 FALLS 210.52 → 174.96 Mt (−16.9 %),
+prices rise in every year, and CCS retrofits rise. D21's FC-6 P1 FAIL does not survive
+the repaired instrument, exactly as D23's attribution predicted: the model's carbon
+response has the correct sign in every channel; the FAIL was the arm construction.**
+`neiso-t3`'s FC-6 re-scores FAIL → CAVEAT (the surviving CAVEAT is the UNTOUCHED
+vacuous-T1.6 battery finding), the determination stays HOLD on FC-1/2/3/4/7, and the
+cross-lane re-grade audit confirms nothing beyond neiso-t3's FC-6 rows moved. Published:
+prior verdict preserved at `neiso-t3-pre-fc6repair`.
 
 ---
 
@@ -157,16 +165,61 @@ interchange seam all byte-inert under `carbon_price_delta=0.0` — and simultane
 the end-to-end proof of the vintage data environment (§3). The arm solve was gated
 on this check passing (control-first, sequential).
 
-**(c) The repaired arm.** TBD-ARM — carbon_plus25 outcome, wall/RSS, headline
-trajectory numbers.
+**(c) The repaired arm** (`carbon_plus25`, key `7784d408fc955785`, 31.1 min / 2.93 GB,
+25/25 years, no error; committed at `fc6/arms/carbon_plus25/`). Against the
+reproduced-golden base, the +$25/t world shows the textbook response in every channel
+at once:
+
+- **CO2 falls, in every era.** Cumulative 210.52 → 174.96 Mt (−35.55 Mt, −16.9 %).
+  Same-fleet dispatch era: 2026 16.32 → 13.60 Mt (the mirror image of the broken arm's
+  +0.21 Mt rise — a −$1/t cut made 2026 dirtier; +$25/t makes it much cleaner).
+  Mid-horizon: 2035 10.27 → 5.91 Mt. Late: 2050 3.21 → 3.18 Mt (both fleets nearly
+  fully abated by then).
+- **Prices rise, in every year** — LW price +$3.4 to +$10.2/MWh (2026: 52.13 → 62.28;
+  2040: 70.53 → 75.51) — impossible under the broken arm, whose "carbon" world was
+  CHEAPER every year.
+- **The CCS screen responds with MORE abatement**: 11,742 vs 11,539 MW by 2032, 13,251
+  vs 13,049 by 2040, 15,251 vs 15,049 by 2050 (unabated CC reaches zero in both worlds
+  by 2040 — the base's own escalator already drives full conversion; the +$25 arm gets
+  there with ~200 MW more CCS capacity throughout). D21's "~3 GW less CCS because of
+  the carbon price" is gone with the premise that manufactured it.
 
 ## 5. The re-scored P1 and FC-6
 
-TBD-RESCORE — new paired_invariants.json construction (P1 + premise from the new pair;
-P2/P3 carried verbatim from D21's committed rows — their arms and construction are
-untouched by the carbon repair and their solve caches are not re-derivable from the
-committed summaries), score_fc6 outcome, verdict diff vs committed (re-grade rule
-audit), ff-verdicts/program-status updates.
+**The new `fc6/paired_invariants.json`** (replaced in place, the D21 precedent) is
+[P1, P1.premise, P2, P3]: P1 + the premise row scored by the repaired checker on the
+new pair — `P1 PASS: cumulative CO2 base 210.52 Mt vs high 174.96 Mt`;
+`P1.premise PASS: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)`
+with the full year-by-year base/high/delta table in its `data` block (the charter's
+"stated in the run record year-by-year") — and P2/P3 carried VERBATIM from D21's
+committed rows. The carry is stated, not smuggled: their arms and construction are
+untouched by the carbon repair (multiplicative `gas_price_factor`, D23 §7), and their
+per-year solve caches are not re-derivable from the committed summaries; the assembler
+refuses to run unless the carried rows match the committed record exactly.
+
+**The re-scored verdict** (same committed inputs as D25's scoring plus the new
+paired_invariants; committed at `bau/forecast_verdict.json`):
+
+| | FC-6 battery row | FC-6 paired rows | FC-6 category | Determination |
+|---|---|---|---|---|
+| committed (D21/D25) | CAVEAT (2 vacuous T1.6 rows) | **P1 FAIL** / P2 PASS / P3 PASS | **FAIL** | HOLD |
+| D26 re-score | CAVEAT (2 vacuous T1.6 rows — untouched) | **P1 PASS** (premise annotated) / P2 PASS / P3 PASS | **CAVEAT** | HOLD |
+
+**The cross-lane re-grade audit PASSES** (scripted, both verdicts compared field by
+field): the only movements are FC-6's category status FAIL → CAVEAT, its P1 row, the
+reasons list dropping `FC-6 driver response FAIL`, and the caveats list gaining
+`FC-6 driver response` — all mechanically derived from the FC-6 rows this lane owns.
+Every other category, row, reason, caveat and note is byte-identical, and the
+determination stays **HOLD** on FC-1/2/3/4/7 (five gates; FC-6 no longer among them).
+Nothing beyond neiso-t3's FC-6 flips, so the result publishes rather than STOPs.
+
+**Published:** `ff-verdicts.json` — prior verdict preserved in full at
+`neiso-t3-pre-fc6repair` (byte-equal to the prior live entry, asserted), `neiso-t3`
+overwritten with the re-score plus the D25-style session narrative (prior stamp
+`7b085947b0ee` carried in it); the only changed keys in the file are those two.
+`program-status.json` — top-level `d26_fc6_p1_repair` block + the NEISO golden note
+append; every other block asserted byte-identical before write;
+`t3_determination` stays HOLD. Backcast namespace untouched.
 
 ## 6. Pricing (written before launch; measured after)
 
@@ -177,7 +230,11 @@ audit), ff-verdicts/program-status updates.
   solve). §2.1b basis: the lane charter (director-issued), with the paired-arm driver
   passing `assert_schedulable(2026, 2050, full_solve_authorized=True)` explicitly —
   the D21 §3 licensing posture, now carried by the committed instrument itself.
-- **Measured:** TBD-TIMING.
+- **Measured:** vintage clean rebuild 51/52 datatypes ok (~35 min, background); base
+  arm 32.1 min / 3.44 GB (median year 72.4 s); carbon_plus25 arm 31.1 min / 2.93 GB;
+  both sequential and solo; scoring zero solves. Total solve wall ≈ 1.05 h — inside
+  the priced envelope, and the base was gated on its reproduction check before the arm
+  launched.
 
 ## 7. Blast-radius notes (not this lane's to fix)
 
@@ -197,7 +254,41 @@ audit), ff-verdicts/program-status updates.
 
 ## 8. Consequence for the golden re-solve card (ledger §0v.6(a))
 
-TBD-DIRECTOR.
+**The card's TERMS do not change; its HOLD CONDITION is discharged and one risk leaves
+its column.** Stated for the director's sitting:
+
+1. **§0v.6(b) is answered by this lane:** D21's FC-6 P1 FAIL does NOT survive the
+   re-score — published FAIL → CAVEAT under the re-grade audit. §0v.6(a)'s "decide
+   AFTER the FC-6 P1 instrument repair" precondition is now met.
+2. **The sign-defect risk is off the table.** A re-solve is no longer a campaign spent
+   into a model with a suspected core carbon-sign defect — the model's response is
+   correct-sign in every channel on the correctly-constructed experiment. This
+   REMOVES a reason to hold; it does not by itself argue for spending.
+3. **The Q16 instrument-ceiling logic is now partially discharged:** FC-5 exists
+   (D22/D25) and FC-6's paired leg genuinely grades (premise-guarded). What still caps
+   a re-solved golden's FC-6 at CAVEAT is the vacuous T1.6 battery leg — NEISO's
+   entire pre-registered battery is that one ladder, and `renewable_buildout_pace`
+   remains consumed by no model code (D21 findings 2–3, untouched here). A re-solve
+   cannot buy FC-6 PASS until that wiring/registration decision is taken.
+4. **One pricing rider the card should carry:** FC-6's paired evidence is
+   vintage-pinned, so a re-solved golden needs its OWN paired arms at ITS vintage —
+   now turnkey via `run_driver_battery.py --paired-arm` (base reproduces the campaign
+   run; carbon_plus25/gasup150/gaspm5 ≈ three more ~30-min solves) plus the ~12-min
+   battery. Budget ≈ +2 h of solves on top of the campaign itself.
+5. The re-solve's actual object is unchanged and if anything strengthened: the
+   zero-storage-entry divergence (D25 §6.3 — the corridor's largest cross-ISO family)
+   is what the R-A arms would move; nothing in this lane touched storage entry.
+
+## 8b. Blast radius left standing (unchanged from D23 §7 where not repaired here)
+
+- The T1.1 absolute-rung ladder's pre-registration is unedited; the battery premise
+  guard detects (and vacuous-izes) its program-ISO inversion rather than re-arming it.
+  Re-registering T1.1 rungs as delta-form for program ISOs is a plan-§2 decision.
+- T1.2's "cap dual ≈ $25" expectation still carries the absolute-knob mental model
+  (D23 §7's note to R1's owner) — unexamined here; T1.2 is mass-cap machinery, outside
+  the exogenous-signal premise by design.
+- D23's R4 (replace vs floor vs stack for `carbon_price` itself) remains the owner's
+  open question. The delta field neither presupposes nor forecloses any answer.
 
 ## 9. Reproduction record
 
@@ -235,7 +326,18 @@ scripts/check_forecast_invariants.py --paired \
     /home/user/fc6-arms/base/NEISO/0365174ab16cc318 \
     /home/user/fc6-arms/carbon_plus25/NEISO/7784d408fc955785 \
     --pair-kind carbon --json
-scripts/forecast_verdict.py --tier t3 <the committed input set + D25 corridor args> \
-    --paired-invariants <new paired_invariants.json> \
+scripts/forecast_verdict.py --tier t3 \
+    --summary results/ff-t3-neiso-golden/bau/full_horizon_summary.json \
+    --run-config results/ff-t3-neiso-golden/bau/run_config.json \
+    --dof-ledger results/ff-t3-neiso-golden/bau/dof_ledger.json \
+    --hindcast-score results/hindcast/neiso-2021-2025-curve/NEISO/2ba529574d4982ea/score.json \
+    --crossover-score results/hindcast/neiso-2023-2027-crossover-capxd14/NEISO/07e416f3f8072e7c/crossover_score.json \
+    --driver-battery results/ff-t3-neiso-golden/bau/fc6/driver-battery-neiso-2026-08-31.json \
+    --paired-invariants results/ff-t3-neiso-golden/bau/fc6/paired_invariants.json \
+    --corridor results/ff-corridor/dispositions/neiso-t3.json \
+    --benchmark-corridor results/ff-corridor/benchmark-corridor-anchors.json \
     --json-out results/ff-t3-neiso-golden/bau/forecast_verdict.json
+# (paired_invariants.json = the new [P1, P1.premise] output + D21's committed P2/P3
+#  rows carried verbatim; the control run of the same command with the COMMITTED
+#  paired_invariants reproduces the committed verdict with zero non-provenance diffs)
 ```
