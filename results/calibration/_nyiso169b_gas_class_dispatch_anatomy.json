@@ -1,0 +1,1094 @@
+{
+ "bundle": "results/calibration/nyiso159_lossarm_B",
+ "by_year": {
+  "2023": {
+   "A_class_volume": {
+    "CC_CHP": {
+     "actual_twh": 14.8022,
+     "delta_pct": 1.84,
+     "delta_twh": 0.2717,
+     "model_twh": 15.0739
+    },
+    "CC_REGULAR": {
+     "actual_twh": 33.0122,
+     "delta_pct": -0.45,
+     "delta_twh": -0.1492,
+     "model_twh": 32.863
+    },
+    "COAL_BIT": {
+     "actual_twh": 0.0,
+     "delta_pct": null,
+     "delta_twh": 0.0,
+     "model_twh": 0.0
+    },
+    "COAL_PRB": {
+     "actual_twh": 0.0,
+     "delta_pct": null,
+     "delta_twh": 0.0,
+     "model_twh": 0.0
+    },
+    "CT_CHP": {
+     "actual_twh": 2.4336,
+     "delta_pct": -27.48,
+     "delta_twh": -0.6688,
+     "model_twh": 1.7648
+    },
+    "CT_PEAKER": {
+     "actual_twh": 2.1139,
+     "delta_pct": -81.47,
+     "delta_twh": -1.7222,
+     "model_twh": 0.3917
+    },
+    "OTHER": {
+     "actual_twh": 2.1973,
+     "delta_pct": 0.0,
+     "delta_twh": 0.0,
+     "model_twh": 2.1973
+    },
+    "ST_CHP": {
+     "actual_twh": 1.1692,
+     "delta_pct": 2.29,
+     "delta_twh": 0.0268,
+     "model_twh": 1.196
+    },
+    "ST_GAS": {
+     "actual_twh": 8.1406,
+     "delta_pct": 40.91,
+     "delta_twh": 3.3301,
+     "model_twh": 11.4707
+    },
+    "biomass": {
+     "actual_twh": 0.8395,
+     "delta_pct": 0.0,
+     "delta_twh": 0.0,
+     "model_twh": 0.8395
+    },
+    "hydro": {
+     "actual_twh": 28.0312,
+     "delta_pct": -5.06,
+     "delta_twh": -1.4178,
+     "model_twh": 26.6134
+    },
+    "import": {
+     "actual_twh": 0.0,
+     "delta_pct": null,
+     "delta_twh": 23.346,
+     "model_twh": 23.346
+    },
+    "nuclear": {
+     "actual_twh": 27.5249,
+     "delta_pct": -0.14,
+     "delta_twh": -0.0378,
+     "model_twh": 27.4871
+    },
+    "oil": {
+     "actual_twh": 0.4217,
+     "delta_pct": -64.7,
+     "delta_twh": -0.2728,
+     "model_twh": 0.1489
+    },
+    "solar": {
+     "actual_twh": 2.0479,
+     "delta_pct": -86.34,
+     "delta_twh": -1.7682,
+     "model_twh": 0.2797
+    },
+    "wind": {
+     "actual_twh": 4.601,
+     "delta_pct": -0.23,
+     "delta_twh": -0.0108,
+     "model_twh": 4.5902
+    }
+   },
+   "B_ccchp_duration": {
+    "anchor_scale": 1.1849,
+    "bands": [
+     {
+      "band": "0-1",
+      "delta_mw": -510.9,
+      "delta_pct": -14.93,
+      "measured_mw": 3422.4,
+      "model_mw": 2911.5,
+      "n": 87,
+      "share_of_overrun_pct": -16.4
+     },
+     {
+      "band": "1-5",
+      "delta_mw": -251.9,
+      "delta_pct": -8.38,
+      "measured_mw": 3004.7,
+      "model_mw": 2752.9,
+      "n": 351,
+      "share_of_overrun_pct": -32.5
+     },
+     {
+      "band": "5-10",
+      "delta_mw": -105.7,
+      "delta_pct": -3.87,
+      "measured_mw": 2731.8,
+      "model_mw": 2626.1,
+      "n": 438,
+      "share_of_overrun_pct": -17.0
+     },
+     {
+      "band": "10-25",
+      "delta_mw": -66.2,
+      "delta_pct": -2.66,
+      "measured_mw": 2485.6,
+      "model_mw": 2419.5,
+      "n": 1314,
+      "share_of_overrun_pct": -32.0
+     },
+     {
+      "band": "25-50",
+      "delta_mw": 65.3,
+      "delta_pct": 3.37,
+      "measured_mw": 1937.9,
+      "model_mw": 2003.2,
+      "n": 2190,
+      "share_of_overrun_pct": 52.6
+     },
+     {
+      "band": "50-75",
+      "delta_mw": 68.0,
+      "delta_pct": 5.12,
+      "measured_mw": 1328.5,
+      "model_mw": 1396.5,
+      "n": 2190,
+      "share_of_overrun_pct": 54.8
+     },
+     {
+      "band": "75-100",
+      "delta_mw": 112.3,
+      "delta_pct": 13.41,
+      "measured_mw": 837.2,
+      "model_mw": 949.5,
+      "n": 2190,
+      "share_of_overrun_pct": 90.5
+     }
+    ],
+    "benchmark_twh": 14.8022,
+    "campd_gross_twh": 12.4927,
+    "peak_band_proposal_supported": false,
+    "rule": "A too-cheap duct-burner (peak) band can bid the class in only where that band is marginal \u2014 the TOP of its own duration curve. The proposal is supported only if the over-run is positive at the top AND larger there than at the bottom."
+   },
+   "C_ccchp_floor": {
+    "measured": {
+     "hours_below_10pct_cap": 65,
+     "hours_near_zero": 0,
+     "p01_mw": 324.6,
+     "p05_mw": 531.0,
+     "p25_mw": 938.8
+    },
+    "model": {
+     "hours_below_10pct_cap": 26,
+     "hours_near_zero": 24,
+     "p01_mw": 703.3,
+     "p05_mw": 868.9,
+     "p25_mw": 1177.7
+    },
+    "p05_excess_pct": 63.6,
+    "reference_cap_mw": 3070.4
+   },
+   "D_monthly_deficit": {
+    "CT_PEAKER": {
+     "all_months_negative": true,
+     "best_month": 9,
+     "months": [
+      {
+       "delta_pct": -96.8,
+       "measured_gwh": 94.3,
+       "model_gwh": 3.0,
+       "month": 1
+      },
+      {
+       "delta_pct": -86.3,
+       "measured_gwh": 113.4,
+       "model_gwh": 15.6,
+       "month": 2
+      },
+      {
+       "delta_pct": -97.8,
+       "measured_gwh": 95.1,
+       "model_gwh": 2.1,
+       "month": 3
+      },
+      {
+       "delta_pct": -99.2,
+       "measured_gwh": 76.2,
+       "model_gwh": 0.6,
+       "month": 4
+      },
+      {
+       "delta_pct": -100.0,
+       "measured_gwh": 58.9,
+       "model_gwh": 0.0,
+       "month": 5
+      },
+      {
+       "delta_pct": -86.3,
+       "measured_gwh": 150.3,
+       "model_gwh": 20.5,
+       "month": 6
+      },
+      {
+       "delta_pct": -59.0,
+       "measured_gwh": 350.2,
+       "model_gwh": 143.8,
+       "month": 7
+      },
+      {
+       "delta_pct": -71.6,
+       "measured_gwh": 225.4,
+       "model_gwh": 63.9,
+       "month": 8
+      },
+      {
+       "delta_pct": -38.5,
+       "measured_gwh": 191.6,
+       "model_gwh": 117.8,
+       "month": 9
+      },
+      {
+       "delta_pct": -83.7,
+       "measured_gwh": 119.2,
+       "model_gwh": 19.5,
+       "month": 10
+      },
+      {
+       "delta_pct": -97.2,
+       "measured_gwh": 66.9,
+       "model_gwh": 1.9,
+       "month": 11
+      },
+      {
+       "delta_pct": -95.4,
+       "measured_gwh": 64.6,
+       "model_gwh": 3.0,
+       "month": 12
+      }
+     ],
+     "worst_month": 5
+    },
+    "ST_GAS": {
+     "all_months_negative": false,
+     "best_month": 12,
+     "months": [
+      {
+       "delta_pct": 55.4,
+       "measured_gwh": 444.2,
+       "model_gwh": 690.1,
+       "month": 1
+      },
+      {
+       "delta_pct": 11.7,
+       "measured_gwh": 532.9,
+       "model_gwh": 595.0,
+       "month": 2
+      },
+      {
+       "delta_pct": 36.1,
+       "measured_gwh": 495.1,
+       "model_gwh": 673.7,
+       "month": 3
+      },
+      {
+       "delta_pct": 28.0,
+       "measured_gwh": 470.5,
+       "model_gwh": 602.2,
+       "month": 4
+      },
+      {
+       "delta_pct": 47.6,
+       "measured_gwh": 452.7,
+       "model_gwh": 668.2,
+       "month": 5
+      },
+      {
+       "delta_pct": 48.0,
+       "measured_gwh": 710.3,
+       "model_gwh": 1051.6,
+       "month": 6
+      },
+      {
+       "delta_pct": 6.9,
+       "measured_gwh": 2087.5,
+       "model_gwh": 2230.5,
+       "month": 7
+      },
+      {
+       "delta_pct": 32.3,
+       "measured_gwh": 1164.5,
+       "model_gwh": 1540.8,
+       "month": 8
+      },
+      {
+       "delta_pct": 3.2,
+       "measured_gwh": 1259.1,
+       "model_gwh": 1299.8,
+       "month": 9
+      },
+      {
+       "delta_pct": -33.4,
+       "measured_gwh": 1057.6,
+       "model_gwh": 704.4,
+       "month": 10
+      },
+      {
+       "delta_pct": 7.9,
+       "measured_gwh": 648.1,
+       "model_gwh": 699.6,
+       "month": 11
+      },
+      {
+       "delta_pct": 68.1,
+       "measured_gwh": 425.3,
+       "model_gwh": 714.9,
+       "month": 12
+      }
+     ],
+     "worst_month": 10
+    }
+   },
+   "E_hydro_shape": {
+    "eia930_cv": 0.1896,
+    "eia930_hod_swing_mw": 1304.7,
+    "eia930_twh": 26.8365,
+    "hod_r": 0.9752,
+    "hourly_r": 0.6773,
+    "hours": 8760,
+    "model_cv": 0.2266,
+    "model_hod_swing_mw": 1332.8,
+    "model_twh": 26.6134
+   }
+  },
+  "2024": {
+   "A_class_volume": {
+    "CC_CHP": {
+     "actual_twh": 17.0174,
+     "delta_pct": 8.44,
+     "delta_twh": 1.437,
+     "model_twh": 18.4544
+    },
+    "CC_REGULAR": {
+     "actual_twh": 34.0604,
+     "delta_pct": 9.23,
+     "delta_twh": 3.1453,
+     "model_twh": 37.2057
+    },
+    "COAL_BIT": {
+     "actual_twh": 0.0,
+     "delta_pct": null,
+     "delta_twh": 0.0,
+     "model_twh": 0.0
+    },
+    "COAL_PRB": {
+     "actual_twh": 0.0,
+     "delta_pct": null,
+     "delta_twh": 0.0,
+     "model_twh": 0.0
+    },
+    "CT_CHP": {
+     "actual_twh": 2.1717,
+     "delta_pct": -38.87,
+     "delta_twh": -0.8442,
+     "model_twh": 1.3275
+    },
+    "CT_PEAKER": {
+     "actual_twh": 1.9108,
+     "delta_pct": -86.24,
+     "delta_twh": -1.648,
+     "model_twh": 0.2628
+    },
+    "OTHER": {
+     "actual_twh": 2.2014,
+     "delta_pct": -0.0,
+     "delta_twh": -0.0,
+     "model_twh": 2.2014
+    },
+    "ST_CHP": {
+     "actual_twh": 0.8721,
+     "delta_pct": 35.89,
+     "delta_twh": 0.313,
+     "model_twh": 1.1851
+    },
+    "ST_GAS": {
+     "actual_twh": 9.9132,
+     "delta_pct": -5.98,
+     "delta_twh": -0.5923,
+     "model_twh": 9.3209
+    },
+    "biomass": {
+     "actual_twh": 0.7597,
+     "delta_pct": 0.01,
+     "delta_twh": 0.0,
+     "model_twh": 0.7597
+    },
+    "hydro": {
+     "actual_twh": 27.4654,
+     "delta_pct": -2.64,
+     "delta_twh": -0.7264,
+     "model_twh": 26.739
+    },
+    "import": {
+     "actual_twh": 0.0,
+     "delta_pct": null,
+     "delta_twh": 20.6492,
+     "model_twh": 20.6492
+    },
+    "nuclear": {
+     "actual_twh": 27.0733,
+     "delta_pct": -0.44,
+     "delta_twh": -0.1201,
+     "model_twh": 26.9532
+    },
+    "oil": {
+     "actual_twh": 0.3225,
+     "delta_pct": 30.23,
+     "delta_twh": 0.0975,
+     "model_twh": 0.42
+    },
+    "solar": {
+     "actual_twh": 2.9008,
+     "delta_pct": -79.79,
+     "delta_twh": -2.3147,
+     "model_twh": 0.5861
+    },
+    "wind": {
+     "actual_twh": 6.012,
+     "delta_pct": -0.01,
+     "delta_twh": -0.0004,
+     "model_twh": 6.0116
+    }
+   },
+   "B_ccchp_duration": {
+    "anchor_scale": 1.1445,
+    "bands": [
+     {
+      "band": "0-1",
+      "delta_mw": -479.9,
+      "delta_pct": -13.92,
+      "measured_mw": 3448.4,
+      "model_mw": 2968.5,
+      "n": 87,
+      "share_of_overrun_pct": -2.9
+     },
+     {
+      "band": "1-5",
+      "delta_mw": -118.2,
+      "delta_pct": -3.91,
+      "measured_mw": 3023.7,
+      "model_mw": 2905.5,
+      "n": 351,
+      "share_of_overrun_pct": -2.9
+     },
+     {
+      "band": "5-10",
+      "delta_mw": 19.0,
+      "delta_pct": 0.68,
+      "measured_mw": 2793.3,
+      "model_mw": 2812.2,
+      "n": 438,
+      "share_of_overrun_pct": 0.6
+     },
+     {
+      "band": "10-25",
+      "delta_mw": 90.7,
+      "delta_pct": 3.51,
+      "measured_mw": 2580.6,
+      "model_mw": 2671.3,
+      "n": 1314,
+      "share_of_overrun_pct": 8.3
+     },
+     {
+      "band": "25-50",
+      "delta_mw": 158.3,
+      "delta_pct": 6.96,
+      "measured_mw": 2275.5,
+      "model_mw": 2433.8,
+      "n": 2190,
+      "share_of_overrun_pct": 24.1
+     },
+     {
+      "band": "50-75",
+      "delta_mw": 250.2,
+      "delta_pct": 14.53,
+      "measured_mw": 1722.4,
+      "model_mw": 1972.6,
+      "n": 2190,
+      "share_of_overrun_pct": 38.1
+     },
+     {
+      "band": "75-100",
+      "delta_mw": 227.4,
+      "delta_pct": 21.79,
+      "measured_mw": 1044.0,
+      "model_mw": 1271.4,
+      "n": 2190,
+      "share_of_overrun_pct": 34.7
+     }
+    ],
+    "benchmark_twh": 17.0174,
+    "campd_gross_twh": 14.8685,
+    "peak_band_proposal_supported": false,
+    "rule": "A too-cheap duct-burner (peak) band can bid the class in only where that band is marginal \u2014 the TOP of its own duration curve. The proposal is supported only if the over-run is positive at the top AND larger there than at the bottom."
+   },
+   "C_ccchp_floor": {
+    "measured": {
+     "hours_below_10pct_cap": 0,
+     "hours_near_zero": 0,
+     "p01_mw": 392.6,
+     "p05_mw": 732.0,
+     "p25_mw": 1262.0
+    },
+    "model": {
+     "hours_below_10pct_cap": 70,
+     "hours_near_zero": 36,
+     "p01_mw": 394.1,
+     "p05_mw": 891.5,
+     "p25_mw": 1741.7
+    },
+    "p05_excess_pct": 21.8,
+    "reference_cap_mw": 3166.0
+   },
+   "D_monthly_deficit": {
+    "CT_PEAKER": {
+     "all_months_negative": true,
+     "best_month": 1,
+     "months": [
+      {
+       "delta_pct": -60.5,
+       "measured_gwh": 106.9,
+       "model_gwh": 42.2,
+       "month": 1
+      },
+      {
+       "delta_pct": -99.1,
+       "measured_gwh": 87.1,
+       "model_gwh": 0.8,
+       "month": 2
+      },
+      {
+       "delta_pct": -97.0,
+       "measured_gwh": 47.5,
+       "model_gwh": 1.4,
+       "month": 3
+      },
+      {
+       "delta_pct": -99.2,
+       "measured_gwh": 43.3,
+       "model_gwh": 0.3,
+       "month": 4
+      },
+      {
+       "delta_pct": -99.4,
+       "measured_gwh": 77.9,
+       "model_gwh": 0.4,
+       "month": 5
+      },
+      {
+       "delta_pct": -81.5,
+       "measured_gwh": 214.6,
+       "model_gwh": 39.6,
+       "month": 6
+      },
+      {
+       "delta_pct": -72.6,
+       "measured_gwh": 345.4,
+       "model_gwh": 94.7,
+       "month": 7
+      },
+      {
+       "delta_pct": -78.2,
+       "measured_gwh": 241.4,
+       "model_gwh": 52.6,
+       "month": 8
+      },
+      {
+       "delta_pct": -94.3,
+       "measured_gwh": 97.2,
+       "model_gwh": 5.6,
+       "month": 9
+      },
+      {
+       "delta_pct": -97.5,
+       "measured_gwh": 82.9,
+       "model_gwh": 2.1,
+       "month": 10
+      },
+      {
+       "delta_pct": -98.7,
+       "measured_gwh": 47.0,
+       "model_gwh": 0.6,
+       "month": 11
+      },
+      {
+       "delta_pct": -85.6,
+       "measured_gwh": 156.8,
+       "model_gwh": 22.5,
+       "month": 12
+      }
+     ],
+     "worst_month": 5
+    },
+    "ST_GAS": {
+     "all_months_negative": false,
+     "best_month": 9,
+     "months": [
+      {
+       "delta_pct": -40.4,
+       "measured_gwh": 719.6,
+       "model_gwh": 428.7,
+       "month": 1
+      },
+      {
+       "delta_pct": -30.7,
+       "measured_gwh": 458.1,
+       "model_gwh": 317.4,
+       "month": 2
+      },
+      {
+       "delta_pct": -21.4,
+       "measured_gwh": 505.1,
+       "model_gwh": 397.0,
+       "month": 3
+      },
+      {
+       "delta_pct": -12.7,
+       "measured_gwh": 623.9,
+       "model_gwh": 544.4,
+       "month": 4
+      },
+      {
+       "delta_pct": -17.7,
+       "measured_gwh": 727.6,
+       "model_gwh": 598.7,
+       "month": 5
+      },
+      {
+       "delta_pct": -6.4,
+       "measured_gwh": 1401.2,
+       "model_gwh": 1310.9,
+       "month": 6
+      },
+      {
+       "delta_pct": -4.3,
+       "measured_gwh": 2246.4,
+       "model_gwh": 2149.1,
+       "month": 7
+      },
+      {
+       "delta_pct": -9.4,
+       "measured_gwh": 1433.0,
+       "model_gwh": 1297.8,
+       "month": 8
+      },
+      {
+       "delta_pct": 0.2,
+       "measured_gwh": 775.8,
+       "model_gwh": 777.3,
+       "month": 9
+      },
+      {
+       "delta_pct": -46.3,
+       "measured_gwh": 858.5,
+       "model_gwh": 461.2,
+       "month": 10
+      },
+      {
+       "delta_pct": -34.7,
+       "measured_gwh": 631.4,
+       "model_gwh": 412.4,
+       "month": 11
+      },
+      {
+       "delta_pct": -51.0,
+       "measured_gwh": 1277.1,
+       "model_gwh": 625.8,
+       "month": 12
+      }
+     ],
+     "worst_month": 12
+    }
+   },
+   "E_hydro_shape": {
+    "eia930_cv": 0.2053,
+    "eia930_hod_swing_mw": 1412.5,
+    "eia930_twh": 26.7463,
+    "hod_r": 0.9842,
+    "hourly_r": 0.7663,
+    "hours": 8746,
+    "model_cv": 0.2508,
+    "model_hod_swing_mw": 1589.7,
+    "model_twh": 26.6895
+   }
+  },
+  "2025": {
+   "A_class_volume": {
+    "CC_CHP": {
+     "actual_twh": 16.9617,
+     "delta_pct": 16.3,
+     "delta_twh": 2.7651,
+     "model_twh": 19.7268
+    },
+    "CC_REGULAR": {
+     "actual_twh": 33.5445,
+     "delta_pct": 6.4,
+     "delta_twh": 2.1469,
+     "model_twh": 35.6914
+    },
+    "COAL_BIT": {
+     "actual_twh": 0.0,
+     "delta_pct": null,
+     "delta_twh": 0.0,
+     "model_twh": 0.0
+    },
+    "CT_CHP": {
+     "actual_twh": 2.3829,
+     "delta_pct": -23.37,
+     "delta_twh": -0.5568,
+     "model_twh": 1.8261
+    },
+    "CT_PEAKER": {
+     "actual_twh": 2.8512,
+     "delta_pct": -63.73,
+     "delta_twh": -1.8171,
+     "model_twh": 1.0341
+    },
+    "OTHER": {
+     "actual_twh": 1.7487,
+     "delta_pct": 11.41,
+     "delta_twh": 0.1996,
+     "model_twh": 1.9483
+    },
+    "ST_CHP": {
+     "actual_twh": 0.7997,
+     "delta_pct": 86.55,
+     "delta_twh": 0.6922,
+     "model_twh": 1.4919
+    },
+    "ST_GAS": {
+     "actual_twh": 13.7121,
+     "delta_pct": -28.63,
+     "delta_twh": -3.9255,
+     "model_twh": 9.7866
+    },
+    "biomass": {
+     "actual_twh": 0.6724,
+     "delta_pct": -0.0,
+     "delta_twh": -0.0,
+     "model_twh": 0.6724
+    },
+    "hydro": {
+     "actual_twh": 24.1039,
+     "delta_pct": -0.19,
+     "delta_twh": -0.045,
+     "model_twh": 24.0589
+    },
+    "import": {
+     "actual_twh": 0.0,
+     "delta_pct": null,
+     "delta_twh": 19.2831,
+     "model_twh": 19.2831
+    },
+    "nuclear": {
+     "actual_twh": 28.4076,
+     "delta_pct": -0.23,
+     "delta_twh": -0.066,
+     "model_twh": 28.3416
+    },
+    "oil": {
+     "actual_twh": 1.0577,
+     "delta_pct": 19.58,
+     "delta_twh": 0.2071,
+     "model_twh": 1.2648
+    },
+    "solar": {
+     "actual_twh": 2.5673,
+     "delta_pct": -61.78,
+     "delta_twh": -1.586,
+     "model_twh": 0.9813
+    },
+    "wind": {
+     "actual_twh": 7.049,
+     "delta_pct": -0.0,
+     "delta_twh": -0.0003,
+     "model_twh": 7.0487
+    }
+   },
+   "B_ccchp_duration": {
+    "anchor_scale": 1.0696,
+    "bands": [
+     {
+      "band": "0-1",
+      "delta_mw": -106.4,
+      "delta_pct": -3.26,
+      "measured_mw": 3261.0,
+      "model_mw": 3154.6,
+      "n": 87,
+      "share_of_overrun_pct": -0.3
+     },
+     {
+      "band": "1-5",
+      "delta_mw": 56.0,
+      "delta_pct": 1.86,
+      "measured_mw": 3012.8,
+      "model_mw": 3068.8,
+      "n": 351,
+      "share_of_overrun_pct": 0.7
+     },
+     {
+      "band": "5-10",
+      "delta_mw": 135.7,
+      "delta_pct": 4.79,
+      "measured_mw": 2830.1,
+      "model_mw": 2965.8,
+      "n": 438,
+      "share_of_overrun_pct": 2.1
+     },
+     {
+      "band": "10-25",
+      "delta_mw": 251.8,
+      "delta_pct": 9.63,
+      "measured_mw": 2614.4,
+      "model_mw": 2866.2,
+      "n": 1314,
+      "share_of_overrun_pct": 12.0
+     },
+     {
+      "band": "25-50",
+      "delta_mw": 349.4,
+      "delta_pct": 15.25,
+      "measured_mw": 2291.7,
+      "model_mw": 2641.1,
+      "n": 2190,
+      "share_of_overrun_pct": 27.7
+     },
+     {
+      "band": "50-75",
+      "delta_mw": 379.1,
+      "delta_pct": 21.46,
+      "measured_mw": 1766.7,
+      "model_mw": 2145.8,
+      "n": 2190,
+      "share_of_overrun_pct": 30.0
+     },
+     {
+      "band": "75-100",
+      "delta_mw": 351.2,
+      "delta_pct": 37.37,
+      "measured_mw": 939.6,
+      "model_mw": 1290.7,
+      "n": 2190,
+      "share_of_overrun_pct": 27.8
+     }
+    ],
+    "benchmark_twh": 16.9617,
+    "campd_gross_twh": 15.8582,
+    "peak_band_proposal_supported": false,
+    "rule": "A too-cheap duct-burner (peak) band can bid the class in only where that band is marginal \u2014 the TOP of its own duration curve. The proposal is supported only if the over-run is positive at the top AND larger there than at the bottom."
+   },
+   "C_ccchp_floor": {
+    "measured": {
+     "hours_below_10pct_cap": 130,
+     "hours_near_zero": 0,
+     "p01_mw": 290.6,
+     "p05_mw": 648.0,
+     "p25_mw": 1266.0
+    },
+    "model": {
+     "hours_below_10pct_cap": 122,
+     "hours_near_zero": 96,
+     "p01_mw": 0.0,
+     "p05_mw": 817.4,
+     "p25_mw": 1844.0
+    },
+    "p05_excess_pct": 26.1,
+    "reference_cap_mw": 3196.6
+   },
+   "D_monthly_deficit": {
+    "CT_PEAKER": {
+     "all_months_negative": false,
+     "best_month": 12,
+     "months": [
+      {
+       "delta_pct": -79.4,
+       "measured_gwh": 179.1,
+       "model_gwh": 36.8,
+       "month": 1
+      },
+      {
+       "delta_pct": -41.2,
+       "measured_gwh": 196.9,
+       "model_gwh": 115.8,
+       "month": 2
+      },
+      {
+       "delta_pct": -82.7,
+       "measured_gwh": 121.1,
+       "model_gwh": 21.0,
+       "month": 3
+      },
+      {
+       "delta_pct": -85.5,
+       "measured_gwh": 97.4,
+       "model_gwh": 14.1,
+       "month": 4
+      },
+      {
+       "delta_pct": -92.8,
+       "measured_gwh": 86.7,
+       "model_gwh": 6.2,
+       "month": 5
+      },
+      {
+       "delta_pct": -47.5,
+       "measured_gwh": 208.5,
+       "model_gwh": 109.4,
+       "month": 6
+      },
+      {
+       "delta_pct": -33.0,
+       "measured_gwh": 352.4,
+       "model_gwh": 236.2,
+       "month": 7
+      },
+      {
+       "delta_pct": -43.9,
+       "measured_gwh": 144.5,
+       "model_gwh": 81.0,
+       "month": 8
+      },
+      {
+       "delta_pct": -71.8,
+       "measured_gwh": 139.6,
+       "model_gwh": 39.4,
+       "month": 9
+      },
+      {
+       "delta_pct": -67.8,
+       "measured_gwh": 112.8,
+       "model_gwh": 36.3,
+       "month": 10
+      },
+      {
+       "delta_pct": -62.0,
+       "measured_gwh": 113.2,
+       "model_gwh": 43.0,
+       "month": 11
+      },
+      {
+       "delta_pct": 94.1,
+       "measured_gwh": 151.9,
+       "model_gwh": 294.9,
+       "month": 12
+      }
+     ],
+     "worst_month": 5
+    },
+    "ST_GAS": {
+     "all_months_negative": true,
+     "best_month": 6,
+     "months": [
+      {
+       "delta_pct": -47.8,
+       "measured_gwh": 1344.7,
+       "model_gwh": 702.3,
+       "month": 1
+      },
+      {
+       "delta_pct": -51.8,
+       "measured_gwh": 932.5,
+       "model_gwh": 449.6,
+       "month": 2
+      },
+      {
+       "delta_pct": -42.8,
+       "measured_gwh": 619.7,
+       "model_gwh": 354.3,
+       "month": 3
+      },
+      {
+       "delta_pct": -49.5,
+       "measured_gwh": 738.4,
+       "model_gwh": 373.1,
+       "month": 4
+      },
+      {
+       "delta_pct": -27.3,
+       "measured_gwh": 558.4,
+       "model_gwh": 405.9,
+       "month": 5
+      },
+      {
+       "delta_pct": -10.1,
+       "measured_gwh": 1480.0,
+       "model_gwh": 1331.2,
+       "month": 6
+      },
+      {
+       "delta_pct": -17.8,
+       "measured_gwh": 3016.2,
+       "model_gwh": 2478.7,
+       "month": 7
+      },
+      {
+       "delta_pct": -16.7,
+       "measured_gwh": 1767.8,
+       "model_gwh": 1472.5,
+       "month": 8
+      },
+      {
+       "delta_pct": -18.8,
+       "measured_gwh": 908.9,
+       "model_gwh": 738.0,
+       "month": 9
+      },
+      {
+       "delta_pct": -62.6,
+       "measured_gwh": 1299.9,
+       "model_gwh": 486.1,
+       "month": 10
+      },
+      {
+       "delta_pct": -59.5,
+       "measured_gwh": 963.4,
+       "model_gwh": 389.8,
+       "month": 11
+      },
+      {
+       "delta_pct": -59.9,
+       "measured_gwh": 1508.1,
+       "model_gwh": 605.0,
+       "month": 12
+      }
+     ],
+     "worst_month": 10
+    }
+   },
+   "E_hydro_shape": {
+    "eia930_cv": 0.265,
+    "eia930_hod_swing_mw": 1833.5,
+    "eia930_twh": 24.0625,
+    "hod_r": 0.9897,
+    "hourly_r": 0.7151,
+    "hours": 8746,
+    "model_cv": 0.3251,
+    "model_hod_swing_mw": 1772.5,
+    "model_twh": 24.0104
+   }
+  }
+ },
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "n_eia860_chp_plants": 848,
+ "probe": "nyiso169b_gas_class_dispatch_anatomy",
+ "verdict": {
+  "note": "The CC_CHP over-run is concentrated at the BOTTOM of the class's own duration curve and the model sits at or below measured at the TOP in every year, so the duct-burner (peak) offer band cannot be its carrier. The signature is a floor / minimum-load object.",
+  "peak_band_proposal_supported_any_year": false
+ },
+ "years": [
+  2023,
+  2024,
+  2025
+ ]
+}
