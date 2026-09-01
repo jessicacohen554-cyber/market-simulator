@@ -47,7 +47,18 @@ avail_mult`` (5 % of AVAILABLE capacity).
 
 **B3 — the COMMITTED keeper artifacts**: ``run_config.json``,
 ``legitimacy_diagnostics.json`` (the D-1/D-2/D-4 rows), ``hourly/`` sidecars,
-``frontend/data/backcast/bench/MISO/<year>.json.gz``.
+``frontend/data/backcast/bench/MISO/<year>.json.gz``. The ``hourly/system_<y>``
+sidecar additionally supplies the ``load_shape`` the floor's own top-
+``online_frac`` SYSTEM-LOAD window is ranked by: the solve passes
+``load_shape=demand.sum(axis=0)`` into ``generators_to_fleet_arrays``
+(run_calibration.py:3176), and the sidecar's per-zone ``demand`` summed by hour
+over the LP's own zone set IS that vector. Supplying it is not optional — with
+``load_shape=None`` the runtime's floor block falls through to ``target[:] =
+level`` (arrays.py:2841) and spans ALL 8760 hours instead of the plant's
+measured window, which would silently collapse the W channel of M-3 to zero and
+push its content into L. (INSTRUMENT DEFECT FOUND AND REPAIRED IN THIS SESSION:
+the first census run passed ``None``; disclosed in the finding, and the record
+below is the repaired run.)
 
 ===============================================================================
 THE FROZEN RULE
@@ -239,6 +250,19 @@ def keeper_config(year: int, **overrides: object) -> ScenarioConfig:
     return ScenarioConfig(**out)  # type: ignore[arg-type]
 
 
+def system_load_shape(year: int) -> np.ndarray:
+    """B3: the solve's own ``demand.sum(axis=0)`` from the committed sidecar.
+
+    The per-plant must-run floors rank their commitment window by SYSTEM LOAD,
+    so a probe that omits it does not reproduce the keeper's floor at all.
+    """
+    df = pd.read_parquet(KEEPER / "hourly" / f"system_{year}.parquet")
+    s = df[df["pass"] == "P1"].groupby("hour")["demand"].sum().sort_index()
+    arr = np.asarray(s.to_numpy(), dtype=float)
+    assert arr.shape == (HOURS,), f"system sidecar {year}: {arr.shape}"
+    return arr
+
+
 def build_run_year_fleet(year: int):
     """B1: the fleet through ``run_calibration.run_year``'s OWN chain.
 
@@ -309,7 +333,13 @@ def build_run_year_fleet(year: int):
         apply_emission_overrides=False,
     )
     fa = generators_to_fleet_arrays(
-        fleet, zone_names, HOURS, iso=ISO, config=cfg, year=year
+        fleet,
+        zone_names,
+        HOURS,
+        iso=ISO,
+        config=cfg,
+        load_shape=system_load_shape(year),
+        year=year,
     )
     return fleet, fa, cfg
 
@@ -817,6 +847,8 @@ def satisfiability() -> None:
     ):
         print(f"  keeper {f} = {getattr(cfg, f)}")
     assert cfg.st_gas_mustrun_per_plant, "premise: the keeper arms the ST_GAS floor"
+    ls = system_load_shape(2024)
+    print(f"  B3 load_shape 2024: mean {ls.mean() / 1e3:.2f} GW, max {ls.max() / 1e3:.2f} GW")
     fleet, fa, _ = build_run_year_fleet(2024)
     print(f"  B1 fleet rows {len(fleet)}; min_gen {None if fa.min_gen is None else fa.min_gen.shape}")
     assert fa.min_gen is not None and fa.min_gen_mechanism is not None
