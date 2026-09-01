@@ -7466,7 +7466,11 @@ arriving exactly when MISO was tight.
 
 **WHAT IT IS.** In the 47 hours MISO's OWN published RT ASM MCP is **$484.87** against an energy
 gap of **$408.24 — 118.8 % of it** (2023 120.9 %; 2024 the honest exception at 19.2 %), while the
-model's reserve dual is **$10.71**. Root cause at a named code site:
+model's reserve dual is **$10.71**. *[Corrected 2026-09-01, xiso-cascade, rule 14: $484.87 SUMS
+the nested cumulative cascade (`GENREGMCP ≥ GENSPINMCP ≥ GENSUPPMCP`, 100.0000 % of committed
+cells); the published price a reserve MW earns is the cascade top — **$193.30 = 47.3 % of the
+gap** (2023 48.4 %, 2024 10.5 %): roughly half the gap, not all of it. See the 2026-09-01
+xiso-cascade entry below.]* Root cause at a named code site:
 **`model/reserves/spec.py::_miso_design` never sets `online_gated`**, so MISO's reserve requirement
 may be backed by UNSYNCHRONISED capacity — the nyiso-83 idle-allowed-headroom misrepresentation.
 Its fix (`nyiso_spin_reserve_online`) and the ISO-agnostic LP machinery
@@ -7838,7 +7842,12 @@ prize ~+0.03 pp vs the 2.5 pp C3a-2025 needs. (c) ~29 % of MISO's published
 scarce-hour ASM price is on the supplemental product (share robust 27–29 %
 across hour-key alignments; the miso-167 $484.87 reproduces exactly at that
 instrument's −1 h alignment); even in DA-foreseen hours DA supp cleared $20.50
-vs RT supp $97.94 — 79 % RT-only.
+vs RT supp $97.94 — 79 % RT-only. *[Corrected 2026-09-01, xiso-cascade: the
+27–29 % is a share of the SUMMED cascade, which is not a price; of the true
+published price (the cascade top, $93.14 on this alignment) the supplemental-
+LEVEL content is 68.2 % and the sync-only increment 31.8 % — the ungateable
+share is larger, the INERT adjudication stands a fortiori. See the 2026-09-01
+entry below.]*
 
 **3. The closure.** C3a-2025 is a documented model-class limit END TO END: the
 RT-only half (miso-163 owner ruling) + a DA-foreseen half that decomposes into
@@ -9556,3 +9565,58 @@ Records: `FINDING-miso196-cc-outage-derate-from-top-2026-09-01.md`,
 `scripts/probes/_miso196_outage_derate_from_top_phase0.py` (frozen at
 `fef3dcb6`). Rule 22: 2023–2025 only; freeze untouched; no marker touched.
 Next number: **miso-197**.
+
+---
+
+## xiso-cascade (2026-09-01) — the miso-167 "$484.87 = 118.8 % of the energy gap" headline CORRECTED: it SUMMED a nested cumulative cascade; the published price is the cascade TOP, $193.30 = 47.3 % of the gap. Instruments repaired, three frozen records annotated, keeper untouched, zero solve
+
+**Cross-ISO instrument audit (not a MISO calibration session; it adjudicates
+nothing).** Carried the nyiso-166 §2 rule — a duration/quality-nested reserve
+cascade posts CUMULATIVE prices, so a reserve MW earns the cascade MAX, never
+the SUM — to every ISO. MISO is the one live hit, first flagged by nyiso-165 §5
+and here measured, blast-radius-enumerated, and repaired.
+
+**The defect.** `GENREGMCP ≥ GENSPINMCP ≥ GENSUPPMCP` in **100.0000 %** of
+554,904 committed cells (2023–2026 × DA/RT × all 9 zone rows — BPM-002 product
+substitution makes the posted prices cumulative), yet two instruments summed
+the three: `_miso167_summer_scarcity_instrument.py` (`asm_sum`, and the
+`asm_share_of_energy_gap_pct` headline) and
+`_miso171_reserve_product_decomposition.py::stage4_mcp` (`regspin`/`total`).
+Corrected scarce-set values (m167 basis): 2025 **$484.87 → $193.30**, share of
+the energy gap **118.8 % → 47.3 %**; 2023 120.9 % → 48.4 %; 2024 19.2 % →
+10.5 %. The m171 §5 share emphasis INVERTS: of the true published price, the
+supplemental-level (offline-quick-start-earnable) content is **68.2 %** and the
+sync-only increment **31.8 %** — not "71 % synchronised / 29 % supplemental",
+which were shares of the sum.
+
+**What moves: prose only. What does not: every gate, cell, keeper and
+determination.** Enumerated call-site by call-site: no scorer, solve path,
+keeper gate or matrix CELL consumes the summed fields — PREREG-miso167's
+K-PRE/K-1..K-5 are MW- and criterion-based, the
+`reserve_deliverability_scoping` K-cell and the miso-171 INERT adjudication
+rest on H_on/requirement MW (which genuinely add). The corrections
+STRENGTHEN the standing miso-178 closure a fortiori: less of the gap is
+reserve-priced, and less of the reserve price is gateable structure. One
+narrative claim flips: the armed gate's DA-foreseen regspin dual ($25.81) sits
+ABOVE the measured DA sync-only increment ($19.43), not conservatively below a
+summed $60.63.
+
+**Repairs (rule 14, nyiso-166 acceptance pattern).** Both instruments now
+aggregate by per-hour cascade top (`cascade_top` / `cascade_price_stats`;
+summed fields deleted per rule 23); the three frozen records
+(`_miso167…json`, `_miso171…json`, `_miso178_c3a2025_anatomy.json` via its
+`m167_repoint`) keep their original fields and carry a dated
+`CORRECTION_2026-09-01_xiso-cascade` key — their input bundles are pruned, so
+they are annotated, never regenerated. Acceptance:
+`scripts/probes/_xiso1_miso_asm_cascade_check.py` (independent construction —
+own hour-mapping implementations — reproduces every committed summed value
+exactly, then emits the corrections; record
+`_xiso1_miso_asm_cascade_check.json`). Regression:
+`tests/test_miso_asm_cascade.py` (7 tests) pins the cascade invariant on every
+committed year/market, max-not-sum synthetically, and the CORRECTION keys.
+Prose corrected in place (dated): FINDING-miso167 §3, FINDING-miso171 §5,
+FINDING-miso178 §3, PREREG-miso167 §1, the mechanism-matrix MISO narrative,
+and the two quotes above. Full record:
+`docs/FINDING-xiso-cascade-scan-2026-09-01.md`. Keeper
+`2026-08-30-miso-191-bexit` untouched; no marker, no shard cell, no holdout
+year, zero solve.

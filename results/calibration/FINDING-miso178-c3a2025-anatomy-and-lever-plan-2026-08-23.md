@@ -108,6 +108,18 @@ MCP ($484.87, −2h alignment; levels key-sensitive, shares not) still ≈120% o
 energy gap; the miso-171 scarce-47 set is bit-identical across bundles (asserted), so
 its committed product split (~29% supplemental, structurally ungateable) stays current.
 
+> **[CORRECTED 2026-09-01 — xiso-cascade, rule 14 `[R-ACCURATE]`.]** "$484.87 ≈
+> 120 %" SUMS a nested cumulative cascade (`GENREGMCP ≥ GENSPINMCP ≥ GENSUPPMCP`,
+> 100.0000 % of committed cells); the published price a reserve MW earns is the
+> cascade TOP — $193.30, ≈ **48 %** of this bundle's $404.68 gap (2023 ≈ 48 %,
+> 2024 ≈ 11 %). And the "~29 % supplemental" split was a share OF THE SUM: of the
+> true published price, the supplemental-level content (offline-quick-start-
+> earnable) is ≈ 68 % and the sync-only increment ≈ 32 % (miso-171 §5 corrected).
+> Both corrections STRENGTHEN this section's conclusion — even less of the gap is
+> reserve-priced, and even less of the reserve price is gateable structure — so
+> the reach map and closure stand a fortiori. This record's `m167_repoint` block
+> carries a dated CORRECTION key; `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.
+
 **The two-term split** G = Σw(Pm−DA) + Σw(DA−RT) — deterministic-reachable vs the
 RT-only wedge no deterministic LP can see (MISO's own DA market is the existence proof
 of the reachable half):

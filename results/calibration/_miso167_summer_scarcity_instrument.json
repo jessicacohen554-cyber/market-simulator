@@ -1,4 +1,27 @@
 {
+ "CORRECTION_2026-09-01_xiso-cascade": {
+  "statement": "CORRECTED \u2014 the summed ASM-MCP fields (asm_sum / miso_asm_mcp_sum / asm_share_of_energy_gap_pct) SUM a nested cumulative cascade: GENREGMCP >= GENSPINMCP >= GENSUPPMCP in 100.0000% of committed cells (all years, DA+RT), so a reserve MW earns the cascade TOP (= GENREGMCP here), never the sum; the sum double/triple-counts the shared shadow prices. Per-product fields alongside are correct and unchanged. Cite the corrected values below, not the summed fields. Measured and reproduced independently by scripts/probes/_xiso1_miso_asm_cascade_check.py; see docs/FINDING-xiso-cascade-scan-2026-09-01.md and FINDING-nyiso166 \u00a72 (the instrument rule).",
+  "corrected": {
+   "2023": {
+    "summer_scarce_miso_asm_mcp_top": 144.63,
+    "asm_share_of_energy_gap_pct": 48.4,
+    "was_sum": 361.1,
+    "was_share_pct": 120.9
+   },
+   "2024": {
+    "summer_scarce_miso_asm_mcp_top": 31.88,
+    "asm_share_of_energy_gap_pct": 10.5,
+    "was_sum": 58.07,
+    "was_share_pct": 19.2
+   },
+   "2025": {
+    "summer_scarce_miso_asm_mcp_top": 193.3,
+    "asm_share_of_energy_gap_pct": 47.3,
+    "was_sum": 484.87,
+    "was_share_pct": 118.8
+   }
+  }
+ },
  "basis": {
   "session": "miso-167",
   "keeper": "2026-08-16-miso-160-wefor-shape",

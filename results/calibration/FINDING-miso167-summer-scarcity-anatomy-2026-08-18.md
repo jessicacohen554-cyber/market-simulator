@@ -84,6 +84,22 @@ honest exception at 19.2 % — 2024's spikes were not reserve-priced). The scarc
 published, and already sitting in `data/raw/MISO-AS/`. The model's reserve constraint is
 effectively dormant in exactly the hours MISO's reserve market cleared at hundreds of dollars.
 
+> **[CORRECTED 2026-09-01 — xiso-cascade, rule 14 `[R-ACCURATE]`.]** The "$484.87
+> (reg+spin+supp)" row SUMS the three generator ASM MCPs. They are a nested
+> CUMULATIVE cascade (`GENREGMCP ≥ GENSPINMCP ≥ GENSUPPMCP` in 100.0000 % of
+> committed cells, every year, both markets — BPM-002 product substitution), so a
+> reserve MW earns the cascade TOP — **$193.30** in these 47 hours — never the sum;
+> the sum triple-counts the shared shadow prices (the nyiso-166 §2 instrument
+> rule). Corrected headline: **MISO's own published reserve price accounts for
+> 47.3 % of the energy gap** (2023: 48.4 %; 2024: 10.5 %) — roughly HALF the gap,
+> not all of it. The §4 structural argument (the model's reserve constraint is
+> dormant while MISO's own market priced reserves at real money) survives at the
+> corrected magnitude; the stronger reading "MISO's own reserve market prices the
+> WHOLE gap" (this section's title included) does not. Measured and independently
+> reproduced: `scripts/probes/_xiso1_miso_asm_cascade_check.py`; instrument
+> corrected (`asm_top`), record carries a dated CORRECTION key;
+> `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.
+
 ## 4. Why the model's reserve constraint never binds — the structural defect
 
 `src/market_sim/model/reserves/spec.py::_miso_design` **never sets `online_gated`**; it is left at
