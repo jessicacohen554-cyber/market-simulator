@@ -9471,3 +9471,72 @@ not charge for them at this size.**
 falsification and the un-grounded-`peak` record; **no verdict moves** and no band
 value was changed. Guard passes (`check_mechanism_matrix.py` exit 0), shard
 passes `node --check`. Rule 22: every year read is 2023/2024/2025.
+
+## 2026-09-01 — nyiso-170 PHASE 0, ZERO SOLVE: the within-gas merit-order split is NOT an hourly displacement (matched-share at or below its own null in all three years, ANTI-coincident in 2025 once load is controlled) — the lane STOPS at the brief's own stop condition, and a CEMS identification limit is established
+
+Phase 0 of the within-gas merit-order object nyiso-169b handed forward, opened as
+the last live in-lane C3a-2025 lead on the hypothesis that the model clears cheap
+CC (offer-band HR 6.29–8.67) in the high-load hours where the market cleared CT /
+gas steam (11.95 / 11.15–11.99). **The brief's stop condition is met and the lane
+stops WITHOUT touching a parameter.** Keeper `2026-08-30-nyiso-159-loss-surface`
+and its NOT-YET determination on {C3a-2025 −11.5 %, C3c} unchanged; no LP ran, so
+rule 15 registers nothing. Full record:
+`docs/FINDING-nyiso170-merit-order-displacement-2026-09-01.md`.
+
+**THE KILL.** On the four classes CAMPD can identify, the over-run
+{CC_CHP, CC_REGULAR} and the under-run {CT_PEAKER, ST_GAS} are **not the same
+hours**: matched-share **0.164 / 0.313 / 0.474** sits **at or below its own
+999-fold circular-shift null p95** (0.167 / 0.314 / 0.525) in every year, Pearson r
+**+0.022 / +0.016 / −0.212**; and with the load channel removed (within-load-decile
+r) 2025 is **anti-coincident** at mean **−0.153 with 1 of 10 deciles positive**.
+Phase (2) was therefore not entered — no cost separation identified, no band swept,
+no solve manufactured.
+
+**WHAT SURVIVES, AND IS NOT THE SAME CLAIM.** The *aggregate* composition error is
+real: the model's share of a rising-load gas increment is more CC-heavy than the
+market's by **+0.086 (2024)** and **+0.130 (2025)**, and 2025's class errors are
+**95 % / 90 % within-gas MIX** rather than total-gas LEVEL under the exact identity
+`delta = s_meas·dG + ds·G_model` (residual 0.0 TWh every class-year). It is simply
+not built out of hour-local substitutions, so a merit-order re-level is **not
+identified** as its mechanism — arming one would have been a rule-1 `[R-STRUCT]`
+steepener adopted because the residual wants one.
+
+**AN INSTRUMENT LIMIT, ESTABLISHED AND CITABLE.** CAMPD cannot identify NYISO
+**ST_CHP** conduct **at all** (5 CEMS-registered units reporting **0.000 TWh** in
+2025 against a 0.800 TWh benchmark) nor **CT_CHP** (**ONE** unit, 0.483 of
+2.383 TWh, anchor 4.93); only CC_CHP / CC_REGULAR / CT_PEAKER / ST_GAS anchor in
+range (1.07 / 0.99 / 1.50 / 0.91). This **contaminated this probe's own first
+pass** — with measured ST_CHP identically zero the over-run group carried the
+model's entire ST_CHP output as error (+1.492 TWh) — and the pre-registered
+validity gate caught it *before* the verdict; the repair onto the admissible four
+**strengthened** the kill rather than rescuing it. It also **confirms nyiso-169b
+rather than impeaching it**: because NY's CHP boilers report exactly zero, that
+probe's pooled `fired|boiler` ST_GAS series equals its non-CHP series identically,
+so its numbers stand unrepaired — do not "fix" a non-bug.
+
+**THE ONE POSITIVE FINDING, HELD TO ITS TRUE STRENGTH.** Within narrow load slices
+the hours the model runs a higher CC share of its gas are the hours it under-prices
+— and it survives four pre-registered attacks: partial r given load **−0.243 /
+−0.316 / −0.257** (**stronger** than the raw −0.217 / −0.268 / −0.214, so load
+suppresses rather than creates it), retaining **0.76 / 0.74 / 0.62×** after further
+residualising on gas price, net imports and renewables, Spearman **−0.159 / −0.248
+/ −0.206**, and beating a 199-fold within-decile permutation null in **8 / 9 / 9 of
+10** deciles, with within-decile spreads monotone in load (2025: −$2.66 at decile 0
+to −$22.08 at decile 8) — i.e. in the 50–90 band nyiso-168 showed carries 73 % of
+the 2025 deficit. It is handed forward as a **named ASSOCIATION, explicitly NOT a
+demonstrated mechanism and NOT a lever**.
+
+**Guardrails honoured.** The un-grounded `peak` 2.25 was **not** swept against C3a
+and stays un-grounded; no C3c lever opened; none of the brief's twelve closed lines
+re-tested. Rule 22: every year read is 2023/2024/2025, no marker requested, nothing
+out-of-training touched. All five briefed probes re-run first — four bit-identical,
+`nyiso168_reserve_supply_slack` to 1e-15 as documented and **not** repaired.
+Operational note: `nyiso169`'s components need the **gitignored** NYISO DA/RT LBMP
+archives, so a fresh container degrades it silently to `available=false` / 1,464 h;
+re-staging via `fetch_nyiso_zonal_lmp.py` restores bit-identical reproduction (the
+degraded output was never committed).
+
+**Rule 28 (b).** `offer_curve_by_group` stays **`K`**, annotated with the
+falsification, the instrument limit and the surviving association; **no verdict
+moves** and no band value was changed. `node --check` passes on the NYISO shard and
+`check_mechanism_matrix.py` exits 0.
