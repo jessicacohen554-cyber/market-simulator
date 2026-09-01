@@ -1,0 +1,519 @@
+{
+ "probe": "nyiso168_reserve_supply_slack",
+ "bundle": "results/calibration/nyiso159_lossarm_B",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "note": "Zero solve. Measures NYISO's own cleared AS prices against the designated keeper's committed reserve-family duals, and the keeper's reserve supply under the as-armed uncapped-headroom basis. A nested cascade is MAXed, never summed.",
+ "by_year": {
+  "2023": {
+   "bands": [
+    "p0-50",
+    "p50-90",
+    "p90-100"
+   ],
+   "DAM": {
+    "cascade": {
+     "mean": 6.723119716700937,
+     "share_gt0_pct": 99.93150684931507,
+     "by_band_mean": [
+      4.889687071722248,
+      7.4601685714285715,
+      12.941267123287673
+     ]
+    },
+    "regulation": {
+     "mean": 8.177212702764452,
+     "share_gt0_pct": 99.93150684931507,
+     "by_band_mean": [
+      7.115708085883965,
+      8.757454285714285,
+      11.163995433789955
+     ]
+    }
+   },
+   "RTM": {
+    "cascade": {
+     "mean": 3.519989918166758,
+     "share_gt0_pct": 34.44063926940639,
+     "by_band_mean": [
+      1.3426234624982438,
+      3.6919324483530254,
+      13.714866045181392
+     ]
+    },
+    "regulation": {
+     "mean": 7.67099244022397,
+     "share_gt0_pct": 96.99771689497717,
+     "by_band_mean": [
+      6.174664690433128,
+      8.317805222448923,
+      12.564917269900876
+     ]
+    }
+   },
+   "model_family_dual_sum": {
+    "mean": 0.10797014832496643,
+    "share_gt0_pct": 0.2397260273972603,
+    "by_band_mean": [
+     0.0,
+     0.0,
+     1.0797014236450195
+    ]
+   },
+   "model_by_family": {
+    "east_10min_total": {
+     "requirement_mw_mean": 1200.0,
+     "held_mw_mean": 1281.01025390625,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 81.01026916503906
+    },
+    "li_10min_total": {
+     "requirement_mw_mean": 120.0,
+     "held_mw_mean": 338.39129638671875,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 218.39129638671875
+    },
+    "li_30min_total": {
+     "requirement_mw_mean": 395.2602844238281,
+     "held_mw_mean": 753.4486083984375,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 358.1883239746094
+    },
+    "nyc_10min_total": {
+     "requirement_mw_mean": 490.82476806640625,
+     "held_mw_mean": 707.5734252929688,
+     "dual_mean": 0.05716990306973457,
+     "share_gt0_pct": 0.2397260273972603,
+     "slack_mw_mean": 216.74859619140625
+    },
+    "nyc_30min_total": {
+     "requirement_mw_mean": 981.6495361328125,
+     "held_mw_mean": 1331.73974609375,
+     "dual_mean": 0.04166782274842262,
+     "share_gt0_pct": 0.182648401826484,
+     "slack_mw_mean": 350.0902404785156
+    },
+    "nyca_10min_spin": {
+     "requirement_mw_mean": 655.0,
+     "held_mw_mean": 1310.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 655.0
+    },
+    "nyca_10min_total": {
+     "requirement_mw_mean": 1310.0,
+     "held_mw_mean": 1310.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 0.0
+    },
+    "nyca_30min_total": {
+     "requirement_mw_mean": 2620.0,
+     "held_mw_mean": 2620.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 0.0
+    },
+    "seny_30min_total": {
+     "requirement_mw_mean": 1602.314453125,
+     "held_mw_mean": 2114.501708984375,
+     "dual_mean": 0.00913241971284151,
+     "share_gt0_pct": 0.0228310502283105,
+     "slack_mw_mean": 512.1873168945312
+    }
+   },
+   "ramp10_ceiling": {
+    "capacity_mw_by_fuel": {
+     "gas_cc": 10766.6,
+     "gas_ct": 3137.9,
+     "gas_st": 9824.6,
+     "hydro": 5964.0,
+     "nuclear": 3304.6,
+     "oil": 3413.8,
+     "other": 513.0,
+     "solar": 1594.8,
+     "storage": 224.2,
+     "wind": 2746.3
+    },
+    "hydro_uncapped_mw": 5964.0,
+    "class0": {
+     "thermal_capacity_mw": 30447.499999999996,
+     "ramp10_ceiling_mw": 12823.260000000002,
+     "ramp10_ceiling_with_hydro_mw": 18787.260000000002
+    },
+    "class1": {
+     "thermal_capacity_mw": 6551.700000000001,
+     "ramp10_ceiling_mw": 6551.700000000001,
+     "ramp10_ceiling_with_hydro_mw": 12515.7
+    },
+    "families": {
+     "nyca_30min_total": {
+      "requirement_mw": 2620.0,
+      "ceiling_with_hydro_mw": 18787.260000000002,
+      "cover_with_hydro_x": 7.1707099236641225,
+      "ceiling_thermal_only_mw": 12823.260000000002,
+      "cover_thermal_only_x": 4.894374045801528
+     },
+     "nyca_10min_total": {
+      "requirement_mw": 1310.0,
+      "ceiling_with_hydro_mw": 12515.7,
+      "cover_with_hydro_x": 9.553969465648855,
+      "ceiling_thermal_only_mw": 6551.700000000001,
+      "cover_thermal_only_x": 5.001297709923665
+     },
+     "nyca_10min_spin": {
+      "requirement_mw": 655.0,
+      "ceiling_with_hydro_mw": 12515.7,
+      "cover_with_hydro_x": 19.10793893129771,
+      "ceiling_thermal_only_mw": 6551.700000000001,
+      "cover_thermal_only_x": 10.00259541984733
+     }
+    }
+   }
+  },
+  "2024": {
+   "bands": [
+    "p0-50",
+    "p50-90",
+    "p90-100"
+   ],
+   "DAM": {
+    "cascade": {
+     "mean": 6.2905588537504284,
+     "share_gt0_pct": 99.98858447488584,
+     "by_band_mean": [
+      4.821145238638958,
+      6.857151826484018,
+      11.369577625570777
+     ]
+    },
+    "regulation": {
+     "mean": 7.310429272748031,
+     "share_gt0_pct": 99.98858447488584,
+     "by_band_mean": [
+      6.066216031057319,
+      8.16945205479452,
+      10.09398401826484
+     ]
+    }
+   },
+   "RTM": {
+    "cascade": {
+     "mean": 3.6018065244468898,
+     "share_gt0_pct": 35.22831050228311,
+     "by_band_mean": [
+      1.7174322612172421,
+      3.7527925113066773,
+      12.417582780983343
+     ]
+    },
+    "regulation": {
+     "mean": 7.989344132741691,
+     "share_gt0_pct": 98.96118721461187,
+     "by_band_mean": [
+      7.62560147413035,
+      7.280397255598497,
+      12.64342970302572
+     ]
+    }
+   },
+   "model_family_dual_sum": {
+    "mean": 0.038065649569034576,
+    "share_gt0_pct": 0.12557077625570776,
+    "by_band_mean": [
+     0.0,
+     0.0,
+     0.38065648078918457
+    ]
+   },
+   "model_by_family": {
+    "east_10min_total": {
+     "requirement_mw_mean": 1200.0,
+     "held_mw_mean": 1282.4190673828125,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 82.41909790039062
+    },
+    "li_10min_total": {
+     "requirement_mw_mean": 120.0,
+     "held_mw_mean": 342.0828857421875,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 222.08285522460938
+    },
+    "li_30min_total": {
+     "requirement_mw_mean": 395.75341796875,
+     "held_mw_mean": 740.3495483398438,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 344.59613037109375
+    },
+    "nyc_10min_total": {
+     "requirement_mw_mean": 488.234375,
+     "held_mw_mean": 708.3802490234375,
+     "dual_mean": 0.02665012516081333,
+     "share_gt0_pct": 0.12557077625570776,
+     "slack_mw_mean": 220.14588928222656
+    },
+    "nyc_30min_total": {
+     "requirement_mw_mean": 976.4688110351562,
+     "held_mw_mean": 1322.0556640625,
+     "dual_mean": 0.01141552533954382,
+     "share_gt0_pct": 0.045662100456621,
+     "slack_mw_mean": 345.5868835449219
+    },
+    "nyca_10min_spin": {
+     "requirement_mw_mean": 655.0,
+     "held_mw_mean": 1310.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 655.0
+    },
+    "nyca_10min_total": {
+     "requirement_mw_mean": 1310.0,
+     "held_mw_mean": 1310.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 0.0
+    },
+    "nyca_30min_total": {
+     "requirement_mw_mean": 2620.0,
+     "held_mw_mean": 2620.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 0.0
+    },
+    "seny_30min_total": {
+     "requirement_mw_mean": 1593.6978759765625,
+     "held_mw_mean": 2095.41748046875,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 501.7198181152344
+    }
+   },
+   "ramp10_ceiling": {
+    "capacity_mw_by_fuel": {
+     "gas_cc": 10795.6,
+     "gas_ct": 3075.28,
+     "gas_st": 9818.55,
+     "hydro": 5971.3,
+     "nuclear": 3330.4,
+     "oil": 3457.3,
+     "other": 458.0,
+     "solar": 2513.41,
+     "storage": 236.1,
+     "wind": 2869.7000000000003
+    },
+    "hydro_uncapped_mw": 5971.3,
+    "class0": {
+     "thermal_capacity_mw": 30477.13,
+     "ramp10_ceiling_mw": 12814.529999999999,
+     "ramp10_ceiling_with_hydro_mw": 18785.829999999998
+    },
+    "class1": {
+     "thermal_capacity_mw": 6532.58,
+     "ramp10_ceiling_mw": 6532.58,
+     "ramp10_ceiling_with_hydro_mw": 12503.880000000001
+    },
+    "families": {
+     "nyca_30min_total": {
+      "requirement_mw": 2620.0,
+      "ceiling_with_hydro_mw": 18785.829999999998,
+      "cover_with_hydro_x": 7.170164122137404,
+      "ceiling_thermal_only_mw": 12814.529999999999,
+      "cover_thermal_only_x": 4.891041984732824
+     },
+     "nyca_10min_total": {
+      "requirement_mw": 1310.0,
+      "ceiling_with_hydro_mw": 12503.880000000001,
+      "cover_with_hydro_x": 9.544946564885496,
+      "ceiling_thermal_only_mw": 6532.58,
+      "cover_thermal_only_x": 4.986702290076336
+     },
+     "nyca_10min_spin": {
+      "requirement_mw": 655.0,
+      "ceiling_with_hydro_mw": 12503.880000000001,
+      "cover_with_hydro_x": 19.089893129770992,
+      "ceiling_thermal_only_mw": 6532.58,
+      "cover_thermal_only_x": 9.973404580152671
+     }
+    }
+   }
+  },
+  "2025": {
+   "bands": [
+    "p0-50",
+    "p50-90",
+    "p90-100"
+   ],
+   "DAM": {
+    "cascade": {
+     "mean": 12.171133196253143,
+     "share_gt0_pct": 99.93150684931507,
+     "by_band_mean": [
+      6.781150947704956,
+      13.371545714285716,
+      34.34403428571429
+     ]
+    },
+    "regulation": {
+     "mean": 13.129003883938772,
+     "share_gt0_pct": 99.93150684931507,
+     "by_band_mean": [
+      10.39971683032656,
+      14.364482857142859,
+      21.846
+     ]
+    }
+   },
+   "RTM": {
+    "cascade": {
+     "mean": 11.693372577431322,
+     "share_gt0_pct": 45.662100456621005,
+     "by_band_mean": [
+      3.022230122972125,
+      13.377665924000372,
+      48.35155097181436
+     ]
+    },
+    "regulation": {
+     "mean": 13.804292101096443,
+     "share_gt0_pct": 99.93150684931507,
+     "by_band_mean": [
+      9.596827150275358,
+      13.924196117057079,
+      34.38123491684879
+     ]
+    }
+   },
+   "model_family_dual_sum": {
+    "mean": 0.16190779209136963,
+    "share_gt0_pct": 0.4337899543378996,
+    "by_band_mean": [
+     0.0,
+     0.0,
+     1.6190779209136963
+    ]
+   },
+   "model_by_family": {
+    "east_10min_total": {
+     "requirement_mw_mean": 1200.0,
+     "held_mw_mean": 1282.00244140625,
+     "dual_mean": 0.00016676867380738258,
+     "share_gt0_pct": 0.01141552511415525,
+     "slack_mw_mean": 82.00238037109375
+    },
+    "li_10min_total": {
+     "requirement_mw_mean": 120.0,
+     "held_mw_mean": 343.0482177734375,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 223.04820251464844
+    },
+    "li_30min_total": {
+     "requirement_mw_mean": 395.75341796875,
+     "held_mw_mean": 741.81005859375,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 346.0566101074219
+    },
+    "nyc_10min_total": {
+     "requirement_mw_mean": 493.9783020019531,
+     "held_mw_mean": 708.0242309570312,
+     "dual_mean": 0.08631140738725662,
+     "share_gt0_pct": 0.4337899543378996,
+     "slack_mw_mean": 214.04591369628906
+    },
+    "nyc_30min_total": {
+     "requirement_mw_mean": 987.9566040039062,
+     "held_mw_mean": 1319.083740234375,
+     "dual_mean": 0.051261916756629944,
+     "share_gt0_pct": 0.2054794520547945,
+     "slack_mw_mean": 331.1272277832031
+    },
+    "nyca_10min_spin": {
+     "requirement_mw_mean": 655.0,
+     "held_mw_mean": 1310.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 655.0
+    },
+    "nyca_10min_total": {
+     "requirement_mw_mean": 1310.0,
+     "held_mw_mean": 1310.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 0.0
+    },
+    "nyca_30min_total": {
+     "requirement_mw_mean": 2620.0,
+     "held_mw_mean": 2620.0,
+     "dual_mean": 0.0,
+     "share_gt0_pct": 0.0,
+     "slack_mw_mean": 0.0
+    },
+    "seny_30min_total": {
+     "requirement_mw_mean": 1613.1177978515625,
+     "held_mw_mean": 2095.50341796875,
+     "dual_mean": 0.02416769601404667,
+     "share_gt0_pct": 0.0684931506849315,
+     "slack_mw_mean": 482.38568115234375
+    }
+   },
+   "ramp10_ceiling": {
+    "capacity_mw_by_fuel": {
+     "gas_cc": 10796.74,
+     "gas_ct": 3091.48,
+     "gas_st": 9796.0,
+     "hydro": 5978.0,
+     "nuclear": 3325.9,
+     "oil": 3468.1,
+     "other": 455.5,
+     "solar": 2508.92,
+     "storage": 236.1,
+     "wind": 2868.5
+    },
+    "hydro_uncapped_mw": 5978.0,
+    "class0": {
+     "thermal_capacity_mw": 30478.219999999998,
+     "ramp10_ceiling_mw": 12837.476,
+     "ramp10_ceiling_with_hydro_mw": 18815.476000000002
+    },
+    "class1": {
+     "thermal_capacity_mw": 6559.58,
+     "ramp10_ceiling_mw": 6559.58,
+     "ramp10_ceiling_with_hydro_mw": 12537.58
+    },
+    "families": {
+     "nyca_30min_total": {
+      "requirement_mw": 2620.0,
+      "ceiling_with_hydro_mw": 18815.476000000002,
+      "cover_with_hydro_x": 7.181479389312978,
+      "ceiling_thermal_only_mw": 12837.476,
+      "cover_thermal_only_x": 4.8998
+     },
+     "nyca_10min_total": {
+      "requirement_mw": 1310.0,
+      "ceiling_with_hydro_mw": 12537.58,
+      "cover_with_hydro_x": 9.57067175572519,
+      "ceiling_thermal_only_mw": 6559.58,
+      "cover_thermal_only_x": 5.007312977099237
+     },
+     "nyca_10min_spin": {
+      "requirement_mw": 655.0,
+      "ceiling_with_hydro_mw": 12537.58,
+      "cover_with_hydro_x": 19.14134351145038,
+      "ceiling_thermal_only_mw": 6559.58,
+      "cover_thermal_only_x": 10.014625954198474
+     }
+    }
+   }
+  }
+ }
+}

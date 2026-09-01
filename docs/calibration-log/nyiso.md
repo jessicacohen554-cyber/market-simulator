@@ -9219,3 +9219,108 @@ built here.
 **Open gates unchanged: C3a-2025 −11.5 % and C3c. Determination still NOT-YET.**
 
 Next shorthand: nyiso-168.
+
+## 2026-09-01 — nyiso-168: the gain deficit LOCATED in the ordinary 50–90 load band (73 % of 2025's), the market's steepness measured ~80 % NON-PHYSICAL, and the one new mechanism it points at KILLED EX ANTE (zero solve)
+
+Successor session to nyiso-167 on the named object — the **price-response gain**
+(model = 0.7032 × actual_RT + $11.03). **ZERO SOLVE**; committed artifacts plus
+one clean-tree fleet read. Keeper, shard determination, marker, freeze and every
+matrix verdict but one UNTOUCHED. Rule 22: every year read is 2023–2025; no
+marker requested. nyiso-167's probe was re-run first and **reproduces
+bit-identically**, so the same object is measured.
+Full record: `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md`.
+
+**(1) THE OBJECT IS THE ORDINARY BAND, NOT THE TAIL.** On the DA basis, 2025's
+−$4.91/MWh decomposes by load percentile as **0–50 +$1.75 (contrib +0.87)**,
+50–80 −$6.20 (**−1.86**), 80–90 −$17.11 (**−1.71**), 90–95 −0.93, 95–99 −0.65,
+99–99.9 −0.58, 99.9–100 −0.06. **The 50–90 band carries 73 %; the top 1 %
+carries 1.2 %.** The bottom half is OVER-priced in all three years (+2.31 /
++2.70 / +1.75) while gas doubles — a fuel-invariant component. This is the
+independent confirmation that C3c is a separate limitation and that a C3c lever
+would not have touched C3a.
+
+**(2) FOUR CANDIDATE CAUSES KILLED ON MEASUREMENT.** *Floors* cannot raise the
+overnight price at all — a floor adds supply and moves the marginal unit DOWN
+the stack (framing (1)'s first suspect, interrogated and structurally
+impossible). *Reserves* contribute **exactly $0.00** below the 90th percentile.
+*Storage* buys ~$1.4 of the bottom and ~$0.35 of the top, and the model's PS
+under-cycles rather than over-cycles. *Mix/availability*: the model's top-decile
+dispatch matches EIA-930 NYIS to within 3 % (2025 gas −716 MW on 23.9 GW).
+
+**(3) THE DECISIVE ONE — the market's steepness is NOT physical.** NY CAMPD
+unit-level hourly `grossLoad`+`heatInput`, pooled and first-differenced, gives
+the fleet's OWN incremental heat rate rising **7.06 → 8.64 (+22 %)** low-to-high
+output in 2025 (+21 % 2023, +29 % 2024), while the price-implied marginal heat
+rate rises **13.33 → 29.02 (+118 %)** for actual DA and 15.33 → 23.71 (+55 %)
+for the model. **Only ~a fifth of the market's revealed steepness is physical
+heat-rate dispersion.** This CLOSES the merit-order/heat-rate family as the
+explanation — the model already prices more curvature than physics justifies —
+and re-points the search at markup and congestion.
+
+**(4) ZONAL SPLIT, and the gradient is not consistently signed.** Load-weighted
+deficit = gradient + level: 2023 −0.69 = **+0.96** + −1.65; 2024 −1.43 = −1.49 +
+**+0.07**; 2025 −6.59 = −2.32 + **−4.27**. The model OVER-shoots the zonal
+gradient in 2023. Only the LEVEL component tracks the year's price level — the
+gain law's own signature — and in 2025 it is 65 % of the deficit, measured in
+**Upstate_West itself**, where no downstate/in-city/seam mechanism reaches
+(reproducing nyiso-167 §2.3's 0.799 upstate passthrough ratio).
+
+**(5) THE ONE NEW MECHANISM, AND ITS EX-ANTE KILL — `reserve_pergen` `·` → `I`.**
+Verified in source first: `_nyiso_design` returns `supply_cap=None`,
+`headroom_eligible=None`, no `pergen_*` — **NYISO is the only ISO with the
+machinery and none of it armed** (`_ercot_design`, `_ercot_multiproduct_design`,
+`_pjm_design` all set `supply_cap`). Motivating gap, newly measured: NYISO
+clears reserves **above zero in 100.0 % of DAM hours in every zone including
+Niagara's own** (2025 zonal means WEST $6.27 → N.Y.C. $12.17; load bands $6.78 →
+$13.37 → $34.34) against keeper duals of exactly zero below the 90th percentile.
+**Pre-registered kill, fired before any build:** the ramp10 CEILING
+(Σ ramp10_frac × pmax) clears every NYCA family on the capacity basis alone —
+**4.90× / 5.01× / 10.01×** in 2025 **with hydro excluded entirely**, stable
+across all three years. The QUICK_START class alone (gas_ct 3,091 + oil
+3,468 MW, both at fraction 1.00) is ten times the 655 MW spinning requirement.
+**PROVABLY LP-INERT; no solve spent; the mechanism is not built.**
+
+**(6) WHAT THIS ADDS TO nyiso-144/145 WITHOUT OVERTURNING EITHER.**
+`nyiso_spin_reserve_online` stays `I`, untouched and not re-tested — its rho
+construction gates on **dispatch** (where hydro does dominate), while nyiso-168
+adjudicated only the **capacity** construction. Two additions: nyiso-145's named
+purchasable object (a defensible 10-min ramp for NYISO hydro) **would buy nothing
+on the capacity basis**, since the thermal-only ceiling is already 10× the spin
+requirement; and the reserve-price gap is now measured to be **general, not
+tail-confined**. The remaining blocker is unchanged and still owner-funded (AS
+certification + hourly water limit), and rule 13 `[R-MEASURED]` bars using the
+measured reserve price as an input. `measured_ramp_capability` stays `I` with its
+value for the reserve lane specifically now bounded at zero.
+
+**(7) FRAMING (2) CLOSED ON EVIDENCE.** The brief required establishing first,
+from NEISO's own record, that the four gates nyiso-167 §4 associated with NEISO's
+0.986 gain are what closes it. Census of every committed NEISO bundle:
+**4 of 4 arm all five gates — no arm without them exists**, so the attribution
+cannot be made from the committed record at all. No NEISO verdict was read and no
+NYISO cell filled from one (rule 25, rule 28(d)). Separately, NYISO's four `·`
+cells are correct on the merits: its own equivalents are armed under native names
+(`nyiso_rcpf_family`, `nyiso_nyc_rcpf_step_curve`, `nyiso_ordc_measured_step_span`,
+`nyiso_seny_rcpf_increment_step`, `dual_fuel_switching`,
+`nyiso_downstate_ct_gas_basis`, all `K`).
+
+**(8) BRIEF-PREMISE CORRECTION.** The brief carried `DECISION-CARD-nyiso161` as
+"FILED AND UNRULED" and directed a check. **It has been ruled:** owner ruling
+**R-H**, **OPTION A — NOT-YET STANDS**, recorded at board D-7 in the v18b
+completion (PR #4498, `9e4291b6`) after the brief was written. Nothing here plans
+around the card or re-litigates it.
+
+**WHAT DID NOT MOVE.** No gate. C3a-2025 still −11.5 %, C3c still fails,
+determination still **NOT-YET on {C3a-2025, C3c}**, NYISO still not CALIBRATED.
+No solve ran, so rule 15 registers nothing — the dashboard is untouched by
+design. One cell moves (`reserve_pergen` `·` → `I`); two carry added evidence
+without moving. The gain itself is unmeasured against any arm, because no arm was
+built. Honest read: every admissible NYISO-measured lever for the gain is now
+adjudicated or blocked on an intake the owner has closed, and the standing
+$27.8–$56.0/MWh C3a pass window should be planned around rather than solved away.
+
+**Evidence:** `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md`;
+`scripts/probes/nyiso168_gap_anatomy.py` → `_nyiso168_gap_anatomy.json`;
+`scripts/probes/nyiso168_reserve_supply_slack.py` →
+`_nyiso168_reserve_supply_slack.json`;
+`docs/codebase-site/data/mechanism-matrix/NYISO.js` (one cell moved, two
+annotated; `node --check` clean on all six shards + the base file).
