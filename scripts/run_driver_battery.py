@@ -47,6 +47,13 @@ Usage::
     # Harness smoke — one rung per ladder, one evolution year, to prove the rig:
     python scripts/run_driver_battery.py --iso ERCOT \
         --start-year 2026 --end-year 2026 --max-rungs 1 --tests T1.1 T1.3
+
+    # One FC-6 paired-invariant arm (golden reference construction ± exactly
+    # one signal; see PAIRED_ARM_OVERRIDES — the carbon arm is the ADDITIVE
+    # carbon_price_delta construction, capx-D26):
+    python scripts/run_driver_battery.py --iso NEISO \
+        --start-year 2026 --end-year 2050 --paired-arm carbon_plus25 \
+        --out results/.../fc6/arms/carbon_plus25 --full-solve-authorized
 """
 
 from __future__ import annotations
@@ -940,8 +947,141 @@ def _acp_ceiling(config) -> float | None:
 
 
 # --------------------------------------------------------------------------- #
+# FC-6 paired arms (P1-P3 constructions) — first-class, no scratchpad drivers.
+# --------------------------------------------------------------------------- #
+#: The FC-6 paired-invariant arm registry: each arm is the golden's exact
+#: reference construction plus exactly ONE perturbation, so base and arm
+#: differ in nothing but the perturbed signal. The carbon arm is built as an
+#: ADDITIVE increment on the RESOLVED carbon signal (``carbon_price_delta``,
+#: capx-D26) — never an absolute ``carbon_price`` override, which on a program
+#: ISO REPLACES the projected program trajectory and turns the "high-carbon"
+#: arm into a price CUT in every year (the D21/D23 premise inversion,
+#: ``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``). With the
+#: delta construction the strictly-positive year-by-year premise the paired
+#: checker asserts (``check_forecast_invariants.carbon_pair_premise``) holds
+#: by construction on every ISO, program or not.
+PAIRED_ARM_OVERRIDES: dict[str, dict] = {
+    "base": {},
+    "carbon_plus25": {"carbon_price_delta": 25.0},  # P1 high-carbon arm
+    "gasup150": {"gas_price_factor": 1.5},  # P2 gas ×1.5 arm
+    "gaspm5": {"gas_price_factor": 1.05},  # P3 ±5% perturbation arm
+}
+
+
+def run_paired_arm(
+    arm: str,
+    iso: str,
+    start_year: int,
+    end_year: int,
+    out_dir: Path,
+    *,
+    full_solve_authorized: bool = False,
+) -> dict:
+    """Solve one FC-6 paired-invariant arm and write its summary bundle.
+
+    The committed home of the arm construction D21 ran from a session
+    scratchpad (its finding §8): the golden's own reference construction
+    (``run_full_horizon.reference_config(iso, start, end, cmc=False,
+    golden_posture=True)``) plus the single :data:`PAIRED_ARM_OVERRIDES`
+    perturbation, solved through ``run_full_horizon.solve_and_summarize``
+    (the golden's engine), so a paired arm is always the golden recipe ±
+    exactly one signal. Passes the §2.1b window gate explicitly
+    (``assert_schedulable``) — a 25-year arm needs
+    ``full_solve_authorized=True`` exactly as the golden did.
+
+    Returns the summary dict (``summary["error"]`` carries a solve failure).
+    """
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "run_full_horizon", REPO / "scripts" / "run_full_horizon.py"
+    )
+    rfh = importlib.util.module_from_spec(spec)
+    # Register before exec: dataclass machinery resolves string annotations
+    # through sys.modules[cls.__module__], which is None for an unregistered
+    # importlib-loaded module.
+    sys.modules[spec.name] = rfh
+    spec.loader.exec_module(rfh)
+
+    overrides = PAIRED_ARM_OVERRIDES[arm]
+    rfh.assert_schedulable(
+        start_year, end_year, full_solve_authorized, f"FC-6 paired arm {arm}"
+    )
+    cfg = rfh.reference_config(
+        iso, start_year, end_year, cmc=False, golden_posture=True
+    )
+    if overrides:
+        cfg = replace(cfg, **overrides)
+    return rfh.solve_and_summarize(cfg, iso, Path(out_dir))
+
+
+# --------------------------------------------------------------------------- #
 # Orchestration
 # --------------------------------------------------------------------------- #
+#: ScenarioConfig fields that ARE the exogenous carbon signal. A ladder whose
+#: every rung override touches only these fields claims "the driver is the
+#: carbon price", and its premise (ladder order == effective-signal order) is
+#: checked against ``resolve_carbon_price`` before its expectations score
+#: (capx-D23 R1 / capx-D26). Mass-cap ladders (T1.2) perturb the cap row, not
+#: the exogenous signal, and are deliberately outside this set.
+_CARBON_SIGNAL_FIELDS = frozenset(
+    {"carbon_price", "carbon_price_delta", "carbon_program_price_path"}
+)
+
+
+def carbon_ladder_premise(
+    rungs: list[Rung], iso: str, start_year: int, end_year: int
+) -> dict | None:
+    """Premise table for a carbon-signal ladder, or ``None`` when not one.
+
+    For each rung, resolves the EFFECTIVE carbon signal
+    (``policy.carbon.resolve_carbon_price`` over the rung's own config — the
+    resolution every model consumer sees) for every solve year, and requires
+    each successive rung to sit strictly above its predecessor in every year.
+    On a program ISO an absolute ``carbon_price`` rung ladder can silently
+    invert (rung 0 resolves the projected program trajectory, ABOVE rung 25 —
+    the D23 finding §7 T1.1 case); an inverted ladder's gate rows are then
+    vacuous evidence (rubric §2 FC-6.2), never scored PASS/FAIL.
+    """
+    keys: set[str] = set()
+    for r in rungs:
+        keys |= set(r.overrides)
+    if not keys or not keys <= _CARBON_SIGNAL_FIELDS:
+        return None
+
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.policy.carbon import resolve_carbon_price
+
+    years = list(range(start_year, end_year + 1))
+    signals: list[list[float]] = []
+    for r in rungs:
+        cfg = ScenarioConfig(
+            iso=iso,
+            use_campd_bins=False,
+            start_year=start_year,
+            end_year=end_year,
+            **r.overrides,
+        )
+        signals.append([float(resolve_carbon_price(cfg, y)) for y in years])
+    inversions: list[str] = []
+    for (lo_rung, lo), (hi_rung, hi) in zip(
+        zip(rungs, signals), zip(rungs[1:], signals[1:])
+    ):
+        bad = [y for y, a, b in zip(years, lo, hi) if b <= a]
+        if bad:
+            inversions.append(
+                f"{lo_rung.label}→{hi_rung.label}: effective signal not a "
+                f"strict increase in {len(bad)}/{len(years)} years "
+                f"(first {bad[0]})"
+            )
+    return {
+        "ok": not inversions,
+        "years": years,
+        "signals": {r.label: [round(v, 4) for v in s] for r, s in zip(rungs, signals)},
+        "inversions": inversions,
+    }
+
+
 def resolve_dynamic_rungs(ladder: Ladder, solved: dict[str, dict]) -> list[Rung]:
     """Fill in rungs whose overrides depend on an earlier rung's result.
 
@@ -1072,7 +1212,13 @@ def run_ladder(
 
     expectations = _expectations_for(ladder, iso)
     ledger = [evaluate_expectation(e, ok_rows) for e in expectations]
-    return {
+
+    # Carbon-ladder premise (capx-D23 R1 / capx-D26): an inverted carbon
+    # ladder's gate rows are vacuous evidence — reclassified to SKIP with the
+    # explicit `vacuous` marker the FC-6 scorer trusts (rubric §2 FC-6.2),
+    # never a scored PASS/FAIL against a premise the ladder does not hold.
+    premise = carbon_ladder_premise(rungs, iso, start_year, end_year)
+    out = {
         "test_id": ladder.test_id,
         "iso": iso,
         "driver": ladder.driver,
@@ -1080,6 +1226,18 @@ def run_ladder(
         "rungs": rung_rows,
         "expectations": ledger,
     }
+    if premise is not None:
+        out["carbon_premise"] = premise
+        if not premise["ok"]:
+            for row in ledger:
+                if row.get("gate"):
+                    row["status"] = SKIP
+                    row["vacuous"] = True
+                    row["detail"] = (
+                        "carbon-ladder premise inverted (see carbon_premise) "
+                        f"— not scored: {row['detail']}"
+                    )
+    return out
 
 
 def _expectations_for(ladder: Ladder, iso: str) -> list[Expectation]:
@@ -1247,6 +1405,20 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Disposable solve-cache root (default: under --out).",
     )
+    p.add_argument(
+        "--paired-arm",
+        choices=sorted(PAIRED_ARM_OVERRIDES),
+        default=None,
+        help="Solve ONE FC-6 paired-invariant arm (golden reference "
+        "construction ± exactly one signal; see PAIRED_ARM_OVERRIDES) "
+        "into --out and exit. The ladders do not run in this mode.",
+    )
+    p.add_argument(
+        "--full-solve-authorized",
+        action="store_true",
+        help="Pass the §2.1b window gate for a >5-year paired arm "
+        "(mirrors run_full_horizon's own flag).",
+    )
     return p
 
 
@@ -1256,6 +1428,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = _build_parser().parse_args(argv)
     iso = args.iso.upper()
+
+    if args.paired_arm:
+        out_dir = (
+            REPO / args.out if not Path(args.out).is_absolute() else Path(args.out)
+        )
+        summary = run_paired_arm(
+            args.paired_arm,
+            iso,
+            args.start_year,
+            args.end_year,
+            out_dir,
+            full_solve_authorized=args.full_solve_authorized,
+        )
+        return 1 if summary.get("error") else 0
 
     ladders = build_ladders()
     if args.tests:

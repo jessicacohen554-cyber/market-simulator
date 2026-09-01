@@ -274,6 +274,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     mass_cap_lp_row: { cell: "U" },
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
+    carbon_price_delta: { cell: ".", fc: "." },
     plant_emission_rates_v2: { cell: "K", ev: "miso-88" },
     startup_co2_reporting: { cell: "U" },
   },

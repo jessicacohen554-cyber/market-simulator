@@ -1160,6 +1160,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the fields (the nyiso-119 discipline).
     "storage_entry_availability_gate",
     "storage_entry_cost_normalized_rank",
+    # D26 FC-6 paired-P1 arm construction (instrument-grade, default 0.0):
+    # dropped from the hash at its 0.0 default so every pre-existing cache key
+    # of all six ISOs stays byte-stable — at 0.0 the resolver's additive stage
+    # is an exact arithmetic no-op, byte-identical by construction (proven by
+    # the D26 base-arm reproduction against the NEISO t3 golden). An armed arm
+    # shifts the resolved carbon signal uniformly (a different mc surface and
+    # evolution driver) and hashes distinctly, keeping the paired base/arm off
+    # one cache entry. SHARED field — very end, per HOUSE-3. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "carbon_price_delta",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1581,6 +1591,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # the live default and fails on any drift).
     "storage_entry_availability_gate": "True",
     "storage_entry_cost_normalized_rank": "True",
+    # D26: additive carbon increment for the FC-6 paired-P1 arm; registered at
+    # its shipping 0.0 default (an armed arm is non-default and keys
+    # distinctly; the default is an exact resolver no-op).
+    "carbon_price_delta": "0.0",
 }
 
 
@@ -2261,6 +2275,26 @@ class ScenarioConfig:
     carbon_price_path: str = (
         "zero"  # "zero", "low", "mid", "high"; used when carbon_price is 0.0
     )
+    carbon_price_delta: float = 0.0  # $/ton CO2, ADDITIVE on the RESOLVED
+    # carbon signal — applied by policy.carbon.resolve_carbon_price as a final
+    # stage AFTER its precedence chain (override / program adder / RFF path),
+    # so every carbon consumer sees base+Δ uniformly and the documented
+    # precedence semantics of `carbon_price` (replacement) are untouched.
+    # Instrument-grade paired-experiment lever (capx-D26): the FC-6 paired-P1
+    # "high-carbon" arm is constructed as base recipe + carbon_price_delta=25
+    # so a program ISO's resolved trajectory (e.g. NEISO's projected RGGI
+    # escalator) stays armed in BOTH legs and the arm is a genuine strictly-
+    # positive increase in every horizon year — the D23 premise inversion
+    # (carbon_price=25 REPLACING an escalating $26→$132/t base, i.e. a CUT)
+    # is impossible by construction. See
+    # docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md and
+    # FINDING-capx-d26-p1-arm-construction-2026-09-01.md. Default 0.0 is an
+    # exact no-op on every path; forecast-only (rule 13 guard in
+    # __post_init__ — an additive carbon adder must never become a backcast
+    # residual-tuning channel); registered in _CACHE_KEY_OPTIONAL_FIELDS at
+    # 0.0 so every pre-existing cache key stays byte-stable and an armed arm
+    # keys distinctly. NEVER armed in a keeper/golden posture: it exists to
+    # construct paired instrument arms, not to be a calibration lever.
     policy_bundle: str = "current"  # "current" / "tight" / "rollback" — the
     # PB-1 coherent policy-scenario axis (probability-bounds-plan-2026-07.md
     # §1.2), resolved by config.scenarios.resolve_policy_bundle into
@@ -13775,6 +13809,18 @@ class ScenarioConfig:
                 "gas_price_factor is a forecast-only uncertainty lever and "
                 "must be 1.0 in backcast mode (rule 13); got "
                 f"{self.gas_price_factor!r}"
+            )
+
+        # carbon_price_delta is a forecast-only paired-instrument lever
+        # (capx-D26, the FC-6 P1 arm construction); rule 13 forbids it ever
+        # becoming a backcast tuning channel that offsets the resolved carbon
+        # signal to chase a residual — same construction as the
+        # gas_price_factor guard above.
+        if self.mode == "backcast" and self.carbon_price_delta != 0.0:
+            raise ValueError(
+                "carbon_price_delta is a forecast-only paired-instrument "
+                "lever and must be 0.0 in backcast mode (rule 13); got "
+                f"{self.carbon_price_delta!r}"
             )
 
         # The national-CES federal EAC premium is a forecast-only policy

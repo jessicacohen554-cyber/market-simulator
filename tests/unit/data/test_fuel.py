@@ -976,6 +976,54 @@ def test_neiso_backcast_gas_mc_includes_rggi():
     assert resolve_carbon_price(caiso, 2024) == 35.23
 
 
+def test_carbon_price_delta_is_additive_on_every_precedence_path():
+    """carbon_price_delta rides ON TOP of whatever the precedence chain resolves.
+
+    The D26 FC-6 P1 arm construction (repairing the D23 premise inversion):
+    on a program ISO the delta shifts the projected trajectory uniformly, so a
+    +25 arm is a strictly positive increase in EVERY horizon year instead of a
+    replacement that CUT an escalating base. Default 0.0 is an exact no-op.
+    """
+    # Path (2): program adder (NEISO projected RGGI escalator, forecast).
+    base = ScenarioConfig(iso="NEISO", gas_seasonality=False, hours=24)
+    arm = ScenarioConfig(
+        iso="NEISO", gas_seasonality=False, hours=24, carbon_price_delta=25.0
+    )
+    for year in (2026, 2030, 2040, 2050):
+        b = resolve_carbon_price(base, year)
+        assert b > 0.0  # premise: the base trajectory is armed, not zero
+        assert resolve_carbon_price(arm, year) == pytest.approx(b + 25.0)
+
+    # Path (1): a nonzero carbon_price override still wins the chain; the
+    # delta adds to it rather than being swallowed by the replacement.
+    over = ScenarioConfig(
+        iso="ERCOT", carbon_price=25.0, carbon_price_delta=10.0, hours=24
+    )
+    assert resolve_carbon_price(over, 2030) == pytest.approx(35.0)
+
+    # Path (3)/zero fallthrough: a no-program ISO at the "zero" path resolves
+    # exactly the delta.
+    ercot = ScenarioConfig(iso="ERCOT", hours=24, carbon_price_delta=25.0)
+    assert resolve_carbon_price(ercot, 2030) == pytest.approx(25.0)
+
+    # Default is an exact no-op (bit-equal, not merely approx).
+    assert resolve_carbon_price(base, 2030) == resolve_carbon_price(
+        ScenarioConfig(iso="NEISO", gas_seasonality=False, hours=24), 2030
+    )
+
+
+def test_carbon_price_delta_is_forecast_only_rule13():
+    """A nonzero delta in backcast mode raises — never a residual channel."""
+    with pytest.raises(ValueError, match="carbon_price_delta"):
+        ScenarioConfig(
+            iso="NEISO",
+            mode="backcast",
+            weather_year=2024,
+            hours=24,
+            carbon_price_delta=5.0,
+        )
+
+
 def test_cc_7000_hr_at_18_per_ton_uplift_5_to_7_per_mwh():
     """A 7.0 HR gas CC at ~$18/t RGGI shows the doc-07 ~$5-7/MWh uplift."""
     fleet = _cc_fleet(heat_rate=7.0, hours=24)

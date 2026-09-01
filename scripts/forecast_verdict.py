@@ -1363,19 +1363,33 @@ def score_fc6(art: dict, tier: str, iso: str) -> list[dict]:
         for r in report:
             rows.append(_row("FC-6", "battery report rows", CAVEAT, r, gating=False))
 
+    # Carbon-pair premise row (capx-D23 R1 / capx-D26): the checker resolves
+    # both arms' effective carbon signal year-by-year and asserts the high arm
+    # is strictly above base in every year. A FAILing premise means the pair
+    # never constructed the experiment P1 claims to score — its P1 is
+    # mis-constructed/vacuous evidence (rubric §2 FC-6.2: CAVEAT, never PASS,
+    # never a scored FAIL). Absent premise rows (every pre-D26 committed
+    # record) leave scoring exactly as before, so this is strictly additive.
+    premise = next(
+        (r for r in paired if (r.get("ident") or r.get("id")) == "P1.premise"),
+        None,
+    )
     for r in paired:
         ident = r.get("ident") or r.get("id")
         st = r.get("status")
         if ident in ("P1", "P2"):
             status = FAIL if st == I_FAIL else (SKIPPED if st == I_SKIP else PASS)
-            rows.append(
-                _row(
-                    "FC-6",
-                    f"paired {ident}",
-                    status,
-                    f"{ident} {r.get('name', '')}: {r.get('detail', '')}",
-                )
-            )
+            detail = f"{ident} {r.get('name', '')}: {r.get('detail', '')}"
+            if ident == "P1" and premise is not None:
+                if premise.get("status") == I_FAIL:
+                    status = CAVEAT
+                    detail = (
+                        "P1 MIS-CONSTRUCTED pair (vacuous evidence, FC-6.2): "
+                        f"{premise.get('detail', '')}"
+                    )
+                else:
+                    detail += f" [premise: {premise.get('detail', '')}]"
+            rows.append(_row("FC-6", f"paired {ident}", status, detail))
         elif ident == "P3":
             status = CAVEAT if st == I_WARN else (SKIPPED if st == I_SKIP else PASS)
             rows.append(_row("FC-6", "paired P3", status, f"P3 {r.get('detail', '')}"))
