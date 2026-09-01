@@ -2894,3 +2894,71 @@ docs/handoffs/FINDING-capx-d29-trajectory-grain-<date>.md recording the schema a
 storage_mw consumer enumeration and what was done about it, and which committed bundles remain
 on the old grain.
 ```
+
+## D30 — the 45Q conversion pace (r#25 amendment 2; D25 §6.4 routed)
+
+```
+You are the D30 session of the capacity-expansion track — Phase-0 characterization of the D25
+§6.4 routed question. The CCS retrofit screen (capacity-evolution step 2, spec §5.6) converts
+existing gas-CC at its 3 GW/yr/ISO cap even where the resolved carbon signal is ZERO (PJM and
+MISO — 45Q alone), reaching ~9 GW per ISO by 2030 and fleet fractions AEO2025 reaches nowhere.
+Lane D23 cleared the model's carbon-response SIGN; the open question is the PACE: is
+cap-saturated conversion on 45Q economics alone the INTENDED reading of spec §5.6, or a defect
+in how the retrofit uplift is valued? You characterize; you do not repair, and you do not
+decide arming.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (mechanism adjudication on a novel object — "intended reading vs
+defect-candidate" is a judgment call with routing consequences).
+BRANCH: claude/capx-d30-45q-pace — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md §6.4 (the routed
+question) + §4.3 mechanism 5 (the named revenue legs, per ISO) ·
+model-methodology-spec.md §5.6 (the screen: ≥15 yr remaining life, 3 GW/yr/ISO cap, valued as
+the INCREMENTAL uplift over the best unabated state, screened jointly with retirement) ·
+CLAUDE.md capacity-evolution step 2 (ccs_retrofit_available_year, eac_price_gas_cc_ccs,
+ira_ccus_45q_last_year, ira_45q_credit_window_years) · docs/parameter-citations.md for every
+45Q/capture-cost/EAC number the screen consumes · the committed full-horizon/t1f bundles'
+evolution ledgers (the conversion paths you are decomposing).
+
+PHASE-0 SCOPE — CHARACTERIZE, DO NOT REPAIR:
+(1) Decompose the screen's uplift arithmetic for the zero-carbon-signal case (PJM PRIMARY —
+    see the seam below): which revenue legs make a retrofit clear the bar with carbon at zero
+    — the 45Q credit value, the EAC price, avoided variable cost, anything else — with the
+    year-by-year margin per leg for a representative cleared unit.
+(2) Establish whether the cap BINDS in every conversion year in every ISO — if yes, the
+    modelled pace IS the cap, and the economics question becomes "how far above the bar is
+    the marginal retrofit", which you should quantify (headroom, not just pass/fail).
+(3) Audit the leg values against their citations: is 45Q valued at statute, over the correct
+    window (ira_45q_credit_window_years against ira_ccus_45q_last_year), against a cited
+    capture cost and capture rate? Name any value whose citation does not support the use the
+    screen puts it to.
+(4) Adjudicate: INTENDED READING (the spec's economics, correctly implemented, genuinely
+    imply cap-saturated conversion — then say so and close the object with the spec cite) or
+    DEFECT-CANDIDATE (name the defective leg and what a repair would be identified FROM — a
+    published capture cost, a credit-monetization haircut, retrofit capex — always a primary
+    source, never the corridor).
+
+TWO SEAMS, both hard:
+- MISO's T1-H baseline is being re-measured by lane D27 IN FLIGHT. Characterize on PJM as the
+  primary case (its 45Q-only economics are the clean instance); treat any MISO rows as
+  provisional, label them so, and do not block on D27.
+- If the pace turns out to be driven by the CAPACITY-REVENUE leg, STOP at that seam and route
+  to lane D28, which owns the capacity-demand-curve object — do not re-derive curves or
+  duplicate its census.
+
+DISCIPLINE (rule 13 [R-MEASURED] and D25's own line): the AEO divergence MOTIVATES this
+question; it must never CALIBRATE the answer. No parameter, threshold, cap or credit value
+moves in this lane, and no proposed repair may be identified from the corridor distance.
+GUARDRAILS: zero solves; docs only; no mechanism, no ScenarioConfig field, no matrix cell
+(rule 28 fires in the repair lane, if one is chartered). No keeper/board/verdict/marker edit.
+Rule 27 on any ≥300-line push. No new GitHub Actions workflow.
+
+COLLISION: none on files — you write docs only. D27 (MISO t1h) and D28 (curve object) are the
+two in-flight lanes your SEAMS reference; cite whichever records are current when you finish.
+
+EXIT: docs/handoffs/FINDING-capx-d30-45q-pace-<date>.md — the per-leg decomposition, the
+cap-binding census, the citation audit, the adjudication with its routing (closure-with-cite,
+a repair-lane charter recommendation, or the D28 handoff), and the honest statement of what
+the PJM-primary scope could not see.
+```
