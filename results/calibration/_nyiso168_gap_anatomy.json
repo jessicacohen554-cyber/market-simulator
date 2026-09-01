@@ -1,0 +1,963 @@
+{
+ "probe": "nyiso168_gap_anatomy",
+ "bundle": "results/calibration/nyiso159_lossarm_B",
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "note": "Zero solve. Locates the nyiso-167 price-response-gain deficit and kills the mechanism candidates that measurement can kill. Gap is stated on the DA basis (the like-for-like comparable for a perfect-foresight LP; RT adds the scarcity tail it cannot form).",
+ "by_year": {
+  "2023": {
+   "A_gap_by_load_band": [
+    {
+     "pct_lo": 0,
+     "pct_hi": 50,
+     "n": 4380,
+     "load_mw": 14622.199543378996,
+     "model": 26.29801510273688,
+     "actual_da": 23.988737026414913,
+     "gap": 2.3092780763219665,
+     "annual_contribution": 1.1546390381609832
+    },
+    {
+     "pct_lo": 50,
+     "pct_hi": 80,
+     "n": 2628,
+     "load_mw": 17465.112633181125,
+     "model": 33.40271511769467,
+     "actual_da": 32.69191158997232,
+     "gap": 0.7108035277223479,
+     "annual_contribution": 0.21324105831670437
+    },
+    {
+     "pct_lo": 80,
+     "pct_hi": 90,
+     "n": 876,
+     "load_mw": 19507.381278538815,
+     "model": 39.186809953779104,
+     "actual_da": 43.20460983825056,
+     "gap": -4.017799884471458,
+     "annual_contribution": -0.4017799884471458
+    },
+    {
+     "pct_lo": 90,
+     "pct_hi": 95,
+     "n": 438,
+     "load_mw": 21292.56392694064,
+     "model": 39.97650271043332,
+     "actual_da": 42.3320526445293,
+     "gap": -2.3555499340959756,
+     "annual_contribution": -0.11777749670479877
+    },
+    {
+     "pct_lo": 95,
+     "pct_hi": 99,
+     "n": 350,
+     "load_mw": 23650.294285714284,
+     "model": 46.8660125971815,
+     "actual_da": 49.40741559164864,
+     "gap": -2.5414029944671412,
+     "annual_contribution": -0.10154007397985153
+    },
+    {
+     "pct_lo": 99,
+     "pct_hi": 99.9,
+     "n": 79,
+     "load_mw": 27191.87341772152,
+     "model": 68.84653027708603,
+     "actual_da": 87.5130493550361,
+     "gap": -18.66651907795007,
+     "annual_contribution": -0.16833961268927575
+    },
+    {
+     "pct_lo": 99.9,
+     "pct_hi": 100,
+     "n": 9,
+     "load_mw": 29436.11111111111,
+     "model": 141.28079832506788,
+     "actual_da": 107.5433332655165,
+     "gap": 33.73746505955138,
+     "annual_contribution": 0.03466177917077197
+    }
+   ],
+   "A_total_annual_gap": 0.6131047038273877,
+   "B_decile_ladder": [
+    {
+     "decile": 0,
+     "load_mw": 12847.142694063927,
+     "model": 21.46640605116242,
+     "actual_da": 18.648934214082484,
+     "gas": 1.525319634703196,
+     "implied_hr_model": 14.63633320082509,
+     "implied_hr_da": 12.885748323771116
+    },
+    {
+     "decile": 1,
+     "load_mw": 13996.91210045662,
+     "model": 25.71011875922798,
+     "actual_da": 22.404908654896637,
+     "gas": 1.8130707762557075,
+     "implied_hr_model": 15.028074872637191,
+     "implied_hr_da": 13.295787646749964
+    },
+    {
+     "decile": 2,
+     "load_mw": 14803.998858447489,
+     "model": 27.082347576447297,
+     "actual_da": 24.749263222359087,
+     "gas": 1.8809018264840183,
+     "implied_hr_model": 15.43603155802828,
+     "implied_hr_da": 14.312136710945321
+    },
+    {
+     "decile": 3,
+     "load_mw": 15428.609589041096,
+     "model": 27.80852633209852,
+     "actual_da": 25.95143625507616,
+     "gas": 1.8303767123287669,
+     "implied_hr_model": 16.38031219722816,
+     "implied_hr_da": 15.334122913525688
+    },
+    {
+     "decile": 4,
+     "load_mw": 16034.334474885845,
+     "model": 29.422676794748174,
+     "actual_da": 28.18914278566021,
+     "gas": 1.9390068493150685,
+     "implied_hr_model": 17.150208728243186,
+     "implied_hr_da": 16.545967274473607
+    },
+    {
+     "decile": 5,
+     "load_mw": 16699.294520547945,
+     "model": 30.92151420227489,
+     "actual_da": 29.798605226490597,
+     "gas": 1.959509132420091,
+     "implied_hr_model": 17.412818425423467,
+     "implied_hr_da": 16.807224475236566
+    },
+    {
+     "decile": 6,
+     "load_mw": 17410.12785388128,
+     "model": 33.34488989965601,
+     "actual_da": 32.39865921185986,
+     "gas": 2.183995433789954,
+     "implied_hr_model": 17.215960208347102,
+     "implied_hr_da": 16.746838415461923
+    },
+    {
+     "decile": 7,
+     "load_mw": 18285.915525114156,
+     "model": 35.941741251153104,
+     "actual_da": 35.87847033156652,
+     "gas": 2.367237442922374,
+     "implied_hr_model": 17.366416858702003,
+     "implied_hr_da": 17.250316713390607
+    },
+    {
+     "decile": 8,
+     "load_mw": 19507.381278538815,
+     "model": 39.186809953779104,
+     "actual_da": 43.20460983825056,
+     "gas": 2.394337899543379,
+     "implied_hr_model": 19.954949199244094,
+     "implied_hr_da": 20.74225079789608
+    },
+    {
+     "decile": 9,
+     "load_mw": 22850.261415525114,
+     "model": 46.37353387328623,
+     "actual_da": 49.90348791531776,
+     "gas": 1.647340182648402,
+     "implied_hr_model": 28.780097081520747,
+     "implied_hr_da": 30.159457077030712
+    }
+   ],
+   "E_measured_incremental_hr": {
+    "pooled_average_hr": 8.580274467847522,
+    "quintiles": [
+     {
+      "output_mw": 4450.859708737864,
+      "n": 1030,
+      "incremental_hr": 7.2923317459796575
+     },
+     {
+      "output_mw": 5449.331875607386,
+      "n": 1029,
+      "incremental_hr": 7.632948780652145
+     },
+     {
+      "output_mw": 6352.514091350826,
+      "n": 1029,
+      "incremental_hr": 7.812495000551838
+     },
+     {
+      "output_mw": 7508.57281553398,
+      "n": 1030,
+      "incremental_hr": 8.21749205327065
+     },
+     {
+      "output_mw": 10714.72017458778,
+      "n": 1031,
+      "incremental_hr": 8.82869238049636
+     }
+    ]
+   },
+   "F_zonal_split": {
+    "zones": {
+     "Capital_Hudson": {
+      "load_share": 0.1367489602120901,
+      "model": 34.77660347057742,
+      "actual_da": 36.38,
+      "delta": -1.6033965294225823,
+      "gradient_model": 10.34909427438334,
+      "gradient_actual": 10.300000000000004
+     },
+     "Long_Island": {
+      "load_share": 0.13182018019276456,
+      "model": 36.55479713518368,
+      "actual_da": 40.77,
+      "delta": -4.215202864816327,
+      "gradient_model": 12.127287938989596,
+      "gradient_actual": 14.690000000000005
+     },
+     "Lower_Hudson": {
+      "load_share": 0.05506530799081355,
+      "model": 35.36500337797483,
+      "actual_da": 33.58,
+      "delta": 1.7850033779748316,
+      "gradient_model": 10.93749418178075,
+      "gradient_actual": 7.5
+     },
+     "NYC": {
+      "load_share": 0.3283560067161398,
+      "model": 35.65531877105272,
+      "actual_da": 33.95,
+      "delta": 1.705318771052717,
+      "gradient_model": 11.22780957485864,
+      "gradient_actual": 7.8700000000000045
+     },
+     "Upstate_West": {
+      "load_share": 0.34800954488819197,
+      "model": 24.42750919619408,
+      "actual_da": 26.08,
+      "delta": -1.652490803805918,
+      "gradient_model": 0.0,
+      "gradient_actual": 0.0
+     }
+    },
+    "load_weighted_deficit": -0.6917507593460059,
+    "gradient_component": 0.9607400444599121,
+    "level_component": -1.652490803805918,
+    "reference_zone": "Upstate_West"
+   },
+   "C_peak_mix_vs_e930": {
+    "gas": {
+     "model_d9": 11969.9931640625,
+     "actual_d9": 12360.873287671233,
+     "model_d0": 4703.55029296875,
+     "actual_d0": 4342.148401826484
+    },
+    "nuclear": {
+     "model_d9": 3092.26318359375,
+     "actual_d9": 3035.7305936073058,
+     "model_d0": 3066.36083984375,
+     "actual_d0": 2314.4440639269405
+    },
+    "hydro": {
+     "model_d9": 3784.3642578125,
+     "actual_d9": 3658.390410958904,
+     "model_d0": 2259.010498046875,
+     "actual_d0": 2336.824200913242
+    },
+    "wind": {
+     "model_d9": 348.3961181640625,
+     "actual_d9": 348.39611872146116,
+     "model_d0": 540.59814453125,
+     "actual_d0": 550.4577625570777
+    },
+    "solar": {
+     "model_d9": 66.8184814453125,
+     "actual_d9": 0.0,
+     "model_d0": 11.404276847839355,
+     "actual_d0": 0.0
+    },
+    "oil": {
+     "model_d9": 0.08796702325344086,
+     "actual_d9": 158.16780821917808,
+     "model_d0": 0.0,
+     "actual_d0": 205.10502283105023
+    },
+    "other": {
+     "model_d9": 371.6435852050781,
+     "actual_d9": 324.6598173515982,
+     "model_d0": 333.2218322753906,
+     "actual_d0": 838.37899543379
+    }
+   },
+   "D_storage_net_discharge_by_decile": [
+    -354.3965148925781,
+    -182.09019470214844,
+    -116.87693786621094,
+    -63.239627838134766,
+    -20.575170516967773,
+    22.554264068603516,
+    65.7833251953125,
+    41.70140838623047,
+    104.28834533691406,
+    285.5525207519531
+   ]
+  },
+  "2024": {
+   "A_gap_by_load_band": [
+    {
+     "pct_lo": 0,
+     "pct_hi": 50,
+     "n": 4380,
+     "load_mw": 14854.38706240487,
+     "model": 29.99414242024909,
+     "actual_da": 27.29781755660767,
+     "gap": 2.696324863641422,
+     "annual_contribution": 1.348162431820711
+    },
+    {
+     "pct_lo": 50,
+     "pct_hi": 80,
+     "n": 2628,
+     "load_mw": 17887.48351090817,
+     "model": 38.11027998160478,
+     "actual_da": 39.19628475354687,
+     "gap": -1.0860047719420862,
+     "annual_contribution": -0.32580143158262587
+    },
+    {
+     "pct_lo": 80,
+     "pct_hi": 90,
+     "n": 876,
+     "load_mw": 20131.81392694064,
+     "model": 47.08794801098676,
+     "actual_da": 53.044332684991566,
+     "gap": -5.956384674004809,
+     "annual_contribution": -0.5956384674004809
+    },
+    {
+     "pct_lo": 90,
+     "pct_hi": 95,
+     "n": 438,
+     "load_mw": 22059.155251141554,
+     "model": 49.78901834069253,
+     "actual_da": 55.836247348349936,
+     "gap": -6.047229007657407,
+     "annual_contribution": -0.3023614503828703
+    },
+    {
+     "pct_lo": 95,
+     "pct_hi": 99,
+     "n": 350,
+     "load_mw": 24867.265714285713,
+     "model": 49.849995712597284,
+     "actual_da": 55.110067640032085,
+     "gap": -5.260071927434801,
+     "annual_contribution": -0.21016269116463246
+    },
+    {
+     "pct_lo": 99,
+     "pct_hi": 99.9,
+     "n": 79,
+     "load_mw": 27673.708860759492,
+     "model": 63.55351832351072,
+     "actual_da": 98.14864194845852,
+     "gap": -34.595123624947796,
+     "annual_contribution": -0.3119879870286388
+    },
+    {
+     "pct_lo": 99.9,
+     "pct_hi": 100,
+     "n": 9,
+     "load_mw": 28777.11111111111,
+     "model": 72.2209974857289,
+     "actual_da": 118.86868794759114,
+     "gap": -46.64769046186224,
+     "annual_contribution": -0.047925709378625586
+    }
+   ],
+   "A_total_annual_gap": -0.44571530511716284,
+   "B_decile_ladder": [
+    {
+     "decile": 0,
+     "load_mw": 13065.671232876712,
+     "model": 25.803136438986535,
+     "actual_da": 21.811870048035225,
+     "gas": 1.4795890410958903,
+     "implied_hr_model": 17.795810267912124,
+     "implied_hr_da": 15.044990125063892
+    },
+    {
+     "decile": 1,
+     "load_mw": 14138.205479452055,
+     "model": 28.17295972963153,
+     "actual_da": 24.627002897872227,
+     "gas": 1.7318835616438357,
+     "implied_hr_model": 17.711012456397906,
+     "implied_hr_da": 15.654698583663233
+    },
+    {
+     "decile": 2,
+     "load_mw": 14998.059360730593,
+     "model": 30.36385174871387,
+     "actual_da": 27.191171661359533,
+     "gas": 1.9502968036529684,
+     "implied_hr_model": 17.725145632741302,
+     "implied_hr_da": 16.119366651253177
+    },
+    {
+     "decile": 3,
+     "load_mw": 15699.160958904109,
+     "model": 31.22320781026847,
+     "actual_da": 29.671577401357155,
+     "gas": 1.8599657534246576,
+     "implied_hr_model": 18.442937497429696,
+     "implied_hr_da": 17.495802991806542
+    },
+    {
+     "decile": 4,
+     "load_mw": 16370.838280060883,
+     "model": 34.40755637364506,
+     "actual_da": 33.1874657744142,
+     "gas": 2.1996803652968038,
+     "implied_hr_model": 18.82139126137445,
+     "implied_hr_da": 18.376895216780678
+    },
+    {
+     "decile": 5,
+     "load_mw": 17046.206240487063,
+     "model": 35.51281388545371,
+     "actual_da": 35.74457866851598,
+     "gas": 2.1894292237442925,
+     "implied_hr_model": 19.177679703909266,
+     "implied_hr_da": 19.172996184046003
+    },
+    {
+     "decile": 6,
+     "load_mw": 17856.608447488583,
+     "model": 37.71064388951735,
+     "actual_da": 38.189703211936774,
+     "gas": 2.351746575342466,
+     "implied_hr_model": 19.117045067571603,
+     "implied_hr_da": 19.14382740995971
+    },
+    {
+     "decile": 7,
+     "load_mw": 18759.63584474886,
+     "model": 41.107382169843284,
+     "actual_da": 43.65457238018785,
+     "gas": 2.5889954337899543,
+     "implied_hr_model": 19.049362161888126,
+     "implied_hr_da": 19.625320150638842
+    },
+    {
+     "decile": 8,
+     "load_mw": 20131.81392694064,
+     "model": 47.08794801098676,
+     "actual_da": 53.044332684991566,
+     "gas": 2.9809246575342465,
+     "implied_hr_model": 20.124304800696386,
+     "implied_hr_da": 21.53675141341655
+    },
+    {
+     "decile": 9,
+     "load_mw": 23756.472602739726,
+     "model": 51.28516604744439,
+     "actual_da": 60.00954442699206,
+     "gas": 2.2348858447488587,
+     "implied_hr_model": 27.504655043387437,
+     "implied_hr_da": 30.930851585238432
+    }
+   ],
+   "E_measured_incremental_hr": {
+    "pooled_average_hr": 8.2231778890751,
+    "quintiles": [
+     {
+      "output_mw": 5069.675179211469,
+      "n": 1116,
+      "incremental_hr": 6.854940817562913
+     },
+     {
+      "output_mw": 6254.3481182795695,
+      "n": 1116,
+      "incremental_hr": 7.239665391889184
+     },
+     {
+      "output_mw": 7149.512085944494,
+      "n": 1117,
+      "incremental_hr": 7.746701261937009
+     },
+     {
+      "output_mw": 8137.90134529148,
+      "n": 1115,
+      "incremental_hr": 8.337652157319699
+     },
+     {
+      "output_mw": 11274.329749103943,
+      "n": 1116,
+      "incremental_hr": 8.83553123298503
+     }
+    ]
+   },
+   "F_zonal_split": {
+    "zones": {
+     "Capital_Hudson": {
+      "load_share": 0.13705790482393648,
+      "model": 36.6361706970745,
+      "actual_da": 38.17,
+      "delta": -1.5338293029255041,
+      "gradient_model": 2.939131290252611,
+      "gradient_actual": 4.539999999999999
+     },
+     "Long_Island": {
+      "load_share": 0.13122048558503116,
+      "model": 38.47576206577266,
+      "actual_da": 43.43,
+      "delta": -4.954237934227336,
+      "gradient_model": 4.778722658950777,
+      "gradient_actual": 9.799999999999997
+     },
+     "Lower_Hudson": {
+      "load_share": 0.05624195401973595,
+      "model": 37.322245046450305,
+      "actual_da": 38.09,
+      "delta": -0.7677549535496979,
+      "gradient_model": 3.625205639628419,
+      "gradient_actual": 4.460000000000001
+     },
+     "NYC": {
+      "load_share": 0.32937158299247477,
+      "model": 37.77840000197244,
+      "actual_da": 39.44,
+      "delta": -1.6615999980275546,
+      "gradient_model": 4.0813605951505565,
+      "gradient_actual": 5.809999999999995
+     },
+     "Upstate_West": {
+      "load_share": 0.34610807257882154,
+      "model": 33.69703940682189,
+      "actual_da": 33.63,
+      "delta": 0.06703940682188403,
+      "gradient_model": 0.0,
+      "gradient_actual": 0.0
+     }
+    },
+    "load_weighted_deficit": -1.4275819186142669,
+    "gradient_component": -1.494621325436151,
+    "level_component": 0.06703940682188403,
+    "reference_zone": "Upstate_West"
+   },
+   "C_peak_mix_vs_e930": {
+    "gas": {
+     "model_d9": 12365.822265625,
+     "actual_d9": 12672.019450800915,
+     "model_d0": 5302.1376953125,
+     "actual_d0": 4991.189003436426
+    },
+    "nuclear": {
+     "model_d9": 3188.69580078125,
+     "actual_d9": 3196.192219679634,
+     "model_d0": 3069.8388671875,
+     "actual_d0": 2710.310423825888
+    },
+    "hydro": {
+     "model_d9": 3747.451416015625,
+     "actual_d9": 3541.49885583524,
+     "model_d0": 2182.446533203125,
+     "actual_d0": 2428.6197021764033
+    },
+    "wind": {
+     "model_d9": 472.2403564453125,
+     "actual_d9": 467.82608695652175,
+     "model_d0": 716.50341796875,
+     "actual_d0": 717.1512027491409
+    },
+    "solar": {
+     "model_d9": 137.33335876464844,
+     "actual_d9": 0.0,
+     "model_d0": 35.538421630859375,
+     "actual_d0": 0.0
+    },
+    "oil": {
+     "model_d9": 64.09867858886719,
+     "actual_d9": 114.67048054919908,
+     "model_d0": 0.0,
+     "actual_d0": 10.649484536082474
+    },
+    "other": {
+     "model_d9": 344.65576171875,
+     "actual_d9": 310.79519450800916,
+     "model_d0": 336.97052001953125,
+     "actual_d0": 549.2966781214204
+    }
+   },
+   "D_storage_net_discharge_by_decile": [
+    -222.7424774169922,
+    -147.20587158203125,
+    -122.0096664428711,
+    -68.55977630615234,
+    -28.259632110595703,
+    3.0850255489349365,
+    26.411470413208008,
+    67.56249237060547,
+    90.94664764404297,
+    256.4096984863281
+   ]
+  },
+  "2025": {
+   "A_gap_by_load_band": [
+    {
+     "pct_lo": 0,
+     "pct_hi": 50,
+     "n": 4380,
+     "load_mw": 14889.217579908676,
+     "model": 41.82223533680454,
+     "actual_da": 40.072387906514344,
+     "gap": 1.7498474302901954,
+     "annual_contribution": 0.8749237151450977
+    },
+    {
+     "pct_lo": 50,
+     "pct_hi": 80,
+     "n": 2628,
+     "load_mw": 18106.61529680365,
+     "model": 62.16572243329995,
+     "actual_da": 68.36844744602476,
+     "gap": -6.202725012724812,
+     "annual_contribution": -1.8608175038174437
+    },
+    {
+     "pct_lo": 80,
+     "pct_hi": 90,
+     "n": 876,
+     "load_mw": 20390.084474885844,
+     "model": 78.13783903593391,
+     "actual_da": 95.25279060346351,
+     "gap": -17.1149515675296,
+     "annual_contribution": -1.7114951567529602
+    },
+    {
+     "pct_lo": 90,
+     "pct_hi": 95,
+     "n": 438,
+     "load_mw": 22067.502283105023,
+     "model": 83.75576591275467,
+     "actual_da": 102.26279809159232,
+     "gap": -18.507032178837648,
+     "annual_contribution": -0.9253516089418824
+    },
+    {
+     "pct_lo": 95,
+     "pct_hi": 99,
+     "n": 350,
+     "load_mw": 24951.56,
+     "model": 74.22132714807881,
+     "actual_da": 90.44010369437082,
+     "gap": -16.218776546292005,
+     "annual_contribution": -0.64801047844774
+    },
+    {
+     "pct_lo": 99,
+     "pct_hi": 99.9,
+     "n": 79,
+     "load_mw": 28503.708860759492,
+     "model": 116.09609568275698,
+     "actual_da": 180.41580055333392,
+     "gap": -64.31970487057694,
+     "annual_contribution": -0.5800521329652487
+    },
+    {
+     "pct_lo": 99.9,
+     "pct_hi": 100,
+     "n": 9,
+     "load_mw": 30963.666666666668,
+     "model": 224.57988631841832,
+     "actual_da": 279.0773756239149,
+     "gap": -54.4974893054966,
+     "annual_contribution": -0.055990571204277334
+    }
+   ],
+   "A_total_annual_gap": -4.906793736984454,
+   "B_decile_ladder": [
+    {
+     "decile": 0,
+     "load_mw": 13034.174657534246,
+     "model": 33.72859580896498,
+     "actual_da": 29.369842233178822,
+     "gas": 2.2999429223744294,
+     "implied_hr_model": 15.329524469048522,
+     "implied_hr_da": 13.328428498734223
+    },
+    {
+     "decile": 1,
+     "load_mw": 14104.728310502283,
+     "model": 37.68414087232844,
+     "actual_da": 34.56878787741813,
+     "gas": 2.5311986301369864,
+     "implied_hr_model": 15.703190372370177,
+     "implied_hr_da": 14.346384455006167
+    },
+    {
+     "decile": 2,
+     "load_mw": 15014.584474885845,
+     "model": 40.67951155079559,
+     "actual_da": 38.694950125533154,
+     "gas": 3.0073744292237445,
+     "implied_hr_model": 15.843962216371214,
+     "implied_hr_da": 15.040984847076498
+    },
+    {
+     "decile": 3,
+     "load_mw": 15793.519406392694,
+     "model": 46.17388646549262,
+     "actual_da": 45.74214616322626,
+     "gas": 3.916997716894977,
+     "implied_hr_model": 16.242416823586716,
+     "implied_hr_da": 16.102177241175976
+    },
+    {
+     "decile": 4,
+     "load_mw": 16499.08105022831,
+     "model": 50.84504198644109,
+     "actual_da": 51.98621313321536,
+     "gas": 4.676666666666667,
+     "implied_hr_model": 16.327606297615837,
+     "implied_hr_da": 16.812784840679246
+    },
+    {
+     "decile": 5,
+     "load_mw": 17195.005707762557,
+     "model": 54.90750188266607,
+     "actual_da": 58.29538804102162,
+     "gas": 4.692385844748859,
+     "implied_hr_model": 16.852065991791292,
+     "implied_hr_da": 17.853249108869075
+    },
+    {
+     "decile": 6,
+     "load_mw": 18032.33105022831,
+     "model": 61.373027440850535,
+     "actual_da": 68.01337993090556,
+     "gas": 5.794828767123288,
+     "implied_hr_model": 16.708325444823696,
+     "implied_hr_da": 18.136363058684445
+    },
+    {
+     "decile": 7,
+     "load_mw": 19092.50913242009,
+     "model": 70.21663797638324,
+     "actual_da": 78.79657436614711,
+     "gas": 6.828607305936074,
+     "implied_hr_model": 17.06542224530055,
+     "implied_hr_da": 19.00495654848397
+    },
+    {
+     "decile": 8,
+     "load_mw": 20390.084474885844,
+     "model": 78.13783903593392,
+     "actual_da": 95.25279060346351,
+     "gas": 7.792511415525115,
+     "implied_hr_model": 17.33563136708346,
+     "implied_hr_da": 20.796872649397432
+    },
+    {
+     "decile": 9,
+     "load_mw": 23891.641552511417,
+     "model": 84.30970377559099,
+     "actual_da": 106.40375169118245,
+     "gas": 5.041404109589042,
+     "implied_hr_model": 23.705882936467734,
+     "implied_hr_da": 29.01901509408369
+    }
+   ],
+   "E_measured_incremental_hr": {
+    "pooled_average_hr": 8.375080404588886,
+    "quintiles": [
+     {
+      "output_mw": 5016.549955396967,
+      "n": 1121,
+      "incremental_hr": 7.056562352126726
+     },
+     {
+      "output_mw": 6371.679875333927,
+      "n": 1123,
+      "incremental_hr": 7.541229058437842
+     },
+     {
+      "output_mw": 7397.979482604817,
+      "n": 1121,
+      "incremental_hr": 7.896041132655336
+     },
+     {
+      "output_mw": 8574.594112399644,
+      "n": 1121,
+      "incremental_hr": 8.165715143835735
+     },
+     {
+      "output_mw": 12040.184656556647,
+      "n": 1121,
+      "incremental_hr": 8.641332369644132
+     }
+    ]
+   },
+   "F_zonal_split": {
+    "zones": {
+     "Capital_Hudson": {
+      "load_share": 0.13919844259368064,
+      "model": 56.91888741335775,
+      "actual_da": 65.15,
+      "delta": -8.231112586642254,
+      "gradient_model": 5.299453500562606,
+      "gradient_actual": 9.260000000000005
+     },
+     "Long_Island": {
+      "load_share": 0.13165245577156362,
+      "model": 58.7847533842592,
+      "actual_da": 68.87,
+      "delta": -10.085246615740807,
+      "gradient_model": 7.165319471464052,
+      "gradient_actual": 12.980000000000004
+     },
+     "Lower_Hudson": {
+      "load_share": 0.05641331547482192,
+      "model": 57.71700615328047,
+      "actual_da": 62.99,
+      "delta": -5.27299384671953,
+      "gradient_model": 6.097572240485327,
+      "gradient_actual": 7.100000000000001
+     },
+     "NYC": {
+      "load_share": 0.3305394081219825,
+      "model": 58.263041585827175,
+      "actual_da": 65.41,
+      "delta": -7.146958414172822,
+      "gradient_model": 6.6436076730320295,
+      "gradient_actual": 9.519999999999996
+     },
+     "Upstate_West": {
+      "load_share": 0.3421963780379512,
+      "model": 51.619433912795145,
+      "actual_da": 55.89,
+      "delta": -4.270566087204855,
+      "gradient_model": 0.0,
+      "gradient_actual": 0.0
+     }
+    },
+    "load_weighted_deficit": -6.594696253576071,
+    "gradient_component": -2.3241301663712153,
+    "level_component": -4.270566087204855,
+    "reference_zone": "Upstate_West"
+   },
+   "C_peak_mix_vs_e930": {
+    "gas": {
+     "model_d9": 12850.41015625,
+     "actual_d9": 13566.073478760047,
+     "model_d0": 5072.84912109375,
+     "actual_d0": 4707.486270022883
+    },
+    "nuclear": {
+     "model_d9": 3253.4052734375,
+     "actual_d9": 3272.877152698048,
+     "model_d0": 3247.688720703125,
+     "actual_d0": 3115.558352402746
+    },
+    "hydro": {
+     "model_d9": 3715.275634765625,
+     "actual_d9": 3460.950631458094,
+     "model_d0": 2042.179931640625,
+     "actual_d0": 2202.479405034325
+    },
+    "wind": {
+     "model_d9": 562.950927734375,
+     "actual_d9": 560.3582089552239,
+     "model_d0": 756.3470458984375,
+     "actual_d0": 755.12471395881
+    },
+    "solar": {
+     "model_d9": 207.7421112060547,
+     "actual_d9": 0.0,
+     "model_d0": 93.44114685058594,
+     "actual_d0": 0.0
+    },
+    "oil": {
+     "model_d9": 281.81939697265625,
+     "actual_d9": 148.15269804822043,
+     "model_d0": 0.0,
+     "actual_d0": 0.3180778032036613
+    },
+    "other": {
+     "model_d9": 302.1087341308594,
+     "actual_d9": 385.43283582089555,
+     "model_d0": 299.82659912109375,
+     "actual_d0": 332.7482837528604
+    }
+   },
+   "D_storage_net_discharge_by_decile": [
+    -368.3414001464844,
+    -187.82115173339844,
+    -119.42501068115234,
+    -40.12655258178711,
+    15.495379447937012,
+    32.33688735961914,
+    42.58406448364258,
+    92.25753784179688,
+    140.03199768066406,
+    195.60134887695312
+   ]
+  }
+ },
+ "G_neiso_arm_census": {
+  "neiso86_2022_corrected": {
+   "present": true,
+   "flags": {
+    "neiso_winter_fuel_inventory": "true",
+    "neiso_winter_fuel_mustrun": "true",
+    "neiso_gas_coldsnap_derate": "true",
+    "scarcity_price_overlay": "true",
+    "temp_dependent_derate": "true"
+   }
+  },
+  "neiso97_dstrepair_A": {
+   "present": true,
+   "flags": {
+    "neiso_winter_fuel_inventory": "true",
+    "neiso_winter_fuel_mustrun": "true",
+    "neiso_gas_coldsnap_derate": "true",
+    "scarcity_price_overlay": "true",
+    "temp_dependent_derate": "true"
+   }
+  },
+  "neiso99_basis_A": {
+   "present": true,
+   "flags": {
+    "neiso_winter_fuel_inventory": "true",
+    "neiso_winter_fuel_mustrun": "true",
+    "neiso_gas_coldsnap_derate": "true",
+    "scarcity_price_overlay": "true",
+    "temp_dependent_derate": "true"
+   }
+  },
+  "neiso99_joint_B": {
+   "present": true,
+   "flags": {
+    "neiso_winter_fuel_inventory": "true",
+    "neiso_winter_fuel_mustrun": "true",
+    "neiso_gas_coldsnap_derate": "true",
+    "scarcity_price_overlay": "true",
+    "temp_dependent_derate": "true"
+   }
+  },
+  "_summary": {
+   "bundles_checked": 4,
+   "bundles_with_all_five_armed": 4,
+   "an_arm_without_them_exists": false
+  }
+ }
+}
