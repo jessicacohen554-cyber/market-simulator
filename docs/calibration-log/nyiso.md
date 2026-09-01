@@ -9324,3 +9324,93 @@ $27.8–$56.0/MWh C3a pass window should be planned around rather than solved aw
 `_nyiso168_reserve_supply_slack.json`;
 `docs/codebase-site/data/mechanism-matrix/NYISO.js` (one cell moved, two
 annotated; `node --check` clean on all six shards + the base file).
+
+## 2026-09-01 — nyiso-169 PHASE 0, ZERO SOLVE: the zonal-gradient half is four consistently-signed link terms that CANCEL, and NO binding constraint carries any of it (≥98.3 % forms off-limit) — `measured_interface_limits` `G` re-confirmed and generalised
+
+Chartered to decompose the one leg nyiso-168 measured but did not break down:
+the **zonal-gradient component** of C3a (`+0.96 / −1.49 / −2.32 $/MWh` for
+2023/24/25), with the standing instruction *"if no constraint carries it in all
+three years, say so and stop."* **It does not, and this stops.** Keeper
+`2026-08-30-nyiso-159-loss-surface` untouched; determination still **NOT-YET on
+{C3a-2025 −11.5 %, C3c}**. No LP ran, so rule 15 registers nothing — by design,
+not omission. Full record:
+`docs/FINDING-nyiso169-congestion-gradient-anatomy-2026-09-01.md`.
+
+**Predecessor probes re-run first.** `nyiso167_price_gain_attribution` and
+`nyiso168_gap_anatomy` reproduce **bit-identically**;
+`nyiso168_reserve_supply_slack` reproduces to **1e-15 relative** (float
+summation order off a locally-regenerated `fleet` partition; every cover ratio
+and verdict identical, committed record left unmodified).
+
+**The decisive measurement.** NYISO's posted cutsets sit within 50 MW of their
+limits in **0.0–0.8 %** of hours (CENTRAL EAST - VC 0.75/0.13/0.21 % —
+reproducing nyiso-109 to the digit off an independent instrument; TOTAL EAST,
+UPNY CONED, SPR/DUN-SOUTH **0.00 %** in every year), while NYISO's own posted
+congestion component is non-zero in **4–64 %** of them. **At most 1.7 % of each
+model link's annual mean congestion arises in a posted-binding hour, and on
+three of the four links it is exactly 0.00 %.** The CENTRAL EAST conditional
+mean barely moves ($8.98 all-hours vs $8.89 non-binding, 2023). The congestion
+is real, large, general — and sub-interface.
+
+**The kill generalises past posted limits.** A chain link's dual is non-zero
+only when its own flow is at TTC, and the model **over**-separates the link it
+under-prices (`Upstate_West→Capital_Hudson`, 82–99 % of hours vs a market
+congested 15–55 %) while **under**-separating the three it misses (0.3–30 % vs
+4–64 %). The aggregate-TTC mechanism is the wrong *shape*, not the wrong
+*number*, so no re-estimation of a limit reaches the object. The gradient half
+of C3a is therefore a **representation limit at five-zone grain**, not a missing
+mechanism: at the 2025 80–90th load percentile the market prices Capital_Hudson
+**$23.29 above** Upstate_West **and $7.54 above** Lower_Hudson — a non-monotone
+surface a four-link radial chain cannot produce at any setting.
+
+**Premise correction carried forward.** nyiso-168 §5's *"the gradient component
+is not even consistently signed"* is true of the **aggregate** and **false of
+every component**. Decomposed exactly along the radial chain (identity error
+`0.00e+00` in all three years, asserted not assumed), it is **four per-link
+terms each consistently signed across 2023–2025 that partially cancel**. Two
+clear the pre-registered carry test with **opposing** signs —
+`Capital_Hudson→Lower_Hudson` (+1.75/+0.40/+1.53, a model **sign inversion**)
+and `NYC→Long_Island` (−0.78/−0.43/−0.39, the model reproduces 13/18/15 % of the
+measured LI premium) — and the largest 2025 term
+(`Upstate_West→Capital_Hudson`, −2.605) fails it only because 2023 matches to
+$0.05. **The aggregate sign flip is a cancellation artifact, not evidence of
+absence.**
+
+**Composition.** Off NYISO's published identity `LBMP = E + MCL − MCC` (gated:
+the recovered reference energy price is uniform to $0.02 DA / $0.01 RT against a
+$0.05 rounding tolerance, every year), the missing content is **congestion, not
+losses** — 90–93 % of the Long Island premium and 59–87 % of the Central-East
+spread. Independent confirmation that the armed `nyiso_zonal_loss_surface` (`K`)
+prices a real, correctly-sized component rather than a residual sink.
+
+**Expected value, priced rather than asserted.** Closing the **entire** gradient
+— an unattainable upper bound — moves the DA-basis error to −5.10 / +0.18 /
+−6.84 % from −2.13 / −3.79 / −10.56 %. It **costs 2023 nearly three points** and
+leaves 2025's level half (the other 65 %) untouched.
+
+**Hypothesis checked and closed en route:** misplaced imports as the
+`Capital_Hudson→Lower_Hudson` inversion — the keeper already attaches ties per
+landing zone via `nyiso_seam_par_attribution` (`K`).
+
+**Rule 28 (b).** `measured_interface_limits` stays **`G`** with the strengthened
+evidence recorded; `nyiso_central_east_measured_ttc` stays **`K`** with an
+annotation that the measured limit is correct (rule 14) and it is the
+mechanism's *reach* that is annotated. **No verdict moves.** Guard passes
+(`check_mechanism_matrix.py` exit 0), shard passes `node --check`.
+
+**Not opened.** A zonal congestion adder is the rule 13 `[R-MEASURED]` forbidden
+move (posted MCC is a measured *outcome*) — **not built, not proposed**;
+tightening a TTC below its measured value is refused on rule 1 `[R-STRUCT]`.
+Phase (2) of the brief (pre-registered kills + a required move in the 0.7032
+gain) is **not reached**, because phase (1) returned the stop condition the
+brief specified. Rule 22: every year read is 2023/2024/2025; NYISO holds no
+`complete` marker, none was requested, the freeze is untouched.
+
+**Data intake (unrestricted per rule 22 as clarified 2026-08-06).** All 36
+months of NYISO MIS RT and DA zonal LBMP **component** archives re-fetched with
+the frozen `scripts/data/fetch_nyiso_zonal_lmp.py`; the repo tracks only 21 RT
+months, the rest being gitignored/regenerable. Probe:
+`scripts/probes/nyiso169_congestion_gradient_anatomy.py` → 
+`results/calibration/_nyiso169_congestion_gradient_anatomy.json`, **committed at
+`bccf58f4` before it was run** so its decision rule is verifiably
+pre-registered.
