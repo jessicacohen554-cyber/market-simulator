@@ -9472,3 +9472,87 @@ Records: `FINDING-miso195-outage-envelope-cap-2026-08-31.md`,
 `scripts/probes/_miso195_outage_envelope_phase0.py` (frozen at `09f70160`).
 Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number:
 **miso-196.**
+
+---
+
+## miso-196 (2026-09-01) — `cc_outage_derate_from_top`: phase 0 CLEARS on MISO's own conduct record; A/B pre-registered and launched, not completed in-session
+
+**Keeper UNCHANGED: `2026-08-30-miso-191-bexit`.** No field added or
+re-semanticized, no matrix row created, no promotion, no verdict claimed for the
+arm. Ask A reproduced exactly as handed off (NOT-YET on {C3a-2025 −12.3405%}
+ALONE; C1 16/16 / 12/12 free; C3c the single ledgered caveat; C6 attested; C8
+PASS with both grounded notes; `audit_keepers` PASS 0/0; `build_status --check`
+in sync; matrix integrity OK).
+
+The FINDING-miso195 §6 named successor — the APPLICATION-SHAPE leg of the
+`campd_outage_windows` row (`cc_outage_derate_from_top`, armed on the CAISO and
+PJM keepers, `False` on MISO's; an xiso-3 sub-scalar, **no new field, no new
+row**). Rule frozen in the probe docstring and pushed at `fef3dcb6` before any
+adjudicating quantity; PREREG pushed and blob-verified at `64f184f1` before the
+arm existed.
+
+**A basis error caught BEFORE the freeze**, by the satisfiability pass that
+exists for it: an earlier draft read the RAW per-unit fleet, whose MISO
+`CC_REGULAR` rows are sibling **units** sharing one heat rate (991_GT1/GT2/STG1
+all at 6.51) — so the seam's own merit-order sort would have been a **pure tie**
+and every witness measured on a fleet the LP never sees. Basis corrected to the
+shipped tranche path; no adjudicating quantity computed on the wrong basis.
+
+**Phase 0 CLEARS, `CHARTER_AB = true`.** W1 LIVE (differing plant-hours
+96.3/95.9/86.0% of the top-200 scarce set). W2 MATERIAL (positive band movement
+8.56/8.64/8.52% of class pmax in S; `committed` +840/+814/+809 MW year-mean and
++1152/+1171/+1147 in S against `peak` −787/−805/−810 and −1005/−1055/−1031;
+plant total MW preserved to 6e-16 — a reallocation, not a removal). W5 CLEAN.
+
+**W3 is the structural case and it is MISO's own** (rule 25 — the CAISO/PJM `K`
+is a registration, not evidence here): across 1,264 partial-outage CC windows
+the surviving units run at **CF 0.6166** against **0.6825** for the *same* units
+when their plant is whole — **ratio 0.9035** against a data-derived bar of
+(1+f)/2 = **0.8018**, where strict pro-rata predicts f = **0.6036**. A
+partially-out MISO CC plant keeps ~90% of its normal loading on the surviving
+train.
+
+**Reported against the clean gates, not behind them.** (a) **W4's CLEAR rules
+out nothing**: `CC_REGULAR` carries **no `min_gen` floor** on this keeper (class
+`min_gen` 0.0 MW in both arms), so the floor channel cannot bite, and half the
+row def's justification — "the committed floor keeps its level" — describes a
+floor MISO does not have. The real C1 exposure is the **economic** channel,
+named as PREREG kill K-1 with ex-ante arithmetic (2024 CC_REGULAR +6.664 vs
+±8.00 TWh = **1.336 TWh headroom** against +814 MW year-mean of freed cheap
+capability = 7.13 TWh at 8,760 h, so **a realised conversion above ~19% blows
+the band**; the charter's +6.820 is stale — committed artifacts govern).
+(b) **Provenance, reported not gated**: the measured CAMPD overlay supplies
+**65.0%** of the 2025 shortfall being reallocated, the statistical base 35.0%.
+
+**Incidental finding, and its correction.** W5's control check showed the *same
+config built twice* differs — 58 rows / 7 plants / 7,722.8 MW / 2,928 h (exactly
+Jun–Sep) / +1,544.1 GWh, `pmax` identical. Root cause:
+`_CC_PMAX_RECONCILED_PLANTS` (`eia860.py:776`) is a last-writer-wins module
+global that a cached auxiliary load (`_iso_plant_capacity →
+load_retired_within_window`) clobbers to empty on the **first** build only,
+after which `_basis_aware_suppresses` drops the flat summer derate for plants
+that should keep it. **NO KEEPER IS CONTAMINATED**: the load-bearing solve log
+on 2023 — the *first* solved year — KEEPS the flat derate for all seven
+reconciled plants [1403, 55218, 55220, 55380, 55418, 55467, 55620]. The PREREG
+declined to assert keeper contamination and the control leg settled it in the
+safer direction. Real order-dependence, reachable by callers whose order differs
+(this session's harness), **not** reached on the load-bearing path. Not fixed
+here: solve-affecting core code, its own charter.
+
+**Why the A/B is handed on, not closed:** the solve rate in this environment is
+far below the charter's ~11 min/year/leg — 2023 P0 alone ran ~2.5 h on 4 cores
+at ~13 GB RSS. Both legs' commands are in PREREG §9; the pre-registration,
+kills and posture are already fixed and pushed, so a successor session runs the
+A/B against a rule it cannot bend.
+
+**Cell stamp:** `campd_outage_windows` stays **K**; its ev note now carries this
+adjudication of the registered application-shape sub-mechanism (rule 28(b),
+same session). Queue otherwise unchanged: `egrid_identity_heat_rates` (K@NYISO),
+`tac_load_coverage` (K@CAISO), `lcr_tsl_published` (K@CAISO+NYISO).
+
+Records: `FINDING-miso196-cc-outage-derate-from-top-2026-09-01.md`,
+`PREREG-miso196-cc-outage-derate-from-top-2026-09-01.md`,
+`_miso196_outage_derate_from_top_phase0.json`, probe
+`scripts/probes/_miso196_outage_derate_from_top_phase0.py` (frozen at
+`fef3dcb6`). Rule 22: 2023–2025 only; freeze untouched; no marker touched.
+Next number: **miso-197**.
