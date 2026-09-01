@@ -224,3 +224,37 @@ ISOs — the R-A arms would move exactly those rows); decide AFTER the P1 instru
 (b) whether neiso-t3's FC-6 FAIL survives D26's re-score — the affected lane's re-verification
 decides publication. **CLOSED at r#25:** the D24 repair choice, the miso-192 posture, the
 nyiso-161 card, and FC-5 source funding (Q20–Q23 — do not re-present any of them).
+
+**r#26 DELTA (2026-09-01, main `8462da22`) — append, not a rewrite. Full record: ledger §0w.**
+
+**THE NINE-WRITER WAVE: 7 landed, 2 clean checkpoints, 0 lost.** D24-R ✓ (cache-key defect
+closed forward, zero keys moved) · D29 ✓ (trajectory grain in) · **D27 ✓ — the headline:
+D17's 14.7 GW vindicated as arithmetic to the decimal, REFUTED as a remedy — the released
+admission went 100 % to coal (+106.3 % over-retirement, G3 sign flips to +52.2 %), non-coal
+exits still 0.000 GW; the SELECTOR is `_apply_reliability_floor`'s cheapest-firm-per-MW
+retention key** (→ R5 = D32, queued) · **D28 ✓ — the $0-curve object decomposes into a
+POSITION defect (model 6–22 reserve-ratio pts longer than real cleared positions; curves
+themselves published-faithful) + a clearing-half question**; NYISO's curve-ON latent row is
+D6's evidence · nyiso-168 ✓ (gain = ordinary-band slope deficit; market steepness NOT
+physical; the one new mechanism LP-inert, killed ex ante) · caiso-231 **PROMOTED**
+(keeper `2026-09-01-caiso-231-b1-ungrounded`, NOT-YET on C3a alone unchanged, nine
+ERCOT-inherited multipliers retired) · stage-0 NEISO+ERCOT captures ✓ (audit R-L; both
+oracles PASS) · **D26 = CHECKPOINT** (carbon_price_delta + exact golden control landed;
+finding at TBD-HEADLINE with the owed-solves runbook) · miso-197 = CHECKPOINT (phase-0
+census rule frozen). D30 owner-confirmed NOT DISPATCHED — pack §D30 stays live.
+
+**AGAINST INTEREST — card duplication (§0w.2):** audit ruling **R-H had already ruled the
+nyiso-161 card Option A** (recorded v18b D-7, before the r#25 card set); Q22 re-served it.
+Same outcome, no divergence; primacy is R-H's. **New standing step: before serving ANY card,
+grep the audit board's R-series ruling ledger for card-adjacent rulings.**
+
+**RULED r#26: Q24 — the MISO PRA/RBDC intake is FUNDED** (tightly-scoped, S-123 document
+class; owner fetches out-of-session, hands files to D31; **Q23 stands unchanged**).
+
+**IN FLIGHT after r#26:** D26-S (the D26 runbook's solve half + FC-6 re-score, Opus) ·
+D31 (MISO capacity-revenue repair — the PRIMARY lever, Q24-funded, Fable) · D33 (NEISO
+position lane, informs the golden card, Fable) · D30 (issued, undispatched) · miso-197
+(owner's, mid-lane). **QUEUED:** D32 (floor-retention monopoly, behind D31) · D6+D28-R3
+(chartered JOINTLY after D31/D33 land — one mechanism-class charter, per-ISO parameters).
+**OWNER-TIER:** the golden re-solve card, FC-6 survival, and D23's R4 carbon-semantics
+question ALL wait on D26-S — present together when it lands.
