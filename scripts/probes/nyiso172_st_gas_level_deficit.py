@@ -455,6 +455,173 @@ def s6_monthly_gas(
     return out
 
 
+
+# ------------------------------------------- post-hoc, after the S2 failure --
+# S7-S10 are NOT pre-registered gates. S2 failed (the deficit is not a
+# year-invariant price-conditional dropout: the sign flips), so these locate
+# what the object actually is. They are reported IN ADDITION to the registered
+# gates, never in place of them -- the nyiso-171 A5b discipline.
+
+
+def s7_population(chpset: set[int]) -> dict:
+    """S7 — is the model's ST_GAS population the measured one?
+
+    A missing-plant input defect would make every conduct statistic meaningless,
+    so it is checked before anything is concluded from the deficit.
+    """
+    tranche = pd.read_csv(TRANCHES)
+    model_plants = set(
+        tranche.loc[tranche["plant_group"] == "ST_GAS", "plant_code"].astype(int)
+    )
+    out: dict = {"model_plants": sorted(model_plants), "by_year": {}}
+    for year in YEARS:
+        d = campd_frame(year)
+        sel = class_mask(d, "ST_GAS", chpset)
+        g = d.loc[sel].groupby(d.loc[sel, "_fid"])["grossLoad"].sum() / 1e6
+        off = {int(k): round(float(v), 4) for k, v in g.items() if int(k) not in model_plants}
+        out["by_year"][str(year)] = {
+            "campd_plants": int(len(g)),
+            "campd_total_twh": round(float(g.sum()), 4),
+            "off_model_plants": off,
+            "off_model_twh": round(float(sum(off.values())), 4),
+            "off_model_share": (
+                round(float(sum(off.values()) / g.sum()), 5) if g.sum() > 0 else None
+            ),
+        }
+    return out
+
+
+def s8_composition_trend(chpset: set[int]) -> dict:
+    """S8 — the year-over-year composition trend, model vs measured.
+
+    The S2 failure says the object is not within-year price response. This asks
+    whether it is a BETWEEN-year response: does the market lean progressively on
+    gas steam while the model leans off it?
+    """
+    classes = list(UNIT_KIND)
+    meas: dict[str, dict[str, float]] = {}
+    mod: dict[str, dict[str, float]] = {}
+    for year in YEARS:
+        d = campd_frame(year)
+        meas[str(year)] = {
+            k: round(float(measured_hourly(d, k, chpset).sum()) / 1e6, 4)
+            for k in classes
+        }
+        mod[str(year)] = {
+            k: round(float(model_hourly(year, k).sum()) / 1e6, 4) for k in classes
+        }
+    def share(tbl: dict[str, dict[str, float]], y: str) -> float:
+        tot = sum(tbl[y].values())
+        return round(tbl[y]["ST_GAS"] / tot, 4) if tot > 0 else 0.0
+    return {
+        "measured_twh": meas,
+        "model_twh": mod,
+        "measured_total_gas_twh": {y: round(sum(v.values()), 4) for y, v in meas.items()},
+        "model_total_gas_twh": {y: round(sum(v.values()), 4) for y, v in mod.items()},
+        "measured_st_gas_share_of_gas": {y: share(meas, y) for y in meas},
+        "model_st_gas_share_of_gas": {y: share(mod, y) for y in mod},
+        "measured_st_gas_growth_23_25": round(
+            meas["2025"]["ST_GAS"] / meas["2023"]["ST_GAS"] - 1, 4
+        ),
+        "model_st_gas_growth_23_25": round(
+            mod["2025"]["ST_GAS"] / mod["2023"]["ST_GAS"] - 1, 4
+        ),
+    }
+
+
+def s9_zonal(chpset: set[int]) -> dict:
+    """S9 — where the measured ST_GAS growth sits, by model zone.
+
+    Model-side zonal dispatch is NOT observable: ``class_hourly`` carries no zone
+    column, so only the measured side is split here. That asymmetry is the
+    finding's instrument limit, stated rather than worked around.
+    """
+    from market_sim.data.zone_assignment import assign_zone
+
+    tranche = pd.read_csv(TRANCHES)
+    st = tranche[tranche["plant_group"] == "ST_GAS"]
+    zone_of = {int(r["plant_code"]): assign_zone(int(r["plant_code"]), "NYISO")
+               for _, r in st.iterrows()}
+    nameplate_by_zone: dict[str, float] = {}
+    for _, r in st.iterrows():
+        z = zone_of[int(r["plant_code"])]
+        nameplate_by_zone[z] = nameplate_by_zone.get(z, 0.0) + float(r["nameplate_mw"])
+    by_year: dict[str, dict[str, float]] = {}
+    for year in YEARS:
+        d = campd_frame(year)
+        sel = class_mask(d, "ST_GAS", chpset)
+        g = d.loc[sel].groupby(d.loc[sel, "_fid"])["grossLoad"].sum() / 1e6
+        acc: dict[str, float] = {}
+        for fid, twh in g.items():
+            z = zone_of.get(int(fid), "OFF_MODEL")
+            acc[z] = acc.get(z, 0.0) + float(twh)
+        by_year[str(year)] = {k: round(v, 4) for k, v in sorted(acc.items())}
+    growth = {
+        z: round(by_year["2025"].get(z, 0.0) - by_year["2023"].get(z, 0.0), 4)
+        for z in set(by_year["2023"]) | set(by_year["2025"])
+    }
+    tot = sum(v for v in growth.values())
+    return {
+        "zone_of_plant": {str(k): v for k, v in sorted(zone_of.items())},
+        "nameplate_mw_by_zone": {k: round(v, 1) for k, v in sorted(nameplate_by_zone.items())},
+        "measured_twh_by_zone": by_year,
+        "growth_2023_to_2025_twh": dict(sorted(growth.items(), key=lambda kv: -kv[1])),
+        "growth_share_by_zone": (
+            {k: round(v / tot, 4) for k, v in sorted(growth.items(), key=lambda kv: -kv[1])}
+            if tot
+            else None
+        ),
+        "instrument_limit": (
+            "measured side only — class_hourly carries no zone column, so the "
+            "model's zonal ST_GAS dispatch is not observable without a re-solve"
+        ),
+    }
+
+
+def s10_cc_availability(chpset: set[int]) -> dict:
+    """S10 — a ONE-SIDED bound on the model's CC availability.
+
+    The measured CC fleet's maximum output WITHIN a month is a strict lower
+    bound on what that fleet could have produced that month, so any hour in
+    which the model's CC output exceeds it is a proven over-statement of CC
+    availability. The bound is conservative twice over: CAMPD ``grossLoad`` is
+    gross while the model's ``class_hourly`` is on the delivered basis (gross >=
+    net), and a monthly maximum is the loosest within-month bound available.
+    """
+    mon = month_of_hour()
+    cc = ["CC_CHP", "CC_REGULAR"]
+    out: dict[str, dict] = {}
+    for year in YEARS:
+        d = campd_frame(year)
+        mo = sum(model_hourly(year, k) for k in cc)
+        me = sum(measured_hourly(d, k, chpset) for k in cc)
+        per_month, total = {}, 0
+        for m in range(1, 13):
+            sel = mon == m
+            ex = int((mo[sel] > me[sel].max()).sum())
+            per_month[str(m)] = ex
+            total += ex
+        mo_st = model_hourly(year, "ST_GAS")
+        me_st = measured_hourly(d, "ST_GAS", chpset)
+        st_total = sum(
+            int((mo_st[mon == m] > me_st[mon == m].max()).sum()) for m in range(1, 13)
+        )
+        out[str(year)] = {
+            "cc_hours_above_measured_monthly_max": total,
+            "cc_share_of_year": round(total / 8760, 4),
+            "cc_per_month": per_month,
+            "cc_model_mean_mw": round(float(mo.mean()), 1),
+            "cc_measured_mean_mw": round(float(me.mean()), 1),
+            "cc_mean_gap_mw": round(float(mo.mean() - me.mean()), 1),
+            "cc_model_max_mw": round(float(mo.max()), 1),
+            "cc_measured_max_mw": round(float(me.max()), 1),
+            "cc_model_p95_mw": round(float(np.percentile(mo, 95)), 1),
+            "cc_measured_p95_mw": round(float(np.percentile(me, 95)), 1),
+            "st_gas_hours_above_measured_monthly_max": st_total,
+        }
+    return out
+
+
 # ------------------------------------------------------------------- main ---
 
 
@@ -588,6 +755,30 @@ def main() -> None:
         "S6_gas_tracking_supported": result["S6_pooled"]["supported"],
         "proceed_to_arm": bool(s2_pass and not s3_input_defect and s4_arm and False),
     }
+
+    # Post-hoc, after the S2 failure (reported in addition to the gates).
+    result["S7_population"] = s7_population(chpset)
+    result["S8_composition_trend"] = s8_composition_trend(chpset)
+    result["S9_zonal"] = s9_zonal(chpset)
+    result["S10_cc_availability"] = s10_cc_availability(chpset)
+
+    s7, s8, s9, s10 = (
+        result["S7_population"], result["S8_composition_trend"],
+        result["S9_zonal"], result["S10_cc_availability"],
+    )
+    print("\n=== POST-HOC (after the S2 failure) ===")
+    print("  S7 population: off-model measured ST_GAS volume share by year:",
+          {y: v["off_model_share"] for y, v in s7["by_year"].items()})
+    print(f"  S8 measured ST_GAS {s8['measured_st_gas_growth_23_25']:+.1%} 2023->2025"
+          f" vs model {s8['model_st_gas_growth_23_25']:+.1%}")
+    print("     ST_GAS share of gas  measured", s8["measured_st_gas_share_of_gas"],
+          " model", s8["model_st_gas_share_of_gas"])
+    print("  S9 measured growth by zone (TWh):", s9["growth_2023_to_2025_twh"])
+    print("  S10 model CC above measured within-month max:")
+    for y, v in s10.items():
+        print(f"     {y}: {v['cc_hours_above_measured_monthly_max']:>5} h"
+              f" ({v['cc_share_of_year']:.2%});  CC mean gap {v['cc_mean_gap_mw']:+.0f} MW;"
+              f" ST_GAS excess hours {v['st_gas_hours_above_measured_monthly_max']}")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(result, indent=1))
