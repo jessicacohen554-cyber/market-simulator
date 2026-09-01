@@ -57,6 +57,19 @@ def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
        :data:`CARBON_PRICE_PATHS` (linear-interpolated across knot years,
        nearest-endpoint clamp outside the range) when no program adder applies.
 
+    **Final additive stage** (capx-D26, outside and after the precedence
+    chain): ``config.carbon_price_delta`` is added to whatever the chain
+    resolved. It exists so a paired instrument arm can construct a genuine
+    carbon-price *increase over the resolved base trajectory* — under
+    precedence (1) alone, a "high-carbon" arm on a program ISO silently
+    REPLACED an escalating program trajectory with a flat value, i.e. a cut
+    (the D23 premise inversion,
+    ``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``). The
+    default 0.0 is an exact no-op on every path; the field is forecast-only
+    (``ScenarioConfig.__post_init__`` rule-13 guard) and never armed in a
+    keeper or golden posture. The precedence semantics above are unchanged
+    for every consumer at the default.
+
     The scalar returned here is the ISO-wide allowance price used by the
     capacity-evolution screen and the CARB border adder; the fractional-
     membership weighting for a partial-footprint program (PJM) is applied at the
@@ -70,6 +83,13 @@ def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
     Returns:
         The carbon price in $/tCO2.
     """
+    delta = float(getattr(config, "carbon_price_delta", 0.0) or 0.0)
+    return _base_carbon_price(config, year) + delta
+
+
+def _base_carbon_price(config: ScenarioConfig, year: int) -> float:
+    """The precedence chain of :func:`resolve_carbon_price`, without the
+    additive ``carbon_price_delta`` stage (see its docstring for the order)."""
     if config.carbon_price != 0:
         return float(config.carbon_price)
 

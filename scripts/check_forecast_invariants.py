@@ -116,12 +116,18 @@ PASS, FAIL, WARN, SKIP = "PASS", "FAIL", "WARN", "SKIP"
 
 @dataclass
 class Result:
-    """One invariant's outcome."""
+    """One invariant's outcome.
+
+    ``data`` carries optional structured evidence (today: the carbon-pair
+    premise table). It is omitted from the JSON emission when ``None`` so
+    every pre-existing row keeps its exact shape.
+    """
 
     ident: str
     name: str
     status: str
     detail: str = ""
+    data: dict | None = None
 
 
 @dataclass
@@ -795,6 +801,63 @@ def check_i14_price_sanity(run: Run) -> Result:
 # --------------------------------------------------------------------------- #
 # Paired-run invariants P1-P3
 # --------------------------------------------------------------------------- #
+def carbon_pair_premise(base: Run, high: Run) -> Result:
+    """Premise assertion for the carbon pair (capx-D23 R1 / capx-D26).
+
+    P1's claim is "cumulative CO2 falls under a HIGHER carbon price", so the
+    pair is scoreable only when the high arm's *effective* carbon signal —
+    ``resolve_carbon_price`` over each arm's own config, the exact resolution
+    every model consumer sees — is STRICTLY ABOVE the base's in EVERY common
+    solved year. The D21 pair violated this silently: the arm's
+    ``carbon_price=25`` override REPLACED the base's escalating projected RGGI
+    trajectory ($26.05→$132.16/t), so the "carbon" arm was a price CUT in
+    every year and P1 measured the premise of its own pair
+    (``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``).
+
+    Emits the year-by-year signal table (``data``: years / base / high /
+    delta) so the run record states the delta explicitly. Status FAIL when
+    the premise is violated — the scorer then treats the pair's P1 as
+    mis-constructed/vacuous evidence (rubric §2 FC-6.2), never a scored
+    PASS/FAIL.
+    """
+    from market_sim.policy.carbon import resolve_carbon_price
+
+    years = sorted(set(base.years) & set(high.years))
+    if not years:
+        return Result(
+            "P1.premise", "carbon pair premise", SKIP, "no common solved years"
+        )
+    b_sig = [float(resolve_carbon_price(base.config, y)) for y in years]
+    h_sig = [float(resolve_carbon_price(high.config, y)) for y in years]
+    delta = [round(h - b, 6) for b, h in zip(b_sig, h_sig)]
+    bad = [y for y, d in zip(years, delta) if d <= 0.0]
+    table = {
+        "years": years,
+        "base": [round(v, 6) for v in b_sig],
+        "high": [round(v, 6) for v in h_sig],
+        "delta": delta,
+    }
+    if bad:
+        return Result(
+            "P1.premise",
+            "carbon pair premise",
+            FAIL,
+            f"MIS-CONSTRUCTED: high-arm effective carbon ≤ base in "
+            f"{len(bad)}/{len(years)} years (first {bad[0]}: "
+            f"Δ{delta[years.index(bad[0])]:+.2f} $/t) — the pair does not "
+            "construct a carbon-price increase, P1 not scored",
+            data=table,
+        )
+    return Result(
+        "P1.premise",
+        "carbon pair premise",
+        PASS,
+        f"strictly positive delta in all {len(years)} years "
+        f"(min {min(delta):+.2f}, max {max(delta):+.2f} $/t)",
+        data=table,
+    )
+
+
 def _cumulative_co2(run: Run) -> float | None:
     total = 0.0
     seen = False
@@ -925,11 +988,24 @@ def run_single(run_dir: Path) -> list[Result]:
 def run_paired(base_dir: Path, other_dir: Path, kind: str) -> list[Result]:
     """Run the paired invariant appropriate to ``kind``.
 
-    ``kind``: ``carbon`` → P1, ``gas_up`` → P2, ``gas_pm5`` → P3.
+    ``kind``: ``carbon`` → P1 (premise-guarded, capx-D26: a mis-constructed
+    pair yields a SKIP P1 plus a FAIL premise row instead of a scored
+    PASS/FAIL), ``gas_up`` → P2, ``gas_pm5`` → P3.
     """
     base, other = load_run(base_dir), load_run(other_dir)
     if kind == "carbon":
-        return [check_p1_co2_monotone(base, other)]
+        premise = carbon_pair_premise(base, other)
+        if premise.status == FAIL:
+            p1 = Result(
+                "P1",
+                "CO2 monotone vs carbon",
+                SKIP,
+                "premise mis-constructed — pair does not raise the effective "
+                "carbon signal in every year; see P1.premise",
+            )
+        else:
+            p1 = check_p1_co2_monotone(base, other)
+        return [p1, premise]
     if kind == "gas_up":
         return [check_p2_merit_sign(base, other)]
     if kind == "gas_pm5":
@@ -1152,7 +1228,14 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("supply --run-dir, --paired and/or --sidecar-dir")
 
     if args.json:
-        print(json.dumps([r.__dict__ for r in results], indent=2))
+        # Rows without structured data keep their historical exact shape
+        # (ident/name/status/detail only) so committed records stay
+        # byte-reproducible; only rows that carry evidence gain a `data` key.
+        rows = [
+            {k: v for k, v in r.__dict__.items() if not (k == "data" and v is None)}
+            for r in results
+        ]
+        print(json.dumps(rows, indent=2))
     else:
         print("Forecast invariants:")
         _print_table(results)

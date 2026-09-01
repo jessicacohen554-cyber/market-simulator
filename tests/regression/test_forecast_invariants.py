@@ -741,6 +741,82 @@ def test_p1_still_skips_when_no_emissions_and_no_rate():
     assert C.check_p1_co2_monotone(base, high).status == C.SKIP
 
 
+def test_carbon_pair_premise_holds_on_additive_delta_arm():
+    """The D26 repaired arm (base + carbon_price_delta) passes the premise
+    with a strictly positive year-by-year delta table in the run record."""
+    from market_sim.config.scenarios import ScenarioConfig
+
+    years = {y: _mk_yeardata(y) for y in (2026, 2027)}
+    base = _mk_run(
+        [],
+        years=dict(years),
+        config=ScenarioConfig(iso="NEISO", start_year=2026, end_year=2027),
+        iso="NEISO",
+    )
+    high = _mk_run(
+        [],
+        years=dict(years),
+        config=ScenarioConfig(
+            iso="NEISO", start_year=2026, end_year=2027, carbon_price_delta=25.0
+        ),
+        iso="NEISO",
+    )
+    res = C.carbon_pair_premise(base, high)
+    assert res.status == C.PASS
+    assert res.data is not None
+    assert res.data["years"] == [2026, 2027]
+    assert all(d == pytest.approx(25.0) for d in res.data["delta"])
+
+
+def test_carbon_pair_premise_fails_on_replacement_override_inversion():
+    """The D21/D23 broken construction: carbon_price=25 REPLACES a program
+    ISO's escalating projected trajectory, so the 'high' arm is a CUT in
+    every year — premise FAIL, and run_paired refuses to score P1."""
+    from market_sim.config.scenarios import ScenarioConfig
+
+    years = {y: _mk_yeardata(y) for y in (2026, 2027)}
+    base = _mk_run(
+        [],
+        years=dict(years),
+        config=ScenarioConfig(iso="NEISO", start_year=2026, end_year=2027),
+        iso="NEISO",
+    )
+    high = _mk_run(
+        [],
+        years=dict(years),
+        config=ScenarioConfig(
+            iso="NEISO", start_year=2026, end_year=2027, carbon_price=25.0
+        ),
+        iso="NEISO",
+    )
+    res = C.carbon_pair_premise(base, high)
+    assert res.status == C.FAIL
+    assert "MIS-CONSTRUCTED" in res.detail
+    # NEISO's projected RGGI base is $26.05 in 2026 — above the flat $25.
+    assert res.data["delta"][0] < 0.0
+
+
+def test_carbon_pair_premise_holds_on_no_program_iso_absolute_pair():
+    """On a program-free ISO (ERCOT) the historical 0 → 25 absolute pair is a
+    genuine increase — the guard does not fire on a clean construction."""
+    from market_sim.config.scenarios import ScenarioConfig
+
+    years = {y: _mk_yeardata(y) for y in (2026, 2027)}
+    base = _mk_run(
+        [],
+        years=dict(years),
+        config=ScenarioConfig(iso="ERCOT", start_year=2026, end_year=2027),
+    )
+    high = _mk_run(
+        [],
+        years=dict(years),
+        config=ScenarioConfig(
+            iso="ERCOT", start_year=2026, end_year=2027, carbon_price=25.0
+        ),
+    )
+    assert C.carbon_pair_premise(base, high).status == C.PASS
+
+
 def test_p2_merit_sign():
     base = _mk_run([], years={2026: _mk_yeardata(2026, fuels=("gas_cc", "coal"))})
     gas_up = _mk_run([], years={2026: _mk_yeardata(2026, fuels=("gas_cc", "coal"))})

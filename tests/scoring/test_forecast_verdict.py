@@ -737,6 +737,57 @@ class FC6Tests(unittest.TestCase):
             fv.CAVEAT,
         )
 
+    def test_paired_p1_misconstructed_premise_is_caveat_never_scored(self):
+        """A FAILing carbon-pair premise (capx-D23/D26) reclassifies P1 to a
+        mis-constructed CAVEAT — never a scored PASS or FAIL — whatever the P1
+        row itself says (the checker emits SKIP, but even a hand-carried FAIL
+        must not score against an inverted premise)."""
+        for p1_status in ("SKIP", "FAIL", "PASS"):
+            paired = [
+                {
+                    "ident": "P1",
+                    "name": "co2 monotone",
+                    "status": p1_status,
+                    "detail": "x",
+                },
+                {
+                    "ident": "P1.premise",
+                    "name": "carbon pair premise",
+                    "status": "FAIL",
+                    "detail": "MIS-CONSTRUCTED: high-arm effective carbon ≤ base",
+                },
+            ]
+            rows = fv.score_fc6(_art(paired_invariants=paired), "t3", "NEISO")
+            p1 = [r for r in rows if r["row"] == "paired P1"][0]
+            self.assertEqual(p1["status"], fv.CAVEAT)
+            self.assertIn("MIS-CONSTRUCTED", p1["detail"])
+
+    def test_paired_p1_passing_premise_annotates_and_scores_normally(self):
+        paired = [
+            {"ident": "P1", "name": "co2 monotone", "status": "PASS", "detail": "fell"},
+            {
+                "ident": "P1.premise",
+                "name": "carbon pair premise",
+                "status": "PASS",
+                "detail": "strictly positive delta in all 25 years",
+            },
+        ]
+        rows = fv.score_fc6(_art(paired_invariants=paired), "t3", "NEISO")
+        p1 = [r for r in rows if r["row"] == "paired P1"][0]
+        self.assertEqual(p1["status"], fv.PASS)
+        self.assertIn("premise: strictly positive delta", p1["detail"])
+
+    def test_paired_premise_absent_scores_exactly_as_before(self):
+        """Every pre-D26 committed record has no premise row — scoring is
+        unchanged (the guard is strictly additive; cross-lane re-grade rule)."""
+        paired = [
+            {"ident": "P1", "name": "co2 monotone", "status": "FAIL", "detail": "rose"}
+        ]
+        rows = fv.score_fc6(_art(paired_invariants=paired), "t3", "NEISO")
+        p1 = [r for r in rows if r["row"] == "paired P1"][0]
+        self.assertEqual(p1["status"], fv.FAIL)
+        self.assertNotIn("premise", p1["detail"])
+
 
 # ---------------------------------------------------------------------------
 # FC-7 provenance & DOF

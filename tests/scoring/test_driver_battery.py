@@ -325,6 +325,86 @@ class TestRunLadderWithSeam(unittest.TestCase):
         self.assertEqual(by_id["T1.1b"]["status"], B.PASS)  # CO2 ↓
         self.assertEqual(by_id["T1.1c"]["status"], B.PASS)  # price ↑ (report)
         self.assertEqual(by_id["T1.1d"]["status"], B.PASS)  # coal moves
+        # ERCOT carries no carbon program: the 0/25/50/100 ladder's effective
+        # signal is strictly ascending, so the premise holds and is recorded.
+        self.assertTrue(result["carbon_premise"]["ok"])
+
+
+class TestCarbonLadderPremise(unittest.TestCase):
+    """capx-D23 R1 / capx-D26: carbon-signal ladders assert their premise."""
+
+    def test_non_carbon_ladder_has_no_premise(self):
+        lad = next(x for x in B.build_ladders() if x.test_id == "T1.3")
+        self.assertIsNone(B.carbon_ladder_premise(lad.rungs, "ERCOT", 2026, 2026))
+
+    def test_mass_cap_ladder_is_outside_the_premise(self):
+        lad = next(x for x in B.build_ladders() if x.test_id == "T1.2")
+        self.assertIsNone(B.carbon_ladder_premise(lad.rungs, "ERCOT", 2026, 2026))
+
+    def test_program_iso_absolute_ladder_is_inverted(self):
+        """On NEISO the T1.1-style absolute rungs invert: rung co2_0 resolves
+        the projected RGGI trajectory ($26.05 in 2026), ABOVE the flat $25
+        rung — the D23 finding §7 case, now detected instead of scored."""
+        lad = next(x for x in B.build_ladders() if x.test_id == "T1.1")
+        premise = B.carbon_ladder_premise(lad.rungs, "NEISO", 2026, 2027)
+        self.assertIsNotNone(premise)
+        self.assertFalse(premise["ok"])
+        self.assertTrue(any("co2_0" in s for s in premise["inversions"]))
+
+    def test_inverted_ladder_gate_rows_reclassified_vacuous(self):
+        lad = next(x for x in B.build_ladders() if x.test_id == "T1.1")
+
+        def fake(spec_dict):
+            carbon = spec_dict["overrides"].get("carbon_price", 0.0)
+            coal = max(0.0, 100.0 - carbon)
+            return {
+                "rung_id": spec_dict["rung_id"],
+                "test_id": spec_dict["test_id"],
+                "iso": spec_dict["iso"],
+                "rung_label": spec_dict["rung_label"],
+                "overrides": spec_dict["overrides"],
+                "status": "ok",
+                "metrics": {
+                    "coal_twh": coal,
+                    "co2_mt_total": coal * 0.9,
+                    "lw_price": 30.0 + carbon,
+                },
+                "cached": False,
+            }
+
+        result = B.run_ladder(
+            lad,
+            "NEISO",
+            2026,
+            2026,
+            cache_root="/tmp/none",
+            metrics_root="/tmp/none",
+            workers=1,
+            evaluate_fn=fake,
+        )
+        self.assertFalse(result["carbon_premise"]["ok"])
+        for row in result["expectations"]:
+            if row["gate"]:
+                self.assertEqual(row["status"], B.SKIP)
+                self.assertTrue(row["vacuous"])
+                self.assertIn("premise inverted", row["detail"])
+
+
+class TestPairedArmRegistry(unittest.TestCase):
+    def test_carbon_arm_is_additive_never_replacement(self):
+        """The P1 arm must be an increment on the RESOLVED signal — an
+        absolute carbon_price override is the retired broken construction."""
+        overrides = B.PAIRED_ARM_OVERRIDES["carbon_plus25"]
+        self.assertEqual(overrides, {"carbon_price_delta": 25.0})
+        for arm, ov in B.PAIRED_ARM_OVERRIDES.items():
+            self.assertNotIn("carbon_price", ov, arm)
+
+    def test_base_arm_is_the_unperturbed_golden(self):
+        self.assertEqual(B.PAIRED_ARM_OVERRIDES["base"], {})
+
+    def test_every_arm_differs_from_base_in_at_most_one_field(self):
+        for arm, ov in B.PAIRED_ARM_OVERRIDES.items():
+            self.assertLessEqual(len(ov), 1, arm)
 
 
 if __name__ == "__main__":

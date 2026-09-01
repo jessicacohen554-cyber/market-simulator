@@ -276,6 +276,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     mass_cap_lp_row: { cell: "U" },
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
+    carbon_price_delta: { cell: ".", fc: "." },
     plant_emission_rates_v2: { cell: "K" },
     startup_co2_reporting: { cell: "U" },
   },

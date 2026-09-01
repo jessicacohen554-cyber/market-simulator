@@ -274,6 +274,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     mass_cap_lp_row: { cell: "U" },
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
+    carbon_price_delta: { cell: ".", fc: ".", ev: "D26 (2026-09-01, the FC-6 P1 arm-construction repair lane): INSTRUMENT FIELD, '.' BY DESIGN \u2014 never a lever; default 0.0 in every posture. Exercised and validated on NEISO's own repaired FC-6 P1 arm at the t3 golden's vintage: carbon_plus25 = golden base recipe + carbon_price_delta=25.0, effective signal base+$25.00/t in ALL 25 years 2026-2050 (base $26.05->$132.16 projected RGGI escalator stays armed in both legs), premise row PASS; default-neutrality PROVEN by the D26 base-arm re-solve reproducing the golden trajectory exactly with the field present at 0.0. Replaces the retired carbon_price=25 replacement construction (D23 premise inversion). Evidence: docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md." },
     plant_emission_rates_v2: { cell: "K" },
     startup_co2_reporting: { cell: "U" },
   },
