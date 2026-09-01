@@ -10596,3 +10596,107 @@ Evidence:
 `scripts/probes/_caiso229_belowstack_decomposition.py`.
 
 **Next number: caiso-230.**
+
+## 2026-09-01 — CAISO — caiso-230: the caiso-229 §A ABOVE-FLOOR term DECOMPOSED — every limb large enough to close C3a has a CLOSED owner; the last un-adjudicated offer-side door (the three ERCOT-inherited gas classes) is opened and CLOSED ON SIGN in all three years. ZERO SOLVES
+
+**Runs:** NONE. No `ScenarioConfig` field added, no LP built, no solver
+called, nothing registered, NO cell verdict moved. Keeper UNCHANGED at
+`2026-08-26-caiso-220-c1-crosswalk`, re-verified in-session with
+`scripts/calibration_verdict.py --run-id` on committed artifacts: **NOT-YET**,
+C3a the sole load-bearing FAIL (+4.0 PASS / +12.5 / +15.5), C1 12/12 free 8/8,
+C2/C3b/C4/C6/C8 PASS, C3c the single ledgered caveat.
+`calibration-complete.json` (no CAISO marker) and `holdout-freeze.json`
+(ACTIVE) untouched; every read stayed inside 2023–2025.
+
+**The basis is the SCORER's own, and that is the session's first validity
+proof.** The probe annualises on the zone-hour mean over all 8,760 hours
+weighted by the model's own zonal demand, reproducing
+`calibration_verdict.score_price_mean` to the cent — model **56.31 / 38.96 /
+39.76** vs RT **54.17 / 34.65 / 34.42**, C3a **+3.96 / +12.45 / +15.50 %**,
+required moves **0.00 / −0.848 / −1.893**. §A separately replays caiso-229's
+own rubric-weight table and reproduces it exactly (2025 Sep–Dec above-floor
++7.30, spring −5.96). Two weightings, both reproduced.
+
+**The limb ledger** (contribution to the ANNUAL load-weighted mean,
+2023/2024/2025):
+
+| limb | 2023 | 2024 | 2025 | verdict |
+|---|--:|--:|--:|---|
+| (a) CC body — CC_REGULAR+CC_CHP `committed`+`econ` | **+4.62** | **+4.33** | **+4.95** | only limb big enough (2.6× the 2025 requirement) — owner CLOSED at any magnitude |
+| (b) peaking — CT_PEAKER/CT_CHP/ST_GAS + `peak` bands | +4.01 | +1.77 | **+0.86** | SIZE KILL: 45 % of 2025 at TOTAL removal; measured bands already armed (+0.0 %) |
+| (c) imports / exports | −2.01 | −1.84 | −1.47 | WRONG SIGN — already pulls λ down |
+| (d) storage / hydro inter-temporal duals | −5.03 | −1.60 | −1.56 | WRONG SIGN — already pulls λ down |
+| (e) zonal congestion | +1.99 | +2.04 | +2.82 | NON-LEVER BY CONSTRUCTION |
+| **TOTAL above-floor** | **+1.28** | **+2.37** | **+2.49** | |
+
+**Limb (e) is disqualified by arithmetic, not evidence** (§3): C3a is the
+zone-hour load-weighted mean, so a mean-preserving zonal redistribution moves
+the dispersion and leaves λ untouched (caiso-215's ±$0.15 ISO-wide bridge
+terms corroborate). And measured like-for-like on CAISO's own three trading
+hubs, same weights and estimator both sides, **the model UNDER-disperses**:
+1.10/1.17/1.04 vs DAM 5.57/4.67/3.31 and RTM 5.70/5.29/4.25 — a **−$2.3 to
+−$4.6** gap. Locational repricing stays a C3b / D-A lane and is never a C3a
+lane.
+
+**The D-A phase flag is corroborated and opens nothing** (§6). The Sep–Dec
+above-floor term is an EVENING/NIGHT object — evening 19–23 + ramp 16–18 carry
+**+1.78 of +2.64 (67 %)** in 2025 while the belly is **−0.05** — the exact
+complement of caiso-229 §6's belly-dominated below-floor discordant hours. But
+the evening cell is again CC-body-dominated (+0.552 vs peaking's +0.377), and
+annually the evening limb is **+2.62 / +2.61 / +2.61**, i.e. flat across the
+two failing years and the passing one, so it cannot be what distinguishes
+them.
+
+**THE NEW DOOR, opened and closed** (§7). `_CAISO_OFFER_CURVE`'s own comment
+flags CC_CHP / CT_CHP / ST_GAS as *"PINNED to the values CAISO previously
+inherited from the generic ERCOT-lineage `else` branch … NOT CAISO-grounded"*;
+with the two fitted `committed` bands (CC_REGULAR's Lever-A 1.000, CT_PEAKER's
+NYISO-grounded 1.350) that is **five out-of-ISO or fitted multipliers on the
+binding path** (rule 25 exposure) pricing `CC_CHP:econ` +1.23,
+`CC_REGULAR:committed` +1.02, `CT_CHP:committed` +0.36 and `CC_CHP:committed`
++0.27 of the 2025 term. A measured counterpart EXISTS and is admissible in
+principle — `derive_caiso_offer_surface.py` discloses that the masked OASIS
+bids cannot be plant-mapped, so CC_CHP lands in the measured CC bucket and
+CT_CHP + the three OTC/RMR ST_GAS steamers land in the CT bucket, making a
+per-class re-grounding a zero-free-parameter measured substitution. **It dies
+on sign, all three years:** the first-order bound on a FULL measured
+re-grounding is **+0.553 / +0.700 / +0.709 $/MWh UPWARD**, and only 37 % of
+2025's requirement even with the sign reversed. Dominant term
+`CC_CHP:econ_low`, armed 0.960 vs measured 1.066 (**+11.0 %**, worth
++0.44/+0.54/+0.61 alone); every negative band together contributes only
+−0.22/−0.17/−0.19. The armed conditional half is inert here too: **not one
+`peak2`–`peak5` ladder rung is the marginal rung in a single CA zone-hour of
+any year.**
+
+**One YoY corroboration** (§2): from 2024 to 2025 the model's gated price rises
+**+$0.80**, of which the FLOOR carries **+$0.67 (84 %)** and the above-floor
+term only **+$0.12 (16 %)** — caiso-229 §G's mechanism confirmed on the gated
+basis. 2025's deterioration is a floor object, not an above-floor object.
+
+**Matrix (rule 26b):** NO verdict moves. Evidence appended to
+`measured_offer_surface` (K), `offer_curve_by_group` (K — cell given its first
+CAISO evidence line), `cc_committed_offer_margin` (R — the sign kill extended
+from CC_REGULAR to EVERY CAISO gas class) and `caiso_fsno_subzonal_topology`
+(R — the structural reason no locational repricing is ever a C3a instrument).
+
+**Filed item (new):** the five out-of-ISO / fitted band multipliers remain a
+rule 25 `[R-ISO-SCOPE]` exposure. Re-grounding them is an **owner-fundable
+structural-integrity ask, not a C3a lever** — it COSTS C3a in all three years
+and carries a rule-14 misalignment caveat (the measured multiplier is defined
+against its bucket's base HR 7.442/10.862 while CC_CHP is 6.90 and ST_GAS
+~11.85, so a naive transplant does not round-trip to the measured bid level).
+caiso-229's filed items 1–2 (the 4 import spot capacities; the G-26 / #1350
+ladder provenance gap) carry unchanged.
+
+**DO-NOT-REDO adds** (FINDING §9): never re-derive §A–§H on this keeper; never
+propose zonal congestion / Path-15 / sub-zonal topology as a C3a instrument;
+never propose re-grounding CC_CHP / CT_CHP / ST_GAS or the two `committed`
+bands as a C3a lever; never re-attribute the above-floor term to the peaking
+family; never quote the above-floor term as the 2025 driver.
+
+**NOT-YET stands** (owner ruling 5: C3a must genuinely pass). Evidence:
+`results/calibration/FINDING-caiso230-abovefloor-decomposition-2026-09-01.md`,
+`results/calibration/_caiso230_abovefloor_decomposition.json`,
+`scripts/probes/_caiso230_abovefloor_decomposition.py`.
+
+**Next number: caiso-231.**
