@@ -1686,6 +1686,9 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_capability_reconciliation": "measured NP6-905 aggregate-capability reconciliation (B-1)",
     "hydro_dispatch_envelope": "measured hydro month x hour-of-day dispatch percentiles",
     "caiso_offer_surface_measured": "measured CAISO peak-rung offer repricing",
+    "caiso_offer_surface_measured_ungrounded": (
+        "measured CAISO bands for the un-grounded CHP/ST_GAS classes"
+    ),
     "pjm_ct_measured_max_reprice": "measured PJM CT max-offer repricing",
 }
 
@@ -10448,6 +10451,42 @@ class ScenarioConfig:
     # SHRINK: fitted values retire where measured rungs land; CAISO-only,
     # no generic fallback (rule 25).
     caiso_offer_surface_measured: bool = False
+    # SAME STATIC HALF, EXTENDED TO CAISO'S THREE UN-GROUNDED GAS CLASSES
+    # (caiso-231, default off, CAISO-gated). `_CAISO_OFFER_CURVE` states in
+    # its own comment that CC_CHP / CT_CHP / ST_GAS "are PINNED to the values
+    # CAISO previously inherited from the generic ERCOT-lineage `else` branch
+    # ... NOT CAISO-grounded ... preserved verbatim ONLY so the neutral generic
+    # fallback (rule 24) does not silently change the caiso-51 keeper" — i.e.
+    # three ERCOT-fitted band blocks live on CAISO's binding path, which is
+    # exactly what rule 25 [R-ISO-SCOPE] forbids. A measured counterpart
+    # EXISTS for all three and the derive script names it: the masked OASIS
+    # bids cannot be plant-mapped, so `derive_caiso_offer_surface.py`
+    # discloses that "the three OTC/RMR steamers (ST_GAS ...) and priced
+    # CT_CHP curves land in the CT bucket ... CC_CHP (HR 6.90) lands in the CC
+    # bucket". The measured CC bucket is therefore the pooled
+    # CC_REGULAR+CC_CHP conduct and the CT bucket the pooled
+    # CT_PEAKER+CT_CHP+ST_GAS conduct, so each un-grounded class is re-grounded
+    # on the bucket it is MEASURED INSIDE — a rule-14 measured-input
+    # substitution with ZERO free parameters, not a new fitted lever.
+    #
+    # Arms EXACTLY the three bands the flag above arms (econ_low / econ_high /
+    # peak) and no others: the measured `committed` band stays unarmed for
+    # every CAISO gas class (the Lever-A inversion lesson applied uniformly —
+    # min-load self-commitment conduct belongs to unit commitment, not the P1
+    # offer; rule 19). Multipliers transfer as multipliers, against each
+    # plant's own base heat rate, which is the incumbent's semantics for
+    # CC_REGULAR / CT_PEAKER and is what the derive's slope-based
+    # classification identifies (a resource joins a bucket BECAUSE its
+    # measured marginal heat rate matches it).
+    #
+    # DIRECTION IS DISCLOSED, NOT HIDDEN (rule 14): this repair makes C3a
+    # WORSE. caiso-230 §H measures the first-order move at +0.235 / +0.344 /
+    # +0.421 $/MWh on the annual load-weighted price in 2023/2024/2025, driven
+    # by CC_CHP econ_low (ERCOT-inherited 0.960 vs CAISO-measured 1.066,
+    # +11.0 %). It is armed for structural integrity under rules 14 and 25,
+    # never as a C3a lever, and caiso-230's DO-NOT-REDO item 3 forbids ever
+    # proposing it as one.
+    caiso_offer_surface_measured_ungrounded: bool = False
     # CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder
     # ported to CAISO — 5 equal-capacity peak rungs repriced P1-only to the
     # measured per-net-load-bin top-of-curve quantiles (fuel-component

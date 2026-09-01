@@ -1204,6 +1204,7 @@ def backcast_config(
     pjm_da_virtual_bids: bool = False,
     pjm_offer_midcurve_conditional: bool = False,
     caiso_offer_surface_measured: bool = False,
+    caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_offer_surface_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
@@ -2154,6 +2155,52 @@ def backcast_config(
             caiso_offer_surface_measured=True,
             offer_curve_by_group=_deep_merge_offer_curve(
                 config.offer_curve_by_group, _measured_bands
+            ),
+        )
+    # CAISO's THREE UN-GROUNDED gas classes re-grounded on the measured
+    # bucket each one is MEASURED INSIDE (caiso-231, default off, CAISO-gated,
+    # requires the static half above). `_CAISO_OFFER_CURVE` records that
+    # CC_CHP / CT_CHP / ST_GAS carry ERCOT-lineage multipliers preserved only
+    # to avoid changing the caiso-51 keeper — an out-of-ISO tuned curve on the
+    # binding path, which rule 25 [R-ISO-SCOPE] forbids. The masked OASIS bids
+    # cannot be plant-mapped, so derive_caiso_offer_surface.py's own disclosure
+    # names the buckets these classes fall into: CC_CHP into the measured CC
+    # bucket, CT_CHP and the three OTC/RMR ST_GAS steamers into the CT bucket.
+    # Re-grounding each class on ITS OWN bucket is therefore a rule-14
+    # measured-input substitution with zero free parameters. Arms exactly the
+    # three bands the static half arms — the measured `committed` band stays
+    # unarmed for every CAISO gas class (the Lever-A inversion lesson applied
+    # uniformly, rule 19). DISCLOSED DIRECTION: this makes C3a worse by a
+    # measured +0.235 / +0.344 / +0.421 $/MWh (caiso-230 §H); it is a
+    # structural-integrity repair, never a C3a lever.
+    if caiso_offer_surface_measured_ungrounded and iso.upper() == "CAISO":
+        if not caiso_offer_surface_measured:
+            raise ValueError(
+                "caiso_offer_surface_measured_ungrounded requires "
+                "caiso_offer_surface_measured: it re-uses the SAME measured "
+                "artifact and band set, and arming it alone would leave "
+                "CC_REGULAR/CT_PEAKER fitted while the CHP classes are "
+                "measured — an incoherent surface (rule 19)."
+            )
+        _ungrounded_source = {
+            "CC_CHP": "CC_REGULAR",  # derive: 'CC_CHP (HR 6.90) lands in the CC bucket'
+            "CT_CHP": "CT_PEAKER",  # derive: 'priced CT_CHP curves land in the CT bucket'
+            "ST_GAS": "CT_PEAKER",  # derive: the three OTC/RMR steamers land in the CT bucket
+        }
+        _extra = {
+            cls: dict(_measured_bands[src])
+            for cls, src in _ungrounded_source.items()
+            if src in _measured_bands
+        }
+        if len(_extra) != len(_ungrounded_source):
+            raise ValueError(
+                "caiso_offer_curve_measured.json is missing a source bucket "
+                f"for {sorted(set(_ungrounded_source) - set(_extra))}"
+            )
+        config = config.with_overrides(
+            caiso_offer_surface_measured_ungrounded=True,
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _extra
             ),
         )
     # MISO gas + coal offer curves (CAMPD-/structure-/SOM-grounded; see

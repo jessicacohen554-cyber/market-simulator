@@ -3454,6 +3454,7 @@ def solve_and_persist(
     pjm_offer_midcurve_conditional: bool = False,
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
     caiso_offer_surface_measured: bool = False,
+    caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     nuclear_unit_availability: bool = False,
@@ -3767,6 +3768,9 @@ def solve_and_persist(
             pjm_da_virtual_bids=pjm_da_virtual_bids,
             pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
             caiso_offer_surface_measured=caiso_offer_surface_measured,
+            caiso_offer_surface_measured_ungrounded=(
+                caiso_offer_surface_measured_ungrounded
+            ),
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         )
         if pjm_offer_midcurve_segments is not None:
@@ -5183,6 +5187,9 @@ def solve_and_persist(
             pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
             pjm_offer_midcurve_segments=pjm_offer_midcurve_segments,
             caiso_offer_surface_measured=caiso_offer_surface_measured,
+            caiso_offer_surface_measured_ungrounded=(
+                caiso_offer_surface_measured_ungrounded
+            ),
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             nuclear_unit_availability=nuclear_unit_availability,
@@ -6077,6 +6084,9 @@ def solve_and_persist(
         "pjm_da_virtual_bids": pjm_da_virtual_bids,
         "pjm_offer_midcurve_conditional": pjm_offer_midcurve_conditional,
         "caiso_offer_surface_measured": caiso_offer_surface_measured,
+        "caiso_offer_surface_measured_ungrounded": (
+            caiso_offer_surface_measured_ungrounded
+        ),
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
         "pjm_offer_midcurve_segments": (
             list(pjm_offer_midcurve_segments)
@@ -8370,6 +8380,7 @@ def run_replay_bundle(
     holdout_authorized: bool,
     zero_forcing_ablation: bool = False,
     reliability_floor_plant_exclusions: bool | None = None,
+    caiso_offer_surface_measured_ungrounded: bool | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8397,6 +8408,11 @@ def run_replay_bundle(
             recipe's own value). Composes like ``zero_forcing_ablation`` so a
             single-delta A/B arm can be solved from a committed control recipe
             without re-expressing it flag-by-flag (nyiso-140).
+        caiso_offer_surface_measured_ungrounded: Override the bundle's setting
+            for the un-grounded-class measured band re-grounding (``None``
+            keeps the recipe's own value). Composes exactly like the override
+            above, so the caiso-231 structural A/B solves both arms from the
+            SAME committed control recipe.
         enable_legacy_p2: Unlock the ARCHIVED P2 commitment pass when the
             REPLAYED RECIPE arms it (see :func:`enforce_legacy_p2_kwargs`).
             Without it a bundle recorded with ``commitment=true`` is a hard
@@ -8420,6 +8436,10 @@ def run_replay_bundle(
     if reliability_floor_plant_exclusions is not None:
         kwargs["reliability_floor_plant_exclusions"] = (
             reliability_floor_plant_exclusions
+        )
+    if caiso_offer_surface_measured_ungrounded is not None:
+        kwargs["caiso_offer_surface_measured_ungrounded"] = (
+            caiso_offer_surface_measured_ungrounded
         )
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
@@ -10120,6 +10140,23 @@ def main() -> None:
         "(OASIS Public Bid Data, scripts/data/derive_caiso_offer_surface.py; "
         "carbon/VOM-netted round-trip). CAISO-gated; reads the frozen "
         "data/raw/_validation-source/caiso_offer_curve_measured.json.",
+    )
+    parser.add_argument(
+        "--caiso-offer-surface-measured-ungrounded",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="STRUCTURAL-INTEGRITY REPAIR (rule 25 [R-ISO-SCOPE], caiso-231): "
+        "extend the static half above to CAISO's THREE UN-GROUNDED gas "
+        "classes. _CAISO_OFFER_CURVE records that CC_CHP / CT_CHP / ST_GAS "
+        "carry ERCOT-lineage band multipliers preserved verbatim only so the "
+        "generic fallback would not change the caiso-51 keeper; this re-grounds "
+        "each on the measured bucket derive_caiso_offer_surface.py says it "
+        "falls inside (CC_CHP -> the CC bucket; CT_CHP and the three OTC/RMR "
+        "ST_GAS steamers -> the CT bucket), arming the same three bands "
+        "(econ_low/econ_high/peak) and leaving every committed band unarmed. "
+        "Zero free parameters. DISCLOSED: it makes C3a WORSE by a measured "
+        "+0.235/+0.344/+0.421 $/MWh (caiso-230 §H) and is NEVER a C3a lever. "
+        "Requires --caiso-offer-surface-measured.",
     )
     parser.add_argument(
         "--caiso-offer-surface-conditional",
@@ -11944,6 +11981,11 @@ def main() -> None:
             reliability_floor_plant_exclusions=(
                 args.reliability_floor_plant_exclusions
             ),
+            caiso_offer_surface_measured_ungrounded=(
+                args.caiso_offer_surface_measured_ungrounded
+                if "--caiso-offer-surface-measured-ungrounded" in sys.argv
+                else None
+            ),
             enable_legacy_p2=args.enable_legacy_p2,
         )
         return
@@ -12238,6 +12280,9 @@ def main() -> None:
         pjm_da_virtual_bids=args.pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=args.pjm_offer_midcurve_conditional,
         caiso_offer_surface_measured=args.caiso_offer_surface_measured,
+        caiso_offer_surface_measured_ungrounded=(
+            args.caiso_offer_surface_measured_ungrounded
+        ),
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
         priced_interchange=(
             True
