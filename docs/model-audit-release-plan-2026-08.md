@@ -4729,3 +4729,286 @@ your branch when done.
   → 13,933 commits) plus a GitHub-API check reduced it to the true strict count of
   **2**. **Before reporting an absence from git, establish that the repository
   could have shown you the thing.**
+
+- 2026-09-01 — **DIRECTOR RECORDS v19 — A FULL BOARD REFRESH THAT CLEARS TWO
+  SITTINGS OF RECORDS DEBT. Rulings R-J, R-K, R-L, R-M, R-N and R-O are ALL
+  recorded for the first time; R-M is EXECUTED here; queue items Q-1 and Q-2
+  RETIRE by execution; Q-4 is ADOPTED; and the gate roster is corrected from
+  five to SEVEN.** Records lane, branch `claude/audit-records-v19-stg058`, cut
+  fresh at `origin/main` **`72576ebe`** (merge of #4527), held stable across two
+  polling rounds, **not a forced update**. **ZERO SOLVE** (rule 22
+  `[R-HOLDOUT]`): no LP, no year solved, no run registered, no re-scoring; no
+  keeper shard, `calibration-complete.json`, `holdout-freeze.json` or
+  `program-status.json` edit; rule 26 `[R-MECH-MATRIX]` — no mechanism tested and
+  **no matrix verdict, evidence string, fc posture or keeper stamp touched**.
+  Every figure re-derived at the pin. **The board is a FULL refresh, not a
+  delta**: the v18/v18b blocks are retained as history and their figures are not
+  carried.
+
+  **WHY THIS ENTRY EXISTS AT ALL — THE DEBT WAS TWO SITTINGS DEEP.** This
+  dispatch was issued three times. The **original never launched** (no branch, no
+  session) and the **first re-issue never launched either**, both confirmed from
+  git and the session roster; the director re-issued a second time with the
+  instruction to record both instances. Meanwhile the 2026-09-01 sitting produced
+  six rulings that reached **no artifact anywhere**: `grep` of each label across
+  `docs/` at the pin returned **ZERO for R-J, R-K, R-M, R-N and R-O**, and R-L
+  appeared only in its own execution lane's finding and the capx desk's private
+  ledger — never on this board and never here. **This is the same failure shape
+  as R-H at v18b, at five times the scale**, and it was found by the same
+  instrument: the ruling-label grep that v18b proposed as Q-4 and that the
+  director has now adopted.
+
+  **(1) 🟢 R-J — THE FOUR UNBLOCKED MAINTENANCE ITEMS ARE EXECUTED AND MERGED,
+  AND THEY RETIRE Q-1 BY EXECUTION (board G-1).** The commit→PR mapping was
+  **derived by ancestry, not taken from the dispatch**: the parity allowlist
+  replaced by a **class-level structural classifier** (`76c5eed6`, **#4495** —
+  BLOAT B-8, checklist item 10); the bench gate's **date-kind mismatch** fixed at
+  source, both sides now on the committer instant in offset-bearing form
+  (`d5c3178f`, **#4495** — checklist item 12); **stage-0 per-entry provenance**,
+  manifest **schema v1 → v2** (`362e2771`, **#4502** — checklist items 2 and 11);
+  and the **`check_gate_a_provenance` hard CI guard** (`3f5a24ae`, **#4495**,
+  `ci.yml:213`). **All four verified in the working tree at the pin.** ⚠️ **One
+  dispatched figure re-derives different, and the truth is better than the
+  claim**: the allowlist went **40 → 8**, not 26 → 3 — 26 was the board's *last
+  count* and the enumeration had grown by 14 since, exactly as the gate's own
+  docstring warned. 🟢 **And R-J's repair lane overturned two of the board's own
+  standing claims in its own commit message rather than quietly fixing them**:
+  `af1ccb6` **does** resolve and **is** an ancestor of `main` (it is the CAISO
+  capture commit), and the five "unrecoverable" shas were recoverable all along —
+  every intermediate value had been committed on its way through the manifest's
+  history. All six recovered with evidence, zero UNKNOWN rows, and the chain
+  **self-corroborates**. The v17 reading was a **shallow-clone artefact**.
+
+  **(2) 🟢 R-K — STAGE-0 CAPTURES HOLD: SPENT, SUPERSEDED BY R-L (board G-2).**
+  Recorded so the hold and its release are both legible, and so no future reader
+  finds R-L acting against an apparently-standing hold.
+
+  **(3) 🟢 R-L — "JUST NEISO AND ERCOT" — DISCHARGED IN FULL, WITH ONE DEVIATION
+  THE DIRECTOR ACCEPTED AND THE BOARD NOW ADOPTS AS STANDING (board G-3).**
+  Executed by `claude/stage0-capture-neiso-ercot-elgk62` (**#4509** captures,
+  **#4517** finding) — **the audit program's first solve lane**. Verified against
+  the committed manifest, not read off the finding: **both fidelity oracles PASS
+  with `scenario_config_drift == []`** (NEISO 259 flags identical, ERCOT 271);
+  **schema v2 proven** — each capture changed **only its own entry**, the other
+  four byte-identical, so the v17 defect of one capture silently re-labelling
+  every earlier one is now structurally impossible; **rule 22 clean** (years
+  `[2023, 2024, 2025]` on both). **Stage-0 coverage 1 current / 5 stale → 3
+  current / 3 stale.** The owner's ruling was **deliberately against
+  restart-checklist item 5** (*capture MISO next*), which **STANDS** — R-L is an
+  exception for this capture, not an amendment, and MISO remains the named next
+  capture. **THE ACCEPTED DEVIATION: the lane registered nothing on the backcast
+  dashboard**, and that reading is now the program's standing interpretation of
+  the stage-0 table's registry column — **a golden's "provenance run" is the
+  KEEPER it was captured against**, which is exactly what schema v2 encodes
+  (`keeper_id` + `keeper_snapshot`) and what `check_golden_manifest.py` enforces;
+  the **Card-1 precedent registered nothing** and **0 of the 60 registered
+  sidecars is a golden capture** (walked at the pin); and **registering captures
+  would spend top-15 retention on regression baselines — the precise fix E-7
+  rejected**, the same error wearing the opposite sign. **A golden capture is not
+  a dashboard run and rule 15 `[R-DASHBOARD]` does not reach it.**
+
+  **(4) 🟢 R-M — EXECUTED HERE, AND THE TARGET HAD MOVED SINCE THE DISPATCH
+  (board G-4). Q-2 RETIRES.** The remedy — **annotate as permanently
+  unverifiable** — is in this lane's own commit, not described in a finding.
+  ⚠️ **The dispatch's key list was already wrong at the pin and following it
+  would have annotated a healthy verdict and missed a defective one**: #4522's
+  FC-6 re-score moved `neiso-t3` onto **`7dffe3341158`, reachable in
+  `origin/main`**, and the defective stamp `89dacc4c0343` **migrated to a
+  different key**, `neiso-t3-pre-fc5`. **The annotation was therefore applied by
+  SHA, not by key name** — the two verdicts are `neiso-t3-pre-fc5` and
+  `neiso-t3-pre-fc6`, both archival preserved-prior verdicts, both `HOLD`.
+  Unreachability was **re-established against the REMOTE**, not inherited: all
+  **43** stamped verdicts swept, the strict count is **2 of 43** — matching v18b's
+  independent figure from a different pin by a different method. **What was
+  written:** two additive keys per verdict, as **siblings of `provenance`, never
+  inside it** — `scored_at_sha_unverifiable` and
+  `scored_at_sha_unverifiable_note` (citing R-M). Neither is a
+  `forecast-provenance/v1` field name and `forecast_provenance.read_stamp()`
+  reads only the `provenance` object, so **no instrument can read the annotation
+  as a provenance stamp**. **No sha altered and none fabricated**; machine-
+  verified **4 lines added, 0 removed, 0 altered**, both `provenance` blocks
+  **byte-identical**, both determinations **`HOLD` → `HOLD`**, no other verdict
+  touched, key set unchanged at 55. `check_forecast_staleness.py` **exit 0** after
+  the edit, still anchored on a **reachable** sha — the ruling's explicit
+  precondition, tested rather than assumed. The file is shared; the edit was
+  rebased onto `origin/main`, never overwritten.
+
+  **(5) 🟢 R-N — THE ONE-PUSH MICRO-SUPERSESSION IS SPENT (board G-5).** Spent by
+  the director as **#4523** (`6d700725`, **5 lines**), re-keying CAISO's forecast
+  gate-(a) stamp to `2026-09-01-caiso-231-b1-ungrounded`. **Verified at this pin
+  rather than accepted**: `check_gate_a_provenance.py` **exit 0**, CAISO's row
+  names the live keeper, and the branch is an ancestry-tested **merged remnant**.
+  Two things worth keeping: it is the **new guard's FIRST REAL FIRING** — exit 1
+  on the caiso-231 promotion, exit 0 after the re-key — a guard catching, eight
+  PRs after it was built, the exact defect class this program re-reported for
+  three cycles with no instrument able to see it; and the push was **rebased onto
+  #4522's disjoint edit** to the same shared file rather than overwriting it.
+  **The supersession does not carry forward**; the standing deviation governs
+  again and this lane is its dispatched instrument.
+
+  **(6) 🟠 R-O — THE ERCOT CARVE-OUT GOLDEN IS ANSWERED BY CHARTERING A SCHEMA
+  LANE, AND THAT LANE HAS NOT LAUNCHED (board G-6).** R-L's capture explicitly
+  reported the 2023 carve-out as **not covered and not coverable without a schema
+  change**. R-O's disposition is **not** "capture it anyway": **config-partition
+  representation in the manifest** (today `keepers` is keyed one entry per ISO,
+  so a two-config ISO has nowhere to put a second golden), **`live_keeper`
+  partition resolution** in `check_golden_manifest.py`, then the capture. **The
+  dispatch-vs-launch check applied at the pin: NO BRANCH, NO PR, NO COMMITS.**
+  ⚠️ The honest limit, stated because this lane's own branch was also unpushed at
+  measurement time: the check observes **branches, not sessions**.
+
+  **(7) 🟢 Q-4 ADOPTED BY THE DIRECTOR INTO THE REFRESH PROTOCOL, and both halves
+  executed here (board G-15).** v18b proposed it and declined to adopt it (*"the
+  protocol is the director desk's"*). Now standing: **(i) `grep` every ruling
+  label of the sitting across `docs/` before a records lane closes** — which is
+  how this cycle's five-ruling gap was found — and **(ii) diff every dispatched
+  job against a CHANGED TARGET FILE**, because *a finding that describes a repair
+  is not the repair*. **Its rider stands: a parallel lane is NOT a completeness
+  check** — redundancy catches measurement error, never scope omission, because
+  both lanes inherit scope from one dispatch.
+
+  **(8) 🟠 TWO OF THIS LANE'S OWN SIX JOBS CAME BACK ALREADY-DONE OR MOVED — AND
+  STEP (ii) IS WHAT CAUGHT ONE OF THEM.** **Job 4, the mechanical anchor repair,
+  was a NO-OP**: `--fix-anchors` repaired **0**, the gate carries **0 WARNs**, and
+  the ~243 the dispatch measured at `8462da22` had already been repaired inside
+  **#4522** (`369c9bb7`) — a capx lane whose commit subject is *"Re-score neiso-t3
+  FC-6 on the repaired P1 arm"* and **whose message does not mention the matrix at
+  all**. `scenarios.py` is byte-identical between that pin and this one, while
+  `mechanism-matrix.js` moved **120 line-pairs**. **The edit was correct** —
+  proven digits-only post hoc by normalising every `:NNNN` token, after which the
+  two sides are identical. **The finding is the silence, not the change**: a
+  shared, CI-gated base file rewritten by a lane whose declared scope was a
+  forecast re-score. Recorded on the board's Watch beside its own counter-example
+  one PR later (#4523's rebase). **Not adjudicated.** The generalisable lesson,
+  now protocol: **re-derive a dispatched job's PRECONDITION, not only its
+  figures** — running `--fix-anchors` blind would have produced an empty commit
+  and a board entry claiming a repair this lane did not make. Job 5's R-M target
+  had likewise moved (item 4).
+
+  **(9) 🟢 THE GATE ROSTER IS SEVEN, NOT FIVE, AND ALL SEVEN EXIT 0 (board
+  G-7).** The board's protocol text and restart-checklist item 0 said *five* for
+  four cycles; the dispatch said *six*. Two were undercounted:
+  **`check_gate_a_provenance.py`** (`ci.yml:213`, hard, new under R-J) and
+  **`check_golden_manifest.py`** (`ci.yml:118` — **enforced throughout and simply
+  never counted**, and it is the instrument that *owns* the stage-0 table this
+  board recomputes by hand every cycle). Exit codes captured directly, unpiped:
+  `audit_keepers` **PASS 0/0** · parity **0** (60 runs / 95 dirs / 0 tolerated) ·
+  matrix **0** (194 + 49 + **156**, 0 WARNs) · staleness **0** (Δ = 0/10; 89
+  stamped / 57 scored; 25 epochs; the undated-stamp WARN persists at 31 of 55) ·
+  bench **0** (20 parts, **0 STALE**, 20 with engine drift at 6 engine commits —
+  now a *repaired* instrument's honest reading) · gate-(a) **0** (6 rows) ·
+  golden-manifest **0** (3 current / 3 stale / 3 with a pruned provenance run).
+  ⚠️ **The parity RED the dispatch carried from the previous sitting
+  (`caiso231_a0_control`) resolved TRANSIENTLY** when that lane's own
+  registrations landed (#4506, #4515, both 2026-09-01) — **no fix was needed and
+  none was made**, which is the standing parity hazard behaving exactly as
+  documented. **New protocol line: count the gates from `ci.yml`, not from the
+  last board.**
+
+  **(10) 🟢 FOUR-INSTRUMENT ALIGNMENT HOLDS AT {ERCOT, NEISO, PJM} — AND ALL SIX
+  FORECAST GATE-(a) STAMPS ARE CURRENT FOR THE FIRST TIME IN PROGRAM HISTORY
+  (board G-9).** Re-derived from four sources with **fail-closed null handling**
+  (a missing or unparseable value counts as NOT in the set, never as a pass):
+  CALIBRATED determinations, the `complete` block, the active `frontier` set
+  (`withdrawn` honoured — NYISO withdrawn 2026-08-30; CAISO and MISO carry no
+  frontier block at all), and the seed's per-ISO `a_keeper_marker` rows. **All
+  four = {ERCOT, NEISO, PJM}.** The structural point is larger than the
+  membership: v17 recorded **four of six stamps stale** and the break was
+  *entirely* that staleness. At this pin **every row names its ISO's live
+  keeper**, machine-checked in CI — so the three gate-(a) failures are failures
+  **on the merits** (CAISO and MISO `NOT-YET` with no marker; NYISO's marker
+  withdrawn). **This is the first cycle in which the divergence could not have
+  been a bookkeeping lag.** What retires is the stale-stamp *mechanism*; what does
+  **not** is the four-instrument comparison itself — the guard reads keeper
+  identity and marker state and **explicitly reads no determination**, and
+  **nothing in the repo compares `frontier` membership to anything**.
+
+  **(11) 🟠 KEEPER MOTION: ONE, IN CAISO — RECORDED, NOT ADJUDICATED (board
+  G-10).** `2026-08-26-caiso-220-c1-crosswalk` → **`2026-09-01-caiso-231-b1-ungrounded`**
+  (#4515), a rule 25 `[R-ISO-SCOPE]` / rule 14 `[R-ACCURATE]` repair removing
+  three ERCOT-lineage-fitted offer bands from CAISO's binding path.
+  **Determination and grade unchanged** (`NOT-YET`, 8/6/1/1); C3a 2023 +4.0 →
+  **+4.1 %**, 2025 +15.5 → **+15.6 %** — kept despite a residual that did not
+  improve, which is rule 1 `[R-STRUCT]` working as written. **No rule-22 D-5(b)
+  re-key was owed** (CAISO is in `withdrawn`, not `complete`), verified by
+  `audit_keepers.py` **PASS 0/0** rather than asserted. Two items in its own
+  record are noted because they bear on program rules and not on CAISO: a
+  **standing owner directive of 2026-09-01, "NO CONTROL ARMS"**, and a
+  **pre-registered gate recorded rather than dropped** when it could not be
+  satisfied (`build_dof_ledger._count_scalars` is provenance-blind and measures
+  surface size, not fitted content). Both recorded; **neither adjudicated**.
+
+  **(12) 🟢 A WORKSTREAM SURFACE MOVED — THE FIRST TIME IN THREE CYCLES (board
+  G-11).** Over `d44446e0..72576ebe`: `results/regression-goldens/` **MOVED**
+  (schema v2, then two captures) and `.github/workflows/` **MOVED** (`ci.yml`
+  gained the gate-(a) step); **`docs/audit/` byte-untouched**. **WS3's completion
+  figure moves by measurement, ~78 % → ~82 %.** **It does NOT move G2**: PERF-B
+  is still paused and the golden tier still parked, so **none of the three CURRENT
+  captures can be certified byte-green**. Coverage improving while the gate stays
+  shut is the honest reading.
+
+  **(13) 🔴 THE SHALLOW-CLONE TRAP, HIT INDEPENDENTLY FOR THE THIRD TIME, AND IT
+  HAS NOW COST A PUBLISHED READING (board G-13).** This container's clone is
+  **shallow** (earliest reachable commit `e52b90a4`). Of the 13 distinct
+  `scored_at_sha` values on the forecast board it reported **8 unreachable**; the
+  GitHub API resolves **6 of those 8**, so the true count is **2**. Had this lane
+  trusted the local answer it would have annotated **six healthy verdicts** as
+  permanently unverifiable — writing six fabricated defects onto the record,
+  strictly worse than the defect it was sent to annotate. The class already has a
+  casualty: v17's `af1ccb6` claim, overturned by R-J's lane, which hit the same
+  trap at depth 258 and un-shallowed in ~2 s. **Now standing protocol: check
+  `--is-shallow-repository` BEFORE reporting any absence from git.**
+
+  **(14) 🔴 FOUR NON-LAUNCHES IN ONE SITTING (board G-14).** The original v19
+  dispatch, its first re-issue, R-L's first dispatch, and R-O's chartered schema
+  lane. **A dispatched job is not a done job and is not even a started job.** The
+  check costs one `ls-remote` plus one live PR list and is now **the
+  highest-yield step in the refresh protocol**; restart-checklist item 9b is
+  re-weighted accordingly.
+
+  **(15) ⚠️ FOUR FIGURES THE DISPATCH ASSERTED RE-DERIVE DIFFERENT** — none a
+  trap, each either moved between derivation and pin or was a shorthand that did
+  not survive measurement: allowlist **26 → 3** vs **40 → 8**; **~243 anchor
+  WARNs** vs **0**; gate-(a) **exit 1** vs **exit 0**; R-M's key list vs the
+  migrated key. And against v17's carried figures: sidecars **58 → 60**, parity
+  **58/93 → 60/95**, staleness **81/49 → 89/57**, epochs **24 → 25**, bench drift
+  **19 → 20 of 20**, matrix path anchors **152 → 156**. **"Trust nothing in this
+  prompt" earned its place twice in one lane.**
+
+  **(16) 🟠 TWO WATCH ITEMS CARRIED FORWARD FROM R-L's OPERATIONAL RECORD, both
+  routed rather than adjudicated.** **(a)** A **latent `ercot_wtx_*` two-channel
+  config conflict in the ERCOT keeper's own recorded config** — explicit kwargs
+  stomped by `prb_overrides` because `run_year` applies the overrides last, so
+  the effective value depends on application order rather than on the registry, a
+  rule-24 `[R-REGISTRY]`-adjacent hazard. **It is the keeper's own config, not
+  something the capture introduced; the golden correctly records the `prb` values
+  because a regression baseline must reproduce live behaviour; and it is not a
+  fidelity failure** (oracle PASS, 0 drift). **ROUTED TO THE CALIBRATION DESK,
+  which owns ERCOT's config — not this program's to fix.** **(b) An
+  infrastructure observation: three streamed progress events the capture logs do
+  not corroborate** — two **fabricated** (`Solve: 163.216s (warm)` and
+  `342.735s (cold)`, grep count 0 in every log, matching none of the twelve real
+  ERCOT solve times, and ERCOT ran **zero** warm solves) and one **premature**
+  (`solving ERCOT 2024`, real but delivered before it existed in the file).
+  **NEVER QUOTE A MONITORING NOTIFICATION — READ LOGS.** The capture lane did
+  exactly that, which is why its numbers stand.
+
+  **QUEUE AT CYCLE END.** **Q-1 RETIRED by execution** (R-J). **Q-2 RETIRED by
+  execution here** (R-M). **Q-3's second half stays OPEN and stays MISO's** —
+  the repair landed (#4497) but the fields' **downstream use was never audited**,
+  as #4485 explicitly flagged and neither the scan nor the repair opened; rule 25
+  `[R-ISO-SCOPE]` keeps it MISO's, and this lane repaired nothing and opened no
+  cross-ISO audit. **Q-4 ADOPTED.** **One item added: R-O's unlaunched schema
+  lane.** **Nothing retired is ever re-served** — nyiso-161 / R-H included, whose
+  disposition is unchanged at **OPTION A, NOT-YET STANDS**.
+
+  **RECORDS INTEGRITY.** Files touched, and no others: the two program record
+  files (`docs/handoffs/audit-program-director-board-2026-08.md`,
+  `docs/model-audit-release-plan-2026-08.md`) and the R-M annotation in
+  `frontend/data/forecast/ff-verdicts.json` (**+4 lines, purely additive**).
+  **Verified byte-unmoved at the pin:** every keeper shard,
+  `calibration-complete.json`, `holdout-freeze.json`, the registry,
+  `program-status.json`, `results/regression-goldens/`, `.github/workflows/`,
+  `docs/audit/`, and **every mechanism-matrix verdict, evidence string, fc
+  posture and keeper stamp** (job 4 was digits-only by charter and turned out to
+  need no edit at all). **No workflow created** — rule: never offload work to CI.
