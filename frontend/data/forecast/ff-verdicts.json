@@ -1663,6 +1663,118 @@
     "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
     "rows": [
      {
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.storage', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "mode=forecast; 766 config keys; gates ['capacity_market_clearing']",
+      "gating": true,
+      "row": "run_config",
+      "status": "PASS"
+     },
+     {
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "determination": "HOLD",
+  "iso": "MISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "501b5f64b8adf8d4",
+   "note": "HEAD re-measure of the MISO T1-H leg (capx lane D27, executing D17-R's routed PRIMARY R1), run `miso-2021-2025-realized-t1h-d27`, bare invocation at HEAD with every solve-affecting flag omitted. Scored against the CURRENT committed capacity_actuals_miso.csv; the prior bare-key record (FFR-3A-2 vintage) is preserved at `miso-t1h-pre-d27`. NOT an S-123-isolating A/B \u2014 five MISO-relevant defaults moved after the FFR-3A-3 baseline and no control arm was in budget; see docs/handoffs/FINDING-capx-d27-miso-t1h-remeasure-2026-09-01.md.",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-09-01T05:10:02Z",
+   "scored_at_sha": "360b83eebfec",
+   "session": "capx-D27"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1h"
+ },
+ "miso-t1h-pre-d27": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
       "detail": "band FAIL: ['add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_cc', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.storage']",
       "gating": true,
       "row": "hindcast bands",
@@ -1728,6 +1840,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "preserved_note": "PRESERVED BASELINE \u2014 the FFR-3A-2-vintage measurement that occupied the bare `miso-t1h` key until capx lane D27 (2026-09-01) re-measured the MISO T1-H leg at HEAD and took the bare key under the LIVE-vintage convention. NEVER quote this record as MISO's current T1-H state; read `miso-t1h`. It remains valid at the sha it records.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
