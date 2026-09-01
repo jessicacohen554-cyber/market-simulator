@@ -10700,3 +10700,98 @@ family; never quote the above-floor term as the 2025 driver.
 `scripts/probes/_caiso230_abovefloor_decomposition.py`.
 
 **Next number: caiso-231.**
+
+## 2026-09-01 — CAISO — caiso-231: the THREE UN-GROUNDED gas offer classes RE-GROUNDED on their own measured bid buckets and PROMOTED TO KEEPER. Nine ERCOT-inherited multipliers retire to measured, zero free parameters added; the pre-registered adverse C3a cost lands at +0.062/+0.037/+0.031 $/MWh, 4–13× SMALLER than the first-order bound. Every gate passes, no falsifier fires, determination UNCHANGED at NOT-YET on C3a alone
+
+**Keeper:** `2026-08-26-caiso-220-c1-crosswalk` → **`2026-09-01-caiso-231-b1-ungrounded`**,
+promoted on the owner's standing in-session standard (*"If structural integrity
+improves but gates regress that may still be a keeper.."*) applied to the filed
+item caiso-230 §8 raised and could not itself decide.
+
+**The defect, in the model's own words.** `_CAISO_OFFER_CURVE`: CC_CHP / CT_CHP /
+ST_GAS are *"PINNED to the values CAISO previously inherited from the generic
+ERCOT-lineage `else` branch … **NOT CAISO-grounded** … preserved verbatim ONLY
+so the neutral generic fallback (rule 24) does not silently change the caiso-51
+keeper."* Three ERCOT-fitted band blocks on the binding path — rule 25
+`[R-ISO-SCOPE]` — pricing (caiso-230 §4/§7) `CC_CHP:econ` +1.23,
+`CT_CHP:committed` +0.36 and `CC_CHP:committed` +0.27 $/MWh of the 2025 annual
+load-weighted above-floor term.
+
+**The repair.** `derive_caiso_offer_surface.py` discloses its own bucket
+membership — *"the three OTC/RMR steamers (ST_GAS …) and priced CT_CHP curves
+land in the CT bucket … CC_CHP (HR 6.90) lands in the CC bucket"* — so each
+class is re-grounded on the bucket it is **measured inside**. Arms exactly the
+three bands the incumbent `caiso_offer_surface_measured` arms (econ_low /
+econ_high / peak); **every `committed` band stays unarmed for every CAISO gas
+class** (the Lever-A inversion lesson applied uniformly, rule 19). Verified
+pre-solve and on the solved `run_config`: **exactly 9 bands change, 0 committed,
+0 non-target.** Zero free parameters added.
+
+**The prediction was pushed before the solve, and it over-predicted.**
+`PRECOMMIT-caiso231` §4 was on the remote before either arm started:
+
+| year | predicted | **measured** | ratio | required move |
+|---|--:|--:|--:|--:|
+| 2023 | +0.235 | **+0.062** | 0.26× | 0.00 |
+| 2024 | +0.344 | **+0.037** | 0.11× | −0.848 |
+| 2025 | +0.421 | **+0.031** | 0.07× | −1.893 |
+
+caiso-230 §H's estimator is a strict first-order UPPER bound assuming λ follows
+the repriced rung 1:1. In an LP it does not — the margin moves to the
+next-cheapest rung. The measured re-dispatch confirms it: **CT_CHP −0.30 TWh/yr
+displaced by CC_REGULAR (+0.12…+0.19) and CC_CHP.** The bound behaved as a bound
+should.
+
+**Gates.** G-CTRL **exact** (control 56.31/38.96/39.76 vs the superseded
+keeper's 56.31/38.96/39.76; drift −0.04/−0.05/+0.00 pp); G-STRUCT bands PASS;
+G-LIVE PASS (max |Δ| 1,225/3,368/1,911 MW class-hour); G-C3a PASS
+(+4.1/+12.5/+15.6 vs control +4.0/+12.5/+15.5 — no year flips, 2023 stays PASS,
+inside [0, 3×]); G-C1 PASS (12/12, free 8/8, unchanged); **G-C3b PASS
+(0.100/0.178/0.181 — the 2025 composition-watch tripwire did NOT fire, margin
+0.019)**; G-C2/C4/C8 PASS; G-CAVEAT budget 1 of 1; G-C6 attested at promotion.
+**Falsifiers F1–F6: none fires.** `audit_keepers.py --iso CAISO` **PASS, 0
+failures, 0 warnings, no repairs.**
+
+**The honest cost, stated plainly.** C3a +4.0 → +4.1 % (2023, still PASS),
++12.45 → +12.55 %, +15.50 → +15.59 %. ~0.1 pp, a **real regression on the sole
+failing gate**, reported at full magnitude in the finding, the keeper shard, the
+attestation and the dashboard, and accepted under rules 14 and 1.
+
+**A pre-registered gate that could not be satisfied, DISCLOSED not dropped.**
+G-STRUCT's DOF leg predicted the ledger's `offer_curve_by_group` count would
+fall 112 → 103. It cannot: `build_dof_ledger._count_scalars` is
+**provenance-blind** and measures the surface's SIZE, not its fitted content.
+That is a defect in the gate specification, not the mechanism. The structural
+claim is verified on the `run_config` bands instead, and the ledger's CAISO
+provenance note is extended to record **five** measured CAISO groups rather than
+two — leaving only the five `committed` bands fitted, by deliberate design.
+**Filed (owner-scoped, cross-ISO):** making the DOF ledger provenance-aware
+touches a counter shared by every keeper's ledger.
+
+**STANDING OWNER DIRECTIVE RECORDED (2026-09-01) — NO CONTROL ARMS.** On being
+shown that this session's control cost a full solve and returned zero drift, the
+owner ruled: *"that's one in like 1000 runs that have been done so I don't care
+and I don't want to measure drift."* **Binding going forward: a single-delta
+calibration arm is solved ONCE and scored against the committed keeper.** Do not
+solve a paired control; do not spend a solve measuring HEAD drift. The empirical
+warrant is on the record — G-CTRL here reproduced the committed keeper to the
+cent across 25+ intervening merges to main. Where assurance is genuinely needed,
+diff the ISO-affecting source paths; never spend an LP run on it.
+
+**Matrix (rule 26b/c):** new row `caiso_ungrounded_class_regrounding` added to
+the base file with a cell line in all six shards in the same PR; CAISO cell
+**O → K**; CAISO keeper stamp and §5.2 prose header re-stamped.
+
+**DO-NOT-REDO adds** (FINDING §8): never re-test the three classes' band level
+(now measured and armed); never propose this mechanism as a C3a lever (it COSTS
+C3a); never re-derive the caiso-230 §A–§H decomposition without re-running it on
+the NEW keeper; never quote the DOF ledger's `offer_curve_by_group` count as a
+measure of fitted content; **no control arms**.
+
+Evidence:
+`results/calibration/FINDING-caiso231-ungrounded-offer-regrounding-2026-09-01.md`,
+`results/calibration/PRECOMMIT-caiso231-ungrounded-offer-regrounding-2026-09-01.md`,
+`scripts/gen_caiso231_attestation.py`, runs
+`2026-09-01-caiso-231-a0-control` / `2026-09-01-caiso-231-b1-ungrounded`.
+
+**Next number: caiso-232.**
