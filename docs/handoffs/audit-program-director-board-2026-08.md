@@ -62,6 +62,32 @@
 > director's pin. **The v18 block is a DELTA, not a refresh: every figure on this
 > board outside those four jobs still carries its v17 pin `d44446e0` and is not
 > re-verified.** See **D-1 … D-6**, immediately below.
+>
+> ### 🔴 v18b COMPLETION (2026-09-01, pin `192460b6`) — THE SITTING'S **SEVENTH** RULING, **R-H**, WAS STILL RECORDED NOWHERE — AND IT HAD ALREADY DECIDED THE CARD THIS BOARD'S QUEUE WAS SERVING
+>
+> The 2026-08-31 REFRESH sitting produced **SEVEN** rulings. v17 recorded four
+> (R-D/R-E/R-F/R-G) on top of the three already merged (R-A/R-B/R-C); the v18
+> delta above recorded **R-I**. **R-H reached no artifact at all** — verified at
+> this pin before writing: `grep "R-H"` across `docs/` (excluding the rule ID
+> `[R-HOLDOUT]`) returns **ZERO**, board and plan §8 included, *after* the v18
+> delta landed.
+>
+> **This was not a cosmetic gap.** R-H **RULED the nyiso-161 winter-face waiver
+> card — OPTION A, NOT-YET STANDS** — and **owner-queue item 1 still presented
+> that card as *"servable at the next sitting, not waiting on anything."* The
+> board was inviting the director to re-serve a card the owner had already
+> decided**, which is exactly the failure the never-re-serve duty exists to
+> prevent. **D-7 records the ruling; the queue item is RETIRED.**
+>
+> **And the v18 delta is itself an instance of the failure shape it named.**
+> D-5(a) named *"landed but incomplete"* — and the lane that named it **omitted
+> R-H**, as did a **second records lane running the same dispatch in parallel at
+> the same pin** (D-8b). **Two independent lanes, the same blind spot,
+> inherited from the same dispatch: parallelism is not a completeness check.**
+>
+> **One dated correction to D-4:** MISO's cascade defect was **LIVE when D-4 was
+> written and is REPAIRED at this pin** (#4497). The finding stands; its tense
+> does not (D-9).
 
 > **STATUS: PARKED AT G1** — live rollup maintained by the program-director
 > session, updated on each owner "refresh". Canonical program definition:
@@ -410,13 +436,117 @@ opened — **the calibration desk's call, not this program's**. → **Q-3.**
   the board names in models: `or {}` turns "declared absent" into "not declared",
   and those are opposite facts.
 
+### D-7 · 🔴 v18b — RULING **R-H**, RECORDED FOR THE FIRST TIME: THE nyiso-161 WINTER-FACE WAIVER CARD IS **RULED**, OPTION A, NOT-YET STANDS
+
+**Verified absent before it was written, at pin `192460b6` — i.e. AFTER the v18
+delta above had landed.** `grep "R-H"` across `docs/` matches only the rule ID
+`[R-HOLDOUT]`; the string as a ruling label appears in **zero** files, this
+board and plan §8 included. The 2026-08-31 REFRESH sitting produced **seven**
+rulings; six were on the record and **this was the seventh**.
+
+**THE RULING.** On the nyiso-161 winter-face waiver card — the card R-F parked
+behind a dated trigger — the owner ruled **OPTION A: NOT-YET STANDS.**
+Exhaustively, what A *is*:
+
+- **No rubric amendment.** The rubric is untouched.
+- **No new caveat class.** In particular **no access-blocked class** is created —
+  which matters beyond NYISO, because CAISO's C3a residual is CEII-blocked on
+  both lever routes and would have had an immediate claim on one.
+- **The v3.0 tier guard is untouched**, and the line that **only C3c is
+  non-downgrading** holds. Nothing joins C3c on the ledgerable list.
+- **NOT-YET continues to mean exactly what it has meant**: *one identified input
+  missing, everything else clean.* The determination is not redefined to
+  accommodate the card.
+- **NYISO's determination is unchanged** and stands as published: **NOT-YET on
+  {C3a-2025, C3c}**.
+- **The MyNYISO stakeholder-account access retry stays OPEN and needs no
+  ruling** — a data-access attempt, not a determination question; A does not
+  close it.
+
+**🟢 AND THE RECORD MUST CARRY WHY A GOT *STRONGER* AFTER IT WAS RULED. C3c's Q2
+STRENGTHENED the basis for A.** Q2 (nyiso-164, **CONFIRM**; independently
+replicated by nyiso-165 after that lane first reached the opposite answer and
+retracted it) establishes that NYISO's C3c caveat is supported **by NYISO's own
+evidence**, not inherited from another ISO — so the **summer face is evidenced
+as a genuine model-class limitation** rather than a published quantity the model
+fails to bind. That leaves the **structural route intact and better grounded
+than when the card was filed**: close the **winter** face → C3a-2025 returns to
+≈ **−5.6 %**, inside band → **C3c becomes the lone failure** → the rule-22
+standing rule (rubric v3.3) reads **CALIBRATED**. **A is not a dead end; it is
+the route that keeps the standing rule honest.**
+
+**CONSEQUENCE, EXECUTED HERE.** Owner-queue **item 1** presented this card as
+*"servable at the next sitting, not waiting on anything"* — inviting the
+director to re-serve a decided card. It is **RETIRED** in the queue below with
+this disposition, and **F-3's closing clause, which carried the same error, is
+annotated in place.** **This board does not re-open A, does not weigh it, and
+takes no position beyond recording it.**
+
+### D-8 · 🔴 v18b — THE FAILURE SHAPE D-5(a) NAMED HAPPENED **AGAIN, TWICE, IN THE CYCLE THAT NAMED IT**
+
+Recorded plainly, because D-5(a) exists precisely so the next cycle catches this
+and the next cycle did not.
+
+- **(a) THE LANE THAT NAMED "LANDED BUT INCOMPLETE" WAS ITSELF INCOMPLETE.** The
+  v18 delta executed R-I, cleared three records defects, wrote D-5(a) — and
+  **omitted R-H**, leaving the ruled card served as open on the very queue it
+  refreshed. D-5(a)'s prescription (*diff each dispatched lane's jobs against its
+  artifacts*) would have caught it; the lane applied it to **v17** and not to
+  **itself**.
+- **(b) 🔴 AND A SECOND RECORDS LANE RAN THE SAME DISPATCH IN PARALLEL, AT THE
+  SAME PIN — AND SHARED THE SAME BLIND SPOT.** At pin `6c7f82dac015` two
+  audit-program records lanes were live on this identical dispatch:
+  `claude/audit-gate-a-repair-12ewmv` (merged as **#4488**, the v18 delta above)
+  and this one. **They independently reached the same two dispatch-overturning
+  corrections** — MISO's live cascade defect, and *two* unreachable
+  `scored_at_sha` rather than one — which is strong evidence that zero-solve
+  measurement on committed artifacts reproduces. **And both omitted R-H.**
+  **DURABLE LESSON: A DUPLICATE LANE IS NOT A SAFETY NET.** Redundancy catches
+  *measurement* error, because two lanes measure independently. It does **not**
+  catch a *scope* omission, because both copies inherit the scope from the same
+  dispatch. **Only a completeness check against the SITTING'S OWN RULING LIST
+  catches that** — `grep` each ruling label, which is exactly how R-H's absence
+  was finally established. **Add it to the refresh protocol as a step, not a
+  habit.**
+- **(c) This is D-5(b)'s root cause repeating, not a new one.** D-5(b) traced the
+  duplicate R-D map to *a dispatch ledger that did not reflect work already
+  landed at dispatch time*. Here the same ledger did not reflect **work already
+  in flight**. **Same defect, one step earlier in the lifecycle.**
+
+### D-9 · 🟢 v18b — DATED CORRECTION TO D-4: MISO'S CASCADE DEFECT WAS LIVE WHEN D-4 WAS WRITTEN AND IS **REPAIRED** AT THIS PIN
+
+**D-4's finding stands in full; only its tense is stale.** D-4 was written at
+`6c7f82dac015`, where
+`scripts/probes/_miso171_reserve_product_decomposition.py` still summed MISO's
+published `GENREGMCP`/`GENSPINMCP`/`GENSUPPMCP`. At **`192460b6`** the
+xiso-cascade lane (**#4497**, `2fe2f2db` *"Repair MISO ASM-MCP cascade sum:
+aggregate by per-hour top, never sum [R-ACCURATE]"*) has **repaired it at
+source**: the probe now emits `top` — the **mean of the per-hour cascade
+max** — plus a `sync_only_increment`, and the docstring carries a dated
+correction naming the superseded `regspin`/`total` fields. The companion commit
+`4ba1ef24` adds dated corrections **at every summed-figure cite site**.
+
+**What this changes and what it does not.** The **rule is unchanged and now
+carried in code as well as prose**: *A NESTED RESERVE CASCADE MUST BE MAXED,
+NEVER SUMMED*, stated on the **provenance** of the number — summing distinct
+nested **shadow prices** is correct and is what
+`results/rcpf.py::rcpf_product_prices` legitimately does; summing **published
+cumulative product prices** double-counts. **D-4's magnitudes stand** (sum/max
+**1.85–2.20×** in hours cleared > $50) as the measurement of what was repaired.
+**The queue item D-6/Q-3 routed to MISO's lane is therefore satisfied on its
+repair half** — but its **second half is NOT**: #4485 explicitly flagged that
+**the fields' downstream use was never audited**, a question neither the scan
+nor the repair opened. **That half stays open, and stays MISO's** (rule 25
+`[R-ISO-SCOPE]`). **This lane repaired nothing and opened no cross-ISO audit.**
+
 ### D-6 · OPEN QUEUE ITEMS ADDED (owner)
 
 | # | item | state |
 |---|---|---|
 | **Q-1** | **A CI guard for gate-(a) staleness.** Four of six stamps were stale for a second consecutive cycle, and the repair is manual each time. **Deliberately NOT built here** (dispatch instruction). | **OPEN — owner decision** |
 | **Q-2** | **Two unreachable `scored_at_sha` in `ff-verdicts.json`** (`neiso-t3`, `neiso-t3-pre-fc6`), blinding the staleness anchor (D-2). Needs an owner call on the remedy: re-score to obtain a real sha, or record the stamps as permanently unverifiable. **No sha may be fabricated.** | **OPEN — owner decision** |
-| **Q-3** | **The cascade rule + MISO's live sibling defect** (D-4). Enters **MISO's lane** as an open item, adjudicated on MISO's own data by MISO's own session, which must also check the fields' downstream use — a question the scan did not open. **Not this program's call.** | **OPEN — routed to the calibration desk** |
+| **Q-3** | **The cascade rule + MISO's sibling defect** (D-4). ⚠️ **UPDATED at v18b (D-9): the REPAIR HALF IS DONE** — #4497 (`2fe2f2db`) fixed the probe at source to aggregate by per-hour cascade max, with dated corrections at every cite site. **The SECOND half stays OPEN and stays MISO's:** the summed fields' **downstream use was never audited**, a question neither the scan nor the repair opened. **Not this program's call.** | **PARTLY CLOSED — repair landed #4497; downstream-use audit still routed to the calibration desk** |
+| **Q-4** | 🆕 **v18b — A COMPLETENESS STEP FOR THE REFRESH PROTOCOL.** Two independent records lanes ran the same dispatch at the same pin and **both omitted ruling R-H** (D-7/D-8). Redundancy catches measurement error, not scope omission. **Proposed step, cheap and mechanical: `grep` each ruling label of the sitting against `docs/` before a records lane closes, and diff each dispatched job against a changed target file.** Recorded as a protocol proposal, **not adopted here** — the refresh protocol is the director desk's. | **OPEN — owner/director decision** |
 
 **What this lane did NOT do**, stated so the next director does not infer it: no
 solve, no scoring, no registration on either dashboard; no keeper shard,
@@ -524,6 +654,15 @@ obtainable data**; **option B is dominated** (marker re-entry needs CALIBRATED,
 not CWC); and **the precedent surface is not NYISO-only** — CAISO's C3a residual
 is CEII-blocked on both lever routes and would have an immediate claim on any
 access-blocked caveat class.
+
+> **🔴 ↳ v18b CORRECTION — "PARKED-AND-RE-SERVABLE" IS SUPERSEDED. THE CARD IS
+> NOT RE-SERVABLE; IT IS RULED.** The owner ruled it at the same 2026-08-31
+> sitting, as **R-H — OPTION A, NOT-YET STANDS** — and that ruling reached no
+> artifact until **v18b** (D-7), which is why this finding, and the queue item
+> it fed, carried the card as open for two board versions. **F-3's account of
+> R-F is accurate as history and its standing-context paragraph still holds; only
+> the "servable at the next sitting" reading is withdrawn.** The queue item is
+> **RETIRED**. **Do not re-serve it.**
 
 ### F-4 · 🟢 R-G EXECUTED — nyiso-160/leg2 CLOSED BY ARCHIVE, AND THE PROMOTE-OR-ARCHIVE ITEM RETIRES FOR GOOD
 
@@ -1598,25 +1737,41 @@ to it.
 
 ## Owner queue at cycle end
 
-Re-served and re-verified at **`d44446e0`**. **The 2026-08-31 REFRESH sitting
+Re-served and re-verified at **`d44446e0`**, **with item 1 RETIRED BY RULING at
+the v18b pin `192460b6`.** **The 2026-08-31 REFRESH sitting
 retired THREE carried items by ruling** (R-A → item 1, EXECUTED and merged;
-R-D → item 2; R-G → item 7), **and its R-F left one PARKED with a trigger that
-has since fired.** What remains, with the parked item and one new one:
+R-D → item 2; R-G → item 7), **and R-H retires a FOURTH — the one R-F had
+parked.** What remains:
 
-1. **🟠 PARKED-AND-RE-SERVABLE — THE nyiso-161 WINTER-FACE WAIVER CARD (R-F).**
-   The owner ruled **neither A (NOT-YET stands) nor C (declare CALIBRATED)** and
-   parked the card behind a dated trigger: *re-serve when the C3c program's
-   Q1/Q2 report lands.* **That trigger is MET at this pin** — Q1 returned
-   **REAL** and Q2 returned **CONFIRM**, both landed (F-2/F-3) — so this item is
-   **servable at the next sitting, not waiting on anything.** Read it with:
-   the **AORR access route is PERMANENTLY CLOSED by owner decision** and
-   **nyiso-97 re-open condition 3 is WITHDRAWN**, so the winter face of
-   C3a-2025 is permanently unidentifiable from obtainable data; **option B
-   (CWC) is dominated** (marker re-entry needs CALIBRATED); and **the precedent
-   surface is not NYISO-only** — CAISO's C3a residual is CEII-blocked on both
-   lever routes and would have an immediate claim on any access-blocked caveat
-   class. **NYISO stays NOT-YET on {C3a-2025 −11.5 %, C3c} meanwhile.** *(This
-   board takes no position on which way.)*
+1. **🟢 ~~PARKED-AND-RE-SERVABLE — THE nyiso-161 WINTER-FACE WAIVER CARD~~ —
+   RETIRED AT v18b: RULED R-H, OPTION A, NOT-YET STANDS. DO NOT RE-SERVE.**
+   ⚠️ **This item was carried as open through two board versions because the
+   ruling that decided it was recorded nowhere** (D-7) — the board was inviting
+   the director to re-serve a card the owner had already decided, which is the
+   exact failure the never-re-serve duty exists to prevent. **Its former text is
+   struck, not deleted, so the error is visible rather than tidied away:**
+   ~~*"the owner ruled neither A nor C and parked the card behind a dated
+   trigger; that trigger is MET, so this item is servable at the next sitting,
+   not waiting on anything."*~~ **The owner subsequently ruled A.**
+
+   **The disposition, exhaustively: no rubric amendment · no new caveat class**
+   (in particular no access-blocked class — CAISO's CEII-blocked C3a residual
+   would have had an immediate claim on one) **· the v3.0 tier guard untouched ·
+   the "only C3c is non-downgrading" line holds · NOT-YET keeps meaning exactly
+   "one identified input missing, everything else clean" · NYISO's determination
+   unchanged at NOT-YET on {C3a-2025, C3c}.** The **MyNYISO stakeholder-account
+   access retry stays OPEN and needs no ruling.**
+
+   **A is better grounded now than when the card was filed: C3c's Q2
+   STRENGTHENED it** — the summer face is evidenced as a genuine model-class
+   limitation on NYISO's own evidence, so the **structural route is intact**:
+   close the winter face → C3a-2025 returns to ≈ **−5.6 %**, in band → C3c
+   becomes the lone failure → the rule-22 standing rule reads **CALIBRATED**.
+   Standing context, unchanged: the **AORR access route is PERMANENTLY CLOSED**
+   and **nyiso-97 re-open condition 3 is WITHDRAWN**, so the winter face is
+   permanently unidentifiable from obtainable data; **option B (CWC) is
+   dominated**. **NOT RE-SERVABLE.** *(This board takes no position on the
+   merits; it records the ruling.)*
 2. **🆕 NEW — THE C3c PROGRAM'S Q3 IS THE ONLY UNANSWERED QUESTION IN IT, AND IT
    IS AN ARCHITECTURE DECISION, NOT A LANE.** R-E chartered Q1+Q2 chained; both
    have reported (**REAL**, **CONFIRM**) and **the program's measurement half is
@@ -1670,7 +1825,15 @@ has since fired.** What remains, with the parked item and one new one:
    decline recorded for it in any window since; its same-day UPDATE block should
    be read before its numbers (the keeper it names is now **six** promotions
    superseded, 148 → 152 → 155 → 157 → 159).
-8. **🟢 RETIRED THIS CYCLE (v17) — do not re-serve:**
+8. **🟢 RETIRED — do not re-serve:**
+   - **🆕 v18b** ~~**the nyiso-161 WINTER-FACE WAIVER CARD** (item 1 above)~~ —
+     **RULED R-H: OPTION A, NOT-YET STANDS.** Full disposition at item 1 and
+     D-7. Retired **for good**: the owner decided it, so there is nothing left
+     to serve. ⚠️ **Read the delay as the lesson it is** — the ruling existed
+     from 2026-08-31 and reached no artifact until v18b, so this card sat on
+     the queue as *"servable at the next sitting"* through two board versions
+     and two independent records lanes (D-8).
+   - *(v17 retirements below.)*
    - ~~**arm the T1-H storage-entry repair, or don't** (v16 item 1)~~ —
      **RULED R-A ("Arm both") AND EXECUTED**: both `ScenarioConfig` fields now
      default `True` (verified in `scenarios.py` at the pin), armed as one
@@ -1867,13 +2030,29 @@ labelled rather than silently re-asserted.
 
 **While the program is parked, the refresh cycle is not the live instrument it
 was.** A park-period refresh confirms (a) whether the owner has ruled on
-anything in the queue — **seven rulings across the 2026-08-31 refresh sitting,
-R-A/R-B/R-C executed and merged before this lane opened, R-D/R-E/R-F/R-G
-executed here**; (b) whether the keeper freeze has been called — **still
-deferred, and this cycle cuts back the other way: no capture was taken, one ISO
-promoted, and a stale row got deeper**; and (c) whether the golden tier's park
-has been lifted — **unchanged, and the CI proof stays deliberately unspent,
-which is why even the PJM capture cannot be certified byte-green**.
+anything in the queue — **the 2026-08-31 refresh sitting's SEVEN rulings are now
+ALL on the record: R-A/R-B/R-C executed and merged before the v17 lane opened,
+R-D/R-E/R-F/R-G at v17, R-I at the v18 delta, and R-H at v18b (D-7) after being
+unrecorded anywhere for two board versions**; (b) whether the keeper freeze has
+been called — **still deferred, and this cycle cuts back the other way: no
+capture was taken, one ISO promoted, and a stale row got deeper**; and (c)
+whether the golden tier's park has been lifted — **unchanged, and the CI proof
+stays deliberately unspent, which is why even the PJM capture cannot be
+certified byte-green**.
+
+**🔴 AND A FOURTH THING EVERY RECORDS LANE MUST NOW CONFIRM — ABOUT ITSELF, NOT
+ONLY ABOUT ITS PREDECESSOR: THAT IT RECORDED EVERY RULING OF THE SITTING.**
+D-5(a) named *"landed but incomplete"* and prescribed *diff each dispatched
+lane's jobs against its artifacts* — and the lane that wrote it applied the test
+to **v17** and not to **itself**, omitting R-H; a **second lane running the same
+dispatch in parallel omitted it too** (D-8). **The cheap mechanical step, and it
+is the one that finally worked: `grep` each ruling label of the sitting across
+`docs/` before closing, and diff each dispatched job against a CHANGED TARGET
+FILE — a finding that *describes* a repair is not the repair.** ⚠️ **And do not
+treat a parallel lane as coverage:** redundancy catches measurement error,
+because two lanes measure independently; it does **not** catch a scope omission,
+because both inherit the scope from the same dispatch. **Proposed for adoption as
+Q-4 — this lane records it, the director desk owns the protocol.**
 
 ## RESTART CHECKLIST — for whoever un-parks the program
 

@@ -4613,3 +4613,119 @@ your branch when done.
   blob sha + empty remote-vs-local tree diff). `program-status.json` was edited
   through a round-trip proved **byte-identical** on the unchanged file
   (`json.dumps(indent=1)`), so every untouched block is guaranteed unmoved.
+- 2026-09-01 — **DIRECTOR RECORDS v18b — THE SITTING'S SEVENTH RULING. R-H is
+  recorded for the first time, the card it decided is RETIRED off the owner
+  queue, and the failure shape that hid it is recorded as having repeated TWICE
+  in the cycle that named it.** Records lane, branch
+  `claude/audit-records-v18-repair-zyd5bj`, cut fresh at `origin/main`
+  **`192460b6`**, held stable across two polling rounds. **ZERO SOLVE** (rule 22
+  `[R-HOLDOUT]`): no LP, no year solved, no run registered, no re-scoring; no
+  keeper shard, `calibration-complete.json` or `holdout-freeze.json` edit; rule 26
+  `[R-MECH-MATRIX]` — no mechanism tested and no matrix shard touched. Every
+  figure re-derived at the pin.
+
+  **⚠️ THIS ENTRY IS A COMPLETION, NOT A DUPLICATE — AND WHY IT IS SHORT.** This
+  lane was dispatched with five jobs at pin `6c7f82dac015`. **A SECOND
+  audit-program records lane was dispatched for the SAME five jobs and was live at
+  the SAME pin** (`claude/audit-gate-a-repair-12ewmv`); it merged as **#4488**
+  while this lane was writing, and the intervening 25 commits also brought
+  **#4495** (a gate-(a) staleness guard) and **#4497** (the MISO cascade repair).
+  Re-derived at the new pin, **four of the five jobs and three of the four
+  director-desk defects were already satisfied on `main`** — so this lane
+  **discarded its own parallel drafts of them rather than landing a third copy**,
+  and records only what remained genuinely owed. **The two lanes independently
+  reached the same two dispatch-overturning corrections** (MISO's live cascade
+  defect; *two* unreachable `scored_at_sha`, not one), which is strong evidence
+  that zero-solve measurement on committed artifacts reproduces — **and both
+  omitted R-H.**
+
+  **(1) 🔴 R-H — RECORDED FOR THE FIRST TIME (board D-7).** Verified absent at
+  the pin *after* the v18 delta had landed: `grep "R-H"` across `docs/` matches
+  only the rule ID `[R-HOLDOUT]`; the string as a ruling label appears in **zero**
+  files, this ledger included. **THE RULING: on the nyiso-161 winter-face waiver
+  card the owner ruled OPTION A — NOT-YET STANDS.** Exhaustively: **no rubric
+  amendment · no new caveat class** (in particular no access-blocked class —
+  CAISO's CEII-blocked C3a residual would have had an immediate claim on one) **·
+  the v3.0 tier guard untouched · the "only C3c is non-downgrading" line holds ·
+  NOT-YET keeps meaning exactly "one identified input missing, everything else
+  clean" · NYISO's determination unchanged at NOT-YET on {C3a-2025, C3c}.** The
+  **MyNYISO stakeholder-account access retry stays OPEN and needs no ruling.**
+  Recorded with the fact that makes A stronger than when the card was filed:
+  **C3c's Q2 STRENGTHENED the basis for A** — the summer face is now evidenced as
+  a genuine model-class limitation on NYISO's own evidence (nyiso-164 CONFIRM,
+  independently replicated by nyiso-165 after that lane first reached the opposite
+  answer and retracted it), so the **structural route is intact and better
+  grounded**: close the winter face → C3a-2025 returns to ≈ **−5.6 %**, in band →
+  C3c becomes the lone failure → the rule-22 standing rule (rubric v3.3) reads
+  **CALIBRATED**. **A is not a dead end; it is the route that keeps the standing
+  rule honest.**
+
+  **(2) 🔴 THE CONSEQUENCE, EXECUTED — THE RULED CARD IS OFF THE QUEUE.**
+  Owner-queue **item 1** still presented this card as *"servable at the next
+  sitting, not waiting on anything"* — **the board was inviting the director to
+  re-serve a card the owner had already decided**, which is precisely the failure
+  the never-re-serve duty exists to prevent. The item is **RETIRED** with the R-H
+  disposition and added to the retired list; its former text is **struck, not
+  deleted**, so the error stays visible; and **finding F-3's closing clause, which
+  carried the same reading, is annotated in place.** The card sat as open through
+  **two board versions and two independent records lanes.**
+
+  **(3) 🔴 THE FAILURE SHAPE D-5(a) NAMED HAPPENED AGAIN, TWICE, IN THE CYCLE
+  THAT NAMED IT (board D-8).** D-5(a) named *"landed but incomplete"* — a lane
+  that launches, lands, writes a correct finding and silently omits part of its
+  dispatch, passing every never-launched check. **(a)** The lane that wrote it
+  **omitted R-H**, applying its own prescription to v17 and not to itself.
+  **(b)** The **second lane on the same dispatch at the same pin omitted R-H
+  too.** **DURABLE LESSON: A DUPLICATE LANE IS NOT A SAFETY NET** — redundancy
+  catches *measurement* error because two lanes measure independently, but not a
+  *scope* omission, because both inherit the scope from the same dispatch. **Only
+  a completeness check against the sitting's own ruling list catches it**, which
+  is exactly how R-H's absence was finally established. **(c)** This is D-5(b)'s
+  root cause one step earlier in the lifecycle: that ledger did not reflect work
+  already *landed* at dispatch time; here it did not reflect work already *in
+  flight*. Proposed to the refresh protocol as **Q-4** — `grep` each ruling label
+  before a records lane closes, and diff each dispatched job against a **changed
+  target file**, because a finding that *describes* a repair is not the repair.
+  **Recorded as a proposal, not adopted here: the protocol is the director
+  desk's.**
+
+  **(4) 🟢 DATED CORRECTION TO D-4 — MISO'S CASCADE DEFECT IS REPAIRED (board
+  D-9).** D-4 was written at `6c7f82dac015`, where
+  `scripts/probes/_miso171_reserve_product_decomposition.py` still summed
+  published `GENREGMCP`/`GENSPINMCP`/`GENSUPPMCP`. At `192460b6` the xiso-cascade
+  lane (**#4497**, `2fe2f2db`) has **repaired it at source** — the probe now emits
+  `top`, the mean of the per-hour cascade max, plus a `sync_only_increment`, with
+  dated corrections in the docstring and (`4ba1ef24`) at every summed-figure cite
+  site. **D-4's finding and magnitudes stand** (sum/max **1.85–2.20×** in hours
+  cleared > $50); only its tense is stale. **The rule is unchanged and now carried
+  in code as well as prose: A NESTED RESERVE CASCADE MUST BE MAXED, NEVER
+  SUMMED** — stated on the **provenance** of the number, because summing distinct
+  nested **shadow prices** is correct and is what
+  `results/rcpf.py::rcpf_product_prices` legitimately does, while summing
+  **published cumulative product prices** double-counts. **Queue item Q-3 moves to
+  PARTLY CLOSED:** the repair half landed, but **#4485 explicitly flagged that the
+  fields' downstream use was never audited**, a question neither the scan nor the
+  repair opened — **that half stays open and stays MISO's** (rule 25
+  `[R-ISO-SCOPE]`). **This lane repaired nothing and opened no cross-ISO audit.**
+
+  **WHAT THIS LANE DELIBERATELY DID NOT RE-DO**, each verified already satisfied
+  at the pin rather than assumed: the **gate-(a) alignment** (R-I's forecast half
+  — all six `a_keeper_marker` rows re-keyed, **ERCOT `fail → PASS` on the
+  marker**, gate-(a) passers **{ERCOT, PJM, NEISO}**, four-instrument alignment
+  restored; landed #4488, guarded #4495); the **two R-D map cross-reference
+  headers** (both present, and the maps re-verified to agree on all five headline
+  figures — miss **12.313 GW** · joint wind **1.442 GW** / Δ **1.092 GW** ·
+  **8.87 %** · naive sum **13.77 %** · **0.00 pp** · `NON_COMPLEMENTARY`); the
+  **ff-verdicts provenance finding** (**two** unreachable `scored_at_sha` —
+  `neiso-t3` `89dacc4c0343` and `neiso-t3-pre-fc6` `271ad606c3fd` — recorded as
+  D-2/Q-2, **no sha fabricated and nothing re-scored to obtain one**); and
+  director-desk defects **(a) "landed but incomplete"**, **(b) the duplicate-map
+  dispatch error** and **(c) the `or {}` frontier bug** (frontier re-derived
+  independently here and **UNCHANGED: ACTIVE {ERCOT, NEISO, PJM}, WITHDRAWN
+  {NYISO}, ABSENT {CAISO, MISO}**). **A methodological note worth keeping:** the
+  `git cat-file` scan behind the ff-verdicts count is only sound in a full clone —
+  this session's was **shallow (256 commits)** and reported **33 of 40**
+  references unreachable before `git fetch --filter=tree:0 --unshallow` (**~2 s**,
+  → 13,933 commits) plus a GitHub-API check reduced it to the true strict count of
+  **2**. **Before reporting an absence from git, establish that the repository
+  could have shown you the thing.**
