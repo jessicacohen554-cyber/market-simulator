@@ -262,3 +262,21 @@ Found while establishing this lane's baseline, unrelated to it, and left alone:
 | `tests/unit/config/test_cache_key_declared_default_drop.py` | (b′-1) + append-only (new) |
 | `tests/unit/results/test_cache_config_agreement.py` | (c′) + the 14-group replay (new) |
 | `tests/unit/pipeline/test_runner.py` | `TestCachedBundleConfigCheck` |
+
+### 7.1 Rule-27 blob verification
+
+One commit (`0ee0542a`) on a base freshly fetched from `origin/main` (`3c1f9642`), pushed over
+`git push`; every edited file was written locally with the Edit tool, never regenerated from
+response content. Each pushed blob fetched back and compared to the on-disk bytes — line count and
+content hash, `sha256` truncated to 16 hex:
+
+| file | local | remote | verdict |
+|---|---|---|---|
+| `src/market_sim/config/scenarios.py` | 15,617 L / `b86324bcedfebce2` | 15,617 L / `b86324bcedfebce2` | MATCH |
+| `src/market_sim/runner.py` | 4,566 L / `828a50f07b7f7269` | 4,566 L / `828a50f07b7f7269` | MATCH |
+| `src/market_sim/results/cache.py` | 917 L / `79cb10385ae21989` | 917 L / `79cb10385ae21989` | MATCH |
+| `scripts/check_cache_key_registration.py` | 442 L / `86f756cff25380a8` | 442 L / `86f756cff25380a8` | MATCH |
+| `tests/unit/pipeline/test_runner.py` | 1,099 L / `d9af6a6375edaa40` | 1,099 L / `d9af6a6375edaa40` | MATCH |
+
+No file shrank; every change is additive apart from the nine-line `cache_key` drop loop and the
+one-line `is_cached` conditional.
