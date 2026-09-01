@@ -4225,6 +4225,8 @@
    "scored_at_date": "2026-08-31T03:19:28Z",
    "scored_at_sha": "271ad606c3fd"
   },
+  "scored_at_sha_unverifiable": true,
+  "scored_at_sha_unverifiable_note": "R-M (owner ruling, 2026-09-01 sitting): the scored_at_sha above was minted from a branch commit that never reached main and is unresolvable in the repository (confirmed against the remote, not a local clone) \u2014 the historical value is kept verbatim and this verdict's scoring provenance is PERMANENTLY UNVERIFIABLE. Records-lane annotation only: it is not a provenance stamp, no instrument reads it, and the determination is untouched.",
   "reasons": [
    "FC-1 structural integrity (I1-I14) FAIL",
    "FC-2 adequacy & equilibrium behavior FAIL",
@@ -6387,6 +6389,8 @@
    "scored_at_date": "2026-08-31T18:38:41Z",
    "cache_epoch": "a4b11ef4aaa1be35"
   },
+  "scored_at_sha_unverifiable": true,
+  "scored_at_sha_unverifiable_note": "R-M (owner ruling, 2026-09-01 sitting): the scored_at_sha above was minted from a branch commit that never reached main and is unresolvable in the repository (confirmed against the remote, not a local clone) \u2014 the historical value is kept verbatim and this verdict's scoring provenance is PERMANENTLY UNVERIFIABLE. Records-lane annotation only: it is not a provenance stamp, no instrument reads it, and the determination is untouched.",
   "tier": "t3",
   "iso": "NEISO",
   "determination": "HOLD",
