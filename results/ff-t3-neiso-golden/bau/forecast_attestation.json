@@ -1,0 +1,22 @@
+{
+ "schema": "forecast-attestation/v1",
+ "bundle": "results/ff-t3-neiso-golden/bau",
+ "run_id": "neiso-2026-2050-t3-golden2-bau",
+ "attested_by": "T3-NEISO-GOLDEN-2 campaign session (owner ruling Q25, r#26 amendment 1), 2026-09-01 \u2014 the producing session, per rubric \u00a75. The attestation was PRE-DECLARED in the campaign finding \u00a73 before any solve, so it cannot be an instrument invented after a row read against the run.",
+ "assertions": {
+  "dof_ledger_complete": true,
+  "run_config_reproducible": true,
+  "honest_unfit_referenced": true,
+  "quarantine_attested": true,
+  "no_off_registry_knobs": true,
+  "registered": true
+ },
+ "evidence": {
+  "dof_ledger_complete": "dof_ledger.json (7 entries, 0 UNIDENTIFIED; sha256 3be7c0d707c368f7) built by the committed scripts/build_forecast_dof_ledger.py from this bundle's run_config.json; open DOFs would be listed open, none exist.",
+  "run_config_reproducible": "FF-4B-style re-run evidence, in-bundle: fc6/arms/base is a full 25-year re-solve of the identical reference construction in the same environment; its trajectory (25 years x every field) and I1-I14 invariant vector reproduce full_horizon_summary.json exactly, cache key 706e7ba8e6582d42 both. Solve basis sha 5083e29e2562; attestation authored at 7726d91e98b4.",
+  "honest_unfit_referenced": "frontend/data/forecast/program-status.json `honest_unfit` register (the plan \u00a70.3 list) \u2014 the campaign finding \u00a74 carries the bundle-specific honest-unfit items: D14 exit-composition recall 2/6 inherited by every composition statement; FC-6 battery leg vacuous (T1.6 out of service); FC-5 permanently single-source (Q23); no locational siting or forward-auction timing claims.",
+  "quarantine_attested": "Forecast-mode 2026+ solves only (rule 22's permitted class): no locked-test or validation year was solved, scored, or read \u2014 the FC-3/FC-4 inputs are the committed training-window T1-H/T1-X score artifacts, consumed as committed bytes; measured overlays are backcast-only by construction; data/clean was regenerated from raw with no holdout-year read.",
+  "no_off_registry_knobs": "Every field at its shipped ScenarioConfig/ISO-registry default (the two CLI flags are the charter's --golden-posture and --full-solve-authorized); the full resolved surface is committed in run_config.json (765 keys); no env-var knobs, no per-plant dicts, no getattr fallbacks introduced (rule 24).",
+  "registered": "Registered in this producing session on the forecast namespace only: run-explorer sidecar frontend/data/hindcast/neiso-2026-2050-t3-golden2-bau.json, verdict key neiso-t3 in ff-verdicts.json (prior preserved at neiso-t3-prera-2026-08-31), board stamp in program-status.json. The backcast registry was not written to (plan \u00a77.5)."
+ }
+}

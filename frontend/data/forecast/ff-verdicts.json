@@ -3905,10 +3905,9 @@
   "rubric_version": "1.0",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "7dffe3341158",
-   "scored_at_date": "2026-09-01T06:12:01Z",
-   "cache_epoch": "a4b11ef4aaa1be35",
-   "session": "FC-6 P1 RE-SCORED ON THE REPAIRED INSTRUMENT 2026-09-01 by lane capx-D26 (executing D23's attribution: the P1 FAIL was the ARM CONSTRUCTION \u2014 carbon_price=25 REPLACED the projected RGGI trajectory, a CUT of -$1.05 to -$107.16/t in every year). The repaired arm is base recipe + carbon_price_delta=25.0 (new instrument-grade additive field, default 0.0, forecast-only, cache-key registered): effective signal base+$25.00/t in ALL 25 years, premise row PASS with the year-by-year table in fc6/paired_invariants.json. CONTROL-FIRST, both halves: (a) the committed verdict reproduces from committed artifacts with zero non-provenance diffs under the amended scorer; (b) the base arm re-solved at the golden's 9e56f0f vintage + repair (delta present at 0.0) reproduces the golden EXACTLY \u2014 25 years x all trajectory fields + full I1-I14, key 0365174ab16cc318 \u2014 before the perturbed arm solved. THE RESULT: under a genuine +$25/t the model's response has the correct sign in every channel \u2014 cumulative CO2 FALLS 210.52 -> 174.96 Mt (-16.9%), LW price RISES in every year, CCS retrofits RISE (15,251 vs 15,049 MW by 2050). P1 FAIL -> PASS; D21's P1 FAIL does NOT survive the repaired instrument, exactly as D23's attribution predicted. MOVED: FC-6 FAIL -> CAVEAT (the surviving CAVEAT is the UNTOUCHED vacuous-T1.6 battery finding, renewable_buildout_pace still consumed by no model code); reasons drop 'FC-6 driver response FAIL', caveats gain 'FC-6 driver response'. NOT MOVED (re-grade audit PASS): every other category, row, reason and caveat, and the DETERMINATION (HOLD, on FC-1/2/3/4/7). P2/P3 rows carried verbatim from D21's committed record (their arms untouched by the carbon repair). docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md. Prior stamp preserved here: scored_at_sha 7b085947b0ee @ 2026-09-01T01:10:11Z. Prior verdict preserved in full at neiso-t3-pre-fc6repair."
+   "scored_at_sha": "7726d91e98b4",
+   "scored_at_date": "2026-09-01T22:07:53Z",
+   "cache_epoch": "706e7ba8e6582d42"
   },
   "tier": "t3",
   "iso": "NEISO",
@@ -3918,11 +3917,10 @@
    "FC-2 adequacy & equilibrium behavior FAIL",
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
    "FC-4 crossover dispatch skill (T1-X) FAIL",
-   "FC-7 provenance & DOF FAIL"
+   "FC-6 driver response FAIL"
   ],
   "caveats": [
-   "FC-5 external corridor",
-   "FC-6 driver response"
+   "FC-5 external corridor"
   ],
   "notes": [],
   "categories": {
@@ -3934,7 +3932,7 @@
      {
       "row": "invariants I1-I14",
       "status": "FAIL",
-      "detail": "FAIL ['I3']: I3: 2043: dump 2.17% of renewable pot.; 2044: dump 2.59% of renewable pot.; 2045: dump 3.72% of renewable pot.; 2046: dump 4.29% of renewable pot.; 2047: dump 5.63% of renewable pot.; 2048: dump 6.31% of renewable pot.; 2049: dump 7.76% of renewable pot.; 2050: dump 8.50% of renewable pot.",
+      "detail": "FAIL ['I3']: I3: 2043: dump 2.17% of renewable pot.; 2044: dump 2.59% of renewable pot.; 2045: dump 3.72% of renewable pot.; 2046: dump 4.29% of renewable pot.; 2047: dump 5.63% of renewable pot.; 2048: dump 6.31% of renewable pot.; 2049: dump 7.76% of renewable pot.; 2050: dump 7.74% of renewable pot.",
       "gating": true
      }
     ]
@@ -3953,13 +3951,13 @@
      {
       "row": "row2",
       "status": "PASS",
-      "detail": "final RM 6.5% in [3.8%, 38.8%]",
+      "detail": "final RM 6.6% in [3.8%, 38.8%]",
       "gating": true
      },
      {
       "row": "row3",
       "status": "FAIL",
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(10)",
+      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(7)",
       "gating": true
      },
      {
@@ -4016,7 +4014,7 @@
      {
       "row": "corridor",
       "status": "CAVEAT",
-      "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030', 'capacity:solar@2035', 'capacity:wind_total@2035', 'capacity:storage@2035', 'capacity:biomass_waste@2035', 'co2@2035', 'capacity:fossil_peaker_steam@2040', 'capacity:solar@2040', 'capacity:wind_total@2040', 'capacity:storage@2040', 'capacity:biomass_waste@2040', 'co2@2040']",
+      "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030', 'generation:gas@2030', 'generation:oil@2030', 'generation:renewables@2030', 'capacity:solar@2035', 'capacity:wind_total@2035', 'capacity:storage@2035', 'capacity:biomass_waste@2035', 'co2@2035', 'generation:gas@2035', 'generation:oil@2035', 'generation:renewables@2035', 'capacity:fossil_peaker_steam@2040', 'capacity:solar@2040', 'capacity:wind_total@2040', 'capacity:storage@2040', 'capacity:biomass_waste@2040', 'co2@2040', 'generation:gas@2040', 'generation:oil@2040', 'generation:renewables@2040']",
       "gating": true
      }
     ]
@@ -4024,30 +4022,30 @@
    "FC-6": {
     "label": "FC-6 driver response",
     "applicability": "required",
-    "status": "CAVEAT",
+    "status": "FAIL",
     "rows": [
      {
       "row": "battery gate rows",
       "status": "CAVEAT",
-      "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a (all-constant series [1.0, 1.0])', 'T1.6/T1.6b (all-constant series [1.0, 1.0])']",
+      "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a', 'T1.6/T1.6b']",
       "gating": true
      },
      {
       "row": "paired P1",
       "status": "PASS",
-      "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 210.52 Mt vs high 174.96 Mt [premise: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)]",
+      "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 229.82 Mt vs high 196.00 Mt [premise: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)]",
       "gating": true
      },
      {
       "row": "paired P2",
-      "status": "PASS",
-      "detail": "P2 merit-order sign: year 2050: all signs correct",
+      "status": "FAIL",
+      "detail": "P2 merit-order sign: year 2050: wrong: gas_cc\u2193",
       "gating": true
      },
      {
       "row": "paired P3",
       "status": "PASS",
-      "detail": "P3 cumulative builds moved 0.0% (base 39500 MW, pert 39500 MW)",
+      "detail": "P3 cumulative builds moved 0.0% (base 38220 MW, pert 38220 MW)",
       "gating": true
      }
     ]
@@ -4055,12 +4053,12 @@
    "FC-7": {
     "label": "FC-7 provenance & DOF",
     "applicability": "required",
-    "status": "FAIL",
+    "status": "PASS",
     "rows": [
      {
       "row": "run_config",
       "status": "PASS",
-      "detail": "mode=forecast; 765 config keys; gates ['capacity_market_clearing']",
+      "detail": "mode=forecast; 766 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -4077,8 +4075,8 @@
      },
      {
       "row": "attestation",
-      "status": "UNATTESTED",
-      "detail": "no forecast_attestation.json (a golden run cannot be certified unattested)",
+      "status": "PASS",
+      "detail": "all \u00a75 checklist assertions present and true",
       "gating": true
      }
     ]
@@ -4091,12 +4089,13 @@
      {
       "row": "runtime",
       "status": "PASS",
-      "detail": "wall 29.2 min within budget",
+      "detail": "wall 35.1 min within budget",
       "gating": true
      }
     ]
    }
-  }
+  },
+  "session_note": "T3-NEISO-GOLDEN-2 (owner ruling Q25, 2026-09-01): the second \u00a72.1b campaign \u2014 the ARMED-posture golden (storage_entry_availability_gate/cost_normalized_rank both true, cache key 706e7ba8e6582d42, solved at basis 5083e29e). PRESERVE-THEN-OVERWRITE: the prior live record (the D26 re-score of the pre-R-A golden) is preserved byte-equal at neiso-t3-prera-2026-08-31; its bundle is preserved at results/ff-t3-neiso-golden/bau-prera-2026-08-31/ with the posture-epoch caveat intact \u2014 it remains the pre-R-A record of note. Q13's/Q25's this-campaign-only scope: a third campaign needs a new owner act."
  },
  "neiso-t3-pre-fc6": {
   "categories": {
@@ -6842,5 +6841,203 @@
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
   "tier": "t3"
+ },
+ "neiso-t3-prera-2026-08-31": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "7dffe3341158",
+   "scored_at_date": "2026-09-01T06:12:01Z",
+   "cache_epoch": "a4b11ef4aaa1be35",
+   "session": "FC-6 P1 RE-SCORED ON THE REPAIRED INSTRUMENT 2026-09-01 by lane capx-D26 (executing D23's attribution: the P1 FAIL was the ARM CONSTRUCTION \u2014 carbon_price=25 REPLACED the projected RGGI trajectory, a CUT of -$1.05 to -$107.16/t in every year). The repaired arm is base recipe + carbon_price_delta=25.0 (new instrument-grade additive field, default 0.0, forecast-only, cache-key registered): effective signal base+$25.00/t in ALL 25 years, premise row PASS with the year-by-year table in fc6/paired_invariants.json. CONTROL-FIRST, both halves: (a) the committed verdict reproduces from committed artifacts with zero non-provenance diffs under the amended scorer; (b) the base arm re-solved at the golden's 9e56f0f vintage + repair (delta present at 0.0) reproduces the golden EXACTLY \u2014 25 years x all trajectory fields + full I1-I14, key 0365174ab16cc318 \u2014 before the perturbed arm solved. THE RESULT: under a genuine +$25/t the model's response has the correct sign in every channel \u2014 cumulative CO2 FALLS 210.52 -> 174.96 Mt (-16.9%), LW price RISES in every year, CCS retrofits RISE (15,251 vs 15,049 MW by 2050). P1 FAIL -> PASS; D21's P1 FAIL does NOT survive the repaired instrument, exactly as D23's attribution predicted. MOVED: FC-6 FAIL -> CAVEAT (the surviving CAVEAT is the UNTOUCHED vacuous-T1.6 battery finding, renewable_buildout_pace still consumed by no model code); reasons drop 'FC-6 driver response FAIL', caveats gain 'FC-6 driver response'. NOT MOVED (re-grade audit PASS): every other category, row, reason and caveat, and the DETERMINATION (HOLD, on FC-1/2/3/4/7). P2/P3 rows carried verbatim from D21's committed record (their arms untouched by the carbon repair). docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md. Prior stamp preserved here: scored_at_sha 7b085947b0ee @ 2026-09-01T01:10:11Z. Prior verdict preserved in full at neiso-t3-pre-fc6repair."
+  },
+  "tier": "t3",
+  "iso": "NEISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL",
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-4 crossover dispatch skill (T1-X) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "caveats": [
+   "FC-5 external corridor",
+   "FC-6 driver response"
+  ],
+  "notes": [],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I3']: I3: 2043: dump 2.17% of renewable pot.; 2044: dump 2.59% of renewable pot.; 2045: dump 3.72% of renewable pot.; 2046: dump 4.29% of renewable pot.; 2047: dump 5.63% of renewable pot.; 2048: dump 6.31% of renewable pot.; 2049: dump 7.76% of renewable pot.; 2050: dump 8.50% of renewable pot.",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "PASS",
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row2",
+      "status": "PASS",
+      "detail": "final RM 6.5% in [3.8%, 38.8%]",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "FAIL",
+      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(10)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "PASS",
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "quarantine",
+      "status": "PASS",
+      "detail": "\u22652026 refusal marker present and clean",
+      "gating": true
+     },
+     {
+      "row": "dispatch skill",
+      "status": "FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "gating": true
+     },
+     {
+      "row": "input-gap ratio",
+      "status": "PASS",
+      "detail": "forecast/keeper input-gap ratios reported (report-only)",
+      "gating": false
+     }
+    ]
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "CAVEAT",
+      "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030', 'capacity:solar@2035', 'capacity:wind_total@2035', 'capacity:storage@2035', 'capacity:biomass_waste@2035', 'co2@2035', 'capacity:fossil_peaker_steam@2040', 'capacity:solar@2040', 'capacity:wind_total@2040', 'capacity:storage@2040', 'capacity:biomass_waste@2040', 'co2@2040']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "battery gate rows",
+      "status": "CAVEAT",
+      "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a (all-constant series [1.0, 1.0])', 'T1.6/T1.6b (all-constant series [1.0, 1.0])']",
+      "gating": true
+     },
+     {
+      "row": "paired P1",
+      "status": "PASS",
+      "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 210.52 Mt vs high 174.96 Mt [premise: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)]",
+      "gating": true
+     },
+     {
+      "row": "paired P2",
+      "status": "PASS",
+      "detail": "P2 merit-order sign: year 2050: all signs correct",
+      "gating": true
+     },
+     {
+      "row": "paired P3",
+      "status": "PASS",
+      "detail": "P3 cumulative builds moved 0.0% (base 39500 MW, pert 39500 MW)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 765 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "PASS",
+      "detail": "7 entries well-formed (0 open residual DOF listed)",
+      "gating": true
+     },
+     {
+      "row": "attestation",
+      "status": "UNATTESTED",
+      "detail": "no forecast_attestation.json (a golden run cannot be certified unattested)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "PASS",
+      "detail": "wall 29.2 min within budget",
+      "gating": true
+     }
+    ]
+   }
+  }
  }
 }
