@@ -45,10 +45,16 @@ forecast with a pinned gas price is still a forecast.
 |-------|---------|----------|
 | `demand_growth_rate` | `0.01` | flat override (only when no structured rate exists) |
 | `demand_growth_path` | `"mid"` | per-ISO escalation path |
-| `renewable_buildout_pace` | `"mid"` | `slow`/`mid`/`aggressive` |
 | `storage_deployment` | `"mid"` | battery deployment rate |
 | `retirement_aggressiveness` | `"mid"` | retirement screen aggressiveness |
 | `hydro_year` | `"normal"` | `dry`/`normal`/`wet` (forecast water-year multiplier on climatology) |
+
+`renewable_buildout_pace` was listed here until 2026-09-01. It was consumed by
+no model code and was DELETED under rule 26 `[R-DELETE]` (capx-T16;
+`docs/handoffs/FINDING-capx-t16-driver-2026-09-01.md`). VRE buildout pace is
+set by the FF-2A entry growth ladder — `entry_rate_limits`, the ReEDS
+200 %-of-prior-max bound over a measured EIA-860 throughput seed that covers
+wind and solar — not by a scenario ladder.
 
 ### Clean-energy credits (EAC, $/MWh)
 

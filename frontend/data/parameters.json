@@ -1959,22 +1959,6 @@
       ]
     },
     {
-      "param_id": "scenario.renewable_buildout_pace",
-      "display_name": "ScenarioConfig.renewable_buildout_pace",
-      "value": "mid",
-      "unit": "-",
-      "domain": "Capacity Expansion",
-      "tier": 1,
-      "source": "Market simulator model design decision",
-      "source_date": "2026-05",
-      "page_or_table": "model-methodology-spec.md / market-sim-build-plan.md",
-      "url": "",
-      "notes": "Default renewable buildout pace lever.",
-      "old_repo_location": "",
-      "last_verified": "2026-05-16",
-      "flags": []
-    },
-    {
       "param_id": "scenario.storage_deployment",
       "display_name": "ScenarioConfig.storage_deployment",
       "value": "mid",

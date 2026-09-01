@@ -876,7 +876,17 @@ class TestSweepIntegrity(unittest.TestCase):
         )
 
     def test_cache_key_sensitive_to_every_tier1_param(self):
-        """Changing any single Tier 1 parameter changes the cache key."""
+        """Changing any single Tier 1 parameter changes the cache key.
+
+        NOTE what this test does and does NOT establish. Cache-key sensitivity
+        is a HASHING property, not evidence that the field reaches the model:
+        ``renewable_buildout_pace`` sat in this list and passed for as long as
+        it existed, while being consumed by no model code at all (capx-D21
+        §5.1 measured its two arms metric-identically; deleted under rule 26
+        [R-DELETE] by capx-T16). A field belongs here because a distinct
+        scenario must not collide with the base key — reachability is the
+        driver battery's job, not this test's.
+        """
         base = ScenarioConfig()
         base_key = base.cache_key()
 
@@ -885,7 +895,6 @@ class TestSweepIntegrity(unittest.TestCase):
             "carbon_price": 42.0,
             "nox_price": 5.0,
             "demand_growth_rate": 0.03,
-            "renewable_buildout_pace": "aggressive",
             "storage_deployment": "high",
         }
         for param, val in tier1_changes.items():

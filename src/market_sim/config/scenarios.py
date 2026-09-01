@@ -71,6 +71,22 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     "coal_tranche_2_fuel_passthrough": 0.35,
     "coal_tranche_3_frac": 0.45,
     "coal_tranche_3_fuel_passthrough": 1.00,
+    # T1.6's pre-registered "VRE buildout pace" driver: declared, tier-tagged,
+    # hashed into every cache key, and consumed by NO model code from the day
+    # it was written (verified at 9e56f0f and at HEAD). Its inertness was
+    # MEASURED, not inferred — capx-D21's NEISO T1.6 ladder solved "slow" and
+    # "aggressive" metric-identically across all 18 extracted values, on two
+    # independent data vintages (FINDING-capx-d21-fc6-battery-2026-08-31.md
+    # §5.1). Deleted 2026-09-01 (capx-T16) rather than wired, because the
+    # phenomenon it names ALREADY has a mechanism — the FF-2A entry growth
+    # ladder (``entry_rate_limits``: the ReEDS 200 %-of-prior-max hard bound
+    # over a measured EIA-860 throughput seed that covers wind and solar),
+    # armed by owner decision D-2 — so a second slow/mid/aggressive channel
+    # onto the same constraint would violate rule 19 [R-ONE-MECH], and no
+    # citation exists for its rungs that the ladder does not already carry
+    # (rule 5 [R-NO-MAGIC]). Adjudication:
+    # docs/handoffs/FINDING-capx-t16-driver-2026-09-01.md.
+    "renewable_buildout_pace": "mid",
 }
 
 # Config fields introduced after the results cache existed. ``cache_key`` omits
@@ -2491,7 +2507,8 @@ class ScenarioConfig:
     # 0.5=mid, 1.0=high). Neutral 0.5 reproduces tech_cost_path's own
     # selection exactly; percentile only overrides path's choice when moved
     # off 0.5.
-    renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
+    # (``renewable_buildout_pace`` stood here until 2026-09-01 — DELETED by
+    # lane capx-T16 under rule 26 [R-DELETE]; see _CACHE_KEY_RETIRED_FIELDS.)
     storage_deployment: str = "mid"
     # Resolve a historical base year's storage fleet from measured EIA-860
     # (model.storage.load_eia860_storage) instead of the forward-looking
@@ -15162,7 +15179,6 @@ TIER_TAGS: dict[str, int] = {
     "electrification_percentile": 2,
     "tech_cost_path": 1,
     "tech_cost_percentile": 1,
-    "renewable_buildout_pace": 1,
     "storage_deployment": 1,
     "storage_measured_base_fleet": 1,
     "retirement_aggressiveness": 1,
