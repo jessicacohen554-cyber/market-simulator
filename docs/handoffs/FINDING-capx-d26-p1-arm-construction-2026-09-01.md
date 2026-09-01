@@ -144,8 +144,18 @@ for the scorer amendment: with no premise row present, nothing moves. (Unit-test
 `test_paired_premise_absent_scores_exactly_as_before`.)
 
 **(b) The base arm re-solved at vintage+repair with the field present at 0.0
-reproduces the golden exactly.** TBD-BASE — trajectory fields × 25 years, I1–I14
-vector, cache key, wall/RSS.
+reproduces the golden exactly.** All 25 trajectory years × every field
+(`co2_mt`, `lw_price`, capacity/builds/retirements, scarcity-hour tiers, reserve
+margin, `rps_dual`, …) AND the full I1–I14 invariant vector — statuses and details,
+the golden's I3 FAIL and I13 WARN included — are identical to the committed
+`full_horizon_summary.json`. Cache key `0365174ab16cc318` (= D21's committed base
+key; the golden bundle's own `a4b11ef4aaa1be35` is the single-root fold of the same
+config, D21 finding 6). 32.1 min wall / 3.44 GB peak RSS, median year 72.4 s. This
+is the D21 reproduction gate passed with the NEW FIELD PRESENT AT ITS DEFAULT through
+a full 25-year solve — dispatch, capacity evolution, the CCS screen and the
+interchange seam all byte-inert under `carbon_price_delta=0.0` — and simultaneously
+the end-to-end proof of the vintage data environment (§3). The arm solve was gated
+on this check passing (control-first, sequential).
 
 **(c) The repaired arm.** TBD-ARM — carbon_plus25 outcome, wall/RSS, headline
 trajectory numbers.
