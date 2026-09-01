@@ -894,6 +894,139 @@ class FC7Tests(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# FC-7 — reconstructed provenance (capx-D20; director ruling r#22 §0s.5)
+#
+# A run_config / DOF ledger labelled ``provenance: "reconstruction"`` was
+# rebuilt after the fact from committed evidence rather than written by the
+# solve. It may reach CAVEAT and NEVER PASS: adopting it as an original would
+# assert exactly the provenance FC-7 exists to measure. The only route to a
+# clean FC-7 on such a leg is a genuine re-run.
+# ---------------------------------------------------------------------------
+class FC7ReconstructionTests(unittest.TestCase):
+    @staticmethod
+    def _row(art, tier, row):
+        return [r for r in fv.score_fc7(art, tier, "ERCOT") if r["row"] == row][0]
+
+    def _reconstructed(self, obj):
+        """Label an artifact the way the committed debt bundles are labelled."""
+        return {**obj, fv._fp.PROVENANCE_KEY: fv.RECONSTRUCTION_PROVENANCE}
+
+    def test_reconstructed_run_config_is_caveat_never_pass(self):
+        # The same config PASSes unlabelled — the label is the only delta.
+        clean = _run_config()
+        self.assertEqual(
+            self._row(_art(run_config=clean), "t1f", "run_config")["status"], fv.PASS
+        )
+        art = _art(run_config=self._reconstructed(clean), dof_ledger=_dof())
+        r1 = self._row(art, "t1f", "run_config")
+        self.assertEqual(r1["status"], fv.CAVEAT)
+        self.assertIn("post-hoc reconstruction", r1["detail"])
+        # The category can never read PASS while the label is on the artifact.
+        self.assertNotEqual(_status(fv.score_fc7(art, "t1f", "ERCOT")), fv.PASS)
+
+    def test_reconstructed_dof_ledger_is_caveat_never_pass(self):
+        clean = _dof()
+        self.assertEqual(
+            self._row(
+                _art(run_config=_run_config(), dof_ledger=clean), "t1f", "dof ledger"
+            )["status"],
+            fv.PASS,
+        )
+        art = _art(run_config=_run_config(), dof_ledger=self._reconstructed(clean))
+        d = self._row(art, "t1f", "dof ledger")
+        self.assertEqual(d["status"], fv.CAVEAT)
+        self.assertIn("post-hoc reconstruction", d["detail"])
+
+    def test_cap_is_a_ceiling_not_a_floor(self):
+        # A reconstruction that ALSO fails a real check keeps its FAIL — the
+        # label can only ever make a row worse.
+        art = _art(run_config=self._reconstructed(_run_config(mode="backcast")))
+        r1 = self._row(art, "t1f", "run_config")
+        self.assertEqual(r1["status"], fv.FAIL)
+        self.assertIn("post-hoc reconstruction", r1["detail"])
+        bad = _dof([{"name": "adder", "where": "sc.x", "identification": "residual"}])
+        d = self._row(
+            _art(run_config=_run_config(), dof_ledger=self._reconstructed(bad)),
+            "t1f",
+            "dof ledger",
+        )
+        self.assertEqual(d["status"], fv.FAIL)
+
+    def test_absent_run_config_still_fails_not_caveats(self):
+        # The cap must not soften an ABSENT artifact into a caveat: absence is
+        # still FAIL, which is what every pre-D20 committed record reads.
+        r1 = self._row(_art(dof_ledger=_dof()), "t1f", "run_config")
+        self.assertEqual(r1["status"], fv.FAIL)
+        self.assertEqual(r1["detail"], "run_config.json absent")
+
+    def test_unlabelled_artifacts_score_exactly_as_before(self):
+        # Strictly additive (cross-lane re-grade rule): no committed record
+        # without the label can move, and no detail string gains a prefix.
+        art = _art(run_config=_run_config(), dof_ledger=_dof())
+        rows = fv.score_fc7(art, "t1f", "ERCOT")
+        self.assertEqual(_status(rows), fv.PASS)
+        for r in rows:
+            self.assertNotIn("reconstruction", r["detail"])
+
+    def test_a_provenance_stamp_is_not_a_reconstruction_claim(self):
+        # Every scored artifact carries a forecast-provenance/v1 DICT under the
+        # same key. It is not a reconstruction label and must never trip the cap.
+        stamped = {**_run_config(), fv._fp.PROVENANCE_KEY: fv._fp.stamp()}
+        self.assertFalse(fv._is_reconstruction(stamped))
+        self.assertEqual(
+            self._row(_art(run_config=stamped), "t1f", "run_config")["status"], fv.PASS
+        )
+
+    def test_label_must_be_asserted_never_inferred(self):
+        # Prose that merely mentions a reconstruction does not cap anything —
+        # only the explicit machine label does.
+        prose = {
+            **_run_config(),
+            "reconstruction": {"status": "RECONSTRUCTED — NOT ORIGINAL"},
+        }
+        self.assertFalse(fv._is_reconstruction(prose))
+        self.assertEqual(
+            self._row(_art(run_config=prose), "t1f", "run_config")["status"], fv.PASS
+        )
+
+
+class FC7CommittedReconstructionArtifactTests(unittest.TestCase):
+    """The seven legacy legs' committed debt bundles carry the label (capx-D20).
+
+    Pins leg (1) of the lane: the artifacts themselves, not just the scorer.
+    """
+
+    LEGS = (
+        "miso-2021-2025-realized-ffr3a3",
+        "neiso-2021-2025-realized-ffr3a3",
+        "nyiso-2021-2025-realized-ffr3a3",
+        "pjm-2021-2025-realized-ffr3a3",
+        "ercot-2023-2027-crossover-ffr3a3",
+        "pjm-2023-2027-crossover-ffr3a3",
+        "miso-2023-2027-crossover-ffr3a4",
+    )
+
+    def test_every_debt_artifact_is_labelled_and_caps_fc7(self):
+        import json
+
+        for leg in self.LEGS:
+            d = _REPO / "results" / "run-config-debt" / leg
+            rc = json.loads((d / "run_config.json").read_text())
+            ledger = json.loads((d / "dof_ledger.json").read_text())
+            with self.subTest(leg=leg):
+                self.assertTrue(fv._is_reconstruction(rc))
+                self.assertTrue(fv._is_reconstruction(ledger))
+                tier = "t1x" if "crossover" in leg else "t1h"
+                rows = fv.score_fc7(
+                    _art(run_config=rc, dof_ledger=ledger), tier, rc["iso"]
+                )
+                self.assertEqual(_status(rows), fv.CAVEAT)
+                self.assertNotIn(
+                    fv.PASS, {r["status"] for r in rows if r["row"] != "overlay-off"}
+                )
+
+
+# ---------------------------------------------------------------------------
 # FC-8 runtime feasibility (never blocks)
 # ---------------------------------------------------------------------------
 class FC8Tests(unittest.TestCase):
