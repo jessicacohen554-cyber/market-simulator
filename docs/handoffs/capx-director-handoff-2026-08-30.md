@@ -258,3 +258,16 @@ position lane, informs the golden card, Fable) · D30 (issued, undispatched) · 
 (chartered JOINTLY after D31/D33 land — one mechanism-class charter, per-ISO parameters).
 **OWNER-TIER:** the golden re-solve card, FC-6 survival, and D23's R4 carbon-semantics
 question ALL wait on D26-S — present together when it lands.
+
+**r#26 amendment-1 correction (same sitting, main `a40cfc68`):** the delta above is already
+stale on three points. **D26 COMPLETED ITSELF** (PR #4522: P1 FAIL→PASS on the repaired arm,
+neiso-t3 FC-6 FAIL→CAVEAT, HOLD unchanged) — **D26-S is RETIRED UNRUN**, and every item that
+waited on it is discharged: **Q25 AUTHORIZED the second golden campaign** (T3-NEISO-GOLDEN-2,
+issued, Fable) and **Q26 CLOSED R4** (replace semantics + below-base guard → D34, issued,
+Opus). **D20 is RELEASED and issued** (its scorer-surface hold dissolved when D26+D27 landed).
+miso-197 CONCLUDED (PR #4521, CC over-dispatch root-caused to the chronic gas-steamer/CHP
+allocation defect; successor prereg frozen). In flight after amendment 1: **D31 · D33 · D30
+(undispatched) · T3-NEISO-GOLDEN-2 · D34 · D20**. Transport note: a silent push hang with
+reads flowing is the proxy's UPLOAD GATE, not transport death — one long-window (~9 m)
+background push attempt after a fresh rebase is the remedy that worked (ledger §0w amendment
+1, last paragraph).
