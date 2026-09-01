@@ -1,0 +1,304 @@
+{
+ "by_year": {
+  "2023": {
+   "K1_full_partial_corr": -0.184,
+   "K1_load_only_partial": -0.243,
+   "K1_magnitude_retained": 0.757,
+   "K1_survives": true,
+   "K2_spearman_partial": -0.1589,
+   "K2_survives": true,
+   "K3_deciles_beating_null": 8,
+   "K3_survives": true,
+   "K3_within_decile": [
+    {
+     "beats_null": false,
+     "decile": 0,
+     "n": 876,
+     "null_median": 0.0,
+     "null_p5": -0.75,
+     "observed": 0.6
+    },
+    {
+     "beats_null": true,
+     "decile": 1,
+     "n": 876,
+     "null_median": 0.03,
+     "null_p5": -0.76,
+     "observed": -1.55
+    },
+    {
+     "beats_null": false,
+     "decile": 2,
+     "n": 876,
+     "null_median": -0.04,
+     "null_p5": -0.79,
+     "observed": -0.78
+    },
+    {
+     "beats_null": true,
+     "decile": 3,
+     "n": 876,
+     "null_median": -0.01,
+     "null_p5": -0.74,
+     "observed": -1.57
+    },
+    {
+     "beats_null": true,
+     "decile": 4,
+     "n": 876,
+     "null_median": 0.05,
+     "null_p5": -0.99,
+     "observed": -4.06
+    },
+    {
+     "beats_null": true,
+     "decile": 5,
+     "n": 876,
+     "null_median": 0.04,
+     "null_p5": -1.11,
+     "observed": -6.15
+    },
+    {
+     "beats_null": true,
+     "decile": 6,
+     "n": 876,
+     "null_median": 0.01,
+     "null_p5": -1.38,
+     "observed": -8.55
+    },
+    {
+     "beats_null": true,
+     "decile": 7,
+     "n": 876,
+     "null_median": 0.04,
+     "null_p5": -1.43,
+     "observed": -8.91
+    },
+    {
+     "beats_null": true,
+     "decile": 8,
+     "n": 876,
+     "null_median": 0.09,
+     "null_p5": -4.55,
+     "observed": -26.68
+    },
+    {
+     "beats_null": true,
+     "decile": 9,
+     "n": 876,
+     "null_median": 0.13,
+     "null_p5": -4.7,
+     "observed": -15.08
+    }
+   ]
+  },
+  "2024": {
+   "K1_full_partial_corr": -0.235,
+   "K1_load_only_partial": -0.316,
+   "K1_magnitude_retained": 0.744,
+   "K1_survives": true,
+   "K2_spearman_partial": -0.2481,
+   "K2_survives": true,
+   "K3_deciles_beating_null": 9,
+   "K3_survives": true,
+   "K3_within_decile": [
+    {
+     "beats_null": true,
+     "decile": 0,
+     "n": 876,
+     "null_median": -0.03,
+     "null_p5": -0.52,
+     "observed": -1.27
+    },
+    {
+     "beats_null": true,
+     "decile": 1,
+     "n": 876,
+     "null_median": -0.06,
+     "null_p5": -1.02,
+     "observed": -3.35
+    },
+    {
+     "beats_null": true,
+     "decile": 2,
+     "n": 876,
+     "null_median": 0.01,
+     "null_p5": -1.1,
+     "observed": -5.56
+    },
+    {
+     "beats_null": true,
+     "decile": 3,
+     "n": 876,
+     "null_median": 0.05,
+     "null_p5": -1.0,
+     "observed": -6.25
+    },
+    {
+     "beats_null": true,
+     "decile": 4,
+     "n": 876,
+     "null_median": -0.19,
+     "null_p5": -1.71,
+     "observed": -8.24
+    },
+    {
+     "beats_null": true,
+     "decile": 5,
+     "n": 876,
+     "null_median": 0.12,
+     "null_p5": -1.88,
+     "observed": -13.41
+    },
+    {
+     "beats_null": true,
+     "decile": 6,
+     "n": 876,
+     "null_median": -0.1,
+     "null_p5": -2.01,
+     "observed": -15.53
+    },
+    {
+     "beats_null": true,
+     "decile": 7,
+     "n": 876,
+     "null_median": -0.03,
+     "null_p5": -2.39,
+     "observed": -17.91
+    },
+    {
+     "beats_null": true,
+     "decile": 8,
+     "n": 876,
+     "null_median": -0.03,
+     "null_p5": -2.99,
+     "observed": -19.69
+    },
+    {
+     "beats_null": false,
+     "decile": 9,
+     "n": 876,
+     "null_median": 0.29,
+     "null_p5": -3.58,
+     "observed": 7.86
+    }
+   ]
+  },
+  "2025": {
+   "K1_full_partial_corr": -0.1596,
+   "K1_load_only_partial": -0.257,
+   "K1_magnitude_retained": 0.621,
+   "K1_survives": true,
+   "K2_spearman_partial": -0.2064,
+   "K2_survives": true,
+   "K3_deciles_beating_null": 9,
+   "K3_survives": true,
+   "K3_within_decile": [
+    {
+     "beats_null": true,
+     "decile": 0,
+     "n": 876,
+     "null_median": 0.03,
+     "null_p5": -0.54,
+     "observed": -2.66
+    },
+    {
+     "beats_null": true,
+     "decile": 1,
+     "n": 876,
+     "null_median": -0.01,
+     "null_p5": -0.8,
+     "observed": -3.89
+    },
+    {
+     "beats_null": true,
+     "decile": 2,
+     "n": 876,
+     "null_median": 0.02,
+     "null_p5": -1.13,
+     "observed": -5.47
+    },
+    {
+     "beats_null": true,
+     "decile": 3,
+     "n": 876,
+     "null_median": 0.13,
+     "null_p5": -1.81,
+     "observed": -10.56
+    },
+    {
+     "beats_null": true,
+     "decile": 4,
+     "n": 876,
+     "null_median": 0.0,
+     "null_p5": -2.2,
+     "observed": -12.31
+    },
+    {
+     "beats_null": true,
+     "decile": 5,
+     "n": 876,
+     "null_median": -0.04,
+     "null_p5": -3.01,
+     "observed": -14.16
+    },
+    {
+     "beats_null": true,
+     "decile": 6,
+     "n": 876,
+     "null_median": 0.0,
+     "null_p5": -3.55,
+     "observed": -19.55
+    },
+    {
+     "beats_null": true,
+     "decile": 7,
+     "n": 876,
+     "null_median": -0.03,
+     "null_p5": -4.32,
+     "observed": -22.08
+    },
+    {
+     "beats_null": true,
+     "decile": 8,
+     "n": 876,
+     "null_median": -0.15,
+     "null_p5": -4.83,
+     "observed": -17.85
+    },
+    {
+     "beats_null": false,
+     "decile": 9,
+     "n": 876,
+     "null_median": -0.61,
+     "null_p5": -5.9,
+     "observed": 7.83
+    }
+   ]
+  }
+ },
+ "gate_thresholds": {
+  "K3_min_deciles": 6,
+  "h2_load_only_partial": {
+   "2023": -0.243,
+   "2024": -0.316,
+   "2025": -0.257
+  },
+  "n_perm": 199,
+  "perm_seed": 1704
+ },
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "note": "Zero solve. Third-factor controls on the ONE positive finding that survived nyiso-170/170b/170c: the within-load association between the model's gas-composition error and its price deficit. Gates pre-registered in the module docstring, committed before running. These can only weaken the finding.",
+ "probe": "nyiso170d_price_linkage_controls",
+ "verdict": {
+  "K1_all_years": true,
+  "K2_all_years": true,
+  "K3_all_years": true,
+  "linkage_survives": true
+ },
+ "years": [
+  2023,
+  2024,
+  2025
+ ]
+}
