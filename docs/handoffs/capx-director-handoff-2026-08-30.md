@@ -164,3 +164,16 @@ landed: the C3c audit (PR #4466) retracted its own Q2 false positive and found t
 be MAXED, never SUMMED, a rule now available to five other ISO lanes; and miso-194 (cold-snap
 gas derate REFUTED, cell U→I). In flight after the amendment: D8-V · D4-M · D17 · D18 · D21 ·
 D22.
+
+**r#24 AMENDMENT (2026-09-01, main `1d280815`).** **The r#23 patch contingency is MOOT** — git
+credentials returned, the held commit rebased/pushed and both files blob-verified. Ignore any
+instruction above about `capx-director-r23.patch`. **THE t3 CEILING IS LIFTED** (D25: 78
+dispositions, 0 UNEXPLAINED, FC-5 SKIPPED→CAVEAT on five keys; D21 had already made FC-6 grade),
+so **owner ruling Q16's hold on the golden re-solve has expired on its own premise** and the
+second-campaign question is live again — but decide it AFTER the FC-6 P1 instrument repair
+(D26), since re-solving into an inverted P1 spends a campaign to re-measure a premise.
+**RECORDED AGAINST INTEREST: the r#23 "a carbon price raises CO2, the model's economic core has
+a sign error" alarm is REFUTED** (D23). The model's sign is right in both legs; a nonzero
+`carbon_price` REPLACES the resolved signal and NEISO's base already carries the RGGI projection,
+so the `carbon25` arm CUT the carbon price in every year. Do not carry the alarm forward.
+In flight after r#24: D26 · D27 · D28, plus the owner's miso-196 and caiso-231.
