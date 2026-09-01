@@ -175,6 +175,18 @@ VERDICT_MAP = {
     # own score contradicts. Determination HOLD on both, no flip.
     "neiso-2023-2027-crossover-capxd14": "neiso-t1x-pre-rcrepair",
     "neiso-2023-2027-crossover-rcrepair": "neiso-t1x",
+    # capx-D27 (2026-09-01) re-measured MISO's T1-H leg at HEAD, executing
+    # D17-R's routed PRIMARY R1: the committed MISO T1-H numbers predate the
+    # S-123 adequacy package, whose three operands are registry constants the
+    # admission cap and execution floor already read at HEAD. The bare live key
+    # moves to the NEW run (the LIVE-vintage convention) and the prior
+    # FFR-3A-2-vintage record keeps its OWN verdict under the preserved
+    # `-pre-d27` key (the -pre-d5r / -pre-rcrepair precedent) — a run never
+    # renders a verdict its own score contradicts, and these scores differ
+    # sharply from the pre-fix ones (`retire.total_gw` 12.716 -> 26.431 GW,
+    # its band FAIL flipping sign from under- to OVER-retirement).
+    # Determination HOLD on both, no flip.
+    "miso-2021-2025-realized-t1h-d27": "miso-t1h",
 }
 
 
