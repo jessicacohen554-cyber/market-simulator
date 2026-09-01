@@ -1,0 +1,495 @@
+{
+ "probe": "_miso198_level_selection.py",
+ "iso": "MISO",
+ "group": "ST_GAS",
+ "frozen": {
+  "S_III_TOLERANCE": 1.25,
+  "candidates": {
+   "C0": {
+    "pctile": 25,
+    "conditioning": "all-online",
+    "S_i_conduct_grounded": false
+   },
+   "C1": {
+    "pctile": 25,
+    "conditioning": "oom-online",
+    "S_i_conduct_grounded": true
+   },
+   "C2": {
+    "pctile": 50,
+    "conditioning": "oom-online",
+    "S_i_conduct_grounded": true
+   },
+   "C3": {
+    "pctile": 50,
+    "conditioning": "all-online",
+    "S_i_conduct_grounded": false
+   }
+  },
+  "selection": "highest raw assertion among ADMISSIBLE candidates"
+ },
+ "levels": {
+  "rows": [
+   {
+    "plant_code": 170,
+    "nameplate_mw": 522.0,
+    "C0": 55.0,
+    "C1": 54.0,
+    "C2": 129.5,
+    "C3": 143.0,
+    "oom_median_mw": 129.5,
+    "oom_sample_hours": 2408
+   },
+   {
+    "plant_code": 990,
+    "nameplate_mw": 618.0,
+    "C0": 226.4,
+    "C1": 217.98,
+    "C2": 348.95,
+    "C3": 381.69,
+    "oom_median_mw": 348.95,
+    "oom_sample_hours": 22472
+   },
+   {
+    "plant_code": 1104,
+    "nameplate_mw": 170.3,
+    "C0": 64.0,
+    "C1": 64.0,
+    "C2": 67.0,
+    "C3": 67.0,
+    "oom_median_mw": 67.0,
+    "oom_sample_hours": 274
+   },
+   {
+    "plant_code": 1122,
+    "nameplate_mw": 108.7,
+    "C0": 33.0,
+    "C1": 33.0,
+    "C2": 35.0,
+    "C3": 46.0,
+    "oom_median_mw": 35.0,
+    "oom_sample_hours": 21308
+   },
+   {
+    "plant_code": 1131,
+    "nameplate_mw": 54.6,
+    "C0": 7.0,
+    "C1": 6.0,
+    "C2": 7.0,
+    "C3": 7.0,
+    "oom_median_mw": 7.0,
+    "oom_sample_hours": 1085
+   },
+   {
+    "plant_code": 1400,
+    "nameplate_mw": null,
+    "C0": null,
+    "C1": 94.0,
+    "C2": 96.0,
+    "C3": null,
+    "oom_median_mw": 96.0,
+    "oom_sample_hours": 1128
+   },
+   {
+    "plant_code": 1402,
+    "nameplate_mw": 916.5,
+    "C0": 53.0,
+    "C1": 50.0,
+    "C2": 174.0,
+    "C3": 175.0,
+    "oom_median_mw": 174.0,
+    "oom_sample_hours": 10830
+   },
+   {
+    "plant_code": 1403,
+    "nameplate_mw": 1465.4,
+    "C0": 724.0,
+    "C1": 688.0,
+    "C2": 902.0,
+    "C3": 930.0,
+    "oom_median_mw": 902.0,
+    "oom_sample_hours": 22722
+   },
+   {
+    "plant_code": 1702,
+    "nameplate_mw": 1199.8,
+    "C0": 158.0,
+    "C1": 158.0,
+    "C2": 178.0,
+    "C3": 178.0,
+    "oom_median_mw": 178.0,
+    "oom_sample_hours": 2583
+   },
+   {
+    "plant_code": 1891,
+    "nameplate_mw": 98.0,
+    "C0": 30.0,
+    "C1": 30.0,
+    "C2": 40.0,
+    "C3": 44.0,
+    "oom_median_mw": 40.0,
+    "oom_sample_hours": 7817
+   },
+   {
+    "plant_code": 3457,
+    "nameplate_mw": 499.3,
+    "C0": 113.49,
+    "C1": 107.67,
+    "C2": 216.31,
+    "C3": 238.62,
+    "oom_median_mw": 216.31,
+    "oom_sample_hours": 19907
+   },
+   {
+    "plant_code": 3459,
+    "nameplate_mw": 1501.4,
+    "C0": 286.15,
+    "C1": 256.08,
+    "C2": 404.49,
+    "C3": 446.2,
+    "oom_median_mw": 404.49,
+    "oom_sample_hours": 19347
+   },
+   {
+    "plant_code": 3992,
+    "nameplate_mw": 95.7,
+    "C0": 11.0,
+    "C1": 10.0,
+    "C2": 16.0,
+    "C3": 19.0,
+    "oom_median_mw": 16.0,
+    "oom_sample_hours": 2879
+   },
+   {
+    "plant_code": 6035,
+    "nameplate_mw": 785.0,
+    "C0": 89.0,
+    "C1": 66.0,
+    "C2": 130.0,
+    "C3": 211.0,
+    "oom_median_mw": 130.0,
+    "oom_sample_hours": 8489
+   },
+   {
+    "plant_code": 6639,
+    "nameplate_mw": 454.0,
+    "C0": 115.17,
+    "C1": 94.94,
+    "C2": 137.05,
+    "C3": 146.96,
+    "oom_median_mw": 137.05,
+    "oom_sample_hours": 6568
+   },
+   {
+    "plant_code": 8054,
+    "nameplate_mw": 701.1,
+    "C0": 236.0,
+    "C1": 235.0,
+    "C2": 254.0,
+    "C3": 289.0,
+    "oom_median_mw": 254.0,
+    "oom_sample_hours": 2453
+   },
+   {
+    "plant_code": 8056,
+    "nameplate_mw": 417.3,
+    "C0": 128.0,
+    "C1": 128.0,
+    "C2": 130.0,
+    "C3": 131.0,
+    "oom_median_mw": 130.0,
+    "oom_sample_hours": 4162
+   }
+  ]
+ },
+ "assertion": {
+  "C0": {
+   "2023": {
+    "raw_assertion_twh": 10.5233,
+    "over_assertion_twh": 0.8516,
+    "over_share": 0.0809,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   },
+   "2024": {
+    "raw_assertion_twh": 11.0223,
+    "over_assertion_twh": 0.7952,
+    "over_share": 0.0721,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   },
+   "2025": {
+    "raw_assertion_twh": 11.0863,
+    "over_assertion_twh": 0.7197,
+    "over_share": 0.0649,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   }
+  },
+  "C1": {
+   "2023": {
+    "raw_assertion_twh": 9.9319,
+    "over_assertion_twh": 0.6951,
+    "over_share": 0.07,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   },
+   "2024": {
+    "raw_assertion_twh": 10.3857,
+    "over_assertion_twh": 0.6984,
+    "over_share": 0.0672,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   },
+   "2025": {
+    "raw_assertion_twh": 10.4408,
+    "over_assertion_twh": 0.5901,
+    "over_share": 0.0565,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   }
+  },
+  "C2": {
+   "2023": {
+    "raw_assertion_twh": 13.9748,
+    "over_assertion_twh": 2.019,
+    "over_share": 0.1445,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   },
+   "2024": {
+    "raw_assertion_twh": 15.0103,
+    "over_assertion_twh": 1.7917,
+    "over_share": 0.1194,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   },
+   "2025": {
+    "raw_assertion_twh": 15.185,
+    "over_assertion_twh": 2.1006,
+    "over_share": 0.1383,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   }
+  },
+  "C3": {
+   "2023": {
+    "raw_assertion_twh": 14.8155,
+    "over_assertion_twh": 2.3538,
+    "over_share": 0.1589,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   },
+   "2024": {
+    "raw_assertion_twh": 16.0678,
+    "over_assertion_twh": 2.1362,
+    "over_share": 0.1329,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   },
+   "2025": {
+    "raw_assertion_twh": 16.2302,
+    "over_assertion_twh": 2.5422,
+    "over_share": 0.1566,
+    "floored_plants": [
+     990,
+     1122,
+     1402,
+     1403,
+     3457,
+     3459,
+     6035
+    ]
+   }
+  }
+ },
+ "admissibility": {
+  "C0": {
+   "S_i_conduct_grounded": false,
+   "S_ii_non_pinning": true,
+   "S_ii_violating_plants": [],
+   "S_iii_no_worse_over_assertion": true,
+   "S_iii_by_year": {
+    "2023": true,
+    "2024": true,
+    "2025": true
+   },
+   "S_iii_bar_by_year": {
+    "2023": 0.1011,
+    "2024": 0.0901,
+    "2025": 0.0811
+   },
+   "admissible": false
+  },
+  "C1": {
+   "S_i_conduct_grounded": true,
+   "S_ii_non_pinning": true,
+   "S_ii_violating_plants": [],
+   "S_iii_no_worse_over_assertion": true,
+   "S_iii_by_year": {
+    "2023": true,
+    "2024": true,
+    "2025": true
+   },
+   "S_iii_bar_by_year": {
+    "2023": 0.1011,
+    "2024": 0.0901,
+    "2025": 0.0811
+   },
+   "admissible": true
+  },
+  "C2": {
+   "S_i_conduct_grounded": true,
+   "S_ii_non_pinning": true,
+   "S_ii_violating_plants": [],
+   "S_iii_no_worse_over_assertion": false,
+   "S_iii_by_year": {
+    "2023": false,
+    "2024": false,
+    "2025": false
+   },
+   "S_iii_bar_by_year": {
+    "2023": 0.1011,
+    "2024": 0.0901,
+    "2025": 0.0811
+   },
+   "admissible": false
+  },
+  "C3": {
+   "S_i_conduct_grounded": false,
+   "S_ii_non_pinning": false,
+   "S_ii_violating_plants": [
+    6639
+   ],
+   "S_iii_no_worse_over_assertion": false,
+   "S_iii_by_year": {
+    "2023": false,
+    "2024": false,
+    "2025": false
+   },
+   "S_iii_bar_by_year": {
+    "2023": 0.1011,
+    "2024": 0.0901,
+    "2025": 0.0811
+   },
+   "admissible": false
+  }
+ },
+ "selected": "C1",
+ "verdict": "SELECTED C1",
+ "selected_levels": {
+  "170": 54.0,
+  "990": 217.98,
+  "1104": 64.0,
+  "1122": 33.0,
+  "1131": 6.0,
+  "1400": 94.0,
+  "1402": 50.0,
+  "1403": 688.0,
+  "1702": 158.0,
+  "1891": 30.0,
+  "3457": 107.67,
+  "3459": 256.08,
+  "3992": 10.0,
+  "6035": 66.0,
+  "6639": 94.94,
+  "8054": 235.0,
+  "8056": 128.0
+ },
+ "materiality_reported": {
+  "2023": {
+   "incumbent_raw_twh": 10.5233,
+   "selected_raw_twh": 9.9319,
+   "increment_twh": -0.5914
+  },
+  "2024": {
+   "incumbent_raw_twh": 11.0223,
+   "selected_raw_twh": 10.3857,
+   "increment_twh": -0.6366
+  },
+  "2025": {
+   "incumbent_raw_twh": 11.0863,
+   "selected_raw_twh": 10.4408,
+   "increment_twh": -0.6455
+  },
+  "cc24_requirement_twh": 4.0,
+  "note": "REPORTED AFTER SELECTION, never a selector (rule 1). A raw assertion is an upper bound on the class increment: the LP re-optimizes and displaced classes give energy back."
+ }
+}

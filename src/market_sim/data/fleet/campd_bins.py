@@ -1564,6 +1564,59 @@ def thermal_tranche_p25_measured_level(iso: str) -> dict[tuple[int, str], float]
 
 
 @lru_cache(maxsize=8)
+def thermal_tranche_oom_level(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): oom_level_mw}`` — the OUT-OF-MERIT level.
+
+    The same measured-MW percentile family as
+    :func:`thermal_tranche_p25_measured_level`, taken over a RE-CONDITIONED
+    sample: the plant's online hours **in which the class's economic signal
+    says off** (the miso-197 W3b set — hours the measured CC_REGULAR fleet ran
+    below 0.90 of its own p99.5, i.e. cheaper CC capability was demonstrably
+    idle), instead of all hours the plant happened to be on. Read from
+    ``data/raw/_processed-legacy/thermal_tranches_oom_level_mw_<ISO>.csv``
+    (``scripts/data/derive_thermal_tranche_oom_level_mw.py``, which imports the
+    frozen deriver's online mask, net construction, derate source, nameplate
+    clamp and pooled window rather than restating them — rule 23
+    ``[R-FROZEN-DERIVE]``).
+
+    Why the re-conditioned sample exists: the miso-198 census partitioned the
+    ST_GAS gap between the measured out-of-merit conduct and the keeper's own
+    armed floor EXACTLY into population / window / LEVEL and found LEVEL
+    dominant in every year (0.640 / 0.699 / 0.665 of a 7.85 / 10.62 / 8.91 TWh
+    gap, 3 of 3 over the 0.45 line; the population channel did not clear the
+    census's operating test and the window channel never reached dominance).
+    The incumbent statistic is a low percentile of "every hour the plant was
+    on", which measures the plant's *operating range*; the phenomenon being
+    represented is that these VLR/self-committed steamers **hold their normal
+    load in the hours merit says shut down**, and the statistic that measures
+    THAT conditions on those hours. The percentile family and the floor's
+    membership, window, mechanism id and ``pmax x availability`` clip are all
+    unchanged — only the sample the percentile is taken over.
+
+    Consumed under ``config.st_gas_mustrun_oom_level``, which REPLACES the
+    level source and never stacks a second floor (rule 19 ``[R-ONE-MECH]``).
+    Empty when the ISO has no artifact, leaving today's behaviour
+    byte-identical.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_oom_level_mw_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "oom_level_mw" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        try:
+            level = float(getattr(r, "oom_level_mw", float("nan")))
+        except (TypeError, ValueError):
+            continue
+        if not level == level or level <= 0.0:  # NaN / no floor
+            continue
+        out[(int(r.plant_code), str(r.plant_group))] = level
+    return out
+
+
+@lru_cache(maxsize=8)
 def coal_prb_committed_split_night(iso: str) -> dict[int, float]:
     """Return ``{plant_code: night_p50}`` from the PRB committed-split artifact.
 
