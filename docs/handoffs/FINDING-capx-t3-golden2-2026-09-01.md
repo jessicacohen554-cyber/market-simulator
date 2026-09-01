@@ -276,3 +276,168 @@ limitation; the CAVEAT is the steady state.
 
 *(Sections below were written AFTER the solves; §§1–4 above were committed before
 launch.)*
+
+## 5. Measured cost vs projected
+
+**The campaign run completed: 25/25 years, `error: None`, cache key
+`706e7ba8e6582d42` — the pre-declared resolution, byte-exact.** Launched
+19:06:22Z, summary written 19:41:33Z (2026-09-01).
+
+| axis | §3 pre-declared | measured | reading |
+|---|---|---|---|
+| wall clock | ~30–60 min (Q25 basis ~1.0 h) | **35.1 min (0.585 h)** | 59 % of the Q25 budget |
+| peak RSS | ≤4.5 GB (Q25 basis ~4.3 GB) | **3.48 GB** | 81 % of budget |
+| solve years | 25, sequential | 25/25, sequential (rule 12) | as declared |
+| cache key | `706e7ba8e6582d42` (ex ante) | `706e7ba8e6582d42` on disk | **exact** |
+| data/clean rebuild | ~30–35 min | **38.4 min** (17:30:35→18:08:59Z), 53/53 datatypes, 0 failures | the §2.4 container prerequisite; `benchmark-corridor`, which failed at the D26 vintage, regenerates cleanly at HEAD |
+
+Per-year median 81.4 s (golden-1: 68.7 s — the armed screens and the HEAD data
+add ~18 % per year). **Checkpoint note (honest deviation from §3):** the solve
+completed inside a single session wake, so the per-year `evolution_<year>.json`
+checkpoints were committed immediately after completion in one commit
+(`a5523fac`) rather than incrementally mid-horizon; the checkpoint files
+themselves were written per-year by the runner as declared, so a mid-horizon
+failure would still have preserved the record.
+
+### 5.1 Scenario-identity integrity — the golden-1 §5.1(b) ambiguity cannot recur
+
+The armed posture keys distinctly (`706e7ba8e6582d42` ≠ pre-R-A
+`a4b11ef4aaa1be35`) because the D24-R (b′-1) declared-defaults ledger makes a
+post-flip field identify in the hash. The flip-back control (resolved HEAD
+config with both storage fields set False) keys at `500790494e360a2a`, not the
+pre-R-A key — **not** hidden config drift: the resolved-config **field diff**
+against the committed pre-R-A `run_config.json` is exactly **5 fields** — the
+armed pair (`storage_entry_availability_gate`,
+`storage_entry_cost_normalized_rank` False→True), plus three provably inert
+ones (`carbon_price_delta` added at its 0.0 no-op default, D26's 25-year
+byte-inertness proof; `caiso_offer_surface_measured_ungrounded` added at False,
+CAISO-scoped; `renewable_buildout_pace` deleted by T16, consumed by no model
+code per D21). The key difference beyond the armed pair is hash-STRUCTURE
+bookkeeping from the added/deleted field set — cite configs, not keys, across
+epochs (the D21 finding-6 lesson, holding again). The cache epoch ledger
+carries no solve-affecting entry after R-A (2026-08-31).
+
+## 6. The horizon record — reported, never judged, never back-tuned
+
+No actuals exist for any year in this window; nothing below is scored against a
+measured outcome, no result feeds back into any input, and no value was
+reverse-engineered to clear an invariant (rules 13/21).
+
+### 6.1 THE STORAGE-ENTRY ANSWER (the campaign's object)
+
+**Under the armed posture, storage enters — once, at the horizon's edge: 720 MW
+of 100-hour iron-air in 2050. Zero entry in all of 2026–2049.**
+
+- The 2050 build (`evolution_2050.json` `storage_additions`): iron_air, 100.0 h
+  duration, zone-split by load share — North 144.0 / Central 216.0 / Boston
+  151.2 / Connecticut 208.8 MW.
+- **Sizing attribution:** 720.0 = `STORAGE_TECH_BUILD_SHARE_CAP` (0.6) ×
+  `STORAGE_ANNUAL_BUILD_CAP_MW["NEISO"]` (1,200 MW) — iron-air hit its
+  diversification cap of the annual budget, i.e. the screen wanted MORE
+  iron-air than the cap allows, **and no second technology claimed the
+  remaining 480 MW** of budget. One tech clears, at its cap, in one year.
+- **Mechanism attribution:** iron_air passes the D-2 availability gate trivially
+  by 2050 (`STORAGE_TECH_AVAILABLE_YEAR["iron_air"]=2024`), so the gate is not
+  what delayed entry to 2050 — the VALUE STACK (arbitrage + RA capacity value
+  at curve-ON) first clears a technology's annualized cost only in the
+  horizon's tightest, highest-priced year (2050: LW $79.16, 2,446 h ≥ $100/MWh,
+  the monotone out-year tightening of §6.3). Under the D-3 cost-normalized rank
+  the clearing pick is the 100-h machine (capex $2,000/kW over 100 h of
+  duration dominates margin-per-capex-dollar in a long-scarcity year), where
+  the pre-R-A absolute-margin rank had cleared nothing.
+- **What either posture would have done on this data in 2026–2049 is identical
+  by construction** — zero entry means the armed screens added no units, so
+  those years' LPs are the same under both postures; the arming's entire
+  solve-visible effect on this horizon is the 2050 build.
+- **The corridor consequence:** the 2030/2035/2040 FC-5 storage anchors are
+  UNTOUCHED by the arming (battery fleet still the 0.77 GW base at every anchor
+  year, −56.2 % vs AEO). **The D25 §4.3 mechanism-2 divergence family — the
+  corridor's largest — survives the armed screens at the anchor years.** The
+  armed economics do not produce entry when AEO says it happens (1.76 GW by
+  2030); they produce it two decades later, at the LDES end of the tech space.
+  Routed to the director as the campaign's headline structural result (§8).
+
+### 6.2 Head-of-horizon: golden-1 does NOT reproduce, and the divergence is
+### decomposed, not absorbed
+
+Pre-declared expectation #2 anticipated exact reproduction **iff** the armed
+screens admitted nothing in 2026–2030 *and* the HEAD data intakes were inert.
+The screens admitted nothing through 2049 — **yet the trajectory diverges from
+the very base year**, so the divergence is the DATA channel (§5.1 bounds the
+config channel to the armed pair + inert fields; the cache epoch ledger carries
+no other solve-affecting change). The two intakes landed since `9e56f0f` are
+exactly the RC-R pair: `capacity-market/demand-curve/neiso` (+15 rows, the
+FCA/MRI curve rework) and `confirmed-retirements/neiso.csv` (+79 rows, the
+registry completion). Measured decomposition:
+
+- **Base fleet (2026): −198.9 MW thermal** (gas_ct −101.0, oil −97.9) — the
+  completed confirmed-retirement registry excludes units the old partial
+  registry missed (applied at fleet build; no 2026 ledger retirement rows).
+  2026 prices identical (LW $52.13 both), CO2 −0.012 Mt.
+- **Every re-timed wave is `reason: economic`** (ledger-verified old vs new;
+  zero non-economic rows at the head), so the re-composition flows through the
+  retirement/entry screens' capacity-revenue term — the RC-R demand-curve
+  intake expressing through the Potomac-SOM margin, not through instrument
+  rows: 2027 exit wave 1,972.7 MW (was 2,231.8, −259.1); the CCS-exit wave
+  moves 2033→2034 and grows (1,701.0→1,873.8); **the 2037 North oil-steam exit
+  (1,451.6 MW) never fires** — only Boston's 237.7 MW retires, in 2038; thermal
+  entry falls 7,500→4,500 MW (first economic entry 2030→2031) and stays 100 %
+  `economic` (zero backstop, zero planned — now scorer-visible via the
+  builds_by_source grain).
+- **Out-years:** tighter (RM 0.05–0.09 vs 0.07–0.10), pricier (2050 LW $79.16
+  vs $66.39; 2,446 h ≥ $100 vs 1,531), dirtier (2050 CO2 5.29 vs 3.21 Mt — the
+  retained oil fleet at 4.85 GW vs 3.49, and 1.9 GW less late CCS since less
+  late CC is built to convert). CCS conversion still reaches 100 % of the CC
+  fleet by 2040 in both (13,135.4 MW here).
+- **The interpretive seam this cuts:** the golden-2 vs golden-1 delta is
+  DOMINATED by the RC-R capacity-revenue intake, not by the storage arming the
+  campaign was authorized to measure. That the NEISO capacity-market revenue
+  surface re-times 3.4 GW of exit waves and 3 GW of entry is precisely the
+  surface lane D33 (accreditation basis / cleared-vs-qualified) is chartered to
+  examine — D33 had landed nothing at this campaign's close; its finding should
+  be read against this decomposition when it lands (§8).
+
+### 6.3 Trajectory at reporting grain
+
+| year | peak MW | RM | LW $/MWh | CO₂ Mt | thermal MW | firm clean | VRE MW | storage MW (fleet) | gen TWh |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2026 | 24,890 | 0.156 | 52.13 | 16.308 | 22,951 | 1,900 | 4,100 | 2,635 | 117.1 |
+| 2030 | 26,209 | 0.038 | 71.56 | 14.885 | 20,849 | 1,900 | 7,100 | 2,635 | 123.4 |
+| 2035 | 27,848 | 0.083 | 72.38 | 10.267 | 22,475 | 1,900 | 14,902 | 2,635 | 131.5 |
+| 2040 | 29,559 | 0.089 | 70.53 | 4.488 | 23,237 | 1,900 | 22,100 | 2,635 | 139.9 |
+| 2045 | 31,376 | 0.069 | 72.08 | 4.587 | 23,237 | 1,900 | 29,902 | 2,635 | 150.4 |
+| 2050 | 33,304 | 0.066 | 79.16 | 5.290 | 23,237 | 1,900 | 37,100 | **3,355** | 163.2 |
+
+Totals: exits 4,138.2 MW (2027 gas_cc 1,876.8 + gas_st 95.8; 2029 coal 54.0;
+2034 gas_cc 234.7 + gas_cc_ccs 1,639.1; 2038 oil 237.7); thermal adds 4,500 MW
+(100 % economic — 4 × 1,000 gas_cc 2031/33/35/37 + 500 gas_ct 2032); VRE adds
+33,000 MW in the same alternating 1,802/1,198 cadence as golden-1; storage adds
+720 MW (§6.1). RPS dual pinned at the **$50 ACP ceiling in every year** —
+unchanged from golden-1. The `generation_by_fuel_mwh` grain (D29, first golden
+carrying it): in-region generation 90.1 TWh (2030) → 109.3 (2040), imports
+~30–33 TWh/yr, gas_cc_ccs the largest single in-region source from 2030
+(23.1 TWh) and oil-fired ENERGY ≈ 0 in every year even as 4.8–5.1 GW of oil
+CAPACITY is retained — capacity value, not dispatch, is what keeps it alive.
+
+**Structural signals, at full magnitude:**
+
+1. **I3 FAIL — out-year renewable dump, same onset, slightly shallower end:**
+   2043 2.17 % (identical to golden-1's onset) rising to 7.76 % (2049) / 7.74 %
+   (2050) vs golden-1's 8.50 % — the 720 MW iron-air and the retained thermal
+   absorb ~0.8 pp of the terminal dump. Still a FAIL; still coherent with 37 GW
+   VRE against a 33 GW peak with (almost) no storage and no incremental firm
+   clean.
+2. **I13 WARN — cobweb `gas_cc(7)`** (golden-1: `gas_cc(10)`); the alternating
+   VRE cadence persists identically.
+3. The 2028/2029 I7-margin floor-dependence caveat (§4(i)): the head years no
+   longer reproduce S-4b's exact figures (RM 2028 0.0465, 2029 0.0430 vs S-4b
+   0.04501/0.04150), so the S-4b numbers do not transfer verbatim; the
+   floor-retention mechanism is unchanged and the sign of these margins still
+   rides on it (this bundle's own `floor_retained` ledger rows are committed
+   with the checkpoints).
+
+**Caveat (ii) carried, as Q25 requires:** every exit wave above is composed by
+the same economic screen D14 measured at exit recall 2/6 with a
+gas-concentration bias; the 25-year composition — including the missing oil
+exits that this solve now RETAINS even longer — inherits that defect, and every
+composition statement in §6.2–6.3 must be read with it.
