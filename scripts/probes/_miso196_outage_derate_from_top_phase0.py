@@ -193,6 +193,38 @@ thresholds, not solve inputs. Rule 22: 2023-2025 only — MISO holds neither a
 ``complete`` nor a ``final`` marker and the holdout freeze is active; no
 out-of-training year is read by any basis.
 
+AMENDMENT 1 (post-freeze, DISCLOSED — the miso-191 precedent: a frozen witness
+that cannot fire clean is amended in the open, never silently). W5 fired BUG on
+2023 ALONE (6 non-P rows moved, worst relative total-MW error 0.100) while 2024
+and 2025 read CLEAN at 6e-16. Diagnosis: THE LEVER IS NOT THE CAUSE. A control
+identity — the SAME config built twice — shows the FIRST fleet build in a
+process differs from every later one on 58 rows, so the frozen W5 compared a
+cold DEFAULT build against a warm FROMTOP build and attributed the difference
+to the single delta.
+
+  ROOT CAUSE, in shipped code: ``_CC_PMAX_RECONCILED_PLANTS``
+  (``data/fleet/eia860.py:776``, written at :875) is a MODULE-LEVEL,
+  LAST-WRITER-WINS global keyed only by ISO. Every fleet-record load writes it
+  from its own record set, including narrow auxiliary loads whose record set
+  legitimately reconciles nothing: the trace shows ``_iso_plant_capacity`` ->
+  ``load_retired_within_window`` writing ``MISO=[]`` AFTER the main
+  ``load_fleet_from_csv`` wrote the correct seven plants. ``_iso_plant_capacity``
+  is cached, so that clobbering call happens on the FIRST build only. The set is
+  then read by ``_basis_aware_suppresses`` (``arrays.py:463``) under the armed
+  ``summer_derate_basis_aware``, which decides which plants KEEP the flat summer
+  ambient derate — so whether seven MISO CC plants are derated depends on
+  lru_cache warm-up order rather than on data.
+
+  THE AMENDMENT: ``main()`` and ``satisfiability()`` perform one WARM-UP build
+  before any witness is measured, so every arm is compared on the settled state
+  and each witness reads the LEVER ALONE. No frozen line, basis, population or
+  prereg is changed. The defect itself is measured and recorded in its own
+  ``W5_defect`` block (cold build vs warm build, same config) rather than left
+  as an unexplained W5 failure — it is reported at full magnitude as this
+  session's incidental finding, and it is NOT this session's to fix (a
+  solve-affecting core change that would re-base a designated keeper needs its
+  own charter).
+
 Output: ``results/calibration/_miso196_outage_derate_from_top_phase0.json``.
 Reproduce: ``python3 scripts/probes/_miso196_outage_derate_from_top_phase0.py``
 (``--satisfiability`` runs the pre-freeze basis-reachability check only, which
@@ -503,6 +535,7 @@ def w3_conduct() -> dict:
 # ----------------------------------------------------------------------- driver
 def satisfiability() -> None:
     """Pre-freeze basis-reachability check: shapes and booleans only."""
+    build(2025)  # Amendment 1 warm-up (see the docstring)
     gens, fa = build(2025)
     mask, multi = population(gens)
     print("SAT B1 availability shape", fa.availability.shape)
@@ -557,6 +590,57 @@ def main() -> None:
         "W1": {}, "W2": {}, "W4": {}, "W5": {},
     }
     c1 = c1_records()
+
+    # Amendment 1: one warm-up build, then measure the defect it exposes
+    # (cold build vs warm build, SAME config — the lever is not involved).
+    import market_sim.data.fleet.eia860 as _e860
+
+    _g_cold, _fa_cold = build(2023)
+    _recon_cold = sorted(_e860._CC_PMAX_RECONCILED_PLANTS.get(ISO, ()))
+    _g_warm, _fa_warm = build(2023)
+    _recon_warm = sorted(_e860._CC_PMAX_RECONCILED_PLANTS.get(ISO, ()))
+    _ac, _aw = _fa_cold.availability, _fa_warm.availability
+    _rows = np.where(np.abs(_ac - _aw).max(axis=1) > DIFF_EPS)[0]
+    _hrs = np.where(np.abs(_ac - _aw).max(axis=0) > DIFF_EPS)[0]
+    _dmw = (_ac - _aw) * _fa_warm.pmax[:, None]
+    _pl = sorted({int(_g_warm[i].plant_code) for i in _rows})
+    rec["W5_defect"] = {
+        "what": (
+            "_CC_PMAX_RECONCILED_PLANTS (data/fleet/eia860.py:776, written "
+            ":875) is a last-writer-wins module global; a cached auxiliary "
+            "load (_iso_plant_capacity -> load_retired_within_window) "
+            "clobbers it to empty on the FIRST build only, and "
+            "_basis_aware_suppresses (arrays.py:463) then suppresses the flat "
+            "summer ambient derate for plants that should KEEP it"
+        ),
+        "reconciled_set_after_cold_build": _recon_cold,
+        "reconciled_set_after_warm_build": _recon_warm,
+        "rows_affected": int(len(_rows)),
+        "plants_affected": _pl,
+        "classes_affected": sorted({_g_warm[i].plant_group for i in _rows}),
+        "hours_affected": int(len(_hrs)),
+        "hour_span": [int(_hrs.min()), int(_hrs.max())] if len(_hrs) else None,
+        "pmax_identical": bool(
+            np.abs(_fa_cold.pmax - _fa_warm.pmax).max() < DIFF_EPS
+        ),
+        "max_availability_delta": float(np.abs(_ac - _aw).max()),
+        "cold_minus_warm_capability_GWh": float(_dmw[_rows].sum() / 1e3),
+        "cold_minus_warm_mean_MW_over_affected_hours": (
+            float(_dmw[_rows][:, _hrs].sum(axis=0).mean()) if len(_hrs) else 0.0
+        ),
+        "affected_plant_pmax_MW": float(
+            sum(
+                _fa_warm.pmax[i]
+                for i in range(len(_g_warm))
+                if int(_g_warm[i].plant_code) in _pl
+            )
+        ),
+        "note": (
+            "incidental finding, reported at full magnitude; NOT this "
+            "session's to fix (solve-affecting core change, own charter)"
+        ),
+    }
+    del _fa_cold, _fa_warm, _ac, _aw, _dmw
 
     for year in YEARS:
         gens, fa_def = build(year)
@@ -645,6 +729,15 @@ def main() -> None:
             "floor_channel_max_TWh": float(np.maximum(d_mg, 0.0).sum() / 1e6),
             "c1_cc_regular_headroom_TWh": head,
             "c1_status": (row or {}).get("status"),
+            "cc_regular_class_min_gen_MW_default": float(mg_def[mask].sum()),
+            "disclosure": (
+                "CC_REGULAR carries NO min_gen floor on this keeper "
+                "(cc_mustrun_per_plant=False; no D-2 row in any year), so the "
+                "floor channel is identically zero and this witness CANNOT "
+                "bite. The arm's real C1 exposure runs through the ECONOMIC "
+                "channel, which phase 0 cannot bound without a solve — see the "
+                "PREREG's named kill."
+            ),
             "status": (
                 "N/A-UNBANDED" if head is None
                 else ("GUARANTEED-FLIP" if lb_twh >= head else "CLEAR")

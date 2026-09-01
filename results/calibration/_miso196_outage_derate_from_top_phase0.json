@@ -1,0 +1,214 @@
+{
+  "session": "miso-196",
+  "keeper": "2026-08-30-miso-191-bexit",
+  "bundle": "results/calibration/miso191_bax_B",
+  "mechanism": "cc_outage_derate_from_top",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "lines": {
+    "W1_live": 0.25,
+    "W2_material": 0.01,
+    "W4": "floor-channel lower bound >= C1 headroom in any BANDED year => refute; an unbanded (SKIPPED) C1 record has no band to blow and reports N/A"
+  },
+  "W1": {
+    "2023": {
+      "n_plants_P": 44,
+      "n_rows_P": 333,
+      "differing_plant_hours_share_year": 0.8380448318804483,
+      "differing_plant_hours_share_S": 0.9631818181818181,
+      "status": "LIVE"
+    },
+    "2024": {
+      "n_plants_P": 45,
+      "n_rows_P": 341,
+      "differing_plant_hours_share_year": 0.8351293759512938,
+      "differing_plant_hours_share_S": 0.9593333333333334,
+      "status": "LIVE"
+    },
+    "2025": {
+      "n_plants_P": 45,
+      "n_rows_P": 341,
+      "differing_plant_hours_share_year": 0.7895890410958905,
+      "differing_plant_hours_share_S": 0.8598888888888889,
+      "status": "LIVE"
+    },
+    "provenance_2025": {
+      "P_capacity_MW": 27747.1,
+      "mean_shortfall_total_MW": 9104.985280435747,
+      "mean_shortfall_statistical_only_MW": 3190.003604211015,
+      "measured_overlay_share": 0.6496420910129854,
+      "note": "reported, NOT gated (frozen rule W1)"
+    }
+  },
+  "W2": {
+    "2023": {
+      "cc_regular_P_pmax_MW": 27420.1,
+      "by_band": {
+        "committed": {
+          "mean_MW_year": 840.4585469710024,
+          "mean_MW_S": 1152.3945805319831
+        },
+        "econ": {
+          "mean_MW_year": -53.78452476052228,
+          "mean_MW_S": -147.29452762251475
+        },
+        "peak": {
+          "mean_MW_year": -786.6740222104801,
+          "mean_MW_S": -1005.1000529094683
+        }
+      },
+      "mean_positive_movement_MW_S": 2347.2197805865053,
+      "positive_movement_share_of_class_pmax_S": 0.08560215975093108,
+      "d_min_gen_TWh_max": 0.0,
+      "d_min_gen_peak_MW": 0.0,
+      "status": "MATERIAL"
+    },
+    "2024": {
+      "cc_regular_P_pmax_MW": 27747.1,
+      "by_band": {
+        "committed": {
+          "mean_MW_year": 813.8186715875554,
+          "mean_MW_S": 1170.6628439845022
+        },
+        "econ": {
+          "mean_MW_year": -9.049919300609675,
+          "mean_MW_S": -115.65016362819362
+        },
+        "peak": {
+          "mean_MW_year": -804.7687522869455,
+          "mean_MW_S": -1055.0126803563078
+        }
+      },
+      "mean_positive_movement_MW_S": 2396.595664582203,
+      "positive_movement_share_of_class_pmax_S": 0.08637283408292049,
+      "d_min_gen_TWh_max": 0.0,
+      "d_min_gen_peak_MW": 0.0,
+      "status": "MATERIAL"
+    },
+    "2025": {
+      "cc_regular_P_pmax_MW": 27747.1,
+      "by_band": {
+        "committed": {
+          "mean_MW_year": 809.4798896334103,
+          "mean_MW_S": 1147.2460131107714
+        },
+        "econ": {
+          "mean_MW_year": 0.28632278506254094,
+          "mean_MW_S": -116.74574778342128
+        },
+        "peak": {
+          "mean_MW_year": -809.7662124184728,
+          "mean_MW_S": -1030.50026532735
+        }
+      },
+      "mean_positive_movement_MW_S": 2365.0939998461404,
+      "positive_movement_share_of_class_pmax_S": 0.08523752031189351,
+      "d_min_gen_TWh_max": 0.0,
+      "d_min_gen_peak_MW": 0.0,
+      "status": "MATERIAL"
+    }
+  },
+  "W4": {
+    "2023": {
+      "binding_hours": 0,
+      "floor_channel_lower_bound_TWh": 0.0,
+      "floor_channel_max_TWh": 0.0,
+      "c1_cc_regular_headroom_TWh": 11.674000000000007,
+      "c1_status": "PASS",
+      "cc_regular_class_min_gen_MW_default": 0.0,
+      "disclosure": "CC_REGULAR carries NO min_gen floor on this keeper (cc_mustrun_per_plant=False; no D-2 row in any year), so the floor channel is identically zero and this witness CANNOT bite. The arm's real C1 exposure runs through the ECONOMIC channel, which phase 0 cannot bound without a solve \u2014 see the PREREG's named kill.",
+      "status": "CLEAR"
+    },
+    "2024": {
+      "binding_hours": 0,
+      "floor_channel_lower_bound_TWh": 0.0,
+      "floor_channel_max_TWh": 0.0,
+      "c1_cc_regular_headroom_TWh": 1.3359999999999843,
+      "c1_status": "PASS",
+      "cc_regular_class_min_gen_MW_default": 0.0,
+      "disclosure": "CC_REGULAR carries NO min_gen floor on this keeper (cc_mustrun_per_plant=False; no D-2 row in any year), so the floor channel is identically zero and this witness CANNOT bite. The arm's real C1 exposure runs through the ECONOMIC channel, which phase 0 cannot bound without a solve \u2014 see the PREREG's named kill.",
+      "status": "CLEAR"
+    },
+    "2025": {
+      "binding_hours": 0,
+      "floor_channel_lower_bound_TWh": 0.0,
+      "floor_channel_max_TWh": 0.0,
+      "c1_cc_regular_headroom_TWh": null,
+      "c1_status": "SKIPPED",
+      "cc_regular_class_min_gen_MW_default": 0.0,
+      "disclosure": "CC_REGULAR carries NO min_gen floor on this keeper (cc_mustrun_per_plant=False; no D-2 row in any year), so the floor channel is identically zero and this witness CANNOT bite. The arm's real C1 exposure runs through the ECONOMIC channel, which phase 0 cannot bound without a solve \u2014 see the PREREG's named kill.",
+      "status": "N/A-UNBANDED"
+    }
+  },
+  "W5": {
+    "2023": {
+      "non_P_rows_moved": 0,
+      "worst_relative_total_MW_error": 6.268398718919178e-16,
+      "status": "CLEAN"
+    },
+    "2024": {
+      "non_P_rows_moved": 0,
+      "worst_relative_total_MW_error": 6.268398718919178e-16,
+      "status": "CLEAN"
+    },
+    "2025": {
+      "non_P_rows_moved": 0,
+      "worst_relative_total_MW_error": 6.689382163750648e-16,
+      "status": "CLEAN"
+    }
+  },
+  "W5_defect": {
+    "what": "_CC_PMAX_RECONCILED_PLANTS (data/fleet/eia860.py:776, written :875) is a last-writer-wins module global; a cached auxiliary load (_iso_plant_capacity -> load_retired_within_window) clobbers it to empty on the FIRST build only, and _basis_aware_suppresses (arrays.py:463) then suppresses the flat summer ambient derate for plants that should KEEP it",
+    "reconciled_set_after_cold_build": [],
+    "reconciled_set_after_warm_build": [
+      1403,
+      55218,
+      55220,
+      55380,
+      55418,
+      55467,
+      55620
+    ],
+    "rows_affected": 58,
+    "plants_affected": [
+      1403,
+      55218,
+      55220,
+      55380,
+      55418,
+      55467,
+      55620
+    ],
+    "classes_affected": [
+      "CC_REGULAR",
+      "CT_PEAKER"
+    ],
+    "hours_affected": 2928,
+    "hour_span": [
+      3624,
+      6551
+    ],
+    "pmax_identical": true,
+    "max_availability_delta": 0.10882841249999997,
+    "cold_minus_warm_capability_GWh": 1544.0856399512854,
+    "cold_minus_warm_mean_MW_over_affected_hours": 527.351652988827,
+    "affected_plant_pmax_MW": 7722.799999999997,
+    "note": "incidental finding, reported at full magnitude; NOT this session's to fix (solve-affecting core change, own charter)"
+  },
+  "W3": {
+    "status": "PASS",
+    "cf_surviving_partial": 0.6166411879798965,
+    "cf_same_units_full": 0.6824807401337294,
+    "ratio": 0.9035290693464377,
+    "f_surviving_capacity_share": 0.6036410502772501,
+    "bar_midpoint": 0.801820525138625,
+    "partial_hours": 208934,
+    "full_hours": 738148,
+    "n_partial_windows": 1264,
+    "n_windows_cc": 1403
+  },
+  "CHARTER_AB": true
+}
