@@ -1,0 +1,1076 @@
+{
+ "probe": "miso197_cc_overdispatch_phase0",
+ "run_id": "2026-08-30-miso-191-bexit",
+ "focus_year": 2024,
+ "w1": {
+  "w1a_zonal_delta_twh": {
+   "MISO-Plains": 2.3215,
+   "MISO-Indiana": 1.9132,
+   "MISO-South": 1.3547,
+   "MISO-Illinois": 1.0374,
+   "MISO-East": -0.4331,
+   "MISO-West": -0.9793
+  },
+  "w1a_top2_share_of_positive": 0.639,
+  "w1a_line": "NOT CONCENTRATED",
+  "w1b_monthly_delta_twh": [
+   0.4916,
+   -0.4084,
+   0.5737,
+   1.1585,
+   1.4521,
+   0.3054,
+   -0.4027,
+   0.4341,
+   0.1832,
+   0.4961,
+   0.3929,
+   0.5379
+  ],
+  "w1b_pos_months": 10,
+  "w1b_max_month_share": 0.2124,
+  "w1b_line": "LEVEL-LIKE",
+  "w1b_top_months": [
+   5,
+   4,
+   3
+  ],
+  "w1c_hod_gap": [
+   0.0386,
+   0.0453,
+   0.0467,
+   0.0388,
+   0.0281,
+   0.0198,
+   0.011,
+   0.0066,
+   0.0004,
+   -0.0063,
+   -0.0074,
+   -0.0106,
+   -0.012,
+   -0.0136,
+   -0.016,
+   -0.0218,
+   -0.0262,
+   -0.0319,
+   -0.0371,
+   -0.0357,
+   -0.0269,
+   -0.0138,
+   0.0014,
+   0.0227
+  ],
+  "w1c_max_abs_gap": 0.0467,
+  "w1c_line": "SHAPE-NEUTRAL"
+ },
+ "w2": {
+  "w2a_rows": [
+   {
+    "key": "1004:CC_REGULAR",
+    "name": "Edwardsport",
+    "zone": "MISO-Indiana",
+    "npl": 813,
+    "m_ann": 3.7505,
+    "c_ann": 1.1557,
+    "delta": 2.5948,
+    "duct": false
+   },
+   {
+    "key": "7985",
+    "name": "Greater Des Moines",
+    "zone": "MISO-Plains",
+    "npl": 576,
+    "m_ann": 3.0326,
+    "c_ann": 1.4411,
+    "delta": 1.5915,
+    "duct": false
+   },
+   {
+    "key": "4040",
+    "name": "Port Washington Generating Station",
+    "zone": "MISO-East",
+    "npl": 1230,
+    "m_ann": 8.7543,
+    "c_ann": 7.7003,
+    "delta": 1.054,
+    "duct": false
+   },
+   {
+    "key": "55334",
+    "name": "Holland Energy Facility",
+    "zone": "MISO-Illinois",
+    "npl": 702,
+    "m_ann": 3.6422,
+    "c_ann": 2.5949,
+    "delta": 1.0473,
+    "duct": true
+   },
+   {
+    "key": "60925",
+    "name": "Montgomery County",
+    "zone": "MISO-South",
+    "npl": 1000,
+    "m_ann": 7.325,
+    "c_ann": 6.338,
+    "delta": 0.987,
+    "duct": false
+   },
+   {
+    "key": "58236",
+    "name": "Marshalltown Generating Station",
+    "zone": "MISO-Plains",
+    "npl": 709,
+    "m_ann": 4.4153,
+    "c_ann": 3.5965,
+    "delta": 0.8188,
+    "duct": false
+   },
+   {
+    "key": "55270",
+    "name": "Jackson Generating Station",
+    "zone": "MISO-East",
+    "npl": 649,
+    "m_ann": 2.8549,
+    "c_ann": 2.1038,
+    "delta": 0.7511,
+    "duct": true
+   },
+   {
+    "key": "60927",
+    "name": "Lake Charles Power",
+    "zone": "MISO-South",
+    "npl": 1000,
+    "m_ann": 6.8087,
+    "c_ann": 6.0886,
+    "delta": 0.7201,
+    "duct": false
+   },
+   {
+    "key": "55380",
+    "name": "Union Power Station",
+    "zone": "MISO-South",
+    "npl": 2428,
+    "m_ann": 11.5845,
+    "c_ann": 10.9392,
+    "delta": 0.6453,
+    "duct": false
+   },
+   {
+    "key": "55221",
+    "name": "Harry L. Oswald",
+    "zone": "MISO-South",
+    "npl": 600,
+    "m_ann": 1.7181,
+    "c_ann": 1.13,
+    "delta": 0.5881,
+    "duct": true
+   },
+   {
+    "key": "56104",
+    "name": "Mankato Energy Center",
+    "zone": "MISO-West",
+    "npl": 741,
+    "m_ann": 3.2864,
+    "c_ann": 2.799,
+    "delta": 0.4874,
+    "duct": true
+   },
+   {
+    "key": "56164",
+    "name": "Faribault Energy Park",
+    "zone": "MISO-West",
+    "npl": 334,
+    "m_ann": 1.6408,
+    "c_ann": 1.1657,
+    "delta": 0.4751,
+    "duct": true
+   },
+   {
+    "key": "8031",
+    "name": "Emery Station",
+    "zone": "MISO-Plains",
+    "npl": 603,
+    "m_ann": 2.908,
+    "c_ann": 2.4331,
+    "delta": 0.4749,
+    "duct": true
+   },
+   {
+    "key": "1007",
+    "name": "Noblesville",
+    "zone": "MISO-Indiana",
+    "npl": 283,
+    "m_ann": 1.5474,
+    "c_ann": 1.1538,
+    "delta": 0.3936,
+    "duct": false
+   },
+   {
+    "key": "55357",
+    "name": "Jack Fusco Energy Center",
+    "zone": "MISO-South",
+    "npl": 676,
+    "m_ann": 3.6324,
+    "c_ann": 3.3786,
+    "delta": 0.2538,
+    "duct": true
+   },
+   {
+    "key": "55011",
+    "name": "Whitewater Generating Station",
+    "zone": "MISO-East",
+    "npl": 284,
+    "m_ann": 0.968,
+    "c_ann": 0.7645,
+    "delta": 0.2035,
+    "duct": true
+   },
+   {
+    "key": "55218:CC_REGULAR",
+    "name": "Hinds Energy Facility",
+    "zone": "MISO-South",
+    "npl": 551,
+    "m_ann": 3.5715,
+    "c_ann": 3.429,
+    "delta": 0.1425,
+    "duct": false
+   },
+   {
+    "key": "55220",
+    "name": "Attala",
+    "zone": "MISO-South",
+    "npl": 551,
+    "m_ann": 3.1216,
+    "c_ann": 3.0175,
+    "delta": 0.1041,
+    "duct": false
+   },
+   {
+    "key": "6061",
+    "name": "R D Morrow",
+    "zone": "MISO-South",
+    "npl": 558,
+    "m_ann": 2.7978,
+    "c_ann": 2.7388,
+    "delta": 0.059,
+    "duct": false
+   },
+   {
+    "key": "58478",
+    "name": "LEPA Unit No. 1",
+    "zone": "MISO-South",
+    "npl": 74,
+    "m_ann": 0.1742,
+    "c_ann": 0.1489,
+    "delta": 0.0253,
+    "duct": false
+   },
+   {
+    "key": "6358:CC_REGULAR",
+    "name": "Hutchinson Plant #2",
+    "zone": "MISO-West",
+    "npl": 65,
+    "m_ann": 0.0097,
+    "c_ann": 0.0017,
+    "delta": 0.008,
+    "duct": false
+   },
+   {
+    "key": "991",
+    "name": "Eagle Valley (IN)",
+    "zone": "MISO-Indiana",
+    "npl": 644,
+    "m_ann": 5.2407,
+    "c_ann": 5.3559,
+    "delta": -0.1152,
+    "duct": false
+   },
+   {
+    "key": "55364",
+    "name": "Sugar Creek Power",
+    "zone": "MISO-Indiana",
+    "npl": 665,
+    "m_ann": 3.916,
+    "c_ann": 4.0425,
+    "delta": -0.1265,
+    "duct": true
+   },
+   {
+    "key": "60926",
+    "name": "St. Charles Power Station (LA)",
+    "zone": "MISO-South",
+    "npl": 1000,
+    "m_ann": 5.0072,
+    "c_ann": 5.3262,
+    "delta": -0.319,
+    "duct": false
+   },
+   {
+    "key": "55358",
+    "name": "Cottonwood Energy Company LP",
+    "zone": "MISO-South",
+    "npl": 1434,
+    "m_ann": 5.5195,
+    "c_ann": 5.9141,
+    "delta": -0.3946,
+    "duct": true
+   },
+   {
+    "key": "55418",
+    "name": "Hot Spring Generating Facility",
+    "zone": "MISO-South",
+    "npl": 715,
+    "m_ann": 1.6868,
+    "c_ann": 2.0835,
+    "delta": -0.3967,
+    "duct": true
+   },
+   {
+    "key": "1927",
+    "name": "Riverside (MN)",
+    "zone": "MISO-West",
+    "npl": 586,
+    "m_ann": 2.3724,
+    "c_ann": 2.8147,
+    "delta": -0.4423,
+    "duct": false
+   },
+   {
+    "key": "63259:CC_REGULAR",
+    "name": "Delta Energy Park",
+    "zone": "MISO-East",
+    "npl": 205,
+    "m_ann": 0.3528,
+    "c_ann": 0.8391,
+    "delta": -0.4863,
+    "duct": false
+   },
+   {
+    "key": "1396",
+    "name": "Coughlin Power Station",
+    "zone": "MISO-South",
+    "npl": 923,
+    "m_ann": 3.9016,
+    "c_ann": 4.4211,
+    "delta": -0.5195,
+    "duct": true
+   },
+   {
+    "key": "55173",
+    "name": "Acadia Energy Center",
+    "zone": "MISO-South",
+    "npl": 1389,
+    "m_ann": 5.8829,
+    "c_ann": 6.6014,
+    "delta": -0.7185,
+    "duct": true
+   },
+   {
+    "key": "2070:CC_REGULAR",
+    "name": "Moselle",
+    "zone": "MISO-South",
+    "npl": 285,
+    "m_ann": 0.9385,
+    "c_ann": 1.6827,
+    "delta": -0.7442,
+    "duct": true
+   },
+   {
+    "key": "55087:CC_REGULAR",
+    "name": "Zeeland Generating Station",
+    "zone": "MISO-East",
+    "npl": 591,
+    "m_ann": 3.2164,
+    "c_ann": 4.015,
+    "delta": -0.7986,
+    "duct": true
+   },
+   {
+    "key": "1904:CC_REGULAR",
+    "name": "Black Dog",
+    "zone": "MISO-West",
+    "npl": 325,
+    "m_ann": 1.0458,
+    "c_ann": 1.8703,
+    "delta": -0.8245,
+    "duct": true
+   },
+   {
+    "key": "55620:CC_REGULAR",
+    "name": "Perryville Power Station",
+    "zone": "MISO-South",
+    "npl": 638,
+    "m_ann": 2.9235,
+    "c_ann": 3.7487,
+    "delta": -0.8252,
+    "duct": true
+   },
+   {
+    "key": "56031",
+    "name": "Fox Energy Center",
+    "zone": "MISO-East",
+    "npl": 619,
+    "m_ann": 3.6988,
+    "c_ann": 4.5545,
+    "delta": -0.8557,
+    "duct": true
+   },
+   {
+    "key": "55467",
+    "name": "Ouachita",
+    "zone": "MISO-South",
+    "npl": 904,
+    "m_ann": 4.5269,
+    "c_ann": 5.4248,
+    "delta": -0.8979,
+    "duct": true
+   },
+   {
+    "key": "1912",
+    "name": "High Bridge",
+    "zone": "MISO-West",
+    "npl": 644,
+    "m_ann": 2.1452,
+    "c_ann": 3.0871,
+    "delta": -0.9419,
+    "duct": true
+   },
+   {
+    "key": "62192",
+    "name": "Blue Water Energy Center",
+    "zone": "MISO-East",
+    "npl": 1267,
+    "m_ann": 6.961,
+    "c_ann": 8.3281,
+    "delta": -1.3671,
+    "duct": true
+   },
+   {
+    "key": "55714",
+    "name": "Magnet Cove",
+    "zone": "MISO-South",
+    "npl": 746,
+    "m_ann": 3.0636,
+    "c_ann": 4.6687,
+    "delta": -1.6051,
+    "duct": true
+   },
+   {
+    "key": "55641",
+    "name": "Riverside Energy Center",
+    "zone": "MISO-East",
+    "npl": 675,
+    "m_ann": 2.5431,
+    "c_ann": 8.4846,
+    "delta": -5.9415,
+    "duct": true
+   }
+  ],
+  "w2a_model_only": [
+   {
+    "key": "52006",
+    "m_ann": 2.1102
+   },
+   {
+    "key": "64020",
+    "m_ann": 5.5296
+   }
+  ],
+  "w2a_bench_only": [],
+  "w2a_pos_total_twh": 13.4252,
+  "w2a_top5_share": 0.5419,
+  "w2a_line": "SPREAD",
+  "w2b_duct_pos_share": 0.3189,
+  "w2b_duct_cap_share": 0.5721,
+  "w2b_line": "NOT DUCT-SPECIFIC",
+  "w2c_model_jump_total": 10.0395,
+  "w2c_actual_jump_total": 3.0199,
+  "w2c_top10": [
+   {
+    "key": "56104",
+    "name": "Mankato Energy Center",
+    "m_jump": 2.9095,
+    "c_jump": 0.0778,
+    "ceiling23": 4.4877,
+    "ceiling24": 5.0023
+   },
+   {
+    "key": "4040",
+    "name": "Port Washington Generating Station",
+    "m_jump": 2.0559,
+    "c_jump": -0.971,
+    "ceiling23": 10.2286,
+    "ceiling24": 9.6751
+   },
+   {
+    "key": "56031",
+    "name": "Fox Energy Center",
+    "m_jump": 1.7292,
+    "c_jump": 0.1161,
+    "ceiling23": 4.2975,
+    "ceiling24": 4.3559
+   },
+   {
+    "key": "55467",
+    "name": "Ouachita",
+    "m_jump": 1.3097,
+    "c_jump": 1.642,
+    "ceiling23": 4.2196,
+    "ceiling24": 5.6991
+   },
+   {
+    "key": "55358",
+    "name": "Cottonwood Energy Company LP",
+    "m_jump": 1.1904,
+    "c_jump": 0.048,
+    "ceiling23": 2.7481,
+    "ceiling24": 3.4994
+   },
+   {
+    "key": "1927",
+    "name": "Riverside (MN)",
+    "m_jump": 1.1705,
+    "c_jump": 0.2908,
+    "ceiling23": 3.0109,
+    "ceiling24": 3.2031
+   },
+   {
+    "key": "55364",
+    "name": "Sugar Creek Power",
+    "m_jump": 1.106,
+    "c_jump": 1.0759,
+    "ceiling23": 3.5693,
+    "ceiling24": 4.3182
+   },
+   {
+    "key": "1912",
+    "name": "High Bridge",
+    "m_jump": 1.0888,
+    "c_jump": 0.5769,
+    "ceiling23": 2.8323,
+    "ceiling24": 3.4008
+   },
+   {
+    "key": "1904:CC_REGULAR",
+    "name": "Black Dog",
+    "m_jump": 1.0446,
+    "c_jump": 0.4483,
+    "ceiling23": 1.737,
+    "ceiling24": 2.0098
+   },
+   {
+    "key": "991",
+    "name": "Eagle Valley (IN)",
+    "m_jump": 0.8101,
+    "c_jump": 0.0803,
+    "ceiling23": 5.5783,
+    "ceiling24": 5.6023
+   }
+  ],
+  "w2d_ceilings": {
+   "2023": {
+    "ceiling_twh": 173.528,
+    "model_twh": 138.143,
+    "actual_twh": 141.817,
+    "headroom_twh": 35.385,
+    "ceiling_limited": false
+   },
+   "2024": {
+    "ceiling_twh": 172.81,
+    "model_twh": 150.1381,
+    "actual_twh": 143.4737,
+    "headroom_twh": 22.672,
+    "ceiling_limited": false
+   },
+   "2025": {
+    "ceiling_twh": 163.305,
+    "model_twh": 135.5032,
+    "actual_twh": 137.9596,
+    "headroom_twh": 27.802,
+    "ceiling_limited": false
+   }
+  },
+  "w2d_actual_over_ceiling": [
+   {
+    "year": 2024,
+    "key": "55641",
+    "name": "Riverside Energy Center",
+    "c_ann": 8.4846,
+    "ceiling": 3.1717,
+    "ratio": 2.675
+   },
+   {
+    "year": 2023,
+    "key": "55641",
+    "name": "Riverside Energy Center",
+    "c_ann": 7.9888,
+    "ceiling": 2.9898,
+    "ratio": 2.672
+   },
+   {
+    "year": 2025,
+    "key": "55641",
+    "name": "Riverside Energy Center",
+    "c_ann": 7.8372,
+    "ceiling": 3.283,
+    "ratio": 2.387
+   },
+   {
+    "year": 2023,
+    "key": "55358",
+    "name": "Cottonwood Energy Company LP",
+    "c_ann": 5.8661,
+    "ceiling": 2.7481,
+    "ratio": 2.135
+   },
+   {
+    "year": 2024,
+    "key": "55358",
+    "name": "Cottonwood Energy Company LP",
+    "c_ann": 5.9141,
+    "ceiling": 3.4994,
+    "ratio": 1.69
+   },
+   {
+    "year": 2024,
+    "key": "2070:CC_REGULAR",
+    "name": "Moselle",
+    "c_ann": 1.6827,
+    "ceiling": 1.3528,
+    "ratio": 1.244
+   },
+   {
+    "year": 2025,
+    "key": "55358",
+    "name": "Cottonwood Energy Company LP",
+    "c_ann": 4.5627,
+    "ceiling": 3.747,
+    "ratio": 1.218
+   },
+   {
+    "year": 2025,
+    "key": "55087:CC_REGULAR",
+    "name": "Zeeland Generating Station",
+    "c_ann": 4.0159,
+    "ceiling": 3.3293,
+    "ratio": 1.206
+   },
+   {
+    "year": 2023,
+    "key": "55714",
+    "name": "Magnet Cove",
+    "c_ann": 3.6907,
+    "ceiling": 3.113,
+    "ratio": 1.186
+   },
+   {
+    "year": 2025,
+    "key": "55714",
+    "name": "Magnet Cove",
+    "c_ann": 3.993,
+    "ceiling": 3.3735,
+    "ratio": 1.184
+   },
+   {
+    "year": 2025,
+    "key": "63259:CC_REGULAR",
+    "name": "Delta Energy Park",
+    "c_ann": 1.3767,
+    "ceiling": 1.1809,
+    "ratio": 1.166
+   },
+   {
+    "year": 2024,
+    "key": "55714",
+    "name": "Magnet Cove",
+    "c_ann": 4.6687,
+    "ceiling": 4.0123,
+    "ratio": 1.164
+   },
+   {
+    "year": 2024,
+    "key": "55620:CC_REGULAR",
+    "name": "Perryville Power Station",
+    "c_ann": 3.7487,
+    "ceiling": 3.2629,
+    "ratio": 1.149
+   },
+   {
+    "year": 2023,
+    "key": "2070:CC_REGULAR",
+    "name": "Moselle",
+    "c_ann": 1.8925,
+    "ceiling": 1.7058,
+    "ratio": 1.109
+   },
+   {
+    "year": 2024,
+    "key": "55087:CC_REGULAR",
+    "name": "Zeeland Generating Station",
+    "c_ann": 4.015,
+    "ceiling": 3.6576,
+    "ratio": 1.098
+   },
+   {
+    "year": 2023,
+    "key": "55620:CC_REGULAR",
+    "name": "Perryville Power Station",
+    "c_ann": 4.1546,
+    "ceiling": 3.8383,
+    "ratio": 1.082
+   },
+   {
+    "year": 2023,
+    "key": "63259:CC_REGULAR",
+    "name": "Delta Energy Park",
+    "c_ann": 0.9224,
+    "ceiling": 0.8553,
+    "ratio": 1.078
+   },
+   {
+    "year": 2025,
+    "key": "55620:CC_REGULAR",
+    "name": "Perryville Power Station",
+    "c_ann": 3.7579,
+    "ceiling": 3.5215,
+    "ratio": 1.067
+   },
+   {
+    "year": 2024,
+    "key": "63259:CC_REGULAR",
+    "name": "Delta Energy Park",
+    "c_ann": 0.8391,
+    "ceiling": 0.7992,
+    "ratio": 1.05
+   },
+   {
+    "year": 2023,
+    "key": "6061",
+    "name": "R D Morrow",
+    "c_ann": 3.4264,
+    "ceiling": 3.2672,
+    "ratio": 1.049
+   },
+   {
+    "year": 2024,
+    "key": "56031",
+    "name": "Fox Energy Center",
+    "c_ann": 4.5545,
+    "ceiling": 4.3559,
+    "ratio": 1.046
+   },
+   {
+    "year": 2025,
+    "key": "2070:CC_REGULAR",
+    "name": "Moselle",
+    "c_ann": 1.5234,
+    "ceiling": 1.4578,
+    "ratio": 1.045
+   },
+   {
+    "year": 2023,
+    "key": "56031",
+    "name": "Fox Energy Center",
+    "c_ann": 4.4384,
+    "ceiling": 4.2975,
+    "ratio": 1.033
+   },
+   {
+    "year": 2024,
+    "key": "62192",
+    "name": "Blue Water Energy Center",
+    "c_ann": 8.3281,
+    "ceiling": 8.1097,
+    "ratio": 1.027
+   },
+   {
+    "year": 2025,
+    "key": "62192",
+    "name": "Blue Water Energy Center",
+    "c_ann": 8.5018,
+    "ceiling": 8.2743,
+    "ratio": 1.027
+   }
+  ],
+  "w2e_mean_availability": {
+   "2023": 0.7224,
+   "2024": 0.711,
+   "2025": 0.6719
+  },
+  "w2e_2024_bump": 0.0138,
+  "w2e_line": "NOT AVAILABILITY"
+ },
+ "w3": {
+  "w3a_by_year": {
+   "2023": {
+    "corr": -0.093,
+    "cancel": 1.0,
+    "cc_delta_mon": [
+     -1.6636,
+     -1.0311,
+     0.123,
+     -0.176,
+     0.873,
+     -0.4554,
+     -0.4317,
+     -0.7017,
+     -0.4384,
+     0.1527,
+     0.2814,
+     -0.213
+    ],
+    "st_delta_mon": [
+     -0.1751,
+     -0.062,
+     -0.31,
+     -0.5519,
+     -0.4761,
+     -0.3573,
+     -0.6373,
+     -0.7897,
+     -0.4062,
+     -0.2602,
+     -0.0759,
+     -0.0795
+    ]
+   },
+   "2024": {
+    "corr": -0.236,
+    "cancel": 0.119,
+    "cc_delta_mon": [
+     0.4916,
+     -0.4084,
+     0.5737,
+     1.1585,
+     1.4521,
+     0.3054,
+     -0.4027,
+     0.4341,
+     0.1832,
+     0.4961,
+     0.3929,
+     0.5379
+    ],
+    "st_delta_mon": [
+     -0.282,
+     -0.3392,
+     0.0745,
+     -0.6411,
+     -1.1053,
+     -0.7929,
+     -0.6906,
+     -0.9658,
+     -0.6932,
+     -0.7525,
+     -0.3649,
+     -0.0686
+    ]
+   },
+   "2025": {
+    "corr": -0.235,
+    "cancel": 0.217,
+    "cc_delta_mon": [
+     -0.173,
+     -0.2195,
+     0.4048,
+     0.3307,
+     0.6499,
+     0.1829,
+     -0.2066,
+     0.0049,
+     1.1072,
+     0.9141,
+     0.2277,
+     0.5661
+    ],
+    "st_delta_mon": [
+     -0.0403,
+     0.0161,
+     0.2239,
+     -0.4256,
+     -0.5097,
+     -0.8809,
+     -1.0731,
+     -0.7492,
+     -0.8017,
+     -0.9158,
+     -0.4115,
+     -0.3223
+    ]
+   }
+  },
+  "w3a_line": "NOT A CLEAN SUBSTITUTION PAIR (2024)",
+  "w3b": {
+   "n_high_st_hours": 2190,
+   "st_p75_mw": 2670.7,
+   "actual_cc_utilization_median": 0.8327,
+   "actual_cc_utilization_p25": 0.7122,
+   "actual_cc_utilization_p75": 0.9465,
+   "model_cc_utilization_median": 0.9083,
+   "line": "ST_GAS RUNS WHILE ACTUAL CC HAS HEADROOM (out-of-merit conduct)"
+  },
+  "w3c": {
+   "classes": {
+    "CC_REGULAR": {
+     "model_hr_pw_median": 7.395,
+     "measured_hr": 7.092,
+     "measured_n_plants": 31
+    },
+    "ST_GAS": {
+     "model_hr_pw_median": 11.272,
+     "measured_hr": 10.19,
+     "measured_n_plants": 11
+    }
+   },
+   "model_st_over_cc": 1.5243,
+   "measured_st_over_cc": 1.4368,
+   "line": "HR INPUTS NOT IMPLICATED"
+  },
+  "w3d_by_year": {
+   "2023": {
+    "class_delta": {
+     "CC_CHP": 0.182,
+     "CC_REGULAR": -3.674,
+     "COAL_BIT": -2.705,
+     "COAL_LIGNITE": -0.628,
+     "COAL_PRB": -0.067,
+     "CT_CHP": -2.82,
+     "CT_PEAKER": -1.812,
+     "OTHER": 0.0,
+     "OTHER_FOSSIL": 0.673,
+     "ST_CHP": -2.964,
+     "ST_GAS": -3.729,
+     "biomass": 0.0,
+     "hydro": -1.204,
+     "nuclear": -0.184,
+     "oil": -0.461,
+     "solar": -0.0,
+     "wind": 4.72
+    },
+    "gas_family_delta": -11.997,
+    "coal_family_delta": -3.4,
+    "import_delta": 2.0,
+    "import_m_a": [
+     39.9127,
+     37.913
+    ],
+    "nonfossil_delta": {
+     "nuclear": -0.827,
+     "hydro": -1.204,
+     "wind": 4.72,
+     "solar": 0.0,
+     "other": 13.968
+    },
+    "import_implicated": true
+   },
+   "2024": {
+    "class_delta": {
+     "CC_CHP": 0.721,
+     "CC_REGULAR": 6.664,
+     "COAL_BIT": -3.785,
+     "COAL_LIGNITE": -0.803,
+     "COAL_PRB": -3.692,
+     "CT_CHP": -2.835,
+     "CT_PEAKER": 1.511,
+     "OTHER": 0.0,
+     "OTHER_FOSSIL": -0.208,
+     "ST_CHP": -2.928,
+     "ST_GAS": -7.553,
+     "biomass": 0.0,
+     "hydro": -1.71,
+     "nuclear": -0.394,
+     "oil": -0.384,
+     "solar": -0.0,
+     "wind": 5.057
+    },
+    "gas_family_delta": -1.585,
+    "coal_family_delta": -8.28,
+    "import_delta": 1.462,
+    "import_m_a": [
+     24.5409,
+     23.0786
+    ],
+    "nonfossil_delta": {
+     "nuclear": -0.781,
+     "hydro": -1.71,
+     "wind": 5.057,
+     "solar": 0.0,
+     "other": 12.785
+    },
+    "import_implicated": false
+   },
+   "2025": {
+    "class_delta": {
+     "CC_CHP": 1.54,
+     "CC_REGULAR": -2.456,
+     "COAL_BIT": -2.053,
+     "COAL_LIGNITE": -0.756,
+     "COAL_PRB": -4.937,
+     "CT_CHP": 0.632,
+     "CT_PEAKER": 0.477,
+     "OTHER": 0.0,
+     "OTHER_FOSSIL": -0.218,
+     "ST_CHP": -2.127,
+     "ST_GAS": -6.548,
+     "biomass": 0.0,
+     "hydro": -0.813,
+     "nuclear": -0.284,
+     "oil": -0.351,
+     "solar": -0.003,
+     "wind": 5.096
+    },
+    "gas_family_delta": -9.114,
+    "coal_family_delta": -7.746,
+    "import_delta": -0.223,
+    "import_m_a": [
+     18.729,
+     18.9519
+    ],
+    "nonfossil_delta": {
+     "nuclear": -1.23,
+     "hydro": -0.813,
+     "wind": 5.096,
+     "solar": -0.003,
+     "other": 5.111
+    },
+    "import_implicated": false
+   }
+  }
+ },
+ "w4": {
+  "2023": {
+   "gas_family_model": 187.313,
+   "gas_family_actual": 199.309,
+   "gas_family_delta": -11.996,
+   "cc_delta": -3.674,
+   "w4a_intra_family": false,
+   "w4b_923sum_vs_930_gas": [
+    216.337,
+    241.242
+   ]
+  },
+  "2024": {
+   "gas_family_model": 205.516,
+   "gas_family_actual": 207.1,
+   "gas_family_delta": -1.584,
+   "cc_delta": 6.664,
+   "w4a_intra_family": true,
+   "w4b_923sum_vs_930_gas": [
+    225.026,
+    252.084
+   ]
+  },
+  "2025": {
+   "gas_family_model": 185.346,
+   "gas_family_actual": 194.461,
+   "gas_family_delta": -9.115,
+   "cc_delta": -2.456,
+   "w4a_intra_family": false,
+   "w4b_923sum_vs_930_gas": [
+    208.063,
+    233.227
+   ]
+  }
+ }
+}
