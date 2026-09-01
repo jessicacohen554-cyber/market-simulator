@@ -9621,3 +9621,116 @@ adjudication and a DO-NOT-REDO; **no verdict moves** and no field was changed.
 Guard passes (`check_mechanism_matrix.py` exit 0), shard passes `node --check`.
 Rule 22: every year read is 2023/2024/2025; NYISO holds no `complete` marker, is
 absent from `final`, and **no marker was requested**.
+
+## 2026-09-01 — nyiso-172 PHASE 0, ZERO SOLVE: the ST_GAS deficit is NOT a price-conditional dropout — its SIGN FLIPS (+40.9 % over-run in 2023), it is a between-year RESPONSE deficit whose growth is 99 % downstate, and its counterpart is a ONE-SIDED-PROVABLE CC availability over-statement reaching 13.8 % of 2025's hours
+
+Phase 0 of the ST_GAS level deficit — model **9.7866 vs 13.7121 TWh** in 2025
+(**−28.63 %**), the largest absolute class error in the failing year and
+nyiso-170 §4's "third thing" (a composition error that is not an hour-local
+swap). Keeper `2026-08-30-nyiso-159-loss-surface` and its NOT-YET determination
+on {C3a-2025 −11.5 %, C3c} **unchanged**; no LP ran, so rule 15 registers
+nothing. Probe `scripts/probes/nyiso172_st_gas_level_deficit.py` →
+`results/calibration/_nyiso172_st_gas_level_deficit.json`, committed with
+`PREREG-nyiso172-st-gas-level-deficit.md` at `8c3e9b6c` **before** either was
+run. Full record:
+`docs/FINDING-nyiso172-st-gas-response-deficit-2026-09-01.md`.
+
+**THE STOP CONDITION FIRES, BY SIGN REVERSAL.** S2 asked whether the deficit is
+price-conditional — whether the model's ST_GAS turn-on threshold sits right of
+the market's in **all three** years, binned on the market's own implied marginal
+heat rate (actual DA price ÷ Transco Z6, exogenous to the model). It does in
+2024/2025 (T50 21.21 vs 20.47; 18.66 vs 17.03) but **not in 2023, where the
+model OVER-runs ST_GAS by +40.9 %, the deficit is POSITIVE in all ten deciles,
+and the threshold is LEFT of the market's** (16.20 vs 17.67). No dropout story
+holds both ends of the training window. **The brief's premise — "exits too
+readily as fuel rises" — is refuted on its own pre-registered gate.**
+
+**WHAT IT ACTUALLY IS: a between-year RESPONSE deficit.** Measured ST_GAS
+**9.75 → 11.67 → 15.14 TWh (+55.3 %)** against model **11.47 → 9.32 → 9.79
+(−14.7 %)**; ST_GAS share of gas measured **0.169 → 0.179 → 0.225** (rising)
+against model **0.183 → 0.138 → 0.141** (falling). Total gas is roughly right in
+both (+16.5 % measured, +10.8 % model): **the market's incremental gas went to
+steam, the model's went to CC.** And **the model is doing correct isolated
+physics** — at ~10.9 heat rate for steam against ~7 for CC the cost gap widens
+from ~$7.6 to ~$18.2/MWh as gas goes $1.95 → $4.66, so a pure-economic stack
+must push steam back. **The missing driver is therefore not a cost-stack
+quantity, which is what rules out the whole offer/startup family rather than
+merely declining it.**
+
+**THE BRIEF'S NAMED TRAP REFUSED TWICE.** `gas_st_startup_cost` is (1) refused
+on **DIRECTION, proven on the code**: `_amortized` returns
+`startup / max(avg_run, 1.0)`, non-negative (`commitment.py:280`), and
+`mc_bid = mc_base + markup` is **P1-only** (`solve.py:308`) so P0 run lengths and
+every seam-injected `min_gen` floor are unchanged — raising a generator's bid
+cost in a pure LP can only weakly **decrease** its output, so arming it
+**deepens** a −28.6 % under-run; and (2) **not groundable** — the only
+direction-safe model/measured instrument is the class aggregate and it is
+**degenerate** (both series on in all 8,760 hours, one run each,
+`model_starts = measured_starts = 1`), while per-unit model dispatch is not in
+the sidecar. The measured side alone is well behaved (29 units, median-of-median
+run **42/61/63 h**, 12–13 starts/unit/yr, **23 of 29** at median run ≥ 24 h in
+2025, so the 24/48 h constants are not absurd for this fleet) but one-sided.
+The price-side reading is refused separately on nyiso-168 §4 (**+55 %** modelled
+vs **+22 %** physical curvature) and rule 1 `[R-STRUCT]`.
+
+**THREE MORE KILLS.** **S3**: not an input defect — required CF **0.176** against
+**1,575 MW** of headroom at the model's own 2025 peak (82.3 % of nameplate).
+**S7**: the population is clean — off-model measured volume **0.63/0.49/0.68 %**,
+one trivial plant (2594), every other non-model steam plant at 0.0000 TWh.
+**S6**: the annual gas-price association does not survive at monthly grain —
+per-year slopes **+0.116 / −0.0695 / −0.0138**, not one sign, so the pooled
+negative is a between-year level artifact and must not be quoted as a mechanism.
+
+**S1, rule 19 `[R-ONE-MECH]`, from committed D-2.** Exactly two mechanisms force
+ST_GAS: `reliability_floor` **16.70/22.67/18.43 %** plus
+`nyiso_gas_commitment_bridge` **0.82/1.46/1.21 %**. Recorded basis caveat: D-2's
+`class_total_twh` (13.6894/11.5181/12.3843) is the LP dispatch frame while the P1
+sidecar reads 11.4707/9.3209/9.7866 — different bases, non-constant ratio, so
+shares are quoted on D-2's own denominator and no cross-basis share is computed.
+Also recorded: the keeper **disables** five downstate `tmax` limbs
+(`NYC:ST_GAS`, `NYC:CT_PEAKER`, `Long_Island:ST_GAS`, `Long_Island:CT_PEAKER`,
+`Capital_Hudson:ST_GAS`) as the bridge's owner-directed **replacement**
+(2026-07-27) — re-arming them alongside it violates rule 19 by construction, and
+a `tmax` window cannot carry an all-twelve-months deficit anyway.
+
+**WHAT IS HANDED FORWARD — the one result with a proof.** 99 % of the measured
+growth is downstate (**NYC +2.354, Capital_Hudson +1.609, Long_Island +1.382,
+Upstate_West +0.004 TWh**), and the counterpart class carries a **one-sided**
+defect: the measured CC fleet's **within-month maximum** is a strict lower bound
+on its availability, and the model's CC exceeds it in **93 / 773 / 1,211 hours =
+1.06 / 8.82 / 13.82 %**, growing monotonically with the ST_GAS error, CC mean gap
+**+224/+495/+636 MW**, while matching the measured CC **peak** to 0.99–1.03× —
+so the miss is **mid-distribution, not at the peak** (2025 p95 8,471 vs 7,918
+MW) and a flat capacity haircut is the wrong instrument. **+636 MW × 8,760 h =
+5.57 TWh** against the 2025 ST_GAS (−3.93) + CT_PEAKER (−1.82) = **−5.75 TWh**.
+Conservative twice over (CAMPD gross vs delivered basis; a monthly max is the
+loosest within-month bound). Concentrated in winter (2025 Jan 432, Feb 343, Dec
+161 h) but present Mar–May too, so **not a winter-only lane**. ST_GAS itself
+violates the same bound in **100 / 0 / 0** hours. A cause is **hypothesised, not
+established**: `UNIT_OUTAGE_MIN_DAYS = 5` (`data/outages.py:239`) makes sub-5-day
+derates invisible to the main overlay. Filed as a rule 14 `[R-ACCURATE]`
+measured-input question. **Instrument limits travelling with it:** model-side
+**zonal** dispatch is not observable from `class_hourly`, and per-unit model
+dispatch is not observable at all.
+
+**Brief guardrails honoured.** No offer-level change proposed; the un-grounded
+`peak` 2.25 neither swept nor touched; no C3c lever opened; none of the eighteen
+closed lines re-tested. All seven inherited probes re-run first and all seven
+reproduce (gain **0.703** / offset **$11.03** / R² **0.910**; deficit **−$6.59 =
+−$2.32 + −$4.27**; reserve ceiling **10.01×**; 169b `False` with ST_GAS −28.6 % /
+all-months-negative `True`; 170 `proceed_to_phase_2: false`; 171 coverage
+**0.253/0.502/0.313**). All three documented traps hit and handled: (a) the
+reserve-slack float churn was **reverted, not committed**; (b) the container had
+**0 DA months** against 21 RT, repaired per the brief (36 DA months staged,
+`nyiso-interface-flows` regenerated), after which DA coverage reads **8760 h/yr**
+— not the degraded 1,464 — and the probe reproduces at **≥99.2 %** off-limit
+congestion; (c) `Etc/GMT+5` throughout.
+
+**Rule 28 (b).** Two cells annotated, **no verdict moves and no field changed**:
+`p1_bidcost_pass` stays **`K`** (the two-pass structure is armed; its
+class-scoped sub-scalar `gas_st_startup_cost` is the thing refused, with a
+DO-NOT-REDO), and `campd_outage_windows` stays **`K`** carrying the one-sided CC
+bound. Guard passes (`check_mechanism_matrix.py` exit 0), shard passes
+`node --check`. Rule 22: every year read is 2023/2024/2025; NYISO's `complete`
+marker was withdrawn 2026-08-30, it is absent from `final`, and **no marker was
+requested**.
