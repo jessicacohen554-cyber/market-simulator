@@ -244,18 +244,16 @@ def build_registry() -> list[ParamPerturbation]:
             citation="NREL ATB (scenarios.py:146-162)",
             category="forecast",
         ),
-        ParamPerturbation(
-            key="renewable_buildout",
-            label="Renewable buildout pace",
-            unit="pace",
-            base_display="mid",
-            low_display="slow",
-            high_display="aggressive",
-            low_overrides={"renewable_buildout_pace": "slow"},
-            high_overrides={"renewable_buildout_pace": "aggressive"},
-            citation="NREL ATB entry (renewable_buildout_pace, scenarios.py:65)",
-            category="forecast",
-        ),
+        # The "Renewable buildout pace" axis stood here until 2026-09-01. It was
+        # a STRUCTURALLY ZERO axis: its driver ``renewable_buildout_pace`` was
+        # consumed by no model code, so its low and high arms solved the same
+        # model and the tornado published a band that could only ever be 0 —
+        # under a citation ("NREL ATB entry … scenarios.py:65") pointing at a
+        # line that never existed. Removed with the field under rule 26
+        # [R-DELETE] (capx-T16; FINDING-capx-t16-driver-2026-09-01.md). VRE
+        # buildout pace is not unrepresented in the model — it is set by the
+        # FF-2A entry growth ladder (``entry_rate_limits``) — so a replacement
+        # axis, if wanted, perturbs THAT mechanism and is a separate decision.
         ParamPerturbation(
             key="renewable_cf",
             label="Renewable capacity-factor scalar",

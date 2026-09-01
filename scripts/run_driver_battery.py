@@ -279,6 +279,15 @@ class Ladder:
     expectations: list[Expectation]
     isos: tuple[str, ...] = ("ERCOT", "PJM")
     note: str = ""
+    # Non-empty => the ladder's PRE-REGISTRATION stands but it has no working
+    # instrument, so it solves NOTHING and every expectation is emitted SKIP +
+    # ``vacuous`` with this string as the reason. The pre-registration stays
+    # VISIBLE in the battery output (deleting the ladder would hide it) and the
+    # FC-6 scorer reads the gate-row SKIPs as CAVEAT, never PASS — which is the
+    # truthful reading of "the model was never asked the question". Clearing
+    # this string is a PRE-REGISTRATION act, not a code change: it requires a
+    # plan §2 instrument decision (see T1.6 below).
+    out_of_service: str = ""
 
 
 def build_ladders() -> list[Ladder]:
@@ -444,20 +453,57 @@ def build_ladders() -> list[Ladder]:
     )
 
     # T1.6 — RPS/ACP. On an RPS-bearing ISO (NEISO), sweep the VRE fleet from
-    # short (slow buildout) to long (aggressive): the REC dual is ≤ the ACP
-    # ceiling always, and falls toward 0 as VRE builds through the target. The
-    # RPS target itself is not config-overridable (it comes from
-    # STATE_RPS_FLOORS), so the lever is the physical VRE supply — exactly what
-    # the plan specifies ("VRE fleet held short vs long").
+    # short to long: the REC dual is ≤ the ACP ceiling always, and falls toward
+    # 0 as VRE builds through the target. The RPS target itself is not
+    # config-overridable (it comes from STATE_RPS_FLOORS), so the lever must be
+    # the physical VRE supply — what the plan §2 line pre-registers ("VRE fleet
+    # held short vs long").
+    #
+    # OUT OF SERVICE since 2026-09-01 (lane capx-T16). Its implementing lever
+    # was ``renewable_buildout_pace``, which capx-D21 MEASURED to be consumed by
+    # no model code: the two rungs below solved metric-identically across all 18
+    # extracted values on two independent data vintages, so the ladder solved
+    # the same model twice under different labels and both gate rows "passed" on
+    # constant series (FINDING-capx-d21-fc6-battery-2026-08-31.md §5.1). The
+    # field was DELETED under rule 26 [R-DELETE] rather than wired, because the
+    # phenomenon already has a mechanism — the FF-2A entry growth ladder
+    # (``entry_rate_limits``), whose measured EIA-860 throughput seed covers
+    # wind and solar — so a second slow/mid/aggressive channel onto the same
+    # constraint would be a rule-19 [R-ONE-MECH] duplicate
+    # (FINDING-capx-t16-driver-2026-09-01.md).
+    #
+    # The RUNG LIST IS EMPTY on purpose: the two retired rungs were
+    # ``{"renewable_buildout_pace": "slow"}`` and ``{... : "aggressive"}``, and
+    # leaving a dead override key in the registry would be a landmine the day
+    # someone clears ``out_of_service``. Their record lives here and in the D21
+    # finding; the EXPECTATIONS below are untouched, because it is the
+    # instrument that failed, not the claim.
+    # Choosing a replacement lever is a plan §2 instrument decision and needs
+    # OWNER SIGN-OFF — it is not a code edit. The finding's §6 recommends
+    # ``entry_rate_limits`` (True = throughput-limited/short vs False =
+    # uncapped/long: real, cited, consumed, owner-armed, and — unlike
+    # ``eac_price_wind`` — NOT confounded with the REC dual this ladder
+    # measures, since attribute revenue is ``max(eac, rps_shadow)``).
+    #
+    # PRE-REGISTERED BEFORE ANY REPLACEMENT RUN (capx-T16, so the result cannot
+    # be chosen after the fact): in BOTH D21 rungs the REC dual sits pinned AT
+    # the $50 ACP ceiling in every year (rps_dual_over_acp = 1.0) with 33.0 GW
+    # of VRE already built. A correctly-wired lever may therefore STILL not move
+    # the 2050 dual. If it does not, that is a REAL finding about the RPS/ACP
+    # stack (the dual escaping to its cap), not a wiring failure, and it is
+    # reported as the outcome — never tuned until it moves (rules 1/11/14).
     ladders.append(
         Ladder(
             test_id="T1.6",
             driver="RPS/ACP vs VRE supply (short→long)",
             isos=("NEISO",),
-            rungs=[
-                Rung("vre_short", {"renewable_buildout_pace": "slow"}),
-                Rung("vre_long", {"renewable_buildout_pace": "aggressive"}),
-            ],
+            out_of_service=(
+                "pre-registered driver renewable_buildout_pace was consumed by "
+                "no model code (capx-D21 §5.1, measured) and was deleted under "
+                "rule 26 [R-DELETE] by capx-T16; a replacement lever is a "
+                "plan §2 instrument decision pending owner sign-off"
+            ),
+            rungs=[],
             expectations=[
                 Expectation(
                     "T1.6a",
@@ -1182,6 +1228,27 @@ def run_ladder(
     evaluate_fn=None,
 ) -> dict:
     """Solve every rung of one ladder for one ISO and score its expectations."""
+    # An OUT-OF-SERVICE ladder (no working instrument — see Ladder.out_of_service)
+    # solves nothing: its expectations are emitted SKIP + ``vacuous`` so the
+    # pre-registration stays on the record and FC-6 reads it as CAVEAT rather
+    # than as a PASS the model never earned.
+    if ladder.out_of_service:
+        return {
+            "test_id": ladder.test_id,
+            "iso": iso,
+            "driver": ladder.driver,
+            "note": ladder.note,
+            "out_of_service": ladder.out_of_service,
+            "rungs": [],
+            "expectations": [
+                dict(
+                    _row(e, SKIP, f"LADDER OUT OF SERVICE — {ladder.out_of_service}"),
+                    vacuous=True,
+                )
+                for e in _expectations_for(ladder, iso)
+            ],
+        }
+
     rungs = ladder.rungs if max_rungs is None else ladder.rungs[:max_rungs]
 
     # First pass solves only the STATIC rungs — anchor-dependent rungs (T1.2's

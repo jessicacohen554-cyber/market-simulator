@@ -689,12 +689,19 @@ sweep:
 ```
 
 ```yaml
-# sweep_demand_buildout.yaml
+# sweep_demand_storage.yaml
 sweep:
   demand_growth_rate: [0.005, 0.015, 0.03]
-  renewable_buildout_pace: [slow, mid, aggressive]
+  storage_deployment: [low, mid, high]
 # 9 more scenarios, orthogonal to the gas×carbon sweep.
 ```
+
+(This example read `renewable_buildout_pace: [slow, mid, aggressive]` until
+2026-09-01. That field was consumed by no model code — it produced nine
+distinct cache keys over three distinct scenarios — and was deleted under rule
+26 `[R-DELETE]`; the illustration now uses a field that actually reaches the
+model. VRE buildout pace is governed by `entry_rate_limits`, not by a scenario
+ladder. See `docs/handoffs/FINDING-capx-t16-driver-2026-09-01.md`.)
 
 Sweeps can be composed (run multiple sweep files) or run independently. The runner deduplicates by cache key — if a scenario exists from a previous sweep, it’s skipped.
 

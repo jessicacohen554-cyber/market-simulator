@@ -28,8 +28,17 @@ class TestRegistry(unittest.TestCase):
     """Every registered band must produce a valid ScenarioConfig."""
 
     def test_registry_nonempty_and_has_forecast_and_dispatch(self):
+        """The registry is populated and spans both categories.
+
+        The floor was 15 until 2026-09-01, when the "Renewable buildout pace"
+        axis was removed with its driver ``renewable_buildout_pace`` (consumed
+        by no model code, so the axis published a band that could only ever be
+        zero — capx-D21 §5.1 / capx-T16, rule 26 [R-DELETE]). This is a
+        coverage smoke test, not a gate: 14 is the count that remains after
+        deleting an axis that measured nothing, NOT a widened threshold.
+        """
         reg = tornado.build_registry()
-        self.assertGreaterEqual(len(reg), 15)
+        self.assertGreaterEqual(len(reg), 14)
         cats = {p.category for p in reg}
         self.assertIn("forecast", cats)
         self.assertIn("dispatch", cats)
