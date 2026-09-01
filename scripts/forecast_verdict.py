@@ -268,6 +268,21 @@ EXPECTED_GATE_KEYS = ("capacity_market_clearing",)
 # 24 requires. Structural presence check, not a tuned value.
 CONFIG_FULL_SURFACE_MIN_KEYS = 20
 
+# An FC-7 input (``run_config.json`` / ``dof_ledger.json``) carrying this as its
+# top-level ``provenance`` value was RECONSTRUCTED after the fact from committed
+# evidence — it is NOT the artifact the solve itself wrote. Director ruling r#22
+# §0s.5 (docs/handoffs/capx-director-ledger-2026-08.md): such an artifact may
+# reach CAVEAT and NEVER PASS, because adopting it as an original would assert
+# exactly the provenance FC-7 exists to measure. The only route to a clean FC-7
+# on a reconstructed leg is a genuine re-run.
+RECONSTRUCTION_PROVENANCE = "reconstruction"
+# The named reason a reconstruction-capped row carries, per row, so the board
+# reads WHY the row is a caveat instead of a bare downgrade.
+RECONSTRUCTION_REASONS = {
+    "run_config": "run_config is a post-hoc reconstruction",
+    "dof ledger": "DOF ledger is derived from a post-hoc reconstruction",
+}
+
 # §5 golden-attestation checklist assertion keys (rubric §5). The scorer checks
 # presence + internal consistency; the truth of each assertion is the attesting
 # session's auditable responsibility (the backcast C6 posture).
@@ -375,6 +390,44 @@ def _row(
         "gating": gating,
         "values": values or {},
     }
+
+
+def _is_reconstruction(artifact: object) -> bool:
+    """True when an FC-7 input declares itself a post-hoc RECONSTRUCTION.
+
+    Reads the artifact's top-level ``provenance`` **string** label
+    (:data:`RECONSTRUCTION_PROVENANCE`). Total by design: a provenance *stamp*
+    (the ``forecast-provenance/v1`` dict a scored artifact carries under the
+    same key) is not a reconstruction claim and never trips this, and any other
+    shape reads ``False`` — the label must be asserted explicitly, never
+    inferred.
+    """
+    return (
+        isinstance(artifact, dict)
+        and artifact.get(_fp.PROVENANCE_KEY) == RECONSTRUCTION_PROVENANCE
+    )
+
+
+def _cap_reconstruction(row: dict, artifact: object) -> dict:
+    """Cap an FC-7 row at CAVEAT when the artifact behind it is a reconstruction.
+
+    A **ceiling, not a floor** (director ruling r#22 §0s.5): the label can only
+    make a row worse. A PASS becomes CAVEAT; a row that already FAILs a real
+    check (run_config records no mode, a malformed ledger) keeps its FAIL. Every
+    capped row is prefixed with :data:`RECONSTRUCTION_REASONS`, so the named
+    reason travels with the status onto the board. An unlabelled artifact is
+    returned untouched, which is what makes this strictly additive for every
+    already-committed record.
+    """
+    if not _is_reconstruction(artifact):
+        return row
+    reason = RECONSTRUCTION_REASONS.get(
+        row["row"], RECONSTRUCTION_REASONS["run_config"]
+    )
+    if row["status"] == PASS:
+        row["status"] = CAVEAT
+    row["detail"] = f"{reason} — {row['detail']}"
+    return row
 
 
 def _agg_rows(rows: list[dict]) -> str:
@@ -1477,6 +1530,10 @@ def score_fc7(art: dict, tier: str, iso: str) -> list[dict]:
                     f"mode={mode}; {len(sc)} config keys; {gate_note}",
                 )
             )
+    # A run_config labelled ``provenance: "reconstruction"`` is capped at CAVEAT
+    # here — never PASS (director ruling r#22 §0s.5). Applied to whichever row 1
+    # the branches above produced, so the cap cannot be routed around.
+    rows[-1] = _cap_reconstruction(rows[-1], rc)
 
     # Row 2 — no backcast overlay armed in a forecast-mode run.
     if mode == "forecast":
@@ -1539,12 +1596,21 @@ def _score_dof_ledger(art: dict, tier: str) -> dict:
     scores the SAME status as an absent ledger — enumerating a parameter is not
     identifying it. What changes is the detail: the CAVEAT names the awaiting
     entries instead of reporting a bare absence.
+
+    A ledger built from a RECONSTRUCTED run_config is capped at CAVEAT the same
+    way row 1 is (:func:`_cap_reconstruction`) — a fully-identified ledger read
+    off an artifact the solve never wrote cannot certify identification either.
     """
     ledger = art.get("dof_ledger")
     if ledger is None:
         att = art.get("attestation")
         if isinstance(att, dict) and isinstance(att.get("free_parameters"), dict):
             ledger = att["free_parameters"]
+    return _cap_reconstruction(_dof_ledger_row(ledger, tier), ledger)
+
+
+def _dof_ledger_row(ledger: object, tier: str) -> dict:
+    """Score one resolved DOF ledger (see :func:`_score_dof_ledger`)."""
     if not ledger:
         status = FAIL if tier == "t3" else CAVEAT
         return _row(

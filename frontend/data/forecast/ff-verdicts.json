@@ -297,23 +297,29 @@
     "status": "n/a"
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
     "applicability": "runtime",
@@ -329,21 +335,25 @@
     "status": "SKIPPED"
    }
   },
-  "caveats": [],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
   "determination": "HOLD",
   "iso": "ERCOT",
-  "notes": [],
+  "notes": [
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/ercot-2023-2027-crossover-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c191aa",
+   "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
-   "solved_at_sha": "941f4983"
+   "solved_at_sha": "941f4983",
+   "scored_at_date": "2026-09-01T17:36:52Z"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
-   "FC-4 crossover dispatch skill (T1-X) FAIL",
-   "FC-7 provenance & DOF FAIL"
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
   ],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
@@ -1085,23 +1095,29 @@
     "status": "n/a"
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
     "applicability": "runtime",
@@ -1117,20 +1133,24 @@
     "status": "SKIPPED"
    }
   },
-  "caveats": [],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
   "determination": "HOLD",
   "iso": "MISO",
-  "notes": [],
+  "notes": [
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/miso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c191aa",
+   "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
-   "solved_at_sha": "941f4983"
+   "solved_at_sha": "941f4983",
+   "scored_at_date": "2026-09-01T17:36:52Z"
   },
   "reasons": [
-   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
-   "FC-7 provenance & DOF FAIL"
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
@@ -1234,23 +1254,29 @@
     "status": "n/a"
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 678 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 2 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
     "applicability": "runtime",
@@ -1266,22 +1292,24 @@
     "status": "SKIPPED"
    }
   },
-  "caveats": [],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
   "determination": "HOLD",
   "iso": "MISO",
   "notes": [
-   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221263.3/\u221258.9/\u221275.5 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 97\u2013117 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-4 bundle was never committed (results/ffr3a4 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same MISO crossover question is `miso-t1x-ffr2a` (co2 +1.2/\u22121.8/+13.4 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison)."
+   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221263.3/\u221258.9/\u221275.5 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 97\u2013117 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-4 bundle was never committed (results/ffr3a4 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same MISO crossover question is `miso-t1x-ffr2a` (co2 +1.2/\u22121.8/+13.4 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison).",
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/miso-2023-2027-crossover-ffr3a4/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at 6fbd3f28eb9a @ 2026-08-04T08:00:24Z -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
    "cache_epoch": null,
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-08-04T08:00:24Z",
-   "scored_at_sha": "6fbd3f28eb9a"
+   "scored_at_date": "2026-09-01T17:36:52Z",
+   "scored_at_sha": "663605c58e0a"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
-   "FC-4 crossover dispatch skill (T1-X) FAIL",
-   "FC-7 provenance & DOF FAIL"
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
   ],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
@@ -2405,23 +2433,29 @@
     "status": "n/a"
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
     "applicability": "runtime",
@@ -2437,20 +2471,24 @@
     "status": "SKIPPED"
    }
   },
-  "caveats": [],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
   "determination": "HOLD",
   "iso": "NEISO",
-  "notes": [],
+  "notes": [
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/neiso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c191aa",
+   "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
-   "solved_at_sha": "941f4983"
+   "solved_at_sha": "941f4983",
+   "scored_at_date": "2026-09-01T17:36:52Z"
   },
   "reasons": [
-   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
-   "FC-7 provenance & DOF FAIL"
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
@@ -4396,23 +4434,29 @@
     "status": "n/a"
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
     "applicability": "runtime",
@@ -4428,20 +4472,24 @@
     "status": "SKIPPED"
    }
   },
-  "caveats": [],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
   "determination": "HOLD",
   "iso": "NYISO",
-  "notes": [],
+  "notes": [
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/nyiso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c191aa",
+   "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
-   "solved_at_sha": "941f4983"
+   "solved_at_sha": "941f4983",
+   "scored_at_date": "2026-09-01T17:36:52Z"
   },
   "reasons": [
-   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
-   "FC-7 provenance & DOF FAIL"
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
@@ -5291,23 +5339,29 @@
     "status": "n/a"
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
     "applicability": "runtime",
@@ -5323,20 +5377,24 @@
     "status": "SKIPPED"
    }
   },
-  "caveats": [],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
   "determination": "HOLD",
   "iso": "PJM",
-  "notes": [],
+  "notes": [
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/pjm-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c191aa",
+   "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
-   "solved_at_sha": "941f4983"
+   "solved_at_sha": "941f4983",
+   "scored_at_date": "2026-09-01T17:36:52Z"
   },
   "reasons": [
-   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
-   "FC-7 provenance & DOF FAIL"
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
@@ -5440,23 +5498,29 @@
     "status": "n/a"
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
     "applicability": "runtime",
@@ -5472,23 +5536,26 @@
     "status": "SKIPPED"
    }
   },
-  "caveats": [],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
   "determination": "HOLD",
   "iso": "PJM",
   "notes": [
-   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221245.1/\u221240.4/\u221254.2 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 75\u201398 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-3 bundle was never committed (results/ffr3a3 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same PJM crossover question is `pjm-t1x-ffr2a` (co2 \u22127.4/\u221210.3/\u22121.1 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison)."
+   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221245.1/\u221240.4/\u221254.2 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 75\u201398 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-3 bundle was never committed (results/ffr3a3 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same PJM crossover question is `pjm-t1x-ffr2a` (co2 \u22127.4/\u221210.3/\u22121.1 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison).",
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/pjm-2023-2027-crossover-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
-   "scored_at_sha": "e2a422c191aa",
+   "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
-   "solved_at_sha": "941f4983"
+   "solved_at_sha": "941f4983",
+   "scored_at_date": "2026-09-01T17:36:52Z"
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
-   "FC-4 crossover dispatch skill (T1-X) FAIL",
-   "FC-7 provenance & DOF FAIL"
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
   ],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
