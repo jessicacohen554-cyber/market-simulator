@@ -177,3 +177,50 @@ a sign error" alarm is REFUTED** (D23). The model's sign is right in both legs; 
 `carbon_price` REPLACES the resolved signal and NEISO's base already carries the RGGI projection,
 so the `carbon25` arm CUT the carbon price in every year. Do not carry the alarm forward.
 In flight after r#24: D26 · D27 · D28, plus the owner's miso-196 and caiso-231.
+
+**r#25 DELTA (2026-09-01, main `1658d8aa`) — append, not a rewrite. Full record: ledger §0v.**
+
+**TWO DIRECTORS RAN ON ONE PROGRAM.** The r#23 container recovered its credentials, landed its
+held ledger (PR #4503) and ran the r#24 sitting (PR #4505) — while the owner separately opened a
+second director session from the stale r#23-era handoff. Grade-by-content caught it before any
+collision. **STANDING PROTOCOL, now binding on every successor: on session open, compare your
+handoff's newest-entry claim against the ledger's actual top §0-entry on main BEFORE grading
+anything.** A handoff is a snapshot that can be a full generation stale; the ledger always wins;
+re-derive your sitting number from the ledger's top entry and grade only the delta it missed.
+The live director line is `claude/capx-director-refresh-0z0e0f` unless the owner says otherwise.
+
+**GRADED AT r#25 (the delta r#24 could not see):** **nyiso-167 LANDED** (PR #4504) — NYISO's
+C3a-2025 re-attributed to a YEAR-INVARIANT price-response gain (model = 0.703 × actual + $11.03,
+R² 0.910, all 36 training months; C3a passes only for an annual actual mean inside
+$27.8–56.0/MWh and 2025 is 19 % outside). The gain is CROSS-ISO: ERCOT 0.347 / MISO 0.500 /
+PJM 0.668 / NYISO 0.703 / CAISO 0.837 / NEISO 0.986 — five of six keepers carry a bounded C3a
+pass window in price level, NEISO is the in-repo proof it is closable, and MISO's
+C3a-2025-only NOT-YET sits inside the same object. Measurement only — no verdict transfers
+(rule 25). Carry it as a stated attribution limit on any price-level-sensitive forecast leg.
+Also **PR #4485** (nyiso-165 verification + reference-side all-ISO cascade scan) discharged the
+r#23 OWED item.
+
+**FOUR OWNER RULINGS (Q20–Q23, ledger §3):** **Q20** cache-key repair = (c′)+(b′-1) zero-cost
+pair, no retroactive re-key → lane D24-R (Opus) · **Q21** MISO D-4 posture = (iii) CONTINUE on
+the named candidates (owner's backcast lane executes, miso-197+ after miso-196 lands) ·
+**Q22** nyiso-161 winter-face waiver = OPTION A, no amendment — the card RETIRES
+answered-by-measurement (its own eligibility test (a) measured NO); NOT-YET stands; no caveat
+class created · **Q23** FC-5 external sources = **NONE FUNDED** ("I'm not getting more data") —
+all five closed, FC-5's CAVEAT is the steady state, **DO NOT RE-PRESENT absent a new owner act.**
+
+**IN FLIGHT after r#25:** D26 (FC-6 P1 arm repair, Fable) · D27 (MISO T1-H HEAD re-measure,
+Opus) · D28 (long-position capacity revenue Phase-0, Fable) · **D24-R** (cache-key repair
+execution, Opus, NEW) · **D29** (trajectory reporting grain, Opus, NEW) · plus the owner's
+miso-196 (A/B arms pending) and caiso-231 (precommit filed) — watch only. **The D26/D27/D28
+charters are now COMMITTED** (pack §D26/§D27/§D28, reconstructions labeled as such — r#24 had
+issued them chat-only; relaunches restart from the pack). **QUEUED:** D6 (held behind
+D27 + D28) · **D30 NEW-named**: the D25 §6.4 45Q conversion-pace question (held behind D27,
+charter with D28's Phase-0 in hand) · D20 (decision taken, unchanged).
+
+**OWNER-TIER OPEN (both deliberately not re-presented until D26 lands):** (a) the golden
+re-solve / second §2.1b campaign — Q16's premise is discharged, and D25 §6.3 measured the
+zero-storage-entry divergence as the corridor's largest cross-ISO family (−56 % to −96 %, four
+ISOs — the R-A arms would move exactly those rows); decide AFTER the P1 instrument repair.
+(b) whether neiso-t3's FC-6 FAIL survives D26's re-score — the affected lane's re-verification
+decides publication. **CLOSED at r#25:** the D24 repair choice, the miso-192 posture, the
+nyiso-161 card, and FC-5 source funding (Q20–Q23 — do not re-present any of them).
