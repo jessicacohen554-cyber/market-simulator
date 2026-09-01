@@ -13,6 +13,7 @@ from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
+import yaml
 
 from market_sim import runner
 from market_sim.pipeline import commitment as pipeline_commitment
@@ -195,6 +196,64 @@ class TestRunScenarioIso(RunnerTestBase):
             key = runner.run_scenario_iso(config, "MISO")
 
         self.assertTrue(cache.is_cached("MISO", key, 2026))
+
+
+class TestCachedBundleConfigCheck(RunnerTestBase):
+    """A bundle whose stored config disagrees is REFUSED and re-solved.
+
+    capx D24 option (c′), owner ruling Q20: the cache key drops every registered
+    field at its default, so a bundle sitting at this run's key is not proof it
+    was solved under this run's config -- D24 §4 demonstrated two committed pairs
+    at one key with different postures. The seam in ``run_scenario_iso`` compares
+    the stored ``config.yaml`` before serving, and treats a disagreement as a
+    logged MISS, never an exception.
+    """
+
+    def _solve_once(self, config):
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
+        ):
+            return runner.run_scenario_iso(config, "ERCOT")
+
+    def test_a_disagreeing_stored_config_forces_a_re_solve(self):
+        config = ScenarioConfig(iso="ERCOT", start_year=2026, end_year=2026)
+        key = self._solve_once(config)
+        self.assertEqual(_FakeDispatchModel.n_solves, 2)  # P0 + P1, one year
+
+        # Simulate the collision: the bundle on disk was solved under the
+        # OPPOSITE storage-entry posture, which the key cannot see because both
+        # runs dropped the field at whatever was the default on their own day.
+        config_path = cache.get_config_path("ERCOT", key, 2026)
+        stored = yaml.safe_load(config_path.read_text())
+        stored["storage_entry_availability_gate"] = not stored[
+            "storage_entry_availability_gate"
+        ]
+        config_path.write_text(yaml.safe_dump(stored, sort_keys=True))
+
+        with self.assertLogs("market_sim.runner", level="WARNING") as logged:
+            self._solve_once(config)
+        # Re-solved rather than served, and the log names the field.
+        self.assertEqual(_FakeDispatchModel.n_solves, 4)
+        self.assertTrue(
+            any("storage_entry_availability_gate" in line for line in logged.output),
+            msg=logged.output,
+        )
+        # save_result rewrote the sidecar, so the bundle is servable again.
+        self._solve_once(config)
+        self.assertEqual(_FakeDispatchModel.n_solves, 4)
+
+    def test_an_agreeing_stored_config_is_still_served(self):
+        # The other half: the check must not turn every hit into a miss.
+        config = ScenarioConfig(iso="ERCOT", start_year=2026, end_year=2026)
+        self._solve_once(config)
+        self.assertEqual(_FakeDispatchModel.n_solves, 2)
+        self._solve_once(config)
+        self.assertEqual(_FakeDispatchModel.n_solves, 2)
 
 
 class TestKnownYearPeakForesight(RunnerTestBase):

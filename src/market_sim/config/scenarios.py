@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import warnings
-from dataclasses import asdict, dataclass, field, fields, replace
+from dataclasses import MISSING, asdict, dataclass, field, fields, replace
 from pathlib import Path
 
 import yaml
@@ -1581,6 +1582,245 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "storage_entry_availability_gate": "True",
     "storage_entry_cost_normalized_rank": "True",
 }
+
+
+# --------------------------------------------------------------------------- #
+# The drop comparison reads the DECLARED default, not the live one (capx D24-R).
+# --------------------------------------------------------------------------- #
+# Owner ruling Q20 (director register r#25) on
+# ``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §7: land
+# option **(b′-1)** — the "deeper fix" the ledger comment above already names as
+# its open follow-up (``docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md``
+# §4). ``cache_key()`` no longer drops a registered field at
+# ``getattr(ScenarioConfig(), name)``, the LIVE default that an owner flip
+# moves; it drops it at the value DECLARED for the field above, which is FROZEN.
+#
+# WHAT THAT BUYS, exactly. After a flip, a config sitting at the NEW default no
+# longer equals the frozen declaration, so it ENTERS the hash and takes its own
+# key — the post-flip run can no longer be served the pre-flip bundle (D24 §4.1,
+# §4.2, the two demonstrated collisions). The useful inverse is unchanged: an
+# EXPLICIT old value still equals the declaration and is still dropped, so a
+# control arm pinned to the superseded posture keeps the pre-flip key, which is
+# correct — same posture, same bundle.
+#
+# WHY IT COSTS NOTHING TO LAND. Check 3 of
+# ``scripts/check_cache_key_registration.py`` already forces declared == live for
+# every registered field, so re-baselining the comparison onto the declarations
+# is a measured NO-OP: 0 forecast and 0 backcast keys move (D24 §7 (b′-1);
+# re-measured at execution over all 170 committed ``run_config.json`` by
+# ``scripts/probes/capxd24r_cache_key_no_op_check.py`` — 0/170 moved, record at
+# ``docs/handoffs/capxd24r-cache-key-no-op-record.json``). This is (b′-1) and
+# NOT (b′-2): the comparison is re-baselined at TODAY's declarations, never at
+# each field's registration-time default. That variant moves 98/99 forecast and
+# 63/63 backcast keys and was NOT licensed by the ruling.
+#
+# APPEND-ONLY. ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`` is now an APPEND-ONLY
+# record: a newly registered field adds a line; an existing line is NEVER edited
+# while the field lives (a field DELETED under rule 26 ``[R-DELETE]`` drops its
+# line together with its registration, and its value survives in
+# ``_CACHE_KEY_RETIRED_FIELDS``). A future default flip is declared by APPENDING
+# to ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` below — which is what guard
+# check 3 then compares the live default against, so a flip still cannot land
+# silently — leaving the frozen drop value it must not disturb exactly where it
+# is. Enforced by check 4 of the same guard (HEAD against the PR base) and by
+# ``tests/unit/config/test_cache_key_declared_default_drop.py``.
+_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
+    # (ISO date, field name, the field's LIVE default source text AFTER the
+    # flip). APPEND ONLY: one line per flip, newest last, and never edit either
+    # this line or the field's frozen entry above. Empty at the 2026-09-01
+    # re-baseline — every registered field's live default IS its declaration,
+    # which is precisely what makes the re-baseline free.
+)
+
+# The default each field carried WHEN IT WAS REGISTERED, for the seven fields
+# whose default has moved since — the ONLY seven, measured commit-by-commit
+# across every main-line ``scenarios.py`` blob in the window that strictly
+# contains every committed forecast run (2026-07-26 -> 2026-09-01, capx D24 §2's
+# four flip events). For every OTHER registered field the registration-time
+# default IS its frozen entry above, so this table is a backfill and not a
+# parallel ledger.
+#
+# WHAT IT IS FOR, and what it is NOT for. It is read ONLY by
+# :func:`registration_time_default`, i.e. by the cached-bundle config check
+# (option (c′)) when deciding whether a field ABSENT from a stored config makes
+# that bundle unservable. A stored config that predates a field was solved with
+# the field's behaviour at its "did not exist" state, which is the value the
+# field was registered as byte-identical AT — not whatever the default has since
+# become. Without this table the §4.2 collision form (absent vs ARMED default:
+# NEITHER side's value is in the key, and the pair looks like ordinary schema
+# growth) would be invisible to the check, since both R-A fields are declared at
+# their post-arming ``True`` today.
+#
+# It touches NO cache key: ``cache_key`` drops at the FROZEN DECLARATION
+# (``cache_key_drop_defaults``), never at these values. Keying on them is option
+# (b′-2), which moves 98/99 forecast and 63/63 backcast keys and was not
+# licensed by ruling Q20.
+#
+# It does not grow. A flip from here on appends to
+# ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` and leaves the frozen declaration
+# alone, so the frozen declaration REMAINS the registration-time value and needs
+# no entry here. Its one limitation, stated rather than buried: a field
+# registered before 2026-07-26 whose default moved before that date would be
+# missing from it, and D24's measurement did not reach behind that boundary.
+_CACHE_KEY_REGISTRATION_TIME_DEFAULTS: dict[str, str] = {
+    # 2026-07-26, D-9 guardrail (PR #2957).
+    "forecast_xyear_warmstart": "False",
+    # 2026-08-03, owner decisions D-1 / D-2 (PR #3338).
+    "retirement_rule": "'legacy'",
+    "entry_rate_limits": "False",
+    "entry_commissioning_lag": "False",
+    # 2026-08-03, owner decision D-3a (PR #3356).
+    "net_cone_forward_escalation": "'hold_last'",
+    # 2026-08-31, owner ruling R-A (PR #4442) — the flip behind the NEISO
+    # collision, capx D24 §4.2.
+    "storage_entry_availability_gate": "False",
+    "storage_entry_cost_normalized_rank": "False",
+}
+
+# Registered fields whose declared default could not be evaluated back to a
+# value, so :func:`cache_key_drop_defaults` fell back to the LIVE default for
+# them (i.e. the pre-2026-09-01 flip hazard is back, for those fields alone).
+# Asserted EMPTY by tests/unit/config/test_cache_key_declared_default_drop.py:
+# the fallback exists so a malformed ledger entry can never kill every solve in
+# the program, NOT as an accepted state.
+_CACHE_KEY_UNRESOLVED_DECLARED_DEFAULTS: set[str] = set()
+
+# Resolved once per process by :func:`cache_key_drop_defaults` (the ledger is a
+# module constant, so the evaluation cannot change under it).
+_CACHE_KEY_DROP_DEFAULTS: dict | None = None
+
+
+def _resolve_declared_default(src: str):
+    """Evaluate one ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`` entry to a value.
+
+    The ledger stores each default's SOURCE TEXT, so that the guard can compare
+    it ``ast.unparse``-normalized and be blind to formatting; the drop
+    comparison needs the value. Plain literals go through
+    :func:`ast.literal_eval`, and the one non-literal form the ledger carries
+    today — ``field(default_factory=lambda: <literal>)`` — is unwrapped to its
+    literal body.
+
+    Args:
+        src: The declared default's source text, e.g. ``"False"`` or
+            ``"'pipeline'"``.
+
+    Returns:
+        The evaluated default value.
+
+    Raises:
+        ValueError: The text is neither a literal nor a literal-bodied
+            ``default_factory``. The caller falls back to the live default and
+            records the field name.
+    """
+    try:
+        return ast.literal_eval(src)
+    except (ValueError, SyntaxError):
+        pass
+    try:
+        node = ast.parse(src, mode="eval").body
+    except SyntaxError as exc:  # pragma: no cover - guard check 3 excludes it
+        raise ValueError(f"unparseable declared default: {src!r}") from exc
+    if isinstance(node, ast.Call) and getattr(node.func, "id", "") == "field":
+        for kw in node.keywords:
+            if kw.arg == "default_factory" and isinstance(kw.value, ast.Lambda):
+                return ast.literal_eval(kw.value.body)
+    raise ValueError(f"declared default is not evaluable: {src!r}")
+
+
+def cache_key_drop_defaults() -> dict:
+    """Return the FROZEN value each registered field is dropped from the key at.
+
+    The declared ledger, evaluated once per process. A registered field whose
+    declaration is missing or cannot be evaluated falls back to the LIVE default
+    and is recorded in :data:`_CACHE_KEY_UNRESOLVED_DECLARED_DEFAULTS`, so a
+    malformed entry degrades to the pre-2026-09-01 behaviour (and trips a test)
+    instead of raising inside every ``cache_key()`` call in the program.
+
+    Returns:
+        Mapping of registered field name to the value at which
+        :meth:`ScenarioConfig.cache_key` drops it.
+    """
+    global _CACHE_KEY_DROP_DEFAULTS
+    if _CACHE_KEY_DROP_DEFAULTS is not None:
+        return _CACHE_KEY_DROP_DEFAULTS
+    resolved: dict = {}
+    unresolved: list[str] = []
+    for name in _CACHE_KEY_OPTIONAL_FIELDS:
+        src = _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS.get(name)
+        if src is None:
+            unresolved.append(name)
+            continue
+        try:
+            resolved[name] = _resolve_declared_default(src)
+        except ValueError:
+            unresolved.append(name)
+    if unresolved:
+        live = ScenarioConfig()
+        for name in unresolved:
+            if hasattr(live, name):
+                resolved[name] = getattr(live, name)
+        _CACHE_KEY_UNRESOLVED_DECLARED_DEFAULTS.update(unresolved)
+        warnings.warn(
+            f"{len(unresolved)} registered cache-key field(s) have no evaluable "
+            f"entry in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: {sorted(unresolved)}. "
+            "cache_key() fell back to the LIVE default for them, which restores "
+            "the default-flip collision hazard for those fields (capx D24 §1). "
+            "Declare an evaluable default for each.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+    _CACHE_KEY_DROP_DEFAULTS = resolved
+    return resolved
+
+
+def registration_time_default(name: str):
+    """Return the value at which a field's ABSENCE from a config is equivalent.
+
+    A stored ``config.yaml`` that lacks a field was written by a run that
+    predates it, and so ran with that field's behaviour at the state it was
+    registered as byte-identical at: its REGISTRATION-time default — the frozen
+    declaration in ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS``, or, for the seven
+    fields whose default has since moved, its recorded original in
+    ``_CACHE_KEY_REGISTRATION_TIME_DEFAULTS``. For an unregistered field it is
+    the plain dataclass default (such a field always enters the key, so the
+    comparison there is exact by construction).
+
+    Used ONLY by the cached-bundle config check
+    (:func:`market_sim.results.cache.cache_config_disagreements`), to tell
+    ordinary schema growth — a stored config predating a field the requester
+    carries at its inert value — apart from a genuine posture change (capx D24
+    §4.2, the absent-vs-ARMED-default collision form). It is deliberately NOT
+    what ``cache_key`` drops at; see the table's own comment block.
+
+    Args:
+        name: A ``ScenarioConfig`` field name.
+
+    Returns:
+        The field's absent-equivalent value.
+
+    Raises:
+        KeyError: ``name`` is not a ``ScenarioConfig`` field, or is one with no
+            default at all (the caller must then treat it as a disagreement
+            rather than guess).
+    """
+    original = _CACHE_KEY_REGISTRATION_TIME_DEFAULTS.get(name)
+    if original is not None:
+        try:
+            return _resolve_declared_default(original)
+        except ValueError:  # pragma: no cover - pinned by the ledger tests
+            pass
+    drop_at = cache_key_drop_defaults()
+    if name in drop_at:
+        return drop_at[name]
+    for f in fields(ScenarioConfig):
+        if f.name != name:
+            continue
+        if f.default is not MISSING:
+            return f.default
+        if f.default_factory is not MISSING:  # type: ignore[misc]
+            return f.default_factory()  # type: ignore[misc]
+        break
+    raise KeyError(name)
 
 
 # --------------------------------------------------------------------------- #
@@ -14324,9 +14564,19 @@ class ScenarioConfig:
         # hash when they hold their default value, so every pre-existing cached
         # run keeps its key. A non-default value DOES enter the key (a hindcast
         # or a narrowed horizon is a distinct scenario).
-        defaults = ScenarioConfig()
+        #
+        # The comparison is against the FROZEN declaration in
+        # ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS``, NOT against
+        # ``getattr(ScenarioConfig(), name)``. The live default moves whenever an
+        # owner flips it and takes the drop with it, so a post-flip config at the
+        # new default used to hash exactly as the pre-flip config it supersedes —
+        # the same-key collision measured twice in
+        # ``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §4.
+        # Owner ruling Q20, option (b′-1); the full reasoning and the measured
+        # zero-key-move cost are at the ledger's own comment block.
+        drop_at = cache_key_drop_defaults()
         for name in _CACHE_KEY_OPTIONAL_FIELDS:
-            if payload_dict.get(name) == getattr(defaults, name):
+            if name in drop_at and payload_dict.get(name) == drop_at[name]:
                 payload_dict.pop(name, None)
         # Re-insert DELETED fields at the default they carried, so removing a
         # dead knob (rule 26 [R-DELETE]) leaves every historical key byte-stable

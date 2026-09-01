@@ -1,0 +1,1733 @@
+{
+  "probe": "capxd24r_cache_key_no_op_check",
+  "ruling": "Q20 (r#25) \u2014 option (b\u2032-1) + (c\u2032)",
+  "registered_fields": 218,
+  "declared_defaults_differing_from_live": [],
+  "configs_checked": 170,
+  "keys_moved": 0,
+  "by_mode": {
+    "forecast": {
+      "configs": 106,
+      "moved": 0
+    },
+    "backcast": {
+      "configs": 64,
+      "moved": 0
+    }
+  },
+  "bare_configs": {
+    "forecast": {
+      "key_old_rule": "7a57fadff595ca83",
+      "key_new_rule": "7a57fadff595ca83",
+      "live_cache_key": "7a57fadff595ca83"
+    },
+    "backcast": {
+      "key_old_rule": "1d82ebcc9666278d",
+      "key_new_rule": "1d82ebcc9666278d",
+      "live_cache_key": "1d82ebcc9666278d"
+    }
+  },
+  "moved_detail": [],
+  "rows": [
+    {
+      "run_config": "results/arm3arm/miso-2031-2035-armed-default/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "9337e00504e1e72a",
+      "fields": 718,
+      "key_old_rule": "69a5022800f58574",
+      "key_new_rule": "69a5022800f58574",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/_nyiso114_baseattrib_2024/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 673,
+      "key_old_rule": "1aa2f0cb0dc53c22",
+      "key_new_rule": "1aa2f0cb0dc53c22",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/caiso200_h1_memberpanel/run_config.json",
+      "mode": "backcast",
+      "iso": "CAISO",
+      "recorded_cache_key": null,
+      "fields": 717,
+      "key_old_rule": "4cd9b4640bf2acb8",
+      "key_new_rule": "4cd9b4640bf2acb8",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/caiso220_c1_crosswalk/run_config.json",
+      "mode": "backcast",
+      "iso": "CAISO",
+      "recorded_cache_key": null,
+      "fields": 754,
+      "key_old_rule": "4cd9b4640bf2acb8",
+      "key_new_rule": "4cd9b4640bf2acb8",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/caiso224_a0_control/run_config.json",
+      "mode": "backcast",
+      "iso": "CAISO",
+      "recorded_cache_key": null,
+      "fields": 759,
+      "key_old_rule": "4cd9b4640bf2acb8",
+      "key_new_rule": "4cd9b4640bf2acb8",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/caiso224_b1_fsno/run_config.json",
+      "mode": "backcast",
+      "iso": "CAISO",
+      "recorded_cache_key": null,
+      "fields": 760,
+      "key_old_rule": "6fb406a3308ae43d",
+      "key_new_rule": "6fb406a3308ae43d",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/caiso231_a0_control/run_config.json",
+      "mode": "backcast",
+      "iso": "CAISO",
+      "recorded_cache_key": null,
+      "fields": 766,
+      "key_old_rule": "4a296028f700951b",
+      "key_new_rule": "4a296028f700951b",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot213_control_A/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 717,
+      "key_old_rule": "80f11a78158b1880",
+      "key_new_rule": "80f11a78158b1880",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot215_control_A/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 718,
+      "key_old_rule": "8757ee9902fb7251",
+      "key_new_rule": "8757ee9902fb7251",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot215_decontam_B/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 718,
+      "key_old_rule": "8757ee9902fb7251",
+      "key_new_rule": "8757ee9902fb7251",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot219_control_A/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 721,
+      "key_old_rule": "8757ee9902fb7251",
+      "key_new_rule": "8757ee9902fb7251",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot219_optionb_B/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 721,
+      "key_old_rule": "7162cee6b55dc54f",
+      "key_new_rule": "7162cee6b55dc54f",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot221_adaptive_B/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 724,
+      "key_old_rule": "6d0244f53ea40083",
+      "key_new_rule": "6d0244f53ea40083",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot221_control_A/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 724,
+      "key_old_rule": "8757ee9902fb7251",
+      "key_new_rule": "8757ee9902fb7251",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot223_control_replay/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 734,
+      "key_old_rule": "6d0244f53ea40083",
+      "key_new_rule": "6d0244f53ea40083",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot223_release_arm/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 734,
+      "key_old_rule": "e9677251e8fa00e3",
+      "key_new_rule": "e9677251e8fa00e3",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot231_tiegtc_full/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 752,
+      "key_old_rule": "1e9fb1391ec06a95",
+      "key_new_rule": "1e9fb1391ec06a95",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot234_eastex_identity/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 752,
+      "key_old_rule": "1e9fb1391ec06a95",
+      "key_new_rule": "1e9fb1391ec06a95",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot235_r10/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 753,
+      "key_old_rule": "1f5778226a198094",
+      "key_new_rule": "1f5778226a198094",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot236_k33_clip/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 754,
+      "key_old_rule": "982d32542949148c",
+      "key_new_rule": "982d32542949148c",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot239_graded_ladder/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 757,
+      "key_old_rule": "54c61305b054caa7",
+      "key_new_rule": "54c61305b054caa7",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/ercot242_room_armed/run_config.json",
+      "mode": "backcast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 762,
+      "key_old_rule": "18a048960443c45f",
+      "key_new_rule": "18a048960443c45f",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso170_layup_A/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 727,
+      "key_old_rule": "047e35fbdce3dcd4",
+      "key_new_rule": "047e35fbdce3dcd4",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso170_layup_B/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 727,
+      "key_old_rule": "2043ef6a67c134fa",
+      "key_new_rule": "2043ef6a67c134fa",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso180_anch_A/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 752,
+      "key_old_rule": "5a66ab7bbf1cfe1c",
+      "key_new_rule": "5a66ab7bbf1cfe1c",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso186_dir_A/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 753,
+      "key_old_rule": "5a66ab7bbf1cfe1c",
+      "key_new_rule": "5a66ab7bbf1cfe1c",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso186_dir_B/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 753,
+      "key_old_rule": "2225b94ce7c7eea1",
+      "key_new_rule": "2225b94ce7c7eea1",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso187_nuc_A/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 753,
+      "key_old_rule": "2225b94ce7c7eea1",
+      "key_new_rule": "2225b94ce7c7eea1",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso187_nuc_B/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 753,
+      "key_old_rule": "0c8990fc1ec0b2b3",
+      "key_new_rule": "0c8990fc1ec0b2b3",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso188_rvs_A/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 756,
+      "key_old_rule": "0c8990fc1ec0b2b3",
+      "key_new_rule": "0c8990fc1ec0b2b3",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso188_rvs_B/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 756,
+      "key_old_rule": "b880a94b41fef2ae",
+      "key_new_rule": "b880a94b41fef2ae",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso191_bax_A/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 763,
+      "key_old_rule": "b880a94b41fef2ae",
+      "key_new_rule": "b880a94b41fef2ae",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso191_bax_B/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 763,
+      "key_old_rule": "964a40b63861f464",
+      "key_new_rule": "964a40b63861f464",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso193_cap_B/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 765,
+      "key_old_rule": "aec8bc6ef73c10b3",
+      "key_new_rule": "aec8bc6ef73c10b3",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso193_control_A/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 765,
+      "key_old_rule": "174dbedb50eab163",
+      "key_new_rule": "174dbedb50eab163",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso196_control_A/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 765,
+      "key_old_rule": "174dbedb50eab163",
+      "key_new_rule": "174dbedb50eab163",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/miso196_top_B/run_config.json",
+      "mode": "backcast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 765,
+      "key_old_rule": "99920ccc5cc39767",
+      "key_new_rule": "99920ccc5cc39767",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/neiso86_2022_corrected/run_config.json",
+      "mode": "backcast",
+      "iso": "NEISO",
+      "recorded_cache_key": null,
+      "fields": 692,
+      "key_old_rule": "8c86a5861ae2c8a9",
+      "key_new_rule": "8c86a5861ae2c8a9",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/neiso97_dstrepair_A/run_config.json",
+      "mode": "backcast",
+      "iso": "NEISO",
+      "recorded_cache_key": null,
+      "fields": 717,
+      "key_old_rule": "be3ebfbbae26ea54",
+      "key_new_rule": "be3ebfbbae26ea54",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/neiso99_basis_A/run_config.json",
+      "mode": "backcast",
+      "iso": "NEISO",
+      "recorded_cache_key": null,
+      "fields": 718,
+      "key_old_rule": "4beae7e72564ae39",
+      "key_new_rule": "4beae7e72564ae39",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/neiso99_joint_B/run_config.json",
+      "mode": "backcast",
+      "iso": "NEISO",
+      "recorded_cache_key": null,
+      "fields": 718,
+      "key_old_rule": "be3ebfbbae26ea54",
+      "key_new_rule": "be3ebfbbae26ea54",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso149_armF/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 742,
+      "key_old_rule": "abbedfdfa643b1e7",
+      "key_new_rule": "abbedfdfa643b1e7",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso150_armC/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 743,
+      "key_old_rule": "ff45b14ea4f59b6f",
+      "key_new_rule": "ff45b14ea4f59b6f",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso150_armW/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 743,
+      "key_old_rule": "f6d501781371e3ff",
+      "key_new_rule": "f6d501781371e3ff",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso150_control/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 743,
+      "key_old_rule": "abbedfdfa643b1e7",
+      "key_new_rule": "abbedfdfa643b1e7",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso151_armH/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 745,
+      "key_old_rule": "c874bb8f91d52d84",
+      "key_new_rule": "c874bb8f91d52d84",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso151_armHC/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 745,
+      "key_old_rule": "564fd1dbf60c96a7",
+      "key_new_rule": "564fd1dbf60c96a7",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso151_control/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 745,
+      "key_old_rule": "abbedfdfa643b1e7",
+      "key_new_rule": "abbedfdfa643b1e7",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso152_armSE/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 749,
+      "key_old_rule": "350554cd4b6ee5c4",
+      "key_new_rule": "350554cd4b6ee5c4",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso152_control/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 749,
+      "key_old_rule": "c874bb8f91d52d84",
+      "key_new_rule": "c874bb8f91d52d84",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso153_armO/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 749,
+      "key_old_rule": "f735acf38aca7056",
+      "key_new_rule": "f735acf38aca7056",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso154_armD/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 749,
+      "key_old_rule": "44caa8c6d3c24d9b",
+      "key_new_rule": "44caa8c6d3c24d9b",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso155_hydro_control/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 753,
+      "key_old_rule": "350554cd4b6ee5c4",
+      "key_new_rule": "350554cd4b6ee5c4",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso155_hydro_repair/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 753,
+      "key_old_rule": "350554cd4b6ee5c4",
+      "key_new_rule": "350554cd4b6ee5c4",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso157_iroq_C/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 756,
+      "key_old_rule": "6af4bfc1d4f25591",
+      "key_new_rule": "6af4bfc1d4f25591",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso157_pararm_B/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 756,
+      "key_old_rule": "52c2161b14e06414",
+      "key_new_rule": "52c2161b14e06414",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso157_parctl_A/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 756,
+      "key_old_rule": "350554cd4b6ee5c4",
+      "key_new_rule": "350554cd4b6ee5c4",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso159_lossarm_B/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 760,
+      "key_old_rule": "d1f632c1df25c8f0",
+      "key_new_rule": "d1f632c1df25c8f0",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso159_lossctl_A/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 760,
+      "key_old_rule": "52c2161b14e06414",
+      "key_new_rule": "52c2161b14e06414",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/nyiso160_tpaudit_replay/run_config.json",
+      "mode": "backcast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 763,
+      "key_old_rule": "d1f632c1df25c8f0",
+      "key_new_rule": "d1f632c1df25c8f0",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/pjm152_collapse_A/run_config.json",
+      "mode": "backcast",
+      "iso": "PJM",
+      "recorded_cache_key": null,
+      "fields": 676,
+      "key_old_rule": "c20ec90ee9626b07",
+      "key_new_rule": "c20ec90ee9626b07",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/pjm158_ctl_A/run_config.json",
+      "mode": "backcast",
+      "iso": "PJM",
+      "recorded_cache_key": null,
+      "fields": 692,
+      "key_old_rule": "c20ec90ee9626b07",
+      "key_new_rule": "c20ec90ee9626b07",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/pjm158_novirt_B/run_config.json",
+      "mode": "backcast",
+      "iso": "PJM",
+      "recorded_cache_key": null,
+      "fields": 692,
+      "key_old_rule": "7e31d973daa9e890",
+      "key_new_rule": "7e31d973daa9e890",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/pjm2022_touchpoint/run_config.json",
+      "mode": "backcast",
+      "iso": "PJM",
+      "recorded_cache_key": null,
+      "fields": 688,
+      "key_old_rule": "a73a1d399add4277",
+      "key_new_rule": "a73a1d399add4277",
+      "moved": false
+    },
+    {
+      "run_config": "results/calibration/pjm_debugb_inputclock_A/run_config.json",
+      "mode": "backcast",
+      "iso": "PJM",
+      "recorded_cache_key": null,
+      "fields": 715,
+      "key_old_rule": "159733571efa869b",
+      "key_new_rule": "159733571efa869b",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t1f-extcap/nyiso/run_config.json",
+      "mode": "forecast",
+      "iso": "NYISO",
+      "recorded_cache_key": "fdd84d51e31ffc82",
+      "fields": 752,
+      "key_old_rule": "fdd84d51e31ffc82",
+      "key_new_rule": "fdd84d51e31ffc82",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t1f-s123/verify/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "587dc5b32ba71ceb",
+      "fields": 765,
+      "key_old_rule": "223ed4e475c6842f",
+      "key_new_rule": "223ed4e475c6842f",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t1f-s4b-ara/neiso-control/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "9a7f68fc7dcac931",
+      "fields": 763,
+      "key_old_rule": "9a7f68fc7dcac931",
+      "key_new_rule": "9a7f68fc7dcac931",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t1f-s4b-ara/neiso/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "9a7f68fc7dcac931",
+      "fields": 763,
+      "key_old_rule": "9a7f68fc7dcac931",
+      "key_new_rule": "9a7f68fc7dcac931",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t1f-s4hydro/neiso-control/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "9a7f68fc7dcac931",
+      "fields": 757,
+      "key_old_rule": "9a7f68fc7dcac931",
+      "key_new_rule": "9a7f68fc7dcac931",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t1f-s4hydro/neiso/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "9a7f68fc7dcac931",
+      "fields": 757,
+      "key_old_rule": "9a7f68fc7dcac931",
+      "key_new_rule": "9a7f68fc7dcac931",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t1f-s6-pjm/ledger/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "31a19d815fa319a7",
+      "fields": 765,
+      "key_old_rule": "2f1a55ad9c824b11",
+      "key_new_rule": "2f1a55ad9c824b11",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/base/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "0365174ab16cc318",
+      "fields": 765,
+      "key_old_rule": "dd519f7dd4bfe807",
+      "key_new_rule": "dd519f7dd4bfe807",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/carbon25/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "7924eccc695c0168",
+      "fields": 765,
+      "key_old_rule": "64dbc1017d1729fa",
+      "key_new_rule": "64dbc1017d1729fa",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/gaspm5/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "1de43201e2040f7f",
+      "fields": 765,
+      "key_old_rule": "ee46ccd7c36532a1",
+      "key_new_rule": "ee46ccd7c36532a1",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/gasup150/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "13f9357712250600",
+      "fields": 765,
+      "key_old_rule": "0315eaa0c519c723",
+      "key_new_rule": "0315eaa0c519c723",
+      "moved": false
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "a4b11ef4aaa1be35",
+      "fields": 765,
+      "key_old_rule": "dd519f7dd4bfe807",
+      "key_new_rule": "dd519f7dd4bfe807",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr-sa-smoke/pjm-mid/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "ced93433f2383d26",
+      "fields": 674,
+      "key_old_rule": "e5db3489a25e10b0",
+      "key_new_rule": "e5db3489a25e10b0",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr-sa-smoke/pjm-off/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "c5054dc0d093da2a",
+      "fields": 674,
+      "key_old_rule": "f39c454759c7f8d2",
+      "key_new_rule": "f39c454759c7f8d2",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr3p/caiso-control/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "e5822277b72184f6",
+      "fields": 677,
+      "key_old_rule": "e5822277b72184f6",
+      "key_new_rule": "e5822277b72184f6",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr3p/caiso-nqc-armed/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "ee0e448058d115aa",
+      "fields": 677,
+      "key_old_rule": "ee0e448058d115aa",
+      "key_new_rule": "ee0e448058d115aa",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr3v/miso-entry-diag/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "ca36ba26ebe1640f",
+      "fields": 680,
+      "key_old_rule": "ca36ba26ebe1640f",
+      "key_new_rule": "ca36ba26ebe1640f",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4b/both/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "27597e342ed68fd1",
+      "fields": 680,
+      "key_old_rule": "27597e342ed68fd1",
+      "key_new_rule": "27597e342ed68fd1",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4b/ctl/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "ca36ba26ebe1640f",
+      "fields": 680,
+      "key_old_rule": "ca36ba26ebe1640f",
+      "key_new_rule": "ca36ba26ebe1640f",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4b/gate/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "27597e342ed68fd1",
+      "fields": 680,
+      "key_old_rule": "27597e342ed68fd1",
+      "key_new_rule": "27597e342ed68fd1",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4b/wire/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "ca36ba26ebe1640f",
+      "fields": 680,
+      "key_old_rule": "ca36ba26ebe1640f",
+      "key_new_rule": "ca36ba26ebe1640f",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4c/miso-ptcwindow-control/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "18688555edc0342a",
+      "fields": 681,
+      "key_old_rule": "18688555edc0342a",
+      "key_new_rule": "18688555edc0342a",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4c/miso-ptcwindow-treatment/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "ca36ba26ebe1640f",
+      "fields": 681,
+      "key_old_rule": "ca36ba26ebe1640f",
+      "key_new_rule": "ca36ba26ebe1640f",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4d/caiso-control/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "35b0a89be0c07483",
+      "fields": 681,
+      "key_old_rule": "35b0a89be0c07483",
+      "key_new_rule": "35b0a89be0c07483",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4d/caiso-treated/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "35b0a89be0c07483",
+      "fields": 681,
+      "key_old_rule": "35b0a89be0c07483",
+      "key_new_rule": "35b0a89be0c07483",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4e/caiso-control/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "3d3e836a176ac9cd",
+      "fields": 708,
+      "key_old_rule": "045362e6f5c4f70a",
+      "key_new_rule": "045362e6f5c4f70a",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4e/caiso-treated/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "bf9b4d739a6b3ab8",
+      "fields": 708,
+      "key_old_rule": "efc8483033831305",
+      "key_new_rule": "efc8483033831305",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4f/caiso-control/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "3d3e836a176ac9cd",
+      "fields": 709,
+      "key_old_rule": "045362e6f5c4f70a",
+      "key_new_rule": "045362e6f5c4f70a",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffr4f/caiso-treated/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "da19509d457988e5",
+      "fields": 709,
+      "key_old_rule": "752d3d5c0915051a",
+      "key_new_rule": "752d3d5c0915051a",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffrsc/txexp-off/caiso/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "fe814896444d8ed7",
+      "fields": 672,
+      "key_old_rule": "e5822277b72184f6",
+      "key_new_rule": "e5822277b72184f6",
+      "moved": false
+    },
+    {
+      "run_config": "results/ffrsc/txexp-on/caiso/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "f4a79a86d61336f8",
+      "fields": 672,
+      "key_old_rule": "2151ad0baeec83a2",
+      "key_new_rule": "2151ad0baeec83a2",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/caiso-2021-2025-realized-control/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "408f9199a82f5814",
+      "fields": 752,
+      "key_old_rule": "408f9199a82f5814",
+      "key_new_rule": "408f9199a82f5814",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/caiso-2021-2025-realized-dumps/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "af508406b2ecb737",
+      "fields": 752,
+      "key_old_rule": "af508406b2ecb737",
+      "key_new_rule": "af508406b2ecb737",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/caiso-2021-2025-realized/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "408f9199a82f5814",
+      "fields": 749,
+      "key_old_rule": "408f9199a82f5814",
+      "key_new_rule": "408f9199a82f5814",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/caiso-2021-2025-t1ff-armk-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "05289c2965f04734",
+      "fields": 718,
+      "key_old_rule": "1e242664e4f284b7",
+      "key_new_rule": "1e242664e4f284b7",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/caiso-2021-2025-t1ff-armr-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "ecb416fd9b9073a3",
+      "fields": 718,
+      "key_old_rule": "fe114938fc2929bb",
+      "key_new_rule": "fe114938fc2929bb",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/caiso-2023-2025-t1ff-armk-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "9759385a44a5ad77",
+      "fields": 711,
+      "key_old_rule": "8407ca40271ccfdb",
+      "key_new_rule": "8407ca40271ccfdb",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/caiso-2023-2025-t1ff-armr-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "CAISO",
+      "recorded_cache_key": "c407117093ad472e",
+      "fields": 711,
+      "key_old_rule": "1accf27c5180f194",
+      "key_new_rule": "1accf27c5180f194",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-c1joint-arm/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "0490af522537a67c",
+      "fields": 765,
+      "key_old_rule": "4af8d8fd24226cc4",
+      "key_new_rule": "4af8d8fd24226cc4",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-c1joint-control/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "28cef3500ec1fd9e",
+      "fields": 765,
+      "key_old_rule": "9e53bd45807b7a10",
+      "key_new_rule": "9e53bd45807b7a10",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-capentry-control/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "28cef3500ec1fd9e",
+      "fields": 765,
+      "key_old_rule": "9e53bd45807b7a10",
+      "key_new_rule": "9e53bd45807b7a10",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-capentry-repair/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "dcbd3b9567b2fe26",
+      "fields": 765,
+      "key_old_rule": "28cef3500ec1fd9e",
+      "key_new_rule": "28cef3500ec1fd9e",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-control/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "28cef3500ec1fd9e",
+      "fields": 752,
+      "key_old_rule": "28cef3500ec1fd9e",
+      "key_new_rule": "28cef3500ec1fd9e",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-d11r-control/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "28cef3500ec1fd9e",
+      "fields": 757,
+      "key_old_rule": "28cef3500ec1fd9e",
+      "key_new_rule": "28cef3500ec1fd9e",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-d11r-exhaustion/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "cc7bbe1170db65c2",
+      "fields": 757,
+      "key_old_rule": "cc7bbe1170db65c2",
+      "key_new_rule": "cc7bbe1170db65c2",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-d12c-armed/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "f061b2646bfaac8b",
+      "fields": 765,
+      "key_old_rule": "4705f4cc56949fd0",
+      "key_new_rule": "4705f4cc56949fd0",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-d12c-control/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "28cef3500ec1fd9e",
+      "fields": 765,
+      "key_old_rule": "9e53bd45807b7a10",
+      "key_new_rule": "9e53bd45807b7a10",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-d4m/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "f061b2646bfaac8b",
+      "fields": 765,
+      "key_old_rule": "f061b2646bfaac8b",
+      "key_new_rule": "f061b2646bfaac8b",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-disarm/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "2eab21467a4214c7",
+      "fields": 752,
+      "key_old_rule": "2eab21467a4214c7",
+      "key_new_rule": "2eab21467a4214c7",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-fwdexp-control/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "28cef3500ec1fd9e",
+      "fields": 754,
+      "key_old_rule": "28cef3500ec1fd9e",
+      "key_new_rule": "28cef3500ec1fd9e",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-fwdexp/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "a2dc52ffebf14761",
+      "fields": 754,
+      "key_old_rule": "a2dc52ffebf14761",
+      "key_new_rule": "a2dc52ffebf14761",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-realized-t1h-refresh/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "28cef3500ec1fd9e",
+      "fields": 748,
+      "key_old_rule": "28cef3500ec1fd9e",
+      "key_new_rule": "28cef3500ec1fd9e",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armk-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "5347a4e60fa8b762",
+      "fields": 718,
+      "key_old_rule": "941fdeea2d14b257",
+      "key_new_rule": "941fdeea2d14b257",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr3q3-legacy/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "d065923f427349d1",
+      "fields": 680,
+      "key_old_rule": "d065923f427349d1",
+      "key_new_rule": "d065923f427349d1",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr3q3-pipeline/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "6a824992b5fb1baf",
+      "fields": 680,
+      "key_old_rule": "6a824992b5fb1baf",
+      "key_new_rule": "6a824992b5fb1baf",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5a-pipeline/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "6a824992b5fb1baf",
+      "fields": 685,
+      "key_old_rule": "6a824992b5fb1baf",
+      "key_new_rule": "6a824992b5fb1baf",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-shipped/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "6a824992b5fb1baf",
+      "fields": 692,
+      "key_old_rule": "6a824992b5fb1baf",
+      "key_new_rule": "6a824992b5fb1baf",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-unified/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "49eac64f146b3460",
+      "fields": 692,
+      "key_old_rule": "49eac64f146b3460",
+      "key_new_rule": "49eac64f146b3460",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr8a-scarcity/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "816031a3308cccde",
+      "fields": 704,
+      "key_old_rule": "30731aa899c8f2fe",
+      "key_new_rule": "30731aa899c8f2fe",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr8a-unified/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "49eac64f146b3460",
+      "fields": 704,
+      "key_old_rule": "f1e4329371165228",
+      "key_new_rule": "f1e4329371165228",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr8b-base/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "816031a3308cccde",
+      "fields": 705,
+      "key_old_rule": "30731aa899c8f2fe",
+      "key_new_rule": "30731aa899c8f2fe",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9a-control/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "816031a3308cccde",
+      "fields": 708,
+      "key_old_rule": "30731aa899c8f2fe",
+      "key_new_rule": "30731aa899c8f2fe",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9a-storageseed/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "816031a3308cccde",
+      "fields": 708,
+      "key_old_rule": "30731aa899c8f2fe",
+      "key_new_rule": "30731aa899c8f2fe",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9b-regen/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "816031a3308cccde",
+      "fields": 708,
+      "key_old_rule": "30731aa899c8f2fe",
+      "key_new_rule": "30731aa899c8f2fe",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-control/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "816031a3308cccde",
+      "fields": 712,
+      "key_old_rule": "30731aa899c8f2fe",
+      "key_new_rule": "30731aa899c8f2fe",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-full/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "d6bc5469694eeedb",
+      "fields": 712,
+      "key_old_rule": "9ea3c8b7b8049044",
+      "key_new_rule": "9ea3c8b7b8049044",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr9c-pipeline/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "3301180d9f501bcd",
+      "fields": 712,
+      "key_old_rule": "e218c84d799383c4",
+      "key_new_rule": "e218c84d799383c4",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2021-2025-t1ff-armr-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "816031a3308cccde",
+      "fields": 718,
+      "key_old_rule": "d46ecc4e1de03262",
+      "key_new_rule": "d46ecc4e1de03262",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2023-2025-t1ff-armk-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "74323d2ef75551dd",
+      "fields": 708,
+      "key_old_rule": "82713810c227008e",
+      "key_new_rule": "82713810c227008e",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/ercot-2023-2025-t1ff-armr-fh4gate/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "e1714e3d41d0b979",
+      "fields": 708,
+      "key_old_rule": "47ec38e35157d18e",
+      "key_new_rule": "47ec38e35157d18e",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/miso-2021-2023-t1ff-armr-ffr3vfix-after/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "d1459d48c4788d7b",
+      "fields": 704,
+      "key_old_rule": "c18c87fd7084f3e3",
+      "key_new_rule": "c18c87fd7084f3e3",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/miso-2021-2023-t1ff-armr-ffr3vfix-before/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "d1459d48c4788d7b",
+      "fields": 704,
+      "key_old_rule": "c18c87fd7084f3e3",
+      "key_new_rule": "c18c87fd7084f3e3",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/miso-2021-2025-t1ff-armk-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "935ba4b27914d9b7",
+      "fields": 718,
+      "key_old_rule": "57a0fc7720ffd9e2",
+      "key_new_rule": "57a0fc7720ffd9e2",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/miso-2021-2025-t1ff-armr-ffr5eh-armed/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "0dc92a27d0782dbc",
+      "fields": 705,
+      "key_old_rule": "ea81a2e4c3b75528",
+      "key_new_rule": "ea81a2e4c3b75528",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/miso-2021-2025-t1ff-armr-ffr5eh-control/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "42985ca815282871",
+      "fields": 705,
+      "key_old_rule": "cdf66c93e7f9e008",
+      "key_new_rule": "cdf66c93e7f9e008",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/miso-2021-2025-t1ff-armr-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "42985ca815282871",
+      "fields": 718,
+      "key_old_rule": "a356de6b219495ca",
+      "key_new_rule": "a356de6b219495ca",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/miso-2023-2025-t1ff-armk-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "d955f6ca905641aa",
+      "fields": 711,
+      "key_old_rule": "43600670e4828bb6",
+      "key_new_rule": "43600670e4828bb6",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/miso-2023-2025-t1ff-armr-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": "e95ffde7f4508be8",
+      "fields": 711,
+      "key_old_rule": "4a9203e517aebe1d",
+      "key_new_rule": "4a9203e517aebe1d",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/neiso-2021-2025-realized-k99/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "b50062a643832c25",
+      "fields": 727,
+      "key_old_rule": "b50062a643832c25",
+      "key_new_rule": "b50062a643832c25",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/neiso-2021-2025-realized-mystic-rescore/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "e118e887b306da37",
+      "fields": 742,
+      "key_old_rule": "e118e887b306da37",
+      "key_new_rule": "e118e887b306da37",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/neiso-2021-2025-t1ff-armk-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "961bf0c6614bf3fa",
+      "fields": 718,
+      "key_old_rule": "ff6d2debe79c6d0b",
+      "key_new_rule": "ff6d2debe79c6d0b",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/neiso-2021-2025-t1ff-armr-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "968729aca8fabfc0",
+      "fields": 718,
+      "key_old_rule": "16fe6ab0326fac3a",
+      "key_new_rule": "16fe6ab0326fac3a",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/neiso-2023-2025-t1ff-armk-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "424eff2528407772",
+      "fields": 711,
+      "key_old_rule": "57486e1e83a218fd",
+      "key_new_rule": "57486e1e83a218fd",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/neiso-2023-2025-t1ff-armr-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "326cbab45b586c72",
+      "fields": 711,
+      "key_old_rule": "8cb3b475a501dc17",
+      "key_new_rule": "8cb3b475a501dc17",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/neiso-2023-2027-crossover-capxd14/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "07e416f3f8072e7c",
+      "fields": 760,
+      "key_old_rule": "07e416f3f8072e7c",
+      "key_new_rule": "07e416f3f8072e7c",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/neiso-2023-2027-crossover-rcrepair/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": "07e416f3f8072e7c",
+      "fields": 765,
+      "key_old_rule": "07e416f3f8072e7c",
+      "key_new_rule": "07e416f3f8072e7c",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/nyiso-2021-2025-t1ff-armk-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "NYISO",
+      "recorded_cache_key": "cad3a7957dfefb55",
+      "fields": 718,
+      "key_old_rule": "4a3fbedf07ffe6de",
+      "key_new_rule": "4a3fbedf07ffe6de",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/nyiso-2021-2025-t1ff-armr-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "NYISO",
+      "recorded_cache_key": "0215407853b63c00",
+      "fields": 718,
+      "key_old_rule": "e059eec45cd8cea2",
+      "key_new_rule": "e059eec45cd8cea2",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/nyiso-2023-2025-t1ff-armk-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "NYISO",
+      "recorded_cache_key": "30eedfd2d38e5b92",
+      "fields": 711,
+      "key_old_rule": "9923dfd2efdeda1f",
+      "key_new_rule": "9923dfd2efdeda1f",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/nyiso-2023-2025-t1ff-armr-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "NYISO",
+      "recorded_cache_key": "90c7a76c8e25ee61",
+      "fields": 711,
+      "key_old_rule": "6fc26be42f5cc7be",
+      "key_new_rule": "6fc26be42f5cc7be",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/nyiso-2023-2027-crossover-capxd10/run_config.json",
+      "mode": "forecast",
+      "iso": "NYISO",
+      "recorded_cache_key": "7323dc2ddabc95c7",
+      "fields": 757,
+      "key_old_rule": "7323dc2ddabc95c7",
+      "key_new_rule": "7323dc2ddabc95c7",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/pjm-2021-2025-realized-exante-control/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "f9d5d795106d9c74",
+      "fields": 742,
+      "key_old_rule": "f9d5d795106d9c74",
+      "key_new_rule": "f9d5d795106d9c74",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/pjm-2021-2025-realized-verified-exits/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "4c2c7907805e679b",
+      "fields": 742,
+      "key_old_rule": "4c2c7907805e679b",
+      "key_new_rule": "4c2c7907805e679b",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/pjm-2021-2025-t1ff-armk-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "d67ed72da0f8874a",
+      "fields": 718,
+      "key_old_rule": "3c0a4afb9fa54855",
+      "key_new_rule": "3c0a4afb9fa54855",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/pjm-2021-2025-t1ff-armr-fh5/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "d41445eab6937d52",
+      "fields": 718,
+      "key_old_rule": "7b09b12e15e8e304",
+      "key_new_rule": "7b09b12e15e8e304",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/pjm-2023-2025-t1ff-armk-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "baa01738a969b00a",
+      "fields": 711,
+      "key_old_rule": "d9e6c778a8e1f5e8",
+      "key_new_rule": "d9e6c778a8e1f5e8",
+      "moved": false
+    },
+    {
+      "run_config": "results/hindcast/pjm-2023-2025-t1ff-armr-fh4/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": "69fdb766dccf439f",
+      "fields": 711,
+      "key_old_rule": "290102858540a315",
+      "key_new_rule": "290102858540a315",
+      "moved": false
+    },
+    {
+      "run_config": "results/run-config-debt/ercot-2023-2027-crossover-ffr3a3/run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": null,
+      "fields": 674,
+      "key_old_rule": "1bd571ce0a472ad9",
+      "key_new_rule": "1bd571ce0a472ad9",
+      "moved": false
+    },
+    {
+      "run_config": "results/run-config-debt/miso-2021-2025-realized-ffr3a3/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 674,
+      "key_old_rule": "5b22aaac4a343c93",
+      "key_new_rule": "5b22aaac4a343c93",
+      "moved": false
+    },
+    {
+      "run_config": "results/run-config-debt/miso-2023-2027-crossover-ffr3a4/run_config.json",
+      "mode": "forecast",
+      "iso": "MISO",
+      "recorded_cache_key": null,
+      "fields": 678,
+      "key_old_rule": "4e1e8da04108ef03",
+      "key_new_rule": "4e1e8da04108ef03",
+      "moved": false
+    },
+    {
+      "run_config": "results/run-config-debt/neiso-2021-2025-realized-ffr3a3/run_config.json",
+      "mode": "forecast",
+      "iso": "NEISO",
+      "recorded_cache_key": null,
+      "fields": 674,
+      "key_old_rule": "ae491f81be1678c0",
+      "key_new_rule": "ae491f81be1678c0",
+      "moved": false
+    },
+    {
+      "run_config": "results/run-config-debt/nyiso-2021-2025-realized-ffr3a3/run_config.json",
+      "mode": "forecast",
+      "iso": "NYISO",
+      "recorded_cache_key": null,
+      "fields": 674,
+      "key_old_rule": "3b5197bc40a264f7",
+      "key_new_rule": "3b5197bc40a264f7",
+      "moved": false
+    },
+    {
+      "run_config": "results/run-config-debt/pjm-2021-2025-realized-ffr3a3/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": null,
+      "fields": 674,
+      "key_old_rule": "73b1585441f8b78b",
+      "key_new_rule": "73b1585441f8b78b",
+      "moved": false
+    },
+    {
+      "run_config": "results/run-config-debt/pjm-2023-2027-crossover-ffr3a3/run_config.json",
+      "mode": "forecast",
+      "iso": "PJM",
+      "recorded_cache_key": null,
+      "fields": 674,
+      "key_old_rule": "23f02b38e85b4458",
+      "key_new_rule": "23f02b38e85b4458",
+      "moved": false
+    },
+    {
+      "run_config": "tests/golden/ercot_2026_2040.run_config.json",
+      "mode": "forecast",
+      "iso": "ERCOT",
+      "recorded_cache_key": "0d6f2710f8dedf56",
+      "fields": 485,
+      "key_old_rule": "6a23be2f5cb8d027",
+      "key_new_rule": "6a23be2f5cb8d027",
+      "moved": false
+    }
+  ]
+}
