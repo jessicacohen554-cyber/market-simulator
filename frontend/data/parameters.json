@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-08-31",
+  "generated": "2026-09-01",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -37623,6 +37623,24 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_offer_surface_measured_ungrounded",
+      "display_name": "Caiso Offer Surface Measured Ungrounded",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "SAME STATIC HALF, EXTENDED TO CAISO'S THREE UN-GROUNDED GAS CLASSES (caiso-231, default off, CAISO-gated). `_CAISO_OFFER_CURVE` states in its own comment that CC_CHP / CT_CHP / ST_GAS \"are PINNED to the values CAISO previously inherited from the generic ERCOT-lineage `else` branch ... NOT CAISO-grounded ... preserved verbatim ONLY so the neutral generic fallback (rule 24) does not silently change the caiso-51 keeper\" — i.e. three ERCOT-fitted band blocks live on CAISO's binding path, which is exactly what rule 25 [R-ISO-SCOPE] forbids. A measured counterpart EXISTS for all three and the derive script names it: the masked OASIS bids cannot be plant-mapped, so `derive_caiso_offer_surface.py` discloses that \"the three OTC/RMR steamers (ST_GAS ...) and priced CT_CHP curves land in the CT bucket ... CC_CHP (HR 6.90) lands in the CC bucket\". The measured CC bucket is therefore the pooled CC_REGULAR+CC_CHP conduct and the CT bucket the pooled CT_PEAKER+CT_CHP+ST_GAS conduct, so each un-grounded class is re-grounded on the bucket it is MEASURED INSIDE — a rule-14 measured-input substitution with ZERO free parameters, not a new fitted lever.  Arms EXACTLY the three bands the flag above arms (econ_low / econ_high / peak) and no others: the measured `committed` band stays unarmed for every CAISO gas class (the Lever-A inversion lesson applied uniformly — min-load self-commitment conduct belongs to unit commitment, not the P1 offer; rule 19). Multipliers transfer as multipliers, against each plant's own base heat rate, which is the incumbent's semantics for CC_REGULAR / CT_PEAKER and is what the derive's slope-based classification identifies (a resource joins a bucket BECAUSE its measured marginal heat rate matches it).  DIRECTION IS DISCLOSED, NOT HIDDEN (rule 14): this repair makes C3a WORSE. caiso-230 §H measures the first-order move at +0.235 / +0.344 / +0.421 $/MWh on the annual load-weighted price in 2023/2024/2025, driven by CC_CHP econ_low (ERCOT-inherited 0.960 vs CAISO-measured 1.066, +11.0 %). It is armed for structural integrity under rules 14 and 25, never as a C3a lever, and caiso-230's DO-NOT-REDO item 3 forbids ever proposing it as one.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_offer_surface_min_bin",
       "display_name": "Caiso Offer Surface Min Bin",
       "value": 0,
@@ -38395,6 +38413,25 @@
       "domain": "Structural",
       "tier": 2,
       "source": "GATED default-OFF",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.carbon_price_delta",
+      "display_name": "Carbon Price Delta",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "$/ton CO2, ADDITIVE on the RESOLVED",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -49294,6 +49331,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.st_gas_mustrun_oom_level",
+      "display_name": "St Gas Mustrun Oom Level",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "OUT-OF-MERIT CONDITIONING for the st_gas_mustrun_p25_level floor's LEVEL — miso-198. The incumbent level (whether the p25_cf reconstruction or the miso-172 measured-MW repair of it) is a low percentile of the plant's output over EVERY hour it was online, which measures its OPERATING RANGE. The phenomenon the floor exists to represent is different and narrower: these VLR/self-committed Entergy-South and upper-Midwest steamers HOLD THEIR LOAD IN THE HOURS MERIT SAYS SHUT DOWN. The statistic that measures that conditions the same percentile family on those hours.  Identified, not asserted. The miso-198 zero-solve census (results/calibration/_miso198_stgas_oom_conduct_phase0.json, rule frozen and blob-verified before any adjudicating quantity) partitioned the ST_GAS gap between the measured out-of-merit conduct and the keeper's own armed floor EXACTLY — an identity, not a fit — into population / window / LEVEL:  year  measured_oom  armed   gap     P      W      L 2023     16.059     8.213   7.846  0.162  0.197  0.640 2024     19.294     8.674  10.620  0.138  0.163  0.699 2025     17.814     8.902   8.912  0.183  0.153  0.665  LEVEL is dominant in 3 of 3 years; the POPULATION channel did not clear the census's own operating test (5 of its 10 plants fail it, so the lay-up exclusion census is NOT a clean identification defect) and the WINDOW channel never reaches the dominance line. Hence a LEVEL re-identification and nothing else.  When True the level is read from ``thermal_tranches_oom_level_mw_<ISO>.csv`` (scripts/data/derive_thermal_tranche_oom_level_mw.py), which imports the frozen deriver's online mask, net construction, derate source, nameplate clamp and pooled window and conditions the sample on the miso-197 W3b CC-headroom set (hours the measured CC_REGULAR fleet ran below 0.90 of its own p99.5 — cheaper CC capability demonstrably idle, so a strict-merit stack says the 10-HR steamer should be OFF).  Rule 19 [R-ONE-MECH]: the level SOURCE is REPLACED, exactly as st_gas_mustrun_p25_measured_level replaced the p25_cf reconstruction before it. Membership (the pooled artifact's level>0 AND online_frac>0 gate plus mustrun_plant_exclusions), the top-online_frac system-load WINDOW, the mechanism id (MECH_ST_GAS_MUSTRUN_PER_PLANT), the cheapest-first tranche distribution and the per-hour pmax x max(0, availability - layup_share) clip are ALL untouched — so D-2/D-4 attribution is unchanged and no second floor is stacked. Rule 21 [R-DOF]: ZERO free parameters. The percentile is the frozen family's own; the conditioning set is miso-197's already-published W3b construction, inherited verbatim rather than chosen here; the level is the plant's own meter. Rule 13 [R-MEASURED]: a pooled multi-year percentile of measured operation conditioned on a measured system state — the same admissible family as p25_cf itself, with the identical forward story (it re-derives from each new CAMPD vintage, and responds to changed conditions through both the plant's own conduct and how much CC headroom the future fleet carries). No outcome pinning: dispatch above the floor stays free, the level sits at or below the plant's own median over its conditioning set by the selection's S-ii criterion, and nothing is fitted to a residual. Rule 20 [R-FORCED-BUDGET]: this RAISES ST_GAS forced energy and the class is expected to sit above the 30 % merchant budget — carried on the grounded provenance+shape path, which the mechanism already holds (a cited D4_WINDOWS entry, MECH_ST_GAS_MUSTRUN_PER_PLANT x ST_GAS -> (0, 24), and D-1 profile_r 0.942-0.977 at the incumbent level). Declared in advance, not discovered. Off by default (every existing keeper byte-identical); the artifact is per-ISO by construction, so the mechanism self-scopes (rule 25). Independent of st_gas_mustrun_p25_measured_level: when BOTH are on this one wins, because it is the same level slot re-conditioned (never stacked). Selection record: results/calibration/_miso198_level_selection.json.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
