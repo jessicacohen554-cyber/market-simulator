@@ -9120,3 +9120,102 @@ by construction, is byte-reproducible, and is guarded by a test — and the remo
 a trap that had already walked one audit to the wrong answer.
 
 Next shorthand: nyiso-167.
+
+## 2026-09-01 — nyiso-167: C3a-2025 is NOT a year-specific miss — it is a year-invariant PRICE-RESPONSE GAIN of ~0.70, and 87 % of the "winter face" is that gain (zero solve)
+
+**Object:** the single load-bearing rubric failure between NYISO and CALIBRATED —
+**C3a mean LMP 2025, −11.5 %** on the keeper `2026-08-30-nyiso-159-loss-surface`.
+**No solve, no LP, no `ScenarioConfig` field, no cell verdict, no keeper, no
+shard verdict, no marker, no determination.** Rule 22: every year read is
+2023/2024/2025; no marker requested; freeze untouched. Record:
+`docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`, probe
+`scripts/probes/nyiso167_price_gain_attribution.py` →
+`results/calibration/_nyiso167_price_gain_attribution.json`.
+
+**(1) The attribution.** The keeper's price response over all 36 training months
+is ONE stable affine law, read off the same `pMon`/`dMon` fields the scorer
+weights: **model = 0.7032 × actual_RT + $11.03** (R² 0.910, resid sd $4.93) and
+**0.7236 × actual_DA + $10.06** (R² 0.947, resid sd $3.80). Each year's own
+monthly law reproduces that year's gated C3a mean to **$0.17 or better**
+(0.7118/0.6550/0.6704 gains — they move by less than the fit's scatter while
+the price level doubles). The same gain appears independently in the
+price-vs-load decile gradient (**0.752 / 0.662 / 0.664**, R² ≥ 0.99, off the
+keeper's own `system_<year>.parquet`) and in the gas passthrough slope (model
+6.38 vs actual-DA 8.94 $/MWh per $/MMBtu → **0.714**).
+
+**(2) Why 2025 fails and 2023/2024 pass — arithmetic, not physics.** With gain
+< 1 the error is `(g−1)·A + c`, monotone in the year's price level, so C3a's
+±10 % is cleared only for an annual actual mean inside **$27.79 … $56.03/MWh**.
+2023 $32.25 ✓, 2024 $38.12 ✓, **2025 $66.43 — 19 % above the upper edge**. The
+two passes are the crossover, not accuracy: three observations of one defect at
+three price levels.
+
+**(3) THE WINTER FACE IS NOT A COMPONENT — this answers the nyiso-161 card's own
+eligibility test (a) NO AS WRITTEN.** Annual load-weighted contributions on the
+gated RT basis: whole-year raw −$7.870 = law −$8.763 + residual **+$0.893**;
+**winter face raw −$4.072 = law −$3.558 + residual −$0.514 (87.4 % is the
+system-wide gain)**, and neither Jan-2025 nor Feb-2025 is an outlier off the
+pooled law (z −0.32, −0.92). The card's test (a) says *"a component that merely
+helps does not qualify"* — removing Jan+Feb does return the year to band, but
+only by removing the two months where a level-dependent error is largest. On the
+DA basis the winter share is 79.4 %. The **summer** face behaves exactly as its
+ledger says: on DA it has no residual at all (June model $52.80 vs DA $53.12,
+−0.6 %), and on RT June is the **one** genuine 2025 outlier (z −2.71) — the
+ledgered C3c limitation, which also proves the probe detects a real separate
+component when one exists. **This rules nothing: the nyiso-161 card stays FILED
+AND UNRULED and this is evidence for the owner**, who should also weigh that the
+AORR intake could not have closed C3a-2025 alone — the **upstate** passthrough
+leg (0.799, on 34 % of ISO load) is outside any in-city mechanism's reach.
+
+**(4) Two lines CLOSED, one bounded and declined.** The "2025 needs a
+year-specific driver" hypothesis is falsified (2025's whole-year residual off
+the law is **positive**). The prompt's DA−RT premium sign-flip clue is a MARKET
+fact, not an instrument defect: **excluding June alone, 2025's premium is
++$1.15/MWh**, same sign and family as 2023 (+$0.69) / 2024 (+$0.62) — the entire
+−$1.16 flip is one month, and the nyiso-165 §5 cascade-defect class is ruled out
+by direct measurement. The offer-side `gas_offer_net_revenue_margin` line is
+**bounded at roughly a third of the passthrough deficit and declined**: the
+compression makes `d(mc)/d(fuel)` `phys × HR` instead of `mult × HR`, but its
+anchor is the rule-23 frozen identification point derived on the SAME pooled
+window the band multipliers were calibrated on, so a per-year re-anchor would be
+a derivation-vs-dispatch basis mismatch with the residual as its only motive
+(rule 1). DO-NOT-REDO written onto the cell's evidence; **verdict stays K**.
+
+**(5) The gain is a cross-ISO model-class property, and NEISO is the in-repo
+counterexample.** Same fit on every ISO's designated keeper (a MEASUREMENT —
+rule 25, no verdict transfers, no other shard touched): ERCOT 0.347, MISO 0.500,
+PJM 0.668, **NYISO 0.703**, CAISO 0.837, **NEISO 0.986**. Every keeper but
+NEISO's carries a bounded C3a pass window in price level. The four gates NEISO
+arms and NYISO does not are all supply-side capability contraction at physical
+extremes and read `·` here; each is a NYISO-lane question entering as `U` on
+NYISO's own data (rule 28(d)), never a transfer. `temp_dependent_derate` stays
+**`G`** — refused ex-ante at nyiso-111 on NYISO's own measured conduct, and
+nothing here is new evidence on it (rule 28(a), do not re-test).
+
+**(6) No lever solved, and why.** The object handed forward is the
+price-response gain, not the winter face. Every candidate for it is already
+adjudicated or blocked: in-city commitment `G`/`R` and access-walled; the
+Iroquois winter spread `R` twice (this finding makes the winter face SMALLER,
+which strengthens the rejection — it is not a re-open); `temp_dependent_derate`
+`G`; the offer-side line bounded and not a defect. Building a steepener because
+the residual wants one is what rule 1 forbids, and no measured NYISO driver in
+the repo identifies one today. So the session delivers the attribution and stops
+rather than spending a solve on a lever it can already predict fails. **No run
+was registered because none was produced** (rule 15 governs completed solves).
+
+**(7) SIDE REPAIR — the NYISO matrix shard did not parse.** The duty-(a) check
+found `docs/codebase-site/data/mechanism-matrix/NYISO.js` invalid JavaScript at
+HEAD: the nyiso-151 `egrid_identity_heat_rates` entry (line 143) lost its
+trailing comma, so `window.MECH_MATRIX_SHARDS.NYISO` was never assigned and
+**NYISO's entire column has been missing from the rendered
+`mechanism-matrix.html`** since `c66a595d`. Verified with `node --check` against
+the HEAD blob before any edit of this session; the other five shards and the
+base file compile. Repaired (one character); all seven now pass.
+`scripts/check_mechanism_matrix.py` reports "integrity OK" both before and after
+— it parses the shards Python-side and never asks a JS engine. A `node --check`
+leg over the site data files is FILED as a governance-round guard change, not
+built here.
+
+**Open gates unchanged: C3a-2025 −11.5 % and C3c. Determination still NOT-YET.**
+
+Next shorthand: nyiso-168.
