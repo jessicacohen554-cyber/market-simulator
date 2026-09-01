@@ -41,6 +41,10 @@ The schema (one object per scenario-year)::
       "fleet_by_fuel_before": {fuel: mw}, "fleet_by_fuel_after": {fuel: mw},
       "peak_demand_mw": float, "firm_clean_mw": float,
       "firm_clean_accredited_mw": float,
+      "wind_cap_mw": float, "solar_cap_mw": float,
+      "renewable_credit_applied": {fuel: credit},
+      "storage_power_mw": float,   # storage FLEET power after the entry screen
+      "storage_firm_mw": float,    # the same fleet, pre-dilution accredited
       "reserve_margin": float, "rps_dual": float,
       "solve_counts": {"P0": 1, "P1": 1, "P2": 0}
     }
@@ -71,6 +75,19 @@ decides on either field; the adequacy screens read
 ``accredited_firm_capacity_mw``), and ``firm_clean_accredited_mw`` is absent
 from every pre-FFR-3B bundle — treat it as backward-compatible, like
 ``confirmed_derates``.
+
+``storage_power_mw`` is the storage fleet's NAMEPLATE POWER after that year's
+new-entry screen (``sum(u.power_cap_mw for u in storage_units)``, written by
+``runner.run_scenario_iso``). It is the ONLY durable record of the storage
+fleet state: :class:`~market_sim.results.outputs.FleetContext` carries the
+fleet's storage ENERGY capacity (``storage_energy_cap_mwh``) but no power
+column, and the LP's storage resources are not generators, so nothing on the
+generator axis ever sums to it. ``run_full_horizon.extract_trajectory`` reads
+this key for the summary's ``storage_power_mw`` (capx D29) precisely because
+the alternative — the generator-axis ``cap.get("storage")`` its legacy
+``storage_mw`` key uses — is 0.0 by construction. Like the two fields above it
+is additive: 83 ledgers written before it exists carry no such key, and a
+reader must render that as "not measured", never as zero storage.
 """
 
 from __future__ import annotations
