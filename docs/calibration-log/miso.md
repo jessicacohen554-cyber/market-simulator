@@ -9751,3 +9751,107 @@ Census queue unchanged: `egrid_identity_heat_rates` (K@NYISO),
 `tac_load_coverage` (K@CAISO), `lcr_tsl_published` (K@CAISO+NYISO). Rule 22:
 2023–2025 committed artifacts only; freeze untouched; no marker touched.
 Next number: **miso-198**.
+
+## miso-198 (2026-09-01) — the out-of-merit steam conduct measured; the LEVEL family EXHAUSTED and the WINDOW BASIS named; the inherited direction REVERSED
+
+**Keeper UNCHANGED at this writing: `2026-08-30-miso-191-bexit`.** New field
+`st_gas_mustrun_oom_level` (GATED, default off); matrix row + a cell in all six
+shards added with it (rule 28c), MISO entering `O` with the A/B in flight.
+
+The FINDING-miso197 §8 chartered successor. Two zero-solve instruments, each
+with its rule frozen in its own docstring and **pushed + blob-verified before
+any adjudicating quantity**, decided the load-bearing question; neither weighed
+anything against a price residual (rule 1).
+
+**THE CONDUCT IS REAL AND LARGE.** Under the miso-197 W3b conditioning set
+inherited verbatim (measured `CC_REGULAR` fleet below 0.90 × its own p99.5 —
+cheaper CC demonstrably idle; 7,726/7,706/7,757 of 8,760 hours), measured ST_GAS
+out-of-merit energy is **16.06/19.29/17.81 TWh/yr** against an armed floor of
+8.21/8.67/8.90 — a gap of **7.85/10.62/8.91**. It is forward-derivable: stable
+plants carry **0.812** of the class's pooled OOM energy (line 0.60), 15 of 22
+pooled-representative.
+
+**THE GAP PARTITIONS EXACTLY** (identity, residual 0.0e+00) into population /
+window / level: **0.162/0.197/0.640 (2023), 0.138/0.163/0.699 (2024),
+0.183/0.153/0.665 (2025)** — **L-3a DOMINANT = LEVEL, 3 of 3**. L-3b did NOT
+clear: only 5 of the 10 plants in the population channel pass the census's own
+operating test, so `mustrun_plant_exclusions` is **not** repaired here (the
+cycler/mothball boundary — R D Green 6639 reads `laid_up=True` at an
+`online_share` of 0.326 with 0.42 TWh/yr on the meter — is named and handed on,
+not acted on).
+
+**AND YET THE LEVEL FAMILY IS EXHAUSTED.** A criterion frozen before any
+candidate's number admitted a candidate only if conduct-grounded (S-i),
+non-pinning (S-ii) and no worse than the incumbent on over-assertion (S-iii,
+the D-4 conduct direction, ≤1.25×). Raw assertions 23/24/25 and over-assertion
+shares: **C0 incumbent** p25-all-online 10.523/11.022/11.086 (.081/.072/.065);
+**C1 p25-out-of-merit 9.932/10.386/10.441 (.070/.067/.057) — the ONLY
+ADMISSIBLE candidate**; C2 p50-out-of-merit 13.975/15.010/15.185
+(.144/.119/.138) **S-iii FAIL**; C3 p50-all-online 14.816/16.068/16.230
+(.159/.133/.157) **S-ii + S-iii FAIL**. C2 is the candidate that would have hit
+the inherited ≥4 TWh CC-2024 requirement (+3.99/+3.99/+4.10 of assertion) and it
+buys about half that volume by asserting **2.02/1.79/2.10 TWh/yr in hours the
+plants' own meters say they did not operate** — rule 17 `[R-FLOOR-WINDOW]`
+verbatim.
+
+**THE MECHANISM-LEVEL RESULT, and the named successor.** A level that is
+non-pinning *inside its own sample* over-asserts *once placed in the floor's
+window*, because the window is the top-`online_frac` fraction of hours ranked by
+**SYSTEM LOAD** while the conduct's own hour set is the plant's **COMMITMENT
+STATE**. **The binding defect is the WINDOW BASIS, not the level** — and the
+census's own W channel (15–20 %) understates it, because W measures energy
+outside the window and never the window's misplacement. The successor must NOT
+be another level move; note `mustrun_online_frac_per_year` (window *vintage*) is
+already `R` at MISO and a same-year meter-derived window is backcast-only under
+rule 13.
+
+**THE INHERITED DIRECTION IS REVERSED, declared in writing before the solve**
+(PREREG-miso198 §2). miso-197 §8(1) pre-registered CC_REGULAR-2024 DOWN /
+ST_GAS-2024 UP at conf 0.85; the admissible level is LOWER than the incumbent at
+every floored plant (Sabine 286.1→256.1 MW, Nine Mile 724.0→688.0, Greenwood
+89.0→66.0, Lewis Creek 113.5→107.7, Harding St 226.4→218.0, Little Gypsy
+53.0→50.0, Ames unchanged), so the arm moves **ST_GAS DOWN and CC UP**, bounded
+by the 0.591/0.637/0.646 TWh assertion drop. C3a face pre-registered **UP** —
+the one direction that would help the sole failing criterion — precisely so a
+favourable movement can never be presented as the reason the arm was kept.
+
+**OUT OF REACH, named so it is not silently dropped:** `ST_CHP` is effectively
+invisible to CEMS (0.0004/0.0004/0.0022 TWh measured against a −2.96/−2.93/−2.13
+C1 deficit), so no CAMPD-conditioned statistic can identify it; it belongs to
+`chp_steam_following` and its EIA-923 basis (its D-1 `profile_r` is negative in
+every year, −0.809/−0.733/−0.650, ungated). **`CT_CHP` IS visible**
+(9.79/10.46/10.20 TWh, L-2b forward-derivable at 1.00) and is a real candidate
+for the same treatment on its own mechanism.
+
+**DISCLOSED INSTRUMENT DEFECT, found and repaired before the adjudicating
+record.** The first census run omitted `load_shape`, and the runtime floor block
+falls through to an all-hours target without it (`arrays.py:2841`), collapsing W
+and inflating L. Repaired to read the solve's own `demand.sum(axis=0)` from the
+committed `hourly/system_<y>` sidecar, pushed and blob-verified at `9ad6b25c`
+before the record was written. It moved W 0.355/0.118/0.099 → 1.548/1.733/1.360
+and L 5.584/8.276/6.394 → 5.024/7.420/5.924; it did **not** move the verdict.
+Byte-faithfulness confirmed independently: the control leg's own log prints
+`floored 7 plant(s), 10.52 TWh` against the probe's 10.5233.
+
+**ENVIRONMENT, reported not worked around (CLAUDE.md GitHub-Actions section):**
+the MISO per-plant LP OOM-killed at **13.95 GB anon RSS** on this 15 GB / 4-core
+box (`CONSTRAINT_MEMCG`, pid 3884). A 12 GB swapfile lets it proceed, but the
+peak forbids rule 12's two-concurrent-invocation pattern, so the A/B legs run
+**sequentially** — 6 year-solves at ~3 h each.
+
+**NOT THIS LANE'S, but blocking others:** 11 `tests/unit/config` cache-key pin
+tests FAIL on clean HEAD `a40cfc68` — the capx-d24 repair that landed today
+deliberately moved the default key (`603c2498bf71d21d` → `7a57fadff595ca83`,
+owner ruling Q20 b′-1) and its literal pins were not updated. Verified
+pre-existing by stashing this session's changes; untouched here. This session's
+field is cache-key neutral.
+
+Records: `FINDING-miso198-stgas-oom-conduct-2026-09-01.md`,
+`PREREG-miso198-stgas-oom-level-2026-09-01.md`,
+`_miso198_stgas_oom_conduct_phase0.json`, `_miso198_level_selection.json`;
+probes `scripts/probes/_miso198_stgas_oom_conduct_phase0.py` (frozen `33facea4`,
+repaired `9ad6b25c`) and `_miso198_level_selection.py` (frozen `88bf6af4`);
+deriver `scripts/data/derive_thermal_tranche_oom_level_mw.py`. Census queue
+unchanged: `egrid_identity_heat_rates` (K@NYISO), `tac_load_coverage` (K@CAISO),
+`lcr_tsl_published` (K@CAISO+NYISO). Rule 22: 2023–2025 only; freeze untouched;
+no marker touched. Next number: **miso-199**.
