@@ -3,8 +3,8 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "7b085947b0ee",
-    "scored_at_date": "2026-09-01T01:10:11Z",
+    "scored_at_sha": "7dffe3341158",
+    "scored_at_date": "2026-09-01T06:12:01Z",
     "cache_epoch": "a4b11ef4aaa1be35"
   },
   "tier": "t3",
@@ -15,11 +15,11 @@
     "FC-2 adequacy & equilibrium behavior FAIL",
     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
     "FC-4 crossover dispatch skill (T1-X) FAIL",
-    "FC-6 driver response FAIL",
     "FC-7 provenance & DOF FAIL"
   ],
   "caveats": [
-    "FC-5 external corridor"
+    "FC-5 external corridor",
+    "FC-6 driver response"
   ],
   "notes": [],
   "categories": {
@@ -121,7 +121,7 @@
     "FC-6": {
       "label": "FC-6 driver response",
       "applicability": "required",
-      "status": "FAIL",
+      "status": "CAVEAT",
       "rows": [
         {
           "row": "battery gate rows",
@@ -131,8 +131,8 @@
         },
         {
           "row": "paired P1",
-          "status": "FAIL",
-          "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 210.52 Mt vs high 320.84 Mt",
+          "status": "PASS",
+          "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 210.52 Mt vs high 174.96 Mt [premise: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)]",
           "gating": true
         },
         {
