@@ -10795,3 +10795,85 @@ Evidence:
 `2026-09-01-caiso-231-a0-control` / `2026-09-01-caiso-231-b1-ungrounded`.
 
 **Next number: caiso-232.**
+
+## 2026-09-01 — CAISO — caiso-232: the owner's two symptoms are TWO DIFFERENT DEFECTS — the morning miss is a diurnal SHAPE error monotone in the solar ramp (+11.02 $/MWh in the steepest sextile, amplitude ratio 0.49/0.56/0.64) coupled for the first time to the caiso-216 LOCAL-curtailment strandedness bound; December is a FLAT LEVEL shift with no solar involvement (+7.4…+13.5 in all 24 hours) landing on the declared IMPORT_TRANCHES residual. ZERO SOLVES
+
+**Runs:** NONE. No LP built, no solver called, no mechanism armed, no
+`ScenarioConfig` field added, nothing registered, no cell verdict moved.
+Keeper `2026-09-01-caiso-231-b1-ungrounded` UNCHANGED, determination
+**NOT-YET** (C3a +4.1/+12.5/+15.6 the sole load-bearing FAIL). The lane's
+rested posture (caiso-201) and exhausted lever queue are respected: this
+session spends no lever and proposes none. `calibration-complete.json` (no
+CAISO marker) and `holdout-freeze.json` (ACTIVE) untouched; every read stayed
+inside 2023–2025.
+
+**Charter.** Owner handoff: *"address overprice in mornings while solar is
+available as well as Decembers. It appears our pricing is not properly
+adjusting around solar availability or whatever happens each December."*
+
+**Why a new probe was needed.** The standing C3a decompositions cannot separate
+the two symptoms: caiso-202 §B buckets by *actual price*, caiso-227 §A by
+*month block*. Neither uses a solar axis, and neither splits the residual into
+a monthly **LEVEL** and a within-month diurnal **SHAPE**. That split is the
+whole finding — under it the two symptoms fall into different halves.
+
+**Defect 1 — morning (SHAPE).** Within-month-demeaned residual is a
+morning-positive / evening-negative dipole in all three years (h07–h09
++3.5…+8.6; h16–h18 −2.7…−14.0). Ordered by the MEASURED solar ramp over six
+morning sextiles it is **monotone**: −3.75 / +1.24 / +2.65 / +4.61 / +8.31 /
+**+11.02** $/MWh (steepest bin: model $34.5 vs actual $19.2), with the evening
+mirror −6.43/−7.86 on the steepest down-ramps. Diurnal amplitude ratio (model ÷
+actual mean daily range) **0.488 / 0.557 / 0.637**. **Phase ACQUITTED** — model
+solar vs measured delivered solar r = 0.993/0.996/0.995 **at lag 0**; the
+amplitude is short, the timing is not shifted.
+
+**Mechanism — credited, not claimed.** The local/system curtailment split is
+**caiso-216's**, already on the `solar_deliverability` cell. caiso-232
+reproduces it on the caiso-231 keeper (solar-only local 1.973/2.960/2.912 vs
+system 0.536/0.233/0.570 TWh; + wind recovers caiso-216's 2.659/3.424/3.765
+exactly; model spill 475/1,170/840 GWh) and adds the coupling nobody had made:
+model spill sits **at or slightly over measured SYSTEM curtailment**
+(−0.06/+0.94/+0.27 TWh), so the entire deficit is the LOCAL half — and local
+curtailment starts h7–h8 with **38.5–40.7 % of it in h6–h11**, the window where
+the shape error peaks. The spill **pricing path is proven correct** (λ → the
+−$20 dump floor on spill), so the defect is *reaching* that regime a third as
+often, giving a **bimodal** model price (gas-marginal $35–48 or floored) against
+reality's continuous one. Honest limit recorded against interest: cell-level
+corr(shape error, local curtailment) is only +0.267/+0.202/+0.219 (system
++0.122/+0.014/+0.050) — the load-bearing evidence is the volume identity and the
+timing, not the correlation.
+
+**Defect 2 — December (LEVEL).** Dec-2025 is overpriced in **every one of the 24
+hours**, +7.41…+13.51 $/MWh, h0–h5 included at zero solar — a slab, where May's
+residual is a solar-shaped bulge. No solar mechanism reaches it. December is the
+only month positive on **both** settlement bases in all three years (RT
++4.58/+5.07/+9.56; DA +2.49/+4.59/+6.13). The supply-state witness points at
+imports: Dec-2025 model gas is only **−873 MW** below CEMS (the year's smallest
+deficit; elsewhere −2,660…−4,433) while imports run **7,082 MW**, the annual
+maximum (elsewhere 3,485–5,851), with model λ $44.33 near MALIN $39.14 + wheel +
+CARB against CAISO RT $34.77. Pooled over the 34 hub-covered months
+**corr(residual, import volume) = +0.419** (corr with the MALIN premium −0.215 —
+volume is the ordered axis, which is consistent with caiso-202 §C's <5 %
+direct-marginal acquittal: the legs displace in-state gas rather than setting λ).
+Lands on the **declared** `IMPORT_TRANCHES[CAISO]` residual (6 live fitted
+scalars, caiso-188/189 census) — a sharper target, not a new object.
+
+**What would close each — and what is refused.** Morning: sub-zonal congestion,
+i.e. local transmission limits whose dual produces local curtailment
+endogenously. Feeding measured curtailment volumes back in is **REFUSED under
+rule 13** — that is `caiso_solar_cap_at_delivered`, self-labelled default-off
+and barred from any keeper because it pins an OUTCOME with no forward analogue.
+The legitimate route (published deliverability limits) is recorded **CEII-blocked**
+(caiso-218/219). `ramp_envelopes` (I) is **not** re-opened: this finding is
+evidence about the defect, not about that mechanism (rule 28(a)). December: the
+standing unfunded import-tranche object.
+
+**Instruments.** `scripts/probes/_caiso232_solar_ramp_december_decomp.py` →
+`results/calibration/_caiso232_solar_ramp_december_decomp.json`;
+`results/calibration/FINDING-caiso232-solar-ramp-december-decomp-2026-09-01.md`;
+charts (8 figures, both themes, table views) at
+<https://claude.ai/code/artifact/24d8650d-fd6d-47ca-8967-9a6b91ace598>.
+
+**Matrix (rule 28(b), CAISO shard only) — evidence appends, NO verdict moves:**
+`diurnal_price_amplitude` (stays **U**), `solar_deliverability` (stays **K**),
+`import_hub_pricing` (stays **K**).
