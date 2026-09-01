@@ -672,6 +672,16 @@ results/hindcast/*/*/*/evolution_*.json
 # the scorer's retirement_decisions_in_window block needs pipeline_events).
 # KB-scale JSON, same class as the committed S-4b T1-F ledgers.
 !results/hindcast/*crossover*/*/*/evolution_*.json
+# capx-D27 tracked-set addition (2026-09-01; FINDING-capx-d17-miso-exit-channel
+# §6 R1, which asked the re-measure to COMMIT "the hindcast per-fuel depths, bar
+# decompositions and event rows this lane had to bound around"). This ONE T1-H
+# bundle's per-year ledgers are the sole evidence for its central mechanism
+# claim — that `_floor_retention_merit`'s ascending cost-per-firm-MW ordering,
+# not admission depth, is what makes the released exit set 100 % coal — so
+# without them a future lane must re-solve (~35 min) to check it. Deliberately
+# scoped to this bundle, NOT to the T1-H class: the slim-set convention above is
+# unchanged for every other hindcast run. 3.0 MB of JSON across 5 files.
+!results/hindcast/miso-2021-2025-realized-t1h-d27/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet
