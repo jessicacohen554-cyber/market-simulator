@@ -6,11 +6,228 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-31 (refresh #22) ·
-**HEAD at refresh:** `d44446e0` · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-08-31 (refresh #23) ·
+**HEAD at refresh:** `240e80e4` (graded through the GitHub API — git transport unavailable, ledger push HELD, §0t.0) · **Owner cards A/B/C SIGNED 2026-08-25; Q5/Q6/signal/S-123 RULED at the r#8 sitting; Q5 RE-RULED at r#12 — WITHDRAW; Q7/Q8/Q9 RULED at the r#13 sitting (leg-(c) measured-closes · D11-R arming HOLD-until-D12 · miso-190 still running)** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (REWRITTEN at r#21 — the five-lane in-flight set NEISO-RC-R/D3/D4-I3/D8-RE + miso-193 watch, the r#19 parallelism + r#20 model-economy + r#20/21 relaunch doctrines, the fifteen rulings, and the open owner-tier card list)
 
 ---
+
+## 0t. Refresh #23 (2026-08-31, main HEAD `240e80e4`) — SEVEN OF EIGHT LAND; the t3 ceiling is measurable and its first verdict is a FAIL; NEISO and NYISO take the program's FIRST CLEAN FC MAPS; two program-wide defects surface (a carbon price that RAISES CO2; one cache key covering two dispatches)
+
+**0. TRANSPORT NOTE — this refresh is graded but NOT PUSHED, deliberately.** `git fetch`/`push`
+fail this session with `could not read Username for 'https://github.com'` (the credential path
+is gone; three retries with backoff, all identical — not a 408/500, so the HTTP/1.1 remedy does
+not apply). The wave was therefore graded **through the GitHub API** — `list_commits` on `main`
+plus the merged-PR list, which is exactly the content-not-branch-name method r#22's amendment
+made standing, and it is strictly better evidence than a branch census would have been. **The
+ledger and pack edits are written and committed LOCALLY and the push is HELD**, because the
+only available transport is `push_files`, and rule 27 `[R-PUSH]` forbids rewriting an existing
+≥300-line file from regenerated response content — which is precisely what pushing this
+1,600-line ledger and 2,300-line pack through it would be. That is the rule working, not an
+obstacle to route around: the incident behind rule 27 was a large file truncated over exactly
+this path. **The push lands as-is the moment git transport returns.**
+
+**1. LANDING VERIFICATION — 7 of 8 dispatched lanes landed** (six capx + the two offered
+backcast prompts; `main` @ `240e80e4`):
+
+- **D8-V LANDED** (PR #4483). **The program has its first two clean FC maps.** Both stopped
+  flips re-verified through their affected lanes' own records and PUBLISHED: `neiso-t1f` and
+  `nyiso-t1f` move PROMOTE-WITH-CAVEATS → **PROMOTE with caveats `[]`**, exactly the capx-D8 §6
+  pre-registration. PJM's ledger built and committed (1 entry, 0 UNIDENTIFIED ⇒ FC-7
+  CAVEAT → PASS, determination HOLD unchanged — not a stop, as pre-measured); MISO's built and
+  committed (4 entries, 3 UNIDENTIFIED ⇒ FC-7 **stays** CAVEAT, the attestation debt NAMED and
+  deliberately not attested — rule 21 honoured rather than cleared by invention). Controls
+  first on all four keys, each reproducing its committed record byte-for-byte. Gate cells left
+  untouched with their stale text **flagged to D19**, which independently confirms the r#22
+  decision to queue D19 behind these writers.
+- **D4-M LANDED** (PR #4481; the R-4 instrument grain `ed83115c` + the run `d110a13b`), and it
+  is the richest result of the wave.
+  - **It caught a posture change the pre-declaration could not have known about, and said so
+    before grading anything.** Asserting from the run's own `run_config.json`, the measured
+    posture is **FOUR levers, not two**: owner ruling R-A flipped `storage_entry_availability_gate`
+    and `storage_entry_cost_normalized_rank` to defaults on 2026-08-31, *after* D4-I3's
+    pre-declaration froze, while its whole basis (`d12c-armed`) ran both False. The lane graded
+    P-1..P-8 **exactly as written**, at full magnitude, carrying that as a stated attribution
+    limit — it did not re-base, reinterpret or quietly widen a single prediction. That is the
+    pre-declaration discipline working under a moving posture.
+  - **Grade: held on direction and on every structural claim; missed LOW on every magnitude.**
+    P-1 HELD (2023 slack 0.1156 %, ≈12× the control). P-2 MISS 1.65×. P-3 HELD in kind, 1.67×
+    (2024 opens at 0.0334 %). P-4 HELD (2025 clean). P-5 build HELD (28.587 GW) but RM MISS low
+    (4.75/5.50 % vs ~6.1/6.8 %). P-6 consistent, not independently measured. P-7 MISS 1.35×.
+    **P-8 UNMEASURED and recorded as unmeasured rather than estimated.** **No falsifier fired**;
+    F-3 is closest at 77 % of its ceiling.
+  - **THE SUBSTANTIVE RESULT — composition beat volume, in the mirror image of F-4.** Against
+    `d12c-armed` the model built **MORE** (+2.7 %) and 2023 slack got **65 % WORSE** — the wrong
+    sign under a pure volume account. This does not refute D4-I3's §2.2(a) monotonicity (a
+    within-posture claim) but **corrects its magnitude**: the duration channel is ~0.05 pp here
+    against an opposing volume move, so **composition is the larger channel at this posture, not
+    the residual**. Storage power is identical (2,750 MW) while this run builds 100 %
+    li_ion_4hr.
+  - **The worse I3 was NOT repaired** — not by re-disarming, not by a volume knob, not by any
+    parameter moved to close the breach. Exactly as D4-I3 §4 bound it. And the deficit is now
+    located: **ERCOT retirements are 0.000 GW modelled against 2.294 actual**, so the gap is
+    entirely entry-side. *(Note the rhyme with D3 and with D17's unstarted object: a second ISO
+    whose economic screen executes no retirements at all.)*
+  - **R-5 IS UPGRADED FROM HYPOTHESIS TO DEMONSTRATED MECHANISM** — see item 2.
+- **D18 LANDED** (PR #4479). Census **re-derived by running the real checker at HEAD** and it
+  matched the charter's list exactly — 13 runs, 15 idents. **14 of 15 point at a real record**;
+  CAISO's 2021 I7 is declared **honestly untracked at root-cause grain**, with the explicit note
+  that attributing it to FR-3 would have been fabricated. That is the charter's "say so
+  explicitly rather than inventing an attribution" clause being honoured against the temptation
+  to tidy. `dominant_open_causes.I3` de-ERCOT'd. Everything else in the file byte-unchanged.
+  *(Dispatch hygiene: TWO D18 sessions ran — PRs #4479 and #4480, the second carrying no unique
+  content. No harm; noted so the duplicate is not mistaken for a second finding.)*
+- **D21 LANDED** (PRs #4477/#4478) — **the t3 FC-6 gate now grades, and its first verdict is a
+  FAIL.** `neiso-t3` FC-6 moves SKIPPED-required → **FAIL**; determination stays HOLD, now on
+  six failing gates + FC-5 unscored. Two sub-results matter more than the verdict:
+  - **NEISO's entire pre-registered ladder is VACUOUS.** T1.6 is its whole battery — 2 rungs —
+    and both solved **metric-identically across all 18 extracted values**, because
+    `renewable_buildout_pace` **is consumed by no model code**. Both gate rows therefore pass on
+    all-constant series ⇒ CAVEAT, never PASS (rubric FC-6.2, which this lane also *implemented*).
+    The instrument tests nothing for NEISO, and now says so out loud.
+  - **PAIRED P1 FAILS AT FULL MAGNITUDE: cumulative 2026–2050 CO2 RISES 210.52 → 320.84 Mt
+    (+52.4 %) under `carbon_price=25`.** Located in the CCS retrofit screen (base retrofits the
+    whole gas-CC fleet by 2040: 13,049 MW gas_cc_ccs / 0 unabated; the carbon arm keeps 4,000 MW
+    unabated with ~3 GW LESS CCS) plus a same-fleet **2026 dispatch-level** rise (+0.21 Mt).
+    Root cause routed, **nothing tuned**. See item 2.
+  - Three pieces of instrument work rode along: it **repaired `_annual_co2_tons`** so P1 can
+    score a forecast bundle at all (P1 had been SKIPping "emissions absent" on every forecast
+    path since the 2026-07-12 weekly — a standing gap); it implemented FC-6.2's vacuity check;
+    and **it caught its own data-vintage leak** — the first battery output was solved against a
+    clean tree curated from CURRENT `data/raw`, which two post-golden intakes had moved for
+    NEISO, so it DELETED that output and re-ran from the golden's own `9e56f0f` raw bytes. The
+    base arm then reproduced the golden's trajectory exactly, all 25 years × 13 fields and the
+    full I1–I14 vector. Self-caught, self-corrected, recorded.
+- **D22 LANDED** (PR #4476) — and the root cause is worth more than the intake. **FF-0F built
+  the machinery but gitignored BOTH ends of the raw→clean chain**, so nothing in the
+  raw→clean→scorer path was ever committed and FC-5 had no table to read; the loader docstring's
+  "regenerated from committed raw" **was not true**. Landed: AEO2025 committed and its fetch made
+  **key-free** (28 keyed requests → 6, fitting the DEMO_KEY budget) with a **refusal on truncated
+  fetch** (the API silently caps JSON at 5,000 rows, which would drop regions with no error —
+  rule 5); ERCOT CDR 2025 and PJM Load Forecast 2026 **machine-extracted, never hand-transcribed**
+  (the rule-5 fat-finger hazard, stated as the reason). Corridor table **1,025 rows from 3
+  sources**; missing-source list **7 → 5**. Contract extension: `peak_demand` / `energy_demand` /
+  `reserve_margin` quantities, with `reserve_margin` marked INTENSIVE so `iso_totals()` **raises**
+  rather than summing a ratio across regions. The CDR's ELCC-derated peak-contribution basis
+  rides as a caveat in every CDR row rather than being silently mixed with AEO nameplate
+  (rule 11). **StdScen2024 is unreachable by egress policy; four other sources are
+  reachable-but-portal-blocked.** **FC-5 still SKIPs pending an authored disposition table —
+  by design**, so the ceiling is measurably closer but NOT yet lifted (item 3).
+- **ercot-248 LANDED** (PR #4484) **and corrected my charter's premise — recorded against
+  interest.** The funded "2024/2025 all-resource SCED intake" was **a RESTORE, not an intake**:
+  those publications were fetched by ercot-183 on 2026-08-09 and untracked as gitignored payload
+  by BLOAT-B-5 item A2 on 2026-08-15, so they are simply absent from a clone. **`SCED-CT/README.md`'s
+  coverage table was written 2026-08-04 — five days BEFORE that intake — and I scoped the charter
+  off it without checking whether a later intake had superseded it.** The lane also overrode my
+  **placement instruction, correctly**: the consumers' corpus glob is `YYYY-MM.part*.parquet`, so
+  the per-day route I specified would have produced an invisible corpus. Verified restore:
+  700/700 publication days, **88,561,421 rows**, every delivery month complete, 0 duplicate days,
+  0 deliveries past 2025-12-31 (rule 22 intact), only the known permanently-unreachable
+  2024-01-10..23 gap; the delivery-2023 offer-wall derive **byte-identical before and after**;
+  the 27 HASL-less RTC+B parts quarantined by content, reproducing the documented set exactly.
+  It also corrected the corpus **recovery doctrine**: `SHA256SUMS.txt` **cannot** accept a
+  re-fetch restore, because parquet bytes are writer-version specific (tracked shards
+  parquet-cpp-arrow 24.0.0 vs this writer's 25.0.1) — so it stays the identity record of the
+  original bytes and a **writer-independent manifest** (delivery day, row count, column count per
+  part) is added alongside, with five structural checks. **Director lesson: a README's coverage
+  table is a claim with a date on it. Check whether a later intake superseded it before scoping a
+  charter from it.**
+- **nyiso-165 + nyiso-166 LANDED** (PR #4473) — the prompt landed as **two** sessions: nyiso-165
+  found the defects, established the blast radius and deferred the repair to a data lane;
+  **nyiso-166 executed it**. Both defects repaired at source and the reference regenerated for
+  **every year it carries, 2018–2026** (data prep applied consistently across all years, rule 22
+  — no year solved, scored or registered). The mandatory acceptance test **passes**: hour-by-hour
+  parity with `nyiso164_nyca_shortage_check.py` — the independent construction — **8,759/8,759
+  mapped hours, both tiers, all three years**, tail table and the **0/65 ceiling test** matching
+  exactly. Keeper `2026-08-30-nyiso-159-loss-surface` re-verifies **NOT-YET on exactly
+  {C3a-2025 −11.5 %, C3c}**; `audit_keepers --iso NYISO` PASS 0/0. **Magnitude: levels were
+  overstated 1.8×–2.9×** — the 2025 NYC max $5,568.18 → **$2,146.50**, and the finding's own
+  verdict on that number is the right instinct to institutionalise: *"a published price above
+  every published penalty factor is a construction error by inspection."* Two secondary repairs:
+  a raw-CSV fallback in `derive_nyiso_rcpf_overlay` that **re-implemented BOTH defects, one
+  missing file away from firing**, DELETED rather than fixed (rule 23 `[R-DELETE]`); and
+  nondeterministic column order fixed so the artifact is byte-reproducible. 9 regression tests
+  pin the cascade invariant, the MAX end-to-end, the std-clock identity and the nyiso-164 parity.
+  - **CORRECTION TO MY OWN r#22 RECORD:** the DST mismatch is **5,712** hours (65.2 %), not the
+    5,710 I carried from the audit; the two-hour difference is the boundary-spill row, which the
+    repair now discards. Immaterial to every conclusion, corrected because it is cited.
+  - **OWED, and not delivered: the cross-ISO cascade SCAN.** My prompt asked for the max-not-sum
+    rule to be scanned across the other five ISOs' reserve constructions (ISO-NE's
+    TMSR ≥ TMNSR ≥ TMOR named as the obvious candidate) and reported per ISO. The finding
+    discharges the NYISO matrix duty (§10, no cell moves) but carries **no such scan**. The
+    generalizable half of the C3c audit's gift is therefore still on the table — item 4(g).
+- **D17 — NOT LANDED. No PR, no branch, no commits.** Verified **by content** this time (the
+  merged-PR list plus `list_commits` over `main`), which is the r#22 lesson applied rather than
+  re-learned. It is a zero-solve Phase-0 lane, so it should have been quick; per the standing
+  relaunch protocol I do **not** grade it lost — the owner is asked (item 4a).
+
+**2. TWO PROGRAM-WIDE DEFECTS SURFACED THIS WAVE, both bigger than the lanes that found them.**
+Neither was the lane's object; both were found because a lane looked at its own evidence
+honestly.
+
+- **(i) A CARBON PRICE RAISES CUMULATIVE CO2 BY 52.4 %** (D21's paired P1). This is not a gate
+  cosmetic — P1 is, in the rubric's own words, "the model's economic core", and a sign error
+  there is a claim about the model's fitness for the entire policy-scenario purpose the forecast
+  program exists to serve. Two distinguishable legs are already visible in the committed arm
+  summaries: a **capacity-side** leg (the CCS retrofit screen retrofits ~3 GW LESS under the
+  carbon price — plausibly because an unabated CC that runs less has a smaller incremental
+  retrofit uplift, which would be a *real* economics result rather than a bug, and must be
+  distinguished from one) and a **dispatch-side** leg (2026, SAME fleet, +0.21 Mt — a same-fleet
+  dispatch CO2 rise under a carbon price is much harder to explain benignly, since merit-order
+  switching should move the other way). Chartered as **D23**, Phase-0, precommit-first,
+  zero new mechanism.
+- **(ii) ONE CACHE KEY, TWO DISPATCHES, BY CONSTRUCTION** (D4-M's R-5 upgrade). `cache_key()`
+  **drops `_CACHE_KEY_OPTIONAL_FIELDS` members at whichever value is the live default**, so
+  D4-M's key `f061b264…` is byte-identical to `d12c-armed`'s **while both storage fields
+  differ**. D4-I3 §5.1 had reported two committed records of one key disagreeing on three scored
+  quantities and honestly declined to assert a cause; the cause is now demonstrated. The reach is
+  program-wide: **every default flip silently makes previously-cached results collide with new
+  ones**, so any cross-vintage comparison is suspect until characterized, and the board now
+  stamps two runs at one `cache_epoch` at different postures. Chartered as **D24**, Phase-0
+  characterize-and-propose ONLY — a fix changes keys globally and invalidates caches, which is
+  an owner-cost decision, not a lane's.
+
+**3. THE t3 CEILING, HONESTLY SCORED.** Q16's premise was that neither FC-5 nor FC-6 existed, so
+no golden could grade better than HOLD. After D21+D22: **FC-6 exists and grades** (FAIL, on real
+evidence), **FC-5 has its table but still SKIPs pending an authored disposition table**. So the
+ceiling is one step from lifted, and the remaining step is judgment work, not intake — chartered
+as **D25**. The golden's determination is unchanged at HOLD either way, and Q16's hold on the
+re-solve therefore still stands on its own reasoning.
+
+**4. OWNER-TIER ITEMS OPEN AFTER THIS REFRESH:** (a) **D17 — is its session still running?**
+(nothing landed; not graded lost per protocol) · (b) the **P1 carbon-sign failure** — D23 is
+chartered but its eventual repair may reach the CCS retrofit screen, a shipped mechanism ·
+(c) the **cache-key defect's fix cost** — D24 characterizes; the fix invalidates caches
+program-wide and is an owner call · (d) **miso-192's D-4 posture options (i)/(ii)/(iii)**, still
+unruled · (e) the **nyiso-161 winter-face waiver card** — the audit refresh's R-F parked it with
+a fired trigger and nyiso-166 confirms it stays "filed and unruled" · (f) whether to fund the
+**four portal-blocked FC-5 sources** (StdScen2024 is unreachable by egress policy — a different
+class) · (g) the **owed cross-ISO cascade scan**, offered as a backcast prompt.
+
+**5. DISPATCH RECORD (post-r#23): FOUR lanes issued** — **D19** (board reconcile 2, RELEASED:
+both blocking writers landed and D8-V explicitly flagged its stale gate text to it; Fable) ·
+**D23** (the P1 carbon-CO2 sign failure, Phase-0 precommit-first; Fable) · **D24** (the cache-key
+optional-fields defect, characterize-and-propose only; **Opus**) · **D25** (the FC-5 disposition
+table, the ceiling's last step; Fable). Charters: four new pack sections. **Collision map:** D19
+writes cross-ISO board prose + gate cells; D23 and D24 write docs only (both Phase-0, nothing
+built); D25 writes the FC-5 disposition artifact and re-scores FC-5 keys. D19 vs D25 both touch
+`program-status.json` — distinct blocks (cross-ISO prose vs FC-5 rows), rebase-care stated in
+both, the r#19 precedent. **All four prompts were pasted to the owner in chat this sitting; the
+pack sections and this entry are committed locally and their push is HELD per item 0.**
+
+**6. BACKCAST-TRACK WATCH.** **caiso-229 LANDED** (PR #4482): Phase-0 kill of the caiso-227 §G
+below-stack wedge, zero LP; `cc_committed_offer_margin` U → **R**, refuted **on sign** (CAISO's
+measured committed band is 1.030 against an armed 1.000, so the ERCOT below-cost committed form
+has no CAISO analogue and a measured-faithful repair would move the floor the wrong way);
+evidence appended without verdict change to three sibling cells. **miso-195 LANDED**
+(PRs #4471/#4474): the remove-only measured outage-envelope cap REFUTED at the pre-frozen gate
+(W4 conversion 16.9 % vs 25 %, and W6 feasibility — 6 cap-caused violation days in 2025 where
+capped availability fell below measured EIA-930 output); **every composition of
+`miso_native_outage_source` at the public record's aggregate grain is now adjudicated**, which
+closes a lever family rather than a single cell. **The audit-program refresh landed** (PR #4465):
+board to v17, rulings R-D/R-F/R-G executed (ERCOT wind decision map, nyiso-161 parked with a
+fired trigger, Leg-2 closed by archive). **One backcast prompt offered this sitting:** the
+cross-ISO reserve-cascade scan nyiso-166 did not carry.
 
 ## 0s. Refresh #22 (2026-08-31, HEAD `d44446e0`) — the r#21 wave lands 3/4 (D3 · D4-I3 · D8-RE); ERCOT DECLARED complete + frontier; the C3c scarcity program opened, chartered and already spent Q1+Q2; four lanes issued (D8-V · D4-M · D17 · D18)
 
@@ -1423,14 +1640,17 @@ the gap.
 | **D3 MISO RETIREMENT / G3** | G3 cap-grain `retire.total_gw` t1h regression — attribution-first, zero-solve Phase 0 | **LANDED** PRs #4455/#4458 — flip ATTRIBUTED to class (b); the fix moved coal TOWARD reality (+18.4 %→+9.1 %) and the band failed because excess coal had been compensating **3.458 GW of real gas/oil exits the screen produces at 0.0**; post-fix value byte-identical to FFR-2B's paired control, so the knife-edge −9.8 % PASS was the artifact; classes (a)/(c) REFUTED | `claude/capx-d3-miso-retire-g3` | Fable | §0s.1. "Retirement-volume regression" retired as a framing. Routed PRIMARY → lane **D17**. |
 | **D4-I3 ERCOT** | I3 scarcity-slack invariant (net-revenue half HELD under card Y-C) — zero-solve breach-set + pre-declared post-arming expectation + FR-6 code-comment home | **LANDED** PR #4460 — I3 is an **under-build signature**, monotone in added GW across 11 records; **no committed ERCOT posture clears I3 and the I12 band together** (one phenomenon, not two); P-1..P-8 + F-1..F-4 frozen for the measurement half; six repairs routed; two measurement-integrity findings (vintage-only comparability; the instrument emits no MW/hours/GWh) | `claude/capx-d4i3-ercot-slack` | Fable→**Opus** | §0s.1. Measurement half → lane **D4-M** (NOT D6 — ERCOT is curve-OFF; see §0s.4). R-6 → lane **D18**. |
 | **D6 FC-3 CURVE-ON OVER-FIRE** | Four T1-H curve legs — the **capacity-market** ISOs (PJM/MISO/CAISO/NEISO), curve-ON | **QUEUED — STILL UNCHARTERED** (needs a pack section before it can be dispatched) | — | Fable | §0s.4. RE-SCOPED: it is NOT the vehicle for the ERCOT post-arming measurement (ERCOT is curve-OFF). D3 partly illuminates its MISO half. |
-| **D4-M ERCOT POST-ARMING T1-H** | Grade D4-I3's frozen P-1..P-8 on the first T1-H at the armed D12-A posture; R-4 instrument grain first | **ISSUED r#22** | `claude/capx-d4m-ercot-t1h` | **Opus** | Execution of a spent pre-declaration. A worse I3 is the correct result and may not be repaired in-lane. |
-| **D8-V FC-7 LEDGER COMPLETION** | Publish D8-RE's two stopped flips through each affected lane's re-verification; close PJM + MISO ledgers | **ISSUED r#22** | `claude/capx-d8v-fc7-ledger` | Fable | Two ISO determinations move (NEISO + NYISO → PROMOTE, empty caveats). Barred from the legacy-leg run_configs (D20). |
-| **D17 MISO NON-COAL EXIT CHANNEL** | Why the economic screen executes ZERO gas_ct/gas_cc/oil exits vs 3.458 GW actual — Phase 0, zero-solve, precommit-first | **ISSUED r#22** | `claude/capx-d17-miso-exit-channel` | Fable | D3's routed PRIMARY. Standing refusal: no FOM/threshold/lag identified from the retirement residual. |
-| **D18 INVARIANT DECLARATION LEDGER** | Declare the 13 undeclared invariant FAILs; correct the misattributing `dominant_open_causes.I3`; make the standing-red CI job green | **ISSUED r#22** | `claude/capx-d18-invariant-ledger` | **Opus** | D4-I3's routed R-6. Census re-derived independently by the director. |
-| **D19 BOARD RECONCILE 2** | Four stale cross-ISO board facts (tier_ladder T3 row · readiness prose · gate_reading/headline leg-(d) · ERCOT's gate (a) after ercot-247) | **QUEUED — deliberately after D8-V + D4-M** | — | Fable | §0s.5. Reconcile to a settled board, not one being written under it (D13 precedent). |
+| **D4-M ERCOT POST-ARMING T1-H** | Grade D4-I3's frozen P-1..P-8 on the first T1-H at the armed D12-A posture; R-4 instrument grain first | **LANDED** PR #4481 — posture measured as **FOUR levers not two** (R-A armed two storage fields after the pre-declaration froze; graded as written with that as a stated limit); **held on direction and every structural claim, missed LOW on every magnitude, no falsifier fired**; **composition beat volume** (built +2.7 % MORE and slack 65 % WORSE — wrong sign for a pure volume account); ERCOT retirements **0.000 GW vs 2.294 actual**; **R-5 upgraded to a demonstrated mechanism** | `claude/capx-d4m-ercot-t1h` | **Opus** | Execution of a spent pre-declaration. A worse I3 is the correct result and may not be repaired in-lane. |
+| **D8-V FC-7 LEDGER COMPLETION** | Publish D8-RE's two stopped flips through each affected lane's re-verification; close PJM + MISO ledgers | **LANDED** PR #4483 — **the program's FIRST TWO CLEAN FC MAPS**: `neiso-t1f` + `nyiso-t1f` → PROMOTE, caveats `[]`; PJM ledger 1/0 ⇒ FC-7 CAVEAT→PASS, HOLD unchanged; MISO 4 entries/3 UNIDENTIFIED ⇒ stays CAVEAT, debt NAMED not attested; four byte-exact controls; stale gate text flagged to D19 | `claude/capx-d8v-fc7-ledger` | Fable | Two ISO determinations move (NEISO + NYISO → PROMOTE, empty caveats). Barred from the legacy-leg run_configs (D20). |
+| **D17 MISO NON-COAL EXIT CHANNEL** | Why the economic screen executes ZERO gas_ct/gas_cc/oil exits vs 3.458 GW actual — Phase 0, zero-solve, precommit-first | **ISSUED r#22 — NOTHING LANDED at r#23** (verified BY CONTENT: no PR, no commit on main; not graded lost per the relaunch protocol — owner asked, §0t.4a) | `claude/capx-d17-miso-exit-channel` | Fable | D3's routed PRIMARY. Standing refusal: no FOM/threshold/lag identified from the retirement residual. |
+| **D18 INVARIANT DECLARATION LEDGER** | Declare the 13 undeclared invariant FAILs; correct the misattributing `dominant_open_causes.I3`; make the standing-red CI job green | **LANDED** PR #4479 — census re-derived by running the checker at HEAD, matched exactly (13 runs / 15 idents); **14 of 15 cite a real record and CAISO's 2021 I7 is declared HONESTLY UNTRACKED** rather than fabricated; I3 cause line de-ERCOT'd (a duplicate session, PR #4480, carried no unique content) | `claude/capx-d18-invariant-ledger` | **Opus** | D4-I3's routed R-6. Census re-derived independently by the director. |
+| **D19 BOARD RECONCILE 2** | The stale cross-ISO board facts, now six (tier_ladder T3 row · readiness prose · gate_reading/headline leg-(d) · ERCOT's gate (a) after ercot-247 · D8-V's flagged gate cells · the two new PROMOTEs) | **ISSUED r#23 — RELEASED** (both blocking writers landed; D8-V flagged its stale gate text to this lane by name) | `claude/capx-d19-board-reconcile-2` | Fable | §0s.5. Reconcile to a settled board, not one being written under it (D13 precedent). |
 | **D20 RECONSTRUCTED RUN_CONFIG PROVENANCE** | Scorer recognises `provenance: "reconstruction"` and scores it **CAVEAT, never PASS** | **QUEUED — director decision taken §0s.5** | — | Fable | Adoption-as-original REFUSED: it would assert provenance the artifacts lack. |
-| **D21 FC-6 DRIVER BATTERY (t3 ceiling, half 1)** | Run the Tier-1 monotonicity battery + paired P1–P3 at the golden's config vintage, commit the machine output, re-score `neiso-t3`'s FC-6 | **ISSUED r#22 (amendment)** | `claude/capx-d21-fc6-battery` | Fable | Q16/Q19 execution. Price the ladder BEFORE running it; a vacuous pass is a CAVEAT, never a PASS. |
-| **D22 FC-5 BENCHMARK CORRIDOR (t3 ceiling, half 2)** | The `benchmark-corridor` curated datatype + the rubric §6 eight-source intake — **data contract and intake ONLY, no scorer edit** | **ISSUED r#22 (amendment)** | `claude/capx-d22-fc5-corridor` | **Opus** | Q16/Q19 execution. Benchmarks are context, never fit targets (rule 13). The no-scorer-edit boundary is what keeps it clear of D8-V's live re-scores. |
+| **D23 P1 CARBON-CO2 SIGN FAILURE** | A carbon price RAISES cumulative CO2 +52.4 % — attribute the capacity-side (CCS retrofit screen) and dispatch-side (2026 same-fleet) legs | **ISSUED r#23** | `claude/capx-d23-p1-carbon-sign` | Fable | D21's routed object. P1 is the model's economic core; Phase-0, precommit-first, nothing tuned. |
+| **D24 CACHE-KEY OPTIONAL FIELDS** | `cache_key()` drops `_CACHE_KEY_OPTIONAL_FIELDS` at the live default ⇒ one key, two dispatches across a default flip | **ISSUED r#23** | `claude/capx-d24-cache-key-defect` | **Opus** | D4-M's R-5 upgrade. CHARACTERIZE AND PROPOSE ONLY — a fix invalidates caches program-wide, an owner cost decision. |
+| **D25 FC-5 DISPOSITION TABLE** | Author the per-row disposition table so FC-5 can score at all — the t3 ceiling's last step | **ISSUED r#23** | `claude/capx-d25-fc5-dispositions` | Fable | Judgment work, not intake. Divergence is not failure; UNEXPLAINED divergence is. Benchmarks are context, never fit targets. |
+| **D21 FC-6 DRIVER BATTERY (t3 ceiling, half 1)** | Run the Tier-1 monotonicity battery + paired P1–P3 at the golden's config vintage, commit the machine output, re-score `neiso-t3`'s FC-6 | **LANDED** PRs #4477/#4478 — **FC-6 grades, and FAILs**: NEISO's whole 2-rung ladder is **VACUOUS** (`renewable_buildout_pace` is consumed by no model code) ⇒ CAVEAT; **paired P1 FAILS — cumulative CO2 RISES 210.52 → 320.84 Mt (+52.4 %) under carbon_price=25**; determination HOLD. Also repaired `_annual_co2_tons` (P1 could not score ANY forecast bundle), implemented FC-6.2, and **self-caught a data-vintage leak** and re-ran from the golden's own raw bytes | `claude/capx-d21-fc6-battery` | Fable | Q16/Q19 execution. Price the ladder BEFORE running it; a vacuous pass is a CAVEAT, never a PASS. |
+| **D22 FC-5 BENCHMARK CORRIDOR (t3 ceiling, half 2)** | The `benchmark-corridor` curated datatype + the rubric §6 eight-source intake — **data contract and intake ONLY, no scorer edit** | **LANDED** PR #4476 — root cause: **FF-0F gitignored BOTH ends of the raw→clean chain**, so the loader's "regenerated from committed raw" was untrue. AEO2025 committed + fetch made key-free (28→6 requests) + truncation refused; ERCOT CDR + PJM Load Forecast machine-extracted; **1,025 rows / 3 sources, missing list 7→5**; StdScen2024 unreachable by egress policy. **FC-5 still SKIPs pending an authored disposition table — by design** (→ D25) | `claude/capx-d22-fc5-corridor` | **Opus** | Q16/Q19 execution. Benchmarks are context, never fit targets (rule 13). The no-scorer-edit boundary is what keeps it clear of D8-V's live re-scores. |
 | **D8 FORECAST PROVENANCE DEBT + DOF LEDGER** | FC-7's two halves: the DOF-ledger instrument (every T1-F leg's caveat — NEISO's ONLY one) + the seven legacy legs' missing `run_config.json` | **LANDED r#21** (PR #4427) + **D8-RE LANDED r#22** (PR #4457): one key re-emitted, **two committed-verdict flips STOPPED and routed** under the cross-lane re-grade rule (`neiso-t1f`/`nyiso-t1f` → PROMOTE, empty caveats), PJM/MISO ledgers measured read-only | `claude/capx-d8-dof-ledger` → `claude/capx-d8-re-emission` | Fable→Opus | §0p.2 + §0r.6. The instrument is what stands between the program's best ISO and a clean FC map. |
 | **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | **ADJUDICATED UNREACHABLE at HEAD, ROUTED** (S-123 finding §5 — TVA re-point + data prerequisite named) | — | Fable | Handed in by miso-183; closed as a lane, lives on as a routed intake item. |
 | **D16 ARMED-INTERFACE mc=0 SEAM** | Armed-interface forecast years leave seam rows at their mc=0 build placeholder (S-123 finding §5/§7-5) | **ISSUED r#19** — director mechanism decision: FAIL CLOSED (hard refusal, holdout_policy pattern); fallback-price alternative deliberately not built without its own charter | `claude/capx-d16-seam-guard` | Fable | §0p.2. New defect found on the D9 trace, routed to this track 2026-08-30. |
@@ -1441,6 +1661,11 @@ the gap.
 
 | item | state |
 |---|---|
+| **CAISO (r#23)** | **caiso-229 LANDED** (PR #4482): Phase-0 kill of the caiso-227 §G below-stack wedge, zero LP. `cc_committed_offer_margin` U → **R**, refuted **on sign** — CAISO's measured committed band is 1.030 against an armed 1.000, so the ERCOT below-cost committed form has no CAISO analogue and a measured-faithful repair moves the floor the wrong way. Evidence appended without verdict change to three sibling cells; keeper unchanged. |
+| **MISO (r#23)** | **miso-195 LANDED** (PRs #4471/#4474): the remove-only measured outage-envelope cap REFUTED at its pre-frozen gate (W4 conversion 16.9 % vs 25 %; W6 feasibility — 6 cap-caused violation days in 2025 where capped availability fell below measured EIA-930 output). **Every composition of `miso_native_outage_source` at the public record's aggregate grain is now adjudicated** — a lever family closed, not a single cell. Keeper unchanged, zero LP. |
+| **NYISO (r#23)** | **nyiso-165 + nyiso-166 LANDED** (PR #4473) — the offered prompt ran as two sessions (find/defer, then repair). Both reference defects fixed for 2018–2026, hour-by-hour parity with nyiso-164 (8,759/8,759, both tiers, three years), keeper re-verified NOT-YET on exactly {C3a-2025 −11.5 %, C3c}, `audit_keepers` PASS 0/0. Levels were overstated **1.8×–2.9×**. A defect-duplicating raw-CSV fallback DELETED (rule 23), artifact made byte-reproducible, 9 regression tests. **OWED: the cross-ISO cascade scan was not carried** — re-offered. |
+| **ERCOT (r#23)** | **ercot-248 LANDED** (PR #4484) and **corrected the director's charter premise**: the funded intake was a RESTORE (shards fetched by ercot-183 2026-08-09, untracked by BLOAT-B-5 A2 2026-08-15; the README coverage table predates that intake by five days). Placement overridden correctly (consumers glob `YYYY-MM.part*.parquet`). 700/700 days, 88,561,421 rows, rule 22 intact, delivery-2023 derive byte-identical. Recovery doctrine corrected: SHA256SUMS cannot accept a re-fetch restore, so a writer-independent manifest rides alongside. |
+| **Audit track (r#23)** | **Refresh landed** (PR #4465): board to v17 + §8 entry; rulings R-D/R-F/R-G executed — the ERCOT wind decision map, **nyiso-161 parked with a fired trigger** (the waiver card stays filed and unruled), Leg-2 closed by archive. |
 | **NEISO (r#22, amendment)** | **NEISO-RC-R LANDED IN FULL** (PR #4467) — see the scoreboard row. It is a capx lane, listed here only because its `neiso-t1x` preserve-then-overwrite is the settled state any later NEISO lane rebases onto. |
 | **C3c audit (r#22, amendment)** | **PR #4466** independently replicated Q1 (REAL, by a different construction: overlap with PJM's posted penalty-step intervals at 75–91× base rate, p ≤ 9.7e-11; the model UNDER-prices reality by 2.7–7×) and **RETRACTED its own Q2 false positive**, tracing it to two defects in the committed reference `data/raw/_validation-source/actual_as_reserve_NYISO.parquet` — `build_reference` SUMS a cumulative cascade (spin_10 ≥ nonsync_10 ≥ op_30 in 100.0000 % of 289,344 rows) and maps naive prevailing timestamps onto the fixed `Etc/GMT+5` clock, off by an hour in 65.2 % of the year. **No keeper or scored result depends on it** (sole consumer is the disarmed RCPF comparator) — a trap for diagnostic sessions, filed for repair. **Generalizable rule for five other ISO lanes: a nested reserve cascade must be MAXED, never SUMMED.** → offered backcast prompt. |
 | **MISO (r#22, amendment)** | **miso-194 LANDED** (PR #4468): the MISO cold-snap gas derate is REFUTED on W4 absorption at phase-0 census; cell U → **I** (inert), keeper unchanged, lever queue stamped. A clean negative. |
@@ -1618,6 +1843,10 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-08-31 | **D18 INVARIANT DECLARATION LEDGER** | `claude/capx-d18-invariant-ledger` | **Opus** | code | r#22 batch — D4-I3's routed R-6: declare the 13 undeclared invariant FAILs (census independently re-derived by the director), correct `dominant_open_causes.I3`, make the standing-red CI job green |
 | 2026-08-31 | **D21 FC-6 DRIVER BATTERY** | `claude/capx-d21-fc6-battery` | **Fable** | neiso | r#22 amendment — Q16/Q19 execution, half 1 of the t3 ceiling: run the Tier-1 ladder + paired P1–P3 at the golden's vintage, commit the output, re-score `neiso-t3` FC-6. Price the ladder before running it |
 | 2026-08-31 | **D22 FC-5 BENCHMARK CORRIDOR** | `claude/capx-d22-fc5-corridor` | **Opus** | code | r#22 amendment — Q16/Q19 execution, half 2: the `benchmark-corridor` datatype + rubric §6 intake. NO scorer edit (that boundary is what keeps it clear of D8-V) |
+| 2026-08-31 | **D19 BOARD RECONCILE 2** | `claude/capx-d19-board-reconcile-2` | **Fable** | code | r#23 batch — released; six stale cross-ISO board facts incl. D8-V's flagged gate cells and the two new PROMOTEs |
+| 2026-08-31 | **D23 P1 CARBON-CO2 SIGN FAILURE** | `claude/capx-d23-p1-carbon-sign` | **Fable** | neiso | r#23 batch — D21's routed object; Phase-0 precommit-first attribution of the +52.4 % cumulative-CO2 rise under a carbon price; capacity-side and dispatch-side legs both named, neither presumed |
+| 2026-08-31 | **D24 CACHE-KEY OPTIONAL FIELDS** | `claude/capx-d24-cache-key-defect` | **Opus** | code | r#23 batch — D4-M's R-5 upgrade; characterize the blast radius and PROPOSE, fix nothing (a key change invalidates caches program-wide) |
+| 2026-08-31 | **D25 FC-5 DISPOSITION TABLE** | `claude/capx-d25-fc5-dispositions` | **Fable** | code | r#23 batch — the t3 ceiling's last step; author dispositions so FC-5 scores, benchmarks stay context and never fit targets |
 
 ## 5. History (compacted)
 
