@@ -127,6 +127,33 @@ arms would move exactly those rows); (b) whether `neiso-t3`'s FC-6 FAIL survives
 re-score — the affected lane's re-verification decides publication, per the cross-lane
 re-grade rule.
 
+*Mid-sitting amendment #2 (owner throughput ask: "is that all that can possibly run without
+collision?"). Answer: NO — the five-prompt set was the charter-READY maximum, not the possible
+maximum; the census found three more, and two holds confirmed real.* **Landed while asking:**
+the r#25 refresh itself merged (PR #4507) and **miso-196 CONCLUDED** (PR #4508 — the
+`cc_outage_derate_from_top` arm REJECTED on its own pre-registered kill, A/B registered),
+which UNBLOCKS the Q21-ruled MISO continuation. **Newly dispatched/offered:** **D30 CHARTERED
+AND ISSUED** (pack §D30; the D25 §6.4 45Q conversion-pace question, Phase-0 docs-only — its
+two seams are written into the charter: PJM-primary while D27 re-measures MISO, and a hard
+STOP-and-route at the capacity-revenue leg, which D28 owns; the "held behind D27/D28" was
+sequencing preference, not collision, and dissolves under those two seam lines) ·
+**nyiso-168 OFFERED** (backcast, owner's track: adjudicate the 0.703 price-response gain on
+NYISO's own data — no NYISO session in flight, zero overlap with D26's neiso forecast
+surfaces) · **miso-197 OFFERED** (backcast, owner's track: execute Q21's (iii) — the prompt
+directs the session to the CURRENT shard verdicts + lever queue rather than hardcoding
+miso-192's candidate list, part of which miso-193/194/195/196 have since adjudicated) · the
+**audit programme's next sitting** is also collision-free anytime (its own board file; the Q22
+parked-row retirement + Q20–Q23 absorption are waiting for it). **Holds CONFIRMED with
+reasons:** D6 (uncharted BY DEPENDENCY — its scope is decided by D28's answer, and its MISO
+leg collides with D27's t1h re-registration) · D20 (the scorer is a SHARED SURFACE: D26 and
+D27 are both actively re-scoring/re-registering against live scorer semantics — a scorer
+change mid-flight forces both to re-verify mid-lane; sequence after they land) · ERCOT
+backcast (C-1 joint-wind mid-lane owns the ERCOT shard/log) · CAISO backcast (caiso-231 arm
+phase owns the CAISO shard/log) · the golden re-solve (owner-gated behind D26 by design, §0v.6).
+Ceiling statement, honestly: with D26/D27/D28/D24-R/D29 + D30 + nyiso-168 + miso-197 + the
+audit sitting, every writable surface group in the program has exactly one owner — nothing
+further can be added without pairing two writers on one surface.
+
 ## 0u. Refresh #24 (2026-09-01, main HEAD `1d280815`) — SIX OF SIX LAND; **THE t3 CEILING IS LIFTED**; and the r#23 "the model's economic core has a sign error" alarm is REFUTED — the instrument's premise was inverted, not the model
 
 **0. The r#23 ledger LANDED.** Git credentials returned; the held commit rebased onto
@@ -1914,6 +1941,7 @@ the gap.
 | **D24 CACHE-KEY OPTIONAL FIELDS** | `cache_key()` drops `_CACHE_KEY_OPTIONAL_FIELDS` at the live default ⇒ one key, two dispatches across a default flip | **LANDED** PR #4496 — 4 flip events / 7 fields; **all 98 analyzable forecast records drop a flipped field**; two collision pairs (ERCOT `f061b264` the known-true positive found INDEPENDENTLY, + NEW NEISO `07e416f3`); **no cached result was ever served — all 99 runs used distinct roots, and that protection is the INCIDENTAL, UNDOCUMENTED per-run `--out-dir` convention**; D4-I3 §5.1's group narrowed OUT; four repairs priced ((c') = 0 keys, 0 invalidations), fix NOT landed → owner; **RULED Q20 at r#25 — (c′)+(b′-1), execution = D24-R** | `claude/capx-d24-cache-key-defect` | **Opus** | D4-M's R-5 upgrade. CHARACTERIZE AND PROPOSE ONLY — a fix invalidates caches program-wide, an owner cost decision. |
 | **D24-R CACHE-KEY REPAIR (Q20 execution)** | Land (c′) — the `is_cached` config-equality refusal — and (b′-1) — the declared-defaults append-only drop comparison; zero keys move, zero caches invalidated, and the zero-key-move assertion is the lane's own merge gate | **ISSUED r#25** | `claude/capx-d24r-cachekey-repair` | **Opus** | Discretion spent in D24 §7. NOT licensed: (a), (b), (b′-2) — no retroactive re-key. Not a mechanism; rule 28 not triggered. |
 | **D29 TRAJECTORY REPORTING GRAIN** | D25 §6.1 routed: `extract_trajectory` gains generation-by-fuel + a REAL storage column (today `storage_mw` reads `cap.get("storage")` over generator fuels — 0.0 by construction even for a 17 GW battery fleet); unblocks the 252 energy-mix corridor anchors for future runs | **ISSUED r#25** | `claude/capx-d29-trajectory-grain` | **Opus** | Additive schema only; committed summaries NOT regenerated. A reporting change, no mechanism. |
+| **D30 45Q CONVERSION PACE** | D25 §6.4 routed: the CCS retrofit screen converts at its 3 GW/yr cap even where the resolved carbon signal is ZERO (PJM/MISO, 45Q alone), reaching 2030 fleet fractions no external view reaches — is cap-saturated conversion the intended reading of spec §5.6's economics? Phase-0, docs-only | **ISSUED r#25 (amendment 2)** | `claude/capx-d30-45q-pace` | **Fable** | D23 cleared the SIGN; this is the PACE. Two seams in the charter: PJM-primary while D27 re-measures MISO; hard STOP-and-route at the capacity-revenue leg (D28 owns it). AEO motivates the question, never calibrates the answer (rule 13). |
 | **D25 FC-5 DISPOSITION TABLE** | Author the per-row disposition table so FC-5 can score at all — the t3 ceiling's last step | **LANDED** PR #4500 — **THE t3 CEILING IS LIFTED**: 78 rows, 37 IN CORRIDOR / 41 EXPLAINED / **0 UNEXPLAINED**, five keys FC-5 SKIPPED → CAVEAT, no determination moves, nothing on `neiso-t3` reads SKIPPED-required. §5 **adversarially audits its own zero-UNEXPLAINED count**; rebuilt mid-session on the landing batch, absorbing D19's board writes and D23's re-attribution before pushing | `claude/capx-d25-fc5-dispositions` | Fable | Judgment work, not intake. Divergence is not failure; UNEXPLAINED divergence is. Benchmarks are context, never fit targets. |
 | **D21 FC-6 DRIVER BATTERY (t3 ceiling, half 1)** | Run the Tier-1 monotonicity battery + paired P1–P3 at the golden's config vintage, commit the machine output, re-score `neiso-t3`'s FC-6 | **LANDED** PRs #4477/#4478 — **FC-6 grades, and FAILs**: NEISO's whole 2-rung ladder is **VACUOUS** (`renewable_buildout_pace` is consumed by no model code) ⇒ CAVEAT; **paired P1 FAILS — cumulative CO2 RISES 210.52 → 320.84 Mt (+52.4 %) under carbon_price=25**; determination HOLD. Also repaired `_annual_co2_tons` (P1 could not score ANY forecast bundle), implemented FC-6.2, and **self-caught a data-vintage leak** and re-ran from the golden's own raw bytes | `claude/capx-d21-fc6-battery` | Fable | Q16/Q19 execution. Price the ladder BEFORE running it; a vacuous pass is a CAVEAT, never a PASS. |
 | **D22 FC-5 BENCHMARK CORRIDOR (t3 ceiling, half 2)** | The `benchmark-corridor` curated datatype + the rubric §6 eight-source intake — **data contract and intake ONLY, no scorer edit** | **LANDED** PR #4476 — root cause: **FF-0F gitignored BOTH ends of the raw→clean chain**, so the loader's "regenerated from committed raw" was untrue. AEO2025 committed + fetch made key-free (28→6 requests) + truncation refused; ERCOT CDR + PJM Load Forecast machine-extracted; **1,025 rows / 3 sources, missing list 7→5**; StdScen2024 unreachable by egress policy. **FC-5 still SKIPs pending an authored disposition table — by design** (→ D25) | `claude/capx-d22-fc5-corridor` | **Opus** | Q16/Q19 execution. Benchmarks are context, never fit targets (rule 13). The no-scorer-edit boundary is what keeps it clear of D8-V's live re-scores. |
@@ -2129,6 +2157,9 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-01 | **D28 CAPACITY REVENUE AT LONG POSITIONS** | `claude/capx-d28-longposition-capacity-revenue` | **Fable** | code | r#24 batch — the cross-ISO $0-at-long-position object, Phase-0. **Charter committed to the pack at r#25 (reconstruction — r#24 issued chat-only)** |
 | 2026-09-01 | **D24-R CACHE-KEY REPAIR** | `claude/capx-d24r-cachekey-repair` | **Opus** | code | r#25 batch — Q20 execution: (c′)+(b′-1) exactly, zero keys move (the assertion is the lane's own merge gate); no retroactive re-key |
 | 2026-09-01 | **D29 TRAJECTORY REPORTING GRAIN** | `claude/capx-d29-trajectory-grain` | **Opus** | code | r#25 batch — D25 §6.1 routed: gen-by-fuel + a real storage column in `extract_trajectory`; additive schema, zero solves, committed summaries not regenerated |
+| 2026-09-01 | **D30 45Q CONVERSION PACE** | `claude/capx-d30-45q-pace` | **Fable** | code | r#25 amendment-2 batch (max-parallel census) — D25 §6.4 routed; Phase-0 docs-only with the PJM-primary and STOP-at-capacity-leg seams |
+| 2026-09-01 | **nyiso-168 (offered, backcast)** | `claude/nyiso-168-price-gain` (stem suggested; grade by content) | **Fable** | nyiso | r#25 amendment-2 — the nyiso-167 gain object (0.703) worked on NYISO's own data; DO-NOT-REDO discipline on the declined offer-side line |
+| 2026-09-01 | **miso-197 (offered, backcast)** | `claude/miso-197-gain-frame` (stem suggested; grade by content) | **Fable** | miso | r#25 amendment-2 — Q21 (iii) execution, unblocked by miso-196's conclusion (PR #4508, arm REJECTED); session picks from CURRENT shard verdicts + lever queue, gain frame recommended |
 
 ## 5. History (compacted)
 
