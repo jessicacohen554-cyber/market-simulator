@@ -2492,6 +2492,31 @@ def _compose_min_gen_floors(
                 _iso or "ERCOT",
                 len(_p25_measured),
             )
+        # OUT-OF-MERIT CONDITIONING of the same level slot
+        # (config.st_gas_mustrun_oom_level, miso-198). The measured-MW level
+        # above is a low percentile of the plant's output over EVERY hour it
+        # was online — its OPERATING RANGE. What the floor represents is
+        # narrower: these VLR/self-committed steamers hold load in the hours
+        # merit says shut down, so the statistic conditions the SAME frozen
+        # percentile on the SAME pooled window over the miso-197 W3b
+        # out-of-merit hour set (the measured CC_REGULAR fleet below 0.90 of
+        # its own p99.5 — cheaper CC capability demonstrably idle).
+        # Rule 19 [R-ONE-MECH]: the level SOURCE is REPLACED in the same slot,
+        # never stacked; membership, window, mechanism id and the
+        # cheapest-first pmax*availability clip are untouched. It wins over
+        # st_gas_mustrun_p25_measured_level when both are on, because it is
+        # that level re-conditioned rather than a second one.
+        # Rule 21: zero free parameters — see the ScenarioConfig field.
+        if getattr(config, "st_gas_mustrun_oom_level", False):
+            _oom_level = _pkg_ns().thermal_tranche_oom_level(_iso or "ERCOT")
+            if _oom_level:
+                _p25_measured = {**_p25_measured, **_oom_level}
+            logger.info(
+                "st_gas_mustrun_oom_level ARMED (%s): %d out-of-merit "
+                "level(s) re-condition the measured-MW level",
+                _iso or "ERCOT",
+                len(_oom_level),
+            )
         for _g_idx, _gen in enumerate(generators):
             if getattr(_gen, "plant_group", "") != "ST_GAS":
                 continue

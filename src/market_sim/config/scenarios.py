@@ -1112,6 +1112,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly because a non-default value always enters the payload.
     "mustrun_online_frac_per_year",
     "st_gas_mustrun_p25_measured_level",
+    "st_gas_mustrun_oom_level",
     # miso-173 measured lay-up window mask for the per-plant must-run floors
     # (GATED default off): dropped from the hash at its default — the off path
     # never reads the lay-up extract at all, so it is byte-identical by
@@ -1558,6 +1559,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # are the fields' original merge-time defaults, unchanged.
     "mustrun_online_frac_per_year": "False",
     "st_gas_mustrun_p25_measured_level": "False",
+    "st_gas_mustrun_oom_level": "False",
     # Added by miso-173 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_layup_window_mask": "False",
@@ -1941,6 +1943,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "st_gas_mustrun_p25_level": "measured per-plant ST-gas p25 operating level",
     "mustrun_online_frac_per_year": "measured per-YEAR must-run commitment window",
     "st_gas_mustrun_p25_measured_level": "measured p25 level in MW (no CF basis)",
+    "st_gas_mustrun_oom_level": "measured level over out-of-merit hours only",
     "mustrun_layup_window_mask": "measured lay-up windows mask the must-run floor",
     "coal_lignite_mustrun_override": "measured lignite must-run level",
     "coal_prb_mustrun_override": "measured PRB must-run level",
@@ -11088,6 +11091,74 @@ class ScenarioConfig:
     # from each new CAMPD vintage). Off by default; independent of
     # mustrun_online_frac_per_year (separate phenomena, separate gates).
     st_gas_mustrun_p25_measured_level: bool = False
+
+    # OUT-OF-MERIT CONDITIONING for the st_gas_mustrun_p25_level floor's LEVEL
+    # — miso-198. The incumbent level (whether the p25_cf reconstruction or the
+    # miso-172 measured-MW repair of it) is a low percentile of the plant's
+    # output over EVERY hour it was online, which measures its OPERATING RANGE.
+    # The phenomenon the floor exists to represent is different and narrower:
+    # these VLR/self-committed Entergy-South and upper-Midwest steamers HOLD
+    # THEIR LOAD IN THE HOURS MERIT SAYS SHUT DOWN. The statistic that measures
+    # that conditions the same percentile family on those hours.
+    #
+    # Identified, not asserted. The miso-198 zero-solve census
+    # (results/calibration/_miso198_stgas_oom_conduct_phase0.json, rule frozen
+    # and blob-verified before any adjudicating quantity) partitioned the ST_GAS
+    # gap between the measured out-of-merit conduct and the keeper's own armed
+    # floor EXACTLY — an identity, not a fit — into population / window / LEVEL:
+    #
+    #   year  measured_oom  armed   gap     P      W      L
+    #   2023     16.059     8.213   7.846  0.162  0.197  0.640
+    #   2024     19.294     8.674  10.620  0.138  0.163  0.699
+    #   2025     17.814     8.902   8.912  0.183  0.153  0.665
+    #
+    # LEVEL is dominant in 3 of 3 years; the POPULATION channel did not clear
+    # the census's own operating test (5 of its 10 plants fail it, so the
+    # lay-up exclusion census is NOT a clean identification defect) and the
+    # WINDOW channel never reaches the dominance line. Hence a LEVEL
+    # re-identification and nothing else.
+    #
+    # When True the level is read from
+    # ``thermal_tranches_oom_level_mw_<ISO>.csv``
+    # (scripts/data/derive_thermal_tranche_oom_level_mw.py), which imports the
+    # frozen deriver's online mask, net construction, derate source, nameplate
+    # clamp and pooled window and conditions the sample on the miso-197 W3b
+    # CC-headroom set (hours the measured CC_REGULAR fleet ran below 0.90 of
+    # its own p99.5 — cheaper CC capability demonstrably idle, so a
+    # strict-merit stack says the 10-HR steamer should be OFF).
+    #
+    # Rule 19 [R-ONE-MECH]: the level SOURCE is REPLACED, exactly as
+    # st_gas_mustrun_p25_measured_level replaced the p25_cf reconstruction
+    # before it. Membership (the pooled artifact's level>0 AND online_frac>0
+    # gate plus mustrun_plant_exclusions), the top-online_frac system-load
+    # WINDOW, the mechanism id (MECH_ST_GAS_MUSTRUN_PER_PLANT), the
+    # cheapest-first tranche distribution and the per-hour
+    # pmax x max(0, availability - layup_share) clip are ALL untouched — so
+    # D-2/D-4 attribution is unchanged and no second floor is stacked.
+    # Rule 21 [R-DOF]: ZERO free parameters. The percentile is the frozen
+    # family's own; the conditioning set is miso-197's already-published W3b
+    # construction, inherited verbatim rather than chosen here; the level is
+    # the plant's own meter.
+    # Rule 13 [R-MEASURED]: a pooled multi-year percentile of measured
+    # operation conditioned on a measured system state — the same admissible
+    # family as p25_cf itself, with the identical forward story (it re-derives
+    # from each new CAMPD vintage, and responds to changed conditions through
+    # both the plant's own conduct and how much CC headroom the future fleet
+    # carries). No outcome pinning: dispatch above the floor stays free, the
+    # level sits at or below the plant's own median over its conditioning set
+    # by the selection's S-ii criterion, and nothing is fitted to a residual.
+    # Rule 20 [R-FORCED-BUDGET]: this RAISES ST_GAS forced energy and the
+    # class is expected to sit above the 30 % merchant budget — carried on the
+    # grounded provenance+shape path, which the mechanism already holds
+    # (a cited D4_WINDOWS entry, MECH_ST_GAS_MUSTRUN_PER_PLANT x ST_GAS ->
+    # (0, 24), and D-1 profile_r 0.942-0.977 at the incumbent level). Declared
+    # in advance, not discovered.
+    # Off by default (every existing keeper byte-identical); the artifact is
+    # per-ISO by construction, so the mechanism self-scopes (rule 25).
+    # Independent of st_gas_mustrun_p25_measured_level: when BOTH are on this
+    # one wins, because it is the same level slot re-conditioned (never
+    # stacked). Selection record: results/calibration/_miso198_level_selection.json.
+    st_gas_mustrun_oom_level: bool = False
 
     # MEASURED LAY-UP WINDOW MASK for the per-plant must-run floors
     # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap

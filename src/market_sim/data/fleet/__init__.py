@@ -553,6 +553,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     st_gas_intermediate_plants,
     thermal_tranche_chp_steam_level,
     thermal_tranche_online_frac,
+    thermal_tranche_oom_level,
     thermal_tranche_online_frac_by_year,
     thermal_tranche_overrides,
     thermal_tranche_p25_level,

@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-08-31. Every numeric input to the model traces to a primary source
+_Generated 2026-09-01. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1832 parameters registered** (965 flagged `needs-citation`).
+**1835 parameters registered** (966 flagged `needs-citation`).
 
 
 ## Calibration
@@ -311,6 +311,7 @@ inline comment and still need a dated primary source — search the table for
 | `rggi_state_co2_budget.RI` | {"2023": 1763884.0, "2024": 1706986.0… | 2 | RGGI CO2 allowance budgets (short tons/yr), regional ("RGGI") and p… | 2027 | auto-generated |
 | `rggi_state_co2_budget.VA` | {"2023": 25480000.0} | 2 | RGGI CO2 allowance budgets (short tons/yr), regional ("RGGI") and p… | 2027 | auto-generated |
 | `rggi_state_co2_budget.VT` | {"2023": 507865.0, "2024": 491482.0, … | 2 | RGGI CO2 allowance budgets (short tons/yr), regional ("RGGI") and p… | 2027 | auto-generated |
+| `scenario.carbon_price_delta` | 0.0 | 2 | $/ton CO2, ADDITIVE on the RESOLVED |  | auto-generated, needs-citation |
 | `scenario.carbon_price_path` | zero | 1 | "zero", "low", "mid", "high"; used when carbon_price is 0.0 |  | auto-generated, needs-citation |
 | `scenario.carbon_program_price_path` | None | 1 | named projected forecast path |  | auto-generated, needs-citation |
 | `scenario.plant_emission_rates_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
@@ -660,6 +661,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.scarcity_price_overlay` | False | 2 | ISO eligibility gate for the |  | auto-generated, needs-citation |
 | `scenario.st_gas_intermediate_cf_threshold` | 50.0 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.st_gas_intermediate_split` | False | 1 | ST_GAS analogue of ct_intermediate_split. MISO's legacy gas-steam f… |  | auto-generated, needs-citation |
+| `scenario.st_gas_mustrun_oom_level` | False | 2 | OUT-OF-MERIT CONDITIONING for the st_gas_mustrun_p25_level floor's … | 2023 | auto-generated |
 | `scenario.st_gas_mustrun_p25_level` | False | 2 | LEVEL SWAP for the st_gas_mustrun_per_plant floor (miso-67). When T… | 2026-07 | auto-generated |
 | `scenario.st_gas_mustrun_p25_measured_level` | False | 2 | LEVEL-BASIS correction for the st_gas_mustrun_p25_level floor — mis… | 2023 | auto-generated |
 | `scenario.st_gas_mustrun_per_plant` | False | 2 | The ST_GAS leg of the same per-plant local-reliability commitment f… | 2023 | auto-generated |
@@ -1143,6 +1145,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_offer_surface_binned_path` | None | 2 | Path to the measured CAISO condition-binned ladder JSON (default: t… |  | auto-generated, needs-citation |
 | `scenario.caiso_offer_surface_conditional` | False | 2 | CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder p… |  | auto-generated, needs-citation |
 | `scenario.caiso_offer_surface_measured` | False | 2 | --- CAISO measured DAM offer surface (C1 CC-over/CT-under lane WP-A… |  | auto-generated, needs-citation |
+| `scenario.caiso_offer_surface_measured_ungrounded` | False | 2 | SAME STATIC HALF, EXTENDED TO CAISO'S THREE UN-GROUNDED GAS CLASSES… | 2023 | auto-generated |
 | `scenario.caiso_offer_surface_min_bin` | 0 | 2 | Minimum net-load bin index at which the ladder engages (0 = every b… |  | auto-generated, needs-citation |
 | `scenario.caiso_p1_export_sink_seam` | False | 2 | Exempt the pmin < 0 absorption |  | auto-generated, needs-citation |
 | `scenario.caiso_per_hub_intertie` | False | 2 | Model CAISO's WECC tie as TWO signed |  | auto-generated, needs-citation |
