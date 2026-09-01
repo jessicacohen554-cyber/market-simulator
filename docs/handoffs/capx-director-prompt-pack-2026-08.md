@@ -2962,3 +2962,189 @@ cap-binding census, the citation audit, the adjudication with its routing (closu
 a repair-lane charter recommendation, or the D28 handoff), and the honest statement of what
 the PJM-primary scope could not see.
 ```
+
+## D26-S — the FC-6 arm solves + re-score (r#26; executes the D26 checkpoint's committed runbook)
+
+```
+You are the D26-S session of the capacity-expansion track — the SOLVE HALF of lane D26, whose
+checkpoint landed at PR #4520: the carbon_price_delta instrument repair is in, the base-arm
+control reproduced the golden EXACTLY at vintage+repair, and the finding is committed with a
+literal TBD-HEADLINE plus the full runbook for what you now run. Your discretion is spent —
+the runbook is literal commands.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Opus (execution; every design decision is in the D26 finding).
+BRANCH: claude/capx-d26s-arm-solves — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md IN FULL — it is
+your charter, your runbook (tail section: the vintage checkout, env, the two
+run_driver_battery.py invocations, the check_forecast_invariants --paired call, the
+forecast_verdict call), and the document you finish. Also
+docs/handoffs/FINDING-capx-d21-fc6-battery-2026-08-31.md (the scoring semantics you inherit)
+and docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md (what the repaired pair now
+actually measures).
+
+THE WORK: (1) run the two paired arms EXACTLY as the runbook states — base, then
+carbon_plus25, SEQUENTIAL (rule 12; budget ~1.0 h / ~4.3 GB each, price and state it before
+launching); (2) score the pair with the committed instruments; (3) re-score neiso-t3's FC-6
+and publish under the CROSS-LANE RE-GRADE RULE — the base-arm control is already reproduced,
+so your remaining stop is: if anything beyond neiso-t3's FC-6 rows would flip, STOP and
+report to the director; (4) fill the finding's TBD sections — headline, measured deltas, the
+FC-6 verdict consequence — and grade D23's expectation of the repaired pair at full
+magnitude, misses included. EITHER FC-6 outcome is a valid result: a surviving FAIL now
+measures the MODEL, which is the whole point of the repair; do not lean either way.
+
+GUARDRAILS: forecast-mode 2026+ solves only (rule 22 — no measured actuals, no holdout year).
+The solves run in the PINNED VINTAGE checkout exactly as the runbook constructs it — do not
+"upgrade" the vintage, and restore any vintage-pinned data checkouts exactly as the runbook's
+git checkout lines do. No model parameter, threshold or expectation moves; carbon_price_delta
+stays default-0 everywhere except the arm leg's config. No keeper/shard/marker; nothing in
+the backcast namespace. Rule 27 on any ≥300-line push; rule 28 already discharged at D26 —
+you add no field. No new GitHub Actions workflow.
+
+COLLISION: D33 (NEISO position lane) writes docs + a NEISO position finding and is barred
+from the golden's pinned inputs — you own those for the duration; if its landing touches
+anything you read, rebase and say so. D31 is MISO-side; no shared files.
+
+EXIT: the completed D26 finding (TBD sections filled, headline written), the committed arm
+records + paired-invariants output, the re-scored (or STOPPED-and-routed) neiso-t3 FC-6, and
+an explicit line for the director: the golden re-solve card (§0w.5) is decided on your
+result — state whether the repaired P1 changes its terms, and whether D23's R4 design
+question (replace/floor/stack semantics for carbon_price) is now ripe.
+```
+
+## D31 — the MISO capacity-revenue repair (r#26; D27-R2 + D28-R1, the primary lever; Q24-funded)
+
+```
+You are the D31 session of the capacity-expansion track — the REPAIR lane for the object two
+findings converged on and D27 promoted to PRIMARY lever on the MISO exit residual. D28
+measured: MISO's RBDC is (one exception) published-faithful, but in the $0 screen years the
+model's accredited position sits ~+11 reserve-ratio points LONGER than the real market's
+cleared position, and the curve is evaluated at a census quantity where the real PRA clears
+supply against the curve. D27 measured at HEAD: the requirement repair released the
+admission cap and the exit object did not move (non-coal exits 0.000 GW), because
+composition is set elsewhere — capacity revenue at the model's positions stays $0 while real
+PRAs cleared small positive prices. You repair the POSITION and the CURVE SHAPE from
+published data, and measure the consequence.
+
+DATA PROFILE: miso
+MODEL ASSIGNMENT: Fable (mechanism repair with arming consequences on the program's
+worst-understood screen).
+BRANCH: claude/capx-d31-miso-caprev-repair — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d28-longposition-capacity-revenue-2026-09-01.md §6.1
+(the position audit's identification — PRA Results Posting p.22 offered-and-cleared category
+rows + Initial PRMR p.18, the S-123 operand source), §6.2 (the RBDC shape sources:
+ER23-2977 / 187 FERC ¶ 61,202 / RAN BPM-011 / the PRA chart), §6.3 (the vertical-era floor —
+an ADJUDICATION item, not a commitment), the one-position limit, and §7's census row for
+MISO · docs/handoffs/FINDING-capx-d27-miso-t1h-remeasure-2026-09-01.md (the fresh baseline
+you measure against, the floor-retention mechanism you must NOT conflate with this repair,
+and R5 — which is D32's, not yours) · the S-123 registry seams
+(resolve_adequacy_requirement_mw / accredited_firm_capacity_mw) your audit rows share.
+
+OWNER RULING Q24 (r#26): the intake is FUNDED. The owner fetches the PRA Results Postings
+(PY2023-24 / 2024-25 / 2025-26) and the RBDC shape source out-of-session (misoenergy.org is
+403-blocked in-session) and hands you the files. Intake them through the full data contract
+(data-intake skill: schema, immutable raw snapshot, curation, per-ISO registry — rule 13
+admissibility stated in the schema notes). If a handed file is missing, run the in-repo
+partial honestly and name the bound — do not fetch, and do not widen the ask.
+
+THE REPAIR, two legs, both identified ONLY from the published record:
+1. POSITION AUDIT: reconcile the model's accredited position (the screen's entering
+   ratio) against the PRA's offered-and-cleared accounting, category by category
+   (Generation / External / BTMG / DR / EE) — find which categories the model counts that
+   the real auction did not clear (or vice versa), per planning year. The repair is whatever
+   the reconciliation IDENTIFIES (a category exclusion, an accreditation basis, a
+   requirement-side term), entered formulaically so it regenerates in a forecast year
+   (rule 13 test).
+2. RBDC SHAPE: replace the first-order construction with the published curve (shape +
+   zero-cross + seasonal grain as the source defines them), citing the filing. The
+   vertical-era floor question is adjudicated in the finding, not silently decided.
+
+RULE-14 SIGN DISCIPLINE, verbatim from D28 and binding: every faithful repair here moves
+capacity revenue UP at the screens' positions, which makes retirements HARDER and moves
+D17's exit headline the WRONG way. That is not a reason to withhold or shade anything.
+Nothing may be sized, tuned, or sequenced by what it does to the exit residual; if the
+accurate inputs worsen it, the remaining error is elsewhere (thread (i-a) energy margins,
+D32's retention key) and stays open on its own evidence.
+
+MEASURE: re-run the MISO T1-H leg with the repair (sequential years, rule 12), register
+preserve-then-overwrite against D27's baseline (`miso-t1h` bare key; preserve the D27 record
+under a dated suffix), refresh the MISO board block, grade a written pre-declaration
+(direction and rough magnitude on the position, screen revenue, exits by fuel, G3) at full
+magnitude. If any committed verdict beyond miso-t1h's rows would flip, STOP (cross-lane
+re-grade).
+
+GUARDRAILS: rules 22 (no holdout year), 27 (blob-verify ≥300-line pushes; screen code is
+core), 28 (a new ScenarioConfig field or armed default = matrix row + every shard cell in
+the same PR; ship default-off unless the identification is complete and say which in the
+finding). D32's floor-retention question is OUT OF SCOPE — do not touch
+_floor_retention_merit. No FOM/threshold/lag tuning (D17's standing refusal binds).
+
+COLLISION: miso-197 (owner's backcast lane) writes the MISO BACKCAST namespace — you write
+forecast surfaces + screen code + the funded intake; no shared files, but rebase-care on
+docs/. D26-S/D33 are NEISO-side. D30, if dispatched, is docs-only and stops at your seam.
+
+EXIT: the intaken sources + the two-leg repair + the measured T1-H consequence +
+docs/handoffs/FINDING-capx-d31-miso-caprev-repair-<date>.md with the reconciliation table,
+the graded pre-declaration, the honest exit-residual direction, and what remains routed
+(D32's retention key; anything the partial record could not identify).
+```
+
+## D33 — the NEISO position lane (r#26; D28-R2, RC-R §10.4(2) executed)
+
+```
+You are the D33 session of the capacity-expansion track — the NEISO half of D28's position
+defect. D28 measured: NEISO's re-derived FCA curve is published-faithful, and in its three
+$0 crossover years the model's position sits +21 / +6 / +7 reserve-ratio points past the
+zero-cross (−3 / +1 in the dip/rebound years) — the curve pays $0 because the MODEL'S
+POSITION is long, not because the curve is wrong. NEISO-RC-R's routed §10.4(2) named the
+question this lane now executes: the ACCREDITATION BASIS (what the model counts as
+accredited capacity entering the screen) and CLEARED-VS-QUALIFIED (the model's census
+position vs what the real FCA actually cleared).
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (the accreditation basis is an adjudication, and its consequence
+reaches the golden re-solve card).
+BRANCH: claude/capx-d33-neiso-position — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d28-longposition-capacity-revenue-2026-09-01.md (the
+NEISO census rows, the position-defect decomposition, and §6's identification sources for
+NEISO) · the NEISO-RC-R record (PR #4467's finding §10.4(2) — the routed question in its own
+words, and the R2 curve re-derivation this lane must NOT redo) · the in-repo FCA results and
+capacity-market data under data/raw (the published cleared/qualified record) · the NEISO
+screen's accreditation seams (accredited_firm_capacity_mw and what feeds it).
+
+SCOPE — in-repo record ONLY (no intake is funded for NEISO; if a tightly-scoped ask emerges,
+FILE it with the D28 §6 sourcing and stop — do not fetch):
+1. Reconstruct, per FCA year in the screen window, the model's entering position vs the real
+   auction's cleared and qualified totals — the +21/+6/+7 decomposed into its accounting
+   causes (what the model counts that the FCA did not clear; retirements/de-list bids;
+   imports; accreditation haircuts the model lacks).
+2. Adjudicate the accreditation basis: is the model's accredited-capacity construction the
+   published one (seasonal claimed capability / FCA qualified) or an artifact of the fleet
+   build? Name the repair each divergence identifies, formulaically (rule 13), from the
+   published record only.
+3. State the consequence for the FCA-curve revenue leg at the repaired position — direction
+   and rough magnitude, no tuning.
+
+RULE-14 SIGN DISCIPLINE: shortening the model's position moves capacity revenue UP and
+makes NEISO retirements HARDER. Nothing is sized by any residual.
+
+GUARDRAILS: zero solves unless a repair is fully identified AND cheap to measure — and even
+then, the golden's pinned inputs are UNTOUCHABLE while D26-S runs (its vintage checkout
+reads the NEISO capacity-market demand-curve raw files; your work is additive-only, never an
+edit of an existing raw file — data/raw is immutable regardless, rule: never modified in
+place). Prefer landing the characterization + filed repair and routing the measurement.
+Rules 22 / 27 / 28 as usual (a ScenarioConfig field = matrix duties, default-off).
+
+COLLISION: D26-S owns the golden vintage and writes neiso-t3 FC-6 rows — you write a
+position finding (+ any additive intake files and filed repair), never the FC-6 instrument
+or neiso-t3 rows. D31 is MISO-side. Rebase-care on docs/.
+
+EXIT: docs/handoffs/FINDING-capx-d33-neiso-position-<date>.md — the per-year
+cleared-vs-qualified reconciliation, the accreditation adjudication, each identified repair
+with its published source, the filed intake ask if one is needed, and the explicit line the
+golden re-solve card is waiting for: does the position repair change what a second campaign
+would measure?
+```

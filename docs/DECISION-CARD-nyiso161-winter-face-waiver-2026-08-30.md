@@ -1,6 +1,11 @@
 # DECISION CARD — nyiso-161: the winter-face determination posture while the AORR wall stands ("waive it?")
 
-> **RULED 2026-09-01 — OPTION A (no amendment); the card is RETIRED, answered by measurement.**
+> **RULED — OPTION A (no amendment); the card is RETIRED.** *(Primacy correction, 2026-09-01
+> r#26: the FIRST ruling was audit ruling **R-H**, taken at the 2026-08-31 audit sitting and
+> first recorded at v18b board item D-7 (PR #4498) — before the ruling below was served. The
+> owner then INDEPENDENTLY RE-CONFIRMED Option A at the capx r#25 sitting as **Q22**, on
+> nyiso-167's added evidence. Same outcome both times; the duplication is recorded against
+> interest at capx ledger §0w.2.)*
 > Ruled by the owner at the capx-director r#25 sitting (ledger
 > `docs/handoffs/capx-director-ledger-2026-08.md` §0v.2 / §3 ruling **Q22**), on the evidence of
 > `docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`: the probe this card's own §4.5
