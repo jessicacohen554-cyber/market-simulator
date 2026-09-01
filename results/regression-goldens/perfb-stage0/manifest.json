@@ -93,18 +93,22 @@
       ]
     },
     "ERCOT": {
-      "bundle": "results/calibration/ercot204_rule26_delete",
+      "bundle": "results/calibration/ercot234_eastex_identity",
       "content_hashes": {
-        "btm.parquet": "8acf053bb5aa6bcb2a38a4081ee9030ed5ef6afc967c7892f6b7bff8d50fd376",
-        "dispatch/2023_P1.parquet": "ced3bc8d6cb95be917c797dca00faf01f5148aa69438d8300e81728affa3a757",
-        "dispatch/2024_P1.parquet": "a54384a9f701d7a23067909081b0ebabed905093b3afa923e0280f75d720f317",
-        "dispatch/2025_P1.parquet": "e109e514e7d382c0b2ae3ead28d281fcb2e0f7bbd8f276f210e567858f3222ca",
-        "flows.parquet": "7145e2aea8ddcdf544bd4e7a6f0ff21b1b1a79ecfd3b8669265dd41a33ce1596",
-        "storage.parquet": "e200b86ad57361cdab117a39e516f94b4a320788bdb05a733e5a674a741f0e0c",
-        "system.parquet": "9d87de1c789d0cbecfa13c512b3eb8daf09c1f4834848cd1ee49a2ff07aa59dd"
+        "btm.parquet": "12a3a86bf89e3b6b25664588937575bfc6df7ade12b90d4973355b87c07942c4",
+        "dispatch/2023_P1.parquet": "7185a39ceec0ad5a9c156f5db09c6af13143d5314ba888e5434a2485b286f49a",
+        "dispatch/2023_P1_fleet.parquet": "d923162032ea20df5c5d523d53398e73367f7204c32587193018923e20f92357",
+        "dispatch/2024_P1.parquet": "7904e2a3f31053d3b4efab56e47742f4cd0ec38bdd8679ce6b65cb6f2422b2d8",
+        "dispatch/2024_P1_fleet.parquet": "9fea7e346b8d7e54f78d1333b681eac13891294a4cd6b301a322c1dafecbe30e",
+        "dispatch/2025_P1.parquet": "ecff88e6fa7a81919a89fab1ca0581faeb2f6fce940fdf8d3db401f0b2fdc5b4",
+        "dispatch/2025_P1_fleet.parquet": "b548129b68272387c0268b375f370cc8ef067059bee8c9f5411b0004a6169be2",
+        "flows.parquet": "8c8e9a35c0b1e3fe31d70501ab202203a852fe78f1103beabd18833094009117",
+        "storage.parquet": "3eef6d6bda000027f2c6eab934a6dddf39e84032c5f1bd12c748e23ecfe72843",
+        "system.parquet": "d6a22c9a54e03fc576e63f1288232e1914252591bb080979cf8c2dd317b8df74"
       },
       "defaulted_unrecorded_params": [
         "ablation_of",
+        "caiso_offer_surface_measured_ungrounded",
         "coal_takeorpay_from_data",
         "gt_ambient_derate",
         "gt_ambient_derate_ref_c",
@@ -116,32 +120,43 @@
         "reuse_solved",
         "zero_forcing_ablation"
       ],
+      "dropped_dead_config_keys": {},
       "fidelity": {
-        "meta_head_only": [],
-        "meta_keeper_only": [
-          "nyiso_solar_registry_cod_dates"
+        "meta_head_only": [
+          "caiso_offer_surface_measured_ungrounded"
         ],
-        "meta_matched": 256,
+        "meta_keeper_only": [],
+        "meta_matched": 271,
         "scenario_config_drift": [],
         "scenario_config_head_only": [
-          "caiso_ps_plant_params",
-          "commission_year_cod_fallback",
-          "ercot_reserve_supply_cap_net_credits"
+          "caiso_fsno_subzonal_topology",
+          "caiso_offer_surface_measured_ungrounded",
+          "entry_forward_expectation_signal",
+          "entry_forward_reserve_leg",
+          "entry_margin_exhaustion",
+          "ercot_offer_surface_cleared_share_rt_room",
+          "ercot_offer_surface_cleared_share_rt_room_path",
+          "ercot_offer_swcap_clip",
+          "nyiso_zonal_loss_surface",
+          "partial_plant_exit_carry",
+          "retiree_vintage_status_scope",
+          "storage_entry_availability_gate",
+          "storage_entry_cost_normalized_rank",
+          "unit_outage_fleet_status_scope"
         ],
-        "scenario_config_matched": 713
+        "scenario_config_matched": 752
       },
       "hours": 8760,
-      "keeper_id": "2026-08-15-ercot204-rule26-delete",
+      "keeper_id": "2026-08-25-234-eastex-identity",
       "keeper_snapshot": {
-        "bundle": "results/calibration/ercot204_rule26_delete",
-        "date": "2026-08-15",
-        "definition": "ercot-204 rule-26 [R-DELETE] successor: the ercot-202 keeper recipe re-solved with ercot_faststart_pool_plant_physics DELETED and the plant-grain rule-18 physics gate made UNCONDITIONAL, together with the pre-repair row-grain branch. Zero mechanism changes, zero fitted scalars, zero new fields - a field is REMOVED so no bundle references the transitional flag. Expected byte-identical to the keeper (precommit P-1).",
-        "id": "2026-08-15-ercot204-rule26-delete",
+        "bundle": "results/calibration/ercot234_eastex_identity",
+        "date": "2026-08-25",
+        "definition": "ercot-234 KEEPER (card Z-A identity repair, owner-signed 2026-08-25): EASTEX \u2014 ERCOT's East Texas GTC, the constraint that physically exists at the model's Northeast->North boundary \u2014 replaces the geographically mis-attributed NE_LOB (North Edinburg-Lobo, a Rio Grande Valley corridor read as 'Northeast lobe' since the zone was built) in the measured-GTC crosswalk; static export rating re-derived 1,300 -> 2,300 MW (NP6-86 mean-limit-at-bind 2023+2024). Zero fitted scalars. All P-6 gates PASS: no new shed, coal rise <= 0.21 TWh, G-SPUR 2023 21 -> 11 (the ercot-231 promotion's named cost dissolves), NE|N separation 2,155/1,128/1,354 -> 29/45/45 h (the real EASTEX scale). Officials: 2023 -39.7% / 0.730 / C3c 72 (the mis-attributed gain returned per rule 14), 2024 -0.2% / 0.131 / 22, 2025 -7.9% / 0.101 / 1; NOT-YET on {C3a-2023, C3b-2023}, C3c ledgered x3.",
+        "id": "2026-08-25-234-eastex-identity",
         "iso": "ERCOT",
-        "label": "ercot204 rule26 delete",
-        "shorthand": "ercot204-rule26-delete",
+        "label": "234 eastex identity",
+        "shorthand": "234-eastex-identity",
         "sidecar_at_capture": "present",
-        "sidecar_source": "recovered from 4c9357527563fca680cd16362671ba17bf0818f7^2",
         "years": [
           2023,
           2024,
@@ -149,29 +164,20 @@
         ]
       },
       "provenance": {
-        "basis_sha": "ec413d20720e9d4b9034d03d6acfa2f74caef145",
+        "basis_sha": "3c1f9642fde8e218de4ad362a009de291bc5e00d",
         "env": {
           "MARKET_SIM_HIGHS_THREADS": "1",
           "MARKET_SIM_WARMSTART": "1",
           "MARKET_SIM_WARMSTART_XYEAR": "0"
         },
         "git_dirty": false,
-        "git_sha": "ec413d20",
-        "git_sha_full": "ec413d20720e9d4b9034d03d6acfa2f74caef145",
+        "git_sha": "a64cc7aa",
+        "git_sha_full": "a64cc7aa387fd6470e3bcabdf6243d232d928310",
         "highspy_version": "unknown",
-        "recorded_at": "2026-08-16T21:29:46Z",
-        "recorded_at_basis": "author date of the capture commit -- an upper bound on the manifest-write instant, which is the closest the record supports (the tool did not stamp a time)",
-        "recovery": {
-          "commit_message_states": "f8c93afe",
-          "manifest_commit": "dd8b7265302c965541e42ba83695abc60cd080ce",
-          "method": "the git_sha this capture wrote, read back from the manifest blob at the commit that added this ISO's entry, before the next capture overwrote the shared field",
-          "note": "commit message says 'captured at f8c93afe'; the manifest stamp is the manifest-write HEAD. git diff f8c93afe..ec413d20 touches ONLY scripts/capture_keeper_goldens.py (the basis_sha fidelity ignore) -- no model code differs between the two trees.",
-          "prefix_unambiguous": true,
-          "resolves_at_repair_pin": true
-        },
-        "source": "recovered-from-manifest-history"
+        "recorded_at": "2026-09-01T04:26:34Z",
+        "source": "stamped-at-capture"
       },
-      "recorded_flag_count": 247,
+      "recorded_flag_count": 262,
       "years": [
         2023,
         2024,
