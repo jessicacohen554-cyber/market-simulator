@@ -387,3 +387,32 @@ PYTHONPATH=src .venv-t16/bin/python scripts/check_cache_key_registration.py
 PYTHONPATH=src .venv-t16/bin/python scripts/check_mechanism_matrix.py
 .venv-t16/bin/python -m pytest tests/unit tests/regression -q
 ```
+
+## 10. CROSS-LANE NOTE — D26-S (found on the r#26 refresh, after this lane's commits)
+
+The director's r#26 sitting landed on `main` mid-lane and **issued D26-S**
+(`claude/capx-d26s-arm-solves`, Opus, neiso): *"execute the D26 finding's committed
+runbook (two paired 25-yr arms at the pinned vintage, paired-invariants scoring,
+**neiso-t3 FC-6 re-score**, fill the TBD sections); cross-lane re-grade STOP rule."* That
+lane and this one are the only two writing NEISO FC-6, so the interaction is stated here
+explicitly rather than left to be discovered by its STOP rule:
+
+- **No verdict conflict.** If D26-S re-runs `run_driver_battery.py` at a HEAD carrying
+  this branch, T1.6 emits two `SKIP` + `vacuous` rows instead of the old constant-series
+  `PASS` rows. `score_fc6` returns **CAVEAT either way** (measured, §5.2), FC-6 stays
+  **CAVEAT**, and the determination stays **HOLD**. Nothing D26-S is chartered to move
+  moves differently because of this lane.
+- **One thing D26-S should expect.** Its control-first step reproduces the committed FC-6
+  record. The battery row's **detail string** legitimately changes — from "two gate rows
+  passed on constant series" to the out-of-service reason — while its **status** does not.
+  That is this lane's intended effect, not a re-grade breach; the status is the thing the
+  STOP rule protects.
+- **Sequencing is free.** These branches share no file (D26-S writes `fc6/` artifacts and
+  `ff-verdicts.json`; this one writes `scenarios.py`, the battery registry, the tornado,
+  docs and `program-status.json`'s own new block). Either can land first. If D26-S lands
+  first, its committed battery output simply carries the old T1.6 rows and the next run
+  after this branch replaces them with the honest ones.
+- **D26's charter clause is honoured, not contradicted.** D26 was told *"do not touch the
+  vacuous-ladder CAVEAT (`renewable_buildout_pace`) — that is a separate, still-true
+  finding."* It did not, and this lane is that separate finding being executed. The CAVEAT
+  is not removed here either; only its cause is, and its reason made true.
