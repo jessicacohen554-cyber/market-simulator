@@ -18,6 +18,14 @@ describe the INSTRUMENT rather than the run:
   has no provenance; FC-7 FAILing on it is the truthful verdict).
 * **blocker 5** — the console printed ``invariants: 0 FAIL, 0 WARN`` on a
   zero-year run, rendering a hard failure as a clean gate.
+* **capx D25 §6.1 / D29** — ``extract_trajectory`` carried no generation by
+  fuel at all (so the FC-5 corridor's 252 AEO generation anchors could never be
+  dispositioned), and its ``storage_mw`` column read ``cap.get("storage")`` over
+  the fleet context's GENERATOR axis — 0.0 by construction even for a 17 GW
+  battery fleet. Asserted here over a synthetic ``Run``: the energy block is
+  emitted, ``storage_power_mw`` reads the ledger's real fleet power and is
+  NONZERO against a fleet with storage, and the defective ``storage_mw`` stays
+  bug-compatible for its three committed consumers.
 """
 
 from __future__ import annotations
@@ -31,6 +39,9 @@ _ROOT = Path(__file__).resolve().parents[2]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
+import numpy as np  # noqa: E402
+
+from scripts import check_forecast_invariants as C  # noqa: E402
 from scripts import forecast_verdict as FV  # noqa: E402
 from scripts import run_full_horizon as F  # noqa: E402
 
@@ -256,6 +267,189 @@ class HonestInvariantConsoleLineTest(unittest.TestCase):
         # Pins the asymmetry the blocker described, so a future change that
         # "fixes" the console by populating an empty list is caught.
         self.assertEqual([i for i in [] if i], [])
+
+
+# --------------------------------------------------------------------------- #
+# capx D29 — the trajectory reporting grain
+# --------------------------------------------------------------------------- #
+def _ctx(fuels: tuple[str, ...], pmax: tuple[float, ...]):
+    """A real ``FleetContext`` over a tiny fleet (never a mock).
+
+    Deliberately the production dataclass: the defect under test is precisely
+    that the GENERATOR axis carries no storage, and a hand-rolled stand-in
+    could be given a "storage" fuel that the real context can never have.
+    """
+    from market_sim.results.outputs import FleetContext
+
+    n = len(fuels)
+    return FleetContext(
+        fuel_types=list(fuels),
+        pmax_mw=[float(x) for x in pmax],
+        emission_rate=[0.4] * n,
+        efficiency_bins=["older"] * n,
+        heat_rates=[7.0] * n,
+        zones=["North"] * n,
+        unit_ids=[f"u{i}" for i in range(n)],
+        wind_cap_mw=1000.0,
+        solar_cap_mw=2000.0,
+        wind_potential_mwh=1.0e6,
+        solar_potential_mwh=1.0e6,
+        # The fleet HAS storage — 4 h on 5,000 MW. The context records only the
+        # ENERGY capacity, which is the whole reason the power column has to
+        # come from the ledger.
+        storage_energy_cap_mwh=20_000.0,
+    )
+
+
+def _synthetic_run(
+    *,
+    storage: bool = True,
+    storage_power_mw: float | None = 5_000.0,
+    hours: int = 24,
+) -> "C.Run":
+    """One-year ``Run``: 2 thermal units + wind/solar + (optionally) storage."""
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.model.dispatch import DispatchResult
+
+    fuels = ("gas_cc", "coal")
+    dispatch = np.vstack(
+        [np.full(hours, 100.0), np.full(hours, 50.0)]
+    )  # 2,400 + 1,200 MWh
+    wind = np.full((1, hours), 10.0)  # 240 MWh
+    solar = np.full((1, hours), 5.0)  # 120 MWh
+    chg = np.full((1, hours), 8.0) if storage else None  # 192 MWh
+    dis = np.full((1, hours), 6.0) if storage else None  # 144 MWh
+    result = DispatchResult(
+        dispatch=dispatch,
+        wind_dispatched=wind,
+        solar_dispatched=solar,
+        slack=np.zeros((1, hours)),
+        dump=np.zeros((1, hours)),
+        prices=np.full((1, hours), 30.0),
+        storage_charge=chg,
+        storage_discharge=dis,
+        storage_soc=np.full((1, hours), 100.0) if storage else None,
+        flows=None,
+        objective_value=0.0,
+        status="optimal",
+        build_time=0.0,
+        solve_time=0.0,
+        emissions=None,
+    )
+    yd = C.YearData(
+        year=2026,
+        result=result,
+        demand=np.full((1, hours), 165.0),
+        context=_ctx(fuels, (800.0, 400.0)),
+    )
+    ledger = {
+        "iso": "ERCOT",
+        "year": 2026,
+        "thermal_additions": [],
+        "renewable_additions": [],
+        "storage_additions": [],
+        "retirements": [],
+        "peak_demand_mw": 165.0,
+        "reserve_margin": 0.2,
+        "rps_dual": 0.0,
+    }
+    if storage_power_mw is not None:
+        ledger["storage_power_mw"] = storage_power_mw
+    run = C.Run(run_dir=Path("."), config=ScenarioConfig(iso="ERCOT"), iso="ERCOT")
+    run.years = {2026: yd}
+    run.ledgers = {2026: ledger}
+    return run
+
+
+class TrajectoryReportingGrainTest(unittest.TestCase):
+    """capx D25 §6.1 → D29 — the energy block and the real storage column."""
+
+    def test_generation_by_fuel_is_emitted_and_closes_on_the_total(self):
+        row = F.extract_trajectory(_synthetic_run())[0]
+        gen = row["generation_by_fuel_mwh"]
+        # Thermal by fuel from the dispatch array, wind/solar from their own.
+        self.assertAlmostEqual(gen["gas_cc"], 2400.0)
+        self.assertAlmostEqual(gen["coal"], 1200.0)
+        self.assertAlmostEqual(gen["wind"], 240.0)
+        self.assertAlmostEqual(gen["solar"], 120.0)
+        # The denominator the FC-5 corridor states its shares against.
+        self.assertAlmostEqual(row["total_gen_mwh"], 3960.0)
+        self.assertAlmostEqual(sum(gen.values()), row["total_gen_mwh"], places=1)
+
+    def test_storage_is_not_folded_into_the_fuel_mix(self):
+        # Discharge is round-tripped energy already counted at charge; summing
+        # it into the generation mix would double-count it.
+        row = F.extract_trajectory(_synthetic_run())[0]
+        self.assertNotIn("storage", row["generation_by_fuel_mwh"])
+        self.assertAlmostEqual(row["storage_discharge_mwh"], 144.0)
+        self.assertAlmostEqual(row["storage_charge_mwh"], 192.0)
+
+    def test_storage_power_mw_is_nonzero_against_a_fleet_with_storage(self):
+        # THE defect: a real storage fleet must not report as no storage.
+        # Pinned as EQUAL to the ledger figure, not merely nonzero: the column
+        # is the fleet TOTAL (batteries + pumped storage, since runner puts PS
+        # into `storage_units` on both legs), so a consumer comparing it to a
+        # batteries-only anchor must net PS out itself. A future change that
+        # silently netted here would break that contract invisibly.
+        row = F.extract_trajectory(_synthetic_run(storage_power_mw=17_000.0))[0]
+        self.assertAlmostEqual(row["storage_power_mw"], 17_000.0)
+        self.assertGreater(row["storage_power_mw"], 0.0)
+
+    def test_the_defective_storage_mw_stays_bug_compatible(self):
+        # Three committed consumers read `storage_mw`, two of them by comparing
+        # two summaries key-by-key; repairing it in place would make an
+        # old-vs-new comparison report a phantom multi-GW delta. It must keep
+        # reading 0.0 off the generator axis, beside the repaired column.
+        row = F.extract_trajectory(_synthetic_run(storage_power_mw=17_000.0))[0]
+        self.assertEqual(row["storage_mw"], 0.0)
+        self.assertNotEqual(row["storage_mw"], row["storage_power_mw"])
+
+    def test_absent_ledger_key_reads_not_measured_never_zero(self):
+        # 83 committed ledgers predate `storage_power_mw`. None is "not
+        # measured"; 0.0 would assert a fleet that was never recorded.
+        row = F.extract_trajectory(_synthetic_run(storage_power_mw=None))[0]
+        self.assertIsNone(row["storage_power_mw"])
+
+    def test_no_storage_arrays_report_none_not_zero_throughput(self):
+        row = F.extract_trajectory(_synthetic_run(storage=False))[0]
+        self.assertIsNone(row["storage_discharge_mwh"])
+        self.assertIsNone(row["storage_charge_mwh"])
+
+    def test_the_addition_is_additive_every_legacy_key_survives(self):
+        # The contract the charter binds this change to: committed summaries
+        # stay readable by every current consumer, so no pre-D29 key may lose
+        # its name, type or meaning.
+        row = F.extract_trajectory(_synthetic_run())[0]
+        # `(int, float)` on the numeric keys is not laziness: several are
+        # `round(sum(...), 1)` over a possibly-empty set, which yields a Python
+        # int (e.g. `firm_clean_mw` on a fleet with no hydro). That is
+        # pre-existing behaviour the summaries already carry; the contract this
+        # pins is "still present, still a number", not a narrowing D29 invented.
+        num = (int, float)
+        legacy = {
+            "year": int,
+            "lw_price": num,
+            "max_hourly_price": num,
+            "neg_price_hour_frac": num,
+            "hours_ge_100": int,
+            "thermal_mw": num,
+            "firm_clean_mw": num,
+            "vre_mw": num,
+            "total_cap_mw": num,
+            "storage_mw": num,
+            "builds_thermal_mw": num,
+            "builds_thermal_backstop_mw": num,
+            "builds_by_source": dict,
+            "builds_renew_mw": num,
+            "builds_storage_mw": num,
+            "retire_mw": num,
+            "capacity_by_fuel_mw": dict,
+        }
+        for key, typ in legacy.items():
+            self.assertIn(key, row)
+            self.assertIsInstance(row[key], typ, key)
+        # And the roll-ups stay GENERATOR-axis: storage is beside them, not in.
+        self.assertAlmostEqual(row["total_cap_mw"], 800.0 + 400.0 + 1000.0 + 2000.0)
 
 
 if __name__ == "__main__":

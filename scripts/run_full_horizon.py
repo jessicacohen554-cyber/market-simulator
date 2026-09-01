@@ -409,8 +409,51 @@ def _capacity_by_fuel(yd: "C.YearData") -> dict[str, float]:
     return out
 
 
+def _storage_throughput_mwh(yd: "C.YearData") -> tuple[float | None, float | None]:
+    """Annual storage discharge / charge energy for one year, MWh.
+
+    Returns ``(discharge_mwh, charge_mwh)``, or ``(None, None)`` when the
+    result carries no storage arrays at all (an ISO-year solved with an empty
+    storage fleet, or a legacy parquet written before the storage columns).
+    ``None`` is "not measured" — never 0.0, which would be indistinguishable
+    from a fleet that stood idle all year.
+    """
+    dis = getattr(yd.result, "storage_discharge", None)
+    chg = getattr(yd.result, "storage_charge", None)
+    if dis is None and chg is None:
+        return None, None
+    d = float(np.asarray(dis, dtype=float).sum()) if dis is not None else 0.0
+    c = float(np.asarray(chg, dtype=float).sum()) if chg is not None else 0.0
+    return d, c
+
+
 def extract_trajectory(run: "C.Run") -> list[dict]:
-    """Per-year headline trajectory metrics for the findings tables."""
+    """Per-year headline trajectory metrics for the findings tables.
+
+    Emits the price / scarcity / emissions block, the capacity block
+    (``capacity_by_fuel_mw`` and its roll-ups), the evolution-event block
+    (``builds_*`` / ``retire_mw``) and — since D29 — the **energy** block
+    (``generation_by_fuel_mwh``, ``total_gen_mwh``, the storage throughput
+    pair) plus the real storage power column ``storage_power_mw``.
+
+    **The D29 addition is purely additive** (capx D25 §6.1, routed as the
+    reporting-grain fix): every pre-existing key keeps its name, type and
+    meaning, so a summary written before D29 stays readable by every consumer
+    and a summary written after it is a superset. Two gaps closed:
+
+    * **No generation by fuel at all.** The summary carried the fleet's
+      *capacity* mix but never its *energy* mix, so the FC-5 corridor's 252
+      AEO generation anchors could not be dispositioned against any bundle
+      (D25 §2: "AEO's 252 generation anchors are **not** dispositioned — the
+      committed summaries carry no generation-by-fuel").
+    * **No real storage column** — see the ``storage_mw`` note below.
+
+    Bundles committed before D29 lack the new keys entirely; they are NOT
+    regenerated (that would need a re-solve, which D29 is chartered not to do).
+    Every reader must therefore treat an absent new key as backward-compatible,
+    the same contract the evolution ledger states for ``confirmed_derates`` /
+    ``firm_clean_accredited_mw``.
+    """
     rows: list[dict] = []
     for year in run.solved_years:
         yd = run.years[year]
@@ -422,6 +465,13 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
         }
         co2 = _co2_tons(yd)
         cap = _capacity_by_fuel(yd)
+        # Energy mix (D29). Reuses the invariant checker's own fuel attribution
+        # — thermal dispatch summed by the fleet context's fuel_types, plus the
+        # separately-dispatched wind/solar arrays — rather than a second
+        # implementation of the same sum. Empty dict when the year carries no
+        # fleet context, which is the honest "not measured".
+        gen = C._fuel_gen_mwh(yd)
+        storage_dis_mwh, storage_chg_mwh = _storage_throughput_mwh(yd)
         thermal = sum(mw for f, mw in cap.items() if f in C.THERMAL_FUELS)
         firm_clean = sum(mw for f, mw in cap.items() if f in C.FIRM_CLEAN_FUELS)
         vre = cap.get("wind", 0.0) + cap.get("solar", 0.0)
@@ -467,7 +517,64 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
                 "firm_clean_mw": round(firm_clean, 1),
                 "vre_mw": round(vre, 1),
                 "total_cap_mw": round(sum(cap.values()), 1),
+                # DEFECT, DELIBERATELY KEPT BUG-COMPATIBLE (capx D25 §6.1 →
+                # D29 charter; first reported as FFR-3H §6 B-3 / FFR-3P B-3).
+                # `cap` is _capacity_by_fuel, which sums the fleet context's
+                # GENERATOR axis (plus the wind/solar scalars) — and LP storage
+                # resources are not generators, so no fuel is ever "storage".
+                # This key is therefore **0.0 by construction in every summary
+                # ever written**, including runs whose real battery fleet is
+                # 10-17 GW. It is NOT repaired in place because three committed
+                # consumers read it — scripts/collate_full_horizon.py (the
+                # storage GW table column), scripts/probes/_d9_relative_deltas
+                # .py (SCALARS) and scripts/probes/_d9_forecast_warmstart_ab.py
+                # (_CAPACITY_KEYS) — and the latter two compare two summaries
+                # key-by-key, so a repaired new-vintage value against an
+                # old-vintage committed summary would report a phantom
+                # multi-GW delta and defeat the very guardrail it feeds. Read
+                # `storage_power_mw` below instead; this key is retained only
+                # so those cross-vintage comparisons stay well-defined.
                 "storage_mw": round(cap.get("storage", 0.0), 1),
+                # THE REAL storage power column (D29). Source: the evolution
+                # ledger's own `storage_power_mw`, which runner.py writes as
+                # sum(u.power_cap_mw for u in storage_units) — the storage
+                # FLEET STATE after that year's new-entry screen, i.e. exactly
+                # the quantity `storage_mw` was meant to carry. Read from the
+                # ledger rather than reconstructed from a base fleet plus the
+                # builds ledger (the reconstruction D25 §2 had to fall back on)
+                # so the artifact reports the model's state, not an inference
+                # over it. `None` — not 0.0 — on the 83 legacy ledgers written
+                # before the key existed: "not measured", per the ledger's own
+                # backward-compatibility contract.
+                #
+                # CLASSIFICATION TRAP, READ BEFORE COMPARING IT TO ANYTHING.
+                # This is the WHOLE storage fleet: batteries AND pumped
+                # storage. runner.run_scenario_iso puts PS into `storage_units`
+                # on both legs — the measured leg logs "MW incl. pumped
+                # storage", the default leg prepends the EIA-860 PS fleet — so
+                # PS is in the sum by construction. AEO2025's "Diurnal Storage"
+                # row (the FC-5 corridor's storage anchor) is BATTERIES ONLY;
+                # AEO books PS separately. Comparing this column to it raw
+                # manufactures a false convergence: PJM 2030 reads 5,546.1 MW
+                # here against AEO's 6.42 GW (−13.6 %, which would score IN
+                # CORRIDOR) when the battery-only divergence is −92 %. A
+                # corridor consumer must net PS out — the model's PS fleet is
+                # fixed EIA-860 existing capacity with no new build, so
+                # `storage_power_mw − STORAGE_BASE_FLEET_MW[iso]["mid"]` is its
+                # constant residual in the base year (derived on the five FC-5
+                # bundles: PJM 5,046.1 / NEISO 1,865.0 / MISO 2,416.8 / NYISO
+                # 1,220.0 MW; NOT valid for the measured-base-fleet ISOs, whose
+                # battery seed is not the registry scalar). The battery/PS
+                # SPLIT is carried by no committed artifact; emitting it is a
+                # one-field producer addition in runner.py, ROUTED rather than
+                # done here (D29 charter scope). Until it exists, this column
+                # is the fleet TOTAL and must be labelled as such wherever it
+                # is quoted.
+                "storage_power_mw": (
+                    round(float(led["storage_power_mw"]), 1)
+                    if led.get("storage_power_mw") is not None
+                    else None
+                ),
                 "builds_thermal_mw": _sum_ledger("thermal_additions"),
                 # FC-2 row 4 reads builds_thermal_backstop_mw first, then
                 # builds_by_source["reserve_backstop"]. Both are emitted: the
@@ -483,7 +590,28 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
                 "builds_renew_mw": _sum_ledger("renewable_additions"),
                 "builds_storage_mw": _sum_ledger("storage_additions"),
                 "retire_mw": _sum_ledger("retirements"),
+                # NB: `capacity_by_fuel_mw` and its roll-ups (`total_cap_mw`,
+                # `thermal_mw`, `vre_mw`) are GENERATOR-axis quantities and
+                # structurally exclude storage — unchanged by D29, which adds
+                # the storage column beside them rather than folding storage
+                # into a total whose meaning readers already depend on.
                 "capacity_by_fuel_mw": {k: round(v, 1) for k, v in sorted(cap.items())},
+                # Energy mix (D29): the denominator-and-shares the FC-5
+                # corridor's AEO generation anchors are stated in. Wind and
+                # solar are DISPATCHED energy (post-curtailment), which is what
+                # a generation anchor reports. Storage is NOT folded in here:
+                # its discharge is round-tripped energy already counted at
+                # charge, so summing it into the fuel mix would double-count.
+                "generation_by_fuel_mwh": {
+                    k: round(v, 1) for k, v in sorted(gen.items())
+                },
+                "total_gen_mwh": round(sum(gen.values()), 1) if gen else None,
+                "storage_discharge_mwh": (
+                    round(storage_dis_mwh, 1) if storage_dis_mwh is not None else None
+                ),
+                "storage_charge_mwh": (
+                    round(storage_chg_mwh, 1) if storage_chg_mwh is not None else None
+                ),
             }
         )
     return rows
