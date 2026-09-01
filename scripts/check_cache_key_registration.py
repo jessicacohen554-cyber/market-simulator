@@ -50,6 +50,19 @@ needs a cache-epoch entry plus a purge (a behavioral flip — see the ledger in
 it fires on every CI run and every local run — a lane cannot rely on a later
 session noticing.
 
+**4. Append-only ledger (FAILS the PR; needs ``--base``).** Since 2026-09-01
+``cache_key()`` drops a registered field at its DECLARED default rather than its
+live one (capx D24 option (b′-1), owner ruling Q20), so each
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`` entry is the FROZEN value that field's
+absence is equivalent to — editing one silently re-keys every config that
+carries the field. The ledger is therefore APPEND-ONLY: a new field adds a line,
+an existing line is never edited, and a line disappears only with the field
+itself (rule 26 ``[R-DELETE]``, which parks the value in
+``_CACHE_KEY_RETIRED_FIELDS``). A DEFAULT FLIP is declared by appending to
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` instead, which check 3 then compares
+the live default against — so a flip still cannot land silently, and the frozen
+drop value stays put, which is the whole point of (b′-1).
+
 Defaults are compared as ``ast.unparse``-normalized SOURCE TEXT, so reformatting
 and comment churn are invisible, and any default form (a literal, a
 ``field(default_factory=...)``, an expression) is expressible.
@@ -75,6 +88,8 @@ _CONFIG_REL = "src/market_sim/config/scenarios.py"
 _CLASS = "ScenarioConfig"
 _REGISTRY = "_CACHE_KEY_OPTIONAL_FIELDS"
 _DECLARED = "_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS"
+_FLIPS = "_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS"
+_RETIRED = "_CACHE_KEY_RETIRED_FIELDS"
 _EPOCH_LEDGER_REL = "src/market_sim/results/cache.py"
 
 
@@ -148,6 +163,91 @@ def _fields_and_registry(
     return fields, registry, declared
 
 
+def _declared_flips(source: str) -> list[tuple[str, str]]:
+    """Return ``[(field, new default source)]`` from ``_CACHE_KEY_..._FLIPS``.
+
+    The flips ledger is a tuple of ``(date, field, new default source text)``
+    triples, appended one line per default flip and never edited. Order is
+    preserved, so the LAST entry for a field is its current declaration. Empty
+    for a blob predating the ledger (2026-09-01).
+    """
+    flips: list[tuple[str, str]] = []
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        tgts = [node.target] if isinstance(node, ast.AnnAssign) else list(node.targets)
+        if not any(isinstance(t, ast.Name) and t.id == _FLIPS for t in tgts):
+            continue
+        for elt in getattr(node.value, "elts", []):
+            parts = [
+                e.value
+                for e in getattr(elt, "elts", [])
+                if isinstance(e, ast.Constant) and isinstance(e.value, str)
+            ]
+            if len(parts) == 3:
+                flips.append((parts[1], _norm(parts[2])))
+    return flips
+
+
+def _retired(source: str) -> set[str]:
+    """Return the ``_CACHE_KEY_RETIRED_FIELDS`` names (fields deleted, rule 26)."""
+    names: set[str] = set()
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        tgts = [node.target] if isinstance(node, ast.AnnAssign) else list(node.targets)
+        if not any(isinstance(t, ast.Name) and t.id == _RETIRED for t in tgts):
+            continue
+        if isinstance(node.value, ast.Dict):
+            names.update(
+                k.value
+                for k in node.value.keys
+                if isinstance(k, ast.Constant) and isinstance(k.value, str)
+            )
+    return names
+
+
+def append_only_violations(
+    base_declared: dict[str, str],
+    head_declared: dict[str, str],
+    head_fields: set[str],
+    head_retired: set[str],
+) -> list[str]:
+    """Return the append-only breaches between two ledger states.
+
+    Pure, so the tests can drive it on synthetic source with no git. Two
+    breaches, and only two — adding an entry for a NEW field is the append the
+    ledger is for:
+
+    * an existing entry whose declared default was EDITED (the frozen drop
+      value moved, silently re-keying every config carrying that field);
+    * an entry REMOVED while its field still exists at HEAD and is not retired
+      (deleting a field under rule 26 ``[R-DELETE]`` legitimately drops its
+      line, and ``_CACHE_KEY_RETIRED_FIELDS`` preserves the value).
+
+    Args:
+        base_declared: The ledger at the merge base.
+        head_declared: The ledger at HEAD.
+        head_fields: ``ScenarioConfig`` field names at HEAD.
+        head_retired: ``_CACHE_KEY_RETIRED_FIELDS`` names at HEAD.
+
+    Returns:
+        Human-readable breach descriptions, empty when the change is an append.
+    """
+    breaches: list[str] = []
+    for name, was in sorted(base_declared.items()):
+        if name not in head_declared:
+            if name in head_fields and name not in head_retired:
+                breaches.append(
+                    f"{name}: entry REMOVED while the field still exists "
+                    f"(declared {was})"
+                )
+            continue
+        if head_declared[name] != was:
+            breaches.append(f"{name}: {was} -> {head_declared[name]} (EDITED)")
+    return breaches
+
+
 def _blob(ref: str, rel: str) -> str | None:
     """``git show ref:rel``, or None when the path does not exist at that ref."""
     try:
@@ -180,8 +280,12 @@ _FLIP_REMEDY = f"""
     the codebase can see this; that is why the guard exists.
 
     REMEDY (in the SAME commit as the flip):
-      1. update the field's entry in {_DECLARED} ({_CONFIG_REL})
-         to the new default's source text -- this is the declaration;
+      1. APPEND a (date, field, new default source) line to {_FLIPS}
+         ({_CONFIG_REL}) -- this is the declaration. Do NOT edit the field's
+         entry in {_DECLARED}: since capx D24 option (b'-1) that
+         entry is the FROZEN value the cache key drops the field at, so leaving
+         it put is what makes the post-flip config take its own key instead of
+         colliding with the pre-flip bundle. Check 4 fails an edit;
       2. decide, and record, what the collision means:
          * BYTE-IDENTICAL flip (no solve output moves) -> say so in the commit
            message and in the entry's comment; nothing further is needed.
@@ -200,6 +304,13 @@ def main(argv: list[str] | None = None) -> int:
 
     head_src = (_REPO / _CONFIG_REL).read_text()
     head_fields, head_registry, head_declared = _fields_and_registry(head_src)
+    # The CURRENT declaration of a field's live default: its frozen ledger entry,
+    # overridden by the newest appended flip. Check 3 compares the live default
+    # against this; the frozen entry itself is what the cache key drops at, and
+    # check 4 keeps it frozen.
+    head_current = dict(head_declared)
+    for name, new_default in _declared_flips(head_src):
+        head_current[name] = new_default
     if not head_fields:
         print(f"FAIL: parsed 0 fields from {_CLASS} in {_CONFIG_REL}")
         return 1
@@ -222,9 +333,12 @@ def main(argv: list[str] | None = None) -> int:
     missing_decl = sorted(head_registry - set(head_declared))
     extra_decl = sorted(set(head_declared) - head_registry)
     moved = sorted(
-        (name, _norm(head_fields[name]), head_declared[name])
-        for name in head_registry & set(head_declared)
-        if name in head_fields and _norm(head_fields[name]) != head_declared[name]
+        (name, _norm(head_fields[name]), head_current[name])
+        for name in head_registry & set(head_current)
+        if name in head_fields and _norm(head_fields[name]) != head_current[name]
+    )
+    stale_flips = sorted(
+        name for name, _ in _declared_flips(head_src) if name not in head_registry
     )
     if missing_decl:
         failures.append(
@@ -251,14 +365,47 @@ def main(argv: list[str] | None = None) -> int:
             )
             + _FLIP_REMEDY
         )
+    if stale_flips:
+        failures.append(
+            f"{len(stale_flips)} entr(y/ies) in {_FLIPS} name a field that is not "
+            f"in {_REGISTRY} -- a flip declared for an unregistered field "
+            f"protects nothing:\n      "
+            + "\n      ".join(stale_flips)
+            + "\n    REMEDY: register the field, or drop the stale flip line."
+        )
 
-    # --- check 1: new fields must be registered (PR only) -------------------
+    # --- check 1 + 4: PR-only, need the merge base --------------------------
     if args.base:
         base_src = _blob(args.base, _CONFIG_REL)
         if base_src is None:
             print(f"note: {_CONFIG_REL} absent at {args.base}; new-field check skipped")
         else:
-            base_fields, _, _ = _fields_and_registry(base_src)
+            base_fields, _, base_declared = _fields_and_registry(base_src)
+            breaches = append_only_violations(
+                base_declared,
+                head_declared,
+                set(head_fields),
+                _retired(head_src),
+            )
+            if breaches:
+                failures.append(
+                    f"{len(breaches)} {_DECLARED} entr(y/ies) changed in this PR; "
+                    f"the ledger is APPEND-ONLY:\n      "
+                    + "\n      ".join(breaches)
+                    + f"""
+    WHY THIS FAILS. Since capx D24 option (b'-1) the entry is the FROZEN value
+    cache_key() DROPS the field at, not a description of the live default.
+    Editing it re-keys every config carrying the field -- silently, because the
+    key is the only address a bundle has.
+
+    REMEDY:
+      * declaring a DEFAULT FLIP -> APPEND a (date, field, new default source)
+        line to {_FLIPS} and leave the frozen entry alone;
+      * deleting the field (rule 26 [R-DELETE]) -> drop its {_REGISTRY} and
+        {_DECLARED} lines TOGETHER and record its value in {_RETIRED};
+      * fixing a genuinely WRONG frozen value -> that moves cache keys. It needs
+        a measured key-move count and an owner decision, not this guard."""
+                )
             added = set(head_fields) - set(base_fields)
             unregistered = sorted(added - head_registry)
             if unregistered:

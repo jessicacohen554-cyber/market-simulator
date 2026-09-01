@@ -26,6 +26,16 @@ and purge/segregate the affected caches. A pure byte-identical refactor needs
 neither. This module never auto-invalidates on epoch; that is the operator's
 responsibility per that policy.
 
+Since 2026-09-01 the key is no longer the only thing standing between a config
+and a bundle: :func:`cache_config_disagreements` compares the requesting config
+against the ``config.yaml`` stored beside the bundle, and the runner treats a
+disagreement as a cache MISS (capx D24 option (c′), owner ruling Q20). That
+closes the *serving* half of the hazard described above — a bundle whose stored
+config differs can no longer be handed to a run — but it closes only that half.
+The ledger below stays load-bearing for everything the stored config cannot see
+(a behavior change that is not a ``ScenarioConfig`` field at all), and it stays
+the only surface on which a same-key invalidation is visible to a READER.
+
 **The epoch is a dated ledger entry, not a code token.** There is deliberately
 no ``CACHE_EPOCH`` constant: a constant that entered ``ScenarioConfig`` would
 move the key of *every* config including the backcast keepers (a solve-affecting
@@ -543,9 +553,11 @@ across all three ``scenarios.py``-touching Wave-1 merges (§W1-X close doc §1).
 """
 
 from contextlib import contextmanager
+from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
+import yaml
 
 from market_sim.config import paths
 from market_sim.config.scenarios import ScenarioConfig
@@ -675,8 +687,141 @@ def is_cached(
 
     ``pass_label`` selects which solve pass to check; ``None`` is the
     final-result file (see :func:`get_cache_path`).
+
+    Presence only. Whether the bundle may be SERVED to a given config is the
+    separate question :func:`cache_config_disagreements` answers.
     """
     return get_cache_path(iso, cache_key, year, pass_label).exists()
+
+
+def _comparable(value):
+    """Normalize a config value for cross-serialization comparison.
+
+    ``config.yaml`` is a ``yaml.safe_dump(asdict(config))`` round-trip, which
+    renders tuples as sequences and reloads them as lists, so a raw ``==``
+    against a live ``asdict`` payload reports every tuple-valued field as
+    differing. Tuples are folded to lists (recursively, through dicts and
+    sequences) and ``Path`` objects to strings; everything else is returned
+    unchanged.
+    """
+    if isinstance(value, dict):
+        return {k: _comparable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_comparable(v) for v in value]
+    if isinstance(value, Path):
+        return str(value)
+    return value
+
+
+def cache_config_disagreements(
+    iso: str, cache_key: str, year: int, config: ScenarioConfig
+) -> list[str]:
+    """Return the fields on which a cached bundle's config disagrees with *config*.
+
+    **Why a cache HIT is not enough (capx D24 option (c′), owner ruling Q20).**
+    ``cache_key`` DROPS every ``_CACHE_KEY_OPTIONAL_FIELDS`` member sitting at
+    its default, so the key names a config largely by omission — a run's key
+    drops 115–215 of its registered fields
+    (``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §3). Two
+    materially different postures can therefore address one bundle, and D24
+    demonstrated both forms among the committed runs:
+
+    * **§4.1, differing common field** — the two configs disagree on a field
+      that is present in both and dropped from the key at whichever value was
+      the default on the day each was hashed;
+    * **§4.2, absent vs armed default** — the stored config predates the field
+      entirely, and the requester carries it at a default that has since been
+      ARMED, so neither side's value is in the key and nothing in the pair of
+      ``run_config.json`` files looks like more than ordinary schema growth.
+
+    This function is the mechanical refusal for both, at the one seam where a
+    bundle is served, and it is deliberately (c′) rather than strict (c): a
+    field ABSENT from the stored config is a disagreement only when the
+    requester's value is not that field's registration-time default. Strict
+    equality would refuse a bundle the moment the schema grew at all — 14 of
+    D24's 14 shared-key groups, against 2 true positives.
+
+    Follows the :func:`assert_cache_key_uncontaminated` precedent (owner
+    decision D-11) in placement and tone, with one deliberate difference: this
+    is NOT an exception. A disagreement is a cache MISS, which the caller logs
+    and re-solves — a wrong bundle must never be served, and a run must never
+    die because one was on disk.
+
+    Three cases are deliberately NOT disagreements, each because refusing would
+    cost re-solves without protecting anything:
+
+    * **No stored ``config.yaml``** (a hand-assembled or truncated bundle):
+      nothing to compare, so the pre-existing behaviour stands. Every bundle
+      :func:`save_result` writes carries one.
+    * **A field present in the STORED config and absent from the requester** —
+      a field deleted under rule 26 ``[R-DELETE]``, whose value
+      ``_CACHE_KEY_RETIRED_FIELDS`` already re-inserts into the key.
+    * **Checkout-absolute paths**, folded to sentinels on both sides exactly as
+      the key folds them, so a bundle stays reachable from a differently-rooted
+      checkout. A path that survives that folding and still differs IS a
+      disagreement: it is a different data source.
+
+    Args:
+        iso: ISO identifier, e.g. ``"ERCOT"``.
+        cache_key: The key the bundle is addressed at.
+        year: Weather/simulation year (selects the bundle directory).
+        config: The config requesting the bundle.
+
+    Returns:
+        Sorted field names on which the stored config disagrees; empty when the
+        bundle may be served.
+    """
+    stored_path = get_config_path(iso, cache_key, year)
+    if not stored_path.exists():
+        return []
+    stored_raw = yaml.safe_load(stored_path.read_text()) or {}
+    if not isinstance(stored_raw, dict):
+        return []
+    return config_disagreements(stored_raw, asdict(config))
+
+
+def config_disagreements(stored: dict, wanted: dict) -> list[str]:
+    """Return the fields on which a stored config disagrees with a wanted one.
+
+    The pure half of :func:`cache_config_disagreements` — no filesystem — so the
+    rule can be exercised directly against the committed ``run_config.json``
+    population that capx D24 measured.
+
+    Args:
+        stored: The config a bundle was solved under (a ``config.yaml`` load or
+            a committed ``run_config.json``'s ``scenario_config``).
+        wanted: The config asking for that bundle (an ``asdict`` payload).
+
+    Returns:
+        Sorted field names on which the two disagree; empty when the stored
+        bundle may be served to *wanted*.
+    """
+    from market_sim.config.scenarios import (
+        _cache_key_path_roots,
+        _normalize_cache_key_paths,
+        registration_time_default,
+    )
+
+    roots = _cache_key_path_roots()
+    stored = _normalize_cache_key_paths(_comparable(stored), roots)
+    wanted = _normalize_cache_key_paths(_comparable(wanted), roots)
+
+    differing: list[str] = []
+    for name, value in wanted.items():
+        if name in stored:
+            if stored[name] != value:
+                differing.append(name)
+            continue
+        # Absent from the stored config: ordinary schema growth UNLESS the
+        # requester has moved it off the value its absence is equivalent to.
+        try:
+            absent_equivalent = registration_time_default(name)
+        except KeyError:
+            differing.append(name)
+            continue
+        if _normalize_cache_key_paths(_comparable(absent_equivalent), roots) != value:
+            differing.append(name)
+    return sorted(differing)
 
 
 def save_result(

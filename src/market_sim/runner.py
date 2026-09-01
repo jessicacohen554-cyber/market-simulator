@@ -155,6 +155,7 @@ from market_sim.policy.rps import (
     get_rps_target,
 )
 from market_sim.results.cache import (
+    cache_config_disagreements,
     get_cache_path,
     is_cached,
     load_result,
@@ -2260,7 +2261,34 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             so2=(fleet_arrays.so2_rate, config.so2_price),
         )
 
-        if is_cached(iso, cache_key, year):
+        # The cache key names a config largely by OMISSION -- every registered
+        # optional field sitting at its default is dropped from the hash -- so a
+        # bundle on disk at this key is not proof that it was solved under this
+        # config. capx D24 demonstrated two committed pairs at one key with
+        # materially different postures (FINDING-capx-d24-cache-key-defect-
+        # 2026-09-01.md §4). Option (c') of that finding, owner ruling Q20: the
+        # stored config.yaml has to agree before the bundle is served. A
+        # disagreement is a logged MISS naming the fields and a re-solve, never
+        # an exception -- a run must not die because a stale bundle exists.
+        _year_cached = is_cached(iso, cache_key, year)
+        _cache_conflicts = (
+            cache_config_disagreements(iso, cache_key, year, config)
+            if _year_cached
+            else []
+        )
+        if _cache_conflicts:
+            logger.warning(
+                "%s %d: REFUSING the cached bundle at key %s -- its stored "
+                "config.yaml disagrees with this run's config on %d field(s): "
+                "%s%s. Re-solving (capx D24 option (c'), owner ruling Q20).",
+                iso,
+                year,
+                cache_key,
+                len(_cache_conflicts),
+                ", ".join(_cache_conflicts[:12]),
+                " ..." if len(_cache_conflicts) > 12 else "",
+            )
+        if _year_cached and not _cache_conflicts:
             result = load_result(iso, cache_key, year)
             _t_cached = time.perf_counter()
             _total = _t_cached - year_start
