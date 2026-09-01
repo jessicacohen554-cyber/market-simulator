@@ -34,7 +34,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     legacy_p2: { cell: "." },
     priced_interchange: { cell: "K" },
     reference_price_interface: { cell: "G", ev: "nyiso-115 (ex-ante transfer adjudication, 0 solves; scripts/probes/_nyiso115_transfer_queue_adjudication.py -> results/calibration/nyiso115_transfer_queue_adjudication.json)" },
-    gas_offer_net_revenue_margin: { cell: "K", ev: "nyiso-72" },
+    gas_offer_net_revenue_margin: { cell: "K", ev: "nyiso-72; nyiso-167 (2026-09-01, zero solve) BOUNDS ITS PASSTHROUGH-SLOPE COST AND DECLINES TO RE-OPEN IT — the compression reprices each gas tranche markup as a fixed $/MWh margin at the per-zone anchor, so d(mc)/d(fuel) is phys x HR rather than mult x HR; on NYISO's registered offer_curve_by_group the phys/mult ratios (CC_REGULAR econ 0.825/0.925, ST_GAS econ 0.769/0.733, CT_PEAKER econ 0.661/0.658) bound its share of the measured 0.714 model/actual passthrough ratio at roughly a third. NOT A DEFECT: the anchor is the rule-23 frozen identification point derived on the SAME pooled 2023-2025 window the band multipliers were calibrated on (derive_gas_offer_margin_anchor.py), so a per-year re-anchor would be a derivation-vs-dispatch basis mismatch with the residual as its only motive (rule 1). DO-NOT-REDO absent new measured NYISO offer data. docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md §5" },
     gas_offer_margin_zonal_anchor: { cell: "K", ev: "nyiso-109 (registered A/B: 2026-08-01-nyiso109-zonal-margin-anchor vs 2026-07-31-nyiso109-control-zerodelta; results/calibration/_nyiso109_zonal_anchor_ab.json; FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md)" },
     diurnal_price_amplitude: { cell: "G", ev: "nyiso-109 (trough half corrected); nyiso-110 (peak half DECOMPOSED — FINDING-nyiso110-peak-half-decomposition-2026-08-02.md + PREREG-nyiso110-spin-online-peak-formation-2026-08-02.md); xiso-1 §2" },
     ordc_scarcity_overlay: { cell: "." },
@@ -792,3 +792,75 @@ window.MECH_MATRIX_SHARDS.NYISO = {
  * pending). Evidence: docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md §7.
  */
 /* NYISO column re-stamp 2026-08-30 (session nyiso-157): keeper -> 2026-08-30-nyiso-157-par-attribution (eastern-seam PAR attribution promoted by owner ruling over the C3a-2025/C3b-2025 regressions; every standing kill gate silent). Cells moved this session: nyiso_seam_par_attribution R -> K (re-test at new HEAD, nyiso-127 rejection record preserved in the ev); nyiso_iroquois_winter_spread R -> R (companion re-test on its recorded re-open condition, rejected on its own W-gates; re-open condition sharpened by measurement); seam_flow_envelopes K unchanged, annotated superseded-at-runtime (rule 19). Column re-checked against the promoted keeper: no other cell's verdict depends on the superseded statics. */
+
+/* NYISO column ANNOTATION 2026-09-01 (session nyiso-167): NO CELL VERDICT MOVES,
+ * NO KEEPER CHANGE, NO SOLVE. The session tested no mechanism, so rule 28 duty
+ * (b) moves nothing and duty (c) is not triggered; duty (a) was discharged
+ * against this shard before any lever was considered. What is recorded is the
+ * ATTRIBUTION that re-points the lane's object, plus one DO-NOT-REDO on the
+ * gas_offer_net_revenue_margin cell above (evidence appended, verdict K
+ * unchanged).
+ *
+ * THE RESULT (docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md,
+ * probe scripts/probes/nyiso167_price_gain_attribution.py ->
+ * results/calibration/_nyiso167_price_gain_attribution.json, all read off the
+ * keeper's own committed artifacts): C3a-2025 is NOT a year-specific miss. The
+ * keeper's price response over all 36 training months is ONE stable affine law
+ * — model = 0.7032 x actual_RT + $11.03 (R2 0.910) / 0.7236 x actual_DA +
+ * $10.06 (R2 0.947) — whose gain is reproduced independently by the
+ * price-vs-load decile gradient (0.752/0.662/0.664, R2 >= 0.99) and by the gas
+ * passthrough slope (model 6.38 vs actual DA 8.94 $/MWh per $/MMBtu, ratio
+ * 0.714). A gain below 1 makes the error a pure function of the year's price
+ * LEVEL, so C3a clears +/-10 % only for an annual actual mean inside
+ * $27.79-$56.03/MWh: 2023 ($32.25) and 2024 ($38.12) are inside it, 2025
+ * ($66.43) is 19 % above the upper edge, and that alone is the -11.5 %.
+ *
+ * CONSEQUENCE FOR THE OPEN GATES, stated so a successor does not re-derive it:
+ * 87.4 % of the winter face (the -$3.92 the DECISION-CARD-nyiso161 arithmetic
+ * attributes to the access-blocked AORR input) is that same system-wide gain;
+ * the genuinely winter-specific residue is -$0.51/MWh and NEITHER Jan-2025 nor
+ * Feb-2025 is a statistical outlier off the pooled law (z -0.32, -0.92). The
+ * ONE 2025 outlier is June (z -2.71), which is RT-only — the model matches
+ * June DA to -0.6 % — i.e. exactly the ledgered C3c limitation. 2025's
+ * whole-year residual off the law is +$0.89. This ANSWERS the nyiso-161 card's
+ * own eligibility test (a) NO AS WRITTEN ("a component that merely helps does
+ * not qualify"); it rules nothing — the card stays filed and unruled, and this
+ * is evidence for the owner.
+ *
+ * CELLS RE-CHECKED, NONE MOVED: nyiso_iroquois_winter_spread R (this finding
+ * makes the winter face SMALLER, which strengthens the nyiso-150/157
+ * rejections — it is NOT new evidence and the sharpened re-open bar stands);
+ * scuc_load_pocket_commitment G and nyiso_incity_commitment_obligation R
+ * (access-blocked, and per the finding S3.1 they could not have closed
+ * C3a-2025 alone — the upstate passthrough leg, 0.799 on 34 % of ISO load, is
+ * outside their reach); temp_dependent_derate G (refused ex-ante at nyiso-111
+ * on NYISO's OWN measured conduct — nothing here is new evidence, rule 28(a),
+ * DO NOT RE-TEST); nyiso_ordc_measured_step_span K, nyiso_li_locational_reserve
+ * K, nyiso_east_reserve_families I, energy_reserve_coopt K all stand as read.
+ *
+ * NEW OBJECT HANDED TO THE QUEUE, replacing "the winter face" as the named
+ * successor for C3a-2025: THE PRICE-RESPONSE GAIN. The finding's S4 measures
+ * the same law on every ISO's designated keeper (ERCOT 0.347, MISO 0.500,
+ * PJM 0.668, NYISO 0.703, CAISO 0.837, NEISO 0.986) — a MEASUREMENT only, rule
+ * 25: no verdict transfers and no other ISO's shard is touched. NEISO's keeper
+ * is the in-repo existence proof that the gain is closable; the four gates it
+ * arms and NYISO does not are all supply-side capability contraction at
+ * physical extremes and are `.` here, so any of them is a NYISO-lane question
+ * entering as U on NYISO's own data (rule 28(d)) — never a transfer.
+ *
+ * SIDE REPAIR, found by the duty-(a) check before anything was edited: THIS
+ * FILE DID NOT PARSE. The nyiso-151 egrid_identity_heat_rates entry (line 143)
+ * ended without its trailing comma, so window.MECH_MATRIX_SHARDS.NYISO was
+ * never assigned and NYISO's ENTIRE COLUMN was missing from the rendered
+ * mechanism-matrix.html — verified with `node --check` against the HEAD blob
+ * BEFORE any edit of this session (introduced in c66a595d; the other five
+ * shards and the base file compile). Repaired: one character. All seven files
+ * now pass `node --check`. scripts/check_mechanism_matrix.py reports
+ * "integrity OK" both before and after, because it parses the shards
+ * Python-side and never asks a JS engine — a `node --check` leg over
+ * every .js under docs/codebase-site/data belongs in a governance round and
+ * is FILED,
+ * not built, here.
+ *
+ * Holdout untouched: 2023-2025 only, no marker requested, freeze ACTIVE.
+ */
