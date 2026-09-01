@@ -3,8 +3,8 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "89dacc4c0343",
-    "scored_at_date": "2026-08-31T18:38:41Z",
+    "scored_at_sha": "7b085947b0ee",
+    "scored_at_date": "2026-09-01T01:10:11Z",
     "cache_epoch": "a4b11ef4aaa1be35"
   },
   "tier": "t3",
@@ -15,11 +15,12 @@
     "FC-2 adequacy & equilibrium behavior FAIL",
     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
     "FC-4 crossover dispatch skill (T1-X) FAIL",
-    "FC-5 external corridor SKIPPED (required, unscored)",
     "FC-6 driver response FAIL",
     "FC-7 provenance & DOF FAIL"
   ],
-  "caveats": [],
+  "caveats": [
+    "FC-5 external corridor"
+  ],
   "notes": [],
   "categories": {
     "FC-1": {
@@ -107,12 +108,12 @@
     "FC-5": {
       "label": "FC-5 external corridor",
       "applicability": "required",
-      "status": "SKIPPED",
+      "status": "CAVEAT",
       "rows": [
         {
           "row": "corridor",
-          "status": "SKIPPED",
-          "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+          "status": "CAVEAT",
+          "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030', 'capacity:solar@2035', 'capacity:wind_total@2035', 'capacity:storage@2035', 'capacity:biomass_waste@2035', 'co2@2035', 'capacity:fossil_peaker_steam@2040', 'capacity:solar@2040', 'capacity:wind_total@2040', 'capacity:storage@2040', 'capacity:biomass_waste@2040', 'co2@2040']",
           "gating": true
         }
       ]
