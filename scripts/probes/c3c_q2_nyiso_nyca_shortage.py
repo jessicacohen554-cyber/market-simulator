@@ -26,6 +26,15 @@ frozen artifact of the false positive, and this probe stays SUPERSEDED (its
 verdict was wrong on the merits of the question, and nyiso-164 is the
 measurement of record whether or not this construction now agrees).
 
+**That repair was independently verified 2026-09-01 (nyiso-165,
+``docs/FINDING-nyiso165-as-reference-repair-2026-09-01.md``)**, which reproduces
+the acceptance test below off the committed parquet rather than the raw CSVs,
+proves by removal that no scorer or gate reads the reference, and corrects one
+number in the nyiso-166 record (its "46 of 65" is the defect-A-only basis; the
+artifact as it actually stood — both defects live, the basis THIS probe ran on —
+gives 29 of 65; repaired it is 0 of 65 on every reading). That finding §5 also
+scans the other five ISOs for the same summed-cascade construction.
+
 * **Defect A (aggregate).** It reads ``nyca_reserve_adder`` from
   ``data/raw/_validation-source/actual_as_reserve_NYISO.parquet``, which
   ``scripts/data/process_nyiso_as.py::build_reference`` computed as
