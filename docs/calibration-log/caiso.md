@@ -10877,3 +10877,74 @@ charts (8 figures, both themes, table views) at
 **Matrix (rule 28(b), CAISO shard only) — evidence appends, NO verdict moves:**
 `diurnal_price_amplitude` (stays **U**), `solar_deliverability` (stays **K**),
 `import_hub_pricing` (stays **K**).
+
+## 2026-09-01 — CAISO — caiso-233: the import DEPTH limb MEASURED and the ported NEISO estimator REFUSED on its own pre-registered gates — object is year-stable (corridor p98 CV 0.042), estimator is not (CV up to 0.550, LOYO to 491.7%); DSW's passing pair disclosed as an arithmetic cancellation and NOT admitted; incumbent ladder measured 1.5–3.1 GW deeper than the p99.9 envelope; NO SOLVE, keeper unchanged
+
+**Runs:** NONE. The pre-registered stop condition fired at the estimation stage —
+no LP built, no solver called, nothing registered (rule 15 applies to completed
+runs; the caiso-134/140/150/202/232 disposition). Keeper stays
+`2026-09-01-caiso-231-b1-ungrounded`, determination **NOT-YET**, C3a the sole
+load-bearing FAIL (+4.1 / +12.5 / +15.6 %, re-verified at HEAD from committed
+artifacts). No CAISO `complete`/`final` marker touched; holdout freeze ACTIVE;
+every read inside 2023–2025.
+
+**Charter.** Close the last uncited limb of CAISO's import ladder — the four SPOT
+capacities `_caiso186os_dof_repair.py` labels `RESIDUAL (static, no cited primary
+source)` and calls "the single most consequential unclosed DOF CAISO carries".
+Corrected enumeration: `PNW_midC` 1,800 / `DSW_CCGT` 1,800 / `DSW_CT` 2,200 /
+`WECC_scarcity` 3,000 = **8,800 MW**. The charter's list substituted
+`DSW_solar_PV`, which is the MIC-measured per-year DSW **firm** block
+(1,251/1,813/1,805), fails the charter's own invariance test, and is already
+closed; both firm rungs were held fixed (rule 1 `[R-STRUCT]`).
+
+**Method + gates.** `scripts/data/derive_caiso_import_depths.py` ports
+`derive_neiso_import_tranches.py` (per-corridor p98 routine depth, p99.9-of-total
+scarcity, firm block carved out as NEISO carves Highgate's published rating, DSW
+remainder split as equal blocks — zero free parameters). Gates fixed at the PRICE
+limb's **own** constants, CV ≤ 0.20 / LOYO ≤ 0.25, so the bar was not this
+session's to set. **BOTH FAIL:** `PNW_midC` CV 0.253, `WECC_scarcity` CV 0.550;
+worst LOYO 40.1 / 491.7 / 57.9 %.
+
+**Diagnosis, not softening** (`scripts/probes/_caiso233_import_depth_decomp.py`).
+The measured depths are year-stable — corridor p98 CV **0.042** on both corridors,
+total p99.9 CV **0.056** — so the object is measurable and the *estimator* is what
+fails, for three structural reasons: (a) the firm carve-out carries CV 0.165/0.162,
+**4× the depth's own 0.042**, because NEISO carves out a *constant* published
+rating while CAISO's analogue is a year-varying DMM RA measurement whose 2025 value
+is a carried-forward 2024 figure; (b) scarcity is a 2.0–10.3 % remainder of a 9 GW
+minuend — CV amplification **9.8×**; (c) the subtrahend is incoherent regardless —
+sum-of-marginal-p98 exceeds p98-of-total by 969/1,126/514 MW at pooled corridor
+r = +0.484. The rule-14 EIA-930 caveat (rejected for the FIRM limb because its low
+percentiles are negative) is confirmed **not** to transfer to the spot limb, and is
+now checkable rather than assumed.
+
+**Refused against interest.** `DSW_CCGT`/`DSW_CT` pass both gates (CV 0.026, LOYO
+≤ 6.8 %) and are exactly FINDING-caiso140 §C's binding 2.7–3.0 GW plateau — but the
+pass is an **arithmetic cancellation**: DSW's depth (+645 MW) and firm block
+(+554 MW) moved co-directionally 2023→2025 while PNW's moved opposed (−128 vs
++494). With n = 3 and 2025's firm value not an independent observation, that is a
+sample coincidence, not stability. No partial swap admitted; re-scoping the gated
+set to whichever subset passes was forbidden by the PRECOMMIT and is also wrong on
+the merits.
+
+**What is durably established** — a bound on the SUM, not a per-rung derivation:
+the incumbent ladder runs **1,493 / 3,059 / 1,736 MW deeper** than the measured
+p99.9 total-import envelope (11,123/12,171/12,171 vs 9,630/9,112/10,435; measured
+p98 7,873/7,805/8,845; max 13,136/13,312/15,080), and the derived pooled total
+7,060 MW is 20 % shallower than 8,800. Direction agrees with caiso-232's +0.419
+residual-vs-import-volume ordering. **Not acted on** — converting a total-envelope
+bound into a depth cut with no per-rung identification is the rule-13 act this lane
+exists to avoid.
+
+**Successor specified (rule 28(a) DO-NOT-REDO the straight NEISO port).** Gate the
+quantity the record actually identifies — the **total** envelope (CV 0.056) — with
+rungs placed inside it by a fixed zero-DOF convention (the NYISO precedent), and
+size scarcity as the p99.9−p98 interval rather than as a residue. Pre-register
+before running; do not select an estimator by which one passes.
+
+**Deliverables:** `PRECOMMIT-caiso233-import-depth-derivation-2026-09-01.md`,
+`FINDING-caiso233-import-depth-derivation-2026-09-01.md`,
+`scripts/data/derive_caiso_import_depths.py`,
+`scripts/probes/_caiso233_import_depth_decomp.py`, their two JSON artifacts, and
+an evidence append (no verdict move) on the CAISO shard's `import_hub_pricing`
+cell. The DOF ledger entry `spot_capacity` stays **OPEN**.
