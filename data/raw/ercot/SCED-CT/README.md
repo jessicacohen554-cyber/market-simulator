@@ -40,12 +40,39 @@ as an all-resource day. A CT-only shard on that path would silently understate
 every class share computed from it. Any consumer of this directory must opt in
 explicitly.
 
+*Sharpened 2026-08-31 (ercot-248), having measured the actual mechanism:* the
+corpus glob is `[0-9][0-9][0-9][0-9]-[0-1][0-9].part*.parquet` and the legacy
+sample-day glob is `60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{year}_*`
+rooted at `data/raw/ercot/` — so a per-day file of this directory's naming,
+dropped into `../SCED/`, matches **neither** and would be invisible rather than
+corrupting. The corrupting placement is the other one: a CT-scoped file at
+`data/raw/ercot/` whose label begins `<year>_` **does** match the legacy glob.
+Both failure modes are silent; keep this fleet in its own directory either way.
+
+**Use the all-resource corpus unless you specifically need the CT scope.**
+This extract exists because ERCOT-147 §4 needed ~700 CT days affordably, back
+when the all-resource span past delivery 2024-01-09 did not exist. It does now
+(`../SCED/`, restore verified 2026-08-31), it is a strict superset, and it is
+the one every corpus consumer already reads.
+
 ## Coverage — and the two gaps, stated
 
 | Span | Source | Grain |
 |---|---|---|
 | delivery 2022-12-31 … 2024-01-09 | `../SCED/` (ERCOT-157 owner re-upload, 315 shards) | **all resources**, all hours |
+| delivery 2024-01-24 … 2025-12-31 | `../SCED/` (ercot-183 re-upload 2026-08-09; restore verified ercot-248 2026-08-31) | **all resources**, all hours |
 | delivery 2024-01-24 … 2025-12-31 | this directory (ERCOT-160 fetch) | **CT only**, all hours |
+
+> **This table was stale between 2026-08-09 and 2026-08-31, and misled a
+> session.** Rows 1 and 3 were written on 2026-08-04, when CT-only genuinely
+> was all that existed past delivery 2024-01-09. Five days later ercot-183
+> landed the **all-resource** corpus over the identical span into `../SCED/`;
+> because that payload is gitignored (BLOAT-B-5 item A2, 2026-08-15) it is
+> absent from a fresh clone, so this table read as "CT-only is what there is"
+> rather than "CT-only is a convenience subset". The ercot-248 charter
+> inherited exactly that reading and was scoped as a new intake of a corpus
+> that already existed. **Read `../SCED/README.md` before concluding anything
+> about coverage past delivery 2024-01-09.**
 
 * **Gap 1 — delivery 2024-01-10 … 2024-01-23 (14 days), UNREACHABLE on the free
   path.** It falls between the end of the committed all-resource corpus and the
