@@ -1,0 +1,343 @@
+{
+ "prereg": "PREREG-miso201-st-basis-alignment-2026-09-02.md \u00a74",
+ "keeper_at_open": "2026-09-02-miso-200-unitroute",
+ "capability_bound_twh": {
+  "2023": 1.576,
+  "2024": 1.968,
+  "2025": 1.403
+ },
+ "field": "unit_outage_st_capacity_basis",
+ "control": "miso201_control_A",
+ "arm": "miso201_stbasis_B",
+ "scorer_written_and_committed_before_any_arm_result": true,
+ "miso198_scorer_defects_not_inherited": [
+  "ordering: kills-silent is evaluated BEFORE inertness",
+  "inertness measured on VALUE MOVEMENT, not criterion-status identity"
+ ],
+ "miso200_vacuous_pass_trap_closed": "K-3/K-4/K-6 are REFUSED (reported UNSCORED, never PASS) unless BOTH legs carry non-empty D1/D4 rows and attestation entries.",
+ "S0": {
+  "sidecars_checked": 9,
+  "missing": [],
+  "max_abs_diff": 0.0,
+  "passed": true
+ },
+ "S1": {
+  "n_fields": 773,
+  "diffs": [
+   "unit_outage_st_capacity_basis"
+  ],
+  "passed": true
+ },
+ "S2": {
+  "eligible_bins_whose_availability_moved": 18,
+  "bins_gaining_availability": 16,
+  "per_bin": {
+   "1402:ST_GAS|2023": {
+    "mean_availability_control": 0.468666,
+    "mean_availability_arm": 0.479224,
+    "delta": 0.010559
+   },
+   "1403:ST_GAS|2023": {
+    "mean_availability_control": 0.581705,
+    "mean_availability_arm": 0.60535,
+    "delta": 0.023644
+   },
+   "3457:ST_GAS|2023": {
+    "mean_availability_control": 0.677262,
+    "mean_availability_arm": 0.701118,
+    "delta": 0.023856
+   },
+   "3459:ST_GAS|2023": {
+    "mean_availability_control": 0.546478,
+    "mean_availability_arm": 0.621713,
+    "delta": 0.075234
+   },
+   "6639:ST_GAS|2023": {
+    "mean_availability_control": 0.076326,
+    "mean_availability_arm": 0.099934,
+    "delta": 0.023608
+   },
+   "1402:ST_GAS|2024": {
+    "mean_availability_control": 0.862116,
+    "mean_availability_arm": 0.87758,
+    "delta": 0.015464
+   },
+   "1403:ST_GAS|2024": {
+    "mean_availability_control": 0.621719,
+    "mean_availability_arm": 0.663403,
+    "delta": 0.041684
+   },
+   "3457:ST_GAS|2024": {
+    "mean_availability_control": 0.799502,
+    "mean_availability_arm": 0.810835,
+    "delta": 0.011334
+   },
+   "3459:ST_GAS|2024": {
+    "mean_availability_control": 0.536287,
+    "mean_availability_arm": 0.619114,
+    "delta": 0.082827
+   },
+   "6639:ST_GAS|2024": {
+    "mean_availability_control": 0.592777,
+    "mean_availability_arm": 0.635562,
+    "delta": 0.042786
+   },
+   "1402:ST_GAS|2025": {
+    "mean_availability_control": 0.755795,
+    "mean_availability_arm": 0.781349,
+    "delta": 0.025554
+   },
+   "1403:ST_GAS|2025": {
+    "mean_availability_control": 0.739845,
+    "mean_availability_arm": 0.7582,
+    "delta": 0.018355
+   },
+   "1891:ST_GAS|2025": {
+    "mean_availability_control": 0.959463,
+    "mean_availability_arm": 0.965753,
+    "delta": 0.00629
+   },
+   "3457:ST_GAS|2025": {
+    "mean_availability_control": 0.852568,
+    "mean_availability_arm": 0.864589,
+    "delta": 0.01202
+   },
+   "3459:ST_GAS|2025": {
+    "mean_availability_control": 0.734269,
+    "mean_availability_arm": 0.781231,
+    "delta": 0.046962
+   },
+   "6639:ST_GAS|2025": {
+    "mean_availability_control": 0.599523,
+    "mean_availability_arm": 0.678468,
+    "delta": 0.078945
+   },
+   "10606:ST_CHP|2025": {
+    "mean_availability_control": 0.107143,
+    "mean_availability_arm": 0.0,
+    "delta": -0.107143
+   },
+   "10863:ST_CHP|2025": {
+    "mean_availability_control": 0.016129,
+    "mean_availability_arm": 0.0,
+    "delta": -0.016129
+   }
+  },
+  "non_steam_bins_touched": 0,
+  "passed": true
+ },
+ "K1": {
+  "band_twh": 8.0,
+  "named_ex_ante": {
+   "ST_GAS|2024": {
+    "prereg_control": -7.854,
+    "prereg_headroom": 0.146,
+    "measured_control": -7.854,
+    "measured_arm": -7.488,
+    "band_exit": false
+   },
+   "CC_REGULAR|2024": {
+    "prereg_control": 7.075,
+    "prereg_headroom": 0.925,
+    "measured_control": 7.075,
+    "measured_arm": 6.931,
+    "band_exit": false
+   },
+   "CC_REGULAR|2023": {
+    "prereg_control": -3.319,
+    "prereg_headroom": 4.681,
+    "measured_control": -3.319,
+    "measured_arm": -3.434,
+    "band_exit": false
+   },
+   "COAL_PRB|2025": {
+    "prereg_control": -4.865,
+    "prereg_headroom": 3.135,
+    "measured_control": -4.865,
+    "measured_arm": -4.904,
+    "band_exit": false
+   },
+   "ST_GAS|2025": {
+    "prereg_control": -6.862,
+    "prereg_headroom": 1.138,
+    "measured_control": -6.862,
+    "measured_arm": -6.681,
+    "band_exit": false
+   },
+   "ST_GAS|2023": {
+    "prereg_control": -3.834,
+    "prereg_headroom": 4.166,
+    "measured_control": -3.834,
+    "measured_arm": -3.512,
+    "band_exit": false
+   },
+   "CC_REGULAR|2025": {
+    "prereg_control": -2.086,
+    "prereg_headroom": 5.914,
+    "measured_control": -2.086,
+    "measured_arm": -2.194,
+    "band_exit": false
+   }
+  },
+  "all_band_exits": [],
+  "passed": true
+ },
+ "K2": {
+  "control": {
+   "2023": 0.081,
+   "2024": 0.109,
+   "2025": 0.181
+  },
+  "arm": {
+   "2023": 0.081,
+   "2024": 0.109,
+   "2025": 0.182
+  },
+  "pass_to_fail": [],
+  "passed": true
+ },
+ "K3": {
+  "d4_row_counts": {
+   "control": 57,
+   "arm": 57
+  },
+  "scorable": true,
+  "new_d4_failures": [
+   "(2023, 'unit-conduct', 'reliability_floor \u00d7 ST_GAS', '1122')"
+  ],
+  "cleared": [],
+  "status": "SCORED",
+  "passed": false
+ },
+ "K4": {
+  "d1_row_counts": {
+   "control": 30,
+   "arm": 30
+  },
+  "scorable": true,
+  "control": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.79,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.956,
+    "cv_ratio": 1.253,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.494,
+    "verdict": "pass"
+   }
+  },
+  "arm": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.762,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.956,
+    "cv_ratio": 1.246,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.485,
+    "verdict": "pass"
+   }
+  },
+  "pass_to_fail": [],
+  "status": "SCORED",
+  "passed": true
+ },
+ "K5": {
+  "pass_to_non_pass": [],
+  "passed": true
+ },
+ "K6": {
+  "attestation_entries": {
+   "control": 39,
+   "arm": 40
+  },
+  "status": "SCORED",
+  "passed": true
+ },
+ "movement": {
+  "epsilons": {
+   "c1_twh": 0.01,
+   "c3a_pp": 0.01,
+   "c3b": 0.0005,
+   "c8_share": 0.0005
+  },
+  "d_c1_twh": {
+   "CC_CHP|2023": -0.043,
+   "CC_CHP|2024": -0.06,
+   "CC_CHP|2025": -0.027,
+   "CC_REGULAR|2023": -0.115,
+   "CC_REGULAR|2024": -0.144,
+   "CC_REGULAR|2025": -0.108,
+   "COAL_BIT|2023": -0.032,
+   "COAL_BIT|2024": -0.023,
+   "COAL_BIT|2025": -0.012,
+   "COAL_LIGNITE|2023": -0.003,
+   "COAL_LIGNITE|2024": -0.003,
+   "COAL_LIGNITE|2025": 0.0,
+   "COAL_PRB|2023": -0.112,
+   "COAL_PRB|2024": -0.138,
+   "COAL_PRB|2025": -0.039,
+   "CT_PEAKER|2023": -0.119,
+   "CT_PEAKER|2024": -0.229,
+   "CT_PEAKER|2025": -0.099,
+   "ST_CHP|2023": -0.004,
+   "ST_CHP|2024": -0.005,
+   "ST_CHP|2025": -0.007,
+   "ST_GAS|2023": 0.322,
+   "ST_GAS|2024": 0.366,
+   "ST_GAS|2025": 0.181
+  },
+  "c3a_control": {
+   "2023": 0.27397260273971474,
+   "2024": -4.365325077399371,
+   "2025": -12.274527056753184
+  },
+  "c3a_arm": {
+   "2023": 0.12176560121765341,
+   "2024": -4.5820433436532415,
+   "2025": -12.384513858337005
+  },
+  "d_c3a_pp": {
+   "2023": -0.1522,
+   "2024": -0.2167,
+   "2025": -0.11
+  },
+  "d_c3b": {
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.001
+  },
+  "c8_share_control": {
+   "2023": 0.14964179575897663,
+   "2024": 0.15201023942177383,
+   "2025": 0.26513939549071047
+  },
+  "c8_share_arm": {
+   "2023": 0.1551221239597797,
+   "2024": 0.15286971207539976,
+   "2025": 0.2712661003731675
+  },
+  "d_c8_share": {
+   "2023": 0.00548,
+   "2024": 0.00086,
+   "2025": 0.00613
+  },
+  "status_map_identical": true,
+  "arm_moved_values": true
+ },
+ "kills_fired": [
+  "K3"
+ ],
+ "verdict": "KILL FIRED (K3) \u2014 reported at full magnitude and NOT renegotiated. Under the owner's 2026-09-02 re-scoped bar this is an OWNER DECISION, not an automatic reject: the structural case and the regression are stated side by side and the scorer does not promote."
+}

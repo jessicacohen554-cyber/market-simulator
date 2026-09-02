@@ -571,6 +571,7 @@ def run_year(
     capacity_deliverability_limits: bool | None = None,
     unit_outage_lp_capacity_basis: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
+    unit_outage_st_capacity_basis: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
@@ -1426,6 +1427,12 @@ def run_year(
     if unit_outage_mixed_gas_routing is not None:
         config = config.with_overrides(
             unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing
+        )
+    if unit_outage_st_capacity_basis is not None:
+        # miso-201: the STEAM-side capacity-basis alignment. Sibling of the two
+        # overrides above and scoped exactly like them.
+        config = config.with_overrides(
+            unit_outage_st_capacity_basis=unit_outage_st_capacity_basis
         )
     if campd_per_unit_attribution is not None:
         # nyiso-176: ONE gate over BOTH CAMPD-derived solve inputs (the

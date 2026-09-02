@@ -10139,3 +10139,97 @@ analogue of `unit_outage_lp_capacity_basis`, which does not exist yet) closes th
 residual overflow cells.
 
 Next shorthand: **miso-201**.
+
+---
+
+## miso-201 (2026-09-02) — the ST-SIDE CAPACITY BASIS ALIGNMENT: **PROMOTED**, keeper → `2026-09-02-miso-201-stbasis`
+
+**Charter:** FINDING-miso200 §8 item 1 — the ST_GAS/ST_CHP analogue of
+`unit_outage_lp_capacity_basis`, which is CC-only (`_CC_NAMEPLATE_BASIS_GROUPS`) and so
+can never reach a steam bin.
+
+**THE CHARTER'S CAUTION WAS CONFIRMED AND THEN SUPERSEDED BY THE SAME MEASUREMENT.** At
+1403/2070 the pre-clip **overflow** is genuinely inert — the units carrying the windows are
+the whole bin, so availability 0.0000 is correct. **But the overflow was never the object.**
+The basis gap over-removes in **every hour a steam unit is out** and the clip hides only the
+extreme: at 1403 itself, unit 5 alone out removes `895.1/1465.4 = 0.611` against a correct
+`742.6/1465.4 = 0.507`. The lever is live at the very facility the charter named inert, and
+the charter's own instruction — find where the overflow is *not* already landing on the
+correct answer — is what surfaced it. Root cause at primary source: EIA-860 generator `5`
+at 1403 is **nameplate 895.1 MW against net summer 742.6 MW**.
+
+**A DESIGN CORRECTION.** The charter (inheriting the CC vocabulary) framed this as a
+**denominator** alignment; measured, that direction is wrong here. The CC flag raises the
+denominator because `fleet_to_bins` had already raised the CC bin's LP capacity — nothing
+raises a steam denominator, so raising it leaves **89 MW of phantom availability** at a
+1403 that is entirely out. The repair moves the **numerator** onto the LP's own `pmax`
+basis, so a fully-out bin lands on **exactly 1.0**. Same family, opposite direction.
+
+**Phase 0** (`_miso201_st_basis_phase0.json`, committed BEFORE the PREREG and before any
+mechanism code): N-1 reproduction **PASS on 988 bins** for both overlays reaching steam
+bins (maxgen reconstructed separately — it does not share the std accumulator). Coverage
+32/55 steam bins, 8,553/12,291 MW (**69.6 %**); capability **+1,576.0 / +1,968.3 /
++1,403.2 GWh**, reproduced EXACTLY by the built mechanism. Two families separated rather
+than absorbed: the `eia923_netzero` whole-plant lay-up rows (58 of 61 full-year 2025) and
+an extract/fleet **unit-set mismatch** (23 of 55 bins — what caps the repair at 69.6 %).
+
+**The A/B.** Control `2026-09-02-miso-201-control` vs arm `2026-09-02-miso-201-stbasis`,
+both 2023+2024+2025 in one invocation, years sequential, in-session, both from the
+committed keeper recipe via `--replay-bundle`. Scorer `_miso201_ab_gates.py` **committed
+blind with the PREREG before the mechanism existed**, and it REFUSES to score K-3/K-4/K-6
+on empty inputs — the miso-200 vacuous-pass trap closed in advance.
+
+| gate | result |
+|---|---|
+| S-0 control integrity | **PASS — BIT-IDENTICAL**, 9 sidecars, `max_abs_diff` 0.0 |
+| S-1 single delta | PASS — exactly `unit_outage_st_capacity_basis` |
+| S-2 liveness | PASS |
+| **K-1 C1 band** | **SILENT — no band exit anywhere** |
+| K-2 / K-4 / K-5 | silent |
+| **K-3 D-4 conduct** | **KILL FIRED** — one cell |
+| K-6 DOF | **PASS, and REAL** |
+
+**K-1 moved as predicted in every named cell.** ST_GAS **−3.834 / −7.854 / −6.862 →
+−3.512 / −7.488 / −6.681** — the class MISO most under-produces moves TOWARD actual in all
+three years, and the tightest cell on the board (ST_GAS-2024, 0.146 TWh from the −8.00
+edge) moves **away** from it. CC_REGULAR-2024 +7.075 → +6.931. The named ADVERSE risks
+moved adversely but stayed far inside: CC_REGULAR-2023 −3.319 → −3.434, COAL_PRB-2025
+−4.865 → −4.904. The LP converted 36/40/26 % of the capability bound.
+
+**Determination UNCHANGED** at NOT-YET on `price_mean` alone; C3c the single ledgered
+caveat; C6 attested (ledger **40/2**, `n_residual` unchanged).
+
+**Reported against the promotion.** (a) **The frozen K-3 kill FIRED and is NOT
+renegotiated** — one cell, `(2023, unit-conduct, reliability_floor × ST_GAS, 1122)`,
+pass → FAIL. Both halves stated: the arm **reduced** that floor's binding 10 h → 2 h and
+its forced energy 0.0001 → 0.0000 TWh, off-window share 0.0362 → 0.0041, and it FAILs
+because the 2 surviving hours are all measured-zero hours, so the ratio trips on a two-hour
+denominator. The scorer does **not** promote on that branch; the promotion is the owner's
+standing bar. (b) **C8 moves the wrong way slightly** — the opposite of miso-200's gain:
+ST_GAS forced share 0.1496/0.1520/0.2651 → 0.1551/0.1529/0.2713, all inside the 0.30
+budget; restoring availability gives the must-run floor more capacity to assert on.
+(c) **C3a gets slightly worse** (2025 −12.2745 → −12.3845), reported and never the
+justification (rule 1). (d) **The arm's first solve crashed on this session's own
+`_recorded_config` plumbing** after completing all three years; fixed, re-solved, and the
+re-solve is **BIT-IDENTICAL across all 18 sidecars** — which is what establishes both legs
+are one code state. (e) The scorer's own K-6 read was wrong on two passes (top-level
+`entries` vs `free_parameters.entries`); fixed — that corrects what the gate can *see*, it
+does not move the gate.
+
+**The phase-0 L-3a soundness line did NOT fire**, and how it did not is a result: every
+residual aligned-overflow cell (170, 1104, 2070, 6639) is **100 % explained by same-unit
+window overlap**, so the repair **isolates** the adjacent-window boundary-day double-count
+as the only remaining steam overflow — the named successor.
+
+**Governance.** Attestation by `scripts/gen_miso201_attestation.py`; diagnostics AND
+attestations generated for BOTH legs before scoring. Keeper shard, `status/MISO.js`, the
+matrix shard keeper stamp, the `unit_outage_st_capacity_basis` cell (O → K) and the §5.4
+prose header all re-stamped this session (rule 28b); base row + all six shard cells landed
+with the field (rule 28c). `audit_keepers --iso MISO` **PASS 0/0**. MISO holds no
+`complete` marker, so the rule-22 D-5(b) re-key does not apply. Rule 22: 2023–2025 only.
+
+**Successor:** the **adjacent-window boundary-day double-count**, now isolated as the only
+mechanism still producing steam overflow; then the **extract/fleet unit-set mismatch**,
+which caps this repair at 69.6 % of steam capacity.
+
+Next shorthand: **miso-202**.

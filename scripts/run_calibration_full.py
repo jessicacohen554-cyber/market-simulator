@@ -3519,6 +3519,7 @@ def solve_and_persist(
     capacity_deliverability_limits: bool | None = None,
     unit_outage_lp_capacity_basis: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
+    unit_outage_st_capacity_basis: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
@@ -4837,6 +4838,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis
             )
+        if unit_outage_st_capacity_basis is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                unit_outage_st_capacity_basis=unit_outage_st_capacity_basis
+            )
         if unit_outage_mixed_gas_routing is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing
@@ -5279,6 +5284,7 @@ def solve_and_persist(
             capacity_deliverability_limits=capacity_deliverability_limits,
             unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis,
             unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing,
+            unit_outage_st_capacity_basis=unit_outage_st_capacity_basis,
             campd_per_unit_attribution=campd_per_unit_attribution,
             campd_outage_merit_order_guard=campd_outage_merit_order_guard,
             cc_winter_capability_basis=cc_winter_capability_basis,
@@ -6190,6 +6196,7 @@ def solve_and_persist(
         "capacity_deliverability_limits": capacity_deliverability_limits,
         "unit_outage_lp_capacity_basis": unit_outage_lp_capacity_basis,
         "unit_outage_mixed_gas_routing": unit_outage_mixed_gas_routing,
+        "unit_outage_st_capacity_basis": unit_outage_st_capacity_basis,
         "campd_per_unit_attribution": campd_per_unit_attribution,
         "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
         "cc_winter_capability_basis": cc_winter_capability_basis,
@@ -8401,6 +8408,7 @@ def run_replay_bundle(
     caiso_offer_surface_measured_ungrounded: bool | None = None,
     caiso_st_gas_committed_measured: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
+    unit_outage_st_capacity_basis: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     enable_legacy_p2: bool = False,
@@ -8480,6 +8488,11 @@ def run_replay_bundle(
         kwargs["caiso_st_gas_committed_measured"] = caiso_st_gas_committed_measured
     if unit_outage_mixed_gas_routing is not None:
         kwargs["unit_outage_mixed_gas_routing"] = unit_outage_mixed_gas_routing
+    if unit_outage_st_capacity_basis is not None:
+        # miso-201: arm/disarm the ST-side unit-outage capacity BASIS alignment
+        # over a committed keeper's recipe, so the A/B solves BOTH legs from the
+        # same recipe and the delta is provably the single flag.
+        kwargs["unit_outage_st_capacity_basis"] = unit_outage_st_capacity_basis
     if campd_per_unit_attribution is not None:
         # nyiso-176: arm/disarm the CAMPD per-unit attribution gate over a
         # committed keeper's recipe, so the re-baseline A/B is a single delta
@@ -11162,6 +11175,33 @@ def main() -> None:
         "discriminator. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--unit-outage-st-capacity-basis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Put each STEAM bin's unit-outage removed MW on the LP's own "
+        "capacity basis — the fleet unit's pmax_mw "
+        "(ScenarioConfig.unit_outage_st_capacity_basis). A consistency repair, "
+        "not a market feature, and the steam-side sibling of "
+        "--unit-outage-lp-capacity-basis, which is CC-ONLY "
+        "(outages._CC_NAMEPLATE_BASIS_GROUPS) and so can never reach an "
+        "ST_GAS/ST_CHP bin. The accumulator derates a bin by "
+        "unit_capacity_mw / cap[bin], where for a steam bin the numerator is the "
+        "extract's per-unit EIA-860 NAMEPLATE (or a CEMS observed peak) while the "
+        "denominator is the fleet's NET-SUMMER pmax sum, so the removed FRACTION "
+        "is inflated by nameplate/net_summer and the model removes more MW than "
+        "went out. Measured at MISO (miso-201): Ninemile Point 1403 generator 5 "
+        "is nameplate 895.1 MW against net summer 742.6 MW, so unit 5 alone out "
+        "removes 0.611 of the bin against a correct 0.507. Applied "
+        "ALL-OR-NOTHING per bin (a bin whose extract units do not resolve 1-1 "
+        "onto distinct fleet units keeps the production basis entirely), zero "
+        "fitted scalars, non-ERCOT only, byte-inert while off. Covers the std "
+        ">=5-day, short, partial and LAY-UP layers together (their shares are "
+        "contractually additive); the declared-event maxgen layer is out of "
+        "scope by construction, its rows carrying a measured derate_mw rather "
+        "than a unit capacity. See "
+        "results/calibration/PREREG-miso201-st-basis-alignment-2026-09-02.md.",
+    )
+    parser.add_argument(
         "--cc-winter-capability-basis",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12131,6 +12171,12 @@ def main() -> None:
                 or "--no-campd-outage-merit-order-guard" in sys.argv
                 else None
             ),
+            unit_outage_st_capacity_basis=(
+                args.unit_outage_st_capacity_basis
+                if "--unit-outage-st-capacity-basis" in sys.argv
+                or "--no-unit-outage-st-capacity-basis" in sys.argv
+                else None
+            ),
             enable_legacy_p2=args.enable_legacy_p2,
         )
         return
@@ -12489,6 +12535,7 @@ def main() -> None:
         capacity_deliverability_limits=args.capacity_deliverability_limits,
         unit_outage_lp_capacity_basis=args.unit_outage_lp_capacity_basis,
         unit_outage_mixed_gas_routing=args.unit_outage_mixed_gas_routing,
+        unit_outage_st_capacity_basis=args.unit_outage_st_capacity_basis,
         campd_per_unit_attribution=args.campd_per_unit_attribution,
         campd_outage_merit_order_guard=args.campd_outage_merit_order_guard,
         cc_winter_capability_basis=args.cc_winter_capability_basis,
