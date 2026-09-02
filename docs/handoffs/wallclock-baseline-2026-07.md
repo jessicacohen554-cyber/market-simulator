@@ -616,3 +616,46 @@ unattributed anomaly worth its own charter.
 cgroup this session's runner imposes under the host's 15 GB (cgroup swap accounting is
 zero — a host swapfile goes unused). Full-8760 gates for those two need a box without the
 cap; the 4368 h keeper-recipe pair method used here is the in-container fallback.
+
+## PERF-B RESUME — the handed-forward `bench` lever, measured (2026-09-02)
+
+WS3 resumed by owner ruling R-V (2026-09-01). Session `perf-b-apply`, branch
+`claude/perf-b-apply-nabnpi`. Full narrative, attribution and gate record:
+`docs/handoffs/perf-recheck-2026-08.md` §5. Conditions as §PERF-B above
+(determinism pin, 4 vCPU / 15 GB with the 14.33 GB shell cgroup re-measured this
+session, `uv.lock` env).
+
+The five §PERF-B changes were re-verified present at HEAD; the charter's four
+dispatch items are all landed or closed and needed no new code (perf-recheck §5.1).
+This section records the one change this session added.
+
+| Change | Where landed | Measured effect |
+|---|---|---|
+| (f) CAMPD normalization: parse `facilityId` over its uniques, skip the no-op split-facility remap, skip the no-op Feb-29 filter in a non-leap year | branch commit `27b3a92c` | `load_campd_hourly` PJM **−63.7 to −71.0 %** (best-of-3, arms alternating in one process: 19.43→6.55 / 21.04→6.11 / 14.03→5.09 s for 2023/24/25). Whole `_campd_hourly_frame`, cold: PJM 50.96→21.18 s, MISO 29.08→16.17 s. In-solve `bench` on the NEISO gate arms: 2.1/1.6/1.9 → **0.9/0.7/0.9 s** (−55 to −57 %); its `data_prep` also −5 to −34 % (CAMPD loads there too). **Reach is ISO-dependent** — see below. |
+
+**Reach caveat, load-bearing.** `load_campd_hourly` reads one extract per (state,
+year), so the win scales with an ISO's CAMPD footprint: 14 states for PJM/MISO
+(`bench` 20.9–34.7 s/yr), 6 for NEISO (~2 s), **1 for ERCOT (0.9 s — the change is
+wallclock-inert there)**. The percentages above must not be transferred across ISOs.
+Against the ≥10 %-wall adoption rule: cleared on `results_write` for the 14-state
+ISOs; **not** cleared as a share of total year wall anywhere (~2–4 % PJM/MISO, ~0 %
+ERCOT).
+
+**Byte gate.** NEISO full 8760 × 2023–2025, keeper `2026-08-17-neiso-99-joint-p1`,
+arms differing only in `campd.py`: `regression_gate.py --mode byte` **check [1]
+golden bundle diff PASS** (9 files, 32 numeric columns, atol=rtol=0), zero reshuffle
+in all three years, smoke PASS, `audit_keepers` PASS, manifest pre-screen 10/10
+artifacts matching. The script's overall `RESULT: FAIL` is check [4]
+`legitimacy(--keepers)`, proven **pre-existing by control** (identical failure with
+`campd.py` reverted, same exception and line, exit 1 both times) — a NYISO
+capacity-deliverability data gap on main. **That makes `regression_gate.py` return
+FAIL for every change on main right now**, which any lane running it needs to know
+before reading its own verdict. Manifests committed under
+`results/regression-goldens/perfb-campd-{before,after}/`.
+
+**Merge is HELD, not blocked by this change.** Per the dispatch, a cross-ISO change
+merges only once every ISO it touches has a current stage-0 golden;
+`check_golden_manifest` reads **3 current (ERCOT, NEISO, PJM) / 3 stale (CAISO, MISO,
+NYISO)**. CAISO/NYISO have a live capture lane; **MISO has none**, and `miso-200` is
+moving that keeper, so a MISO golden captured now would be stale on arrival. That
+sequencing is the director's call, not this lane's.
