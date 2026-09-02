@@ -558,7 +558,6 @@ def run_year(
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
-    caiso_bidir_intertie: bool | None = None,
     caiso_per_hub_intertie: bool | None = None,
     caiso_perhub_firm_base: bool | None = None,
     caiso_corridor_flow_limit: bool | None = None,
@@ -1380,8 +1379,6 @@ def run_year(
         config = config.with_overrides(
             caiso_import_solar_shape=caiso_import_solar_shape
         )
-    if caiso_bidir_intertie is not None:
-        config = config.with_overrides(caiso_bidir_intertie=caiso_bidir_intertie)
     if caiso_per_hub_intertie is not None:
         config = config.with_overrides(caiso_per_hub_intertie=caiso_per_hub_intertie)
     if caiso_perhub_firm_base is not None:
@@ -4260,8 +4257,11 @@ def run_year(
         and getattr(config, "caiso_per_hub_intertie", False)
         and iso == "CAISO"
     )
-    bidir_intertie = getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO"
-    legacy_intertie = not per_hub_intertie and not bidir_intertie
+    # caiso_bidir_intertie was DELETED at caiso-236 (rule 26 [R-DELETE]): dead on
+    # the keeper AND in the ScenarioConfig defaults, so its fitted 4,361 MW
+    # aggregate export cap was a re-armable answer key. Only the per-hub node and
+    # the legacy pooled ladder remain.
+    legacy_intertie = not per_hub_intertie
 
     def _backcast_measured_interchange_prices(fleet_arrays, mc_base) -> None:
         """Backcast measured-price interchange overlays (BOD, plan §3.1).
@@ -4401,29 +4401,10 @@ def run_year(
                         else ""
                     ),
                 )
-        # [measured: WECC intertie hub LMP (MCE, per-hub series averaged to
-        #  one) | forecast substitute: none wired — the bidir STRUCTURE is
-        #  forward-reachable via the spec; its legs keep the static ladder
-        #  prices in a forecast]. Single signed tie, both legs at the hub.
-        if not per_hub_intertie and bidir_intertie:
-            from market_sim.model.transmission import (
-                inject_caiso_bidir_intertie_prices,
-            )
-
-            if inject_caiso_bidir_intertie_prices(
-                fleet_arrays, mc_base, iso, year, carbon_price
-            ):
-                logger.info(
-                    "%s %d: bidirectional WECC intertie — single signed flow on a "
-                    "shared cap, both legs priced at the measured hub (import + "
-                    "border carbon / export, arbitrage-free, one direction per hour)",
-                    iso,
-                    year,
-                )
         # [measured: WECC intertie hub LMPs (Mid-C / Palo Verde) on the pooled
         #  legacy node, import + export sides | forecast substitute: the
         #  static ladder / the per-hub or reference seams]. Superseded by the
-        # per-hub and bidir nodes; gated to the legacy pooled topology only.
+        # per-hub node; gated to the legacy pooled topology only.
         if legacy_intertie and getattr(config, "caiso_import_hub_prices", False):
             from market_sim.model.transmission import (
                 inject_caiso_export_hub_prices,

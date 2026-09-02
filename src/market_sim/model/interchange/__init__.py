@@ -138,7 +138,6 @@ from market_sim.model.interchange.import_nodes import (  # noqa: F401
     wecc_border_carbon_adder,
 )
 from market_sim.model.interchange.caiso import (  # noqa: F401
-    _CAISO_BIDIR_EXPORT_NAME as _CAISO_BIDIR_EXPORT_NAME,
     _caiso_corridor_export_cap_mw as _caiso_corridor_export_cap_mw,
     _caiso_corridor_import_ttc_mw as _caiso_corridor_import_ttc_mw,
     _CAISO_CORRIDOR_LINK_TO as _CAISO_CORRIDOR_LINK_TO,
@@ -153,14 +152,11 @@ from market_sim.model.interchange.caiso import (  # noqa: F401
     apply_caiso_local_import_limits,
     apply_caiso_zonal_loss_links,
     apply_caiso_seam_injections,
-    build_caiso_bidir_intertie,
     build_caiso_corridor_flow_groups,
     build_caiso_link_loss,
     build_caiso_per_hub_intertie,
     build_wecc_export_sink,
     build_wecc_import_generators,
-    CAISO_BIDIR_EXPORT_CAP_MW,
-    CAISO_BIDIR_IMPORT_CAP_MW,
     CAISO_FIRM_IMPORT_TRANCHES,
     CAISO_GAS_FLOOR_HOURS,
     CAISO_INTERTIE_TIEBREAK_EPS,
@@ -168,7 +164,6 @@ from market_sim.model.interchange.caiso import (  # noqa: F401
     caiso_solar_deliverability_derate,
     forward_corridor_atc_envelope,
     forward_corridor_interface_groups,
-    inject_caiso_bidir_intertie_prices,
     inject_caiso_dsw_daytime_clean,
     inject_caiso_dsw_overnight_clean,
     inject_caiso_dsw_surplus_clean,
@@ -273,8 +268,6 @@ from market_sim.data.floor_mechanisms import (  # noqa: F401
 )
 
 __all__ = [
-    "CAISO_BIDIR_EXPORT_CAP_MW",
-    "CAISO_BIDIR_IMPORT_CAP_MW",
     "CAISO_CORRIDOR_ATC_SOLAR_K",
     "CAISO_CORRIDOR_DIBA",
     "CAISO_CORRIDOR_FLOW_PERCENTILE",
@@ -384,7 +377,6 @@ __all__ = [
     "apply_nyiso_nyc_tsl_import_cap",
     "apply_nyiso_zonal_loss_links",
     "apply_reference_price_seam_injections",
-    "build_caiso_bidir_intertie",
     "build_caiso_corridor_flow_groups",
     "build_caiso_per_hub_intertie",
     "build_export_sinks",
@@ -415,7 +407,6 @@ __all__ = [
     "get_link_bidirectional_array",
     "get_link_flow_cost_array",
     "get_ttc_array",
-    "inject_caiso_bidir_intertie_prices",
     "inject_caiso_dsw_daytime_clean",
     "inject_caiso_dsw_overnight_clean",
     "inject_caiso_dsw_surplus_clean",

@@ -29,7 +29,6 @@ from market_sim.config.interchange_config import (
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.model.transmission import (
-    build_caiso_bidir_intertie,
     build_caiso_per_hub_intertie,
     build_export_sinks,
     build_import_generators,
@@ -50,7 +49,6 @@ class _FakeConfig:
     reference_price_interface: bool = False
     caiso_reference_price_seam: bool = False
     caiso_per_hub_intertie: bool = False
-    caiso_bidir_intertie: bool = False
     caiso_perhub_firm_base: bool = False
     miso_firm_imports: bool = False
     nyiso_import_reconciliation: bool = False
@@ -81,8 +79,6 @@ def _old_inline_import_fleet(config, iso, year, border_carbon):
         import_generators = build_reference_price_node(iso)
     elif caiso_per_hub:
         import_generators = build_caiso_per_hub_intertie(border_carbon)
-    elif getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO":
-        import_generators = build_caiso_bidir_intertie(border_carbon)
     elif (
         getattr(config, "reference_price_interface", False)
         and iso in INTERFACE_NEIGHBORS
@@ -326,14 +322,9 @@ def test_caiso_per_hub_parity(border_carbon):
     ]
 
 
-@pytest.mark.parametrize("border_carbon", [0.0, 12.34])
-def test_caiso_bidir_parity(border_carbon):
-    config = _FakeConfig(caiso_bidir_intertie=True, weather_year=2024)
-    spec, gens = _assert_parity(config, "CAISO", 2024, border_carbon)
-    assert spec.caiso_mode == "bidir"
-    assert not spec.use_corridors  # pooled WECC_import node, no per-hub split
-    assert gens[-1].name == "export_bidir"
-    assert all(g.zone == "WECC_import" for g in gens)
+# (test_caiso_bidir_parity was DELETED at caiso-236 with the caiso_bidir_intertie
+# mechanism — rule 26 [R-DELETE]. The oracle above lost its bidir limb in the same
+# pass; it stays frozen in every other respect.)
 
 
 def test_caiso_reference_seam_parity():
@@ -346,19 +337,20 @@ def test_caiso_reference_seam_parity():
 
 
 def test_caiso_mode_mutual_exclusion_ladder():
-    """reference seam ≻ per-hub ≻ bidir — the frozen inline precedence."""
+    """reference seam ≻ per-hub — the frozen inline precedence.
+
+    The ladder's third rung, ``caiso_bidir_intertie``, was DELETED at caiso-236
+    (rule 26 [R-DELETE]); the precedence of the two survivors is unchanged.
+    """
     config = _FakeConfig(
         caiso_reference_price_seam=True,
         caiso_per_hub_intertie=True,
-        caiso_bidir_intertie=True,
         weather_year=2024,
     )
     spec, _ = _assert_parity(config, "CAISO", 2024)
     assert spec.caiso_mode == "reference_seam"
 
-    config = _FakeConfig(
-        caiso_per_hub_intertie=True, caiso_bidir_intertie=True, weather_year=2024
-    )
+    config = _FakeConfig(caiso_per_hub_intertie=True, weather_year=2024)
     spec, _ = _assert_parity(config, "CAISO", 2024)
     assert spec.caiso_mode == "per_hub"
 

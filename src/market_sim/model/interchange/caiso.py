@@ -1,7 +1,7 @@
 """CAISO interchange: WECC intertie builders, injectors, and path limits.
 
 Everything CAISO-specific that lived in ``model/transmission.py``: the
-bidirectional / per-hub WECC intertie builders and their measured-hub or
+per-hub WECC intertie builder and its measured-hub or
 forward reference-price injectors, the firm-import shape/self-schedule and
 DSW clean-depth (caiso-87/93/94) capability injectors, corridor flow groups
 and forward ATC envelopes, local (SP15-pocket) and asymmetric path limits,
@@ -68,44 +68,6 @@ from market_sim.model.interchange.spec import (
 _logger = logging.getLogger(__name__)
 
 
-# Single-signed-flow WECC intertie (``caiso_bidir_intertie``). The legacy
-# representation modeled CAISO's tie as TWO independent one-way mechanisms on
-# the same external node — priced import tranches (:func:`build_import_generators`)
-# and separate export sinks (:func:`build_export_sinks`) — so the LP could
-# simultaneously import the cheap midday hub AND stay long on its own solar (the
-# two never netted: 2024 diurnal interchange corr −0.65, anti-correlated). The
-# bidirectional intertie collapses both legs onto ONE signed flow over a shared
-# directional cap: import (flow into CAISO) priced at hub + per-tranche border
-# carbon, export (flow out of CAISO) priced at the hub (no CA carbon). Because
-# every import leg (hub + carbon, carbon ≥ 0) is priced at or above the export
-# leg (hub) at every hour, the two legs are arbitrage-free *by construction*, so
-# the LP never imports and exports in the same hour — one net direction per hour,
-# no MIP. Caps are the measured directional limits.
-CAISO_BIDIR_IMPORT_CAP_MW = 8300.0  # aggregate simultaneous-import limit (the
-# import-tightening cap: WECC COI/Path 66 + Path 46/WOR deliverable import into
-# CAISO, ~ the deep-import hours of the EIA-930 CISO net-interchange curve).
-# FALLBACK-ONLY (audit item C-14, scalar-remediation B-CAI-1 2026-07-05). This
-# single aggregate export cap is used ONLY by the superseded
-# `build_caiso_bidir_intertie` (gated on `caiso_bidir_intertie`, default off).
-# The caiso-51 keeper — and every current CAISO run — uses `caiso_per_hub_intertie`
-# instead, whose export legs are bounded by each corridor's physical link TTC
-# (`_caiso_corridor_export_cap_mw`) plus the measured p95 net-export
-# deliverability envelope (`caiso_corridor_flow_limit` /
-# `eia_loader.measured_corridor_flow_envelope(direction="export")`) — NOT this
-# scalar. So changing this value does not move any keeper solve.
-#   Re-derived from the SAME measured series the per-hub export envelopes use:
-# the EIA-930 CISO BA-to-BA net-interchange (the realized ATC proxy on disk; the
-# named "OASIS export ATC" is unreachable from this environment — see
-# scripts/data/derive_caiso_export_cap.py). Convention matches the corridor
-# envelopes' own CAISO_CORRIDOR_FLOW_PERCENTILE (p95): the peak-bucket ceiling =
-# max over (month x hour-of-day) of the p95 aggregate net export, 2023-2025
-# (2026 holdout excluded, rule #22) = 4,361 MW. The prior 3,500 was a
-# hand-fitted "typical peak" sitting at ~p99 of the aggregate, BELOW the measured
-# export capability. rule-23 source-data change: the caiso-51 keeper
-# (2026-07-03-caiso-51-firm-base) landed the measured per-hub export envelopes.
-# Frozen derive script: scripts/data/derive_caiso_export_cap.py.
-CAISO_BIDIR_EXPORT_CAP_MW = 4361.0
-_CAISO_BIDIR_EXPORT_NAME = "export_bidir"
 # Intertie throughput tiebreaker (same role/magnitude as the storage ε = 0.001
 # $/MWh in the objective): the cheapest import leg (firm hydro/solar, zero CARB
 # EF) prices exactly at the hub, which is also the export price, so a gross
@@ -117,84 +79,14 @@ _CAISO_BIDIR_EXPORT_NAME = "export_bidir"
 CAISO_INTERTIE_TIEBREAK_EPS = 1e-3
 
 
-def build_caiso_bidir_intertie(border_carbon_per_mwh: float = 0.0) -> list[Generator]:
-    """Return CAISO's WECC tie as a single signed flow (import leg + export leg).
-
-    The structurally-faithful replacement for the separate
-    :func:`build_import_generators` + :func:`build_export_sinks` pair on the
-    ``WECC_import`` node. The import leg keeps the per-tranche supply curve of
-    :data:`~market_sim.config.interchange_config.IMPORT_TRANCHES` (so the rising
-    border-carbon ladder of :data:`~market_sim.config.interchange_config.IMPORT_TRANCHE_EF`
-    is preserved — firm hydro/solar pay no CARB adder, unspecified gas pays the
-    full one), but the aggregate import capacity is rescaled to
-    :data:`CAISO_BIDIR_IMPORT_CAP_MW` (the tightened simultaneous-import cap).
-    The export leg is a SINGLE sink bounded at :data:`CAISO_BIDIR_EXPORT_CAP_MW`,
-    the measured aggregate export-direction capability ceiling (fallback-only;
-    the per-hub successor uses per-corridor physical + measured envelopes).
-
-    Both legs sit in the ISO's external zone and net through the ordinary energy
-    balance + the WECC border links, so the LP's *net* interchange on the tie is
-    one signed quantity. The energy prices are placeholders here — overwritten
-    hour-by-hour by :func:`inject_caiso_bidir_intertie_prices` to the measured
-    hub (import = hub + border carbon, export = hub), which makes the two legs
-    arbitrage-free so only one direction clears per hour.
-
-    Args:
-        border_carbon_per_mwh: Unspecified-import border carbon adjustment
-            ($/MWh); scaled per import tranche by its emission factor. 0 disables.
-
-    Returns:
-        The import tranches (cheapest first) followed by the single export sink.
-    """
-    iso = "CAISO"
-    zone = IMPORT_ZONE[iso]
-    base = IMPORT_TRANCHES.get(iso, [])
-    total = sum(cap for _, cap, _ in base) or 1.0
-    scale = CAISO_BIDIR_IMPORT_CAP_MW / total
-    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
-    gens: list[Generator] = []
-    for name, capacity, marginal_cost in base:
-        ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
-        tranche_carbon = border_carbon_per_mwh * (ef / CARB_UNSPECIFIED_IMPORT_EF)
-        gens.append(
-            Generator(
-                unit_id=f"{zone}_{name}",
-                name=name,
-                zone=zone,
-                fuel_type="import",
-                pmax_mw=capacity * scale,
-                pmin_mw=0.0,
-                heat_rate=0.0,
-                vom=marginal_cost + tranche_carbon,
-                eford=IMPORT_EFORD.get(iso, 0.0),
-            )
-        )
-    # Single export leg sharing the same signed tie (negative-generation sink;
-    # see build_export_sinks for the sign convention). Priced at the hub (no CA
-    # carbon) by inject_caiso_bidir_intertie_prices.
-    gens.append(
-        Generator(
-            unit_id=f"{zone}_{_CAISO_BIDIR_EXPORT_NAME}",
-            name=_CAISO_BIDIR_EXPORT_NAME,
-            zone=zone,
-            fuel_type="import",
-            pmax_mw=0.0,
-            pmin_mw=-CAISO_BIDIR_EXPORT_CAP_MW,
-            heat_rate=0.0,
-            vom=0.0,
-            eford=0.0,
-        )
-    )
-    return gens
-
-
 # Per-hub signed WECC intertie (``caiso_per_hub_intertie``). The unification of
-# the single-flow bidir node (which fixed the inverted diurnal sign but had to
-# AVERAGE the two neighbor hubs into one price) and the per-hub-basis hub-price
-# node (which kept Malin != Palo Verde but pooled both import legs + one averaged
-# export sink onto a single bubble, so the cheap midday Palo Verde block filled
-# the whole 8.3 GW budget over either link and never netted → over-import +
-# inverted diurnal). Here CAISO's tie is its TWO REAL corridors, each a single
+# the retired single-flow bidir node (which fixed the inverted diurnal sign but
+# had to AVERAGE the two neighbor hubs into one price) and the per-hub-basis
+# hub-price node (which kept Malin != Palo Verde but pooled both import legs +
+# one averaged export sink onto a single bubble, so the cheap midday Palo Verde
+# block filled the whole simultaneous-import budget over either link and never
+# netted → over-import + inverted diurnal). Here CAISO's tie is its TWO REAL
+# corridors, each a single
 # signed flow priced at its OWN measured hub:
 #   * WECC_PNW  — COI / Path 66, the Malin / Mid-C hub, into NP15 (north); holds
 #     the PNW_* import tranches + one PNW export leg.
@@ -238,9 +130,12 @@ def build_caiso_per_hub_intertie(
 ) -> list[Generator]:
     """Return CAISO's WECC tie as TWO per-hub signed flows (Malin + Palo Verde).
 
-    The structurally-faithful successor to :func:`build_caiso_bidir_intertie`
-    (single averaged node) and the :func:`build_import_generators` +
-    :func:`build_export_sinks` pair (pooled node). Each import tranche of
+    The structurally-faithful successor to the :func:`build_import_generators`
+    + :func:`build_export_sinks` pair (pooled node) and to the retired
+    single-averaged-node ``caiso_bidir_intertie`` (DELETED caiso-236, rule 26
+    ``[R-DELETE]``: dead under every shipped configuration, so its fitted
+    4,361 MW aggregate export cap was a re-armable answer key). Each import
+    tranche of
     :data:`~market_sim.config.interchange_config.IMPORT_TRANCHES` is placed in the
     external zone of the WECC neighbor hub it proxies
     (:data:`~market_sim.config.interchange_config.CAISO_IMPORT_TRANCHE_HUB` →
@@ -526,7 +421,7 @@ def inject_caiso_per_hub_intertie_prices(
 ) -> bool:
     """Price each CAISO per-hub corridor at its OWN measured intertie hub.
 
-    The per-hub analogue of :func:`inject_caiso_bidir_intertie_prices`: each
+    The per-hub analogue of the retired single-node bidir injector: each
     corridor (WECC_PNW / WECC_DSW) is a single signed flow priced from the
     measured hub of the neighbor it proxies
     (:func:`market_sim.data.eia_loader.measured_import_hub_prices`, which returns
@@ -1483,95 +1378,6 @@ def inject_caiso_export_hub_prices(
         name = uid[len(zone) + 1 :]
         if name in _CAISO_HUB_EXPORT_TRANCHES:
             mc[row, :] = hub_price
-            applied = True
-    return applied
-
-
-def inject_caiso_bidir_intertie_prices(
-    fleet_arrays,
-    mc: np.ndarray,
-    iso: str,
-    year: int,
-    carbon_price: float,
-) -> bool:
-    """Price the single signed WECC intertie at the measured hub (arbitrage-free).
-
-    The unified replacement for :func:`inject_caiso_import_hub_prices` +
-    :func:`inject_caiso_export_hub_prices`, paired with
-    :func:`build_caiso_bidir_intertie`. Both legs of the tie are repriced from
-    the SAME measured hub energy series (the MCE component of the CAISO intertie
-    LMP, :func:`market_sim.data.eia_loader.measured_import_hub_prices`):
-
-    * each import tranche row → ``hub + border_carbon × (EF / EF_unspecified)``
-      (the per-tranche CARB adder of
-      :data:`~market_sim.config.interchange_config.IMPORT_TRANCHE_EF`), and
-    * the single export leg row → ``hub`` (exports owe no CA compliance cost).
-
-    PROBE NOTE (caiso 24 bidir+wheel-only): each import leg is priced at
-    ``hub + wheel + border_carbon × (EF / EF_unspecified)`` — the ADDITIVE
-    per-tranche OATT point-to-point wheeling charge of
-    :data:`~market_sim.config.interchange_config.CAISO_IMPORT_DELIVERY_BASIS`, but NOT its
-    multiplicative line-loss markup (``loss·max(hub,0)``). On the capped 8.3 GW
-    single-flow bidir node the multiplicative loss double-counts the congestion
-    the cap already prices and over-suppresses imports (caiso-23 basis-only: net
-    −19.09, neg 194, corr −0.04); the additive wheel still separates the flat
-    ~$38 MCE into a rising delivered-import merit order without the price-scaling
-    explosion that crushes midday imports. (The full-basis unify variant — loss +
-    wheel — lives in commit af1e369; the floor-only probe drops both.)
-
-    Because the carbon adder is ≥ 0, *every* import leg is priced at or above the
-    export leg at every hour, so importing and exporting in the same hour can
-    never both reduce the objective: the LP carries one net direction per hour
-    over the shared cap (no MIP). The measured hub crashes in the spring PNW
-    runoff and goes negative in the desert-SW solar glut, so the tie reverses to
-    export midday — the diurnal interchange now tracks the measured sign instead
-    of anti-correlating with it.
-
-    Returns ``True`` when the tie was repriced, ``False`` (byte-identical) when
-    CAISO has no measured hub series for the year (e.g. 2023's OASIS-retention
-    gap), so the bidir tie keeps its static-ladder placeholder prices.
-    """
-    from market_sim.data.eia_loader import measured_import_hub_prices
-
-    prices = measured_import_hub_prices(iso, year, int(mc.shape[1]))
-    if not prices:
-        return False
-    zone = IMPORT_ZONE.get(iso)
-    if zone is None:
-        return False
-    # The bidir tie is a SINGLE signed node, so collapse the per-hub nodal series
-    # (MALIN/PALOVRDE) into one price both legs share. (The per-tranche import
-    # path keeps the hubs separate; the single tie cannot.)
-    hub = np.mean(np.vstack(list(prices.values())), axis=0)
-    border = wecc_border_carbon_adder(carbon_price)
-    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
-    import_names = {name for name, _, _ in IMPORT_TRANCHES.get(iso, [])}
-    eps = CAISO_INTERTIE_TIEBREAK_EPS
-    applied = False
-    for row, uid in enumerate(fleet_arrays.unit_ids):
-        if not uid.startswith(f"{zone}_"):
-            continue
-        name = uid[len(zone) + 1 :]
-        if name == _CAISO_BIDIR_EXPORT_NAME:
-            # Export earns the hub (no CA carbon), less the ε tiebreaker so a
-            # gross round-trip is strictly cost-positive.
-            mc[row, :] = hub - eps
-            applied = True
-        elif name in import_names:
-            loss, wheel = CAISO_IMPORT_DELIVERY_BASIS.get(name, (0.0, 0.0))
-            # Wheel-only (additive) delivery: the per-tranche OATT point-to-point
-            # wheeling charge ($/MWh) restores the rising delivered-import merit
-            # order the flat MCE collapses, but WITHOUT the multiplicative
-            # line-loss markup (loss·max(hub,0)) — on the capped 8.3 GW
-            # single-flow bidir node that loss term double-counts the congestion
-            # the cap already prices and over-suppresses imports (caiso-23
-            # basis-only: net −19.09, corr −0.04). rule #12: the wheel is a real,
-            # forward-reproducible physical charge; the dropped loss is a
-            # representation correction for the cap, not a residual tune.
-            # Arbitrage-free: wheel ≥ 0 and carbon ≥ 0 so every import leg ≥
-            # export (hub − ε) every hour.
-            ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
-            mc[row, :] = hub + wheel + border * (ef / CARB_UNSPECIFIED_IMPORT_EF) + eps
             applied = True
     return applied
 
