@@ -9858,3 +9858,65 @@ deriver `scripts/data/derive_thermal_tranche_oom_level_mw.py`. Census queue
 unchanged: `egrid_identity_heat_rates` (K@NYISO), `tac_load_coverage` (K@CAISO),
 `lcr_tsl_published` (K@CAISO+NYISO). Rule 22: 2023–2025 only; freeze untouched;
 no marker touched. Next number: **miso-199**.
+
+## miso-198b (2026-09-01) — the A/B lands: EVERY GATE SILENT, and the keeper is PROMOTED on structure
+
+**KEEPER → `2026-09-01-miso-198-oomlevel`** (bundle `miso198_oom_B`), superseding
+`2026-08-30-miso-191-bexit`, under the owner's standing in-session instruction that a
+run improving structural integrity may be promoted even where gates regress — **here
+nothing regresses.** `audit_keepers --iso MISO` **PASS 0/0**; both legs registered
+(`2026-09-01-miso-198-control` / `-oomlevel`); matrix cell
+`st_gas_mustrun_oom_level` **O → K**; `check_mechanism_matrix` green on all four checks.
+
+**S-0 BIT-IDENTICAL.** The control reproduces the superseded keeper with
+`max_abs_diff` **0.0** on all 12 sidecars of all three years — through **39 commits of
+main** landing mid-session, `scenarios.py` and `policy/carbon.py` included. The MISO
+solve path is unchanged and the comparator is sound.
+
+**S-1** exactly one delta over 763 fields. **S-2 floor liveness PASS**: the floor's own
+D-2 forced energy falls **0.4798 / 0.5892 / 0.5878 TWh** against the pre-registered
+0.5914/0.6366/0.6455 — 81/93/91 % realised conversion, in band all three years.
+
+**EVERY PRE-REGISTERED KILL SILENT.** K-1 the ex-ante-NAMED `CC_REGULAR-2024` and
+`-2023` both **PASS → PASS** (2024 lands **+6.748 TWh** against its ±8.00 band, using
+0.084 of 1.336 TWh of headroom — the ex-ante arithmetic held); K-2 C3b
+0.081/0.108/0.182 → 0.081/0.108/0.181; K-3 zero D-4 conduct failures and zero new;
+K-4 D-1 ST_GAS `profile_r` 0.942/0.957/0.977 → 0.941/0.957/0.978; K-5 **ZERO** status
+flips across every scored record; K-6 UNSCORED (replay bundles carry no attestation —
+the keeper's was generated post hoc by the established `gen_miso186/187/188` pattern,
+ledger **38/2**, new entry MEASURED).
+
+**THE REVERSED DIRECTION HELD.** ST_GAS **DOWN** (−0.145/−0.145/−0.222 TWh),
+CC_REGULAR **UP** (+0.087/+0.084/+0.135) — the opposite of FINDING-miso197 §8(1)'s
+conf-0.85 pre-registration, declared in writing before the solve.
+
+**WHAT IT BUYS IS STRUCTURAL INTEGRITY, NOT FIT.** C8 ST_GAS forced share
+**0.2196 → 0.2001, 0.2342 → 0.2100, 0.3423 → 0.3186**, taking 2025 **2.4 pp** off its
+grounded over-budget note. **No criterion status moves**; determination **UNCHANGED**
+at NOT-YET on {C3a-2025}, C3c the single ledgered caveat. C3a face, reported and never
+the criterion: 2023 +0.0913 → **+0.1522 (ADVERSE)**, 2024 −4.5511 → −4.4892,
+2025 −12.3405 → −12.2745.
+
+**REPORTED AGAINST INTEREST — THE FROZEN SCORER'S OWN VERDICT LINE IS WRONG.** It reads
+`INERT — every scored record identical`, because it computes record-identity from
+criterion **STATUSES** and orders that branch ahead of the kills-silent branch. The arm
+is demonstrably **not** inert: S-2 passes and C1, C3a, C3b and C8 all move. The defect
+is in the verdict **ORDERING**, it was found only **after** the numbers were read, and
+it is recorded rather than repaired in the frozen file — the mechanical output stands
+unaltered in `_miso198_ab_gates.json`. Promotion rests on rule 1 `[R-STRUCT]` ("a run
+is a keeper because it is the most structurally faithful, not because it has the lowest
+MAE") plus the owner's standing instruction.
+
+**ALSO AGAINST INTEREST:** the solve builds the ST_GAS floor **twice per year with
+different values** (control 2023 11.29 then 10.52 TWh); the second is load-bearing and
+both probes match it to 2 dp on every year and both legs. That independently
+re-confirms miso-196's incidental `_CC_PMAX_RECONCILED_PLANTS` (`eia860.py:776`)
+last-writer-wins finding from a second direction — a named, unchartered solve-affecting
+defect, not repaired here.
+
+**THE LEVEL FAMILY STAYS EXHAUSTED.** This keeper re-grounds the level honestly; it
+does **not** fix the dominant channel. The named successor is the floor's **WINDOW
+BASIS** — it ranks hours by SYSTEM LOAD while the conduct's own hour set is the plant's
+COMMITMENT STATE — and it must not be attempted as another level move.
+
+Next shorthand: **miso-199**.
