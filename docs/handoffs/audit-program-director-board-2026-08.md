@@ -317,6 +317,62 @@
 > already 0 at v19b's pin. **A third consecutive dispatch has now carried an
 > anchor-WARN figure that measurement does not support** (J-12).
 
+> ### ⚡ POST-PIN MOTION (`07472e7c..9220243f`, measured while this board awaited merge) — **FOUR OF THE FIVE UNLAUNCHED DISPATCHES LAUNCHED WITHIN HOURS, AND TWO ARE ALREADY MERGED**
+>
+> **THE PIN WAS NOT MOVED.** Every figure in the v20 block and in the live tables
+> below stands as measured at **`07472e7c`** and is not silently rewritten — this
+> is an annotation, per the standing *pin once, then record motion* rule. `main`
+> advanced to **`9220243f`**: **20 commits / 6 merged PRs (#4564–#4569)**.
+> **Nothing material to the keeper table, markers, freeze, registry or stage-0
+> COVERAGE moved** — those five surfaces show **0 commits** in this window too, so
+> the keeper table, the marker block, the sidecar walk and the 3-current/3-stale
+> count are all still current at `9220243f`. **What changed is the dispatch
+> ledger, and it changed hard:**
+>
+> | dispatch | at the pin (J-11) | post-pin | evidence |
+> |---|---|---|---|
+> | **R-U CI-red repair** | no branch, no PR | 🟢 **LAUNCHED AND MERGED** | **#4564**, 54 files — the five ruff errors fixed (*"two are real latent defects"*), 46 files ruff-formatted, `STORAGE_TECH_AVAILABLE_YEAR` added to the frozen constants-facade inventory, `caiso_offer_surface_measured_ungrounded` registered in `_CACHE_KEY_OPTIONAL_FIELDS`, plus a finding doc |
+> | **R-O schema lane** | no branch, no PR, third pin | 🟢 **LAUNCHED AND MERGED** | **#4567** — `check_golden_manifest.py` now resolves a `ERCOT__carveout-2023` partition key through `keepers/<ISO>.json`'s `config_partition.configs[]`, and `capture_keeper_goldens.py` can take one |
+> | **PERF-B resume** | no branch, no PR | 🟠 **LAUNCHED, IN FLIGHT** | `claude/perf-b-apply-nabnpi` @ `94245d14`, **ahead of `main`**, unmerged |
+> | **Capture-B (CAISO → NYISO)** | no branch, no PR | 🟠 **BRANCH CUT, NOTHING PUSHED** | `claude/stage0-capture-caiso-nyiso-vicx26` sits at **exactly `9220243f`** — zero commits of its own |
+> | **Capture-A (MISO)** | no branch, no PR | 🔴 **STILL NO BRANCH** | the one dispatch of the five that has not appeared |
+>
+> **🟢 AND R-P's SECOND BLOCKER IS REPAIRED — BY NAME.** Commit `f0fb9ce4` removes
+> the `paths:` filter from `file-integrity-guard`'s `pull_request` trigger so the
+> check **always reports**, and its comment cites *"blocker 2 of owner ruling R-P
+> (director board v19b, H-1)"* and warns not to re-add the filter without first
+> taking the check out of the required set. **The `push` trigger keeps its filter
+> — billed minutes, deliberately.** So of R-P's two blockers, **(b) is closed and
+> (a) is closed pending a green CI run.** The flip itself remains the owner's
+> Settings action and is still not live.
+>
+> **🟠 WHAT DID *NOT* MOVE, and it is the part that matters for G2 leg 1: R-O
+> landed the SCHEMA, not a CAPTURE.** Re-derived at `9220243f`:
+> `check_golden_manifest.py` **exit 0**, still **6 enforced entries / 3 stale**,
+> and ERCOT's entry still carries **no partition key** — so **the 2023 carve-out
+> is now REPRESENTABLE and still UNCOVERED**, and full coverage is still 7
+> captures, not 6. `results/regression-goldens/` has **0 commits** across this
+> window as well. **Stage-0 is unmoved at 3 current / 3 stale.**
+>
+> **🟠 AND THE MECHANISM-MATRIX ANCHORS WERE REPAIRED AGAIN — A FOURTH INSTANCE**
+> (`0d090576`, *"the +19-line `scenarios.py` shift"*), taking path anchors
+> **159 → 160**. Same shape as J-12's: a lane shifts `scenarios.py`, every anchor
+> below it moves, the same lane repairs the digits in the same PR. **Four
+> instances now say this is not an incident but a standing cost of storing line
+> numbers against a file under active edit** — worth a director look at whether
+> the anchor should be a line number at all. **Recorded, not adjudicated.**
+>
+> **THE HONEST READING OF THE NON-LAUNCH LEDGER, AND IT CUTS BOTH WAYS.** J-11's
+> five negatives were **true at the pin** and are **not withdrawn** — but four of
+> the five resolved within hours, so the count is a snapshot of dispatch *latency*,
+> not of dispatches lost. ⚠️ **And this is precisely why the phrasing was weakened
+> to *"no branch and no PR at this pin"*:** with the session-roster tool gone,
+> git-only detection cannot distinguish a lane that never launched from one that
+> had not yet pushed — and here it was overwhelmingly the latter. **Capture-B is
+> the case in point: its branch exists and carries zero commits, a state that was
+> invisible to the check minutes earlier and is barely visible now.** The one
+> genuine outstanding non-launch is **Capture-A**.
+
 > **STATUS: AT G1, UN-PARKED — WS3 RESUMED, G2 NOT DECLARED** ⬅ *(was "PARKED AT
 > G1" for eight cycles; changed by R-V, not by progress against a gate)*. Live
 > rollup maintained by the program-director session, updated on each owner
@@ -3329,7 +3385,15 @@ R-T's executed half by execution.** Q-1 and Q-2 stay retired by execution;
    CI runs later — ⬅ **these are now R-U's charter, so the blocker has an owner
    for the first time**, and R-P's flip is **blocked on R-U**; (b)
    **`file-integrity-guard` is still path-filtered** and would strand every
-   docs-only PR as *pending*. **The sequencing this lane recommends and nobody
+   docs-only PR as *pending*. ⚡ **POST-PIN: BLOCKER (b) IS REPAIRED, BY NAME** —
+   `f0fb9ce4` (#4564) drops the `paths:` filter from `file-integrity-guard`'s
+   `pull_request` trigger so the check always REPORTS, citing *"blocker 2 of owner
+   ruling R-P (director board v19b, H-1)"* and warning against re-adding it
+   without first removing the check from the required set (the `push` trigger
+   keeps its filter, for billed minutes). **And R-U's merge is blocker (a)'s
+   repair attempt.** Both are now addressed in code; what remains is a green CI
+   run to confirm (a), then the owner's Settings action.
+   **The sequencing this lane recommends and nobody
    has ruled on is unchanged: require the four green checks now, add the other
    three the day R-U's lane goes green.** **The flip is the owner's Settings
    action; no lane can perform or verify it, and it is NOT live at this pin**
@@ -3345,7 +3409,10 @@ R-T's executed half by execution.** Q-1 and Q-2 stay retired by execution;
    second-order one: not "confirm the dispatch" — R-S already re-sent it — but
    establish WHY a re-issued dispatch produces no session**, which the roster
    tool's removal has made harder to answer (J-11).
-2b. **🔴 NEW — R-U's CI-RED REPAIR LANE IS CHARTERED AND HAS NOT LAUNCHED, AND
+2b. **⚡ POST-PIN: R-U's LANE LAUNCHED AND MERGED (#4564)** — this item is
+   DISCHARGED on the lane; what remains is confirming CI actually went green.
+   Recorded at the pin as follows, and not rewritten:
+   **🔴 R-U's CI-RED REPAIR LANE IS CHARTERED AND HAS NOT LAUNCHED, AND
    TWO G2 LEGS SIT BEHIND IT.** It owns `Pinned default cache key`, `Ruff lint +
    format` and `Structural refactor guards`. **No branch, no PR at this pin**, and
    all three are unchanged on run 2295. ⚠️ **One scoping question for the owner or
@@ -3395,7 +3462,14 @@ R-T's executed half by execution.** Q-1 and Q-2 stay retired by execution;
    adopted: Q-4 checks documents and diffs; it has no step that reads a
    WORKFLOW's run list, which is precisely how a red weekly cron went unseen for
    three weeks** (J-6).
-8. **🟠 R-O's SCHEMA LANE IS CHARTERED, RE-ISSUED UNDER R-S, AND STILL HAS NOT
+8. **⚡ POST-PIN: R-O's SCHEMA LANE LAUNCHED AND MERGED (#4567) — the SCHEMA half
+   is done, the CAPTURE half is not.** `check_golden_manifest.py` now resolves an
+   `ERCOT__carveout-2023` partition key through the shard's `config_partition`, so
+   the carve-out is **representable**; re-derived at `9220243f` it is still
+   **UNCOVERED** (6 enforced entries, ERCOT carrying no partition key), and full
+   coverage is still **7 captures, not 6**. Recorded at the pin as follows, and
+   not rewritten:
+   **🟠 R-O's SCHEMA LANE IS CHARTERED, RE-ISSUED UNDER R-S, AND STILL HAS NOT
    LAUNCHED** — across **three** pins now. Config-partition representation in the
    manifest, `live_keeper` partition resolution, then the ERCOT carve-out capture.
    Until it runs, "ERCOT CURRENT" means *forward config only* and full coverage is
@@ -3509,6 +3583,14 @@ forced update** — `f45766e4` is an ancestor, fast-forward, both polls.
 | **Records v19b (predecessor)** | *(branch gone from the remote)* | **MERGED — #4538.** Same branch mandate as this lane, not a second lane |
 | MISO calibration | `claude/miso-mustrun-window-basis-g1tqk1` | **MERGED remnant** (#4557/#4556). The MISO **promotion** came through `claude/miso-st-gas-steam-chp-calibration-9snn32` (#4552), whose branch is already gone. Not this board's work |
 | NYISO calibration — 170 | `claude/nyiso-170-merit-order-split-x3sp2w` | **MERGED remnant** (#4535). Not this board's work |
+
+> ⚡ **POST-PIN (`9220243f`): FOUR OF THESE FIVE LANES LAUNCHED WITHIN HOURS.**
+> **R-U merged (#4564)** · **R-O merged (#4567)** · **PERF-B** is live on
+> `claude/perf-b-apply-nabnpi`, ahead of `main` · **Capture-B** has a branch,
+> `claude/stage0-capture-caiso-nyiso-vicx26`, sitting at exactly `9220243f` with
+> **zero commits of its own**. **Capture-A (MISO) is the one still absent.** The
+> rows above stand as measured at the pin and are not rewritten; see the POST-PIN
+> MOTION block at the top of this board.
 
 **The honest reading: the branch check returned FIVE negatives this cycle**, and
 each was looked for three ways — as a branch, as a PR, and as a commit touching

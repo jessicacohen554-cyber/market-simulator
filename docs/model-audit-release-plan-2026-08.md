@@ -5445,3 +5445,70 @@ your branch when done.
   window (3 commits each) — **none of them this lane's**. **No workflow was
   created or edited**, per CLAUDE.md's standing prohibition — which finding (6)
   makes newly pointed.
+
+  **⚡ POST-PIN ADDENDUM (`07472e7c..9220243f`, recorded before this entry merged).**
+  **The pin was NOT moved** and no figure above is rewritten — this is the
+  *pin once, then record motion* rule applied. `main` advanced by **20 commits /
+  6 merged PRs (#4564–#4569)** while the v20 records PR awaited merge, and it
+  resolves three of the entry's own findings:
+
+  **(a) 🟢 R-U's LANE LAUNCHED AND MERGED — #4564, 54 files.** The five ruff
+  errors fixed (*"two are real latent defects"*, per its own commit), 46 files
+  ruff-formatted, `STORAGE_TECH_AVAILABLE_YEAR` added to the frozen
+  constants-facade inventory, and `caiso_offer_surface_measured_ungrounded`
+  registered in `_CACHE_KEY_OPTIONAL_FIELDS` — i.e. one repair per red job, plus a
+  finding doc. **Finding (3)'s "no branch, no PR" was true at the pin and is
+  superseded within hours.**
+
+  **(b) 🟢 R-O's SCHEMA LANE LAUNCHED AND MERGED — #4567 — AND IT LANDED THE
+  SCHEMA, NOT A CAPTURE.** `check_golden_manifest.py` now resolves an
+  `ERCOT__carveout-2023` partition key through `keepers/<ISO>.json`'s
+  `config_partition.configs[]`, and `capture_keeper_goldens.py` can take one.
+  **Re-derived at `9220243f`: exit 0, still 6 enforced entries / 3 stale, ERCOT
+  carrying no partition key — so the 2023 carve-out is now REPRESENTABLE and
+  still UNCOVERED**, `results/regression-goldens/` has 0 commits in this window
+  too, and full coverage is still **7 captures, not 6**. **G2 leg 1 is unmoved.**
+
+  **(c) 🟢 R-P's BLOCKER (b) IS REPAIRED, BY NAME.** `f0fb9ce4` removes the
+  `paths:` filter from `file-integrity-guard`'s `pull_request` trigger so the
+  check always REPORTS, citing *"blocker 2 of owner ruling R-P (director board
+  v19b, H-1)"* and warning against re-adding it without first taking the check out
+  of the required set; the `push` trigger keeps its filter for billed-minutes
+  reasons. **With R-U's merge as blocker (a)'s repair attempt, both of R-P's
+  blockers are addressed in code** — what remains is a green CI run to confirm
+  (a), then the owner's Settings action, which no lane can perform.
+
+  **(d) 🟠 TWO MORE LANES LAUNCHED, NEITHER MERGED.** `claude/perf-b-apply-nabnpi`
+  (**PERF-B**, ahead of `main`, in flight) and
+  `claude/stage0-capture-caiso-nyiso-vicx26` (**Capture-B**, branch cut at exactly
+  `9220243f` with **zero commits of its own**). **Capture-A (MISO) is the one
+  dispatch of the five still showing no branch.**
+
+  **(e) 🟠 THE MECHANISM-MATRIX ANCHORS WERE REPAIRED A FOURTH TIME** (`0d090576`,
+  *"the +19-line `scenarios.py` shift"*), path anchors **159 → 160**. Same shape
+  as finding (12)'s: a lane shifts `scenarios.py`, every anchor below it moves,
+  the same lane repairs the digits in the same PR. **Four instances make this a
+  standing cost of storing line numbers against a file under active edit, not an
+  incident** — worth a director look at whether the anchor should be a line number
+  at all. **Recorded, not adjudicated.**
+
+  **WHAT DID NOT MOVE, verified by `git log` over this window as well:** keeper
+  shards, `calibration-complete.json`, `holdout-freeze.json`, the registry and
+  `results/regression-goldens/` all show **0 commits**, so the keeper table, the
+  marker block, the 60-sidecar walk and the 3-current/3-stale stage-0 count are
+  **still current at `9220243f`**. Gates re-run there: `check_golden_manifest.py`,
+  `check_mechanism_matrix.py` and `audit_keepers.py` all **exit 0**.
+
+  **AND THE READING THE LEDGER SHOULD KEEP, because it cuts both ways.**
+  Finding (11)'s five negatives were **true at the pin** and are not withdrawn —
+  but **four of the five resolved within hours**, so that count measures dispatch
+  *latency*, not dispatches lost. ⚠️ **This is exactly why the phrasing was
+  weakened to *"no branch and no PR at this pin"***: with the session-roster tool
+  gone, git-only detection cannot separate a lane that never launched from one
+  that has not yet pushed, and here it was overwhelmingly the latter.
+  **Capture-B is the case in point — a branch carrying zero commits, a state
+  invisible to the check minutes earlier and barely visible now.** The dominant
+  failure mode this program has recorded for three cycles may be, in substantial
+  part, **an artifact of measuring launches with a tool that can only see
+  pushes**; the honest next step is the director's standing question, and it now
+  needs an instrument git cannot supply.
