@@ -20,6 +20,12 @@ The schema (one object per scenario-year)::
       "iso": "ERCOT", "year": 2027, "mode": "forecast", "hindcast": false,
       "retirements":        [{"unit_id","fuel","mw","reason"}],   # confirmed|announced|economic
       "confirmed_derates":  [{"unit_id","fuel","mw_before","mw_after","derate_mw"}],
+      "announced_derates":  [{"unit_id","fuel","mw_before","mw_after","derate_mw"}],
+                            # capx D42: the fossil announced-date step-1 channel's
+                            # plant-binned derates (fossil_announced_exits_enabled)
+      "announced_fossil_schedule": [{...}],  # first ledger year only, under the
+                            # D42 gate: the audited dated-row set (every
+                            # disposition, incl. cancelled/reversed)
       "floor_retained":     [{"unit_id","fuel","mw"}],            # econ wanted out
       "pipeline_events":    [{"event","unit_id","fuel","mw","year",...}],  # R-NEW
                             # decided|re_confirmed|reversed|entry_capped|executed
@@ -135,6 +141,7 @@ def new_events() -> dict:
     return {
         "retirements": [],
         "confirmed_derates": [],
+        "announced_derates": [],
         "floor_retained": [],
         "pipeline_events": [],
         "thermal_additions": [],

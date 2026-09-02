@@ -46,6 +46,7 @@ from .new_entry import (
     _merge_renewable_additions,
 )
 from .retirements import (
+    dated_plant_unit_ids,
     _storage_portfolio_elcc_dilution,
     deliverability_headroom_by_zone,
     resolve_planning_reserve_margin,
@@ -94,6 +95,7 @@ def evolve_fleet(
     confirmed_exits: list[ConfirmedExit] | None = None,
     peak_demand_next: float | None = None,
     announced_reversal_plants: frozenset[int] = frozenset(),
+    announced_fossil_exits: list | None = None,
     reserve_position: float | None = None,
     entry_rate_caps_mw: dict[str, float] | None = None,
     entry_pipeline: list[dict] | None = None,
@@ -112,7 +114,9 @@ def evolve_fleet(
     0. confirmed exits (exogenous, any fuel, instrument-bound; gated on
        ``config.confirmed_exits_enabled``, default on),
     1. announced retirements (non-fossil within the data horizon only; announced
-       fossil dates are a default no-op — the exogenous fossil channel is step 0),
+       fossil dates are a default no-op — the exogenous fossil channel is step 0 —
+       unless ``config.fossil_announced_exits_enabled`` (capx D42, default off)
+       carries ``announced_fossil_exits`` through step 0's derate machinery),
     2. CCS retrofits (convert existing gas CC units to ``gas_cc_ccs``),
     3. economic retirements,
     4. known additions (planned units with ``online_year == year``), plus the
@@ -205,6 +209,19 @@ def evolve_fleet(
             peak-anchored adequacy mechanisms (the retirement reliability
             floor and the reserve-margin backstop), deleting their one-year
             bookkeeping lag. ``None`` keeps the prior-year peak.
+        announced_fossil_exits: capx D42 (GATED ``config.fossil_announced_
+            exits_enabled``, default off ⇒ ignored, byte-identical): the
+            owner-filed EIA-860 Schedule-3 fossil retirement rows
+            (:func:`market_sim.data.announced_retirements.
+            load_announced_fossil_exits`, ``ConfirmedExit``-shaped). Applied at
+            step 1 through :func:`apply_confirmed_exits` (once-per-year
+            legs; a plant-binned row derates and is recorded under
+            ``announced_derates``, a unit-grain row drops the unit and is
+            recorded as an ``announced`` retirement). Rule-19 reconciliation:
+            plants with a pending row are EXEMPT from the step-3 screen
+            (:func:`dated_plant_unit_ids`) and the pending rows are handed to
+            the screen as ``exogenous_exits`` so the R-NEW admission cap's
+            counterfactual nets them.
         announced_reversal_plants: Plant codes whose announced retirement
             was reversed by a public counter-instrument (registry rows all
             superseded) — step 1 ignores their stale EIA-860 dates
@@ -446,6 +463,21 @@ def evolve_fleet(
         confirmed_plant_codes=confirmed_plant_codes,
         reversed_plant_codes=announced_reversal_plants,
     )
+    # 1b. capx D42: the FOSSIL owner-filed dates (GATED
+    #     fossil_announced_exits_enabled, default off ⇒ this whole block is a
+    #     no-op and the shipped path is byte-identical). A LIMB of the same
+    #     step-1 announced channel, never a new step (rule 19): the rows ride
+    #     step 0's matcher/derate machinery so a plant-binned fleet derates the
+    #     plant's tranches and a unit-grain fleet drops the unit, with the
+    #     identical once-per-year leg semantics. Reversal-registry plants were
+    #     dropped by the loader. Bypasses the reliability floor by
+    #     construction, like step 0 — an owner's filed exit is exogenous.
+    _fossil_channel_on = bool(
+        getattr(config, "fossil_announced_exits_enabled", False)
+        and announced_fossil_exits
+    )
+    if _fossil_channel_on:
+        fleet = _pkg_ns().apply_confirmed_exits(fleet, year, announced_fossil_exits)
     if _rec:
         # Step-1 recorder seam: diff against the POST-step-0 fleet, so a unit
         # already attributed "confirmed" above is never double-recorded here.
@@ -460,6 +492,29 @@ def evolve_fleet(
             for uid, g in _post_confirmed.items()
             if uid not in _survived
         )
+        if _fossil_channel_on:
+            # The derate twin of confirmed_derates: a plant-binned dated exit
+            # shrinks a surviving unit_id in place, invisible to the set-diff.
+            _post_announced = {g.unit_id: g for g in fleet}
+            events.setdefault("announced_derates", []).extend(
+                {
+                    "unit_id": uid,
+                    "fuel": g.fuel_type,
+                    "mw_before": float(g.pmax_mw),
+                    "mw_after": float(_post_announced[uid].pmax_mw),
+                    "derate_mw": float(g.pmax_mw - _post_announced[uid].pmax_mw),
+                }
+                for uid, g in _post_confirmed.items()
+                if uid in _post_announced and _post_announced[uid].pmax_mw != g.pmax_mw
+            )
+    # Rule-19 reconciliation inputs for step 3 (both empty/None off the gate):
+    # the units whose plant still carries a pending dated row are exogenous to
+    # the screen, and the pending rows are what the admission cap nets.
+    _dated_exempt: frozenset[str] = frozenset()
+    _exogenous_pending: list | None = None
+    if _fossil_channel_on:
+        _dated_exempt = dated_plant_unit_ids(fleet, announced_fossil_exits, year)
+        _exogenous_pending = announced_fossil_exits
 
     # Locational deliverability headroom per zone (empty no-op unless
     # capacity_deliverability_limits is on and the ISO has clean data). Prior-
@@ -558,7 +613,8 @@ def evolve_fleet(
             reserve_price_signal=reserve_price_signal,
             reserve_price_signal_slow=reserve_price_signal_slow,
             reserve_position=reserve_position,
-            exempt_unit_ids=_retrofitted_ids,
+            exempt_unit_ids=_retrofitted_ids | _dated_exempt,
+            exogenous_exits=_exogenous_pending,
         )
         if _rec:
             events["retirements"].extend(

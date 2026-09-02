@@ -646,6 +646,60 @@ def _is_confirmed_binned(gen: Generator) -> bool:
     return gen.is_campd_bin or _unit_generator_id(gen) is None
 
 
+def _exit_row_pending_after(exit_: object, year: int) -> bool:
+    """Whether an exogenous exit row still has a leg due AFTER ``year``.
+
+    A row is pending while its effective year is ahead, or while a first-half
+    row's completion leg (:func:`apply_confirmed_exits`, the ``m/12 × mw``
+    remainder removed the year after the effective year) is still due.
+    """
+    eff = _confirmed_effective_year(exit_)
+    if eff > year:
+        return True
+    month = getattr(exit_, "exit_month", None)
+    return month is not None and month <= 6 and eff == year
+
+
+def dated_plant_unit_ids(
+    fleet: list[Generator], exits: list, year: int
+) -> frozenset[str]:
+    """Unit ids that are EXOGENOUS to the economic screen in ``year`` because
+    their plant carries a pending owner-filed exit row (capx D42, the rule-19
+    reconciliation of the fossil announced-date channel).
+
+    The filed date IS the owner's exit decision for that plant, so the screen
+    decides only undated plants — no unit's exit is decided twice. Grain
+    follows the matcher's (:func:`apply_confirmed_exits`): a UNIT-GRAIN
+    generator is exempt iff its own generator ID carries a pending row; a
+    PLANT-BINNED generator (``is_campd_bin`` / unparseable id) is exempt while
+    ANY row of its plant is pending — the plant's residual configuration is
+    the owner's post-retirement plan, and the derate lands on the bin as a
+    whole. Once a plant's last row has completed, its survivors re-enter the
+    screen as an undated residual plant. Empty when ``exits`` is empty.
+    """
+    if not exits:
+        return frozenset()
+    pending_gids: dict[int, set[str]] = {}
+    for e in exits:
+        if _exit_row_pending_after(e, year):
+            pending_gids.setdefault(int(e.plant_id), set()).add(str(e.generator_id))
+    if not pending_gids:
+        return frozenset()
+    out: set[str] = set()
+    for g in fleet:
+        pc = int(g.plant_code)
+        gids = pending_gids.get(pc)
+        if not gids:
+            continue
+        if _is_confirmed_binned(g):
+            out.add(g.unit_id)
+        else:
+            gid = _unit_generator_id(g)
+            if gid is not None and gid in gids:
+                out.add(g.unit_id)
+    return frozenset(out)
+
+
 def _derate_generator(gen: Generator, factor: float) -> Generator:
     """Return a copy of ``gen`` with its MW-valued fields scaled by ``factor``.
 
@@ -1531,6 +1585,7 @@ def _apply_pipeline_retirements(
     event_sink: dict | None,
     exit_rate_cap_mw: float | None,
     margin_detail: dict[str, dict[str, float | str]] | None = None,
+    exogenous_exits: list | None = None,
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """R-NEW decision/execution retirement pipeline (``retirement_rule="pipeline"``).
 
@@ -1585,6 +1640,18 @@ def _apply_pipeline_retirements(
        can attribute which leg moved a unit across the bar, and whether the
        bar was the same object between two screen years, without replaying
        the solve. Diagnostic only: rows record the decision, never shape it.
+
+    ``exogenous_exits`` (capx D42, the fossil announced-date channel's
+    rule-19 reconciliation; ``None``/empty is byte-identical): owner-filed
+    exit rows still pending after this screen. The ADMISSION cap's
+    counterfactual fleet nets every such row due by the cap horizon
+    (:func:`apply_confirmed_exits` applied year by year from ``year + 1`` to
+    ``cap_year``), so the floor's retention pool sees the dated units as
+    scheduled exogenous exits: it can neither retain them (they are never in
+    ``eligible`` — their plants are exempt from the screen upstream) nor
+    over-admit other candidates against capacity that is leaving anyway. The
+    realized-year EXECUTION floor is untouched: it tests the post-step-1
+    fleet, from which this year's dated exits are already gone.
 
     ``pipeline_state`` maps ``unit_id -> decided_year`` and is threaded
     through the same cross-year seam as the legacy loss counters (the
@@ -1660,8 +1727,15 @@ def _apply_pipeline_retirements(
     cap_year, cap_peak_demand = _admission_cap_horizon(
         config, scheduled, state, decided_year, fleet, peak_demand, year
     )
+    # capx D42: the counterfactual the cap screens is the fleet at the cap
+    # horizon, so every exogenous dated exit landing by then is netted out
+    # of it (see the docstring). Empty ⇒ ``cap_fleet is fleet``.
+    cap_fleet = fleet
+    if exogenous_exits:
+        for _y in range(year + 1, cap_year + 1):
+            cap_fleet = apply_confirmed_exits(cap_fleet, _y, exogenous_exits)
     _apply_reliability_floor(
-        fleet,
+        cap_fleet,
         new_units,
         scheduled,
         state,
@@ -1789,6 +1863,7 @@ def apply_economic_retirements(
     reserve_position: float | None = None,
     exempt_unit_ids: frozenset[str] = frozenset(),
     exit_rate_cap_mw: float | None = None,
+    exogenous_exits: list | None = None,
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -1942,7 +2017,11 @@ def apply_economic_retirements(
             gate is on, the capacity payment slides along the ISO's published
             demand curve.
         exempt_unit_ids: Unit ids excluded from this year's screen entirely
-            (no margin evaluation, no counter change). Used by
+            (no margin evaluation, no counter change). Also carries, under
+            ``config.fossil_announced_exits_enabled`` (capx D42), the units
+            whose plant holds a pending owner-filed exit row
+            (:func:`dated_plant_unit_ids`) — exogenous to the screen by the
+            rule-19 reconciliation. Used by
             :func:`evolve_fleet` for units CCS-retrofitted THIS year (W2-C
             joint choice): the just-converted unit's prior-year ``mc`` rows
             price its old unabated cost basis, so screening it in the same
@@ -1950,6 +2029,10 @@ def apply_economic_retirements(
             re-enters the screen as ``gas_cc_ccs`` next year on its own
             post-retrofit dispatch. Default empty ⇒ byte-identical.
         exit_rate_cap_mw: The year's deactivation-throughput budget in MW
+        exogenous_exits: capx D42 — pending owner-filed fossil exit rows the
+            R-NEW admission cap nets from its counterfactual fleet (see
+            :func:`_apply_pipeline_retirements`). ``None`` is byte-identical;
+            the legacy rule ignores it (its floor tests the realized fleet).
             (``ScenarioConfig.exit_rate_limits``; owner decision D-8), or
             ``None`` for no cap. Pipeline rule only. Bounds how many MW of
             DUE exits actually execute this year, strict-FIFO by decided
@@ -2368,6 +2451,7 @@ def apply_economic_retirements(
             event_sink,
             exit_rate_cap_mw,
             margin_detail=margin_detail,
+            exogenous_exits=exogenous_exits,
         )
 
     # Legacy rule: a failing year increments the unit's consecutive-loss

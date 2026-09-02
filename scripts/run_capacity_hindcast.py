@@ -523,6 +523,10 @@ META_RECORD_SPEC = RecordSpec(
         # never claim a posture the solve lacked); absent from committed
         # pre-2026-08-22 metas, which all ran the ex-ante arm.
         "hindcast_verified_announced_exits": FromConfig(cast=bool),
+        # capx D42 fossil announced-date step-1 channel (the D32 R1 posture
+        # A/B; GATED default-off, nothing armed). FromConfig so the record
+        # reads the SOLVED gate (FFR-3R).
+        "fossil_announced_exits_enabled": FromConfig(cast=bool),
         # FFR-5E procurement channel (owner decision D-18(a)). Declared
         # FromConfig, never FromArgs: the record reads the SOLVED gate, so a
         # meta can never claim an arming the solve did not carry (FFR-3R).
@@ -635,6 +639,7 @@ def build_config(
     smr_available_year: "int | None" = None,
     ptc_window: "int | str | None" = None,
     verified_announced_exits: bool = True,
+    fossil_announced_exits: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -739,6 +744,12 @@ def build_config(
         # no model default moves here). An armed leg hashes distinctly; the
         # off arm is byte-identical to the pre-flag harness.
         hindcast_verified_announced_exits=verified_announced_exits,
+        # capx D42 (2026-09-02): the fossil announced-date step-1 channel —
+        # the D32 R1 posture A/B's ARM leg. Off (the ScenarioConfig default)
+        # is the shipped posture, byte-identical; --fossil-announced-exits
+        # arms it for a measurement leg. NOTHING ARMS BY DEFAULT: the owner
+        # arms or declines on the D42 finding.
+        fossil_announced_exits_enabled=fossil_announced_exits,
         gas_price_path=gas_path,
         # T1-X crossover (FF-0E, plan §2.2): set the forward boundary so years
         # >= CROSSOVER_FORWARD_YEAR (2026) run on pure forward drivers (the
@@ -1722,6 +1733,26 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--fossil-announced-exits",
+        dest="fossil_announced_exits",
+        action="store_true",
+        default=False,
+        help=(
+            "capx D42 MEASUREMENT arm (the D32 R1 posture A/B): honor each "
+            "FOSSIL unit's owner-filed EIA-860 Schedule-3 planned retirement "
+            "date as an exogenous step-1 exit, read from the run's vintage "
+            "snapshot (vintage-gated — a date is admissible only because it "
+            "was on file at the cutoff), the reversal registry armed, the "
+            "economic screen on the residual (undated) fleet and the "
+            "admission-cap floor netting the dated exits. Under the default "
+            "verification posture the dated set is checked against the later "
+            "in-repo vintages (a re-filed deferral or a withdrawn date is "
+            "honored per unit; nothing is injected or advanced); with "
+            "--no-verified-announced-exits it is the pure ex-ante set. OMIT "
+            "for the shipped posture (ScenarioConfig default False)."
+        ),
+    )
+    parser.add_argument(
         "--no-verified-announced-exits",
         dest="verified_announced_exits",
         action="store_false",
@@ -1900,6 +1931,7 @@ def main(argv: list[str] | None = None) -> int:
         smr_available_year=args.smr_available_year,
         ptc_window=args.ptc_window,
         verified_announced_exits=args.verified_announced_exits,
+        fossil_announced_exits=args.fossil_announced_exits,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately

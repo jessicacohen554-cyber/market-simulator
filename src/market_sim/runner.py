@@ -70,6 +70,10 @@ from market_sim.data.offer_curves import (
     apply_miso_offer_spread_anchored,
     apply_miso_offer_surface,
 )
+from market_sim.data.announced_retirements import (
+    disposition_table as announced_fossil_disposition_table,
+    rows_as_records as announced_fossil_rows_as_records,
+)
 from market_sim.data.confirmed_retirements import (
     ConfirmedExit,
     load_announced_reversal_plants,
@@ -1655,6 +1659,46 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             required=_confirmed_exits_active(config),
         )
 
+    # capx D42 (2026-09-02): the FOSSIL owner-filed EIA-860 Schedule-3 dates,
+    # GATED fossil_announced_exits_enabled (default OFF ⇒ nothing loaded, the
+    # shipped posture byte-identical) and forecast-mode only, like every
+    # exogenous exit channel. Read from the ACTIVE vintage snapshot — the
+    # rule-13 vintage gate: a date is admissible only because it was on file
+    # at the run's information cutoff. Under the verified posture
+    # (hindcast_verified_announced_exits) the set is checked per unit against
+    # the later in-repo vintages (a filed deferral / withdrawal is honored;
+    # nothing injected or advanced) and reversal-registry plants are dropped.
+    # The full audited disposition table is persisted on the first ledger
+    # year so a finding reports the ex-ante and verified sets side by side.
+    announced_fossil_exits: list = []
+    announced_fossil_schedule: list[dict] = []
+    if config.mode == "forecast" and getattr(
+        config, "fossil_announced_exits_enabled", False
+    ):
+        _afx_table = announced_fossil_disposition_table(
+            iso,
+            verify=bool(
+                getattr(config, "hindcast", False)
+                and getattr(config, "hindcast_verified_announced_exits", False)
+            ),
+            reversed_plant_codes=announced_reversal_plants,
+        )
+        announced_fossil_exits = [
+            r for r in _afx_table if r.disposition not in ("cancelled", "reversed")
+        ]
+        announced_fossil_schedule = announced_fossil_rows_as_records(_afx_table)
+        logger.info(
+            "capx D42 fossil announced dates armed: %d live row(s), %.0f MW, %s",
+            len(announced_fossil_exits),
+            sum(r.mw or 0.0 for r in announced_fossil_exits),
+            (
+                f"{min(r.exit_year for r in announced_fossil_exits)}-"
+                f"{max(r.exit_year for r in announced_fossil_exits)}"
+                if announced_fossil_exits
+                else "n/a"
+            ),
+        )
+
     # FF-2A entry-stack state (both gates default-off ⇒ both None/absent,
     # byte-identical). The growth ladder (entry_rate_limits) tracks each
     # tech's PRIOR MAXIMUM annual build: seeded from the measured EIA-860
@@ -1948,12 +1992,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 planned_additions,
                 year,
                 confirmed_exits=confirmed_exits,
+                announced_fossil_exits=announced_fossil_exits,
             )
             # First year has no evolution: the ledger records the base fleet
             # snapshot only (fleet_by_fuel before == after, no events).
             base_totals = fleet_totals_by_fuel(fleet)
             evo_events["fleet_by_fuel_before"] = base_totals
             evo_events["fleet_by_fuel_after"] = base_totals
+            if announced_fossil_schedule:
+                # capx D42 audit record (first ledger year only): every dated
+                # row with its disposition, incl. the cancelled/reversed rows
+                # the channel never applies.
+                evo_events["announced_fossil_schedule"] = announced_fossil_schedule
         else:
             # The RPS shadow price from the prior year's dispatch raises the
             # expected revenue of clean technologies in the new-entry screen.
@@ -1996,6 +2046,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 confirmed_exits=confirmed_exits,
                 peak_demand_next=peak_demand,
                 announced_reversal_plants=announced_reversal_plants,
+                announced_fossil_exits=announced_fossil_exits,
                 reserve_position=curve_reserve_position,
                 entry_rate_caps_mw=(
                     {

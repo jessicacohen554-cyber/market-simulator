@@ -1257,6 +1257,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. SHARED field — very end, per HOUSE-3. Registered IN
     # THE SAME COMMIT as the field (the nyiso-119 discipline).
     "entry_dispersion_expectation_signal",
+    # capx D42 fossil announced-date step-1 channel (GATED default-off, 2026-09-02):
+    # dropped from the hash at its False default so every pre-existing cache
+    # key of all six ISOs stays byte-stable — the off path never loads the
+    # dated rows and every reconciliation branch is skipped, byte-identical by
+    # construction. An armed run removes/derates dated fossil units at step 1
+    # and exempts their plants from the screen (a different fleet) and hashes
+    # distinctly, keeping the D42 control/arm A/B off one cache entry. SHARED
+    # field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "fossil_announced_exits_enabled",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1702,6 +1712,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # D40: NEISO published Net ICR requirement gate, registered at its shipping
     # False default (an armed run keys distinctly).
     "neiso_net_icr_requirement": "False",
+    # capx D42: fossil announced-date step-1 channel, registered at its shipping
+    # False default (an armed run keys distinctly).
+    "fossil_announced_exits_enabled": "False",
 }
 
 
@@ -2995,6 +3008,43 @@ class ScenarioConfig:
     # retire on their announced EIA-860 date (policy/contract/end-of-life exits
     # with no economic-screen analogue). Set False for the legacy behaviour
     # (every scheduled retirement honored regardless of fuel).
+    fossil_announced_exits_enabled: bool = False  # GATED, default-OFF (capx D42,
+    # 2026-09-02 — the D32 R1 posture A/B; NOTHING ARMS HERE: the owner arms
+    # or declines on the D42 finding). When True (forecast mode), a FOSSIL
+    # unit's owner-filed EIA-860 Schedule-3 planned retirement date is honored
+    # as an EXOGENOUS step-1 input alongside the non-fossil dates — the posture
+    # the shipped ``forecast_fossil_retirement_economic=True`` default no-ops.
+    # Identification (rule 13 [R-MEASURED] forward test): the rows are read
+    # from the run's ACTIVE EIA-860 vintage (``data.announced_retirements.
+    # load_announced_fossil_exits``), so a date is admissible in year Y only if
+    # it was on file at the vintage cutoff — the same information gate step 0
+    # applies to ``instrument_date`` — and the identical construction
+    # regenerates for a forecast year from the then-current 860 (the additions
+    # pipeline already reads the same form's proposed-generator schedule).
+    # Consumption reuses step 0's matching/derate machinery
+    # (``apply_confirmed_exits``: unit-grain rows drop the unit, plant-binned
+    # rows derate the plant's tranches, first-half months carry a completion
+    # leg). Rule 19 [R-ONE-MECH] reconciliation, designed WITH the gate: (a) a
+    # plant carrying a pending admissible date is EXOGENOUS to the economic
+    # screen (``exempt_unit_ids``) — the owner's filed plan IS the exit
+    # decision for that plant, so the screen decides only undated plants and
+    # no unit's exit is decided twice; (b) the R-NEW admission-cap
+    # counterfactual nets every dated exit due by the cap horizon, so the
+    # floor's retention pool sees the dated units as scheduled exogenous exits
+    # and can neither retain them nor over-admit others against capacity that
+    # is leaving anyway; (c) the realized-year floor tests the post-step-1
+    # fleet, unchanged. Under ``hindcast_verified_announced_exits`` the dated
+    # set is additionally VERIFIED against the later in-repo EIA-860 vintages
+    # — a re-filed later date (a filed deferral) or a dropped date (a sale with
+    # continued operation) is honored per unit as the later vintage's
+    # information, and a reversal-registry plant is countered — the same
+    # ex-ante-purity-vs-verified-fleet trade that flag already records; it
+    # can defer or cancel a vintage date but never inject one. Zero free
+    # parameters, no fitted filter: an undated deferral is a false positive at
+    # full magnitude. Consulted only under the default
+    # ``forecast_fossil_retirement_economic=True`` (the legacy False posture
+    # already honors every fossil date ungated). Cache-neutral off
+    # (``_CACHE_KEY_OPTIONAL_FIELDS``); an armed run hashes distinctly.
     confirmed_exits_enabled: bool = True  # GATED, default-ON (flipped 2026-07-05,
     # owner sign-off — docs/handoffs/confirmed-retirement-plan-2026-07.md §7). When
     # True and mode == "forecast", the confirmed-retirement channel force-retires (or

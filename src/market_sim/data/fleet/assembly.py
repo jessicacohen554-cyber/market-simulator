@@ -1507,6 +1507,7 @@ def build_base_fleet(
     year: int,
     confirmed_exits: list | None = None,
     *,
+    announced_fossil_exits: list | None = None,
     vintage_year: int | None = None,
     nonthermal_exclude: frozenset[str] | None = None,
     legacy_n_bins: int | None = None,
@@ -1533,6 +1534,13 @@ def build_base_fleet(
     only ever selects a row newly effective in its own year, so no row is
     ever applied twice. GATED on ``config.confirmed_exits_enabled``; a no-op
     when off or ``confirmed_exits`` is empty.
+
+    ``announced_fossil_exits`` (capx D42, GATED
+    ``config.fossil_announced_exits_enabled``, default off ⇒ no-op): the
+    owner-filed fossil retirement rows get the SAME first-year backlog
+    treatment through the same call — a date at or before the first
+    simulated year is applied up front, and later years' rows are selected by
+    :func:`~market_sim.model.capacity.evolve_fleet` step 1 exactly once.
 
     Backcast parameterization (orchestrator-unification Stage 6 -- the
     backcast rebuilds this base fleet every solved year instead of evolving
@@ -1642,6 +1650,22 @@ def build_base_fleet(
                 year,
                 before - len(fleet),
             )
+    if (
+        getattr(config, "fossil_announced_exits_enabled", False)
+        and announced_fossil_exits
+    ):
+        from market_sim.model.capacity import apply_confirmed_exits
+
+        before_mw = sum(g.pmax_mw for g in fleet)
+        fleet = apply_confirmed_exits(
+            fleet, year, announced_fossil_exits, apply_backlog=True
+        )
+        logger.info(
+            "year %d: announced fossil dates (capx D42) removed/derated %.0f MW "
+            "of base-fleet capacity in the pre-start backlog",
+            year,
+            before_mw - sum(g.pmax_mw for g in fleet),
+        )
     return fleet
 
 
