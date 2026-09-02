@@ -572,6 +572,7 @@ def run_year(
     unit_outage_lp_capacity_basis: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
+    campd_outage_merit_order_guard: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
     # merge, but the parameter was never added here, so EVERY solve through
@@ -1433,6 +1434,13 @@ def run_year(
         # outage-derated denominator (rule 19 [R-ONE-MECH]).
         config = config.with_overrides(
             campd_per_unit_attribution=campd_per_unit_attribution
+        )
+    if campd_outage_merit_order_guard is not None:
+        # nyiso-177: the SECOND half of the same selector — the economic-lay-up
+        # guard rides both CAMPD companions together for the same rule 19
+        # [R-ONE-MECH] reason, and is inert without the gate above.
+        config = config.with_overrides(
+            campd_outage_merit_order_guard=campd_outage_merit_order_guard
         )
     if cc_winter_capability_basis is not None:
         config = config.with_overrides(
