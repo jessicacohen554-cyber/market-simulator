@@ -405,9 +405,7 @@ def chp_pmin_cf(
     """
     from market_sim.data.fleet import CHP_PMIN_CF_BY_PLANT
 
-    pmin, *_ = chp_overrides(iso, per_unit).get(
-        int(plant_code), (None, None, None)
-    )
+    pmin, *_ = chp_overrides(iso, per_unit).get(int(plant_code), (None, None, None))
     if pmin is not None:
         return pmin
     return CHP_PMIN_CF_BY_PLANT.get(int(plant_code))

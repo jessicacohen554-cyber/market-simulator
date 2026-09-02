@@ -262,6 +262,52 @@ def _hydro_plant_modes_block(config, iso: str) -> dict[str, Any]:
     return block
 
 
+def _thermal_tranche_block(config, iso: str) -> dict[str, Any]:
+    """Identity of the CAMPD thermal-tranche artifact the fleet builder reads.
+
+    The sibling of :func:`_campd_unit_outages_block`, and added for the same
+    reason (nyiso-176): the tranche artifact is a COMMITTED measured input under
+    rule 13 ``[R-MEASURED]`` that sets per-plant committed / must-run / peaking
+    shares and the CHP p-min floors, and a bundle that cannot name the bytes it
+    consumed cannot be reproduced from its own record. Resolved WITH the
+    ``campd_per_unit_attribution`` gate, so an armed run records the
+    ``-perunit-`` companion it consumed rather than the incumbent it did not.
+
+    ``armed`` is False only where the ISO has no artifact at all (ERCOT runs the
+    CAMPD bin sheet instead), since the per-plant loaders are self-targeting: a
+    plant absent from the artifact falls back to its group default.
+    """
+    block: dict[str, Any] = {
+        "armed": None,
+        "path": None,
+        "present": None,
+        "sha256": None,
+        "bytes": None,
+    }
+    try:
+        from market_sim.config.paths import REPO_ROOT
+        from market_sim.data.fleet.campd_bins import thermal_tranche_csv_for_iso
+
+        path = Path(
+            thermal_tranche_csv_for_iso(
+                iso, bool(getattr(config, "campd_per_unit_attribution", False))
+            )
+        )
+    except Exception:  # pragma: no cover - a probe never breaks the record
+        logger.warning("resolved_inputs: thermal-tranche probe failed", exc_info=True)
+        return block
+    try:
+        block["path"] = str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        block["path"] = str(path)
+    block["present"] = path.exists()
+    block["armed"] = path.exists()
+    if block["present"]:
+        block["bytes"] = path.stat().st_size
+        block["sha256"] = _sha256(path)
+    return block
+
+
 def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
     """Identity of the CAMPD unit-outage extract the overlay reads.
 
@@ -271,6 +317,11 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
     all the same: the overlay is a measured input under rule 13
     ``[R-MEASURED]``, and a bundle that cannot name the bytes it consumed
     cannot be reproduced from its own record.
+
+    The path is resolved WITH the routing gates
+    (``unit_outage_mixed_gas_routing``, ``campd_per_unit_attribution``), so an
+    armed run records the companion it consumed rather than the incumbent it
+    did not.
     """
     armed = str(getattr(config, "outage_source", "") or "").lower() == "historic"
     block: dict[str, Any] = {
@@ -284,7 +335,18 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
         from market_sim.config.paths import REPO_ROOT
         from market_sim.data.outages import unit_outage_csv_for_iso
 
-        path = Path(unit_outage_csv_for_iso(iso))
+        # Record the path the overlay ACTUALLY reads, gates included
+        # (nyiso-176). Without the gates this block names the incumbent extract
+        # for a run that consumed a '-unitroute-' or '-perunit-' companion —
+        # a bundle claiming an input it did not use, which is the exact
+        # reproducibility failure this record exists to prevent.
+        path = Path(
+            unit_outage_csv_for_iso(
+                iso,
+                bool(getattr(config, "unit_outage_mixed_gas_routing", False)),
+                bool(getattr(config, "campd_per_unit_attribution", False)),
+            )
+        )
     except Exception:  # pragma: no cover - a probe never breaks the record
         logger.warning("resolved_inputs: CAMPD extract probe failed", exc_info=True)
         return block
@@ -334,4 +396,5 @@ def resolved_inputs_block(config, iso: str) -> dict[str, Any]:
         },
         "hydro_plant_modes": _hydro_plant_modes_block(config, iso),
         "campd_unit_outages": _campd_unit_outages_block(config, iso),
+        "thermal_tranches": _thermal_tranche_block(config, iso),
     }

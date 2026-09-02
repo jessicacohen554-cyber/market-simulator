@@ -833,9 +833,7 @@ def main() -> None:
         # nyiso-175b shipped and disclosed (its East River CT_CHP row was
         # derived un-derated because every window there still routed to
         # ST_CHP). One crosswalk, both artifacts (rule 19 [R-ONE-MECH]).
-        derate = unit_outage_derate_factors(
-            year, iso=iso, per_unit_crosswalk=per_unit
-        )
+        derate = unit_outage_derate_factors(year, iso=iso, per_unit_crosswalk=per_unit)
         for (code, group), nameplate in cap.items():
             if group not in _THERMAL_GROUPS or nameplate <= 0:
                 continue
@@ -1029,9 +1027,7 @@ def main() -> None:
     }
     f923_floors = _chp_f923_floor_cf(args.years, cap)
     for (code, group), (pmin, level) in sorted(f923_floors.items()):
-        if (code, group) in have_floor or (
-            not per_unit and primary.get(code) != group
-        ):
+        if (code, group) in have_floor or (not per_unit and primary.get(code) != group):
             continue
         rows.append(
             {
