@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-02-nyiso-176-perunit-attribution",
+  "label": "nyiso 176 perunit attribution",
+  "date": "2026-09-02",
+  "shorthand": "nyiso-176-perunit-attribution",
+  "definition": "nyiso-176 arm: campd_per_unit_attribution ON (both companions)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-02-nyiso-176-perunit-attribution.js",
+  "bundle": "results/calibration/nyiso176_arm_B"
+}
