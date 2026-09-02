@@ -9981,3 +9981,135 @@ design, not omission. **Rule 22:** every year read is 2023/2024/2025; NYISO's
 marker was requested**. **No C3c lever opened**; none of the twenty-three closed
 lines re-tested; **C3a-2025 did not move and none was available** — §4.2 is the
 measurement that explains why this lane never could.
+
+## 2026-09-02 — nyiso-175 PHASE 0, ZERO SOLVE: the D-2 blocker is a GRAIN difference (not a defect) and UNBLOCKS its successor; the "CT deficit" is TWO objects with opposite signatures; and BOTH East River gates fail on their own pre-registered thresholds, so nothing is armed
+
+Chartered to clear nyiso-174 §6 item 3's D-2 vs `class_hourly` blocker and then
+spend the `CT_CHP` instrument nyiso-174 unlocked. Both done; **no arm was
+pre-registered and no LP ran**, so rule 15 registers nothing — by design, not
+omission. Keeper `2026-08-30-nyiso-159-loss-surface` and its **NOT-YET**
+determination on {C3a-2025 −11.5 %, C3c} **unchanged**. Prereg
+`results/calibration/PREREG-nyiso175-ct-conduct-and-d2-basis.md` + probe
+`scripts/probes/nyiso175_ct_conduct_and_d2_basis.py` committed at `6c3f0cf7`
+**before either was run**. Full record:
+`docs/FINDING-nyiso175-ct-deficit-two-objects-2026-09-02.md`.
+
+**Predecessor probes re-run first — all fifteen.** Fourteen reproduce
+**bit-identically**; `nyiso168_reserve_supply_slack` to a max relative delta of
+**1.94e-16** over 309 numeric leaves with **zero** structural difference (trap
+(a); the churn was **not** committed). Traps (b)–(f) all hit and all handled:
+the gitignored DA LBMP container was re-staged and `nyiso169` then reproduces
+bit-identically at DA `hours_covered` **8760/8760/8760**; `ancillary-services`
+was regenerated first and the reserve-slack JSON diffed **structurally** as well
+as numerically (both measured DAM/RTM blocks intact). **One new environment
+trap, recorded:** the D-2 floor rebuild needs the `capacity-deliverability`
+clean partition or `apply_nyiso_li_tsl_import_cap` raises — it is not on the
+brief's phase-0 list.
+
+**(A) THE BLOCKER IS CLEARED, AND NEITHER ARTIFACT WAS WRONG.** Gate A1 as
+pre-registered **FAILS** — and the failure identifies the basis. The committed
+D-2 was built at solve time on the run's own `dispatch/<year>_P1.parquet`;
+that file is gitignored, so a HEAD recompute falls **silently** to the 100-plant
+run payload and moves `CC_CHP` **+28.9 %**, `CT_CHP` **+34.3 %**, `ST_CHP`
+**+95.3 %**, `hydro` **+37.3 %** (2025). Two identities off committed bytes
+settle what the committed denominator IS: D-2's `hydro` equals `class_hourly`'s
+**to four decimals in all three years** (26.6134 / 26.7390 / 24.0589) and its
+`''` bucket equals `nuclear` + the 7.884 TWh HQ pseudo-unit to **0.005 %**; and
+the `CT_CHP` / `ST_CHP` deltas are **equal and opposite** to a residual of
+**0.0084 / 0.0271 / 0.0746 TWh**. **The 13–17× disagreement is a GRAIN
+difference**: D-2's row is the **plant** and its label is the plant's
+most-common **LP-unit** `plant_group` — East River carries **4 `CT_CHP`
+tranches against 3 `ST_CHP`** (floors arrays), so the plant is labelled
+`CT_CHP` and its `ST_CHP` energy lands in D-2's `CT_CHP` denominator (gate A2's
+sign falsifier, **PASS**). `class_hourly` is the identified per-class model
+artifact and **nyiso-174 §6 item 2 is UNBLOCKED**.
+
+**The brief's rule 20 `[R-FORCED-BUDGET]` hazard is WITHDRAWN ON THE CODE.**
+`ST_CHP`'s `share_of_class` > 1 is a unit-grain numerator over a plant-grain
+denominator — the pathology `run_d2`'s own docstring discloses — and it can
+never gate, because `CC_CHP` / `CT_CHP` / `ST_CHP` are in `D2_EXEMPT_CLASSES`;
+the keeper's own D-2 summary carries `CC_REGULAR`, `CT_PEAKER`, `ST_GAS`,
+`hydro` and nothing else. **A different number in the same family is corrected
+UPWARD**: `chp_steam`'s forced share of `CT_CHP` is **12.5 / 39.2 / 11.3 %** of
+class energy, not the recorded 7.6 / 21.3 / 6.3 % — **~1.8× larger**, because
+the recorded figure divided by D-2's plant-rollup denominator.
+
+**(B) THE INSTRUMENT SPEND SPLITS THE OBJECT IN TWO, unanimously across three
+years.** On the pre-registered B5 rule `CT_PEAKER` is **LEVEL**-limited (q90
+model ÷ q90 anchored-measured **0.050 / 0.053 / 0.369**; starts **102 / 93 /
+156** against **399 / 457 / 293** with run medians still MATCHING at 8/7/7 vs
+9/7/10 h; only **37.8 / 28.2 / 43.2 %** of measured class energy in an hour the
+model runs the class) while `CT_CHP` is **RESPONSE**-limited (q90 ratio **0.739
+/ 0.870 / 0.756**, hourly **r = 0.016 / 0.258 / 0.395**) — a class online
+**8,760 h** in the market and 8,592–8,736 h in the model, below the market at
+**every decile** of its own duration curve, with **88 / 100 / 88 %** of its
+deficit in the bottom 80 % of load hours. **The −2.4 TWh "CT deficit" is not one
+object**, and only `CT_PEAKER` was ever the load-pocket story — whose diagnosis
+this independently **CONFIRMS** on a different construction, bar and keeper than
+nyiso-90/91/96 used. Guard S4 honoured: **no `CT_PEAKER` lever opened**.
+
+**THE ONE OBVIOUS `CT_CHP` SUCCESSOR IS CLOSED BEFORE IT IS BUILT.** CAMPD
+meters East River's district-steam send-out directly, and it sits **entirely**
+on units 60/70 — two direct-fired boilers generating **0 MWh** of electricity in
+all three years (nyiso-120 KE3, reproduced independently here) — with units 1/2
+exporting **zero** steam. `r`(measured plant turbine MW, plant steam klb/h) =
+**−0.016 / +0.309 / +0.077**. **There is no hourly steam profile to give
+`chp_steam_following` at this plant.** The model's `CT_CHP` tracks system load
+at r = 0.724/0.759/0.644; the market's tracks load at 0.29–0.40, steam at ~0,
+and runs a **maintenance** shape (2023: 271/256 GWh Jan–Feb against 114/69 GWh
+Apr/Oct) no armed mechanism can produce.
+
+**(C) BOTH EAST RIVER GATES FAIL, SO NOTHING IS ARMED.** S2 needs all three:
+(a) turbine-family share of the plant's CAMPD `grossLoad` **1.000/1.000/1.000**
+PASS; **(b) EIA-923 GT:ST 1.914 / 2.885 / 3.083 — FAIL** (below the 2:1 bar in
+2023, where the steam half carried **34 %** of the plant's electricity);
+(c) inversion 1.212/2.007/2.082 PASS. **S3 also FAILS**: East River is **43.2 %**
+of the misattributed energy (**6.581 of 15.233 TWh**) — **Ravenswood (2500) is
+bigger at 8.509 TWh**, its `ST_GAS` 1,724.8 MW primary group losing to a 222.2 MW
+`CC_REGULAR` bin that carries 64–73 % of the energy. The object is real, named
+and sized, and it is a **fleet-wide derive question**, handed forward.
+
+**FOUR CORRECTIONS TO THE COMMITTED RECORD**, all measured. (1) nyiso-174 §5's
+"the turbine bin has no floor" is **WRONG** — East River's `CT_CHP` bin carries
+a `chp_steam` floor of **90.08 MW in all 8,760 hours of every year**, MORE hours
+than the ST bin's 92.82 MW binds (7,272/8,040/7,872); the tranches CSV has no
+`CT_CHP` row but the EIA-923 CHP-pmin route floors it anyway. (2) nyiso-174 §6
+item 2's premise **"its boilers having generated 0.000 TWh" conflates CAMPD's
+direct-fired boilers with the EIA-860 steam TURBINES**, which generate **1.057 /
+0.745 / 0.674 TWh** a year on EIA-923 — which is what fails S2(b). (3)
+nyiso-174 §1's heat-rate leg (10.51–10.89 MMBtu/MWh) divides the whole power
+train's fuel by GT-only gross load; nyiso-120 KE2 measured the power-train rate
+at **7.3763** against eGRID's **7.4205** (0.6 %), in the CC band — the label
+conclusion stands on prime movers, the heat-rate leg does not support it.
+(4) the forced-share correction above.
+
+**THE NAMED OBJECT, handed forward with its expected value stated honestly.**
+`derive_thermal_tranches._fleet_nameplate_and_group` attributes a plant's
+facility-summed CAMPD net to its **largest-nameplate** group; at East River that
+is decided by **3.5 MW (1.1 %)** and puts 2.1–2.3 TWh/yr of turbine conduct onto
+the steam row (`online_hours` 26,253, `committed_pct` 32.0, `median_cf` 98.5 on
+a 309.5 MW steam denominator) while the 306.0 MW turbine bin gets no row.
+Same defect family as nyiso-174 §6 item 1 and neiso-99's rule 14 exception; the
+corrected per-unit construction exists and is tested. Zero DOF. Closing East
+River's split moves C1 `CT_CHP` by **+0.378 / +0.965 / +0.402 TWh** and `ST_CHP`
+by **−0.064 / −0.343 / −0.713 TWh** — but its **C3a expectation is ~ZERO**
+(both bins carry heat rate 7.4205 and the same delivered gas), so it is a rule 1
+`[R-STRUCT]` representation repair and **must never be proposed as a C3a lever**.
+Re-open condition: a session that can carry a full three-year re-solve, in the
+same commit as nyiso-174 §6 item 1.
+
+**ALSO HANDED FORWARD: the keeper's committed D-2 is not re-derivable from
+committed artifacts** (§A above) — `dispatch_source` is already computed in
+`legitimacy_diagnostics.py` and used only in a coverage note; stamping it into
+the D-2 block closes the gap. Cross-ISO, zero solve.
+
+**Rule 28 (b).** Five NYISO cells re-stamped, **no verdict moves**:
+`chp_steam_following` **K** (ex-ante adjudication of its one successor route),
+`thermal_tranche_artifact_coverage` **O** (the attribution defect),
+`scuc_load_pocket_commitment` **G** (independent confirmation),
+`diagnostics_plant_set` **I** (the reproducibility gap),
+`measured_chp_heat_rates` **K** (correction 3). NYISO shard only; `node --check`
+passes and `check_mechanism_matrix.py` exits 0. **Rule 22:** every year read is
+2023/2024/2025; NYISO holds no `complete` marker, none was requested, the freeze
+is untouched. **No C3c lever opened; none of the twenty-six closed lines
+re-tested.**
