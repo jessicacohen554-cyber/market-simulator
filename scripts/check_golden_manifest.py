@@ -26,6 +26,20 @@ whose sidecar is gone AND which never absorbed that snapshot — the only state 
 which a prune actually destroys information — and REPORTS, without failing, every
 entry whose sidecar has been pruned or whose keeper has since moved on.
 
+**Entry keys, and config partitions (2026-09-02).** A manifest entry is keyed
+either by a bare ISO — resolved against ``keepers/<ISO>.json``'s ``keeper`` —
+or, for an ISO whose shard carries a ``config_partition`` block, by
+``<ISO>__<role>`` (``ERCOT__carveout-2023``), resolved against that block's
+``configs[].run_id``. ERCOT is the first such ISO: a forward config for
+{2024, 2025} plus a 2023 carve-out, owner ruling 2026-08-26. Both key forms go
+through :func:`live_keeper`, so a partition golden reports CURRENT/STALE against
+the config it was actually captured against instead of the perpetual
+``STALE (live keeper: None)`` that a bare-ISO-only lookup would produce
+(``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4). Partition
+entries are ordinary schema-v2 entries in every other respect and are validated
+identically — the representation is additive, so nothing here special-cases
+them beyond the key split.
+
 Exit codes:
     0 — every manifest conforms (pruned sidecars and stale keepers are reported,
         not failed: retention is correct policy and goldens are allowed to age).
@@ -68,6 +82,13 @@ REQUIRED_SNAPSHOT_KEYS = ("id", "iso", "label", "date", "years", "bundle")
 FORBIDDEN_TOP_LEVEL_KEYS = ("git_sha", "git_dirty", "env", "highspy_version")
 
 MIN_SCHEMA_VERSION = 2
+
+# Separator between the ISO and the config-partition role in a manifest key
+# (``ERCOT__carveout-2023``). Must match
+# ``capture_keeper_goldens.PARTITION_KEY_SEP``; duplicated rather than imported
+# because this gate is deliberately stdlib-only and importable with no solve
+# dependencies (the capture tool pulls in numpy/highspy at import time).
+PARTITION_KEY_SEP = "__"
 
 # THE RATCHET. Every manifest written since the 2026-09-01 repair is schema v2,
 # because ``capture_keeper_goldens.write_manifest`` can no longer write anything
@@ -124,15 +145,38 @@ LEGACY_V1_MANIFESTS = frozenset(
 )
 
 
-def live_keeper(iso: str) -> str | None:
-    """Return the ISO's currently designated keeper id, or None if unreadable."""
+def live_keeper(key: str) -> str | None:
+    """Return the run id the keeper shards currently designate for ``key``.
+
+    Two key forms, both resolved against ``keepers/<ISO>.json``:
+
+    * a bare ISO (``"ERCOT"``) → the shard's ``keeper`` field, i.e. the ISO's
+      single designated keeper;
+    * a config-partition key (``"ERCOT__carveout-2023"``) → the ``run_id`` of
+      the ``config_partition.configs[]`` entry whose ``role`` matches the half
+      after the separator. This is the lookup that makes a partition golden
+      report its true state instead of ``STALE (live keeper: None)`` forever
+      (``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4).
+
+    Returns None when the shard is missing/unreadable, or when the named role is
+    not (or is no longer) designated — which the caller reports as STALE, the
+    correct reading: a golden captured against a retired config is exactly what
+    staleness means.
+    """
+    iso, _, role = key.partition(PARTITION_KEY_SEP)
     shard = KEEPERS_DIR / f"{iso.upper()}.json"
     if not shard.is_file():
         return None
     try:
-        return json.loads(shard.read_text()).get("keeper")
+        rec = json.loads(shard.read_text())
     except Exception:
         return None
+    if not role:
+        return rec.get("keeper")
+    for cfg in (rec.get("config_partition") or {}).get("configs") or []:
+        if isinstance(cfg, dict) and str(cfg.get("role", "")).lower() == role.lower():
+            return cfg.get("run_id")
+    return None
 
 
 def find_manifests() -> list[Path]:
@@ -164,12 +208,12 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
         # Grandfathered: report its coupling state, enforce nothing. It may still
         # opt in by being migrated to v2 — then it is enforced like any other.
         if not isinstance(version, int) or version < MIN_SCHEMA_VERSION:
-            for iso in sorted(man.get("keepers", {})):
-                entry = man["keepers"][iso]
+            for key in sorted(man.get("keepers", {})):
+                entry = man["keepers"][key]
                 kid = entry.get("keeper_id")
                 pruned = not (REGISTRY_DIR / f"{kid}.json").is_file()
                 notes.append(
-                    f"{rel} [{iso}]: {kid} — LEGACY v1 (pre-repair, grandfathered), "
+                    f"{rel} [{key}]: {kid} — LEGACY v1 (pre-repair, grandfathered), "
                     f"provenance run {'PRUNED from registry' if pruned else 'registered'}"
                 )
             return fails, notes
@@ -195,17 +239,17 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
         fails.append(f"{rel}: no 'keepers' entries")
         return fails, notes
 
-    for iso in sorted(keepers):
-        entry = keepers[iso]
-        where = f"{rel} [{iso}]"
+    for key in sorted(keepers):
+        entry = keepers[key]
+        where = f"{rel} [{key}]"
 
         prov = entry.get("provenance")
         if not isinstance(prov, dict):
             fails.append(f"{where}: missing 'provenance' block (schema v2)")
         else:
-            for key in REQUIRED_PROVENANCE_KEYS:
-                if key not in prov:
-                    fails.append(f"{where}: provenance missing {key!r}")
+            for req in REQUIRED_PROVENANCE_KEYS:
+                if req not in prov:
+                    fails.append(f"{where}: provenance missing {req!r}")
             sha = prov.get("git_sha")
             if not isinstance(sha, str) or not sha:
                 fails.append(f"{where}: provenance.git_sha must be a non-empty string")
@@ -234,9 +278,9 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
                 )
             )
         else:
-            for key in REQUIRED_SNAPSHOT_KEYS:
-                if key not in snap:
-                    fails.append(f"{where}: keeper_snapshot missing {key!r}")
+            for req in REQUIRED_SNAPSHOT_KEYS:
+                if req not in snap:
+                    fails.append(f"{where}: keeper_snapshot missing {req!r}")
             # The snapshot must describe the entry it lives in, or it is a copy
             # of the wrong run and worse than none.
             if snap.get("id") != keeper_id:
@@ -256,9 +300,21 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
                 )
 
         # --- The visible coupling. Reported, never failed. ---
-        current = live_keeper(iso)
+        current = live_keeper(key)
         state = "CURRENT" if current == keeper_id else "STALE"
-        detail = "" if state == "CURRENT" else f" (live keeper: {current})"
+        if state == "CURRENT":
+            detail = ""
+        elif current is None and PARTITION_KEY_SEP in key:
+            # Distinguish "the shard no longer designates this role" from an
+            # ordinary supersession — otherwise a typo'd or retired role reads
+            # identically to a golden that simply aged.
+            _iso, _, _role = key.partition(PARTITION_KEY_SEP)
+            detail = (
+                f" (keepers/{_iso.upper()}.json designates no config_partition "
+                f"role {_role!r})"
+            )
+        else:
+            detail = f" (live keeper: {current})"
         notes.append(
             f"{where}: {keeper_id} — provenance run "
             f"{'PRUNED from registry' if pruned else 'registered'}, "
