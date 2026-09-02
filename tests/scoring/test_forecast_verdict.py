@@ -728,6 +728,30 @@ class FC6Tests(unittest.TestCase):
             fv.FAIL,
         )
 
+    def test_paired_p2_row_with_evidence_block_scores_on_status_only(self):
+        """capx-D35: the repaired P2 row carries a `data` evidence block (gas-fired
+        split, per-year series, the legacy per-class key as a control). The
+        scorer reads status + detail only — the block never gates."""
+        paired = [
+            {
+                "ident": "P2",
+                "name": "merit-order sign",
+                "status": "PASS",
+                "detail": "year 2050: all signs correct; gas-fired 36.53→35.36 TWh",
+                "data": {"legacy_gas_cc_key": {"would_fail": True}},
+            }
+        ]
+        rows = fv.score_fc6(_art(paired_invariants=paired), "t3", "NEISO")
+        p2 = [r for r in rows if r["row"] == "paired P2"][0]
+        self.assertEqual(p2["status"], fv.PASS)
+        self.assertIn("gas-fired", p2["detail"])
+        paired[0]["status"] = "FAIL"
+        paired[0]["detail"] = "year 2050: wrong: gas↓"
+        self.assertEqual(
+            _status(fv.score_fc6(_art(paired_invariants=paired), "t3", "NEISO")),
+            fv.FAIL,
+        )
+
     def test_paired_p3_warn_is_caveat(self):
         paired = [
             {"ident": "P3", "name": "perturbation", "status": "WARN", "detail": "cliff"}
