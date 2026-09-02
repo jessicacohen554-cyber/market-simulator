@@ -3920,3 +3920,119 @@ docs/handoffs/FINDING-capx-d43-caiso-dispersion-<date>.md with the expected-vs-r
 closure table, the entry-composition consequence, the cross-ISO code note (what other
 lanes would run), and the arming recommendation for the owner.
 ```
+
+## D44 — arm the fossil announced-date default (r#31; owner ruling Q30)
+
+```
+You are the D44 session of the capacity-expansion track — the EXECUTION of owner ruling Q30
+on D42's decisive A/B (recall 5/19 → 16/19, zero screen displacement, per-unit published
+deferral counters): the fossil announced-date channel ARMS AS THE DEFAULT POSTURE.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (ruled and mechanical — but the files are core, so rule 27 is this
+charter's spine).
+BRANCH: claude/capx-d44-fossil-dates-arm — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md IN FULL (the
+channel as built: the gated field, the vintage gate, the reversal registry, the rule-19
+reconciliation, the deferral counters — you flip and document, you do not redesign) · the
+capx ledger §3 Q30 (the ruling's exact scope) · CLAUDE.md capacity-evolution step 1 (the
+text you amend) · model-methodology-spec.md §5.1 (same) ·
+scenarios.py's _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS ledger (the b′-1 append-only declared
+defaults — the flip ADDS a dated declaration line; D24-R's discipline).
+
+THE WORK:
+1. Flip the D42 gate field's default ON in ScenarioConfig, with the Q30 citation at the
+   definition. Append the dated declaration to _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS (never
+   overwrite — b′-1 is append-only; this is exactly the flip class it exists for).
+2. Amend CLAUDE.md's step-1 bullet ("for fossil this step is a default no-op") and spec
+   §5.1 to the new posture: fossil owner-filed EIA-860 dates honored as an exogenous step-1
+   input, vintage-gated, reversal registry armed, economic screen on the residual fleet,
+   with the D42/Q30 citation. Precise, minimal edits — CLAUDE.md and the spec are ≥300-line
+   core files: edit locally, push exact bytes, blob-verify after push (rule 27), and NEVER
+   regenerate either file wholesale.
+3. Re-stamp the channel's matrix row/cells to the armed-default posture (Q30 citation);
+   MISO's cell carries the D42 A/B verdict; other ISOs' cells note default-on with their
+   own verdicts pending their own measurements (rule 25).
+4. CHANGELOG + a short docs/handoffs/FINDING-capx-d44-fossil-dates-arm-<date>.md: what
+   flipped, the declared-defaults line, the doc amendments quoted, and the consequence
+   line: every future forecast/hindcast solve carries the channel; existing bundles join
+   the batched re-measure decision (the director's queue — do NOT re-run anything here).
+
+GUARDRAILS: no new field, no parameter values, no solve. Rule 22 untouched. The one
+default flip is the entire licensed change; if anything else asks to move, STOP and route.
+
+COLLISION: D45 runs PJM/NYISO solves — if its containers launched before your flip lands,
+their bundles record the OLD posture; that is a vintage fact for their findings, not a
+conflict. Nobody else touches scenarios.py/CLAUDE.md/spec this window.
+
+EXIT: the flip + amendments + matrix + CHANGELOG + the finding, all blob-verified.
+```
+
+## D45 — PJM + NYISO capacity curves: the once-only D6+R3 joint charter (r#31)
+
+```
+You are the D45 session of the capacity-expansion track — the ONCE-ONLY cross-ISO
+clearing-half + curve-ON charter (queued since r#26 as "D6+R3"), finally written against
+what remains after the repair wave. The other four ISOs are done or owned: MISO has the
+supply_accounting_ratio + published RBDC (D31), NEISO the Net ICR devintage measured to
+±3.3 pts (D40/D37), ERCOT is curve-OFF energy-only, CAISO has no capacity market in the
+program's design. PJM and NYISO are the two capacity-market ISOs NO repair lane has
+touched: no diagnostics-on solve exists for either, and D28's NYISO row is the program's
+loudest latent finding — the curve is NEVER CONSULTED at default (a flat $110/kW-yr
+over-pays 2–6×), and a curve-ON probe would arm at +123 % retirements.
+
+DATA PROFILE: pjm  (widen to nyiso when the NYISO half runs — hydration is incremental)
+MODEL ASSIGNMENT: Fable (the once-only mechanism-class adjudication; arming consequences
+on two ISOs).
+BRANCH: claude/capx-d45-pjm-nyiso-curves — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d28-longposition-capacity-revenue-2026-09-01.md
+(the four-ISO census; the PJM and NYISO rows — PJM's position +9..+14 pts hindcast-
+confirmed, NYISO's LATENT flip-gate evidence; §6.5's clearing-half statement: the curve is
+evaluated at a census quantity where every real market clears supply against the curve) ·
+the D31 finding (the MISO worked example: supply-accounting reconciliation + published
+curve shape) · the D40/D37 findings (the NEISO worked example: requirement devintage,
+paired control, P9-style pre-stated flip conditions) · the PJM/NYISO curve implementations
++ docs/parameter-citations.md (what is published-faithful already, what is flat-default) ·
+docs/handoffs/FINDING-capx-d43-caiso-dispersion-2026-09-02.md §routing (the PJM/NYISO
+diagnostics precondition this charter absorbs).
+
+THE CHARTER, three stages per ISO, PJM first then NYISO, sequential:
+1. FIRST DIAGNOSTICS-ON T1-H SOLVE at the live stack posture (`entry_screen_diagnostics`
+   on; pre-declaration first, the D37 pattern; preserve-then-overwrite on the bare t1h key;
+   this also commits the expected-side dumps the dispersion family lacked — a free
+   by-product, not an object).
+2. THE POSITION + EVALUATION-QUANTITY RECONCILIATION, per ISO, from published data ONLY
+   (rule 25 — own parameters; the MISO/NEISO patterns are worked examples, never
+   transfers): PJM — the model's entering position vs the published BRA/RPM cleared and
+   requirement record (CETO/CETL where the crosswalk carries it); NYISO — vs the published
+   ICAP/IRM/LCR record. Name each divergence's identified repair with its published source.
+3. THE CURVE-ON ADJUDICATION (D6's object, now per-ISO): NYISO — adjudicate whether the
+   published demand curve should be CONSULTED at default (the +123 % latent probe says what
+   would happen; the adjudication decides whether that is faithful or a position artifact —
+   after stage 2's reconciliation, not before); PJM — whether the curve-ON leg's over-fire
+   (the original D6 signal) survives the corrected position. NOTHING ARMS in this lane:
+   pre-stated conditions, suffixed registrations for any probe legs, and every arming
+   recommendation returns to the owner.
+
+RULE-14 SIGN DISCIPLINE, inherited from every predecessor: faithful positions/curves move
+capacity revenue UP and retirements HARDER; nothing is sized by any residual, and a
+worse-looking G3/FC-3 after accurate inputs is the expected signature, not a failure.
+
+GUARDRAILS: rules 12 (years sequential per solve), 13, 22, 25, 27, 28 (any new
+field/lever: matrix row + all shards, default-off, in the same PR). Solves priced before
+launch, one ISO at a time. No keeper/shard/marker; backcast namespace untouched. STOP if
+anything beyond the two ISOs' t1h keys + board blocks would move.
+
+COLLISION: D44 flips the fossil-dates default — your solves record whichever posture is at
+HEAD when each launches; state the vintage per leg in the finding (a fact, not a
+conflict). Nobody else touches PJM/NYISO forecast surfaces this window.
+
+EXIT: two registered diagnostics-on baselines + the two reconciliations + the two curve-ON
+adjudications + docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-<date>.md with the per-ISO
+position tables, each identified repair and its source, the arming recommendations, and
+the explicit close-out line: this was the once-only clearing-half charter — successor work
+is per-ISO repair lanes, and the mechanism-class question does not reopen without new
+evidence.
+```
