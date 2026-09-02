@@ -342,7 +342,57 @@ and names the remedy), but it is a standing tax on a heavily-crossed file.
 
 ## 6. Evidence — the green run (job 6)
 
-<!--RUNID-->
+**Run `2298`, id `33587007663`, head `0b4bdb39` — COMPLETED.**
+<https://github.com/jessicacohen554-cyber/market-simulator/actions/runs/33587007663>
+
+| job | conclusion | in R-P's required set |
+|---|---|---|
+| `Rule-22 quarantine gates` | 🟢 success | ✅ |
+| `Rule-28 mechanism-matrix guard` | 🟢 success | ✅ |
+| `Cache-key registration guard` | 🟢 success | ✅ |
+| `FR-21 forecast-board staleness (WARN only)` | 🟢 success | ✅ |
+| `Pinned default cache key` | 🟢 success | ✅ |
+| `Ruff lint + format` | 🟢 success | ✅ |
+| `Structural refactor guards` | 🟢 success | ✅ |
+| `FR-22 backcast->forecast parity` | 🔴 failure | ❌ DO-NOT-REQUIRE (H-1) |
+| `Forecast-invariant artifact audit` | 🔴 failure | ❌ DO-NOT-REQUIRE (H-1) |
+| `Fast test tier` | 🔴 failure | ❌ deferred (memo §3) |
+
+**7 of 7 required checks green.** The run is **not** "fully green" and this
+finding does not claim it is: the three jobs still red are the three R-P
+deliberately leaves out, each red on `main` content for reasons this lane did
+not touch. Run **2297** (the branch's first push) is retained as the record of
+the induced matrix regression and its repair (§5b).
+
+`file-integrity-guard` run **2736** also passed on this PR's diff — 28 changed
+core files ≥300 lines, none shrunk.
+
+### The no-regression proof, and what the repair actually cleared
+
+The full fast tier was run **twice locally under identical conditions** — once
+on this branch, once with `src/ scripts/ tests/ conftest.py pyproject.toml`
+checked out from `origin/main` — and the failure sets diffed name-for-name:
+
+| | `origin/main` | this branch |
+|---|---|---|
+| fast-tier failures | **56** | **33** |
+| failures **only on this branch** (regressions) | — | **0 — the set is EMPTY** |
+| failures **only on main** (cleared here) | **23** | — |
+
+**Zero regressions across 51 changed files.** Of the 23 cleared, **22 are
+cache-key pin tests** spread across `tests/unit/config/`, `tests/unit/data/`,
+`tests/unit/model/`, `tests/unit/pipeline/` and `tests/regression/`, and one is
+the facade inventory. That number is the diagnosis confirming itself: the
+`program-status.json` note quoted in §2.3 counted the same population
+(*"23 of main's 33 test failures are one stale-pin defect"*) and prescribed
+**a re-pin sweep of 23 literals**. All of them fall out of **registering one
+field**, and **not one pin literal was edited.**
+
+`Fast test tier` therefore goes **56 → 33 failures** on this branch. It stays
+red and stays out of the required set; the improvement is a by-product of the
+root-cause repair, not a goal of this lane, and the remaining 33 are
+pre-existing and untouched.
+
 
 No `workflow_dispatch` was issued: the PR's own run is the evidence, per the lane
 charter and the repo CI cost policy.
