@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-02-miso-200-unitroute",
+  "label": "miso 200 unitroute",
+  "date": "2026-09-02",
+  "shorthand": "miso-200-unitroute",
+  "definition": "miso-200 arm: keeper recipe + unit_outage_mixed_gas_routing ON (single delta)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-02-miso-200-unitroute.js",
+  "bundle": "results/calibration/miso200_unitroute_B"
+}
