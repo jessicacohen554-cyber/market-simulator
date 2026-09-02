@@ -24,6 +24,11 @@ Usage::
     python scripts/check_forecast_invariants.py --paired <base_dir> <other_dir> \
         --pair-kind carbon        # carbon | gas_up | gas_pm5
 
+    # P2 from committed artifacts (no cache dirs; capx-D35):
+    python scripts/check_forecast_invariants.py \
+        --paired-summaries <base_summary.json> <gas_up_summary.json> \
+        --pair-kind gas_up
+
 The single-run and paired modes can be combined; ``--json`` emits a machine-
 readable summary to stdout instead of the human table.
 """
@@ -63,6 +68,21 @@ THERMAL_FUELS = frozenset(
 )
 FIRM_CLEAN_FUELS = frozenset({"hydro"})
 CLEAN_FUELS = frozenset({"wind", "solar", "nuclear", "hydro"})
+# Classes that burn natural gas and therefore pay the gas price — the model's
+# OWN partition, mirrored from ``data/fuel/_shared.py::_GAS_FUEL_IDX`` (the
+# FUEL_TYPE_MAP codes of ``data/fleet/models.py``; a
+# literal here for the same reason as THERMAL_FUELS; the unit test
+# ``test_p2_gas_scope_is_the_models_gas_partition`` pins the mirror). CCUS
+# burns the same gas as its unabated host at a higher heat rate; gas_st is
+# legacy gas steam. capx-D35 (FINDING-capx-d35-p2-scope-2026-09-02 §0.1): the
+# P2 gas leg is scored on this WHOLE set, never on one class — the gas price
+# is a fuel-level driver, the LP comparative-statics inequality
+# Δ·(x'−x) ≤ 0 bounds the gas-burning aggregate and says nothing about one
+# class, and on an evolution pair the gas_cc / gas_cc_ccs split is itself a
+# response to the driver (the CCS screen's fuel penalty scales with the gas
+# price), so a per-class key measured the retrofit screen's composition
+# response and reported it as a merit-order failure.
+GAS_FIRED_FUELS = frozenset({"gas_cc", "gas_ct", "gas_cc_ccs", "gas_st"})
 
 
 @dataclass(frozen=True)
@@ -883,29 +903,144 @@ def check_p1_co2_monotone(base: Run, high: Run) -> Result:
     )
 
 
-def check_p2_merit_sign(base: Run, gas_up: Run) -> Result:
-    """P2: +gas ⇒ coal gen ↑, gas-CC gen ↓, LW price ↑, objective ↑."""
-    year = max(set(base.years) & set(gas_up.years), default=None)
-    if year is None:
+def _gas_fired_mwh(fuel_gen: dict[str, float]) -> float:
+    """Total gas-fired generation (every class in ``GAS_FIRED_FUELS``), MWh."""
+    return sum(float(v) for f, v in fuel_gen.items() if f in GAS_FIRED_FUELS)
+
+
+def _p2_year_evidence(yd: YearData) -> dict:
+    """The three quantities P2 reads for one solved year, from a loaded cache."""
+    obj = getattr(yd.result, "objective_value", None)
+    return {
+        "fuel_gen": _fuel_gen_mwh(yd),
+        "lw_price": _load_weighted_price(yd),
+        "objective": float(obj) if obj is not None else None,
+    }
+
+
+def p2_evidence_from_run(run: Run) -> dict[int, dict]:
+    """P2 evidence (fuel generation, LW price, objective) per year from a cache."""
+    return {year: _p2_year_evidence(yd) for year, yd in run.years.items()}
+
+
+def p2_evidence_from_summary(summary: dict) -> dict[int, dict]:
+    """P2 evidence per year from a committed ``full_horizon_summary.json``.
+
+    The summary's ``generation_by_fuel_mwh`` (D29 energy grain) is written by
+    ``run_full_horizon.py`` calling this module's own :func:`_fuel_gen_mwh`
+    and rounding to 0.1 MWh, and ``lw_price`` is the same load-weighted price
+    rounded to 3 dp — so a summary-backed P2 is the cache-backed P2 by
+    construction for the generation and price sub-checks. The summary carries
+    NO objective value: ``objective`` is ``None`` and the objective sub-check
+    is reported as not scored at this grain, never assumed. Trajectory rows
+    without an energy block (pre-D29 summaries) contribute no year, so such a
+    pair SKIPs on "no common year" rather than scoring on nothing.
+    """
+    out: dict[int, dict] = {}
+    for row in summary.get("trajectory") or []:
+        if not isinstance(row, dict) or row.get("year") is None:
+            continue
+        gen = row.get("generation_by_fuel_mwh")
+        if not isinstance(gen, dict):
+            continue
+        price = row.get("lw_price")
+        out[int(row["year"])] = {
+            "fuel_gen": {str(k): float(v) for k, v in gen.items()},
+            "lw_price": float(price) if price is not None else None,
+            "objective": None,
+        }
+    return out
+
+
+def check_p2_merit_sign_evidence(
+    base_ev: dict[int, dict], up_ev: dict[int, dict]
+) -> Result:
+    """P2 on pre-extracted evidence (see :func:`check_p2_merit_sign`).
+
+    Scored at the last common year: ``coal↑`` (only where the base holds coal
+    that year), ``gas↓`` on TOTAL gas-fired generation over ``GAS_FIRED_FUELS``
+    (capx-D35 — replaces the per-class ``gas_cc↓`` key, which is kept in the
+    evidence block as a reported control and gates nothing), ``price↑``, and
+    ``objective↑`` where both objectives are present. A sub-check whose inputs
+    are absent at the evidence's grain is listed under ``not_scored`` in the
+    row's ``data`` and named in the detail — it is never counted as a PASS.
+    ``data`` also carries the per-class split of the gas-fired total in both
+    worlds, the per-year gas-fired series over every common year, and whether
+    the legacy per-class key disagrees with the gas-fired total — i.e. whether
+    it would have been confounded by a class migration on this pair.
+    """
+    common = sorted(set(base_ev) & set(up_ev))
+    if not common:
         return Result("P2", "merit-order sign", SKIP, "no common year")
-    b, g = base.years[year], gas_up.years[year]
-    fb, fg = _fuel_gen_mwh(b), _fuel_gen_mwh(g)
-    checks = []
+    year = common[-1]
+    b, g = base_ev[year], up_ev[year]
+    fb, fg = b["fuel_gen"], g["fuel_gen"]
+    gas_b, gas_g = _gas_fired_mwh(fb), _gas_fired_mwh(fg)
+    checks: list[tuple[str, bool]] = []
+    not_scored: list[str] = []
     if fb.get("coal", 0) > 0:
         checks.append(("coal↑", fg.get("coal", 0) >= fb.get("coal", 0) - 1e-6))
-    checks.append(("gas_cc↓", fg.get("gas_cc", 0) <= fb.get("gas_cc", 0) + 1e-6))
-    checks.append(("price↑", _load_weighted_price(g) >= _load_weighted_price(b) - 1e-6))
-    checks.append(
-        ("objective↑", g.result.objective_value >= b.result.objective_value - 1e-6)
-    )
+    checks.append(("gas↓", gas_g <= gas_b + 1e-6))
+    if b["lw_price"] is not None and g["lw_price"] is not None:
+        checks.append(("price↑", g["lw_price"] >= b["lw_price"] - 1e-6))
+    else:
+        not_scored.append("price↑")
+    if b["objective"] is not None and g["objective"] is not None:
+        checks.append(("objective↑", g["objective"] >= b["objective"] - 1e-6))
+    else:
+        not_scored.append("objective↑")
     failed = [n for n, ok in checks if not ok]
     status = PASS if not failed else FAIL
-    return Result(
-        "P2",
-        "merit-order sign",
-        status,
-        f"year {year}: "
-        + ("all signs correct" if not failed else "wrong: " + ",".join(failed)),
+
+    legacy_b, legacy_g = fb.get("gas_cc", 0.0), fg.get("gas_cc", 0.0)
+    legacy_would_fail = not (legacy_g <= legacy_b + 1e-6)
+    gas_total_rises = gas_g > gas_b + 1e-6
+    data = {
+        "year": year,
+        "gas_fired_classes": sorted(GAS_FIRED_FUELS),
+        "gas_fired_mwh": {"base": gas_b, "up": gas_g},
+        "gas_fired_by_class_mwh": {
+            f: {"base": fb.get(f, 0.0), "up": fg.get(f, 0.0)}
+            for f in sorted(GAS_FIRED_FUELS)
+        },
+        "lw_price": {"base": b["lw_price"], "up": g["lw_price"]},
+        "objective": {"base": b["objective"], "up": g["objective"]},
+        "scored": [n for n, _ in checks],
+        "not_scored": not_scored,
+        "series": {
+            "years": common,
+            "gas_fired_base_mwh": [
+                _gas_fired_mwh(base_ev[y]["fuel_gen"]) for y in common
+            ],
+            "gas_fired_up_mwh": [_gas_fired_mwh(up_ev[y]["fuel_gen"]) for y in common],
+        },
+        # The pre-D35 gating key, reported as a control and gating nothing.
+        "legacy_gas_cc_key": {
+            "base_mwh": legacy_b,
+            "up_mwh": legacy_g,
+            "would_fail": legacy_would_fail,
+            "disagrees_with_gas_fired_total": legacy_would_fail != gas_total_rises,
+        },
+    }
+    detail = f"year {year}: " + (
+        "all signs correct" if not failed else "wrong: " + ",".join(failed)
+    )
+    detail += f"; gas-fired {gas_b / 1e6:.2f}→{gas_g / 1e6:.2f} TWh"
+    if b["lw_price"] is not None and g["lw_price"] is not None:
+        detail += f", LW price {b['lw_price']:.2f}→{g['lw_price']:.2f} $/MWh"
+    if not_scored:
+        detail += f" [not scored at this grain: {','.join(not_scored)}]"
+    return Result("P2", "merit-order sign", status, detail, data=data)
+
+
+def check_p2_merit_sign(base: Run, gas_up: Run) -> Result:
+    """P2: +gas ⇒ coal gen ↑, gas-fired gen ↓, LW price ↑, objective ↑.
+
+    The gas leg is the TOTAL over ``GAS_FIRED_FUELS`` (capx-D35), scored at
+    the last common year; see :func:`check_p2_merit_sign_evidence`.
+    """
+    return check_p2_merit_sign_evidence(
+        p2_evidence_from_run(base), p2_evidence_from_run(gas_up)
     )
 
 
@@ -1011,6 +1146,30 @@ def run_paired(base_dir: Path, other_dir: Path, kind: str) -> list[Result]:
     if kind == "gas_pm5":
         return [check_p3_perturbation(base, other)]
     raise SystemExit(f"unknown --pair-kind {kind!r}")
+
+
+def run_paired_summaries(base_json: Path, other_json: Path, kind: str) -> list[Result]:
+    """Run a paired invariant from two committed ``full_horizon_summary.json``.
+
+    The artifact-only path (capx-D35): a committed FC-6 arm record carries the
+    summary + run_config, never the multi-GB cache, so a re-score from
+    committed artifacts must read the summary grain. Only ``gas_up`` (P2) is
+    scoreable here — P1 needs each arm's resolved config for the premise row
+    and P3 needs the evolution ledgers, both of which live in the cache dirs
+    (``--paired``).
+    """
+    if kind != "gas_up":
+        raise SystemExit(
+            f"--paired-summaries scores P2 (--pair-kind gas_up) only; {kind!r} "
+            "needs the cache directories (--paired)"
+        )
+    base = json.loads(Path(base_json).read_text(encoding="utf-8"))
+    other = json.loads(Path(other_json).read_text(encoding="utf-8"))
+    return [
+        check_p2_merit_sign_evidence(
+            p2_evidence_from_summary(base), p2_evidence_from_summary(other)
+        )
+    ]
 
 
 def _print_table(results: list[Result]) -> None:
@@ -1186,6 +1345,14 @@ def main(argv: list[str] | None = None) -> int:
         help="Two scenario caches for a paired invariant.",
     )
     parser.add_argument(
+        "--paired-summaries",
+        nargs=2,
+        metavar=("BASE_SUMMARY", "OTHER_SUMMARY"),
+        type=Path,
+        help="ARTIFACT mode for P2 (--pair-kind gas_up): two committed "
+        "full_horizon_summary.json files instead of cache directories.",
+    )
+    parser.add_argument(
         "--pair-kind",
         choices=["carbon", "gas_up", "gas_pm5"],
         default="carbon",
@@ -1224,8 +1391,14 @@ def main(argv: list[str] | None = None) -> int:
         results += run_single(args.run_dir)
     if args.paired:
         results += run_paired(args.paired[0], args.paired[1], args.pair_kind)
+    if args.paired_summaries:
+        results += run_paired_summaries(
+            args.paired_summaries[0], args.paired_summaries[1], args.pair_kind
+        )
     if not results:
-        parser.error("supply --run-dir, --paired and/or --sidecar-dir")
+        parser.error(
+            "supply --run-dir, --paired, --paired-summaries and/or --sidecar-dir"
+        )
 
     if args.json:
         # Rows without structured data keep their historical exact shape

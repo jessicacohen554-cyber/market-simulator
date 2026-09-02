@@ -3,8 +3,8 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "cba50e46aa70",
-    "scored_at_date": "2026-09-02T02:09:15Z",
+    "scored_at_sha": "a67364c1aa2d",
+    "scored_at_date": "2026-09-02T03:21:32Z",
     "cache_epoch": "706e7ba8e6582d42"
   },
   "tier": "t3",
@@ -14,11 +14,11 @@
     "FC-1 structural integrity (I1-I14) FAIL",
     "FC-2 adequacy & equilibrium behavior FAIL",
     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
-    "FC-4 crossover dispatch skill (T1-X) FAIL",
-    "FC-6 driver response FAIL"
+    "FC-4 crossover dispatch skill (T1-X) FAIL"
   ],
   "caveats": [
-    "FC-5 external corridor"
+    "FC-5 external corridor",
+    "FC-6 driver response"
   ],
   "notes": [],
   "categories": {
@@ -120,7 +120,7 @@
     "FC-6": {
       "label": "FC-6 driver response",
       "applicability": "required",
-      "status": "FAIL",
+      "status": "CAVEAT",
       "rows": [
         {
           "row": "battery gate rows",
@@ -136,8 +136,8 @@
         },
         {
           "row": "paired P2",
-          "status": "FAIL",
-          "detail": "P2 merit-order sign: year 2050: wrong: gas_cc\u2193",
+          "status": "PASS",
+          "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 36.53\u219235.36 TWh, LW price 79.16\u219293.95 $/MWh [not scored at this grain: objective\u2191]",
           "gating": true
         },
         {

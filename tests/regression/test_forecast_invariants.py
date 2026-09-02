@@ -22,6 +22,7 @@ real input contract.
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 
@@ -828,6 +829,202 @@ def test_p2_merit_sign():
     gu.prices[:] = b.prices + 5.0
     gu.objective_value = b.objective_value + 100.0
     assert C.check_p2_merit_sign(base, gas_up).status == C.PASS
+
+
+# --------------------------------------------------------------------------- #
+# P2 gas-leg scope (capx-D35, FINDING-capx-d35-p2-scope-2026-09-02)
+# --------------------------------------------------------------------------- #
+def test_p2_gas_scope_is_the_models_gas_partition():
+    """The checker's literal mirrors data/fuel/_shared._GAS_FUEL_IDX exactly."""
+    from market_sim.data.fleet import FUEL_TYPE_MAP
+    from market_sim.data.fuel._shared import _GAS_FUEL_IDX
+
+    name_of = {idx: name for name, idx in FUEL_TYPE_MAP.items()}
+    assert C.GAS_FIRED_FUELS == frozenset(name_of[i] for i in _GAS_FUEL_IDX)
+    assert C.GAS_FIRED_FUELS <= C.THERMAL_FUELS
+
+
+def _ev(year, fuel_gen, lw_price, objective=None):
+    return {year: {"fuel_gen": fuel_gen, "lw_price": lw_price, "objective": objective}}
+
+
+def test_p2_migration_pair_scores_the_gas_total_not_the_class_label():
+    """Base 100 % CCS-converted, arm holds unabated CC: the golden-2 shape.
+
+    Per-class gas_cc rises 0 → 23 TWh (the legacy key reads a violation) while
+    total gas-fired generation FALLS 36.5 → 35.4 TWh. The repaired leg PASSes
+    on the all-gas sign and reports the legacy key as confounded.
+    """
+    base = _ev(
+        2050,
+        {"gas_cc_ccs": 35.08e6, "gas_ct": 1.22e6, "gas_st": 0.23e6, "import": 25.6e6},
+        79.16,
+    )
+    up = _ev(
+        2050,
+        {
+            "gas_cc": 23.19e6,
+            "gas_cc_ccs": 10.83e6,
+            "gas_ct": 1.0e6,
+            "gas_st": 0.35e6,
+            "import": 25.8e6,
+        },
+        93.95,
+    )
+    r = C.check_p2_merit_sign_evidence(base, up)
+    assert r.status == C.PASS, r.detail
+    assert r.data["legacy_gas_cc_key"]["would_fail"] is True
+    assert r.data["legacy_gas_cc_key"]["disagrees_with_gas_fired_total"] is True
+    assert r.data["scored"] == ["gas↓", "price↑"]
+    assert r.data["not_scored"] == ["objective↑"]
+    assert "objective↑" in r.detail  # named as unscored, never assumed
+    assert r.data["gas_fired_mwh"]["base"] == pytest.approx(36.53e6)
+    assert r.data["gas_fired_mwh"]["up"] == pytest.approx(35.37e6)
+
+
+def test_p2_fails_when_total_gas_fired_generation_rises():
+    """A dearer-gas world generating MORE from gas is a real sign violation."""
+    base = _ev(2030, {"gas_cc": 30e6, "gas_ct": 2e6, "coal": 5e6}, 60.0, 1e9)
+    up = _ev(2030, {"gas_cc": 29e6, "gas_ct": 4e6, "coal": 6e6}, 70.0, 1.1e9)
+    r = C.check_p2_merit_sign_evidence(base, up)
+    assert r.status == C.FAIL
+    assert "wrong: gas↓" in r.detail
+    # The per-class key would have PASSED here (gas_cc fell) — the two
+    # constructions disagree in the other direction too, and the total wins.
+    assert r.data["legacy_gas_cc_key"]["would_fail"] is False
+    assert r.data["legacy_gas_cc_key"]["disagrees_with_gas_fired_total"] is True
+    assert r.data["scored"] == ["coal↑", "gas↓", "price↑", "objective↑"]
+
+
+def test_p2_same_fleet_pair_keeps_every_legacy_subcheck():
+    """No migration: coal↑ / gas↓ / price↑ / objective↑ all score, all PASS."""
+    base = _ev(2030, {"gas_cc": 30e6, "gas_ct": 2e6, "coal": 5e6}, 60.0, 1e9)
+    up = _ev(2030, {"gas_cc": 25e6, "gas_ct": 1e6, "coal": 8e6}, 70.0, 1.1e9)
+    r = C.check_p2_merit_sign_evidence(base, up)
+    assert r.status == C.PASS
+    assert r.data["scored"] == ["coal↑", "gas↓", "price↑", "objective↑"]
+    assert r.data["not_scored"] == []
+    assert r.data["legacy_gas_cc_key"]["disagrees_with_gas_fired_total"] is False
+
+
+def test_p2_scores_the_last_common_year_and_carries_the_series():
+    base = {**_ev(2026, {"gas_cc": 10e6}, 50.0), **_ev(2027, {"gas_cc": 11e6}, 51.0)}
+    up = {**_ev(2026, {"gas_cc": 9e6}, 55.0), **_ev(2028, {"gas_cc": 9e6}, 56.0)}
+    r = C.check_p2_merit_sign_evidence(base, up)
+    assert r.data["year"] == 2026 and r.data["series"]["years"] == [2026]
+    assert C.check_p2_merit_sign_evidence({}, up).status == C.SKIP
+
+
+def test_p2_summary_evidence_matches_run_evidence():
+    """A summary built from a run's own _fuel_gen_mwh scores identically (bar objective)."""
+    base = _mk_run([], years={2026: _mk_yeardata(2026, fuels=("gas_cc", "coal"))})
+    up = _mk_run([], years={2026: _mk_yeardata(2026, fuels=("gas_cc", "coal"))})
+    u, b = up.years[2026].result, base.years[2026].result
+    u.dispatch[0] = b.dispatch[0] * 0.5
+    u.dispatch[1] = b.dispatch[1] * 1.5
+    u.prices[:] = b.prices + 5.0
+
+    def summary(run):
+        return {
+            "trajectory": [
+                {
+                    "year": y,
+                    "lw_price": C._load_weighted_price(yd),
+                    "generation_by_fuel_mwh": C._fuel_gen_mwh(yd),
+                }
+                for y, yd in run.years.items()
+            ]
+        }
+
+    from_run = C.check_p2_merit_sign(base, up)
+    from_summary = C.check_p2_merit_sign_evidence(
+        C.p2_evidence_from_summary(summary(base)),
+        C.p2_evidence_from_summary(summary(up)),
+    )
+    assert from_run.status == from_summary.status == C.PASS
+    assert from_run.data["gas_fired_mwh"] == from_summary.data["gas_fired_mwh"]
+    assert from_run.data["scored"] == ["coal↑", "gas↓", "price↑", "objective↑"]
+    assert from_summary.data["scored"] == ["coal↑", "gas↓", "price↑"]
+    assert from_summary.data["not_scored"] == ["objective↑"]
+    # A pre-D29 summary (no energy block) yields no scoreable year.
+    assert (
+        C.p2_evidence_from_summary({"trajectory": [{"year": 2026, "lw_price": 1.0}]})
+        == {}
+    )
+
+
+def test_p2_summaries_cli_scores_gas_up_only(tmp_path):
+    base = tmp_path / "base.json"
+    up = tmp_path / "up.json"
+    base.write_text(
+        json.dumps(
+            {
+                "trajectory": [
+                    {
+                        "year": 2030,
+                        "lw_price": 60.0,
+                        "generation_by_fuel_mwh": {"gas_cc": 10e6},
+                    }
+                ]
+            }
+        )
+    )
+    up.write_text(
+        json.dumps(
+            {
+                "trajectory": [
+                    {
+                        "year": 2030,
+                        "lw_price": 65.0,
+                        "generation_by_fuel_mwh": {"gas_cc": 9e6},
+                    }
+                ]
+            }
+        )
+    )
+    rows = C.run_paired_summaries(base, up, "gas_up")
+    assert [r.ident for r in rows] == ["P2"] and rows[0].status == C.PASS
+    with pytest.raises(SystemExit):
+        C.run_paired_summaries(base, up, "carbon")
+
+
+_GOLDEN2_ARMS = (
+    Path(__file__).resolve().parents[2] / "results/ff-t3-neiso-golden/bau/fc6/arms"
+)
+
+
+@pytest.mark.skipif(
+    not (_GOLDEN2_ARMS / "gasup150/full_horizon_summary.json").exists(),
+    reason="golden-2 FC-6 arm summaries not checked out",
+)
+def test_p2_legacy_key_on_committed_golden2_summaries_reproduces_the_committed_row():
+    """Control: the retired per-class key, computed at summary grain, reproduces
+    the committed golden-2 P2 detail ('year 2050: wrong: gas_cc↓') exactly —
+    the summary grain IS the cache grain the committed row was scored on."""
+    b = C.p2_evidence_from_summary(
+        json.loads((_GOLDEN2_ARMS / "base/full_horizon_summary.json").read_text())
+    )
+    g = C.p2_evidence_from_summary(
+        json.loads((_GOLDEN2_ARMS / "gasup150/full_horizon_summary.json").read_text())
+    )
+    year = max(set(b) & set(g))
+    fb, fg = b[year]["fuel_gen"], g[year]["fuel_gen"]
+    assert year == 2050 and fb.get("coal", 0) == 0
+    legacy_failed = [
+        n
+        for n, ok in (
+            ("gas_cc↓", fg.get("gas_cc", 0) <= fb.get("gas_cc", 0) + 1e-6),
+            ("price↑", g[year]["lw_price"] >= b[year]["lw_price"] - 1e-6),
+        )
+        if not ok
+    ]
+    assert (
+        f"year {year}: wrong: " + ",".join(legacy_failed) == "year 2050: wrong: gas_cc↓"
+    )
+    # And the repaired row's evidence block records exactly that confound.
+    r = C.check_p2_merit_sign_evidence(b, g)
+    assert r.data["legacy_gas_cc_key"]["would_fail"] is True
+    assert r.data["legacy_gas_cc_key"]["base_mwh"] == 0.0
 
 
 def test_p3_perturbation_stability():
