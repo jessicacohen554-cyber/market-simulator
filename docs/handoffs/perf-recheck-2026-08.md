@@ -364,3 +364,65 @@ the 2026-08-17 completion note (§4); this pass re-verified each against the cod
 **Consequence for the WS3 DoD:** items 1–4 need no new code, and their wallclock
 deltas are already reported in `wallclock-baseline-2026-07.md` §PERF-B. What this
 session adds is the one lever §4 handed forward.
+
+### 5.2 The handed-forward lever — `results_write`'s `bench` sub-phase
+
+§4 handed forward "the `bench` sub-phase now dominating MISO/PJM `results_write`
+(~21–35 s/yr)" as the next lever. **It is not frame assembly, and it is not the
+EIA-923 benchmark frames.** Sub-instrumenting the phase's two disjoint segments
+(`run_calibration_full.py:5619`) attributes essentially all of it to
+`_campd_hourly_frame`, and within that to `campd.load_campd_hourly`:
+
+| Stage of `_campd_hourly_frame` (2024, cold) | PJM | MISO |
+|---|---|---|
+| `load_campd_hourly` | 38.80 s | 27.42 s |
+| `fill_heatinput_proxy` (PJM only) | 9.69 s | — |
+| `plant_hourly_net` | 2.32 s | 1.52 s |
+| frame assembly | **0.15 s** | **0.14 s** |
+| total | 50.96 s | 29.08 s |
+
+Frame assembly — the thing the (a) categorical fix was about — is already free.
+The cost is the *loader*, and cProfile puts 21.7 s of PJM's 33.7 s inside
+`_normalize_campd`. Three defects, each a low-cardinality or no-op computation
+done per row:
+
+1. **`facilityId` parsed row-by-row.** It is a ~1 M-row *string* column carrying
+   a few dozen ORIS codes; `pd.to_numeric` parsed every row (~0.95 s per
+   state-year extract), and `stack_duplicate_mask` then parsed **the same column
+   again** (another ~0.92 s). Fixed by `_to_numeric_by_uniques`: parse the
+   uniques, gather by factorize code. Value- and dtype-identical by construction
+   — the unique set carries the same values, so `to_numeric`'s int-vs-float
+   choice is the same; empty / already-numeric / low-repeat inputs fall through
+   to the direct call.
+2. **The split-facility remap ran 7 M dict lookups per PJM year to remap
+   nothing.** `CAMPD_UNIT_PLANT_REMAP` is CA-only, so every non-CA row's `.get`
+   returned its own id. Restricted to remap-eligible rows via one `np.isin`.
+3. **The closing `df[idx >= 0].reset_index(drop=True)` copied a multi-million-row
+   frame to drop Feb 29** — which does not exist in a non-leap year. `-1` is
+   emitted by `_hour_index_8760` *only* for Feb 29, so `(idx >= 0).all()` ⟺ the
+   filter drops nothing; `concat(ignore_index=True)` already left the RangeIndex
+   `reset_index` would rebuild.
+
+**Measured, best-of-3 with the arms alternating in one process** (so page-cache
+state and container noise hit both equally), PJM, `load_campd_hourly`:
+
+| Year | pre-PERF-B reference | this change | Δ | arm-vs-arm frame equality |
+|---|---|---|---|---|
+| 2023 (non-leap) | 19.43 s | **6.55 s** | **−66.3 %** | IDENTICAL |
+| 2024 (leap) | 21.04 s | **6.11 s** | **−71.0 %** | IDENTICAL |
+| 2025 (non-leap) | 14.03 s | **5.09 s** | **−63.7 %** | IDENTICAL |
+
+(Absolute values sit below the cold table above because best-of-3 runs warm; per
+§4's standing host-noise caveat the *relative* delta is the reliable signal.)
+Cold, single-shot, the whole `_campd_hourly_frame` goes PJM 50.96 → 21.18 s and
+MISO 29.08 → 16.17 s — i.e. the `bench` sub-phase roughly halves, which clears
+the ≥10 %-of-phase adoption bar on `results_write` with room to spare, while
+being ~2–4 % of an ISO-year's total wall.
+
+**Identity evidence, ahead of the byte gate.** `assert_frame_equal(
+check_exact=True, check_dtype=True)` against a verbatim reproduction of the
+pre-change `_normalize_campd`, over **every CAMPD extract on disk: 331/331
+identical**, 8 of them exercising the split-facility remap and 8 the
+stack-duplicate drop. Plus the three arm-vs-arm equalities above, which cover
+the leap fast path in both directions. `tests/curation/test_campd.py`: 43 passed,
+10 subtests.
