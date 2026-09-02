@@ -5512,3 +5512,103 @@ your branch when done.
   part, **an artifact of measuring launches with a tool that can only see
   pushes**; the honest next step is the director's standing question, and it now
   needs an instrument git cannot supply.
+
+- 2026-09-02 — **RECORDS v21 (pin `0653bf13`; dispatch pin `0a3d22c7` confirmed at
+  two-poll stability first, then re-pinned mid-session as `main` advanced through
+  #4593/#4594/#4595 in six minutes).** Board rewritten with a full refresh:
+  **K-1 … K-13**.
+
+  **(a) 🔴 THE CYCLE'S HEADLINE IS A REFUSAL: G2 LEG 2 IS NOT SATISFIED.** The
+  dispatch instructed this lane to record run **2298** (id `33587007663`) as
+  *"THE GREEN COMPLETED RUN … G2 LEG 2 SATISFIED, retiring the 'leg 2 not
+  satisfiable' correction it supersedes."* **Refused on measurement.** The run's
+  API record reads **`"conclusion": "failure"`**; of its ten jobs **seven are
+  green and three red**, and one of the three is **`Fast test tier`**. Leg 2's
+  criterion — this board's own words — is *"one completed **fast-tier-green**
+  `ci.yml` run"*. **Leg 2 stays BLOCKED and the v19b correction is RE-CONFIRMED
+  on fresher evidence, not retired.** (K-1.)
+
+  **(b) 🟢 R-U'S OWN FINDING NEVER CLAIMED THE LEG, AND SAYS SO.**
+  `docs/FINDING-ci-red-repair-2026-09.md` §6: ***"7 of 7 required checks green.
+  The run is not 'fully green' and this finding does not claim it is"***, with
+  `Fast test tier` marked **🔴 deferred (memo §3)**. **The defect is the
+  dispatch's compression of "7 of 7 *required*" into "the green run", then into a
+  satisfaction claim the working lane explicitly declined.** R-U is credited at
+  full weight: its three chartered jobs are genuinely repaired by root cause, the
+  fast tier improves **56 → 33 with ZERO regressions across 51 files**, and
+  **both R-P blockers are cleared**. (K-3.)
+
+  **(c) 🟢 J-11 VINDICATED VERBATIM.** v20 warned, before R-U ran, that
+  `Fast test tier` *"is NOT in R-U's three, and it is the job G2 leg 2 actually
+  requires — leaving it out leaves leg 2 blocked even on a fully successful
+  R-U."* **That is precisely what happened.** The scoping note turned this
+  cycle's check into a five-minute confirmation instead of a discovery, and it
+  answers the question J-11 declined to adjudicate: the fast tier was **outside**
+  R-U's scope. (K-2.)
+
+  **(d) 🟢 CAPTURE-B AND R-O VERIFY CLEAN; FULL ERCOT COVERAGE CLOSES THE
+  "7-NOT-6" LINE.** R-O's config-partition schema is present in all three
+  chartered surfaces (`capture_keeper_goldens.py` 20 refs,
+  `check_golden_manifest.py` 7, `tests/scoring/test_golden_manifest_provenance.py`
+  40) plus the ERCOT shard's `config_partition` block, and the gate resolves
+  **`ERCOT__carveout-2023` → `2026-08-25-236-swcap-clip-k33` CURRENT**. With
+  `ERCOT` → `234-eastex-identity` also CURRENT, **ERCOT is covered on both
+  designated configs**. **Stage-0 goes 3 current/3 stale → 6 CURRENT / 1 STALE**,
+  MISO the sole stale entry. (K-4, K-5.)
+
+  **(e) 🔴 SIX OF SEVEN GATES EXIT 0 — `check_registry_payload_parity.py` IS
+  EXIT 1**, on `results/calibration/miso200_control_A`. Re-derived identically at
+  **both** pins. ⚠️ **It is committed to `main`** (14 tracked files, #4591), not a
+  local artifact, and the director's *"transient class as caiso231"* reading is
+  **verified rather than asserted** — caiso231 landed unregistered too and both
+  its sidecars exist today. **Not this program's to fix**, but the gate is a
+  `pull_request` job, **so it reddens every PR while it stands, this board's
+  included.** (K-8.)
+
+  **(f) 🟢 PERF-B MOVED TWICE — v20's J-9 ("no PERF-B surface has moved") IS
+  SUPERSEDED.** `perfb-campd-ercot-after` landed **during this session** (#4595,
+  *"ERCOT byte gate PASS (§5.5) — both normalizer grains now gated"*): keeper
+  `234-eastex-identity`, full 8760 × 2023–2025, `--mode byte` check [1] **PASS**
+  (9 files, 34 numeric columns, `atol=rtol=0`), zero reshuffle in all three
+  years. **Why ERCOT: a TX extract is facility-level and carries no `unitId`, so
+  it exercises the `_normalize_campd` branch NEISO's unit-level files never
+  enter** — both grains now byte-gated. Golden-manifest moved 41/74/10 → **42/75/11**
+  between this lane's two pins. (K-9.)
+
+  **(g) 🔴 BOTH OWNER ACTIONS UNEXECUTED, OBSERVED AND NEVER PERFORMED.**
+  **R-P flip: UNEXECUTED** — PR #4592 was created 05:28:17Z and merged 05:28:23Z,
+  **6 seconds**, so no required check can be in force. **Golden-tier
+  `workflow_dispatch`: UNEXECUTED** — all 7 runs ever enumerated; the last
+  dispatch of any kind is **#4, 2026-08-15**, and the last run of any kind is
+  **#7, 2026-08-31, RED**. ⚠️ **No run at all since R-V un-parked the tier on
+  2026-09-01.** **Capture-A MISO: NOT LAUNCHED** — zero open PRs, zero open
+  issues, two remote branches total. (K-7.)
+
+  **(h) 🟢 FOUR-INSTRUMENT ALIGNMENT HOLDS AT {ERCOT, NEISO, PJM}** on all four
+  (determination CALIBRATED · `complete` · active `frontier` · forecast gate-(a)
+  pass), re-derived from committed artifacts. NYISO's frontier is **withdrawn
+  2026-08-30**. **`final` is EMPTY — no ISO has ever spent a locked-test year.**
+  Fail-closed nulls confirmed; all six gate-(a) stamps name the live keeper, so
+  the v17 stale-stamp defect stays repaired. (K-10.)
+
+  **(i) 🟠 THE MECHANISM-MATRIX ANCHOR TAX IS PAID A FIFTH TIME — AND R-U
+  PREDICTED IT ONE DAY EARLIER.** `check_mechanism_matrix.py` exits 0 but reports
+  **243 WARNs / 160 path anchors** where v20 recorded **0 WARNs / 159**. R-U §5b
+  named the mechanism in advance: *"any PR adding lines high in `scenarios.py`
+  inherits a red matrix guard until it runs `--fix-anchors` … a standing tax on a
+  heavily-crossed file."* ⚠️ **Note the collision: v20's J-12 overturned a
+  dispatch's "243 WARNs" claim as in-branch-only. This is a DIFFERENT occurrence
+  with a coincidentally equal count, and it is real and on `main`** — J-12's "0
+  WARNs" figure must not be re-quoted. Combined with finding (e) of the prior
+  entry, that is **five instances**; the director question of whether an anchor
+  should be a line number at all is now well past anecdote. **Recorded, not
+  adjudicated.** (K-6.)
+
+  **(j) 🟢 Q-4 EXECUTED: ALL 22 RULING LABELS R-A … R-V PRESENT IN BOTH THE BOARD
+  AND THIS §8.** No ruling reached this cycle unrecorded — **the v18b R-H failure
+  shape does not repeat.** The G2-declaration duty is restated on the board so it
+  is not lost: **on declaration the PM notifies the FFR desk, whose Q.2
+  supersession battery commissions at G2** — it still does not fire, and K-11 is
+  why. **G2 is NOT declarable at this pin:** leg 1 IN MOTION, **leg 2 BLOCKED**,
+  leg 3 satisfied-as-scoped, leg 4 unlocked pending the owner's Settings flip.
+  (K-11, K-12, K-13.)
