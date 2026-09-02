@@ -186,7 +186,18 @@ VERDICT_MAP = {
     # sharply from the pre-fix ones (`retire.total_gw` 12.716 -> 26.431 GW,
     # its band FAIL flipping sign from under- to OVER-retirement).
     # Determination HOLD on both, no flip.
-    "miso-2021-2025-realized-t1h-d27": "miso-t1h",
+    # capx-D31 (2026-09-02) re-measured the leg with the capacity-revenue
+    # repair (the funded PRA intake: the published RBDC shape replacing the
+    # first-order x-positions, and the 0.8546 internal-supply accounting
+    # ratio closing D28's position defect). The bare live key moves to the
+    # NEW run and D27's record keeps its OWN verdict under the preserved
+    # `-pre-d31` key (same precedent chain) — the scores differ sharply
+    # again (`retire.total_gw` 26.431 -> 4.469 GW, the band FAIL flipping
+    # sign BACK from over- to under-retirement as the corrected ledger holds
+    # the reliability floor at the requirement). Determination HOLD on both,
+    # no flip.
+    "miso-2021-2025-realized-t1h-d27": "miso-t1h-pre-d31",
+    "miso-2021-2025-realized-t1h-d31": "miso-t1h",
 }
 
 
