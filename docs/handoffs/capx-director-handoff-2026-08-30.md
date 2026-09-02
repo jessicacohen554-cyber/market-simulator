@@ -271,3 +271,22 @@ allocation defect; successor prereg frozen). In flight after amendment 1: **D31 
 reads flowing is the proxy's UPLOAD GATE, not transport death — one long-window (~9 m)
 background push attempt after a fresh rebase is the remedy that worked (ledger §0w amendment
 1, last paragraph).
+
+**r#27 DELTA (2026-09-01, main `a2e80dbf`) — append, not a rewrite. Full record: ledger §0x.**
+
+**GOLDEN-2 REGISTERED** (session still open at the refresh — its neiso-t3/FC-6 surfaces stay
+reserved): **HOLD; FC-7 PASSES (first golden ever, zero instrument-absence debt); FC-6 FAIL
+on the NEW P2 only** (P1 passes natively, −14.7 % CO₂ under a genuine +$25/t); **the storage
+divergence SURVIVES the arming** (720 MW iron-air at 2050, nothing 2026–2049, −56.2 % family
+intact, entry vanishes under gas ×1.5). **Q25 SPENT.** Four routed items → D36 (issued,
+value-stack timing) · D35 (P2 instrument scope, queued behind golden-close) · D37 (NEISO
+T1-H at armed posture, queued behind D33 + golden-close) · a D33 cross-read. **D34 + D20
+LANDED** (guard in, R4 closed; seven legacy legs FC-7 FAIL→CAVEAT, determinations
+unchanged). **T16 (audit/plan-§2 track) DELETED `renewable_buildout_pace` under rule 26**,
+T1.6 out of service → **Q27 RULED: re-point to `entry_rate_limits`**; execution **T16-A is
+HELD-DISPATCH until the golden session closes** (pack §T16-A; the REC-dual-at-ACP-ceiling
+honesty clause binds). NYISO landed FOUR kills on the gain object (169/170/171/172);
+miso-198 mid-flight (reversed prereg, bit-identical control); caiso-232/233 landed; audit
+v19/v19b recorded R-J..R-R (R-M applied by-sha after a key migration). **SILENT, not lost:
+D31 (waiting on the Q24 PRA/RBDC files — nudge the owner), D33, D30.** In flight: GOLDEN-2
+session · miso-198 · D31 · D33 · D30 · D36. Owner-tier open: NONE — Q20–Q27 all spent.
