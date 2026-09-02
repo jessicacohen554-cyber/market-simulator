@@ -10445,3 +10445,136 @@ base file and to **all six** ISO shards (rule 28 duty c), NYISO at **R**
 thermal-tranche artifact), the other four **U** (rule 28(d) — no verdict crosses
 an ISO boundary).
 
+
+## 2026-09-02 — nyiso-177: the accurate CAMPD attribution is EXONERATED — nyiso-176's degradation is 100 % the AVAILABILITY basis the same gate imports alongside it, and the merit-order-guarded companion reproduces the keeper's envelope `np.array_equal`; still not promotable, and the real object (a 0.50–0.56 over-booked ST_GAS envelope, IN THE KEEPER) is sized for the first time
+
+**Two solves, both registered, NEITHER PROMOTED.** Keeper unchanged:
+`2026-08-30-nyiso-159-loss-surface`, determination **NOT-YET** on
+{C3a-2025 −11.5 %, C3c}. Full record:
+`docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md`; gates
+`results/calibration/PREREG-nyiso177-degradation-root-cause.md`, committed
+(`966da189`) **before any measurement** and amended (`499430f4`) **before any
+solve**, with no score of any kind consulted in the amendment.
+
+**THE OBJECT, ANSWERED.** nyiso-176 armed `campd_per_unit_attribution` — the
+accurate per-unit attribution — the backcast got worse, and rule 14
+`[R-ACCURATE]` handed the degradation forward as a discovered bug. **The
+accurate input is not the bug.** That gate is ONE field over TWO artifacts, and
+arming it imports the attribution repair **together with an unguarded HEAD
+re-derivation of the availability envelope**. Separating them convicts the
+second of **all** of it.
+
+**THE MEASUREMENT (phase 0, zero solve).** `(2500, ST_GAS)` Ravenswood,
+1,724.8 MW, falls from **0.772 → 0.129** mean availability in 2023 — about
+**9.7 TWh of capacity-hours removed** against an ISO-wide `ST_GAS` fall of
+−5.28 TWh — with Port Jefferson 0.925→0.289, Arthur Kill 0.855→0.360 and five
+plants going 1.000 → 0.008–0.54. **nyiso-176's "unexplained year signature" is
+explained and closed**: the absolute monthly price delta is $4.14 / $2.51 /
+$2.95 on base levels of $31.73 / $36.27 / $55.81 (a denominator, not a
+mechanism), and the residual heterogeneity is the keeper's own Ravenswood
+availability path 0.772 / 0.465 / 0.297.
+
+**G1 PASSES — a rule-19 `[R-ONE-MECH]` stack, repaired.**
+`outages._FLEET_GROUP_OVERRIDE = {2500: "ST_GAS"}` enumerates per plant the very
+defect the general crosswalk repairs, and under the arm it still fires on the
+repaired rows: it pins `(2500, CC_REGULAR)` at availability **1.000** in every
+year where the repaired routing measures **0.823 / 0.918 / 0.923**, while
+`(2500, ST_GAS)` moves by at most 0.012. Disarmed on the per-unit path and
+**only** there — on the incumbent extract it is load-bearing (without it
+`(2500, ST_GAS)` reads 1.000 and the whole plant's downtime lands on a 222.2 MW
+CC bin). Rule 24 `[R-REGISTRY]` names hardcoded per-plant dicts in `data/`
+explicitly; this removes one on the repaired path.
+
+**G2 FIRES, ON THE KEEPER TOO — and this is the session's largest result.** The
+NYISO `ST_GAS` overlay books **0.536 / 0.560 / 0.501** of the bin-capacity-year
+as mechanical outage **in the keeper** (0.794 / 0.742 / 0.688 under the
+unguarded arm), against a documented EFOR+planned norm of **0.10–0.15**. The
+model still runs the remaining capacity at ~3× the fleet's measured annual CF.
+**The overlay is carrying economic idling the offer curves should be
+producing.** Nothing here repairs it; it is sized and handed forward.
+
+**G3 IS RECORDED FAILED, on both legs, and the consequence is honoured.** Leg
+(a) asked for "strictly between" and the guarded extract lands **ON** the
+keeper's value to 16 significant figures. Leg (b)'s 0.40 threshold **measures a
+pre-existing keeper property**, so no guarded construction could have passed it
+— a defect in the gate's own construction, disclosed in the amendment. **The
+merit-order guard is NOT armed as a repair of the availability envelope and no
+such claim is made.**
+
+**THE BRIEF'S OWN ITEM-(1) INSTRUMENT IS REFUTED, for zero solves.** A
+`--no-fullstop-override` companion was derived and measured: its availability
+envelope sits **FURTHER** from the keeper's (nameplate-weighted L1 **0.1055**)
+than the unguarded arm's (**0.0943**), moving 41 bins by >0.02 in 2023 in both
+directions. The `--merit-order-guard` companion sits at **0.0006** and is
+`np.array_equal` to the keeper on `(2500, ST_GAS)` in all three years. **The
+confound is ECONOMIC LAY-UP, not the full-stop override.** G3′ (metric and both
+thresholds fixed before any solve) qualifies the guarded companion and
+disqualifies the other two.
+
+**THE A/B — a 2 × 2, every cell a single delta from a neighbour.** Control = the
+committed keeper (bit-identical at HEAD per nyiso-176 §8a.1; no control leg
+solved).
+`2026-09-02-nyiso-177-destack-unguarded` (`nyiso177_destack_B1`) reproduces
+nyiso-176's arm at the criterion level **exactly** — grade 3, fails 4, price
+38.01 / 40.49 / 62.00 against the arm's 37.86 / 40.42 / 61.96. **Repair 1 is not
+LP-inert** (37,557 of 52,560 hourly zonal prices move in 2023, max $7.84) but it
+moves **no criterion**. `2026-09-02-nyiso-177-vintage-matched`
+(`nyiso177_vintage_B1p`) adds the guard: **grade 4, fails 3**, load-bearing
+**C3b RETURNS TO PASS**, price returns to the keeper's (32.97 / 37.79 / 58.99 vs
+33.01 / 37.66 / 58.81; actual RT 32.25 / 38.12 / 66.43), C2 / C4 / C8 PASS
+throughout.
+
+**GATE R6 / K5 IS SILENT, and that is the point.** B1′'s C3a-2025 is **−11.2 %**
+against the keeper's −11.5 %. The representation repair's ~ZERO C3a expectation
+— carried verbatim from nyiso-175b K5 through nyiso-176 R6 — **is confirmed by
+the one leg that could test it cleanly**. Against the keeper B1′ moves ~80 % of
+hourly zonal prices at a mean |Δ| of only $0.23 / $0.27 / $0.27: a real
+redistribution at an unchanged level.
+
+**NEITHER IS PROMOTED, and the reason is stated rather than deferred.** B1′
+fails the promotion bar's leg (a) — it is three objects (attribution + repair 1
++ guard), not one — and it is **strictly worse than the keeper** (grade 4 vs 6,
+fails 3 vs 2) on one load-bearing cell: **C1 2023 `ST_GAS` +3.86 TWh against the
+keeper's +3.33**, marginally outside a band the keeper sits marginally inside.
+Its mechanism IS stated: the repaired attribution measures a **higher committed
+share** on Northport (10.7→15.3), Bowline Point (16.5→20.1), Danskammer
+(9.9→17.8) and Astoria (`online_hours` 11,405→17,027), outweighing Ravenswood's
+10.7→6.5 — the incumbent artifact diluted each plant's conduct across a
+facility-summed denominator including its non-steam units. Under rule 14 that
+measured change **stays**; under rule 1 the promotion is an owner call, not this
+session's, and it is put forward as a candidate rather than taken.
+
+**BUILT.** `ScenarioConfig.campd_outage_merit_order_guard` (GATED default off,
+registered in `_CACHE_KEY_OPTIONAL_FIELDS` + the default-string registry in the
+same commit, reaching `run_config.json`), selecting the `-perunitmerit-` pair
+through the new `campd_attribution_selectors` accessor, which returns the
+`(per_unit, merit_guard)` PAIR so no call site can take one without the other
+(rule 19 — a tranche row's statistics sit on an outage-derated denominator).
+`derive_thermal_tranches --merit-order-guard`. **Zero free parameters**:
+`MERIT_OOM_FRAC` / `MERIT_RCC_PCTL` / `FULL_STOP_OVERRIDE_*` untouched at their
+committed values (stop condition S1). CI contract extended by 12 tests pinning
+the same five properties the per-unit gate has, plus repair 1's two-sided
+scoping.
+
+**LINES CLOSED.** (x) the nyiso-176 attribution rejection, **corrected on its
+facts** — the cell moves R → O and the repair is exonerated; (y) the
+"unexplained year signature", explained as a denominator plus the keeper's own
+Ravenswood availability path; (z) `--no-fullstop-override` as a confound-removal
+instrument, refuted at artifact level with a stated metric.
+
+**HANDED FORWARD, none scoped here.** (1) **The over-booking** — 0.50–0.56 of
+the `ST_GAS` capacity-year booked as outage in the keeper against a 0.10–0.15
+norm, with the model running the remainder at ~3× measured CF: an **offer-side**
+object, not an availability-side one. (2) **The missing rung, one solve**: a leg
+arming the guard **alone** on incumbent routing would make it a true single
+adjudicated object and satisfy promotion-bar leg (a); that companion does not
+exist yet and deriving it is unrestricted data prep. (3) **C1 2023 `ST_GAS` is
+now a named, sized, single object** — the keeper passes that criterion by ~0.5
+TWh of margin the attribution defect was supplying. (4) The four `U` cells
+transfer without a solve. (5) `mustrun_layup_window_mask` now has a matched
+companion the resolver cannot yet reach.
+
+**Rule 22 `[R-HOLDOUT]`**: every solved, scored and registered year is
+2023 / 2024 / 2025. Deriving multi-year inputs is data prep, which the rule does
+not gate. NYISO's `complete` marker was **not** requested; NYISO remains absent
+from both markers and the holdout spend freeze is untouched.
