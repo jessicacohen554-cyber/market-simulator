@@ -3322,3 +3322,111 @@ direction only), and the standing rule restated: a reconstruction can reach CAVE
 PASS — so the only route to a clean FC-7 on those legs is a genuine re-run, which is a
 charter decision, not this lane's.
 ```
+
+## D36 — the storage value-stack timing decomposition (r#27; GOLDEN-2 routed item 1, the D25 §6.3 route)
+
+```
+You are the D36 session of the capacity-expansion track. GOLDEN-2 answered the armed-posture
+question: the R-A-armed storage-entry economics produce 720 MW of 100-h iron-air in 2050 and
+NOTHING in 2026–2049, so the corridor's largest cross-ISO divergence family (zero storage at
+the 2030/35/40 anchors, −56.2 % at NEISO; −56..−96 % across four ISOs) SURVIVES the arming —
+entry is late, single-tech, cap-bound (0.6 × 1,200 MW), and vanishes under gas ×1.5. Your
+question, the D25 §6.3 route now backed by an armed measurement: WHY does the value stack
+clear nothing for 24 years — which term is short, by how much, in which years?
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (mechanism decomposition on the entry screen; routing consequences).
+BRANCH: claude/capx-d36-storage-valuestack — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-t3-golden2-2026-09-01.md §§5–8 (the measured record —
+the 2050 iron-air event, the gas×1.5 sensitivity, the routed question as the lane that
+measured it posed it) · spec §5.5 + CLAUDE.md "Storage entry" (the value stack: arbitrage
+net of cycling degradation PLUS RA capacity value where MARKET_DESIGN pays;
+STORAGE_TECH_BUILD_SHARE_CAP; the cost-decline inputs) · the storage-entry code the golden
+exercised (model/capacity evolution, the entry screen's storage branch) ·
+docs/handoffs/FINDING-capx-d28-longposition-capacity-revenue-2026-09-01.md (NEISO's RA/FCA
+revenue at long positions pays ~$0 — if the RA leg of the storage stack is priced off the
+same curve at the same positions, SAY SO: that would make D36 and the D33/D28 position
+object one mechanism, not two).
+
+PHASE-0 SCOPE — DECOMPOSE, DO NOT REPAIR: from the registered golden-2 bundle (zero new
+solves), reconstruct the entry screen's storage arithmetic year-by-year 2026–2050: (1) the
+arbitrage leg (what spread the dispatch actually offered each year, net of degradation);
+(2) the RA capacity-value leg (what the NEISO curve paid at the model's position each year —
+tie to D28's measured $0-at-long-positions if that is what it is); (3) the cost side (the
+per-tech decline curves, which tech becomes cheapest when, why iron-air and why 2050);
+(4) the caps and gates (which of STORAGE_TECH_BUILD_SHARE_CAP / availability gates /
+normalized-rank actually bound). Name the SHORT term per year and its magnitude. Then state
+what a repair would be identified FROM (a published RA accreditation rule, an FCA clearing
+record, a cost-curve source — never the corridor row), per rule 13's forward test.
+
+DISCIPLINE: AEO's 1.76 GW by 2030 is CONTEXT, NEVER A TARGET (rule 13; D25's line). If the
+decomposition says the model's stack is faithful and the market's early build is driven by
+something the model deliberately excludes (state policy procurement, out-of-market
+contracts), then the honest answer is a DISPOSITION, not a repair — write it that way and
+route the disposition to the corridor table instead.
+
+GUARDRAILS: zero solves; docs only; no mechanism, no ScenarioConfig field, no matrix cell
+(rule 28 fires only in a repair lane). No keeper/board/verdict/marker edit; do NOT touch
+neiso-t3 or any FC row — the golden session may still be open. Rule 27 on any ≥300-line
+push. No new workflow.
+
+COLLISION: the GOLDEN-2 session may still be open — you READ its registered bundle and write
+docs only; if the bundle moves under you, cite the version you read by commit. D33 (NEISO
+position) is in flight and adjacent on the RA leg — cite, don't duplicate: your job is the
+STACK decomposition, its job is the POSITION accounting.
+
+EXIT: docs/handoffs/FINDING-capx-d36-storage-valuestack-<date>.md — the year-by-year
+short-term table, the binding-gate census, the one-mechanism-or-two answer on the D28/D33
+RA-leg question, and either the identified repair route (with its published source) or the
+disposition recommendation. NO repair lands in this lane.
+```
+
+## T16-A — the T1.6 re-point execution (r#27; owner ruling Q27; **HELD-DISPATCH: paste only after the GOLDEN-2 session closes**)
+
+```
+You are the T16-A session of the capacity-expansion track — the EXECUTION of owner ruling
+Q27 (capx ledger §3, 2026-09-01): T1.6 re-points to `entry_rate_limits`. The T16 lane
+deleted `renewable_buildout_pace` under rule 26 (consumed by no model code), marked T1.6 out
+of service, and pre-registered everything you need; your discretion is spent.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Opus (execution of a ruled re-point under a pre-registered honesty clause).
+BRANCH: claude/capx-t16a-ladder-repoint — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-t16-driver-2026-09-01.md IN FULL (the adjudication,
+the recommended lever's cited basis, the two rejected alternatives, the ~12-min pricing, and
+THE PRE-REGISTERED CLAUSE) · the FC-6 ladder machinery (scripts/run_driver_battery.py, the
+Tier-1 rung construction) · plan §2's Tier-1 table (T1.6's cell names an ECONOMIC CONDITION,
+not a config field — your first deliverable is to verify and STATE whether pointing the
+rungs at `entry_rate_limits` is a re-point WITHIN the existing pre-registration or an
+AMENDMENT to it; if amendment, say so in the finding and record it as one — never silently).
+
+THE WORK: (1) wire T1.6's two rungs to `entry_rate_limits` (True = short, False = long) at
+the golden-2 vintage; (2) run the 2 rungs (~12 min priced — state actuals); (3) artifact-only
+FC-6 re-score of neiso-t3 (control-first: reproduce the committed FC-6 record byte-for-byte
+before re-scoring; the battery leg moves SKIP/out-of-service → scored). NO golden re-solve.
+STOP if anything beyond neiso-t3's FC-6 rows would move.
+
+THE HONESTY CLAUSE, verbatim from T16 and binding: the REC dual sits pinned at the $50 ACP
+ceiling in every year of both D21 rungs with 33.0 GW of VRE built — a correctly-wired lever
+may still not move it. **If it does not move, that is a REAL RPS/ACP finding — the dual
+escaping to its cap — reported as the outcome. NEVER a third lever tried until one moves.**
+Either rung outcome is a valid result.
+
+GUARDRAILS: rule 28 — `entry_rate_limits` already exists and no default moves; you add no
+field; the T1.6 matrix/ladder records are updated to the re-pointed lever with the Q27
+citation. Rules 22/27 as usual. No keeper/shard/marker; nothing in the backcast namespace.
+
+COLLISION: this prompt is HELD until the GOLDEN-2 session closes because you write
+neiso-t3's FC-6 rows — if you are reading this as a running session, the director has
+confirmed it closed; still rebase before every push. D36 reads the golden bundle and writes
+docs only — no shared writes. D35 (P2 scope) is QUEUED and not running — if you find it
+running, STOP and report.
+
+EXIT: the re-pointed rungs + their results + the re-scored FC-6 +
+docs/handoffs/FINDING-capx-t16a-ladder-repoint-<date>.md stating: re-point-vs-amendment (the
+plan §2 verification), both rung outcomes at full magnitude, whether the REC dual moved (and
+the RPS/ACP finding if not), and the FC-6 battery-leg status after (scored, or CAVEAT with
+the named reason).
+```

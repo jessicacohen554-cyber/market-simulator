@@ -6,11 +6,82 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-01 (refresh #26) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-01 (refresh #27) ·
+**r#27 (HEAD `a2e80dbf`):** GOLDEN-2 REGISTERED — verdict HOLD, **FC-7 PASSES (first on any golden)**, FC-6 FAIL on the NEW P2 only, storage entry survives arming as a −56.2 % divergence (720 MW iron-air, 2050 only); Q25 SPENT · D34 + D20 LANDED · T1.6 deleted under rule 26 and **Q27 re-points it to `entry_rate_limits`** · D36 issued; T16-A held for golden-close; D35/D37 named-queued (§0x) ·
+*(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (base r#21 prompt + r#22 delta + r#24 amendment + **r#25 delta**; the ledger wins where they diverge)
 
 ---
+
+## 0x. Refresh #27 (2026-09-01, main HEAD `a2e80dbf`) — GOLDEN-2 REGISTERS (HOLD; the first golden with a passing FC-7 and zero instrument-absence debt); the storage divergence SURVIVES the arming; T1.6 is deleted under rule 26 and Q27 re-points it; the NYISO lane lands four disciplined kills
+
+**1. GRADED (81 commits since `a40cfc68`; grade-by-content):**
+
+- **T3-NEISO-GOLDEN-2 REGISTERED** (PRs #4532/#4543/#4546/#4548; the owner reports the
+  session STILL OPEN at this refresh — the lane stays open for further landings and its
+  neiso-t3/FC-6 surfaces stay reserved, but the registration + finding §8 exit state are
+  complete on main). **Verdict HOLD. FC-7 PASSES — the first golden in program history
+  scored end-to-end with zero instrument-absence debt and a passing FC-7.** Solved 25/25 in
+  35.1 min / 3.48 GB (inside budget), pre-declaration first, preserve-then-overwrite
+  complete, DOF ledger 7/0, FC-5 re-dispositioned (54 rows, 0 UNEXPLAINED). **The
+  campaign's object is answered: the armed storage-entry economics produce 720 MW of 100-h
+  iron-air in 2050 and NOTHING in 2026–2049** — the corridor's largest divergence family
+  (−56.2 % at the 2030/35/40 anchors) SURVIVES the arming; entry is late, single-tech,
+  cap-bound, and vanishes under gas ×1.5. FC-6 at its own vintage: **P1 PASSES natively**
+  (cum CO₂ 229.82 → 196.00 Mt, −14.7 % under a genuine +$25/t — the D26 construction at its
+  second use) and **P2 FAILs as a NEW root-caused instrument-scope object**: the
+  unabated-`gas_cc` leg crosses the CCS class migration (base holds ZERO unabated CC at 2050;
+  gas ×1.5 stalls retrofits and builds MORE late CC — all-gas sign correct, row FAIL, left
+  standing as scored). **Q25 IS SPENT** (this campaign only, executed once). Four routed
+  items: (1) the storage value-stack timing question → **D36, issued**; (2) the P2
+  instrument-scope repair → **D35, named-queued** (its surfaces are the open session's);
+  (3) read D33's position finding against the §6.2 capacity-revenue delta decomposition when
+  it lands; (4) FC-3's evidence vintage (no post-R-A NEISO T1-H) → **D37, named-queued**.
+- **D34 LANDED** (PRs #4534/#4537): the below-base carbon_price guard + A/B regression
+  evidence. Q26 executed; R4 closed.
+- **D20 LANDED** (PR #4536): the seven legacy legs labeled and re-emitted **FC-7
+  FAIL → CAVEAT, determinations unchanged**, control-first held. The §0s.5 decision is
+  executed; a reconstruction can reach CAVEAT, never PASS.
+- **T16 LANDED (not this desk's dispatch — the audit/plan-§2 track):**
+  `renewable_buildout_pace` **DELETED under rule 26** (consumed by no model code — the D21
+  "vacuous" caveat made structural), T1.6 marked OUT OF SERVICE, cache-key and full-suite
+  controls taken against unmodified main, and the replacement-lever decision routed to the
+  owner — taken this sitting as **Q27**. The lane also stated its D26-S interaction
+  explicitly rather than leaning on a STOP rule — the collision-hygiene bar lanes should
+  copy.
+- **Owner backcast track:** the NYISO lane landed **FOUR disciplined kills on the gain
+  object** — nyiso-169 (the zonal-gradient half is carried by NO binding constraint; 169b:
+  the CC_CHP over-run is a FLOOR, not the duct-burner band), nyiso-170+b/c/d (the
+  within-gas merit-order split is NOT an hourly displacement — layered pre-registered
+  adversarial controls), nyiso-171 (the CC_CHP steam-host floor fails its own stop condition
+  three independent ways), nyiso-172 (the ST_GAS deficit is a RESPONSE deficit, not a
+  dropout — object relocated). The candidate space narrows honestly. **miso-198 MID-FLIGHT**
+  (ST_GAS out-of-merit level A/B: prereg REVERSED the inherited direction, scorer committed
+  before results, control leg BIT-IDENTICAL, arm solved — not yet registered). **caiso-232**
+  split CAISO's C3a into level + shape (two defects); **caiso-233** derived the import spot
+  depths and REFUSED the depth limb (both pre-registered gates FAIL, no solve). **Audit
+  v19/v19b:** rulings R-J..R-R recorded; R-M applied by-sha after its target migrated keys;
+  the dispatch-vs-launch check caught three non-launches in one sitting.
+- **SILENT, not graded lost (relaunch protocol):** **D31** (most likely waiting on the Q24
+  files — OWNER NUDGE: the three PRA postings + RBDC source unblock the primary lever) ·
+  **D33** · **D30** (confirmed undispatched at r#26). All three prompts stand in the pack.
+
+**2. RULING Q27 (§3):** T1.6 re-points to **`entry_rate_limits`** at the T16
+recommendation. Execution = **T16-A** (Opus; ~12 min for 2 rungs + artifact-only re-score,
+no golden re-solve), **HELD until the golden session closes** — it writes neiso-t3's FC-6
+rows. The pre-registered honesty clause travels with it: the REC dual is pinned at the $50
+ACP ceiling in both D21 rungs, so the lever may still not move it — that outcome is a real
+RPS/ACP finding, reported, never a third lever tried.
+
+**3. DISPATCH:** **D36 issued** (the storage value-stack timing decomposition — why the
+armed economics clear nothing before 2050 against AEO's 1.76 GW by 2030; Fable, zero-solve,
+docs-only, reads the registered golden-2 bundle — no collision with the open session).
+**Held-dispatch: T16-A** (paste after golden-close). **Named-queued: D35** (P2
+instrument-scope repair — same family as D23's P1 attribution; FC-6 checker + neiso-t3
+surfaces) · **D37** (NEISO T1-H at the armed posture, the D4-M pattern — behind D33 and
+golden-close). **In flight after r#27:** GOLDEN-2 session (open) · miso-198 (owner's) ·
+D31 (awaiting Q24 files) · D33 · D30 (undispatched) · D36.
 
 ## 0w. Refresh #26 (2026-09-01, main HEAD `8462da22`) — the nine-writer wave lands 7-of-9 (two clean checkpoints, zero losses); D17's 14.7 GW is VINDICATED AS ARITHMETIC AND REFUTED AS A REMEDY (coal ate all of it — the floor-retention key owns exit composition); D28 decomposes the $0-curve object into a POSITION defect plus a clearing-half question; CAISO promotes; a card-duplication defect recorded against interest
 
@@ -2098,7 +2169,7 @@ the gap.
 | **D17 / D17-R MISO NON-COAL EXIT CHANNEL** | Why the economic screen executes ZERO gas_ct/gas_cc/oil exits vs 3.458 GW actual — Phase 0, zero-solve, precommit-first | **LANDED on relaunch** PRs #4487/#4494 — outcome **(B) requirement/cap-side**, thread (iii) CONFIRMED-PRIMARY: gas/oil fail the bar en masse then hit the admission cap (`entry_capped` 93.0 GW 2023 / 105.5 GW 2024); the corrected S-123 basis is worth **≈14.7 GW of headroom, 3.7–4.3× the whole missing-exit target**, and **the repair is ALREADY SHIPPED at HEAD** — routed PRIMARY is a HEAD re-measure (→ D27). Contributing cause with the OPPOSITE sign to the charter's thread (i): the bar under-rewards ~118.5 of 142.6 GW of thermal because capacity revenue pays **$0 at every long position** (→ D28) | `claude/capx-d17-miso-exit-channel` | Fable | D3's routed PRIMARY. Standing refusal: no FOM/threshold/lag identified from the retirement residual. |
 | **D18 INVARIANT DECLARATION LEDGER** | Declare the 13 undeclared invariant FAILs; correct the misattributing `dominant_open_causes.I3`; make the standing-red CI job green | **LANDED** PR #4479 — census re-derived by running the checker at HEAD, matched exactly (13 runs / 15 idents); **14 of 15 cite a real record and CAISO's 2021 I7 is declared HONESTLY UNTRACKED** rather than fabricated; I3 cause line de-ERCOT'd (a duplicate session, PR #4480, carried no unique content) | `claude/capx-d18-invariant-ledger` | **Opus** | D4-I3's routed R-6. Census re-derived independently by the director. |
 | **D19 BOARD RECONCILE 2** | The six stale cross-ISO board facts | **LANDED** PR #4492 — records only, **zero gate-leg status moves by the lane**, byte-identity asserted programmatically; absorbed a mid-session collision correctly by keeping the audit programme's own gate-(a) ERCOT flip (owner ruling R-I) VERBATIM and reconciling its remainder rather than re-deciding it | `claude/capx-d19-board-reconcile-2` | Fable | §0s.5. Reconcile to a settled board, not one being written under it (D13 precedent). |
-| **D20 RECONSTRUCTED RUN_CONFIG PROVENANCE** | Scorer recognises `provenance: "reconstruction"` and scores it **CAVEAT, never PASS** on the seven legacy legs; control-first on all seven committed records | **RELEASED + ISSUED r#26 (amendment 1)** — the hold (scorer surface under active re-scoring lanes) dissolved when D26 and D27 both landed | `claude/capx-d20-reconstruction-provenance` | **Opus** | Adoption-as-original REFUSED (§0s.5): it would assert provenance the artifacts lack. STOP if anything beyond the seven keys' FC-7 rows moves. |
+| **D20 RECONSTRUCTED RUN_CONFIG PROVENANCE** | Scorer recognises `provenance: "reconstruction"`, CAVEAT never PASS, on the seven legacy legs | **LANDED** PR #4536 — seven legs re-emitted **FC-7 FAIL → CAVEAT, determinations unchanged**, control-first held | `claude/capx-d20-reconstruction-provenance-7amx23` | **Opus** | §0x.1. §0s.5 executed; the only route past CAVEAT on those legs is a genuine re-run, a charter decision. |
 | **D26 FC-6 P1 ARM CONSTRUCTION** | Repair the paired-arm construction so P1 measures the model rather than its own premise; re-score `neiso-t3` FC-6 under the cross-lane re-grade rule | **LANDED IN FULL** PRs #4520 + #4522 — `carbon_price_delta` in (default-0 no-op proven, rule 28 discharged), base-arm control reproduced the golden EXACTLY, then the lane's own session ran the arms: **P1 FAIL → PASS on the repaired arm; neiso-t3 FC-6 FAIL → CAVEAT; HOLD unchanged.** The D21 FAIL did not survive the instrument repair — the carbon alarm is closed at every layer | `claude/capx-d26-p1-carbon-arm-t641px` | Fable | §0w.1 + amendment 1. The r#20/21 lesson executed right: graded checkpoint, not lost; finished on its own. |
 | **D26-S FC-6 ARM SOLVES + RE-SCORE** | Execute the D26 finding's committed runbook | **RETIRED UNRUN** — D26's own session completed the owed half (PR #4522) before D26-S was dispatched | `claude/capx-d26s-arm-solves` | **Opus** | §0w amendment 1. Pack section annotated retired; nothing double-run. |
 | **D27 MISO T1-H HEAD RE-MEASURE** | D17-R's routed PRIMARY: re-solve the MISO T1-H leg at HEAD, where the S-123 requirement repair is already shipped, against D17's quantified ≈14.7 GW expectation | **LANDED** PRs #4512/#4519 — **arithmetic VINDICATED to the decimal, remedy REFUTED: coal ate all of it** (exits 11.9→25.6 GW 100 % coal, +106.3 % vs actual; non-coal still 0.000 GW); G3 sign flips −27.7 %→+52.2 %, false_retire PASS→FAIL; the SELECTOR is `_apply_reliability_floor`'s cheapest-firm-per-MW retention key; `miso-t1h` re-registered preserve-then-overwrite, FC-7 FAIL→CAVEAT | `claude/capx-d27-miso-t1h-remeasure-9z817j` | **Opus** | §0w.1. Routes: R2 → D31 (primary lever), R5 → D32 (queued). Pre-declaration graded at full magnitude, misses included. |
@@ -2106,8 +2177,12 @@ the gap.
 | **D31 MISO CAPACITY-REVENUE REPAIR** | D27-R2/D28-R1 executed: the position audit (PRA offered-and-cleared by category vs the model's accredited position) + the measured RBDC shape, both from published sources (Q24-funded intake); measured on the T1-H leg against D27's fresh baseline | **ISSUED r#26** | `claude/capx-d31-miso-caprev-repair` | Fable | The PRIMARY lever on the MISO exit object. Rule 14: revenue moves UP, the residual moves the WRONG way — sized only by published data, never the residual. |
 | **D32 FLOOR-RETENTION COMPOSITION MONOPOLY** | D27's R5: `_floor_retention_merit` buys adequacy cheapest-per-firm-MW, making exit composition a pure FOM ranking whenever the floor binds — vs a real cohort that is emphatically not FOM-rank-ordered | **QUEUED (named, uncharted)** behind D31 — same MISO evolution machinery, hard collision | — | Fable | Rule 21 forbids a tuned retention weight; the question is structural, with an external observable. |
 | **D33 NEISO POSITION LANE** | D28's R2: the NEISO accreditation basis + cleared-vs-qualified question (RC-R §10.4(2) executed) — why the model's position sits +21/+6/+7 pts past the FCA zero-cross in its $0 years | **ISSUED r#26** | `claude/capx-d33-neiso-position` | Fable | In-repo record only (no intake funded). Q25 decided the golden runs WITHOUT waiting on this lane; its result informs interpretation, cited on landing. |
-| **T3-NEISO-GOLDEN-2 (second §2.1b campaign)** | Owner ruling Q25: NEISO BAU 2026–2050 at HEAD with the R-A-armed storage posture, its own FC-6 battery at its own vintage (`carbon_price_delta` construction), full-rubric scoring, preserve-then-overwrite over the pre-R-A golden | **ISSUED r#26 (amendment 1)** | `claude/capx-t3-golden-2` | **Fable** | The storage-entry answer is the object; EITHER outcome is valid — zero entry under armed economics would be a major finding, routed not "fixed". Q13's this-campaign-only scope carries over. |
-| **D34 CARBON_PRICE BELOW-BASE GUARD** | Owner ruling Q26: `carbon_price` keeps replace semantics; a loud forecast-mode validation warning fires when it sits below the resolved base trajectory in any year, pointing at `carbon_price_delta` | **ISSUED r#26 (amendment 1)** | `claude/capx-d34-carbonprice-guard` | **Opus** | R4 CLOSED by Q26. Warning observes, never alters (byte-unchanged resolver outputs, tested). Rule 28 not triggered. |
+| **T3-NEISO-GOLDEN-2 (second §2.1b campaign)** | Owner ruling Q25: NEISO BAU 2026–2050 at HEAD with the R-A-armed storage posture, its own FC-6 battery at its own vintage, full-rubric scoring, preserve-then-overwrite | **REGISTERED** PRs #4532/#4543/#4546/#4548 (session still open at r#27 — surfaces reserved) — **HOLD; FC-7 PASSES (first golden ever); FC-6 FAIL on the NEW P2 only (P1 PASSES natively, −14.7 % CO₂ under +$25/t)**; storage: 720 MW iron-air at 2050, NOTHING 2026–2049 — the −56.2 % divergence family SURVIVES arming; 35.1 min/3.48 GB, DOF 7/0, FC-5 re-dispositioned 54/0. **Q25 SPENT** | `claude/capx-t3-golden-2-tm9eiy` | **Fable** | §0x.1. Four routed items → D36 (issued) · D35/D37 (queued) · a D33 cross-read. |
+| **D35 P2 INSTRUMENT SCOPE** | GOLDEN-2 §7.1: the unabated-`gas_cc` FC-6 leg crosses the CCS class migration on 25-year pairs — all-gas sign correct, row FAILs; same family as D23's P1 attribution | **NAMED-QUEUED r#27** — surfaces (FC-6 checker + neiso-t3 rows) are the open golden session's | — | Fable | The FAIL stands as scored until chartered; repair is instrument-side by precedent, but that is D35's to establish, not assume. |
+| **D36 STORAGE VALUE-STACK TIMING** | GOLDEN-2 routed item 1 (the D25 §6.3 route, now with an armed-posture measurement): why the armed economics clear NOTHING before 2050 — decompose the value stack per year vs the cost curve | **ISSUED r#27** | `claude/capx-d36-storage-valuestack` | **Fable** | Zero-solve, docs-only, reads the registered bundle. AEO's 1.76 GW by 2030 is context, never a target (rule 13). |
+| **D37 NEISO T1-H AT ARMED POSTURE** | GOLDEN-2 routed item 4: FC-3's evidence carries the pre-arming curve-ON leg; re-run the capacity hindcast at the armed posture (the D4-M pattern) | **NAMED-QUEUED r#27** — behind D33 and golden-close | — | Opus | A solve; pre-declaration-first when chartered. |
+| **T16-A T1.6 RE-POINT EXECUTION** | Owner ruling Q27: re-point T1.6 to `entry_rate_limits`, run the 2 rungs, artifact-only FC-6 re-score; verify and state whether it is a re-point within the pre-registration or an amendment | **HELD-DISPATCH r#27** — paste after the golden session closes (writes neiso-t3 FC-6 rows) | `claude/capx-t16a-ladder-repoint` | **Opus** | The honesty clause travels: a REC dual pinned at the $50 ACP ceiling that does not move is a real RPS/ACP finding — never a third lever. |
+| **D34 CARBON_PRICE BELOW-BASE GUARD** | Owner ruling Q26: replace semantics + the below-base forecast warning pointing at `carbon_price_delta` | **LANDED** PRs #4534/#4537 — guard in with A/B regression evidence recorded; R4 closed | `claude/capx-d34-carbonprice-guard-lfpeld` | **Opus** | §0x.1. Q26 executed. |
 | **D23 P1 CARBON-CO2 SIGN FAILURE** | A carbon price RAISES cumulative CO2 +52.4 % — attribute the capacity-side and dispatch-side legs | **LANDED** PR #4490 — **NEITHER LEG IS A MODEL DEFECT; the model's sign is RIGHT in both.** `carbon_price` REPLACES the resolved signal, and NEISO's base already carries the RGGI projection ($26.05/t 2026 → $132.16/t 2050 at the published 7 %/yr CCR rate), so the `carbon25` arm **CUT** the carbon price in every year (−$1.05 → −$107.16). P1 measured the premise of its own pair. **This REFUTES the director's r#23 alarm** (§0u.1). Repairs instrument-side (→ D26) | `claude/capx-d23-p1-carbon-sign` | Fable | D21's routed object. P1 is the model's economic core; Phase-0, precommit-first, nothing tuned. |
 | **D24 CACHE-KEY OPTIONAL FIELDS** | `cache_key()` drops `_CACHE_KEY_OPTIONAL_FIELDS` at the live default ⇒ one key, two dispatches across a default flip | **LANDED** PR #4496 — 4 flip events / 7 fields; **all 98 analyzable forecast records drop a flipped field**; two collision pairs (ERCOT `f061b264` the known-true positive found INDEPENDENTLY, + NEW NEISO `07e416f3`); **no cached result was ever served — all 99 runs used distinct roots, and that protection is the INCIDENTAL, UNDOCUMENTED per-run `--out-dir` convention**; D4-I3 §5.1's group narrowed OUT; four repairs priced ((c') = 0 keys, 0 invalidations), fix NOT landed → owner; **RULED Q20 at r#25 — (c′)+(b′-1), execution = D24-R** | `claude/capx-d24-cache-key-defect` | **Opus** | D4-M's R-5 upgrade. CHARACTERIZE AND PROPOSE ONLY — a fix invalidates caches program-wide, an owner cost decision. |
 | **D24-R CACHE-KEY REPAIR (Q20 execution)** | Land (c′) — the `is_cached` config-equality refusal — and (b′-1) — the declared-defaults append-only drop comparison; zero keys move, zero caches invalidated, and the zero-key-move assertion is the lane's own merge gate | **LANDED** PR #4514 — both changes in, zero keys moved (assertion committed), tests + blob verification recorded; **the cache-key defect is closed forward**, the two historical pairs stay provenance-only as ruled | `claude/capx-d24r-cachekey-repair-hjz6un` | **Opus** | §0w.1. Q20 execution complete. |
@@ -2122,10 +2197,14 @@ the gap.
 | **NEISO-RC-R REPAIR PHASE** | Execute the Phase-0 finding's routed repairs: R2 FCA-curve re-derivation + R1 registry intake + R3 scorer trio + R4 reporting; R5 deferred, R6 standing refusal; PREREG-first verification pair (one T1-X treatment vs the committed capxd14 control) | **LANDED IN FULL** PR #4467 (R1–R4 + Phase-B prereg + graded verification) — R2 curve leg MISSES (re-derived curve near-inert at the model's long positions), **Mystic-instrument leg HITS** (1,464 MW economic→confirmed, the derate half visible ONLY through R3(iii)), level ≈ control (confirmed exits displace the floor budget ~1:1), **dual basis +24.2 % over vs −27.3 % under**, recall 2/4, Merrimack decided in-window and reversed 2025; `neiso-t1x` re-registered preserve-then-overwrite, HOLD→HOLD, no verdict flipped | `claude/neiso-rc-repair-fymtkz` (NOT the charter stem) | Fable | §0s amendment A. **The branch-stem census is what missed this landing — grade by `--grep=<LANE-ID>` and merged PRs, never by branch name.** |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
-## 2. Backcast-track watch (last seen 2026-09-01 @ `8462da22`, refresh #26)
+## 2. Backcast-track watch (last seen 2026-09-01 @ `a2e80dbf`, refresh #27)
 
 | item | state |
 |---|---|
+| **NYISO (r#27)** | **Four disciplined kills on the gain object in one cycle**: nyiso-169 (zonal-gradient half carried by NO binding constraint; 169b: the CC_CHP over-run is a FLOOR, not the duct-burner band) · nyiso-170+b/c/d (the within-gas merit-order split is NOT an hourly displacement — layered pre-registered adversarial controls) · nyiso-171 (CC_CHP steam-host floor fails its own stop condition three ways) · nyiso-172 (the ST_GAS deficit is a RESPONSE deficit, not a dropout — object relocated). Keeper unchanged; the candidate space narrows honestly. |
+| **MISO backcast (r#27)** | **miso-198 MID-FLIGHT** (ST_GAS out-of-merit level A/B): the prereg **REVERSED the inherited direction**, the scorer was committed before any arm result, the control leg reproduced the keeper BIT-IDENTICAL, the arm is solved — not yet registered. Grade next refresh. |
+| **CAISO (r#27)** | **caiso-232**: the C3a residual SPLIT into level + shape — the morning and December symptoms are two different defects. **caiso-233**: import spot depths derived; both pre-registered gates FAIL — the depth limb REFUSED without a solve. Lane self-driving post-promotion. |
+| **Audit programme (r#27)** | **v19 + v19b**: rulings **R-J..R-R** recorded (six were unrecorded from one sitting — the R-H failure shape again, caught by the same verified-absent discipline); **R-M applied BY-SHA** after its target verdict migrated keys; the dispatch-vs-launch check caught **three non-launches in one sitting**. **T16 executed plan §2's ladder adjudication** (rule-26 delete; → Q27). |
 | **CAISO (r#26)** | **caiso-231 PROMOTED: keeper → `2026-09-01-caiso-231-b1-ungrounded`** (PR #4515). Three un-grounded gas offer classes re-grounded on their own measured bid buckets; **nine ERCOT-inherited multipliers retired to measured** (rule-25 debt paid), zero free parameters; adverse C3a cost 4–13× under bound; determination UNCHANGED NOT-YET on C3a alone (+12.55 %/+15.59 % 2024/2025, OVER — note the sign differs from the NYISO/MISO gain story); `audit_keepers` PASS 0/0. Promoted on the owner's verbatim structural-integrity standard. Terminal rest ends on the lane's own motion. |
 | **NYISO (r#26)** | **nyiso-168 LANDED** (PR #4518): the 0.703 gain is a **slope deficit in the ordinary 50th–90th load band**; four candidate causes killed by measurement; the market's steepness there measured **NOT physical** (reserves clear >0 in ~100 % of DAM hours every zone, keeper ~0 in 99.6 %); the one new mechanism is **provably LP-inert, killed ex ante**; nyiso-167's probe reproduced bit-identically first. Keeper unchanged. Next: nyiso-169. |
 | **MISO backcast (r#26)** | **miso-197 CHECKPOINT** (PR #4510): the CC_REGULAR over-dispatch census rule frozen zero-solve (914-line pre-registered probe) before any adjudicating quantity. Mid-lane. |
@@ -2187,7 +2266,7 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — TWENTY-SIX ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26**, 2026-09-01. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+## 3. Owner-tier questions — TWENTY-SEVEN ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
 
 Full signature record and the consequences adopted:
 **`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5** (cards A/B/C/Y);
@@ -2196,6 +2275,7 @@ Q7–Q9 were ruled via in-session decision cards at r#13 and are recorded here +
 
 | # | question | resolution |
 |---|---|---|
+| **Q27** | T1.6's lever `renewable_buildout_pace` was consumed by no model code and is DELETED (rule 26, lane T16); the FC-6 battery leg is OUT OF SERVICE and NEISO's FC-6 is structurally CAVEAT-at-best until a replacement lever is owner-signed. Which? | **RULED 2026-09-01 (r#27 sitting) — RE-POINT T1.6 TO `entry_rate_limits`**, at the T16 recommendation (real, cited, consumed, owner-armed, not metric-confounded; the adjudicated rejections — `eac_price_wind` confounded via max(eac, rps_shadow), `offshore_wind_available_year` inert in NEISO — stand). Execution = **T16-A** (Opus; 2 rungs + artifact-only re-score, no golden re-solve), HELD until the golden session closes. The pre-registered honesty clause binds: the REC dual is pinned at the $50 ACP ceiling in both D21 rungs — a non-moving lever is a real RPS/ACP finding, reported, never a third lever tried. The re-point-vs-amend question (T1.6's cell names an economic condition, not a config field) is verified and stated by the execution lane. |
 | **Q26** | D23's R4, surfaced again by D26: `carbon_price` REPLACES the resolved signal — the exact trap the carbon25 arm fell into on an ISO whose base carries the RGGI trajectory. Replace, floor, or stack? | **RULED 2026-09-01 (r#26 amendment 1) — KEEP REPLACE + ADD THE GUARD.** Semantics unchanged (no registered-field meaning shift, no config archaeology); a loud validation warning fires when a forecast scenario's `carbon_price` sits below the resolved base trajectory in any year, pointing authors at `carbon_price_delta` for increments. Execution = **D34** (Opus). **R4 is CLOSED** — no successor re-opens it without a new owner act. |
 | **Q25** | The golden re-solve, fully ripe at last: Q16's ceiling premise discharged (FC-5 CAVEAT via D25; FC-6 CAVEAT via D26's repaired P1, which PASSES), the standing golden still records the pre-R-A posture (headline: ZERO storage entry in 25 years) while R-A armed exactly the storage-entry mechanisms and D25 measured that family as the corridor's largest divergence. Authorize a second §2.1b campaign? | **RULED 2026-09-01 (r#26 amendment 1) — AUTHORIZED, NOW** (over the after-D33 and hold options). One campaign: **T3-NEISO-GOLDEN-2**, NEISO BAU 2026–2050 at HEAD with the R-A-armed posture, its own FC-6 battery at its own vintage (the D26 `carbon_price_delta` construction), full-rubric scoring, preserve-then-overwrite (the pre-R-A golden stays preserved with its posture-epoch caveat). Q13's "this campaign only" scoping carries over verbatim — a third campaign needs a new owner act. Execution = lane **T3-NEISO-GOLDEN-2** (Fable). |
 | **Q24** | Fund the tightly-scoped MISO PRA/RBDC intake D31's identification needs (PRA Results Posting category rows, ~5 numbers × 3 planning-year postings + Initial PRMR, plus the published RBDC shape source — misoenergy.org 403-blocked in-session)? D28 pre-argued this is NOT the FC-5 class Q23 refused: one source, the S-123 anchor-vintage document class, ~15 numbers | **RULED 2026-09-01 (r#26 sitting) — FUNDED.** The owner fetches the postings out-of-session and hands the files to lane D31; the position audit and curve shape are then fully identified from published data (rule 14). **Q23 stands unchanged** — its FC-5 source class remains closed; this ruling neither re-opens nor narrows it. |
@@ -2345,6 +2425,8 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-01 | **T3-NEISO-GOLDEN-2** | `claude/capx-t3-golden-2` | **Fable** | neiso | r#26 amendment-1 batch — owner ruling Q25: the second §2.1b campaign, armed posture, own FC-6 battery, preserve-then-overwrite |
 | 2026-09-01 | **D34 CARBON_PRICE GUARD** | `claude/capx-d34-carbonprice-guard` | **Opus** | code | r#26 amendment-1 batch — owner ruling Q26: replace semantics + the below-base warning; R4 closed |
 | 2026-09-01 | **D20 RECONSTRUCTION PROVENANCE** | `claude/capx-d20-reconstruction-provenance` | **Opus** | code | r#26 amendment-1 batch — released (hold dissolved by D26+D27 landing); §0s.5 decision executed, control-first on the seven legacy legs |
+| 2026-09-01 | **D36 STORAGE VALUE-STACK TIMING** | `claude/capx-d36-storage-valuestack` | **Fable** | code | r#27 batch — GOLDEN-2 routed item 1 / D25 §6.3 route; zero-solve decomposition of why armed economics clear nothing before 2050 |
+| 2026-09-01 | **T16-A T1.6 RE-POINT** | `claude/capx-t16a-ladder-repoint` | **Opus** | neiso | r#27 batch — Q27 execution; **HELD-DISPATCH until the golden session closes**; honesty clause binds |
 
 ## 5. History (compacted)
 
