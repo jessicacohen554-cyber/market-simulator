@@ -337,3 +337,30 @@ MISO/PJM `results_write` (~21–35 s/yr); NEISO's 118–190 s/yr `data_prep` ano
 
 Mechanism-matrix duty check (rule 28 `[R-MECH-MATRIX]`): no calibration/forecast
 mechanism tested, no `ScenarioConfig` field added — no matrix touch required.
+
+---
+
+## 5. PERF-B RESUME (2026-09-02, session perf-b-apply) — owner ruling R-V
+
+WS3 was paused by owner decision 2026-08-17 and **resumed by owner ruling R-V**
+(2026-09-01, third sitting). Branch `claude/perf-b-apply-nabnpi`, off `origin/main`
+@ `07472e7c`. Host: 4 vCPU / 15 GB with a **14.33 GB memory cgroup on the shell**
+(`/sys/fs/cgroup/memory/process_api/.../memory.limit_in_bytes`) — the same cap §4
+recorded, re-measured here, so the PJM/miso full-8760 replay ceiling is unchanged.
+
+### 5.1 The charter's four items, re-verified at HEAD — all four are CLOSED
+
+The dispatch re-issued §3/WS3's four-item scope. Every item was already disposed by
+the 2026-08-17 completion note (§4); this pass re-verified each against the code at
+`07472e7c` rather than carrying §4's claim forward.
+
+| # | Charter item | State at HEAD | Evidence |
+|---|---|---|---|
+| 1 | `results_write` refactor | **LANDED** | `pd.Categorical.from_codes` at `scripts/run_calibration_full.py:460,517,718,724`; the post-hoc `.astype("category")` survives only on the small per-pass sidecar frames. §4's measured effect (`frames` 10.3–10.8 → 2.1–3.7 s/yr) stands. Its handed-forward residual — the `bench` sub-phase — is §5.2 below. |
+| 2 | ci.yml checkout change | **LANDED, nothing open** | All **10** real jobs carry a non-cone `sparse-checkout` block (⇒ `actions/checkout` adds `--filter=blob:none`); `fast-tests`, the open case the dispatch named, has both the tested sparse block and `timeout-minutes: 20`. Verified job-by-job, not from the header comment. |
+| 3 | Exp-2 memoized-enum basis LUT | **LANDED** | `_BASIS_STATUS_OBJS = [highspy.HighsBasisStatus(i) for i in range(5)]` at `src/market_sim/model/lp/model.py:43`, indexed in both list-comps at `:1501-1502`. PERF-A §2.3's "NO — never folded in" no longer holds. |
+| 4 | `forecast_xyear_warmstart` default flip | **CLOSED — no flip ships; none was made** | Plan §6 decision 1 reads *CLOSED — OVERTAKEN BY EVENTS*, owner ack on record 2026-08-26: D-9 flipped the default, D-10 disarmed the forecast lane. HEAD matches that account — `ScenarioConfig.forecast_xyear_warmstart: bool = True` (`config/scenarios.py:13606`) with the lane disarmed through `forecast_posture.shipped_forecast_xyear_warmstart`. **The memo is signed and its answer is "do not flip"**, so PERF-B correctly makes no config change here. Records verification only. |
+
+**Consequence for the WS3 DoD:** items 1–4 need no new code, and their wallclock
+deltas are already reported in `wallclock-baseline-2026-07.md` §PERF-B. What this
+session adds is the one lever §4 handed forward.
