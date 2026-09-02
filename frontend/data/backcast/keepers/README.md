@@ -29,10 +29,62 @@ Now a promotion touches only its own lane:
    changes bytes when the rubric itself changed).
 3. Commit `keepers/<ISO>.json` + `status/<ISO>.js` with the run's own files.
 
+4. **Re-key the forecast gate-(a) stamp in THIS SAME PR** — see the
+   2026-09-01 block below (owner ruling R-T). It is one field in
+   `frontend/data/forecast/program-status.json`, and it is the promoting
+   lane's duty, not a follow-up.
+
 Different-ISO promotions merge cleanly; only same-ISO promotions serialize
 (as they should). Log entries likewise go to the per-ISO continuation files
 under `docs/calibration-log/` — never append cross-ISO shared files in a
 promotion commit.
+
+## 2026-09-01 — two owner rulings that bind promotion lanes (R-T, R-V)
+
+Recorded by the audit-program records lane v20 at pin `07472e7c`. Both are
+owner rulings from the 2026-09-01 third director sitting; the audit board
+(`docs/handoffs/audit-program-director-board-2026-08.md`, items J-2 and J-4)
+and the program ledger (`docs/model-audit-release-plan-2026-08.md` §8) carry
+the full record. **Nothing above this heading is changed by this block.**
+
+### R-T — a keeper-promotion PR re-keys the forecast gate-(a) stamp in the same PR
+
+**This is step 4 of the promotion procedure above, and it is the promoting
+lane's duty.** When you set `keeper` in `keepers/<ISO>.json`, also update that
+ISO's `gate.a_keeper_marker` in `frontend/data/forecast/program-status.json`
+to name the new run id — **in the same PR**, alongside `status/<ISO>.js`.
+
+- **It is a STAMP re-key, not a verdict change.** `scripts/check_gate_a_provenance.py`
+  compares keeper identity and marker state and **reads no determination**, so
+  a leg that read `fail` before will read `fail` after. Re-keying a stale stamp
+  never moves a gate verdict; leaving it stale just makes the forecast board
+  name a keeper that no longer exists.
+- **Why it moved to the promoting lane.** The guard is a *detector* — it fires
+  on the *next* PR, after the staleness already exists. In the MISO
+  `191-bexit → 198-oomlevel` promotion the stamp stayed wrong for **nine merged
+  PRs** (#4552 → #4561) and needed a separate one-push owner grant to repair.
+  Carrying the re-key in the promotion PR makes that window **zero**. Two
+  earlier one-push grants (R-N for CAISO, R-T for MISO) exist only because this
+  duty did not; there should not be a third.
+- Verify locally before pushing: `python3 scripts/check_gate_a_provenance.py`
+  (exit 0). CI enforces it at PR time once branch protection lands.
+
+### R-V — keeper freeze on ERCOT, NEISO and PJM
+
+**No keeper promotion in these three lanes** until PERF-B's byte-green loop
+completes **or the owner lifts the freeze**. They are the three ISOs holding a
+`complete` marker and the three whose stage-0 goldens are CURRENT; the freeze
+exists to keep those goldens from going stale under them.
+
+- **MISO, CAISO and NYISO are EXPLICITLY UNFROZEN** and promote as normal.
+- **This freeze is prose-enforced.** No script checks it — `audit_keepers.py`
+  validates marker/keeper identity and knows nothing about a promotion embargo.
+  If you are promoting in a frozen lane, you will not be stopped by a gate; do
+  not promote.
+- ⚠️ **It is NOT `holdout-freeze.json`.** That file is a *spend* freeze on the
+  locked-test tier for all six ISOs (CLAUDE.md rule 22). This is a *promotion*
+  freeze on three ISOs. Different scope, different subject, different lifting
+  authority; neither implies the other.
 
 Readers: use `scripts/lib/keeper_store.py` (`load_merged()` returns the old
 monolith shape). The dashboard composes the shards client-side
