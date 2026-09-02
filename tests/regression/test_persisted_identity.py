@@ -88,7 +88,45 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # changed. The new key is byte-identical on a session container and a hosted
 # runner. This bump orphans every on-disk results cache (a re-key, not a
 # behavior change — the solve path is untouched).
-PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"
+#
+# ADVANCED 2026-09-02, 603c2498bf71d21d -> cedadc285f8603b9 — owner-authorized
+# in the capx D41 session sitting (the lane's charter said "STOP and report the
+# blast radius first" if the repair re-keyed configs; it does, it was reported,
+# and the owner answered "land it, advance the pins"). A genuine key ADVANCE,
+# not a re-baseline to silence red.
+#
+# CAUSE. Two CCS-retrofit fixed-cost defaults are re-identified onto the model's
+# own NREL ATB 2024 (2026$) basis, repairing the defect
+# `docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md` §5 rows 6-7
+# adjudicated:
+#   * `fixed_om_gas_cc_ccs` 25.0 -> 65.0 $/kW-yr — a "host CC + capture island"
+#     figure that had sat BELOW its own host (`fixed_om_gas_cc` 30.0) ever since
+#     the G-32 ATB flip raised the host 12 -> 30 and left this field behind, so
+#     the retrofit screen's dFOM was -$5,000/MW-yr (a saving) instead of the ATB
+#     capture-island increment +$35,000/MW-yr.
+#   * `ccs_retrofit_capex_kw` 900.0 -> 1521.4 $/kW — `needs-citation`, no stated
+#     dollar-year, and 59 % of the capture-island increment the model's own
+#     new-build CCS carries (3104.7 - 1583.3, ATB 2024 2026$).
+# NEITHER field is in `_CACHE_KEY_OPTIONAL_FIELDS`, so both are hashed at every
+# value and a value change moves the key unconditionally — registration is not
+# an available remedy here and re-pinning IS the sanctioned route (the "do NOT
+# re-pin" rule targets an unregistered NEW FIELD that is cache-neutral at its
+# default, which this is not). Same shape as G-32 itself, which moved this pin
+# when it flipped `fixed_om_gas_cc` 12 -> 30.
+#
+# WHAT THIS COSTS, EXACTLY. A one-time cache MISS per forecast config: every
+# pre-2026-09-02 `results/<ISO>/<key>/` bundle at the old key is now unaddressed
+# and the next run re-solves. Behaviour moves ONLY in forecast years >=
+# `ccs_retrofit_available_year` (2028) — which is the repair, measured at screen
+# grain in `docs/handoffs/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md`. The two
+# fields have exactly two consumers, both inside forecast-mode capacity
+# evolution (`capacity_evolution/ccs.py::apply_ccs_retrofit` and the
+# `_THERMAL_FOM` lookup in `capacity_evolution/retirements.py`, which reaches
+# `fixed_om_gas_cc_ccs` only for a `gas_cc_ccs` unit). No committed keeper,
+# sidecar, determination or dashboard row is a cache lookup, so none moves.
+# Full record: the cache-epoch ledger in `src/market_sim/results/cache.py`,
+# epoch 2026-09-02.
+PINNED_DEFAULT_CACHE_KEY = "cedadc285f8603b9"
 
 # The BACKCAST default key, pinned by FFR-3D (2026-08-03) because the forecast
 # pin above CANNOT see a whole class of re-key: `__post_init__` coerces several
@@ -142,7 +180,21 @@ PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"
 # False either side), so no keeper, sidecar, determination or dashboard row
 # moves and nothing needs re-scoring. Full record: the cache-epoch ledger in
 # `src/market_sim/results/cache.py`, epoch 2026-08-31.
-PINNED_BACKCAST_CACHE_KEY = "e027bc248c93c835"
+#
+# ADVANCED 2026-09-02, e027bc248c93c835 -> e006dfd7cef8bedd — the SAME
+# owner-authorized capx D41 re-identification recorded in the forward pin's
+# cause block above. Unregistered fields are hashed in both modes, so the
+# backcast payload moves with the forward one.
+#
+# BEHAVIOUR IN BACKCAST IS BYTE-IDENTICAL. Neither field is reachable in a
+# backcast: `apply_ccs_retrofit` is gated on `ccs_retrofit_available_year`
+# (2028, past every backcast year) and `fixed_om_gas_cc_ccs` enters
+# `_THERMAL_FOM` only for a `gas_cc_ccs` unit, which exists only after a
+# retrofit or a CCS new build and so never appears in a measured backcast
+# fleet. Cost is a one-time cache MISS per backcast config; dispatch, scores
+# and `run_config.json` values other than these two are unmoved, no keeper or
+# determination is affected, and nothing needs re-scoring.
+PINNED_BACKCAST_CACHE_KEY = "e006dfd7cef8bedd"
 
 # Registered cache-key-optional fields whose backcast coercion is KNOWINGLY off
 # their default, each having paid for its re-key in the block above. Only these

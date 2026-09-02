@@ -23,7 +23,7 @@ historical record and never a post-epoch baseline. The measured half of the
 declaration is ``scripts/probes/_ffr9c_stageb_cache_epoch.py``; the tests below
 pin both halves of what makes the epoch clean: the ``ScenarioConfig`` field
 defaults stay ``False``/``None`` (so an armed run ENTERS the digest rather than
-colliding with its pre-arm predecessor, and the global pin ``603c2498bf71d21d``
+colliding with its pre-arm predecessor, and the global pin ``cedadc285f8603b9``
 cannot move), and no ERCOT backcast key shifts.
 
 FORMER LIVE EXPOSURE — **CLOSED 2026-08-13**, and deliberately never pinned
@@ -52,6 +52,22 @@ already reconstructs its own pre-arm pole.
 
 Pure config construction — no solve, no data root (the FFR-1D
 ``test_forecast_mode_guards`` discipline).
+
+ALL THREE POLE LITERALS ADVANCED 2026-09-02 BY A NON-ERCOT CAUSE, and the
+narrative literals above are left as the dated measurements they are. The
+owner-authorized capx D41 re-identification moved two SHARED ``ScenarioConfig``
+defaults onto the NREL ATB 2024 (2026$) basis — ``fixed_om_gas_cc_ccs``
+25.0 -> 65.0 and ``ccs_retrofit_capex_kw`` 900.0 -> 1521.4 — and neither is a
+``_CACHE_KEY_OPTIONAL_FIELDS`` member, so every config in the program re-keys,
+these ERCOT poles included. NOTHING ABOUT THE STAGE-B OR D12-A ARMING CHANGED:
+the poles moved together, by the same delta, so every relation this file pins
+(armed vs pre-arm distinct, the global pin unmoved BY THIS ARMING) holds exactly
+as before. Advances: D12-A armed ``68a207068509f2b0`` -> ``6bb61037c072502d``,
+Stage-B armed ``8d9ef77edb3e44cb`` -> ``71f20d708a810f0a``, pre-Stage-B
+``062d440558103f81`` -> ``ddeb8a9aaffe1f6b``, global pin ``603c2498bf71d21d``
+-> ``cedadc285f8603b9``. Cause block and full blast radius: the pins in
+``tests/regression/test_persisted_identity.py`` and the cache-epoch ledger in
+``src/market_sim/results/cache.py`` (epoch 2026-09-02).
 """
 
 from __future__ import annotations
@@ -184,9 +200,9 @@ class TestD30Arming:
         pre_arm = dataclasses.replace(
             resolved, **{f: getattr(defaults, f) for f in STAGE_B}
         )
-        assert resolved.cache_key() == "8d9ef77edb3e44cb"
-        assert pre_arm.cache_key() == "062d440558103f81"
-        assert ScenarioConfig().cache_key() == "603c2498bf71d21d"
+        assert resolved.cache_key() == "71f20d708a810f0a"
+        assert pre_arm.cache_key() == "ddeb8a9aaffe1f6b"
+        assert ScenarioConfig().cache_key() == "cedadc285f8603b9"
 
     def test_arming_does_not_disturb_the_scarcity_overlay_entry(self):
         """The pre-existing ERCOT override survives alongside the five."""
@@ -258,9 +274,9 @@ class TestD12AArming:
         pre_arm = dataclasses.replace(
             resolved, **{f: getattr(defaults, f) for f in D12A_PAIR}
         )
-        assert resolved.cache_key() == "68a207068509f2b0"
-        assert pre_arm.cache_key() == "8d9ef77edb3e44cb"
-        assert ScenarioConfig().cache_key() == "603c2498bf71d21d"
+        assert resolved.cache_key() == "6bb61037c072502d"
+        assert pre_arm.cache_key() == "71f20d708a810f0a"
+        assert ScenarioConfig().cache_key() == "cedadc285f8603b9"
 
     def test_the_pair_control_arm_is_expressible(self):
         """An explicit both-off caller wins over the override (OVERRIDE-FIX

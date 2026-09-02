@@ -75,6 +75,37 @@ def _gas_cc(
     )
 
 
+# FIXTURE COST PIN (capx D41, 2026-09-02) — the same remedy G-32 applied to the
+# five ``test_capacity.py`` margin tests when it flipped the FOM defaults:
+# **a behavioural identification test must not silently ride a default it does
+# not intend to exercise.** Every crafted margin in this file (the 24-hour $60 /
+# $33 / split price fixtures) was sized against the pre-repair retrofit cost
+# basis, so once ``fixed_om_gas_cc_ccs`` and ``ccs_retrofit_capex_kw`` were
+# re-identified onto the NREL ATB 2024 (2026$) basis — 25.0 -> 65.0 $/kW-yr and
+# 900.0 -> 1521.4 $/kW, repairing a screen ΔFOM that was a *saving* and a capex
+# 59 % of the increment the model's own new-build CCS charges — the fixtures
+# stopped placing their units near the bar and seven mechanism assertions went
+# red without any mechanism changing.
+#
+# The pin restores the fixtures' INTENT, not the old defect: the ΔFOM keeps the
+# repaired POSITIVE sign (the capture island is charged, at the shipped
+# ``fixed_om_gas_cc_ccs``), and only the fixture's capex is lowered, to place
+# these synthetic 24-hour margins back in the window where the mechanism under
+# test is discriminating. That is what these tests are for — the screen's
+# ordering, its cap displacement, its §45Q window gate and its
+# beats-staying-unabated gate — never the cost LEVEL, which is asserted against
+# its source in ``tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py`` and
+# measured for consequence in
+# ``docs/handoffs/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md``.
+_FIXTURE_RETROFIT_CAPEX_KW = 300.0
+
+
+def _fixture_config(**overrides):
+    """``ScenarioConfig`` for the ERCOT screen fixtures, with the capex pin."""
+    overrides.setdefault("ccs_retrofit_capex_kw", _FIXTURE_RETROFIT_CAPEX_KW)
+    return ScenarioConfig(iso="ERCOT", **overrides)
+
+
 def _screen(
     fleet,
     prices,
@@ -86,7 +117,7 @@ def _screen(
     cumulative=None,
 ):
     """Run the retrofit screen with the fixture defaults."""
-    config = config or ScenarioConfig(iso="ERCOT")
+    config = config or _fixture_config()
     return apply_ccs_retrofit(
         fleet,
         prices,
@@ -220,7 +251,7 @@ class TestBau45QRetrofit(unittest.TestCase):
         self.assertEqual(log, [])
         self.assertEqual(fleet[0].fuel_type, "gas_cc")
         # Extending the deadline restores the credit and the retrofit.
-        cfg = ScenarioConfig(iso="ERCOT", ira_ccus_45q_last_year=2040)
+        cfg = _fixture_config(ira_ccus_45q_last_year=2040)
         fleet2, log2 = _screen([_gas_cc("G1")], HIGH_PRICES, year=2033, config=cfg)
         self.assertEqual(len(log2), 1)
         self.assertEqual(fleet2[0].fuel_type, "gas_cc_ccs")
@@ -235,13 +266,14 @@ class Test45QWindowInScreen(unittest.TestCase):
         # 12h/day in-merit margin without the credit). Under the statutory
         # 12-year window the capex cannot be recovered before the credit
         # dies -> no retrofit; under the indefinite extension (None) the
-        # credit runs the full remaining life and the payback (~16 yr)
-        # clears the 25-year remaining life.
+        # credit runs the full remaining life and the payback (~20 yr at the
+        # capx-D41 fixture capex pin; ~16 yr before it) clears the 25-year
+        # remaining life.
         fleet, log = _screen([_gas_cc("G0")], SPLIT_PRICES)
         self.assertEqual(log, [])
         self.assertEqual(fleet[0].fuel_type, "gas_cc")
 
-        cfg_none = ScenarioConfig(iso="ERCOT", ira_45q_credit_window_years=None)
+        cfg_none = _fixture_config(ira_45q_credit_window_years=None)
         fleet2, log2 = _screen([_gas_cc("G1")], SPLIT_PRICES, config=cfg_none)
         self.assertEqual(len(log2), 1)
         self.assertEqual(fleet2[0].fuel_type, "gas_cc_ccs")
@@ -255,7 +287,7 @@ class Test45QWindowInScreen(unittest.TestCase):
         # credit never expires within the horizon.
         self.assertAlmostEqual(
             entry["payback_years"],
-            900_000.0 / entry["annual_net_savings_per_mw"],
+            _FIXTURE_RETROFIT_CAPEX_KW * 1000.0 / entry["annual_net_savings_per_mw"],
             places=6,
         )
 
@@ -362,7 +394,7 @@ class TestRetrofitEfficientFirst(unittest.TestCase):
 
     def test_shortest_payback_units_chosen(self):
         # Cap of 1.0 GW/yr admits only 2 of the 3 x 500 MW units.
-        config = ScenarioConfig(iso="ERCOT", ccs_retrofit_max_gw_per_year=1.0)
+        config = _fixture_config(ccs_retrofit_max_gw_per_year=1.0)
         g_eff = _gas_cc("EFF", heat_rate=6.3, emission_rate=0.40)
         g_mid = _gas_cc("MID", heat_rate=6.9, emission_rate=0.40)
         g_old = _gas_cc("OLD", heat_rate=7.5, emission_rate=0.40)
@@ -381,7 +413,7 @@ class TestRetrofitMinRemainingLife(unittest.TestCase):
 
     def test_old_unit_skipped_young_unit_eligible(self):
         # available_year lowered so the 2025 screen year passes the gate.
-        config = ScenarioConfig(iso="ERCOT", ccs_retrofit_available_year=2020)
+        config = _fixture_config(ccs_retrofit_available_year=2020)
         near_eol = _gas_cc("OLD", online_year=1990)
         young = _gas_cc("YOUNG", online_year=2005)
         _, log = _screen(
@@ -455,7 +487,7 @@ class TestJointRetrofitOrRetire(unittest.TestCase):
         }
 
     def _evolve(self, fleet, tracker, config=None, prices=DISTRESS_PRICES):
-        config = config or ScenarioConfig(iso="ERCOT")
+        config = config or _fixture_config()
         return evolve_fleet(
             fleet,
             self._prior(fleet, prices),
@@ -485,7 +517,7 @@ class TestJointRetrofitOrRetire(unittest.TestCase):
         # Same distressed unit, but 45Q unavailable (deadline in the past):
         # without the credit the post-retrofit margin cannot pay back, so
         # BOTH continuations fail and the unit exits on its loss counter.
-        cfg = ScenarioConfig(iso="ERCOT", ira_ccus_45q_last_year=2000)
+        cfg = _fixture_config(ira_ccus_45q_last_year=2000)
         d0 = _gas_cc("D0", pmax=100.0)
         fleet, tracker, _, retrofit_log, _ = self._evolve([d0], {"D0": 2}, config=cfg)
         self.assertEqual(retrofit_log, [])
@@ -503,7 +535,7 @@ class TestJointRetrofitOrRetire(unittest.TestCase):
         # unabated keeps failing and the cap keeps binding.)
         eff = _gas_cc("EFF", heat_rate=6.5)
         old = _gas_cc("OLD", heat_rate=7.4)
-        cfg = ScenarioConfig(iso="ERCOT", ccs_retrofit_max_gw_per_year=0.5)
+        cfg = _fixture_config(ccs_retrofit_max_gw_per_year=0.5)
         fleet, tracker, _, retrofit_log, _ = self._evolve(
             [eff, old], {"EFF": 2, "OLD": 2}, config=cfg
         )
@@ -526,8 +558,8 @@ class TestJointRetrofitOrRetire(unittest.TestCase):
         # construct the R-NEW pipeline does not keep.
         eff = _gas_cc("EFF", heat_rate=6.5)
         old = _gas_cc("OLD", heat_rate=7.4)
-        cfg = ScenarioConfig(
-            iso="ERCOT", ccs_retrofit_max_gw_per_year=0.5, retirement_rule="legacy"
+        cfg = _fixture_config(
+            ccs_retrofit_max_gw_per_year=0.5, retirement_rule="legacy"
         )
         fleet, tracker, _, retrofit_log, _ = self._evolve(
             [eff, old], {"EFF": 2, "OLD": 1}, config=cfg
@@ -555,7 +587,7 @@ class TestRetrofitsAddToCumulative(unittest.TestCase):
     """Retrofits expand the global CCS experience base."""
 
     def test_retrofits_increment_cumulative_tracker(self):
-        config = ScenarioConfig(iso="ERCOT")
+        config = _fixture_config()
         cumulative = CumulativeDeployment.initial()
         before = cumulative.get("gas_cc_ccs")
 

@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-09-01. Every numeric input to the model traces to a primary source
+_Generated 2026-09-02. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1835 parameters registered** (966 flagged `needs-citation`).
+**1837 parameters registered** (965 flagged `needs-citation`).
 
 
 ## Calibration
@@ -934,6 +934,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.unit_outage_fleet_status_scope` | False | 2 | Unit-outage EVENTS scoped to the fleet's own capacity basis (unit_o… | 2025 | auto-generated |
 | `scenario.unit_outage_lp_capacity_basis` | False | 2 | Unit-outage derate DENOMINATOR on the LP's own capacity basis (unit… | 2023 | auto-generated |
 | `scenario.unit_outage_maxgen_events` | False | 3 | Tier 3 (calibration) — declared-event-window revealed unit derates,… | 2026-07 | auto-generated |
+| `scenario.unit_outage_mixed_gas_routing` | False | 2 | Unit-outage windows ROUTED BY THE UNIT'S OWN CLASS at a mixed-gas f… | 2023 | auto-generated |
 | `scenario.unit_outage_short_windows` | False | 3 | Tier 3 (calibration) — short (1-5 day) unit-outage windows for base… | 2025 | auto-generated |
 | `scenario.unit_partial_outage_windows` | False | 3 | Tier 3 (calibration) — unit-grain partial-derate plateaus, the seco… | 2026-07 | auto-generated |
 | `scenario.voll` | 5000.0 | 0 | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2023-01 | stale |
@@ -1562,7 +1563,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ccs_available_year` | 2030 | 1 | year CCUS enters the candidate pool |  | auto-generated, needs-citation |
 | `scenario.ccs_capture_rate` | 0.9 | 2 | NETL Cost & Performance Baseline for Fossil Energy Plants Rev 4 (20… | 2022 |  |
 | `scenario.ccs_retrofit_available_year` | 2028 | 2 | Earliest year retrofits can occur. |  | auto-generated, needs-citation |
-| `scenario.ccs_retrofit_capex_kw` | 900.0 | 2 | $/kW for post-combustion capture retrofit. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_capex_kw` | 1521.4 | 2 | NREL ATB 2024 (v4.0.0 pin) capture-island CAPEX increment, Moderate… | 2024 |  |
 | `scenario.ccs_retrofit_capture_rate` | 0.9 | 2 | Fraction of CO2 captured. 0.90 = 90%. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_hr_penalty` | 0.12 | 2 | Fractional heat rate increase from capture parasitic load. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_max_gw_per_year` | 3.0 | 2 | GW/yr retrofit throughput cap per ISO. |  | auto-generated, needs-citation |
@@ -1589,7 +1590,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.federal_ces_ccs_capture_fraction` | 0.95 | 1 | Owner decision Q4 (docs/handoffs/national-ces-eac-premium-plan-2026… | 2026-07 |  |
 | `scenario.fixed_om_coal` | 45.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
 | `scenario.fixed_om_gas_cc` | 30.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
-| `scenario.fixed_om_gas_cc_ccs` | 25.0 | 2 | CC + capture island going-forward fixed |  | auto-generated, needs-citation |
+| `scenario.fixed_om_gas_cc_ccs` | 65.0 | 2 | NREL ATB 2024 (v4.0.0 pin), Moderate case @2026, converted 2022$ ->… | 2024 |  |
 | `scenario.fixed_om_gas_ct` | 21.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
 | `scenario.fixed_om_nuclear` | 130.0 | 2 | existing nuclear avoidable fixed O&M |  | auto-generated, needs-citation |
 | `scenario.gas_offer_curve` | False | 3 | Tier 3 (calibration) — give the non-ERCOT per-plant gas fleet a ste… |  | auto-generated, needs-citation |
@@ -1718,6 +1719,7 @@ inline comment and still need a dated primary source — search the table for
 | `adequacy_external_tie_firm_mw.MISO` | 3505.9 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `adequacy_external_tie_firm_mw.NEISO` | 409.31 | 2 | Net import Capacity Supply Obligation for CCP 2026/2027 INCLUDING A… | 2026-05-01 |  |
 | `adequacy_external_tie_firm_mw.NYISO` | 2749.94115 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `adequacy_internal_supply_accounting_ratio_by_iso.MISO` | 0.8546435044350695 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `as_saturation_ref_gw_by_iso.CAISO` | 5.517 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `as_saturation_ref_gw_by_iso.ERCOT` | 4.0 | 2 | ERCOT AS-eligible (storage) fleet at the 2023 AS-revenue calibratio… | 2023 | auto-generated |
 | `atb_tech_wacc_real.solar` | 0.042271 | 2 | ATB 2024 WACC Real Market, UtilityPV @2026 | 2024 | auto-generated |

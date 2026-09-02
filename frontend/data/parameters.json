@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-09-01",
+  "generated": "2026-09-02",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -2772,16 +2772,248 @@
         "net_cone_per_kw_yr": 79.8,
         "demand_curve": [
           {
-            "reserve_ratio": 0.97,
-            "price_frac_net_cone": 1.596
+            "reserve_ratio": 0.9511,
+            "price_frac_net_cone": 6.243282191780821
           },
           {
-            "reserve_ratio": 1.0,
-            "price_frac_net_cone": 1.0
+            "reserve_ratio": 0.9519,
+            "price_frac_net_cone": 6.164666301369863
           },
           {
-            "reserve_ratio": 1.05,
-            "price_frac_net_cone": 0.0
+            "reserve_ratio": 0.9564,
+            "price_frac_net_cone": 5.867241643835617
+          },
+          {
+            "reserve_ratio": 0.9638,
+            "price_frac_net_cone": 5.507559452054794
+          },
+          {
+            "reserve_ratio": 0.9687,
+            "price_frac_net_cone": 5.33074301369863
+          },
+          {
+            "reserve_ratio": 0.9693,
+            "price_frac_net_cone": 5.3140048664964
+          },
+          {
+            "reserve_ratio": 0.9707,
+            "price_frac_net_cone": 5.183683436266545
+          },
+          {
+            "reserve_ratio": 0.9746,
+            "price_frac_net_cone": 4.507106536203523
+          },
+          {
+            "reserve_ratio": 0.9756,
+            "price_frac_net_cone": 4.365151815068493
+          },
+          {
+            "reserve_ratio": 0.9802,
+            "price_frac_net_cone": 3.8080681636430973
+          },
+          {
+            "reserve_ratio": 0.981,
+            "price_frac_net_cone": 3.720792452178205
+          },
+          {
+            "reserve_ratio": 0.983,
+            "price_frac_net_cone": 3.512379775559167
+          },
+          {
+            "reserve_ratio": 0.9841,
+            "price_frac_net_cone": 3.4110963089986406
+          },
+          {
+            "reserve_ratio": 0.9869,
+            "price_frac_net_cone": 3.1796396477495095
+          },
+          {
+            "reserve_ratio": 0.989,
+            "price_frac_net_cone": 3.014576999347684
+          },
+          {
+            "reserve_ratio": 0.99,
+            "price_frac_net_cone": 2.9432414916286147
+          },
+          {
+            "reserve_ratio": 0.9932,
+            "price_frac_net_cone": 2.744047485638533
+          },
+          {
+            "reserve_ratio": 0.9962,
+            "price_frac_net_cone": 2.5838934509457605
+          },
+          {
+            "reserve_ratio": 0.9967,
+            "price_frac_net_cone": 2.5601009835221005
+          },
+          {
+            "reserve_ratio": 0.9977,
+            "price_frac_net_cone": 2.4339001582638273
+          },
+          {
+            "reserve_ratio": 0.9978,
+            "price_frac_net_cone": 2.42863503464211
+          },
+          {
+            "reserve_ratio": 0.999,
+            "price_frac_net_cone": 2.3710598882869176
+          },
+          {
+            "reserve_ratio": 1.0024,
+            "price_frac_net_cone": 2.219224631200601
+          },
+          {
+            "reserve_ratio": 1.0026,
+            "price_frac_net_cone": 2.211084006391694
+          },
+          {
+            "reserve_ratio": 1.0027,
+            "price_frac_net_cone": 2.2070190670654135
+          },
+          {
+            "reserve_ratio": 1.0045,
+            "price_frac_net_cone": 2.0098708217079206
+          },
+          {
+            "reserve_ratio": 1.0068,
+            "price_frac_net_cone": 1.7693317049827235
+          },
+          {
+            "reserve_ratio": 1.0082,
+            "price_frac_net_cone": 1.627215656456825
+          },
+          {
+            "reserve_ratio": 1.009,
+            "price_frac_net_cone": 1.579766334058947
+          },
+          {
+            "reserve_ratio": 1.0115,
+            "price_frac_net_cone": 1.4343651981408958
+          },
+          {
+            "reserve_ratio": 1.0117,
+            "price_frac_net_cone": 1.42306655593607
+          },
+          {
+            "reserve_ratio": 1.0122,
+            "price_frac_net_cone": 1.3958915176125244
+          },
+          {
+            "reserve_ratio": 1.0166,
+            "price_frac_net_cone": 1.1691395510000655
+          },
+          {
+            "reserve_ratio": 1.0189,
+            "price_frac_net_cone": 1.0778577680795014
+          },
+          {
+            "reserve_ratio": 1.0193,
+            "price_frac_net_cone": 1.0627480726579313
+          },
+          {
+            "reserve_ratio": 1.0225,
+            "price_frac_net_cone": 0.9498239560834405
+          },
+          {
+            "reserve_ratio": 1.0249,
+            "price_frac_net_cone": 0.867200653289297
+          },
+          {
+            "reserve_ratio": 1.0254,
+            "price_frac_net_cone": 0.8512000160581535
+          },
+          {
+            "reserve_ratio": 1.0304,
+            "price_frac_net_cone": 0.6986557396082822
+          },
+          {
+            "reserve_ratio": 1.0326,
+            "price_frac_net_cone": 0.6333770315735743
+          },
+          {
+            "reserve_ratio": 1.0348,
+            "price_frac_net_cone": 0.5712941997438383
+          },
+          {
+            "reserve_ratio": 1.0355,
+            "price_frac_net_cone": 0.5565483300459378
+          },
+          {
+            "reserve_ratio": 1.0377,
+            "price_frac_net_cone": 0.5127972618585915
+          },
+          {
+            "reserve_ratio": 1.042,
+            "price_frac_net_cone": 0.4301505020885013
+          },
+          {
+            "reserve_ratio": 1.0461,
+            "price_frac_net_cone": 0.35604699352807057
+          },
+          {
+            "reserve_ratio": 1.0463,
+            "price_frac_net_cone": 0.3520190186317203
+          },
+          {
+            "reserve_ratio": 1.0507,
+            "price_frac_net_cone": 0.2681879226163708
+          },
+          {
+            "reserve_ratio": 1.0514,
+            "price_frac_net_cone": 0.255491811096517
+          },
+          {
+            "reserve_ratio": 1.0567,
+            "price_frac_net_cone": 0.1775076737235367
+          },
+          {
+            "reserve_ratio": 1.0587,
+            "price_frac_net_cone": 0.15740929265255296
+          },
+          {
+            "reserve_ratio": 1.0624,
+            "price_frac_net_cone": 0.1204040484230642
+          },
+          {
+            "reserve_ratio": 1.0673,
+            "price_frac_net_cone": 0.07520641095890426
+          },
+          {
+            "reserve_ratio": 1.0682,
+            "price_frac_net_cone": 0.06898808429926181
+          },
+          {
+            "reserve_ratio": 1.0738,
+            "price_frac_net_cone": 0.03388904109589038
+          },
+          {
+            "reserve_ratio": 1.0743,
+            "price_frac_net_cone": 0.028294755381604687
+          },
+          {
+            "reserve_ratio": 1.0751,
+            "price_frac_net_cone": 0.0271223091976517
+          },
+          {
+            "reserve_ratio": 1.0754,
+            "price_frac_net_cone": 0.022394559686888506
+          },
+          {
+            "reserve_ratio": 1.0785,
+            "price_frac_net_cone": 0.014836125244618383
+          },
+          {
+            "reserve_ratio": 1.0804,
+            "price_frac_net_cone": 0.010284031311154577
+          },
+          {
+            "reserve_ratio": 1.085,
+            "price_frac_net_cone": 0.007745479452054794
+          },
+          {
+            "reserve_ratio": 1.0915,
+            "price_frac_net_cone": 0.0010386301369863014
           }
         ],
         "net_cone_curve_per_kw_yr": 79.8,
@@ -2794,15 +3026,63 @@
               "days": 92,
               "demand_curve": [
                 {
-                  "reserve_ratio": 0.97,
-                  "price_frac_net_cone": 6.331972431077693
+                  "reserve_ratio": 0.9967,
+                  "price_frac_net_cone": 6.1924
                 },
                 {
-                  "reserve_ratio": 1.0,
-                  "price_frac_net_cone": 1.0
+                  "reserve_ratio": 0.9977,
+                  "price_frac_net_cone": 5.8805
                 },
                 {
-                  "reserve_ratio": 1.05,
+                  "reserve_ratio": 1.0027,
+                  "price_frac_net_cone": 5.78
+                },
+                {
+                  "reserve_ratio": 1.0082,
+                  "price_frac_net_cone": 4.1665
+                },
+                {
+                  "reserve_ratio": 1.0166,
+                  "price_frac_net_cone": 3.1086
+                },
+                {
+                  "reserve_ratio": 1.0348,
+                  "price_frac_net_cone": 1.6719
+                },
+                {
+                  "reserve_ratio": 1.0567,
+                  "price_frac_net_cone": 0.5647
+                },
+                {
+                  "reserve_ratio": 1.0587,
+                  "price_frac_net_cone": 0.5006
+                },
+                {
+                  "reserve_ratio": 1.0673,
+                  "price_frac_net_cone": 0.2266
+                },
+                {
+                  "reserve_ratio": 1.0738,
+                  "price_frac_net_cone": 0.0792
+                },
+                {
+                  "reserve_ratio": 1.0743,
+                  "price_frac_net_cone": 0.0581
+                },
+                {
+                  "reserve_ratio": 1.0751,
+                  "price_frac_net_cone": 0.0552
+                },
+                {
+                  "reserve_ratio": 1.0754,
+                  "price_frac_net_cone": 0.0371
+                },
+                {
+                  "reserve_ratio": 1.0785,
+                  "price_frac_net_cone": 0.0139
+                },
+                {
+                  "reserve_ratio": 1.0804,
                   "price_frac_net_cone": 0.0
                 }
               ]
@@ -2812,16 +3092,68 @@
               "days": 91,
               "demand_curve": [
                 {
-                  "reserve_ratio": 0.97,
-                  "price_frac_net_cone": 6.401587719298245
+                  "reserve_ratio": 0.9707,
+                  "price_frac_net_cone": 6.2604
                 },
                 {
-                  "reserve_ratio": 1.0,
-                  "price_frac_net_cone": 1.0
+                  "reserve_ratio": 0.9746,
+                  "price_frac_net_cone": 5.0028
                 },
                 {
-                  "reserve_ratio": 1.05,
-                  "price_frac_net_cone": 0.0
+                  "reserve_ratio": 0.9802,
+                  "price_frac_net_cone": 3.7312
+                },
+                {
+                  "reserve_ratio": 0.9841,
+                  "price_frac_net_cone": 3.0335
+                },
+                {
+                  "reserve_ratio": 0.989,
+                  "price_frac_net_cone": 2.3419
+                },
+                {
+                  "reserve_ratio": 0.9932,
+                  "price_frac_net_cone": 1.8715
+                },
+                {
+                  "reserve_ratio": 0.9978,
+                  "price_frac_net_cone": 1.4699
+                },
+                {
+                  "reserve_ratio": 1.0024,
+                  "price_frac_net_cone": 1.1545
+                },
+                {
+                  "reserve_ratio": 1.0068,
+                  "price_frac_net_cone": 0.9226
+                },
+                {
+                  "reserve_ratio": 1.0117,
+                  "price_frac_net_cone": 0.7247
+                },
+                {
+                  "reserve_ratio": 1.0189,
+                  "price_frac_net_cone": 0.4958
+                },
+                {
+                  "reserve_ratio": 1.0249,
+                  "price_frac_net_cone": 0.3511
+                },
+                {
+                  "reserve_ratio": 1.0326,
+                  "price_frac_net_cone": 0.2403
+                },
+                {
+                  "reserve_ratio": 1.0461,
+                  "price_frac_net_cone": 0.1247
+                },
+                {
+                  "reserve_ratio": 1.0514,
+                  "price_frac_net_cone": 0.0354
+                },
+                {
+                  "reserve_ratio": 1.0624,
+                  "price_frac_net_cone": 0.0011
                 }
               ]
             },
@@ -2830,16 +3162,68 @@
               "days": 90,
               "demand_curve": [
                 {
-                  "reserve_ratio": 0.97,
-                  "price_frac_net_cone": 6.472712406015038
+                  "reserve_ratio": 0.9693,
+                  "price_frac_net_cone": 6.33
                 },
                 {
-                  "reserve_ratio": 1.0,
-                  "price_frac_net_cone": 1.0
+                  "reserve_ratio": 0.9756,
+                  "price_frac_net_cone": 4.6644
                 },
                 {
-                  "reserve_ratio": 1.05,
-                  "price_frac_net_cone": 0.0
+                  "reserve_ratio": 0.983,
+                  "price_frac_net_cone": 3.3337
+                },
+                {
+                  "reserve_ratio": 0.99,
+                  "price_frac_net_cone": 2.4193
+                },
+                {
+                  "reserve_ratio": 0.9962,
+                  "price_frac_net_cone": 1.8379
+                },
+                {
+                  "reserve_ratio": 1.0045,
+                  "price_frac_net_cone": 1.2548
+                },
+                {
+                  "reserve_ratio": 1.009,
+                  "price_frac_net_cone": 1.0289
+                },
+                {
+                  "reserve_ratio": 1.0122,
+                  "price_frac_net_cone": 0.8832
+                },
+                {
+                  "reserve_ratio": 1.0193,
+                  "price_frac_net_cone": 0.641
+                },
+                {
+                  "reserve_ratio": 1.0254,
+                  "price_frac_net_cone": 0.4944
+                },
+                {
+                  "reserve_ratio": 1.0355,
+                  "price_frac_net_cone": 0.3128
+                },
+                {
+                  "reserve_ratio": 1.042,
+                  "price_frac_net_cone": 0.227
+                },
+                {
+                  "reserve_ratio": 1.0507,
+                  "price_frac_net_cone": 0.1526
+                },
+                {
+                  "reserve_ratio": 1.0682,
+                  "price_frac_net_cone": 0.0679
+                },
+                {
+                  "reserve_ratio": 1.085,
+                  "price_frac_net_cone": 0.0303
+                },
+                {
+                  "reserve_ratio": 1.0915,
+                  "price_frac_net_cone": 0.0031
                 }
               ]
             },
@@ -2848,15 +3232,67 @@
               "days": 92,
               "demand_curve": [
                 {
-                  "reserve_ratio": 0.97,
-                  "price_frac_net_cone": 6.331972431077693
+                  "reserve_ratio": 0.9511,
+                  "price_frac_net_cone": 6.1924
                 },
                 {
-                  "reserve_ratio": 1.0,
-                  "price_frac_net_cone": 1.0
+                  "reserve_ratio": 0.9519,
+                  "price_frac_net_cone": 5.8805
                 },
                 {
-                  "reserve_ratio": 1.05,
+                  "reserve_ratio": 0.9564,
+                  "price_frac_net_cone": 4.7005
+                },
+                {
+                  "reserve_ratio": 0.9638,
+                  "price_frac_net_cone": 3.2735
+                },
+                {
+                  "reserve_ratio": 0.9687,
+                  "price_frac_net_cone": 2.572
+                },
+                {
+                  "reserve_ratio": 0.9746,
+                  "price_frac_net_cone": 1.919
+                },
+                {
+                  "reserve_ratio": 0.981,
+                  "price_frac_net_cone": 1.4073
+                },
+                {
+                  "reserve_ratio": 0.9869,
+                  "price_frac_net_cone": 1.05
+                },
+                {
+                  "reserve_ratio": 0.9932,
+                  "price_frac_net_cone": 0.77
+                },
+                {
+                  "reserve_ratio": 0.999,
+                  "price_frac_net_cone": 0.5745
+                },
+                {
+                  "reserve_ratio": 1.0026,
+                  "price_frac_net_cone": 0.5006
+                },
+                {
+                  "reserve_ratio": 1.0115,
+                  "price_frac_net_cone": 0.3198
+                },
+                {
+                  "reserve_ratio": 1.0225,
+                  "price_frac_net_cone": 0.1691
+                },
+                {
+                  "reserve_ratio": 1.0304,
+                  "price_frac_net_cone": 0.0879
+                },
+                {
+                  "reserve_ratio": 1.0377,
+                  "price_frac_net_cone": 0.0371
+                },
+                {
+                  "reserve_ratio": 1.0463,
                   "price_frac_net_cone": 0.0
                 }
               ]
@@ -4337,6 +4773,38 @@
       "flags": []
     },
     {
+      "param_id": "scenario.ccs_retrofit_capex_kw",
+      "display_name": "Ccs Retrofit Capex Kw",
+      "value": 1521.4,
+      "unit": "$/kW (2026$)",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "NREL ATB 2024 (v4.0.0 pin) capture-island CAPEX increment, Moderate case @2026, converted 2022$ -> 2026$ by constants.INFLATION_RATE: NG 2-on-1 CC (F-Frame) 95% CCS 3104.7 - NG 2-on-1 CC (F-Frame) 1583.3 = 1521.4 $/kW — the same increment the model's own new-build CCS screen charges (constants.NEW_ENTRY_COSTS).",
+      "source_date": "2024",
+      "page_or_table": "ATB 2024 NaturalGas_FE, CAPEX @2026 (Moderate)",
+      "url": "https://atb.nrel.gov/electricity/2024/",
+      "notes": "RE-CITED 2026-09-02 (capx D41) from 900.0, which was flagged needs-citation, stated no dollar-year, and rested on an INVERTED rationale ('lower than greenfield because the host plant exists') — a retrofit capture island costs MORE per kW than the greenfield increment (congested brownfield site, steam and flue-gas tie-ins, outage tie-in risk). 900 was 59 % of the increment the entry screen charges: the '~$900/kW makes the capture island look nearly free' defect FF-1E repaired for new-build and explicitly left standing for the retrofit screen. Adjudicated docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md §5 row 6. THIS IS A FLOOR AND IS LABELLED ONE: all three published bases are GREENFIELD increments, so a retrofit-specific TPC is >= this value and the screen stays biased TOWARD retrofitting, never against it. Matched-configuration cross-check (data/raw/new-build-cost-benchmarks/benchmarks_2026.csv): EIA/S&L Jan-2024 2365-921 = 1444 (2023$ => 1541 in 2026$); EIA AEO2026 EMM Table 3 2824-1086 = 1738 (2025$ => 1776 in 2026$) — ATB is the lowest of the three, which is why it is the floor. Sourcing a retrofit-specific premium (NETL 'Cost and Performance of Retrofitting NGCC Units for Carbon Capture') is routed as follow-on and can only raise it. Pinned by tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py.",
+      "old_repo_location": "",
+      "last_verified": "2026-09-02",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.fixed_om_gas_cc_ccs",
+      "display_name": "Fixed Om Gas Cc Ccs",
+      "value": 65.0,
+      "unit": "$/kW-yr (2026$)",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "NREL ATB 2024 (v4.0.0 pin), Moderate case @2026, converted 2022$ -> 2026$ by constants.INFLATION_RATE. Host CC going-forward O&M (fixed_om_gas_cc = 30.0, the G-32 ATB target) PLUS the ATB capture-island Fixed-O&M increment: NG 2-on-1 CC (F-Frame) 95% CCS 71.1 - NG 2-on-1 CC (F-Frame) 36.1 = 35.0 $/kW-yr.",
+      "source_date": "2024",
+      "page_or_table": "ATB 2024 NaturalGas_FE, Fixed O&M @2026 (Moderate)",
+      "url": "https://atb.nrel.gov/electricity/2024/",
+      "notes": "RE-DERIVED 2026-09-02 (capx D41) from 25.0. Rule 23 trigger is a DATA change, never a residual: the G-32 ATB flip (docs/handoffs/fom-scarcity-defaults-flip-2026-07-07.md) raised the host fixed_om_gas_cc 12 -> 30 and left this 'host + capture island' figure at its pre-flip 25, i.e. BELOW its own host, so the CCS retrofit screen's delta_fom was -$5,000/MW-yr (a SAVING) instead of the capture island's O&M. Adjudicated docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md §5 row 7; repaired and measured in FINDING-capx-d41-ccs-fixedcost-2026-09-02.md. ADDITIVE, not ratio-scaled: the capture island is separate plant with its own absolute O&M and is NEW plant at retrofit time, so it carries a full new-build fixed cost rather than a paid-off host's going-forward discount. Cross-source check on the increment (data/raw/new-build-cost-benchmarks/benchmarks_2026.csv, matched configuration): EIA/S&L Jan-2024 24.78-15.51 = 9.27 (2023$ => 9.90 in 2026$); EIA AEO2026 EMM Table 3 25.93-16.23 = 9.70 (2025$ => 9.91). Every published basis makes the island an added COST; ATB's increment is the largest because ATB's whole NG Fixed-O&M basis runs ~2.2x the EIA/S&L line, which is exactly why host and island must be read off ONE basis — this field's host is the ATB one. Pinned by tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py.",
+      "old_repo_location": "",
+      "last_verified": "2026-09-02",
+      "flags": []
+    },
+    {
       "param_id": "adequacy_demand_response_fraction_by_iso.ERCOT",
       "display_name": "Adequacy Demand Response Fraction By Iso / Ercot",
       "value": 0.058,
@@ -4432,6 +4900,25 @@
       "param_id": "adequacy_external_tie_firm_mw.NYISO",
       "display_name": "Adequacy External Tie Firm Mw / Nyiso",
       "value": 2749.94115,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "adequacy_internal_supply_accounting_ratio_by_iso.MISO",
+      "display_name": "Adequacy Internal Supply Accounting Ratio By Iso / Miso",
+      "value": 0.8546435044350695,
       "unit": "",
       "domain": "Uncategorized",
       "tier": 2,
@@ -30477,16 +30964,248 @@
           "net_cone_curve_per_kw_yr": 79.8,
           "demand_curve": [
             {
-              "reserve_ratio": 0.97,
-              "price_frac_net_cone": 1.596
+              "reserve_ratio": 0.9511,
+              "price_frac_net_cone": 6.243282191780821
             },
             {
-              "reserve_ratio": 1.0,
-              "price_frac_net_cone": 1.0
+              "reserve_ratio": 0.9519,
+              "price_frac_net_cone": 6.164666301369863
             },
             {
-              "reserve_ratio": 1.05,
-              "price_frac_net_cone": 0.0
+              "reserve_ratio": 0.9564,
+              "price_frac_net_cone": 5.867241643835617
+            },
+            {
+              "reserve_ratio": 0.9638,
+              "price_frac_net_cone": 5.507559452054794
+            },
+            {
+              "reserve_ratio": 0.9687,
+              "price_frac_net_cone": 5.33074301369863
+            },
+            {
+              "reserve_ratio": 0.9693,
+              "price_frac_net_cone": 5.3140048664964
+            },
+            {
+              "reserve_ratio": 0.9707,
+              "price_frac_net_cone": 5.183683436266545
+            },
+            {
+              "reserve_ratio": 0.9746,
+              "price_frac_net_cone": 4.507106536203523
+            },
+            {
+              "reserve_ratio": 0.9756,
+              "price_frac_net_cone": 4.365151815068493
+            },
+            {
+              "reserve_ratio": 0.9802,
+              "price_frac_net_cone": 3.8080681636430973
+            },
+            {
+              "reserve_ratio": 0.981,
+              "price_frac_net_cone": 3.720792452178205
+            },
+            {
+              "reserve_ratio": 0.983,
+              "price_frac_net_cone": 3.512379775559167
+            },
+            {
+              "reserve_ratio": 0.9841,
+              "price_frac_net_cone": 3.4110963089986406
+            },
+            {
+              "reserve_ratio": 0.9869,
+              "price_frac_net_cone": 3.1796396477495095
+            },
+            {
+              "reserve_ratio": 0.989,
+              "price_frac_net_cone": 3.014576999347684
+            },
+            {
+              "reserve_ratio": 0.99,
+              "price_frac_net_cone": 2.9432414916286147
+            },
+            {
+              "reserve_ratio": 0.9932,
+              "price_frac_net_cone": 2.744047485638533
+            },
+            {
+              "reserve_ratio": 0.9962,
+              "price_frac_net_cone": 2.5838934509457605
+            },
+            {
+              "reserve_ratio": 0.9967,
+              "price_frac_net_cone": 2.5601009835221005
+            },
+            {
+              "reserve_ratio": 0.9977,
+              "price_frac_net_cone": 2.4339001582638273
+            },
+            {
+              "reserve_ratio": 0.9978,
+              "price_frac_net_cone": 2.42863503464211
+            },
+            {
+              "reserve_ratio": 0.999,
+              "price_frac_net_cone": 2.3710598882869176
+            },
+            {
+              "reserve_ratio": 1.0024,
+              "price_frac_net_cone": 2.219224631200601
+            },
+            {
+              "reserve_ratio": 1.0026,
+              "price_frac_net_cone": 2.211084006391694
+            },
+            {
+              "reserve_ratio": 1.0027,
+              "price_frac_net_cone": 2.2070190670654135
+            },
+            {
+              "reserve_ratio": 1.0045,
+              "price_frac_net_cone": 2.0098708217079206
+            },
+            {
+              "reserve_ratio": 1.0068,
+              "price_frac_net_cone": 1.7693317049827235
+            },
+            {
+              "reserve_ratio": 1.0082,
+              "price_frac_net_cone": 1.627215656456825
+            },
+            {
+              "reserve_ratio": 1.009,
+              "price_frac_net_cone": 1.579766334058947
+            },
+            {
+              "reserve_ratio": 1.0115,
+              "price_frac_net_cone": 1.4343651981408958
+            },
+            {
+              "reserve_ratio": 1.0117,
+              "price_frac_net_cone": 1.42306655593607
+            },
+            {
+              "reserve_ratio": 1.0122,
+              "price_frac_net_cone": 1.3958915176125244
+            },
+            {
+              "reserve_ratio": 1.0166,
+              "price_frac_net_cone": 1.1691395510000655
+            },
+            {
+              "reserve_ratio": 1.0189,
+              "price_frac_net_cone": 1.0778577680795014
+            },
+            {
+              "reserve_ratio": 1.0193,
+              "price_frac_net_cone": 1.0627480726579313
+            },
+            {
+              "reserve_ratio": 1.0225,
+              "price_frac_net_cone": 0.9498239560834405
+            },
+            {
+              "reserve_ratio": 1.0249,
+              "price_frac_net_cone": 0.867200653289297
+            },
+            {
+              "reserve_ratio": 1.0254,
+              "price_frac_net_cone": 0.8512000160581535
+            },
+            {
+              "reserve_ratio": 1.0304,
+              "price_frac_net_cone": 0.6986557396082822
+            },
+            {
+              "reserve_ratio": 1.0326,
+              "price_frac_net_cone": 0.6333770315735743
+            },
+            {
+              "reserve_ratio": 1.0348,
+              "price_frac_net_cone": 0.5712941997438383
+            },
+            {
+              "reserve_ratio": 1.0355,
+              "price_frac_net_cone": 0.5565483300459378
+            },
+            {
+              "reserve_ratio": 1.0377,
+              "price_frac_net_cone": 0.5127972618585915
+            },
+            {
+              "reserve_ratio": 1.042,
+              "price_frac_net_cone": 0.4301505020885013
+            },
+            {
+              "reserve_ratio": 1.0461,
+              "price_frac_net_cone": 0.35604699352807057
+            },
+            {
+              "reserve_ratio": 1.0463,
+              "price_frac_net_cone": 0.3520190186317203
+            },
+            {
+              "reserve_ratio": 1.0507,
+              "price_frac_net_cone": 0.2681879226163708
+            },
+            {
+              "reserve_ratio": 1.0514,
+              "price_frac_net_cone": 0.255491811096517
+            },
+            {
+              "reserve_ratio": 1.0567,
+              "price_frac_net_cone": 0.1775076737235367
+            },
+            {
+              "reserve_ratio": 1.0587,
+              "price_frac_net_cone": 0.15740929265255296
+            },
+            {
+              "reserve_ratio": 1.0624,
+              "price_frac_net_cone": 0.1204040484230642
+            },
+            {
+              "reserve_ratio": 1.0673,
+              "price_frac_net_cone": 0.07520641095890426
+            },
+            {
+              "reserve_ratio": 1.0682,
+              "price_frac_net_cone": 0.06898808429926181
+            },
+            {
+              "reserve_ratio": 1.0738,
+              "price_frac_net_cone": 0.03388904109589038
+            },
+            {
+              "reserve_ratio": 1.0743,
+              "price_frac_net_cone": 0.028294755381604687
+            },
+            {
+              "reserve_ratio": 1.0751,
+              "price_frac_net_cone": 0.0271223091976517
+            },
+            {
+              "reserve_ratio": 1.0754,
+              "price_frac_net_cone": 0.022394559686888506
+            },
+            {
+              "reserve_ratio": 1.0785,
+              "price_frac_net_cone": 0.014836125244618383
+            },
+            {
+              "reserve_ratio": 1.0804,
+              "price_frac_net_cone": 0.010284031311154577
+            },
+            {
+              "reserve_ratio": 1.085,
+              "price_frac_net_cone": 0.007745479452054794
+            },
+            {
+              "reserve_ratio": 1.0915,
+              "price_frac_net_cone": 0.0010386301369863014
             }
           ],
           "seasonal_rbdc": {
@@ -30496,15 +31215,63 @@
                 "days": 92,
                 "demand_curve": [
                   {
-                    "reserve_ratio": 0.97,
-                    "price_frac_net_cone": 6.331972431077693
+                    "reserve_ratio": 0.9967,
+                    "price_frac_net_cone": 6.1924
                   },
                   {
-                    "reserve_ratio": 1.0,
-                    "price_frac_net_cone": 1.0
+                    "reserve_ratio": 0.9977,
+                    "price_frac_net_cone": 5.8805
                   },
                   {
-                    "reserve_ratio": 1.05,
+                    "reserve_ratio": 1.0027,
+                    "price_frac_net_cone": 5.78
+                  },
+                  {
+                    "reserve_ratio": 1.0082,
+                    "price_frac_net_cone": 4.1665
+                  },
+                  {
+                    "reserve_ratio": 1.0166,
+                    "price_frac_net_cone": 3.1086
+                  },
+                  {
+                    "reserve_ratio": 1.0348,
+                    "price_frac_net_cone": 1.6719
+                  },
+                  {
+                    "reserve_ratio": 1.0567,
+                    "price_frac_net_cone": 0.5647
+                  },
+                  {
+                    "reserve_ratio": 1.0587,
+                    "price_frac_net_cone": 0.5006
+                  },
+                  {
+                    "reserve_ratio": 1.0673,
+                    "price_frac_net_cone": 0.2266
+                  },
+                  {
+                    "reserve_ratio": 1.0738,
+                    "price_frac_net_cone": 0.0792
+                  },
+                  {
+                    "reserve_ratio": 1.0743,
+                    "price_frac_net_cone": 0.0581
+                  },
+                  {
+                    "reserve_ratio": 1.0751,
+                    "price_frac_net_cone": 0.0552
+                  },
+                  {
+                    "reserve_ratio": 1.0754,
+                    "price_frac_net_cone": 0.0371
+                  },
+                  {
+                    "reserve_ratio": 1.0785,
+                    "price_frac_net_cone": 0.0139
+                  },
+                  {
+                    "reserve_ratio": 1.0804,
                     "price_frac_net_cone": 0.0
                   }
                 ]
@@ -30514,16 +31281,68 @@
                 "days": 91,
                 "demand_curve": [
                   {
-                    "reserve_ratio": 0.97,
-                    "price_frac_net_cone": 6.401587719298245
+                    "reserve_ratio": 0.9707,
+                    "price_frac_net_cone": 6.2604
                   },
                   {
-                    "reserve_ratio": 1.0,
-                    "price_frac_net_cone": 1.0
+                    "reserve_ratio": 0.9746,
+                    "price_frac_net_cone": 5.0028
                   },
                   {
-                    "reserve_ratio": 1.05,
-                    "price_frac_net_cone": 0.0
+                    "reserve_ratio": 0.9802,
+                    "price_frac_net_cone": 3.7312
+                  },
+                  {
+                    "reserve_ratio": 0.9841,
+                    "price_frac_net_cone": 3.0335
+                  },
+                  {
+                    "reserve_ratio": 0.989,
+                    "price_frac_net_cone": 2.3419
+                  },
+                  {
+                    "reserve_ratio": 0.9932,
+                    "price_frac_net_cone": 1.8715
+                  },
+                  {
+                    "reserve_ratio": 0.9978,
+                    "price_frac_net_cone": 1.4699
+                  },
+                  {
+                    "reserve_ratio": 1.0024,
+                    "price_frac_net_cone": 1.1545
+                  },
+                  {
+                    "reserve_ratio": 1.0068,
+                    "price_frac_net_cone": 0.9226
+                  },
+                  {
+                    "reserve_ratio": 1.0117,
+                    "price_frac_net_cone": 0.7247
+                  },
+                  {
+                    "reserve_ratio": 1.0189,
+                    "price_frac_net_cone": 0.4958
+                  },
+                  {
+                    "reserve_ratio": 1.0249,
+                    "price_frac_net_cone": 0.3511
+                  },
+                  {
+                    "reserve_ratio": 1.0326,
+                    "price_frac_net_cone": 0.2403
+                  },
+                  {
+                    "reserve_ratio": 1.0461,
+                    "price_frac_net_cone": 0.1247
+                  },
+                  {
+                    "reserve_ratio": 1.0514,
+                    "price_frac_net_cone": 0.0354
+                  },
+                  {
+                    "reserve_ratio": 1.0624,
+                    "price_frac_net_cone": 0.0011
                   }
                 ]
               },
@@ -30532,16 +31351,68 @@
                 "days": 90,
                 "demand_curve": [
                   {
-                    "reserve_ratio": 0.97,
-                    "price_frac_net_cone": 6.472712406015038
+                    "reserve_ratio": 0.9693,
+                    "price_frac_net_cone": 6.33
                   },
                   {
-                    "reserve_ratio": 1.0,
-                    "price_frac_net_cone": 1.0
+                    "reserve_ratio": 0.9756,
+                    "price_frac_net_cone": 4.6644
                   },
                   {
-                    "reserve_ratio": 1.05,
-                    "price_frac_net_cone": 0.0
+                    "reserve_ratio": 0.983,
+                    "price_frac_net_cone": 3.3337
+                  },
+                  {
+                    "reserve_ratio": 0.99,
+                    "price_frac_net_cone": 2.4193
+                  },
+                  {
+                    "reserve_ratio": 0.9962,
+                    "price_frac_net_cone": 1.8379
+                  },
+                  {
+                    "reserve_ratio": 1.0045,
+                    "price_frac_net_cone": 1.2548
+                  },
+                  {
+                    "reserve_ratio": 1.009,
+                    "price_frac_net_cone": 1.0289
+                  },
+                  {
+                    "reserve_ratio": 1.0122,
+                    "price_frac_net_cone": 0.8832
+                  },
+                  {
+                    "reserve_ratio": 1.0193,
+                    "price_frac_net_cone": 0.641
+                  },
+                  {
+                    "reserve_ratio": 1.0254,
+                    "price_frac_net_cone": 0.4944
+                  },
+                  {
+                    "reserve_ratio": 1.0355,
+                    "price_frac_net_cone": 0.3128
+                  },
+                  {
+                    "reserve_ratio": 1.042,
+                    "price_frac_net_cone": 0.227
+                  },
+                  {
+                    "reserve_ratio": 1.0507,
+                    "price_frac_net_cone": 0.1526
+                  },
+                  {
+                    "reserve_ratio": 1.0682,
+                    "price_frac_net_cone": 0.0679
+                  },
+                  {
+                    "reserve_ratio": 1.085,
+                    "price_frac_net_cone": 0.0303
+                  },
+                  {
+                    "reserve_ratio": 1.0915,
+                    "price_frac_net_cone": 0.0031
                   }
                 ]
               },
@@ -30550,15 +31421,67 @@
                 "days": 92,
                 "demand_curve": [
                   {
-                    "reserve_ratio": 0.97,
-                    "price_frac_net_cone": 6.331972431077693
+                    "reserve_ratio": 0.9511,
+                    "price_frac_net_cone": 6.1924
                   },
                   {
-                    "reserve_ratio": 1.0,
-                    "price_frac_net_cone": 1.0
+                    "reserve_ratio": 0.9519,
+                    "price_frac_net_cone": 5.8805
                   },
                   {
-                    "reserve_ratio": 1.05,
+                    "reserve_ratio": 0.9564,
+                    "price_frac_net_cone": 4.7005
+                  },
+                  {
+                    "reserve_ratio": 0.9638,
+                    "price_frac_net_cone": 3.2735
+                  },
+                  {
+                    "reserve_ratio": 0.9687,
+                    "price_frac_net_cone": 2.572
+                  },
+                  {
+                    "reserve_ratio": 0.9746,
+                    "price_frac_net_cone": 1.919
+                  },
+                  {
+                    "reserve_ratio": 0.981,
+                    "price_frac_net_cone": 1.4073
+                  },
+                  {
+                    "reserve_ratio": 0.9869,
+                    "price_frac_net_cone": 1.05
+                  },
+                  {
+                    "reserve_ratio": 0.9932,
+                    "price_frac_net_cone": 0.77
+                  },
+                  {
+                    "reserve_ratio": 0.999,
+                    "price_frac_net_cone": 0.5745
+                  },
+                  {
+                    "reserve_ratio": 1.0026,
+                    "price_frac_net_cone": 0.5006
+                  },
+                  {
+                    "reserve_ratio": 1.0115,
+                    "price_frac_net_cone": 0.3198
+                  },
+                  {
+                    "reserve_ratio": 1.0225,
+                    "price_frac_net_cone": 0.1691
+                  },
+                  {
+                    "reserve_ratio": 1.0304,
+                    "price_frac_net_cone": 0.0879
+                  },
+                  {
+                    "reserve_ratio": 1.0377,
+                    "price_frac_net_cone": 0.0371
+                  },
+                  {
+                    "reserve_ratio": 1.0463,
                     "price_frac_net_cone": 0.0
                   }
                 ]
@@ -38968,25 +39891,6 @@
       ]
     },
     {
-      "param_id": "scenario.ccs_retrofit_capex_kw",
-      "display_name": "Ccs Retrofit Capex Kw",
-      "value": 900.0,
-      "unit": "",
-      "domain": "Supply Stack",
-      "tier": 2,
-      "source": "$/kW for post-combustion capture retrofit.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
-    },
-    {
       "param_id": "scenario.ccs_retrofit_capture_rate",
       "display_name": "Ccs Retrofit Capture Rate",
       "value": 0.9,
@@ -44101,25 +45005,6 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
-      ]
-    },
-    {
-      "param_id": "scenario.fixed_om_gas_cc_ccs",
-      "display_name": "Fixed Om Gas Cc Ccs",
-      "value": 25.0,
-      "unit": "",
-      "domain": "Supply Stack",
-      "tier": 2,
-      "source": "CC + capture island going-forward fixed",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
       ]
     },
     {
@@ -50043,6 +50928,24 @@
       "tier": 3,
       "source": "Tier 3 (calibration) — declared-event-window revealed unit derates, the third window shape of the measured unit-availability family (M-2 of the MISO price-formation lane, docs/handoffs/miso-price-formation-design- 2026-07.md §3). Driver (rule 12): the ISO's OWN declared emergency- procedure instruments (Max Gen events / warnings / alerts / capacity advisories — public, per-event provenance in the ``maxgen-events`` registry, data/raw/maxgen-events/) plus each unit's own CAMPD trace inside them. Window: EXACTLY the declared windows, clipped to the declared start/end and kept only where the measured DA hub record certifies deep in-merit prices (> $150/MWh for >= 2 window hours, region-scoped) — inside such a window an available unit runs, so absence/reduction below the unit's own +/-45-day demonstrated capability is revealed unavailability (derate = capability - best in-window hour, floored at 0; a unit that touched capability is not derated). CLASS-AGNOSTIC by design — this is the only channel that can carry the CT/CC leg (the std extract's 5-day floor and the short channel's coal-only guard exclude it by construction); unit-hours already covered by the std or short extracts are excluded at derivation (disjointness asserted). Forward story (rule 13): a declared physical/market availability event, the same admissibility family as the CAMPD outage windows — backcast/calibration overlay only; the registry + derates regenerate from each new CAMPD/declaration vintage, and a forecast year carries the class outage-rate machinery instead (no forward window is fabricated). Applies only when ``outage_source == \"historic\"`` and the ISO's ``campd-unit-outages-maxgen-<ISO>.csv`` exists (built by ``scripts/data/derive_campd_maxgen_outages.py --iso <ISO>``). Default off; GATED CHANGE (alters availability).",
       "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.unit_outage_mixed_gas_routing",
+      "display_name": "Unit Outage Mixed Gas Routing",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Unit-outage windows ROUTED BY THE UNIT'S OWN CLASS at a mixed-gas facility (unit_outage_mixed_gas_routing, off by default; miso-200). The third member of the same consistency-repair family as the two flags above, and the one that fixes the NUMERATOR'S ADDRESS rather than its size: those align the derate's denominator (unit_outage_lp_capacity_basis) and its event set (unit_outage_fleet_status_scope); this one aligns WHICH BIN the event is charged to. A repair, not a market feature (rule 14 [R-ACCURATE]).  scripts/data/derive_campd_unit_outages.py::_resolve_unit_group routes each CAMPD unit to a model (plant_code, plant_group) bin, and short-circuits on the FACILITY's group whenever that group is a qualifying non-COAL one. Its own pjm-75 justification states the premise: \"single-group gas facilities are byte-identical\". But the facility group comes from ``group_by_code[plant_code] = g.plant_group`` over the fleet — LAST WRITER WINS — so at a facility carrying TWO OR MORE gas bins the premise is false and every unit is handed to whichever bin's fleet row happened to come last. Measured case (_miso200_outage_routing_phase0.json): Ninemile Point 1403 (MISO-South) carries ST_GAS 1,465.4 MW and CC_REGULAR 649.5 MW, the last writer is CC_REGULAR, and its two gas-STEAM boilers (units 4 and 5, CAMPD unitType \"Tangentially-fired\", 1,658.1 MW) dump their windows onto the 649.5 MW CC bin: a pre-clip removed share peaking at 3.556 and above 1.0 for 4,920/6,192/4,920 hours in 2023/24/25, so the CC bin is clipped to availability 0.0 for most of every year — while the ST_GAS bin that actually holds those boilers receives NO rows and reads availability identically 1.0, so its 688 MW must-run floor asserts straight through every outage (the FINDING-miso199 §7a cell, 320.5 GWh in Feb-2024 alone = 54 % of the three-year floor misplacement). Both halves are wrong, in opposite directions, at once.  When True the short-circuit is SKIPPED at a multi-gas facility and the resolver falls through to its OWN existing per-unit unitType routing. MEASURED (CAMPD's published unitType), ZERO fitted scalars and ZERO free parameters (rule 21 [R-DOF]), rule-13 forward-regenerable (unitType is a static unit attribute present for any year), and a GENERAL RULE rather than a per-plant enumeration (rule 24 [R-REGISTRY]) — unlike outages._FLEET_GROUP_OVERRIDE, which carries the same defect at NYISO Ravenswood 2500 as a hardcoded entry. Single-gas-group facilities are untouched BY CONSTRUCTION, so the flag is byte-inert while off. Applies to BOTH layers built by the shared resolver (the >= 5-day std extract and the declared-event maxgen extract), because a unit routed to ST_GAS in one and CC_REGULAR in the other would leave the object half-repaired (rule 19 [R-ONE-MECH]); each reads its own \"-unitroute-\" companion file, so the incumbent extracts are never overwritten and the off path is byte-inert. The short-window layer is out of scope by construction (baseload COAL only, so it carries no mixed-gas rows) — a documented boundary, measured, not an oversight.",
+      "source_date": "2023",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",

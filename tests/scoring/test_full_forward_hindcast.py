@@ -686,8 +686,8 @@ class TestBridgeSeam(unittest.TestCase):
                     with pytest.raises(RuntimeError, match="QUARANTINED"):
                         cachemod.is_cached("ERCOT", key, 2022)
                 # An uncontaminated key is untouched.
-                (cachemod.CACHE_ROOT / "ERCOT" / "603c2498bf71d21d").mkdir(parents=True)
-                self.assertFalse(cachemod.is_cached("ERCOT", "603c2498bf71d21d", 2023))
+                (cachemod.CACHE_ROOT / "ERCOT" / "cedadc285f8603b9").mkdir(parents=True)
+                self.assertFalse(cachemod.is_cached("ERCOT", "cedadc285f8603b9", 2023))
 
 
 if __name__ == "__main__":  # pragma: no cover

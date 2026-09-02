@@ -192,7 +192,7 @@ class TestCcCommittedOfferMargin(unittest.TestCase):
 
     def test_default_cache_key_is_byte_stable(self):
         """The new fields are registered as dropped-at-default (rule 24)."""
-        self.assertEqual(ScenarioConfig().cache_key(), "603c2498bf71d21d")
+        self.assertEqual(ScenarioConfig().cache_key(), "cedadc285f8603b9")
 
     def test_armed_cache_key_is_a_distinct_scenario(self):
         """An armed run must not collide with the default's cached results."""

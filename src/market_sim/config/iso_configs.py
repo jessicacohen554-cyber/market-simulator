@@ -418,6 +418,23 @@ def _ercot_config() -> ISOConfig:
         # tests/unit/config/test_ercot_stageb_arming.py (TestD12AArming) and
         # tests/unit/config/test_iso_override_precedence.py.
         #
+        # POLE LITERALS SUPERSEDED 2026-09-02 (this arming is untouched; the
+        # cause is elsewhere). The owner-authorized capx D41 re-identification
+        # moved two SHARED defaults onto the NREL ATB 2024 (2026$) basis —
+        # fixed_om_gas_cc_ccs 25.0 -> 65.0 and ccs_retrofit_capex_kw 900.0 ->
+        # 1521.4 — and NEITHER is a _CACHE_KEY_OPTIONAL_FIELDS member, so both
+        # are hashed at every value and EVERY config in the program re-keys:
+        # this ERCOT pole 68a207068509f2b0 -> 6bb61037c072502d, its pre-arm
+        # 8d9ef77edb3e44cb -> 71f20d708a810f0a, the global pin
+        # 603c2498bf71d21d -> cedadc285f8603b9 and every backcast key
+        # e027bc248c93c835 -> e006dfd7cef8bedd. The literals above are the
+        # dated measurements taken at THIS arming and are left as written; the
+        # relations they assert (armed vs pre-arm distinct, no other ISO's
+        # resolution disturbed by this arming) are unaffected, because the
+        # poles moved together by the same delta. Cause block and blast
+        # radius: tests/regression/test_persisted_identity.py and the
+        # cache-epoch ledger in src/market_sim/results/cache.py.
+        #
         # The control arm stays expressible (OVERRIDE-FIX precedence): an
         # explicit --no-entry-margin-exhaustion /
         # --no-entry-forward-reserve-leg (or constructor False) wins over

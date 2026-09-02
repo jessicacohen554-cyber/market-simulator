@@ -20,7 +20,7 @@ D-29 is a declared **cache epoch for the MISO forecast lane**
 (``cd2403cc031515db`` -> ``9337e00504e1e72a``) and for that lane only. The
 tests below pin both halves of what makes it clean: the ``ScenarioConfig``
 field default stays ``False`` (so an armed run ENTERS the digest rather than
-colliding with its pre-arm predecessor, and the global pin ``603c2498bf71d21d``
+colliding with its pre-arm predecessor, and the global pin ``cedadc285f8603b9``
 cannot move), and no MISO backcast key shifts.
 
 The flag's forecast-mode restriction is enforced at **CONSUMPTION**
@@ -147,7 +147,7 @@ class TestD26Arming:
         base = ScenarioConfig(mode="forecast", iso="MISO")
         armed = dataclasses.replace(base, miso_clean_tier_rows=True)
         assert armed.cache_key() != base.cache_key()
-        assert ScenarioConfig().cache_key() == "603c2498bf71d21d"
+        assert ScenarioConfig().cache_key() == "cedadc285f8603b9"
 
     def test_arming_does_not_disturb_the_d2prime_entry(self):
         """The pre-existing D-2' override survives alongside the new one."""

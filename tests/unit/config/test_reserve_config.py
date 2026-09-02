@@ -1992,6 +1992,6 @@ class TestErcotReserveSupplyCapNetCredits(unittest.TestCase):
 
         # Registered drop-at-default (nyiso-119 discipline): the global
         # pinned default key is unmoved, an armed config hashes distinctly.
-        self.assertEqual(ScenarioConfig().cache_key(), "603c2498bf71d21d")
+        self.assertEqual(ScenarioConfig().cache_key(), "cedadc285f8603b9")
         armed = ScenarioConfig(ercot_reserve_supply_cap_net_credits=True)
-        self.assertNotEqual(armed.cache_key(), "603c2498bf71d21d")
+        self.assertNotEqual(armed.cache_key(), "cedadc285f8603b9")
