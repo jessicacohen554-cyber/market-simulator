@@ -196,8 +196,23 @@ VERDICT_MAP = {
     # sign BACK from over- to under-retirement as the corrected ledger holds
     # the reliability floor at the requirement). Determination HOLD on both,
     # no flip.
+    # capx-D33 (2026-09-02) re-measured the leg with the ADDITIONS repair
+    # (entry_vre_zone_selection: the entry screen sites a VRE candidate where
+    # its own margin is highest instead of in the single
+    # RENEWABLE_ZONE_ALLOCATION bucket, which for MISO was MISO-South — the one
+    # model zone eligible under NO compliance region, so every solar candidate
+    # was screened at a $0 REC credit). The bare live key moves to the NEW run
+    # and D31's record keeps its OWN verdict under the preserved `-pre-d33`
+    # key (same precedent chain) — the scores differ on the ADDITIONS side
+    # (`add.by_tech.wind` 4.000 -> 8.000 GW, its band FAIL -> PASS;
+    # `add.by_tech.solar` 1.236 -> 4.946 GW, still FAIL; the FC-3 band-FAIL
+    # list 9 rows -> 8) and are IDENTICAL on the retirement side
+    # (`retire.total_gw` 4.469 GW and recall 5/19 to the decimal — the measured
+    # null that amends D31 §7's attribution). Determination HOLD on both,
+    # no flip.
     "miso-2021-2025-realized-t1h-d27": "miso-t1h-pre-d31",
-    "miso-2021-2025-realized-t1h-d31": "miso-t1h",
+    "miso-2021-2025-realized-t1h-d31": "miso-t1h-pre-d33",
+    "miso-2021-2025-realized-t1h-d33": "miso-t1h",
 }
 
 
