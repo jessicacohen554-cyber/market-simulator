@@ -9840,3 +9840,144 @@ passes (`check_mechanism_matrix.py` exit 0), shard passes `node --check`.
 not omission. **Rule 22:** every year read is 2023/2024/2025; NYISO's `complete`
 marker was withdrawn 2026-08-30, it is absent from `final`, and **no marker was
 requested**.
+
+## 2026-09-02 — nyiso-174 PHASE 0, ZERO SOLVE: the East River crosswalk defect is a ONE-PLANT defect at 97.8 % of the misclassed volume, the wrong side is the PROBE-SIDE measured construction, the repair moves NOTHING on C1 — and it FLIPS nyiso-170 §3's CT_CHP identification blocker
+
+**Keeper unchanged:** `2026-08-30-nyiso-159-loss-surface`, determination
+**NOT-YET** on {C3a-2025 −11.5 %, C3c}. **No parameter touched, no band swept,
+no arm pre-registered, no run registered.** Finding:
+`docs/FINDING-nyiso174-east-river-class-crosswalk-2026-09-02.md`; probe
+`scripts/probes/nyiso174_class_crosswalk_audit.py` →
+`results/calibration/_nyiso174_class_crosswalk_audit.json`.
+
+**(a) WHICH SIDE IS WRONG — the CAMPD `unitType` construction, on three
+independent primary records that agree.** EIA-860 codes East River (2493)
+`GT`×2 (180 MW, 2005) + `ST`×2 (156.2 / 200 MW, 1951/1955) with **no
+combined-cycle prime mover (`CA`/`CT`/`CS`) anywhere**. EIA-923 files its net
+generation under **two** prime movers every year (`GT` 2.022/2.149/2.079 TWh,
+`ST` 1.057/0.745/0.674). And CAMPD's own meters refute CAMPD's own label: the
+two units it tags `"Combined cycle"` burn at a measured **10.51–10.89
+MMBtu/MWh** — simple-cycle, ~45 % above the CC band — and export **zero**
+steam, while all the steam sits on two boilers that generate **0.000 TWh**. The
+model's bins reproduce EIA-860's summer split **to the megawatt** (`CT_CHP`
+306.0 = 152.1+153.9; `ST_CHP` 309.5 = 132.7+176.8), and a **fourth**
+corroboration closes it: the committed `classFull` benchmark runs through the
+same `plant_taxonomy.classify_plant`, so the thing C1 is scored against
+**already** places the plant in `CT_CHP` + `ST_CHP`. **No per-unit
+`_FLEET_GROUP_OVERRIDE` is warranted — the model already has the split.**
+*Brief-premise correction:* the tranches CSV carries only the `ST_CHP` row, but
+the fleet and `bin_assignments_NYISO.csv` carry **both** bins.
+
+**(b) HOW MANY OTHER PLANTS — ONE.** 228 of 773 NY CAMPD unit-years disagree,
+but by volume East River is **6.5811 of 6.7292 TWh = 97.8 %** of the misclassed
+energy 2023–2025. Next: S A Carlson (2682) **0.142 TWh** (confirming nyiso-173
+S1's 87 MW case as the same family), then Arthur Kill 0.0029, Astoria 0.0022,
+Ravenswood 0.0008, Northport 0.0001 — 0.148 TWh in aggregate, 0.07 % of
+measured NY energy. A separate 0.578 TWh sits at plants absent from the model
+fleet (largest Oswego Harbor 0.222), a **population** question consistent with
+nyiso-172 S7's < 0.7 %, not a new object. **This is a one-plant repair, not a
+systematic crosswalk defect.**
+
+**(c) WHAT THE REPAIR MOVES — nothing scored; four probe-side bases, one flip.**
+**C1 does not move, and that was measured rather than assumed:** nyiso-169b
+measurement A reproduces exactly (2025 CC_CHP **+16.30**, CC_REGULAR **+6.40**,
+CT_PEAKER **−63.73**, ST_GAS **−28.63**) because both its inputs — the keeper's
+P1 `class_hourly` and `classFull` — were always on the prime-mover basis. **The
+defective construction never touched a scored quantity, so there is no
+model-side, data-side or config-side arm to pre-register.** What does move:
+**nyiso-170 §3's `CT_CHP` "NOT identifiable" FLIPS** (anchor **4.933 → 0.892**,
+1 → 3 CEMS units, 0.483 → 2.672 TWh gross against a 2.383 TWh benchmark) —
+CT_CHP hourly conduct IS identifiable from CAMPD; its **`ST_CHP` blocker
+SURVIVES** at 0.000 TWh; its **`CC_CHP` anchor WORSENS 1.070 → 1.241**, so that
+verdict was itself partly an artifact. **nyiso-171 A3 is STRENGTHENED TO
+UNANIMITY** — all 16 remaining CC_CHP plants reach zero in every year,
+sum-of-plant-minima **0.0 MW** in all three (vs its own 0.0/81.0/85.0), 0 plants
+never off, while the class floor is still 182/277/81 MW; East River **was** its
+single counter-example. **nyiso-172 §3.4 is RESTATED ~60 % larger** — 93 → 219,
+773 → 1,523, 1,211 → 1,926 h (2.50/17.39/21.99 %), still portfolio-only.
+**nyiso-173's adjudication SURVIVES untouched** — its decisive S3 was taken with
+and without East River, and 2.0–2.7 GW of unused envelope dwarfs the growth.
+
+**(d) RULE 19 `[R-ONE-MECH]` ENUMERATION for 2493**, off the engine: `chp_steam`
+(`chp_pmin_cf = 30.0`) reaches the **`ST_CHP` bin only** (no `CT_CHP` tranches
+row exists); the outage overlay reaches **`ST_CHP` only**, because
+`_generic_unit_outage_target` returns `None` for `CT_CHP`/`CT_PEAKER` by design,
+so the 306 MW turbine bin takes **no derate at all**; the commitment bridge
+(`CC_REGULAR` + `ST_GAS`) and the reliability-floor limbs do not reach it; and
+there is **no `_FLEET_GROUP_OVERRIDE` entry and none should be added**.
+
+**Phase 2: NOT ENTERED, and that is the correct outcome, not a punt.** The
+brief made phase 2 conditional on (1) establishing which side is wrong. It did —
+and the wrong side turns out to be entirely measurement-side, with no
+`ScenarioConfig` field, data input or LP quantity behind it. The repair
+delivered is therefore the corrected construction itself,
+`scripts/lib/campd_measured_classes.py` (19 tests,
+`tests/unit/data/test_campd_measured_classes.py`), which costs no solve and
+stops session 175+ re-introducing the defect.
+
+**Handed forward, none scoped here.** (1) A real zero-DOF **model-input**
+defect: `_resolve_unit_group`'s `fac_group` short-circuit (last-writer-wins over
+the fleet iteration) writes East River's two `GT`s into
+`campd-unit-outages-NYISO.csv` as `ST_CHP`, so their windows derate the steam
+bin — the same short-circuit neiso-99 already carved a rule 14 exception out of.
+**Two windows, both 2023**; not repaired because it is solve-affecting, its
+direction makes the steam bin *more* available (deepening the +86.55 % ST_CHP
+over-run), and it sits inside (2). (2) **The successor object: which half of
+East River carries the must-run.** The model floors the **steam** bin at
+92.85 MW and leaves the turbine bin unfloored and un-derated, while the market's
+must-run is measurably in the **turbine** half (7,183–7,698 op-hours each, a
+hard 85 MW plant floor in 2025, boilers at 0.000 TWh); C1 2025 reads `ST_CHP`
+**+86.55 %** against `CT_CHP` **−23.37 %**, with East River **65.8 %** of the
+model's `ST_CHP` capacity and **68.6 %** of its `CT_CHP`. (3) **A
+diagnostics-integrity limit that BLOCKS (2)** and is far larger than the
+`ST_GAS` one on record: D-2's `class_total_twh` vs the P1 `class_hourly`
+sidecar disagree **13–17×** on `ST_CHP` (0.0712/0.0913/0.0931 vs
+1.196/1.185/1.492) and 1.6–1.8× on `CT_CHP` in the **opposite** direction, while
+agreeing on the CT+ST **total** to within 2.2 % — and D-2's `ST_CHP`
+`share_of_class` is consequently **> 1** (2.847 / 1.795), a live hazard for the
+rule 20 `[R-FORCED-BUDGET]` gate. (4) The model's East River `heat_rate` is
+**7.4205** on all four units against a measured **10.51–10.89** on the two
+turbine stacks — **recorded, NOT proposed**, because the right electric heat
+rate for a cogen is a fuel-allocation question and (3) blocks the model-side
+check.
+
+**All twelve inherited probes re-run first and all twelve reproduce** — 168
+gap (−$6.59 = −$2.32 + −$4.27), 168 reserve slack (**trap (a)**: max *relative*
+delta **3.6e-16** over 309 leaves, zero structural or verdict differences,
+churn **reverted not committed**), 169 (**trap (b)** handled: DA months
+re-fetched and `nyiso-interface-flows` regenerated, DA `hours_covered` **8760/yr**
+after), 169b (+16.3 / +6.4 %), 170 (`proceed_to_phase_2: false`), 170b/c/d
+(`survives_all_years: true`), 171 (0.253/0.502/0.313), 172
+(`proceed_to_arm: false`), 173 (773 / 1,211 h, coverage 0.831), 173b (0.794 /
+0.821 / 0.839, headroom 2,745 / 2,630 / 2,363 MW). **Eleven produced zero git
+churn.** **A NEW TRAP, same family as (b), documented for successors:**
+`nyiso168_reserve_supply_slack` **silently degrades** without the
+`ancillary-services` clean partition — it drops its entire `DAM` and `RTM`
+measured reserve-price blocks (127 lines) and still **exits 0**, so committing
+its output would silently delete a committed measurement. It fails *loudly*
+without `fleet`; the loud mode is the safe one. Regenerate **both**, and diff
+structurally, not just numerically.
+
+**Reproduction discipline.** The construction was verified against **three**
+committed sessions before restating any of them: nyiso-171 A3 exactly (17
+plants, 0.0/81.0/85.0 MW, fleet minima 282/368/184, plants-never-off `[2493]` in
+2024/2025), nyiso-172 §3.4's violation-hour counts exactly (93/773/1,211), and
+nyiso-173 S3's violating-hour means exactly (2025 model − measured
+**1,646.5 MW** vs its 7,749 − 6,102). One item is left **unreconciled and said
+so**: nyiso-172 §3.4's reported *"CC mean gap"* column (+224/+495/+636 MW) could
+not be reconstructed from any of four natural definitions; it is a reported
+column, not a gate, and nothing here depends on it. Trap (c) (`Etc/GMT+5`) and
+trap (d) (CAMPD `grossLoad` NULL filled to zero explicitly) both handled.
+
+**Rule 28 (b).** Two NYISO cells annotated, **no verdict moves and no field
+changed**: `campd_outage_windows` stays **`K`** (mechanism armed and correct;
+the routing defect is named, sized and handed forward) and
+`chp_steam_following` stays **`K`** (nyiso-171's stop condition strengthened to
+unanimity on the corrected basis). Guard passes
+(`check_mechanism_matrix.py` exit 0), shard passes `node --check`.
+**Rule 15:** no solve ran, so nothing is registered on the dashboard — by
+design, not omission. **Rule 22:** every year read is 2023/2024/2025; NYISO's
+`complete` marker was withdrawn 2026-08-30, it is absent from `final`, and **no
+marker was requested**. **No C3c lever opened**; none of the twenty-three closed
+lines re-tested; **C3a-2025 did not move and none was available** — §4.2 is the
+measurement that explains why this lane never could.
