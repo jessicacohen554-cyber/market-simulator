@@ -10076,4 +10076,66 @@ tests" item is CLOSED — it measured **8** on the base this session opened agai
 `main` at the time of writing `tests/unit/config` is **642 passed, 0 failed**, unchanged with
 this branch applied. Do not carry the item forward.
 
+
+### miso-200 (cont.) — the arm SOLVED and PROMOTED: **KEEPER `2026-09-02-miso-200-unitroute`**
+
+**The refusal above was SUPERSEDED IN-SESSION by an owner directive** — *"Is this a
+recommended keeper candidate? If so plz promote. If structural integrity improves but
+gates regress that may still be a keeper."* — which re-scoped the promotion bar and made
+the arm worth spending. **In the event NOTHING REGRESSED, so the re-scoped bar was not
+needed.**
+
+**The A/B.** Control `2026-09-02-miso-200-control` vs arm `2026-09-02-miso-200-unitroute`,
+both 2023+2024+2025 in one invocation, years sequential, in-session, both solved from the
+committed keeper recipe via `--replay-bundle` so the delta is provably one field. Scorer
+`_miso200_ab_gates.py` **committed blind** and deliberately NOT importing
+`_miso198_ab_gates`: it orders kills-silent BEFORE inertness and measures inertness on
+**value movement** rather than criterion-status identity, repairing both defects
+FINDING-miso198 §5b disclosed in its own scorer.
+
+| gate | result |
+|---|---|
+| S-0 control integrity | **PASS — BIT-IDENTICAL**, 9 sidecars, `max_abs_diff` 0.0 |
+| S-1 single delta | PASS — exactly `unit_outage_mixed_gas_routing` |
+| S-2 liveness | PASS |
+| **K-1 C1 band** | **silent** — CC_REGULAR-2024 +6.748 → +7.075, ST_GAS-2024 −7.698 → −7.854, **no band exit anywhere** |
+| K-2 C3b / K-3 D-4 / K-4 D-1 / K-5 flips | silent |
+| K-6 DOF | **UNSCORED** and disclosed, never counted as a pass |
+
+**The gain is on C8 (rule 20).** ST_GAS forced share **0.2002 / 0.2100 / 0.3187 →
+0.1496 / 0.1520 / 0.2651**, ~−5 pp every year, and **2025 crosses from ABOVE the 0.30
+merchant budget (a grounded over-budget pass) to WITHIN it** — the floor stops forcing
+energy in hours the plant's own meter says it was out.
+
+**The pre-registered K-1 risk did not materialise.** The N-4 capability bound
+(+3.3055 / −5.1916 TWh) was a rigorous UPPER bound and very loose: the LP converted
+**~10 % and ~3 %** of it. **No criterion status moves**; determination UNCHANGED at
+NOT-YET on `price_mean`, and **C3a-2025 is EXACTLY unchanged at −12.2745** — nothing here
+is C3a-driven (face: 2023 +0.1522 → +0.2740, 2024 −4.4892 → −4.3653).
+
+**Reported against the promotion.** (a) **The phase-0 L-3a line FIRED and is NOT
+renegotiated.** What licensed the solve is a *separable measurement*: the fleet's ST_GAS
+bin at 1403 is EXACTLY the two units carrying those windows (742.6 + 722.8 = 1,465.4 MW)
+and at 2070 exactly one (59.0 MW), so availability is exactly **0.0000** in every overflow
+hour — the physically correct value. L-3a was a proxy for "the repair must not remove
+capacity that should be running", and measured, it never does. (b) **K-3 and K-4 passed
+VACUOUSLY on the first scoring run** — a `--replay-bundle` solve writes no
+`legitimacy_diagnostics.json`, so the scorer compared empty against empty. Disclosed, then
+the diagnostics were generated for BOTH legs (D1=30, D2=23, D4=57 each) and the pair
+re-scored; only then did S-2/K-3/K-4 become real PASSes, and the promotion rests only on
+the re-scored run.
+
+**Governance.** Attestation by `scripts/gen_miso200_attestation.py` on the
+gen_miso186/187/188/198 pattern — one appended MEASURED entry, **n_entries 39, n_residual
+UNCHANGED at 2**; `build_dof_ledger.py` deliberately NOT run on it. Keeper shard,
+`status/MISO.js`, the matrix shard keeper stamp and the §5.4 prose header all re-stamped
+this session (rule 28b). `audit_keepers --iso MISO` **PASS 0/0**, independently
+re-verified by the `calibration-keeper-auditor` agent against the artifacts (0 failures,
+0 repairs; it re-derived C8 from the D-2 rows itself). MISO holds no `complete` marker, so
+the rule-22 D-5(b) re-key does not apply. Rule 22: 2023–2025 only.
+
+**Successor unchanged:** the **ST-side denominator basis alignment** (the ST_GAS/ST_CHP
+analogue of `unit_outage_lp_capacity_basis`, which does not exist yet) closes the two
+residual overflow cells.
+
 Next shorthand: **miso-201**.
