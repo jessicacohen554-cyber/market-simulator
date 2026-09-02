@@ -122,12 +122,18 @@ consumer to re-run or invalidate.
 
 The golden-2 finding is ≥300 lines (584 → 605), so it was edited **locally**
 with the Edit tool — never regenerated from response content — and the exact
-on-disk bytes are pushed. Blob verification against the remote follows the push;
-the local blob shas at the time of writing are
-`462ec2a807ca002735cd3f130d941098f8ca59f8` (golden-2 finding) and
-`cc8dbbe4a94e1109723dbf1501b750b9f7ffa8d5` (`neiso-t3.json`). The disposition
-file is data, not source, and was likewise written whole from a verified
-round-trip rather than retyped.
+on-disk bytes are pushed. **Blob verification after the push: all three files
+MATCH** — remote blob sha and line count equal to local, checked against
+`origin/claude/capx-d38-records-wfzdfx`:
+
+| File | Blob sha | Lines |
+|---|---|---|
+| `docs/handoffs/FINDING-capx-t3-golden2-2026-09-01.md` | `cc8dbbe4a94e1109723dbf1501b750b9f7ffa8d5` | 605 |
+| `results/ff-corridor/dispositions/neiso-t3.json` | `462ec2a807ca002735cd3f130d941098f8ca59f8` | 795 |
+| `docs/handoffs/FINDING-capx-d38-d36-records-2026-09-02.md` | (this file) | 149 |
+
+The disposition file is data, not source, and was likewise written whole from a
+verified round-trip rather than retyped.
 
 ## 5. Governance attestation
 
