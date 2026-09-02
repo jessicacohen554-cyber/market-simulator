@@ -210,7 +210,14 @@ class CommittedSharedKeyGroupsTest(unittest.TestCase):
         # lands two configs at one key; the invariant this test guards is the
         # refused SET, asserted next. Corrected 2026-09-02 by the fast-tier
         # repair lane (the count had been red on main since 2026-09-01).
-        self.assertEqual(len(self.groups), 15)
+        # 15 -> 16 on 2026-09-02: capx D42 registered the verified fossil-dates
+        # arm twice at key 85000b5179ddff0f — the plant-wide-derate solve
+        # (`-d42-dates-plantwide`, kept as the measurement of the composition
+        # artifact) and the fuel-scoped re-solve (`-d42-dates`); the derate
+        # scope is code, not config, so the two run_config.json files are
+        # identical by construction — a designed (permitted) case. Refused set
+        # unchanged.
+        self.assertEqual(len(self.groups), 16)
         self.assertIn("706e7ba8e6582d42", self.groups)
         self.assertEqual(
             refused_keys, ["07e416f3f8072e7c", "f061b2646bfaac8b"], msg=refused
