@@ -104,6 +104,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     unit_outage_lp_capacity_basis: { cell: "U" },
     unit_outage_fleet_status_scope: { cell: "U" },
     unit_outage_mixed_gas_routing: { cell: "U", ev: "Row added by miso-200 (2026-09-02) with the field, same PR (rule 28c). UNTESTED here: rule 28(d) — a verdict is strictly per-ISO and MISO's does not fill this cell. The transfer question is cheap and well-posed: does this ISO carry any facility with two or more model gas bins whose CAMPD units disagree with the last-writer facility group? Note outages._FLEET_GROUP_OVERRIDE already carries NYISO Ravenswood 2500 as a hardcoded per-plant instance of the SAME defect, so at least one non-MISO case is known to exist and is currently handled by enumeration rather than by this general rule." },
+    campd_per_unit_attribution: { cell: "U", ev: "Row added by nyiso-176 (2026-09-02) with the field, same PR (rule 28c). UNTESTED here: rule 28(d), and no NEISO '-perunit-' companion has been derived, so the gate is a literal no-op today. The transfer question has a specific hook in this ISO: neiso-99 already had to carve a rule 14 [R-ACCURATE] exception out of the SAME _resolve_unit_group short-circuit, so the defect family is known to be present here and was handled per-plant rather than by the general rule this gate applies. Answerable from committed bytes without a solve." },
     retiree_vintage_status_scope: { cell: "U" },
     partial_plant_exit_carry: { cell: "U" },
     wefor_residual: { cell: "U" },
