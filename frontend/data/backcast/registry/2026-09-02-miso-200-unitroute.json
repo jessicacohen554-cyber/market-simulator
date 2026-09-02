@@ -1,15 +1,15 @@
 {
-  "id": "2026-09-02-miso-200-unitroute",
-  "label": "miso 200 unitroute",
-  "date": "2026-09-02",
-  "shorthand": "miso-200-unitroute",
-  "definition": "miso-200 arm: keeper recipe + unit_outage_mixed_gas_routing ON (single delta)",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "MISO",
-  "file": "frontend/data/backcast/runs/2026-09-02-miso-200-unitroute.js",
-  "bundle": "results/calibration/miso200_unitroute_B"
+ "id": "2026-09-02-miso-200-unitroute",
+ "label": "miso 200 unitroute",
+ "date": "2026-09-02",
+ "shorthand": "miso-200-unitroute",
+ "definition": "MISO KEEPER (promoted 2026-09-02, miso-200). Single delta unit_outage_mixed_gas_routing=true: the CAMPD unit-outage extract's CLASS ROUTING repaired at mixed-gas facilities. _resolve_unit_group short-circuits on the FACILITY group \u2014 its own pjm-75 premise is 'single-group gas facilities are byte-identical' \u2014 but group_by_code is LAST-WRITER-WINS over the fleet, so at a facility with two or more model gas bins every unit lands on one bin. Exactly TWO MISO facilities qualify: Ninemile Point 1403 sent its two 'Tangentially-fired' gas-steam boilers (units 4+5, 1,651.1 MW) onto its 649.5 MW CC bin \u2014 pre-clip removed share 2.588/3.556/2.553, above 1.0 for 5,640/6,192/4,920 h/yr \u2014 while the ST_GAS bin that actually holds them got ZERO rows and read availability identically 1.0, so its 688 MW must-run floor asserted through every outage. MEASURED (CAMPD's published unitType), ZERO free parameters (ledger 39/2). S-0 BIT-IDENTICAL vs control, S-1 single delta, S-2 PASS, K-1..K-5 ALL SILENT, K-6 UNSCORED and disclosed. THE GAIN IS ON C8: ST_GAS forced share 0.2002/0.2100/0.3187 -> 0.1496/0.1520/0.2651, 2025 crossing from ABOVE the 0.30 merchant budget to WITHIN it. C1 CC_REGULAR-2024 +6.748 -> +7.075 and ST_GAS-2024 -7.698 -> -7.854, NO band exit. NO criterion status moves: DETERMINATION UNCHANGED at NOT-YET, deciding criterion C3a (price_mean) 2025, which is EXACTLY unchanged at -12.2745 \u2014 nothing here is C3a-driven. C3c the single ledgered caveat. Control leg: 2026-09-02-miso-200-control.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-09-02-miso-200-unitroute.js",
+ "bundle": "results/calibration/miso200_unitroute_B"
 }

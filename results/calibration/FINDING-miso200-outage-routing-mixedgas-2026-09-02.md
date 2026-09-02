@@ -1,4 +1,52 @@
-# FINDING miso-200 — the outage extract MIS-ROUTES a mixed CC+ST facility's steam units onto its CC bin: the defect is REAL, TWO-SIDED and LARGE, the repair is EXACT — and the arm is KILLED at phase 0 by its own frozen soundness line, because the mis-routing was MASKING two further pre-existing defects (2026-09-02)
+# FINDING miso-200 — the outage extract MIS-ROUTES a mixed CC+ST facility's steam units onto its CC bin: the defect is REAL, TWO-SIDED and LARGE; the arm was killed at phase 0 on a proxy that over-fired, then SOLVED and PROMOTED on the owner's re-scoped bar with every gate silent (2026-09-02)
+
+> **SUPERSEDING ADDENDUM (same session, appended after §1-§10 were written).**
+> §§1-10 below were written when this session had refused to solve, and they say so.
+> **That outcome was superseded in-session by an owner directive** — *"Is this a
+> recommended keeper candidate? If so plz promote. If structural integrity improves
+> but gates regress that may still be a keeper."* — which re-scoped the promotion
+> bar and made the arm worth spending. The A/B was then solved end to end.
+>
+> **KEEPER AT CLOSE: `2026-09-02-miso-200-unitroute`** (bundle
+> `results/calibration/miso200_unitroute_B`), promoted; `audit_keepers --iso MISO`
+> PASS 0/0, independently re-verified by the `calibration-keeper-auditor` agent
+> against the artifacts (0 failures, 0 repairs).
+>
+> **In the event NOTHING REGRESSED, so the re-scoped bar was not needed:** S-0
+> BIT-IDENTICAL (9 sidecars, `max_abs_diff` 0.0), S-1 exactly one field, S-2 PASS,
+> **K-1..K-5 ALL SILENT**, K-6 UNSCORED and disclosed. The gain is on **C8**: ST_GAS
+> forced share **0.2002 / 0.2100 / 0.3187 → 0.1496 / 0.1520 / 0.2651**, with 2025
+> crossing from ABOVE the 0.30 merchant budget (a grounded over-budget pass) to
+> WITHIN it. The **K-1 risk named ex ante did NOT materialise**: CC_REGULAR-2024
+> +6.748 → +7.075 and ST_GAS-2024 −7.698 → −7.854, no band exit anywhere — the §7
+> capability bound (+3.3055 / −5.1916 TWh) was rigorous but very loose, the LP
+> converting ~10 % and ~3 % of it. **No criterion status moves**; the determination
+> is UNCHANGED at NOT-YET on `price_mean`, and **C3a-2025 is EXACTLY unchanged at
+> −12.2745**, so nothing here is C3a-driven.
+>
+> **§5's L-3a KILL STANDS AS FIRED and is NOT renegotiated.** What licensed the
+> solve was a *separable measurement*, not a reinterpretation: the fleet's ST_GAS bin
+> at 1403 is EXACTLY the two units carrying those windows (742.6 + 722.8 =
+> 1,465.4 MW) and at 2070 exactly one (59.0 MW), so a concurrent full stop means the
+> bin is genuinely 100 % out — and availability is exactly **0.0000** in every one of
+> the 1,728 / 552 / 144 and 24 / 72 / 24 overflow hours, which is the physically
+> correct value. The overflow is a bookkeeping artifact with **zero dispatch
+> consequence**; L-3a was a proxy for "the repair must not remove capacity that
+> should be running", and measured, it never does.
+>
+> **A second defect, disclosed rather than absorbed:** on the FIRST scoring run K-3
+> (D-4 conduct) and K-4 (D-1 shape) passed **VACUOUSLY** — a `--replay-bundle` solve
+> writes no `legitimacy_diagnostics.json`, so the scorer compared empty against
+> empty, and S-2's forced-share leg was unmeasurable. That is the same defect class
+> this session's scorer was written to avoid. The diagnostics were generated for BOTH
+> legs (D1=30, D2=23, D4=57 rows each) and the pair re-scored, at which point S-2,
+> K-3 and K-4 became **real** PASSes. The promotion rests only on the re-scored run.
+>
+> §8's handed-on items stand unchanged — in particular the successor: the **ST-side
+> denominator basis alignment**, which closes the two residual overflow cells.
+> Records: `_miso200_ab_gates.json`, `scripts/gen_miso200_attestation.py`
+> (n_entries 39, n_residual UNCHANGED at 2), runs `2026-09-02-miso-200-control` /
+> `2026-09-02-miso-200-unitroute`.
 
 **Session:** miso-200 (2026-09-02). **Keeper at open AND at close:
 `2026-09-01-miso-198-oomlevel`** (bundle `results/calibration/miso198_oom_B`) —
