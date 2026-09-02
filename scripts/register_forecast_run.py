@@ -213,6 +213,18 @@ VERDICT_MAP = {
     "miso-2021-2025-realized-t1h-d27": "miso-t1h-pre-d31",
     "miso-2021-2025-realized-t1h-d31": "miso-t1h-pre-d33",
     "miso-2021-2025-realized-t1h-d33": "miso-t1h",
+    # capx-D37 (2026-09-02) re-measured NEISO's T1-H leg with the D40 Net ICR
+    # requirement lever ARMED (owner ruling Q28, this measurement only; the
+    # shipped default stays False). The armed arm takes the bare `neiso-t1h`
+    # key under the LIVE-vintage convention, superseding the FFR-3A-2 vintage
+    # preserved verbatim at `neiso-t1h-pre-d37`. Its PAIRED CONTROL -- the same
+    # HEAD, the same recipe, one field apart -- keeps its OWN key for the reason
+    # every block above gives: a run must never render a verdict its own score
+    # contradicts, and the control's FC-3 band list differs from the armed arm's
+    # (add.shares.gas_ct PASS in the control, FAIL under the arm). Determination
+    # HOLD on both, no flip.
+    "neiso-2021-2025-realized-t1h-d37-armed": "neiso-t1h",
+    "neiso-2021-2025-realized-t1h-d37-control": "neiso-t1h-d37-control",
 }
 
 
