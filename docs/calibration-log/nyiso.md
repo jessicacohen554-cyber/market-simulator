@@ -9734,3 +9734,109 @@ bound. Guard passes (`check_mechanism_matrix.py` exit 0), shard passes
 `node --check`. Rule 22: every year read is 2023/2024/2025; NYISO's `complete`
 marker was withdrawn 2026-08-30, it is absent from `final`, and **no marker was
 requested**.
+
+## 2026-09-02 — nyiso-173: the CC availability over-statement is REAL as a bound violation but PROVABLY INERT as a lever — the armed overlay already carries 56 %, the model never reaches its own CC envelope, and 2.0–2.7 GW sits unused in the violating hours
+
+**Zero solves. No parameter touched, no band swept, no run registered.** Keeper
+unchanged: `2026-08-30-nyiso-159-loss-surface`, determination **NOT-YET** on
+{C3a-2025 −11.5 %, C3c}. Full record:
+`docs/FINDING-nyiso173-cc-availability-envelope-not-binding-2026-09-02.md`;
+gates `results/calibration/PREREG-nyiso173-cc-availability-anatomy.md`, committed
+with the probe **before either ran** (`278ddf37`).
+
+**The object.** nyiso-172 §3.4's one-sided-provable CC availability
+over-statement — model CC above the measured fleet's within-month max in
+**93 / 773 / 1,211 h** (1.06 / 8.82 / 13.82 %), mean gap **+224 / +495 / +636 MW**
+— with `UNIT_OUTAGE_MIN_DAYS = 5` (`data/outages.py:239`) **named but explicitly
+not established** as its cause. The probe reproduces §3.4 exactly off an
+independent per-unit construction (93 / 773 / 1,211 h; +223.9 / +494.6 /
++635.7 MW) before anything else is measured.
+
+**P1a FAILS — the stop condition fires against the hypothesis.** Decomposing the
+measured CC fleet's shortfall from its own demonstrated capability inside the
+violating hours, the **armed ≥ 5-day overlay already carries 0.565 / 0.560 /
+0.562** of it — a majority, stable to half a point across three years — against
+**0.373 / 0.350 / 0.372** overlay-blind. **P1b fails too**: within the blind
+remainder the carrier is **partial derates** (0.260 / 0.234 / 0.242), about twice
+the sub-5-day full stops the hypothesis named (0.113 / 0.116 / 0.130). NY CC
+off-episodes are overwhelmingly sub-day (2025: 1,852 under 24 h vs 427 ≥ 120 h),
+which is why the CC detector is event-based to begin with.
+
+**S3, the decisive measurement (reported in addition to the gates).** The overlay
+is working hard — it derates the CC fleet in **100 % of hours**, to mean
+availability **0.740 / 0.770 / 0.762** of 13,092 MW — and **the model never once
+reaches that envelope**: 0 hours at it in any year, peak utilisation 0.794 /
+0.821 / 0.839. In the violating hours the model runs 7,384 / 7,500 / 7,749 MW
+against an envelope of 10,129 / 10,129 / 10,112 MW, leaving **2,745 / 2,630 /
+2,363 MW of already-derated headroom UNUSED**, still **2,391 / 2,275 / 2,010 MW**
+net of a 3.5 % CC WEFOR (0 hours at that envelope either). **The whole
+measured-availability-input family is therefore provably inert against this
+object, ex ante and for any construction**: an input can only lower the envelope
+and would have to remove **> 3× the entire gap** before binding. Validated
+against its two likeliest artifacts — the envelope is **not** over-tight (the
+measured fleet exceeds it in **0** hours of all three years, with and without
+East River) and the omitted WEFOR changes nothing. Routing delivers: 2,880 of
+2,928 CC rows land on a fleet bin; the 48 dropped (1.64 %) are all plant **2682**
+S A Carlson, the `_FLEET_GROUP_OVERRIDE` class at 87 MW — named, out of scope.
+
+**P3 FAILS: the inherited object is DOWNGRADED to portfolio-only.** The model
+exceeds the **additive per-plant** bound `Σ_p M_p,m` in **0 hours** in every year
+(coverage `M_fleet / Σ_p M_p` = 0.807 / 0.831 / 0.803) — it never exceeds what
+NYISO's CC plants individually demonstrated, only what they demonstrated
+*simultaneously*. Same discriminator nyiso-171 used; §3.4 must be quoted at that
+strength from here on. **P2 is the one gate that PASSES** — the gap is not a
+shape artifact in 2025 (positive in all ten price deciles, all ten load deciles,
+all five online-unit-count quintiles; 2023 fails the on-count leg at −6.4 MW and
+is reported as such) — which buys nothing once S3 holds.
+
+**Lines closed.** (u) the 5-day floor as the cause of the CC bound violation —
+refuted on its own pre-registered gate by a stable 56 % majority; (v) the entire
+measured-availability-input family as a lever against this object, with a
+**measurable re-open condition**: a future keeper whose CC utilisation actually
+reaches its envelope; (w) `unit_outage_short_windows` /
+`unit_partial_outage_windows` / `unit_outage_maxgen_events` for NYISO on
+**measured** grounds rather than argued — the first two extracts are **0 data
+rows** (coal-only detectors, NYISO has no coal) and no NYISO maxgen registry
+exists (`data/raw/maxgen-events/` is `miso` only), so arming any of the three is
+a literal no-op. **The rule 14 `[R-ACCURATE]` framing does not survive the
+measurement**: there is no estimate to swap — the accurate availability data is
+already in, already applied and already the sole armed channel; the question was
+sufficiency, and the envelope is not binding.
+
+**Handed forward, none scoped here.** (1) The unrepaired nyiso-171 §5 **East
+River (2493)** crosswalk defect is **materially larger than recorded** — it
+inflates the measured CC series, loosening this bound, and removing it raises the
+violation count **93 → 208, 773 → 1,500, 1,211 → 1,864**, about a third of the
+object. (2) The plant-2682 routing drop. (3) `wefor_residual = null`, so the
+caiso-186 rule 19 statistical-WEFOR double count is live here too — recorded, not
+proposed, since resolving it makes CC **more** available and points away from
+this object. Standing limits unchanged: per-unit and zonal model dispatch are
+both unobservable from `class_hourly`, so the S3 envelope is a class aggregate.
+
+**Brief guardrails honoured.** No capacity or nameplate change proposed
+(`cc_winter_capability_basis` refused ex ante in the prereg §4); no derate fitted
+to the bound (rule 13 — the bound is a diagnostic, never a target); no C3c lever
+opened; none of the twenty closed lines re-tested. All **eight** inherited probes
+re-run first and all eight reproduce (gain **0.703** / offset **$11.03** / R²
+**0.910**; deficit **−$6.59 = −$2.32 + −$4.27**; reserve ceiling **10.01×**; 169b
+`False` with ST_GAS −28.6 %; 170 `proceed_to_phase_2: false`; 170b/c/d survival
+`True`; 171 coverage **0.253/0.502/0.313**; 172 all six gates false). All three
+documented traps hit and handled: (a) the reserve-slack float churn **reverted,
+not committed**; (b) the container had **0 DA months** against 21 RT, repaired
+per the brief, after which DA coverage reads **8760 h/yr**; (c) `Etc/GMT+5`
+throughout. One instrument defect of this session's own was found and repaired
+**before any result was read** — CAMPD reports `grossLoad` NULL for a
+non-operating unit-hour (52 % of 2025 CC unit-hours) and the first pass
+propagated rather than zeroed them; the exact reproduction of §3.4 above is what
+validates the repair.
+
+**Rule 28 (b).** Two NYISO cells annotated, **no verdict moves and no field
+changed**: `campd_outage_windows` stays **`K`** (the overlay is armed, correctly
+routed, demonstrably not over-tight — the successor lane it carried is closed on
+measurement) and `unit_outage_short_windows` stays **`I`** (inertness converted
+from argued to measured, for all three window shapes that row registers). Guard
+passes (`check_mechanism_matrix.py` exit 0), shard passes `node --check`.
+**Rule 15:** no solve ran, so nothing is registered on the dashboard — by design,
+not omission. **Rule 22:** every year read is 2023/2024/2025; NYISO's `complete`
+marker was withdrawn 2026-08-30, it is absent from `final`, and **no marker was
+requested**.
