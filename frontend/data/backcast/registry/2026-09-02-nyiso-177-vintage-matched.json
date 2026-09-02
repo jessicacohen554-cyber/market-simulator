@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-02-nyiso-177-vintage-matched",
+  "label": "nyiso 177 vintage matched",
+  "date": "2026-09-02",
+  "shorthand": "nyiso-177-vintage-matched",
+  "definition": "nyiso-177 B1-prime: per-unit attribution + repair 1 + economic-lay-up guard (vintage-matched availability basis)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-02-nyiso-177-vintage-matched.js",
+  "bundle": "results/calibration/nyiso177_vintage_B1p"
+}

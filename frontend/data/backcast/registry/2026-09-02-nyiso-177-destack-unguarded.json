@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-02-nyiso-177-destack-unguarded",
+  "label": "nyiso 177 destack unguarded",
+  "date": "2026-09-02",
+  "shorthand": "nyiso-177-destack-unguarded",
+  "definition": "nyiso-177 B1: per-unit attribution + repair 1 (rule-19 _FLEET_GROUP_OVERRIDE de-stack), UNGUARDED availability basis",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-02-nyiso-177-destack-unguarded.js",
+  "bundle": "results/calibration/nyiso177_destack_B1"
+}
