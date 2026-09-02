@@ -496,6 +496,11 @@ META_RECORD_SPEC = RecordSpec(
         # re-leveled against the entering year's stack. FromConfig so the
         # record reads the SOLVED gate (FFR-3R).
         "entry_forward_expectation_signal": FromConfig(cast=bool),
+        # capx D43 dispersion-carrying entry expectation: the screens' price
+        # object becomes each zone's realized price-duration curve indexed
+        # by the entering year's headroom rank. FromConfig so the record
+        # reads the SOLVED gate (FFR-3R).
+        "entry_dispersion_expectation_signal": FromConfig(cast=bool),
         # D11-R margin-exhaustion entry volume rule: the allocators build
         # until the screen's own repriced margin is exhausted instead of the
         # bang-bang full-cap allocation. FromConfig so the record reads the
@@ -622,6 +627,7 @@ def build_config(
     vre_procurement_additions: "bool | None" = None,
     entry_pipeline_aware_signal: "bool | None" = None,
     entry_forward_expectation_signal: "bool | None" = None,
+    entry_dispersion_expectation_signal: "bool | None" = None,
     entry_margin_exhaustion: "bool | None" = None,
     entry_forward_reserve_leg: "bool | None" = None,
     storage_entry_availability_gate: "bool | None" = None,
@@ -890,6 +896,16 @@ def build_config(
                 # OMIT inherits the shipped default so the control arm's
                 # cache key is untouched.
                 "entry_forward_expectation_signal": (entry_forward_expectation_signal),
+                # capx D43 dispersion-carrying entry expectation (GATED
+                # default-off in ScenarioConfig): the capacity screens' price
+                # object becomes each zone's own realized price-duration
+                # curve indexed by the entering year's headroom rank on the
+                # current year's, replacing the zone-flat MC step. OMIT
+                # inherits the shipped default so the control arm's cache
+                # key is untouched.
+                "entry_dispersion_expectation_signal": (
+                    entry_dispersion_expectation_signal
+                ),
                 # D11-R margin-exhaustion entry volume rule (GATED
                 # default-off in ScenarioConfig): both entry allocators build
                 # in repriced tranches until the screen's own margin is
@@ -1553,6 +1569,29 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--entry-dispersion-expectation-signal",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D43 dispersion-carrying entry expectation MEASUREMENT arm "
+            "(the D39 object, docs/handoffs/FINDING-capx-d39-entry-underbuild-"
+            "2026-09-02.md): the capacity screens' price object becomes each "
+            "zone's OWN realized price-duration curve (the prior solve's "
+            "zonal duals) indexed by the ENTERING year's stack-headroom rank "
+            "on the current year's headroom distribution, replacing the "
+            "zone-flat MC-step object — the realized dispersion (daily "
+            "spread, hours >= $100, trough, zonal spread) the stack discards, "
+            "zero fitted parameters. Requires the reprice "
+            "(entry_lookahead_reprice); mutually exclusive with "
+            "--entry-forward-expectation-signal and --entry-margin-exhaustion. "
+            "OMIT to inherit the shipped ScenarioConfig default (GATED OFF — "
+            "this is a measurement, not an arming); "
+            "--entry-dispersion-expectation-signal arms the treatment and "
+            "--no-entry-dispersion-expectation-signal forces the control "
+            "explicitly."
+        ),
+    )
+    parser.add_argument(
         "--entry-margin-exhaustion",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1853,6 +1892,7 @@ def main(argv: list[str] | None = None) -> int:
         vre_procurement_additions=args.vre_procurement_additions,
         entry_pipeline_aware_signal=args.entry_pipeline_aware_signal,
         entry_forward_expectation_signal=args.entry_forward_expectation_signal,
+        entry_dispersion_expectation_signal=(args.entry_dispersion_expectation_signal),
         entry_margin_exhaustion=args.entry_margin_exhaustion,
         entry_forward_reserve_leg=args.entry_forward_reserve_leg,
         storage_entry_availability_gate=args.storage_entry_availability_gate,

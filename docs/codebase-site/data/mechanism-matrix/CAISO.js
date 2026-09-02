@@ -259,6 +259,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     capacity_screen_unified_lookahead: { cell: "U", fc: "U" },
     capacity_screen_scarcity_restoration: { cell: "U", fc: "U" },
     entry_forward_expectation_signal: { cell: "U", fc: "U" },
+    entry_dispersion_expectation_signal: { cell: "U", fc: "U", ev: "capx D43 — CAISO A/B pending (placeholder, replaced in this PR)" },
     entry_margin_exhaustion: { cell: "U", fc: "U" },
     entry_forward_reserve_leg: { cell: "U", fc: "U" },
     storage_entry_availability_gate: { cell: "U", fc: "U" },

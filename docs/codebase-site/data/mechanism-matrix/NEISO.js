@@ -257,6 +257,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     capacity_screen_unified_lookahead: { cell: "U", fc: "U" },
     capacity_screen_scarcity_restoration: { cell: "U", fc: "U" },
     entry_forward_expectation_signal: { cell: "U", fc: "U" },
+    entry_dispersion_expectation_signal: { cell: "U", fc: "U", ev: "capx D43 minted the row (2026-09-02) and adjudicated CAISO ONLY (rule 25 [R-ISO-SCOPE]); this ISO is UNTESTED and byte-identical (ScenarioConfig default stays False). Its cell opens on its OWN dumps: a diagnostics-on solve (entry_screen_diagnostics, output-only) commits the expected side and — since D43 — the run's own duals, so the screen-grain replay (scripts/probes/entry_signal_d43_dispersion_replay.py) can score the construction against this ISO's own realized surface before any arm solve. D39 §7 routed order: MISO after the MISO-D33 baseline lands; NEISO after D40 and the D37 diagnostics-on solve; PJM/NYISO after their first dump; ERCOT stays on its owner-gated forward-expectation O cell (its armed tail is a different object)." },
     entry_margin_exhaustion: { cell: "U", fc: "U" },
     entry_forward_reserve_leg: { cell: "U", fc: "U" },
     storage_entry_availability_gate: { cell: "U", fc: "U" },
