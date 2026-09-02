@@ -148,6 +148,13 @@ VERDICT_MAP = {
     "nyiso-2021-2025-realized-ffr3a3": "nyiso-2021-2025-realized-ffr3a3-t1h",
     "pjm-2021-2025-realized-ffr3a3": "pjm-2021-2025-realized-ffr3a3-t1h",
     "miso-2021-2025-realized-ffr3a3": "miso-2021-2025-realized-ffr3a3-t1h",
+    # capx D42 (2026-09-02): the D32 R1 fossil announced-date posture A/B —
+    # BOTH legs SUFFIXED by charter (plus the ex-ante diagnostic leg); the
+    # bare `miso-t1h` key is NOT taken by this lane (owner posture decision
+    # pending; nothing armed).
+    "miso-2021-2025-realized-t1h-d42-control": "miso-t1h-d42-control",
+    "miso-2021-2025-realized-t1h-d42-dates": "miso-t1h-d42-dates",
+    "miso-2021-2025-realized-t1h-d42-dates-exante": "miso-t1h-d42-dates-exante",
     "ercot-2023-2027-crossover-ffr3a3": "ercot-2023-2027-crossover-ffr3a3-t1x",
     "pjm-2023-2027-crossover-ffr3a3": "pjm-2023-2027-crossover-ffr3a3-t1x",
     # FFR-3A-4 measured the ONE leg the FFR-3A battery never got: MISO T1-X,
