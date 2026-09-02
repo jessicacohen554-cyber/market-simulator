@@ -1,0 +1,437 @@
+{
+ "session": "caiso-235",
+ "precommit": "results/calibration/PRECOMMIT-caiso235-import-depth-widesample-2026-09-02.md",
+ "method": {
+  "estimator": "caiso-234 TOTAL envelope, imported verbatim from scripts/data/derive_caiso_import_total_envelope.py",
+  "single_change": "pooled sample 2023-2025 -> 2019-2025",
+  "years": [
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "excluded": "2026 (LOCKED-TEST tier, active holdout freeze)",
+  "gated_object": [
+   "routine_total",
+   "scarcity_interval"
+  ],
+  "cap_pctl": 98.0,
+  "scarcity_pctl": 99.9,
+  "cv_max": 0.2,
+  "loyo_max": 0.25,
+  "round_mw": 5.0,
+  "fork": "PRECOMMIT \u00a74-FORK option (a): placement firm block = mean of the committed measured MIC blocks over [2023, 2024, 2025], constant across sample years and folds",
+  "fork_check_ok": true,
+  "fork_check": {
+   "PNW_midC": {
+    "caiso234_committed": 1065.0,
+    "caiso234_replayed": 1065.0,
+    "caiso235_fork_a": 1065.0
+   },
+   "DSW_CCGT": {
+    "caiso234_committed": 2100.0,
+    "caiso234_replayed": 2100.0,
+    "caiso235_fork_a": 2100.0
+   },
+   "DSW_CT": {
+    "caiso234_committed": 2100.0,
+    "caiso234_replayed": 2100.0,
+    "caiso235_fork_a": 2100.0
+   },
+   "WECC_scarcity": {
+    "caiso234_committed": 1795.0,
+    "caiso234_replayed": 1795.0,
+    "caiso235_fork_a": 1795.0
+   }
+  }
+ },
+ "gated": {
+  "per_year": {
+   "2019": {
+    "routine_total": 9801.51953125,
+    "scarcity_interval": 1319.384765625,
+    "ladder_total": 11120.904296875
+   },
+   "2020": {
+    "routine_total": 10201.51953125,
+    "scarcity_interval": 824.2568359375,
+    "ladder_total": 11025.7763671875
+   },
+   "2021": {
+    "routine_total": 10372.0,
+    "scarcity_interval": 1000.59765625,
+    "ladder_total": 11372.59765625
+   },
+   "2022": {
+    "routine_total": 9904.6796875,
+    "scarcity_interval": 880.7724609375,
+    "ladder_total": 10785.4521484375
+   },
+   "2023": {
+    "routine_total": 7872.52001953125,
+    "scarcity_interval": 1757.49755859375,
+    "ladder_total": 9630.017578125
+   },
+   "2024": {
+    "routine_total": 7804.83984375,
+    "scarcity_interval": 1306.826171875,
+    "ladder_total": 9111.666015625
+   },
+   "2025": {
+    "routine_total": 8844.8798828125,
+    "scarcity_interval": 1590.0419921875,
+    "ladder_total": 10434.921875
+   }
+  },
+  "pooled": {
+   "routine_total": 9841.759765625,
+   "scarcity_interval": 1142.6806640625,
+   "ladder_total": 10984.4404296875
+  },
+  "cv": {
+   "routine_total": 0.10838137396250805,
+   "scarcity_interval": 0.2657989333532613,
+   "ladder_total": 0.07373183616131695
+  },
+  "year_stability": false,
+  "loyo": {
+   "2019": {
+    "worst": 0.1489263905851005,
+    "worst_component": "scarcity_interval",
+    "errors": {
+     "routine_total": 0.004844194678041391,
+     "scarcity_interval": 0.1489263905851005
+    }
+   },
+   "2020": {
+    "worst": 0.549889282367284,
+    "worst_component": "scarcity_interval",
+    "errors": {
+     "routine_total": 0.04906907250719773,
+     "scarcity_interval": 0.549889282367284
+    }
+   },
+   "2021": {
+    "worst": 0.18286922269112602,
+    "worst_component": "scarcity_interval",
+    "errors": {
+     "routine_total": 0.06594677979174701,
+     "scarcity_interval": 0.18286922269112602
+    }
+   },
+   "2022": {
+    "worst": 0.3481352372905974,
+    "worst_component": "scarcity_interval",
+    "errors": {
+     "routine_total": 0.0075458530886993915,
+     "scarcity_interval": 0.3481352372905974
+    }
+   },
+   "2023": {
+    "worst": 0.36884247316533103,
+    "worst_component": "scarcity_interval",
+    "errors": {
+     "routine_total": 0.2613496028418176,
+     "scarcity_interval": 0.36884247316533103
+    }
+   },
+   "2024": {
+    "worst": 0.2724079710155808,
+    "worst_component": "routine_total",
+    "errors": {
+     "routine_total": 0.2724079710155808,
+     "scarcity_interval": 0.15190144897211905
+    }
+   },
+   "2025": {
+    "worst": 0.2967639784474049,
+    "worst_component": "scarcity_interval",
+    "errors": {
+     "routine_total": 0.12098752401001771,
+     "scarcity_interval": 0.2967639784474049
+    }
+   }
+  },
+  "loyo_ok": false,
+  "verdict": "FAIL"
+ },
+ "delivered": {
+  "pooled_rungs": {
+   "PNW_midC": 1730.0,
+   "DSW_CCGT": 2545.0,
+   "DSW_CT": 2545.0,
+   "WECC_scarcity": 1145.0
+  },
+  "incumbent_2025": {
+   "PNW_midC": 1800.0,
+   "DSW_CCGT": 1800.0,
+   "DSW_CT": 2200.0,
+   "WECC_scarcity": 3000.0
+  },
+  "per_year_rungs": {
+   "2019": {
+    "PNW_midC": 1355.0,
+    "DSW_CCGT": 2715.0,
+    "DSW_CT": 2715.0,
+    "WECC_scarcity": 1320.0
+   },
+   "2020": {
+    "PNW_midC": 1965.0,
+    "DSW_CCGT": 2610.0,
+    "DSW_CT": 2610.0,
+    "WECC_scarcity": 825.0
+   },
+   "2021": {
+    "PNW_midC": 1835.0,
+    "DSW_CCGT": 2755.0,
+    "DSW_CT": 2755.0,
+    "WECC_scarcity": 1000.0
+   },
+   "2022": {
+    "PNW_midC": 1955.0,
+    "DSW_CCGT": 2465.0,
+    "DSW_CT": 2465.0,
+    "WECC_scarcity": 880.0
+   },
+   "2023": {
+    "PNW_midC": 1130.0,
+    "DSW_CCGT": 1860.0,
+    "DSW_CT": 1860.0,
+    "WECC_scarcity": 1755.0
+   },
+   "2024": {
+    "PNW_midC": 845.0,
+    "DSW_CCGT": 1970.0,
+    "DSW_CT": 1970.0,
+    "WECC_scarcity": 1305.0
+   },
+   "2025": {
+    "PNW_midC": 1165.0,
+    "DSW_CCGT": 2330.0,
+    "DSW_CT": 2330.0,
+    "WECC_scarcity": 1590.0
+   }
+  }
+ },
+ "reported_not_gated": {
+  "per_rung_cv": {
+   "PNW_midC": 0.2857729012704588,
+   "DSW_CCGT": 0.13749841179922878,
+   "DSW_CT": 0.13749841179922878,
+   "WECC_scarcity": 0.2654902947924642
+  },
+  "per_rung_loyo": {
+   "2019": {
+    "worst": 0.3173431734317343,
+    "worst_rung": "PNW_midC",
+    "errors": {
+     "PNW_midC": 0.3173431734317343,
+     "DSW_CCGT": 0.0718232044198895,
+     "DSW_CT": 0.0718232044198895,
+     "WECC_scarcity": 0.14772727272727273
+    }
+   },
+   "2020": {
+    "worst": 0.5515151515151515,
+    "worst_rung": "WECC_scarcity",
+    "errors": {
+     "PNW_midC": 0.17302798982188294,
+     "DSW_CCGT": 0.032567049808429116,
+     "DSW_CT": 0.032567049808429116,
+     "WECC_scarcity": 0.5515151515151515
+    }
+   },
+   "2021": {
+    "worst": 0.185,
+    "worst_rung": "WECC_scarcity",
+    "errors": {
+     "PNW_midC": 0.07629427792915532,
+     "DSW_CCGT": 0.09800362976406533,
+     "DSW_CT": 0.09800362976406533,
+     "WECC_scarcity": 0.185
+    }
+   },
+   "2022": {
+    "worst": 0.3465909090909091,
+    "worst_rung": "WECC_scarcity",
+    "errors": {
+     "PNW_midC": 0.1483375959079284,
+     "DSW_CCGT": 0.04462474645030426,
+     "DSW_CT": 0.04462474645030426,
+     "WECC_scarcity": 0.3465909090909091
+    }
+   },
+   "2023": {
+    "worst": 0.5530973451327433,
+    "worst_rung": "PNW_midC",
+    "errors": {
+     "PNW_midC": 0.5530973451327433,
+     "DSW_CCGT": 0.3844086021505376,
+     "DSW_CT": 0.3844086021505376,
+     "WECC_scarcity": 0.36752136752136755
+    }
+   },
+   "2024": {
+    "worst": 1.0887573964497042,
+    "worst_rung": "PNW_midC",
+    "errors": {
+     "PNW_midC": 1.0887573964497042,
+     "DSW_CCGT": 0.30456852791878175,
+     "DSW_CT": 0.30456852791878175,
+     "WECC_scarcity": 0.14942528735632185
+    }
+   },
+   "2025": {
+    "worst": 0.5107296137339056,
+    "worst_rung": "PNW_midC",
+    "errors": {
+     "PNW_midC": 0.5107296137339056,
+     "DSW_CCGT": 0.10085836909871244,
+     "DSW_CT": 0.10085836909871244,
+     "WECC_scarcity": 0.29559748427672955
+    }
+   }
+  }
+ },
+ "diagnostics": {
+  "2019": {
+   "routine_total": 9801.51953125,
+   "scarcity_interval": 1319.384765625,
+   "ladder_total": 11120.904296875,
+   "WECC_PNW_p98_marginal": 2973.679931640625,
+   "WECC_PNW_weight": 0.28078696746788734,
+   "WECC_PNW_routine_alloc": 2752.138945756956,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 1353.4722790902895,
+   "WECC_DSW_p98_marginal": 7616.83984375,
+   "WECC_DSW_weight": 0.7192130325321127,
+   "WECC_DSW_routine_alloc": 7049.380585493044,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 5426.380585493044,
+   "marginal_p98_sum": 10590.519775390625,
+   "simultaneity_gap": 789.000244140625
+  },
+  "2020": {
+   "routine_total": 10201.51953125,
+   "scarcity_interval": 824.2568359375,
+   "ladder_total": 11025.7763671875,
+   "WECC_PNW_p98_marginal": 3672.679931640625,
+   "WECC_PNW_weight": 0.3296094604877532,
+   "WECC_PNW_routine_alloc": 3362.5173488505893,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 1963.8506821839226,
+   "WECC_DSW_p98_marginal": 7469.83984375,
+   "WECC_DSW_weight": 0.6703905395122468,
+   "WECC_DSW_routine_alloc": 6839.00218239941,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 5216.00218239941,
+   "marginal_p98_sum": 11142.519775390625,
+   "simultaneity_gap": 941.000244140625
+  },
+  "2021": {
+   "routine_total": 10372.0,
+   "scarcity_interval": 1000.59765625,
+   "ladder_total": 11372.59765625,
+   "WECC_PNW_p98_marginal": 3412.840087890625,
+   "WECC_PNW_weight": 0.3119301272594779,
+   "WECC_PNW_routine_alloc": 3235.3392799353046,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 1836.6726132686379,
+   "WECC_DSW_p98_marginal": 7528.2001953125,
+   "WECC_DSW_weight": 0.6880698727405221,
+   "WECC_DSW_routine_alloc": 7136.660720064695,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 5513.660720064695,
+   "marginal_p98_sum": 10941.040283203125,
+   "simultaneity_gap": 569.040283203125
+  },
+  "2022": {
+   "routine_total": 9904.6796875,
+   "scarcity_interval": 880.7724609375,
+   "ladder_total": 10785.4521484375,
+   "WECC_PNW_p98_marginal": 3547.840087890625,
+   "WECC_PNW_weight": 0.33848010157044606,
+   "WECC_PNW_routine_alloc": 3352.536986647734,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 1953.8703199810673,
+   "WECC_DSW_p98_marginal": 6933.83984375,
+   "WECC_DSW_weight": 0.6615198984295539,
+   "WECC_DSW_routine_alloc": 6552.142700852266,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 4929.142700852266,
+   "marginal_p98_sum": 10481.679931640625,
+   "simultaneity_gap": 577.000244140625
+  },
+  "2023": {
+   "routine_total": 7872.52001953125,
+   "scarcity_interval": 1757.49755859375,
+   "ladder_total": 9630.017578125,
+   "WECC_PNW_p98_marginal": 2841.0,
+   "WECC_PNW_weight": 0.32132483936292905,
+   "WECC_PNW_routine_alloc": 2529.636230657322,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 1130.9695639906552,
+   "WECC_DSW_p98_marginal": 6000.52001953125,
+   "WECC_DSW_weight": 0.678675160637071,
+   "WECC_DSW_routine_alloc": 5342.883788873928,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 3719.883788873928,
+   "marginal_p98_sum": 8841.52001953125,
+   "simultaneity_gap": 969.0
+  },
+  "2024": {
+   "routine_total": 7804.83984375,
+   "scarcity_interval": 1306.826171875,
+   "ladder_total": 9111.666015625,
+   "WECC_PNW_p98_marginal": 2565.840087890625,
+   "WECC_PNW_weight": 0.2873113785238368,
+   "WECC_PNW_routine_alloc": 2242.4192946655794,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 843.7526279989127,
+   "WECC_DSW_p98_marginal": 6364.68017578125,
+   "WECC_DSW_weight": 0.7126886214761632,
+   "WECC_DSW_routine_alloc": 5562.420549084421,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 3939.4205490844206,
+   "marginal_p98_sum": 8930.520263671875,
+   "simultaneity_gap": 1125.680419921875
+  },
+  "2025": {
+   "routine_total": 8844.8798828125,
+   "scarcity_interval": 1590.0419921875,
+   "ladder_total": 10434.921875,
+   "WECC_PNW_p98_marginal": 2713.0,
+   "WECC_PNW_weight": 0.2898863582767462,
+   "WECC_PNW_routine_alloc": 2564.010018623769,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 1165.3433519571024,
+   "WECC_DSW_p98_marginal": 6645.83984375,
+   "WECC_DSW_weight": 0.7101136417232538,
+   "WECC_DSW_routine_alloc": 6280.86986418873,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 4657.86986418873,
+   "marginal_p98_sum": 9358.83984375,
+   "simultaneity_gap": 513.9599609375
+  },
+  "pooled": {
+   "routine_total": 9841.759765625,
+   "scarcity_interval": 1142.6806640625,
+   "ladder_total": 10984.4404296875,
+   "WECC_PNW_p98_marginal": 3372.0,
+   "WECC_PNW_weight": 0.3176636834667923,
+   "WECC_PNW_routine_alloc": 3126.369658943712,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 1727.702992277045,
+   "WECC_DSW_p98_marginal": 7243.0,
+   "WECC_DSW_weight": 0.6823363165332077,
+   "WECC_DSW_routine_alloc": 6715.390106681288,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 5092.390106681288,
+   "marginal_p98_sum": 10615.0,
+   "simultaneity_gap": 773.240234375
+  }
+ }
+}

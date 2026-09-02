@@ -101,8 +101,17 @@ LOYO_MAX = 0.25  # held-out relative price error
 PARTIAL_EXCLUDED = ("DSW_solar_PV",)
 
 
-def corridor_net_import() -> pd.DataFrame:
-    """Dense (year, hour) net-import MW per corridor, on the model clock."""
+def corridor_net_import(years=YEARS) -> pd.DataFrame:
+    """Dense (year, hour) net-import MW per corridor, on the model clock.
+
+    ``years`` selects the rows of the dense frame and defaults to :data:`YEARS`
+    (2023-2025), so every existing caller is byte-unaffected. It is widened only
+    by ``derive_caiso_import_depth_widesample`` -- caiso-235's re-run of
+    the caiso-234 TOTAL-envelope estimator on the 2019-2025 measured sample,
+    where the SAMPLE is the single pre-registered change and the construction
+    below is untouched. The committed extract runs 2018-12-31 to 2026-06-30;
+    2026 is LOCKED-TEST tier and is never passed here.
+    """
     frame = pd.read_parquet(INTERCHANGE)
     local = _caiso_interchange_model_clock(pd.DatetimeIndex(frame["local_time"]))
     month = local.month.to_numpy()
@@ -120,7 +129,9 @@ def corridor_net_import() -> pd.DataFrame:
     # net_import = -sum(interchange) per (year, hour, corridor)
     g = f.groupby(["year", "hour", "corridor"], observed=True)["mw"].sum()
     net = (-g).unstack("corridor")
-    full = pd.MultiIndex.from_product([YEARS, range(_HOURS)], names=["year", "hour"])
+    full = pd.MultiIndex.from_product(
+        [list(years), range(_HOURS)], names=["year", "hour"]
+    )
     return net.reindex(full)
 
 
