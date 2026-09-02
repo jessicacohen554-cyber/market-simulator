@@ -149,6 +149,44 @@ def _entry(
     return e
 
 
+#: Sigmoid TOGGLE field -> the coal supply tag whose curve it engages, mirroring
+#: `market_sim.data.fuel.trajectories._COAL_SIGMOID_FIELD_STEM` inverted. Used by
+#: :func:`_coal_sigmoid_resolves` so the ledger attests a fitted sigmoid only where
+#: one is actually characterized (caiso-236).
+_COAL_SIGMOID_TOGGLE_SUPPLY: dict[str, tuple[str, str]] = {
+    # toggle field -> (supply tag, the config field stem its overrides use)
+    "coal_prb_passthrough_sigmoid": ("prb", "prb_passthrough"),
+    "coal_lignite_passthrough_sigmoid": ("lignite", "lignite_passthrough"),
+    "coal_bit_passthrough_sigmoid": ("bituminous", "bit_passthrough"),
+    "coal_sub_passthrough_sigmoid": ("subbituminous", "sub_passthrough"),
+    "coal_wc_passthrough_sigmoid": ("waste", "waste_passthrough"),
+}
+
+_COAL_SIGMOID_PARAMS = ("floor", "ceil", "gas_mid", "gas_slope")
+
+
+def _coal_sigmoid_resolves(sc: dict, iso: str, toggle: str) -> bool:
+    """Return whether ``toggle``'s coal sigmoid is actually characterized.
+
+    Mirrors :func:`market_sim.data.fuel.trajectories.coal_sigmoid_params`: the
+    registry entry for ``(iso, supply)`` overlaid by any explicitly-set
+    ``coal_<stem>_<param>`` field, complete on all four parameters or nothing.
+    An armed toggle over an uncharacterized supply engages NO parameters — the
+    solve falls back to the flat passthrough — so it must not put a row in the
+    DOF ledger (rule 21 ``[R-DOF]``: the ledger states the free parameters that
+    exist, not the ones a flag name implies).
+    """
+    from market_sim.config.scenarios import COAL_SIGMOID_DEFAULTS
+
+    supply, stem = _COAL_SIGMOID_TOGGLE_SUPPLY[toggle]
+    params = dict(COAL_SIGMOID_DEFAULTS.get((iso.upper(), supply), {}))
+    for name in _COAL_SIGMOID_PARAMS:
+        value = sc.get(f"coal_{stem}_{name}")
+        if value is not None:
+            params[name] = value
+    return all(name in params for name in _COAL_SIGMOID_PARAMS)
+
+
 def config_entries(sc: dict, iso: str) -> list[dict]:
     """Ledger entries computed from the bundle's scenario_config."""
     out = []
@@ -223,6 +261,20 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 root_cause=_HOLDOUT_ROOT_CAUSE,
             )
         )
+    # caiso-236 (rule 21 [R-DOF] ledger integrity): a sigmoid TOGGLE being on is
+    # NOT evidence that a fitted sigmoid exists. `fuel.trajectories.coal_sigmoid_params`
+    # resolves each (ISO, supply) pair against COAL_SIGMOID_DEFAULTS, overlaid by the
+    # explicit `coal_<stem>_{floor,ceil,gas_mid,gas_slope}` fields; when the resolved
+    # set is incomplete it returns None and `coal_passthrough_series` falls back to the
+    # FLAT passthrough — so the toggle is armed over nothing and there are no free
+    # parameters to attest. Counting the toggle alone made the ledger claim four fitted
+    # scalars that do not exist anywhere in the code for any ISO carrying no curve:
+    # CAISO arms `coal_prb_passthrough_sigmoid` and COAL_SIGMOID_DEFAULTS holds no
+    # ("CAISO", *) key at all, so its "COAL_SIGMOID_DEFAULTS[CAISO]" row was a PHANTOM,
+    # over-counting the residual by one entry and four scalars. The gate below counts a
+    # toggle only when its supply's parameter set actually RESOLVES. This can only
+    # REMOVE over-counted rows, never add one.
+    # Record: results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
     sigmoids = [
         k
         for k in (
@@ -232,7 +284,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
             "coal_sub_passthrough_sigmoid",
             "coal_wc_passthrough_sigmoid",
         )
-        if sc.get(k)
+        if sc.get(k) and _coal_sigmoid_resolves(sc, iso, k)
     ]
     if sigmoids:
         if iso.upper() == "MISO":
@@ -604,33 +656,16 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 + _ISSUE_C5_C14_SEAM_FALLBACKS,
             )
         )
-        # C-14 (audit): the aggregate WECC export cap. Re-derived in B-CAI-1
-        # from the SAME measured EIA-930 CISO net-interchange series the per-hub
-        # export envelopes use (scripts/data/derive_caiso_export_cap.py): 3,500 (fitted
-        # "typical peak", ~p99) -> 4,361 MW (peak-bucket p95, measured capability).
-        # Used ONLY by the superseded caiso_bidir_intertie; the keeper's
-        # caiso_per_hub_intertie bounds exports by physical TTC + measured
-        # envelope, so this scalar is not in any keeper solve (fallback-only).
-        out.append(
-            _entry(
-                "CAISO_BIDIR_EXPORT_CAP_MW",
-                "transmission.py (fallback; caiso_bidir_intertie only)",
-                "measured-physical",
-                iso,
-                value=4361.0,
-                source="aggregate WECC export-direction capability ceiling, "
-                "re-derived from EIA-930 CISO net-interchange (the realized ATC "
-                "proxy; OASIS unreachable) at the corridor mechanism's own p95 "
-                "peak-bucket convention, 2023-2025 (2026 holdout excluded, "
-                "rule 22); frozen scripts/data/derive_caiso_export_cap.py. rule-23 "
-                "source-data change: the caiso-51 keeper measured export "
-                "envelopes.",
-                root_cause="fallback-only (superseded by caiso_per_hub_intertie); "
-                "refresh against a true OASIS export-ATC pull, or R5-delete the "
-                "caiso_bidir_intertie mechanism (rule 26); tracked in "
-                + _ISSUE_C5_C14_SEAM_FALLBACKS,
-            )
-        )
+        # C-14 (audit) CLOSED BY DELETION at caiso-236. The row that stood here,
+        # CAISO_BIDIR_EXPORT_CAP_MW = 4,361 MW (the aggregate WECC export cap),
+        # was read ONLY by caiso_bidir_intertie, which was off on the CAISO keeper
+        # AND off in the ScenarioConfig defaults — dead in every shipped
+        # configuration while one CLI flag could re-arm it. Rule 26 [R-DELETE]
+        # ("a deprecated parameter that still parses is a re-armable answer key")
+        # says such a knob is removed, not zeroed, so the mechanism and its cap
+        # were deleted rather than re-documented. Its own root_cause named this
+        # exit: "R5-delete the caiso_bidir_intertie mechanism (rule 26)".
+        # Record: results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
         if sc.get("ct_netload_drag"):
             out.append(
                 _entry(
@@ -1674,6 +1709,32 @@ def build_ledger(bundle: Path, iso: str) -> dict:
     }
 
 
+def _carry_hand_notes(ledger: dict, previous: dict | None) -> dict:
+    """Carry a committed row's HAND-WRITTEN ``note`` onto its regenerated twin.
+
+    caiso-236. Several rows' most load-bearing provenance is a ``note`` no
+    generator writes — e.g. the CAISO ``offer_curve_by_group`` row carries the
+    caiso-220/231 correction recording that five of its CAISO groups are now
+    MEASURED, so the row's ``identification: "residual"`` overstates it. A blind
+    regeneration silently DELETED that text, which is the ledger losing exactly
+    the disclosure rule 21 ``[R-DOF]`` exists to preserve.
+
+    Only rows that SURVIVE the rebuild keep their note, and only where the
+    rebuild does not supply one of its own — a row the generator no longer emits
+    is gone on purpose and its note goes with it.
+    """
+    if not previous:
+        return ledger
+    old_notes = {
+        e.get("name"): e["note"] for e in previous.get("entries", []) if e.get("note")
+    }
+    for entry in ledger.get("entries", []):
+        carried = old_notes.get(entry.get("name"))
+        if carried and not entry.get("note"):
+            entry["note"] = carried
+    return ledger
+
+
 def update_attestation(bundle: Path, iso: str, check: bool = False) -> bool:
     """Write (or verify) the ledger into the bundle's attestation.
 
@@ -1681,7 +1742,7 @@ def update_attestation(bundle: Path, iso: str, check: bool = False) -> bool:
     """
     att_path = bundle / "calibration_attestation.json"
     att = json.loads(att_path.read_text()) if att_path.exists() else {}
-    ledger = build_ledger(bundle, iso)
+    ledger = _carry_hand_notes(build_ledger(bundle, iso), att.get("free_parameters"))
     if check:
         return att.get("free_parameters") == ledger
     att["free_parameters"] = ledger
