@@ -9920,3 +9920,96 @@ BASIS** — it ranks hours by SYSTEM LOAD while the conduct's own hour set is th
 COMMITMENT STATE — and it must not be attempted as another level move.
 
 Next shorthand: **miso-199**.
+
+---
+
+## miso-199 (2026-09-02) — the must-run floor's WINDOW BASIS: **REFUSED on its own frozen line**; the whole commitment-floor family closes
+
+**KEEPER UNCHANGED: `2026-09-01-miso-198-oomlevel`** (bundle `miso198_oom_B`).
+**Nothing was solved, nothing promoted, nothing registered** — rule 15 has nothing to
+register because no run was produced. The chartered lever (FINDING-miso198 §7 item 1,
+the window basis) is **refused at phase 0**, which is the escalation path the charter
+itself prescribed.
+
+**THE FROZEN LINE SPOKE.** `_miso199_mustrun_window_basis_phase0.py`, pushed and
+blob-verified at `ca9681a8` **before any adjudicating number**, declared L-2b verbatim:
+an `O_lvl`-dominant partition REFUTES the premise and the session escalates without
+solving. The keeper's own over-assertion partitions EXACTLY (identity residual
+**0.0e+00**):
+
+| year | raw | O | O/raw | MIS | LVL |
+|---|---:|---:|---:|---:|---:|
+| 2023 | 9.9319 | 0.6951 | 0.0700 | 0.0763 (.110) | 0.6188 (**.890**) |
+| 2024 | 10.3857 | 0.6984 | 0.0672 | 0.3969 (.568) | 0.3015 (.432) |
+| 2025 | 10.4408 | 0.5901 | 0.0565 | 0.1162 (.197) | 0.4739 (**.803**) |
+
+**DOMINANT = LEVEL, 2 of 3.** Premise refuted; window family refused.
+
+**WHY, AND IT IS STRUCTURAL.** The incumbent window is **already well-placed — 7/7
+plants over the 0.80 hit line in all three years** (energy-weighted hit
+0.991/0.962/0.986). **57–60 % of the entire assertion sits on ONE plant** (1403,
+**688.0 MW × 8,602 h = 5.9182 TWh**) whose window spans **98.2 % of the year** — exactly
+the synchronization share this mechanism's own `D4_WINDOWS` declaration cites as its
+evidence base. A continuously-synchronized steamer has no window to get wrong, and it
+carries the majority of the quantity under test. The two plants whose windows are
+genuinely informative (1402 lift 4.18/1.48/1.46; 6035 2.68/1.96/1.97) carry
+0.05–0.18 TWh each. **MAGNITUDE BOUND:** even a *perfect* window repair moves the
+charter's own acceptance metric only **0.8/3.8/1.1 pp** and buys **none** of the
+5.024/7.420/5.924 TWh `L` channel.
+
+**THE FAMILY CLOSES — a stronger result than the charter anticipated.** `W` is
+**84.9/79.6/82.9 %** attributable to the window being too SMALL (`k < m` in **20 of 21
+plant-years**), which is the window **SIZE** object whose lever is already **`R`** here
+(`mustrun_online_frac_per_year`, miso-172) — **not** a BASIS change, and miso-172 is
+**not** re-opened. `L` is measured energy *above* a floor already armed, so capturing it
+means pinning, which miso-198 §4 refused on S-ii/S-iii. `P` did not clear miso-198's
+L-3b. **No commitment floor — at any level, in any window, over any membership — closes
+this gap without pinning.** The successor is **bid-side** (miso-198 M-4 form (c), zero
+forced energy, zero C8 exposure); §3/§6 of the finding are the **new evidence** the
+DO-NOT-REDO discipline requires against MISO's `R`/`I` offer-level cells.
+
+**X-1: THE MISPLACEMENT THAT DOES EXIST IS ONE EVENT.** Plant **1403, Feb-2024, 320.5
+GWh = 0.5438 of the ENTIRE three-year `O_mis`** (L-X1a CONCENTRATED at a 0.40 line) —
+a ranking defect is diffuse by construction, so this is an event, not a basis property.
+The outage extract reads availability **1.0000** all month against a meter online only
+**206 of 672 h**, with the floor asserting **688.0 MW** through it. **REPORTED EXACTLY
+AS FROZEN, NOT RELABELLED:** L-X1b needed availability ≥0.50 AND online share ≤0.25; the
+cell clears the first and **misses the second by 5.7 pp** (0.307), so its mechanical
+verdict is *"NOT the availability family"* and **stands unaltered**. On the evidence it
+is the miso-172 "laid up but reads available" family at part-year grain — handed on as
+an **availability** question under a different charter (rule 19), never claimed as a
+passed test.
+
+**X-2: A CORRECTION TO THE PREDECESSOR.** FINDING-miso198 §4 explained its C2 refusal as
+*"that mismatch — window basis, not level — is the binding defect"*. Rebuilding the floor
+under the C2 p50 map shows C2's own over-assertion is **0.942/0.685/0.913 LEVEL**:
+**§4's stated mechanism is WRONG** — the median over-asserts because it exceeds what the
+plant makes in hours it *is* running. **C2 STAYS REFUSED** (S-iii refused it on
+magnitude, untouched here). The repaired harness reproduces §4's published C2 raw
+assertions **13.975/15.010/15.185** and over-assertions **2.019/1.792/2.101** *exactly*,
+from an independently written probe. That correction is what turns a narrow refusal into
+the general closure above: **even the refused higher-level candidate's defect was level,
+not window.**
+
+**INSTRUMENT DEFECT, DISCLOSED NOT ABSORBED.** The first X-2 run patched
+`thermal_tranche_p25_measured_level` — correct against miso-198's keeper, a **silent
+no-op** against this one, because `arrays.py:2512` merges the oom map over it when
+`st_gas_mustrun_oom_level` is armed. The symptom was unmistakable (the "C2" partition
+came back byte-identical to the incumbent's); the defective record was committed as the
+disclosed artifact, and the probe now patches `thermal_tranche_oom_level` and **ABORTS**
+unless the swap moves the raw assertion >1 %. X-1 is unaffected.
+
+**REPORTED AGAINST INTEREST.** The misplacement *does* have real structure the refusal
+does not need: **SEASONAL** (worst-4-month concentration 0.8067; February alone 354.8 of
+592.8 GWh) and **FRAGMENTATION** (floor 76.7 h runs × 123.6 vs measured 1,575.8 h × 13.8,
+ratio 0.0486). Both handed on, unacted. Also: this mechanism's `D4_WINDOWS` text calling
+the floor *"self-windowing by construction"* is **imprecise** — it is self-**sizing** by
+construction, not self-**placing** (system-load lift only 1.05–1.07).
+
+Rule 28(b): matrix cell `st_gas_mustrun_p25` stamped with the adjudication (stays **K** —
+the mechanism is armed and untouched; what is refused is a proposed change to its window
+basis). **No `ScenarioConfig` field was added**, so rule 28(c) does not apply.
+`check_mechanism_matrix` green on all four checks. Rule 22: 2023–2025 only, no marker
+read or written.
+
+Next shorthand: **miso-200**.
