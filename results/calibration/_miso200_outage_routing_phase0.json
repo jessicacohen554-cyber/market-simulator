@@ -1,0 +1,733 @@
+{
+ "probe": "_miso200_outage_routing_phase0.py",
+ "session": "miso-200",
+ "keeper_bundle": "miso198_oom_B",
+ "run_id": "2026-09-01-miso-198-oomlevel",
+ "prereg": "results/calibration/PREREG-miso200-outage-routing-mixedgas-2026-09-02.md",
+ "frozen_lines": {
+  "L1a_min_misrouted_mw": 500.0,
+  "L1a_min_years": 2,
+  "L1b_plant": 1403,
+  "zero_coverage_min_cap_mw": 100.0,
+  "L4_no_refuse_without_solving_branch": true
+ },
+ "n1": {
+  "per_year": {
+   "2023": {
+    "multi_gas_facilities": 2,
+    "misrouted_rows": 15,
+    "misrouted_units_unique": 3,
+    "misrouted_mw_row_sum": 8809.6,
+    "misrouted_mw_unique": 1740.1
+   },
+   "2024": {
+    "multi_gas_facilities": 2,
+    "misrouted_rows": 19,
+    "misrouted_units_unique": 3,
+    "misrouted_mw_row_sum": 7995.4,
+    "misrouted_mw_unique": 1719.1
+   },
+   "2025": {
+    "multi_gas_facilities": 2,
+    "misrouted_rows": 12,
+    "misrouted_units_unique": 3,
+    "misrouted_mw_row_sum": 6604.2,
+    "misrouted_mw_unique": 1717.1
+   }
+  },
+  "facilities": {
+   "1403": {
+    "facility_name": "Ninemile Point",
+    "model_groups": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "fac_group_last_writer": "CC_REGULAR",
+    "misrouted_units": {
+     "4": {
+      "unit_capacity_mw": 763.0,
+      "unit_type": "Tangentially-fired",
+      "extract_group": "CC_REGULAR",
+      "repaired_group": "ST_GAS"
+     },
+     "5": {
+      "unit_capacity_mw": 895.1,
+      "unit_type": "Tangentially-fired",
+      "extract_group": "CC_REGULAR",
+      "repaired_group": "ST_GAS"
+     }
+    },
+    "years": [
+     2023,
+     2024,
+     2025
+    ]
+   },
+   "2070": {
+    "facility_name": "Moselle Generation Complex",
+    "model_groups": [
+     "CC_REGULAR",
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "fac_group_last_writer": "CC_REGULAR",
+    "misrouted_units": {
+     "3": {
+      "unit_capacity_mw": 59.0,
+      "unit_type": "Dry bottom wall-fired boiler",
+      "extract_group": "CC_REGULAR",
+      "repaired_group": "ST_GAS"
+     }
+    },
+    "years": [
+     2023,
+     2024,
+     2025
+    ]
+   }
+  },
+  "years_clearing_500mw": [
+   2023,
+   2024,
+   2025
+  ],
+  "L1a_material": true
+ },
+ "n2": {
+  "preclip_keys_validated_against_production": {
+   "2023": 120,
+   "2024": 121,
+   "2025": 153
+  },
+  "over_removal": [
+   {
+    "year": 2025,
+    "plant_code": 10319,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 7.2,
+    "max_preclip_share": 11.6806,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 10234,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 7.5,
+    "max_preclip_share": 8.2133,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 54518,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 16.0,
+    "max_preclip_share": 6.3,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 63826,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 0.9,
+    "max_preclip_share": 5.5556,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 2123,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 35.0,
+    "max_preclip_share": 5.2371,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 1403,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 649.5,
+    "max_preclip_share": 3.5561,
+    "hours_over_1": 6192,
+    "at_multi_gas_facility": true
+   },
+   {
+    "year": 2023,
+    "plant_code": 2123,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 35.0,
+    "max_preclip_share": 3.4914,
+    "hours_over_1": 8472,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 2123,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 35.0,
+    "max_preclip_share": 3.4914,
+    "hours_over_1": 8328,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 1073,
+    "plant_group": "COAL",
+    "bin_cap_mw": 29.3,
+    "max_preclip_share": 3.3925,
+    "hours_over_1": 600,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 1073,
+    "plant_group": "COAL",
+    "bin_cap_mw": 29.3,
+    "max_preclip_share": 3.3925,
+    "hours_over_1": 744,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 1073,
+    "plant_group": "COAL",
+    "bin_cap_mw": 29.3,
+    "max_preclip_share": 3.3925,
+    "hours_over_1": 1008,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 2001,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 17.9,
+    "max_preclip_share": 3.0726,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 2001,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 17.9,
+    "max_preclip_share": 3.0726,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 2001,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 17.9,
+    "max_preclip_share": 3.0726,
+    "hours_over_1": 8232,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 203,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 134.0,
+    "max_preclip_share": 3.0448,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 6190,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 428.5,
+    "max_preclip_share": 2.6149,
+    "hours_over_1": 6120,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 6190,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 428.5,
+    "max_preclip_share": 2.6149,
+    "hours_over_1": 7056,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 54512,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 5.4,
+    "max_preclip_share": 2.5926,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 54512,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 5.4,
+    "max_preclip_share": 2.5926,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 54512,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 5.4,
+    "max_preclip_share": 2.5926,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 1403,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 649.5,
+    "max_preclip_share": 2.5883,
+    "hours_over_1": 5640,
+    "at_multi_gas_facility": true
+   },
+   {
+    "year": 2023,
+    "plant_code": 55641,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 534.8,
+    "max_preclip_share": 2.5711,
+    "hours_over_1": 2424,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 1403,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 649.5,
+    "max_preclip_share": 2.5529,
+    "hours_over_1": 4920,
+    "at_multi_gas_facility": true
+   },
+   {
+    "year": 2024,
+    "plant_code": 1104,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 170.3,
+    "max_preclip_share": 2.4897,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 10397,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 52.0,
+    "max_preclip_share": 2.4423,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 55270,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 534.4,
+    "max_preclip_share": 2.4289,
+    "hours_over_1": 1296,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 65405,
+    "plant_group": "CC_CHP",
+    "bin_cap_mw": 49.9,
+    "max_preclip_share": 2.3727,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 55334,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 602.2,
+    "max_preclip_share": 2.3321,
+    "hours_over_1": 1440,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 55334,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 602.2,
+    "max_preclip_share": 2.3321,
+    "hours_over_1": 4296,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 6190,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 428.5,
+    "max_preclip_share": 2.3256,
+    "hours_over_1": 8616,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 1904,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 282.0,
+    "max_preclip_share": 2.3035,
+    "hours_over_1": 2040,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 56164,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 261.0,
+    "max_preclip_share": 2.2299,
+    "hours_over_1": 4296,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 10855,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 18.0,
+    "max_preclip_share": 2.2222,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2025,
+    "plant_code": 50846,
+    "plant_group": "ST_CHP",
+    "bin_cap_mw": 40.0,
+    "max_preclip_share": 2.1325,
+    "hours_over_1": 8760,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 170,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 522.0,
+    "max_preclip_share": 2.1169,
+    "hours_over_1": 7416,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 6055,
+    "plant_group": "COAL",
+    "bin_cap_mw": 551.3,
+    "max_preclip_share": 2.0588,
+    "hours_over_1": 8016,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 6055,
+    "plant_group": "COAL",
+    "bin_cap_mw": 551.3,
+    "max_preclip_share": 2.0461,
+    "hours_over_1": 6168,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 55011,
+    "plant_group": "CC_REGULAR",
+    "bin_cap_mw": 261.0,
+    "max_preclip_share": 2.0383,
+    "hours_over_1": 3624,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2023,
+    "plant_code": 203,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 134.0,
+    "max_preclip_share": 2.0299,
+    "hours_over_1": 7296,
+    "at_multi_gas_facility": false
+   },
+   {
+    "year": 2024,
+    "plant_code": 203,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 134.0,
+    "max_preclip_share": 2.0299,
+    "hours_over_1": 7008,
+    "at_multi_gas_facility": false
+   }
+  ],
+  "over_removal_count": 283,
+  "zero_coverage": [
+   {
+    "year": 2023,
+    "plant_code": 1403,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 1465.4
+   },
+   {
+    "year": 2023,
+    "plant_code": 2070,
+    "plant_group": "CT_PEAKER",
+    "bin_cap_mw": 150.0
+   },
+   {
+    "year": 2024,
+    "plant_code": 1403,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 1465.4
+   },
+   {
+    "year": 2024,
+    "plant_code": 2070,
+    "plant_group": "CT_PEAKER",
+    "bin_cap_mw": 150.0
+   },
+   {
+    "year": 2025,
+    "plant_code": 1403,
+    "plant_group": "ST_GAS",
+    "bin_cap_mw": 1465.4
+   },
+   {
+    "year": 2025,
+    "plant_code": 2070,
+    "plant_group": "CT_PEAKER",
+    "bin_cap_mw": 150.0
+   }
+  ],
+  "L1b": {
+   "plant": 1403,
+   "leg_i_zero_coverage_st_gas_2024": true,
+   "leg_ii_feb2024_window_exists": true,
+   "leg_iii_a_feb_unit_routes_to_st_gas": true,
+   "feb_2024_units": [
+    {
+     "unit_id": "4",
+     "window": "2024-02-06..2024-02-26",
+     "unit_capacity_mw": 765.0,
+     "extract_group": "CC_REGULAR",
+     "unit_type": "Tangentially-fired",
+     "repaired_group": "ST_GAS"
+    },
+    {
+     "unit_id": "5",
+     "window": "2024-01-30..2024-02-27",
+     "unit_capacity_mw": 895.1,
+     "extract_group": "CC_REGULAR",
+     "unit_type": "Tangentially-fired",
+     "repaired_group": "ST_GAS"
+    },
+    {
+     "unit_id": "6A",
+     "window": "2024-02-03..2024-03-30",
+     "unit_capacity_mw": 324.8,
+     "extract_group": "CC_REGULAR",
+     "unit_type": "Combined cycle",
+     "repaired_group": "CC_REGULAR"
+    },
+    {
+     "unit_id": "6B",
+     "window": "2024-02-03..2024-03-29",
+     "unit_capacity_mw": 324.8,
+     "extract_group": "CC_REGULAR",
+     "unit_type": "Combined cycle",
+     "repaired_group": "CC_REGULAR"
+    }
+   ],
+   "IS_MISROUTING_FAMILY": true
+  }
+ },
+ "n3": {
+  "status": "SCORED",
+  "rows_added": 0,
+  "rows_dropped": 0,
+  "rows_changed": 116,
+  "changed_columns": {
+   "plant_group": 116
+  },
+  "out_of_scope_changes": [],
+  "out_of_scope_count": 0,
+  "new_over_removal": [
+   {
+    "year": 2023,
+    "plant_code": 1403,
+    "plant_group": "ST_GAS",
+    "max_preclip_share_before": 0.0,
+    "max_preclip_share_after": 1.1472
+   },
+   {
+    "year": 2023,
+    "plant_code": 2070,
+    "plant_group": "ST_GAS",
+    "max_preclip_share_before": 0.0,
+    "max_preclip_share_after": 2.0
+   },
+   {
+    "year": 2024,
+    "plant_code": 1403,
+    "plant_group": "ST_GAS",
+    "max_preclip_share_before": 0.0,
+    "max_preclip_share_after": 1.1329
+   },
+   {
+    "year": 2024,
+    "plant_code": 2070,
+    "plant_group": "ST_GAS",
+    "max_preclip_share_before": 0.0,
+    "max_preclip_share_after": 2.0
+   },
+   {
+    "year": 2025,
+    "plant_code": 1403,
+    "plant_group": "ST_GAS",
+    "max_preclip_share_before": 0.0,
+    "max_preclip_share_after": 1.1315
+   },
+   {
+    "year": 2025,
+    "plant_code": 2070,
+    "plant_group": "ST_GAS",
+    "max_preclip_share_before": 0.0,
+    "max_preclip_share_after": 2.0
+   }
+  ],
+  "L3a_pass": false,
+  "L3b_pass": true
+ },
+ "n4": {
+  "status": "SCORED",
+  "note": "capability_twh is a RIGOROUS UPPER BOUND on the class energy movement (the LP can never move more than the capability that changed), signed: positive = the repair ADDS capability. It is NOT an LP result and NOTHING is gated on it (PREREG L-4).",
+  "keeper_outage_kwargs": {
+   "cc_steam_part_reclass": false,
+   "cc_nameplate_basis": false,
+   "fleet_status_scope": true
+  },
+  "by_year": {
+   "2023": {
+    "CC_REGULAR": {
+     "capability_twh": 3.4746,
+     "bins": [
+      {
+       "plant_code": 1403,
+       "bin_cap_mw": 649.5,
+       "capability_twh": 3.3826,
+       "mean_avail_before": 0.3521,
+       "mean_avail_after": 0.9466
+      },
+      {
+       "plant_code": 2070,
+       "bin_cap_mw": 268.0,
+       "capability_twh": 0.092,
+       "mean_avail_before": 0.8007,
+       "mean_avail_after": 0.8399
+      }
+     ]
+    },
+    "ST_GAS": {
+     "capability_twh": -5.4602,
+     "bins": [
+      {
+       "plant_code": 2070,
+       "bin_cap_mw": 59.0,
+       "capability_twh": -0.0906,
+       "mean_avail_before": 1.0,
+       "mean_avail_after": 0.8247
+      },
+      {
+       "plant_code": 1403,
+       "bin_cap_mw": 1465.4,
+       "capability_twh": -5.3696,
+       "mean_avail_before": 1.0,
+       "mean_avail_after": 0.5817
+      }
+     ]
+    }
+   },
+   "2024": {
+    "CC_REGULAR": {
+     "capability_twh": 3.3055,
+     "bins": [
+      {
+       "plant_code": 1403,
+       "bin_cap_mw": 649.5,
+       "capability_twh": 2.9773,
+       "mean_avail_before": 0.2877,
+       "mean_avail_after": 0.811
+      },
+      {
+       "plant_code": 2070,
+       "bin_cap_mw": 268.0,
+       "capability_twh": 0.3282,
+       "mean_avail_before": 0.6373,
+       "mean_avail_after": 0.777
+      }
+     ]
+    },
+    "ST_GAS": {
+     "capability_twh": -5.1916,
+     "bins": [
+      {
+       "plant_code": 2070,
+       "bin_cap_mw": 59.0,
+       "capability_twh": -0.3356,
+       "mean_avail_before": 1.0,
+       "mean_avail_after": 0.3507
+      },
+      {
+       "plant_code": 1403,
+       "bin_cap_mw": 1465.4,
+       "capability_twh": -4.856,
+       "mean_avail_before": 1.0,
+       "mean_avail_after": 0.6217
+      }
+     ]
+    }
+   },
+   "2025": {
+    "ST_GAS": {
+     "capability_twh": -3.569,
+     "bins": [
+      {
+       "plant_code": 2070,
+       "bin_cap_mw": 59.0,
+       "capability_twh": -0.2294,
+       "mean_avail_before": 1.0,
+       "mean_avail_after": 0.5562
+      },
+      {
+       "plant_code": 1403,
+       "bin_cap_mw": 1465.4,
+       "capability_twh": -3.3396,
+       "mean_avail_before": 1.0,
+       "mean_avail_after": 0.7398
+      }
+     ]
+    },
+    "CC_REGULAR": {
+     "capability_twh": 2.834,
+     "bins": [
+      {
+       "plant_code": 1403,
+       "bin_cap_mw": 649.5,
+       "capability_twh": 2.6032,
+       "mean_avail_before": 0.4384,
+       "mean_avail_after": 0.8959
+      },
+      {
+       "plant_code": 2070,
+       "bin_cap_mw": 268.0,
+       "capability_twh": 0.2308,
+       "mean_avail_before": 0.6901,
+       "mean_avail_after": 0.7884
+      }
+     ]
+    }
+   }
+  }
+ }
+}
