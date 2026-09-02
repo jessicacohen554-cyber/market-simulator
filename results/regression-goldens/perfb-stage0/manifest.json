@@ -2,20 +2,22 @@
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "keepers": {
     "CAISO": {
-      "bundle": "results/calibration/caiso197_w2_r5",
+      "bundle": "results/calibration/caiso231_b1_ungrounded",
       "content_hashes": {
-        "btm.parquet": "f59e46c76213b7b67bed113a70233bcc9484bc2c50bef1daed6a4c88b8150545",
-        "dispatch/2023_P1.parquet": "8a6e0578369d25ec9a1a421eeda84ddef1ffe9e942849dd2d73371809042e4f6",
-        "dispatch/2024_P1.parquet": "aec008a9fa70f407d7e8deb28604a9c09aaa3fa385375aff7d1fbd3d360c3ad6",
-        "dispatch/2025_P1.parquet": "03159063aad35bf8333064b678caad93a36b926205b4c6a87cfabb5f825aecd8",
-        "flows.parquet": "2e5e983e1008b6a8266d960cdc0e80cdbc15424a81193f8247b37b861e4d51cd",
-        "storage.parquet": "7e713c355125c42f1e30963160487fc0d291372634bbf40b5f415fe79f0cd8a9",
-        "system.parquet": "1ea3e4d5c1c9025d66d82a97683a97045129c48967ce8ad2df08113f28ff8d6b"
+        "btm.parquet": "f3ef049744383b96f3dbe71107c97878ef5aa4449c5f9a1df8448a18331c9349",
+        "dispatch/2023_P1.parquet": "2bb0d8e12855919eba63efc7e4c5c52b32da56b7a62b82cbc301493fed0424c8",
+        "dispatch/2023_P1_fleet.parquet": "84ed8f3158d4ada8b33772a1e5cbaabadfff808ee96dba12dff1f5627df056ee",
+        "dispatch/2024_P1.parquet": "5ed9809886220f316c9973c6c559f943c15af054344a650cff334f6f9f6b2b86",
+        "dispatch/2024_P1_fleet.parquet": "6757cdb69783102016ee0f8f71a8cd4472ffcb3b2eed9770913f83bb843dbd15",
+        "dispatch/2025_P1.parquet": "3bd8b1573179593e75eaf8689fcfd616d0048f94a93eb0f419b3a88a00f12c03",
+        "dispatch/2025_P1_fleet.parquet": "29c5b0f6745a0392b8ffc24cf83cdadeaab778918af7b3f1c0701809c85d7a0c",
+        "flows.parquet": "c8804c78b8a9918d7980a73e4dbb3acbb4b70f3d33271fd3fd0ccc2ea461b0bc",
+        "storage.parquet": "cdcb6083ec56a3b9d405da7682c3dd4f3a2845d81aca7e551ba728d8f4326607",
+        "system.parquet": "22d42531375b910267a3dddc368ded2bdf0e1e14f454fbe0c7cf394cf6776969"
       },
       "defaulted_unrecorded_params": [
         "ablation_of",
         "coal_takeorpay_from_data",
-        "ercot_ordc_adder_published_anchor",
         "gt_ambient_derate",
         "gt_ambient_derate_ref_c",
         "gt_ambient_derate_slope_cc",
@@ -23,39 +25,32 @@
         "miso_pjm_lmp_import_pricing",
         "persist_p0_commitment",
         "plant_tranche_config",
-        "reliability_floor_plant_exclusions",
         "reuse_solved",
         "zero_forcing_ablation"
       ],
       "dropped_dead_config_keys": {},
       "fidelity": {
-        "meta_head_only": [
-          "ercot_ordc_adder_published_anchor",
-          "reliability_floor_plant_exclusions"
-        ],
+        "meta_head_only": [],
         "meta_keeper_only": [],
-        "meta_matched": 256,
+        "meta_matched": 272,
         "scenario_config_drift": [],
         "scenario_config_head_only": [
-          "commission_year_cod_fallback",
-          "ercot_reserve_supply_cap_net_credits",
-          "reliability_floor_plant_exclusions",
-          "summer_wefor_share_override"
+          "carbon_price_delta",
+          "st_gas_mustrun_oom_level"
         ],
-        "scenario_config_matched": 714
+        "scenario_config_matched": 765
       },
       "hours": 8760,
-      "keeper_id": "2026-08-16-caiso-197-w2-r5",
+      "keeper_id": "2026-09-01-caiso-231-b1-ungrounded",
       "keeper_snapshot": {
-        "bundle": "results/calibration/caiso197_w2_r5",
-        "date": "2026-08-16",
-        "definition": "caiso-197 WAVE-2 FINAL RUNG +L5: the full surviving ladder \u2014 lane-2 three-field move + lane-3 cited override + lane-5 six-plant cited-physical PS \u2014 on the re-anchored caiso-196 base (integration protocol \u00a71; all three lanes ACCEPTED on their pre-registered gates before composition). One mechanism added vs the previous rung (caiso197_w2_r3).",
-        "id": "2026-08-16-caiso-197-w2-r5",
+        "bundle": "results/calibration/caiso231_b1_ungrounded",
+        "date": "2026-09-01",
+        "definition": "caiso-231 B1: measured re-grounding of CC_CHP/CT_CHP/ST_GAS bands",
+        "id": "2026-09-01-caiso-231-b1-ungrounded",
         "iso": "CAISO",
-        "label": "caiso 197 w2 r5",
-        "shorthand": "caiso-197-w2-r5",
+        "label": "caiso 231 b1 ungrounded",
+        "shorthand": "caiso-231-b1-ungrounded",
         "sidecar_at_capture": "present",
-        "sidecar_source": "recovered from 6cc332e741ccdc8900817a7edc247044c6b268f7^",
         "years": [
           2023,
           2024,
@@ -63,29 +58,20 @@
         ]
       },
       "provenance": {
-        "basis_sha": "9f6ff3ee8b92c636aa69d8f335b493129e1bbd07",
+        "basis_sha": "9220243ff7a3dd6ed37bdee952e93e7109d91614",
         "env": {
           "MARKET_SIM_HIGHS_THREADS": "1",
           "MARKET_SIM_WARMSTART": "1",
           "MARKET_SIM_WARMSTART_XYEAR": "0"
         },
         "git_dirty": false,
-        "git_sha": "9f6ff3e",
-        "git_sha_full": "9f6ff3ee8b92c636aa69d8f335b493129e1bbd07",
+        "git_sha": "9220243f",
+        "git_sha_full": "9220243ff7a3dd6ed37bdee952e93e7109d91614",
         "highspy_version": "unknown",
-        "recorded_at": "2026-08-17T03:34:14Z",
-        "recorded_at_basis": "author date of the capture commit -- an upper bound on the manifest-write instant, which is the closest the record supports (the tool did not stamp a time)",
-        "recovery": {
-          "commit_message_states": "2dd9dbc",
-          "manifest_commit": "af1ccb6ca76ae9b8f4a0e0a8060c308995678659",
-          "method": "the git_sha this capture wrote, read back from the manifest blob at the commit that added this ISO's entry, before the next capture overwrote the shared field",
-          "note": "commit message says 'Re-solve at 2dd9dbc'; the manifest stamp is the manifest-write HEAD, which advanced to the NYISO capture commit while this ~41 min solve ran. git diff 2dd9dbc..9f6ff3e touches ONLY this manifest -- the two trees are code-identical.",
-          "prefix_unambiguous": true,
-          "resolves_at_repair_pin": true
-        },
-        "source": "recovered-from-manifest-history"
+        "recorded_at": "2026-09-02T04:58:22Z",
+        "source": "stamped-at-capture"
       },
-      "recorded_flag_count": 247,
+      "recorded_flag_count": 263,
       "years": [
         2023,
         2024,

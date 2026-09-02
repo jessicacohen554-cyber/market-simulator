@@ -1,0 +1,2512 @@
+{
+ "session": "nyiso-175",
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "prereg": "results/calibration/PREREG-nyiso175-ct-conduct-and-d2-basis.md",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "A_d2_basis": {
+  "route": "diagnostics-recompute",
+  "recompute_error": null,
+  "rows": [
+   {
+    "year": 2023,
+    "class": "",
+    "committed_twh": 35.3713,
+    "recon_twh": 35.3711,
+    "rel_delta": 6e-06,
+    "within_gate": true
+   },
+   {
+    "year": 2023,
+    "class": "CC_CHP",
+    "committed_twh": 15.0996,
+    "recon_twh": 21.0263,
+    "rel_delta": 0.392507,
+    "within_gate": false
+   },
+   {
+    "year": 2023,
+    "class": "CC_REGULAR",
+    "committed_twh": 30.8323,
+    "recon_twh": 30.762,
+    "rel_delta": 0.00228,
+    "within_gate": true
+   },
+   {
+    "year": 2023,
+    "class": "CT_CHP",
+    "committed_twh": 2.898,
+    "recon_twh": 4.4083,
+    "rel_delta": 0.521153,
+    "within_gate": false
+   },
+   {
+    "year": 2023,
+    "class": "CT_PEAKER",
+    "committed_twh": 0.3182,
+    "recon_twh": 0.3023,
+    "rel_delta": 0.049969,
+    "within_gate": false
+   },
+   {
+    "year": 2023,
+    "class": "ST_CHP",
+    "committed_twh": 0.0712,
+    "recon_twh": null,
+    "rel_delta": null,
+    "within_gate": false
+   },
+   {
+    "year": 2023,
+    "class": "ST_GAS",
+    "committed_twh": 13.6894,
+    "recon_twh": 13.6615,
+    "rel_delta": 0.002038,
+    "within_gate": true
+   },
+   {
+    "year": 2023,
+    "class": "hydro",
+    "committed_twh": 26.6134,
+    "recon_twh": 18.7521,
+    "rel_delta": 0.295389,
+    "within_gate": false
+   },
+   {
+    "year": 2024,
+    "class": "",
+    "committed_twh": 34.8373,
+    "recon_twh": 34.8372,
+    "rel_delta": 3e-06,
+    "within_gate": true
+   },
+   {
+    "year": 2024,
+    "class": "CC_CHP",
+    "committed_twh": 18.531,
+    "recon_twh": 25.1794,
+    "rel_delta": 0.358772,
+    "within_gate": false
+   },
+   {
+    "year": 2024,
+    "class": "CC_REGULAR",
+    "committed_twh": 35.3678,
+    "recon_twh": 35.1454,
+    "rel_delta": 0.006288,
+    "within_gate": false
+   },
+   {
+    "year": 2024,
+    "class": "CT_CHP",
+    "committed_twh": 2.4484,
+    "recon_twh": null,
+    "rel_delta": null,
+    "within_gate": false
+   },
+   {
+    "year": 2024,
+    "class": "CT_PEAKER",
+    "committed_twh": 0.2197,
+    "recon_twh": 0.181,
+    "rel_delta": 0.176149,
+    "within_gate": false
+   },
+   {
+    "year": 2024,
+    "class": "ST_CHP",
+    "committed_twh": 0.0913,
+    "recon_twh": 0.2258,
+    "rel_delta": 1.473165,
+    "within_gate": false
+   },
+   {
+    "year": 2024,
+    "class": "ST_GAS",
+    "committed_twh": 11.5181,
+    "recon_twh": 11.4631,
+    "rel_delta": 0.004775,
+    "within_gate": true
+   },
+   {
+    "year": 2024,
+    "class": "hydro",
+    "committed_twh": 26.739,
+    "recon_twh": 18.9136,
+    "rel_delta": 0.292659,
+    "within_gate": false
+   },
+   {
+    "year": 2025,
+    "class": "",
+    "committed_twh": 36.2274,
+    "recon_twh": 36.2256,
+    "rel_delta": 5e-05,
+    "within_gate": true
+   },
+   {
+    "year": 2025,
+    "class": "CC_CHP",
+    "committed_twh": 19.9516,
+    "recon_twh": 25.7257,
+    "rel_delta": 0.289405,
+    "within_gate": false
+   },
+   {
+    "year": 2025,
+    "class": "CC_REGULAR",
+    "committed_twh": 34.2456,
+    "recon_twh": 33.6291,
+    "rel_delta": 0.018002,
+    "within_gate": false
+   },
+   {
+    "year": 2025,
+    "class": "CT_CHP",
+    "committed_twh": 3.2995,
+    "recon_twh": 4.4299,
+    "rel_delta": 0.342597,
+    "within_gate": false
+   },
+   {
+    "year": 2025,
+    "class": "CT_PEAKER",
+    "committed_twh": 0.8458,
+    "recon_twh": 0.7096,
+    "rel_delta": 0.161031,
+    "within_gate": false
+   },
+   {
+    "year": 2025,
+    "class": "ST_CHP",
+    "committed_twh": 0.0931,
+    "recon_twh": 0.1818,
+    "rel_delta": 0.952739,
+    "within_gate": false
+   },
+   {
+    "year": 2025,
+    "class": "ST_GAS",
+    "committed_twh": 12.3843,
+    "recon_twh": 12.1736,
+    "rel_delta": 0.017013,
+    "within_gate": false
+   },
+   {
+    "year": 2025,
+    "class": "hydro",
+    "committed_twh": 24.0589,
+    "recon_twh": 15.094,
+    "rel_delta": 0.372623,
+    "within_gate": false
+   }
+  ],
+  "gate_A1_pass": false,
+  "east_river_model_groups": {
+   "CT_CHP": 306.0,
+   "ST_CHP": 309.5
+  },
+  "east_river_majority_label_alpha_tie": "CT_CHP",
+  "note": "gate A1 accepts H-A iff every gas class-year and hydro reproduces within 0.5 % relative (or 0.005 TWh absolute)"
+ },
+ "A_posthoc_grain_identity": {
+  "labelled": "POST-HOC \u2014 added after gate A1 returned; not pre-registered",
+  "by_year": {
+   "2023": {
+    "d2_class_total_twh": {
+     "": 35.3713,
+     "CC_CHP": 15.0996,
+     "CC_REGULAR": 30.8323,
+     "CT_CHP": 2.898,
+     "CT_PEAKER": 0.3182,
+     "ST_CHP": 0.0712,
+     "ST_GAS": 13.6894,
+     "hydro": 26.6134
+    },
+    "class_hourly_twh": {
+     "CC_CHP": 15.0739,
+     "CC_REGULAR": 32.863,
+     "CT_CHP": 1.7648,
+     "CT_PEAKER": 0.3917,
+     "OTHER": 2.1973,
+     "ST_CHP": 1.196,
+     "ST_GAS": 11.4707,
+     "biomass": 0.8395,
+     "hydro": 26.6134,
+     "import": 23.346,
+     "nuclear": 27.4871,
+     "oil": 0.1489,
+     "solar": 0.2797,
+     "wind": 4.5902
+    },
+    "delta_d2_minus_class_hourly": {
+     "CC_CHP": 0.0257,
+     "CC_REGULAR": -2.0307,
+     "CT_CHP": 1.1332,
+     "CT_PEAKER": -0.0735,
+     "OTHER": -2.1973,
+     "ST_CHP": -1.1248,
+     "ST_GAS": 2.2187,
+     "biomass": -0.8395,
+     "hydro": 0.0,
+     "import": -23.346,
+     "nuclear": -27.4871,
+     "oil": -0.1489,
+     "solar": -0.2797,
+     "wind": -4.5902
+    },
+    "hydro_identical": true,
+    "ct_st_chp_transfer_residual_twh": 0.0084
+   },
+   "2024": {
+    "d2_class_total_twh": {
+     "": 34.8373,
+     "CC_CHP": 18.531,
+     "CC_REGULAR": 35.3678,
+     "CT_CHP": 2.4484,
+     "CT_PEAKER": 0.2197,
+     "ST_CHP": 0.0913,
+     "ST_GAS": 11.5181,
+     "hydro": 26.739
+    },
+    "class_hourly_twh": {
+     "CC_CHP": 18.4544,
+     "CC_REGULAR": 37.2057,
+     "CT_CHP": 1.3275,
+     "CT_PEAKER": 0.2628,
+     "OTHER": 2.2014,
+     "ST_CHP": 1.1851,
+     "ST_GAS": 9.3209,
+     "biomass": 0.7597,
+     "hydro": 26.739,
+     "import": 20.6492,
+     "nuclear": 26.9532,
+     "oil": 0.42,
+     "solar": 0.5861,
+     "wind": 6.0116
+    },
+    "delta_d2_minus_class_hourly": {
+     "CC_CHP": 0.0766,
+     "CC_REGULAR": -1.8379,
+     "CT_CHP": 1.1209,
+     "CT_PEAKER": -0.0431,
+     "OTHER": -2.2014,
+     "ST_CHP": -1.0938,
+     "ST_GAS": 2.1972,
+     "biomass": -0.7597,
+     "hydro": -0.0,
+     "import": -20.6492,
+     "nuclear": -26.9532,
+     "oil": -0.42,
+     "solar": -0.5861,
+     "wind": -6.0116
+    },
+    "hydro_identical": true,
+    "ct_st_chp_transfer_residual_twh": 0.0271
+   },
+   "2025": {
+    "d2_class_total_twh": {
+     "": 36.2274,
+     "CC_CHP": 19.9516,
+     "CC_REGULAR": 34.2456,
+     "CT_CHP": 3.2995,
+     "CT_PEAKER": 0.8458,
+     "ST_CHP": 0.0931,
+     "ST_GAS": 12.3843,
+     "hydro": 24.0589
+    },
+    "class_hourly_twh": {
+     "CC_CHP": 19.7268,
+     "CC_REGULAR": 35.6914,
+     "CT_CHP": 1.8261,
+     "CT_PEAKER": 1.0341,
+     "OTHER": 1.9483,
+     "ST_CHP": 1.4919,
+     "ST_GAS": 9.7866,
+     "biomass": 0.6724,
+     "hydro": 24.0589,
+     "import": 19.2831,
+     "nuclear": 28.3416,
+     "oil": 1.2648,
+     "solar": 0.9813,
+     "wind": 7.0487
+    },
+    "delta_d2_minus_class_hourly": {
+     "CC_CHP": 0.2248,
+     "CC_REGULAR": -1.4458,
+     "CT_CHP": 1.4734,
+     "CT_PEAKER": -0.1883,
+     "OTHER": -1.9483,
+     "ST_CHP": -1.3988,
+     "ST_GAS": 2.5977,
+     "biomass": -0.6724,
+     "hydro": 0.0,
+     "import": -19.2831,
+     "nuclear": -28.3416,
+     "oil": -1.2648,
+     "solar": -0.9813,
+     "wind": -7.0487
+    },
+    "hydro_identical": true,
+    "ct_st_chp_transfer_residual_twh": 0.0746
+   }
+  },
+  "east_river_floors": {
+   "2023": {
+    "east_river_lp_units_by_group": {
+     "CT_CHP": 4,
+     "ST_CHP": 3
+    },
+    "plant_majority_label": "CT_CHP",
+    "east_river_units": [
+     {
+      "unit": "CT_CHP_NYC_p2493_committed",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_econlo",
+      "max_floor_mw": 90.08,
+      "hours_floored": 8760,
+      "floor_energy_twh": 0.7447,
+      "mechanisms": [
+       2
+      ]
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_econhi",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_peak",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_committed",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_econ",
+      "max_floor_mw": 92.82,
+      "hours_floored": 7272,
+      "floor_energy_twh": 0.591,
+      "mechanisms": [
+       2
+      ]
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_peak",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     }
+    ]
+   },
+   "2024": {
+    "east_river_lp_units_by_group": {
+     "CT_CHP": 4,
+     "ST_CHP": 3
+    },
+    "plant_majority_label": "CT_CHP",
+    "east_river_units": [
+     {
+      "unit": "CT_CHP_NYC_p2493_committed",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_econlo",
+      "max_floor_mw": 90.08,
+      "hours_floored": 8760,
+      "floor_energy_twh": 0.7447,
+      "mechanisms": [
+       2
+      ]
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_econhi",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_peak",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_committed",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_econ",
+      "max_floor_mw": 92.82,
+      "hours_floored": 8040,
+      "floor_energy_twh": 0.6669,
+      "mechanisms": [
+       2
+      ]
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_peak",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     }
+    ]
+   },
+   "2025": {
+    "east_river_lp_units_by_group": {
+     "CT_CHP": 4,
+     "ST_CHP": 3
+    },
+    "plant_majority_label": "CT_CHP",
+    "east_river_units": [
+     {
+      "unit": "CT_CHP_NYC_p2493_committed",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_econlo",
+      "max_floor_mw": 90.08,
+      "hours_floored": 8760,
+      "floor_energy_twh": 0.7447,
+      "mechanisms": [
+       2
+      ]
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_econhi",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "CT_CHP_NYC_p2493_peak",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_committed",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_econ",
+      "max_floor_mw": 92.82,
+      "hours_floored": 7872,
+      "floor_energy_twh": 0.6723,
+      "mechanisms": [
+       2
+      ]
+     },
+     {
+      "unit": "ST_CHP_NYC_p2493_peak",
+      "max_floor_mw": 0.0,
+      "hours_floored": 0,
+      "floor_energy_twh": 0.0,
+      "mechanisms": []
+     }
+    ]
+   }
+  }
+ },
+ "A3_payload_vs_class_hourly": {
+  "by_year": {
+   "2023": {
+    "payload_sliced_twh": {
+     "CC_REGULAR": 2.2825,
+     "CT_CHP": 2.3535,
+     "CT_PEAKER": 0.0897,
+     "ST_CHP": 1.697,
+     "ST_GAS": 6.6205
+    },
+    "class_hourly_twh": {
+     "CC_CHP": 15.0739,
+     "CC_REGULAR": 32.863,
+     "CT_CHP": 1.7648,
+     "CT_PEAKER": 0.3917,
+     "OTHER": 2.1973,
+     "ST_CHP": 1.196,
+     "ST_GAS": 11.4707,
+     "biomass": 0.8395,
+     "hydro": 26.6134,
+     "import": 23.346,
+     "nuclear": 27.4871,
+     "oil": 0.1489,
+     "solar": 0.2797,
+     "wind": 4.5902
+    }
+   },
+   "2024": {
+    "payload_sliced_twh": {
+     "CC_REGULAR": 2.2977,
+     "CT_CHP": 1.9404,
+     "CT_PEAKER": 0.0818,
+     "ST_CHP": 1.5737,
+     "ST_GAS": 4.0296
+    },
+    "class_hourly_twh": {
+     "CC_CHP": 18.4544,
+     "CC_REGULAR": 37.2057,
+     "CT_CHP": 1.3275,
+     "CT_PEAKER": 0.2628,
+     "OTHER": 2.2014,
+     "ST_CHP": 1.1851,
+     "ST_GAS": 9.3209,
+     "biomass": 0.7597,
+     "hydro": 26.739,
+     "import": 20.6492,
+     "nuclear": 26.9532,
+     "oil": 0.42,
+     "solar": 0.5861,
+     "wind": 6.0116
+    }
+   },
+   "2025": {
+    "payload_sliced_twh": {
+     "CC_REGULAR": 2.4166,
+     "CT_CHP": 2.4686,
+     "CT_PEAKER": 0.3245,
+     "ST_CHP": 1.8171,
+     "ST_GAS": 3.2704
+    },
+    "class_hourly_twh": {
+     "CC_CHP": 19.7268,
+     "CC_REGULAR": 35.6914,
+     "CT_CHP": 1.8261,
+     "CT_PEAKER": 1.0341,
+     "OTHER": 1.9483,
+     "ST_CHP": 1.4919,
+     "ST_GAS": 9.7866,
+     "biomass": 0.6724,
+     "hydro": 24.0589,
+     "import": 19.2831,
+     "nuclear": 28.3416,
+     "oil": 1.2648,
+     "solar": 0.9813,
+     "wind": 7.0487
+    }
+   }
+  },
+  "d2_exempt_classes": [
+   "CC_CHP",
+   "CT_CHP",
+   "ST_CHP",
+   "nuclear"
+  ],
+  "d2_peaker_classes": [
+   "CT_PEAKER"
+  ],
+  "chp_classes_reach_gated_summary": false,
+  "committed_d2_summary_classes": [
+   "CC_REGULAR",
+   "CT_PEAKER",
+   "ST_GAS",
+   "hydro"
+  ]
+ },
+ "B_ct_conduct": {
+  "2023": {
+   "CT_CHP": {
+    "cems_gross_twh": 2.6287,
+    "bench_classfull_twh": 2.4336,
+    "anchor": 0.9258,
+    "model_twh": 1.7648,
+    "class_error_pct": -27.48,
+    "online_bar_mw": 8.91,
+    "measured_on_hours": 8760,
+    "model_on_hours": 8736,
+    "measured_starts": 1,
+    "model_starts": 2,
+    "measured_run_mean_h": 8760.0,
+    "model_run_mean_h": 4368.0,
+    "measured_run_median_h": 8760.0,
+    "model_run_median_h": 4368.0,
+    "hourly_r": 0.016,
+    "measured_energy_in_model_on_hours": 0.9957,
+    "p90_measured_anchored_mw": 414.74,
+    "p90_model_mw": 306.58,
+    "q90_ratio": 0.7392,
+    "B5_verdict": "RESPONSE",
+    "duration_deciles": [
+     {
+      "decile": 0,
+      "measured_anchored_mw": 426.91,
+      "model_mw": 309.53,
+      "ratio": 0.7251
+     },
+     {
+      "decile": 1,
+      "measured_anchored_mw": 408.74,
+      "model_mw": 295.03,
+      "ratio": 0.7218
+     },
+     {
+      "decile": 2,
+      "measured_anchored_mw": 390.61,
+      "model_mw": 279.68,
+      "ratio": 0.716
+     },
+     {
+      "decile": 3,
+      "measured_anchored_mw": 363.04,
+      "model_mw": 257.93,
+      "ratio": 0.7105
+     },
+     {
+      "decile": 4,
+      "measured_anchored_mw": 298.95,
+      "model_mw": 182.4,
+      "ratio": 0.6101
+     },
+     {
+      "decile": 5,
+      "measured_anchored_mw": 240.59,
+      "model_mw": 175.06,
+      "ratio": 0.7276
+     },
+     {
+      "decile": 6,
+      "measured_anchored_mw": 217.91,
+      "model_mw": 172.31,
+      "ratio": 0.7907
+     },
+     {
+      "decile": 7,
+      "measured_anchored_mw": 173.85,
+      "model_mw": 156.76,
+      "ratio": 0.9017
+     },
+     {
+      "decile": 8,
+      "measured_anchored_mw": 138.92,
+      "model_mw": 96.79,
+      "ratio": 0.6967
+     },
+     {
+      "decile": 9,
+      "measured_anchored_mw": 118.56,
+      "model_mw": 89.1,
+      "ratio": 0.7515
+     }
+    ],
+    "load_bands": [
+     {
+      "band": "0-50",
+      "hours": 4380,
+      "deficit_gwh": 371.473,
+      "share_of_deficit": 0.5554
+     },
+     {
+      "band": "50-80",
+      "hours": 2628,
+      "deficit_gwh": 222.639,
+      "share_of_deficit": 0.3329
+     },
+     {
+      "band": "80-90",
+      "hours": 876,
+      "deficit_gwh": 59.92,
+      "share_of_deficit": 0.0896
+     },
+     {
+      "band": "90-95",
+      "hours": 438,
+      "deficit_gwh": 6.682,
+      "share_of_deficit": 0.01
+     },
+     {
+      "band": "95-99",
+      "hours": 350,
+      "deficit_gwh": 4.349,
+      "share_of_deficit": 0.0065
+     },
+     {
+      "band": "99-99.9",
+      "hours": 79,
+      "deficit_gwh": 3.432,
+      "share_of_deficit": 0.0051
+     },
+     {
+      "band": "99.9-100",
+      "hours": 9,
+      "deficit_gwh": 0.316,
+      "share_of_deficit": 0.0005
+     }
+    ]
+   },
+   "CT_PEAKER": {
+    "cems_gross_twh": 1.6476,
+    "bench_classfull_twh": 2.1139,
+    "anchor": 1.283,
+    "model_twh": 0.3917,
+    "class_error_pct": -81.47,
+    "online_bar_mw": 35.29,
+    "measured_on_hours": 5927,
+    "model_on_hours": 805,
+    "measured_starts": 399,
+    "model_starts": 102,
+    "measured_run_mean_h": 14.85,
+    "model_run_mean_h": 7.89,
+    "measured_run_median_h": 9.0,
+    "model_run_median_h": 8.0,
+    "hourly_r": 0.6785,
+    "measured_energy_in_model_on_hours": 0.3775,
+    "p90_measured_anchored_mw": 699.23,
+    "p90_model_mw": 35.19,
+    "q90_ratio": 0.0503,
+    "B5_verdict": "LEVEL",
+    "duration_deciles": [
+     {
+      "decile": 0,
+      "measured_anchored_mw": 1104.74,
+      "model_mw": 433.59,
+      "ratio": 0.3925
+     },
+     {
+      "decile": 1,
+      "measured_anchored_mw": 537.85,
+      "model_mw": 13.52,
+      "ratio": 0.0251
+     },
+     {
+      "decile": 2,
+      "measured_anchored_mw": 330.85,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 3,
+      "measured_anchored_mw": 203.92,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 4,
+      "measured_anchored_mw": 122.05,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 5,
+      "measured_anchored_mw": 68.45,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 6,
+      "measured_anchored_mw": 42.04,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 7,
+      "measured_anchored_mw": 3.24,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 8,
+      "measured_anchored_mw": 0.0,
+      "model_mw": 0.0,
+      "ratio": null
+     },
+     {
+      "decile": 9,
+      "measured_anchored_mw": 0.0,
+      "model_mw": 0.0,
+      "ratio": null
+     }
+    ],
+    "load_bands": [
+     {
+      "band": "0-50",
+      "hours": 4380,
+      "deficit_gwh": 305.401,
+      "share_of_deficit": 0.1773
+     },
+     {
+      "band": "50-80",
+      "hours": 2628,
+      "deficit_gwh": 587.461,
+      "share_of_deficit": 0.3411
+     },
+     {
+      "band": "80-90",
+      "hours": 876,
+      "deficit_gwh": 315.295,
+      "share_of_deficit": 0.1831
+     },
+     {
+      "band": "90-95",
+      "hours": 438,
+      "deficit_gwh": 240.314,
+      "share_of_deficit": 0.1395
+     },
+     {
+      "band": "95-99",
+      "hours": 350,
+      "deficit_gwh": 218.74,
+      "share_of_deficit": 0.127
+     },
+     {
+      "band": "99-99.9",
+      "hours": 79,
+      "deficit_gwh": 49.956,
+      "share_of_deficit": 0.029
+     },
+     {
+      "band": "99.9-100",
+      "hours": 9,
+      "deficit_gwh": 5.066,
+      "share_of_deficit": 0.0029
+     }
+    ]
+   }
+  },
+  "2024": {
+   "CT_CHP": {
+    "cems_gross_twh": 2.7786,
+    "bench_classfull_twh": 2.1717,
+    "anchor": 0.7816,
+    "model_twh": 1.3275,
+    "class_error_pct": -38.87,
+    "online_bar_mw": 7.68,
+    "measured_on_hours": 8760,
+    "model_on_hours": 8702,
+    "measured_starts": 1,
+    "model_starts": 6,
+    "measured_run_mean_h": 8760.0,
+    "model_run_mean_h": 1450.33,
+    "measured_run_median_h": 8760.0,
+    "model_run_median_h": 4.5,
+    "hourly_r": 0.2583,
+    "measured_energy_in_model_on_hours": 0.9904,
+    "p90_measured_anchored_mw": 354.06,
+    "p90_model_mw": 308.16,
+    "q90_ratio": 0.8704,
+    "B5_verdict": "RESPONSE",
+    "duration_deciles": [
+     {
+      "decile": 0,
+      "measured_anchored_mw": 365.09,
+      "model_mw": 322.04,
+      "ratio": 0.8821
+     },
+     {
+      "decile": 1,
+      "measured_anchored_mw": 346.28,
+      "model_mw": 302.61,
+      "ratio": 0.8739
+     },
+     {
+      "decile": 2,
+      "measured_anchored_mw": 333.0,
+      "model_mw": 203.79,
+      "ratio": 0.612
+     },
+     {
+      "decile": 3,
+      "measured_anchored_mw": 315.94,
+      "model_mw": 138.76,
+      "ratio": 0.4392
+     },
+     {
+      "decile": 4,
+      "measured_anchored_mw": 286.56,
+      "model_mw": 96.57,
+      "ratio": 0.337
+     },
+     {
+      "decile": 5,
+      "measured_anchored_mw": 232.79,
+      "model_mw": 93.66,
+      "ratio": 0.4023
+     },
+     {
+      "decile": 6,
+      "measured_anchored_mw": 197.99,
+      "model_mw": 93.22,
+      "ratio": 0.4708
+     },
+     {
+      "decile": 7,
+      "measured_anchored_mw": 166.92,
+      "model_mw": 92.94,
+      "ratio": 0.5568
+     },
+     {
+      "decile": 8,
+      "measured_anchored_mw": 125.9,
+      "model_mw": 90.42,
+      "ratio": 0.7182
+     },
+     {
+      "decile": 9,
+      "measured_anchored_mw": 108.62,
+      "model_mw": 81.37,
+      "ratio": 0.7491
+     }
+    ],
+    "load_bands": [
+     {
+      "band": "0-50",
+      "hours": 4380,
+      "deficit_gwh": 534.818,
+      "share_of_deficit": 0.6335
+     },
+     {
+      "band": "50-80",
+      "hours": 2628,
+      "deficit_gwh": 312.851,
+      "share_of_deficit": 0.3706
+     },
+     {
+      "band": "80-90",
+      "hours": 876,
+      "deficit_gwh": 16.689,
+      "share_of_deficit": 0.0198
+     },
+     {
+      "band": "90-95",
+      "hours": 438,
+      "deficit_gwh": -7.456,
+      "share_of_deficit": -0.0088
+     },
+     {
+      "band": "95-99",
+      "hours": 350,
+      "deficit_gwh": -11.448,
+      "share_of_deficit": -0.0136
+     },
+     {
+      "band": "99-99.9",
+      "hours": 79,
+      "deficit_gwh": -1.017,
+      "share_of_deficit": -0.0012
+     },
+     {
+      "band": "99.9-100",
+      "hours": 9,
+      "deficit_gwh": -0.223,
+      "share_of_deficit": -0.0003
+     }
+    ]
+   },
+   "CT_PEAKER": {
+    "cems_gross_twh": 1.5785,
+    "bench_classfull_twh": 1.9108,
+    "anchor": 1.2106,
+    "model_twh": 0.2628,
+    "class_error_pct": -86.24,
+    "online_bar_mw": 38.19,
+    "measured_on_hours": 5093,
+    "model_on_hours": 779,
+    "measured_starts": 457,
+    "model_starts": 93,
+    "measured_run_mean_h": 11.14,
+    "model_run_mean_h": 8.38,
+    "measured_run_median_h": 7.0,
+    "model_run_median_h": 7.0,
+    "hourly_r": 0.4642,
+    "measured_energy_in_model_on_hours": 0.2822,
+    "p90_measured_anchored_mw": 660.96,
+    "p90_model_mw": 35.19,
+    "q90_ratio": 0.0532,
+    "B5_verdict": "BOTH",
+    "duration_deciles": [
+     {
+      "decile": 0,
+      "measured_anchored_mw": 1080.64,
+      "model_mw": 265.37,
+      "ratio": 0.2456
+     },
+     {
+      "decile": 1,
+      "measured_anchored_mw": 507.29,
+      "model_mw": 31.64,
+      "ratio": 0.0624
+     },
+     {
+      "decile": 2,
+      "measured_anchored_mw": 289.06,
+      "model_mw": 3.04,
+      "ratio": 0.0105
+     },
+     {
+      "decile": 3,
+      "measured_anchored_mw": 161.63,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 4,
+      "measured_anchored_mw": 88.48,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 5,
+      "measured_anchored_mw": 46.7,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 6,
+      "measured_anchored_mw": 7.48,
+      "model_mw": 0.0,
+      "ratio": 0.0
+     },
+     {
+      "decile": 7,
+      "measured_anchored_mw": 0.0,
+      "model_mw": 0.0,
+      "ratio": null
+     },
+     {
+      "decile": 8,
+      "measured_anchored_mw": 0.0,
+      "model_mw": 0.0,
+      "ratio": null
+     },
+     {
+      "decile": 9,
+      "measured_anchored_mw": 0.0,
+      "model_mw": 0.0,
+      "ratio": null
+     }
+    ],
+    "load_bands": [
+     {
+      "band": "0-50",
+      "hours": 4380,
+      "deficit_gwh": 248.72,
+      "share_of_deficit": 0.1509
+     },
+     {
+      "band": "50-80",
+      "hours": 2628,
+      "deficit_gwh": 521.665,
+      "share_of_deficit": 0.3166
+     },
+     {
+      "band": "80-90",
+      "hours": 876,
+      "deficit_gwh": 322.353,
+      "share_of_deficit": 0.1956
+     },
+     {
+      "band": "90-95",
+      "hours": 438,
+      "deficit_gwh": 209.917,
+      "share_of_deficit": 0.1274
+     },
+     {
+      "band": "95-99",
+      "hours": 350,
+      "deficit_gwh": 285.723,
+      "share_of_deficit": 0.1734
+     },
+     {
+      "band": "99-99.9",
+      "hours": 79,
+      "deficit_gwh": 53.358,
+      "share_of_deficit": 0.0324
+     },
+     {
+      "band": "99.9-100",
+      "hours": 9,
+      "deficit_gwh": 6.218,
+      "share_of_deficit": 0.0038
+     }
+    ]
+   }
+  },
+  "2025": {
+   "CT_CHP": {
+    "cems_gross_twh": 2.6717,
+    "bench_classfull_twh": 2.3829,
+    "anchor": 0.8919,
+    "model_twh": 1.8261,
+    "class_error_pct": -23.37,
+    "online_bar_mw": 8.88,
+    "measured_on_hours": 8760,
+    "model_on_hours": 8592,
+    "measured_starts": 1,
+    "model_starts": 3,
+    "measured_run_mean_h": 8760.0,
+    "model_run_mean_h": 2864.0,
+    "measured_run_median_h": 8760.0,
+    "model_run_median_h": 432.0,
+    "hourly_r": 0.3946,
+    "measured_energy_in_model_on_hours": 0.974,
+    "p90_measured_anchored_mw": 408.49,
+    "p90_model_mw": 308.84,
+    "q90_ratio": 0.7561,
+    "B5_verdict": "RESPONSE",
+    "duration_deciles": [
+     {
+      "decile": 0,
+      "measured_anchored_mw": 421.41,
+      "model_mw": 328.85,
+      "ratio": 0.7804
+     },
+     {
+      "decile": 1,
+      "measured_anchored_mw": 400.92,
+      "model_mw": 306.63,
+      "ratio": 0.7648
+     },
+     {
+      "decile": 2,
+      "measured_anchored_mw": 377.01,
+      "model_mw": 295.78,
+      "ratio": 0.7845
+     },
+     {
+      "decile": 3,
+      "measured_anchored_mw": 346.13,
+      "model_mw": 284.73,
+      "ratio": 0.8226
+     },
+     {
+      "decile": 4,
+      "measured_anchored_mw": 294.81,
+      "model_mw": 271.8,
+      "ratio": 0.922
+     },
+     {
+      "decile": 5,
+      "measured_anchored_mw": 237.96,
+      "model_mw": 200.07,
+      "ratio": 0.8408
+     },
+     {
+      "decile": 6,
+      "measured_anchored_mw": 218.52,
+      "model_mw": 138.73,
+      "ratio": 0.6348
+     },
+     {
+      "decile": 7,
+      "measured_anchored_mw": 177.9,
+      "model_mw": 93.22,
+      "ratio": 0.524
+     },
+     {
+      "decile": 8,
+      "measured_anchored_mw": 145.15,
+      "model_mw": 92.54,
+      "ratio": 0.6375
+     },
+     {
+      "decile": 9,
+      "measured_anchored_mw": 100.38,
+      "model_mw": 72.25,
+      "ratio": 0.7198
+     }
+    ],
+    "load_bands": [
+     {
+      "band": "0-50",
+      "hours": 4380,
+      "deficit_gwh": 340.272,
+      "share_of_deficit": 0.6111
+     },
+     {
+      "band": "50-80",
+      "hours": 2628,
+      "deficit_gwh": 150.363,
+      "share_of_deficit": 0.2701
+     },
+     {
+      "band": "80-90",
+      "hours": 876,
+      "deficit_gwh": 49.323,
+      "share_of_deficit": 0.0886
+     },
+     {
+      "band": "90-95",
+      "hours": 438,
+      "deficit_gwh": 14.914,
+      "share_of_deficit": 0.0268
+     },
+     {
+      "band": "95-99",
+      "hours": 350,
+      "deficit_gwh": -0.031,
+      "share_of_deficit": -0.0001
+     },
+     {
+      "band": "99-99.9",
+      "hours": 79,
+      "deficit_gwh": 1.739,
+      "share_of_deficit": 0.0031
+     },
+     {
+      "band": "99.9-100",
+      "hours": 9,
+      "deficit_gwh": 0.202,
+      "share_of_deficit": 0.0004
+     }
+    ]
+   },
+   "CT_PEAKER": {
+    "cems_gross_twh": 1.9749,
+    "bench_classfull_twh": 2.8512,
+    "anchor": 1.4437,
+    "model_twh": 1.0341,
+    "class_error_pct": -63.73,
+    "online_bar_mw": 46.65,
+    "measured_on_hours": 6803,
+    "model_on_hours": 1556,
+    "measured_starts": 293,
+    "model_starts": 156,
+    "measured_run_mean_h": 23.22,
+    "model_run_mean_h": 9.97,
+    "measured_run_median_h": 10.0,
+    "model_run_median_h": 7.0,
+    "hourly_r": 0.626,
+    "measured_energy_in_model_on_hours": 0.4315,
+    "p90_measured_anchored_mw": 807.03,
+    "p90_model_mw": 297.73,
+    "q90_ratio": 0.3689,
+    "B5_verdict": "LEVEL",
+    "duration_deciles": [
+     {
+      "decile": 0,
+      "measured_anchored_mw": 1264.5,
+      "model_mw": 854.22,
+      "ratio": 0.6755
+     },
+     {
+      "decile": 1,
+      "measured_anchored_mw": 656.55,
+      "model_mw": 96.34,
+      "ratio": 0.1467
+     },
+     {
+      "decile": 2,
+      "measured_anchored_mw": 451.05,
+      "model_mw": 39.47,
+      "ratio": 0.0875
+     },
+     {
+      "decile": 3,
+      "measured_anchored_mw": 324.86,
+      "model_mw": 37.16,
+      "ratio": 0.1144
+     },
+     {
+      "decile": 4,
+      "measured_anchored_mw": 236.28,
+      "model_mw": 36.09,
+      "ratio": 0.1528
+     },
+     {
+      "decile": 5,
+      "measured_anchored_mw": 161.69,
+      "model_mw": 35.98,
+      "ratio": 0.2225
+     },
+     {
+      "decile": 6,
+      "measured_anchored_mw": 100.07,
+      "model_mw": 35.01,
+      "ratio": 0.3499
+     },
+     {
+      "decile": 7,
+      "measured_anchored_mw": 55.63,
+      "model_mw": 33.61,
+      "ratio": 0.6042
+     },
+     {
+      "decile": 8,
+      "measured_anchored_mw": 4.18,
+      "model_mw": 12.57,
+      "ratio": 3.0049
+     },
+     {
+      "decile": 9,
+      "measured_anchored_mw": 0.0,
+      "model_mw": 0.0,
+      "ratio": null
+     }
+    ],
+    "load_bands": [
+     {
+      "band": "0-50",
+      "hours": 4380,
+      "deficit_gwh": 452.65,
+      "share_of_deficit": 0.2491
+     },
+     {
+      "band": "50-80",
+      "hours": 2628,
+      "deficit_gwh": 670.716,
+      "share_of_deficit": 0.3691
+     },
+     {
+      "band": "80-90",
+      "hours": 876,
+      "deficit_gwh": 244.863,
+      "share_of_deficit": 0.1348
+     },
+     {
+      "band": "90-95",
+      "hours": 438,
+      "deficit_gwh": 164.26,
+      "share_of_deficit": 0.0904
+     },
+     {
+      "band": "95-99",
+      "hours": 350,
+      "deficit_gwh": 220.31,
+      "share_of_deficit": 0.1212
+     },
+     {
+      "band": "99-99.9",
+      "hours": 79,
+      "deficit_gwh": 53.637,
+      "share_of_deficit": 0.0295
+     },
+     {
+      "band": "99.9-100",
+      "hours": 9,
+      "deficit_gwh": 10.686,
+      "share_of_deficit": 0.0059
+     }
+    ]
+   }
+  }
+ },
+ "B6_east_river_plant_grain": {
+  "labelled": "POST-HOC \u2014 added after B returned; not pre-registered",
+  "eia860_published_minimum_load_mw": {
+   "1": {
+    "prime_mover": "GT",
+    "min_load_mw": 110.0,
+    "summer_mw": 152.1
+   },
+   "2": {
+    "prime_mover": "GT",
+    "min_load_mw": 110.0,
+    "summer_mw": 153.9
+   },
+   "6": {
+    "prime_mover": "ST",
+    "min_load_mw": 45.0,
+    "summer_mw": 132.7
+   },
+   "7": {
+    "prime_mover": "ST",
+    "min_load_mw": 65.0,
+    "summer_mw": 176.8
+   }
+  },
+  "by_year": {
+   "2023": {
+    "bins": {
+     "CT_CHP": {
+      "btm_share": 0.35,
+      "eia923_netgen_twh": 2.0221,
+      "payload_twh_with_addback": 2.352,
+      "model_grid_twh": 1.6443,
+      "model_grid_p05_mw": 84.66,
+      "model_grid_p25_mw": 156.6,
+      "model_grid_p50_mw": 167.39,
+      "model_grid_p90_mw": 271.7,
+      "measured_campd_twh": 2.1335,
+      "measured_min_mw": 0.0,
+      "measured_p05_mw": 87.0,
+      "measured_p25_mw": 162.0,
+      "measured_p50_mw": 224.0,
+      "measured_p90_mw": 379.1,
+      "measured_zero_hours": 25,
+      "hourly_r_grid_vs_measured": -0.0026
+     },
+     "ST_CHP": {
+      "btm_share": 0.35,
+      "eia923_netgen_twh": 1.0566,
+      "payload_twh_with_addback": 1.49,
+      "model_grid_twh": 1.1202,
+      "model_grid_p05_mw": 0.46,
+      "model_grid_p25_mw": 71.59,
+      "model_grid_p50_mw": 121.38,
+      "model_grid_p90_mw": 295.66,
+      "measured_campd_twh": 0.0,
+      "measured_min_mw": 0.0,
+      "measured_p05_mw": 0.0,
+      "measured_p25_mw": 0.0,
+      "measured_p50_mw": 0.0,
+      "measured_p90_mw": 0.0,
+      "measured_zero_hours": 8760,
+      "hourly_r_grid_vs_measured": null
+     }
+    },
+    "scored_basis_attribution": {
+     "CT_CHP": {
+      "class_model_twh": 1.7648,
+      "class_bench_twh": 2.4336,
+      "class_gap_twh": -0.6688,
+      "east_river_gap_twh": -0.3778,
+      "east_river_share_of_class_gap": 0.5649
+     },
+     "ST_CHP": {
+      "class_model_twh": 1.196,
+      "class_bench_twh": 1.1692,
+      "class_gap_twh": 0.0268,
+      "east_river_gap_twh": 0.0636,
+      "east_river_share_of_class_gap": 2.3713
+     }
+    }
+   },
+   "2024": {
+    "bins": {
+     "CT_CHP": {
+      "btm_share": 0.35,
+      "eia923_netgen_twh": 2.1492,
+      "payload_twh_with_addback": 1.9367,
+      "model_grid_twh": 1.1845,
+      "model_grid_p05_mw": 79.39,
+      "model_grid_p25_mw": 86.58,
+      "model_grid_p50_mw": 86.58,
+      "model_grid_p90_mw": 255.43,
+      "measured_campd_twh": 2.2503,
+      "measured_min_mw": 81.0,
+      "measured_p05_mw": 93.0,
+      "measured_p25_mw": 176.0,
+      "measured_p50_mw": 275.0,
+      "measured_p90_mw": 382.0,
+      "measured_zero_hours": 0,
+      "hourly_r_grid_vs_measured": 0.2487
+     },
+     "ST_CHP": {
+      "btm_share": 0.35,
+      "eia923_netgen_twh": 0.745,
+      "payload_twh_with_addback": 1.3475,
+      "model_grid_twh": 1.0878,
+      "model_grid_p05_mw": 0.0,
+      "model_grid_p25_mw": 73.61,
+      "model_grid_p50_mw": 91.43,
+      "model_grid_p90_mw": 283.91,
+      "measured_campd_twh": 0.0,
+      "measured_min_mw": 0.0,
+      "measured_p05_mw": 0.0,
+      "measured_p25_mw": 0.0,
+      "measured_p50_mw": 0.0,
+      "measured_p90_mw": 0.0,
+      "measured_zero_hours": 8760,
+      "hourly_r_grid_vs_measured": null
+     }
+    },
+    "scored_basis_attribution": {
+     "CT_CHP": {
+      "class_model_twh": 1.3275,
+      "class_bench_twh": 2.1717,
+      "class_gap_twh": -0.8442,
+      "east_river_gap_twh": -0.9647,
+      "east_river_share_of_class_gap": 1.1427
+     },
+     "ST_CHP": {
+      "class_model_twh": 1.1851,
+      "class_bench_twh": 0.8721,
+      "class_gap_twh": 0.313,
+      "east_river_gap_twh": 0.3428,
+      "east_river_share_of_class_gap": 1.0952
+     }
+    }
+   },
+   "2025": {
+    "bins": {
+     "CT_CHP": {
+      "btm_share": 0.35,
+      "eia923_netgen_twh": 2.0792,
+      "payload_twh_with_addback": 2.4051,
+      "model_grid_twh": 1.6774,
+      "model_grid_p05_mw": 82.45,
+      "model_grid_p25_mw": 86.05,
+      "model_grid_p50_mw": 255.17,
+      "model_grid_p90_mw": 287.55,
+      "measured_campd_twh": 2.1886,
+      "measured_min_mw": 85.0,
+      "measured_p05_mw": 94.0,
+      "measured_p25_mw": 171.0,
+      "measured_p50_mw": 239.0,
+      "measured_p90_mw": 385.0,
+      "measured_zero_hours": 0,
+      "hourly_r_grid_vs_measured": 0.3451
+     },
+     "ST_CHP": {
+      "btm_share": 0.35,
+      "eia923_netgen_twh": 0.6745,
+      "payload_twh_with_addback": 1.624,
+      "model_grid_twh": 1.3879,
+      "model_grid_p05_mw": 1.51,
+      "model_grid_p25_mw": 93.98,
+      "model_grid_p50_mw": 140.21,
+      "model_grid_p90_mw": 293.15,
+      "measured_campd_twh": 0.0,
+      "measured_min_mw": 0.0,
+      "measured_p05_mw": 0.0,
+      "measured_p25_mw": 0.0,
+      "measured_p50_mw": 0.0,
+      "measured_p90_mw": 0.0,
+      "measured_zero_hours": 8760,
+      "hourly_r_grid_vs_measured": null
+     }
+    },
+    "scored_basis_attribution": {
+     "CT_CHP": {
+      "class_model_twh": 1.8261,
+      "class_bench_twh": 2.3829,
+      "class_gap_twh": -0.5568,
+      "east_river_gap_twh": -0.4018,
+      "east_river_share_of_class_gap": 0.7216
+     },
+     "ST_CHP": {
+      "class_model_twh": 1.4919,
+      "class_bench_twh": 0.7997,
+      "class_gap_twh": 0.6922,
+      "east_river_gap_twh": 0.7134,
+      "east_river_share_of_class_gap": 1.0307
+     }
+    }
+   }
+  }
+ },
+ "B7_steam_host_driver": {
+  "labelled": "POST-HOC \u2014 added after B6 returned; not pre-registered",
+  "by_year": {
+   "2023": {
+    "steam_klb_total": 9423863.0,
+    "steam_by_unit_klb": {
+     "1": 0.0,
+     "2": 0.0,
+     "60": 4677707.0,
+     "70": 4746156.0
+    },
+    "gross_by_unit_mwh": {
+     "1": 1087690.0,
+     "2": 1045798.0,
+     "60": 0.0,
+     "70": 0.0
+    },
+    "r_measured_elec_vs_steam": -0.0163,
+    "r_measured_elec_vs_load": 0.3518,
+    "r_model_class_vs_steam": 0.2889,
+    "r_model_class_vs_load": 0.7235,
+    "steam_monthly_klb": [
+     683481.0,
+     728428.0,
+     821431.0,
+     514572.0,
+     948381.0,
+     1067995.0,
+     1233517.0,
+     1040297.0,
+     843009.0,
+     721283.0,
+     578471.0,
+     242998.0
+    ],
+    "measured_elec_monthly_gwh": [
+     271.06,
+     256.49,
+     188.17,
+     114.13,
+     126.31,
+     178.0,
+     189.91,
+     188.94,
+     125.57,
+     68.86,
+     181.04,
+     245.01
+    ]
+   },
+   "2024": {
+    "steam_klb_total": 7661035.0,
+    "steam_by_unit_klb": {
+     "1": 0.0,
+     "2": 0.0,
+     "60": 5009577.0,
+     "70": 2663936.0
+    },
+    "gross_by_unit_mwh": {
+     "1": 1120840.0,
+     "2": 1138171.0,
+     "60": 0.0,
+     "70": 0.0
+    },
+    "r_measured_elec_vs_steam": 0.3092,
+    "r_measured_elec_vs_load": 0.2881,
+    "r_model_class_vs_steam": 0.3648,
+    "r_model_class_vs_load": 0.7591,
+    "steam_monthly_klb": [
+     802991.0,
+     877578.0,
+     585916.0,
+     84934.0,
+     480346.0,
+     746501.0,
+     820818.0,
+     1028541.0,
+     598460.0,
+     504830.0,
+     536566.0,
+     593554.0
+    ],
+    "measured_elec_monthly_gwh": [
+     236.34,
+     237.88,
+     264.36,
+     105.76,
+     124.7,
+     188.43,
+     202.04,
+     188.56,
+     171.48,
+     77.42,
+     193.69,
+     259.61
+    ]
+   },
+   "2025": {
+    "steam_klb_total": 7221082.0,
+    "steam_by_unit_klb": {
+     "1": 0.0,
+     "2": 0.0,
+     "60": 3354662.0,
+     "70": 3866420.0
+    },
+    "gross_by_unit_mwh": {
+     "1": 1093484.0,
+     "2": 1095160.0,
+     "60": 0.0,
+     "70": 0.0
+    },
+    "r_measured_elec_vs_steam": 0.0767,
+    "r_measured_elec_vs_load": 0.395,
+    "r_model_class_vs_steam": 0.3375,
+    "r_model_class_vs_load": 0.6438,
+    "steam_monthly_klb": [
+     514682.0,
+     750037.0,
+     613132.0,
+     218690.0,
+     128883.0,
+     460463.0,
+     837103.0,
+     904403.0,
+     724489.0,
+     687882.0,
+     525000.0,
+     856318.0
+    ],
+    "measured_elec_monthly_gwh": [
+     274.7,
+     239.97,
+     148.06,
+     99.69,
+     152.31,
+     190.15,
+     189.74,
+     128.99,
+     169.68,
+     125.68,
+     219.85,
+     249.81
+    ]
+   }
+  }
+ },
+ "C_east_river_attribution": {
+  "east_river": {
+   "2023": {
+    "campd_gross_twh_by_class": {
+     "CT_CHP": 2.1335,
+     "ST_CHP": 0.0
+    },
+    "campd_turbine_share": 1.0,
+    "eia923_gt_twh": 2.0221,
+    "eia923_st_twh": 1.0566,
+    "eia923_gt_over_st": 1.914,
+    "model_payload_ct_chp_twh": 2.352,
+    "model_payload_st_chp_twh": 1.49,
+    "model_st_over_ct": 0.634,
+    "eia923_st_over_gt": 0.523,
+    "inversion_x": 1.212
+   },
+   "2024": {
+    "campd_gross_twh_by_class": {
+     "CT_CHP": 2.2503,
+     "ST_CHP": 0.0
+    },
+    "campd_turbine_share": 1.0,
+    "eia923_gt_twh": 2.1492,
+    "eia923_st_twh": 0.745,
+    "eia923_gt_over_st": 2.885,
+    "model_payload_ct_chp_twh": 1.9367,
+    "model_payload_st_chp_twh": 1.3475,
+    "model_st_over_ct": 0.696,
+    "eia923_st_over_gt": 0.347,
+    "inversion_x": 2.007
+   },
+   "2025": {
+    "campd_gross_twh_by_class": {
+     "CT_CHP": 2.1886,
+     "ST_CHP": 0.0
+    },
+    "campd_turbine_share": 1.0,
+    "eia923_gt_twh": 2.0792,
+    "eia923_st_twh": 0.6745,
+    "eia923_gt_over_st": 3.083,
+    "model_payload_ct_chp_twh": 2.4051,
+    "model_payload_st_chp_twh": 1.624,
+    "model_st_over_ct": 0.675,
+    "eia923_st_over_gt": 0.324,
+    "inversion_x": 2.082
+   }
+  },
+  "S2a_campd_turbine_share": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "S2a_pass": true,
+  "S2b_eia923_gt_over_st": [
+   1.914,
+   2.885,
+   3.083
+  ],
+  "S2b_pass": false,
+  "S2c_inversion_x": [
+   1.212,
+   2.007,
+   2.082
+  ],
+  "S2c_pass": true,
+  "S3_misattributed_rows": [
+   {
+    "year": 2023,
+    "plant_code": 2493,
+    "primary_group_by_nameplate": "ST_CHP",
+    "campd_energy_carrier": "CT_CHP",
+    "carrier_share": 1.0,
+    "campd_twh": 2.1335,
+    "group_mw": {
+     "CT_CHP": 306.0,
+     "ST_CHP": 309.5
+    },
+    "nameplate_margin_mw": 3.5
+   },
+   {
+    "year": 2023,
+    "plant_code": 2500,
+    "primary_group_by_nameplate": "ST_GAS",
+    "campd_energy_carrier": "CC_REGULAR",
+    "carrier_share": 0.69,
+    "campd_twh": 2.8501,
+    "group_mw": {
+     "CC_REGULAR": 222.2,
+     "ST_GAS": 1724.8
+    },
+    "nameplate_margin_mw": 1502.6
+   },
+   {
+    "year": 2023,
+    "plant_code": 2682,
+    "primary_group_by_nameplate": "ST_GAS",
+    "campd_energy_carrier": "CT_PEAKER",
+    "carrier_share": 1.0,
+    "campd_twh": 0.0424,
+    "group_mw": {
+     "CT_PEAKER": 42.0,
+     "ST_GAS": 45.0
+    },
+    "nameplate_margin_mw": 3.0
+   },
+   {
+    "year": 2024,
+    "plant_code": 2493,
+    "primary_group_by_nameplate": "ST_CHP",
+    "campd_energy_carrier": "CT_CHP",
+    "carrier_share": 1.0,
+    "campd_twh": 2.259,
+    "group_mw": {
+     "CT_CHP": 306.0,
+     "ST_CHP": 309.5
+    },
+    "nameplate_margin_mw": 3.5
+   },
+   {
+    "year": 2024,
+    "plant_code": 2500,
+    "primary_group_by_nameplate": "ST_GAS",
+    "campd_energy_carrier": "CC_REGULAR",
+    "carrier_share": 0.734,
+    "campd_twh": 2.6652,
+    "group_mw": {
+     "CC_REGULAR": 222.2,
+     "ST_GAS": 1724.8
+    },
+    "nameplate_margin_mw": 1502.6
+   },
+   {
+    "year": 2024,
+    "plant_code": 2682,
+    "primary_group_by_nameplate": "ST_GAS",
+    "campd_energy_carrier": "CT_PEAKER",
+    "carrier_share": 1.0,
+    "campd_twh": 0.0288,
+    "group_mw": {
+     "CT_PEAKER": 42.0,
+     "ST_GAS": 45.0
+    },
+    "nameplate_margin_mw": 3.0
+   },
+   {
+    "year": 2025,
+    "plant_code": 2493,
+    "primary_group_by_nameplate": "ST_CHP",
+    "campd_energy_carrier": "CT_CHP",
+    "carrier_share": 1.0,
+    "campd_twh": 2.1886,
+    "group_mw": {
+     "CT_CHP": 306.0,
+     "ST_CHP": 309.5
+    },
+    "nameplate_margin_mw": 3.5
+   },
+   {
+    "year": 2025,
+    "plant_code": 2500,
+    "primary_group_by_nameplate": "ST_GAS",
+    "campd_energy_carrier": "CC_REGULAR",
+    "carrier_share": 0.6426,
+    "campd_twh": 2.994,
+    "group_mw": {
+     "CC_REGULAR": 222.2,
+     "ST_GAS": 1724.8
+    },
+    "nameplate_margin_mw": 1502.6
+   },
+   {
+    "year": 2025,
+    "plant_code": 2682,
+    "primary_group_by_nameplate": "ST_GAS",
+    "campd_energy_carrier": "CT_PEAKER",
+    "carrier_share": 1.0,
+    "campd_twh": 0.071,
+    "group_mw": {
+     "CT_PEAKER": 42.0,
+     "ST_GAS": 45.0
+    },
+    "nameplate_margin_mw": 3.0
+   }
+  ],
+  "S3_total_misattributed_twh": 15.2326,
+  "S3_east_river_twh": 6.5811,
+  "S3_east_river_share": 0.432,
+  "S3_pass_one_plant": false,
+  "S5_required_move": {
+   "2023": {
+    "class_error_pct": -27.48,
+    "class_gap_twh": -0.6688,
+    "east_river_gt_gap_twh": 0.3299,
+    "bound_share_of_class_gap": -0.4933
+   },
+   "2024": {
+    "class_error_pct": -38.87,
+    "class_gap_twh": -0.8442,
+    "east_river_gt_gap_twh": -0.2125,
+    "bound_share_of_class_gap": 0.2517
+   },
+   "2025": {
+    "class_error_pct": -23.37,
+    "class_gap_twh": -0.5568,
+    "east_river_gt_gap_twh": 0.3259,
+    "bound_share_of_class_gap": -0.5853
+   }
+  },
+  "tranche_rows_nyiso_chp": [
+   {
+    "plant_code": 10521,
+    "plant_group": "CC_CHP",
+    "name": "Lederle Laboratories",
+    "status": "eia923_cf",
+    "nameplate_mw": 21.7,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 23.6,
+    "chp_sector": "industrial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 10617,
+    "plant_group": "CC_CHP",
+    "name": "CH Resources Beaver Falls",
+    "status": "ok",
+    "nameplate_mw": 79.8,
+    "online_hours": 378,
+    "committed_pct": 12.5,
+    "mustrun_pct": 0.0,
+    "p25_cf": 69.2,
+    "median_cf": 97.7,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 9.0
+   },
+   {
+    "plant_code": 10725,
+    "plant_group": "CC_CHP",
+    "name": "Selkirk Cogen",
+    "status": "ok",
+    "nameplate_mw": 596.6,
+    "online_hours": 2690,
+    "committed_pct": 16.6,
+    "mustrun_pct": 0.0,
+    "p25_cf": 37.8,
+    "median_cf": 50.6,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 12.5
+   },
+   {
+    "plant_code": 50006,
+    "plant_group": "CC_CHP",
+    "name": "Linden Cogen Plant",
+    "status": "eia923_cf",
+    "nameplate_mw": 915.3,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 39.4,
+    "chp_sector": "merchant",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 50368,
+    "plant_group": "CC_CHP",
+    "name": "Cornell University Central Heat",
+    "status": "eia923_cf",
+    "nameplate_mw": 29.9,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 51.0,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 50449,
+    "plant_group": "CC_CHP",
+    "name": "Indeck Silver Springs Energy Center",
+    "status": "ok",
+    "nameplate_mw": 52.3,
+    "online_hours": 4712,
+    "committed_pct": 26.8,
+    "mustrun_pct": 0.0,
+    "p25_cf": 84.1,
+    "median_cf": 88.0,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 5.4
+   },
+   {
+    "plant_code": 50450,
+    "plant_group": "CC_CHP",
+    "name": "Indeck Oswego Energy Center",
+    "status": "ok",
+    "nameplate_mw": 67.8,
+    "online_hours": 4305,
+    "committed_pct": 26.5,
+    "mustrun_pct": 0.0,
+    "p25_cf": 72.3,
+    "median_cf": 76.7,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 3.3
+   },
+   {
+    "plant_code": 50451,
+    "plant_group": "CC_CHP",
+    "name": "Indeck Yerkes Energy Center",
+    "status": "ok",
+    "nameplate_mw": 65.8,
+    "online_hours": 2762,
+    "committed_pct": 25.8,
+    "mustrun_pct": 0.0,
+    "p25_cf": 65.3,
+    "median_cf": 68.4,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 3.5
+   },
+   {
+    "plant_code": 50458,
+    "plant_group": "CC_CHP",
+    "name": "Indeck Corinth Energy Center",
+    "status": "ok",
+    "nameplate_mw": 125.5,
+    "online_hours": 11985,
+    "committed_pct": 70.0,
+    "mustrun_pct": 0.0,
+    "p25_cf": 98.0,
+    "median_cf": 101.2,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 1.5
+   },
+   {
+    "plant_code": 52168,
+    "plant_group": "CC_CHP",
+    "name": "Riverbay",
+    "status": "ok",
+    "nameplate_mw": 40.6,
+    "online_hours": 9962,
+    "committed_pct": 29.6,
+    "mustrun_pct": 0.0,
+    "p25_cf": 29.6,
+    "median_cf": 39.9,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "commercial",
+    "peaking_pct": 3.8
+   },
+   {
+    "plant_code": 54041,
+    "plant_group": "CC_CHP",
+    "name": "Lockport Energy Associates LP",
+    "status": "ok",
+    "nameplate_mw": 219.0,
+    "online_hours": 4857,
+    "committed_pct": 20.5,
+    "mustrun_pct": 0.0,
+    "p25_cf": 39.8,
+    "median_cf": 52.5,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 6.8
+   },
+   {
+    "plant_code": 54076,
+    "plant_group": "CC_CHP",
+    "name": "Indeck Olean Energy Center",
+    "status": "ok",
+    "nameplate_mw": 79.2,
+    "online_hours": 2319,
+    "committed_pct": 34.0,
+    "mustrun_pct": 0.0,
+    "p25_cf": 82.1,
+    "median_cf": 85.9,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 11.9
+   },
+   {
+    "plant_code": 54114,
+    "plant_group": "CC_CHP",
+    "name": "Kennedy International Airport Cogen",
+    "status": "ok",
+    "nameplate_mw": 123.2,
+    "online_hours": 21301,
+    "committed_pct": 24.4,
+    "mustrun_pct": 0.0,
+    "p25_cf": 39.8,
+    "median_cf": 61.8,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 3.3
+   },
+   {
+    "plant_code": 54131,
+    "plant_group": "CC_CHP",
+    "name": "World Generation X",
+    "status": "ok",
+    "nameplate_mw": 55.7,
+    "online_hours": 14636,
+    "committed_pct": 57.5,
+    "mustrun_pct": 0.0,
+    "p25_cf": 64.6,
+    "median_cf": 68.2,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 6.5
+   },
+   {
+    "plant_code": 54547,
+    "plant_group": "CC_CHP",
+    "name": "Sithe Independence Station",
+    "status": "ok",
+    "nameplate_mw": 996.4,
+    "online_hours": 22335,
+    "committed_pct": 19.5,
+    "mustrun_pct": 0.0,
+    "p25_cf": 53.1,
+    "median_cf": 85.9,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 3.5
+   },
+   {
+    "plant_code": 54914,
+    "plant_group": "CC_CHP",
+    "name": "Brooklyn Navy Yard Cogeneration",
+    "status": "ok",
+    "nameplate_mw": 260.0,
+    "online_hours": 25649,
+    "committed_pct": 66.9,
+    "mustrun_pct": 0.0,
+    "p25_cf": 73.8,
+    "median_cf": 78.8,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 3.3
+   },
+   {
+    "plant_code": 56259,
+    "plant_group": "CC_CHP",
+    "name": "Empire Generating Co LLC",
+    "status": "ok",
+    "nameplate_mw": 580.0,
+    "online_hours": 22199,
+    "committed_pct": 35.9,
+    "mustrun_pct": 0.0,
+    "p25_cf": 59.5,
+    "median_cf": 81.9,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": 6.2
+   },
+   {
+    "plant_code": 50136,
+    "plant_group": "CT_CHP",
+    "name": "South Oaks Hospital",
+    "status": "eia923_cf",
+    "nameplate_mw": 0.5,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 75.0,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 50203,
+    "plant_group": "CT_CHP",
+    "name": "US Gypsum Oakfield",
+    "status": "eia923_cf",
+    "nameplate_mw": 4.9,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 1.9,
+    "chp_sector": "industrial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 50427,
+    "plant_group": "CT_CHP",
+    "name": "Bronx Zoo",
+    "status": "eia923_cf",
+    "nameplate_mw": 2.6,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 55.3,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 54149,
+    "plant_group": "CT_CHP",
+    "name": "Stony Brook Cogen Plant",
+    "status": "ok",
+    "nameplate_mw": 44.5,
+    "online_hours": 23466,
+    "committed_pct": 70.0,
+    "mustrun_pct": 0.0,
+    "p25_cf": 134.8,
+    "median_cf": 146.1,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "merchant",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 57789,
+    "plant_group": "CT_CHP",
+    "name": "Peak Power 1 Cogen",
+    "status": "eia923_cf",
+    "nameplate_mw": 6.0,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 25.1,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 58167,
+    "plant_group": "CT_CHP",
+    "name": "William Floyd School District",
+    "status": "eia923_cf",
+    "nameplate_mw": 2.6,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 0.0,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 58186,
+    "plant_group": "CT_CHP",
+    "name": "HVCC Cogen Plant",
+    "status": "eia923_cf",
+    "nameplate_mw": 5.4,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 18.7,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 58507,
+    "plant_group": "CT_CHP",
+    "name": "Montefieor Medical Center Moses Division",
+    "status": "eia923_cf",
+    "nameplate_mw": 4.8,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 37.3,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 61238,
+    "plant_group": "CT_CHP",
+    "name": "New York Presbyterian Hospital- 68th Street",
+    "status": "eia923_cf",
+    "nameplate_mw": 7.7,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 43.9,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 61488,
+    "plant_group": "CT_CHP",
+    "name": "NYU LANGONE HEALTH",
+    "status": "eia923_cf",
+    "nameplate_mw": 7.5,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 40.1,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 63236,
+    "plant_group": "CT_CHP",
+    "name": "Kings Plaza Total Energy Plant (TEP)",
+    "status": "eia923_cf",
+    "nameplate_mw": 12.8,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 9.8,
+    "chp_sector": "commercial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 2493,
+    "plant_group": "ST_CHP",
+    "name": "East River",
+    "status": "ok",
+    "nameplate_mw": 309.5,
+    "online_hours": 26253,
+    "committed_pct": 32.0,
+    "mustrun_pct": 0.0,
+    "p25_cf": 67.2,
+    "median_cf": 98.5,
+    "chp_pmin_cf": 30.0,
+    "chp_sector": "merchant",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 10025,
+    "plant_group": "ST_CHP",
+    "name": "RED-Rochester, LLC",
+    "status": "eia923_cf",
+    "nameplate_mw": 119.6,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 11.3,
+    "chp_sector": "industrial",
+    "peaking_pct": null
+   },
+   {
+    "plant_code": 54099,
+    "plant_group": "ST_CHP",
+    "name": "Ticonderoga Mill",
+    "status": "eia923_cf",
+    "nameplate_mw": 41.0,
+    "online_hours": 0,
+    "committed_pct": null,
+    "mustrun_pct": null,
+    "p25_cf": null,
+    "median_cf": null,
+    "chp_pmin_cf": 6.4,
+    "chp_sector": "industrial",
+    "peaking_pct": null
+   }
+  ]
+ },
+ "rule19_enumeration": {
+  "d2_rows_ct": [
+   {
+    "year": 2023,
+    "class": "CT_CHP",
+    "mechanism": "chp_steam",
+    "forced_twh": 0.2199,
+    "class_total_twh": 2.898,
+    "share_of_class": 0.0759
+   },
+   {
+    "year": 2024,
+    "class": "CT_CHP",
+    "mechanism": "chp_steam",
+    "forced_twh": 0.5208,
+    "class_total_twh": 2.4484,
+    "share_of_class": 0.2127
+   },
+   {
+    "year": 2025,
+    "class": "CT_CHP",
+    "mechanism": "chp_steam",
+    "forced_twh": 0.2072,
+    "class_total_twh": 3.2995,
+    "share_of_class": 0.0628
+   }
+  ],
+  "d2_summary_ct": [
+   {
+    "year": 2023,
+    "class": "CT_PEAKER",
+    "forced_twh": 0.0,
+    "class_total_twh": 0.3182,
+    "forced_share": 0.0,
+    "limit": 0.15,
+    "load_share": null,
+    "immaterial": false,
+    "lower_bound": true,
+    "upper_bound": false,
+    "verdict": "pass"
+   },
+   {
+    "year": 2024,
+    "class": "CT_PEAKER",
+    "forced_twh": 0.0,
+    "class_total_twh": 0.2197,
+    "forced_share": 0.0,
+    "limit": 0.15,
+    "load_share": null,
+    "immaterial": false,
+    "lower_bound": true,
+    "upper_bound": false,
+    "verdict": "pass"
+   },
+   {
+    "year": 2025,
+    "class": "CT_PEAKER",
+    "forced_twh": 0.0,
+    "class_total_twh": 0.8458,
+    "forced_share": 0.0,
+    "limit": 0.15,
+    "load_share": null,
+    "immaterial": false,
+    "lower_bound": true,
+    "upper_bound": false,
+    "verdict": "pass"
+   }
+  ],
+  "generic_unit_outage_target": {
+   "CT_CHP": "None",
+   "CT_PEAKER": "None",
+   "ST_CHP": "(2493, 'ST_CHP')",
+   "ST_GAS": "(2493, 'ST_GAS')",
+   "CC_REGULAR": "(2493, 'CC_REGULAR')"
+  },
+  "keeper_flags": {}
+ }
+}

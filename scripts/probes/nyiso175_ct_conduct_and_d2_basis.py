@@ -244,6 +244,23 @@ def payload_plant_series(pay: dict, year: int) -> dict[str, np.ndarray]:
 # --------------------------------------------------------- A: the blocker --
 
 
+def _d2_class_totals(diag: dict) -> dict[str, dict[str, float]]:
+    """``{year: {class: class_total_twh}}`` over D-2's rows AND summary.
+
+    A class with no forced energy has no DETAIL row but does carry a summary
+    row (``CT_PEAKER`` at NYISO), and a class-exempt one (the three CHP
+    classes) has detail rows but no summary row — so the union is the only
+    complete view of the denominator D-2 actually used.
+    """
+    out: dict[str, dict[str, float]] = {}
+    d2 = diag["diagnostics"]["D2"]
+    for r in list(d2.get("rows", [])) + list(d2.get("summary", [])):
+        out.setdefault(str(r["year"]), {}).setdefault(
+            str(r["class"]), float(r["class_total_twh"])
+        )
+    return out
+
+
 def a1_d2_basis() -> dict:
     """A1/A2 — reconstruct D-2's ``class_total_twh`` and test H-A.
 
@@ -255,11 +272,7 @@ def a1_d2_basis() -> dict:
     plant-majority convention read off ``plant_class_rows``.
     """
     committed = json.loads((KEEPER / "legitimacy_diagnostics.json").read_text())
-    ref: dict[str, dict[str, float]] = {}
-    for r in committed["diagnostics"]["D2"]["rows"]:
-        ref.setdefault(str(r["year"]), {})[str(r["class"])] = float(
-            r["class_total_twh"]
-        )
+    ref = _d2_class_totals(committed)
 
     recon: dict[str, dict[str, float]] = {}
     route = "diagnostics-recompute"
@@ -285,11 +298,7 @@ def a1_d2_basis() -> dict:
         e.update(env)
         p = subprocess.run(cmd, capture_output=True, text=True, cwd=str(REPO), env=e)
         if jout.exists():
-            got = json.loads(jout.read_text())
-            for r in got["diagnostics"]["D2"]["rows"]:
-                recon.setdefault(str(r["year"]), {})[str(r["class"])] = float(
-                    r["class_total_twh"]
-                )
+            recon = _d2_class_totals(json.loads(jout.read_text()))
         else:
             err = (p.stderr or p.stdout)[-2000:]
 
@@ -298,7 +307,6 @@ def a1_d2_basis() -> dict:
         pay = payload()
         for y in YEARS:
             ser = payload_plant_series(pay, y)
-            import scripts.backcast_add as _ba  # noqa: F401
             import scripts.lib.bench_multiclass as bm
 
             by_plant: dict[str, float] = {}
@@ -362,6 +370,93 @@ def a1_d2_basis() -> dict:
             "gate A1 accepts H-A iff every gas class-year and hydro reproduces "
             "within 0.5 % relative (or 0.005 TWh absolute)"
         ),
+    }
+
+
+def a_posthoc_grain_identity() -> dict:
+    """POST-HOC (added after gate A1 returned; NOT pre-registered, labelled as such).
+
+    Gate A1's pre-registered route — recompute D-2 at HEAD — FAILS, and the
+    failure identifies the basis rather than leaving it open: the committed
+    artifact was built on the solve's own ``dispatch/<year>_P1.parquet`` (every
+    model plant), while a HEAD recompute can only reach the 100-plant run
+    payload. Two measurements settle what the committed denominator IS, both
+    computable from committed artifacts alone:
+
+    * **the untouched-class identity** — for a class with no mixed-class plant,
+      D-2's ``class_total_twh`` must equal ``class_hourly``'s class sum exactly
+      if and only if the committed D-2 ran on the full LP dispatch;
+    * **the conservation identity** — if a mixed plant's whole energy is
+      relabelled onto its plant-majority class, the pair's D-2-minus-
+      ``class_hourly`` deltas must be equal and opposite.
+
+    The plant-majority label itself is read off the floors arrays the
+    diagnostics rebuild wrote (LP-unit grain, the D-2 rule), not inferred.
+    """
+    d2 = _d2_class_totals(
+        json.loads((KEEPER / "legitimacy_diagnostics.json").read_text())
+    )
+
+    per_year = {}
+    for y in YEARS:
+        ch = model_class_hourly(y)
+        chs = {k: float(v.sum()) / 1e6 for k, v in ch.items()}
+        row = d2.get(str(y), {})
+        deltas = {
+            k: _round(row.get(k, 0.0) - chs.get(k, 0.0))
+            for k in sorted(set(row) | set(chs))
+            if k not in ("",)
+        }
+        per_year[str(y)] = {
+            "d2_class_total_twh": {k: _round(v) for k, v in sorted(row.items())},
+            "class_hourly_twh": {k: _round(v) for k, v in sorted(chs.items())},
+            "delta_d2_minus_class_hourly": deltas,
+            "hydro_identical": bool(
+                abs(row.get("hydro", 0.0) - chs.get("hydro", 0.0)) < 5e-4
+            ),
+            "ct_st_chp_transfer_residual_twh": _round(
+                (row.get("CT_CHP", 0.0) - chs.get("CT_CHP", 0.0))
+                + (row.get("ST_CHP", 0.0) - chs.get("ST_CHP", 0.0))
+            ),
+        }
+
+    floors = {}
+    for y in YEARS:
+        f = KEEPER / f"floors/{y}_rebuilt.npz"
+        if not f.exists():
+            continue
+        z = np.load(f, allow_pickle=True)
+        pc = np.asarray(z["plant_code"])
+        pg = np.asarray(z["plant_group"]).astype(str)
+        uid = np.asarray(z["unit_ids"]).astype(str)
+        mg = np.asarray(z["min_gen"], dtype=float)
+        mech = np.asarray(z["mechanism"])
+        sel = pc == EAST_RIVER
+        counts: dict[str, int] = {}
+        for g in pg[sel]:
+            counts[str(g)] = counts.get(str(g), 0) + 1
+        floors[str(y)] = {
+            "east_river_lp_units_by_group": counts,
+            "plant_majority_label": (
+                max(sorted(counts), key=lambda k: counts[k]) if counts else None
+            ),
+            "east_river_units": [
+                {
+                    "unit": str(u),
+                    "max_floor_mw": _round(float(g.max()), 2),
+                    "hours_floored": int((g > 0).sum()),
+                    "floor_energy_twh": _round(float(g.sum()) / 1e6),
+                    "mechanisms": sorted(
+                        {int(x) for x in m[g > 0].tolist()} if (g > 0).any() else set()
+                    ),
+                }
+                for u, g, m in zip(uid[sel], mg[sel], mech[sel])
+            ],
+        }
+    return {
+        "labelled": "POST-HOC — added after gate A1 returned; not pre-registered",
+        "by_year": per_year,
+        "east_river_floors": floors,
     }
 
 
@@ -516,6 +611,183 @@ def b_ct_conduct() -> dict:
 
 
 # ------------------------------------- C: East River + the attribution audit --
+
+
+def b6_east_river_plant_grain() -> dict:
+    """POST-HOC (added after B returned; NOT pre-registered, labelled as such).
+
+    B5 returns RESPONSE for ``CT_CHP`` in all three years, and the class is
+    68.6 % East River by capacity — so the class result is read at the plant
+    that carries it, on a SINGLE, stated basis.
+
+    **The basis trap this measurement exists to avoid.** The payload's per-
+    (plant, class) series carries a report-only CHP behind-the-meter add-back
+    (``render_calibration_html``: ``mw += btm_mwh / T``, flat), while
+    ``class_hourly`` and the LP carry the GRID series with the host self-supply
+    held out. Comparing one to the other mixes bases. Here the add-back is
+    REMOVED explicitly — ``grid = payload - share x e923_slice / T`` with the
+    share read from :func:`market_sim.data.chp.chp_btm_pct` — so the model side
+    is the LP's own grid dispatch, the same basis ``class_hourly`` and the
+    scored C1 comparison use.
+    """
+    from market_sim.data.chp import chp_btm_pct
+
+    g860 = pd.read_parquet(RAW_DATA_DIR / "eia-860/eia860_generator_operable.parquet")
+    e860 = g860[g860["Plant Code"] == EAST_RIVER]
+    g923 = pd.read_parquet(
+        RAW_DATA_DIR / "_processed-legacy/eia923_monthly_generation.parquet"
+    )
+    pay = payload()
+    out = {}
+    for y in YEARS:
+        ser = payload_plant_series(pay, y)
+        e = g923[(g923["plant_id"] == EAST_RIVER) & (g923["year"] == y)]
+        pm = e.groupby("prime_mover")["netgen_annual_mwh"].sum()
+        e923 = {"CT_CHP": float(pm.get("GT", 0.0)), "ST_CHP": float(pm.get("ST", 0.0))}
+        meas = measured_plant_class_hourly(y, EAST_RIVER)
+        mod_class = model_class_hourly(y)
+        bench = bench_classes(y)
+        rows = {}
+        for k in ("CT_CHP", "ST_CHP"):
+            raw = ser.get(f"{EAST_RIVER}:{k}")
+            if raw is None:
+                continue
+            share = chp_btm_pct(EAST_RIVER, k, iso=ISO) / 100.0
+            grid = np.clip(raw - share * e923[k] / 8760.0, 0.0, None)
+            a = meas.get(k, np.zeros(8760))
+            rows[k] = {
+                "btm_share": _round(share, 3),
+                "eia923_netgen_twh": _round(e923[k] / 1e6),
+                "payload_twh_with_addback": _round(float(raw.sum()) / 1e6),
+                "model_grid_twh": _round(float(grid.sum()) / 1e6),
+                "model_grid_p05_mw": _round(float(np.percentile(grid, 5)), 2),
+                "model_grid_p25_mw": _round(float(np.percentile(grid, 25)), 2),
+                "model_grid_p50_mw": _round(float(np.percentile(grid, 50)), 2),
+                "model_grid_p90_mw": _round(float(np.percentile(grid, 90)), 2),
+                "measured_campd_twh": _round(float(a.sum()) / 1e6),
+                "measured_min_mw": _round(float(a.min()), 2),
+                "measured_p05_mw": _round(float(np.percentile(a, 5)), 2),
+                "measured_p25_mw": _round(float(np.percentile(a, 25)), 2),
+                "measured_p50_mw": _round(float(np.percentile(a, 50)), 2),
+                "measured_p90_mw": _round(float(np.percentile(a, 90)), 2),
+                "measured_zero_hours": int((a <= 0.0).sum()),
+                "hourly_r_grid_vs_measured": (
+                    _round(float(np.corrcoef(grid, a)[0, 1]))
+                    if grid.std() > 0 and a.std() > 0
+                    else None
+                ),
+            }
+        # Scored-basis attribution: class_hourly (LP grid) vs classFull, the
+        # nyiso-169b measurement-A basis nyiso-174 section 4.2 reproduced.
+        cg = {}
+        for k in ("CT_CHP", "ST_CHP"):
+            m_cls = float(mod_class.get(k, np.zeros(8760)).sum()) / 1e6
+            b_cls = float(bench.get(k, 0.0))
+            er = rows.get(k, {})
+            er_gap = (er.get("model_grid_twh") or 0.0) - (
+                er.get("eia923_netgen_twh") or 0.0
+            )
+            cg[k] = {
+                "class_model_twh": _round(m_cls),
+                "class_bench_twh": _round(b_cls),
+                "class_gap_twh": _round(m_cls - b_cls),
+                "east_river_gap_twh": _round(er_gap),
+                "east_river_share_of_class_gap": _round(
+                    er_gap / (m_cls - b_cls) if (m_cls - b_cls) != 0 else None
+                ),
+            }
+        out[str(y)] = {"bins": rows, "scored_basis_attribution": cg}
+    return {
+        "labelled": "POST-HOC — added after B returned; not pre-registered",
+        "eia860_published_minimum_load_mw": {
+            str(r["Generator ID"]).strip(): {
+                "prime_mover": str(r["Prime Mover"]).strip().upper(),
+                "min_load_mw": _round(r["Minimum Load (MW)"], 1),
+                "summer_mw": _round(r["Summer Capacity (MW)"], 1),
+            }
+            for _, r in e860.iterrows()
+        },
+        "by_year": out,
+    }
+
+
+def b7_steam_host_driver() -> dict:
+    """POST-HOC (added after B6 returned; NOT pre-registered, labelled as such).
+
+    ``chp_steam_following`` is the SOLE mechanism forcing ``CT_CHP`` (rule 19
+    enumeration below), and B5 types the class deficit as a RESPONSE deficit —
+    the model reaches comparable output in the wrong hours. A steam-following
+    mechanism is only identified if the host's steam demand is (a) MEASURED at
+    hourly grain and (b) actually predicts the plant's electric conduct. Both
+    are testable here without a solve: CAMPD meters East River's district-steam
+    send-out on its two direct-fired boilers (``steamLoad``, klb/h), which is
+    the same host load its turbine block serves.
+
+    Reported, never armed: this names whether a driver EXISTS for a successor,
+    and its absence would close the route.
+    """
+    out = {}
+    for y in YEARS:
+        raw = pd.read_parquet(
+            RAW_DATA_DIR / f"campd-unit-level/NY_{y}.parquet",
+            columns=["facilityId", "unitId", "date", "hour", "steamLoad", "grossLoad"],
+        )
+        raw["facilityId"] = raw["facilityId"].astype(int)
+        raw = raw[raw["facilityId"] == EAST_RIVER]
+        raw["steamLoad"] = raw["steamLoad"].fillna(0.0)
+        raw["grossLoad"] = raw["grossLoad"].fillna(0.0)
+        ts = pd.to_datetime(raw["date"]) + pd.to_timedelta(raw["hour"], unit="h")
+        raw["hix"] = ((ts - pd.Timestamp(f"{y}-01-01")) // pd.Timedelta("1h")).astype(
+            int
+        )
+        t = 8784 if y % 4 == 0 else 8760
+        steam = np.zeros(t)
+        np.add.at(steam, raw["hix"].to_numpy(), raw["steamLoad"].to_numpy(float))
+        steam = steam[:8760]
+        pc = measured_plant_class_hourly(y, EAST_RIVER)
+        elec = pc.get("CT_CHP", np.zeros(8760))
+        dem = model_demand(y)
+        mod = model_class_hourly(y).get("CT_CHP", np.zeros(8760))
+        by_unit = (
+            raw.groupby("unitId")[["steamLoad", "grossLoad"]].sum().round(1).to_dict()
+        )
+        out[str(y)] = {
+            "steam_klb_total": _round(float(steam.sum()), 0),
+            "steam_by_unit_klb": {
+                str(k): _round(v, 0) for k, v in by_unit.get("steamLoad", {}).items()
+            },
+            "gross_by_unit_mwh": {
+                str(k): _round(v, 0) for k, v in by_unit.get("grossLoad", {}).items()
+            },
+            "r_measured_elec_vs_steam": (
+                _round(float(np.corrcoef(elec, steam)[0, 1]))
+                if elec.std() > 0 and steam.std() > 0
+                else None
+            ),
+            "r_measured_elec_vs_load": (
+                _round(float(np.corrcoef(elec, dem)[0, 1])) if elec.std() > 0 else None
+            ),
+            "r_model_class_vs_steam": (
+                _round(float(np.corrcoef(mod, steam)[0, 1]))
+                if mod.std() > 0 and steam.std() > 0
+                else None
+            ),
+            "r_model_class_vs_load": (
+                _round(float(np.corrcoef(mod, dem)[0, 1])) if mod.std() > 0 else None
+            ),
+            "steam_monthly_klb": [
+                _round(float(steam[i * 730 : (i + 1) * 730].sum()), 0)
+                for i in range(12)
+            ],
+            "measured_elec_monthly_gwh": [
+                _round(float(elec[i * 730 : (i + 1) * 730].sum()) / 1e3, 2)
+                for i in range(12)
+            ],
+        }
+    return {
+        "labelled": "POST-HOC — added after B6 returned; not pre-registered",
+        "by_year": out,
+    }
 
 
 def c_east_river_and_attribution() -> dict:
@@ -700,8 +972,11 @@ def main() -> None:
         "prereg": "results/calibration/PREREG-nyiso175-ct-conduct-and-d2-basis.md",
         "years": list(YEARS),
         "A_d2_basis": a1_d2_basis(),
+        "A_posthoc_grain_identity": a_posthoc_grain_identity(),
         "A3_payload_vs_class_hourly": a3_payload_vs_class_hourly(),
         "B_ct_conduct": b_ct_conduct(),
+        "B6_east_river_plant_grain": b6_east_river_plant_grain(),
+        "B7_steam_host_driver": b7_steam_host_driver(),
         "C_east_river_attribution": c_east_river_and_attribution(),
         "rule19_enumeration": rule19_enumeration(),
     }
