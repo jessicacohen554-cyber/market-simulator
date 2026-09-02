@@ -594,6 +594,84 @@ def _fleet_nameplate_and_group(
     return cap, primary
 
 
+def _per_unit_group_resolver(
+    cap: dict[tuple[int, str], float],
+    primary: dict[int, str],
+    iso: str,
+) -> "callable":
+    """Build the ``group_of`` callback for per-unit CAMPD attribution.
+
+    THE DEFECT THIS REPAIRS (nyiso-175 §4.4, nyiso-174 §6 item 1). The default
+    path attributes a plant's **facility-summed** CAMPD net to
+    :func:`_fleet_nameplate_and_group`'s ``primary`` group — the bin holding the
+    most **nameplate**. At a mixed plant that is a guess about which machines
+    made the energy, and it is measurably wrong: at East River (2493) a
+    **3.5 MW (1.1 %)** nameplate margin puts 2.1-2.3 TWh/yr of gas-turbine
+    conduct onto the steam bin and leaves the turbine bin with no row at all;
+    at Ravenswood (2500) a 1,502.6 MW margin picks a bin carrying a third of
+    the energy. Six NYISO plants, **13.7577 TWh** over 2023-2025.
+
+    THE REPAIR. Each unit's gross is routed to the bin that CONTAINS it, using
+    the same primary-record crosswalk the measurement side already uses —
+    :func:`scripts.lib.campd_measured_classes.corrected_unit_class`, which keeps
+    a unit's prime-mover FAMILY (turbine-fired vs boiler-fired) and lets the
+    unit's own plant's model roster pick the class inside that family. So a
+    CAMPD unit can never land on a bin its plant does not have, and no machine
+    ever crosses the turbine/boiler line.
+
+    THE FALLBACK CLAUSE is not incidental — it is what makes this a strict
+    crosswalk repair rather than a reclassification, and it was forced by the
+    pre-registered gate K2
+    (``results/calibration/PREREG-nyiso175b-tranche-attribution-repair.md``).
+    Without it, three ST_GAS-only plants (2490, 8906, 2516 Northport) whose
+    CAMPD combustion turbines correct to ``CT_PEAKER`` — a bin those plants do
+    not carry — would have had 0.0051 TWh silently dropped out of the ``ST_GAS``
+    denominator. Where the plant carries no bin in the unit's own family the
+    repair has nothing to say, so today's attribution stands.
+
+    Rule 13 ``[R-MEASURED]``: the inputs are EIA-860 prime movers and CAMPD unit
+    types, both static unit attributes that regenerate for any forward year.
+    Rule 21 ``[R-DOF]``: zero free parameters — no threshold, no scalar, nothing
+    fitted to any residual. Rule 23 ``[R-FROZEN-DERIVE]``: a crosswalk repair
+    justified by the attribution defect, not a re-derivation against a residual.
+    """
+    from market_sim.config.paths import RAW_DATA_DIR
+    from market_sim.data.chp import _chp_by_plant
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from scripts.lib.campd_measured_classes import (
+        campd_unittype_class,
+        corrected_unit_class,
+    )
+
+    groups_by_plant: dict[int, dict[str, float]] = {}
+    for (code, group), mw in cap.items():
+        groups_by_plant.setdefault(code, {})[group] = mw
+    # 2025 vintage: the same CHP determination the nyiso-174/175 measurement
+    # side used, so the model's bins and the measured series agree on which
+    # plants are cogens.
+    flags = _chp_by_plant(RAW_DATA_DIR / "eia-860", 2025)
+    chp = {int(k) for k, v in flags.items() if str(v).strip().upper() == "Y"}
+    memo: dict[tuple[int, str], str | None] = {}
+
+    def group_of(plant_id: int, unit_id: str, unit_type: str) -> str | None:
+        key = (plant_id, unit_type)
+        if key not in memo:
+            klass = corrected_unit_class(
+                campd_unittype_class(unit_type, plant_id in chp),
+                groups_by_plant.get(plant_id),
+            )
+            if klass and klass in groups_by_plant.get(plant_id, {}):
+                memo[key] = klass
+            else:
+                # No bin in this unit's family at this plant — gate K2's
+                # amendment: leave the attribution exactly as it is today.
+                memo[key] = primary.get(plant_id)
+        return memo[key]
+
+    return group_of
+
+
 def _consume_chp_floors(rows: list[dict], prior: pd.DataFrame) -> list[dict]:
     """Override the freshly derived CHP floors with a prior artifact's values.
 
@@ -663,6 +741,17 @@ def main() -> None:
         "verbatim instead of re-derived.",
     )
     ap.add_argument(
+        "--per-unit-attribution",
+        action="store_true",
+        help="Route each CAMPD unit's gross to the model bin that CONTAINS it "
+        "(scripts.lib.campd_measured_classes.corrected_unit_class) instead of "
+        "attributing the facility-summed net to the plant's largest-nameplate "
+        "group. Repairs the nyiso-175 section 4.4 / nyiso-174 section 6 item 1 "
+        "attribution defect. Writes the '-perunit' companion by default, never "
+        "an overwrite, so the off path stays byte-inert and the two "
+        "attributions are a clean single delta. Zero free parameters.",
+    )
+    ap.add_argument(
         "--backfill-sidecar",
         action="store_true",
         help="Write the DESCRIPTIVE vintage sidecar for an existing committed "
@@ -674,9 +763,13 @@ def main() -> None:
     iso = args.iso.upper()
     from market_sim.config.paths import PROCESSED_DIR
 
-    out_path = (
-        Path(args.out) if args.out else (PROCESSED_DIR / f"thermal_tranches_{iso}.csv")
+    per_unit = bool(getattr(args, "per_unit_attribution", False))
+    default_name = (
+        f"thermal_tranches-perunit-{iso}.csv"
+        if per_unit
+        else f"thermal_tranches_{iso}.csv"
     )
+    out_path = Path(args.out) if args.out else (PROCESSED_DIR / default_name)
 
     if args.backfill_sidecar:
         # Descriptive-only mode: stamps what is ON DISK. Rule 23
@@ -710,21 +803,43 @@ def main() -> None:
     # pooled across years, per (code, group). frac = synced / total, capped 1.0.
     sync_hours: dict[tuple[int, str], list[int]] = {}
     for year in args.years:
-        df = campd.load_campd_hourly(states, [year])
+        # Per-unit attribution NEEDS the unit-level extract: a state present in
+        # both directories (NY is) resolves facility-first by default, and a
+        # facility-level frame has already summed its units away. Requesting it
+        # explicitly is what makes plant_group_hourly_net's guard reachable
+        # instead of a silent fallback to facility attribution.
+        df = campd.load_campd_hourly(states, [year], prefer_unit_level=per_unit)
         if df.empty:
             print(f"  (no CAMPD for {iso} {year})")
             continue
-        net = campd.plant_hourly_net(df, factors, year)  # {code: (8760,) net MW}
+        if per_unit:
+            # PER-UNIT ATTRIBUTION (nyiso-175b): each unit's gross is routed to
+            # the bin that contains it, so a mixed plant's bins each get their
+            # own series over their own denominator. See
+            # :func:`_per_unit_group_resolver`.
+            net_by_group = campd.plant_group_hourly_net(
+                df, factors, year, _per_unit_group_resolver(cap, primary, iso)
+            )
+            net = {}
+        else:
+            net = campd.plant_hourly_net(df, factors, year)  # {code: (8760,) net MW}
+            net_by_group = {}
         derate = unit_outage_derate_factors(year, iso=iso)
         for (code, group), nameplate in cap.items():
             if group not in _THERMAL_GROUPS or nameplate <= 0:
                 continue
-            # Attribute the facility-summed CAMPD net to the plant's primary
-            # group only; secondary-group rows at a multi-group plant are left
-            # to the CSV default (their net cannot be separated from CEMS).
-            if primary.get(code) != group:
-                continue
-            series = net.get(code)
+            if per_unit:
+                # Every bin the units actually reached gets its own row — the
+                # secondary-group skip below is exactly the defect being
+                # repaired, so it does not apply here.
+                series = net_by_group.get((code, group))
+            else:
+                # Attribute the facility-summed CAMPD net to the plant's primary
+                # group only; secondary-group rows at a multi-group plant are left
+                # to the CSV default (their net cannot be separated from CEMS).
+                if primary.get(code) != group:
+                    continue
+                series = net.get(code)
             if series is None:
                 continue
             avail_mult = derate.get((code, group), np.ones(len(series)))
@@ -762,7 +877,11 @@ def main() -> None:
 
     rows: list[dict] = []
     for (code, group), nameplate in sorted(cap.items()):
-        if group not in _THERMAL_GROUPS or primary.get(code) != group:
+        if group not in _THERMAL_GROUPS:
+            continue
+        # Under per-unit attribution every bin the plant's units reached is a
+        # real row; the primary-group filter IS the defect (nyiso-175b).
+        if not per_unit and primary.get(code) != group:
             continue
         on = online_cf.get((code, group))
         allh = allhr_cf.get((code, group))
@@ -899,7 +1018,9 @@ def main() -> None:
     }
     f923_floors = _chp_f923_floor_cf(args.years, cap)
     for (code, group), (pmin, level) in sorted(f923_floors.items()):
-        if (code, group) in have_floor or primary.get(code) != group:
+        if (code, group) in have_floor or (
+            not per_unit and primary.get(code) != group
+        ):
             continue
         rows.append(
             {
