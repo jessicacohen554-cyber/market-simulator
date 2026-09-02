@@ -687,6 +687,10 @@ results/hindcast/*/*/*/evolution_*.json
 # scoped to this bundle, NOT to the T1-H class: the slim-set convention above is
 # unchanged for every other hindcast run. 3.0 MB of JSON across 5 files.
 !results/hindcast/miso-2021-2025-realized-t1h-d27/*/*/evolution_*.json
+# capx D31 (2026-09-02): same one-bundle-scoped carve-out as the d27 rule above
+# (the D27 §7.5 precedent) — the evolution ledgers are the sole committed
+# evidence for the D31 finding's screen-revenue and floor-binding sections.
+!results/hindcast/miso-2021-2025-realized-t1h-d31/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet
