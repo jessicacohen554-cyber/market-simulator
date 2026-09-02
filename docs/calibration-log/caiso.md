@@ -11198,3 +11198,115 @@ attestation, the `caiso_bidir_intertie` deletion, a mechanism-matrix base-row
 retirement note (rule 28(c)) and one CAISO-shard evidence append (rule 28(b), no
 verdict move). **No dashboard registration is due — rule 15 attaches to completed
 calibration runs and this session produced none.**
+
+## caiso-237 (2026-09-02) — the caiso-236 §10 item 6 test debt TRIAGED: 10 of the 14 failures at HEAD are ENVIRONMENT, not defects, and the CAISO one was a STALE TEST against CORRECT code (`test_families_zone_masks` asserted a region's full membership against a mask the builder deliberately INTERSECTS with the active topology, so the caiso-224 FSNO row broke it). The four repairs LANDED CONCURRENTLY ON MAIN via the fast-tier repair lane (PR #4611) and are NOT re-asserted here. NO SOLVE, keeper unchanged
+
+**Keeper `2026-09-01-caiso-231-b1-ungrounded` UNCHANGED**, determination
+**NOT-YET** (C3a the sole load-bearing FAIL, +4.1 / +12.5 / +15.6 %; C3c the
+single ledgered caveat; C6 attested; C8 PASS) — re-verified in-session from
+committed artifacts with `scripts/calibration_verdict.py --run-id`, alongside
+`audit_keepers.py --iso CAISO` **PASS 0/0** and `check_mechanism_matrix.py`
+clean (integrity, anchors, keeper stamps, §5.x headers). No LP built, no solver
+called, no `ScenarioConfig` field touched, nothing armed, nothing registered,
+**no cell verdict moved**. No CAISO `complete`/`final` marker; holdout freeze
+**ACTIVE**; every read inside 2023–2025.
+
+**Admissible under the caiso-201 terminal rest for the same reason caiso-236
+was**: it is not a lever hunt. No mechanism is proposed, tested or re-opened,
+and **no conclusion here is argued from the price residual** (rule 1
+`[R-STRUCT]`). Rule 15 does not attach — no calibration run was produced.
+**THERE IS NO KEEPER CANDIDATE IN THIS SESSION**: no bundle, no scored run,
+nothing to promote.
+
+**The triage.** caiso-236 §10 item 6 recorded 13 test failures standing at
+`origin/main`, verified pre-existing and left for a later pass. Re-measured they
+are **14**, and they are three different things:
+
+* **10 are ENVIRONMENT, not defects.** The four
+  `test_export::TestExportScenarioJson` cases and the six
+  `test_soundness.py::TestEndToEnd` cases fail on a `code`-profile checkout
+  because `data/clean/confirmed-retirements` is derived and gitignored;
+  `confirmed_retirements.load_confirmed_exits` refuses to degrade silently
+  (W1-B B3) and raises. They are the guard **working**, and they pass wherever
+  `scripts/data/curate_confirmed_retirements.py` has been run. **Nothing to fix
+  in the code** — recorded so the next lane does not re-triage them.
+* **1 was the CAISO-lane defect**, and the direction matters:
+  `test_caiso_locational_as.py::test_families_zone_masks` asserted
+  `mask_zones == set(REGION_ZONES["AS_NP26"])`, but
+  `_caiso_locational_as_families` builds its mask by `if z in idx` — the region
+  membership **intersected** with the zone list it is handed, a deliberate
+  design documented at `caiso_as_requirements.REGION_ZONES` ("listing it here is
+  inert whenever the zone is not in the active topology"). When caiso-224 added
+  `FSNO` to `AS_NP26` the equality became false on the DEFAULT six-zone
+  topology. **No mechanism was mis-wired**: `caiso_fsno_subzonal_topology` is
+  default-off, no keeper carries it, and the failure could never have reached a
+  solve. What the red test was *hiding* is the more useful half — nothing
+  covered the behaviour caiso-224 actually introduced, that FSNO joins the
+  **NP26** masks and only those (it is north of Path 26 by construction, so an
+  SP26 mask picking it up would be a real locational-AS defect). That coverage
+  now exists on main and **passes**: coverage added, no bug found.
+* **3 were stale literals from other lanes' same-day merges**, all breaking a
+  blocking CI job — the `test_cache_config_agreement` corpus census, capx D40's
+  missing `NET_ICR_*` facade-inventory entry, and capx D41's missed
+  `cache_key` pin site in `test_entry_vre_zone_selection`.
+
+**CONVERGENT REPAIR, DISCLOSED: all four landed on `main` while this session
+worked**, through the dedicated fast-tier repair lane (PR #4611, merged
+`6d52fdc5`), which reached materially the same resolutions independently — the
+intersection assertion plus an FSNO-partition coverage test, the facade
+inventory entry, and the advanced cache-key pin. **This session's own repairs
+are therefore DROPPED, not re-asserted**: on rebase the four test files are
+taken from `main` verbatim, so nothing here competes with the merged fix and no
+duplicate edit lands. The one place the two resolutions differ is recorded as a
+filed item below rather than re-opened.
+
+**FILED, NOT FIXED — three items, none of them this lane's to decide.**
+
+1. **`test_cache_config_agreement` will go red again.** The merged repair
+   advanced the census literal `len(self.groups) == 14` → `== 15`. That number
+   is a **census of the committed run-config corpus**, not an invariant: it
+   counts cache keys carrying more than one committed `run_config.json`, so it
+   increments whenever ANY lane registers a second run at an existing key. It
+   was 14 at capx D24-R (2026-09-01) and 15 by that evening on the NEISO
+   forecast golden pair `706e7ba8e6582d42` — a group the rule correctly
+   **permits**. The durable form is a floor (`assertGreaterEqual(..., 14)`) with
+   the load-bearing assertion left exact (`refused_keys ==
+   ["07e416f3f8072e7c", "f061b2646bfaac8b"]`), which loses no protection: a
+   genuine new true positive still fails on the refused-key line. Not applied
+   here — it is a just-merged file of another lane, and CAISO's own next
+   registration is what will trip it.
+2. **`tests/scoring/test_forecast_parity.py::test_all_six_keepers_resolve` fails
+   deterministically at this HEAD** and reproduces in isolation:
+   `ercot_adaptive_event_release` / `ercot_storage_adaptive_expectation` are
+   armed in the ERCOT keeper with no forecast-orchestrator consumer and no
+   `scripts/lib/forecast_parity_registry.py` declaration. It needs the ERCOT
+   lane's judgement on which of the two remedies the test names is right, so it
+   is reported rather than guessed at. (Its companion,
+   `tests/curation/test_clean_io.py::TestRegenerateEntrypoint::test_datatype_list_matches_schemas`
+   — `regenerate_clean.DATATYPES` missing `capacity-market-auction-supply` and
+   `winter-fuel-inventory` — was open when this session measured it and is
+   **fixed on main** by the time of writing.)
+3. **The whole-repo fast tier is FLAKY, which is a standing confound when any
+   lane reads a red CI run.** Running CI's own blocking selection
+   (`pytest -m "not slow and not integration and not fulldata"` over all of
+   `tests/`, which additionally covers `tests/curation`, `tests/scoring`,
+   `tests/golden` and the loose top-level files) returned **74 failures on one
+   run and 19 on the next, same tree, materially different failure sets** under
+   `-n 4`: `test_dispatch`, `test_emerging_tech`, `test_pipeline_solve` and
+   `test_eac` each failed in one run, passed in the other, and pass cleanly when
+   their file is run alone. Recorded so a future session does not attribute a
+   red fast tier to its own diff.
+
+**Measurement.** `tests/unit` + `tests/iso` + `tests/regression` — the exact
+scope caiso-236 §10 item 6 measured — ran **14 failed / 5,647 passed** before
+the repairs and **10 failed / 5,652 passed** after, the ten being exactly the
+environment cases above.
+
+**Deliverables:** this log entry alone. **No code change survives the rebase**
+(the four repairs are main's, via PR #4611). **No FINDING or PRECOMMIT is
+filed** — nothing was measured, predicted or adjudicated against the model;
+pre-registration governs claims from evidence, and this session makes none.
+**No dashboard registration is due** (rule 15). **No matrix edit is due**
+(rule 28: no mechanism tested, no `ScenarioConfig` field added or removed).
+
+**Next number: caiso-238.**
