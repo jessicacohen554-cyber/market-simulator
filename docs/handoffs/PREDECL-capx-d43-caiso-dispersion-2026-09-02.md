@@ -128,3 +128,72 @@ computed offline for comparison, not a lane object) lands within ±15 % of the
 raw-dual arm on every energy leg** — CAISO's demand and stack move little
 between 2023 and 2024, so its delta is small; it keeps the raw duals' solar
 flip (hour alignment leaves solar's hours where 2023 priced them).
+
+## 3. Stage 2 — the T1-H composition consequence (pushed BEFORE the arm solve)
+
+**What the control established first (read before this stage was written).** The
+control `caiso-2021-2025-realized-t1h-d43-control` (key `3f924a5e9c5d57c3` at HEAD;
+the D39 basis `af508406` no longer reproduces as a KEY — two fields deleted since —
+but reproduces as a RUN: additions 6.0 / 8.0 / 3.0 / 11.838 / 0.0 GW wind / solar /
+gas_cc / gas_ct / storage, retirements 2.24 GW, CO2 36.329 / 36.582 / 35.691 Mt, all
+identical to the committed basis score). Its ledgers show what the screen-grain
+replay could not: (a) `rps_dual = 50` (the ACP) in every solved year, so wind and
+solar carry a $131k / $124k per MW-yr attribute leg and clear at their per-tech caps
+in every non-zero ladder year regardless of the energy leg — VRE volume is cap-set
+(D39 §5.2), and the replay's EAC-only solar sign is moot at this grain; (b) gas_cc
+clears the 2022 / 2023 / 2024 decision screens at the `iso_budget` cap of 1,000 MW
+with the $83.7k RA anchor doing most of the work (2024 margin +$1,117), and fails
+2025 at −$61k; (c) every gas_ct MW is the reserve-margin BACKSTOP (4,402 / 5,281 /
+1,676 / 478 MW, `source: reserve_backstop`), never the economic screen; (d) no storage
+technology clears in any year. And, decisive for this stage, the control's dumps now
+carry the run's OWN duals (the D43 L-5 extension), so the exact in-run closure is
+measurable without a keeper stand-in — and it is a different object from D39's:
+**the hindcast's own 2023 surface has a daily top-4/bottom-4 spread of $8.63/MWh and
+0 hours ≥ $100 (the keeper's: $35 and 699), and its own realized 2024 surface pays a
+new CT $1,924/MW-yr, not the keeper's $18,817.** On the run's own surfaces the
+shipped ratios are 0.92 (cc) / 0.57 (ct) at entering-2024, and the dispersion
+construction on the run's own duals reads 1.41 / 2.03.
+
+**PC0 — the arming reaches the solve.** `run_config.json` records
+`entry_dispersion_expectation_signal: true`; exactly one solve-affecting field
+differs from the control; the key is not `3f924a5e9c5d57c3`. *Falsifier:* the field
+records false.
+
+**PC1 — the arm is DECISION-INERT at the D39 basis.** Every `entry_decided_mw_by_tech`
+row, every `thermal_additions` / `renewable_additions` / `storage_additions` row and
+the reserve-backstop MW are identical to the control's in every year. Reasoning,
+stated before the run: at decision-2024 the arm lifts gas_cc's energy leg from $64k to
+~$98k (in-run dispersion arm, control dumps) — it already clears at its 1,000 MW
+budget cap, so the volume cannot move; gas_ct rises from $1.1k to ~$3.9k against a
+$45k shortfall — still unprofitable; at decision-2025 gas_cc reads ~$15k against a
+$61k shortfall and gas_ct $0; storage stays far from clearing (arbitrage ≤ $8k vs the
+$148k cost); VRE is cap-set with the ACP credit. *Falsifier:* any decided MW differs
+between the legs. If it does, the arm is NOT inert and §PC3 governs.
+
+**PC2 — therefore the score is byte-identical:** additions (both bases), retirements,
+CO2 and every invariant reproduce the control. *Falsifier:* any band or CO2 year
+differs.
+
+**PC3 — declared, not predicted (only if PC1 falsifies).** The only volume the signal
+could move is gas_ct economic entry at decision-2024 (per-tech cap 1.0 GW, ISO budget
+8 GW with 8.0 GW already decided that year — so even a clearing CT would be
+budget-blocked at 0 MW). Any storage clearing would be a genuine surprise and is
+reported as such.
+
+**PC4 — the in-run closure, exact (the arm's own dumps).** The arm's consumed signal
+`signal_zonal_usd_mwh` for entering-2024 is reproduced offline from the same dump's
+duals and headroom terms to the float (`offline_reproduces_consumed_signal`); scored
+against the arm's own realized 2024 duals (the 2024-for-2025 dump's
+`econ_prices_usd_mwh`): gas_cc ratio **1.2–1.6**, gas_ct **1.5–3.0**, li-ion 4 h
+arbitrage ratio **0.2–0.5** — the under-expectation closes and modestly over-shoots,
+on a surface whose own dispersion is ~¼ of the keeper's. *Falsifier:* any 2024 ratio
+under the arm below the control's own (0.92 / 0.57).
+
+**PC5 — the reading this stage pre-commits to.** If PC1 holds, the CAISO cell is
+`I` (inert) for the T1-H lane at this basis, with the construction VALIDATED at the
+screen grain (§2) and in-run (PC4) — and the under-build object D39 named moves one
+step upstream: what the screen discards is the dispersion the hindcast's OWN LP
+prices, and that surface carries a fraction of the keeper's. The forecast lane's
+price-formation dispersion (the D36 "1/10–1/20 of the market's spread" object, seen
+here as hindcast-vs-keeper) is the residual — a forecast-program dispatch object,
+not an entry-signal object. Nothing arms by default either way.

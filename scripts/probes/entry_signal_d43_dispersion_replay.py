@@ -62,6 +62,7 @@ from pathlib import Path
 import sys
 
 import numpy as np
+import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
@@ -292,6 +293,18 @@ def main() -> None:
                         realized_source = "the run's OWN realized duals for the entering year (next dump)"
                 except SystemExit:
                     realized = None
+        if realized is None and args.mode == "arm":
+            # The run's persisted year parquet carries the SAME zonal price
+            # surface as the dump's econ_prices (verified: max |diff| 0.0 on
+            # the control's 2023 and 2024), so the LAST solved year — which
+            # has no next dump — is scored exactly too.
+            yp = sorted((bundle / iso).iterdir())[0] / f"year_{step}.parquet"
+            if yp.exists():
+                ydf = pd.read_parquet(yp, columns=["price"])
+                realized = np.stack(ydf["price"].to_numpy()).T[run_zone_idx]
+                realized_source = (
+                    "the run's OWN realized duals for the entering year (year parquet)"
+                )
         if realized is None:
             realized = dual_price_array(duals_bundle, step, zone_names)
         arms: dict = {}
