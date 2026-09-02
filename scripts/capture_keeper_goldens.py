@@ -1,4 +1,4 @@
-"""Capture current-HEAD golden baselines for the six calibration keepers.
+"""Capture current-HEAD golden baselines for the calibration keeper configs.
 
 Stage 0 of the orchestrator-unification plan
 (``docs/handoffs/orchestrator-unification-plan-2026-07.md`` §6-§7) needs a
@@ -49,6 +49,38 @@ entry and never touched again; the top level keeps only what is genuinely
 global to the file (``schema_version``, ``stage_tag``, ``hash_scheme``,
 ``note``).
 
+Config-partition entries (2026-09-02) — ADDITIVE to schema v2, no version bump.
+An ISO whose keeper shard carries a ``config_partition`` block designates more
+than one config, each covering a disjoint slice of the training window: ERCOT is
+the first (owner ruling 2026-08-26,
+``docs/FINDING-ercot-two-config-keeper-2026-08-26.md``) — a **forward** config
+for {2024, 2025} and a 2023 **carve-out** for the ECRS-era regime. The manifest
+keyed one entry per bare ISO, so only the designated ``keeper`` was reachable and
+full coverage of such an ISO was structurally impossible.
+
+The representation is a SIBLING entry in the same ``keepers`` map, keyed
+``<ISO>__<role>`` (``ERCOT__carveout-2023``), where ``role`` is verbatim the
+shard's ``config_partition.configs[].role``. Everything else about the entry is
+an ordinary v2 entry, so every v2 invariant — per-entry provenance, the
+``keeper_snapshot`` retention absorb, the content hashes — applies to it with no
+new enforcement code, and the bare-ISO entries are untouched byte-for-byte. The
+key is DERIVED from the shard rather than invented, so
+``check_golden_manifest.live_keeper`` resolves it mechanically through
+``config_partition.configs[].run_id``; a role that is renamed or retired
+therefore reads STALE rather than silently CURRENT.
+
+*Rejected alternative:* nesting a ``configs`` list inside the existing ``ERCOT``
+entry. That changes the shape of an entry that already exists (so the forward
+entry's bytes move), and every per-entry invariant would need a second,
+parallel implementation for the nested rows. Sibling entries need neither.
+
+A partition entry additionally carries a ``partition`` block naming its ISO,
+role, the shard's DESIGNATED year span for that config, and the ruling that
+declared the partition. ``designated_years`` and the entry's own ``years``
+(which come from the replayed ``meta.json``, i.e. the run's REGISTERED span) are
+recorded separately and can legitimately differ — the forward config's
+registered span is 3-year while its designated span is {2024, 2025}.
+
 Each entry also carries a ``keeper_snapshot`` copied from the provenance run's
 registry sidecar at capture time. Top-15-per-ISO registry retention will prune
 that sidecar long before the golden is retired — five of the six perfb-stage0
@@ -68,11 +100,21 @@ Usage:
     # one keeper, in-process (all its years sequentially):
     python scripts/capture_keeper_goldens.py --iso NEISO --stage-tag stage1-before
 
-    # all six, ≤2 concurrent per-ISO subprocesses (CLAUDE.md rule 8 memory cap):
+    # a config-partition member (see above), by its <ISO>__<role> key:
+    python scripts/capture_keeper_goldens.py --iso ERCOT__carveout-2023 \
+        --stage-tag perfb-stage0
+
+    # what an ISO's shard designates (no solve):
+    python scripts/capture_keeper_goldens.py --list-configs
+
+    # all six, ≤2 concurrent per-ISO subprocesses (CLAUDE.md rule 8 memory cap);
+    # add --include-partitions to cover every designated config, not just the
+    # bare ``keeper`` of each shard:
     python scripts/capture_keeper_goldens.py --all --stage-tag stage1-before
 
 Holdout quarantine (CLAUDE.md rule 22): this only ever solves the years already
-recorded in each keeper's ``meta.json`` (all within 2023-2025). It never
+recorded in the replayed run's ``meta.json`` (all within 2023-2025) — for a
+partition member, that run's own REGISTERED span, never a widened one. It never
 introduces a 2022 or 2026 solve.
 """
 
@@ -116,6 +158,12 @@ from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
 
 REGISTRY_DIR = REPO / "frontend" / "data" / "backcast" / "registry"
 GOLDENS_ROOT = REPO / "results" / "regression-goldens"
+
+# Separator between the ISO and the config-partition role in a capture key
+# (``ERCOT__carveout-2023``). Doubled underscore: it appears in no ISO name and
+# in no ``config_partition.configs[].role`` value, so the split is unambiguous,
+# and it is filesystem-safe because the key is also the golden subdirectory.
+PARTITION_KEY_SEP = "__"
 
 # ``meta.json`` records four ``solve_and_persist`` parameters under a different
 # (historical / recorded) key name. Every other meta key that is also a
@@ -282,6 +330,119 @@ def _keeper_snapshot(info: dict) -> dict:
         ),
     }
     return snap
+
+
+def parse_capture_key(key: str) -> tuple[str, str | None]:
+    """Split a capture key into ``(ISO, role)``.
+
+    ``"ERCOT"`` → ``("ERCOT", None)`` (the shard's designated ``keeper``);
+    ``"ERCOT__carveout-2023"`` → ``("ERCOT", "carveout-2023")`` (that config
+    partition member). The ISO half is upper-cased; the role is preserved
+    verbatim, because it is matched against the shard's own ``role`` string.
+    """
+    iso, _, role = key.partition(PARTITION_KEY_SEP)
+    return iso.upper(), (role or None)
+
+
+def capture_key(iso: str, role: str | None = None) -> str:
+    """Inverse of :func:`parse_capture_key` — the manifest key / golden dir name."""
+    return iso.upper() if not role else f"{iso.upper()}{PARTITION_KEY_SEP}{role}"
+
+
+def _bundle_info(keeper_id: str, *, what: str) -> dict:
+    """Resolve one run id to its frozen bundle via its registry sidecar.
+
+    Args:
+        keeper_id: The provenance run id.
+        what: Human label for error messages (``"ERCOT"`` / the capture key).
+
+    Returns:
+        ``{"keeper_id", "bundle", "years", "sidecar"}`` — ``years`` is the run's
+        REGISTERED span from the sidecar (rule 22: never widened here).
+    """
+    sidecar = REGISTRY_DIR / f"{keeper_id}.json"
+    if not sidecar.is_file():
+        raise FileNotFoundError(f"{what}: registry sidecar missing: {sidecar}")
+    reg = json.loads(sidecar.read_text())
+    bundle = REPO / reg["bundle"]
+    if not (bundle / "meta.json").is_file():
+        raise FileNotFoundError(f"{keeper_id}: bundle meta.json missing at {bundle}")
+    return {
+        "keeper_id": keeper_id,
+        "bundle": bundle,
+        "years": [int(y) for y in reg["years"]],
+        # Kept whole so ``_keeper_snapshot`` can copy the sidecar's identity
+        # into the manifest entry before retention prunes the sidecar.
+        "sidecar": reg,
+    }
+
+
+def partition_configs(iso: str) -> list[dict]:
+    """Return the ISO's ``config_partition.configs`` list (empty when absent).
+
+    The keeper shard is the single source of truth for what an ISO designates;
+    a shard with no ``config_partition`` block is an ordinary one-config ISO.
+    """
+    shard = keeper_store.load_shard(iso, REPO) or {}
+    cfgs = (shard.get("config_partition") or {}).get("configs") or []
+    return [c for c in cfgs if isinstance(c, dict) and c.get("run_id")]
+
+
+def partition_run_id(iso: str, role: str) -> str | None:
+    """Resolve ``(ISO, role)`` to the run id the shard designates, or None."""
+    for cfg in partition_configs(iso):
+        if str(cfg.get("role", "")).lower() == role.lower():
+            return str(cfg["run_id"])
+    return None
+
+
+def resolve_capture_targets(keys: list[str]) -> dict[str, dict]:
+    """Resolve capture keys (bare ISO or ``<ISO>__<role>``) to bundle info.
+
+    A bare ISO resolves through the shard's designated ``keeper``; a partition
+    key resolves through ``config_partition.configs[].run_id``. Both land on the
+    same ``{"keeper_id", "bundle", "years", "sidecar"}`` shape, plus ``iso`` /
+    ``role`` / ``partition_config`` so the caller can solve the right ISO and
+    stamp the entry's ``partition`` block.
+
+    Args:
+        keys: Capture keys, e.g. ``["NEISO", "ERCOT__carveout-2023"]``.
+
+    Returns:
+        ``{capture_key: info}``, one entry per requested key.
+
+    Raises:
+        KeyError: if a partition key names a role the ISO's shard does not
+            designate (fail loud — a typo'd role must never write a golden that
+            the CI gate would then report STALE forever).
+    """
+    out: dict[str, dict] = {}
+    for raw in keys:
+        iso, role = parse_capture_key(raw)
+        key = capture_key(iso, role)
+        if role is None:
+            bundles = resolve_keeper_bundles(only_isos={iso})
+            if iso not in bundles:
+                raise KeyError(f"{iso}: no designated keeper in keepers/{iso}.json")
+            info = dict(bundles[iso])
+            info.update({"iso": iso, "role": None, "partition_config": None})
+        else:
+            run_id = partition_run_id(iso, role)
+            if run_id is None:
+                have = [c.get("role") for c in partition_configs(iso)]
+                raise KeyError(
+                    f"{key}: keepers/{iso}.json declares no config_partition "
+                    f"role {role!r} (roles present: {have or 'none'})"
+                )
+            cfg = next(
+                c
+                for c in partition_configs(iso)
+                if str(c.get("role", "")).lower() == role.lower()
+            )
+            info = _bundle_info(run_id, what=key)
+            info.update({"iso": iso, "role": role, "partition_config": cfg})
+        out[key] = info
+    return out
 
 
 def resolve_keeper_bundles(only_isos: set[str] | None = None) -> dict[str, dict]:
@@ -511,12 +672,45 @@ def _fidelity_check(
     }
 
 
-def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
-    """Re-solve one keeper at HEAD into the golden dir; return its manifest entry.
+def _partition_block(info: dict) -> dict | None:
+    """Return the entry's ``partition`` block, or None for a bare-ISO capture.
+
+    ``designated_years`` is the span the ISO's shard assigns to THIS config;
+    the entry's own ``years`` is the replayed run's REGISTERED span. They are
+    recorded separately because they legitimately differ (ERCOT's forward config
+    is registered 3-year but designated {2024, 2025}), and conflating them is
+    exactly the gloss ``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2
+    warns against.
+    """
+    cfg = info.get("partition_config")
+    if not cfg:
+        return None
+    shard = keeper_store.load_shard(info["iso"], REPO) or {}
+    part = shard.get("config_partition") or {}
+    return {
+        "iso": info["iso"],
+        "role": info["role"],
+        "designated_years": [int(y) for y in cfg.get("years", [])],
+        "label": cfg.get("label", ""),
+        "declared": part.get("declared", ""),
+        "ruling_source": part.get("ruling_source", ""),
+    }
+
+
+def capture_one(key: str, stage_tag: str, info: dict) -> dict:
+    """Re-solve one keeper config at HEAD into its golden dir; return its entry.
+
+    Args:
+        key: The capture key — a bare ISO, or ``<ISO>__<role>`` for a
+            config-partition member. It names both the golden subdirectory and
+            the manifest key, so two configs of one ISO never collide.
+        stage_tag: Golden subdir tag.
+        info: Resolved bundle info from :func:`resolve_capture_targets`.
 
     Raises:
         RuntimeError: if the fidelity oracle finds any applied-flag mismatch.
     """
+    iso = info.get("iso") or key
     # Heavy import deferred until after the determinism env is pinned.
     from scripts.run_calibration import _load_reference
     from scripts.run_calibration_full import solve_and_persist
@@ -527,13 +721,13 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
     kwargs, defaulted = build_solve_kwargs(meta, solve_and_persist)
     dropped_dead = drop_dead_config_keys(kwargs)
 
-    golden_dir = GOLDENS_ROOT / stage_tag / iso
+    golden_dir = GOLDENS_ROOT / stage_tag / key
     golden_dir.mkdir(parents=True, exist_ok=True)
 
     logger.info(
         "[%s] re-solving keeper %s years=%s hours=%s (%d recorded flags, "
         "%d params defaulted)",
-        iso,
+        key,
         info["keeper_id"],
         years,
         hours,
@@ -564,13 +758,13 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
         for m in meta_bad[:30]:
             logger.error(
                 "[%s] META FLAG MISMATCH %s: keeper=%r golden=%r",
-                iso,
+                key,
                 m["key"],
                 m["keeper"],
                 m["golden"],
             )
         raise RuntimeError(
-            f"{iso}: fidelity oracle failed — {len(meta_bad)} recorded flag(s) "
+            f"{key}: fidelity oracle failed — {len(meta_bad)} recorded flag(s) "
             f"diverged between keeper and golden meta.json; the golden does not "
             f"faithfully replay the keeper's flags."
         )
@@ -583,7 +777,7 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
         logger.warning(
             "[%s] scenario_config drift vs keeper on %d field(s) (expected if "
             "base config moved since the keeper was frozen): %s",
-            iso,
+            key,
             len(cfg_bad),
             ", ".join(m["key"] for m in cfg_bad[:15]),
         )
@@ -591,7 +785,7 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
     logger.info(
         "[%s] fidelity OK: %d recorded flags replayed identically "
         "(%d HEAD-only meta keys); scenario_config %d matched, %d drifted",
-        iso,
+        key,
         fidelity["meta"]["matched"],
         len(fidelity["meta"]["golden_only"]),
         fidelity["scenario_config"]["matched"],
@@ -622,11 +816,15 @@ def capture_one(iso: str, stage_tag: str, info: dict) -> dict:
         "provenance": _provenance(),
         "keeper_snapshot": _keeper_snapshot(info),
     }
+    part = _partition_block(info)
+    if part is not None:
+        entry["partition"] = part
     return entry
 
 
-def _run_subprocess(iso: str, stage_tag: str) -> int:
-    """Re-invoke this script for a single ISO in its own process."""
+def _run_subprocess(key: str, stage_tag: str) -> int:
+    """Re-invoke this script for a single capture key in its own process."""
+    iso = key  # the CLI takes the capture key verbatim under --iso
     env = dict(os.environ)
     env.update(DETERMINISM_ENV)
     cmd = [
@@ -648,9 +846,11 @@ MANIFEST_SCHEMA_VERSION = 2
 def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
     """Write / merge the hashes-only manifest for a stage tag.
 
-    Only the ISOs in ``entries`` are rewritten. Under schema v2 the top level
-    holds nothing capture-specific, so merging one ISO's entry cannot re-label
-    any other — the v1 failure mode this function used to have.
+    Only the keys in ``entries`` are rewritten. Under schema v2 the top level
+    holds nothing capture-specific, so merging one entry cannot re-label any
+    other — the v1 failure mode this function used to have. The same merge is
+    what makes a config-partition entry (keyed ``<ISO>__<role>``) purely
+    additive: it lands beside the bare-ISO entry rather than replacing it.
     """
     manifest_path = GOLDENS_ROOT / stage_tag / "manifest.json"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -668,7 +868,14 @@ def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
             "gitignored; only this manifest is committed. Provenance (git sha, "
             "basis sha, env pins, timestamp) and the provenance run's identity "
             "are PER ENTRY under keepers.<ISO>.provenance / .keeper_snapshot — "
-            "there is deliberately no shared top-level git_sha."
+            "there is deliberately no shared top-level git_sha. An entry keyed "
+            "<ISO>__<role> (e.g. ERCOT__carveout-2023) is a CONFIG-PARTITION "
+            "member: the role is verbatim that ISO's "
+            "keepers/<ISO>.json config_partition.configs[].role, the entry "
+            "carries an extra 'partition' block, and it is an ordinary v2 entry "
+            "in every other respect — additive, so the bare-ISO entries are "
+            "untouched. check_golden_manifest.live_keeper resolves both key "
+            "forms."
         ),
         "keepers": existing,
     }
@@ -684,13 +891,32 @@ def main() -> int:
         "--iso",
         nargs="+",
         default=None,
-        help="ISO(s) to capture (e.g. NEISO, or ERCOT CAISO). Omit with --all.",
+        help="Capture key(s): a bare ISO (NEISO, or ERCOT CAISO) for that "
+        "shard's designated keeper, or <ISO>__<role> (ERCOT__carveout-2023) "
+        "for a config-partition member. Omit with --all.",
     )
-    parser.add_argument("--all", action="store_true", help="Capture all six keepers.")
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Capture every ISO's designated keeper (six).",
+    )
+    parser.add_argument(
+        "--include-partitions",
+        action="store_true",
+        help="With --all, also capture every config_partition member that is "
+        "not already the ISO's designated keeper (e.g. ERCOT__carveout-2023).",
+    )
+    parser.add_argument(
+        "--list-configs",
+        action="store_true",
+        help="Print every capture key the keeper shards designate, and exit "
+        "(no solve). --stage-tag is not required with this flag.",
+    )
     parser.add_argument(
         "--stage-tag",
-        required=True,
-        help="Golden subdir tag, e.g. stage1-before / stage1-after / aa-run1.",
+        default=None,
+        help="Golden subdir tag, e.g. stage1-before / stage1-after / aa-run1. "
+        "Required for every mode except --list-configs.",
     )
     parser.add_argument(
         "--max-concurrency",
@@ -706,40 +932,69 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    only = {i.upper() for i in args.iso} if args.iso and not args.all else None
-    bundles = resolve_keeper_bundles(only_isos=only)
+    if args.list_configs:
+        for iso in keeper_store.iso_list(REPO):
+            rec = keeper_store.load_shard(iso, REPO) or {}
+            designated = rec.get("keeper")
+            print(f"{iso:6} {designated}   (capture key: {iso})")
+            for cfg in partition_configs(iso):
+                role = cfg.get("role", "")
+                mark = " [= designated keeper]" if cfg["run_id"] == designated else ""
+                print(
+                    f"       {cfg['run_id']}   (capture key: "
+                    f"{capture_key(iso, role)}; designated years "
+                    f"{cfg.get('years', [])}){mark}"
+                )
+        return 0
+
+    if not args.stage_tag:
+        parser.error("--stage-tag is required (except with --list-configs)")
+
     if args.all:
-        isos = sorted(bundles)
+        keys = sorted(resolve_keeper_bundles())
+        if args.include_partitions:
+            designated = set(keeper_store.keeper_list(REPO))
+            extra = [
+                capture_key(iso, cfg["role"])
+                for iso in keeper_store.iso_list(REPO)
+                for cfg in partition_configs(iso)
+                # A partition member that IS the ISO's designated keeper is
+                # already covered by the bare-ISO key; capturing it twice would
+                # solve the same config into two golden dirs.
+                if cfg["run_id"] not in designated
+            ]
+            keys += sorted(extra)
     elif args.iso:
-        isos = [i.upper() for i in args.iso]
+        keys = [capture_key(*parse_capture_key(i)) for i in args.iso]
     else:
-        parser.error("provide --iso <ISO...> or --all")
+        parser.error("provide --iso <KEY...>, --all, or --list-configs")
 
-    for iso in isos:
-        if iso not in bundles:
-            parser.error(f"{iso} is not a registered keeper ISO ({sorted(bundles)})")
+    try:
+        bundles = resolve_capture_targets(keys)
+    except KeyError as exc:
+        parser.error(str(exc.args[0]))
 
-    # Single in-process ISO (also the subprocess-child path).
-    if args._single or len(isos) == 1:
+    # Single in-process capture (also the subprocess-child path).
+    if args._single or len(keys) == 1:
         rc = 0
-        for iso in isos:
+        for key in keys:
             try:
-                entry = capture_one(iso, args.stage_tag, bundles[iso])
-                write_manifest(args.stage_tag, {iso: entry})
+                entry = capture_one(key, args.stage_tag, bundles[key])
+                write_manifest(args.stage_tag, {key: entry})
             except Exception:
-                logger.exception("[%s] capture failed", iso)
+                logger.exception("[%s] capture failed", key)
                 rc = 1
         return rc
 
-    # Multiple ISOs: fan out to ≤max_concurrency subprocesses (memory cap).
+    # Multiple captures: fan out to ≤max_concurrency subprocesses (memory cap).
     rc = 0
     with ThreadPoolExecutor(max_workers=max(1, args.max_concurrency)) as ex:
-        futures = {ex.submit(_run_subprocess, iso, args.stage_tag): iso for iso in isos}
+        futures = {ex.submit(_run_subprocess, k, args.stage_tag): k for k in keys}
         for fut in as_completed(futures):
-            iso = futures[fut]
+            key = futures[fut]
             code = fut.result()
             if code != 0:
-                logger.error("[%s] subprocess exited %d", iso, code)
+                logger.error("[%s] subprocess exited %d", key, code)
                 rc = 1
     logger.info(
         "all captures complete (rc=%d); manifest at %s",
