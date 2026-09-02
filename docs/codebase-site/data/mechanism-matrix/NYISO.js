@@ -245,6 +245,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     capacity_market_clearing: { cell: "O", fc: "O", ev: "FFR-2E §5 — WRONG-ARM FC-3 citation: shipped posture is curve-OFF, gate cites the force-ON probe leg" },
     net_cone_forward_vintages: { cell: "O", fc: "O" },
     reserve_margin_backstop: { cell: "K", fc: "K" },
+    adequacy_internal_supply_accounting: { cell: "U", fc: "U", ev: "UNTESTED, no transfer (rule 25/28d — capx D31): identification source is the SOM supplied-vs-requirement tables (D28 §6.5); NOTE the NYISO position basis is already the FF-3D/FF-2C flip gate's live object (D28 §4 latent verdict — the curve-ON probe's +123% retirements is the position defect expressing), so this cell belongs to whichever session holds that flip" },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },

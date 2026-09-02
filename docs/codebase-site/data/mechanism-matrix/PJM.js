@@ -244,6 +244,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     capacity_market_clearing: { cell: "K", fc: "K", ev: "FFR-2C (ffr-2c-net-cone-currency-2026-08-02.md §3) supersedes the inertness clause from 2028; FFR-2E §3.1 (pjm-2021-2025-{shipped,fixed}-ffr2e: 33.716 vs 4.106 GW, fixed recall 0.000) + §4 (pjm-2026-2028-ffr2e-t0-{shipped,fixed}: floor does NOT bind, fleet is short)" },
     net_cone_forward_vintages: { cell: "O", fc: "O" },
     reserve_margin_backstop: { cell: "K", fc: "K" },
+    adequacy_internal_supply_accounting: { cell: "U", fc: "U", ev: "UNTESTED, no transfer (rule 25/28d — capx D31): the named identification source is PJM's own BRA offered/cleared UCAP accounting (D28 §6.5, BRA Report Table 2/7 — in-repo rows carry cleared); D28 measured PJM's hindcast positions 1.14-1.20 vs published zeroes 1.064-1.074, the same defect class the MISO ratio repaired" },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },
