@@ -261,7 +261,18 @@ that left the `STORAGE_TECH_AVAILABLE_YEAR` inventory line unfixed through two
 lanes in §4. Repairing a red without the flip buys minutes; the flip is what
 makes the repair hold.
 
-**Routed, not acted on (§7 item 5):** the file is a **per-run analysis driver
+**And again, twice more, while this follow-up was being written.** Re-checked at
+~03:55Z: red on `docs/handoffs/d33/…` (#4569). Re-checked at ~04:20Z, after that
+repair merged: red again on **`src/market_sim/data/outages.py` and
+`tests/unit/data/test_unit_outage_mixed_gas_routing.py`** (#4575, miso-200) —
+this time **core `src/` code**, not a record-class file, so no exclusion would
+have covered it. Both repaired here. **Three independent re-reddenings inside
+one hour**, each from a different lane, each landing green-in-its-own-eyes
+because nothing made the check block a merge. This lane stops chasing the file
+here: at this cadence a repair without the flip has a half-life measured in
+minutes, and the durable fix is R-P itself.
+
+**Routed, not acted on (§7 item 5):** the *first* of the three is a **per-run analysis driver
 committed as a record** — its own docstring says "zero solves" — living under
 `docs/handoffs/`, which is *not* in `pyproject`'s `extend-exclude`. That exclude
 list already carves out exactly this class for the same stated reason
