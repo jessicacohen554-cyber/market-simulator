@@ -235,7 +235,7 @@ class TestAccumulatorWiring:
             outages, "_iso_plant_capacity", lambda *a, **k: cap
         )
         return outages._unit_outage_factors_from_events(
-            df, 2024, 8760, "", iso, False, False, False, flag
+            df, 2024, 8760, "", iso, False, False, False, st_capacity_basis=flag
         )
 
     def test_off_keeps_the_production_basis_and_on_aligns_it(
@@ -308,7 +308,7 @@ class TestAccumulatorWiring:
         df = _events([(1, "5", "ST_GAS", 120.0)])
 
         outages._unit_outage_factors_from_events(
-            df, 2024, 8760, "", "MISO", False, False, False, True
+            df, 2024, 8760, "", "MISO", False, False, False, st_capacity_basis=True
         )
         assert calls == ["MISO"]
 
@@ -325,7 +325,7 @@ class TestAccumulatorWiring:
             ),
         )
         outages._unit_outage_factors_from_events(
-            df, 2024, 8760, "", "ERCOT", False, False, False, True
+            df, 2024, 8760, "", "ERCOT", False, False, False, st_capacity_basis=True
         )
         assert calls == [], "ERCOT must never build an ST pairmap"
 
