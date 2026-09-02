@@ -480,3 +480,30 @@ an easy trap to misread as "my change broke something". Until the NYISO TSL row 
 gate verdicts must be read **per check**, and check [1] is the one `--mode byte`
 speaks to. This is adjacent to, but distinct from, the three red `ci.yml` jobs R-P's
 blocker 1 records.
+
+### 5.4 The lever's reach scales with an ISO's CAMPD footprint — stated plainly
+
+`bench` is dominated by `load_campd_hourly`, which reads **one extract per (state,
+year)**. So the win is proportional to how many states an ISO spans, and the
+headline percentages do **not** transfer across ISOs:
+
+| ISO | CAMPD states | measured `bench`, before |
+|---|---|---|
+| PJM | 14 | 20.9–34.7 s/yr (§4) |
+| MISO | 14 | 20.9–34.7 s/yr (§4) |
+| NEISO | 6 | 2.1 / 1.6 / 1.9 s (this session's before arm) |
+| ERCOT | 1 (TX, facility-level) | **0.9 s** (this session's before arm, 2023) |
+
+**Consequence, recorded so no later lane quotes the wrong number:** the ~40–70 %
+reductions in §5.2 are real but they are *fractions of a phase whose size is
+ISO-dependent*. On PJM/MISO that is ~10–18 s/yr of real wall; on ERCOT it is
+sub-second and the change is, in wallclock terms, **inert**. The ERCOT byte-gate arm
+below therefore exists to prove **identity on the facility-level normalizer path**
+(no `unitId` column, so a different branch of `_normalize_campd` than NEISO
+exercises), *not* to demonstrate a speed-up — and it should never be cited as
+evidence of one.
+
+Against the ≥10 %-wall adoption rule "per its scope": the change clears it on
+`results_write` for the 14-state ISOs and does not clear it anywhere as a share of
+*total year* wall (~2–4 % on PJM/MISO, ~0 % on ERCOT). Both readings are stated so
+the merge decision is made on the honest one.
