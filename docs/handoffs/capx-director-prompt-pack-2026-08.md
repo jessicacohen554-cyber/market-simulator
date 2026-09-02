@@ -3430,3 +3430,102 @@ plan §2 verification), both rung outcomes at full magnitude, whether the REC du
 the RPS/ACP finding if not), and the FC-6 battery-leg status after (scored, or CAVEAT with
 the named reason).
 ```
+
+## D35 — the FC-6 P2 instrument-scope repair (r#28; GOLDEN-2 routed item 2, released on golden-close)
+
+```
+You are the D35 session of the capacity-expansion track. GOLDEN-2's FC-6 battery surfaced a
+NEW, root-caused instrument-scope object and left it standing as scored: **P2 FAILs
+("year 2050: wrong: gas_cc↓") while the all-gas sign is correct.** The leg tests
+unabated-gas_cc generation FALLING under gas ×1.5 at the last common year — but the BASE
+world holds ZERO unabated CC at 2050 (the fleet is 100 % CCS-converted by 2040), while the
+gas ×1.5 world retrofits LESS (the retrofit's fuel-cost penalty scales with gas price:
+CCS 9,846.8 vs 13,135.4 MW) and builds MORE late unabated CC. On 25-year evolution pairs
+the leg crosses the CCS class migration — the same family as D23's P1 attribution: the
+instrument measuring its own construction, not the model. You adjudicate the correct scope,
+repair the checker, and re-score.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (instrument semantics on a novel object; a committed FC-6 row moves).
+BRANCH: claude/capx-d35-p2-scope — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-t3-golden2-2026-09-01.md §7.1 (the P2 evidence, the
+root cause as the lane measured it) · docs/handoffs/FINDING-capx-d23-p1-carbon-sign-*.md +
+FINDING-capx-d26-p1-arm-construction-*.md (the family precedent: what "the instrument
+measured its own premise" looked like, and what a repair that measures the MODEL looks
+like) · scripts/check_forecast_invariants.py --paired (the P2 leg's implementation) · the
+committed golden-2 fc6/ bundles (base `706e7ba8`, carbon_plus25, gasup150, gaspm5 — your
+artifact set; NO new solves needed).
+
+THE ADJUDICATION, yours to make and defend: what SHOULD the gas-up driver leg measure on a
+25-year evolution pair where the CC class migrates to CCS? Candidates the finding implies
+(adjudicate, don't assume): the whole gas_cc family including CCS-converted units; total
+gas-fired generation; the last year BOTH worlds hold unabated CC; a
+capacity-migration-aware construction. The repaired leg must (a) measure a real
+model-response claim with a defensible sign expectation, (b) stay meaningful on ISOs whose
+fleets do NOT migrate, (c) not be constructed so the golden passes — state the expected
+verdict BEFORE running the repaired checker, then report what happened at full magnitude.
+
+THE RE-SCORE: artifact-only, control-first — reproduce the committed FC-6 record
+byte-for-byte with the unmodified checker, then apply the repair and re-score neiso-t3's
+FC-6. PRESERVE T16-A's battery-row state (CAVEAT-measured, series [1.0, 1.0]) — you touch
+the P2 row and nothing else. STOP AND ROUTE if anything beyond neiso-t3's FC-6 P2 row (and
+the FC-6 rollup it feeds) would move. EITHER outcome of the repaired leg is valid — a
+surviving FAIL now measures the model, which is the point.
+
+GUARDRAILS: rule 27 (checker is core; blob-verify); rule 28 NOT triggered unless you add a
+ScenarioConfig field (you should not need one — this is checker scope, not model config);
+no keeper/shard/marker; no backcast surface; zero solves. Cross-lane re-grade is your
+operating mode. No new workflow.
+
+COLLISION: D38 edits the FC-5 disposition rows + the golden-2 finding text — no shared
+files with your FC-6 work; rebase-care on ff-verdicts.json (distinct rows). D31/D33/D30 are
+MISO/NEISO-position/45Q docs lanes — no overlap.
+
+EXIT: the adjudication + repaired checker + tests + the re-scored P2 row +
+docs/handoffs/FINDING-capx-d35-p2-scope-<date>.md with the scope decision defended, the
+pre-stated expectation graded, the control reproduction, and the FC-6 state after — plus an
+explicit line on whether the repaired leg changes anything for the OTHER five ISOs' future
+FC-6 runs (the leg is cross-ISO instrument code; rule 25 governs verdicts, not the checker).
+```
+
+## D38 — the D36-routed records pair (r#28; corridor rows + the golden-2 wording correction)
+
+```
+You are the D38 session of the capacity-expansion track — a records-only lane executing D36's
+routed items 1 and 3. Zero solves, zero scorer edits, no verdict moves.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (the content is specified in D36 §7/§8; execution).
+BRANCH: claude/capx-d38-d36-records — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d36-storage-valuestack-2026-09-02.md §7 (the
+disposition text you are transcribing — the procurement-channel explanation and the R-1
+residual, in the lane's own words) and §8 items 1 + 3 ·
+results/ff-corridor/dispositions/neiso-t3.json (the three `capacity:storage` rows you
+re-author) · docs/handoffs/FINDING-capx-t3-golden2-2026-09-01.md §6.1 (the sentence being
+corrected).
+
+THE WORK:
+1. Re-author the three `capacity:storage` rows in the neiso-t3 disposition file with the
+   D36 §7 explanation (procurement-channel driver + the R-1 residual named), citing D36.
+   CONTROL-FIRST: byte-check the file's current state against the committed version before
+   editing; the rows are already EXPLAINED DIVERGENCE and MUST remain so — if your edit
+   would change any row's category or any verdict anywhere, STOP: that is not this charter.
+2. The golden-2 §6.1 correction as a DATED ANNOTATION (never a rewrite): the 2050 storage
+   clearing is a data-channel result (the RC-R demand-curve intake re-times exits, tightening
+   the 2049 stack), not a D-3-rank result — the rank is sign-preserving. One paragraph,
+   marked "Correction 2026-09-02 (D38, routed by D36 §8.3)", appended at the section.
+
+GUARDRAILS: records only — no scorer, no FC row, no board, no keeper/shard/marker, no
+ScenarioConfig. Rule 27 on any ≥300-line file (the golden-2 finding qualifies: edit locally,
+push exact bytes, blob-verify). If the disposition file's schema resists a clean re-author,
+report rather than force. No new workflow.
+
+COLLISION: D35 edits FC-6 checker + ff-verdicts P2 row — no shared files. The FC-5
+disposition file is yours alone this window.
+
+EXIT: the re-authored rows + the annotation + a SHORT
+docs/handoffs/FINDING-capx-d38-d36-records-<date>.md (a page: what changed, the control
+check, confirmation that no category or verdict moved).
+```
