@@ -525,6 +525,159 @@ def _load_unit_outage_events(csv_path: Path, iso: str) -> pd.DataFrame | None:
 # the consumer so the two lists cannot drift.
 _CC_NAMEPLATE_BASIS_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP")
 
+# The bin groups the ST-side capacity-basis alignment covers
+# (ScenarioConfig.unit_outage_st_capacity_basis, miso-201). These are EXACTLY
+# the groups _CC_NAMEPLATE_BASIS_GROUPS above cannot reach, which is why the
+# CC-only flag leaves a steam bin's numerator/denominator basis gap open.
+_ST_CAPACITY_BASIS_GROUPS: tuple[str, ...] = ("ST_GAS", "ST_CHP")
+
+
+@lru_cache(maxsize=None)
+def _iso_plant_unit_capacity(
+    iso: str, cc_steam_part_reclass: bool = False
+) -> dict[tuple[int, str], dict[str, float]]:
+    """Return ``{(plant_code, plant_group): {normalised_gen_id: pmax_mw}}``.
+
+    The PER-UNIT companion of :func:`_iso_plant_capacity`, built from the SAME
+    fleet load so the roster and the bin denominator can never disagree about
+    what is in the bin (``_iso_plant_capacity`` is literally this map summed).
+    Fleet unit ids are ``"<plant_code>_<EIA generator id>"``; the plant prefix is
+    stripped and the generator id normalised with
+    :func:`_norm_partial_unit_id`, so the key is what a CAMPD unit id has to
+    match. Consumed only by :func:`_st_basis_pairmap`.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.data.fleet import (
+        load_fleet_from_csv,
+        load_retired_within_window,
+    )
+
+    iso_config = get_iso_config(iso)
+    fleet = load_fleet_from_csv(
+        iso, iso_config, cc_steam_part_reclass=cc_steam_part_reclass
+    ) + load_retired_within_window(iso, iso_config)
+    out: dict[tuple[int, str], dict[str, float]] = {}
+    for g in fleet:
+        code = int(g.plant_code)
+        if code <= 0 or not g.plant_group:
+            continue
+        uid = str(getattr(g, "unit_id", "") or "")
+        gid = uid.split("_", 1)[1] if "_" in uid else uid
+        key = _norm_partial_unit_id(gid)
+        if not key:
+            continue
+        bin_units = out.setdefault((code, str(g.plant_group)), {})
+        bin_units[key] = bin_units.get(key, 0.0) + float(g.pmax_mw)
+    return out
+
+
+def _st_basis_pairmap(
+    df: pd.DataFrame,
+    cap: dict[tuple[int, str], float],
+    iso: str,
+    cc_steam_part_reclass: bool,
+) -> dict[tuple[int, str, str], float]:
+    """Return ``{(plant, group, extract_unit_id): fleet pmax_mw}`` for ALIGNED bins.
+
+    ``ScenarioConfig.unit_outage_st_capacity_basis`` (miso-201). The steam-side
+    member of the same consistency-repair family as
+    ``unit_outage_lp_capacity_basis`` — but where that flag raises the
+    DENOMINATOR to meet a numerator the LP had already raised, this one puts the
+    NUMERATOR on the basis the LP actually applies it to, because for a steam bin
+    nothing raises the denominator in the first place.
+
+    **The defect.** The accumulator derates a bin by
+    ``unit_capacity_mw / cap[bin]``. For a steam bin the numerator is the
+    extract's per-unit EIA-860 **nameplate** (``capacity_source == eia_exact``)
+    or a CEMS **observed peak**, while ``cap[bin]`` is the fleet's **net-summer**
+    pmax sum. The removed FRACTION is inflated by ``nameplate / net_summer``, so
+    the model removes more MW than went out — the Stony Brook arithmetic
+    (NEISO 6081, caiso-184) on the side ``_CC_NAMEPLATE_BASIS_GROUPS`` excludes.
+    Measured at Ninemile Point 1403 generator ``5``: nameplate 895.1 MW against
+    net summer 742.6 MW, so unit 5 alone out removes ``895.1/1465.4 = 0.611`` of
+    the bin against a correct ``742.6/1465.4 = 0.507``.
+
+    **The repair.** Each row's removed MW becomes the fleet unit's own
+    ``pmax_mw``. Numerator and denominator then sit on one basis by construction,
+    so a bin all of whose units are out lands on EXACTLY 1.0 — never 1.13, never
+    0.94.
+
+    **ALL-OR-NOTHING per bin.** A bin is aligned only when EVERY extract unit
+    appearing in it resolves 1-1 onto a DISTINCT fleet unit of that bin, by three
+    zero-DOF routes in order: an exact normalised-id hit; an UNAMBIGUOUS
+    trailing-digit hit (a single fleet unit in the bin carries those digits — the
+    deriver's own ``build_capacity_index`` rule); and a unique 1-1 RESIDUAL
+    pairing where exactly one extract unit and exactly one fleet unit are left
+    over, so the pairing is FORCED rather than chosen (this is what resolves 1403,
+    whose CAMPD unit ``4`` cannot match EIA generator ``6(4)`` on digits). A bin
+    with any unresolved unit is left ENTIRELY untouched: a half-aligned bin —
+    some units on the LP basis, some on nameplate — is less coherent than either
+    basis alone, so partial application is REFUSED rather than counted.
+
+    Eligibility is computed over every row this layer sees, so it is a static
+    property of the bin and does not shift with the years solved. **Zero free
+    parameters** (rule 21 ``[R-DOF]``): every capacity is the fleet's own.
+    **Rule 13 ``[R-MEASURED]`` forward-regenerable** — the fleet's pmax and the
+    extract's unit ids both exist for a forecast year, and the alignment responds
+    to changed conditions because the fleet does.
+
+    Measured coverage at MISO (miso-201 phase 0): 32 of 55 steam bins eligible,
+    8,553 of 12,291 MW (69.6 %); the refusals are dominated by an extract/fleet
+    UNIT-SET mismatch and by the whole-plant ``eia923_netzero`` synthetic rows,
+    both separate open defects this flag deliberately does not touch.
+    """
+    roster = _iso_plant_unit_capacity(iso, cc_steam_part_reclass)
+    # Every extract unit id that ever appears in each steam bin.
+    bin_units: dict[tuple[int, str], set[str]] = {}
+    for r in df.itertuples(index=False):
+        tgt = _generic_unit_outage_target(
+            int(r.facility_id), r.unit_id, r.plant_group
+        )
+        if tgt is None or tgt not in cap:
+            continue
+        if tgt[1] not in _ST_CAPACITY_BASIS_GROUPS:
+            continue
+        bin_units.setdefault(tgt, set()).add(str(r.unit_id))
+
+    pairmap: dict[tuple[int, str, str], float] = {}
+    for (plant, group), uids in bin_units.items():
+        fleet_units = roster.get((plant, group), {})
+        if not fleet_units:
+            continue
+        by_digits: dict[str, list[str]] = {}
+        for gid in fleet_units:
+            digits = re.sub(r"\D", "", gid)
+            if digits:
+                by_digits.setdefault(digits, []).append(gid)
+        local: dict[str, str] = {}
+        unresolved: list[str] = []
+        for uid in uids:
+            full = _norm_partial_unit_id(uid)
+            if full in fleet_units:
+                local[uid] = full
+                continue
+            digits = re.sub(r"\D", "", full)
+            cands = by_digits.get(digits) if digits else None
+            if cands is not None and len(cands) == 1:
+                local[uid] = cands[0]
+            else:
+                unresolved.append(uid)
+        # A fleet unit may be claimed by at most one extract unit; a collision
+        # means the join is not 1-1 and the bin is refused.
+        claimed = list(local.values())
+        if len(set(claimed)) != len(claimed):
+            continue
+        unmatched = [gid for gid in fleet_units if gid not in set(claimed)]
+        if len(unresolved) == 1 and len(unmatched) == 1:
+            local[unresolved[0]] = unmatched[0]
+            unresolved = []
+        if unresolved:
+            continue  # fail closed: the whole bin keeps the production basis
+        for uid, gid in local.items():
+            pairmap[(plant, group, str(uid))] = fleet_units[gid]
+    return pairmap
+
+
 
 @lru_cache(maxsize=None)
 def _iso_plant_capacity(
@@ -620,6 +773,7 @@ def unit_outage_derate_factors(
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
+    st_capacity_basis: bool = False,
     mixed_gas_routing: bool = False,
     per_unit_crosswalk: bool = False,
     merit_order_guard: bool = False,
@@ -665,6 +819,7 @@ def unit_outage_derate_factors(
         cc_nameplate_basis,
         fleet_status_scope,
         per_unit_crosswalk=per_unit_crosswalk,
+        st_capacity_basis=st_capacity_basis,
     )
 
 
@@ -714,6 +869,7 @@ def _unit_outage_factors_from_events(
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
     per_unit_crosswalk: bool = False,
+    st_capacity_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -770,6 +926,16 @@ def _unit_outage_factors_from_events(
         target_fn = partial(
             _generic_unit_outage_target, per_unit_crosswalk=per_unit_crosswalk
         )
+    # ST-side capacity-basis alignment (ScenarioConfig.unit_outage_st_capacity_basis,
+    # miso-201). Non-ERCOT only: the ERCOT branch caps on its own CAMPD bin sheet,
+    # a different basis with no per-unit fleet roster to align onto. Built AFTER
+    # target_fn so it shares whichever routing this call is using — including the
+    # nyiso-177 per-unit-crosswalk path.
+    st_pairmap: dict[tuple[int, str, str], float] = (
+        _st_basis_pairmap(df, cap, iso, cc_steam_part_reclass)
+        if (st_capacity_basis and iso != "ERCOT")
+        else {}
+    )
     has_derate = "derate_factor" in df.columns
     # Checked once per frame: an extract re-derived with --hour-grain states the
     # detected window in hours, otherwise the day-granular reconstruction stands
@@ -792,6 +958,12 @@ def _unit_outage_factors_from_events(
         ucap = r.unit_capacity_mw
         if pd.isna(ucap) or float(ucap) <= 0.0:
             continue
+        # Put the removed MW on the LP's own basis where this bin is aligned.
+        # Absent from the pairmap => the bin was refused (or the flag is off) and
+        # the production numerator stands, so the change is strictly scoped.
+        aligned = st_pairmap.get((tgt[0], tgt[1], str(r.unit_id)))
+        if aligned is not None:
+            ucap = aligned
         # Fraction of the unit's capacity removed over the window: a full stop
         # removes all of it; a partial plateau removes (1 - derate_factor).
         removed_frac = 1.0
@@ -820,6 +992,7 @@ def unit_outage_short_derate_factors(
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
+    st_capacity_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -851,6 +1024,7 @@ def unit_outage_short_derate_factors(
         cc_steam_part_reclass,
         cc_nameplate_basis,
         fleet_status_scope,
+        st_capacity_basis=st_capacity_basis,
     )
 
 
@@ -881,6 +1055,7 @@ def unit_layup_removed_fractions(
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
+    st_capacity_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) laid-up capacity fraction}``.
 
@@ -905,8 +1080,21 @@ def unit_layup_removed_fractions(
     # Same duration floor as the standard overlay: the lay-up companion is a
     # reclassification of the >= 5-day detector output, re-filtered defensively.
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
+    # st_capacity_basis moves with the standard overlay by necessity, not by
+    # choice: this loader's contract is that "a lay-up share and an outage share
+    # for the same plant sit on the same basis and are additive". Aligning one
+    # numerator and not the other would break exactly that invariant, so the two
+    # layers share the flag (rule 19 [R-ONE-MECH]).
     factors = _unit_outage_factors_from_events(
-        df, year, hours, bins_path, iso, cc_steam_part_reclass, cc_nameplate_basis
+        df,
+        year,
+        hours,
+        bins_path,
+        iso,
+        cc_steam_part_reclass,
+        cc_nameplate_basis,
+        False,
+        st_capacity_basis=st_capacity_basis,
     )
     # The accumulator returns availability multipliers (1 - removed share);
     # this loader's contract is the REMOVED (laid-up) share itself.
@@ -940,6 +1128,7 @@ def unit_partial_outage_derate_factors(
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
+    st_capacity_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -978,6 +1167,7 @@ def unit_partial_outage_derate_factors(
         cc_steam_part_reclass,
         cc_nameplate_basis,
         fleet_status_scope,
+        st_capacity_basis=st_capacity_basis,
     )
 
 

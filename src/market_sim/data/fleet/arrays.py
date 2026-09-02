@@ -1102,6 +1102,7 @@ def _apply_outage_overlays(
             iso=_iso or "ERCOT",
             cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
+            st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
             fleet_status_scope=getattr(config, "unit_outage_fleet_status_scope", False),
             # miso-200 (rule 14 [R-ACCURATE]): route each unit's window by its
             # OWN CAMPD unitType at a facility carrying two or more model gas
@@ -1256,6 +1257,9 @@ def _apply_outage_overlays(
                 cc_nameplate_basis=getattr(
                     config, "unit_outage_lp_capacity_basis", False
                 ),
+                st_capacity_basis=getattr(
+                    config, "unit_outage_st_capacity_basis", False
+                ),
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
                 ),
@@ -1297,6 +1301,9 @@ def _apply_outage_overlays(
                 cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
                 cc_nameplate_basis=getattr(
                     config, "unit_outage_lp_capacity_basis", False
+                ),
+                st_capacity_basis=getattr(
+                    config, "unit_outage_st_capacity_basis", False
                 ),
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
@@ -1340,6 +1347,13 @@ def _apply_outage_overlays(
                 cc_nameplate_basis=getattr(
                     config, "unit_outage_lp_capacity_basis", False
                 ),
+                # unit_outage_st_capacity_basis is DELIBERATELY NOT passed here.
+                # This layer's rows carry a measured derate_mw — a partial MW
+                # reduction revealed by CEMS, NOT a unit capacity — so substituting
+                # a fleet pmax_mw for it would substitute a capacity for a derate.
+                # The routing repair had to move both layers together because a unit
+                # routed to DIFFERENT BINS in the two is incoherent; a numerator
+                # BASIS is per-layer and carries no such coupling (miso-201 PREREG §2).
                 # Same routing repair, same flag: this layer shares
                 # _resolve_unit_group, so it carries the same mis-attribution
                 # and must move with the std layer (rule 19 [R-ONE-MECH]).
@@ -2477,6 +2491,7 @@ def _compose_min_gen_floors(
             iso=_iso or "ERCOT",
             cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
+            st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
         )
         logger.info(
             "mustrun_layup_window_mask ARMED (%s %s): %d plant-tranche lay-up "

@@ -332,6 +332,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # miso-200 unit-outage class routing at mixed-gas facilities (GATED
     # default-off; the consumers read it via
     # ``getattr(config, "unit_outage_mixed_gas_routing", False)`` in
+    # miso-201 ST-side unit-outage capacity BASIS alignment (GATED default-off;
+    # every consumer reads it via
+    # ``getattr(config, "unit_outage_st_capacity_basis", False)`` in
+    # data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
+    # pinned default key never moves — the failure mode caiso-184 and nyiso-128
+    # both hit by landing a field unregistered.
+    "unit_outage_st_capacity_basis",
     # data/fleet/arrays.py and it selects a SEPARATE companion extract, so the
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 / caiso-186 discipline).
@@ -1404,6 +1412,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-200 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_mixed_gas_routing": "False",
+    # Added by miso-201 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_st_capacity_basis": "False",
     # Added by nyiso-176 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_per_unit_attribution": "False",
@@ -11900,6 +11911,63 @@ class ScenarioConfig:
     # only, so it carries no mixed-gas rows) — a documented boundary, measured,
     # not an oversight.
     unit_outage_mixed_gas_routing: bool = False
+
+    # Unit-outage derate NUMERATOR on the LP's own capacity basis, for STEAM
+    # bins (unit_outage_st_capacity_basis, off by default; miso-201). The fourth
+    # member of the same consistency-repair family as the three flags above, and
+    # the one that closes the side unit_outage_lp_capacity_basis structurally
+    # CANNOT reach: outages._CC_NAMEPLATE_BASIS_GROUPS is
+    # ("CC_REGULAR", "CC_CHP"), so that flag's nameplate raise never touches an
+    # ST_GAS/ST_CHP bin. A repair, not a market feature (rule 14 [R-ACCURATE]).
+    #
+    # THE DEFECT. The accumulator derates a bin by unit_capacity_mw / cap[bin].
+    # For a steam bin the numerator is the extract's per-unit EIA-860 NAMEPLATE
+    # (capacity_source == eia_exact) or a CEMS observed peak, while cap[bin] is
+    # the fleet's NET-SUMMER pmax sum (eia860 sets pmax = net_summer_capacity_mw).
+    # The removed FRACTION is inflated by nameplate / net_summer and the model
+    # removes MORE MW than went out — the Stony Brook arithmetic (NEISO 6081,
+    # caiso-184) on the side the CC-only flag excludes. Measured at Ninemile
+    # Point 1403 generator "5": nameplate 895.1 MW against net summer 742.6 MW,
+    # so unit 5 alone out removes 895.1/1465.4 = 0.611 of the bin against a
+    # correct 742.6/1465.4 = 0.507.
+    #
+    # WHY THE CC FLAG'S DIRECTION IS WRONG HERE. That flag RAISES the denominator
+    # to meet a numerator fleet_to_bins had already raised for the LP. For a
+    # steam bin nothing raises the denominator, so raising it would leave the LP
+    # applying the multiplier to a capacity the share was never taken against —
+    # at 1403 a nameplate denominator makes a full concurrent stop read 0.939,
+    # i.e. 89 MW of phantom availability at a plant that is entirely out. This
+    # flag therefore moves the NUMERATOR onto the LP's basis instead: each row's
+    # removed MW becomes the fleet unit's own pmax_mw, the exact capacity the
+    # availability multiplier is applied to, so a bin all of whose units are out
+    # lands on EXACTLY 1.0 — never 1.13, never 0.94.
+    #
+    # ALL-OR-NOTHING PER BIN (outages._st_basis_pairmap): a bin is aligned only
+    # when every extract unit in it resolves 1-1 onto a distinct fleet unit, by
+    # exact normalised id, an unambiguous trailing-digit hit, or a unique 1-1
+    # RESIDUAL pairing that is forced rather than chosen. Any unresolved unit
+    # leaves the whole bin on the production basis, because a half-aligned bin —
+    # some units on the LP basis, some on nameplate — is less coherent than
+    # either basis alone. Measured coverage at MISO: 32 of 55 steam bins,
+    # 8,553 of 12,291 MW (69.6 %); the refusals are an extract/fleet UNIT-SET
+    # mismatch and the whole-plant eia923_netzero synthetic rows, both separate
+    # open defects this flag deliberately does not touch.
+    #
+    # Shared by the std >= 5-day, short and partial layers AND by the lay-up
+    # loader, whose contract is that a lay-up share and an outage share for the
+    # same plant "sit on the same basis and are additive" — aligning one and not
+    # the other would break exactly that invariant (rule 19 [R-ONE-MECH]). The
+    # declared-event MAXGEN layer is OUT of scope by construction and this is
+    # not the same question: its rows carry a measured derate_mw, a partial MW
+    # reduction and not a unit capacity, so a pmax substitution there would swap
+    # a capacity for a derate. MEASURED (the fleet's own pmax), ZERO fitted
+    # scalars (rule 21 [R-DOF]), rule-13 forward-regenerable (both the fleet
+    # pmax and the extract's unit ids exist for a forecast year, and the
+    # alignment responds to changed conditions because the fleet does),
+    # eligibility year-independent, non-ERCOT only (the ERCOT branch caps on its
+    # own CAMPD bin sheet, a different basis with no per-unit fleet roster),
+    # and byte-inert while off.
+    unit_outage_st_capacity_basis: bool = False
 
     # CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two
     # CAMPD-derived NYISO solve inputs both attribute a MIXED plant's measured
