@@ -249,7 +249,37 @@ Baseline (committed artifacts, `2026-09-01-caiso-231-b1-ungrounded`):
   one. The owner's standing standard applies verbatim — *"If structural integrity
   improves but gates regress that may still be a keeper."*
 
-## §9 — OUTCOME
+## §9 — OUTCOME (recorded 2026-09-02, same session)
 
-**PENDING.** To be recorded in this same session, in this document, alongside
+**THE STOP CONDITION FIRED.** G-STABILITY passed and G-LOYO **FAILED**:
+
+* **G-STABILITY ok** — `routine_total` CV **0.058**, `scarcity_interval` CV
+  **0.120**, both inside the 0.20 bar. **This is the foreseen leg** (§0.3
+  pre-disclosed the hand calculation "CV ≈ 0.12"; the script returned 0.120), so
+  nothing rests on it.
+* **G-LOYO FAIL** — worst held-out error **34.2 %** against the 25 % bar, on
+  `scarcity_interval` with 2024 held out (folds: 7.0 % / **34.2 %** / 11.5 %).
+  **This was the load-bearing, genuinely unseen leg (§0.4), and it failed.**
+
+**No LP was built and no solver was called.** §7's arms were never run, so there
+is nothing to register. The bar was not moved, the gated object was not re-scoped
+to the passing component — and `routine_total` *did* pass both gates cleanly
+(CV 0.058, LOYO ≤ 11.5 %), so that refusal was a live one, made under §6 and
+recorded in the FINDING §C against interest.
+
+**The two-estimator budget is SPENT (§0.6). No third estimator was attempted.**
+The DOF ledger entry `spot_capacity` stays **OPEN** and is escalated to the owner
+as a standing item.
+
+**One correction to this document, against interest.** §0.5 anticipated the
+gate-shopping objection and answered it. Execution surfaced a **stronger** form of
+that objection, unknown when this was written: the caiso-233 and caiso-234
+estimators are **algebraically constrained to deliver the same total**
+(both reduce to `p99.9(TOTAL) − Σ firm` = 7,062 MW), so gating the total gated
+their common ground and left ungated exactly the split caiso-233 failed on. It is
+moot in outcome — the estimator failed anyway — but it is recorded at full
+strength in FINDING §E rather than left to the reader to notice.
+
+Full result, the failure decomposition, the §5 diagnostics published as promised,
+and the owner escalation:
 `FINDING-caiso234-import-total-envelope-2026-09-02.md`.

@@ -10948,3 +10948,81 @@ before running; do not select an estimator by which one passes.
 `scripts/probes/_caiso233_import_depth_decomp.py`, their two JSON artifacts, and
 an evidence append (no verdict move) on the CAISO shard's `import_hub_pricing`
 cell. The DOF ledger entry `spot_capacity` stays **OPEN**.
+
+## 2026-09-02 — CAISO — caiso-234: the pre-specified TOTAL-envelope successor **ALSO REFUSED** — G-LOYO 34.2 % vs a 25 % bar on the genuinely-unseen leg, while the stability leg passed and had been pre-disclosed as foreseen. The scarcity rung is a **9-hour-per-year order statistic**: not identifiable from three years in *either* construction (residue 491.7 % → interval 34.2 %, a 14× improvement that still misses). `routine_total` passes both gates cleanly and is REFUSED as a partial swap. Disclosed against interest: the two estimators are **algebraically constrained to the same total**. **TWO ESTIMATORS REFUSED, BUDGET SPENT, DOF ESCALATED TO THE OWNER.** NO SOLVE, keeper unchanged
+
+**Keeper `2026-09-01-caiso-231-b1-ungrounded` UNCHANGED** (NOT-YET, C3a the sole
+load-bearing FAIL +4.1/+12.5/+15.6 %; C3c the single ledgered caveat; C6 attested;
+C8 PASS). No CAISO `complete`/`final` marker, holdout freeze ACTIVE, every read
+inside 2023–2025. No LP, no solver, nothing registered, no verdict move, and **no
+`ScenarioConfig` field written** — `caiso_import_depth_measured` was
+pre-registered but is reached only on a gate PASS, so rule 28(c) does not apply.
+
+**The tightening on caiso-233: the PRECOMMIT was pushed to `origin` BEFORE the
+derivation ran**, not merely before the solve (`d18fa22d`). Necessary, because
+this was a **second estimator on data a first had already been run against**.
+
+**Executed caiso-233 §F verbatim.** Gated object = the TOTAL corridor net-import
+envelope: `routine_total` = p98(TOTAL) and `scarcity_interval` = p99.9 − p98, with
+**no firm carve-out inside the gated statistic** (§F1) and **scarcity as an
+interval, never a residue** (§F2). Rungs placed by a zero-DOF convention (pro-rata
+corridor weights on p98 share, firm rungs held fixed, equal-MW within-corridor
+split). Bars unchanged and un-settable: `CV_MAX` 0.20 / `LOYO_MAX` 0.25, imported
+from `derive_caiso_import_tranches.py`.
+
+**Result.** G-STABILITY **ok** — `routine_total` CV 0.058, `scarcity_interval`
+CV 0.120. **But that leg was pre-disclosed as FORESEEN** (PRECOMMIT §0.3: caiso-233
+had already published the per-year total percentiles, and the hand calculation
+"CV ≈ 0.12" was written down before execution), so nothing rests on it.
+**G-LOYO FAIL at 34.2 %** against 25 % — folds 7.0 % / **34.2 %** / 11.5 %, the miss
+on `scarcity_interval` with 2024 held out. **That was the load-bearing, genuinely
+unseen leg.** Stop condition fired.
+
+**Diagnosed, not softened.** p99.9 of an 8,759-hour year is fixed by its **9
+highest hours**; 2024 has a p98 within 0.9 % of 2023 and a *higher* annual max yet
+a p99.9 **518 MW lower** — the extreme tail's *shape* moves, not its level. With
+n = 3, one atypical year is a third of the sample. The prescribed fix **worked**
+(CV 0.550 → 0.120; worst LOYO 491.7 % → 34.2 %) and **was not enough**.
+
+**Refused against interest, and harder than caiso-233's refusal.**
+`routine_total` clears both gates decisively (CV 0.058, LOYO 7.0/8.8/11.5 %) and —
+unlike caiso-233's `DSW_CCGT`/`DSW_CT` pair, whose CV 0.026 was an arithmetic
+cancellation — its stability is **genuine**. No partial swap was admitted anyway:
+the gated object was pre-registered as **both** components, and admitting the half
+that passed after seeing which half passed is the forking path the PRECOMMIT
+exists to close. The measurement is preserved as evidence for the owner.
+
+**The sharpest objection is arithmetic, and self-disclosed (FINDING §E).** The two
+estimators are **algebraically constrained to the same delivered total** — both
+reduce to `p99.9(TOTAL) − Σ firm` = 7,062 MW — so their 7,060 MW agreement is an
+**identity, never independent corroboration**, and gating the total gated their
+common ground while leaving ungated exactly the split caiso-233 failed on. Moot in
+outcome: the estimator failed anyway, so nothing rests on the move.
+
+**§5 diagnostics published as pre-committed, at full magnitude.** Under
+caiso-233's own per-rung bar this ladder **also** fails, and `PNW_midC` is **worse**
+than the port (CV 0.304 vs 0.253; worst LOYO 83.9 % vs 45.5 %). The zero-DOF
+placement **relocated** the firm-carve-out problem rather than fixing it — grounded
+firm rungs must sit inside the total however the gate is drawn. Delivered pooled
+ladder (**not armed**): `PNW_midC` 1,065 / `DSW_CCGT` 2,100 / `DSW_CT` 2,100 /
+`WECC_scarcity` 1,795 = **7,060** vs 8,800 incumbent.
+
+**New method fact for any pooled percentile ladder in this repo:** a pooled tail
+**interval** is biased upward above *every* constituent year (+15.7 % here); a
+pooled p98 **level** is nearly immune (+1.4 %).
+
+**Escalation.** DO-NOT-REDO now covers **both** estimators (rule 28(a)). The
+failure is one of **sample length**, not construction, so the only candidate route
+is re-running the *same* estimator on the 2019–2025 measured span — ~61 tail hours
+instead of 9, six LOYO folds instead of three — which the owner's 2026-08-06
+clarification treats as **data prep, not a spend** (no year solved, scored or
+registered). **Put to the owner, not taken:** it needs its own pre-registration and
+an owner call on whether a wider-sample re-run is the forbidden third estimator.
+The incumbent 8,800 MW literals stand, still labelled `RESIDUAL (static, no cited
+primary source)`; DOF ledger `spot_capacity` stays **OPEN**.
+
+**Deliverables:** `PRECOMMIT-caiso234-import-total-envelope-2026-09-02.md`,
+`FINDING-caiso234-import-total-envelope-2026-09-02.md`,
+`scripts/data/derive_caiso_import_total_envelope.py`,
+`results/calibration/_caiso234_import_total_envelope.json`, and an evidence append
+(no verdict move) on the CAISO shard's `import_hub_pricing` cell.
