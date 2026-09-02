@@ -426,3 +426,57 @@ identical**, 8 of them exercising the split-facility remap and 8 the
 stack-duplicate drop. Plus the three arm-vs-arm equalities above, which cover
 the leap fast path in both directions. `tests/curation/test_campd.py`: 43 passed,
 10 subtests.
+
+### 5.3 Byte gate — NEISO, full 8760 × 2023–2025
+
+Arms captured with `scripts/capture_keeper_goldens.py` at this branch's HEAD, keeper
+**`2026-08-17-neiso-99-joint-p1`**, determinism pin (`MARKET_SIM_HIGHS_THREADS=1`,
+`WARMSTART=1`, `WARMSTART_XYEAR=0`). The two arms differ **only** in
+`src/market_sim/data/campd.py` (before = `27b3a92c~1`, after = `27b3a92c`); every
+other file is identical. Both arms replayed the keeper cleanly — *259 recorded flags
+replayed identically (13 HEAD-only meta keys); scenario_config 717 matched, 0 drifted*
+— so the pair is a real recipe reproduction, not a degraded one.
+
+```
+scripts/regression_gate.py --before results/regression-goldens/perfb-campd-before \
+                           --after  results/regression-goldens/perfb-campd-after \
+                           --mode byte
+```
+
+| Gate check | Result |
+|---|---|
+| **[1] Golden bundle diff** | **PASS — NEISO: 9 files, 32 numeric columns within tolerance (atol=0.0, rtol=0.0)** |
+| [2] Reshuffle localization | 2023/2024/2025 all `Σ|hourly Δ| = 0.0 GWh = 0.000 % of total gen`; annual gen Δ +0.0000 GWh every year |
+| [3] Trivial-case smoke | PASS (24 passed) |
+| [4] Quarantine + registry | `audit_keepers` PASS; **`legitimacy(--keepers)` FAIL — see below, pre-existing** |
+
+Content-hash pre-screen (manifest, independent of the gate): **10 of 10 artifacts
+MATCH** — `btm`, `flows`, `storage`, `system`, and `dispatch/<year>_P1` +
+`_P1_fleet` for each of 2023/2024/2025.
+
+**The `--mode byte` identity requirement is MET.** The overall `RESULT: FAIL` the
+script prints comes entirely from check [4], and that check fails for a reason with
+no connection to this change:
+
+```
+ValueError: nyiso_li_lcr_tsl=True but no published Long Island transfer_security_limit
+for delivery year 2023/2024 in the capacity-deliverability table
+(data/raw/capacity-deliverability/nyiso/nyiso.csv); available areas: []
+```
+
+⚠️ **Attributed by control, not by assertion.** `legitimacy_diagnostics.py --keepers`
+was run twice at this HEAD, once with `campd.py` at `27b3a92c` and once reverted to
+`27b3a92c~1`, changing nothing else: **byte-identical failure, same exception, same
+line (`model/interchange/nyiso.py:279`), exit 1 both times.** It is a NYISO
+capacity-deliverability *data* gap on main, not a regression from this branch, and
+this branch touches no NYISO or capacity-deliverability path.
+
+**A finding for the director, not for this lane to fix (rule 25 `[R-ISO-SCOPE]` — it
+is NYISO's):** because check [4] is part of `regression_gate.py`, **the program's own
+byte gate currently returns `RESULT: FAIL` for *every* change on main**, whatever the
+change does. Any WS3/DEBUG-B lane running the gate will see a red verdict it did not
+cause, and the failure text points at NYISO rather than at the gate being broken —
+an easy trap to misread as "my change broke something". Until the NYISO TSL row lands,
+gate verdicts must be read **per check**, and check [1] is the one `--mode byte`
+speaks to. This is adjacent to, but distinct from, the three red `ci.yml` jobs R-P's
+blocker 1 records.
