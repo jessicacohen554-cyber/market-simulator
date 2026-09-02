@@ -16,7 +16,7 @@ solve holds ~8 GB, so rule 12's ~2-concurrent cap is a memory ceiling here):
 |---|---|---|---|
 | control | `miso-2021-2025-realized-t1h-d42-control` | `b0f54861d57685c5` | shipped posture at HEAD, replayed |
 | **dates (verified)** | `miso-2021-2025-realized-t1h-d42-dates` | `85000b5179ddff0f` | gate on; verified posture; fuel-scoped derate |
-| dates (ex-ante) | `miso-2021-2025-realized-t1h-d42-dates-exante` | see §5 | gate on; `--no-verified-announced-exits`; fuel-scoped derate |
+| dates (ex-ante) | `miso-2021-2025-realized-t1h-d42-dates-exante` | `bb75c36c7619a358` | gate on; `--no-verified-announced-exits`; fuel-scoped derate |
 | dates (plant-wide, superseded) | `miso-2021-2025-realized-t1h-d42-dates-plantwide` | `85000b5179ddff0f` | gate on; verified; the first solve, on step 0's plant-wide derate — registered as the measurement of §4.3 |
 
 Both verified solves share one config hash because the derate scope is
@@ -53,7 +53,7 @@ six deferred/sold coal plants, ≈6.5 GW — is countered in every case by a
 published per-unit record (a later EIA-860 Schedule-3 filing, or DOE
 §202(c) for Campbell), never by a filter, and every EIA-860 re-filing was on
 file in the 2021 vintage, i.e. knowable before the vintage date's effective
-year; the ex-ante leg (§5) carries all of it at full magnitude. The price of
+year; the ex-ante leg (§5) carries all of it at full magnitude — 6.07 GW at 15 plants — and thereby lands a −3.9 % total that PASSES the band only because the false positives cancel the undated cohort inside the coal total (plant-grain precision 63.6 % vs 98.5 %): a band PASS that is a cancellation, not skill. The price of
 the exits is the adequacy response the shipped model has no other channel
 for: reserve margin −1.0 % / −1.5 % in 2023/2024 (I7 FAIL, I12 WARN) before
 the backstop fires 2,415 MW of gas_ct in 2025 and flips `add.by_tech.gas_ct`
@@ -286,9 +286,43 @@ operable file) — a true positive lost to the verification, and one of the
 three ≥300 MW misses. The verification is a uniform rule and takes this
 loss with the eleven gains.
 
-## 5. The ex-ante leg (pure 2020-vintage dates, no verification)
+## 5. The ex-ante leg (pure 2020-vintage dates, no verification) — the band PASS that is a cancellation
 
-TBD — solving; filled below when registered.
+| row | verified arm | **ex-ante arm** | actual |
+|---|---:|---:|---:|
+| `retire.total_gw` | 9.799 (−43.6 %) FAIL | **16.695 (−3.9 %) PASS** | 17.369 |
+| coal / gas_st / oil / gas_ct / gas_cc | 7.877 / 0.849 / 0.154 / 0.132 / 0.002 | **13.438 / 1.849 / 0.276 / 0.346 / 0.002** | 12.434 / 2.127 / 0.543 / 0.399 / 0.858 |
+| `retire.unit_recall_gt300` | 16/19 PASS | **18/19 (0.947) PASS**; plant grain 15/19 | |
+| `false_retire` (per-fuel excess) | 0.0 PASS | **1.004 GW (6.0 % of model) PASS** — coal 13.44 vs 12.43 | band ≤ 15 % |
+| plant-grain precision of released MW (probe) | 98.5 % | **63.6 %** (coal 62.6 %, gas_st 70.0 %, oil 55.5 %, gas_ct 0 %) | |
+| false-positive plants (probe) | 2 / 148 MW | **15 / 6,070 MW** — Coal Creek 1,146, Columbia 1,112, Merom 991, Campbell 811, R D Green 454, Edgewater 414, Lake Catherine 261, Sabine 239, Blue Lake 227, French Island 122, Culley 104, Geismar 73, Moselle 54, Sterlington 46 | |
+| economic `decided` / `executed` | 0 / 0 | 0 / 0 | |
+| LOYO recall folds | 8/16 F, 14/15 P, 15/18 P | 15/16 P, 14/15 P, 16/18 P → 3/3 | |
+| BLK-10 backstop fired | 2,415 MW (2025) | **8,301 MW** (1,472 in 2023, 1,180 in 2024, 5,650 in 2025) | |
+| `add.by_tech.gas_ct` | 4.415 FAIL | **10.301 FAIL** | 1.355 |
+| reserve margin 2023 / 2024 / 2025 | −0.010 / −0.015 / 0.052 | **−0.018 / −0.031 / 0.046** (I7 FAIL, I12 WARN) | |
+
+**Read this leg the way rule 1 requires, not the way the bands invite.** The
+ex-ante arm PASSES `retire.total_gw` and reads 18/19 on recall, and it does
+so by carrying the entire §4.4 deferral class as exits — 6.07 GW of model
+MW at plants that did not exit — which the per-fuel-EXCESS grain of
+`false_retire` cannot see because the same 6 GW is offset, inside the coal
+total, by the undated cohort the channel cannot reach (Rush Island, Big
+Cajun 2, South Oak Creek …). Two errors of opposite sign cancel to a −3.9 %
+total; the plant-grain precision (63.6 %) is the honest number, and it is
+the D32 lesson in the other direction: a total that lands is not a
+selection that is right. The extra recall (18 vs 16) comes from Waterford 2
+and Schahfer 17/18 firing on their vintage dates — one real 2024 exit the
+verification deferred (§4.4, reported against interest) and two that really
+did defer to 2026. The adequacy response scales with the false exits: the
+backstop fires 8.3 GW of gas_ct against 1.4 GW of real CT builds.
+
+**Pre-declared P3/P4 for this leg, graded:** P3 declared over-retirement in
+[+10 %, +30 %] — measured −3.9 %, **MISS** (the undated cohort's under-reach
+offsets the false positives almost exactly; the declaration counted the
+false positives and not the offset); P4 declared `false_retire` FAIL on a
+~6 GW coal excess — measured 1.0 GW PASS, **MISS** for the same reason,
+with the 6.07 GW reported at plant grain at full magnitude instead.
 
 ## 6. Grading the pre-declaration (full magnitude)
 
@@ -303,7 +337,8 @@ TBD — solving; filled below when registered.
 | P6 | T-R10 a/b PASS | PASS / PASS (vacuous) | HIT |
 | P7 | LOYO recall holds ≥ 2/3; control 0/3 | 2/3; 0/3 | HIT |
 | P8 | additions: direction unknown, declared not predicted | the adequacy backstop fires 2,415 MW gas_ct (2025); `add.by_tech.gas_ct` PASS → FAIL; wind/solar/gas_cc/storage unchanged | declared, reported |
-| P9 | HOLD on FC-3 every leg; no `miso-t1h` edit; suffixed keys only | HOLD ×3 (ex-ante pending); board edits insert-only | HIT |
+| P9 | HOLD on FC-3 every leg; no `miso-t1h` edit; suffixed keys only | HOLD ×4; board edits insert-only | HIT |
+| P3 / P4 (ex-ante leg) | over-retirement [+10 %, +30 %]; `false_retire` FAIL | −3.9 % PASS; 1.0 GW PASS (6.07 GW of plant-grain false positives offset by the undated cohort) | **MISS / MISS** — see §5 |
 
 Not pre-declared, found: the §4.3 derate artifact (repaired in-lane) and
 the I4 checker gap (repaired). Both are reported with their measurements.
@@ -318,7 +353,9 @@ is a POSTURE, not a fit:
    (the same form's proposed-generator schedule is a forecast input today).
    The shipped default's rationale — "an announcement is not a certainty" —
    is a statement about precision, and the measured precision at plant
-   grain is 98.5 % under verification and (§5) under the pure vintage.
+   grain is 98.5 % under verification and 63.6 % under the pure vintage —
+   the difference being exactly the re-filings a rolling vintage would
+   consume in time (§4.4).
 2. **The channel identifies the cohort the screen cannot.** Recall 16/19,
    the non-coal classes open, the floor's composition monopoly dissolved by
    construction — with zero free parameters and zero economic exits, so
