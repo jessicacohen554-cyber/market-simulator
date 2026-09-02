@@ -1,0 +1,299 @@
+{
+ "prereg": "PREREG-miso198-stgas-oom-level-2026-09-01.md \u00a72-\u00a74",
+ "keeper": "2026-08-30-miso-191-bexit",
+ "field": "st_gas_mustrun_oom_level",
+ "control": "miso198_control_A",
+ "arm": "miso198_oom_B",
+ "scorer_written_before_any_arm_result": true,
+ "S0": {
+  "gate": "S-0",
+  "files": [
+   {
+    "file": "class_hourly_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "class_hourly_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "reserve_family_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "storage_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2023.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2024.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   },
+   {
+    "file": "system_2025.parquet",
+    "max_abs_diff": 0.0,
+    "nonnumeric_equal": true,
+    "passed": true
+   }
+  ],
+  "passed": true,
+  "worst": 0.0,
+  "note": "DRIFT IS DISCLOSED, NEVER A KILL: HEAD has moved since the keeper was solved, so a drifting control is information about other lanes, not about this arm. It voids the A/B only if it reaches the classes under test, which the class-drift line below reports."
+ },
+ "S1": {
+  "gate": "S-1",
+  "diffs": {
+   "st_gas_mustrun_oom_level": [
+    false,
+    true
+   ]
+  },
+  "passed": true
+ },
+ "S2": {
+  "gate": "S-2",
+  "rows": {
+   "2023": {
+    "control_forced_twh": 4.7806,
+    "arm_forced_twh": 4.3008,
+    "observed_drop_twh": 0.4798,
+    "predicted_drop_twh": 0.5914,
+    "fell": true,
+    "in_band": true
+   },
+   "2024": {
+    "control_forced_twh": 5.1507,
+    "arm_forced_twh": 4.5615,
+    "observed_drop_twh": 0.5892,
+    "predicted_drop_twh": 0.6366,
+    "fell": true,
+    "in_band": true
+   },
+   "2025": {
+    "control_forced_twh": 6.6009,
+    "arm_forced_twh": 6.0131,
+    "observed_drop_twh": 0.5878,
+    "predicted_drop_twh": 0.6455,
+    "fell": true,
+    "in_band": true
+   }
+  },
+  "passed": true
+ },
+ "K1": {
+  "c1_pass_to_fail": {},
+  "named_ex_ante": {
+   "fuelmix|CC_REGULAR|2024": "PASS -> PASS",
+   "fuelmix|CC_REGULAR|2023": "PASS -> PASS"
+  },
+  "passed": true
+ },
+ "K2": {
+  "c3b_control": {
+   "2023": 0.081,
+   "2024": 0.108,
+   "2025": 0.182
+  },
+  "c3b_arm": {
+   "2023": 0.081,
+   "2024": 0.108,
+   "2025": 0.181
+  },
+  "over_gate": {},
+  "passed": true
+ },
+ "K3": {
+  "d4_control": [],
+  "d4_arm": [],
+  "new_d4_fails": [],
+  "passed": true
+ },
+ "K4": {
+  "d1_st_gas_control": {
+   "2023": {
+    "profile_r": 0.942,
+    "cv_ratio": 1.755,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.957,
+    "cv_ratio": 1.227,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.453,
+    "verdict": "pass"
+   }
+  },
+  "d1_st_gas_arm": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.794,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.957,
+    "cv_ratio": 1.252,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.978,
+    "cv_ratio": 1.49,
+    "verdict": "pass"
+   }
+  },
+  "violations": {},
+  "passed": true
+ },
+ "K5": {
+  "other_pass_to_fail": {},
+  "all_flips": {},
+  "passed": true
+ },
+ "K6": {
+  "n_residual_control": null,
+  "n_residual_arm": null,
+  "keeper_max": 2,
+  "note": "a re-conditioned measured statistic introduces ZERO free parameters, so n_residual must not move",
+  "passed": true
+ },
+ "scoring": {
+  "c1_moves_classes_under_test": {
+   "ST_GAS|2023": {
+    "control_twh": -3.729,
+    "arm_twh": -3.874,
+    "delta_twh": -0.145
+   },
+   "ST_GAS|2024": {
+    "control_twh": -7.553,
+    "arm_twh": -7.698,
+    "delta_twh": -0.145
+   },
+   "ST_GAS|2025": {
+    "control_twh": -6.548,
+    "arm_twh": -6.77,
+    "delta_twh": -0.222
+   },
+   "CC_REGULAR|2023": {
+    "control_twh": -3.674,
+    "arm_twh": -3.587,
+    "delta_twh": 0.087
+   },
+   "CC_REGULAR|2024": {
+    "control_twh": 6.664,
+    "arm_twh": 6.748,
+    "delta_twh": 0.084
+   },
+   "CC_REGULAR|2025": {
+    "control_twh": -2.457,
+    "arm_twh": -2.322,
+    "delta_twh": 0.135
+   }
+  },
+  "frozen_direction": "ST_GAS DOWN / CC_REGULAR UP (PREREG \u00a72, conf 0.85) \u2014 REVERSES FINDING-miso197 \u00a78(1)",
+  "direction_observed_2024": {
+   "ST_GAS": "DOWN",
+   "CC_REGULAR": "UP"
+  },
+  "c3a_control_pct": {
+   "2023": 0.0913,
+   "2024": -4.5511,
+   "2025": -12.3405
+  },
+  "c3a_arm_pct": {
+   "2023": 0.1522,
+   "2024": -4.4892,
+   "2025": -12.2745
+  },
+  "c3a_face_pp": {
+   "2023": 0.0609,
+   "2024": -0.0619,
+   "2025": -0.066
+  },
+  "c3a_frozen_direction": "UP (PREREG \u00a72) \u2014 reported, NEVER the criterion",
+  "d2_st_gas_control": {
+   "2023": {
+    "forced_twh": 4.7806,
+    "share_of_class": 0.2196,
+    "class_total_twh": 21.7656
+   },
+   "2024": {
+    "forced_twh": 5.1507,
+    "share_of_class": 0.2342,
+    "class_total_twh": 21.9921
+   },
+   "2025": {
+    "forced_twh": 6.6009,
+    "share_of_class": 0.3423,
+    "class_total_twh": 19.2823
+   }
+  },
+  "d2_st_gas_arm": {
+   "2023": {
+    "forced_twh": 4.3008,
+    "share_of_class": 0.2001,
+    "class_total_twh": 21.4981
+   },
+   "2024": {
+    "forced_twh": 4.5615,
+    "share_of_class": 0.21,
+    "class_total_twh": 21.7193
+   },
+   "2025": {
+    "forced_twh": 6.0131,
+    "share_of_class": 0.3186,
+    "class_total_twh": 18.873
+   }
+  },
+  "determination_control": "NOT-YET",
+  "determination_arm": "NOT-YET",
+  "records_identical": true
+ },
+ "verdict": "INERT \u2014 every scored record identical; cell I, keeper unchanged."
+}

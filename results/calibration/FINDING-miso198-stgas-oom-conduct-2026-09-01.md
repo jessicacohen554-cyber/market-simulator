@@ -1,7 +1,8 @@
-# FINDING miso-198 — the out-of-merit steam conduct is REAL, LEVEL-shaped in its accounting and NOT level-repairable: the floor's window basis is the binding defect (2026-09-01)
+# FINDING miso-198 — the out-of-merit steam conduct is REAL, LEVEL-shaped in its accounting and NOT level-repairable: the floor's window basis is the binding defect; the admissible re-conditioning is PROMOTED (2026-09-01)
 
-**Session:** miso-198 (2026-09-01). **Keeper:** `2026-08-30-miso-191-bexit`
-(bundle `results/calibration/miso191_bax_B`). **Charter:** the FINDING-miso197 §8
+**Session:** miso-198 (2026-09-01). **Keeper at open:** `2026-08-30-miso-191-bexit`.
+**KEEPER AT CLOSE: `2026-09-01-miso-198-oomlevel`** (bundle
+`results/calibration/miso198_oom_B`) — promoted, `audit_keepers --iso MISO` PASS 0/0. **Charter:** the FINDING-miso197 §8
 named successor — re-identify the existing `st_gas_mustrun_*` / steam-host
 conduct family to its MEASURED out-of-merit level (rule 19 `[R-ONE-MECH]`;
 rule 13 `[R-MEASURED]` multi-year CAMPD derivation).
@@ -165,6 +166,48 @@ incumbent at every floored plant (Sabine 286.1 → 256.1 MW, Nine Mile Point
 assertion drop. The C3a face is pre-registered **UP** — the one direction that
 would help the keeper's sole failing criterion — precisely so that a favourable
 movement can never be presented as the reason the arm was kept (rule 1).
+
+## 5b. The A/B: every gate silent, promoted on structure
+
+Control `2026-09-01-miso-198-control`, arm `2026-09-01-miso-198-oomlevel`, both
+2023+2024+2025 in one invocation at one HEAD, legs sequential. Scored by
+`_miso198_ab_gates.py`, **committed blind while the control was still solving.**
+
+| gate | result |
+|---|---|
+| S-0 control integrity | **PASS — BIT-IDENTICAL**, 12/12 sidecars, `max_abs_diff` 0.0, through 39 commits of main (incl. `scenarios.py`, `policy/carbon.py`) |
+| S-1 single delta | PASS — exactly one of 763 fields |
+| S-2 floor liveness | PASS — forced energy −0.4798 / −0.5892 / −0.5878 TWh vs pre-registered −0.5914 / −0.6366 / −0.6455 (81 / 93 / 91 % realised) |
+| K-1 C1 band | **silent** — the ex-ante-named CC_REGULAR-2024 and -2023 both PASS→PASS (2024 lands +6.748, using 0.084 of 1.336 TWh headroom) |
+| K-2 C3b | silent — 0.081/0.108/0.182 → 0.081/0.108/0.181 |
+| K-3 D-4 conduct | silent — 0 failures, 0 new |
+| K-4 D-1 shape | silent — `profile_r` 0.942/0.957/0.977 → 0.941/0.957/0.978 |
+| K-5 record flips | silent — **zero** PASS→non-PASS anywhere |
+| K-6 DOF | UNSCORED (replay bundles carry no attestation) |
+
+**The pre-registered direction held, and it was the reversed one.** ST_GAS DOWN
+(−0.145 / −0.145 / −0.222 TWh), CC_REGULAR UP (+0.087 / +0.084 / +0.135) — the
+opposite of FINDING-miso197 §8(1)'s conf-0.85 call, declared in writing before
+the solve.
+
+**What it buys is structural integrity, not fit.** C8 ST_GAS forced share
+0.2196 → 0.2001, 0.2342 → 0.2100, 0.3423 → 0.3186, taking 2025 2.4 pp off its
+grounded over-budget note. **No criterion status moves**; the determination is
+unchanged at NOT-YET on {C3a-2025}. C3a face, reported and never the criterion:
+2023 +0.0913 → +0.1522 (**adverse**), 2024 −4.5511 → −4.4892, 2025 −12.3405 →
+−12.2745.
+
+**REPORTED AGAINST INTEREST — the scorer's own verdict line is wrong.** It reads
+`INERT — every scored record identical`, because it computes record-identity
+from criterion **statuses** and orders that branch ahead of the kills-silent
+branch. The arm is demonstrably **not** inert: S-2 passes and C1, C3a, C3b and
+C8 all move. The defect is in the verdict **ordering**, it was found only after
+the numbers were read, and it is recorded here rather than repaired in the
+frozen file — the scorer's mechanical output stands unaltered in
+`_miso198_ab_gates.json`. Promotion rests on rule 1 `[R-STRUCT]` plus the
+owner's standing instruction that structural integrity may carry a keeper
+through gate regression; here nothing regresses.
+
 
 ## 6. Out of reach of this instrument (named so it is not silently dropped)
 
