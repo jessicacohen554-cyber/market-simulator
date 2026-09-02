@@ -5612,3 +5612,136 @@ your branch when done.
   why. **G2 is NOT declarable at this pin:** leg 1 IN MOTION, **leg 2 BLOCKED**,
   leg 3 satisfied-as-scoped, leg 4 unlocked pending the owner's Settings flip.
   (K-11, K-12, K-13.)
+
+- 2026-09-02 — **v22 records lane** (`claude/audit-records-v22-qrmalx`). ⚠️ **The
+  director pinned `a5abe3fe` (#4603); `origin/main` was already `dfc44d95` (#4608)
+  at first poll and stable across three.** All figures re-derived at `dfc44d95`;
+  the v21→v22 window is 13 merges (#4585…#4608). Board updated in the same pass
+  (headline block, `What moved — v22` L-1…L-15, Gates + Stage-0 supersession
+  pointers, Owner queue W-1…W-6, Refresh protocol). **No solve, score or
+  registration; no keeper shard, `calibration-complete.json`, `holdout-freeze.json`,
+  matrix verdict or `program-status.json` edit; no workflow created or edited.**
+
+  **(a) 🔴 G2 LEG 2 REFUSED A THIRD TIME, ON A RUN THE DISPATCH DID NOT CITE.**
+  The lane was sent to re-check run 2298; **run 2307** (`33590273632`,
+  `claude/ci-red-repair-hn56lh`, head `937c48ee`, 2026-09-02T04:28:51Z) is
+  **52 minutes newer**. Job-by-job: **7 green / 3 red**, with **`Fast test tier`
+  still failing on content** (9 min 24 s). Leg 2's criterion — *one completed
+  fast-tier-green `ci.yml` run* — is unmet on **three successively newer runs
+  (2278 → 2298 → 2307)** and has never been contradicted. (L-1.)
+
+  **(b) 🟢 R-U IS FULLY DISCHARGED — BETTER THAN v21 COULD REPORT.** Run 2307 is
+  the **first run in which all three R-U charter jobs are simultaneously green**
+  (`Ruff lint + format`, `Pinned default cache key`, `Structural refactor
+  guards`). Lane merged as **#4564 / #4573 / #4578**; branch **deleted**. Credit
+  stands at full weight and the charter is now **complete**, not merely advanced.
+  (L-2.)
+
+  **(c) 🔴 RULING R-W RECORDED FOR THE FIRST TIME — AND IT HAS NOT LAUNCHED.**
+  The fast-tier repair lane, dispatched 2026-09-02 by card, is **leg 2's only
+  route**. At the pin: **zero `R-W` mentions anywhere on the board before this
+  cycle**, **no branch**, **zero open PRs repo-wide**, no in-window merge touching
+  the fast tier. **Non-launch #5** on G-14's tally. ⚠️ **Compounded by (b):** with
+  R-U discharged, **no lane is even adjacent to the job leg 2 requires** — a gate
+  leg's sole route is correctly diagnosed and entirely unstaffed. (L-3, queue W-1.)
+
+  **(d) 🔴 THE PARITY DEFECT DOUBLED INSIDE THIS WINDOW.**
+  `check_registry_payload_parity.py` **exit 1** naming **two** dead bundles, not
+  the director's one: `miso200_control_A` **and** `miso200_unitroute_B`, the
+  latter landed in-window via **#4607** (`e8a5a485`), **both tracked on `main` at
+  14 files each**. Same lane, same Class-E, **one more per push**. Still **not
+  this program's to fix** (calibration desk: register, prune or allowlist) — but
+  the escalation now carries the cost: the `pull_request` parity job is red on
+  **every** PR the repo opens. (L-4, queue W-3.)
+
+  **(e) 🟢 STAGE-0 IS 7 OF 7 CURRENT — CONFIRMED, WITH THE FINDING'S OWN COUNT
+  CORRECTED.** `check_golden_manifest.py` exit 0: **42 manifests / 75 entries /
+  11 enforced, 0 stale and 0 pruned among the enforced**; all seven rows
+  cross-checked against `keepers/<ISO>.json`. **Capture-A (#4601) verifies against
+  its dispatch with no gap** — MISO ← `2026-09-01-miso-198-oomlevel`, manifest
+  MISO entry only, finding doc present, **oracle PASS (271 flags identical, 0
+  drift) read from the finding**. ⚠️ The finding's headline says *"6 current / 0
+  stale"* while enumerating **seven** entries — it omits `ERCOT__carveout-2023`;
+  **the gate's 7 is authoritative, its conclusion unaffected.** **Restated: 7/7
+  is manifest currency, NOT byte-green certification.** (L-5.)
+
+  **(f) 🔴 THE GOLDEN TIER IS RED, NOT MERELY UNEXERCISED.** Director's read
+  confirmed exactly — **last `workflow_dispatch` is run #4, 2026-08-15**. But runs
+  **#5 (08-17), #6 (08-24), #7 (08-31)** are `schedule` events and **all three
+  failed**, and **#7 post-dates R-V's un-park**. G2 leg 1 is therefore not waiting
+  on permission: **byte-green has no working instrument.** (L-6.)
+
+  **(g) 🟢 PERF-B SESSION 1 CLOSE CONFIRMED — AND ITS CHARTER QUESTION
+  RE-DERIVES DIFFERENT.** Five PRs (**#4571 / #4577 / #4579 / #4587 / #4595**),
+  branch deleted, all four `perfb-campd*` rows CURRENT (both `_normalize_campd`
+  grains gated). ⚠️ **The dispatch asked which of four charter items remain
+  unadjudicated; `perf-recheck-2026-08.md` §5.1 answers "all four are CLOSED" —
+  ZERO remain.** Two re-verified against source, not the doc: the basis LUT
+  (`_BASIS_STATUS_OBJS` at `model/lp/model.py:43`, indexed `:1501-1502`) and the
+  `ci.yml` checkout (21 sparse blocks / 10 jobs; `fast-tests` `timeout-minutes:
+  20`). The warm-start item's substance holds but its **line citation has drifted
+  (`scenarios.py:13606` → `:13825`)** — the only repair owed. (L-7.)
+
+  **(h) 🟠 THE PERF-B HAND-BACK IS QUEUED AS A WS3-NEXT-CHARTER ITEM, NOT A
+  LANE.** `markup` = **471–601 s/yr** on the ERCOT arms vs `results_write`
+  **8.3–11.4 s** — **~50×** the phase PERF-B optimized — and **UNATTRIBUTED**.
+  No prompt issued and none should be until WS3's next charter is written.
+  (L-8, queue W-4.)
+
+  **(i) 🔴 Q-2 IS WIDER, NOT RETIRED — THE `ff-verdicts.json` DEFECT
+  REGENERATED.** File grew **46 refs / 12 distinct → 53 / 17**. Six shas are not
+  on `main`, in **three sub-classes with three distinct repairs**: **3 genuinely
+  absent** (remote-confirmed; all NEISO T3 — and **`neiso-t3` carries a NEW dead
+  sha `a67364c1aa2d` after D-2 named its predecessor**, so re-scoring from
+  unmerged branches is *minting* the defect it repairs); **1 live unmerged
+  branch** (`80327d08fc2a`, capx D33, today) which is what **blinds the staleness
+  Δ — `(unknown)` where v20 read 0 of 10**; and **2 pre-rewrite orphans carrying
+  19 refs**, dead by construction of the 2026-08-16 history rewrite. (L-10,
+  queue W-5.)
+
+  **(j) 🟢 SEVEN GATES: SIX EXIT 0, ONE EXIT 1** (each unpiped, `$?` read
+  immediately). `audit_keepers` **0** · `check_registry_payload_parity` **1** (d)
+  · `check_mechanism_matrix` **0** · `check_forecast_staleness` **0** ·
+  `check_bench_freshness` **0** · `check_gate_a_provenance` **0** ·
+  `check_golden_manifest` **0**. ⬅ **CORRECTION TO THE PRIOR ENTRY'S ITEM (i):
+  the 243-WARN anchor tax has been PAID.** `check_mechanism_matrix.py` reports
+  **0 WARNs** at `dfc44d95` (four lines of output, anchors **195 field + 49 row +
+  160 path**) — the base matrix file was re-anchored in-window (252 lines,
+  130+/122−). The sixth instance is resolved; **the standing director question of
+  whether an anchor should be a line number at all is untouched.** Also moved:
+  `check_bench_freshness` now reports **17 engine commits** of drift (v20: 6) with
+  **0 STALE** and no bench part regenerated. (L-11.)
+
+  **(k) 🟢 FOUR-INSTRUMENT ALIGNMENT HOLDS AT {ERCOT, NEISO, PJM}** on all four,
+  fail-closed; **`final` EMPTY — no ISO has ever spent a locked-test year**.
+  **Keeper motion: NONE** in either window; the R-V freeze is not breached and
+  {MISO, CAISO, NYISO} simply did not promote. ⚠️ **Method note:** a first pass
+  read `frontier` from `calibration-complete.json`, returned ∅ and printed
+  MISALIGNED — the block lives in `keepers/<ISO>.json`, as G-9 states. **An empty
+  set from an instrument that structurally cannot be empty is a parser bug until
+  proven otherwise**; caught before publication. (L-12, L-13.)
+
+  **(l) 🔴 THE SHALLOW-CLONE TRAP, FOURTH CONTAINER — AND G-13's RULE IS
+  INSUFFICIENT AS WRITTEN.** This container was shallow; the prescribed
+  `--filter=tree:0 --unshallow` worked (3.4 s). **But it makes the clone PARTIAL,
+  and a bare reachability probe then LAZILY FETCHES the object it tests for** —
+  two shas read absent, then present, on successive probes. **Rule extended in the
+  Refresh protocol:** probe with `git rev-parse --verify <sha>^{commit}` +
+  `merge-base --is-ancestor` under `GIT_NO_LAZY_FETCH=1`, then confirm against the
+  remote API. (L-9, queue W-6.)
+
+  **(m) 🟢 THE LEG-2 DISPATCH ERROR IS ACKNOWLEDGED AND ITS LESSON ADOPTED AS A
+  STANDING PROTOCOL STEP: *A DISPATCH MAY NOT UPGRADE A LANE'S OWN CLAIM.*** Where
+  a records instruction asserts more than the finding it cites, **the finding
+  governs**. R-U's own text declined the claim in terms; the error was entirely
+  downstream of it. **The correction STANDS; R-U's credit is at full weight.** The
+  new step ran here and yielded **three**: the leg-2 premise, the PERF-B
+  "three unadjudicated" premise (g), and Capture-A's "6 current" count (e).
+  **Q-4 executed across R-A … R-W**: every label A–V returns ≥1 artifact; **R-W
+  returns 0** and is recorded as (c). The previously-*proposed* step (iii) — list
+  the runs of every workflow the board makes a claim about — **was run unprompted
+  and yielded twice** ((a) and (f)) for two API calls; **adoption recommended.**
+  **G2 is NOT declarable at this pin:** leg 1 in motion, **leg 2 blocked and
+  unstaffed**, leg 3 satisfied, **leg 4 now blocked ONLY on the owner's Settings
+  action — both its code blockers are cleared.** The FFR desk's Q.2 supersession
+  battery still does not fire. (L-14, L-15, queue W-2.)
