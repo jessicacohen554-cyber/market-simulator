@@ -824,7 +824,18 @@ def main() -> None:
         else:
             net = campd.plant_hourly_net(df, factors, year)  # {code: (8760,) net MW}
             net_by_group = {}
-        derate = unit_outage_derate_factors(year, iso=iso)
+        # COUPLING (nyiso-176): under per-unit attribution the derate MUST come
+        # from the per-unit-routed outage companion. avail_cap = nameplate x
+        # avail_mult feeds both the online test (series > _ONLINE_FRAC x
+        # avail_cap) and the `finite` mask (avail_cap > 0), so a per-unit tranche
+        # row derived against the INCUMBENT extract is computed over a
+        # denominator derated for units that are not in its bin — the state
+        # nyiso-175b shipped and disclosed (its East River CT_CHP row was
+        # derived un-derated because every window there still routed to
+        # ST_CHP). One crosswalk, both artifacts (rule 19 [R-ONE-MECH]).
+        derate = unit_outage_derate_factors(
+            year, iso=iso, per_unit_crosswalk=per_unit
+        )
         for (code, group), nameplate in cap.items():
             if group not in _THERMAL_GROUPS or nameplate <= 0:
                 continue

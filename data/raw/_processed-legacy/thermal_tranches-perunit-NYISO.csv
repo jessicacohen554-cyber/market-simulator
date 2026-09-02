@@ -8,27 +8,27 @@ plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustr
 50450,CC_CHP,Indeck Oswego Energy Center,ok,67.8,4279,32.4,0.0,0.0,,73.7,76.7,0.0,merchant,12.6,3.3
 50451,CC_CHP,Indeck Yerkes Energy Center,ok,65.8,2678,33.4,0.0,0.0,,66.9,69.9,0.0,merchant,7.2,3.5
 50458,CC_CHP,Indeck Corinth Energy Center,ok,125.5,11270,70.0,0.0,0.0,,98.0,101.2,0.0,merchant,73.0,1.5
-52168,CC_CHP,Riverbay,ok,40.6,9958,27.1,0.0,0.0,,29.6,29.6,0.0,commercial,11.2,3.8
-54041,CC_CHP,Lockport Energy Associates LP,ok,219.0,4873,17.8,0.0,0.0,,36.1,49.8,0.0,merchant,9.2,6.8
+52168,CC_CHP,Riverbay,ok,40.6,9962,29.6,0.0,0.0,,29.6,39.9,0.0,commercial,15.1,3.8
+54041,CC_CHP,Lockport Energy Associates LP,ok,219.0,4830,26.2,0.0,0.0,,46.1,53.9,0.0,merchant,9.9,6.8
 54076,CC_CHP,Indeck Olean Energy Center,ok,79.2,1827,37.0,0.0,0.0,,82.1,84.6,0.0,merchant,39.3,2.6
 54114,CC_CHP,Kennedy International Airport Cogen,ok,123.2,21789,19.2,0.0,0.0,,39.8,70.6,0.0,merchant,58.6,3.3
-54131,CC_CHP,World Generation X,ok,55.7,14655,57.5,0.0,0.0,,64.6,68.2,0.0,merchant,38.0,6.5
+54131,CC_CHP,World Generation X,ok,55.7,14339,57.5,0.0,0.0,,64.6,68.2,0.0,merchant,66.2,6.5
 54547,CC_CHP,Sithe Independence Station,ok,996.4,22205,21.8,0.0,0.0,,66.2,92.6,0.0,merchant,85.1,3.5
-54914,CC_CHP,Brooklyn Navy Yard Cogeneration,ok,260.0,25648,41.9,0.0,0.0,,73.8,78.8,0.0,merchant,77.0,3.3
+54914,CC_CHP,Brooklyn Navy Yard Cogeneration,ok,260.0,25649,66.9,0.0,0.0,,73.8,78.8,0.0,merchant,77.0,3.3
 56259,CC_CHP,Empire Generating Co LLC,ok,580.0,22187,36.2,0.0,0.0,,60.3,82.5,0.0,merchant,79.7,6.2
 2500,CC_REGULAR,Ravenswood,ok,222.2,23607,70.0,0.0,0.0,0.899,100.0,113.9,,,,1.8
 2539,CC_REGULAR,Bethlehem Energy Center,ok,812.7,24561,29.5,0.0,0.0,0.936,64.2,74.9,,,,3.7
-7314,CC_REGULAR,Richard M Flynn,ok,170.0,10825,21.2,0.0,0.0,0.42,40.6,43.5,,,,9.1
+7314,CC_REGULAR,Richard M Flynn,ok,170.0,10844,21.2,0.0,0.0,0.42,40.6,44.7,,,,9.1
 10190,CC_REGULAR,Castleton Energy Center,ok,72.0,5062,23.6,0.0,0.0,0.225,77.8,81.9,,,,4.1
 10620,CC_REGULAR,Carthage Energy LLC,ok,61.1,41,16.4,0.0,0.0,0.012,45.8,80.2,,,,10.2
 10621,CC_REGULAR,CH Resources Syracuse,ok,86.2,854,41.8,0.0,0.0,0.047,90.5,94.0,,,,5.0
-50292,CC_REGULAR,Bethpage Power Plant,ok,129.0,19886,33.1,0.0,0.0,0.855,71.2,99.2,,,,5.8
-50744,CC_REGULAR,Sterling Power Plant,ok,54.8,628,16.4,0.0,0.0,0.024,60.2,62.0,,,,2.2
-50978,CC_REGULAR,Carr Street Generating Station,ok,58.0,9064,50.0,0.0,0.0,0.345,62.1,70.7,,,,1.2
+50292,CC_REGULAR,Bethpage Power Plant,ok,129.0,19956,33.1,0.0,0.0,0.855,67.5,97.9,,,,5.8
+50744,CC_REGULAR,Sterling Power Plant,ok,54.8,552,30.1,0.0,0.0,0.024,62.0,79.5,,,,1.2
+50978,CC_REGULAR,Carr Street Generating Station,ok,58.0,8520,56.9,0.0,0.0,0.345,100.0,141.4,,,,1.2
 54034,CC_REGULAR,Rensselaer Cogen,ok,79.4,1122,70.0,0.0,0.0,0.065,81.9,94.5,,,,0.0
 54574,CC_REGULAR,Saranac Facility,ok,237.8,10534,23.1,0.0,0.0,0.442,69.4,72.3,,,,25.0
-54592,CC_REGULAR,Massena Energy Facility,ok,81.0,1032,33.3,0.0,0.0,0.04,60.5,63.0,,,,3.6
-54593,CC_REGULAR,Batavia Power Plant,ok,48.8,648,14.3,0.0,0.0,0.025,67.1,71.7,,,,2.2
+54592,CC_REGULAR,Massena Energy Facility,ok,81.0,996,55.6,0.0,0.0,0.04,61.7,63.0,,,,3.6
+54593,CC_REGULAR,Batavia Power Plant,ok,48.8,323,20.5,0.0,0.0,0.025,71.7,73.8,,,,0.0
 55375,CC_REGULAR,Astoria Energy,ok,558.0,22104,70.0,0.0,0.0,0.992,100.0,150.0,,,,2.6
 55405,CC_REGULAR,Athens Generating Plant,ok,984.4,15106,49.7,0.0,0.0,0.59,96.5,110.2,,,,5.2
 56188,CC_REGULAR,Pinelawn Power LLC,ok,74.5,3842,52.3,0.0,0.0,0.171,71.1,79.2,,,,2.5
@@ -74,13 +74,13 @@ plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustr
 2493,ST_CHP,East River,eia923_cf,309.5,0,,,,,,,1.5,merchant,30.4,
 10025,ST_CHP,"RED-Rochester, LLC",eia923_cf,119.6,0,,,,,,,5.3,industrial,27.5,
 54099,ST_CHP,Ticonderoga Mill,eia923_cf,41.0,0,,,,,,,3.0,industrial,31.2,
-2480,ST_GAS,Danskammer Generating Station,ok,497.3,557,17.8,0.0,0.0,0.028,24.6,56.0,,,,
-2490,ST_GAS,Arthur Kill Generating Station,ok,876.6,21142,11.0,0.0,0.0,0.81,11.2,29.1,,,,
-2500,ST_GAS,Ravenswood,ok,1724.8,7293,6.5,0.0,0.0,0.282,19.4,29.1,,,,
-2511,ST_GAS,E F Barrett,ok,372.2,24270,14.8,0.0,0.0,0.925,28.2,46.0,,,,
-2516,ST_GAS,Northport,ok,1592.2,25232,15.5,0.0,0.0,0.96,29.2,44.2,,,,
-2517,ST_GAS,Port Jefferson,ok,385.0,8101,11.7,0.0,0.0,0.31,12.2,24.2,,,,
+2480,ST_GAS,Danskammer Generating Station,ok,497.3,192,30.8,0.0,0.0,0.028,31.3,42.0,,,,
+2490,ST_GAS,Arthur Kill Generating Station,ok,876.6,21012,29.7,0.0,0.0,0.81,30.1,33.0,,,,
+2500,ST_GAS,Ravenswood,ok,1724.8,6930,20.3,0.0,0.0,0.282,28.3,41.1,,,,
+2511,ST_GAS,E F Barrett,ok,372.2,24271,15.1,0.0,0.0,0.925,28.8,48.1,,,,
+2516,ST_GAS,Northport,ok,1592.2,25265,25.7,0.0,0.0,0.96,32.7,50.3,,,,
+2517,ST_GAS,Port Jefferson,ok,385.0,8145,13.0,0.0,0.0,0.31,23.6,41.0,,,,
 2527,ST_GAS,Greenidge Generation LLC,ok,104.5,24791,65.1,0.0,0.0,0.948,69.9,72.7,,,,
-2625,ST_GAS,Bowline Point,ok,1159.6,6835,20.1,0.0,0.0,0.298,51.8,92.8,,,,
-8006,ST_GAS,Roseton Generating Facility,ok,1222.0,3155,13.5,0.0,0.0,0.144,27.2,28.3,,,,
-8906,ST_GAS,Astoria Generating Station,ok,923.2,17027,17.8,0.0,0.0,0.671,50.9,57.6,,,,
+2625,ST_GAS,Bowline Point,ok,1159.6,6658,21.0,0.0,0.0,0.298,58.9,94.9,,,,
+8006,ST_GAS,Roseton Generating Facility,ok,1222.0,2977,13.6,0.0,0.0,0.144,27.3,29.3,,,,
+8906,ST_GAS,Astoria Generating Station,ok,923.2,8823,11.3,0.0,0.0,0.671,26.9,90.6,,,,

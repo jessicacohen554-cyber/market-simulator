@@ -3518,6 +3518,7 @@ def solve_and_persist(
     capacity_deliverability_limits: bool | None = None,
     unit_outage_lp_capacity_basis: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
+    campd_per_unit_attribution: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -4837,6 +4838,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing
             )
+        if campd_per_unit_attribution is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                campd_per_unit_attribution=campd_per_unit_attribution
+            )
         if cc_winter_capability_basis is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_winter_capability_basis=cc_winter_capability_basis
@@ -5266,6 +5271,7 @@ def solve_and_persist(
             capacity_deliverability_limits=capacity_deliverability_limits,
             unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis,
             unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing,
+            campd_per_unit_attribution=campd_per_unit_attribution,
             cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -6174,6 +6180,7 @@ def solve_and_persist(
         "capacity_deliverability_limits": capacity_deliverability_limits,
         "unit_outage_lp_capacity_basis": unit_outage_lp_capacity_basis,
         "unit_outage_mixed_gas_routing": unit_outage_mixed_gas_routing,
+        "campd_per_unit_attribution": campd_per_unit_attribution,
         "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -8382,6 +8389,7 @@ def run_replay_bundle(
     reliability_floor_plant_exclusions: bool | None = None,
     caiso_offer_surface_measured_ungrounded: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
+    campd_per_unit_attribution: bool | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8414,6 +8422,9 @@ def run_replay_bundle(
             keeps the recipe's own value). Composes exactly like the override
             above, so the caiso-231 structural A/B solves both arms from the
             SAME committed control recipe.
+        campd_per_unit_attribution: Override the bundle's setting for the
+            CAMPD per-unit attribution gate (nyiso-176), which selects the
+            '-perunit-' tranche and unit-outage companions together.
         unit_outage_mixed_gas_routing: Override the bundle's setting for the
             mixed-gas-facility unit-outage class routing (``None`` keeps the
             recipe's own value). Composes exactly like the two overrides above,
@@ -8449,6 +8460,11 @@ def run_replay_bundle(
         )
     if unit_outage_mixed_gas_routing is not None:
         kwargs["unit_outage_mixed_gas_routing"] = unit_outage_mixed_gas_routing
+    if campd_per_unit_attribution is not None:
+        # nyiso-176: arm/disarm the CAMPD per-unit attribution gate over a
+        # committed keeper's recipe, so the re-baseline A/B is a single delta
+        # against a byte-faithful control leg.
+        kwargs["campd_per_unit_attribution"] = campd_per_unit_attribution
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
         # (the dashboard and audit_keepers pair twins by ablation_of).
@@ -11032,6 +11048,35 @@ def main() -> None:
         "keeps the base config value (off).",
     )
     parser.add_argument(
+        "--campd-per-unit-attribution",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Attribute a MIXED plant's measured CAMPD conduct to the bin that "
+        "CONTAINS each unit, in BOTH CAMPD-derived solve inputs at once "
+        "(ScenarioConfig.campd_per_unit_attribution). Selects the '-perunit-' "
+        "companions written by derive_thermal_tranches --per-unit-attribution "
+        "and derive_campd_unit_outages --per-unit-crosswalk, which route through "
+        "the SAME scripts/lib/campd_measured_classes crosswalk, so the two "
+        "artifacts cannot disagree about which bin a machine is in. A "
+        "consistency repair, not a market feature, and the WIDER form of "
+        "--unit-outage-mixed-gas-routing (which reaches only the mixed-GAS "
+        "subset and is measurably wrong where the two disagree, nyiso-175b K3). "
+        "The incumbent derivers attribute by two different proxies: the tranche "
+        "deriver gives a plant's facility-summed CAMPD net to 'the group holding "
+        "the most nameplate', and the outage deriver short-circuits on a "
+        "last-writer-wins facility group. Measured at NYISO (nyiso-175b/176): "
+        "13.7577 TWh of 2023-2025 conduct is re-seated across six plants, and "
+        "E F Barrett's 16 combustion turbines alone carry 610 of the outage "
+        "extract's 1,137 spurious 2023-2025 windows. ONE gate over both "
+        "artifacts by design (rule 19 [R-ONE-MECH]): a tranche row's "
+        "online/committed statistics are computed over an outage-derated "
+        "denominator, so repairing one artifact alone is internally "
+        "inconsistent. Zero free parameters; falls back to the incumbent "
+        "artifact wherever a companion has not been derived, so the off path is "
+        "byte-inert and only NYISO is reachable today. See "
+        "docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.",
+    )
+    parser.add_argument(
         "--unit-outage-mixed-gas-routing",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12006,6 +12051,12 @@ def main() -> None:
                 or "--no-unit-outage-mixed-gas-routing" in sys.argv
                 else None
             ),
+            campd_per_unit_attribution=(
+                args.campd_per_unit_attribution
+                if "--campd-per-unit-attribution" in sys.argv
+                or "--no-campd-per-unit-attribution" in sys.argv
+                else None
+            ),
             enable_legacy_p2=args.enable_legacy_p2,
         )
         return
@@ -12363,6 +12414,7 @@ def main() -> None:
         capacity_deliverability_limits=args.capacity_deliverability_limits,
         unit_outage_lp_capacity_basis=args.unit_outage_lp_capacity_basis,
         unit_outage_mixed_gas_routing=args.unit_outage_mixed_gas_routing,
+        campd_per_unit_attribution=args.campd_per_unit_attribution,
         cc_winter_capability_basis=args.cc_winter_capability_basis,
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,

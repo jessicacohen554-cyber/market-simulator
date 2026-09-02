@@ -1109,6 +1109,18 @@ def _apply_outage_overlays(
             # its own stated premise. Selects the '-unitroute-' companion
             # extract; byte-inert while off.
             mixed_gas_routing=getattr(config, "unit_outage_mixed_gas_routing", False),
+            # nyiso-175b/176 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]): the
+            # WIDER form of the same repair — every unit routes by the shared
+            # campd_measured_classes crosswalk, not just the mixed-gas subset,
+            # and the SAME gate selects the tranche artifact's matching
+            # '-perunit-' companion, because a tranche row's online/committed
+            # statistics are computed over an outage-derated denominator.
+            # Selects the '-perunit-' extract; byte-inert while off. The maxgen
+            # layer below is out of scope BY CONSTRUCTION (no '-perunit-'
+            # companion is written for it) — a documented boundary, not an
+            # oversight; it carries a miso-only registry and reaches no NYISO
+            # plant.
+            per_unit_crosswalk=getattr(config, "campd_per_unit_attribution", False),
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
@@ -2478,8 +2490,9 @@ def _compose_min_gen_floors(
         and getattr(config, "st_gas_mustrun_per_plant", False)
     )
     if st_gas_p25_level_on:
-        _p25_levels = _pkg_ns().thermal_tranche_p25_level(_iso or "ERCOT")
-        _p25_fracs = _pkg_ns().thermal_tranche_online_frac(_iso or "ERCOT")
+        _pu = bool(getattr(config, "campd_per_unit_attribution", False))
+        _p25_levels = _pkg_ns().thermal_tranche_p25_level(_iso or "ERCOT", _pu)
+        _p25_fracs = _pkg_ns().thermal_tranche_online_frac(_iso or "ERCOT", _pu)
         # MEASURED-MW LEVEL BASIS (config.st_gas_mustrun_p25_measured_level,
         # miso-172). ``p25_cf`` is a percentile of net / (nameplate x
         # avail_mult), so the incumbent reconstruction ``p25_cf x nameplate``
