@@ -31,7 +31,7 @@ from market_sim.data.fleet.models import FleetArrays
 # The default ScenarioConfig cache key, pinned repo-wide. Declaring a new field
 # must NOT move it — ``ramp_limits`` is registered in
 # ``_CACHE_KEY_OPTIONAL_FIELDS`` so its default value is dropped from the hash.
-PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"
+PINNED_DEFAULT_CACHE_KEY = "cedadc285f8603b9"
 
 
 def _fleet(plant_codes, plant_groups, pmax):

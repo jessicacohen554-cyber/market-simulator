@@ -128,5 +128,5 @@ def test_armed_run_keys_distinctly_and_default_key_is_unmoved() -> None:
     """Registered at False: the pinned default key holds; armed hashes apart."""
     default = ScenarioConfig()
     armed = ScenarioConfig(caiso_ra_mpb_capacity_anchor=True)
-    assert default.cache_key() == "603c2498bf71d21d"
+    assert default.cache_key() == "cedadc285f8603b9"
     assert armed.cache_key() != default.cache_key()

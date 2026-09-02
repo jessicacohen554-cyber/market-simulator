@@ -244,7 +244,7 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
         # Rule 24 registration: the field is dropped from the hash at its None
         # default (every pre-FH-2 cached run keeps its key) and enters the key
         # when set (a vintage-addressed run is a distinct scenario).
-        self.assertEqual(ScenarioConfig().cache_key(), "603c2498bf71d21d")
+        self.assertEqual(ScenarioConfig().cache_key(), "cedadc285f8603b9")
         with _with_vintages(_VINTAGE_2021):
             base = ScenarioConfig(iso="ERCOT")
             vintaged = ScenarioConfig(iso="ERCOT", demand_growth_vintage=2021)

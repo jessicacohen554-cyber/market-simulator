@@ -108,7 +108,7 @@ class TestProcurementGate(unittest.TestCase):
         from market_sim.config.scenarios import _CACHE_KEY_OPTIONAL_FIELDS
 
         self.assertIn("vre_procurement_additions_enabled", _CACHE_KEY_OPTIONAL_FIELDS)
-        self.assertEqual(ScenarioConfig().cache_key(), "603c2498bf71d21d")
+        self.assertEqual(ScenarioConfig().cache_key(), "cedadc285f8603b9")
 
     def test_armed_run_gets_a_distinct_cache_key(self):
         # An armed run is a different scenario, not a cache collision — which

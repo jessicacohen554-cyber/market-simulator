@@ -28,7 +28,7 @@ What these tests hold, in both directions:
   ``68a207068509f2b0`` — the pole was ``8d9ef77edb3e44cb`` until the Q15
   arming of 2026-08-30 moved it, see
   ``docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md`` — the global
-  pin ``603c2498bf71d21d`` unmoved), and a non-default explicit value still
+  pin ``cedadc285f8603b9`` unmoved), and a non-default explicit value still
   wins as it always did. The fix is a strict NARROWING;
 * **cache-key invisibility** — the record is a NON-FIELD attribute, so it can
   never reach ``asdict()``/``cache_key()`` and rule 28's ledger duty does not
@@ -70,8 +70,16 @@ STAGE_B = {
 # the CURRENT pole; the per-epoch genealogy lives in
 # tests/unit/config/test_ercot_stageb_arming.py, which reconstructs each
 # prior pole explicitly.
-ERCOT_ARMED_KEY = "68a207068509f2b0"
-GLOBAL_PINNED_KEY = "603c2498bf71d21d"
+# ADVANCED 2026-09-02, 68a207068509f2b0 -> 6bb61037c072502d, by a NON-ERCOT
+# cause: the owner-authorized capx D41 re-identification of the shared defaults
+# fixed_om_gas_cc_ccs (25.0 -> 65.0) and ccs_retrofit_capex_kw (900.0 -> 1521.4)
+# onto the NREL ATB 2024 (2026$) basis. Neither is a _CACHE_KEY_OPTIONAL_FIELDS
+# member, so every config re-keys and this pole moved with the global pin — the
+# D12-A arming itself is untouched, and the "pole unmoved by the fix" property
+# this file pins holds exactly as before. Cause block:
+# tests/regression/test_persisted_identity.py.
+ERCOT_ARMED_KEY = "6bb61037c072502d"
+GLOBAL_PINNED_KEY = "cedadc285f8603b9"
 
 FIELD_DEFAULTS = {
     f.name: getattr(ScenarioConfig(), f.name)

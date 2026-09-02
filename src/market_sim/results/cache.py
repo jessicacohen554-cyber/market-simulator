@@ -56,6 +56,41 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-02 — capx D41 CCS-retrofit fixed-cost re-identification (both
+lanes, every ISO). THIS ONE IS A KEY ADVANCE, NOT A SAME-KEY INVALIDATION** —
+recorded here anyway because it re-keys *every* config in the program and a
+reader looking for "why did my bundle stop resolving on 2026-09-02" will look
+here first. ``ScenarioConfig.fixed_om_gas_cc_ccs`` 25.0 -> 65.0 $/kW-yr and
+``ScenarioConfig.ccs_retrofit_capex_kw`` 900.0 -> 1521.4 $/kW, both onto the
+model's own NREL ATB 2024 (2026$) basis, repairing the two legs
+``docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md`` §5 rows 6-7
+adjudicated DEFECT-CANDIDATE. Owner-authorized in the D41 session sitting.
+
+**BOTH KEYS MOVE:** default ``603c2498bf71d21d`` -> ``cedadc285f8603b9``, bare
+backcast ``e027bc248c93c835`` -> ``e006dfd7cef8bedd``. Neither field is a
+``_CACHE_KEY_OPTIONAL_FIELDS`` member, so both are hashed at every value and a
+value change moves the key unconditionally — registration is not an available
+remedy, and re-pinning is the sanctioned route rather than the forbidden one
+(the "do NOT re-pin" rule targets an unregistered NEW field that is cache-
+neutral at its default). Same shape as G-32, which moved the pin when it
+flipped ``fixed_om_gas_cc`` 12 -> 30.
+
+**INVALIDATED — re-solve before quoting:** every ``results/<ISO>/<key>/`` bundle
+at a pre-2026-09-02 key, in both lanes. This is a one-time cache MISS, never a
+wrong answer: the key moved, so nothing can be mis-served.
+
+**BEHAVIOUR moves in FORECAST years >= 2028 ONLY, and that is the repair.** The
+two fields have exactly two consumers, both in forecast-mode capacity evolution:
+``capacity_evolution/ccs.py::apply_ccs_retrofit`` (gated on
+``ccs_retrofit_available_year`` = 2028) and the ``_THERMAL_FOM`` lookup in
+``capacity_evolution/retirements.py``, which reaches ``fixed_om_gas_cc_ccs``
+only for a ``gas_cc_ccs`` unit. **BACKCAST IS BYTE-IDENTICAL:** no measured
+backcast fleet contains a ``gas_cc_ccs`` unit and no backcast year reaches 2028,
+so dispatch, scores and every other ``run_config.json`` value are unmoved; no
+keeper, sidecar, determination or dashboard row is affected and nothing needs
+re-scoring (committed artifacts are files, not cache lookups). Screen-grain
+before/after: ``docs/handoffs/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md``.
+
 **Epoch 2026-08-31 — owner ruling R-A, the T1-H storage-entry Leg A arming
 (every ISO's forecast lane).** ``ScenarioConfig.storage_entry_availability_gate``
 and ``ScenarioConfig.storage_entry_cost_normalized_rank`` flip default

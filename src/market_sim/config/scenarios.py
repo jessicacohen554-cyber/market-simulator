@@ -117,6 +117,21 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
 # are (do NOT reorder — pointless churn on a heavily-crossed file). Apply the
 # SAME position discipline to the ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS``
 # ledger below, in the same commit (the guard enforces membership parity).
+#
+# READING THE PIN LITERALS IN THE PER-FIELD COMMENTS BELOW. Many entries below
+# (and many field docstrings in ``ScenarioConfig``) name the pinned default key
+# as ``603c2498bf71d21d`` — the value it held from 2026-07-27 until 2026-09-02,
+# and the value each of those registrations was MEASURED against. Each such
+# literal is a dated historical measurement and is left as written; the claim it
+# carries ("this registration keeps the pinned default byte-stable") is
+# unaffected by a later advance from an unrelated cause. THE LIVE PIN IS
+# ``cedadc285f8603b9`` (backcast ``e006dfd7cef8bedd``), advanced 2026-09-02 by
+# the owner-authorized capx D41 re-identification of ``fixed_om_gas_cc_ccs``
+# (25.0 -> 65.0) and ``ccs_retrofit_capex_kw`` (900.0 -> 1521.4) onto the ATB
+# 2024 2026$ basis. Neither field is registered here — both are hashed at every
+# value, so registration was never an available remedy and the advance is the
+# sanctioned route. Authoritative value + full cause block:
+# ``tests/regression/test_persisted_identity.py``.
 _CACHE_KEY_OPTIONAL_FIELDS = (
     "start_year",
     "end_year",
@@ -3145,8 +3160,46 @@ class ScenarioConfig:
     # note above for the flip rationale and its inert-on-realized-fleet caveat).
     fixed_om_oil: float = 25.0  # legacy oil/distillate steam & CT — high O&M,
     # rarely run. Source: Lazard LCOE / EIA O&M.
-    fixed_om_gas_cc_ccs: float = 25.0  # CC + capture island going-forward fixed
-    # cost (host CC O&M + capture O&M). Source: NETL Rev 4 / NREL ATB CCS.
+    fixed_om_gas_cc_ccs: float = 65.0  # $/kW-yr, 2026$. CC + capture island
+    # going-forward fixed cost = HOST CC O&M + the capture island's own O&M:
+    # fixed_om_gas_cc (30.0, the G-32 ATB target directly above) + 35.0, the
+    # NREL ATB 2024 capture-island Fixed-O&M INCREMENT
+    # NEW_ENTRY_COSTS["gas_cc_ccs"]["fom_per_kw_yr"] (71.1)
+    #   − NEW_ENTRY_COSTS["gas_cc"]["fom_per_kw_yr"] (36.1) = 35.0 $/kW-yr,
+    # both ATB 2024 Moderate @2026 in constant 2026$, derived from the
+    # committed extract by scripts/data/derive_entry_costs_from_atb.py.
+    # Additive, not ratio-scaled: the capture island is separate plant with
+    # its own absolute O&M, and it is NEW plant at retrofit time, so it
+    # carries a full new-build fixed cost rather than a paid-off host's
+    # going-forward discount. The retrofit screen's ΔFOM is therefore exactly
+    # the ATB island increment (+$35,000/MW-yr), independent of the host
+    # field's own rounding.
+    #
+    # RE-DERIVED 2026-09-02 (capx D41) from 25.0. Rule 23: the trigger is a
+    # DATA change, never a residual — the G-32 ATB flip
+    # (docs/handoffs/fom-scarcity-defaults-flip-2026-07-07.md) raised the host
+    # fixed_om_gas_cc 12 → 30 on the ATB 2024 basis and left this
+    # "host + capture island" figure at its pre-flip 25, i.e. BELOW its own
+    # host. ΔFOM was therefore −$5,000/MW-yr: the CCS retrofit screen
+    # (model/capacity_evolution/ccs.py) PAID every retrofit $5,000/MW-yr in
+    # fixed-cost savings instead of charging it the capture island's O&M, and
+    # the retirement screen priced a retrofitted unit's going-forward bar
+    # below its unabated self. Adjudicated DEFECT-CANDIDATE by
+    # docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md §5 row 7 / §6
+    # item 1; repaired and measured in FINDING-capx-d41-ccs-fixedcost-2026-09-02.md.
+    #
+    # Cross-source check on the increment (same file the entry-cost envelope
+    # reads, data/raw/new-build-cost-benchmarks/benchmarks_2026.csv, matched
+    # config within each source): EIA/Sargent & Lundy Jan-2024 CC 1x1x1 +95 %
+    # capture 24.78 − CC 1x1x1 15.51 = 9.27 $/kW-yr (2023$ ⇒ 9.90 in 2026$);
+    # EIA AEO2026 EMM Table 3 25.93 − 16.23 = 9.70 (2025$ ⇒ 9.91). Every
+    # published basis makes the capture island an added COST; the shipped
+    # −5.0 saving is outside all of them. ATB's increment is the LARGEST of
+    # the three because ATB's whole NG Fixed-O&M basis runs ~2.2× the
+    # EIA/S&L line (ATB gas_cc 36.1 vs S&L 15.51), which is exactly why the
+    # host and the island must be read off ONE basis — this field's host is
+    # the ATB one. Reconciling the fixed_om_* family onto a single stated
+    # basis is routed as follow-on, not done here (D41 owns two fields).
     fixed_om_nuclear: float = 130.0  # existing nuclear avoidable fixed O&M
     # (staffing, security, NRC fees) — large, but high net revenue keeps most
     # reactors solvent; the screen lets a genuinely uneconomic one exit.
@@ -3255,9 +3308,49 @@ class ScenarioConfig:
     # Applied as: retrofit_hr = base_hr × (1 + penalty).
     # 0.12 = 12% penalty. Source: NETL Cost & Performance
     # Baseline Rev 4, 2021. Range in literature: 0.10–0.18.
-    ccs_retrofit_capex_kw: float = 900.0  # $/kW for post-combustion capture retrofit.
-    # Source: NETL 2021, Sargent & Lundy 2022.
-    # Lower than greenfield (~$1400/kW) because host plant exists.
+    ccs_retrofit_capex_kw: float = 1521.4  # $/kW in constant 2026$ (dollar-year
+    # STATED — the shipped 900.0 carried none). Post-combustion capture-island
+    # capital cost for a gas-CC retrofit, set to the NREL ATB 2024 CAPTURE-
+    # ISLAND INCREMENT the model's own new-build CCS already carries:
+    # NEW_ENTRY_COSTS["gas_cc_ccs"]["capex_per_kw"] (3104.7, ATB 2024 Moderate
+    # NG CC 95 % CCS @2026) − NEW_ENTRY_COSTS["gas_cc"]["capex_per_kw"]
+    # (1583.3, ATB 2024 Moderate NG 2-on-1 CC F-Frame @2026) = 1521.4 $/kW,
+    # both derived from the committed ATB extract by
+    # scripts/data/derive_entry_costs_from_atb.py on ATB's 2022$ → 2026$
+    # INFLATION_RATE basis.
+    #
+    # RE-CITED 2026-09-02 (capx D41) from 900.0, which was flagged
+    # `needs-citation` in docs/parameter-citations.md, stated no dollar-year,
+    # and rested on an INVERTED rationale ("lower than greenfield because the
+    # host plant exists"): a retrofit capture island costs MORE per kW than
+    # the greenfield increment, not less — congested brownfield site, steam
+    # and flue-gas tie-ins, outage tie-in risk. 900 was 59 % of the increment
+    # the entry screen charges, the same "~$900/kW makes the capture island
+    # look nearly free" defect FF-1E repaired for new-build
+    # (docs/handoffs/ff-1e-entry-cost-atb-wiring-2026-07.md) and explicitly
+    # left standing here. Adjudicated by
+    # docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md §5 row 6 / §6
+    # item 2; repaired and measured in
+    # FINDING-capx-d41-ccs-fixedcost-2026-09-02.md.
+    #
+    # THIS IS A FLOOR, AND IS LABELLED ONE. All three published bases are
+    # GREENFIELD increments, so a retrofit-specific TPC is ≥ this value and
+    # the screen stays biased TOWARD retrofitting, never against it. Matched-
+    # configuration cross-check from
+    # data/raw/new-build-cost-benchmarks/benchmarks_2026.csv: EIA/Sargent &
+    # Lundy Jan-2024 (2023$) 2365 − 921 = 1444 ⇒ 1541 in 2026$; EIA AEO2026
+    # EMM Table 3 (2025$) 2824 − 1086 = 1738 ⇒ 1776 in 2026$. ATB's 1521.4 is
+    # the LOWEST of the three, which is why it is the floor. Sourcing a
+    # retrofit-specific premium (the NETL "Cost and Performance of
+    # Retrofitting NGCC Units for Carbon Capture" series, D30 §6 item 2) is
+    # routed as follow-on — it can only raise this value.
+    #
+    # Unchanged: the Wright's-Law learning curve this base feeds
+    # (_adjust_retrofit_capex, shared with new-build CCS) and every other
+    # retrofit-screen field. Closing the 900-vs-1521 gap also closes the
+    # two-cost-basis arbitrage D30 §4 measured in the NEISO golden, where a
+    # 2031 new-build CC whose OWN CCS variant the entry screen rejected at
+    # the 1521.4 increment was retrofitted in 2032 at a learning-adjusted 621.
     ccs_retrofit_vom_adder: float = (
         8.0  # $/MWh additional VOM for capture O&M, solvent, compression.
     )
