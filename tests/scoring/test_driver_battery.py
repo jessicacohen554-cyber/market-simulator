@@ -11,6 +11,7 @@ ladder table and scorer stay well-formed; the real solve path is covered by
 
 from __future__ import annotations
 
+import dataclasses
 import unittest
 
 from scripts import run_driver_battery as B
@@ -120,6 +121,75 @@ class TestDynamicRungResolver(unittest.TestCase):
         labels = [r.label for r in resolved]
         self.assertIn("anchor_c25", labels)
         self.assertNotIn("cap_binding", labels)
+
+
+class TestT16Repoint(unittest.TestCase):
+    """T1.6's lever, re-pointed to ``entry_rate_limits`` by owner ruling Q27.
+
+    Pins the three properties the re-point rests on (capx-T16-A,
+    ``docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md``): the
+    ladder is IN SERVICE, both rungs perturb the FF-2A entry growth ladder and
+    nothing else, and the rung ORDER runs short → long so the T1.6b
+    ``monotone_down`` series runs in the direction the pre-registered
+    expectation names (more VRE ⇒ lower REC dual). A silent re-order or a
+    lever swap would make the gate score a different claim than plan §2
+    pre-registers.
+    """
+
+    def _ladder(self):
+        return next(x for x in B.build_ladders() if x.test_id == "T1.6")
+
+    def test_ladder_is_in_service(self):
+        self.assertEqual(self._ladder().out_of_service, "")
+
+    def test_rungs_perturb_entry_rate_limits_short_then_long(self):
+        lad = self._ladder()
+        self.assertEqual(
+            [(r.label, r.overrides) for r in lad.rungs],
+            [
+                ("vre_short", {"entry_rate_limits": True}),
+                ("vre_long", {"entry_rate_limits": False}),
+            ],
+        )
+
+    def test_expectations_are_unchanged_by_the_repoint(self):
+        # It was the instrument that failed, not the claim: the pre-registered
+        # expectations are byte-identical across the delete/re-point.
+        lad = self._ladder()
+        self.assertEqual(
+            [(e.expr_id, e.metric, e.rule, e.target, e.gate) for e in lad.expectations],
+            [
+                ("T1.6a", "rps_dual_over_acp", "le_target", 1.0, True),
+                ("T1.6b", "rps_dual_over_acp", "monotone_down", None, True),
+            ],
+        )
+
+
+class TestOutOfServiceLadder(unittest.TestCase):
+    """The out-of-service path (capx-T16) — kept exercised now T1.6 is back.
+
+    No registered ladder sets ``out_of_service`` any more, so without this the
+    machinery would be unexercised dead code the next failing instrument
+    depends on. Solves NOTHING and emits SKIP + ``vacuous`` per expectation,
+    which ``forecast_verdict.score_fc6`` reads as CAVEAT, never PASS.
+    """
+
+    def test_returns_no_rungs_and_vacuous_skips(self):
+        lad = next(x for x in B.build_ladders() if x.test_id == "T1.6")
+        parked = dataclasses.replace(lad, out_of_service="no working instrument")
+
+        def _never(spec):  # pragma: no cover - must not be reached
+            raise AssertionError("an out-of-service ladder must not solve")
+
+        out = B.run_ladder(
+            parked, "NEISO", 2026, 2027, "/tmp/x", "/tmp/y", 1, evaluate_fn=_never
+        )
+        self.assertEqual(out["rungs"], [])
+        self.assertEqual(out["out_of_service"], "no working instrument")
+        self.assertEqual(
+            [(e["expr_id"], e["status"], e["vacuous"]) for e in out["expectations"]],
+            [("T1.6a", B.SKIP, True), ("T1.6b", B.SKIP, True)],
+        )
 
 
 class TestExpectationSplitByIso(unittest.TestCase):
