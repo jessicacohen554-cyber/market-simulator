@@ -691,6 +691,10 @@ results/hindcast/*/*/*/evolution_*.json
 # (the D27 §7.5 precedent) — the evolution ledgers are the sole committed
 # evidence for the D31 finding's screen-revenue and floor-binding sections.
 !results/hindcast/miso-2021-2025-realized-t1h-d31/*/*/evolution_*.json
+# capx D33 (2026-09-02): same one-bundle-scoped carve-out as the d27/d31 rules
+# above — the evolution ledgers are the sole committed evidence for the D33
+# finding's per-year entry-decision, build-zone and floor-binding sections.
+!results/hindcast/miso-2021-2025-realized-t1h-d33/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet
