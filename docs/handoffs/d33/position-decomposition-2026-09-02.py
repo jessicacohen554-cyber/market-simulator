@@ -59,7 +59,6 @@ print(
 )
 
 
-
 def vintage_pay(year: int, pos: float) -> float:
     """$/kW-yr the HEAD vintage curve pays at reserve position pos."""
     v = resolve_demand_curve_vintage("NEISO", year)
