@@ -158,3 +158,265 @@ the re-authored corridor disposition table and the committed benchmark anchors.
 
 The control reproduces, so the re-score in §6 differs from the committed record by exactly
 one input: the battery JSON.
+
+---
+
+## 5. The measured record — both rungs, at full magnitude
+
+**Solved:** NEISO forecast 2026–2050, legacy heat-rate bins, years sequential within each
+rung, the two rungs concurrent (rule 12). **Wall: 654.5 s = 10.9 min** against the ~12 min
+Q27 pricing — inside it. Cache keys minted distinct and verified so pre-solve:
+`vre_short` (`entry_rate_limits=True`) `b0b2fed9022abfbb` → runtime `e4c79ce0e1f4a76c`;
+`vre_long` (`False`) `8fa63b0cc9fe85cb` → runtime `bf26a9eb5dacf56c`. Both rungs
+`status: ok`, neither cached. Prerequisite, not part of the pricing: the gitignored
+`data/clean` tree was rebuilt from `data/raw` first (`scripts/regenerate_clean.py`, 53/53
+datatypes, **0 failures**, 35.2 min) — a fresh container has no derived tree, and the
+first attempt failed fast on exactly that (`confirmed-retirements: clean partition for
+NEISO is absent`), which is the guard working.
+
+### 5.1 Every extracted metric, both rungs
+
+| metric | `vre_short` (capped) | `vre_long` (uncapped) | Δ |
+|---|---:|---:|---:|
+| **`rps_dual_over_acp`** | **1.0** | **1.0** | **0.0** |
+| `renewable_build_gw` | 33.0 | 33.0 | **0.0** |
+| `entry_thermal_gw` | 1.0 | 0.0 | −1.0 |
+| `total_build_gw` | 34.72 | 33.72 | −1.0 |
+| `retired_thermal_gw` | 2.015 | 3.015 | +1.0 |
+| `economic_retired_thermal_gw` | 0.1603 | 0.1603 | 0.0 |
+| `exogenous_retired_thermal_gw` | 0.124 | 0.124 | 0.0 |
+| `reserve_margin_final` | 0.0853 | 0.05527 | −0.030 |
+| `co2_mt_total` (Mt) | 197.1768 | 193.9864 | −3.190 |
+| `gas_cc_twh` | 423.4149 | 415.5949 | −7.820 |
+| `coal_twh` | 0.7568 | 0.7568 | 0.0 |
+| `lw_price` ($/MWh) | 66.500 | 66.224 | −0.276 |
+| `scarcity_hours` | 0 | 0 | 0 |
+| `storage_fleet_mw` | 3355.0 | 3355.0 | 0.0 |
+| `storage_cap_value_per_mw` | 0.38343 | 0.38343 | 0.0 |
+| `storage_fleet_avg_elcc` | 0.88937 | 0.88937 | 0.0 |
+| `storage_new_longdur_share` | 1.0 | 1.0 | 0.0 |
+| `net_cone` | 108.94 | 108.94 | 0.0 |
+
+**Gate rows as scored by the battery:** `T1.6a` **PASS** (`all ≤ 1.0`) · `T1.6b` **PASS**
+(`↓ [1.0, 1.0]`). Both are then flagged **vacuous** by the FC-6 scorer's constant-series
+detector (§6) — which is the pre-registered outcome **B**, and the correct reading.
+
+### 5.2 The lever is LIVE — this is not a second disconnected knob
+
+The distinction matters and is stated first, because it is the one thing this run
+establishes beyond doubt. `renewable_buildout_pace` produced **18 of 18 identical**
+extracted values (D21 §5.1) — the signature of a field no model code reads.
+`entry_rate_limits` moves **8 of the 18** comparable metrics, materially: 1.0 GW of gas-CC
+entry appears in the capped arm and vanishes in the uncapped one, thermal retirements move
+by the same 1.0 GW, the final reserve margin falls 8.53 % → 5.53 %, cumulative CO₂ falls
+3.19 Mt and gas-CC generation 7.82 TWh. **The re-point is correctly wired.** Q27's premise
+holds.
+
+### 5.3 …but its VRE half RE-PHASES WITHOUT RE-SIZING — the ladder still does not construct its own condition
+
+This is the finding that was not predicted, and it is the honest headline. Read from the
+two rungs' own evolution ledgers:
+
+| | `vre_short` (`entry_rate_limits=True`) | `vre_long` (`False`) |
+|---|---|---|
+| build years | **22** — every year 2029–2050 | **11** — alternating 2029, 2031, … 2049 |
+| per-build-year tranche | alternating 1,089.4 solar + 712.6 wind / 910.6 solar + 287.4 wind | 2,000.0 solar + 1,000.0 wind |
+| **cumulative VRE additions** | **33,000 MW** | **33,000 MW** |
+| **terminal 2050 VRE fleet** | **37.1 GW** | **37.1 GW** |
+| max inter-arm VRE gap | 1.198 GW, odd years only | — |
+
+The growth ladder converts eleven alternate-year 3,000 MW tranches into twenty-two
+consecutive-year rate-limited ones and **arrives at the identical fleet, to the MW**. It
+re-phases; it does not re-size. That is the same signature FFR-2B recorded on the MISO
+backstop (*"cumulative backstop 11,195.3 → 11,187.7 MW, −0.07 %, i.e. INVARIANT. It
+RE-PHASES"*) — now measured on the VRE half, in NEISO, for the first time.
+
+**Consequence for T1.6, stated plainly: the re-pointed ladder does not hold the VRE fleet
+short vs long either.** It holds the *cadence* short vs long. Because
+`rps_dual_over_acp` is measured on the **final-year** dual against a **final** fleet that
+is identical in both arms, the ladder cannot discriminate on its own metric by
+construction — and that is a second, independent reason the series is constant, on top of
+the RPS/ACP result in §5.4. The binding constraint on NEISO VRE *volume* in this window is
+not the growth ladder but the **per-tech queue cap** (2,000 MW solar / 1,000 MW wind per
+decision year, the ceiling the uncapped arm sits exactly on). Naming that is not testing
+it: **no third lever was tried, and none is proposed** (Q27, rules 1/11/14). It is filed
+as the successor's open object in §8.
+
+### 5.4 THE RPS/ACP FINDING — the dual escapes to its cap, and never comes back
+
+The pre-registered clause fires, and the evidence is stronger than the two-point ladder it
+was written for. The REC dual is **$50.00/MWh — exactly the ACP ceiling — in all 25 years
+of BOTH arms, 50 arm-years without a single exception**, while the VRE fleet grows from
+**4.1 GW to 37.1 GW (9.0×, +33.0 GW)**:
+
+| year | dual `vre_short` | dual `vre_long` | VRE `vre_short` (GW) | VRE `vre_long` (GW) |
+|---|---:|---:|---:|---:|
+| 2026 | 50.0 | 50.0 | 4.1 | 4.1 |
+| 2030 | 50.0 | 50.0 | 7.1 | 7.1 |
+| 2035 | 50.0 | 50.0 | 14.902 | 16.1 |
+| 2040 | 50.0 | 50.0 | 22.1 | 22.1 |
+| 2045 | 50.0 | 50.0 | 29.902 | 31.1 |
+| 2049 | 50.0 | 50.0 | 35.902 | 37.1 |
+| 2050 | 50.0 | 50.0 | 37.1 | 37.1 |
+
+*(All 25 years are in `fc6/_battery_metrics/`'s source ledgers; the seven above are a
+readable sample of a series that is constant at 50.0 throughout.)*
+
+**Reported as the outcome, exactly as pre-registered.** NEISO's RPS target is unreachable
+at every VRE volume this model builds across a quarter-century, so the ACP escape column —
+not the physical REC balance — sets the attribute price in every year, and the dual is
+pinned at its ceiling. That is a **REAL statement about the RPS/ACP stack**, not a wiring
+failure: the same 9× fleet expansion that fails to move it *does* move CO₂, gas-CC
+generation, reserve margin and thermal entry, so the model is responding to VRE elsewhere
+— just not through this dual.
+
+**Two honest limits on that statement**, neither of which softens it:
+1. The 33.0 GW ceiling is itself the queue cap's (§5.3), so this measures "unreachable at
+   the volumes the entry stack will build", not "unreachable at any conceivable volume".
+2. The ladder's own two-point comparison is degenerate for the reason §5.3 gives. The
+   force of the finding comes from the **within-arm** 25-year series — 4.1 → 37.1 GW at a
+   flat $50.00 — not from the between-arm comparison.
+
+**No third lever was tried, and none will be** (Q27, verbatim: *"never a third lever tried
+until one moves"*). Nothing was tuned, re-run for a better draw, or softened.
+
+## 6. The FC-6 re-score — one leaf moves, and it is the right one
+
+The §4 control and the re-score differ by **exactly one input**: the battery JSON. A
+whole-document recursive diff of the two verdicts (provenance excluded) returns
+**one differing leaf**:
+
+```
+PATH: .categories.FC-6.rows[0].detail
+  control : … 2 vacuous row(s) …: ['T1.6/T1.6a', 'T1.6/T1.6b']
+  rescored: … 2 vacuous row(s) …: ['T1.6/T1.6a (all-constant series [1.0, 1.0])',
+                                   'T1.6/T1.6b (all-constant series [1.0, 1.0])']
+```
+
+Everything else — FC-1, FC-2, FC-3, FC-4, FC-5, FC-7, FC-8, the paired P1/P2/P3 rows, the
+`reasons`, the `caveats`, the `determination` — is byte-identical. **The STOP rule is
+satisfied by measurement, not by assertion.**
+
+### 6.1 FC-6 battery-leg status after: **CAVEAT**, with the named reason
+
+| | before (golden-2 record) | **after (this lane)** |
+|---|---|---|
+| battery gate rows | CAVEAT | **CAVEAT** |
+| reason | 2 vacuous rows — ladder **OUT OF SERVICE**, the model was never asked | 2 vacuous rows — **all-constant series [1.0, 1.0]**, the model was asked and answered the same twice |
+| rungs solved | 0 | **2** |
+| FC-6 category | FAIL (on paired **P2**) | **FAIL** (on paired **P2**) |
+| determination | HOLD | **HOLD** |
+
+**The battery leg is scored, not skipped — and it still reads CAVEAT.** That is the
+pre-registered outcome B and it is not a disappointment: the row moves from *"we never
+ran the experiment"* to *"we ran it and the metric did not respond"*, which is a strictly
+more informative artifact backed by 50 arm-years of measured dual. Per §3, no outcome
+available to this lane could have cleared FC-6, which fails on the **P2** merit-order leg
+golden-2 root-caused and routed to D35 — untouched here.
+
+**No preserved verdict key is minted.** The program's preserve-then-overwrite discipline
+attaches to a record whose *content* is replaced; here every status, every other row and
+the determination are identical and the one moving leaf is a reason string becoming true —
+the interaction T16 §10 anticipated in advance (*"the detail string legitimately changes …
+while its status does not"*). The one-leaf diff above is the evidence that nothing was
+lost; the golden-2 `session_note` is preserved verbatim and extended, not replaced.
+
+## 7. What was written
+
+| artifact | change |
+|---|---|
+| `scripts/run_driver_battery.py` | T1.6 re-pointed: `out_of_service` cleared, two `entry_rate_limits` rungs, registry comment carrying Q27, the §2 verification, the rejected alternatives, the declared confound and the honesty clause |
+| `tests/scoring/test_driver_battery.py` | `TestT16Repoint` (lever, rung order, expectations unchanged) + `TestOutOfServiceLadder` (T16's machinery stays exercised now no ladder uses it) |
+| `results/ff-t3-neiso-golden/bau/fc6/driver-battery-neiso-2026-09-02.{json,md}` | the new battery record — **added beside**, never over, the 2026-09-01 out-of-service record |
+| `…/fc6/_battery_metrics/NEISO/*.json` | the two rungs' memoized metric sidecars |
+| `results/ff-t3-neiso-golden/bau/forecast_verdict.json` | re-scored (one leaf + provenance) |
+| `frontend/data/forecast/ff-verdicts.json` | `neiso-t3` re-scored; `session_note` extended; **1 of 56 keys moved**, asserted |
+| `docs/codebase-site/data/mechanism-matrix/NEISO.js` | `entry_dampers` gains this ISO's `ev` citation; **cell and `fc` stay `U`** |
+
+**Not touched:** plan §2 (§2 above is why); the T1.6 expectations; any `ScenarioConfig`
+field or default; the golden's solved bundle; `forecast_attestation.json`;
+`paired_invariants.json`; the FC-5 disposition table; any other ISO's shard; anything in
+the backcast namespace; any GitHub Actions workflow.
+
+**Rule 28 duties.** (a) DO-NOT-REDO: NEISO's `entry_dampers` cell was `U`/`U` — no
+`R`/`I`/`G` verdict was re-tested. (b) The cell is stamped in this session with the
+evidence. (c) No new `ScenarioConfig` mechanism, so no base-matrix row is owed. (d) The
+cell **stays `U`**: a ladder perturbation of an already-armed field is an instrument, not
+an arming adjudication, so no verdict is minted and none transfers to another ISO.
+`check_mechanism_matrix.py` passes (integrity OK, 0 unresolvable anchors beyond the
+ratchet, keeper stamps and §5.x headers matched).
+
+### 7.1 Test and guard controls
+
+| check | unmodified `origin/main` (`d697cd83`) | this branch | verdict |
+|---|---|---|---|
+| `tests/scoring`, FULL | 4 failed / 1198 passed / 3 skipped / 1 xfailed | 4 failed / 1198 passed / 3 skipped / 1 xfailed | **identical set** |
+| the 4 failing names | `test_ff_readiness_battery::test_marker_state_reflects_committed_markers`, `::test_build_registration_scorecard_no_iso_gate_open`, `test_forecast_parity::test_all_six_keepers_resolve`, `test_gate_a_provenance::test_live_board_passes` | same four | **pre-existing, name-for-name** |
+| `ScenarioConfig().cache_key()` | `7a57fadff595ca83` | `7a57fadff595ca83` | **unmoved** |
+| `check_cache_key_registration.py` | — | ok, 767 fields, 220 optional all resolve, 220 declared defaults match HEAD | pass |
+| `check_mechanism_matrix.py` | integrity OK | integrity OK, 0 unresolvable anchors beyond the ratchet | pass |
+
+The four reds were measured on a clean `origin/main` checkout of this same tree (stash →
+`git checkout origin/main` → re-run → restore), not inferred. **This lane introduces no
+new test failure and fixes none**; the reds are another lane's object (they read the live
+board / keeper resolution, not anything this lane writes) and are disclosed rather than
+absorbed. The 34 tests in `tests/scoring/test_driver_battery.py` — including the five
+added here — all pass.
+
+## 8. Routed to the director — one open object, deliberately not tested here
+
+**The VRE-volume constraint in NEISO is the per-tech queue cap, not the growth ladder**
+(§5.3). Two consequences the successor owns, neither actioned by this lane:
+
+1. **T1.6's instrument question is NOT fully closed by Q27.** The re-point is correct on
+   its own terms — `entry_rate_limits` is the real, cited, consumed, owner-armed VRE-pace
+   mechanism, exactly as T16 argued — but in NEISO's 2026–2050 window it re-phases VRE
+   without re-sizing it, so the ladder's *cadence* contrast cannot exercise a *final-year*
+   metric. Whether T1.6 should therefore (i) stand as-is with this measured limitation on
+   the record, (ii) score an intermediate-year dual where the arms genuinely differ (1.198
+   GW in odd years), or (iii) point at the queue cap, is a **plan §2 instrument decision
+   and needs a new owner act**. This lane makes no attempt at any of them: Q27 binds
+   ("never a third lever tried until one moves"), and the correct response to a
+   non-moving lever is this report, not another lever.
+2. **The RPS/ACP result is the more valuable half and stands on its own** (§5.4), because
+   it is a *within-arm* 25-year measurement that does not depend on the ladder
+   discriminating at all. If NEISO's RPS target is genuinely unreachable at every
+   buildable VRE volume, that is a structural statement about the RPS/ACP stack worth its
+   own examination — and it is the reason FC-6's battery CAVEAT is now an honest
+   measurement rather than an instrument defect.
+
+**Also still open, from T16 §6 and unchanged:** plan §2 line 99's *"nuclear does not move
+the dual"* clause has no rung, expectation or scoring path — T1.6 remains a two-of-three
+implementation of its own pre-registration (§2.2). And T16's second-order note stands
+untested: `retirement_aggressiveness` has the identical dead-knob signature
+`renewable_buildout_pace` had, and deserves D21's measured treatment before anyone acts.
+
+## 9. Reproduction record
+
+```
+git fetch origin main && git checkout -B <branch> origin/main       # 69b6c8d9
+python3 -m venv .venv-t16a && .venv-t16a/bin/pip install -r requirements.txt pytest
+PYTHONPATH=.:src .venv-t16a/bin/python scripts/regenerate_clean.py  # 53/53, 0 failures
+
+# the two rungs (654.5 s)
+PYTHONPATH=src .venv-t16a/bin/python scripts/run_driver_battery.py \
+  --iso NEISO --start-year 2026 --end-year 2050 --tests T1.6 --workers 2 \
+  --out <out> --cache-root <cache>
+
+# the FC-6 score (identical invocation for the control and the re-score, differing
+# ONLY in --driver-battery: …-2026-09-01.json vs …-2026-09-02.json)
+B=results/ff-t3-neiso-golden/bau
+PYTHONPATH=src .venv-t16a/bin/python scripts/forecast_verdict.py --tier t3 \
+  --summary $B/full_horizon_summary.json --invariants $B/full_horizon_summary.json \
+  --paired-invariants $B/fc6/paired_invariants.json \
+  --driver-battery $B/fc6/driver-battery-neiso-2026-09-02.json \
+  --hindcast-score results/hindcast/neiso-2021-2025-curve/NEISO/2ba529574d4982ea/score.json \
+  --crossover-score results/hindcast/neiso-2023-2027-crossover-capxd14/NEISO/07e416f3f8072e7c/crossover_score.json \
+  --corridor results/ff-corridor/dispositions/neiso-t3.json \
+  --benchmark-corridor results/ff-corridor/benchmark-corridor-anchors.json \
+  --run-config $B/run_config.json --dof-ledger $B/dof_ledger.json \
+  --attestation $B/forecast_attestation.json --json-out <out>.json
+
+PYTHONPATH=src .venv-t16a/bin/python scripts/check_mechanism_matrix.py
+PYTHONPATH=src:. .venv-t16a/bin/python -m pytest tests/scoring -q
+```

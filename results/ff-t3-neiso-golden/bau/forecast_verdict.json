@@ -3,8 +3,8 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "7726d91e98b4",
-    "scored_at_date": "2026-09-01T22:07:53Z",
+    "scored_at_sha": "cba50e46aa70",
+    "scored_at_date": "2026-09-02T02:09:15Z",
     "cache_epoch": "706e7ba8e6582d42"
   },
   "tier": "t3",
@@ -125,7 +125,7 @@
         {
           "row": "battery gate rows",
           "status": "CAVEAT",
-          "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a', 'T1.6/T1.6b']",
+          "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a (all-constant series [1.0, 1.0])', 'T1.6/T1.6b (all-constant series [1.0, 1.0])']",
           "gating": true
         },
         {
