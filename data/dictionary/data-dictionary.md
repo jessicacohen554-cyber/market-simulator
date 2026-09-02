@@ -79,6 +79,7 @@ for the market split.
 | som-competitive-conduct | — | — | — | — | — | — |
 | capacity-market-demand-curve | — | — | — | — | — | — |
 | capacity-market-auction-price | — | — | — | — | — | — |
+| capacity-market-auction-supply | — | — | — | — | — | — |
 | capacity-market-elcc | — | — | — | — | — | — |
 | transfer-constraint-binding | — | — | — | — | — | — |
 | maxgen-events | — | — | — | — | — | — |
@@ -1532,6 +1533,42 @@ the model's implemented demand-curve mechanism, never pinned or fit to (rules
 | `price_unit` | `string` | `none` | yes | Unit of clearing_price — usd_per_mw_day \| usd_per_kw_month \| usd_per_kw_yr \| usd_per_mw_yr. |
 | `cleared_mw` | `float64` | `mw` | yes | Total capacity cleared in this area/round, if published. Null when not stated. |
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
+| `source_page` | `string` | `none` | yes | Page / table locator within source_doc. |
+
+## capacity-market-auction-supply
+
+Published capacity-auction supply-side QUANTITY accounting per ISO — offered
+and cleared MW by planning-resource category plus the auction's own
+requirement/commitment ledger rows (PRMR, FRAP, self-scheduled, committed) — by
+planning year, season and area. The quantity half of the capacity-auction
+record that capacity-market-auction-price carries the price half of. A
+rule-13-admissible published ACCOUNTING-BASIS input (e.g. the wedge between a
+census-accreditation ledger and the market's counted supply); the cleared rows
+are validation observables. Never a quantity target. Schema:
+[`schema/capacity-market-auction-supply.schema.yaml`](schema/capacity-market-auction-supply.schema.yaml).
+
+- **Keys:** `iso`, `planning_year`, `season`, `area`, `metric`, `category`
+- **Reconciles:** MISO PRA Results Postings — the "Seasonal Supply Offered and
+  Cleared Comparison Trend" category tables (Generation / External Resources /
+  Behind-the-Meter Generation / Demand Resources / Energy Efficiency, in ZRC)
+  and the seasonal "PRA Results by Zone" System/subregion ledger rows (PRMR,
+  Offer Submitted, FRAP, Self-Scheduled, Committed, in MW SAC) — onto one
+  canonical frame keyed on `(iso, planning_year, season, area, metric,
+  category)`. MISO to date (capx D31, 2026-09-02); per-ISO parsing lives in
+  `scripts/lib/capacity_market_auction_supply/<iso>.py`.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO publishing the accounting (MISO to date). |
+| `planning_year` | `string` | `none` | no | Planning/delivery year label the auction governs (e.g. "2025-2026" for a MISO Planning Year). |
+| `season` | `string` | `none` | yes | Season the row applies to (summer \| fall \| winter \| spring) for seasonally-cleared auctions (MISO PRA from PY2023-24); null for annual-only records. |
+| `area` | `string` | `none` | no | Scope of the row: "System" for ISO-wide rows, a subregion label (MISO "North/Central" \| "South") for subregional ledger rows. |
+| `metric` | `string` | `none` | no | Canonical metric. Category quantities: offered \| cleared (paired with a non-null category — the posting's "Offered (ZRC)" / "Cleared (ZRC)" columns). Requirement/commitment ledger rows (category null): prmr (the vertical-era single Planning Reserve Margin Requirement) \| initial_prmr \| final_prmr (the RBDC-era pair: pre-auction requirement and the cleared curve-intersection quantity) \| offer_submitted (total offers incl. FRAP) \| frap (Fixed Resource Adequacy Plan self-supply) \| self_scheduled \| non_ss_offer_cleared \| committed (offer cleared + FRAP — the auction's committed total). |
+| `category` | `string` | `none` | yes | Planning-resource category for offered/cleared rows: generation \| external_resources \| behind_meter_generation \| demand_resources \| energy_efficiency \| total. Null for requirement/commitment ledger metrics. |
+| `value_mw` | `float64` | `MW` | no | The row's quantity in MW (ZRC or SAC per unit). |
+| `unit` | `string` | `none` | no | Quantity basis as the source labels it: mw_zrc (Zonal Resource Credits — the category trend tables) \| mw_sac (MW Seasonal Accredited Capacity — the zonal-results ledger rows). Numerically the same accredited-MW basis; the label preserves the source's own terminology. |
+| `vintage` | `string` | `none` | yes | The publishing document's own label/date (e.g. "PY2025-26 PRA Results Posting (05/29/2025, corrections)"), distinct from planning_year. |
+| `source_doc` | `string` | `none` | yes | Authoritative source document (URL or citation) the value was read from. |
 | `source_page` | `string` | `none` | yes | Page / table locator within source_doc. |
 
 ## capacity-market-elcc

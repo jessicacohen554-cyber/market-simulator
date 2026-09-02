@@ -107,6 +107,15 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "MarketDesign",
         "MarketDesignVintage",
         "NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO",
+        # Added to capacity_market.py by capx D40 (`4d3263c6`, 2026-09-02,
+        # NEISO Net ICR de-vintage) WITH the paired `constants.py` re-export
+        # but WITHOUT this inventory entry — the STORAGE_TECH_AVAILABLE_YEAR
+        # gap below, recurring. The facade contract was never broken: both
+        # names resolve from `constants` and are the same objects — this is
+        # the inventory catching up. No value touched. Entered 2026-09-02 by
+        # the fast-tier repair lane.
+        "NET_ICR_HOLD_LAST_RATIO_BY_ISO",
+        "NET_ICR_REQUIREMENT_MW_BY_ISO",
         "NONFOSSIL_ANNOUNCED_HORIZON_YEARS",
         "PJM_RGGI_ZONE_SHARE",
         "PLANNING_RESERVE_MARGIN_BY_ISO",

@@ -102,7 +102,35 @@ def test_families_zone_masks(monkeypatch):
     assert not sp.zone_mask[idx["WECC_import"]]
     npf = by_name["caiso_np26_nonspin"]
     np_zones = {CAISO_ZONES[i] for i in np.flatnonzero(npf.zone_mask)}
-    assert np_zones == set(REGION_ZONES["AS_NP26"])
+    # REGION_ZONES lists FSNO under AS_NP26 since the caiso-224 sub-zonal
+    # partition landed (#4516, 2026-08-31). Its own comment says the entry is
+    # inert whenever the zone is not in the active topology — zone-name
+    # matching finds nothing — and this test runs the default 6-zone topology,
+    # so the mask is the region's members that are PRESENT, not the full list.
+    assert np_zones == set(REGION_ZONES["AS_NP26"]) & set(CAISO_ZONES)
+    assert np_zones == {"NP15", "ZP26"}
+
+
+def test_families_zone_masks_include_fsno_when_partition_is_active(monkeypatch):
+    # Trivial case for the caiso-224 topology: with FSNO in the zone list the
+    # NP26 mask picks it up, and the SP26 mask still does not.
+    T = 24
+    series = {
+        "sp26_spin": np.full(T, 60.0),
+        "sp26_nonspin": np.full(T, 220.0),
+        "np26_spin": np.full(T, 55.0),
+        "np26_nonspin": np.full(T, 210.0),
+    }
+    monkeypatch.setattr(asr, "load_caiso_as_requirements", lambda *a, **k: series)
+    pen, wid = _steps()
+    zones = ["NP15", "FSNO", "ZP26", "LA_BASIN", "SDGE", "SP15_rest", "WECC_import"]
+    fams = _caiso_locational_as_families(zones, len(zones), T, 2024, pen, wid, pen, wid)
+    by_name = {f.name: f for f in fams}
+    np_zones = {zones[i] for i in np.flatnonzero(by_name["caiso_np26_spin"].zone_mask)}
+    assert np_zones == set(REGION_ZONES["AS_NP26"]) == {"NP15", "FSNO", "ZP26"}
+    sp_zones = {zones[i] for i in np.flatnonzero(by_name["caiso_sp26_spin"].zone_mask)}
+    assert "FSNO" not in sp_zones
+    assert sp_zones == set(REGION_ZONES["AS_SP26"])
 
 
 def test_families_requires_sim_year():

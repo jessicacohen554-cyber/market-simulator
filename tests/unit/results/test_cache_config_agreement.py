@@ -15,8 +15,9 @@ one its absence is equivalent to. Refusal is a logged cache miss, never an
 exception.
 
 The last class here is the one that decides (c′) is the right shape rather than
-strict (c): it replays the FOURTEEN committed shared-key groups and asserts the
-rule refuses the two true positives and permits the twelve designed cases —
+strict (c): it replays the committed shared-key groups (FOURTEEN at D24,
+fifteen since T3-GOLDEN-2 landed a designed pair on 2026-09-01) and asserts the
+rule refuses the two true positives and permits every designed case —
 strict equality refuses 14 of 14 (D24 §7).
 """
 
@@ -146,7 +147,7 @@ class StoredConfigAgreementTest(unittest.TestCase):
 
 
 class CommittedSharedKeyGroupsTest(unittest.TestCase):
-    """Replay D24 §4.5: refuse the 2 true positives, permit the 12 designed cases.
+    """Replay D24 §4.5: refuse the 2 true positives, permit the designed cases.
 
     Every committed ``run_config.json`` carrying a ``cache_key`` is grouped by
     that key; each group is a set of runs that addressed ONE bundle directory.
@@ -200,7 +201,17 @@ class CommittedSharedKeyGroupsTest(unittest.TestCase):
     def test_fourteen_groups_split_two_and_twelve(self):
         refused = {k: self._refusals(v) for k, v in self.groups.items()}
         refused_keys = sorted(k for k, v in refused.items() if v)
-        self.assertEqual(len(self.groups), 14)
+        # 14 -> 15 on 2026-09-01: T3-GOLDEN-2 (`a5523fac`, `bba296ca`)
+        # overwrote results/ff-t3-neiso-golden/bau/run_config.json with the
+        # armed-posture golden, which now shares key 706e7ba8e6582d42 with its
+        # own fc6/arms/base control — a designed (permitted) case, so the
+        # refused pair below is unchanged. The count is a frozen inventory of
+        # committed run_config.json files and moves whenever a registration
+        # lands two configs at one key; the invariant this test guards is the
+        # refused SET, asserted next. Corrected 2026-09-02 by the fast-tier
+        # repair lane (the count had been red on main since 2026-09-01).
+        self.assertEqual(len(self.groups), 15)
+        self.assertIn("706e7ba8e6582d42", self.groups)
         self.assertEqual(
             refused_keys, ["07e416f3f8072e7c", "f061b2646bfaac8b"], msg=refused
         )

@@ -248,14 +248,25 @@ def test_marker_state_reflects_committed_markers():
     # them: `withdrawn` records that a marker existed and was revoked, which is
     # what a later re-declaration has to reckon with.
     #
-    # All three `complete` markers are VALIDATION-tier only: the two-tier split
+    # All `complete` markers are VALIDATION-tier only: the two-tier split
     # means `complete` no longer authorizes the touch-once locked test, which
     # needs the separate `final` block (EMPTY at HEAD).
-    for iso in ("NEISO", "NYISO", "PJM"):
+    #
+    # Two more moves this test lagged behind, both read from the committed
+    # marker file (no re-derivation), and both the SAME desync class again:
+    # ERCOT was DECLARED `complete` on the 2026-08-25-234-eastex-identity
+    # keeper, and NYISO's marker was WITHDRAWN 2026-08-30 by owner ruling at
+    # the capacity-expansion director's refresh-#12 card (the CAISO precedent
+    # applied uniformly: a `complete` marker cannot stand on a NOT-YET keeper;
+    # nyiso-157 re-keyed it onto a second consecutive NOT-YET). Landed on main
+    # in the #4516 merge (2026-08-31); the assertions were corrected 2026-09-02
+    # by the fast-tier repair lane. `withdrawn` is kept distinct from `none`
+    # for the reason given above.
+    for iso in ("ERCOT", "NEISO", "PJM"):
         assert B._marker_state(iso)["marker"] == "complete", iso
-    for iso in ("ERCOT", "MISO"):
-        assert B._marker_state(iso)["marker"] == "none", iso
-    assert B._marker_state("CAISO")["marker"] == "withdrawn"
+    assert B._marker_state("MISO")["marker"] == "none"
+    for iso in ("CAISO", "NYISO"):
+        assert B._marker_state(iso)["marker"] == "withdrawn", iso
 
 
 def test_t1f_verdict_reads_ff2d_hold():
