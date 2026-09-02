@@ -695,6 +695,20 @@ results/hindcast/*/*/*/evolution_*.json
 # above — the evolution ledgers are the sole committed evidence for the D33
 # finding's per-year entry-decision, build-zone and floor-binding sections.
 !results/hindcast/miso-2021-2025-realized-t1h-d33/*/*/evolution_*.json
+# capx D37 (2026-09-02): same one-bundle-scoped carve-out as the d27/d31/d33
+# rules above, for BOTH arms of the armed-vs-control A/B. The evolution ledgers
+# are the sole committed evidence for the D37 finding's per-year position table
+# (the reserve_margin -> accredited-firm identity the positions are computed
+# from), its exit re-timing claim, and its floor-binding measurement; without
+# them a future lane must re-solve both arms. The floor-retention sidecars are
+# un-ignored for the same two bundles only: they carry the retained-unit
+# identities that are the ONLY evidence the floor bound at all (6 coal units in
+# 2024, 13 gas_cc in 2025, against zero in the control). Scoped to these two
+# bundles, NOT to the T1-H class. ~0.7 MB of JSON across 10 files.
+!results/hindcast/neiso-2021-2025-realized-t1h-d37-armed/*/*/evolution_*.json
+!results/hindcast/neiso-2021-2025-realized-t1h-d37-control/*/*/evolution_*.json
+!results/hindcast/neiso-2021-2025-realized-t1h-d37-armed/*/*/year_*_floor_retentions.json
+!results/hindcast/neiso-2021-2025-realized-t1h-d37-control/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet
