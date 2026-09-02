@@ -140,6 +140,17 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO",
         "STORAGE_ELCC_SATURATION_EXPONENT",
         "STORAGE_TECHS",
+        # Added to capacity_market.py by the T1-H storage-entry lane WITH the
+        # paired `constants.py` re-export but WITHOUT this inventory entry,
+        # which left the frozen surface red on main from 2026-08-31 (reported
+        # as a pre-existing failure by FINDING-capx-d16-seam-guard-2026-08-30
+        # §3 and FINDING-capx-d4m-ercot-t1h-2026-08-31 §9, fixed by neither).
+        # The facade contract itself was never broken — `constants.
+        # STORAGE_TECH_AVAILABLE_YEAR` resolves and is the same object — so
+        # this is the inventory catching up with a name that is already on the
+        # re-exported surface, exactly as PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE
+        # above. No value touched.
+        "STORAGE_TECH_AVAILABLE_YEAR",
         "STORAGE_TECH_BUILD_SHARE_CAP",
         "STORAGE_TECH_POWER_SHARE",
         # FFR-4E: CAISO's published whole-class storage accreditation, the
