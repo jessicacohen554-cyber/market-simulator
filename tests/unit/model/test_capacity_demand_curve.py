@@ -27,7 +27,6 @@ from market_sim.config.constants import (
     evaluate_demand_curve,
     resolve_capacity_curve_eligible,
     resolve_demand_curve_vintage,
-    seasonal_rbdc_price_per_firm_mw_yr,
 )
 from market_sim.config.paths import RAW_DIR
 from market_sim.config.scenarios import ScenarioConfig
@@ -154,9 +153,15 @@ class TestCapacityPriceSeam(unittest.TestCase):
     def test_curve_price_at_requirement_is_net_cone(self):
         # Curve mode ON: every ISO whose published curve places net-CONE at the
         # requirement pays exactly net_cone_curve there. (PJM's real curve puts
-        # its net-CONE point at 1.015, so it is tested at that x.)
-        anchor_x = {"PJM": 1.015, "NYISO": 1.0, "NEISO": 1.0, "MISO": 1.0}
+        # its net-CONE point at 1.015, so it is tested at that x. MISO's
+        # published RBDC does NOT price net-CONE at the requirement — it sits
+        # near its seasonal CONE caps there; its net-CONE calibration is the
+        # cleared-position identity asserted in TestMISOSeasonalRBDC — so it
+        # is excluded here since the D31 published-shape repair.)
+        anchor_x = {"PJM": 1.015, "NYISO": 1.0, "NEISO": 1.0}
         for iso in _CURVE_ISOS:
+            if iso == "MISO":
+                continue
             design = MARKET_DESIGN[iso]
             price = design.capacity_price_per_firm_mw_yr(_CFG_ON, anchor_x[iso])
             self.assertAlmostEqual(
@@ -165,10 +170,15 @@ class TestCapacityPriceSeam(unittest.TestCase):
 
     def test_curve_zero_when_long(self):
         # Far above the zero-cross the curve pays nothing (fleet is long).
+        # MISO's published fall/winter curves approach zero asymptotically and
+        # their charts end before it, so their tails flat-clamp at the last
+        # observed point (<= $7/MW-day) — bounded near-zero, not exact zero.
         for iso in _CURVE_ISOS:
-            self.assertEqual(
-                MARKET_DESIGN[iso].capacity_price_per_firm_mw_yr(_CFG_ON, 1.5), 0.0
-            )
+            price = MARKET_DESIGN[iso].capacity_price_per_firm_mw_yr(_CFG_ON, 1.5)
+            if iso == "MISO":
+                self.assertLess(price, 150.0)  # $/MW-yr; < $0.15/kW-yr
+            else:
+                self.assertEqual(price, 0.0)
 
     def test_curve_cap_when_short(self):
         # Deep shortage clamps to the published price cap (cap fraction x
@@ -603,16 +613,26 @@ class TestP0BReconciliation(unittest.TestCase):
         # FF-2C R4: the fixed-mode anchor is re-derived to the SAME published
         # North/Central Net CONE basis as the curve anchor.
         self.assertAlmostEqual(design.net_cone_per_kw_yr, net_cone / 1000.0, 2)
-        # Cap fraction ~ North/Central average gross CONE / Net CONE. The RBDC
-        # shape is first-order (documented), so this is a band, not equality.
-        nc_lrz = rows[(rows.metric == "gross_cone") & (rows.area.str.startswith("LRZ"))]
-        # LRZ 1-7 make up the North/Central region.
-        nc = nc_lrz[nc_lrz.area.isin([f"LRZ {i}" for i in range(1, 8)])]
-        gross_avg = float(nc.y_value.mean())
-        cap_frac_data = gross_avg / net_cone
-        self.assertAlmostEqual(
-            design.demand_curve[0].price_frac_net_cone, cap_frac_data, places=1
-        )
+
+    def test_miso_seasonal_curves_equal_the_derivation_from_committed_data(self):
+        # capx D31: the four encoded seasonal SYSTEM curves EQUAL the output of
+        # scripts/data/derive_miso_rbdc_system_curves.py over the committed raw
+        # rows (the digitized subregional polylines + published caps + PRMR
+        # operands), point for point — so the constants can never drift from
+        # the committed published data. This replaces the former first-order
+        # cap-fraction band check (the shape is now published, not assumed).
+        from scripts.data.derive_miso_rbdc_system_curves import derive_system_curves
+
+        derived = derive_system_curves()
+        by_season = {s.name: s for s in MISO_SEASONAL_RBDC.seasons}
+        for season, pts in derived.items():
+            encoded = by_season[season].demand_curve
+            self.assertEqual(len(encoded), len(pts), msg=f"{season}: point-count drift")
+            for cp, (x, frac) in zip(encoded, pts):
+                self.assertAlmostEqual(cp.reserve_ratio, x, places=4, msg=season)
+                self.assertAlmostEqual(
+                    cp.price_frac_net_cone, frac, places=4, msg=season
+                )
 
     def test_miso_py2026_27_aggregation_facts_are_pinned(self):
         # FFR-2C. MISO's PY2026-27 vintage is deliberately NOT encoded (the
@@ -1211,40 +1231,87 @@ class TestMISOSeasonalRBDC(unittest.TestCase):
             self.ON, pos, iso="MISO"
         )
 
+    # PY2025-26 published outcomes (PRA Results Posting pp.18-21 + p.12/26 ACP
+    # rows, mirrored in capacity-market-auction-supply/auction-price):
+    # season -> (cleared MW = Final PRMR, System Initial PRMR, ACP $/MW-day).
+    CLEARED = {
+        "summer": (137_559.3, 135_213.4, 666.50),
+        "fall": (132_515.8, 129_578.0, 91.60),
+        "winter": (130_999.5, 124_615.7, 33.20),
+        "spring": (130_699.5, 129_177.3, 69.88),
+    }
+
     def test_structure(self):
         s = MISO_SEASONAL_RBDC
         self.assertEqual(len(s.seasons), 4)
         self.assertEqual(sum(x.days for x in s.seasons), 365)
         self.assertAlmostEqual(s.daily_net_cone_per_mw_day, self.DAILY_NET, places=4)
-        # Summer's cap fraction ≈ gross 1384.36 / daily net 218.63 ≈ 6.33.
+        # Summer's cap fraction = the SYSTEM seasonal CONE (the PRMR-weighted
+        # subregional aggregate the D31 published-shape curves carry) ÷ the
+        # flat daily net-CONE: 1353.84 / 218.63 ≈ 6.19.
         self.assertAlmostEqual(
             s.seasons[0].demand_curve[0].price_frac_net_cone,
-            1384.36 / self.DAILY_NET,
-            places=4,
+            1353.84 / self.DAILY_NET,
+            places=3,
         )
 
-    def test_at_requirement_reduces_to_annual_net_cone(self):
-        # position 1.0: every season pays the flat daily net-CONE, so the sum is
-        # EXACTLY the annual net-CONE (reduces to the annual curve).
-        self.assertAlmostEqual(self._price(1.0), 79_800.0, places=3)
-        # Byte-consistency with the shared seasonal function.
-        self.assertAlmostEqual(
-            self._price(1.0),
-            seasonal_rbdc_price_per_firm_mw_yr(MISO_SEASONAL_RBDC, 1.0),
-            places=6,
-        )
+    def test_cleared_positions_reproduce_published_acps(self):
+        # THE published-shape validation (capx D31): each season's curve at the
+        # market's own cleared position reproduces that season's actual ACP —
+        # summer +0.1%, winter -1.1%, spring -1.0%; fall -3.5% carries the
+        # documented SRPBC reduction (the real fall auction price-separated
+        # $91.60/$74.09 across subregions, which one system curve cannot
+        # express). The pre-repair first-order shape needed a SHORT position
+        # (0.988) to reproduce a print reality produced while 1.7% LONG.
+        by_season = {s.name: s for s in MISO_SEASONAL_RBDC.seasons}
+        for season, (cleared, prmr, acp) in self.CLEARED.items():
+            frac = evaluate_demand_curve(by_season[season].demand_curve, cleared / prmr)
+            price = frac * self.DAILY_NET
+            tol = 0.06 if season == "fall" else 0.02
+            self.assertAlmostEqual(
+                price, acp, delta=acp * tol, msg=f"{season}: {price} vs {acp}"
+            )
 
-    def test_long_pays_zero(self):
-        # At/beyond the zero-cross (1.05) every season is 0.
-        self.assertAlmostEqual(self._price(1.05), 0.0, places=6)
-        self.assertAlmostEqual(self._price(1.2), 0.0, places=6)
+    def test_cleared_revenue_sum_is_market_annualization(self):
+        # The market's own annualization identity: Σ ACP_s × days_s at the four
+        # cleared positions = $79,070.6/MW-yr ≈ the published net-CONE anchor
+        # (the RBDC's long-run calibration realizes at CLEARED positions, not
+        # at x=1.0, where the published curves sit near their caps). The
+        # encoded curves reproduce the sum to -0.4%.
+        days = {s.name: s.days for s in MISO_SEASONAL_RBDC.seasons}
+        by_season = {s.name: s for s in MISO_SEASONAL_RBDC.seasons}
+        total = sum(
+            evaluate_demand_curve(by_season[s].demand_curve, cleared / prmr)
+            * self.DAILY_NET
+            * days[s]
+            for s, (cleared, prmr, _) in self.CLEARED.items()
+        )
+        actual = sum(acp * days[s] for s, (_, _, acp) in self.CLEARED.items())
+        self.assertAlmostEqual(actual, 79_070.6, places=0)
+        self.assertAlmostEqual(total, actual, delta=0.01 * actual)
+
+    def test_long_pays_near_zero(self):
+        # Past every zero/tail the sum is bounded near zero (fall/winter tails
+        # flat-clamp at their last observed chart points, <= $7/MW-day each,
+        # so a deeply long position keeps a de-minimis (<$0.15/kW-yr) residue
+        # rather than an exact zero). At 1.05 — the OLD first-order zero-cross
+        # — the published curves genuinely still pay (summer alone ~$250/MW-day
+        # there): the repair's point.
+        self.assertLess(self._price(1.2), 150.0)
+        self.assertGreater(self._price(1.05), 20_000.0)
 
     def test_deep_short_caps_at_seasonal_gross_sum(self):
-        # Below the cap-plateau start (0.97) every season clamps to its own
-        # gross-CONE cap, so the annual sum is Σ (gross_daily × days) — the
-        # ceiling of the seasonal construction (~4× annual gross; the documented
-        # one-position over-statement at a short position).
-        expected = sum(gross * days for _, days, gross in self.SEASONS)
+        # Below every cap-plateau start each season clamps to its own SYSTEM
+        # seasonal-CONE cap, so the annual sum is Σ (cap_s × days_s) — each
+        # season's cap annualizes to the full annual System gross CONE, so the
+        # ceiling is ~4× annual gross (the published design's stacked seasonal
+        # CONEs; the documented one-position over-statement at a short
+        # position).
+        s = MISO_SEASONAL_RBDC
+        expected = sum(
+            x.demand_curve[0].price_frac_net_cone * self.DAILY_NET * x.days
+            for x in s.seasons
+        )
         self.assertAlmostEqual(self._price(0.3), expected, places=2)
         self.assertAlmostEqual(self._price(0.90), expected, places=2)
 
@@ -1253,16 +1320,18 @@ class TestMISOSeasonalRBDC(unittest.TestCase):
         ys = [self._price(x) for x in xs]
         self.assertTrue(all(ys[i] >= ys[i + 1] - 1e-6 for i in range(len(ys) - 1)))
 
-    def test_short_exceeds_annual_curve(self):
-        # A short position lifts the seasonal price above the annual-curve price
-        # (each season reaches for its own, higher, seasonal cap).
-        seasonal = self._price(0.985)
-        annual = (
-            evaluate_demand_curve(MARKET_DESIGN["MISO"].demand_curve, 0.985)
-            * MARKET_DESIGN["MISO"].net_cone_curve_per_kw_yr
-            * 1000.0
-        )
-        self.assertGreater(seasonal, annual)
+    def test_annual_reduction_is_days_weighted_seasonal_mean(self):
+        # The registry demand_curve (the annual reduction) is DERIVED from the
+        # same four seasonal point sets (days-weighted mean), so the two grains
+        # can never disagree: seasonal sum == annual frac × net-CONE anchor.
+        design = MARKET_DESIGN["MISO"]
+        for pos in (0.95, 0.99, 1.0, 1.017, 1.03, 1.05, 1.08, 1.2):
+            annual = (
+                evaluate_demand_curve(design.demand_curve, pos)
+                * design.net_cone_curve_per_kw_yr
+                * 1000.0
+            )
+            self.assertAlmostEqual(self._price(pos), annual, delta=1e-6 + annual * 1e-9)
 
     def test_pre_rbdc_year_is_vertical_at_cone(self):
         # A pre-RBDC MISO year (2023) resolves to the vertical-at-CONE vintage:

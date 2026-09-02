@@ -43,6 +43,7 @@ from .retirements import (
     _default_build_zone,
     _thermal_firm_mw,
     resolve_adequacy_requirement_mw,
+    resolve_internal_supply_accounting_ratio,
     resolve_renewable_capacity_credit,
 )
 
@@ -296,7 +297,13 @@ def accredited_firm_capacity_mw(
     imports of the import-node ISOs CAISO/NEISO, credited additively without
     double-counting the dispatch import node). Wind/solar
     held in the zonal pools (not Generators) are passed as ``wind_pool_mw``
-    / ``solar_pool_mw``.
+    / ``solar_pool_mw``. The whole INTERNAL aggregate (everything but the
+    firm-import credit) is then scaled by the ISO's measured internal-supply
+    accounting ratio
+    (:func:`~market_sim.model.capacity_evolution.retirements.
+    resolve_internal_supply_accounting_ratio` — capx D31; MISO 0.8546, the
+    PRA offered-Generation-to-census wedge; every other ISO the neutral
+    1.0).
 
     For the CR-3.1 curves each credit-accredited class's penetration is its
     ISO-WIDE installed nameplate — the zonal pool plus any fleet units of
@@ -322,25 +329,31 @@ def accredited_firm_capacity_mw(
             nqc_curves_enabled=nqc_curves_enabled,
         )
 
-    firm = float(storage_firm_mw)
-    firm += wind_pool_mw * (_credit("wind") or 0.0)
-    firm += solar_pool_mw * (_credit("solar") or 0.0)
+    internal = float(storage_firm_mw)
+    internal += wind_pool_mw * (_credit("wind") or 0.0)
+    internal += solar_pool_mw * (_credit("solar") or 0.0)
+    # Conventional hydro at the ISO's published accreditation (FFR-1C / FR-3):
+    # dispatched via the energy-budget path, so it is absent from `fleet` and
+    # must be credited as its own pool, exactly like wind/solar above.
+    internal += _hydro_firm_mw(fleet, iso, year)
+    for g in fleet:
+        credit = _credit(g.fuel_type)
+        if credit is not None:
+            internal += g.pmax_mw * credit
+        else:
+            internal += _thermal_firm_mw(g, iso)
+    # Internal-supply accounting ratio (capx D31): the measured wedge between
+    # this census-accreditation aggregate and the market's own counted supply
+    # (MISO: PRA offered Generation ZRC ÷ this ledger's internal firm — see
+    # ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO's citation block).
+    # Applied to every internal term; the external-tie credit below is
+    # already the market's own cleared external quantity and is NOT scaled.
+    internal *= resolve_internal_supply_accounting_ratio(iso)
     # Firm imports the ISO's own adequacy ledger counts (one resolver, rule 19):
     # ERCOT/PJM ties absent from topology AND the RA/FCM firm imports of the
     # import-node ISOs (CAISO WECC_import, NEISO HQ_import) — additive, never
     # double-counted against the dispatch node (see :func:`_firm_import_mw`).
-    firm += _firm_import_mw(iso)
-    # Conventional hydro at the ISO's published accreditation (FFR-1C / FR-3):
-    # dispatched via the energy-budget path, so it is absent from `fleet` and
-    # must be credited as its own pool, exactly like wind/solar above.
-    firm += _hydro_firm_mw(fleet, iso, year)
-    for g in fleet:
-        credit = _credit(g.fuel_type)
-        if credit is not None:
-            firm += g.pmax_mw * credit
-        else:
-            firm += _thermal_firm_mw(g, iso)
-    return firm
+    return internal + _firm_import_mw(iso)
 
 
 def capacity_reserve_position(
@@ -507,11 +520,15 @@ def apply_reserve_margin_build(
 
     # Nameplate needed to close a firm-MW gap, on the ISO's accreditation
     # basis: seasonal-rating ISOs count the new CT at nameplate; UCAP ISOs
-    # derate it by EFORd.
+    # derate it by EFORd. The internal-supply accounting ratio (capx D31)
+    # rides along so the built unit's LEDGER contribution — which carries the
+    # ratio in accredited_firm_capacity_mw — actually closes the gap (one
+    # basis, rule 19).
     if THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso) == "seasonal_rating":
         credit = 1.0
     else:
         credit = 1.0 - EFORD["gas_ct"]
+    credit *= resolve_internal_supply_accounting_ratio(iso)
     nameplate_needed = firm_gap / credit if credit > 0.0 else firm_gap
     iso_config = get_iso_config(iso)
     queue_cap_mw = QUEUE_CAP_GW.get(iso_config.name, 0.0) * 1000.0

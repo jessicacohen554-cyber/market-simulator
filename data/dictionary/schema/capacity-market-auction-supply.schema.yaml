@@ -1,0 +1,119 @@
+# Canonical schema: capacity-market-auction-supply (published capacity-auction
+# supply-side accounting — offered and cleared MW by planning-resource
+# category, plus the auction's own requirement/commitment ledger rows).
+#
+# The supply half of the capacity-auction record: where
+# capacity-market-auction-price carries each auction's cleared PRICE, this
+# datatype carries the QUANTITY accounting the same postings publish — what
+# was offered, what cleared, and the requirement it cleared against. First
+# populated for MISO (capx D31, 2026-09-02) from the PRA Results Postings'
+# "Seasonal Supply Offered and Cleared Comparison Trend" category tables
+# (Generation / External Resources / Behind-the-Meter Generation / Demand
+# Resources / Energy Efficiency, in ZRC) and the seasonal "PRA Results by
+# Zone" System/subregion ledger rows (PRMR, Offer Submitted, FRAP,
+# Self-Scheduled, Committed, in MW SAC).
+#
+# Rule-13 admissibility (stated per the data-intake contract): these are the
+# market's own supply-accounting quantities — a recurring published market
+# input that regenerates every auction cycle and responds to fleet and load
+# conditions. Admissible as an ACCOUNTING-BASIS input (e.g. identifying the
+# wedge between a census-accreditation ledger and the market's counted
+# supply); NEVER admissible as a target to pin a model's cleared quantity or
+# position to (that is the auction's outcome — rule 13's forbidden half).
+# The offered/PRMR rows identify the basis; the cleared rows are validation
+# observables of the same class as capacity-market-auction-price.
+datatype: capacity-market-auction-supply
+schema_version: 1
+title: Capacity-auction supply accounting (offered/cleared by category, requirement ledger)
+description: >-
+  Published capacity-auction supply-side quantity accounting per ISO — offered
+  and cleared MW by planning-resource category and the auction's own
+  requirement/commitment ledger rows (PRMR, FRAP, self-scheduled, committed) —
+  by planning year, season and area. Rule-13-admissible published market
+  accounting basis; never a quantity target.
+
+key_columns: [iso, planning_year, season, area, metric, category]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO publishing the accounting (MISO to date).
+  - name: planning_year
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Planning/delivery year label the auction governs (e.g. "2025-2026" for a
+      MISO Planning Year).
+  - name: season
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Season the row applies to (summer | fall | winter | spring) for
+      seasonally-cleared auctions (MISO PRA from PY2023-24); null for
+      annual-only records.
+  - name: area
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Scope of the row: "System" for ISO-wide rows, a subregion label
+      (MISO "North/Central" | "South") for subregional ledger rows.
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical metric. Category quantities: offered | cleared (paired with a
+      non-null category — the posting's "Offered (ZRC)" / "Cleared (ZRC)"
+      columns). Requirement/commitment ledger rows (category null):
+      prmr (the vertical-era single Planning Reserve Margin Requirement) |
+      initial_prmr | final_prmr (the RBDC-era pair: pre-auction requirement
+      and the cleared curve-intersection quantity) | offer_submitted (total
+      offers incl. FRAP) | frap (Fixed Resource Adequacy Plan self-supply) |
+      self_scheduled | non_ss_offer_cleared | committed (offer cleared +
+      FRAP — the auction's committed total).
+  - name: category
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Planning-resource category for offered/cleared rows: generation |
+      external_resources | behind_meter_generation | demand_resources |
+      energy_efficiency | total. Null for requirement/commitment ledger
+      metrics.
+  - name: value_mw
+    dtype: float64
+    unit: MW
+    nullable: false
+    description: The row's quantity in MW (ZRC or SAC per unit).
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Quantity basis as the source labels it: mw_zrc (Zonal Resource Credits —
+      the category trend tables) | mw_sac (MW Seasonal Accredited Capacity —
+      the zonal-results ledger rows). Numerically the same accredited-MW
+      basis; the label preserves the source's own terminology.
+  - name: vintage
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      The publishing document's own label/date (e.g. "PY2025-26 PRA Results
+      Posting (05/29/2025, corrections)"), distinct from planning_year.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: Authoritative source document (URL or citation) the value was read from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Page / table locator within source_doc.

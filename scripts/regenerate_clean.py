@@ -67,6 +67,9 @@ DATATYPES: tuple[str, ...] = (
     "storage-as-awards",
     "capacity-market-demand-curve",
     "capacity-market-auction-price",
+    # capx D31 (2026-09-02): auction supply-side quantity accounting (MISO PRA
+    # offered/cleared by category + requirement ledger).
+    "capacity-market-auction-supply",
     "capacity-market-elcc",
     "capacity-market-avoidable-cost-rate",
     "transfer-constraint-binding",

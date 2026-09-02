@@ -1,0 +1,8 @@
+# MISO PRA Results Posting primary PDFs — identity records (payloads NOT
+# committed; corpus posture for publication PDFs). Fetched from
+# cdn.misoenergy.org and sha256-verified by capx D31 (2026-09-02); the
+# PY2025-26 sha is byte-identical to the capx S-123 (2026-08-30) record in
+# SOURCES.md. Re-fetch URLs in SOURCES.md.
+d6ef5ba9c800f088631c4a4ea14b808cf81032b4f7e9e3f646ce75353e0eeb70  2023 Planning Resource Auction (PRA) Results628925.pdf
+94854416a7b5cb0b3dd547a84984c3b395dd1abab10410087ed2bcc728b76ab8  2024 PRA Results Posting 20240425632665.pdf
+4c8db42dabc340bc6747a178d446a4fc6ca37eb21897b36700e6c64905e9ad9b  2025 PRA Results Posting 20250529_Corrections694160.pdf

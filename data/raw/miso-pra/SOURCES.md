@@ -26,7 +26,24 @@ External Resources cleared 3,505.9 MW ZRC;
 cleared 9,004.4 over Initial PRMR 135,213.4; see
 `src/market_sim/config/capacity_market.py` citation blocks).
 
-Primary sources to download manually:
+**capx D31 (2026-09-02): all three primary postings fetched, sha256-recorded
+and intaken.** The Q24-funded intake fetched the three URLs below directly
+from `cdn.misoenergy.org` (open from this environment class since
+2026-08-30); the PY2025-26 sha is byte-identical to the S-123 record above.
+Identity records: `SHA256SUMS.txt` in this directory (payloads NOT
+committed — corpus posture). What was transcribed from them:
+
+- pp.22-25 offered/cleared category trend + pp.16-21 seasonal System/
+  subregional PRMR-and-commitment ledgers →
+  `data/raw/capacity-market/auction-supply/miso/miso.csv`
+  (the `capacity-market-auction-supply` datatype; capacity_market.py's
+  `ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO` identification source).
+- pp.4/15/16/17 subregional RBDC chart polylines (digitized via
+  `scripts/data/digitize_miso_rbdc_charts.py`) →
+  `data/raw/capacity-market/demand-curve/miso/miso.csv` curve_point rows
+  (the published-shape replacement for the first-order RBDC x-positions).
+
+Primary sources (verified live 2026-09-02):
 - PY 2023/24: https://cdn.misoenergy.org/2023%20Planning%20Resource%20Auction%20(PRA)%20Results628925.pdf
 - PY 2024/25: https://cdn.misoenergy.org/2024%20PRA%20Results%20Posting%2020240425632665.pdf
 - PY 2025/26: https://cdn.misoenergy.org/2025%20PRA%20Results%20Posting%2020250529_Corrections694160.pdf

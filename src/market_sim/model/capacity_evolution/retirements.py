@@ -41,6 +41,7 @@ import numpy as np
 
 from market_sim.config.constants import (
     ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+    ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO,
     DEFAULT_MARKET_DESIGN,
     FORECAST_POOL_REQUIREMENT_BY_ISO,
     MARKET_DESIGN,
@@ -1129,6 +1130,26 @@ def resolve_adequacy_requirement_mw(
     )
 
 
+def resolve_internal_supply_accounting_ratio(iso: str | None) -> float:
+    """Ratio of the market's counted internal supply to the model's census ledger.
+
+    The single resolver (rule 19) for the internal-supply accounting wedge
+    (:data:`ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO` — see its
+    citation block for the MISO identification, capx D31): applied to every
+    INTERNAL contribution wherever firm capacity is summed toward the
+    adequacy requirement — :func:`~market_sim.model.capacity_evolution.
+    adequacy.accredited_firm_capacity_mw` (hence the CR-1 reserve position),
+    :func:`_apply_reliability_floor`'s per-unit retention increments, and the
+    build backstop's crediting of a new unit — so the position, the floor and
+    the backstop stay on ONE basis. Deliberately NOT applied to per-unit
+    capacity revenue (:func:`thermal_accreditation_fraction` is untouched):
+    the aggregate wedge includes non-participants, while a unit that clears
+    earns its own accredited revenue. ISOs absent from the registry — and
+    ``iso=None`` — resolve the neutral 1.0 byte-identically.
+    """
+    return ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO.get(iso or "", 1.0)
+
+
 def thermal_accreditation_fraction(
     fuel_type: str, eford: float, iso: str | None
 ) -> float:
@@ -1366,7 +1387,12 @@ def _apply_reliability_floor(
         if _zone_is_long(deliverability_headroom, g.zone):
             continue  # RA-saturated zone: no adequacy value in retaining here
         retired.discard(g.unit_id)
-        firm_mw = _thermal_firm_mw(g, config.iso)
+        # One basis with the aggregate test above (rule 19): the retained
+        # unit's increment carries the same internal-supply accounting ratio
+        # accredited_firm_capacity_mw applied to the ledger it adds to.
+        firm_mw = _thermal_firm_mw(g, config.iso) * (
+            resolve_internal_supply_accounting_ratio(config.iso)
+        )
         accredited_mw += firm_mw
         cost_per_firm_mw, co2_rate, _hr = _floor_retention_merit(config, g)
         retention_log.append(

@@ -525,7 +525,12 @@ def invert_normalized_curve(
 
 def miso_nc_seasonal_cleared() -> dict[str, dict[str, float]]:
     """MISO PY2025-26 North/Central cleared price ($/MW-day) + cleared MW per
-    season, from the demand-curve 'RBDC labeled clearing intersection' points."""
+    season, from the demand-curve 'RBDC labeled clearing intersection' points.
+
+    point_index 0 is each (area, season)'s labeled clearing intersection; the
+    capx D31 digitized curve polylines occupy indices 1..N of the same key
+    space and must not shadow it here.
+    """
     out: dict[str, dict[str, float]] = {}
     for r in load_demand_curve("MISO"):
         if (
@@ -533,6 +538,7 @@ def miso_nc_seasonal_cleared() -> dict[str, dict[str, float]]:
             and r["metric"] == "curve_point"
             and r["area"] == "North/Central"
             and (r.get("season") or "").strip()
+            and int(float(r.get("point_index") or 0)) == 0
         ):
             out[r["season"]] = {
                 "cleared_mw_day": _f(r, "y_value"),
