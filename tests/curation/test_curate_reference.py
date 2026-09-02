@@ -41,6 +41,20 @@ _COAL_CROSSWALK_CSV = (
     "PJM,3130,Seward (PA),PA,waste,,,none,culm/gob reclamation fuel\n"
 )
 
+# A 2-row stand-in for caiso-plant-hub-membership.csv
+# (scripts/data/derive_caiso_plant_hub_membership.py, caiso-217). The curator
+# gained this fourth table in the #4516 merge (2026-08-31) without this fixture
+# following, so every test here failed on a FileNotFoundError for a file the
+# synthetic raw dir never wrote. Same column set as the real raw file.
+_HUB_CSV = (
+    "plant_code,plant_name,tech,capacity_mw,hub,pnode,eff_start,eff_end,"
+    "join_method,n_evidence\n"
+    "34,Rollins,hydro,12.1,TH_NP15,ROLLINSF_7_B1,2025-10-01,2025-12-31,"
+    "resource-name:prefix,1\n"
+    "180,Volta 2,hydro,1.0,TH_NP15,VOLTA2_7_N001,2025-10-01,2025-12-31,"
+    "eia-lmp-node:pnode-exact,1\n"
+)
+
 
 class TestCurateReference(unittest.TestCase):
     def setUp(self):
@@ -53,6 +67,7 @@ class TestCurateReference(unittest.TestCase):
         (self.raw_dir / "master-plant-registry.csv").write_text(_REGISTRY_CSV)
         (self.raw_dir / "custom-bin-assignments.csv").write_text(_BINS_CSV)
         (self.raw_dir / "coal_region_crosswalk.csv").write_text(_COAL_CROSSWALK_CSV)
+        (self.raw_dir / "caiso-plant-hub-membership.csv").write_text(_HUB_CSV)
 
         # Redirect the clean tree so writes never touch the repo.
         self._orig_clean = clean_io.paths.CLEAN_DIR
@@ -67,7 +82,13 @@ class TestCurateReference(unittest.TestCase):
 
         # One file per lookup table, each under its own `market` partition.
         self.assertEqual(
-            set(written), {"plant-registry", "bin-assignments", "coal-region-crosswalk"}
+            set(written),
+            {
+                "plant-registry",
+                "bin-assignments",
+                "coal-region-crosswalk",
+                "caiso-hub-membership",
+            },
         )
         for name, path in written.items():
             self.assertTrue(path.exists())
@@ -138,6 +159,22 @@ class TestCurateReference(unittest.TestCase):
         # no region match (culm/gob is not commodity-traded).
         self.assertEqual(df.loc[df["plant_id"] == 298, "region_id"].iloc[0], "PRB")
         self.assertEqual(df.loc[df["plant_id"] == 3130, "confidence"].iloc[0], "none")
+
+    def test_caiso_hub_membership_normalization(self):
+        written = curate_reference.curate(raw_dir=self.raw_dir)
+        df = pd.read_parquet(written["caiso-hub-membership"])
+
+        # plant_code -> plant_id, pnode -> node, iso stamped; hub carried through.
+        self.assertIn("plant_id", df.columns)
+        self.assertNotIn("plant_code", df.columns)
+        self.assertIn("node", df.columns)
+        self.assertNotIn("pnode", df.columns)
+        self.assertEqual(set(df["iso"]), {"CAISO"})
+        self.assertEqual(set(df["hub"]), {"TH_NP15"})
+        self.assertEqual(
+            df.loc[df["plant_id"] == 34, "key"].iloc[0], "caiso-hub-membership:34"
+        )
+        self.assertEqual(df.loc[df["plant_id"] == 34, "node"].iloc[0], "ROLLINSF_7_B1")
 
 
 if __name__ == "__main__":

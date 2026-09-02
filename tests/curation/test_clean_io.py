@@ -28,7 +28,8 @@ from scripts.lib.clean_io import (
 # Datatypes that must each have a parseable schema (the standardization
 # contract). Frozen snapshot of scripts/regenerate_clean.DATATYPES — extend it
 # when an intake registers a new regenerable datatype (last refreshed
-# 2026-08-31 adding ps-water-state, the caiso-227 intake; before that
+# 2026-09-02 adding capacity-market-auction-supply, the capx D31 intake;
+# before that 2026-08-31 adding ps-water-state, the caiso-227 intake, and
 # 2026-08-30 adding miso-m2m-flowgates, which the miso-176 intake registered
 # in DATATYPES without re-freezing this snapshot, and 2026-08-01 for
 # the FFR-PB ATB/IRA intake and 2026-07-26 for the 16 intakes landed since
@@ -74,6 +75,11 @@ ALL_DATATYPES = [
     "storage-as-awards",
     "capacity-market-demand-curve",
     "capacity-market-auction-price",
+    # capx D31 (2026-09-02, `89415b60`) registered this in
+    # scripts/regenerate_clean.DATATYPES without refreshing this snapshot —
+    # the same miss this header names for miso-m2m-flowgates. Snapshot
+    # refreshed 2026-09-02 by the fast-tier repair lane.
+    "capacity-market-auction-supply",
     "capacity-market-elcc",
     "capacity-market-avoidable-cost-rate",
     "transfer-constraint-binding",

@@ -108,6 +108,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "som-competitive-conduct",
     "capacity-market-demand-curve",
     "capacity-market-auction-price",
+    "capacity-market-auction-supply",
     "capacity-market-elcc",
     "transfer-constraint-binding",
     "maxgen-events",
@@ -980,6 +981,32 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "empty); ERCOT excluded. Delivery-year cutoff enforced by "
             "`validate_tidy` in "
             "`scripts/lib/capacity_market_auction_price/__init__.py`."
+        ),
+    },
+    "capacity-market-auction-supply": {
+        "summary": (
+            "Published capacity-auction supply-side QUANTITY accounting per "
+            "ISO — offered and cleared MW by planning-resource category plus "
+            "the auction's own requirement/commitment ledger rows (PRMR, "
+            "FRAP, self-scheduled, committed) — by planning year, season and "
+            "area. The quantity half of the capacity-auction record that "
+            "capacity-market-auction-price carries the price half of. A "
+            "rule-13-admissible published ACCOUNTING-BASIS input (e.g. the "
+            "wedge between a census-accreditation ledger and the market's "
+            "counted supply); the cleared rows are validation observables. "
+            "Never a quantity target."
+        ),
+        "reconciles": (
+            'MISO PRA Results Postings — the "Seasonal Supply Offered and '
+            'Cleared Comparison Trend" category tables (Generation / '
+            "External Resources / Behind-the-Meter Generation / Demand "
+            'Resources / Energy Efficiency, in ZRC) and the seasonal "PRA '
+            'Results by Zone" System/subregion ledger rows (PRMR, Offer '
+            "Submitted, FRAP, Self-Scheduled, Committed, in MW SAC) — onto "
+            "one canonical frame keyed on `(iso, planning_year, season, "
+            "area, metric, category)`. MISO to date (capx D31, 2026-09-02); "
+            "per-ISO parsing lives in "
+            "`scripts/lib/capacity_market_auction_supply/<iso>.py`."
         ),
     },
     "capacity-market-elcc": {

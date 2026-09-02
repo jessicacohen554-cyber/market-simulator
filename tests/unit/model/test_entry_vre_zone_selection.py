@@ -152,7 +152,15 @@ class TestMisoIsArmedAndOthersAreNot(unittest.TestCase):
         self.assertEqual(armed, {"MISO"})
 
     def test_default_cache_key_is_byte_stable(self):
-        self.assertEqual(ScenarioConfig().cache_key(), "603c2498bf71d21d")
+        # 2026-09-02: 603c2498bf71d21d -> cedadc285f8603b9, the owner-authorized
+        # capx D41 key ADVANCE (`11af6f1c`; cause block and blast radius in
+        # tests/regression/test_persisted_identity.py beside
+        # PINNED_DEFAULT_CACHE_KEY). D41 swept every other pin and missed this
+        # one; re-pinned to the same authorized value by the fast-tier repair
+        # lane. Not a re-baseline to silence red: the two re-identified CCS
+        # fixed-cost fields are hashed at every value, so registration is not
+        # a remedy and re-pinning is the sanctioned route.
+        self.assertEqual(ScenarioConfig().cache_key(), "cedadc285f8603b9")
 
 
 if __name__ == "__main__":  # pragma: no cover
