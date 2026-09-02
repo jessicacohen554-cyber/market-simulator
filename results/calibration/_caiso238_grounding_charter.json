@@ -1,0 +1,1313 @@
+{
+ "_provenance": {
+  "session": "caiso-238",
+  "keeper": "2026-09-01-caiso-231-b1-ungrounded",
+  "bundle": "results/calibration/caiso231_b1_ungrounded",
+  "precommit": "results/calibration/PRECOMMIT-caiso238-grounding-charter-2026-09-02.md",
+  "note": "Committed artifacts only \u2014 no LP, no solver, no replay. C3a is never this probe's object (rule 1 [R-STRUCT])."
+ },
+ "gates": {
+  "use_campd_bins": true,
+  "plant_level_fleet": true,
+  "caiso_offer_surface_measured": true,
+  "caiso_offer_surface_measured_ungrounded": true,
+  "caiso_offer_surface_conditional": true,
+  "gas_offer_net_revenue_margin": true,
+  "gas_offer_margin_anchor": 4.7964,
+  "cc_committed_offer_margin": false,
+  "offer_curve_smoothing_n": 6,
+  "offer_curve_smoothing_exp": 1.0,
+  "offer_curve_smoothing_mid": null,
+  "battery_dispatch_adder": 5.0,
+  "storage_as_commitment": false,
+  "caiso_storage_as_reservation": false,
+  "storage_degradation": true,
+  "storage_capacity_value": true
+ },
+ "class_energy": {
+  "per_year": {
+   "2023": {
+    "passes_present": [
+     "P1"
+    ],
+    "total_twh": 209.2492,
+    "gas_total_twh": 60.3162,
+    "by_class_twh": {
+     "CC_CHP": 8.53154,
+     "CC_REGULAR": 48.90818,
+     "COAL": 0.0925,
+     "CT_CHP": 1.25502,
+     "CT_PEAKER": 1.41978,
+     "OTHER": 9.25896,
+     "ST_GAS": 0.20164,
+     "biomass": 4.47702,
+     "hydro": 24.33022,
+     "import": 37.27914,
+     "nuclear": 17.62631,
+     "oil": 6e-05,
+     "solar": 39.31436,
+     "wind": 16.55451
+    },
+    "gas_share_by_class": {
+     "CC_CHP": 0.141447,
+     "CC_REGULAR": 0.810864,
+     "CT_CHP": 0.020807,
+     "CT_PEAKER": 0.023539,
+     "ST_GAS": 0.003343
+    }
+   },
+   "2024": {
+    "passes_present": [
+     "P1"
+    ],
+    "total_twh": 216.2716,
+    "gas_total_twh": 55.9486,
+    "by_class_twh": {
+     "CC_CHP": 7.63405,
+     "CC_REGULAR": 45.97812,
+     "COAL": 0.05358,
+     "CT_CHP": 1.22583,
+     "CT_PEAKER": 0.4767,
+     "OTHER": 8.07632,
+     "ST_GAS": 0.6339,
+     "biomass": 4.41006,
+     "hydro": 22.52344,
+     "import": 40.03722,
+     "nuclear": 18.19286,
+     "oil": 0.0,
+     "solar": 46.73989,
+     "wind": 20.28963
+    },
+    "gas_share_by_class": {
+     "CC_CHP": 0.136448,
+     "CC_REGULAR": 0.821792,
+     "CT_CHP": 0.02191,
+     "CT_PEAKER": 0.00852,
+     "ST_GAS": 0.01133
+    }
+   },
+   "2025": {
+    "passes_present": [
+     "P1"
+    ],
+    "total_twh": 210.4379,
+    "gas_total_twh": 48.1508,
+    "by_class_twh": {
+     "CC_CHP": 7.57261,
+     "CC_REGULAR": 39.04016,
+     "COAL": 0.08274,
+     "CT_CHP": 1.20524,
+     "CT_PEAKER": 0.23022,
+     "OTHER": 5.92062,
+     "ST_GAS": 0.10255,
+     "biomass": 3.23294,
+     "hydro": 21.26638,
+     "import": 41.74597,
+     "nuclear": 17.48465,
+     "oil": 0.0,
+     "solar": 52.45589,
+     "wind": 20.098
+    },
+    "gas_share_by_class": {
+     "CC_CHP": 0.157269,
+     "CC_REGULAR": 0.81079,
+     "CT_CHP": 0.02503,
+     "CT_PEAKER": 0.004781,
+     "ST_GAS": 0.00213
+    }
+   }
+  }
+ },
+ "object1_offer_curve_by_group": {
+  "n_scalars_total": 112,
+  "ledger_n_scalars": 112,
+  "by_provenance": {
+   "derived-from-peak": 20,
+   "fitted": 37,
+   "fitted-geometry": 20,
+   "measured": 15,
+   "measured-physical": 20
+  },
+  "on_dispatching_groups": 74,
+  "on_absent_groups": 38,
+  "fitted_and_live": 19,
+  "fitted_and_live_noncommitted_material": [
+   {
+    "group": "CC_REGULAR",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "pct_peaking",
+    "value": 8.0,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_CHP",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "pct_peaking",
+    "value": 8.0,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CT_CHP",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "econ_low_share",
+    "value": 0.526,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "pct_peaking",
+    "value": 7.0,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "ST_GAS",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "pct_peaking",
+    "value": 15.0,
+    "group_gas_share_max": 0.01133
+   }
+  ],
+  "absent_groups": [
+   "CC_INTERMEDIATE",
+   "COAL_BIT",
+   "COAL_LIGNITE",
+   "COAL_PRB",
+   "COAL_WC",
+   "CT_INTERMEDIATE",
+   "ST_GAS_INTERMEDIATE"
+  ],
+  "rows": [
+   {
+    "group": "CC_REGULAR",
+    "band": "committed",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "econ_low",
+    "value": 1.066,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "econ_high",
+    "value": 1.072,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "peak",
+    "value": 1.386,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "pct_peaking",
+    "value": 8.0,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "phys_committed",
+    "value": 1.103,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "phys_econ_low",
+    "value": 0.836,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "phys_econ_high",
+    "value": 0.968,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "phys_peak",
+    "value": 2.25,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_REGULAR",
+    "band": "peak_ladder",
+    "value": [
+     [
+      0.2,
+      1.386
+     ],
+     [
+      0.2,
+      1.386
+     ],
+     [
+      0.2,
+      1.386
+     ],
+     [
+      0.2,
+      1.386
+     ],
+     [
+      0.2,
+      1.386
+     ]
+    ],
+    "n_scalars": 10,
+    "provenance": "derived-from-peak",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.821792
+   },
+   {
+    "group": "CC_INTERMEDIATE",
+    "band": "committed",
+    "value": 0.92,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CC_INTERMEDIATE",
+    "band": "econ_low",
+    "value": 0.95,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CC_INTERMEDIATE",
+    "band": "econ_high",
+    "value": 1.08,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CC_INTERMEDIATE",
+    "band": "peak",
+    "value": 2.25,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CC_INTERMEDIATE",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CC_INTERMEDIATE",
+    "band": "pct_peaking",
+    "value": 8.0,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CC_CHP",
+    "band": "committed",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "econ_low",
+    "value": 1.066,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "econ_high",
+    "value": 1.072,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "peak",
+    "value": 1.386,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "pct_peaking",
+    "value": 8.0,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "phys_committed",
+    "value": 1.028,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "phys_econ_low",
+    "value": 0.88,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "phys_econ_high",
+    "value": 0.942,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CC_CHP",
+    "band": "phys_peak",
+    "value": 2.25,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.157269
+   },
+   {
+    "group": "CT_CHP",
+    "band": "committed",
+    "value": 1.1,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_CHP",
+    "band": "econ_low",
+    "value": 1.145,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_CHP",
+    "band": "econ_high",
+    "value": 1.166,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_CHP",
+    "band": "peak",
+    "value": 1.166,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_CHP",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_CHP",
+    "band": "phys_committed",
+    "value": 1.073,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_CHP",
+    "band": "phys_econ_low",
+    "value": 0.594,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_CHP",
+    "band": "phys_econ_high",
+    "value": 0.598,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_CHP",
+    "band": "phys_peak",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.02503
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "committed",
+    "value": 1.35,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "econ_low",
+    "value": 1.145,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "econ_high",
+    "value": 1.166,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "peak",
+    "value": 1.166,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "econ_low_share",
+    "value": 0.526,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "pct_peaking",
+    "value": 7.0,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "phys_committed",
+    "value": 0.991,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "phys_econ_low",
+    "value": 0.686,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "phys_econ_high",
+    "value": 0.71,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "phys_peak",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_PEAKER",
+    "band": "peak_ladder",
+    "value": [
+     [
+      0.2,
+      1.166
+     ],
+     [
+      0.2,
+      1.166
+     ],
+     [
+      0.2,
+      1.166
+     ],
+     [
+      0.2,
+      1.166
+     ],
+     [
+      0.2,
+      1.166
+     ]
+    ],
+    "n_scalars": 10,
+    "provenance": "derived-from-peak",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.023539
+   },
+   {
+    "group": "CT_INTERMEDIATE",
+    "band": "committed",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CT_INTERMEDIATE",
+    "band": "econ_low",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CT_INTERMEDIATE",
+    "band": "econ_high",
+    "value": 1.2,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CT_INTERMEDIATE",
+    "band": "peak",
+    "value": 3.0,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CT_INTERMEDIATE",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "CT_INTERMEDIATE",
+    "band": "pct_peaking",
+    "value": 5.0,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "ST_GAS",
+    "band": "committed",
+    "value": 0.81,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "econ_low",
+    "value": 1.145,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "econ_high",
+    "value": 1.166,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "peak",
+    "value": 1.166,
+    "n_scalars": 1,
+    "provenance": "measured",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "pct_peaking",
+    "value": 15.0,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "phys_committed",
+    "value": 1.683,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "phys_econ_low",
+    "value": 0.725,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "phys_econ_high",
+    "value": 0.755,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS",
+    "band": "phys_peak",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "measured-physical",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.01133
+   },
+   {
+    "group": "ST_GAS_INTERMEDIATE",
+    "band": "committed",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "ST_GAS_INTERMEDIATE",
+    "band": "econ_low",
+    "value": 1.0,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "ST_GAS_INTERMEDIATE",
+    "band": "econ_high",
+    "value": 1.15,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "ST_GAS_INTERMEDIATE",
+    "band": "peak",
+    "value": 2.2,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "ST_GAS_INTERMEDIATE",
+    "band": "econ_low_share",
+    "value": 0.5,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "ST_GAS_INTERMEDIATE",
+    "band": "pct_peaking",
+    "value": 6.0,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_LIGNITE",
+    "band": "committed",
+    "value": 0.95,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_LIGNITE",
+    "band": "econ_low",
+    "value": 1.14,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_LIGNITE",
+    "band": "econ_high",
+    "value": 1.15,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_LIGNITE",
+    "band": "peak",
+    "value": 1.55,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_LIGNITE",
+    "band": "econ_low_share",
+    "value": 0.556,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_PRB",
+    "band": "committed",
+    "value": 0.95,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_PRB",
+    "band": "econ_low",
+    "value": 0.77,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_PRB",
+    "band": "econ_high",
+    "value": 1.19,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_PRB",
+    "band": "peak",
+    "value": 1.48,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_PRB",
+    "band": "econ_low_share",
+    "value": 0.556,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_BIT",
+    "band": "committed",
+    "value": 0.9,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_BIT",
+    "band": "econ_low",
+    "value": 0.95,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_BIT",
+    "band": "econ_high",
+    "value": 1.1,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_BIT",
+    "band": "peak",
+    "value": 1.45,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_BIT",
+    "band": "econ_low_share",
+    "value": 0.55,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_WC",
+    "band": "committed",
+    "value": 0.85,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_WC",
+    "band": "econ_low",
+    "value": 0.9,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_WC",
+    "band": "econ_high",
+    "value": 1.02,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_WC",
+    "band": "peak",
+    "value": 1.2,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL_WC",
+    "band": "econ_low_share",
+    "value": 0.55,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": false,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL",
+    "band": "committed",
+    "value": 0.9,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL",
+    "band": "econ_low",
+    "value": 0.95,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL",
+    "band": "econ_high",
+    "value": 1.1,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL",
+    "band": "peak",
+    "value": 1.45,
+    "n_scalars": 1,
+    "provenance": "fitted",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.0
+   },
+   {
+    "group": "COAL",
+    "band": "econ_low_share",
+    "value": 0.55,
+    "n_scalars": 1,
+    "provenance": "fitted-geometry",
+    "group_dispatches": true,
+    "group_gas_share_max": 0.0
+   }
+  ]
+ },
+ "object2_st_gas_committed": {
+  "armed_committed_mult": 0.81,
+  "audit_physical_floor": 0.85,
+  "below_audit_floor": true,
+  "caiso_measured_physical_basis": 1.683,
+  "basis_source": "data/raw/reference/caiso_campd_marginal_hr_summary.csv avg_committed_p50 (CAISO's OWN CAMPD min-load block burn), carried on the band dict as phys_committed",
+  "ratio_armed_to_measured": 0.4813,
+  "measured_ct_bucket_committed_bid_mult": 1.166,
+  "gas_offer_margin_markup": 0.0,
+  "markup_clips_to_zero": true,
+  "st_gas_gas_share_by_year": {
+   "2023": 0.003343,
+   "2024": 0.01133,
+   "2025": 0.00213
+  },
+  "st_gas_twh_by_year": {
+   "2023": 0.20164,
+   "2024": 0.6339,
+   "2025": 0.10255
+  }
+ },
+ "object3_offer_curve_smoothing": {
+  "n": 6,
+  "exp": 1.0,
+  "mid": null,
+  "identity_when": "n <= 0 recovers the flat two-block econ curve; exp = 1.0 is a STRAIGHT (linear) ramp across n slices, NOT an identity (scenarios.py offer_curve_smoothing_n docstring; fleet/assembly.py _econ_curve_steps)",
+  "exp_is_identity": false,
+  "econ_tranches_rendered_per_plant": 6
+ },
+ "fleet_geometry_census": {
+  "CC_CHP": {
+   "n_plants": 21,
+   "nameplate_mw": 2706.7,
+   "pct_peaking_capwt": 2.054,
+   "pct_peaking_distinct": [
+    0.0,
+    1.6,
+    3.5,
+    3.9,
+    5.5,
+    8.0
+   ],
+   "peaking_sources": [
+    "campd",
+    "class_default"
+   ],
+   "pct_committed_capwt": 40.559,
+   "committed_sources": [
+    "campd",
+    "class_default"
+   ],
+   "base_hr_capwt": 6.902,
+   "n_in_duct_map": 21,
+   "n_in_tranche_map": 6,
+   "n_fall_through_to_classwide": 0,
+   "mw_share_fall_through": 0.0
+  },
+  "CC_REGULAR": {
+   "n_plants": 28,
+   "nameplate_mw": 13708.1,
+   "pct_peaking_capwt": 3.444,
+   "pct_peaking_distinct": [
+    0.0,
+    0.1,
+    0.6,
+    1.0,
+    1.1,
+    1.4,
+    1.7,
+    1.8,
+    2.1,
+    2.5,
+    2.9,
+    3.0,
+    3.1,
+    3.6,
+    3.8,
+    4.2,
+    8.0,
+    25.0
+   ],
+   "peaking_sources": [
+    "campd",
+    "class_default"
+   ],
+   "pct_committed_capwt": 27.368,
+   "committed_sources": [
+    "campd",
+    "class_default"
+   ],
+   "base_hr_capwt": 7.442,
+   "n_in_duct_map": 28,
+   "n_in_tranche_map": 23,
+   "n_fall_through_to_classwide": 0,
+   "mw_share_fall_through": 0.0
+  },
+  "COAL": {
+   "n_plants": 1,
+   "nameplate_mw": 50.0,
+   "pct_peaking_capwt": 2.0,
+   "pct_peaking_distinct": [
+    2.0
+   ],
+   "peaking_sources": [
+    "class_default"
+   ],
+   "pct_committed_capwt": 5.0,
+   "committed_sources": [
+    "class_default"
+   ],
+   "base_hr_capwt": 5.613
+  },
+  "CT_CHP": {
+   "n_plants": 71,
+   "nameplate_mw": 1961.9,
+   "pct_peaking_capwt": 4.885,
+   "pct_peaking_distinct": [
+    0.0,
+    5.0,
+    7.0
+   ],
+   "peaking_sources": [
+    "class_default"
+   ],
+   "pct_committed_capwt": 28.237,
+   "committed_sources": [
+    "campd",
+    "class_default"
+   ],
+   "base_hr_capwt": 11.009
+  },
+  "CT_PEAKER": {
+   "n_plants": 134,
+   "nameplate_mw": 7616.3,
+   "pct_peaking_capwt": 7.0,
+   "pct_peaking_distinct": [
+    7.0
+   ],
+   "peaking_sources": [
+    "class_default"
+   ],
+   "pct_committed_capwt": 10.896,
+   "committed_sources": [
+    "campd",
+    "class_default"
+   ],
+   "base_hr_capwt": 10.862
+  },
+  "ST_GAS": {
+   "n_plants": 3,
+   "nameplate_mw": 2858.8,
+   "pct_peaking_capwt": 15.0,
+   "pct_peaking_distinct": [
+    15.0
+   ],
+   "peaking_sources": [
+    "class_default"
+   ],
+   "pct_committed_capwt": 6.617,
+   "committed_sources": [
+    "campd"
+   ],
+   "base_hr_capwt": 11.847,
+   "plants": [
+    {
+     "Plant_Code": 315,
+     "Plant_Name": "AES Alamitos LLC",
+     "Zone": "SP15",
+     "Nameplate_MW": 1142.0
+    },
+    {
+     "Plant_Code": 335,
+     "Plant_Name": "AES Huntington Beach LLC",
+     "Zone": "SP15",
+     "Nameplate_MW": 225.8
+    },
+    {
+     "Plant_Code": 350,
+     "Plant_Name": "Ormond Beach",
+     "Zone": "SP15",
+     "Nameplate_MW": 1491.0
+    }
+   ]
+  }
+ },
+ "object4_battery_dispatch_adder": {
+  "value": 5.0,
+  "storage": {
+   "2023": {
+    "passes_present": [
+     "P1"
+    ],
+    "discharge_twh_by_tech": {
+     "li_ion": 3.90279,
+     "pumped_storage": 2.29972
+    },
+    "li_ion_share_of_total_generation": 0.01865,
+    "all_storage_share_of_total_generation": 0.02964
+   },
+   "2024": {
+    "passes_present": [
+     "P1"
+    ],
+    "discharge_twh_by_tech": {
+     "li_ion": 7.42672,
+     "pumped_storage": 2.2207
+    },
+    "li_ion_share_of_total_generation": 0.03434,
+    "all_storage_share_of_total_generation": 0.04461
+   },
+   "2025": {
+    "passes_present": [
+     "P1"
+    ],
+    "discharge_twh_by_tech": {
+     "li_ion": 11.12761,
+     "pumped_storage": 2.30625
+    },
+    "li_ion_share_of_total_generation": 0.05288,
+    "all_storage_share_of_total_generation": 0.06384
+   }
+  }
+ }
+}

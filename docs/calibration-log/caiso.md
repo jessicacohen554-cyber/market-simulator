@@ -11310,3 +11310,158 @@ pre-registration governs claims from evidence, and this session makes none.
 (rule 28: no mechanism tested, no `ScenarioConfig` field added or removed).
 
 **Next number: caiso-238.**
+
+## caiso-238 (2026-09-02) — the caiso-236 §10 GROUNDING CHARTER: the four "live and material" residual DOF rows put to the owner as costed asks. **TWO are fundable, not the one pre-registered** — `ST_GAS committed 0.81` is **F1, groundable now** on an instrument already committed in this repo (it prices the min-load block at **48.1 %** of CAISO's own measured burn, below the audit floor AND below its own `econ_low`, the exact merit inversion Lever A was built to remove — on the one class Lever A skipped); `battery_dispatch_adder` is **F2** and its materiality is **compounding** (li-ion 1.87 → 5.29 % of generation). And **42 of `offer_curve_by_group`'s 112 scalars are DEAD or INERT**, i.e. caiso-236 class (a)/(a′), not (c). NO SOLVE, keeper unchanged
+
+**Keeper `2026-09-01-caiso-231-b1-ungrounded` UNCHANGED**, determination
+**NOT-YET** (C3a the sole load-bearing FAIL, +4.1 / +12.5 / +15.6 %; C1 12/12
+free 8/8; C3b PASS; C3c the single ledgered caveat; C6 attested; C8 PASS). No
+LP built, no solver called, no `ScenarioConfig` field added/removed/changed,
+nothing armed, nothing registered, **no cell verdict moved**. No CAISO
+`complete`/`final` marker; holdout freeze **ACTIVE**; every read inside
+2023–2025. Rule 15 does not attach — no calibration run was produced.
+
+**Admissible under the caiso-201/222 terminal rest for the same reason
+caiso-236 and caiso-237 were: it is not a lever hunt.** caiso-236 §10 left four
+residual rows *"LIVE AND MATERIAL and deliberately not touched"* and recorded
+that *"grounding a live residual is a funded-object question under the resting
+ruling, not a ledger-audit session's to take"*. This session takes that
+question to the **proposal** stage and no further — **PROPOSE, DO NOT
+EXECUTE**. **C3a is never the object and is used nowhere as a ranking
+criterion** (rule 1 `[R-STRUCT]`); where a direction is knowable it is
+disclosed, as caiso-231's adverse direction was before it was promoted.
+**The DATED W-1/W-2/W-3 sweep was NOT executed** — its trigger is the
+Order-881 AAR effective date (≤ 2026-12-01) and an earlier re-run is the
+re-survey the caiso-218 §F fences forbid.
+
+**Pre-registered BEFORE any measurement** (`PRECOMMIT-caiso238-grounding-charter-2026-09-02.md`,
+pushed to `origin` first): the F1–F4 fundability taxonomy plus an explicit
+fifth "mis-classified at caiso-236" outcome, the five questions asked of every
+object **in order**, a predicted class for each object **each with its own
+falsifier**, the registered ranking prediction, and a §0.6 disclosure of every
+artifact already read so the predictions are honestly conditioned.
+
+**THE FOUR VERDICTS.**
+
+* **`offer_curve_by_group` (112 scalars) — F4 on the live fitted remainder,
+  plus a caiso-236 MIS-CLASSIFICATION.** The probe reproduces the ledger's
+  `n_scalars = 112` **exactly** (an independent check of the provenance-blind
+  `_count_scalars`) and splits it: 15 `measured` bucket bands, 20
+  `measured-physical` `phys_*` (LIVE — `gas_offer_net_revenue_margin` is armed),
+  20 `peak_ladder` rungs each equal to its group's own measured `peak`, 20
+  fitted geometry, 37 fitted. **38 sit on SEVEN groups with ZERO CAISO dispatch
+  in all three years** (`CC_INTERMEDIATE`, `CT_INTERMEDIATE`,
+  `ST_GAS_INTERMEDIATE`, `COAL_LIGNITE/PRB/BIT/WC`). Fitted **and** live: 19 —
+  the five Lever-A-withheld `committed` bands (**F4**, refusal unchanged), five
+  `econ_low_share` (**F3**: the derive's `band_windows_geometry` value is the
+  ARMED number copied through, *"kept, not re-derived"* — reading it back is
+  circular), four `pct_peaking`, and the 5-scalar `COAL` block (1 plant, 50 MW,
+  0.04 % of generation). **`pct_peaking` is not class (c) at all**: DEAD for
+  CC_REGULAR and CC_CHP (`cc_duct_peaking` + `cc_peaking_per_plant` armed and
+  **all 28 + 21 plants are in the duct map** — fall-through 0 plants /
+  0.0000 MW share), and INERT for CT_PEAKER and ST_GAS (the fleet CSV carries
+  **one distinct value** each, 7.0 and 15.0, `Peaking_Source = class_default`
+  on every plant — the override rewrites each value with itself). **42 of 112
+  scalars are therefore (a)/(a′), not (c)** — filed, NOT proposed for deletion,
+  because the absent groups are cross-ISO family entries and the keys are read
+  by other ISOs' recipes (caiso-236's own (a′) keeper-dead-but-lane-live class).
+* **`ST_GAS` `committed` = 0.81 — F1, GROUNDABLE NOW. The prediction MISSED and
+  this is the session's finding.** CAISO's `ST_GAS` is **exactly the three
+  coastal OTC steamers** (Alamitos 1,142 MW, Huntington Beach 225.8 MW, Ormond
+  Beach 1,491 MW, all SP15, `Committed_Source = campd`) — the pre-registered
+  falsifier does **not** fire. The band is (i) **below the audit §2 0.85
+  physical floor**, the only CAISO band that is, (ii) **below its own
+  `econ_low` 1.145 / `econ_high` 1.166** — the *same inverted merit order*
+  Lever A was created to remove, still standing three sessions after caiso-231
+  re-grounded every other band on the class — and (iii) **48.1 % of CAISO's own
+  measured physical basis**, `phys_committed = 1.683` (`avg_committed_p50`,
+  `caiso_campd_marginal_hr_summary.csv`), which is **already committed in this
+  repo and already resolved onto this band dict**. It is load-bearing, not
+  decorative: because `markup = max(0, mult − phys)`, the ST_GAS committed
+  markup is **exactly 0**, so `apply_gas_offer_margin` never touches the row —
+  the one measured object attached to the band is loaded and then
+  **arithmetically discarded**, precisely because the fitted multiplier sits
+  below it. **Why the prediction missed, stated plainly:** it treated the
+  Lever-A refusal as covering every route to the committed band. It does not —
+  Lever A withholds the measured **bid** multiplier (self-commitment *conduct*,
+  a unit-commitment object, rule 19) and says nothing about the measured
+  **physical** min-load burn, which Lever A itself invoked when it set
+  CC_REGULAR to 1.00 as *"still CONSERVATIVE vs the true (>avg) min-load HR"*.
+  **DIRECTION DISCLOSED, ADVERSE:** raising 0.81 raises the floor in the hours
+  the class is marginal, i.e. the wrong way on a gate already over — per rule 1
+  and the caiso-231 precedent that is not an argument against the repair, but
+  it must never be proposed as a C3a lever. Materiality is small
+  (0.202/0.634/0.103 TWh, 0.33/1.13/0.21 % of gas energy); the ask is made on
+  rule-14/25 integrity grounds, exactly as caiso-231's $0.03–0.06/MWh repair
+  was. **DOF −1, zero added.** The design question the owner funds is *which*
+  value — Lever A's conservative 1.00, or the full measured 1.683 (physically
+  faithful, but it makes min-load the class's dearest band).
+* **`offer_curve_smoothing_{n, exp}` = {6, 1.0} — F3 at this grain; the
+  fifth-outcome leg REFUTED by its own falsifier.** `exp = 1.0` is **not** an
+  identity — the registered form is `mult(t) = lo + (pk − lo)·t^exp`, so 1.0 is
+  a straight LINEAR ramp across n slices and it is `n ≤ 0` that recovers the
+  flat two-block curve. Every gas plant's econ ramp renders as 6 sub-tranches.
+  The one real route is a MISO-style **shape-only, level-cancelling own-curve
+  derive** on CAISO's own DAM bids (rule 25: CAISO must derive its own; MISO's
+  verdict never transfers) — **blocked on the corpus**:
+  `data/raw/caiso-public-bids/` is a BLOAT-S2 conversion holding **only a
+  README at tip**, recovery **re-fetch only, no pin**. **No ask.**
+* **`battery_dispatch_adder` = 5.0 — F2, and the strongest ask on forward
+  risk.** It prices the **li-ion leg only** (pumped storage takes its own null
+  adder): discharge **3.903 / 7.427 / 11.128 TWh = 1.87 / 3.43 / 5.29 %** of
+  total generation — **2.8× growth across the training window**, the only
+  residual in the ledger whose materiality is compounding. It is the one row
+  whose ledger entry **writes its own ask**: *"forward-valid replacement is the
+  measured AS power reservation (`storage_as_commitment`) + an ATB-derived
+  degradation cost"* — both admissible by inspection (CLAUDE.md rule 13 names a
+  measured AS power reservation as legitimate; ATB is a published forward-native
+  cost). **Instrument NOT in hand on both halves:** `storage_as_commitment` and
+  `caiso_storage_as_reservation` are both `false`, and
+  `data/raw/storage-as-awards/CAISO/` holds **README + SHA256SUMS only** (the
+  `.xlsx` payload is a BLOAT-S2 (a)-only conversion, **re-fetch is the sole
+  recovery route**). The ask is a **data-intake session** on the
+  `gas-ofo-events` shape caiso-226 proved out, then a separate derive + solve.
+  **DOF −1, +0. Direction unknown and deliberately not estimated.**
+
+**PREDICTIONS SCORED — three hits, one miss, one partial, reported against
+interest.** Object 1 F4 **HIT** (its sub-claim confirmed harder than
+predicted); object 3 F3 **HIT** with the fifth outcome refuted by its own
+falsifier; object 4 F2 **HIT**; **object 2 MISS** (predicted F4/F2, actual F1 —
+the miss that matters, and it nearly buried the one genuinely groundable row in
+the set); and the registered ranking prediction of *exactly one* fundable ask
+**PARTIAL MISS** — there are two. The §3 stop rule (specified at *all four*
+coming back fundable) did **not** fire, but the direction of the ranking miss
+is the one that warrants suspicion, so both asks are stated with their adverse
+or unknown C3a directions attached.
+
+**(b)-class roll-up (status only, no new measurement, no re-adjudication).**
+The **SoCalGas OFO arm**: source archaeology and availability **final**
+(caiso-225); the `gas-ofo-events` datatype **already landed** (caiso-226, 2,590
+rows, rule-13 ADMISSIBLE-as-input); the arm's design **fully pre-registered and
+unexecuted** in `PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`. The remaining work
+is the solve round, not the data. C3c-side, orthogonal to C3a. **Unfunded.**
+The **`IMPORT_TRANCHES[CAISO]`** caiso-232 defect-2 object: unfunded, and any
+funded work must be the **LEVEL** object — the depth lane is CLOSED
+(caiso-233/234/235, `spot_capacity` NOT IDENTIFIABLE on a regime break).
+
+**DO-NOT-REDO adds (ASSESSMENT §8):** do not re-census `offer_curve_by_group`
+(the provenance split is committed); **never propose CAISO `pct_peaking` as a
+grounding object in any group** (dead or self-restating); do not read
+`band_windows_geometry.econ_low_share` — or CT_PEAKER's `pct_peaking` — as a
+measurement (both are armed/class-default values read back out); do not re-test
+whether `offer_curve_smoothing_exp = 1.0` is an identity (it is not; `n ≤ 0`
+is); do not re-propose the measured **bid** `committed` multipliers (CC 1.030 /
+CT 1.166) for any CAISO gas class — the Lever-A refusal stands uniformly and
+object 2's ask is a **different object**, the physical basis, which must not be
+merged with it; and **never propose object 2 or object 4 as a C3a instrument**.
+
+**Deliverables:** `PRECOMMIT-caiso238-grounding-charter-2026-09-02.md` (pushed
+before any measurement), `ASSESSMENT-caiso238-grounding-charter-2026-09-02.md`,
+`scripts/probes/_caiso238_grounding_charter.py` →
+`_caiso238_grounding_charter.json`, this log entry, and one CAISO
+mechanism-matrix **evidence append** (rule 28(b), **no verdict move**). **No
+dashboard registration is due** (rule 15 — no calibration run). **There is no
+keeper candidate in this session**: no bundle, no scored run, nothing to
+promote. Determination stays **NOT-YET**.
+
+**Next number: caiso-239.**
