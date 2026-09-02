@@ -1240,6 +1240,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off, byte-identical unarmed — the floor/backstop/CR-1 position keep the
     # composite). Starts the neiso_* cluster at the tuple's end per HOUSE-3.
     "neiso_net_icr_requirement",
+    # capx D43 dispersion-carrying entry expectation (GATED default-off):
+    # dropped from the hash at its False default so every pre-existing cache
+    # key is byte-stable; an armed run replaces the capacity screens' price
+    # object (each zone's realized price-duration curve indexed by the
+    # entering year's headroom rank, instead of the zone-flat MC step) and
+    # hashes distinctly. SHARED field — very end, per HOUSE-3. Registered IN
+    # THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "entry_dispersion_expectation_signal",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1632,6 +1640,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # the same commit as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119
     # discipline). Shared field — very end, per HOUSE-3.
     "entry_forward_expectation_signal": "False",
+    # Added by the capx D43 CAISO dispersion lane WITH the field, in the same
+    # commit as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119
+    # discipline). Shared field — very end, per HOUSE-3.
+    "entry_dispersion_expectation_signal": "False",
     # Added by the D11-R entry-volume-rule lane WITH the field, in the same
     # commit as its _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119
     # discipline). Shared field — very end, per HOUSE-3.
@@ -4722,6 +4734,75 @@ class ScenarioConfig:
     # ERCOT T1-H arm at the registered t1h posture plus this ONE field,
     # scored against the committed bracketing pair
     # results/hindcast/ercot-2021-2025-realized-t1h-{control,disarm}.
+    entry_dispersion_expectation_signal: bool = False  # GATED default-OFF
+    # (capx D43, 2026-09-02 — the first REPAIR measurement on D39's object:
+    # docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md §0/§3.1
+    # measured that the five tail-free ISOs' shared stack re-price hands a
+    # new peaker 0-25 % and a new CC 6-92 % of the energy margin the model's
+    # own realized surface pays, and that the miss is ONE term — the energy
+    # leg's DISPERSION (daily spread, hours >= $100, zonal spread, negative
+    # trough), not its level). REPLACES the zone-flat MC-step object with a
+    # DISPERSION-CARRYING expectation: the entrant is priced against the
+    # prior solve's realized zonal price DISTRIBUTION — each zone's own
+    # price-duration curve — indexed by the entering year's net-load /
+    # headroom duration (rule 19 [R-ONE-MECH]: the construction is replaced,
+    # never a shape correction stacked on the stack):
+    #     u[t]         = rank of the ENTERING year's stack headroom
+    #                    (top_of_stack - net_load, the lookahead instrument's
+    #                    own installed_headroom_mw) on the CURRENT year's
+    #                    headroom distribution (mid-rank empirical CDF);
+    #     signal[z, t] = the (1 - u[t])-quantile of econ_prices[z, :]
+    # i.e. an hour whose forward headroom sits at the p-th percentile of this
+    # year's headroom earns this zone's p-th-percentile realized price — the
+    # merit stack's own structural assumption (price is a monotone function
+    # of net-load position) applied to the REALIZED dual distribution instead
+    # of the time-mean MC step. It is the developer pro-forma object: the
+    # node's observed price-duration curve, re-indexed by the forward
+    # net-load duration. Both headroom terms are the lookahead instrument's
+    # own diagnostics — S_entering exactly as shipped (entering-year demand,
+    # committed pipeline when armed, unified repairs when armed) and the
+    # same instrument at the CURRENT year's own dispatched demand with no
+    # pipeline terms (the entry_forward_expectation_signal S_current
+    # evaluation, shared) — so load growth, VRE potential, the committed
+    # pipeline and the storage shave all move the RANK and nothing else is
+    # needed. ZERO fitted parameters (rule 21 [R-DOF]): the distribution IS
+    # the identification — no bandwidth, no elasticity, no scaling. Exact
+    # fixed points (tested): at unchanged headroom every zone's price
+    # multiset is reproduced exactly (same mean, duration curve, hours
+    # >= $100, negative hours); if the LP's own duals were a monotone
+    # function of headroom the signal reproduces them HOUR BY HOUR. The
+    # ceiling is the dual surface itself — a forward hour tighter than any
+    # current hour earns the zone's realized maximum, never a pro-forma
+    # tail (D39 §3.2: "the signal lane's ceiling is the dual surface"). What
+    # it deliberately does NOT carry: the prior year's LEVEL is the prior
+    # year's (the stack re-price carries this year's mc_cost too, so the
+    # A/B isolates dispersion alone — D39's one term); and the cross-zone
+    # co-movement is comonotone by rank, not hour-aligned (each zone keeps
+    # its own duration curve). Differs from entry_forward_expectation_signal
+    # (hour-aligned residual transplant, duals[z,t] + (S_next[t] -
+    # S_curr[t])) in conditioning on the forward net-load POSITION rather
+    # than the calendar hour — a scarcity residual pinned to a calendar hour
+    # follows that hour even when the entering year's net load has moved
+    # away from it, and the additive re-level can subtract a pro-forma tail
+    # from realized duals (the ERCOT two-scarcity-objects defect,
+    # docs/FINDING-entry-signal-forward-expectation-2026-08-25.md §4); a
+    # quantile map has no additive term and cannot. Mutually exclusive with
+    # that field (one construction of the screens' price object per run,
+    # rule 19) and with entry_margin_exhaustion (the walk's delta
+    # construction is exact only through maps AFFINE in S_entering; a rank
+    # map is not — refused rather than silently wrong). Requires
+    # entry_lookahead_reprice (the headroom terms are the reprice
+    # instrument's own; with it disarmed there is no instrument). Forecast
+    # machinery only; coerced off in a plain backcast alongside the reprice.
+    # Screens-only: dispatch, results and persisted prices never see it.
+    # Default off is byte-identical. Verdicts are per-ISO (rule 25
+    # [R-ISO-SCOPE]): the D43 A/B adjudicates CAISO's cell on CAISO's own
+    # dumps and keeper duals; every other ISO's cell stays U until its own
+    # lane runs it. Adjudicating A/B (pre-declared before the arm ran,
+    # docs/handoffs/PREDECL-capx-d43-caiso-dispersion-2026-09-02.md): the
+    # screen-grain replay of this construction on the committed CAISO
+    # dumps + keeper duals, then a CAISO T1-H control/arm pair on the D39
+    # basis recipe.
     entry_margin_exhaustion: bool = False  # GATED default-OFF (D11-R entry
     # volume rule; chartered by the capx director ledger §0e.3 on
     # docs/FINDING-entry-signal-forward-expectation-2026-08-25.md §3/§7(b)).
@@ -14465,6 +14546,13 @@ class ScenarioConfig:
             # below then cannot misfire on a backcast inheriting a forecast
             # arming.
             self.entry_forward_expectation_signal = False
+            # The D43 dispersion-carrying expectation reads the reprice
+            # instrument's own headroom diagnostics (screens-only forecast
+            # machinery — a backcast runs no capacity evolution), so it
+            # coerces off with it: same byte-stability rationale, and the
+            # requires-reprice refusal below then cannot misfire on a
+            # backcast inheriting a forecast arming.
+            self.entry_dispersion_expectation_signal = False
             # The margin-exhaustion volume rule likewise rides the reprice's
             # own instrument (screens-only forecast machinery — a backcast
             # runs no capacity evolution), so it coerces off with it: same
@@ -14520,6 +14608,52 @@ class ScenarioConfig:
                 "(docs/FINDING-entry-signal-disarm-2026-08.md §6); with the "
                 "reprice disarmed the screens read raw econ_prices and there "
                 "is nothing to re-level."
+            )
+
+        # capx D43 dispersion-carrying expectation: the construction indexes
+        # the prior year's realized zonal price-duration curves by the
+        # lookahead instrument's OWN entering-vs-current headroom ranks; with
+        # the reprice disarmed no instrument evaluation exists (the FFR-8A
+        # refusal pattern — refused, not silently inert).
+        if (
+            self.entry_dispersion_expectation_signal
+            and not self.entry_lookahead_reprice
+        ):
+            raise ValueError(
+                "entry_dispersion_expectation_signal requires "
+                "entry_lookahead_reprice: the dispersion-carrying expectation "
+                "indexes the prior year's realized price-duration curves by the "
+                "lookahead instrument's own headroom ranks "
+                "(docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md "
+                "§6-§7); with the reprice disarmed there is no instrument."
+            )
+        # Exactly ONE construction of the capacity screens' price object per
+        # run (rule 19 [R-ONE-MECH]): the hour-aligned forward-expectation
+        # composition and the rank-indexed dispersion construction both
+        # REPLACE the zone-flat stack object, and arming both would compose
+        # two replacements of one object — an untested posture, refused.
+        if (
+            self.entry_dispersion_expectation_signal
+            and self.entry_forward_expectation_signal
+        ):
+            raise ValueError(
+                "entry_dispersion_expectation_signal and "
+                "entry_forward_expectation_signal are mutually exclusive: each "
+                "is a complete replacement of the capacity screens' price object "
+                "(rule 19 [R-ONE-MECH]) — arm at most one."
+            )
+        # The D11-R margin-exhaustion walk's delta construction is exact only
+        # through maps AFFINE in S_entering (the EWMA blend and the additive
+        # forward-expectation composition); a quantile map is not affine, so
+        # the walk's within-year delta would not carry through the consumed
+        # signal. Refused rather than silently wrong (rule 19).
+        if self.entry_dispersion_expectation_signal and self.entry_margin_exhaustion:
+            raise ValueError(
+                "entry_dispersion_expectation_signal cannot be armed with "
+                "entry_margin_exhaustion: the exhaustion walk's delta "
+                "construction (consumed + alpha x (S(state) - S(0))) is exact "
+                "only through maps affine in S_entering, and the rank-indexed "
+                "quantile map is not — an untested posture, refused."
             )
 
         # D11-R margin-exhaustion volume rule + entry_lookahead_reprice: the

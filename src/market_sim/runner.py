@@ -900,6 +900,87 @@ def _forward_expectation_signal(
     return np.asarray(econ_prices, dtype=float) + delta[None, :]
 
 
+def _daily_top_bottom_spread(price_h: np.ndarray, k: int = 4) -> float:
+    """Mean over whole days of (top-k hour mean - bottom-k hour mean), $/MWh.
+
+    Log-line diagnostic only (the D39 §2 instrument's daily spread
+    statistic); hours beyond the last whole day are ignored.
+    """
+    p = np.asarray(price_h, dtype=float)
+    n_days = p.size // 24
+    if n_days == 0:
+        return 0.0
+    days = np.sort(p[: n_days * 24].reshape(n_days, 24), axis=1)
+    return float((days[:, -k:].mean(axis=1) - days[:, :k].mean(axis=1)).mean())
+
+
+def _headroom_rank(headroom_next: np.ndarray, headroom_curr: np.ndarray) -> np.ndarray:
+    """Mid-rank empirical CDF of the entering year's headroom on the current year's.
+
+    ``u[t]`` is the fraction of CURRENT-year hours whose headroom lies below
+    ``headroom_next[t]``, with ties split at the midpoint (the average of the
+    left and right ``searchsorted`` positions) so equal values rank equally
+    and the map is monotone. A forward hour tighter than every current hour
+    ranks 0.0; looser than every current hour ranks 1.0. Vectorized (rule 2
+    ``[R-VECTOR]``): two searchsorted calls, no hour loop.
+    """
+    h_sorted = np.sort(np.asarray(headroom_curr, dtype=float))
+    h_next = np.asarray(headroom_next, dtype=float)
+    lo = np.searchsorted(h_sorted, h_next, side="left")
+    hi = np.searchsorted(h_sorted, h_next, side="right")
+    return (lo + hi) / (2.0 * h_sorted.size)
+
+
+def _dispersion_expectation_signal(
+    econ_prices: np.ndarray,
+    headroom_next: np.ndarray,
+    headroom_curr: np.ndarray,
+) -> np.ndarray:
+    """Compose the dispersion-carrying capacity-screen entry signal (zero-DOF).
+
+    capx D43 (``docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md``
+    §0/§3.1 is the object; the CAISO A/B is the adjudication). The screens'
+    price object becomes each zone's OWN realized price-duration curve — the
+    prior solve's hourly zonal LP duals, ``econ_prices`` with the same
+    post-solve scarcity overlay the screens' disarm fallback reads —
+    indexed by the ENTERING year's headroom rank on the CURRENT year's
+    headroom distribution::
+
+        u[t]         = _headroom_rank(headroom_next, headroom_curr)[t]
+        signal[z, t] = quantile_{1 - u[t]} ( econ_prices[z, :] )
+
+    An hour whose forward headroom (``top_of_stack - net_load``, the
+    lookahead instrument's own ``installed_headroom_mw``) sits at the p-th
+    percentile of this year's headroom earns this zone's p-th-percentile
+    realized price: the merit stack's structural assumption (price is a
+    monotone function of net-load position) applied to the REALIZED dual
+    distribution instead of the time-mean MC step. The quantile is read by
+    linear interpolation on the mid-rank grid ``((i + 0.5) / T)`` of each
+    zone's ascending-sorted duals, so at unchanged headroom the map is an
+    exact permutation — every zone's price multiset (mean, duration curve,
+    hours >= $100, negative hours, zonal spread in distribution) is
+    reproduced exactly, and a dual surface that is itself monotone in
+    headroom is reproduced hour by hour. Forward hours outside the current
+    range clamp to the zone's realized minimum / maximum: the ceiling is the
+    dual surface itself, never a pro-forma tail. Exact arithmetic, no
+    coefficient anywhere (rule 21 ``[R-DOF]``); returns a NEW ``(n_zones,
+    T)`` array — the duals are never mutated. Gated by
+    ``entry_dispersion_expectation_signal`` at the ``_screen_signal_for``
+    seam. Vectorized: one sort per zone and one interpolation pass (rule 2
+    ``[R-VECTOR]``).
+    """
+    prices = np.asarray(econ_prices, dtype=float)
+    n_zones, T = prices.shape
+    u = _headroom_rank(headroom_next, headroom_curr)  # (T_next,)
+    q = 1.0 - u  # tight headroom -> high quantile
+    grid = (np.arange(T) + 0.5) / T
+    sorted_duals = np.sort(prices, axis=1)  # ascending per zone
+    out = np.empty((n_zones, u.size), dtype=float)
+    for z in range(n_zones):  # z = zone (a handful; hours are vectorized)
+        out[z] = np.interp(q, grid, sorted_duals[z])
+    return out
+
+
 class _EntryRepriceWalk:
     """Shared repricer state for the margin-exhaustion entry walk (D11-R).
 
@@ -3697,11 +3778,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 _dump_diag = unified_screens or getattr(
                     config, "entry_screen_diagnostics", False
                 )
+                # capx D43 dispersion construction: its two headroom terms
+                # are the instrument's own installed_headroom_mw diagnostics,
+                # so arming the flag forces the dict on the same way (the
+                # npz write keeps its ORIGINAL gate below).
+                _dispersion_sig = getattr(
+                    config, "entry_dispersion_expectation_signal", False
+                )
                 _diag: dict | None = (
                     {}
                     if (
                         _dump_diag
                         or getattr(config, "entry_forward_reserve_leg", False)
+                        or _dispersion_sig
                     )
                     else None
                 )
@@ -3794,6 +3883,87 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         float(np.percentile(_fwd_delta, 95)),
                         _zspread,
                     )
+                # capx D43 DISPERSION-CARRYING expectation (GATED default-OFF,
+                # entry_dispersion_expectation_signal; the D39 object:
+                # docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md
+                # §0/§3.1/§7). The screens' price object becomes each zone's
+                # OWN realized price-duration curve (econ_prices — the
+                # prior-year zonal duals with the run's own scarcity
+                # overlay) indexed by the ENTERING year's headroom rank on
+                # the CURRENT year's headroom distribution. Both headroom
+                # terms are the lookahead instrument's own installed_headroom
+                # diagnostics: S_entering is the ``sig`` evaluation above
+                # (entering demand, pipeline / unified repairs as armed) and
+                # S_current is the shared _fwd_curr_state evaluation at THIS
+                # year's own dispatched demand with no pipeline terms — the
+                # same pair the forward-expectation composition uses, so
+                # load growth, VRE potential, the committed pipeline and the
+                # storage shave move the RANK. Zero fitted parameters (rule
+                # 21 [R-DOF]); REPLACES the zone-flat object (rule 19
+                # [R-ONE-MECH]; __post_init__ refuses it alongside the
+                # hour-aligned composition or the exhaustion walk).
+                if _dispersion_sig:
+                    if "sig" not in _fwd_curr_state:
+                        _diag_curr_d: dict = {}
+                        _fwd_curr_state["sig"] = _lookahead_reprice_signal(
+                            wx_config,
+                            year,
+                            base_demand,
+                            fleet_arrays,
+                            mc_cost,
+                            result,
+                            len(zone_names),
+                            demand_next_total=year_demand.sum(axis=0),
+                            vre_capacity_potential=_uni_vre,
+                            storage_shave=_uni_storage,
+                            hourly_availability=unified_screens,
+                            scarcity_restoration=_scar_bundle,
+                            diagnostics=_diag_curr_d,
+                        )
+                        _fwd_curr_state["diag"] = _diag_curr_d
+                    _h_next = np.asarray(_diag["installed_headroom_mw"], dtype=float)
+                    _h_curr = np.asarray(
+                        _fwd_curr_state["diag"]["installed_headroom_mw"], dtype=float
+                    )
+                    sig = _dispersion_expectation_signal(econ_prices, _h_next, _h_curr)
+                    _u_rank = _headroom_rank(_h_next, _h_curr)
+                    # L-5 dump relocation (the composition's precedent): the
+                    # dump keeps the S_entering internals above AND records
+                    # the S_current internals, the headroom rank and the
+                    # composed zonal signal, so the object the screens
+                    # consumed stays offline-diagnosable without a solve.
+                    _diag["headroom_rank_next"] = np.asarray(_u_rank, dtype=float)
+                    _diag["signal_zonal_usd_mwh"] = np.asarray(sig, dtype=float)
+                    _dc = _fwd_curr_state.get("diag") or {}
+                    for _k in (
+                        "price_base_usd_mwh",
+                        "adder_usd_mwh",
+                        "net_load_mw",
+                        "installed_headroom_mw",
+                    ):
+                        if _k in _dc:
+                            _diag[f"fwd_curr_{_k}"] = _dc[_k]
+                    logger.info(
+                        "year %d: dispersion-carrying signal for %d -- realized "
+                        "zonal duration curves indexed by entering headroom rank: "
+                        "mean $%.2f/MWh (duals $%.2f, stack $%.2f); h >= $100: "
+                        "%d (duals %d, stack %d); daily top4-bot4 spread $%.2f "
+                        "(duals %.2f, stack %.2f); mean cross-zone spread $%.2f; "
+                        "rank shift mean %+.3f",
+                        year,
+                        entering_year,
+                        float(sig.mean()),
+                        float(econ_prices.mean()),
+                        float(_diag["price_base_usd_mwh"].mean()),
+                        int((sig.mean(axis=0) >= 100.0).sum()),
+                        int((econ_prices.mean(axis=0) >= 100.0).sum()),
+                        int((_diag["price_base_usd_mwh"] >= 100.0).sum()),
+                        _daily_top_bottom_spread(sig.mean(axis=0)),
+                        _daily_top_bottom_spread(econ_prices.mean(axis=0)),
+                        _daily_top_bottom_spread(_diag["price_base_usd_mwh"]),
+                        float((sig.max(axis=0) - sig.min(axis=0)).mean()),
+                        float(_u_rank.mean() - 0.5),
+                    )
                 # D12 forward reserve leg (GATED entry_forward_reserve_leg,
                 # default OFF ⇒ dict empty, byte-identical): capture the
                 # entering year's own expected-ORDC adder — the SAME
@@ -3844,6 +4014,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     _diag["solar_potential_mw"] = (
                         solar_cf * np.asarray(solar_cap, dtype=float)[:, None]
                     ).sum(axis=0)
+                    # capx D43 (L-5 dump extension, output-only): the run's
+                    # OWN prior-year zonal dual surface the disarm fallback
+                    # and both replacement constructions read. With it the
+                    # dump is self-contained for the expected-vs-realized
+                    # instrument (D39 §2): the NEXT solved year's dump
+                    # carries that year's realized duals, so a run's own
+                    # screen expectation can be scored against its own
+                    # realized surface offline — no keeper stand-in, no
+                    # replay. No config field, no cache-key term, no
+                    # solve-path change.
+                    _diag["econ_prices_usd_mwh"] = np.asarray(econ_prices, dtype=float)
                     _diag_path = get_cache_path(iso, cache_key, year).parent / (
                         f"screen_signal_diag_{year}_for_{entering_year}.npz"
                     )
@@ -3854,7 +4035,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # the scarcity-hour log counts read the cross-zone mean.
                 _sig_h = (
                     sig.mean(axis=0)
-                    if getattr(config, "entry_forward_expectation_signal", False)
+                    if (
+                        getattr(config, "entry_forward_expectation_signal", False)
+                        or _dispersion_sig
+                    )
                     else sig[0]
                 )
                 logger.info(
