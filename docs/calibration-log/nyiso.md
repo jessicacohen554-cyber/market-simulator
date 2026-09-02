@@ -10644,3 +10644,149 @@ ledgered-class C3c (not lone, so it stands), **NEW — C1 2023 `ST_GAS`**, and t
 `booked_share` 0.53–0.56 of the capacity-year *in the keeper*, against an
 EFOR+planned norm of 0.10–0.15; PREREG gate G3 **recorded FAILED** on it). The
 over-booking is the lane's next lever and it is an **OFFER-side** object.
+
+## 2026-09-02 — nyiso-178: the `ST_GAS` availability envelope is NOT BINDING IN ANY YEAR IN EITHER DIRECTION — nyiso-177's offer-side type is CONFIRMED on the LP's own envelope, the merit guard's non-effect is DIAGNOSED to a single cause, and the natural offer-shape successor is REFUTED for zero solves
+
+**ZERO SOLVES. Keeper UNCHANGED:** `2026-09-02-nyiso-177-vintage-matched`,
+determination **NOT-YET**, target grade 5, fails 3 {C1-2023 `ST_GAS`,
+C3a-2025 −11.2 %, C3c}. **No parameter touched, no band swept, no arm built, no
+run registered — by the pre-registration's own stop condition S3, which fired.**
+Full record: `docs/FINDING-nyiso178-offer-side-idling-2026-09-02.md`; gates
+`results/calibration/PREREG-nyiso178-offer-side-idling.md`, committed with the
+probe (`31180c9b`) **before either ran**; probe
+`scripts/probes/nyiso178_offer_side_idling.py` →
+`results/calibration/_nyiso178_offer_side_idling.json`.
+
+**THE OBJECT, AND WHY THE TYPE WAS TESTED RATHER THAN INHERITED.** nyiso-177 §7.1
+sized an over-booked `ST_GAS` outage envelope (0.50–0.56 of the bin-capacity-year
+against a 0.10–0.15 EFOR+planned norm) and handed it forward with a **stated
+type** — "an offer-side question, not an availability-side one". The type is the
+whole disposition, because the two have disjoint lever sets, so this session
+gated it.
+
+**G1 ⇒ OFFER-SIDE, and the instrument had to be REPAIRED to say so honestly.**
+PREREG §5.3 had already corrected §5.2's envelope from a difference to a product
+(`availability = (1 − WEFOR(age) − DERATE(age)) × ufac`, `arrays.py:1097`) by code
+reading, before any execution — a correction that mattered, because the additive
+form would have biased G1 toward the brief's preferred answer. **The corrected
+reconstruction was still invalid and its own output said so**: model `ST_GAS`
+EXCEEDED it at p99 (1.025 / 1.062 / 1.065), which a ceiling cannot do. Rather
+than gate on a falsified bound, the envelope was rebuilt by CALLING THE ENGINE
+(`load_or_synthesize_bins` → `bins_to_fleet` → `generators_to_fleet_arrays` on
+the keeper's own `ScenarioConfig`) — and the exact envelope is TIGHTER than the
+overlay-only bound, i.e. the swap makes OFFER-SIDE harder to reach, not easier.
+On it: mean availability **0.384 / 0.364 / 0.416**, envelope 29.96 / 28.40 /
+32.43 TWh, model 12.00 / 9.80 / 10.01 against actual 8.14 / 9.91 / 13.71, and the
+model sits at its own ceiling in **0 / 0 / 4 hours of 8,760** (0.00 / 0.00 /
+0.05 %), mean utilisation **0.391 / 0.315 / 0.286**.
+
+**THE DECISIVE LINE — it does not bind in the SCARCITY hours either.** By actual
+RT LBMP decile, the model is at its envelope in **zero hours of the top decile of
+any year**. In 2025's top decile (**\$176.25** mean) the envelope is **3,658 MW**
+and the model runs **1,442 MW** — **2.2 GW of already-derated, in-envelope steam
+goes unoffered or over-priced**, while the measured fleet averages ~2,597 MW
+(CAMPD gross). Across the top three deciles the model is FLAT (1,603 → 1,429 →
+1,442 MW) as price runs \$70 → \$176. **The whole measured-availability-input
+family is therefore provably inert against `ST_GAS`, ex ante and in BOTH
+directions**: tightening cannot cure the 2023 +3.86 TWh over-run (60 % slack) and
+loosening cannot cure the 2025 −3.70 TWh under-run (the slack is already there).
+The nyiso-173 CC disposition, now established for steam. **Re-open condition,
+measurable: a keeper whose `ST_GAS` utilisation actually reaches its envelope.**
+**ROBUSTNESS, reported because it could have flipped the gate:** the LP's
+`ST_GAS` bins carry a **stamped `online_year` of 2010**, so
+`THERMAL_AVAILABILITY`'s 30-year age escalation never fires for a 1951–1977 NY
+steamer; re-scaling to true EIA-860 vintages tightens availability to
+0.312 / 0.294 / 0.338 and hours-at-envelope to 154 / 234 / 296 (1.76 / 2.67 /
+3.38 %) — **`MIXED`, never `AVAILABILITY-SIDE`.**
+
+**G2 DISCHARGED — the guard is working exactly as designed, and that is WHY it
+removes nothing.** Attributing the `ST_GAS` window-hours the keeper-armed guard
+KEPT across the three fail-safe exits its own code defines: **0.8083** are PRICED
+windows whose `out_of_merit_share` falls below `MERIT_OOM_FRAC` = 0.9, 0.1917 are
+panel-unidentified units (`2480:2`, `2682:9`, `2682:10`, `8906:CT0001`), 0.0000
+unpriceable, 0.0000 no-panel — a single cause at 0.81 against a 0.80 bar. The
+guard is not idling: it **REMOVED 449 windows / 221,016 window-hours at mean
+out-of-merit 0.989**. What it KEPT is 450 windows / 362,736 window-hours at mean
+**0.173, MEDIAN 0.000** — in the median kept window the unit was in merit in
+every priceable hour and was off anyway, which against a fail-safe test reads
+mechanical. **The residual over-booking is NOT reachable by this guard at its
+committed constants, and it is not a defect in the guard.** No constant touched
+or swept (rule 23).
+
+**G3 NEITHER — THE NATURAL SUCCESSOR IS REFUTED FOR ZERO SOLVES, and S3 fires.**
+The arm was pre-specified in full: an `ST_GAS` duty curve, the class sibling of
+the adjudicated keeper `chp_layup_duty_curve` (nyiso-149), disjoint by class
+scope, zero new price constants, whole-class membership so no cohort DOF. It was
+conditional on the defect being one of offer SHAPE. Measured on shares within
+actual-RT-LBMP bands: model bottom-half share 0.383 / 0.358 / 0.365 against the
+measured fleet's 0.345 / 0.319 / 0.317 — a ratio of only **1.108 / 1.121 /
+1.152** against a ≥ 2.0 bar — and the model is **LESS** top-heavy in every year
+(0.156 / 0.146 / 0.126 vs 0.190 / 0.181 / 0.150), not more. The LEVEL branch
+fails too (max per-band departure 0.181 / 0.190 / **0.389**). **Not a duty-role
+defect; a duty curve is the wrong instrument and no solve was spent finding out.**
+
+**G4′ DISCHARGED — no unattributed `ST_GAS` forcing channel.** Eleven armed
+candidates from the list fixed before the cross-check; every one either carries an
+`ST_GAS` D-2 row (`reliability_floor`, `nyiso_gas_commitment_bridge` + six legs)
+or is inert by class scope (`chp_steam_following`, `chp_layup_duty_curve` — CHP
+groups only). No D-2 `ST_GAS` mechanism was missing from the list either. Forced
+share, **report only**: 0.177 / 0.237 / 0.198 — **~80 % of the class's energy is
+economic clearing**, which is what makes the headroom an offer statement.
+
+**G5 — a rule 19 `[R-ONE-MECH]` availability STACK is FLAGGED, and is also
+PROVABLY INERT.** `ST_GAS` unavailability is derived by two mechanisms for one
+phenomenon, **multiplied**: the age-escalated statistical NERC-GADS layer
+(`THERMAL_AVAILABILITY["ST_GAS"]`, the one `arrays.py:690` calls "fitted to
+ERCOT's once-through steamers and > 2× every other thermal class") and the
+measured CAMPD overlay, with **all three relief fields `None`**
+(`wefor_residual`, `gas_st_wefor_base_override`, `wefor_residual_groups`).
+Composed 2023 by plant: Roseton 0.050, Bowline 0.124, Astoria 0.155, Danskammer
+0.181, Northport 0.433, E F Barrett 0.567, Ravenswood 0.641, Arthur Kill 0.693,
+Port Jefferson 0.750, Greenidge 0.780. Both things are reported: it is a genuine
+stack, **and** G1 makes relieving it move ZERO `ST_GAS` energy. **Stop condition
+S6 forbade an availability-loosening arm ex ante; G1 converts that guardrail from
+an argument into a measurement.** Nothing touched (rules 21, 23).
+
+**LINES CLOSED.** (a) the measured-availability-input family against `ST_GAS`, in
+both directions, with a stated re-open condition; (b) the merit-order guard as a
+repair for the residual over-booking, on a measured single-cause attribution;
+(c) the `ST_GAS` duty curve as this object's successor.
+
+**HANDED FORWARD, none scoped here.** (1) **The object, RE-TYPED**: an offer
+**POSITION** object — 2023 near-uniformly multiplicative (band ratios 1.23 →
+1.01, converging at the top), 2025 top-weighted deficit (0.92 → 0.555), class
+saturating flat at ~1,450 MW above \$70/MWh against a ~3,650 MW envelope and a
+~2,500 MW measured fleet. Enumerate first (rule 19): downstate zonal gas basis +
+`dual_fuel_switching` in the dear hours, the UN-GROUNDED `ST_GAS` `peak` 4.2
+multiplier, `gas_st_committed_hr_mult` 1.32. `gas_st_startup_cost` stays
+DO-NOT-REDO. (2) **The missing rung is STILL UNSPENT and its cost is now
+specified**: it is not a flag flip — `campd_attribution_selectors` forces
+`merit_guard` False without `per_unit` by design and both resolvers name only a
+`-perunitmerit-` companion, so it needs a `-merit-` PAIR on incumbent routing,
+both resolvers extended, and the selector relaxed while preserving the pairing
+invariant. (3) **`mustrun_layup_window_mask`'s NYISO census is now measured** —
+449 `ST_GAS` windows / 221,016 window-hours at mean out-of-merit 0.989 — but
+`unit_layup_csv_for_iso` still resolves only the unsuffixed name, and G4′ bounds
+what the mask can move on a class that is 80 % economic. (4) **A newly named
+data-fidelity gap**: the LP's `ST_GAS` bins carry a stamped `online_year` of 2010
+against EIA-860's 1951–1977. (5) C3a-2025 unmoved, owner-court, not opened.
+
+**WHAT IS NOT DELIVERED, stated without softening.** No keeper, no candidate, no
+run, no repair. C1-2023 `ST_GAS` is exactly where nyiso-177 left it. **The
+over-booking is shown INERT, which is a lesser result than fixing it** — it is
+still 3.5–5× a documented norm and remains wrong on the merits even though
+nothing downstream currently depends on it. §9's re-typed object is a
+**specification, not an identification**.
+
+**Rule 15:** no solve ran, so nothing is registered on the dashboard — by design
+(S3), not omission. **Rule 22 `[R-HOLDOUT]`:** every year read is 2023 / 2024 /
+2025; NYISO is absent from both `complete` and `final`; **no marker was
+requested**; the holdout spend freeze is untouched. **Rule 25:** NYISO only.
+**Rule 28 (b):** four NYISO cells annotated — `campd_outage_windows` stays **`K`**,
+`campd_outage_merit_order_guard` stays **`K`**, `offer_curve_by_group` stays
+**`K`**, `mustrun_layup_window_mask` stays **`U`** — **no verdict moves and no
+field changed**; guard exit 0, shard passes `node --check`. Also re-stamped
+`docs/mechanism-testing-matrix.md` §5.5, whose prose header still named the
+nyiso-159 keeper (the promoting session's duty, missed; CI was warning on it) and
+whose NYISO lever queue now carries this session's three closed lines — the prior
+header is preserved beneath, unedited.

@@ -217,126 +217,204 @@ def measured_hourly(year: int, klass: str) -> np.ndarray:
 # ------------------------------------------------------------------- G1 / G5 --
 
 
-def bin_ages() -> dict[tuple[int, str], float]:
-    """Capacity-weighted age basis: ``{(code, group): online_year}``."""
+def eia860_bin_vintages() -> dict[tuple[int, str], int]:
+    """``{(plant_code, group): capacity-weighted EIA-860 online_year}``.
+
+    The EIA-860 fleet's TRUE vintages, used only for the G1 robustness leg —
+    the LP's own CAMPD bins carry a stamped year instead.
+    """
     gens = load_fleet_from_csv(ISO)
     num: dict[tuple[int, str], float] = {}
     den: dict[tuple[int, str], float] = {}
     for g in gens:
         grp = getattr(g, "plant_group", None)
         oy = getattr(g, "online_year", None)
-        cap = float(getattr(g, "capacity_mw", 0.0) or 0.0)
-        if grp is None or oy is None or cap <= 0.0:
+        cap = float(getattr(g, "pmax_mw", 0.0) or 0.0)
+        if not grp or not oy or cap <= 0.0:
             continue
         k = (int(g.plant_code), str(grp))
         num[k] = num.get(k, 0.0) + cap * float(oy)
         den[k] = den.get(k, 0.0) + cap
-    return {k: num[k] / den[k] for k in num if den[k] > 0}
+    return {k: int(round(num[k] / den[k])) for k in num if den[k] > 0}
 
 
-def envelopes(year: int) -> dict:
-    """The three PREREG §5.3 ``ST_GAS`` envelopes, plus the G5 decomposition."""
-    cap = _iso_plant_capacity(ISO, False, False)
-    ufac = unit_outage_derate_factors(
-        year, iso=ISO, per_unit_crosswalk=True, merit_order_guard=True
+def lp_fleet(year: int, cfg_obj):
+    """Build the EXACT LP fleet arrays the keeper's own config produces.
+
+    PROBE-CONSTRUCTION REPAIR, disclosed (PREREG §5.3 reconstructed the envelope
+    by hand and the reconstruction was INVALID: the model's ``ST_GAS`` dispatch
+    EXCEEDED it at p99, which a ceiling cannot do). This calls the engine's own
+    ``bins_to_fleet`` -> ``generators_to_fleet_arrays`` on the keeper's exact
+    ``ScenarioConfig``, so the envelope is the LP's, not an approximation of it.
+    The exact envelope is TIGHTER than the overlay-only upper bound, i.e. the
+    swap makes the OFFER-SIDE branch HARDER to reach, never easier.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.data.fleet import generators_to_fleet_arrays
+    from market_sim.data.fleet.assembly import bins_to_fleet, load_or_synthesize_bins
+
+    ic = get_iso_config(ISO)
+    zones = [z.name for z in ic.zones]
+    cfg_y = cfg_obj.with_overrides(weather_year=year)
+    bins = load_or_synthesize_bins(cfg_y, ISO, ic, [])
+    gens, _ = bins_to_fleet(bins, zones, cfg_y)
+    s = pd.read_parquet(KEEPER / f"hourly/system_{year}.parquet")
+    s = s[s["pass"] == "P1"]
+    load_shape = (
+        s.groupby("hour")["demand"].sum().reindex(range(HOURS)).ffill().bfill().to_numpy()
     )
-    ages = bin_ages()
-    _, w_base, w_rate, w_onset, d_base, d_rate, d_onset = THERMAL_AVAILABILITY[KLASS]
-
-    summer = np.zeros(HOURS, dtype=bool)
-    months = np.repeat(
-        pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D").month.to_numpy()[:365],
-        24,
-    )[:HOURS]
-    summer[np.isin(months, (6, 7, 8, 9))] = True
-
-    env_overlay = np.zeros(HOURS)
-    env_stat = np.zeros(HOURS)
-    env_stat_summer = np.zeros(HOURS)
-    total = 0.0
-    per_bin = []
-    for (code, grp), mw in sorted(cap.items()):
-        if grp != KLASS:
-            continue
-        total += mw
-        u = ufac.get((code, grp), np.ones(HOURS))
-        oy = ages.get((code, grp))
-        age = (year - oy) if oy else 0.0
-        wefor = w_base + max(0.0, age - w_onset) * w_rate
-        derate = d_base + max(0.0, age - d_onset) * d_rate
-        stat = max(0.0, 1.0 - wefor - derate)
-        s_wefor = SUMMER_WEFOR_SHARE * wefor
-        stat_s = np.full(HOURS, stat)
-        stat_s[summer] = max(0.0, 1.0 - s_wefor - derate)
-        env_overlay += mw * u
-        env_stat += mw * stat * u
-        env_stat_summer += mw * stat_s * u
-        per_bin.append(
-            {
-                "plant_code": int(code),
-                "nameplate_mw": round(float(mw), 1),
-                "online_year": (int(oy) if oy else None),
-                "age": round(float(age), 1),
-                "wefor_age": round(float(wefor), 4),
-                "derate_age": round(float(derate), 4),
-                "statistical_availability": round(float(stat), 4),
-                "mean_overlay_ufac": round(float(np.mean(u)), 4),
-                "mean_composed_availability": round(float(stat * np.mean(u)), 4),
-            }
-        )
-    return {
-        "total_capacity_mw": round(total, 1),
-        "env_overlay": env_overlay,
-        "env_stat": env_stat,
-        "env_stat_summer": env_stat_summer,
-        "per_bin": per_bin,
-    }
+    fa = generators_to_fleet_arrays(
+        gens, zones, hours=HOURS, iso=ISO, config=cfg_y,
+        load_shape=load_shape, year=year,
+    )
+    return gens, fa
 
 
 def g1_and_g5(cfg: dict) -> tuple[dict, dict]:
+    from market_sim.config.scenarios import ScenarioConfig
+
+    cfg_obj = ScenarioConfig(**cfg)
     per_year, g5_bins = {}, {}
     for year in YEARS:
-        e = envelopes(year)
+        gens, fa = lp_fleet(year, cfg_obj)
+        grp = np.array([str(getattr(g, "plant_group", "") or "") for g in gens])
+        sel = grp == KLASS
+        pmax = fa.pmax[sel]
+        env = (pmax[:, None] * fa.availability[sel, :]).sum(axis=0)
+        tot = float(pmax.sum())
         mo = model_hourly(year, KLASS)
-        tot = e["total_capacity_mw"]
-        row = {"capacity_mw": tot}
-        for name in ("env_overlay", "env_stat", "env_stat_summer"):
-            env = e[name]
-            at = int((mo >= G1_AT_FRAC * env).sum())
-            row[name] = {
-                "mean_availability": round(float(env.mean() / tot), 4),
-                "envelope_twh": round(float(env.sum()) / 1e6, 4),
-                "hours_at_envelope": at,
-                "share_hours_at_envelope": round(at / HOURS, 5),
-                "mean_utilisation": round(float((mo / np.maximum(env, 1e-9)).mean()), 4),
-                "p99_utilisation": round(
-                    float(np.percentile(mo / np.maximum(env, 1e-9), 99)), 4
-                ),
-                "max_utilisation": round(float((mo / np.maximum(env, 1e-9)).max()), 4),
-                "min_headroom_mw": round(float((env - mo).min()), 1),
+        util = mo / np.maximum(env, 1e-9)
+        at = int((util >= G1_AT_FRAC).sum())
+
+        # Report-only: utilisation by ACTUAL-price decile. The gate is on all
+        # hours, exactly as pre-registered; this only says WHERE the headroom is.
+        px = actual_price(year, "rt")
+        order = np.argsort(px)
+        decs = np.array_split(order, 10)
+        by_decile = [
+            {
+                "decile": i,
+                "mean_price": round(float(px[d].mean()), 2),
+                "mean_envelope_mw": round(float(env[d].mean()), 1),
+                "mean_model_mw": round(float(mo[d].mean()), 1),
+                "mean_utilisation": round(float(util[d].mean()), 4),
+                "p95_utilisation": round(float(np.percentile(util[d], 95)), 4),
+                "hours_at_envelope": int((util[d] >= G1_AT_FRAC).sum()),
             }
-        row["model_twh"] = round(float(mo.sum()) / 1e6, 4)
-        row["actual_twh"] = round(actual_class_twh(year, KLASS), 4)
-        per_year[year] = row
-        g5_bins[year] = e["per_bin"]
+            for i, d in enumerate(decs)
+        ]
 
-    def verdict(name: str) -> str:
-        shares = [per_year[y][name]["share_hours_at_envelope"] for y in YEARS]
-        if max(shares) >= G1_AVAIL_MIN_SHARE:
-            return "AVAILABILITY-SIDE"
-        if max(shares) < G1_OFFER_MAX_SHARE:
-            return "OFFER-SIDE"
-        return "MIXED"
+        # G5 decomposition: composed = statistical x ufac, so the statistical
+        # layer is recoverable exactly from the LP's own availability array.
+        ufac = unit_outage_derate_factors(
+            year, iso=ISO, per_unit_crosswalk=True, merit_order_guard=True
+        )
+        codes = np.array([int(getattr(g, "plant_code", 0) or 0) for g in gens])[sel]
+        rows = []
+        for code in sorted(set(codes.tolist())):
+            m = codes == code
+            cap_c = float(pmax[m].sum())
+            if cap_c <= 0:
+                continue
+            comp = float(
+                (pmax[m][:, None] * fa.availability[sel][m, :]).sum() / (cap_c * HOURS)
+            )
+            u = ufac.get((code, KLASS))
+            u_mean = float(np.mean(u)) if u is not None else 1.0
+            oy = [
+                int(getattr(g, "online_year", 0) or 0)
+                for g, s_ in zip(gens, sel)
+                if s_ and int(getattr(g, "plant_code", 0) or 0) == code
+            ]
+            rows.append(
+                {
+                    "plant_code": int(code),
+                    "lp_pmax_mw": round(cap_c, 1),
+                    "online_year_min_max": [min(oy), max(oy)] if oy else None,
+                    "mean_overlay_ufac": round(u_mean, 4),
+                    "mean_composed_availability": round(comp, 4),
+                    "implied_statistical_layer": (
+                        round(comp / u_mean, 4) if u_mean > 1e-6 else None
+                    ),
+                }
+            )
+        g5_bins[year] = rows
 
-    v_gated = verdict("env_stat")
-    v_loose = verdict("env_overlay")
+        # G1 ROBUSTNESS, reported: the LP's ST_GAS bins carry a STAMPED
+        # online_year (the CAMPD bin synthesis), not their EIA-860 vintages, so
+        # THERMAL_AVAILABILITY's age escalation past its 30-year onset never
+        # fires for a NY steamer built in 1951-1977. Re-scale the statistical
+        # layer to each plant's true capacity-weighted EIA-860 vintage and
+        # re-test the gate. This can only TIGHTEN the envelope, i.e. it is the
+        # sensitivity that could FLIP G1 to AVAILABILITY-SIDE.
+        _, w_base, w_rate, w_onset, d_base, d_rate, d_onset = THERMAL_AVAILABILITY[
+            KLASS
+        ]
+        true_oy = eia860_bin_vintages()
+        scale = np.ones(int(sel.sum()))
+        stamped = max(0.0, 1.0 - w_base - d_base)
+        for i, code in enumerate(codes.tolist()):
+            oy = true_oy.get((int(code), KLASS))
+            if not oy:
+                continue
+            age = year - oy
+            st = max(
+                0.0,
+                1.0
+                - (w_base + max(0.0, age - w_onset) * w_rate)
+                - (d_base + max(0.0, age - d_onset) * d_rate),
+            )
+            scale[i] = st / stamped if stamped > 0 else 1.0
+        env_aged = ((pmax * scale)[:, None] * fa.availability[sel, :]).sum(axis=0)
+        util_aged = mo / np.maximum(env_aged, 1e-9)
+        aged = {
+            "note": "statistical layer re-scaled to true EIA-860 vintages",
+            "mean_availability": round(float(env_aged.mean() / tot), 4),
+            "envelope_twh": round(float(env_aged.sum()) / 1e6, 4),
+            "hours_at_envelope": int((util_aged >= G1_AT_FRAC).sum()),
+            "share_hours_at_envelope": round(
+                float((util_aged >= G1_AT_FRAC).sum()) / HOURS, 5
+            ),
+            "mean_utilisation": round(float(util_aged.mean()), 4),
+            "p99_utilisation": round(float(np.percentile(util_aged, 99)), 4),
+            "top_decile_mean_utilisation": round(
+                float(util_aged[decs[-1]].mean()), 4
+            ),
+            "true_vintages": {
+                str(int(c)): true_oy.get((int(c), KLASS))
+                for c in sorted(set(codes.tolist()))
+            },
+        }
+
+        per_year[year] = {
+            "capacity_mw": round(tot, 1),
+            "robustness_true_vintage_envelope": aged,
+            "envelope_twh": round(float(env.sum()) / 1e6, 4),
+            "mean_availability": round(float(env.mean() / tot), 4),
+            "model_twh": round(float(mo.sum()) / 1e6, 4),
+            "actual_twh": round(actual_class_twh(year, KLASS), 4),
+            "hours_at_envelope": at,
+            "share_hours_at_envelope": round(at / HOURS, 5),
+            "mean_utilisation": round(float(util.mean()), 4),
+            "p95_utilisation": round(float(np.percentile(util, 95)), 4),
+            "p99_utilisation": round(float(np.percentile(util, 99)), 4),
+            "max_utilisation": round(float(util.max()), 4),
+            "min_headroom_mw": round(float((env - mo).min()), 1),
+            "utilisation_by_actual_price_decile": by_decile,
+        }
+
+    shares = [per_year[y]["share_hours_at_envelope"] for y in YEARS]
+    if max(shares) >= G1_AVAIL_MIN_SHARE:
+        verdict = "AVAILABILITY-SIDE"
+    elif max(shares) < G1_OFFER_MAX_SHARE:
+        verdict = "OFFER-SIDE"
+    else:
+        verdict = "MIXED"
+
     g1 = {
         "gate": "G1 — is the composed ST_GAS availability envelope BINDING?",
-        "gated_on": "env_stat (PREREG §5.3)",
-        "verdict": v_gated if v_gated == v_loose else "MIXED",
-        "verdict_env_stat": v_gated,
-        "verdict_env_overlay": v_loose,
-        "bounds_agree": v_gated == v_loose,
+        "gated_on": "the EXACT LP envelope (probe repair, see lp_fleet docstring)",
+        "verdict": verdict,
         "thresholds": {
             "offer_side_max_share_hours_at_envelope": G1_OFFER_MAX_SHARE,
             "availability_side_min_share": G1_AVAIL_MIN_SHARE,
@@ -344,7 +422,6 @@ def g1_and_g5(cfg: dict) -> tuple[dict, dict]:
         },
         "per_year": per_year,
     }
-
     relief = {
         k: cfg.get(k)
         for k in ("wefor_residual", "gas_st_wefor_base_override", "wefor_residual_groups")
@@ -359,7 +436,10 @@ def g1_and_g5(cfg: dict) -> tuple[dict, dict]:
             "summer_wefor_share": SUMMER_WEFOR_SHARE,
         },
         "measured_layer": "outages.unit_outage_derate_factors (perunitmerit basis)",
-        "composition": "PRODUCT (fleet/arrays.py:1097 'Multiplies the statistical availability already set above')",
+        "composition": (
+            "PRODUCT (fleet/arrays.py:1097 'Multiplies the statistical "
+            "availability already set above')"
+        ),
         "relief_fields": relief,
         "per_bin": g5_bins,
     }
@@ -641,18 +721,32 @@ def main() -> None:
     OUT.write_text(json.dumps(rec, indent=1, default=float))
 
     print(f"\n=== nyiso-178 phase 0 — {KLASS}, keeper {rec['keeper_control']}")
-    print(f"\nG1 {g1['verdict']}  (env_stat {g1['verdict_env_stat']} / "
-          f"env_overlay {g1['verdict_env_overlay']})")
+    print(f"\nG1 {g1['verdict']}   (gated on the EXACT LP envelope)")
     for y in YEARS:
         r = g1["per_year"][y]
-        e = r["env_stat"]
         print(
-            f"  {y}  cap {r['capacity_mw']:.0f} MW  composed avail "
-            f"{e['mean_availability']:.3f}  envelope {e['envelope_twh']:.2f} TWh"
-            f"  model {r['model_twh']:.2f}  actual {r['actual_twh']:.2f}"
-            f"  hours AT envelope {e['hours_at_envelope']}"
-            f" ({e['share_hours_at_envelope']*100:.2f} %)"
-            f"  mean util {e['mean_utilisation']:.3f}  p99 {e['p99_utilisation']:.3f}"
+            f"  {y}  cap {r['capacity_mw']:.0f} MW  avail {r['mean_availability']:.3f}"
+            f"  envelope {r['envelope_twh']:.2f} TWh   model {r['model_twh']:.2f}"
+            f"  actual {r['actual_twh']:.2f}"
+            f"   hours AT envelope {r['hours_at_envelope']}"
+            f" ({r['share_hours_at_envelope']*100:.2f} %)"
+            f"  util mean {r['mean_utilisation']:.3f} p99 {r['p99_utilisation']:.3f}"
+            f" max {r['max_utilisation']:.3f}"
+        )
+        a = r["robustness_true_vintage_envelope"]
+        print(
+            f"        true-vintage robustness: avail {a['mean_availability']:.3f}"
+            f"  hours AT envelope {a['hours_at_envelope']}"
+            f" ({a['share_hours_at_envelope']*100:.2f} %)"
+            f"  util mean {a['mean_utilisation']:.3f}"
+            f"  top-decile {a['top_decile_mean_utilisation']:.3f}"
+        )
+        d9 = r["utilisation_by_actual_price_decile"][-1]
+        print(
+            f"        top price decile (${d9['mean_price']:.0f}): envelope "
+            f"{d9['mean_envelope_mw']:.0f} MW  model {d9['mean_model_mw']:.0f} MW"
+            f"  util {d9['mean_utilisation']:.3f}  p95 {d9['p95_utilisation']:.3f}"
+            f"  hours at envelope {d9['hours_at_envelope']}"
         )
     g2 = rec["G2"]
     print(f"\nG2 {g2['verdict']}  dominant {g2['dominant_cause']} "
@@ -683,11 +777,10 @@ def main() -> None:
     print(f"\nG5 {g5['verdict']}  relief {g5['relief_fields']}")
     for b in g5["per_bin"][2023]:
         print(
-            f"  {b['plant_code']:>6}  {b['nameplate_mw']:>7.1f} MW  online "
-            f"{b['online_year']}  WEFOR {b['wefor_age']:.3f}  derate "
-            f"{b['derate_age']:.3f}  stat {b['statistical_availability']:.3f}"
-            f"  x overlay {b['mean_overlay_ufac']:.3f}  = "
-            f"{b['mean_composed_availability']:.3f}"
+            f"  {b['plant_code']:>6}  {b['lp_pmax_mw']:>7.1f} MW  online "
+            f"{b['online_year_min_max']}  overlay {b['mean_overlay_ufac']:.3f}"
+            f"  x statistical {b['implied_statistical_layer']}"
+            f"  = composed {b['mean_composed_availability']:.3f}"
         )
     print(f"\nwrote {OUT.relative_to(REPO)}")
 
