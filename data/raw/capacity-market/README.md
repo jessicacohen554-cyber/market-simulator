@@ -14,6 +14,7 @@ first; `data-intake` skill recipe):
 |---|---|---|---|---|
 | `capacity-market-demand-curve` | `demand-curve/` | [`capacity-market-demand-curve.schema.yaml`](../../dictionary/schema/capacity-market-demand-curve.schema.yaml) | `scripts/curate_capacity_market_demand_curve.py` | published market-design **input** (rule 13) |
 | `capacity-market-auction-price` | `auction-price/` | [`capacity-market-auction-price.schema.yaml`](../../dictionary/schema/capacity-market-auction-price.schema.yaml) | `scripts/curate_capacity_market_auction_price.py` | published **outcome** — validation observable, NEVER a fit target |
+| `capacity-market-auction-supply` | `auction-supply/` | [`capacity-market-auction-supply.schema.yaml`](../../dictionary/schema/capacity-market-auction-supply.schema.yaml) | `scripts/curate_capacity_market_auction_supply.py` | published supply **accounting basis** (offered/PRMR — rule 13); cleared rows are outcome observables |
 | `capacity-market-elcc` | `elcc/` | [`capacity-market-elcc.schema.yaml`](../../dictionary/schema/capacity-market-elcc.schema.yaml) | `scripts/curate_capacity_market_elcc.py` | published market-design **input** (rule 13) |
 
 ## Layout
@@ -22,6 +23,7 @@ first; `data-intake` skill recipe):
 data/raw/capacity-market/
   demand-curve/<iso>/<iso>.csv    # net-CONE, IRM, price cap, sloped curve points
   auction-price/<iso>/<iso>.csv   # auction/spot clearing-price history, delivery year <= 2026/27
+  auction-supply/<iso>/<iso>.csv  # offered/cleared MW by category + PRMR/commitment ledger (MISO PRA)
   elcc/<iso>/<iso>.csv            # ELCC / accreditation ratings, by penetration where published
 ```
 

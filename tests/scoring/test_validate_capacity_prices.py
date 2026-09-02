@@ -125,21 +125,37 @@ def test_invert_normalized_curve_round_trips():
         assert evaluate_demand_curve(summer, pos) == pytest.approx(frac, abs=1e-6)
 
 
-def test_miso_seasonal_pass1_reproduces_net_cone_and_concentration():
-    # RC-1C: the seasonal SUM (Σ cleared × days) lands on the published
-    # North/Central net-CONE (~79,800), and the per-season implied positions
-    # reproduce the summer-short / other-seasons-long concentration directionally.
+def test_miso_seasonal_pass1_reproduces_net_cone_and_positions():
+    # RC-1C, re-anchored by capx D31's published-shape curves: the seasonal
+    # SUM (Σ cleared × days) lands on the published North/Central net-CONE
+    # (~79,800), and back-solving each season's ACP on the SHIPPED curves now
+    # implies positions matching the market's own published cleared positions
+    # (all four LONG: PY2025-26 cleared 1.0174/1.0227/1.0512/1.0118 of the
+    # Initial PRMR). The pre-repair first-order shape needed an implied SHORT
+    # summer (<1.0) to reproduce a print reality produced while 1.7% long —
+    # that artifact is gone, which is the repair's point.
     mp = miso_seasonal_pass1()
     assert not mp["locked"]  # PY2025-26 is in-train
     assert mp["published_net_cone_mw_yr"] == pytest.approx(79_800.0, abs=1.0)
     # Annual sum within a few percent of net-CONE (a real reproduction).
     assert abs(mp["pct_error"]) < 3.0
     by_season = {s["season"]: s for s in mp["seasons"]}
-    assert by_season["summer"]["implied_reserve_position"] < 1.0  # short
-    for season in ("fall", "winter", "spring"):
-        assert by_season[season]["implied_reserve_position"] > 1.0  # long
-    # Summer's gross-CONE cap fraction is ~6.3× the flat daily net-CONE.
-    assert by_season["summer"]["model_cap_frac"] == pytest.approx(6.33, abs=0.05)
+    published_cleared = {
+        "summer": 137_559.3 / 135_213.4,
+        "fall": 132_515.8 / 129_578.0,
+        "winter": 130_999.5 / 124_615.7,
+        "spring": 130_699.5 / 129_177.3,
+    }
+    for season, expected in published_cleared.items():
+        implied = by_season[season]["implied_reserve_position"]
+        assert implied > 1.0  # every season cleared LONG of its Initial PRMR
+        # fall carries the SRPBC price-separation reduction (~±1 pt); the
+        # others land within ~half a point of the published cleared position.
+        tol = 0.012 if season == "fall" else 0.006
+        assert implied == pytest.approx(expected, abs=tol), season
+    # Summer's SYSTEM seasonal-CONE cap fraction (PRMR-weighted subregional
+    # aggregate 1353.84 $/MW-day ÷ the flat daily net-CONE 218.63) ≈ 6.19.
+    assert by_season["summer"]["model_cap_frac"] == pytest.approx(6.19, abs=0.05)
 
 
 def test_nyiso_scored_per_vintage_and_sparse_years_excluded():

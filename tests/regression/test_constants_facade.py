@@ -65,6 +65,7 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
     "market_sim.config.capacity_market": (
         "ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO",
         "ADEQUACY_EXTERNAL_TIE_FIRM_MW",
+        "ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO",
         "AS_REVENUE_PER_KW_YR_BY_ISO",
         "AS_SATURATION_REF_GW_BY_ISO",
         # FFR-4F (2026-08-09, commit 675b9782) added the CAISO RA-MPB capacity
@@ -162,11 +163,20 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "THERMAL_ELCC_CLASS_RATING_BY_ISO",
         "_MISO_DAILY_NET_CONE_PER_MW_DAY",
         "_MISO_NC_NET_CONE_PER_MW_YR",
-        "_MISO_RBDC_CAP_X",
         "_MISO_RBDC_CURVE",
-        "_MISO_RBDC_ZERO_X",
+        # capx D31 (2026-09-02): the published-shape seasonal RBDC point
+        # tuples that replaced the first-order cap/zero x-position constants
+        # (_MISO_RBDC_CAP_X / _MISO_RBDC_ZERO_X — removed, rule 26) and the
+        # parametric _miso_seasonal_curve builder.
+        "_MISO_RBDC_FALL_POINTS",
+        "_MISO_RBDC_SPRING_POINTS",
+        "_MISO_RBDC_SUMMER_POINTS",
+        "_MISO_RBDC_WINTER_POINTS",
+        "_MISO_SEASON_DAYS",
+        "_MISO_SEASON_POINTS",
         "_MISO_VERTICAL_CURVE",
         "_MISO_VERTICAL_STEP",
+        "_miso_annual_reduction",
         # NEISO-RC-R R2 (2026-08-31): _NEISO_FCA_ZERO_X (the linear FCA-11
         # geometry's 1.083) is DELETED, not zeroed (rule 26) — the re-derived
         # curves carry _NEISO_MRI_ZERO_X (FCA 13's published tail zero) plus
@@ -182,7 +192,6 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "_PJM_VRR_CURVE",
         "_PJM_VRR_CURVE_2027_2028",
         "_PJM_VRR_CURVE_2028_2029",
-        "_miso_seasonal_curve",
         "_neiso_fca_vintage_curve",
         "_nyiso_icap_vintage_curve",
         "evaluate_demand_curve",

@@ -4695,5 +4695,114 @@ class TestIRANuclear45UAndCleanPhaseout(unittest.TestCase):
         self.assertEqual(compute_dispatch_credits(config, 2034), (0.0, 0.0))
 
 
+class TestInternalSupplyAccountingRatio(unittest.TestCase):
+    """capx D31 (2026-09-02): the MISO internal-supply accounting ratio.
+
+    The measured wedge between the model's census-accreditation ledger and
+    MISO's PRA supply accounting, applied to every internal contribution
+    wherever firm capacity is summed toward the adequacy requirement (ledger,
+    floor increments, backstop crediting) — and to nothing else. Value and
+    application both pinned; every other ISO must stay byte-identical.
+    """
+
+    def test_value_is_the_documented_published_arithmetic(self):
+        from market_sim.config.constants import (
+            ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO,
+        )
+        from market_sim.model.capacity import resolve_internal_supply_accounting_ratio
+
+        # Two clean overlap years' Summer offered Generation ZRC (PRA trend
+        # table, capacity-market-auction-supply rows) over the model's own
+        # entering internal firm (committed D27 ledgers on documented bases).
+        expected = (122_375.6 + 123_395.6) / (143_822.1 + 143_749.5)
+        self.assertAlmostEqual(
+            ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO["MISO"],
+            expected,
+            places=9,
+        )
+        self.assertAlmostEqual(expected, 0.854644, places=6)
+        self.assertEqual(resolve_internal_supply_accounting_ratio("ERCOT"), 1.0)
+        self.assertEqual(resolve_internal_supply_accounting_ratio(None), 1.0)
+
+    def test_numerators_match_the_committed_auction_supply_rows(self):
+        # The ratio's numerators ARE the committed PRA rows — a transcription
+        # tripwire between the registry constant and the datatype.
+        from pathlib import Path
+
+        from scripts.lib import capacity_market_auction_supply as asup
+
+        repo_raw = Path(__file__).resolve().parents[3] / "data" / "raw"
+        df = asup.parse_iso("MISO", repo_raw)
+        gen = df[
+            (df["metric"] == "offered")
+            & (df["category"] == "generation")
+            & (df["season"] == "summer")
+        ].set_index("planning_year")["value_mw"]
+        self.assertEqual(float(gen.loc["2023-2024"]), 122_375.6)
+        self.assertEqual(float(gen.loc["2024-2025"]), 123_395.6)
+
+    def test_ledger_scales_internal_but_not_the_tie(self):
+        from market_sim.config.constants import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+        from market_sim.model.capacity import (
+            _thermal_firm_mw,
+            accredited_firm_capacity_mw,
+            resolve_internal_supply_accounting_ratio,
+        )
+
+        ratio = resolve_internal_supply_accounting_ratio("MISO")
+        g = _gen("C1", "coal", pmax=1000.0)
+        with no_hydro_accreditation():
+            base = accredited_firm_capacity_mw([], iso="MISO")
+            with_unit = accredited_firm_capacity_mw([g], iso="MISO")
+        # Empty fleet: the tie alone, UNSCALED (the tie is already the
+        # market's own cleared external ZRC).
+        self.assertAlmostEqual(base, ADEQUACY_EXTERNAL_TIE_FIRM_MW["MISO"], places=6)
+        # Adding a unit moves the ledger by its firm MW × the ratio — the
+        # exact increment the reliability floor credits when it un-retires
+        # the same unit (one basis, rule 19).
+        self.assertAlmostEqual(
+            with_unit - base, _thermal_firm_mw(g, "MISO") * ratio, places=6
+        )
+        self.assertLess(with_unit - base, _thermal_firm_mw(g, "MISO"))
+
+    def test_other_isos_ledgers_are_byte_identical(self):
+        from market_sim.model.capacity import (
+            _thermal_firm_mw,
+            accredited_firm_capacity_mw,
+        )
+
+        for iso in ("PJM", "NYISO", "NEISO", "CAISO", "ERCOT"):
+            g = _gen("G1", "gas_cc", pmax=500.0)
+            with no_hydro_accreditation():
+                base = accredited_firm_capacity_mw([], iso=iso)
+                with_unit = accredited_firm_capacity_mw([g], iso=iso)
+            self.assertAlmostEqual(
+                with_unit - base, _thermal_firm_mw(g, iso), places=6, msg=iso
+            )
+
+    def test_backstop_builds_enough_to_close_the_gap_on_the_ratioed_ledger(self):
+        from market_sim.config.constants import EFORD
+        from market_sim.model.capacity import (
+            apply_reserve_margin_build,
+            resolve_internal_supply_accounting_ratio,
+        )
+
+        config = ScenarioConfig(reserve_margin_build_enabled=True)
+        peak = 100_000.0
+        # A firm ledger 5 GW short of the requirement: the built nameplate
+        # must be gap / ((1 - EFORd_ct) × ratio) so its LEDGER contribution
+        # (which carries the ratio) closes the gap exactly.
+        from market_sim.model.capacity import resolve_adequacy_requirement_mw
+
+        req = resolve_adequacy_requirement_mw(config, "MISO", peak)
+        firm = req - 5_000.0
+        fleet, built = apply_reserve_margin_build([], firm, peak, 2030, config, "MISO")
+        ratio = resolve_internal_supply_accounting_ratio("MISO")
+        self.assertAlmostEqual(
+            built, 5_000.0 / ((1.0 - EFORD["gas_ct"]) * ratio), places=3
+        )
+        self.assertEqual(len(fleet), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

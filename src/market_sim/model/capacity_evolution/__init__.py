@@ -149,6 +149,7 @@ from .retirements import (
     deliverability_headroom_by_zone,
     logger,
     resolve_adequacy_requirement_mw,
+    resolve_internal_supply_accounting_ratio,
     resolve_forecast_pool_requirement,
     resolve_planning_reserve_margin,
     resolve_renewable_capacity_credit,
@@ -271,6 +272,7 @@ __all__ = [
     "resolve_planning_reserve_margin",
     "resolve_forecast_pool_requirement",
     "resolve_adequacy_requirement_mw",
+    "resolve_internal_supply_accounting_ratio",
     "resolve_renewable_capacity_credit",
     "thermal_accreditation_fraction",
     # new entry

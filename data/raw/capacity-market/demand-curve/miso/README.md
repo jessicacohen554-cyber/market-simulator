@@ -88,11 +88,26 @@ regional Net CONE (North/Central + South), seasonal CONE by System/subregion ×
 season), and Planning Reserve Margin (%) by season for PY2023-24 through
 PY2025-26 — all from the PY2025-26 PRA Results Posting + the RASC Net-CONE
 update. MISO's reliability-based demand curve (RBDC) began PY2025-26; the full
-continuous curve (beyond the one labeled clearing point per chart) is not
-published as a data table, only as chart images — the labeled intersection is
-the only exact point available. A more granular per-zone-per-season PRMR (MW)
-breakdown exists in the source but was not transcribed at this pass (season-
-level % IRM was kept instead).
+continuous curve is not published as a data table, only as chart images. A
+more granular per-zone-per-season PRMR (MW) breakdown exists in the source
+but was not transcribed at this pass (season-level % IRM was kept instead;
+the System/subregional Initial PRMR MW rows now live in
+`../../auction-supply/miso/miso.csv`).
+
+**2026-09-02 pass (capx D31)** — the RBDC chart images themselves are now
+DIGITIZED: 8 × ≤16-point `curve_point` polylines (subregion × season,
+point_index 1..N; index 0 stays the labeled clearing intersection), extracted
+at pixel resolution from the sha256-verified posting by
+`scripts/data/digitize_miso_rbdc_charts.py` (per-panel validation against the
+labeled points: $0.2–$3.2 on seven panels; the South-summer $81 residual is a
+~2-px slope artifact where the curve drops ~$1,280 over ~0.7 GW). Only the
+OBSERVED chart segments are committed; the seasonal-CONE cap bridging and the
+PRMR-weighted SYSTEM aggregation live in
+`scripts/data/derive_miso_rbdc_system_curves.py`, whose output
+`capacity_market.py` encodes verbatim (asserted by
+`tests/unit/model/test_capacity_demand_curve.py`). This supersedes the
+"labeled intersection is the only exact point available" limitation and
+replaced the first-order 0.97/1.05 RBDC x-positions in code.
 
 **2026-07-15 pass** extended the file both backward and forward from that
 base, all pre-RBDC/RBDC-transition years, no `curve_point` rows added except
