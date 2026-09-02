@@ -128,7 +128,40 @@ _RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
     # the same non-replayability the owner's ruling gave every pre-ruling
     # MISO bundle, the miso-175 keeper included.
     "miso_online_rho_no_floor": ("MISO", True),
+    # caiso-236 (2026-09-02) deleted `caiso_bidir_intertie` from ScenarioConfig
+    # under rule 26 [R-DELETE] and registered it in
+    # scenarios._CACHE_KEY_RETIRED_FIELDS, but did not extend THIS registry — so
+    # every keeper meta recording the key became unmappable and build_kwargs
+    # hard-errored, taking the keeper-replay guard family red on main (xiso-7
+    # §7; seven tests across test_replay_keeper_strict, test_forecast_parity and
+    # test_ff_readiness_battery). False is the unconditional post-deletion
+    # behaviour: the field was off on the CAISO keeper AND off in the CAISO
+    # defaults, i.e. unreachable in every shipped configuration. The inert SET is
+    # declared because every keeper meta of all six ISOs records the key as None
+    # — the tri-state CLI's "flag never set", which resolves to that same False
+    # default — and not one records False literally; both drop safely.
+    # A bundle that recorded True selected the
+    # fitted 4,361 MW aggregate export cap that no longer exists at HEAD and
+    # still hard-errors as historical-record-only — the miso-50..53 strictness
+    # is preserved, not relaxed. Successor mechanism: caiso_per_hub_intertie.
+    "caiso_bidir_intertie": ("CAISO", (False, None)),
 }
+
+
+def _rule26_inert(unconditional: object) -> tuple:
+    """Return the recorded values that are INERT for a rule-26-deleted field.
+
+    A registry entry declares either a single value or a TUPLE of them whose
+    FIRST element is the canonical now-unconditional behaviour (the value the
+    error messages name) and whose remaining elements are other recordings that
+    resolve to it. The case that needs the tuple is ``None``: a tri-state CLI
+    flag writes ``None`` into meta.json for "never set", which resolves to the
+    field's default, so for a field whose default WAS the unconditional
+    behaviour both ``None`` and the explicit value are inert. Declaring the set
+    per field keeps that from becoming a blanket "None is always safe" rule,
+    which would be false for a field whose default was the OTHER polarity.
+    """
+    return unconditional if isinstance(unconditional, tuple) else (unconditional,)
 
 
 def _strip_rule26_from_override_dict(channel: str, overrides: dict, meta: dict) -> dict:
@@ -164,13 +197,14 @@ def _strip_rule26_from_override_dict(channel: str, overrides: dict, meta: dict) 
     out = dict(overrides)
     for k in hits:
         owner_iso, unconditional = _RULE26_DELETED_UNCONDITIONAL[k]
+        inert = _rule26_inert(unconditional)
         v = out.pop(k)
-        if meta.get("iso") == owner_iso and v != unconditional:
+        if meta.get("iso") == owner_iso and v not in inert:
             raise SystemExit(
                 f"bundle records the rule-26-deleted field {k}={v!r} inside "
                 f"{channel} on an {owner_iso} solve: the basis that value "
                 f"selected no longer exists at HEAD (the collapse made "
-                f"{unconditional!r} unconditional), so a kwargs replay would "
+                f"{inert[0]!r} unconditional), so a kwargs replay would "
                 "run a DIFFERENT mechanism than the bundle. Historical record "
                 "— read, never replayed (see the cache.py epoch note)."
             )
@@ -197,11 +231,12 @@ def build_kwargs(meta: dict) -> dict:
             continue
         if k in _RULE26_DELETED_UNCONDITIONAL:
             owner_iso, unconditional = _RULE26_DELETED_UNCONDITIONAL[k]
-            if meta.get("iso") == owner_iso and v != unconditional:
+            inert = _rule26_inert(unconditional)
+            if meta.get("iso") == owner_iso and v not in inert:
                 raise SystemExit(
                     f"bundle records the rule-26-deleted field {k}={v!r} on an "
                     f"{owner_iso} solve: the basis that value selected no "
-                    f"longer exists at HEAD (the collapse made {unconditional!r} "
+                    f"longer exists at HEAD (the collapse made {inert[0]!r} "
                     "unconditional), so a kwargs replay would run a DIFFERENT "
                     "mechanism than the bundle. Historical record — read, "
                     "never replayed (see the cache.py epoch note)."
