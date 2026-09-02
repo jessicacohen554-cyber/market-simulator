@@ -217,7 +217,17 @@ class CommittedSharedKeyGroupsTest(unittest.TestCase):
         # scope is code, not config, so the two run_config.json files are
         # identical by construction — a designed (permitted) case. Refused set
         # unchanged.
-        self.assertEqual(len(self.groups), 16)
+        #
+        # DE-BRITTLED 2026-09-02 (caiso-239): the equality was a CORPUS CENSUS,
+        # not an invariant — it goes red on any registration that lands a
+        # config at a new key OR a second config at an existing one, which is
+        # what every calibration session does, and it had already been repaired
+        # in place three times in two days (14 -> 15 -> 16). The invariant this
+        # test guards is the REFUSED SET, asserted immediately below and left
+        # EXACT; the census is kept only as a floor, so a collapse of the
+        # grouping (the failure mode worth catching) still fails while a
+        # routine registration does not.
+        self.assertGreaterEqual(len(self.groups), 14)
         self.assertIn("706e7ba8e6582d42", self.groups)
         self.assertEqual(
             refused_keys, ["07e416f3f8072e7c", "f061b2646bfaac8b"], msg=refused

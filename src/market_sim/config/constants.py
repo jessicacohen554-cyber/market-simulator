@@ -627,6 +627,52 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
     "NEISO": 4.0763,
 }
 
+# MEASURED min-load block-average burn ratio of the ST_GAS plants that
+# ``offer_curves._offer_curve_for_group`` EXCLUDES from ``offer_curve_by_group``
+# — its ``ST_GAS_PEAKER_PLANTS`` bypass — by ISO. Consumed ONLY under
+# ``ScenarioConfig.caiso_st_gas_committed_measured`` (gated, default off).
+#
+# WHY THE REGISTRY EXISTS (caiso-239, rule 24 [R-REGISTRY] / rule 14
+# [R-ACCURATE]). A bypassed ST_GAS bin never reaches
+# ``committed_hr = base_hr x offer["committed"]`` in ``fleet.assembly``, so its
+# committed band falls through to the ERCOT-lineage class default
+# ``fleet.campd_bins._DEFAULT_HR_MULT_BY_GROUP["ST_GAS"]["mc"] = 1.15`` — an
+# UNCITED literal in a data/ module, absent from ``run_config.json`` and from
+# the DOF ledger's ``offer_curve_by_group`` count. For CAISO that literal
+# prices the whole 2,858.8 MW once-through-cooling steam fleet (plants 315 AES
+# Alamitos, 335 AES Huntington Beach, 350 Ormond Beach — the three plants
+# ``ST_GAS_PEAKER_PLANTS`` names) while CAISO's own measurement of THOSE EXACT
+# UNITS sits unused. This registry is the measured replacement.
+#
+# CAISO 1.683 = ``avg_committed_p50`` for class ST_GAS in
+# ``data/raw/reference/caiso_campd_marginal_hr_summary.csv`` (base HR 11.847,
+# n_units 10). Those ten units are exactly plants 315/335/350 —
+# ``data/raw/_processed-legacy/campd_gas_commitment_params_CAISO_units.csv``
+# lists Alamitos 3/4/5/CT1/CT2, Huntington Beach 2/CT1/CT2 and Ormond Beach 1/2
+# and no others — so the statistic's population and the band's population
+# COINCIDE, which is what makes this a rule-14 measured-for-estimate
+# substitution rather than a transplant. It is the SAME key already resolved
+# onto this class as ``phys_committed`` in
+# ``pipeline.backcast_config._CAISO_OFFER_CURVE``, so arming it adds no new
+# measurement and no free parameter (rule 21 [R-DOF]).
+#
+# DISPERSION, DISCLOSED (caiso-239 §1 F-5): ST_GAS is the only CAISO class whose
+# ``avg_committed`` spread is wide — p25 0.682 / p50 1.683 / p75 3.275, ratio
+# 4.80, against 1.12-1.27 for every other gas class. The spread is real physical
+# bimodality (six steam units at LSL 7.6-10.0 % of HSL pooled with four
+# colocated CTs at 22.0-28.2 %), and the tranche this value prices is sized
+# 6.3-9.3 % of nameplate — the STEAM min-load block, whose own statistic sits
+# near p75. The class p50 is therefore the CONSERVATIVE choice for this tranche,
+# not a midpoint of convenience.
+#
+# Re-derives ONLY when the CAMPD source updates (rule 23 [R-FROZEN-DERIVE]).
+# No other ISO has a measured counterpart yet; an ISO absent from this registry
+# cannot arm the mechanism (rule 25 [R-ISO-SCOPE] — the gate hard-errors rather
+# than silently falling back to the class default).
+ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO: dict[str, float] = {
+    "CAISO": 1.683,
+}
+
 # ZONE-resolved delivered-gas anchor ($/MMBtu) — the same identification point
 # as ``GAS_OFFER_MARGIN_ANCHOR_BY_ISO`` above, evaluated at the grain the
 # mechanism's own definition requires, for the ISOs whose keeper applies a

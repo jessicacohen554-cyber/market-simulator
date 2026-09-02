@@ -22,6 +22,7 @@ from market_sim.config.constants import (
     GAS_ST_ECON_HR_OVERRIDE_DEFAULT,
     GAS_ST_PEAK_HR_OVERRIDE_DEFAULT,
     HOURS_PER_YEAR,
+    ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO,
     START_YEAR,
 )
 from market_sim.config.iso_configs import ISOConfig
@@ -738,6 +739,40 @@ def bins_to_fleet(
                 peak_hr = base_hr * _hr_override(
                     config.cc_peak_hr_override, CC_PEAK_HR_OVERRIDE_DEFAULT
                 )
+            # caiso-239 (ScenarioConfig.caiso_st_gas_committed_measured):
+            # control reaches this `else` for an ST_GAS plant ONLY because
+            # `_offer_curve_for_group` bypasses `offer_curve_by_group` for
+            # every `ST_GAS_PEAKER_PLANTS` member, so its committed band falls
+            # through to the UNCITED ERCOT-lineage class default
+            # `campd_bins._DEFAULT_HR_MULT_BY_GROUP["ST_GAS"]["mc"] = 1.15` —
+            # an off-registry channel (rule 24 [R-REGISTRY]) carrying an
+            # out-of-ISO fitted value (rule 25 [R-ISO-SCOPE]) on CAISO's whole
+            # 2,858.8 MW OTC steam fleet (plants 315 / 335 / 350). Armed, the
+            # band takes the ISO's own MEASURED min-load block-average burn
+            # ratio instead — for CAISO `avg_committed_p50` = 1.683 over the
+            # ten CAMPD units of exactly those three plants, so the statistic's
+            # population and the band's population coincide (rule 14
+            # [R-ACCURATE], zero free parameters, rule 21 [R-DOF]).
+            #
+            # EXACTLY ONE BAND: `mustrun_hr`, `econ_hr` and `peak_hr` keep
+            # their class defaults, and the limb is unreachable for any plant
+            # that resolves an offer curve. An ISO with no registry entry is a
+            # HARD ERROR, never a silent fallback (rule 25).
+            if group == "ST_GAS" and getattr(
+                config, "caiso_st_gas_committed_measured", False
+            ):
+                _iso = str(getattr(config, "iso", "") or "").upper()
+                _mult = ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO.get(_iso)
+                if _mult is None:
+                    raise ValueError(
+                        "caiso_st_gas_committed_measured is armed for "
+                        f"{_iso or '<unset>'}, which has no measured entry in "
+                        "constants.ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO; "
+                        "derive the ISO's own avg_committed_p50 first (rule 25 "
+                        "[R-ISO-SCOPE] — no cross-ISO transfer, and no silent "
+                        "fallback to the class default)"
+                    )
+                committed_hr = base_hr * float(_mult)
             st_mc = config.gas_st_committed_hr_override
             if (
                 group == "ST_GAS"

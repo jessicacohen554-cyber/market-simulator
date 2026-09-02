@@ -1112,6 +1112,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # main. Root-cause repair, NOT a re-pin: both literals are restored by this
     # registration. See docs/FINDING-ci-red-repair-2026-09.md.
     "caiso_offer_surface_measured_ungrounded",
+    # caiso-239 measured ST_GAS committed band (default off): dropped from the
+    # hash at its default so every pre-existing cached run keeps its key -- the
+    # consumer is a single gated limb in fleet/assembly.py's `offer is None`
+    # branch, so the off path is byte-identical by construction. An armed run
+    # prices the bypassed ST_GAS committed tranches at a different heat rate (a
+    # different offer surface) and hashes distinctly. Registered WITH the field,
+    # in the same commit, per the nyiso-119 discipline the caiso-231 late
+    # registration had to be repaired for.
+    "caiso_st_gas_committed_measured",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1632,6 +1641,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # without either. Append-only ledger (guard check 4): this is a NEW line,
     # no existing line is edited.
     "caiso_offer_surface_measured_ungrounded": "False",
+    # Added by caiso-239 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "caiso_st_gas_committed_measured": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -11094,6 +11106,55 @@ class ScenarioConfig:
     # never as a C3a lever, and caiso-230's DO-NOT-REDO item 3 forbids ever
     # proposing it as one.
     caiso_offer_surface_measured_ungrounded: bool = False
+    # THE ST_GAS COMMITTED BAND, GROUNDED AT ITS TRUE LOCATION (caiso-239,
+    # default off, per-ISO registry). The two flags above re-ground CAISO's gas
+    # classes through `offer_curve_by_group`; caiso-239 measured that for
+    # ST_GAS that dictionary is NOT the scalar that does the work.
+    # `offer_curves._offer_curve_for_group` returns None for
+    # `group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS`, and
+    # `data.outages.ST_GAS_PEAKER_PLANTS` names CAISO plants 315 (AES
+    # Alamitos), 335 (AES Huntington Beach) and 350 (Ormond Beach) explicitly.
+    # With `offer is None`, `fleet.assembly.bins_to_fleet` never reaches
+    # `committed_hr = base_hr x offer["committed"]`, so the whole 2,858.8 MW
+    # once-through-cooling steam fleet takes the ERCOT-lineage class default
+    # `fleet.campd_bins._DEFAULT_HR_MULT_BY_GROUP["ST_GAS"]["mc"] = 1.15`
+    # instead (verified on the rebuilt caiso-231 fleet: 11.850 x 1.15 = 13.63
+    # MMBtu/MWh, exact). That literal is uncited, lives in a data/ module, and
+    # appears in NO run_config.json -- an off-registry channel on the binding
+    # path (rule 24 [R-REGISTRY]) carrying an out-of-ISO fitted value (rule 25
+    # [R-ISO-SCOPE]).
+    #
+    # When armed, a BYPASSED ST_GAS bin takes
+    # `base_hr x ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO[iso]` for its
+    # committed band instead of the class default. CAISO's entry is 1.683 =
+    # `avg_committed_p50` from `caiso_campd_marginal_hr_summary.csv`, whose ten
+    # CAMPD units are EXACTLY plants 315/335/350 -- so the statistic's
+    # population and the band's population coincide, which is what makes this a
+    # rule-14 [R-ACCURATE] measured-for-estimate substitution rather than a
+    # transplant. It is the same key already resolved onto this class as
+    # `phys_committed`, so it adds no new measurement and NO free parameter
+    # (rule 21 [R-DOF]). EXACTLY ONE BAND moves: `mr` / `econ` / `peak` keep
+    # their class defaults.
+    #
+    # Deliberately NOT in `_BACKCAST_ONLY_OVERLAY_FIELDS`, unlike the two flags
+    # above. Those arm measured BID conduct (OASIS DAM bids), which has no
+    # forward analogue. This is a measured PHYSICAL heat-rate ratio -- the
+    # part-load burn of a boiler, a unit characteristic that does not depend on
+    # the year -- i.e. the family's own documented exclusion ("measured
+    # PHYSICAL parameters with a forward story -- measured heat rates ... which
+    # rule 14 tells us to PREFER"). It regenerates for a forward year and
+    # responds to changed conditions (rule 13 [R-MEASURED]).
+    #
+    # DIRECTION IS DISCLOSED, NOT HIDDEN (rule 14): raising a min-load band
+    # makes C3a WORSE in the hours the band is marginal. The caiso-230 SS-H
+    # first-order bound, re-run on the caiso-231 keeper, is
+    # +0.0003 / +0.0265 / +0.0000 $/MWh (2023/2024/2025) -- 3.1 % of 2024's
+    # required move at its largest and identically zero in 2025. Armed for
+    # structural integrity under rules 14 / 24 / 25, NEVER as a C3a lever.
+    #
+    # An ISO absent from the registry cannot arm it (hard error, never a silent
+    # fallback to the class default -- rule 25).
+    caiso_st_gas_committed_measured: bool = False
     # CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder
     # ported to CAISO — 5 equal-capacity peak rungs repriced P1-only to the
     # measured per-net-load-bin top-of-curve quantiles (fuel-component
