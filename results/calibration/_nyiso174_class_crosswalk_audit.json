@@ -1,0 +1,797 @@
+{
+ "M1_which_side_is_wrong": {
+  "campd_units": {
+   "2023": [
+    {
+     "gross_twh": 1.0877,
+     "measured_hr": 10.736,
+     "op_hours": 7356.2,
+     "peak_mw": 277.0,
+     "steam_klb": 0.0,
+     "unit_id": "1",
+     "unit_type": "Combined cycle"
+    },
+    {
+     "gross_twh": 1.0458,
+     "measured_hr": 10.549,
+     "op_hours": 7023.2,
+     "peak_mw": 287.0,
+     "steam_klb": 0.0,
+     "unit_id": "2",
+     "unit_type": "Combined cycle"
+    },
+    {
+     "gross_twh": 0.0,
+     "measured_hr": null,
+     "op_hours": 5577.5,
+     "peak_mw": 0.0,
+     "steam_klb": 4677707.0,
+     "unit_id": "60",
+     "unit_type": "Dry bottom wall-fired boiler"
+    },
+    {
+     "gross_twh": 0.0,
+     "measured_hr": null,
+     "op_hours": 5604.2,
+     "peak_mw": 0.0,
+     "steam_klb": 4746156.0,
+     "unit_id": "70",
+     "unit_type": "Dry bottom wall-fired boiler"
+    }
+   ],
+   "2024": [
+    {
+     "gross_twh": 1.1208,
+     "measured_hr": 10.818,
+     "op_hours": 7620.8,
+     "peak_mw": 244.0,
+     "steam_klb": 0.0,
+     "unit_id": "1",
+     "unit_type": "Combined cycle"
+    },
+    {
+     "gross_twh": 1.1382,
+     "measured_hr": 10.577,
+     "op_hours": 7660.0,
+     "peak_mw": 306.0,
+     "steam_klb": 0.0,
+     "unit_id": "2",
+     "unit_type": "Combined cycle"
+    },
+    {
+     "gross_twh": 0.0,
+     "measured_hr": null,
+     "op_hours": 6839.2,
+     "peak_mw": 0.0,
+     "steam_klb": 5009577.0,
+     "unit_id": "60",
+     "unit_type": "Dry bottom wall-fired boiler"
+    },
+    {
+     "gross_twh": 0.0,
+     "measured_hr": null,
+     "op_hours": 4464.0,
+     "peak_mw": 0.0,
+     "steam_klb": 2663936.0,
+     "unit_id": "70",
+     "unit_type": "Dry bottom wall-fired boiler"
+    }
+   ],
+   "2025": [
+    {
+     "gross_twh": 1.0935,
+     "measured_hr": 10.888,
+     "op_hours": 7698.0,
+     "peak_mw": 268.0,
+     "steam_klb": 0.0,
+     "unit_id": "1",
+     "unit_type": "Combined cycle"
+    },
+    {
+     "gross_twh": 1.0952,
+     "measured_hr": 10.51,
+     "op_hours": 7182.8,
+     "peak_mw": 285.0,
+     "steam_klb": 0.0,
+     "unit_id": "2",
+     "unit_type": "Combined cycle"
+    },
+    {
+     "gross_twh": 0.0,
+     "measured_hr": null,
+     "op_hours": 5523.0,
+     "peak_mw": 0.0,
+     "steam_klb": 3354662.0,
+     "unit_id": "60",
+     "unit_type": "Dry bottom wall-fired boiler"
+    },
+    {
+     "gross_twh": 0.0,
+     "measured_hr": null,
+     "op_hours": 6234.2,
+     "peak_mw": 0.0,
+     "steam_klb": 3866420.0,
+     "unit_id": "70",
+     "unit_type": "Dry bottom wall-fired boiler"
+    }
+   ]
+  },
+  "campd_unittype_construction_class": "CC_CHP",
+  "eia860_generators": [
+   {
+    "chp_flag": "N",
+    "generator_id": "1",
+    "min_load_mw": 110.0,
+    "nameplate_mw": 180.0,
+    "operating_year": 2005,
+    "prime_mover": "GT",
+    "summer_mw": 152.1,
+    "technology": "Natural Gas Fired Combustion Turbine",
+    "winter_mw": 196.7
+   },
+   {
+    "chp_flag": "N",
+    "generator_id": "2",
+    "min_load_mw": 110.0,
+    "nameplate_mw": 180.0,
+    "operating_year": 2005,
+    "prime_mover": "GT",
+    "summer_mw": 153.9,
+    "technology": "Natural Gas Fired Combustion Turbine",
+    "winter_mw": 199.5
+   },
+   {
+    "chp_flag": "Y",
+    "generator_id": "6",
+    "min_load_mw": 45.0,
+    "nameplate_mw": 156.2,
+    "operating_year": 1951,
+    "prime_mover": "ST",
+    "summer_mw": 132.7,
+    "technology": "Natural Gas Steam Turbine",
+    "winter_mw": 132.7
+   },
+   {
+    "chp_flag": "N",
+    "generator_id": "7",
+    "min_load_mw": 65.0,
+    "nameplate_mw": 200.0,
+    "operating_year": 1955,
+    "prime_mover": "ST",
+    "summer_mw": 176.8,
+    "technology": "Natural Gas Steam Turbine",
+    "winter_mw": 185.9
+   }
+  ],
+  "eia860_has_combined_cycle_prime_mover": false,
+  "eia860_prime_movers": [
+   "GT",
+   "ST"
+  ],
+  "eia860_summer_mw_by_prime_mover": {
+   "GT": 306.0,
+   "ST": 309.5
+  },
+  "eia923_netgen_twh_by_prime_mover": {
+   "2023": {
+    "GT": 2.0221,
+    "ST": 1.0566
+   },
+   "2024": {
+    "GT": 2.1492,
+    "ST": 0.745
+   },
+   "2025": {
+    "GT": 2.0792,
+    "ST": 0.6745
+   }
+  },
+  "model_fleet_groups_mw": {
+   "CT_CHP": 306.0,
+   "ST_CHP": 309.5
+  }
+ },
+ "M2_fleet_crosswalk": {
+  "absent_from_model_3yr_twh": 0.5775,
+  "absent_from_model_top": [
+   {
+    "campd_unittype_class": "ST_GAS",
+    "name": "Oswego Harbor Power",
+    "plant_code": 2594,
+    "twh_3yr": 0.222003
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "name": "Holtsville Facility",
+    "plant_code": 8007,
+    "twh_3yr": 0.088085
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "name": "Hawkeye Energy Greenport, LLC",
+    "plant_code": 55969,
+    "twh_3yr": 0.074621
+   },
+   {
+    "campd_unittype_class": "CC_REGULAR",
+    "name": "Allegany Station No. 133",
+    "plant_code": 10619,
+    "twh_3yr": 0.071522
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "name": "Wading River Facility",
+    "plant_code": 7146,
+    "twh_3yr": 0.048159
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "name": "East Hampton Facility",
+    "plant_code": 2512,
+    "twh_3yr": 0.028903
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "name": "Shoreham Energy",
+    "plant_code": 55787,
+    "twh_3yr": 0.025135
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "name": "Astoria Gas Turbine Power",
+    "plant_code": 55243,
+    "twh_3yr": 0.00944
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "name": "Glenwood",
+    "plant_code": 2514,
+    "twh_3yr": 0.009042
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "name": "74th Street",
+    "plant_code": 2504,
+    "twh_3yr": 0.000336
+   }
+  ],
+  "campd_twh_by_year": {
+   "2023": 57.8247,
+   "2024": 65.2163,
+   "2025": 67.3749
+  },
+  "disagreeing_twh_by_year": {
+   "2023": 2.3533,
+   "2024": 2.4393,
+   "2025": 2.5141
+  },
+  "east_river_3yr_twh": 6.5811,
+  "east_river_share_of_misclassed": 0.978,
+  "misclassed_3yr_twh": 6.7292,
+  "misclassed_plants": [
+   {
+    "campd_unittype_class": "CC_CHP",
+    "model_classes": "CT_CHP,ST_CHP",
+    "name": "East River",
+    "plant_code": 2493,
+    "twh_3yr": 6.581143
+   },
+   {
+    "campd_unittype_class": "CC_REGULAR",
+    "model_classes": "CT_PEAKER,ST_GAS",
+    "name": "S A Carlson",
+    "plant_code": 2682,
+    "twh_3yr": 0.142101
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "model_classes": "ST_GAS",
+    "name": "Arthur Kill",
+    "plant_code": 2490,
+    "twh_3yr": 0.00288
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "model_classes": "ST_GAS",
+    "name": "Astoria Generating Station",
+    "plant_code": 8906,
+    "twh_3yr": 0.002155
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "model_classes": "CC_REGULAR,ST_GAS",
+    "name": "Ravenswood Generating Station",
+    "plant_code": 2500,
+    "twh_3yr": 0.000786
+   },
+   {
+    "campd_unittype_class": "CT_PEAKER",
+    "model_classes": "ST_GAS",
+    "name": "Northport",
+    "plant_code": 2516,
+    "twh_3yr": 0.000138
+   },
+   {
+    "campd_unittype_class": "ST_GAS",
+    "model_classes": "CT_PEAKER",
+    "name": "59th Street",
+    "plant_code": 2503,
+    "twh_3yr": 0.0
+   },
+   {
+    "campd_unittype_class": "ST_CHP",
+    "model_classes": "CC_CHP",
+    "name": "Riverbay Corp. - Co-Op City",
+    "plant_code": 52168,
+    "twh_3yr": 0.0
+   }
+  ],
+  "unit_years_disagreeing": 228,
+  "unit_years_total": 773
+ },
+ "M3_what_the_repair_moves": {
+  "anchor_table": {
+   "2023": {
+    "CC_CHP": {
+     "anchor_new": 1.429,
+     "anchor_old": 1.185,
+     "bench_twh": 14.8022,
+     "cems_gross_twh_new": 10.3592,
+     "cems_gross_twh_old": 12.4927,
+     "cems_units_new": 29,
+     "cems_units_old": 31
+    },
+    "CC_REGULAR": {
+     "anchor_new": 0.987,
+     "anchor_old": 0.986,
+     "bench_twh": 33.0122,
+     "cems_gross_twh_new": 33.4414,
+     "cems_gross_twh_old": 33.483,
+     "cems_units_new": 39,
+     "cems_units_old": 37
+    },
+    "CT_CHP": {
+     "anchor_new": 0.926,
+     "anchor_old": 4.914,
+     "bench_twh": 2.4336,
+     "cems_gross_twh_new": 2.6287,
+     "cems_gross_twh_old": 0.4953,
+     "cems_units_new": 3,
+     "cems_units_old": 1
+    },
+    "CT_PEAKER": {
+     "anchor_new": 1.283,
+     "anchor_old": 1.316,
+     "bench_twh": 2.1139,
+     "cems_gross_twh_new": 1.6476,
+     "cems_gross_twh_old": 1.606,
+     "cems_units_new": 156,
+     "cems_units_old": 158
+    },
+    "ST_CHP": {
+     "anchor_new": null,
+     "anchor_old": null,
+     "bench_twh": 1.1692,
+     "cems_gross_twh_new": 0.0,
+     "cems_gross_twh_old": 0.0,
+     "cems_units_new": 10,
+     "cems_units_old": 10
+    },
+    "ST_GAS": {
+     "anchor_new": 0.835,
+     "anchor_old": 0.835,
+     "bench_twh": 8.1406,
+     "cems_gross_twh_new": 9.7477,
+     "cems_gross_twh_old": 9.7477,
+     "cems_units_new": 46,
+     "cems_units_old": 46
+    }
+   },
+   "2024": {
+    "CC_CHP": {
+     "anchor_new": 1.345,
+     "anchor_old": 1.141,
+     "bench_twh": 17.0174,
+     "cems_gross_twh_new": 12.6554,
+     "cems_gross_twh_old": 14.9144,
+     "cems_units_new": 29,
+     "cems_units_old": 31
+    },
+    "CC_REGULAR": {
+     "anchor_new": 0.933,
+     "anchor_old": 0.932,
+     "bench_twh": 34.0604,
+     "cems_gross_twh_new": 36.5184,
+     "cems_gross_twh_old": 36.5472,
+     "cems_units_new": 39,
+     "cems_units_old": 37
+    },
+    "CT_CHP": {
+     "anchor_new": 0.779,
+     "anchor_old": 4.098,
+     "bench_twh": 2.1717,
+     "cems_gross_twh_new": 2.7889,
+     "cems_gross_twh_old": 0.5299,
+     "cems_units_new": 3,
+     "cems_units_old": 1
+    },
+    "CT_PEAKER": {
+     "anchor_new": 1.21,
+     "anchor_old": 1.232,
+     "bench_twh": 1.9108,
+     "cems_gross_twh_new": 1.5797,
+     "cems_gross_twh_old": 1.551,
+     "cems_units_new": 129,
+     "cems_units_old": 131
+    },
+    "ST_CHP": {
+     "anchor_new": null,
+     "anchor_old": null,
+     "bench_twh": 0.8721,
+     "cems_gross_twh_new": 0.0,
+     "cems_gross_twh_old": 0.0,
+     "cems_units_new": 10,
+     "cems_units_old": 10
+    },
+    "ST_GAS": {
+     "anchor_new": 0.849,
+     "anchor_old": 0.849,
+     "bench_twh": 9.9132,
+     "cems_gross_twh_new": 11.6739,
+     "cems_gross_twh_old": 11.6739,
+     "cems_units_new": 46,
+     "cems_units_old": 46
+    }
+   },
+   "2025": {
+    "CC_CHP": {
+     "anchor_new": 1.241,
+     "anchor_old": 1.07,
+     "bench_twh": 16.9617,
+     "cems_gross_twh_new": 13.6695,
+     "cems_gross_twh_old": 15.8582,
+     "cems_units_new": 29,
+     "cems_units_old": 31
+    },
+    "CC_REGULAR": {
+     "anchor_new": 0.989,
+     "anchor_old": 0.987,
+     "bench_twh": 33.5445,
+     "cems_gross_twh_new": 33.9206,
+     "cems_gross_twh_old": 33.9916,
+     "cems_units_new": 36,
+     "cems_units_old": 37
+    },
+    "CT_CHP": {
+     "anchor_new": 0.892,
+     "anchor_old": 4.933,
+     "bench_twh": 2.3829,
+     "cems_gross_twh_new": 2.6717,
+     "cems_gross_twh_old": 0.4831,
+     "cems_units_new": 3,
+     "cems_units_old": 1
+    },
+    "CT_PEAKER": {
+     "anchor_new": 1.444,
+     "anchor_old": 1.498,
+     "bench_twh": 2.8512,
+     "cems_gross_twh_new": 1.9749,
+     "cems_gross_twh_old": 1.904,
+     "cems_units_new": 113,
+     "cems_units_old": 112
+    },
+    "ST_CHP": {
+     "anchor_new": null,
+     "anchor_old": null,
+     "bench_twh": 0.7997,
+     "cems_gross_twh_new": 0.0,
+     "cems_gross_twh_old": 0.0,
+     "cems_units_new": 10,
+     "cems_units_old": 10
+    },
+    "ST_GAS": {
+     "anchor_new": 0.906,
+     "anchor_old": 0.906,
+     "bench_twh": 13.7121,
+     "cems_gross_twh_new": 15.138,
+     "cems_gross_twh_old": 15.138,
+     "cems_units_new": 43,
+     "cems_units_old": 43
+    }
+   }
+  },
+  "c1_class_errors": {
+   "2023": {
+    "CC_CHP": {
+     "actual_twh": 14.8022,
+     "delta_pct": 1.84,
+     "model_twh": 15.0739
+    },
+    "CC_REGULAR": {
+     "actual_twh": 33.0122,
+     "delta_pct": -0.45,
+     "model_twh": 32.863
+    },
+    "CT_CHP": {
+     "actual_twh": 2.4336,
+     "delta_pct": -27.48,
+     "model_twh": 1.7648
+    },
+    "CT_PEAKER": {
+     "actual_twh": 2.1139,
+     "delta_pct": -81.47,
+     "model_twh": 0.3917
+    },
+    "ST_CHP": {
+     "actual_twh": 1.1692,
+     "delta_pct": 2.29,
+     "model_twh": 1.196
+    },
+    "ST_GAS": {
+     "actual_twh": 8.1406,
+     "delta_pct": 40.91,
+     "model_twh": 11.4707
+    }
+   },
+   "2024": {
+    "CC_CHP": {
+     "actual_twh": 17.0174,
+     "delta_pct": 8.44,
+     "model_twh": 18.4544
+    },
+    "CC_REGULAR": {
+     "actual_twh": 34.0604,
+     "delta_pct": 9.23,
+     "model_twh": 37.2057
+    },
+    "CT_CHP": {
+     "actual_twh": 2.1717,
+     "delta_pct": -38.87,
+     "model_twh": 1.3275
+    },
+    "CT_PEAKER": {
+     "actual_twh": 1.9108,
+     "delta_pct": -86.24,
+     "model_twh": 0.2628
+    },
+    "ST_CHP": {
+     "actual_twh": 0.8721,
+     "delta_pct": 35.89,
+     "model_twh": 1.1851
+    },
+    "ST_GAS": {
+     "actual_twh": 9.9132,
+     "delta_pct": -5.98,
+     "model_twh": 9.3209
+    }
+   },
+   "2025": {
+    "CC_CHP": {
+     "actual_twh": 16.9617,
+     "delta_pct": 16.3,
+     "model_twh": 19.7268
+    },
+    "CC_REGULAR": {
+     "actual_twh": 33.5445,
+     "delta_pct": 6.4,
+     "model_twh": 35.6914
+    },
+    "CT_CHP": {
+     "actual_twh": 2.3829,
+     "delta_pct": -23.37,
+     "model_twh": 1.8261
+    },
+    "CT_PEAKER": {
+     "actual_twh": 2.8512,
+     "delta_pct": -63.73,
+     "model_twh": 1.0341
+    },
+    "ST_CHP": {
+     "actual_twh": 0.7997,
+     "delta_pct": 86.55,
+     "model_twh": 1.4919
+    },
+    "ST_GAS": {
+     "actual_twh": 13.7121,
+     "delta_pct": -28.63,
+     "model_twh": 9.7866
+    }
+   }
+  }
+ },
+ "M4_mechanism_enumeration": {
+  "bin_assignment_rows": [
+   {
+    "Committed_Source": "class_default",
+    "Mixed_Facility": "CT+ST",
+    "Must_Run_Source": "chp_sector_default",
+    "Nameplate_MW": 306.0,
+    "Pct_Committed": 30.0,
+    "Pct_Economic": 28.0,
+    "Pct_Must_Run": 35.0,
+    "Pct_Peaking": 7.0,
+    "Peaking_Source": "class_default",
+    "Plant_Avg_HR_MMBtu_MWh": 7.42,
+    "Plant_Code": 2493,
+    "Plant_Group": "CT_CHP",
+    "Plant_Name": "East River",
+    "Zone": "NYC"
+   },
+   {
+    "Committed_Source": "campd",
+    "Mixed_Facility": "CT+ST",
+    "Must_Run_Source": "chp_sector_default",
+    "Nameplate_MW": 309.5,
+    "Pct_Committed": 32.0,
+    "Pct_Economic": 18.0,
+    "Pct_Must_Run": 35.0,
+    "Pct_Peaking": 15.0,
+    "Peaking_Source": "class_default",
+    "Plant_Avg_HR_MMBtu_MWh": 7.42,
+    "Plant_Code": 2493,
+    "Plant_Group": "ST_CHP",
+    "Plant_Name": "East River",
+    "Zone": "NYC"
+   }
+  ],
+  "fleet_group_override_now": {
+   "2500": "ST_GAS"
+  },
+  "model_fleet_groups_mw": {
+   "CT_CHP": 306.0,
+   "ST_CHP": 309.5
+  },
+  "outage_router_targets": {
+   "CC_CHP": [
+    2493,
+    "CC_CHP"
+   ],
+   "CC_REGULAR": [
+    2493,
+    "CC_REGULAR"
+   ],
+   "CT_CHP": null,
+   "CT_PEAKER": null,
+   "ST_CHP": [
+    2493,
+    "ST_CHP"
+   ],
+   "ST_GAS": [
+    2493,
+    "ST_GAS"
+   ]
+  },
+  "tranches_rows": [
+   {
+    "chp_pmin_cf": 30.0,
+    "chp_sector": "merchant",
+    "committed_pct": 32.0,
+    "median_cf": 98.5,
+    "mustrun_pct": 0.0,
+    "name": "East River",
+    "nameplate_mw": 309.5,
+    "online_hours": 26253,
+    "p25_cf": 67.2,
+    "peaking_pct": NaN,
+    "plant_code": 2493,
+    "plant_group": "ST_CHP",
+    "status": "ok"
+   }
+  ]
+ },
+ "M5_downstream_restatement": {
+  "2023": {
+   "cc_chp_plant_minima_new": {
+    "fleet_minimum_mw": 182.0,
+    "n_plants": 16,
+    "n_plants_reaching_zero": 16,
+    "plants_never_off": [],
+    "sum_of_plant_minima_mw": 0.0
+   },
+   "cc_chp_plant_minima_old": {
+    "fleet_minimum_mw": 282.0,
+    "n_plants": 17,
+    "n_plants_reaching_zero": 17,
+    "plants_never_off": [],
+    "sum_of_plant_minima_mw": 0.0
+   },
+   "new": {
+    "mean_gap_mw": 282.0,
+    "measured_cc_chp_hours_at_zero": 0,
+    "measured_cc_chp_min_mw": 182.0,
+    "measured_cc_chp_twh": 10.3592,
+    "measured_cc_twh": 43.8006,
+    "violation_hours": 219,
+    "violation_share_pct": 2.5
+   },
+   "old": {
+    "mean_gap_mw": 266.4,
+    "measured_cc_chp_hours_at_zero": 0,
+    "measured_cc_chp_min_mw": 282.0,
+    "measured_cc_chp_twh": 12.4927,
+    "measured_cc_twh": 45.9757,
+    "violation_hours": 93,
+    "violation_share_pct": 1.06
+   }
+  },
+  "2024": {
+   "cc_chp_plant_minima_new": {
+    "fleet_minimum_mw": 277.0,
+    "n_plants": 16,
+    "n_plants_reaching_zero": 16,
+    "plants_never_off": [],
+    "sum_of_plant_minima_mw": 0.0
+   },
+   "cc_chp_plant_minima_old": {
+    "fleet_minimum_mw": 368.0,
+    "n_plants": 17,
+    "n_plants_reaching_zero": 16,
+    "plants_never_off": [
+     2493
+    ],
+    "sum_of_plant_minima_mw": 81.0
+   },
+   "new": {
+    "mean_gap_mw": 381.9,
+    "measured_cc_chp_hours_at_zero": 0,
+    "measured_cc_chp_min_mw": 277.0,
+    "measured_cc_chp_twh": 12.6187,
+    "measured_cc_twh": 49.0489,
+    "violation_hours": 1523,
+    "violation_share_pct": 17.39
+   },
+   "old": {
+    "mean_gap_mw": 228.3,
+    "measured_cc_chp_hours_at_zero": 0,
+    "measured_cc_chp_min_mw": 368.0,
+    "measured_cc_chp_twh": 14.8685,
+    "measured_cc_twh": 51.3274,
+    "violation_hours": 773,
+    "violation_share_pct": 8.82
+   }
+  },
+  "2025": {
+   "cc_chp_plant_minima_new": {
+    "fleet_minimum_mw": 81.0,
+    "n_plants": 16,
+    "n_plants_reaching_zero": 16,
+    "plants_never_off": [],
+    "sum_of_plant_minima_mw": 0.0
+   },
+   "cc_chp_plant_minima_old": {
+    "fleet_minimum_mw": 184.0,
+    "n_plants": 17,
+    "n_plants_reaching_zero": 16,
+    "plants_never_off": [
+     2493
+    ],
+    "sum_of_plant_minima_mw": 85.0
+   },
+   "new": {
+    "mean_gap_mw": 562.5,
+    "measured_cc_chp_hours_at_zero": 0,
+    "measured_cc_chp_min_mw": 81.0,
+    "measured_cc_chp_twh": 13.6695,
+    "measured_cc_twh": 47.5902,
+    "violation_hours": 1926,
+    "violation_share_pct": 21.99
+   },
+   "old": {
+    "mean_gap_mw": 416.0,
+    "measured_cc_chp_hours_at_zero": 0,
+    "measured_cc_chp_min_mw": 184.0,
+    "measured_cc_chp_twh": 15.8582,
+    "measured_cc_twh": 49.8498,
+    "violation_hours": 1211,
+    "violation_share_pct": 13.82
+   }
+  }
+ },
+ "probe": "nyiso174_class_crosswalk_audit",
+ "solves": 0,
+ "years": [
+  2023,
+  2024,
+  2025
+ ]
+}
