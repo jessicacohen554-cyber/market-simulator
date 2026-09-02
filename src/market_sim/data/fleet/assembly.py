@@ -423,6 +423,7 @@ def bins_to_fleet(
                 int(b["Plant_Code"]),
                 str(b["Plant_Group"]),
                 iso=getattr(config, "iso", "ERCOT"),
+                per_unit=bool(getattr(config, "campd_per_unit_attribution", False)),
             )
             # nyiso-147: replace the sector-keyed default with the plant's
             # own measured Gold-Book/EIA-923 grid-delivery share where the
@@ -521,7 +522,8 @@ def bins_to_fleet(
             # cycler -> floor held only in its top-load online hours. Plants
             # absent from the artifact keep the force-all default (1.0).
             sync_online_frac = coal_sync_online_frac(
-                getattr(config, "iso", "ERCOT") or "ERCOT"
+                getattr(config, "iso", "ERCOT") or "ERCOT",
+                bool(getattr(config, "campd_per_unit_attribution", False)),
             ).get(int(b["Plant_Code"]), 1.0)
 
         group = str(b["Plant_Group"])
@@ -556,7 +558,8 @@ def bins_to_fleet(
             # the offer curve's class-wide pct_peaking; the hand-set ERCOT
             # map below stays the final word for its four plants.
             _pk = thermal_tranche_peaking(
-                (getattr(config, "iso", "ERCOT") or "ERCOT")
+                (getattr(config, "iso", "ERCOT") or "ERCOT"),
+                bool(getattr(config, "campd_per_unit_attribution", False)),
             ).get((plant_code, group))
             if _pk is not None:
                 pct_peak = _pk
@@ -774,7 +777,11 @@ def bins_to_fleet(
         chp_pmin_mw = 0.0
         pmin_cf = None
         if chp_following:
-            pmin_cf = chp_pmin_cf(plant_code, iso=getattr(config, "iso", "ERCOT"))
+            pmin_cf = chp_pmin_cf(
+                plant_code,
+                iso=getattr(config, "iso", "ERCOT"),
+                per_unit=bool(getattr(config, "campd_per_unit_attribution", False)),
+            )
             # Multi-year steam-host operating level (chp_steam_floor_p25):
             # the artifact's measured steam level supersedes the p2
             # never-below minimum wherever it is higher — since WP-3
@@ -788,7 +795,8 @@ def bins_to_fleet(
             # not a second floor.
             if getattr(config, "chp_steam_floor_p25", False):
                 _level = thermal_tranche_chp_steam_level(
-                    getattr(config, "iso", "ERCOT") or "ERCOT"
+                    getattr(config, "iso", "ERCOT") or "ERCOT",
+                    bool(getattr(config, "campd_per_unit_attribution", False)),
                 ).get((plant_code, group))
                 if _level is not None and _level > (pmin_cf or 0.0):
                     pmin_cf = _level
@@ -1206,7 +1214,10 @@ def bins_to_fleet(
         ) or (group == "ST_GAS" and getattr(config, "st_gas_mustrun_per_plant", False)):
             cc_mustrun_frac = (
                 _pkg_ns()
-                .thermal_tranche_online_frac(getattr(config, "iso", "ERCOT") or "ERCOT")
+                .thermal_tranche_online_frac(
+                    getattr(config, "iso", "ERCOT") or "ERCOT",
+                    bool(getattr(config, "campd_per_unit_attribution", False)),
+                )
                 .get((plant_code, group), 0.0)
             )
         tranches = [

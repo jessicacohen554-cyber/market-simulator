@@ -248,7 +248,9 @@ def measured_btm_share_by_plant(iso: str) -> dict[int, float]:
 
 
 @lru_cache(maxsize=8)
-def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None, float | None]]:
+def chp_overrides(
+    iso: str, per_unit: bool = False
+) -> dict[int, tuple[float | None, str | None, float | None]]:
     """Return ``{plant_code: (chp_pmin_cf, sector_class, btm_pct_override)}`` for an ISO.
 
     The per-ISO CHP steam-following data from
@@ -267,7 +269,9 @@ def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None, float |
     :data:`CHP_PMIN_CF_BY_PLANT` / :data:`CHP_SECTOR_CLASS_BY_PLANT`; empty
     when the ISO has no artifact or it predates the CHP columns.
     """
-    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    from market_sim.data.fleet.campd_bins import thermal_tranche_csv_for_iso
+
+    path = thermal_tranche_csv_for_iso(iso, per_unit)
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -325,7 +329,9 @@ def measured_chp_btm_pct_nyiso() -> dict[int, float]:
     return {int(r.plant_code): float(r.btm_pct) for r in df.itertuples(index=False)}
 
 
-def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
+def chp_btm_pct(
+    plant_code: int, group: str, iso: str = "ERCOT", per_unit: bool = False
+) -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant.
 
     Per-plant override from the ISO's derived artifact takes precedence when the
@@ -339,7 +345,7 @@ def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
         CHP_ST_BTM_PCT,
     )
 
-    _, sector, btm_override = chp_overrides(iso).get(
+    _, sector, btm_override = chp_overrides(iso, per_unit).get(
         int(plant_code), (None, None, None)
     )
     if btm_override is not None:
@@ -389,7 +395,9 @@ def chp_class_netgen_mwh(year: int) -> dict[tuple[int, str], float]:
     return {(int(pid), str(k)): float(v) for (pid, k), v in totals.items() if v > 0.0}
 
 
-def chp_pmin_cf(plant_code: int, iso: str = "ERCOT") -> float | None:
+def chp_pmin_cf(
+    plant_code: int, iso: str = "ERCOT", per_unit: bool = False
+) -> float | None:
     """Total must-run CF floor (%) for a CHP plant, or ``None`` for no floor.
 
     Per-ISO derived artifact first (:func:`chp_overrides`), then the hardcoded
@@ -397,7 +405,9 @@ def chp_pmin_cf(plant_code: int, iso: str = "ERCOT") -> float | None:
     """
     from market_sim.data.fleet import CHP_PMIN_CF_BY_PLANT
 
-    pmin, *_ = chp_overrides(iso).get(int(plant_code), (None, None, None))
+    pmin, *_ = chp_overrides(iso, per_unit).get(
+        int(plant_code), (None, None, None)
+    )
     if pmin is not None:
         return pmin
     return CHP_PMIN_CF_BY_PLANT.get(int(plant_code))

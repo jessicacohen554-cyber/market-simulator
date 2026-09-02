@@ -61,6 +61,8 @@ def derive_outages(years: list[int], out_path: Path) -> pd.DataFrame:
         "--out",
         str(out_path),
     ]
+    if out_path.exists():
+        return pd.read_csv(out_path)
     env = {"PYTHONPATH": f"{ROOT}:{ROOT / 'src'}"}
     import os
 
@@ -109,16 +111,19 @@ def run_r1_r2() -> dict:
     def by_plant(keys: set[tuple], df: pd.DataFrame) -> dict:
         if not keys:
             return {}
-        idx = df.set_index(
-            [
+        k = list(
+            zip(
                 df["facility_id"].astype(int),
                 df["unit_id"].astype(str),
                 df["outage_start"].astype(str),
-            ]
+            )
         )
-        sub = idx.loc[sorted(keys)]
-        g = sub.groupby(["facility_id", "facility_name"]).size()
-        return {f"{int(k[0])} {k[1]}": int(v) for k, v in g.sort_values().items()}
+        sel = df.loc[[i for i, key in enumerate(k) if key in keys]]
+        g = sel.groupby(["facility_id", "facility_name"]).size()
+        return {
+            f"{int(a)} {b}": int(v)
+            for (a, b), v in g.sort_values(ascending=False).items()
+        }
 
     return {
         "committed_windows": int(len(committed)),
@@ -169,6 +174,8 @@ def derive_tranches(out_path: Path, ablate: str | None) -> pd.DataFrame:
         f"'2025', '--out', {str(out_path)!r}]\n"
         "d.main()\n"
     )
+    if out_path.exists():
+        return pd.read_csv(out_path)
     import os
 
     e = dict(os.environ)

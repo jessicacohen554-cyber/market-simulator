@@ -305,7 +305,11 @@ def _generic_unit_outage_target(
     return (facility_id, g)
 
 
-def unit_outage_csv_for_iso(iso: str | None, mixed_gas_routing: bool = False) -> Path:
+def unit_outage_csv_for_iso(
+    iso: str | None,
+    mixed_gas_routing: bool = False,
+    per_unit_crosswalk: bool = False,
+) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
     ERCOT uses the canonical ``campd-unit-outages.csv``; every other ISO uses
@@ -321,12 +325,32 @@ def unit_outage_csv_for_iso(iso: str | None, mixed_gas_routing: bool = False) ->
     A SEPARATE path, never an overwrite, so the off path is byte-inert and the
     two routings are a clean single delta. Falls back to the incumbent extract
     when the companion has not been derived for the ISO.
+
+    ``per_unit_crosswalk`` (``ScenarioConfig.campd_per_unit_attribution``,
+    GATED default False; nyiso-175b/176) selects the ``-perunit-`` companion
+    written by that deriver's ``--per-unit-crosswalk`` mode, in which EVERY
+    unit routes by the shared ``scripts/lib/campd_measured_classes`` crosswalk
+    rather than by the plant-level ``fac_group`` short-circuit — the wider
+    repair, and the one the tranche artifact's own ``--per-unit-attribution``
+    companion is derived against, which is why a single
+    ``ScenarioConfig`` field gates both (rule 19 ``[R-ONE-MECH]``). It takes
+    precedence over ``mixed_gas_routing``, whose ``-unitroute-`` companion
+    repairs a strict subset of the same object and is measurably WRONG where
+    the two disagree (nyiso-175b K3: it routes Ravenswood's gas-fired block
+    CTs to ``CT_PEAKER`` and drops them from the overlay). Same fallback: the
+    incumbent extract when the companion has not been derived.
     """
     base = (
         UNIT_OUTAGE_CSV
         if (iso is None or iso.upper() == "ERCOT")
         else UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-{iso.upper()}.csv")
     )
+    if per_unit_crosswalk:
+        alt = base.with_name(
+            f"campd-unit-outages-perunit-{(iso or 'ERCOT').upper()}.csv"
+        )
+        if alt.exists():
+            return alt
     if not mixed_gas_routing:
         return base
     alt = base.with_name(f"campd-unit-outages-unitroute-{(iso or 'ERCOT').upper()}.csv")
@@ -550,6 +574,7 @@ def unit_outage_derate_factors(
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
     mixed_gas_routing: bool = False,
+    per_unit_crosswalk: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -575,7 +600,7 @@ def unit_outage_derate_factors(
     ``(plant_code, plant_group)`` (no split plants, CTs still excluded).
     """
     iso = (iso or "ERCOT").upper()
-    csv_path = unit_outage_csv_for_iso(iso, mixed_gas_routing)
+    csv_path = unit_outage_csv_for_iso(iso, mixed_gas_routing, per_unit_crosswalk)
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:
         return {}

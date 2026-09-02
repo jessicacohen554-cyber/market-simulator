@@ -80,6 +80,7 @@ threshold or detector constant is involved.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -1048,6 +1049,81 @@ def assert_hour_grain_consistent(frame: pd.DataFrame) -> None:
     )
 
 
+def _write_outage_sidecar(
+    out_path: Path, args: argparse.Namespace, frame: pd.DataFrame
+) -> Path:
+    """Write ``<artifact>.meta.json`` recording how the extract was derived.
+
+    nyiso-176: the incumbent NYISO extract could not be reproduced at HEAD and
+    nothing on disk said what invocation had produced it — its tranche sibling's
+    sidecar carries ``derive_invocation: null`` and states in terms that it
+    "makes no claim about what HEAD would emit". The whole 4,423-vs-2,632-window
+    comparison that blocked a session turned on a ``--years`` span nobody had
+    recorded (the committed extract spans 2018-2026; this deriver's default is
+    2023-2025), and the detector settings that carry the largest remaining
+    channel — the full-stop duration override — were equally unrecorded.
+
+    So every emit now states its own provenance: the year span, the detector
+    thresholds that change which windows survive, the row count and the observed
+    year histogram. A successor comparing two extracts can read the two sidecars
+    and see immediately whether it is looking at drift or at a different
+    invocation. Descriptive only — no loader reads it, and it never gates.
+    """
+    try:
+        years = sorted(
+            {int(y) for y in pd.to_datetime(frame["outage_start"]).dt.year}
+        ) if len(frame) else []
+        by_year = {
+            str(int(k)): int(v)
+            for k, v in pd.to_datetime(frame["outage_start"])
+            .dt.year.value_counts()
+            .sort_index()
+            .items()
+        } if len(frame) else {}
+    except Exception:  # pragma: no cover - an empty/odd frame never blocks the emit
+        years, by_year = [], {}
+    side = out_path.with_suffix(".meta.json")
+    side.write_text(
+        json.dumps(
+            {
+                "artifact": out_path.name,
+                "artifact_rows": int(len(frame)),
+                "deriver": "scripts/data/derive_campd_unit_outages.py",
+                "sidecar_schema_version": 1,
+                "derive_invocation": {
+                    "iso": str(args.iso).upper(),
+                    "years": [int(y) for y in args.years],
+                    "min_outage_days": float(args.min_outage_days),
+                    "per_unit_crosswalk": bool(
+                        getattr(args, "per_unit_crosswalk", False)
+                    ),
+                    "mixed_gas_routing": bool(
+                        getattr(args, "mixed_gas_routing", False)
+                    ),
+                    "short_windows": bool(getattr(args, "short_windows", False)),
+                    "partial_windows": bool(getattr(args, "partial_windows", False)),
+                    "merit_order_guard": bool(
+                        getattr(args, "merit_order_guard", False)
+                    ),
+                    "no_inmerit_filter": bool(
+                        getattr(args, "no_inmerit_filter", False)
+                    ),
+                    "min_inmerit_hours": int(args.min_inmerit_hours),
+                    "high_load_pctl": float(args.high_load_pctl),
+                    "fullstop_override_days": int(args.fullstop_override_days),
+                    "fullstop_override_cf": float(args.fullstop_override_cf),
+                },
+                "observed_years": years,
+                "windows_by_start_year": by_year,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    print(f"wrote provenance sidecar {side}")
+    return side
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -1984,6 +2060,7 @@ def main() -> None:
             "flag-absent frame — the grain change moved a detected window"
         )
     out.to_csv(args.out, index=False)
+    _write_outage_sidecar(Path(str(args.out)), args, out)
 
     if args.merit_order_guard:
         # Labelled companion: the windows the guard reclassified as economic

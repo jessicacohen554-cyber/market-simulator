@@ -336,6 +336,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 / caiso-186 discipline).
     "unit_outage_mixed_gas_routing",
+    # nyiso-176 CAMPD per-unit attribution (GATED default-off). ONE gate over
+    # BOTH artifacts — the tranche readers in data/fleet/campd_bins.py,
+    # data/coal.py and data/chp.py and the unit-outage extract in
+    # data/outages.py — because a unit attributed per-unit in one and by the
+    # plant's primary group in the other would leave the object half-repaired
+    # (rule 19 [R-ONE-MECH]); each selects a SEPARATE "-perunit-" companion,
+    # so the off path is byte-inert. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 / caiso-186 discipline).
+    "campd_per_unit_attribution",
     # miso-188 retiree-channel vintage-status scope (GATED default-off; the
     # sole consumer threads it via getattr into
     # data/fleet/eia860.py::load_retired_within_window, so the off path is
@@ -1359,6 +1368,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-200 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_mixed_gas_routing": "False",
+    # Added by nyiso-176 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_per_unit_attribution": "False",
     # Added by miso-188 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "retiree_vintage_status_scope": "False",
@@ -11681,6 +11693,32 @@ class ScenarioConfig:
     # only, so it carries no mixed-gas rows) — a documented boundary, measured,
     # not an oversight.
     unit_outage_mixed_gas_routing: bool = False
+
+    # CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two
+    # CAMPD-derived NYISO solve inputs both attribute a MIXED plant's measured
+    # conduct by a PROXY rather than by the units' own meters, and the two
+    # proxies are different: derive_thermal_tranches._fleet_nameplate_and_group
+    # gives the plant's facility-summed CAMPD net to "the group holding the most
+    # nameplate", while derive_campd_unit_outages._resolve_unit_group
+    # short-circuits on a last-writer-wins fac_group. Both are wrong at the same
+    # plants, in different directions. This gate selects the "-perunit-"
+    # companions BOTH derivers write under --per-unit-attribution /
+    # --per-unit-crosswalk, in which each unit routes to the bin that CONTAINS
+    # it via the SINGLE shared crosswalk scripts/lib/campd_measured_classes.
+    # ONE field over BOTH artifacts by design (rule 19 [R-ONE-MECH]): the
+    # tranche row's online/committed statistics are computed over an
+    # outage-derated denominator, so a tranche artifact repaired against an
+    # UNREPAIRED outage extract is internally inconsistent — the coupling
+    # nyiso-175b measured and nyiso-176 confirmed as the dominant channel of the
+    # committed-vs-HEAD artifact drift (E F Barrett's 16 combustion turbines
+    # carry 610 of the 2023-2025 outage extract's 1,137 drifting windows purely
+    # through the fac_group short-circuit). Zero free parameters: the inputs are
+    # EIA-860 prime movers and CAMPD unit types, static attributes that
+    # regenerate for a forward year (rule 13 [R-MEASURED]). Falls back to the
+    # incumbent artifact wherever a companion has not been derived for the ISO,
+    # so the off path is byte-inert and no ISO but NYISO is reachable today.
+    # See docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.
+    campd_per_unit_attribution: bool = False
 
     # Retiree-channel injection scoped by the EIA-860 vintage status oracle
     # (retiree_vintage_status_scope, off by default; miso-188,
