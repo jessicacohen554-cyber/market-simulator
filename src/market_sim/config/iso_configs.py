@@ -1047,8 +1047,25 @@ def _miso_config() -> ISOConfig:
         # form, NO CLI invocation can reach a clean-tier-OFF MISO forecast leg
         # once this is armed. The arm-off pole is the COMMITTED ARM3-FIX control
         # bundle (key cd2403cc031515db), not a re-solve.
+        #
+        # entry_vre_zone_selection — ARMED FOR MISO by capx D33
+        # (docs/handoffs/FINDING-capx-d33-miso-additions-repair-2026-09-02.md
+        # §2). MISO is the ISO where the single-bucket VRE siting is not merely
+        # coarse but WRONG in kind: RENEWABLE_ZONE_ALLOCATION sends every
+        # economically-entered solar MW to MISO-South, the one model zone
+        # excluded from every state compliance region's eligible-zone mask
+        # (MISO_RPS_MIDWEST_FOOTPRINT_ZONES; AR/LA/MS/E-TX carry no standard),
+        # so the screen priced new solar at a $0 REC credit while the run's own
+        # zonal REC vector peaked at the $30/MWh ACP — and declined solar and
+        # wind in EVERY screen year of the 2021-2025 T1-H hindcast against a
+        # market that built 18.6 GW of solar, 76% of it outside that bucket.
+        # Rule 25 [R-ISO-SCOPE]: MISO ONLY. The mechanism is ISO-agnostic and
+        # the ScenarioConfig default STAYS False, so every other ISO is
+        # byte-identical and arming one is its own separate decision on its own
+        # evidence.
         default_scenario_overrides={
             "entry_vre_capacity_revenue": True,
+            "entry_vre_zone_selection": True,
             "miso_rps_compliance_regions": True,
             "miso_clean_tier_rows": True,
         },
