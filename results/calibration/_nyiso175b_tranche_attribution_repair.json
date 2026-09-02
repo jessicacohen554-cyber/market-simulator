@@ -1,0 +1,489 @@
+{
+ "session": "nyiso-175b",
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "prereg": "results/calibration/PREREG-nyiso175b-tranche-attribution-repair.md",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "gate_verdicts": {
+  "K1": "PASS",
+  "K2": "PASS",
+  "K3": "PASS",
+  "K4": "PASS"
+ },
+ "all_presolve_gates_pass": true,
+ "K1_reseated_energy": {
+  "gate": "K1",
+  "bar_twh": 4.0,
+  "reseated_twh_by_year": {
+   "2023": 4.5293,
+   "2024": 4.5612,
+   "2025": 4.6672
+  },
+  "reseated_twh_total": 13.7577,
+  "n_plants_affected": 6,
+  "top_plants": {
+   "2493": {
+    "name": "East River",
+    "primary_group": "ST_CHP",
+    "primary_nameplate_mw": 309.5,
+    "model_groups": {
+     "CT_CHP": 306.0,
+     "ST_CHP": 309.5
+    },
+    "reseated_twh_by_year": {
+     "2023": 2.1335,
+     "2024": 2.259,
+     "2025": 2.1886
+    },
+    "reseated_to": {
+     "CT_CHP": 6.5811
+    },
+    "reseated_twh_total": 6.5811
+   },
+   "2500": {
+    "name": "Ravenswood",
+    "primary_group": "ST_GAS",
+    "primary_nameplate_mw": 1724.8,
+    "model_groups": {
+     "ST_GAS": 1724.8,
+     "CC_REGULAR": 222.2
+    },
+    "reseated_twh_by_year": {
+     "2023": 1.9667,
+     "2024": 1.9562,
+     "2025": 1.9238
+    },
+    "reseated_to": {
+     "CC_REGULAR": 5.8467
+    },
+    "reseated_twh_total": 5.8467
+   },
+   "50292": {
+    "name": "",
+    "primary_group": "CC_REGULAR",
+    "primary_nameplate_mw": 129.0,
+    "model_groups": {
+     "CC_REGULAR": 129.0,
+     "CT_PEAKER": 44.1
+    },
+    "reseated_twh_by_year": {
+     "2023": 0.1719,
+     "2024": 0.1199,
+     "2025": 0.2088
+    },
+    "reseated_to": {
+     "CT_PEAKER": 0.5006
+    },
+    "reseated_twh_total": 0.5006
+   },
+   "2511": {
+    "name": "",
+    "primary_group": "ST_GAS",
+    "primary_nameplate_mw": 372.2,
+    "model_groups": {
+     "CT_PEAKER": 281.4,
+     "ST_GAS": 372.2
+    },
+    "reseated_twh_by_year": {
+     "2023": 0.1395,
+     "2024": 0.1144,
+     "2025": 0.2031
+    },
+    "reseated_to": {
+     "CT_PEAKER": 0.457
+    },
+    "reseated_twh_total": 0.457
+   },
+   "2517": {
+    "name": "",
+    "primary_group": "ST_GAS",
+    "primary_nameplate_mw": 385.0,
+    "model_groups": {
+     "ST_GAS": 385.0,
+     "CT_PEAKER": 82.7
+    },
+    "reseated_twh_by_year": {
+     "2023": 0.0753,
+     "2024": 0.083,
+     "2025": 0.0719
+    },
+    "reseated_to": {
+     "CT_PEAKER": 0.2302
+    },
+    "reseated_twh_total": 0.2302
+   },
+   "2682": {
+    "name": "S A Carlson",
+    "primary_group": "ST_GAS",
+    "primary_nameplate_mw": 45.0,
+    "model_groups": {
+     "ST_GAS": 45.0,
+     "CT_PEAKER": 42.0
+    },
+    "reseated_twh_by_year": {
+     "2023": 0.0424,
+     "2024": 0.0288,
+     "2025": 0.071
+    },
+    "reseated_to": {
+     "CT_PEAKER": 0.1422
+    },
+    "reseated_twh_total": 0.1422
+   }
+  },
+  "east_river_share_of_moved": 0.4784,
+  "verdict": "PASS"
+ },
+ "K2_single_group_noop": {
+  "gate": "K2",
+  "n_single_thermal_group_plants": 96,
+  "n_plant_class_rows_checked": 192,
+  "n_offenders": 0,
+  "offenders": {},
+  "verdict": "PASS",
+  "construction_amended_by_this_gate": true,
+  "amendment": "As FIRST constructed this gate FAILED on three ST_GAS-only plants (2490, 8906, 2516 Northport), 0.0051 TWh over three years: their CAMPD combustion turbines correct to CT_PEAKER, a bin those plants do not carry, so the energy would have been dropped out of the ST_GAS denominator. The CONSTRUCTION was amended, never the threshold \u2014 reseat_group now leaves a unit on the plant's primary group where the plant carries no bin in the unit's family \u2014 and the gate was re-run. See reseat_group's docstring.",
+  "note": "An offender is a plant where the repair genuinely relocates energy away from the single bin the model carries."
+ },
+ "K3_existing_gate": {
+  "gate": "K3",
+  "question": "does the EXISTING mixed_gas_routing gate already cover East River?",
+  "units": [
+   {
+    "plant": 2493,
+    "name": "East River",
+    "unit": "1",
+    "unitType": "Combined cycle",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CT_CHP",
+     "ST_CHP"
+    ],
+    "is_multi_gas_facility": false,
+    "resolved_gate_OFF": "ST_CHP",
+    "resolved_gate_ON": "ST_CHP",
+    "corrected_crosswalk": "CT_CHP",
+    "gate_ON_fixes_it": false
+   },
+   {
+    "plant": 2493,
+    "name": "East River",
+    "unit": "2",
+    "unitType": "Combined cycle",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CT_CHP",
+     "ST_CHP"
+    ],
+    "is_multi_gas_facility": false,
+    "resolved_gate_OFF": "ST_CHP",
+    "resolved_gate_ON": "ST_CHP",
+    "corrected_crosswalk": "CT_CHP",
+    "gate_ON_fixes_it": false
+   },
+   {
+    "plant": 2493,
+    "name": "East River",
+    "unit": "60",
+    "unitType": "Dry bottom wall-fired boiler",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CT_CHP",
+     "ST_CHP"
+    ],
+    "is_multi_gas_facility": false,
+    "resolved_gate_OFF": "ST_CHP",
+    "resolved_gate_ON": "ST_CHP",
+    "corrected_crosswalk": "ST_CHP",
+    "gate_ON_fixes_it": true
+   },
+   {
+    "plant": 2493,
+    "name": "East River",
+    "unit": "70",
+    "unitType": "Dry bottom wall-fired boiler",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CT_CHP",
+     "ST_CHP"
+    ],
+    "is_multi_gas_facility": false,
+    "resolved_gate_OFF": "ST_CHP",
+    "resolved_gate_ON": "ST_CHP",
+    "corrected_crosswalk": "ST_CHP",
+    "gate_ON_fixes_it": true
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "unit": "10",
+    "unitType": "Tangentially-fired",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": true,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "ST_GAS",
+    "corrected_crosswalk": "ST_GAS",
+    "gate_ON_fixes_it": true
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "unit": "20",
+    "unitType": "Tangentially-fired",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": true,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "ST_GAS",
+    "corrected_crosswalk": "ST_GAS",
+    "gate_ON_fixes_it": true
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "unit": "30",
+    "unitType": "Tangentially-fired",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": true,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "ST_GAS",
+    "corrected_crosswalk": "ST_GAS",
+    "gate_ON_fixes_it": true
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "unit": "CT0001",
+    "unitType": "Combustion turbine",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": true,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "CT_PEAKER",
+    "corrected_crosswalk": "CC_REGULAR",
+    "gate_ON_fixes_it": false
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "unit": "CT0010",
+    "unitType": "Combustion turbine",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": true,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "CT_PEAKER",
+    "corrected_crosswalk": "CC_REGULAR",
+    "gate_ON_fixes_it": false
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "unit": "CT0011",
+    "unitType": "Combustion turbine",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": true,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "CT_PEAKER",
+    "corrected_crosswalk": "CC_REGULAR",
+    "gate_ON_fixes_it": false
+   },
+   {
+    "plant": 2500,
+    "name": "Ravenswood",
+    "unit": "UCC001",
+    "unitType": "Combined cycle",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CC_REGULAR",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": true,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "CC_REGULAR",
+    "corrected_crosswalk": "CC_REGULAR",
+    "gate_ON_fixes_it": true
+   },
+   {
+    "plant": 2682,
+    "name": "S A Carlson",
+    "unit": "10",
+    "unitType": "Dry bottom wall-fired boiler",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": false,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "ST_GAS",
+    "corrected_crosswalk": "ST_GAS",
+    "gate_ON_fixes_it": true
+   },
+   {
+    "plant": 2682,
+    "name": "S A Carlson",
+    "unit": "20",
+    "unitType": "Combined cycle",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": false,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "ST_GAS",
+    "corrected_crosswalk": "CT_PEAKER",
+    "gate_ON_fixes_it": false
+   },
+   {
+    "plant": 2682,
+    "name": "S A Carlson",
+    "unit": "9",
+    "unitType": "Dry bottom wall-fired boiler",
+    "fuel": "Pipeline Natural Gas",
+    "model_groups": [
+     "CT_PEAKER",
+     "ST_GAS"
+    ],
+    "is_multi_gas_facility": false,
+    "resolved_gate_OFF": "ST_GAS",
+    "resolved_gate_ON": "ST_GAS",
+    "corrected_crosswalk": "ST_GAS",
+    "gate_ON_fixes_it": true
+   }
+  ],
+  "east_river_turbine_units_fixed_by_existing_gate": false,
+  "verdict": "PASS",
+  "note": "PASS means the existing gate does NOT cover it, so new routing logic is warranted under rule 19 [R-ONE-MECH]. FAIL would mean arming the existing gate instead of writing anything new."
+ },
+ "K4_missing_rows": {
+  "gate": "K4",
+  "committed_csv": "data/raw/_processed-legacy/thermal_tranches_NYISO.csv",
+  "csv_note": null,
+  "plants": {
+   "2493": {
+    "name": "East River",
+    "carrier_group": "CT_CHP",
+    "carrier_in_model_fleet": true,
+    "carrier_nameplate_mw": 306.0,
+    "primary_group_today": "ST_CHP",
+    "row_exists_in_committed_csv": false,
+    "primary_row_exists_in_committed_csv": true
+   },
+   "2500": {
+    "name": "Ravenswood",
+    "carrier_group": "CC_REGULAR",
+    "carrier_in_model_fleet": true,
+    "carrier_nameplate_mw": 222.2,
+    "primary_group_today": "ST_GAS",
+    "row_exists_in_committed_csv": false,
+    "primary_row_exists_in_committed_csv": true
+   },
+   "2682": {
+    "name": "S A Carlson",
+    "carrier_group": "CT_PEAKER",
+    "carrier_in_model_fleet": true,
+    "carrier_nameplate_mw": 42.0,
+    "primary_group_today": "ST_GAS",
+    "row_exists_in_committed_csv": false,
+    "primary_row_exists_in_committed_csv": true
+   }
+  },
+  "n_carrier_rows_missing_today": 3,
+  "verdict": "PASS",
+  "note": "PASS means the carrier bin genuinely has no tranche row today, which is the defect the repair closes."
+ },
+ "context_named_plants": {
+  "2493": {
+   "name": "East River",
+   "model_groups_mw": {
+    "CT_CHP": 306.0,
+    "ST_CHP": 309.5
+   },
+   "primary_group_by_nameplate": "ST_CHP",
+   "measured_twh_by_class": {
+    "2023": {
+     "CT_CHP": 2.1335,
+     "ST_CHP": 0.0
+    },
+    "2024": {
+     "CT_CHP": 2.259,
+     "ST_CHP": 0.0
+    },
+    "2025": {
+     "CT_CHP": 2.1886,
+     "ST_CHP": 0.0
+    }
+   }
+  },
+  "2500": {
+   "name": "Ravenswood",
+   "model_groups_mw": {
+    "ST_GAS": 1724.8,
+    "CC_REGULAR": 222.2
+   },
+   "primary_group_by_nameplate": "ST_GAS",
+   "measured_twh_by_class": {
+    "2023": {
+     "CC_REGULAR": 1.9667,
+     "ST_GAS": 0.8834
+    },
+    "2024": {
+     "CC_REGULAR": 1.9562,
+     "ST_GAS": 0.709
+    },
+    "2025": {
+     "CC_REGULAR": 1.9238,
+     "ST_GAS": 1.0701
+    }
+   }
+  },
+  "2682": {
+   "name": "S A Carlson",
+   "model_groups_mw": {
+    "ST_GAS": 45.0,
+    "CT_PEAKER": 42.0
+   },
+   "primary_group_by_nameplate": "ST_GAS",
+   "measured_twh_by_class": {
+    "2023": {
+     "CT_PEAKER": 0.0424,
+     "ST_GAS": 0.0
+    },
+    "2024": {
+     "CT_PEAKER": 0.0288,
+     "ST_GAS": 0.0
+    },
+    "2025": {
+     "CT_PEAKER": 0.071,
+     "ST_GAS": 0.0
+    }
+   }
+  }
+ }
+}

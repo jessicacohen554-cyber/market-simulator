@@ -78,6 +78,23 @@ except Exception:  # pragma: no cover
 K1_BAR_TWH = 4.0
 
 
+_CACHE: dict = {}
+
+
+def chp_plants() -> set[int]:
+    """EIA-860 CHP plant codes — the model's own CHP determination.
+
+    Same call the nyiso-175 probe used, so the CHP flag behind every class
+    verdict here is identical to the one behind that session's numbers.
+    """
+    if "chp" not in _CACHE:
+        flags = _chp_by_plant(RAW_DATA_DIR / "eia-860", 2025)
+        _CACHE["chp"] = {
+            int(k) for k, v in flags.items() if str(v).strip().upper() == "Y"
+        }
+    return _CACHE["chp"]
+
+
 def _round(x, n=4):
     try:
         return round(float(x), n)
@@ -95,6 +112,8 @@ def fleet_groups() -> tuple[dict[int, dict[str, float]], dict[int, str]]:
     non-ERCOT ISO exactly, so the "current" side of every comparison here is
     the deriver's own behaviour and not a paraphrase of it.
     """
+    if "fleet" in _CACHE:
+        return _CACHE["fleet"]
     cap: dict[int, dict[str, float]] = {}
     for gen in load_fleet_from_csv(ISO, get_iso_config(ISO)):
         code = int(gen.plant_code)
@@ -109,6 +128,7 @@ def fleet_groups() -> tuple[dict[int, dict[str, float]], dict[int, str]]:
         for code, groups in cap.items()
         if groups
     }
+    _CACHE["fleet"] = (cap, primary)
     return cap, primary
 
 
@@ -118,6 +138,8 @@ def campd_units(year: int) -> pd.DataFrame:
     ``grossLoad`` NULL is a non-operating unit-hour and is filled to zero before
     any aggregation (trap (d)); ``facilityId`` is a string dtype and is cast.
     """
+    if ("campd", year) in _CACHE:
+        return _CACHE[("campd", year)]
     d = pd.read_parquet(
         RAW_DATA_DIR / f"campd-unit-level/NY_{year}.parquet",
         columns=[
@@ -130,7 +152,7 @@ def campd_units(year: int) -> pd.DataFrame:
     )
     d["grossLoad"] = d["grossLoad"].fillna(0.0)
     d["facilityId"] = d["facilityId"].astype(int)
-    chpset = _chp_by_plant()
+    chpset = chp_plants()
     cap, _ = fleet_groups()
     pairs = d[["facilityId", "unitType"]].drop_duplicates()
     kmap: dict[tuple[int, str], str | None] = {}
@@ -140,7 +162,37 @@ def campd_units(year: int) -> pd.DataFrame:
     d["klass"] = [
         kmap[(int(f), str(u))] for f, u in zip(d["facilityId"], d["unitType"])
     ]
+    _CACHE[("campd", year)] = d
     return d
+
+
+def reseat_group(
+    code: int,
+    klass: str,
+    cap: dict[int, dict[str, float]],
+    primary: dict[int, str],
+) -> str | None:
+    """The tranche row a unit's energy belongs on, under the REPAIR.
+
+    The rule: a unit's energy goes to the model bin that CONTAINS the unit —
+    its corrected prime-mover class — and where the plant carries no such bin
+    the attribution is left exactly as it is today (the plant's primary group).
+
+    **The fallback clause is an AMENDMENT forced by pre-registered gate K2**,
+    and it amends the CONSTRUCTION, never the threshold. As first written this
+    function had no fallback, and K2 caught three ST_GAS-only plants — 2490,
+    8906 and 2516 Northport — whose CAMPD combustion turbines correct to
+    ``CT_PEAKER``, a bin those plants do not carry, so 0.0051 TWh over three
+    years would have been silently dropped out of the ``ST_GAS`` denominator.
+    That is a reclassification, not a crosswalk repair: the repair's warrant is
+    "attribute a unit's energy to the bin that contains it", and where there is
+    no such bin the repair has nothing to say. Confining it to the case it is
+    justified for is what makes it a strict crosswalk repair — and what makes
+    K2 pass honestly instead of by redefinition.
+    """
+    if klass and klass in cap.get(code, {}):
+        return klass
+    return primary.get(code)
 
 
 # -------------------------------------------------------------- the gates --
@@ -167,7 +219,8 @@ def k1_reseated_energy() -> dict:
             prim = primary.get(code)
             if prim is None or prim not in _THERMAL_GROUPS:
                 continue
-            if str(klass) == prim:
+            seat = reseat_group(code, str(klass), cap, primary)
+            if seat == prim:
                 continue
             twh = float(mwh) / 1e6
             moved_y += twh
@@ -187,8 +240,8 @@ def k1_reseated_energy() -> dict:
             per_plant[key]["reseated_twh_by_year"][str(year)] = _round(
                 per_plant[key]["reseated_twh_by_year"][str(year)] + twh
             )
-            per_plant[key]["reseated_to"][str(klass)] = _round(
-                per_plant[key]["reseated_to"].get(str(klass), 0.0) + twh
+            per_plant[key]["reseated_to"][str(seat)] = _round(
+                per_plant[key]["reseated_to"].get(str(seat), 0.0) + twh
             )
         per_year[str(year)] = _round(moved_y)
         total_moved += moved_y
@@ -236,7 +289,8 @@ def k2_single_group_noop() -> dict:
             prim = primary.get(code)
             if prim is None or prim not in _THERMAL_GROUPS:
                 continue
-            if str(klass) != prim and float(mwh) > 0.0:
+            seat = reseat_group(code, str(klass), cap, primary)
+            if seat != prim and float(mwh) > 0.0:
                 o = offenders.setdefault(
                     str(code),
                     {
@@ -250,8 +304,8 @@ def k2_single_group_noop() -> dict:
                     },
                 )
                 o["moved_twh"] = _round(o["moved_twh"] + float(mwh) / 1e6)
-                o["to"][str(klass)] = _round(
-                    o["to"].get(str(klass), 0.0) + float(mwh) / 1e6
+                o["to"][str(seat)] = _round(
+                    o["to"].get(str(seat), 0.0) + float(mwh) / 1e6
                 )
     return {
         "gate": "K2",
@@ -260,11 +314,20 @@ def k2_single_group_noop() -> dict:
         "n_offenders": len(offenders),
         "offenders": offenders,
         "verdict": "PASS" if not offenders else "FAIL",
+        "construction_amended_by_this_gate": True,
+        "amendment": (
+            "As FIRST constructed this gate FAILED on three ST_GAS-only plants "
+            "(2490, 8906, 2516 Northport), 0.0051 TWh over three years: their "
+            "CAMPD combustion turbines correct to CT_PEAKER, a bin those "
+            "plants do not carry, so the energy would have been dropped out of "
+            "the ST_GAS denominator. The CONSTRUCTION was amended, never the "
+            "threshold — reseat_group now leaves a unit on the plant's primary "
+            "group where the plant carries no bin in the unit's family — and "
+            "the gate was re-run. See reseat_group's docstring."
+        ),
         "note": (
-            "A single-thermal-group plant whose CAMPD units carry a class the "
-            "model roster does not have is NOT an offender by construction: "
-            "corrected_unit_class re-seats it onto the plant's own group. An "
-            "offender is a plant where the repair genuinely relocates energy."
+            "An offender is a plant where the repair genuinely relocates "
+            "energy away from the single bin the model carries."
         ),
     }
 
@@ -305,7 +368,7 @@ def k3_existing_gate_does_not_cover() -> dict:
                 mixed_gas_routing=True,
             )
             corrected = corrected_unit_class(
-                campd_unittype_class(u["unitType"], code in _chp_by_plant()),
+                campd_unittype_class(u["unitType"], code in chp_plants()),
                 cap.get(code),
             )
             rows.append(
