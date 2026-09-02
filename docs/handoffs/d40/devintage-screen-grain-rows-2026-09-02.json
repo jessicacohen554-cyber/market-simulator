@@ -1,0 +1,342 @@
+{
+ "f_dr": 0.08784299500831946,
+ "composite": 1.0286069498649055,
+ "hold_ratio": 1.1301434682212212,
+ "net_icr_series": {
+  "2020/2021": 34075.0,
+  "2021/2022": 33725.0,
+  "2022/2023": 33750.0,
+  "2023/2024": 32490.0,
+  "2024/2025": 33270.0,
+  "2025/2026": 31645.0,
+  "2026/2027": 30305.0,
+  "2027/2028": 30550.0
+ },
+ "rows": [
+  {
+   "y": 2023,
+   "fca": 14,
+   "peak": 23475.0,
+   "firm_enter": 30409.93755,
+   "firm_post": 30409.93755,
+   "req_off": 24146.54814807866,
+   "req_on": 29635.9810921797,
+   "req_delta": 5489.432944101041,
+   "net_icr": 32490.0,
+   "cleared": 33956.0,
+   "pos_real": 1.0451215758694983,
+   "pos_off_post": 1.2593906741249772,
+   "pos_on_post": 1.0238213745097045,
+   "pos_ra_only_post": 1.0261154322987651,
+   "pos_off_enter": 1.2593906741249772,
+   "pos_on_enter": 1.0238213745097045,
+   "gap_off_post": 0.2142690982554789,
+   "gap_on_post": -0.021300201359793824,
+   "gap_off_enter": 0.2142690982554789,
+   "gap_on_enter": -0.021300201359793824,
+   "pay_off_post": 0.0,
+   "pay_on_post": 55.20118718918704,
+   "pay_off_enter": 0.0,
+   "pay_on_enter": 55.20118718918704,
+   "pay_real": 24.012,
+   "budget_off": 6263.38940192134,
+   "budget_on": 773.956457820299,
+   "floor_binds_off_post": false,
+   "floor_binds_on_post": false
+  },
+  {
+   "y": 2024,
+   "fca": 15,
+   "peak": 24255.0,
+   "firm_enter": 30409.93755,
+   "firm_post": 27532.19007,
+   "req_off": 24948.861568973283,
+   "req_on": 30347.46355607321,
+   "req_delta": 5398.601987099926,
+   "net_icr": 33270.0,
+   "cleared": 34621.0,
+   "pos_real": 1.0406071535918244,
+   "pos_off_post": 1.1035449450823591,
+   "pos_on_post": 0.9153810193545775,
+   "pos_ra_only_post": 0.9072320004315547,
+   "pos_off_enter": 1.2188907885006737,
+   "pos_on_enter": 1.0018777876142708,
+   "gap_off_post": 0.06293779149053469,
+   "gap_on_post": -0.12522613423724693,
+   "gap_off_enter": 0.17828363490884924,
+   "gap_on_enter": -0.03872936597755361,
+   "pay_off_post": 0.0,
+   "pay_on_post": 167.184,
+   "pay_off_enter": 0.0,
+   "pay_on_enter": 100.87552208496587,
+   "pay_real": 31.332,
+   "budget_off": 5461.075981026715,
+   "budget_on": 62.47399392678926,
+   "floor_binds_off_post": false,
+   "floor_binds_on_post": true
+  },
+  {
+   "y": 2025,
+   "fca": 16,
+   "peak": 25898.0,
+   "firm_enter": 27532.19007,
+   "firm_post": 26775.009872,
+   "req_off": 26638.86278760132,
+   "req_on": 28865.20842296173,
+   "req_delta": 2226.345635360409,
+   "net_icr": 31645.0,
+   "cleared": 32810.0,
+   "pos_real": 1.0368146626639279,
+   "pos_off_post": 1.0051108444637527,
+   "pos_on_post": 0.9339485368632728,
+   "pos_ra_only_post": 0.9275876161940678,
+   "pos_off_enter": 1.033534737932374,
+   "pos_on_enter": 0.957875861811922,
+   "gap_off_post": -0.031703818200175204,
+   "gap_on_post": -0.10286612580065502,
+   "gap_off_enter": -0.003279924731553807,
+   "gap_on_enter": -0.07893880085200589,
+   "pay_off_post": 81.19223949968378,
+   "pay_on_post": 148.8,
+   "pay_off_enter": 34.301782598755,
+   "pay_on_enter": 148.8,
+   "pay_real": 31.092000000000002,
+   "budget_off": 893.3272823986808,
+   "budget_on": -1333.018352961728,
+   "floor_binds_off_post": false,
+   "floor_binds_on_post": true
+  },
+  {
+   "y": 2026,
+   "fca": 17,
+   "peak": 26234.674,
+   "firm_enter": 26775.009872,
+   "firm_post": 28308.367571656003,
+   "req_off": 26985.168003840135,
+   "req_on": 27642.918036272877,
+   "req_delta": 657.7500324327411,
+   "net_icr": 30305.0,
+   "cleared": 31370.0,
+   "pos_real": 1.035142715723478,
+   "pos_off_post": 1.0490343275842333,
+   "pos_on_post": 1.0219584073711638,
+   "pos_ra_only_post": 1.0240730567775054,
+   "pos_off_enter": 0.9922120873284824,
+   "pos_on_enter": 0.9713608921210072,
+   "gap_off_post": 0.01389161186075527,
+   "gap_on_post": -0.013184308352314211,
+   "gap_off_enter": -0.04293062839499562,
+   "gap_on_enter": -0.06378182360247087,
+   "pay_off_post": 15.10791114782014,
+   "pay_on_post": 52.644112780617206,
+   "pay_off_enter": 116.14383723050781,
+   "pay_on_enter": 153.13199999999998,
+   "pay_real": 31.08,
+   "budget_off": -210.15813184013678,
+   "budget_on": -867.9081642728779,
+   "floor_binds_off_post": false,
+   "floor_binds_on_post": false
+  },
+  {
+   "y": 2027,
+   "fca": 18,
+   "peak": 26575.725,
+   "firm_enter": 28308.367571656003,
+   "firm_post": 30019.168263974996,
+   "req_off": 27335.975432698513,
+   "req_on": 27866.396502495838,
+   "req_delta": 530.4210697973249,
+   "net_icr": 30550.0,
+   "cleared": 31556.0,
+   "pos_real": 1.0329296235679215,
+   "pos_off_post": 1.0981561034060239,
+   "pos_on_post": 1.0704671607685485,
+   "pos_ra_only_post": 1.0772533241349074,
+   "pos_off_enter": 1.0355718837014443,
+   "pos_on_enter": 1.0144671381067156,
+   "gap_off_post": 0.06522647983810237,
+   "gap_on_post": 0.037537537200627025,
+   "gap_off_enter": 0.002642260133522756,
+   "gap_on_enter": -0.01846248546120588,
+   "pay_off_post": 0.0,
+   "pay_on_post": 0.0,
+   "pay_off_enter": 38.2015301121976,
+   "pay_on_enter": 79.95336584457286,
+   "pay_real": 42.96,
+   "budget_off": 972.3921389574898,
+   "budget_on": 441.9710691601649,
+   "floor_binds_off_post": false,
+   "floor_binds_on_post": false
+  }
+ ],
+ "hold_last_edge": {
+  "peak_2027": 26575.725,
+  "req_2027_on": 27866.396502495838,
+  "req_2028_on": 27396.071951957485,
+  "req_2028_off": 27335.975432698513
+ },
+ "loyo": [
+  {
+   "metric": "position_post",
+   "held_out": 2023,
+   "train": [
+    2024,
+    2025
+   ],
+   "train_arms": false,
+   "held_out_improves": true,
+   "held_out_abs_err_off": 0.2142690982554789,
+   "held_out_abs_err_on": 0.021300201359793824,
+   "fold_pass": true
+  },
+  {
+   "metric": "position_post",
+   "held_out": 2024,
+   "train": [
+    2023,
+    2025
+   ],
+   "train_arms": false,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 0.06293779149053469,
+   "held_out_abs_err_on": 0.12522613423724693,
+   "fold_pass": true
+  },
+  {
+   "metric": "position_post",
+   "held_out": 2025,
+   "train": [
+    2023,
+    2024
+   ],
+   "train_arms": false,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 0.031703818200175204,
+   "held_out_abs_err_on": 0.10286612580065502,
+   "fold_pass": true
+  },
+  {
+   "metric": "position_enter",
+   "held_out": 2023,
+   "train": [
+    2024,
+    2025
+   ],
+   "train_arms": false,
+   "held_out_improves": true,
+   "held_out_abs_err_off": 0.2142690982554789,
+   "held_out_abs_err_on": 0.021300201359793824,
+   "fold_pass": true
+  },
+  {
+   "metric": "position_enter",
+   "held_out": 2024,
+   "train": [
+    2023,
+    2025
+   ],
+   "train_arms": false,
+   "held_out_improves": true,
+   "held_out_abs_err_off": 0.17828363490884924,
+   "held_out_abs_err_on": 0.03872936597755361,
+   "fold_pass": true
+  },
+  {
+   "metric": "position_enter",
+   "held_out": 2025,
+   "train": [
+    2023,
+    2024
+   ],
+   "train_arms": true,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 0.003279924731553807,
+   "held_out_abs_err_on": 0.07893880085200589,
+   "fold_pass": false
+  },
+  {
+   "metric": "capacity_revenue_post",
+   "held_out": 2023,
+   "train": [
+    2024,
+    2025
+   ],
+   "train_arms": false,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 24.012,
+   "held_out_abs_err_on": 31.189187189187038,
+   "fold_pass": true
+  },
+  {
+   "metric": "capacity_revenue_post",
+   "held_out": 2024,
+   "train": [
+    2023,
+    2025
+   ],
+   "train_arms": false,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 31.332,
+   "held_out_abs_err_on": 135.852,
+   "fold_pass": true
+  },
+  {
+   "metric": "capacity_revenue_post",
+   "held_out": 2025,
+   "train": [
+    2023,
+    2024
+   ],
+   "train_arms": false,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 50.10023949968378,
+   "held_out_abs_err_on": 117.70800000000001,
+   "fold_pass": true
+  },
+  {
+   "metric": "capacity_revenue_enter",
+   "held_out": 2023,
+   "train": [
+    2024,
+    2025
+   ],
+   "train_arms": false,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 24.012,
+   "held_out_abs_err_on": 31.189187189187038,
+   "fold_pass": true
+  },
+  {
+   "metric": "capacity_revenue_enter",
+   "held_out": 2024,
+   "train": [
+    2023,
+    2025
+   ],
+   "train_arms": false,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 31.332,
+   "held_out_abs_err_on": 69.54352208496587,
+   "fold_pass": true
+  },
+  {
+   "metric": "capacity_revenue_enter",
+   "held_out": 2025,
+   "train": [
+    2023,
+    2024
+   ],
+   "train_arms": false,
+   "held_out_improves": false,
+   "held_out_abs_err_off": 3.2097825987549946,
+   "held_out_abs_err_on": 117.70800000000001,
+   "fold_pass": true
+  }
+ ],
+ "loyo_failing_folds": 1,
+ "cache_keys": {
+  "off": "7f3914c3df7014ab",
+  "on": "3b8d2bbc96a9433e"
+ },
+ "bundle": "results/hindcast/neiso-2023-2027-crossover-rcrepair/NEISO/07e416f3f8072e7c"
+}

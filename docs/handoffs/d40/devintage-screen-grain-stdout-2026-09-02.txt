@@ -1,0 +1,53 @@
+f_DR=0.087843  composite=1.028607  hold ratio=1.130143
+Net ICR series: {'2020/2021': 34075.0, '2021/2022': 33725.0, '2022/2023': 33750.0, '2023/2024': 32490.0, '2024/2025': 33270.0, '2025/2026': 31645.0, '2026/2027': 30305.0, '2027/2028': 30550.0}
+
+REQUIREMENT (net convention, MW)
+yr FCA |  peak   | req OFF  req ON   delta   | NetICR  | firmEnter firmPost
+2023 14 |   23475 |   24147   29636   +5489 |   32490 |    30410    30410
+2024 15 |   24255 |   24949   30347   +5399 |   33270 |    30410    27532
+2025 16 |   25898 |   26639   28865   +2226 |   31645 |    27532    26775
+2026 17 |   26235 |   26985   27643    +658 |   30305 |    26775    28308
+2027 18 |   26576 |   27336   27866    +530 |   30550 |    28308    30019
+
+POSITIONS vs REAL (post-evolution fleet; ON is on the curve's raw convention)
+yr FCA | real   | OFF    gap(pts) | ON     gap(pts) | R-A only(net) | ENTER: OFF gap  ON gap
+2023 14 | 1.0451 | 1.2594 +21.43 | 1.0238  -2.13 | 1.0261 | 1.2594 +21.43  1.0238  -2.13
+2024 15 | 1.0406 | 1.1035  +6.29 | 0.9154 -12.52 | 0.9072 | 1.2189 +17.83  1.0019  -3.87
+2025 16 | 1.0368 | 1.0051  -3.17 | 0.9339 -10.29 | 0.9276 | 1.0335  -0.33  0.9579  -7.89
+2026 17 | 1.0351 | 1.0490  +1.39 | 1.0220  -1.32 | 1.0241 | 0.9922  -4.29  0.9714  -6.38
+2027 18 | 1.0329 | 1.0982  +6.52 | 1.0705  +3.75 | 1.0773 | 1.0356  +0.26  1.0145  -1.85
+
+CAPACITY REVENUE $/kW-yr (HEAD vintage curves) — post fleet / entering fleet / real
+yr FCA | OFF post  ON post | OFF enter ON enter | real
+2023 14 |     0.00    55.20 |     0.00    55.20 |  24.01
+2024 15 |     0.00   167.18 |     0.00   100.88 |  31.33
+2025 16 |    81.19   148.80 |    34.30   148.80 |  31.09
+2026 17 |    15.11    52.64 |   116.14   153.13 |  31.08
+2027 18 |     0.00     0.00 |    38.20    79.95 |  42.96
+
+FLOOR EXIT BUDGET at entry (firm_enter − requirement, MW) and binding on the as-solved post fleet
+2023: budget OFF    +6263  ON     +774  (ratio 0.12); floor binds post-fleet: OFF False  ON False
+2024: budget OFF    +5461  ON      +62  (ratio 0.01); floor binds post-fleet: OFF False  ON True
+2025: budget OFF     +893  ON    -1333  (ratio -1.49); floor binds post-fleet: OFF False  ON True
+2026: budget OFF     -210  ON     -868  (ratio 4.13); floor binds post-fleet: OFF False  ON False
+2027: budget OFF     +972  ON     +442  (ratio 0.45); floor binds post-fleet: OFF False  ON False
+
+HOLD-LAST EDGE at the 2027 ledger peak 26576: 2027 ON 27866 → 2028 ON (held ratio) 27396 (-1.69 %); 2028 OFF (composite) 27336; ON/OFF beyond table = 1.00220
+
+LEAVE-ONE-YEAR-OUT (train 2023-2025; fold passes iff a train-armed lever also improves the held-out year)
+metric                 held | train arms | held-out |err| OFF → ON | fold
+position_post          2023 | False      |   0.2143 →   0.0213 | PASS
+position_post          2024 | False      |   0.0629 →   0.1252 | PASS  (held-out DEGRADES)
+position_post          2025 | False      |   0.0317 →   0.1029 | PASS  (held-out DEGRADES)
+position_enter         2023 | False      |   0.2143 →   0.0213 | PASS
+position_enter         2024 | False      |   0.1783 →   0.0387 | PASS
+position_enter         2025 | True       |   0.0033 →   0.0789 | FAIL  (held-out DEGRADES)
+capacity_revenue_post  2023 | False      |  24.0120 →  31.1892 | PASS  (held-out DEGRADES)
+capacity_revenue_post  2024 | False      |  31.3320 → 135.8520 | PASS  (held-out DEGRADES)
+capacity_revenue_post  2025 | False      |  50.1002 → 117.7080 | PASS  (held-out DEGRADES)
+capacity_revenue_enter 2023 | False      |  24.0120 →  31.1892 | PASS  (held-out DEGRADES)
+capacity_revenue_enter 2024 | False      |  31.3320 →  69.5435 | PASS  (held-out DEGRADES)
+capacity_revenue_enter 2025 | False      |   3.2098 → 117.7080 | PASS  (held-out DEGRADES)
+
+folds: 12  failing: 1
+rows dumped to docs/handoffs/d40/devintage-screen-grain-rows-2026-09-02.json
