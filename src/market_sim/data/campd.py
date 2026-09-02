@@ -235,6 +235,12 @@ CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
 # Facilities with at least one remapped unit (split facilities).
 CAMPD_SPLIT_FACILITIES: frozenset[int] = frozenset(f for f, _ in CAMPD_UNIT_PLANT_REMAP)
 
+# Same ids as an array, so a normalizer can select the remap-eligible rows with
+# one vectorized ``np.isin`` instead of a per-row dict lookup (PERF-B).
+_CAMPD_REMAP_FACILITY_IDS: np.ndarray = np.array(
+    sorted(CAMPD_SPLIT_FACILITIES), dtype=np.int64
+)
+
 # Common-generator stack pairs: ONE generating unit whose flue gas is monitored
 # on two separate paths, which CEMS files as two "units". CAMPD repeats the
 # generator's FULL ``grossLoad`` on BOTH rows while splitting ``heatInput`` and
@@ -294,6 +300,36 @@ _FACILITIES_NEEDING_UNIT_ROWS: frozenset[int] = (
 )
 
 
+def _to_numeric_by_uniques(s: pd.Series) -> pd.Series:
+    """``pd.to_numeric(s, errors="coerce")`` evaluated over ``s``'s uniques.
+
+    CAMPD's ``facilityId`` arrives as a string column of ~1M rows carrying a
+    few dozen distinct ORIS codes, and parsing it row-by-row is the single
+    largest cost in :func:`_normalize_campd` (PERF-B: ~0.95 s per state-year
+    extract, paid again inside :func:`stack_duplicate_mask`). Parsing the
+    uniques and gathering by factorize code is the same computation on 10^2
+    values instead of 10^6.
+
+    Value- and dtype-identical to the direct call by construction: the unique
+    set carries the same values, so ``to_numeric``'s integer-vs-float dtype
+    choice is the same, and the gather preserves it. Degenerate inputs (empty,
+    already numeric, or too few repeats to pay for the factorize) fall through
+    to the direct call unchanged.
+    """
+    if s.dtype.kind in "iufc" or len(s) < 1024:
+        return pd.to_numeric(s, errors="coerce")
+    codes, uniques = pd.factorize(s, use_na_sentinel=True)
+    if len(uniques) * 4 >= len(s):
+        return pd.to_numeric(s, errors="coerce")
+    vals = pd.to_numeric(pd.Series(uniques), errors="coerce")
+    if vals.dtype.kind in "iu" and not (codes < 0).any() and not vals.isna().any():
+        # No NA anywhere, so the integer dtype ``to_numeric`` chose survives
+        # the gather (a NaN sentinel would force the whole column to float).
+        return pd.Series(vals.to_numpy()[codes], index=s.index)
+    gathered = np.concatenate([vals.to_numpy(dtype="float64"), [np.nan]])
+    return pd.Series(gathered[codes], index=s.index)
+
+
 def stack_duplicate_mask(facility: pd.Series, unit: pd.Series) -> pd.Series:
     """Return a boolean mask of duplicate-reporting stack rows.
 
@@ -309,7 +345,7 @@ def stack_duplicate_mask(facility: pd.Series, unit: pd.Series) -> pd.Series:
     Returns:
         Boolean Series aligned to ``facility``/``unit``.
     """
-    fac = pd.to_numeric(facility, errors="coerce").fillna(-1).astype(int)
+    fac = _to_numeric_by_uniques(facility).fillna(-1).astype(int)
     uid = unit.astype(str)
     mask = pd.Series(False, index=fac.index)
     for fid, pairs in CAMPD_STACK_DUPLICATE_UNITS.items():
@@ -333,7 +369,7 @@ def merge_stack_duplicate_units(facility: pd.Series, unit: pd.Series) -> pd.Seri
     Returns:
         Series of unit ids, aligned to the input, duplicates re-labelled.
     """
-    fac = pd.to_numeric(facility, errors="coerce").fillna(-1).astype(int)
+    fac = _to_numeric_by_uniques(facility).fillna(-1).astype(int)
     out = unit.astype(str).copy()
     for fid, pairs in CAMPD_STACK_DUPLICATE_UNITS.items():
         at = fac == fid
@@ -554,12 +590,20 @@ def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
     :data:`CAMPD_UNIT_PLANT_REMAP` are re-keyed to the EIA plant their
     history belongs to before any facility summing happens downstream.
     """
-    plant_id = pd.to_numeric(raw["facilityId"], errors="coerce")
+    plant_id = _to_numeric_by_uniques(raw["facilityId"])
     gross = pd.to_numeric(raw["grossLoad"], errors="coerce")
     if "unitId" in raw.columns and len(raw):
         fac = plant_id.fillna(-1).astype(int).to_numpy()
         uid = raw["unitId"].astype(str).to_numpy()
-        remapped = [CAMPD_UNIT_PLANT_REMAP.get((f, u), f) for f, u in zip(fac, uid)]
+        # Only rows at a split facility can remap, and the remap table is CA-only
+        # (:data:`CAMPD_UNIT_PLANT_REMAP`), so restrict the per-row dict lookup to
+        # those rows: every other row's ``.get`` returns its own ``f`` unchanged.
+        # PERF-B: the unrestricted comprehension ran 7M dict lookups per PJM year
+        # to remap nothing at all (~4.4 s of the phase).
+        remapped = fac.copy()
+        at_split = np.flatnonzero(np.isin(fac, _CAMPD_REMAP_FACILITY_IDS))
+        for i in at_split:
+            remapped[i] = CAMPD_UNIT_PLANT_REMAP.get((fac[i], uid[i]), fac[i])
         plant_id = pd.Series(remapped, index=raw.index, dtype=float).where(
             plant_id.notna()
         )
@@ -732,6 +776,13 @@ def load_campd_hourly(
     df = pd.concat(frames, ignore_index=True)
     idx = _hour_index_8760(df["date"].dt.month, df["date"].dt.day, df["hour"])
     df["hour_of_year"] = idx
+    if (idx >= 0).all():
+        # Nothing to drop — the only negative index is Feb 29, so in a non-leap
+        # year the boolean take below copies the whole (multi-million-row) frame
+        # to reproduce it exactly. ``concat(ignore_index=True)`` already left a
+        # clean RangeIndex, so ``reset_index(drop=True)`` is a no-op here too.
+        # PERF-B: ~5 s per non-leap ISO-year.
+        return df
     return df[idx >= 0].reset_index(drop=True)
 
 

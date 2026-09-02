@@ -337,3 +337,146 @@ MISO/PJM `results_write` (~21–35 s/yr); NEISO's 118–190 s/yr `data_prep` ano
 
 Mechanism-matrix duty check (rule 28 `[R-MECH-MATRIX]`): no calibration/forecast
 mechanism tested, no `ScenarioConfig` field added — no matrix touch required.
+
+---
+
+## 5. PERF-B RESUME (2026-09-02, session perf-b-apply) — owner ruling R-V
+
+WS3 was paused by owner decision 2026-08-17 and **resumed by owner ruling R-V**
+(2026-09-01, third sitting). Branch `claude/perf-b-apply-nabnpi`, off `origin/main`
+@ `07472e7c`. Host: 4 vCPU / 15 GB with a **14.33 GB memory cgroup on the shell**
+(`/sys/fs/cgroup/memory/process_api/.../memory.limit_in_bytes`) — the same cap §4
+recorded, re-measured here, so the PJM/miso full-8760 replay ceiling is unchanged.
+
+### 5.1 The charter's four items, re-verified at HEAD — all four are CLOSED
+
+The dispatch re-issued §3/WS3's four-item scope. Every item was already disposed by
+the 2026-08-17 completion note (§4); this pass re-verified each against the code at
+`07472e7c` rather than carrying §4's claim forward.
+
+| # | Charter item | State at HEAD | Evidence |
+|---|---|---|---|
+| 1 | `results_write` refactor | **LANDED** | `pd.Categorical.from_codes` at `scripts/run_calibration_full.py:460,517,718,724`; the post-hoc `.astype("category")` survives only on the small per-pass sidecar frames. §4's measured effect (`frames` 10.3–10.8 → 2.1–3.7 s/yr) stands. Its handed-forward residual — the `bench` sub-phase — is §5.2 below. |
+| 2 | ci.yml checkout change | **LANDED, nothing open** | All **10** real jobs carry a non-cone `sparse-checkout` block (⇒ `actions/checkout` adds `--filter=blob:none`); `fast-tests`, the open case the dispatch named, has both the tested sparse block and `timeout-minutes: 20`. Verified job-by-job, not from the header comment. |
+| 3 | Exp-2 memoized-enum basis LUT | **LANDED** | `_BASIS_STATUS_OBJS = [highspy.HighsBasisStatus(i) for i in range(5)]` at `src/market_sim/model/lp/model.py:43`, indexed in both list-comps at `:1501-1502`. PERF-A §2.3's "NO — never folded in" no longer holds. |
+| 4 | `forecast_xyear_warmstart` default flip | **CLOSED — no flip ships; none was made** | Plan §6 decision 1 reads *CLOSED — OVERTAKEN BY EVENTS*, owner ack on record 2026-08-26: D-9 flipped the default, D-10 disarmed the forecast lane. HEAD matches that account — `ScenarioConfig.forecast_xyear_warmstart: bool = True` (`config/scenarios.py:13606`) with the lane disarmed through `forecast_posture.shipped_forecast_xyear_warmstart`. **The memo is signed and its answer is "do not flip"**, so PERF-B correctly makes no config change here. Records verification only. |
+
+**Consequence for the WS3 DoD:** items 1–4 need no new code, and their wallclock
+deltas are already reported in `wallclock-baseline-2026-07.md` §PERF-B. What this
+session adds is the one lever §4 handed forward.
+
+### 5.2 The handed-forward lever — `results_write`'s `bench` sub-phase
+
+§4 handed forward "the `bench` sub-phase now dominating MISO/PJM `results_write`
+(~21–35 s/yr)" as the next lever. **It is not frame assembly, and it is not the
+EIA-923 benchmark frames.** Sub-instrumenting the phase's two disjoint segments
+(`run_calibration_full.py:5619`) attributes essentially all of it to
+`_campd_hourly_frame`, and within that to `campd.load_campd_hourly`:
+
+| Stage of `_campd_hourly_frame` (2024, cold) | PJM | MISO |
+|---|---|---|
+| `load_campd_hourly` | 38.80 s | 27.42 s |
+| `fill_heatinput_proxy` (PJM only) | 9.69 s | — |
+| `plant_hourly_net` | 2.32 s | 1.52 s |
+| frame assembly | **0.15 s** | **0.14 s** |
+| total | 50.96 s | 29.08 s |
+
+Frame assembly — the thing the (a) categorical fix was about — is already free.
+The cost is the *loader*, and cProfile puts 21.7 s of PJM's 33.7 s inside
+`_normalize_campd`. Three defects, each a low-cardinality or no-op computation
+done per row:
+
+1. **`facilityId` parsed row-by-row.** It is a ~1 M-row *string* column carrying
+   a few dozen ORIS codes; `pd.to_numeric` parsed every row (~0.95 s per
+   state-year extract), and `stack_duplicate_mask` then parsed **the same column
+   again** (another ~0.92 s). Fixed by `_to_numeric_by_uniques`: parse the
+   uniques, gather by factorize code. Value- and dtype-identical by construction
+   — the unique set carries the same values, so `to_numeric`'s int-vs-float
+   choice is the same; empty / already-numeric / low-repeat inputs fall through
+   to the direct call.
+2. **The split-facility remap ran 7 M dict lookups per PJM year to remap
+   nothing.** `CAMPD_UNIT_PLANT_REMAP` is CA-only, so every non-CA row's `.get`
+   returned its own id. Restricted to remap-eligible rows via one `np.isin`.
+3. **The closing `df[idx >= 0].reset_index(drop=True)` copied a multi-million-row
+   frame to drop Feb 29** — which does not exist in a non-leap year. `-1` is
+   emitted by `_hour_index_8760` *only* for Feb 29, so `(idx >= 0).all()` ⟺ the
+   filter drops nothing; `concat(ignore_index=True)` already left the RangeIndex
+   `reset_index` would rebuild.
+
+**Measured, best-of-3 with the arms alternating in one process** (so page-cache
+state and container noise hit both equally), PJM, `load_campd_hourly`:
+
+| Year | pre-PERF-B reference | this change | Δ | arm-vs-arm frame equality |
+|---|---|---|---|---|
+| 2023 (non-leap) | 19.43 s | **6.55 s** | **−66.3 %** | IDENTICAL |
+| 2024 (leap) | 21.04 s | **6.11 s** | **−71.0 %** | IDENTICAL |
+| 2025 (non-leap) | 14.03 s | **5.09 s** | **−63.7 %** | IDENTICAL |
+
+(Absolute values sit below the cold table above because best-of-3 runs warm; per
+§4's standing host-noise caveat the *relative* delta is the reliable signal.)
+Cold, single-shot, the whole `_campd_hourly_frame` goes PJM 50.96 → 21.18 s and
+MISO 29.08 → 16.17 s — i.e. the `bench` sub-phase roughly halves, which clears
+the ≥10 %-of-phase adoption bar on `results_write` with room to spare, while
+being ~2–4 % of an ISO-year's total wall.
+
+**Identity evidence, ahead of the byte gate.** `assert_frame_equal(
+check_exact=True, check_dtype=True)` against a verbatim reproduction of the
+pre-change `_normalize_campd`, over **every CAMPD extract on disk: 331/331
+identical**, 8 of them exercising the split-facility remap and 8 the
+stack-duplicate drop. Plus the three arm-vs-arm equalities above, which cover
+the leap fast path in both directions. `tests/curation/test_campd.py`: 43 passed,
+10 subtests.
+
+### 5.3 Byte gate — NEISO, full 8760 × 2023–2025
+
+Arms captured with `scripts/capture_keeper_goldens.py` at this branch's HEAD, keeper
+**`2026-08-17-neiso-99-joint-p1`**, determinism pin (`MARKET_SIM_HIGHS_THREADS=1`,
+`WARMSTART=1`, `WARMSTART_XYEAR=0`). The two arms differ **only** in
+`src/market_sim/data/campd.py` (before = `27b3a92c~1`, after = `27b3a92c`); every
+other file is identical. Both arms replayed the keeper cleanly — *259 recorded flags
+replayed identically (13 HEAD-only meta keys); scenario_config 717 matched, 0 drifted*
+— so the pair is a real recipe reproduction, not a degraded one.
+
+```
+scripts/regression_gate.py --before results/regression-goldens/perfb-campd-before \
+                           --after  results/regression-goldens/perfb-campd-after \
+                           --mode byte
+```
+
+| Gate check | Result |
+|---|---|
+| **[1] Golden bundle diff** | **PASS — NEISO: 9 files, 32 numeric columns within tolerance (atol=0.0, rtol=0.0)** |
+| [2] Reshuffle localization | 2023/2024/2025 all `Σ|hourly Δ| = 0.0 GWh = 0.000 % of total gen`; annual gen Δ +0.0000 GWh every year |
+| [3] Trivial-case smoke | PASS (24 passed) |
+| [4] Quarantine + registry | `audit_keepers` PASS; **`legitimacy(--keepers)` FAIL — see below, pre-existing** |
+
+Content-hash pre-screen (manifest, independent of the gate): **10 of 10 artifacts
+MATCH** — `btm`, `flows`, `storage`, `system`, and `dispatch/<year>_P1` +
+`_P1_fleet` for each of 2023/2024/2025.
+
+**The `--mode byte` identity requirement is MET.** The overall `RESULT: FAIL` the
+script prints comes entirely from check [4], and that check fails for a reason with
+no connection to this change:
+
+```
+ValueError: nyiso_li_lcr_tsl=True but no published Long Island transfer_security_limit
+for delivery year 2023/2024 in the capacity-deliverability table
+(data/raw/capacity-deliverability/nyiso/nyiso.csv); available areas: []
+```
+
+⚠️ **Attributed by control, not by assertion.** `legitimacy_diagnostics.py --keepers`
+was run twice at this HEAD, once with `campd.py` at `27b3a92c` and once reverted to
+`27b3a92c~1`, changing nothing else: **byte-identical failure, same exception, same
+line (`model/interchange/nyiso.py:279`), exit 1 both times.** It is a NYISO
+capacity-deliverability *data* gap on main, not a regression from this branch, and
+this branch touches no NYISO or capacity-deliverability path.
+
+**A finding for the director, not for this lane to fix (rule 25 `[R-ISO-SCOPE]` — it
+is NYISO's):** because check [4] is part of `regression_gate.py`, **the program's own
+byte gate currently returns `RESULT: FAIL` for *every* change on main**, whatever the
+change does. Any WS3/DEBUG-B lane running the gate will see a red verdict it did not
+cause, and the failure text points at NYISO rather than at the gate being broken —
+an easy trap to misread as "my change broke something". Until the NYISO TSL row lands,
+gate verdicts must be read **per check**, and check [1] is the one `--mode byte`
+speaks to. This is adjacent to, but distinct from, the three red `ci.yml` jobs R-P's
+blocker 1 records.
