@@ -345,6 +345,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # so the off path is byte-inert. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 / caiso-186 discipline).
     "campd_per_unit_attribution",
+    # nyiso-177 economic-lay-up guard on the per-unit CAMPD companions (GATED
+    # default-off; selects the '-perunitmerit-' pair through the SAME resolver
+    # pair as campd_per_unit_attribution, so the off path is byte-inert).
+    # Registered IN THE SAME COMMIT as the field.
+    "campd_outage_merit_order_guard",
     # miso-188 retiree-channel vintage-status scope (GATED default-off; the
     # sole consumer threads it via getattr into
     # data/fleet/eia860.py::load_retired_within_window, so the off path is
@@ -1402,6 +1407,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-176 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_per_unit_attribution": "False",
+    # Added by nyiso-177 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_outage_merit_order_guard": "False",
     # Added by miso-188 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "retiree_vintage_status_scope": "False",
@@ -11918,6 +11926,49 @@ class ScenarioConfig:
     # so the off path is byte-inert and no ISO but NYISO is reachable today.
     # See docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.
     campd_per_unit_attribution: bool = False
+
+    # ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177,
+    # GATED default off; PREREG-nyiso177-degradation-root-cause.md). Selects
+    # the '-perunitmerit-' pair -- the SAME per-unit attribution, derived with
+    # scripts/data/derive_campd_unit_outages.py --merit-order-guard, in which a
+    # detected full-stop window whose unit's measured SRMC (CAMPD heat rate x
+    # delivered fuel price) sat above the revealed marginal cost of the
+    # capacity that WAS running for at least MERIT_OOM_FRAC of the window is
+    # classified as ECONOMIC LAY-UP and LEAVES the availability envelope. An
+    # economically idle unit is AVAILABLE; the LP declines it on its own
+    # economics rather than losing it from the supply stack.
+    #
+    # WHY IT EXISTS. nyiso-176 armed campd_per_unit_attribution and the
+    # backcast got worse (C1/C3b PASS -> FAIL, load-weighted price
+    # +14.7/+7.3/+5.4 %, ST_GAS -5.28/-2.39/-1.05 TWh). Rule 14 [R-ACCURATE]
+    # binds: the accurate input is kept and the degradation is a discovered
+    # bug. nyiso-177 attributes it -- NOT to the attribution repair but to the
+    # unguarded HEAD derivation the same gate imported alongside it, which
+    # books economic idling as mechanical outage. The guarded companion
+    # reproduces the KEEPER's availability envelope while carrying the accurate
+    # attribution: np.array_equal on (2500, ST_GAS) in all three years and a
+    # nameplate-weighted L1 distance of 0.0006 across every bin, against the
+    # unguarded companion's 0.0943.
+    #
+    # WHAT IT DOES NOT CLAIM. It does NOT repair the overlay's over-booking:
+    # the NYISO ST_GAS bins still read 0.53/0.56/0.50 of the capacity-year as
+    # outage under it, against an EFOR+planned norm of 0.10-0.15 -- and the
+    # KEEPER reads 0.54/0.56/0.50, so that object is PRE-EXISTING and stays
+    # OPEN (PREREG-nyiso177 gate G2; G3 is recorded FAILED on exactly this).
+    #
+    # ZERO FREE PARAMETERS (rule 21 [R-DOF]): MERIT_OOM_FRAC and
+    # MERIT_RCC_PCTL are the deriver's committed constants, untouched, and the
+    # inputs are measured heat rates and delivered fuel prices that regenerate
+    # for a forward year (rule 13 [R-MEASURED]). ONE field over BOTH artifacts,
+    # exactly as campd_per_unit_attribution is (rule 19 [R-ONE-MECH]) -- the
+    # tranche statistics are computed over an outage-derated denominator, so
+    # the two must never sit on different availability bases. Has no meaning
+    # without campd_per_unit_attribution and is forced False without it
+    # (data/fleet/campd_bins.py::campd_attribution_selectors). Byte-inert off:
+    # separate files, never an overwrite, with fallback to the unguarded
+    # companion and then the incumbent artifact, so no ISO but NYISO is
+    # reachable today (rule 25 [R-ISO-SCOPE]).
+    campd_outage_merit_order_guard: bool = False
 
     # Retiree-channel injection scoped by the EIA-860 vintage status oracle
     # (retiree_vintage_status_scope, off by default; miso-188,

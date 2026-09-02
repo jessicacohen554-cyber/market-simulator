@@ -1083,6 +1083,7 @@ def _posture_pool_params(
     n_r: int,
     iso: str,
     per_unit: bool = False,
+    merit_guard: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Per-pool commitment-posture parameters for the pergen (zone, fuel) pools.
 
@@ -1148,7 +1149,9 @@ def _posture_pool_params(
 
     # Member min-stable-when-online fraction: CEMS-measured committed_pct per
     # plant, WWSIS-2 class gap-fill for uncovered plants.
-    overrides = thermal_tranche_overrides(iso, per_unit=per_unit)
+    overrides = thermal_tranche_overrides(
+        iso, per_unit=per_unit, merit_guard=merit_guard
+    )
     mlf = np.zeros(gidx.size)
     for j in range(gidx.size):
         row = overrides.get((int(plants[j]), str(groups[j])))
@@ -2708,6 +2711,7 @@ def _pjm_design(
                 n_r,
                 str(config.iso),
                 bool(getattr(config, "campd_per_unit_attribution", False)),
+                bool(getattr(config, "campd_outage_merit_order_guard", False)),
             )
         return ReserveDesign(
             families=families,
@@ -3130,6 +3134,7 @@ def _miso_design(
                 n_r,
                 str(config.iso),
                 bool(getattr(config, "campd_per_unit_attribution", False)),
+                bool(getattr(config, "campd_outage_merit_order_guard", False)),
             )
         return ReserveDesign(
             families=families,
@@ -4234,6 +4239,7 @@ def _caiso_design(
             n_r,
             str(config.iso),
             bool(getattr(config, "campd_per_unit_attribution", False)),
+            bool(getattr(config, "campd_outage_merit_order_guard", False)),
         )
 
     return ReserveDesign(

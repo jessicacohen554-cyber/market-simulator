@@ -196,7 +196,7 @@ def _offer_curve_for_group(
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "st_gas_intermediate_cf_threshold", 50.0))
         if int(plant_code) in st_gas_intermediate_plants(
-            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))
+            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False)), bool(getattr(config, "campd_outage_merit_order_guard", False))
         ):
             inter = curves.get("ST_GAS_INTERMEDIATE")
             if inter:
@@ -205,7 +205,7 @@ def _offer_curve_for_group(
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "ct_intermediate_cf_threshold", 50.0))
         if int(plant_code) in ct_intermediate_plants(
-            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))
+            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False)), bool(getattr(config, "campd_outage_merit_order_guard", False))
         ):
             inter = curves.get("CT_INTERMEDIATE")
             if inter:
@@ -214,7 +214,7 @@ def _offer_curve_for_group(
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "cc_intermediate_cf_threshold", 50.0))
         if int(plant_code) in cc_intermediate_plants(
-            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))
+            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False)), bool(getattr(config, "campd_outage_merit_order_guard", False))
         ):
             inter = curves.get("CC_INTERMEDIATE")
             if inter:
@@ -939,6 +939,7 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
             group,
             iso=getattr(config, "iso", "ERCOT"),
             per_unit=bool(getattr(config, "campd_per_unit_attribution", False)),
+            merit_guard=bool(getattr(config, "campd_outage_merit_order_guard", False)),
         )
     pct_mc = float(b["pct_mc"])
     if offer is not None and "pct_committed" in offer:

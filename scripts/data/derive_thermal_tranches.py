@@ -752,6 +752,21 @@ def main() -> None:
         "attributions are a clean single delta. Zero free parameters.",
     )
     ap.add_argument(
+        "--merit-order-guard",
+        action="store_true",
+        help="Derive against the MERIT-ORDER-GUARDED unit-outage companion "
+        "(campd-unit-outages-perunitmerit-{ISO}.csv, written by "
+        "derive_campd_unit_outages.py --per-unit-crosswalk --merit-order-guard) "
+        "instead of the unguarded '-perunit-' extract, and write the matching "
+        "'-perunitmerit' tranche companion. Requires --per-unit-attribution. "
+        "A tranche row's online_hours / committed_pct / median_cf are computed "
+        "over an outage-derated denominator (avail_cap = nameplate x "
+        "avail_mult enters both the online test and the finite mask), so the "
+        "two artifacts must be derived on the SAME availability basis or a "
+        "solve carries two of them inside one LP (nyiso-177, rule 19 "
+        "[R-ONE-MECH]). Zero free parameters. Never an overwrite.",
+    )
+    ap.add_argument(
         "--backfill-sidecar",
         action="store_true",
         help="Write the DESCRIPTIVE vintage sidecar for an existing committed "
@@ -764,9 +779,13 @@ def main() -> None:
     from market_sim.config.paths import PROCESSED_DIR
 
     per_unit = bool(getattr(args, "per_unit_attribution", False))
+    merit_guard = bool(getattr(args, "merit_order_guard", False))
+    if merit_guard and not per_unit:
+        raise SystemExit("--merit-order-guard requires --per-unit-attribution")
     default_name = (
-        f"thermal_tranches-perunit-{iso}.csv"
-        if per_unit
+        f"thermal_tranches-perunitmerit-{iso}.csv"
+        if (per_unit and merit_guard)
+        else f"thermal_tranches-perunit-{iso}.csv" if per_unit
         else f"thermal_tranches_{iso}.csv"
     )
     out_path = Path(args.out) if args.out else (PROCESSED_DIR / default_name)
@@ -833,7 +852,12 @@ def main() -> None:
         # nyiso-175b shipped and disclosed (its East River CT_CHP row was
         # derived un-derated because every window there still routed to
         # ST_CHP). One crosswalk, both artifacts (rule 19 [R-ONE-MECH]).
-        derate = unit_outage_derate_factors(year, iso=iso, per_unit_crosswalk=per_unit)
+        derate = unit_outage_derate_factors(
+            year,
+            iso=iso,
+            per_unit_crosswalk=per_unit,
+            merit_order_guard=merit_guard,
+        )
         for (code, group), nameplate in cap.items():
             if group not in _THERMAL_GROUPS or nameplate <= 0:
                 continue

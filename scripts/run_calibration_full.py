@@ -3520,6 +3520,7 @@ def solve_and_persist(
     unit_outage_lp_capacity_basis: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
+    campd_outage_merit_order_guard: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -4844,6 +4845,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 campd_per_unit_attribution=campd_per_unit_attribution
             )
+        if campd_outage_merit_order_guard is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                campd_outage_merit_order_guard=campd_outage_merit_order_guard
+            )
         if cc_winter_capability_basis is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_winter_capability_basis=cc_winter_capability_basis
@@ -5275,6 +5280,7 @@ def solve_and_persist(
             unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis,
             unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing,
             campd_per_unit_attribution=campd_per_unit_attribution,
+            campd_outage_merit_order_guard=campd_outage_merit_order_guard,
             cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -6185,6 +6191,7 @@ def solve_and_persist(
         "unit_outage_lp_capacity_basis": unit_outage_lp_capacity_basis,
         "unit_outage_mixed_gas_routing": unit_outage_mixed_gas_routing,
         "campd_per_unit_attribution": campd_per_unit_attribution,
+        "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
         "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -8395,6 +8402,7 @@ def run_replay_bundle(
     caiso_st_gas_committed_measured: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
+    campd_outage_merit_order_guard: bool | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8477,6 +8485,10 @@ def run_replay_bundle(
         # committed keeper's recipe, so the re-baseline A/B is a single delta
         # against a byte-faithful control leg.
         kwargs["campd_per_unit_attribution"] = campd_per_unit_attribution
+    if campd_outage_merit_order_guard is not None:
+        # nyiso-177: the lay-up guard rides the SAME replay path, so a
+        # vintage-matched availability basis is reachable from a keeper recipe.
+        kwargs["campd_outage_merit_order_guard"] = campd_outage_merit_order_guard
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
         # (the dashboard and audit_keepers pair twins by ablation_of).
@@ -11080,6 +11092,24 @@ def main() -> None:
         "keeps the base config value (off).",
     )
     parser.add_argument(
+        "--campd-outage-merit-order-guard",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Take ECONOMIC LAY-UP out of the availability envelope on the "
+        "per-unit CAMPD companions (ScenarioConfig."
+        "campd_outage_merit_order_guard; REQUIRES "
+        "--campd-per-unit-attribution and is inert without it). Selects the "
+        "'-perunitmerit-' pair -- the same per-unit attribution, derived with "
+        "derive_campd_unit_outages --merit-order-guard, in which a detected "
+        "full-stop window whose unit's measured SRMC sat above the revealed "
+        "clearing cost of the capacity that WAS running is classified as "
+        "economic lay-up and leaves the outage overlay, so the LP keeps the "
+        "capacity and declines it on its own economics. Zero free parameters "
+        "(MERIT_OOM_FRAC / MERIT_RCC_PCTL are the deriver's committed "
+        "constants). It does NOT repair the overlay's over-booking -- see "
+        "PREREG-nyiso177 gates G2/G3, which record that object as open.",
+    )
+    parser.add_argument(
         "--campd-per-unit-attribution",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12095,6 +12125,12 @@ def main() -> None:
                 or "--no-campd-per-unit-attribution" in sys.argv
                 else None
             ),
+            campd_outage_merit_order_guard=(
+                args.campd_outage_merit_order_guard
+                if "--campd-outage-merit-order-guard" in sys.argv
+                or "--no-campd-outage-merit-order-guard" in sys.argv
+                else None
+            ),
             enable_legacy_p2=args.enable_legacy_p2,
         )
         return
@@ -12454,6 +12490,7 @@ def main() -> None:
         unit_outage_lp_capacity_basis=args.unit_outage_lp_capacity_basis,
         unit_outage_mixed_gas_routing=args.unit_outage_mixed_gas_routing,
         campd_per_unit_attribution=args.campd_per_unit_attribution,
+        campd_outage_merit_order_guard=args.campd_outage_merit_order_guard,
         cc_winter_capability_basis=args.cc_winter_capability_basis,
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,
