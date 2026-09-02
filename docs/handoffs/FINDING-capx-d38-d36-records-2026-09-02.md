@@ -114,9 +114,21 @@ here or anywhere else.** The FC-5 header's `counts` block needed no edit because
 nothing it counts changed.
 
 The schema did not resist the re-author: `fc5-disposition/v1` carries
-`explanation` as a free-text string, and no script in the repo reads these
-disposition files (they are the rubric's human artifact), so there is no
-consumer to re-run or invalidate.
+`explanation` as a free-text string, and no **script** in the repo reads these
+disposition files — they are the rubric's human artifact, so nothing has to be
+re-run.
+
+**The one derived consumer, checked and NOT stale.** A repo-wide search found two
+committed data files that carry FC-5 material downstream of this table:
+`frontend/data/forecast/ff-verdicts.json` (D35's file this window — not touched
+here) and `frontend/data/forecast/program-status.json`. Their FC-5 snapshot
+records only the **row-key list** of explained divergences plus the leg's status
+— e.g. `"explained divergences: [… 'capacity:storage@2030' … 'capacity:storage@2035'
+… 'capacity:storage@2040' …]"`, `status: CAVEAT` — and embeds none of the
+`explanation` prose. Because all three storage rows kept the
+`EXPLAINED DIVERGENCE` category, every key in those lists and every FC-5 status
+is unchanged by this edit. No forecast-namespace file needed a write, which is
+what a records-only charter requires.
 
 ## 4. Rule 27
 
