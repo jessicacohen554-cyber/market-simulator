@@ -130,6 +130,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     ercot_offer_surface_position_tail: { cell: "." },
     ercot_offline_commit_offer: { cell: "." },
     caiso_ungrounded_class_regrounding: { cell: "." },
+    st_gas_committed_measured_bypass: { cell: ".", ev: "n/a (caiso-239, 2026-09-02): the mechanism only reaches ST_GAS bins that _offer_curve_for_group bypasses, i.e. ST_GAS_PEAKER_PLANTS members, and that frozenset holds only CAISO and ERCOT plants. This ISO has none, so no bin can take the class-default path the repair replaces." },
     measured_offer_surface: { cell: "G", ev: "nyiso-115 (ex-ante transfer adjudication, 0 solves; scripts/probes/_nyiso115_transfer_queue_adjudication.py -> results/calibration/nyiso115_transfer_queue_adjudication.json)" },
     miso_offer_level_dispersion: { cell: ".", ev: "MISO-only adjudication of a MISO-corpus identification (the masked *_co conduct book). Each ISO's across-unit offer-level object is its own identification from its own disclosure corpus (rule 25) — this market's offer-conduct candidates live on its own offer-surface family rows; a dispersion-form candidate here would enter as its own cell with its own derive." },
     miso_offer_spread_anchored: { cell: ".", ev: "MISO-only graft of a MISO-corpus identification (the committed miso-179 BOOK-ELIG vector + the miso-180 H*-crossing anchor). Rule 25: the verdict never transfers; a spread-graft candidate in this ISO enters as its own cell with its own identification from its own disclosure corpus." },

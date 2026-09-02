@@ -1205,6 +1205,7 @@ def backcast_config(
     pjm_offer_midcurve_conditional: bool = False,
     caiso_offer_surface_measured: bool = False,
     caiso_offer_surface_measured_ungrounded: bool = False,
+    caiso_st_gas_committed_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
@@ -2203,6 +2204,22 @@ def backcast_config(
                 config.offer_curve_by_group, _extra
             ),
         )
+    # caiso-239 measured ST_GAS committed band at the ST_GAS_PEAKER_PLANTS
+    # bypass (default off, CAISO-gated here as well as in the consumer). Only
+    # the GATE is set on the config -- the band itself is resolved per plant in
+    # `fleet.assembly.bins_to_fleet`, because the bypassed plants never reach
+    # `offer_curve_by_group` at all (that IS the defect this repairs), so there
+    # is no band dict here to merge into. Armed on a non-CAISO ISO is a hard
+    # error at the consumer, never a silent no-op (rule 25 [R-ISO-SCOPE]).
+    if caiso_st_gas_committed_measured:
+        if iso.upper() != "CAISO":
+            raise ValueError(
+                "caiso_st_gas_committed_measured is CAISO-scoped "
+                f"(rule 25 [R-ISO-SCOPE]) and was armed for {iso.upper()}; "
+                "no other ISO has a measured avg_committed_p50 entry in "
+                "constants.ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO"
+            )
+        config = config.with_overrides(caiso_st_gas_committed_measured=True)
     # MISO gas + coal offer curves (CAMPD-/structure-/SOM-grounded; see
     # _MISO_OFFER_CURVE). Merged on top of the generic non-PJM/non-ERCOT branch
     # so only the named classes change (CC_REGULAR flattened to MISO's measured
