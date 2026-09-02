@@ -357,6 +357,27 @@ of 100-hour iron-air in 2050. Zero entry in all of 2026–2049.**
   2030); they produce it two decades later, at the LDES end of the tech space.
   Routed to the director as the campaign's headline structural result (§8).
 
+**Correction 2026-09-02 (D38, routed by D36 §8.3).** The mechanism-attribution
+bullet above — "under the D-3 cost-normalized rank the clearing pick is the
+100-h machine …, where the pre-R-A absolute-margin rank had cleared nothing" —
+**misattributes the 2050 clearing to the rank**. D-3 is **sign-preserving**: by
+its own docstring (`storage.py:1789`) it reorders clearing technologies and can
+neither create nor remove a clearing, and D-2 only removes candidates, so on
+identical prices the armed screen clears a *subset* of what the unarmed screen
+clears — the arming could not have produced the 2050 entry. The clearing is a
+**DATA-channel result**, the same channel §6.2 below already attributes the
+trajectory delta to: the RC-R demand-curve intake re-times the exit waves, less
+capacity is retained, and the out-year stack tightens (2049: 2,243 h ≥ $100/MWh
+vs golden-1's 1,339; 2050: 2,446 vs 1,531), so the iron-air requirement crosses
+its arbitrage leg between the 2049 and 2050 screens ($83.4 → $78.7/kW-yr). What
+the rank did do is choose *among* clearers — and iron-air was the only one, so
+it was never decisive here. Everything else in §6.1 stands unchanged: the 720 MW
+sizing attribution, the availability-gate attribution, the identity of 2026–2049
+under both postures, and the corridor consequence. No verdict, gate, cell or
+corridor row moves on this correction. Basis: D36 §1 (consequence 1), §4 census
+row "D-3 cost-normalized rank", §6 —
+`docs/handoffs/FINDING-capx-d36-storage-valuestack-2026-09-02.md`.
+
 ### 6.2 Head-of-horizon: golden-1 does NOT reproduce, and the divergence is
 ### decomposed, not absorbed
 
