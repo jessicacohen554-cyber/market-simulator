@@ -246,6 +246,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     net_cone_forward_vintages: { cell: "O", fc: "O" },
     reserve_margin_backstop: { cell: "K", fc: "K" },
     adequacy_internal_supply_accounting: { cell: "U", fc: "U", ev: "UNTESTED, no transfer (rule 25/28d — capx D31): identification source is the SOM supplied-vs-requirement tables (D28 §6.5); NOTE the NYISO position basis is already the FF-3D/FF-2C flip gate's live object (D28 §4 latent verdict — the curve-ON probe's +123% retirements is the position defect expressing), so this cell belongs to whichever session holds that flip" },
+    neiso_net_icr_requirement: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D40): NYISO's requirement is the NYSRC IRM × the NYCA translation factor (R5a); the per-capability-year IRM series is a NYISO-side analogue not adjudicated here (rule 25)." },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },

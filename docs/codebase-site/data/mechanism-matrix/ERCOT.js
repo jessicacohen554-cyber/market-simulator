@@ -245,6 +245,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     net_cone_forward_vintages: { cell: ".", fc: "." },
     reserve_margin_backstop: { cell: ".", fc: "." },
     adequacy_internal_supply_accounting: { cell: ".", fc: ".", ev: "n/a by market design (capx D31): energy-only — no capacity auction, no offered/cleared supply accounting to reconcile a census ledger against; ERCOT's ledger already counts on its own published CDR seasonal_rating basis" },
+    neiso_net_icr_requirement: { cell: ".", fc: ".", ev: "n/a by market design (capx D40): energy-only — no capacity auction, no published procurement requirement series; the Board target RM composite is the only adequacy construct." },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },

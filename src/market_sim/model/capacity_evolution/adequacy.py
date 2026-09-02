@@ -23,6 +23,7 @@ import logging
 from functools import lru_cache
 
 from market_sim.config.constants import (
+    ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
     ADEQUACY_EXTERNAL_TIE_FIRM_MW,
     DEFAULT_MARKET_DESIGN,
     EFORD,
@@ -42,6 +43,7 @@ from .new_entry import _make_new_generator
 from .retirements import (
     _default_build_zone,
     _thermal_firm_mw,
+    net_icr_requirement_armed,
     resolve_adequacy_requirement_mw,
     resolve_internal_supply_accounting_ratio,
     resolve_renewable_capacity_credit,
@@ -403,7 +405,48 @@ def capacity_reserve_position(
         year=year,
         nqc_curves_enabled=config.caiso_nqc_accreditation,
     )
-    return accredited_mw / requirement_mw
+    return curve_convention_position(config, iso, accredited_mw / requirement_mw)
+
+
+def curve_convention_position(
+    config: ScenarioConfig | None, iso: str | None, position: float
+) -> float:
+    """Re-express a DR-netted reserve position on the ISO's curve x-convention.
+
+    The capx D40 R-B half of the NEISO position repair
+    (``FINDING-capx-d33-neiso-position-2026-09-02.md`` §1 / §4 R-B — "one
+    convention for position and curve, land WITH R-A"). The model's position
+    is ``firm / requirement`` on the NET convention: DR is netted from the
+    requirement and absent from the numerator. ISO-NE's published MRI demand
+    curve — and hence every R2 vintage point (``_NEISO_MRI_CLEARING_POINTS``,
+    x = cleared MW ÷ Net ICR) — is on the RAW convention: demand-capacity
+    resources are IN the cleared quantity and the Net ICR is un-netted.
+    Evaluating a net-convention position on a raw-convention curve mis-pairs
+    the two (D33 §2: +0.4 to +2.3 reserve-ratio points, growing with surplus,
+    so it maximally inflates exactly the long years the $0 readings occur in).
+
+    With ``f`` the ISO's DR fraction of the Net ICR
+    (:data:`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO`) and ``R`` the raw
+    requirement, ``firm = pos_net × R × (1 − f)`` and the DR quantity is
+    ``f × R``, so the raw-convention position is
+
+        pos_raw = (firm + f·R) / R = f + (1 − f) · pos_net
+
+    — purely algebraic in ``f``, no further data, and it holds identically on
+    the in-table (absolute Net ICR) and hold-last (ratio) paths because DR is
+    ``f × R`` on both. ``pos = 1.0`` is a fixed point (at the requirement the
+    curve pays net-CONE on either convention); positions away from 1 are
+    compressed by ``(1 − f)``. Applied ONLY when
+    :func:`~market_sim.model.capacity_evolution.retirements.
+    net_icr_requirement_armed` holds (the default-OFF gate + the NEISO
+    registry), so every other ISO and every unarmed run is byte-identical.
+    The reliability floor and the build backstop are untouched — they test
+    ``firm ≥ requirement``, which is convention-invariant.
+    """
+    if not net_icr_requirement_armed(config, iso):
+        return position
+    dr_fraction = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO.get(iso or "", 0.0)
+    return dr_fraction + (1.0 - dr_fraction) * position
 
 
 def resolve_reserve_margin_build_enabled(config: ScenarioConfig, iso: str) -> bool:

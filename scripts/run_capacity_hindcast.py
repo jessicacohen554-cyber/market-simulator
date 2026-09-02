@@ -481,6 +481,7 @@ META_RECORD_SPEC = RecordSpec(
         # solve did not carry (FFR-3R). Armed for MISO through the ISO's
         # default_scenario_overrides, so it is ON in a bare MISO invocation.
         "entry_vre_zone_selection": FromConfig(cast=bool),
+        "neiso_net_icr_requirement": FromConfig(cast=bool),
         "entry_rate_limits": FromConfig(cast=bool),
         "entry_commissioning_lag": FromConfig(cast=bool),
         "exit_rate_limits": FromConfig(cast=bool),
@@ -612,6 +613,7 @@ def build_config(
     retirement_rule: "str | None" = None,
     entry_screen_diagnostics: bool = False,
     entry_vre_capacity_revenue: "bool | None" = None,
+    neiso_net_icr_requirement: "bool | None" = None,
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     exit_rate_limits: "bool | None" = None,
@@ -820,6 +822,10 @@ def build_config(
             for k, v in {
                 "retirement_rule": retirement_rule,
                 "entry_vre_capacity_revenue": entry_vre_capacity_revenue,
+                # capx D40: NEISO published Net ICR requirement (+ curve
+                # convention) gate — default-off; None inherits the shipped
+                # default, True arms the D37 T1-H measurement posture.
+                "neiso_net_icr_requirement": neiso_net_icr_requirement,
                 "entry_rate_limits": entry_rate_limits,
                 "entry_commissioning_lag": entry_commissioning_lag,
                 "exit_rate_limits": exit_rate_limits,
@@ -1420,6 +1426,21 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--neiso-net-icr-requirement",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D40 (2026-09-02) NEISO-only arm: resolve the adequacy "
+            "requirement from ISO-NE's PUBLISHED per-CCP Net ICR series "
+            "(constants.NET_ICR_REQUIREMENT_MW_BY_ISO, hold-last ratio beyond "
+            "FCA 18) instead of the single-vintage composite, and evaluate "
+            "the CR-1 position on the published curve's own x-convention. "
+            "Inert on every other ISO. OMIT to inherit the shipped default "
+            "(off, owner-armed only); --neiso-net-icr-requirement arms it "
+            "(distinct cache key)."
+        ),
+    )
+    parser.add_argument(
         "--entry-vre-capacity-revenue",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1821,6 +1842,7 @@ def main(argv: list[str] | None = None) -> int:
         retirement_rule=args.retirement_rule,
         entry_screen_diagnostics=args.entry_screen_diagnostics,
         entry_vre_capacity_revenue=args.entry_vre_capacity_revenue,
+        neiso_net_icr_requirement=args.neiso_net_icr_requirement,
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         exit_rate_limits=args.exit_rate_limits,

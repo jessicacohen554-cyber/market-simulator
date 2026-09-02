@@ -45,6 +45,8 @@ from market_sim.config.constants import (
     DEFAULT_MARKET_DESIGN,
     FORECAST_POOL_REQUIREMENT_BY_ISO,
     MARKET_DESIGN,
+    NET_ICR_HOLD_LAST_RATIO_BY_ISO,
+    NET_ICR_REQUIREMENT_MW_BY_ISO,
     PLANNING_RESERVE_MARGIN_BY_ISO,
     PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     RENEWABLE_CAPACITY_CREDIT,
@@ -1075,14 +1077,112 @@ def resolve_forecast_pool_requirement(iso: str, year: int | None) -> float | Non
     return None
 
 
+def net_icr_requirement_armed(config: ScenarioConfig | None, iso: str | None) -> bool:
+    """True when ``iso`` prices adequacy on its published Net ICR series.
+
+    The ONE gate predicate (rule 19) behind both halves of the capx D40 repair
+    (``FINDING-capx-d33-neiso-position-2026-09-02.md`` §4 R-A / R-B): the
+    requirement resolver (:func:`resolve_published_net_icr_mw`) and the CR-1
+    position's curve-convention transform
+    (:func:`~market_sim.model.capacity_evolution.adequacy.
+    curve_convention_position`) consult it, so the two can never be armed
+    apart. Requires BOTH the default-OFF ``ScenarioConfig.
+    neiso_net_icr_requirement`` gate AND an entry for ``iso`` in
+    :data:`NET_ICR_REQUIREMENT_MW_BY_ISO` (NEISO alone — rule 25
+    ``[R-ISO-SCOPE]``: the flag armed on any other ISO's run is inert by
+    construction). ``config=None`` / ``iso=None`` resolve False.
+    """
+    if config is None or iso is None:
+        return False
+    if not getattr(config, "neiso_net_icr_requirement", False):
+        return False
+    return iso in NET_ICR_REQUIREMENT_MW_BY_ISO
+
+
+def resolve_published_net_icr_mw(
+    config: ScenarioConfig | None,
+    iso: str | None,
+    peak_demand_mw: float,
+    year: int | None,
+) -> float | None:
+    """Published Net ICR (MW, before DR netting) for ``iso``'s delivery year, or None.
+
+    The NEISO analogue of :func:`resolve_forecast_pool_requirement` (capx D40,
+    2026-09-02 — see :data:`NET_ICR_REQUIREMENT_MW_BY_ISO`'s citation block for
+    the identification and the D33 measurement it repairs). Resolution, in
+    order:
+
+    1. Gate: :func:`net_icr_requirement_armed` must hold (the default-OFF
+       ``neiso_net_icr_requirement`` flag AND a registry entry for the ISO);
+       otherwise ``None`` — the caller keeps its composite, byte-identically.
+    2. ``year`` maps to the Capacity Commitment Period that BEGINS in it
+       (``"YYYY/YYYY+1"``; ISO-NE's CCP runs June–May, so model calendar
+       ``2023`` prices against FCA 14's 2023/24 Net ICR — the same start-year
+       labelling the FPR table uses for PJM's June-start delivery year). The
+       label is built here rather than through
+       ``capacity_deliverability.resolve_delivery_year`` because that helper
+       keys its planning-year set on the clean-partition alias ``ISONE`` and
+       returns a bare calendar label for the model name ``NEISO``.
+    3. An in-table CCP returns its ABSOLUTE published Net ICR — the auction's
+       own denominator; the model's peak drops out (D33 R-A shape (i)).
+    4. Strictly beyond the last published CCP: HOLD-LAST (card C-A
+       2026-08-25), realised as ``peak_demand_mw × NET_ICR_HOLD_LAST_RATIO``
+       — the last CCP's published Net-ICR-to-50/50-peak ratio, so the held
+       bar still scales with load (an absolute MW held over a 2028–2050
+       horizon would fail the rule-13 forward test; see the registry
+       comment). Superseded per CCP the moment the ISO publishes it.
+    5. Before the first published CCP, or an in-table gap: ``None`` — the
+       composite fallback, exactly the PJM convention (the table's FORWARD
+       edge only is extended; a mid-table hole is a data problem hold-last
+       must not paper over).
+
+    The returned quantity is the RAW (gross-of-DR) requirement; the caller
+    nets the ISO's DR fraction (which is defined as a fraction OF Net ICR)
+    to obtain the firm-capacity bar the floor, backstop and CR-1 position
+    test. ``year=None`` returns ``None`` (the composite path).
+    """
+    if year is None or not net_icr_requirement_armed(config, iso):
+        return None
+    table = NET_ICR_REQUIREMENT_MW_BY_ISO.get(iso or "")
+    if not table:
+        return None
+    label = f"{int(year)}/{int(year) + 1}"
+    net_icr = table.get(label)
+    if net_icr is not None:
+        return float(net_icr)
+    last_label = max(table, key=lambda lbl: int(lbl[:4]))
+    if int(year) > int(last_label[:4]):
+        ratio = NET_ICR_HOLD_LAST_RATIO_BY_ISO.get(iso or "")
+        if ratio is None:
+            # A series with no published hold ratio has nothing lawful to
+            # hold; fall through to the composite rather than freeze a MW.
+            return None
+        return float(peak_demand_mw) * float(ratio)
+    return None
+
+
 def resolve_adequacy_requirement_mw(
     config: ScenarioConfig, iso: str, peak_demand_mw: float, year: int | None = None
 ) -> float:
     """Return the firm-capacity requirement shared by the floor and backstop.
 
-    Two constructions, in preference order (R2, accreditation-basis memo
+    Three constructions, in preference order (R2, accreditation-basis memo
     2026-07-12 §4.2 — "resolve the requirement from the published FPR of the
-    matching delivery year; fall back to ``(1 + PRM) x ratio`` otherwise"):
+    matching delivery year; fall back to ``(1 + PRM) x ratio`` otherwise";
+    extended by capx D40 with the ISO-NE Net ICR analogue):
+
+    0. **Published Net ICR series (NEISO, GATED default-OFF).** When
+       ``config.neiso_net_icr_requirement`` is armed and the ISO carries a
+       :data:`NET_ICR_REQUIREMENT_MW_BY_ISO` entry
+       (:func:`resolve_published_net_icr_mw`), the requirement is
+       ``Net_ICR_ccp × (1 − dr_fraction)`` for an in-table delivery year — the
+       auction's own absolute denominator, the model's peak dropping out — and
+       ``peak × hold_ratio × (1 − dr_fraction)`` strictly beyond the last
+       published CCP (card C-A hold-last, realised as the last CCP's
+       published Net-ICR/peak ratio). Pre-table years and in-table gaps fall
+       through. Repairs the single-vintage composite artifact D33 measured
+       (+23.8 reserve-ratio points of requirement error in 2023). Off — the
+       default — every NEISO solve is byte-identical to the two paths below.
 
     1. **Published Forecast Pool Requirement.** When ``year`` resolves to a
        delivery year the ISO publishes an FPR for
@@ -1118,6 +1218,13 @@ def resolve_adequacy_requirement_mw(
     that does not thread a year is byte-identical to the pre-R2 behaviour.
     """
     dr_fraction = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO.get(iso, 0.0)
+    # capx D40: the published Net ICR path (gated; None whenever unarmed,
+    # off-registry, pre-table, in-gap or year-less). The DR fraction is
+    # defined as a share OF the Net ICR (registry citation), so netting it
+    # from the published quantity reproduces ISO-NE's own DCR-CSO counting.
+    net_icr_raw_mw = resolve_published_net_icr_mw(config, iso, peak_demand_mw, year)
+    if net_icr_raw_mw is not None:
+        return net_icr_raw_mw * (1.0 - dr_fraction)
     firm_peak_mw = peak_demand_mw * (1.0 - dr_fraction)
     fpr = resolve_forecast_pool_requirement(iso, year)
     if fpr is not None:
