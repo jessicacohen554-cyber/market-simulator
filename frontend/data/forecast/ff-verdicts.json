@@ -3474,6 +3474,106 @@
     "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
     "rows": [
      {
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "NEISO",
+  "notes": [
+   "capx-D37 armed re-measure (owner ruling Q28): HEAD recipe + the D40 Net ICR requirement lever armed IN THIS RUN'S CONFIG ONLY; the SHIPPED DEFAULT of neiso_net_icr_requirement STAYS False. Determination HOLD -- UNCHANGED from the preserved FFR-3A-2 vintage, on FC-3 FAIL both times. FC-7 FAIL -> CAVEAT is an INSTRUMENT change (the harness now writes run_config.json, which the FFR-3A-2 leg predates), not a model improvement. The lever's real effect is NOT visible in this band list: it is in the adequacy POSITION, which the paired control isolates -- the armed post-evolution positions land +0.37 / -3.26 / +0.14 points of the real FCA 14/15/16 against the control's +21.13 / -1.44 / -5.34. See docs/handoffs/FINDING-capx-d37-neiso-t1h-armed-2026-09-02.md."
+  ],
+  "provenance": {
+   "cache_epoch": "313ba0612435b963",
+   "run_id": "neiso-2021-2025-realized-t1h-d37-armed",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-09-02",
+   "scored_at_sha": "11735c1f5d18",
+   "session": "capx-D37"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1h"
+ },
+ "neiso-t1h-pre-d37": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
       "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
       "gating": true,
       "row": "hindcast bands",
@@ -3536,7 +3636,9 @@
   "caveats": [],
   "determination": "HOLD",
   "iso": "NEISO",
-  "notes": [],
+  "notes": [
+   "PRESERVED BASELINE -- the FFR-3A-2-vintage `neiso-t1h` record, moved here VERBATIM by capx lane D37 (2026-09-02) when the armed Net ICR re-measure took the bare key under the LIVE-vintage convention. Valid at the sha it records (8ba592814d92); NEVER quote it as current state. Superseded by `neiso-t1h` (run neiso-2021-2025-realized-t1h-d37-armed)."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
@@ -3545,6 +3647,106 @@
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
    "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1h"
+ },
+ "neiso-t1h-d37-control": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "NEISO",
+  "notes": [
+   "capx-D37 PAIRED CONTROL: the same HEAD, the same recipe, ONE FIELD apart from `neiso-t1h` (neiso_net_icr_requirement False). Carries its own key because its FC-3 band list differs from the armed arm's -- add.shares.gas_ct is PASS here and FAIL under the arm -- so a run never renders a verdict its own score contradicts. This is the arm the D37 attribution is measured against; it is NOT a candidate for any bare per-tier key."
+  ],
+  "provenance": {
+   "cache_epoch": "5925e67c572a910f",
+   "run_id": "neiso-2021-2025-realized-t1h-d37-control",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-09-02",
+   "scored_at_sha": "11735c1f5d18",
+   "session": "capx-D37"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
