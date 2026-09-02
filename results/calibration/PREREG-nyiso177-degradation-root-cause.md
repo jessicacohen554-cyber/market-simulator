@@ -161,3 +161,103 @@ C3a-2025 it is **not** evidence for the representation repair (G5) and it is not
 quoted as one. If both legs score worse than the keeper, the accurate input and
 the repairs **stay**, the keeper is **untouched**, and the result is a sized,
 named root cause — which is the chartered deliverable either way.
+
+---
+
+# 6. AMENDMENT — committed BEFORE either A/B leg is solved, with NO score of any kind consulted
+
+**Status at amendment: G1 PASS, G2 OVER-BOOKED, G3 FAILED AS WORDED.** No LP has
+run. Everything below is driven by artifact-level measurement only; the
+amendment changes a gate's **CONSTRUCTION**, never a threshold in response to a
+result (the nyiso-175b K2 precedent).
+
+## 6.1 G3 is recorded as FAILED, at full strength, and its consequence is honoured
+
+Both legs fail, for different and separately-reported reasons:
+
+* **G3(a) — "strictly between the control's and the unguarded arm's".** The
+  merit-guarded per-unit extract puts `(2500, ST_GAS)` at **0.7715010038884795 /
+  0.4653023102142477 / 0.2967897806694284**, which is the **control's value to
+  16 significant figures** — the availability arrays are `np.array_equal` to the
+  keeper's in all three years. It lands **ON** the endpoint, not strictly
+  between it and the arm. **FAIL.**
+* **G3(b) — "booked_share below 0.40 in every year".** The guarded extract
+  reads **0.534 / 0.560 / 0.501**. **FAIL** — and the reason is a **defect in
+  the gate's construction, disclosed here**: the **KEEPER ITSELF** reads
+  **0.536 / 0.560 / 0.501**. The threshold therefore measures a **pre-existing
+  property of the keeper**, not the guard's effect, so no guarded construction
+  could ever have passed it. That was not visible when the gate was written.
+
+**The consequence is honoured in full. The merit-order guard is NOT armed as a
+repair of the availability envelope, and this session makes NO claim that it
+fixes the over-booking.** G2 fires on the keeper as well as on the arm
+(0.50–0.56 against a 10–15 % EFOR+planned norm); **that object stays OPEN and is
+handed forward unrepaired.**
+
+## 6.2 The brief's own item-(1) instrument is REFUTED at artifact level
+
+The brief directed a confound-removal leg derived with `--no-fullstop-override`,
+"so it matches the incumbent extract's own vintage". Derived and measured
+(2019–2026, per-unit routing, zero solves): **it does not match.** On the
+nameplate-weighted L1 distance of the mean-availability vector from the
+keeper's, over every bin and all three years — a **post-registration
+descriptive statistic, labelled as such and used for no gate below without
+being fixed in advance in §6.3**:
+
+| candidate companion | L1 distance from the keeper |
+|---|---|
+| unguarded per-unit (nyiso-176's arm) | 0.0943 |
+| **`--no-fullstop-override`** | **0.1055 — FURTHER than the arm** |
+| `--merit-order-guard` | **0.0006** |
+
+`--no-fullstop-override` moves **41 bins** by more than 0.02 in 2023 alone, in
+both directions: it deletes genuine long mechanical outages the in-merit filter
+alone would keep, while leaving the economically-idle ones the filter admits.
+**The confound the brief was reaching for is ECONOMIC LAYUP, not the full-stop
+override**, and the item-(1) instrument is recorded as refuted.
+
+## 6.3 G3′ REPLACES G3 — the question the brief actually posed
+
+G3 asked whether the guard **repairs** the envelope; it does not, and that is
+recorded above. What the brief asked is a **different** question: does a
+candidate companion **hold the availability envelope at the keeper's** so that
+the representation repair becomes a clean single delta?
+
+**METRIC, fixed here before any solve** (both directions stated): for each
+candidate, (a) the nameplate-weighted L1 distance above, and (b) hour-by-hour
+`np.array_equal` on `(2500, ST_GAS)` — the bin that carries the damage.
+
+* **G3′ QUALIFIES a candidate** iff L1 ≤ **0.01** **AND** (b) holds in all three
+  years. On this bar the merit-guarded companion **QUALIFIES** and both the
+  unguarded and `--no-fullstop-override` companions **DO NOT**.
+* **If no candidate qualified**, no vintage-matched leg would be solved and the
+  object would be handed forward. Stated so the gate could have gone the other
+  way; the measurement, not the preference, decides.
+
+**The claim a qualifying candidate earns is EXACTLY ONE THING and no more:**
+that a solve on it changes the **representation** while holding the
+**availability envelope** at the keeper's. It earns **no** claim about the
+over-booking, which G2 leaves open.
+
+## 6.4 The ladder, restated
+
+Control = the committed keeper (bit-identical at HEAD, nyiso-176 §8a.1;
+no control leg is solved).
+
+| leg | arm | isolates |
+|---|---|---|
+| **B1** | per-unit attribution **+ repair 1**, on the **unguarded** companions | repair 1 (the rule-19 stack), against nyiso-176's registered arm |
+| **B1′** | per-unit attribution **+ repair 1**, on the **G3′-qualifying** companions | the representation repair alone, availability held at the keeper's |
+
+Together with the keeper and nyiso-176's registered arm these form a **2 × 2**:
+{keeper-vintage availability, HEAD-unguarded availability} × {incumbent routing,
+per-unit routing + repair 1}. Every cell is a single delta from a neighbour.
+
+**G5 (R6/K5) BINDS HARDEST ON B1′ and is not relaxed by this amendment.** B1′ is
+by construction the leg on which the representation repair's C3a expectation is
+**~ZERO**. If B1′ moves C3a-2025 materially, that is a **result requiring a
+named mechanism**, not a promotion argument, and the burden is on the mechanism.
+
+**S1–S7 are unchanged.** No detector constant is touched; the guard runs at its
+committed `MERIT_OOM_FRAC` / `MERIT_RCC_PCTL`. The promotion bar (a)(b)(c) is
+unchanged and is not waived for B1′.
