@@ -1,0 +1,25 @@
+PRM=0.127664  f_DR=0.087843  (1+PRM)=1.127664  composite=1.028607  tie=409.31
+
+yr  FCA | peak    firmPost firmEnter| reqNet  reqRaw   NetICR | posNet posEnt posRaw posReal | gapNet  = conv + supply + req
+2023 FCA14 |   23475    30410    30410 |   24147   26472   32490 | 1.2594 1.2594 1.2366 1.0451 | +21.43 = +2.28  -4.61 +23.76 (pts)
+2024 FCA15 |   24255    27532    30410 |   24949   27351   33270 | 1.1035 1.2189 1.0944 1.0406 |  +6.29 = +0.91 -17.13 +22.52 (pts)
+2025 FCA16 |   25898    26775    27532 |   26639   29204   31645 | 1.0051 1.0335 1.0047 1.0368 |  -3.17 = +0.04 -11.88  +8.67 (pts)
+2026 FCA17 |   26235    28308    26775 |   26985   29584   30305 | 1.0490 0.9922 1.0447 1.0351 |  +1.39 = +0.43  -1.56  +2.52 (pts)
+2027 FCA18 |   26576    30019    28308 |   27336   29968   30550 | 1.0982 1.0356 1.0895 1.0329 |  +6.52 = +0.86  +3.66  +2.00 (pts)
+
+supply/requirement MW ledger (raw convention):
+2023 FCA14: model supply    32735 vs cleared    33956 (delta   -1221); model req(raw)    26472 vs NetICR    32490 (delta   -6018)
+2024 FCA15: model supply    29935 vs cleared    34621 (delta   -4686); model req(raw)    27351 vs NetICR    33270 (delta   -5919)
+2025 FCA16: model supply    29340 vs cleared    32810 (delta   -3470); model req(raw)    29204 vs NetICR    31645 (delta   -2441)
+2026 FCA17: model supply    30907 vs cleared    31370 (delta    -463); model req(raw)    29584 vs NetICR    30305 (delta    -721)
+2027 FCA18: model supply    32652 vs cleared    31556 (delta   +1096); model req(raw)    29968 vs NetICR    30550 (delta    -582)
+
+curve pay $/kW-yr (HEAD vintage curves):
+yr  FCA | @modelNet @enterNet | @repaired [lo..hi] | @realPos | real clearing
+2023 FCA14 |     0.00      0.00 |    28.03 [  0.00.. 66.81] |    24.01 |    24.01   (repaired pos 1.0418 [1.0174..1.0674])
+2024 FCA15 |     0.00      0.00 |   167.18 [167.18..167.18] |    31.33 |    31.33   (repaired pos 0.9187 [0.8977..0.9406])
+2025 FCA16 |    81.19     34.30 |   148.80 [148.80..148.80] |    31.09 |    31.09   (repaired pos 0.9446 [0.9218..0.9685])
+2026 FCA17 |    15.11    116.14 |    32.21 [ 32.21.. 32.21] |    31.08 |    31.08   (repaired pos 1.0345 [1.0345..1.0345])
+2027 FCA18 |     0.00     38.20 |     0.00 [  0.00..  0.00] |    42.96 |    42.96   (repaired pos 1.0742 [1.0742..1.0742])
+
+rows dumped.
