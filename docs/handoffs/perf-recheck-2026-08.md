@@ -507,3 +507,42 @@ Against the ≥10 %-wall adoption rule "per its scope": the change clears it on
 `results_write` for the 14-state ISOs and does not clear it anywhere as a share of
 *total year* wall (~2–4 % on PJM/MISO, ~0 % on ERCOT). Both readings are stated so
 the merge decision is made on the honest one.
+
+### 5.5 Byte gate — ERCOT, full 8760 × 2023–2025 (second ISO, facility-level path)
+
+Second gate pair, keeper **`2026-08-25-234-eastex-identity`**, same protocol as §5.3: arms
+differ only in `src/market_sim/data/campd.py`, determinism pin, full 8760. Both arms
+*fidelity OK: 271 recorded flags replayed identically (1 HEAD-only meta key);
+scenario_config 751 matched, 0 drifted*.
+
+**Why this ISO and not PJM.** A TX extract is **facility-level** — it carries no `unitId`
+column — so it takes the branch of `_normalize_campd` that NEISO's unit-level files never
+enter (no remap comprehension, no `stack_duplicate_mask`). Between the two gates both
+grains of the normalizer are now covered on a full-8760 byte gate. PJM would have been the
+higher-value ISO for *wallclock*, but it cannot be replayed at 8760 h inside this
+container's 14.33 GB cgroup (§4's environmental negative, re-confirmed this session).
+
+| Gate check | Result |
+|---|---|
+| **[1] Golden bundle diff** | **PASS — ERCOT: 9 files, 34 numeric columns within tolerance (atol=0.0, rtol=0.0)** |
+| [2] Reshuffle localization | 2023/2024/2025 all `Σ|hourly Δ| = 0.0 GWh = 0.000 %`; annual gen Δ +0.0000 GWh (446,064.7 / 462,847.6 / 488,450.0 GWh) |
+| [3] Trivial-case smoke | PASS (24 passed) |
+| [4] Quarantine + registry | `audit_keepers` PASS; `legitimacy(--keepers)` FAIL — **the same pre-existing NYISO failure §5.3 attributed by control**, byte-identical text |
+
+Content-hash pre-screen: **10 of 10 artifacts MATCH**.
+
+**The wallclock result is a null, exactly as §5.4 predicted before the arms ran.** ERCOT
+`bench`, before → after: **0.9 → 0.7 s (2023), 0.8 → 0.8 s (2024), 1.0 → 0.5 s (2025)** —
+sub-second either way, at this host's noise level. That is the prediction confirmed, not a
+disappointment: ERCOT spans one CAMPD state, so there is nothing here for this lever to
+take. **These arms are identity evidence only and must never be quoted as a speed-up.**
+
+**An observation for whoever charters WS3 next, well outside this lane's scope.** The
+ERCOT arms' own phase lines put `markup` at **471–601 s/yr** against a `results_write` of
+**8.3–11.4 s** — the markup window is now roughly **50×** the phase PERF-B has spent two
+sessions optimizing, and ~50 % of the ERCOT keeper's whole year. PERF-A §2.7 attributed
+the then-26–44 s markup window to `export_cross_year_basis` and PERF-B (e) gated that
+export on its consumer; whatever now dominates this much larger window is unattributed.
+`results_write` is close to exhausted as a lever; `markup` is not. Not investigated here —
+recorded so the next charter starts from the measurement rather than from §2.6's stale
+"`compute_monthly_markup`: close the flag".
