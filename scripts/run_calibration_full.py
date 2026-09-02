@@ -3518,6 +3518,7 @@ def solve_and_persist(
     caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     unit_outage_lp_capacity_basis: bool | None = None,
+    unit_outage_mixed_gas_routing: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -4837,6 +4838,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis
             )
+        if unit_outage_mixed_gas_routing is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing
+            )
         if cc_winter_capability_basis is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_winter_capability_basis=cc_winter_capability_basis
@@ -5266,6 +5271,7 @@ def solve_and_persist(
             caiso_zonal_loss_surface=caiso_zonal_loss_surface,
             capacity_deliverability_limits=capacity_deliverability_limits,
             unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis,
+            unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing,
             cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -6174,6 +6180,7 @@ def solve_and_persist(
         "caiso_zonal_loss_surface": caiso_zonal_loss_surface,
         "capacity_deliverability_limits": capacity_deliverability_limits,
         "unit_outage_lp_capacity_basis": unit_outage_lp_capacity_basis,
+        "unit_outage_mixed_gas_routing": unit_outage_mixed_gas_routing,
         "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -8381,6 +8388,7 @@ def run_replay_bundle(
     zero_forcing_ablation: bool = False,
     reliability_floor_plant_exclusions: bool | None = None,
     caiso_offer_surface_measured_ungrounded: bool | None = None,
+    unit_outage_mixed_gas_routing: bool | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8413,6 +8421,11 @@ def run_replay_bundle(
             keeps the recipe's own value). Composes exactly like the override
             above, so the caiso-231 structural A/B solves both arms from the
             SAME committed control recipe.
+        unit_outage_mixed_gas_routing: Override the bundle's setting for the
+            mixed-gas-facility unit-outage class routing (``None`` keeps the
+            recipe's own value). Composes exactly like the two overrides above,
+            so the miso-200 A/B solves BOTH legs from the same committed keeper
+            recipe and the delta is provably the single flag.
         enable_legacy_p2: Unlock the ARCHIVED P2 commitment pass when the
             REPLAYED RECIPE arms it (see :func:`enforce_legacy_p2_kwargs`).
             Without it a bundle recorded with ``commitment=true`` is a hard
@@ -8441,6 +8454,8 @@ def run_replay_bundle(
         kwargs["caiso_offer_surface_measured_ungrounded"] = (
             caiso_offer_surface_measured_ungrounded
         )
+    if unit_outage_mixed_gas_routing is not None:
+        kwargs["unit_outage_mixed_gas_routing"] = unit_outage_mixed_gas_routing
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
         # (the dashboard and audit_keepers pair twins by ablation_of).
@@ -11041,6 +11056,29 @@ def main() -> None:
         "keeps the base config value (off).",
     )
     parser.add_argument(
+        "--unit-outage-mixed-gas-routing",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Route each CAMPD unit's outage window to the model bin matching "
+        "the UNIT's own class at a facility carrying two or more model gas bins "
+        "(ScenarioConfig.unit_outage_mixed_gas_routing). A consistency repair, "
+        "not a market feature, and the ADDRESS sibling of "
+        "--unit-outage-lp-capacity-basis (which fixes the derate's denominator) "
+        "and --unit-outage-fleet-status-scope (its event set). "
+        "derive_campd_unit_outages._resolve_unit_group short-circuits on the "
+        "FACILITY's group, whose own pjm-75 premise is that the facility carries "
+        "ONE gas group; but that group is last-writer-wins over the fleet, so at "
+        "a mixed CC+ST facility every unit is handed to whichever bin came last. "
+        "Measured at MISO (miso-200): Ninemile Point 1403 sends its two "
+        "'Tangentially-fired' gas-steam boilers (1,651.1 MW) onto its 649.5 MW "
+        "CC bin — pre-clip removed share up to 3.556, above 1.0 for 4,920-6,192 "
+        "h/yr — while the ST_GAS bin that actually holds them receives ZERO rows "
+        "and reads availability identically 1.0. Selects the '-unitroute-' "
+        "companion extracts for BOTH the >=5-day std layer and the declared-event "
+        "maxgen layer. Zero free parameters; CAMPD's published unitType is the "
+        "discriminator. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--cc-winter-capability-basis",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11986,6 +12024,12 @@ def main() -> None:
                 if "--caiso-offer-surface-measured-ungrounded" in sys.argv
                 else None
             ),
+            unit_outage_mixed_gas_routing=(
+                args.unit_outage_mixed_gas_routing
+                if "--unit-outage-mixed-gas-routing" in sys.argv
+                or "--no-unit-outage-mixed-gas-routing" in sys.argv
+                else None
+            ),
             enable_legacy_p2=args.enable_legacy_p2,
         )
         return
@@ -12343,6 +12387,7 @@ def main() -> None:
         caiso_zonal_loss_surface=args.caiso_zonal_loss_surface,
         capacity_deliverability_limits=args.capacity_deliverability_limits,
         unit_outage_lp_capacity_basis=args.unit_outage_lp_capacity_basis,
+        unit_outage_mixed_gas_routing=args.unit_outage_mixed_gas_routing,
         cc_winter_capability_basis=args.cc_winter_capability_basis,
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,

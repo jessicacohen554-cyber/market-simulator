@@ -570,6 +570,7 @@ def run_year(
     caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     unit_outage_lp_capacity_basis: bool | None = None,
+    unit_outage_mixed_gas_routing: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
     # merge, but the parameter was never added here, so EVERY solve through
@@ -1420,6 +1421,10 @@ def run_year(
     if unit_outage_lp_capacity_basis is not None:
         config = config.with_overrides(
             unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis
+        )
+    if unit_outage_mixed_gas_routing is not None:
+        config = config.with_overrides(
+            unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing
         )
     if cc_winter_capability_basis is not None:
         config = config.with_overrides(
