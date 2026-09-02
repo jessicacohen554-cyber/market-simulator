@@ -503,20 +503,23 @@
       ]
     },
     "NYISO": {
-      "bundle": "results/calibration/nyiso140_exclusion_arm",
+      "bundle": "results/calibration/nyiso159_lossarm_B",
       "content_hashes": {
-        "btm.parquet": "9b5d612ff4c1d121a1e568f829487cc9b834b6b99b82aee58efbc8edb4bfd348",
-        "dispatch/2023_P1.parquet": "550cbafc785ba91e4b136fb6c36e526367c5833917612effcb151f514b0a2284",
-        "dispatch/2024_P1.parquet": "7448ef24f3f4ef5bcee08ae25dfdec18ac1799c0f9316e2f1403b1804dd1b3db",
-        "dispatch/2025_P1.parquet": "19a80f851df531a736cf8e88218a3b298ee08c4f4bdf9855ea1efee52e33f26a",
-        "flows.parquet": "276f9fc7f180205cef6e31143dc434c1d917bef507c8c95cb08e01e5c08f4ccd",
-        "storage.parquet": "a96c5d2820b54ce990def9e937ec2739234b6b33a16316fd08d85b7e6cbb822d",
-        "system.parquet": "5ed853458ae47a7a92b2d2198b682f0620f088e0647a65d324937111d729c98b"
+        "btm.parquet": "cfe076736c1f233af397984a516dd67630b2d6f07646907fae6b14bfed05d623",
+        "dispatch/2023_P1.parquet": "e266424e75abef69694dbc39679cfdb0b64c538531990d975e8f4e5241810a95",
+        "dispatch/2023_P1_fleet.parquet": "a10d18bb65484ceed281b928684016bdeca367001bc0beab17a0f1b5849d422e",
+        "dispatch/2024_P1.parquet": "c79009209c8e87439ac10040060613c241ae43ce6dd009d3da63902013728019",
+        "dispatch/2024_P1_fleet.parquet": "03dc58ad9c1d05a7571c2bd07edd7f613f4cc6f5f5b58fe86d435bc63b474ba3",
+        "dispatch/2025_P1.parquet": "c27e928588cde3e1c90c9072fc05918a593a2d49ade6ccb03a76c2bc82813101",
+        "dispatch/2025_P1_fleet.parquet": "ca78b4bb6e9801b53329ce01b7313862348bf24c693ca72a768f43fdb685ed08",
+        "flows.parquet": "1987d65ea4fafd6d919eca872d3240e68c57bd9a6939559706de8fe7163c993e",
+        "storage.parquet": "c556ae4c4f8a1b250d357583e16bccc0c1660ab958af573ac06026c4e689c462",
+        "system.parquet": "95bece4c1f8226acf2c135e6e9dbae530aec8f2a6f5a0c005620630d03716a3d"
       },
       "defaulted_unrecorded_params": [
         "ablation_of",
+        "caiso_offer_surface_measured_ungrounded",
         "coal_takeorpay_from_data",
-        "ercot_ordc_adder_published_anchor",
         "gt_ambient_derate",
         "gt_ambient_derate_ref_c",
         "gt_ambient_derate_slope_cc",
@@ -525,33 +528,42 @@
         "persist_p0_commitment",
         "plant_tranche_config",
         "reuse_solved",
+        "unit_outage_mixed_gas_routing",
         "zero_forcing_ablation"
       ],
       "dropped_dead_config_keys": {},
       "fidelity": {
         "meta_head_only": [
-          "ercot_ordc_adder_published_anchor"
+          "caiso_offer_surface_measured_ungrounded",
+          "unit_outage_mixed_gas_routing"
         ],
         "meta_keeper_only": [],
-        "meta_matched": 257,
+        "meta_matched": 271,
         "scenario_config_drift": [],
         "scenario_config_head_only": [
-          "summer_wefor_share_override"
+          "caiso_offer_surface_measured_ungrounded",
+          "carbon_price_delta",
+          "entry_forward_reserve_leg",
+          "ercot_offer_surface_cleared_share_rt_room",
+          "ercot_offer_surface_cleared_share_rt_room_path",
+          "st_gas_mustrun_oom_level",
+          "storage_entry_availability_gate",
+          "storage_entry_cost_normalized_rank",
+          "unit_outage_mixed_gas_routing"
         ],
-        "scenario_config_matched": 717
+        "scenario_config_matched": 759
       },
       "hours": 8760,
-      "keeper_id": "2026-08-16-nyiso-140-layup-exclusion",
+      "keeper_id": "2026-08-30-nyiso-159-loss-surface",
       "keeper_snapshot": {
-        "bundle": "results/calibration/nyiso140_exclusion_arm",
-        "date": "2026-08-16",
-        "definition": "NYISO KEEPER (promoted 2026-08-16, nyiso-140). Excludes the economically laid-up Port Jefferson (2517) from the always-on Long_Island ST_GAS reliability floor \u2014 a rule-17 [R-FLOOR-WINDOW] MEMBERSHIP correction, never a window change. The limb is IDENTIFIED on a fleet-aggregate when-available capacity factor but APPLIED per UNIT (pro_rata), and 2517's own CAMPD conduct is median CF EXACTLY 0.000 in every hour block of 2023/2024/2025 with 73 % of cool hours at zero, while carrying ~100 % model availability because the 2026-07-26 guard fix correctly un-booked lay-up from the outage extract. It absorbed 72.6 % of everything the limb forced (1.87 of 2.57 TWh over 3 yr) on 7.2 % of the fleet's output. The 24-hour WINDOW is confirmed CORRECT and is UNCHANGED \u2014 Barrett (2511) and Northport (2516) genuinely run the persistent cable-islanded baseline (cool-day median CF 0.254/0.313 at h00-05). floor_pct is UNCHANGED at 0.262: the two CANCELLING basis errors (a daily-mean statistic applied hourly; a fleet aggregate applied per unit) correct to 0.2666, so ZERO free parameters are added (rule 21 [R-DOF], n_residual unchanged at 6). CALIBRATED (rubric v3.3, owner amendment 2026-08-17: a ledgered C3c caveat is REPORTED at full magnitude but no longer DOWNGRADES the determination; before the amendment this run read the with-caveats determination, and no criterion moved), C3c the lone ledgered caveat \u2014 identical to the superseded keeper; C1/C2/C3a/C3b/C4/C6/C8 all PASS. A/B vs the same-HEAD control 2026-08-16-nyiso-140-control, all six pre-registered kill gates clean; K3 liveness shed 0.602/0.560/0.625 TWh against the ~0.62/yr predicted from CAMPD BEFORE any solve. DO-NOT-MISREAD: the fit gets slightly WORSE and was pre-registered to (ST_GAS err +2.679->+2.263 in 2023, -0.595->-0.916 in 2024, -3.379->-3.737 in 2025; summed |err| 6.653->6.916 TWh). It is the keeper on rule 1 [R-STRUCT] and the owner's standing structure-over-gates clause \u2014 the floor was forcing a laid-up plant, which is wrong whatever it does to the residual \u2014 and NO gated criterion regresses. Under rule 14 [R-ACCURATE] the degradation is a DISCOVERED BUG: the manufactured 1.87 TWh was masking a real downstate under-production (2025 ST_GAS already -21 % before the fix), and the successor is that root cause, never re-flooring the laid-up plant. First application of the owner-adopted K6' gate (2026-08-16): the surviving nyiso_gas_commitment_bridge share ROSE while doing strictly less work, which bare K6 would have killed. STANDING CAVEAT: K6' leg (a) leans on D-4, which is TAUTOLOGICAL for an h0-23 floor (offwindow_share 0.0 by construction), and the adopted D-4 per-unit rider is NOT yet implemented \u2014 that leg is unproven rather than passed. Evidence: results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md, PREREG-nyiso140-li-st-floor-membership-2026-08-16.md; probe scripts/probes/_nyiso140_li_st_floor_membership.py.",
-        "id": "2026-08-16-nyiso-140-layup-exclusion",
+        "bundle": "results/calibration/nyiso159_lossarm_B",
+        "date": "2026-08-30",
+        "definition": "nyiso-159 arm: + nyiso_zonal_loss_surface (PREREG-nyiso159; measured NYISO delivery-factor surface, zero fitted scalars)",
+        "id": "2026-08-30-nyiso-159-loss-surface",
         "iso": "NYISO",
-        "label": "nyiso 140 layup exclusion",
-        "shorthand": "nyiso-140-layup-exclusion",
+        "label": "nyiso 159 loss surface",
+        "shorthand": "nyiso-159-loss-surface",
         "sidecar_at_capture": "present",
-        "sidecar_source": "recovered from cf7b3fd74c094d0f34f09b287f6cf651b211a02e^2",
         "years": [
           2023,
           2024,
@@ -559,29 +571,20 @@
         ]
       },
       "provenance": {
-        "basis_sha": "2dd9dbc97a4556f248ba0bd2b76925bbcb8a5a10",
+        "basis_sha": "8ffb34db7866c478eefff2f32d925041293976b8",
         "env": {
           "MARKET_SIM_HIGHS_THREADS": "1",
           "MARKET_SIM_WARMSTART": "1",
           "MARKET_SIM_WARMSTART_XYEAR": "0"
         },
         "git_dirty": false,
-        "git_sha": "2dd9dbc",
-        "git_sha_full": "2dd9dbc97a4556f248ba0bd2b76925bbcb8a5a10",
+        "git_sha": "75a55a4c",
+        "git_sha_full": "75a55a4cefa49ebf0ba285f182cf1e7280e63eea",
         "highspy_version": "unknown",
-        "recorded_at": "2026-08-17T03:04:23Z",
-        "recorded_at_basis": "author date of the capture commit -- an upper bound on the manifest-write instant, which is the closest the record supports (the tool did not stamp a time)",
-        "recovery": {
-          "commit_message_states": "2dd9dbc",
-          "manifest_commit": "9f6ff3ee8b92c636aa69d8f335b493129e1bbd07",
-          "method": "the git_sha this capture wrote, read back from the manifest blob at the commit that added this ISO's entry, before the next capture overwrote the shared field",
-          "note": "commit message 'Re-solve at 2dd9dbc' matches the manifest stamp exactly.",
-          "prefix_unambiguous": true,
-          "resolves_at_repair_pin": true
-        },
-        "source": "recovered-from-manifest-history"
+        "recorded_at": "2026-09-02T05:20:28Z",
+        "source": "stamped-at-capture"
       },
-      "recorded_flag_count": 248,
+      "recorded_flag_count": 262,
       "years": [
         2023,
         2024,
