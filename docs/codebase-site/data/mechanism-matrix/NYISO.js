@@ -103,6 +103,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     coal_nameplate_summer_derate: { cell: "." },
     unit_outage_lp_capacity_basis: { cell: "U" },
     unit_outage_fleet_status_scope: { cell: "U" },
+    unit_outage_mixed_gas_routing: { cell: "U", ev: "Row added by miso-200 (2026-09-02) with the field, same PR (rule 28c). UNTESTED here: rule 28(d) — a verdict is strictly per-ISO and MISO's does not fill this cell. The transfer question is cheap and well-posed: does this ISO carry any facility with two or more model gas bins whose CAMPD units disagree with the last-writer facility group? Note outages._FLEET_GROUP_OVERRIDE already carries NYISO Ravenswood 2500 as a hardcoded per-plant instance of the SAME defect, so at least one non-MISO case is known to exist and is currently handled by enumeration rather than by this general rule." },
     retiree_vintage_status_scope: { cell: "U" },
     partial_plant_exit_carry: { cell: "U" },
     wefor_residual: { cell: "U" },

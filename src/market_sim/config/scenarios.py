@@ -301,6 +301,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline).
     "unit_outage_fleet_status_scope",
+    # miso-200 unit-outage class routing at mixed-gas facilities (GATED
+    # default-off; the consumers read it via
+    # ``getattr(config, "unit_outage_mixed_gas_routing", False)`` in
+    # data/fleet/arrays.py and it selects a SEPARATE companion extract, so the
+    # off path is byte-inert). Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 / caiso-186 discipline).
+    "unit_outage_mixed_gas_routing",
     # miso-188 retiree-channel vintage-status scope (GATED default-off; the
     # sole consumer threads it via getattr into
     # data/fleet/eia860.py::load_retired_within_window, so the off path is
@@ -1320,6 +1327,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_fleet_status_scope": "False",
+    # Added by miso-200 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_mixed_gas_routing": "False",
     # Added by miso-188 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "retiree_vintage_status_scope": "False",
@@ -1920,6 +1930,17 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "miso_native_outage_source": "MISO's published outage record for the year",
     "unit_outage_short_windows": "measured unit-grain outage windows",
     "unit_outage_fleet_status_scope": "EIA-860 operable generator status",
+    # miso-200's unit_outage_mixed_gas_routing is DELIBERATELY ABSENT from this
+    # map, and the absence is the claim. This registry marks an overlay whose
+    # measured input is keyed to a SPECIFIC YEAR's published record and so
+    # cannot regenerate from forward drivers (rule 13). That flag adds no such
+    # record: it changes which model bin an ALREADY-registered overlay's rows
+    # are charged to, and its discriminator is CAMPD's ``unitType`` — a STATIC
+    # unit attribute, present for any year and responsive to a changed fleet.
+    # The overlay it repairs (campd_outage_windows) already carries the
+    # backcast gate, so the routing flag is inert in forecast mode regardless;
+    # listing it here would additionally ASSERT a non-regenerability that is
+    # false. Reasoned exclusion, not an oversight.
     "retiree_vintage_status_scope": "EIA-860 vintage generator status",
     "partial_plant_exit_carry": "EIA-860 actual retirement + vintage status",
     "unit_partial_outage_windows": "measured unit-grain partial-derate plateaus",
@@ -11488,6 +11509,55 @@ class ScenarioConfig:
     # (different accumulation semantics; no adjudicated case) — documented
     # boundary, not an oversight.
     unit_outage_fleet_status_scope: bool = False
+
+    # Unit-outage windows ROUTED BY THE UNIT'S OWN CLASS at a mixed-gas facility
+    # (unit_outage_mixed_gas_routing, off by default; miso-200). The third
+    # member of the same consistency-repair family as the two flags above, and
+    # the one that fixes the NUMERATOR'S ADDRESS rather than its size: those
+    # align the derate's denominator (unit_outage_lp_capacity_basis) and its
+    # event set (unit_outage_fleet_status_scope); this one aligns WHICH BIN the
+    # event is charged to. A repair, not a market feature (rule 14
+    # [R-ACCURATE]).
+    #
+    # scripts/data/derive_campd_unit_outages.py::_resolve_unit_group routes each
+    # CAMPD unit to a model (plant_code, plant_group) bin, and short-circuits on
+    # the FACILITY's group whenever that group is a qualifying non-COAL one. Its
+    # own pjm-75 justification states the premise: "single-group gas facilities
+    # are byte-identical". But the facility group comes from
+    # ``group_by_code[plant_code] = g.plant_group`` over the fleet — LAST WRITER
+    # WINS — so at a facility carrying TWO OR MORE gas bins the premise is false
+    # and every unit is handed to whichever bin's fleet row happened to come
+    # last. Measured case (_miso200_outage_routing_phase0.json): Ninemile Point
+    # 1403 (MISO-South) carries ST_GAS 1,465.4 MW and CC_REGULAR 649.5 MW, the
+    # last writer is CC_REGULAR, and its two gas-STEAM boilers (units 4 and 5,
+    # CAMPD unitType "Tangentially-fired", 1,658.1 MW) dump their windows onto
+    # the 649.5 MW CC bin: a pre-clip removed share peaking at 3.556 and above
+    # 1.0 for 4,920/6,192/4,920 hours in 2023/24/25, so the CC bin is clipped to
+    # availability 0.0 for most of every year — while the ST_GAS bin that
+    # actually holds those boilers receives NO rows and reads availability
+    # identically 1.0, so its 688 MW must-run floor asserts straight through
+    # every outage (the FINDING-miso199 §7a cell, 320.5 GWh in Feb-2024 alone =
+    # 54 % of the three-year floor misplacement). Both halves are wrong, in
+    # opposite directions, at once.
+    #
+    # When True the short-circuit is SKIPPED at a multi-gas facility and the
+    # resolver falls through to its OWN existing per-unit unitType routing.
+    # MEASURED (CAMPD's published unitType), ZERO fitted scalars and ZERO free
+    # parameters (rule 21 [R-DOF]), rule-13 forward-regenerable (unitType is a
+    # static unit attribute present for any year), and a GENERAL RULE rather
+    # than a per-plant enumeration (rule 24 [R-REGISTRY]) — unlike
+    # outages._FLEET_GROUP_OVERRIDE, which carries the same defect at NYISO
+    # Ravenswood 2500 as a hardcoded entry. Single-gas-group facilities are
+    # untouched BY CONSTRUCTION, so the flag is byte-inert while off. Applies to
+    # BOTH layers built by the shared resolver (the >= 5-day std extract and the
+    # declared-event maxgen extract), because a unit routed to ST_GAS in one and
+    # CC_REGULAR in the other would leave the object half-repaired (rule 19
+    # [R-ONE-MECH]); each reads its own "-unitroute-" companion file, so the
+    # incumbent extracts are never overwritten and the off path is byte-inert.
+    # The short-window layer is out of scope by construction (baseload COAL
+    # only, so it carries no mixed-gas rows) — a documented boundary, measured,
+    # not an oversight.
+    unit_outage_mixed_gas_routing: bool = False
 
     # Retiree-channel injection scoped by the EIA-860 vintage status oracle
     # (retiree_vintage_status_scope, off by default; miso-188,

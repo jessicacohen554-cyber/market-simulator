@@ -299,16 +299,28 @@ def capability_and_derate(
     return capability, best, max(0.0, capability - best)
 
 
-def _load_covered_windows(iso: str) -> dict[tuple[int, str], list[tuple]]:
+def _load_covered_windows(
+    iso: str, mixed_gas_routing: bool = False
+) -> dict[tuple[int, str], list[tuple]]:
     """Return std + short extract windows keyed ``(facility_id, unit_id)``.
 
     Day-grain rows become half-open hour intervals
     ``[outage_start 00:00, outage_end + 1 day)`` — the same reconstruction the
     overlay loaders use — for guard 4 (disjointness): a unit already covered
     on any block hour is excluded from that block.
+
+    ``mixed_gas_routing`` (miso-200) reads the std extract the ARMED run will
+    itself read, so the guard is checked against the same file the overlay
+    loads. The keys here are ``(facility_id, unit_id)`` and the routing repair
+    changes neither the rows nor their windows, so the covered set is identical
+    either way -- the flag is threaded for wiring consistency, not to change a
+    verdict.
     """
     covered: dict[tuple[int, str], list[tuple]] = {}
-    for path in (unit_outage_csv_for_iso(iso), unit_outage_short_csv_for_iso(iso)):
+    for path in (
+        unit_outage_csv_for_iso(iso, mixed_gas_routing),
+        unit_outage_short_csv_for_iso(iso),
+    ):
         if not path.exists():
             continue
         df = pd.read_csv(path, parse_dates=["outage_start", "outage_end"])
@@ -355,13 +367,34 @@ def main() -> None:
         help="EIA-860 generator parquet, for per-unit nameplate capacity.",
     )
     ap.add_argument(
+        "--mixed-gas-routing",
+        action="store_true",
+        help=(
+            "miso-200: skip _resolve_unit_group's fac_group short-circuit at a "
+            "facility carrying two or more model gas bins (see that function's "
+            "docstring). Writes the '-unitroute-' companion so the incumbent "
+            "extract is never overwritten."
+        ),
+    )
+    ap.add_argument(
         "--out",
         default=None,
         help="Output CSV; defaults to data/raw/campd-unit-outages-maxgen-{ISO}.csv.",
     )
     args = ap.parse_args()
     iso = args.iso.upper()
-    out_path = Path(args.out) if args.out else unit_outage_maxgen_csv_for_iso(iso)
+    if args.out:
+        out_path = Path(args.out)
+    elif args.mixed_gas_routing:
+        # Constructed EXPLICITLY, never via the reader helper: that helper falls
+        # back to the incumbent path when the companion does not yet exist, so
+        # using it here would OVERWRITE the incumbent extract on the very first
+        # derivation (miso-200).
+        out_path = unit_outage_maxgen_csv_for_iso(iso).with_name(
+            f"campd-unit-outages-maxgen-unitroute-{iso}.csv"
+        )
+    else:
+        out_path = unit_outage_maxgen_csv_for_iso(iso)
 
     ev = load_registry_est(iso)
     years = sorted(ev["start_est"].dt.year.unique())
@@ -424,7 +457,7 @@ def main() -> None:
     plant_cap = _iso_plant_capacity(iso)
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
-    covered = _load_covered_windows(iso)
+    covered = _load_covered_windows(iso, bool(args.mixed_gas_routing))
 
     # Blocks by calendar year (all current blocks are within-year; a block
     # straddling Dec 31 would clip at the CAMPD year files' edges).
@@ -482,6 +515,7 @@ def main() -> None:
                         fac_groups,
                         fac_group,
                         unit_fuel.get(uid, ""),
+                        mixed_gas_routing=bool(args.mixed_gas_routing),
                     )
                     if (code, ugroup) not in plant_cap:
                         continue  # routed to a bin absent from the model fleet

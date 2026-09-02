@@ -10012,4 +10012,68 @@ basis). **No `ScenarioConfig` field was added**, so rule 28(c) does not apply.
 `check_mechanism_matrix` green on all four checks. Rule 22: 2023–2025 only, no marker
 read or written.
 
-Next shorthand: **miso-200**.
+## miso-200 (2026-09-02) — the outage extract MIS-ROUTES a mixed CC+ST facility's steam units; the repair is EXACT and is **KILLED at phase 0** by its own frozen soundness line
+
+**Keeper UNCHANGED at `2026-09-01-miso-198-oomlevel`. No solve, no promotion, no
+registration** (rule 15: no run was produced). **The charter fork was taken toward the
+AVAILABILITY object; the bid-side self-schedule form was NOT built**, so the rule-28(a)
+DO-NOT-REDO argument it would have needed against MISO's `R`/`I` offer-level cells stays
+unwritten rather than stretched. Its cell is not minted and it remains open.
+
+**The defect.** `_resolve_unit_group` short-circuits on the FACILITY's group — a branch
+whose own pjm-75 premise is *"single-group gas facilities are byte-identical"* — but
+`group_by_code` is LAST-WRITER-WINS over the fleet, so at a facility carrying two or more
+model gas bins the premise is false and every unit is handed to one bin. Exactly **two**
+MISO facilities qualify. Ninemile Point **1403** (ST_GAS 1,465.4 MW + CC_REGULAR 649.5 MW,
+last writer CC_REGULAR) sends its two "Tangentially-fired" gas-steam boilers (units 4+5,
+**1,651.1 MW**) onto the **649.5 MW CC bin**; Moselle **2070** sends its 59.0 MW boiler
+unit 3 the same way. Mis-routed MW **1,740.1 / 1,719.1 / 1,717.1**, clearing the frozen
+L-1a line in 3 of 3 years. **Two-sided:** (1403, CC_REGULAR) carries a pre-clip removed
+share of **2.588 / 3.556 / 2.553**, above 1.0 for **5,640 / 6,192 / 4,920 h/yr**, mean
+availability **0.352 / 0.288 / 0.438** — while (1403, ST_GAS) receives **zero rows** and
+reads availability **identically 1.0**, so its 688 MW must-run floor asserts through every
+outage. That **closes FINDING-miso199 §7a** on this session's own frozen structural line
+(all three legs TRUE; miso-199's L-X1b is NOT cited as a passed test).
+
+**The repair and the kill.** `ScenarioConfig.unit_outage_mixed_gas_routing` (GATED,
+default off; zero free parameters, CAMPD's own `unitType` as discriminator, cache-key
+neutral, 24 unit tests, matrix row + six shard cells same PR). **L-3b PASS** — 116 rows
+change and `plant_group` is the only column that changes. **L-3a FAIL** — the repair
+*creates* over-removal at (1403, ST_GAS) **1.13** and (2070, ST_GAS) **2.00**, and the
+frozen line makes that a kill. **It is not renegotiated and no solve was spent.** The
+reason is the session's real result: the mis-routing was **masking two independent
+pre-existing defects** — (a) a numerator/denominator basis gap (extract 1,651.1 MW vs
+fleet bin 1,465.4 = **1.1267**) that `unit_outage_lp_capacity_basis` **cannot reach**,
+because `_CC_NAMEPLATE_BASIS_GROUPS` is CC-only; and (b) an adjacent-window boundary-day
+double-count (2070 unit 3's `2023-03-20..03-27` and `03-27..04-04` both cover 03-27 under
+the `[start, end+1 day)` reconstruction).
+
+**Reported against the kill's interest, and not changing it:** on a NET basis the repair
+removes overflow (bin-hours over 1.0 **195,504→192,048 / 211,416→207,432 /
+352,224→348,384**; excess capability **20.80→18.82 / 23.06→21.17 / 21.07→20.34 TWh**). A
+net test is not what was frozen. **Reported, gating nothing (L-4 has no
+refuse-without-solving branch, by design):** capability upper bounds CC_REGULAR
+**+3.475 / +3.306 / +2.834** and ST_GAS **−5.460 / −5.192 / −3.569 TWh**, against the
+ex-ante K-1 headroom of 1.252 (CC-2024) and 0.447 (ST_GAS-2024). **Also against interest:**
+over-removal is widespread (238 bin-years at cap ≥ 100 MW, median max-share 1.128), so the
+share signature does **not** identify this family — the routing census does.
+
+**Also measured, first quantification of the open `outage_artifact_provenance` cell:** the
+committed MISO extract is **not reproducible at HEAD** — a fresh unrepaired derivation
+gives **11,141 rows vs 9,298** for 2019–2026 (+19 %/yr in 2023–2025), which is why the
+arm's extract is a surgical relabel of the committed file rather than a re-derivation.
+
+**Successor:** re-offer this flag **composed** with a new **ST-side denominator basis
+alignment** (the ST_GAS/ST_CHP analogue of `unit_outage_lp_capacity_basis`, which does not
+exist yet). Cell minted **`O`, deliberately not `R`** — the object is proven real and the
+delta proven exact; a DO-NOT-REDO stamp would block exactly the work that is required.
+
+`FINDING-miso200-outage-routing-mixedgas-2026-09-02.md`;
+`PREREG-miso200-outage-routing-mixedgas-2026-09-02.md`;
+`_miso200_outage_routing_phase0.json`. Rule 22: 2023–2025 only, no marker read or written.
+**Correction carried forward:** the inherited "11 failing `tests/unit/config` cache-key pin
+tests" item is CLOSED — it measured **8** on the base this session opened against, and on
+`main` at the time of writing `tests/unit/config` is **642 passed, 0 failed**, unchanged with
+this branch applied. Do not carry the item forward.
+
+Next shorthand: **miso-201**.

@@ -1103,6 +1103,12 @@ def _apply_outage_overlays(
             cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
             fleet_status_scope=getattr(config, "unit_outage_fleet_status_scope", False),
+            # miso-200 (rule 14 [R-ACCURATE]): route each unit's window by its
+            # OWN CAMPD unitType at a facility carrying two or more model gas
+            # bins, where _resolve_unit_group's fac_group short-circuit loses
+            # its own stated premise. Selects the '-unitroute-' companion
+            # extract; byte-inert while off.
+            mixed_gas_routing=getattr(config, "unit_outage_mixed_gas_routing", False),
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
@@ -1317,6 +1323,12 @@ def _apply_outage_overlays(
                 cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
                 cc_nameplate_basis=getattr(
                     config, "unit_outage_lp_capacity_basis", False
+                ),
+                # Same routing repair, same flag: this layer shares
+                # _resolve_unit_group, so it carries the same mis-attribution
+                # and must move with the std layer (rule 19 [R-ONE-MECH]).
+                mixed_gas_routing=getattr(
+                    config, "unit_outage_mixed_gas_routing", False
                 ),
             )
             if mgfac:
