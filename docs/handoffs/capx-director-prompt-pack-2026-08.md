@@ -3745,3 +3745,178 @@ sources, and a routed recommendation (which ISOs get repair lanes, in what order
 whether the NEISO `U` cell should open first given D40's corrected requirement). NO repair
 lands in this lane.
 ```
+
+## D37 — the NEISO T1-H at the armed posture (r#30; GOLDEN-2 item 4 + D40's handoff; Q28 posture)
+
+```
+You are the D37 session of the capacity-expansion track — the NEISO capacity hindcast
+(T1-H) re-run that three chains have been waiting for: GOLDEN-2 routed it (FC-3's evidence
+carries the pre-arming leg), D40 built its requirement lever and declared the post-wave
+years UNSCOREABLE until this run, and owner ruling Q28 armed that lever FOR THIS
+MEASUREMENT ONLY.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Opus (the posture is ruled, the expectations are D40's numbers; this is a
+pre-declared re-measure — the D27/D4-M pattern).
+BRANCH: claude/capx-d37-neiso-t1h-armed — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d40-neiso-devintage-2026-09-02.md IN FULL (the
+lever, the screen-grain consequences at the clean entry — +21.4 → −2.1 pts — the LOYO
+result, and the explicit D37 handoff line) ·
+docs/handoffs/FINDING-capx-d33-neiso-position-2026-09-02.md (the census-supply-SHORT bound)
+· the committed neiso-t1h record + run_config (your baseline) · the D27 finding (the
+preserve-then-overwrite + pre-declaration pattern you copy).
+
+THE POSTURE, exactly (Q28): HEAD recipe + the D40 Net ICR requirement lever ON in this
+run's config (the run_config records it; the SHIPPED DEFAULT STAYS OFF — you flip nothing)
++ `entry_screen_diagnostics=True` (the D36/D39 zero-cost precondition — output-only, no
+cache-key term; VERIFY that claim against the cache-key registry before the solve and say
+so).
+
+THE RUN: pre-declaration FIRST, pushed before the solve (direction + rough magnitude on:
+per-year positions vs D40's screen-grain table; floor binding; capacity revenue at the
+corrected positions; FC-3's retire/build legs; the honest note that D40's clean-entry
+figure does not guarantee the post-wave years). Then the NEISO T1-H leg, years sequential
+(rule 12). Then grade every prediction at full magnitude, misses included.
+
+REGISTRATION: preserve-then-overwrite — the current neiso-t1h record to a dated suffix,
+the re-measure to the bare key; refresh the NEISO board block; STOP if anything beyond
+neiso-t1h's rows would flip (cross-lane re-grade). Note for your finding: with D41's
+corrected CCS constants at HEAD, your bundle is the FIRST NEISO capacity run on the
+repaired retrofit economics — state what the screen did on that axis even though it is not
+your object.
+
+GUARDRAILS: rules 22 (hindcast years only, no holdout), 27 (blob-verify), 28 NOT triggered
+(no field added; the lever exists — you arm it per Q28 in-config only). No keeper/shard/
+marker; the backcast namespace untouched. Solve priced before launch. No new workflow.
+
+COLLISION: D42 (MISO) and D43 (CAISO) share no files; nobody else touches neiso-t1h or the
+NEISO board this window. Rebase-care on docs/ and ff-verdicts.json.
+
+EXIT: the registered re-measure + graded pre-declaration +
+docs/handoffs/FINDING-capx-d37-neiso-t1h-armed-<date>.md: the per-year position table vs
+D40's, FC-3's state after, the CCS-axis note, whether the post-wave years now score, and
+the explicit line the arming decision needs — does the measured result support flipping the
+Net ICR default (the owner decides; you recommend on the evidence).
+```
+
+## D42 — the fossil announced-date A/B (r#30; D32 R1 + owner ruling Q29)
+
+```
+You are the D42 session of the capacity-expansion track — the A/B owner ruling Q29
+chartered on D32's R1. The finding behind it: post-repair, MISO's reliability floor decides
+100 % of exit composition, its selection is measured indistinguishable from random against
+the real 2021–2025 cohort, and the ONE published per-unit driver that discriminates is the
+owner's filed retirement date — which `forecast_fossil_retirement_economic=True`
+deliberately no-ops for fossil. This lane MEASURES the alternative posture. Nothing arms:
+both legs register SUFFIXED, the bare key is untouched, and the posture decision returns to
+the owner with the evidence.
+
+DATA PROFILE: miso
+MODEL ASSIGNMENT: Fable (a spec-§5.1-adjacent posture measurement with a rule-19
+reconciliation to design).
+BRANCH: claude/capx-d42-fossil-dates-ab — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d32-floor-retention-2026-09-02.md IN FULL — its §7
+R1 is your charter body: the pre-declared numbers (coal +9.7 GW, gas_st +1.1, oil +0.3,
+gas_ct +0.2 carried by the channel; recall 5/19 → ≥13/19; the six deferred/sold coal plants
+≈6.5 GW of false positives), the vintage gate (2020), the reversal-registry arming, and the
+economic-screen-as-residual construction · CLAUDE.md capacity-evolution step 1 +
+`apply_announced_retirements` / `load_announced_reversal_plants` (the machinery that
+already exists for non-fossil — you are extending a path, not inventing one) · the
+EIA-860 announced-retirement data in-repo (the identification; vintage-gated per the
+hindcast information rule, same as step 0's instrument_date gate).
+
+THE A/B: control = the shipped posture at HEAD, replayed. Arm = fossil EIA-860 planned
+dates honored as an exogenous step-1 input, vintage-gated at 2020 (a date is admissible in
+year Y only if filed before Y's cutoff — the rule-13 forward test: the same construction
+regenerates for a forecast year from the then-current 860), the reversal registry armed,
+and the economic screen running on the RESIDUAL fleet. THE RULE-19 RECONCILIATION IS
+IN-CHARTER, not an afterthought: when a date fires for a unit, the economic screen must not
+double-count that unit's exit, and the floor's retention pool must see the dated units as
+exogenous — design it, document it, test it. THE DEFERRAL CLASS: the six deferred/sold
+plants are countered ONLY by a published per-unit instrument (a filed deferral, an RMR, a
+sale record with continued operation) — NEVER a fitted filter; if no instrument exists,
+take the false positives at full magnitude and report them.
+
+SCORING: MISO T1-H 2021–2025 both legs, LOYO within 2023–2025 per rule 22, the D32
+pre-declared table graded at full magnitude (recall, composition by fuel, false positives,
+G3, false_retire). Registration: BOTH legs SUFFIXED (e.g. miso-t1h-d42-control /
+-d42-dates); the bare miso-t1h key is NOT taken; the MISO matrix shard gets the posture
+lever's row/cell (rule 28 — the new gate field ships DEFAULT-OFF in the same PR).
+
+GUARDRAILS: rules 12 (years sequential per leg), 13 (the vintage gate is the admissibility
+test — state it in the schema/notes), 22, 27, 28 as above. No keeper/shard/marker beyond
+the matrix duty; the backcast namespace untouched. Nothing arms — the finding ends with
+the evidence and a recommendation, and the decision line reads: THE OWNER ARMS OR
+DECLINES; this lane did neither.
+
+COLLISION: D37 (NEISO) and D43 (CAISO) share no files. The step-1 fossil path is yours
+alone this window; D33-M's additions machinery is adjacent but landed — rebase, don't
+re-derive. Rebase-care on docs/ and the MISO shard.
+
+EXIT: both suffixed registrations + the reconciliation design + the graded pre-declaration
++ docs/handoffs/FINDING-capx-d42-fossil-dates-ab-<date>.md with the LOYO table, the
+composition before/after by fuel, the deferral-class handling at full honesty, and the
+posture recommendation for the owner.
+```
+
+## D43 — the CAISO dispersion A/B (r#30; D39 §7's CAISO-first single-term isolation)
+
+```
+You are the D43 session of the capacity-expansion track — the first repair measurement on
+D39's object: the entry stack under-builds through ONE term, the energy leg's DISPERSION,
+which the zone-flat tail-free stack re-price shared by five ISOs discards. D39 ranked
+CAISO FIRST: the largest committed expected-vs-realized gap (peaker 0.00–0.07,
+CC 0.07–0.92, storage 8–12×, sign flips in both the thermal and VRE screens at
+entering-2024), the replay already in place, and a capacity leg whose correction is
+measured INERT (0.0 MW) — the cleanest single-term isolation in the program.
+
+DATA PROFILE: caiso
+MODEL ASSIGNMENT: Fable (a novel mechanism construction on the entry screen; arming
+consequences are cross-ISO in code even though verdicts are per-ISO).
+BRANCH: claude/capx-d43-caiso-dispersion — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md IN FULL — §7.2's
+CAISO construction and pre-declaration basis are your charter body; §3's
+expected-vs-realized method is your instrument · the entry screen's stack re-price
+implementation (the zone-flat tail-free construction D39 names) · the CAISO replay/probe
+records D39 cites · the matrix entry-signal family rows (ERCOT's armed pair is the worked
+PATTERN; rule 25 — CAISO's parameters come from CAISO's own record, nothing transfers).
+
+THE MECHANISM, identified from the model's own record (rule 13): a dispersion-carrying
+expectation — the screen re-prices the entrant against the realized price DISTRIBUTION
+(the prior solve's own hourly duals: duration/deciles at the entrant's zone), not the flat
+mean. Design the exact construction yourself (that is the Fable half): it must (a) use
+only in-model prior-solve quantities that regenerate every forecast year, (b) carry no
+fitted parameter — the distribution IS the identification, (c) ship as a gated
+ScenarioConfig mechanism, DEFAULT-OFF, with rule-28 duties (matrix row + a cell line in
+every ISO shard, CAISO's cell carrying this A/B's verdict) in the same PR.
+
+THE A/B: control = shipped screen replayed on the D39 basis; arm = the dispersion
+construction ON, CAISO only. Pre-declare from D39 §7.2's numbers BEFORE the arm runs
+(which screens flip sign, which classes' expected-vs-realized ratios close, the entry
+composition consequence). Score at the screen grain first; run the smallest solve that
+makes the A/B observable (D39 names what the replay covers — if screen-grain replay
+suffices, run NO new LP and say so; if a T1-H leg is needed, price it, run years
+sequential, register both legs SUFFIXED — the bare caiso keys are untouched).
+
+DISCIPLINE: the corridor's renewables rows and AEO are context, never targets (rule 13);
+nothing is sized by any residual — the distribution is the whole identification. Rule 25:
+the construction is shared code but the VERDICT is CAISO's; other ISOs' cells stay U until
+their own lanes run it.
+
+GUARDRAILS: rules 12/22/27/28 as above; no keeper/shard/marker beyond the matrix duty;
+backcast namespace untouched. Nothing arms as default — the finding recommends, the owner
+decides.
+
+COLLISION: D37 (NEISO) and D42 (MISO) share no files; the entry-screen re-price code is
+yours alone this window — if D37's solve is running when your shared-code change lands,
+its container is isolated (no interference), but note the vintage in both findings.
+
+EXIT: the gated mechanism + the A/B (screen-grain, plus the smallest observable solve if
+needed) + graded pre-declaration +
+docs/handoffs/FINDING-capx-d43-caiso-dispersion-<date>.md with the expected-vs-realized
+closure table, the entry-composition consequence, the cross-ISO code note (what other
+lanes would run), and the arming recommendation for the owner.
+```
