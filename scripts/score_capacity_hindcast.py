@@ -203,6 +203,21 @@ def model_retirements(ledgers: dict) -> pd.DataFrame:
                     "reason": "confirmed",
                 }
             )
+        # capx D42: the fossil announced-date step-1 channel derates
+        # plant-binned tranches through the same machinery, recorded under
+        # ``announced_derates`` (evolve.py's step-1 recorder seam) — the
+        # announced-channel twin of the row above. Absent on every bundle
+        # that never armed ``fossil_announced_exits_enabled``.
+        for r in led.get("announced_derates", []) or []:
+            rows.append(
+                {
+                    "unit_id": r["unit_id"],
+                    "fuel": r["fuel"],
+                    "mw": float(r["derate_mw"]),
+                    "year": year,
+                    "reason": "announced",
+                }
+            )
     return pd.DataFrame(rows, columns=["unit_id", "fuel", "mw", "year", "reason"])
 
 
@@ -584,6 +599,11 @@ FLEET_EVIDENCE_CONFIG_GATE = "use_campd_bins"
 # announced-date channel is live for fossil and could reach the exit by a route
 # the decode never measured — so the exclusion is not taken (fail-closed).
 ECONOMIC_EVIDENCE_CONFIG_GATE = "forecast_fossil_retirement_economic"
+# capx D42: the fossil announced-date step-1 channel (``fossil_announced_
+# exits_enabled``) makes the announced route live for fossil under the DEFAULT
+# ``forecast_fossil_retirement_economic=True`` too — the economic exclusion is
+# then equally not decisive, and is not taken (fail-closed).
+FOSSIL_ANNOUNCED_CONFIG_GATE = "fossil_announced_exits_enabled"
 
 
 def load_solved_scenario_config(bundle: Path | None) -> dict | None:
@@ -776,8 +796,9 @@ def classify_exit_reachability(
     cfg = solved_config if isinstance(solved_config, dict) else {}
     use_bins = cfg.get(FLEET_EVIDENCE_CONFIG_GATE)
     fossil_econ = cfg.get(ECONOMIC_EVIDENCE_CONFIG_GATE)
+    fossil_dated = cfg.get(FOSSIL_ANNOUNCED_CONFIG_GATE)
     fleet_applies = use_bins is True
-    econ_applies = fossil_econ is not False
+    econ_applies = fossil_econ is not False and fossil_dated is not True
 
     block: dict = {
         "decision": "D-24, signed 2026-08-06 (sitting Addendum X.6)",
@@ -801,6 +822,7 @@ def classify_exit_reachability(
             FLEET_EVIDENCE_CONFIG_GATE: use_bins,
             "fleet_evidence_applied": fleet_applies,
             ECONOMIC_EVIDENCE_CONFIG_GATE: fossil_econ,
+            FOSSIL_ANNOUNCED_CONFIG_GATE: fossil_dated,
             "economic_evidence_applied": econ_applies,
         },
         "fail_closed": (

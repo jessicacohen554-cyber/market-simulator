@@ -523,6 +523,8 @@ class TestEvolveFleetLedgerReconciliation(unittest.TestCase):
             expected[r["fuel"]] = expected.get(r["fuel"], 0.0) - r["mw"]
         for d in events["confirmed_derates"]:
             expected[d["fuel"]] = expected.get(d["fuel"], 0.0) - d["derate_mw"]
+        for d in events.get("announced_derates", []):
+            expected[d["fuel"]] = expected.get(d["fuel"], 0.0) - d["derate_mw"]
         for a in events["thermal_additions"]:
             expected[a["fuel"]] = expected.get(a["fuel"], 0.0) + a["mw"]
         for c in events["ccs_retrofits"]:
@@ -5078,3 +5080,335 @@ class TestNeisoNetIcrRequirement(unittest.TestCase):
             ScenarioConfig(iso="NEISO", neiso_net_icr_requirement=False).cache_key(),
         )
         self.assertNotEqual(self._cfg(False).cache_key(), self._cfg(True).cache_key())
+
+
+class TestFossilAnnouncedExits(unittest.TestCase):
+    """capx D42: the FOSSIL owner-filed date channel at step 1 + its rule-19
+    reconciliation with the economic screen and the reliability floor.
+
+    GATED ``fossil_announced_exits_enabled`` (default off): off, the rows are
+    ignored and step 1 is the shipped fossil no-op; on, the rows ride step 0's
+    matcher/derate machinery, dated plants are exogenous to the screen, and
+    the R-NEW admission cap's counterfactual nets the pending dated exits.
+    """
+
+    def _row(self, plant_id, gen_id, year, month=None, mw=None):
+        from market_sim.data.announced_retirements import AnnouncedFossilExit
+
+        return AnnouncedFossilExit(
+            plant_id=plant_id,
+            generator_id=gen_id,
+            exit_year=year,
+            exit_month=month,
+            mw=mw,
+            fuel_type="coal",
+            filed_vintage=2020,
+            vintage_exit_year=year,
+            vintage_exit_month=month,
+        )
+
+    def _events(self):
+        from market_sim.results.evolution_ledger import new_events
+
+        return new_events()
+
+    # -- gate off: byte-identical shipped posture -------------------------
+    def test_gate_off_ignores_dated_rows(self):
+        fleet = [_unit(300, "1", 500.0, fuel="coal", retirement_year=2028)]
+        events = self._events()
+        kept, _, _, _, _ = evolve_fleet(
+            fleet,
+            None,
+            2028,
+            ScenarioConfig(),
+            {},
+            events=events,
+            announced_fossil_exits=[self._row(300, "1", 2028, mw=500.0)],
+        )
+        self.assertEqual([g.unit_id for g in kept], ["300_1"])
+        self.assertEqual(events["retirements"], [])
+        self.assertEqual(events["announced_derates"], [])
+
+    # -- gate on: unit-grain drop + plant-binned derate --------------------
+    def test_unit_grain_dated_fossil_exits_at_its_date(self):
+        cfg = ScenarioConfig(fossil_announced_exits_enabled=True)
+        fleet = [
+            _unit(300, "1", 500.0, fuel="coal", retirement_year=2028),
+            # Undated-in-window sibling survives. It carries a far date only so
+            # the year-end legacy re-aggregation passes it through un-binned
+            # (units with no retirement_year collapse into an efficiency bin —
+            # pre-existing behaviour, not this channel's).
+            _unit(300, "2", 400.0, fuel="coal", retirement_year=2099),
+        ]
+        rows = [self._row(300, "1", 2028, mw=500.0)]
+        early = self._events()
+        kept, _, _, _, _ = evolve_fleet(
+            fleet, None, 2027, cfg, {}, events=early, announced_fossil_exits=rows
+        )
+        self.assertEqual([g.unit_id for g in kept], ["300_1", "300_2"])
+        events = self._events()
+        kept, _, _, _, _ = evolve_fleet(
+            fleet, None, 2028, cfg, {}, events=events, announced_fossil_exits=rows
+        )
+        self.assertEqual([g.unit_id for g in kept], ["300_2"])
+        self.assertEqual(
+            [(r["unit_id"], r["reason"], r["mw"]) for r in events["retirements"]],
+            [("300_1", "announced", 500.0)],
+        )
+        self.assertEqual(events["announced_derates"], [])
+
+    def test_plant_binned_dated_fossil_derates_and_ledgers(self):
+        cfg = ScenarioConfig(fossil_announced_exits_enabled=True)
+        fleet = [_binned("H_C1", 200, 300.0), _binned("H_C2", 200, 200.0)]
+        rows = [self._row(200, "U1", 2028, mw=250.0)]
+        events = self._events()
+        kept, _, _, _, _ = evolve_fleet(
+            fleet, None, 2028, cfg, {}, events=events, announced_fossil_exits=rows
+        )
+        self.assertAlmostEqual(sum(g.pmax_mw for g in kept), 250.0)
+        self.assertEqual(events["retirements"], [])
+        self.assertAlmostEqual(
+            sum(d["derate_mw"] for d in events["announced_derates"]), 250.0
+        )
+        self.assertEqual(
+            {d["unit_id"] for d in events["announced_derates"]}, {"H_C1", "H_C2"}
+        )
+
+    def test_first_year_backlog_via_build_base_fleet_is_gated(self):
+        # A dated row at/before the first simulated year lands in the
+        # base-fleet backlog only under the gate.
+        from market_sim.data.fleet import build_base_fleet
+
+        rows = [self._row(300, "1", 2026, month=3, mw=500.0)]
+        # build_base_fleet resolves its loaders through the fleet package
+        # namespace (_pkg_ns); with campd_bins=None it takes the legacy path.
+        with (
+            mock.patch(
+                "market_sim.data.fleet.load_fleet_from_csv",
+                return_value=[_unit(300, "1", 500.0, fuel="coal")],
+            ),
+            mock.patch(
+                "market_sim.data.fleet.aggregate_fleet",
+                side_effect=lambda gens, *a, **kw: list(gens),
+            ),
+        ):
+            iso_config = get_iso_config("MISO")
+            zones = [z.name for z in iso_config.zones]
+            off = build_base_fleet(
+                None,
+                "MISO",
+                iso_config,
+                zones,
+                ScenarioConfig(),
+                [],
+                [],
+                2027,
+                announced_fossil_exits=rows,
+            )
+            on = build_base_fleet(
+                None,
+                "MISO",
+                iso_config,
+                zones,
+                ScenarioConfig(fossil_announced_exits_enabled=True),
+                [],
+                [],
+                2027,
+                announced_fossil_exits=rows,
+            )
+        self.assertEqual([g.unit_id for g in off], ["300_1"])
+        self.assertEqual(on, [])
+
+    # -- reconciliation (a): dated plants are exogenous to the screen -----
+    def test_dated_plant_unit_ids_grain_and_pending_semantics(self):
+        from market_sim.model.capacity import dated_plant_unit_ids
+
+        fleet = [
+            _unit(300, "1", 500.0, fuel="coal"),
+            _unit(300, "2", 400.0, fuel="coal"),
+            _binned("H_C1", 200, 300.0),
+            _binned("H_C2", 200, 200.0),
+            _unit(999, "1", 100.0, fuel="gas_ct"),
+        ]
+        rows = [
+            self._row(300, "1", 2030, mw=500.0),  # pending in 2028
+            self._row(200, "U1", 2029, month=3, mw=100.0),  # pending in 2028
+        ]
+        # Unit grain: only the dated generator; binned: the whole plant.
+        self.assertEqual(
+            dated_plant_unit_ids(fleet, rows, 2028),
+            frozenset({"300_1", "H_C1", "H_C2"}),
+        )
+        # A first-half row in its effective year still has a completion leg
+        # next year -> still pending; the year after, it is done.
+        self.assertIn("H_C1", dated_plant_unit_ids(fleet, rows, 2029))
+        self.assertNotIn("H_C1", dated_plant_unit_ids(fleet, rows, 2030))
+        # A past unit-grain row is not pending.
+        self.assertEqual(dated_plant_unit_ids(fleet, rows, 2031), frozenset())
+        self.assertEqual(dated_plant_unit_ids(fleet, [], 2028), frozenset())
+
+    def test_evolve_passes_exemption_and_exogenous_rows_to_the_screen(self):
+        from market_sim.model import capacity_evolution as pkg
+
+        cfg = ScenarioConfig(fossil_announced_exits_enabled=True)
+        fleet = [
+            _unit(300, "1", 500.0, fuel="coal"),
+            _unit(301, "1", 400.0, fuel="coal"),
+        ]
+        rows = [self._row(300, "1", 2030, mw=500.0)]
+        seen = {}
+
+        def spy(fleet_, *a, **kw):
+            seen["exempt"] = kw.get("exempt_unit_ids")
+            seen["exogenous"] = kw.get("exogenous_exits")
+            return fleet_, {}, []
+
+        prior = {
+            "fleet_arrays": object(),
+            "dispatch_result": object(),
+            "prices": np.zeros((1, 24)),
+            "peak_demand": 1000.0,
+        }
+        with mock.patch.object(pkg, "apply_economic_retirements", side_effect=spy):
+            evolve_fleet(fleet, prior, 2028, cfg, {}, announced_fossil_exits=rows)
+        self.assertEqual(seen["exempt"], frozenset({"300_1"}))
+        self.assertIs(seen["exogenous"], rows)
+        # Off the gate the screen sees neither.
+        seen.clear()
+        with mock.patch.object(pkg, "apply_economic_retirements", side_effect=spy):
+            evolve_fleet(
+                fleet, prior, 2028, ScenarioConfig(), {}, announced_fossil_exits=rows
+            )
+        self.assertEqual(seen["exempt"], frozenset())
+        self.assertIsNone(seen["exogenous"])
+
+    # -- reconciliation (b): the admission cap nets the dated exits ---------
+    def test_admission_cap_counterfactual_nets_dated_exits(self):
+        from market_sim.model.capacity_evolution import retirements as rmod
+
+        cfg = ScenarioConfig(iso="MISO", retirement_rule="pipeline")
+        lag = rmod._execution_lag_years(cfg, "coal")  # cap horizon = year-1+lag
+        year = 2028
+        cap_year = year - 1 + lag
+        fleet = [
+            _unit(300, "1", 500.0, fuel="coal"),  # dated, due inside the horizon
+            _unit(301, "1", 400.0, fuel="coal"),  # dated, due beyond the horizon
+            _unit(302, "1", 300.0, fuel="coal"),  # undated failing candidate
+        ]
+        rows = [
+            self._row(300, "1", cap_year, mw=500.0),
+            self._row(301, "1", cap_year + 1, mw=400.0),
+        ]
+        margins = [(fleet[2], 0.0, 1.0)]  # only the undated unit is screened
+        calls = []
+
+        def spy(fleet_, eligible, retired, *a, **kw):
+            calls.append([g.unit_id for g in fleet_])
+            return []
+
+        with mock.patch.object(rmod, "_apply_reliability_floor", side_effect=spy):
+            rmod._apply_pipeline_retirements(
+                fleet,
+                margins,
+                {},
+                cfg,
+                1000.0,
+                0.0,
+                0.0,
+                0.0,
+                None,
+                year,
+                None,
+                None,
+                exogenous_exits=rows,
+            )
+            rmod._apply_pipeline_retirements(
+                fleet,
+                margins,
+                {},
+                cfg,
+                1000.0,
+                0.0,
+                0.0,
+                0.0,
+                None,
+                year,
+                None,
+                None,
+            )
+        admission_with, execution_with, admission_without, _ = calls
+        # With the rows: the admission counterfactual has lost the in-horizon
+        # dated unit and kept the beyond-horizon one; the execution-stage
+        # floor still sees the realized fleet.
+        self.assertEqual(admission_with, ["301_1", "302_1"])
+        self.assertEqual(execution_with, ["300_1", "301_1", "302_1"])
+        # Without the rows: byte-identical pre-D42 behaviour.
+        self.assertEqual(admission_without, ["300_1", "301_1", "302_1"])
+
+    # -- fuel-scoped derate at mixed-fuel plants ---------------------------
+    def test_fuel_scoped_derate_at_mixed_fuel_plant(self):
+        cfg = ScenarioConfig(fossil_announced_exits_enabled=True)
+        fleet = [
+            _binned("H_C1", 200, 300.0, fuel="coal"),
+            _binned("H_G1", 200, 200.0, fuel="gas_ct"),
+        ]
+        # A dated COAL row lands on the coal bin only.
+        rows = [self._row(200, "U1", 2028, mw=150.0)]
+        kept, _, _, _, _ = evolve_fleet(
+            fleet, None, 2028, cfg, {}, announced_fossil_exits=rows
+        )
+        by_id = {g.unit_id: g.pmax_mw for g in kept}
+        self.assertAlmostEqual(by_id["H_C1"], 150.0)
+        self.assertAlmostEqual(by_id["H_G1"], 200.0)
+        # A row whose fuel has no binned generator at the plant falls back to
+        # the plant-wide derate (nothing is silently dropped).
+        from dataclasses import replace
+
+        oil_row = replace(rows[0], fuel_type="oil", mw=100.0)
+        kept, _, _, _, _ = evolve_fleet(
+            fleet, None, 2028, cfg, {}, announced_fossil_exits=[oil_row]
+        )
+        self.assertAlmostEqual(sum(g.pmax_mw for g in kept), 400.0)
+        self.assertAlmostEqual(
+            {g.unit_id: g.pmax_mw for g in kept}["H_C1"], 300.0 * 400.0 / 500.0
+        )
+        # A fuel-less confirmed row keeps the plant-wide derate (byte-identical
+        # pre-D42 behaviour).
+        conf = ConfirmedExit(
+            plant_id=200, generator_id="U1", exit_year=2028, exit_month=None, mw=150.0
+        )
+        kept = apply_confirmed_exits(fleet, 2028, [conf])
+        by_id = {g.unit_id: g.pmax_mw for g in kept}
+        self.assertAlmostEqual(by_id["H_C1"], 300.0 * 350.0 / 500.0)
+        self.assertAlmostEqual(by_id["H_G1"], 200.0 * 350.0 / 500.0)
+
+
+class TestFossilAnnouncedLedgerReconciliation(TestEvolveFleetLedgerReconciliation):
+    """The I4 identity holds with the D42 ``announced_derates`` rows in the sum."""
+
+    def test_dated_binned_and_unit_grain_reconcile(self):
+        from market_sim.data.announced_retirements import AnnouncedFossilExit
+
+        cfg = ScenarioConfig(fossil_announced_exits_enabled=True)
+        fleet = [
+            _binned("H_C1", 200, 300.0, fuel="coal"),
+            _binned("H_G1", 200, 200.0, fuel="gas_ct"),
+            _unit(300, "1", 500.0, fuel="coal", retirement_year=2028),
+            _unit(301, "1", 400.0, fuel="gas_st", retirement_year=2099),
+        ]
+        rows = [
+            AnnouncedFossilExit(200, "U1", 2028, None, 150.0, "coal", 2020, 2028, None),
+            AnnouncedFossilExit(300, "1", 2028, None, 500.0, "coal", 2020, 2028, None),
+        ]
+        events = self._events()
+        evolve_fleet(
+            fleet, None, 2028, cfg, {}, events=events, announced_fossil_exits=rows
+        )
+        self.assertEqual(
+            [(r["unit_id"], r["reason"]) for r in events["retirements"]],
+            [("300_1", "announced")],
+        )
+        self.assertAlmostEqual(
+            sum(d["derate_mw"] for d in events["announced_derates"]), 150.0
+        )
+        self._assert_reconciles(events)

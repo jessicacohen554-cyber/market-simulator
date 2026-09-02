@@ -144,6 +144,7 @@ from .retirements import (
     _zone_is_long as _zone_is_long,
     apply_announced_retirements,
     apply_confirmed_exits,
+    dated_plant_unit_ids,
     apply_economic_retirements,
     capacity_revenue_per_mw_yr,
     compute_attribute_revenue,
@@ -268,6 +269,7 @@ __all__ = [
     # retirements
     "logger",
     "apply_confirmed_exits",
+    "dated_plant_unit_ids",
     "apply_announced_retirements",
     "apply_economic_retirements",
     "compute_attribute_revenue",
