@@ -121,45 +121,51 @@
  },
  "x2": {
   "candidate": "C2 (p50 over out-of-merit online hours) \u2014 the level FINDING-miso198 \u00a74 refused",
+  "swap_liveness_rel_move_vs_incumbent": {
+   "2023": 0.4071,
+   "2024": 0.4453,
+   "2025": 0.4544
+  },
+  "swap_slot": "thermal_tranche_oom_level (REPAIRED \u2014 see the docstring's instrument-defect note; the p25_measured slot is a silent no-op against a keeper arming st_gas_mustrun_oom_level)",
   "by_year": {
    "2023": {
-    "raw_assertion_twh": 9.9319,
-    "O_overassertion_twh": 0.6951,
-    "over_share": 0.07,
-    "O_mis_twh": 0.0763,
-    "O_lvl_twh": 0.6188,
+    "raw_assertion_twh": 13.9748,
+    "O_overassertion_twh": 2.019,
+    "over_share": 0.1445,
+    "O_mis_twh": 0.1167,
+    "O_lvl_twh": 1.9022,
     "shares": {
-     "MIS": 0.1097,
-     "LVL": 0.8903
+     "MIS": 0.0578,
+     "LVL": 0.9422
     }
    },
    "2024": {
-    "raw_assertion_twh": 10.3857,
-    "O_overassertion_twh": 0.6984,
-    "over_share": 0.0672,
-    "O_mis_twh": 0.3969,
-    "O_lvl_twh": 0.3015,
+    "raw_assertion_twh": 15.0103,
+    "O_overassertion_twh": 1.7917,
+    "over_share": 0.1194,
+    "O_mis_twh": 0.5646,
+    "O_lvl_twh": 1.2271,
     "shares": {
-     "MIS": 0.5683,
-     "LVL": 0.4317
+     "MIS": 0.3151,
+     "LVL": 0.6849
     }
    },
    "2025": {
-    "raw_assertion_twh": 10.4408,
-    "O_overassertion_twh": 0.5901,
-    "over_share": 0.0565,
-    "O_mis_twh": 0.1162,
-    "O_lvl_twh": 0.4739,
+    "raw_assertion_twh": 15.185,
+    "O_overassertion_twh": 2.1006,
+    "over_share": 0.1383,
+    "O_mis_twh": 0.1824,
+    "O_lvl_twh": 1.9181,
     "shares": {
-     "MIS": 0.1969,
-     "LVL": 0.8031
+     "MIS": 0.0868,
+     "LVL": 0.9132
     }
    }
   },
   "dominant_channel": "LVL",
   "years_over_line": {
-   "MIS": 1,
-   "LVL": 2
+   "MIS": 0,
+   "LVL": 3
   },
   "LX2_section4_explanation_holds": false,
   "LX2_verdict": "\u00a74's STATED MECHANISM IS WRONG. C2's over-assertion is a LEVEL effect: the median exceeds what the plant makes in hours it IS running. It is a property of the level against its own conditioning sample and has nothing to do with the window. C2 STAYS REFUSED \u2014 S-iii refused it on the MAGNITUDE of its over-assertion, which this measurement does not change."
