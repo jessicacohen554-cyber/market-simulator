@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import logging
 import os
+from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
@@ -500,7 +501,9 @@ def _hour_index_8760(
     return idx
 
 
-def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
+def _read_one(
+    state: str, year: int, raw_dir: Path, prefer_unit_level: bool = False
+) -> pd.DataFrame | None:
     """Load and normalize one ``{STATE}_{YEAR}.parquet`` extract, or ``None``.
 
     Resolves the file from the facility-level subdirectory
@@ -520,18 +523,20 @@ def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
     so each unit's history lands on the EIA plant the model fleet carries.
     """
     fname = f"{state}_{year}.parquet"
-    path = next(
-        (
-            p
-            for p in (
-                raw_dir / "campd-facility-level" / fname,
-                raw_dir / "campd-unit-level" / fname,
-                raw_dir / fname,  # legacy flat layout (tests / old data)
-            )
-            if p.exists()
-        ),
-        None,
+    # ``prefer_unit_level`` inverts the first two candidates for a caller that
+    # NEEDS per-unit identity (campd.plant_group_hourly_net). The default order
+    # is unchanged and deliberately facility-first, which keeps ERCOT and the
+    # existing PJM states bit-for-bit; a state present in BOTH directories (NY
+    # is) otherwise silently yields a frame whose units the publisher already
+    # summed away.
+    candidates = (
+        raw_dir / "campd-facility-level" / fname,
+        raw_dir / "campd-unit-level" / fname,
+        raw_dir / fname,  # legacy flat layout (tests / old data)
     )
+    if prefer_unit_level:
+        candidates = (candidates[1], candidates[0], candidates[2])
+    path = next((p for p in candidates if p.exists()), None)
     if path is None:
         logger.warning(
             "CAMPD extract not found for %s %d (looked in %s/"
@@ -617,6 +622,24 @@ def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
     out = pd.DataFrame(
         {
             "plant_id": plant_id,
+            # Unit identity, carried through for the per-unit attribution seam
+            # (nyiso-175b): a mixed facility's CEMS rows can only be split
+            # across the model's bins if the unit each row belongs to survives
+            # normalization. Purely additive — every existing consumer selects
+            # columns by name — and present ONLY on the raw path, because the
+            # curated ``emissions`` clean datatype does not carry unit identity
+            # at all. :func:`plant_group_hourly_net` therefore RAISES rather
+            # than silently falling back when they are absent.
+            "unit_id": (
+                raw["unitId"].astype(str)
+                if "unitId" in raw.columns
+                else pd.Series([""] * len(raw), index=raw.index)
+            ),
+            "unit_type": (
+                raw["unitType"].astype(str)
+                if "unitType" in raw.columns
+                else pd.Series([""] * len(raw), index=raw.index)
+            ),
             "facility_name": raw["facilityName"].astype(str),
             "state": raw["stateCode"].astype(str),
             "year": np.int16(year),
@@ -739,6 +762,7 @@ def load_campd_hourly(
     states: list[str] | tuple[str, ...],
     years: list[int] | tuple[int, ...],
     raw_dir: str | Path | None = None,
+    prefer_unit_level: bool = False,
 ) -> pd.DataFrame:
     """Load and normalize CAMPD hourly extracts for states and years.
 
@@ -747,6 +771,12 @@ def load_campd_hourly(
         years: Calendar years, e.g. ``[2023, 2024, 2025]``.
         raw_dir: Directory holding ``{STATE}_{YEAR}.parquet``; ``None`` uses
             :data:`RAW_DATA_DIR`.
+        prefer_unit_level: Read the ``campd-unit-level`` extract in preference
+            to the facility-level one, for a caller that needs per-unit
+            identity (:func:`plant_group_hourly_net`). Default ``False`` keeps
+            the facility-first resolution order every existing caller relies
+            on. Ignored on the clean path, which carries no unit identity at
+            all.
 
     Returns:
         One row per ``(plant, unit-hour)`` with masses in kg, gross load in
@@ -769,7 +799,7 @@ def load_campd_hourly(
         df
         for state in states
         for year in years
-        if (df := _read_one(state, int(year), base)) is not None
+        if (df := _read_one(state, int(year), base, prefer_unit_level)) is not None
     ]
     if not frames:
         return pd.DataFrame()
@@ -1181,6 +1211,96 @@ def plant_hourly_net(
         np.add.at(series, hoy[valid], gross[valid])
         out[int(plant_id)] = series * float(factors.get(int(plant_id), 1.0))
     return out
+
+
+def plant_group_hourly_net(
+    df: pd.DataFrame,
+    factors: dict[int, float],
+    year: int,
+    group_of: Callable[[int, str, str], str | None],
+    hours: int = HOURS_PER_YEAR,
+) -> dict[tuple[int, str], np.ndarray]:
+    """Return per-``(plant, model group)`` 8760-hour **net** series for a year.
+
+    The per-unit analogue of :func:`plant_hourly_net`. That function sums a
+    plant's units into ONE facility series, which the callers then attribute
+    wholesale to a single model bin — correct at a single-bin plant and wrong
+    at a mixed one, where it hands one bin the whole facility's conduct (the
+    nyiso-175 §4.4 object: 13.76 TWh across six NYISO plants, decided at East
+    River by a 3.5 MW nameplate margin). Here each unit's gross is routed by
+    ``group_of`` to the bin that actually contains it, so a mixed plant's bins
+    each get their own measured series over their own denominator.
+
+    Args:
+        df: A frame from :func:`load_campd_hourly` **on the raw path** — it
+            must carry ``unit_id`` / ``unit_type``.
+        factors: ``{plant_id: parasitic_factor}`` (net/gross).
+        year: Calendar year to extract.
+        group_of: ``(plant_id, unit_id, unit_type) -> model group or None``.
+            A unit mapped to ``None`` is dropped. The caller owns the crosswalk
+            (and the decision of what to do with a unit whose family the plant
+            carries no bin for), so nothing here needs to know about classes.
+        hours: Length of the output series.
+
+    Returns:
+        ``{(plant_id, group): (hours,) net MW}``.
+
+    Raises:
+        ValueError: When ``df`` lacks unit identity. This is deliberate: the
+            curated ``emissions`` clean datatype does not carry ``unitId`` /
+            ``unitType``, so under ``MARKET_SIM_USE_CLEAN`` a silent fallback
+            to facility attribution would reinstate exactly the defect this
+            function exists to repair, and would do it invisibly.
+    """
+    out: dict[tuple[int, str], np.ndarray] = {}
+    if df.empty:
+        return out
+    missing = {"unit_id", "unit_type"} - set(df.columns)
+    if missing:
+        raise ValueError(
+            "plant_group_hourly_net needs per-unit identity but the frame is "
+            f"missing {sorted(missing)}. The curated 'emissions' clean datatype "
+            "does not carry unit identity, so this attribution cannot be built "
+            "under MARKET_SIM_USE_CLEAN — use the raw CAMPD path."
+        )
+    if not (df["unit_id"].astype(str).str.len() > 0).any():
+        # The columns exist but every row is blank: this is a FACILITY-level
+        # extract, whose units the publisher already summed away. Loading it
+        # here would silently reproduce facility attribution under a per-unit
+        # name — the exact defect this function repairs, invisible. Callers
+        # must request the unit-level extract explicitly
+        # (``load_campd_hourly(..., prefer_unit_level=True)``).
+        raise ValueError(
+            "plant_group_hourly_net was given a FACILITY-level CAMPD frame "
+            "(unit_id blank on every row), in which per-unit identity has "
+            "already been summed away. Per-unit attribution is impossible on "
+            "it; load with prefer_unit_level=True."
+        )
+    yr = df[df["year"] == year]
+    for (plant_id, unit_id, unit_type), sub in yr.groupby(
+        ["plant_id", "unit_id", "unit_type"], observed=True
+    ):
+        group = group_of(int(plant_id), str(unit_id), str(unit_type))
+        if not group:
+            continue
+        key = (int(plant_id), str(group))
+        series = out.get(key)
+        if series is None:
+            series = np.zeros(hours, dtype=float)
+            out[key] = series
+        hoy = sub["hour_of_year"].to_numpy()
+        # NaN gross == an offline unit-hour: CAMPD writes NaN, not 0, for a
+        # non-operating unit on the unit-level extracts (52 % of NY CC
+        # unit-hours in 2025). It MUST be zeroed before accumulation because
+        # np.add.at PROPAGATES NaN — the same trap plant_hourly_net documents.
+        gross = np.nan_to_num(sub["gross_mw"].to_numpy(), nan=0.0)
+        valid = (hoy >= 0) & (hoy < hours)
+        np.add.at(series, hoy[valid], gross[valid])
+    factor_by_plant = {k: float(v) for k, v in factors.items()}
+    return {
+        (code, group): series * factor_by_plant.get(code, 1.0)
+        for (code, group), series in out.items()
+    }
 
 
 def coal_share_by_plant(

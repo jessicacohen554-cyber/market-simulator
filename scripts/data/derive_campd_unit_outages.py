@@ -580,6 +580,8 @@ def _resolve_unit_group(
     fac_group: str | None,
     unit_fuel: str = "",
     mixed_gas_routing: bool = False,
+    per_unit_crosswalk: bool = False,
+    plant_model_groups: dict[str, float] | set[str] | None = None,
 ) -> str:
     """Route a CAMPD unit's outage row to the model bin matching the UNIT.
 
@@ -650,6 +652,32 @@ def _resolve_unit_group(
     any forward year (rule 13 ``[R-MEASURED]``). Single-gas-group facilities are
     untouched by construction, so the flag is byte-inert everywhere else.
 
+    THE PER-UNIT CROSSWALK (nyiso-175b, ``per_unit_crosswalk``, GATED default
+    False, rule 14 ``[R-ACCURATE]``). ``mixed_gas_routing`` above repairs the
+    short-circuit only where :data:`_GAS_BIN_GROUPS` sees two or more gas bins
+    -- and that set EXCLUDES both CT classes, so a ``{CT_CHP, ST_CHP}`` cogen
+    intersects it at size 1 and the gate never fires. Measured at East River
+    (2493): all 93 of its windows, units 1 and 2 included, are written as
+    ``ST_CHP``, so the EIA-860 ``GT`` machines' outages derate the 309.5 MW
+    STEAM bin (nyiso-174 section 6 item 1) with the gate on or off. Worse, where
+    the existing gate DOES fire it can be wrong: at Ravenswood (2500) it routes
+    the combined-cycle block's CT0001/CT0010/CT0011 to ``CT_PEAKER`` -- dropping
+    them from the overlay entirely -- although those are three of the 27 units
+    the liquid-fuel guard's own evidence names as gas-fired members of a genuine
+    block that must keep inheriting it.
+
+    Both failures share one cause: the fallback routes on the bare ``unitType``
+    STRING, which is a CEMS monitoring-configuration descriptor and not an EIA
+    prime-mover code. ``per_unit_crosswalk`` replaces that string test with
+    :func:`scripts.lib.campd_measured_classes.corrected_unit_class`, which keeps
+    the unit's prime-mover FAMILY and lets the unit's own plant's model roster
+    pick the class inside it -- so East River's turbines reach ``CT_CHP`` and
+    Ravenswood's block CTs stay on ``CC_REGULAR``. Requires
+    ``plant_model_groups``; without it the flag is inert by construction. ZERO
+    free parameters, and the same crosswalk the tranche deriver's
+    ``--per-unit-attribution`` uses, so the two repairs cannot disagree about
+    which bin a machine belongs to.
+
     Module-level (not nested in :func:`main`) so the declared-event-window
     sibling deriver (``scripts/data/derive_campd_maxgen_outages.py``) reuses the
     SAME routing verbatim -- including this gate, which is why it lives here
@@ -663,6 +691,26 @@ def _resolve_unit_group(
         # Excluded downstream: peakers carry no overlay. See the guard's
         # rationale in this function's docstring.
         return "CT_CHP" if "CT_CHP" in fac_groups else "CT_PEAKER"
+    if per_unit_crosswalk and plant_model_groups:
+        # Seat the unit on a class its OWN plant's model fleet carries, by
+        # prime-mover family. Ahead of the fac_group short-circuit because the
+        # short-circuit is exactly what mis-routes a mixed cogen's turbines.
+        from scripts.lib.campd_measured_classes import (
+            campd_unittype_class,
+            corrected_unit_class,
+        )
+
+        # is_chp comes from the plant's OWN model roster rather than a
+        # separate EIA-860 read: the model's bins ARE that classification
+        # (plant_taxonomy.classify_plant), so this cannot disagree with the
+        # fleet the windows will be applied to.
+        groups = set(plant_model_groups)
+        seated = corrected_unit_class(
+            campd_unittype_class(unit_type, any(g.endswith("_CHP") for g in groups)),
+            groups,
+        )
+        if seated and seated in groups:
+            return seated
     if (
         fac_group in QUALIFYING_PLANT_GROUPS
         and fac_group != "COAL"
@@ -1105,6 +1153,19 @@ def main() -> None:
         ),
     )
     ap.add_argument(
+        "--per-unit-crosswalk",
+        action="store_true",
+        help=(
+            "nyiso-175b (rule 14 [R-ACCURATE]): route each unit by the "
+            "prime-mover-family crosswalk (campd_measured_classes."
+            "corrected_unit_class) instead of the bare CAMPD unitType string, "
+            "so a unit lands on a bin its own plant's model fleet carries. "
+            "Repairs the East River case mixed_gas_routing cannot reach "
+            "(_GAS_BIN_GROUPS excludes both CT classes) and the Ravenswood "
+            "case it gets wrong. Writes the '-perunit-' companion."
+        ),
+    )
+    ap.add_argument(
         "--out",
         default=None,
         help="Output CSV; defaults to data/raw/campd-unit-outages.csv "
@@ -1217,6 +1278,11 @@ def main() -> None:
                 if iso == "ERCOT"
                 else f"campd-unit-outages-short-{iso}.csv"
             )
+        elif getattr(args, "per_unit_crosswalk", False):
+            # SEPARATE companion (nyiso-175b), same discipline as the
+            # -unitroute- path: never an overwrite, so the control leg keeps
+            # reading byte-identical input and the delta is a single object.
+            fname = f"campd-unit-outages-perunit-{iso}.csv"
         elif args.mixed_gas_routing:
             # A SEPARATE companion path (miso-200): the incumbent extract is
             # never overwritten, so the two routings can be A/B'd as a single
@@ -1608,6 +1674,10 @@ def main() -> None:
                             group,
                             unit_fuel.get(uid, ""),
                             mixed_gas_routing=bool(args.mixed_gas_routing),
+                            per_unit_crosswalk=bool(
+                                getattr(args, "per_unit_crosswalk", False)
+                            ),
+                            plant_model_groups=fac_groups,
                         )
                     )
                     if ugroup not in QUALIFYING_PLANT_GROUPS:
