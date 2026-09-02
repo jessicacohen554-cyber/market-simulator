@@ -1,0 +1,167 @@
+{
+ "probe": "_miso199_overassertion_attribution.py",
+ "run_id": "2026-09-01-miso-198-oomlevel",
+ "keeper_bundle": "results/calibration/miso198_oom_B",
+ "status": "NON-ADJUDICATING DIAGNOSTIC. The window family is already REFUSED by the census's frozen L-2b line; nothing here re-opens it.",
+ "frozen_lines": {
+  "LX1A_CONCENTRATION": 0.4,
+  "LX2_DOMINANT_SHARE": 0.45,
+  "LX2_MIN_YEARS": 2
+ },
+ "x1": {
+  "O_mis_by_year_twh": {
+   "2023": 0.0763,
+   "2024": 0.3969,
+   "2025": 0.1162
+  },
+  "O_mis_total_twh": 0.5894,
+  "top_cells": [
+   {
+    "plant_code": 1403,
+    "year": 2024,
+    "month": 2,
+    "O_mis_gwh": 320.5,
+    "share_of_3y_O_mis": 0.5438
+   },
+   {
+    "plant_code": 990,
+    "year": 2025,
+    "month": 3,
+    "O_mis_gwh": 38.5,
+    "share_of_3y_O_mis": 0.0653
+   },
+   {
+    "plant_code": 3459,
+    "year": 2025,
+    "month": 12,
+    "O_mis_gwh": 12.4,
+    "share_of_3y_O_mis": 0.021
+   },
+   {
+    "plant_code": 990,
+    "year": 2023,
+    "month": 2,
+    "O_mis_gwh": 12.0,
+    "share_of_3y_O_mis": 0.0204
+   },
+   {
+    "plant_code": 3457,
+    "year": 2025,
+    "month": 1,
+    "O_mis_gwh": 11.7,
+    "share_of_3y_O_mis": 0.0199
+   },
+   {
+    "plant_code": 990,
+    "year": 2023,
+    "month": 1,
+    "O_mis_gwh": 11.7,
+    "share_of_3y_O_mis": 0.0198
+   },
+   {
+    "plant_code": 990,
+    "year": 2025,
+    "month": 9,
+    "O_mis_gwh": 11.3,
+    "share_of_3y_O_mis": 0.0192
+   },
+   {
+    "plant_code": 3457,
+    "year": 2025,
+    "month": 2,
+    "O_mis_gwh": 10.6,
+    "share_of_3y_O_mis": 0.0179
+   },
+   {
+    "plant_code": 3457,
+    "year": 2023,
+    "month": 3,
+    "O_mis_gwh": 10.4,
+    "share_of_3y_O_mis": 0.0177
+   },
+   {
+    "plant_code": 3457,
+    "year": 2023,
+    "month": 10,
+    "O_mis_gwh": 7.6,
+    "share_of_3y_O_mis": 0.013
+   },
+   {
+    "plant_code": 1402,
+    "year": 2024,
+    "month": 7,
+    "O_mis_gwh": 6.6,
+    "share_of_3y_O_mis": 0.0112
+   },
+   {
+    "plant_code": 990,
+    "year": 2024,
+    "month": 1,
+    "O_mis_gwh": 6.5,
+    "share_of_3y_O_mis": 0.0111
+   }
+  ],
+  "LX1a_top_cell_share": 0.5438,
+  "LX1a_concentrated": true,
+  "LX1a_verdict": "CONCENTRATED \u2014 the misplacement is an EVENT in one (plant, year, month) cell, not a property of the window RANKING (a ranking defect is diffuse by construction: the system-load rank carries no calendar structure).",
+  "LX1b_top_cell": {
+   "plant_code": 1403,
+   "year": 2024,
+   "month": 2,
+   "plant_group": "ST_GAS",
+   "nameplate_mw": 1465.4,
+   "mean_outage_availability": 1.0,
+   "mean_measured_net_mw": 167.3,
+   "measured_online_hours_in_month": 206,
+   "hours_in_month": 672,
+   "mean_floor_mw": 688.0,
+   "O_mis_gwh": 320.5
+  },
+  "LX1b_verdict": "NOT the availability family on this cell's evidence."
+ },
+ "x2": {
+  "candidate": "C2 (p50 over out-of-merit online hours) \u2014 the level FINDING-miso198 \u00a74 refused",
+  "by_year": {
+   "2023": {
+    "raw_assertion_twh": 9.9319,
+    "O_overassertion_twh": 0.6951,
+    "over_share": 0.07,
+    "O_mis_twh": 0.0763,
+    "O_lvl_twh": 0.6188,
+    "shares": {
+     "MIS": 0.1097,
+     "LVL": 0.8903
+    }
+   },
+   "2024": {
+    "raw_assertion_twh": 10.3857,
+    "O_overassertion_twh": 0.6984,
+    "over_share": 0.0672,
+    "O_mis_twh": 0.3969,
+    "O_lvl_twh": 0.3015,
+    "shares": {
+     "MIS": 0.5683,
+     "LVL": 0.4317
+    }
+   },
+   "2025": {
+    "raw_assertion_twh": 10.4408,
+    "O_overassertion_twh": 0.5901,
+    "over_share": 0.0565,
+    "O_mis_twh": 0.1162,
+    "O_lvl_twh": 0.4739,
+    "shares": {
+     "MIS": 0.1969,
+     "LVL": 0.8031
+    }
+   }
+  },
+  "dominant_channel": "LVL",
+  "years_over_line": {
+   "MIS": 1,
+   "LVL": 2
+  },
+  "LX2_section4_explanation_holds": false,
+  "LX2_verdict": "\u00a74's STATED MECHANISM IS WRONG. C2's over-assertion is a LEVEL effect: the median exceeds what the plant makes in hours it IS running. It is a property of the level against its own conditioning sample and has nothing to do with the window. C2 STAYS REFUSED \u2014 S-iii refused it on the MAGNITUDE of its over-assertion, which this measurement does not change."
+ }
+}

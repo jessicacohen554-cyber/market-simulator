@@ -50,6 +50,23 @@ cells and reports the ranked list.
     named miso-172 "laid up but reads available at PART-YEAR grain" family and
     the successor is an AVAILABILITY-representation repair, NOT a window one.
 
+**INSTRUMENT DEFECT IN X-2, FOUND AFTER THE FIRST NUMBERS WERE READ, DISCLOSED AND
+REPAIRED RATHER THAN ABSORBED** (the miso-198 §3 precedent). The first X-2 run patched
+``fleet_pkg.thermal_tranche_p25_measured_level``, which is the accessor
+``_miso198_level_selection`` patches — correct against THAT session's keeper
+(``miso191_bax_B``, ``st_gas_mustrun_oom_level=False``) but WRONG against this one. The
+current keeper arms ``st_gas_mustrun_oom_level``, and the runtime then does
+``_p25_measured = {**_p25_measured, **_oom_level}`` (arrays.py:2512), so the
+out-of-merit map OVERRIDES the patched one on every ST_GAS key and the swap is a no-op.
+**The symptom was unmistakable and is recorded here rather than hidden: the "C2"
+partition came back BYTE-IDENTICAL to the incumbent's** (raw 9.932/10.386/10.441, O
+0.695/0.698/0.590) instead of C2's own published 13.975/15.010/15.185 raw assertion
+(FINDING-miso198 §4). X-2 now patches ``thermal_tranche_oom_level`` — the accessor that
+actually wins in this keeper — and **asserts the swap took effect before partitioning**
+(the raw assertion must move by > 1 % against the incumbent, else the run aborts rather
+than reporting a silent no-op as a result). **The frozen L-X2 line below is UNCHANGED**;
+only the instrument that feeds it is repaired.
+
 **X-2 WHY THE MEDIAN OVER-ASSERTS — testing miso-198 §4's OWN explanation.**
 FINDING-miso198 §4 refused the C2 (p50-over-out-of-merit) level and explained
 the refusal thus: *"A statistic that is non-pinning inside its own sample is
@@ -245,7 +262,12 @@ def run() -> dict:
     allon, oomon = sel.measured_samples()
     cands = sel.candidate_levels(allon, oomon)
     c2 = cands["C2"]
-    orig = fleet_pkg.thermal_tranche_p25_measured_level
+    # THE REPAIRED SLOT (see the docstring's instrument-defect note): this
+    # keeper arms st_gas_mustrun_oom_level, and arrays.py:2512 merges the
+    # out-of-merit map OVER the measured-level map, so the accessor that must
+    # be patched is thermal_tranche_oom_level — patching the p25_measured one
+    # is a silent no-op here.
+    orig = fleet_pkg.thermal_tranche_oom_level
     patched = {(int(c), GROUP): float(v) for c, v in c2.items()}
 
     def _patched(iso: str):  # noqa: ANN202 - runtime accessor shim
@@ -253,7 +275,7 @@ def run() -> dict:
         base.update(patched)
         return base
 
-    fleet_pkg.thermal_tranche_p25_measured_level = _patched
+    fleet_pkg.thermal_tranche_oom_level = _patched
     try:
         by_year: dict[int, dict] = {}
         for year in YEARS:
@@ -276,7 +298,23 @@ def run() -> dict:
                 },
             }
     finally:
-        fleet_pkg.thermal_tranche_p25_measured_level = orig
+        fleet_pkg.thermal_tranche_oom_level = orig
+
+    # LIVENESS ASSERTION (the repair's own regression test): a swap that did
+    # not take effect must ABORT, never be reported as a partition. The
+    # incumbent raw assertions are the census's own published figures.
+    incumbent_raw = {2023: 9.9319, 2024: 10.3857, 2025: 10.4408}
+    moved = {
+        y: abs(by_year[y]["raw_assertion_twh"] - incumbent_raw[y]) / incumbent_raw[y]
+        for y in YEARS
+    }
+    if not all(v > 0.01 for v in moved.values()):
+        raise SystemExit(
+            "X-2 ABORT: the C2 level swap did not take effect (raw assertion "
+            f"moved {moved} against the incumbent). Reporting this partition "
+            "would restate the incumbent's numbers as C2's — the exact defect "
+            "the docstring's instrument note records."
+        )
 
     dom = {"MIS": 0, "LVL": 0}
     for year in YEARS:
@@ -289,6 +327,10 @@ def run() -> dict:
     rec["x2"] = {
         "candidate": "C2 (p50 over out-of-merit online hours) — the level "
                      "FINDING-miso198 §4 refused",
+        "swap_liveness_rel_move_vs_incumbent": {y: round(v, 4) for y, v in moved.items()},
+        "swap_slot": "thermal_tranche_oom_level (REPAIRED — see the docstring's "
+                     "instrument-defect note; the p25_measured slot is a silent "
+                     "no-op against a keeper arming st_gas_mustrun_oom_level)",
         "by_year": by_year,
         "dominant_channel": channel,
         "years_over_line": dom,
