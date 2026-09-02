@@ -352,7 +352,9 @@ def coal_chp_overrides(iso: str, year: int) -> dict[int, tuple[float, str]]:
 
 
 @lru_cache(maxsize=8)
-def coal_sync_online_frac(iso: str, per_unit: bool = False) -> dict[int, float]:
+def coal_sync_online_frac(
+    iso: str, per_unit: bool = False, merit_guard: bool = False
+) -> dict[int, float]:
     """Return ``{plant_code: online_frac}`` for an ISO's coal plants.
 
     The CAMPD-derived plant-level synchronization fraction from
@@ -368,7 +370,7 @@ def coal_sync_online_frac(iso: str, per_unit: bool = False) -> dict[int, float]:
     """
     from market_sim.data.fleet.campd_bins import thermal_tranche_csv_for_iso
 
-    path = thermal_tranche_csv_for_iso(iso, per_unit)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
     if not path.exists():
         return {}
     df = pd.read_csv(path)

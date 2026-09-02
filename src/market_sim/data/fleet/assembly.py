@@ -425,6 +425,7 @@ def bins_to_fleet(
                 str(b["Plant_Group"]),
                 iso=getattr(config, "iso", "ERCOT"),
                 per_unit=bool(getattr(config, "campd_per_unit_attribution", False)),
+                merit_guard=bool(getattr(config, "campd_outage_merit_order_guard", False)),
             )
             # nyiso-147: replace the sector-keyed default with the plant's
             # own measured Gold-Book/EIA-923 grid-delivery share where the
@@ -525,6 +526,7 @@ def bins_to_fleet(
             sync_online_frac = coal_sync_online_frac(
                 getattr(config, "iso", "ERCOT") or "ERCOT",
                 bool(getattr(config, "campd_per_unit_attribution", False)),
+                bool(getattr(config, "campd_outage_merit_order_guard", False)),
             ).get(int(b["Plant_Code"]), 1.0)
 
         group = str(b["Plant_Group"])
@@ -561,6 +563,7 @@ def bins_to_fleet(
             _pk = thermal_tranche_peaking(
                 (getattr(config, "iso", "ERCOT") or "ERCOT"),
                 bool(getattr(config, "campd_per_unit_attribution", False)),
+                bool(getattr(config, "campd_outage_merit_order_guard", False)),
             ).get((plant_code, group))
             if _pk is not None:
                 pct_peak = _pk
@@ -816,6 +819,7 @@ def bins_to_fleet(
                 plant_code,
                 iso=getattr(config, "iso", "ERCOT"),
                 per_unit=bool(getattr(config, "campd_per_unit_attribution", False)),
+                merit_guard=bool(getattr(config, "campd_outage_merit_order_guard", False)),
             )
             # Multi-year steam-host operating level (chp_steam_floor_p25):
             # the artifact's measured steam level supersedes the p2
@@ -832,6 +836,7 @@ def bins_to_fleet(
                 _level = thermal_tranche_chp_steam_level(
                     getattr(config, "iso", "ERCOT") or "ERCOT",
                     bool(getattr(config, "campd_per_unit_attribution", False)),
+                    bool(getattr(config, "campd_outage_merit_order_guard", False)),
                 ).get((plant_code, group))
                 if _level is not None and _level > (pmin_cf or 0.0):
                     pmin_cf = _level
@@ -1252,6 +1257,7 @@ def bins_to_fleet(
                 .thermal_tranche_online_frac(
                     getattr(config, "iso", "ERCOT") or "ERCOT",
                     bool(getattr(config, "campd_per_unit_attribution", False)),
+                    bool(getattr(config, "campd_outage_merit_order_guard", False)),
                 )
                 .get((plant_code, group), 0.0)
             )

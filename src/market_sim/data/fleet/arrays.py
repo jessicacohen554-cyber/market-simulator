@@ -1121,6 +1121,10 @@ def _apply_outage_overlays(
             # oversight; it carries a miso-only registry and reaches no NYISO
             # plant.
             per_unit_crosswalk=getattr(config, "campd_per_unit_attribution", False),
+            merit_order_guard=bool(
+                getattr(config, "campd_per_unit_attribution", False)
+            )
+            and bool(getattr(config, "campd_outage_merit_order_guard", False)),
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
@@ -2490,9 +2494,11 @@ def _compose_min_gen_floors(
         and getattr(config, "st_gas_mustrun_per_plant", False)
     )
     if st_gas_p25_level_on:
-        _pu = bool(getattr(config, "campd_per_unit_attribution", False))
-        _p25_levels = _pkg_ns().thermal_tranche_p25_level(_iso or "ERCOT", _pu)
-        _p25_fracs = _pkg_ns().thermal_tranche_online_frac(_iso or "ERCOT", _pu)
+        from market_sim.data.fleet.campd_bins import campd_attribution_selectors
+
+        _pu, _mg = campd_attribution_selectors(config)
+        _p25_levels = _pkg_ns().thermal_tranche_p25_level(_iso or "ERCOT", _pu, _mg)
+        _p25_fracs = _pkg_ns().thermal_tranche_online_frac(_iso or "ERCOT", _pu, _mg)
         # MEASURED-MW LEVEL BASIS (config.st_gas_mustrun_p25_measured_level,
         # miso-172). ``p25_cf`` is a percentile of net / (nameplate x
         # avail_mult), so the incumbent reconstruction ``p25_cf x nameplate``

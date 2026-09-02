@@ -1,0 +1,237 @@
+{
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "G1": {
+  "legs": {
+   "L0_keeper_inc_ovr": {
+    "2023": {
+     "ST_GAS": 0.7715010038884795,
+     "CC_REGULAR": 1.0
+    },
+    "2024": {
+     "ST_GAS": 0.46530231021424767,
+     "CC_REGULAR": 1.0
+    },
+    "2025": {
+     "ST_GAS": 0.2967897806694284,
+     "CC_REGULAR": 1.0
+    }
+   },
+   "L1_arm_pu_ovr": {
+    "2023": {
+     "ST_GAS": 0.1294984369837599,
+     "CC_REGULAR": 1.0
+    },
+    "2024": {
+     "ST_GAS": 0.09698928762040311,
+     "CC_REGULAR": 1.0
+    },
+    "2025": {
+     "ST_GAS": 0.11056719699087603,
+     "CC_REGULAR": 1.0
+    }
+   },
+   "L2_pu_no_ovr": {
+    "2023": {
+     "ST_GAS": 0.14122264721579791,
+     "CC_REGULAR": 0.8229559942295597
+    },
+    "2024": {
+     "ST_GAS": 0.09698928762040311,
+     "CC_REGULAR": 0.9178082191780822
+    },
+    "2025": {
+     "ST_GAS": 0.12116520954583576,
+     "CC_REGULAR": 0.9232876712328767
+    }
+   },
+   "L3_inc_no_ovr": {
+    "2023": {
+     "ST_GAS": 1.0,
+     "CC_REGULAR": 0.0958904109589041
+    },
+    "2024": {
+     "ST_GAS": 1.0,
+     "CC_REGULAR": 0.18356164383561643
+    },
+    "2025": {
+     "ST_GAS": 1.0,
+     "CC_REGULAR": 0.049315068493150684
+    }
+   }
+  },
+  "st_gas_stable_within_0.05": true,
+  "cc_regular_derated_at_or_below_0.95": true,
+  "cc_regular_pinned_at_1.0_under_override": true,
+  "verdict": "PASS"
+ },
+ "G2": {
+  "metric": "nameplate-weighted mean (1 - availability) over NYISO ST_GAS bins",
+  "norm_efor_plus_planned": "0.10-0.15",
+  "threshold": 0.4,
+  "by_leg": {
+   "L0_keeper_inc_ovr": {
+    "2023": {
+     "booked_share": 0.5357404006184572,
+     "bin_nameplate_mw": 8902.4
+    },
+    "2024": {
+     "booked_share": 0.5598667559556051,
+     "bin_nameplate_mw": 8902.4
+    },
+    "2025": {
+     "booked_share": 0.500861396157293,
+     "bin_nameplate_mw": 8902.4
+    }
+   },
+   "L1_arm_pu_ovr": {
+    "2023": {
+     "booked_share": 0.7942925657110781,
+     "bin_nameplate_mw": 8902.4
+    },
+    "2024": {
+     "booked_share": 0.7415967865830239,
+     "bin_nameplate_mw": 8902.4
+    },
+    "2025": {
+     "booked_share": 0.687831171277193,
+     "bin_nameplate_mw": 8902.4
+    }
+   },
+   "L2_pu_no_ovr": {
+    "2023": {
+     "booked_share": 0.792021052657495,
+     "bin_nameplate_mw": 8902.4
+    },
+    "2024": {
+     "booked_share": 0.7415967865830239,
+     "bin_nameplate_mw": 8902.4
+    },
+    "2025": {
+     "booked_share": 0.6857778539633457,
+     "bin_nameplate_mw": 8902.4
+    }
+   }
+  },
+  "verdict": "OVER-BOOKED"
+ },
+ "ravenswood_metered_conduct": {
+  "2023": {
+   "10": {
+    "on_hours": 1857,
+    "gwh": 281.7,
+    "pmax_mw": 384.0,
+    "cf_of_pmax": 0.0838
+   },
+   "20": {
+    "on_hours": 1261,
+    "gwh": 226.2,
+    "pmax_mw": 379.0,
+    "cf_of_pmax": 0.0681
+   },
+   "30": {
+    "on_hours": 1604,
+    "gwh": 375.5,
+    "pmax_mw": 1030.0,
+    "cf_of_pmax": 0.0416
+   },
+   "CT0001": {
+    "on_hours": 0,
+    "gwh": 0.0,
+    "pmax_mw": null,
+    "cf_of_pmax": null
+   },
+   "CT0010": {
+    "on_hours": 64,
+    "gwh": 0.8,
+    "pmax_mw": 21.0,
+    "cf_of_pmax": 0.0043
+   },
+   "CT0011": {
+    "on_hours": 0,
+    "gwh": 0.0,
+    "pmax_mw": null,
+    "cf_of_pmax": null
+   },
+   "UCC001": {
+    "on_hours": 7857,
+    "gwh": 1965.9,
+    "pmax_mw": 268.0,
+    "cf_of_pmax": 0.8374
+   }
+  },
+  "2024": {
+   "10": {
+    "on_hours": 995,
+    "gwh": 145.5,
+    "pmax_mw": 380.0,
+    "cf_of_pmax": 0.0437
+   },
+   "20": {
+    "on_hours": 1439,
+    "gwh": 230.5,
+    "pmax_mw": 395.0,
+    "cf_of_pmax": 0.0666
+   },
+   "30": {
+    "on_hours": 1007,
+    "gwh": 333.0,
+    "pmax_mw": 1030.0,
+    "cf_of_pmax": 0.0369
+   },
+   "CT0001": {
+    "on_hours": 0,
+    "gwh": 0.0,
+    "pmax_mw": null,
+    "cf_of_pmax": null
+   },
+   "CT0010": {
+    "on_hours": 0,
+    "gwh": 0.0,
+    "pmax_mw": null,
+    "cf_of_pmax": null
+   },
+   "CT0011": {
+    "on_hours": 0,
+    "gwh": 0.0,
+    "pmax_mw": null,
+    "cf_of_pmax": null
+   },
+   "UCC001": {
+    "on_hours": 7900,
+    "gwh": 1956.2,
+    "pmax_mw": 279.0,
+    "cf_of_pmax": 0.8004
+   }
+  },
+  "2025": {
+   "10": {
+    "on_hours": 1891,
+    "gwh": 346.5,
+    "pmax_mw": 385.0,
+    "cf_of_pmax": 0.1027
+   },
+   "20": {
+    "on_hours": 2417,
+    "gwh": 434.3,
+    "pmax_mw": 394.0,
+    "cf_of_pmax": 0.1258
+   },
+   "30": {
+    "on_hours": 888,
+    "gwh": 289.4,
+    "pmax_mw": 1027.0,
+    "cf_of_pmax": 0.0322
+   },
+   "UCC001": {
+    "on_hours": 7885,
+    "gwh": 1923.8,
+    "pmax_mw": 278.0,
+    "cf_of_pmax": 0.79
+   }
+  }
+ }
+}

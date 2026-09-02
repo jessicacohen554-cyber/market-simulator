@@ -290,7 +290,9 @@ def _thermal_tranche_block(config, iso: str) -> dict[str, Any]:
 
         path = Path(
             thermal_tranche_csv_for_iso(
-                iso, bool(getattr(config, "campd_per_unit_attribution", False))
+                iso,
+                bool(getattr(config, "campd_per_unit_attribution", False)),
+                bool(getattr(config, "campd_outage_merit_order_guard", False)),
             )
         )
     except Exception:  # pragma: no cover - a probe never breaks the record
@@ -345,6 +347,7 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
                 iso,
                 bool(getattr(config, "unit_outage_mixed_gas_routing", False)),
                 bool(getattr(config, "campd_per_unit_attribution", False)),
+                bool(getattr(config, "campd_outage_merit_order_guard", False)),
             )
         )
     except Exception:  # pragma: no cover - a probe never breaks the record

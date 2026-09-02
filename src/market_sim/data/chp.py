@@ -249,7 +249,7 @@ def measured_btm_share_by_plant(iso: str) -> dict[int, float]:
 
 @lru_cache(maxsize=8)
 def chp_overrides(
-    iso: str, per_unit: bool = False
+    iso: str, per_unit: bool = False, merit_guard: bool = False
 ) -> dict[int, tuple[float | None, str | None, float | None]]:
     """Return ``{plant_code: (chp_pmin_cf, sector_class, btm_pct_override)}`` for an ISO.
 
@@ -271,7 +271,7 @@ def chp_overrides(
     """
     from market_sim.data.fleet.campd_bins import thermal_tranche_csv_for_iso
 
-    path = thermal_tranche_csv_for_iso(iso, per_unit)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -330,7 +330,11 @@ def measured_chp_btm_pct_nyiso() -> dict[int, float]:
 
 
 def chp_btm_pct(
-    plant_code: int, group: str, iso: str = "ERCOT", per_unit: bool = False
+    plant_code: int,
+    group: str,
+    iso: str = "ERCOT",
+    per_unit: bool = False,
+    merit_guard: bool = False,
 ) -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant.
 
@@ -345,7 +349,7 @@ def chp_btm_pct(
         CHP_ST_BTM_PCT,
     )
 
-    _, sector, btm_override = chp_overrides(iso, per_unit).get(
+    _, sector, btm_override = chp_overrides(iso, per_unit, merit_guard).get(
         int(plant_code), (None, None, None)
     )
     if btm_override is not None:
@@ -396,7 +400,10 @@ def chp_class_netgen_mwh(year: int) -> dict[tuple[int, str], float]:
 
 
 def chp_pmin_cf(
-    plant_code: int, iso: str = "ERCOT", per_unit: bool = False
+    plant_code: int,
+    iso: str = "ERCOT",
+    per_unit: bool = False,
+    merit_guard: bool = False,
 ) -> float | None:
     """Total must-run CF floor (%) for a CHP plant, or ``None`` for no floor.
 
@@ -405,7 +412,9 @@ def chp_pmin_cf(
     """
     from market_sim.data.fleet import CHP_PMIN_CF_BY_PLANT
 
-    pmin, *_ = chp_overrides(iso, per_unit).get(int(plant_code), (None, None, None))
+    pmin, *_ = chp_overrides(iso, per_unit, merit_guard).get(
+        int(plant_code), (None, None, None)
+    )
     if pmin is not None:
         return pmin
     return CHP_PMIN_CF_BY_PLANT.get(int(plant_code))

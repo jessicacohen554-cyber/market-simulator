@@ -43,7 +43,7 @@ import calendar
 import logging
 import os
 import re
-from functools import lru_cache
+from functools import lru_cache, partial
 from pathlib import Path
 
 import numpy as np
@@ -281,7 +281,10 @@ _FLEET_GROUP_OVERRIDE: dict[int, str] = {2500: "ST_GAS"}
 
 
 def _generic_unit_outage_target(
-    facility_id: int, unit_id: object, group: object
+    facility_id: int,
+    unit_id: object,
+    group: object,
+    per_unit_crosswalk: bool = False,
 ) -> tuple[int, str] | None:
     """Map a non-ERCOT unit-outage row to its ``(plant_code, plant_group)``.
 
@@ -290,6 +293,29 @@ def _generic_unit_outage_target(
     excluded from the derate (they dispatch economically), matching the
     ERCOT convention. A handful of mixed CC/ST facilities whose CAMPD class tag
     disagrees with the model bin are remapped via :data:`_FLEET_GROUP_OVERRIDE`.
+
+    ``per_unit_crosswalk`` DISARMS that remap (nyiso-177, rule 19
+    ``[R-ONE-MECH]``). The override exists ONLY because the incumbent extract's
+    ``_resolve_unit_group`` short-circuit tags every unit at a mixed plant with
+    one facility group, so a plant's real per-unit split is unrecoverable at
+    read time and has to be enumerated per plant here. The ``-perunit-``
+    companion carries that split in the file, which makes the override
+    REDUNDANT and, worse, WRONG: it still fires on the repaired rows and drags
+    the plant's correctly-routed CC units onto the steam bin, so the CC bin gets
+    no derate at all. Measured at Ravenswood (2500) over 2023-2025 (probe
+    ``scripts/probes/nyiso177_degradation_root_cause.py``): with the override
+    armed on the repaired routing, ``(2500, CC_REGULAR)`` reads availability
+    1.000 in every year against the repaired routing's own 0.823 / 0.918 /
+    0.923, while ``(2500, ST_GAS)`` moves by at most 0.012 -- i.e. the override
+    contributes almost nothing the crosswalk does not already do, and
+    everything it does contribute is a mis-route. Two mechanisms for one
+    phenomenon: the general one REPLACES the enumeration rather than stacking
+    on it.
+
+    It is disarmed ONLY on that path. On the incumbent extract the override is
+    load-bearing exactly as its comment says -- there ``(2500, ST_GAS)`` reads
+    1.000 without it and the whole plant's downtime lands on a 222.2 MW CC bin
+    -- so the off path stays byte-inert.
     """
     g = (
         ""
@@ -298,7 +324,7 @@ def _generic_unit_outage_target(
     )
     if g in ("CT_PEAKER", "CT_CHP"):
         return None
-    if facility_id in _FLEET_GROUP_OVERRIDE:
+    if facility_id in _FLEET_GROUP_OVERRIDE and not per_unit_crosswalk:
         return (facility_id, _FLEET_GROUP_OVERRIDE[facility_id])
     if not g or g == "OTHER":
         return None
@@ -309,6 +335,7 @@ def unit_outage_csv_for_iso(
     iso: str | None,
     mixed_gas_routing: bool = False,
     per_unit_crosswalk: bool = False,
+    merit_order_guard: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -339,6 +366,20 @@ def unit_outage_csv_for_iso(
     the two disagree (nyiso-175b K3: it routes Ravenswood's gas-fired block
     CTs to ``CT_PEAKER`` and drops them from the overlay). Same fallback: the
     incumbent extract when the companion has not been derived.
+
+    ``merit_order_guard`` (``ScenarioConfig.campd_outage_merit_order_guard``,
+    GATED default False; nyiso-177) selects the ``-perunitmerit-`` companion:
+    the SAME per-unit routing, derived with the deriver's
+    ``--merit-order-guard``, so a detected window whose unit's measured SRMC sat
+    above the revealed clearing cost of the capacity that WAS running is
+    classified as ECONOMIC LAY-UP and leaves the availability envelope (an
+    economically idle unit is AVAILABLE; the LP declines it on its own
+    economics). Zero free parameters -- ``MERIT_OOM_FRAC`` and
+    ``MERIT_RCC_PCTL`` are the deriver's committed constants. It has no meaning
+    without ``per_unit_crosswalk`` and is ignored without it, so the two flags
+    are one selector over one artifact family. Same discipline again: a
+    separate file, never an overwrite, and the incumbent extract when the
+    companion is absent.
     """
     base = (
         UNIT_OUTAGE_CSV
@@ -346,6 +387,12 @@ def unit_outage_csv_for_iso(
         else UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-{iso.upper()}.csv")
     )
     if per_unit_crosswalk:
+        if merit_order_guard:
+            alt = base.with_name(
+                f"campd-unit-outages-perunitmerit-{(iso or 'ERCOT').upper()}.csv"
+            )
+            if alt.exists():
+                return alt
         alt = base.with_name(
             f"campd-unit-outages-perunit-{(iso or 'ERCOT').upper()}.csv"
         )
@@ -575,6 +622,7 @@ def unit_outage_derate_factors(
     fleet_status_scope: bool = False,
     mixed_gas_routing: bool = False,
     per_unit_crosswalk: bool = False,
+    merit_order_guard: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -600,7 +648,9 @@ def unit_outage_derate_factors(
     ``(plant_code, plant_group)`` (no split plants, CTs still excluded).
     """
     iso = (iso or "ERCOT").upper()
-    csv_path = unit_outage_csv_for_iso(iso, mixed_gas_routing, per_unit_crosswalk)
+    csv_path = unit_outage_csv_for_iso(
+        iso, mixed_gas_routing, per_unit_crosswalk, merit_order_guard
+    )
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:
         return {}
@@ -614,6 +664,7 @@ def unit_outage_derate_factors(
         cc_steam_part_reclass,
         cc_nameplate_basis,
         fleet_status_scope,
+        per_unit_crosswalk=per_unit_crosswalk,
     )
 
 
@@ -662,6 +713,7 @@ def _unit_outage_factors_from_events(
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
+    per_unit_crosswalk: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -712,7 +764,12 @@ def _unit_outage_factors_from_events(
         target_fn = _unit_outage_target
     else:
         cap = _iso_plant_capacity(iso, cc_steam_part_reclass, cc_nameplate_basis)
-        target_fn = _generic_unit_outage_target
+        # rule 19 [R-ONE-MECH]: the per-plant _FLEET_GROUP_OVERRIDE enumeration
+        # is DISARMED on the per-unit-crosswalk path, where the file already
+        # carries each unit's own bin (nyiso-177).
+        target_fn = partial(
+            _generic_unit_outage_target, per_unit_crosswalk=per_unit_crosswalk
+        )
     has_derate = "derate_factor" in df.columns
     # Checked once per frame: an extract re-derived with --hour-grain states the
     # detected window in hours, otherwise the day-granular reconstruction stands
