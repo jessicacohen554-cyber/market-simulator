@@ -476,6 +476,11 @@ META_RECORD_SPEC = RecordSpec(
         "correlated_forced_outage": FromConfig(cast=bool),
         "entry_screen_diagnostics": FromConfig(cast=bool),
         "entry_vre_capacity_revenue": FromConfig(cast=bool),
+        # capx D33 VRE build-zone resolution. FromConfig, never FromArgs: the
+        # record reads the SOLVED gate, so a meta can never claim an arming the
+        # solve did not carry (FFR-3R). Armed for MISO through the ISO's
+        # default_scenario_overrides, so it is ON in a bare MISO invocation.
+        "entry_vre_zone_selection": FromConfig(cast=bool),
         "entry_rate_limits": FromConfig(cast=bool),
         "entry_commissioning_lag": FromConfig(cast=bool),
         "exit_rate_limits": FromConfig(cast=bool),

@@ -259,6 +259,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     entry_forward_reserve_leg: { cell: "U", fc: "U" },
     storage_entry_availability_gate: { cell: "U", fc: "U" },
     storage_entry_cost_normalized_rank: { cell: "U", fc: "U" },
+    entry_vre_zone_selection: { cell: "U", fc: "U", ev: "capx D33 minted the row (2026-09-02) and armed the gate for MISO ONLY (rule 25 [R-ISO-SCOPE]); this ISO is UNTESTED and byte-identical (ScenarioConfig default stays False). The identification that would open this cell is this ISO's OWN: whether its RENEWABLE_ZONE_ALLOCATION bucket is materially unrepresentative of where its market actually builds, and whether its RPS/clean rows are zone-restricted enough for the bucket to change the attribute credit. MISO is the extreme case (its bucket is the ONE zone no compliance region admits); an ISO with a single footprint-wide REC product has no attribute leg to gain and would move only on the price/CF legs.", },
     entry_vre_capacity_revenue: { cell: "U", fc: "U" },
     vre_procurement_additions: { cell: "U", fc: "U" },
     smr_available_year: { cell: "U", fc: "U" },

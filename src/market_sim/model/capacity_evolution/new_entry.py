@@ -135,6 +135,7 @@ def _clean_credit_for_tech(
     iso_config,
     zone_names: list[str] | None,
     clean_attribute_price_by_fuel: "dict[str, np.ndarray] | None",
+    zone_override: str | None = None,
 ) -> float:
     """Return a candidate tech's clean-tier attribute credit (FFR-7B Arm 3).
 
@@ -149,7 +150,9 @@ def _clean_credit_for_tech(
         return 0.0
     fuel = _TECH_TO_ATTRIBUTE_FUEL.get(tech, tech)
     if tech in _RENEWABLE_NEW_FUELS:
-        zi = _candidate_zone_idx(tech, iso_config.name, zone_names)
+        zi = _candidate_zone_idx(
+            tech, iso_config.name, zone_names, zone_override=zone_override
+        )
     else:
         default_zone = _default_build_zone(iso_config)
         zi = (
@@ -161,7 +164,7 @@ def _clean_credit_for_tech(
 
 
 def _candidate_zone_idx(
-    tech: str, iso: str, zone_names: list[str] | None
+    tech: str, iso: str, zone_names: list[str] | None, zone_override: str | None = None
 ) -> int | None:
     """Return a VRE candidate's build-zone LP index, or ``None`` unknown.
 
@@ -170,11 +173,14 @@ def _candidate_zone_idx(
     payment already use — one notion of the candidate's location. ``None``
     (no zone ordering supplied, or the target zone is not in it) makes
     ``rps_credit_for_zone`` degrade to 0.0 for a vector credit — never a
-    broadcast max.
+    broadcast max. ``zone_override`` (capx D33 ``entry_vre_zone_selection``)
+    substitutes the screen's resolved build zone for the single
+    :data:`RENEWABLE_ZONE_ALLOCATION` bucket, so the credit is still read at
+    exactly one notion of the candidate's location.
     """
     if not zone_names:
         return None
-    target_zone = get_renewable_zone(iso, tech)
+    target_zone = zone_override or get_renewable_zone(iso, tech)
     if target_zone in zone_names:
         return zone_names.index(target_zone)
     return None
@@ -1016,6 +1022,107 @@ def apply_economic_new_entry(
             fleet, wind_pool_mw, solar_pool_mw, iso_config.name
         )
 
+    # capx D33 build-zone resolution (``entry_vre_zone_selection``, GATED
+    # default-OFF ⇒ byte-identical). OFF: every economically-entered VRE MW is
+    # sited in the single :data:`RENEWABLE_ZONE_ALLOCATION` bucket — a table
+    # whose own docstring calls it the FALLBACK for ISOs with no plant-location
+    # data, and which the procurement channel already bypasses by siting from
+    # coordinates (``load_procured_vre_additions``, FFR-3V §4.4). ON: the
+    # candidate is screened in every zone that has the resource and sited where
+    # its own margin is highest — the developer's choice, over the zonal
+    # machinery the screen ALREADY carries (per-zone CF profile, per-zone LP
+    # price, the K-row zone-resolved REC/clean credit, the zonal RA gate). Cost
+    # is zone-invariant, so argmax(revenue) IS argmax(margin). No free parameter
+    # (rule 21) and nothing measured about the outcome enters (rule 13): the
+    # eligibility masks are statute, the CFs and prices are the model's own.
+    _zone_selection_on = bool(getattr(config, "entry_vre_zone_selection", False))
+    _vre_zone_by_tech: dict[str, str] = {}
+
+    def _vre_cap_payment(tech: str, ra_zone: str) -> float:
+        """The RA capacity payment a VRE candidate earns sited in ``ra_zone``.
+
+        The ONE construction of term c (rule 19): shared verbatim by the zone
+        chooser below and the screen's own revenue build-up, so a candidate can
+        never be ranked on one capacity payment and screened on another.
+        """
+        if not (_vre_capacity_on and tech in _RENEWABLE_NEW_FUELS):
+            return 0.0
+        if _zone_is_long(deliverability_headroom, ra_zone):
+            return 0.0
+        design = MARKET_DESIGN.get(iso_config.name, DEFAULT_MARKET_DESIGN)
+        firm_price = design.capacity_price_per_firm_mw_yr(
+            config, reserve_position, iso=iso_config.name, year=year
+        )
+        if firm_price <= 0.0:
+            return 0.0
+        credit = resolve_renewable_capacity_credit(
+            tech,
+            iso_config.name,
+            installed_mw=_vre_nameplate.get(tech),
+            peak_demand_mw=(peak_demand_mw if peak_demand_mw > 0.0 else None),
+            curves_enabled=config.renewable_elcc_curves,
+            nqc_curves_enabled=config.caiso_nqc_accreditation,
+        )
+        return firm_price * float(credit or 0.0)
+
+    def _choose_vre_zone(tech: str, default_zone: str) -> str:
+        """Return the highest-margin build zone for a VRE candidate.
+
+        Ranks every zone whose CF profile carries resource on the SAME revenue
+        construction the screen then applies (energy at that zone's own hourly
+        prices and CF, the zone-resolved attribute credit, the zonal RA
+        payment). Ties and any missing zonal input fall back to
+        ``default_zone``, so the gate can never silently relocate a build on
+        incomplete data.
+        """
+        cf_zonal = wind_cf if tech == "wind" else solar_cf
+        if cf_zonal is None or not zone_names:
+            return default_zone
+        prices_arr = np.asarray(prices, dtype=float)
+        cf_arr = np.asarray(cf_zonal, dtype=float)
+        if prices_arr.ndim != 2 or cf_arr.ndim != 2:
+            return default_zone
+        def _zone_revenue(zi: int, zname: str) -> float | None:
+            """Screened revenue for ``tech`` sited in one zone, or None."""
+            if zi >= cf_arr.shape[0] or zi >= prices_arr.shape[0]:
+                return None
+            cf_z = cf_arr[zi]
+            if float(cf_z.max()) <= 0.0:
+                return None
+            rev = _pkg_ns().estimate_expected_revenue(prices_arr[zi], cf_z)
+            attr = max(
+                effective_eac_price_for_tech(config, tech, year),
+                rps_credit_for_zone(rps_shadow_price, zi),
+                _clean_credit_for_tech(
+                    tech,
+                    iso_config,
+                    zone_names,
+                    clean_attribute_price_by_fuel,
+                    zone_override=zname,
+                ),
+            )
+            if attr > 0.0:
+                rev += attr * float(cf_z.mean()) * HOURS_PER_YEAR
+            return rev + _vre_cap_payment(tech, zname)
+
+        # The incumbent is the allocation bucket, and it is displaced only by a
+        # STRICTLY better zone: a tie — every zone identical, or a zone-blind
+        # scalar REC dual — leaves the siting exactly where the gate-off path
+        # puts it, so the gate can never relocate a build on no information.
+        best_zone = default_zone
+        best_rev = (
+            _zone_revenue(zone_names.index(default_zone), default_zone)
+            if default_zone in zone_names
+            else None
+        )
+        for zi, zname in enumerate(zone_names):
+            rev = _zone_revenue(zi, zname)
+            if rev is None:
+                continue
+            if best_rev is None or rev > best_rev:
+                best_rev, best_zone = rev, zname
+        return best_zone
+
     margins: list[tuple[float, str]] = []
     for tech in _new_entry_candidates(year, config, iso_config.name):
         # Emerging technologies are costed through their own LCOE path.
@@ -1231,9 +1338,19 @@ def apply_economic_new_entry(
         # unavailable (older callers) or the build zone has no resource.
         cf_profile: np.ndarray | None = None
         prices_for_rev: np.ndarray = prices
+        # The candidate's build zone, resolved ONCE and reused by every leg
+        # below (revenue shape, REC/clean credit, RA payment, commissioning) —
+        # the single notion of the candidate's location the K-row grain
+        # requires. Default: the RENEWABLE_ZONE_ALLOCATION bucket.
+        build_zone: str | None = None
+        if tech in _RENEWABLE_NEW_FUELS:
+            build_zone = get_renewable_zone(iso_config.name, tech)
+            if _zone_selection_on:
+                build_zone = _choose_vre_zone(tech, build_zone)
+            _vre_zone_by_tech[tech] = build_zone
         if tech in _RENEWABLE_NEW_FUELS and zone_names:
             cf_zonal = wind_cf if tech == "wind" else solar_cf
-            target_zone = get_renewable_zone(iso_config.name, tech)
+            target_zone = build_zone
             prices_arr = np.asarray(prices, dtype=float)
             if (
                 cf_zonal is not None
@@ -1269,7 +1386,9 @@ def apply_economic_new_entry(
         rps_for_tech = (
             rps_credit_for_zone(
                 rps_shadow_price,
-                _candidate_zone_idx(tech, iso_config.name, zone_names),
+                _candidate_zone_idx(
+                    tech, iso_config.name, zone_names, zone_override=build_zone
+                ),
             )
             if tech in _RENEWABLE_NEW_FUELS
             else 0.0
@@ -1278,7 +1397,11 @@ def apply_economic_new_entry(
         # lets a nuclear_smr candidate earn a state clean dual (the first LP
         # row that pays nuclear at all) — never a sum (FFR-6B §6.4).
         clean_for_tech = _clean_credit_for_tech(
-            tech, iso_config, zone_names, clean_attribute_price_by_fuel
+            tech,
+            iso_config,
+            zone_names,
+            clean_attribute_price_by_fuel,
+            zone_override=build_zone,
         )
         effective_attribute_price = max(
             effective_eac_price_for_tech(config, tech, year),
@@ -1302,24 +1425,7 @@ def apply_economic_new_entry(
         # same locational gate the thermal branch applies.
         vre_capacity_payment = 0.0
         if _vre_capacity_on and tech in _RENEWABLE_NEW_FUELS:
-            ra_zone = get_renewable_zone(iso_config.name, tech)
-            if not _zone_is_long(deliverability_headroom, ra_zone):
-                design = MARKET_DESIGN.get(iso_config.name, DEFAULT_MARKET_DESIGN)
-                firm_price = design.capacity_price_per_firm_mw_yr(
-                    config, reserve_position, iso=iso_config.name, year=year
-                )
-                if firm_price > 0.0:
-                    credit = resolve_renewable_capacity_credit(
-                        tech,
-                        iso_config.name,
-                        installed_mw=_vre_nameplate.get(tech),
-                        peak_demand_mw=(
-                            peak_demand_mw if peak_demand_mw > 0.0 else None
-                        ),
-                        curves_enabled=config.renewable_elcc_curves,
-                        nqc_curves_enabled=config.caiso_nqc_accreditation,
-                    )
-                    vre_capacity_payment = firm_price * float(credit or 0.0)
+            vre_capacity_payment = _vre_cap_payment(tech, build_zone)
             effective_revenue += vre_capacity_payment
         # lcoe uses base_cf internally, so lcoe x hours x base_cf is the
         # CF-independent annualized fixed cost in $/MW-yr — it stays on
@@ -1343,7 +1449,7 @@ def apply_economic_new_entry(
             # output into the net-load VRE term.
             _zi = None
             if cf_profile is not None and zone_names:
-                _tz = get_renewable_zone(iso_config.name, tech)
+                _tz = build_zone or get_renewable_zone(iso_config.name, tech)
                 _zi = zone_names.index(_tz) if _tz in zone_names else None
             _calc[tech] = {
                 "kind": "vre_profile" if cf_profile is not None else "flat_cf",
@@ -1375,6 +1481,9 @@ def apply_economic_new_entry(
             _rows[tech] = {
                 "tech": tech,
                 "kind": "vre" if tech in _RENEWABLE_NEW_FUELS else "must_run",
+                # The zone the candidate was screened and (if built) sited in —
+                # the measurement that makes the single-bucket siting visible.
+                "build_zone": build_zone,
                 "cf_base": float(base_cf),
                 "cf_expected": float(cf_expected),
                 "cf_shape_aware": bool(cf_profile is not None),
@@ -1503,7 +1612,13 @@ def apply_economic_new_entry(
             ENTRY_COD_LAG_YEARS.get(tech, ENTRY_COD_LAG_DEFAULT_YEARS) if _lag_on else 0
         )
         if tech in _RENEWABLE_NEW_FUELS:
-            target_zone = get_renewable_zone(iso_config.name, tech)
+            # The zone the screen actually valued this candidate in (capx D33);
+            # identical to the RENEWABLE_ZONE_ALLOCATION bucket when the gate
+            # is off, and the fallback for a tech that never reached the VRE
+            # branch (no candidate row ⇒ nothing to commission).
+            target_zone = _vre_zone_by_tech.get(tech) or get_renewable_zone(
+                iso_config.name, tech
+            )
             if _cod_lag > 0:
                 entry_pipeline.append(
                     {

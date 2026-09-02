@@ -262,6 +262,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "entry_vre_capacity_revenue",
     "entry_rate_limits",
     "entry_commissioning_lag",
+    # capx D33 VRE build-zone resolution (GATED default-off): dropped from the
+    # hash at its default so every pre-existing cache key is byte-stable; an
+    # armed run sites new VRE in a different zone and so gets a distinct key.
+    "entry_vre_zone_selection",
     # FFR-5C entry anti-cobweb guard relocation (GATED default-off): dropped
     # from the hash at its default so every pre-existing cache key is
     # byte-stable; an armed run changes both the flow caps and the pro-forma
@@ -1310,6 +1314,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "retirement_execution_lag_oil": "1",
     "retirement_execution_lag_nuclear": "3",
     "entry_vre_capacity_revenue": "False",
+    "entry_vre_zone_selection": "False",
     # Backfilled at FFR-4B: the field was registered in
     # _CACHE_KEY_OPTIONAL_FIELDS by ercot-162 (48a158a6) without its ledger
     # entry, which left the HEAD-only leg of the cache-key flip guard
@@ -4317,6 +4322,33 @@ class ScenarioConfig:
     # removes is that VRE was the ONLY accredited class denied the payment
     # while thermal entry, thermal retirement and storage entry all took it
     # through the same MarketDesign.capacity_price_per_firm_mw_yr seam.
+    entry_vre_zone_selection: bool = False  # GATED, default-OFF (capx D33).
+    # WHERE a new wind/solar MW is built. OFF (byte-identical): every
+    # economically-entered VRE MW is sited in the single per-ISO
+    # ``renewables.RENEWABLE_ZONE_ALLOCATION`` bucket — a table whose own
+    # docstring calls it the FALLBACK for an ISO with no plant-location data,
+    # and which the FFR-5E procurement channel already bypasses by siting each
+    # procured row from its plant coordinates (FFR-3V §4.4). ON: the screen
+    # values the candidate in every zone that carries the resource and sites it
+    # where its own margin is highest, over machinery it ALREADY has — the
+    # zone's hourly CF profile, that zone's LP prices, the K-row zone-resolved
+    # REC / clean-tier credit, and the zonal RA gate. The annualized cost is
+    # zone-invariant, so argmax(revenue) IS argmax(margin); there is no free
+    # parameter (rule 21 [R-DOF]) and no measured outcome enters (rule 13
+    # [R-MEASURED]) — the eligibility masks are statute
+    # (MISO_RPS_COMPLIANCE_REGIONS), the CFs and prices are the model's own,
+    # and the whole construction regenerates for any forward year.
+    # WHY IT EXISTS (capx D33 §2): in MISO the bucket is MISO-South — the ONE
+    # model zone excluded from EVERY state compliance region's eligible-zone
+    # mask (MISO_RPS_MIDWEST_FOOTPRINT_ZONES omits it; AR/LA/MS/E-TX have no
+    # standard) — so every candidate solar MW was screened as REC-ineligible
+    # and priced at a $0 attribute credit while the ISO's own zonal REC vector
+    # peaked at the $30/MWh ACP. The measured consequence was an entry screen
+    # that declined solar AND wind in every screen year of the 2021-2025 T1-H
+    # hindcast. ARMED FOR MISO ONLY via ISOConfig.default_scenario_overrides in
+    # config/iso_configs.py::_miso_config — this default STAYS False, so every
+    # other ISO is byte-identical and each is its own separate decision
+    # (rule 25 [R-ISO-SCOPE]).
     entry_rate_limits: bool = True  # ARMED by owner decision D-2, signed
     # 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1:
     # "ARM BOTH"). Was GATED default-OFF (FF-2A item 2 / BLK-10
@@ -15690,6 +15722,7 @@ TIER_TAGS: dict[str, int] = {
     "entry_price_signal_alpha": 2,
     "entry_lookahead_reprice": 1,
     "entry_vre_capacity_revenue": 1,
+    "entry_vre_zone_selection": 1,
     "entry_rate_limits": 1,
     "entry_commissioning_lag": 1,
     "entry_pipeline_aware_signal": 1,
