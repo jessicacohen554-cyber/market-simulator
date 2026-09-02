@@ -11026,3 +11026,87 @@ primary source)`; DOF ledger `spot_capacity` stays **OPEN**.
 `scripts/data/derive_caiso_import_total_envelope.py`,
 `results/calibration/_caiso234_import_total_envelope.json`, and an evidence append
 (no verdict move) on the CAISO shard's `import_hub_pricing` cell.
+
+## caiso-235 (2026-09-02) — the caiso-234 estimator on 2019–2025: **BOTH gates FAIL**, and the obstacle is a **REGIME BREAK**, not sample length. The DOF is **CLOSED as not identifiable**. NO SOLVE
+
+**Keeper `2026-09-01-caiso-231-b1-ungrounded` UNCHANGED**; NOT-YET stands (C3a sole
+load-bearing FAIL +4.1 / +12.5 / +15.6 %). No mechanism armed, no `ScenarioConfig`
+field added, no LP built, nothing registered, no cell verdict moved. No year outside
+2023–2025 solved, scored or registered; no model output or measured actual from any
+such year read — EIA-930 flow percentiles only, per the owner grant and the
+2026-08-06 clarification. 2026 excluded (locked-test tier, active freeze).
+
+**PRECOMMIT pushed before the derivation ran** (`dc7257f5`), the standing practice
+since caiso-234. **The estimator is not new**: the gated object is computed by
+calling caiso-234's own `derive_envelope`, and the pre-registered §4-FORK-CHECK
+confirms the placement reproduces caiso-234's committed ladder to the MW on the
+2023–2025 sample (1,065 / 2,100 / 2,100 / 1,795 = 7,060). **The sample is the only
+change.**
+
+**BOTH gates FAIL.** G-STABILITY: `scarcity_interval` CV **0.266** vs 0.20.
+G-LOYO: worst **55.0 %** vs 25 %, **five of seven folds failing**. The
+pre-registered §3.1 near-miss rule fired as written on two folds (29.7 %, 27.2 %)
+and was not argued.
+
+**THE FINDING: the seven-year sample is not seven draws of one object.** Split at
+the 2022/2023 boundary, both halves are *tighter* than the pooled sample —
+`p98(TOTAL)` = **10,070 MW (2019–22, CV 0.023)** vs **8,174 MW (2023–25, CV 0.058)**,
+a **−18.8 %** level shift — while `scarcity_interval` moves **+54.2 %** the *other*
+way. The 7-year CVs are almost entirely the gap BETWEEN regimes. The break is
+physically legible: the PNW seam flipped from 82–96 % import-hours (2019–22) to
+**49–69 %** (2023–25) as CAISO's in-state solar-plus-storage build displaced routine
+daytime imports; corridor p98 falls −20.4 % (PNW) and −14.2 % (DSW).
+
+**This FALSIFIES the caiso-234 §B2/§G diagnosis, stated plainly.** That finding
+called the obstacle **sample length** and named a longer sample as the direct
+remedy. The mechanism it identified was real; the inference was wrong — the extra
+years are a different market. The sample-length reading was only available because
+the three-year window sat entirely inside one regime.
+
+**What newly broke is the lane's strongest quantity.** `routine_total` — recorded by
+caiso-234 §F2 as "IDENTIFIABLE from three years" (CV 0.058, LOYO ≤ 11.5 %) and
+refused as a partial swap *reluctantly*, on the pre-registration alone — **FAILS at
+26.1 / 27.2 %** on the folds that train across the break. Had the partial swap been
+taken on three-year evidence, a rung would have been sized on a window concealing a
+1.9 GW structural shift. The pre-registration did real work.
+
+**The delivered ladder is not stable to the sample choice**: same estimator, same
+convention, one sample change moves it **7,060 → 7,965 MW (+12.8 %)** in total and
+**+62 % / −36 %** on `PNW_midC` / `WECC_scarcity`, in opposite directions. A
+quantity that swings that far on the measurement window is not identified,
+independently of any gate.
+
+**AGAINST INTEREST — caiso-233 §E / caiso-234 §F4's over-depth bound is WITHDRAWN as
+a standing fact.** The incumbent 8,800 MW ladder is over-deep by only
+**+449…+1,036 MW** against the 2019–22 measured p99.9 envelope, versus
++1,493…+3,059 against 2023–25. The literals look like a defensible representation of
+the seam as it behaved through 2022, which the solar/storage build has since moved
+out from under. They remain correctly labelled `RESIDUAL (static, no cited primary
+source)` — a plausible number is not a grounded one — but "measurably too deep" was
+resting on a three-year window and that support is removed.
+
+**Also measured:** every fold fails the ungated per-rung bar (worst 108.9 %,
+`PNW_midC`); the `DSW_CCGT`/`DSW_CT` pair's earlier CV 0.026/0.073 stability was a
+within-window property (now 0.137, 30–38 % LOYO across the break); the corridor
+**split** is the one durable structure (`w_PNW` 0.281–0.338, CV 0.068) even as both
+levels move; the rule-14 EIA-930 sign check passes on all seven years, so the
+failure is a property of the object, not the source.
+
+**CLOSURE (PRECOMMIT §6, terminal).** Three pre-registered executions have now
+failed on the same four capacities — caiso-233 (CV 0.550 / LOYO 491.7 %), caiso-234
+(0.120 / 34.2 %), caiso-235 (0.266 / 55.0 %) — and the third is the one that closes
+the question, because it is **not a failure of the estimator**. 2019–2025 is the
+whole measured record (the extract's remainder is locked-test H1-2026) and it holds
+no stationary object to estimate. **DOF ledger `spot_capacity`: CLOSED AS NOT
+IDENTIFIABLE from EIA-930 seam flow, returned to the owner permanently declared.**
+What would re-open it is a different KIND of evidence — a published CAISO source
+sizing economic (non-RA) import availability directly, on the MIC/DMM annual cadence
+— named, not proposed. DO-NOT-REDO now covers all three executions and the object.
+
+**Deliverables:** `PRECOMMIT-caiso235-import-depth-widesample-2026-09-02.md`,
+`FINDING-caiso235-import-depth-widesample-2026-09-02.md`,
+`scripts/data/derive_caiso_import_depth_widesample.py`,
+`results/calibration/_caiso235_import_depth_widesample.json`, a default-preserving
+`years` argument on `derive_caiso_import_tranches.corridor_net_import` (all fifteen
+existing callers byte-unaffected), and an evidence append (no verdict move) on the
+CAISO shard's `import_hub_pricing` cell.

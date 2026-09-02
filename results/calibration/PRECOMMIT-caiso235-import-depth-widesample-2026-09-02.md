@@ -334,7 +334,48 @@ Baseline (committed artifacts, `2026-09-01-caiso-231-b1-ungrounded`):
   one. The owner's standing standard applies verbatim — *"If structural integrity
   improves but gates regress that may still be a keeper."*
 
-## §9 — OUTCOME
+## §9 — OUTCOME (recorded 2026-09-02, same session)
 
-*(To be recorded in this document in the same session, alongside
-`FINDING-caiso235-import-depth-widesample-2026-09-02.md`.)*
+**THE STOP CONDITION FIRED, ON BOTH GATES.**
+
+* **G-STABILITY FAIL** — `scarcity_interval` CV **0.266** against the 0.20 bar
+  (`routine_total` 0.108, ok).
+* **G-LOYO FAIL** — worst held-out error **55.0 %** against the 25 % bar, with
+  **five of seven folds failing** (14.9 / **55.0** / 18.3 / **34.8** / **36.9** /
+  **27.2** / **29.7 %**).
+
+**The §3.1 near-miss rule fired as written.** Hold-2025 (29.7 %) and hold-2024
+(27.2 %) landed in the pre-declared 25–30 % band that this document fixed in
+advance as a **FAIL**. It changed no verdict — hold-2020's 55.0 % settles it — but
+it was there for a case where it might have, and it did not have to be argued.
+
+**The §4-FORK-CHECK passed exactly**: on the 2023–2025 sample the fork-(a)
+placement reproduces caiso-234's committed ladder to the MW (1,065 / 2,100 / 2,100
+/ 1,795 = 7,060), so every difference reported is attributable to the sample alone.
+
+**No LP was built and no solver was called.** §7's arms were never run; nothing is
+registered. The bar was not moved, the gated object was not re-scoped, no component
+was admitted after seeing which passed — and this time **none passed**, including
+`routine_total`, the quantity caiso-234 §C refused reluctantly and recorded as the
+strongest the lane had produced.
+
+**One correction to this document, against interest, and it is the substance of
+the result.** §0.5 recorded the caiso-234 diagnosis — that the obstacle is **sample
+length** — as established and foreseen, and §0.5 conceded that a widening was
+therefore *expected* to help. **The execution falsified the diagnosis.** The
+obstacle is a **REGIME BREAK at the 2022/2023 boundary**: `p98(TOTAL)` runs
+10,070 MW over 2019–22 (CV **0.023**) and 8,174 MW over 2023–25 (CV 0.058), a
+−18.8 % level shift, while the scarcity interval moves **+54.2 %** the other way.
+The extra years are not more observations of the same quantity. The direction of
+improvement this document said was foreseen **did not materialise, and the reason
+it did not is the finding.**
+
+**Per §6 the outcome is TERMINAL.** Seven years of measured seam flow is the whole
+record; the object is closed **from data, not from effort**; no further widening and
+no fourth construction is proposed. DOF ledger `spot_capacity`: **CLOSED as NOT
+IDENTIFIABLE** from EIA-930 seam flow and returned to the owner permanently
+declared.
+
+Full result, the regime-break decomposition, the §5 diagnostics published as
+promised, and the §E withdrawal of caiso-233/234's over-depth bound as a standing
+fact: `FINDING-caiso235-import-depth-widesample-2026-09-02.md`.
