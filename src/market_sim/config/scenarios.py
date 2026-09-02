@@ -87,6 +87,15 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     # (rule 5 [R-NO-MAGIC]). Adjudication:
     # docs/handoffs/FINDING-capx-t16-driver-2026-09-01.md.
     "renewable_buildout_pace": "mid",
+    # CAISO's single-signed-flow WECC intertie. OFF on the CAISO keeper AND off
+    # in these defaults — dead in every shipped configuration — while carrying a
+    # fitted 4,361 MW aggregate export cap (CAISO_BIDIR_EXPORT_CAP_MW) that one
+    # CLI flag could re-arm: the re-armable-answer-key shape rule 26 [R-DELETE]
+    # names. Its own DOF-ledger row named this exit ("R5-delete the
+    # caiso_bidir_intertie mechanism (rule 26)"). Superseded in full by
+    # caiso_per_hub_intertie. Deleted 2026-09-02 (caiso-236),
+    # results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md.
+    "caiso_bidir_intertie": False,
 }
 
 # Config fields introduced after the results cache existed. ``cache_key`` omits
@@ -6398,25 +6407,14 @@ class ScenarioConfig:
     # the belly of CAISO's published duck chart) has its median annual
     # net-load rank at 10.0/5.6/6.0 (2023/2024/2025, p75 <= 16.6) — the deep
     # belly saturates the bottom decile, confirming 10.
-    caiso_bidir_intertie: bool = False  # Model CAISO's WECC tie as a SINGLE
-    # signed flow instead of two independent one-way mechanisms. The legacy node
-    # carries priced import tranches AND separate export sinks on the same
-    # external bubble, so the LP can simultaneously import the cheap midday hub
-    # and stay long on its own solar (2024 diurnal interchange corr −0.65,
-    # anti-correlated with the measured tie). This collapses both legs onto one
-    # net direction over a shared directional cap (import ≤ ~8.3 GW, export ≤
-    # ~3.5 GW), pricing import at hub + per-tranche border carbon and export at
-    # the hub. Because every import leg (hub + carbon) is priced at/above the
-    # export leg (hub) at every hour, the legs are arbitrage-free by construction
-    # — the LP never imports and exports in the same hour, so the tie reverses to
-    # export in the midday solar glut and the diurnal sign tracks the measured
-    # interchange (no MIP, pure LP). Supersedes --caiso-import-hub-prices /
-    # --caiso-import-gas-coupling / --caiso-import-solar-shape (the legacy
-    # two-mechanism injectors) when on. Carried by
-    # transmission.build_caiso_bidir_intertie +
-    # transmission.inject_caiso_bidir_intertie_prices. Default off
-    # (byte-identical); CAISO-only; no-op without the measured intertie parquet
-    # (2023 falls back to the static ladder, like --caiso-import-hub-prices).
+    # (``caiso_bidir_intertie`` — CAISO's WECC tie as a SINGLE signed flow over
+    # one averaged hub — was DELETED here at caiso-236 under rule 26
+    # ``[R-DELETE]``. It was off on the CAISO keeper AND off in these defaults,
+    # i.e. unreachable in every shipped configuration, while still carrying a
+    # fitted 4,361 MW aggregate export cap that one CLI flag could re-arm — the
+    # re-armable-answer-key shape the rule names. `caiso_per_hub_intertie` below
+    # is its documented successor and supersedes it in full.
+    # Record: results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
     caiso_per_hub_intertie: bool = False  # Model CAISO's WECC tie as TWO signed
     # corridors — COI/Path-66 at the Malin hub into NP15 (north) and Path-46/WOR
     # at the Palo Verde hub into SP15 (south) — each a single signed flow priced

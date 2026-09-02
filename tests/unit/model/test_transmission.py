@@ -23,10 +23,7 @@ from market_sim.data.fleet import (
 )
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.transmission import (
-    CAISO_BIDIR_EXPORT_CAP_MW,
-    CAISO_BIDIR_IMPORT_CAP_MW,
     CAISO_GAS_FLOOR_HOURS,
-    build_caiso_bidir_intertie,
     build_export_sinks,
     build_import_generators,
     caiso_solar_deliverability_derate,
@@ -37,7 +34,6 @@ from market_sim.model.transmission import (
     build_wecc_import_generators,
     extend_with_import_node,
     get_ttc_array,
-    inject_caiso_bidir_intertie_prices,
     inject_caiso_export_hub_prices,
     inject_caiso_gas_commitment_floor,
     inject_interchange_shape,
@@ -1073,139 +1069,11 @@ class TestCaisoExportHubPrices(unittest.TestCase):
         np.testing.assert_array_equal(mc, 0.0)
 
 
-class TestCaisoBidirIntertie(unittest.TestCase):
-    """Single signed WECC intertie: one net direction per hour, arbitrage-free."""
-
-    def _fleet(self, border_carbon=0.0):
-        gens = build_caiso_bidir_intertie(border_carbon)
-        fa = generators_to_fleet_arrays(gens, ["WECC_import"], hours=T)
-        return fa, gens
-
-    def test_builder_caps_match_directional_limits(self):
-        gens = build_caiso_bidir_intertie()
-        import_legs = [g for g in gens if g.pmax_mw > 0.0]
-        export_legs = [g for g in gens if g.pmax_mw == 0.0 and g.pmin_mw < 0.0]
-        # Import legs keep the per-tranche supply curve but rescale to the cap.
-        self.assertEqual(len(import_legs), len(IMPORT_TRANCHES["CAISO"]))
-        self.assertAlmostEqual(
-            sum(g.pmax_mw for g in import_legs), CAISO_BIDIR_IMPORT_CAP_MW, places=3
-        )
-        # A SINGLE export leg, bounded at the measured export-direction peak.
-        self.assertEqual(len(export_legs), 1)
-        self.assertAlmostEqual(export_legs[0].pmin_mw, -CAISO_BIDIR_EXPORT_CAP_MW)
-
-    def test_reprices_both_legs_off_the_hub_arbitrage_free(self):
-        fa, gens = self._fleet(border_carbon=wecc_border_carbon_adder(35.0))
-        n = len(gens)
-        mc = np.zeros((n, T))
-        # A hub that swings high (overnight) and negative (midday solar glut).
-        hub = np.tile(np.array([60.0, 60.0, 60.0, -25.0, -25.0, -25.0] * 4), 1)[
-            :T
-        ].astype(float)
-        with unittest.mock.patch(
-            "market_sim.data.eia_loader.measured_import_hub_prices",
-            return_value={"PNW_midC": hub.copy(), "DSW_solar_PV": hub.copy()},
-        ):
-            applied = inject_caiso_bidir_intertie_prices(fa, mc, "CAISO", 2024, 35.0)
-        self.assertTrue(applied)
-
-        is_export = np.array([g.name == "export_bidir" for g in gens])
-        is_import = np.array([g.pmax_mw > 0.0 for g in gens])
-        # Export leg earns the hub (no CA carbon), less the ε tiebreaker.
-        np.testing.assert_allclose(mc[is_export][0], hub - 1e-3)
-        # Every import leg is priced at hub + a non-negative border-carbon adder
-        # (+ ε), so at every hour the dearest export is STRICTLY below the
-        # cheapest import: the legs cannot arbitrage and the LP carries one
-        # direction per hour.
-        export_price = mc[is_export].max(axis=0)
-        import_price_min = mc[is_import].min(axis=0)
-        self.assertTrue(np.all(import_price_min > export_price))
-        # The zero-EF firm hydro/solar legs sit at hub + delivered-cost basis
-        # (line-loss markup on the positive hub + OATT wheeling); the gas legs
-        # additionally carry a strictly positive carbon adder above it.
-        self.assertTrue(np.all(mc[is_import].max(axis=0) > export_price + 1.0))
-        # The delivery basis lifts every import leg strictly above the bare hub
-        # (the wheel adder is >= $2 for every tranche), and never below it even
-        # in the negative-hub hours (the loss is applied to max(hub, 0) only) —
-        # so the single-flow tie can never round-trip wash.
-        np.testing.assert_array_less(hub, mc[is_import].min(axis=0))
-
-    def test_no_measured_series_is_noop(self):
-        fa, gens = self._fleet()
-        mc = np.zeros((len(gens), T))
-        with unittest.mock.patch(
-            "market_sim.data.eia_loader.measured_import_hub_prices",
-            return_value=None,
-        ):
-            applied = inject_caiso_bidir_intertie_prices(fa, mc, "CAISO", 2023, 35.0)
-        self.assertFalse(applied)
-        np.testing.assert_array_equal(mc, 0.0)
-
-    def test_dispatch_carries_one_direction_per_hour(self):
-        # CAISO_main load zone + the external WECC_import bubble, joined by an
-        # uncongested link. An in-state $40 gas unit and a midday solar block
-        # make CAISO short overnight (imports) and long midday (exports); the
-        # arbitrage-free hub pricing must never do both in the same hour.
-        zone_names = ["CAISO_main", "WECC_import"]
-        gas = Generator(
-            unit_id="CAISO_gas",
-            name="CAISO_gas",
-            zone="CAISO_main",
-            fuel_type="gas_cc",
-            pmax_mw=5000.0,
-            pmin_mw=0.0,
-            heat_rate=0.0,
-            vom=40.0,
-            eford=0.0,
-        )
-        gens = build_caiso_bidir_intertie() + [gas]
-        fleet = generators_to_fleet_arrays(gens, zone_names, hours=T)
-        # Hub: cheap overnight (imports beat $40 gas), low-but-positive midday.
-        # CAISO is long off its own solar midday (internal ~$0), so it sells the
-        # surplus into the tie (export earns the hub) rather than imports; the ε
-        # tiebreaker keeps the LP from washing import against export.
-        hod = np.arange(T) % 24
-        hub = np.where((hod >= 10) & (hod <= 15), 12.0, 25.0).astype(float)
-        mc = assemble_mc(fleet, np.zeros((len(gens), T)), carbon_price=0.0)
-        with unittest.mock.patch(
-            "market_sim.data.eia_loader.measured_import_hub_prices",
-            return_value={"PNW_midC": hub.copy(), "DSW_solar_PV": hub.copy()},
-        ):
-            self.assertTrue(
-                inject_caiso_bidir_intertie_prices(fleet, mc, "CAISO", 2024, 0.0)
-            )
-        # Midday solar floods CAISO_main (8 GW vs 4 GW load) -> long -> export.
-        solar_cap = np.array([8000.0, 0.0])
-        solar_cf = np.vstack(
-            [np.where((hod >= 10) & (hod <= 15), 1.0, 0.0), np.zeros(T)]
-        )
-        links = [
-            TransferLink(from_zone="WECC_import", to_zone="CAISO_main", ttc_mw=20000.0)
-        ]
-        result = solve_dispatch(
-            fleet,
-            np.vstack([np.full(T, 4000.0), np.zeros(T)]),
-            mc=mc,
-            T=T,
-            incidence=build_incidence_matrix(links, zone_names),
-            ttc=get_ttc_array(links),
-            wind_cf=np.zeros((2, T)),
-            wind_cap=np.zeros(2),
-            solar_cf=solar_cf,
-            solar_cap=solar_cap,
-        )
-        is_import = np.array([g.pmax_mw > 0.0 for g in gens])
-        is_export = np.array([g.name == "export_bidir" for g in gens])
-        import_mw = result.dispatch[is_import].sum(axis=0)  # >= 0
-        export_mw = -result.dispatch[is_export].sum(axis=0)  # withdrawal, >= 0
-        # No hour both imports and exports (one signed flow on the shared tie).
-        self.assertTrue(np.all(np.minimum(import_mw, export_mw) <= 1e-6))
-        # The tie genuinely reverses: imports some hours, exports the midday glut.
-        self.assertGreater(import_mw.max(), 1.0)
-        self.assertGreater(export_mw.max(), 1.0)
-        # Directional caps hold.
-        self.assertLessEqual(import_mw.max(), CAISO_BIDIR_IMPORT_CAP_MW + 1e-6)
-        self.assertLessEqual(export_mw.max(), CAISO_BIDIR_EXPORT_CAP_MW + 1e-6)
+# (TestCaisoBidirIntertie was DELETED at caiso-236 with the caiso_bidir_intertie
+# mechanism itself — rule 26 [R-DELETE]: the tie was off on the CAISO keeper AND
+# off in the ScenarioConfig defaults, so its fitted 4,361 MW aggregate export cap
+# was a re-armable answer key. The per-hub successor's own coverage is
+# TestCaisoPerHubIntertie / tests/regression/test_interchange_parity.py.)
 
 
 class TestInterfaceGroups(unittest.TestCase):

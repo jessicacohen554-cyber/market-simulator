@@ -1849,9 +1849,13 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
        (``build_reference_price_node``), per-hub corridor topology.
     2. else ``caiso_per_hub_intertie`` — two signed corridors priced at their
        own hubs (``build_caiso_per_hub_intertie``), per-hub corridor topology.
-    3. else ``caiso_bidir_intertie`` — single signed tie
-       (``build_caiso_bidir_intertie``), pooled ``WECC_import`` node.
-    4. else — static import tranches + export sinks on the pooled node.
+    3. else — static import tranches + export sinks on the pooled node.
+
+    (The former step 3, ``caiso_bidir_intertie`` — a single signed tie over one
+    averaged hub — was DELETED at caiso-236 under rule 26 ``[R-DELETE]``: it was
+    off on the keeper AND off in the ``ScenarioConfig`` defaults, i.e. dead in
+    every shipped configuration, so its fitted 4,361 MW aggregate export cap was
+    a re-armable answer key. ``caiso_per_hub_intertie`` is its successor.)
 
     The generic ``reference_price_interface`` path never applies to CAISO
     (CAISO's seam is the dedicated mode-1 above; the generic single-node path
@@ -1880,20 +1884,8 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
         and iso == "CAISO"
         and getattr(config, "caiso_per_hub_intertie", False)
     )
-    caiso_bidir = (
-        (not caiso_ref_seam)
-        and (not caiso_per_hub)
-        and iso == "CAISO"
-        and getattr(config, "caiso_bidir_intertie", False)
-    )
     caiso_mode = (
-        "reference_seam"
-        if caiso_ref_seam
-        else "per_hub"
-        if caiso_per_hub
-        else "bidir"
-        if caiso_bidir
-        else None
+        "reference_seam" if caiso_ref_seam else "per_hub" if caiso_per_hub else None
     )
     use_ref = caiso_ref_seam or (
         getattr(config, "reference_price_interface", False)
@@ -1973,12 +1965,8 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
     return InterchangeSpec(
         iso=iso,
         import_zone=import_zone,
-        import_tranches=tranches
-        if not (use_ref or use_corridors or caiso_bidir)
-        else [],
-        export_tranches=exports
-        if not (use_ref or use_corridors or caiso_bidir)
-        else [],
+        import_tranches=tranches if not (use_ref or use_corridors) else [],
+        export_tranches=exports if not (use_ref or use_corridors) else [],
         neighbors=neighbors,
         corridors=corridors,
         firm_imports=firm_imports,
@@ -2022,7 +2010,6 @@ def build_interchange_fleet(
     * ``use_reference_price`` → :func:`~market_sim.model.transmission.build_reference_price_node`
       (generic non-CAISO seam and CAISO's ``caiso_reference_price_seam``).
     * ``caiso_mode == "per_hub"`` → :func:`~market_sim.model.transmission.build_caiso_per_hub_intertie`.
-    * ``caiso_mode == "bidir"`` → :func:`~market_sim.model.transmission.build_caiso_bidir_intertie`.
     * otherwise → the static import-tranche + export-sink ladder (identical to
       ``build_import_generators`` + ``build_export_sinks`` on the spec's
       year-grounded tranches).
@@ -2066,10 +2053,6 @@ def build_interchange_fleet(
                 daytime_clean=spec.caiso_daytime_clean,
             )
         )
-    elif spec.caiso_mode == "bidir":
-        from market_sim.model.transmission import build_caiso_bidir_intertie
-
-        gens.extend(build_caiso_bidir_intertie(border_carbon_per_mwh))
     else:
         gens.extend(_build_static_tranche_gens(spec, border_carbon_per_mwh))
 

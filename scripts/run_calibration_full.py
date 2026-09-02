@@ -3506,7 +3506,6 @@ def solve_and_persist(
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
-    caiso_bidir_intertie: bool | None = None,
     caiso_per_hub_intertie: bool | None = None,
     caiso_perhub_firm_base: bool | None = None,
     caiso_corridor_flow_limit: bool | None = None,
@@ -4410,10 +4409,6 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 caiso_import_solar_shape=caiso_import_solar_shape
             )
-        if caiso_bidir_intertie is not None:
-            recorded_cfg = recorded_cfg.with_overrides(
-                caiso_bidir_intertie=caiso_bidir_intertie
-            )
         if caiso_per_hub_intertie is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 caiso_per_hub_intertie=caiso_per_hub_intertie
@@ -5259,7 +5254,6 @@ def solve_and_persist(
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
-            caiso_bidir_intertie=caiso_bidir_intertie,
             caiso_per_hub_intertie=caiso_per_hub_intertie,
             caiso_perhub_firm_base=caiso_perhub_firm_base,
             caiso_corridor_flow_limit=caiso_corridor_flow_limit,
@@ -6168,7 +6162,6 @@ def solve_and_persist(
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
-        "caiso_bidir_intertie": caiso_bidir_intertie,
         "caiso_per_hub_intertie": caiso_per_hub_intertie,
         "caiso_perhub_firm_base": caiso_perhub_firm_base,
         "caiso_corridor_flow_limit": caiso_corridor_flow_limit,
@@ -10841,24 +10834,6 @@ def main() -> None:
         "keeps the base config value (off).",
     )
     parser.add_argument(
-        "--caiso-bidir-intertie",
-        action=argparse.BooleanOptionalAction,
-        default=None,
-        help="Model CAISO's WECC tie as a SINGLE signed flow (one net direction "
-        "per hour over a shared directional cap, import ≤ ~8.3 GW / export ≤ "
-        "~3.5 GW) instead of the legacy two independent one-way mechanisms "
-        "(priced import tranches + separate export sinks on the same external "
-        "node, which let the LP import the cheap midday hub AND stay long on its "
-        "own solar — 2024 diurnal interchange corr −0.65). Both legs are priced "
-        "off the same measured hub: import = hub + per-tranche border carbon, "
-        "export = hub, so they are arbitrage-free by construction and the tie "
-        "reverses to export in the midday solar glut (positive diurnal sign). "
-        "Supersedes --caiso-import-hub-prices / --caiso-import-gas-coupling / "
-        "--caiso-import-solar-shape when set. CAISO-only; pure LP; 2023 falls "
-        "back to the static ladder (no measured hub). Default (unset) keeps the "
-        "base config value (off).",
-    )
-    parser.add_argument(
         "--caiso-per-hub-intertie",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -10866,8 +10841,9 @@ def main() -> None:
         "Path-66 at the Malin hub (→ NP15, north) and Path-46/WOR at the Palo "
         "Verde hub (→ SP15, south) — each a single net direction over its OWN "
         "real link, priced at its OWN measured intertie hub. The unification of "
-        "--caiso-bidir-intertie (single signed flow → per-hub netting, fixes the "
-        "inverted diurnal sign) and --caiso-import-hub-prices (per-hub basis): "
+        "the retired single-signed-flow bidir node (per-hub netting, fixed the "
+        "inverted diurnal sign; DELETED caiso-236, rule 26) and "
+        "--caiso-import-hub-prices (per-hub basis): "
         "the bidir node had to average the two hubs into one price; the hub-price "
         "node kept the basis but pooled both legs onto one bubble (cheap Palo "
         "Verde midday fills the whole 8.3 GW budget, never nets → over-import + "
@@ -10875,7 +10851,7 @@ def main() -> None:
         "corridor reverses to EXPORT midday instead of over-importing. The 8.3 GW "
         "simultaneous-import cap stays as the WECC_import_simultaneous interface "
         "limit re-homed to the two links. Supersedes --caiso-import-hub-prices / "
-        "--caiso-bidir-intertie / --caiso-import-solar-shape (measured per-hub "
+        "--caiso-import-solar-shape (measured per-hub "
         "Palo Verde already prints the negative midday tail); --caiso-import-gas-"
         "coupling still applies to the desert-SW gas legs. CAISO-only; pure LP; "
         "2023 falls back to the static ladder. Default (unset) keeps the base "
@@ -12375,7 +12351,6 @@ def main() -> None:
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
-        caiso_bidir_intertie=args.caiso_bidir_intertie,
         caiso_per_hub_intertie=args.caiso_per_hub_intertie,
         caiso_perhub_firm_base=args.caiso_perhub_firm_base,
         caiso_corridor_flow_limit=args.caiso_corridor_flow_limit,

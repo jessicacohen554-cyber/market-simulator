@@ -85,7 +85,7 @@ def apply_interchange_injections(
     2. CAISO dedicated seams (mutually exclusive, the spec ladder):
        ``caiso_reference_price_seam`` (both corridor legs priced forward, CARB
        border carbon on the import leg) or the per-hub FORWARD reference
-       prices (``caiso_intertie_reference_price``). The per-hub/bidir
+       prices (``caiso_intertie_reference_price``). The per-hub
        *measured-hub* pricing is a backcast overlay and lives in
        ``measured_overlay``, never here.
     3. Firm import floors: Manitoba (``miso_firm_imports``) and NYISO
@@ -96,8 +96,7 @@ def apply_interchange_injections(
        overwrites must land on the forward base prices (the MISO PJM-LMP
        overwrite replaces seam rows step 1 priced) and before the offer
        couplings below (which shift/blend whatever base price is active).
-    5. Offer couplings (CAISO, skipped under the bidir tie whose injector owns
-       both legs): commodity-gas coupling of the desert-SW blocks
+    5. Offer couplings (CAISO): commodity-gas coupling of the desert-SW blocks
        (:func:`inject_caiso_import_gas_coupling`) and the net-load-keyed
        solar-shape collapse (:func:`inject_caiso_import_solar_shape`).
 
@@ -140,10 +139,10 @@ def apply_interchange_injections(
     if measured_overlay is not None:
         measured_overlay(fleet_arrays, mc)
 
-    bidir_intertie = getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO"
-    # --- 5. CAISO offer couplings (skipped under the bidir tie, whose
-    #     injector prices both legs itself). ---
-    if not bidir_intertie and getattr(config, "caiso_import_gas_coupling", False):
+    # --- 5. CAISO offer couplings. (Their former `bidir_intertie` skip guard
+    #     went with the caiso_bidir_intertie mechanism, DELETED at caiso-236
+    #     under rule 26 [R-DELETE]; the per-hub injector does not need it.) ---
+    if getattr(config, "caiso_import_gas_coupling", False):
         if inject_caiso_import_gas_coupling(fleet_arrays, mc, config, year):
             _logger.info(
                 "%s %d: desert-SW gas import tranches (DSW_CCGT/DSW_CT) coupled "
@@ -151,7 +150,7 @@ def apply_interchange_injections(
                 iso,
                 year,
             )
-    if not bidir_intertie and getattr(config, "caiso_import_solar_shape", False):
+    if getattr(config, "caiso_import_solar_shape", False):
         if net_load is None:
             raise ValueError(
                 "caiso_import_solar_shape is on but the orchestrator did not "
