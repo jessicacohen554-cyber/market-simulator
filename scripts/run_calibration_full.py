@@ -4839,10 +4839,8 @@ def solve_and_persist(
                 unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis
             )
         if unit_outage_st_capacity_basis is not None:
-            scenario = scenario.model_copy(
-                update=dict(
-                    unit_outage_st_capacity_basis=unit_outage_st_capacity_basis
-                )
+            recorded_cfg = recorded_cfg.with_overrides(
+                unit_outage_st_capacity_basis=unit_outage_st_capacity_basis
             )
         if unit_outage_mixed_gas_routing is not None:
             recorded_cfg = recorded_cfg.with_overrides(

@@ -329,8 +329,12 @@ def kills(vc: dict, va: dict) -> dict:
         return json.loads(p.read_text()) if p.exists() else {}
 
     ac_, aa_ = _att(CONTROL), _att(ARM)
-    n_c = len(ac_.get("entries") or [])
-    n_a = len(aa_.get("entries") or [])
+    # The attestation nests its ledger under free_parameters; reading a
+    # top-level "entries" found nothing and reported UNSCORED on a bundle that
+    # DID carry a full ledger. Fixed here — this corrects what the gate can SEE,
+    # it does not move the gate: K-6 still counts UNSCORED as never-a-pass.
+    n_c = len((ac_.get("free_parameters") or {}).get("entries") or [])
+    n_a = len((aa_.get("free_parameters") or {}).get("entries") or [])
     att = n_c > 0 and n_a > 0
     out["K6"] = {
         "attestation_entries": {"control": n_c, "arm": n_a},

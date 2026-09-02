@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-02-miso-201-control",
+  "label": "miso 201 control",
+  "date": "2026-09-02",
+  "shorthand": "miso-201-control",
+  "definition": "miso-201 A/B CONTROL leg A \u2014 the miso-200 keeper recipe replayed unchanged. Pairs with miso201_stbasis_B (unit_outage_st_capacity_basis=True), the single delta.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-02-miso-201-control.js",
+  "bundle": "results/calibration/miso201_control_A"
+}
