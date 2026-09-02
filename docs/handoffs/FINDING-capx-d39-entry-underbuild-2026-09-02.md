@@ -25,6 +25,16 @@ floor-composition finding exists on `origin/main`; the position/requirement cont
 cited from D33 (`FINDING-capx-d33-neiso-position-2026-09-02.md`, the denominator artifact
 and its R-A devintage) and D31 (`FINDING-capx-d31-miso-caprev-repair-2026-09-02.md`, the
 MISO capacity-revenue repair measured on the T1-H leg). Nothing here re-derives either.
+**Landed on main during this session (re-checked before push, HEAD `5ef02b3d`):** the
+director r#29 refresh (this lane's issue) and
+`PREDECL-capx-d33-miso-additions-repair-2026-09-02.md` — the MISO additions-under-build
+repair lane, pre-declaration only, whose diagnostics-on probe bundle
+`results/hindcast/miso-d33-probe-entrydiag` (key `1b0f1a5e75719b92`, the D31 recipe +
+`--entry-screen-diagnostics`) commits the MISO screen-signal dumps at the LIVE posture.
+Its measured attribute-leg fact (the $30 REC dual is zone-resolved to $0 at MISO's VRE
+allocation buckets) corrects an inference this finding would otherwise have carried
+(§5.3), and its dumps supply the MISO live-posture rows of §3.1. Its repair
+(`entry_vre_zone_selection`, gated, MISO-only) is cited, not touched.
 
 ## 0. Verdict (one paragraph, then the term table)
 
@@ -49,7 +59,9 @@ volume owned by the allocator (§3.2). **The other three terms do not understate
 attribute leg is EXACT by construction: the prior-year REC dual the screen credits equals
 the ACP, and so does the LP's realized dual, in every committed forecast year of every RPS
 ISO — CAISO $50, NEISO $50, NYISO $40, PJM $45, MISO $30 (§5) — so T16-A's NEISO result is
-the cross-ISO signature, not a NEISO defect. The reserve leg exists only in ERCOT (D12
+the cross-ISO signature, not a NEISO defect (MISO's is exact at the ISO grain and $0 at the
+build-zone grain, because its VRE allocation buckets are RPS-ineligible — the MISO-D33
+lane's object, §5.3, not a signal object). The reserve leg exists only in ERCOT (D12
 repaired it); everywhere else `reserve_price_signal` is `None` and the AS credit is $0. The
 capacity leg is mis-expected through the POSITION the one adequacy seam evaluates
 (NEISO's D33 denominator artifact, MISO's D31-repaired supply ratio, NYISO curve-OFF),
@@ -73,7 +85,7 @@ defect that broke the ERCOT arm cannot arise there.
 |---|---|---|---|---|---|---|
 | **energy leg** | armed tail: **over** 21–29× (tight step), ≈1.0, **under** 8× | **under** 1.1–14× (CC), 14×–∞ (CT); zonal spread 0 vs $9–21 | prior-dual posture (BLK-8): both signs 0.06–3.4×; current stack posture unmeasured | **under** 1.5–10× (CC), 5–11× (CT); FFR-4E: 21 % of the peaker leg | unmeasured (no diag) — realized surface has the widest zonal spread of the six ($4.8–12.2) | unmeasured (no diag) — realized 101–2,075 h ≥ $100 the stack cannot carry; storage sees $0.1–5/kW-yr (D36) |
 | **reserve leg** | D12 phantom (realized-r) → repaired, armed Q15 | absent ($0) | absent ($0) | absent ($0) | absent ($0) | absent ($0) |
-| **attribute leg** | n/a (no RPS) | exact: dual $50 = ACP | exact: $45 = ACP (T1-F); $0 in-sample | exact: $30 = ACP (d27/d31); $0 in the diag-on bundle | exact: $40 = ACP | exact: $50 = ACP |
+| **attribute leg** | n/a (no RPS) | exact: dual $50 = ACP | exact: $45 = ACP (T1-F); $0 in-sample | exact at the ISO grain ($30 = ACP) but zone-resolved to **$0** at the VRE build zones (MISO-South ineligible; MISO-D33 predecl) | exact: $40 = ACP | exact: $50 = ACP |
 | **capacity leg** | n/a (energy-only) | fixed $88.08 anchor = 94–100 % of CT revenue (FFR-3W) | curve-ON; fixed $74k/$60k in the diag bundle | $0 at every hindcast screen → D31: $13.83 vs real $79.07 | curve-OFF ⇒ fixed net-CONE $110 | curve at the D33-displaced position: $0–124/kW-yr, sign flips at COD |
 | **volume binding** | exhaustion walk (armed) | solar cap 4,000; wind ladder 702 | solar/wind caps 6,000/1,500; CT ladder | wind cap 4,000 | wind cap 1,000; solar ≤ 2,000 cap | VRE cap/ladder; gas_cc 1,000 = cap; gas_ct 500 = cap; storage share cap (2050) |
 
@@ -107,7 +119,7 @@ The registered posture per ISO, read from each bundle's committed `run_config.js
 | ERCOT | `ercot-2021-2025-realized-t1h-d12c-{control,armed}` (`28cef350`/`f061b264`) | unified lookahead (hourly availability, VRE potential, storage shave) + FFR-8A expected ORDC | **on** | entering-year expected adder (armed) | 0 (no RPS) | none (energy-only) | margin-exhaustion walk (armed) | yes — 4 `screen_signal_diag` npz per bundle; `entry_signal_l1_dual_replay_ercot.json` |
 | CAISO | `caiso-2021-2025-realized-dumps` (`af508406`), `ffr4e/caiso-*` | shipped stack (no unified repairs) | off | none ($0) | $50 = ACP | fixed $88.08/kW-yr anchor (`caiso_ra_mpb_capacity_anchor` off) | bang-bang + ladder | yes — 2 npz; `entry_signal_l1_dual_replay_caiso.json` |
 | PJM | `ff-t1f-s6-pjm/ledger`; `pjm-2021-2025-realized-blk8diag` | shipped stack (S-6); **prior-year duals** in the 2026-07-15 BLK-8 diag bundle | off | none ($0) | $45 = ACP (T1-F); $0 in-sample | curve-ON per `capacity_market_clearing_by_iso` (S-6); fixed $74k/$60k in BLK-8 | bang-bang + ladder | ledger rows at the OLD posture only |
-| MISO | `miso-2021-2025-realized-t1h-{d27,d31}`; `ffr3v/miso-entry-diag` | shipped stack | off (`scarcity_price_overlay` False) | none ($0) | $30 = ACP (d27/d31); $0 in the diag-on bundle | RBDC curve (D31 supply ratio 0.8546); VRE capacity ON | bang-bang + ladder | ledger rows at the pre-D26/D31 posture only |
+| MISO | `miso-2021-2025-realized-t1h-{d27,d31}`; `miso-d33-probe-entrydiag` (`1b0f1a5e`); `ffr3v/miso-entry-diag` | shipped stack | off (`scarcity_price_overlay` False) | none ($0) | $30 = ACP ISO-wide, $0 at the build zones (K-row grain) | RBDC curve (D31 supply ratio 0.8546); VRE capacity ON | bang-bang + ladder | yes — 2 npz at the live posture (probe); ledger rows only at the pre-D26/D31 posture |
 | NYISO | `ff-t1f-extcap/nyiso`; D10 | shipped stack | off (no overlay row) | none ($0) | $40 = ACP | curve-OFF ⇒ fixed net-CONE $110/kW-yr | bang-bang + ladder | **no** |
 | NEISO | `ff-t3-neiso-golden/bau` (`706e7ba8`) | shipped stack | off (`scarcity_pricing_enabled` false) | none ($0; `as_revenue_enabled` false) | $50 = ACP | FCA curve at the entering position (2027–28 vintage hold-last) | bang-bang + ladder (`entry_rate_limits` true) | **no** (D36 §1 item 2) |
 
@@ -198,6 +210,10 @@ recorded. Realized = the same integral on the entering year's keeper surface (§
 | MISO | 2024 | gas_ct | 25.9 | 8,727 | 43,068 | **0.20** | " |
 | MISO | 2025 | gas_cc | 26.1 | 11,705 | 112,272 | **0.10** | " |
 | MISO | 2025 | gas_ct | 38.0 | 2,750 | 29,698 | **0.09** | " |
+| MISO | 2024 | gas_cc | 17.7 | 75,418 | 107,159 | **0.70** | LIVE posture (D31 recipe), probe dump `2023_for_2024`: signal mean $26.31, max $39.4, 0 h ≥ $100 |
+| MISO | 2024 | gas_ct | 25.9 | 10,636 | 43,068 | **0.25** | " |
+| MISO | 2025 | gas_cc | 26.1 | 7,639 | 112,272 | **0.07** | LIVE posture, dump `2024_for_2025`: mean $25.67, max $45.0, 0 h ≥ $100 |
+| MISO | 2025 | gas_ct | 38.0 | 16 | 29,698 | **0.00** | " |
 | PJM | 2023 | gas_cc | 22.2 | 132,631 | 75,294 | **1.76** | prior-year duals (2022 gas spike) |
 | PJM | 2023 | gas_ct | 32.4 | 45,729 | 13,380 | **3.42** | " |
 | PJM | 2024 | gas_cc | 20.0 | 72,890 | 86,020 | 0.85 | prior-year duals |
@@ -215,7 +231,11 @@ Three readings, each measured:
    and its ORDC-tail counterfactual is worth "approximately nothing" at MISO's reserve
    floor. The same object, seen from CAISO's replay: shipped daily spread 12.7 / 14.4 vs
    35.5 / 30.0 on the duals, zonal range 0 vs 2.7 / 2.5, and the sign flips it produces —
-   gas_cc −$82.7 k → **+$66.6 k** and solar −$6.2 → **+$2.9/MWh** at entering-2024.
+   gas_cc −$82.7 k → **+$66.6 k** and solar −$6.2 → **+$2.9/MWh** at entering-2024. The
+   MISO live-posture dumps confirm the object is unchanged by D26/D31: the D31-recipe
+   signal is $26.31 / $25.67 mean with a $39.4 / $45.0 maximum, a $3.5 daily
+   top-4/bottom-4 spread and a $0 arbitrage for every storage technology — the same
+   flattening FFR-4E measured, now on the registered recipe.
 2. **The prior-dual construction errs BOTH ways** (PJM 2023 at 1.8–3.4×, 2025 at 0.00–0.06):
    it is naive expectations — last year's outturn as next year's forecast — and it lags the
    gas price by one year. It is not a repair of the stack; it is the disarm corner the
@@ -236,6 +256,8 @@ Three readings, each measured:
 | ERCOT | 2025 | 4.5 → 42.0 (60.0) | 1.5 → 238.8 (248.9) | 1.03 → 0.87 (1.28) | " |
 | CAISO | 2024 | 2.9 → 35.5 (29.2) | 0.0 → 79.3 (32.0) | 0.90 → 0.63 (0.82) | " |
 | CAISO | 2025 | 4.1 → 35.7 (24.6) | 2.0 → 59.9 (43.0) | 0.84 → 0.64 (0.79) | " |
+| MISO | 2024 | 0.0 → 2.1 | 0.0 → 5.3 | — | live-posture probe dump vs §2 |
+| MISO | 2025 | 0.0 → 1.1 | 0.0 → 0.0 | — | " |
 | NEISO | 2027–2050 | bracket: < required $77–154 in every year; keeper surface 0.1–2.7 | crossed $79–83 only at the 2050 screen; keeper 2.3–4.0 | — | D36 §2–§3 (no committed screen reading) |
 
 Two things the storage rows add to D36. **The stack's arbitrage blindness is not
@@ -305,12 +327,13 @@ signal object.**
   13.1 GW actual with attribute $0 in-sample and $45 = ACP from 2026 on (§5); wind
   cap-bound at 1,500 every year; gas_ct entry is the S-6 backstop ladder. **Energy leg by
   construction (BLK-8 term (a)), unmeasured at the live posture; volume cap/ladder-set.**
-- **MISO** — energy leg 5–11× under for the peaker, 1.5–10× for the CC at the stack
-  posture (FFR-4E's 21 %); capacity leg $0 → D31 $13.83 (vs $79.07 real); attribute $0
-  in the diag-on bundle but $30 = ACP in d27/d31 — the screen the committed ledgers
-  describe is NOT the screen the registered leg now runs (§5.3). **Energy leg dispersion
-  plus the capacity position; wind cap-bound at 4,000; solar's clearing hinges on the $30
-  attribute and the D31 capacity leg, neither of which is a signal object.**
+- **MISO** — energy leg 4–14× under for the peaker, 1.4–14× for the CC, measured on both
+  the superseded and the live posture (FFR-4E's 21 %); capacity leg $0 → D31 $13.83 (vs
+  $79.07 real); attribute leg $30 = ACP at the ISO grain but $0 at the VRE build zones,
+  because the allocation buckets are RPS-ineligible (§5.3) — the MISO-D33 lane's
+  zone-selection repair, in flight. **Energy-leg dispersion plus the capacity position;
+  wind cap-bound at 4,000; solar's clearing hinges on the zone-resolved attribute leg
+  (MISO-D33) and the D31 capacity leg, neither of which is a signal object.**
 - **NYISO** — no screen reading exists; the realized surface carries the widest zonal spread
   of the six ($4.8–12.2/MWh, Long Island/NYC vs Upstate) and 653 h ≥ $100 in 2025, all of
   it discarded by the zone-flat object; capacity leg position-blind (curve-OFF).
@@ -336,7 +359,7 @@ the attribute price) across the repository:
 | NEISO | 50 | 50.0 in all 25 golden-2 years, both T16-A arms, s4b/s4hydro | 50.0 (mystic T1-H, crossover) |
 | NYISO | 40 | 40.0 (extcap, 2026–2030) | 40.0 (realized T1-H) |
 | PJM | 45 | 45.0 (s6, 2026–2030) | 0.0 (every hindcast bundle) |
-| MISO | 30 | 30.0 (s123, arm3arm 2031–35) | 30.0 (d27/d31); **0.0** (ffr3v/ffr4b/ffr4c) |
+| MISO | 30 | 30.0 (s123, arm3arm 2031–35) | 30.0 (d27/d31; = `np.max` of the K-row vector, $0 at MISO-South/West); **0.0** (ffr3v/ffr4b/ffr4c) |
 | ERCOT | — | 0.0 | 0.0 |
 
 The LP enters the ACP as the cost of an RPS escape column (`policy/rps.py:185`), so a
@@ -370,15 +393,26 @@ all (`:4082` — "ERCOT CDR, CAISO TPP — approximate"). The NEISO RPS under-bu
 throughput-identification question — the ISO-NE queue's demonstrated per-technology COD
 series — before it is anything else.
 
-### 5.3 A posture drift the MISO record now carries
+### 5.3 The MISO exception is a GRAIN fact, not a signal fact
 
-The only MISO screen ledgers on disk (ffr3v/ffr4b/ffr4c) credit solar `attribute_price 0.0`
-(rps_dual 0.0, "MISO's 11 % target is slack against a 16.9 % modelled VRE share",
-FFR-3V §4.6), while the registered d27/d31 T1-H ledgers carry `rps_dual = 30.0` in every
-solved year (post-D26/D29 defaults). At cf 0.22 that is a $57.8 k/MW-yr attribute credit
-the committed screen rows never saw — enough on its own to flip the ledgers' solar margins
-(−$22.7 k to −$35.9 k) positive. No diagnostics-on ledger exists at the live MISO posture;
-this is a precondition item, not a finding about the sign.
+The registered d27/d31 T1-H ledgers carry `rps_dual = 30.0` in every solved year while the
+older diagnostics-on ledgers (ffr3v/ffr4b/ffr4c) carry 0.0 — which, read at the ISO grain,
+would look like a $57.8 k/MW-yr attribute credit (cf 0.22 × $30 × 8,760) that the committed
+screen rows never saw and that would flip their solar margins (−$22.7 k to −$35.9 k)
+positive. It is not. The MISO-D33 pre-declaration measured it on the live-posture probe
+(`miso-d33-probe-entrydiag`): the ledger's `rps_dual` is `np.max` over the K-row
+compliance-region vector, the $30 sits in MISO-East/MISO-Illinois, and
+`RENEWABLE_ZONE_ALLOCATION["MISO"]` sends 100 % of economic solar to MISO-South, which no
+compliance row makes eligible — so `rps_credit_for_zone` resolves the candidate's credit to
+**$0**, and `attribute_revenue_per_mw_yr` is exactly 0.0 on every VRE row in 2022/2023/2024
+(solar −24,835 / −21,070 / −34,598 $/MW-yr; wind −3,919 / −1,880 / −20,819). The
+expectation is still exact — the screen credits what a MISO-South entrant would be paid —
+and the under-build it produces is a siting/eligibility object (that lane's
+`entry_vre_zone_selection` repair), not an expectation object. The same pre-declaration's
+§3 records the probe's 2025 capacity legs at $304,418 / $307,656 / $125,491 / $53,759 per
+MW-yr (gas_ct / gas_cc / solar / wind) — ~4× the $79.8 k net-CONE anchor, read at the
+screen's own forward position — and routes it to the capacity-price lane; that is §3.3's
+position object again, and it is why every 2025 MISO candidate cleared at its cap.
 
 ## 6. What a repair would be identified FROM (rule 13), per ISO — and why the composition is cleaner outside ERCOT
 
@@ -417,9 +451,10 @@ dumps (§7 item 1), never a transfer.
 
 1. **Precondition, every ISO, zero cost: `entry_screen_diagnostics=True` on the next solve
    of any kind** (output-only, no cache-key term, no solve-path change — the L-5 dump; D36
-   R-1). Today the expected side is committed for two ISOs; after one solve per ISO it is
-   committed for six, and the §3.1 table becomes a screen reading instead of a bound for
-   NYISO/NEISO and a live-posture reading for PJM/MISO (§5.3).
+   R-1). Today the expected side is committed for three ISOs (ERCOT, CAISO, and MISO via
+   the MISO-D33 probe dumps); after one solve per ISO it is committed for six, and the §3.1
+   table becomes a screen reading instead of a bound for NYISO/NEISO and a live-posture
+   reading for PJM.
 2. **CAISO first.** Largest committed expected-vs-realized gap with the replay already in
    place (peaker 0.00–0.07, CC 0.07–0.92, storage 8–12×, sign flips in both the thermal and
    the VRE screen at entering-2024), a scarcity overlay the duals already carry, and a
@@ -428,10 +463,14 @@ dumps (§7 item 1), never a transfer.
    the replay's sign flips; the storage kill-gate is that a 4 h machine still cannot clear
    (the duals' own spread is $22–36 k against a $148 k cost — D-9's value stack is the
    residual, stated before the solve so it cannot be traded).
-3. **MISO second.** FFR-4E's 21 % is the most exactly quantified energy-leg loss in the
-   record; D31 has just landed the capacity leg, so a signal A/B on the d31 baseline is a
-   one-term delta. Pre-declare that wind stays cap-bound at 4,000 (the signal cannot move
-   it) and that the solar outcome is jointly the $30 attribute + D31 capacity leg + signal.
+3. **MISO second — on the MISO-D33 baseline once it lands, not on D31's.** FFR-4E's 21 %
+   (now reproduced on the live posture: 0.25 / 0.00 for the peaker) is the most exactly
+   quantified energy-leg loss in the record, and the probe dumps already commit the expected
+   side; D31 has landed the capacity leg and MISO-D33 is repairing the attribute leg's
+   siting, so a signal A/B run AFTER it is a one-term delta. Pre-declare that wind stays
+   cap-bound at 4,000 (the signal cannot move it) and that solar's clearing is jointly the
+   zone-resolved attribute + the D31 capacity leg + the signal's energy leg — the signal's
+   share is the dispersion, and it is the smallest of the three for a $0-attribute solar row.
 4. **NEISO third — after D40 (D33 R-A) lands, not before, and not first.** The NEISO thermal
    and storage capacity legs currently oscillate on the denominator artifact (§3.3, D36 §5);
    a signal A/B run on the golden's requirement would attribute position-driven timing
@@ -468,8 +507,9 @@ finding; no `src/`, no matrix shard, no board/verdict/keeper/marker/FC-row file,
 identification PATTERN (dumps → replay → composed construction → A/B) is cited, no ERCOT
 number or verdict transfers. Rule 13: AEO and the corridor rows appear nowhere as targets;
 the "actual additions" figures quoted are the committed hindcast scores' context. Rule 27:
-no ≥300-line source file touched (this is a new file). Collision: D40/D41/D32 absent on
-main at write; D33/D31 cited as current.
+no ≥300-line source file touched (this is a new file). Collision: D40/D41/D32 findings
+absent on main at write (HEAD `5ef02b3d` after rebase); D33 (NEISO position), D31 and the
+MISO-D33 additions pre-declaration cited as current; no file shared with any of them.
 
 ## 9. Reproduction (the instrument, committed inline)
 
@@ -518,6 +558,8 @@ The §3.1 realized column is `Σ max(p_mean − vc, 0)` on the same `p_mean` at 
 costs printed in the table (the replay's `var_cost_per_mwh` for ERCOT/CAISO; the ledgers'
 for MISO/PJM). Expected-side sources: `results/calibration/entry_signal_l1_dual_replay_{ercot,caiso}.json`
 (`steps.<year>.arms.shipped_signal` / `dual_prior_solve` / `dual_same_year`);
+`results/hindcast/miso-d33-probe-entrydiag/MISO/1b0f1a5e75719b92/screen_signal_diag_{2023_for_2024,2024_for_2025}.npz`
+(`price_base_usd_mwh + adder_usd_mwh` is the live MISO signal);
 `results/ffr3v/miso-entry-diag/MISO/ca36ba26ebe1640f/evolution_<year>.json` and
 `results/hindcast/pjm-2021-2025-realized-blk8diag/PJM/b6144d9d292349b1/evolution_<year>.json`
 (`entry_screen_diagnostics` rows); `results/ff-t3-neiso-golden/bau/{full_horizon_summary.json,
