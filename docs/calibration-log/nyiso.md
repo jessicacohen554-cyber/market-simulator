@@ -10113,3 +10113,134 @@ passes and `check_mechanism_matrix.py` exits 0. **Rule 22:** every year read is
 2023/2024/2025; NYISO holds no `complete` marker, none was requested, the freeze
 is untouched. **No C3c lever opened; none of the twenty-six closed lines
 re-tested.**
+
+## 2026-09-02 — nyiso-175b: the per-unit attribution repair is BUILT and VALIDATED at artifact level (both artifacts), it RESOLVES nyiso-174 §6 item 2, and a NEW blocker — BOTH NYISO solve inputs are non-reproducible at HEAD — is why no LP ran
+
+Second charter of session nyiso-175, taken after the first was found discharged
+and merged. Chartered to land nyiso-175 §4.4's handed-forward item 1 (the
+fleet-wide tranche-attribution defect) together with nyiso-174 §6 item 1 (the
+outage-extract routing defect), with the three-year re-solve those needed.
+**The repair is delivered; the re-solve is BLOCKED, on evidence, by an object
+neither brief knew about.** Keeper `2026-08-30-nyiso-159-loss-surface` and its
+**NOT-YET** determination on {C3a-2025 −11.5 %, C3c} **unchanged**; no LP ran,
+so rule 15 registers nothing — correct, not an omission. Prereg
+`results/calibration/PREREG-nyiso175b-tranche-attribution-repair.md` committed
+at `22bfe37a` **before** the probe or any derivation was run (the seventh
+consecutive session to honour this). Full record:
+`docs/FINDING-nyiso175b-tranche-attribution-repair-2026-09-02.md`.
+
+**ALL FOUR PRE-SOLVE GATES PASS — and K2 earned its keep.** **K1**: the
+corrected per-unit attribution re-seats **13.7577 TWh** of NYISO CAMPD energy
+over 2023-2025 (bar 4.0), 4.5293/4.5612/4.6672 by year, across **six** plants —
+East River 6.5811 onto `CT_CHP` (a **3.5 MW, 1.1 %** nameplate margin decides
+it), Ravenswood 5.8467 onto `CC_REGULAR` (a 1,502.6 MW margin picks a bin
+carrying a third of the energy), then Bethpage/E F Barrett/Port Jefferson/S A
+Carlson. **K2 FAILED as first constructed**: three `ST_GAS`-only plants (2490,
+8906, 2516 Northport) have CAMPD combustion turbines correcting to `CT_PEAKER`,
+a bin they do not carry, so 0.0051 TWh would have been silently dropped out of
+the `ST_GAS` denominator — a reclassification, not a crosswalk repair. **The
+CONSTRUCTION was amended, never the threshold** (nyiso-175 §4.5's own
+discipline): a unit stays on the plant's primary group wherever the plant
+carries no bin in its prime-mover family. Re-run **PASS**, and K1 tightens
+13.7628 → 13.7577 over 11 → 6 plants. **K3** (rule 19 `[R-ONE-MECH]`, measured
+by CALLING the production resolver, not reading it): the existing miso-200
+`mixed_gas_routing` gate **cannot** reach East River — `_GAS_BIN_GROUPS`
+excludes both CT classes, so `{CT_CHP, ST_CHP}` intersects at size 1 — **and is
+actively WRONG where it does fire**, routing Ravenswood's block CTs
+`CT0001/0010/0011` to `CT_PEAKER` (dropped from the overlay) although those are
+three of the 27 units the neiso-99 liquid-fuel guard's own evidence names as
+gas-fired block members. Arming the existing flag for NYISO would have traded
+one mis-routing for another. **K4**: all three carrier bins genuinely lack a
+tranche row today.
+
+**THE REPAIR, both artifacts, one crosswalk.**
+`derive_thermal_tranches --per-unit-attribution` and
+`derive_campd_unit_outages --per-unit-crosswalk`, both default-off, both
+writing `-perunit-` companions (never an overwrite — the `-unitroute-`
+discipline), both routing through the SAME
+`campd_measured_classes.corrected_unit_class`, so they cannot disagree about
+which bin a machine belongs to. Zero free parameters (rule 21), static
+forward-regenerable inputs (rule 13), a crosswalk repair citing the attribution
+defect rather than a data change (rule 23). `campd` gains
+`plant_group_hourly_net` plus `prefer_unit_level`, and **two guards that were
+earned, not designed**: it raises without unit identity, and raises when every
+`unit_id` is blank — a FACILITY-level extract. Without the second, the first
+derivation **silently reproduced facility attribution under a per-unit name**
+(NY resolves facility-first because it exists in both directories), which is the
+repaired defect made invisible.
+
+**ARTIFACT DELTA, unconfounded (both legs derived at HEAD).** Tranches: **13 of
+85 rows**, seven plants. **nyiso-174 §6 item 2 is RESOLVED in the artifact** —
+East River's `ST_CHP` measured row correctly disappears (its boilers generate
+0.000 TWh in all three years) and a **`CT_CHP` row appears at 306.0 MW / 26,251
+online hours / committed 30.1 / `chp_pmin_cf` 28.4**, moving the must-run to the
+half the meters say is running. Ravenswood `ST_GAS` 23,472 → 7,293 h with a new
+222.2 MW `CC_REGULAR` row at committed 70.0. S A Carlson's 120-hour `ST_GAS` row
+is replaced by a 3,913-hour `CT_PEAKER` row — **recovering the committed
+artifact's own `online_hours` on the correct bin**. Outages: **22 units
+re-routed, zero added** — East River 1/2 `ST_CHP`→`CT_CHP` (8+8 windows),
+Ravenswood 10/20/30 `CC_REGULAR`→`ST_GAS` (25+23+22), and E F Barrett's 16
+`U000xx` combustion turbines (~590 windows) correctly leaving the overlay, since
+`CT_PEAKER` is outside `QUALIFYING_PLANT_GROUPS` **by existing design**. That
+last is the largest single effect and its direction is ADVERSE to the CT
+deficit: today 16 CTs derate that plant's STEAM bin, and removing them makes
+`ST_GAS` *more* available. It is proposed because the routing is wrong, not
+because it helps.
+
+**ONE NEGATIVE RESULT, at full strength.** The physically-impossible
+`median_cf > 100` census improves only **11 → 10**: the repair removes the two
+it causes (2493/`ST_CHP` 118.3, 2682/`ST_GAS` 150.0) and Ravenswood's new
+`CC_REGULAR` row adds one at 113.9. **Above-nameplate CEMS gross is NOT a
+signature of this defect** and must not be quoted as evidence for it.
+
+**THE BLOCKER, and it is the session's real headline. BOTH NYISO solve inputs
+are non-reproducible at HEAD.** `thermal_tranches_NYISO.csv` — the keeper's
+input, sidecar `derive_invocation: null`, vintage unknown, and its own text
+says it "makes no claim about what HEAD would emit" — differs from a fresh
+unrepaired HEAD derivation on **46 of 78 rows**: `online_hours` by up to
+**26,271**, `median_cf` 65.6, `committed_pct` 27.2. The outage extract is worse
+in proportion: **4,423 → 2,632 windows, −40 %, from nothing but re-running the
+deriver**. Consequently a fully re-derived arm carries the repair AND 40 rows of
+unadjudicated drift at plants the repair never touches, and cannot attribute
+either — the confound miso-200 refused. **The obvious escape also fails**: a
+minimal-delta arm keeping committed values except at the seven affected plants
+does not work, because at **two of those seven the drift EXCEEDS the repair**
+(Bethpage `CC_REGULAR` drift −2,337 h against repair −217; E F Barrett `ST_GAS`
+drift +3,050 against repair −736). A clean A/B therefore needs a HEAD control
+leg — **two** three-year solves — and even then the arm is **not promotable**,
+because promoting it would import the drift as an unadjudicated change.
+
+**HANDED FORWARD, in priority order.** (1) **The reproducibility gap is now the
+precondition for everything else** — adjudicate the drift and re-baseline the
+keeper's inputs at HEAD, then land the repair on top as a clean delta; that is
+strictly better than paying for a control leg to work around it. (2) The A/B is
+otherwise **ready**: both companions are committed, and the two flags must land
+**together**, because the repaired `CT_CHP` tranche row is currently derived
+against an **un-derated** denominator (every East River window still routes to
+`ST_CHP` in the extract the tranche deriver reads). (3) **The solve-side
+selector is NOT built**: nothing in `src/` reads the `-perunit-` tranche
+companion — the path is hardcoded at **11 call sites** (`campd_bins.py` ×9,
+`coal.py`, `chp.py`), 9 of which take only `iso` and no config, so wiring it
+needs a resolver plus a `ScenarioConfig` field threaded through those callers
+(rule 24). The outage half is already wired via `unit_outage_csv_for_iso`.
+(4) S A Carlson's 120-hour control row with `median_cf` 150.0 is a good place to
+start diagnosing the drift.
+
+**CORRECTIONS.** nyiso-174 §6 item 1's "two windows, both in 2023" **understates
+it**: the committed extract carries **21** windows on East River units 1/2,
+spanning 2018-2026; 2023 is where the training window clips it. And the
+mis-routing is **not East-River-specific** — all **185** Ravenswood windows sit
+on `CC_REGULAR`, its three steam boilers included. nyiso-175 §4.4's 15.233 TWh
+and this session's 13.7577 TWh are **different statistics, not a disagreement**
+(whole-plant conduct vs the units actually re-seated).
+
+**Rule 28 (b).** `thermal_tranche_artifact_coverage` **O → K** (the repair is
+built, validated at artifact level, default-off) and `campd_outage_windows`
+re-stamped with the routing evidence; NYISO shard only. **Rule 25**: the code is
+ISO-agnostic but **only NYISO's artifacts were derived** — every other ISO's
+committed tranche and outage CSVs are byte-untouched. **Rule 22**: every year
+read is 2023/2024/2025; NYISO holds no `complete` marker, none was requested.
+**Tests**: 167 campd + 758 tranche/outage/fleet pass; the single failure
+(`test_capacity_evolution_changes_fleet`) reproduces on a clean stash of HEAD
+and is pre-existing. **No C3c lever opened; none of the twenty-six closed lines
+re-tested.**
