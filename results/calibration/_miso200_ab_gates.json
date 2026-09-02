@@ -1,0 +1,205 @@
+{
+ "prereg": "PREREG-miso200-outage-routing-mixedgas-2026-09-02.md \u00a75",
+ "keeper_at_open": "2026-09-01-miso-198-oomlevel",
+ "field": "unit_outage_mixed_gas_routing",
+ "control": "miso200_control_A",
+ "arm": "miso200_unitroute_B",
+ "scorer_written_and_committed_before_any_arm_result": true,
+ "miso198_scorer_defects_not_inherited": [
+  "ordering: kills-silent is evaluated BEFORE inertness",
+  "inertness measured on VALUE MOVEMENT, not criterion-status identity"
+ ],
+ "S0": {
+  "sidecars_checked": 9,
+  "missing": [],
+  "max_abs_diff": 0.0,
+  "passed": true
+ },
+ "S1": {
+  "n_fields": 768,
+  "diffs": [
+   "unit_outage_mixed_gas_routing"
+  ],
+  "passed": true
+ },
+ "S2": {
+  "arm_1403_st_gas_mean_availability_2024": 0.6217,
+  "availability_below_one": true,
+  "st_gas_forced_share_control": {
+   "2023": 0.2002083905089287,
+   "2024": 0.21002058077378183,
+   "2025": 0.31865098288560373
+  },
+  "st_gas_forced_share_arm": {
+   "2023": 0.14964179575897663,
+   "2024": 0.15201023942177383,
+   "2025": 0.26513939549071047
+  },
+  "forced_share_fell": {
+   "2023": true,
+   "2024": true,
+   "2025": true
+  },
+  "passed": true
+ },
+ "K1": {
+  "band_twh": 8.0,
+  "named_ex_ante": {
+   "CC_REGULAR|2024": {
+    "prereg_control": 6.748,
+    "prereg_headroom": 1.252,
+    "measured_control": 6.748,
+    "measured_arm": 7.075,
+    "band_exit": false
+   },
+   "ST_GAS|2024": {
+    "prereg_control": -7.553,
+    "prereg_headroom": 0.447,
+    "measured_control": -7.698,
+    "measured_arm": -7.854,
+    "band_exit": false
+   }
+  },
+  "all_band_exits": [],
+  "passed": true
+ },
+ "K2": {
+  "control": {
+   "2023": 0.081,
+   "2024": 0.108,
+   "2025": 0.181
+  },
+  "arm": {
+   "2023": 0.081,
+   "2024": 0.109,
+   "2025": 0.181
+  },
+  "pass_to_fail": [],
+  "passed": true
+ },
+ "K3": {
+  "new_d4_failures": [],
+  "cleared": [],
+  "passed": true
+ },
+ "K4": {
+  "control": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.794,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.957,
+    "cv_ratio": 1.252,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.978,
+    "cv_ratio": 1.49,
+    "verdict": "pass"
+   }
+  },
+  "arm": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.79,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.956,
+    "cv_ratio": 1.253,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.494,
+    "verdict": "pass"
+   }
+  },
+  "pass_to_fail": [],
+  "passed": true
+ },
+ "K5": {
+  "pass_to_non_pass": [],
+  "passed": true
+ },
+ "K6": {
+  "attestation_present": false,
+  "status": "UNSCORED \u2014 replay bundles carry no attestation",
+  "passed": null
+ },
+ "movement": {
+  "epsilons": {
+   "c1_twh": 0.01,
+   "c3a_pp": 0.01,
+   "c3b": 0.0005,
+   "c8_share": 0.0005
+  },
+  "d_c1_twh": {
+   "CC_CHP|2023": 0.043,
+   "CC_CHP|2024": 0.037,
+   "CC_CHP|2025": 0.014,
+   "CC_REGULAR|2023": 0.268,
+   "CC_REGULAR|2024": 0.327,
+   "CC_REGULAR|2025": 0.236,
+   "COAL_BIT|2023": 0.031,
+   "COAL_BIT|2024": -0.007,
+   "COAL_BIT|2025": -0.003,
+   "COAL_LIGNITE|2023": 0.003,
+   "COAL_LIGNITE|2024": 0.003,
+   "COAL_LIGNITE|2025": 0.0,
+   "COAL_PRB|2023": 0.112,
+   "COAL_PRB|2024": 0.075,
+   "COAL_PRB|2025": 0.009,
+   "CT_PEAKER|2023": 0.108,
+   "CT_PEAKER|2024": 0.104,
+   "CT_PEAKER|2025": -0.033,
+   "ST_CHP|2023": 0.003,
+   "ST_CHP|2024": 0.003,
+   "ST_CHP|2025": 0.0,
+   "ST_GAS|2023": 0.04,
+   "ST_GAS|2024": -0.156,
+   "ST_GAS|2025": -0.092
+  },
+  "c3a_control": {
+   "2023": 0.15220700152206135,
+   "2024": -4.4891640866872935,
+   "2025": -12.274527056753184
+  },
+  "c3a_arm": {
+   "2023": 0.27397260273971474,
+   "2024": -4.365325077399371,
+   "2025": -12.274527056753184
+  },
+  "d_c3a_pp": {
+   "2023": 0.1218,
+   "2024": 0.1238,
+   "2025": 0.0
+  },
+  "d_c3b": {
+   "2023": 0.0,
+   "2024": 0.001,
+   "2025": 0.0
+  },
+  "c8_share_control": {
+   "2023": 0.2002083905089287,
+   "2024": 0.21002058077378183,
+   "2025": 0.31865098288560373
+  },
+  "c8_share_arm": {
+   "2023": 0.14964179575897663,
+   "2024": 0.15201023942177383,
+   "2025": 0.26513939549071047
+  },
+  "d_c8_share": {
+   "2023": -0.05057,
+   "2024": -0.05801,
+   "2025": -0.05351
+  },
+  "status_map_identical": true,
+  "arm_moved_values": true
+ },
+ "kills_fired": [],
+ "verdict": "KILLS SILENT and the arm MOVED values -> keeper candidate on its own gates. C3a is reported at full magnitude and is NEVER the justification."
+}
