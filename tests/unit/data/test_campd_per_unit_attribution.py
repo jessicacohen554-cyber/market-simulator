@@ -41,9 +41,7 @@ class TestDefaultOffAndInert:
             )
 
     def test_outage_path_unchanged_while_off(self):
-        assert unit_outage_csv_for_iso("NYISO").name == (
-            "campd-unit-outages-NYISO.csv"
-        )
+        assert unit_outage_csv_for_iso("NYISO").name == ("campd-unit-outages-NYISO.csv")
         assert unit_outage_csv_for_iso("ERCOT").name == "campd-unit-outages.csv"
 
 
@@ -97,9 +95,12 @@ class TestCompanionSelection:
         monkeypatch.setattr(om, "UNIT_OUTAGE_CSV", tmp_path / "campd-unit-outages.csv")
         (tmp_path / "campd-unit-outages-perunit-NYISO.csv").write_text("x\n")
         (tmp_path / "campd-unit-outages-unitroute-NYISO.csv").write_text("x\n")
-        assert om.unit_outage_csv_for_iso(
-            "NYISO", mixed_gas_routing=True, per_unit_crosswalk=True
-        ).name == "campd-unit-outages-perunit-NYISO.csv"
+        assert (
+            om.unit_outage_csv_for_iso(
+                "NYISO", mixed_gas_routing=True, per_unit_crosswalk=True
+            ).name
+            == "campd-unit-outages-perunit-NYISO.csv"
+        )
 
 
 class TestGateCompleteness:

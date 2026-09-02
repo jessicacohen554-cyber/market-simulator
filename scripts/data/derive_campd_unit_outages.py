@@ -1070,16 +1070,22 @@ def _write_outage_sidecar(
     invocation. Descriptive only — no loader reads it, and it never gates.
     """
     try:
-        years = sorted(
-            {int(y) for y in pd.to_datetime(frame["outage_start"]).dt.year}
-        ) if len(frame) else []
-        by_year = {
-            str(int(k)): int(v)
-            for k, v in pd.to_datetime(frame["outage_start"])
-            .dt.year.value_counts()
-            .sort_index()
-            .items()
-        } if len(frame) else {}
+        years = (
+            sorted({int(y) for y in pd.to_datetime(frame["outage_start"]).dt.year})
+            if len(frame)
+            else []
+        )
+        by_year = (
+            {
+                str(int(k)): int(v)
+                for k, v in pd.to_datetime(frame["outage_start"])
+                .dt.year.value_counts()
+                .sort_index()
+                .items()
+            }
+            if len(frame)
+            else {}
+        )
     except Exception:  # pragma: no cover - an empty/odd frame never blocks the emit
         years, by_year = [], {}
     side = out_path.with_suffix(".meta.json")

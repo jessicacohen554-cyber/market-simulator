@@ -1212,7 +1212,9 @@ def thermal_tranche_overrides(
 
 
 @lru_cache(maxsize=8)
-def thermal_tranche_peaking(iso: str, per_unit: bool = False) -> dict[tuple[int, str], float]:
+def thermal_tranche_peaking(
+    iso: str, per_unit: bool = False
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): peaking_pct}`` for an ISO's CC plants.
 
     The CAMPD-derived duct-firing / scarcity share from
@@ -1285,7 +1287,9 @@ def coal_min_config(iso: str) -> dict[int, float]:
 
 
 @lru_cache(maxsize=8)
-def thermal_tranche_online_frac(iso: str, per_unit: bool = False) -> dict[tuple[int, str], float]:
+def thermal_tranche_online_frac(
+    iso: str, per_unit: bool = False
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): online_frac}`` for an ISO's gas plants.
 
     The CEMS-measured synchronization fraction from
@@ -1445,7 +1449,9 @@ def assert_thermal_tranche_coverage(iso: str, config: ScenarioConfig) -> None:
         )
 
 
-def thermal_tranche_p25_level(iso: str, per_unit: bool = False) -> dict[tuple[int, str], float]:
+def thermal_tranche_p25_level(
+    iso: str, per_unit: bool = False
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): p25_level_mw}`` for an ISO's gas plants.
 
     The measured 25th-percentile-of-online available-CF from
@@ -1679,7 +1685,9 @@ def coal_prb_committed_split_night(iso: str) -> dict[int, float]:
     return out
 
 
-def thermal_tranche_chp_steam_level(iso: str, per_unit: bool = False) -> dict[tuple[int, str], float]:
+def thermal_tranche_chp_steam_level(
+    iso: str, per_unit: bool = False
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): steam_level_cf_pct}`` for an ISO's CHP cogens.
 
     The measured multi-year steam-host operating LEVEL (percent of nameplate)

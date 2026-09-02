@@ -195,21 +195,27 @@ def _offer_curve_for_group(
     if group == "ST_GAS" and getattr(config, "st_gas_intermediate_split", False):
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "st_gas_intermediate_cf_threshold", 50.0))
-        if int(plant_code) in st_gas_intermediate_plants(iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))):
+        if int(plant_code) in st_gas_intermediate_plants(
+            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))
+        ):
             inter = curves.get("ST_GAS_INTERMEDIATE")
             if inter:
                 return inter
     if group == "CT_PEAKER" and getattr(config, "ct_intermediate_split", False):
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "ct_intermediate_cf_threshold", 50.0))
-        if int(plant_code) in ct_intermediate_plants(iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))):
+        if int(plant_code) in ct_intermediate_plants(
+            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))
+        ):
             inter = curves.get("CT_INTERMEDIATE")
             if inter:
                 return inter
     if group == "CC_REGULAR" and getattr(config, "cc_intermediate_split", False):
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "cc_intermediate_cf_threshold", 50.0))
-        if int(plant_code) in cc_intermediate_plants(iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))):
+        if int(plant_code) in cc_intermediate_plants(
+            iso, thr, bool(getattr(config, "campd_per_unit_attribution", False))
+        ):
             inter = curves.get("CC_INTERMEDIATE")
             if inter:
                 return inter
