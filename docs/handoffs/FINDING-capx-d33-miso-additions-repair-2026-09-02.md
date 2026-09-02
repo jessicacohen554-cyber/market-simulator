@@ -22,7 +22,34 @@ BEFORE the pre-declaration, which was pushed before the solve.
 
 ## 0. Verdict (one paragraph)
 
-*(Lands with the measured run — §5.)*
+**The additions defect is a SITING defect, it is repaired, and repairing it does
+exactly NOTHING to the exit residual — which is the lane's most important
+result, because it amends D31 §7.** The entry screen sited 100 % of new MISO
+solar in MISO-South, the one model zone eligible under **no** state compliance
+region, screened it at a $0 REC credit against the run's own $30/MWh ACP, and
+declined **every candidate in every screen year 2022/2023/2024**; 75.8 % of the
+solar the market actually built was outside that bucket. Coverage was never the
+alternative: at the run's vintage-2020 cutoff the known-additions channel can
+reach **5.6 % of that solar** (1.036 of 18.649 GW), 85.9 % of it having never
+been filed with EIA at the cutoff. With `entry_vre_zone_selection` armed for
+MISO the screen fires in **every** year and every decided VRE row sites in
+**MISO-East or MISO-Illinois** — the REC-eligible zones — never MISO-South:
+`add.by_tech.wind` **4.000 → 8.000 GW** against 7.200 actual, band **FAIL →
+PASS**; `add.by_tech.solar` **1.236 → 4.946 GW**, still FAIL at −73.5 %; the
+FC-3 band-FAIL list goes **9 rows → 8**; all 14 invariants stay PASS. Solar's
+remaining shortfall is not the siting repair's — it is the FFR-4A pending-stock
+netting holding the ladder at its measured vintage-2020 seed cap of
+1,236.4 MW/yr in every year, exactly as pre-declared. **And the exit side does
+not move at all**: `retire.total_gw` stays **4.469 GW (−74.3 %)** and
+`unit_recall_gt300` stays **5/19**, with the pipeline **event-for-event
+identical to D31 in every year** — same 3,684.0 MW all-coal decided cohort, same
+`entry_capped` sets to the MW. +7.7 GW of new VRE decisions, 5.236 GW of it
+commissioned inside the window, released **exactly zero** additional exits,
+because the first cohort commissions at step 4.5 of 2024 — *after* that year's
+retirement screen — and the 2025 screen fails no unit in either run. **D31 §7's
+chain "additions under-build → floor binds → exits throttled" is refuted at this
+magnitude: on this evidence the additions residual and the exit residual are
+independent objects.** Determination **HOLD, unchanged**, on FC-3 alone.
 
 ## 1. Leg 1 — the planned-additions coverage audit (a MEASUREMENT, not a knob)
 
@@ -217,26 +244,318 @@ the pending-stock netting, any FOM, threshold or execution lag, the reliability
 floor, `_floor_retention_merit` (D32's object, untouched), the D31 accounting
 ratio, or the published RBDC curves.
 
-## 4. The measured consequence
+## 4. The measured consequence — the additions side
 
-*(Lands with the run — §5.)*
+```
+uv run python scripts/run_capacity_hindcast.py \
+  --iso MISO --start-year 2021 --end-year 2025 \
+  --vintage 2020 --fuel-variant realized \
+  --out-dir results/hindcast/miso-2021-2025-realized-t1h-d33
+```
 
-## 5. The T1-H run
+Bare HEAD recipe, every solve-affecting flag omitted — the arming reaches the
+solve through MISO's own `default_scenario_overrides`, not the CLI, and
+`run_config.json` records `entry_vre_zone_selection: true` (P0). Solved
+`[2021, 2023, 2024, 2025]`, bridged `[2022]`, scored 2023–2025; ~20 min. Cache
+key **`40173304213d39cd`** — neither D31's `3649264ca98a1fb4` nor the probe's
+`1b0f1a5e75719b92`; the fresh out-dir was the fresh-solve guard. One environment
+note, disclosed: the first launch of the *probe* died on the fresh checkout's
+absent `data/clean/confirmed-retirements` partition (regenerated per the error's
+own instruction; no solve had started) — the same note D31 carried.
 
-*(Lands with the run.)*
+
+The screen now fires in **every** year, and it fires in the REC-eligible zones.
+Every decided VRE row, from the run's own committed `entry_pipeline` ledgers:
+
+| decision year | tech | MW | **build zone** | COD |
+|---|---|---:|---|---:|
+| 2022 (bridge screen) | wind | 4,000.0 | **MISO-Illinois** | 2024 |
+| 2022 (bridge screen) | solar | 1,236.4 | **MISO-East** | 2024 |
+| 2023 | solar | 1,236.4 | **MISO-East** | 2025 |
+| 2024 | wind | 4,000.0 | **MISO-Illinois** | 2026 |
+| 2024 | solar | 1,236.4 | **MISO-Illinois** | 2026 |
+| 2025 | solar | 1,236.4 | **MISO-East** | 2027 |
+| 2025 | gas_cc / gas_ct | 3,000.0 / 1,471.6 | MISO-Illinois | 2027 |
+
+**Not one row sites in MISO-South or MISO-West.** In D31 the only VRE rows in
+the whole run were the 2025 pair, sited in MISO-South (solar) and MISO-West
+(wind) — the two zones whose REC credit is 0.
+
+The zonal pools grow for the first time: `solar_cap_mw` 2,048.0 → **3,284.4**
+(2024) → **4,520.8** (2025), and wind takes +4,000 MW in 2024. In D31 the pools
+sat at 2,048.0 for the entire 2021–2025 window.
+
+**The score** (committed `score.json`; bands per the T1-H rubric):
+
+| row | D31 | **D33** | actual | band |
+|---|---:|---:|---:|---|
+| `add.by_tech.wind` | 4.000 (−44.4 %) | **8.000 (+11.1 %)** | 7.200 | **FAIL → PASS** |
+| `add.by_tech.solar` | 1.236 (−93.4 %) | **4.946 (−73.5 %)** | 18.649 | FAIL (both) |
+| `add.by_tech.gas_cc` | 4.146 (+7.2 %) | 4.146 (+7.2 %) | 3.867 | PASS (both) |
+| `add.by_tech.gas_ct` | 1.472 (+8.6 %) | 1.472 (+8.6 %) | 1.355 | PASS (both) |
+| `add.by_tech.storage` | 4.000 (+437.7 %) | 4.000 (+437.7 %) | 0.744 | FAIL (both) |
+| model total additions | 14.854 | **22.563** | 31.981 | — |
+| `add.shares.wind` | +4.4 pp PASS | **+12.9 pp FAIL** | — | **PASS → FAIL** |
+| `add.shares.gas_ct` | +5.7 pp FAIL | **+2.3 pp PASS** | — | **FAIL → PASS** |
+| `retire.total_gw` | 4.469 (−74.3 %) | **4.469 (−74.3 %)** | 17.369 | FAIL (both) |
+| `retire.unit_recall_gt300` | 5/19 (0.263) | **5/19 (0.263)** | — | FAIL (both) |
+
+FC-3's band-FAIL list goes **9 rows → 8**: `add.by_tech.wind` and
+`add.shares.gas_ct` out, `add.shares.wind` in. The share flip is honest and
+worth naming: fixing wind's *volume* made wind's *share* wrong, because solar
+did not keep up — the composition is still solar-short, which is the same object
+under a different row.
+
+**All 14 forecast invariants PASS** on the committed sidecar (I1 energy balance
+7.3e-11 MW; I12 reserve-margin band "all in-band"; I7 "held"), matching D31's
+clean record.
+
+### 4.1 Why solar is still short — and it is not the siting repair
+
+Solar decides **exactly 1,236.4 MW in every one of 2022 / 2023 / 2024 / 2025**.
+That is `ENTRY_GROWTH_LIMIT_MULTIPLE × 0.6182 GW`, the measured EIA-860
+vintage-2020 MISO seed — i.e. **the growth ladder's opening cap, in every year,
+never ratcheted**. The ratchet is killed by the FFR-4A pending-stock netting:
+with `entry_pipeline_aware_signal` OFF and a 2-year COD lag, the pending stock
+(a MW quantity, no time denominator) is subtracted from an annual flow cap, so
+`K − L + 1 = 1` and a tech building at its cap never raises it. 2023 is the
+arithmetic in one line: prior-max rises to 1.2364 GW, the cap doubles to
+2,472.8 MW, the 2022 row's 1,236.4 MW is still pending, room = 1,236.4.
+
+Against a market that reached **7.145 GW of solar in 2025 alone**, a ladder
+pinned at 1.24 GW/yr cannot close the band whatever the siting is. **This was
+pre-declared as the ceiling on the repair (P3), and the measurement confirms the
+mechanism, not just the number.** It is the `entry_rate_limits` /
+`entry_pipeline_aware_signal` object, already adjudicated `O` in MISO's matrix
+column with a measured armed series on the same cell — not this lane's to arm.
+
+## 5. The measured consequence — the exit side is a NULL, and it amends D31 §7
+
+**Every retirement row is identical to D31 to the decimal**, and so is the
+pipeline that produced it:
+
+| year | event | D31 | **D33** |
+|---|---|---:|---:|
+| 2022 (bridge screen) | `decided` | 3,684.0 MW coal | **3,684.0 MW coal** |
+| 2022 | `entry_capped` | coal 27,247.4 / gas_cc 27,223.5 / gas_ct 24,385.0 / gas_st 13,942.2 / oil 3,516.9 | **identical, to the MW** |
+| 2023 | `re_confirmed` / `entry_capped` | 3,684.0 / same five classes | **identical** |
+| 2024 | `executed` / `entry_capped` | 3,684.0 coal / coal 51,880.5 + four classes | **identical** |
+| 2025 | any screen event | none | **none** |
+| — | `retire.total_gw` | 4.469 GW | **4.469 GW** |
+| — | `unit_recall_gt300` | 5/19 | **5/19** |
+
+The ONLY thing that moved on the exit side is the reserve margin:
+**2024 0.015662 → 0.023699** (+0.80 pp) and **2025 0.064675 → 0.076359**
+(+1.17 pp) — on the run's own requirement basis, ≈ **0.98 GW** and ≈ **1.40 GW**
+of additional accredited firm capacity. Real headroom, and it released nothing.
+
+**Why, read off the run's own ledgers rather than argued.** Two reasons compose:
+
+1. **Sequencing.** The first VRE cohort (4,000 MW wind + 1,236.4 MW solar,
+   decided 2022) commissions at **step 4.5 of 2024**, *after* that year's
+   economic-retirement screen (step 3). The 2024 screen therefore sees the
+   2023-evolved fleet, exactly as D31's did — which is why its `entry_capped`
+   set reproduces D31's to the megawatt. The 2025 screen *does* see the cohort,
+   and fails **no unit** in either run. So inside a 2021–2025 window the
+   headroom never reaches an exit decision at all.
+2. **Magnitude.** Even if it had, ≈1 GW of accredited capacity is not the right
+   order. The gap between the model's 4.469 GW of exits and the market's
+   17.369 GW is ~12.9 GW of nameplate sitting behind an admission cap that holds
+   ~27 GW of coal and ~100 % of the entire gas_ct, gas_st and oil fleets
+   (D27 §4). At the ≈19 % effective accreditation this cohort realizes, closing
+   that would take **tens of GW** of VRE nameplate — more than the 26 GW the
+   real market built over the whole window.
+
+**The consequence for D31 §7, stated plainly.** D31 attributed the exit residual
+**downstream** of the additions residual: "the floor holds the census at the
+requirement precisely because nothing new arrives to create headroom … the
+under-build is the only term left that can starve the release." That inference
+was reasonable on D31's evidence and it is **refuted at this magnitude by
+direct measurement**: something new now arrives, the census does gain headroom,
+and the release is bit-for-bit unchanged. The two residuals are, on this
+evidence, **independent objects**. The exit residual's owner is back where D27
+put it — the admission cap and the retention key (**D32**), which this lane did
+not touch.
 
 ## 6. The pre-declaration, graded at full magnitude
 
-*(Lands with the run.)*
+**P0 — the arming reaches the solve: HIT.** `run_config.json` records
+`entry_vre_zone_selection: true`; cache key `40173304213d39cd`, neither D31's
+`3649264ca98a1fb4` nor the probe's `1b0f1a5e75719b92`.
+
+**P1 — the attribute leg turns on in a REC-eligible zone: HIT, exactly.** Every
+decided VRE row sites in MISO-East or MISO-Illinois — the declared set — and
+none in MISO-South or MISO-West. The falsifier (siting unchanged ⇒
+identification refuted) did not fire.
+
+**P2 — entry fires before 2025: HIT, and stronger than declared.** I declared
+"at least two of 2022/2023/2024"; **all three** fired. The central expectation
+("solar decides 1,236.4 MW in 2022") is exact. **Its trailing clause — "and the
+ladder then ratchets" — is a MISS:** the ladder never ratcheted, held at
+1,236.4 MW/yr in all four years by the pending-stock netting. I had that
+mechanism right in P3's rationale and wrong in P2's sentence; the two clauses
+contradicted each other in the pre-declaration and the measurement settled it
+against P2.
+
+**P3 — the addition bands: HIT on both, including the ceiling's mechanism.**
+Solar 4.946 GW is inside the declared **2.0–5.5 GW** band and −73.5 % is inside
+the declared −70 % to −89 %. Wind 8.000 GW is inside the declared **4.0–8.0 GW**
+band (at its top edge) and the declared *possibility* — "may cross into PASS" —
+materialized (+11.1 %, band 5.400–9.000). Storage unchanged at 4.000 GW as
+declared. The falsifier (solar does not rise) did not fire. The declared
+**reason** for the ceiling — the FFR-4A netting throttling the ratchet — is
+confirmed by the per-year decision series, not merely consistent with it.
+
+**P4 — the exit residual: MISS, on direction and on band.** I declared "more
+exits than D31's 4.469 GW", band **4.5–12.0 GW**. Measured: **4.469 GW,
+identical to D31** — below the band's floor, and no movement in the declared
+direction. The falsifier ("falls below 4.469") did not fire, so the miss is a
+null rather than a reversal. **This is the lane's most consequential miss and it
+is the finding** (§5): I inherited D31 §7's downstream attribution and
+pre-declared from it; the measurement refuted the attribution. The sequencing
+reason (the cohort commissions after the screen) was available in the code
+before the solve and I did not check it — that is the error, not the band width.
+
+**P5 — invariants hold: HIT.** All 14 PASS.
+
+**P6 — declared, not predicted.** The gas bands did **not** break in either
+direction: `gas_cc` +7.2 % PASS and `gas_ct` +8.6 % PASS, byte-identical to
+D31, because both are set by the known-additions channel plus the 2025 decision
+and neither moved. What did move unpredicted is the **share** pair
+(`add.shares.wind` PASS → FAIL, `add.shares.gas_ct` FAIL → PASS), reported at
+full magnitude in §4.
+
+**P7 — governance: HIT on every leg.** Determination HOLD on FC-3 alone; the
+ff-verdicts edit is a pure two-key change (`miso-t1h` replaced,
+`miso-t1h-pre-d33` inserted, 110 lines inserted and zero deleted); the
+cross-lane STOP condition was checked against the diff and did not trigger.
+
+**Scorecard: every structural and directional prediction about the REPAIR hit,
+including the exact zone set and the ceiling's mechanism; the one prediction
+inherited from another lane's attribution (P4) missed completely, and that miss
+is the result worth having.**
+
+### 6.1 A cross-lane discharge, with the opposite sign
+
+capx **D39** §5.3, merged into main one day into this session, names exactly
+this object as an open precondition: the committed MISO screen ledgers credit
+solar `attribute_price 0.0` while the registered D27/D31 T1-H ledgers carry
+`rps_dual = 30.0`, "a $57.8 k/MW-yr attribute credit the committed screen rows
+never saw — enough on its own to flip the ledgers' solar margins positive. No
+diagnostics-on ledger exists at the live MISO posture; this is a precondition
+item, not a finding about the sign."
+
+**This lane's probe IS that ledger, and it settles the sign the other way.** At
+the live posture the attribute credit is **0.0 on every VRE row in every screen
+year** — not because the dual is absent, but because the dual is a *per-zone
+vector* and the candidate is sited in the one zone no row admits. D39's
+inference from the scalar was the natural one and it was wrong for the same
+reason the screen was: the scalar `rps_dual` in the ledger is
+`np.max(vector)`, and the zonal grain is invisible in it. §5.3 is discharged.
 
 ## 7. Exit-residual direction, stated honestly (rule 14)
 
-*(Lands with the run.)*
+**Direction: none. Magnitude: zero. That is the measurement, and nothing in this
+lane was arranged to produce it.**
+
+The charter pre-authorized either sign. The repair moves the additions residual
+toward the actual on both VRE rows and moves the exit residual **not at all** —
+`retire.total_gw` identical to nine significant figures, the pipeline identical
+event by event. There is no parameter in `entry_vre_zone_selection` that could
+have been set to a different answer: the zone chooser has zero free values, and
+the two things it reads (statutory eligibility masks, the model's own zonal CFs
+and duals) were both fixed before the lane opened.
+
+What the null establishes, and what it does not:
+
+* **It establishes** that the additions and exit residuals are separable in
+  MISO's T1-H window: a 55 % increase in modelled additions (14.854 → 22.563 GW)
+  bought zero exits. Any future claim that fixing entry will fix the exit side
+  now has a measured counterexample to clear.
+* **It does not establish** that additions never matter to exits — only that
+  they do not inside a 5-year window whose first VRE cohort commissions after
+  the second-to-last screen. A longer horizon, or a repair that also moved the
+  ladder, would test the proposition properly; this run cannot.
+* **It does not reopen anything.** D31's ratio and RBDC curves are untouched;
+  D32's `_floor_retention_merit` is neither read nor written here; non-coal
+  fossil exits remain exactly 0.000 GW, as in D27 and D31.
 
 ## 8. What remains routed
 
-*(Lands with the run.)*
+1. **D32 — the floor-retention key's composition monopoly.** Untouched by
+   charter, and this lane's null **strengthens** its priority: with additions
+   demonstrably not the exit lever, the admission cap and the retention key are
+   where the −74.3 % lives. Non-coal fossil exits are still exactly 0.000 GW.
+2. **The solar ladder (`entry_rate_limits` / `entry_pipeline_aware_signal`).**
+   §4.1 measures the remaining solar shortfall to the pending-stock netting,
+   whose armed MISO series is already recorded on the matrix cell
+   (1,236 → 2,472 → 4,944 → 6,000 MW/yr). Arming it is a separate decision on
+   its own evidence and was refused here — it is the ceiling on this band, not
+   part of this repair.
+3. **The 2025 entry screen's capacity leg** (pre-declaration §3, disclosed
+   before the solve and unchanged by it): the probe prices it at $304.4 k /
+   $307.7 k / $125.5 k / $53.8 k per MW-yr for gas_ct / gas_cc / solar / wind,
+   roughly 4× MISO's ~$79.8 k/MW-yr annual net-CONE anchor, and it is why every
+   2025 candidate clears at its cap. That is the D31 RBDC seam read at the entry
+   screen's own forward `reserve_position`; **D31's closed repairs may not be
+   revisited because a residual moved** (rules 13/14/23). Routed to the
+   capacity-price lane, named so it cannot be mistaken for something D33
+   introduced.
+4. **Arming `entry_vre_zone_selection` in any other ISO** — five `U` cells, each
+   its own decision on its own evidence (rule 25). The identification that would
+   open one is that ISO's own: whether its allocation bucket is materially
+   unrepresentative of where its market builds, and whether its RPS/clean rows
+   are zone-restricted enough for the bucket to change the attribute credit.
+   MISO is the extreme case; an ISO with one footprint-wide REC product has no
+   attribute leg to gain.
+5. **Unchanged from D31 §8:** per-class SAC accreditation intake; the seasonal
+   accreditation basis; the BTMG operating-mode split; the cross-ISO clearing
+   D6; the director's 8-failure unit-test census.
 
 ## 9. Governance attestation
 
-*(Lands with the run.)*
+**Rule 12 [R-PARALLEL]:** years sequential within each invocation (the runner's
+design); the diagnostic probe and the registered run were run **sequentially,
+not concurrently** — this environment holds 15 GB and a single MISO T1-H solve
+peaks near 8 GB, so a second concurrent invocation would have OOMed.
+**Rule 13 [R-MEASURED] / 14 [R-ACCURATE]:** the repair has zero free parameters;
+its inputs are statute (`MISO_RPS_COMPLIANCE_REGIONS`, each row cited to its
+enabling act) and the model's own zonal CFs and duals; the §2.2 build-share
+table is evidence that the bucket is unrepresentative and appears nowhere in the
+code. Nothing was sized, tuned or sequenced by any residual, and the
+pre-declaration was pushed (`dc0f4b84`) before the solve.
+**Rule 19 [R-ONE-MECH]:** one construction of the VRE capacity payment, shared
+by the zone chooser and the screen; the siting rule is *replaced*, never stacked.
+**Rule 21 [R-DOF]:** no parameter added — nothing enters the DOF ledger.
+**Rule 22 [R-HOLDOUT]:** solve years {2021, 2023, 2024, 2025}, 2022 bridged and
+never scored, scoring bounded to 2023–2025; the holdout freeze is active,
+honored, and asserted by the run's own governance banner; no marker touched;
+nothing scored against measured H1-2026.
+**Rule 25 [R-ISO-SCOPE]:** the ScenarioConfig default stays `False`; the arming
+is MISO's alone through its own `default_scenario_overrides`; every other ISO is
+byte-identical (`cache_key(ScenarioConfig())` unchanged at `603c2498bf71d21d`,
+asserted as a regression test).
+**Rule 27 [R-PUSH]:** every ≥300-line file was edited locally and pushed as
+on-disk bytes, with post-push blob verification (git hash-object vs the remote
+blob) on `new_entry.py`, `scenarios.py`, `iso_configs.py`,
+`run_capacity_hindcast.py`, `mechanism-matrix.js`, `mechanism-matrix/MISO.js`
+and the new test — all OK.
+**Rule 28 [R-MECH-MATRIX]:** the new solve-affecting field carries its base row
+in `mechanism-matrix.js` plus a cell in **all six** shards in this same
+PR-chain (MISO `O`/fc `K` with the measured evidence; the other five `U` with
+their own named identification source); `scripts/check_mechanism_matrix.py`
+passes, and its 237 drifted line anchors were repaired by the shipped
+`--fix-anchors`.
+**Registration:** the bundle's slim set + evolution ledgers (one-bundle
+`.gitignore` carve-out, the D27/D31 precedent), the canonical sidecar, the
+hindcast report, `VERDICT_MAP`, the ff-verdicts preserve-then-overwrite and the
+board block are committed in this chain; the generated forecast namespace is
+left to the Pages deploy. **Verdict edit surface: exactly two keys**
+(`miso-t1h`, `miso-t1h-pre-d33`) — the cross-lane STOP condition was checked
+against the diff and did not fire; no keeper, no backcast surface, no other
+ISO's rows.
+**Environment notes disclosed:** the fresh checkout's absent
+`data/clean/confirmed-retirements` partition (regenerated per the error's own
+instruction, before any solve started — the same note D31 carried); the branch
+was rebased on `origin/main` before every push and force-with-lease was used
+once, on this lane's own branch, after its earlier commits merged to main.
