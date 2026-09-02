@@ -142,3 +142,43 @@ class TestGateCompleteness:
             if "per_unit" not in args and "config" not in args:
                 missing.append(node.name)
         assert not missing, f"readers with no way to receive the gate: {missing}"
+
+
+class TestResolvedInputsProvenance:
+    """The run_config must name the bytes the run actually consumed.
+
+    A bundle whose ``resolved_inputs`` names the incumbent artifact for a run
+    that read a companion is the exact reproducibility failure this session
+    diagnosed, one level up: the record would be wrong rather than merely
+    absent.
+    """
+
+    class _Cfg:
+        iso = "NYISO"
+        outage_source = "historic"
+        unit_outage_mixed_gas_routing = False
+        campd_per_unit_attribution = False
+
+    class _CfgOn(_Cfg):
+        campd_per_unit_attribution = True
+
+    def test_both_blocks_follow_the_gate(self):
+        from market_sim.data.resolved_inputs import (
+            _campd_unit_outages_block,
+            _thermal_tranche_block,
+        )
+
+        off_t = _thermal_tranche_block(self._Cfg(), "NYISO")["path"]
+        on_t = _thermal_tranche_block(self._CfgOn(), "NYISO")["path"]
+        off_o = _campd_unit_outages_block(self._Cfg(), "NYISO")["path"]
+        on_o = _campd_unit_outages_block(self._CfgOn(), "NYISO")["path"]
+        assert off_t.endswith("thermal_tranches_NYISO.csv")
+        assert on_t.endswith("thermal_tranches-perunit-NYISO.csv")
+        assert off_o.endswith("campd-unit-outages-NYISO.csv")
+        assert on_o.endswith("campd-unit-outages-perunit-NYISO.csv")
+
+    def test_ercot_tranche_block_reports_unarmed(self):
+        """ERCOT runs the CAMPD bin sheet and has no tranche artifact."""
+        from market_sim.data.resolved_inputs import _thermal_tranche_block
+
+        assert _thermal_tranche_block(self._CfgOn(), "ERCOT")["armed"] is False
