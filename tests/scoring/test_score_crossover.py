@@ -796,7 +796,9 @@ def test_capacity_events_reports_dual_retirement_basis(monkeypatch, tmp_path):
 
     # Default basis unchanged: full-window target 900 MW, model 400 -> -55.6%.
     assert out["retirements"]["total_gw"]["actual"] == pytest.approx(0.9)
-    assert out["retirements"]["total_gw"]["err_frac"] == pytest.approx(-0.5556, abs=1e-3)
+    assert out["retirements"]["total_gw"]["err_frac"] == pytest.approx(
+        -0.5556, abs=1e-3
+    )
     # Vintage basis: the 2021 exit leaves the target -> 400 vs 400, exact.
     vint = out["retirements_vintage_basis"]
     assert vint["total_gw"]["actual"] == pytest.approx(0.4)

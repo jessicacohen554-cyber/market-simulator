@@ -546,7 +546,9 @@ class TestErcotAdaptiveFixedPoint:
         )
 
         assert "ercot_adaptive_fixed_point" in _CACHE_KEY_OPTIONAL_FIELDS
-        assert _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["ercot_adaptive_fixed_point"] == "False"
+        assert (
+            _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["ercot_adaptive_fixed_point"] == "False"
+        )
         assert TIER_TAGS["ercot_adaptive_fixed_point"] == 1
 
     def test_default_cache_key_unmoved_and_armed_distinct(self):

@@ -179,8 +179,13 @@ class TestInertWhileOff(unittest.TestCase):
         )
         fleet, _ = bins_to_fleet(bins, ZONES, cfg)
         fa = generators_to_fleet_arrays(
-            fleet, ZONES, HOURS, iso="MISO", config=cfg,
-            load_shape=np.linspace(40_000.0, 90_000.0, HOURS), year=2024,
+            fleet,
+            ZONES,
+            HOURS,
+            iso="MISO",
+            config=cfg,
+            load_shape=np.linspace(40_000.0, 90_000.0, HOURS),
+            year=2024,
         )
         if fa.min_gen_mechanism is not None:
             self.assertFalse(

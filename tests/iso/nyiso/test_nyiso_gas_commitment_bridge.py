@@ -715,9 +715,7 @@ class TestStateFloorDutyScoping(unittest.TestCase):
 
     def test_scoping_flag_alone_is_inert(self):
         base = self._floor(_config())
-        scoped_only = self._floor(
-            _config(nyiso_gas_bridge_state_floor_min_run=True)
-        )
+        scoped_only = self._floor(_config(nyiso_gas_bridge_state_floor_min_run=True))
         np.testing.assert_array_equal(base, scoped_only)
 
 
@@ -794,9 +792,7 @@ class TestReserveDutyMembershipExclusions(unittest.TestCase):
 
     def test_empty_artifact_is_a_no_op(self):
         base = self._floor(_config())
-        armed = self._floor(
-            _config(nyiso_gas_bridge_reserve_duty_exclusions=True), []
-        )
+        armed = self._floor(_config(nyiso_gas_bridge_reserve_duty_exclusions=True), [])
         np.testing.assert_array_equal(base, armed)
 
     def test_channels_compose_by_union(self):

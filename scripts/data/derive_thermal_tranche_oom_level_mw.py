@@ -202,8 +202,10 @@ def main() -> None:
     if df.empty:
         raise SystemExit("no rows derived")
 
-    out = Path(args.out) if args.out else (
-        PROCESSED_DIR / f"thermal_tranches_oom_level_mw_{iso}.csv"
+    out = (
+        Path(args.out)
+        if args.out
+        else (PROCESSED_DIR / f"thermal_tranches_oom_level_mw_{iso}.csv")
     )
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False)

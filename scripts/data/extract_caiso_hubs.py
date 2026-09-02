@@ -36,7 +36,9 @@ import sys
 import zipfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # repo root: canonical sibling import
+sys.path.insert(
+    0, str(Path(__file__).resolve().parents[2])
+)  # repo root: canonical sibling import
 from scripts.data.fetch_caiso_intertie_lmp import INTERTIE_NODES  # noqa: E402
 
 HUBS = ("TH_NP15_GEN-APND", "TH_SP15_GEN-APND", "TH_ZP26_GEN-APND")

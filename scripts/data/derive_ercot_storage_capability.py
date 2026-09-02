@@ -130,7 +130,9 @@ def derive_year(year: int) -> np.ndarray:
     import sys
 
     if str(REPO) not in sys.path:
-        sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling import
+        sys.path.insert(
+            0, str(REPO)
+        )  # repo root: canonical scripts.data.* sibling import
     from scripts.data.build_ercot_as_withholding import prevailing_he_to_cst
 
     df = _load_storage_rows(year)

@@ -251,9 +251,15 @@ class TestHeldRequirementDepth(unittest.TestCase):
     def test_off_by_default_and_zeros_identical(self):
         fleet = _fleet()
         p = _patches()  # held loader returns zeros for every product
-        with p[0], p[1], p[2], mock.patch.object(
-            scarcity, "ercot_as_responsibility_mw",
-            lambda y, h, c: np.zeros(h),
+        with (
+            p[0],
+            p[1],
+            p[2],
+            mock.patch.object(
+                scarcity,
+                "ercot_as_responsibility_mw",
+                lambda y, h, c: np.zeros(h),
+            ),
         ):
             off = _design(_config(), fleet)
             on = _design(
@@ -270,9 +276,15 @@ class TestHeldRequirementDepth(unittest.TestCase):
         fleet = _fleet()
         held = {"RRS": 150.0, "NSPIN": 0.0}
         p = _patches(plan=100.0)
-        with p[0], p[1], p[2], mock.patch.object(
-            scarcity, "ercot_as_responsibility_mw",
-            lambda y, h, c: np.full(h, held.get(c, 0.0)),
+        with (
+            p[0],
+            p[1],
+            p[2],
+            mock.patch.object(
+                scarcity,
+                "ercot_as_responsibility_mw",
+                lambda y, h, c: np.full(h, held.get(c, 0.0)),
+            ),
         ):
             d = _design(_config(ercot_as_held_requirement=True), fleet)
         names = [f.name for f in d.families]
@@ -284,9 +296,15 @@ class TestHeldRequirementDepth(unittest.TestCase):
     def test_nspin_leg_gated_separately(self):
         fleet = _fleet()
         p = _patches(plan=100.0)
-        with p[0], p[1], p[2], mock.patch.object(
-            scarcity, "ercot_as_responsibility_mw",
-            lambda y, h, c: np.full(h, 400.0 if c == "NSPIN" else 0.0),
+        with (
+            p[0],
+            p[1],
+            p[2],
+            mock.patch.object(
+                scarcity,
+                "ercot_as_responsibility_mw",
+                lambda y, h, c: np.full(h, 400.0 if c == "NSPIN" else 0.0),
+            ),
         ):
             f1_only = _design(_config(ercot_as_held_requirement=True), fleet)
             both = _design(

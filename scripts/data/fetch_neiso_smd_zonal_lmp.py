@@ -91,12 +91,10 @@ RAW_DIR = RAW_DATA_DIR / "lmp-data" / "NEISO" / "smd-zonal-lmp"
 
 REPORT_PAGE = "https://www.iso-ne.com/isoexpress/web/reports/pricing/-/tree/lmp-hourly"
 DA_URL = (
-    "https://www.iso-ne.com/static-transform/csv/histRpts/da-lmp/"
-    "WW_DALMP_ISO_%s.csv"
+    "https://www.iso-ne.com/static-transform/csv/histRpts/da-lmp/WW_DALMP_ISO_%s.csv"
 )
 RT_URL = (
-    "https://www.iso-ne.com/static-transform/csv/histRpts/rt-lmp/"
-    "lmp_rt_final_%s.csv"
+    "https://www.iso-ne.com/static-transform/csv/histRpts/rt-lmp/lmp_rt_final_%s.csv"
 )
 
 #: The nine SMD pricing locations, by ISO-NE location id -> SMD sheet name.
