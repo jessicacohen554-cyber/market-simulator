@@ -3529,3 +3529,219 @@ EXIT: the re-authored rows + the annotation + a SHORT
 docs/handoffs/FINDING-capx-d38-d36-records-<date>.md (a page: what changed, the control
 check, confirmation that no category or verdict moved).
 ```
+
+## D32 — the floor-retention composition monopoly (r#29; D27's R5, unlocked by D31)
+
+```
+You are the D32 session of the capacity-expansion track — the owner of MISO's non-coal exit
+channel, the residual every repair has now sharpened. The chain: D17 attributed the missing
+3.93 GW of non-coal exits to cap rationing; D27 released the cap and coal ate all of it
+(selection, not depth); D31 landed the faithful capacity-revenue repair and the residual
+swung to −74.3 % UNDER, localized to the margin/selection side. D27's R5 named your object:
+`_apply_reliability_floor` selects retention in ascending going-forward-cost-per-firm-MW
+(`_floor_retention_merit`), so WHENEVER THE FLOOR BINDS, exit composition is a pure function
+of per-fuel FOM ranking. The real 2021–2025 MISO cohort — 3 large gas steamers plus a
+158-unit small tail — is emphatically NOT FOM-rank-ordered. The question is structural, with
+an external observable.
+
+DATA PROFILE: miso
+MODEL ASSIGNMENT: Fable (a selection-mechanism adjudication with an external observable and
+rule-21 exposure).
+BRANCH: claude/capx-d32-floor-retention — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d27-miso-t1h-remeasure-2026-09-01.md (R5 as posed;
+the enriched pipeline_events evidence class) ·
+docs/handoffs/FINDING-capx-d31-miso-caprev-repair-2026-09-02.md §5 (whether and where the
+floor still binds AFTER the repair — your starting census) and §7 (the −74.3 % localization)
+· `_apply_reliability_floor` / `_floor_retention_merit` and the floor_retention_log
+attribution · the real cohort record (the confirmed/announced retirement data already
+in-repo).
+
+PHASE-0 SCOPE — CHARACTERIZE THE SELECTION RULE, DO NOT TUNE IT:
+(1) With D31's repair at HEAD, census where the floor binds 2021–2025 and what
+    _floor_retention_merit retained vs released, unit by unit, vs the real cohort.
+(2) Adjudicate the RULE, not the ranking: cheapest-firm-adequacy is defensible as
+    PROCUREMENT — is retention-by-FOM-rank a defensible model of which units actually EXIT
+    when a floor binds? Name what a real ISO's process holds back (RMR designations,
+    must-run agreements, location/deliverability, suspension-vs-retire) and which of those
+    have PUBLISHED, per-unit, forward-regenerable identification (rule 13's test).
+(3) For each candidate re-specification of the retention key: its external driver, its
+    identification source, and its expected composition consequence — stated BEFORE any
+    implementation, which this lane does NOT do.
+RULE 21 [R-DOF], the charter's hard wall: a tuned retention weight is forbidden — the
+−74.3 % residual is CONTEXT for where the error lives, never the identifier of any
+parameter. If no published per-unit driver exists, say so and route the honest dead end.
+
+GUARDRAILS: zero solves (D31's bundle + the enriched events are your data). Docs only; no
+mechanism lands, no ScenarioConfig field, no matrix cell (the repair lane, if chartered,
+takes rule 28). No keeper/board/verdict/marker. Rule 27 on any ≥300-line push.
+
+COLLISION: D40/D41/D39 are NEISO/CCS/cross-ISO-docs — no shared files. miso-200 (owner's
+backcast lane) writes the MISO backcast namespace — distinct. Rebase-care on docs/.
+
+EXIT: docs/handoffs/FINDING-capx-d32-floor-retention-<date>.md — the post-repair binding
+census, the unit-level retained-vs-released vs real-cohort table, the adjudication of the
+selection rule with each candidate's published identification (or the honest absence), and
+a routed recommendation. NO repair lands in this lane.
+```
+
+## D40 — the NEISO requirement devintage (r#29; D33's R-A/R-B executed)
+
+```
+You are the D40 session of the capacity-expansion track — the repair lane D33 routed. D33
+measured: NEISO's position error (+21/+6/+7 reserve-ratio points past the FCA zero-cross in
+the $0 years) is DOMINATED by a requirement-denominator artifact — a single-vintage
+composite ratio held flat across delivery years — while the published per-CCP Net ICR
+series is ALREADY COMMITTED IN-REPO, and the model's census supply is actually SHORT of
+what the real FCAs cleared. You implement R-A (and R-B as D33 specifies it): resolve the
+NEISO adequacy requirement from the published Net ICR series, the exact pattern
+`resolve_adequacy_requirement_mw` already uses to prefer PJM's published FPR over the
+composite (`retirements.py:1086-1096`), with the card C-A hold-last convention beyond the
+last published year.
+
+DATA PROFILE: neiso
+MODEL ASSIGNMENT: Fable (a load-bearing requirement resolution changes the screens; arming
+posture and LOYO scoring are adjudications).
+BRANCH: claude/capx-d40-neiso-devintage — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d33-neiso-position-2026-09-02.md IN FULL (R-A/R-B as
+routed — their exact specification is your charter boundary; the census-supply-SHORT finding
+that bounds what this repair can and cannot explain) · `retirements.py:1086-1096` (the
+PJM-FPR precedent you mirror) · the committed Net ICR series (D33 names where) · the S-123
+precedent (the MISO requirement repair — the registry-constant pattern, and its lesson: a
+requirement repair RELEASES budget, it does not choose composition).
+
+THE WORK: (1) the resolver prefers the published per-CCP Net ICR series for NEISO, per-year,
+hold-last beyond the last published CCP (C-A convention), composite as the documented
+fallback; (2) rule-28 duties in the same PR — the resolution lever's matrix row + per-ISO
+shard cells, **DEFAULT-OFF**; (3) rule-22 discipline as D33 pre-stated it: the arming
+verdict is scored **LEAVE-ONE-YEAR-OUT within 2023–2025 BEFORE any keeper or default
+moves** — in-sample gain with held-out degradation is overfitting, not skill; (4) measure
+the consequence at the screen grain (positions per year, floor binding, capacity-revenue at
+the corrected positions) on committed artifacts — a NEISO T1-H re-run is D37's, not yours:
+your exit hands D37 its armed-or-not input.
+
+RULE-14 SIGN DISCIPLINE: the corrected (lower, per-year) requirement SHORTENS the model's
+position → capacity revenue moves UP → NEISO retirements get HARDER. Nothing is sized by any
+residual; the Net ICR series is the identification, full stop.
+
+GUARDRAILS: rules 22/27/28 as above; no keeper/shard/marker; the backcast namespace
+untouched (the requirement resolution is used by forecast screens — if you find a backcast
+consumer, STOP and report the blast radius before landing anything). No new workflow.
+
+COLLISION: D39 reads entry screens docs-only; D41 owns the CCS retrofit constants; D32 is
+MISO-side. Nobody else touches the NEISO requirement seam or registry this window.
+
+EXIT: the resolver + registry data path + matrix row/cells (default-off) + the LOYO score +
+the screen-grain consequence + docs/handoffs/FINDING-capx-d40-neiso-devintage-<date>.md with
+the per-CCP table, the LOYO result at full magnitude, the arming recommendation (the owner
+arms; you recommend), and the explicit handoff line to D37.
+```
+
+## D41 — the CCS fixed-cost re-identification (r#29; D30's two defective legs)
+
+```
+You are the D41 session of the capacity-expansion track — the repair lane for D30's
+adjudication: the 45Q mechanism is the intended reading, but TWO fixed-cost legs wrongly
+clear the retrofit bar. (i) `fixed_om_gas_cc_ccs` = 25 sits BELOW `fixed_om_gas_cc` = 30
+because the G-32 ATB flip raised the host CC's FOM 12 → 30 and left the "host + capture
+island" value behind — so every retrofit is PAID $5,000/MW-yr in fixed-cost savings instead
+of being CHARGED the capture island's O&M. (ii) `ccs_retrofit_capex_kw` = 900 carries an
+unstated dollar-year and a `needs-citation` flag, and is 59 % of the capture-island
+increment the model's own new-build CCS carries on the ATB-2024 2026$ basis. You re-identify
+both from the ATB basis, with citations, and measure the screen-grain consequence.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (the identification source and direction are fully specified by D30;
+this is execution under rule 23).
+BRANCH: claude/capx-d41-ccs-fixedcost — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md IN FULL (the two legs, the
+G-32 history, the ATB-2024 arithmetic it already did — your numbers likely already exist
+there and need only be landed with citations) · docs/parameter-citations.md (where both
+values' citations live and the citation format) · the G-32 record (the ATB flip that created
+the inconsistency) · spec §5.6 + the retrofit screen implementation (the consumer).
+
+THE WORK: (1) `fixed_om_gas_cc_ccs` re-identified on the same ATB-2024 basis as the host's
+30 — host FOM PLUS the capture-island O&M increment, cited (rule 23: the re-derivation
+commit cites the DATA change — the G-32 flip — never a residual); (2) `ccs_retrofit_capex_kw`
+re-cited on the ATB-2024 2026$ capture-island increment with the dollar-year STATED and the
+`needs-citation` flag cleared; (3) constants/citations updated together, tests pinning both
+values to their cited sources; (4) MEASURE at screen grain only: re-run D30's own
+decomposition arithmetic at the corrected values — which units still clear the bar, does the
+cap still bind, the per-leg margin table before/after. **NO golden re-solve is licensed**
+(Q13/Q25 this-campaign-only stand); do not re-run any full-horizon campaign or T1-H leg —
+route the follow-on measurement needs in the finding.
+
+RULE-14 LINE, stated because the corridor moves: the corrected legs make retrofits LESS
+attractive → less CCS → the FC-5 CCS rows move TOWARD AEO. That is a consequence, never a
+target — nothing is sized by the corridor distance, and the FC-5 dispositions are
+re-authored only by a records lane after the next registered run, not by you.
+
+GUARDRAILS: rule 23 (citations to primary sources in the same commit); rule 27 (constants
+live in ≥300-line core files — edit locally, push exact bytes, blob-verify); rule 28 NOT
+triggered (values move, no field is added and no default posture flips — but SAY SO in the
+finding, and if you find either value is actually a registered cache-key field whose change
+re-keys configs, STOP and report the blast radius first). No keeper/board/verdict/marker.
+No new workflow.
+
+COLLISION: D40 owns the NEISO requirement seam; D32/D39 are docs lanes. The retrofit screen
+constants are yours alone this window.
+
+EXIT: the two re-identified values + citations + tests + the screen-grain before/after +
+docs/handoffs/FINDING-capx-d41-ccs-fixedcost-<date>.md with the cited derivations, the
+cap-binding answer at corrected values, and the routed follow-on (which registered runs are
+now stale on this axis, for the director to sequence — never re-run here).
+```
+
+## D39 — the entry-stack under-build, cross-ISO Phase-0 (r#29; T16-A outcome B + D36 converge)
+
+```
+You are the D39 session of the capacity-expansion track — Phase-0 of the object two
+instruments measured independently in one week: T16-A found NEISO's REC dual pinned at the
+$50 ACP ceiling in all 50 arm-years (the RPS target unreachable at every VRE volume the
+entry stack builds, 4.1 → 37.1 GW), and D36 found the storage arbitrage leg short by
+$50–150/kW-yr in every year. One shape: THE ENTRY STACK UNDER-BUILDS relative to both the
+RPS constraint and every external view (the corridor's renewables rows). The chartered
+route D36 named: the `entry_forward_expectation_signal` family — the entry screen's forward
+price expectation — cross-ISO, every screen, NOT a storage lane and NOT an RPS lane.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (a cross-ISO mechanism question on the program's entry economics).
+BRANCH: claude/capx-d39-entry-underbuild — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-t16a-ladder-repoint-*.md (the RPS/ACP finding at
+full magnitude) · docs/handoffs/FINDING-capx-d36-storage-valuestack-2026-09-02.md §§2–6 +
+§8.2 (the arbitrage-short table and the routed signal question) · the entry screen's price
+expectation construction (what forward prices the economic-entry screen actually uses:
+prior_results duals? a flat extrapolation? per-ISO?) · the matrix rows for the
+entry-signal family (`entry_forward_expectation_signal`, `entry_margin_exhaustion`,
+`entry_forward_reserve_leg` — the ERCOT pair is K-forecast-armed via Q15; NEISO's cell is
+`U`; rule 25: nothing transfers, but the ERCOT identification PATTERN is citable) ·
+docs/handoffs/FINDING-capx-d33-neiso-position-2026-09-02.md + D31's finding (the corrected
+position/requirement context you now have — cite, don't re-derive).
+
+PHASE-0 SCOPE — ONE QUESTION, CHARACTERIZED CROSS-ISO: does the entry screen's forward
+expectation systematically UNDERSTATE the revenue a marginal entrant would actually earn —
+and if so, through which term (energy price expectation, reserve leg, REC/EAC leg, capacity
+leg), per ISO? For each ISO: reconstruct what the screen expected vs what the model's own
+NEXT-YEAR solve actually paid at the margin (the model's own realized prices are the
+in-model observable — no external target). The NEISO golden-2 horizon + T16-A arms are the
+richest committed evidence; use ERCOT's armed pair as the worked example of what a
+identified repair looked like there. Name, per ISO, what a repair would be identified FROM.
+DISCIPLINE: the corridor's renewables rows and AEO are CONTEXT, never targets (rule 13);
+rule 25 — per-ISO parameters and verdicts, always.
+
+GUARDRAILS: zero solves; docs only; no mechanism, no field, no matrix cell edits beyond
+evidence citations IF a lane convention requires none at Phase-0 (it does not — leave cells
+alone). No keeper/board/verdict/marker. Rule 27 on any ≥300-line push. No new workflow.
+
+COLLISION: D40 (NEISO requirement seam), D41 (CCS constants), D32 (MISO floor docs) — no
+shared files; cite whichever of their findings are current when you finish.
+
+EXIT: docs/handoffs/FINDING-capx-d39-entry-underbuild-<date>.md — the per-ISO
+expected-vs-realized margin table, the term attribution, the per-ISO identification
+sources, and a routed recommendation (which ISOs get repair lanes, in what order, and
+whether the NEISO `U` cell should open first given D40's corrected requirement). NO repair
+lands in this lane.
+```
