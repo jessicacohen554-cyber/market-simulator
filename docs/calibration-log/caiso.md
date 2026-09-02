@@ -11110,3 +11110,91 @@ sizing economic (non-RA) import availability directly, on the MIC/DMM annual cad
 `years` argument on `derive_caiso_import_tranches.corridor_net_import` (all fifteen
 existing callers byte-unaffected), and an evidence append (no verdict move) on the
 CAISO shard's `import_hub_pricing` cell.
+
+## caiso-236 (2026-09-02) — the keeper's DOF ledger AUDITED against the code: it over-counted the residual by **two** entries, one of which attested **four parameters that do not exist**. One dead mechanism DELETED (rule 26), two stale ledger claims corrected. NO SOLVE, keeper unchanged
+
+**Admissible under the caiso-201 resting ruling because it is not a lever hunt**: a
+rule-21 `[R-DOF]` / rule-26 `[R-DELETE]` ledger-integrity pass. **C3a was never its
+object and no result here is argued from the price residual** (rule 1 `[R-STRUCT]`).
+Zero solves; every number read from the keeper's own committed `run_config.json` and
+`hourly/` sidecars, or from importing the code. Keeper unchanged at
+`2026-09-01-caiso-231-b1-ungrounded`, NOT-YET.
+
+**Pre-registered BEFORE any classification was computed** (not merely before a
+solve): the three-class taxonomy, the arithmetic materiality bound, the
+byte-identity requirement for any neutralization, and a **per-entry prediction for
+each of the seven residual rows** plus `CAISO_BIDIR_EXPORT_CAP_MW`.
+
+**Ledger: `n_entries` 11 → 9, `n_residual` 7 → 6.**
+
+**Defect 1 — A PHANTOM ROW.** `COAL_SIGMOID_DEFAULTS[CAISO]` attested four fitted
+scalars that **do not exist**. The registry holds keys for ERCOT/MISO/PJM only —
+**no `("CAISO", *)` key of any kind** — and the keeper sets none of the four
+`coal_<supply>_passthrough_*` overrides, so `coal_sigmoid_params` returns `None` for
+every supply and the solve uses the flat identity passthrough (1.0). The generator
+emitted the row off the armed **toggle alone**, never checking that a curve
+resolves. Fixed at the generator; the gate can only remove over-counted rows.
+**The same phantom sits on the NYISO and NEISO keepers** — reported to those lanes,
+their committed attestations deliberately NOT rewritten here. ERCOT/PJM/MISO
+unaffected.
+
+**Defect 2 — A DEAD RE-ARMABLE KNOB, DELETED.** `CAISO_BIDIR_EXPORT_CAP_MW = 4,361
+MW` was read only by `caiso_bidir_intertie`, **False on the keeper AND False in the
+`ScenarioConfig` defaults** — unreachable in every shipped configuration while one
+CLI flag could re-arm it. Its own `root_cause` named the exit verbatim. The whole
+mechanism went (16 files, incl. the orphaned frozen derive script). **Cache-key
+NEUTRAL** via `_CACHE_KEY_RETIRED_FIELDS`: both pinned literals unmoved, no cache
+orphaned. `tests/unit` + `tests/iso` + `tests/regression` in full — **zero new
+failures**, all 13 verified failing at `origin/main` first.
+
+**Two ledger CLAIMS were false for this keeper and are corrected in place.**
+`WECC_import_simultaneous.cap_mw`: the row (and caiso-188's measurement inside it)
+said the baked 7,500 binds because Part A silently no-ops. **On this keeper it does
+not.** `resolved_inputs.seam_import_cap` records `source="mic_partition"`, cap
+**16,055 / 16,452 / 16,148 MW**, and the P1 hourlies stand **above 7,500 MW in
+835/533/803 hours with EXACTLY ZERO hours pinned at 7,500.0**. caiso-188's own open
+item (1) — persist the resolved cap — is **DISCHARGED**, and it is what made this
+checkable without a solve. `EXPORT_TRANCHES[CAISO]`: its "not on the binding path"
+line was an **assertion** and is now established from code (spec `export_tranches=[]`
+under `use_corridors`; per-hub export legs bounded by physical corridor TTC; the
+repricing injector matches pooled-node uids only).
+
+**NEITHER IS DELETABLE, and that is a class the pre-registered taxonomy lacked** —
+**(a′) keeper-dead but LANE-LIVE.** `capacity_deliverability_limits` and
+`caiso_per_hub_intertie` both **default to False**, so both objects are live in
+forecast mode. Deleting them would be a mechanism change, not a ledger repair. The
+class is disclosed as an amendment rather than folded into (a) or (c). It sharpens
+O-1 (#1373): the fitted 7,500 is dead on the keeper and live in the forecast.
+
+**Final classes: (a) 1 · (a′) 2 · (b) 0 · (c) 5 · PHANTOM 1.** No entry classified
+(b), so **no A/B solve was run** (PRECOMMIT §4.1) and the byte-identity apparatus is
+not claimed. **Four residual rows are LIVE AND MATERIAL and were deliberately not
+touched** — `offer_curve_by_group`, the `ST_GAS 0.81` committed band,
+`offer_curve_smoothing`, `battery_dispatch_adder` (storage discharge is 2.96/4.46/
+6.38 % of dispatch). Grounding a live residual is a funded-object question under the
+resting ruling, not a ledger-audit session's to take.
+
+**PREDICTIONS SCORED — five hits, one partial, two misses, reported against
+interest.** The loudest miss is **entry 6**: the charter called the 7,500 cap "the
+prime candidate" for dead; the PRECOMMIT predicted the opposite on the ledger's own
+committed caiso-188 text and registered that disagreement in advance. **The charter
+was right.** Entry 4 missed because both branches assumed a parameter existed — and
+the materiality screen was computed and **FAILED** anyway (CAISO coal is inside the
+0.10 % energy threshold at 0.0442/0.0248/0.0393 % but runs at a ~14 MW floor in
+**8,760 of 8,760 hours**, against a 1.0 % threshold), so the predicted (b)
+neutralization would have been refused regardless. A §3.5 arithmetic slip is also
+disclosed: `n_entries` was predicted 11 → 10, actual 11 → 9.
+
+**Also fixed:** regeneration used to **silently delete** hand-written `note`
+provenance no generator writes — for CAISO, the 2,152-character caiso-220/231
+correction recording that five of its groups are now MEASURED.
+`build_dof_ledger._carry_hand_notes` now carries it onto the surviving twin, and the
+CAISO rebuild is idempotent (`--check` reports current).
+
+**Deliverables:** `PRECOMMIT-caiso236-dof-residual-ledger-audit-2026-09-02.md`
+(pushed before classification), `FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md`,
+`scripts/probes/_caiso236_dof_residual_classifier.py`, the rebuilt CAISO
+attestation, the `caiso_bidir_intertie` deletion, a mechanism-matrix base-row
+retirement note (rule 28(c)) and one CAISO-shard evidence append (rule 28(b), no
+verdict move). **No dashboard registration is due — rule 15 attaches to completed
+calibration runs and this session produced none.**
