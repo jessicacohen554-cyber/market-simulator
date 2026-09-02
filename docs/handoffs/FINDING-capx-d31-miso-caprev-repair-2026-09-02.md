@@ -17,7 +17,30 @@ the pre-declaration, which was pushed before the solve.
 
 ## 0. Verdict (one paragraph)
 
-*(written after §5-§7; see them for the measured numbers)*
+**Both legs of the funded repair land as identified from the published record,
+close D28's MISO objects, and flip the exit residual's sign BACK — the
+corrected accounting throttles the floor's release so hard that the model now
+UNDER-retires (−74.3%), and the invariant record turns fully clean.** The
+position defect is closed to under one point of the market's own offered
+position (entering 1.2111/1.2028 → 1.0393/1.0321 vs offered 1.0488/1.0340);
+the RBDC shape defect is closed to −0.4% on the market's own cleared-position
+revenue, and the run's 2025 screen prices the published curve at
+**$13.83/kW-yr at position 1.0571 — the first strictly-positive capacity leg
+any MISO hindcast screen has ever seen** (2021-2024 stay $0 on the
+design-faithful vertical vintages). The measured T1-H consequence: the
+2022-bridge decided cohort collapses 25,646.6 → **3,684.0 MW nameplate, all
+coal** (the floor's release at the corrected census), no later screen fails a
+single unit, `retire.total_gw` reads **4.469 vs 17.369 GW actual (−74.3%
+FAIL)**, `false_retire` returns to **PASS (0.0 GW)**, `unit_recall` drops to
+**5/19 FAIL**, and **all 14 invariants PASS** (D27 carried I3 FAIL ×2 + I12
+WARN). Non-coal fossil exits stay **exactly 0.000 GW** — predicted in
+advance (P2): this repair moves the volume the floor admits, never the
+composition, which remains D32's routed object. The clean attribution the
+run surfaces (§7): with requirement and supply both published-anchored, the
+exit residual is now **downstream of the additions residual** — the real
+market retired 17.4 GW while staying long because real entry replaced it
+(actual solar +18.6 GW vs model +1.2), so the model's under-build starves
+the floor's headroom. Determination **HOLD, unchanged**, on FC-3 alone.
 
 ## 1. The funded intake (owner ruling Q24), and one deviation disclosed
 
@@ -186,15 +209,173 @@ as a known understatement, not built.
 
 ## 5. The T1-H consequence (the measured run)
 
-*(filled from `miso-2021-2025-realized-t1h-d31` after the solve)*
+```
+uv run python scripts/run_capacity_hindcast.py \
+  --iso MISO --start-year 2021 --end-year 2025 \
+  --vintage 2020 --fuel-variant realized \
+  --out-dir results/hindcast/miso-2021-2025-realized-t1h-d31
+```
+
+Bare HEAD invocation, the exact D27 recipe. Solved [2021, 2023, 2024, 2025],
+bridged [2022], scored 2023–2025; ~20 min (the perf-b wallclock work landed
+between the runs). Cache key `3649264ca98a1fb4` — NOT D27's
+`501b5f64b8adf8d4`, and the pre-declaration's "equals D27's expected" is a
+graded MISS (§6 P0): the resolved configs have **zero value diffs on shared
+keys** (verified against D27's committed `run_config.json`); the key moved on
+field-set churn alone (new default-off fields + a rule-26 deletion in the
+53-commit rebase window). The fresh out-dir was the operative guard, as the
+pre-declaration said. One environment note, disclosed: the first launch died
+on the fresh checkout's absent `data/clean/confirmed-retirements` partition
+(regenerated per the error's own instruction; no solve had started).
+
+**The pipeline, year by year (this run's committed evolution ledgers, vs
+D27):**
+
+| year | event | D27 | D31 |
+|---|---|---:|---:|
+| 2022 (bridge screen) | decided | 25,646.6 MW (coal) | **3,684.0 MW (coal)** |
+| 2022 (bridge screen) | entry_capped | 74,352.5 | **96,314.9** (coal 27,247.4 / gas_cc 27,223.5 / gas_ct 24,385.0 / gas_st 13,942.2 / oil 3,516.9) |
+| 2023 | re_confirmed | 25,646.6 | 3,684.0 |
+| 2024 | executed | 25,646.6 (coal) | **3,684.0 (coal)** |
+| 2025 | any screen event | — | **none — no unit fails the 2025 bar** |
+
+Ledger reserve margins (now on the corrected accounting basis): 0.1038 /
+0.0462 / 0.0157 / 0.0647 (2021/2023/2024/2025).
+
+**The screens' capacity price, computed from the run's own entering ledgers
+through the shipped seam** (the committed curve + ratio; the per-unit event
+rows record it only for failing candidates, of which 2025 has none):
+
+| screen year | entering position | vintage | capacity price |
+|---|---:|---|---:|
+| 2023 | 1.0393 | vertical (design) | $0 |
+| 2024 | 1.0321 | vertical (design) | $0 |
+| 2025 | 1.0571 | **published RBDC** | **$13,831/firm-MW-yr = $13.83/kW-yr** |
+
+The $13.83 at 1.0571 sits against the real market's $79.07 at its own 1.0174
+— the remaining gap is the POSITION difference (the model's fleet is +4 pts
+longer than reality's because it has not shed what reality shed; §7), not
+the curve: the same seam at 1.0174 pays $104/kW-yr (the one-position sum).
+
+**The score** (committed `score.json`; bands per the T1-H rubric):
+
+| row | D27 | D31 | actual | band |
+|---|---:|---:|---:|---|
+| `retire.total_gw` | 26.431 (+52.2%) | **4.469** | 17.369 | **FAIL −74.3%** (sign flipped BACK to under) |
+| coal | 25.647 | **3.684** | 12.434 | −70.4% |
+| gas_st / gas_cc / oil / gas_ct | 0.000 | **0.000** | 2.127/0.858/0.543/0.399 | −100% each |
+| nuclear / biomass | 0.768 / 0.016 | 0.768 / 0.016 | 0.812 / 0.196 | −5.3% / −91.9% |
+| `false_retire` | 13.212 (50.0%) FAIL | **0.000 (0.0%)** | — | **PASS** |
+| `unit_recall_gt300` | 15/19 PASS | **5/19 (0.263)** | — | **FAIL** |
+| `add.by_tech.gas_cc` / `gas_ct` | PASS | PASS (+7.2% / +8.6%) | 3.867 / 1.355 | PASS |
+| `add.by_tech.wind` / `solar` / `storage` | FAIL | FAIL (−44.4% / −93.4% / +437.7%) | 7.2 / 18.6 / 0.744 | FAIL |
+
+FC-3 band-FAIL list swaps exactly one member vs D27 (`retire.false_retire`
+out, `retire.unit_recall_gt300` in; still 9 rows). **All 14 forecast
+invariants PASS** on the committed sidecar — I3 (D27: FAIL 2024+2025,
+133/143 GWh unserved) and I12 (D27: WARN) both clean; I7 "held". The armed
+backstop again never fires (the floor stops exits at the requirement, so no
+gap ever opens — P5's mechanism).
+
+**The 2025 entry screen fired on the RBDC's revenue** (P6's declared-live
+risk, materialized): `entry_pipeline` decides 3,000 MW gas_cc + 1,471.6 MW
+gas_ct (decision 2025, COD 2027 — outside the scored window, so the addition
+bands above don't carry them) alongside 4,000 MW wind + 1,236 MW solar +
+iron-air storage entries.
 
 ## 6. The pre-declaration, graded at full magnitude
 
-*(filled after §5)*
+**P0 (implicit, from the preamble) — "config cache key equals D27's
+expected": MISS.** Key `3649264ca98a1fb4` ≠ `501b5f64b8adf8d4`. Zero value
+diffs on shared config keys (measured); the field-set churn in the rebase
+window moved the hash. The operative guard (fresh out-dir) is what the
+pre-declaration actually leaned on, and it held.
+
+**P1 — decided coal 4.5–9.5 GW, all coal → DIRECTION HIT, MAGNITUDE MISS.**
+Measured 3,684.0 MW — the collapse happened and the composition was 100%
+coal (the falsifier "<2 GW or >12 GW or any non-coal" did NOT fire), but the
+value is 0.8 GW BELOW my band's floor. The miss's cause is the same class as
+D27's P1 miss, inverted: I sized the release from the 2023-entering
+headroom (4,778 MW accredited ⇒ ~6.1 GW nameplate) and the 2022 bridge
+screen's own basis was tighter (~2.9 GW accredited released).
+
+**P2 — non-coal channel does NOT open, exactly 0.000 GW → HIT, exactly.**
+All four classes 0.000 in every year. The central negative prediction of
+the lane held: this repair moves the floor's VOLUME, not its COMPOSITION.
+
+**P3 — G3 5.5–11 GW, −37% to −68%, sign flips to under; false_retire PASS;
+recall drops → THREE HITS, TWO MAGNITUDE MISSES.** Sign flipped to under
+✓; false_retire PASS (0.0) ✓; recall dropped ✓ — but total 4.469 GW is
+below my 5.5 floor and −74.3% is deeper than my −68% edge (the P1 miss
+propagating: less coal decided ⇒ lower total), and recall fell to 5/19
+(FAIL), well past my "toward 13/17-ish" (a 3.7 GW cohort covers far fewer
+real ≥300 MW units than I allowed for).
+
+**P4 — 2025 capacity leg strictly positive, 2021–2024 exactly $0 → DIRECTION
+HIT (both legs), MAGNITUDE MISS.** Vertical-era screens: $0 confirmed
+(per-event `capacity_revenue_usd` 0.0 across the 2022–2024 screens; positions
+1.032–1.039 > 1.0). 2025: strictly positive ✓ at $13.83/kW-yr — but below
+BOTH my declared ranges ($85–115 central; ">$25 if the position sits
+1.03–1.05"): the position landed 1.0571, longer than either scenario,
+because the executed wave (3.7 GW) was smaller than my P1 central and the
+"essentially zero 2025-screen retirement decisions" consequence ✓ HIT
+(no unit fails the 2025 bar).
+
+**P5 — I3 PASSES all years, backstop never fires → HIT on every leg**, and
+stronger than predicted: I12's predicted "may still WARN" did not even WARN
+— the full I1–I14 block is clean, the first all-PASS MISO T1-H invariant
+record on the board.
+
+**P6 — additions move, direction declared-not-predicted → the honesty
+clause did its job.** The scored addition bands barely moved vs D27 (gas
+PASS, wind/solar/storage FAIL, one share flip), because the 2025 entry
+decisions land at COD 2027, outside the scored window — a window mechanic I
+had not called out. The RBDC-driven gas entry itself (4.47 GW decided) is
+real and reported.
+
+**P7 — FC-3 FAIL, FC-7 caveat, determination HOLD, no verdict outside
+miso-t1h moves → HIT on all legs.** The ff-verdicts edit is a pure two-key
+change (`miso-t1h` replaced, `miso-t1h-pre-d31` inserted); the STOP
+condition was checked and not triggered.
+
+**Scorecard: every directional and structural prediction hit, including the
+lane's central negative (P2) and the falsifiers' non-firing; every
+point-magnitude band on the floor's release missed LOW by 20–45% (P1/P3/P4
+— one propagated sizing error: the bridge screen's own basis), and the
+cache-key expectation missed on rebase churn.**
 
 ## 7. Exit-residual direction, stated honestly (rule 14)
 
-*(filled after §5)*
+The charter pre-authorized the "wrong way": faithful repairs move capacity
+revenue UP and make retirements HARDER. Both happened — and the headline
+consequence is starker than the charter imagined, because it lands on
+D27's flipped baseline: **the exit residual swings from +52.2% OVER back to
+−74.3% UNDER**, a worse |error| than D27's (74.3 vs 52.2) and a worse
+|error| than the pre-S-123 baseline's −27.7%. Under rule 14 this is the
+expected signature of accurate inputs exposing the real remaining error,
+and this run localizes it more sharply than any predecessor:
+
+* **The invariant record says the repair is structurally right.** D27
+  bought its better-looking recall with 13.2 GW of false coal exits, 50%
+  false-retire, two I3 FAILs and an I12 WARN. D31 has zero false exits and
+  a fully clean I1–I14 — the model no longer fabricates exits the grid
+  could not have survived.
+* **The remaining exit error is now attributably DOWNSTREAM of the
+  additions error.** The real market retired 17.4 GW *while its offered
+  position stayed ≈1.02–1.05* because real entry replaced the exits (actual
+  2021-2025 additions: solar 18.6 GW, wind 7.2 GW — model: 1.2 and 4.0).
+  In the model, the floor holds the census at the requirement precisely
+  because nothing new arrives to create headroom; with the supply
+  accounting now published-anchored on BOTH sides, the under-build is the
+  only term left that can starve the release. The exit-residual chain is
+  now: **additions under-build → floor binds → exits throttled → recall
+  collapses**, with the composition monopoly (D32) waiting behind it.
+* **What this does NOT reopen:** the ratio was identified from the
+  published accounting before any solve; the curve from the published
+  charts. Neither may be revisited because this residual moved (rules
+  13/14/23); the open threads are the additions screens (wind/solar bands,
+  a standing FC-3 object), D32's retention key, and thread (i-a) energy
+  margins.
 
 ## 8. What remains routed
 
@@ -224,4 +405,34 @@ as a known understatement, not built.
 
 ## 9. Governance attestation
 
-*(completed at push)*
+Rule 12: years sequential within the one invocation (the runner's design); no
+concurrent solve launched. Rule 22: solve years {2021, 2023, 2024, 2025},
+2022 bridged and never scored, scoring bounded to 2023–2025; holdout freeze
+active, honored, and asserted by the run's own governance banner; no marker
+touched; nothing scored against measured H1-2026. Rule 13/14: both repairs
+identified from published sources committed BEFORE the pre-declaration, which
+was pushed BEFORE the solve; the vertical-era floor adjudicated OUT on rule
+13 (§4); the cleared quantities are validation observables, never targets.
+Rule 26: the first-order constants (`_MISO_RBDC_CAP_X`/`_ZERO_X`,
+`_miso_seasonal_curve`) are REMOVED, not zeroed. Rule 27: every ≥300-line
+core file was edited locally and pushed as on-disk bytes with post-push blob
+verification (capacity_market.py, constants.py, retirements.py, adequacy.py,
+validate_capacity_prices.py, the two test files). Rule 28: the new
+solve-affecting registry carries its matrix row + a cell in all six shards
+in this same PR-chain (MISO K; ERCOT n/a; the other four U with their own
+named identification sources); the MISO `capacity_market_clearing` cell
+carries the shape-repair evidence; no ScenarioConfig field was added (the
+ratio is a registry constant, the accreditation-registry precedent). Rule
+15/registration: the bundle's slim set + evolution ledgers (one-bundle
+.gitignore carve-out, the D27 §7.5 precedent) + sidecar + VERDICT_MAP +
+ff-verdicts preserve-then-overwrite + board block are committed in this
+chain; the generated forecast namespace is left to the Pages deploy. Verdict
+edit surface: exactly two keys (`miso-t1h`, `miso-t1h-pre-d31`) — the
+cross-lane STOP condition was checked against the diff and did not fire;
+no keeper, no backcast surface, no other ISO's rows. Collisions: the MISO
+backcast lane (miso-200) writes the backcast namespace — no shared files;
+the branch was twice fast-forward-reconciled with main mid-session (my own
+merged PRs + 4 unrelated commits; one trivial conflict in the facade test's
+comment, resolved to main's fuller provenance text). Environment notes
+disclosed: the fresh checkout's empty `data/clean` (regenerated
+per-instruction), and the pre-existing main test failures recorded in §8.6.
