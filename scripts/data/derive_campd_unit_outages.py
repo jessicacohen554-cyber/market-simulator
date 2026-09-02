@@ -556,12 +556,30 @@ def _is_liquid_only_fuel(primary_fuel: str) -> bool:
     return bool(toks) and all(t in _CAMPD_LIQUID_FUELS for t in toks)
 
 
+# The model bins a gas facility can carry. A facility holding TWO OR MORE of
+# these is exactly where the ``fac_group`` short-circuit in
+# :func:`_resolve_unit_group` loses its own stated premise ("single-group gas
+# facilities are byte-identical"): ``group_by_code`` keeps ONE group per plant
+# code by LAST-WRITER-WINS over the fleet rows, so at such a facility the group
+# is whichever fleet row happened to come last, and the short-circuit then hands
+# EVERY unit to that one bin (miso-200).
+_GAS_BIN_GROUPS: frozenset[str] = frozenset(
+    {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
+)
+
+
+def _is_multi_gas_facility(fac_groups: set[str]) -> bool:
+    """True when the facility carries two or more distinct model GAS bins."""
+    return len(_GAS_BIN_GROUPS & set(fac_groups)) >= 2
+
+
 def _resolve_unit_group(
     is_coal: bool,
     unit_type: str,
     fac_groups: set[str],
     fac_group: str | None,
     unit_fuel: str = "",
+    mixed_gas_routing: bool = False,
 ) -> str:
     """Route a CAMPD unit's outage row to the model bin matching the UNIT.
 
@@ -607,9 +625,35 @@ def _resolve_unit_group(
     1588 Mystic MJ-1, 1595 Kendall S6; PJM 593 Edge Moor 10; MISO 2001 New Ulm 7
     and 8056 Waterford 4; NYISO 2516 Northport UGT001.
 
+    THE MULTI-GAS-GROUP GATE (miso-200, ``mixed_gas_routing``, GATED default
+    False, rule 14 ``[R-ACCURATE]``). The ``fac_group`` short-circuit above is
+    sound only where the facility carries ONE gas bin -- which is precisely what
+    its own pjm-75 justification claims ("single-group gas facilities are
+    byte-identical"). At a facility carrying TWO OR MORE gas bins the premise is
+    false and the short-circuit is a defect, because ``group_by_code`` is
+    LAST-WRITER-WINS over the fleet rows: the "facility group" is whichever
+    fleet row came last, and every unit is handed to it. Measured at MISO
+    (``_miso200_outage_routing_phase0.json``): Ninemile Point 1403 carries model
+    bins ``ST_GAS`` 1,465.4 MW and ``CC_REGULAR`` 649.5 MW, the last writer is
+    ``CC_REGULAR``, and its two gas-STEAM boilers (units 4 and 5, CAMPD
+    ``unitType`` "Tangentially-fired", 1,658.1 MW combined) therefore dump their
+    outage windows onto the 649.5 MW CC bin -- a pre-clip removed share peaking
+    at 3.556 and exceeding 1.0 for 4,920-6,192 hours a year, so the CC bin is
+    clipped to zero availability for most of every year -- while the ST_GAS bin
+    that actually contains them receives NO rows at all and reads availability
+    identically 1.0. Both halves are wrong, in opposite directions, at once.
+    When ``mixed_gas_routing`` is True the short-circuit is SKIPPED at such a
+    facility and the resolver falls through to its OWN existing per-unit
+    ``unitType`` routing below -- no new logic, no new data source, no new
+    threshold, ZERO free parameters (rule 21 ``[R-DOF]``), and the discriminator
+    is CAMPD's own ``unitType``, a static unit attribute that regenerates for
+    any forward year (rule 13 ``[R-MEASURED]``). Single-gas-group facilities are
+    untouched by construction, so the flag is byte-inert everywhere else.
+
     Module-level (not nested in :func:`main`) so the declared-event-window
     sibling deriver (``scripts/data/derive_campd_maxgen_outages.py``) reuses the
-    SAME routing verbatim.
+    SAME routing verbatim -- including this gate, which is why it lives here
+    rather than in either deriver's own body.
     """
     if is_coal:
         return "COAL"
@@ -619,7 +663,11 @@ def _resolve_unit_group(
         # Excluded downstream: peakers carry no overlay. See the guard's
         # rationale in this function's docstring.
         return "CT_CHP" if "CT_CHP" in fac_groups else "CT_PEAKER"
-    if fac_group in QUALIFYING_PLANT_GROUPS and fac_group != "COAL":
+    if (
+        fac_group in QUALIFYING_PLANT_GROUPS
+        and fac_group != "COAL"
+        and not (mixed_gas_routing and _is_multi_gas_facility(fac_groups))
+    ):
         return str(fac_group)
     ut = str(unit_type).strip().lower()
     if "combined cycle" in ut:
@@ -1045,6 +1093,18 @@ def main() -> None:
         help="EIA-860 generator parquet, for per-unit nameplate capacity.",
     )
     ap.add_argument(
+        "--mixed-gas-routing",
+        action="store_true",
+        help=(
+            "miso-200 (rule 14 [R-ACCURATE]): at a facility carrying TWO OR "
+            "MORE model gas bins, skip _resolve_unit_group's fac_group "
+            "short-circuit -- whose own premise is that the facility carries "
+            "ONE gas group -- and route each unit by its OWN CAMPD unitType. "
+            "Writes to the '-unitroute-' companion file so the incumbent "
+            "extract is never overwritten and the two can be A/B'd."
+        ),
+    )
+    ap.add_argument(
         "--out",
         default=None,
         help="Output CSV; defaults to data/raw/campd-unit-outages.csv "
@@ -1157,6 +1217,11 @@ def main() -> None:
                 if iso == "ERCOT"
                 else f"campd-unit-outages-short-{iso}.csv"
             )
+        elif args.mixed_gas_routing:
+            # A SEPARATE companion path (miso-200): the incumbent extract is
+            # never overwritten, so the two routings can be A/B'd as a single
+            # delta and the control leg keeps reading byte-identical input.
+            fname = f"campd-unit-outages-unitroute-{iso}.csv"
         else:
             fname = (
                 "campd-unit-outages.csv"
@@ -1542,6 +1607,7 @@ def main() -> None:
                             fac_groups,
                             group,
                             unit_fuel.get(uid, ""),
+                            mixed_gas_routing=bool(args.mixed_gas_routing),
                         )
                     )
                     if ugroup not in QUALIFYING_PLANT_GROUPS:

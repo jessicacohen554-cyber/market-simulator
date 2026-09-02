@@ -305,16 +305,36 @@ def _generic_unit_outage_target(
     return (facility_id, g)
 
 
-def unit_outage_csv_for_iso(iso: str | None) -> Path:
+def unit_outage_csv_for_iso(
+    iso: str | None, mixed_gas_routing: bool = False
+) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
     ERCOT uses the canonical ``campd-unit-outages.csv``; every other ISO uses
     ``campd-unit-outages-<ISO>.csv``, both written by
     ``scripts/data/derive_campd_unit_outages.py --iso <ISO>``.
+
+    ``mixed_gas_routing`` (``ScenarioConfig.unit_outage_mixed_gas_routing``,
+    GATED default False; miso-200) selects the ``-unitroute-`` companion written
+    by that deriver's ``--mixed-gas-routing`` mode, in which
+    :func:`~scripts.data.derive_campd_unit_outages._resolve_unit_group`'s
+    ``fac_group`` short-circuit is skipped at a facility carrying two or more
+    model gas bins and each unit routes by its own CAMPD ``unitType`` instead.
+    A SEPARATE path, never an overwrite, so the off path is byte-inert and the
+    two routings are a clean single delta. Falls back to the incumbent extract
+    when the companion has not been derived for the ISO.
     """
-    if iso is None or iso.upper() == "ERCOT":
-        return UNIT_OUTAGE_CSV
-    return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-{iso.upper()}.csv")
+    base = (
+        UNIT_OUTAGE_CSV
+        if (iso is None or iso.upper() == "ERCOT")
+        else UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-{iso.upper()}.csv")
+    )
+    if not mixed_gas_routing:
+        return base
+    alt = base.with_name(
+        f"campd-unit-outages-unitroute-{(iso or 'ERCOT').upper()}.csv"
+    )
+    return alt if alt.exists() else base
 
 
 def unit_outage_short_csv_for_iso(iso: str | None) -> Path:
@@ -533,6 +553,7 @@ def unit_outage_derate_factors(
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
+    mixed_gas_routing: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -558,7 +579,7 @@ def unit_outage_derate_factors(
     ``(plant_code, plant_group)`` (no split plants, CTs still excluded).
     """
     iso = (iso or "ERCOT").upper()
-    csv_path = unit_outage_csv_for_iso(iso)
+    csv_path = unit_outage_csv_for_iso(iso, mixed_gas_routing)
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:
         return {}
@@ -882,7 +903,9 @@ def unit_partial_outage_derate_factors(
     )
 
 
-def unit_outage_maxgen_csv_for_iso(iso: str | None) -> Path:
+def unit_outage_maxgen_csv_for_iso(
+    iso: str | None, mixed_gas_routing: bool = False
+) -> Path:
     """Return the declared-event-window (maxgen) unit-derate CSV path.
 
     Written by ``scripts/data/derive_campd_maxgen_outages.py --iso <ISO>``: CAMPD
@@ -890,10 +913,21 @@ def unit_outage_maxgen_csv_for_iso(iso: str | None) -> Path:
     (the ``maxgen-events`` registry), consumed by
     :func:`unit_outage_maxgen_derate_factors` under
     ``ScenarioConfig.unit_outage_maxgen_events``. Always ISO-suffixed.
+
+    ``mixed_gas_routing`` (miso-200) selects the ``-unitroute-`` companion, for
+    the same reason and on the same terms as
+    :func:`unit_outage_csv_for_iso`: this layer shares the SAME
+    ``_resolve_unit_group`` routing, so it carries the SAME mis-attribution and
+    must move with it -- a unit routed to ``ST_GAS`` in one layer and
+    ``CC_REGULAR`` in the other would leave the object half-repaired
+    (rule 19 ``[R-ONE-MECH]``).
     """
-    return UNIT_OUTAGE_CSV.with_name(
-        f"campd-unit-outages-maxgen-{(iso or 'ERCOT').upper()}.csv"
-    )
+    iso_u = (iso or "ERCOT").upper()
+    base = UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-maxgen-{iso_u}.csv")
+    if not mixed_gas_routing:
+        return base
+    alt = base.with_name(f"campd-unit-outages-maxgen-unitroute-{iso_u}.csv")
+    return alt if alt.exists() else base
 
 
 @lru_cache(maxsize=None)
@@ -903,6 +937,7 @@ def unit_outage_maxgen_derate_factors(
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
+    mixed_gas_routing: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return declared-event-window revealed-derate availability multipliers.
 
@@ -929,7 +964,7 @@ def unit_outage_maxgen_derate_factors(
     derate. ISOs without the file get an empty dict (no effect).
     """
     iso = (iso or "ERCOT").upper()
-    csv_path = unit_outage_maxgen_csv_for_iso(iso)
+    csv_path = unit_outage_maxgen_csv_for_iso(iso, mixed_gas_routing)
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)

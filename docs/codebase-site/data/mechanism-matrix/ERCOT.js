@@ -103,6 +103,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     coal_nameplate_summer_derate: { cell: "K", ev: "docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md; armed on the ERCOT keeper; row split out at ercot-177 (results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md §5)" },
     unit_outage_lp_capacity_basis: { cell: "U" },
     unit_outage_fleet_status_scope: { cell: "." },
+    unit_outage_mixed_gas_routing: { cell: ".", ev: "N/A BY CONSTRUCTION, not untested: the ERCOT path never reaches the gate. derive_campd_unit_outages keeps the bin-sheet group verbatim for ERCOT (ugroup = group if iso == 'ERCOT') and the accumulator routes ERCOT rows through _unit_outage_target (the CAMPD bin sheet + the W A Parish / Barney M Davis split-plant rules), not _generic_unit_outage_target. ERCOT's mixed facilities are already split by unit id at the overlay, which is the same repair by a different, ISO-specific route." },
     retiree_vintage_status_scope: { cell: "U" },
     partial_plant_exit_carry: { cell: "U" },
     wefor_residual: { cell: "K", ev: "registration only — read from the ERCOT keeper's run_config.json (0.02); no ERCOT evidence, no verdict" },
