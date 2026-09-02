@@ -2444,3 +2444,113 @@ reserve-shortage quantity the model fails to bind, i.e. a defect contradicting t
 card. It does not stand. This bears on the summer half only, is a statement about
 characterisation rather than arithmetic, caveat budget or the standing rule, and
 **rules nothing**.
+
+---
+
+## 2026-09-02 — xiso-7: the `prb_follower` DOF under-count is REAL IN THE GENERATOR and INERT ON EVERY KEEPER — and caiso-236's rule-26 deletion had left a red guard on `main`
+
+**Cross-ISO entry. Zero solve, zero bundle, zero scoring, zero dashboard
+registration; committed artifacts and source only; no holdout year touched; no
+keeper changed and no CAISO artifact, config or number touched** (the CAISO lane
+is rested at NOT-YET, caiso-201). Takes **option B** of the three items caiso-236
+handed on (`FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md` §10.3).
+Pre-registration
+`results/calibration/PRECOMMIT-xiso7-prb-follower-dof-undercount-2026-09-02.md`
+(pushed before any keeper artifact was opened), record
+`results/calibration/FINDING-xiso7-prb-follower-dof-undercount-2026-09-02.md`,
+instrument `scripts/probes/_xiso7_prb_follower_dof_probe.py`, transcript
+`results/calibration/_xiso7_prb_follower_dof.json`.
+
+**(1) The defect is real and structural.** `prb_follower` is the one coal
+passthrough tier with **no sigmoid toggle of its own** — its gate is the
+conjunction `coal_prb_passthrough_sigmoid AND coal_prb_passthrough_tiered`, and
+when it fires it resolves a **second** four-parameter set alongside the baseload
+prb curve. `build_dof_ledger`'s `n_scalars = 4 * len(sigmoids)` enumerated only the
+five `coal_*_passthrough_sigmoid` toggles, so those four scalars were attested
+**nowhere, for any ISO, ever**. An over-count (caiso-236's half) is the
+conservative direction; an **under-count states fewer free parameters than the
+solve consumes**, which is the disclosure failure rule 21 `[R-DOF]` exists to
+prevent.
+
+**(2) It fires on NO keeper of any ISO — and caiso-236 §10.3 is WITHDRAWN in
+part.** That item named ERCOT and MISO as lanes that "under-count their own
+residual". **Neither does, and neither can: both have
+`coal_prb_passthrough_sigmoid = False`.** ERCOT's keeper runs
+`coal_perplant_offer_curves` (ERCOT-144), whose harness disarms the sigmoids, so it
+carries no `COAL_SIGMOID_DEFAULTS[ERCOT]` row at all; MISO's keeper arms no coal
+sigmoid toggle whatsoever. The other four ISOs arm the full conjunction but have no
+`(ISO,"prb_follower")` entry, so the follower falls back to the baseload curve and
+consumes nothing. **The affected set is EMPTY.** The session's pre-registered P-1
+(affected = {MISO}) is therefore a **MISS**, inherited from caiso-236's claim and
+refuted by measurement.
+
+**(3) The fix lands anyway, by the pre-registered rule.** A generator that will
+attest every *future* keeper must count a set the solve demonstrably consumes.
+`_prb_follower_engaged` applies the same resolve-or-nothing discipline as
+`_coal_sigmoid_resolves`; `n_scalars` now counts `tiers`, and the row's **emission**
+gates on `tiers` too (the follower can resolve for an ISO whose baseload prb pair
+does not — under the old `if sigmoids:` that row vanished entirely). Verified to
+move **no committed number**: all six keepers' generated ledgers are byte-identical
+pre/post. `tests/scoring/test_build_dof_ledger_coal_sigmoids.py` (8 cases) pins
+**both** gates — this generator's counting had no test at all, the caiso-236 fix
+included — and its load-bearing case asserts the ledger's gate equals
+`coal_sigmoid_params(cfg, "prb_follower")`, **the resolver the dispatch itself
+calls**, so the attestation cannot drift from the solve in either direction.
+
+**(4) OUT-OF-PRECOMMIT REPAIR — caiso-236 broke the keeper-replay guard on `main`.**
+Found by the charter's own instruction to baseline failures at `origin/main`. The
+charter's thirteen known-red tests are all in `tests/unit` / `tests/iso` /
+`tests/regression`; **`tests/scoring` was not in that list and carried seven more**,
+verified failing at clean `origin/main`. caiso-236 deleted `caiso_bidir_intertie`
+under rule 26 and registered it in `scenarios._CACHE_KEY_RETIRED_FIELDS` — but not
+in `replay_keeper._RULE26_DELETED_UNCONDITIONAL`, its parallel registry. Every
+keeper meta of **all six ISOs** records the key, so `build_kwargs` hard-errored on
+all of them. (caiso-236 §11's "ZERO new test failures" was measured over
+`tests/unit` + `tests/iso` + `tests/regression`; `tests/scoring`, where the guard
+lives, was not run.) **Fixed**, as the error message itself prescribes:
+`"caiso_bidir_intertie": ("CAISO", (False, None))`. The registry's second element
+may now be a **tuple of inert values** (`_rule26_inert`), which was necessary — all
+six keepers record the key as **`None`**, the tri-state CLI's "never set", not
+`False` — and is declared per field so it never becomes a blanket "`None` is always
+safe" rule, which would be false for a deleted field whose default was the other
+polarity. **The strictness is preserved:** a bundle recording `True` still
+hard-errors as historical-record-only, and a census confirms none does.
+`test_replay_keeper_strict::test_all_keeper_metas_build` is green again.
+
+**(5) Two findings not predicted.** **U-1: PJM's committed ledger over-counts its
+sigmoid row by 4 scalars** (12 vs 8 — it arms `prb` over a non-existent
+`("PJM","prb")` pair). caiso-236 §7 recorded PJM as "none", which is true of the
+*row* (bit and sub keep it alive) but blind to a partial over-count **inside** a
+surviving row. **Handed to the PJM lane** on the same terms as option A; not
+touched here (rule 25, and PJM's ledger is hand-augmented so a blind regeneration
+would destroy rows). **U-2: ERCOT's dormant `coal_prb_follower_floor = 0.76` behind
+the disarmed toggle is ALREADY ON RECORD** at xiso-3 (measured Δ = 0.0 with a
+separating control, filed unadjudicated); the only increment is that it is also
+**absent from the DOF ledger**, so re-arming one boolean would add an *undisclosed*
+parameter — after this fix it would at least be counted. **A census may not
+adjudicate** (rule 28(d)), and this one does not.
+
+**(6) Gates.** `audit_keepers --iso <ISO>` **PASS 0/0 on all six ISOs**;
+`check_mechanism_matrix.py` **exit 0** (its anchor warnings are pre-existing
+line-number drift in `scenarios.py`, a file this session never touched); **no
+mechanism-matrix cell moved** — no mechanism was proposed, tested or re-verdicted
+and no `ScenarioConfig` field was added or removed. `tests/unit` fails exactly the
+charter's baselined five, no new. `tests/scoring` **7 red at `origin/main` → 6**;
+the remaining six are other lanes' or this container's `DATA PROFILE: caiso`
+hydration (an ERCOT forecast-parity registry gap; `ERCOT:confirmed_retirements
+[MISSING] clean partition unbuilt`; a NYISO marker expectation). **Net movement of
+this session on the whole suite: one test fixed, none broken.**
+
+**(7) Open, handed on.** PJM's 4-scalar over-count (U-1); options **A**
+(NYISO/NEISO phantom rows) and **C** (O-1 forecast parity, #1373), untaken and left
+exactly as caiso-236 left them; `coal_prb_follower_mustrun_max` is a free parameter
+counted by no row (inert at its 25.0 default on all six keepers, so nothing is
+currently misstated — deliberately not folded in, as classifying a tier-split
+threshold is a judgement for a lane that may adjudicate its ISO); and the class
+defect behind (4) — **`_CACHE_KEY_RETIRED_FIELDS` and
+`replay_keeper._RULE26_DELETED_UNCONDITIONAL` are two hand-maintained registries of
+the same fact with no test tying them together**, which is exactly what let a
+rule-26 deletion pass CI and break the replay guard. A guard asserting every
+retired field appearing in a committed keeper meta is declared in the replay
+registry would close the class; not built here, as it wants an owner's view on
+which registry is canonical.
