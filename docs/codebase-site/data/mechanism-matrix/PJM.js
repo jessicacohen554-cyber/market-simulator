@@ -245,6 +245,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     net_cone_forward_vintages: { cell: "O", fc: "O" },
     reserve_margin_backstop: { cell: "K", fc: "K" },
     adequacy_internal_supply_accounting: { cell: "U", fc: "U", ev: "UNTESTED, no transfer (rule 25/28d — capx D31): the named identification source is PJM's own BRA offered/cleared UCAP accounting (D28 §6.5, BRA Report Table 2/7 — in-repo rows carry cleared); D28 measured PJM's hindcast positions 1.14-1.20 vs published zeroes 1.064-1.074, the same defect class the MISO ratio repaired" },
+    neiso_net_icr_requirement: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D40): PJM already prices its requirement on its OWN published FPR series (FORECAST_POOL_REQUIREMENT_BY_ISO, the pattern this row mirrors). The R-B curve-convention question — PJM's VRR x is UCAP % of an un-netted Reliability Requirement while ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO nets DR — is a PJM-side analogue NOT adjudicated here (rule 25); it enters PJM's queue only through a PJM lane's own derivation." },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },

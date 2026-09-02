@@ -1236,6 +1236,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # one cache entry. SHARED field — very end, per HOUSE-3. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "carbon_price_delta",
+    # NEISO published Net ICR requirement gate (capx D40, 2026-09-02; default
+    # off, byte-identical unarmed — the floor/backstop/CR-1 position keep the
+    # composite). Starts the neiso_* cluster at the tuple's end per HOUSE-3.
+    "neiso_net_icr_requirement",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1671,6 +1675,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # its shipping 0.0 default (an armed arm is non-default and keys
     # distinctly; the default is an exact resolver no-op).
     "carbon_price_delta": "0.0",
+    # D40: NEISO published Net ICR requirement gate, registered at its shipping
+    # False default (an armed run keys distinctly).
+    "neiso_net_icr_requirement": "False",
 }
 
 
@@ -14033,6 +14040,57 @@ class ScenarioConfig:
     # charter, never residual-tuned).
     caiso_adaptive_half_life_days: float = 30.0
     caiso_adaptive_beta: float = 0.5945
+    neiso_net_icr_requirement: bool = False  # GATED default-OFF (capx D40
+    # 2026-09-02, docs/handoffs/FINDING-capx-d40-neiso-devintage-2026-09-02.md,
+    # executing FINDING-capx-d33-neiso-position-2026-09-02.md §4 R-A + R-B).
+    # Resolves the NEISO adequacy requirement from ISO-NE's PUBLISHED per-CCP
+    # Net ICR series (constants.NET_ICR_REQUIREMENT_MW_BY_ISO, FCAs 11-18,
+    # digitized from the committed demand-curve rows) instead of the
+    # single-vintage composite peak × (1 − f_DR) × (1 + PRM) — the EXACT
+    # pattern resolve_adequacy_requirement_mw already uses to prefer PJM's
+    # published FPR over its composite — with the card C-A hold-last beyond
+    # the last published CCP realised as the last CCP's published Net-ICR/peak
+    # RATIO (constants.NET_ICR_HOLD_LAST_RATIO_BY_ISO) so the held bar scales
+    # with load. Lands WITH its R-B half: the CR-1 reserve position is
+    # re-expressed on the published curve's own x-convention
+    # (adequacy.curve_convention_position: pos_raw = f + (1 − f) · pos_net),
+    # so one denominator object sits on both sides of evaluate_demand_curve.
+    # One gate predicate (retirements.net_icr_requirement_armed) arms both.
+    #
+    # WHY IT EXISTS. D33 measured that the model's +21/+6/+7 reserve-ratio
+    # point long-position error in the NEISO crossover's $0 years is
+    # DOMINATED by the requirement denominator: the composite is the
+    # published construction evaluated at ONE CCP (the ARA-3 restatement of
+    # 2026/27) and held flat, while the published Net ICR fell 34,075 →
+    # 30,550 MW over FCAs 11-18 and the hindcast weather-year peaks sit far
+    # below the CELT 50/50 forecasts the ratio was built on: −6,018 MW
+    # (−18.5 %) of requirement in 2023, +23.8 pts on its own. The census
+    # supply is SHORT of what the real FCAs cleared, so the fix is the
+    # denominator, not the numerator.
+    #
+    # SIGN DISCIPLINE (rule 14): the corrected (lower-ratio, per-year)
+    # requirement SHORTENS the model's position → capacity revenue moves UP
+    # in the long years → NEISO retirements get HARDER, entry EARLIER, and
+    # the floor's admissible exit budget collapses ~80 % (6,263 → ~0.5-1.9
+    # GW at the 2023 entry). Nothing is sized by any residual; the published
+    # series is the identification, full stop.
+    #
+    # WHY DEFAULT-OFF: arming posture is an OWNER decision (rules 5/24/28)
+    # scored leave-one-year-out within 2023-2025 BEFORE any default moves
+    # (rule 22) — the D40 finding carries the LOYO score and the
+    # recommendation; D37's NEISO T1-H re-run at the armed posture is the
+    # solve-level measurement. Registered in _CACHE_KEY_OPTIONAL_FIELDS at
+    # False, so an unarmed run's cache key is byte-stable and an armed run
+    # keys distinctly. Coerced to the default in a plain backcast (capacity
+    # evolution is forecast-only; the hindcast harness — mode="forecast",
+    # hindcast=True — arms it explicitly via --neiso-net-icr-requirement).
+    #
+    # SCOPE. NEISO-only by construction (the registry holds one ISO and the
+    # gate predicate requires a registry entry) — rule 25 [R-ISO-SCOPE]:
+    # nothing transfers; PJM's FPR path is untouched. Forecast-lane
+    # mechanism: no backcast consumer of resolve_adequacy_requirement_mw
+    # exists (swept at D40, the S-123 sweep re-confirmed). Placed at the END
+    # of the field list so no existing matrix `:line` anchor shifts.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -14371,6 +14429,18 @@ class ScenarioConfig:
         if self.mode == "backcast":
             self.net_cone_forward_escalation = (
                 type(self).__dataclass_fields__["net_cone_forward_escalation"].default
+            )
+
+        # capx D40: the NEISO published-Net-ICR requirement gate is a
+        # forecast-lane mechanism (capacity evolution never runs in a plain
+        # backcast), so coerce it to the DATACLASS DEFAULT — never a literal
+        # (the FFR-3D rule directly above) — in a plain backcast, keeping every
+        # backcast keeper's cache_key + run_config.json byte-identical. NOT
+        # coerced when hindcast (mode="forecast", hindcast=True): the
+        # capacity-hindcast harness arms forecast screens explicitly.
+        if self.mode == "backcast":
+            self.neiso_net_icr_requirement = (
+                type(self).__dataclass_fields__["neiso_net_icr_requirement"].default
             )
 
         # entry_lookahead_reprice is a FORECAST-only capacity-screen price
@@ -15628,6 +15698,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_oil_burn_budget": 1,
     "neiso_winter_fuel_inventory": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
+    "neiso_net_icr_requirement": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

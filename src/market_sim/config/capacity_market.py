@@ -3204,6 +3204,90 @@ FORECAST_POOL_REQUIREMENT_BY_ISO: dict[str, dict[str, float]] = {
     },
 }
 
+# Published per-Capacity-Commitment-Period Net Installed Capacity Requirement
+# (Net ICR = ICR − HQICCs), in MW, keyed by CCP label "YYYY/YYYY+1" — the
+# ISO-NE analogue of :data:`FORECAST_POOL_REQUIREMENT_BY_ISO` (capx D40,
+# 2026-09-02, executing FINDING-capx-d33-neiso-position-2026-09-02.md §4 R-A).
+#
+# WHY. ISO-NE publishes NO reserve-margin percentage: the FCM procures to an
+# absolute Net ICR that is re-derived and filed for EVERY CCP (the FCA ICR
+# filings, Docket ER-series each November). HEAD's NEISO requirement is the
+# composite ``peak × (1 − f_DR) × (1 + PRM)`` with BOTH factors anchored to ONE
+# vintage (the ARA-3 restatement of CCP 2026/27 — see the PLANNING_RESERVE_MARGIN
+# _BY_ISO["NEISO"] entry). Algebraically that composite IS the published
+# construction ``(Net ICR − DCR CSO) × peak / CELT_peak`` at exactly one CCP;
+# every other delivery year inherits that CCP's ratio, while the published
+# series itself fell 34,075 → 30,550 MW (FCA 11 → 18) and the model's hindcast
+# weather-year peaks sit far below the CELT 50/50 forecasts the ratio was built
+# on. D33 measured the consequence: −6,018 MW (−18.5 %) of requirement in 2023,
+# worth +23.8 reserve-ratio points of the model's +21.4-pt long-position error
+# on its own, decaying to +2.0–2.5 pts at the anchor vintage exactly as a
+# frozen-vintage artifact must.
+#
+# THE SERIES. FCA-vintage (primary auction) Net ICRs, digitized from the
+# committed demand-curve rows (data/raw/capacity-market/demand-curve/neiso/
+# neiso.csv, metric ``reliability_requirement``; every row cites ISO-NE's
+# summary_of_historical_icr_values.xlsx sheet/row, one row cross-checked to the
+# FCA 13 ICR-filing testimony) and reconciled against them byte-for-byte by
+# tests/unit/model/test_capacity.py — a published market-design input, never a
+# fit target (rules 13/23). The FCA vintage (not the ARA restatement) is
+# deliberate: the R2 vintage curves (``_NEISO_MRI_CLEARING_POINTS``) normalize
+# their x by the SAME FCA Net ICR, so position and curve share one denominator
+# object (D33 §4 R-B — one convention on both sides of evaluate_demand_curve).
+# The ARA-3 / ARA-2 restatements (30,050 / 29,855 MW, icr-ara extract) are the
+# same-cycle LATER vintages of the last two CCPs; they are not mixed into the
+# series, and the last one supplies the hold-last ratio below instead.
+#
+# CONSUMER. ``retirements.resolve_published_net_icr_mw`` — armed ONLY by the
+# default-OFF ``ScenarioConfig.neiso_net_icr_requirement`` gate (rule 28 row
+# ``neiso_net_icr_requirement``); off, every NEISO solve is byte-identical to
+# the composite. In-table CCPs return the absolute MW (the model's peak drops
+# out — the auction's own denominator, D33 R-A shape (i)); years BEFORE the
+# first entry (pre-FCA 11) and any in-table gap fall through to the composite
+# exactly as the PJM FPR table does; years strictly BEYOND the last entry
+# hold-last (card C-A 2026-08-25) — see NET_ICR_HOLD_LAST_RATIO_BY_ISO for why
+# the held object is a ratio, not the MW. The requirement the floor/backstop/
+# CR-1 position test is then ``Net ICR × (1 − f_DR)`` — the DR registry entry
+# is DEFINED as a fraction OF Net ICR (see its citation block), so under this
+# path the netted MW reproduces ISO-NE's own supply-side DCR counting.
+# FORWARD STORY (rule 13): the Net ICR is a recurring published planning
+# quantity that regenerates every capability year and responds to load /
+# BTM-PV / tie conditions by construction; the FCM sunset (FCA 18 was the last
+# forward auction) hands the continuation to CAR-SA's successor parameters,
+# intaken on publication (rule 23) as new rows here.
+NET_ICR_REQUIREMENT_MW_BY_ISO: dict[str, dict[str, float]] = {
+    "NEISO": {
+        "2020/2021": 34_075.0,  # FCA 11 (ER17-320-000)
+        "2021/2022": 33_725.0,  # FCA 12 (ER18-263-000)
+        "2022/2023": 33_750.0,  # FCA 13 (ER19-291-000; testimony p.10)
+        "2023/2024": 32_490.0,  # FCA 14 (ER20-311-000)
+        "2024/2025": 33_270.0,  # FCA 15 (ER21-371-000)
+        "2025/2026": 31_645.0,  # FCA 16 (ER22-378-000)
+        "2026/2027": 30_305.0,  # FCA 17 (ER23-405-000)
+        "2027/2028": 30_550.0,  # FCA 18 (ER24-362-000) — the LAST FCA held
+    },
+}
+
+# Hold-last object for delivery years strictly beyond an ISO's last published
+# Net ICR CCP (card C-A convention). PJM's held object is the FPR — a RATIO to
+# peak, so the held requirement still scales with load. An absolute Net ICR
+# held flat over a 2028–2050 horizon would NOT respond to changed conditions
+# (a growing peak against a frozen MW bar is a collapsing margin by
+# construction), failing the rule-13 forward test; so the held object here is
+# the last CCP's own published Net-ICR-to-50/50-peak ratio, applied to the
+# model's peak: ``requirement = peak × ratio × (1 − f_DR)`` — the SAME
+# construction the composite fallback uses, re-anchored on the LAST CCP.
+# Value: ISO-NE's newest same-cycle restatement of CCP 2027/28 (ARA 2, the
+# 2025-11-21 ICR-related-values filing, p.12 — committed extract
+# data/raw/capacity-market/icr-ara/neiso/ara_requirement_values.csv rows
+# ``2027-2028 / ARA 2``): Net ICR 29,855 MW over the 50/50 summer peak net of
+# BTM PV 26,417 MW = 1.13015. Kept as an explicit expression so both published
+# MW stay traceable (rule 5). Supersedes itself the moment a later CCP's rows
+# land in NET_ICR_REQUIREMENT_MW_BY_ISO (rule 23).
+NET_ICR_HOLD_LAST_RATIO_BY_ISO: dict[str, float] = {
+    "NEISO": 29_855.0 / 26_417.0,  # ARA 2 of CCP 2027/28: Net ICR / 50-50 peak
+}
+
 # AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
 # the AS-eligible (mostly storage) fleet grows past the calibration point.
 # Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **

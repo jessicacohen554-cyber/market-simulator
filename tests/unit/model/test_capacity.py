@@ -7,9 +7,12 @@ from unittest import mock
 import numpy as np
 
 from market_sim.config.constants import (
+    ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
     FORECAST_POOL_REQUIREMENT_BY_ISO,
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HOURS_PER_YEAR,
+    NET_ICR_HOLD_LAST_RATIO_BY_ISO,
+    NET_ICR_REQUIREMENT_MW_BY_ISO,
     NEW_ENTRY_COSTS,
     PLANNING_RESERVE_MARGIN_BY_ISO,
     PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
@@ -34,9 +37,11 @@ from market_sim.model.capacity import (
     evolve_fleet,
     resolve_adequacy_requirement_mw,
     resolve_forecast_pool_requirement,
+    resolve_published_net_icr_mw,
     wind_ptc_levelized_per_mwh,
     wright_cost,
 )
+from market_sim.model.capacity_evolution.adequacy import curve_convention_position
 from market_sim.model.storage import STORAGE_TECHS, compute_storage_annual_cost
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
@@ -4806,3 +4811,270 @@ class TestInternalSupplyAccountingRatio(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestNeisoNetIcrRequirement(unittest.TestCase):
+    """capx D40 (2026-09-02) — the NEISO adequacy requirement devintaged onto
+    ISO-NE's published per-CCP Net ICR series (D33 §4 R-A, the PJM published-FPR
+    pattern), with the CR-1 position on the curve's own x-convention (R-B) and
+    the card C-A hold-last as the last CCP's published ratio. GATED default-OFF:
+    every unarmed NEISO solve is byte-identical to the composite."""
+
+    PEAK = 23_475.0  # the crossover-rcrepair 2023 ledger peak
+
+    @staticmethod
+    def _csv_rows(sub, metric):
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / sub
+        with path.open(newline="") as fh:
+            return [r for r in csv.DictReader(fh) if r["metric"] == metric]
+
+    @staticmethod
+    def _cfg(armed, **kw):
+        return ScenarioConfig(
+            iso="NEISO",
+            mode="forecast",
+            hindcast=True,
+            neiso_net_icr_requirement=armed,
+            **kw,
+        )
+
+    @staticmethod
+    def _composite(peak):
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"]
+        return peak * (1.0 - dr) * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["NEISO"])
+
+    def test_registry_reconciles_with_published_csv(self):
+        # Every NET_ICR_REQUIREMENT_MW_BY_ISO["NEISO"] entry must match the
+        # committed reliability_requirement row for that CCP byte-for-byte,
+        # and the table must cover EVERY published row — a new intaken FCA
+        # row that is not carried here fails loudly (rules 13/23).
+        rows = self._csv_rows("demand-curve/neiso/neiso.csv", "reliability_requirement")
+        self.assertTrue(rows, "expected published Net ICR rows on disk")
+        by_ccp = {
+            r["delivery_year"].replace("-", "/"): float(r["y_value"]) for r in rows
+        }
+        self.assertEqual(NET_ICR_REQUIREMENT_MW_BY_ISO["NEISO"], by_ccp)
+        self.assertTrue(all(r["y_unit"] == "mw" for r in rows))
+        self.assertEqual(set(NET_ICR_REQUIREMENT_MW_BY_ISO), {"NEISO"})  # rule 25
+
+    def test_hold_last_ratio_reconciles_with_ara_extract(self):
+        # The held object is the last CCP's newest published Net-ICR / 50-50
+        # peak pair (ARA 2 of 2027/28, icr-ara extract), not a frozen MW.
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = (
+            RAW_DATA_DIR
+            / "capacity-market"
+            / "icr-ara"
+            / "neiso"
+            / "ara_requirement_values.csv"
+        )
+        with path.open(newline="") as fh:
+            ara2 = {
+                r["metric"]: float(r["value_mw"])
+                for r in csv.DictReader(fh)
+                if r["ccp"] == "2027-2028" and r["vintage"] == "ARA 2"
+            }
+        last_ccp = max(NET_ICR_REQUIREMENT_MW_BY_ISO["NEISO"], key=lambda l: int(l[:4]))
+        self.assertEqual(last_ccp, "2027/2028")
+        self.assertAlmostEqual(
+            NET_ICR_HOLD_LAST_RATIO_BY_ISO["NEISO"],
+            ara2["net_icr"] / ara2["peak_50_50_net_btm_pv"],
+            places=12,
+        )
+
+    def test_default_off_is_byte_identical_to_composite(self):
+        cfg = self._cfg(False)
+        for year in (2019, 2020, 2023, 2027, 2028, 2050, None):
+            self.assertIsNone(
+                resolve_published_net_icr_mw(cfg, "NEISO", self.PEAK, year)
+            )
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(cfg, "NEISO", self.PEAK, year),
+                self._composite(self.PEAK),
+                places=6,
+            )
+        self.assertEqual(
+            curve_convention_position(cfg, "NEISO", 1.2593906741), 1.2593906741
+        )
+        # And the gate is off in the shipped default (owner-armed only).
+        self.assertFalse(ScenarioConfig(iso="NEISO").neiso_net_icr_requirement)
+
+    def test_armed_in_table_year_uses_absolute_net_icr(self):
+        cfg = self._cfg(True)
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"]
+        # Model year 2023 -> CCP 2023/2024 -> FCA 14 Net ICR 32,490 MW; the
+        # model's peak DROPS OUT (the auction's own denominator, D33 R-A (i)).
+        self.assertEqual(
+            resolve_published_net_icr_mw(cfg, "NEISO", self.PEAK, 2023), 32_490.0
+        )
+        for peak in (self.PEAK, 2.0 * self.PEAK):
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(cfg, "NEISO", peak, 2023),
+                32_490.0 * (1.0 - dr),
+                places=6,
+            )
+        # The D33 measurement: +5,489 MW of requirement at the 2023 ledger peak.
+        delta = resolve_adequacy_requirement_mw(
+            cfg, "NEISO", self.PEAK, 2023
+        ) - self._composite(self.PEAK)
+        self.assertAlmostEqual(delta, 5_489.4, delta=0.5)
+
+    def test_armed_pre_table_and_year_none_fall_through(self):
+        cfg = self._cfg(True)
+        for year in (2019, None):
+            self.assertIsNone(
+                resolve_published_net_icr_mw(cfg, "NEISO", self.PEAK, year)
+            )
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(cfg, "NEISO", self.PEAK, year),
+                self._composite(self.PEAK),
+                places=6,
+            )
+
+    def test_armed_hold_last_beyond_table_is_the_published_ratio(self):
+        cfg = self._cfg(True)
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"]
+        ratio = NET_ICR_HOLD_LAST_RATIO_BY_ISO["NEISO"]
+        for year in (2028, 2035, 2050):
+            for peak in (self.PEAK, 30_000.0):
+                self.assertAlmostEqual(
+                    resolve_published_net_icr_mw(cfg, "NEISO", peak, year),
+                    peak * ratio,
+                    places=6,
+                )
+                self.assertAlmostEqual(
+                    resolve_adequacy_requirement_mw(cfg, "NEISO", peak, year),
+                    peak * ratio * (1.0 - dr),
+                    places=6,
+                )
+        # The held bar scales with load (rule 13) and sits marginally ABOVE
+        # the composite it re-anchors (ARA-2 2027/28 ratio 1.1301 vs the
+        # ARA-3 2026/27 composite ratio 1.1277) — never a frozen MW.
+        self.assertGreater(
+            resolve_adequacy_requirement_mw(cfg, "NEISO", self.PEAK, 2050),
+            self._composite(self.PEAK),
+        )
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "NEISO", self.PEAK, 2050)
+            / self._composite(self.PEAK),
+            ratio / (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["NEISO"]),
+            places=9,
+        )
+
+    def test_hold_last_never_bridges_an_in_table_gap(self):
+        cfg = self._cfg(True)
+        with mock.patch.dict(
+            NET_ICR_REQUIREMENT_MW_BY_ISO,
+            {"NEISO": {"2023/2024": 32_490.0, "2027/2028": 30_550.0}},
+            clear=False,
+        ):
+            self.assertIsNone(
+                resolve_published_net_icr_mw(cfg, "NEISO", self.PEAK, 2025)
+            )
+            self.assertEqual(
+                resolve_published_net_icr_mw(cfg, "NEISO", self.PEAK, 2027), 30_550.0
+            )
+            self.assertAlmostEqual(
+                resolve_published_net_icr_mw(cfg, "NEISO", self.PEAK, 2028),
+                self.PEAK * NET_ICR_HOLD_LAST_RATIO_BY_ISO["NEISO"],
+                places=6,
+            )
+
+    def test_no_hold_ratio_means_no_hold(self):
+        # A series without a published hold ratio has nothing lawful to hold:
+        # beyond its table it falls through to the composite, never a frozen MW.
+        cfg = self._cfg(True)
+        with mock.patch.dict(NET_ICR_HOLD_LAST_RATIO_BY_ISO, {}, clear=True):
+            self.assertIsNone(
+                resolve_published_net_icr_mw(cfg, "NEISO", self.PEAK, 2030)
+            )
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(cfg, "NEISO", self.PEAK, 2030),
+                self._composite(self.PEAK),
+                places=6,
+            )
+
+    def test_curve_convention_transform(self):
+        # R-B: pos_raw = f + (1 - f) * pos_net; 1.0 is a fixed point; the D33
+        # 2023 row (net 1.2594 -> raw 1.2366) is reproduced.
+        cfg = self._cfg(True)
+        f = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"]
+        self.assertAlmostEqual(
+            curve_convention_position(cfg, "NEISO", 1.0), 1.0, places=12
+        )
+        self.assertAlmostEqual(
+            curve_convention_position(cfg, "NEISO", 1.2593906741249772),
+            1.2366050204326122,
+            places=9,
+        )
+        for p in (0.9, 1.05, 1.3):
+            self.assertAlmostEqual(
+                curve_convention_position(cfg, "NEISO", p), f + (1.0 - f) * p, places=12
+            )
+        # Inert off-registry even with the flag armed (rule 25).
+        self.assertEqual(curve_convention_position(cfg, "PJM", 1.3), 1.3)
+        self.assertEqual(curve_convention_position(None, "NEISO", 1.3), 1.3)
+
+    def test_reserve_position_end_to_end(self):
+        from market_sim.model.capacity_evolution.adequacy import (
+            accredited_firm_capacity_mw,
+            capacity_reserve_position,
+        )
+
+        gen = _gen("G0", "gas_cc", pmax=30_000.0, eford=0.05)
+        f = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["NEISO"]
+        with no_hydro_accreditation():
+            firm = accredited_firm_capacity_mw(
+                [gen], 0.0, 0.0, 0.0, iso="NEISO", peak_demand_mw=self.PEAK, year=2023
+            )
+            off = capacity_reserve_position(
+                [gen], 0.0, 0.0, 0.0, self._cfg(False), "NEISO", self.PEAK, 2023
+            )
+            on = capacity_reserve_position(
+                [gen], 0.0, 0.0, 0.0, self._cfg(True), "NEISO", self.PEAK, 2023
+            )
+        self.assertAlmostEqual(off, firm / self._composite(self.PEAK), places=9)
+        self.assertAlmostEqual(
+            on, f + (1.0 - f) * firm / (32_490.0 * (1.0 - f)), places=9
+        )
+        # Sign discipline (rule 14): the corrected denominator SHORTENS the
+        # position — capacity revenue moves UP, retirements get HARDER.
+        self.assertLess(on, off)
+
+    def test_other_isos_inert_with_the_flag_armed(self):
+        for iso, peak, year in (
+            ("PJM", 160_560.0, 2026),
+            ("MISO", 120_000.0, 2026),
+            ("ERCOT", 85_000.0, 2030),
+        ):
+            armed = ScenarioConfig(iso=iso, neiso_net_icr_requirement=True)
+            plain = ScenarioConfig(iso=iso)
+            self.assertIsNone(resolve_published_net_icr_mw(armed, iso, peak, year))
+            self.assertEqual(
+                resolve_adequacy_requirement_mw(armed, iso, peak, year),
+                resolve_adequacy_requirement_mw(plain, iso, peak, year),
+            )
+
+    def test_backcast_coerces_hindcast_keeps_and_cache_key(self):
+        # Plain backcast: coerced to the dataclass default (forecast-lane
+        # mechanism); hindcast (mode=forecast, hindcast=True) keeps the arm.
+        self.assertFalse(
+            ScenarioConfig(
+                iso="NEISO", mode="backcast", neiso_net_icr_requirement=True
+            ).neiso_net_icr_requirement
+        )
+        self.assertTrue(self._cfg(True).neiso_net_icr_requirement)
+        # Registered in _CACHE_KEY_OPTIONAL_FIELDS at False: unarmed keys are
+        # byte-stable, an armed run keys distinctly.
+        self.assertEqual(
+            ScenarioConfig(iso="NEISO").cache_key(),
+            ScenarioConfig(iso="NEISO", neiso_net_icr_requirement=False).cache_key(),
+        )
+        self.assertNotEqual(self._cfg(False).cache_key(), self._cfg(True).cache_key())
