@@ -1,0 +1,187 @@
+{
+  "keepers": [
+    {
+      "run_id": "2026-08-25-234-eastex-identity",
+      "iso": "ERCOT",
+      "bundle": "results/calibration/ercot234_eastex_identity",
+      "gate": {
+        "coal_prb_passthrough_sigmoid": false,
+        "coal_prb_passthrough_tiered": true,
+        "prb_follower_resolves": true,
+        "resolved_params": {
+          "floor": 0.76,
+          "ceil": 1.35,
+          "gas_mid": 2.85,
+          "gas_slope": 2.5
+        },
+        "UNDER_COUNTED": false
+      },
+      "coal_prb_follower_mustrun_max": 25.0,
+      "coal_perplant_offer_curves": true,
+      "committed_ledger": {
+        "n_entries": 9,
+        "n_residual": 6,
+        "sigmoid_row": null
+      },
+      "generated_ledger": {
+        "n_entries": 9,
+        "n_residual": 6,
+        "sigmoid_row": null
+      },
+      "committed_matches_generated": true,
+      "expected_delta_scalars": 0
+    },
+    {
+      "run_id": "2026-08-15-pjm-162-inputclock",
+      "iso": "PJM",
+      "bundle": "results/calibration/pjm_debugb_inputclock_A",
+      "gate": {
+        "coal_prb_passthrough_sigmoid": true,
+        "coal_prb_passthrough_tiered": true,
+        "prb_follower_resolves": false,
+        "resolved_params": null,
+        "UNDER_COUNTED": false
+      },
+      "coal_prb_follower_mustrun_max": 25.0,
+      "coal_perplant_offer_curves": false,
+      "committed_ledger": {
+        "n_entries": 19,
+        "n_residual": 6,
+        "sigmoid_row": {
+          "name": "COAL_SIGMOID_DEFAULTS[PJM]",
+          "identification": "residual",
+          "n_scalars": 12
+        }
+      },
+      "generated_ledger": {
+        "n_entries": 14,
+        "n_residual": 6,
+        "sigmoid_row": {
+          "name": "COAL_SIGMOID_DEFAULTS[PJM]",
+          "identification": "residual",
+          "n_scalars": 8
+        }
+      },
+      "committed_matches_generated": false,
+      "expected_delta_scalars": 0
+    },
+    {
+      "run_id": "2026-09-01-caiso-231-b1-ungrounded",
+      "iso": "CAISO",
+      "bundle": "results/calibration/caiso231_b1_ungrounded",
+      "gate": {
+        "coal_prb_passthrough_sigmoid": true,
+        "coal_prb_passthrough_tiered": true,
+        "prb_follower_resolves": false,
+        "resolved_params": null,
+        "UNDER_COUNTED": false
+      },
+      "coal_prb_follower_mustrun_max": 25.0,
+      "coal_perplant_offer_curves": false,
+      "committed_ledger": {
+        "n_entries": 9,
+        "n_residual": 6,
+        "sigmoid_row": null
+      },
+      "generated_ledger": {
+        "n_entries": 9,
+        "n_residual": 6,
+        "sigmoid_row": null
+      },
+      "committed_matches_generated": false,
+      "expected_delta_scalars": 0
+    },
+    {
+      "run_id": "2026-08-30-nyiso-159-loss-surface",
+      "iso": "NYISO",
+      "bundle": "results/calibration/nyiso159_lossarm_B",
+      "gate": {
+        "coal_prb_passthrough_sigmoid": true,
+        "coal_prb_passthrough_tiered": true,
+        "prb_follower_resolves": false,
+        "resolved_params": null,
+        "UNDER_COUNTED": false
+      },
+      "coal_prb_follower_mustrun_max": 25.0,
+      "coal_perplant_offer_curves": false,
+      "committed_ledger": {
+        "n_entries": 13,
+        "n_residual": 6,
+        "sigmoid_row": {
+          "name": "COAL_SIGMOID_DEFAULTS[NYISO]",
+          "identification": "residual",
+          "n_scalars": 4
+        }
+      },
+      "generated_ledger": {
+        "n_entries": 7,
+        "n_residual": 5,
+        "sigmoid_row": null
+      },
+      "committed_matches_generated": false,
+      "expected_delta_scalars": 0
+    },
+    {
+      "run_id": "2026-08-17-neiso-99-joint-p1",
+      "iso": "NEISO",
+      "bundle": "results/calibration/neiso99_joint_B",
+      "gate": {
+        "coal_prb_passthrough_sigmoid": true,
+        "coal_prb_passthrough_tiered": true,
+        "prb_follower_resolves": false,
+        "resolved_params": null,
+        "UNDER_COUNTED": false
+      },
+      "coal_prb_follower_mustrun_max": 25.0,
+      "coal_perplant_offer_curves": false,
+      "committed_ledger": {
+        "n_entries": 7,
+        "n_residual": 5,
+        "sigmoid_row": {
+          "name": "COAL_SIGMOID_DEFAULTS[NEISO]",
+          "identification": "residual",
+          "n_scalars": 4
+        }
+      },
+      "generated_ledger": {
+        "n_entries": 6,
+        "n_residual": 4,
+        "sigmoid_row": null
+      },
+      "committed_matches_generated": false,
+      "expected_delta_scalars": 0
+    },
+    {
+      "run_id": "2026-09-01-miso-198-oomlevel",
+      "iso": "MISO",
+      "bundle": "results/calibration/miso198_oom_B",
+      "gate": {
+        "coal_prb_passthrough_sigmoid": false,
+        "coal_prb_passthrough_tiered": false,
+        "prb_follower_resolves": true,
+        "resolved_params": {
+          "floor": 0.598,
+          "ceil": 1.0,
+          "gas_mid": 3.187,
+          "gas_slope": 2.5
+        },
+        "UNDER_COUNTED": false
+      },
+      "coal_prb_follower_mustrun_max": 25.0,
+      "coal_perplant_offer_curves": false,
+      "committed_ledger": {
+        "n_entries": 38,
+        "n_residual": 2,
+        "sigmoid_row": null
+      },
+      "generated_ledger": {
+        "n_entries": 25,
+        "n_residual": 2,
+        "sigmoid_row": null
+      },
+      "committed_matches_generated": false,
+      "expected_delta_scalars": 0
+    }
+  ],
+  "affected": []
+}

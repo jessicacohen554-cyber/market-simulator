@@ -187,6 +187,35 @@ def _coal_sigmoid_resolves(sc: dict, iso: str, toggle: str) -> bool:
     return all(name in params for name in _COAL_SIGMOID_PARAMS)
 
 
+def _prb_follower_engaged(sc: dict, iso: str) -> bool:
+    """Return whether the tiered PRB follower curve consumes its own parameters.
+
+    ``prb_follower`` is the one coal passthrough tier with **no sigmoid toggle of
+    its own**: its gate is the conjunction ``coal_prb_passthrough_sigmoid AND
+    coal_prb_passthrough_tiered`` (``data.fleet.assembly``), and when it fires
+    ``data.fuel.trajectories.prb_follower_passthrough_series`` resolves a SECOND
+    four-parameter set — ``COAL_SIGMOID_DEFAULTS[(iso, "prb_follower")]`` overlaid
+    by the explicit ``coal_prb_follower_*`` fields — for the low-must-run PRB
+    cyclers, alongside the baseload prb curve.
+
+    Same resolve-or-nothing discipline as :func:`_coal_sigmoid_resolves`: an
+    incomplete set makes ``prb_follower_passthrough_series`` fall back to the
+    baseload prb curve, so there are no additional free parameters to attest.
+    """
+    if not (
+        sc.get("coal_prb_passthrough_sigmoid") and sc.get("coal_prb_passthrough_tiered")
+    ):
+        return False
+    from market_sim.config.scenarios import COAL_SIGMOID_DEFAULTS
+
+    params = dict(COAL_SIGMOID_DEFAULTS.get((iso.upper(), "prb_follower"), {}))
+    for name in _COAL_SIGMOID_PARAMS:
+        value = sc.get(f"coal_prb_follower_{name}")
+        if value is not None:
+            params[name] = value
+    return all(name in params for name in _COAL_SIGMOID_PARAMS)
+
+
 def config_entries(sc: dict, iso: str) -> list[dict]:
     """Ledger entries computed from the bundle's scenario_config."""
     out = []
@@ -286,7 +315,26 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
         )
         if sc.get(k) and _coal_sigmoid_resolves(sc, iso, k)
     ]
-    if sigmoids:
+    # xiso-7 (rule 21 [R-DOF] ledger integrity, the UNDER-count half — the mirror
+    # of the caiso-236 over-count fix above). The list comprehension enumerates the
+    # five `coal_*_passthrough_sigmoid` TOGGLES, but the tiered PRB follower tier
+    # has no toggle of its own (see `_prb_follower_engaged`): armed by the
+    # conjunction with `coal_prb_passthrough_tiered`, it resolves a SECOND
+    # four-parameter set for the low-must-run PRB cyclers that
+    # `n_scalars = 4 * len(sigmoids)` counted nowhere. An over-count is the
+    # conservative direction — it claims more fitted surface than exists; an
+    # UNDER-count states fewer free parameters than the solve consumes, which is
+    # the disclosure failure rule 21 exists to prevent, so it is counted here.
+    # `tiers` (not `sigmoids`) also gates the row's emission: the follower set can
+    # resolve for an ISO whose BASELOAD prb pair does not, in which case the tier
+    # is live and is the row's only engaged parameter set.
+    # Record: results/calibration/FINDING-xiso7-prb-follower-dof-undercount-2026-09-02.md
+    tiers = sigmoids + (
+        ["coal_prb_passthrough_tiered (prb_follower tier)"]
+        if _prb_follower_engaged(sc, iso)
+        else []
+    )
+    if tiers:
         if iso.upper() == "MISO":
             # MISO's COAL_SIGMOID_DEFAULTS were re-derived 2026-07-09 from the
             # #1803 EIA Annual Coal Report region f.o.b.-mine price + BLS PPI
@@ -303,11 +351,11 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 _entry(
                     "COAL_SIGMOID_DEFAULTS[MISO]",
                     "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via "
-                    + ", ".join(sigmoids)
+                    + ", ".join(tiers)
                     + ")",
                     "measured-physical",
                     iso,
-                    n_scalars=4 * len(sigmoids),
+                    n_scalars=4 * len(tiers),
                     source="re-derived from #1803 region f.o.b./PPI by "
                     "scripts/data/derive_coal_sigmoid.py (frozen; provenance "
                     "data/raw/_processed-legacy/coal_sigmoid_params.csv; freeze "
@@ -321,11 +369,11 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 _entry(
                     "COAL_SIGMOID_DEFAULTS[" + iso + "]",
                     "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via "
-                    + ", ".join(sigmoids)
+                    + ", ".join(tiers)
                     + ")",
                     "residual",
                     iso,
-                    n_scalars=4 * len(sigmoids),
+                    n_scalars=4 * len(tiers),
                     source="gas-keyed coal passthrough sigmoids — the largest fitted "
                     "surface (audit C-1); owner-sanctioned under rule #1",
                     root_cause="weakly identified: each asymptote is pinned by a "
