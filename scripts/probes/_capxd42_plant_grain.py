@@ -157,13 +157,17 @@ def main() -> int:
         rows = []
         for s in sched:
             eff_v = effective_year(s["vintage_exit_year"], s["vintage_exit_month"])
-            eff = effective_year(s["exit_year"], s["exit_month"]) if s["exit_year"] else None
+            eff = (
+                None
+                if s["disposition"] in ("cancelled", "reversed") or not s["exit_year"]
+                else effective_year(s["exit_year"], s["exit_month"])
+            )
             fcv = s.get("first_change_vintage")
             knowable = (fcv is not None and fcv + 1 <= eff_v)
             rows.append({**s, "effective_vintage": eff_v, "effective_verified": eff, "knowable_before_vintage_effective_year": knowable if s["disposition"] in ("deferred", "cancelled") else None})
         df = pd.DataFrame(rows)
         out["schedule_dispositions"] = df["disposition"].value_counts().to_dict()
-        cls = df[(df["effective_vintage"] <= 2025) & df["disposition"].isin(["deferred", "cancelled"])].copy()
+        cls = df[(df["effective_vintage"] <= 2025) & df["disposition"].isin(["deferred", "cancelled", "reversed"])].copy()
         cls = cls[(cls["effective_verified"].isna()) | (cls["effective_verified"] > 2025)]
         out["deferral_class"] = cls.sort_values("mw", ascending=False).to_dict(orient="records")
         print(f"\n== deferral class (vintage-effective <=2025, verified out of window or withdrawn): {len(cls)} rows, {cls['mw'].sum():.1f} MW; knowable-in-time {cls['knowable_before_vintage_effective_year'].sum()} rows / {cls[cls['knowable_before_vintage_effective_year']==True]['mw'].sum():.1f} MW ==")

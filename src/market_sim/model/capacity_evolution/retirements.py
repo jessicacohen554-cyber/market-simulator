@@ -489,7 +489,11 @@ def apply_confirmed_exits(
       ``(binned_mw − mw_due_now) / binned_mw`` — pmax/pmin and the MW-valued
       tranche floors scale proportionally, dropping a tranche when its
       remaining MW ≤ ε. The residual heat-rate composition shift (the exiting
-      unit is usually the worst) is accepted second-order error. Because each
+      unit is usually the worst) is accepted second-order error. A row that
+      carries a ``fuel_type`` (the capx D42 announced fossil channel) derates
+      only the plant's binned generators of THAT fuel when it has any — the
+      cross-fuel bleed at a mixed-fuel plant is a composition error, not a
+      second-order one; fuel-less rows keep the plant-wide derate. Because each
       row's schedule legs are each selected exactly once and remove absolute
       MW (never re-summed against an already-shrunk denominator), a plant
       with multiple rows landing in different years derates correctly year
@@ -541,47 +545,73 @@ def apply_confirmed_exits(
     if not current and not prior and not completion:
         return list(fleet)
 
-    # Per-plant MW due for removal THIS year (the derate branch's numerator),
-    # the registry MW behind it (warning + over-subscription basis,
-    # current/prior rows only), the completion dues (kept separate — they are
-    # never capped, see below), and the unit-grain generator IDs dropping this
-    # year.
-    remove_mw_by_plant: dict[int, float] = {}
-    raw_mw_by_plant: dict[int, float] = {}
-    completion_mw_by_plant: dict[int, float] = {}
+    # Derate SCOPE (capx D42, the fossil announced-date channel): a row that
+    # carries a ``fuel_type`` derates ONLY the plant's binned generators of
+    # that fuel when the plant has any — a dated coal unit at a mixed-fuel
+    # plant (Karn coal + gas steam, Schahfer coal + CTs) must not bleed its
+    # MW onto the plant's gas bins, which is a cross-fuel COMPOSITION error,
+    # not the accepted second-order heat-rate shift. A row without a fuel
+    # (the confirmed registry's ``ConfirmedExit``) or whose fuel has no
+    # binned generator at the plant keeps the plant-wide derate, so every
+    # pre-D42 caller is byte-identical (the D42 plant-wide probe leg
+    # measured the artifact at 0.8 GW of gas_ct/gas_st false positives).
+    fuels_by_plant: dict[int, set[str]] = {}
+    for g in fleet:
+        if _is_confirmed_binned(g):
+            fuels_by_plant.setdefault(int(g.plant_code), set()).add(g.fuel_type)
+
+    def _scope(e: object) -> tuple[int, str | None]:
+        pc = int(e.plant_id)
+        f = getattr(e, "fuel_type", None)
+        if f is not None and str(f) in fuels_by_plant.get(pc, set()):
+            return (pc, str(f))
+        return (pc, None)
+
+    # Per (plant, scope) MW due for removal THIS year (the derate branch's
+    # numerator), the registry MW behind it (warning + over-subscription
+    # basis, current/prior rows only), the completion dues (kept separate —
+    # they are never capped, see below), and the unit-grain generator IDs
+    # dropping this year.
+    remove_mw_by_key: dict[tuple[int, str | None], float] = {}
+    raw_mw_by_key: dict[tuple[int, str | None], float] = {}
+    completion_mw_by_key: dict[tuple[int, str | None], float] = {}
     exit_gids_by_plant: dict[int, set[str]] = {}
     for e in current:
         mw = e.mw or 0.0
-        raw_mw_by_plant[e.plant_id] = raw_mw_by_plant.get(e.plant_id, 0.0) + mw
+        key = _scope(e)
+        raw_mw_by_key[key] = raw_mw_by_key.get(key, 0.0) + mw
         if e.exit_month is not None and e.exit_month <= 6:
             # Annual-average leg: the unit ran exit_month months this year.
             due = mw * (12 - e.exit_month) / 12.0
         else:
             due = mw
-        remove_mw_by_plant[e.plant_id] = remove_mw_by_plant.get(e.plant_id, 0.0) + due
+        remove_mw_by_key[key] = remove_mw_by_key.get(key, 0.0) + due
         exit_gids_by_plant.setdefault(e.plant_id, set()).add(str(e.generator_id))
     for e in prior:
         mw = e.mw or 0.0
-        raw_mw_by_plant[e.plant_id] = raw_mw_by_plant.get(e.plant_id, 0.0) + mw
-        remove_mw_by_plant[e.plant_id] = remove_mw_by_plant.get(e.plant_id, 0.0) + mw
+        key = _scope(e)
+        raw_mw_by_key[key] = raw_mw_by_key.get(key, 0.0) + mw
+        remove_mw_by_key[key] = remove_mw_by_key.get(key, 0.0) + mw
         exit_gids_by_plant.setdefault(e.plant_id, set()).add(str(e.generator_id))
     for e in completion:
         # No gid entry: the unit-grain drop happened at the effective year.
         due = (e.mw or 0.0) * e.exit_month / 12.0
-        completion_mw_by_plant[e.plant_id] = (
-            completion_mw_by_plant.get(e.plant_id, 0.0) + due
-        )
+        key = _scope(e)
+        completion_mw_by_key[key] = completion_mw_by_key.get(key, 0.0) + due
 
-    exit_plants = (
-        set(remove_mw_by_plant) | set(completion_mw_by_plant) | set(exit_gids_by_plant)
-    )
+    exit_keys = set(remove_mw_by_key) | set(completion_mw_by_key)
+    exit_plants = {k[0] for k in exit_keys} | set(exit_gids_by_plant)
 
-    # Per exit-plant total binned MW (the derate denominator), computed once.
-    binned_mw_by_plant: dict[int, float] = {}
+    # Per (plant, scope) total binned MW (the derate denominator), computed
+    # once: the plant-wide key sums every binned generator of the plant, a
+    # fuel-scoped key only those of that fuel.
+    binned_mw_by_key: dict[tuple[int, str | None], float] = {}
     for g in fleet:
         pc = int(g.plant_code)
         if pc in exit_plants and _is_confirmed_binned(g):
-            binned_mw_by_plant[pc] = binned_mw_by_plant.get(pc, 0.0) + g.pmax_mw
+            for key in ((pc, None), (pc, g.fuel_type)):
+                if key in exit_keys:
+                    binned_mw_by_key[key] = binned_mw_by_key.get(key, 0.0) + g.pmax_mw
 
     # Over-subscription cap: when the registry's exit MW exceeds the plant's
     # binned fleet MW (the fleet under-represents the plant — NEISO Merrimack
@@ -593,12 +623,12 @@ def apply_confirmed_exits(
     # are added AFTER the cap, uncapped: next year the raw m/12 × mw due
     # meets the already-averaged remainder, the factor floors at 0, and the
     # plant correctly finishes at max(0, binned − mw).
-    for pc, raw in raw_mw_by_plant.items():
-        binned = binned_mw_by_plant.get(pc, 0.0)
+    for key, raw in raw_mw_by_key.items():
+        binned = binned_mw_by_key.get(key, 0.0)
         if raw > binned > 0.0:
-            remove_mw_by_plant[pc] *= binned / raw
-    for pc, due in completion_mw_by_plant.items():
-        remove_mw_by_plant[pc] = remove_mw_by_plant.get(pc, 0.0) + due
+            remove_mw_by_key[key] *= binned / raw
+    for key, due in completion_mw_by_key.items():
+        remove_mw_by_key[key] = remove_mw_by_key.get(key, 0.0) + due
 
     kept: list[Generator] = []
     for g in fleet:
@@ -607,22 +637,31 @@ def apply_confirmed_exits(
             kept.append(g)
             continue
         if _is_confirmed_binned(g):
-            binned_mw = binned_mw_by_plant.get(pc, 0.0)
-            remove_mw = remove_mw_by_plant.get(pc, 0.0)
-            if binned_mw <= 0.0 or remove_mw <= 0.0:
-                # No usable MW to derate against (registry left capacity_mw
-                # blank): keep the tranche rather than over-retire the plant.
-                # Warn only for a current/prior row's plant — a completion leg
-                # with no MW already warned at its effective year.
-                if pc in raw_mw_by_plant and raw_mw_by_plant[pc] <= 0.0:
-                    logger.warning(
-                        "confirmed-exit: plant %d has no capacity_mw to derate "
-                        "binned tranches; kept intact",
-                        pc,
-                    )
-                kept.append(g)
+            factor = 1.0
+            touched = False
+            for key in ((pc, None), (pc, g.fuel_type)):
+                if key not in exit_keys:
+                    continue
+                touched = True
+                binned_mw = binned_mw_by_key.get(key, 0.0)
+                remove_mw = remove_mw_by_key.get(key, 0.0)
+                if binned_mw <= 0.0 or remove_mw <= 0.0:
+                    # No usable MW to derate against (registry left
+                    # capacity_mw blank): keep the tranche rather than
+                    # over-retire the plant. Warn only for a current/prior
+                    # row's plant — a completion leg with no MW already
+                    # warned at its effective year.
+                    if key in raw_mw_by_key and raw_mw_by_key[key] <= 0.0:
+                        logger.warning(
+                            "confirmed-exit: plant %d has no capacity_mw to derate "
+                            "binned tranches; kept intact",
+                            pc,
+                        )
+                    continue
+                factor *= max(0.0, (binned_mw - remove_mw) / binned_mw)
+            if not touched:
+                kept.append(g)  # the plant's exits are unit-grain drops only
                 continue
-            factor = max(0.0, (binned_mw - remove_mw) / binned_mw)
             derated = _derate_generator(g, factor)
             if derated.pmax_mw > _CONFIRMED_EXIT_MW_EPS:
                 kept.append(derated)

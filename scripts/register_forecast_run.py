@@ -155,6 +155,10 @@ VERDICT_MAP = {
     "miso-2021-2025-realized-t1h-d42-control": "miso-t1h-d42-control",
     "miso-2021-2025-realized-t1h-d42-dates": "miso-t1h-d42-dates",
     "miso-2021-2025-realized-t1h-d42-dates-exante": "miso-t1h-d42-dates-exante",
+    # The first verified-arm solve, on the PLANT-WIDE derate (superseded by the
+    # fuel-scoped derate the same session landed; kept registered as the
+    # measurement of that composition artifact — finding §4.3).
+    "miso-2021-2025-realized-t1h-d42-dates-plantwide": "miso-t1h-d42-dates-plantwide",
     "ercot-2023-2027-crossover-ffr3a3": "ercot-2023-2027-crossover-ffr3a3-t1x",
     "pjm-2023-2027-crossover-ffr3a3": "pjm-2023-2027-crossover-ffr3a3-t1x",
     # FFR-3A-4 measured the ONE leg the FFR-3A battery never got: MISO T1-X,
