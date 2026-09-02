@@ -252,7 +252,9 @@ ARCHITECTURE"*. No out-of-training year was solved, scored or registered.
 ## 6. Deliverables
 
 * `results/regression-goldens/perfb-stage0/manifest.json` — MISO entry
-  (commit `ecefdce6`), pushed over `git push` (HTTP/1.1, lowSpeedLimit 1000 /
+  (commit `98050834`, after a rebase onto `f45fb607` so the file-integrity
+  guard's two-dot diff against main's moving tip sees only this PR's two files;
+  see §7 item 6), pushed over `git push` (HTTP/1.1, lowSpeedLimit 1000 /
   lowSpeedTime 20) and **blob-verified** against the remote: local
   `git hash-object` and the fetched remote blob both `4e2ff5a1…`, 752 lines
   (rule 27 `[R-PUSH]`).
@@ -294,3 +296,15 @@ ARCHITECTURE"*. No out-of-training year was solved, scored or registered.
 5. **Stage-0 is now fully current.** PERF-B's byte-gated cross-ISO merges have
    their MISO "before" set; the next PERF-B MISO gate re-solve counts against
    rule 12's two-concurrent-lane cap.
+6. **The `shrink-guard` check diffs `base.sha..head.sha` two-dot, so a PR whose
+   branch predates main's tip reads main's newer additions as DELETIONS.** First
+   run on this PR: *"core file DELETED (was 504 lines)"* — the 504-line
+   `scripts/probes/nyiso175b_tranche_attribution_repair.py` that main added
+   after `0a3d22c7`, which this branch (based there) did not carry. The guard
+   scanned 8/8 "core paths", all of them main's own post-base commits seen
+   backwards. Resolved by rebasing onto `f45fb607` (CLAUDE.md Git & Pushing §1
+   convention on a branch this session created); the two committed blobs are
+   byte-identical before and after. A `base...head` (merge-base) diff in the
+   workflow would remove the false positive for every PR that outlives a main
+   push — an infrastructure change, not made here (no workflow edits in this
+   lane).
