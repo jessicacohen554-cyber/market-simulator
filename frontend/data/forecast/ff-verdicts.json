@@ -3905,8 +3905,8 @@
   "rubric_version": "1.0",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "7726d91e98b4",
-   "scored_at_date": "2026-09-01T22:07:53Z",
+   "scored_at_sha": "cba50e46aa70",
+   "scored_at_date": "2026-09-02T02:09:15Z",
    "cache_epoch": "706e7ba8e6582d42"
   },
   "tier": "t3",
@@ -4027,7 +4027,7 @@
      {
       "row": "battery gate rows",
       "status": "CAVEAT",
-      "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a', 'T1.6/T1.6b']",
+      "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a (all-constant series [1.0, 1.0])', 'T1.6/T1.6b (all-constant series [1.0, 1.0])']",
       "gating": true
      },
      {
@@ -4095,7 +4095,7 @@
     ]
    }
   },
-  "session_note": "T3-NEISO-GOLDEN-2 (owner ruling Q25, 2026-09-01): the second \u00a72.1b campaign \u2014 the ARMED-posture golden (storage_entry_availability_gate/cost_normalized_rank both true, cache key 706e7ba8e6582d42, solved at basis 5083e29e). PRESERVE-THEN-OVERWRITE: the prior live record (the D26 re-score of the pre-R-A golden) is preserved byte-equal at neiso-t3-prera-2026-08-31; its bundle is preserved at results/ff-t3-neiso-golden/bau-prera-2026-08-31/ with the posture-epoch caveat intact \u2014 it remains the pre-R-A record of note. Q13's/Q25's this-campaign-only scope: a third campaign needs a new owner act."
+  "session_note": "T3-NEISO-GOLDEN-2 (owner ruling Q25, 2026-09-01): the second \u00a72.1b campaign \u2014 the ARMED-posture golden (storage_entry_availability_gate/cost_normalized_rank both true, cache key 706e7ba8e6582d42, solved at basis 5083e29e). PRESERVE-THEN-OVERWRITE: the prior live record (the D26 re-score of the pre-R-A golden) is preserved byte-equal at neiso-t3-prera-2026-08-31; its bundle is preserved at results/ff-t3-neiso-golden/bau-prera-2026-08-31/ with the posture-epoch caveat intact \u2014 it remains the pre-R-A record of note. Q13's/Q25's this-campaign-only scope: a third campaign needs a new owner act. \u00b7 T16-A RE-SCORE (owner ruling Q27, 2026-09-02): ARTIFACT-ONLY. T1.6's ladder was re-pointed from the deleted renewable_buildout_pace to entry_rate_limits and its two rungs solved; the FC-6 battery row's REASON changes from the out-of-service SKIP to a MEASURED all-constant series [1.0, 1.0], and NOTHING ELSE MOVES \u2014 a whole-document diff against a control re-score of the committed record shows exactly one differing leaf (categories.FC-6.rows[0].detail). Status CAVEAT, FC-6 FAIL (on paired P2) and determination HOLD are unchanged, so no preserved key is minted. See docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md."
  },
  "neiso-t3-pre-fc6": {
   "categories": {
