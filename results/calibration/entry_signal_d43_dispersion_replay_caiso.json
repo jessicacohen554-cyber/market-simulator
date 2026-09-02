@@ -1,0 +1,1262 @@
+{
+ "probe": "entry_signal_d43_dispersion_replay",
+ "finding": "docs/handoffs/FINDING-capx-d43-caiso-dispersion-2026-09-02.md",
+ "object": "docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md \u00a70/\u00a73.1/\u00a77.2",
+ "iso": "CAISO",
+ "mode": "basis",
+ "bundle": "results/hindcast/caiso-2021-2025-realized-dumps",
+ "duals_bundle": "results/calibration/caiso231_b1_ungrounded",
+ "bundle_cache_key_reproduced_at_head": true,
+ "run_config_fields_dropped_since_solve": [
+  "caiso_bidir_intertie",
+  "renewable_buildout_pace"
+ ],
+ "zone_names": [
+  "NP15",
+  "ZP26",
+  "LA_BASIN",
+  "SDGE",
+  "SP15_rest"
+ ],
+ "zones_excluded_from_all_arms": [
+  "WECC_import"
+ ],
+ "cost_state": "entry seed (cumulative_gw=None), identical across arms",
+ "steps": {
+  "2024": {
+   "prior_solve": 2023,
+   "driver_year": 2024,
+   "gas_price_per_mmbtu": 3.39,
+   "carbon_price": 28.06,
+   "storage_power_entering_mw": 2022.4,
+   "duals_source": "keeper sidecar (D39 \u00a72 stand-in)",
+   "headroom_source": "reconstructed: seam load_demand(prior) - (load_demand(step) - dump net_load_mw), against the dump's top of stack",
+   "headroom_reconstruction_gate": {
+    "implied_prior_vre_min_mw": 91.1,
+    "implied_prior_vre_mean_mw": 5815.1,
+    "corr_with_dump_vre_potential": 1.0,
+    "stack_reprices_own_net_load": true,
+    "pass": true
+   },
+   "headroom_rank": {
+    "mean_shift_vs_0.5": -0.0224,
+    "frac_next_tighter_than_all_current": 0.0021,
+    "frac_next_looser_than_all_current": 0.0005,
+    "net_load_next_mean_mw": 19695.3,
+    "net_load_curr_mean_mw": 19091.5,
+    "top_of_stack_mw": 55449.8
+   },
+   "arms": {
+    "shipped_signal": {
+     "shape": {
+      "mean": 39.63,
+      "daily_top4_bot4_spread_system": 12.71,
+      "zonal_mean_range": 0.0,
+      "hourly_cross_zone_spread_mean": 0.0
+     },
+     "h_ge_100_system": 0,
+     "neg_hour_frac_system": 0.0,
+     "thermal_r_none": {
+      "gas_cc": {
+       "var_cost_per_mwh": 33.459,
+       "energy_margin_per_mw_yr": 64440.8,
+       "fixed_cost_per_mw_yr": 147155.5,
+       "margin_per_mw_yr": -82714.7,
+       "sign": "-"
+      },
+      "gas_ct": {
+       "var_cost_per_mwh": 48.321,
+       "energy_margin_per_mw_yr": 1102.5,
+       "fixed_cost_per_mw_yr": 128111.6,
+       "margin_per_mw_yr": -127009.0,
+       "sign": "-"
+      }
+     },
+     "vre": {
+      "wind": {
+       "flat_signal_mean": 39.63,
+       "capture_price_system": 39.21,
+       "capture_ratio_system": 0.9894,
+       "build_zone": "ZP26",
+       "capture_price_zone_row": 39.21,
+       "capture_ratio_zone_row": 0.9894,
+       "lcoe_per_mwh": 31.82,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 7.39,
+       "sign": "+"
+      },
+      "solar": {
+       "flat_signal_mean": 39.63,
+       "capture_price_system": 35.67,
+       "capture_ratio_system": 0.9002,
+       "build_zone": "SP15_rest",
+       "capture_price_zone_row": 35.67,
+       "capture_ratio_zone_row": 0.9002,
+       "lcoe_per_mwh": 41.86,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": -6.18,
+       "sign": "-"
+      }
+     },
+     "storage": {
+      "techs": {
+       "li_ion_4hr": {
+        "arbitrage_per_mw_yr": 2890.1,
+        "capacity_value_per_mw_yr": 46566.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 148485.5,
+        "margin_per_mw_yr": -99028.6,
+        "sign": "-"
+       },
+       "li_ion_8hr": {
+        "arbitrage_per_mw_yr": 2485.4,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 260858.9,
+        "margin_per_mw_yr": -190851.8,
+        "sign": "-"
+       },
+       "iron_air": {
+        "arbitrage_per_mw_yr": 0.0,
+        "capacity_value_per_mw_yr": 77611.2,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 138859.3,
+        "margin_per_mw_yr": -61248.1,
+        "sign": "-"
+       },
+       "li_ion_12hr": {
+        "arbitrage_per_mw_yr": 123.3,
+        "capacity_value_per_mw_yr": 75282.8,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 373138.3,
+        "margin_per_mw_yr": -297732.2,
+        "sign": "-"
+       },
+       "flow_battery": {
+        "arbitrage_per_mw_yr": 5100.6,
+        "capacity_value_per_mw_yr": 72178.4,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 294319.3,
+        "margin_per_mw_yr": -217040.3,
+        "sign": "-"
+       },
+       "compressed_air": {
+        "arbitrage_per_mw_yr": 5682.6,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 170460.0,
+        "margin_per_mw_yr": -97255.7,
+        "sign": "-"
+       }
+      },
+      "ranking_by_margin": [
+       "iron_air",
+       "compressed_air",
+       "li_ion_4hr",
+       "li_ion_8hr",
+       "flow_battery",
+       "li_ion_12hr"
+      ],
+      "profitable": [],
+      "budget_mw": 3000.0,
+      "allocator_result": []
+     }
+    },
+    "dual_prior_solve": {
+     "shape": {
+      "mean": 54.45,
+      "daily_top4_bot4_spread_system": 34.98,
+      "zonal_mean_range": 1.04,
+      "hourly_cross_zone_spread_mean": 3.07
+     },
+     "h_ge_100_system": 699,
+     "neg_hour_frac_system": 0.0403,
+     "thermal_r_none": {
+      "gas_cc": {
+       "var_cost_per_mwh": 33.459,
+       "energy_margin_per_mw_yr": 211792.1,
+       "fixed_cost_per_mw_yr": 147155.5,
+       "margin_per_mw_yr": 64636.6,
+       "sign": "+"
+      },
+      "gas_ct": {
+       "var_cost_per_mwh": 48.321,
+       "energy_margin_per_mw_yr": 115379.1,
+       "fixed_cost_per_mw_yr": 128111.6,
+       "margin_per_mw_yr": -12732.4,
+       "sign": "-"
+      }
+     },
+     "vre": {
+      "wind": {
+       "flat_signal_mean": 54.45,
+       "capture_price_system": 52.67,
+       "capture_ratio_system": 0.9674,
+       "build_zone": "ZP26",
+       "capture_price_zone_row": 51.94,
+       "capture_ratio_zone_row": 0.954,
+       "lcoe_per_mwh": 31.82,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 20.12,
+       "sign": "+"
+      },
+      "solar": {
+       "flat_signal_mean": 54.45,
+       "capture_price_system": 42.92,
+       "capture_ratio_system": 0.7883,
+       "build_zone": "SP15_rest",
+       "capture_price_zone_row": 43.68,
+       "capture_ratio_zone_row": 0.8022,
+       "lcoe_per_mwh": 41.86,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 1.82,
+       "sign": "+"
+      }
+     },
+     "storage": {
+      "techs": {
+       "li_ion_4hr": {
+        "arbitrage_per_mw_yr": 27562.8,
+        "capacity_value_per_mw_yr": 46566.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 148485.5,
+        "margin_per_mw_yr": -74355.9,
+        "sign": "-"
+       },
+       "li_ion_8hr": {
+        "arbitrage_per_mw_yr": 35109.4,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 260858.9,
+        "margin_per_mw_yr": -158227.8,
+        "sign": "-"
+       },
+       "iron_air": {
+        "arbitrage_per_mw_yr": 29606.0,
+        "capacity_value_per_mw_yr": 77611.2,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 138859.3,
+        "margin_per_mw_yr": -31642.1,
+        "sign": "-"
+       },
+       "li_ion_12hr": {
+        "arbitrage_per_mw_yr": 17599.3,
+        "capacity_value_per_mw_yr": 75282.8,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 373138.3,
+        "margin_per_mw_yr": -280256.2,
+        "sign": "-"
+       },
+       "flow_battery": {
+        "arbitrage_per_mw_yr": 44944.8,
+        "capacity_value_per_mw_yr": 72178.4,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 294319.3,
+        "margin_per_mw_yr": -177196.2,
+        "sign": "-"
+       },
+       "compressed_air": {
+        "arbitrage_per_mw_yr": 47460.1,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 170460.0,
+        "margin_per_mw_yr": -55478.2,
+        "sign": "-"
+       }
+      },
+      "ranking_by_margin": [
+       "iron_air",
+       "compressed_air",
+       "li_ion_4hr",
+       "li_ion_8hr",
+       "flow_battery",
+       "li_ion_12hr"
+      ],
+      "profitable": [],
+      "budget_mw": 3000.0,
+      "allocator_result": []
+     }
+    },
+    "fwd_expectation_prior_solve": {
+     "shape": {
+      "mean": 55.41,
+      "daily_top4_bot4_spread_system": 35.75,
+      "zonal_mean_range": 1.04,
+      "hourly_cross_zone_spread_mean": 3.07
+     },
+     "h_ge_100_system": 681,
+     "neg_hour_frac_system": 0.0273,
+     "thermal_r_none": {
+      "gas_cc": {
+       "var_cost_per_mwh": 33.459,
+       "energy_margin_per_mw_yr": 215734.9,
+       "fixed_cost_per_mw_yr": 147155.5,
+       "margin_per_mw_yr": 68579.4,
+       "sign": "+"
+      },
+      "gas_ct": {
+       "var_cost_per_mwh": 48.321,
+       "energy_margin_per_mw_yr": 116206.8,
+       "fixed_cost_per_mw_yr": 128111.6,
+       "margin_per_mw_yr": -11904.7,
+       "sign": "-"
+      }
+     },
+     "vre": {
+      "wind": {
+       "flat_signal_mean": 55.41,
+       "capture_price_system": 53.3,
+       "capture_ratio_system": 0.9619,
+       "build_zone": "ZP26",
+       "capture_price_zone_row": 52.57,
+       "capture_ratio_zone_row": 0.9488,
+       "lcoe_per_mwh": 31.82,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 20.75,
+       "sign": "+"
+      },
+      "solar": {
+       "flat_signal_mean": 55.41,
+       "capture_price_system": 45.31,
+       "capture_ratio_system": 0.8177,
+       "build_zone": "SP15_rest",
+       "capture_price_zone_row": 46.06,
+       "capture_ratio_zone_row": 0.8314,
+       "lcoe_per_mwh": 41.86,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 4.21,
+       "sign": "+"
+      }
+     },
+     "storage": {
+      "techs": {
+       "li_ion_4hr": {
+        "arbitrage_per_mw_yr": 27067.4,
+        "capacity_value_per_mw_yr": 46566.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 148485.5,
+        "margin_per_mw_yr": -74851.4,
+        "sign": "-"
+       },
+       "li_ion_8hr": {
+        "arbitrage_per_mw_yr": 30234.3,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 260858.9,
+        "margin_per_mw_yr": -163102.9,
+        "sign": "-"
+       },
+       "iron_air": {
+        "arbitrage_per_mw_yr": 23511.7,
+        "capacity_value_per_mw_yr": 77611.2,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 138859.3,
+        "margin_per_mw_yr": -37736.4,
+        "sign": "-"
+       },
+       "li_ion_12hr": {
+        "arbitrage_per_mw_yr": 11867.0,
+        "capacity_value_per_mw_yr": 75282.8,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 373138.3,
+        "margin_per_mw_yr": -285988.4,
+        "sign": "-"
+       },
+       "flow_battery": {
+        "arbitrage_per_mw_yr": 38934.5,
+        "capacity_value_per_mw_yr": 72178.4,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 294319.3,
+        "margin_per_mw_yr": -183206.4,
+        "sign": "-"
+       },
+       "compressed_air": {
+        "arbitrage_per_mw_yr": 39574.8,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 170460.0,
+        "margin_per_mw_yr": -63363.5,
+        "sign": "-"
+       }
+      },
+      "ranking_by_margin": [
+       "iron_air",
+       "compressed_air",
+       "li_ion_4hr",
+       "li_ion_8hr",
+       "flow_battery",
+       "li_ion_12hr"
+      ],
+      "profitable": [],
+      "budget_mw": 3000.0,
+      "allocator_result": []
+     }
+    },
+    "dispersion_prior_solve": {
+     "shape": {
+      "mean": 58.79,
+      "daily_top4_bot4_spread_system": 61.91,
+      "zonal_mean_range": 1.1,
+      "hourly_cross_zone_spread_mean": 2.41
+     },
+     "h_ge_100_system": 990,
+     "neg_hour_frac_system": 0.0331,
+     "thermal_r_none": {
+      "gas_cc": {
+       "var_cost_per_mwh": 33.459,
+       "energy_margin_per_mw_yr": 242522.6,
+       "fixed_cost_per_mw_yr": 147155.5,
+       "margin_per_mw_yr": 95367.1,
+       "sign": "+"
+      },
+      "gas_ct": {
+       "var_cost_per_mwh": 48.321,
+       "energy_margin_per_mw_yr": 142641.1,
+       "fixed_cost_per_mw_yr": 128111.6,
+       "margin_per_mw_yr": 14529.5,
+       "sign": "+"
+      }
+     },
+     "vre": {
+      "wind": {
+       "flat_signal_mean": 58.79,
+       "capture_price_system": 56.88,
+       "capture_ratio_system": 0.9676,
+       "build_zone": "ZP26",
+       "capture_price_zone_row": 56.18,
+       "capture_ratio_zone_row": 0.9557,
+       "lcoe_per_mwh": 31.82,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 24.36,
+       "sign": "+"
+      },
+      "solar": {
+       "flat_signal_mean": 58.79,
+       "capture_price_system": 44.27,
+       "capture_ratio_system": 0.753,
+       "build_zone": "SP15_rest",
+       "capture_price_zone_row": 44.76,
+       "capture_ratio_zone_row": 0.7614,
+       "lcoe_per_mwh": 41.86,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 2.9,
+       "sign": "+"
+      }
+     },
+     "storage": {
+      "techs": {
+       "li_ion_4hr": {
+        "arbitrage_per_mw_yr": 55808.3,
+        "capacity_value_per_mw_yr": 46566.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 148485.5,
+        "margin_per_mw_yr": -46110.5,
+        "sign": "-"
+       },
+       "li_ion_8hr": {
+        "arbitrage_per_mw_yr": 65861.9,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 260858.9,
+        "margin_per_mw_yr": -127475.3,
+        "sign": "-"
+       },
+       "iron_air": {
+        "arbitrage_per_mw_yr": 33791.0,
+        "capacity_value_per_mw_yr": 77611.2,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 138859.3,
+        "margin_per_mw_yr": -27457.1,
+        "sign": "-"
+       },
+       "li_ion_12hr": {
+        "arbitrage_per_mw_yr": 31158.7,
+        "capacity_value_per_mw_yr": 75282.8,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 373138.3,
+        "margin_per_mw_yr": -266696.7,
+        "sign": "-"
+       },
+       "flow_battery": {
+        "arbitrage_per_mw_yr": 77491.4,
+        "capacity_value_per_mw_yr": 72178.4,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 294319.3,
+        "margin_per_mw_yr": -144649.5,
+        "sign": "-"
+       },
+       "compressed_air": {
+        "arbitrage_per_mw_yr": 62946.3,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 170460.0,
+        "margin_per_mw_yr": -39992.0,
+        "sign": "-"
+       }
+      },
+      "ranking_by_margin": [
+       "iron_air",
+       "compressed_air",
+       "li_ion_4hr",
+       "li_ion_8hr",
+       "flow_battery",
+       "li_ion_12hr"
+      ],
+      "profitable": [],
+      "budget_mw": 3000.0,
+      "allocator_result": []
+     }
+    }
+   },
+   "construction_gates": {
+    "unchanged_headroom_reproduces_each_zone_multiset": true,
+    "tied_headroom_hours_current_year": 2,
+    "multiset_max_abs_deviation_usd_mwh": 0.01,
+    "entering_signal_is_within_realized_range_per_zone": true
+   },
+   "closure": {
+    "realized_source": "keeper sidecar, entering year (D39 \u00a72 stand-in)",
+    "realized": {
+     "shape": {
+      "mean": 36.88,
+      "daily_top4_bot4_spread_system": 29.08,
+      "zonal_mean_range": 1.29,
+      "hourly_cross_zone_spread_mean": 2.97
+     },
+     "h_ge_100_system": 85,
+     "energy_leg_per_mw_yr": {
+      "gas_cc": 75631.0,
+      "gas_ct": 18816.7
+     },
+     "storage_arbitrage_per_mw_yr": {
+      "li_ion_4hr": 22363.1,
+      "iron_air": 40462.6
+     },
+     "solar_capture_ratio_zone_row": 0.7684
+    },
+    "by_arm": {
+     "shipped_signal": {
+      "energy_leg_ratio": {
+       "gas_cc": 0.852,
+       "gas_ct": 0.059
+      },
+      "energy_leg_per_mw_yr": {
+       "gas_cc": 64440.8,
+       "gas_ct": 1102.5
+      },
+      "storage_arbitrage_ratio": {
+       "li_ion_4hr": 0.129,
+       "iron_air": 0.0
+      },
+      "solar_capture_ratio": 0.9002,
+      "daily_top4_bot4_spread": 12.71,
+      "h_ge_100_system": 0,
+      "margin_signs": {
+       "gas_cc": "-",
+       "gas_ct": "-",
+       "wind": "+",
+       "solar": "-",
+       "storage_profitable": []
+      }
+     },
+     "dual_prior_solve": {
+      "energy_leg_ratio": {
+       "gas_cc": 2.8,
+       "gas_ct": 6.132
+      },
+      "energy_leg_per_mw_yr": {
+       "gas_cc": 211792.1,
+       "gas_ct": 115379.1
+      },
+      "storage_arbitrage_ratio": {
+       "li_ion_4hr": 1.233,
+       "iron_air": 0.732
+      },
+      "solar_capture_ratio": 0.8022,
+      "daily_top4_bot4_spread": 34.98,
+      "h_ge_100_system": 699,
+      "margin_signs": {
+       "gas_cc": "+",
+       "gas_ct": "-",
+       "wind": "+",
+       "solar": "+",
+       "storage_profitable": []
+      }
+     },
+     "fwd_expectation_prior_solve": {
+      "energy_leg_ratio": {
+       "gas_cc": 2.852,
+       "gas_ct": 6.176
+      },
+      "energy_leg_per_mw_yr": {
+       "gas_cc": 215734.9,
+       "gas_ct": 116206.8
+      },
+      "storage_arbitrage_ratio": {
+       "li_ion_4hr": 1.21,
+       "iron_air": 0.581
+      },
+      "solar_capture_ratio": 0.8314,
+      "daily_top4_bot4_spread": 35.75,
+      "h_ge_100_system": 681,
+      "margin_signs": {
+       "gas_cc": "+",
+       "gas_ct": "-",
+       "wind": "+",
+       "solar": "+",
+       "storage_profitable": []
+      }
+     },
+     "dispersion_prior_solve": {
+      "energy_leg_ratio": {
+       "gas_cc": 3.207,
+       "gas_ct": 7.581
+      },
+      "energy_leg_per_mw_yr": {
+       "gas_cc": 242522.6,
+       "gas_ct": 142641.1
+      },
+      "storage_arbitrage_ratio": {
+       "li_ion_4hr": 2.496,
+       "iron_air": 0.835
+      },
+      "solar_capture_ratio": 0.7614,
+      "daily_top4_bot4_spread": 61.91,
+      "h_ge_100_system": 990,
+      "margin_signs": {
+       "gas_cc": "+",
+       "gas_ct": "+",
+       "wind": "+",
+       "solar": "+",
+       "storage_profitable": []
+      }
+     }
+    }
+   }
+  },
+  "2025": {
+   "prior_solve": 2024,
+   "driver_year": 2025,
+   "gas_price_per_mmbtu": 4.73,
+   "carbon_price": 28.06,
+   "storage_power_entering_mw": 2022.4,
+   "duals_source": "keeper sidecar (D39 \u00a72 stand-in)",
+   "headroom_source": "reconstructed: seam load_demand(prior) - (load_demand(step) - dump net_load_mw), against the dump's top of stack",
+   "headroom_reconstruction_gate": {
+    "implied_prior_vre_min_mw": 138.4,
+    "implied_prior_vre_mean_mw": 7847.7,
+    "corr_with_dump_vre_potential": 1.0,
+    "stack_reprices_own_net_load": true,
+    "pass": true
+   },
+   "headroom_rank": {
+    "mean_shift_vs_0.5": 0.0009,
+    "frac_next_tighter_than_all_current": 0.0,
+    "frac_next_looser_than_all_current": 0.0001,
+    "net_load_next_mean_mw": 17726.7,
+    "net_load_curr_mean_mw": 17662.6,
+    "top_of_stack_mw": 57087.4
+   },
+   "arms": {
+    "shipped_signal": {
+     "shape": {
+      "mean": 35.54,
+      "daily_top4_bot4_spread_system": 14.36,
+      "zonal_mean_range": 0.0,
+      "hourly_cross_zone_spread_mean": 0.0
+     },
+     "h_ge_100_system": 0,
+     "neg_hour_frac_system": 0.0,
+     "thermal_r_none": {
+      "gas_cc": {
+       "var_cost_per_mwh": 41.901,
+       "energy_margin_per_mw_yr": 1926.5,
+       "fixed_cost_per_mw_yr": 147155.5,
+       "margin_per_mw_yr": -145229.0,
+       "sign": "-"
+      },
+      "gas_ct": {
+       "var_cost_per_mwh": 60.381,
+       "energy_margin_per_mw_yr": 0.0,
+       "fixed_cost_per_mw_yr": 128111.6,
+       "margin_per_mw_yr": -128111.6,
+       "sign": "-"
+      }
+     },
+     "vre": {
+      "wind": {
+       "flat_signal_mean": 35.54,
+       "capture_price_system": 35.11,
+       "capture_ratio_system": 0.9879,
+       "build_zone": "ZP26",
+       "capture_price_zone_row": 35.11,
+       "capture_ratio_zone_row": 0.9879,
+       "lcoe_per_mwh": 31.82,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 3.29,
+       "sign": "+"
+      },
+      "solar": {
+       "flat_signal_mean": 35.54,
+       "capture_price_system": 29.97,
+       "capture_ratio_system": 0.8433,
+       "build_zone": "SP15_rest",
+       "capture_price_zone_row": 29.97,
+       "capture_ratio_zone_row": 0.8433,
+       "lcoe_per_mwh": 41.86,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": -11.89,
+       "sign": "-"
+      }
+     },
+     "storage": {
+      "techs": {
+       "li_ion_4hr": {
+        "arbitrage_per_mw_yr": 4063.7,
+        "capacity_value_per_mw_yr": 46566.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 148485.5,
+        "margin_per_mw_yr": -97855.0,
+        "sign": "-"
+       },
+       "li_ion_8hr": {
+        "arbitrage_per_mw_yr": 5104.2,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 260858.9,
+        "margin_per_mw_yr": -188233.0,
+        "sign": "-"
+       },
+       "iron_air": {
+        "arbitrage_per_mw_yr": 1963.5,
+        "capacity_value_per_mw_yr": 77611.2,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 138859.3,
+        "margin_per_mw_yr": -59284.6,
+        "sign": "-"
+       },
+       "li_ion_12hr": {
+        "arbitrage_per_mw_yr": 568.7,
+        "capacity_value_per_mw_yr": 75282.8,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 373138.3,
+        "margin_per_mw_yr": -297286.8,
+        "sign": "-"
+       },
+       "flow_battery": {
+        "arbitrage_per_mw_yr": 10380.3,
+        "capacity_value_per_mw_yr": 72178.4,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 294319.3,
+        "margin_per_mw_yr": -211760.7,
+        "sign": "-"
+       },
+       "compressed_air": {
+        "arbitrage_per_mw_yr": 11355.7,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 170460.0,
+        "margin_per_mw_yr": -91582.6,
+        "sign": "-"
+       }
+      },
+      "ranking_by_margin": [
+       "iron_air",
+       "compressed_air",
+       "li_ion_4hr",
+       "li_ion_8hr",
+       "flow_battery",
+       "li_ion_12hr"
+      ],
+      "profitable": [],
+      "budget_mw": 3000.0,
+      "allocator_result": []
+     }
+    },
+    "dual_prior_solve": {
+     "shape": {
+      "mean": 36.88,
+      "daily_top4_bot4_spread_system": 29.08,
+      "zonal_mean_range": 1.29,
+      "hourly_cross_zone_spread_mean": 2.97
+     },
+     "h_ge_100_system": 85,
+     "neg_hour_frac_system": 0.0745,
+     "thermal_r_none": {
+      "gas_cc": {
+       "var_cost_per_mwh": 41.901,
+       "energy_margin_per_mw_yr": 33899.5,
+       "fixed_cost_per_mw_yr": 147155.5,
+       "margin_per_mw_yr": -113256.0,
+       "sign": "-"
+      },
+      "gas_ct": {
+       "var_cost_per_mwh": 60.381,
+       "energy_margin_per_mw_yr": 8666.2,
+       "fixed_cost_per_mw_yr": 128111.6,
+       "margin_per_mw_yr": -119445.3,
+       "sign": "-"
+      }
+     },
+     "vre": {
+      "wind": {
+       "flat_signal_mean": 36.88,
+       "capture_price_system": 35.37,
+       "capture_ratio_system": 0.9589,
+       "build_zone": "ZP26",
+       "capture_price_zone_row": 34.73,
+       "capture_ratio_zone_row": 0.9415,
+       "lcoe_per_mwh": 31.82,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 2.91,
+       "sign": "+"
+      },
+      "solar": {
+       "flat_signal_mean": 36.88,
+       "capture_price_system": 28.17,
+       "capture_ratio_system": 0.7637,
+       "build_zone": "SP15_rest",
+       "capture_price_zone_row": 28.36,
+       "capture_ratio_zone_row": 0.7689,
+       "lcoe_per_mwh": 41.86,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": -13.5,
+       "sign": "-"
+      }
+     },
+     "storage": {
+      "techs": {
+       "li_ion_4hr": {
+        "arbitrage_per_mw_yr": 22363.1,
+        "capacity_value_per_mw_yr": 46566.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 148485.5,
+        "margin_per_mw_yr": -79555.6,
+        "sign": "-"
+       },
+       "li_ion_8hr": {
+        "arbitrage_per_mw_yr": 32239.1,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 260858.9,
+        "margin_per_mw_yr": -161098.1,
+        "sign": "-"
+       },
+       "iron_air": {
+        "arbitrage_per_mw_yr": 40462.6,
+        "capacity_value_per_mw_yr": 77611.2,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 138859.3,
+        "margin_per_mw_yr": -20785.5,
+        "sign": "-"
+       },
+       "li_ion_12hr": {
+        "arbitrage_per_mw_yr": 17888.3,
+        "capacity_value_per_mw_yr": 75282.8,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 373138.3,
+        "margin_per_mw_yr": -279967.1,
+        "sign": "-"
+       },
+       "flow_battery": {
+        "arbitrage_per_mw_yr": 48657.0,
+        "capacity_value_per_mw_yr": 72178.4,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 294319.3,
+        "margin_per_mw_yr": -173483.9,
+        "sign": "-"
+       },
+       "compressed_air": {
+        "arbitrage_per_mw_yr": 53554.0,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 170460.0,
+        "margin_per_mw_yr": -49384.3,
+        "sign": "-"
+       }
+      },
+      "ranking_by_margin": [
+       "iron_air",
+       "compressed_air",
+       "li_ion_4hr",
+       "li_ion_8hr",
+       "flow_battery",
+       "li_ion_12hr"
+      ],
+      "profitable": [],
+      "budget_mw": 3000.0,
+      "allocator_result": []
+     }
+    },
+    "fwd_expectation_prior_solve": {
+     "shape": {
+      "mean": 37.83,
+      "daily_top4_bot4_spread_system": 29.66,
+      "zonal_mean_range": 1.29,
+      "hourly_cross_zone_spread_mean": 2.97
+     },
+     "h_ge_100_system": 85,
+     "neg_hour_frac_system": 0.0497,
+     "thermal_r_none": {
+      "gas_cc": {
+       "var_cost_per_mwh": 41.901,
+       "energy_margin_per_mw_yr": 33606.7,
+       "fixed_cost_per_mw_yr": 147155.5,
+       "margin_per_mw_yr": -113548.8,
+       "sign": "-"
+      },
+      "gas_ct": {
+       "var_cost_per_mwh": 60.381,
+       "energy_margin_per_mw_yr": 8651.2,
+       "fixed_cost_per_mw_yr": 128111.6,
+       "margin_per_mw_yr": -119460.4,
+       "sign": "-"
+      }
+     },
+     "vre": {
+      "wind": {
+       "flat_signal_mean": 37.83,
+       "capture_price_system": 36.5,
+       "capture_ratio_system": 0.9649,
+       "build_zone": "ZP26",
+       "capture_price_zone_row": 35.86,
+       "capture_ratio_zone_row": 0.948,
+       "lcoe_per_mwh": 31.82,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 4.04,
+       "sign": "+"
+      },
+      "solar": {
+       "flat_signal_mean": 37.83,
+       "capture_price_system": 30.57,
+       "capture_ratio_system": 0.8082,
+       "build_zone": "SP15_rest",
+       "capture_price_zone_row": 30.76,
+       "capture_ratio_zone_row": 0.8132,
+       "lcoe_per_mwh": 41.86,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": -11.09,
+       "sign": "-"
+      }
+     },
+     "storage": {
+      "techs": {
+       "li_ion_4hr": {
+        "arbitrage_per_mw_yr": 20900.9,
+        "capacity_value_per_mw_yr": 46566.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 148485.5,
+        "margin_per_mw_yr": -81017.9,
+        "sign": "-"
+       },
+       "li_ion_8hr": {
+        "arbitrage_per_mw_yr": 24335.8,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 260858.9,
+        "margin_per_mw_yr": -169001.4,
+        "sign": "-"
+       },
+       "iron_air": {
+        "arbitrage_per_mw_yr": 28717.4,
+        "capacity_value_per_mw_yr": 77611.2,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 138859.3,
+        "margin_per_mw_yr": -32530.7,
+        "sign": "-"
+       },
+       "li_ion_12hr": {
+        "arbitrage_per_mw_yr": 10824.7,
+        "capacity_value_per_mw_yr": 75282.8,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 373138.3,
+        "margin_per_mw_yr": -287030.8,
+        "sign": "-"
+       },
+       "flow_battery": {
+        "arbitrage_per_mw_yr": 38186.6,
+        "capacity_value_per_mw_yr": 72178.4,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 294319.3,
+        "margin_per_mw_yr": -183954.4,
+        "sign": "-"
+       },
+       "compressed_air": {
+        "arbitrage_per_mw_yr": 41464.6,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 170460.0,
+        "margin_per_mw_yr": -61473.7,
+        "sign": "-"
+       }
+      },
+      "ranking_by_margin": [
+       "iron_air",
+       "compressed_air",
+       "li_ion_4hr",
+       "li_ion_8hr",
+       "flow_battery",
+       "li_ion_12hr"
+      ],
+      "profitable": [],
+      "budget_mw": 3000.0,
+      "allocator_result": []
+     }
+    },
+    "dispersion_prior_solve": {
+     "shape": {
+      "mean": 37.48,
+      "daily_top4_bot4_spread_system": 32.02,
+      "zonal_mean_range": 1.32,
+      "hourly_cross_zone_spread_mean": 2.25
+     },
+     "h_ge_100_system": 30,
+     "neg_hour_frac_system": 0.0501,
+     "thermal_r_none": {
+      "gas_cc": {
+       "var_cost_per_mwh": 41.901,
+       "energy_margin_per_mw_yr": 25477.7,
+       "fixed_cost_per_mw_yr": 147155.5,
+       "margin_per_mw_yr": -121677.8,
+       "sign": "-"
+      },
+      "gas_ct": {
+       "var_cost_per_mwh": 60.381,
+       "energy_margin_per_mw_yr": 3358.5,
+       "fixed_cost_per_mw_yr": 128111.6,
+       "margin_per_mw_yr": -124753.1,
+       "sign": "-"
+      }
+     },
+     "vre": {
+      "wind": {
+       "flat_signal_mean": 37.48,
+       "capture_price_system": 36.55,
+       "capture_ratio_system": 0.9751,
+       "build_zone": "ZP26",
+       "capture_price_zone_row": 35.87,
+       "capture_ratio_zone_row": 0.9571,
+       "lcoe_per_mwh": 31.82,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": 4.05,
+       "sign": "+"
+      },
+      "solar": {
+       "flat_signal_mean": 37.48,
+       "capture_price_system": 26.08,
+       "capture_ratio_system": 0.6957,
+       "build_zone": "SP15_rest",
+       "capture_price_zone_row": 26.02,
+       "capture_ratio_zone_row": 0.6943,
+       "lcoe_per_mwh": 41.86,
+       "attribute_price_per_mwh": 0.0,
+       "margin_per_mwh": -15.84,
+       "sign": "-"
+      }
+     },
+     "storage": {
+      "techs": {
+       "li_ion_4hr": {
+        "arbitrage_per_mw_yr": 18249.6,
+        "capacity_value_per_mw_yr": 46566.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 148485.5,
+        "margin_per_mw_yr": -83669.2,
+        "sign": "-"
+       },
+       "li_ion_8hr": {
+        "arbitrage_per_mw_yr": 22900.6,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 260858.9,
+        "margin_per_mw_yr": -170436.6,
+        "sign": "-"
+       },
+       "iron_air": {
+        "arbitrage_per_mw_yr": 16683.8,
+        "capacity_value_per_mw_yr": 77611.2,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 138859.3,
+        "margin_per_mw_yr": -44564.3,
+        "sign": "-"
+       },
+       "li_ion_12hr": {
+        "arbitrage_per_mw_yr": 11521.7,
+        "capacity_value_per_mw_yr": 75282.8,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 373138.3,
+        "margin_per_mw_yr": -286333.7,
+        "sign": "-"
+       },
+       "flow_battery": {
+        "arbitrage_per_mw_yr": 34268.0,
+        "capacity_value_per_mw_yr": 72178.4,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 294319.3,
+        "margin_per_mw_yr": -187872.9,
+        "sign": "-"
+       },
+       "compressed_air": {
+        "arbitrage_per_mw_yr": 36562.5,
+        "capacity_value_per_mw_yr": 67521.7,
+        "as_revenue_per_mw_yr": 0.0,
+        "annual_cost_per_mw_yr": 170460.0,
+        "margin_per_mw_yr": -66375.8,
+        "sign": "-"
+       }
+      },
+      "ranking_by_margin": [
+       "iron_air",
+       "compressed_air",
+       "li_ion_4hr",
+       "li_ion_8hr",
+       "flow_battery",
+       "li_ion_12hr"
+      ],
+      "profitable": [],
+      "budget_mw": 3000.0,
+      "allocator_result": []
+     }
+    }
+   },
+   "construction_gates": {
+    "unchanged_headroom_reproduces_each_zone_multiset": true,
+    "tied_headroom_hours_current_year": 8,
+    "multiset_max_abs_deviation_usd_mwh": 0.0107,
+    "entering_signal_is_within_realized_range_per_zone": true
+   },
+   "closure": {
+    "realized_source": "keeper sidecar, entering year (D39 \u00a72 stand-in)",
+    "realized": {
+     "shape": {
+      "mean": 37.78,
+      "daily_top4_bot4_spread_system": 28.87,
+      "zonal_mean_range": 1.92,
+      "hourly_cross_zone_spread_mean": 3.91
+     },
+     "h_ge_100_system": 0,
+     "energy_leg_per_mw_yr": {
+      "gas_cc": 30596.2,
+      "gas_ct": 530.7
+     },
+     "storage_arbitrage_per_mw_yr": {
+      "li_ion_4hr": 25623.2,
+      "iron_air": 45284.0
+     },
+     "solar_capture_ratio_zone_row": 0.7935
+    },
+    "by_arm": {
+     "shipped_signal": {
+      "energy_leg_ratio": {
+       "gas_cc": 0.063,
+       "gas_ct": 0.0
+      },
+      "energy_leg_per_mw_yr": {
+       "gas_cc": 1926.5,
+       "gas_ct": 0.0
+      },
+      "storage_arbitrage_ratio": {
+       "li_ion_4hr": 0.159,
+       "iron_air": 0.043
+      },
+      "solar_capture_ratio": 0.8433,
+      "daily_top4_bot4_spread": 14.36,
+      "h_ge_100_system": 0,
+      "margin_signs": {
+       "gas_cc": "-",
+       "gas_ct": "-",
+       "wind": "+",
+       "solar": "-",
+       "storage_profitable": []
+      }
+     },
+     "dual_prior_solve": {
+      "energy_leg_ratio": {
+       "gas_cc": 1.108,
+       "gas_ct": 16.33
+      },
+      "energy_leg_per_mw_yr": {
+       "gas_cc": 33899.5,
+       "gas_ct": 8666.2
+      },
+      "storage_arbitrage_ratio": {
+       "li_ion_4hr": 0.873,
+       "iron_air": 0.894
+      },
+      "solar_capture_ratio": 0.7689,
+      "daily_top4_bot4_spread": 29.08,
+      "h_ge_100_system": 85,
+      "margin_signs": {
+       "gas_cc": "-",
+       "gas_ct": "-",
+       "wind": "+",
+       "solar": "-",
+       "storage_profitable": []
+      }
+     },
+     "fwd_expectation_prior_solve": {
+      "energy_leg_ratio": {
+       "gas_cc": 1.098,
+       "gas_ct": 16.301
+      },
+      "energy_leg_per_mw_yr": {
+       "gas_cc": 33606.7,
+       "gas_ct": 8651.2
+      },
+      "storage_arbitrage_ratio": {
+       "li_ion_4hr": 0.816,
+       "iron_air": 0.634
+      },
+      "solar_capture_ratio": 0.8132,
+      "daily_top4_bot4_spread": 29.66,
+      "h_ge_100_system": 85,
+      "margin_signs": {
+       "gas_cc": "-",
+       "gas_ct": "-",
+       "wind": "+",
+       "solar": "-",
+       "storage_profitable": []
+      }
+     },
+     "dispersion_prior_solve": {
+      "energy_leg_ratio": {
+       "gas_cc": 0.833,
+       "gas_ct": 6.328
+      },
+      "energy_leg_per_mw_yr": {
+       "gas_cc": 25477.7,
+       "gas_ct": 3358.5
+      },
+      "storage_arbitrage_ratio": {
+       "li_ion_4hr": 0.712,
+       "iron_air": 0.368
+      },
+      "solar_capture_ratio": 0.6943,
+      "daily_top4_bot4_spread": 32.02,
+      "h_ge_100_system": 30,
+      "margin_signs": {
+       "gas_cc": "-",
+       "gas_ct": "-",
+       "wind": "+",
+       "solar": "-",
+       "storage_profitable": []
+      }
+     }
+    }
+   }
+  }
+ },
+ "gates": {
+  "shipped_vs_committed_l1": [
+   {
+    "step": 2024,
+    "shipped_reproduces_committed_l1": true
+   },
+   {
+    "step": 2025,
+    "shipped_reproduces_committed_l1": true
+   }
+  ],
+  "all_pass": true
+ }
+}

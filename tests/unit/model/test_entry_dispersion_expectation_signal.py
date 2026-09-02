@@ -91,6 +91,18 @@ class TestDispersionCompose(unittest.TestCase):
         self.assertGreater((out >= 100.0).sum(), (econ >= 100.0).sum())
         self.assertLessEqual(out.max(), 400.0)
 
+    def test_tied_headroom_hours_are_priced_equally(self):
+        # Two hours with identical headroom share one mid-rank, hence one
+        # quantile: equal inputs, equal expected prices (by design — an
+        # ordinal tie-break would price them differently by hour index).
+        # The multiset is then reproduced up to the tie group's width.
+        econ = np.array([[10.0, 20.0, 30.0, 40.0]])
+        h = np.array([400.0, 200.0, 200.0, 100.0])
+        out = _dispersion_expectation_signal(econ, h, h)
+        self.assertEqual(out[0, 1], out[0, 2])
+        np.testing.assert_allclose(out[0], [10.0, 25.0, 25.0, 40.0])
+        self.assertAlmostEqual(out.mean(), econ.mean())
+
     def test_new_array_inputs_untouched_and_shapes(self):
         econ = np.array([[1.0, 2.0, 3.0], [3.0, 2.0, 1.0]])
         econ_copy = econ.copy()

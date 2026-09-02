@@ -103,7 +103,9 @@ def load_config_filtered(bundle: Path) -> tuple[ScenarioConfig, bool]:
     rc = json.loads((bundle / "run_config.json").read_text())
     valid = {f.name for f in dataclasses.fields(ScenarioConfig)}
     dropped = sorted(k for k in rc["scenario_config"] if k not in valid)
-    cfg = ScenarioConfig(**{k: v for k, v in rc["scenario_config"].items() if k in valid})
+    cfg = ScenarioConfig(
+        **{k: v for k, v in rc["scenario_config"].items() if k in valid}
+    )
     meta = json.loads((bundle / "meta.json").read_text())
     return cfg, cfg.cache_key() == meta["cache_key"], dropped
 
@@ -163,7 +165,9 @@ def main() -> None:
     ap.add_argument("--iso", default="CAISO", choices=sorted(ISO_STEPS))
     ap.add_argument("--mode", choices=("basis", "arm"), default="basis")
     ap.add_argument("--bundle", required=True, help="dumps bundle (basis or arm run)")
-    ap.add_argument("--duals-bundle", required=True, help="keeper bundle (hourly sidecars)")
+    ap.add_argument(
+        "--duals-bundle", required=True, help="keeper bundle (hourly sidecars)"
+    )
     ap.add_argument(
         "--committed-replay",
         default="results/calibration/entry_signal_l1_dual_replay_caiso.json",
@@ -221,7 +225,9 @@ def main() -> None:
         else:
             duals = dual_price_array(duals_bundle, prior, zone_names)
         if duals is None:
-            result["steps"][str(step)] = {"blocked": f"no duals for prior solve {prior}"}
+            result["steps"][str(step)] = {
+                "blocked": f"no duals for prior solve {prior}"
+            }
             continue
         if args.mode == "arm" and "fwd_curr_installed_headroom_mw" in dump:
             h_curr = np.asarray(dump["fwd_curr_installed_headroom_mw"], dtype=float)
@@ -240,7 +246,9 @@ def main() -> None:
                 "reconstructed: seam load_demand(prior) - (load_demand(step) - "
                 "dump net_load_mw), against the dump's top of stack"
             )
-            pot = np.asarray(dump["wind_potential_mw"] + dump["solar_potential_mw"], float)
+            pot = np.asarray(
+                dump["wind_potential_mw"] + dump["solar_potential_mw"], float
+            )
             recon_gate = {
                 "implied_prior_vre_min_mw": round(float(vre_prior.min()), 1),
                 "implied_prior_vre_mean_mw": round(float(vre_prior.mean()), 1),
@@ -278,7 +286,9 @@ def main() -> None:
                 try:
                     d2 = load_dump(bundle, step, step + 1, iso)
                     if "econ_prices_usd_mwh" in d2:
-                        realized = np.asarray(d2["econ_prices_usd_mwh"], float)[run_zone_idx]
+                        realized = np.asarray(d2["econ_prices_usd_mwh"], float)[
+                            run_zone_idx
+                        ]
                         realized_source = "the run's OWN realized duals for the entering year (next dump)"
                 except SystemExit:
                     realized = None
@@ -289,7 +299,9 @@ def main() -> None:
             arms[label] = {
                 "shape": shape_stats(prices),
                 "h_ge_100_system": int((prices.mean(axis=0) >= 100.0).sum()),
-                "neg_hour_frac_system": round(float((prices.mean(axis=0) < 0.0).mean()), 4),
+                "neg_hour_frac_system": round(
+                    float((prices.mean(axis=0) < 0.0).mean()), 4
+                ),
                 "thermal_r_none": thermal_margins(prices, gas, carbon, cfg, None),
                 "vre": vre_capture(prices, dump, cfg, step, zone_names, iso),
                 "storage": storage_screen(prices, cfg, step, storage_mw, iso),
@@ -305,7 +317,9 @@ def main() -> None:
             "headroom_reconstruction_gate": recon_gate,
             "headroom_rank": {
                 "mean_shift_vs_0.5": round(float(u.mean() - 0.5), 4),
-                "frac_next_tighter_than_all_current": round(float((u == 0.0).mean()), 4),
+                "frac_next_tighter_than_all_current": round(
+                    float((u == 0.0).mean()), 4
+                ),
                 "frac_next_looser_than_all_current": round(float((u == 1.0).mean()), 4),
                 "net_load_next_mean_mw": round(float(dump["net_load_mw"].mean()), 1),
                 "net_load_curr_mean_mw": round(float(nl_curr.mean()), 1),
@@ -315,10 +329,21 @@ def main() -> None:
         }
         # --- the construction's own fixed-point / permutation gates ------
         same = _dispersion_expectation_signal(duals, h_curr, h_curr)
+        # Exact up to TIES: hours with identical headroom share one mid-rank
+        # and therefore one quantile (two equal-headroom hours are priced
+        # equally, by design), so the multiset is reproduced to the tie
+        # groups' interpolation width — reported, and gated at $0.05/MWh.
+        n_ties = int(h_curr.size - np.unique(h_curr).size)
+        multiset_dev = float(
+            np.abs(np.sort(same, axis=1) - np.sort(duals, axis=1)).max()
+        )
         body["construction_gates"] = {
             "unchanged_headroom_reproduces_each_zone_multiset": bool(
-                np.allclose(np.sort(same, axis=1), np.sort(duals, axis=1))
+                multiset_dev <= 0.05
+                and np.allclose(same.mean(axis=1), duals.mean(axis=1), atol=1e-6)
             ),
+            "tied_headroom_hours_current_year": n_ties,
+            "multiset_max_abs_deviation_usd_mwh": round(multiset_dev, 4),
             "entering_signal_is_within_realized_range_per_zone": bool(
                 np.all(disp.max(axis=1) <= duals.max(axis=1) + 1e-9)
                 and np.all(disp.min(axis=1) >= duals.min(axis=1) - 1e-9)
@@ -344,18 +369,24 @@ def main() -> None:
                     t: real_stor[t]["arbitrage_per_mw_yr"] for t in STORAGE_REF
                 },
                 "solar_capture_ratio_zone_row": (
-                    real_vre["solar"]["capture_ratio_zone_row"] if "solar" in real_vre else None
+                    real_vre["solar"]["capture_ratio_zone_row"]
+                    if "solar" in real_vre
+                    else None
                 ),
             }
             rows = {}
             for label, a in arms.items():
                 rows[label] = {
                     "energy_leg_ratio": {
-                        t: ratio(a["thermal_r_none"][t]["energy_margin_per_mw_yr"], real_legs[t])
+                        t: ratio(
+                            a["thermal_r_none"][t]["energy_margin_per_mw_yr"],
+                            real_legs[t],
+                        )
                         for t in _THERMAL
                     },
                     "energy_leg_per_mw_yr": {
-                        t: a["thermal_r_none"][t]["energy_margin_per_mw_yr"] for t in _THERMAL
+                        t: a["thermal_r_none"][t]["energy_margin_per_mw_yr"]
+                        for t in _THERMAL
                     },
                     "storage_arbitrage_ratio": {
                         t: ratio(
@@ -365,9 +396,13 @@ def main() -> None:
                         for t in STORAGE_REF
                     },
                     "solar_capture_ratio": (
-                        a["vre"]["solar"]["capture_ratio_zone_row"] if "solar" in a["vre"] else None
+                        a["vre"]["solar"]["capture_ratio_zone_row"]
+                        if "solar" in a["vre"]
+                        else None
                     ),
-                    "daily_top4_bot4_spread": a["shape"]["daily_top4_bot4_spread_system"],
+                    "daily_top4_bot4_spread": a["shape"][
+                        "daily_top4_bot4_spread_system"
+                    ],
                     "h_ge_100_system": a["h_ge_100_system"],
                     "margin_signs": {
                         **{t: a["thermal_r_none"][t]["sign"] for t in _THERMAL},
@@ -392,10 +427,15 @@ def main() -> None:
                 )
             for t, row in c["storage"]["techs"].items():
                 checks.append(
-                    abs(row["margin_per_mw_yr"] - mine["storage"]["techs"][t]["margin_per_mw_yr"])
+                    abs(
+                        row["margin_per_mw_yr"]
+                        - mine["storage"]["techs"][t]["margin_per_mw_yr"]
+                    )
                     <= 1.0
                 )
-            gate_rows.append({"step": step, "shipped_reproduces_committed_l1": all(checks)})
+            gate_rows.append(
+                {"step": step, "shipped_reproduces_committed_l1": all(checks)}
+            )
         result["steps"][str(step)] = body
 
     result["gates"]["shipped_vs_committed_l1"] = gate_rows
