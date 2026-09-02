@@ -1,0 +1,458 @@
+{
+  "R1_R2_outage_extract": {
+    "R1_PASS": false,
+    "R1_per_year_within_10pct": {
+      "2018": false,
+      "2019": false,
+      "2020": false,
+      "2021": false,
+      "2022": false,
+      "2023": false,
+      "2024": false,
+      "2025": false,
+      "2026": false
+    },
+    "R1_within_5pct_total": false,
+    "R2_exact_window_matches": 3767,
+    "R2_only_at_head": 2688,
+    "R2_only_at_head_by_plant": {
+      "10725 Selkirk Cogen Partners": 9,
+      "2480 Danskammer Generating Station": 37,
+      "2490 Arthur Kill": 120,
+      "2493 East River": 16,
+      "2500 Ravenswood Generating Station": 169,
+      "2511 E F Barrett": 1403,
+      "2516 Northport": 18,
+      "2517 Port Jefferson Energy Center": 103,
+      "2527 Greenidge Generation LLC": 2,
+      "2539 Bethlehem Energy Center (Albany)": 3,
+      "2625 Bowline Generating Station": 7,
+      "2682 S A Carlson": 33,
+      "50744 Sterling Power Plant": 47,
+      "50978 Carr Street Generating Station": 147,
+      "52168 Riverbay Corp. - Co-Op City": 69,
+      "54041 Lockport": 201,
+      "54131 World Generation X, LLC": 50,
+      "54149 Nissequogue Energy Center": 2,
+      "54592 Massena Energy Facility": 31,
+      "54593 Batavia Energy": 56,
+      "54914 Brooklyn Navy Yard Cogeneration": 16,
+      "7314 Richard M Flynn (Holtsville)": 66,
+      "8006 Roseton Generating LLC": 13,
+      "8906 Astoria Generating Station": 70
+    },
+    "R2_only_in_committed": 656,
+    "R2_only_in_committed_by_plant": {
+      "10025 RED-Rochester, LLC-Eastman Business Park": 8,
+      "10190 Castleton Power, LLC": 13,
+      "10617 Beaver Falls, LLC": 9,
+      "10620 Carthage Energy": 12,
+      "10621 Syracuse, LLC": 13,
+      "10725 Selkirk Cogen Partners": 41,
+      "2480 Danskammer Generating Station": 5,
+      "2490 Arthur Kill": 14,
+      "2493 East River": 16,
+      "2500 Ravenswood Generating Station": 47,
+      "2511 E F Barrett": 10,
+      "2516 Northport": 75,
+      "2517 Port Jefferson Energy Center": 20,
+      "2527 Greenidge Generation LLC": 13,
+      "2539 Bethlehem Energy Center (Albany)": 7,
+      "2625 Bowline Generating Station": 20,
+      "2682 S A Carlson": 12,
+      "50006 Linden Cogeneration Facility": 9,
+      "50292 Bethpage Energy Center": 31,
+      "50368 Cornell University Ithaca Campus": 4,
+      "50449 Indeck-Silver Springs Energy Center": 15,
+      "50450 Indeck-Oswego Energy Center": 12,
+      "50451 Indeck-Yerkes Energy Center": 15,
+      "50458 Indeck-Corinth Energy Center": 8,
+      "50744 Sterling Power Plant": 8,
+      "50978 Carr Street Generating Station": 16,
+      "52168 Riverbay Corp. - Co-Op City": 7,
+      "54034 Rensselaer Cogen": 5,
+      "54076 Indeck-Olean Energy Center": 15,
+      "54099 Ticonderoga Mill": 1,
+      "54114 KIAC Cogeneration": 6,
+      "54547 Independence": 9,
+      "54574 Saranac Power Partners, LP": 15,
+      "54914 Brooklyn Navy Yard Cogeneration": 1,
+      "55375 Astoria Energy": 18,
+      "55405 Athens Generating Company": 27,
+      "56188 Pinelawn Power": 3,
+      "56196 Poletti 500 MW CC": 5,
+      "56234 Caithness Long Island Energy Center": 2,
+      "56259 Empire Generating Co, LLC": 13,
+      "56940 Valley Energy Center": 9,
+      "8006 Roseton Generating LLC": 23,
+      "8906 Astoria Generating Station": 44
+    },
+    "committed_2023_2025_subset": 1495,
+    "committed_by_year": {
+      "2018": 621,
+      "2019": 516,
+      "2020": 537,
+      "2021": 539,
+      "2022": 533,
+      "2023": 540,
+      "2024": 464,
+      "2025": 491,
+      "2026": 182
+    },
+    "committed_windows": 4423,
+    "head_2023_2025_by_year": {
+      "2023": 922,
+      "2024": 868,
+      "2025": 842
+    },
+    "head_2023_2025_windows": 2632,
+    "head_fullspan_by_year": {
+      "2019": 943,
+      "2020": 862,
+      "2021": 943,
+      "2022": 841,
+      "2023": 922,
+      "2024": 868,
+      "2025": 842,
+      "2026": 234
+    },
+    "head_fullspan_windows": 6455
+  },
+  "R3_R4_tranche_artifact": {
+    "R3_S0_baseline_n_match": 44,
+    "R3_channel_C_nameplate_rows": [
+      {
+        "nameplate_mw_c": 199.5,
+        "nameplate_mw_x": 170.0,
+        "plant_code": 7314,
+        "plant_group": "CC_REGULAR"
+      },
+      {
+        "nameplate_mw_c": 92.0,
+        "nameplate_mw_x": 72.0,
+        "plant_code": 10190,
+        "plant_group": "CC_REGULAR"
+      },
+      {
+        "nameplate_mw_c": 662.0,
+        "nameplate_mw_x": 560.0,
+        "plant_code": 56196,
+        "plant_group": "CC_REGULAR"
+      }
+    ],
+    "R3_dominant_channel": null,
+    "R3_verdict": "MULTI-CHANNEL (no ablation >= 60)",
+    "R4": {
+      "A_no_derate": {
+        "ST_GAS": {
+          "median_cf": 84.4,
+          "nameplate_mw": 45.0,
+          "online_hours": 3913,
+          "status": "ok"
+        }
+      },
+      "B_no_parasitic": {
+        "ST_GAS": {
+          "median_cf": 150.0,
+          "nameplate_mw": 45.0,
+          "online_hours": 120,
+          "status": "ok"
+        }
+      },
+      "R4_PASS": true,
+      "S0": {
+        "ST_GAS": {
+          "median_cf": 150.0,
+          "nameplate_mw": 45.0,
+          "online_hours": 120,
+          "status": "ok"
+        }
+      },
+      "committed": {
+        "ST_GAS": {
+          "median_cf": 84.4,
+          "nameplate_mw": 45.0,
+          "online_hours": 3913,
+          "status": "ok"
+        }
+      }
+    },
+    "legs": {
+      "A_no_derate": {
+        "n_common": 78,
+        "n_match_online_hours": 47,
+        "rows": 79,
+        "worst_online_hours_rows": [
+          {
+            "delta": 26271,
+            "online_hours_c": 0,
+            "online_hours_x": 26271,
+            "plant_code": 50006,
+            "plant_group": "CC_CHP"
+          },
+          {
+            "delta": 6112,
+            "online_hours_c": 11405,
+            "online_hours_x": 17517,
+            "plant_code": 8906,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 3002,
+            "online_hours_c": 21956,
+            "online_hours_x": 24958,
+            "plant_code": 2511,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 1712,
+            "online_hours_c": 24366,
+            "online_hours_x": 26078,
+            "plant_code": 55375,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 740,
+            "online_hours_c": 6993,
+            "online_hours_x": 7733,
+            "plant_code": 2625,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 637,
+            "online_hours_c": 22440,
+            "online_hours_x": 23077,
+            "plant_code": 50292,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 490,
+            "online_hours_c": 3200,
+            "online_hours_x": 3690,
+            "plant_code": 8006,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 487,
+            "online_hours_c": 3984,
+            "online_hours_x": 4471,
+            "plant_code": 56188,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 434,
+            "online_hours_c": 10805,
+            "online_hours_x": 11239,
+            "plant_code": 54574,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 334,
+            "online_hours_c": 346,
+            "online_hours_x": 680,
+            "plant_code": 2480,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 317,
+            "online_hours_c": 8747,
+            "online_hours_x": 9064,
+            "plant_code": 50978,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 306,
+            "online_hours_c": 21301,
+            "online_hours_x": 20995,
+            "plant_code": 54114,
+            "plant_group": "CC_CHP"
+          }
+        ]
+      },
+      "B_no_parasitic": {
+        "n_common": 78,
+        "n_match_online_hours": 44,
+        "rows": 79,
+        "worst_online_hours_rows": [
+          {
+            "delta": 26271,
+            "online_hours_c": 0,
+            "online_hours_x": 26271,
+            "plant_code": 50006,
+            "plant_group": "CC_CHP"
+          },
+          {
+            "delta": 5622,
+            "online_hours_c": 11405,
+            "online_hours_x": 17027,
+            "plant_code": 8906,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 3793,
+            "online_hours_c": 3913,
+            "online_hours_x": 120,
+            "plant_code": 2682,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 3093,
+            "online_hours_c": 26253,
+            "online_hours_x": 23160,
+            "plant_code": 2493,
+            "plant_group": "ST_CHP"
+          },
+          {
+            "delta": 3050,
+            "online_hours_c": 21956,
+            "online_hours_x": 25006,
+            "plant_code": 2511,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 2337,
+            "online_hours_c": 22440,
+            "online_hours_x": 20103,
+            "plant_code": 50292,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 2262,
+            "online_hours_c": 24366,
+            "online_hours_x": 22104,
+            "plant_code": 55375,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 1213,
+            "online_hours_c": 24685,
+            "online_hours_x": 23472,
+            "plant_code": 2500,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 793,
+            "online_hours_c": 5855,
+            "online_hours_x": 5062,
+            "plant_code": 10190,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 715,
+            "online_hours_c": 11985,
+            "online_hours_x": 11270,
+            "plant_code": 50458,
+            "plant_group": "CC_CHP"
+          },
+          {
+            "delta": 694,
+            "online_hours_c": 4712,
+            "online_hours_x": 4018,
+            "plant_code": 50449,
+            "plant_group": "CC_CHP"
+          },
+          {
+            "delta": 565,
+            "online_hours_c": 1687,
+            "online_hours_x": 1122,
+            "plant_code": 54034,
+            "plant_group": "CC_REGULAR"
+          }
+        ]
+      },
+      "S0": {
+        "n_common": 78,
+        "n_match_online_hours": 44,
+        "rows": 79,
+        "worst_online_hours_rows": [
+          {
+            "delta": 26271,
+            "online_hours_c": 0,
+            "online_hours_x": 26271,
+            "plant_code": 50006,
+            "plant_group": "CC_CHP"
+          },
+          {
+            "delta": 5622,
+            "online_hours_c": 11405,
+            "online_hours_x": 17027,
+            "plant_code": 8906,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 3793,
+            "online_hours_c": 3913,
+            "online_hours_x": 120,
+            "plant_code": 2682,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 3093,
+            "online_hours_c": 26253,
+            "online_hours_x": 23160,
+            "plant_code": 2493,
+            "plant_group": "ST_CHP"
+          },
+          {
+            "delta": 3050,
+            "online_hours_c": 21956,
+            "online_hours_x": 25006,
+            "plant_code": 2511,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 2337,
+            "online_hours_c": 22440,
+            "online_hours_x": 20103,
+            "plant_code": 50292,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 2262,
+            "online_hours_c": 24366,
+            "online_hours_x": 22104,
+            "plant_code": 55375,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 1213,
+            "online_hours_c": 24685,
+            "online_hours_x": 23472,
+            "plant_code": 2500,
+            "plant_group": "ST_GAS"
+          },
+          {
+            "delta": 793,
+            "online_hours_c": 5855,
+            "online_hours_x": 5062,
+            "plant_code": 10190,
+            "plant_group": "CC_REGULAR"
+          },
+          {
+            "delta": 715,
+            "online_hours_c": 11985,
+            "online_hours_x": 11270,
+            "plant_code": 50458,
+            "plant_group": "CC_CHP"
+          },
+          {
+            "delta": 694,
+            "online_hours_c": 4712,
+            "online_hours_x": 4018,
+            "plant_code": 50449,
+            "plant_group": "CC_CHP"
+          },
+          {
+            "delta": 565,
+            "online_hours_c": 1687,
+            "online_hours_x": 1122,
+            "plant_code": 54034,
+            "plant_group": "CC_REGULAR"
+          }
+        ]
+      }
+    },
+    "n_committed_rows": 78
+  },
+  "prereg": "PREREG-nyiso176-input-artifact-reproducibility.md"
+}
