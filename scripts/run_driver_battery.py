@@ -286,7 +286,10 @@ class Ladder:
     # FC-6 scorer reads the gate-row SKIPs as CAVEAT, never PASS — which is the
     # truthful reading of "the model was never asked the question". Clearing
     # this string is a PRE-REGISTRATION act, not a code change: it requires a
-    # plan §2 instrument decision (see T1.6 below).
+    # plan §2 instrument decision. NO LADDER IS CURRENTLY OUT OF SERVICE — T1.6
+    # was, between capx-T16 (2026-09-01) and owner ruling Q27 the same day, which
+    # re-pointed it to ``entry_rate_limits``; the machinery stays for the next
+    # ladder whose instrument fails under it.
     out_of_service: str = ""
 
 
@@ -459,51 +462,81 @@ def build_ladders() -> list[Ladder]:
     # the physical VRE supply — what the plan §2 line pre-registers ("VRE fleet
     # held short vs long").
     #
-    # OUT OF SERVICE since 2026-09-01 (lane capx-T16). Its implementing lever
-    # was ``renewable_buildout_pace``, which capx-D21 MEASURED to be consumed by
-    # no model code: the two rungs below solved metric-identically across all 18
-    # extracted values on two independent data vintages, so the ladder solved
-    # the same model twice under different labels and both gate rows "passed" on
-    # constant series (FINDING-capx-d21-fc6-battery-2026-08-31.md §5.1). The
-    # field was DELETED under rule 26 [R-DELETE] rather than wired, because the
-    # phenomenon already has a mechanism — the FF-2A entry growth ladder
-    # (``entry_rate_limits``), whose measured EIA-860 throughput seed covers
-    # wind and solar — so a second slow/mid/aggressive channel onto the same
-    # constraint would be a rule-19 [R-ONE-MECH] duplicate
-    # (FINDING-capx-t16-driver-2026-09-01.md).
+    # RE-POINTED 2026-09-01 to ``entry_rate_limits`` by OWNER RULING Q27
+    # (capx r#27 sitting, `docs/handoffs/capx-director-ledger-2026-08.md` §3),
+    # executed by lane capx-T16-A. The ladder was OUT OF SERVICE between
+    # 2026-09-01 (lane capx-T16) and this ruling.
     #
-    # The RUNG LIST IS EMPTY on purpose: the two retired rungs were
-    # ``{"renewable_buildout_pace": "slow"}`` and ``{... : "aggressive"}``, and
-    # leaving a dead override key in the registry would be a landmine the day
-    # someone clears ``out_of_service``. Their record lives here and in the D21
-    # finding; the EXPECTATIONS below are untouched, because it is the
-    # instrument that failed, not the claim.
-    # Choosing a replacement lever is a plan §2 instrument decision and needs
-    # OWNER SIGN-OFF — it is not a code edit. The finding's §6 recommends
-    # ``entry_rate_limits`` (True = throughput-limited/short vs False =
-    # uncapped/long: real, cited, consumed, owner-armed, and — unlike
-    # ``eac_price_wind`` — NOT confounded with the REC dual this ladder
-    # measures, since attribute revenue is ``max(eac, rps_shadow)``).
+    # WHY THE FORMER LEVER IS GONE. The 2026-07-12 session implemented T1.6 with
+    # ``renewable_buildout_pace``, which capx-D21 MEASURED to be consumed by no
+    # model code: the two rungs solved metric-identically across all 18 extracted
+    # values on two independent data vintages, so the ladder solved the same
+    # model twice under different labels and both gate rows "passed" on constant
+    # series (FINDING-capx-d21-fc6-battery-2026-08-31.md §5.1). capx-T16 DELETED
+    # the field under rule 26 [R-DELETE] rather than wiring it, because the
+    # phenomenon already has a mechanism and a second slow/mid/aggressive channel
+    # onto the same constraint would be a rule-19 [R-ONE-MECH] duplicate
+    # (FINDING-capx-t16-driver-2026-09-01.md §2.2).
     #
-    # PRE-REGISTERED BEFORE ANY REPLACEMENT RUN (capx-T16, so the result cannot
-    # be chosen after the fact): in BOTH D21 rungs the REC dual sits pinned AT
-    # the $50 ACP ceiling in every year (rps_dual_over_acp = 1.0) with 33.0 GW
-    # of VRE already built. A correctly-wired lever may therefore STILL not move
-    # the 2050 dual. If it does not, that is a REAL finding about the RPS/ACP
-    # stack (the dual escaping to its cap), not a wiring failure, and it is
-    # reported as the outcome — never tuned until it moves (rules 1/11/14).
+    # RE-POINT, NOT AMENDMENT — verified against the plan §2 Tier-1 table by this
+    # lane (FINDING-capx-t16a-ladder-repoint-2026-09-02.md §2). T1.6's "Ladder"
+    # cell reads "NEISO or CAISO forecast, VRE fleet held short vs long" — an
+    # ECONOMIC CONDITION, the only Tier-1 row that does not name a config field
+    # (T1.9's "storage fleet seeded at {5,15,25} GW" is the one other quantity
+    # row, and its ``_storage_seed_gw`` probe patch has exactly this relationship
+    # to its own pre-registration). ``renewable_buildout_pace`` was therefore the
+    # implementation chosen UNDER the pre-registration, never the
+    # pre-registration itself, and swapping it for a lever that genuinely holds
+    # the VRE fleet short vs long leaves the pre-registered claim and both
+    # expectations byte-identical. Nothing in plan §2 is edited.
+    #
+    # THE LEVER. ``entry_rate_limits`` is the FF-2A entry growth ladder (armed by
+    # owner decision D-2, 2026-08-02): each entry technology's annual build is
+    # capped at ``ENTRY_GROWTH_LIMIT_MULTIPLE`` (2.0, the ReEDS growth-constraint
+    # hard bound adopted verbatim) × its prior maximum annual build, seeded from
+    # the measured EIA-860 record over a trailing window
+    # (``data/build_throughput.py``, whose docstring states wind/solar come from
+    # their own EIA-860 technology sheets — the ladder is not thermal-only).
+    # ``True`` (the armed default, and the NEISO golden's own posture) is the
+    # SHORT rung: VRE build is throughput-limited. ``False`` is the LONG rung:
+    # ``runner`` leaves ``entry_prior_max_gw`` None, no ``entry_rate_caps_mw``
+    # reach the entry screen, and the fleet builds uncapped. Rung ORDER is
+    # short → long so the T1.6b ``monotone_down`` series runs in the direction
+    # the expectation names (more VRE ⇒ lower dual). Rejected alternatives, per
+    # Q27 and the T16 §6 adjudication that stands: ``eac_price_wind`` /
+    # ``eac_price_solar`` are CONFOUNDED with the metric (``policy/eac.py`` prices
+    # attribute revenue as ``max(eac, rps_shadow)``, so moving an EAC price moves
+    # the very channel ``rps_dual_over_acp`` measures), and
+    # ``offshore_wind_available_year`` is INERT in NEISO
+    # (``offshore_wind_eligible_isos`` defaults to ``["CAISO"]``).
+    #
+    # DECLARED CONFOUND (T16 §6, stated rather than hidden): ``entry_rate_limits``
+    # also gates THERMAL entry and, through it, the reserve-margin backstop — the
+    # arm is broader than VRE alone. The ladder therefore isolates "VRE fleet
+    # short vs long" only up to that co-movement; a rung difference in the REC
+    # dual is attributable to VRE supply only when read alongside the rungs'
+    # own ``renewable_build_gw`` / ``entry_thermal_gw`` metrics, which the
+    # battery output carries for exactly this reason.
+    #
+    # PRE-REGISTERED BEFORE THE REPLACEMENT RUN (capx-T16, carried verbatim by
+    # Q27 so the result cannot be chosen after the fact): in BOTH D21 rungs the
+    # REC dual sits pinned AT the $50 ACP ceiling in every year
+    # (rps_dual_over_acp = 1.0) with 33.0 GW of VRE already built. A correctly-
+    # wired lever may therefore STILL not move the 2050 dual. If it does not,
+    # that is a REAL finding about the RPS/ACP stack (the dual escaping to its
+    # cap, NEISO's target unreachable at any plausible VRE build), not a wiring
+    # failure, and it is reported as the outcome — never tuned until it moves,
+    # and NEVER a third lever tried (rules 1/11/14; Q27 verbatim). The scorer
+    # labels a constant series vacuous either way.
     ladders.append(
         Ladder(
             test_id="T1.6",
             driver="RPS/ACP vs VRE supply (short→long)",
             isos=("NEISO",),
-            out_of_service=(
-                "pre-registered driver renewable_buildout_pace was consumed by "
-                "no model code (capx-D21 §5.1, measured) and was deleted under "
-                "rule 26 [R-DELETE] by capx-T16; a replacement lever is a "
-                "plan §2 instrument decision pending owner sign-off"
-            ),
-            rungs=[],
+            rungs=[
+                Rung("vre_short", {"entry_rate_limits": True}),
+                Rung("vre_long", {"entry_rate_limits": False}),
+            ],
             expectations=[
                 Expectation(
                     "T1.6a",
