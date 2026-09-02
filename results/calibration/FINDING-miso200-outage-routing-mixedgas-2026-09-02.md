@@ -147,8 +147,8 @@ so it carries no mixed-gas rows) — measured, not assumed. **Zero free paramete
 reaches is the resolver's OWN existing routing. **Rule 13 forward-regenerable** — `unitType`
 is a static unit attribute — which is why the field is **deliberately absent** from
 `_BACKCAST_ONLY_OVERLAY_FIELDS`, with that reasoning recorded at the exclusion site.
-**Cache-key neutral** (default key `7a57fadff595ca83` unchanged, distinct when armed) and
-byte-inert off. 24 unit tests (`tests/unit/data/test_unit_outage_mixed_gas_routing.py`),
+**Cache-key neutral** (the default key is unchanged with the field present and off, and
+distinct when armed) and byte-inert off. 24 unit tests (`tests/unit/data/test_unit_outage_mixed_gas_routing.py`),
 including that the coal and neiso-99 liquid-CT guards still run **ahead** of the new gate.
 Matrix row + a cell in all six shards, same PR (rule 28(c)).
 
@@ -290,10 +290,15 @@ under rule 22 regardless.
    `ST_CHP`'s CEMS invisibility with `profile_r` negative every year; the standing wind
    +5 TWh/yr over EIA-930; the 2023 import +2.0 TWh face; `_CC_PMAX_RECONCILED_PLANTS`
    (observed again here — it reconciles 1403's CC bin 896.0 → 649.5 MW).
-7. **Not this lane's, but blocking others:** the 11 `tests/unit/config` cache-key pin tests
-   that fail on clean `main` (the capx-d24 repair moved the default key
-   `603c2498bf71d21d` → `7a57fadff595ca83` without updating its literal pins). Verified
-   pre-existing; untouched.
+7. **The charter's inherited "11 failing cache-key pin tests" item is CLOSED — corrected
+   here rather than repeated.** It was true of the `main` this session opened against
+   (measured: **8**, not 11, and identical to this branch's, so zero were introduced). It
+   is **no longer true of `main` at the time of writing**: the default key has moved back
+   to `603c2498bf71d21d` and `tests/unit/config` is **642 passed, 0 failed** on clean
+   `main` and **unchanged with this branch applied**. A successor should not carry the item
+   forward, and should re-measure rather than inherit any pinned key literal — this
+   session's own first measurement (`7a57fadff595ca83`) was against the older base and is
+   superseded.
 
 ## 9. Governance
 

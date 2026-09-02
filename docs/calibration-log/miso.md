@@ -10071,5 +10071,9 @@ delta proven exact; a DO-NOT-REDO stamp would block exactly the work that is req
 `FINDING-miso200-outage-routing-mixedgas-2026-09-02.md`;
 `PREREG-miso200-outage-routing-mixedgas-2026-09-02.md`;
 `_miso200_outage_routing_phase0.json`. Rule 22: 2023–2025 only, no marker read or written.
+**Correction carried forward:** the inherited "11 failing `tests/unit/config` cache-key pin
+tests" item is CLOSED — it measured **8** on the base this session opened against, and on
+`main` at the time of writing `tests/unit/config` is **642 passed, 0 failed**, unchanged with
+this branch applied. Do not carry the item forward.
 
 Next shorthand: **miso-201**.
