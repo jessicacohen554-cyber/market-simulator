@@ -523,6 +523,8 @@ class TestEvolveFleetLedgerReconciliation(unittest.TestCase):
             expected[r["fuel"]] = expected.get(r["fuel"], 0.0) - r["mw"]
         for d in events["confirmed_derates"]:
             expected[d["fuel"]] = expected.get(d["fuel"], 0.0) - d["derate_mw"]
+        for d in events.get("announced_derates", []):
+            expected[d["fuel"]] = expected.get(d["fuel"], 0.0) - d["derate_mw"]
         for a in events["thermal_additions"]:
             expected[a["fuel"]] = expected.get(a["fuel"], 0.0) + a["mw"]
         for c in events["ccs_retrofits"]:
@@ -5379,3 +5381,34 @@ class TestFossilAnnouncedExits(unittest.TestCase):
         by_id = {g.unit_id: g.pmax_mw for g in kept}
         self.assertAlmostEqual(by_id["H_C1"], 300.0 * 350.0 / 500.0)
         self.assertAlmostEqual(by_id["H_G1"], 200.0 * 350.0 / 500.0)
+
+
+class TestFossilAnnouncedLedgerReconciliation(TestEvolveFleetLedgerReconciliation):
+    """The I4 identity holds with the D42 ``announced_derates`` rows in the sum."""
+
+    def test_dated_binned_and_unit_grain_reconcile(self):
+        from market_sim.data.announced_retirements import AnnouncedFossilExit
+
+        cfg = ScenarioConfig(fossil_announced_exits_enabled=True)
+        fleet = [
+            _binned("H_C1", 200, 300.0, fuel="coal"),
+            _binned("H_G1", 200, 200.0, fuel="gas_ct"),
+            _unit(300, "1", 500.0, fuel="coal", retirement_year=2028),
+            _unit(301, "1", 400.0, fuel="gas_st", retirement_year=2099),
+        ]
+        rows = [
+            AnnouncedFossilExit(200, "U1", 2028, None, 150.0, "coal", 2020, 2028, None),
+            AnnouncedFossilExit(300, "1", 2028, None, 500.0, "coal", 2020, 2028, None),
+        ]
+        events = self._events()
+        evolve_fleet(
+            fleet, None, 2028, cfg, {}, events=events, announced_fossil_exits=rows
+        )
+        self.assertEqual(
+            [(r["unit_id"], r["reason"]) for r in events["retirements"]],
+            [("300_1", "announced")],
+        )
+        self.assertAlmostEqual(
+            sum(d["derate_mw"] for d in events["announced_derates"]), 150.0
+        )
+        self._assert_reconciles(events)

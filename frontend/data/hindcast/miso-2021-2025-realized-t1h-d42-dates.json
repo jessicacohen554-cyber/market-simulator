@@ -604,8 +604,8 @@
     {
       "ident": "I4",
       "name": "capacity accounting",
-      "status": "FAIL",
-      "detail": "2022:gas_st off by 21.6 MW; 2022:coal off by 1872.8 MW; 2022:gas_cc off by 1.9 MW; 2023:gas_st off by 313.8 MW; 2023:coal off by 1288.6 MW; 2024:coal off by 207.3 MW; 2025:gas_ct off by 132.3 MW"
+      "status": "PASS",
+      "detail": "closes"
     },
     {
       "ident": "I5",
@@ -668,11 +668,11 @@
       "detail": "in band"
     }
   ],
-  "registered_utc": "2026-09-02T17:54:14Z",
+  "registered_utc": "2026-09-02T17:58:20Z",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "a8551b3361e6",
-    "scored_at_date": "2026-09-02T17:54:14Z",
+    "scored_at_sha": "999781567c45",
+    "scored_at_date": "2026-09-02T17:58:20Z",
     "cache_epoch": "85000b5179ddff0f"
   }
 }

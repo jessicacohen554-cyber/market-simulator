@@ -405,14 +405,17 @@ def check_i3_unserved_dump(run: Run) -> Result:
 
 
 def check_i4_capacity_accounting(run: Run) -> Result:
-    """I4: fleet(after) = fleet(before) − retirements − confirmed_derates + builds.
+    """I4: fleet(after) = fleet(before) − retirements − derates + builds.
 
     Per fuel. ``confirmed_derates`` (FFR-1A / FR-1) are confirmed-registry rows
     that shrink a surviving plant-binned tranche in place — MW that leaves the
-    fleet without a ``retirements`` row. Ledgers written before the FFR-1A
-    recorder carry no such key; ``led.get`` keeps them scoreable (their derated
-    MW is then genuinely unexplained, which is exactly the A1 leak this
-    invariant exists to catch).
+    fleet without a ``retirements`` row; ``announced_derates`` (capx D42) are
+    the same event on the fossil announced-date channel
+    (``fossil_announced_exits_enabled``), recorded under its own key so the
+    channel attribution survives. Ledgers written before either recorder
+    carry no such key; ``led.get`` keeps them scoreable (their derated MW is
+    then genuinely unexplained, which is exactly the A1 leak this invariant
+    exists to catch).
     """
     problems: list[str] = []
     for year, led in run.ledgers.items():
@@ -422,6 +425,10 @@ def check_i4_capacity_accounting(run: Run) -> Result:
             continue
         retired = _sum_by_fuel(led.get("retirements", []))
         derated = _sum_by_fuel(led.get("confirmed_derates", []), mw_key="derate_mw")
+        for f, mw in _sum_by_fuel(
+            led.get("announced_derates", []) or [], mw_key="derate_mw"
+        ).items():
+            derated[f] = derated.get(f, 0.0) + mw
         added = _sum_by_fuel(led.get("thermal_additions", []))
         expected = dict(before)
         for f, mw in retired.items():
