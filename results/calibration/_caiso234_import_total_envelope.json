@@ -1,0 +1,219 @@
+{
+ "session": "caiso-234",
+ "precommit": "results/calibration/PRECOMMIT-caiso234-import-total-envelope-2026-09-02.md",
+ "method": {
+  "gated_object": [
+   "routine_total",
+   "scarcity_interval"
+  ],
+  "cap_pctl": 98.0,
+  "scarcity_pctl": 99.9,
+  "cv_max": 0.2,
+  "loyo_max": 0.25,
+  "round_mw": 5.0,
+  "specified_by": "FINDING-caiso233-import-depth-derivation-2026-09-01.md \u00a7F",
+  "placement": "pro-rata corridor weights on p98 share; firm held fixed; equal-MW within-corridor split; scarcity = p99.9 - p98"
+ },
+ "gated": {
+  "per_year": {
+   "2023": {
+    "routine_total": 7872.52001953125,
+    "scarcity_interval": 1757.49755859375,
+    "ladder_total": 9630.017578125
+   },
+   "2024": {
+    "routine_total": 7804.83984375,
+    "scarcity_interval": 1306.826171875,
+    "ladder_total": 9111.666015625
+   },
+   "2025": {
+    "routine_total": 8844.8798828125,
+    "scarcity_interval": 1590.0419921875,
+    "ladder_total": 10434.921875
+   }
+  },
+  "pooled": {
+   "routine_total": 8288.9599609375,
+   "scarcity_interval": 1795.0,
+   "ladder_total": 10083.9599609375
+  },
+  "cv": {
+   "routine_total": 0.05812657622361598,
+   "scarcity_interval": 0.11988614550891222,
+   "ladder_total": 0.05597869503569861
+  },
+  "year_stability": true,
+  "loyo": {
+   "2023": {
+    "worst": 0.07000549094050637,
+    "worst_component": "routine_total",
+    "errors": {
+     "routine_total": 0.07000549094050637,
+     "scarcity_interval": 0.030570199382945
+    }
+   },
+   "2024": {
+    "worst": 0.34244838176940495,
+    "worst_component": "scarcity_interval",
+    "errors": {
+     "routine_total": 0.08765844910935172,
+     "scarcity_interval": 0.34244838176940495
+    }
+   },
+   "2025": {
+    "worst": 0.11470591709959317,
+    "worst_component": "routine_total",
+    "errors": {
+     "routine_total": 0.11470591709959317,
+     "scarcity_interval": 0.03074033151885852
+    }
+   }
+  },
+  "loyo_ok": false,
+  "verdict": "FAIL"
+ },
+ "delivered": {
+  "pooled_rungs": {
+   "PNW_midC": 1065.0,
+   "DSW_CCGT": 2100.0,
+   "DSW_CT": 2100.0,
+   "WECC_scarcity": 1795.0
+  },
+  "incumbent_2025": {
+   "PNW_midC": 1800.0,
+   "DSW_CCGT": 1800.0,
+   "DSW_CT": 2200.0,
+   "WECC_scarcity": 3000.0
+  },
+  "per_year_rungs": {
+   "2023": {
+    "PNW_midC": 1460.0,
+    "DSW_CCGT": 2045.0,
+    "DSW_CT": 2045.0,
+    "WECC_scarcity": 1755.0
+   },
+   "2024": {
+    "PNW_midC": 685.0,
+    "DSW_CCGT": 1875.0,
+    "DSW_CT": 1875.0,
+    "WECC_scarcity": 1305.0
+   },
+   "2025": {
+    "PNW_midC": 1000.0,
+    "DSW_CCGT": 2240.0,
+    "DSW_CT": 2240.0,
+    "WECC_scarcity": 1590.0
+   }
+  }
+ },
+ "reported_not_gated": {
+  "per_rung_cv": {
+   "PNW_midC": 0.30356086022724527,
+   "DSW_CCGT": 0.07262682940995953,
+   "DSW_CT": 0.07262682940995953,
+   "WECC_scarcity": 0.11992019545445874
+  },
+  "per_rung_loyo": {
+   "2023": {
+    "worst": 0.4006849315068493,
+    "worst_rung": "PNW_midC",
+    "errors": {
+     "PNW_midC": 0.4006849315068493,
+     "DSW_CCGT": 0.022004889975550123,
+     "DSW_CT": 0.022004889975550123,
+     "WECC_scarcity": 0.03133903133903134
+    }
+   },
+   "2024": {
+    "worst": 0.8394160583941606,
+    "worst_rung": "PNW_midC",
+    "errors": {
+     "PNW_midC": 0.8394160583941606,
+     "DSW_CCGT": 0.168,
+     "DSW_CT": 0.168,
+     "WECC_scarcity": 0.3448275862068966
+    }
+   },
+   "2025": {
+    "worst": 0.12053571428571429,
+    "worst_rung": "DSW_CCGT",
+    "errors": {
+     "PNW_midC": 0.045,
+     "DSW_CCGT": 0.12053571428571429,
+     "DSW_CT": 0.12053571428571429,
+     "WECC_scarcity": 0.031446540880503145
+    }
+   }
+  }
+ },
+ "diagnostics": {
+  "2023": {
+   "routine_total": 7872.52001953125,
+   "scarcity_interval": 1757.49755859375,
+   "ladder_total": 9630.017578125,
+   "WECC_PNW_p98_marginal": 2841.0,
+   "WECC_PNW_weight": 0.32132483936292905,
+   "WECC_PNW_routine_alloc": 2529.636230657322,
+   "WECC_PNW_firm": 1072.0,
+   "WECC_PNW_spot_routine": 1457.636230657322,
+   "WECC_DSW_p98_marginal": 6000.52001953125,
+   "WECC_DSW_weight": 0.678675160637071,
+   "WECC_DSW_routine_alloc": 5342.883788873928,
+   "WECC_DSW_firm": 1251.0,
+   "WECC_DSW_spot_routine": 4091.883788873928,
+   "marginal_p98_sum": 8841.52001953125,
+   "simultaneity_gap": 969.0
+  },
+  "2024": {
+   "routine_total": 7804.83984375,
+   "scarcity_interval": 1306.826171875,
+   "ladder_total": 9111.666015625,
+   "WECC_PNW_p98_marginal": 2565.840087890625,
+   "WECC_PNW_weight": 0.2873113785238368,
+   "WECC_PNW_routine_alloc": 2242.4192946655794,
+   "WECC_PNW_firm": 1558.0,
+   "WECC_PNW_spot_routine": 684.4192946655794,
+   "WECC_DSW_p98_marginal": 6364.68017578125,
+   "WECC_DSW_weight": 0.7126886214761632,
+   "WECC_DSW_routine_alloc": 5562.420549084421,
+   "WECC_DSW_firm": 1813.0,
+   "WECC_DSW_spot_routine": 3749.4205490844206,
+   "marginal_p98_sum": 8930.520263671875,
+   "simultaneity_gap": 1125.680419921875
+  },
+  "2025": {
+   "routine_total": 8844.8798828125,
+   "scarcity_interval": 1590.0419921875,
+   "ladder_total": 10434.921875,
+   "WECC_PNW_p98_marginal": 2713.0,
+   "WECC_PNW_weight": 0.2898863582767462,
+   "WECC_PNW_routine_alloc": 2564.010018623769,
+   "WECC_PNW_firm": 1566.0,
+   "WECC_PNW_spot_routine": 998.0100186237692,
+   "WECC_DSW_p98_marginal": 6645.83984375,
+   "WECC_DSW_weight": 0.7101136417232538,
+   "WECC_DSW_routine_alloc": 6280.86986418873,
+   "WECC_DSW_firm": 1805.0,
+   "WECC_DSW_spot_routine": 4475.86986418873,
+   "marginal_p98_sum": 9358.83984375,
+   "simultaneity_gap": 513.9599609375
+  },
+  "pooled": {
+   "routine_total": 8288.9599609375,
+   "scarcity_interval": 1795.0,
+   "ladder_total": 10083.9599609375,
+   "WECC_PNW_p98_marginal": 2698.0,
+   "WECC_PNW_weight": 0.2971208576862833,
+   "WECC_PNW_routine_alloc": 2462.8228929210113,
+   "WECC_PNW_firm": 1398.6666666666667,
+   "WECC_PNW_spot_routine": 1064.1562262543446,
+   "WECC_DSW_p98_marginal": 6382.47998046875,
+   "WECC_DSW_weight": 0.7028791423137167,
+   "WECC_DSW_routine_alloc": 5826.137068016489,
+   "WECC_DSW_firm": 1623.0,
+   "WECC_DSW_spot_routine": 4203.137068016489,
+   "marginal_p98_sum": 9080.47998046875,
+   "simultaneity_gap": 791.52001953125
+  }
+ }
+}
