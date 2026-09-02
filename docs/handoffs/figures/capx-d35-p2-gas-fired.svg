@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 690" font-family="Helvetica,Arial,sans-serif" font-size="12">
+<rect width="880" height="690" fill="#fcfcfb"/>
+<text x="56" y="20" font-size="15" font-weight="700" fill="#0b0b0b">Gas-fired generation, NEISO golden-2 FC-6 pair — base vs gas ×1.5 (TWh, all four gas-burning classes)</text>
+<text x="56" y="36" fill="#52514e">The repaired P2 gas sub-check: the gas ×1.5 world burns less gas in every one of the 25 common years</text>
+<line x1="56" x2="856" y1="320.0" y2="320.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="48" y="324.0" text-anchor="end" fill="#52514e">28</text>
+<line x1="56" x2="856" y1="251.0" y2="251.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="48" y="255.0" text-anchor="end" fill="#52514e">32</text>
+<line x1="56" x2="856" y1="182.0" y2="182.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="48" y="186.0" text-anchor="end" fill="#52514e">36</text>
+<line x1="56" x2="856" y1="113.0" y2="113.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="48" y="117.0" text-anchor="end" fill="#52514e">40</text>
+<line x1="56" x2="856" y1="44.0" y2="44.0" stroke="#e6e5e1" stroke-width="1"/>
+<text x="48" y="48.0" text-anchor="end" fill="#52514e">44</text>
+<text x="56.0" y="338" text-anchor="middle" fill="#52514e">2026</text>
+<text x="189.3" y="338" text-anchor="middle" fill="#52514e">2030</text>
+<text x="322.7" y="338" text-anchor="middle" fill="#52514e">2034</text>
+<text x="456.0" y="338" text-anchor="middle" fill="#52514e">2038</text>
+<text x="589.3" y="338" text-anchor="middle" fill="#52514e">2042</text>
+<text x="722.7" y="338" text-anchor="middle" fill="#52514e">2046</text>
+<text x="856.0" y="338" text-anchor="middle" fill="#52514e">2050</text>
+<polyline points="56.0,70.3 89.3,70.3 122.7,77.2 156.0,149.3 189.3,179.1 222.7,202.1 256.0,212.1 289.3,232.8 322.7,232.7 356.0,252.8 389.3,254.9 422.7,269.6 456.0,267.1 489.3,274.7 522.7,251.6 556.0,254.7 589.3,243.4 622.7,241.8 656.0,231.6 689.3,228.4 722.7,216.5 756.0,210.1 789.3,189.0 822.7,181.3 856.0,172.9" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="856.0" cy="172.9" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="864.0" y="176.9" fill="#0b0b0b" font-weight="600">36.53</text>
+<polyline points="56.0,180.1 89.3,170.8 122.7,145.6 156.0,176.3 189.3,185.4 222.7,210.5 256.0,216.0 289.3,240.1 322.7,243.1 356.0,262.0 389.3,261.8 422.7,276.4 456.0,273.0 489.3,281.2 522.7,274.9 556.0,278.4 589.3,269.6 622.7,268.9 656.0,257.7 689.3,254.1 722.7,241.2 756.0,234.4 789.3,219.0 822.7,208.8 856.0,193.0" fill="none" stroke="#eb6834" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="856.0" cy="193.0" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="864.0" y="197.0" fill="#0b0b0b" font-weight="600">35.36</text>
+<rect x="56" y="346" width="14" height="3" fill="#2a78d6"/><text x="76" y="350" fill="#52514e">base</text><rect x="126" y="346" width="14" height="3" fill="#eb6834"/><text x="146" y="350" fill="#52514e">gas ×1.5</text>
+<text x="56" y="390" font-size="15" font-weight="700" fill="#0b0b0b">The 2050 split by class — why the per-class key read a violation (TWh)</text>
+<text x="56" y="406" fill="#52514e">Unabated gas_cc: 0.00 in base vs 23.19 in the arm (the retired gas_cc↓ key); the gas-fired total still falls 36.53 → 35.36</text>
+<text x="48" y="446" text-anchor="end" fill="#0b0b0b">base</text>
+<rect x="57.0" y="430" width="699.5" height="24" fill="#eb6834"/>
+<text x="406.8" y="446" text-anchor="middle" fill="#ffffff" font-weight="600">gas_cc_ccs 35.08</text>
+<rect x="758.5" y="430" width="22.4" height="24" fill="#1baf7a"/>
+<rect x="783.0" y="430" width="2.6" height="24" fill="#eda100"/>
+<text x="794.5" y="446" fill="#0b0b0b" font-weight="700">36.53</text>
+<text x="48" y="494" text-anchor="end" fill="#0b0b0b">gas ×1.5</text>
+<rect x="57.0" y="478" width="461.7" height="24" fill="#2a78d6"/>
+<text x="287.9" y="494" text-anchor="middle" fill="#ffffff" font-weight="600">gas_cc 23.19</text>
+<rect x="520.7" y="478" width="214.7" height="24" fill="#eb6834"/>
+<text x="628.1" y="494" text-anchor="middle" fill="#ffffff" font-weight="600">gas_cc_ccs 10.83</text>
+<rect x="737.4" y="478" width="17.9" height="24" fill="#1baf7a"/>
+<rect x="757.3" y="478" width="4.9" height="24" fill="#eda100"/>
+<text x="771.2" y="494" fill="#0b0b0b" font-weight="700">35.36</text>
+<rect x="56" y="540" width="12" height="12" fill="#2a78d6"/><text x="74" y="550" fill="#52514e">gas_cc (unabated)</text>
+<rect x="206" y="540" width="12" height="12" fill="#eb6834"/><text x="224" y="550" fill="#52514e">gas_cc_ccs</text>
+<rect x="356" y="540" width="12" height="12" fill="#1baf7a"/><text x="374" y="550" fill="#52514e">gas_ct</text>
+<rect x="506" y="540" width="12" height="12" fill="#eda100"/><text x="524" y="550" fill="#52514e">gas_st</text>
+<text x="56.0" y="530" text-anchor="middle" fill="#52514e">0</text>
+<text x="256.0" y="530" text-anchor="middle" fill="#52514e">10</text>
+<text x="456.0" y="530" text-anchor="middle" fill="#52514e">20</text>
+<text x="656.0" y="530" text-anchor="middle" fill="#52514e">30</text>
+<text x="856.0" y="530" text-anchor="middle" fill="#52514e">40</text>
+<text x="56" y="580" fill="#52514e">Source: results/ff-t3-neiso-golden/bau/fc6/arms/{base,gasup150}/full_horizon_summary.json, generation_by_fuel_mwh (D29 grain). FINDING-capx-d35-p2-scope-2026-09-02 §4.</text>
+</svg>

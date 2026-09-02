@@ -228,7 +228,7 @@ Paired-run invariants (`--paired base_dir other_dir`), run on demand and in the 
 | # | Invariant | Pairing | Threshold |
 |---|---|---|---|
 | P1 | CO2 monotone under rising carbon price | same config, carbon_price_path high vs base | cumulative-2050 CO2(high) < CO2(base) FAIL; per-year violations > 1% WARN (evolution feedback can locally wiggle) |
-| P2 | Merit-order sign response | +$1/MMBtu gas | coal gen ↑ (coal-bearing ISOs), gas-CC gen ↓, LW price ↑, objective ↑; FAIL on sign |
+| P2 | Merit-order sign response | +$1/MMBtu gas | coal gen ↑ (coal-bearing ISOs), **total gas-fired gen ↓** (every class that pays the gas price: gas_cc + gas_ct + gas_cc_ccs + gas_st — capx-D35 2026-09-02, formerly "gas-CC gen ↓"; the per-class key is now a reported control in the row's evidence block), LW price ↑, objective ↑ (where the grain carries it); FAIL on sign |
 | P3 | Perturbation stability | ±5% gas | cumulative-2035 builds move < 25% (cliff-edge detector); WARN |
 
 ### 2.3 Golden-scenario band regression

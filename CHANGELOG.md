@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-02 — capx D35: FC-6 P2 gas leg re-scoped to the model's gas partition; neiso-t3 P2 re-scored artifact-only (no LP, no field, nothing armed)
+
+The golden-2 P2 FAIL ("year 2050: wrong: gas_cc↓") was the instrument crossing
+the CCS class migration on a 25-year pair, not a merit-order sign error
+(`docs/handoffs/FINDING-capx-d35-p2-scope-2026-09-02.md`): the gas price is a
+fuel-level driver, the LP comparative-statics inequality bounds the
+gas-burning AGGREGATE and says nothing about one class, and on an evolution
+pair the gas_cc / gas_cc_ccs split is itself a response to the driver.
+`check_forecast_invariants.py` P2 now scores `gas↓` on TOTAL gas-fired
+generation over `GAS_FIRED_FUELS` (the `data/fuel/_shared._GAS_FUEL_IDX`
+mirror: gas_cc, gas_ct, gas_cc_ccs, gas_st), keeps coal↑ / price↑ /
+objective↑ as they were, retires the per-class key to the row's evidence
+block as a reported control, carries the per-year gas-fired series, and gains
+`--paired-summaries` (P2 from committed `full_horizon_summary.json`, whose
+energy block is the checker's own `_fuel_gen_mwh`; objective↑ reported as not
+scored at that grain, never assumed). Controls: the unmodified scorer
+reproduces the committed verdict with zero non-provenance diffs, and the
+retired key at summary grain reproduces the committed FAIL string exactly.
+Re-score: P2 PASS (gas-fired 36.53→35.36 TWh at 2050, falling in all 25
+years), FC-6 FAIL→CAVEAT (T16-A battery row untouched), determination HOLD
+unchanged; prior verdict preserved at `neiso-t3-pre-p2scope`. No other ISO
+holds a committed P2 row. Rule 28 not triggered (no `ScenarioConfig` field).
+
 ## 2026-08-30 — capx D12: entry-screen scarcity basis adjudicated (no LP; one default-OFF field; nothing armed)
 
 The two-scarcity-objects question the D11-R finding §4 escalated, answered
