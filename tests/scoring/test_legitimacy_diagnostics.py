@@ -2014,17 +2014,13 @@ class TestFloorClassAttribution:
         """Plant 9: two ST_GAS units (no floor) + one CT_PEAKER unit floored
         by the CT netload limb — the 1104 topology."""
         return {
-            "min_gen": np.array(
-                [[0.0] * h, [0.0] * h, [20.0] * h], dtype=float
-            ),
+            "min_gen": np.array([[0.0] * h, [0.0] * h, [20.0] * h], dtype=float),
             "mechanism": np.array(
                 [[0] * h, [0] * h, [MECH_CT_NETLOAD_DRAG] * h], dtype=np.int8
             ),
             "unit_ids": np.array(["p9_st_a", "p9_st_b", "p9_ct"]),
             "plant_code": np.array([9, 9, 9]),
-            "plant_group": np.array(
-                ["ST_GAS", "ST_GAS", "CT_PEAKER"], dtype=object
-            ),
+            "plant_group": np.array(["ST_GAS", "ST_GAS", "CT_PEAKER"], dtype=object),
         }
 
     def test_floor_class_is_the_carrying_units_class(self):

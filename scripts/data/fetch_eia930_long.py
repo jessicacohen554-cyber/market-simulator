@@ -32,7 +32,9 @@ from pathlib import Path
 import pandas as pd
 
 # Reuse the paging + key resolution of the wide-extract fetcher (same API).
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # repo root: canonical sibling import
+sys.path.insert(
+    0, str(Path(__file__).resolve().parents[2])
+)  # repo root: canonical sibling import
 from scripts.data.fetch_eia930_hourly import (  # noqa: E402
     FUEL_URL,
     REGION_URL,

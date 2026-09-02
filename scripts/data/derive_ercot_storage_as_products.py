@@ -44,7 +44,9 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO_ROOT))  # repo root: canonical scripts.data.* sibling imports on direct run
+sys.path.insert(
+    0, str(REPO_ROOT)
+)  # repo root: canonical scripts.data.* sibling imports on direct run
 from scripts.data.build_ercot_as_withholding import (  # noqa: E402
     HOURS_PER_YEAR,
     _to_model_clock,

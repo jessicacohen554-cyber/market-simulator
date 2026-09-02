@@ -4,17 +4,30 @@ name: file-integrity-guard
 # shrinks a core source file by >30% or deletes it. Guards against
 # response-budget-truncated API pushes (incident 2026-07-15: constants.py
 # 6,368 -> 33 lines merged to main, five failed fragment restores).
-# Runtime is seconds and path-filtered — durable infrastructure, not a compute
-# job (repo CI cost policy). Escape hatch: the `intentional-shrink` PR label.
+# Runtime is seconds — durable infrastructure, not a compute job (repo CI cost
+# policy). The `push` trigger stays path-filtered; the `pull_request` trigger is
+# deliberately unfiltered so the check always REPORTS (see the `on:` block).
+# Escape hatch: the `intentional-shrink` PR label.
 
 on:
+  # NO `paths:` FILTER ON `pull_request` — deliberate, and the ONLY reason this
+  # trigger is unfiltered (the `push` trigger below keeps its filter, since a
+  # push to main needs no always-report property and unfiltered runs there are
+  # billed minutes for nothing).
+  #
+  # A required status check that never REPORTS is `pending`, not `passed`, so a
+  # path-filtered workflow strands every PR outside its filter — for this one,
+  # every docs-only PR, i.e. every records-lane PR. That is blocker 2 of owner
+  # ruling R-P (director board v19b, H-1), and it is why this guard could not
+  # be added to the required set. Removing the filter makes the job REPORT on
+  # every PR; on an out-of-scope PR it is a no-op success, because the scan is
+  # already scoped by `is_core()` below and simply finds nothing:
+  # `expected` = `scanned` = 0 and the step prints "Scanned 0/0 core paths."
+  # The rule-27 semantics are unchanged — only the reporting surface widens.
+  #
+  # Do NOT re-add a `paths:` filter here to save runner minutes without first
+  # taking this check out of the required set: the two are a package.
   pull_request:
-    paths:
-      - "src/**"
-      - "scripts/**"
-      - "CLAUDE.md"
-      - "model-methodology-spec.md"
-      - ".github/workflows/**"
   push:
     branches: [main]
     paths:

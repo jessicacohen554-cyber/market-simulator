@@ -1054,6 +1054,20 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # field's docstring promises byte-identical off. An armed run solves a
     # 7-zone CAISO topology and so gets a distinct key.
     "caiso_fsno_subzonal_topology",
+    # caiso-231 un-grounded-class offer re-grounding (default off): dropped
+    # from the hash at its default so every pre-existing cached run keeps its
+    # key -- the consumer is a single `if caiso_offer_surface_measured_ungrounded
+    # and iso.upper() == "CAISO"` block in pipeline/backcast_config.py, so the
+    # off path is byte-identical by construction. An armed run merges measured
+    # CC/CT bands onto CC_CHP / CT_CHP / ST_GAS (a different offer surface) and
+    # hashes distinctly. REGISTERED LATE, by the CI-red repair lane
+    # (2026-09-02): the field landed in aebeb60e WITHOUT this entry, which moved
+    # the default key 603c2498bf71d21d -> 7a57fadff595ca83 and the backcast key
+    # e027bc248c93c835 -> 1d82ebcc9666278d, orphaning every on-disk cache and
+    # reddening `Pinned default cache key` + `Structural refactor guards` on
+    # main. Root-cause repair, NOT a re-pin: both literals are restored by this
+    # registration. See docs/FINDING-ci-red-repair-2026-09.md.
+    "caiso_offer_surface_measured_ungrounded",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1540,6 +1554,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "caiso_fsno_subzonal_topology": "False",
+    # Added by the CI-red repair lane (2026-09-02) alongside the field's
+    # _CACHE_KEY_OPTIONAL_FIELDS entry above; caiso-231 landed the field
+    # without either. Append-only ledger (guard check 4): this is a NEW line,
+    # no existing line is edited.
+    "caiso_offer_surface_measured_ungrounded": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",

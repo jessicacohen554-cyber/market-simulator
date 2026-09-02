@@ -915,9 +915,7 @@ class TestCaisoPsPlantParams(unittest.TestCase):
     def test_off_state_is_the_legacy_aggregate(self):
         # Default off ⇒ byte-identical legacy behaviour: one NP15 aggregate,
         # no per-plant unit ids, no charge_power_cap_mw anywhere.
-        units = load_eia860_pumped_storage(
-            "CAISO", 2023, ScenarioConfig(iso="CAISO")
-        )
+        units = load_eia860_pumped_storage("CAISO", 2023, ScenarioConfig(iso="CAISO"))
         self.assertEqual(len(units), 1)
         self.assertEqual(units[0].unit_id, "NP15_eia860_pumped_storage")
         self.assertIsNone(units[0].charge_power_cap_mw)
@@ -1007,9 +1005,7 @@ class TestCaisoPsPlantParams(unittest.TestCase):
         self.assertTrue((out2[2] == 100.0).all())
         # No cited ratings anywhere ⇒ None (caller keeps its channel as-is).
         bare = [units[2]]
-        self.assertIsNone(
-            caiso_ps_charge_caps(np.array([100.0]), bare, 4, env[2:3])
-        )
+        self.assertIsNone(caiso_ps_charge_caps(np.array([100.0]), bare, 4, env[2:3]))
 
 
 class TestNYISOPumpedStorage(unittest.TestCase):

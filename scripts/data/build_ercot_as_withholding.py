@@ -58,7 +58,9 @@ import pyarrow.parquet as pq
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO_ROOT))  # repo root: canonical scripts.data.* sibling imports on direct run
+sys.path.insert(
+    0, str(REPO_ROOT)
+)  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from market_sim.config.paths import ERCOT_AS_DIR  # noqa: E402

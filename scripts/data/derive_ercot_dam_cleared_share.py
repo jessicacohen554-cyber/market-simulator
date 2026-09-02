@@ -62,7 +62,9 @@ from market_sim.config.paths import (  # noqa: E402
 )
 import sys  # noqa: E402
 
-sys.path.insert(0, str(REPO))  # repo root: canonical scripts.data.* sibling imports on direct run
+sys.path.insert(
+    0, str(REPO)
+)  # repo root: canonical scripts.data.* sibling imports on direct run
 sys.path.insert(0, str(REPO / "src"))
 
 from scripts.data.build_ercot_as_withholding import prevailing_he_to_cst  # noqa: E402

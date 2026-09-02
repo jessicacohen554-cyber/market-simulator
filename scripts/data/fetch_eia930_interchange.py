@@ -51,7 +51,9 @@ import pandas as pd
 
 # Reuse the paging + key resolution + BA-timezone map of the wide-extract
 # fetcher (same EIA API v2).
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # repo root: canonical sibling import
+sys.path.insert(
+    0, str(Path(__file__).resolve().parents[2])
+)  # repo root: canonical sibling import
 from scripts.data.fetch_eia930_hourly import BA_TIMEZONE, _api_key, _fetch  # noqa: E402
 
 INTERCHANGE_URL = "https://api.eia.gov/v2/electricity/rto/interchange-data/data/"

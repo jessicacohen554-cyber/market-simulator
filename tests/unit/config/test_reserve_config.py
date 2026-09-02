@@ -1914,18 +1914,23 @@ class TestErcotReserveSupplyCapNetCredits(unittest.TestCase):
             storage_as_commitment=True,
             **cfg_kw,
         )
-        with mock.patch(
-            "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
-            side_effect=fake_req,
-        ), mock.patch(
-            "market_sim.results.scarcity.ercot_rtolcap_supply_cap_mw",
-            return_value=np.vstack([np.full(24, fast), np.full(24, allt)]),
-        ), mock.patch(
-            "market_sim.results.scarcity.ercot_load_resource_reserve_credit_mw",
-            return_value=np.full(24, self._LR),
-        ), mock.patch(
-            "market_sim.results.scarcity.ercot_storage_as_reserve_mw",
-            return_value=np.full(24, self._SAS),
+        with (
+            mock.patch(
+                "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+                side_effect=fake_req,
+            ),
+            mock.patch(
+                "market_sim.results.scarcity.ercot_rtolcap_supply_cap_mw",
+                return_value=np.vstack([np.full(24, fast), np.full(24, allt)]),
+            ),
+            mock.patch(
+                "market_sim.results.scarcity.ercot_load_resource_reserve_credit_mw",
+                return_value=np.full(24, self._LR),
+            ),
+            mock.patch(
+                "market_sim.results.scarcity.ercot_storage_as_reserve_mw",
+                return_value=np.full(24, self._SAS),
+            ),
         ):
             return get_reserve_design(cfg, _fleet(), 24, ["Z0"])
 

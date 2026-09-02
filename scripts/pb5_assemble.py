@@ -55,7 +55,9 @@ logger = logging.getLogger("pb5_assemble")
 
 REPO = Path(__file__).resolve().parent.parent
 if str(REPO) not in sys.path:
-    sys.path.insert(0, str(REPO))  # repo root: canonical scripts.* sibling imports on direct run
+    sys.path.insert(
+        0, str(REPO)
+    )  # repo root: canonical scripts.* sibling imports on direct run
 
 
 def prior_from_artifact(path) -> StructuralPrior:

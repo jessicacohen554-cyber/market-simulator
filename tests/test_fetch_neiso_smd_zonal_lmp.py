@@ -153,9 +153,7 @@ class DeriveSeamTest(unittest.TestCase):
                 dal.NEISO_REPORT_DIR = orig
             self.assertIsNotNone(frame)
             self.assertEqual(len(frame), 24)
-            self.assertEqual(
-                set(frame.columns), {*dal.NEISO_ZONE_MAP, "hub"}
-            )
+            self.assertEqual(set(frame.columns), {*dal.NEISO_ZONE_MAP, "hub"})
             self.assertTrue((frame["hub"] == 20.0).all())
             # Hour 0 is local midnight EST -> 05:00 UTC, and the day is
             # contiguous from there.
