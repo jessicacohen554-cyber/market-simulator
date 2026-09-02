@@ -16,7 +16,7 @@
   "rubric_version": 3.5,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail"
   ],
   "notes": [],
   "criteria": {
@@ -53,7 +53,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -71,8 +71,8 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 4,
+    "scored": 8,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 3

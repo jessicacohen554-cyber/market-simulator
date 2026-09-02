@@ -10578,3 +10578,69 @@ companion the resolver cannot yet reach.
 2023 / 2024 / 2025. Deriving multi-year inputs is data prep, which the rule does
 not gate. NYISO's `complete` marker was **not** requested; NYISO remains absent
 from both markers and the holdout spend freeze is untouched.
+
+### 2026-09-02 — nyiso-177 ADDENDUM: the owner rules, and `2026-09-02-nyiso-177-vintage-matched` IS PROMOTED
+
+The entry above was written and pushed recommending **against** a promotion this
+session could take on its own authority (its promotion-bar leg (a) fails: the
+arm is three objects, not one). The owner then ruled, in session and verbatim:
+
+> *"Is this a recommended keeper candidate? If so plz promote. If structural
+> integrity improves but gates regress that may still be a keeper.."*
+
+— the standing-disposition formula of the nyiso-155 / -157 / -159 promotions.
+**NYISO keeper → `2026-09-02-nyiso-177-vintage-matched`** (bundle
+`results/calibration/nyiso177_vintage_B1p`), superseding
+`2026-08-30-nyiso-159-loss-surface`. **The recommendation against it is left
+standing, unedited, in the entry above and in §6 of the finding**; the ruling is
+recorded as an **OVERRIDE**, never as the pre-registration's own verdict.
+
+**DETERMINATION NOT-YET, target grade 5, fails 3** {C1, C3a-2025 −11.2 %, C3c},
+against the superseded keeper's grade 6 / fails 2. **The promotion narrows
+nothing and costs one load-bearing cell** — C1 2023 `ST_GAS` +3.86 TWh against
++3.33 — and the honest reading is the **nyiso-155 precedent exactly**: the
+superseded keeper passed that cell on **~0.5 TWh of margin the attribution
+defect was supplying**. Mechanism stated, not residual (Northport committed
+10.7→15.3, Bowline 16.5→20.1, Danskammer 9.9→17.8, Astoria `online_hours`
+11,405→17,027, outweighing Ravenswood 10.7→6.5). C2 / C3b / C4 / C6 / C8 PASS;
+same six D-4 rows, identical gates, zero new forcing mechanisms; DOF 13 /
+`n_residual` 6 carried verbatim (both repairs are zero-scalar).
+
+**THE FOUR STRUCTURAL GAINS the promotion rests on**, each independent of any
+score — and the last two are ones the pre-ruling write-up **under-weighted**,
+corrected in finding §10.2: (1) **accuracy** (East River's `ST_CHP` row carried
+the *turbine* half's conduct on the *steam* half's denominator and correctly
+disappears; S A Carlson `ST_GAS`→`CT_PEAKER`; Ravenswood's steam/CC split
+becomes real); (2) **no off-registry channel** — the hardcoded
+`_FLEET_GROUP_OVERRIDE` per-plant dict is disarmed on the repaired path, where
+it was a rule-19 stack pinning `(2500, CC_REGULAR)` at 1.000; (3)
+**REPRODUCIBILITY** — the superseded keeper's outage extract has a **null
+`derive_invocation`** and cannot be reproduced at HEAD at any flag setting
+(nyiso-176 §4); (4) **INTERNAL CONSISTENCY** — nyiso-176 R4 proved bit-exactly
+that the committed tranche and outage artifacts sat on **different availability
+bases**, and `campd_attribution_selectors` now makes one basis structural rather
+than a discipline a successor could forget.
+
+**GATE R6/K5 STAYED SILENT**: C3a-2025 −11.2 % vs −11.5 %. No price claim is
+made or banked, and C3a-2025 remains the lane's standing open gate, unmoved.
+
+**C6 was attested AT the promotion with every premise COMPUTED, never typed**
+(`scripts/gen_nyiso177_attestation.py`, which refuses to write on any failed
+leg): **G-CONTROL** re-measures the same-HEAD control's bit-identity to the
+superseded keeper (0 of 52,560 hourly zonal prices differ in all three years,
+max |Δp| 0.0) — the premise that licenses using that control as the delta
+baseline; **G-DELTA** confirms the config delta is exactly the two fields with
+nothing riding along; **G-INPUTS**, **G-DOF**, **G-ENGAGE** pass. With C6
+attested both legs re-score one grade higher than first reported.
+
+**NO MARKER DUTY**: NYISO holds no `complete` marker (declared 2026-07-31,
+**withdrawn** 2026-08-30), so rule 22 D-5(b) imposes no re-key and none was
+performed. NYISO stays absent from both markers; the holdout spend freeze is
+untouched; every solved, scored and registered year is 2023–2025.
+
+**OPEN GATES AFTER THE PROMOTION**: C3a-2025 (unchanged, owner-court), the
+ledgered-class C3c (not lone, so it stands), **NEW — C1 2023 `ST_GAS`**, and the
+**outage over-booking this session sized for the first time** (`ST_GAS`
+`booked_share` 0.53–0.56 of the capacity-year *in the keeper*, against an
+EFOR+planned norm of 0.10–0.15; PREREG gate G3 **recorded FAILED** on it). The
+over-booking is the lane's next lever and it is an **OFFER-side** object.

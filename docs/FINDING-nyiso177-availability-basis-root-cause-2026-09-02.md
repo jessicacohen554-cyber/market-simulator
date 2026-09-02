@@ -1,14 +1,15 @@
 # nyiso-177 — the accurate CAMPD attribution is NOT what broke the NYISO backcast: the availability basis is, and the guarded companion reproduces the keeper's envelope to `np.array_equal`
 
 **Session:** nyiso-177, NYISO backcast-calibration track, 2026-09-02.
-**Keeper:** `2026-08-30-nyiso-159-loss-surface` — **UNCHANGED**, NOT-YET on
-{C3a-2025 −11.5 %, C3c}.
+**Keeper:** `2026-09-02-nyiso-177-vintage-matched` — **PROMOTED 2026-09-02 by
+owner ruling** (see §10, added after the ruling), superseding
+`2026-08-30-nyiso-159-loss-surface`. Determination NOT-YET, grade 5, fails 3
+{C1-2023-ST_GAS, C3a-2025 −11.2 %, C3c}.
 **Gates:** `results/calibration/PREREG-nyiso177-degradation-root-cause.md`,
 committed at `966da189` **before any measurement**, amended at `499430f4`
 **before any solve** and with no score of any kind consulted.
-**Runs registered:** `2026-09-02-nyiso-177-destack-unguarded`,
-`2026-09-02-nyiso-177-vintage-matched` (both PROBES, both NOT-YET, neither
-promoted).
+**Runs registered:** `2026-09-02-nyiso-177-destack-unguarded` (probe) and
+`2026-09-02-nyiso-177-vintage-matched` (**the promoted keeper**), both NOT-YET.
 **Machine artifacts:** `results/calibration/_nyiso177_root_cause_phase0.json`,
 `results/calibration/_nyiso177_availability_basis_gates.json`; probes
 `scripts/probes/nyiso177_degradation_root_cause.py`,
@@ -376,3 +377,89 @@ reserved to the owner in nyiso-155, -157 and -159.
   subtests passed. The 4 failures in `tests/unit/results/test_export.py`
   reproduce identically on a clean stash of HEAD (a missing
   `confirmed-retirements` clean partition) and are pre-existing.
+
+---
+
+## 10. ADDENDUM — the owner ruling, and what changed after §1–§9 were written
+
+**§1–§9 above were written and pushed BEFORE the ruling, recommending against a
+promotion this session could take on its own authority.** The owner then ruled,
+in session and verbatim:
+
+> *"Is this a recommended keeper candidate? If so plz promote. If structural
+> integrity improves but gates regress that may still be a keeper.."*
+
+That is the standing-disposition formula of the nyiso-155 / -157 / -159
+promotions, and it resolves precisely the question §6 escalated. **`B1′` is
+promoted; the record of the recommendation against it is left standing above,
+unedited.**
+
+### 10.1 What the ruling changes, and what it does not
+
+It changes the **disposition**, not a single measurement. Every number in
+§1–§9 stands. Two things in §6 are superseded and are named here rather than
+quietly rewritten:
+
+* §6's **"NEITHER LEG IS PROMOTED. THE KEEPER IS UNTOUCHED"** is superseded for
+  `B1′` only. `2026-09-02-nyiso-177-destack-unguarded` remains a probe.
+* §6's promotion-bar leg **(a)** — "a single adjudicated object" — is **still
+  failed on its face**, and the ruling overrides it rather than satisfying it.
+  `B1′` is three objects. That is recorded as an **override**, exactly as
+  nyiso-155 / -157 / -159 recorded theirs, never as the pre-registration's own
+  verdict.
+
+### 10.2 One thing the ruling made me re-weigh, and I was wrong to under-weight it
+
+§6 argued that the guarded availability basis "is **not** demonstrably more
+accurate than the keeper's … it was selected because it *matches*". That is
+true about **accuracy** and it is **incomplete about integrity**, because it
+omits two gains that are independent of accuracy and that §2–§4 had already
+measured:
+
+* **Reproducibility.** The superseded keeper's outage extract carries a **null
+  `derive_invocation`** and, per nyiso-176 §4, **cannot be reproduced at HEAD at
+  any flag setting**. `B1′`'s inputs regenerate from a recorded invocation with
+  a provenance sidecar. A keeper whose inputs cannot be regenerated is a
+  standing risk to every future A/B against it.
+* **Internal consistency.** nyiso-176 R4 established **bit-exactly** (S A
+  Carlson 2682, 3,913 online hours recovered) that the committed tranche
+  artifact and the committed outage extract sit on **different availability
+  bases** — the tranche artifact was derived against an *older* extract than the
+  one the solve reads. `B1′` puts both on one basis, and
+  `campd_attribution_selectors` makes that **structural** rather than a
+  discipline a successor could forget.
+
+Those two, plus the accuracy repair and the removal of an off-registry
+per-plant dict, are the four gains the promotion rests on. **The correction is
+to §6's reasoning, not to any measurement.**
+
+### 10.3 What was executed at the promotion
+
+* `frontend/data/backcast/keepers/NYISO.json` — keeper, promotion note,
+  determination note and a new `superseded` entry, prior records preserved
+  verbatim beneath. **NYISO holds no `complete` marker** (withdrawn
+  2026-08-30), so rule 22 D-5(b) imposes **no re-key duty** and none was
+  performed.
+* **`scripts/gen_nyiso177_attestation.py`** — the C6 attestation for **both**
+  legs, with every premise **computed, never typed**, refusing to write on any
+  failed leg (the caiso-196/197 E10 discipline). Its checks: **G-CONTROL**
+  re-measures the same-HEAD control's bit-identity to the superseded keeper
+  (**0 of 52,560** hourly zonal prices differ in all three years, max |Δp|
+  **0.0**) — which is what licenses using that control as the delta baseline;
+  **G-DELTA** confirms the config delta is **exactly** the two fields with
+  nothing riding along, after normalizing three `None`-from-absence registry
+  additions; **G-INPUTS** confirms both artifacts resolve to the same
+  `-perunitmerit-` basis; **G-DOF** (13 entries / `n_residual` 6, zero added)
+  and **G-ENGAGE** pass. With C6 attested, both legs re-score one grade higher
+  than §5 reported: the keeper **6**, `B1′` **5**, `B1` **4**.
+* The mechanism-matrix shard re-stamped (keeper + gates), and both cells moved
+  to **K**.
+
+### 10.4 The determination, stated without softening
+
+**NOT-YET, grade 5, fails 3.** The promotion **narrows nothing** and **costs one
+load-bearing cell**: C1 2023 `ST_GAS`, whose mechanism §5.4 states. C3a-2025 is
+essentially unmoved (−11.2 % against −11.5 %) and **is not claimed as an
+improvement** — R6/G5 stayed silent by design. The over-booking object (§7.1)
+is **unrepaired** and is now the lane's next lever, on the **offer** side.
+
