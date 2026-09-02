@@ -10244,3 +10244,161 @@ read is 2023/2024/2025; NYISO holds no `complete` marker, none was requested.
 (`test_capacity_evolution_changes_fleet`) reproduces on a clean stash of HEAD
 and is pre-existing. **No C3c lever opened; none of the twenty-six closed lines
 re-tested.**
+
+## 2026-09-02 — nyiso-176: the "−40 % artifact drift" that blocked nyiso-175b is an INVOCATION-SPAN ARTIFACT whose SIGN IS WRONG; the real drift decomposes into three channels of which ONE is a defect and it is ALREADY REPAIRED; and the repair is now WIRED into the solve
+
+Chartered to attribute the input-artifact reproducibility gap nyiso-175b handed
+forward as "the precondition for everything else", and to decide the
+re-baseline. **Both done, and the attribution changes what the object is.**
+Keeper `2026-08-30-nyiso-159-loss-surface` and its **NOT-YET** determination on
+{C3a-2025 −11.5 %, C3c} **untouched**; no parameter, band, floor or offer value
+changed; **no C3c lever opened**. Prereg
+`results/calibration/PREREG-nyiso176-input-artifact-reproducibility.md` +
+probe `scripts/probes/nyiso176_input_artifact_reproducibility.py` committed at
+`60653b59` **before either was run** (the ninth consecutive session to honour
+this). Full record:
+`docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md`.
+
+**THE HEADLINE IS A CORRECTION TO THE COMMITTED RECORD.** nyiso-175b §4.1
+reported `campd-unit-outages-NYISO.csv` drifting **"4,423 → 2,632 windows,
+−40 %, from nothing but re-running the deriver."** **That comparison is an
+INVOCATION-SPAN ARTIFACT AND ITS SIGN IS WRONG.** The committed extract spans
+**2018–2026**; `derive_campd_unit_outages.py --years` defaults to
+**2023–2025**; the figure put nine years against three. Re-derived at HEAD over
+the committed span the count is **6,455**, and on a like-for-like 2023–2025
+basis the direction **REVERSES** to **1,495 → 2,632, +76 %**. Pre-registered
+gate **R1 therefore FAILS** on its own bar and is reported as a failure — but
+the failure re-sizes the object rather than dissolving it: **3,767 of the
+committed 4,423 windows (85.2 %) reproduce EXACTLY at HEAD**, and **3,674 of
+the 3,802 NON-2018 windows (96.6 %)** reproduce exactly under the repaired
+routing. **The 621 missing 2018 windows have a NAME, not a mystery:** BLOAT-S2
+(2026-08-17) untracked the `campd-unit-level` 2018 vintage and the 2026-08-16
+rewrite stripped it, so `data/raw/campd-unit-level/` carries NY_2019…NY_2026
+only and recovery is **re-fetch, never a pin**.
+
+**THE REMAINING 2023–2025 GAP DECOMPOSES ORTHOGONALLY, measured as a 2×2 of
+HEAD re-derivations against the committed 1,495:** incumbent routing + override
+**2,632**; override OFF **1,645**; per-unit routing **1,996**; both **1,344**.
+So of the **+1,137**: the **full-stop duration override carries +987 (87 %)**
+and the **`fac_group` routing short-circuit carries +636** at override-on
+(+301 at override-off), the two overlapping on the same idle-peaker windows.
+**ONLY ONE IS A DEFECT, AND IT IS THE ONE ALREADY REPAIRED.** E F Barrett
+(2511)'s 16 `U000xx` combustion turbines alone explode **18 committed 2023–2025
+windows into 610 at HEAD** and collapse back to **20** under nyiso-175b's
+per-unit crosswalk — **54 % of the entire gap, one plant, the exact defect
+nyiso-174 §6 item 1 named.** **THE OVERRIDE IS NOT A DEFECT AND IS NOT PROPOSED
+FOR CHANGE**, and it survives its own falsifier rather than being excused: of
+the **60,024** unit-hours its 2024 windows cover across five affected plants,
+only **622 (1.0 %)** show ANY metered generation (committed 0.1 %) — the
+windows are not asserting unavailability against a running meter. It is a
+deliberate, cited detector feature (`FULL_STOP_OVERRIDE_DAYS`/`_CF`) that the
+committed extract simply predates.
+
+**TWO SUSPECTS ELIMINATED BY MEASUREMENT, both recorded because either could
+have gone the other way.** (1) **Parasitic factors are EXACTLY INERT** — 0 of
+78 tranche rows move under ablation. (2) **The in-merit revealed-availability
+filter is INTACT at HEAD**: the attractive silent-degradation story
+(`high_load_mask` returns `None` on a missing EIA-930 BA file, and BLOAT-S2
+untracked "the eia-930 per-BA long files") is **REFUTED** — `NYIS
+hourly.parquet` is present, covers 2015–2026, and returns 1,172/1,194/1,233/
+1,225 high-net-load hours for 2019/2023/2024/2025.
+
+**ON THE TRANCHE ARTIFACT: R3 MULTI-CHANNEL, R4 BIT-EXACT.** The pre-registered
+R3 metric (rows matching committed `online_hours` within 24 h, of 78; dominant
+at ≥ 60) returns control **44**, no-derate **47**, no-parasitic **44** —
+**MULTI-CHANNEL**, reported at the bar set in advance. But **R4 PASSES
+EXACTLY**: ablating the outage-derate overlay restores S A Carlson (2682)
+`ST_GAS` to the committed **3,913 online hours and `median_cf` 84.4 — the
+committed values bit-for-bit** — from a control reading **120 h at the
+physically meaningless clip cap of 150.0**. `avail_cap = nameplate × avail_mult`
+feeds BOTH the online test and the `finite` mask, so a derate deletes hours
+outright; the committed tranche artifact was derived when the extract carried
+**no (2682, ST_GAS) windows** and the committed extract now carries **55**.
+**THE TWO COMMITTED INPUTS ARE MUTUALLY INCONSISTENT — the tranche artifact is
+derated against an OLDER outage extract than the one the solve reads.** That,
+not "drift", is the real blocker. Channel C is **3 rows** of HEAD's own fleet
+reconciliation (7314, 10190, 56196, "corrupt summer-capacity rows — reconciled"),
+where **HEAD is right**.
+
+**R5 DISCHARGED AS PRE-REGISTERED, WITH NO SCORE CONSULTED IN CHOOSING THE
+BRANCH.** R5-(iii) for the tranche artifact (MULTI-CHANNEL → re-baseline) and
+R5-(i) for the routing channel (a nameable defect → repair and re-derive) land
+in the SAME act, and better than either alone: **the `-perunit-` companions ARE
+the re-baselined inputs, selected by a DEFAULT-OFF gate rather than by
+overwriting the incumbents** — so the incumbent artifacts stay byte-untouched,
+the keeper is unchanged, and the re-baseline is an ADJUDICATED single delta
+rather than a silent import.
+
+**WHAT WAS BUILT — nyiso-175b's handed-forward item 3, which it listed as NOT
+BUILT.** `ScenarioConfig.campd_per_unit_attribution`, default-off, **ONE gate
+over BOTH artifacts** (rule 19 `[R-ONE-MECH]`: a tranche row's statistics are
+computed over an outage-derated denominator, so the two must move together, and
+a single field makes that structural rather than a discipline a successor could
+forget). `campd_bins.thermal_tranche_csv_for_iso` is the single resolver and
+**all 11 hardcoded call sites** now route through it, threaded from config via
+`assembly.py` / `arrays.py` / `offer_curves.py` / `reserves/spec.py`;
+`unit_outage_csv_for_iso` gains `per_unit_crosswalk`, which **takes precedence
+over** the narrower `-unitroute-` companion (measurably wrong where the two
+disagree, nyiso-175b K3). `--campd-per-unit-attribution` reaches both
+`solve_and_persist` and `run_replay_bundle`, and lands in `run_config.json`
+(rule 24). **COMPLETENESS IS CI-ENFORCED, NOT ASSERTED**
+(`tests/unit/data/test_campd_per_unit_attribution.py`, 10 tests): no `src/`
+module may read the tranche artifact outside the resolver, and no resolver-using
+reader may lack the selector — the invariant that stops a solve reading **two
+artifact vintages inside one LP**, a failure mode nothing in the output would
+reveal.
+
+**THE COUPLING GAP nyiso-175b DISCLOSED IS CLOSED IN THE DERIVER**, not in
+prose: `derive_thermal_tranches` now sources its derate from the per-unit outage
+companion under `--per-unit-attribution`. **BOTH NYISO COMPANIONS REGENERATED
+ON THE CONSISTENT BASIS** (rule 23, citing the defect and never a residual):
+the outage companion over the committed extract's own **2019–2026** span,
+**1,996 → 4,928 windows** (the 2023-2025-only companion would have silently lost
+every window beginning in 2022 and running into 2023, since
+`unit_outage_derate_factors` clips to the run year), **byte-identical on
+re-derivation**; and the tranche companion against that repaired extract,
+moving **15 of its 85 rows** (8906 `ST_GAS` 17,027 → 8,823 h). **ONE NEGATIVE
+RESULT AT FULL STRENGTH:** the physically-impossible `median_cf > 100` census
+goes **10 → 11** (50978 `CC_REGULAR` enters at 141.4 as the derate bites at a
+sparsely-metered plant). Rule 14 `[R-ACCURATE]` binds: the accurate construction
+is KEPT and the artefact RECORDED, never reverted.
+
+**AND THE REPRODUCIBILITY GAP IS STRUCTURALLY CLOSED GOING FORWARD, FOR EVERY
+ISO:** `derive_campd_unit_outages` now writes a **provenance sidecar** beside
+every extract it emits — year span, `min_outage_days`, routing flags, in-merit
+and full-stop thresholds, row count, year histogram. **The absence of exactly
+this record is why the session's headline comparison was ambiguous in the first
+place.**
+
+**EXPECTED VALUE, UNCHANGED AND NOT OVERSOLD.** The per-unit repair's C3a-2025
+expectation is **~ZERO** — both East River bins carry heat rate 7.4205 and the
+same delivered gas, so moving energy between them changes no unit's marginal
+cost and no marginal price — and nyiso-175b's gate **K5, which FAILS a large
+favourable C3a move, is carried forward verbatim as R6**. This is a rule 1
+`[R-STRUCT]` C1 / representation repair plus an input-integrity repair, **never
+a C3a lever**. The re-baseline itself has **no pre-registered sign**.
+
+**HANDED FORWARD.** (1) The A/B, now genuinely runnable — and it still needs a
+HEAD control leg, but **not for nyiso-175b's reason**: the drift is adjudicated;
+the control leg is needed only because HEAD's code has moved since 2026-08-30.
+(2) **The cross-ISO question, deliberately not opened here (rule 25):** nothing
+in the diagnosis is NYISO-specific — the `fac_group` short-circuit's own
+docstring calls it "a deliberate pjm-75 conservatism" and **neiso-99 already
+carved a rule 14 exception out of it**, so the defect family is known in at
+least two other ISOs and was handled per-plant rather than by the general rule.
+Each `U` cell states its own transfer question and **all four are answerable
+from committed bytes without a solve.** (3) Every other ISO's tranche artifact
+still has the xiso-6 descriptive-backfill sidecar that makes no claim about what
+HEAD would emit; the outage half is now self-recording and the tranche half is
+not. (4) `--fix-anchors` on the shared matrix — the standing governance round;
+this session's new field adds to the existing drift and deliberately did not run
+the fixer, which would rewrite every row of a file five other lanes edit.
+
+**Tests:** `tests/unit` + `tests/iso/nyiso` **1,792 passed / 17 skipped**. The
+**14** `tests/regression` + `tests/scoring` failures **reproduce identically on
+a clean stash of HEAD** (the brief named one; there are fourteen). Matrix:
+`check_mechanism_matrix.py` no errors; `campd_per_unit_attribution` added to the
+base file and to **all six** ISO shards (rule 28 duty c), NYISO at **O**, ERCOT
+**n/a** (no thermal-tranche artifact), the other four **U** (rule 28(d) — no
+verdict crosses an ISO boundary).
+

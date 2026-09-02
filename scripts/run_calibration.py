@@ -570,6 +570,7 @@ def run_year(
     capacity_deliverability_limits: bool | None = None,
     unit_outage_lp_capacity_basis: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
+    campd_per_unit_attribution: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
     # merge, but the parameter was never added here, so EVERY solve through
@@ -1422,6 +1423,14 @@ def run_year(
     if unit_outage_mixed_gas_routing is not None:
         config = config.with_overrides(
             unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing
+        )
+    if campd_per_unit_attribution is not None:
+        # nyiso-176: ONE gate over BOTH CAMPD-derived solve inputs (the
+        # thermal-tranche artifact and the unit-outage extract), which must
+        # move together — a tranche row's statistics are computed over an
+        # outage-derated denominator (rule 19 [R-ONE-MECH]).
+        config = config.with_overrides(
+            campd_per_unit_attribution=campd_per_unit_attribution
         )
     if cc_winter_capability_basis is not None:
         config = config.with_overrides(
