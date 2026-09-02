@@ -28,17 +28,48 @@ test reads or writes the real registry.
 
 import importlib.util
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
 
 from tests.helpers import REPO_ROOT
 
-_spec = importlib.util.spec_from_file_location(
-    "check_golden_manifest", str(REPO_ROOT / "scripts" / "check_golden_manifest.py")
+
+def _load_script(name: str, path: Path):
+    """Execute a loose ``scripts/`` module by path WITHOUT leaking its import-time
+    environment into the test process.
+
+    ``capture_keeper_goldens.py`` pins ``DETERMINISM_ENV``
+    (``MARKET_SIM_HIGHS_THREADS=1``, the WARMSTART pair) into ``os.environ`` at
+    import — correct for its own CLI process, where it must precede any solve.
+    Executed here it leaked into the whole pytest process: every LP built
+    afterwards by ``model/lp/model.py`` set ``threads=1`` against a HiGHS global
+    scheduler that an earlier test had already initialized at the default, and
+    HiGHS refused every one of them (``Option 'threads' is set to 1 but global
+    scheduler has already been initialized to use N threads`` → status ``Not
+    Set`` → ``dispatch LP has no feasible primal solution``). That is 203 of
+    the tier's LP tests in a serial run and 24–79 in whichever xdist worker
+    this file lands in — scheduling-dependent, so a latent CI red, and the
+    reason a local count of the tier over-reads ``main`` (fast-tier repair,
+    2026-09-02, ``docs/FINDING-fast-tier-repair-2026-09.md`` §4). The
+    environment is snapshotted before ``exec_module`` and restored after it,
+    added keys included, so the script's own pin never outlives its import.
+    """
+    saved = dict(os.environ)
+    spec = importlib.util.spec_from_file_location(name, str(path))
+    mod = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(mod)
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+    return mod
+
+
+cgm = _load_script(
+    "check_golden_manifest", REPO_ROOT / "scripts" / "check_golden_manifest.py"
 )
-cgm = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(cgm)
 
 LIVE_MANIFEST = (
     REPO_ROOT / "results" / "regression-goldens" / "perfb-stage0" / "manifest.json"
@@ -465,12 +496,10 @@ class PartitionCaptureKeyTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        spec = importlib.util.spec_from_file_location(
+        cls.mod = _load_script(
             "capture_keeper_goldens_partition",
-            str(REPO_ROOT / "scripts" / "capture_keeper_goldens.py"),
+            REPO_ROOT / "scripts" / "capture_keeper_goldens.py",
         )
-        cls.mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(cls.mod)
 
     def test_key_round_trip(self):
         m = self.mod
@@ -550,12 +579,10 @@ class CaptureToolSchemaTest(unittest.TestCase):
     """The capture tool can only write schema v2, and only its own entry."""
 
     def setUp(self):
-        spec = importlib.util.spec_from_file_location(
+        self.mod = _load_script(
             "capture_keeper_goldens_schema",
-            str(REPO_ROOT / "scripts" / "capture_keeper_goldens.py"),
+            REPO_ROOT / "scripts" / "capture_keeper_goldens.py",
         )
-        self.mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.mod)
         self._tmp = tempfile.TemporaryDirectory()
         self._saved_root = self.mod.GOLDENS_ROOT
         self.mod.GOLDENS_ROOT = Path(self._tmp.name)
