@@ -1,0 +1,549 @@
+{
+ "prereg": "results/calibration/PREREG-nyiso173-cc-availability-anatomy.md",
+ "keeper": "2026-08-30-nyiso-159-loss-surface",
+ "solves": 0,
+ "by_year": {
+  "2023": {
+   "P1": {
+    "violation_hours": 93,
+    "shortfall_in_violation_hours": {
+     "total_mwh": 480077.0,
+     "A_mwh": 271242.0,
+     "A_share": 0.565,
+     "B_mwh": 54302.0,
+     "B_share": 0.1131,
+     "C_mwh": 124798.0,
+     "C_share": 0.26,
+     "D_mwh": 29735.0,
+     "D_share": 0.0619
+    },
+    "shortfall_all_hours": {
+     "total_mwh": 54764280.0,
+     "A_mwh": 29366478.0,
+     "A_share": 0.5362,
+     "B_mwh": 7032867.0,
+     "B_share": 0.1284,
+     "C_mwh": 13878885.0,
+     "C_share": 0.2534,
+     "D_mwh": 4486050.0,
+     "D_share": 0.0819
+    },
+    "off_episode_histogram_count": {
+     "lt_24h": 1798,
+     "24_72h": 362,
+     "72_120h": 119,
+     "ge_120h": 471
+    },
+    "off_episode_capacity_mwh": {
+     "lt_24h": 2555490.0,
+     "24_72h": 2899989.0,
+     "72_120h": 1763057.0,
+     "ge_120h": 33814239.0
+    },
+    "depressed_ceiling_unit_days": 638,
+    "depressed_ceiling_shortfall_mwh": 2334474.0,
+    "n_units": 68,
+    "fleet_cap_mw": 11500.0
+   },
+   "P2": {
+    "mean_gap_mw": 223.9,
+    "gap_by_actual_price_decile": [
+     412.8,
+     398.6,
+     346.2,
+     228.1,
+     187.4,
+     121.6,
+     108.1,
+     96.5,
+     148.9,
+     190.7
+    ],
+    "gap_by_load_decile": [
+     296.4,
+     283.4,
+     286.7,
+     370.7,
+     276.4,
+     210.9,
+     152.9,
+     91.9,
+     139.0,
+     130.7
+    ],
+    "gap_by_online_unit_count_quintile": [
+     538.8,
+     318.3,
+     249.3,
+     19.4,
+     -6.4
+    ],
+    "top3_price_deciles_positive": true,
+    "top3_load_deciles_positive": true,
+    "all_on_count_quintiles_positive": false,
+    "mean_online_units": 28.0
+   },
+   "P3": {
+    "n_plants": 39,
+    "hours_above_fleet_bound": 93,
+    "hours_above_additive_per_plant_bound": 0,
+    "additive_share_of_year": 0.0,
+    "coverage_fleet_over_additive_by_month": {
+     "1": 0.8379,
+     "2": 0.738,
+     "3": 0.7026,
+     "4": 0.7071,
+     "5": 0.7653,
+     "6": 0.8412,
+     "7": 0.905,
+     "8": 0.9126,
+     "9": 0.9208,
+     "10": 0.6951,
+     "11": 0.8372,
+     "12": 0.8246
+    },
+    "coverage_mean": 0.8073,
+    "east_river_present": true,
+    "hours_above_fleet_bound_ex_east_river": 208,
+    "top_violation_hour_shortfall_plants": [
+     {
+      "plant": 55405,
+      "cap_mw": 1100.0,
+      "violation_hour_shortfall_gwh": 77.4
+     },
+     {
+      "plant": 57185,
+      "cap_mw": 1133.0,
+      "violation_hour_shortfall_gwh": 53.4
+     },
+     {
+      "plant": 10725,
+      "cap_mw": 429.0,
+      "violation_hour_shortfall_gwh": 30.74
+     },
+     {
+      "plant": 56940,
+      "cap_mw": 716.0,
+      "violation_hour_shortfall_gwh": 26.61
+     },
+     {
+      "plant": 56259,
+      "cap_mw": 650.0,
+      "violation_hour_shortfall_gwh": 23.47
+     },
+     {
+      "plant": 56196,
+      "cap_mw": 614.0,
+      "violation_hour_shortfall_gwh": 23.2
+     },
+     {
+      "plant": 2539,
+      "cap_mw": 630.0,
+      "violation_hour_shortfall_gwh": 18.49
+     },
+     {
+      "plant": 55375,
+      "cap_mw": 1252.0,
+      "violation_hour_shortfall_gwh": 18.09
+     }
+    ]
+   },
+   "model_cc_twh": 47.9369,
+   "measured_cc_twh": 45.9757
+  },
+  "2024": {
+   "P1": {
+    "violation_hours": 773,
+    "shortfall_in_violation_hours": {
+     "total_mwh": 4235379.0,
+     "A_mwh": 2371946.0,
+     "A_share": 0.56,
+     "B_mwh": 489215.0,
+     "B_share": 0.1155,
+     "C_mwh": 992240.0,
+     "C_share": 0.2343,
+     "D_mwh": 381978.0,
+     "D_share": 0.0902
+    },
+    "shortfall_all_hours": {
+     "total_mwh": 50910599.0,
+     "A_mwh": 26644268.0,
+     "A_share": 0.5234,
+     "B_mwh": 5981636.0,
+     "B_share": 0.1175,
+     "C_mwh": 14119029.0,
+     "C_share": 0.2773,
+     "D_mwh": 4165666.0,
+     "D_share": 0.0818
+    },
+    "off_episode_histogram_count": {
+     "lt_24h": 1801,
+     "24_72h": 281,
+     "72_120h": 115,
+     "ge_120h": 393
+    },
+    "off_episode_capacity_mwh": {
+     "lt_24h": 2596884.0,
+     "24_72h": 2048420.0,
+     "72_120h": 1473628.0,
+     "ge_120h": 30900422.0
+    },
+    "depressed_ceiling_unit_days": 599,
+    "depressed_ceiling_shortfall_mwh": 2199338.0,
+    "n_units": 68,
+    "fleet_cap_mw": 11671.0
+   },
+   "P2": {
+    "mean_gap_mw": 494.6,
+    "gap_by_actual_price_decile": [
+     490.4,
+     608.2,
+     504.9,
+     400.3,
+     440.2,
+     393.2,
+     409.3,
+     440.3,
+     568.3,
+     690.8
+    ],
+    "gap_by_load_decile": [
+     391.2,
+     462.3,
+     462.9,
+     554.6,
+     475.8,
+     500.8,
+     552.2,
+     566.2,
+     641.3,
+     338.6
+    ],
+    "gap_by_online_unit_count_quintile": [
+     553.3,
+     541.4,
+     536.1,
+     536.7,
+     305.4
+    ],
+    "top3_price_deciles_positive": true,
+    "top3_load_deciles_positive": true,
+    "all_on_count_quintiles_positive": true,
+    "mean_online_units": 29.51
+   },
+   "P3": {
+    "n_plants": 39,
+    "hours_above_fleet_bound": 773,
+    "hours_above_additive_per_plant_bound": 0,
+    "additive_share_of_year": 0.0,
+    "coverage_fleet_over_additive_by_month": {
+     "1": 0.8709,
+     "2": 0.8725,
+     "3": 0.6893,
+     "4": 0.7994,
+     "5": 0.8655,
+     "6": 0.8697,
+     "7": 0.8631,
+     "8": 0.8969,
+     "9": 0.8399,
+     "10": 0.7617,
+     "11": 0.8524,
+     "12": 0.7931
+    },
+    "coverage_mean": 0.8312,
+    "east_river_present": true,
+    "hours_above_fleet_bound_ex_east_river": 1500,
+    "top_violation_hour_shortfall_plants": [
+     {
+      "plant": 55405,
+      "cap_mw": 1100.0,
+      "violation_hour_shortfall_gwh": 619.45
+     },
+     {
+      "plant": 57185,
+      "cap_mw": 1111.0,
+      "violation_hour_shortfall_gwh": 552.03
+     },
+     {
+      "plant": 10725,
+      "cap_mw": 406.0,
+      "violation_hour_shortfall_gwh": 309.32
+     },
+     {
+      "plant": 2539,
+      "cap_mw": 930.0,
+      "violation_hour_shortfall_gwh": 283.13
+     },
+     {
+      "plant": 56196,
+      "cap_mw": 700.0,
+      "violation_hour_shortfall_gwh": 210.06
+     },
+     {
+      "plant": 55375,
+      "cap_mw": 1252.0,
+      "violation_hour_shortfall_gwh": 207.59
+     },
+     {
+      "plant": 56259,
+      "cap_mw": 650.0,
+      "violation_hour_shortfall_gwh": 207.29
+     },
+     {
+      "plant": 54547,
+      "cap_mw": 1192.0,
+      "violation_hour_shortfall_gwh": 157.66
+     }
+    ]
+   },
+   "model_cc_twh": 55.66,
+   "measured_cc_twh": 51.3274
+  },
+  "2025": {
+   "P1": {
+    "violation_hours": 1211,
+    "shortfall_in_violation_hours": {
+     "total_mwh": 6679341.0,
+     "A_mwh": 3753882.0,
+     "A_share": 0.562,
+     "B_mwh": 869542.0,
+     "B_share": 0.1302,
+     "C_mwh": 1613579.0,
+     "C_share": 0.2416,
+     "D_mwh": 442338.0,
+     "D_share": 0.0662
+    },
+    "shortfall_all_hours": {
+     "total_mwh": 51923907.0,
+     "A_mwh": 27043779.0,
+     "A_share": 0.5208,
+     "B_mwh": 7240481.0,
+     "B_share": 0.1394,
+     "C_mwh": 13763280.0,
+     "C_share": 0.2651,
+     "D_mwh": 3876367.0,
+     "D_share": 0.0747
+    },
+    "off_episode_histogram_count": {
+     "lt_24h": 1852,
+     "24_72h": 349,
+     "72_120h": 187,
+     "ge_120h": 427
+    },
+    "off_episode_capacity_mwh": {
+     "lt_24h": 2607229.0,
+     "24_72h": 2418498.0,
+     "72_120h": 2406634.0,
+     "ge_120h": 30824928.0
+    },
+    "depressed_ceiling_unit_days": 623,
+    "depressed_ceiling_shortfall_mwh": 2312430.0,
+    "n_units": 68,
+    "fleet_cap_mw": 11618.0
+   },
+   "P2": {
+    "mean_gap_mw": 635.7,
+    "gap_by_actual_price_decile": [
+     652.5,
+     704.1,
+     596.1,
+     622.1,
+     614.7,
+     636.5,
+     809.0,
+     800.1,
+     717.0,
+     204.6
+    ],
+    "gap_by_load_decile": [
+     542.6,
+     650.1,
+     687.4,
+     688.0,
+     695.8,
+     731.8,
+     706.4,
+     639.9,
+     665.4,
+     349.3
+    ],
+    "gap_by_online_unit_count_quintile": [
+     775.0,
+     757.9,
+     590.9,
+     656.1,
+     398.4
+    ],
+    "top3_price_deciles_positive": true,
+    "top3_load_deciles_positive": true,
+    "all_on_count_quintiles_positive": true,
+    "mean_online_units": 31.56
+   },
+   "P3": {
+    "n_plants": 39,
+    "hours_above_fleet_bound": 1211,
+    "hours_above_additive_per_plant_bound": 0,
+    "additive_share_of_year": 0.0,
+    "coverage_fleet_over_additive_by_month": {
+     "1": 0.8014,
+     "2": 0.8372,
+     "3": 0.7037,
+     "4": 0.7024,
+     "5": 0.7939,
+     "6": 0.8912,
+     "7": 0.9326,
+     "8": 0.8836,
+     "9": 0.8027,
+     "10": 0.6939,
+     "11": 0.752,
+     "12": 0.8367
+    },
+    "coverage_mean": 0.8026,
+    "east_river_present": true,
+    "hours_above_fleet_bound_ex_east_river": 1864,
+    "top_violation_hour_shortfall_plants": [
+     {
+      "plant": 55405,
+      "cap_mw": 1124.0,
+      "violation_hour_shortfall_gwh": 1195.65
+     },
+     {
+      "plant": 57185,
+      "cap_mw": 1120.0,
+      "violation_hour_shortfall_gwh": 899.76
+     },
+     {
+      "plant": 10725,
+      "cap_mw": 429.0,
+      "violation_hour_shortfall_gwh": 507.65
+     },
+     {
+      "plant": 2539,
+      "cap_mw": 908.0,
+      "violation_hour_shortfall_gwh": 445.07
+     },
+     {
+      "plant": 55375,
+      "cap_mw": 1252.0,
+      "violation_hour_shortfall_gwh": 425.38
+     },
+     {
+      "plant": 56259,
+      "cap_mw": 652.0,
+      "violation_hour_shortfall_gwh": 329.64
+     },
+     {
+      "plant": 54574,
+      "cap_mw": 261.0,
+      "violation_hour_shortfall_gwh": 237.5
+     },
+     {
+      "plant": 54547,
+      "cap_mw": 1210.0,
+      "violation_hour_shortfall_gwh": 232.79
+     }
+    ]
+   },
+   "model_cc_twh": 55.4182,
+   "measured_cc_twh": 49.8498
+  }
+ },
+ "P4_attribution": {
+  "armed_availability_config": {
+   "outage_source": "historic",
+   "historic_outage_overlay": false,
+   "unit_outage_short_windows": false,
+   "unit_partial_outage_windows": false,
+   "unit_outage_maxgen_events": false,
+   "unit_outage_lp_capacity_basis": false,
+   "unit_outage_fleet_status_scope": false,
+   "mustrun_layup_window_mask": false,
+   "cc_nameplate_summer_derate": true,
+   "cc_winter_capability_basis": false,
+   "cc_outage_derate_from_top": false,
+   "temp_dependent_derate": false,
+   "gt_ambient_derate": false,
+   "correlated_forced_outage": false,
+   "nuclear_unit_availability": true,
+   "nysdec_peaker_rule_availability": true,
+   "wefor_residual": null
+  },
+  "nyiso_outage_extracts": {
+   "campd-unit-outages-NYISO.csv": {
+    "exists": true,
+    "data_rows": 4423,
+    "cc_rows": 2928
+   },
+   "campd-unit-outages-short-NYISO.csv": {
+    "exists": true,
+    "data_rows": 0,
+    "cc_rows": 0
+   },
+   "campd-partial-outages-NYISO.csv": {
+    "exists": true,
+    "data_rows": 0,
+    "cc_rows": 0
+   },
+   "campd-unit-outages-layup-NYISO.csv": {
+    "exists": true,
+    "data_rows": 3037,
+    "cc_rows": 1012
+   },
+   "campd-unit-outages-maxgen-NYISO.csv": {
+    "exists": false,
+    "data_rows": 0
+   }
+  },
+  "d2_rows_forcing_cc": {
+   "2023": [
+    {
+     "klass": "CC_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 0.0072,
+     "share_of_class": 0.0005
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mechanism": "nyiso_gas_commitment_bridge",
+     "forced_twh": 1.3485,
+     "share_of_class": 0.0437
+    }
+   ],
+   "2024": [
+    {
+     "klass": "CC_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 0.026,
+     "share_of_class": 0.0014
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mechanism": "nyiso_gas_commitment_bridge",
+     "forced_twh": 1.3547,
+     "share_of_class": 0.0383
+    }
+   ],
+   "2025": [
+    {
+     "klass": "CC_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 0.0202,
+     "share_of_class": 0.001
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mechanism": "nyiso_gas_commitment_bridge",
+     "forced_twh": 1.1257,
+     "share_of_class": 0.0329
+    }
+   ]
+  }
+ },
+ "verdict": {
+  "P1a_overlay_blind_majority_all_years": false,
+  "P1b_sub5day_fullstop_dominant_all_years": false,
+  "P2_availability_not_shape_2025": true,
+  "P3_per_plant_grounded_2025": false,
+  "proceed_to_phase_2": false
+ }
+}

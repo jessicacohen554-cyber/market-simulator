@@ -125,12 +125,20 @@ def campd_cc_units(year: int, chpset: set[int]) -> pd.DataFrame:
         _fid=d["facilityId"].astype(int),
         _ut=d["unitType"].fillna(""),
     )
+    # CC_CHP + CC_REGULAR together are every combined-cycle unit, CHP or not,
+    # so the EIA-860 CHP split does not enter here (it does in nyiso-172's
+    # per-class construction; this probe sums the two classes exactly as its
+    # §3.4 bound does).
+    del chpset
     sel = d["_ut"].str.contains("Combined cycle")
-    inchp = d["_fid"].isin(chpset)
-    # CC_CHP + CC_REGULAR is every combined-cycle unit, CHP or not.
-    del inchp
-    d = d[sel & d["_h"].between(0, 8759)]
-    return d[["_fid", "unitId", "_h", "grossLoad"]].copy()
+    d = d[sel & d["_h"].between(0, 8759)].copy()
+    # CAMPD reports grossLoad as NULL for a non-operating unit-hour (52 % of NY
+    # CC unit-hours in 2025). nyiso-172 read the series through
+    # ``groupby().sum()``, which skips nulls, i.e. treats them as ZERO output —
+    # reproduced here explicitly so this probe's fleet series is identical to
+    # the one the §3.4 bound was computed on.
+    d["grossLoad"] = d["grossLoad"].fillna(0.0)
+    return d[["_fid", "unitId", "_h", "grossLoad"]]
 
 
 def unit_matrix(d: pd.DataFrame) -> tuple[np.ndarray, list[tuple[int, str]]]:
