@@ -12,6 +12,7 @@ key; the D31 record preserved at `miso-t1h-pre-d33` (D31's own preserved
 D31 recipe plus the decision-neutral `--entry-screen-diagnostics` arm. Its 2025
 decisions reproduce D31's to the MW, which is what licenses reading its screen
 rows as D31's own.
+**Owner-facing chart brief:** https://claude.ai/code/artifact/bcee1d9b-a5d7-49c3-9302-4f7a6559096f
 **Rule 14 [R-ACCURATE] sign discipline (binding).** Nothing below was sized,
 tuned, or sequenced by what it does to the exit residual or to any band. The
 repair has **zero free parameters**, so there was nothing to size. Both legs
