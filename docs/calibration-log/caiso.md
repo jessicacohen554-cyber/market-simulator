@@ -11464,4 +11464,120 @@ dashboard registration is due** (rule 15 — no calibration run). **There is no
 keeper candidate in this session**: no bundle, no scored run, nothing to
 promote. Determination stays **NOT-YET**.
 
-**Next number: caiso-239.**
+**CORRECTION APPENDED 2026-09-02 BY caiso-239 — THIS ENTRY'S OBJECT-2 CLASSIFICATION IS SUPERSEDED.** The `ST_GAS committed 0.81` row is graded **F1, groundable now** above, on the ratio 0.81 / 1.683 = 48.1 % and the band-dict inversion. Both numbers are correct and **the classification they support is not**: the charter measured the scalar's VALUE and never measured its FOOTPRINT — which LP units it actually reaches. caiso-239 measured that (zero solves) and found the scalar reaches **2 of the keeper's 25 ST_GAS LP tranches**, both EIA-860 retired-window units, **both at zero availability in 2025**, and **not one of the three OTC steamers** the charter names — `_offer_curve_for_group` returns `None` for every `ST_GAS_PEAKER_PLANTS` member, and that frozenset names plants 315/335/350 explicitly, so the steamers take `_DEFAULT_HR_MULT_BY_GROUP["ST_GAS"]["mc"] = 1.15` instead. The measured basis 1.683 is drawn from the ten CAMPD units of exactly those three EXCLUDED plants, so arming it on this scalar would apply the statistic to a disjoint population (rule 14's own representation-mismatch exception). The correct grade for object 2 as chartered is therefore the charter's own FIFTH OUTCOME — **MIS-CLASSIFIED at caiso-236** — not F1; the repair belongs at the 1.15 literal, where caiso-239 executed it. Object 2's supporting measurements stand; only its class and its ask are withdrawn. The rest of this entry is untouched.
+
+## caiso-239 (2026-09-02) — the caiso-238 object-2 charter's premise FALSIFIED: the scalar it funded prices 2 of 25 ST_GAS tranches, both RETIRED, neither an OTC steamer. BOTH candidate values REFUSED; the repair RELOCATED to the uncited class literal that actually prices the band, armed, solved and registered at a measured C3a cost of +0.0001/+0.0060/+0.0001 $/MWh
+
+**Keeper UNCHANGED at `2026-09-01-caiso-231-b1-ungrounded`** (NOT-YET, C3a the
+sole load-bearing FAIL +4.1 PASS / +12.5 / +15.6 %; C3c the single ledgered
+caveat; C6 attested; C8 PASS). Run registered:
+**`2026-09-02-caiso-239-b1-stgas`**, NOT-YET, scoring identically to the keeper
+on every criterion. No `complete`/`final` marker; holdout freeze ACTIVE; the
+whole session inside 2023–2025.
+
+**The charter was mis-located, and that is the primary result.** caiso-238
+object 2 funded a choice between 1.00 and 1.683 for
+`offer_curve_by_group["ST_GAS"]["committed"] = 0.81`, on the premise that it
+prices CAISO's three coastal OTC steamers. Measured with **zero solves**
+(`scripts/probes/_caiso239_st_gas_committed_footprint.py`), **both candidates
+are refused on that scalar** on three independent grounds, each sufficient:
+**SCOPE** — `_offer_curve_for_group` returns `None` for every
+`ST_GAS_PEAKER_PLANTS` member and that frozenset names plants 315/335/350
+EXPLICITLY, so the steamers are byte-identical at `committed` ∈ {0.81, 1.00,
+1.683} in all three years and take
+`_DEFAULT_HR_MULT_BY_GROUP["ST_GAS"]["mc"] = 1.15` instead (exact on the
+rebuilt fleet: 11.850 × 1.15 = 13.628 MMBtu/MWh); the scalar reaches **2 of 25**
+ST_GAS LP tranches. **LIVENESS** — both are EIA-860 retired-window units (356
+AES Redondo Beach; 10446 SEGS IX, a retired solar-trough plant's gas auxiliary)
+and **both carry zero availability in 2025**, the keeper's worst C3a year.
+**POPULATION MISMATCH** — `avg_committed_p50 = 1.683` is measured on the ten
+CAMPD units of exactly plants 315/335/350, i.e. the plants the scalar
+**excludes**: rule 14 `[R-ACCURATE]`'s own representation-mismatch exception in
+its exact form.
+
+**AGAINST INTEREST, the charter's inversion premise is ALSO false at the
+resolved offer level:** on the keeper as built the steamers' committed band is
+already their DEAREST (2024 mean mc, p315 69.19 committed > 68.92 peak > 62.38
+econ). The inversion is real only for the two retired units.
+
+**THE REPAIR, RELOCATED.** `ScenarioConfig.caiso_st_gas_committed_measured`
+(gated, default off, per-ISO registry
+`constants.ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO`) replaces the uncited
+ERCOT-lineage 1.15 — an **off-registry channel** (rule 24 `[R-REGISTRY]`) absent
+from every `run_config.json` and from the DOF ledger's `offer_curve_by_group`
+count, pricing 2,858.8 MW of SP15 OTC steam capacity — with CAISO's own measured
+min-load block-average burn ratio 1.683, taken on those same ten units.
+Population and statistic COINCIDE; zero free parameters; **exactly one band
+moves**. Deliberately NOT in `_BACKCAST_ONLY_OVERLAY_FIELDS`: this is a measured
+PHYSICAL heat-rate ratio with a forward story, the family's own documented
+exclusion (rule 13).
+
+**Gates.** G-STRUCT **exact** — 3 of 1,795 fleet rows move, all three the OTC
+steamers' `_committed` tranches, ratio 1.4635 = 1.683/1.15; verified pre-solve
+AND on the solved fleet. G-INERT PASS — 2024 ST_GAS sheds 14.7 GWh (−2.3 %) to
+CT_PEAKER (+8.2), CC_REGULAR (+4.6), imports (+1.8); 2023 and 2025 identical to
+the keeper to 0.001 TWh in every class. G-C3a PASS on its substantive legs — no
+year flips, 2023 stays PASS at +4.1 %, 2024 +12.5 → +12.6 %, 2025 +15.6 %
+unchanged. G-C1 / G-C3b / G-C2 / G-C4 / G-C8 / G-CAVEAT all PASS, all unchanged.
+
+**The pre-registered adverse bound held.** PRECOMMIT §3 (pushed to `origin`
+BEFORE the solve) predicted **+0.0003 / +0.0265 / +0.0000 $/MWh**; the measured
+load-weighted cost is **+0.0001 / +0.0060 / +0.0001** — inside the bound with
+3× and 4× margin in the two years it was non-zero, the same over-prediction
+caiso-231 measured.
+
+**TWO PRE-REGISTERED GATES DISCLOSED AS NOT SATISFIED AS WRITTEN, not dropped.**
+**G-CTRL**: 22 `run_config` fields differ, every one HEAD drift rather than a
+solve input (9 provenance-recording additions incl. the `hydro_plant_modes`
+probe with `hydro_ror_split` False on both arms; 8 new fields at defaults; the
+rule-26 `caiso_bidir_intertie` deletion; and the capx-D41 forecast-only CCS
+costs that only `model/capacity_evolution` reads). The substantive claim is
+established from the DISPATCH instead, which is stronger: 2023/2025 class energy
+identical to 0.001 TWh in every class — which also proves
+`thermal_tranches_CAISO.csv` was on disk for the keeper's solve and that PR
+#4536 captured provenance rather than changing an input. **G-C3a's 2025 leg**
+had a degenerate bound of exactly +0.0000 and the measured move is +0.0001
+$/MWh; the §H form counts only matched-marginal hours and cannot represent
+indirect re-dispatch. Nothing re-fitted.
+
+**FOR THE OWNER — the caiso-231 "NO CONTROL ARMS" directive was honoured and its
+warrant is worth re-examining.** No control was solved. But G-CTRL was
+checkable here only because the mechanism happens to be inert in two of three
+years; a future single-delta arm that is live in every year will have no
+comparable independent check, and the run_config field diff does not supply one.
+
+**The DOF ledger does NOT move, exactly as pre-registered** — `n_entries` 9,
+`n_residual` **6**. The handoff's "6 → 5" is unachievable by this repair or the
+chartered one: the retired literal lives in `campd_bins.py`, which
+`build_dof_ledger._count_scalars` does not read. The chartered
+`offer_curve_committed_below_floor[CAISO] {ST_GAS: 0.81}` row correctly STAYS —
+this session refused that scalar rather than arming it.
+
+**Matrix (rule 28(b)/(c)):** new row `st_gas_committed_measured_bypass` in the
+base file with a cell line in all six shards in the same PR; CAISO cell
+**O → K-candidate/R** per §5; **ERCOT is `U`, not n/a** — six ERCOT plants take
+the same 1.15 default through the same bypass, and rule 25 forbids transferring
+CAISO's 1.683.
+
+**DO-NOT-REDO adds** (FINDING §8): never re-propose the chartered scalar as a
+repair target for the OTC steamers; never arm `avg_committed_p50` on it; never
+quote it as live-and-material; never propose this mechanism as a C3a lever;
+never transfer 1.683 to ERCOT. Also: caiso-238's `ASSESSMENT` and
+`_caiso238_grounding_charter.json` **were never committed** (only its PRECOMMIT,
+`6b7e6492`) — do not cite them as sources.
+
+**Filed, unfunded (FINDING §9):** `_DEFAULT_HR_MULT_BY_GROUP` is an off-registry
+channel for **every** ISO and class (28 uncited literals across seven groups),
+of which this session repaired one — a rule-24 census is the natural successor;
+and the `ST_GAS_PEAKER_PLANTS` double duty (outage/floor scope AND offer-curve
+scope) is a rule-19 `[R-ONE-MECH]` coupling whose stated warrant, the
+`gas_st_*_hr_override` scope, is `None` on this keeper.
+
+Evidence:
+`results/calibration/FINDING-caiso239-st-gas-committed-relocation-2026-09-02.md`,
+`results/calibration/PRECOMMIT-caiso239-st-gas-committed-relocation-2026-09-02.md`,
+`results/calibration/_caiso239_st_gas_committed_footprint.json`,
+`scripts/probes/_caiso239_st_gas_committed_footprint.py`,
+`scripts/gen_caiso239_attestation.py`, run `2026-09-02-caiso-239-b1-stgas`.
+
+**Next number: caiso-240.**
