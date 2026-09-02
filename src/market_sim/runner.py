@@ -131,6 +131,7 @@ from market_sim.model.transmission import (
     build_interface_groups,
     build_caiso_link_loss,
     build_miso_link_loss,
+    build_nyiso_link_loss,
     build_pjm_link_loss,
     forward_corridor_interface_groups,
     get_link_bidirectional_array,
@@ -1344,6 +1345,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # own signal is swapped into prior_results.price_signal before any
     # screen runs. Empty unarmed (byte-identical).
     unified_signals: dict[int, np.ndarray] = {}
+    # D11-R / D12 per-entering-year state, bound here for the SAME reason
+    # ``unified_signals`` is: the year loop READS both near its top (the
+    # entering-year rebinds) and only re-binds them further down, at the
+    # solved-year seam. Both reads are gated on ``prior_results is not None``,
+    # so no live path reaches them before the first seam — but the names were
+    # nonetheless unbound in this scope on entry, which ruff reports as F821
+    # and which is one early ``continue`` away from a real UnboundLocalError.
+    # Byte-identical: each is re-assigned to a fresh ``{}`` at the seam on
+    # every iteration, so these bindings are only ever read before the first
+    # seam, where the gates are False.
+    entry_walks: dict[int, _EntryRepriceWalk] = {}
+    entry_reserve_adders: dict[int, np.ndarray] = {}
 
     # Load the CAMPD operational bins once when enabled. The same bin frame
     # builds the dispatch fleet and drives the CHP must-run post-processing.

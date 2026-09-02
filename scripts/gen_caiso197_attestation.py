@@ -300,9 +300,7 @@ def carry_exceptions(arm: Path, run_id: str) -> tuple[list[dict], list[dict]]:
         key = (entry["criterion"], int(entry["year"]))
         rec = measured.get(key)
         if rec is None:
-            raise SystemExit(
-                f"G-EXC FAILED: no scored record for {key} on {run_id}."
-            )
+            raise SystemExit(f"G-EXC FAILED: no scored record for {key} on {run_id}.")
         new = dict(entry)
         new["magnitude"], moved = _refresh_magnitude(entry, rec, arm.name)
         chain = entry.get("carried_from")
@@ -354,8 +352,8 @@ def main() -> int:
         f"({', '.join(delta['composed_fields'])}) over {delta['n_keys']} keys"
     )
 
-    prov = assert_extract_provenance(arm)
-    print(f"OK  G-EXTRACT: control and arm record IDENTICAL extract provenance")
+    assert_extract_provenance(arm)
+    print("OK  G-EXTRACT: control and arm record IDENTICAL extract provenance")
 
     engage = assert_engaged(arm)
     for year, row in engage.items():
