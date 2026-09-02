@@ -305,9 +305,7 @@ def _generic_unit_outage_target(
     return (facility_id, g)
 
 
-def unit_outage_csv_for_iso(
-    iso: str | None, mixed_gas_routing: bool = False
-) -> Path:
+def unit_outage_csv_for_iso(iso: str | None, mixed_gas_routing: bool = False) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
     ERCOT uses the canonical ``campd-unit-outages.csv``; every other ISO uses
@@ -331,9 +329,7 @@ def unit_outage_csv_for_iso(
     )
     if not mixed_gas_routing:
         return base
-    alt = base.with_name(
-        f"campd-unit-outages-unitroute-{(iso or 'ERCOT').upper()}.csv"
-    )
+    alt = base.with_name(f"campd-unit-outages-unitroute-{(iso or 'ERCOT').upper()}.csv")
     return alt if alt.exists() else base
 
 

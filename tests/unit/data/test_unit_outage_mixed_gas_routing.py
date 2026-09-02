@@ -54,14 +54,20 @@ class TestMultiGasDetector:
 class TestMixedFacilityRouting:
     """The 1403 cell: the boilers must reach the bin that actually holds them."""
 
-    @pytest.mark.parametrize("unit_type", ["Tangentially-fired", "Dry bottom wall-fired boiler"])
+    @pytest.mark.parametrize(
+        "unit_type", ["Tangentially-fired", "Dry bottom wall-fired boiler"]
+    )
     def test_steam_boiler_misroutes_when_off(self, unit_type):
         assert (
-            _resolve_unit_group(False, unit_type, MIXED, "CC_REGULAR", "Pipeline Natural Gas")
+            _resolve_unit_group(
+                False, unit_type, MIXED, "CC_REGULAR", "Pipeline Natural Gas"
+            )
             == "CC_REGULAR"
         )
 
-    @pytest.mark.parametrize("unit_type", ["Tangentially-fired", "Dry bottom wall-fired boiler"])
+    @pytest.mark.parametrize(
+        "unit_type", ["Tangentially-fired", "Dry bottom wall-fired boiler"]
+    )
     def test_steam_boiler_routes_to_st_gas_when_on(self, unit_type):
         assert (
             _resolve_unit_group(
@@ -110,11 +116,18 @@ class TestByteInertWhereThePremiseHolds:
     @pytest.mark.parametrize(
         "unit_type", ["Combined cycle", "Tangentially-fired", "Cyclone boiler"]
     )
-    @pytest.mark.parametrize("groups,fac", [(SINGLE_CC, "CC_REGULAR"), (SINGLE_ST, "ST_GAS")])
+    @pytest.mark.parametrize(
+        "groups,fac", [(SINGLE_CC, "CC_REGULAR"), (SINGLE_ST, "ST_GAS")]
+    )
     def test_single_gas_group_identical_on_and_off(self, unit_type, groups, fac):
         off = _resolve_unit_group(False, unit_type, groups, fac, "Pipeline Natural Gas")
         on = _resolve_unit_group(
-            False, unit_type, groups, fac, "Pipeline Natural Gas", mixed_gas_routing=True
+            False,
+            unit_type,
+            groups,
+            fac,
+            "Pipeline Natural Gas",
+            mixed_gas_routing=True,
         )
         assert off == on == fac
 
@@ -125,7 +138,11 @@ class TestGuardOrdering:
     def test_coal_still_wins_at_a_mixed_facility(self):
         assert (
             _resolve_unit_group(
-                True, "Cyclone boiler", MIXED | {"COAL"}, "CC_REGULAR", "Coal",
+                True,
+                "Cyclone boiler",
+                MIXED | {"COAL"},
+                "CC_REGULAR",
+                "Coal",
                 mixed_gas_routing=True,
             )
             == "COAL"
@@ -136,7 +153,11 @@ class TestGuardOrdering:
         # member of a sibling gas bin just because the facility is mixed.
         assert (
             _resolve_unit_group(
-                False, "Combustion turbine", MIXED, "CC_REGULAR", "Diesel Oil",
+                False,
+                "Combustion turbine",
+                MIXED,
+                "CC_REGULAR",
+                "Diesel Oil",
                 mixed_gas_routing=True,
             )
             == "CT_PEAKER"
