@@ -184,6 +184,100 @@
         2025
       ]
     },
+    "ERCOT__carveout-2023": {
+      "bundle": "results/calibration/ercot236_k33_clip",
+      "content_hashes": {
+        "btm.parquet": "1e8f296d32aa7877a168dfc2037d18886935446fb95c9f7b1852d79a61c65800",
+        "dispatch/2023_P1.parquet": "fc2273e9ea46d4b7a78756ac11c92ca8611a7683d80d9cf7ce46f308ec9666d3",
+        "dispatch/2023_P1_fleet.parquet": "d923162032ea20df5c5d523d53398e73367f7204c32587193018923e20f92357",
+        "flows.parquet": "b6c481e8cfb783e3055ef7027840449883fede861616a168f8042c60262b2afd",
+        "storage.parquet": "14ead0ba5ebfa297e61b7ed0b6d7842102b70e6a57c62c778e0c2c1b11e37f5e",
+        "system.parquet": "b2e2822cfda5ee0b9859037aab0b59a12e1cd71c6d3682648c3d582e3f84627c"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "caiso_offer_surface_measured_ungrounded",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "persist_p0_commitment",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "dropped_dead_config_keys": {},
+      "fidelity": {
+        "meta_head_only": [
+          "caiso_offer_surface_measured_ungrounded"
+        ],
+        "meta_keeper_only": [],
+        "meta_matched": 271,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "caiso_fsno_subzonal_topology",
+          "caiso_offer_surface_measured_ungrounded",
+          "carbon_price_delta",
+          "entry_forward_expectation_signal",
+          "entry_forward_reserve_leg",
+          "entry_margin_exhaustion",
+          "ercot_offer_surface_cleared_share_rt_room",
+          "ercot_offer_surface_cleared_share_rt_room_path",
+          "nyiso_zonal_loss_surface",
+          "partial_plant_exit_carry",
+          "retiree_vintage_status_scope",
+          "st_gas_mustrun_oom_level",
+          "storage_entry_availability_gate",
+          "storage_entry_cost_normalized_rank"
+        ],
+        "scenario_config_matched": 753
+      },
+      "hours": 8760,
+      "keeper_id": "2026-08-25-236-swcap-clip-k33",
+      "keeper_snapshot": {
+        "bundle": "results/calibration/ercot236_k33_clip",
+        "date": "2026-08-25",
+        "definition": "ercot-236 h4097 SHED REPAIR + re-selection \u2014 THE FIRST ERCOT RUN TO PASS ALL THREE 2023 PRICE CRITERIA (C3a -7.3% / C3b 0.102 / C3c 180 of 181), DETERMINATION CALIBRATED, zero caveats. 2023-only under the owner's invoked rule-16 waiver (the ercot-235 2023-DISCRETE-CONFIG charter, cited from the log entry). The ercot-235 keeper recipe + TWO deltas: (1) ercot_offer_swcap_clip=true \u2014 the STRUCTURAL system-wide offer cap (every real SCED energy offer is capped at SWCAP $5,000 = VOLL; the uncapped tuned surface at k_peak > 24 walked implied offers past VOLL and manufactured the June-20 h4097 shed against physically-available capacity \u2014 D-1 measured: thermal -48.28 MW undispatched at all-zone $5,000, storage +12.33 refutes SOC starvation, net reserve held 0.0 refutes withholding; zero fitted values, measured INERT below the cap: V-0 k24+clip reproduces the prior keeper's officials to the digit); (2) k_peak 24 -> 33.0, re-selected on the repaired surface by the precommitted kill-gated {27, 30, 33} re-bracket (all clean: zero shed, off-season intact, coal +0.099 TWh vs the ercot-234 baseline). August lands $221.18 vs actual $220.16; the >=$1,000 tail is 59 vs 61 h [CORRECTED 2026-08-26 by owner authorization, per ercot-237 Amendment 1: originally registered 'EXACT (59 vs 59 h)' \u2014 the actual-side 59 was a hardcoded constant, never computed from data; true actual count 61, 77+43+61 = 181 = actual_tail.json rt_gt; no scored criterion moves]; reported structure residual: [500,1000) under (18 vs 43), [200,500) over (103 vs 77); spur 68 banded / 74 lidless (unchanged from k24). PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md (Amendments 1-2) + docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md.",
+        "id": "2026-08-25-236-swcap-clip-k33",
+        "iso": "ERCOT",
+        "label": "236 swcap clip k33",
+        "shorthand": "236-swcap-clip-k33",
+        "sidecar_at_capture": "present",
+        "years": [
+          2023
+        ]
+      },
+      "partition": {
+        "declared": "2026-08-26",
+        "designated_years": [
+          2023
+        ],
+        "iso": "ERCOT",
+        "label": "2023 CARVE-OUT - the discrete 2023 config for the ECRS-era regime (ECRS introduced 2023-06-10)",
+        "role": "carveout-2023",
+        "ruling_source": "Owner, program-director sitting 2026-08-26 (verbatim). Executed by the governance-records session the same day; record: docs/FINDING-ercot-two-config-keeper-2026-08-26.md."
+      },
+      "provenance": {
+        "basis_sha": "07472e7c5259f3fc3154df3cf0d95bc75ebb9b41",
+        "env": {
+          "MARKET_SIM_HIGHS_THREADS": "1",
+          "MARKET_SIM_WARMSTART": "1",
+          "MARKET_SIM_WARMSTART_XYEAR": "0"
+        },
+        "git_dirty": true,
+        "git_sha": "909dbd3e",
+        "git_sha_full": "909dbd3e3013d8e4a0162fc7066573883451de81",
+        "highspy_version": "unknown",
+        "recorded_at": "2026-09-02T03:50:41Z",
+        "source": "stamped-at-capture"
+      },
+      "recorded_flag_count": 262,
+      "years": [
+        2023
+      ]
+    },
     "MISO": {
       "bundle": "results/calibration/miso160_wefor_B",
       "content_hashes": {
@@ -671,7 +765,7 @@
       ]
     }
   },
-  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed. Provenance (git sha, basis sha, env pins, timestamp) and the provenance run's identity are PER ENTRY under keepers.<ISO>.provenance / .keeper_snapshot \u2014 there is deliberately no shared top-level git_sha.",
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed. Provenance (git sha, basis sha, env pins, timestamp) and the provenance run's identity are PER ENTRY under keepers.<ISO>.provenance / .keeper_snapshot \u2014 there is deliberately no shared top-level git_sha. An entry keyed <ISO>__<role> (e.g. ERCOT__carveout-2023) is a CONFIG-PARTITION member: the role is verbatim that ISO's keepers/<ISO>.json config_partition.configs[].role, the entry carries an extra 'partition' block, and it is an ordinary v2 entry in every other respect \u2014 additive, so the bare-ISO entries are untouched. check_golden_manifest.live_keeper resolves both key forms.",
   "schema_version": 2,
   "stage_tag": "perfb-stage0"
 }
