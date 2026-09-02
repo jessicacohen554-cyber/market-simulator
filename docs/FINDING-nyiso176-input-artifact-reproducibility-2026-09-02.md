@@ -37,7 +37,9 @@ outage deriver record its own invocation.
 
 **The honest headline is a correction, not a discovery.** The blocker that
 stopped a session was, in its largest part, two extracts derived over different
-year spans and never labelled as such.
+year spans and never labelled as such. And when the unblocked A/B finally ran,
+it **failed its own pre-registered gate** (§8a): the repair closes C3a-2025 and
+breaks three other criteria, which is the trap R6 was written to catch.
 
 ---
 
@@ -314,23 +316,132 @@ has no pre-registered sign**: it may move scores either way, and under rule 14 a
 worse backcast after a more accurate input is a **discovered bug elsewhere**,
 never a reason to revert.
 
-**What is still unmeasured.** The A/B's dispatch consequence. The gate changes
-availability *and* tranche parameters at seven plants; no prediction of its C1
-effect beyond nyiso-175 §4.5's `CT_CHP` +0.378 / +0.965 / +0.402 TWh and
-`ST_CHP` −0.064 / −0.343 / −0.713 TWh is offered, and that remains **predicted,
-not measured**.
+**The A/B was solved, and it is reported in §8a below — it FAILS its own
+pre-registered gate.**
+
+---
+
+## 8a. THE A/B — solved, scored, and REJECTED on its own pre-registered gate
+
+Two three-year bundles, one invocation each, both registered on the dashboard
+(rules 15/16):
+
+| run id | bundle | gate |
+|---|---|---|
+| `2026-09-02-nyiso-176-rebaseline-control` | `nyiso176_ctl_A` | OFF |
+| `2026-09-02-nyiso-176-perunit-attribution` | `nyiso176_arm_B` | ON |
+
+### 8a.1 The control is a result in itself: the NYISO keeper reproduces BIT-IDENTICALLY at HEAD
+
+| year | max abs class-energy delta | hourly zonal prices differing |
+|---|---|---|
+| 2023 | **0.000 TWh** | **0 of 52,560** |
+| 2024 | **0.000 TWh** | **0 of 52,560** |
+| 2025 | **0.000 TWh** | **0 of 52,560** |
+
+**HEAD has not drifted for NYISO since 2026-08-30.** The keeper is reproducible
+from its own recipe, and the A/B against it is an unambiguous single delta. This
+also **retires nyiso-175b's stated reason for needing a control leg** — that
+reason was artifact drift, and the drift is now attributed.
+
+### 8a.2 The arm fires gate R6
+
+**R6, carried verbatim from nyiso-175b's K5, FAILS a large FAVOURABLE C3a move.
+That is exactly what the arm produces.**
+
+| criterion | tier | control (= keeper) | arm |
+|---|---|---|---|
+| **C1** fuel mix | load-bearing | **PASS** | **FAIL** — CC_REGULAR 2024 38.77 vs 34.06, MODEL MISS |
+| **C2** system volume | load-bearing | PASS | PASS |
+| **C3a** price level | load-bearing | FAIL **2025 only** (58.81 vs 66.43, −11.5 %) | FAIL **2023 only** (37.86 vs 32.25, **+17.4 %**) |
+| **C3b** price shape | load-bearing | **PASS** | **FAIL** — 2023 NRMSE 0.215 |
+| C3c price tail | supporting | FAIL | FAIL |
+| C4 dispatch corr | supporting | PASS | PASS |
+| C8 forced share | protective | PASS | PASS |
+| **target grade / fails** | | **5 / 2** | **3 / 4** |
+
+**The arm closes the keeper's sole load-bearing failure** — C3a-2025 goes
+−11.5 % → **−6.7 % and PASSES** (58.81 → 61.96 against an actual 66.43) — **and
+pays for it with a +17.4 % blow-out in 2023 and two new load-bearing
+failures.**
+
+The mechanism is legible. Class energy moves out of steam and into combined
+cycle:
+
+| class | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| `ST_GAS` | **−5.28** | −2.39 | −1.05 |
+| `CC_REGULAR` | +3.29 | +1.56 | +0.32 |
+| `CC_CHP` | +1.22 | +0.96 | +0.44 |
+| `CT_PEAKER` | +0.53 | +0.19 | +0.30 |
+| load-wtd price | **+14.71 %** | +7.32 % | +5.36 % |
+
+Both determinations read **NOT-YET**; the governance gate is UNATTESTED (a
+replay bundle carries no `calibration_attestation.json`), but the arm's
+load-bearing failures stand on their own and do not depend on that.
+
+### 8a.3 Disposition — REJECTED as a keeper, NOT rejected as an input
+
+**The arm is not promotable, and the keeper is untouched.**
+
+**But rule 14 `[R-ACCURATE]` binds explicitly, and it was stated in this
+session's pre-registration before any of this was measured:** a more accurate
+input that makes the backcast worse is a **discovered bug elsewhere**, never a
+reason to revert. Something in the NYISO keeper was silently compensating for
+the mis-attribution, and the A/B has now exposed it rather than created it. The
+repair stays in the codebase, default-off, and the root cause is the successor's
+object.
+
+**Leading suspect, and where to start:** **Ravenswood (2500)**. Its 1,724.8 MW
+`ST_GAS` bin loses its committed share (10.7 → 20.3 %) to a **new 222.2 MW
+`CC_REGULAR` bin at committed 70.0**, while its three steam boilers' outage
+windows move `CC_REGULAR` → `ST_GAS` so the steam bin takes its own derates for
+the first time. Both changes push the same way, and `ST_GAS` is where the
+−5.28 TWh comes from.
+
+**The year signature is itself diagnostic and is unexplained.** 2023 is the only
+year whose price *overshoots*, and it overshoots hard (+14.71 %) while 2025 —
+the year the keeper misses low — improves. A single mis-attribution repair
+should not be that year-heterogeneous.
+
+**DO-NOT-REDO:** do not re-run this A/B unchanged. The next step is the
+root-cause decomposition, and the cheapest instrument is arming the two halves
+**separately as a diagnostic** — which the single gate deliberately forbids for
+a *keeper* (the two artifacts must ship together, §6.1) but which is entirely
+legitimate for attribution.
+
+### 8a.4 One provenance caveat, disclosed
+
+Both bundles' `run_config.resolved_inputs` were written by the code as it stood
+when the solves started, which is **before** this branch's `resolved_inputs`
+fix: the arm's block therefore names `campd-unit-outages-NYISO.csv` although it
+actually read the `-perunit-` companion, and neither bundle carries a
+`thermal_tranches` block. The artifacts each leg consumed, by sha256:
+
+| leg | unit-outage extract | tranche artifact |
+|---|---|---|
+| control | `587dd6fa…` (450,345 B) | `0dae176b…` (6,045 B) |
+| arm | `ce40c46a…` (501,759 B) | `a4250a73…` (7,424 B) |
+
+The gate's effect is independently corroborated in both directions: the arm
+derates **305** plant-tranches in 2023 against the control's **278**, and the
+tranche readers move East River's committed share from the steam bin (32.0) to
+the turbine bin (30.1) with `chp_pmin_cf` 30.0 → 1.5. The fix is committed in
+this same PR, so the next solve records correctly.
 
 ---
 
 ## 9. Handed forward
 
-1. **THE A/B, now genuinely runnable and cheaper than nyiso-175b priced it.**
-   `--campd-per-unit-attribution` over the keeper's own recipe via
-   `run_replay_bundle`, three years, one bundle (rules 15/16). It still needs a
-   **control leg at HEAD**, but not for the reason nyiso-175b gave — the drift
-   is now adjudicated; the control leg is needed only because HEAD's code has
-   moved since 2026-08-30 and a keeper re-solve is the only way to separate that
-   from the gate.
+1. **THE ROOT CAUSE OF THE ARM'S DEGRADATION — the successor's object.** The
+   A/B is done (§8a) and the arm is rejected as a keeper, but under rule 14 the
+   accurate input stays and the degradation is a discovered bug. Start at
+   Ravenswood (2500) and at the 2023-only price overshoot. The cheapest
+   instrument is arming the tranche and outage halves **separately as a
+   diagnostic** — forbidden for a keeper by the single-gate design, legitimate
+   for attribution. A control leg is no longer needed: §8a.1 establishes that
+   the keeper reproduces bit-identically at HEAD, so the committed keeper *is*
+   a valid control.
 2. **The cross-ISO question, which this session deliberately did not open.**
    **Nothing in the diagnosis is NYISO-specific.** The `fac_group`
    short-circuit's own docstring calls it "a deliberate pjm-75 conservatism",
@@ -371,8 +482,7 @@ not measured**.
 * **Rule 19 `[R-ONE-MECH]`** — ONE `ScenarioConfig` field over both artifacts;
   `-perunit-` **replaces** `-unitroute-` where both exist rather than stacking.
 * **Rule 21 `[R-DOF]`** — zero free parameters.
-* **Rule 22 `[R-HOLDOUT]`** — no solve, score or registration touched any year
-  outside 2023–2025. Deriving a multi-year *input* is data prep, which the rule
+* **Rule 22 `[R-HOLDOUT]`** — every solve, score and registration is 2023–2025. Deriving a multi-year *input* is data prep, which the rule
   explicitly does not gate. NYISO's `complete` marker was **not** requested.
 * **Rule 23 `[R-FROZEN-DERIVE]`** — both re-derivation commits cite the defect
   (span mismatch; derate coupling), never a residual.
@@ -384,8 +494,11 @@ not measured**.
 * **Rule 27 `[R-PUSH]`** — every pushed file ≥ 300 lines was blob-verified
   (line count + hash against local) immediately after the push.
 * **Rule 28 `[R-MECH-MATRIX]`** — the new mechanism's base row plus a cell line
-  in **every** ISO shard, same PR (duty c); `check_mechanism_matrix.py` reports
-  no errors.
+  in **every** ISO shard, same PR (duty c), and the tested cell updated in the
+  same session (duty b): NYISO closes at **R**. `check_mechanism_matrix.py`
+  reports no errors.
+* **Rule 15 / 16** — both completed solves are registered on the dashboard,
+  keeper and rejected probe alike, all three years in one bundle each.
 * **Tests** — `tests/unit` + `tests/iso/nyiso`: **1,792 passed, 17 skipped**.
   The **14** failures in `tests/regression` + `tests/scoring` **reproduce
   identically on a clean stash of HEAD** and are pre-existing (the brief named
