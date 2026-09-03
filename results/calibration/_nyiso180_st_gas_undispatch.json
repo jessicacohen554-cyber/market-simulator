@@ -1,0 +1,138 @@
+{
+  "gates": {
+    "G1": [
+      {
+        "year": 2023,
+        "mean_itm_mw": 1785.6024928652455,
+        "mean_oil_mw": 16.98161377910882,
+        "R_lo": {
+          "median_R": 0.7750791482328192,
+          "aggregate_R": 0.7671078184758507,
+          "mean_mw": 1369.7496329668995
+        },
+        "R_hi": {
+          "median_R": 0.7750791482328192,
+          "aggregate_R": 0.7766181175748733,
+          "mean_mw": 1386.7312467460083
+        },
+        "R_mid_REPORT_ONLY": {
+          "median_R": 0.7750791482328192,
+          "aggregate_R": 0.7701477737590324,
+          "mean_mw": 1375.1777846987475
+        },
+        "st_gas_share_of_switched_capacity_mean": 0.3197868458561643,
+        "hours_any_switch": 24,
+        "reproduces_nyiso179": true,
+        "repro_abs_diff": 7.914823281918171e-05,
+        "clears_floor_lo": true,
+        "clears_floor_hi": true
+      },
+      {
+        "year": 2024,
+        "mean_itm_mw": 2141.055133735897,
+        "mean_oil_mw": 47.8622798726575,
+        "R_lo": {
+          "median_R": 0.4481078054534848,
+          "aggregate_R": 0.5224368864350957,
+          "mean_mw": 1118.5661777548594
+        },
+        "R_hi": {
+          "median_R": 0.44823145801028286,
+          "aggregate_R": 0.544791415806389,
+          "mean_mw": 1166.428457627517
+        },
+        "R_mid_REPORT_ONLY": {
+          "median_R": 0.44823145801028286,
+          "aggregate_R": 0.5264876727271669,
+          "mean_mw": 1127.2391345411656
+        },
+        "st_gas_share_of_switched_capacity_mean": 0.18235557402293187,
+        "hours_any_switch": 72,
+        "reproduces_nyiso179": true,
+        "repro_abs_diff": 0.00010780545348476611,
+        "clears_floor_lo": false,
+        "clears_floor_hi": false
+      },
+      {
+        "year": 2025,
+        "mean_itm_mw": 1544.3831073176345,
+        "mean_oil_mw": 144.24731746634393,
+        "R_lo": {
+          "median_R": 0.8158671745600583,
+          "aggregate_R": 0.7402222574640472,
+          "mean_mw": 1143.1867500879994
+        },
+        "R_hi": {
+          "median_R": 0.820514226074605,
+          "aggregate_R": 0.8336235105487693,
+          "mean_mw": 1287.4340675543433
+        },
+        "R_mid_REPORT_ONLY": {
+          "median_R": 0.820514226074605,
+          "aggregate_R": 0.7696992647917428,
+          "mean_mw": 1188.7105422591706
+        },
+        "st_gas_share_of_switched_capacity_mean": 0.32737965087937543,
+        "hours_any_switch": 192,
+        "reproduces_nyiso179": true,
+        "repro_abs_diff": 0.00013282543994164175,
+        "clears_floor_lo": true,
+        "clears_floor_hi": true
+      }
+    ],
+    "G2": [
+      {
+        "year": 2023,
+        "n_ramp_groups_total": 61,
+        "n_groups_with_ST_GAS": 11,
+        "ramp_up_agg_mw": 3821.9917,
+        "ramp_dn_agg_mw": 4048.9199099999996,
+        "class_pmax_mw": 8902.400000000001,
+        "max_abs_delta_mw": 1449.24755859375,
+        "share_hours_up_at_envelope": 0.0,
+        "share_hours_dn_at_envelope": 0.0,
+        "implicated": false
+      },
+      {
+        "year": 2024,
+        "n_ramp_groups_total": 61,
+        "n_groups_with_ST_GAS": 11,
+        "ramp_up_agg_mw": 3821.9917,
+        "ramp_dn_agg_mw": 4048.9199099999996,
+        "class_pmax_mw": 8902.400000000001,
+        "max_abs_delta_mw": 2278.48583984375,
+        "share_hours_up_at_envelope": 0.0,
+        "share_hours_dn_at_envelope": 0.0,
+        "implicated": false
+      },
+      {
+        "year": 2025,
+        "n_ramp_groups_total": 61,
+        "n_groups_with_ST_GAS": 11,
+        "ramp_up_agg_mw": 3821.9917,
+        "ramp_dn_agg_mw": 4048.9199099999996,
+        "class_pmax_mw": 8902.400000000001,
+        "max_abs_delta_mw": 2084.6163024902344,
+        "share_hours_up_at_envelope": 0.0,
+        "share_hours_dn_at_envelope": 0.0,
+        "implicated": false
+      }
+    ],
+    "G3_armed_rows": {
+      "ramp_limits": true,
+      "nyiso_nyc_lcr_tsl": true,
+      "nyiso_li_lcr_tsl": true,
+      "nyiso_seam_deliverability_envelope": true,
+      "nyiso_local_selfsupply": true,
+      "nyiso_zonal_loss_surface": true,
+      "reliability_floor": true,
+      "nyiso_gas_commitment_bridge": true,
+      "dual_fuel_switching": true,
+      "dual_fuel_oil_reattribution": true,
+      "ordc_multistep_floor": true
+    }
+  },
+  "prereg": "PREREG-nyiso180-st-gas-undispatch.md",
+  "G1_verdict": "SURVIVES",
+  "G2_verdict": "INCONCLUSIVE - PENDING SIDECAR (NOT an exoneration)"
+}

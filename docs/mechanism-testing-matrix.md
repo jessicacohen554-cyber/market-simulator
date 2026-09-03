@@ -10254,6 +10254,77 @@ is now the live queue head.**)*
 
 ### 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — UPDATED 2026-09-03 (nyiso-180, ZERO SOLVE; ALL FOUR candidate
+explanations for the un-dispatched in-the-money `ST_GAS` CLOSED, the object's
+inherited PREMISE corrected, and the standing per-generator-dispatch limit
+LIFTED). Open gate: C1-2023 `ST_GAS` +3.86 TWh; C3a-2025 −11.2 % stays
+owner-court; C3c ledgered. NO LEVER OPENED — pre-declared in every branch.**
+* **THE LANE STAYS BLOCKED ON C3a-2025**, unchanged and re-affirmed. nyiso-180
+  bottomed out against that wall and stopped, as instructed.
+* **CLOSED (a) — the `nyiso_zonal_loss_surface` delivery factors. STRUCTURAL,
+  DO-NOT-REDO.** The `link_loss` coefficient is applied to the receiving-end
+  incidence of **Flow** columns only (`lp/rows.py:1448-1465`); a generator's own
+  energy-balance incidence is `+1`. There is no `δ_z` on injection, so
+  `mc ≤ price_z` IS the correct energy-balance comparison. §6.1's "a few
+  percent" bound was generous — the right figure is exactly zero.
+* **CLOSED (b) — a post-solve price transform. STRUCTURAL + ARTIFACT,
+  DO-NOT-REDO.** A transform exists (`price = prices[z] + total_overlay`,
+  `run_calibration_full.py:1282`) but all three overlay terms are initialized
+  `None` and assigned only inside `if iso == "ERCOT":`, so on a NYISO run
+  `price` **is** the raw LP dual; none of the three audit columns appears in any
+  of the keeper's three years.
+* **CLOSED (c) — the capacity/label-basis mismatch. REAL, FIXED, and an order of
+  magnitude too small.** `dual_fuel_oil_reattribution` relabels every
+  oil-switched (gen, hour) to the POOLED `oil` class, so `class_hourly`'s
+  `ST_GAS` genuinely undercounts. G1 bounds it EXACTLY: crediting `ST_GAS` with
+  **100 %** of that class moves the median ratio only 0.775→0.775 /
+  0.448→**0.448** / 0.816→0.821 against the inherited 0.70 floor (switching in
+  just 24/72/192 h of 8,760). `SURVIVES`. The defect is fixed generally by the
+  new sidecar's `klass_base`/`mw_oil` keys.
+* **CLOSED (d) — `ramp_envelopes` as this signature's carrier**, a candidate
+  §6.1 never named, found by reading the keeper's own flags. G2 was declared
+  ONE-SIDED before running and reads `INCONCLUSIVE — PENDING SIDECAR` (**not an
+  exoneration**), but a post-hoc report settles it: the withholding is
+  **SUSTAINED, not transient** (max unbroken run 137/**2,650**/270 h; 85/99/81 %
+  of withheld hours in runs > 6 h) while every `ST_GAS` ramp group traverses
+  cold-to-full in **1.5–3.0 h**. A ramp row bounds the RATE, not the LEVEL.
+  **Re-open only with per-group dispatch AND a mechanism for a level gap.**
+* **THE PREMISE ITSELF WAS WRONG, and this is the durable correction.** §6.1
+  reasons from *"in a pure LP, capacity with `mc` below its own zone's dual and
+  below its bound should run"*. Under the keeper's eleven armed mechanisms an LP
+  generator's optimality condition is its **REDUCED COST**, which collapses to
+  `mc − price_z` only for a generator whose sole row is the energy balance. **So
+  "in the money and below its bound" is NOT by itself an anomaly**, and `R < 1`
+  is not per se a defect. Seven of the eleven armed mechanisms are ruled out on
+  sign or scope (the floors push dispatch UP; the LCR/TSL and seam rows act on
+  links/import generators; the loss surface on Flow columns).
+* **THE OBJECT, RE-POSED — not "why doesn't in-the-money capacity run" but
+  "what carries a SUSTAINED ~1,000 MW LEVEL gap in 59–90 % of hours".** Two
+  named carriers survive: **LP degeneracy at a price plateau** (nyiso-179 R1 —
+  excluding capacity within \$5/MWh lifts 2024 from 0.448 to 0.678, so a large
+  share IS thin-margin capacity) and the reserve rows (nyiso-179 R2 bounds these
+  tightly: families bind 21/11/38 h). **Degeneracy is the stronger and should be
+  taken first — and note it would make the signature an ARTIFACT OF THE ITM
+  STATISTIC rather than a dispatch defect.**
+* **THE nyiso-172 §2.5 LIMIT IS LIFTED.** `hourly/class_band_hourly_<year>.parquet`
+  — `(year, pass, klass, band, hour, mw, mw_oil)` — ships for any run solved at
+  or after this commit; band-level dispatch no longer needs a replay. Sized
+  before it was built: per-unit-hour is 4,187,280 rows/yr (too large, and grows
+  with fleet size) against **306,600** for per-(klass, band), which is bounded by
+  classes × bands rather than fleet size and so stays committable in ERCOT/PJM.
+  **Its grain limit is per-group**: the `ramp_limits` rows live at
+  (plant, bucket) grain and this artifact cannot see them.
+* **STILL UNSPENT — the missing rung** (nyiso-177 §7.2 / nyiso-178 §9.2),
+  unchanged.
+* Evidence: `docs/FINDING-nyiso180-st-gas-undispatch-2026-09-03.md`,
+  `results/calibration/PREREG-nyiso180-st-gas-undispatch.md`,
+  `scripts/probes/nyiso180_st_gas_undispatch.py` +
+  `nyiso180_ramp_report.py` →
+  `results/calibration/_nyiso180_st_gas_undispatch.json` +
+  `_nyiso180_ramp_report.json`.
+
+PRIOR QUEUE (nyiso-179, superseded 2026-09-03, preserved verbatim):
+
 **LEVER QUEUE — UPDATED 2026-09-03 (nyiso-179, ZERO SOLVE; the offer-POSITION
 type REFUTED, all three of nyiso-178's starting points CLOSED, one new object
 opened and one lane declared BLOCKED). Open gate: C1-2023 `ST_GAS` +3.86 TWh;

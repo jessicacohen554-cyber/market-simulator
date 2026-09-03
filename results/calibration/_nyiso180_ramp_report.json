@@ -1,0 +1,155 @@
+{
+  "note": "POST-HOC REPORT. Not a gate. Moves no bar, changes no verdict.",
+  "n_groups_with_ST_GAS": 11,
+  "ramp_up_frac_of_cap": {
+    "min": 0.3380519480519481,
+    "median": 0.41900000000000004,
+    "max": 0.6503466204506065
+  },
+  "hours_cold_to_full": {
+    "min": 1.5376415722851433,
+    "median": 2.386634844868735,
+    "max": 2.9581252401075675
+  },
+  "groups": [
+    {
+      "group_id": 8,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 384.99999999999994,
+      "ramp_up_mw_per_h": 130.15,
+      "ramp_up_frac_of_cap": 0.3380519480519481,
+      "hours_cold_to_full": 2.9581252401075675
+    },
+    {
+      "group_id": 12,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 1159.6,
+      "ramp_up_mw_per_h": 431.29999999999995,
+      "ramp_up_frac_of_cap": 0.37193859951707486,
+      "hours_cold_to_full": 2.688615812659402
+    },
+    {
+      "group_id": 7,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 1592.1999999999998,
+      "ramp_up_mw_per_h": 608.9499999999999,
+      "ramp_up_frac_of_cap": 0.38245823389021477,
+      "hours_cold_to_full": 2.6146645865834635
+    },
+    {
+      "group_id": 0,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 497.29999999999995,
+      "ramp_up_mw_per_h": 208.36869999999996,
+      "ramp_up_frac_of_cap": 0.419,
+      "hours_cold_to_full": 2.3866348448687353
+    },
+    {
+      "group_id": 13,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 45.0,
+      "ramp_up_mw_per_h": 18.855,
+      "ramp_up_frac_of_cap": 0.419,
+      "hours_cold_to_full": 2.386634844868735
+    },
+    {
+      "group_id": 21,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 1222.0,
+      "ramp_up_mw_per_h": 512.018,
+      "ramp_up_frac_of_cap": 0.41900000000000004,
+      "hours_cold_to_full": 2.386634844868735
+    },
+    {
+      "group_id": 3,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 1724.8000000000002,
+      "ramp_up_mw_per_h": 726.75,
+      "ramp_up_frac_of_cap": 0.42135320037105745,
+      "hours_cold_to_full": 2.373305813553492
+    },
+    {
+      "group_id": 1,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 876.5999999999999,
+      "ramp_up_mw_per_h": 370.5,
+      "ramp_up_frac_of_cap": 0.4226557152635182,
+      "hours_cold_to_full": 2.3659919028340077
+    },
+    {
+      "group_id": 6,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 372.2,
+      "ramp_up_mw_per_h": 159.6,
+      "ramp_up_frac_of_cap": 0.4288017195056421,
+      "hours_cold_to_full": 2.3320802005012533
+    },
+    {
+      "group_id": 10,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 104.5,
+      "ramp_up_mw_per_h": 55.099999999999994,
+      "ramp_up_frac_of_cap": 0.5272727272727272,
+      "hours_cold_to_full": 1.8965517241379313
+    },
+    {
+      "group_id": 23,
+      "classes_in_group": [
+        "ST_GAS"
+      ],
+      "group_pmax_mw": 923.2,
+      "ramp_up_mw_per_h": 600.4,
+      "ramp_up_frac_of_cap": 0.6503466204506065,
+      "hours_cold_to_full": 1.5376415722851433
+    }
+  ],
+  "persistence": {
+    "2023": {
+      "hours_withholding_gt10pct": 6008,
+      "share_of_year": 0.6858447488584475,
+      "n_runs": 616,
+      "median_run_length_h": 7.0,
+      "p90_run_length_h": 19.0,
+      "max_run_length_h": 137.0,
+      "share_of_withheld_hours_in_runs_gt_6h": 0.8515312916111851
+    },
+    "2024": {
+      "hours_withholding_gt10pct": 7911,
+      "share_of_year": 0.9030821917808219,
+      "n_runs": 106,
+      "median_run_length_h": 16.5,
+      "p90_run_length_h": 127.5,
+      "max_run_length_h": 2650.0,
+      "share_of_withheld_hours_in_runs_gt_6h": 0.9900139046896727
+    },
+    "2025": {
+      "hours_withholding_gt10pct": 5144,
+      "share_of_year": 0.5872146118721461,
+      "n_runs": 513,
+      "median_run_length_h": 5.0,
+      "p90_run_length_h": 19.0,
+      "max_run_length_h": 270.0,
+      "share_of_withheld_hours_in_runs_gt_6h": 0.8139580093312597
+    }
+  }
+}
