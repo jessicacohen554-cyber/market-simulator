@@ -673,6 +673,57 @@ ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO: dict[str, float] = {
     "CAISO": 1.683,
 }
 
+# MEASURED PEAK-band offer multiplier of the same bypassed ST_GAS plants, by
+# ISO. Consumed ONLY under ``ScenarioConfig.caiso_st_gas_peak_measured``
+# (gated, default off). The ``mc`` sibling of the registry directly above; the
+# two are DISJOINT BY BAND (rule 19 [R-ONE-MECH]) — that one moves the committed
+# band and nothing else, this one the peak band and nothing else.
+#
+# WHY THIS REGISTRY EXISTS (caiso-240, rule 24 [R-REGISTRY] / rule 14
+# [R-ACCURATE]). The caiso-240 census measured the full footprint of all 28
+# ``fleet.campd_bins._DEFAULT_HR_MULT_BY_GROUP`` literals on all six designated
+# keepers, and found that after caiso-239 exactly TWO cells remain live on the
+# CAISO keeper — ``ST_GAS["econ"] = 1.00`` and ``ST_GAS["peak"] = 1.10`` — both
+# on the same 2,858.8 MW once-through-cooling steam fleet (plants 315 / 335 /
+# 350) reached through the same ``ST_GAS_PEAKER_PLANTS`` offer-curve bypass.
+# ``peak`` is the one of the two that has a measured counterpart AT THE MODEL'S
+# OWN GRAIN: the bypassed plant's peak band is a single flat multiplier, and the
+# measurement is a single number.
+#
+# CAISO 1.166 = ``CT_PEAKER.bands.peak`` in the committed
+# ``data/raw/_validation-source/caiso_offer_curve_measured.json`` (CAISO OASIS
+# Public Bid Data, PUB_DAM_GRP masked DAM bids, trade years 2023-2025). It is
+# the SAME value the CAISO ``ST_GAS`` class band already carries on the keeper,
+# armed there by ``caiso_offer_surface_measured_ungrounded`` at caiso-231 — and
+# ``derive_caiso_offer_surface.py`` discloses why that class assignment is
+# sound: *"the three OTC/RMR steamers (ST_GAS ...) and priced CT_CHP curves land
+# in the CT bucket"*. So the measurement's population CONTAINS exactly the
+# plants this registry prices, while the class band it was written onto reaches
+# none of them.
+#
+# POPULATION MATCH IS CONTAINMENT, NOT COINCIDENCE — DISCLOSED AGAINST INTEREST.
+# Unlike caiso-239's ``avg_committed_p50`` (whose ten CAMPD units ARE plants
+# 315/335/350 and no others), the CT bucket is the pooled
+# CT_PEAKER + CT_CHP + ST_GAS conduct and the OASIS ids are masked, so the
+# steamers cannot be isolated inside it. This is the SAME basis on which
+# caiso-231 re-grounded the ST_GAS class band and promoted the result, applied
+# now to the plants the class band was measured on and never reaches.
+#
+# BID CONDUCT, NOT PHYSICS — hence the rule-13 treatment DIFFERS from
+# caiso-239's. That mechanism arms a measured PHYSICAL heat-rate ratio (a
+# boiler's part-load burn, year-independent) and is deliberately NOT a
+# backcast-only overlay. This one arms measured BID conduct from a specific
+# year's OASIS record, exactly like its ``caiso_offer_surface_measured*``
+# siblings, so it IS registered in ``_BACKCAST_ONLY_OVERLAY_FIELDS``.
+#
+# Re-derives ONLY when the OASIS source updates (rule 23 [R-FROZEN-DERIVE]).
+# An ISO absent from this registry cannot arm the mechanism (rule 25
+# [R-ISO-SCOPE] — the gate hard-errors rather than silently falling back to the
+# class default).
+ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO: dict[str, float] = {
+    "CAISO": 1.166,
+}
+
 # ZONE-resolved delivered-gas anchor ($/MMBtu) — the same identification point
 # as ``GAS_OFFER_MARGIN_ANCHOR_BY_ISO`` above, evaluated at the grain the
 # mechanism's own definition requires, for the ISOs whose keeper applies a

@@ -50,13 +50,19 @@ def _load(name: str, rel: str):
     return mod
 
 
-M230 = _load("_caiso230_abovefloor_decomposition", "scripts/probes/_caiso230_abovefloor_decomposition.py")
+M230 = _load(
+    "_caiso230_abovefloor_decomposition",
+    "scripts/probes/_caiso230_abovefloor_decomposition.py",
+)
 M230.BUNDLE = BUNDLE
 M230.CACHE = CACHE
 M230.M202.BUNDLE = BUNDLE
 M230.M202.CACHE = CACHE
 
-CENSUS = _load("_caiso240_default_hr_mult_census", "scripts/probes/_caiso240_default_hr_mult_census.py")
+CENSUS = _load(
+    "_caiso240_default_hr_mult_census",
+    "scripts/probes/_caiso240_default_hr_mult_census.py",
+)
 
 
 def responsive_rows(year: int, cell: tuple[str, str]) -> tuple[dict, list[int]]:
@@ -71,9 +77,11 @@ def responsive_rows(year: int, cell: tuple[str, str]) -> tuple[dict, list[int]]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument(
-        "--moves", nargs="+", required=True,
+        "--moves",
+        nargs="+",
+        required=True,
         help="GROUP:BAND=target, e.g. ST_GAS:econ=1.255 (target is the measured "
-             "counterpart; the armed literal is read from the live dict)",
+        "counterpart; the armed literal is read from the live dict)",
     )
     ap.add_argument("--years", nargs="*", type=int, default=list(YEARS))
     ap.add_argument("--out", default=str(OUT))
@@ -105,7 +113,9 @@ def main() -> None:
     per_year: dict = {}
     for year in a.years:
         M230.FRAMES[year] = M230.frame(year)
-        M230.HIT[(year, "annual")] = M230._attribute(M230.FRAMES[year], np.arange(HOURS))
+        M230.HIT[(year, "annual")] = M230._attribute(
+            M230.FRAMES[year], np.arange(HOURS)
+        )
         f = M230.FRAMES[year]
         hit = M230.HIT[(year, "annual")]
         wann = f["w"].sum()
@@ -132,13 +142,19 @@ def main() -> None:
                 "n_marginal_zone_hours": n_zh,
                 "w_weighted_price": round(wp, 6),
                 "first_order_bound_usd_mwh": round(bound, 6),
-                "direction": "ADVERSE (offer up)" if tgt > armed else "favourable (offer down)",
+                "direction": "ADVERSE (offer up)"
+                if tgt > armed
+                else "favourable (offer down)",
             }
-            print(f"[{year}] {key:<16} armed {armed:.4f} -> {tgt:.4f} "
-                  f"({100*rel:+.1f}%)  responsive tranches {len(idx):>4}  "
-                  f"marginal zone-hours {n_zh:>6}  bound {bound:+.4f} $/MWh")
+            print(
+                f"[{year}] {key:<16} armed {armed:.4f} -> {tgt:.4f} "
+                f"({100 * rel:+.1f}%)  responsive tranches {len(idx):>4}  "
+                f"marginal zone-hours {n_zh:>6}  bound {bound:+.4f} $/MWh"
+            )
         per_year[str(year)] = {
-            "model_lw_price": round(float((f["pz"] * f["dz"]).sum() / f["dz"].sum()), 4),
+            "model_lw_price": round(
+                float((f["pz"] * f["dz"]).sum() / f["dz"].sum()), 4
+            ),
             "cells": rows,
         }
     result["per_year"] = per_year

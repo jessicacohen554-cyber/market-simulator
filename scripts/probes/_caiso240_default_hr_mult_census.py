@@ -46,7 +46,6 @@ from __future__ import annotations
 import argparse
 import contextlib
 import csv
-import importlib.util
 import inspect
 import io
 import json
@@ -67,16 +66,31 @@ YEARS = (2023, 2024, 2025)
 #: its committed bundle. Rule 25 [R-ISO-SCOPE]: every measurement for an ISO is
 #: taken on THAT ISO's own keeper; nothing is transferred between them.
 KEEPERS: dict[str, tuple[str, str]] = {
-    "ERCOT": ("2026-08-25-234-eastex-identity", "results/calibration/ercot234_eastex_identity"),
-    "PJM": ("2026-08-15-pjm-162-inputclock", "results/calibration/pjm_debugb_inputclock_A"),
-    "CAISO": ("2026-09-02-caiso-239-b1-stgas", "results/calibration/caiso239_b1_stgas_committed_measured"),
-    "NYISO": ("2026-09-02-nyiso-177-vintage-matched", "results/calibration/nyiso177_vintage_B1p"),
+    "ERCOT": (
+        "2026-08-25-234-eastex-identity",
+        "results/calibration/ercot234_eastex_identity",
+    ),
+    "PJM": (
+        "2026-08-15-pjm-162-inputclock",
+        "results/calibration/pjm_debugb_inputclock_A",
+    ),
+    "CAISO": (
+        "2026-09-02-caiso-239-b1-stgas",
+        "results/calibration/caiso239_b1_stgas_committed_measured",
+    ),
+    "NYISO": (
+        "2026-09-02-nyiso-177-vintage-matched",
+        "results/calibration/nyiso177_vintage_B1p",
+    ),
     "NEISO": ("2026-08-17-neiso-99-joint-p1", "results/calibration/neiso99_joint_B"),
     "MISO": ("2026-09-02-miso-201-stbasis", "results/calibration/miso201_stbasis_B"),
 }
 
 #: The caiso-231 predecessor recipe, used ONLY by the M-2 two-point validation.
-CAISO_PRIOR = ("2026-09-01-caiso-231-b1-ungrounded", "results/calibration/caiso231_b1_ungrounded")
+CAISO_PRIOR = (
+    "2026-09-01-caiso-231-b1-ungrounded",
+    "results/calibration/caiso231_b1_ungrounded",
+)
 
 GROUPS = ("CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP", "COAL")
 BANDS = ("mr", "mc", "econ", "peak")
@@ -96,6 +110,7 @@ BIG_FACTOR = 1.25
 
 OUT = REPO / "results/calibration/_caiso240_default_hr_mult_census.json"
 HR_SUMMARY = REPO / "data/raw/reference/{iso}_campd_marginal_hr_summary.csv"
+
 
 #: Tranche-suffix -> band. The ``bins_to_fleet`` vocabulary (assembly.py):
 #: mustrun/sync take ``hr_mr``; committed*/commitcyc take ``hr_mc``; econ* take
@@ -138,7 +153,9 @@ def _clear_fleet_caches() -> None:
                 fn.cache_clear()
 
 
-def rebuild(bundle: Path, year: int, mutation: dict[tuple[str, str], float] | None) -> dict:
+def rebuild(
+    bundle: Path, year: int, mutation: dict[tuple[str, str], float] | None
+) -> dict:
     """Rebuild one keeper's offer surface, optionally with the literals scaled.
 
     ``mutation`` maps (group, band) -> multiplicative factor applied IN PLACE to
@@ -151,8 +168,14 @@ def rebuild(bundle: Path, year: int, mutation: dict[tuple[str, str], float] | No
     meta = json.loads((bundle / "meta.json").read_text())
     params = inspect.signature(run_year).parameters
     skip = {
-        "year", "iso", "hours", "gas_price", "ttc_overrides",
-        "fleet_only", "xyear_cache", "must_run_mw",
+        "year",
+        "iso",
+        "hours",
+        "gas_price",
+        "ttc_overrides",
+        "fleet_only",
+        "xyear_cache",
+        "must_run_mw",
     }
     kwargs = {k: v for k, v in meta.items() if k in params and k not in skip}
 
@@ -166,8 +189,13 @@ def rebuild(bundle: Path, year: int, mutation: dict[tuple[str, str], float] | No
         buf = io.StringIO()
         with contextlib.redirect_stderr(buf):
             st = run_year(
-                year, meta["iso"], HOURS, float(meta["gas_prices"][str(year)]),
-                {}, fleet_only=True, **kwargs,
+                year,
+                meta["iso"],
+                HOURS,
+                float(meta["gas_prices"][str(year)]),
+                {},
+                fleet_only=True,
+                **kwargs,
             )
     finally:
         for g, v in original.items():
@@ -207,9 +235,15 @@ def attribute(base: dict, arm: dict, factors: dict[tuple[str, str], float]) -> d
     counted as a cell's footprint) and ``_rowset`` diagnostics.
     """
     out: dict[str, list[int]] = {}
-    if base["uid"].shape != arm["uid"].shape or not np.array_equal(base["uid"], arm["uid"]):
+    if base["uid"].shape != arm["uid"].shape or not np.array_equal(
+        base["uid"], arm["uid"]
+    ):
         common = np.intersect1d(base["uid"], arm["uid"])
-        out["_rowset_mismatch"] = [int(len(base["uid"])), int(len(arm["uid"])), int(len(common))]
+        out["_rowset_mismatch"] = [
+            int(len(base["uid"])),
+            int(len(arm["uid"])),
+            int(len(common)),
+        ]
         return out
     ratio = np.divide(
         arm["hr"], base["hr"], out=np.ones_like(base["hr"]), where=base["hr"] > 0
@@ -273,13 +307,22 @@ def method_checks(years) -> dict:
         and np.array_equal(a["hr"], b["hr"])
         and np.array_equal(a["mc"], b["mc"])
     )
-    print(f"  M-1 null pass  ({y}, CAISO keeper): "
-          f"{'PASS — byte-identical' if same else 'FAIL — rows moved'}")
-    out["M1_null_pass"] = {"year": y, "identical": bool(same), "n_rows": int(a["uid"].size)}
+    print(
+        f"  M-1 null pass  ({y}, CAISO keeper): "
+        f"{'PASS — byte-identical' if same else 'FAIL — rows moved'}"
+    )
+    out["M1_null_pass"] = {
+        "year": y,
+        "identical": bool(same),
+        "n_rows": int(a["uid"].size),
+    }
 
     # M-2: the ST_GAS.mc cell alone, on both recipes.
     m2: dict = {}
-    for label, (run_id, bdir) in (("caiso231_prior", CAISO_PRIOR), ("caiso239_keeper", KEEPERS["CAISO"])):
+    for label, (run_id, bdir) in (
+        ("caiso231_prior", CAISO_PRIOR),
+        ("caiso239_keeper", KEEPERS["CAISO"]),
+    ):
         bp = REPO / bdir
         per_year = {}
         for yy in years:
@@ -291,22 +334,32 @@ def method_checks(years) -> dict:
             per_year[str(yy)] = {
                 "n_responsive": st["n_tranches"],
                 "plants": st["plants"],
-                "uids": [str(u) for u in base["uid"][np.asarray(idx, dtype=int)]] if idx else [],
+                "uids": [str(u) for u in base["uid"][np.asarray(idx, dtype=int)]]
+                if idx
+                else [],
                 "indirect": len(hits.get("_indirect", [])),
             }
-            print(f"  M-2 {label:<16} {yy}: ST_GAS.mc responsive tranches = "
-                  f"{st['n_tranches']}  plants={st['plants']}")
+            print(
+                f"  M-2 {label:<16} {yy}: ST_GAS.mc responsive tranches = "
+                f"{st['n_tranches']}  plants={st['plants']}"
+            )
         m2[label] = {"run_id": run_id, "bundle": bdir, "per_year": per_year}
     out["M2_two_point"] = m2
-    prior_ok = all(v["n_responsive"] == 3 for v in m2["caiso231_prior"]["per_year"].values())
-    keeper_ok = all(v["n_responsive"] == 0 for v in m2["caiso239_keeper"]["per_year"].values())
+    prior_ok = all(
+        v["n_responsive"] == 3 for v in m2["caiso231_prior"]["per_year"].values()
+    )
+    keeper_ok = all(
+        v["n_responsive"] == 0 for v in m2["caiso239_keeper"]["per_year"].values()
+    )
     out["M2_verdict"] = {
         "prior_is_3_in_every_year": bool(prior_ok),
         "keeper_is_0_in_every_year": bool(keeper_ok),
         "PASS": bool(prior_ok and keeper_ok),
     }
-    print(f"  M-2 verdict: prior==3 {prior_ok}, keeper==0 {keeper_ok} -> "
-          f"{'PASS' if prior_ok and keeper_ok else 'FAIL'}")
+    print(
+        f"  M-2 verdict: prior==3 {prior_ok}, keeper==0 {keeper_ok} -> "
+        f"{'PASS' if prior_ok and keeper_ok else 'FAIL'}"
+    )
     return out
 
 
@@ -335,9 +388,15 @@ def census(isos, years) -> dict:
             # the large pass can only be attributed by band/group (one factor),
             # so it is used ONLY as a liveness cross-check per row.
             big_moved = set()
-            if base["uid"].shape == arm_big["uid"].shape and np.array_equal(base["uid"], arm_big["uid"]):
-                r = np.divide(arm_big["hr"], base["hr"],
-                              out=np.ones_like(base["hr"]), where=base["hr"] > 0)
+            if base["uid"].shape == arm_big["uid"].shape and np.array_equal(
+                base["uid"], arm_big["uid"]
+            ):
+                r = np.divide(
+                    arm_big["hr"],
+                    base["hr"],
+                    out=np.ones_like(base["hr"]),
+                    where=base["hr"] > 0,
+                )
                 big_moved = {int(i) for i in np.flatnonzero(np.abs(r - 1.0) > 1e-12)}
             # Heat-rate response is STRUCTURAL liveness; marginal-cost response
             # is ECONOMIC liveness. They can differ: the coal ``_mustrun``
@@ -358,18 +417,24 @@ def census(isos, years) -> dict:
                 st["n_priced_but_inert"] = int(st["n_tranches"] - st["n_mc_responsive"])
                 cells[key] = st
             # clip-suppression: rows live at BIG but not attributed at small
-            small_rows = {i for k, v in hits.items() if not k.startswith("_") for i in v}
+            small_rows = {
+                i for k, v in hits.items() if not k.startswith("_") for i in v
+            }
             clip_only = sorted(big_moved - small_rows)
             n_rows = int(base["uid"].size)
             live = {k: v for k, v in cells.items() if v["n_tranches"] > 0}
-            print(f"  [{year}] fleet rows {n_rows:>5}   live cells {len(live):>2}/28   "
-                  f"responsive rows {len(small_rows):>5}   clip-only {len(clip_only)}   "
-                  f"indirect {len(hits.get('_indirect', []))}   ({time.time()-t0:.0f}s)")
+            print(
+                f"  [{year}] fleet rows {n_rows:>5}   live cells {len(live):>2}/28   "
+                f"responsive rows {len(small_rows):>5}   clip-only {len(clip_only)}   "
+                f"indirect {len(hits.get('_indirect', []))}   ({time.time() - t0:.0f}s)"
+            )
             for k, v in sorted(live.items(), key=lambda kv: -kv[1]["available_gwh"]):
-                print(f"       {k:<20} tranches {v['n_tranches']:>5}  "
-                      f"mc-live {v['n_mc_responsive']:>5}  "
-                      f"pmax {v['pmax_mw']:>9.1f} MW  avail {v['available_gwh']:>10.1f} GWh  "
-                      f"plants {v['n_plants']:>4}  bands {','.join(v['bands_seen'])}")
+                print(
+                    f"       {k:<20} tranches {v['n_tranches']:>5}  "
+                    f"mc-live {v['n_mc_responsive']:>5}  "
+                    f"pmax {v['pmax_mw']:>9.1f} MW  avail {v['available_gwh']:>10.1f} GWh  "
+                    f"plants {v['n_plants']:>4}  bands {','.join(v['bands_seen'])}"
+                )
             per_year[str(year)] = {
                 "n_fleet_rows": n_rows,
                 "n_responsive_rows": len(small_rows),
@@ -411,7 +476,9 @@ def counterparts(isos) -> dict:
                 "avg_econ_high_p50": float(r["avg_econ_high_p50"]),
                 "iqr_ratio": round(
                     float(r["avg_committed_p75"]) / float(r["avg_committed_p25"]), 3
-                ) if float(r["avg_committed_p25"]) else None,
+                )
+                if float(r["avg_committed_p25"])
+                else None,
             }
         # POPULATION, where the committed per-unit artifact exists. The
         # caiso-239 F-3 refusal turned on this test -- a counterpart measured on
@@ -419,7 +486,10 @@ def counterparts(isos) -> dict:
         # 14's own representation-boundary exception. The test is performable
         # only where a per-unit artifact is committed; where it is not, the
         # census records NOT ESTABLISHED rather than assuming a match.
-        up = REPO / f"data/raw/_processed-legacy/campd_gas_commitment_params_{iso}_units.csv"
+        up = (
+            REPO
+            / f"data/raw/_processed-legacy/campd_gas_commitment_params_{iso}_units.csv"
+        )
         pop: dict[str, list[int]] = {}
         if up.exists():
             for r in csv.DictReader(up.open()):
@@ -428,11 +498,15 @@ def counterparts(isos) -> dict:
         out[iso] = {
             "artifact": str(p.relative_to(REPO)),
             "classes": rows,
-            "unit_population_artifact": str(up.relative_to(REPO)) if up.exists() else None,
+            "unit_population_artifact": str(up.relative_to(REPO))
+            if up.exists()
+            else None,
             "measured_plant_population": pop or None,
         }
-        print(f"  {iso}: classes {sorted(rows)}   population artifact: "
-              f"{'YES ' + str({k: len(v) for k, v in pop.items()}) if pop else 'NOT COMMITTED'}")
+        print(
+            f"  {iso}: classes {sorted(rows)}   population artifact: "
+            f"{'YES ' + str({k: len(v) for k, v in pop.items()}) if pop else 'NOT COMMITTED'}"
+        )
     return out
 
 

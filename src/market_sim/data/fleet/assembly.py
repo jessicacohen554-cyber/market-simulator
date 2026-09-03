@@ -23,6 +23,7 @@ from market_sim.config.constants import (
     GAS_ST_PEAK_HR_OVERRIDE_DEFAULT,
     HOURS_PER_YEAR,
     ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO,
+    ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO,
     START_YEAR,
 )
 from market_sim.config.iso_configs import ISOConfig
@@ -778,6 +779,45 @@ def bins_to_fleet(
                         "fallback to the class default)"
                     )
                 committed_hr = base_hr * float(_mult)
+            # caiso-240 (ScenarioConfig.caiso_st_gas_peak_measured): the PEAK
+            # sibling of the limb directly above, DISJOINT FROM IT BY BAND
+            # (rule 19 [R-ONE-MECH]) -- that one moves `committed_hr` and this
+            # one `peak_hr`, and neither touches the other's band. The caiso-240
+            # census measured that after caiso-239 exactly two
+            # `_DEFAULT_HR_MULT_BY_GROUP` cells stay live on the CAISO keeper,
+            # `ST_GAS["econ"]` and `ST_GAS["peak"]`, both on the same three
+            # bypassed steamers; `peak` is the one whose measured counterpart is
+            # at the model's own grain (one flat multiplier against one measured
+            # number), so it is the one repaired here.
+            #
+            # The value is the ISO's OWN measured peak-band offer multiplier --
+            # for CAISO 1.166 = `CT_PEAKER.bands.peak` in the committed
+            # caiso_offer_curve_measured.json, which is ALREADY the value the
+            # CAISO ST_GAS class band carries on the keeper (armed at caiso-231
+            # by caiso_offer_surface_measured_ungrounded). The class band simply
+            # never reaches these plants, because `_offer_curve_for_group`
+            # bypasses every ST_GAS_PEAKER_PLANTS member -- so the measurement
+            # taken on a bucket that CONTAINS the steamers is withheld from the
+            # steamers and applied instead to two retired-window units. Zero new
+            # measurement, zero free parameters (rule 21 [R-DOF]).
+            #
+            # An ISO with no registry entry is a HARD ERROR, never a silent
+            # fallback (rule 25 [R-ISO-SCOPE]).
+            if group == "ST_GAS" and getattr(
+                config, "caiso_st_gas_peak_measured", False
+            ):
+                _iso_pk = str(getattr(config, "iso", "") or "").upper()
+                _pk_mult = ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO.get(_iso_pk)
+                if _pk_mult is None:
+                    raise ValueError(
+                        "caiso_st_gas_peak_measured is armed for "
+                        f"{_iso_pk or '<unset>'}, which has no measured entry "
+                        "in constants.ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO; "
+                        "derive the ISO's own measured peak band first (rule 25 "
+                        "[R-ISO-SCOPE] — no cross-ISO transfer, and no silent "
+                        "fallback to the class default)"
+                    )
+                peak_hr = base_hr * float(_pk_mult)
             st_mc = config.gas_st_committed_hr_override
             if (
                 group == "ST_GAS"

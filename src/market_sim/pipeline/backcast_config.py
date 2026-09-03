@@ -1206,6 +1206,7 @@ def backcast_config(
     caiso_offer_surface_measured: bool = False,
     caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_st_gas_committed_measured: bool = False,
+    caiso_st_gas_peak_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
@@ -2220,6 +2221,22 @@ def backcast_config(
                 "constants.ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO"
             )
         config = config.with_overrides(caiso_st_gas_committed_measured=True)
+    # caiso-240 measured ST_GAS PEAK band at the same ST_GAS_PEAKER_PLANTS
+    # bypass (default off, CAISO-gated here as well as in the consumer). Same
+    # shape as the caiso-239 gate directly above and DISJOINT FROM IT BY BAND
+    # (rule 19 [R-ONE-MECH]): only the GATE is set here, because the bypassed
+    # plants never reach `offer_curve_by_group` at all, so there is no band dict
+    # to merge into. Armed on a non-CAISO ISO is a hard error at the consumer,
+    # never a silent no-op (rule 25 [R-ISO-SCOPE]).
+    if caiso_st_gas_peak_measured:
+        if iso.upper() != "CAISO":
+            raise ValueError(
+                "caiso_st_gas_peak_measured is CAISO-scoped "
+                f"(rule 25 [R-ISO-SCOPE]) and was armed for {iso.upper()}; "
+                "no other ISO has a measured peak-band entry in "
+                "constants.ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO"
+            )
+        config = config.with_overrides(caiso_st_gas_peak_measured=True)
     # MISO gas + coal offer curves (CAMPD-/structure-/SOM-grounded; see
     # _MISO_OFFER_CURVE). Merged on top of the generic non-PJM/non-ERCOT branch
     # so only the named classes change (CC_REGULAR flattened to MISO's measured
