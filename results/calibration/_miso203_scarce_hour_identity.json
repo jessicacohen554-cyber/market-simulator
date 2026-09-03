@@ -1,0 +1,740 @@
+{
+ "charter": "miso-203 G-E \u2014 descriptive characterisation of the 15 scarce hours. POST-HOC and NOT PRE-REGISTERED: it carries no gate and licenses nothing. Written because phase-0's G-C falsified prediction P1 in a direction that raises a question about the OBJECT.",
+ "keeper": "2026-09-03-miso-202-unitclip",
+ "basis": "committed artifacts only \u2014 no solve",
+ "years": {
+  "2023": {
+   "driver_contrast": {
+    "scarce_hours": {
+     "load_mw": 96580.0,
+     "wind_mw": 6366.0,
+     "solar_mw": 1927.0,
+     "netload_mw": 88287.0,
+     "netload_3h_ramp_mw": 6874.0,
+     "iso_drybulb_c": 28.8,
+     "hour_of_day_mean": 14.4
+    },
+    "top_gross_load_hours": {
+     "load_mw": 114090.0,
+     "wind_mw": 7350.0,
+     "solar_mw": 2148.0,
+     "netload_mw": 104592.0,
+     "netload_3h_ramp_mw": 4514.0,
+     "iso_drybulb_c": 33.1,
+     "hour_of_day_mean": 15.0
+    },
+    "all_jun_jul": {
+     "load_mw": 81955.0,
+     "wind_mw": 6078.0,
+     "solar_mw": 1040.0,
+     "netload_mw": 74837.0,
+     "netload_3h_ramp_mw": 12.0,
+     "iso_drybulb_c": 24.1,
+     "hour_of_day_mean": 11.5
+    }
+   },
+   "threshold_usd_per_mwh": 100.42,
+   "n_scarce_hours": 15,
+   "hour_of_day_histogram": {
+    "9": 1,
+    "11": 1,
+    "12": 3,
+    "13": 2,
+    "15": 1,
+    "16": 3,
+    "17": 2,
+    "18": 1,
+    "19": 1
+   },
+   "n_distinct_days": 10,
+   "mean_ranks": {
+    "load_pctile_in_jun_jul": 83.2,
+    "netload_pctile_in_jun_jul": 80.4,
+    "drybulb_pctile_in_jun_jul": 79.2,
+    "load_pctile_in_summer": 84.5,
+    "netload_pctile_in_summer": 83.3,
+    "drybulb_pctile_in_summer": 81.3
+   },
+   "overlap_with_driver_extremes": {
+    "n_scarce": 15,
+    "n_also_in_top_load_hours": 0,
+    "n_also_in_top_netload_hours": 0,
+    "n_also_in_top_drybulb_hours": 0
+   },
+   "jun_jul_peaks_for_reference": {
+    "max_load_mw": 116545.0,
+    "max_netload_mw": 107029.0,
+    "max_iso_drybulb_c": 34.1
+   },
+   "hours": [
+    {
+     "hour": 3784,
+     "stamp": "06-07 h16",
+     "actual_hub_usd": 120.62,
+     "model_price_usd": 34.67,
+     "load_mw": 88286.0,
+     "load_pctile_jj": 66.7,
+     "netload_mw": 82169.0,
+     "netload_pctile_jj": 68.4,
+     "iso_drybulb_c": 26.2,
+     "drybulb_pctile_jj": 63.4
+    },
+    {
+     "hour": 4187,
+     "stamp": "06-24 h11",
+     "actual_hub_usd": 122.62,
+     "model_price_usd": 33.37,
+     "load_mw": 90130.0,
+     "load_pctile_jj": 70.8,
+     "netload_mw": 76326.0,
+     "netload_pctile_jj": 54.7,
+     "iso_drybulb_c": 27.8,
+     "drybulb_pctile_jj": 74.7
+    },
+    {
+     "hour": 4191,
+     "stamp": "06-24 h15",
+     "actual_hub_usd": 135.24,
+     "model_price_usd": 36.59,
+     "load_mw": 99100.0,
+     "load_pctile_jj": 89.2,
+     "netload_mw": 86861.0,
+     "netload_pctile_jj": 78.0,
+     "iso_drybulb_c": 32.3,
+     "drybulb_pctile_jj": 98.3
+    },
+    {
+     "hour": 4192,
+     "stamp": "06-24 h16",
+     "actual_hub_usd": 118.13,
+     "model_price_usd": 37.52,
+     "load_mw": 99317.0,
+     "load_pctile_jj": 89.6,
+     "netload_mw": 88812.0,
+     "netload_pctile_jj": 82.7,
+     "iso_drybulb_c": 32.1,
+     "drybulb_pctile_jj": 98.1
+    },
+    {
+     "hour": 4193,
+     "stamp": "06-24 h17",
+     "actual_hub_usd": 164.31,
+     "model_price_usd": 37.52,
+     "load_mw": 97866.0,
+     "load_pctile_jj": 87.0,
+     "netload_mw": 88834.0,
+     "netload_pctile_jj": 82.7,
+     "iso_drybulb_c": 31.7,
+     "drybulb_pctile_jj": 96.6
+    },
+    {
+     "hour": 4194,
+     "stamp": "06-24 h18",
+     "actual_hub_usd": 119.8,
+     "model_price_usd": 37.44,
+     "load_mw": 95161.0,
+     "load_pctile_jj": 81.5,
+     "netload_mw": 87906.0,
+     "netload_pctile_jj": 80.3,
+     "iso_drybulb_c": 31.0,
+     "drybulb_pctile_jj": 94.2
+    },
+    {
+     "hour": 4243,
+     "stamp": "06-26 h19",
+     "actual_hub_usd": 100.99,
+     "model_price_usd": 37.0,
+     "load_mw": 87631.0,
+     "load_pctile_jj": 65.1,
+     "netload_mw": 82158.0,
+     "netload_pctile_jj": 68.4,
+     "iso_drybulb_c": 25.8,
+     "drybulb_pctile_jj": 60.8
+    },
+    {
+     "hour": 4449,
+     "stamp": "07-05 h09",
+     "actual_hub_usd": 143.35,
+     "model_price_usd": 36.92,
+     "load_mw": 94014.0,
+     "load_pctile_jj": 78.8,
+     "netload_mw": 84580.0,
+     "netload_pctile_jj": 72.5,
+     "iso_drybulb_c": 24.3,
+     "drybulb_pctile_jj": 51.6
+    },
+    {
+     "hour": 4476,
+     "stamp": "07-06 h12",
+     "actual_hub_usd": 193.06,
+     "model_price_usd": 37.18,
+     "load_mw": 94409.0,
+     "load_pctile_jj": 80.1,
+     "netload_mw": 88142.0,
+     "netload_pctile_jj": 80.7,
+     "iso_drybulb_c": 26.5,
+     "drybulb_pctile_jj": 64.8
+    },
+    {
+     "hour": 4501,
+     "stamp": "07-07 h13",
+     "actual_hub_usd": 210.9,
+     "model_price_usd": 37.18,
+     "load_mw": 93180.0,
+     "load_pctile_jj": 77.6,
+     "netload_mw": 87789.0,
+     "netload_pctile_jj": 79.8,
+     "iso_drybulb_c": 26.3,
+     "drybulb_pctile_jj": 63.7
+    },
+    {
+     "hour": 4649,
+     "stamp": "07-13 h17",
+     "actual_hub_usd": 135.72,
+     "model_price_usd": 39.61,
+     "load_mw": 99976.0,
+     "load_pctile_jj": 90.7,
+     "netload_mw": 93090.0,
+     "netload_pctile_jj": 91.1,
+     "iso_drybulb_c": 28.7,
+     "drybulb_pctile_jj": 81.0
+    },
+    {
+     "hour": 4669,
+     "stamp": "07-14 h13",
+     "actual_hub_usd": 117.2,
+     "model_price_usd": 41.36,
+     "load_mw": 104678.0,
+     "load_pctile_jj": 96.6,
+     "netload_mw": 93740.0,
+     "netload_pctile_jj": 92.3,
+     "iso_drybulb_c": 30.9,
+     "drybulb_pctile_jj": 94.1
+    },
+    {
+     "hour": 4672,
+     "stamp": "07-14 h16",
+     "actual_hub_usd": 102.1,
+     "model_price_usd": 42.46,
+     "load_mw": 105720.0,
+     "load_pctile_jj": 97.1,
+     "netload_mw": 95298.0,
+     "netload_pctile_jj": 94.9,
+     "iso_drybulb_c": 31.9,
+     "drybulb_pctile_jj": 97.3
+    },
+    {
+     "hour": 4740,
+     "stamp": "07-17 h12",
+     "actual_hub_usd": 109.35,
+     "model_price_usd": 37.46,
+     "load_mw": 94643.0,
+     "load_pctile_jj": 80.7,
+     "netload_mw": 88551.0,
+     "netload_pctile_jj": 81.9,
+     "iso_drybulb_c": 26.2,
+     "drybulb_pctile_jj": 63.2
+    },
+    {
+     "hour": 4908,
+     "stamp": "07-24 h12",
+     "actual_hub_usd": 183.96,
+     "model_price_usd": 43.04,
+     "load_mw": 104585.0,
+     "load_pctile_jj": 96.4,
+     "netload_mw": 100045.0,
+     "netload_pctile_jj": 97.3,
+     "iso_drybulb_c": 29.5,
+     "drybulb_pctile_jj": 86.4
+    }
+   ]
+  },
+  "2024": {
+   "driver_contrast": {
+    "scarce_hours": {
+     "load_mw": 99906.0,
+     "wind_mw": 6716.0,
+     "solar_mw": 2520.0,
+     "netload_mw": 90670.0,
+     "netload_3h_ramp_mw": 96.0,
+     "iso_drybulb_c": 29.2,
+     "hour_of_day_mean": 17.1
+    },
+    "top_gross_load_hours": {
+     "load_mw": 112822.0,
+     "wind_mw": 5758.0,
+     "solar_mw": 4959.0,
+     "netload_mw": 102105.0,
+     "netload_3h_ramp_mw": 5137.0,
+     "iso_drybulb_c": 31.8,
+     "hour_of_day_mean": 14.9
+    },
+    "all_jun_jul": {
+     "load_mw": 82596.0,
+     "wind_mw": 8512.0,
+     "solar_mw": 2123.0,
+     "netload_mw": 71962.0,
+     "netload_3h_ramp_mw": 40.0,
+     "iso_drybulb_c": 24.1,
+     "hour_of_day_mean": 11.5
+    }
+   },
+   "threshold_usd_per_mwh": 129.68,
+   "n_scarce_hours": 15,
+   "hour_of_day_histogram": {
+    "11": 1,
+    "15": 1,
+    "16": 4,
+    "17": 3,
+    "18": 3,
+    "20": 2,
+    "21": 1
+   },
+   "n_distinct_days": 10,
+   "mean_ranks": {
+    "load_pctile_in_jun_jul": 83.8,
+    "netload_pctile_in_jun_jul": 83.6,
+    "drybulb_pctile_in_jun_jul": 84.7,
+    "load_pctile_in_summer": 85.7,
+    "netload_pctile_in_summer": 85.2,
+    "drybulb_pctile_in_summer": 85.4
+   },
+   "overlap_with_driver_extremes": {
+    "n_scarce": 15,
+    "n_also_in_top_load_hours": 3,
+    "n_also_in_top_netload_hours": 4,
+    "n_also_in_top_drybulb_hours": 1
+   },
+   "jun_jul_peaks_for_reference": {
+    "max_load_mw": 114734.0,
+    "max_netload_mw": 104996.0,
+    "max_iso_drybulb_c": 33.4
+   },
+   "hours": [
+    {
+     "hour": 3714,
+     "stamp": "06-04 h18",
+     "actual_hub_usd": 267.09,
+     "model_price_usd": 32.6,
+     "load_mw": 88671.0,
+     "load_pctile_jj": 66.7,
+     "netload_mw": 74412.0,
+     "netload_pctile_jj": 58.8,
+     "iso_drybulb_c": 27.9,
+     "drybulb_pctile_jj": 78.1
+    },
+    {
+     "hour": 3716,
+     "stamp": "06-04 h20",
+     "actual_hub_usd": 143.88,
+     "model_price_usd": 31.2,
+     "load_mw": 83357.0,
+     "load_pctile_jj": 54.2,
+     "netload_mw": 72091.0,
+     "netload_pctile_jj": 53.0,
+     "iso_drybulb_c": 26.1,
+     "drybulb_pctile_jj": 64.1
+    },
+    {
+     "hour": 4029,
+     "stamp": "06-17 h21",
+     "actual_hub_usd": 630.96,
+     "model_price_usd": 26.84,
+     "load_mw": 89359.0,
+     "load_pctile_jj": 68.0,
+     "netload_mw": 69063.0,
+     "netload_pctile_jj": 44.7,
+     "iso_drybulb_c": 29.0,
+     "drybulb_pctile_jj": 86.7
+    },
+    {
+     "hour": 4096,
+     "stamp": "06-20 h16",
+     "actual_hub_usd": 492.13,
+     "model_price_usd": 38.67,
+     "load_mw": 101963.0,
+     "load_pctile_jj": 92.6,
+     "netload_mw": 95436.0,
+     "netload_pctile_jj": 96.4,
+     "iso_drybulb_c": 30.1,
+     "drybulb_pctile_jj": 92.1
+    },
+    {
+     "hour": 4337,
+     "stamp": "06-30 h17",
+     "actual_hub_usd": 154.87,
+     "model_price_usd": 28.9,
+     "load_mw": 85330.0,
+     "load_pctile_jj": 58.6,
+     "netload_mw": 72738.0,
+     "netload_pctile_jj": 54.9,
+     "iso_drybulb_c": 29.1,
+     "drybulb_pctile_jj": 87.2
+    },
+    {
+     "hour": 4576,
+     "stamp": "07-10 h16",
+     "actual_hub_usd": 317.12,
+     "model_price_usd": 36.97,
+     "load_mw": 96742.0,
+     "load_pctile_jj": 85.4,
+     "netload_mw": 88387.0,
+     "netload_pctile_jj": 87.6,
+     "iso_drybulb_c": 27.7,
+     "drybulb_pctile_jj": 76.2
+    },
+    {
+     "hour": 4580,
+     "stamp": "07-10 h20",
+     "actual_hub_usd": 153.8,
+     "model_price_usd": 34.19,
+     "load_mw": 87269.0,
+     "load_pctile_jj": 63.5,
+     "netload_mw": 83255.0,
+     "netload_pctile_jj": 78.0,
+     "iso_drybulb_c": 25.5,
+     "drybulb_pctile_jj": 59.8
+    },
+    {
+     "hour": 4696,
+     "stamp": "07-15 h16",
+     "actual_hub_usd": 176.6,
+     "model_price_usd": 45.8,
+     "load_mw": 114453.0,
+     "load_pctile_jj": 99.8,
+     "netload_mw": 101050.0,
+     "netload_pctile_jj": 98.8,
+     "iso_drybulb_c": 32.5,
+     "drybulb_pctile_jj": 99.3
+    },
+    {
+     "hour": 4883,
+     "stamp": "07-23 h11",
+     "actual_hub_usd": 158.33,
+     "model_price_usd": 36.59,
+     "load_mw": 93054.0,
+     "load_pctile_jj": 76.8,
+     "netload_mw": 86908.0,
+     "netload_pctile_jj": 85.9,
+     "iso_drybulb_c": 25.5,
+     "drybulb_pctile_jj": 59.9
+    },
+    {
+     "hour": 5033,
+     "stamp": "07-29 h17",
+     "actual_hub_usd": 193.66,
+     "model_price_usd": 49.71,
+     "load_mw": 109397.0,
+     "load_pctile_jj": 98.6,
+     "netload_mw": 104823.0,
+     "netload_pctile_jj": 99.8,
+     "iso_drybulb_c": 30.5,
+     "drybulb_pctile_jj": 93.6
+    },
+    {
+     "hour": 5034,
+     "stamp": "07-29 h18",
+     "actual_hub_usd": 694.2,
+     "model_price_usd": 46.93,
+     "load_mw": 106608.0,
+     "load_pctile_jj": 97.5,
+     "netload_mw": 103790.0,
+     "netload_pctile_jj": 99.5,
+     "iso_drybulb_c": 30.0,
+     "drybulb_pctile_jj": 91.5
+    },
+    {
+     "hour": 5055,
+     "stamp": "07-30 h15",
+     "actual_hub_usd": 365.63,
+     "model_price_usd": 39.85,
+     "load_mw": 112264.0,
+     "load_pctile_jj": 99.4,
+     "netload_mw": 100727.0,
+     "netload_pctile_jj": 98.8,
+     "iso_drybulb_c": 31.0,
+     "drybulb_pctile_jj": 95.9
+    },
+    {
+     "hour": 5056,
+     "stamp": "07-30 h16",
+     "actual_hub_usd": 134.54,
+     "model_price_usd": 41.43,
+     "load_mw": 111617.0,
+     "load_pctile_jj": 99.1,
+     "netload_mw": 102344.0,
+     "netload_pctile_jj": 99.1,
+     "iso_drybulb_c": 30.9,
+     "drybulb_pctile_jj": 95.6
+    },
+    {
+     "hour": 5057,
+     "stamp": "07-30 h17",
+     "actual_hub_usd": 502.72,
+     "model_price_usd": 42.16,
+     "load_mw": 109950.0,
+     "load_pctile_jj": 98.7,
+     "netload_mw": 103661.0,
+     "netload_pctile_jj": 99.5,
+     "iso_drybulb_c": 30.6,
+     "drybulb_pctile_jj": 93.9
+    },
+    {
+     "hour": 5082,
+     "stamp": "07-31 h18",
+     "actual_hub_usd": 268.7,
+     "model_price_usd": 41.29,
+     "load_mw": 108563.0,
+     "load_pctile_jj": 98.3,
+     "netload_mw": 101360.0,
+     "netload_pctile_jj": 98.9,
+     "iso_drybulb_c": 31.5,
+     "drybulb_pctile_jj": 96.7
+    }
+   ]
+  },
+  "2025": {
+   "driver_contrast": {
+    "scarce_hours": {
+     "load_mw": 105843.0,
+     "wind_mw": 5965.0,
+     "solar_mw": 1859.0,
+     "netload_mw": 98018.0,
+     "netload_3h_ramp_mw": 1875.0,
+     "iso_drybulb_c": 30.8,
+     "hour_of_day_mean": 18.3
+    },
+    "top_gross_load_hours": {
+     "load_mw": 117415.0,
+     "wind_mw": 5758.0,
+     "solar_mw": 11435.0,
+     "netload_mw": 100223.0,
+     "netload_3h_ramp_mw": 5364.0,
+     "iso_drybulb_c": 32.7,
+     "hour_of_day_mean": 14.5
+    },
+    "all_jun_jul": {
+     "load_mw": 86370.0,
+     "wind_mw": 7969.0,
+     "solar_mw": 4639.0,
+     "netload_mw": 73762.0,
+     "netload_3h_ramp_mw": 26.0,
+     "iso_drybulb_c": 24.9,
+     "hour_of_day_mean": 11.5
+    }
+   },
+   "threshold_usd_per_mwh": 238.93,
+   "n_scarce_hours": 15,
+   "hour_of_day_histogram": {
+    "14": 1,
+    "16": 1,
+    "18": 6,
+    "19": 4,
+    "20": 2,
+    "21": 1
+   },
+   "n_distinct_days": 9,
+   "mean_ranks": {
+    "load_pctile_in_jun_jul": 88.4,
+    "netload_pctile_in_jun_jul": 94.3,
+    "drybulb_pctile_in_jun_jul": 89.6,
+    "load_pctile_in_summer": 91.6,
+    "netload_pctile_in_summer": 95.5,
+    "drybulb_pctile_in_summer": 92.6
+   },
+   "overlap_with_driver_extremes": {
+    "n_scarce": 15,
+    "n_also_in_top_load_hours": 0,
+    "n_also_in_top_netload_hours": 4,
+    "n_also_in_top_drybulb_hours": 0
+   },
+   "jun_jul_peaks_for_reference": {
+    "max_load_mw": 118661.0,
+    "max_netload_mw": 107112.0,
+    "max_iso_drybulb_c": 34.6
+   },
+   "hours": [
+    {
+     "hour": 4026,
+     "stamp": "06-17 h18",
+     "actual_hub_usd": 529.03,
+     "model_price_usd": 52.24,
+     "load_mw": 98733.0,
+     "load_pctile_jj": 78.1,
+     "netload_mw": 92432.0,
+     "netload_pctile_jj": 91.1,
+     "iso_drybulb_c": 29.3,
+     "drybulb_pctile_jj": 80.7
+    },
+    {
+     "hour": 4028,
+     "stamp": "06-17 h20",
+     "actual_hub_usd": 333.58,
+     "model_price_usd": 48.98,
+     "load_mw": 92420.0,
+     "load_pctile_jj": 65.4,
+     "netload_mw": 89796.0,
+     "netload_pctile_jj": 86.4,
+     "iso_drybulb_c": 27.3,
+     "drybulb_pctile_jj": 68.1
+    },
+    {
+     "hour": 4125,
+     "stamp": "06-21 h21",
+     "actual_hub_usd": 252.04,
+     "model_price_usd": 38.84,
+     "load_mw": 96330.0,
+     "load_pctile_jj": 73.1,
+     "netload_mw": 75740.0,
+     "netload_pctile_jj": 57.4,
+     "iso_drybulb_c": 31.1,
+     "drybulb_pctile_jj": 92.5
+    },
+    {
+     "hour": 4170,
+     "stamp": "06-23 h18",
+     "actual_hub_usd": 519.43,
+     "model_price_usd": 127.64,
+     "load_mw": 109778.0,
+     "load_pctile_jj": 95.1,
+     "netload_mw": 100053.0,
+     "netload_pctile_jj": 98.5,
+     "iso_drybulb_c": 32.7,
+     "drybulb_pctile_jj": 97.3
+    },
+    {
+     "hour": 4171,
+     "stamp": "06-23 h19",
+     "actual_hub_usd": 591.83,
+     "model_price_usd": 111.71,
+     "load_mw": 105732.0,
+     "load_pctile_jj": 89.3,
+     "netload_mw": 99498.0,
+     "netload_pctile_jj": 98.4,
+     "iso_drybulb_c": 31.8,
+     "drybulb_pctile_jj": 94.9
+    },
+    {
+     "hour": 4194,
+     "stamp": "06-24 h18",
+     "actual_hub_usd": 772.62,
+     "model_price_usd": 68.46,
+     "load_mw": 103323.0,
+     "load_pctile_jj": 85.5,
+     "netload_mw": 98308.0,
+     "netload_pctile_jj": 97.7,
+     "iso_drybulb_c": 30.7,
+     "drybulb_pctile_jj": 90.6
+    },
+    {
+     "hour": 4195,
+     "stamp": "06-24 h19",
+     "actual_hub_usd": 478.39,
+     "model_price_usd": 64.56,
+     "load_mw": 100509.0,
+     "load_pctile_jj": 80.4,
+     "netload_mw": 97302.0,
+     "netload_pctile_jj": 97.2,
+     "iso_drybulb_c": 29.9,
+     "drybulb_pctile_jj": 84.9
+    },
+    {
+     "hour": 4696,
+     "stamp": "07-15 h16",
+     "actual_hub_usd": 297.21,
+     "model_price_usd": 53.0,
+     "load_mw": 113000.0,
+     "load_pctile_jj": 97.1,
+     "netload_mw": 98185.0,
+     "netload_pctile_jj": 97.7,
+     "iso_drybulb_c": 32.2,
+     "drybulb_pctile_jj": 96.1
+    },
+    {
+     "hour": 4866,
+     "stamp": "07-22 h18",
+     "actual_hub_usd": 633.79,
+     "model_price_usd": 53.88,
+     "load_mw": 109835.0,
+     "load_pctile_jj": 95.2,
+     "netload_mw": 100433.0,
+     "netload_pctile_jj": 98.8,
+     "iso_drybulb_c": 30.4,
+     "drybulb_pctile_jj": 88.9
+    },
+    {
+     "hour": 5010,
+     "stamp": "07-28 h18",
+     "actual_hub_usd": 1669.52,
+     "model_price_usd": 165.58,
+     "load_mw": 113404.0,
+     "load_pctile_jj": 97.4,
+     "netload_mw": 107112.0,
+     "netload_pctile_jj": 99.9,
+     "iso_drybulb_c": 32.0,
+     "drybulb_pctile_jj": 95.6
+    },
+    {
+     "hour": 5011,
+     "stamp": "07-28 h19",
+     "actual_hub_usd": 589.26,
+     "model_price_usd": 93.76,
+     "load_mw": 109946.0,
+     "load_pctile_jj": 95.4,
+     "netload_mw": 105371.0,
+     "netload_pctile_jj": 99.7,
+     "iso_drybulb_c": 31.1,
+     "drybulb_pctile_jj": 92.8
+    },
+    {
+     "hour": 5012,
+     "stamp": "07-28 h20",
+     "actual_hub_usd": 320.74,
+     "model_price_usd": 61.43,
+     "load_mw": 105209.0,
+     "load_pctile_jj": 88.9,
+     "netload_mw": 100360.0,
+     "netload_pctile_jj": 98.7,
+     "iso_drybulb_c": 30.1,
+     "drybulb_pctile_jj": 86.6
+    },
+    {
+     "hour": 5034,
+     "stamp": "07-29 h18",
+     "actual_hub_usd": 244.22,
+     "model_price_usd": 134.45,
+     "load_mw": 112288.0,
+     "load_pctile_jj": 96.8,
+     "netload_mw": 106639.0,
+     "netload_pctile_jj": 99.9,
+     "iso_drybulb_c": 32.3,
+     "drybulb_pctile_jj": 96.2
+    },
+    {
+     "hour": 5035,
+     "stamp": "07-29 h19",
+     "actual_hub_usd": 249.93,
+     "model_price_usd": 79.88,
+     "load_mw": 108735.0,
+     "load_pctile_jj": 94.1,
+     "netload_mw": 104240.0,
+     "netload_pctile_jj": 99.5,
+     "iso_drybulb_c": 31.3,
+     "drybulb_pctile_jj": 93.6
+    },
+    {
+     "hour": 5054,
+     "stamp": "07-30 h14",
+     "actual_hub_usd": 715.34,
+     "model_price_usd": 44.82,
+     "load_mw": 108401.0,
+     "load_pctile_jj": 93.6,
+     "netload_mw": 94801.0,
+     "netload_pctile_jj": 94.3,
+     "iso_drybulb_c": 30.0,
+     "drybulb_pctile_jj": 85.5
+    }
+   ]
+  }
+ }
+}

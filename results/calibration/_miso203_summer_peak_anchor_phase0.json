@@ -1,0 +1,612 @@
+{
+ "charter": "miso-203 queue item 1 \u2014 the merchant ambient capability derate, re-opened on a MECHANISM change (the anchor) and judged against the TAIL object the miso-202 anatomy measured, not the level object miso-139 refused it for. No LP solved.",
+ "keeper": "2026-09-03-miso-202-unitclip",
+ "prereg": "PREREG-miso203-summer-peak-anchor-2026-09-03.md @ 011b2420",
+ "g_a_reference_condition": {
+  "source": "EIA glossary, 'Net summer capacity', retrieved 2026-09-03",
+  "quote": "The maximum output, commonly expressed in megawatts (MW), that generating equipment can supply to system load, as demonstrated by a multi-hour test, at the time of summer peak demand (period of June 1 through September 30.)",
+  "consequence": "EIA-860 states NO nominal reference temperature. The reference condition is the ambient at the time of summer peak demand, so the admissible anchor is MISO's own load-weighted top-1 % Jun-Sep dry-bulb \u2014 measured, per zone, below.",
+  "committed_gt_ambient_ref_c": 35.0,
+  "committed_ref_c_citation_status": "docs/parameter-citations.md:1314 \u2014 'auto-generated, needs-citation'. Unsourced; carried DIAGNOSTIC ONLY (TRAP 5)."
+ },
+ "structural_finding": {
+  "mechanism_already_exists": "ScenarioConfig.gt_ambient_derate",
+  "form": "extra(t) = slope x max(0, tmax_zone(t) - ref_c); avail *= 1 - extra",
+  "unreachable_on_keeper": "arrays.py guards the block with 'and not _td_on'; the keeper sets temp_dependent_derate=True (scope CT_CHP/ST_CHP only), so the guard is GLOBAL while the scope is PER-CLASS and arming gt_ambient_derate for MISO's merchant classes would change nothing today."
+ },
+ "n0_reproduction": {
+  "2023": {
+   "max_abs_diff": 0.109475875,
+   "reproduces_exactly": false,
+   "cells_overlay_removes_MORE": 99528,
+   "cells_overlay_removes_LESS": 0,
+   "is_upper_bound": true,
+   "n_units": 1976,
+   "n_units_differing": 35,
+   "production_block_moved": true,
+   "note": "Production composes the derate with the LATER retiree CEMS availability cap (arrays.py:1407, an np.minimum) as min(a*f, cap); the overlay computes min(a, cap)*f. The two differ only where that cap binds, and since f <= 1 the overlay can then only remove MORE. Every reach number below is therefore an UPPER BOUND on the mechanism's real reach, which is the conservative direction for a refusal."
+  },
+  "2024": {
+   "max_abs_diff": 1.1102230246251565e-16,
+   "reproduces_exactly": true,
+   "cells_overlay_removes_MORE": 0,
+   "cells_overlay_removes_LESS": 0,
+   "is_upper_bound": true,
+   "n_units": 1976,
+   "n_units_differing": 0,
+   "production_block_moved": true,
+   "note": "Production composes the derate with the LATER retiree CEMS availability cap (arrays.py:1407, an np.minimum) as min(a*f, cap); the overlay computes min(a, cap)*f. The two differ only where that cap binds, and since f <= 1 the overlay can then only remove MORE. Every reach number below is therefore an UPPER BOUND on the mechanism's real reach, which is the conservative direction for a refusal."
+  },
+  "2025": {
+   "max_abs_diff": 1.1102230246251565e-16,
+   "reproduces_exactly": true,
+   "cells_overlay_removes_MORE": 0,
+   "cells_overlay_removes_LESS": 0,
+   "is_upper_bound": true,
+   "n_units": 1976,
+   "n_units_differing": 0,
+   "production_block_moved": true,
+   "note": "Production composes the derate with the LATER retiree CEMS availability cap (arrays.py:1407, an np.minimum) as min(a*f, cap); the overlay computes min(a, cap)*f. The two differ only where that cap binds, and since f <= 1 the overlay can then only remove MORE. Every reach number below is therefore an UPPER BOUND on the mechanism's real reach, which is the conservative direction for a refusal."
+  }
+ },
+ "g_a_anchor": {
+  "2023": {
+   "MISO-West": {
+    "t_ref_c": 35.004,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 16491.785,
+    "summer_mean_c": 22.959,
+    "annual_mean_c": 10.032
+   },
+   "MISO-Plains": {
+    "t_ref_c": 36.623,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 17068.61,
+    "summer_mean_c": 24.472,
+    "annual_mean_c": 14.0
+   },
+   "MISO-Illinois": {
+    "t_ref_c": 33.311,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 8909.331,
+    "summer_mean_c": 22.553,
+    "annual_mean_c": 12.311
+   },
+   "MISO-Indiana": {
+    "t_ref_c": 32.758,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 15554.833,
+    "summer_mean_c": 22.773,
+    "annual_mean_c": 13.457
+   },
+   "MISO-East": {
+    "t_ref_c": 30.451,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 28370.48,
+    "summer_mean_c": 21.175,
+    "annual_mean_c": 11.395
+   },
+   "MISO-South": {
+    "t_ref_c": 38.222,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 32888.236,
+    "summer_mean_c": 28.39,
+    "annual_mean_c": 19.783
+   }
+  },
+  "2024": {
+   "MISO-West": {
+    "t_ref_c": 29.531,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 16470.135,
+    "summer_mean_c": 21.849,
+    "annual_mean_c": 10.568
+   },
+   "MISO-Plains": {
+    "t_ref_c": 34.521,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 16926.301,
+    "summer_mean_c": 24.624,
+    "annual_mean_c": 14.507
+   },
+   "MISO-Illinois": {
+    "t_ref_c": 32.574,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 8890.285,
+    "summer_mean_c": 23.087,
+    "annual_mean_c": 12.803
+   },
+   "MISO-Indiana": {
+    "t_ref_c": 31.865,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 16417.567,
+    "summer_mean_c": 23.295,
+    "annual_mean_c": 13.873
+   },
+   "MISO-East": {
+    "t_ref_c": 31.612,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 29387.248,
+    "summer_mean_c": 21.886,
+    "annual_mean_c": 12.02
+   },
+   "MISO-South": {
+    "t_ref_c": 35.937,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 31832.48,
+    "summer_mean_c": 27.775,
+    "annual_mean_c": 19.966
+   }
+  },
+  "2025": {
+   "MISO-West": {
+    "t_ref_c": 32.249,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 15946.781,
+    "summer_mean_c": 22.063,
+    "annual_mean_c": 9.173
+   },
+   "MISO-Plains": {
+    "t_ref_c": 33.34,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 16815.478,
+    "summer_mean_c": 24.405,
+    "annual_mean_c": 13.153
+   },
+   "MISO-Illinois": {
+    "t_ref_c": 32.701,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 8322.568,
+    "summer_mean_c": 23.116,
+    "annual_mean_c": 11.234
+   },
+   "MISO-Indiana": {
+    "t_ref_c": 33.018,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 16004.499,
+    "summer_mean_c": 23.766,
+    "annual_mean_c": 12.679
+   },
+   "MISO-East": {
+    "t_ref_c": 31.902,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 30718.003,
+    "summer_mean_c": 21.54,
+    "annual_mean_c": 10.07
+   },
+   "MISO-South": {
+    "t_ref_c": 35.674,
+    "n_peak_hours": 29,
+    "peak_load_mw_mean": 31788.889,
+    "summer_mean_c": 27.727,
+    "annual_mean_c": 19.349
+   }
+  }
+ },
+ "g_b_summer_neutrality": {
+  "2023": {
+   "measured_anchor_miso_slopes": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.99996,
+     "summer_delta_pct": -0.004,
+     "annual_rel": 0.999986,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999984,
+     "summer_delta_pct": -0.0016,
+     "annual_rel": 0.999994,
+     "within_1pct": true
+    }
+   },
+   "measured_anchor_literature_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.99986,
+     "summer_delta_pct": -0.014,
+     "annual_rel": 0.999953,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999937,
+     "summer_delta_pct": -0.0063,
+     "annual_rel": 0.999976,
+     "within_1pct": true
+    }
+   },
+   "ref35_miso_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999922,
+     "summer_delta_pct": -0.0078,
+     "annual_rel": 0.999974,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999867,
+     "summer_delta_pct": -0.0133,
+     "annual_rel": 0.99995,
+     "within_1pct": true
+    }
+   },
+   "ref35_gt_default_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999871,
+     "summer_delta_pct": -0.0129,
+     "annual_rel": 0.999957,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999724,
+     "summer_delta_pct": -0.0276,
+     "annual_rel": 0.999895,
+     "within_1pct": true
+    }
+   }
+  },
+  "2024": {
+   "measured_anchor_miso_slopes": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999892,
+     "summer_delta_pct": -0.0108,
+     "annual_rel": 0.999963,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999964,
+     "summer_delta_pct": -0.0036,
+     "annual_rel": 0.999986,
+     "within_1pct": true
+    }
+   },
+   "measured_anchor_literature_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999625,
+     "summer_delta_pct": -0.0375,
+     "annual_rel": 0.999873,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999857,
+     "summer_delta_pct": -0.0143,
+     "annual_rel": 0.999946,
+     "within_1pct": true
+    }
+   },
+   "ref35_miso_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999977,
+     "summer_delta_pct": -0.0023,
+     "annual_rel": 0.999992,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999965,
+     "summer_delta_pct": -0.0035,
+     "annual_rel": 0.999987,
+     "within_1pct": true
+    }
+   },
+   "ref35_gt_default_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999962,
+     "summer_delta_pct": -0.0038,
+     "annual_rel": 0.999987,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999927,
+     "summer_delta_pct": -0.0073,
+     "annual_rel": 0.999972,
+     "within_1pct": true
+    }
+   }
+  },
+  "2025": {
+   "measured_anchor_miso_slopes": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999933,
+     "summer_delta_pct": -0.0067,
+     "annual_rel": 0.999977,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999971,
+     "summer_delta_pct": -0.0029,
+     "annual_rel": 0.999989,
+     "within_1pct": true
+    }
+   },
+   "measured_anchor_literature_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999769,
+     "summer_delta_pct": -0.0231,
+     "annual_rel": 0.999921,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999886,
+     "summer_delta_pct": -0.0114,
+     "annual_rel": 0.999957,
+     "within_1pct": true
+    }
+   },
+   "ref35_miso_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999984,
+     "summer_delta_pct": -0.0016,
+     "annual_rel": 0.999995,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.999967,
+     "summer_delta_pct": -0.0033,
+     "annual_rel": 0.999987,
+     "within_1pct": true
+    }
+   },
+   "ref35_gt_default_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": {
+     "summer_mean_rel": 0.999973,
+     "summer_delta_pct": -0.0027,
+     "annual_rel": 0.999991,
+     "within_1pct": true
+    },
+    "CC_REGULAR": {
+     "summer_mean_rel": 0.99993,
+     "summer_delta_pct": -0.007,
+     "annual_rel": 0.999974,
+     "within_1pct": true
+    }
+   }
+  }
+ },
+ "g_c_tail_reach": {
+  "2023": {
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (100.42 $/MWh and above) \u2014 the anatomy's own set",
+   "n_scarce_hours": 15,
+   "threshold_usd_per_mwh": 100.42,
+   "p1_scarce_vs_rating_condition": {
+    "MISO-West": {
+     "t_ref_c": 35.0,
+     "scarce_hour_mean_c": 26.64,
+     "scarce_hour_max_c": 31.52,
+     "scarce_minus_ref_c": -8.37
+    },
+    "MISO-Plains": {
+     "t_ref_c": 36.62,
+     "scarce_hour_mean_c": 29.32,
+     "scarce_hour_max_c": 33.44,
+     "scarce_minus_ref_c": -7.3
+    },
+    "MISO-Illinois": {
+     "t_ref_c": 33.31,
+     "scarce_hour_mean_c": 28.59,
+     "scarce_hour_max_c": 33.9,
+     "scarce_minus_ref_c": -4.72
+    },
+    "MISO-Indiana": {
+     "t_ref_c": 32.76,
+     "scarce_hour_mean_c": 28.65,
+     "scarce_hour_max_c": 32.2,
+     "scarce_minus_ref_c": -4.11
+    },
+    "MISO-East": {
+     "t_ref_c": 30.45,
+     "scarce_hour_mean_c": 26.73,
+     "scarce_hour_max_c": 30.66,
+     "scarce_minus_ref_c": -3.72
+    },
+    "MISO-South": {
+     "t_ref_c": 38.22,
+     "scarce_hour_mean_c": 32.6,
+     "scarce_hour_max_c": 35.25,
+     "scarce_minus_ref_c": -5.62
+    }
+   },
+   "measured_anchor_miso_slopes": {
+    "CT_PEAKER": 1.0,
+    "CC_REGULAR": 0.3,
+    "TOTAL_MW": 1.3,
+    "summer_aft_732h_TOTAL_MW": 4.2
+   },
+   "measured_anchor_literature_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 3.6,
+    "CC_REGULAR": 1.0,
+    "TOTAL_MW": 4.6,
+    "summer_aft_732h_TOTAL_MW": 15.3
+   },
+   "ref35_miso_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 0.2,
+    "CC_REGULAR": 0.6,
+    "TOTAL_MW": 0.8,
+    "summer_aft_732h_TOTAL_MW": 15.8
+   },
+   "ref35_gt_default_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 0.4,
+    "CC_REGULAR": 1.2,
+    "TOTAL_MW": 1.5,
+    "summer_aft_732h_TOTAL_MW": 30.7
+   }
+  },
+  "2024": {
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (129.68 $/MWh and above) \u2014 the anatomy's own set",
+   "n_scarce_hours": 15,
+   "threshold_usd_per_mwh": 129.68,
+   "p1_scarce_vs_rating_condition": {
+    "MISO-West": {
+     "t_ref_c": 29.53,
+     "scarce_hour_mean_c": 28.12,
+     "scarce_hour_max_c": 32.07,
+     "scarce_minus_ref_c": -1.41
+    },
+    "MISO-Plains": {
+     "t_ref_c": 34.52,
+     "scarce_hour_mean_c": 30.27,
+     "scarce_hour_max_c": 34.62,
+     "scarce_minus_ref_c": -4.25
+    },
+    "MISO-Illinois": {
+     "t_ref_c": 32.57,
+     "scarce_hour_mean_c": 28.97,
+     "scarce_hour_max_c": 33.7,
+     "scarce_minus_ref_c": -3.61
+    },
+    "MISO-Indiana": {
+     "t_ref_c": 31.86,
+     "scarce_hour_mean_c": 27.87,
+     "scarce_hour_max_c": 32.07,
+     "scarce_minus_ref_c": -3.99
+    },
+    "MISO-East": {
+     "t_ref_c": 31.61,
+     "scarce_hour_mean_c": 27.63,
+     "scarce_hour_max_c": 32.84,
+     "scarce_minus_ref_c": -3.99
+    },
+    "MISO-South": {
+     "t_ref_c": 35.94,
+     "scarce_hour_mean_c": 32.3,
+     "scarce_hour_max_c": 35.5,
+     "scarce_minus_ref_c": -3.64
+    }
+   },
+   "measured_anchor_miso_slopes": {
+    "CT_PEAKER": 11.3,
+    "CC_REGULAR": 3.9,
+    "TOTAL_MW": 15.3,
+    "summer_aft_732h_TOTAL_MW": 10.2
+   },
+   "measured_anchor_literature_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 39.3,
+    "CC_REGULAR": 15.6,
+    "TOTAL_MW": 54.9,
+    "summer_aft_732h_TOTAL_MW": 37.0
+   },
+   "ref35_miso_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 0.9,
+    "CC_REGULAR": 2.2,
+    "TOTAL_MW": 3.1,
+    "summer_aft_732h_TOTAL_MW": 4.7
+   },
+   "ref35_gt_default_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 1.5,
+    "CC_REGULAR": 4.6,
+    "TOTAL_MW": 6.2,
+    "summer_aft_732h_TOTAL_MW": 9.0
+   }
+  },
+  "2025": {
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (238.93 $/MWh and above) \u2014 the anatomy's own set",
+   "n_scarce_hours": 15,
+   "threshold_usd_per_mwh": 238.93,
+   "p1_scarce_vs_rating_condition": {
+    "MISO-West": {
+     "t_ref_c": 32.25,
+     "scarce_hour_mean_c": 28.8,
+     "scarce_hour_max_c": 33.65,
+     "scarce_minus_ref_c": -3.45
+    },
+    "MISO-Plains": {
+     "t_ref_c": 33.34,
+     "scarce_hour_mean_c": 31.1,
+     "scarce_hour_max_c": 33.34,
+     "scarce_minus_ref_c": -2.24
+    },
+    "MISO-Illinois": {
+     "t_ref_c": 32.7,
+     "scarce_hour_mean_c": 31.25,
+     "scarce_hour_max_c": 33.72,
+     "scarce_minus_ref_c": -1.45
+    },
+    "MISO-Indiana": {
+     "t_ref_c": 33.02,
+     "scarce_hour_mean_c": 30.68,
+     "scarce_hour_max_c": 33.72,
+     "scarce_minus_ref_c": -2.34
+    },
+    "MISO-East": {
+     "t_ref_c": 31.9,
+     "scarce_hour_mean_c": 29.69,
+     "scarce_hour_max_c": 33.29,
+     "scarce_minus_ref_c": -2.22
+    },
+    "MISO-South": {
+     "t_ref_c": 35.67,
+     "scarce_hour_mean_c": 33.37,
+     "scarce_hour_max_c": 35.77,
+     "scarce_minus_ref_c": -2.31
+    }
+   },
+   "measured_anchor_miso_slopes": {
+    "CT_PEAKER": 4.9,
+    "CC_REGULAR": 1.7,
+    "TOTAL_MW": 6.7,
+    "summer_aft_732h_TOTAL_MW": 6.8
+   },
+   "measured_anchor_literature_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 17.1,
+    "CC_REGULAR": 6.8,
+    "TOTAL_MW": 23.9,
+    "summer_aft_732h_TOTAL_MW": 24.7
+   },
+   "ref35_miso_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 0.9,
+    "CC_REGULAR": 2.2,
+    "TOTAL_MW": 3.1,
+    "summer_aft_732h_TOTAL_MW": 3.8
+   },
+   "ref35_gt_default_slopes__DIAGNOSTIC": {
+    "CT_PEAKER": 1.5,
+    "CC_REGULAR": 4.7,
+    "TOTAL_MW": 6.2,
+    "summer_aft_732h_TOTAL_MW": 7.5
+   }
+  }
+ },
+ "g_d_reserve_binding": {
+  "2023": {
+   "basis": "reserve-eligible idle capability (model's own capability matrix minus its committed P1 class dispatch) minus the four families' summed requirement, in the G-C scarce hours.",
+   "reserve_requirement_mw_mean_scarce": 6460.5,
+   "idle_reserve_eligible_mw_mean_scarce": 54104.6,
+   "idle_armed_classes_mw_mean_scarce": 15788.8,
+   "margin_broad_mw_min_scarce": 42735.7,
+   "margin_broad_mw_mean_scarce": 47644.1,
+   "margin_armed_only_mw_min_scarce": 6489.3,
+   "removal_mw_measured_anchor": 1.3,
+   "removal_share_of_broad_margin": 0.0,
+   "removal_share_of_armed_margin": 0.0002,
+   "license_threshold": 0.25,
+   "G_D_PASS": false,
+   "miso139_summer_aft_732h_idle_mw_mean": 55683.9
+  },
+  "2024": {
+   "basis": "reserve-eligible idle capability (model's own capability matrix minus its committed P1 class dispatch) minus the four families' summed requirement, in the G-C scarce hours.",
+   "reserve_requirement_mw_mean_scarce": 6760.8,
+   "idle_reserve_eligible_mw_mean_scarce": 53757.6,
+   "idle_armed_classes_mw_mean_scarce": 11751.6,
+   "margin_broad_mw_min_scarce": 38374.8,
+   "margin_broad_mw_mean_scarce": 46996.8,
+   "margin_armed_only_mw_min_scarce": -1869.3,
+   "removal_mw_measured_anchor": 15.3,
+   "removal_share_of_broad_margin": 0.0004,
+   "removal_share_of_armed_margin": null,
+   "license_threshold": 0.25,
+   "G_D_PASS": false,
+   "miso139_summer_aft_732h_idle_mw_mean": 56183.3
+  },
+  "2025": {
+   "basis": "reserve-eligible idle capability (model's own capability matrix minus its committed P1 class dispatch) minus the four families' summed requirement, in the G-C scarce hours.",
+   "reserve_requirement_mw_mean_scarce": 7148.2,
+   "idle_reserve_eligible_mw_mean_scarce": 44263.3,
+   "idle_armed_classes_mw_mean_scarce": 5620.9,
+   "margin_broad_mw_min_scarce": 30533.2,
+   "margin_broad_mw_mean_scarce": 37115.1,
+   "margin_armed_only_mw_min_scarce": -5759.0,
+   "removal_mw_measured_anchor": 6.7,
+   "removal_share_of_broad_margin": 0.0002,
+   "removal_share_of_armed_margin": null,
+   "license_threshold": 0.25,
+   "G_D_PASS": false,
+   "miso139_summer_aft_732h_idle_mw_mean": 53481.6
+  }
+ }
+}
