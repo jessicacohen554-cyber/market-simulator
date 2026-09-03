@@ -223,7 +223,10 @@ VERDICT_MAP = {
     # no flip.
     "miso-2021-2025-realized-t1h-d27": "miso-t1h-pre-d31",
     "miso-2021-2025-realized-t1h-d31": "miso-t1h-pre-d33",
-    "miso-2021-2025-realized-t1h-d33": "miso-t1h",
+    # RE-POINTED by capx-D46 (2026-09-03) to `miso-t1h-pre-d46`: the bare key
+    # moved on to D46's HEAD re-measure and this record keeps its own verdict,
+    # continuing the same preserve-then-overwrite chain.
+    "miso-2021-2025-realized-t1h-d33": "miso-t1h-pre-d46",
     # capx-D37 (2026-09-02) re-measured NEISO's T1-H leg with the D40 Net ICR
     # requirement lever ARMED (owner ruling Q28, this measurement only; the
     # shipped default stays False). The armed arm takes the bare `neiso-t1h`
