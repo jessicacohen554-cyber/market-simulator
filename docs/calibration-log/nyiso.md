@@ -10895,3 +10895,100 @@ transferred nowhere. **Rule 28 (b):** five NYISO cells annotated —
 stays **`.`** — **no verdict moves and no field changed**; guard exit 0, shard
 passes `node --check`. The §5.5 NYISO lever queue is updated with this session's
 three closed lines and the new blocked status.
+
+---
+
+## nyiso-180 (2026-09-03) — all four candidate explanations for the un-dispatched in-the-money `ST_GAS` CLOSE, the object's inherited PREMISE is corrected, and the nyiso-172 §2.5 per-generator-dispatch limit is LIFTED
+
+**Keeper UNCHANGED — `2026-09-02-nyiso-177-vintage-matched`**, determination
+NOT-YET, target grade 5, fails 3 {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}.
+**ZERO SOLVES against the object. NO LEVER OPENED — pre-declared in all three
+stop conditions** (`PREREG-nyiso180-st-gas-undispatch.md` §4, committed with the
+probe at `fbf93e50` before either ran).
+
+**All three of nyiso-179 §6.1's candidates close, and a fourth it never named
+closes with them.** (a) The `nyiso_zonal_loss_surface` is **refuted
+structurally**: the `link_loss` coefficient lands on the receiving-end incidence
+of **Flow** columns only (`lp/rows.py:1448-1465`), so a generator's own
+energy-balance incidence is `+1` and there is no `δ_z` on injection — the right
+figure is exactly zero, not "a few percent". (b) A post-solve price transform is
+**refuted structurally and on the artifact**: `price = prices[z] + total_overlay`
+exists, but all three overlay terms are assigned only inside
+`if iso == "ERCOT":`, and none of the three audit columns appears in any of the
+keeper's three years. (c) The capacity/label-basis mismatch is **real, fixed, and
+an order of magnitude too small** — `dual_fuel_oil_reattribution` relabels
+oil-switched generator-hours to a POOLED `oil` class so `class_hourly`'s `ST_GAS`
+genuinely undercounts, but crediting `ST_GAS` with **100 %** of that class moves
+the median ratio only 0.775→0.775 / 0.448→**0.448** / 0.816→0.821 against the
+inherited 0.70 floor (switching in just 24/72/192 h of 8,760). G1 = `SURVIVES`.
+(d) The armed `ramp_envelopes`, found by reading the keeper's own flags: G2 was
+declared **ONE-SIDED before it ran** and reads `INCONCLUSIVE — PENDING SIDECAR`,
+explicitly **not** an exoneration — but a post-hoc report settles it on the
+merits, because the withholding is **SUSTAINED, not transient** (max unbroken run
+137/**2,650**/270 h; 85/99/81 % of withheld hours in runs > 6 h) while every
+`ST_GAS` ramp group traverses cold-to-full in **1.5–3.0 h**. A ramp row bounds
+the RATE, not the LEVEL.
+
+**The instrument was checked before it was believed.** The no-oil leg reproduces
+nyiso-179's published medians to **0.0001** in all three years, and the switch
+mask is reconstructed exactly with no re-derivation (`apply_dual_fuel_pricing`
+writes `min(gas, oil)` in place, so a switched hour is precisely pre-min >
+post-min). One premise was checked rather than assumed: the committed
+`system_<year>.parquet` carries **six** zones against `get_iso_config`'s five, so
+the probe's name mapping is valid only if the solve-time list keeps the base five
+in order — `apply_interchange_topology`'s `extend_node` step **appends** the
+external zone, and the measured `ST_GAS` zone distribution corroborates.
+
+**THE PREMISE ITSELF IS WRONG, and that is the session's most durable result.**
+§6.1 reasons from *"in a pure LP, capacity with `mc` below its own zone's dual
+and below its bound should run"*. Under the keeper's eleven armed mechanisms an
+LP generator's optimality condition is its **reduced cost**, which collapses to
+`mc − price_z` only for a generator whose sole row is the energy balance. **"In
+the money and below its bound" is therefore not by itself an anomaly.** Seven of
+the eleven are ruled out on sign or scope (the reliability floor and commitment
+bridge are `min_gen` LOWER bounds that push dispatch UP; the LCR/TSL and seam
+rows act on links and import generators; the loss surface on Flow columns;
+`local_capacity_constraints` builds no rows at all).
+
+**DELIVERABLE — the nyiso-172 §2.5 limit is LIFTED.**
+`hourly/class_band_hourly_<year>.parquet` carries
+`(year, pass, klass, band, hour, mw, mw_oil)`. The per-unit-hour frame it
+aggregates is already written every solve and merely gitignored, so this is an
+aggregation choice, not new plumbing; it is general, not an `ST_GAS` special
+case. **Sized before it was built, as pre-declared:** per-unit-hour is
+**4,187,280** rows/yr and grows with fleet size, against **306,600** for
+per-(klass, band), which is bounded by classes × bands and so stays committable
+in ERCOT/PJM. `klass` is the **pre-re-attribution** plant group (a new
+`klass_base` column captured before the dual-fuel overwrite), which is what makes
+(c)'s defect un-repeatable in any ISO. Four regression tests; no LP row, price or
+dispatch value touched.
+
+**WHAT IS NOT DELIVERED, stated without softening.** **The object is NOT
+explained.** Four candidates are closed; the sustained ~1,000 MW gap is not
+attributed. What the session delivers is a **correctly posed** question in place
+of a mis-posed one — not "why doesn't in-the-money capacity run" but **"what
+carries a sustained ~1,000 MW LEVEL gap in 59–90 % of hours"**, whose two
+surviving named carriers are LP degeneracy at a price plateau (nyiso-179 R1:
+excluding capacity within $5/MWh lifts 2024 from 0.448 to 0.678) and the reserve
+rows (R2 bounds these tightly). **Degeneracy is the stronger and would make the
+signature an artifact of the ITM statistic rather than a dispatch defect.** G2 is
+not an exoneration and per-group ramp duals remain unmeasured. The sidecar does
+**not** reach per-group grain, so it cannot see the `ramp_limits` rows. Nothing
+here moves C1-2023, C3a-2025 or C3c. **The lane wall stands: nyiso-179 §7 puts
+62.4 % of the 2025 top-decile deficit downstream of the owner-court C3a-2025, and
+this session bottomed out against it and stopped rather than manufacturing a
+lever.** The missing rung is still unspent.
+
+**Rule 15:** no solve ran against the object, so nothing is registered on the
+dashboard — by design (S3), not omission; the keeper replay was run solely to
+produce and verify the new sidecar and is not a calibration result. **Rule 22
+`[R-HOLDOUT]`:** every year read is 2023 / 2024 / 2025; NYISO is absent from both
+`complete` and `final`; **no marker was requested**. **Rules 21/23:** zero
+parameters touched; the ramp envelopes, `THERMAL_AVAILABILITY`, every band and
+every hr-mult READ and never written or swept; nothing re-derived. **Rule 24:**
+no new tunable — the sidecar adds an artifact column, not a knob. **Rule 25:**
+NYISO only; the sidecar is ISO-agnostic and carries no NYISO-specific logic.
+**Rule 28 (b):** two NYISO cells annotated — `ramp_envelopes` and
+`dual_fuel_switching`, **both stay `K`, no verdict moves**; guard exit 0, shard
+passes `node --check`. The §5.5 NYISO lever queue is updated with the four closed
+lines, the premise correction and the re-posed object.
