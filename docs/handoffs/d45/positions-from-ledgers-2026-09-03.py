@@ -175,3 +175,68 @@ if __name__ == "__main__":
     Path(__file__).with_suffix(".json").write_text(
         json.dumps(out, indent=1, default=float)
     )
+
+
+# ---------------------------------------------------------------------------
+# Counterfactual re-screen (PJM stage 3, zero-solve): for every candidate the
+# pipeline screen FAILED in a year (event 'decided' / 'entry_capped'), add the
+# capacity leg it WOULD have earned at the published CLEARED position on HEAD's own
+# vintage curve (thermal accreditation on PJM's ELCC class basis, the same
+# thermal_accreditation_fraction seam the screen used) and re-test
+# net_revenue + delta >= going_forward_cost. Reports the MW that would have
+# survived the bar. A bound: the screen's own year-over-year dynamics (a unit
+# saved in year Y changes year Y+1's stack) are not replayed.
+# ---------------------------------------------------------------------------
+def counterfactual(run_dir: Path, positions: dict[int, float] | None = None) -> list[dict]:
+    from market_sim.model.capacity_evolution.retirements import (
+        thermal_accreditation_fraction,
+    )
+
+    meta = json.loads((run_dir / "meta.json").read_text())
+    iso = meta["iso"]
+    bundle = REPO / meta["bundle"]
+    out = []
+    for p in sorted(bundle.glob("evolution_*.json")):
+        y = int(p.stem.split("_")[1])
+        led = json.loads(p.read_text())
+        pos_model = led.get("capacity_reserve_position")
+        pub = published(iso, y)
+        pos_cf = (positions or {}).get(y) or (
+            (pub.get("pos_cleared") if iso == "PJM" else pub.get("pos_published"))
+            if pub
+            else None
+        )
+        if pos_cf is None:
+            continue
+        px_cf = curve_price(iso, y, pos_cf) or 0.0
+        px_model = curve_price(iso, y, pos_model) if pos_model is not None else None
+        rows = [
+            r
+            for r in (led.get("pipeline_events") or [])
+            if isinstance(r, dict) and r.get("event") in ("decided", "entry_capped")
+        ]
+        failed_mw = sum(float(r.get("mw") or 0.0) for r in rows)
+        saved_mw, saved_by_fuel = 0.0, {}
+        for r in rows:
+            mw = float(r.get("mw") or 0.0)
+            frac = thermal_accreditation_fraction(r.get("fuel", ""), 0.0, iso)
+            cap_now = float(r.get("capacity_revenue_usd") or 0.0)
+            cap_cf = mw * frac * px_cf * 1000.0
+            nr = float(r.get("net_revenue_usd") or 0.0) - cap_now + cap_cf
+            if nr >= float(r.get("going_forward_cost_usd") or 0.0):
+                saved_mw += mw
+                saved_by_fuel[r["fuel"]] = saved_by_fuel.get(r["fuel"], 0.0) + mw
+        out.append(
+            dict(
+                year=y,
+                pos_model=pos_model,
+                price_model=px_model,
+                pos_counterfactual=pos_cf,
+                price_counterfactual=px_cf,
+                failed_mw=failed_mw,
+                saved_mw=saved_mw,
+                saved_by_fuel=saved_by_fuel,
+                n_failed=len(rows),
+            )
+        )
+    return out
