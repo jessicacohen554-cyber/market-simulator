@@ -33,9 +33,9 @@ run's own API record and nowhere else; §0 states only what this lane did.
 | the job as R-W scoped it | **larger than R-W saw**: seven unaccounted fields on `main`, not three; three of the extra four were already armed at R-W's pin and masked by the test's assertion order — §2 |
 | the three non-ERCOT fields | two accounted as `PARAMETER_OF` already-declared rows (registry bookkeeping, no disposition made); one filed GAP under the R-X route as a same-class fork, **flagged as the one row beyond the ruling's letter** — §3 |
 | `_FR22_OPEN_UNACCOUNTED` pin | reviewed: exact, both members still live, **unchanged** (no shrink available, no extension permitted) — §4 |
-| fast tier, local, CI's exact command | §5 |
-| rider: `ruff format` on R-W §7.2's three files | done, own commit; **ten further files** have gone red on `main` since R-W's pin and are reported, not formatted — §6 |
-| CI evidence and the leg-2 statement | §7 |
+| fast tier, local, CI's exact command | `1 failed, 7807 passed, 34 skipped, 2 xfailed` — the parity test is green; the one red is a NEW `main`-content forecast-board re-key (three promotions after R-W's run) in a file this lane may not touch — §5.1 |
+| rider: `ruff format` on R-W §7.2's three files | done, own commit; the job is still red on `main` content — two `E731`s fail the lint step, and **ten further files** would fail the format step — reported, not fixed — §6 |
+| CI evidence and the leg-2 statement | run 2344: `Fast test tier` **failure**, same one test as local. **Leg 2 NOT SATISFIED; not claimed.** Now BLOCKED on the forecast-board re-key, not on parity — §7 |
 | routed items + R-W's process finding carried forward verbatim | §8 |
 
 ---
@@ -261,10 +261,54 @@ Where the signal now lives: the `FR-22 backcast->forecast parity` CI job
   unpiped; a valid measurement again since R-W §4b closed the environment
   leak): see §5.1.
 
-### 5.1 Local fast tier
+### 5.1 Local fast tier — `1 failed, 7807 passed, 34 skipped, 2 xfailed`, and the one is a NEW `main`-content red
 
-(filled from the run log — see §7 for the CI-side number, which is the
-evidence.)
+Environment as R-W §1.1 (this container's clone carries `data/raw`, 5.8 GB,
+161 entries — a superset of the job's sparse list; `data/clean` absent).
+Command, exit captured unpiped into a file after the bare command:
+
+```
+uv run python -m pytest -n 2 -m "not slow and not integration and not fulldata"
+PYTEST_EXIT=1
+= 1 failed, 7807 passed, 34 skipped, 2 xfailed, 23 warnings in 518.92s (0:08:38) =
+FAILED tests/scoring/test_gate_a_provenance.py::test_live_board_passes
+```
+
+(01:29:34Z → 01:38:15Z on the final tree, both commits in.) The routed
+parity test **passes**; the skip and xfail counts are CI's own baseline
+(34 / 2, as in run 2324). **The single failure is not the parity test and
+not this branch's**:
+
+```
+gate-(a) provenance FAILED:
+  - CAISO: gate.a_keeper_marker cites SUPERSEDED keeper '2026-09-01-caiso-231-b1-ungrounded';
+    the ISO's current designated keeper is '2026-09-02-caiso-239-b1-stgas'
+  - MISO:  gate.a_keeper_marker cites SUPERSEDED keeper '2026-09-01-miso-198-oomlevel';
+    the ISO's current designated keeper is '2026-09-02-miso-201-stbasis'
+  - NYISO: gate.a_keeper_marker cites SUPERSEDED keeper '2026-08-30-nyiso-159-loss-surface';
+    the ISO's current designated keeper is '2026-09-02-nyiso-177-vintage-matched'
+```
+
+`scripts/check_gate_a_provenance.py` (the audit board's F-5 guard; also the
+`check_gate_a_provenance` step of the `FR-21 forecast-board staleness` job)
+compares each `isos.<ISO>.gate.a_keeper_marker` row of
+`frontend/data/forecast/program-status.json` against the ISO's live keeper
+shard, identity only. The board was last written at `8c41c90f`
+(2026-09-02 16:54Z, capx D37); the three promotions that moved the keepers
+landed **after** it — nyiso-177 `bfa990ec` (20:38Z), miso-201 `30a6518a`
+(21:00Z), caiso-239 `c0cf3790` (22:57Z) — and none re-keyed the board row.
+R-W's run 2324 (16:58Z) pre-dates all three, which is why this red did not
+exist in R-W's count. It is on `main` content at `c73f78f5` and reproduces on
+this branch unchanged.
+
+**This lane cannot repair it.** The repair is a re-key of three
+`program-status.json` rows, and the charter forbids this lane to touch
+`program-status.json` (alongside keeper shards, markers and the freeze file)
+— rightly: the forecast board is the FR-21/FF-2D namespace's, and a re-key
+there is the promoting lane's duty (the same duty rule 22 D-5(b) states for
+the backcast `complete` entry). Routed, §8 item 3. Until it lands, **no
+`ci.yml` run can be fast-tier-green**, and the `FR-21` job is red on the same
+object.
 
 ---
 
@@ -301,17 +345,79 @@ tests/unit/data/test_unit_outage_st_capacity_basis.py
 The rider's charter names three files; five of the ten are heavily-crossed
 core `src/` files other lanes are editing this week, and reflowing them from
 this branch would seed merge conflicts in those lanes for no gain this lane
-was asked for. So the `Ruff lint + format` job on this PR will be red on
-those ten and on nothing this lane changed (§7) — the R-U §3.3 "re-reddens
-within minutes" dynamic, still running. The owner's flip therefore still
-waits on a format pass over these ten (a one-command, one-commit chore for
-whichever lane next touches them, or an owner-chartered sweep).
+was asked for. So the `Ruff lint + format` job on this PR is red on those
+ten and on nothing this lane changed (§7) — the R-U §3.3 "re-reddens within
+minutes" dynamic, still running.
+
+**And the job never reaches the format step on this PR: `ruff check` itself
+is red on `main` content.** `uv run ruff check .` → `Found 2 errors`, both
+`E731` (lambda assignment): `docs/handoffs/d37/grade-2026-09-02.py:127` and
+`docs/handoffs/d37/predecl-screen-grain-2026-09-02.py:113` — two D37 scratch
+scripts committed under `docs/handoffs/` (`c87452f5`, 2026-09-02 16:08Z), a
+directory `pyproject.toml` does not exclude, unlike `scripts/probes` /
+`scripts/archive` / `results`. Run 2344's `Ruff lint` step fails on them and
+the `Ruff format check` step is skipped. R-U had this job green in run 2307;
+the files landed after. Reported, not fixed (a `def` rewrite or an
+`extend-exclude` entry for `docs/handoffs/**/*.py` is a one-line owner/CI-lane
+call, not this rider's).
+The owner's flip therefore still waits on both: the two E731s and the
+format pass over the ten files.
 
 ---
 
 ## 7. Evidence — the CI run (job 4)
 
-(filled after the run completes; see the PR.)
+**PR #4635. Run `2344`, id `33703895548`, head `b2ce045a` (both code commits)
+— `Fast test tier` job id `100488803209`, step *Fast pytest tier*
+01:31:40Z → 01:40:21Z (8m41s), conclusion `failure`.**
+<https://github.com/jessicacohen554-cyber/market-simulator/actions/runs/33703895548>
+
+The job's own log tail:
+
+```
+FAILED tests/scoring/test_gate_a_provenance.py::test_live_board_passes - assert 1 == 0
+= 1 failed, 7807 passed, 34 skipped, 2 xfailed, 23 warnings in 516.42s (0:08:36) =
+##[error]Process completed with exit code 1.
+```
+
+Byte-for-byte the local §5.1 numbers (`1 / 7807 / 34 / 2`), the same single
+test, so the serial-vs-`-n 2` and container-vs-runner axes agree — R-W §4b's
+leak repair holds. **The routed parity test is green on CI** (it is not in
+the failure list; the 7,807 include `test_all_six_keepers_resolve`), which is
+what this lane was chartered to deliver on the tier. The one red is the
+`main`-content forecast-board re-key of §5.1 / §8 item 3, present on `main`
+since 22:57Z on 2026-09-02 and outside this lane's permitted files.
+
+Every job, as found:
+
+| job | conclusion | note |
+|---|---|---|
+| **`Fast test tier`** | 🔴 **failure** | `1 failed, 7807 passed, 34 skipped, 2 xfailed` — `test_gate_a_provenance.py::test_live_board_passes`, `main` content (§5.1); the R-W §3.8 parity red is CLEARED |
+| `Rule-22 quarantine gates` | 🟢 success | `audit_keepers`, `legitimacy_diagnostics --keepers`, `check_registry_payload_parity`, `check_golden_manifest` all green |
+| `Cache-key registration guard` | 🟢 success | |
+| `Pinned default cache key` | 🟢 success | |
+| `Structural refactor guards` | 🟢 success | |
+| `Rule-28 mechanism-matrix guard` | 🟢 success | the R-W §7.7 anchor drift was repaired upstream; not this lane's |
+| `Ruff lint + format` | 🔴 failure | **`Ruff lint` step** — the two `E731`s in `docs/handoffs/d37/` (§6); the format step is skipped behind it, so the rider's three files are not even reached |
+| `FR-21 forecast-board staleness (WARN only)` | 🔴 failure | `check_gate_a_provenance` step — the SAME object as the tier's one red (§5.1); `check_forecast_staleness` green |
+| `FR-22 backcast->forecast parity` | 🔴 failure | as designed (DO-NOT-REQUIRE, H-1): exit 1 on the two pinned fields only (§4) — down from seven UNACCOUNTED on `main` |
+| `Forecast-invariant artifact audit` | 🔴 failure | as on `main` (DO-NOT-REQUIRE, H-1); untouched |
+
+**G2 leg 2 status, stated against the criterion verbatim — *"one completed
+fast-tier-green `ci.yml` run"*: NOT SATISFIED, and this finding does not
+claim it.** The run completed; its `Fast test tier` job is red on exactly one
+test. That test is not the one R-X was ruled to clear — that one is green —
+but the criterion is the job, not a test, and the v21 / R-W refusals are the
+guardrails in both directions: 7 → 1 on the parity object is not a green,
+and neither is "green except for someone else's file". What blocks the
+criterion now is a three-row re-key of `program-status.json` (§8 item 3) that
+this lane is forbidden to make; the next records lane should carry leg 2 as
+*"BLOCKED on the caiso-239 / miso-201 / nyiso-177 forecast-board re-key
+(FR-22 gap filings landed, parity red cleared — #4635)"*.
+
+No `workflow_dispatch` was issued; the PR's own run is the evidence. A
+second run on the docs-only commit carrying this section (§9) adds no content
+evidence beyond 2344's and is expected to read identically.
 
 ---
 
@@ -324,14 +430,26 @@ whichever lane next touches them, or an owner-chartered sweep).
    (§3.3) and, with it, its pinned sibling `nyiso_seam_deliverability_envelope`
    and `ercot_storage_as_soc_reserve` (§3.4): measured-TTC / measured-AS
    `BACKCAST_ONLY` family, or a forward channel. Three fields, one question.
-3. **→ owner / next CI lane.** Ten files red on `ruff format --check` beyond
-   R-W's three (§6). The `Ruff lint + format` job cannot be green until they
-   are formatted; this lane's rider was chartered for three.
-4. **→ the lanes touching `scenarios.py`.** The `Rule-28 mechanism-matrix
-   guard` state on this PR's run is reported in §7 as found; the digits-only
-   anchor repair is theirs (R-W §7.7), and this lane's charter forbids matrix
-   edits.
-5. **→ calibration desk — R-W's process finding, verbatim:** *"A process
+3. **🔴 → the caiso-239 / miso-201 / nyiso-177 promoting lanes (or the
+   forecast-board owner) — THE sole `Fast test tier` red, and this lane is
+   forbidden to touch it.** `frontend/data/forecast/program-status.json`
+   `isos.{CAISO,MISO,NYISO}.gate.a_keeper_marker` cite the superseded
+   keepers (§5.1); `test_gate_a_provenance.py::test_live_board_passes` and
+   the `FR-21` job's `check_gate_a_provenance` step fail on it. Repair: re-key
+   the three rows against the live keepers per the F-5 protocol
+   (`read_live_at` to the promotion sha, status re-read), one commit, then
+   any PR's run can be fast-tier-green. Leg 2 is BLOCKED on exactly this
+   until it lands.
+4. **→ owner / next CI lane.** `Ruff lint + format` is red on `main` content
+   twice over (§6): two `E731`s in a `docs/handoffs/d37/` script fail the
+   lint step outright, and ten files beyond R-W's three would fail the
+   format step behind it. This rider was chartered for three files.
+5. **⚪ as found.** `Rule-28 mechanism-matrix guard` is **green** on run 2344
+   — the 25 stale anchors R-W §7.7 reported were repaired upstream before
+   this PR's run; nothing to route. `FR-22 backcast->forecast parity` and
+   `Forecast-invariant artifact audit` red as on `main` (DO-NOT-REQUIRE,
+   H-1); the FR-22 job's red is now the two pinned fields only (§4).
+6. **→ calibration desk — R-W's process finding, verbatim:** *"A process
    finding rides along: two ERCOT promotions armed keeper mechanisms without
    the parity check that the promotion duty implies, and the fast tier — the
    one gate that would have caught it on the PR — was already red at the
@@ -348,4 +466,17 @@ whichever lane next touches them, or an owner-chartered sweep).
 
 ## 9. Rule 27 blob verification
 
-(filled after push.)
+Both code commits (`72d64d0a` registry + finding, `b2ce045a` rider) were
+pushed over `git push` (HTTP/1.1, `lowSpeedLimit`/`lowSpeedTime` set) and
+every pushed file was fetched back from
+`origin/claude/fr22-gap-fast-tier-green-n9n7by` under `GIT_NO_LAZY_FETCH=1`
+and compared to local on line count AND sha256: **5 of 5 OK, 0 mismatches**
+— `scripts/lib/forecast_parity_registry.py` 548 lines,
+`scripts/data/derive_thermal_tranches.py` 1,203,
+`src/market_sim/model/capacity_evolution/new_entry.py` 1,872 (the three at or
+above the 300-line threshold), plus `test_build_dof_ledger_coal_sigmoids.py`
+195 and this document. No file was rewritten from regenerated response
+content: the registry rows were added with local edits and the three rider
+files are `ruff format`'s own on-disk output pushed as exact bytes. The
+docs-only commit carrying §5.1/§7/§9 is verified the same way before this
+lane ends, with the result recorded in the PR.
