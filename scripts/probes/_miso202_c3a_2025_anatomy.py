@@ -112,6 +112,7 @@ def main() -> None:
         "a1_monthly_attribution": {},
         "a2_distribution": {},
         "a3_ceiling": {},
+        "a4_what_is_serving_those_hours": {},
     }
 
     # ---- A-0 + A-1 --------------------------------------------------------
@@ -259,6 +260,46 @@ def main() -> None:
             "jun_jul_price_max": round(float(jj["price"].max()), 2),
             "jun_jul_zone_hours_over_200": int((jj["price"] > 200).sum()),
             "reserve_families": fam,
+        }
+
+    # ---- A-4: what is serving the hours the real market priced high? -----
+    # MODEL-SIDE ONLY, and labelled as such: no hourly interchange ACTUAL is
+    # committed for MISO, so this reports what the keeper dispatches in the
+    # hours the actual hub price was in its own top 1 %, against the same
+    # month's ordinary hours. It adjudicates nothing — it says which supply is
+    # present when the real market was scarce and the model was not.
+    for year in YEARS:
+        act = hub_hourly_rt(year)
+        if act is None:
+            continue
+        ch = pd.read_parquet(KEEPER / "hourly" / f"class_hourly_{year}.parquet")
+        ch = ch[ch["pass"] == "P1"]
+        idx = pd.date_range(f"{year}-01-01", periods=HOURS, freq="h")
+        jj = np.isin(idx.month, (6, 7))
+        thr = float(np.percentile(act[jj], 99))
+        scarce = jj & (act >= thr)
+        ordinary = jj & (act < thr)
+        rows = {}
+        for k, g in ch.groupby(ch["klass"].astype(str)):
+            mw = g.set_index("hour")["mw"].reindex(range(HOURS)).to_numpy()
+            rows[k] = {
+                "mean_mw_actual_scarce_hours": round(float(np.nanmean(mw[scarce])), 1),
+                "mean_mw_other_jun_jul_hours": round(float(np.nanmean(mw[ordinary])), 1),
+                "delta_mw": round(
+                    float(np.nanmean(mw[scarce]) - np.nanmean(mw[ordinary])), 1
+                ),
+            }
+        report["a4_what_is_serving_those_hours"][str(year)] = {
+            "basis": (
+                "MODEL-SIDE ONLY — no hourly interchange actual is committed for "
+                "MISO, so this is descriptive, not a residual against a benchmark."
+            ),
+            "scarce_hours_definition": (
+                f"Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of "
+                f"Jun-Jul ({thr:.2f} $/MWh and above)"
+            ),
+            "n_scarce_hours": int(scarce.sum()),
+            "by_class": dict(sorted(rows.items(), key=lambda kv: -kv[1]["delta_mw"])),
         }
 
     OUT.write_text(json.dumps(report, indent=1))

@@ -864,5 +864,293 @@
     }
    }
   }
+ },
+ "a4_what_is_serving_those_hours": {
+  "2023": {
+   "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (100.42 $/MWh and above)",
+   "n_scarce_hours": 15,
+   "by_class": {
+    "CT_PEAKER": {
+     "mean_mw_actual_scarce_hours": 5143.6,
+     "mean_mw_other_jun_jul_hours": 2686.1,
+     "delta_mw": 2457.5
+    },
+    "import": {
+     "mean_mw_actual_scarce_hours": 6702.5,
+     "mean_mw_other_jun_jul_hours": 4694.8,
+     "delta_mw": 2007.7
+    },
+    "COAL_PRB": {
+     "mean_mw_actual_scarce_hours": 20430.3,
+     "mean_mw_other_jun_jul_hours": 18542.4,
+     "delta_mw": 1887.9
+    },
+    "CC_REGULAR": {
+     "mean_mw_actual_scarce_hours": 21340.5,
+     "mean_mw_other_jun_jul_hours": 19842.0,
+     "delta_mw": 1498.5
+    },
+    "ST_GAS": {
+     "mean_mw_actual_scarce_hours": 4009.8,
+     "mean_mw_other_jun_jul_hours": 2759.7,
+     "delta_mw": 1250.1
+    },
+    "hydro": {
+     "mean_mw_actual_scarce_hours": 1843.9,
+     "mean_mw_other_jun_jul_hours": 877.9,
+     "delta_mw": 966.0
+    },
+    "solar": {
+     "mean_mw_actual_scarce_hours": 1926.7,
+     "mean_mw_other_jun_jul_hours": 1030.9,
+     "delta_mw": 895.8
+    },
+    "COAL_BIT": {
+     "mean_mw_actual_scarce_hours": 8074.3,
+     "mean_mw_other_jun_jul_hours": 7642.0,
+     "delta_mw": 432.3
+    },
+    "CC_CHP": {
+     "mean_mw_actual_scarce_hours": 3110.8,
+     "mean_mw_other_jun_jul_hours": 2702.4,
+     "delta_mw": 408.4
+    },
+    "nuclear": {
+     "mean_mw_actual_scarce_hours": 11355.5,
+     "mean_mw_other_jun_jul_hours": 11057.8,
+     "delta_mw": 297.7
+    },
+    "wind": {
+     "mean_mw_actual_scarce_hours": 6366.3,
+     "mean_mw_other_jun_jul_hours": 6075.3,
+     "delta_mw": 291.0
+    },
+    "COAL_LIGNITE": {
+     "mean_mw_actual_scarce_hours": 1005.4,
+     "mean_mw_other_jun_jul_hours": 874.0,
+     "delta_mw": 131.4
+    },
+    "ST_CHP": {
+     "mean_mw_actual_scarce_hours": 330.2,
+     "mean_mw_other_jun_jul_hours": 279.2,
+     "delta_mw": 51.0
+    },
+    "CT_CHP": {
+     "mean_mw_actual_scarce_hours": 703.2,
+     "mean_mw_other_jun_jul_hours": 661.5,
+     "delta_mw": 41.7
+    },
+    "OTHER": {
+     "mean_mw_actual_scarce_hours": 1277.9,
+     "mean_mw_other_jun_jul_hours": 1272.1,
+     "delta_mw": 5.8
+    },
+    "COAL": {
+     "mean_mw_actual_scarce_hours": 23.5,
+     "mean_mw_other_jun_jul_hours": 21.9,
+     "delta_mw": 1.6
+    },
+    "biomass": {
+     "mean_mw_actual_scarce_hours": 941.0,
+     "mean_mw_other_jun_jul_hours": 941.1,
+     "delta_mw": -0.0
+    },
+    "oil": {
+     "mean_mw_actual_scarce_hours": 0.0,
+     "mean_mw_other_jun_jul_hours": 0.0,
+     "delta_mw": 0.0
+    }
+   }
+  },
+  "2024": {
+   "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (129.68 $/MWh and above)",
+   "n_scarce_hours": 15,
+   "by_class": {
+    "CT_PEAKER": {
+     "mean_mw_actual_scarce_hours": 8110.0,
+     "mean_mw_other_jun_jul_hours": 2996.4,
+     "delta_mw": 5113.5
+    },
+    "COAL_PRB": {
+     "mean_mw_actual_scarce_hours": 21031.2,
+     "mean_mw_other_jun_jul_hours": 17229.0,
+     "delta_mw": 3802.2
+    },
+    "COAL_BIT": {
+     "mean_mw_actual_scarce_hours": 8995.2,
+     "mean_mw_other_jun_jul_hours": 7070.3,
+     "delta_mw": 1924.9
+    },
+    "import": {
+     "mean_mw_actual_scarce_hours": 4878.5,
+     "mean_mw_other_jun_jul_hours": 3194.5,
+     "delta_mw": 1684.0
+    },
+    "CC_REGULAR": {
+     "mean_mw_actual_scarce_hours": 21857.1,
+     "mean_mw_other_jun_jul_hours": 20365.3,
+     "delta_mw": 1491.8
+    },
+    "ST_GAS": {
+     "mean_mw_actual_scarce_hours": 3751.4,
+     "mean_mw_other_jun_jul_hours": 2344.1,
+     "delta_mw": 1407.3
+    },
+    "hydro": {
+     "mean_mw_actual_scarce_hours": 2189.2,
+     "mean_mw_other_jun_jul_hours": 1345.0,
+     "delta_mw": 844.2
+    },
+    "solar": {
+     "mean_mw_actual_scarce_hours": 2520.4,
+     "mean_mw_other_jun_jul_hours": 2132.6,
+     "delta_mw": 387.8
+    },
+    "CC_CHP": {
+     "mean_mw_actual_scarce_hours": 3047.9,
+     "mean_mw_other_jun_jul_hours": 2711.8,
+     "delta_mw": 336.1
+    },
+    "COAL_LIGNITE": {
+     "mean_mw_actual_scarce_hours": 930.9,
+     "mean_mw_other_jun_jul_hours": 841.1,
+     "delta_mw": 89.8
+    },
+    "ST_CHP": {
+     "mean_mw_actual_scarce_hours": 439.7,
+     "mean_mw_other_jun_jul_hours": 371.5,
+     "delta_mw": 68.2
+    },
+    "CT_CHP": {
+     "mean_mw_actual_scarce_hours": 721.4,
+     "mean_mw_other_jun_jul_hours": 659.6,
+     "delta_mw": 61.9
+    },
+    "nuclear": {
+     "mean_mw_actual_scarce_hours": 11246.1,
+     "mean_mw_other_jun_jul_hours": 11242.4,
+     "delta_mw": 3.7
+    },
+    "biomass": {
+     "mean_mw_actual_scarce_hours": 837.9,
+     "mean_mw_other_jun_jul_hours": 834.3,
+     "delta_mw": 3.6
+    },
+    "COAL": {
+     "mean_mw_actual_scarce_hours": 18.2,
+     "mean_mw_other_jun_jul_hours": 16.2,
+     "delta_mw": 1.9
+    },
+    "OTHER": {
+     "mean_mw_actual_scarce_hours": 1093.4,
+     "mean_mw_other_jun_jul_hours": 1091.7,
+     "delta_mw": 1.7
+    },
+    "oil": {
+     "mean_mw_actual_scarce_hours": 0.0,
+     "mean_mw_other_jun_jul_hours": 0.0,
+     "delta_mw": 0.0
+    },
+    "wind": {
+     "mean_mw_actual_scarce_hours": 6716.4,
+     "mean_mw_other_jun_jul_hours": 8559.5,
+     "delta_mw": -1843.1
+    }
+   }
+  },
+  "2025": {
+   "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (238.93 $/MWh and above)",
+   "n_scarce_hours": 15,
+   "by_class": {
+    "CT_PEAKER": {
+     "mean_mw_actual_scarce_hours": 13120.9,
+     "mean_mw_other_jun_jul_hours": 4337.5,
+     "delta_mw": 8783.4
+    },
+    "import": {
+     "mean_mw_actual_scarce_hours": 6351.3,
+     "mean_mw_other_jun_jul_hours": 2506.9,
+     "delta_mw": 3844.4
+    },
+    "ST_GAS": {
+     "mean_mw_actual_scarce_hours": 5087.0,
+     "mean_mw_other_jun_jul_hours": 2260.5,
+     "delta_mw": 2826.5
+    },
+    "COAL_PRB": {
+     "mean_mw_actual_scarce_hours": 22608.2,
+     "mean_mw_other_jun_jul_hours": 20433.4,
+     "delta_mw": 2174.8
+    },
+    "CC_REGULAR": {
+     "mean_mw_actual_scarce_hours": 20327.8,
+     "mean_mw_other_jun_jul_hours": 19209.2,
+     "delta_mw": 1118.7
+    },
+    "COAL_BIT": {
+     "mean_mw_actual_scarce_hours": 8756.1,
+     "mean_mw_other_jun_jul_hours": 7698.0,
+     "delta_mw": 1058.1
+    },
+    "hydro": {
+     "mean_mw_actual_scarce_hours": 2296.7,
+     "mean_mw_other_jun_jul_hours": 1325.9,
+     "delta_mw": 970.8
+    },
+    "nuclear": {
+     "mean_mw_actual_scarce_hours": 10728.9,
+     "mean_mw_other_jun_jul_hours": 10315.9,
+     "delta_mw": 413.0
+    },
+    "CC_CHP": {
+     "mean_mw_actual_scarce_hours": 2799.6,
+     "mean_mw_other_jun_jul_hours": 2614.4,
+     "delta_mw": 185.2
+    },
+    "ST_CHP": {
+     "mean_mw_actual_scarce_hours": 395.8,
+     "mean_mw_other_jun_jul_hours": 265.7,
+     "delta_mw": 130.1
+    },
+    "oil": {
+     "mean_mw_actual_scarce_hours": 63.1,
+     "mean_mw_other_jun_jul_hours": 0.3,
+     "delta_mw": 62.8
+    },
+    "COAL_LIGNITE": {
+     "mean_mw_actual_scarce_hours": 861.5,
+     "mean_mw_other_jun_jul_hours": 808.8,
+     "delta_mw": 52.7
+    },
+    "CT_CHP": {
+     "mean_mw_actual_scarce_hours": 707.4,
+     "mean_mw_other_jun_jul_hours": 682.1,
+     "delta_mw": 25.3
+    },
+    "OTHER": {
+     "mean_mw_actual_scarce_hours": 842.2,
+     "mean_mw_other_jun_jul_hours": 839.7,
+     "delta_mw": 2.5
+    },
+    "biomass": {
+     "mean_mw_actual_scarce_hours": 358.9,
+     "mean_mw_other_jun_jul_hours": 358.8,
+     "delta_mw": 0.2
+    },
+    "wind": {
+     "mean_mw_actual_scarce_hours": 5965.4,
+     "mean_mw_other_jun_jul_hours": 7989.3,
+     "delta_mw": -2023.9
+    },
+    "solar": {
+     "mean_mw_actual_scarce_hours": 1859.5,
+     "mean_mw_other_jun_jul_hours": 4667.9,
+     "delta_mw": -2808.5
+    }
+   }
+  }
  }
 }
