@@ -3921,7 +3921,7 @@ closure table, the entry-composition consequence, the cross-ISO code note (what 
 lanes would run), and the arming recommendation for the owner.
 ```
 
-## D44 — arm the fossil announced-date default (r#31; owner ruling Q30)
+## D44 — arm the fossil announced-date default (r#31; owner ruling Q30) — **LANDED** PR #4639 (`57088c33`, 2026-09-03; graded at r#32 amendment 1 — the r#32 pin briefly read it unlaunched)
 
 ```
 You are the D44 session of the capacity-expansion track — the EXECUTION of owner ruling Q30
@@ -3969,7 +3969,9 @@ conflict. Nobody else touches scenarios.py/CLAUDE.md/spec this window.
 EXIT: the flip + amendments + matrix + CHANGELOG + the finding, all blob-verified.
 ```
 
-## D45 — PJM + NYISO capacity curves: the once-only D6+R3 joint charter (r#31)
+## D45 — PJM + NYISO capacity curves: the once-only D6+R3 joint charter (r#31) — **CHECKPOINT at r#32** (PRs #4643/#4647/#4649: PJM L1 registered + stages 2/3 written; **OWED: NYISO L2/L3, PJM L4, finding §4–§9 and the §9 close-out** — graded a checkpoint, not lost; a session resuming this charter starts from the committed finding's placeholders)
+
+*r#32 amendment (recorded OUTSIDE the charter text, which does not move): the NYISO keeper is now `2026-09-02-nyiso-177-vintage-matched` (promoted 2026-09-02 by owner ruling; NOT-YET on {C1-2023 ST_GAS, C3a-2025, C3c}); PJM's is unchanged (`2026-08-15-pjm-162-inputclock`). The charter names no keeper id, so nothing in it changes — but the per-leg vintage line it already requires must name the keeper id per ISO alongside the fossil-dates posture. Also note: the forecast board's gate-(a) stamps for NYISO/MISO/CAISO were stale at r#32 (ledger §0ac.2) — read the keeper from `keepers/<ISO>.json`, never from `program-status.json`.*
 
 ```
 You are the D45 session of the capacity-expansion track — the ONCE-ONLY cross-ISO
