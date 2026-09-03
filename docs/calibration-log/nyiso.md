@@ -10790,3 +10790,108 @@ field changed**; guard exit 0, shard passes `node --check`. Also re-stamped
 nyiso-159 keeper (the promoting session's duty, missed; CI was warning on it) and
 whose NYISO lever queue now carries this session's three closed lines — the prior
 header is preserved beneath, unedited.
+
+---
+
+## 2026-09-03 — nyiso-179: the `ST_GAS` offer POSITION is refuted as the governing object; all three of the brief's starting points close; ZERO SOLVES
+
+**Keeper UNCHANGED — `2026-09-02-nyiso-177-vintage-matched`**, determination
+**NOT-YET**, target grade 5, fails 3 {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}.
+No parameter touched, no band swept, no arm built, no run registered — by the
+pre-registration's own stop conditions **S1, S2 and S3, all three of which
+fired**. Gates: `results/calibration/PREREG-nyiso179-st-gas-offer-position.md`,
+committed with the probe at `15f2d3e8` **before either ran**; §8 amendment at
+`5264cff2` **before the corrected run**. Evidence:
+`docs/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md`, machine records
+`_nyiso179_st_gas_offer_position.json` + `_nyiso179_g1_robustness.json`.
+
+**THE INSTRUMENT.** The **exact LP marginal-cost array**, rebuilt by calling the
+engine — nyiso-178's validated `lp_fleet` → `resolve_fuel_prices` →
+`assemble_mc` on the keeper's own `run_config.json`. `resolve_fuel_prices`
+applies the F923 overlay, the NYISO zonal basis and the dual-fuel oil cap inside
+one call in that order (read from the code, not assumed), and the keeper carries
+`carbon_price = nox_price = so2_price = 0`, so `mc = hr × delivered fuel + vom`
+exactly. Zero solves.
+
+**THE THREE STARTING POINTS, ALL CLOSED ON MEASUREMENT.**
+**(1) G0 `INERT`** — `gas_st_committed_hr_mult` 1.32 is consumed at exactly one
+site, `offer_curves.split_gas_tranches`, reachable only from the non-CAMPD limb
+(`assembly.py:1912`, the limb whose coal sibling was deleted as unreachable at
+ercot-188); this keeper is `use_campd_bins=True`, so it cannot price a single MW.
+Every committed band measures `base_hr × 1.05`. The caiso-239 transfer is
+declined twice over — NYISO has **0 of 11** `ST_GAS_PEAKER_PLANTS` members, and
+its own `avg_committed_p50` 1.104 is **already registered** as `phys_committed`.
+A NYISO registry entry would be an unreachable entry (rule 24), so none added.
+**(2) G3 `PEAK-EXONERATED`** — in 2025's top decile the un-grounded `peak` 4.20
+holds 0.336 of the class's out-of-the-money MW (bar 0.40) and is OOM in 0.806 of
+hours (bar 0.90). At mean mc \$415.9 against a \$176.25 price it is 2.4× the
+price and never was the carrier, while **700 MW of econ-band steam sits OOM at
+\$112**. It stays un-grounded (no peak column exists to ground it from); the
+prereg's pre-declared refusal to pick a value from the residual held.
+**(3) G2 `LINE CLOSED`** — rule 19 `[R-ONE-MECH]` executed: the **armed**
+oil-parity cap reaches **0.834** of `ST_GAS` capacity (7,424 / 8,902 MW) and
+bites hardest exactly where predicted — 2025's top decile, 0.0875 of bin-hours
+capped at **\$2.371/MMBtu** relief, delivered gas \$11.76 → \$9.39. No new
+fuel-side mechanism proposed.
+
+**G1 `NOT-OFFER-GOVERNED` — the type itself is refuted.** Against its own P1
+zonal prices the model dispatches only **0.767 / 0.522 / 0.740** of the `ST_GAS`
+its own offer puts in the money (median R 0.775 / **0.448** / 0.816 against a
+0.70 floor) — **3.84 / 9.09 / 3.99 TWh a year** of in-the-money steam unrun.
+Robust four ways: **not** a marginal-tranche artifact (marginal capacity is
+3.1–4.6 % of ITM; no ε in 0–\$5 rescues it), **not** reserve holding (a family
+binds in 21 / 11 / 38 h of 8,760 against 6,008 / 7,911 / 5,144 withholding
+hours, overlap 0 / 2 / 0 — independently reproducing nyiso-152), **not** the
+P0/P1 bid-cost gap (`commitment.py:312` skips the `gas_st` limb and the keeper
+carries `gas_st_startup_cost=False`, so the ST_GAS markup is **identically
+zero** and the reconstruction **is** the P1 bid cost — a structural close), and
+coherent in the zero-ITM hours.
+
+**THE SUBSTANTIVE RESULT — the 2025 top-decile decomposition** (measured 2,597
+MW vs model 1,442 MW): **62.4 %** of the 1,155 MW gap is capacity the model's
+own offer clears at the ACTUAL price but not at its own lower price — i.e.
+**downstream of C3a-2025, which is owner-court** — **24.6 %** is offer position
+proper, **13.0 %** is in the money at its own price and still unrun. An
+**accounting** identity at fixed offer, not a causal one, but it identifies the
+`ST_GAS` C1 lane and the C3a-2025 lane as **one object** and sizes the
+offer-position component at a quarter — which is why no solve was spent.
+G4's between-year channels: FUEL **−740.8 MW**, PRICE **+1,163.1 MW**, AVAIL
+−239.9 MW on a net of +182 (band hr/vom drift exactly 0.0); the pre-registered
+`CARRIER IDENTIFIED`/`PRICE` label is disclosed as an artifact of the small net
+denominator and the MW contributions are led instead.
+
+**SEVEN CONSTRUCTION DEFECTS caught and disclosed before they could affect a
+conclusion** — four by CODE READING before the probe was committed (PREREG §7:
+the band-suffix vocabulary, which would have hollowed out G3 *toward the brief's
+own preferred answer*; a VOM omission in G4; G4's "bands are constant" premise
+made measured; and V1, which was wrong on the code because a third pricing route
+exists), three by the probe's own OUTPUT before the finding was written
+(PREREG §8: V1 checked zero bins because NYISO `ST_GAS` has no `econlo`/`econhi`
+band at all; G1's top-decile mean-of-ratios read 58.5 against MW levels implying
+0.906; G4's shares are not fractions). **In every case the instrument was
+replaced and no bar was moved.**
+
+**WHAT IS NOT DELIVERED, stated without softening.** No keeper, no candidate, no
+run, no repair. C1-2023 `ST_GAS` is exactly where nyiso-177 and nyiso-178 left
+it — named, sized at +3.86 TWh, open. **Why** in-the-money steam goes
+un-dispatched is **bounded but not answered** (three candidates named in finding
+§6.1; the settling instrument is per-generator model dispatch, absent from every
+keeper artifact — the nyiso-172 §2.5 limit, now binding a third session). The
+§7 decomposition's dominant term routes into an owner-court decision, so **the
+`ST_GAS` lane is BLOCKED pending Q1 of
+`DECISION-CARD-nyiso148-2025-level-remainder`** — a real constraint on the next
+session, not a hand-off with work in it. The missing rung is still unspent.
+
+**Rule 15:** no solve ran, so nothing is registered on the dashboard — by design
+(S1/S2/S3), not omission. **Rule 22 `[R-HOLDOUT]`:** every year read is 2023 /
+2024 / 2025; NYISO is absent from both `complete` and `final`; **no marker was
+requested**; the holdout spend freeze is untouched. **Rules 21/23:** zero
+parameters touched; `THERMAL_AVAILABILITY`, `MERIT_*`, every band and every
+hr-mult READ and never written or swept; no artifact re-derived. **Rule 25:**
+NYISO only; the CAISO 1.683 was read as a *derivation pattern* and its value
+transferred nowhere. **Rule 28 (b):** five NYISO cells annotated —
+`offer_curve_by_group`, `dual_fuel_switching`, `zonal_gas_basis`,
+`gas_hub_basis_overlay` stay **`K`** and `st_gas_committed_measured_bypass`
+stays **`.`** — **no verdict moves and no field changed**; guard exit 0, shard
+passes `node --check`. The §5.5 NYISO lever queue is updated with this session's
+three closed lines and the new blocked status.

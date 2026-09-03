@@ -1,0 +1,232 @@
+{
+  "session": "nyiso-179",
+  "kind": "POST-GATE ROBUSTNESS \u2014 reports only, no gate verdict changes",
+  "frozen_gate_record": "results/calibration/_nyiso179_st_gas_offer_position.json",
+  "R1_marginal_tranche": {
+    "bar": {
+      "R_low": 0.7,
+      "R_high": 1.43
+    },
+    "per_year": {
+      "2023": {
+        "by_eps": [
+          {
+            "eps_usd_per_mwh": 0.0,
+            "mean_itm_mw": 1785.6,
+            "aggregate_R_all_hours": 0.7671,
+            "aggregate_R_top_decile": 0.8718,
+            "median_R": 0.7751
+          },
+          {
+            "eps_usd_per_mwh": 0.01,
+            "mean_itm_mw": 1785.0,
+            "aggregate_R_all_hours": 0.7674,
+            "aggregate_R_top_decile": 0.872,
+            "median_R": 0.7751
+          },
+          {
+            "eps_usd_per_mwh": 0.1,
+            "mean_itm_mw": 1779.5,
+            "aggregate_R_all_hours": 0.7697,
+            "aggregate_R_top_decile": 0.8734,
+            "median_R": 0.7764
+          },
+          {
+            "eps_usd_per_mwh": 1.0,
+            "mean_itm_mw": 1731.0,
+            "aggregate_R_all_hours": 0.7913,
+            "aggregate_R_top_decile": 0.8885,
+            "median_R": 0.7976
+          },
+          {
+            "eps_usd_per_mwh": 5.0,
+            "mean_itm_mw": 1439.3,
+            "aggregate_R_all_hours": 0.9517,
+            "aggregate_R_top_decile": 0.9893,
+            "median_R": 0.9578
+          }
+        ],
+        "mean_marginal_mw_within_1usd": 54.6,
+        "marginal_share_of_itm": 0.0306
+      },
+      "2024": {
+        "by_eps": [
+          {
+            "eps_usd_per_mwh": 0.0,
+            "mean_itm_mw": 2141.1,
+            "aggregate_R_all_hours": 0.5224,
+            "aggregate_R_top_decile": 0.7225,
+            "median_R": 0.4481
+          },
+          {
+            "eps_usd_per_mwh": 0.01,
+            "mean_itm_mw": 2139.5,
+            "aggregate_R_all_hours": 0.5228,
+            "aggregate_R_top_decile": 0.7229,
+            "median_R": 0.4488
+          },
+          {
+            "eps_usd_per_mwh": 0.1,
+            "mean_itm_mw": 2131.5,
+            "aggregate_R_all_hours": 0.5248,
+            "aggregate_R_top_decile": 0.7245,
+            "median_R": 0.4514
+          },
+          {
+            "eps_usd_per_mwh": 1.0,
+            "mean_itm_mw": 2041.7,
+            "aggregate_R_all_hours": 0.5479,
+            "aggregate_R_top_decile": 0.747,
+            "median_R": 0.4755
+          },
+          {
+            "eps_usd_per_mwh": 5.0,
+            "mean_itm_mw": 1599.9,
+            "aggregate_R_all_hours": 0.6991,
+            "aggregate_R_top_decile": 0.8672,
+            "median_R": 0.678
+          }
+        ],
+        "mean_marginal_mw_within_1usd": 99.3,
+        "marginal_share_of_itm": 0.0464
+      },
+      "2025": {
+        "by_eps": [
+          {
+            "eps_usd_per_mwh": 0.0,
+            "mean_itm_mw": 1544.4,
+            "aggregate_R_all_hours": 0.7402,
+            "aggregate_R_top_decile": 0.9055,
+            "median_R": 0.8159
+          },
+          {
+            "eps_usd_per_mwh": 0.01,
+            "mean_itm_mw": 1543.8,
+            "aggregate_R_all_hours": 0.7405,
+            "aggregate_R_top_decile": 0.9059,
+            "median_R": 0.8163
+          },
+          {
+            "eps_usd_per_mwh": 0.1,
+            "mean_itm_mw": 1537.7,
+            "aggregate_R_all_hours": 0.7434,
+            "aggregate_R_top_decile": 0.9085,
+            "median_R": 0.8214
+          },
+          {
+            "eps_usd_per_mwh": 1.0,
+            "mean_itm_mw": 1480.7,
+            "aggregate_R_all_hours": 0.772,
+            "aggregate_R_top_decile": 0.9348,
+            "median_R": 0.8633
+          },
+          {
+            "eps_usd_per_mwh": 5.0,
+            "mean_itm_mw": 1251.4,
+            "aggregate_R_all_hours": 0.9135,
+            "aggregate_R_top_decile": 1.0579,
+            "median_R": 1.0362
+          }
+        ],
+        "mean_marginal_mw_within_1usd": 63.6,
+        "marginal_share_of_itm": 0.0412
+      }
+    },
+    "eps_that_brings_all_years_into_band": null,
+    "verdict": "REAL \u2014 un-dispatched in-the-money capacity survives"
+  },
+  "R2_reserve_holding": {
+    "per_year": {
+      "2023": {
+        "columns": [
+          "year",
+          "pass",
+          "family",
+          "reserve_class",
+          "zones",
+          "hour",
+          "dual",
+          "requirement_mw",
+          "held_mw",
+          "shortfall_mw"
+        ],
+        "hours_any_family_binding": 21,
+        "hours_withholding_gt_10pct": 6008,
+        "hours_both": 0,
+        "share_of_withholding_hours_with_binding_reserve": 0.0,
+        "mean_withheld_itm_mw": 438.5,
+        "total_withheld_twh": 3.841
+      },
+      "2024": {
+        "columns": [
+          "year",
+          "pass",
+          "family",
+          "reserve_class",
+          "zones",
+          "hour",
+          "dual",
+          "requirement_mw",
+          "held_mw",
+          "shortfall_mw"
+        ],
+        "hours_any_family_binding": 11,
+        "hours_withholding_gt_10pct": 7911,
+        "hours_both": 2,
+        "share_of_withholding_hours_with_binding_reserve": 0.0003,
+        "mean_withheld_itm_mw": 1037.8,
+        "total_withheld_twh": 9.091
+      },
+      "2025": {
+        "columns": [
+          "year",
+          "pass",
+          "family",
+          "reserve_class",
+          "zones",
+          "hour",
+          "dual",
+          "requirement_mw",
+          "held_mw",
+          "shortfall_mw"
+        ],
+        "hours_any_family_binding": 38,
+        "hours_withholding_gt_10pct": 5144,
+        "hours_both": 0,
+        "share_of_withholding_hours_with_binding_reserve": 0.0,
+        "mean_withheld_itm_mw": 455.6,
+        "total_withheld_twh": 3.991
+      }
+    }
+  },
+  "R3_p1_bid_cost": {
+    "keeper_gas_st_startup_cost": false,
+    "st_gas_fuel_types_in_lp": [
+      "gas_st"
+    ],
+    "guard_at_commitment_py_312": "fuel_type == 'gas_st' and not gas_st_startup_cost",
+    "markup_identically_zero_for_st_gas": true,
+    "mc_bid_adjust_scope": "ERCOT-only (None for NYISO)",
+    "verdict": "CLOSED \u2014 reconstruction IS the P1 bid cost for ST_GAS"
+  },
+  "R4_zero_itm_hours": {
+    "2023": {
+      "hours_zero_itm": 105,
+      "mean_model_mw_in_zero_itm_hours": 426.7,
+      "max_model_mw_in_zero_itm_hours": 663.6,
+      "mean_model_mw_all_hours": 1369.7
+    },
+    "2024": {
+      "hours_zero_itm": 149,
+      "mean_model_mw_in_zero_itm_hours": 262.5,
+      "max_model_mw_in_zero_itm_hours": 606.9,
+      "mean_model_mw_all_hours": 1118.6
+    },
+    "2025": {
+      "hours_zero_itm": 470,
+      "mean_model_mw_in_zero_itm_hours": 255.5,
+      "max_model_mw_in_zero_itm_hours": 1417.1,
+      "mean_model_mw_all_hours": 1143.2
+    }
+  }
+}
