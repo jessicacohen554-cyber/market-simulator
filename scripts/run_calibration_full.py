@@ -611,7 +611,18 @@ def _write_class_band_hourly_sidecar(
     frames = []
     for label in labels:
         src = run_dir / "dispatch" / f"{year}_{label}.parquet"
-        cols = pq.ParquetFile(src).schema.names
+        # Readability probe, and the sidecar's whole fail-open contract. A
+        # reused-year bundle may carry a dispatch frame this process cannot
+        # read at all (a placeholder copied by the reuse path, a prune), and a
+        # frame written before ``klass_base`` existed carries the column but
+        # not the key. Neither is a reason to fail a solve for an ADDITIVE
+        # diagnostic sidecar, so both skip it. Scoped to the schema probe
+        # alone: once the file reads, a failure in the aggregation below is a
+        # real bug and is allowed to raise.
+        try:
+            cols = pq.ParquetFile(src).schema.names
+        except Exception:  # unreadable/placeholder frame — skip, never fail
+            return None
         if "klass_base" not in cols:
             return None
         d = pd.read_parquet(

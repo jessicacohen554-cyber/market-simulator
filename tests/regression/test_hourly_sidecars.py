@@ -192,6 +192,16 @@ class ClassBandHourlySidecarTest(unittest.TestCase):
                     places=4,
                 )
 
+    def test_returns_none_on_an_unreadable_placeholder_frame(self):
+        """A reused-year bundle can carry a frame this process cannot read."""
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = Path(tmp)
+            (run_dir / "dispatch").mkdir()
+            (run_dir / "dispatch" / "2024_P1.parquet").write_text("x")
+            self.assertIsNone(
+                rcf._write_class_band_hourly_sidecar(run_dir, 2024, ["P1"])
+            )
+
     def test_returns_none_on_a_frame_predating_klass_base(self):
         """Additive: an older bundle replays without the sidecar, never fails."""
         with tempfile.TemporaryDirectory() as tmp:
