@@ -27,7 +27,7 @@ Re-derive your sitting number from the ledger's top entry and grade only the del
 
 READ ON EVERY REFRESH, IN THIS ORDER:
 1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ac = r#32 is the
-   newest at this writing), §1 scoreboard, §3 the THIRTY-ONE rulings Q1–Q31 (ALL SPENT — none
+   newest at this writing; it carries two mid-sitting amendments — read them), §1 scoreboard, §3 the THIRTY-ONE rulings Q1–Q31 (ALL SPENT — none
    open), §4 issuance record, §2 backcast watch.
 2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
    EVERY charter you issue is COMMITTED to the pack in the same sitting (the r#24 chat-only
@@ -65,7 +65,7 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#32 amendment 1, main HEAD 2b0b8796, 2026-09-03 — VERIFY, DON'T TRUST):
+STATE AT HANDOFF (r#32 amendment 2, main HEAD c6e46b49, 2026-09-03 — VERIFY, DON'T TRUST):
 - KEEPERS: ERCOT two-config 2026-08-25-234-eastex-identity (+236-swcap 2023 carve-out),
   CALIBRATED · NEISO neiso-99-joint-p1 CALIBRATED · PJM pjm-162-inputclock CALIBRATED ·
   MISO 2026-09-03-miso-202-unitclip NOT-YET {C3a-2025 alone, −12.4 % — measured to be a
@@ -103,13 +103,14 @@ STATE AT HANDOFF (r#32 amendment 1, main HEAD 2b0b8796, 2026-09-03 — VERIFY, D
 - QUEUE (short, deliberately): (1) THE BATCHED RE-MEASURE — one owner-cost decision covering
   the D41-stale bundles + Q30-stale forecast baselines + everything the wave changed; PRICE
   it next sitting once D44 lands so it runs once (registered t1f/golden bundles, solve-hours,
-  which keys move; PRICED at §0ac.7 — hindcasts+golden ≈2.5 h, the t1f tail ≈24 h serial
-  (80 % PJM+MISO); card C-3's answer and the D46 charter are in §0ac amendment 2 / pack
-  §D46 if issued) · (2) per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
+  which keys move; PRICED §0ac.7, RULED Q32 STAGED, DISPATCHED as D46 (pack §D46): Stage 1
+  in flight (ERCOT/CAISO/MISO/NEISO t1h + GOLDEN-2 + pairable t1f), Stage 2 gated on D45's
+  close-out, Stage 3 (PJM/MISO t1f, ~17 h) owner-scheduled — grade D46 by content) · (2)
+  per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
   NYISO's zonal spread ($4.8–12.2) is the only promising instance and needs D45's
   diagnostics-on solve first · (3) nothing else — the capx queue emptied at r#31.
-- OWNER-TIER OPEN: C-1/C-2 answered and spent (§0ac amendment 1); C-3 (the re-measure)
-  per amendment 2. Q1–Q31 all spent. New cards otherwise come only from D45's owed half
+- OWNER-TIER OPEN: NONE — C-1/C-2/C-3 all answered and spent (§0ac amendments 1–2; C-3 =
+  Q32). Q1–Q32 all spent. New cards otherwise come only from D45's owed half
   (its §6 arming recommendations) and the audit board's X-1(ii) lint-scope question.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
