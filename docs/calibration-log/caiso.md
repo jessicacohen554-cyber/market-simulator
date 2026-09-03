@@ -11737,3 +11737,139 @@ class priced materially above its measured physical basis.
 **`2026-09-03-caiso-240-b1-stgas`**.
 
 **Next number: caiso-241.**
+
+---
+
+## caiso-241 (2026-09-03) — THE CT_PEAKER `committed` ADMISSIBILITY RULING, THE GROUNDING IT AUTHORISED, AND THE OBJECT THAT SURVIVED IT
+
+**Keeper `2026-09-03-caiso-240-b1-stgas` → `2026-09-03-caiso-241-b1-ctpeaker`.**
+Determination UNCHANGED at **NOT-YET**, C3a the sole load-bearing FAIL,
+`audit_keepers --iso CAISO` **PASS 0/0**. Two bundles registered:
+`caiso241_b1_ctpeaker_committed` (the arm, promoted) and
+`caiso241_a0_control` (the control, never a promotion candidate).
+
+**THE FIRST DELIVERABLE WAS A RULING, NOT A SOLVE.** caiso-238 graded the five
+live CAISO `committed` bands **F4 — refused on rule**; caiso-231 applied that
+refusal uniformly. The ruling (`PRECOMMIT-caiso241` §1, pushed to `origin`
+BEFORE any fleet was rebuilt): grounding `CT_PEAKER.committed` on its own
+measured **PHYSICAL** counterpart is **OUTSIDE** the refusal, on five limbs,
+three new and any one sufficient. **(1) The refusal is ROUTE-scoped and
+caiso-238 §3 said so in the assessment that ISSUED the F4** — it covers the
+measured **bid** (CT bucket 1.166, still unarmed here); *"grounding on the
+physical min-load burn is the same class of instrument Lever A itself used"* —
+and **1.350 > 1.166 > 0.991**, so the repair's direction is invariant to route.
+**(2) Lever A's own ground refuses 1.35 symmetrically** (*"any avoided-startup
+credit belongs in an explicit UC layer, not the P1 offer"*), since
+`_CAISO_OFFER_CURVE` itself calls 1.35 a *"start-cost hurdle"*. **(3) NEW —
+rule 19 `[R-ONE-MECH]` DOUBLE-COUNT:** the `_committed` tranche is the ONLY
+tranche carrying the bin's start cost and P1 already amortizes it ($20/MW,
+NREL/SR-5500-55433, ÷ the P0 run length, no CT exemption, and
+`tranche_startup_amortization` OFF on this keeper so the markup lands on the
+very band at issue). **(4) NEW — rule 25 `[R-ISO-SCOPE]`:** `committed = 1.35`
+sits in the CAISO, NYISO and NEISO CT_PEAKER curves each citing the others and
+NONE citing a measurement, against their own 0.991 (n=75) / 0.843 (n=70) /
+0.985 (n=18). **(5) NEW — the band is the class's MOST EXPENSIVE MW** (keeper:
+committed 1.350 > peak 1.166 = econ_high > econ_low 1.145) **and applying the
+refusal to ONE band of four is what inverted it**, when caiso-231's measured
+surface re-grounded econ/peak while withholding committed.
+
+**THE REPAIR:** `ScenarioConfig.caiso_ct_peaker_committed_measured` (gated,
+default off, CAISO-gated) sets `committed := phys_committed`, 1.350 → 0.991 —
+the value the band's own dict already carries. **No new literal, no registry
+value to pick, ZERO free parameters.**
+
+**THE OWNER MADE TWO RULINGS** (`ADDENDUM2`, pushed before any LP). **(1) The
+solve is FUNDED**, lifting the caiso-201/222 terminal rest for this object.
+**(2) The caiso-231 "NO CONTROL ARMS" directive is AMENDED:** an arm measured
+**live in every solved year** — so that neither the `run_config` field-diff form
+of G-CTRL nor caiso-240's dispatch-identity form can bind — may spend ONE
+control solve, and its effect is measured against that control; an arm with even
+one inert year still spends nothing. Raised caiso-239 §6.1, escaped by caiso-240
+§6.3, **met here for the first time**. **WHAT THE CONTROL MEASURED, REPORTED
+WHETHER OR NOT IT FLATTERS THE AMENDMENT: HEAD DRIFT IS EXACTLY ZERO** — A0
+reproduces the predecessor in every class and every year with an empty delta
+set, and its C3a reads the keeper's own +4.1/+12.6/+15.6 %. It cost ~65 min of
+LP to learn that; it also converted into a measurement an assumption every
+keeper-relative number in this lane has rested on since caiso-239 measured 22
+differing `run_config` fields and could not tell drift from mechanism.
+
+**GATES, all scored on B1 − A0. EVERY ONE PASSES.** G-STRUCT **PASS pre-solve**
+(exactly **44** rows move in every year, all CAISO CT_PEAKER `_committed`, at the
+exact ratio 0.991/1.350 = **0.734074074074**, `offer_markup_hr` → **exactly
+0.0**, and ZERO rows in any other band, group or ISO; 829.8 MW = **11.0 %** of
+the class). G-INERT PASS. G-CTRL (form 3, HEAD-drift) PASS. G-C1 PASS 12/12 free
+8/8. G-C3a PASS on BOTH legs — no verdict flip (**+4.1→+3.9 / +12.6→+12.3 /
++15.6→+15.5 %**) and the measured **−0.0777/−0.0426/−0.0169 $/MWh** sits inside
+the pre-registered two-sided envelope **[−0.880,+0.05]/[−0.380,+0.05]/[−0.198,
++0.05]**. G-C3b, G-C8, G-CAVEAT (1 ledgered / 0 protective) PASS. G-C6 attested
+on **both** bundles. Every scored criterion is identical across keeper, control
+and arm.
+
+**THE DECOMPOSITION IS THE RULE-19 ARGUMENT, NOT AN INTERPRETATION OF IT.** Under
+`gas_offer_net_revenue_margin` grounding leaves the fuel-scaled PHYSICAL cost
+untouched and removes ONLY the fuel-invariant margin: measured capacity-weighted
+**−18.6197 $/MWh, IDENTICAL TO FOUR DECIMALS in all three years** across gas at
+2.54/2.19/3.52 $/MMBtu (route arithmetic predicted ≈ $18.7). **CORROBORATION
+FOUND AFTER THE PRECOMMIT PUSH AND LABELLED AS SUCH: MISO HAS ALREADY MADE THIS
+REPAIR** — its CT_PEAKER committed is **1.025 = its own `phys_committed` 1.025**
+— and `_MISO_OFFER_CURVE` states limb 3 verbatim, citing FERC Order 825 / ELMP.
+Five of six ISOs price the CT min-load band above their own measured basis
+(ERCOT 1.480/1.022, CAISO 1.350/0.991, PJM 1.250/1.049, NYISO 1.350/0.843,
+NEISO 1.350/0.985); under rule 25 the other four are **asks for their own
+lanes** and **nothing transfers** in either direction.
+
+**PROMOTION BASIS IS STRUCTURAL AND EXCLUDES C3a BY PRE-REGISTRATION** (rule 1
+`[R-STRUCT]`): one uncited, cross-ISO-circular scalar retires to CAISO's own
+measured counterpart, removing a rule-19 double-count and a class-internal
+merit-order inversion, at zero free parameters, with no scored criterion
+regressing. The favourable direction was declared the session's **HAZARD** in
+§0.7 before any solve, and §A6 established from the arm's own maximum — before
+it ran — that it could not flip C3a in any year. It delivered **9 % of its own
+price ceiling**.
+
+**WHAT IT DOES NOT DO, MEASURED AND SAID PLAINLY: the CT_PEAKER object
+SURVIVES.** Volume +0.206/+0.253/+0.148 TWh closes only **7.6/6.6/7.0 %** of the
+miss; the class stays below **HALF** its actual in all three years (39.4/17.2/
+16.2 %) and remains the largest single-class gas miss in **2024 (−3.58 TWh)** and
+**2025 (−1.96 TWh)**. Its dominant cause is elsewhere — a **separate, larger,
+UNFUNDED object**. P-2 and P-6, both written to be uncomfortable before anything
+was measured, hold.
+
+**TWO DISCLOSURES AGAINST INTEREST.** (a) **THE PRE-REGISTERED VOLUME CEILING
+WAS BREACHED** — 0.432/0.247/0.120 TWh predicted, 0.206/**0.253**/**0.148**
+measured, exceeding by **+2.4 %** (2024) and **+23.1 %** (2025). Root cause: the
+crossing envelope §H′ counts only hours where the tranche crosses the CONTROL's
+price and cannot see hours that re-dispatch itself opens — caiso-240's §H
+blindness, one level up. **The asymmetry is the useful part:** §H′'s PRICE leg is
+*conservative* (the measured move came in at 9 % of it) while its VOLUME leg is
+*anti-conservative*. Reported as an estimator defect and **NEVER re-fitted**; the
+registered price falsifiers both passed with margin. (b) **P-7 IS FALSIFIED** —
+the DOF ledger did **not** move (9 entries / 6 residual, unchanged). Root cause:
+`build_dof_ledger._count_scalars` counts numeric **LEAVES**, and the repair
+changes a value without removing a key, so a fitted→measured **substitution** is
+invisible to it whether or not the scalar sits inside `offer_curve_by_group`.
+caiso-240's note said the counter measures the surface's SIZE not its fitted
+content; I read that as a statement about **location** when it is one about
+**provenance**, and made the same error one level up in the session that quoted
+it. **CONSEQUENCE, larger than one prediction: four consecutive grounding
+repairs are invisible to the DOF ledger.** Filed as an owner ask — give the
+ledger a per-leaf fitted/measured provenance count, or rule 21 `[R-DOF]` stays
+enforced by prose rather than by the counter.
+
+**PREDICTIONS: seven hold, one falsified.** The three written to be
+uncomfortable (P-2, P-4, P-6) all held in the direction that constrains the
+session's claim; the one that flattered the session's own instrument (P-7) is
+the one that broke.
+
+**Deliverables:** `PRECOMMIT-caiso241-ct-peaker-committed-2026-09-03.md`,
+`PRECOMMIT-caiso241-ADDENDUM-arm-2026-09-03.md`,
+`PRECOMMIT-caiso241-ADDENDUM2-owner-ruling-2026-09-03.md`,
+`FINDING-caiso241-ct-peaker-committed-2026-09-03.md`,
+`results/calibration/_caiso241_{gstruct_presolve,cell_bound,arm_vs_control}.json`,
+`scripts/probes/_caiso241_{gstruct_presolve,cell_bound,arm_vs_control}.py`,
+`scripts/gen_caiso241_attestation.py`,
+`tests/unit/pipeline/test_caiso_ct_peaker_committed_measured.py`, runs
+**`2026-09-03-caiso-241-b1-ctpeaker`** (keeper) and
+**`2026-09-03-caiso-241-a0-control`**.
+
+**Next number: caiso-242.**

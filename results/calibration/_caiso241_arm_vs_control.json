@@ -1,0 +1,205 @@
+{
+ "G_CTRL_form3": {
+  "PASS": true,
+  "control_verdicts": {
+   "dispatch_corr": "PASS",
+   "forced_share": "PASS",
+   "fuelmix": "PASS",
+   "governance": "PASS",
+   "price_mean": "FAIL",
+   "price_shape": "PASS",
+   "price_tail": "CAVEAT",
+   "sysvol": "PASS"
+  },
+  "differing": {},
+  "falsifier": "any scored criterion's verdict differs between A0 and the committed keeper \u21d2 HEAD drift is material and the keeper-relative comparison is unsafe; reported as a blocking finding, never absorbed",
+  "keeper_verdicts": {
+   "dispatch_corr": "PASS",
+   "forced_share": "PASS",
+   "fuelmix": "PASS",
+   "governance": "PASS",
+   "price_mean": "FAIL",
+   "price_shape": "PASS",
+   "price_tail": "CAVEAT",
+   "sysvol": "PASS"
+  }
+ },
+ "G_INERT": {
+  "PASS": true,
+  "falsifier": "all three years reproduce the control exactly"
+ },
+ "P8_no_inert_year": {
+  "HOLDS": true,
+  "falsifier": "any year reproduces the control to within 0.001 TWh in every class"
+ },
+ "_provenance": {
+  "arm": "results/calibration/caiso241_b1_ctpeaker_committed",
+  "control": "results/calibration/caiso241_a0_control",
+  "keeper": "results/calibration/caiso240_b1_stgas_peak_measured",
+  "purpose": "B1 - A0 mechanism effect + (A0 - KEEPER) HEAD-drift decomposition, under the owner's 2026-09-03 amendment of the caiso-231 no-control-arms directive (ADDENDUM2 \u00a7B2/\u00a7B4)",
+  "session": "caiso-241",
+  "solves": 0
+ },
+ "arm_verdicts": {
+  "dispatch_corr": "PASS",
+  "forced_share": "PASS",
+  "fuelmix": "PASS",
+  "governance": "PASS",
+  "price_mean": "FAIL",
+  "price_shape": "PASS",
+  "price_tail": "CAVEAT",
+  "sysvol": "PASS"
+ },
+ "arm_vs_control_verdict_diff": {},
+ "determinations": {
+  "arm": {
+   "caveats": [
+    "C3c price tail / scarcity (RT hourly)"
+   ],
+   "determination": "NOT-YET",
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 1,
+    "ledgered": 1,
+    "scored": 8,
+    "target_grade": 6
+   }
+  },
+  "control": {
+   "caveats": [
+    "C3c price tail / scarcity (RT hourly)"
+   ],
+   "determination": "NOT-YET",
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 1,
+    "ledgered": 1,
+    "scored": 8,
+    "target_grade": 6
+   }
+  },
+  "keeper": {
+   "caveats": [
+    "C3c price tail / scarcity (RT hourly)"
+   ],
+   "determination": "NOT-YET",
+   "grade_summary": {
+    "commercial_grade": 0,
+    "fails": 1,
+    "ledgered": 1,
+    "scored": 8,
+    "target_grade": 6
+   }
+  }
+ },
+ "per_year": {
+  "2023": {
+   "class_twh_headdrift": {},
+   "class_twh_mechanism": {
+    "CC_CHP": -0.009821,
+    "CC_REGULAR": -0.149448,
+    "COAL": -2.5e-05,
+    "CT_CHP": -0.006443,
+    "CT_PEAKER": 0.205967,
+    "ST_GAS": -0.04569,
+    "hydro": 0.000946,
+    "import": -0.009024,
+    "solar": 0.0025
+   },
+   "ct_peaker_twh": {
+    "arm": 1.6268,
+    "control": 1.4208,
+    "gap_closed_pct": 7.6,
+    "inside_ceiling": true,
+    "keeper": 1.4208,
+    "measured_miss": -2.71,
+    "mechanism_gain": 0.206,
+    "pre_registered_ceiling": 0.432
+   },
+   "dP_headdrift_A0_minus_keeper": 0.0,
+   "dP_mechanism_B1_minus_A0": -0.077693,
+   "envelope": [
+    -0.879762,
+    0.05
+   ],
+   "envelope_PASS": true,
+   "max_abs_class_delta_twh": 0.205967,
+   "mean_price_arm": 50.6662,
+   "mean_price_control": 50.7439,
+   "mean_price_keeper": 50.7439,
+   "year_is_inert": false
+  },
+  "2024": {
+   "class_twh_headdrift": {},
+   "class_twh_mechanism": {
+    "CC_CHP": -0.007239,
+    "CC_REGULAR": -0.18498,
+    "COAL": -9.7e-05,
+    "CT_CHP": -0.005567,
+    "CT_PEAKER": 0.252841,
+    "ST_GAS": -0.055376,
+    "hydro": 0.000996,
+    "import": -0.023488,
+    "solar": 0.003264
+   },
+   "ct_peaker_twh": {
+    "arm": 0.7442,
+    "control": 0.4914,
+    "gap_closed_pct": 6.58,
+    "inside_ceiling": false,
+    "keeper": 0.4914,
+    "measured_miss": -3.84,
+    "mechanism_gain": 0.2528,
+    "pre_registered_ceiling": 0.247
+   },
+   "dP_headdrift_A0_minus_keeper": 0.0,
+   "dP_mechanism_B1_minus_A0": -0.042643,
+   "envelope": [
+    -0.380368,
+    0.05
+   ],
+   "envelope_PASS": true,
+   "max_abs_class_delta_twh": 0.252841,
+   "mean_price_arm": 35.6343,
+   "mean_price_control": 35.677,
+   "mean_price_keeper": 35.677,
+   "year_is_inert": false
+  },
+  "2025": {
+   "class_twh_headdrift": {},
+   "class_twh_mechanism": {
+    "CC_CHP": -0.007444,
+    "CC_REGULAR": -0.104992,
+    "COAL": -2.9e-05,
+    "CT_CHP": -0.001708,
+    "CT_PEAKER": 0.147681,
+    "ST_GAS": -0.017496,
+    "hydro": 0.000106,
+    "import": -0.031272,
+    "solar": 0.002716
+   },
+   "ct_peaker_twh": {
+    "arm": 0.3779,
+    "control": 0.2303,
+    "gap_closed_pct": 7.0,
+    "inside_ceiling": false,
+    "keeper": 0.2303,
+    "measured_miss": -2.11,
+    "mechanism_gain": 0.1477,
+    "pre_registered_ceiling": 0.12
+   },
+   "dP_headdrift_A0_minus_keeper": 0.0,
+   "dP_mechanism_B1_minus_A0": -0.016922,
+   "envelope": [
+    -0.197915,
+    0.05
+   ],
+   "envelope_PASS": true,
+   "max_abs_class_delta_twh": 0.147681,
+   "mean_price_arm": 36.8252,
+   "mean_price_control": 36.8421,
+   "mean_price_keeper": 36.8421,
+   "year_is_inert": false
+  }
+ }
+}
