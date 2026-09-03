@@ -223,7 +223,10 @@ VERDICT_MAP = {
     # no flip.
     "miso-2021-2025-realized-t1h-d27": "miso-t1h-pre-d31",
     "miso-2021-2025-realized-t1h-d31": "miso-t1h-pre-d33",
-    "miso-2021-2025-realized-t1h-d33": "miso-t1h",
+    # RE-POINTED by capx-D46 (2026-09-03) to `miso-t1h-pre-d46`: the bare key
+    # moved on to D46's HEAD re-measure and this record keeps its own verdict,
+    # continuing the same preserve-then-overwrite chain.
+    "miso-2021-2025-realized-t1h-d33": "miso-t1h-pre-d46",
     # capx-D37 (2026-09-02) re-measured NEISO's T1-H leg with the D40 Net ICR
     # requirement lever ARMED (owner ruling Q28, this measurement only; the
     # shipped default stays False). The armed arm takes the bare `neiso-t1h`
@@ -233,8 +236,11 @@ VERDICT_MAP = {
     # every block above gives: a run must never render a verdict its own score
     # contradicts, and the control's FC-3 band list differs from the armed arm's
     # (add.shares.gas_ct PASS in the control, FAIL under the arm). Determination
-    # HOLD on both, no flip.
-    "neiso-2021-2025-realized-t1h-d37-armed": "neiso-t1h",
+    # HOLD on both, no flip. RE-POINTED by capx-D46 (2026-09-03) to
+    # `neiso-t1h-pre-d46`: the bare key moved on to D46's live-posture
+    # re-measure and this record keeps its own verdict, the same
+    # preserve-then-overwrite the `-pre-d31` / `-pre-d33` chain uses.
+    "neiso-2021-2025-realized-t1h-d37-armed": "neiso-t1h-pre-d46",
     "neiso-2021-2025-realized-t1h-d37-control": "neiso-t1h-d37-control",
     # capx-D45 (2026-09-03), the once-only PJM + NYISO clearing-half / curve-ON
     # charter: the FIRST diagnostics-on T1-H solves of both ISOs at the LIVE
@@ -250,6 +256,39 @@ VERDICT_MAP = {
     "pjm-2021-2025-realized-t1h-d45-fixed": "pjm-t1h-d45-fixed",
     "nyiso-2021-2025-realized-t1h-d45": "nyiso-t1h",
     "nyiso-2021-2025-realized-t1h-d45-curveon": "nyiso-t1h-d45-curveon",
+    # capx-D46 (2026-09-03), the BATCHED RE-MEASURE (director r#30/r#31, owner
+    # ruling Q32 STAGED): a BASELINE REFRESH, not an A/B. Every registered
+    # forecast bundle was stale on up to three independent axes already measured
+    # on their own lanes -- the Q30/D44 fossil-dates default flip (`57088c33`),
+    # the D41 CCS fixed-cost re-identification, and keeper vintage (CAISO
+    # 231->240, MISO 198->202, NYISO 159->177). Each leg re-solves the bare
+    # key's own flag set at HEAD, changing only what HEAD's defaults changed;
+    # nothing is attributed to an axis and nothing arms.
+    #
+    # NEISO and MISO OVERWRITE their bare keys under the live-vintage
+    # convention, with the prior records preserved verbatim at `-pre-d46` (the
+    # `-pre-d45` / `-pre-d33` precedent) -- a run must never render a verdict its
+    # own score contradicts, and these scores differ (NEISO `retire.total_gw`
+    # 3.645 -> 4.447 GW with recall 4/6 -> 3/6; MISO re-measured at HEAD).
+    #
+    # ERCOT and CAISO MINT bare t1h keys: neither had one, their hindcasts were
+    # registered under long ids only, and every existing long-id record is left
+    # untouched (the D43 pair stays the dispersion baseline; the ERCOT c1joint /
+    # d12c legs stay where they are). A minted key cannot contradict any other
+    # run's score, so it IS this run's own verdict -- the same reasoning the
+    # capx-D10 `nyiso-t1x` block gives.
+    "neiso-2021-2025-realized-t1h-d46": "neiso-t1h",
+    "miso-2021-2025-realized-t1h-d46": "miso-t1h",
+    "caiso-2021-2025-realized-t1h-d46": "caiso-t1h",
+    "ercot-2021-2025-realized-t1h-d46": "ercot-t1h",
+    # The T1-F legs of the same batch. Run ids are the registrar's derived
+    # `<iso>-<start>-<end>-<label>` form, not the `-t1f-d46` names the
+    # pre-declaration guessed; the ids below are what --summary --label
+    # d46-remeasure actually writes, and the finding records the deviation.
+    # Each bare t1f key's prior record is preserved verbatim at `<key>-pre-d46`.
+    "ercot-2026-2030-d46-remeasure": "ercot-t1f",
+    "neiso-2026-2030-d46-remeasure": "neiso-t1f",
+    "caiso-2026-2030-d46-remeasure": "caiso-t1f",
 }
 
 

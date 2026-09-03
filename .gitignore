@@ -370,6 +370,12 @@ frontend/data/forecast/program-status.js
 # committed per-arm record stays exactly the D21 one (full_horizon_summary.json +
 # run_config.json); the whole per-arm solve cache is session-local.
 /results/ff-t3-neiso-golden/*/fc6/arms/*/NEISO/
+# T3-GOLDEN-3 / capx-D46 (2026-09-03): the FC-6 T1.6 LADDER also runs inside the
+# bundle (fc6/), and its disposable solve cache is session-local exactly like the
+# paired arms' above. The ladder's OWN committed record is unchanged from
+# GOLDEN-2's — driver-battery-<iso>-<date>.{json,md}, paired_invariants.json and
+# the per-rung _battery_metrics/<ISO>/*.json, all of which STAY TRACKED.
+/results/ff-t3-neiso-golden/*/fc6/_battery_cache_*/
 
 # capx-S6 PJM T1-F ledger run (run id pjm-2026-2030-s6-ledger, pre-declared in
 # docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md §3) — same class and
@@ -380,6 +386,21 @@ frontend/data/forecast/program-status.js
 /results/ff-t1f-s6-pjm/*/*/*/hourly/
 /results/ff-t1f-s6-pjm/*/*/*/year_*_floor_retentions.json
 /results/ff-t1f-s6-pjm/*.log
+
+# capx-D46 batched re-measure — the three Stage-1 T1-F legs at HEAD (run ids
+# ercot-/neiso-/caiso-2026-2030-d46-remeasure, pre-declared in
+# docs/handoffs/PREDECL-capx-d46-remeasure-2026-09-03.md and reported in
+# docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md). Same class and same
+# slim-vs-heavy split as /results/ff-t1f-s6-pjm/ above: the committed record is
+# config.yaml + evolution_<year>.json + full_horizon_summary + run_config +
+# forecast_verdict + dof_ledger, and the per-year dispatch parquets, screen
+# diagnostics and floor-retention dumps are session-local and regenerable from
+# the committed config at the recorded cache key.
+/results/ff-t1f-d46/*/*/*/*.parquet
+/results/ff-t1f-d46/*/*/*/*.npz
+/results/ff-t1f-d46/*/*/*/hourly/
+/results/ff-t1f-d46/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d46/*.log
 
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
