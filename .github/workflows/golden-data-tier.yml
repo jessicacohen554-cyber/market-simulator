@@ -43,17 +43,26 @@
 #      future -m/marker drift that deselects it (the exact card-F failure
 #      mode) is a red run, not silence.
 #
-# COST: one scheduled run per week + on-demand dispatch. Serial pytest (the
+# TRIGGER: workflow_dispatch ONLY — THE WEEKLY CRON WAS REMOVED 2026-09-03
+# (owner ruling R-Y, 2026-09-02; docs/FINDING-golden-tier-repair-2026-09.md).
+# The schedule signed under card F / F1 fired three times (runs #5 08-17,
+# #6 08-24, #7 08-31) and every firing was RED with nobody watching, each on
+# a defect that had merged since the previous run (a curate_lmp dtype crash,
+# an un-provisioned new raw corpus, a stale marker assertion) — billed
+# minutes spent producing no certification. CLAUDE.md's GitHub-Actions
+# policy ("scheduled workflows spend money with nobody watching") now
+# governs: the tier runs when a session dispatches it — after a change to
+# the provisioning list, a golden regeneration, or when byte-green
+# certification is needed (G2 leg 1) — and that session reads the result.
+# Re-adding a schedule is an explicit owner act, never a lane's.
+#
+# COST: on-demand dispatch only (see TRIGGER). Serial pytest (the
 # data-backed tests each hold several GB — CLAUDE.md rule 12; no xdist).
 name: Golden data tier
 
 on:
+  # Dispatch-only since 2026-09-03 (R-Y). No `schedule:` — see TRIGGER above.
   workflow_dispatch:
-  schedule:
-    # Weekly, Monday 05:37 UTC (off the on-the-hour load spike). LOW frequency
-    # by design — private repo, billed minutes; cadence authorized by card F
-    # signature F1 (2026-08-11).
-    - cron: "37 5 * * 1"
 
 permissions:
   contents: read
@@ -109,6 +118,10 @@ jobs:
             /data/raw/eia-860/
             /data/raw/eia-930/eia_generation_profiles.parquet
             /data/raw/eia-930-hourly/
+            # ercot-231 (2026-08-23) added the EIA-930 by-neighbor interchange
+            # corpus + a fulldata test reading it; runs #6/#7 went red on the
+            # guard because this glob was missing (~5.8 MB, 5 BAs + README).
+            /data/raw/eia-930-interchange/
             /data/raw/ercot/2_DAY_AS_DISCLOSURE_2d_Cleared_DAM_AS_*.parquet
             /data/raw/ercot-AS/*60d_dam_as_only_awards*json.zip
             /data/raw/ercot-AS/ercot_*_as_up_mw.parquet
