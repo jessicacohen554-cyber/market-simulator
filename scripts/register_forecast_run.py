@@ -287,6 +287,7 @@ VERDICT_MAP = {
     # d46-remeasure actually writes, and the finding records the deviation.
     # Each bare t1f key's prior record is preserved verbatim at `<key>-pre-d46`.
     "ercot-2026-2030-d46-remeasure": "ercot-t1f",
+    "neiso-2026-2030-d46-remeasure": "neiso-t1f",
 }
 
 

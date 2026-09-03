@@ -2722,139 +2722,140 @@
   "tier": "t1h"
  },
  "neiso-t1f": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "75a5ff084eb3",
+   "scored_at_date": "2026-09-03T09:48:53Z",
+   "cache_epoch": "6690e4d6d66bc819",
+   "run_id": "neiso-2026-2030-d46-remeasure",
+   "session": "capx-D46"
+  },
+  "tier": "t1f",
+  "iso": "NEISO",
+  "determination": "PROMOTE",
+  "reasons": [],
+  "caveats": [],
+  "notes": [
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed to an axis, nothing armed. Run neiso-2026-2030-d46-remeasure, cache key 6690e4d6d66bc819 (pre-declared and matched), --golden-posture, 2026-2030, 8.0 min wall / 3.3 GB peak RSS. Determination PROMOTE, caveats [] \u2014 UNCHANGED from the preserved neiso-t1f-pre-d46 (the capx-S4b ARA arm), with all 14 invariants PASS on both and every FC-2 row PASS on both. THE ONE GATE-ROW MOVE: FC-2 row4 backstop share 0.0 % -> 1.2 % (bar 10 %, PASS both) \u2014 the reserve-margin backstop now fires slightly, consistent with the dates channel removing capacity. INSTRUMENT PARITY, STATED: the first score of this run read PROMOTE-WITH-CAVEATS purely because no DOF ledger was passed; the ledger was then BUILT from this run's own run_config.json by the committed scripts/build_forecast_dof_ledger.py (7 entries, 0 UNIDENTIFIED \u2014 the same shape as the preserved record's) and the re-score reads PROMOTE. That is an instrument gap closed, not a model gain, and it is recorded rather than quietly absorbed. FC-5 stays SKIPPED here where the preserved record reads CAVEAT: D25's corridor disposition table was authored against the S4b trajectory and this lane declines to re-apply per-row dispositions to a different one; FC-5 is report-only at t1f and gates nothing, so the determination is unaffected. THE D41 CCS QUESTION, ANSWERED FOR THIS WINDOW AND AGAINST THIS LANE'S OWN PREDICTION: NEISO is the RGGI case D41 \u00a74.4 left open, where retrofits still clear but the bar rises from a 28-35 % capacity factor to 56-85 %, and D41 \u00a77 routed \"whether the cap still binds there\" as not determinable from committed artifacts. It STILL BINDS. On the corrected constants: 2028 17 rows / 2999.6 MW, 2029 23 / 2994.4, 2030 10 / 2948.6 \u2014 every year still at the 3 GW/yr/ISO cap, against the preserved arm's 2999.9 / 2999.4 / 2997.5. The corrected constants thin the conversion COUNT (58 -> 50 rows) and trim total MW 8996.8 -> 8942.6 (-0.6 %), but they do NOT unbind the cap in any year. This lane pre-declared that the cap would STOP binding in at least one year; it does not. The full-horizon reading is GOLDEN-3's. Exit channels: the dates channel fires (coal 108.0 MW retire:announced 2027, gas_cc 6.2 MW derate:announced 2027, gas_ct 1.6 MW 2029) and gas_cc economic exits move 2136.0 -> 2166.0 MW. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+  ],
   "categories": {
    "FC-1": {
-    "applicability": "required",
     "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "PASS",
     "rows": [
      {
-      "detail": "all 14 invariants PASS",
-      "gating": true,
       "row": "invariants I1-I14",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "all 14 invariants PASS",
+      "gating": true
      }
-    ],
-    "status": "PASS"
+    ]
    },
    "FC-2": {
-    "applicability": "required",
     "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "PASS",
     "rows": [
      {
-      "detail": "reserve-margin band (I12 PASS)",
-      "gating": true,
       "row": "row1",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true
      },
      {
-      "detail": "no cobweb (I13 PASS)",
-      "gating": true,
       "row": "row3",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
-      "gating": true,
       "row": "row4",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "backstop share 1.2% \u2264 10%",
+      "gating": true
      }
-    ],
-    "status": "PASS"
+    ]
    },
    "FC-3": {
-    "applicability": "n/a",
     "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-4": {
-    "applicability": "n/a",
     "label": "FC-4 crossover dispatch skill (T1-X)",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-5": {
-    "applicability": "report",
     "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
     "rows": [
      {
-      "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030']",
-      "gating": true,
       "row": "corridor",
-      "status": "CAVEAT"
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true
      }
-    ],
-    "status": "CAVEAT"
+    ]
    },
    "FC-6": {
-    "applicability": "optional",
     "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
     "rows": [
      {
-      "detail": "no committed driver-battery or paired-invariant output",
-      "gating": true,
       "row": "driver response",
-      "status": "SKIPPED"
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
      }
-    ],
-    "status": "SKIPPED"
+    ]
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "PASS",
     "rows": [
      {
-      "detail": "mode=forecast; 763 config keys; gates ['capacity_market_clearing']",
-      "gating": true,
       "row": "run_config",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "mode=forecast; 778 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "no backcast overlay armed (outage_source='statistical')",
-      "gating": true,
       "row": "overlay-off",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
      },
      {
-      "detail": "7 entries well-formed (0 open residual DOF listed)",
-      "gating": true,
       "row": "dof ledger",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "7 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "PASS"
+    ]
    },
    "FC-8": {
-    "applicability": "runtime",
     "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
     "rows": [
      {
-      "detail": "wall 8.0 min within budget",
-      "gating": true,
       "row": "runtime",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "wall 8.0 min within budget",
+      "gating": true
      }
-    ],
-    "status": "PASS"
+    ]
    }
-  },
-  "caveats": [],
-  "determination": "PROMOTE",
-  "iso": "NEISO",
-  "notes": [
-   "FC-5 external corridor (report-only): CAVEAT"
-  ],
-  "provenance": {
-   "cache_epoch": "9a7f68fc7dcac931",
-   "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-09-01T01:10:12Z",
-   "scored_at_sha": "7b085947b0ee",
-   "session": "capx-S4b-neiso-ara \u00b7 FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-s4b-ara/neiso/dof_ledger.json \u2014 the capx-D8 instrument's committed ledger, 7 entries, 0 UNIDENTIFIED). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha 88baa9d5c71b @ 2026-08-30T22:25:51Z (session capx-S4b-neiso-ara). MOVED \u2014 exactly the D8 \u00a76 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('7 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] \u2014 NEISO's first clean FC map. NOT MOVED: every other category, row status and detail. This also closes the S-4b treatment/control FC-7 split D8-RE flagged (both arms now read the same FC-7 rows). docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. \u00b7 FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/neiso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (PROMOTE). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
-  },
-  "reasons": [],
-  "rubric_version": "1.0",
-  "schema": "forecast-verdict/v1",
-  "tier": "t1f"
+  }
  },
  "neiso-t1f-ff2d": {
   "categories": {
@@ -8814,6 +8815,141 @@
    "FC-1 structural integrity (I1-I14) FAIL",
    "FC-2 adequacy & equilibrium behavior FAIL"
   ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1f"
+ },
+ "neiso-t1f-pre-d46": {
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "all 14 invariants PASS",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   },
+   "FC-2": {
+    "applicability": "required",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true,
+      "row": "row1",
+      "status": "PASS"
+     },
+     {
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true,
+      "row": "row3",
+      "status": "PASS"
+     },
+     {
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true,
+      "row": "row4",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   },
+   "FC-3": {
+    "applicability": "n/a",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030']",
+      "gating": true,
+      "row": "corridor",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-6": {
+    "applicability": "optional",
+    "label": "FC-6 driver response",
+    "rows": [
+     {
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true,
+      "row": "driver response",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "mode=forecast; 763 config keys; gates ['capacity_market_clearing']",
+      "gating": true,
+      "row": "run_config",
+      "status": "PASS"
+     },
+     {
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS"
+     },
+     {
+      "detail": "7 entries well-formed (0 open residual DOF listed)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "wall 8.0 min within budget",
+      "gating": true,
+      "row": "runtime",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   }
+  },
+  "caveats": [],
+  "determination": "PROMOTE",
+  "iso": "NEISO",
+  "notes": [
+   "FC-5 external corridor (report-only): CAVEAT"
+  ],
+  "provenance": {
+   "cache_epoch": "9a7f68fc7dcac931",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-09-01T01:10:12Z",
+   "scored_at_sha": "7b085947b0ee",
+   "session": "capx-S4b-neiso-ara \u00b7 FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-s4b-ara/neiso/dof_ledger.json \u2014 the capx-D8 instrument's committed ledger, 7 entries, 0 UNIDENTIFIED). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha 88baa9d5c71b @ 2026-08-30T22:25:51Z (session capx-S4b-neiso-ara). MOVED \u2014 exactly the D8 \u00a76 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('7 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] \u2014 NEISO's first clean FC map. NOT MOVED: every other category, row status and detail. This also closes the S-4b treatment/control FC-7 split D8-RE flagged (both arms now read the same FC-7 rows). docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. \u00b7 FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/neiso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (PROMOTE). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
+  },
+  "reasons": [],
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
   "tier": "t1f"
