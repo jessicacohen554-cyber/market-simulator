@@ -1,0 +1,892 @@
+{
+ "charter": "miso-204 section F \u2014 POST-HOC INSTRUMENT FORENSIC. NOT pre-registered, NO gate, licenses NOTHING. Measures whether the pre-registered ENERGY verdict is robust to a defect found while chasing the negative congestion share: the C3a comparator is INDIANA.HUB on the fixed-CST non-leap clock, while both committed probes use an EIGHT-HUB average on the RAW EST hour-ending index.",
+ "keeper": "2026-09-03-miso-202-unitclip",
+ "inputs": "committed artifacts only \u2014 no solve",
+ "scoring_reference": "data/raw/_validation-source/actual_lmp_hourly_MISO.parquet \u2014 the actual behind bench.avgLMP.rt / rt_lw, i.e. C3a itself",
+ "years": {
+  "2023": {
+   "n3_reproduces_committed_parquet": {
+    "hubs": [
+     "ARKANSAS.HUB",
+     "ILLINOIS.HUB",
+     "INDIANA.HUB",
+     "LOUISIANA.HUB",
+     "MICHIGAN.HUB",
+     "MINN.HUB",
+     "MS.HUB",
+     "TEXAS.HUB"
+    ],
+    "max_abs_diff": 0.0,
+    "n_compared": 70080,
+    "n_nan_reconstruction": 0,
+    "n_nan_committed": 0,
+    "reproduces": true
+   },
+   "f1_series_contrast": {
+    "committed_probe_series": "8-hub mean, RAW EST hour-ending index",
+    "annual_mean_committed_probe": 28.358,
+    "annual_mean_scoring_clock_8hub": 28.358,
+    "annual_mean_scoring_reference_indiana": 31.789,
+    "level_gap_indiana_minus_8hub": 3.431,
+    "corr_committed_vs_scoring_clock_8hub": 0.39006,
+    "corr_committed_vs_scoring_reference": 0.29579,
+    "corr_scoring_8hub_vs_scoring_reference": 0.88327,
+    "lag_scan_raw_vs_scoring_clock": {
+     "-2": 0.39,
+     "-1": 1.0,
+     "0": 0.39,
+     "1": 0.3001,
+     "2": 0.2396
+    },
+    "scoring_series_lag1_autocorr": 0.3901
+   },
+   "f2_object_relocation": {
+    "n_committed": 15,
+    "n_scoring_reference": 15,
+    "overlap_committed_vs_scoring_reference": 2,
+    "overlap_committed_vs_scoring_clock_8hub": 3,
+    "overlap_scoring_8hub_vs_scoring_reference": 8,
+    "threshold_committed": 100.42,
+    "threshold_scoring_reference": 121.43,
+    "hour_of_day_hist_scoring_reference": {
+     "8": 3,
+     "9": 1,
+     "10": 2,
+     "11": 2,
+     "12": 2,
+     "13": 1,
+     "14": 2,
+     "16": 1,
+     "19": 1
+    },
+    "n_distinct_days_scoring_reference": 10
+   },
+   "f3_decomposition_on_scoring_reference": {
+    "vs_model_zone_mean": {
+     "n_hours": 15,
+     "mean_excess": 151.54,
+     "mean_energy": 134.565,
+     "mean_cong": 13.248,
+     "mean_loss": 3.727,
+     "share_energy": 0.888,
+     "share_cong": 0.0874,
+     "share_loss": 0.0246,
+     "r1_hours_largest_energy": 13,
+     "r1_hours_largest_cong": 2,
+     "r1_hours_largest_loss": 0
+    },
+    "vs_model_load_weighted": {
+     "n_hours": 15,
+     "mean_excess": 151.537,
+     "mean_energy": 134.562,
+     "mean_cong": 13.248,
+     "mean_loss": 3.727,
+     "share_energy": 0.888,
+     "share_cong": 0.0874,
+     "share_loss": 0.0246,
+     "r1_hours_largest_energy": 13,
+     "r1_hours_largest_cong": 2,
+     "r1_hours_largest_loss": 0
+    },
+    "vs_model_indiana_zone": {
+     "n_hours": 15,
+     "mean_excess": 151.52,
+     "mean_energy": 134.545,
+     "mean_cong": 13.248,
+     "mean_loss": 3.727,
+     "share_energy": 0.888,
+     "share_cong": 0.0874,
+     "share_loss": 0.0246,
+     "r1_hours_largest_energy": 13,
+     "r1_hours_largest_cong": 2,
+     "r1_hours_largest_loss": 0
+    }
+   },
+   "f3_levels": {
+    "mean_actual_lmp": 187.67,
+    "mean_actual_mec": 170.69,
+    "mean_actual_mcc": 13.25,
+    "mean_actual_mlc": 3.73,
+    "mean_model_zone_mean": 36.13,
+    "mean_model_load_weighted": 36.13,
+    "mean_model_indiana_zone": 36.15
+   },
+   "f4_hours_scoring_reference": [
+    {
+     "hour_index": 3656,
+     "cst_stamp": "2023-06-02 HE09",
+     "actual_lmp": 125.58,
+     "actual_mec": 122.7,
+     "actual_mcc": 0.0,
+     "actual_mlc": 2.88,
+     "model_load_weighted": 31.83,
+     "model_indiana_zone": 32.35,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 3757,
+     "cst_stamp": "2023-06-06 HE14",
+     "actual_lmp": 121.54,
+     "actual_mec": 38.78,
+     "actual_mcc": 82.68,
+     "actual_mlc": 0.08,
+     "model_load_weighted": 34.95,
+     "model_indiana_zone": 34.95,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 3758,
+     "cst_stamp": "2023-06-06 HE15",
+     "actual_lmp": 141.75,
+     "actual_mec": 34.82,
+     "actual_mcc": 107.03,
+     "actual_mlc": -0.1,
+     "model_load_weighted": 35.15,
+     "model_indiana_zone": 35.15,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4112,
+     "cst_stamp": "2023-06-21 HE09",
+     "actual_lmp": 160.73,
+     "actual_mec": 157.79,
+     "actual_mcc": 0.0,
+     "actual_mlc": 2.94,
+     "model_load_weighted": 32.68,
+     "model_indiana_zone": 32.68,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4186,
+     "cst_stamp": "2023-06-24 HE11",
+     "actual_lmp": 147.69,
+     "actual_mec": 131.66,
+     "actual_mcc": 11.86,
+     "actual_mlc": 4.17,
+     "model_load_weighted": 32.32,
+     "model_indiana_zone": 32.32,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4190,
+     "cst_stamp": "2023-06-24 HE15",
+     "actual_lmp": 136.65,
+     "actual_mec": 133.32,
+     "actual_mcc": 2.05,
+     "actual_mlc": 1.28,
+     "model_load_weighted": 35.81,
+     "model_indiana_zone": 35.54,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4192,
+     "cst_stamp": "2023-06-24 HE17",
+     "actual_lmp": 154.52,
+     "actual_mec": 150.96,
+     "actual_mcc": 3.44,
+     "actual_mlc": 0.12,
+     "model_load_weighted": 37.52,
+     "model_indiana_zone": 37.52,
+     "in_committed_object": true
+    },
+    {
+     "hour_index": 4448,
+     "cst_stamp": "2023-07-05 HE09",
+     "actual_lmp": 265.49,
+     "actual_mec": 254.54,
+     "actual_mcc": 0.0,
+     "actual_mlc": 10.95,
+     "model_load_weighted": 33.92,
+     "model_indiana_zone": 33.92,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4449,
+     "cst_stamp": "2023-07-05 HE10",
+     "actual_lmp": 128.83,
+     "actual_mec": 124.24,
+     "actual_mcc": 0.0,
+     "actual_mlc": 4.59,
+     "model_load_weighted": 36.92,
+     "model_indiana_zone": 36.92,
+     "in_committed_object": true
+    },
+    {
+     "hour_index": 4475,
+     "cst_stamp": "2023-07-06 HE12",
+     "actual_lmp": 324.18,
+     "actual_mec": 309.8,
+     "actual_mcc": 0.74,
+     "actual_mlc": 13.64,
+     "model_load_weighted": 36.9,
+     "model_indiana_zone": 36.9,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4500,
+     "cst_stamp": "2023-07-07 HE13",
+     "actual_lmp": 354.91,
+     "actual_mec": 344.44,
+     "actual_mcc": 0.0,
+     "actual_mlc": 10.47,
+     "model_load_weighted": 36.57,
+     "model_indiana_zone": 36.57,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4666,
+     "cst_stamp": "2023-07-14 HE11",
+     "actual_lmp": 123.95,
+     "actual_mec": 121.01,
+     "actual_mcc": 0.0,
+     "actual_mlc": 2.94,
+     "model_load_weighted": 38.51,
+     "model_indiana_zone": 38.51,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4668,
+     "cst_stamp": "2023-07-14 HE13",
+     "actual_lmp": 191.94,
+     "actual_mec": 187.27,
+     "actual_mcc": 0.0,
+     "actual_mlc": 4.67,
+     "model_load_weighted": 41.83,
+     "model_indiana_zone": 41.83,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4891,
+     "cst_stamp": "2023-07-23 HE20",
+     "actual_lmp": 129.69,
+     "actual_mec": 131.39,
+     "actual_mcc": -1.45,
+     "actual_mlc": -0.25,
+     "model_load_weighted": 37.18,
+     "model_indiana_zone": 37.18,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4907,
+     "cst_stamp": "2023-07-24 HE12",
+     "actual_lmp": 307.53,
+     "actual_mec": 317.64,
+     "actual_mcc": -7.63,
+     "actual_mlc": -2.48,
+     "model_load_weighted": 39.83,
+     "model_indiana_zone": 39.83,
+     "in_committed_object": false
+    }
+   ],
+   "f5_annual_basis": {
+    "actual_lw_scoring_reference": 32.847,
+    "actual_lw_system_mec_at_scoring_hub": 30.502,
+    "model_lw": 32.8889,
+    "c3a_face_pct": 0.1274,
+    "c3a_face_on_mec_basis_pct": 7.8253,
+    "scoring_hub_congestion_wedge": 1.6533,
+    "scoring_hub_loss_wedge": 0.6917
+   },
+   "f6_miso203_recheck": {
+    "mean_hour_of_day_committed_raw_est_index": 14.4,
+    "mean_hour_of_day_scoring_reference_cst": 11.67,
+    "n_in_h18_h21_committed": 2,
+    "n_in_h18_h21_scoring_reference": 1,
+    "n_in_h15_h18_scoring_reference": 1
+   }
+  },
+  "2024": {
+   "n3_reproduces_committed_parquet": {
+    "hubs": [
+     "ARKANSAS.HUB",
+     "ILLINOIS.HUB",
+     "INDIANA.HUB",
+     "LOUISIANA.HUB",
+     "MICHIGAN.HUB",
+     "MINN.HUB",
+     "MS.HUB",
+     "TEXAS.HUB"
+    ],
+    "max_abs_diff": 0.0,
+    "n_compared": 70080,
+    "n_nan_reconstruction": 0,
+    "n_nan_committed": 0,
+    "reproduces": true
+   },
+   "f1_series_contrast": {
+    "committed_probe_series": "8-hub mean, RAW EST hour-ending index",
+    "annual_mean_committed_probe": 26.881,
+    "annual_mean_scoring_clock_8hub": 26.881,
+    "annual_mean_scoring_reference_indiana": 30.796,
+    "level_gap_indiana_minus_8hub": 3.915,
+    "corr_committed_vs_scoring_clock_8hub": 0.2595,
+    "corr_committed_vs_scoring_reference": 0.22941,
+    "corr_scoring_8hub_vs_scoring_reference": 0.91362,
+    "lag_scan_raw_vs_scoring_clock": {
+     "-2": 0.291,
+     "-1": 0.3188,
+     "0": 0.2595,
+     "1": 0.185,
+     "2": 0.1768
+    },
+    "scoring_series_lag1_autocorr": 0.3711
+   },
+   "f2_object_relocation": {
+    "n_committed": 15,
+    "n_scoring_reference": 15,
+    "overlap_committed_vs_scoring_reference": 1,
+    "overlap_committed_vs_scoring_clock_8hub": 1,
+    "overlap_scoring_8hub_vs_scoring_reference": 13,
+    "threshold_committed": 129.68,
+    "threshold_scoring_reference": 159.01,
+    "hour_of_day_hist_scoring_reference": {
+     "10": 2,
+     "14": 1,
+     "15": 3,
+     "16": 3,
+     "17": 3,
+     "19": 2,
+     "20": 1
+    },
+    "n_distinct_days_scoring_reference": 10
+   },
+   "f3_decomposition_on_scoring_reference": {
+    "vs_model_zone_mean": {
+     "n_hours": 15,
+     "mean_excess": 290.071,
+     "mean_energy": 287.142,
+     "mean_cong": 1.114,
+     "mean_loss": 1.815,
+     "share_energy": 0.9899,
+     "share_cong": 0.0038,
+     "share_loss": 0.0063,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0
+    },
+    "vs_model_load_weighted": {
+     "n_hours": 15,
+     "mean_excess": 290.021,
+     "mean_energy": 287.092,
+     "mean_cong": 1.114,
+     "mean_loss": 1.815,
+     "share_energy": 0.9899,
+     "share_cong": 0.0038,
+     "share_loss": 0.0063,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0
+    },
+    "vs_model_indiana_zone": {
+     "n_hours": 15,
+     "mean_excess": 290.301,
+     "mean_energy": 287.372,
+     "mean_cong": 1.114,
+     "mean_loss": 1.815,
+     "share_energy": 0.9899,
+     "share_cong": 0.0038,
+     "share_loss": 0.0063,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0
+    }
+   },
+   "f3_levels": {
+    "mean_actual_lmp": 328.94,
+    "mean_actual_mec": 326.01,
+    "mean_actual_mcc": 1.11,
+    "mean_actual_mlc": 1.81,
+    "mean_model_zone_mean": 38.87,
+    "mean_model_load_weighted": 38.92,
+    "mean_model_indiana_zone": 38.64
+   },
+   "f4_hours_scoring_reference": [
+    {
+     "hour_index": 3689,
+     "cst_stamp": "2024-06-03 HE18",
+     "actual_lmp": 274.84,
+     "actual_mec": 267.37,
+     "actual_mcc": 0.0,
+     "actual_mlc": 7.47,
+     "model_load_weighted": 37.56,
+     "model_indiana_zone": 37.56,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 3691,
+     "cst_stamp": "2024-06-03 HE20",
+     "actual_lmp": 175.89,
+     "actual_mec": 165.26,
+     "actual_mcc": 5.21,
+     "actual_mlc": 5.42,
+     "model_load_weighted": 35.44,
+     "model_indiana_zone": 35.44,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4004,
+     "cst_stamp": "2024-06-16 HE21",
+     "actual_lmp": 631.92,
+     "actual_mec": 631.23,
+     "actual_mcc": 0.0,
+     "actual_mlc": 0.69,
+     "model_load_weighted": 30.64,
+     "model_indiana_zone": 30.17,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4066,
+     "cst_stamp": "2024-06-19 HE11",
+     "actual_lmp": 162.0,
+     "actual_mec": 139.78,
+     "actual_mcc": 17.7,
+     "actual_mlc": 4.52,
+     "model_load_weighted": 35.37,
+     "model_indiana_zone": 35.37,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4071,
+     "cst_stamp": "2024-06-19 HE16",
+     "actual_lmp": 537.17,
+     "actual_mec": 490.5,
+     "actual_mcc": 32.99,
+     "actual_mlc": 13.68,
+     "model_load_weighted": 40.57,
+     "model_indiana_zone": 40.57,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4099,
+     "cst_stamp": "2024-06-20 HE20",
+     "actual_lmp": 212.87,
+     "actual_mec": 134.73,
+     "actual_mcc": 71.34,
+     "actual_mlc": 6.8,
+     "model_load_weighted": 36.51,
+     "model_indiana_zone": 36.51,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4312,
+     "cst_stamp": "2024-06-29 HE17",
+     "actual_lmp": 195.7,
+     "actual_mec": 157.55,
+     "actual_mcc": 31.69,
+     "actual_mlc": 6.46,
+     "model_load_weighted": 30.32,
+     "model_indiana_zone": 26.58,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4551,
+     "cst_stamp": "2024-07-09 HE16",
+     "actual_lmp": 301.75,
+     "actual_mec": 433.41,
+     "actual_mcc": -126.55,
+     "actual_mlc": -5.11,
+     "model_load_weighted": 40.85,
+     "model_indiana_zone": 40.85,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4858,
+     "cst_stamp": "2024-07-22 HE11",
+     "actual_lmp": 179.08,
+     "actual_mec": 175.47,
+     "actual_mcc": 3.57,
+     "actual_mlc": 0.04,
+     "model_load_weighted": 36.64,
+     "model_indiana_zone": 36.64,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 5008,
+     "cst_stamp": "2024-07-28 HE17",
+     "actual_lmp": 195.71,
+     "actual_mec": 193.94,
+     "actual_mcc": 0.0,
+     "actual_mlc": 1.77,
+     "model_load_weighted": 34.84,
+     "model_indiana_zone": 34.84,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 5009,
+     "cst_stamp": "2024-07-28 HE18",
+     "actual_lmp": 704.06,
+     "actual_mec": 699.44,
+     "actual_mcc": 0.0,
+     "actual_mlc": 4.62,
+     "model_load_weighted": 34.84,
+     "model_indiana_zone": 34.84,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 5030,
+     "cst_stamp": "2024-07-29 HE15",
+     "actual_lmp": 384.09,
+     "actual_mec": 394.73,
+     "actual_mcc": -4.25,
+     "actual_mlc": -6.39,
+     "model_load_weighted": 46.72,
+     "model_indiana_zone": 46.72,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 5031,
+     "cst_stamp": "2024-07-29 HE16",
+     "actual_lmp": 161.26,
+     "actual_mec": 167.9,
+     "actual_mcc": -3.57,
+     "actual_mlc": -3.07,
+     "model_load_weighted": 49.71,
+     "model_indiana_zone": 49.71,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 5032,
+     "cst_stamp": "2024-07-29 HE17",
+     "actual_lmp": 543.36,
+     "actual_mec": 556.25,
+     "actual_mcc": -2.53,
+     "actual_mlc": -10.36,
+     "model_load_weighted": 51.56,
+     "model_indiana_zone": 51.56,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 5057,
+     "cst_stamp": "2024-07-30 HE18",
+     "actual_lmp": 274.35,
+     "actual_mec": 282.56,
+     "actual_mcc": -8.89,
+     "actual_mlc": 0.68,
+     "model_load_weighted": 42.16,
+     "model_indiana_zone": 42.16,
+     "in_committed_object": true
+    }
+   ],
+   "f5_annual_basis": {
+    "actual_lw_scoring_reference": 32.3006,
+    "actual_lw_system_mec_at_scoring_hub": 30.0185,
+    "model_lw": 30.8139,
+    "c3a_face_pct": -4.6028,
+    "c3a_face_on_mec_basis_pct": 2.6499,
+    "scoring_hub_congestion_wedge": 1.4982,
+    "scoring_hub_loss_wedge": 0.784
+   },
+   "f6_miso203_recheck": {
+    "mean_hour_of_day_committed_raw_est_index": 17.07,
+    "mean_hour_of_day_scoring_reference_cst": 15.73,
+    "n_in_h18_h21_committed": 6,
+    "n_in_h18_h21_scoring_reference": 3,
+    "n_in_h15_h18_scoring_reference": 9
+   }
+  },
+  "2025": {
+   "n3_reproduces_committed_parquet": {
+    "hubs": [
+     "ARKANSAS.HUB",
+     "ILLINOIS.HUB",
+     "INDIANA.HUB",
+     "LOUISIANA.HUB",
+     "MICHIGAN.HUB",
+     "MINN.HUB",
+     "MS.HUB",
+     "TEXAS.HUB"
+    ],
+    "max_abs_diff": 0.0,
+    "n_compared": 70072,
+    "n_nan_reconstruction": 8,
+    "n_nan_committed": 8,
+    "reproduces": true
+   },
+   "f1_series_contrast": {
+    "committed_probe_series": "8-hub mean, RAW EST hour-ending index",
+    "annual_mean_committed_probe": 38.135,
+    "annual_mean_scoring_clock_8hub": 38.136,
+    "annual_mean_scoring_reference_indiana": 42.85,
+    "level_gap_indiana_minus_8hub": 4.714,
+    "corr_committed_vs_scoring_clock_8hub": 0.44297,
+    "corr_committed_vs_scoring_reference": 0.43161,
+    "corr_scoring_8hub_vs_scoring_reference": 0.9455,
+    "lag_scan_raw_vs_scoring_clock": {
+     "-2": 0.4429,
+     "-1": 1.0,
+     "0": 0.4429,
+     "1": 0.2309,
+     "2": 0.1753
+    },
+    "scoring_series_lag1_autocorr": 0.443
+   },
+   "f2_object_relocation": {
+    "n_committed": 15,
+    "n_scoring_reference": 15,
+    "overlap_committed_vs_scoring_reference": 4,
+    "overlap_committed_vs_scoring_clock_8hub": 5,
+    "overlap_scoring_8hub_vs_scoring_reference": 11,
+    "threshold_committed": 238.93,
+    "threshold_scoring_reference": 373.02,
+    "hour_of_day_hist_scoring_reference": {
+     "10": 1,
+     "11": 1,
+     "13": 1,
+     "15": 2,
+     "16": 1,
+     "17": 5,
+     "18": 3,
+     "19": 1
+    },
+    "n_distinct_days_scoring_reference": 7
+   },
+   "f3_decomposition_on_scoring_reference": {
+    "vs_model_zone_mean": {
+     "n_hours": 15,
+     "mean_excess": 638.301,
+     "mean_energy": 594.014,
+     "mean_cong": 24.287,
+     "mean_loss": 19.999,
+     "share_energy": 0.9306,
+     "share_cong": 0.038,
+     "share_loss": 0.0313,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0
+    },
+    "vs_model_load_weighted": {
+     "n_hours": 15,
+     "mean_excess": 636.862,
+     "mean_energy": 592.575,
+     "mean_cong": 24.287,
+     "mean_loss": 19.999,
+     "share_energy": 0.9305,
+     "share_cong": 0.0381,
+     "share_loss": 0.0314,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0
+    },
+    "vs_model_indiana_zone": {
+     "n_hours": 15,
+     "mean_excess": 636.983,
+     "mean_energy": 592.697,
+     "mean_cong": 24.287,
+     "mean_loss": 19.999,
+     "share_energy": 0.9305,
+     "share_cong": 0.0381,
+     "share_loss": 0.0314,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0
+    }
+   },
+   "f3_levels": {
+    "mean_actual_lmp": 718.32,
+    "mean_actual_mec": 674.03,
+    "mean_actual_mcc": 24.29,
+    "mean_actual_mlc": 20.0,
+    "mean_model_zone_mean": 80.02,
+    "mean_model_load_weighted": 81.46,
+    "mean_model_indiana_zone": 81.33
+   },
+   "f4_hours_scoring_reference": [
+    {
+     "hour_index": 4025,
+     "cst_stamp": "2025-06-17 HE18",
+     "actual_lmp": 543.22,
+     "actual_mec": 537.81,
+     "actual_mcc": 0.0,
+     "actual_mlc": 5.41,
+     "model_load_weighted": 49.45,
+     "model_indiana_zone": 49.45,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4169,
+     "cst_stamp": "2025-06-23 HE18",
+     "actual_lmp": 838.9,
+     "actual_mec": 772.96,
+     "actual_mcc": 33.63,
+     "actual_mlc": 32.31,
+     "model_load_weighted": 85.31,
+     "model_indiana_zone": 85.31,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4170,
+     "cst_stamp": "2025-06-23 HE19",
+     "actual_lmp": 1046.69,
+     "actual_mec": 937.76,
+     "actual_mcc": 73.81,
+     "actual_mlc": 35.12,
+     "model_load_weighted": 127.64,
+     "model_indiana_zone": 127.64,
+     "in_committed_object": true
+    },
+    {
+     "hour_index": 4186,
+     "cst_stamp": "2025-06-24 HE11",
+     "actual_lmp": 382.73,
+     "actual_mec": 322.15,
+     "actual_mcc": 50.15,
+     "actual_mlc": 10.43,
+     "model_load_weighted": 52.77,
+     "model_indiana_zone": 52.77,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4187,
+     "cst_stamp": "2025-06-24 HE12",
+     "actual_lmp": 406.29,
+     "actual_mec": 350.74,
+     "actual_mcc": 43.77,
+     "actual_mlc": 11.78,
+     "model_load_weighted": 58.45,
+     "model_indiana_zone": 58.45,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4191,
+     "cst_stamp": "2025-06-24 HE16",
+     "actual_lmp": 390.12,
+     "actual_mec": 339.64,
+     "actual_mcc": 35.48,
+     "actual_mlc": 15.0,
+     "model_load_weighted": 64.56,
+     "model_indiana_zone": 64.56,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4192,
+     "cst_stamp": "2025-06-24 HE17",
+     "actual_lmp": 451.42,
+     "actual_mec": 411.96,
+     "actual_mcc": 19.85,
+     "actual_mlc": 19.61,
+     "model_load_weighted": 64.61,
+     "model_indiana_zone": 64.61,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4193,
+     "cst_stamp": "2025-06-24 HE18",
+     "actual_lmp": 1202.05,
+     "actual_mec": 1108.33,
+     "actual_mcc": 36.11,
+     "actual_mlc": 57.61,
+     "model_load_weighted": 64.61,
+     "model_indiana_zone": 64.61,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4194,
+     "cst_stamp": "2025-06-24 HE19",
+     "actual_lmp": 774.99,
+     "actual_mec": 724.43,
+     "actual_mcc": 13.96,
+     "actual_mlc": 36.6,
+     "model_load_weighted": 68.46,
+     "model_indiana_zone": 68.46,
+     "in_committed_object": true
+    },
+    {
+     "hour_index": 4695,
+     "cst_stamp": "2025-07-15 HE16",
+     "actual_lmp": 413.32,
+     "actual_mec": 402.35,
+     "actual_mcc": 5.06,
+     "actual_mlc": 5.91,
+     "model_load_weighted": 50.65,
+     "model_indiana_zone": 50.65,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 4865,
+     "cst_stamp": "2025-07-22 HE18",
+     "actual_lmp": 643.66,
+     "actual_mec": 645.39,
+     "actual_mcc": 2.11,
+     "actual_mlc": -3.84,
+     "model_load_weighted": 48.34,
+     "model_indiana_zone": 46.56,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 5009,
+     "cst_stamp": "2025-07-28 HE18",
+     "actual_lmp": 1782.55,
+     "actual_mec": 1726.34,
+     "actual_mcc": 19.51,
+     "actual_mlc": 36.7,
+     "model_load_weighted": 161.39,
+     "model_indiana_zone": 161.39,
+     "in_committed_object": false
+    },
+    {
+     "hour_index": 5010,
+     "cst_stamp": "2025-07-28 HE19",
+     "actual_lmp": 683.21,
+     "actual_mec": 666.78,
+     "actual_mcc": 1.94,
+     "actual_mlc": 14.49,
+     "model_load_weighted": 183.22,
+     "model_indiana_zone": 183.22,
+     "in_committed_object": true
+    },
+    {
+     "hour_index": 5011,
+     "cst_stamp": "2025-07-28 HE20",
+     "actual_lmp": 388.7,
+     "actual_mec": 383.64,
+     "actual_mcc": 1.64,
+     "actual_mlc": 3.42,
+     "model_load_weighted": 97.48,
+     "model_indiana_zone": 97.48,
+     "in_committed_object": true
+    },
+    {
+     "hour_index": 5053,
+     "cst_stamp": "2025-07-30 HE14",
+     "actual_lmp": 826.91,
+     "actual_mec": 780.18,
+     "actual_mcc": 27.29,
+     "actual_mlc": 19.44,
+     "model_load_weighted": 44.88,
+     "model_indiana_zone": 44.85,
+     "in_committed_object": false
+    }
+   ],
+   "f5_annual_basis": {
+    "actual_lw_scoring_reference": 45.4555,
+    "actual_lw_system_mec_at_scoring_hub": 43.0162,
+    "model_lw": 39.8266,
+    "c3a_face_pct": -12.3833,
+    "c3a_face_on_mec_basis_pct": -7.4149,
+    "scoring_hub_congestion_wedge": 1.5422,
+    "scoring_hub_loss_wedge": 0.8971
+   },
+   "f6_miso203_recheck": {
+    "mean_hour_of_day_committed_raw_est_index": 18.33,
+    "mean_hour_of_day_scoring_reference_cst": 15.87,
+    "n_in_h18_h21_committed": 13,
+    "n_in_h18_h21_scoring_reference": 4,
+    "n_in_h15_h18_scoring_reference": 11
+   }
+  }
+ },
+ "f0_scoring_actual_is_one_hub": {
+  "2023": {
+   "max_abs_diff_sysref_vs_indiana_hub": 1.3427734359083843e-05,
+   "verdict": "the C3a actual IS INDIANA.HUB"
+  },
+  "2024": {
+   "max_abs_diff_sysref_vs_indiana_hub": 2.6855468718167685e-05,
+   "verdict": "the C3a actual IS INDIANA.HUB"
+  },
+  "2025": {
+   "max_abs_diff_sysref_vs_indiana_hub": 5.859375005456968e-05,
+   "verdict": "the C3a actual IS INDIANA.HUB"
+  }
+ }
+}
