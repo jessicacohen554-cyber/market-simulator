@@ -119,6 +119,32 @@ def _dual_fuel_unit_frame(year: int, pass_label: str, T: int = 4):
     return pd.DataFrame(rows)
 
 
+class TrancheBandTest(unittest.TestCase):
+    """Only the closed LP tranche vocabulary counts as a band."""
+
+    def test_real_tranche_suffixes_are_recognised(self):
+        for uid, want in (
+            ("ST_GAS_NYC_p1_committed", "committed"),
+            ("CC_REGULAR_NYC_p2_econc03", "econc03"),
+            ("COAL_West_p3_mustrun", "mustrun"),
+            ("CC_CHP_NYC_p4_peak2", "peak2"),
+            ("ST_GAS_NYC_p1_commitcyc", "commitcyc"),
+        ):
+            self.assertEqual(rcf._tranche_band(uid), want)
+
+    def test_non_tranche_units_get_no_band(self):
+        """Zone names, unit numbers and corridor labels are NOT bands."""
+        for uid in (
+            "WIND_Upstate_West",
+            "SOLAR_NYC",
+            "NYISO_external_HQ_tie",
+            "hydro_Lower_Hudson",
+            "import_scarcity",
+            "PLANT_GEN1",
+        ):
+            self.assertEqual(rcf._tranche_band(uid), "")
+
+
 class ClassBandHourlySidecarTest(unittest.TestCase):
     """``class_band_hourly`` — the per-offer-band dispatch sidecar."""
 

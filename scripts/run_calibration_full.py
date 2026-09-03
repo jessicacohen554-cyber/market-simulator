@@ -566,6 +566,39 @@ def _write_class_hourly_sidecar(run_dir: Path, year: int, labels: list[str]) -> 
     return out
 
 
+#: Exact LP tranche-suffix vocabulary. Same closed set as
+#: ``data/fleet/legacy_bins._coal_tranche_rank`` (the assembled order is
+#: ``mustrun -> sync -> committed -> commitcyc -> econ ramp -> peak``, built at
+#: ``fleet/assembly.py``'s ``tranches`` list); ``econc00..econcNN`` are the econ
+#: ramp's smoothing slices and ``peak2`` exists, so those two match by prefix.
+_TRANCHE_BANDS_EXACT = frozenset(
+    {"mustrun", "committed", "commitcyc", "econlo", "econhi", "econ"}
+)
+_TRANCHE_BANDS_PREFIX = ("sync", "econc", "peak")
+
+
+def _tranche_band(unit_id: str) -> str:
+    """Return the LP offer-band suffix of ``unit_id``, or ``""`` if it has none.
+
+    A CAMPD-binned thermal unit id is ``f"{bin_id}_{suffix}"`` where the suffix
+    is a single token containing no underscore, so the band is the last
+    underscore-delimited token. **But most LP columns are not tranches** —
+    import pseudo-generators, hydro, wind/solar zone pseudo-units and legacy
+    equal-width bins all carry ids whose last token is a zone name, a unit
+    number or a corridor label. Splitting those blindly invents bands like
+    ``Hudson`` / ``GEN1`` / ``tie`` / ``scarcity``, which is meaningless, and
+    fragments the sidecar (it measured 59 distinct "bands" and 893,520 rows for
+    one NYISO year before this guard, against 11 real bands).
+
+    Matching against the closed vocabulary instead means a non-tranche column
+    buckets to ``""`` and the class aggregate over it is still exact.
+    """
+    suffix = str(unit_id).rpartition("_")[2]
+    if suffix in _TRANCHE_BANDS_EXACT or suffix.startswith(_TRANCHE_BANDS_PREFIX):
+        return suffix
+    return ""
+
+
 def _write_class_band_hourly_sidecar(
     run_dir: Path, year: int, labels: list[str]
 ) -> "Path | None":
@@ -629,11 +662,7 @@ def _write_class_band_hourly_sidecar(
             src,
             columns=["year", "pass", "klass", "klass_base", "unit_id", "hour", "mw"],
         )
-        # Band = last underscore token of the unit id (single token by
-        # construction). Pseudo-units carry no tranche and bucket to "".
-        d["band"] = (
-            d["unit_id"].astype(str).str.rsplit("_", n=1).str[-1].astype("category")
-        )
+        d["band"] = pd.Categorical([_tranche_band(u) for u in d["unit_id"].astype(str)])
         d["mw_oil"] = np.where(
             d["klass"].astype(str).to_numpy() == "oil", d["mw"].to_numpy(), 0.0
         )
