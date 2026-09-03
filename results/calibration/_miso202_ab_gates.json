@@ -1,0 +1,521 @@
+{
+ "prereg": "PREREG-miso202-boundary-day-double-count-2026-09-03.md \u00a74",
+ "keeper_at_open": "2026-09-02-miso-201-stbasis",
+ "capability_bound_twh": {
+  "2023": 0.091,
+  "2024": 0.078,
+  "2025": 0.103
+ },
+ "field": "unit_outage_per_unit_clip",
+ "control": "miso202_control_A",
+ "arm": "miso202_unitclip_B",
+ "scorer_written_and_committed_before_any_arm_result": true,
+ "miso198_scorer_defects_not_inherited": [
+  "ordering: kills-silent is evaluated BEFORE inertness",
+  "inertness measured on VALUE MOVEMENT, not criterion-status identity"
+ ],
+ "miso200_vacuous_pass_trap_closed": "K-3/K-4/K-6 are REFUSED (reported UNSCORED, never PASS) unless BOTH legs carry non-empty D1/D4 rows and attestation entries.",
+ "c3a_is_never_a_gate": "rule 1 [R-STRUCT]. Phase-0 N-4 measured 1.4 % / 0.0 % / 1.4 % of the restored capability landing in the keeper's own top-1 % price hours, so C3a is expected to barely move; if it moves the right way that is NOT evidence for the mechanism.",
+ "S0": {
+  "sidecars_checked": 9,
+  "missing": [],
+  "max_abs_diff": 0.0,
+  "passed": true
+ },
+ "S1": {
+  "n_fields": 776,
+  "diffs": [
+   "unit_outage_per_unit_clip"
+  ],
+  "passed": true
+ },
+ "S2": {
+  "bins_gaining_availability": 43,
+  "per_layer_bins_gaining": {
+   "std5d": 31,
+   "short": 0,
+   "layup": 12
+  },
+  "per_bin": {
+   "layup|2023|1122:ST_GAS": {
+    "mean_availability_control": 0.532868,
+    "mean_availability_arm": 0.533881,
+    "hours_gaining": 24,
+    "max_gain": 0.369825
+   },
+   "layup|2023|2070:CC_REGULAR": {
+    "mean_availability_control": 0.614378,
+    "mean_availability_arm": 0.616116,
+    "hours_gaining": 96,
+    "max_gain": 0.158582
+   },
+   "layup|2023|3992:ST_GAS": {
+    "mean_availability_control": 0.598019,
+    "mean_availability_arm": 0.600636,
+    "hours_gaining": 48,
+    "max_gain": 0.477534
+   },
+   "layup|2023|6358:CC_REGULAR": {
+    "mean_availability_control": 0.826108,
+    "mean_availability_arm": 0.828525,
+    "hours_gaining": 120,
+    "max_gain": 0.176471
+   },
+   "layup|2024|1402:ST_GAS": {
+    "mean_availability_control": 0.507852,
+    "mean_availability_arm": 0.51268,
+    "hours_gaining": 96,
+    "max_gain": 0.440589
+   },
+   "layup|2024|1464:ST_GAS": {
+    "mean_availability_control": 0.149327,
+    "mean_availability_arm": 0.150677,
+    "hours_gaining": 24,
+    "max_gain": 0.492837
+   },
+   "layup|2024|2070:CC_REGULAR": {
+    "mean_availability_control": 0.696023,
+    "mean_availability_arm": 0.697495,
+    "hours_gaining": 72,
+    "max_gain": 0.220149
+   },
+   "layup|2025|1131:ST_GAS": {
+    "mean_availability_control": 0.423222,
+    "mean_availability_arm": 0.424196,
+    "hours_gaining": 24,
+    "max_gain": 0.355311
+   },
+   "layup|2025|2070:CC_REGULAR": {
+    "mean_availability_control": 0.583056,
+    "mean_availability_arm": 0.58832,
+    "hours_gaining": 216,
+    "max_gain": 0.378731
+   },
+   "layup|2025|3459:ST_GAS": {
+    "mean_availability_control": 0.804516,
+    "mean_availability_arm": 0.805189,
+    "hours_gaining": 24,
+    "max_gain": 0.24597
+   },
+   "layup|2025|55087:CC_REGULAR": {
+    "mean_availability_control": 0.956812,
+    "mean_availability_arm": 0.957919,
+    "hours_gaining": 24,
+    "max_gain": 0.404194
+   },
+   "layup|2025|6358:CC_REGULAR": {
+    "mean_availability_control": 0.455761,
+    "mean_availability_arm": 0.456245,
+    "hours_gaining": 24,
+    "max_gain": 0.176471
+   },
+   "std5d|2023|10745:CC_CHP": {
+    "mean_availability_control": 0.977162,
+    "mean_availability_arm": 0.977357,
+    "hours_gaining": 24,
+    "max_gain": 0.070975
+   },
+   "std5d|2023|10865:COAL": {
+    "mean_availability_control": 0.825144,
+    "mean_availability_arm": 0.825394,
+    "hours_gaining": 24,
+    "max_gain": 0.091045
+   },
+   "std5d|2023|1702:ST_GAS": {
+    "mean_availability_control": 0.104257,
+    "mean_availability_arm": 0.106998,
+    "hours_gaining": 216,
+    "max_gain": 0.249958
+   },
+   "std5d|2023|1912:CC_REGULAR": {
+    "mean_availability_control": 0.656438,
+    "mean_availability_arm": 0.657514,
+    "hours_gaining": 24,
+    "max_gain": 0.392453
+   },
+   "std5d|2023|2070:CC_REGULAR": {
+    "mean_availability_control": 0.83993,
+    "mean_availability_arm": 0.841014,
+    "hours_gaining": 24,
+    "max_gain": 0.395522
+   },
+   "std5d|2023|55467:CC_REGULAR": {
+    "mean_availability_control": 0.617108,
+    "mean_availability_arm": 0.618008,
+    "hours_gaining": 24,
+    "max_gain": 0.328576
+   },
+   "std5d|2023|55620:CC_REGULAR": {
+    "mean_availability_control": 0.740643,
+    "mean_availability_arm": 0.745964,
+    "hours_gaining": 168,
+    "max_gain": 0.277473
+   },
+   "std5d|2023|55714:CC_REGULAR": {
+    "mean_availability_control": 0.596297,
+    "mean_availability_arm": 0.597307,
+    "hours_gaining": 24,
+    "max_gain": 0.368667
+   },
+   "std5d|2023|63259:CC_REGULAR": {
+    "mean_availability_control": 0.591648,
+    "mean_availability_arm": 0.59191,
+    "hours_gaining": 24,
+    "max_gain": 0.095721
+   },
+   "std5d|2023|6358:CC_REGULAR": {
+    "mean_availability_control": 0.555036,
+    "mean_availability_arm": 0.55552,
+    "hours_gaining": 24,
+    "max_gain": 0.176471
+   },
+   "std5d|2023|992:ST_GAS": {
+    "mean_availability_control": 0.112329,
+    "mean_availability_arm": 0.114155,
+    "hours_gaining": 48,
+    "max_gain": 0.333333
+   },
+   "std5d|2024|1073:ST_CHP": {
+    "mean_availability_control": 0.270725,
+    "mean_availability_arm": 0.271027,
+    "hours_gaining": 24,
+    "max_gain": 0.110116
+   },
+   "std5d|2024|10865:COAL": {
+    "mean_availability_control": 0.689949,
+    "mean_availability_arm": 0.690448,
+    "hours_gaining": 48,
+    "max_gain": 0.091045
+   },
+   "std5d|2024|1702:ST_GAS": {
+    "mean_availability_control": 0.113425,
+    "mean_availability_arm": 0.114439,
+    "hours_gaining": 72,
+    "max_gain": 0.123354
+   },
+   "std5d|2024|2070:CC_REGULAR": {
+    "mean_availability_control": 0.77705,
+    "mean_availability_arm": 0.778123,
+    "hours_gaining": 24,
+    "max_gain": 0.391791
+   },
+   "std5d|2024|3459:ST_GAS": {
+    "mean_availability_control": 0.619114,
+    "mean_availability_arm": 0.619484,
+    "hours_gaining": 24,
+    "max_gain": 0.134874
+   },
+   "std5d|2024|4042:ST_CHP": {
+    "mean_availability_control": 0.734682,
+    "mean_availability_arm": 0.735395,
+    "hours_gaining": 24,
+    "max_gain": 0.260326
+   },
+   "std5d|2024|50240:ST_CHP": {
+    "mean_availability_control": 0.741683,
+    "mean_availability_arm": 0.742466,
+    "hours_gaining": 24,
+    "max_gain": 0.285714
+   },
+   "std5d|2024|55096:ST_CHP": {
+    "mean_availability_control": 0.216438,
+    "mean_availability_arm": 0.217808,
+    "hours_gaining": 24,
+    "max_gain": 0.5
+   },
+   "std5d|2024|55220:CC_REGULAR": {
+    "mean_availability_control": 0.774013,
+    "mean_availability_arm": 0.774014,
+    "hours_gaining": 24,
+    "max_gain": 0.000181
+   },
+   "std5d|2024|55620:CC_REGULAR": {
+    "mean_availability_control": 0.656887,
+    "mean_availability_arm": 0.658484,
+    "hours_gaining": 48,
+    "max_gain": 0.291582
+   },
+   "std5d|2024|63259:CC_REGULAR": {
+    "mean_availability_control": 0.553079,
+    "mean_availability_arm": 0.554498,
+    "hours_gaining": 72,
+    "max_gain": 0.326577
+   },
+   "std5d|2024|6358:CC_REGULAR": {
+    "mean_availability_control": 0.191781,
+    "mean_availability_arm": 0.192264,
+    "hours_gaining": 24,
+    "max_gain": 0.176471
+   },
+   "std5d|2025|10865:COAL": {
+    "mean_availability_control": 0.856712,
+    "mean_availability_arm": 0.857534,
+    "hours_gaining": 72,
+    "max_gain": 0.1
+   },
+   "std5d|2025|1702:ST_GAS": {
+    "mean_availability_control": 0.156617,
+    "mean_availability_arm": 0.160033,
+    "hours_gaining": 144,
+    "max_gain": 0.292215
+   },
+   "std5d|2025|4040:CC_REGULAR": {
+    "mean_availability_control": 0.916224,
+    "mean_availability_arm": 0.916905,
+    "hours_gaining": 24,
+    "max_gain": 0.248605
+   },
+   "std5d|2025|55096:ST_CHP": {
+    "mean_availability_control": 0.256164,
+    "mean_availability_arm": 0.257534,
+    "hours_gaining": 24,
+    "max_gain": 0.5
+   },
+   "std5d|2025|55173:CC_REGULAR": {
+    "mean_availability_control": 0.747022,
+    "mean_availability_arm": 0.747791,
+    "hours_gaining": 24,
+    "max_gain": 0.2806
+   },
+   "std5d|2025|55221:CC_REGULAR": {
+    "mean_availability_control": 0.758877,
+    "mean_availability_arm": 0.759012,
+    "hours_gaining": 24,
+    "max_gain": 0.04927
+   },
+   "std5d|2025|55620:CC_REGULAR": {
+    "mean_availability_control": 0.711737,
+    "mean_availability_arm": 0.714829,
+    "hours_gaining": 96,
+    "max_gain": 0.282176
+   },
+   "std5d|2025|6639:ST_GAS": {
+    "mean_availability_control": 0.678468,
+    "mean_availability_arm": 0.679814,
+    "hours_gaining": 24,
+    "max_gain": 0.491189
+   }
+  },
+  "short_layer_moved": 0,
+  "passed": true
+ },
+ "S3": {
+  "bins_checked": 589,
+  "hours_with_arm_removing_more": 0,
+  "worst_regression": {
+   "key": null,
+   "amount": 0.0
+  },
+  "passed": true
+ },
+ "K1": {
+  "band_twh": 8.0,
+  "named_ex_ante": {
+   "ST_GAS|2024": {
+    "prereg_control": -7.488,
+    "prereg_headroom": 0.512,
+    "measured_control": -7.488,
+    "measured_arm": -7.487,
+    "band_exit": false
+   },
+   "CC_REGULAR|2024": {
+    "prereg_control": 6.931,
+    "prereg_headroom": 1.069,
+    "measured_control": 6.931,
+    "measured_arm": 6.942,
+    "band_exit": false
+   },
+   "ST_GAS|2025": {
+    "prereg_control": -6.681,
+    "prereg_headroom": 1.319,
+    "measured_control": -6.681,
+    "measured_arm": -6.684,
+    "band_exit": false
+   },
+   "COAL_PRB|2025": {
+    "prereg_control": -4.904,
+    "prereg_headroom": 3.096,
+    "measured_control": -4.904,
+    "measured_arm": -4.907,
+    "band_exit": false
+   },
+   "ST_GAS|2023": {
+    "prereg_control": -3.512,
+    "prereg_headroom": 4.488,
+    "measured_control": -3.512,
+    "measured_arm": -3.516,
+    "band_exit": false
+   },
+   "CC_REGULAR|2023": {
+    "prereg_control": -3.434,
+    "prereg_headroom": 4.566,
+    "measured_control": -3.434,
+    "measured_arm": -3.408,
+    "band_exit": false
+   },
+   "CC_REGULAR|2025": {
+    "prereg_control": -2.194,
+    "prereg_headroom": 5.806,
+    "measured_control": -2.194,
+    "measured_arm": -2.177,
+    "band_exit": false
+   }
+  },
+  "all_band_exits": [],
+  "passed": true
+ },
+ "K2": {
+  "control": {
+   "2023": 0.081,
+   "2024": 0.109,
+   "2025": 0.182
+  },
+  "arm": {
+   "2023": 0.081,
+   "2024": 0.109,
+   "2025": 0.182
+  },
+  "pass_to_fail": [],
+  "passed": true
+ },
+ "K3": {
+  "d4_row_counts": {
+   "control": 57,
+   "arm": 57
+  },
+  "scorable": true,
+  "new_d4_failures": [],
+  "cleared": [],
+  "status": "SCORED",
+  "passed": true
+ },
+ "K4": {
+  "d1_row_counts": {
+   "control": 30,
+   "arm": 30
+  },
+  "scorable": true,
+  "control": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.762,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.956,
+    "cv_ratio": 1.246,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.485,
+    "verdict": "pass"
+   }
+  },
+  "arm": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.762,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.956,
+    "cv_ratio": 1.246,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.485,
+    "verdict": "pass"
+   }
+  },
+  "pass_to_fail": [],
+  "status": "SCORED",
+  "passed": true
+ },
+ "K5": {
+  "pass_to_non_pass": [],
+  "passed": true
+ },
+ "K6": {
+  "attestation_entries": {
+   "control": 40,
+   "arm": 41
+  },
+  "status": "SCORED",
+  "passed": true
+ },
+ "movement": {
+  "epsilons": {
+   "c1_twh": 0.01,
+   "c3a_pp": 0.01,
+   "c3b": 0.0005,
+   "c8_share": 0.0005
+  },
+  "d_c1_twh": {
+   "CC_CHP|2023": 0.0,
+   "CC_CHP|2024": -0.001,
+   "CC_CHP|2025": -0.002,
+   "CC_REGULAR|2023": 0.026,
+   "CC_REGULAR|2024": 0.011,
+   "CC_REGULAR|2025": 0.017,
+   "COAL_BIT|2023": -0.002,
+   "COAL_BIT|2024": 0.0,
+   "COAL_BIT|2025": 0.001,
+   "COAL_LIGNITE|2023": 0.0,
+   "COAL_LIGNITE|2024": 0.0,
+   "COAL_LIGNITE|2025": 0.0,
+   "COAL_PRB|2023": -0.008,
+   "COAL_PRB|2024": -0.002,
+   "COAL_PRB|2025": -0.003,
+   "CT_PEAKER|2023": -0.007,
+   "CT_PEAKER|2024": -0.006,
+   "CT_PEAKER|2025": -0.006,
+   "ST_CHP|2023": 0.0,
+   "ST_CHP|2024": 0.001,
+   "ST_CHP|2025": 0.0,
+   "ST_GAS|2023": -0.004,
+   "ST_GAS|2024": 0.001,
+   "ST_GAS|2025": -0.003
+  },
+  "c3a_control": {
+   "2023": 0.12176560121765341,
+   "2024": -4.5820433436532415,
+   "2025": -12.384513858337005
+  },
+  "c3a_arm": {
+   "2023": 0.12176560121765341,
+   "2024": -4.613003095975228,
+   "2025": -12.384513858337005
+  },
+  "d_c3a_pp": {
+   "2023": 0.0,
+   "2024": -0.031,
+   "2025": 0.0
+  },
+  "d_c3b": {
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "c8_share_control": {
+   "2023": 0.1551221239597797,
+   "2024": 0.15286971207539976,
+   "2025": 0.2712661003731675
+  },
+  "c8_share_arm": {
+   "2023": 0.15525822777731177,
+   "2024": 0.15289001071383174,
+   "2025": 0.27136193981018586
+  },
+  "d_c8_share": {
+   "2023": 0.00014,
+   "2024": 2e-05,
+   "2025": 0.0001
+  },
+  "status_map_identical": true,
+  "arm_moved_values": true
+ },
+ "kills_fired": [],
+ "verdict": "KILLS SILENT and the arm MOVED values -> keeper candidate on its own gates. C3a is reported at full magnitude and is NEVER the justification."
+}

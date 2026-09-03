@@ -10233,3 +10233,101 @@ mechanism still producing steam overflow; then the **extract/fleet unit-set mism
 which caps this repair at 69.6 % of steam capacity.
 
 Next shorthand: **miso-202**.
+
+---
+
+## miso-202 (2026-09-03) — the ADJACENT-WINDOW BOUNDARY-DAY DOUBLE-COUNT: **PROMOTED**, keeper → `2026-09-03-miso-202-unitclip`, **all ten A/B gates passing**
+
+**Charter:** queue item 1 — FINDING-miso201 §7 item 1's named successor. Plus the lane's
+standing re-charter, C3a-2025 summer scarcity (miso-167).
+
+**TWO RESULTS, and the second matters more than the first.**
+
+**THE LEVER.** `unit_outage_event_window` reconstructs a day-granular extract row as
+`[outage_start, outage_end + 1 day)`, so two windows of the SAME unit sharing a boundary
+date both cover that day while `_unit_outage_factors_from_events` **sums** row shares
+rather than unioning them — the unit's capacity is subtracted TWICE on a day it can be at
+most 100 % out. **What settles it as a defect rather than a judgement call is the census's
+SHAPE, not its size: every one of the 845 same-unit window overlaps is EXACTLY 24.0 h**
+(std5d 648, lay-up 197, short 0) — a single-bin histogram, the fingerprint of the `+ 1 day`
+artifact and of nothing else. **It is wider than the instrument that found it could see:**
+miso-201 met the object only where it OVERFLOWED a steam bin and sized it at "24–72 h/yr
+per bin"; measured class-agnostically it is 845 pairs over 63 bins restoring
+**91.1 / 77.6 / 103.4 GWh** across CC_REGULAR, ST_GAS, COAL, CC_CHP and ST_CHP — and an
+overflowing cell is precisely where it is INERT (the correct answer there is 0.0 and the
+clip already delivers it), which is why an overflow-scoped census could not see the live
+part. The repair is a **ceiling on a sum**, not a window-merging heuristic: no date
+arithmetic, no adjacency test, no tolerance, **zero free parameters**.
+
+**THE CHARTER — and this is the session's larger deliverable.** Three sessions (miso-199,
+-200, -201) worked the unit-outage overlay family while C3a-2025 drifted −12.2745 →
+−12.3845, because every repair in it restores availability. `_miso202_c3a_2025_anatomy.json`
+(committed artifacts only, **no solve**) locates the miss and the answer redirects the lane:
+
+* **A-0** the reconstruction reproduces `calibration_verdict`'s C3a face in all three years.
+* **A-1** Jun–Sep carries **77.7 %** of 2025's −5.625 $/MWh gap; **June + July alone 59.0 %**
+  (June 40.03 vs 57.39; July 41.96 vs 59.45). Feb–Apr are within 0.5–1.8 and **May is +4.54
+  OVER** — there is no level bias to find.
+* **A-2** and it is **entirely a TAIL miss**: over Jun–Jul the model's **median is HIGHER**
+  than actual (37.47 vs 32.73) and so is its p75; the gap opens only past p90 and explodes
+  at p99 (69.04 vs **238.93**) and p99.9 (148.92 vs **746.10**). **The top 1 % of actual
+  hours — 15 hours — carry 99.9 % of the mean gap**; the other 1,449 contribute −0.00.
+* **A-3** because the model never enters scarcity: max price in **any** Jun–Jul zone-hour
+  **183.22** against an actual hub max **1,669.52**; **zero** zone-hours over $200 against
+  20 actual; **0.0 MWh unserved**; ORDC shortfall in 3 hours of 8,760. **The ceiling is not
+  in the ORDC curve** — its 14 steps span $65–$3,500.
+* **A-4** and the model is not missing the EVENT, only its PRICE: in those 15 hours it
+  dispatches CT_PEAKER **+8,783 MW** and **import +3,844 MW**. Independently corroborated by
+  the rubric's own C3c row: model **1 h** above $200 in 2025 against **88 h** actual (0.01×).
+
+**The chain:** surplus supply in the binding hours → reserves never short → the ORDC never
+climbs its own curve → a ~$183 ceiling in exactly the months that carry the miss. **C3a-2025
+is not closable by anything that moves the price LEVEL**, and the outage-overlay vein is
+exhausted as a route to it. The **+3.8 GW of import** corroborates the **D-2 5(i)**
+seam-response object as the successor — **NAMED, NOT CHARTERED**, pending the owner.
+
+**The A/B.** Control `2026-09-03-miso-202-control` vs arm `2026-09-03-miso-202-unitclip`,
+both 2023+2024+2025 in one invocation, years sequential, in-session, both from the committed
+keeper recipe via `--replay-bundle`. Scorer `_miso202_ab_gates.py` **committed blind with the
+PREREG before the mechanism existed**.
+
+| gate | result |
+|---|---|
+| S-0 control integrity | **PASS — BIT-IDENTICAL**, 9 sidecars, `max_abs_diff` 0.0 |
+| S-1 single delta | PASS — exactly `unit_outage_per_unit_clip` |
+| S-2 liveness | PASS — std5d 31, lay-up 12, **short 0** (a falsifiable phase-0 prediction confirmed) |
+| **S-3 monotonicity** (hard void) | **PASS** — 589 bins, **zero** bin-hours removing more |
+| **K-1 C1 band** | **PASS — no band exit anywhere** |
+| K-2 / K-3 / K-4 / K-5 | PASS — status map **identical** |
+| K-6 DOF | **PASS, and REAL** |
+
+**Determination UNCHANGED** at NOT-YET on `{C3a-2025 −12.3845}` alone; C3c the single
+ledgered caveat; C6 attested (ledger **41 / 2**, `n_residual` unchanged).
+
+**Reported against the promotion.** (a) **The arm is SMALL in dispatch** — largest C1 move
++0.026 TWh against a 91.1/77.6/103.4 GWh bound; **the repair is justified as a defect repair
+and its size is not its argument**. (b) **The named risk moved adversely as pre-registered**:
+CC_REGULAR-2024 +6.931 → +6.942 (+0.011 TWh against 1.069 headroom); CC_REGULAR-2023/-2025
+moved toward actual. (c) **C3a is essentially unchanged and NEVER the justification**
+(rule 1): 2023 and 2025 **unchanged**, 2024 −4.5820 → −4.6130. (d) **The PREREG's named C8
+risk did not materialise** — deltas +0.00014/+0.00002/+0.00010, all below the 0.0005
+inertness epsilon. (e) K-6 was UNSCORED on the first pass (a replay writes no attestation);
+diagnostics (D1=30/D2=23/D4=57 both legs) and attestations were generated for both legs and
+the pair re-scored — the miso-200 vacuous-pass trap closed **by construction**. (f) **Main
+drift MEASURED, not assumed**: both legs at `fe641ebe`, the only src/ drift a blank line plus
+additive output-only ledger fields backcast mode never reaches. (g) **A container restart
+killed the first pair mid-flight**; the partial control bundle was **deleted rather than
+reused** (a half-written bundle makes S-0 meaningless) and both legs re-solved from scratch.
+
+**Governance.** Attestation by `scripts/gen_miso202_attestation.py` (n_entries 40 → 41,
+`n_residual` UNCHANGED at 2); `build_dof_ledger.py` deliberately NOT run. Keeper shard,
+`status/MISO.js`, the matrix shard keeper stamp, the `unit_outage_per_unit_clip` cell (O → K)
+and the §5.4 prose header all re-stamped this session (rule 28b); base row + all six shard
+cells landed with the field (rule 28c). `audit_keepers --iso MISO` **PASS 0/0**. Rule 25:
+only MISO's files touched. MISO holds no `complete` marker, so the rule-22 D-5(b) re-key does
+not apply. Rule 22: 2023–2025 only.
+
+**Successor:** the **D-2 5(i) seam-response / binding-hour import excess** (owner
+admissibility ruling outstanding) — the only named object that can reach a tail miss.
+
+Next shorthand: **miso-203**.
