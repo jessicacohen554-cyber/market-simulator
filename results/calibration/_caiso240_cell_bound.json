@@ -1,0 +1,99 @@
+{
+ "_provenance": {
+  "bundle": "results/calibration/caiso239_b1_stgas_committed_measured",
+  "form": "caiso-230 \u00a7H, re-pointed at the caiso-239 keeper",
+  "keeper_run_id": "2026-09-02-caiso-239-b1-stgas",
+  "moves": [
+   {
+    "armed": 1.1,
+    "cell": "ST_GAS:peak",
+    "target": 1.166
+   },
+   {
+    "armed": 1.0,
+    "cell": "ST_GAS:econ",
+    "target": 1.145
+   }
+  ],
+  "session": "caiso-240",
+  "solves": 0,
+  "tolerance_usd_mwh": 0.75
+ },
+ "per_year": {
+  "2023": {
+   "cells": {
+    "ST_GAS:econ": {
+     "armed": 1.0,
+     "direction": "ADVERSE (offer up)",
+     "first_order_bound_usd_mwh": 0.010827,
+     "n_marginal_zone_hours": 48,
+     "n_responsive_tranches": 3,
+     "relative_move": 0.145,
+     "target": 1.145,
+     "w_weighted_price": 0.07467
+    },
+    "ST_GAS:peak": {
+     "armed": 1.1,
+     "direction": "ADVERSE (offer up)",
+     "first_order_bound_usd_mwh": 0.001412,
+     "n_marginal_zone_hours": 12,
+     "n_responsive_tranches": 3,
+     "relative_move": 0.06,
+     "target": 1.166,
+     "w_weighted_price": 0.023526
+    }
+   },
+   "model_lw_price": 56.3744
+  },
+  "2024": {
+   "cells": {
+    "ST_GAS:econ": {
+     "armed": 1.0,
+     "direction": "ADVERSE (offer up)",
+     "first_order_bound_usd_mwh": 0.008438,
+     "n_marginal_zone_hours": 43,
+     "n_responsive_tranches": 3,
+     "relative_move": 0.145,
+     "target": 1.145,
+     "w_weighted_price": 0.058195
+    },
+    "ST_GAS:peak": {
+     "armed": 1.1,
+     "direction": "ADVERSE (offer up)",
+     "first_order_bound_usd_mwh": 0.001105,
+     "n_marginal_zone_hours": 14,
+     "n_responsive_tranches": 3,
+     "relative_move": 0.06,
+     "target": 1.166,
+     "w_weighted_price": 0.01841
+    }
+   },
+   "model_lw_price": 39.006
+  },
+  "2025": {
+   "cells": {
+    "ST_GAS:econ": {
+     "armed": 1.0,
+     "direction": "ADVERSE (offer up)",
+     "first_order_bound_usd_mwh": 0.004361,
+     "n_marginal_zone_hours": 10,
+     "n_responsive_tranches": 3,
+     "relative_move": 0.145,
+     "target": 1.145,
+     "w_weighted_price": 0.030076
+    },
+    "ST_GAS:peak": {
+     "armed": 1.1,
+     "direction": "ADVERSE (offer up)",
+     "first_order_bound_usd_mwh": 0.0,
+     "n_marginal_zone_hours": 0,
+     "n_responsive_tranches": 3,
+     "relative_move": 0.06,
+     "target": 1.166,
+     "w_weighted_price": 0.0
+    }
+   },
+   "model_lw_price": 39.7867
+  }
+ }
+}
