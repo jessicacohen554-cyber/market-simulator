@@ -716,6 +716,14 @@ results/hindcast/*/*/*/evolution_*.json
 # deferral-class grading reads (scripts/probes/_capxd42_plant_grain.py);
 # without them the posture evidence is unverifiable from a checkout.
 !results/hindcast/miso-2021-2025-realized-t1h-d42-*/*/*/evolution_*.json
+# capx D45 (2026-09-03): the same one-bundle-scoped carve-out for the four
+# PJM / NYISO legs (live-posture baselines + the curve-ON / fixed-anchor
+# probes) -- their per-year ledgers carry the ENTERING reserve position and
+# the adequacy requirement (the D45 runner observability keys), the pipeline
+# screen rows the finding's counterfactual re-screen reads, and the
+# entry_screen_diagnostics dumps D43 routed as the PJM/NYISO precondition.
+!results/hindcast/pjm-2021-2025-realized-t1h-d45*/*/*/evolution_*.json
+!results/hindcast/nyiso-2021-2025-realized-t1h-d45*/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet

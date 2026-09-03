@@ -140,43 +140,6 @@ def analyse(run_dir: Path) -> dict:
     return dict(run=run_dir.name, iso=iso, cache_key=meta.get("cache_key"), rows=rows)
 
 
-if __name__ == "__main__":
-    out = [analyse(Path(a)) for a in sys.argv[1:]]
-    for r in out:
-        print(f"\n===== {r['run']} ({r['iso']}, key {r['cache_key']})")
-        hdr = f"{'yr':>5} {'peak':>9} {'req':>9} {'firmAfter':>10} {'posEnter':>9} {'posEnterId':>10} {'posAfter':>8} {'$model':>7} {'pubPos':>7} {'pubOff':>7} {'$@pub':>7} {'$real':>7} {'retireMW':>9} {'capRev$':>10} {'floor':>5} {'diag':>5}"
-        print(hdr)
-        for x in r["rows"]:
-            f = lambda v, w, p=1: (
-                f"{v:>{w},.{p}f}"
-                if isinstance(v, (int, float)) and v is not None
-                else f"{'-':>{w}}"
-            )
-            print(
-                f"{x['year']:>5} {f(x['peak_mw'], 9, 0)} {f(x['requirement_mw'], 9, 0)} {f(x['firm_after_mw'], 10, 0)} "
-                f"{f(x['pos_entering_ledger'], 9, 4)} {f(x['pos_entering_identity'], 10, 4)} {f(x['pos_after'], 8, 4)} "
-                f"{f(x['curve_price_at_model_entering'], 7, 2)} {f(x['pub_pos'], 7, 4)} {f(x['pub_pos_offered'], 7, 4)} "
-                f"{f(x['curve_price_at_pub_pos'], 7, 2)} {f(x['real_price'], 7, 2)} {f(sum(x['retire_events_mw_by_fuel'].values()), 9, 0)} "
-                f"{f(x['retire_capacity_revenue_usd'], 10, 0)} {x['floor_retained_n']:>5} {x['entry_diag_rows']:>5}"
-            )
-            if x["retire_events_mw_by_fuel"] or x["pipeline_events_mw"]:
-                print(
-                    "       exits by fuel:",
-                    {k: round(v, 1) for k, v in x["retire_events_mw_by_fuel"].items()},
-                    "| pipeline events MW:",
-                    {k: round(v, 0) for k, v in x["pipeline_events_mw"].items()},
-                    "| cap leg $/kW-yr seen:",
-                    x["pipeline_capacity_rev_per_kw_yr"],
-                    "| entry cap terms $/MW-yr:",
-                    x["entry_diag_capacity_terms"][:6],
-                    "| thermal adds:",
-                    x["thermal_additions"],
-                )
-    Path(__file__).with_suffix(".json").write_text(
-        json.dumps(out, indent=1, default=float)
-    )
-
-
 # ---------------------------------------------------------------------------
 # Counterfactual re-screen (PJM stage 3, zero-solve): for every candidate the
 # pipeline screen FAILED in a year (event 'decided' / 'entry_capped'), add the
@@ -217,7 +180,10 @@ def counterfactual(run_dir: Path, positions: dict[int, float] | None = None) -> 
         ]
         failed_mw = sum(float(r.get("mw") or 0.0) for r in rows)
         saved_mw, saved_by_fuel = 0.0, {}
+        saved_by_event: dict[str, float] = {}
+        failed_by_event: dict[str, float] = {}
         for r in rows:
+            failed_by_event[r["event"]] = failed_by_event.get(r["event"], 0.0) + float(r.get("mw") or 0.0)
             mw = float(r.get("mw") or 0.0)
             frac = thermal_accreditation_fraction(r.get("fuel", ""), 0.0, iso)
             cap_now = float(r.get("capacity_revenue_usd") or 0.0)
@@ -226,6 +192,8 @@ def counterfactual(run_dir: Path, positions: dict[int, float] | None = None) -> 
             if nr >= float(r.get("going_forward_cost_usd") or 0.0):
                 saved_mw += mw
                 saved_by_fuel[r["fuel"]] = saved_by_fuel.get(r["fuel"], 0.0) + mw
+                k = f"{r['event']}:{r['fuel']}"
+                saved_by_event[k] = saved_by_event.get(k, 0.0) + mw
         out.append(
             dict(
                 year=y,
@@ -236,6 +204,8 @@ def counterfactual(run_dir: Path, positions: dict[int, float] | None = None) -> 
                 failed_mw=failed_mw,
                 saved_mw=saved_mw,
                 saved_by_fuel=saved_by_fuel,
+                saved_by_event=saved_by_event,
+                failed_by_event=failed_by_event,
                 n_failed=len(rows),
             )
         )
@@ -301,3 +271,117 @@ def firm_decomposition(run_dir: Path) -> list[dict]:
             )
         )
     return out
+
+
+# ---------------------------------------------------------------------------
+# PJM pre-CIFP UCAP restatement (stage 2): re-accredit the ledger fleet on the
+# accreditation design the 2021/22-2024/25 auctions actually cleared on —
+# thermal at 1 - EFORd (constants.EFORD by fuel, the NERC-GADS class rates the
+# model's own UCAP basis uses), hydro at 1 - EFORd on its dispatched nameplate,
+# wind / solar at PJM's pre-CIFP Manual 21 class capacity values (14.7 % / 38 %,
+# the 2021/22-2024/25 Rev. defaults for wind and fixed-tilt solar), storage and
+# the firm tie as the ledger carries them — so the model's firm can be laid
+# against the PUBLISHED UCAP requirement (demand-curve/pjm/pjm.csv
+# reliability_requirement, the RTO-wide bar before the FRR adjustment) on ONE
+# basis. A first-order restatement (class-average EFORd, not unit sell-offer
+# EFORd; the FPR itself is built on a pool-average EFORd, so the grain matches).
+# ---------------------------------------------------------------------------
+PJM_PRE_CIFP_VRE_CLASS = {"wind": 0.147, "solar": 0.38}
+
+
+def pjm_ucap_restatement(run_dir: Path) -> list[dict]:
+    import pandas as pd
+    from market_sim.config.capacity_market import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+    from market_sim.config.constants import EFORD
+
+    dc = pd.read_csv(REPO / "data/raw/capacity-market/demand-curve/pjm/pjm.csv")
+    meta = json.loads((run_dir / "meta.json").read_text())
+    bundle = REPO / meta["bundle"]
+    out = []
+    for p in sorted(bundle.glob("evolution_*.json")):
+        led = json.loads(p.read_text())
+        if led.get("reserve_margin") is None:
+            continue
+        y = int(p.stem.split("_")[1])
+        dy = f"{y}/{y + 1}"
+        fleet = led.get("fleet_by_fuel_after") or {}
+        thermal = sum(mw * (1.0 - EFORD.get(f, 0.05)) for f, mw in fleet.items())
+        hydro = float(led.get("firm_clean_mw") or 0.0) * (1.0 - 0.05)
+        wind = float(led.get("wind_cap_mw") or 0.0) * PJM_PRE_CIFP_VRE_CLASS["wind"]
+        solar = float(led.get("solar_cap_mw") or 0.0) * PJM_PRE_CIFP_VRE_CLASS["solar"]
+        storage = float(led.get("storage_firm_mw") or 0.0)
+        tie = ADEQUACY_EXTERNAL_TIE_FIRM_MW["PJM"]
+        firm_ucap = thermal + hydro + wind + solar + storage + tie
+        d = dc[dc.delivery_year == dy]
+        rr = d[d.metric == "reliability_requirement"].y_value
+        rr = float(rr.iloc[0]) if len(rr) else None
+        fpr = d[d.metric == "forecast_pool_requirement"].y_value
+        fpr = float(fpr.iloc[0]) if len(fpr) else None
+        out.append(
+            dict(
+                year=y,
+                delivery_year=dy,
+                firm_ucap_restated_mw=firm_ucap,
+                thermal_ucap_mw=thermal,
+                hydro_ucap_mw=hydro,
+                vre_ucap_mw=wind + solar,
+                storage_mw=storage,
+                tie_mw=tie,
+                firm_elcc_basis_mw=led["peak_demand_mw"] * (1 + led["reserve_margin"]),
+                published_rto_requirement_ucap_mw=rr,
+                pos_ucap_vs_published_rto_requirement=(firm_ucap / rr) if rr else None,
+                published_fpr=fpr,
+                model_peak_mw=led["peak_demand_mw"],
+                pos_ucap_vs_fpr_on_model_peak=(firm_ucap / (led["peak_demand_mw"] * fpr)) if fpr else None,
+            )
+        )
+    return out
+
+
+
+if __name__ == "__main__":
+    out = [analyse(Path(a)) for a in sys.argv[1:]]
+    for r in out:
+        print(f"\n===== {r['run']} ({r['iso']}, key {r['cache_key']})")
+        hdr = f"{'yr':>5} {'peak':>9} {'req':>9} {'firmAfter':>10} {'posEnter':>9} {'posEnterId':>10} {'posAfter':>8} {'$model':>7} {'pubPos':>7} {'pubOff':>7} {'$@pub':>7} {'$real':>7} {'retireMW':>9} {'capRev$':>10} {'floor':>5} {'diag':>5}"
+        print(hdr)
+        for x in r["rows"]:
+            f = lambda v, w, p=1: (
+                f"{v:>{w},.{p}f}"
+                if isinstance(v, (int, float)) and v is not None
+                else f"{'-':>{w}}"
+            )
+            print(
+                f"{x['year']:>5} {f(x['peak_mw'], 9, 0)} {f(x['requirement_mw'], 9, 0)} {f(x['firm_after_mw'], 10, 0)} "
+                f"{f(x['pos_entering_ledger'], 9, 4)} {f(x['pos_entering_identity'], 10, 4)} {f(x['pos_after'], 8, 4)} "
+                f"{f(x['curve_price_at_model_entering'], 7, 2)} {f(x['pub_pos'], 7, 4)} {f(x['pub_pos_offered'], 7, 4)} "
+                f"{f(x['curve_price_at_pub_pos'], 7, 2)} {f(x['real_price'], 7, 2)} {f(sum(x['retire_events_mw_by_fuel'].values()), 9, 0)} "
+                f"{f(x['retire_capacity_revenue_usd'], 10, 0)} {x['floor_retained_n']:>5} {x['entry_diag_rows']:>5}"
+            )
+            if x["retire_events_mw_by_fuel"] or x["pipeline_events_mw"]:
+                print(
+                    "       exits by fuel:",
+                    {k: round(v, 1) for k, v in x["retire_events_mw_by_fuel"].items()},
+                    "| pipeline events MW:",
+                    {k: round(v, 0) for k, v in x["pipeline_events_mw"].items()},
+                    "| cap leg $/kW-yr seen:",
+                    x["pipeline_capacity_rev_per_kw_yr"],
+                    "| entry cap terms $/MW-yr:",
+                    x["entry_diag_capacity_terms"][:6],
+                    "| thermal adds:",
+                    x["thermal_additions"],
+                )
+    # Persist every instrument view per run beside the table (the finding's evidence).
+    full = []
+    for a in sys.argv[1:]:
+        rd = Path(a)
+        rec = analyse(rd)
+        rec["counterfactual_at_published_position"] = counterfactual(rd)
+        rec["firm_decomposition"] = firm_decomposition(rd)
+        if rec["iso"] == "PJM":
+            rec["pjm_ucap_restatement"] = pjm_ucap_restatement(rd)
+            rec["counterfactual_at_total_reserve_margin_position"] = counterfactual(
+                rd, {int(x["delivery_year"][:4]): x["pos_total_rm"] for x in PUB["pjm"]}
+            )
+        full.append(rec)
+    Path(__file__).with_suffix(".json").write_text(json.dumps(full, indent=1, default=float))

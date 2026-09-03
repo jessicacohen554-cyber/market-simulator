@@ -236,6 +236,20 @@ VERDICT_MAP = {
     # HOLD on both, no flip.
     "neiso-2021-2025-realized-t1h-d37-armed": "neiso-t1h",
     "neiso-2021-2025-realized-t1h-d37-control": "neiso-t1h-d37-control",
+    # capx-D45 (2026-09-03), the once-only PJM + NYISO clearing-half / curve-ON
+    # charter: the FIRST diagnostics-on T1-H solves of both ISOs at the LIVE
+    # stack posture take the bare keys under the live-vintage convention,
+    # superseding the FFR-3A-3 vintages preserved verbatim at `pjm-t1h-pre-d45`
+    # / `nyiso-t1h-pre-d45`. The two pre-declared PROBE legs -- NYISO with the
+    # published curve force-ON (the D28 latent flip-gate object) and PJM on the
+    # flat net-CONE anchor (the FFR-2E comparison arm, the D6 over-fire's
+    # control) -- keep their OWN keys: each is one field from its baseline and
+    # renders a score the bare key would contradict. Determination HOLD on all
+    # four; nothing flips; no default moves.
+    "pjm-2021-2025-realized-t1h-d45": "pjm-t1h",
+    "pjm-2021-2025-realized-t1h-d45-fixed": "pjm-t1h-d45-fixed",
+    "nyiso-2021-2025-realized-t1h-d45": "nyiso-t1h",
+    "nyiso-2021-2025-realized-t1h-d45-curveon": "nyiso-t1h-d45-curveon",
 }
 
 
