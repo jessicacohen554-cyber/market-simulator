@@ -3638,6 +3638,7 @@ def solve_and_persist(
     caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_st_gas_committed_measured: bool = False,
     caiso_st_gas_peak_measured: bool = False,
+    caiso_ct_peaker_committed_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     nuclear_unit_availability: bool = False,
@@ -3960,6 +3961,7 @@ def solve_and_persist(
             ),
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
+            caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         )
         if pjm_offer_midcurve_segments is not None:
@@ -5397,6 +5399,7 @@ def solve_and_persist(
             ),
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
+            caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             nuclear_unit_availability=nuclear_unit_availability,
@@ -6301,6 +6304,7 @@ def solve_and_persist(
         ),
         "caiso_st_gas_committed_measured": caiso_st_gas_committed_measured,
         "caiso_st_gas_peak_measured": caiso_st_gas_peak_measured,
+        "caiso_ct_peaker_committed_measured": caiso_ct_peaker_committed_measured,
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
         "pjm_offer_midcurve_segments": (
             list(pjm_offer_midcurve_segments)
@@ -8601,6 +8605,7 @@ def run_replay_bundle(
     caiso_offer_surface_measured_ungrounded: bool | None = None,
     caiso_st_gas_committed_measured: bool | None = None,
     caiso_st_gas_peak_measured: bool | None = None,
+    caiso_ct_peaker_committed_measured: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
@@ -8689,6 +8694,10 @@ def run_replay_bundle(
         kwargs["caiso_st_gas_committed_measured"] = caiso_st_gas_committed_measured
     if caiso_st_gas_peak_measured is not None:
         kwargs["caiso_st_gas_peak_measured"] = caiso_st_gas_peak_measured
+    if caiso_ct_peaker_committed_measured is not None:
+        kwargs["caiso_ct_peaker_committed_measured"] = (
+            caiso_ct_peaker_committed_measured
+        )
     if unit_outage_mixed_gas_routing is not None:
         kwargs["unit_outage_mixed_gas_routing"] = unit_outage_mixed_gas_routing
     if unit_outage_st_capacity_basis is not None:
@@ -10468,6 +10477,29 @@ def main() -> None:
         "zero free parameters. DISCLOSED: 1.10 -> 1.166 RAISES the peak band "
         "(+6.0 %), so it makes C3a WORSE, and it is NEVER a C3a lever. An ISO "
         "with no registry entry is a hard error.",
+    )
+    parser.add_argument(
+        "--caiso-ct-peaker-committed-measured",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="STRUCTURAL-INTEGRITY REPAIR (rules 14/19/21/25, caiso-241): "
+        "ground CAISO CT_PEAKER's fitted `committed` band (1.35) on the "
+        "measured physical counterpart its OWN band dict already carries, "
+        "phys_committed = 0.991 (avg_committed_p50, "
+        "caiso_campd_marginal_hr_summary.csv, n=75). Zero new numbers, zero "
+        "free parameters; exactly one band moves. This is the PHYSICAL route, "
+        "NOT the Lever-A-refused measured BID (1.166), which stays unarmed. "
+        "Rule 19: the _committed tranche is the only tranche carrying the "
+        "bin's start cost and P1 already amortizes it ($20/MW NREL "
+        "SR-5500-55433 / P0 run length), so the 1.35 'start hurdle' is a "
+        "SECOND unidentified start-cost mechanism on the same tranche. Rule "
+        "25: 1.35 appears in the CAISO/NYISO/NEISO curves each citing the "
+        "others and none citing a measurement. It also un-inverts the class "
+        "(the keeper reads committed 1.350 > peak 1.166 -- the min-load block "
+        "is the class's most expensive MW). DISCLOSED: the direction is "
+        "FAVOURABLE to C3a, which is the session's hazard, not its argument; "
+        "this is NEVER a C3a lever. Non-CAISO, or a band with no "
+        "phys_committed, is a hard error.",
     )
     parser.add_argument(
         "--caiso-offer-surface-conditional",
@@ -12417,6 +12449,12 @@ def main() -> None:
                 or "--no-caiso-st-gas-peak-measured" in sys.argv
                 else None
             ),
+            caiso_ct_peaker_committed_measured=(
+                args.caiso_ct_peaker_committed_measured
+                if "--caiso-ct-peaker-committed-measured" in sys.argv
+                or "--no-caiso-ct-peaker-committed-measured" in sys.argv
+                else None
+            ),
             unit_outage_mixed_gas_routing=(
                 args.unit_outage_mixed_gas_routing
                 if "--unit-outage-mixed-gas-routing" in sys.argv
@@ -12746,6 +12784,7 @@ def main() -> None:
         ),
         caiso_st_gas_committed_measured=args.caiso_st_gas_committed_measured,
         caiso_st_gas_peak_measured=args.caiso_st_gas_peak_measured,
+        caiso_ct_peaker_committed_measured=args.caiso_ct_peaker_committed_measured,
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
         priced_interchange=(
             True
