@@ -335,6 +335,27 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "per-band derate) for the MISO seam import cap",
         evidence=(_BACKCAST_ORCH,),
     ),
+    ParityDeclaration(
+        fields=("miso_seam_envelope_hour_ending_key",),
+        disposition=PARAMETER_OF,
+        parent="miso_seam_flow_limit",
+        why="miso-175 hour-ENDING stamp convention for the measured (month x "
+        "hod) seam-envelope cap key — read only inside the miso_seam_flow_limit "
+        "/ miso_seam_export_limit blocks, the same treatment as its sibling "
+        "miso_seam_envelope_merit_cap (armed in the MISO keeper since miso-198)",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/model/interchange/miso.py"),
+    ),
+    ParityDeclaration(
+        fields=("caiso_offer_surface_measured_ungrounded",),
+        disposition=PARAMETER_OF,
+        parent="caiso_offer_surface_measured",
+        why="caiso-231 scope extension of the measured CAISO offer surface to "
+        "the un-grounded CHP / ST_GAS classes — re-uses the SAME measured "
+        "artifact and band set and raises ValueError unless the parent is "
+        "armed, so it inherits the parent's filed GAP (FFR-1E F-5) rather "
+        "than opening a second one (armed in the CAISO keeper since caiso-231)",
+        evidence=("src/market_sim/pipeline/backcast_config.py",),
+    ),
     # -- alias ---------------------------------------------------------------
     ParityDeclaration(
         fields=("plant_level_fleet",),
@@ -474,6 +495,47 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "them forward is its own future decision, never a silent fork. "
         "PRECOMMIT-ercot219 §1.2-§1.3.",
         evidence=(_BACKCAST_ORCH,),
+    ),
+    # -- FILED GAPS, owner ruling R-X (2026-09-02) ---------------------------
+    # The ercot-221 / ercot-223 backcast->forecast fork
+    # (docs/FINDING-fast-tier-repair-2026-09.md §3.8 + §7.1). The owner ruled
+    # FILE GAP DECLARATIONS — the FFR-1E route the two storage-envelope fields
+    # above took: the fork is KNOWN and TRACKED, not silenced. Whether to wire
+    # it forward (the runner.py / pipeline/solve.py seam,
+    # p1_storage_discharge_cost) or to declare it BACKCAST_ONLY is the
+    # capx/forecast desk's adjudication and is deliberately NOT decided here.
+    # Filing record: docs/FINDING-fr22-gap-leg2-2026-09.md.
+    ParityDeclaration(
+        fields=("ercot_storage_adaptive_expectation", "ercot_adaptive_event_release"),
+        disposition=GAP,
+        why="ercot-221 adaptive-expectation storage offer floor (a second P1 "
+        "pass floored on the model's OWN daily settle duals — zero measured "
+        "content) and its ercot-223 event-realized release guard, both armed "
+        "in the ERCOT forward keeper; their only consumer is the backcast "
+        "orchestrator's two-pass block, so a forecast on the keeper config "
+        "silently drops the floor. Wire-forward vs BACKCAST_ONLY is the "
+        "forecast desk's call (owner ruling R-X), not this row's",
+        finding="docs/FINDING-fr22-gap-leg2-2026-09.md",
+        evidence=(_BACKCAST_ORCH,),
+    ),
+    # Same fork class, surfaced by the same test on the same run, armed in the
+    # NYISO keeper before R-X's pin but masked from R-W's §3.8 by the test's
+    # per-ISO assertion order (ERCOT first). Filed under the R-X route — the
+    # disposition that decides nothing — never as BACKCAST_ONLY.
+    ParityDeclaration(
+        fields=("nyiso_seam_par_attribution",),
+        disposition=GAP,
+        why="nyiso-127 full-seam PAR attribution — all four NYISO_external "
+        "border-link caps rebuilt from the measured MIS P-32 per-neighbour "
+        "schedules (the SCH-PJ-NY row split by NYISO's published PAR shares); "
+        "armed in the NYISO keeper since nyiso-159 and consumed only in the "
+        "backcast orchestrator's TTC overlay block. Whether it joins the "
+        "measured-TTC BACKCAST_ONLY family or gets a forward channel is the "
+        "forecast desk's call — its superseded sibling "
+        "nyiso_seam_deliverability_envelope stays pinned open in "
+        "tests/scoring/test_forecast_parity.py on the same question",
+        finding="docs/FINDING-fr22-gap-leg2-2026-09.md",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_par_attribution.py"),
     ),
 )
 

@@ -785,7 +785,8 @@ def main() -> None:
     default_name = (
         f"thermal_tranches-perunitmerit-{iso}.csv"
         if (per_unit and merit_guard)
-        else f"thermal_tranches-perunit-{iso}.csv" if per_unit
+        else f"thermal_tranches-perunit-{iso}.csv"
+        if per_unit
         else f"thermal_tranches_{iso}.csv"
     )
     out_path = Path(args.out) if args.out else (PROCESSED_DIR / default_name)

@@ -34,7 +34,9 @@ from scripts.build_dof_ledger import _prb_follower_engaged, config_entries
 def _sigmoid_row(entries: list[dict]) -> dict | None:
     """Return the ``COAL_SIGMOID_DEFAULTS[*]`` entry among ``entries``, if any."""
     rows = [
-        e for e in entries if str(e.get("name", "")).startswith("COAL_SIGMOID_DEFAULTS[")
+        e
+        for e in entries
+        if str(e.get("name", "")).startswith("COAL_SIGMOID_DEFAULTS[")
     ]
     return rows[0] if rows else None
 
@@ -80,7 +82,9 @@ class TestFollowerGate(unittest.TestCase):
         )
         baseload_only = {"coal_prb_passthrough_sigmoid": True}
         tiered = {**baseload_only, "coal_prb_passthrough_tiered": True}
-        self.assertEqual(_sigmoid_row(config_entries(baseload_only, "ERCOT"))["n_scalars"], 4)
+        self.assertEqual(
+            _sigmoid_row(config_entries(baseload_only, "ERCOT"))["n_scalars"], 4
+        )
         self.assertEqual(_sigmoid_row(config_entries(tiered, "ERCOT"))["n_scalars"], 8)
 
     def test_tiered_names_the_follower_tier_in_its_provenance(self):
@@ -100,7 +104,9 @@ class TestFollowerGate(unittest.TestCase):
         # prb_follower_passthrough_series, so it attests nothing. This is the
         # ERCOT keeper's own state (coal_perplant_offer_curves disarmed the
         # sigmoids while leaving coal_prb_passthrough_tiered armed).
-        self.assertFalse(_prb_follower_engaged({"coal_prb_passthrough_tiered": True}, "ERCOT"))
+        self.assertFalse(
+            _prb_follower_engaged({"coal_prb_passthrough_tiered": True}, "ERCOT")
+        )
         self.assertIsNone(
             _sigmoid_row(config_entries({"coal_prb_passthrough_tiered": True}, "ERCOT"))
         )
@@ -158,8 +164,18 @@ class TestFollowerGate(unittest.TestCase):
             ("MISO", {}),
             ("PJM", {}),
             ("NYISO", {}),
-            ("NYISO", {f"coal_prb_follower_{p}": v for p, v in
-                       (("floor", 0.6), ("ceil", 1.1), ("gas_mid", 3.0), ("gas_slope", 2.5))}),
+            (
+                "NYISO",
+                {
+                    f"coal_prb_follower_{p}": v
+                    for p, v in (
+                        ("floor", 0.6),
+                        ("ceil", 1.1),
+                        ("gas_mid", 3.0),
+                        ("gas_slope", 2.5),
+                    )
+                },
+            ),
         ]
         for iso, overrides in cases:
             with self.subTest(iso=iso, overrides=sorted(overrides)):
