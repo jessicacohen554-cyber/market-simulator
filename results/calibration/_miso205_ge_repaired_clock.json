@@ -1,0 +1,1505 @@
+{
+ "charter": "miso-205 phase 0 \u2014 miso-203's G-E driver characterisation RE-DONE on the repaired instrument (INDIANA.HUB on the model's fixed-CST non-leap 8760, read from the committed zonal parquet). miso-203's hour-of-day claims were corrected by miso-204 \u00a76.5 and are inherited; its DRIVER claims were computed on the misaligned hour set and are UNMEASURED \u2014 neither re-affirmed nor refuted. This probe measures them.",
+ "prereg": "results/calibration/PREREG-miso205-ge-repaired-clock-2026-09-03.md @ fc8006d9",
+ "keeper": "2026-09-03-miso-202-unitclip",
+ "basis": "committed artifacts only \u2014 no LP solved. Rule 22: 2023/2024/2025.",
+ "instrument": "OBJ = top 1% of Jun-Jul hours of actual_lmp_hourly_zonal_MISO.parquet hub=INDIANA.HUB col=rt. Drivers from the keeper's hourly/ sidecars and iso_zone_hourly_drybulb \u2014 already on the model clock, unaffected by the LMP defect; only the hour SET moves.",
+ "trap5_anchors_read_not_derived": {
+  "reproduces_miso203_g_a_anchor_2025": true,
+  "anchors_2025": {
+   "MISO-West": 32.249,
+   "MISO-Plains": 33.34,
+   "MISO-Illinois": 32.701,
+   "MISO-Indiana": 33.018,
+   "MISO-East": 31.902,
+   "MISO-South": 35.674
+  }
+ },
+ "years": {
+  "2023": {
+   "trap7_scoring_reference_coverage": {
+    "n_nan_jun_jul": 0,
+    "n_nan_full_year": 0,
+    "max_abs_diff_vs_actual_lmp_hourly_MISO": 1.3427734359083843e-05,
+    "note": "the C3a system reference IS this hub (miso-204 \u00a76.1); the residual here is float32 rounding in the committed parquet"
+   },
+   "n1_reproduces_miso204_object_set": {
+    "n_hours": 15,
+    "mean_hour_of_day": 11.67,
+    "miso204_mean_hour_of_day": 11.67,
+    "in_h18_21": 1,
+    "miso204_in_h18_21": 1,
+    "in_h15_18": 1,
+    "miso204_in_h15_18": 1,
+    "threshold_usd_per_mwh": 121.43,
+    "reproduces_miso204": true
+   },
+   "n2_comparison_set_unchanged": {
+    "mine": {
+     "load_mw": 114090.0,
+     "wind_mw": 7350.0,
+     "solar_mw": 2148.0,
+     "netload_mw": 104592.0,
+     "netload_3h_ramp_mw": 4514.0,
+     "iso_drybulb_c": 33.1,
+     "hour_of_day_mean": 15.0
+    },
+    "miso203_committed": {
+     "load_mw": 114090.0,
+     "wind_mw": 7350.0,
+     "solar_mw": 2148.0,
+     "netload_mw": 104592.0,
+     "netload_3h_ramp_mw": 4514.0,
+     "iso_drybulb_c": 33.1,
+     "hour_of_day_mean": 15.0
+    },
+    "diffs": {
+     "load_mw": 0.0,
+     "wind_mw": 0.0,
+     "solar_mw": 0.0,
+     "netload_mw": 0.0,
+     "netload_3h_ramp_mw": 0.0,
+     "iso_drybulb_c": 0.0,
+     "hour_of_day_mean": 0.0
+    },
+    "reproduces_exactly": true,
+    "note": "the top-15 gross-load set is defined on MODEL drivers and does not move with the clock repair; a mismatch would mean the driver pipeline differs and no contrast below is comparable"
+   },
+   "g_a_g_b_driver_contrast": {
+    "obj_hours_REPAIRED": {
+     "load_mw": 92514.0,
+     "wind_mw": 5359.0,
+     "solar_mw": 2268.0,
+     "netload_mw": 84887.0,
+     "netload_3h_ramp_mw": 9971.0,
+     "iso_drybulb_c": 26.6,
+     "hour_of_day_mean": 11.7
+    },
+    "obj_hours_miso203_COMMITTED_defective": {
+     "load_mw": 96580.0,
+     "wind_mw": 6366.0,
+     "solar_mw": 1927.0,
+     "netload_mw": 88287.0,
+     "netload_3h_ramp_mw": 6874.0,
+     "iso_drybulb_c": 28.8,
+     "hour_of_day_mean": 14.4
+    },
+    "top_gross_load_hours": {
+     "load_mw": 114090.0,
+     "wind_mw": 7350.0,
+     "solar_mw": 2148.0,
+     "netload_mw": 104592.0,
+     "netload_3h_ramp_mw": 4514.0,
+     "iso_drybulb_c": 33.1,
+     "hour_of_day_mean": 15.0
+    },
+    "all_jun_jul": {
+     "load_mw": 81955.0,
+     "wind_mw": 6078.0,
+     "solar_mw": 1040.0,
+     "netload_mw": 74837.0,
+     "netload_3h_ramp_mw": 12.0,
+     "iso_drybulb_c": 24.1,
+     "hour_of_day_mean": 11.5
+    }
+   },
+   "g_a_mean_ranks": {
+    "repaired": {
+     "load_pctile_in_jun_jul": 75.4,
+     "netload_pctile_in_jun_jul": 73.3,
+     "drybulb_pctile_in_jun_jul": 66.0,
+     "load_pctile_in_summer": 77.7,
+     "netload_pctile_in_summer": 77.2,
+     "drybulb_pctile_in_summer": 68.7
+    },
+    "miso203_committed_defective": {
+     "load_pctile_in_jun_jul": 83.2,
+     "netload_pctile_in_jun_jul": 80.4,
+     "drybulb_pctile_in_jun_jul": 79.2,
+     "load_pctile_in_summer": 84.5,
+     "netload_pctile_in_summer": 83.3,
+     "drybulb_pctile_in_summer": 81.3
+    }
+   },
+   "g_c_overlap_with_driver_extremes": {
+    "repaired": {
+     "n_obj": 15,
+     "n_also_in_top_load_hours": 0,
+     "n_also_in_top_netload_hours": 0,
+     "n_also_in_top_drybulb_hours": 0
+    },
+    "miso203_committed_defective": {
+     "n_scarce": 15,
+     "n_also_in_top_load_hours": 0,
+     "n_also_in_top_netload_hours": 0,
+     "n_also_in_top_drybulb_hours": 0
+    }
+   },
+   "hour_of_day_histogram": {
+    "8": 3,
+    "9": 1,
+    "10": 2,
+    "11": 2,
+    "12": 2,
+    "13": 1,
+    "14": 2,
+    "16": 1,
+    "19": 1
+   },
+   "n_distinct_days": 10,
+   "g_e_location_recheck": {
+    "zones": {
+     "MISO-West": {
+      "t_ref_c": 35.0,
+      "obj_hour_mean_c": 25.12,
+      "obj_hour_max_c": 29.77,
+      "obj_minus_ref_c": -9.88
+     },
+     "MISO-Plains": {
+      "t_ref_c": 36.62,
+      "obj_hour_mean_c": 27.59,
+      "obj_hour_max_c": 32.61,
+      "obj_minus_ref_c": -9.03
+     },
+     "MISO-Illinois": {
+      "t_ref_c": 33.31,
+      "obj_hour_mean_c": 26.22,
+      "obj_hour_max_c": 33.73,
+      "obj_minus_ref_c": -7.09
+     },
+     "MISO-Indiana": {
+      "t_ref_c": 32.76,
+      "obj_hour_mean_c": 26.59,
+      "obj_hour_max_c": 32.07,
+      "obj_minus_ref_c": -6.17
+     },
+     "MISO-East": {
+      "t_ref_c": 30.45,
+      "obj_hour_mean_c": 24.74,
+      "obj_hour_max_c": 30.51,
+      "obj_minus_ref_c": -5.71
+     },
+     "MISO-South": {
+      "t_ref_c": 38.22,
+      "obj_hour_mean_c": 29.45,
+      "obj_hour_max_c": 35.1,
+      "obj_minus_ref_c": -8.78
+     }
+    },
+    "n_zones_below_anchor": 6,
+    "n_zones": 6,
+    "mean_gap_c": -7.78
+   },
+   "g_f_seam_and_class_dispatch": {
+    "label": "MODEL-SIDE DESCRIPTIVE ONLY \u2014 no committed hourly MISO interchange actual exists, so this is NOT a residual against a benchmark (miso-202 \u00a72 A-4's own labelling). Licenses nothing.",
+    "basis": "OBJ hours vs the other Jun-Jul hours, P1",
+    "n_other_jun_jul_hours": 1449,
+    "classes": {
+     "import": {
+      "obj_mean_mw": 6177.3,
+      "other_jun_jul_mean_mw": 4700.0,
+      "excess_mw": 1477.4
+     },
+     "CT_PEAKER": {
+      "obj_mean_mw": 4119.9,
+      "other_jun_jul_mean_mw": 2696.3,
+      "excess_mw": 1423.6
+     },
+     "ST_GAS": {
+      "obj_mean_mw": 3778.7,
+      "other_jun_jul_mean_mw": 2761.3,
+      "excess_mw": 1017.3
+     },
+     "COAL_PRB": {
+      "obj_mean_mw": 20704.4,
+      "other_jun_jul_mean_mw": 18539.3,
+      "excess_mw": 2165.2
+     },
+     "wind": {
+      "obj_mean_mw": 5359.3,
+      "other_jun_jul_mean_mw": 6085.7,
+      "excess_mw": -726.5
+     },
+     "solar": {
+      "obj_mean_mw": 2267.8,
+      "other_jun_jul_mean_mw": 1027.3,
+      "excess_mw": 1240.5
+     }
+    },
+    "miso202_committed_defective_import_excess_mw": 3844.4
+   },
+   "h1_netload_elevation_decomposition__POSTHOC": {
+    "label": "POST-HOC, NOT PRE-REGISTERED, no gate. The C10 decision rule measures the ramp's magnitude and is silent on its cause; this block supplies the cause.",
+    "netload_excess_over_all_jun_jul_mw": 10050.0,
+    "from_load_mw": 10559.0,
+    "from_wind_deficit_mw": 719.0,
+    "from_solar_deficit_mw": -1228.0,
+    "share_load": 1.0506,
+    "share_wind_deficit": 0.0715,
+    "share_solar_deficit": -0.1222,
+    "solar_pctile_in_jun_jul": 82.3,
+    "wind_pctile_in_jun_jul": 45.5,
+    "solar_pctile_hod_matched": 55.3,
+    "wind_pctile_hod_matched": 54.5,
+    "load_pctile_hod_matched": 63.8,
+    "drybulb_pctile_hod_matched": 63.9
+   },
+   "h2_largest_hour__POSTHOC": {
+    "stamp": "2023-07-07 HE13",
+    "actual_indiana_hub_usd": 354.91,
+    "model_price_load_weighted_usd": 36.57,
+    "load_pctile_jj": 73.6,
+    "netload_pctile_jj": 76.2,
+    "drybulb_pctile_jj": 58.1,
+    "solar_mw": 2417.0,
+    "solar_mean_all_jun_jul_mw": 1040.0
+   },
+   "hours": [
+    {
+     "hour": 3656,
+     "stamp": "2023-06-02 HE09",
+     "actual_indiana_hub_usd": 125.58,
+     "model_price_zone_mean_usd": 31.82,
+     "model_price_load_weighted_usd": 31.83,
+     "load_mw": 83897.0,
+     "load_pctile_jj": 56.7,
+     "solar_mw": 2518.0,
+     "netload_mw": 78351.0,
+     "netload_pctile_jj": 58.7,
+     "netload_3h_ramp_mw": 14557.0,
+     "iso_drybulb_c": 21.7,
+     "drybulb_pctile_jj": 33.9
+    },
+    {
+     "hour": 3757,
+     "stamp": "2023-06-06 HE14",
+     "actual_indiana_hub_usd": 121.54,
+     "model_price_zone_mean_usd": 34.95,
+     "model_price_load_weighted_usd": 34.95,
+     "load_mw": 90172.0,
+     "load_pctile_jj": 70.8,
+     "solar_mw": 2051.0,
+     "netload_mw": 85440.0,
+     "netload_pctile_jj": 74.8,
+     "netload_3h_ramp_mw": 6796.0,
+     "iso_drybulb_c": 27.5,
+     "drybulb_pctile_jj": 71.5
+    },
+    {
+     "hour": 3758,
+     "stamp": "2023-06-06 HE15",
+     "actual_indiana_hub_usd": 141.75,
+     "model_price_zone_mean_usd": 35.15,
+     "model_price_load_weighted_usd": 35.15,
+     "load_mw": 91171.0,
+     "load_pctile_jj": 72.8,
+     "solar_mw": 1802.0,
+     "netload_mw": 86054.0,
+     "netload_pctile_jj": 76.5,
+     "netload_3h_ramp_mw": 4667.0,
+     "iso_drybulb_c": 28.3,
+     "drybulb_pctile_jj": 78.6
+    },
+    {
+     "hour": 4112,
+     "stamp": "2023-06-21 HE09",
+     "actual_indiana_hub_usd": 160.73,
+     "model_price_zone_mean_usd": 32.68,
+     "model_price_load_weighted_usd": 32.68,
+     "load_mw": 84551.0,
+     "load_pctile_jj": 58.4,
+     "solar_mw": 2830.0,
+     "netload_mw": 76114.0,
+     "netload_pctile_jj": 54.3,
+     "netload_3h_ramp_mw": 18353.0,
+     "iso_drybulb_c": 21.9,
+     "drybulb_pctile_jj": 35.6
+    },
+    {
+     "hour": 4186,
+     "stamp": "2023-06-24 HE11",
+     "actual_indiana_hub_usd": 147.69,
+     "model_price_zone_mean_usd": 32.32,
+     "model_price_load_weighted_usd": 32.32,
+     "load_mw": 86864.0,
+     "load_pctile_jj": 63.5,
+     "solar_mw": 2878.0,
+     "netload_mw": 73040.0,
+     "netload_pctile_jj": 47.4,
+     "netload_3h_ramp_mw": 12253.0,
+     "iso_drybulb_c": 25.9,
+     "drybulb_pctile_jj": 60.9
+    },
+    {
+     "hour": 4190,
+     "stamp": "2023-06-24 HE15",
+     "actual_indiana_hub_usd": 136.65,
+     "model_price_zone_mean_usd": 35.78,
+     "model_price_load_weighted_usd": 35.81,
+     "load_mw": 97594.0,
+     "load_pctile_jj": 86.5,
+     "solar_mw": 2603.0,
+     "netload_mw": 84018.0,
+     "netload_pctile_jj": 71.5,
+     "netload_3h_ramp_mw": 7692.0,
+     "iso_drybulb_c": 32.0,
+     "drybulb_pctile_jj": 97.5
+    },
+    {
+     "hour": 4192,
+     "stamp": "2023-06-24 HE17",
+     "actual_indiana_hub_usd": 154.52,
+     "model_price_zone_mean_usd": 37.52,
+     "model_price_load_weighted_usd": 37.52,
+     "load_mw": 99317.0,
+     "load_pctile_jj": 89.6,
+     "solar_mw": 2064.0,
+     "netload_mw": 88812.0,
+     "netload_pctile_jj": 82.7,
+     "netload_3h_ramp_mw": 7675.0,
+     "iso_drybulb_c": 32.1,
+     "drybulb_pctile_jj": 98.1
+    },
+    {
+     "hour": 4448,
+     "stamp": "2023-07-05 HE09",
+     "actual_indiana_hub_usd": 265.49,
+     "model_price_zone_mean_usd": 33.92,
+     "model_price_load_weighted_usd": 33.92,
+     "load_mw": 88587.0,
+     "load_pctile_jj": 67.6,
+     "solar_mw": 2360.0,
+     "netload_mw": 78442.0,
+     "netload_pctile_jj": 58.9,
+     "netload_3h_ramp_mw": 13496.0,
+     "iso_drybulb_c": 22.9,
+     "drybulb_pctile_jj": 42.3
+    },
+    {
+     "hour": 4449,
+     "stamp": "2023-07-05 HE10",
+     "actual_indiana_hub_usd": 128.83,
+     "model_price_zone_mean_usd": 36.92,
+     "model_price_load_weighted_usd": 36.92,
+     "load_mw": 94014.0,
+     "load_pctile_jj": 78.8,
+     "solar_mw": 2449.0,
+     "netload_mw": 84580.0,
+     "netload_pctile_jj": 72.5,
+     "netload_3h_ramp_mw": 15720.0,
+     "iso_drybulb_c": 24.3,
+     "drybulb_pctile_jj": 51.6
+    },
+    {
+     "hour": 4475,
+     "stamp": "2023-07-06 HE12",
+     "actual_indiana_hub_usd": 324.18,
+     "model_price_zone_mean_usd": 36.9,
+     "model_price_load_weighted_usd": 36.9,
+     "load_mw": 91772.0,
+     "load_pctile_jj": 74.7,
+     "solar_mw": 2391.0,
+     "netload_mw": 85689.0,
+     "netload_pctile_jj": 75.5,
+     "netload_3h_ramp_mw": 8181.0,
+     "iso_drybulb_c": 25.2,
+     "drybulb_pctile_jj": 56.8
+    },
+    {
+     "hour": 4500,
+     "stamp": "2023-07-07 HE13",
+     "actual_indiana_hub_usd": 354.91,
+     "model_price_zone_mean_usd": 36.57,
+     "model_price_load_weighted_usd": 36.57,
+     "load_mw": 91422.0,
+     "load_pctile_jj": 73.6,
+     "solar_mw": 2417.0,
+     "netload_mw": 85947.0,
+     "netload_pctile_jj": 76.2,
+     "netload_3h_ramp_mw": 9483.0,
+     "iso_drybulb_c": 25.3,
+     "drybulb_pctile_jj": 58.1
+    },
+    {
+     "hour": 4666,
+     "stamp": "2023-07-14 HE11",
+     "actual_indiana_hub_usd": 123.95,
+     "model_price_zone_mean_usd": 38.51,
+     "model_price_load_weighted_usd": 38.51,
+     "load_mw": 95433.0,
+     "load_pctile_jj": 82.3,
+     "solar_mw": 2391.0,
+     "netload_mw": 87681.0,
+     "netload_pctile_jj": 79.6,
+     "netload_3h_ramp_mw": 12449.0,
+     "iso_drybulb_c": 26.2,
+     "drybulb_pctile_jj": 62.7
+    },
+    {
+     "hour": 4668,
+     "stamp": "2023-07-14 HE13",
+     "actual_indiana_hub_usd": 191.94,
+     "model_price_zone_mean_usd": 41.83,
+     "model_price_load_weighted_usd": 41.83,
+     "load_mw": 102417.0,
+     "load_pctile_jj": 94.0,
+     "solar_mw": 2398.0,
+     "netload_mw": 93977.0,
+     "netload_pctile_jj": 92.7,
+     "netload_3h_ramp_mw": 9459.0,
+     "iso_drybulb_c": 29.6,
+     "drybulb_pctile_jj": 87.0
+    },
+    {
+     "hour": 4891,
+     "stamp": "2023-07-23 HE20",
+     "actual_indiana_hub_usd": 129.69,
+     "model_price_zone_mean_usd": 37.18,
+     "model_price_load_weighted_usd": 37.18,
+     "load_mw": 89956.0,
+     "load_pctile_jj": 70.6,
+     "solar_mw": 14.0,
+     "netload_mw": 89026.0,
+     "netload_pctile_jj": 83.3,
+     "netload_3h_ramp_mw": -5393.0,
+     "iso_drybulb_c": 28.6,
+     "drybulb_pctile_jj": 80.3
+    },
+    {
+     "hour": 4907,
+     "stamp": "2023-07-24 HE12",
+     "actual_indiana_hub_usd": 307.53,
+     "model_price_zone_mean_usd": 39.83,
+     "model_price_load_weighted_usd": 39.83,
+     "load_mw": 100544.0,
+     "load_pctile_jj": 91.6,
+     "solar_mw": 2851.0,
+     "netload_mw": 96135.0,
+     "netload_pctile_jj": 95.4,
+     "netload_3h_ramp_mw": 14172.0,
+     "iso_drybulb_c": 27.8,
+     "drybulb_pctile_jj": 74.4
+    }
+   ],
+   "jun_jul_peaks_for_reference": {
+    "max_load_mw": 116545.0,
+    "max_netload_mw": 107029.0,
+    "max_iso_drybulb_c": 34.1
+   }
+  },
+  "2024": {
+   "trap7_scoring_reference_coverage": {
+    "n_nan_jun_jul": 0,
+    "n_nan_full_year": 0,
+    "max_abs_diff_vs_actual_lmp_hourly_MISO": 2.6855468718167685e-05,
+    "note": "the C3a system reference IS this hub (miso-204 \u00a76.1); the residual here is float32 rounding in the committed parquet"
+   },
+   "n1_reproduces_miso204_object_set": {
+    "n_hours": 15,
+    "mean_hour_of_day": 15.73,
+    "miso204_mean_hour_of_day": 15.73,
+    "in_h18_21": 3,
+    "miso204_in_h18_21": 3,
+    "in_h15_18": 9,
+    "miso204_in_h15_18": 9,
+    "threshold_usd_per_mwh": 159.01,
+    "reproduces_miso204": true
+   },
+   "n2_comparison_set_unchanged": {
+    "mine": {
+     "load_mw": 112822.0,
+     "wind_mw": 5758.0,
+     "solar_mw": 4959.0,
+     "netload_mw": 102105.0,
+     "netload_3h_ramp_mw": 5137.0,
+     "iso_drybulb_c": 31.8,
+     "hour_of_day_mean": 14.9
+    },
+    "miso203_committed": {
+     "load_mw": 112822.0,
+     "wind_mw": 5758.0,
+     "solar_mw": 4959.0,
+     "netload_mw": 102105.0,
+     "netload_3h_ramp_mw": 5137.0,
+     "iso_drybulb_c": 31.8,
+     "hour_of_day_mean": 14.9
+    },
+    "diffs": {
+     "load_mw": 0.0,
+     "wind_mw": 0.0,
+     "solar_mw": 0.0,
+     "netload_mw": 0.0,
+     "netload_3h_ramp_mw": 0.0,
+     "iso_drybulb_c": 0.0,
+     "hour_of_day_mean": 0.0
+    },
+    "reproduces_exactly": true,
+    "note": "the top-15 gross-load set is defined on MODEL drivers and does not move with the clock repair; a mismatch would mean the driver pipeline differs and no contrast below is comparable"
+   },
+   "g_a_g_b_driver_contrast": {
+    "obj_hours_REPAIRED": {
+     "load_mw": 99291.0,
+     "wind_mw": 5822.0,
+     "solar_mw": 2917.0,
+     "netload_mw": 90552.0,
+     "netload_3h_ramp_mw": 3865.0,
+     "iso_drybulb_c": 28.6,
+     "hour_of_day_mean": 15.7
+    },
+    "obj_hours_miso203_COMMITTED_defective": {
+     "load_mw": 99906.0,
+     "wind_mw": 6716.0,
+     "solar_mw": 2520.0,
+     "netload_mw": 90670.0,
+     "netload_3h_ramp_mw": 96.0,
+     "iso_drybulb_c": 29.2,
+     "hour_of_day_mean": 17.1
+    },
+    "top_gross_load_hours": {
+     "load_mw": 112822.0,
+     "wind_mw": 5758.0,
+     "solar_mw": 4959.0,
+     "netload_mw": 102105.0,
+     "netload_3h_ramp_mw": 5137.0,
+     "iso_drybulb_c": 31.8,
+     "hour_of_day_mean": 14.9
+    },
+    "all_jun_jul": {
+     "load_mw": 82596.0,
+     "wind_mw": 8512.0,
+     "solar_mw": 2123.0,
+     "netload_mw": 71962.0,
+     "netload_3h_ramp_mw": 40.0,
+     "iso_drybulb_c": 24.1,
+     "hour_of_day_mean": 11.5
+    }
+   },
+   "g_a_mean_ranks": {
+    "repaired": {
+     "load_pctile_in_jun_jul": 85.9,
+     "netload_pctile_in_jun_jul": 86.6,
+     "drybulb_pctile_in_jun_jul": 80.6,
+     "load_pctile_in_summer": 87.5,
+     "netload_pctile_in_summer": 88.3,
+     "drybulb_pctile_in_summer": 81.6
+    },
+    "miso203_committed_defective": {
+     "load_pctile_in_jun_jul": 83.8,
+     "netload_pctile_in_jun_jul": 83.6,
+     "drybulb_pctile_in_jun_jul": 84.7,
+     "load_pctile_in_summer": 85.7,
+     "netload_pctile_in_summer": 85.2,
+     "drybulb_pctile_in_summer": 85.4
+    }
+   },
+   "g_c_overlap_with_driver_extremes": {
+    "repaired": {
+     "n_obj": 15,
+     "n_also_in_top_load_hours": 1,
+     "n_also_in_top_netload_hours": 4,
+     "n_also_in_top_drybulb_hours": 0
+    },
+    "miso203_committed_defective": {
+     "n_scarce": 15,
+     "n_also_in_top_load_hours": 3,
+     "n_also_in_top_netload_hours": 4,
+     "n_also_in_top_drybulb_hours": 1
+    }
+   },
+   "hour_of_day_histogram": {
+    "10": 2,
+    "14": 1,
+    "15": 3,
+    "16": 3,
+    "17": 3,
+    "19": 2,
+    "20": 1
+   },
+   "n_distinct_days": 10,
+   "g_e_location_recheck": {
+    "zones": {
+     "MISO-West": {
+      "t_ref_c": 29.53,
+      "obj_hour_mean_c": 27.51,
+      "obj_hour_max_c": 32.65,
+      "obj_minus_ref_c": -2.02
+     },
+     "MISO-Plains": {
+      "t_ref_c": 34.52,
+      "obj_hour_mean_c": 29.63,
+      "obj_hour_max_c": 33.08,
+      "obj_minus_ref_c": -4.9
+     },
+     "MISO-Illinois": {
+      "t_ref_c": 32.57,
+      "obj_hour_mean_c": 28.15,
+      "obj_hour_max_c": 34.4,
+      "obj_minus_ref_c": -4.42
+     },
+     "MISO-Indiana": {
+      "t_ref_c": 31.86,
+      "obj_hour_mean_c": 27.47,
+      "obj_hour_max_c": 31.1,
+      "obj_minus_ref_c": -4.39
+     },
+     "MISO-East": {
+      "t_ref_c": 31.61,
+      "obj_hour_mean_c": 27.26,
+      "obj_hour_max_c": 33.08,
+      "obj_minus_ref_c": -4.35
+     },
+     "MISO-South": {
+      "t_ref_c": 35.94,
+      "obj_hour_mean_c": 31.29,
+      "obj_hour_max_c": 34.92,
+      "obj_minus_ref_c": -4.65
+     }
+    },
+    "n_zones_below_anchor": 6,
+    "n_zones": 6,
+    "mean_gap_c": -4.12
+   },
+   "g_f_seam_and_class_dispatch": {
+    "label": "MODEL-SIDE DESCRIPTIVE ONLY \u2014 no committed hourly MISO interchange actual exists, so this is NOT a residual against a benchmark (miso-202 \u00a72 A-4's own labelling). Licenses nothing.",
+    "basis": "OBJ hours vs the other Jun-Jul hours, P1",
+    "n_other_jun_jul_hours": 1449,
+    "classes": {
+     "import": {
+      "obj_mean_mw": 5002.6,
+      "other_jun_jul_mean_mw": 3152.2,
+      "excess_mw": 1850.4
+     },
+     "CT_PEAKER": {
+      "obj_mean_mw": 7993.1,
+      "other_jun_jul_mean_mw": 2957.9,
+      "excess_mw": 5035.1
+     },
+     "ST_GAS": {
+      "obj_mean_mw": 3680.8,
+      "other_jun_jul_mean_mw": 2306.3,
+      "excess_mw": 1374.5
+     },
+     "COAL_PRB": {
+      "obj_mean_mw": 21305.9,
+      "other_jun_jul_mean_mw": 17073.8,
+      "excess_mw": 4232.1
+     },
+     "wind": {
+      "obj_mean_mw": 5821.6,
+      "other_jun_jul_mean_mw": 8539.4,
+      "excess_mw": -2717.8
+     },
+     "solar": {
+      "obj_mean_mw": 2916.7,
+      "other_jun_jul_mean_mw": 2114.5,
+      "excess_mw": 802.2
+     }
+    },
+    "miso202_committed_defective_import_excess_mw": 3844.4
+   },
+   "h1_netload_elevation_decomposition__POSTHOC": {
+    "label": "POST-HOC, NOT PRE-REGISTERED, no gate. The C10 decision rule measures the ramp's magnitude and is silent on its cause; this block supplies the cause.",
+    "netload_excess_over_all_jun_jul_mw": 18590.0,
+    "from_load_mw": 16694.0,
+    "from_wind_deficit_mw": 2690.0,
+    "from_solar_deficit_mw": -794.0,
+    "share_load": 0.898,
+    "share_wind_deficit": 0.1447,
+    "share_solar_deficit": -0.0427,
+    "solar_pctile_in_jun_jul": 59.8,
+    "wind_pctile_in_jun_jul": 34.5,
+    "solar_pctile_hod_matched": 38.0,
+    "wind_pctile_hod_matched": 36.1,
+    "load_pctile_hod_matched": 69.6,
+    "drybulb_pctile_hod_matched": 57.5
+   },
+   "h2_largest_hour__POSTHOC": {
+    "stamp": "2024-07-28 HE18",
+    "actual_indiana_hub_usd": 704.06,
+    "model_price_load_weighted_usd": 34.84,
+    "load_pctile_jj": 89.2,
+    "netload_pctile_jj": 88.4,
+    "drybulb_pctile_jj": 90.0,
+    "solar_mw": 2167.0,
+    "solar_mean_all_jun_jul_mw": 2123.0
+   },
+   "hours": [
+    {
+     "hour": 3689,
+     "stamp": "2024-06-03 HE18",
+     "actual_indiana_hub_usd": 274.84,
+     "model_price_zone_mean_usd": 37.56,
+     "model_price_load_weighted_usd": 37.56,
+     "load_mw": 93005.0,
+     "load_pctile_jj": 76.6,
+     "solar_mw": 2220.0,
+     "netload_mw": 84575.0,
+     "netload_pctile_jj": 81.1,
+     "netload_3h_ramp_mw": 51.0,
+     "iso_drybulb_c": 26.0,
+     "drybulb_pctile_jj": 63.3
+    },
+    {
+     "hour": 3691,
+     "stamp": "2024-06-03 HE20",
+     "actual_indiana_hub_usd": 175.89,
+     "model_price_zone_mean_usd": 35.44,
+     "model_price_load_weighted_usd": 35.44,
+     "load_mw": 87825.0,
+     "load_pctile_jj": 65.0,
+     "solar_mw": 31.0,
+     "netload_mw": 80986.0,
+     "netload_pctile_jj": 73.2,
+     "netload_3h_ramp_mw": -4007.0,
+     "iso_drybulb_c": 24.6,
+     "drybulb_pctile_jj": 53.6
+    },
+    {
+     "hour": 4004,
+     "stamp": "2024-06-16 HE21",
+     "actual_indiana_hub_usd": 631.92,
+     "model_price_zone_mean_usd": 30.6,
+     "model_price_load_weighted_usd": 30.64,
+     "load_mw": 90825.0,
+     "load_pctile_jj": 71.4,
+     "solar_mw": 0.0,
+     "netload_mw": 77444.0,
+     "netload_pctile_jj": 65.4,
+     "netload_3h_ramp_mw": 153.0,
+     "iso_drybulb_c": 26.3,
+     "drybulb_pctile_jj": 65.6
+    },
+    {
+     "hour": 4066,
+     "stamp": "2024-06-19 HE11",
+     "actual_indiana_hub_usd": 162.0,
+     "model_price_zone_mean_usd": 35.37,
+     "model_price_load_weighted_usd": 35.37,
+     "load_mw": 95283.0,
+     "load_pctile_jj": 81.6,
+     "solar_mw": 4396.0,
+     "netload_mw": 84243.0,
+     "netload_pctile_jj": 80.1,
+     "netload_3h_ramp_mw": 8861.0,
+     "iso_drybulb_c": 27.1,
+     "drybulb_pctile_jj": 72.0
+    },
+    {
+     "hour": 4071,
+     "stamp": "2024-06-19 HE16",
+     "actual_indiana_hub_usd": 537.17,
+     "model_price_zone_mean_usd": 40.57,
+     "model_price_load_weighted_usd": 40.57,
+     "load_mw": 103937.0,
+     "load_pctile_jj": 95.6,
+     "solar_mw": 3435.0,
+     "netload_mw": 95608.0,
+     "netload_pctile_jj": 96.7,
+     "netload_3h_ramp_mw": 4630.0,
+     "iso_drybulb_c": 31.7,
+     "drybulb_pctile_jj": 97.5
+    },
+    {
+     "hour": 4099,
+     "stamp": "2024-06-20 HE20",
+     "actual_indiana_hub_usd": 212.87,
+     "model_price_zone_mean_usd": 36.51,
+     "model_price_load_weighted_usd": 36.51,
+     "load_mw": 94487.0,
+     "load_pctile_jj": 79.8,
+     "solar_mw": 100.0,
+     "netload_mw": 89334.0,
+     "netload_pctile_jj": 89.0,
+     "netload_3h_ramp_mw": -6102.0,
+     "iso_drybulb_c": 28.4,
+     "drybulb_pctile_jj": 81.7
+    },
+    {
+     "hour": 4312,
+     "stamp": "2024-06-29 HE17",
+     "actual_indiana_hub_usd": 195.7,
+     "model_price_zone_mean_usd": 29.61,
+     "model_price_load_weighted_usd": 30.32,
+     "load_mw": 97961.0,
+     "load_pctile_jj": 88.2,
+     "solar_mw": 4320.0,
+     "netload_mw": 76410.0,
+     "netload_pctile_jj": 62.7,
+     "netload_3h_ramp_mw": 5733.0,
+     "iso_drybulb_c": 27.7,
+     "drybulb_pctile_jj": 76.4
+    },
+    {
+     "hour": 4551,
+     "stamp": "2024-07-09 HE16",
+     "actual_indiana_hub_usd": 301.75,
+     "model_price_zone_mean_usd": 40.85,
+     "model_price_load_weighted_usd": 40.85,
+     "load_mw": 95673.0,
+     "load_pctile_jj": 82.7,
+     "solar_mw": 2388.0,
+     "netload_mw": 91848.0,
+     "netload_pctile_jj": 92.3,
+     "netload_3h_ramp_mw": 1962.0,
+     "iso_drybulb_c": 30.1,
+     "drybulb_pctile_jj": 92.1
+    },
+    {
+     "hour": 4858,
+     "stamp": "2024-07-22 HE11",
+     "actual_indiana_hub_usd": 179.08,
+     "model_price_zone_mean_usd": 36.64,
+     "model_price_load_weighted_usd": 36.64,
+     "load_mw": 91469.0,
+     "load_pctile_jj": 73.2,
+     "solar_mw": 5210.0,
+     "netload_mw": 86180.0,
+     "netload_pctile_jj": 84.8,
+     "netload_3h_ramp_mw": 11765.0,
+     "iso_drybulb_c": 23.6,
+     "drybulb_pctile_jj": 46.4
+    },
+    {
+     "hour": 5008,
+     "stamp": "2024-07-28 HE17",
+     "actual_indiana_hub_usd": 195.71,
+     "model_price_zone_mean_usd": 34.84,
+     "model_price_load_weighted_usd": 34.84,
+     "load_mw": 99762.0,
+     "load_pctile_jj": 90.4,
+     "solar_mw": 3395.0,
+     "netload_mw": 87739.0,
+     "netload_pctile_jj": 86.9,
+     "netload_3h_ramp_mw": 5628.0,
+     "iso_drybulb_c": 30.0,
+     "drybulb_pctile_jj": 91.6
+    },
+    {
+     "hour": 5009,
+     "stamp": "2024-07-28 HE18",
+     "actual_indiana_hub_usd": 704.06,
+     "model_price_zone_mean_usd": 34.84,
+     "model_price_load_weighted_usd": 34.84,
+     "load_mw": 99012.0,
+     "load_pctile_jj": 89.2,
+     "solar_mw": 2167.0,
+     "netload_mw": 88947.0,
+     "netload_pctile_jj": 88.4,
+     "netload_3h_ramp_mw": 4554.0,
+     "iso_drybulb_c": 29.7,
+     "drybulb_pctile_jj": 90.0
+    },
+    {
+     "hour": 5030,
+     "stamp": "2024-07-29 HE15",
+     "actual_indiana_hub_usd": 384.09,
+     "model_price_zone_mean_usd": 46.72,
+     "model_price_load_weighted_usd": 46.72,
+     "load_mw": 109273.0,
+     "load_pctile_jj": 98.5,
+     "solar_mw": 5055.0,
+     "netload_mw": 102200.0,
+     "netload_pctile_jj": 99.0,
+     "netload_3h_ramp_mw": 8482.0,
+     "iso_drybulb_c": 30.7,
+     "drybulb_pctile_jj": 94.6
+    },
+    {
+     "hour": 5031,
+     "stamp": "2024-07-29 HE16",
+     "actual_indiana_hub_usd": 161.26,
+     "model_price_zone_mean_usd": 49.71,
+     "model_price_load_weighted_usd": 49.71,
+     "load_mw": 110341.0,
+     "load_pctile_jj": 98.8,
+     "solar_mw": 4389.0,
+     "netload_mw": 104116.0,
+     "netload_pctile_jj": 99.7,
+     "netload_3h_ramp_mw": 6362.0,
+     "iso_drybulb_c": 31.0,
+     "drybulb_pctile_jj": 95.7
+    },
+    {
+     "hour": 5032,
+     "stamp": "2024-07-29 HE17",
+     "actual_indiana_hub_usd": 543.36,
+     "model_price_zone_mean_usd": 51.56,
+     "model_price_load_weighted_usd": 51.56,
+     "load_mw": 110557.0,
+     "load_pctile_jj": 99.0,
+     "solar_mw": 3733.0,
+     "netload_mw": 104996.0,
+     "netload_pctile_jj": 99.9,
+     "netload_3h_ramp_mw": 4795.0,
+     "iso_drybulb_c": 30.9,
+     "drybulb_pctile_jj": 95.2
+    },
+    {
+     "hour": 5057,
+     "stamp": "2024-07-30 HE18",
+     "actual_indiana_hub_usd": 274.35,
+     "model_price_zone_mean_usd": 42.16,
+     "model_price_load_weighted_usd": 42.16,
+     "load_mw": 109950.0,
+     "load_pctile_jj": 98.7,
+     "solar_mw": 2911.0,
+     "netload_mw": 103661.0,
+     "netload_pctile_jj": 99.5,
+     "netload_3h_ramp_mw": 5116.0,
+     "iso_drybulb_c": 30.6,
+     "drybulb_pctile_jj": 93.9
+    }
+   ],
+   "jun_jul_peaks_for_reference": {
+    "max_load_mw": 114734.0,
+    "max_netload_mw": 104996.0,
+    "max_iso_drybulb_c": 33.4
+   }
+  },
+  "2025": {
+   "trap7_scoring_reference_coverage": {
+    "n_nan_jun_jul": 0,
+    "n_nan_full_year": 1,
+    "max_abs_diff_vs_actual_lmp_hourly_MISO": 5.859375005456968e-05,
+    "note": "the C3a system reference IS this hub (miso-204 \u00a76.1); the residual here is float32 rounding in the committed parquet"
+   },
+   "n1_reproduces_miso204_object_set": {
+    "n_hours": 15,
+    "mean_hour_of_day": 15.87,
+    "miso204_mean_hour_of_day": 15.87,
+    "in_h18_21": 4,
+    "miso204_in_h18_21": 4,
+    "in_h15_18": 11,
+    "miso204_in_h15_18": 11,
+    "threshold_usd_per_mwh": 373.02,
+    "reproduces_miso204": true,
+    "stamps_match_miso204_table": true,
+    "stamps": [
+     "2025-06-17 HE18",
+     "2025-06-23 HE18",
+     "2025-06-23 HE19",
+     "2025-06-24 HE11",
+     "2025-06-24 HE12",
+     "2025-06-24 HE16",
+     "2025-06-24 HE17",
+     "2025-06-24 HE18",
+     "2025-06-24 HE19",
+     "2025-07-15 HE16",
+     "2025-07-22 HE18",
+     "2025-07-28 HE18",
+     "2025-07-28 HE19",
+     "2025-07-28 HE20",
+     "2025-07-30 HE14"
+    ]
+   },
+   "n2_comparison_set_unchanged": {
+    "mine": {
+     "load_mw": 117415.0,
+     "wind_mw": 5758.0,
+     "solar_mw": 11435.0,
+     "netload_mw": 100223.0,
+     "netload_3h_ramp_mw": 5364.0,
+     "iso_drybulb_c": 32.7,
+     "hour_of_day_mean": 14.5
+    },
+    "miso203_committed": {
+     "load_mw": 117415.0,
+     "wind_mw": 5758.0,
+     "solar_mw": 11435.0,
+     "netload_mw": 100223.0,
+     "netload_3h_ramp_mw": 5364.0,
+     "iso_drybulb_c": 32.7,
+     "hour_of_day_mean": 14.5
+    },
+    "diffs": {
+     "load_mw": 0.0,
+     "wind_mw": 0.0,
+     "solar_mw": 0.0,
+     "netload_mw": 0.0,
+     "netload_3h_ramp_mw": 0.0,
+     "iso_drybulb_c": 0.0,
+     "hour_of_day_mean": 0.0
+    },
+    "reproduces_exactly": true,
+    "note": "the top-15 gross-load set is defined on MODEL drivers and does not move with the clock repair; a mismatch would mean the driver pipeline differs and no contrast below is comparable"
+   },
+   "g_a_g_b_driver_contrast": {
+    "obj_hours_REPAIRED": {
+     "load_mw": 109041.0,
+     "wind_mw": 5120.0,
+     "solar_mw": 6237.0,
+     "netload_mw": 97684.0,
+     "netload_3h_ramp_mw": 4930.0,
+     "iso_drybulb_c": 31.0,
+     "hour_of_day_mean": 15.9
+    },
+    "obj_hours_miso203_COMMITTED_defective": {
+     "load_mw": 105843.0,
+     "wind_mw": 5965.0,
+     "solar_mw": 1859.0,
+     "netload_mw": 98018.0,
+     "netload_3h_ramp_mw": 1875.0,
+     "iso_drybulb_c": 30.8,
+     "hour_of_day_mean": 18.3
+    },
+    "top_gross_load_hours": {
+     "load_mw": 117415.0,
+     "wind_mw": 5758.0,
+     "solar_mw": 11435.0,
+     "netload_mw": 100223.0,
+     "netload_3h_ramp_mw": 5364.0,
+     "iso_drybulb_c": 32.7,
+     "hour_of_day_mean": 14.5
+    },
+    "all_jun_jul": {
+     "load_mw": 86370.0,
+     "wind_mw": 7969.0,
+     "solar_mw": 4639.0,
+     "netload_mw": 73762.0,
+     "netload_3h_ramp_mw": 26.0,
+     "iso_drybulb_c": 24.9,
+     "hour_of_day_mean": 11.5
+    }
+   },
+   "g_a_mean_ranks": {
+    "repaired": {
+     "load_pctile_in_jun_jul": 92.8,
+     "netload_pctile_in_jun_jul": 95.6,
+     "drybulb_pctile_in_jun_jul": 90.2,
+     "load_pctile_in_summer": 95.1,
+     "netload_pctile_in_summer": 96.6,
+     "drybulb_pctile_in_summer": 92.9
+    },
+    "miso203_committed_defective": {
+     "load_pctile_in_jun_jul": 88.4,
+     "netload_pctile_in_jun_jul": 94.3,
+     "drybulb_pctile_in_jun_jul": 89.6,
+     "load_pctile_in_summer": 91.6,
+     "netload_pctile_in_summer": 95.5,
+     "drybulb_pctile_in_summer": 92.6
+    }
+   },
+   "g_c_overlap_with_driver_extremes": {
+    "repaired": {
+     "n_obj": 15,
+     "n_also_in_top_load_hours": 1,
+     "n_also_in_top_netload_hours": 3,
+     "n_also_in_top_drybulb_hours": 0
+    },
+    "miso203_committed_defective": {
+     "n_scarce": 15,
+     "n_also_in_top_load_hours": 0,
+     "n_also_in_top_netload_hours": 4,
+     "n_also_in_top_drybulb_hours": 0
+    }
+   },
+   "hour_of_day_histogram": {
+    "10": 1,
+    "11": 1,
+    "13": 1,
+    "15": 2,
+    "16": 1,
+    "17": 5,
+    "18": 3,
+    "19": 1
+   },
+   "n_distinct_days": 7,
+   "g_e_location_recheck": {
+    "zones": {
+     "MISO-West": {
+      "t_ref_c": 32.25,
+      "obj_hour_mean_c": 28.39,
+      "obj_hour_max_c": 33.9,
+      "obj_minus_ref_c": -3.86
+     },
+     "MISO-Plains": {
+      "t_ref_c": 33.34,
+      "obj_hour_mean_c": 30.88,
+      "obj_hour_max_c": 33.94,
+      "obj_minus_ref_c": -2.46
+     },
+     "MISO-Illinois": {
+      "t_ref_c": 32.7,
+      "obj_hour_mean_c": 31.98,
+      "obj_hour_max_c": 34.42,
+      "obj_minus_ref_c": -0.72
+     },
+     "MISO-Indiana": {
+      "t_ref_c": 33.02,
+      "obj_hour_mean_c": 31.28,
+      "obj_hour_max_c": 33.3,
+      "obj_minus_ref_c": -1.74
+     },
+     "MISO-East": {
+      "t_ref_c": 31.9,
+      "obj_hour_mean_c": 30.31,
+      "obj_hour_max_c": 34.09,
+      "obj_minus_ref_c": -1.59
+     },
+     "MISO-South": {
+      "t_ref_c": 35.67,
+      "obj_hour_mean_c": 33.4,
+      "obj_hour_max_c": 36.0,
+      "obj_minus_ref_c": -2.27
+     }
+    },
+    "n_zones_below_anchor": 6,
+    "n_zones": 6,
+    "mean_gap_c": -2.11
+   },
+   "g_f_seam_and_class_dispatch": {
+    "label": "MODEL-SIDE DESCRIPTIVE ONLY \u2014 no committed hourly MISO interchange actual exists, so this is NOT a residual against a benchmark (miso-202 \u00a72 A-4's own labelling). Licenses nothing.",
+    "basis": "OBJ hours vs the other Jun-Jul hours, P1",
+    "n_other_jun_jul_hours": 1449,
+    "classes": {
+     "import": {
+      "obj_mean_mw": 6181.7,
+      "other_jun_jul_mean_mw": 2508.4,
+      "excess_mw": 3673.3
+     },
+     "CT_PEAKER": {
+      "obj_mean_mw": 13247.8,
+      "other_jun_jul_mean_mw": 4336.1,
+      "excess_mw": 8911.7
+     },
+     "ST_GAS": {
+      "obj_mean_mw": 5016.2,
+      "other_jun_jul_mean_mw": 2260.5,
+      "excess_mw": 2755.6
+     },
+     "COAL_PRB": {
+      "obj_mean_mw": 22631.4,
+      "other_jun_jul_mean_mw": 20433.0,
+      "excess_mw": 2198.3
+     },
+     "wind": {
+      "obj_mean_mw": 5120.2,
+      "other_jun_jul_mean_mw": 7998.1,
+      "excess_mw": -2877.9
+     },
+     "solar": {
+      "obj_mean_mw": 6237.1,
+      "other_jun_jul_mean_mw": 4622.6,
+      "excess_mw": 1614.4
+     }
+    },
+    "miso202_committed_defective_import_excess_mw": 3844.4
+   },
+   "h1_netload_elevation_decomposition__POSTHOC": {
+    "label": "POST-HOC, NOT PRE-REGISTERED, no gate. The C10 decision rule measures the ramp's magnitude and is silent on its cause; this block supplies the cause.",
+    "netload_excess_over_all_jun_jul_mw": 23922.0,
+    "from_load_mw": 22671.0,
+    "from_wind_deficit_mw": 2848.0,
+    "from_solar_deficit_mw": -1598.0,
+    "share_load": 0.9477,
+    "share_wind_deficit": 0.1191,
+    "share_solar_deficit": -0.0668,
+    "solar_pctile_in_jun_jul": 61.3,
+    "wind_pctile_in_jun_jul": 32.4,
+    "solar_pctile_hod_matched": 48.1,
+    "wind_pctile_hod_matched": 36.5,
+    "load_pctile_hod_matched": 83.4,
+    "drybulb_pctile_hod_matched": 79.2
+   },
+   "h2_largest_hour__POSTHOC": {
+    "stamp": "2025-07-28 HE18",
+    "actual_indiana_hub_usd": 1782.55,
+    "model_price_load_weighted_usd": 161.39,
+    "load_pctile_jj": 99.3,
+    "netload_pctile_jj": 99.8,
+    "drybulb_pctile_jj": 96.9,
+    "solar_mw": 7668.0,
+    "solar_mean_all_jun_jul_mw": 4639.0
+   },
+   "hours": [
+    {
+     "hour": 4025,
+     "stamp": "2025-06-17 HE18",
+     "actual_indiana_hub_usd": 543.22,
+     "model_price_zone_mean_usd": 49.45,
+     "model_price_load_weighted_usd": 49.45,
+     "load_mw": 101518.0,
+     "load_pctile_jj": 82.0,
+     "solar_mw": 5678.0,
+     "netload_mw": 90783.0,
+     "netload_pctile_jj": 88.7,
+     "netload_3h_ramp_mw": 3283.0,
+     "iso_drybulb_c": 30.0,
+     "drybulb_pctile_jj": 85.7
+    },
+    {
+     "hour": 4169,
+     "stamp": "2025-06-23 HE18",
+     "actual_indiana_hub_usd": 838.9,
+     "model_price_zone_mean_usd": 85.31,
+     "model_price_load_weighted_usd": 85.31,
+     "load_mw": 113603.0,
+     "load_pctile_jj": 97.6,
+     "solar_mw": 6651.0,
+     "netload_mw": 97039.0,
+     "netload_pctile_jj": 97.0,
+     "netload_3h_ramp_mw": 4359.0,
+     "iso_drybulb_c": 33.3,
+     "drybulb_pctile_jj": 98.7
+    },
+    {
+     "hour": 4170,
+     "stamp": "2025-06-23 HE19",
+     "actual_indiana_hub_usd": 1046.69,
+     "model_price_zone_mean_usd": 127.64,
+     "model_price_load_weighted_usd": 127.64,
+     "load_mw": 109778.0,
+     "load_pctile_jj": 95.1,
+     "solar_mw": 2241.0,
+     "netload_mw": 100053.0,
+     "netload_pctile_jj": 98.5,
+     "netload_3h_ramp_mw": 5845.0,
+     "iso_drybulb_c": 32.7,
+     "drybulb_pctile_jj": 97.3
+    },
+    {
+     "hour": 4186,
+     "stamp": "2025-06-24 HE11",
+     "actual_indiana_hub_usd": 382.73,
+     "model_price_zone_mean_usd": 52.77,
+     "model_price_load_weighted_usd": 52.77,
+     "load_mw": 103335.0,
+     "load_pctile_jj": 85.6,
+     "solar_mw": 10454.0,
+     "netload_mw": 88011.0,
+     "netload_pctile_jj": 83.4,
+     "netload_3h_ramp_mw": 11452.0,
+     "iso_drybulb_c": 27.2,
+     "drybulb_pctile_jj": 67.1
+    },
+    {
+     "hour": 4187,
+     "stamp": "2025-06-24 HE12",
+     "actual_indiana_hub_usd": 406.29,
+     "model_price_zone_mean_usd": 58.45,
+     "model_price_load_weighted_usd": 58.45,
+     "load_mw": 106313.0,
+     "load_pctile_jj": 90.2,
+     "solar_mw": 10498.0,
+     "netload_mw": 91734.0,
+     "netload_pctile_jj": 90.1,
+     "netload_3h_ramp_mw": 12250.0,
+     "iso_drybulb_c": 28.6,
+     "drybulb_pctile_jj": 75.6
+    },
+    {
+     "hour": 4191,
+     "stamp": "2025-06-24 HE16",
+     "actual_indiana_hub_usd": 390.12,
+     "model_price_zone_mean_usd": 64.56,
+     "model_price_load_weighted_usd": 64.56,
+     "load_mw": 108114.0,
+     "load_pctile_jj": 93.2,
+     "solar_mw": 7881.0,
+     "netload_mw": 96993.0,
+     "netload_pctile_jj": 96.9,
+     "netload_3h_ramp_mw": 2957.0,
+     "iso_drybulb_c": 31.8,
+     "drybulb_pctile_jj": 95.2
+    },
+    {
+     "hour": 4192,
+     "stamp": "2025-06-24 HE17",
+     "actual_indiana_hub_usd": 451.42,
+     "model_price_zone_mean_usd": 64.61,
+     "model_price_load_weighted_usd": 64.61,
+     "load_mw": 107522.0,
+     "load_pctile_jj": 92.4,
+     "solar_mw": 7020.0,
+     "netload_mw": 97158.0,
+     "netload_pctile_jj": 97.1,
+     "netload_3h_ramp_mw": 1455.0,
+     "iso_drybulb_c": 31.7,
+     "drybulb_pctile_jj": 94.6
+    },
+    {
+     "hour": 4193,
+     "stamp": "2025-06-24 HE18",
+     "actual_indiana_hub_usd": 1202.05,
+     "model_price_zone_mean_usd": 64.61,
+     "model_price_load_weighted_usd": 64.61,
+     "load_mw": 105825.0,
+     "load_pctile_jj": 89.5,
+     "solar_mw": 5344.0,
+     "netload_mw": 97281.0,
+     "netload_pctile_jj": 97.1,
+     "netload_3h_ramp_mw": 1130.0,
+     "iso_drybulb_c": 31.3,
+     "drybulb_pctile_jj": 93.5
+    },
+    {
+     "hour": 4194,
+     "stamp": "2025-06-24 HE19",
+     "actual_indiana_hub_usd": 774.99,
+     "model_price_zone_mean_usd": 68.46,
+     "model_price_load_weighted_usd": 68.46,
+     "load_mw": 103323.0,
+     "load_pctile_jj": 85.5,
+     "solar_mw": 1911.0,
+     "netload_mw": 98308.0,
+     "netload_pctile_jj": 97.7,
+     "netload_3h_ramp_mw": 1315.0,
+     "iso_drybulb_c": 30.7,
+     "drybulb_pctile_jj": 90.6
+    },
+    {
+     "hour": 4695,
+     "stamp": "2025-07-15 HE16",
+     "actual_indiana_hub_usd": 413.32,
+     "model_price_zone_mean_usd": 50.65,
+     "model_price_load_weighted_usd": 50.65,
+     "load_mw": 113489.0,
+     "load_pctile_jj": 97.5,
+     "solar_mw": 9741.0,
+     "netload_mw": 96885.0,
+     "netload_pctile_jj": 96.7,
+     "netload_3h_ramp_mw": 6759.0,
+     "iso_drybulb_c": 32.3,
+     "drybulb_pctile_jj": 96.4
+    },
+    {
+     "hour": 4865,
+     "stamp": "2025-07-22 HE18",
+     "actual_indiana_hub_usd": 643.66,
+     "model_price_zone_mean_usd": 48.13,
+     "model_price_load_weighted_usd": 48.34,
+     "load_mw": 113184.0,
+     "load_pctile_jj": 97.3,
+     "solar_mw": 7954.0,
+     "netload_mw": 96755.0,
+     "netload_pctile_jj": 96.4,
+     "netload_3h_ramp_mw": 5057.0,
+     "iso_drybulb_c": 31.0,
+     "drybulb_pctile_jj": 91.9
+    },
+    {
+     "hour": 5009,
+     "stamp": "2025-07-28 HE18",
+     "actual_indiana_hub_usd": 1782.55,
+     "model_price_zone_mean_usd": 161.39,
+     "model_price_load_weighted_usd": 161.39,
+     "load_mw": 117206.0,
+     "load_pctile_jj": 99.3,
+     "solar_mw": 7668.0,
+     "netload_mw": 105957.0,
+     "netload_pctile_jj": 99.8,
+     "netload_3h_ramp_mw": 4046.0,
+     "iso_drybulb_c": 32.6,
+     "drybulb_pctile_jj": 96.9
+    },
+    {
+     "hour": 5010,
+     "stamp": "2025-07-28 HE19",
+     "actual_indiana_hub_usd": 683.21,
+     "model_price_zone_mean_usd": 165.58,
+     "model_price_load_weighted_usd": 183.22,
+     "load_mw": 113404.0,
+     "load_pctile_jj": 97.4,
+     "solar_mw": 2212.0,
+     "netload_mw": 107112.0,
+     "netload_pctile_jj": 99.9,
+     "netload_3h_ramp_mw": 5249.0,
+     "iso_drybulb_c": 32.0,
+     "drybulb_pctile_jj": 95.6
+    },
+    {
+     "hour": 5011,
+     "stamp": "2025-07-28 HE20",
+     "actual_indiana_hub_usd": 388.7,
+     "model_price_zone_mean_usd": 93.76,
+     "model_price_load_weighted_usd": 97.48,
+     "load_mw": 109946.0,
+     "load_pctile_jj": 95.4,
+     "solar_mw": 46.0,
+     "netload_mw": 105371.0,
+     "netload_pctile_jj": 99.7,
+     "netload_3h_ramp_mw": 2527.0,
+     "iso_drybulb_c": 31.1,
+     "drybulb_pctile_jj": 92.8
+    },
+    {
+     "hour": 5053,
+     "stamp": "2025-07-30 HE14",
+     "actual_indiana_hub_usd": 826.91,
+     "model_price_zone_mean_usd": 44.87,
+     "model_price_load_weighted_usd": 44.88,
+     "load_mw": 109055.0,
+     "load_pctile_jj": 94.5,
+     "solar_mw": 8257.0,
+     "netload_mw": 95814.0,
+     "netload_pctile_jj": 95.2,
+     "netload_3h_ramp_mw": 6268.0,
+     "iso_drybulb_c": 29.3,
+     "drybulb_pctile_jj": 80.9
+    }
+   ],
+   "jun_jul_peaks_for_reference": {
+    "max_load_mw": 118661.0,
+    "max_netload_mw": 107112.0,
+    "max_iso_drybulb_c": 34.6
+   }
+  }
+ },
+ "g_d_verdicts_on_miso203_section8": {
+  "decision_rules": "fixed in PREREG \u00a73 G-D before any statistic was computed",
+  "C3_load_vs_netload_gap": {
+   "claim": "11.6 GW less gross load, but only 2.2 GW less net load",
+   "load_gap_mw": 8374.0,
+   "netload_gap_mw": 2539.0,
+   "miso203_load_gap_mw": 11572,
+   "miso203_netload_gap_mw": 2205,
+   "verdict": "SURVIVES"
+  },
+  "C4_solar_collapse": {
+   "claim": "solar collapses 11,435 -> 1,859 MW",
+   "obj_solar_mw": 6237.0,
+   "top_load_solar_mw": 11435.0,
+   "miso203_obj_solar_mw": 1859,
+   "verdict": "REFUTED"
+  },
+  "C5_zero_top_load_hours": {
+   "claim": "zero of 15 are top-15 load hours",
+   "overlap": 1,
+   "verdict": "PARTLY"
+  },
+  "C6_zero_top_drybulb_hours": {
+   "claim": "zero of 15 are top-15 dry-bulb hours",
+   "overlap": 0,
+   "verdict": "SURVIVES"
+  },
+  "C7_four_top_netload_hours": {
+   "claim": "only 4 of 15 are top-15 net-load hours",
+   "overlap": 3,
+   "verdict": "SURVIVES"
+  },
+  "C8_netload_object_not_load_object": {
+   "claim": "net load p94.3 > load p88.4",
+   "netload_pctile": 95.6,
+   "load_pctile": 92.8,
+   "verdict": "SURVIVES"
+  },
+  "C10_evening_netload_ramp": {
+   "claim": "the tail is an EVENING NET-LOAD RAMP",
+   "obj_ramp_mw": 4930.0,
+   "all_jun_jul_ramp_mw": 26.0,
+   "excess_mw": 4904.0,
+   "verdict": "SURVIVES"
+  },
+  "G_E_location_argument": {
+   "claim": "any capability-removal mechanism keyed to heat or peak load is aimed at hours the object is not in",
+   "n_zone_years_below_anchor": 18,
+   "n_zone_years": 18,
+   "mean_gap_2025_c": -2.11,
+   "verdict": "SURVIVES"
+  },
+  "inherited_from_miso204_not_readjudicated": {
+   "C1_13_of_15_in_h18_21": "ALREADY CORRECTED to 4/15 (miso-204 \u00a76.5)",
+   "C2_monotone_migration_14.4_17.1_18.3": "ALREADY CORRECTED to 11.67 -> 15.73 -> 15.87: one large step then FLAT"
+  }
+ }
+}

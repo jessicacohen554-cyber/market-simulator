@@ -10615,3 +10615,107 @@ story; the D-2 5(i) ruling remains the gating owner item.
 `scripts/probes/_miso204_scoring_reference_instrument.py`.
 
 Next shorthand: **miso-205**.
+
+---
+
+## miso-205 (2026-09-03) — queue item 1 discharged: miso-203's G-E re-done on the repaired clock, and **the mechanism story inverts** — solar is ABOVE normal in the object's hours, the renewable anomaly is WIND, and the dominant driver is plain LOAD
+
+**Zero-solve.** Keeper unchanged at `2026-09-03-miso-202-unitclip`; determination
+unchanged at **NOT-YET on {C3a-2025 −12.3845}** alone. No LP, no keeper move, no
+mechanism armed, no `ScenarioConfig` field, no run registered, no cell verdict
+moved. **PREREG** `PREREG-miso205-ge-repaired-clock-2026-09-03.md` pushed blind at
+`fc8006d9` — two reproduction pre-conditions, seven claim-by-claim decision rules
+fixed ex ante, ten predictions **each carrying a direction as well as a
+magnitude**, eight traps with pre-committed counter-measurements.
+
+**The instrument was asserted before anything was read.** N-1: the object set
+reproduces miso-204's published set exactly — mean hour-of-day **11.67 / 15.73 /
+15.87**, h18–h21 **1 / 3 / 4**, h15–h18 **1 / 9 / 11**, and 2025's fifteen CST
+stamps match §6.4 row for row. N-2: the top-15 gross-load comparison set
+reproduces miso-203's own committed driver row exactly in all three years, so
+every difference is attributable to the object set alone. TRAP 7 clean (0 NaN in
+Jun–Jul).
+
+**The mechanism story inverts.** miso-203 reported solar collapsing to **1,859 MW**
+against a Jun–Jul mean of 4,639. The repaired hours carry **6,237 MW — +34 %
+ABOVE** that mean, and above it in **11 of the 15 hours**. Solar's contribution to
+the net-load elevation **flips sign**, from the **+11.5 %** miso-203's construction
+implied to **−6.7 %**. Hour-of-day matched (the diurnal cycle removed), 2025 solar
+sits at **p48.1** — ordinary — while **wind sits at p36.5** and **load at p83.4**.
+The elevation is **94.8 % load, +11.9 % wind deficit, −6.7 % solar surplus**, with
+the same signs in all three years. **The object is a high-load, low-wind,
+ordinary-solar set, not a solar-roll-off one.**
+
+**G-D, on rules fixed in advance.** C4 solar-collapse **REFUTED**; C5
+zero-top-load-hours **MARGINAL** (0 → 1); C3 load/net-load gap **SURVIVES
+knife-edge** (8,374 MW, 374 over its own 8,000 line); C6 **SURVIVES** (0 top-15
+dry-bulb); C7 **SURVIVES** (3 of 15); C8 net-load-object **SURVIVES, strengthened**
+(net load p95.6 > load p92.8). C10 passes its ramp-*magnitude* rule (+4,904 MW over
+the Jun–Jul mean) but **that rule was under-specified and is reported as such**:
+"evening" is refuted by miso-204, "after solar roll-off" by C4, and the ramp does
+not even discriminate — the ordinary top-15 gross-load hours carry a **larger** 3-h
+ramp (5,364 vs 4,930 MW).
+
+**The location argument survives; the peak-load argument does not.** G-E, checked
+against miso-203's own anchors (read, not re-derived): **18 of 18 zone-years below
+the summer peak-demand rating condition**, 2025 mean gap **−2.11 °C** — so a
+temperature-keyed capability-removal lever stays closed on LOCATION, and that is
+the ground to cite. But load percentile rises **p88.4 → p92.8**, the top-15-load
+overlap goes **0 → 1**, and the largest hour of 2025 (`2025-07-28 HE18`, actual
+**$1,782.55** vs a model **$161.39**) sits at **load p99.3 / net load p99.8 /
+dry-bulb p96.9**. The inherited constraint narrows from *"keyed to heat or peak
+load"* to **"keyed to heat"**. **No cell is re-opened.**
+
+**2023 and 2025 are not the same phenomenon** — 2023 is a midday set (mean hour
+11.7, ten days) at load p75.4 / net load p73.3 / dry-bulb p66.0; 2025 is a
+late-afternoon near-peak set at p92.8 / p95.6 / p90.2 over seven days.
+
+**Queue item 2 re-measured on the right hours: the D-2 5(i) binding-hour import
+excess is `+3,673.3 MW`** (2025) against the `+3,844.4` measured on the defective
+set — a 4.4 % revision, and the figure to quote to the owner. CT_PEAKER +8,911.7,
+ST_GAS +2,755.6, COAL_PRB +2,198.3, wind −2,877.9, solar **+1,614.4**.
+**Model-side descriptive only**; it licenses nothing and the admissibility ruling
+remains outstanding. **Queue item 3 (a ramp product) is weakened** — its window is
+re-established as required, but ramp does not discriminate the object from the peak
+hours it would also hit, so a phase 0 must now clear three objections.
+
+**A caution that generalises.** Aggregate class dispatch was *stable* across a
+defect that moved 11 of 15 hours, while the one hour-of-day-dependent row (solar)
+**inverted its sign** (−2,808.5 → +1,614.4). **Aggregate agreement is not evidence
+that an hour set is correct** — only an hour-of-day-matched or stamp-level check is.
+
+**Prior scored.** P1/P3/P5/P6/P7/P8/P9/P10 right (P1 and P7 badly understated); P2
+half-wrong (direction right, threshold missed by 374 MW); **P4 WRONG ON THE SIGN** —
+the net-load percentile rose rather than fell. And the session's actual result had
+**no prediction at all**: ten predictions and not one about solar's sign relative to
+its *own normal population*. That is three consecutive MISO sessions whose most
+useful output came from the part of the prior that was wrong or absent, so the
+discipline sharpens: **pre-commit each driver's sign against its OWN normal
+population, not against a prior session's number.**
+
+**Governance.** Rule 15: no LP solved, so no run to register (the miso-131…139 /
+miso-179 / miso-194 / miso-203 / miso-204 zero-solve precedent). Rule 28(a): no
+`R`/`I`/`G` cell re-tested or re-opened. Rule 28(b): **no mechanism tested, so no
+cell verdict moved** — `temp_dependent_derate` and `measured_ramp_capability` carry
+amended evidence citations in MISO's shard only, plus a §5.4 queue stamp. Rule
+28(c): no `ScenarioConfig` field added. Rule 28(d)/25: no other ISO's shard, keeper
+or status file touched. Rule 22: 2023–2025 only; MISO holds no `complete`/`final`
+marker and the locked-test freeze is active. Rule 13: the committed C3a scoring
+reference, the keeper's committed sidecars and prior sessions' committed records,
+read as a diagnostic characterisation; nothing enters a solve. Rule 1: no residual
+moved, nothing armed. Rule 27: one new probe file; no existing ≥300-line file
+rewritten.
+
+**Successor:** the queue's two live items are the **D-2 5(i) seam object** (now
+quotable at `+3,673.3 MW`, still awaiting the owner's admissibility ruling) and a
+**ramp-constrained product** (weakened; three objections plus an unanswered
+primary-source question). Any lever must be bounded at the object's own percentile
+in its own driver before a solve — and must state which year's object it means.
+
+**Records:**
+`FINDING-miso205-the-object-is-load-and-wind-not-solar-2026-09-03.md`,
+`PREREG-miso205-ge-repaired-clock-2026-09-03.md` @ `fc8006d9`,
+`_miso205_ge_repaired_clock.json`,
+`scripts/probes/_miso205_ge_repaired_clock.py`.
+
+Next shorthand: **miso-206**.
