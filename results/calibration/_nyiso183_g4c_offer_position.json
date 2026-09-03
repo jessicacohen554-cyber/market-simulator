@@ -1,0 +1,494 @@
+{
+  "session": "nyiso-183",
+  "gate": "G4c",
+  "bundle": "results/calibration/nyiso177_vintage_B1p",
+  "bar_usd_mwh": 5.0,
+  "instrument": "scripts.lib.bundle_fleet.reconstruct_bundle_fleet (fleet_only, NO LP) -> mc_base, vs outage_detect.build_merit_order_panel srmc",
+  "years": {
+    "2023": {
+      "rows": [
+        {
+          "plant": 2682,
+          "name": "",
+          "cap_mw": 45.0,
+          "n_tranches": 8,
+          "model_mc": 40.143,
+          "measured_srmc": null,
+          "model_minus_measured": null
+        },
+        {
+          "plant": 2527,
+          "name": "",
+          "cap_mw": 104.5,
+          "n_tranches": 8,
+          "model_mc": 42.412,
+          "measured_srmc": 32.991,
+          "model_minus_measured": 9.421
+        },
+        {
+          "plant": 2500,
+          "name": "Ravenswood",
+          "cap_mw": 1724.8,
+          "n_tranches": 8,
+          "model_mc": 43.943,
+          "measured_srmc": 35.642,
+          "model_minus_measured": 8.301
+        },
+        {
+          "plant": 2490,
+          "name": "Arthur Kill",
+          "cap_mw": 876.6,
+          "n_tranches": 8,
+          "model_mc": 52.247,
+          "measured_srmc": 35.197,
+          "model_minus_measured": 17.05
+        },
+        {
+          "plant": 8906,
+          "name": "Astoria Gen",
+          "cap_mw": 923.2,
+          "n_tranches": 8,
+          "model_mc": 55.378,
+          "measured_srmc": 23.451,
+          "model_minus_measured": 31.927
+        },
+        {
+          "plant": 2625,
+          "name": "Bowline Point",
+          "cap_mw": 1159.6,
+          "n_tranches": 8,
+          "model_mc": 67.295,
+          "measured_srmc": 32.933,
+          "model_minus_measured": 34.362
+        },
+        {
+          "plant": 2516,
+          "name": "Northport",
+          "cap_mw": 1592.2,
+          "n_tranches": 8,
+          "model_mc": 71.323,
+          "measured_srmc": 34.046,
+          "model_minus_measured": 37.277
+        },
+        {
+          "plant": 8006,
+          "name": "",
+          "cap_mw": 1222.0,
+          "n_tranches": 8,
+          "model_mc": 72.541,
+          "measured_srmc": 32.838,
+          "model_minus_measured": 39.703
+        },
+        {
+          "plant": 2511,
+          "name": "E F Barrett",
+          "cap_mw": 372.2,
+          "n_tranches": 8,
+          "model_mc": 72.886,
+          "measured_srmc": 33.165,
+          "model_minus_measured": 39.721
+        },
+        {
+          "plant": 2480,
+          "name": "",
+          "cap_mw": 497.3,
+          "n_tranches": 8,
+          "model_mc": 74.499,
+          "measured_srmc": 36.535,
+          "model_minus_measured": 37.964
+        },
+        {
+          "plant": 2517,
+          "name": "",
+          "cap_mw": 385.0,
+          "n_tranches": 8,
+          "model_mc": 78.485,
+          "measured_srmc": 36.507,
+          "model_minus_measured": 41.978
+        }
+      ],
+      "peer_model_mc_median": 67.295,
+      "peer_measured_srmc_median": 33.165,
+      "ravenswood_model_rank_of": "3 of 11 (cheapest first)",
+      "ravenswood_measured_rank_of": "8 of 10 (cheapest first)",
+      "leg_i_model_below_own_measured_by_bar": false,
+      "leg_ii_merit_position_inversion": true,
+      "G4c_fired": true
+    },
+    "2024": {
+      "rows": [
+        {
+          "plant": 2682,
+          "name": "",
+          "cap_mw": 45.0,
+          "n_tranches": 8,
+          "model_mc": 43.451,
+          "measured_srmc": null,
+          "model_minus_measured": null
+        },
+        {
+          "plant": 2527,
+          "name": "",
+          "cap_mw": 104.5,
+          "n_tranches": 8,
+          "model_mc": 44.36,
+          "measured_srmc": 27.235,
+          "model_minus_measured": 17.126
+        },
+        {
+          "plant": 2500,
+          "name": "Ravenswood",
+          "cap_mw": 1724.8,
+          "n_tranches": 8,
+          "model_mc": 47.899,
+          "measured_srmc": 29.352,
+          "model_minus_measured": 18.547
+        },
+        {
+          "plant": 2490,
+          "name": "Arthur Kill",
+          "cap_mw": 876.6,
+          "n_tranches": 8,
+          "model_mc": 57.015,
+          "measured_srmc": 29.161,
+          "model_minus_measured": 27.854
+        },
+        {
+          "plant": 8906,
+          "name": "Astoria Gen",
+          "cap_mw": 923.2,
+          "n_tranches": 8,
+          "model_mc": 60.577,
+          "measured_srmc": 19.734,
+          "model_minus_measured": 40.844
+        },
+        {
+          "plant": 2625,
+          "name": "Bowline Point",
+          "cap_mw": 1159.6,
+          "n_tranches": 8,
+          "model_mc": 66.748,
+          "measured_srmc": 27.686,
+          "model_minus_measured": 39.062
+        },
+        {
+          "plant": 2516,
+          "name": "Northport",
+          "cap_mw": 1592.2,
+          "n_tranches": 8,
+          "model_mc": 70.299,
+          "measured_srmc": 28.26,
+          "model_minus_measured": 42.04
+        },
+        {
+          "plant": 8006,
+          "name": "",
+          "cap_mw": 1222.0,
+          "n_tranches": 8,
+          "model_mc": 71.655,
+          "measured_srmc": 28.188,
+          "model_minus_measured": 43.467
+        },
+        {
+          "plant": 2511,
+          "name": "E F Barrett",
+          "cap_mw": 372.2,
+          "n_tranches": 8,
+          "model_mc": 72.146,
+          "measured_srmc": 27.908,
+          "model_minus_measured": 44.239
+        },
+        {
+          "plant": 2480,
+          "name": "",
+          "cap_mw": 497.3,
+          "n_tranches": 8,
+          "model_mc": 73.214,
+          "measured_srmc": 30.753,
+          "model_minus_measured": 42.461
+        },
+        {
+          "plant": 2517,
+          "name": "",
+          "cap_mw": 385.0,
+          "n_tranches": 8,
+          "model_mc": 76.948,
+          "measured_srmc": 30.133,
+          "model_minus_measured": 46.815
+        }
+      ],
+      "peer_model_mc_median": 66.748,
+      "peer_measured_srmc_median": 27.908,
+      "ravenswood_model_rank_of": "3 of 11 (cheapest first)",
+      "ravenswood_measured_rank_of": "8 of 10 (cheapest first)",
+      "leg_i_model_below_own_measured_by_bar": false,
+      "leg_ii_merit_position_inversion": true,
+      "G4c_fired": true
+    },
+    "2025": {
+      "rows": [
+        {
+          "plant": 2682,
+          "name": "",
+          "cap_mw": 45.0,
+          "n_tranches": 8,
+          "model_mc": 46.056,
+          "measured_srmc": null,
+          "model_minus_measured": null
+        },
+        {
+          "plant": 2527,
+          "name": "",
+          "cap_mw": 104.5,
+          "n_tranches": 8,
+          "model_mc": 54.009,
+          "measured_srmc": 56.028,
+          "model_minus_measured": -2.019
+        },
+        {
+          "plant": 2500,
+          "name": "Ravenswood",
+          "cap_mw": 1724.8,
+          "n_tranches": 8,
+          "model_mc": 62.783,
+          "measured_srmc": 56.588,
+          "model_minus_measured": 6.194
+        },
+        {
+          "plant": 8906,
+          "name": "Astoria Gen",
+          "cap_mw": 923.2,
+          "n_tranches": 8,
+          "model_mc": 78.269,
+          "measured_srmc": 37.995,
+          "model_minus_measured": 40.273
+        },
+        {
+          "plant": 2490,
+          "name": "Arthur Kill",
+          "cap_mw": 876.6,
+          "n_tranches": 8,
+          "model_mc": 79.011,
+          "measured_srmc": 55.667,
+          "model_minus_measured": 23.344
+        },
+        {
+          "plant": 2625,
+          "name": "Bowline Point",
+          "cap_mw": 1159.6,
+          "n_tranches": 8,
+          "model_mc": 88.15,
+          "measured_srmc": 53.867,
+          "model_minus_measured": 34.282
+        },
+        {
+          "plant": 2516,
+          "name": "Northport",
+          "cap_mw": 1592.2,
+          "n_tranches": 8,
+          "model_mc": 93.858,
+          "measured_srmc": 55.397,
+          "model_minus_measured": 38.461
+        },
+        {
+          "plant": 8006,
+          "name": "",
+          "cap_mw": 1222.0,
+          "n_tranches": 8,
+          "model_mc": 95.224,
+          "measured_srmc": 57.176,
+          "model_minus_measured": 38.048
+        },
+        {
+          "plant": 2511,
+          "name": "E F Barrett",
+          "cap_mw": 372.2,
+          "n_tranches": 8,
+          "model_mc": 96.555,
+          "measured_srmc": 59.264,
+          "model_minus_measured": 37.291
+        },
+        {
+          "plant": 2480,
+          "name": "",
+          "cap_mw": 497.3,
+          "n_tranches": 8,
+          "model_mc": 102.229,
+          "measured_srmc": 59.429,
+          "model_minus_measured": 42.8
+        },
+        {
+          "plant": 2517,
+          "name": "",
+          "cap_mw": 385.0,
+          "n_tranches": 8,
+          "model_mc": 102.567,
+          "measured_srmc": 59.823,
+          "model_minus_measured": 42.743
+        }
+      ],
+      "peer_model_mc_median": 88.15,
+      "peer_measured_srmc_median": 55.397,
+      "ravenswood_model_rank_of": "3 of 11 (cheapest first)",
+      "ravenswood_measured_rank_of": "6 of 10 (cheapest first)",
+      "leg_i_model_below_own_measured_by_bar": false,
+      "leg_ii_merit_position_inversion": true,
+      "G4c_fired": true
+    }
+  },
+  "population": {
+    "2023": {
+      "n_stgas_units": 45,
+      "units": [
+        "10464:E0001",
+        "10464:E0002",
+        "10464:E0003",
+        "2480:1",
+        "2480:2",
+        "2480:3",
+        "2480:4",
+        "2490:20",
+        "2490:30",
+        "2500:10",
+        "2500:20",
+        "2500:30",
+        "2503:BLR114",
+        "2503:BLR115",
+        "2503:BLR116",
+        "2503:BLR117",
+        "2503:BLR118",
+        "2504:120",
+        "2504:121",
+        "2504:122",
+        "2511:10",
+        "2511:20",
+        "2516:1",
+        "2516:2",
+        "2516:3",
+        "2516:4",
+        "2517:3",
+        "2517:4",
+        "2527:6",
+        "2594:5",
+        "2594:6",
+        "2625:1",
+        "2625:2",
+        "2682:10",
+        "2682:9",
+        "50472:BLR05",
+        "50472:R1B01",
+        "50472:R1B02",
+        "8006:1",
+        "8006:2",
+        "8906:20",
+        "8906:31RH",
+        "8906:32SH",
+        "8906:51RH",
+        "8906:52SH"
+      ]
+    },
+    "2024": {
+      "n_stgas_units": 45,
+      "units": [
+        "10464:E0001",
+        "10464:E0002",
+        "10464:E0003",
+        "2480:1",
+        "2480:2",
+        "2480:3",
+        "2480:4",
+        "2490:20",
+        "2490:30",
+        "2500:10",
+        "2500:20",
+        "2500:30",
+        "2503:BLR114",
+        "2503:BLR115",
+        "2503:BLR116",
+        "2503:BLR117",
+        "2503:BLR118",
+        "2504:120",
+        "2504:121",
+        "2504:122",
+        "2511:10",
+        "2511:20",
+        "2516:1",
+        "2516:2",
+        "2516:3",
+        "2516:4",
+        "2517:3",
+        "2517:4",
+        "2527:6",
+        "2594:5",
+        "2594:6",
+        "2625:1",
+        "2625:2",
+        "2682:10",
+        "2682:9",
+        "50472:BLR05",
+        "50472:R1B01",
+        "50472:R1B02",
+        "8006:1",
+        "8006:2",
+        "8906:20",
+        "8906:31RH",
+        "8906:32SH",
+        "8906:51RH",
+        "8906:52SH"
+      ]
+    },
+    "2025": {
+      "n_stgas_units": 42,
+      "units": [
+        "2480:1",
+        "2480:2",
+        "2480:3",
+        "2480:4",
+        "2490:20",
+        "2490:30",
+        "2500:10",
+        "2500:20",
+        "2500:30",
+        "2503:BLR114",
+        "2503:BLR115",
+        "2503:BLR116",
+        "2503:BLR117",
+        "2503:BLR118",
+        "2504:120",
+        "2504:121",
+        "2504:122",
+        "2511:10",
+        "2511:20",
+        "2516:1",
+        "2516:2",
+        "2516:3",
+        "2516:4",
+        "2517:3",
+        "2517:4",
+        "2527:6",
+        "2594:5",
+        "2594:6",
+        "2625:1",
+        "2625:2",
+        "2682:10",
+        "2682:9",
+        "50472:BLR05",
+        "50472:R1B01",
+        "50472:R1B02",
+        "8006:1",
+        "8006:2",
+        "8906:20",
+        "8906:31RH",
+        "8906:32SH",
+        "8906:51RH",
+        "8906:52SH"
+      ]
+    }
+  },
+  "G4c_fired_any_year": true,
+  "G4c_fired_years": [
+    2023,
+    2024,
+    2025
+  ]
+}

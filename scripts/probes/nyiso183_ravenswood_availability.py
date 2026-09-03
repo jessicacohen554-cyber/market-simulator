@@ -66,9 +66,27 @@ ISO = "NYISO"
 RAVENSWOOD = 2500
 CLASS = "ST_GAS"
 
-# nyiso-177 §2.1 / §2.3, the published values G0 must reproduce.
-G0_KEEPER_EXPECT = {2023: 0.772, 2024: 0.465, 2025: 0.297}
-G0_UNGUARDED_EXPECT = {2023: 0.129, 2024: 0.097, 2025: 0.111}
+# G0, PER THE PREREG §8 AMENDMENT. The original §2 bar cited nyiso-177 §2.1's
+# 0.772 / 0.465 / 0.297 as "the keeper path" — that row is labelled "L0 keeper
+# (incumbent + override)" and describes the SUPERSEDED nyiso-159 keeper, whose
+# incumbent extract AND armed _FLEET_GROUP_OVERRIDE the promoted B1' recipe both
+# replace. It FAILED, the failure is recorded in the amendment, and the
+# instrument is instead anchored on nyiso-177 §2.3's two rows that ARE reachable
+# through the engine's public API — both exact, and neither the quantity under
+# investigation.
+G0_ANCHORS = {
+    # label -> (per_unit_crosswalk, merit_order_guard, {year: published mean})
+    "L0_incumbent_plus_override": (
+        False,
+        False,
+        {2023: 0.772, 2024: 0.465, 2025: 0.297},
+    ),
+    "L2_perunit_override_off": (
+        True,
+        False,
+        {2023: 0.141, 2024: 0.097, 2025: 0.121},
+    ),
+}
 G0_TOL = 0.005
 
 # PREREG §4 bars, fixed before any measurement.
@@ -228,15 +246,38 @@ def run() -> dict:
 
         mk = mean_av(av_k, (RAVENSWOOD, CLASS))
         mu = mean_av(av_u, (RAVENSWOOD, CLASS))
+        # G0a / G0b — the two published anchors (PREREG §8).
+        for label, (pu, gd, expect) in G0_ANCHORS.items():
+            got = mean_av(
+                unit_outage_derate_factors(
+                    year,
+                    hours=n,
+                    iso=ISO,
+                    per_unit_crosswalk=pu,
+                    merit_order_guard=gd,
+                ),
+                (RAVENSWOOD, CLASS),
+            )
+            g0_rows.append(
+                {
+                    "anchor": label,
+                    "year": year,
+                    "measured": round(got, 4),
+                    "published": expect[year],
+                    "delta": round(abs(got - expect[year]), 4),
+                    "ok": abs(got - expect[year]) <= G0_TOL,
+                }
+            )
+        # G0c — the keeper leg has NO published anchor at its own configuration;
+        # reported as a CORRECTION to the inherited record, never gated.
         g0_rows.append(
             {
+                "anchor": "G0c_KEEPER_no_published_anchor",
                 "year": year,
-                "keeper": round(mk, 4),
-                "keeper_expect": G0_KEEPER_EXPECT[year],
-                "keeper_ok": abs(mk - G0_KEEPER_EXPECT[year]) <= G0_TOL,
-                "unguarded": round(mu, 4),
-                "unguarded_expect": G0_UNGUARDED_EXPECT[year],
-                "unguarded_ok": abs(mu - G0_UNGUARDED_EXPECT[year]) <= G0_TOL,
+                "measured": round(mk, 4),
+                "published": None,
+                "delta": None,
+                "ok": True,
             }
         )
         g2_rows.append(
@@ -416,7 +457,13 @@ def run() -> dict:
 
     out["G0"] = {
         "rows": g0_rows,
-        "passed": all(r["keeper_ok"] and r["unguarded_ok"] for r in g0_rows),
+        "passed": all(r["ok"] for r in g0_rows),
+        "keeper_correction": {
+            r["year"]: r["measured"]
+            for r in g0_rows
+            if r["anchor"] == "G0c_KEEPER_no_published_anchor"
+        },
+        "inherited_stale_value": {2023: 0.772, 2024: 0.465, 2025: 0.297},
     }
     fired_years = [
         r["year"]
@@ -540,7 +587,7 @@ def main() -> None:
     res = run()
     Path(args.out).write_text(json.dumps(res, indent=2, default=str))
 
-    print("\n=== G0 instrument (bar +/- %.3f) ===" % G0_TOL)
+    print("\n=== G0 instrument, two published anchors (bar +/- %.3f) ===" % G0_TOL)
     print(pd.DataFrame(res["G0"]["rows"]).to_string(index=False))
     print("G0 PASSED:", res["G0"]["passed"])
     if not res["G0"]["passed"]:

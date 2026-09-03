@@ -1,0 +1,415 @@
+{
+  "session": "nyiso-183",
+  "gate": "G4d (POST-HOC locator, no bar, not scored)",
+  "measured_hr_basis": "sum(heatInput)/sum(grossLoad) over running hours (grossLoad/peak >= REAL_RUN_CF=0.05), clipped to [4.0, 20.0] \u2014 MeritOrderPanel's own documented formula",
+  "years": {
+    "2023": {
+      "rows": [
+        {
+          "plant": 2682,
+          "name": "S A Carlson",
+          "cap_mw": 45.0,
+          "model_hr": 14.529,
+          "measured_hr": null,
+          "model_minus_measured_hr": null,
+          "ratio_model_over_measured": null,
+          "measured_gross_gwh": null,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.6239
+        },
+        {
+          "plant": 2500,
+          "name": "Ravenswood",
+          "cap_mw": 1724.8,
+          "model_hr": 14.802,
+          "measured_hr": 10.707,
+          "model_minus_measured_hr": 4.095,
+          "ratio_model_over_measured": 1.382,
+          "measured_gross_gwh": 880.8,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.4508
+        },
+        {
+          "plant": 2625,
+          "name": "Bowline Point",
+          "cap_mw": 1159.6,
+          "model_hr": 15.867,
+          "measured_hr": 9.618,
+          "model_minus_measured_hr": 6.249,
+          "ratio_model_over_measured": 1.65,
+          "measured_gross_gwh": 975.5,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5263
+        },
+        {
+          "plant": 2527,
+          "name": "Greenidge",
+          "cap_mw": 104.5,
+          "model_hr": 16.08,
+          "measured_hr": 9.829,
+          "model_minus_measured_hr": 6.251,
+          "ratio_model_over_measured": 1.636,
+          "measured_gross_gwh": 665.5,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.529
+        },
+        {
+          "plant": 2516,
+          "name": "Northport",
+          "cap_mw": 1592.2,
+          "model_hr": 16.931,
+          "measured_hr": 10.101,
+          "model_minus_measured_hr": 6.83,
+          "ratio_model_over_measured": 1.676,
+          "measured_gross_gwh": 2555.6,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5515
+        },
+        {
+          "plant": 8006,
+          "name": "Roseton",
+          "cap_mw": 1222.0,
+          "model_hr": 17.102,
+          "measured_hr": 9.781,
+          "model_minus_measured_hr": 7.321,
+          "ratio_model_over_measured": 1.748,
+          "measured_gross_gwh": 208.3,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5813
+        },
+        {
+          "plant": 2511,
+          "name": "E F Barrett",
+          "cap_mw": 372.2,
+          "model_hr": 17.289,
+          "measured_hr": 9.883,
+          "model_minus_measured_hr": 7.406,
+          "ratio_model_over_measured": 1.749,
+          "measured_gross_gwh": 1386.2,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5598
+        },
+        {
+          "plant": 2490,
+          "name": "Arthur Kill",
+          "cap_mw": 876.6,
+          "model_hr": 17.499,
+          "measured_hr": 10.429,
+          "model_minus_measured_hr": 7.07,
+          "ratio_model_over_measured": 1.678,
+          "measured_gross_gwh": 1117.6,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5671
+        },
+        {
+          "plant": 2480,
+          "name": "Danskammer",
+          "cap_mw": 497.3,
+          "model_hr": 17.514,
+          "measured_hr": 10.069,
+          "model_minus_measured_hr": 7.445,
+          "ratio_model_over_measured": 1.739,
+          "measured_gross_gwh": 20.1,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5797
+        },
+        {
+          "plant": 8906,
+          "name": "Astoria Gen",
+          "cap_mw": 923.2,
+          "model_hr": 18.677,
+          "measured_hr": 5.55,
+          "model_minus_measured_hr": 13.127,
+          "ratio_model_over_measured": 3.365,
+          "measured_gross_gwh": 1543.2,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.6247
+        },
+        {
+          "plant": 2517,
+          "name": "Port Jefferson",
+          "cap_mw": 385.0,
+          "model_hr": 18.768,
+          "measured_hr": 10.91,
+          "model_minus_measured_hr": 7.858,
+          "ratio_model_over_measured": 1.72,
+          "measured_gross_gwh": 324.8,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5827
+        }
+      ]
+    },
+    "2024": {
+      "rows": [
+        {
+          "plant": 2682,
+          "name": "S A Carlson",
+          "cap_mw": 45.0,
+          "model_hr": 14.529,
+          "measured_hr": null,
+          "model_minus_measured_hr": null,
+          "ratio_model_over_measured": null,
+          "measured_gross_gwh": null,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.6123
+        },
+        {
+          "plant": 2500,
+          "name": "Ravenswood",
+          "cap_mw": 1724.8,
+          "model_hr": 14.802,
+          "measured_hr": 10.449,
+          "model_minus_measured_hr": 4.352,
+          "ratio_model_over_measured": 1.417,
+          "measured_gross_gwh": 707.8,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.4324
+        },
+        {
+          "plant": 2625,
+          "name": "Bowline Point",
+          "cap_mw": 1159.6,
+          "model_hr": 15.867,
+          "measured_hr": 9.891,
+          "model_minus_measured_hr": 5.976,
+          "ratio_model_over_measured": 1.604,
+          "measured_gross_gwh": 1359.0,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5404
+        },
+        {
+          "plant": 2527,
+          "name": "Greenidge",
+          "cap_mw": 104.5,
+          "model_hr": 16.08,
+          "measured_hr": 9.741,
+          "model_minus_measured_hr": 6.339,
+          "ratio_model_over_measured": 1.651,
+          "measured_gross_gwh": 722.0,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5247
+        },
+        {
+          "plant": 2516,
+          "name": "Northport",
+          "cap_mw": 1592.2,
+          "model_hr": 16.931,
+          "measured_hr": 10.109,
+          "model_minus_measured_hr": 6.822,
+          "ratio_model_over_measured": 1.675,
+          "measured_gross_gwh": 3917.8,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5519
+        },
+        {
+          "plant": 8006,
+          "name": "Roseton",
+          "cap_mw": 1222.0,
+          "model_hr": 17.102,
+          "measured_hr": 10.084,
+          "model_minus_measured_hr": 7.018,
+          "ratio_model_over_measured": 1.696,
+          "measured_gross_gwh": 255.8,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5723
+        },
+        {
+          "plant": 2511,
+          "name": "E F Barrett",
+          "cap_mw": 372.2,
+          "model_hr": 17.289,
+          "measured_hr": 9.914,
+          "model_minus_measured_hr": 7.374,
+          "ratio_model_over_measured": 1.744,
+          "measured_gross_gwh": 1139.2,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5689
+        },
+        {
+          "plant": 2490,
+          "name": "Arthur Kill",
+          "cap_mw": 876.6,
+          "model_hr": 17.499,
+          "measured_hr": 10.394,
+          "model_minus_measured_hr": 7.105,
+          "ratio_model_over_measured": 1.684,
+          "measured_gross_gwh": 1353.2,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5644
+        },
+        {
+          "plant": 2480,
+          "name": "Danskammer",
+          "cap_mw": 497.3,
+          "model_hr": 17.514,
+          "measured_hr": 10.388,
+          "model_minus_measured_hr": 7.126,
+          "ratio_model_over_measured": 1.686,
+          "measured_gross_gwh": 19.9,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5969
+        },
+        {
+          "plant": 8906,
+          "name": "Astoria Gen",
+          "cap_mw": 923.2,
+          "model_hr": 18.677,
+          "measured_hr": 5.464,
+          "model_minus_measured_hr": 13.214,
+          "ratio_model_over_measured": 3.419,
+          "measured_gross_gwh": 1847.2,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5937
+        },
+        {
+          "plant": 2517,
+          "name": "Port Jefferson",
+          "cap_mw": 385.0,
+          "model_hr": 18.768,
+          "measured_hr": 10.758,
+          "model_minus_measured_hr": 8.011,
+          "ratio_model_over_measured": 1.745,
+          "measured_gross_gwh": 287.6,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5643
+        }
+      ]
+    },
+    "2025": {
+      "rows": [
+        {
+          "plant": 2682,
+          "name": "S A Carlson",
+          "cap_mw": 45.0,
+          "model_hr": 14.529,
+          "measured_hr": null,
+          "model_minus_measured_hr": null,
+          "ratio_model_over_measured": null,
+          "measured_gross_gwh": null,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5415
+        },
+        {
+          "plant": 2500,
+          "name": "Ravenswood",
+          "cap_mw": 1724.8,
+          "model_hr": 14.802,
+          "measured_hr": 10.181,
+          "model_minus_measured_hr": 4.62,
+          "ratio_model_over_measured": 1.454,
+          "measured_gross_gwh": 1068.6,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.4456
+        },
+        {
+          "plant": 2625,
+          "name": "Bowline Point",
+          "cap_mw": 1159.6,
+          "model_hr": 15.867,
+          "measured_hr": 9.657,
+          "model_minus_measured_hr": 6.21,
+          "ratio_model_over_measured": 1.643,
+          "measured_gross_gwh": 2060.8,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5262
+        },
+        {
+          "plant": 2527,
+          "name": "Greenidge",
+          "cap_mw": 104.5,
+          "model_hr": 16.08,
+          "measured_hr": 10.077,
+          "model_minus_measured_hr": 6.003,
+          "ratio_model_over_measured": 1.596,
+          "measured_gross_gwh": 669.2,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5439
+        },
+        {
+          "plant": 2516,
+          "name": "Northport",
+          "cap_mw": 1592.2,
+          "model_hr": 16.931,
+          "measured_hr": 9.968,
+          "model_minus_measured_hr": 6.963,
+          "ratio_model_over_measured": 1.699,
+          "measured_gross_gwh": 4304.8,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5577
+        },
+        {
+          "plant": 8006,
+          "name": "Roseton",
+          "cap_mw": 1222.0,
+          "model_hr": 17.102,
+          "measured_hr": 10.331,
+          "model_minus_measured_hr": 6.771,
+          "ratio_model_over_measured": 1.655,
+          "measured_gross_gwh": 723.8,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.6016
+        },
+        {
+          "plant": 2511,
+          "name": "E F Barrett",
+          "cap_mw": 372.2,
+          "model_hr": 17.289,
+          "measured_hr": 10.348,
+          "model_minus_measured_hr": 6.94,
+          "ratio_model_over_measured": 1.671,
+          "measured_gross_gwh": 1035.2,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.6211
+        },
+        {
+          "plant": 2490,
+          "name": "Arthur Kill",
+          "cap_mw": 876.6,
+          "model_hr": 17.499,
+          "measured_hr": 10.005,
+          "model_minus_measured_hr": 7.494,
+          "ratio_model_over_measured": 1.749,
+          "measured_gross_gwh": 2157.9,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5422
+        },
+        {
+          "plant": 2480,
+          "name": "Danskammer",
+          "cap_mw": 497.3,
+          "model_hr": 17.514,
+          "measured_hr": 10.077,
+          "model_minus_measured_hr": 7.437,
+          "ratio_model_over_measured": 1.738,
+          "measured_gross_gwh": 27.3,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5708
+        },
+        {
+          "plant": 8906,
+          "name": "Astoria Gen",
+          "cap_mw": 923.2,
+          "model_hr": 18.677,
+          "measured_hr": 5.393,
+          "model_minus_measured_hr": 13.285,
+          "ratio_model_over_measured": 3.464,
+          "measured_gross_gwh": 2670.3,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5782
+        },
+        {
+          "plant": 2517,
+          "name": "Port Jefferson",
+          "cap_mw": 385.0,
+          "model_hr": 18.768,
+          "measured_hr": 10.843,
+          "model_minus_measured_hr": 7.925,
+          "ratio_model_over_measured": 1.731,
+          "measured_gross_gwh": 308.7,
+          "model_vom": 4.0,
+          "model_co2_rate": 0.5912
+        }
+      ]
+    }
+  }
+}
