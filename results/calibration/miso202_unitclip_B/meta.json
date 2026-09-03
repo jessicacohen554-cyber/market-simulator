@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-30T02:49:33",
+  "timestamp": "2026-09-03T03:15:49",
   "iso": "MISO",
   "years": [
     2023,
@@ -212,7 +212,9 @@
     "miso_seam_envelope_hour_ending_key": true,
     "unit_outage_fleet_status_scope": true,
     "nuclear_unit_availability": true,
-    "retiree_vintage_status_scope": true
+    "retiree_vintage_status_scope": true,
+    "partial_plant_exit_carry": true,
+    "st_gas_mustrun_oom_level": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -319,6 +321,8 @@
   "pjm_da_virtual_bids": false,
   "pjm_offer_midcurve_conditional": false,
   "caiso_offer_surface_measured": false,
+  "caiso_offer_surface_measured_ungrounded": false,
+  "caiso_st_gas_committed_measured": false,
   "caiso_offer_surface_conditional": false,
   "pjm_offer_midcurve_segments": null,
   "ercot_nuclear_unit_availability": false,
@@ -375,7 +379,6 @@
   "caiso_import_hub_prices": null,
   "caiso_import_gas_coupling": null,
   "caiso_import_solar_shape": null,
-  "caiso_bidir_intertie": null,
   "caiso_per_hub_intertie": null,
   "caiso_perhub_firm_base": null,
   "caiso_corridor_flow_limit": null,
@@ -387,6 +390,11 @@
   "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
   "unit_outage_lp_capacity_basis": null,
+  "unit_outage_mixed_gas_routing": true,
+  "unit_outage_st_capacity_basis": true,
+  "unit_outage_per_unit_clip": true,
+  "campd_per_unit_attribution": null,
+  "campd_outage_merit_order_guard": null,
   "cc_winter_capability_basis": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -456,7 +464,7 @@
   "btm_backfill_year": null,
   "shared_inputs": {
     "eia930": "../_shared/MISO/eia930-a257b22934ed.parquet",
-    "eia923": "../_shared/MISO/eia923-1a5b4475b1f3.parquet",
+    "eia923": "../_shared/MISO/eia923-fa4995bba15c.parquet",
     "campd": "../_shared/MISO/campd-0c8c8860e930.parquet",
     "unit_outages": "../_shared/MISO/unit_outages-5b083f8b739a.parquet",
     "unit_outages_short": "../_shared/MISO/unit_outages_short-ee95f581732c.parquet",
@@ -464,19 +472,19 @@
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "66c584c",
-  "basis_sha": "3f7388e8d46b2375394953d04a41b34abe599bb1",
-  "highspy_version": "1.15.1",
+  "git_sha": "1aab8d41",
+  "basis_sha": "fe641ebe6c8c9bdec9299ca7d7388ab50810671a",
+  "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v22-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.15.1",
+      "highspy": "1.14.0",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.5",
-      "pyarrow": "25.0.1",
-      "pydantic": "2.13.5"
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4"
     }
   }
 }

@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-03-miso-202-unitclip",
+  "label": "miso 202 unitclip",
+  "date": "2026-09-03",
+  "shorthand": "miso-202-unitclip",
+  "definition": "miso-202 ARM leg B: the same keeper recipe with unit_outage_per_unit_clip=True (the per-unit removal clip)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-03-miso-202-unitclip.js",
+  "bundle": "results/calibration/miso202_unitclip_B"
+}

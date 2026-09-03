@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-03-miso-202-control",
+  "label": "miso 202 control",
+  "date": "2026-09-03",
+  "shorthand": "miso-202-control",
+  "definition": "miso-202 CONTROL leg A: the committed keeper recipe (2026-09-02-miso-201-stbasis) re-solved with unit_outage_per_unit_clip explicitly OFF",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-03-miso-202-control.js",
+  "bundle": "results/calibration/miso202_control_A"
+}
