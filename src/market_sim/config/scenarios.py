@@ -340,6 +340,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # pinned default key never moves — the failure mode caiso-184 and nyiso-128
     # both hit by landing a field unregistered.
     "unit_outage_st_capacity_basis",
+    # miso-202 one-unit-cannot-be-more-than-100 %-out clip in the shared
+    # unit-outage accumulator (GATED default-off; every consumer reads it via
+    # ``getattr(config, "unit_outage_per_unit_clip", False)`` in
+    # data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
+    # pinned default key never moves.
+    "unit_outage_per_unit_clip",
     # data/fleet/arrays.py and it selects a SEPARATE companion extract, so the
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 / caiso-186 discipline).
@@ -1415,6 +1422,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-201 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_st_capacity_basis": "False",
+    # Added by miso-202 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_per_unit_clip": "False",
     # Added by nyiso-176 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_per_unit_attribution": "False",
@@ -11968,6 +11978,44 @@ class ScenarioConfig:
     # own CAMPD bin sheet, a different basis with no per-unit fleet roster),
     # and byte-inert while off.
     unit_outage_st_capacity_basis: bool = False
+
+    # miso-202: enforce, in the shared unit-outage accumulator, the invariant
+    # that ONE UNIT CANNOT BE MORE THAN 100 % OUT OF SERVICE.
+    #
+    # THE DEFECT. outages.unit_outage_event_window reconstructs a day-granular
+    # extract row as the half-open window [outage_start, outage_end + 1 day).
+    # Two windows of the SAME unit whose first row's outage_end falls on the
+    # second row's outage_start therefore BOTH cover that boundary day, and
+    # _unit_outage_factors_from_events SUMS row shares into the bin rather than
+    # unioning them — so the unit's capacity is subtracted TWICE for 24 h. The
+    # measurement is unambiguous about the cause: across MISO's committed
+    # extracts every one of the 845 same-unit window overlaps is EXACTLY 24.0 h
+    # (std5d 648, layup 197, short 0 — a single-bin histogram), which is the
+    # fingerprint of the "+ 1 day" artifact and of nothing else.
+    #
+    # THE REPAIR. Accumulate each UNIT's removed MW into its own hourly array,
+    # clip that array at the unit's own capacity, and only then sum the units
+    # into the bin. It is a ceiling on a sum, not a window-merging heuristic:
+    # no date arithmetic, no adjacency test, no tolerance. It bites in exactly
+    # the physically impossible case and is the identity everywhere else, which
+    # is why the arm's availability is >= the control's on every bin and hour
+    # (the miso-202 A/B's S-3 monotonicity check).
+    #
+    # SCOPE, decided by measurement rather than inheritance. Shared by the std
+    # >= 5-day, short and partial layers AND by the lay-up loader, whose
+    # contract is that a lay-up share and an outage share for the same plant
+    # "sit on the same basis and are additive" (rule 19 [R-ONE-MECH]). The
+    # declared-event MAXGEN layer is OUT of scope because phase-0 N-5 measured
+    # ZERO same-unit overlaps in it over 544 unit-series — its windows are
+    # already hour-granular, so it cannot carry a boundary-DAY defect and the
+    # flag would be provably inert there while widening the blast radius.
+    #
+    # MEASURED (the extract's own unit capacities), ZERO fitted scalars and zero
+    # free parameters (rule 21 [R-DOF]), rule-13 forward-regenerable (it is a
+    # property of the accumulator, not of any year's data, and regenerates
+    # identically for a forecast year), eligibility year-independent, and
+    # byte-inert while off.
+    unit_outage_per_unit_clip: bool = False
 
     # CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two
     # CAMPD-derived NYISO solve inputs both attribute a MIXED plant's measured

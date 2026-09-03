@@ -630,9 +630,7 @@ def _st_basis_pairmap(
     # Every extract unit id that ever appears in each steam bin.
     bin_units: dict[tuple[int, str], set[str]] = {}
     for r in df.itertuples(index=False):
-        tgt = _generic_unit_outage_target(
-            int(r.facility_id), r.unit_id, r.plant_group
-        )
+        tgt = _generic_unit_outage_target(int(r.facility_id), r.unit_id, r.plant_group)
         if tgt is None or tgt not in cap:
             continue
         if tgt[1] not in _ST_CAPACITY_BASIS_GROUPS:
@@ -676,7 +674,6 @@ def _st_basis_pairmap(
         for uid, gid in local.items():
             pairmap[(plant, group, str(uid))] = fleet_units[gid]
     return pairmap
-
 
 
 @lru_cache(maxsize=None)
@@ -777,6 +774,7 @@ def unit_outage_derate_factors(
     mixed_gas_routing: bool = False,
     per_unit_crosswalk: bool = False,
     merit_order_guard: bool = False,
+    per_unit_clip: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -820,6 +818,7 @@ def unit_outage_derate_factors(
         fleet_status_scope,
         per_unit_crosswalk=per_unit_crosswalk,
         st_capacity_basis=st_capacity_basis,
+        per_unit_clip=per_unit_clip,
     )
 
 
@@ -870,6 +869,7 @@ def _unit_outage_factors_from_events(
     fleet_status_scope: bool = False,
     per_unit_crosswalk: bool = False,
     st_capacity_basis: bool = False,
+    per_unit_clip: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -905,6 +905,22 @@ def _unit_outage_factors_from_events(
     retirees dispatched from the retired-within-window sheet — absent from
     the operable parquet — keep their legitimate windows. Non-ERCOT only (the
     ERCOT branch caps on its own CAMPD bin sheet, a different basis).
+
+    ``per_unit_clip`` (GATED default-off; miso-202,
+    ``ScenarioConfig.unit_outage_per_unit_clip``): enforce the invariant that
+    ONE UNIT CANNOT BE MORE THAN 100 % OUT OF SERVICE before the units are
+    summed into the bin. :func:`unit_outage_event_window` reconstructs a
+    day-granular row as ``[outage_start, outage_end + 1 day)``, so two windows
+    of the SAME unit that share a boundary date both cover that day and this
+    accumulator — which sums row shares rather than unioning them — subtracts
+    the unit's capacity TWICE for 24 h. Across MISO's committed extracts every
+    one of the 845 same-unit window overlaps is EXACTLY 24.0 h (std5d 648,
+    lay-up 197, short 0), the fingerprint of the ``+ 1 day`` artifact and of
+    nothing else. With the flag on, each unit's removed MW accumulates into its
+    own array, is clipped at that unit's own capacity, and only then enters the
+    bin — a ceiling on a sum, not a window-merging heuristic, so it is the
+    identity except in the physically impossible case and can only ever remove
+    LESS. Zero free parameters (rule 21 ``[R-DOF]``).
     """
     if iso == "ERCOT":
         from market_sim.data.fleet import load_campd_bins
@@ -945,6 +961,10 @@ def _unit_outage_factors_from_events(
         _fleet_status_index(iso) if (fleet_status_scope and iso != "ERCOT") else None
     )
     sums: dict[tuple[int, str], np.ndarray] = {}
+    # miso-202 per-unit clip: {(bin, unit_id): [removed_mw array, unit capacity]}.
+    # Populated INSTEAD of writing straight into ``sums`` when the flag is on, so
+    # the off path allocates nothing and stays byte-inert.
+    per_unit: dict[tuple[tuple[int, str], str], list] = {}
     for r in df.itertuples(index=False):
         tgt = target_fn(int(r.facility_id), r.unit_id, r.plant_group)
         if tgt is None or tgt not in cap:
@@ -978,8 +998,28 @@ def _unit_outage_factors_from_events(
         mask = outage_hour_mask(w_start, w_stop, year, hours)
         if not mask.any():
             continue
+        if per_unit_clip:
+            # Hold this unit's removed MW apart from the bin so it can be capped
+            # at the unit's own capacity below. ``ucap`` is the same value the
+            # unclipped path divides by ``cap[tgt]``, so the two paths differ ONLY
+            # where a unit's own rows overlap — the boundary-day double-count.
+            slot = per_unit.setdefault((tgt, str(r.unit_id)), [np.zeros(hours), 0.0])
+            slot[0][mask] += removed_frac * float(ucap)
+            # A unit is at most fully out. Rows for one unit can differ in
+            # ``ucap`` (a partial plateau carries the same unit capacity but a
+            # fractional ``removed_frac``; an extract spanning a re-rating can
+            # carry two capacities), so the ceiling is the LARGEST capacity the
+            # unit's own rows claim — never a smaller one, which would clip a
+            # legitimate single window.
+            slot[1] = max(slot[1], float(ucap))
+            sums.setdefault(tgt, np.zeros(hours))
+            continue
         arr = sums.setdefault(tgt, np.zeros(hours))
         arr[mask] += removed_frac * float(ucap) / cap[tgt]
+    for (tgt, _uid), (removed_mw, unit_cap) in per_unit.items():
+        if unit_cap <= 0.0:
+            continue
+        sums[tgt] += np.minimum(removed_mw, unit_cap) / cap[tgt]
     return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}
 
 
@@ -993,6 +1033,7 @@ def unit_outage_short_derate_factors(
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
     st_capacity_basis: bool = False,
+    per_unit_clip: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1025,6 +1066,7 @@ def unit_outage_short_derate_factors(
         cc_nameplate_basis,
         fleet_status_scope,
         st_capacity_basis=st_capacity_basis,
+        per_unit_clip=per_unit_clip,
     )
 
 
@@ -1056,6 +1098,7 @@ def unit_layup_removed_fractions(
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
     st_capacity_basis: bool = False,
+    per_unit_clip: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) laid-up capacity fraction}``.
 
@@ -1095,6 +1138,13 @@ def unit_layup_removed_fractions(
         cc_nameplate_basis,
         False,
         st_capacity_basis=st_capacity_basis,
+        # Same rule-19 [R-ONE-MECH] reasoning as st_capacity_basis above: this
+        # loader's contract is that a lay-up share and an outage share for the
+        # same plant sit on the same basis and are additive, so clipping one
+        # layer's per-unit removal and not the other would break exactly that
+        # invariant. Phase-0 N-2 measures 197 same-unit overlaps in MISO's
+        # lay-up extract, so the layer is not merely eligible — it is live.
+        per_unit_clip=per_unit_clip,
     )
     # The accumulator returns availability multipliers (1 - removed share);
     # this loader's contract is the REMOVED (laid-up) share itself.
@@ -1129,6 +1179,7 @@ def unit_partial_outage_derate_factors(
     cc_nameplate_basis: bool = False,
     fleet_status_scope: bool = False,
     st_capacity_basis: bool = False,
+    per_unit_clip: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -1168,6 +1219,7 @@ def unit_partial_outage_derate_factors(
         cc_nameplate_basis,
         fleet_status_scope,
         st_capacity_basis=st_capacity_basis,
+        per_unit_clip=per_unit_clip,
     )
 
 
