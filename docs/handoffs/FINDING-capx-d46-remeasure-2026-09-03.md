@@ -469,6 +469,20 @@ and one of them attributed to my own process rather than to the model.
 **Stage 2 was NOT started**, and the gate was verified closed at the end of the
 session rather than assumed at the start (§8). **Stage 3 was not touched.**
 
+**One under-commit, caught at close and repaired.** GOLDEN-3's FC-6 T1.6 ladder
+writes per-rung metrics to `fc6/_battery_metrics/NEISO/*.json`, and GOLDEN-2
+**tracks** its equivalents — they are part of the committed FC-6 evidence, not
+scratch. This lane's first pass committed the ladder's `driver-battery-*.json/.md`
+and `paired_invariants.json` but missed them; both files are now committed. In the
+same repair, the two new lanes got the per-lane `.gitignore` blocks the house
+pattern gives every other lane (`/results/ff-t1f-d46/` on the
+`/results/ff-t1f-s6-pjm/` template, and `fc6/_battery_cache_*/` alongside the
+existing `fc6/arms/*/NEISO/` rule), so the 105.8 MB of per-year dispatch parquets,
+screen-diagnostic `.npz`, floor-retention dumps and the ladder's disposable solve
+cache are excluded by rule rather than by omission. Verified both ways: every one
+of those artifacts is now ignored, and **no previously-tracked file became
+ignored** — GOLDEN-2's own `_battery_metrics` included.
+
 Every push touching a file ≥300 lines was blob-verified against the local bytes
 before the next commit (rule 27): `register_forecast_run.py` at each of its five
 edits, `ff-verdicts.json` at each of six, all six `run_config.json` bundles, the
