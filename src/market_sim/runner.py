@@ -1661,9 +1661,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         )
 
     # capx D42 (2026-09-02): the FOSSIL owner-filed EIA-860 Schedule-3 dates,
-    # GATED fossil_announced_exits_enabled (default OFF ⇒ nothing loaded, the
-    # shipped posture byte-identical) and forecast-mode only, like every
-    # exogenous exit channel. Read from the ACTIVE vintage snapshot — the
+    # GATED fossil_announced_exits_enabled — DEFAULT ON since 2026-09-03 (owner
+    # ruling Q30 / capx D44); an explicit False loads nothing and restores the
+    # pre-Q30 posture byte-identically — and forecast-mode only, like every
+    # exogenous exit channel (which is why a BACKCAST is untouched by the flip). Read from the ACTIVE vintage snapshot — the
     # rule-13 vintage gate: a date is admissible only because it was on file
     # at the run's information cutoff. Under the verified posture
     # (hindcast_verified_announced_exits) the set is checked per unit against

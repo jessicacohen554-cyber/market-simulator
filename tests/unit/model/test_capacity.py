@@ -5086,10 +5086,13 @@ class TestFossilAnnouncedExits(unittest.TestCase):
     """capx D42: the FOSSIL owner-filed date channel at step 1 + its rule-19
     reconciliation with the economic screen and the reliability floor.
 
-    GATED ``fossil_announced_exits_enabled`` (default off): off, the rows are
-    ignored and step 1 is the shipped fossil no-op; on, the rows ride step 0's
-    matcher/derate machinery, dated plants are exogenous to the screen, and
-    the R-NEW admission cap's counterfactual nets the pending dated exits.
+    GATED ``fossil_announced_exits_enabled`` — DEFAULT ON since 2026-09-03
+    (owner ruling Q30, capx D44): on, the rows ride step 0's matcher/derate
+    machinery, dated plants are exogenous to the screen, and the R-NEW
+    admission cap's counterfactual nets the pending dated exits. The OFF legs
+    below now pass an EXPLICIT ``fossil_announced_exits_enabled=False`` — that
+    is the pre-Q30 control posture, and what they assert (rows ignored, step 1
+    the fossil no-op, cache key unmoved) is unchanged by the flip.
     """
 
     def _row(self, plant_id, gen_id, year, month=None, mw=None):
@@ -5120,7 +5123,7 @@ class TestFossilAnnouncedExits(unittest.TestCase):
             fleet,
             None,
             2028,
-            ScenarioConfig(),
+            ScenarioConfig(fossil_announced_exits_enabled=False),
             {},
             events=events,
             announced_fossil_exits=[self._row(300, "1", 2028, mw=500.0)],
@@ -5199,7 +5202,7 @@ class TestFossilAnnouncedExits(unittest.TestCase):
                 "MISO",
                 iso_config,
                 zones,
-                ScenarioConfig(),
+                ScenarioConfig(fossil_announced_exits_enabled=False),
                 [],
                 [],
                 2027,
@@ -5277,7 +5280,12 @@ class TestFossilAnnouncedExits(unittest.TestCase):
         seen.clear()
         with mock.patch.object(pkg, "apply_economic_retirements", side_effect=spy):
             evolve_fleet(
-                fleet, prior, 2028, ScenarioConfig(), {}, announced_fossil_exits=rows
+                fleet,
+                prior,
+                2028,
+                ScenarioConfig(fossil_announced_exits_enabled=False),
+                {},
+                announced_fossil_exits=rows,
             )
         self.assertEqual(seen["exempt"], frozenset())
         self.assertIsNone(seen["exogenous"])

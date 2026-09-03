@@ -160,7 +160,12 @@ class TestMisoIsArmedAndOthersAreNot(unittest.TestCase):
         # lane. Not a re-baseline to silence red: the two re-identified CCS
         # fixed-cost fields are hashed at every value, so registration is not
         # a remedy and re-pinning is the sanctioned route.
-        self.assertEqual(ScenarioConfig().cache_key(), "cedadc285f8603b9")
+        # 2026-09-03: cedadc285f8603b9 -> 4c6b03ae098b6e3e, capx D44's declared
+        # flip of fossil_announced_exits_enabled (owner ruling Q30). That field
+        # IS registered, and the key moving is what capx D24-R (b'-1) exists to
+        # make happen — the drop is at the FROZEN declaration, so the armed
+        # default enters the hash instead of colliding with the pre-flip bundle.
+        self.assertEqual(ScenarioConfig().cache_key(), "4c6b03ae098b6e3e")
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -154,7 +154,7 @@ class TestConfigFields(unittest.TestCase):
 
     def test_default_key_pin_unmoved_by_the_arming(self):
         """The global default-config pin is untouched by the flip (measured)."""
-        self.assertEqual(ScenarioConfig().cache_key(), "cedadc285f8603b9")
+        self.assertEqual(ScenarioConfig().cache_key(), "4c6b03ae098b6e3e")
 
     def test_backcast_coerces_off(self):
         cfg = ScenarioConfig(

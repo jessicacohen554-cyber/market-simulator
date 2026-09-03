@@ -11,11 +11,17 @@ between simulation years:
   acceptance, regulatory order, RMR end) force-retire (or derate a plant-binned
   tranche) at the instrument date, any fuel, bypassing the reliability floor.
   GATED on ``confirmed_exits_enabled`` (default on) and forecast-mode only; the
-  ONLY exogenous fossil exit channel.
+  INSTRUMENT-BOUND exogenous fossil exit channel (it was the only one until
+  owner ruling Q30, 2026-09-03, added the owner-filed-date limb below).
 * **Announced retirements** (:func:`apply_announced_retirements`) -- units with
-  a scheduled EIA-860 ``retirement_year``. Fossil units are a default no-op
-  (``forecast_fossil_retirement_economic``); non-fossil dates are honored
-  within the EIA-860 data horizon.
+  a scheduled EIA-860 ``retirement_year``. Fossil units are a no-op ON THIS
+  ROUTE (``forecast_fossil_retirement_economic``); non-fossil dates are honored
+  within the EIA-860 data horizon. Since owner ruling Q30 the owner-filed
+  FOSSIL dates enter as limb 1b of the same step under
+  ``fossil_announced_exits_enabled`` (default on, capx D42/D44), riding the
+  confirmed channel's own matcher/derate machinery; the economic screen below
+  then decides the residual UNDATED fossil fleet (rule 19 [R-ONE-MECH]:
+  a plant carrying a pending filed date is exempt from the screen).
 * **Economic retirements** (:func:`apply_economic_retirements`) -- thermal
   units whose attainable (pro-forma) inframarginal margin fails to cover their
   going-forward fixed cost for a fuel-type-specific number of consecutive
@@ -783,14 +789,21 @@ def apply_announced_retirements(
     binding instrument (that is the confirmed channel,
     :func:`apply_confirmed_exits`, which runs first).
 
-    **Fossil default no-op (RC-3).** When ``fossil_economic`` is ``True`` (the
-    forecast default), units of a :data:`_FOSSIL_FUELS` type are **exempt** from
-    this date-based retirement: an announced fossil date is an announcement, not
-    a certainty, so their phaseout is left to the economic-retirement screen
-    (:func:`apply_economic_retirements`) and the exogenous fossil exit channel is
-    the confirmed registry. For the whole fossil fleet this step is a default
-    no-op. Set ``fossil_economic=False`` to honor every scheduled fossil date
-    (the legacy behaviour).
+    **Fossil no-op ON THIS ROUTE (RC-3).** When ``fossil_economic`` is ``True``
+    (the forecast default), units of a :data:`_FOSSIL_FUELS` type are **exempt**
+    from date-based retirement HERE. Set ``fossil_economic=False`` to honor
+    every scheduled fossil date on this route (the legacy behaviour).
+
+    That exemption is no longer the whole fossil-date posture. Owner ruling Q30
+    (2026-09-03, capx D42/D44) arms ``fossil_announced_exits_enabled`` by
+    default, so the owner-filed fossil dates DO retire units — as limb 1b of
+    this same step 1, vintage-gated and reversal-checked, on the confirmed
+    channel's matcher/derate machinery — and the economic screen
+    (:func:`apply_economic_retirements`) decides the residual UNDATED fossil
+    fleet. The superseded rationale for the exemption ("an announced fossil
+    date is an announcement, not a certainty") was ruled a statement about
+    PRECISION rather than admissibility; D42 measured that precision at 98.5 %
+    of released MW at plant grain under the verified posture.
 
     **Non-fossil data-horizon gate (RC-5).** A non-fossil announced date
     (nuclear/hydro/renewables/storage) is honored deterministically only within

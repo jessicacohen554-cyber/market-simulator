@@ -15,9 +15,12 @@ tests pin three things:
 
 * the repair works — the same simulated flip that collides under the live-default
   rule separates under the declared-default rule (``FlipNoLongerCollidesTest``);
-* it cost nothing to land — every frozen declaration still equals its live
-  default, which is why re-baselining moved 0 of 170 committed keys
-  (``RebaselineIsANoOpTest``);
+* it cost nothing to land — every frozen declaration equalled its live default
+  at the re-baseline, which is why it moved 0 of 170 committed keys
+  (``RebaselineIsANoOpTest``). Since capx D44 (owner ruling Q30) the ledger
+  carries its first declared flip, so that equality now holds for every
+  registered field EXCEPT a flipped one, whose live default deliberately
+  differs — the no-op property is therefore asserted as of the pre-flip day;
 * the ledger stays append-only — an EDIT to an existing entry fails loudly
   (``AppendOnlyLedgerTest``), which is what keeps the frozen values frozen.
 """
@@ -145,11 +148,37 @@ class RebaselineIsANoOpTest(unittest.TestCase):
     def test_the_default_keys_are_unmoved_by_the_repair(self):
         # The pinned-identity surface: hashing under the live-default rule (the
         # pre-repair algorithm) and under the shipped rule gives the same key
-        # for both bare configs.
+        # for the same config — i.e. the re-baseline itself moved nothing, which
+        # is what makes (b′-1) free.
+        #
+        # AMENDED by capx D44 (the first declared flip, owner ruling Q30 arming
+        # `fossil_announced_exits_enabled`). A field WITH a declared flip is
+        # expected to hash differently under the two rules — that difference IS
+        # the repair working, and asserting it away would re-introduce exactly
+        # the collision (b′-1) was landed to stop. So the comparison is made as
+        # of the PRE-FLIP day on both sides: the pre-repair rule is the live
+        # defaults with each flipped field put back to its frozen declaration
+        # (which is what "the live default" meant before the flip), and the
+        # config hashed is the pre-flip bare config (same substitution). On
+        # that pair the two rules must still agree — for every registered
+        # field, flipped or not. Nothing here is weakened for the 229 unflipped
+        # fields: their live default IS their declaration, so the substitution
+        # is a no-op for them.
+        frozen = {
+            name: scenarios._resolve_declared_default(
+                _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS[name]
+            )
+            for _, name, _ in _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS
+        }
+        pre_flip_rule = {**_live_defaults(), **frozen}
         for kwargs in ({}, {"mode": "backcast"}):
-            with _drop_rule(_live_defaults()):
-                before = ScenarioConfig(**kwargs).cache_key()
-            self.assertEqual(before, ScenarioConfig(**kwargs).cache_key(), msg=kwargs)
+            with _drop_rule(pre_flip_rule):
+                before = ScenarioConfig(**kwargs, **frozen).cache_key()
+            self.assertEqual(
+                before,
+                ScenarioConfig(**kwargs, **frozen).cache_key(),
+                msg=kwargs,
+            )
 
 
 class RegistrationTimeDefaultTest(unittest.TestCase):

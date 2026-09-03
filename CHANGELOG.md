@@ -1,5 +1,60 @@
 # Changelog
 
+## 2026-09-03 — capx D44: the fossil announced-date channel ARMS AS THE DEFAULT POSTURE (owner ruling Q30). One default flip, both pins advanced, no solve
+
+`ScenarioConfig.fossil_announced_exits_enabled` flips default `False` →
+`True`, executing **owner ruling Q30** (director sitting r#31, 2026-09-02) on
+the capx D42 A/B (`docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md`):
+a fossil unit's owner-filed EIA-860 Schedule-3 planned retirement date is now
+honored as an **exogenous, vintage-gated step-1 input** (reversal registry
+armed; under the verified posture a later re-filing may defer or cancel a
+vintage exit, never inject or advance one), and the economic retirement screen
+runs on the **residual UNDATED fleet** — the rule-19 `[R-ONE-MECH]`
+reconciliation D42 designed with the gate, so no unit's exit is decided twice.
+Admissibility was ruled on rule 13 `[R-MEASURED]` by the additions-pipeline
+symmetry; the superseded default's "an announcement is not a certainty"
+rationale is a statement about precision, and D42 measured that precision
+(MISO T1-H unit recall 5/19 → 16/19, every non-coal exit class opened,
+`false_retire` 0.0, 98.5 % plant-grain precision of released MW, **zero**
+economic-screen decisions displaced).
+
+Nothing else moved: **no new field, no parameter value, no solve, no keeper,
+no marker, rule 22 untouched.** Documentation amended to match the posture —
+CLAUDE.md capacity-evolution steps 0/1, `model-methodology-spec.md` §5.1
+(the pseudocode gains limb 1b and the "Confirmed vs announced" prose is
+rewritten), the field/module/limb docstrings in `scenarios.py`,
+`capacity_evolution/{evolve,retirements}.py`, `data/announced_retirements.py`,
+`data/fleet/assembly.py` and `runner.py` — plus the mechanism matrix (base row
++ all six shards: MISO `fc` O → **K** on its measured verdict, the other five
+U → **O**, armed but holding no verdict of their own, rule 25).
+
+**Cache keys.** The flip is DECLARED as the first entry in
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`; the frozen drop declaration stays
+`False`, so under capx D24-R option (b′-1) the armed default **enters** the
+hash and takes its own key rather than silently re-using the pre-flip bundle —
+the collision that ledger exists to prevent. Both pins advance: default
+`cedadc285f8603b9` → `4c6b03ae098b6e3e`, bare backcast
+`e006dfd7cef8bedd` → `8211c72bb1960adc` (dated cause blocks on the pins in
+`tests/regression/test_persisted_identity.py`; cache-epoch ledger entry
+2026-09-03 in `src/market_sim/results/cache.py`), and the ERCOT resolved poles
+move with them. An explicit `fossil_announced_exits_enabled=False` still
+equals the frozen declaration, is still dropped, and still addresses its
+pre-flip bundle — measured, so control arms and the D42 legs are unaffected.
+**Backcast is byte-identical** (the channel loads only in `mode="forecast"`),
+so no keeper, sidecar, determination or dashboard row moves and nothing needs
+re-scoring. Forecast/hindcast bundles solved at the pre-flip default record
+the superseded posture and join the director's batched re-measure decision;
+this lane re-solved nothing.
+
+**Harness plumbing (required for the flip to be effective).**
+`run_capacity_hindcast.py` pinned this field to its own `False` parameter
+default on every invocation, which would have left the flip inert for the
+entire hindcast lane. It now rides the None-drop dict — omit to inherit the
+shipped default, `--no-fossil-announced-exits` for an explicit pre-Q30 control
+arm (`argparse.BooleanOptionalAction`, the house pattern).
+
+Record: `docs/handoffs/FINDING-capx-d44-fossil-dates-arm-2026-09-03.md`.
+
 ## 2026-09-02 — capx D35: FC-6 P2 gas leg re-scoped to the model's gas partition; neiso-t3 P2 re-scored artifact-only (no LP, no field, nothing armed)
 
 The golden-2 P2 FAIL ("year 2050: wrong: gas_cc↓") was the instrument crossing

@@ -639,7 +639,7 @@ def build_config(
     smr_available_year: "int | None" = None,
     ptc_window: "int | str | None" = None,
     verified_announced_exits: bool = True,
-    fossil_announced_exits: bool = False,
+    fossil_announced_exits: "bool | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -744,12 +744,6 @@ def build_config(
         # no model default moves here). An armed leg hashes distinctly; the
         # off arm is byte-identical to the pre-flag harness.
         hindcast_verified_announced_exits=verified_announced_exits,
-        # capx D42 (2026-09-02): the fossil announced-date step-1 channel —
-        # the D32 R1 posture A/B's ARM leg. Off (the ScenarioConfig default)
-        # is the shipped posture, byte-identical; --fossil-announced-exits
-        # arms it for a measurement leg. NOTHING ARMS BY DEFAULT: the owner
-        # arms or declines on the D42 finding.
-        fossil_announced_exits_enabled=fossil_announced_exits,
         gas_price_path=gas_path,
         # T1-X crossover (FF-0E, plan §2.2): set the forward boundary so years
         # >= CROSSOVER_FORWARD_YEAR (2026) run on pure forward drivers (the
@@ -899,6 +893,18 @@ def build_config(
                 # default-off in ScenarioConfig; OMIT inherits that shipped
                 # default so the control arm's cache key is untouched.
                 "entry_pipeline_aware_signal": entry_pipeline_aware_signal,
+                # capx D42 fossil announced-date step-1 channel, ARMED AS THE
+                # DEFAULT by owner ruling Q30 (2026-09-03, capx D44). Moved
+                # onto the None-drop dict by D44: the harness previously pinned
+                # this field to its own ``False`` parameter default on every
+                # invocation, which would have made the flip INERT for the
+                # entire hindcast lane. OMIT now inherits the shipped
+                # ScenarioConfig default (GATED ON);
+                # --no-fossil-announced-exits passes an explicit False, which
+                # is the pre-Q30 control posture AND — because the cache key
+                # drops the field at its frozen ``False`` declaration (capx
+                # D24-R (b'-1)) — keeps that arm on its pre-flip key.
+                "fossil_announced_exits_enabled": fossil_announced_exits,
                 # ENTRY-SIGNAL forward-expectation construction (the disarm
                 # finding §6 rung, GATED default-off in ScenarioConfig): the
                 # capacity screens' price object becomes the run's own
@@ -1735,21 +1741,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--fossil-announced-exits",
         dest="fossil_announced_exits",
-        action="store_true",
-        default=False,
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
-            "capx D42 MEASUREMENT arm (the D32 R1 posture A/B): honor each "
-            "FOSSIL unit's owner-filed EIA-860 Schedule-3 planned retirement "
-            "date as an exogenous step-1 exit, read from the run's vintage "
-            "snapshot (vintage-gated — a date is admissible only because it "
-            "was on file at the cutoff), the reversal registry armed, the "
-            "economic screen on the residual (undated) fleet and the "
-            "admission-cap floor netting the dated exits. Under the default "
-            "verification posture the dated set is checked against the later "
-            "in-repo vintages (a re-filed deferral or a withdrawn date is "
-            "honored per unit; nothing is injected or advanced); with "
-            "--no-verified-announced-exits it is the pure ex-ante set. OMIT "
-            "for the shipped posture (ScenarioConfig default False)."
+            "capx D42 channel, ARMED AS THE DEFAULT POSTURE by owner ruling "
+            "Q30 (2026-09-03, capx D44): honor each FOSSIL unit's owner-filed "
+            "EIA-860 Schedule-3 planned retirement date as an exogenous step-1 "
+            "exit, read from the run's vintage snapshot (vintage-gated — a "
+            "date is admissible only because it was on file at the cutoff), "
+            "the reversal registry armed, the economic screen on the residual "
+            "(undated) fleet and the admission-cap floor netting the dated "
+            "exits. Under the default verification posture the dated set is "
+            "checked against the later in-repo vintages (a re-filed deferral "
+            "or a withdrawn date is honored per unit; nothing is injected or "
+            "advanced); with --no-verified-announced-exits it is the pure "
+            "ex-ante set. OMIT to inherit the shipped ScenarioConfig default "
+            "(GATED ON since Q30); --no-fossil-announced-exits forces the "
+            "pre-Q30 control posture explicitly, which is byte-identical to "
+            "the pre-flip harness and keeps that arm's pre-flip cache key."
         ),
     )
     parser.add_argument(

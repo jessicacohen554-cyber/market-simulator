@@ -1,8 +1,10 @@
 """Owner-filed EIA-860 Schedule-3 planned retirement dates for FOSSIL units.
 
 The data seam behind ``ScenarioConfig.fossil_announced_exits_enabled`` (capx
-D42, 2026-09-02 — the D32 R1 posture A/B; the gate ships DEFAULT-OFF and this
-module is never read while it is off). The shipped forecast posture
+D42, 2026-09-02 — the D32 R1 posture A/B; the gate shipped DEFAULT-OFF and was
+FLIPPED DEFAULT-ON on 2026-09-03 by capx D44, executing owner ruling Q30 "ARM
+AS DEFAULT" on the D42 measurement. An explicit ``False`` restores the pre-Q30
+posture and this module is then never read). The pre-Q30 forecast posture
 (``forecast_fossil_retirement_economic=True``) deliberately no-ops the
 announced-date step for coal/gas/oil, leaving fossil exits to the economic
 screen. D32 measured that the owner's filed date is the ONE published per-unit

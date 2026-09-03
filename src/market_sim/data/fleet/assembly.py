@@ -425,7 +425,9 @@ def bins_to_fleet(
                 str(b["Plant_Group"]),
                 iso=getattr(config, "iso", "ERCOT"),
                 per_unit=bool(getattr(config, "campd_per_unit_attribution", False)),
-                merit_guard=bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                merit_guard=bool(
+                    getattr(config, "campd_outage_merit_order_guard", False)
+                ),
             )
             # nyiso-147: replace the sector-keyed default with the plant's
             # own measured Gold-Book/EIA-923 grid-delivery share where the
@@ -819,7 +821,9 @@ def bins_to_fleet(
                 plant_code,
                 iso=getattr(config, "iso", "ERCOT"),
                 per_unit=bool(getattr(config, "campd_per_unit_attribution", False)),
-                merit_guard=bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                merit_guard=bool(
+                    getattr(config, "campd_outage_merit_order_guard", False)
+                ),
             )
             # Multi-year steam-host operating level (chp_steam_floor_p25):
             # the artifact's measured steam level supersedes the p2
@@ -1577,7 +1581,8 @@ def build_base_fleet(
     when off or ``confirmed_exits`` is empty.
 
     ``announced_fossil_exits`` (capx D42, GATED
-    ``config.fossil_announced_exits_enabled``, default off ⇒ no-op): the
+    ``config.fossil_announced_exits_enabled`` — DEFAULT ON since 2026-09-03,
+    owner ruling Q30; an explicit ``False`` makes it a no-op): the
     owner-filed fossil retirement rows get the SAME first-year backlog
     treatment through the same call — a date at or before the first
     simulated year is applied up front, and later years' rows are selected by
