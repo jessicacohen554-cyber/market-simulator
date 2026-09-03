@@ -11580,4 +11580,160 @@ Evidence:
 `scripts/probes/_caiso239_st_gas_committed_footprint.py`,
 `scripts/gen_caiso239_attestation.py`, run `2026-09-02-caiso-239-b1-stgas`.
 
-**Next number: caiso-240.**
+## caiso-240 (2026-09-03) — the `_DEFAULT_HR_MULT_BY_GROUP` CENSUS: **22 of the 28 uncited literals are DEAD in every one of the six ISOs**, the largest live one is PRICED-BUT-INERT, the real off-registry class is **ST_CHP and it is not CAISO's** — and the one CAISO cell that grades groundable is armed, solved and **PROMOTED**. The pre-registered adverse bound **FAILED in 2024** and the root cause is an **estimator defect**: caiso-230 §H is NOT the strict upper bound three sessions have called it
+
+**Keeper `2026-09-02-caiso-239-b1-stgas` → `2026-09-03-caiso-240-b1-stgas`**
+(bundle `results/calibration/caiso240_b1_stgas_peak_measured`). Determination
+**UNCHANGED at NOT-YET**, C3a the sole load-bearing FAIL; C1 12/12 free 8/8; C2 /
+C3b / C4 PASS; C3c the single ledgered caveat; C6 attested; C8 PASS;
+`audit_keepers --iso CAISO` **PASS 0/0**. **Every scored criterion is identical to
+the predecessor.** CAISO holds no `complete`/`final` marker; holdout freeze
+ACTIVE; every read and the whole solve inside 2023–2025.
+
+Pre-registered in `PRECOMMIT-caiso240-default-hr-mult-census-2026-09-03.md`
+(pushed **before any footprint measurement**) and
+`PRECOMMIT-caiso240-ADDENDUM-arm-2026-09-03.md` (pushed **before the solve**).
+
+**THE CENSUS IS THE PRIMARY RESULT — caiso-239 §9 item 1, executed.** Zero
+solves. The LP footprint of **all 28** uncited class heat-rate literals measured
+on **all six** designated keepers, by rebuilding each keeper's offer surface with
+every cell scaled by its **own unique probe factor** and reading each row's
+heat-rate ratio back — so a row's cell is **identified by measurement**, never
+inferred from its group or its name. That makes the caiso-238 error
+(grading a scalar from the band dict alone) structurally impossible. Both
+pre-registered method falsifiers **PASS**: **M-1**, a baseline→baseline rebuild is
+byte-identical across all 1,801 CAISO rows; **M-2**, the `ST_GAS.mc` cell is
+responsive on **exactly 3** tranches (plants 315/335/350) in every year on the
+caiso-231 predecessor recipe — reproducing caiso-239 F-1 — and on **ZERO** in
+every year on the caiso-239 keeper, which independently verifies that caiso-239
+retired the literal it claimed to retire. Across 18 ISO-years, **0** rows moved at
+an unattributed ratio and **0** were clip-suppressed.
+
+**WHAT IS LIVE, AND IT IS NOT WHERE ANYONE EXPECTED.**
+1. **Five of the seven `mr` literals are dead BY CONSTRUCTION** —
+   `bins_to_fleet` sets `mustrun_cap > 0` only for non-CHP coal, so no gas group
+   can ever build a must-run tranche and reach its `mr` literal, in any ISO under
+   any configuration these keepers use.
+2. **`COAL:mr` is the largest exposure by MW and is mostly PRICED-BUT-INERT** —
+   MISO 61 tranches / **12,709 MW**, PJM 52 / 10,393 MW, ERCOT 10 / 3,650 MW, but
+   the coal `_mustrun` tranche's fuel is **sunk under take-or-pay**, so its heat
+   rate moves with the literal and its marginal cost does not: **0 of 10** ERCOT,
+   **20 of 52** PJM, **15 of 61** MISO rows are economically live. (PJM's higher
+   share is its `coal_sync_srmc_tranche = True`, the only keeper that arms it.)
+   Structural liveness without economic liveness is a distinction this census had
+   to invent to report honestly.
+3. **`ST_CHP` is the only class in the model whose ENTIRE offer surface is uncited
+   literals** — **no keeper of any ISO configures an `ST_CHP` offer curve**. Live
+   in MISO (46 / 27 / 13 tranches on mc / econ / peak), PJM (23 / 12 / 3), NEISO
+   (7 / 1 / 2), NYISO (3 / 1 / 1). CAISO has none. **Rule 25: an ask for those
+   lanes, never an arm here.**
+4. **On the CAISO keeper exactly TWO cells survive caiso-239** — `ST_GAS:econ`
+   = 1.00 (3 tranches, 2,240.8 MW) and `ST_GAS:peak` = 1.10 (3 tranches,
+   428.8 MW), both on the same three OTC steamers through the same bypass.
+
+**THE ARM REPAIRS THE PEAK ONE** — the only one whose measured counterpart is **at
+the model's own grain** (a bypassed plant's peak band is a single flat
+multiplier; the measurement is a single number).
+`ScenarioConfig.caiso_st_gas_peak_measured` (gated, default off, per-ISO registry)
+replaces the uncited ERCOT-lineage 1.10 with CAISO **1.166** =
+`CT_PEAKER.bands.peak` in the committed `caiso_offer_curve_measured.json`.
+**Zero new measurement, zero free parameters:** 1.166 is *already* the value the
+CAISO ST_GAS class band carries, armed at caiso-231 on the CT bucket that
+`derive_caiso_offer_surface.py` discloses **CONTAINS these very steamers** — and
+the bypass keeps that re-grounded band from reaching any of them, so on the keeper
+it prices only two EIA-860 retired-window units (356 AES Redondo Beach, 10446
+SEGS IX). **The measurement is withheld from its own population; this arm
+delivers it.** That is caiso-239's structural inversion again, one band over.
+**Disclosed against interest:** the population match is **containment, not
+coincidence**, and so weaker than caiso-239's exact ten-unit coincidence — the CT
+bucket is pooled CT_PEAKER + CT_CHP + ST_GAS conduct and the OASIS ids are
+masked. It is the same basis caiso-231 was promoted on.
+
+**THE LARGER CELL IS REFUSED, NOT TAKEN.** `ST_GAS:econ` (2,240.8 MW vs 428.8) is
+graded **F3**: the model's band for a bypassed plant is **one flat multiplier**
+while every measured counterpart is a **two-endpoint ramp**, so choosing an
+endpoint would be a free parameter (precommit §6(3)). Its bound
+(+0.0108 / +0.0084 / +0.0044 $/MWh) is on record for whoever takes it.
+
+**GATES.** G-STRUCT **PASS**, verified **pre-solve** on the rebuilt fleet in all
+three years: exactly **3 of 1,801** rows move, all three the steamers' `_peak`
+tranches, at the **exact** ratio 1.166/1.10 = **1.060000000000**, with 0 other
+bands, groups or ISOs; the solved fleet agrees. G-INERT **PASS** (2024 ST_GAS
+sheds **11.8 GWh** to CT_PEAKER +6.5, CC_REGULAR +3.6, imports +1.2). G-CTRL
+**PASS** on its dispatch-identity leg (2023 and 2025 reproduce the keeper to
+within **0.001 TWh in every class** — max |Δ| 0.000735 and 0.000196 TWh).
+G-C1 / G-C3b / G-C8 / G-CAVEAT **PASS** unchanged.
+
+**THE PRE-REGISTERED ADVERSE BOUND FAILED IN 2024, AND THE ROOT CAUSE IS AN
+ESTIMATOR DEFECT — DISCLOSED, NEVER RE-FITTED.** Pushed to `origin` before the
+solve: **+0.0014 / +0.0011 / zero-to-tolerance $/MWh**. Measured: **+0.0003 /
++0.0049 / +0.0000** — the 2024 leg **exceeds by 4.5×**. Measured root cause: the
+caiso-230 §H form counts only zone-hours where the repriced rung is **itself** the
+matched marginal rung (**14** in 2024) and is structurally blind to **indirect
+re-dispatch**, which is this arm's dominant channel. **So §H is NOT the strict
+UPPER bound caiso-230, caiso-231 and caiso-239 all describe it as** — it
+over-predicts when the repriced rung's own marginal hours dominate (both prior
+sessions' regime) and **under-predicts when the displaced energy lands on rungs
+already marginal elsewhere** (this arm's regime). Any future session quoting §H
+as a ceiling is quoting it wrongly. **This is the THIRD gate-spec defect the
+family has disclosed**; §0.7 inherited caiso-239's other two rather than
+re-discovering them. In proportion: +0.0049 $/MWh is **0.013 %** of the 2024
+price level and **0.6 %** of its required move; no year flips, 2023 stays PASS,
+and the reported C3a percentages are unchanged at the scorecard's precision.
+
+**PROMOTION BASIS: the owner's standing standard in its strongest form** —
+structural integrity strictly improves **and no scored criterion regresses at
+all**. Never a C3a lever: direction is adverse by construction (+6.0 % on a peak
+band).
+
+**PREDICTIONS SCORED AGAINST INTEREST: two falsified, one right for the wrong
+reason, four confirmed.** P-4 (ERCOT below the plant-level median) **FALSIFIED**
+by a tie at 10 responsive tranches; P-6 (CAISO's largest live cell is in the `mr`
+family) **FALSIFIED** — CAISO has no live `mr` cell at all. P-1 survives its own
+falsifier but its **reasoning was wrong**: I predicted the `mr` exposure would sit
+across the gas groups, reasoning from the route (no offer curve overrides
+`mustrun_hr`) without first measuring whether any gas must-run tranche exists —
+**the caiso-238 error in miniature, made by the session that built the instrument
+to prevent it**, and visible only because the instrument was built.
+
+**SECOND OBJECT (caiso-239 §9 item 2) — DESIGNED AND COSTED, NOT ARMED, and it is
+worse than "large blast radius": it is DEPENDENCY-BLOCKED.**
+`ST_GAS_PEAKER_PLANTS` is not a double duty but **SIX scopes on one frozenset**,
+of which **four are inert on the CAISO keeper** (the reliability-floor scope
+needs `gas_st_netload_drag`, False on CAISO; the econ-split scope needs
+`econ_split_by_group`, `{}` on all six; the `gas_st_*_hr_override` scope is
+`None` on all six — **and that inert scope is the offer bypass's only STATED
+warrant**). Splitting the offer scope as posed would hand plants 315/335/350 the
+class curve and thereby **re-impose the caiso-239-refused `committed = 0.81` on
+them**, raise their econ band +14.5–16.6 %, and newly enrol them in
+`gas_offer_net_revenue_margin` — two mechanisms bundled (rule 19) on top of an
+adjudicated refusal. **Recommendation: the byte-identity half instead** — give
+the offer-side scope its own named frozenset seeded identically, gated on a
+provable zero-row fleet diff with **no LP run at all**.
+
+**ALSO DELIVERED THIS SESSION, ON OWNER QUESTION: the CAISO-gas-vs-EIA-930
+diagnosis** (`FINDING-caiso240-gas-vs-eia930-2026-09-03.md`, zero solves). The
+EIA-930 comparison is **invalid** — nuclear/solar/wind agree to ±0.03 TWh while
+the +20.6 / +26.1 TWh NG excess has a mirror-image −13.8 / −13.6 TWh deficit in
+`OTH`/`GEO` (CISO reports **zero geothermal** in 2023 and 2024 and a *negative*
+"other"), and the codebase already declares
+`EIA930_NG_CORRUPT_ONSET = {"CAISO": 2023}`. But underneath it sits a **real,
+structural, currently-UNGATED defect: CT_PEAKER**, dispatched at **2.5 % / 0.8 %
+/ 0.4 %** capacity factor against a measured **7.4 % / 7.5 % / 4.1 %** — uniform
+across every zone and month, worsening, and passed by C1 only because the class
+fits inside the ±8 TWh / ±3 pp bands. Mechanism: `CT_PEAKER.committed = 1.35`
+against its own measured `phys_committed = 0.991`, the **only** live CAISO gas
+class priced materially above its measured physical basis.
+
+**Deliverables:** `PRECOMMIT-caiso240-default-hr-mult-census-2026-09-03.md`,
+`PRECOMMIT-caiso240-ADDENDUM-arm-2026-09-03.md`,
+`ASSESSMENT-caiso240-default-hr-mult-census-2026-09-03.md`,
+`FINDING-caiso240-default-hr-mult-census-2026-09-03.md`,
+`FINDING-caiso240-gas-vs-eia930-2026-09-03.md`,
+`results/calibration/_caiso240_default_hr_mult_census.json`,
+`_caiso240_cell_bound.json`, `_caiso240_gstruct_presolve.json`,
+`scripts/probes/_caiso240_{default_hr_mult_census,cell_bound,gstruct_presolve}.py`,
+`scripts/gen_caiso240_attestation.py`, run
+**`2026-09-03-caiso-240-b1-stgas`**.
+
+**Next number: caiso-241.**
