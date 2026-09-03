@@ -11245,3 +11245,123 @@ I1 proves the resulting solve is the keeper.
 `scripts/probes/nyiso182_offer_repair_rederivation.py` →
 `results/calibration/_nyiso182_offer_repair_rederivation.json` +
 `_nyiso182_replay_identity.json`.
+
+## 2026-09-03 — nyiso-181 (`stgas-floor` lane): the C1-2023 `ST_GAS` over-generation is ONE PLANT, it is ECONOMIC not forced, and the class aggregate that hid it also hides a ~1 TWh/yr under-count in the committed D-2 row
+
+**Keeper at entry and exit `2026-09-02-nyiso-177-vintage-matched` — NOT-YET,
+target grade 5, {C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}. UNCHANGED.
+Solves run: ZERO. NO LEVER OPENED — PREREG §4 S2 fired on its own pre-declared
+terms.** Pre-registration
+`results/calibration/PREREG-nyiso181-stgas-floor-overgeneration.md`, pushed to
+origin at `a1f717b5` **before the first measurement**, with §0 disclosing all
+eight reads held at writing time.
+
+**The instrument.** The LP's **own installed offer and reduced cost** at unit
+grain (`unit_hourly_stgas_<year>.parquet`, PR #4656's bundle), the keeper's own
+zonal `price`, and the floor matrices imported from
+`legitimacy_diagnostics.load_or_rebuild_floors` / `at_floor_mask` so every
+measured number is on the D-2/D-4 gate's own basis. All three instrument checks
+PASS: **I1** the unit bundle IS the keeper (0 / 122,640 class-hour cells and
+0 / 52,560 zonal prices differ — PR #4656's bit-identity claim verified, not
+inherited); **I2** the slice closes on `class_hourly` + the dual-fuel `oil`
+undercount, **reproducing nyiso-180 §5 to the fourth decimal** (0.021 / 0.034 /
+0.154) from a different artifact; **I3** p95 |Ω| ≤ 6.2e-06 $/MWh, which licenses
+reading `mc > price` as out-of-the-money. One population trap was caught before
+any gate ran: the committed slice is cut on FUEL, so it carries `ST_CHP` too and
+reads 13.281 TWh unfiltered against the class's 12.020.
+
+**Rule 19 `[R-ONE-MECH]`, discharged before anything was proposed and then
+confirmed numerically: there is ONE mechanism.** 97 % of the class's
+out-of-the-money energy sits at a `reliability_floor` cell. Three enabled limbs —
+the NYC and Long_Island **persistent 24 h bases** (`tmax` @ −50 °C so every day
+is flagged, `floor_pct` 0.175 / 0.262, `pro_rata`) and the Capital_Hudson `tmax`
+31.1 step; the three evening ramp families are disarmed by the keeper's
+`reliability_floor_overrides`.
+
+**The gates: P1a / P1c / P2b PASS, P1b / P2a FAIL, P3 CONFIRMED.** The rule-17
+violation is real and reported at full magnitude — **0.316 / 0.268 / 0.049 TWh a
+year of floored energy lands in hours the floored plant's own CAMPD meter reads
+exactly zero**, 9.2 % / 7.5 % / 1.7 % of the mechanism against D-4's own 0.05 bar,
+**55 % of it on Arthur Kill (2490)**, which sits on the NYC persistent-base limb,
+the one enabled `ST_GAS` limb that has **never had a membership review**. But it
+is **8.2 % of the miss**, not its carrier, and **no plant on that limb meets
+nyiso-140's evidentiary standard**, so **no repair was proposed**. P3 is
+confirmed decisively: the forced term explains **−4.1 %** of the between-year
+swing — it moves the wrong way.
+
+**Why both hypotheses failed (POST-HOC, gates byte-identical before and after,
+verified programmatically): the class aggregate is a CANCELLATION.** At plant
+grain, **Ravenswood (2500) runs +5.472 / +2.787 / +1.618 TWh above its own
+meter** — in 2023 more than the entire class miss from one machine — while the
+other ten plants net **−2.365 TWh** (gross basis). Its excess is **ECONOMIC**:
+5.631 of its 6.328 TWh clears in or at the money, and the floor touches
+0.699 TWh at unit grain / 0.0099 at plant grain. Model availability **0.700 /
+0.425 / 0.280** against measured CF **0.062 / 0.049 / 0.077** — ratio **11.3**,
+the largest in the class by capacity. **This is nyiso-177 §6's open object with
+its dispatch consequence attached**, plus one sharpening: **that session's G2
+over-booking is not uniform, it is INVERTED against measured conduct** — the
+availability ÷ measured-CF ratio runs 39.2× Danskammer, 11.3× Ravenswood, 7.8×
+Port Jefferson, 4.8× Arthur Kill against 1.07× Greenidge and 1.3× Barrett, so
+the class is over-derated in aggregate while the plants that barely ran carry the
+highest availability. **P2a was a badly-chosen statistic — a class aggregate over
+a population that cancels — the bar was mine, it stands as FAILED, and the plant
+grain is disclosed as post-hoc.**
+
+**And the floor is doing the OPPOSITE job at the plants that did run.** Northport
+and Barrett take **1.920 of the floor's 3.454 TWh** and are **−3.415 TWh short
+economically**; Port Jefferson takes **exactly 0.000** in all three years, so
+**nyiso-140's membership correction is verified live at unit grain** from an
+artifact that did not exist when it was made. **Deleting or narrowing this floor
+to close C1-2023 would break 2024 (−0.081 → −3.774) and 2025 (−3.544 → −6.583)** —
+the nyiso-140 no-volume-buying warning in mirror image.
+
+**Second result, escalated and NOT acted on — the D-2 / C8 grain under-count.**
+At its native **unit** grain the floor forces **3.454 / 3.562 / 2.934 TWh**,
+**0.96 / 0.80 / 0.57 TWh (27.8 / 22.3 / 19.4 %) MORE** than the committed
+plant-grain row, because `aggregate_floors_by_plant` nets a pinned unit against a
+free one at the same site (Ravenswood 0.699 unit vs 0.0099 plant, **70×**).
+Instrument validated: re-aggregating the same unit data under D-2's own plant-sum
+convention reproduces the committed total to **0.8 / 1.2 / 3.8 %**, so the gap is
+**grain, not method**. `ST_GAS`'s C8 forced share is therefore **0.287 / 0.362 /
+0.289 as LOWER bounds** against rule 20's **0.30** cap (committed: 0.177 / 0.237 /
+0.198) — **2024 is above the cap** — and a second grain effect compounds it: the
+committed denominator exceeds the class's own dispatch by **1.98 / 1.97 /
+2.25 TWh** — all eleven `ST_GAS` plants take an `ST_GAS` plant-grain majority
+label and four are mixed, **Ravenswood carrying 7 `CC_REGULAR` LP units** beside
+its 8 steam units, so with the whole model `CT_PEAKER` class at only 0.350 /
+0.242 / 1.010 TWh the balance is Ravenswood's CC output inside the steam row.
+**Not repaired here**: the defect is in `scripts/legitimacy_diagnostics.py` and is
+**code-generic across all six ISOs**, so it belongs to the scorer/governance lane
+(rule 25 `[R-ISO-SCOPE]`, PREREG §4 S4). A re-based breach would not auto-fail —
+rule 20 escalates to D-4 + D-1, and **NYISO's D-4 already reads `passed: false`**.
+
+**Handed forward.** (1) The object is **Ravenswood's availability**, not the
+floor; take it in nyiso-177 §6, and note it is an accounting identity, not a
+causal proof — no A/B here separates availability from offer. (2) **Do not delete
+or narrow the `ST_GAS` reliability floor to close C1-2023.** (3) The deficit
+object spans all three years: holding Ravenswood out, the economic shortfall is
+**−5.197 / −6.776 / −7.957 TWh**, so **2023's class-level sign flip is
+arithmetic, not a separate phenomenon** — which AMENDS the parallel lane's "2023
+is a separate, opposite-signed object" reading. (4) The **NYC persistent-base
+limb has never had a membership review**; a lane that re-derives it should look,
+from source data, never at a residual. (5) The D-2/C8 grain under-count is
+escalated. (6) **Merge PR #4656 or these numbers do not reproduce from `main`.**
+
+**Rule 15:** zero solves, so nothing is registered — by design, not omission
+(the nyiso-180 / nyiso-181 zero-solve precedent). **Rule 22 `[R-HOLDOUT]`:**
+every year is 2023 / 2024 / 2025; NYISO absent from both `complete` and `final`;
+**no marker requested**; the spend freeze untouched. **Rules 5/21/23/24:** zero
+parameters touched, zero swept, nothing re-derived, no new tunable. **Rule 13:**
+measured CAMPD conduct used only to diagnose; PREREG §4 S4 pre-emptively forbade
+the same-year availability gate that would close this gate and has no forward
+analogue, and it was not built. **Rule 27:** no existing source file modified —
+the probe is a new file. **Rule 28 (b):** four NYISO cells annotated —
+`reliability_floor`, `reliability_floor_plant_exclusions`,
+`campd_outage_merit_order_guard`, `campd_per_unit_attribution` — **all stay `K`,
+no verdict moves**; `scripts/check_mechanism_matrix.py` clean. The §5.5 lever
+queue is rewritten, with the prior lane's queue preserved verbatim beneath it.
+
+**Evidence:** `docs/FINDING-nyiso181b-stgas-floor-overgeneration-2026-09-03.md`,
+`results/calibration/PREREG-nyiso181-stgas-floor-overgeneration.md`,
+`scripts/probes/nyiso181b_stgas_floor_overgeneration.py` →
+`results/calibration/_nyiso181b_stgas_floor_overgeneration.json`.
