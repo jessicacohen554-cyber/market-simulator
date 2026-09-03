@@ -65,14 +65,16 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#32, main HEAD c73f78f5, 2026-09-03 — VERIFY, DON'T TRUST):
+STATE AT HANDOFF (r#32 amendment 1, main HEAD 2b0b8796, 2026-09-03 — VERIFY, DON'T TRUST):
 - KEEPERS: ERCOT two-config 2026-08-25-234-eastex-identity (+236-swcap 2023 carve-out),
   CALIBRATED · NEISO neiso-99-joint-p1 CALIBRATED · PJM pjm-162-inputclock CALIBRATED ·
-  MISO 2026-09-02-miso-201-stbasis NOT-YET {C3a-2025 alone, −12.4 %} · NYISO
+  MISO 2026-09-03-miso-202-unitclip NOT-YET {C3a-2025 alone, −12.4 % — measured to be a
+  scarcity TAIL, the C3c object} · NYISO
   2026-09-02-nyiso-177-vintage-matched (owner-ruled override) NOT-YET {C1-2023 ST_GAS,
-  C3a-2025, C3c — WIDENED} · CAISO 2026-09-02-caiso-239-b1-stgas NOT-YET {C3a alone}.
-  All three promoted 2026-09-02 and ALL THREE forecast gate-(a) stamps were STALE at r#32
-  (R-T step 4 skipped; card C-2 asked) — read keepers from keepers/<ISO>.json only. Markers: complete = {ERCOT, NEISO, PJM}; final EMPTY (no locked-test
+  C3a-2025, C3c — WIDENED} · CAISO 2026-09-03-caiso-240-b1-stgas NOT-YET {C3a alone}.
+  SIX consecutive promotions skipped the R-T gate-(a) re-key (audit v23 repaired three,
+  this desk two under C-2); read keepers from keepers/<ISO>.json only, and run
+  scripts/check_gate_a_provenance.py at every refresh. Markers: complete = {ERCOT, NEISO, PJM}; final EMPTY (no locked-test
   year ever spent); freeze tier-scoped to the locked test. Stage-0 goldens: FIVE of six ISOs
   covered (PJM the gap).
 - FORECAST BOARD: neiso-t3 HOLD on {FC-1, FC-2, FC-3, FC-4} with FC-5 + FC-6 both CAVEATs —
@@ -89,9 +91,10 @@ STATE AT HANDOFF (r#32, main HEAD c73f78f5, 2026-09-03 — VERIFY, DON'T TRUST):
   dispersion the deterministic LP never priced (D43, cell I) — same family as the C3c ledger
   and the sub-unity price-response gain (nyiso-167's cross-ISO table). Do not charter lanes
   into that wall without new evidence.
-- IN FLIGHT: D44 + D45 had NO branch/PR/commit at r#32 — dispatch status asked (card C-1),
-  both re-emitted verbatim; §0ac records the answer. D44 (fossil-dates default arm +
-  spec/CLAUDE.md amendment; Opus) · D45 (the
+- IN FLIGHT: D44 LANDED (PR #4639; default ON, cache pins advanced by design). D45 is a
+  CHECKPOINT — PJM L1 registered (the $0-at-position is a BASIS artifact; the curve-ON
+  over-fire does not survive the market's own price; no default moves); OWED: NYISO
+  L2/L3, PJM L4, finding §4–§9 + the §9 close-out — ask if still absent. D45 (the
   ONCE-ONLY D6+R3 joint charter: PJM+NYISO first diagnostics-on T1-H solves, position/
   evaluation-quantity reconciliations, curve-ON adjudications; Fable; its close-out line
   retires the mechanism-class question) · owner-track: caiso-238 (both asks FUNDED, Q31),
@@ -100,13 +103,14 @@ STATE AT HANDOFF (r#32, main HEAD c73f78f5, 2026-09-03 — VERIFY, DON'T TRUST):
 - QUEUE (short, deliberately): (1) THE BATCHED RE-MEASURE — one owner-cost decision covering
   the D41-stale bundles + Q30-stale forecast baselines + everything the wave changed; PRICE
   it next sitting once D44 lands so it runs once (registered t1f/golden bundles, solve-hours,
-  which keys move; the r#32 stale-set INVENTORY is in §0ac.3 — every CAISO/MISO/NYISO
-  forecast bundle now sits on a superseded keeper) · (2) per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
+  which keys move; PRICED at §0ac.7 — hindcasts+golden ≈2.5 h, the t1f tail ≈24 h serial
+  (80 % PJM+MISO); card C-3's answer and the D46 charter are in §0ac amendment 2 / pack
+  §D46 if issued) · (2) per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
   NYISO's zonal spread ($4.8–12.2) is the only promising instance and needs D45's
   diagnostics-on solve first · (3) nothing else — the capx queue emptied at r#31.
-- OWNER-TIER OPEN: cards C-1/C-2 of r#32 if unanswered (§0ac.6). Q1–Q31 all spent. New
-  cards otherwise come only from D44/D45 landings (D45 returns arming recommendations for
-  PJM/NYISO curves) and the re-measure pricing.
+- OWNER-TIER OPEN: C-1/C-2 answered and spent (§0ac amendment 1); C-3 (the re-measure)
+  per amendment 2. Q1–Q31 all spent. New cards otherwise come only from D45's owed half
+  (its §6 arming recommendations) and the audit board's X-1(ii) lint-scope question.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,
