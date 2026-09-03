@@ -11365,3 +11365,119 @@ queue is rewritten, with the prior lane's queue preserved verbatim beneath it.
 `results/calibration/PREREG-nyiso181-stgas-floor-overgeneration.md`,
 `scripts/probes/nyiso181b_stgas_floor_overgeneration.py` →
 `results/calibration/_nyiso181b_stgas_floor_overgeneration.json`.
+
+## nyiso-183 — the availability hypothesis is REFUTED on its own gate; the C1-2023 carrier is the OFFER, and it is ONE TERM (2026-09-03)
+
+**Session nyiso-183, `ravenswood-availability` lane, ZERO SOLVES.** Keeper
+`2026-09-02-nyiso-177-vintage-matched` **UNCHANGED** — determination NOT-YET,
+target grade 5, fails 3 {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}. No parameter
+touched, no band swept, no constant moved or swept, no `ScenarioConfig` field,
+no CLI flag, no arm built; `src/market_sim/` byte-untouched. **PREREG
+§6 S2 AND S3 BOTH FIRED**, on their own pre-declared terms.
+Pre-registration pushed to `origin` at `53767546` **before the first
+measurement**, amended at `3085f253` **before any gate below G0 was read**.
+
+**Rule 19 `[R-ONE-MECH]`, discharged from the code before any proposal:**
+`campd_outage_merit_order_guard` (stage 3 of the deriver's per-unit loop) OWNS
+the outage-vs-lay-up decision for NYISO `ST_GAS`, and owns it LAST — stages 1,
+2 and 2b can only *propose* a window as mechanical. Every other availability
+gate is off on this keeper.
+
+**G0 — the bar as first written FAILED, and the failure is a stale inherited
+number.** `0.772 / 0.465 / 0.297` is the **SUPERSEDED nyiso-159** keeper's
+`(2500, ST_GAS)` availability (nyiso-177 §2.1 labels the row *"L0 keeper
+(incumbent + override)"*); the promoted recipe replaces both the incumbent
+extract and `_FLEET_GROUP_OVERRIDE`. **The CURRENT keeper reads
+`0.786 / 0.478 / 0.309`.** Re-anchored on two harder published anchors — L0
+(0.7715 / 0.4645 / 0.2968) and L2 (0.1412 / 0.0967 / 0.1212) — both **PASS** at
+max |Δ| **0.0005**. The correction makes the object LARGER, i.e. cuts against
+this session's own hypothesis.
+
+**G1 — HYPOTHESIS A (mis-booking) REFUTED, 3/3 years.** The guard's own evidence
+statistic separates at Ravenswood: guard-removed windows read `out_of_merit`
+**0.9954 / 0.9336 / 0.9581** while the plant's RUNNING hours read only
+**0.6669 / 0.2928 / 0.1531** — separation **+0.33 / +0.64 / +0.81** against a bar
+of `MERIT_OOM_FRAC` itself. **G2 fires** (the guard hands back
+**0.645 / 0.381 / 0.188** of the capacity-year, bar 0.40) but materiality without
+discrimination grounds nothing, and **G3 blocks both admissible zero-constant
+repair forms independently**: `sel_fleet` **0.8674** (R2) and **0.9235** (R1)
+against a 0.75 bar — each IS nyiso-177's already-rejected unguarded arm in
+disguise. **DO-NOT-REDO the availability route.**
+
+**G4 — HYPOTHESIS B (offer) FIRES, 3/3 years, on its pre-registered leg (ii).**
+G4c was scored **in full** rather than left PARTIALLY TESTED: PR #4656 is closed
+unmerged and the keeper's invocation is recorded nowhere, but
+`scripts.lib.bundle_fleet.reconstruct_bundle_fleet` yields the keeper's own
+`mc_base` **with no LP**, behind a fidelity guard. The model prices Ravenswood
+**3rd cheapest of 11** `ST_GAS` plants every year while its measured SRMC ranks
+it **8th / 8th / 6th of 10** — \$23.35 / \$18.85 / \$25.37 below the
+downstate-steam peer model-`mc` median with its measured SRMC ABOVE the peer
+measured median.
+
+**G4d (POST-HOC locator, no bar) puts it in ONE TERM.** Model heat rate ÷
+CAMPD-measured is a tight **1.596–1.749** cluster across eight peers (median
+**1.699 / 1.685 / 1.685**) and **1.382 / 1.417 / 1.454** at Ravenswood; base heat
+rate **9.50 against a measured 10.71** — ~11 % MORE efficient than its own meter
+where every peer's basis is 8–12 % LESS efficient than theirs, a **~20 pp
+relative error on 1,725 MW** worth **\$11.38 / \$7.88 / \$13.08 per MWh**. `vom`
+is a uniform \$4.00 and the tranche multipliers are class-uniform, so neither can
+carry it. **Astoria (8906) is the mirror-image outlier at 3.365 / 3.419 / 3.464**,
+unexplained.
+
+**Upstream cause NAMED, explicitly NOT adjudicated:** `fleet/eia860.py:624`
+reads **plant-grain** eGRID `PLHTIAN`/`PLNGENAN`/`PLHTRT`, and Ravenswood is the
+class's only large mixed steam+CC site (facility blend 8.24 vs steam-only 10.71,
+model 9.50 between) — the same facility-summed-denominator family nyiso-177
+repaired on the OUTAGE and TRANCHE paths, surviving in the HEAT-RATE path.
+The unexplained `CC_REGULAR`/`ST_GAS` base split (8.80 vs 9.50) means a second
+term is at work.
+
+**Three defects in this session's own instruments, disclosed rather than argued
+around:** the G0 bar cited the wrong keeper (above); G4c's leg (i) was
+uninformative by construction (model `mc` carries VOM/CO2/tranche multipliers
+that measured SRMC does not, so it sits above measured everywhere, and the gate
+was carried by the rank-based leg (ii) alone); and the first cut of the measured
+population averaged **every** unit at an `ST_GAS`-labelled plant, pulling in
+Ravenswood's combined cycle (`UCC001`, measured HR 7.137) and Astoria's four
+heat-recovery halves — nyiso-181 §3's population trap in mirror image. The
+population repair (to the keeper's own `campd_measured_classes` crosswalk) was
+triggered by an **internal contradiction between two of this session's own
+measurements**, not by a gate outcome; it MOVED G4c's 2024 and 2025 verdicts
+`False → True`, and **no bar was touched**.
+
+**Rule 15:** zero non-control solves, so nothing is registered — by design, not
+omission (the nyiso-179 / -180 / -181 precedent). **Rule 22 `[R-HOLDOUT]`:**
+every year is 2023 / 2024 / 2025; NYISO absent from both `complete` and `final`;
+**no marker requested**; the spend freeze untouched. **Rules 5 / 21 / 23 / 24:**
+zero parameters touched, zero swept, nothing re-derived, no new tunable — every
+`MERIT_*`, `FULL_STOP_OVERRIDE_*`, `HIGH_LOAD_PCTL`, `MIN_INMERIT_HOURS`,
+`UNIT_OUTAGE_MIN_DAYS`, `REAL_RUN_CF` and `ST_GAS_CF_PEAK` READ at its committed
+value. **Rule 13:** measured conduct diagnoses only; PREREG §5 F6 pre-emptively
+forbade the same-year availability gate that would close C1-2023 and has no
+forward analogue, and it was not built. **Rule 27:** no existing source file
+modified — the three probes are new files. **Rule 28 (b):** three NYISO cells
+annotated — `campd_outage_merit_order_guard` (stays `K`, now positively
+corroborated), `campd_per_unit_attribution` (stays `K`, annotated: the repair
+does not reach the heat-rate path) and `offer_curve_by_group` (stays `K`, with
+the new open defect recorded inside it) — **no verdict moves**;
+`scripts/check_mechanism_matrix.py` clean. The §5.5 lever queue is rewritten,
+with the prior lane's queue preserved verbatim beneath it.
+
+**Tests:** `tests/unit` + `tests/iso/nyiso` — 4,475 passed, 28 skipped, 1
+xfailed, 200 subtests passed; the 4 failures in `tests/unit/results/test_export.py`
+are the pre-existing missing-`confirmed-retirements`-partition failure nyiso-177
+§9 recorded, **proved rather than asserted**: after regenerating that clean
+partition the file runs 14 passed / 0 failed, i.e. **4,489 passed, 0 failed**.
+
+**Side effect, disclosed:** `data/clean/` (gitignored, derived, disposable) was
+regenerated for `capacity-deliverability`, `nyiso-interface-flows` and
+`confirmed-retirements` — the first two because the no-LP reconstruction requires
+them and they were absent in this container, the third to discharge the test
+question above. No raw input was written.
+
+**Evidence:** `docs/FINDING-nyiso183-ravenswood-availability-2026-09-03.md`,
+`results/calibration/PREREG-nyiso183-ravenswood-availability.md`,
+probes `scripts/probes/nyiso183_ravenswood_availability.py`,
+`nyiso183_g4c_offer_position.py`, `nyiso183_g4d_offer_anatomy.py` →
+`results/calibration/_nyiso183_ravenswood_availability.json`,
+`_nyiso183_g4c_offer_position.json`, `_nyiso183_g4d_offer_anatomy.json`.
