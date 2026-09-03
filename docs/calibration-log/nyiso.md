@@ -11144,3 +11144,104 @@ rewritten with the retired statistic and the four handed-forward items.
 `results/calibration/_nyiso181_itm_degeneracy.json` +
 `_nyiso181_replay_identity.json` + `_nyiso181_offer_reconstruction_repair.json` +
 `_nyiso181_unit_dispatch_nyiso180gates.json`.
+
+## 2026-09-03 — nyiso-182: the offer reconstruction is REPAIRED, and the load-bearing premise it carried is CONFIRMED and STRENGTHENED — the 2025 split is 107.2 / 14.6 / −21.8, not 62.4 / 24.6 / 13.0
+
+**ZERO NON-CONTROL SOLVES.** One bit-identical control replay (the instrument),
+**not registered** (rule 15). Keeper `2026-09-02-nyiso-177-vintage-matched`,
+determination NOT-YET, target grade 5, fail set {C1-2023 `ST_GAS` +3.86 TWh,
+C3a-2025 −11.2 %, C3c} — **all UNCHANGED**. `src/market_sim/` untouched; the one
+edited file is a probe.
+
+**THE REPAIR (nyiso-181 §11 item 2), made non-silently.**
+`nyiso179_st_gas_offer_position.build_year()` omitted two armed,
+keeper-registered offer terms — the measured RGGI allowance price
+($13.49 / $20.71 / $22.09 per tCO₂) and `apply_gas_offer_margin` (anchor
+$3.9046/MMBtu). The repaired form is now the **default**; an explicit
+`legacy_defective_offer=True` reproduces the published form and `main()` is
+**pinned to it**, so `_nyiso179_st_gas_offer_position.json` and every number in
+the nyiso-179 finding stay byte-reproducible. **Gate I3 confirms it:
+`max|d| = 0.0` MW and 0.0 on shares, all three years, every band, every G3/G4
+field.**
+
+Three downstream callers (`nyiso180_ramp_report`, `nyiso180_st_gas_undispatch`,
+`nyiso179_g1_robustness`) called `build_year` with the default and are **pinned
+to the legacy path** with a citation comment, so **no published probe changes its
+output**.
+
+**INSTRUMENT GATES — ALL PASS, S1 DID NOT FIRE.** **I1** replay identity: 0 of
+52,560 prices, 0 of 122,640 class-hour cells, all three years (bar inherited from
+nyiso-181). **I2** — the repaired reconstruction equals the LP's own installed
+`mc` at **`max|d|` 2.7e-05 / 1.5e-05 / 3.0e-05 $/MWh** over 88 units × 8,760 h
+against an inherited 1e-4 bar; capacity basis 1.7e-05 MW. This is the check
+**nyiso-180's P-c could not be** — P-c compared the LP to ITSELF — and it
+independently reproduces nyiso-181 §4's identity from a fresh instrument.
+**I2b** — the ITM anchor by two routes agrees to ≤ 2.3e-05 MW.
+
+**G-S, THE LOAD-BEARING GATE — `PREMISE-CONFIRMED` on both legs.** 2025
+top-decile split, on the LP's own `unit_hourly` frame and with the trap-(j)
+dispatch undercount corrected (+140.5 MW): **`T1` price level +1,087.1 MW
+(107.2 %), `T2` offer position +148.1 MW (14.6 %), `T3` own signal −220.8 MW
+(−21.8 %) on a gap of 1,014.5 MW** — against the published 721 / 284 / 150 on
+1,155 MW. G-S1 dominance 1.0717 vs the inherited 0.60 bar; G-S2 plurality
+threshold-free. **The *"C1 `ST_GAS` and C3a-2025 are ONE OBJECT"* identification
+STANDS on a repaired instrument and is STRONGER** (the offer-position component
+is a seventh of the gap, not a quarter); **the standing DO-NOT-OPEN on `ST_GAS`
+offer levers STANDS; the brief's task-2 conditional did NOT arm; no lever was
+opened.**
+
+**`T3` CHANGED SIGN, and its matched-population repair is a NEW UNATTRIBUTED
+OBJECT.** Of the −220.8 MW, only **+14.1 MW** is un-run in-the-money capacity
+(consistent with nyiso-181's 8 MW mean) and **−234.9 MW is dispatch of
+out-of-the-money bins**. The model **over**-dispatches against its own offer in
+the 2025 top decile. Attributing that 235 MW per mechanism (reliability floor vs
+`nyiso_gas_commitment_bridge`) is the named successor — a **D-2 diagnostic**, not
+a lever (rule 19: this is the enumeration).
+
+**G-3R — `PEAK-EXONERATED` SURVIVES, but every leg moved and the reason changed.**
+2023/2024 `peak` OOM-hours **crossed** the 0.90 bar (0.8912 → 0.9343,
+0.8628 → 0.9252) while 2025's fell **away** from it (0.8062 → 0.7676), share leg
+0.3659 vs 0.40. `p179.g3_band_attribution` run **unmodified**, both bars
+inherited verbatim.
+
+**G-4R — a REAL fourth channel.** RGGI is `emission_rate × carbon_price` and both
+factors move (CO₂-rate drift `max|d|` 0.0825 t/MWh, measured); on full Shapley
+over 24 orderings **CARBON = −148.2 MW, larger in magnitude than AVAILABILITY
+(−109.6 MW)**. PRICE stays the carrier in all four basis × method grid cells and
+`share_denominator_is_small` is TRUE in every one, so the MW contributions are
+the output and the verdict word is not load-bearing. `heat_rate` / `vom` /
+`markup_hr` drift exactly 0.0.
+
+**A PRE-REGISTERED EXPECTATION OF MINE WAS FALSIFIED and is reported at full
+magnitude.** PREREG §2 G-3R predicted *"the repair raises every band's `mc`"*. It
+does not: the margin term is `markup_hr × (anchor − fuel)`, **negative wherever
+delivered fuel exceeds the $3.9046 anchor**, so in the 2025 top decile it
+**lowers** `peak` by $188/MWh while **raising** `committed` by $12/MWh. No bar was
+moved and nothing was rescued — but nyiso-181's class-median $9.57 / $15.39 /
+$11.98 under-statement is a median over a **signed** distribution, and that is new.
+
+**Rule 15:** no non-control solve ran, so nothing is registered — by design, not
+omission. **Rule 16:** one invocation, all three years from the bundle's own
+`meta.json`, sequential. **Rule 22 `[R-HOLDOUT]`:** every year is
+2023 / 2024 / 2025; NYISO absent from both `complete` and `final`; **no marker
+requested**; the spend freeze untouched. **Rules 21/23/24:** zero parameters
+touched, zero swept, nothing re-derived from a residual, no new tunable (the one
+new argument is a probe-local reproducibility switch). **Rule 27:** the one
+edited existing file (`scripts/probes/nyiso179_st_gas_offer_position.py`,
+748 → 839 lines) was edited locally and its pushed blob verified. **Rule 28 (b):**
+three NYISO cells annotated — `unit_network_layer_sidecar`,
+`gas_offer_net_revenue_margin`, `state_carbon_pricing` — **all stay `K`, no
+verdict moves**; `node --check` and `scripts/check_mechanism_matrix.py` both
+clean. The §5.5 lever queue is rewritten with the repaired split and the new
+`T3b` object.
+
+**Environment note:** this container's `data/clean` tree was empty, so the replay
+needed `capacity-deliverability` and `nyiso-interface-flows` curated from
+`data/raw` first. `data/clean` is derived, disposable and gitignored by design;
+I1 proves the resulting solve is the keeper.
+
+**Evidence:** `docs/FINDING-nyiso182-offer-repair-rederivation-2026-09-03.md`,
+`results/calibration/PREREG-nyiso182-offer-repair-rederivation.md`,
+`scripts/probes/nyiso182_offer_repair_rederivation.py` →
+`results/calibration/_nyiso182_offer_repair_rederivation.json` +
+`_nyiso182_replay_identity.json`.

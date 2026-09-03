@@ -1,0 +1,64 @@
+{
+  "committed": "results/calibration/nyiso177_vintage_B1p",
+  "replay": "results/calibration/nyiso182_control",
+  "years": {
+    "2023": {
+      "system": {
+        "available": true,
+        "cells_compared": 52560,
+        "cells_unmatched": 0,
+        "cells_differing": 0,
+        "max_abs_delta": 0.0,
+        "IDENTICAL": true
+      },
+      "class_hourly": {
+        "available": true,
+        "cells_compared": 122640,
+        "cells_unmatched": 0,
+        "cells_differing": 0,
+        "max_abs_delta": 0.0,
+        "IDENTICAL": true
+      },
+      "I1_PASS": true
+    },
+    "2024": {
+      "system": {
+        "available": true,
+        "cells_compared": 52560,
+        "cells_unmatched": 0,
+        "cells_differing": 0,
+        "max_abs_delta": 0.0,
+        "IDENTICAL": true
+      },
+      "class_hourly": {
+        "available": true,
+        "cells_compared": 122640,
+        "cells_unmatched": 0,
+        "cells_differing": 0,
+        "max_abs_delta": 0.0,
+        "IDENTICAL": true
+      },
+      "I1_PASS": true
+    },
+    "2025": {
+      "system": {
+        "available": true,
+        "cells_compared": 52560,
+        "cells_unmatched": 0,
+        "cells_differing": 0,
+        "max_abs_delta": 0.0,
+        "IDENTICAL": true
+      },
+      "class_hourly": {
+        "available": true,
+        "cells_compared": 122640,
+        "cells_unmatched": 0,
+        "cells_differing": 0,
+        "max_abs_delta": 0.0,
+        "IDENTICAL": true
+      },
+      "I1_PASS": true
+    }
+  },
+  "I1_PASS_ALL_YEARS": true
+}

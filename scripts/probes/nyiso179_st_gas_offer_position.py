@@ -29,6 +29,19 @@ exactly ``unit_id.rsplit("_", 1)[-1]``. An earlier draft of this file split on
 silently collapsed the entire economic ramp into an ``other`` bucket, hollowing
 out G3. Caught by code reading before this file was committed or run.
 
+REPAIR BANNER — nyiso-182, 2026-09-03. ``build_year`` as originally committed
+omitted TWO ARMED, keeper-registered offer terms (the measured RGGI allowance
+price and ``apply_gas_offer_margin``), under-stating the NYISO gas offer by a
+median $9.57 / $15.39 / $11.98 per MWh; see that function's docstring and
+``docs/FINDING-nyiso181-itm-degeneracy-2026-09-03.md`` §4. **The repaired offer
+is now the default for every importing caller.** ``main()`` below is pinned to
+``legacy_defective_offer=True`` so that ``_nyiso179_st_gas_offer_position.json``
+— the PUBLISHED record, and the basis of every number in
+``docs/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md`` — stays exactly
+reproducible; nothing here is silently rewritten. G1's ``R = mo / itm`` is
+RETIRED (nyiso-181 §5) and is preserved here only as that record, never to be
+cited again.
+
 Run: PYTHONPATH=.:src python scripts/probes/nyiso179_st_gas_offer_position.py
 """
 
@@ -53,7 +66,9 @@ from market_sim.data.fleet.campd_bins import _DEFAULT_HR_MULT_BY_GROUP  # noqa: 
 from market_sim.data.fleet.eia860 import dual_fuel_plant_groups  # noqa: E402
 from market_sim.data.fleet.legacy_bins import assemble_mc  # noqa: E402
 from market_sim.data.fuel import resolve_fuel_prices  # noqa: E402
+from market_sim.data.offer_curves import apply_gas_offer_margin  # noqa: E402
 from market_sim.data.outages import ST_GAS_PEAKER_PLANTS  # noqa: E402
+from market_sim.policy.carbon import resolve_carbon_price  # noqa: E402
 
 # Reuse nyiso-178's VALIDATED instrument rather than re-deriving it (brief).
 from scripts.probes.nyiso178_offer_side_idling import (  # noqa: E402
@@ -154,17 +169,76 @@ def st_gas_base_hr(year: int, cfg_obj) -> dict:
     return {int(r.Plant_Code): float(r.hr_weighted) for r in sub.itertuples()}
 
 
-def build_year(year: int, cfg_obj) -> dict:
-    """Return the exact LP ST_GAS offer state for one year. Zero solve."""
+def build_year(year: int, cfg_obj, legacy_defective_offer: bool = False) -> dict:
+    """Return the exact LP ST_GAS offer state for one year. Zero solve.
+
+    **REPAIRED 2026-09-03 by nyiso-182 (nyiso-181 §11 item 2).** As originally
+    committed this function reconstructed the offer as
+    ``assemble_mc(fa, fuel, 0.0, 0.0, so2=(fa.so2_rate, 0.0))`` and omitted two
+    ARMED, keeper-registered terms the runner installs:
+
+    1. the measured **RGGI allowance price** (``state_carbon_pricing=True``;
+       $13.49 / $20.71 / $22.09 per tCO2 in 2023 / 2024 / 2025), and
+    2. **``apply_gas_offer_margin``** — the mc-side half of
+       ``gas_offer_net_revenue_margin=True``, applied at ``runner.py:2494``
+       AFTER ``assemble_mc``.
+
+    Together they under-stated the NYISO gas offer by a median $9.57 / $15.39 /
+    $11.98 per MWh. Restoring both reproduces the LP's own installed ``mc`` to
+    ``max|d| = 0`` on every ST_GAS unit-hour in all three years
+    (``nyiso181_offer_reconstruction_repair.py``; re-verified as nyiso-182 gate
+    I2 against ``hourly/unit_hourly_<year>.parquet``'s ``mc`` column).
+
+    The repaired form is now the DEFAULT, and it is the runner's own
+    expression: ``cfg_y.nox_price`` / ``cfg_y.so2_price`` rather than the
+    hardcoded zeros (both are 0.0 on this keeper, so the change is a no-op here
+    and a correctness fix anywhere else).
+
+    ``legacy_defective_offer=True`` reproduces the pre-repair form EXACTLY, so
+    the published nyiso-179 record stays reproducible by explicit opt-in rather
+    than being silently overwritten — the condition under which nyiso-181
+    declined to make this edit. **Every number in
+    ``_nyiso179_st_gas_offer_position.json`` and in
+    ``docs/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md`` was produced
+    on the legacy path**, and nyiso-182 gate I3 pins that reproduction.
+
+    Args:
+        year: Simulation year.
+        cfg_obj: The keeper's ``ScenarioConfig``.
+        legacy_defective_offer: Reproduce the pre-repair (defective) offer.
+            Default ``False`` — the repaired offer, identical to the LP's.
+
+    Returns:
+        The per-bin ST_GAS offer state. Keys added by the repair —
+        ``co2_rate``, ``carbon_price``, ``markup_hr``, ``margin_anchor``,
+        ``offer_basis`` — are what a between-year decomposition needs to carry
+        the carbon channel and to certify the markup as structurally constant.
+    """
     from market_sim.config.iso_configs import get_iso_config
 
-    _gens, fa = lp_fleet(year, cfg_obj)
+    gens, fa = lp_fleet(year, cfg_obj)
     grp = np.asarray([str(g or "") for g in fa.plant_group])
     idx = np.nonzero(grp == KLASS)[0]
     cfg_y = cfg_obj.with_overrides(weather_year=year)
 
     fuel = resolve_fuel_prices(cfg_y, fa, year)
-    mc = assemble_mc(fa, fuel, 0.0, 0.0, so2=(fa.so2_rate, 0.0))
+    carbon = 0.0 if legacy_defective_offer else resolve_carbon_price(cfg_y, year)
+    if legacy_defective_offer:
+        mc = assemble_mc(fa, fuel, 0.0, 0.0, so2=(fa.so2_rate, 0.0))
+    else:
+        mc = assemble_mc(
+            fa,
+            fuel,
+            carbon,
+            cfg_y.nox_price,
+            so2=(fa.so2_rate, cfg_y.so2_price),
+        )
+        apply_gas_offer_margin(mc, gens, fuel, cfg_y)
+    markup_hr = np.fromiter(
+        (float(getattr(g, "offer_markup_hr", 0.0)) for g in gens),
+        dtype=float,
+        count=len(gens),
+    )
 
     # Input-side A/B for G2(b): the SAME call with the cap disarmed. No LP.
     cfg_nodf = cfg_obj.with_overrides(weather_year=year, dual_fuel_switching=False)
@@ -189,6 +263,18 @@ def build_year(year: int, cfg_obj) -> dict:
         "band": np.asarray([band_of(u) for u in unit_id]),
         "zone": np.asarray(zone_of),
         "plant_code": np.asarray([int(fa.plant_code[g]) for g in idx]),
+        # nyiso-182: the carbon and margin inputs, so a between-year
+        # decomposition can carry the CARBON channel explicitly and certify
+        # markup_hr as structurally constant (it is a band property).
+        "co2_rate": fa.emission_rate[idx],
+        "carbon_price": float(carbon),
+        "markup_hr": markup_hr[idx],
+        "margin_anchor": (
+            None
+            if legacy_defective_offer
+            else float(getattr(cfg_y, "gas_offer_margin_anchor", 0.0) or 0.0)
+        ),
+        "offer_basis": "legacy_defective" if legacy_defective_offer else "repaired",
     }
 
 
@@ -651,7 +737,12 @@ def main() -> None:
     cfg_obj = _cfg_obj()
     offer = dict(cfg_obj.offer_curve_by_group["ST_GAS"])
 
-    states = {y: build_year(y, cfg_obj) for y in YEARS}
+    # nyiso-182: this file's OUT artifact IS the published nyiso-179 record, so
+    # main() is pinned to the LEGACY (defective) offer and stays byte-
+    # reproducible. build_year's DEFAULT is the repaired offer, which is what
+    # every importing probe now gets; the repaired re-derivation of G3/G4 and
+    # the 2025 top-decile split lives in nyiso182_offer_repair_rederivation.py.
+    states = {y: build_year(y, cfg_obj, legacy_defective_offer=True) for y in YEARS}
     base_hr = st_gas_base_hr(2023, cfg_obj)
     env_twh = {
         y: float((states[y]["pmax"][:, None] * states[y]["avail"]).sum()) / 1e6

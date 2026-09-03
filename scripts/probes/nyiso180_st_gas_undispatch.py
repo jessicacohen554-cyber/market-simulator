@@ -204,7 +204,13 @@ def main() -> None:
     res = {"gates": {}, "prereg": "PREREG-nyiso180-st-gas-undispatch.md"}
     g1, g2 = [], []
     for y in YEARS:
-        st = build_year(y, _cfg_obj())
+        # nyiso-182 pinned this call to the LEGACY (defective) offer: build_year's
+        # DEFAULT is now the REPAIRED offer (nyiso-181 §11 item 2 — the omitted RGGI
+        # allowance price and apply_gas_offer_margin), and this probe's committed
+        # record was produced on the legacy one. Re-running it must reproduce that
+        # record, not silently restate it on a different basis. A successor that
+        # WANTS the repaired basis should drop the flag deliberately and say so.
+        st = build_year(y, _cfg_obj(), legacy_defective_offer=True)
         g1.append(gate1(st, y))
         g2.append(gate2(y))
     res["gates"]["G1"] = g1

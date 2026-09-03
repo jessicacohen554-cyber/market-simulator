@@ -10254,7 +10254,64 @@ is now the live queue head.**)*
 
 ### 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
-**LEVER QUEUE — UPDATED 2026-09-03 (nyiso-181, ZERO NON-CONTROL SOLVE; THE
+**LEVER QUEUE — UPDATED 2026-09-03 (nyiso-182, ZERO NON-CONTROL SOLVE; THE
+OFFER RECONSTRUCTION IS REPAIRED AND THE LOAD-BEARING PREMISE IS CONFIRMED AND
+STRENGTHENED). Open gate: C1-2023 `ST_GAS` +3.86 TWh; C3a-2025 −11.2 % stays
+owner-court; C3c ledgered. NO LEVER OPENED — pre-declared in every branch.
+Keeper, determination, gate set, every score and every parameter UNCHANGED;
+`src/market_sim/` untouched.**
+* **THE LANE STAYS BLOCKED ON C3a-2025**, and the identification that blocks it
+  is now measured on a FAITHFUL offer. `nyiso179_st_gas_offer_position.build_year()`
+  is **REPAIRED** (repaired offer is the DEFAULT; an explicit
+  `legacy_defective_offer` opt-in reproduces the published form and `main()` is
+  pinned to it, so `_nyiso179_st_gas_offer_position.json` stays byte-reproducible —
+  gate I3 `max|d| = 0.0` MW / 0.0 share, every year, every band). The repaired
+  reconstruction equals the LP's own installed `mc` at **`max|d|` 2.7e-05 /
+  1.5e-05 / 3.0e-05 $/MWh** on 88 units x 8,760 h (gate I2 — the check
+  nyiso-180's P-c could not be, because P-c compared the LP to ITSELF).
+* **CITE THE REPAIRED 2025 TOP-DECILE SPLIT: `T1` price level **107.2 %**,
+  `T2` offer position **14.6 %**, `T3` own signal **−21.8 %**, on a gap of
+  **1,014.5 MW**. DO NOT CITE 62.4 / 24.6 / 13.0 AGAIN.** The published figures
+  rode the defective offer AND a dispatch anchor 140.5 MW short (trap (j),
+  `class_hourly`'s `ST_GAS` row). Gate G-S reads **`PREMISE-CONFIRMED`** on both
+  legs (G-S1 dominance 1.0717 vs the inherited 0.60 bar; G-S2 plurality
+  threshold-free), so the *"C1 `ST_GAS` and C3a-2025 are ONE OBJECT"*
+  identification **STANDS AND IS STRONGER** — the offer-position component is a
+  SEVENTH of the gap, not a quarter — and **the standing DO-NOT-OPEN on `ST_GAS`
+  offer levers STANDS. Task 2's conditional did NOT arm.**
+* **`T3` CHANGED SIGN, and its matched-population repair is a NEW OBJECT.**
+  Published +150 MW of "in-the-money capacity not running"; repaired it is
+  **−220.8 MW**, of which only **+14.1 MW** is un-run in-the-money capacity
+  (consistent with nyiso-181's 8 MW mean) and **−234.9 MW is DISPATCH OF
+  OUT-OF-THE-MONEY BINS**. The model over-dispatches against its own offer in
+  the 2025 top decile. **Attributing that 235 MW per mechanism (reliability
+  floor vs `nyiso_gas_commitment_bridge`) is the natural successor — a D-2
+  DIAGNOSTIC on committed rows plus this instrument, NOT a lever.**
+* **G3's `PEAK-EXONERATED` verdict SURVIVES the repair, but every leg moved and
+  the reason changed.** 2023/2024 `peak` OOM-hours CROSSED the 0.90 bar
+  (0.8912 -> 0.9343, 0.8628 -> 0.9252) while 2025's fell AWAY from it
+  (0.8062 -> 0.7676) and its share leg is 0.3659 vs the 0.40 bar. Both bars
+  inherited verbatim; `p179.g3_band_attribution` run UNMODIFIED.
+* **G4 GAINS A REAL FOURTH CHANNEL.** RGGI is `emission_rate x carbon_price` and
+  both factors move; on full Shapley over 24 orderings **CARBON = −148.2 MW**,
+  LARGER in magnitude than AVAILABILITY (−109.6 MW). PRICE stays the carrier in
+  all four basis-x-method grid cells, and `share_denominator_is_small` is TRUE in
+  every one — the MW contributions are the output, the verdict word is not.
+* **THE REPAIR'S EFFECT IS SIGNED, WHICH nyiso-182's OWN PRE-REGISTERED
+  DIRECTIONAL EXPECTATION GOT WRONG AND REPORTS AT FULL MAGNITUDE.** The margin
+  term is `markup_hr x (anchor − fuel)`, NEGATIVE wherever delivered fuel exceeds
+  the $3.9046 anchor: in the 2025 top decile it LOWERS `peak` by $188/MWh while
+  RAISING `committed` by $12/MWh. nyiso-181's class-median $9.57 / $15.39 /
+  $11.98 under-statement is a median over a SIGNED distribution.
+* **THE CROSS-ISO AUDIT IS STILL OPEN AND STILL NEEDS ITS OWN SESSION (rule 25),
+  with a SECOND LIMB.** The defect class is not only *omitting a term the runner
+  installs* — it is omitting one whose SIGN IS NOT CONSTANT, so a sanity check on
+  a class median can miss it entirely. CAISO and NEISO carry state carbon
+  programs; `gas_offer_net_revenue_margin` is armed more widely still.
+* **THE C1-2023 `ST_GAS` OBJECT IS OPEN AND UNEXPLAINED.** nyiso-182 re-sizes an
+  explanation of a 2025 object; it does not touch 2023.
+
+**PRIOR QUEUE (nyiso-181, ZERO NON-CONTROL SOLVE; THE
 OBJECT THREE SESSIONS CHASED IS SUBSTANTIALLY AN INSTRUMENT ARTIFACT, PROVED ON
 AN EXACT IDENTITY; the ITM statistic is RETIRED). Open gate: C1-2023 `ST_GAS`
 +3.86 TWh; C3a-2025 −11.2 % stays owner-court; C3c ledgered. NO LEVER OPENED —
