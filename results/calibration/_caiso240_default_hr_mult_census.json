@@ -1,0 +1,6938 @@
+{
+ "_provenance": {
+  "big_factor": 1.25,
+  "cells": [
+   "CC_CHP:mr",
+   "CC_CHP:mc",
+   "CC_CHP:econ",
+   "CC_CHP:peak",
+   "CC_REGULAR:mr",
+   "CC_REGULAR:mc",
+   "CC_REGULAR:econ",
+   "CC_REGULAR:peak",
+   "CT_CHP:mr",
+   "CT_CHP:mc",
+   "CT_CHP:econ",
+   "CT_CHP:peak",
+   "CT_PEAKER:mr",
+   "CT_PEAKER:mc",
+   "CT_PEAKER:econ",
+   "CT_PEAKER:peak",
+   "ST_GAS:mr",
+   "ST_GAS:mc",
+   "ST_GAS:econ",
+   "ST_GAS:peak",
+   "ST_CHP:mr",
+   "ST_CHP:mc",
+   "ST_CHP:econ",
+   "ST_CHP:peak",
+   "COAL:mr",
+   "COAL:mc",
+   "COAL:econ",
+   "COAL:peak"
+  ],
+  "keepers": {
+   "CAISO": "2026-09-02-caiso-239-b1-stgas",
+   "ERCOT": "2026-08-25-234-eastex-identity",
+   "MISO": "2026-09-02-miso-201-stbasis",
+   "NEISO": "2026-08-17-neiso-99-joint-p1",
+   "NYISO": "2026-09-02-nyiso-177-vintage-matched",
+   "PJM": "2026-08-15-pjm-162-inputclock"
+  },
+  "merged_from": [
+   "/tmp/census_ce.json",
+   "/tmp/census_rest2.json",
+   "/tmp/census_pjm.json"
+  ],
+  "note": "Assembled from per-ISO invocations of the same probe at the same HEAD. The probe is deterministic per (ISO, year) and every ISO is measured on its own keeper, so the split is a scheduling detail, not a method change: PJM had to run separately because its keeper's pjm_da_virtual_bids corpus is payload-untracked in this checkout (see _provenance.rebuild_deviations).",
+  "precommit": "results/calibration/PRECOMMIT-caiso240-default-hr-mult-census-2026-09-03.md",
+  "probe_factors": {
+   "CC_CHP:econ": 1.0003,
+   "CC_CHP:mc": 1.0002,
+   "CC_CHP:mr": 1.0001,
+   "CC_CHP:peak": 1.0004,
+   "CC_REGULAR:econ": 1.0007,
+   "CC_REGULAR:mc": 1.0006,
+   "CC_REGULAR:mr": 1.0005,
+   "CC_REGULAR:peak": 1.0008,
+   "COAL:econ": 1.0027,
+   "COAL:mc": 1.0026,
+   "COAL:mr": 1.0025,
+   "COAL:peak": 1.0028,
+   "CT_CHP:econ": 1.0011,
+   "CT_CHP:mc": 1.001,
+   "CT_CHP:mr": 1.0009,
+   "CT_CHP:peak": 1.0012,
+   "CT_PEAKER:econ": 1.0015,
+   "CT_PEAKER:mc": 1.0014,
+   "CT_PEAKER:mr": 1.0013,
+   "CT_PEAKER:peak": 1.0016,
+   "ST_CHP:econ": 1.0023,
+   "ST_CHP:mc": 1.0022,
+   "ST_CHP:mr": 1.0021,
+   "ST_CHP:peak": 1.0024,
+   "ST_GAS:econ": 1.0019,
+   "ST_GAS:mc": 1.0018,
+   "ST_GAS:mr": 1.0017,
+   "ST_GAS:peak": 1.002
+  },
+  "rebuild_deviations": {
+   "PJM": {
+    "pjm_da_virtual_bids": false
+   }
+  },
+  "session": "caiso-240",
+  "solves": 0,
+  "years": [
+   2023,
+   2024,
+   2025
+  ]
+ },
+ "census": {
+  "CAISO": {
+   "bundle": "results/calibration/caiso239_b1_stgas_committed_measured",
+   "per_year": {
+    "2023": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:econ": {
+       "avail_mean": 0.813,
+       "available_gwh": 15958.8,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_GAS"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        315,
+        335,
+        350
+       ],
+       "pmax_mw": 2240.8,
+       "uids": [
+        "ST_GAS_LA_BASIN_p315_econ",
+        "ST_GAS_LA_BASIN_p335_econ",
+        "ST_GAS_LA_BASIN_p350_econ"
+       ]
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "avail_mean": 0.813,
+       "available_gwh": 3054.0,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_GAS"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        315,
+        335,
+        350
+       ],
+       "pmax_mw": 428.8,
+       "uids": [
+        "ST_GAS_LA_BASIN_p315_peak",
+        "ST_GAS_LA_BASIN_p335_peak",
+        "ST_GAS_LA_BASIN_p350_peak"
+       ]
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 1801,
+     "n_live_cells": 2,
+     "n_responsive_rows": 6,
+     "rowset_mismatch": null
+    },
+    "2024": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:econ": {
+       "avail_mean": 0.813,
+       "available_gwh": 15958.8,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_GAS"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        315,
+        335,
+        350
+       ],
+       "pmax_mw": 2240.8,
+       "uids": [
+        "ST_GAS_LA_BASIN_p315_econ",
+        "ST_GAS_LA_BASIN_p335_econ",
+        "ST_GAS_LA_BASIN_p350_econ"
+       ]
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "avail_mean": 0.813,
+       "available_gwh": 3054.0,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_GAS"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        315,
+        335,
+        350
+       ],
+       "pmax_mw": 428.8,
+       "uids": [
+        "ST_GAS_LA_BASIN_p315_peak",
+        "ST_GAS_LA_BASIN_p335_peak",
+        "ST_GAS_LA_BASIN_p350_peak"
+       ]
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 1795,
+     "n_live_cells": 2,
+     "n_responsive_rows": 6,
+     "rowset_mismatch": null
+    },
+    "2025": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:econ": {
+       "avail_mean": 0.813,
+       "available_gwh": 15958.8,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_GAS"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        315,
+        335,
+        350
+       ],
+       "pmax_mw": 2240.8,
+       "uids": [
+        "ST_GAS_LA_BASIN_p315_econ",
+        "ST_GAS_LA_BASIN_p335_econ",
+        "ST_GAS_LA_BASIN_p350_econ"
+       ]
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "avail_mean": 0.813,
+       "available_gwh": 3054.0,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_GAS"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        315,
+        335,
+        350
+       ],
+       "pmax_mw": 428.8,
+       "uids": [
+        "ST_GAS_LA_BASIN_p315_peak",
+        "ST_GAS_LA_BASIN_p335_peak",
+        "ST_GAS_LA_BASIN_p350_peak"
+       ]
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 1800,
+     "n_live_cells": 2,
+     "n_responsive_rows": 6,
+     "rowset_mismatch": null
+    }
+   },
+   "run_id": "2026-09-02-caiso-239-b1-stgas"
+  },
+  "ERCOT": {
+   "bundle": "results/calibration/ercot234_eastex_identity",
+   "per_year": {
+    "2023": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.7838,
+       "available_gwh": 26070.0,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 0,
+       "n_plants": 10,
+       "n_priced_but_inert": 10,
+       "n_tranches": 10,
+       "plants": [
+        298,
+        3470,
+        6146,
+        6178,
+        6179,
+        6180,
+        6183,
+        7030,
+        7097,
+        56611
+       ],
+       "pmax_mw": 3649.6,
+       "uids": [
+        "COAL_Houston_p3470_mustrun",
+        "COAL_North_p6180_mustrun",
+        "COAL_North_p7030_mustrun",
+        "COAL_North_p298_mustrun",
+        "COAL_Northeast_p6146_mustrun",
+        "COAL_South_p6178_mustrun",
+        "COAL_South_p6183_mustrun",
+        "COAL_South_Central_p6179_mustrun",
+        "COAL_South_Central_p7097_mustrun",
+        "COAL_South_Central_p56611_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 1780,
+     "n_live_cells": 1,
+     "n_responsive_rows": 10,
+     "rowset_mismatch": null
+    },
+    "2024": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.775,
+       "available_gwh": 25353.0,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 0,
+       "n_plants": 10,
+       "n_priced_but_inert": 10,
+       "n_tranches": 10,
+       "plants": [
+        298,
+        3470,
+        6146,
+        6178,
+        6179,
+        6180,
+        6183,
+        7030,
+        7097,
+        56611
+       ],
+       "pmax_mw": 3649.6,
+       "uids": [
+        "COAL_Houston_p3470_mustrun",
+        "COAL_North_p6180_mustrun",
+        "COAL_North_p7030_mustrun",
+        "COAL_North_p298_mustrun",
+        "COAL_Northeast_p6146_mustrun",
+        "COAL_South_p6178_mustrun",
+        "COAL_South_p6183_mustrun",
+        "COAL_South_Central_p6179_mustrun",
+        "COAL_South_Central_p7097_mustrun",
+        "COAL_South_Central_p56611_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 1778,
+     "n_live_cells": 1,
+     "n_responsive_rows": 10,
+     "rowset_mismatch": null
+    },
+    "2025": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.6987,
+       "available_gwh": 22434.0,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 0,
+       "n_plants": 10,
+       "n_priced_but_inert": 10,
+       "n_tranches": 10,
+       "plants": [
+        298,
+        3470,
+        6146,
+        6178,
+        6179,
+        6180,
+        6183,
+        7030,
+        7097,
+        56611
+       ],
+       "pmax_mw": 3649.6,
+       "uids": [
+        "COAL_Houston_p3470_mustrun",
+        "COAL_North_p6180_mustrun",
+        "COAL_North_p7030_mustrun",
+        "COAL_North_p298_mustrun",
+        "COAL_Northeast_p6146_mustrun",
+        "COAL_South_p6178_mustrun",
+        "COAL_South_p6183_mustrun",
+        "COAL_South_Central_p6179_mustrun",
+        "COAL_South_Central_p7097_mustrun",
+        "COAL_South_Central_p56611_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 1767,
+     "n_live_cells": 1,
+     "n_responsive_rows": 10,
+     "rowset_mismatch": null
+    }
+   },
+   "run_id": "2026-08-25-234-eastex-identity"
+  },
+  "MISO": {
+   "bundle": "results/calibration/miso201_stbasis_B",
+   "per_year": {
+    "2023": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.6522,
+       "available_gwh": 69121.2,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 15,
+       "n_plants": 61,
+       "n_priced_but_inert": 46,
+       "n_tranches": 61,
+       "plants": [
+        889,
+        963,
+        976,
+        994,
+        997,
+        1001,
+        1004,
+        1012,
+        1024,
+        1047,
+        1073,
+        1082,
+        1091,
+        1167,
+        1393,
+        1710,
+        1733,
+        1893,
+        1915,
+        2103,
+        2107,
+        2823,
+        4041,
+        4050,
+        4078,
+        4271,
+        6009,
+        6017,
+        6030,
+        6034,
+        6055,
+        6085,
+        6090,
+        6098,
+        6113,
+        6155,
+        6190,
+        6213,
+        6254,
+        6641
+       ],
+       "pmax_mw": 12709.0,
+       "uids": [
+        "COAL_MISO-Illinois_p889_mustrun",
+        "COAL_MISO-Illinois_p963_mustrun",
+        "COAL_MISO-Illinois_p976_mustrun",
+        "COAL_MISO-Indiana_p994_mustrun",
+        "COAL_MISO-Indiana_p997_mustrun",
+        "COAL_MISO-Indiana_p1001_mustrun",
+        "COAL_MISO-Indiana_p1004_mustrun",
+        "COAL_MISO-Indiana_p1012_mustrun",
+        "COAL_MISO-Plains_p1073_mustrun",
+        "COAL_MISO-Plains_p1082_mustrun",
+        "COAL_MISO-Plains_p1091_mustrun",
+        "COAL_MISO-Plains_p1167_mustrun",
+        "COAL_MISO-South_p1393_mustrun",
+        "COAL_MISO-East_p1710_mustrun",
+        "COAL_MISO-East_p1733_mustrun",
+        "COAL_MISO-West_p1893_mustrun",
+        "COAL_MISO-West_p1915_mustrun",
+        "COAL_MISO-Plains_p2103_mustrun",
+        "COAL_MISO-Plains_p2107_mustrun",
+        "COAL_MISO-West_p2823_mustrun",
+        "COAL_MISO-East_p4041_mustrun",
+        "COAL_MISO-East_p4050_mustrun",
+        "COAL_MISO-East_p4078_mustrun",
+        "COAL_MISO-East_p4271_mustrun",
+        "COAL_MISO-South_p6009_mustrun",
+        "COAL_MISO-Illinois_p6017_mustrun",
+        "COAL_MISO-West_p6030_mustrun",
+        "COAL_MISO-East_p6034_mustrun",
+        "COAL_MISO-South_p6055_mustrun",
+        "COAL_MISO-Indiana_p6085_mustrun",
+        "COAL_MISO-West_p6090_mustrun",
+        "COAL_MISO-West_p6098_mustrun",
+        "COAL_MISO-Indiana_p6113_mustrun",
+        "COAL_MISO-South_p6190_mustrun",
+        "COAL_MISO-Indiana_p6213_mustrun",
+        "COAL_MISO-Plains_p6254_mustrun",
+        "COAL_MISO-South_p6641_mustrun",
+        "COAL_MISO-Plains_p6664_mustrun",
+        "COAL_MISO-Indiana_p6705_mustrun",
+        "COAL_MISO-Indiana_p6823_mustrun",
+        "COAL_MISO-Plains_p7343_mustrun",
+        "COAL_MISO-East_p8023_mustrun",
+        "COAL_MISO-West_p8222_mustrun",
+        "COAL_MISO-Plains_p10860_mustrun",
+        "COAL_MISO-Plains_p10864_mustrun",
+        "COAL_MISO-Illinois_p10865_mustrun",
+        "COAL_MISO-East_p50835_mustrun",
+        "COAL_MISO-West_p54210_mustrun",
+        "COAL_MISO-West_p54212_mustrun",
+        "COAL_MISO-West_p54213_mustrun",
+        "COAL_MISO-West_p54214_mustrun",
+        "COAL_MISO-West_p54533_mustrun",
+        "COAL_MISO-Illinois_p55856_mustrun",
+        "COAL_MISO-East_p56068_mustrun",
+        "COAL_MISO-South_p56456_mustrun",
+        "COAL_MISO-Illinois_p57928_mustrun",
+        "COAL_MISO-East_p57949_mustrun",
+        "COAL_MISO-Indiana_p1024_mustrun",
+        "COAL_MISO-Plains_p1047_mustrun",
+        "COAL_MISO-Plains_p6155_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.8023,
+       "available_gwh": 1089.1,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 27,
+       "n_plants": 27,
+       "n_priced_but_inert": 0,
+       "n_tranches": 27,
+       "plants": [
+        1073,
+        1979,
+        4042,
+        10234,
+        10301,
+        10319,
+        10328,
+        10360,
+        10397,
+        10430,
+        10686,
+        10867,
+        50240,
+        50395,
+        50489,
+        50625,
+        50846,
+        50969,
+        54224,
+        54321,
+        54518,
+        54780,
+        55096,
+        56309,
+        56786,
+        58066,
+        63921
+       ],
+       "pmax_mw": 186.0,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_econ",
+        "ST_CHP_MISO-West_p1979_econ",
+        "ST_CHP_MISO-East_p4042_econ",
+        "ST_CHP_MISO-East_p10234_econ",
+        "ST_CHP_MISO-South_p10301_econ",
+        "ST_CHP_MISO-South_p10319_econ",
+        "ST_CHP_MISO-East_p10328_econ",
+        "ST_CHP_MISO-East_p10360_econ",
+        "ST_CHP_MISO-Indiana_p10397_econ",
+        "ST_CHP_MISO-Plains_p10430_econ",
+        "ST_CHP_MISO-West_p10686_econ",
+        "ST_CHP_MISO-Illinois_p10867_econ",
+        "ST_CHP_MISO-Indiana_p50240_econ",
+        "ST_CHP_MISO-East_p50395_econ",
+        "ST_CHP_MISO-South_p50489_econ",
+        "ST_CHP_MISO-South_p50625_econ",
+        "ST_CHP_MISO-South_p50846_econ",
+        "ST_CHP_MISO-Plains_p50969_econ",
+        "ST_CHP_MISO-West_p54224_econ",
+        "ST_CHP_MISO-South_p54321_econ",
+        "ST_CHP_MISO-South_p54518_econ",
+        "ST_CHP_MISO-Illinois_p54780_econ",
+        "ST_CHP_MISO-Indiana_p55096_econ",
+        "ST_CHP_MISO-Plains_p56309_econ",
+        "ST_CHP_MISO-West_p56786_econ",
+        "ST_CHP_MISO-East_p58066_econ",
+        "ST_CHP_MISO-Indiana_p63921_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7923,
+       "available_gwh": 2596.4,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 46,
+       "n_plants": 46,
+       "n_priced_but_inert": 0,
+       "n_tranches": 46,
+       "plants": [
+        1073,
+        1393,
+        1979,
+        2001,
+        4042,
+        10149,
+        10234,
+        10301,
+        10319,
+        10328,
+        10360,
+        10397,
+        10430,
+        10606,
+        10686,
+        10855,
+        10861,
+        10863,
+        10867,
+        50088,
+        50240,
+        50395,
+        50489,
+        50490,
+        50846,
+        50903,
+        50969,
+        54201,
+        54224,
+        54321,
+        54408,
+        54512,
+        54518,
+        54775,
+        54780,
+        55096,
+        55861,
+        56309,
+        56786,
+        58066
+       ],
+       "pmax_mw": 419.0,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_committed",
+        "ST_CHP_MISO-South_p1393_committed",
+        "ST_CHP_MISO-West_p1979_committed",
+        "ST_CHP_MISO-West_p2001_committed",
+        "ST_CHP_MISO-East_p4042_committed",
+        "ST_CHP_MISO-East_p10234_committed",
+        "ST_CHP_MISO-South_p10301_committed",
+        "ST_CHP_MISO-South_p10319_committed",
+        "ST_CHP_MISO-East_p10328_committed",
+        "ST_CHP_MISO-East_p10360_committed",
+        "ST_CHP_MISO-Indiana_p10397_committed",
+        "ST_CHP_MISO-Plains_p10430_committed",
+        "ST_CHP_MISO-South_p10606_committed",
+        "ST_CHP_MISO-West_p10686_committed",
+        "ST_CHP_MISO-Plains_p10855_committed",
+        "ST_CHP_MISO-Plains_p10861_committed",
+        "ST_CHP_MISO-West_p10863_committed",
+        "ST_CHP_MISO-Illinois_p10867_committed",
+        "ST_CHP_MISO-Plains_p50088_committed",
+        "ST_CHP_MISO-Indiana_p50240_committed",
+        "ST_CHP_MISO-East_p50395_committed",
+        "ST_CHP_MISO-South_p50489_committed",
+        "ST_CHP_MISO-South_p50490_committed",
+        "ST_CHP_MISO-South_p50846_committed",
+        "ST_CHP_MISO-Indiana_p50903_committed",
+        "ST_CHP_MISO-Plains_p50969_committed",
+        "ST_CHP_MISO-Plains_p54201_committed",
+        "ST_CHP_MISO-West_p54224_committed",
+        "ST_CHP_MISO-South_p54321_committed",
+        "ST_CHP_MISO-East_p54408_committed",
+        "ST_CHP_MISO-South_p54512_committed",
+        "ST_CHP_MISO-South_p54518_committed",
+        "ST_CHP_MISO-Plains_p54775_committed",
+        "ST_CHP_MISO-Illinois_p54780_committed",
+        "ST_CHP_MISO-Indiana_p55096_committed",
+        "ST_CHP_MISO-East_p55861_committed",
+        "ST_CHP_MISO-Plains_p56309_committed",
+        "ST_CHP_MISO-West_p56786_committed",
+        "ST_CHP_MISO-East_p58066_committed",
+        "ST_CHP_MISO-East_p63831_committed",
+        "ST_CHP_MISO-Indiana_p63852_committed",
+        "ST_CHP_MISO-West_p63918_committed",
+        "ST_CHP_MISO-Plains_p63919_committed",
+        "ST_CHP_MISO-Indiana_p63921_committed",
+        "ST_CHP_MISO-Plains_p63923_committed",
+        "ST_CHP_MISO-East_p10149_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.7297,
+       "available_gwh": 492.8,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 13,
+       "n_plants": 13,
+       "n_priced_but_inert": 0,
+       "n_tranches": 13,
+       "plants": [
+        1073,
+        1979,
+        4042,
+        10328,
+        10686,
+        50240,
+        50969,
+        54201,
+        54224,
+        54775,
+        54780,
+        55096,
+        56786
+       ],
+       "pmax_mw": 97.1,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_peak",
+        "ST_CHP_MISO-West_p1979_peak",
+        "ST_CHP_MISO-East_p4042_peak",
+        "ST_CHP_MISO-East_p10328_peak",
+        "ST_CHP_MISO-West_p10686_peak",
+        "ST_CHP_MISO-Indiana_p50240_peak",
+        "ST_CHP_MISO-Plains_p50969_peak",
+        "ST_CHP_MISO-Plains_p54201_peak",
+        "ST_CHP_MISO-West_p54224_peak",
+        "ST_CHP_MISO-Plains_p54775_peak",
+        "ST_CHP_MISO-Illinois_p54780_peak",
+        "ST_CHP_MISO-Indiana_p55096_peak",
+        "ST_CHP_MISO-West_p56786_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 3077,
+     "n_live_cells": 4,
+     "n_responsive_rows": 147,
+     "rowset_mismatch": null
+    },
+    "2024": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.618,
+       "available_gwh": 67267.2,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 15,
+       "n_plants": 61,
+       "n_priced_but_inert": 46,
+       "n_tranches": 61,
+       "plants": [
+        889,
+        963,
+        976,
+        994,
+        997,
+        1001,
+        1004,
+        1012,
+        1024,
+        1047,
+        1073,
+        1082,
+        1091,
+        1167,
+        1393,
+        1710,
+        1733,
+        1893,
+        1915,
+        2103,
+        2107,
+        2823,
+        4041,
+        4050,
+        4078,
+        4271,
+        6009,
+        6017,
+        6030,
+        6034,
+        6055,
+        6085,
+        6090,
+        6098,
+        6113,
+        6155,
+        6190,
+        6213,
+        6254,
+        6641
+       ],
+       "pmax_mw": 12709.0,
+       "uids": [
+        "COAL_MISO-Illinois_p889_mustrun",
+        "COAL_MISO-Illinois_p963_mustrun",
+        "COAL_MISO-Illinois_p976_mustrun",
+        "COAL_MISO-Indiana_p994_mustrun",
+        "COAL_MISO-Indiana_p997_mustrun",
+        "COAL_MISO-Indiana_p1001_mustrun",
+        "COAL_MISO-Indiana_p1004_mustrun",
+        "COAL_MISO-Indiana_p1012_mustrun",
+        "COAL_MISO-Plains_p1073_mustrun",
+        "COAL_MISO-Plains_p1082_mustrun",
+        "COAL_MISO-Plains_p1091_mustrun",
+        "COAL_MISO-Plains_p1167_mustrun",
+        "COAL_MISO-South_p1393_mustrun",
+        "COAL_MISO-East_p1710_mustrun",
+        "COAL_MISO-East_p1733_mustrun",
+        "COAL_MISO-West_p1893_mustrun",
+        "COAL_MISO-West_p1915_mustrun",
+        "COAL_MISO-Plains_p2103_mustrun",
+        "COAL_MISO-Plains_p2107_mustrun",
+        "COAL_MISO-West_p2823_mustrun",
+        "COAL_MISO-East_p4041_mustrun",
+        "COAL_MISO-East_p4050_mustrun",
+        "COAL_MISO-East_p4078_mustrun",
+        "COAL_MISO-East_p4271_mustrun",
+        "COAL_MISO-South_p6009_mustrun",
+        "COAL_MISO-Illinois_p6017_mustrun",
+        "COAL_MISO-West_p6030_mustrun",
+        "COAL_MISO-East_p6034_mustrun",
+        "COAL_MISO-South_p6055_mustrun",
+        "COAL_MISO-Indiana_p6085_mustrun",
+        "COAL_MISO-West_p6090_mustrun",
+        "COAL_MISO-West_p6098_mustrun",
+        "COAL_MISO-Indiana_p6113_mustrun",
+        "COAL_MISO-South_p6190_mustrun",
+        "COAL_MISO-Indiana_p6213_mustrun",
+        "COAL_MISO-Plains_p6254_mustrun",
+        "COAL_MISO-South_p6641_mustrun",
+        "COAL_MISO-Plains_p6664_mustrun",
+        "COAL_MISO-Indiana_p6705_mustrun",
+        "COAL_MISO-Indiana_p6823_mustrun",
+        "COAL_MISO-Plains_p7343_mustrun",
+        "COAL_MISO-East_p8023_mustrun",
+        "COAL_MISO-West_p8222_mustrun",
+        "COAL_MISO-Plains_p10860_mustrun",
+        "COAL_MISO-Plains_p10864_mustrun",
+        "COAL_MISO-Illinois_p10865_mustrun",
+        "COAL_MISO-East_p50835_mustrun",
+        "COAL_MISO-West_p54210_mustrun",
+        "COAL_MISO-West_p54212_mustrun",
+        "COAL_MISO-West_p54213_mustrun",
+        "COAL_MISO-West_p54214_mustrun",
+        "COAL_MISO-West_p54533_mustrun",
+        "COAL_MISO-Illinois_p55856_mustrun",
+        "COAL_MISO-East_p56068_mustrun",
+        "COAL_MISO-South_p56456_mustrun",
+        "COAL_MISO-Illinois_p57928_mustrun",
+        "COAL_MISO-East_p57949_mustrun",
+        "COAL_MISO-Indiana_p1024_mustrun",
+        "COAL_MISO-Plains_p1047_mustrun",
+        "COAL_MISO-Plains_p6155_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.7998,
+       "available_gwh": 1104.3,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 27,
+       "n_plants": 27,
+       "n_priced_but_inert": 0,
+       "n_tranches": 27,
+       "plants": [
+        1073,
+        1979,
+        4042,
+        10234,
+        10301,
+        10319,
+        10328,
+        10360,
+        10397,
+        10430,
+        10686,
+        10867,
+        50240,
+        50395,
+        50489,
+        50625,
+        50846,
+        50969,
+        54224,
+        54321,
+        54518,
+        54780,
+        55096,
+        56309,
+        56786,
+        58066,
+        63921
+       ],
+       "pmax_mw": 186.0,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_econ",
+        "ST_CHP_MISO-West_p1979_econ",
+        "ST_CHP_MISO-East_p4042_econ",
+        "ST_CHP_MISO-East_p10234_econ",
+        "ST_CHP_MISO-South_p10301_econ",
+        "ST_CHP_MISO-South_p10319_econ",
+        "ST_CHP_MISO-East_p10328_econ",
+        "ST_CHP_MISO-East_p10360_econ",
+        "ST_CHP_MISO-Indiana_p10397_econ",
+        "ST_CHP_MISO-Plains_p10430_econ",
+        "ST_CHP_MISO-West_p10686_econ",
+        "ST_CHP_MISO-Illinois_p10867_econ",
+        "ST_CHP_MISO-Indiana_p50240_econ",
+        "ST_CHP_MISO-East_p50395_econ",
+        "ST_CHP_MISO-South_p50489_econ",
+        "ST_CHP_MISO-South_p50625_econ",
+        "ST_CHP_MISO-South_p50846_econ",
+        "ST_CHP_MISO-Plains_p50969_econ",
+        "ST_CHP_MISO-West_p54224_econ",
+        "ST_CHP_MISO-South_p54321_econ",
+        "ST_CHP_MISO-South_p54518_econ",
+        "ST_CHP_MISO-Illinois_p54780_econ",
+        "ST_CHP_MISO-Indiana_p55096_econ",
+        "ST_CHP_MISO-Plains_p56309_econ",
+        "ST_CHP_MISO-West_p56786_econ",
+        "ST_CHP_MISO-East_p58066_econ",
+        "ST_CHP_MISO-Indiana_p63921_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7908,
+       "available_gwh": 2614.2,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 46,
+       "n_plants": 46,
+       "n_priced_but_inert": 0,
+       "n_tranches": 46,
+       "plants": [
+        1073,
+        1393,
+        1979,
+        2001,
+        4042,
+        10234,
+        10301,
+        10319,
+        10328,
+        10360,
+        10397,
+        10430,
+        10606,
+        10686,
+        10855,
+        10861,
+        10863,
+        10867,
+        50088,
+        50240,
+        50395,
+        50489,
+        50490,
+        50846,
+        50903,
+        50969,
+        54201,
+        54224,
+        54321,
+        54408,
+        54512,
+        54518,
+        54775,
+        54780,
+        55096,
+        55861,
+        56309,
+        56786,
+        58066,
+        63831
+       ],
+       "pmax_mw": 418.9,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_committed",
+        "ST_CHP_MISO-South_p1393_committed",
+        "ST_CHP_MISO-West_p1979_committed",
+        "ST_CHP_MISO-West_p2001_committed",
+        "ST_CHP_MISO-East_p4042_committed",
+        "ST_CHP_MISO-East_p10234_committed",
+        "ST_CHP_MISO-South_p10301_committed",
+        "ST_CHP_MISO-South_p10319_committed",
+        "ST_CHP_MISO-East_p10328_committed",
+        "ST_CHP_MISO-East_p10360_committed",
+        "ST_CHP_MISO-Indiana_p10397_committed",
+        "ST_CHP_MISO-Plains_p10430_committed",
+        "ST_CHP_MISO-South_p10606_committed",
+        "ST_CHP_MISO-West_p10686_committed",
+        "ST_CHP_MISO-Plains_p10855_committed",
+        "ST_CHP_MISO-Plains_p10861_committed",
+        "ST_CHP_MISO-West_p10863_committed",
+        "ST_CHP_MISO-Illinois_p10867_committed",
+        "ST_CHP_MISO-Plains_p50088_committed",
+        "ST_CHP_MISO-Indiana_p50240_committed",
+        "ST_CHP_MISO-East_p50395_committed",
+        "ST_CHP_MISO-South_p50489_committed",
+        "ST_CHP_MISO-South_p50490_committed",
+        "ST_CHP_MISO-South_p50846_committed",
+        "ST_CHP_MISO-Indiana_p50903_committed",
+        "ST_CHP_MISO-Plains_p50969_committed",
+        "ST_CHP_MISO-Plains_p54201_committed",
+        "ST_CHP_MISO-West_p54224_committed",
+        "ST_CHP_MISO-South_p54321_committed",
+        "ST_CHP_MISO-East_p54408_committed",
+        "ST_CHP_MISO-South_p54512_committed",
+        "ST_CHP_MISO-South_p54518_committed",
+        "ST_CHP_MISO-Plains_p54775_committed",
+        "ST_CHP_MISO-Illinois_p54780_committed",
+        "ST_CHP_MISO-Indiana_p55096_committed",
+        "ST_CHP_MISO-East_p55861_committed",
+        "ST_CHP_MISO-Plains_p56309_committed",
+        "ST_CHP_MISO-West_p56786_committed",
+        "ST_CHP_MISO-East_p58066_committed",
+        "ST_CHP_MISO-East_p63831_committed",
+        "ST_CHP_MISO-Indiana_p63852_committed",
+        "ST_CHP_MISO-West_p63918_committed",
+        "ST_CHP_MISO-Plains_p63919_committed",
+        "ST_CHP_MISO-Indiana_p63921_committed",
+        "ST_CHP_MISO-Plains_p63923_committed",
+        "ST_CHP_MISO-Illinois_p68066_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.7245,
+       "available_gwh": 503.6,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 13,
+       "n_plants": 13,
+       "n_priced_but_inert": 0,
+       "n_tranches": 13,
+       "plants": [
+        1073,
+        1979,
+        4042,
+        10328,
+        10686,
+        50240,
+        50969,
+        54201,
+        54224,
+        54775,
+        54780,
+        55096,
+        56786
+       ],
+       "pmax_mw": 97.1,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_peak",
+        "ST_CHP_MISO-West_p1979_peak",
+        "ST_CHP_MISO-East_p4042_peak",
+        "ST_CHP_MISO-East_p10328_peak",
+        "ST_CHP_MISO-West_p10686_peak",
+        "ST_CHP_MISO-Indiana_p50240_peak",
+        "ST_CHP_MISO-Plains_p50969_peak",
+        "ST_CHP_MISO-Plains_p54201_peak",
+        "ST_CHP_MISO-West_p54224_peak",
+        "ST_CHP_MISO-Plains_p54775_peak",
+        "ST_CHP_MISO-Illinois_p54780_peak",
+        "ST_CHP_MISO-Indiana_p55096_peak",
+        "ST_CHP_MISO-West_p56786_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 3077,
+     "n_live_cells": 4,
+     "n_responsive_rows": 147,
+     "rowset_mismatch": null
+    },
+    "2025": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.5807,
+       "available_gwh": 70098.6,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 15,
+       "n_plants": 61,
+       "n_priced_but_inert": 46,
+       "n_tranches": 61,
+       "plants": [
+        889,
+        963,
+        976,
+        994,
+        997,
+        1001,
+        1004,
+        1012,
+        1024,
+        1047,
+        1073,
+        1082,
+        1091,
+        1167,
+        1393,
+        1710,
+        1733,
+        1893,
+        1915,
+        2103,
+        2107,
+        2823,
+        4041,
+        4050,
+        4078,
+        4271,
+        6009,
+        6017,
+        6030,
+        6034,
+        6055,
+        6085,
+        6090,
+        6098,
+        6113,
+        6155,
+        6190,
+        6213,
+        6254,
+        6641
+       ],
+       "pmax_mw": 12709.0,
+       "uids": [
+        "COAL_MISO-Illinois_p889_mustrun",
+        "COAL_MISO-Illinois_p963_mustrun",
+        "COAL_MISO-Illinois_p976_mustrun",
+        "COAL_MISO-Indiana_p994_mustrun",
+        "COAL_MISO-Indiana_p997_mustrun",
+        "COAL_MISO-Indiana_p1001_mustrun",
+        "COAL_MISO-Indiana_p1004_mustrun",
+        "COAL_MISO-Indiana_p1012_mustrun",
+        "COAL_MISO-Plains_p1073_mustrun",
+        "COAL_MISO-Plains_p1082_mustrun",
+        "COAL_MISO-Plains_p1091_mustrun",
+        "COAL_MISO-Plains_p1167_mustrun",
+        "COAL_MISO-South_p1393_mustrun",
+        "COAL_MISO-East_p1710_mustrun",
+        "COAL_MISO-East_p1733_mustrun",
+        "COAL_MISO-West_p1893_mustrun",
+        "COAL_MISO-West_p1915_mustrun",
+        "COAL_MISO-Plains_p2103_mustrun",
+        "COAL_MISO-Plains_p2107_mustrun",
+        "COAL_MISO-West_p2823_mustrun",
+        "COAL_MISO-East_p4041_mustrun",
+        "COAL_MISO-East_p4050_mustrun",
+        "COAL_MISO-East_p4078_mustrun",
+        "COAL_MISO-East_p4271_mustrun",
+        "COAL_MISO-South_p6009_mustrun",
+        "COAL_MISO-Illinois_p6017_mustrun",
+        "COAL_MISO-West_p6030_mustrun",
+        "COAL_MISO-East_p6034_mustrun",
+        "COAL_MISO-South_p6055_mustrun",
+        "COAL_MISO-Indiana_p6085_mustrun",
+        "COAL_MISO-West_p6090_mustrun",
+        "COAL_MISO-West_p6098_mustrun",
+        "COAL_MISO-Indiana_p6113_mustrun",
+        "COAL_MISO-South_p6190_mustrun",
+        "COAL_MISO-Indiana_p6213_mustrun",
+        "COAL_MISO-Plains_p6254_mustrun",
+        "COAL_MISO-South_p6641_mustrun",
+        "COAL_MISO-Plains_p6664_mustrun",
+        "COAL_MISO-Indiana_p6705_mustrun",
+        "COAL_MISO-Indiana_p6823_mustrun",
+        "COAL_MISO-Plains_p7343_mustrun",
+        "COAL_MISO-East_p8023_mustrun",
+        "COAL_MISO-West_p8222_mustrun",
+        "COAL_MISO-Plains_p10860_mustrun",
+        "COAL_MISO-Plains_p10864_mustrun",
+        "COAL_MISO-Illinois_p10865_mustrun",
+        "COAL_MISO-East_p50835_mustrun",
+        "COAL_MISO-West_p54210_mustrun",
+        "COAL_MISO-West_p54212_mustrun",
+        "COAL_MISO-West_p54213_mustrun",
+        "COAL_MISO-West_p54214_mustrun",
+        "COAL_MISO-West_p54533_mustrun",
+        "COAL_MISO-Illinois_p55856_mustrun",
+        "COAL_MISO-East_p56068_mustrun",
+        "COAL_MISO-South_p56456_mustrun",
+        "COAL_MISO-Illinois_p57928_mustrun",
+        "COAL_MISO-East_p57949_mustrun",
+        "COAL_MISO-Indiana_p1024_mustrun",
+        "COAL_MISO-Plains_p1047_mustrun",
+        "COAL_MISO-Plains_p6155_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.4827,
+       "available_gwh": 921.2,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 27,
+       "n_plants": 27,
+       "n_priced_but_inert": 0,
+       "n_tranches": 27,
+       "plants": [
+        1073,
+        1979,
+        4042,
+        10234,
+        10301,
+        10319,
+        10328,
+        10360,
+        10397,
+        10430,
+        10686,
+        10867,
+        50240,
+        50395,
+        50489,
+        50625,
+        50846,
+        50969,
+        54224,
+        54321,
+        54518,
+        54780,
+        55096,
+        56309,
+        56786,
+        58066,
+        63921
+       ],
+       "pmax_mw": 184.3,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_econ",
+        "ST_CHP_MISO-West_p1979_econ",
+        "ST_CHP_MISO-East_p4042_econ",
+        "ST_CHP_MISO-East_p10234_econ",
+        "ST_CHP_MISO-South_p10301_econ",
+        "ST_CHP_MISO-South_p10319_econ",
+        "ST_CHP_MISO-East_p10328_econ",
+        "ST_CHP_MISO-East_p10360_econ",
+        "ST_CHP_MISO-Indiana_p10397_econ",
+        "ST_CHP_MISO-Plains_p10430_econ",
+        "ST_CHP_MISO-West_p10686_econ",
+        "ST_CHP_MISO-Illinois_p10867_econ",
+        "ST_CHP_MISO-Indiana_p50240_econ",
+        "ST_CHP_MISO-East_p50395_econ",
+        "ST_CHP_MISO-South_p50489_econ",
+        "ST_CHP_MISO-South_p50625_econ",
+        "ST_CHP_MISO-South_p50846_econ",
+        "ST_CHP_MISO-Plains_p50969_econ",
+        "ST_CHP_MISO-West_p54224_econ",
+        "ST_CHP_MISO-South_p54321_econ",
+        "ST_CHP_MISO-South_p54518_econ",
+        "ST_CHP_MISO-Illinois_p54780_econ",
+        "ST_CHP_MISO-Indiana_p55096_econ",
+        "ST_CHP_MISO-Plains_p56309_econ",
+        "ST_CHP_MISO-West_p56786_econ",
+        "ST_CHP_MISO-East_p58066_econ",
+        "ST_CHP_MISO-Indiana_p63921_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.379,
+       "available_gwh": 1977.9,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 46,
+       "n_plants": 46,
+       "n_priced_but_inert": 0,
+       "n_tranches": 46,
+       "plants": [
+        1073,
+        1393,
+        1979,
+        2001,
+        4042,
+        10234,
+        10301,
+        10319,
+        10328,
+        10360,
+        10397,
+        10430,
+        10606,
+        10686,
+        10855,
+        10861,
+        10863,
+        10867,
+        50088,
+        50240,
+        50395,
+        50489,
+        50490,
+        50846,
+        50903,
+        50969,
+        54201,
+        54224,
+        54321,
+        54408,
+        54512,
+        54518,
+        54775,
+        54780,
+        55096,
+        55861,
+        56309,
+        56786,
+        58066,
+        63831
+       ],
+       "pmax_mw": 416.9,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_committed",
+        "ST_CHP_MISO-South_p1393_committed",
+        "ST_CHP_MISO-West_p1979_committed",
+        "ST_CHP_MISO-West_p2001_committed",
+        "ST_CHP_MISO-East_p4042_committed",
+        "ST_CHP_MISO-East_p10234_committed",
+        "ST_CHP_MISO-South_p10301_committed",
+        "ST_CHP_MISO-South_p10319_committed",
+        "ST_CHP_MISO-East_p10328_committed",
+        "ST_CHP_MISO-East_p10360_committed",
+        "ST_CHP_MISO-Indiana_p10397_committed",
+        "ST_CHP_MISO-Plains_p10430_committed",
+        "ST_CHP_MISO-South_p10606_committed",
+        "ST_CHP_MISO-West_p10686_committed",
+        "ST_CHP_MISO-Plains_p10855_committed",
+        "ST_CHP_MISO-Plains_p10861_committed",
+        "ST_CHP_MISO-West_p10863_committed",
+        "ST_CHP_MISO-Illinois_p10867_committed",
+        "ST_CHP_MISO-Plains_p50088_committed",
+        "ST_CHP_MISO-Indiana_p50240_committed",
+        "ST_CHP_MISO-East_p50395_committed",
+        "ST_CHP_MISO-South_p50489_committed",
+        "ST_CHP_MISO-South_p50490_committed",
+        "ST_CHP_MISO-South_p50846_committed",
+        "ST_CHP_MISO-Indiana_p50903_committed",
+        "ST_CHP_MISO-Plains_p50969_committed",
+        "ST_CHP_MISO-Plains_p54201_committed",
+        "ST_CHP_MISO-West_p54224_committed",
+        "ST_CHP_MISO-South_p54321_committed",
+        "ST_CHP_MISO-East_p54408_committed",
+        "ST_CHP_MISO-South_p54512_committed",
+        "ST_CHP_MISO-South_p54518_committed",
+        "ST_CHP_MISO-Plains_p54775_committed",
+        "ST_CHP_MISO-Illinois_p54780_committed",
+        "ST_CHP_MISO-Indiana_p55096_committed",
+        "ST_CHP_MISO-East_p55861_committed",
+        "ST_CHP_MISO-Plains_p56309_committed",
+        "ST_CHP_MISO-West_p56786_committed",
+        "ST_CHP_MISO-East_p58066_committed",
+        "ST_CHP_MISO-East_p63831_committed",
+        "ST_CHP_MISO-Indiana_p63852_committed",
+        "ST_CHP_MISO-West_p63918_committed",
+        "ST_CHP_MISO-Plains_p63919_committed",
+        "ST_CHP_MISO-Indiana_p63921_committed",
+        "ST_CHP_MISO-Plains_p63923_committed",
+        "ST_CHP_MISO-Illinois_p68066_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.6011,
+       "available_gwh": 456.4,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 13,
+       "n_plants": 13,
+       "n_priced_but_inert": 0,
+       "n_tranches": 13,
+       "plants": [
+        1073,
+        1979,
+        4042,
+        10328,
+        10686,
+        50240,
+        50969,
+        54201,
+        54224,
+        54775,
+        54780,
+        55096,
+        56786
+       ],
+       "pmax_mw": 97.1,
+       "uids": [
+        "ST_CHP_MISO-Plains_p1073_peak",
+        "ST_CHP_MISO-West_p1979_peak",
+        "ST_CHP_MISO-East_p4042_peak",
+        "ST_CHP_MISO-East_p10328_peak",
+        "ST_CHP_MISO-West_p10686_peak",
+        "ST_CHP_MISO-Indiana_p50240_peak",
+        "ST_CHP_MISO-Plains_p50969_peak",
+        "ST_CHP_MISO-Plains_p54201_peak",
+        "ST_CHP_MISO-West_p54224_peak",
+        "ST_CHP_MISO-Plains_p54775_peak",
+        "ST_CHP_MISO-Illinois_p54780_peak",
+        "ST_CHP_MISO-Indiana_p55096_peak",
+        "ST_CHP_MISO-West_p56786_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 3073,
+     "n_live_cells": 4,
+     "n_responsive_rows": 147,
+     "rowset_mismatch": null
+    }
+   },
+   "run_id": "2026-09-02-miso-201-stbasis"
+  },
+  "NEISO": {
+   "bundle": "results/calibration/neiso99_joint_B",
+   "per_year": {
+    "2023": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.8918,
+       "available_gwh": 22.0,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 1,
+       "n_plants": 1,
+       "n_priced_but_inert": 0,
+       "n_tranches": 1,
+       "plants": [
+        10883
+       ],
+       "pmax_mw": 2.8,
+       "uids": [
+        "ST_CHP_Boston_p10883_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7636,
+       "available_gwh": 133.9,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 7,
+       "n_plants": 7,
+       "n_priced_but_inert": 0,
+       "n_tranches": 7,
+       "plants": [
+        10417,
+        10883,
+        50087,
+        52024,
+        54225,
+        54236,
+        58160
+       ],
+       "pmax_mw": 18.1,
+       "uids": [
+        "ST_CHP_Central_p10417_committed",
+        "ST_CHP_Boston_p10883_committed",
+        "ST_CHP_Central_p50087_committed",
+        "ST_CHP_Central_p52024_committed",
+        "ST_CHP_Boston_p54225_committed",
+        "ST_CHP_Connecticut_p54236_committed",
+        "ST_CHP_Central_p58160_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.8919,
+       "available_gwh": 12.7,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 2,
+       "n_plants": 2,
+       "n_priced_but_inert": 0,
+       "n_tranches": 2,
+       "plants": [
+        10883,
+        52024
+       ],
+       "pmax_mw": 1.6,
+       "uids": [
+        "ST_CHP_Boston_p10883_peak",
+        "ST_CHP_Central_p52024_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 817,
+     "n_live_cells": 3,
+     "n_responsive_rows": 10,
+     "rowset_mismatch": null
+    },
+    "2024": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.8898,
+       "available_gwh": 30.1,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 2,
+       "n_plants": 2,
+       "n_priced_but_inert": 0,
+       "n_tranches": 2,
+       "plants": [
+        10883,
+        68493
+       ],
+       "pmax_mw": 3.9,
+       "uids": [
+        "ST_CHP_Boston_p10883_econ",
+        "ST_CHP_Central_p68493_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7775,
+       "available_gwh": 139.5,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 8,
+       "n_plants": 8,
+       "n_priced_but_inert": 0,
+       "n_tranches": 8,
+       "plants": [
+        10417,
+        10883,
+        50087,
+        52024,
+        54225,
+        54236,
+        58160,
+        68493
+       ],
+       "pmax_mw": 18.9,
+       "uids": [
+        "ST_CHP_Central_p10417_committed",
+        "ST_CHP_Boston_p10883_committed",
+        "ST_CHP_Central_p50087_committed",
+        "ST_CHP_Central_p52024_committed",
+        "ST_CHP_Boston_p54225_committed",
+        "ST_CHP_Connecticut_p54236_committed",
+        "ST_CHP_Central_p58160_committed",
+        "ST_CHP_Central_p68493_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.8898,
+       "available_gwh": 12.6,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 2,
+       "n_plants": 2,
+       "n_priced_but_inert": 0,
+       "n_tranches": 2,
+       "plants": [
+        10883,
+        52024
+       ],
+       "pmax_mw": 1.6,
+       "uids": [
+        "ST_CHP_Boston_p10883_peak",
+        "ST_CHP_Central_p52024_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 807,
+     "n_live_cells": 3,
+     "n_responsive_rows": 12,
+     "rowset_mismatch": null
+    },
+    "2025": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.0,
+       "available_gwh": 0.0,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 2,
+       "n_plants": 2,
+       "n_priced_but_inert": 0,
+       "n_tranches": 2,
+       "plants": [
+        10883,
+        68493
+       ],
+       "pmax_mw": 3.9,
+       "uids": [
+        "ST_CHP_Boston_p10883_econ",
+        "ST_CHP_Central_p68493_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.6675,
+       "available_gwh": 111.7,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 8,
+       "n_plants": 8,
+       "n_priced_but_inert": 0,
+       "n_tranches": 8,
+       "plants": [
+        10417,
+        10883,
+        50087,
+        52024,
+        54225,
+        54236,
+        58160,
+        68493
+       ],
+       "pmax_mw": 18.9,
+       "uids": [
+        "ST_CHP_Central_p10417_committed",
+        "ST_CHP_Boston_p10883_committed",
+        "ST_CHP_Central_p50087_committed",
+        "ST_CHP_Central_p52024_committed",
+        "ST_CHP_Boston_p54225_committed",
+        "ST_CHP_Connecticut_p54236_committed",
+        "ST_CHP_Central_p58160_committed",
+        "ST_CHP_Central_p68493_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.4454,
+       "available_gwh": 4.1,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 2,
+       "n_plants": 2,
+       "n_priced_but_inert": 0,
+       "n_tranches": 2,
+       "plants": [
+        10883,
+        52024
+       ],
+       "pmax_mw": 1.6,
+       "uids": [
+        "ST_CHP_Boston_p10883_peak",
+        "ST_CHP_Central_p52024_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 807,
+     "n_live_cells": 3,
+     "n_responsive_rows": 12,
+     "rowset_mismatch": null
+    }
+   },
+   "run_id": "2026-08-17-neiso-99-joint-p1"
+  },
+  "NYISO": {
+   "bundle": "results/calibration/nyiso177_vintage_B1p",
+   "per_year": {
+    "2023": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.5915,
+       "available_gwh": 881.5,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 1,
+       "n_plants": 1,
+       "n_priced_but_inert": 0,
+       "n_tranches": 1,
+       "plants": [
+        2493
+       ],
+       "pmax_mw": 170.1,
+       "uids": [
+        "ST_CHP_NYC_p2493_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7531,
+       "available_gwh": 586.0,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        2493,
+        10025,
+        54099
+       ],
+       "pmax_mw": 106.9,
+       "uids": [
+        "ST_CHP_NYC_p2493_committed",
+        "ST_CHP_Upstate_West_p10025_committed",
+        "ST_CHP_Upstate_West_p54099_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.5915,
+       "available_gwh": 240.6,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 1,
+       "n_plants": 1,
+       "n_priced_but_inert": 0,
+       "n_tranches": 1,
+       "plants": [
+        2493
+       ],
+       "pmax_mw": 46.4,
+       "uids": [
+        "ST_CHP_NYC_p2493_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 812,
+     "n_live_cells": 3,
+     "n_responsive_rows": 5,
+     "rowset_mismatch": null
+    },
+    "2024": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.6174,
+       "available_gwh": 920.1,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 1,
+       "n_plants": 1,
+       "n_priced_but_inert": 0,
+       "n_tranches": 1,
+       "plants": [
+        2493
+       ],
+       "pmax_mw": 170.1,
+       "uids": [
+        "ST_CHP_NYC_p2493_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7877,
+       "available_gwh": 609.1,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        2493,
+        10025,
+        54099
+       ],
+       "pmax_mw": 106.9,
+       "uids": [
+        "ST_CHP_NYC_p2493_committed",
+        "ST_CHP_Upstate_West_p10025_committed",
+        "ST_CHP_Upstate_West_p54099_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.6174,
+       "available_gwh": 251.1,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 1,
+       "n_plants": 1,
+       "n_priced_but_inert": 0,
+       "n_tranches": 1,
+       "plants": [
+        2493
+       ],
+       "pmax_mw": 46.4,
+       "uids": [
+        "ST_CHP_NYC_p2493_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 809,
+     "n_live_cells": 3,
+     "n_responsive_rows": 5,
+     "rowset_mismatch": null
+    },
+    "2025": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.6541,
+       "available_gwh": 974.9,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 1,
+       "n_plants": 1,
+       "n_priced_but_inert": 0,
+       "n_tranches": 1,
+       "plants": [
+        2493
+       ],
+       "pmax_mw": 170.1,
+       "uids": [
+        "ST_CHP_NYC_p2493_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7519,
+       "available_gwh": 637.9,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        2493,
+        10025,
+        54099
+       ],
+       "pmax_mw": 106.9,
+       "uids": [
+        "ST_CHP_NYC_p2493_committed",
+        "ST_CHP_Upstate_West_p10025_committed",
+        "ST_CHP_Upstate_West_p54099_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.6541,
+       "available_gwh": 266.0,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 1,
+       "n_plants": 1,
+       "n_priced_but_inert": 0,
+       "n_tranches": 1,
+       "plants": [
+        2493
+       ],
+       "pmax_mw": 46.4,
+       "uids": [
+        "ST_CHP_NYC_p2493_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 809,
+     "n_live_cells": 3,
+     "n_responsive_rows": 5,
+     "rowset_mismatch": null
+    }
+   },
+   "run_id": "2026-09-02-nyiso-177-vintage-matched"
+  },
+  "PJM": {
+   "bundle": "results/calibration/pjm_debugb_inputclock_A",
+   "per_year": {
+    "2023": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.6285,
+       "available_gwh": 47893.3,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 20,
+       "n_plants": 38,
+       "n_priced_but_inert": 32,
+       "n_tranches": 52,
+       "plants": [
+        602,
+        876,
+        879,
+        983,
+        1040,
+        1384,
+        2828,
+        2832,
+        2866,
+        2876,
+        2914,
+        2935,
+        2936,
+        3118,
+        3122,
+        3130,
+        3136,
+        3935,
+        3943,
+        3944,
+        3948,
+        3954,
+        6004,
+        6018,
+        6041,
+        6166,
+        6264,
+        7213,
+        8102,
+        10143,
+        10151,
+        10603,
+        50611,
+        50776,
+        50888,
+        50974,
+        56671,
+        56808
+       ],
+       "pmax_mw": 10393.3,
+       "uids": [
+        "COAL_PJM_SWMAAC_p602_mustrun",
+        "COAL_PJM_ComEd_p876_mustrun",
+        "COAL_PJM_ComEd_p879_mustrun",
+        "COAL_PJM_AEP_Ohio_p983_mustrun",
+        "COAL_PJM_AEP_Ohio_p1040_sync",
+        "COAL_PJM_AEP_Ohio_p1384_sync",
+        "COAL_PJM_AEP_Ohio_p2828_mustrun",
+        "COAL_PJM_AEP_Ohio_p2828_sync",
+        "COAL_PJM_AEP_Ohio_p2832_sync",
+        "COAL_PJM_AEP_Ohio_p2876_mustrun",
+        "COAL_PJM_AEP_Ohio_p2876_sync",
+        "COAL_PJM_AEP_Ohio_p2914_mustrun",
+        "COAL_PJM_AEP_Ohio_p2935_mustrun",
+        "COAL_PJM_ATSI_p2936_mustrun",
+        "COAL_PJM_West_APS_p3118_mustrun",
+        "COAL_PJM_West_APS_p3130_mustrun",
+        "COAL_PJM_West_APS_p3136_mustrun",
+        "COAL_PJM_AEP_Ohio_p3935_mustrun",
+        "COAL_PJM_West_APS_p3943_mustrun",
+        "COAL_PJM_West_APS_p3943_sync",
+        "COAL_PJM_West_APS_p3944_mustrun",
+        "COAL_PJM_West_APS_p3948_mustrun",
+        "COAL_PJM_West_APS_p3948_sync",
+        "COAL_PJM_West_APS_p3954_mustrun",
+        "COAL_PJM_West_APS_p3954_sync",
+        "COAL_PJM_West_APS_p6004_mustrun",
+        "COAL_PJM_West_APS_p6004_sync",
+        "COAL_PJM_AEP_Ohio_p6018_mustrun",
+        "COAL_PJM_AEP_Ohio_p6018_sync",
+        "COAL_PJM_AEP_Ohio_p6041_mustrun",
+        "COAL_PJM_AEP_Ohio_p6041_sync",
+        "COAL_PJM_AEP_Ohio_p6166_mustrun",
+        "COAL_PJM_AEP_Ohio_p6166_sync",
+        "COAL_PJM_AEP_Ohio_p6264_mustrun",
+        "COAL_PJM_AEP_Ohio_p6264_sync",
+        "COAL_PJM_Dominion_p7213_mustrun",
+        "COAL_PJM_Dominion_p7213_sync",
+        "COAL_PJM_AEP_Ohio_p8102_mustrun",
+        "COAL_PJM_Central_PA_p10143_mustrun",
+        "COAL_PJM_West_APS_p10151_sync",
+        "COAL_PJM_Central_PA_p10603_mustrun",
+        "COAL_PJM_Central_PA_p50611_mustrun",
+        "COAL_PJM_Central_PA_p50776_sync",
+        "COAL_PJM_Central_PA_p50888_sync",
+        "COAL_PJM_West_APS_p50974_mustrun",
+        "COAL_PJM_West_APS_p50974_sync",
+        "COAL_PJM_West_APS_p56671_mustrun",
+        "COAL_PJM_West_APS_p56671_sync",
+        "COAL_PJM_Dominion_p56808_mustrun",
+        "COAL_PJM_Dominion_p56808_sync",
+        "COAL_PJM_AEP_Ohio_p2866_mustrun",
+        "COAL_PJM_West_APS_p3122_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.7375,
+       "available_gwh": 399.3,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 12,
+       "n_plants": 12,
+       "n_priced_but_inert": 0,
+       "n_tranches": 12,
+       "plants": [
+        10224,
+        10244,
+        50366,
+        50479,
+        50491,
+        52072,
+        52089,
+        54081,
+        54556,
+        54785,
+        54795,
+        63829
+       ],
+       "pmax_mw": 58.8,
+       "uids": [
+        "ST_CHP_PJM_EMAAC_p10224_econ",
+        "ST_CHP_PJM_AEP_Ohio_p10244_econ",
+        "ST_CHP_PJM_AEP_Ohio_p50366_econ",
+        "ST_CHP_PJM_Dominion_p50479_econ",
+        "ST_CHP_PJM_West_APS_p50491_econ",
+        "ST_CHP_PJM_Dominion_p52072_econ",
+        "ST_CHP_PJM_Dominion_p52089_econ",
+        "ST_CHP_PJM_Dominion_p54081_econ",
+        "ST_CHP_PJM_ComEd_p54556_econ",
+        "ST_CHP_PJM_EMAAC_p54785_econ",
+        "ST_CHP_PJM_SWMAAC_p54795_econ",
+        "ST_CHP_PJM_AEP_Ohio_p63829_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7317,
+       "available_gwh": 673.2,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 23,
+       "n_plants": 23,
+       "n_priced_but_inert": 0,
+       "n_tranches": 23,
+       "plants": [
+        10224,
+        10244,
+        10693,
+        50275,
+        50366,
+        50397,
+        50456,
+        50479,
+        50481,
+        50491,
+        52072,
+        52089,
+        52148,
+        54081,
+        54556,
+        54785,
+        54795,
+        58194,
+        63829,
+        63920,
+        63922,
+        63924,
+        63927
+       ],
+       "pmax_mw": 101.6,
+       "uids": [
+        "ST_CHP_PJM_EMAAC_p10224_committed",
+        "ST_CHP_PJM_AEP_Ohio_p10244_committed",
+        "ST_CHP_PJM_SWMAAC_p10693_committed",
+        "ST_CHP_PJM_Dominion_p50275_committed",
+        "ST_CHP_PJM_AEP_Ohio_p50366_committed",
+        "ST_CHP_PJM_Central_PA_p50397_committed",
+        "ST_CHP_PJM_Dominion_p50479_committed",
+        "ST_CHP_PJM_AEP_Ohio_p50481_committed",
+        "ST_CHP_PJM_West_APS_p50491_committed",
+        "ST_CHP_PJM_Dominion_p52072_committed",
+        "ST_CHP_PJM_Dominion_p52089_committed",
+        "ST_CHP_PJM_Dominion_p52148_committed",
+        "ST_CHP_PJM_Dominion_p54081_committed",
+        "ST_CHP_PJM_ComEd_p54556_committed",
+        "ST_CHP_PJM_EMAAC_p54785_committed",
+        "ST_CHP_PJM_SWMAAC_p54795_committed",
+        "ST_CHP_PJM_Central_PA_p58194_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63829_committed",
+        "ST_CHP_PJM_ATSI_p63920_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63922_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63924_committed",
+        "ST_CHP_PJM_ATSI_p63927_committed",
+        "ST_CHP_PJM_AEP_Ohio_p50456_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.8389,
+       "available_gwh": 126.1,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        50366,
+        54081,
+        54785
+       ],
+       "pmax_mw": 17.8,
+       "uids": [
+        "ST_CHP_PJM_AEP_Ohio_p50366_peak",
+        "ST_CHP_PJM_Dominion_p54081_peak",
+        "ST_CHP_PJM_EMAAC_p54785_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 3279,
+     "n_live_cells": 4,
+     "n_responsive_rows": 90,
+     "rowset_mismatch": null
+    },
+    "2024": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.5781,
+       "available_gwh": 43755.5,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 20,
+       "n_plants": 38,
+       "n_priced_but_inert": 32,
+       "n_tranches": 52,
+       "plants": [
+        602,
+        876,
+        879,
+        983,
+        1040,
+        1384,
+        2828,
+        2832,
+        2866,
+        2876,
+        2914,
+        2935,
+        2936,
+        3118,
+        3122,
+        3130,
+        3136,
+        3935,
+        3943,
+        3944,
+        3948,
+        3954,
+        6004,
+        6018,
+        6041,
+        6166,
+        6264,
+        7213,
+        8102,
+        10143,
+        10151,
+        10603,
+        50611,
+        50776,
+        50888,
+        50974,
+        56671,
+        56808
+       ],
+       "pmax_mw": 10393.3,
+       "uids": [
+        "COAL_PJM_SWMAAC_p602_mustrun",
+        "COAL_PJM_ComEd_p876_mustrun",
+        "COAL_PJM_ComEd_p879_mustrun",
+        "COAL_PJM_AEP_Ohio_p983_mustrun",
+        "COAL_PJM_AEP_Ohio_p1040_sync",
+        "COAL_PJM_AEP_Ohio_p1384_sync",
+        "COAL_PJM_AEP_Ohio_p2828_mustrun",
+        "COAL_PJM_AEP_Ohio_p2828_sync",
+        "COAL_PJM_AEP_Ohio_p2832_sync",
+        "COAL_PJM_AEP_Ohio_p2876_mustrun",
+        "COAL_PJM_AEP_Ohio_p2876_sync",
+        "COAL_PJM_AEP_Ohio_p2914_mustrun",
+        "COAL_PJM_AEP_Ohio_p2935_mustrun",
+        "COAL_PJM_ATSI_p2936_mustrun",
+        "COAL_PJM_West_APS_p3118_mustrun",
+        "COAL_PJM_West_APS_p3130_mustrun",
+        "COAL_PJM_West_APS_p3136_mustrun",
+        "COAL_PJM_AEP_Ohio_p3935_mustrun",
+        "COAL_PJM_West_APS_p3943_mustrun",
+        "COAL_PJM_West_APS_p3943_sync",
+        "COAL_PJM_West_APS_p3944_mustrun",
+        "COAL_PJM_West_APS_p3948_mustrun",
+        "COAL_PJM_West_APS_p3948_sync",
+        "COAL_PJM_West_APS_p3954_mustrun",
+        "COAL_PJM_West_APS_p3954_sync",
+        "COAL_PJM_West_APS_p6004_mustrun",
+        "COAL_PJM_West_APS_p6004_sync",
+        "COAL_PJM_AEP_Ohio_p6018_mustrun",
+        "COAL_PJM_AEP_Ohio_p6018_sync",
+        "COAL_PJM_AEP_Ohio_p6041_mustrun",
+        "COAL_PJM_AEP_Ohio_p6041_sync",
+        "COAL_PJM_AEP_Ohio_p6166_mustrun",
+        "COAL_PJM_AEP_Ohio_p6166_sync",
+        "COAL_PJM_AEP_Ohio_p6264_mustrun",
+        "COAL_PJM_AEP_Ohio_p6264_sync",
+        "COAL_PJM_Dominion_p7213_mustrun",
+        "COAL_PJM_Dominion_p7213_sync",
+        "COAL_PJM_AEP_Ohio_p8102_mustrun",
+        "COAL_PJM_Central_PA_p10143_mustrun",
+        "COAL_PJM_West_APS_p10151_sync",
+        "COAL_PJM_Central_PA_p10603_mustrun",
+        "COAL_PJM_Central_PA_p50611_mustrun",
+        "COAL_PJM_Central_PA_p50776_sync",
+        "COAL_PJM_Central_PA_p50888_sync",
+        "COAL_PJM_West_APS_p50974_mustrun",
+        "COAL_PJM_West_APS_p50974_sync",
+        "COAL_PJM_West_APS_p56671_mustrun",
+        "COAL_PJM_West_APS_p56671_sync",
+        "COAL_PJM_Dominion_p56808_mustrun",
+        "COAL_PJM_Dominion_p56808_sync",
+        "COAL_PJM_AEP_Ohio_p2866_mustrun",
+        "COAL_PJM_West_APS_p3122_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.726,
+       "available_gwh": 386.0,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 12,
+       "n_plants": 12,
+       "n_priced_but_inert": 0,
+       "n_tranches": 12,
+       "plants": [
+        10224,
+        10244,
+        50366,
+        50479,
+        50491,
+        52072,
+        52089,
+        54081,
+        54556,
+        54785,
+        54795,
+        63829
+       ],
+       "pmax_mw": 58.8,
+       "uids": [
+        "ST_CHP_PJM_EMAAC_p10224_econ",
+        "ST_CHP_PJM_AEP_Ohio_p10244_econ",
+        "ST_CHP_PJM_AEP_Ohio_p50366_econ",
+        "ST_CHP_PJM_Dominion_p50479_econ",
+        "ST_CHP_PJM_West_APS_p50491_econ",
+        "ST_CHP_PJM_Dominion_p52072_econ",
+        "ST_CHP_PJM_Dominion_p52089_econ",
+        "ST_CHP_PJM_Dominion_p54081_econ",
+        "ST_CHP_PJM_ComEd_p54556_econ",
+        "ST_CHP_PJM_EMAAC_p54785_econ",
+        "ST_CHP_PJM_SWMAAC_p54795_econ",
+        "ST_CHP_PJM_AEP_Ohio_p63829_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.7568,
+       "available_gwh": 653.1,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 22,
+       "n_plants": 22,
+       "n_priced_but_inert": 0,
+       "n_tranches": 22,
+       "plants": [
+        10224,
+        10244,
+        10693,
+        50275,
+        50366,
+        50397,
+        50479,
+        50481,
+        50491,
+        52072,
+        52089,
+        52148,
+        54081,
+        54556,
+        54785,
+        54795,
+        58194,
+        63829,
+        63920,
+        63922,
+        63924,
+        63927
+       ],
+       "pmax_mw": 100.5,
+       "uids": [
+        "ST_CHP_PJM_EMAAC_p10224_committed",
+        "ST_CHP_PJM_AEP_Ohio_p10244_committed",
+        "ST_CHP_PJM_SWMAAC_p10693_committed",
+        "ST_CHP_PJM_Dominion_p50275_committed",
+        "ST_CHP_PJM_AEP_Ohio_p50366_committed",
+        "ST_CHP_PJM_Central_PA_p50397_committed",
+        "ST_CHP_PJM_Dominion_p50479_committed",
+        "ST_CHP_PJM_AEP_Ohio_p50481_committed",
+        "ST_CHP_PJM_West_APS_p50491_committed",
+        "ST_CHP_PJM_Dominion_p52072_committed",
+        "ST_CHP_PJM_Dominion_p52089_committed",
+        "ST_CHP_PJM_Dominion_p52148_committed",
+        "ST_CHP_PJM_Dominion_p54081_committed",
+        "ST_CHP_PJM_ComEd_p54556_committed",
+        "ST_CHP_PJM_EMAAC_p54785_committed",
+        "ST_CHP_PJM_SWMAAC_p54795_committed",
+        "ST_CHP_PJM_Central_PA_p58194_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63829_committed",
+        "ST_CHP_PJM_ATSI_p63920_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63922_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63924_committed",
+        "ST_CHP_PJM_ATSI_p63927_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.7873,
+       "available_gwh": 115.0,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        50366,
+        54081,
+        54785
+       ],
+       "pmax_mw": 17.8,
+       "uids": [
+        "ST_CHP_PJM_AEP_Ohio_p50366_peak",
+        "ST_CHP_PJM_Dominion_p54081_peak",
+        "ST_CHP_PJM_EMAAC_p54785_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 3285,
+     "n_live_cells": 4,
+     "n_responsive_rows": 89,
+     "rowset_mismatch": null
+    },
+    "2025": {
+     "cells": {
+      "CC_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CC_REGULAR:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "COAL:mr": {
+       "avail_mean": 0.5276,
+       "available_gwh": 47762.6,
+       "bands_seen": [
+        "mr"
+       ],
+       "groups_seen": [
+        "COAL"
+       ],
+       "n_mc_responsive": 20,
+       "n_plants": 41,
+       "n_priced_but_inert": 35,
+       "n_tranches": 55,
+       "plants": [
+        602,
+        876,
+        879,
+        983,
+        1040,
+        1384,
+        2828,
+        2832,
+        2866,
+        2876,
+        2914,
+        2935,
+        2936,
+        3118,
+        3122,
+        3130,
+        3136,
+        3935,
+        3943,
+        3944,
+        3948,
+        3954,
+        6004,
+        6018,
+        6041,
+        6166,
+        6264,
+        7213,
+        8102,
+        10113,
+        10143,
+        10151,
+        10343,
+        10603,
+        10678,
+        50611,
+        50776,
+        50888,
+        50974,
+        56671
+       ],
+       "pmax_mw": 10528.7,
+       "uids": [
+        "COAL_PJM_SWMAAC_p602_mustrun",
+        "COAL_PJM_ComEd_p876_mustrun",
+        "COAL_PJM_ComEd_p879_mustrun",
+        "COAL_PJM_AEP_Ohio_p983_mustrun",
+        "COAL_PJM_AEP_Ohio_p1040_sync",
+        "COAL_PJM_AEP_Ohio_p1384_sync",
+        "COAL_PJM_AEP_Ohio_p2828_mustrun",
+        "COAL_PJM_AEP_Ohio_p2828_sync",
+        "COAL_PJM_AEP_Ohio_p2832_sync",
+        "COAL_PJM_AEP_Ohio_p2876_mustrun",
+        "COAL_PJM_AEP_Ohio_p2876_sync",
+        "COAL_PJM_AEP_Ohio_p2914_mustrun",
+        "COAL_PJM_AEP_Ohio_p2935_mustrun",
+        "COAL_PJM_ATSI_p2936_mustrun",
+        "COAL_PJM_West_APS_p3118_mustrun",
+        "COAL_PJM_West_APS_p3130_mustrun",
+        "COAL_PJM_West_APS_p3136_mustrun",
+        "COAL_PJM_AEP_Ohio_p3935_mustrun",
+        "COAL_PJM_West_APS_p3943_mustrun",
+        "COAL_PJM_West_APS_p3943_sync",
+        "COAL_PJM_West_APS_p3944_mustrun",
+        "COAL_PJM_West_APS_p3948_mustrun",
+        "COAL_PJM_West_APS_p3948_sync",
+        "COAL_PJM_West_APS_p3954_mustrun",
+        "COAL_PJM_West_APS_p3954_sync",
+        "COAL_PJM_West_APS_p6004_mustrun",
+        "COAL_PJM_West_APS_p6004_sync",
+        "COAL_PJM_AEP_Ohio_p6018_mustrun",
+        "COAL_PJM_AEP_Ohio_p6018_sync",
+        "COAL_PJM_AEP_Ohio_p6041_mustrun",
+        "COAL_PJM_AEP_Ohio_p6041_sync",
+        "COAL_PJM_AEP_Ohio_p6166_mustrun",
+        "COAL_PJM_AEP_Ohio_p6166_sync",
+        "COAL_PJM_AEP_Ohio_p6264_mustrun",
+        "COAL_PJM_AEP_Ohio_p6264_sync",
+        "COAL_PJM_Dominion_p7213_mustrun",
+        "COAL_PJM_Dominion_p7213_sync",
+        "COAL_PJM_AEP_Ohio_p8102_mustrun",
+        "COAL_PJM_Central_PA_p10113_mustrun",
+        "COAL_PJM_Central_PA_p10143_mustrun",
+        "COAL_PJM_West_APS_p10151_sync",
+        "COAL_PJM_Central_PA_p10343_mustrun",
+        "COAL_PJM_Central_PA_p10603_mustrun",
+        "COAL_PJM_Central_PA_p50611_mustrun",
+        "COAL_PJM_Central_PA_p50776_sync",
+        "COAL_PJM_Central_PA_p50888_sync",
+        "COAL_PJM_West_APS_p50974_mustrun",
+        "COAL_PJM_West_APS_p50974_sync",
+        "COAL_PJM_West_APS_p56671_mustrun",
+        "COAL_PJM_West_APS_p56671_sync",
+        "COAL_PJM_Dominion_p56808_mustrun",
+        "COAL_PJM_Dominion_p56808_sync",
+        "COAL_PJM_AEP_Ohio_p2866_mustrun",
+        "COAL_PJM_West_APS_p3122_mustrun",
+        "COAL_PJM_West_APS_p10678_mustrun"
+       ]
+      },
+      "COAL:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_CHP:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "CT_PEAKER:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:econ": {
+       "avail_mean": 0.4775,
+       "available_gwh": 339.9,
+       "bands_seen": [
+        "econ"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 12,
+       "n_plants": 12,
+       "n_priced_but_inert": 0,
+       "n_tranches": 12,
+       "plants": [
+        10224,
+        10244,
+        50366,
+        50479,
+        50491,
+        52072,
+        52089,
+        54081,
+        54556,
+        54785,
+        54795,
+        63829
+       ],
+       "pmax_mw": 58.8,
+       "uids": [
+        "ST_CHP_PJM_EMAAC_p10224_econ",
+        "ST_CHP_PJM_AEP_Ohio_p10244_econ",
+        "ST_CHP_PJM_AEP_Ohio_p50366_econ",
+        "ST_CHP_PJM_Dominion_p50479_econ",
+        "ST_CHP_PJM_West_APS_p50491_econ",
+        "ST_CHP_PJM_Dominion_p52072_econ",
+        "ST_CHP_PJM_Dominion_p52089_econ",
+        "ST_CHP_PJM_Dominion_p54081_econ",
+        "ST_CHP_PJM_ComEd_p54556_econ",
+        "ST_CHP_PJM_EMAAC_p54785_econ",
+        "ST_CHP_PJM_SWMAAC_p54795_econ",
+        "ST_CHP_PJM_AEP_Ohio_p63829_econ"
+       ]
+      },
+      "ST_CHP:mc": {
+       "avail_mean": 0.417,
+       "available_gwh": 490.0,
+       "bands_seen": [
+        "mc"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 22,
+       "n_plants": 22,
+       "n_priced_but_inert": 0,
+       "n_tranches": 22,
+       "plants": [
+        10224,
+        10244,
+        10693,
+        50275,
+        50366,
+        50397,
+        50479,
+        50481,
+        50491,
+        52072,
+        52089,
+        52148,
+        54081,
+        54556,
+        54785,
+        54795,
+        58194,
+        63829,
+        63920,
+        63922,
+        63924,
+        63927
+       ],
+       "pmax_mw": 100.5,
+       "uids": [
+        "ST_CHP_PJM_EMAAC_p10224_committed",
+        "ST_CHP_PJM_AEP_Ohio_p10244_committed",
+        "ST_CHP_PJM_SWMAAC_p10693_committed",
+        "ST_CHP_PJM_Dominion_p50275_committed",
+        "ST_CHP_PJM_AEP_Ohio_p50366_committed",
+        "ST_CHP_PJM_Central_PA_p50397_committed",
+        "ST_CHP_PJM_Dominion_p50479_committed",
+        "ST_CHP_PJM_AEP_Ohio_p50481_committed",
+        "ST_CHP_PJM_West_APS_p50491_committed",
+        "ST_CHP_PJM_Dominion_p52072_committed",
+        "ST_CHP_PJM_Dominion_p52089_committed",
+        "ST_CHP_PJM_Dominion_p52148_committed",
+        "ST_CHP_PJM_Dominion_p54081_committed",
+        "ST_CHP_PJM_ComEd_p54556_committed",
+        "ST_CHP_PJM_EMAAC_p54785_committed",
+        "ST_CHP_PJM_SWMAAC_p54795_committed",
+        "ST_CHP_PJM_Central_PA_p58194_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63829_committed",
+        "ST_CHP_PJM_ATSI_p63920_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63922_committed",
+        "ST_CHP_PJM_AEP_Ohio_p63924_committed",
+        "ST_CHP_PJM_ATSI_p63927_committed"
+       ]
+      },
+      "ST_CHP:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_CHP:peak": {
+       "avail_mean": 0.7799,
+       "available_gwh": 113.4,
+       "bands_seen": [
+        "peak"
+       ],
+       "groups_seen": [
+        "ST_CHP"
+       ],
+       "n_mc_responsive": 3,
+       "n_plants": 3,
+       "n_priced_but_inert": 0,
+       "n_tranches": 3,
+       "plants": [
+        50366,
+        54081,
+        54785
+       ],
+       "pmax_mw": 17.8,
+       "uids": [
+        "ST_CHP_PJM_AEP_Ohio_p50366_peak",
+        "ST_CHP_PJM_Dominion_p54081_peak",
+        "ST_CHP_PJM_EMAAC_p54785_peak"
+       ]
+      },
+      "ST_GAS:econ": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mc": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:mr": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      },
+      "ST_GAS:peak": {
+       "available_gwh": 0.0,
+       "n_mc_responsive": 0,
+       "n_priced_but_inert": 0,
+       "n_tranches": 0,
+       "plants": [],
+       "pmax_mw": 0.0
+      }
+     },
+     "clip_only_rows": 0,
+     "indirect_rows": 0,
+     "n_fleet_rows": 3288,
+     "n_live_cells": 4,
+     "n_responsive_rows": 92,
+     "rowset_mismatch": null
+    }
+   },
+   "run_id": "2026-08-15-pjm-162-inputclock"
+  }
+ },
+ "counterparts": {
+  "CAISO": {
+   "artifact": "data/raw/reference/caiso_campd_marginal_hr_summary.csv",
+   "classes": {
+    "CC_CHP": {
+     "avg_committed_p25": 0.981,
+     "avg_committed_p50": 1.028,
+     "avg_committed_p75": 1.239,
+     "avg_econ_high_p50": 0.983,
+     "avg_econ_low_p50": 1.027,
+     "base_hr": 6.902,
+     "iqr_ratio": 1.263,
+     "n_units": 9
+    },
+    "CC_REGULAR": {
+     "avg_committed_p25": 1.019,
+     "avg_committed_p50": 1.103,
+     "avg_committed_p75": 1.296,
+     "avg_econ_high_p50": 0.943,
+     "avg_econ_low_p50": 1.024,
+     "base_hr": 7.442,
+     "iqr_ratio": 1.272,
+     "n_units": 51
+    },
+    "CT_CHP": {
+     "avg_committed_p25": 1.027,
+     "avg_committed_p50": 1.073,
+     "avg_committed_p75": 1.164,
+     "avg_econ_high_p50": 0.817,
+     "avg_econ_low_p50": 0.995,
+     "base_hr": 11.009,
+     "iqr_ratio": 1.133,
+     "n_units": 6
+    },
+    "CT_PEAKER": {
+     "avg_committed_p25": 0.969,
+     "avg_committed_p50": 0.991,
+     "avg_committed_p75": 1.085,
+     "avg_econ_high_p50": 0.877,
+     "avg_econ_low_p50": 0.973,
+     "base_hr": 10.862,
+     "iqr_ratio": 1.12,
+     "n_units": 75
+    },
+    "ST_GAS": {
+     "avg_committed_p25": 0.682,
+     "avg_committed_p50": 1.683,
+     "avg_committed_p75": 3.275,
+     "avg_econ_high_p50": 0.813,
+     "avg_econ_low_p50": 1.255,
+     "base_hr": 11.847,
+     "iqr_ratio": 4.802,
+     "n_units": 10
+    }
+   },
+   "measured_plant_population": {
+    "CC_REGULAR": [
+     260,
+     358,
+     422,
+     10169,
+     55151,
+     55182,
+     55295,
+     55333,
+     55345,
+     55393,
+     55518,
+     55656,
+     55748,
+     55933,
+     55985,
+     56026,
+     56041,
+     56467,
+     56476,
+     56532,
+     57564,
+     57978
+    ],
+    "ST_GAS": [
+     315,
+     335,
+     350
+    ]
+   },
+   "unit_population_artifact": "data/raw/_processed-legacy/campd_gas_commitment_params_CAISO_units.csv"
+  },
+  "ERCOT": {
+   "artifact": "data/raw/reference/ercot_campd_marginal_hr_summary.csv",
+   "classes": {
+    "CC_CHP": {
+     "avg_committed_p25": 0.887,
+     "avg_committed_p50": 0.982,
+     "avg_committed_p75": 1.545,
+     "avg_econ_high_p50": 0.916,
+     "avg_econ_low_p50": 0.968,
+     "base_hr": 7.884,
+     "iqr_ratio": 1.742,
+     "n_units": 32
+    },
+    "CC_REGULAR": {
+     "avg_committed_p25": 0.957,
+     "avg_committed_p50": 1.006,
+     "avg_committed_p75": 1.36,
+     "avg_econ_high_p50": 0.918,
+     "avg_econ_low_p50": 0.98,
+     "base_hr": 7.741,
+     "iqr_ratio": 1.421,
+     "n_units": 120
+    },
+    "COAL": {
+     "avg_committed_p25": 1.033,
+     "avg_committed_p50": 1.081,
+     "avg_committed_p75": 1.119,
+     "avg_econ_high_p50": 0.965,
+     "avg_econ_low_p50": 1.044,
+     "base_hr": 10.341,
+     "iqr_ratio": 1.083,
+     "n_units": 25
+    },
+    "CT_CHP": {
+     "avg_committed_p25": 1.498,
+     "avg_committed_p50": 1.556,
+     "avg_committed_p75": 1.618,
+     "avg_econ_high_p50": 1.455,
+     "avg_econ_low_p50": 1.549,
+     "base_hr": 9.505,
+     "iqr_ratio": 1.08,
+     "n_units": 9
+    },
+    "CT_PEAKER": {
+     "avg_committed_p25": 0.964,
+     "avg_committed_p50": 1.022,
+     "avg_committed_p75": 1.259,
+     "avg_econ_high_p50": 0.931,
+     "avg_econ_low_p50": 1.006,
+     "base_hr": 10.908,
+     "iqr_ratio": 1.306,
+     "n_units": 117
+    },
+    "ST_GAS": {
+     "avg_committed_p25": 1.172,
+     "avg_committed_p50": 1.36,
+     "avg_committed_p75": 1.595,
+     "avg_econ_high_p50": 0.887,
+     "avg_econ_low_p50": 1.121,
+     "base_hr": 11.18,
+     "iqr_ratio": 1.361,
+     "n_units": 41
+    }
+   },
+   "measured_plant_population": null,
+   "unit_population_artifact": null
+  },
+  "MISO": {
+   "artifact": "data/raw/reference/miso_campd_marginal_hr_summary.csv",
+   "classes": {
+    "CC_CHP": {
+     "avg_committed_p25": 1.009,
+     "avg_committed_p50": 1.508,
+     "avg_committed_p75": 1.778,
+     "avg_econ_high_p50": 1.35,
+     "avg_econ_low_p50": 1.493,
+     "base_hr": 6.762,
+     "iqr_ratio": 1.762,
+     "n_units": 37
+    },
+    "CC_REGULAR": {
+     "avg_committed_p25": 0.951,
+     "avg_committed_p50": 1.005,
+     "avg_committed_p75": 1.057,
+     "avg_econ_high_p50": 0.952,
+     "avg_econ_low_p50": 0.989,
+     "base_hr": 7.436,
+     "iqr_ratio": 1.111,
+     "n_units": 103
+    },
+    "COAL": {
+     "avg_committed_p25": 0.951,
+     "avg_committed_p50": 1.006,
+     "avg_committed_p75": 1.078,
+     "avg_econ_high_p50": 0.908,
+     "avg_econ_low_p50": 0.984,
+     "base_hr": 10.661,
+     "iqr_ratio": 1.134,
+     "n_units": 74
+    },
+    "CT_CHP": {
+     "avg_committed_p25": 0.624,
+     "avg_committed_p50": 0.857,
+     "avg_committed_p75": 1.588,
+     "avg_econ_high_p50": 0.816,
+     "avg_econ_low_p50": 0.827,
+     "base_hr": 6.616,
+     "iqr_ratio": 2.545,
+     "n_units": 10
+    },
+    "CT_PEAKER": {
+     "avg_committed_p25": 0.938,
+     "avg_committed_p50": 1.025,
+     "avg_committed_p75": 1.138,
+     "avg_econ_high_p50": 0.92,
+     "avg_econ_low_p50": 1.002,
+     "base_hr": 12.372,
+     "iqr_ratio": 1.213,
+     "n_units": 249
+    },
+    "ST_CHP": {
+     "avg_committed_p25": 1.803,
+     "avg_committed_p50": 1.803,
+     "avg_committed_p75": 1.803,
+     "avg_econ_high_p50": 1.412,
+     "avg_econ_low_p50": 1.693,
+     "base_hr": 7.849,
+     "iqr_ratio": 1.0,
+     "n_units": 1
+    },
+    "ST_GAS": {
+     "avg_committed_p25": 0.995,
+     "avg_committed_p50": 1.079,
+     "avg_committed_p75": 1.269,
+     "avg_econ_high_p50": 0.883,
+     "avg_econ_low_p50": 1.023,
+     "base_hr": 11.27,
+     "iqr_ratio": 1.275,
+     "n_units": 40
+    }
+   },
+   "measured_plant_population": null,
+   "unit_population_artifact": null
+  },
+  "NEISO": {
+   "artifact": "data/raw/reference/neiso_campd_marginal_hr_summary.csv",
+   "classes": {
+    "CC_CHP": {
+     "avg_committed_p25": 1.013,
+     "avg_committed_p50": 1.399,
+     "avg_committed_p75": 2.041,
+     "avg_econ_high_p50": 1.273,
+     "avg_econ_low_p50": 1.373,
+     "base_hr": 6.859,
+     "iqr_ratio": 2.015,
+     "n_units": 5
+    },
+    "CC_REGULAR": {
+     "avg_committed_p25": 0.989,
+     "avg_committed_p50": 1.107,
+     "avg_committed_p75": 1.769,
+     "avg_econ_high_p50": 0.95,
+     "avg_econ_low_p50": 1.02,
+     "base_hr": 7.48,
+     "iqr_ratio": 1.789,
+     "n_units": 51
+    },
+    "COAL": {
+     "avg_committed_p25": 0.912,
+     "avg_committed_p50": 0.937,
+     "avg_committed_p75": 0.983,
+     "avg_econ_high_p50": 1.168,
+     "avg_econ_low_p50": 0.946,
+     "base_hr": 11.337,
+     "iqr_ratio": 1.078,
+     "n_units": 2
+    },
+    "CT_CHP": {
+     "avg_committed_p25": 1.955,
+     "avg_committed_p50": 1.955,
+     "avg_committed_p75": 1.955,
+     "avg_econ_high_p50": 1.753,
+     "avg_econ_low_p50": 1.887,
+     "base_hr": 6.327,
+     "iqr_ratio": 1.0,
+     "n_units": 1
+    },
+    "CT_PEAKER": {
+     "avg_committed_p25": 0.952,
+     "avg_committed_p50": 0.985,
+     "avg_committed_p75": 1.182,
+     "avg_econ_high_p50": 0.924,
+     "avg_econ_low_p50": 0.973,
+     "base_hr": 10.603,
+     "iqr_ratio": 1.242,
+     "n_units": 18
+    },
+    "ST_GAS": {
+     "avg_committed_p25": 2.316,
+     "avg_committed_p50": 2.394,
+     "avg_committed_p75": 2.599,
+     "avg_econ_high_p50": 0.78,
+     "avg_econ_low_p50": 1.041,
+     "base_hr": 12.755,
+     "iqr_ratio": 1.122,
+     "n_units": 2
+    }
+   },
+   "measured_plant_population": null,
+   "unit_population_artifact": null
+  },
+  "NYISO": {
+   "artifact": "data/raw/reference/nyiso_campd_marginal_hr_summary.csv",
+   "classes": {
+    "CC_CHP": {
+     "avg_committed_p25": 1.03,
+     "avg_committed_p50": 1.21,
+     "avg_committed_p75": 1.684,
+     "avg_econ_high_p50": 1.03,
+     "avg_econ_low_p50": 1.171,
+     "base_hr": 6.989,
+     "iqr_ratio": 1.635,
+     "n_units": 31
+    },
+    "CC_REGULAR": {
+     "avg_committed_p25": 0.917,
+     "avg_committed_p50": 0.964,
+     "avg_committed_p75": 1.31,
+     "avg_econ_high_p50": 0.882,
+     "avg_econ_low_p50": 0.929,
+     "base_hr": 7.763,
+     "iqr_ratio": 1.429,
+     "n_units": 35
+    },
+    "CT_CHP": {
+     "avg_committed_p25": 0.871,
+     "avg_committed_p50": 0.871,
+     "avg_committed_p75": 0.871,
+     "avg_econ_high_p50": 0.832,
+     "avg_econ_low_p50": 0.848,
+     "base_hr": 7.578,
+     "iqr_ratio": 1.0,
+     "n_units": 1
+    },
+    "CT_PEAKER": {
+     "avg_committed_p25": 0.833,
+     "avg_committed_p50": 0.843,
+     "avg_committed_p75": 1.373,
+     "avg_econ_high_p50": 0.821,
+     "avg_econ_low_p50": 0.846,
+     "base_hr": 11.946,
+     "iqr_ratio": 1.648,
+     "n_units": 70
+    },
+    "ST_GAS": {
+     "avg_committed_p25": 1.01,
+     "avg_committed_p50": 1.104,
+     "avg_committed_p75": 1.929,
+     "avg_econ_high_p50": 0.905,
+     "avg_econ_low_p50": 1.028,
+     "base_hr": 10.614,
+     "iqr_ratio": 1.91,
+     "n_units": 25
+    }
+   },
+   "measured_plant_population": {
+    "CC_REGULAR": [
+     2539,
+     7314,
+     10190,
+     10620,
+     10621,
+     50292,
+     50744,
+     50978,
+     54034,
+     54574,
+     54592,
+     54593,
+     55375,
+     55405,
+     56188,
+     56196,
+     56234,
+     56940,
+     57185
+    ],
+    "ST_GAS": [
+     2480,
+     2490,
+     2511,
+     2516,
+     2517,
+     2527,
+     2625,
+     2682,
+     8006,
+     8906
+    ]
+   },
+   "unit_population_artifact": "data/raw/_processed-legacy/campd_gas_commitment_params_NYISO_units.csv"
+  },
+  "PJM": {
+   "artifact": "data/raw/reference/pjm_campd_marginal_hr_summary.csv",
+   "classes": {
+    "CC_CHP": {
+     "avg_committed_p25": 0.957,
+     "avg_committed_p50": 1.359,
+     "avg_committed_p75": 1.765,
+     "avg_econ_high_p50": 1.018,
+     "avg_econ_low_p50": 1.274,
+     "base_hr": 7.622,
+     "iqr_ratio": 1.844,
+     "n_units": 16
+    },
+    "CC_REGULAR": {
+     "avg_committed_p25": 0.978,
+     "avg_committed_p50": 1.015,
+     "avg_committed_p75": 1.216,
+     "avg_econ_high_p50": 0.944,
+     "avg_econ_low_p50": 0.99,
+     "base_hr": 7.195,
+     "iqr_ratio": 1.243,
+     "n_units": 174
+    },
+    "COAL": {
+     "avg_committed_p25": 0.886,
+     "avg_committed_p50": 0.916,
+     "avg_committed_p75": 1.056,
+     "avg_econ_high_p50": 0.853,
+     "avg_econ_low_p50": 0.903,
+     "base_hr": 11.197,
+     "iqr_ratio": 1.192,
+     "n_units": 65
+    },
+    "CT_CHP": {
+     "avg_committed_p25": 1.064,
+     "avg_committed_p50": 1.163,
+     "avg_committed_p75": 1.4,
+     "avg_econ_high_p50": 1.071,
+     "avg_econ_low_p50": 1.141,
+     "base_hr": 10.258,
+     "iqr_ratio": 1.316,
+     "n_units": 5
+    },
+    "CT_PEAKER": {
+     "avg_committed_p25": 0.955,
+     "avg_committed_p50": 1.049,
+     "avg_committed_p75": 1.136,
+     "avg_econ_high_p50": 0.916,
+     "avg_econ_low_p50": 1.011,
+     "base_hr": 11.681,
+     "iqr_ratio": 1.19,
+     "n_units": 271
+    },
+    "ST_GAS": {
+     "avg_committed_p25": 0.91,
+     "avg_committed_p50": 1.006,
+     "avg_committed_p75": 1.314,
+     "avg_econ_high_p50": 0.801,
+     "avg_econ_low_p50": 0.902,
+     "base_hr": 12.563,
+     "iqr_ratio": 1.444,
+     "n_units": 24
+    }
+   },
+   "measured_plant_population": null,
+   "unit_population_artifact": null
+  }
+ },
+ "method_checks": {
+  "M1_null_pass": {
+   "identical": true,
+   "n_rows": 1801,
+   "year": 2023
+  },
+  "M2_two_point": {
+   "caiso231_prior": {
+    "bundle": "results/calibration/caiso231_b1_ungrounded",
+    "per_year": {
+     "2023": {
+      "indirect": 0,
+      "n_responsive": 3,
+      "plants": [
+       315,
+       335,
+       350
+      ],
+      "uids": [
+       "ST_GAS_LA_BASIN_p315_committed",
+       "ST_GAS_LA_BASIN_p335_committed",
+       "ST_GAS_LA_BASIN_p350_committed"
+      ]
+     },
+     "2024": {
+      "indirect": 0,
+      "n_responsive": 3,
+      "plants": [
+       315,
+       335,
+       350
+      ],
+      "uids": [
+       "ST_GAS_LA_BASIN_p315_committed",
+       "ST_GAS_LA_BASIN_p335_committed",
+       "ST_GAS_LA_BASIN_p350_committed"
+      ]
+     },
+     "2025": {
+      "indirect": 0,
+      "n_responsive": 3,
+      "plants": [
+       315,
+       335,
+       350
+      ],
+      "uids": [
+       "ST_GAS_LA_BASIN_p315_committed",
+       "ST_GAS_LA_BASIN_p335_committed",
+       "ST_GAS_LA_BASIN_p350_committed"
+      ]
+     }
+    },
+    "run_id": "2026-09-01-caiso-231-b1-ungrounded"
+   },
+   "caiso239_keeper": {
+    "bundle": "results/calibration/caiso239_b1_stgas_committed_measured",
+    "per_year": {
+     "2023": {
+      "indirect": 0,
+      "n_responsive": 0,
+      "plants": [],
+      "uids": []
+     },
+     "2024": {
+      "indirect": 0,
+      "n_responsive": 0,
+      "plants": [],
+      "uids": []
+     },
+     "2025": {
+      "indirect": 0,
+      "n_responsive": 0,
+      "plants": [],
+      "uids": []
+     }
+    },
+    "run_id": "2026-09-02-caiso-239-b1-stgas"
+   }
+  },
+  "M2_verdict": {
+   "PASS": true,
+   "keeper_is_0_in_every_year": true,
+   "prior_is_3_in_every_year": true
+  }
+ }
+}
