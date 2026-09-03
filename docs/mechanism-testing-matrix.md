@@ -10254,6 +10254,113 @@ is now the live queue head.**)*
 
 ### 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — UPDATED 2026-09-03 (nyiso-181, ZERO NON-CONTROL SOLVE; THE
+OBJECT THREE SESSIONS CHASED IS SUBSTANTIALLY AN INSTRUMENT ARTIFACT, PROVED ON
+AN EXACT IDENTITY; the ITM statistic is RETIRED). Open gate: C1-2023 `ST_GAS`
++3.86 TWh; C3a-2025 −11.2 % stays owner-court; C3c ledgered. NO LEVER OPENED —
+pre-declared in every branch. Keeper, determination, gate set, every score and
+every parameter UNCHANGED; `src/market_sim/` untouched.**
+* **THE LANE STAYS BLOCKED ON C3a-2025**, unchanged and re-affirmed. C3a-2025 is
+  a scored price metric from the keeper's own `metrics.json`, independent of any
+  probe, so nothing below disturbs it.
+* **RETIRE `R = mo / itm` — THE STATISTIC IS DEFECTIVE TWICE OVER. Do not cite
+  0.767 / 0.522 / 0.740, the 3.84 / 9.09 / 3.99 TWh object, or the "sustained
+  ~1,000 MW LEVEL gap in 59–90 % of hours" again.**
+  1. **Its offer input omitted two armed, keeper-registered terms.**
+     `nyiso179_st_gas_offer_position.build_year()` reconstructs the offer OUTSIDE
+     the solve and misses the measured **RGGI allowance price** ($13.49 / $20.71 /
+     $22.09 per tCO₂, armed via `state_carbon_pricing=True`; the probe hardcodes
+     `0.0`) and **`apply_gas_offer_margin`** (the mc-side half of
+     `gas_offer_net_revenue_margin=True`, zonal anchor $2.03–3.90/MMBtu, applied
+     at `runner.py:2494` AFTER `assemble_mc`). Restoring both reproduces the LP's
+     installed `mc` to **`max|d| = 0`** on 88 units × 8,760 hours in all three
+     years — an identity, zero free parameters, zero thresholds. The CAPACITY
+     basis was never in doubt (`max|d|` 1.7e-05 MW). The omission under-states the
+     offer by a median **$9.57 / $15.39 / $11.98 per MWh**, putting 23.8 % /
+     46.2 % / 20.4 % of bin-hours (**804 / 1,433 / 744 MW**) in the money that the
+     LP's own offer puts **$4.76–$7.87 ABOVE** the clearing price.
+  2. **Numerator and denominator range over different bin populations.** `mo` is
+     the class's TOTAL dispatch over every bin (floors and bridge included); `itm`
+     is the capacity of the in-the-money bins ONLY. Repairing the offer does not
+     rehabilitate it — `R` then **EXCEEDS 1** (median 1.409 / 2.421 / 1.747), so
+     it is not "the share of in-the-money capacity that runs" at ANY offer basis.
+  **The well-formed replacement is the matched-population ratio: `R` =
+  0.9925 / 0.9913 / 0.9918, un-run in-the-money = 0.073 / 0.061 / 0.070 TWh
+  (8.4 / 7.0 / 8.0 MW mean) — 52× / 149× / 57× smaller than published.**
+  Instrument validated like-for-like: on the defective basis nyiso-181 reproduces
+  nyiso-179's published `median_R` to 0.0000 / 0.0001 / 0.0046.
+* **REPAIR `build_year()` BEFORE REUSING IT.** It is cited as a reusable
+  instrument in the standing NYISO brief ("reuse it; do not re-derive it") and
+  under-states the NYISO gas offer by $9.6–15.4/MWh. The two-line repair and its
+  closure proof are in `scripts/probes/nyiso181_offer_reconstruction_repair.py`.
+  nyiso-181 deliberately did NOT edit it — doing so would silently rewrite the
+  basis of the published nyiso-179 record; the repair belongs with the
+  re-derivation.
+* **RE-DERIVE nyiso-179's G3 (peak exoneration), G4 (between-year channels) and
+  the 62.4 / 24.6 / 13.0 split of the 2025 top-decile deficit.** All read the same
+  defective `mc`. They are **FLAGGED, NOT RE-MEASURED** — no claim is made about
+  which way they move, and the 2025 split in particular is load-bearing in this
+  queue and in the standing brief.
+* **AUDIT THE DEFECT CLASS CROSS-ISO — needs its own session (rule 25).** The
+  class is *a probe reconstructing the LP's offer outside the solve and omitting a
+  term the runner installs*. `unit_hourly.mc` now makes the check exact and cheap
+  in any ISO: reconstruct, compare, require `max|d| = 0`. **CAISO and NEISO also
+  carry state carbon programs**, so the RGGI/CARB limb is not NYISO-specific.
+* **THE PER-GENERATOR ADJUDICATION IS NOW ACTUALLY RUN.** PR #4650 built the
+  `mc`/`red_cost` columns and a complete pre-registered probe but never executed
+  it — `unit_hourly` is gitignored (`.gitignore:541`), no committed bundle carries
+  it, and no `_nyiso180_unit_dispatch.json` exists in any commit on any branch
+  (its own S2 stop condition, fired silently). nyiso-181 regenerated the
+  instrument by a **bit-identical control replay** (I1: 0 of 52,560 prices, 0 of
+  122,640 class-hour cells; an instrument, not a run, NOT registered) and ran that
+  pre-registration verbatim. **P-c PASS; P-d FALSIFIED all three years** (un-run
+  MW at a lower bound 0.058 / 0.165 / 0.298 vs its own ≥ 0.70 bar — the MW sits
+  **INTERIOR**, 0.942 / 0.835 / 0.702); **§2.4 STOP does not fire**; P-a/P-b median
+  leg PASS (median `mc − price` exactly 0.0), mean leg FAILS 2023/2025.
+  **P-c passes yet did NOT catch the defect, because it compares the LP to
+  ITSELF** (`mw` vs its own `cap_mw`) — a basis test must compare the
+  RECONSTRUCTION to the LP.
+* **nyiso-181's OWN headline gates are UNADJUDICATED — S1 fired.** P-b is its
+  pre-registered I3, so the G-D / G-P verdict words are WITHHELD; they are
+  reported as measured only (`Dshare` at the inherited $1.00 rung
+  0.977 / 0.974 / 0.943; `Pshare` 0.960 / 0.891 / 0.764) and would have read
+  `DEGENERACY-CARRIES` / `PLATEAU`. **The degeneracy carrier is therefore neither
+  confirmed nor needed** — it would explain a residual of 7–8 MW. Of that residual
+  only **0.0017 / 0.0016 / 0.0040 TWh/yr** sits at a bound with any row charging
+  it. Disclosed, not argued around: I3's mean leg is a poorly-chosen statistic
+  over a heavy-tailed residual, and the substance it screens for is refuted
+  exactly by the `max|d| = 0` identity.
+* **CARRIER 2 (the reserve shared-headroom rows) — INCONCLUSIVE, declared
+  ONE-SIDED in advance, explicitly NOT an exoneration.** Mean held reserve
+  11,764 / 11,752 / 11,750 MW vs mean un-run in-the-money 8.4 / 7.0 / 8.0 MW,
+  Pearson r +0.010 / +0.025 / −0.007. Independently, the net rent ALL non-energy
+  rows charge the class is `Ω` p50 0.0, p95 3e-06 / 3e-06 / 4e-06, non-zero in
+  0.68 % / 1.12 % / 1.01 % of unit-hours. `Ω` is NOT decomposed per row (the
+  parallel lane's §3 limit, inherited).
+* **THE C1-2023 `ST_GAS` OBJECT IS OPEN AND UNEXPLAINED**, with one live
+  explanation fewer. Nothing here moves it.
+* **nyiso-180's DO-NOT-REDO set is UNCHANGED and its reasoning STANDS** — the loss
+  surface, the post-solve transform, the capacity/label-basis mismatch and
+  `ramp_envelopes`-as-dominant-carrier stay closed, and the reduced-cost
+  correction to the optimality premise is right (nyiso-181 §6.2 confirms the
+  population is interior). Only the QUANTITY those arguments were applied to was
+  inflated. The `nyiso_zonal_loss_surface` and post-solve-transform refutations
+  are independently **RE-CONFIRMED** by the `max|d| = 0` identity.
+* **REPRODUCIBILITY COST, named:** `unit_hourly` is 16.4 / 17.4 / 17.4 MB/yr —
+  3.3× the parallel lane's own 5 MB commit threshold — so it stays gitignored and
+  every nyiso-181 number needs the ~15-minute control replay.
+* **STILL UNSPENT — the missing rung** (nyiso-177 §7.2 / nyiso-178 §9.2),
+  unchanged.
+* Evidence: `docs/FINDING-nyiso181-itm-degeneracy-2026-09-03.md`,
+  `results/calibration/PREREG-nyiso181-itm-degeneracy.md`,
+  `scripts/probes/nyiso181_itm_degeneracy.py` +
+  `nyiso181_replay_identity.py` + `nyiso181_offer_reconstruction_repair.py` →
+  `results/calibration/_nyiso181_itm_degeneracy.json` +
+  `_nyiso181_replay_identity.json` + `_nyiso181_offer_reconstruction_repair.json`
+  + `_nyiso181_unit_dispatch_nyiso180gates.json`.
+
+PRIOR QUEUE (nyiso-180, superseded 2026-09-03, preserved verbatim):
+
 **LEVER QUEUE — UPDATED 2026-09-03 (nyiso-180, ZERO SOLVE; ALL FOUR candidate
 explanations for the un-dispatched in-the-money `ST_GAS` CLOSED, the object's
 inherited PREMISE corrected, and the standing per-generator-dispatch limit

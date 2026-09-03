@@ -179,6 +179,46 @@ def _verdicts(years: dict) -> dict:
     }
 
 
+def adjudication_status(report: dict) -> dict:
+    """PREREG §4 S1: did an instrument check fail, withholding every verdict?
+
+    ADDED AFTER THE GATES RAN, and additive only — the gate computation and
+    every bar above are untouched (the nyiso-180 §8.1 discipline: the
+    INSTRUMENT is repaired, no bar is moved). Without this block a reader of
+    the JSON would take ``verdicts`` for the session's adjudication, which
+    S1 withholds.
+
+    I1 (replay identity) and I2/I3 (the parallel lane's §2.4 STOP and P-b) are
+    read from the two committed instrument records rather than recomputed.
+    """
+    i1p = REPO / "results/calibration/_nyiso181_replay_identity.json"
+    i23p = REPO / "results/calibration/_nyiso181_unit_dispatch_nyiso180gates.json"
+    out: dict = {"I1": None, "I2": None, "I3": None}
+    if i1p.exists():
+        out["I1"] = bool(json.loads(i1p.read_text()).get("I1_PASS_ALL_YEARS"))
+    if i23p.exists():
+        yrs = json.loads(i23p.read_text()).get("years", {})
+        out["I2"] = all(
+            v["STOP_2_4_identity_does_not_close"]["share_of_class_unit_hours"] < 0.001
+            for v in yrs.values()
+            if "STOP_2_4_identity_does_not_close" in v
+        )
+        out["I3"] = all(
+            v["P_b_price_is_the_dual"]["PASS"]
+            for v in yrs.values()
+            if "P_b_price_is_the_dual" in v
+        )
+        out["I3_per_year_mean_mc_minus_price"] = {
+            y: v["P_b_price_is_the_dual"]["mean_mc_minus_price"]
+            for y, v in yrs.items()
+            if "P_b_price_is_the_dual" in v
+        }
+    fired = any(v is False for v in (out["I1"], out["I2"], out["I3"]))
+    out["S1_FIRED"] = fired
+    out["verdicts_are"] = "WITHHELD (PREREG §4 S1)" if fired else "ADJUDICATED"
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundle", type=Path)
@@ -194,6 +234,7 @@ def main() -> None:
             continue
         report["years"][str(year)] = analyse_year(df, year)
     report["verdicts"] = _verdicts(report["years"])
+    report["adjudication_status"] = adjudication_status(report)
 
     out = args.out or (REPO / "results/calibration/_nyiso181_itm_degeneracy.json")
     out.write_text(json.dumps(report, indent=2))

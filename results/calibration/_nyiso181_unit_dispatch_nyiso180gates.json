@@ -1,0 +1,179 @@
+{
+  "bundle": "results/calibration/nyiso181_control",
+  "years": {
+    "2023": {
+      "year": 2023,
+      "class_unit_hours": 814680,
+      "n_units": 93,
+      "object": {
+        "R_aggregate": 0.99245,
+        "itm_cap_mwh": 9719840.963682,
+        "itm_dispatch_mwh": 9646454.791892,
+        "unrun_itm_mwh": 73386.237699,
+        "unrun_itm_twh": 0.073386
+      },
+      "P_b_price_is_the_dual": {
+        "interior_unit_hours": 4533,
+        "median_mc_minus_price": 0.0,
+        "mean_mc_minus_price": -0.071397,
+        "p95_abs": 1.769296,
+        "PASS": false
+      },
+      "P_c_capacity_basis": {
+        "max_mw_minus_cap": 3.1e-05,
+        "unit_hours_mw_gt_cap": 0,
+        "unrun_share_at_upper_bound": 0.0,
+        "PASS": true
+      },
+      "P_d_where_the_unrun_MW_sits": {
+        "unrun_share_at_lower_bound": 0.057631,
+        "unrun_share_interior": 0.942369,
+        "unrun_share_at_upper_bound": 0.0,
+        "omega_mwh_weighted_mean_at_lower": 11.68168,
+        "omega_p50_at_lower": 1.292658,
+        "PASS_lower_bound_ge_70pct": false
+      },
+      "degeneracy_control": {
+        "unrun_share_within_1_dollar_of_price": 0.944791,
+        "R_aggregate_strict_1_dollar": 0.999506
+      },
+      "ramp_signature": {
+        "unrun_share_ramp_saturated": 0.010996
+      },
+      "STOP_2_4_identity_does_not_close": {
+        "unit_hours": 0,
+        "share_of_class_unit_hours": 0.0,
+        "mw_at_stake": 0.0
+      },
+      "omega_all_rows": {
+        "p50": 0.0,
+        "p95": 3e-06,
+        "share_nonzero": 0.006843
+      },
+      "reserve_headroom_overlay": {
+        "available": true,
+        "mean_held_mw": 11763.888672,
+        "mean_unrun_itm_mw": 8.377424,
+        "held_over_unrun": 1404.236925,
+        "pearson_r": 0.009751
+      },
+      "sidecar_bytes": 16360734
+    },
+    "2024": {
+      "year": 2024,
+      "class_unit_hours": 814680,
+      "n_units": 93,
+      "object": {
+        "R_aggregate": 0.991275,
+        "itm_cap_mwh": 7015815.495177,
+        "itm_dispatch_mwh": 6954605.307576,
+        "unrun_itm_mwh": 61210.256948,
+        "unrun_itm_twh": 0.06121
+      },
+      "P_b_price_is_the_dual": {
+        "interior_unit_hours": 4480,
+        "median_mc_minus_price": 0.0,
+        "mean_mc_minus_price": 0.014066,
+        "p95_abs": 1.946304,
+        "PASS": true
+      },
+      "P_c_capacity_basis": {
+        "max_mw_minus_cap": 3.1e-05,
+        "unit_hours_mw_gt_cap": 0,
+        "unrun_share_at_upper_bound": 1e-06,
+        "PASS": true
+      },
+      "P_d_where_the_unrun_MW_sits": {
+        "unrun_share_at_lower_bound": 0.164591,
+        "unrun_share_interior": 0.835407,
+        "unrun_share_at_upper_bound": 1e-06,
+        "omega_mwh_weighted_mean_at_lower": 2.323527,
+        "omega_p50_at_lower": 1.239312,
+        "PASS_lower_bound_ge_70pct": false
+      },
+      "degeneracy_control": {
+        "unrun_share_within_1_dollar_of_price": 0.922521,
+        "R_aggregate_strict_1_dollar": 0.99919
+      },
+      "ramp_signature": {
+        "unrun_share_ramp_saturated": 0.042955
+      },
+      "STOP_2_4_identity_does_not_close": {
+        "unit_hours": 0,
+        "share_of_class_unit_hours": 0.0,
+        "mw_at_stake": 0.0
+      },
+      "omega_all_rows": {
+        "p50": 0.0,
+        "p95": 3e-06,
+        "share_nonzero": 0.011176
+      },
+      "reserve_headroom_overlay": {
+        "available": true,
+        "mean_held_mw": 11752.204102,
+        "mean_unrun_itm_mw": 6.987472,
+        "held_over_unrun": 1681.896353,
+        "pearson_r": 0.025221
+      },
+      "sidecar_bytes": 17357285
+    },
+    "2025": {
+      "year": 2025,
+      "class_unit_hours": 814680,
+      "n_units": 93,
+      "object": {
+        "R_aggregate": 0.991811,
+        "itm_cap_mwh": 8521946.637855,
+        "itm_dispatch_mwh": 8452162.564569,
+        "unrun_itm_mwh": 69784.150539,
+        "unrun_itm_twh": 0.069784
+      },
+      "P_b_price_is_the_dual": {
+        "interior_unit_hours": 3220,
+        "median_mc_minus_price": 0.0,
+        "mean_mc_minus_price": -0.126572,
+        "p95_abs": 2.392546,
+        "PASS": false
+      },
+      "P_c_capacity_basis": {
+        "max_mw_minus_cap": 3.1e-05,
+        "unit_hours_mw_gt_cap": 0,
+        "unrun_share_at_upper_bound": 2e-06,
+        "PASS": true
+      },
+      "P_d_where_the_unrun_MW_sits": {
+        "unrun_share_at_lower_bound": 0.297603,
+        "unrun_share_interior": 0.702396,
+        "unrun_share_at_upper_bound": 2e-06,
+        "omega_mwh_weighted_mean_at_lower": 3.493735,
+        "omega_p50_at_lower": 1.525024,
+        "PASS_lower_bound_ge_70pct": false
+      },
+      "degeneracy_control": {
+        "unrun_share_within_1_dollar_of_price": 0.786536,
+        "R_aggregate_strict_1_dollar": 0.99807
+      },
+      "ramp_signature": {
+        "unrun_share_ramp_saturated": 0.096362
+      },
+      "STOP_2_4_identity_does_not_close": {
+        "unit_hours": 0,
+        "share_of_class_unit_hours": 0.0,
+        "mw_at_stake": 0.0
+      },
+      "omega_all_rows": {
+        "p50": -0.0,
+        "p95": 4e-06,
+        "share_nonzero": 0.010098
+      },
+      "reserve_headroom_overlay": {
+        "available": true,
+        "mean_held_mw": 11750.421875,
+        "mean_unrun_itm_mw": 7.966227,
+        "held_over_unrun": 1475.029714,
+        "pearson_r": -0.00736
+      },
+      "sidecar_bytes": 17362408
+    }
+  }
+}
