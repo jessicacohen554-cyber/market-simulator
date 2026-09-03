@@ -90,3 +90,116 @@ class SystemYearSidecarTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def _dual_fuel_unit_frame(year: int, pass_label: str, T: int = 4):
+    """Unit-hour frame exercising the dual-fuel re-attribution.
+
+    Two ``ST_GAS`` tranches of one bin. ``u_peak`` is oil-switched in the back
+    half of the horizon, so its ``klass`` reads ``oil`` there while its
+    ``klass_base`` stays ``ST_GAS`` — the exact shape that makes a ``klass``
+    aggregate undercount the class (nyiso-179 §6.1 candidate (c)).
+    """
+    rows = []
+    for unit, band in (("ST_GAS_NYC_p1_committed", "committed"),
+                       ("ST_GAS_NYC_p1_peak", "peak")):
+        for t in range(T):
+            switched = band == "peak" and t >= T // 2
+            rows.append(
+                {
+                    "year": year,
+                    "pass": pass_label,
+                    "unit_id": unit,
+                    "klass": "oil" if switched else "ST_GAS",
+                    "klass_base": "ST_GAS",
+                    "hour": t,
+                    "mw": float(10 + t),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+class ClassBandHourlySidecarTest(unittest.TestCase):
+    """``class_band_hourly`` — the per-offer-band dispatch sidecar."""
+
+    def _write(self, tmp, labels=("P0", "P1")):
+        run_dir = Path(tmp)
+        (run_dir / "dispatch").mkdir()
+        for label in labels:
+            _dual_fuel_unit_frame(2024, label).to_parquet(
+                run_dir / "dispatch" / f"2024_{label}.parquet", index=False
+            )
+        return run_dir, rcf._write_class_band_hourly_sidecar(
+            run_dir, 2024, list(labels)
+        )
+
+    def test_schema_and_band_split(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir, out = self._write(tmp)
+            self.assertEqual(
+                out, run_dir / "hourly" / "class_band_hourly_2024.parquet"
+            )
+            cb = pd.read_parquet(out)
+            self.assertEqual(
+                sorted(cb.columns),
+                ["band", "hour", "klass", "mw", "mw_oil", "pass", "year"],
+            )
+            # Band is the last underscore token of the unit id, and the two
+            # tranches of one bin stay separate.
+            self.assertEqual(set(cb["band"]), {"committed", "peak"})
+            self.assertEqual(set(cb["pass"]), {"P0", "P1"})
+
+    def test_klass_is_pre_reattribution_so_the_class_is_not_undercounted(self):
+        """The whole point: ``klass`` here counts oil-switched hours too."""
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir, out = self._write(tmp)
+            cb = pd.read_parquet(out)
+            cb = cb[cb["pass"] == "P1"]
+            unit = pd.read_parquet(run_dir / "dispatch" / "2024_P1.parquet")
+            # Every row is ST_GAS on the base key, including the switched ones.
+            self.assertEqual(set(cb["klass"]), {"ST_GAS"})
+            self.assertAlmostEqual(
+                float(cb["mw"].sum()), float(unit["mw"].sum()), places=4
+            )
+            # ...whereas the klass key alone would have lost the switched MW.
+            self.assertLess(
+                float(unit[unit["klass"] == "ST_GAS"]["mw"].sum()),
+                float(unit["mw"].sum()),
+            )
+
+    def test_mw_oil_reproduces_the_class_hourly_view(self):
+        """``mw - mw_oil`` must equal what ``class_hourly`` reports per class."""
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir, out = self._write(tmp)
+            rcf._write_class_hourly_sidecar(run_dir, 2024, ["P0", "P1"])
+            ch = pd.read_parquet(run_dir / "hourly" / "class_hourly_2024.parquet")
+            cb = pd.read_parquet(out)
+            for label in ("P0", "P1"):
+                b = cb[cb["pass"] == label]
+                h = ch[ch["pass"] == label]
+                gas = (
+                    (b[b["klass"] == "ST_GAS"]["mw"].sum())
+                    - (b[b["klass"] == "ST_GAS"]["mw_oil"].sum())
+                )
+                self.assertAlmostEqual(
+                    float(gas),
+                    float(h[h["klass"] == "ST_GAS"]["mw"].sum()),
+                    places=4,
+                )
+                self.assertAlmostEqual(
+                    float(b["mw_oil"].sum()),
+                    float(h[h["klass"] == "oil"]["mw"].sum()),
+                    places=4,
+                )
+
+    def test_returns_none_on_a_frame_predating_klass_base(self):
+        """Additive: an older bundle replays without the sidecar, never fails."""
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = Path(tmp)
+            (run_dir / "dispatch").mkdir()
+            _unit_frame(2024, "P1").to_parquet(
+                run_dir / "dispatch" / "2024_P1.parquet", index=False
+            )
+            self.assertIsNone(
+                rcf._write_class_band_hourly_sidecar(run_dir, 2024, ["P1"])
+            )

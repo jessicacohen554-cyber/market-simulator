@@ -443,6 +443,17 @@ def _dispatch_frame(
         return np.searchsorted(cats, np.asarray(values, dtype=object)).astype(np.int32)
 
     kcode = np.repeat(_codes(cats_klass, klass), T)
+    # Pre-re-attribution plant group, captured BEFORE the dual-fuel overwrite
+    # below. ``klass`` alone cannot answer "how much did class X dispatch",
+    # because a dual-fuel unit's switched hours are relabelled to ``oil`` — a
+    # POOLED class every dual-fuel class relabels into — so a class aggregate
+    # keyed on ``klass`` silently UNDERCOUNTS the gas class and the shortfall
+    # is not attributable back out of ``oil``. That defect is what made
+    # nyiso-179's un-dispatched-in-the-money ST_GAS signature unresolvable
+    # from committed artifacts (its §6.1 candidate (c)). Carrying both keys
+    # makes the split exact and costs one ~14-category column on a frame that
+    # is gitignored anyway.
+    kcode_base = kcode.copy()
     fcode = np.repeat(_codes(cats_fuel, fuels), T)
     # Dual-fuel re-attribution: a gas unit that switched to its backup oil this
     # hour (gas price > oil parity; mask from fuel.dual_fuel_switch_mask) burned
@@ -465,6 +476,7 @@ def _dispatch_frame(
                 "unit_id": _cat(cats_unit, np.repeat(_codes(cats_unit, unit_ids), T)),
                 "plant_code": np.repeat(plant_codes.astype(np.int32), T),
                 "klass": _cat(cats_klass, kcode),
+                "klass_base": _cat(cats_klass, kcode_base),
                 "fuel": _cat(cats_fuel, fcode),
                 "supply": _cat(cats_supply, np.repeat(_codes(cats_supply, supply), T)),
                 "zone": _cat(cats_zone, np.repeat(_codes(cats_zone, zones), T)),
@@ -495,6 +507,8 @@ def _dispatch_frame(
                         ),
                         "plant_code": np.full(T, 0, dtype=np.int32),
                         "klass": _cat(cats_klass, np.full(T, ck, dtype=np.int32)),
+                        # Pseudo-units never re-attribute, so base == klass.
+                        "klass_base": _cat(cats_klass, np.full(T, ck, dtype=np.int32)),
                         "fuel": _cat(cats_fuel, np.full(T, cf, dtype=np.int32)),
                         "supply": _cat(cats_supply, np.full(T, cs, dtype=np.int32)),
                         "zone": _cat(
@@ -549,6 +563,89 @@ def _write_class_hourly_sidecar(run_dir: Path, year: int, labels: list[str]) -> 
     ]
     out = hourly_dir / f"class_hourly_{year}.parquet"
     pd.concat(frames, ignore_index=True).to_parquet(out, index=False)
+    return out
+
+
+def _write_class_band_hourly_sidecar(
+    run_dir: Path, year: int, labels: list[str]
+) -> "Path | None":
+    """Write the committable class-BAND-hour dispatch sidecar for one year.
+
+    The offer-band refinement of :func:`_write_class_hourly_sidecar`:
+    ``(year, pass, klass, band, hour, mw, mw_oil)`` →
+    ``hourly/class_band_hourly_<year>.parquet``.
+
+    **Why this exists (the standing nyiso-172 §2.5 / nyiso-173 limit).** No
+    keeper bundle in ANY ISO persisted dispatch below the class aggregate, so
+    every question of the form "which part of the class's offer stack actually
+    ran" required replaying the solve. That limit blocked nyiso-178's G1,
+    nyiso-179's G1/G3 and was binding for a third consecutive session; it is
+    the only instrument that can settle nyiso-179 §6.1. The per-unit-hour frame
+    this aggregates is already written every solve — it is simply gitignored —
+    so this is an aggregation choice, not new plumbing.
+
+    Two keys, because one is not enough:
+
+    * ``klass`` is the PRE-re-attribution plant group (``klass_base`` in the
+      unit-hour frame), so a class aggregate here counts the class's real
+      dispatch. The ``klass`` column of ``class_hourly`` cannot: the dual-fuel
+      re-attribution relabels a switched unit-hour to the POOLED ``oil`` class,
+      which undercounts every dual-fuel class by an amount not attributable
+      back out of ``oil``.
+    * ``band`` is the LP tranche suffix — the last underscore token of
+      ``unit_id`` (``mustrun``/``sync``/``committed``/``commitcyc``/
+      ``econlo``/``econhi``/``econcNN``/``peak``), every one a single token
+      containing no underscore, so the split is exact.
+
+    ``mw_oil`` carries the re-attributed portion, so the ``class_hourly`` view
+    is reproducible from this frame (a class's ``class_hourly`` MW is
+    ``mw - mw_oil``, and the ``oil`` class is ``Σ mw_oil``) and no information
+    is lost in either direction.
+
+    Returns the path written, or ``None`` when the unit-hour frames predate the
+    ``klass_base`` column (an older bundle being replayed) — the sidecar is
+    additive and never fails a run.
+    """
+    hourly_dir = run_dir / "hourly"
+    hourly_dir.mkdir(parents=True, exist_ok=True)
+    frames = []
+    for label in labels:
+        src = run_dir / "dispatch" / f"{year}_{label}.parquet"
+        cols = pq.ParquetFile(src).schema.names
+        if "klass_base" not in cols:
+            return None
+        d = pd.read_parquet(
+            src,
+            columns=["year", "pass", "klass", "klass_base", "unit_id", "hour", "mw"],
+        )
+        # Band = last underscore token of the unit id (single token by
+        # construction). Pseudo-units carry no tranche and bucket to "".
+        d["band"] = (
+            d["unit_id"].astype(str).str.rsplit("_", n=1).str[-1].astype("category")
+        )
+        d["mw_oil"] = np.where(
+            d["klass"].astype(str).to_numpy() == "oil", d["mw"].to_numpy(), 0.0
+        )
+        frames.append(
+            d.groupby(["year", "pass", "klass_base", "band", "hour"], observed=True)[
+                ["mw", "mw_oil"]
+            ]
+            .sum()
+            .reset_index()
+            .rename(columns={"klass_base": "klass"})
+        )
+    out = hourly_dir / f"class_band_hourly_{year}.parquet"
+    df = pd.concat(frames, ignore_index=True)
+    df["mw"] = df["mw"].astype(np.float32)
+    df["mw_oil"] = df["mw_oil"].astype(np.float32)
+    pq.write_table(
+        pa.Table.from_pandas(df, preserve_index=False),
+        out,
+        compression="zstd",
+        version="2.6",
+        use_dictionary=["pass", "klass", "band"],
+        column_encoding={"hour": "DELTA_BINARY_PACKED"},
+    )
     return out
 
 
@@ -3304,6 +3401,8 @@ def _copy_reused_year(
     # frames just copied, so the reused year is never the one with the hole.
     if not (run_dir / "hourly" / f"class_hourly_{year}.parquet").exists():
         _write_class_hourly_sidecar(run_dir, year, passes)
+    if not (run_dir / "hourly" / f"class_band_hourly_{year}.parquet").exists():
+        _write_class_band_hourly_sidecar(run_dir, year, passes)
     if persist_p2_state:
         p2 = prior / "p2_state" / f"{year}.pkl.gz"
         if p2.exists():
@@ -5668,6 +5767,7 @@ def solve_and_persist(
         # 3-year backcast past 16 GB and into the OOM killer. Only the compact
         # per-year frames accumulated above survive the loop.
         _write_class_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
+        _write_class_band_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
         _write_p0_commitment_sidecar(run_dir, year, p2_state)
         _write_storage_hourly_sidecar(run_dir, year, storage_frames)
         _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
