@@ -449,6 +449,7 @@ def run_year(
     caiso_offer_surface_measured: bool = False,
     caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_st_gas_committed_measured: bool = False,
+    caiso_st_gas_peak_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     nuclear_unit_availability: bool = False,
@@ -764,6 +765,7 @@ def run_year(
             caiso_offer_surface_measured_ungrounded
         ),
         caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
+        caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
         caiso_offer_surface_conditional=caiso_offer_surface_conditional,
     )
     if pjm_offer_midcurve_segments is not None:

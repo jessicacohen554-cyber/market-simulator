@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-03-caiso-240-b1-stgas",
+  "label": "caiso 240 b1 stgas",
+  "date": "2026-09-03",
+  "shorthand": "caiso-240-b1-stgas",
+  "definition": "caiso-240 B1: measured ST_GAS peak band at the ST_GAS_PEAKER_PLANTS bypass (single-flag delta on the caiso-239 keeper recipe)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-03-caiso-240-b1-stgas.js",
+  "bundle": "results/calibration/caiso240_b1_stgas_peak_measured"
+}

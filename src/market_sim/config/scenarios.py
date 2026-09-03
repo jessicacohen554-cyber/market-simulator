@@ -1149,6 +1149,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # in the same commit, per the nyiso-119 discipline the caiso-231 late
     # registration had to be repaired for.
     "caiso_st_gas_committed_measured",
+    # caiso-240 measured ST_GAS peak band at the same bypass (default off):
+    # dropped from the hash at its default so every pre-existing cached run
+    # keeps its key -- the consumer is a single gated limb in
+    # fleet/assembly.py's `offer is None` branch, so the off path is
+    # byte-identical by construction. An armed run prices the bypassed ST_GAS
+    # peak tranches at a different heat rate (a different offer surface) and
+    # hashes distinctly. Registered WITH the field, in the same commit, per the
+    # nyiso-119 discipline.
+    "caiso_st_gas_peak_measured",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1687,6 +1696,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-239 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "caiso_st_gas_committed_measured": "False",
+    "caiso_st_gas_peak_measured": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -2153,6 +2163,15 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_offer_surface_measured": "measured CAISO peak-rung offer repricing",
     "caiso_offer_surface_measured_ungrounded": (
         "measured CAISO bands for the un-grounded CHP/ST_GAS classes"
+    ),
+    # caiso-240: the SAME measured OASIS bid record as the two entries above,
+    # delivered to the ST_GAS plants the offer-curve bypass keeps it from. Its
+    # caiso-239 sibling (caiso_st_gas_committed_measured) is deliberately ABSENT
+    # from this map because it arms a measured PHYSICAL heat-rate ratio; this
+    # one arms measured BID conduct keyed to a specific year's OASIS record and
+    # so belongs here (rule 13 [R-MEASURED]).
+    "caiso_st_gas_peak_measured": (
+        "measured CAISO peak band for the bypassed ST_GAS steamers"
     ),
     "pjm_ct_measured_max_reprice": "measured PJM CT max-offer repricing",
 }
@@ -11259,6 +11278,62 @@ class ScenarioConfig:
     # An ISO absent from the registry cannot arm it (hard error, never a silent
     # fallback to the class default -- rule 25).
     caiso_st_gas_committed_measured: bool = False
+    # THE ST_GAS PEAK BAND AT THE SAME BYPASS (caiso-240, default off, per-ISO
+    # registry). The caiso-240 census measured every one of the 28
+    # `fleet.campd_bins._DEFAULT_HR_MULT_BY_GROUP` literals on all six
+    # designated keepers and found that, after caiso-239, exactly TWO cells
+    # remain live on the CAISO keeper: `ST_GAS["econ"] = 1.00` and
+    # `ST_GAS["peak"] = 1.10`, both reaching the same three once-through-cooling
+    # steamers (315 / 335 / 350) through the same `_offer_curve_for_group`
+    # bypass. This flag repairs the `peak` one -- the only one of the two with a
+    # measured counterpart AT THE MODEL'S OWN GRAIN, since a bypassed plant's
+    # peak band is a single flat multiplier and the measurement is a single
+    # number. (`econ` is a single flat band against a measured TWO-ENDPOINT
+    # ramp; picking one endpoint would be a free parameter, so it is left
+    # un-armed and reported to the owner -- see the caiso-240 assessment.)
+    #
+    # When armed, a BYPASSED ST_GAS bin takes
+    # `base_hr x ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO[iso]` for its peak band
+    # instead of the uncited ERCOT-lineage class default 1.10. CAISO's entry is
+    # 1.166 = `CT_PEAKER.bands.peak` in the committed
+    # `caiso_offer_curve_measured.json` -- the SAME value the CAISO ST_GAS class
+    # band already carries, armed there by
+    # `caiso_offer_surface_measured_ungrounded` at caiso-231. So this adds NO
+    # new measurement and NO free parameter (rule 21 [R-DOF]): it delivers a
+    # value already in the keeper's own `run_config.json` to the plants it was
+    # measured on. EXACTLY ONE BAND moves: `mr` / `mc` / `econ` are untouched,
+    # and the limb is unreachable for any plant that resolves an offer curve.
+    #
+    # WHY THE CLASS BAND DOES NOT ALREADY DO THIS -- the census's CAISO
+    # headline. `derive_caiso_offer_surface.py` discloses that "the three
+    # OTC/RMR steamers (ST_GAS ...) land in the CT bucket", which is why
+    # caiso-231 re-grounded the ST_GAS class on that bucket. But
+    # `_offer_curve_for_group` returns None for every `ST_GAS_PEAKER_PLANTS`
+    # member, so the re-grounded class band reaches NONE of the steamers it was
+    # measured on -- on the keeper it prices only two EIA-860 retired-window
+    # units (356 AES Redondo Beach, 10446 SEGS IX). The measurement is withheld
+    # from its own population; this flag delivers it.
+    #
+    # POPULATION MATCH IS CONTAINMENT, NOT COINCIDENCE -- disclosed against
+    # interest, and weaker than caiso-239's. The CT bucket is pooled
+    # CT_PEAKER + CT_CHP + ST_GAS conduct and the OASIS ids are masked, so the
+    # steamers cannot be isolated inside it. It is the same basis caiso-231 was
+    # promoted on.
+    #
+    # REGISTERED IN `_BACKCAST_ONLY_OVERLAY_FIELDS`, unlike caiso-239's sibling.
+    # That one arms a measured PHYSICAL heat-rate ratio with a forward story;
+    # this one arms measured BID conduct keyed to a specific year's OASIS
+    # record, exactly like `caiso_offer_surface_measured*` (rule 13
+    # [R-MEASURED]).
+    #
+    # DIRECTION IS DISCLOSED, NOT HIDDEN (rule 14): 1.10 -> 1.166 RAISES the
+    # peak band (+6.0 %), i.e. C3a gets WORSE in the hours that band is
+    # marginal. Armed for structural integrity under rules 14 / 24 / 25, NEVER
+    # as a C3a lever.
+    #
+    # An ISO absent from the registry cannot arm it (hard error, never a silent
+    # fallback to the class default -- rule 25).
+    caiso_st_gas_peak_measured: bool = False
     # CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder
     # ported to CAISO — 5 equal-capacity peak rungs repriced P1-only to the
     # measured per-net-load-bin top-of-curve quantiles (fuel-component

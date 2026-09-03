@@ -3498,6 +3498,7 @@ def solve_and_persist(
     caiso_offer_surface_measured: bool = False,
     caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_st_gas_committed_measured: bool = False,
+    caiso_st_gas_peak_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     nuclear_unit_availability: bool = False,
@@ -3819,6 +3820,7 @@ def solve_and_persist(
                 caiso_offer_surface_measured_ungrounded
             ),
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
+            caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         )
         if pjm_offer_midcurve_segments is not None:
@@ -5255,6 +5257,7 @@ def solve_and_persist(
                 caiso_offer_surface_measured_ungrounded
             ),
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
+            caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             nuclear_unit_availability=nuclear_unit_availability,
@@ -6157,6 +6160,7 @@ def solve_and_persist(
             caiso_offer_surface_measured_ungrounded
         ),
         "caiso_st_gas_committed_measured": caiso_st_gas_committed_measured,
+        "caiso_st_gas_peak_measured": caiso_st_gas_peak_measured,
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
         "pjm_offer_midcurve_segments": (
             list(pjm_offer_midcurve_segments)
@@ -8456,6 +8460,7 @@ def run_replay_bundle(
     reliability_floor_plant_exclusions: bool | None = None,
     caiso_offer_surface_measured_ungrounded: bool | None = None,
     caiso_st_gas_committed_measured: bool | None = None,
+    caiso_st_gas_peak_measured: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
@@ -8498,6 +8503,12 @@ def run_replay_bundle(
             bypass (``None`` keeps the recipe's own value). Composes exactly
             like the override above, so the caiso-239 structural arm is
             provably the committed keeper recipe plus ONE flag.
+        caiso_st_gas_peak_measured: Override the bundle's setting for the
+            measured ST_GAS PEAK band at the same ``ST_GAS_PEAKER_PLANTS``
+            bypass (``None`` keeps the recipe's own value). The band-disjoint
+            sibling of the override above (rule 19 ``[R-ONE-MECH]``), so the
+            caiso-240 structural arm is provably the committed keeper recipe
+            plus ONE flag.
         campd_per_unit_attribution: Override the bundle's setting for the
             CAMPD per-unit attribution gate (nyiso-176), which selects the
             '-perunit-' tranche and unit-outage companions together.
@@ -8536,6 +8547,8 @@ def run_replay_bundle(
         )
     if caiso_st_gas_committed_measured is not None:
         kwargs["caiso_st_gas_committed_measured"] = caiso_st_gas_committed_measured
+    if caiso_st_gas_peak_measured is not None:
+        kwargs["caiso_st_gas_peak_measured"] = caiso_st_gas_peak_measured
     if unit_outage_mixed_gas_routing is not None:
         kwargs["unit_outage_mixed_gas_routing"] = unit_outage_mixed_gas_routing
     if unit_outage_st_capacity_basis is not None:
@@ -10293,6 +10306,28 @@ def main() -> None:
         "makes C3a WORSE by a bounded +0.0003/+0.0265/+0.0000 $/MWh "
         "(caiso-230 §H form on the caiso-231 keeper) and is NEVER a C3a lever. "
         "An ISO with no registry entry is a hard error.",
+    )
+    parser.add_argument(
+        "--caiso-st-gas-peak-measured",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="STRUCTURAL-INTEGRITY REPAIR (rules 14/24/25, caiso-240): the "
+        "BAND-DISJOINT sibling of --caiso-st-gas-committed-measured (rule 19 "
+        "[R-ONE-MECH]). The caiso-240 census measured all 28 "
+        "_DEFAULT_HR_MULT_BY_GROUP literals on all six designated keepers and "
+        "found that after caiso-239 exactly TWO cells stay live on the CAISO "
+        "keeper -- ST_GAS['econ'] = 1.00 and ST_GAS['peak'] = 1.10 -- both on "
+        "the same three bypassed OTC steamers (315/335/350). This arms the "
+        "peak one, the only one whose measured counterpart is at the model's "
+        "own grain. Armed, the band takes the ISO's own measured peak-band "
+        "offer multiplier (constants.ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO; "
+        "CAISO 1.166 = CT_PEAKER.bands.peak in caiso_offer_curve_measured.json "
+        "-- ALREADY the value the CAISO ST_GAS class band carries, armed at "
+        "caiso-231, which the bypass keeps from reaching the very plants the "
+        "CT bucket contains). Exactly one band moves; zero new measurement and "
+        "zero free parameters. DISCLOSED: 1.10 -> 1.166 RAISES the peak band "
+        "(+6.0 %), so it makes C3a WORSE, and it is NEVER a C3a lever. An ISO "
+        "with no registry entry is a hard error.",
     )
     parser.add_argument(
         "--caiso-offer-surface-conditional",
@@ -12236,6 +12271,12 @@ def main() -> None:
                 or "--no-caiso-st-gas-committed-measured" in sys.argv
                 else None
             ),
+            caiso_st_gas_peak_measured=(
+                args.caiso_st_gas_peak_measured
+                if "--caiso-st-gas-peak-measured" in sys.argv
+                or "--no-caiso-st-gas-peak-measured" in sys.argv
+                else None
+            ),
             unit_outage_mixed_gas_routing=(
                 args.unit_outage_mixed_gas_routing
                 if "--unit-outage-mixed-gas-routing" in sys.argv
@@ -12564,6 +12605,7 @@ def main() -> None:
             args.caiso_offer_surface_measured_ungrounded
         ),
         caiso_st_gas_committed_measured=args.caiso_st_gas_committed_measured,
+        caiso_st_gas_peak_measured=args.caiso_st_gas_peak_measured,
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
         priced_interchange=(
             True
