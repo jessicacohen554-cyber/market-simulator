@@ -10320,6 +10320,83 @@ is now the live queue head.**)*
 
 ### 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — REWRITTEN 2026-09-03 (nyiso-183 `ravenswood-availability`
+lane, ZERO SOLVES; THE AVAILABILITY HYPOTHESIS IS REFUTED ON ITS OWN
+PRE-REGISTERED GATE AND THE C1-2023 CARRIER IS AN **OFFER** OBJECT SITTING IN
+**ONE TERM**). Open gate: C1-2023 `ST_GAS` +3.86 TWh; C3a-2025 −11.2 % stays
+owner-court; C3c ledgered. Keeper, determination, gate set, every score and
+every parameter UNCHANGED; `src/market_sim/` untouched; no constant moved or
+swept; nothing registered (S2 + S3 fired, so no non-control solve ran).**
+
+* **TOP OF QUEUE — THE MODEL'S `ST_GAS` HEAT-RATE BASIS AT RAVENSWOOD.** Model
+  base heat rate **9.50 MMBtu/MWh against a CAMPD-measured 10.71**. The ratio
+  model ÷ measured is a tight **1.596–1.749** cluster across eight peer plants
+  (median **1.699 / 1.685 / 1.685** — that cluster IS the class's uniform
+  offer-curve markup) and **1.382 / 1.417 / 1.454** at Ravenswood: the model has
+  it ~11 % MORE efficient than its own meter while it has every peer 8–12 % LESS
+  efficient than theirs, a **~20 pp relative error on 1,725 MW** worth
+  **\$11.38 / \$7.88 / \$13.08 per MWh** at the merit panel's own delivered
+  gas. Consequence, measured: the model prices Ravenswood **3rd cheapest of 11**
+  `ST_GAS` plants in EVERY training year while its measured SRMC ranks it
+  **8th / 8th / 6th of 10** — the pre-registered leg-(ii) merit-position
+  inversion, fired 3/3 years. `vom` is a uniform \$4.00 and the tranche
+  multipliers are class-uniform, so **neither can carry it**. Measured with NO
+  LP via `scripts.lib.bundle_fleet.reconstruct_bundle_fleet`.
+* **THE UPSTREAM JOIN IS NAMED BUT NOT ADJUDICATED — start there, from source
+  data, never from a residual.** `fleet/eia860.py:624` reads **plant-grain**
+  eGRID `PLHTIAN` / `PLNGENAN` / `PLHTRT`, and Ravenswood is the NYISO `ST_GAS`
+  class's only large mixed steam+CC site (7 `CC_REGULAR` LP rows beside 8 steam
+  rows): its facility blend is **8.24** against the steam-only **10.71**, with
+  the model's 9.50 between them — the same facility-summed-denominator family
+  nyiso-177 repaired on the OUTAGE and TRANCHE paths, surviving in the
+  HEAT-RATE path that `campd_per_unit_attribution` does not reach. **NOT
+  PROVED:** the unexplained `CC_REGULAR` / `ST_GAS` base split (8.80 vs 9.50)
+  means a second term is at work.
+* **DO-NOT-REDO — THE AVAILABILITY ROUTE IS CLOSED.** The merit-order guard's
+  own evidence statistic **separates** at Ravenswood: guard-removed windows read
+  `out_of_merit` **0.9954 / 0.9336 / 0.9581** against running hours at
+  **0.6669 / 0.2928 / 0.1531** — separation **+0.33 / +0.64 / +0.81** against a
+  bar of `MERIT_OOM_FRAC` itself. G1 did not fire in any year. The
+  reclassification IS material (the guard hands back **0.645 / 0.381 / 0.188**
+  of Ravenswood's capacity-year) but materiality without discrimination grounds
+  nothing, and **both** admissible zero-constant repair forms independently
+  collapse onto nyiso-177's already-rejected unguarded arm (`sel_fleet`
+  **0.8674** and **0.9235** against a 0.75 bar). Do not re-open without evidence
+  addressing the separation directly.
+* **CORRECTION TO THE INHERITED RECORD.** `0.772 / 0.465 / 0.297` is the
+  **SUPERSEDED nyiso-159** keeper's Ravenswood availability — nyiso-177 §2.1
+  labels that row *'L0 keeper (incumbent + override)'* and the promoted recipe
+  replaces both the incumbent extract and the `_FLEET_GROUP_OVERRIDE`. **The
+  CURRENT keeper reads `0.786 / 0.478 / 0.309`.** The stale pair was carried by
+  nyiso-181 §5.1, by this queue, and by nyiso-183's own brief and first G0 bar
+  (recorded FAILED and re-anchored on two harder published anchors, max |Δ|
+  0.0005).
+* **ASTORIA (8906) IS THE MIRROR-IMAGE OUTLIER** at ratio
+  **3.365 / 3.419 / 3.464** — priced far too EXPENSIVE, a plausible contributor
+  to the −5.197 / −6.776 / −7.957 TWh other-ten-plant deficit. Unexplained, and
+  **not** assumed to share Ravenswood's cause.
+* **TWO MEASURED FACTS RECORDED, NEITHER A DEFECT ON THIS EVIDENCE:** stage 3
+  overrules the stage-2b full-stop override on **92.4 %** of the `ST_GAS`
+  window-hours it removes; and at unit grain Ravenswood's 1,000 MW unit 30 in
+  2023 alone separates by only **0.080** (`oom_run` 0.9195) — POST-HOC, one unit
+  in one year, and it does not resurrect the hypothesis.
+* **PR #4656 IS CLOSED UNMERGED AND ITS BRANCH IS DELETED**, so every nyiso-181
+  dispatch-side number is currently unreproducible. Nothing in nyiso-183 rests
+  on them, and `reconstruct_bundle_fleet` is the instrument a successor should
+  reach for first — it yields the keeper's own offer with no LP and no bundle
+  beyond the committed one.
+* Evidence: `docs/FINDING-nyiso183-ravenswood-availability-2026-09-03.md`,
+  `results/calibration/PREREG-nyiso183-ravenswood-availability.md` (pushed
+  before the first measurement; §8 amendment pushed before any gate below G0 was
+  read), `_nyiso183_ravenswood_availability.json`,
+  `_nyiso183_g4c_offer_position.json`, `_nyiso183_g4d_offer_anatomy.json`;
+  probes `scripts/probes/nyiso183_ravenswood_availability.py`,
+  `nyiso183_g4c_offer_position.py`, `nyiso183_g4d_offer_anatomy.py`.
+
+**PRIOR QUEUE (nyiso-181) PRESERVED BELOW — its DO-NOT-REDO items all stand;
+its first bullet ("the object is Ravenswood, and it is an AVAILABILITY object")
+is SUPERSEDED by nyiso-183's G1/G3 above and is left unedited as the record.**
+
 **LEVER QUEUE — UPDATED 2026-09-03 (nyiso-181 `stgas-floor` lane, ZERO SOLVE;
 THE C1-2023 OBJECT IS ATTRIBUTED — IT IS ONE PLANT, IT IS ECONOMIC NOT FORCED,
 AND THE CLASS AGGREGATE THAT HID IT ALSO HIDES A ~1 TWh/yr UNDER-COUNT IN THE
