@@ -289,13 +289,17 @@ def test_build_registration_scorecard_no_iso_gate_open():
         and s["gate_c_readiness"]["config_green"]
         for s in sc.values()
     )
-    # NEISO and NYISO hold the backcast marker (NYISO re-declared 2026-07-31,
-    # nyiso-104b). Gate A is therefore GREEN for both — and the gate still does
-    # not open for either, because gate B (FF-2D T1-F) reads HOLD for every ISO.
-    # That is the invariant worth pinning: a backcast marker alone never opens
-    # the forecast gate.
+    # NEISO holds the backcast marker; NYISO's was WITHDRAWN 2026-08-30 (owner
+    # r#12 ruling, Q5-W, commit ecc2d609 — the same marker move
+    # test_marker_state_reflects_committed_markers pins above). The fast-tier repair
+    # of 2026-09-02 corrected that copy but not this integration-marked one, so
+    # the golden data tier's run #7 (2026-08-31) failed here. Gate A is GREEN
+    # for NEISO only — and the gate still does not open for either, because
+    # gate B (FF-2D T1-F) reads HOLD for every ISO. That is the invariant worth
+    # pinning: a backcast marker alone never opens the forecast gate, and a
+    # withdrawn one does not either.
     assert sc["NEISO"]["gate_a_backcast"]["marker"] == "complete"
-    assert sc["NYISO"]["gate_a_backcast"]["marker"] == "complete"
+    assert sc["NYISO"]["gate_a_backcast"]["marker"] == "withdrawn"
     for iso in ("NEISO", "NYISO"):
         assert sc[iso]["gate_b_t1f"]["determination"] == "HOLD", iso
         assert not sc[iso]["gate_open"], iso
