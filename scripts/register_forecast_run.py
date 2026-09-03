@@ -281,6 +281,12 @@ VERDICT_MAP = {
     "miso-2021-2025-realized-t1h-d46": "miso-t1h",
     "caiso-2021-2025-realized-t1h-d46": "caiso-t1h",
     "ercot-2021-2025-realized-t1h-d46": "ercot-t1h",
+    # The T1-F legs of the same batch. Run ids are the registrar's derived
+    # `<iso>-<start>-<end>-<label>` form, not the `-t1f-d46` names the
+    # pre-declaration guessed; the ids below are what --summary --label
+    # d46-remeasure actually writes, and the finding records the deviation.
+    # Each bare t1f key's prior record is preserved verbatim at `<key>-pre-d46`.
+    "ercot-2026-2030-d46-remeasure": "ercot-t1f",
 }
 
 

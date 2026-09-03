@@ -1,0 +1,413 @@
+{
+  "adequacy_requirement_mw": 112527.546,
+  "announced_derates": [
+    {
+      "derate_mw": 141.49999999999997,
+      "fuel": "coal",
+      "mw_after": 230.62500000000003,
+      "mw_before": 372.125,
+      "unit_id": "COAL_South_Central_p7097_mustrun"
+    },
+    {
+      "derate_mw": 113.19999999999999,
+      "fuel": "coal",
+      "mw_after": 184.5,
+      "mw_before": 297.7,
+      "unit_id": "COAL_South_Central_p7097_committed"
+    },
+    {
+      "derate_mw": 282.99999999999994,
+      "fuel": "coal",
+      "mw_after": 461.25000000000006,
+      "mw_before": 744.25,
+      "unit_id": "COAL_South_Central_p7097_econ"
+    },
+    {
+      "derate_mw": 28.299999999999997,
+      "fuel": "coal",
+      "mw_after": 46.125,
+      "mw_before": 74.425,
+      "unit_id": "COAL_South_Central_p7097_peak"
+    }
+  ],
+  "bridge": false,
+  "capacity_reserve_position": null,
+  "ccs_retrofits": [
+    {
+      "from_fuel": "gas_cc",
+      "mw": 352.80000000000007,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Houston_p55464_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 117.6,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Houston_p55464_peak"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 213.85,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_Houston_p55470_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 294.525,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Houston_p56806_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 187.425,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Houston_p56806_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 106.04,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_South_p3631_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 67.48,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_South_p3631_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 316.03,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_South_Central_p4937_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 201.11000000000004,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_South_Central_p4937_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 53.86500000000001,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_West_p56233_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 220.15999999999997,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_West_p56349_econ"
+    }
+  ],
+  "confirmed_derates": [
+    {
+      "derate_mw": 41.7,
+      "fuel": "gas_ct",
+      "mw_after": 97.59999999999998,
+      "mw_before": 139.29999999999998,
+      "unit_id": "CT_PEAKER_South_Central_p3612_committed"
+    },
+    {
+      "derate_mw": 57.337500000000006,
+      "fuel": "gas_ct",
+      "mw_after": 134.19999999999993,
+      "mw_before": 191.53749999999994,
+      "unit_id": "CT_PEAKER_South_Central_p3612_econ"
+    },
+    {
+      "derate_mw": 5.2125,
+      "fuel": "gas_ct",
+      "mw_after": 12.199999999999998,
+      "mw_before": 17.412499999999998,
+      "unit_id": "CT_PEAKER_South_Central_p3612_peak"
+    }
+  ],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 2000.0
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2030,
+      "decision_year": 2028,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 2000.0,
+      "seq": 0,
+      "tech": "gas_cc",
+      "zone": "North"
+    }
+  ],
+  "firm_clean_accredited_mw": 273.15,
+  "firm_clean_mw": 546.3,
+  "fleet_by_fuel_after": {
+    "coal": 13397.9,
+    "gas_cc": 35784.155,
+    "gas_cc_ccs": 2130.885,
+    "gas_ct": 11726.167,
+    "gas_st": 10850.45,
+    "nuclear": 4980.0
+  },
+  "fleet_by_fuel_before": {
+    "coal": 13963.9,
+    "gas_cc": 37241.04,
+    "gas_ct": 11419.417,
+    "gas_st": 10850.45,
+    "nuclear": 4980.0
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "ERCOT",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 105016.258,
+  "pipeline_events": [
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.8789563237380371,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 27.544322571539826,
+      "energy_margin_usd": 75020.94543945833,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "going_forward_cost_usd": 916500.0,
+      "mc_mean_usd_mwh": 160.1659290410959,
+      "mw": 30.55,
+      "net_revenue_usd": 75020.94543945833,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "CC_CHP_Houston_p55470_peak",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.8279109767498591,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 2.711762346017342,
+      "energy_margin_usd": 9875.648333150635,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "going_forward_cost_usd": 11340.0,
+      "mc_mean_usd_mwh": 108.2504129753425,
+      "mw": 0.54,
+      "net_revenue_usd": 9875.648333150635,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "CT_PEAKER_Houston_p66593_peak",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.5692411404265967,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 1.7436205146533446,
+      "energy_margin_usd": 1262079.6014689056,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "going_forward_cost_usd": 1328250.0,
+      "mc_mean_usd_mwh": 51.68549190136987,
+      "mw": 37.95,
+      "net_revenue_usd": 1262079.6014689056,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "ST_GAS_North_p4266_committed",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.5692411404265967,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 1.5255736245693439,
+      "energy_margin_usd": 211725.7468245989,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "going_forward_cost_usd": 221375.0,
+      "mc_mean_usd_mwh": 51.130911978082196,
+      "mw": 6.325,
+      "net_revenue_usd": 211725.7468245989,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "ST_GAS_North_p4266_peak",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.5642411404265966,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 0.40030776286247116,
+      "energy_margin_usd": 2525431.5363886678,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "going_forward_cost_usd": 2554649.9999999995,
+      "mc_mean_usd_mwh": 48.71606566575343,
+      "mw": 72.99,
+      "net_revenue_usd": 2525431.5363886678,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "ST_GAS_North_p3507_committed",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.5542411404265967,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 0.3398839390053093,
+      "energy_margin_usd": 13671336.179098746,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "going_forward_cost_usd": 13805400.0,
+      "mc_mean_usd_mwh": 47.94750828712329,
+      "mw": 394.44,
+      "net_revenue_usd": 13671336.179098746,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "ST_GAS_North_p3491_committed",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.5642411404265966,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 0.2234028418202078,
+      "energy_margin_usd": 423057.3044292572,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "going_forward_cost_usd": 425775.0,
+      "mc_mean_usd_mwh": 48.32056214794522,
+      "mw": 12.165,
+      "net_revenue_usd": 423057.3044292572,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "ST_GAS_North_p3507_peak",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.5192411404265966,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 0.2133146015331085,
+      "energy_margin_usd": 8893563.988972045,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "going_forward_cost_usd": 8948100.0,
+      "mc_mean_usd_mwh": 45.81650828273973,
+      "mw": 255.66,
+      "net_revenue_usd": 8893563.988972045,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "ST_GAS_North_p3453_committed",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.5542411404265967,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 0.18264859000035735,
+      "energy_margin_usd": 2288892.681693376,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "going_forward_cost_usd": 2300899.9999999995,
+      "mc_mean_usd_mwh": 47.5931774860274,
+      "mw": 65.74,
+      "net_revenue_usd": 2288892.681693376,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "ST_GAS_North_p3491_peak",
+      "year": 2028
+    },
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.5192411404265966,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 0.10353972394698241,
+      "energy_margin_usd": 1486938.172362619,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "going_forward_cost_usd": 1491350.0,
+      "mc_mean_usd_mwh": 45.576338196164386,
+      "mw": 42.61,
+      "net_revenue_usd": 1486938.172362619,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 160.1659290410959,
+      "screen_price_mean_usd_mwh": 41.37022300397493,
+      "unit_id": "ST_GAS_North_p3453_peak",
+      "year": 2028
+    }
+  ],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.21,
+    "wind": 0.2
+  },
+  "reserve_margin": 0.029925,
+  "retirements": [],
+  "rps_dual": 0.0,
+  "solar_cap_mw": 38100.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 11687.5,
+  "storage_power_mw": 17000.0,
+  "thermal_additions": [
+    {
+      "eia860_id": "planned_68606_5",
+      "fuel": "gas_cc",
+      "mw": 674.0,
+      "source": "planned",
+      "unit_id": "planned_68606_5",
+      "zone": "Houston"
+    },
+    {
+      "eia860_id": "planned_69691_06",
+      "fuel": "gas_ct",
+      "mw": 411.0,
+      "source": "planned",
+      "unit_id": "planned_69691_06",
+      "zone": "Houston"
+    }
+  ],
+  "wind_cap_mw": 42553.1,
+  "year": 2028
+}
