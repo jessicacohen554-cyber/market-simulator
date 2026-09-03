@@ -5815,8 +5815,12 @@ your branch when done.
   the stamp stale are **17:14Z, 20:37Z, 21:07Z and 22:59Z the same day** — every
   one 13 h or more later, across three ISO desks, with no gate-(a) re-key among
   them. The README's own words are *"there should not be a third"*; this was the
-  **fourth**, at three rows. **The durable enforcement is the owner's
-  branch-protection flip, not a fifth desk grant** — a promoting lane cannot be
+  **fourth**, at three rows. **Independently corroborated off-program:** open PR
+  **#4642** (capx-director r#32, opened mid-session) raises the identical finding
+  as its own card **C-2** — *"all three skipped the R-T gate-(a) re-key — guard
+  fails x3"* — so R-X, this lane and the capx director converged on the same
+  three-row object from three directions within hours. **The durable enforcement
+  is the owner's branch-protection flip, not a fifth desk grant** — a promoting lane cannot be
   faulted for skipping a check nothing blocks it on.
   **(f) MEASUREMENTS CARRIED AT FULL WEIGHT, AND ONE THAT CHANGED SHAPE.** The
   flip is **still not live** — re-measured **30-for-30 red `ci.yml` runs (2322–2350)

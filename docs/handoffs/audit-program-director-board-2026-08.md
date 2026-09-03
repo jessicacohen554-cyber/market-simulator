@@ -1009,6 +1009,16 @@ which re-keyed the stamp.** No `program-status.json` commit in that span is a
 gate-(a) re-key. So the duty is not failing at the margin of a stale clone — it
 is **not being read at all**, across three different ISO desks.
 
+**⬅ INDEPENDENTLY CORROBORATED, BY A DESK THAT IS NOT THIS PROGRAM.** Open PR
+**#4642** (capx-director refresh **r#32**, opened 02:07Z while this lane was
+mid-session) reaches the identical finding from the capx side and raises it as
+its own decision card **C-2**: *"three owner-track keeper promotions in one day
+(CAISO caiso-239, MISO miso-201, NYISO nyiso-177) … all three skipped the R-T
+gate-(a) re-key — guard fails x3."* **Three desks — R-X (M-4), this lane (M-1)
+and the capx director — converged on the same three-row object from three
+directions within hours.** That is not a records-hygiene complaint any more; it
+is a systemic routing failure with three independent witnesses.
+
 **The fair conclusion is the one the dispatch already reached, now with
 evidence: the durable enforcement is the owner's branch-protection flip, not a
 fifth desk grant.** The README's own words are *"there should not be a third"*;
