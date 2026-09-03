@@ -10325,6 +10325,76 @@ owner-court; C3c ledgered. NO LEVER OPENED — pre-declared in every branch.**
 
 PRIOR QUEUE (nyiso-179, superseded 2026-09-03, preserved verbatim):
 
+**AMENDMENT — 2026-09-03, the PARALLEL nyiso-180 lane
+(`claude/nyiso-180-per-generator-dispatch`, ONE 3-YEAR REPLAY). Two sessions ran
+concurrently under the same number: the queue above is the ZERO-SOLVE lane
+(`FINDING-nyiso180-st-gas-undispatch`), this is the SOLVE lane
+(`FINDING-nyiso180-per-generator-dispatch`, run
+`2026-09-03-nyiso-180-unit-dispatch`). Their structural closes (a)/(b) are
+independently reproduced here and STAND; this amendment adds what a zero-solve
+lane could not reach and corrects one item.**
+* **THE TWO LANES RECONCILE EXACTLY, AND THE RECONCILIATION IS THE RESULT.** The
+  queue above reproduces nyiso-179's medians to 0.0001 (0.775 / 0.448 / 0.816) —
+  but that is the ratio computed against a RECONSTRUCTED offer. Measured against
+  the offer the **LP actually installed** (`DispatchResult.gen_mc`, now persisted),
+  the ratio is **0.992 / 0.991 / 0.992** and the un-run in-the-money volume is
+  **0.073 / 0.061 / 0.070 TWh**, not 3.84 / 9.09 / 3.99. The gap between the two
+  lanes IS the answer: nyiso-179's `mc`, rebuilt outside the solve, is **cheaper
+  than the installed offer in 97.6 / 97.3 / 88.2 %** of `ST_GAS` unit-hours, by a
+  mean of **+\$11.45 / +\$17.25 / +\$5.43**/MWh, so its in-the-money envelope was
+  inflated. `apply_gas_offer_margin` (`run_calibration.py:3931`, `runner.py:2494`,
+  applied right after `assemble_mc` and never called by `build_year`) is one named
+  missing step and **does NOT close the residual** (+\$7.58 / +\$11.53 / +\$12.29
+  remain) — at least one channel stays unidentified and is handed forward.
+* **THE PREMISE CORRECTION ABOVE IS RIGHT, AND NOW MEASURED.** Optimality is the
+  reduced cost, not `mc ≤ price_z` — and the reduced cost is now persisted
+  (`red_cost`), so `Ω = red_cost − (mc − price)` measures what every NON-energy row
+  charges. **Ω is essentially identically zero** (p50 0.0, p95 **3e-6 \$/MWh**), and
+  the identity closes EXACTLY (STOP population **0 unit-hours**, all three years).
+  So no row charges this class: (a), (b), (c) and (d) close together, and the
+  residual 0.06–0.07 TWh is LP indifference at the margin (79–95 % of it within
+  \$1/MWh of the clearing price; at a strict \$1 margin R = 0.9995 / 0.9992 / 0.9981).
+  This also confirms (d) independently — ramp saturation carries only 1.1 / 4.3 /
+  9.6 % of the residual — and refutes reserve shared-headroom occupancy as a
+  carrier (correlation with the un-run MW ≈ 0.010 / 0.025 / −0.007).
+* **ONE ITEM ABOVE IS AMENDED: "THE LANE STAYS BLOCKED ON C3a-2025" HOLDS FOR
+  2025 ONLY.** The only failing C1 cell is **2023** `ST_GAS` at **+3.86 TWh — the
+  model running TOO MUCH steam** (scorer: `FAIL 2023 ST_GAS: +3.86 TWh, share
+  +3.2pp [MODEL MISS]`; annual model − measured **+3.53 TWh**; top decile model
+  2,339 MW vs measured 2,114 MW), and 2025 `ST_GAS` is **SKIPPED**, not gated
+  (preliminary EIA-923 vintage). Recomputing nyiso-179 §7 on the LP's own offer,
+  2025's top-decile gap is **137 %** the model's own price level with **offer
+  position at −8.7 %** (not a deficit at all) — so C3a-2025 owns 2025 — but
+  **2023's total gap is NEGATIVE (−225 MW)**, an opposite-signed object that is
+  **NOT blocked behind C3a-2025**. **Top of queue is therefore 2023
+  OVER-generation:** enumerate what FORCES steam on (D-2 attribution in
+  `legitimacy_diagnostics.json`; the gas bridge's `gas_st` leg floors only
+  0.163 TWh, so the bulk is elsewhere) and whether the 2023 offer level is too
+  cheap. **Do not open another under-generation lever.**
+* **BOTH PREREQUISITE LIFTS LANDED AND ARE COMPLEMENTARY, NOT DUPLICATES.**
+  `class_band_hourly` (queue above) is band-grain dispatch;
+  `unit_hourly_<year>.parquet` now additionally carries the solve's own `mc` and
+  `red_cost` at **unit** grain, which is what makes the optimality identity close.
+  Proven inert: cache keys unchanged (`4c6b03ae098b6e3e` / `8211c72bb1960adc`),
+  byte-identical pre/post control in BOTH the with-links and no-links branch,
+  314 tests. **SIZE, reported against the session's own convenience:** the full
+  layer is now **16.4–17.4 MB/yr (51 MB/bundle, 90 % of it `red_cost`)**, so the
+  pre-registered 5 MB per-year commit gate FIRED and the full layer is **NOT**
+  committed; the **`ST_GAS` slice** (`unit_hourly_stgas_<year>.parquet`, 2.6 MB/yr)
+  is, under the `.gitignore` §8 `git add -f` opt-in.
+* **EVERY PROBE THAT REBUILDS AN OFFER OUTSIDE THE SOLVE IS SUSPECT.** The
+  sidecar's `mc` is the reference from here. nyiso-178, nyiso-179 and the
+  zero-solve nyiso-180 lane all share the `build_year` construction; their
+  class-level OFFER claims should be re-checked against it before being cited
+  again. (Their STRUCTURAL claims, which do not depend on `mc`, are unaffected.)
+* Evidence: `docs/FINDING-nyiso180-per-generator-dispatch-2026-09-03.md`,
+  `results/calibration/PREREG-nyiso180-per-generator-dispatch.md`, probe
+  `scripts/probes/nyiso180_unit_dispatch_adjudication.py` →
+  `results/calibration/_nyiso180_unit_dispatch.json`,
+  `_nyiso180_mc_reconstruction_gap.json`,
+  `_nyiso180_topdecile_decomposition.json`.
+
+
 **LEVER QUEUE — UPDATED 2026-09-03 (nyiso-179, ZERO SOLVE; the offer-POSITION
 type REFUTED, all three of nyiso-178's starting points CLOSED, one new object
 opened and one lane declared BLOCKED). Open gate: C1-2023 `ST_GAS` +3.86 TWh;

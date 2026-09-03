@@ -526,10 +526,18 @@ results/calibration/*/floors/
 # The two grounds this exclusion used to state ("~58 MB/bundle", "regenerable by
 # a replay") were both MEASURED FALSE at nyiso-116 (2026-08-03) and are corrected
 # here rather than left to mislead:
-#   * SIZE — NYISO measures 920 KB/yr (unit) + 170 KB/yr (network) = 3.2 MB for a
-#     whole 3-year bundle. The ~58 MB figure predates the DELTA_BINARY_PACKED
-#     ``hour`` encoding (see _write_hourly_sidecar's docstring: CAISO's unit frame
-#     went 12.60 MB -> 1.74 MB from that change alone).
+#   * SIZE — the ~58 MB figure predates the DELTA_BINARY_PACKED ``hour`` encoding
+#     (see _write_hourly_sidecar's docstring: CAISO's unit frame went 12.60 MB ->
+#     1.74 MB from that change alone). MEASURED AGAIN 2026-09-03 (nyiso-180),
+#     because the frame grew: adding the solve's own offer (``mc``) and the
+#     generation columns' reduced cost (``red_cost``) takes NYISO from 920 KB/yr
+#     to 16.4-17.4 MB/yr (51.1 MB for a 3-year bundle). ``red_cost`` is 14.75 MB
+#     of that — 2.73 M distinct float32 duals, genuinely incompressible — and
+#     ``mc`` only 0.73 MB. So the default exclusion now bites much harder than
+#     the old note implied: a lane that needs the OPTIMALITY columns should
+#     normally commit a CLASS-SCOPED slice (nyiso-180 committed
+#     ``unit_hourly_stgas_<year>.parquet``, 2.55-2.67 MB/yr) rather than the
+#     whole layer. The 170 KB/yr network figure is unchanged.
 #   * REPLAY — nyiso-114 §2 measured that a keeper arming a P0-run-pattern bridge
 #     CANNOT be re-solved into byte-identity once main has moved (caiso-155 vertex
 #     dependence), so for such a keeper this layer is PERMANENTLY unrecoverable.
