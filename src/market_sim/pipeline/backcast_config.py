@@ -1207,6 +1207,7 @@ def backcast_config(
     caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_st_gas_committed_measured: bool = False,
     caiso_st_gas_peak_measured: bool = False,
+    caiso_ct_peaker_committed_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
@@ -2237,6 +2238,50 @@ def backcast_config(
                 "constants.ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO"
             )
         config = config.with_overrides(caiso_st_gas_peak_measured=True)
+    # caiso-241: the CT_PEAKER `committed` band grounded on its OWN measured
+    # physical counterpart (default off, CAISO-gated). Unlike the two gates
+    # above -- whose plants are BYPASSED out of `offer_curve_by_group`
+    # entirely -- CT_PEAKER does resolve a class curve, so the substitution is
+    # made HERE, on the resolved band dict, and there is no consumer-side limb.
+    #
+    # ZERO NEW NUMBERS: the band takes the value its own dict already carries
+    # under `phys_committed` (`avg_committed_p50`,
+    # caiso_campd_marginal_hr_summary.csv, n = 75), so nothing is chosen and
+    # rule 21 [R-DOF] is satisfied by construction. Applied LAST of the CAISO
+    # offer-surface blocks so it wins over any of them; band-disjoint from all
+    # of them, which arm `econ_low` / `econ_high` / `peak` only (rule 19).
+    #
+    # This is the PHYSICAL route, not the BID route: the measured bid committed
+    # (1.166, `caiso_offer_curve_measured.json` -> `CT_PEAKER.unarmed.committed`)
+    # stays unarmed for every CAISO gas class, as caiso-231 left it. The
+    # admissibility ruling that separates the two is
+    # PRECOMMIT-caiso241-ct-peaker-committed-2026-09-03.md §1; the
+    # ScenarioConfig field carries its summary.
+    if caiso_ct_peaker_committed_measured:
+        if iso.upper() != "CAISO":
+            raise ValueError(
+                "caiso_ct_peaker_committed_measured is CAISO-scoped "
+                f"(rule 25 [R-ISO-SCOPE]) and was armed for {iso.upper()}; "
+                "NYISO (0.843, n=70) and NEISO (0.985, n=18) carry the same "
+                "uncited 1.35 and the same defect, but each lane grounds its "
+                "OWN band on its OWN measured avg_committed_p50 -- no value "
+                "crosses an ISO boundary"
+            )
+        _ct = dict(config.offer_curve_by_group.get("CT_PEAKER") or {})
+        if "phys_committed" not in _ct:
+            raise ValueError(
+                "caiso_ct_peaker_committed_measured is armed but the resolved "
+                "CAISO CT_PEAKER band carries no `phys_committed` measurement "
+                "to ground on; it must never fall back to the fitted value "
+                "(rule 25 [R-ISO-SCOPE])"
+            )
+        config = config.with_overrides(
+            caiso_ct_peaker_committed_measured=True,
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group,
+                {"CT_PEAKER": {"committed": float(_ct["phys_committed"])}},
+            ),
+        )
     # MISO gas + coal offer curves (CAMPD-/structure-/SOM-grounded; see
     # _MISO_OFFER_CURVE). Merged on top of the generic non-PJM/non-ERCOT branch
     # so only the named classes change (CC_REGULAR flattened to MISO's measured

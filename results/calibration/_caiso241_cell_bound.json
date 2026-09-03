@@ -1,0 +1,99 @@
+{
+ "_provenance": {
+  "bundle": "results/calibration/caiso240_b1_stgas_peak_measured",
+  "cost_basis": "mc_base (P0); the P1 startup markup is omitted, which makes the envelope CONSERVATIVE (true bid higher \u2192 fewer crossings)",
+  "estimator": "crossing-envelope \u00a7H' (precommit \u00a73.2) \u2014 REPLACES the caiso-230 \u00a7H form, which caiso-240 falsified as an upper bound and which is blind to the indirect re-dispatch that is THIS arm's dominant channel",
+  "flag": "caiso_ct_peaker_committed_measured",
+  "keeper_run_id": "2026-09-03-caiso-240-b1-stgas",
+  "positive_tolerance_usd_mwh": 0.05,
+  "session": "caiso-241",
+  "solves": 0
+ },
+ "falsifiers": {
+  "degenerate_year": "a year with zero crossing zone-hours reports B as 'zero to within the estimator's attribution tolerance', never as an exact zero; a small measured move there is a bound-form limitation, not a falsification (precommit \u00a73.2)",
+  "lower": "measured annual mean price move BELOW -B \u2014 the channel delivered more than its maximum \u21d2 estimator or mechanism is wrong",
+  "upper": "measured move ABOVE +0.05 \u2014 the arm moved price the UNEXPECTED way at material size"
+ },
+ "per_year": {
+  "2023": {
+   "B_usd_mwh": 0.879762,
+   "crossing_share_pct": 11.648,
+   "degenerate": false,
+   "interval_usd_mwh": [
+    -0.879762,
+    0.05
+   ],
+   "mean_fall_in_crossing_hours_usd_mwh": 7.5526,
+   "n_crossing_zone_hours": 5102,
+   "n_repriced_tranches": 44,
+   "n_zone_hours": 43800,
+   "sectionH_matched_marginal_zone_hours": 576,
+   "volume_envelope_twh": 0.4322,
+   "zones_live": [
+    "NP15",
+    "ZP26",
+    "LA_BASIN",
+    "SDGE",
+    "SP15_rest"
+   ]
+  },
+  "2024": {
+   "B_usd_mwh": 0.380368,
+   "crossing_share_pct": 6.443,
+   "degenerate": false,
+   "interval_usd_mwh": [
+    -0.380368,
+    0.05
+   ],
+   "mean_fall_in_crossing_hours_usd_mwh": 5.9037,
+   "n_crossing_zone_hours": 2822,
+   "n_repriced_tranches": 44,
+   "n_zone_hours": 43800,
+   "sectionH_matched_marginal_zone_hours": 90,
+   "volume_envelope_twh": 0.247,
+   "zones_live": [
+    "NP15",
+    "ZP26",
+    "LA_BASIN",
+    "SDGE",
+    "SP15_rest"
+   ]
+  },
+  "2025": {
+   "B_usd_mwh": 0.197915,
+   "crossing_share_pct": 4.799,
+   "degenerate": false,
+   "interval_usd_mwh": [
+    -0.197915,
+    0.05
+   ],
+   "mean_fall_in_crossing_hours_usd_mwh": 4.124,
+   "n_crossing_zone_hours": 2102,
+   "n_repriced_tranches": 44,
+   "n_zone_hours": 43800,
+   "sectionH_matched_marginal_zone_hours": 11,
+   "volume_envelope_twh": 0.1195,
+   "zones_live": [
+    "NP15",
+    "ZP26",
+    "LA_BASIN",
+    "SDGE",
+    "SP15_rest"
+   ]
+  }
+ },
+ "registered_interval": {
+  "2023": [
+   -0.879762,
+   0.05
+  ],
+  "2024": [
+   -0.380368,
+   0.05
+  ],
+  "2025": [
+   -0.197915,
+   0.05
+  ]
+ }
+}

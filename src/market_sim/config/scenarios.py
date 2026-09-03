@@ -1158,6 +1158,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered WITH the field, in the same commit, per the
     # nyiso-119 discipline.
     "caiso_st_gas_peak_measured",
+    # caiso-241: the off path never touches `offer_curve_by_group`, so it is
+    # byte-identical by construction; an armed run prices the CAISO CT_PEAKER
+    # `_committed` tranches at a different heat rate (a different offer
+    # surface) and hashes distinctly. Registered WITH the field, in the same
+    # commit, per the nyiso-119 discipline.
+    "caiso_ct_peaker_committed_measured",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1697,6 +1703,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "caiso_st_gas_committed_measured": "False",
     "caiso_st_gas_peak_measured": "False",
+    # Added by caiso-241 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "caiso_ct_peaker_committed_measured": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -11334,6 +11343,72 @@ class ScenarioConfig:
     # An ISO absent from the registry cannot arm it (hard error, never a silent
     # fallback to the class default -- rule 25).
     caiso_st_gas_peak_measured: bool = False
+    # THE CT_PEAKER `committed` BAND, GROUNDED ON ITS OWN MEASURED PHYSICAL
+    # COUNTERPART (caiso-241, default off, CAISO-gated, zero new numbers).
+    #
+    # THE OBJECT. `_CAISO_OFFER_CURVE["CT_PEAKER"]["committed"] = 1.35` is a
+    # fitted scalar whose own band dict already carries the measured
+    # counterpart `phys_committed = 0.991` (`avg_committed_p50`,
+    # `data/raw/reference/caiso_campd_marginal_hr_summary.csv`, n = 75, IQR
+    # [0.969, 1.085]). When armed, the band takes that value: the fitted
+    # multiplier retires to the measurement already resolved onto its own band,
+    # so there is no new literal, no registry value to pick and NO FREE
+    # PARAMETER (rule 21 [R-DOF]). Exactly one band moves; `econ_low` /
+    # `econ_high` / `peak` are untouched, which keeps this band-disjoint from
+    # `caiso_offer_surface_measured*` (rule 19 [R-ONE-MECH]).
+    #
+    # WHY IT IS OUTSIDE THE LEVER-A / caiso-238 F4 REFUSAL. The refusal is
+    # ROUTE-scoped, and caiso-238 §3 said so in the assessment that issued the
+    # F4: it covers the measured BID committed multiplier (CT bucket 1.166 --
+    # self-commitment conduct, and STILL NOT ARMED here); grounding on the
+    # measured PHYSICAL min-load burn is the instrument Lever A itself used.
+    # Three further grounds, each sufficient alone
+    # (PRECOMMIT-caiso241-ct-peaker-committed-2026-09-03.md §1):
+    #   * rule 19 [R-ONE-MECH]. The `_committed` tranche is the ONLY tranche
+    #     carrying the bin's start cost (`bins_to_fleet` docstring), and P1
+    #     already amortizes it -- BIN_STARTUP_COST_PER_MW["CT_PEAKER"] = $20/MW
+    #     (NREL/SR-5500-55433) divided by the P0 run length, with no CT
+    #     exemption in `compute_monthly_markup` and
+    #     `tranche_startup_amortization` off on the keeper. 1.35, which
+    #     `_CAISO_OFFER_CURVE` itself calls a "start-cost hurdle", is a SECOND,
+    #     unidentified start-cost mechanism on the same tranche. Grounding it
+    #     removes the unidentified limb and leaves the identified one -- which
+    #     is also why the resulting ZERO `gas_offer_net_revenue_margin` markup
+    #     on this band is correct rather than incoherent: a min-load block's
+    #     offer-curve margin IS its commitment cost, and P1 supplies it.
+    #   * rule 25 [R-ISO-SCOPE]. `committed = 1.35` appears in the CAISO, NYISO
+    #     and NEISO CT_PEAKER curves, each comment citing the others
+    #     ("NYISO-grounded" / "NYISO/CAISO-grounded") and NONE citing a
+    #     measurement, while those ISOs' own CAMPD samples read 0.843 (n=70) /
+    #     0.985 (n=18) / 0.991 (n=75). NYISO's and NEISO's cells are ASKS FOR
+    #     THEIR OWN LANES; nothing transfers in either direction.
+    #   * The merit order is INVERTED, and applying the refusal to one band of
+    #     four is what inverted it. On the keeper the class reads committed
+    #     1.350 > peak 1.166 = econ_high 1.166 > econ_low 1.145 -- the min-load
+    #     block is the class's MOST EXPENSIVE MW. When 1.35 was set the class
+    #     read 1.35 / 1.10 / 1.50 / 4.0, a properly rising curve; caiso-231's
+    #     measured static surface re-grounded econ/peak while withholding
+    #     `committed`, leaving a LARGER unmeasured commitment adder standing
+    #     above them. Lever A exists to remove exactly this defect ("an
+    #     INVERTED merit order"), in the mirror-image direction.
+    #
+    # NOT IN `_BACKCAST_ONLY_OVERLAY_FIELDS`, and deliberately so -- like its
+    # caiso-239 sibling and unlike caiso-240's. `avg_committed_p50` is a
+    # measured PHYSICAL heat-rate ratio that regenerates for a forward year
+    # from CAMPD conduct and responds to fleet change, so it is admissible in
+    # both modes (rule 13 [R-MEASURED]).
+    #
+    # DIRECTION IS DISCLOSED, NOT HIDDEN, AND IS FAVOURABLE -- WHICH IS THE
+    # HAZARD, NOT THE ARGUMENT (rule 1 [R-STRUCT]). Lowering the band raises
+    # CT_PEAKER volume (the class runs at 2.5 / 0.8 / 0.4 % CF against a
+    # measured 7.4 / 7.5 / 4.1 %) and puts a cheaper rung into the evening
+    # merit order, which moves C3a DOWN in hours it is over. This flag is
+    # armed for structural integrity under rules 14 / 19 / 21 / 25 and MUST
+    # NEVER be proposed as a C3a lever.
+    #
+    # A CAISO CT_PEAKER band with no `phys_committed` key, or arming on any
+    # other ISO, is a HARD ERROR -- never a silent no-op (rule 25).
+    caiso_ct_peaker_committed_measured: bool = False
     # CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder
     # ported to CAISO — 5 equal-capacity peak rungs repriced P1-only to the
     # measured per-net-load-bin top-of-curve quantiles (fuel-component
