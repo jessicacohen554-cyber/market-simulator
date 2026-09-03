@@ -1,0 +1,837 @@
+{
+ "iso": "MISO",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "keeper_args": {
+  "cc_steam_part_reclass": false,
+  "cc_nameplate_basis": false,
+  "fleet_status_scope": true,
+  "mixed_gas_routing": true,
+  "per_unit_crosswalk": false,
+  "st_capacity_basis": true,
+  "short_windows": true,
+  "maxgen_events": true,
+  "partial_windows": false,
+  "layup_mask": true
+ },
+ "extracts": {
+  "std5d": "data/raw/campd-unit-outages-unitroute-MISO.csv",
+  "short": "data/raw/campd-unit-outages-short-MISO.csv",
+  "layup": "data/raw/campd-unit-outages-layup-MISO.csv",
+  "maxgen": "data/raw/campd-unit-outages-maxgen-unitroute-MISO.csv"
+ },
+ "n1_reproduction": {
+  "checked": 589,
+  "mismatches": []
+ },
+ "n2_overlap_census": {
+  "std5d": {
+   "layer": "std5d",
+   "n_unit_series": 408,
+   "n_overlapping_pairs": 648,
+   "overlap_hours_histogram": {
+    "24.0": 648
+   },
+   "by_year": {
+    "2019": {
+     "pairs": 63,
+     "hours": 1512.0
+    },
+    "2020": {
+     "pairs": 109,
+     "hours": 2616.0
+    },
+    "2021": {
+     "pairs": 93,
+     "hours": 2232.0
+    },
+    "2022": {
+     "pairs": 71,
+     "hours": 1704.0
+    },
+    "2023": {
+     "pairs": 70,
+     "hours": 1680.0
+    },
+    "2024": {
+     "pairs": 81,
+     "hours": 1944.0
+    },
+    "2025": {
+     "pairs": 56,
+     "hours": 1344.0
+    },
+    "2026": {
+     "pairs": 16,
+     "hours": 384.0
+    }
+   },
+   "distinct_bins": [
+    [
+     170,
+     "ST_GAS"
+    ],
+    [
+     203,
+     "ST_GAS"
+    ],
+    [
+     862,
+     "CC_REGULAR"
+    ],
+    [
+     990,
+     "ST_GAS"
+    ],
+    [
+     991,
+     "CC_REGULAR"
+    ],
+    [
+     992,
+     "ST_GAS"
+    ],
+    [
+     1007,
+     "CC_REGULAR"
+    ],
+    [
+     1073,
+     "ST_CHP"
+    ],
+    [
+     1104,
+     "ST_GAS"
+    ],
+    [
+     1122,
+     "ST_GAS"
+    ],
+    [
+     1391,
+     "CT_CHP"
+    ],
+    [
+     1396,
+     "CC_REGULAR"
+    ],
+    [
+     1402,
+     "ST_GAS"
+    ],
+    [
+     1403,
+     "CC_REGULAR"
+    ],
+    [
+     1403,
+     "ST_GAS"
+    ],
+    [
+     1702,
+     "ST_GAS"
+    ],
+    [
+     1904,
+     "CC_REGULAR"
+    ],
+    [
+     1912,
+     "CC_REGULAR"
+    ],
+    [
+     1927,
+     "CC_REGULAR"
+    ],
+    [
+     2001,
+     "ST_CHP"
+    ],
+    [
+     2050,
+     "ST_GAS"
+    ],
+    [
+     2070,
+     "CC_REGULAR"
+    ],
+    [
+     2070,
+     "CT_PEAKER"
+    ],
+    [
+     2070,
+     "ST_GAS"
+    ],
+    [
+     2123,
+     "ST_GAS"
+    ],
+    [
+     3459,
+     "ST_GAS"
+    ],
+    [
+     4040,
+     "CC_REGULAR"
+    ],
+    [
+     4042,
+     "ST_CHP"
+    ],
+    [
+     6035,
+     "ST_GAS"
+    ],
+    [
+     6190,
+     "ST_GAS"
+    ],
+    [
+     6358,
+     "CC_REGULAR"
+    ],
+    [
+     6639,
+     "ST_GAS"
+    ],
+    [
+     7991,
+     "CC_CHP"
+    ],
+    [
+     8056,
+     "ST_GAS"
+    ],
+    [
+     10328,
+     "CT_CHP"
+    ],
+    [
+     10745,
+     "CC_CHP"
+    ],
+    [
+     10865,
+     "COAL"
+    ],
+    [
+     10866,
+     "CT_CHP"
+    ],
+    [
+     50240,
+     "ST_CHP"
+    ],
+    [
+     55010,
+     "CC_CHP"
+    ],
+    [
+     55011,
+     "CC_REGULAR"
+    ],
+    [
+     55075,
+     "CC_CHP"
+    ],
+    [
+     55088,
+     "CT_CHP"
+    ],
+    [
+     55096,
+     "ST_CHP"
+    ],
+    [
+     55173,
+     "CC_REGULAR"
+    ],
+    [
+     55218,
+     "CC_REGULAR"
+    ],
+    [
+     55220,
+     "CC_REGULAR"
+    ],
+    [
+     55221,
+     "CC_REGULAR"
+    ],
+    [
+     55270,
+     "CC_REGULAR"
+    ],
+    [
+     55334,
+     "CC_REGULAR"
+    ],
+    [
+     55380,
+     "CC_REGULAR"
+    ],
+    [
+     55404,
+     "CC_CHP"
+    ],
+    [
+     55418,
+     "CC_REGULAR"
+    ],
+    [
+     55467,
+     "CC_REGULAR"
+    ],
+    [
+     55620,
+     "CC_REGULAR"
+    ],
+    [
+     55641,
+     "CC_REGULAR"
+    ],
+    [
+     55714,
+     "CC_REGULAR"
+    ],
+    [
+     56104,
+     "CC_REGULAR"
+    ],
+    [
+     56164,
+     "CC_REGULAR"
+    ],
+    [
+     58236,
+     "CC_REGULAR"
+    ],
+    [
+     60925,
+     "CC_REGULAR"
+    ],
+    [
+     60926,
+     "CC_REGULAR"
+    ],
+    [
+     63259,
+     "CC_REGULAR"
+    ]
+   ]
+  },
+  "short": {
+   "layer": "short",
+   "n_unit_series": 117,
+   "n_overlapping_pairs": 0,
+   "overlap_hours_histogram": {},
+   "by_year": {},
+   "distinct_bins": []
+  },
+  "layup": {
+   "layer": "layup",
+   "n_unit_series": 100,
+   "n_overlapping_pairs": 197,
+   "overlap_hours_histogram": {
+    "24.0": 197
+   },
+   "by_year": {
+    "2019": {
+     "pairs": 32,
+     "hours": 768.0
+    },
+    "2020": {
+     "pairs": 28,
+     "hours": 672.0
+    },
+    "2021": {
+     "pairs": 15,
+     "hours": 360.0
+    },
+    "2022": {
+     "pairs": 28,
+     "hours": 672.0
+    },
+    "2023": {
+     "pairs": 14,
+     "hours": 336.0
+    },
+    "2024": {
+     "pairs": 12,
+     "hours": 288.0
+    },
+    "2025": {
+     "pairs": 23,
+     "hours": 552.0
+    }
+   },
+   "distinct_bins": [
+    [
+     170,
+     "ST_GAS"
+    ],
+    [
+     990,
+     "ST_GAS"
+    ],
+    [
+     1104,
+     "ST_GAS"
+    ],
+    [
+     1122,
+     "ST_GAS"
+    ],
+    [
+     1131,
+     "ST_GAS"
+    ],
+    [
+     1402,
+     "ST_GAS"
+    ],
+    [
+     1464,
+     "ST_GAS"
+    ],
+    [
+     1891,
+     "ST_GAS"
+    ],
+    [
+     2070,
+     "CC_REGULAR"
+    ],
+    [
+     3459,
+     "ST_GAS"
+    ],
+    [
+     3992,
+     "ST_GAS"
+    ],
+    [
+     6035,
+     "ST_GAS"
+    ],
+    [
+     6055,
+     "ST_GAS"
+    ],
+    [
+     6358,
+     "CC_REGULAR"
+    ],
+    [
+     7985,
+     "CC_REGULAR"
+    ],
+    [
+     8054,
+     "ST_GAS"
+    ],
+    [
+     8056,
+     "ST_GAS"
+    ],
+    [
+     10745,
+     "CC_CHP"
+    ],
+    [
+     55087,
+     "CC_REGULAR"
+    ],
+    [
+     55089,
+     "CC_CHP"
+    ],
+    [
+     55620,
+     "CC_REGULAR"
+    ]
+   ]
+  }
+ },
+ "n3_counterfactual": {
+  "by_year": {
+   "2023": {
+    "by_class_gwh": {
+     "CC_CHP": 2.52,
+     "CC_REGULAR": 55.86,
+     "COAL": 0.732,
+     "ST_GAS": 32.021
+    },
+    "total_gwh": 91.133
+   },
+   "2024": {
+    "by_class_gwh": {
+     "CC_REGULAR": 17.33,
+     "COAL": 1.464,
+     "ST_CHP": 2.431,
+     "ST_GAS": 56.345
+    },
+    "total_gwh": 77.57
+   },
+   "2025": {
+    "by_class_gwh": {
+     "CC_REGULAR": 50.194,
+     "COAL": 2.412,
+     "ST_CHP": 0.228,
+     "ST_GAS": 50.58
+    },
+    "total_gwh": 103.414
+   }
+  },
+  "bins": [
+   {
+    "plant": 1702,
+    "group": "ST_GAS",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 28.8144,
+     "2024": 10.656,
+     "2025": 35.8992
+    }
+   },
+   {
+    "plant": 55620,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 29.736,
+     "2024": 8.928,
+     "2025": 17.28
+    }
+   },
+   {
+    "plant": 1402,
+    "group": "ST_GAS",
+    "layer": "layup",
+    "gwh": {
+     "2024": 38.7648
+    }
+   },
+   {
+    "plant": 2070,
+    "group": "CC_REGULAR",
+    "layer": "layup",
+    "gwh": {
+     "2023": 4.08,
+     "2024": 3.456,
+     "2025": 12.36
+    }
+   },
+   {
+    "plant": 3459,
+    "group": "ST_GAS",
+    "layer": "layup",
+    "gwh": {
+     "2025": 8.8632
+    }
+   },
+   {
+    "plant": 4040,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2025": 7.3776
+    }
+   },
+   {
+    "plant": 55173,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2025": 7.224
+    }
+   },
+   {
+    "plant": 55467,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 7.128
+    }
+   },
+   {
+    "plant": 55714,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 5.676
+    }
+   },
+   {
+    "plant": 6639,
+    "group": "ST_GAS",
+    "layer": "std5d",
+    "gwh": {
+     "2025": 5.352
+    }
+   },
+   {
+    "plant": 55087,
+    "group": "CC_REGULAR",
+    "layer": "layup",
+    "gwh": {
+     "2025": 5.088
+    }
+   },
+   {
+    "plant": 2070,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 2.544,
+     "2024": 2.52
+    }
+   },
+   {
+    "plant": 1912,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 4.992
+    }
+   },
+   {
+    "plant": 3459,
+    "group": "ST_GAS",
+    "layer": "std5d",
+    "gwh": {
+     "2024": 4.86
+    }
+   },
+   {
+    "plant": 10865,
+    "group": "COAL",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 0.732,
+     "2024": 1.464,
+     "2025": 2.412
+    }
+   },
+   {
+    "plant": 63259,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 0.408,
+     "2024": 2.208
+    }
+   },
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 2.52
+    }
+   },
+   {
+    "plant": 3992,
+    "group": "ST_GAS",
+    "layer": "layup",
+    "gwh": {
+     "2023": 2.1936
+    }
+   },
+   {
+    "plant": 1464,
+    "group": "ST_GAS",
+    "layer": "layup",
+    "gwh": {
+     "2024": 2.064
+    }
+   },
+   {
+    "plant": 4042,
+    "group": "ST_CHP",
+    "layer": "std5d",
+    "gwh": {
+     "2024": 1.6488
+    }
+   },
+   {
+    "plant": 6358,
+    "group": "CC_REGULAR",
+    "layer": "layup",
+    "gwh": {
+     "2023": 1.08,
+     "2025": 0.216
+    }
+   },
+   {
+    "plant": 1122,
+    "group": "ST_GAS",
+    "layer": "layup",
+    "gwh": {
+     "2023": 0.9648
+    }
+   },
+   {
+    "plant": 55221,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2025": 0.648
+    }
+   },
+   {
+    "plant": 1131,
+    "group": "ST_GAS",
+    "layer": "layup",
+    "gwh": {
+     "2025": 0.4656
+    }
+   },
+   {
+    "plant": 55096,
+    "group": "ST_CHP",
+    "layer": "std5d",
+    "gwh": {
+     "2024": 0.228,
+     "2025": 0.228
+    }
+   },
+   {
+    "plant": 6358,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 0.216,
+     "2024": 0.216
+    }
+   },
+   {
+    "plant": 1073,
+    "group": "ST_CHP",
+    "layer": "std5d",
+    "gwh": {
+     "2024": 0.2952
+    }
+   },
+   {
+    "plant": 50240,
+    "group": "ST_CHP",
+    "layer": "std5d",
+    "gwh": {
+     "2024": 0.2592
+    }
+   },
+   {
+    "plant": 992,
+    "group": "ST_GAS",
+    "layer": "std5d",
+    "gwh": {
+     "2023": 0.048
+    }
+   },
+   {
+    "plant": 55220,
+    "group": "CC_REGULAR",
+    "layer": "std5d",
+    "gwh": {
+     "2024": 0.0024
+    }
+   }
+  ]
+ },
+ "n4_where_it_lands": {
+  "2023": {
+   "total_gwh": 82.814,
+   "by_month_gwh": {
+    "1": 5.676,
+    "2": 9.264,
+    "3": 8.712,
+    "4": 11.45,
+    "5": 6.773,
+    "6": 18.648,
+    "9": 14.33,
+    "10": 3.281,
+    "11": 4.656,
+    "12": 0.024
+   },
+   "jun_sep_gwh": 32.978,
+   "jun_sep_share": 0.3982,
+   "top_load_decile_gwh": 7.389,
+   "top_load_decile_share": 0.0892,
+   "top_price_pct1_gwh": 1.1825,
+   "top_price_pct1_share": 0.0143,
+   "top_price_pct1_n_hours": 88
+  },
+  "2024": {
+   "total_gwh": 33.286,
+   "by_month_gwh": {
+    "1": 7.296,
+    "2": 8.928,
+    "3": 7.104,
+    "5": 2.748,
+    "6": 5.592,
+    "8": 0.732,
+    "9": 0.259,
+    "10": 0.216,
+    "11": 0.41
+   },
+   "jun_sep_gwh": 6.583,
+   "jun_sep_share": 0.1978,
+   "top_load_decile_gwh": 0.702,
+   "top_load_decile_share": 0.0211,
+   "top_price_pct1_gwh": 0.0,
+   "top_price_pct1_share": 0.0,
+   "top_price_pct1_n_hours": 88
+  },
+  "2025": {
+   "total_gwh": 76.421,
+   "by_month_gwh": {
+    "1": 3.552,
+    "2": 7.104,
+    "3": 4.968,
+    "4": 7.378,
+    "5": 7.224,
+    "6": 5.352,
+    "7": 13.766,
+    "8": 10.022,
+    "12": 17.054
+   },
+   "jun_sep_gwh": 29.141,
+   "jun_sep_share": 0.3813,
+   "top_load_decile_gwh": 13.441,
+   "top_load_decile_share": 0.1759,
+   "top_price_pct1_gwh": 1.036,
+   "top_price_pct1_share": 0.0136,
+   "top_price_pct1_n_hours": 88
+  }
+ },
+ "n5_maxgen": {
+  "overlap_census": {
+   "layer": "maxgen",
+   "n_unit_series": 544,
+   "n_overlapping_pairs": 0,
+   "pairs": []
+  },
+  "by_year": {
+   "2023": {
+    "bins_checked": 196,
+    "mismatches": [],
+    "overflow_gwh": 0.121
+   },
+   "2024": {
+    "bins_checked": 196,
+    "mismatches": [],
+    "overflow_gwh": 2.019
+   },
+   "2025": {
+    "bins_checked": 196,
+    "mismatches": [],
+    "overflow_gwh": 1.733
+   }
+  }
+ }
+}

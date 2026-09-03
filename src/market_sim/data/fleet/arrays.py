@@ -1103,6 +1103,7 @@ def _apply_outage_overlays(
             cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
             st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
+            per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
             fleet_status_scope=getattr(config, "unit_outage_fleet_status_scope", False),
             # miso-200 (rule 14 [R-ACCURATE]): route each unit's window by its
             # OWN CAMPD unitType at a facility carrying two or more model gas
@@ -1122,9 +1123,7 @@ def _apply_outage_overlays(
             # oversight; it carries a miso-only registry and reaches no NYISO
             # plant.
             per_unit_crosswalk=getattr(config, "campd_per_unit_attribution", False),
-            merit_order_guard=bool(
-                getattr(config, "campd_per_unit_attribution", False)
-            )
+            merit_order_guard=bool(getattr(config, "campd_per_unit_attribution", False))
             and bool(getattr(config, "campd_outage_merit_order_guard", False)),
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
@@ -1260,6 +1259,7 @@ def _apply_outage_overlays(
                 st_capacity_basis=getattr(
                     config, "unit_outage_st_capacity_basis", False
                 ),
+                per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
                 ),
@@ -1305,6 +1305,7 @@ def _apply_outage_overlays(
                 st_capacity_basis=getattr(
                     config, "unit_outage_st_capacity_basis", False
                 ),
+                per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
                 ),
@@ -1354,6 +1355,14 @@ def _apply_outage_overlays(
                 # The routing repair had to move both layers together because a unit
                 # routed to DIFFERENT BINS in the two is incoherent; a numerator
                 # BASIS is per-layer and carries no such coupling (miso-201 PREREG §2).
+                # unit_outage_per_unit_clip is DELIBERATELY NOT passed here either,
+                # and the reason is a MEASUREMENT rather than an argument: this
+                # layer's windows are already hour-granular
+                # ([window_start, window_end), read straight off the extract), so
+                # it cannot carry the boundary-DAY artifact the clip repairs, and
+                # phase-0 N-5 confirmed ZERO same-unit window overlaps in it over
+                # 544 unit-series. Passing the flag would be provably inert while
+                # widening the blast radius (miso-202 PREREG §3).
                 # Same routing repair, same flag: this layer shares
                 # _resolve_unit_group, so it carries the same mis-attribution
                 # and must move with the std layer (rule 19 [R-ONE-MECH]).
@@ -2492,6 +2501,7 @@ def _compose_min_gen_floors(
             cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
             st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
+            per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
         )
         logger.info(
             "mustrun_layup_window_mask ARMED (%s %s): %d plant-tranche lay-up "

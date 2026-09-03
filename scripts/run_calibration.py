@@ -572,6 +572,7 @@ def run_year(
     unit_outage_lp_capacity_basis: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
+    unit_outage_per_unit_clip: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
@@ -1433,6 +1434,13 @@ def run_year(
         # overrides above and scoped exactly like them.
         config = config.with_overrides(
             unit_outage_st_capacity_basis=unit_outage_st_capacity_basis
+        )
+    if unit_outage_per_unit_clip is not None:
+        # miso-202: the one-unit-cannot-be-more-than-100 %-out clip. THIS is the
+        # SOLVE path for the flag (run_calibration_full's _recorded_config only
+        # records it), so an override missing here would solve the control twice.
+        config = config.with_overrides(
+            unit_outage_per_unit_clip=unit_outage_per_unit_clip
         )
     if campd_per_unit_attribution is not None:
         # nyiso-176: ONE gate over BOTH CAMPD-derived solve inputs (the

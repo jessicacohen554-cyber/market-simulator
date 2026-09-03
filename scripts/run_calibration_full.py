@@ -3520,6 +3520,7 @@ def solve_and_persist(
     unit_outage_lp_capacity_basis: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
+    unit_outage_per_unit_clip: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
@@ -4842,6 +4843,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_st_capacity_basis=unit_outage_st_capacity_basis
             )
+        if unit_outage_per_unit_clip is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                unit_outage_per_unit_clip=unit_outage_per_unit_clip
+            )
         if unit_outage_mixed_gas_routing is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing
@@ -5285,6 +5290,7 @@ def solve_and_persist(
             unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis,
             unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing,
             unit_outage_st_capacity_basis=unit_outage_st_capacity_basis,
+            unit_outage_per_unit_clip=unit_outage_per_unit_clip,
             campd_per_unit_attribution=campd_per_unit_attribution,
             campd_outage_merit_order_guard=campd_outage_merit_order_guard,
             cc_winter_capability_basis=cc_winter_capability_basis,
@@ -6197,6 +6203,7 @@ def solve_and_persist(
         "unit_outage_lp_capacity_basis": unit_outage_lp_capacity_basis,
         "unit_outage_mixed_gas_routing": unit_outage_mixed_gas_routing,
         "unit_outage_st_capacity_basis": unit_outage_st_capacity_basis,
+        "unit_outage_per_unit_clip": unit_outage_per_unit_clip,
         "campd_per_unit_attribution": campd_per_unit_attribution,
         "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
         "cc_winter_capability_basis": cc_winter_capability_basis,
@@ -8409,6 +8416,7 @@ def run_replay_bundle(
     caiso_st_gas_committed_measured: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
+    unit_outage_per_unit_clip: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     enable_legacy_p2: bool = False,
@@ -8493,6 +8501,11 @@ def run_replay_bundle(
         # over a committed keeper's recipe, so the A/B solves BOTH legs from the
         # same recipe and the delta is provably the single flag.
         kwargs["unit_outage_st_capacity_basis"] = unit_outage_st_capacity_basis
+    if unit_outage_per_unit_clip is not None:
+        # miso-202: arm/disarm the per-unit removal clip over a committed
+        # keeper's recipe, so the A/B solves BOTH legs from the same recipe and
+        # the delta is provably the single flag.
+        kwargs["unit_outage_per_unit_clip"] = unit_outage_per_unit_clip
     if campd_per_unit_attribution is not None:
         # nyiso-176: arm/disarm the CAMPD per-unit attribution gate over a
         # committed keeper's recipe, so the re-baseline A/B is a single delta
@@ -11202,6 +11215,34 @@ def main() -> None:
         "results/calibration/PREREG-miso201-st-basis-alignment-2026-09-02.md.",
     )
     parser.add_argument(
+        "--unit-outage-per-unit-clip",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Enforce, in the shared unit-outage accumulator, the invariant that "
+        "ONE UNIT CANNOT BE MORE THAN 100 %% OUT OF SERVICE "
+        "(ScenarioConfig.unit_outage_per_unit_clip). A defect repair, not a "
+        "market feature. outages.unit_outage_event_window reconstructs a "
+        "day-granular extract row as [outage_start, outage_end + 1 day), so two "
+        "windows of the SAME unit that share a boundary date both cover that "
+        "day; the accumulator SUMS row shares rather than unioning them, and "
+        "subtracts the unit's capacity TWICE for 24 h. Measured at MISO "
+        "(miso-202 phase 0): every one of the 845 same-unit window overlaps is "
+        "EXACTLY 24.0 h (std5d 648, lay-up 197, short 0) — a single-bin "
+        "histogram, the fingerprint of the '+ 1 day' artifact and of nothing "
+        "else — and a per-unit clip restores 91.1 / 77.6 / 103.4 GWh of "
+        "capability in 2023 / 2024 / 2025 across CC_REGULAR, ST_GAS, COAL, "
+        "CC_CHP and ST_CHP bins. Each unit's removed MW is accumulated into its "
+        "own array and capped at that unit's own capacity before the units sum "
+        "into the bin: a ceiling on a sum, not a window-merging heuristic, so it "
+        "is the identity except in the physically impossible case and can only "
+        "ever remove LESS. Zero free parameters, byte-inert while off. Covers "
+        "the std >=5-day, short, partial and LAY-UP layers together (their "
+        "shares are contractually additive); the declared-event maxgen layer is "
+        "out of scope BY MEASUREMENT — its windows are already hour-granular and "
+        "carry zero same-unit overlaps over 544 unit-series. See "
+        "results/calibration/PREREG-miso202-boundary-day-double-count-2026-09-03.md.",
+    )
+    parser.add_argument(
         "--cc-winter-capability-basis",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12177,6 +12218,12 @@ def main() -> None:
                 or "--no-unit-outage-st-capacity-basis" in sys.argv
                 else None
             ),
+            unit_outage_per_unit_clip=(
+                args.unit_outage_per_unit_clip
+                if "--unit-outage-per-unit-clip" in sys.argv
+                or "--no-unit-outage-per-unit-clip" in sys.argv
+                else None
+            ),
             enable_legacy_p2=args.enable_legacy_p2,
         )
         return
@@ -12536,6 +12583,7 @@ def main() -> None:
         unit_outage_lp_capacity_basis=args.unit_outage_lp_capacity_basis,
         unit_outage_mixed_gas_routing=args.unit_outage_mixed_gas_routing,
         unit_outage_st_capacity_basis=args.unit_outage_st_capacity_basis,
+        unit_outage_per_unit_clip=args.unit_outage_per_unit_clip,
         campd_per_unit_attribution=args.campd_per_unit_attribution,
         campd_outage_merit_order_guard=args.campd_outage_merit_order_guard,
         cc_winter_capability_basis=args.cc_winter_capability_basis,
