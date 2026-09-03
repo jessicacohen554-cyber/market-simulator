@@ -31,6 +31,7 @@ from typing import Any
 
 import pandas as pd
 import pyarrow as pa
+import pyarrow.fs as pafs
 import pyarrow.parquet as pq
 import yaml
 
@@ -509,7 +510,25 @@ def validate_clean(path: str | Path) -> Schema:
             f"{datatype} schema is v{schema.schema_version}"
         )
 
-    df = pd.read_parquet(path)
+    # Read through Arrow's own LocalFileSystem with prefetch + reader threads
+    # OFF. A bare ``pd.read_parquet(path)`` has pandas open the file itself and
+    # hand Arrow a Python file object (pandas/io/parquet.py ``get_handle``
+    # branch), so Arrow's IO-pool prefetch threads read through the GIL and can
+    # still hold Python buffers when a short curation script reaches
+    # interpreter finalization — CPython then force-unwinds that worker,
+    # which aborts with ``terminate called without an active exception``
+    # (exit -6) AFTER every partition was written and validated. This is
+    # every curation script's LAST parquet read, so it is the trigger that
+    # fired non-deterministically on ancillary-services (caiso160 §5.1),
+    # ira-credit-parameters (ffr-3p) and confirmed-retirements (golden tier
+    # run #8, 2026-09-03; docs/FINDING-golden-tier-repair-2026-09.md §7).
+    # Upstream: apache/arrow #34314 / #36980 (unfixed; ``use_threads=False``
+    # is the documented mitigation). The frame is byte-identical, dtypes
+    # included (asserted 2026-09-03 on 27M-row emissions: +0.8 s), so the
+    # round-trip validation is unchanged — only the IO path is.
+    df = pd.read_parquet(
+        path, filesystem=pafs.LocalFileSystem(), use_threads=False, pre_buffer=False
+    )
     validate_df(df, datatype, schema=schema)
     return schema
 

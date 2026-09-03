@@ -9,6 +9,7 @@ that every shipped schema parses and that provenance metadata is embedded.
 import unittest
 from tempfile import TemporaryDirectory
 from pathlib import Path
+from unittest import mock
 
 import pandas as pd
 
@@ -261,6 +262,38 @@ class TestWriteRoundTrip(CleanIORedirectMixin):
         bad = _good_lmp().rename(columns={"lmp_usd_per_mwh": "LMP"})
         with self.assertRaises(SchemaError):
             write_clean(bad, "lmp", iso="CAISO", year=2024)
+
+    def test_validate_clean_reads_handle_free_without_arrow_threads(self):
+        """The round-trip read never hands Arrow a Python file object.
+
+        A bare ``pd.read_parquet(path)`` makes pandas open the file itself and
+        pass the handle to Arrow, whose IO-pool prefetch threads then read
+        through the GIL; at interpreter finalization of a short curation script
+        that worker is force-unwound and the process aborts with ``terminate
+        called without an active exception`` after every partition was written
+        (golden tier run #8, 2026-09-03; apache/arrow #34314 / #36980). Pin the
+        seam: the read goes through Arrow's LocalFileSystem with reader threads
+        and prefetch off — and the validated frame is identical to the plain
+        read, dtypes included.
+        """
+        import pyarrow.fs as pafs
+
+        path = write_clean(_good_lmp(), "lmp", iso="CAISO", year=2024, market="DAM")
+        seen: dict = {}
+        real_read = clean_io.pd.read_parquet
+
+        def spy(p, *args, **kwargs):
+            seen["kwargs"] = kwargs
+            return real_read(p, *args, **kwargs)
+
+        with mock.patch.object(clean_io.pd, "read_parquet", spy):
+            validate_clean(path)
+        self.assertIsInstance(seen["kwargs"].get("filesystem"), pafs.LocalFileSystem)
+        self.assertIs(seen["kwargs"].get("use_threads"), False)
+        self.assertIs(seen["kwargs"].get("pre_buffer"), False)
+        pd.testing.assert_frame_equal(
+            pd.read_parquet(path), real_read(path, **seen["kwargs"]), check_exact=True
+        )
 
     def test_validate_clean_detects_version_drift(self):
         path = write_clean(_good_lmp(), "lmp", iso="CAISO", year=2024, market="DAM")
