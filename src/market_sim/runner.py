@@ -108,6 +108,7 @@ from market_sim.model.capacity import (
     modelled_hydro_nameplate_mw,
     pipeline_lookahead_units,
     renewable_credits_applied,
+    resolve_adequacy_requirement_mw,
 )
 from market_sim.model.ancillary import (
     realized_storage_as_revenue_per_mw_yr,
@@ -4485,6 +4486,30 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             reserve_margin=round(firm_mw / peak_demand - 1.0, 6)
             if peak_demand > 0
             else None,
+            # capx D45 (2026-09-03) observability, ADDITIVE and output-only (no
+            # decision reads it back; not a cache-key term): the CR-1 reserve
+            # position the three capacity screens actually consumed this year
+            # (ENTERING fleet ÷ this year's requirement — ``None`` when the
+            # clearing gate is off for this ISO or in the base year) and the
+            # adequacy requirement the position, the reliability floor and the
+            # backstop share, so a per-year position table reads off the
+            # committed ledger instead of being reconstructed from the
+            # post-evolution ``reserve_margin`` identity (the D28/D37 route).
+            capacity_reserve_position=(
+                round(float(curve_reserve_position), 6)
+                if curve_reserve_position is not None
+                else None
+            ),
+            adequacy_requirement_mw=(
+                round(
+                    float(
+                        resolve_adequacy_requirement_mw(config, iso, peak_demand, year)
+                    ),
+                    3,
+                )
+                if peak_demand > 0
+                else None
+            ),
             # Accreditation trail (CR-3.1): pool nameplates, resolved VRE
             # credits, and the storage fleet's power / pre-dilution firm MW
             # (dilution applies at the evolve consumer, capacity.py -- see
