@@ -240,6 +240,35 @@ writer returns `None` on a frame predating `klass_base`, so replaying an older
 bundle skips the sidecar rather than failing). **No LP row, price, or dispatch
 value is touched.**
 
+**IT SHIPS IN THE KEEPER'S OWN BUNDLE**, produced by a full 3-year replay of the
+keeper recipe and verified against the committed artifacts before installation:
+
+| year | class-hour cells differing | **hourly zonal prices differing** | bands | rows | size | round-trip |
+|---|---|---|---|---|---|---|
+| 2023 | 0 / 122,640 | **0 / 52,560** | 12 | 376,680 | 253 KB | 4.9e-4 MWh |
+| 2024 | 0 / 122,640 | **0 / 52,560** | 12 | 376,680 | 257 KB | 4.9e-4 MWh |
+| 2025 | 0 / 122,640 | **0 / 52,560** | 12 | 376,680 | 255 KB | 4.9e-4 MWh |
+
+The replay is **bit-identical** to the committed keeper — the nyiso-177 G-CONTROL
+result reproduced — so the sidecar records the keeper's own dispatch and no
+calibration result changed. It is therefore **not registered on the dashboard**:
+it is an instrument, not a run (rule 15). The round-trip residual is float32
+rounding on ~10⁷ MWh sums, i.e. ~5 × 10⁻¹¹ relative.
+
+**The (c) defect, now quantified from the keeper's own bundle.** `class_hourly`
+under-reports `ST_GAS` by exactly the oil-switched energy:
+
+| year | `class_hourly` `ST_GAS` | true class dispatch | undercount |
+|---|---|---|---|
+| 2023 | 11.999 TWh | 12.020 TWh | 0.021 |
+| 2024 | 9.799 TWh | 9.833 TWh | 0.034 |
+| 2025 | 10.014 TWh | **10.169 TWh** | **0.154** |
+
+Every `ST_GAS` figure in nyiso-178 and nyiso-179 — and every C1 `ST_GAS` energy
+comparison in any NYISO scoring that reads `class_hourly` — carries this bias.
+It is small against the C1-2023 gate (+3.86 TWh) and does not move it, but it is
+**not** zero in 2025 and it is now correctable from the committed bundle.
+
 ### 8.1 TWO CONSTRUCTION DEFECTS IN THE SIDECAR, both found before it was reported
 
 Disclosed in the nyiso-179 §8 discipline. **In both cases the INSTRUMENT was
