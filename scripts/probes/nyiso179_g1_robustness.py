@@ -233,7 +233,13 @@ def r4_zero_itm_hours(states: dict) -> dict:
 
 def main() -> None:
     cfg = _cfg_obj()
-    states = {y: build_year(y, cfg) for y in YEARS}
+    # nyiso-182 pinned this call to the LEGACY (defective) offer: build_year's
+    # DEFAULT is now the REPAIRED offer (nyiso-181 §11 item 2 — the omitted RGGI
+    # allowance price and apply_gas_offer_margin), and this probe's committed
+    # record was produced on the legacy one. Re-running it must reproduce that
+    # record, not silently restate it on a different basis. A successor that
+    # WANTS the repaired basis should drop the flag deliberately and say so.
+    states = {y: build_year(y, cfg, legacy_defective_offer=True) for y in YEARS}
     rec = {
         "session": "nyiso-179",
         "kind": "POST-GATE ROBUSTNESS — reports only, no gate verdict changes",

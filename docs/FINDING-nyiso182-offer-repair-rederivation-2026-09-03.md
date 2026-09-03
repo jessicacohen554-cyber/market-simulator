@@ -75,6 +75,18 @@ that file, which is the condition under which nyiso-181 declined to make this ed
 swaps nyiso-179's hardcoded `0.0` NOx/SO₂ prices for the config's own (both **are** 0.0 on this
 keeper, so it is a no-op here and a correctness fix anywhere else).
 
+### 2.2 Every downstream caller is pinned too
+
+`build_year()` has four callers besides this session's probe, and three of them
+(`nyiso180_ramp_report.py`, `nyiso180_st_gas_undispatch.py`,
+`nyiso179_g1_robustness.py`) call it with the default. Flipping the default would
+have made **their** committed records silently irreproducible — the exact failure
+mode nyiso-181 named. All three are therefore pinned to
+`legacy_defective_offer=True` with a citation comment saying why and telling a
+successor how to opt into the repaired basis deliberately. (The fourth,
+`nyiso181_offer_reconstruction_repair.py`, builds its `mc` stages itself and is
+unaffected.) **No published probe changes its output.**
+
 ---
 
 ## 3. Instrument gates — ALL PASS, S1 did not fire

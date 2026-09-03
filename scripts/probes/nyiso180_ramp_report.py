@@ -56,7 +56,13 @@ def _withholding_persistence() -> dict:
 
     out = {}
     for year in YEARS:
-        st = build_year(year, _cfg_obj())
+        # nyiso-182 pinned this call to the LEGACY (defective) offer: build_year's
+        # DEFAULT is now the REPAIRED offer (nyiso-181 §11 item 2 — the omitted RGGI
+        # allowance price and apply_gas_offer_margin), and this probe's committed
+        # record was produced on the legacy one. Re-running it must reproduce that
+        # record, not silently restate it on a different basis. A successor that
+        # WANTS the repaired basis should drop the flag deliberately and say so.
+        st = build_year(year, _cfg_obj(), legacy_defective_offer=True)
         itm = (
             (st["mc"] <= st["p_model"]) * st["pmax"][:, None] * st["avail"]
         ).sum(axis=0)

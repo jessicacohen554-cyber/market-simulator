@@ -11164,6 +11164,11 @@ the nyiso-179 finding stay byte-reproducible. **Gate I3 confirms it:
 `max|d| = 0.0` MW and 0.0 on shares, all three years, every band, every G3/G4
 field.**
 
+Three downstream callers (`nyiso180_ramp_report`, `nyiso180_st_gas_undispatch`,
+`nyiso179_g1_robustness`) called `build_year` with the default and are **pinned
+to the legacy path** with a citation comment, so **no published probe changes its
+output**.
+
 **INSTRUMENT GATES — ALL PASS, S1 DID NOT FIRE.** **I1** replay identity: 0 of
 52,560 prices, 0 of 122,640 class-hour cells, all three years (bar inherited from
 nyiso-181). **I2** — the repaired reconstruction equals the LP's own installed
