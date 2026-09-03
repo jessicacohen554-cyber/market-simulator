@@ -418,3 +418,78 @@ Recorded now so it is not discovered later as a convenience.
 4. **Any A/B degradation in 2024 / 2025 is expected** (§4 G5) and will be
    reported at full magnitude with the disposition put to the owner, never
    withheld and never compensated by a second lever.
+
+---
+
+## §8 — AMENDMENT (committed and pushed BEFORE any gate below G0 was read)
+
+**G0 AS WRITTEN IN §2 FAILED, ON ALL THREE YEARS OF THE KEEPER LEG AND TWO OF
+THE UNGUARDED LEG. The failure is recorded, not edited.** Measured:
+
+| year | keeper leg | §2 expected | unguarded leg | §2 expected |
+|---|---|---|---|---|
+| 2023 | **0.7860** | 0.772 | **0.1412** | 0.129 |
+| 2024 | **0.4778** | 0.465 | **0.0967** | 0.097 |
+| 2025 | **0.3092** | 0.297 | **0.1212** | 0.111 |
+
+**The instrument is not what failed — the EXPECTATION was mis-attributed, and
+the mis-attribution is itself a finding this session now owns.** nyiso-177 §2.1
+/ §2.2 publish `(2500, ST_GAS)` = **0.772 / 0.465 / 0.297** and label that row
+**"L0 keeper (incumbent + override)"**. That was the **nyiso-159** keeper, which
+read the *incumbent* extract with `outages._FLEET_GROUP_OVERRIDE` armed. The
+session then promoted **B1′**, whose `campd_per_unit_attribution=True`
+**disarms that override** (`outages._generic_unit_outage_target`, l. 327:
+`if facility_id in _FLEET_GROUP_OVERRIDE and not per_unit_crosswalk`) and
+selects the `-perunitmerit-` extract — and §1–§9 were written before the
+ruling, so the figure was never restated. **`0.772 / 0.465 / 0.297` is the
+SUPERSEDED keeper's Ravenswood availability. The CURRENT keeper's is
+`0.786 / 0.478 / 0.309`.** §0's disclosure carried the stale number verbatim,
+and so do the matrix §5.5 lever queue and this session's own brief.
+
+**The instrument is validated instead on TWO INDEPENDENT PUBLISHED ANCHORS that
+§2 did not name — a strictly harder test than the one it replaces**, since both
+are exact and neither is the quantity under investigation:
+
+| leg | kwargs | extract | measured | nyiso-177 §2.3 published | Δ |
+|---|---|---|---|---|---|
+| **L0** incumbent + override | `per_unit=False, guard=False` | `campd-unit-outages-NYISO.csv` | **0.7715 / 0.4645 / 0.2968** | 0.772 / 0.465 / 0.297 | ≤ 0.0005 |
+| **L2** per-unit, override off | `per_unit=True, guard=False` | `campd-unit-outages-perunit-NYISO.csv` | **0.1412 / 0.0967 / 0.1212** | 0.141 / 0.097 / 0.121 | ≤ 0.0002 |
+
+L1 (per-unit extract with the override force-armed) and L3 are **not reachable
+through the engine's public API** — `per_unit_crosswalk` gates the extract
+selection and the override disarm through the same flag — so they cannot be
+anchors and are not used as such.
+
+**REPLACEMENT G0, fixed here:**
+
+* **G0a** — the L0 leg reproduces nyiso-177 §2.3's L0 row within **±0.005**.
+  **MEASURED: PASS**, all three years, max |Δ| 0.0005.
+* **G0b** — the L2 leg reproduces §2.3's L2 row within **±0.005**.
+  **MEASURED: PASS**, all three years, max |Δ| 0.0002.
+* **G0c** — the keeper leg has **NO published anchor at its own configuration**
+  and therefore is not gated against one. It is constructed from the keeper's
+  own pinned input (`campd-unit-outages-perunitmerit-NYISO.csv`, sha256
+  `45bc4f7c…`, verbatim from the keeper's `resolved_inputs`) through the
+  **engine's own** `unit_outage_derate_factors` at the **keeper's own** kwargs
+  (`per_unit_crosswalk=True, merit_order_guard=True`, verbatim from the keeper's
+  `run_config.json`). Its value **0.786 / 0.478 / 0.309** is reported as a
+  **CORRECTION to the inherited record**, not as a gate result.
+
+**WHAT THIS AMENDMENT DOES NOT DO, stated so the change cannot be read as
+convenience:**
+
+* **No downstream bar is touched.** `G1_BAR` (= `MERIT_OOM_FRAC` = 0.90),
+  `G1_MIN_YEARS` (2), `G2_BAR` (0.40), `G3_SEL_FLEET_BAR` (0.75), G3's R1
+  premise bar (0.50), G4's \$5/MWh bar and every §5 / §6 prohibition are
+  **unchanged and unread at the time of writing**.
+* **Nothing below G0 had been read.** The probe's `main()` returns on a G0
+  failure before printing any other gate; the machine record it wrote was
+  **deleted unread** and is regenerated after this amendment lands.
+* **No detector constant moved** (S1 holds), no new bar was invented to admit a
+  result, and the replacement anchors are **more** demanding than the one they
+  replace, not less.
+* **The correction cuts AGAINST this session's own hypothesis A**, and is
+  recorded for that reason too: the keeper's Ravenswood availability is
+  **higher** than the inherited number, so the object is **larger** than the
+  brief stated and the guard restores **0.645 / 0.381 / 0.188** of the
+  capacity-year, not the 0.643 / 0.368 / 0.186 the stale pair implies.
