@@ -115,7 +115,7 @@ class StorageAccreditationResolverTest(unittest.TestCase):
 
     def test_cache_key_stable_off_and_distinct_on(self) -> None:
         """Registered in _CACHE_KEY_OPTIONAL_FIELDS: unarmed keys must not move."""
-        self.assertEqual(ScenarioConfig().cache_key(), "cedadc285f8603b9")
+        self.assertEqual(ScenarioConfig().cache_key(), "4c6b03ae098b6e3e")
         self.assertNotEqual(self.off.cache_key(), self.on.cache_key())
 
 

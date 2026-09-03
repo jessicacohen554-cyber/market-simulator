@@ -45,7 +45,7 @@ from market_sim.runner import _lookahead_reprice_signal
 # The pinned default-config cache key (tests/regression/test_persisted_identity
 # .PINNED_DEFAULT_CACHE_KEY) — asserted here too so this mechanism's own suite
 # fails loudly if its field ever enters the default hash.
-_PINNED_DEFAULT_KEY = "cedadc285f8603b9"
+_PINNED_DEFAULT_KEY = "4c6b03ae098b6e3e"
 
 
 def _three_unit_fixture(T=4):

@@ -28,8 +28,10 @@ What these tests hold, in both directions:
   ``68a207068509f2b0`` — the pole was ``8d9ef77edb3e44cb`` until the Q15
   arming of 2026-08-30 moved it, see
   ``docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md`` — the global
-  pin ``cedadc285f8603b9`` unmoved), and a non-default explicit value still
-  wins as it always did. The fix is a strict NARROWING;
+  pin unmoved BY THE FIX: ``cedadc285f8603b9`` when this was written,
+  ``4c6b03ae098b6e3e`` since capx D44's 2026-09-03 flip of an unrelated
+  field), and a non-default explicit value still wins as it always did. The
+  fix is a strict NARROWING;
 * **cache-key invisibility** — the record is a NON-FIELD attribute, so it can
   never reach ``asdict()``/``cache_key()`` and rule 28's ledger duty does not
   arise;
@@ -78,8 +80,14 @@ STAGE_B = {
 # D12-A arming itself is untouched, and the "pole unmoved by the fix" property
 # this file pins holds exactly as before. Cause block:
 # tests/regression/test_persisted_identity.py.
-ERCOT_ARMED_KEY = "6bb61037c072502d"
-GLOBAL_PINNED_KEY = "cedadc285f8603b9"
+# ADVANCED AGAIN 2026-09-03, 6bb61037c072502d -> 1e1002d480fc180d, by another
+# NON-ERCOT cause: capx D44's declared default flip of
+# fossil_announced_exits_enabled (owner ruling Q30). It IS registered, but the
+# key drops it at its FROZEN "False" declaration (capx D24-R (b'-1)), so the
+# armed default enters every digest and this pole moves with the global pin —
+# the D12-A arming and the "pole unmoved by the fix" property are untouched.
+ERCOT_ARMED_KEY = "1e1002d480fc180d"
+GLOBAL_PINNED_KEY = "4c6b03ae098b6e3e"
 
 FIELD_DEFAULTS = {
     f.name: getattr(ScenarioConfig(), f.name)

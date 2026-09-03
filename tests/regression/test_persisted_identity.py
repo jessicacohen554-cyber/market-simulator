@@ -126,7 +126,43 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # sidecar, determination or dashboard row is a cache lookup, so none moves.
 # Full record: the cache-epoch ledger in `src/market_sim/results/cache.py`,
 # epoch 2026-09-02.
-PINNED_DEFAULT_CACHE_KEY = "cedadc285f8603b9"
+#
+# ADVANCED 2026-09-03, cedadc285f8603b9 -> 4c6b03ae098b6e3e — capx D44
+# executing OWNER RULING Q30 (director sitting r#31, 2026-09-02: "ARM AS
+# DEFAULT"). A genuine, DECLARED advance, not a re-baseline to silence red.
+#
+# CAUSE. `ScenarioConfig.fossil_announced_exits_enabled` flips default
+# False -> True: an owner's filed EIA-860 Schedule-3 fossil retirement date is
+# now honored as an exogenous, vintage-gated step-1 input, with the economic
+# screen running on the residual (undated) fleet. Evidence:
+# `docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md` (MISO T1-H
+# recall 5/19 -> 16/19, zero screen displacement, per-unit published deferral
+# counters); execution record `FINDING-capx-d44-fossil-dates-arm-2026-09-03.md`.
+#
+# WHY THE KEY MOVES, AND WHY THAT IS THE DESIGN. The field IS a
+# `_CACHE_KEY_OPTIONAL_FIELDS` member, so this looks at first glance like the
+# "do NOT re-pin" case — it is the opposite. Since capx D24-R option (b'-1),
+# `cache_key()` drops a registered field at its FROZEN declaration in
+# `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` ("False", left untouched), never at the
+# live default. A post-flip default config therefore no longer equals the drop
+# value, ENTERS the hash and takes its own key — which is precisely what (b'-1)
+# was landed to guarantee (D24 §4.1/§4.2: before it, the post-flip run silently
+# re-used the pre-flip bundle at an unmoved key). The flip is DECLARED in
+# `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` — its first entry — so the
+# registration guard's check 3 passes on the declaration, not on silence.
+#
+# WHAT THIS COSTS, EXACTLY. A one-time cache MISS per forecast config: every
+# pre-2026-09-03 `results/<ISO>/<key>/` forecast bundle at cedadc285f8603b9 (or
+# any key derived from the unarmed default) is unaddressed by a default config
+# and the next run re-solves. Nothing can be mis-served — the key moved. The
+# useful inverse is intact and MEASURED this session: an explicit
+# `fossil_announced_exits_enabled=False` still equals the frozen declaration,
+# is still dropped, and still hashes cedadc285f8603b9, so a control arm pinned
+# to the superseded posture keeps its pre-flip key and its bundle.
+# Forecast bundles solved at the pre-flip default now record a SUPERSEDED
+# posture; per ruling Q30 that staleness joins the director's batched
+# post-repair re-measure decision (no re-solve was run or owed by D44).
+PINNED_DEFAULT_CACHE_KEY = "4c6b03ae098b6e3e"
 
 # The BACKCAST default key, pinned by FFR-3D (2026-08-03) because the forecast
 # pin above CANNOT see a whole class of re-key: `__post_init__` coerces several
@@ -194,7 +230,26 @@ PINNED_DEFAULT_CACHE_KEY = "cedadc285f8603b9"
 # fleet. Cost is a one-time cache MISS per backcast config; dispatch, scores
 # and `run_config.json` values other than these two are unmoved, no keeper or
 # determination is affected, and nothing needs re-scoring.
-PINNED_BACKCAST_CACHE_KEY = "e006dfd7cef8bedd"
+#
+# ADVANCED 2026-09-03, e006dfd7cef8bedd -> 8211c72bb1960adc — the SAME capx D44
+# / owner-ruling-Q30 default flip recorded in the forward pin's cause block
+# above. `fossil_announced_exits_enabled` is NOT coerced in `__post_init__`
+# (nothing coerces it, before or after the flip), so the armed default enters
+# the backcast payload exactly as it enters the forward one and this pin moves
+# with it. It is therefore NOT a `_DECLARED_BACKCAST_COERCION_REKEYS` case: no
+# coercion is knowingly off its default here.
+#
+# BEHAVIOUR IN BACKCAST IS BYTE-IDENTICAL. The channel is consumed only in
+# forecast-mode capacity evolution — `data.announced_retirements.
+# load_announced_fossil_exits` is reached from `evolve_fleet` / `build_base_
+# fleet` under `mode == "forecast"`, and the production backcast lane
+# (`run_calibration_full.py` -> `pipeline.solve`, one config per year) never
+# evolves a fleet at all. Cost is a one-time cache MISS per backcast config;
+# dispatch, scores and every other `run_config.json` value are unmoved, so no
+# keeper, sidecar, determination or dashboard row is affected and nothing needs
+# re-scoring (committed artifacts are files, not cache lookups). An explicit
+# `fossil_announced_exits_enabled=False` still hashes e006dfd7cef8bedd.
+PINNED_BACKCAST_CACHE_KEY = "8211c72bb1960adc"
 
 # Registered cache-key-optional fields whose backcast coercion is KNOWINGLY off
 # their default, each having paid for its re-key in the block above. Only these

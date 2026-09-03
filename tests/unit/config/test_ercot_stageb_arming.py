@@ -68,6 +68,22 @@ Stage-B armed ``8d9ef77edb3e44cb`` -> ``71f20d708a810f0a``, pre-Stage-B
 -> ``cedadc285f8603b9``. Cause block and full blast radius: the pins in
 ``tests/regression/test_persisted_identity.py`` and the cache-epoch ledger in
 ``src/market_sim/results/cache.py`` (epoch 2026-09-02).
+
+ALL THREE POLE LITERALS ADVANCED AGAIN 2026-09-03, BY ANOTHER NON-ERCOT CAUSE,
+and again the narrative literals above are left as the dated measurements they
+are. Capx D44 flipped ``fossil_announced_exits_enabled`` default-on (owner
+ruling Q30). That field IS a ``_CACHE_KEY_OPTIONAL_FIELDS`` member, but under
+capx D24-R option (b'-1) the key drops it at its FROZEN declaration (``False``,
+unedited), so the armed default ENTERS every config's digest and every pole
+moves together — by design, and by the same delta, so every relation this file
+pins (armed vs pre-arm distinct, the global pin unmoved BY THE STAGE-B/D12-A
+ARMINGS, no ERCOT backcast key shifted) again holds exactly as before.
+Advances: D12-A armed ``6bb61037c072502d`` -> ``1e1002d480fc180d``, Stage-B
+armed ``71f20d708a810f0a`` -> ``ef70a350ac15fd0f``, pre-Stage-B
+``ddeb8a9aaffe1f6b`` -> ``11a94474a0c824e3``, global pin ``cedadc285f8603b9``
+-> ``4c6b03ae098b6e3e``. Cause block: the pins in
+``tests/regression/test_persisted_identity.py``; cache-epoch ledger entry
+2026-09-03 in ``src/market_sim/results/cache.py``.
 """
 
 from __future__ import annotations
@@ -200,9 +216,9 @@ class TestD30Arming:
         pre_arm = dataclasses.replace(
             resolved, **{f: getattr(defaults, f) for f in STAGE_B}
         )
-        assert resolved.cache_key() == "71f20d708a810f0a"
-        assert pre_arm.cache_key() == "ddeb8a9aaffe1f6b"
-        assert ScenarioConfig().cache_key() == "cedadc285f8603b9"
+        assert resolved.cache_key() == "ef70a350ac15fd0f"
+        assert pre_arm.cache_key() == "11a94474a0c824e3"
+        assert ScenarioConfig().cache_key() == "4c6b03ae098b6e3e"
 
     def test_arming_does_not_disturb_the_scarcity_overlay_entry(self):
         """The pre-existing ERCOT override survives alongside the five."""
@@ -274,9 +290,9 @@ class TestD12AArming:
         pre_arm = dataclasses.replace(
             resolved, **{f: getattr(defaults, f) for f in D12A_PAIR}
         )
-        assert resolved.cache_key() == "6bb61037c072502d"
-        assert pre_arm.cache_key() == "71f20d708a810f0a"
-        assert ScenarioConfig().cache_key() == "cedadc285f8603b9"
+        assert resolved.cache_key() == "1e1002d480fc180d"
+        assert pre_arm.cache_key() == "ef70a350ac15fd0f"
+        assert ScenarioConfig().cache_key() == "4c6b03ae098b6e3e"
 
     def test_the_pair_control_arm_is_expressible(self):
         """An explicit both-off caller wins over the override (OVERRIDE-FIX

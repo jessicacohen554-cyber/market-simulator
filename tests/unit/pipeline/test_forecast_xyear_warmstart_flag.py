@@ -40,9 +40,13 @@ from tests.unit.pipeline.test_pipeline_solve import _Cfg, _trivial_inputs
 # default-off field must not move it. (2026-07-27: advanced edbc1b103207170a ->
 # 603c2498bf71d21d by the owner-authorized path-portability cache-epoch bump;
 # 2026-09-02: advanced again 603c2498bf71d21d -> cedadc285f8603b9 by the
-# owner-authorized capx D41 CCS-retrofit fixed-cost re-identification —
-# rationale and provenance live on the pin in test_persisted_identity.py.)
-_PINNED_DEFAULT_CACHE_KEY = "cedadc285f8603b9"
+# owner-authorized capx D41 CCS-retrofit fixed-cost re-identification;
+# 2026-09-03: advanced again cedadc285f8603b9 -> 4c6b03ae098b6e3e by capx D44,
+# the owner-ruling-Q30 fossil_announced_exits_enabled DEFAULT FLIP — a declared
+# flip of a REGISTERED field, which under capx D24-R (b'-1) is supposed to move
+# the key (the frozen drop value stays False, so the armed default enters the
+# hash) — rationale and provenance live on the pin in test_persisted_identity.py.)
+_PINNED_DEFAULT_CACHE_KEY = "4c6b03ae098b6e3e"
 
 
 class TestFieldRegistration:

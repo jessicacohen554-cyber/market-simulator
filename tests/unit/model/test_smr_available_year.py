@@ -22,7 +22,7 @@ from market_sim.config.scenarios import (
 from market_sim.model.capacity_evolution import _new_entry_candidates
 
 # The pinned default-config cache key (the cache-key flip guard's anchor).
-_PINNED_DEFAULT_KEY = "cedadc285f8603b9"
+_PINNED_DEFAULT_KEY = "4c6b03ae098b6e3e"
 
 
 class TestSmrAvailableYearRegistration(unittest.TestCase):

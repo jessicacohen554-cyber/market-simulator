@@ -33,6 +33,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from market_sim.config.scenarios import (  # noqa: E402
+    _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS,
     _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS,
     _CACHE_KEY_OPTIONAL_FIELDS,
     ScenarioConfig,
@@ -75,9 +76,19 @@ class DeclaredLedgerCoversTheRegistryTest(unittest.TestCase):
         # The ledger stores SOURCE TEXT; for the plain-literal entries (the vast
         # majority) that text must evaluate to the live default value, so the
         # declaration cannot drift into being merely well-formed.
+        #
+        # A field with a DECLARED FLIP is the one exception, and by design: the
+        # frozen entry stays at the pre-flip value (that is what the cache key
+        # drops at, capx D24-R (b′-1)) while the live default moves, and the
+        # flips ledger carries the new one. Compare against the newest declared
+        # flip where there is one — the guard's own check 3 resolves it exactly
+        # this way, so a silent drift is still caught for every field.
+        current = dict(_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS)
+        for _date, name, new_src in _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS:
+            current[name] = new_src
         live = ScenarioConfig()
         checked = 0
-        for name, src in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS.items():
+        for name, src in current.items():
             try:
                 want = eval(src, {"__builtins__": {}}, {})  # noqa: S307 — literals
             except Exception:  # noqa: BLE001 — field(default_factory=...) etc.
@@ -85,6 +96,19 @@ class DeclaredLedgerCoversTheRegistryTest(unittest.TestCase):
             self.assertEqual(getattr(live, name), want, msg=name)
             checked += 1
         self.assertGreater(checked, 100, "expected most entries to be plain literals")
+
+    def test_a_declared_flip_leaves_its_frozen_entry_alone(self):
+        # The other half of the same invariant: the flip is declared by an
+        # APPEND, never by editing the frozen entry. A flipped field's frozen
+        # declaration must therefore still differ from its live default — if
+        # someone "syncs" the entry, the cache key silently re-bases and the
+        # post-flip config collides with its pre-flip bundle again.
+        live = ScenarioConfig()
+        for _date, name, _new_src in _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS:
+            frozen = eval(  # noqa: S307 — ledger literals
+                _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS[name], {"__builtins__": {}}, {}
+            )
+            self.assertNotEqual(getattr(live, name), frozen, msg=name)
 
 
 class TheHazardItselfTest(unittest.TestCase):

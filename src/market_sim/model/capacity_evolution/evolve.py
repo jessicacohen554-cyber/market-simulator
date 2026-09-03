@@ -113,10 +113,13 @@ def evolve_fleet(
 
     0. confirmed exits (exogenous, any fuel, instrument-bound; gated on
        ``config.confirmed_exits_enabled``, default on),
-    1. announced retirements (non-fossil within the data horizon only; announced
-       fossil dates are a default no-op — the exogenous fossil channel is step 0 —
-       unless ``config.fossil_announced_exits_enabled`` (capx D42, default off)
-       carries ``announced_fossil_exits`` through step 0's derate machinery),
+    1. announced retirements (non-fossil within the data horizon only) PLUS,
+       under ``config.fossil_announced_exits_enabled`` (capx D42; DEFAULT ON
+       since 2026-09-03, owner ruling Q30), limb 1b: the owner-filed fossil
+       EIA-860 dates, carried through step 0's derate machinery. The
+       ``apply_announced_retirements`` route itself remains a fossil no-op —
+       the dated fossil rows arrive on limb 1b, and the economic screen (step
+       3) then runs on the residual UNDATED fossil fleet,
     2. CCS retrofits (convert existing gas CC units to ``gas_cc_ccs``),
     3. economic retirements,
     4. known additions (planned units with ``online_year == year``), plus the
@@ -442,9 +445,10 @@ def evolve_fleet(
             if uid in _post_confirmed and _post_confirmed[uid].pmax_mw != g.pmax_mw
         )
 
-    # 1. Announced (EIA-860 date) retirements. Fossil units are a default no-op
-    #    (their phaseout is economic, step 2; the exogenous fossil channel is
-    #    step 0). Non-fossil announced dates are honored within the EIA-860 data
+    # 1. Announced (EIA-860 date) retirements. Fossil units are a no-op ON THIS
+    #    ROUTE — since owner ruling Q30 (2026-09-03) their filed dates arrive on
+    #    limb 1b below, and the economic screen (step 3) decides the residual
+    #    undated fleet. Non-fossil announced dates are honored within the EIA-860 data
     #    horizon; beyond it, only when the unit is in the confirmed registry (the
     #    horizon gate activates with the confirmed channel — off = honor all
     #    non-fossil dates, as before). config.forecast_fossil_retirement_economic
@@ -464,8 +468,9 @@ def evolve_fleet(
         reversed_plant_codes=announced_reversal_plants,
     )
     # 1b. capx D42: the FOSSIL owner-filed dates (GATED
-    #     fossil_announced_exits_enabled, default off ⇒ this whole block is a
-    #     no-op and the shipped path is byte-identical). A LIMB of the same
+    #     fossil_announced_exits_enabled — DEFAULT ON since 2026-09-03, owner
+    #     ruling Q30 / capx D44; an explicit False restores the pre-Q30 posture
+    #     byte-identically, this whole block being a no-op then). A LIMB of the same
     #     step-1 announced channel, never a new step (rule 19): the rows ride
     #     step 0's matcher/derate machinery so a plant-binned fleet derates the
     #     plant's tranches and a unit-grain fleet drops the unit, with the

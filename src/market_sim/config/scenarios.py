@@ -124,13 +124,21 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
 # and the value each of those registrations was MEASURED against. Each such
 # literal is a dated historical measurement and is left as written; the claim it
 # carries ("this registration keeps the pinned default byte-stable") is
-# unaffected by a later advance from an unrelated cause. THE LIVE PIN IS
-# ``cedadc285f8603b9`` (backcast ``e006dfd7cef8bedd``), advanced 2026-09-02 by
-# the owner-authorized capx D41 re-identification of ``fixed_om_gas_cc_ccs``
-# (25.0 -> 65.0) and ``ccs_retrofit_capex_kw`` (900.0 -> 1521.4) onto the ATB
-# 2024 2026$ basis. Neither field is registered here — both are hashed at every
-# value, so registration was never an available remedy and the advance is the
-# sanctioned route. Authoritative value + full cause block:
+# unaffected by a later advance from an unrelated cause. Many also name
+# ``cedadc285f8603b9`` (backcast ``e006dfd7cef8bedd``), the value the pin held
+# from 2026-09-02 (the owner-authorized capx D41 re-identification of
+# ``fixed_om_gas_cc_ccs`` 25.0 -> 65.0 and ``ccs_retrofit_capex_kw``
+# 900.0 -> 1521.4 onto the ATB 2024 2026$ basis) until 2026-09-03; same
+# reading, same treatment.
+#
+# THE LIVE PIN IS ``4c6b03ae098b6e3e`` (backcast ``8211c72bb1960adc``),
+# advanced 2026-09-03 by capx D44 executing owner ruling Q30 — the
+# ``fossil_announced_exits_enabled`` default flip. That field IS registered
+# here, and the advance is the DESIGNED behaviour of capx D24-R option (b'-1),
+# not a registration failure: the key drops at the FROZEN declaration, so the
+# armed default enters the hash and cannot be served a pre-flip bundle, while
+# an explicit ``False`` still drops and still holds ``cedadc285f8603b9`` /
+# ``e006dfd7cef8bedd``. Authoritative values + full cause blocks:
 # ``tests/regression/test_persisted_identity.py``.
 _CACHE_KEY_OPTIONAL_FIELDS = (
     "start_year",
@@ -1294,7 +1302,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # and exempts their plants from the screen (a different fleet) and hashes
     # distinctly, keeping the D42 control/arm A/B off one cache entry. SHARED
     # field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
-    # field (the nyiso-119 discipline).
+    # field (the nyiso-119 discipline). DEFAULT FLIPPED False -> True on
+    # 2026-09-03 (capx D44, owner ruling Q30), declared in
+    # ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS``: the registration STANDS and
+    # the frozen drop value stays ``False``, so the sentences above still read
+    # true of an EXPLICIT ``False`` (a pre-Q30 control arm keeps its key) while
+    # the armed default now enters the hash and advances both pins — which is
+    # the point of (b'-1), not a defect in the registration.
     "fossil_announced_exits_enabled",
 )
 
@@ -1805,6 +1819,30 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # this line or the field's frozen entry above. Empty at the 2026-09-01
     # re-baseline — every registered field's live default IS its declaration,
     # which is precisely what makes the re-baseline free.
+    #
+    # capx D44, executing OWNER RULING Q30 (director sitting r#31, 2026-09-02):
+    # the fossil announced-date step-1 channel ARMS AS THE DEFAULT POSTURE, on
+    # the D42 A/B (``docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.
+    # md``). The FIRST entry in this ledger, and exactly the flip class option
+    # (b'-1) was landed for.
+    #
+    # BEHAVIORAL, and NOT a same-key collision. The frozen declaration above
+    # stays ``"False"``, so a post-flip default config no longer equals the drop
+    # value: it ENTERS the hash and takes its own key. Measured this session —
+    # forecast default ``cedadc285f8603b9`` -> ``4c6b03ae098b6e3e``, bare
+    # backcast ``e006dfd7cef8bedd`` -> ``8211c72bb1960adc``; both pins advanced
+    # with dated cause blocks in ``tests/regression/test_persisted_identity.py``
+    # and the cache-epoch ledger entry 2026-09-03 in
+    # ``src/market_sim/results/cache.py``. The cost is a one-time cache MISS per
+    # config, never a wrong answer — nothing can be mis-served at a key that
+    # moved. BACKCAST BEHAVIOUR IS BYTE-IDENTICAL: the channel is consumed only
+    # in ``mode="forecast"`` capacity evolution, so no keeper, sidecar,
+    # determination or dashboard row moves and nothing needs re-scoring
+    # (committed artifacts are files, not cache lookups). Forecast bundles
+    # solved at the pre-flip default carry the SUPERSEDED posture and join the
+    # director's batched post-repair re-measure decision; this lane re-ran
+    # nothing.
+    ("2026-09-03", "fossil_announced_exits_enabled", "True"),
 )
 
 # The default each field carried WHEN IT WAS REGISTERED, for the seven fields
@@ -3041,20 +3079,49 @@ class ScenarioConfig:
     retirement_consecutive_years: int = 2  # fallback if no per-fuel override
     forecast_fossil_retirement_economic: bool = True  # In a forecast, fossil
     # (coal/gas/oil) units are NOT retired on their announced EIA-860 planned-
-    # retirement date — their phaseout is governed entirely by the economic-
-    # retirement screen (capacity.apply_economic_retirements), so the forecast
-    # responds to conditions (a fossil unit may close early on losses or run past
-    # its announced date if it stays in-merit) rather than to a hardcoded
-    # announcement. Non-fossil units (nuclear/hydro/wind/solar/storage) still
+    # retirement date by THIS field's own route — their phaseout is governed by
+    # the economic-retirement screen (capacity.apply_economic_retirements), so
+    # the forecast responds to conditions (a fossil unit may close early on
+    # losses or run past its announced date if it stays in-merit) rather than to
+    # a hardcoded announcement. AMENDED BY OWNER RULING Q30 (2026-09-02, capx
+    # D44): this is no longer the whole fossil exit posture. The dated fossil
+    # rows now enter through ``fossil_announced_exits_enabled`` (default-ON
+    # below), vintage-gated and reversal-checked, and the economic screen runs
+    # on the RESIDUAL (undated) fleet — the two are reconciled per rule 19
+    # [R-ONE-MECH] so no unit's exit is decided twice. This field still governs
+    # what happens to a fossil unit the date channel does NOT reach.
+    # Non-fossil units (nuclear/hydro/wind/solar/storage) still
     # retire on their announced EIA-860 date (policy/contract/end-of-life exits
     # with no economic-screen analogue). Set False for the legacy behaviour
     # (every scheduled retirement honored regardless of fuel).
-    fossil_announced_exits_enabled: bool = False  # GATED, default-OFF (capx D42,
-    # 2026-09-02 — the D32 R1 posture A/B; NOTHING ARMS HERE: the owner arms
-    # or declines on the D42 finding). When True (forecast mode), a FOSSIL
+    fossil_announced_exits_enabled: bool = True  # GATED, default-ON (FLIPPED
+    # False -> True 2026-09-03 by capx D44, executing OWNER RULING Q30 of the
+    # director sitting r#31, 2026-09-02: "ARM AS DEFAULT". Built and measured
+    # default-OFF by capx D42 (the D32 R1 posture A/B,
+    # ``docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md``), which
+    # armed nothing and put the posture to the owner: MISO T1-H
+    # ``retire.unit_recall_gt300`` 5/19 -> 16/19 (PASS), every non-coal exit
+    # class the reliability floor held at exactly 0.0 GW opens, ``false_retire``
+    # stays 0.0, the economic screen decides NOTHING it decided before (zero
+    # economic exits in every year, so the arm DISPLACES no screen decision),
+    # and the deferral class is countered per unit by published re-filings.
+    # Admissibility was ruled on rule 13 [R-MEASURED] by the additions-pipeline
+    # symmetry — the shipped default's "an announcement is not a certainty"
+    # rationale is a statement about PRECISION, never about admissibility.
+    # Rule 25 [R-ISO-SCOPE]: the flip is a POSTURE, not a fitted parameter — it
+    # carries no ISO's numbers, so it arms in all six; MISO alone carries a
+    # measured verdict and the other five measure their own cohorts (mechanism
+    # matrix). The flip is DECLARED in
+    # ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` (capx D24-R option (b'-1)):
+    # the frozen drop value stays "False", so a post-flip default config ENTERS
+    # the hash and takes its own key instead of silently re-using a pre-flip
+    # bundle, and an EXPLICIT ``False`` control arm still drops and keeps the
+    # pre-flip key. Both pins advance (``tests/regression/
+    # test_persisted_identity.py``; cache-epoch ledger 2026-09-03 in
+    # ``src/market_sim/results/cache.py``). When True (forecast mode), a FOSSIL
     # unit's owner-filed EIA-860 Schedule-3 planned retirement date is honored
     # as an EXOGENOUS step-1 input alongside the non-fossil dates — the posture
-    # the shipped ``forecast_fossil_retirement_economic=True`` default no-ops.
+    # the pre-Q30 ``forecast_fossil_retirement_economic=True`` default no-opped.
     # Identification (rule 13 [R-MEASURED] forward test): the rows are read
     # from the run's ACTIVE EIA-860 vintage (``data.announced_retirements.
     # load_announced_fossil_exits``), so a date is admissible in year Y only if
@@ -3084,8 +3151,16 @@ class ScenarioConfig:
     # parameters, no fitted filter: an undated deferral is a false positive at
     # full magnitude. Consulted only under the default
     # ``forecast_fossil_retirement_economic=True`` (the legacy False posture
-    # already honors every fossil date ungated). Cache-neutral off
-    # (``_CACHE_KEY_OPTIONAL_FIELDS``); an armed run hashes distinctly.
+    # already honors every fossil date ungated). Registered in
+    # ``_CACHE_KEY_OPTIONAL_FIELDS``, dropped at the FROZEN declared ``False``:
+    # an explicit ``False`` (the pre-Q30 posture, and the way a control arm is
+    # written now) is cache-neutral and keeps its pre-flip key; the armed
+    # default hashes distinctly. What the flip does NOT close, stated at the
+    # gate: the UNDATED cohort (real exits with no vintage date, which no date
+    # channel can reach ex ante), the December-dated majority-of-year roll, and
+    # genuine deferrals — D42 §0/§7.3. Its adequacy response (exogenous exits
+    # push MISO's reserve margin negative in 2023/2024 before the backstop
+    # fires) is the additions lane's object, not a reason to hold the exits.
     confirmed_exits_enabled: bool = True  # GATED, default-ON (flipped 2026-07-05,
     # owner sign-off — docs/handoffs/confirmed-retirement-plan-2026-07.md §7). When
     # True and mode == "forecast", the confirmed-retirement channel force-retires (or

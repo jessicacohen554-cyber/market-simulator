@@ -56,6 +56,55 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-03 — capx D44 / owner ruling Q30: the fossil announced-date
+channel ARMS AS THE DEFAULT POSTURE. A KEY ADVANCE, NOT A SAME-KEY
+INVALIDATION** — and, unlike every earlier entry here, that is true BY
+CONSTRUCTION rather than by luck. Recorded anyway because it re-keys every
+config in the program and a reader asking "why did my bundle stop resolving on
+2026-09-03" will look here first. ``ScenarioConfig.
+fossil_announced_exits_enabled`` flips default ``False`` -> ``True``: an
+owner's filed EIA-860 Schedule-3 fossil retirement date becomes an exogenous,
+vintage-gated step-1 input (reversal registry armed), and the economic
+retirement screen runs on the residual UNDATED fleet. Owner ruling Q30 of the
+director sitting r#31 (2026-09-02) on the measurement
+``docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md``; execution
+record ``docs/handoffs/FINDING-capx-d44-fossil-dates-arm-2026-09-03.md``.
+
+**BOTH KEYS MOVE:** default ``cedadc285f8603b9`` -> ``4c6b03ae098b6e3e``, bare
+backcast ``e006dfd7cef8bedd`` -> ``8211c72bb1960adc``. The field IS a
+``_CACHE_KEY_OPTIONAL_FIELDS`` member — which under the OLD live-default drop
+rule would have been the silent-collision case this ledger's 2026-08-31 entry
+records in its pure form. It is not, because capx D24-R option (b'-1) (owner
+ruling Q20) now drops a registered field at its FROZEN declaration in
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS``, which the flip leaves at ``False``.
+The armed default therefore enters the hash and takes its own key. The flip is
+declared — the FIRST entry in
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` — so the registration guard's
+check 3 passes on the declaration, not on silence. **This is (b'-1) doing the
+exact job it was landed for.**
+
+**INVALIDATED — re-solve before quoting:** every ``results/<ISO>/<key>/``
+forecast bundle at a pre-2026-09-03 key. A one-time cache MISS, never a wrong
+answer: the key moved, so nothing can be mis-served. **NOT invalidated:** any
+arm that passed ``fossil_announced_exits_enabled=False`` EXPLICITLY — that
+still equals the frozen declaration, is still dropped, and still addresses its
+pre-flip bundle (measured this session: explicit-False hashes
+``cedadc285f8603b9`` / ``e006dfd7cef8bedd``). The D42 A/B legs are in that
+class or carry the armed value explicitly, so the A/B's own record stands
+without re-solve. Committed dashboard artifacts — sidecars, bundles, keeper
+shards, determinations — are files, not cache lookups, and none moves.
+
+**BEHAVIOUR moves in FORECAST mode ONLY, and that is the arming.** The channel
+is loaded under ``config.mode == "forecast"`` in ``runner.run_scenario_iso``,
+so ``announced_fossil_exits`` is empty in every backcast and both consumption
+sites (``capacity_evolution/evolve.py`` limb 1b and
+``data/fleet/assembly.py``'s first-year backlog) are no-ops there: **BACKCAST
+IS BYTE-IDENTICAL** — dispatch, scores and every other ``run_config.json``
+value are unmoved, no keeper or determination is affected and nothing needs
+re-scoring. Forecast/hindcast bundles solved at the pre-flip default record the
+SUPERSEDED posture; per Q30 that staleness joins the director's batched
+post-repair re-measure decision (D44 re-solved nothing).
+
 **Epoch 2026-09-02 — capx D41 CCS-retrofit fixed-cost re-identification (both
 lanes, every ISO). THIS ONE IS A KEY ADVANCE, NOT A SAME-KEY INVALIDATION** —
 recorded here anyway because it re-keys *every* config in the program and a
