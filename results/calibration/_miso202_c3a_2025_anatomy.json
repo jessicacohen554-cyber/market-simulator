@@ -1,0 +1,868 @@
+{
+ "charter": "miso-167 standing re-charter: C3a-2025 is MISO's sole load-bearing rubric failure. This probe locates it; it proposes no mechanism.",
+ "keeper": "2026-09-02-miso-201-stbasis",
+ "inputs": "committed artifacts only \u2014 no solve",
+ "a0_instrument": {
+  "2023": {
+   "model_lw": 32.8916,
+   "actual_rt_lw": 32.85,
+   "reconstructed_err_pct": 0.1267,
+   "verdict_err_pct": 0.1218,
+   "abs_diff_pp": 0.0049,
+   "reproduces": true
+  },
+  "2024": {
+   "model_lw": 30.8153,
+   "actual_rt_lw": 32.3,
+   "reconstructed_err_pct": -4.5967,
+   "verdict_err_pct": -4.582,
+   "abs_diff_pp": 0.0147,
+   "reproduces": true
+  },
+  "2025": {
+   "model_lw": 39.8298,
+   "actual_rt_lw": 45.46,
+   "reconstructed_err_pct": -12.3849,
+   "verdict_err_pct": -12.3845,
+   "abs_diff_pp": 0.0004,
+   "reproduces": true
+  }
+ },
+ "a1_monthly_attribution": {
+  "2023": {
+   "months": [
+    {
+     "month": "Jan",
+     "model_lw": 37.88,
+     "actual_lw": 38.05,
+     "gap": -0.17,
+     "load_share": 0.0848,
+     "contribution_usd_per_mwh": -0.0145
+    },
+    {
+     "month": "Feb",
+     "model_lw": 31.98,
+     "actual_lw": 26.81,
+     "gap": 5.17,
+     "load_share": 0.0756,
+     "contribution_usd_per_mwh": 0.3911
+    },
+    {
+     "month": "Mar",
+     "model_lw": 31.2,
+     "actual_lw": 29.73,
+     "gap": 1.47,
+     "load_share": 0.0806,
+     "contribution_usd_per_mwh": 0.1188
+    },
+    {
+     "month": "Apr",
+     "model_lw": 29.99,
+     "actual_lw": 30.84,
+     "gap": -0.85,
+     "load_share": 0.0724,
+     "contribution_usd_per_mwh": -0.0614
+    },
+    {
+     "month": "May",
+     "model_lw": 30.86,
+     "actual_lw": 33.95,
+     "gap": -3.09,
+     "load_share": 0.0796,
+     "contribution_usd_per_mwh": -0.2457
+    },
+    {
+     "month": "Jun",
+     "model_lw": 31.8,
+     "actual_lw": 31.18,
+     "gap": 0.62,
+     "load_share": 0.0891,
+     "contribution_usd_per_mwh": 0.0551
+    },
+    {
+     "month": "Jul",
+     "model_lw": 33.99,
+     "actual_lw": 35.44,
+     "gap": -1.45,
+     "load_share": 0.0981,
+     "contribution_usd_per_mwh": -0.1423
+    },
+    {
+     "month": "Aug",
+     "model_lw": 35.65,
+     "actual_lw": 36.02,
+     "gap": -0.37,
+     "load_share": 0.0995,
+     "contribution_usd_per_mwh": -0.0369
+    },
+    {
+     "month": "Sep",
+     "model_lw": 32.12,
+     "actual_lw": 33.65,
+     "gap": -1.53,
+     "load_share": 0.0844,
+     "contribution_usd_per_mwh": -0.1293
+    },
+    {
+     "month": "Oct",
+     "model_lw": 32.78,
+     "actual_lw": 36.5,
+     "gap": -3.72,
+     "load_share": 0.0778,
+     "contribution_usd_per_mwh": -0.2891
+    },
+    {
+     "month": "Nov",
+     "model_lw": 32.61,
+     "actual_lw": 32.89,
+     "gap": -0.28,
+     "load_share": 0.0764,
+     "contribution_usd_per_mwh": -0.0211
+    },
+    {
+     "month": "Dec",
+     "model_lw": 32.43,
+     "actual_lw": 27.29,
+     "gap": 5.14,
+     "load_share": 0.0817,
+     "contribution_usd_per_mwh": 0.4204
+    }
+   ],
+   "total_gap_usd_per_mwh": 0.0451,
+   "jun_sep_usd_per_mwh": -0.2534,
+   "jun_sep_share_of_gap": -5.6186,
+   "jun_jul_usd_per_mwh": -0.0872,
+   "jun_jul_share_of_gap": -1.9335
+  },
+  "2024": {
+   "months": [
+    {
+     "month": "Jan",
+     "model_lw": 39.52,
+     "actual_lw": 42.25,
+     "gap": -2.73,
+     "load_share": 0.0905,
+     "contribution_usd_per_mwh": -0.247
+    },
+    {
+     "month": "Feb",
+     "model_lw": 29.54,
+     "actual_lw": 26.99,
+     "gap": 2.55,
+     "load_share": 0.0747,
+     "contribution_usd_per_mwh": 0.1908
+    },
+    {
+     "month": "Mar",
+     "model_lw": 25.92,
+     "actual_lw": 23.73,
+     "gap": 2.19,
+     "load_share": 0.0757,
+     "contribution_usd_per_mwh": 0.166
+    },
+    {
+     "month": "Apr",
+     "model_lw": 25.36,
+     "actual_lw": 28.83,
+     "gap": -3.47,
+     "load_share": 0.0727,
+     "contribution_usd_per_mwh": -0.2523
+    },
+    {
+     "month": "May",
+     "model_lw": 29.32,
+     "actual_lw": 35.8,
+     "gap": -6.48,
+     "load_share": 0.0806,
+     "contribution_usd_per_mwh": -0.5221
+    },
+    {
+     "month": "Jun",
+     "model_lw": 29.27,
+     "actual_lw": 33.79,
+     "gap": -4.52,
+     "load_share": 0.0905,
+     "contribution_usd_per_mwh": -0.4096
+    },
+    {
+     "month": "Jul",
+     "model_lw": 31.81,
+     "actual_lw": 36.84,
+     "gap": -5.03,
+     "load_share": 0.098,
+     "contribution_usd_per_mwh": -0.4927
+    },
+    {
+     "month": "Aug",
+     "model_lw": 34.69,
+     "actual_lw": 32.53,
+     "gap": 2.16,
+     "load_share": 0.0972,
+     "contribution_usd_per_mwh": 0.2098
+    },
+    {
+     "month": "Sep",
+     "model_lw": 29.37,
+     "actual_lw": 32.91,
+     "gap": -3.54,
+     "load_share": 0.0836,
+     "contribution_usd_per_mwh": -0.2959
+    },
+    {
+     "month": "Oct",
+     "model_lw": 27.35,
+     "actual_lw": 28.23,
+     "gap": -0.88,
+     "load_share": 0.0775,
+     "contribution_usd_per_mwh": -0.0683
+    },
+    {
+     "month": "Nov",
+     "model_lw": 29.09,
+     "actual_lw": 26.88,
+     "gap": 2.21,
+     "load_share": 0.0765,
+     "contribution_usd_per_mwh": 0.1692
+    },
+    {
+     "month": "Dec",
+     "model_lw": 35.43,
+     "actual_lw": 34.42,
+     "gap": 1.01,
+     "load_share": 0.0825,
+     "contribution_usd_per_mwh": 0.0837
+    }
+   ],
+   "total_gap_usd_per_mwh": -1.4684,
+   "jun_sep_usd_per_mwh": -0.9884,
+   "jun_sep_share_of_gap": 0.6731,
+   "jun_jul_usd_per_mwh": -0.9023,
+   "jun_jul_share_of_gap": 0.6145
+  },
+  "2025": {
+   "months": [
+    {
+     "month": "Jan",
+     "model_lw": 44.37,
+     "actual_lw": 51.52,
+     "gap": -7.15,
+     "load_share": 0.0914,
+     "contribution_usd_per_mwh": -0.6535
+    },
+    {
+     "month": "Feb",
+     "model_lw": 45.97,
+     "actual_lw": 46.5,
+     "gap": -0.53,
+     "load_share": 0.0781,
+     "contribution_usd_per_mwh": -0.0412
+    },
+    {
+     "month": "Mar",
+     "model_lw": 36.86,
+     "actual_lw": 37.92,
+     "gap": -1.06,
+     "load_share": 0.0751,
+     "contribution_usd_per_mwh": -0.0798
+    },
+    {
+     "month": "Apr",
+     "model_lw": 35.86,
+     "actual_lw": 37.7,
+     "gap": -1.84,
+     "load_share": 0.072,
+     "contribution_usd_per_mwh": -0.1323
+    },
+    {
+     "month": "May",
+     "model_lw": 38.47,
+     "actual_lw": 33.93,
+     "gap": 4.54,
+     "load_share": 0.0762,
+     "contribution_usd_per_mwh": 0.3462
+    },
+    {
+     "month": "Jun",
+     "model_lw": 40.03,
+     "actual_lw": 57.39,
+     "gap": -17.36,
+     "load_share": 0.0891,
+     "contribution_usd_per_mwh": -1.5463
+    },
+    {
+     "month": "Jul",
+     "model_lw": 41.96,
+     "actual_lw": 59.45,
+     "gap": -17.49,
+     "load_share": 0.1014,
+     "contribution_usd_per_mwh": -1.7738
+    },
+    {
+     "month": "Aug",
+     "model_lw": 37.06,
+     "actual_lw": 40.44,
+     "gap": -3.38,
+     "load_share": 0.0944,
+     "contribution_usd_per_mwh": -0.3189
+    },
+    {
+     "month": "Sep",
+     "model_lw": 37.52,
+     "actual_lw": 46.37,
+     "gap": -8.85,
+     "load_share": 0.0828,
+     "contribution_usd_per_mwh": -0.7331
+    },
+    {
+     "month": "Oct",
+     "model_lw": 36.42,
+     "actual_lw": 38.7,
+     "gap": -2.28,
+     "load_share": 0.0778,
+     "contribution_usd_per_mwh": -0.1774
+    },
+    {
+     "month": "Nov",
+     "model_lw": 38.03,
+     "actual_lw": 40.62,
+     "gap": -2.59,
+     "load_share": 0.0748,
+     "contribution_usd_per_mwh": -0.1942
+    },
+    {
+     "month": "Dec",
+     "model_lw": 43.71,
+     "actual_lw": 47.4,
+     "gap": -3.69,
+     "load_share": 0.0869,
+     "contribution_usd_per_mwh": -0.3209
+    }
+   ],
+   "total_gap_usd_per_mwh": -5.6252,
+   "jun_sep_usd_per_mwh": -4.3721,
+   "jun_sep_share_of_gap": 0.7772,
+   "jun_jul_usd_per_mwh": -3.3201,
+   "jun_jul_share_of_gap": 0.5902
+  }
+ },
+ "a2_distribution": {
+  "2023": {
+   "full_year": {
+    "n_hours": 8760,
+    "actual_mean": 28.36,
+    "model_mean": 32.32,
+    "mean_gap": 3.961,
+    "percentiles": {
+     "p50": {
+      "actual": 25.18,
+      "model": 32.0
+     },
+     "p75": {
+      "actual": 30.88,
+      "model": 35.06
+     },
+     "p90": {
+      "actual": 38.97,
+      "model": 38.02
+     },
+     "p95": {
+      "actual": 48.42,
+      "model": 40.91
+     },
+     "p99": {
+      "actual": 93.54,
+      "model": 46.55
+     },
+     "p99.9": {
+      "actual": 221.33,
+      "model": 54.29
+     }
+    },
+    "actual_max": 569.17,
+    "model_max": 194.9,
+    "hours_actual_over_200": 12,
+    "hours_model_over_200": 0,
+    "top1pct_of_actual_hours": {
+     "n": 88,
+     "contribution_usd_per_mwh": -1.102,
+     "share_of_mean_gap": -0.2782
+    },
+    "all_other_hours_contribution": 5.063
+   },
+   "jun_jul": {
+    "n_hours": 1464,
+    "actual_mean": 29.92,
+    "model_mean": 32.17,
+    "mean_gap": 2.255,
+    "percentiles": {
+     "p50": {
+      "actual": 26.22,
+      "model": 31.84
+     },
+     "p75": {
+      "actual": 34.91,
+      "model": 36.1
+     },
+     "p90": {
+      "actual": 44.39,
+      "model": 38.46
+     },
+     "p95": {
+      "actual": 56.99,
+      "model": 40.34
+     },
+     "p99": {
+      "actual": 100.42,
+      "model": 45.35
+     },
+     "p99.9": {
+      "actual": 188.84,
+      "model": 52.91
+     }
+    },
+    "actual_max": 210.9,
+    "model_max": 53.95,
+    "hours_actual_over_200": 1,
+    "hours_model_over_200": 0,
+    "top1pct_of_actual_hours": {
+     "n": 15,
+     "contribution_usd_per_mwh": -1.03,
+     "share_of_mean_gap": -0.4568
+    },
+    "all_other_hours_contribution": 3.285
+   },
+   "jun_sep": {
+    "n_hours": 2928,
+    "actual_mean": 30.77,
+    "model_mean": 32.53,
+    "mean_gap": 1.758,
+    "percentiles": {
+     "p50": {
+      "actual": 26.63,
+      "model": 32.15
+     },
+     "p75": {
+      "actual": 34.98,
+      "model": 35.85
+     },
+     "p90": {
+      "actual": 44.55,
+      "model": 38.63
+     },
+     "p95": {
+      "actual": 55.99,
+      "model": 41.29
+     },
+     "p99": {
+      "actual": 100.16,
+      "model": 45.86
+     },
+     "p99.9": {
+      "actual": 394.05,
+      "model": 118.62
+     }
+    },
+    "actual_max": 569.17,
+    "model_max": 194.9,
+    "hours_actual_over_200": 7,
+    "hours_model_over_200": 0,
+    "top1pct_of_actual_hours": {
+     "n": 30,
+     "contribution_usd_per_mwh": -1.462,
+     "share_of_mean_gap": -0.8317
+    },
+    "all_other_hours_contribution": 3.22
+   }
+  },
+  "2024": {
+   "full_year": {
+    "n_hours": 8760,
+    "actual_mean": 26.88,
+    "model_mean": 29.9,
+    "mean_gap": 3.021,
+    "percentiles": {
+     "p50": {
+      "actual": 22.43,
+      "model": 28.73
+     },
+     "p75": {
+      "actual": 28.02,
+      "model": 32.35
+     },
+     "p90": {
+      "actual": 37.77,
+      "model": 36.97
+     },
+     "p95": {
+      "actual": 52.81,
+      "model": 39.18
+     },
+     "p99": {
+      "actual": 103.61,
+      "model": 52.26
+     },
+     "p99.9": {
+      "actual": 342.73,
+      "model": 139.5
+     }
+    },
+    "actual_max": 694.2,
+    "model_max": 500.0,
+    "hours_actual_over_200": 27,
+    "hours_model_over_200": 6,
+    "top1pct_of_actual_hours": {
+     "n": 88,
+     "contribution_usd_per_mwh": -1.437,
+     "share_of_mean_gap": -0.4757
+    },
+    "all_other_hours_contribution": 4.459
+   },
+   "jun_jul": {
+    "n_hours": 1464,
+    "actual_mean": 28.79,
+    "model_mean": 29.73,
+    "mean_gap": 0.946,
+    "percentiles": {
+     "p50": {
+      "actual": 23.36,
+      "model": 29.27
+     },
+     "p75": {
+      "actual": 29.07,
+      "model": 33.14
+     },
+     "p90": {
+      "actual": 39.21,
+      "model": 37.46
+     },
+     "p95": {
+      "actual": 54.94,
+      "model": 39.34
+     },
+     "p99": {
+      "actual": 129.68,
+      "model": 45.11
+     },
+     "p99.9": {
+      "actual": 571.58,
+      "model": 49.71
+     }
+    },
+    "actual_max": 694.2,
+    "model_max": 51.56,
+    "hours_actual_over_200": 8,
+    "hours_model_over_200": 0,
+    "top1pct_of_actual_hours": {
+     "n": 15,
+     "contribution_usd_per_mwh": -2.788,
+     "share_of_mean_gap": -2.9462
+    },
+    "all_other_hours_contribution": 3.734
+   },
+   "jun_sep": {
+    "n_hours": 2928,
+    "actual_mean": 27.78,
+    "model_mean": 30.16,
+    "mean_gap": 2.383,
+    "percentiles": {
+     "p50": {
+      "actual": 22.79,
+      "model": 28.95
+     },
+     "p75": {
+      "actual": 28.8,
+      "model": 32.72
+     },
+     "p90": {
+      "actual": 39.32,
+      "model": 36.73
+     },
+     "p95": {
+      "actual": 54.89,
+      "model": 38.46
+     },
+     "p99": {
+      "actual": 108.68,
+      "model": 45.54
+     },
+     "p99.9": {
+      "actual": 492.91,
+      "model": 500.0
+     }
+    },
+    "actual_max": 694.2,
+    "model_max": 500.0,
+    "hours_actual_over_200": 9,
+    "hours_model_over_200": 6,
+    "top1pct_of_actual_hours": {
+     "n": 30,
+     "contribution_usd_per_mwh": -1.638,
+     "share_of_mean_gap": -0.6873
+    },
+    "all_other_hours_contribution": 4.02
+   }
+  },
+  "2025": {
+   "full_year": {
+    "n_hours": 8760,
+    "actual_mean": 38.13,
+    "model_mean": 38.88,
+    "mean_gap": 0.741,
+    "percentiles": {
+     "p50": {
+      "actual": 30.28,
+      "model": 37.04
+     },
+     "p75": {
+      "actual": 39.07,
+      "model": 41.95
+     },
+     "p90": {
+      "actual": 53.97,
+      "model": 47.63
+     },
+     "p95": {
+      "actual": 72.73,
+      "model": 53.0
+     },
+     "p99": {
+      "actual": 173.14,
+      "model": 78.64
+     },
+     "p99.9": {
+      "actual": 601.94,
+      "model": 108.63
+     }
+    },
+    "actual_max": 1669.52,
+    "model_max": 165.58,
+    "hours_actual_over_200": 62,
+    "hours_model_over_200": 0,
+    "top1pct_of_actual_hours": {
+     "n": 88,
+     "contribution_usd_per_mwh": -2.79,
+     "share_of_mean_gap": -3.765
+    },
+    "all_other_hours_contribution": 3.531
+   },
+   "jun_jul": {
+    "n_hours": 1464,
+    "actual_mean": 44.66,
+    "model_mean": 39.88,
+    "mean_gap": -4.784,
+    "percentiles": {
+     "p50": {
+      "actual": 32.73,
+      "model": 37.47
+     },
+     "p75": {
+      "actual": 42.93,
+      "model": 44.14
+     },
+     "p90": {
+      "actual": 61.77,
+      "model": 48.12
+     },
+     "p95": {
+      "actual": 91.03,
+      "model": 52.48
+     },
+     "p99": {
+      "actual": 238.93,
+      "model": 69.04
+     },
+     "p99.9": {
+      "actual": 746.1,
+      "model": 148.92
+     }
+    },
+    "actual_max": 1669.52,
+    "model_max": 165.58,
+    "hours_actual_over_200": 20,
+    "hours_model_over_200": 0,
+    "top1pct_of_actual_hours": {
+     "n": 15,
+     "contribution_usd_per_mwh": -4.78,
+     "share_of_mean_gap": 0.9991
+    },
+    "all_other_hours_contribution": -0.004
+   },
+   "jun_sep": {
+    "n_hours": 2928,
+    "actual_mean": 40.91,
+    "model_mean": 38.17,
+    "mean_gap": -2.737,
+    "percentiles": {
+     "p50": {
+      "actual": 30.46,
+      "model": 36.76
+     },
+     "p75": {
+      "actual": 40.37,
+      "model": 42.08
+     },
+     "p90": {
+      "actual": 55.44,
+      "model": 46.47
+     },
+     "p95": {
+      "actual": 75.43,
+      "model": 49.55
+     },
+     "p99": {
+      "actual": 203.92,
+      "model": 62.2
+     },
+     "p99.9": {
+      "actual": 813.35,
+      "model": 128.14
+     }
+    },
+    "actual_max": 1669.52,
+    "model_max": 165.58,
+    "hours_actual_over_200": 31,
+    "hours_model_over_200": 0,
+    "top1pct_of_actual_hours": {
+     "n": 30,
+     "contribution_usd_per_mwh": -4.389,
+     "share_of_mean_gap": 1.6036
+    },
+    "all_other_hours_contribution": 1.652
+   }
+  }
+ },
+ "a3_ceiling": {
+  "2023": {
+   "model_price_max_any_zone_hour": 242.86,
+   "zone_hours_over_200": 18,
+   "zone_hours_over_500": 0,
+   "zone_hours_over_1000": 0,
+   "unserved_energy_mwh": 0.0,
+   "hours_with_unserved_energy": 0,
+   "jun_jul_price_max": 56.42,
+   "jun_jul_zone_hours_over_200": 0,
+   "reserve_families": {
+    "miso_rbdc": {
+     "dual_max": -0.0,
+     "requirement_mw_max": 3068.9,
+     "held_mw_max": 3068.9,
+     "shortfall_mw_max": 0.0,
+     "hours_with_shortfall": 0,
+     "hours_dual_positive": 0
+    },
+    "miso_rbdc_regspin": {
+     "dual_max": 98.0,
+     "requirement_mw_max": 2110.5,
+     "held_mw_max": 2696.2,
+     "shortfall_mw_max": 1006.612,
+     "hours_with_shortfall": 5,
+     "hours_dual_positive": 5
+    },
+    "miso_subregional_or_midwest": {
+     "dual_max": -0.0,
+     "requirement_mw_max": 2810.2,
+     "held_mw_max": 2810.2,
+     "shortfall_mw_max": 0.0,
+     "hours_with_shortfall": 0,
+     "hours_dual_positive": 0
+    },
+    "miso_zonal_or_miso_south": {
+     "dual_max": -0.0,
+     "requirement_mw_max": 1030.9,
+     "held_mw_max": 1030.9,
+     "shortfall_mw_max": 0.0,
+     "hours_with_shortfall": 0,
+     "hours_dual_positive": 0
+    }
+   }
+  },
+  "2024": {
+   "model_price_max_any_zone_hour": 500.0,
+   "zone_hours_over_200": 48,
+   "zone_hours_over_500": 0,
+   "zone_hours_over_1000": 0,
+   "unserved_energy_mwh": 19384.4,
+   "hours_with_unserved_energy": 6,
+   "jun_jul_price_max": 52.0,
+   "jun_jul_zone_hours_over_200": 0,
+   "reserve_families": {
+    "miso_rbdc": {
+     "dual_max": 276.04,
+     "requirement_mw_max": 3124.1,
+     "held_mw_max": 3585.6,
+     "shortfall_mw_max": 0.0,
+     "hours_with_shortfall": 0,
+     "hours_dual_positive": 6
+    },
+    "miso_rbdc_regspin": {
+     "dual_max": 98.0,
+     "requirement_mw_max": 2431.8,
+     "held_mw_max": 2909.3,
+     "shortfall_mw_max": 816.846,
+     "hours_with_shortfall": 6,
+     "hours_dual_positive": 8
+    },
+    "miso_subregional_or_midwest": {
+     "dual_max": 200.0,
+     "requirement_mw_max": 2988.9,
+     "held_mw_max": 2988.9,
+     "shortfall_mw_max": 489.513,
+     "hours_with_shortfall": 2,
+     "hours_dual_positive": 2
+    },
+    "miso_zonal_or_miso_south": {
+     "dual_max": 29.06,
+     "requirement_mw_max": 1192.2,
+     "held_mw_max": 1235.2,
+     "shortfall_mw_max": 0.0,
+     "hours_with_shortfall": 0,
+     "hours_dual_positive": 4
+    }
+   }
+  },
+  "2025": {
+   "model_price_max_any_zone_hour": 200.39,
+   "zone_hours_over_200": 2,
+   "zone_hours_over_500": 0,
+   "zone_hours_over_1000": 0,
+   "unserved_energy_mwh": 0.0,
+   "hours_with_unserved_energy": 0,
+   "jun_jul_price_max": 183.22,
+   "jun_jul_zone_hours_over_200": 0,
+   "reserve_families": {
+    "miso_rbdc": {
+     "dual_max": -0.0,
+     "requirement_mw_max": 3295.0,
+     "held_mw_max": 3341.2,
+     "shortfall_mw_max": 0.0,
+     "hours_with_shortfall": 0,
+     "hours_dual_positive": 0
+    },
+    "miso_rbdc_regspin": {
+     "dual_max": 98.0,
+     "requirement_mw_max": 2579.0,
+     "held_mw_max": 2615.8,
+     "shortfall_mw_max": 384.391,
+     "hours_with_shortfall": 3,
+     "hours_dual_positive": 12
+    },
+    "miso_subregional_or_midwest": {
+     "dual_max": -0.0,
+     "requirement_mw_max": 2948.5,
+     "held_mw_max": 2948.5,
+     "shortfall_mw_max": 0.0,
+     "hours_with_shortfall": 0,
+     "hours_dual_positive": 0
+    },
+    "miso_zonal_or_miso_south": {
+     "dual_max": 3.11,
+     "requirement_mw_max": 1716.3,
+     "held_mw_max": 1716.3,
+     "shortfall_mw_max": 0.0,
+     "hours_with_shortfall": 0,
+     "hours_dual_positive": 1
+    }
+   }
+  }
+ }
+}
