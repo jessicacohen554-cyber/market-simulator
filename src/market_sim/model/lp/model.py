@@ -1116,17 +1116,31 @@ class DispatchModel:
         # bit-identical.
         _log_rss("post-run pre-extraction")
         solution = h.getSolution()
-        # Flow reduced costs: highspy 1.14 has no partial accessor, so the
-        # full col_dual converts, but only the (n_links, T) flow block is
-        # retained (the network sidecar's input; see the stationarity notes
-        # further down where it is consumed).
+        # Flow AND generation reduced costs: highspy 1.14 has no partial
+        # accessor, so the full col_dual converts, but only the (n_links, T)
+        # flow block and the (n_gen, T) generation block are retained (the
+        # network / unit_hourly sidecars' inputs; see the stationarity notes
+        # further down and in DispatchResult where each is consumed). The
+        # generation block is kept float32 — the same precision the retained
+        # ``_flow_cap_*`` bounds use, and 1e-7 relative on a $/MWh reduced
+        # cost is four orders below the smallest charge any diagnostic reads —
+        # because it is the larger of the two by the gen:link ratio (a
+        # plant-level MISO year is 2.8k gens against ~30 links, so float64
+        # would retain ~200 MB against a documented 14.4 GB year peak).
         flow_dual = None
-        if n_links:
+        gen_reduced_cost = None
+        if n_links or layout.n_gen:
             col_dual = np.asarray(solution.col_dual, dtype=float)
-            flow_dual = col_dual.reshape(T, layout.vars_per_hour)[
-                :, layout._flow_off : layout._slack_off
-            ].T.copy()
-            del col_dual
+            _cd_block = col_dual.reshape(T, layout.vars_per_hour)
+            if n_links:
+                flow_dual = _cd_block[:, layout._flow_off : layout._slack_off].T.copy()
+            if layout.n_gen:
+                gen_reduced_cost = (
+                    _cd_block[:, layout._p_off : layout._w_off]
+                    .T.copy()
+                    .astype(np.float32)
+                )
+            del col_dual, _cd_block
             _log_rss("post col_dual extraction")
         # Reserve balance-row ACTIVITY (Ax), co-opt only: the final
         # n_families*T entries of row_value — the only output that needs the
@@ -1418,6 +1432,14 @@ class DispatchModel:
             flow_dual=flow_dual,
             flow_cap_up=self._flow_cap_up,
             flow_cap_dn=self._flow_cap_dn,
+            # The offer array THIS solve installed — the LP's own marginal
+            # cost, so a diagnostic never has to rebuild it from the fleet/fuel
+            # path and can never disagree with what cleared. float32 for the
+            # same reason as ``gen_reduced_cost``, and as a COPY rather than a
+            # reference so the result can never alias (and be mutated through)
+            # the caller's objective array.
+            gen_mc=np.asarray(mc, dtype=np.float32),
+            gen_reduced_cost=gen_reduced_cost,
         )
 
     def export_cross_year_basis(self) -> "CrossYearBasis | None":

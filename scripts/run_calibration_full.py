@@ -654,7 +654,7 @@ def _write_storage_hourly_sidecar(
 def _unit_hourly_frame(
     year: int, pass_label: str, result, context, fleet_arrays, iso: str = "ERCOT"
 ) -> "pd.DataFrame | None":
-    """Per-LP-unit hourly dispatch AND available capacity for one year-pass.
+    """Per-LP-unit hourly dispatch, capacity, OFFER and reduced cost for one year-pass.
 
     The committed class sidecar sums dispatch to 14 classes and the storage
     sidecar to 3 techs, so a slim bundle exposes **no per-unit series at all** —
@@ -673,6 +673,32 @@ def _unit_hourly_frame(
     the two can never drift. Renewable/must-run pseudo-units are NOT included:
     they carry no LP capacity bound, and their series are already the class
     sidecar's ``wind``/``solar``/must-run rows.
+
+    **``mc`` and ``red_cost`` (nyiso-180)** are the pass's own
+    ``DispatchResult.gen_mc`` / ``gen_reduced_cost`` — the marginal-cost array
+    the LP installed in its objective and the generation columns' HiGHS
+    reduced cost. They are what turns this frame from a dispatch record into
+    an OPTIMALITY record, and they exist because three consecutive NYISO
+    sessions (172 §2.5, 173, 179 §6.1) closed unable to say why in-the-money
+    steam goes un-dispatched: no committed artifact carried a per-generator
+    series at all, so every attempt had to RECONSTRUCT the offer outside the
+    solve and could never rule out that it was measuring a different object
+    than the one that cleared. With both columns here, joined to
+    ``hourly/system_<year>.parquet``'s zonal ``price``, the generation
+    column's stationarity identity closes per unit-hour,
+
+        red_cost[g,t] = mc[g,t] - price[zone(g),t] + sum_r a(r,g) * y_r,
+
+    so the residual ``red_cost - (mc - price)`` measures, exactly and with no
+    free parameter, the net rent every NON-energy row charges that unit-hour
+    — and the sign of ``red_cost`` says which bound the column sits at (> 0
+    lower, < 0 upper, ~ 0 interior). A unit-hour that is in the money and at
+    its lower bound is then not a puzzle but an accounting question with an
+    answer in the frame.
+
+    Both are float32 on the result already (see ``DispatchResult.gen_mc``);
+    they are the reason this frame is worth its bytes, and they are still
+    write-only — every input is a solved output.
 
     Write-only and solve-invariant: every input is a solved output or an LP
     input the solve already consumed. Returns ``None`` when the pass carried no
@@ -699,6 +725,18 @@ def _unit_hourly_frame(
         np.asarray(fa.pmax, dtype=np.float32)[:, None]
         * np.asarray(fa.availability, dtype=np.float32)
     )[:, :T]
+    # The solve's own offer and reduced cost, aligned to the SAME (n_gen, T)
+    # dispatch block. Absent on a legacy/pickled result (the field post-dates
+    # it), in which case the two columns are simply not written rather than
+    # filled with a placeholder a reader could mistake for a measurement.
+    _mc = getattr(result, "gen_mc", None)
+    _rc = getattr(result, "gen_reduced_cost", None)
+    _mc = None if _mc is None else np.asarray(_mc, dtype=np.float32)[:n_gen, :T]
+    _rc = None if _rc is None else np.asarray(_rc, dtype=np.float32)[:n_gen, :T]
+    if _mc is not None and _mc.shape != disp.shape:
+        _mc = None
+    if _rc is not None and _rc.shape != disp.shape:
+        _rc = None
     unit_ids = [str(u) for u in context.unit_ids][:n_gen]
     fuels = [str(f) for f in context.fuel_types][:n_gen]
     zones = [str(z) for z in context.zones][:n_gen]
@@ -734,6 +772,10 @@ def _unit_hourly_frame(
             "cap_mw": cap.reshape(-1),
         }
     )
+    if _mc is not None:
+        df["mc"] = _mc.reshape(-1)
+    if _rc is not None:
+        df["red_cost"] = _rc.reshape(-1)
     return df
 
 

@@ -230,6 +230,25 @@ class DispatchResult:
     # records the third candidate limit's level next to its dual.
     flow_cap_up: np.ndarray | None = None
     flow_cap_dn: np.ndarray | None = None
+    # --- per-generator offer + optimality (the ``unit_hourly`` sidecar) -----
+    # ``gen_mc`` is the (n_gen, T) marginal-cost array THIS solve installed in
+    # its objective — the LP's own offer, not a reconstruction of it; a
+    # reference to the caller's array, so it costs no memory. ``gen_reduced
+    # _cost`` is the generation columns' HiGHS reduced cost, (n_gen, T)
+    # float32, HiGHS-raw (NOT sign-normalised), the exact twin of
+    # ``flow_dual`` for the P block.
+    #
+    # Together they close the generation column's stationarity identity
+    #     red_cost[g,t] = mc[g,t] - lambda[zone(g),t] + sum_r a(r,g) * y_r
+    # whose last term is the net rent every NON-energy row (reserve headroom,
+    # LCR/TSL area minima, ramp, RPS/mass-cap, ...) charges that unit-hour. It
+    # is what lets a diagnostic say WHY a unit whose offer is below its own
+    # zone's dual is not running — the sign says which bound it sits at
+    # (> 0 lower, < 0 upper, ~ 0 interior/marginal), and the residual
+    # ``red_cost - (mc - lambda)`` measures the charge and names nothing else.
+    # Both ``None`` when the LP carried no generators.
+    gen_mc: np.ndarray | None = None
+    gen_reduced_cost: np.ndarray | None = None
 
 
 @dataclass
