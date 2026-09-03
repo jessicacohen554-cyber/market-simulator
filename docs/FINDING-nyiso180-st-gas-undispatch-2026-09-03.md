@@ -240,6 +240,37 @@ writer returns `None` on a frame predating `klass_base`, so replaying an older
 bundle skips the sidecar rather than failing). **No LP row, price, or dispatch
 value is touched.**
 
+### 8.1 TWO CONSTRUCTION DEFECTS IN THE SIDECAR, both found before it was reported
+
+Disclosed in the nyiso-179 §8 discipline. **In both cases the INSTRUMENT was
+replaced and no threshold or claim moved** — neither defect touches a gate, and
+the gate record (`_nyiso180_st_gas_undispatch.json`) was frozen before either
+was found.
+
+**(1) Caught by the test suite.** Wiring the writer into the *reuse* call site
+broke two `tests/regression/test_reuse_solved.py` cases, whose fixture writes
+1-byte dispatch stubs. The existing `class_hourly` writer is called only when
+its output is absent and the fixture pre-stubs it, so it never read them; the
+new writer did. **The writer's own docstring already claimed a fail-open
+contract for a frame predating `klass_base`** — the fix extends that contract
+to a frame that cannot be read as parquet at all, scoped to the schema probe
+alone so a genuine aggregation bug still raises.
+
+**(2) Caught by the artifact's OWN OUTPUT, on the first real NYISO year, before
+any of it was reported.** The `band` column carried values like `Hudson`,
+`GEN1`, `tie`, `scarcity`, `Ontario`, `01-8N`. Taking the last underscore token
+is correct for a CAMPD-binned thermal tranche, but **most LP columns are not
+tranches** — import pseudo-generators, hydro, wind/solar zone pseudo-units and
+legacy equal-width bins carry ids whose last token is a zone name, a unit number
+or a corridor label. The artifact reported **59 distinct "bands" and 893,520
+rows** for one year against **11** real bands. `_tranche_band` now matches the
+**closed vocabulary** instead (the same set as
+`legacy_bins._coal_tranche_rank`), and a non-tranche column buckets to `""` so
+the class aggregate stays exact. **Had this shipped unfixed, every future
+band-level reader would have silently mixed real tranches with invented ones** —
+the same class of silent trap as nyiso-179 PREREG §8.1's `econ_low`/`econlo`
+vocabulary error.
+
 ## 9. Honest expected value — what is NOT delivered
 
 * **The object is NOT explained.** Four candidates are closed; the sustained
