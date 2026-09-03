@@ -1,0 +1,32 @@
+{
+  "2023": {
+    "mean_actual_price_top_decile": 72.2,
+    "measured_campd_mw": 2113.6,
+    "itm_at_ACTUAL_price_mw": 2697.5,
+    "itm_at_MODEL_price_mw": 2027.3,
+    "model_dispatch_mw": 2339.1,
+    "total_gap_mw": -225.5
+  },
+  "2024": {
+    "mean_actual_price_top_decile": 93.39,
+    "measured_campd_mw": 2404.7,
+    "itm_at_ACTUAL_price_mw": 2613.9,
+    "itm_at_MODEL_price_mw": 1613.2,
+    "model_dispatch_mw": 1884.0,
+    "total_gap_mw": 520.7,
+    "share_model_price_below_actual": 1.922,
+    "share_offer_position": -0.402,
+    "share_unrun_at_own_signal": -0.52
+  },
+  "2025": {
+    "mean_actual_price_top_decile": 176.25,
+    "measured_campd_mw": 2596.9,
+    "itm_at_ACTUAL_price_mw": 2664.9,
+    "itm_at_MODEL_price_mw": 1594.1,
+    "model_dispatch_mw": 1814.8,
+    "total_gap_mw": 782.1,
+    "share_model_price_below_actual": 1.369,
+    "share_offer_position": -0.087,
+    "share_unrun_at_own_signal": -0.282
+  }
+}

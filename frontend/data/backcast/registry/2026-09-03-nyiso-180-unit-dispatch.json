@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-03-nyiso-180-unit-dispatch",
+  "label": "nyiso 180 unit-dispatch instrument",
+  "date": "2026-09-03",
+  "shorthand": "nyiso-180-unit-dispatch",
+  "definition": "(PROBE \u2014 INSTRUMENT, NOT A KEEPER CANDIDATE) Byte-faithful replay of keeper 2026-09-02-nyiso-177-vintage-matched's own recipe from its meta.json, carrying the nyiso-180 per-generator sidecar: unit_hourly_<year>.parquet now writes the solve's OWN installed offer (mc) and the generation columns' HiGHS reduced cost (red_cost) beside mw/cap_mw, so the stationarity identity red_cost = mc - price + sum_r a(r,g).y_r closes per unit-hour against the system sidecar's zonal dual. ZERO mechanism change, ZERO parameter change: every substantive criterion reproduces the keeper exactly (fuelmix FAIL, price_mean FAIL, price_tail FAIL; sysvol / price_shape / dispatch_corr / forced_share PASS). The lone difference is governance UNATTESTED - replay_keeper.py regenerates no calibration_attestation.json - which is why this run is NOT proposed for promotion: it would move the keeper pointer to a bundle that is structurally identical and governance-unattested. RESULT: it REFUTES the nyiso-179 section 6.1 object. Against the LP's OWN offer the model dispatches 0.992 / 0.991 / 0.992 of the ST_GAS it puts in the money (nyiso-179 reported 0.767 / 0.522 / 0.740), and the un-run in-the-money volume is 0.073 / 0.061 / 0.070 TWh, not 3.84 / 9.09 / 3.99 TWh - two orders of magnitude smaller. The identity closes exactly (STOP population 0 unit-hours in all three years; omega p95 = 3e-6 $/MWh), so candidates (a) the zonal loss surface, (b) a post-solve price transform and (c) an in-LP capacity-basis mismatch are all CLOSED. The carrier is a RECONSTRUCTION gap: nyiso-179's mc, rebuilt outside the solve, is CHEAPER than the offer the LP installed in 97.6 / 97.3 / 88.2 % of ST_GAS unit-hours, by a mean of $11.45 / $17.25 / $5.43 per MWh. See docs/FINDING-nyiso180-per-generator-dispatch-2026-09-03.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-03-nyiso-180-unit-dispatch.js",
+  "bundle": "results/calibration/nyiso180_unitdispatch"
+}

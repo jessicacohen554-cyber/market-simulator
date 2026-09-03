@@ -1,0 +1,44 @@
+{
+  "2023": {
+    "matched_unit_hours": 770880,
+    "LP_minus_recon": {
+      "mean": 11.4477,
+      "p50": 9.5736,
+      "p95": 40.5938,
+      "share_LP_dearer": 0.9761
+    },
+    "LP_minus_recon_PLUS_margin": {
+      "mean": 7.5752,
+      "max_abs": 8.427839,
+      "share_abs_gt_0p01": 1.0
+    }
+  },
+  "2024": {
+    "matched_unit_hours": 770880,
+    "LP_minus_recon": {
+      "mean": 17.2461,
+      "p50": 15.3879,
+      "p95": 62.2589,
+      "share_LP_dearer": 0.9726
+    },
+    "LP_minus_recon_PLUS_margin": {
+      "mean": 11.526243,
+      "max_abs": 12.681378,
+      "share_abs_gt_0p01": 1.0
+    }
+  },
+  "2025": {
+    "matched_unit_hours": 770880,
+    "LP_minus_recon": {
+      "mean": 5.4324,
+      "p50": 11.9775,
+      "p95": 18.7533,
+      "share_LP_dearer": 0.8815
+    },
+    "LP_minus_recon_PLUS_margin": {
+      "mean": 12.289967,
+      "max_abs": 13.720741,
+      "share_abs_gt_0p01": 1.0
+    }
+  }
+}
