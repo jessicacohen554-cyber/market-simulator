@@ -1,4 +1,4 @@
-# Capacity-Expansion Director — successor handoff (2026-09-02, refresh #31 REWRITE)
+# Capacity-Expansion Director — successor handoff (2026-09-03, refresh #32; r#31 REWRITE base)
 
 Supersedes the r#21 revision and its r#22/r#24/r#25/r#26/r#27 append-deltas as the live
 successor prompt. Paste the block below verbatim to open the next director session. The
@@ -26,7 +26,7 @@ generation stale (it happened at r#25: a "dead" session recovered and ran a whol
 Re-derive your sitting number from the ledger's top entry and grade only the delta it missed.
 
 READ ON EVERY REFRESH, IN THIS ORDER:
-1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ab = r#31 is the
+1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ac = r#32 is the
    newest at this writing), §1 scoreboard, §3 the THIRTY-ONE rulings Q1–Q31 (ALL SPENT — none
    open), §4 issuance record, §2 backcast watch.
 2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
@@ -65,12 +65,14 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#31, main HEAD 68690427, 2026-09-02 — VERIFY, DON'T TRUST):
+STATE AT HANDOFF (r#32, main HEAD c73f78f5, 2026-09-03 — VERIFY, DON'T TRUST):
 - KEEPERS: ERCOT two-config 2026-08-25-234-eastex-identity (+236-swcap 2023 carve-out),
   CALIBRATED · NEISO neiso-99-joint-p1 CALIBRATED · PJM pjm-162-inputclock CALIBRATED ·
-  MISO 2026-09-02-miso-200-unitroute NOT-YET {C3a-2025 alone, smaller} · NYISO
-  nyiso-159-loss-surface NOT-YET {C3a-2025, C3c} · CAISO 2026-09-01-caiso-231-b1-ungrounded
-  NOT-YET {C3a alone}. Markers: complete = {ERCOT, NEISO, PJM}; final EMPTY (no locked-test
+  MISO 2026-09-02-miso-201-stbasis NOT-YET {C3a-2025 alone, −12.4 %} · NYISO
+  2026-09-02-nyiso-177-vintage-matched (owner-ruled override) NOT-YET {C1-2023 ST_GAS,
+  C3a-2025, C3c — WIDENED} · CAISO 2026-09-02-caiso-239-b1-stgas NOT-YET {C3a alone}.
+  All three promoted 2026-09-02 and ALL THREE forecast gate-(a) stamps were STALE at r#32
+  (R-T step 4 skipped; card C-2 asked) — read keepers from keepers/<ISO>.json only. Markers: complete = {ERCOT, NEISO, PJM}; final EMPTY (no locked-test
   year ever spent); freeze tier-scoped to the locked test. Stage-0 goldens: FIVE of six ISOs
   covered (PJM the gap).
 - FORECAST BOARD: neiso-t3 HOLD on {FC-1, FC-2, FC-3, FC-4} with FC-5 + FC-6 both CAVEATs —
@@ -87,7 +89,9 @@ STATE AT HANDOFF (r#31, main HEAD 68690427, 2026-09-02 — VERIFY, DON'T TRUST):
   dispersion the deterministic LP never priced (D43, cell I) — same family as the C3c ledger
   and the sub-unity price-response gain (nyiso-167's cross-ISO table). Do not charter lanes
   into that wall without new evidence.
-- IN FLIGHT: D44 (fossil-dates default arm + spec/CLAUDE.md amendment; Opus) · D45 (the
+- IN FLIGHT: D44 + D45 had NO branch/PR/commit at r#32 — dispatch status asked (card C-1),
+  both re-emitted verbatim; §0ac records the answer. D44 (fossil-dates default arm +
+  spec/CLAUDE.md amendment; Opus) · D45 (the
   ONCE-ONLY D6+R3 joint charter: PJM+NYISO first diagnostics-on T1-H solves, position/
   evaluation-quantity reconciliations, curve-ON adjudications; Fable; its close-out line
   retires the mechanism-class question) · owner-track: caiso-238 (both asks FUNDED, Q31),
@@ -96,11 +100,13 @@ STATE AT HANDOFF (r#31, main HEAD 68690427, 2026-09-02 — VERIFY, DON'T TRUST):
 - QUEUE (short, deliberately): (1) THE BATCHED RE-MEASURE — one owner-cost decision covering
   the D41-stale bundles + Q30-stale forecast baselines + everything the wave changed; PRICE
   it next sitting once D44 lands so it runs once (registered t1f/golden bundles, solve-hours,
-  which keys move) · (2) per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
+  which keys move; the r#32 stale-set INVENTORY is in §0ac.3 — every CAISO/MISO/NYISO
+  forecast bundle now sits on a superseded keeper) · (2) per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
   NYISO's zonal spread ($4.8–12.2) is the only promising instance and needs D45's
   diagnostics-on solve first · (3) nothing else — the capx queue emptied at r#31.
-- OWNER-TIER OPEN: NONE. Q1–Q31 all spent. New cards come only from D44/D45 landings (D45
-  returns arming recommendations for PJM/NYISO curves) and the re-measure pricing.
+- OWNER-TIER OPEN: cards C-1/C-2 of r#32 if unanswered (§0ac.6). Q1–Q31 all spent. New
+  cards otherwise come only from D44/D45 landings (D45 returns arming recommendations for
+  PJM/NYISO curves) and the re-measure pricing.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,
