@@ -1,5 +1,94 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🟢 v23 (2026-09-03, pin `49bfbc49`) — **R-W, R-X AND R-Y ALL DISCHARGED IN ONE CYCLE. LEG 1's INSTRUMENT IS GREEN FOR THE FIRST TIME SINCE 08-15; LEG 2 IS ONE MERGE AWAY, AND THAT MERGE IS THIS LANE'S OWN JOB 0.**
+>
+> **THE PIN MOVED TWICE UNDER THIS DISPATCH.** The director pinned `68690427`
+> (#4628); `origin/main` was already **`c73f78f5`** (#4634) at this lane's first
+> two-poll stability, and **`49bfbc49`** (#4644) by the time job 0 was pushed —
+> because **R-X and R-Y both launched, landed AND merged inside this lane's own
+> session.** Every figure below is re-derived at **`49bfbc49`** (two-poll stable);
+> the two windows — `68690427..c73f78f5` (28 commits) and `c73f78f5..49bfbc49`
+> (27 commits) — are called out separately where they change an answer.
+>
+> ### 🔴→🟢 JOB 0 FOUND **THREE** STALE GATE-(a) ROWS, NOT ONE — AND IT IS LEG 2's LAST BLOCKER
+>
+> The dispatch sent this lane to re-key **MISO** to `2026-09-02-miso-200-unitroute`.
+> At the pin, `check_gate_a_provenance.py` **exit 1 on THREE rows**, and MISO's live
+> keeper was **`2026-09-02-miso-201-stbasis`** — one promotion past the dispatch's own
+> target. The three: **CAISO** `231-b1-ungrounded → 239-b1-stgas` (#4634), **MISO**
+> `198-oomlevel → 201-stbasis` (#4630, via `200-unitroute` #4614), **NYISO**
+> `159-loss-surface → 177-vintage-matched` (#4632).
+>
+> **This is no longer records hygiene.** `tests/scoring/test_gate_a_provenance.py::test_live_board_passes`
+> calls the checker's `main([])`, so it clears **only when every row is current** — and
+> at `49bfbc49` it is **the sole remaining `Fast test tier` failure on `main`**. The
+> `FR-21` CI job is red on the same step. **R-X's own finding routes this re-key to
+> this lane by name, naming all three ISOs** (its §7: *"the next records lane should
+> carry leg 2 as 'BLOCKED on the caiso-239 / miso-201 / nyiso-177 forecast-board
+> re-key'"*). The dispatch's scope was extended from one row to three by **explicit
+> owner decision taken in-session** on that measurement. **Executed, stamp-only:
+> exactly 12 leaf paths change, no verdict moves** (all three read NOT-YET and are
+> absent from `complete` on both sides), ERCOT/PJM/NEISO byte-unchanged,
+> `check_gate_a_provenance` **1 → 0**, all seven gates green.
+>
+> ### 🟢 R-W **DISCHARGED**, COMPLETENESS-CHECKED — AND ITS COUNT LINEAGE REPLACES THE BOARD's
+>
+> 11 of 12 CI-true failures repaired by root cause, **zero regressions**, 7,717
+> passing. The 12th was **substantively routed, not patched** — the second
+> consecutive lane to hold that line. And it root-caused a **13th, latent** defect:
+> `tests/scoring/test_golden_manifest_provenance.py` executes
+> `scripts/capture_keeper_goldens.py` by path, whose import-time
+> `MARKET_SIM_HIGHS_THREADS=1` pin **leaks into the pytest process**, so every later
+> in-process LP solve dies `Not Set` against an already-initialized HiGHS scheduler.
+> **THE BOARD'S CI COUNTS ARE HEREBY CORRECTED:** *"56 → 33"* and *"33 remaining"*
+> were **local poisoned counts**. CI-side truth: **9** at R-U's pin, **12** at R-W's
+> start, **1** after. Use the CI numbers.
+>
+> ### 🟢 R-X **DISCHARGED** — THE PARITY RED IS CLEARED, AND LEG 2 RE-BLOCKED ON JOB 0
+>
+> Owner ruled **GAP declarations** (the FFR-1E route); the wire-forward question was
+> **deliberately routed to the capx/forecast desk, undecided**. The lane found the job
+> **larger than R-W saw — seven unaccounted fields, not three** — filed the ERCOT pair
+> plus one same-class NYISO fork as GAP, accounted two as `PARAMETER_OF`, and
+> **reviewed rather than extended** the `_FR22_OPEN_UNACCOUNTED` pin. Run **2344**:
+> `Fast test tier` **`1 failed, 7807 passed`** — *the parity test is GREEN*; the one
+> red is job 0's object. **It refused the leg-2 claim itself** — the fourth
+> consecutive lane to refuse on measurement.
+>
+> ### 🟢 R-Y **DISCHARGED** — AND LEG 1's INSTRUMENT IS **GREEN FOR THE FIRST TIME SINCE 2026-08-15**
+>
+> The 3-for-3 scheduled reds were **three different defects, one merged between each
+> firing** — not the history rewrite, not the corpus conversions, not the manifest
+> schema (each ruled out on evidence). Run #5 the `curate_lmp` dtype crash (already
+> fixed); #6 an un-provisioned new raw corpus (`eia-930-interchange`, the loud-failure
+> guard working as designed); #7 that plus a stale NYISO `complete` assertion the
+> Q5-W withdrawal invalidated. **The cron is REMOVED — `workflow_dispatch`-only, as
+> ruled** (the billed-minutes point recorded: a failing cron was spending owner money
+> unwatched). The first dispatch, run #8, surfaced a **fourth** defect — a teardown
+> abort at interpreter finalization, fixed at the shared `clean_io.validate_clean`
+> seam. **Run #9 (`33704730253`) is `success`**, 51 passed / 0 failed, zero
+> data-missing skips, the ERCOT fleet-arrays golden byte-identical.
+>
+> ### 🔴 THE FLIP IS **STILL NOT LIVE** — LEG 4 REMAINS THE OWNER'S ALONE
+>
+> Re-measured: **all 30 most recent `ci.yml` runs are `pull_request` events and every
+> one concluded `failure`** (runs 2322–2350), against **13 merges in-window**. v22's measurement is
+> **confirmed unchanged**. R-X's lint rider landed, but **blocker (a) has re-reddened
+> from a new direction**: `ruff check` is red on **5 errors, all in capx probe scripts
+> under `docs/handoffs/d37/` and `d45/`**, and **10 files** would fail the format step
+> behind it. The flip is best taken when that job is green, which is now a
+> *per-run-probe-script hygiene* question, not a source-tree one.
+>
+> ### 🟢 GATES, ALIGNMENT, KEEPER MOTION
+>
+> Seven gate scripts at `49bfbc49`, each unpiped: **six exit 0, one exit 1** — and the
+> one is job 0's, repaired on this lane's branch. Four-instrument alignment
+> **HOLDS at {ERCOT, NEISO, PJM}**, all four agreeing, `final` **EMPTY**. Keeper
+> motion is **three ISOs** (CAISO, MISO ×2, NYISO) — **the R-V freeze on
+> {ERCOT, NEISO, PJM} is intact**; every one of the three is an explicitly-unfrozen
+> lane. **Stage-0 has REGRESSED to 4-of-7 current** (CAISO, MISO, NYISO goldens stale
+> against those same promotions) — independently confirmed by R-Y §8.
+
 > # 🔴 v22 (2026-09-02, pin `dfc44d95`) — **G2 LEG 2 REFUSED A THIRD TIME, ON EVIDENCE NEWER THAN v21's. R-U IS DISCHARGED; R-W HAS NOT LAUNCHED; THE PARITY DEFECT HAS DOUBLED.**
 >
 > **THE PIN MOVED UNDER THE DISPATCH.** The director pinned `a5abe3fe` (merge of
@@ -849,6 +938,373 @@ refresh), **and this lane's own branch is now the only one ahead of `main`.**
 gates table, the forecast board and the queue are unaffected; **F-2's and F-3's
 verdicts are confirmed rather than rewritten**, and this block reads as what
 happened next.
+
+## What moved — v23 (`dfc44d95..49bfbc49`, "the three-discharge cycle")
+
+Director's pin `68690427`; **`origin/main` was `c73f78f5` at this lane's first
+two-poll stability and `49bfbc49` by the time job 0 was pushed** — R-X and R-Y
+launched, landed and merged *during this session*. Every number below is
+re-derived at **`49bfbc49`**, two-poll stable, each gate invoked alone with `$?`
+read unpiped. The v22→v23 span is **55 commits** across the two windows.
+
+### M-1 · 🔴→🟢 JOB 0 — THE DISPATCH NAMED ONE ROW; THE PIN HAD **THREE**, AND ITS TARGET WAS ALREADY STALE
+
+The dispatch's job 0 was: re-key MISO from `2026-09-01-miso-198-oomlevel` to
+`2026-09-02-miso-200-unitroute`. Two things were false by the time this lane
+measured them.
+
+**(a) MISO's live keeper was not `200-unitroute`.** `keepers/MISO.json` at the
+pin reads **`2026-09-02-miso-201-stbasis`** (#4630, `30a6518a`, 21:07Z) — MISO
+promoted *twice* after R-T's own re-key. The dispatch's target was itself
+superseded; re-keying to it would have left the gate red.
+
+**(b) It was not one row.** `check_gate_a_provenance.py` **exit 1 naming three**:
+
+| ISO | stamp cited | live keeper | promotion |
+|---|---|---|---|
+| CAISO | `2026-09-01-caiso-231-b1-ungrounded` | **`2026-09-02-caiso-239-b1-stgas`** | #4634, `c0cf3790`, 22:59Z |
+| MISO | `2026-09-01-miso-198-oomlevel` | **`2026-09-02-miso-201-stbasis`** | #4630, `30a6518a`, 21:07Z |
+| NYISO | `2026-08-30-nyiso-159-loss-surface` | **`2026-09-02-nyiso-177-vintage-matched`** | #4632, `3040e2e0`, 20:37Z |
+
+**Why all three moved together, and why that is not scope creep.**
+`tests/scoring/test_gate_a_provenance.py::test_live_board_passes` calls the
+checker's `main([])`, so it passes **only when every row is current**. A
+MISO-only re-key leaves the gate exit 1, the test red and the dispatch's own
+stated acceptance criterion (*"check_gate_a_provenance exit 0 after"*)
+**unreachable**. The extension from one row to three was put to the owner and
+**taken as an explicit in-session decision** on that measurement — not assumed.
+**R-X's finding independently routes exactly this three-ISO re-key to this lane
+by name** (M-4).
+
+**Executed to the R-N/R-T stamp pattern.** Verified structurally: **exactly 12
+leaf paths change** — the three rows' `detail` / `read_live_at` / `corrected_by`
+plus `gate_a_provenance.derived_at_{sha,date}` / `derived_by` — with the JSON key
+set byte-identical and **`status` unmoved on all six rows**. All three ISOs read
+**NOT-YET** and are **absent from `complete`** on both sides, so each leg fails
+identically before and after: **nothing opened, nothing closed, nothing solved,
+scored or registered.** ERCOT / PJM / NEISO are **byte-unchanged**. NYISO's
+displaced `nyiso-159` provenance is **preserved inside the row** rather than
+deleted, since it described that keeper and not this one. Post-edit:
+`check_gate_a_provenance` **exit 0**, `check_forecast_staleness` **exit 0**,
+`tests/scoring/test_gate_a_provenance.py` **13 passed**, and the fast tier's
+remaining failure is **none** — the routed FR-22 item having been cleared by R-X.
+
+### M-2 · 🔴 THE R-T ROUTING DUTY — RECORDED FAIRLY, AND THE DISPATCH'S CHARITABLE READING **DOES NOT SURVIVE THE TIMESTAMPS**
+
+The dispatch asked this to be recorded fairly, offering that the miso-200
+session *"plausibly predated the keepers/README.md note."* Re-derived, it did
+not — and neither did any of the others:
+
+| event | commit | UTC |
+|---|---|---|
+| R-T's own re-key | `f863458a` | 2026-09-02 **02:56** |
+| keepers/README.md step-4 note lands | `9b1e96b2` | 2026-09-02 **03:28** |
+| miso-200 promotion (#4614) | `ca59460e` | 2026-09-02 **17:14** |
+| nyiso-177 promotion (#4632) | `3040e2e0` | 2026-09-02 **20:37** |
+| miso-201 promotion (#4630) | `30a6518a` | 2026-09-02 **21:07** |
+| caiso-239 promotion (#4634) | `c0cf3790` | 2026-09-02 **22:59** |
+
+**FOUR consecutive promotions, every one 13 h or more after the note, none of
+which re-keyed the stamp.** No `program-status.json` commit in that span is a
+gate-(a) re-key. So the duty is not failing at the margin of a stale clone — it
+is **not being read at all**, across three different ISO desks.
+
+**⬅ INDEPENDENTLY CORROBORATED, BY A DESK THAT IS NOT THIS PROGRAM.** Open PR
+**#4642** (capx-director refresh **r#32**, opened 02:07Z while this lane was
+mid-session) reaches the identical finding from the capx side and raises it as
+its own decision card **C-2**: *"three owner-track keeper promotions in one day
+(CAISO caiso-239, MISO miso-201, NYISO nyiso-177) … all three skipped the R-T
+gate-(a) re-key — guard fails x3."* **Three desks — R-X (M-4), this lane (M-1)
+and the capx director — converged on the same three-row object from three
+directions within hours.** That is not a records-hygiene complaint any more; it
+is a systemic routing failure with three independent witnesses.
+
+**The fair conclusion is the one the dispatch already reached, now with
+evidence: the durable enforcement is the owner's branch-protection flip, not a
+fifth desk grant.** The README's own words are *"there should not be a third"*;
+this is the **fourth**, and it took three rows. A promoting lane cannot be
+blamed for skipping a check that no gate blocks it on — **which is precisely
+leg 4** (M-7).
+
+### M-3 · 🟢 R-W **DISCHARGED IN FULL** — AND THE BOARD'S CI-COUNT LINEAGE IS CORRECTED HERE
+
+`docs/FINDING-fast-tier-repair-2026-09.md`, PR #4611, merged `6d52fdc5`.
+**11 of 12 CI-true main-content failures repaired by root cause; zero
+regressions across 10 changed files; 7,704 → 7,717 passing.** The 12th — the
+ERCOT FR-22 fork — was **routed with its remedies enumerated, not patched on
+either side**; it declined the leg-2 claim in terms. **Credit it as the second
+consecutive lane to hold that line** (R-U was the first), and R-X (M-4) makes
+it four in a row across v21–v23.
+
+**The 13th defect, found on the way, is the more valuable half.** §4b:
+`tests/scoring/test_golden_manifest_provenance.py` loads
+`scripts/capture_keeper_goldens.py` by path; that script pins
+`MARKET_SIM_HIGHS_THREADS=1` **at import**, correct for its own CLI but leaking
+into the whole pytest process. `model/lp/model.py` then sets `threads=1` on
+every later LP and HiGHS refuses against a scheduler already sized at 2 —
+`run()` returns `kError`, model status `Not Set`. **Bisected to a 42-file
+prefix; reproduced verbatim outside the suite in a four-step `highspy` probe.**
+CI has been green on it only by collection-order luck.
+
+**THE BOARD'S COUNTS ARE CORRECTED, per R-W §7.5's routing to this lane.**
+*"56 → 33"* and *"33 remaining"* were **local `-n 2` counts taken in a poisoned
+container**, not measurements of `main`:
+
+| pin | local | **CI (authoritative)** |
+|---|--:|--:|
+| R-U's pin (run 2298) | 33 | **9** |
+| R-W's start (run 2319) | 91 / 204 | **12** |
+| after R-W (runs 2322/2324) | 1 | **1** |
+
+**Quote the CI column.** R-U's *zero-regression* diff is untouched by this — it
+compared two runs under identical local conditions, which stays valid. With the
+leak closed a local serial count is a valid measurement again, and it now agrees
+with the runner to the digit.
+
+### M-4 · 🟢 R-X **DISCHARGED** — GAP FILED, PARITY RED CLEARED, AND LEG 2 HANDED TO JOB 0
+
+`docs/FINDING-fr22-gap-leg2-2026-09.md`, PR #4635 (`2ad85f2c`). **Dispatched AND
+launched inside this lane's session** — the label returned zero artifacts at
+`c73f78f5` and a merged PR at `49bfbc49`.
+
+The owner ruled **file GAP declarations** on the
+`ercot_storage_adaptive_expectation` + `ercot_adaptive_event_release` fork, the
+FFR-1E route. **The wire-forward question was deliberately NOT decided** — it
+routes to the capx/forecast desk (`runner.py` / `pipeline/solve.py` seam,
+`p1_storage_discharge_cost`), filed and tracked rather than silenced. Three
+things beyond the ruling's letter, all flagged as such by the lane itself:
+
+- **The job was larger than R-W saw: seven unaccounted fields on `main`, not
+  three** — three of the extra four were already armed at R-W's pin and **masked
+  by the test's assertion order**.
+- Two were accounted as `PARAMETER_OF` already-declared rows (bookkeeping, no
+  disposition made); **one — `nyiso_seam_par_attribution` — was filed GAP as a
+  same-class fork and explicitly marked as the one row beyond the ruling.**
+- **`_FR22_OPEN_UNACCOUNTED` was REVIEWED, not extended** — exact, both members
+  live, unchanged. No `BACKCAST_ONLY` claim, no forward wiring, no matrix edit.
+
+**Run 2344: `Fast test tier` `1 failed, 7807 passed, 34 skipped, 2 xfailed` —
+the parity test is GREEN.** The one red is job 0's object, *"present on `main`
+since 22:57Z and outside this lane's permitted files."* **It refused the leg-2
+claim itself** and wrote this lane's instruction verbatim: carry leg 2 as
+*"BLOCKED on the caiso-239 / miso-201 / nyiso-177 forecast-board re-key (FR-22
+gap filings landed, parity red cleared — #4635)."* **Two independent lanes
+converged on the same three-row object from opposite directions.**
+
+### M-5 · 🟢 R-Y **DISCHARGED** — THE GOLDEN TIER IS GREEN, AND THE CRON IS GONE
+
+`docs/FINDING-golden-tier-repair-2026-09.md`, PR #4644 (`49bfbc49`). Also
+**launched and merged inside this session**.
+
+The 3-for-3 schedule reds were **three different defects, each merged between
+one firing and the next** — and the board's standing suspects are **ruled out on
+evidence**: not the 2026-08-16 history rewrite, not the corpus conversions, not
+the R-J/R-O manifest-schema changes.
+
+| run | cause |
+|---|---|
+| #5 (08-17) | `curate_lmp` int64/str dtype crash — already fixed by #4071 the same day |
+| #6 (08-24) | ercot-231 added `data/raw/eia-930-interchange/` + a test reading it **without extending the sparse-checkout list**; the loud-failure guard turned the data-missing skip red — **the guard working as designed** |
+| #7 (08-31) | that gap, **plus** an `integration` test still asserting NYISO's `complete` marker after the Q5-W withdrawal |
+
+**The cron is REMOVED — `workflow_dispatch`-only, exactly as R-Y ruled.** The
+billed-minutes point is recorded: a failing scheduled workflow on a private repo
+was spending owner money unwatched, three firings running.
+
+**The dispatch itself then earned its keep.** Run #8 went red on a **fourth,
+never-attributed defect** — `curate_confirmed_retirements.py` completed every
+write and validation then aborted at interpreter finalization (`terminate called
+without an active exception`, exit -6), the intermittent teardown abort three
+earlier sessions had logged and none had pinned. Mechanism: pandas hands Arrow a
+Python file handle on the validate round-trip read and an Arrow IO thread
+outlives finalization. **Fixed at the shared `clean_io.validate_clean` seam.**
+
+**Run #9 (`33704730253`) is `success`** — 12m57s, **51 passed / 2 skipped / 0
+failed**, guard reading *"no data-missing skips; golden ran and passed"*, the
+ERCOT fleet-arrays golden byte-identical. **The first green tier run since
+run #4 (2026-08-15), and the first ever on a head carrying the ercot-231 corpus
+and the NYISO withdrawal.** Two dispatches were spent and the finding says why:
+**the first surfaced a real defect; it was not a re-roll of a flake.**
+
+**What it does NOT certify, in the finding's own words and worth repeating:** it
+is **not** a byte-green certificate for the stage-0 keeper LP goldens. It makes
+that certification *possible* — the instrument works again — it does not perform
+it.
+
+### M-6 · 🔴 STAGE-0 HAS **REGRESSED, 7-of-7 → 4-of-7** — ON THE SAME THREE PROMOTIONS
+
+`check_golden_manifest.py` **exit 0** (the ratchet does not gate staleness):
+**42 manifests, 75 entries, 11 enforced / 64 legacy, 0 pruned — and 3 STALE.**
+
+| stage-0 row | golden | state |
+|---|---|---|
+| ERCOT | `2026-08-25-234-eastex-identity` | 🟢 CURRENT |
+| `ERCOT__carveout-2023` | `2026-08-25-236-swcap-clip-k33` | 🟢 CURRENT |
+| PJM | `2026-08-15-pjm-162-inputclock` | 🟢 CURRENT |
+| NEISO | `2026-08-17-neiso-99-joint-p1` | 🟢 CURRENT |
+| **CAISO** | `2026-09-01-caiso-231-b1-ungrounded` | 🔴 **STALE** → `239-b1-stgas` |
+| **MISO** | `2026-09-01-miso-198-oomlevel` | 🔴 **STALE** → `201-stbasis` |
+| **NYISO** | `2026-08-30-nyiso-159-loss-surface` | 🔴 **STALE** → `177-vintage-matched` |
+
+**Independently confirmed by R-Y §8**, which reached 4-of-7 from its own reading.
+This is the *same three promotions* as job 0 — one event, three instruments
+(gate-(a) stamp, stage-0 manifest, and the fast-tier test). **Capture-A's MISO
+capture is now a RE-capture**, and leg 1's "merged byte-green" cannot be claimed
+against live keepers until these three are re-captured under the R-O partition
+schema. **It is not this lane's to repair** (goldens are capture artifacts, not
+records) — routed to the PERF-B/stage-0 lane.
+
+### M-7 · 🔴 LEG 4 — THE FLIP IS STILL NOT LIVE, AND BLOCKER (a) HAS RE-REDDENED FROM A NEW DIRECTION
+
+**Re-measured, not assumed: all 30 most recent completed `ci.yml` runs (2322–2350)
+are `pull_request` events, and every one concluded `failure`** — against **13
+merges** across the two windows. **v22's 30-for-30 measurement is confirmed
+unchanged, on an entirely different set of 30 runs.**
+
+R-X landed the lint rider (`b2ce045a`, `ruff format` on R-W §7.2's three files),
+**and the job is red anyway** — from a source the board has not tracked before:
+
+- **`ruff check`: 5 errors, ALL in per-run capx probe scripts** —
+  `docs/handoffs/d37/grade-2026-09-02.py`, `d37/predecl-screen-grain-2026-09-02.py`,
+  `d45/positions-from-ledgers-2026-09-03.py` (×2), `d45/published-positions-2026-09-03.py`
+  (`E731` ×3, `E402`, `E401`).
+- **`ruff format --check`: 10 files** would reformat — the format step is *skipped
+  behind the failing lint step*, so the rider's three files are never even reached.
+
+**This reframes blocker (a).** It is no longer a source-tree hygiene problem; it
+is that **desks check per-run probe scripts into `docs/handoffs/` and those
+scripts are linted.** R-U §3.3's *"re-reddens within minutes"* dynamic is now in
+its third day and has changed shape. The flip is best taken immediately after a
+green Ruff job; **that is a small, well-defined cleanup, and it is the last thing
+standing between leg 4 and the owner's Settings action.**
+
+### M-8 · 🟢 SEVEN GATE SCRIPTS AT `49bfbc49` — SIX EXIT 0, ONE EXIT 1 (AND THAT ONE IS JOB 0's)
+
+Measured on **`main` content**, each invoked alone, `$?` read immediately, never
+through a pipe.
+
+| gate script | exit | reading at `49bfbc49` |
+|---|--:|---|
+| `audit_keepers.py --check` | **0** | **PASS — 0 failures, 0 warnings**; `complete` = {ERCOT, NEISO, PJM} |
+| `check_registry_payload_parity.py` | **0** | 🟢 **REPAIRED** — 61 runs, 96 bundle dirs swept, 0 known-unsynced. v22's two dead bundles (`miso200_control_A`, `miso200_unitroute_B`) **resolved by registration in #4609**, exactly as v21 predicted the transient class would |
+| `check_mechanism_matrix.py` | **0** | integrity OK, base + 6 shards; anchors **195 field + 49 row + 161 path** (v22: 195/49/160 — **+1 path**); **0 WARNs**; keeper stamps + §5.x headers match every shard |
+| `check_forecast_staleness.py` | **0** | ⬅ **Δ re-derives as `8 commit(s)` (threshold 10)** — v22 read `(unknown)`; **the L-10 blinding has lifted** · **110 stamped / 84 scored** (v22: 96/70) · **25 of 65** verdict stamps undated (unchanged count, wider base) · **35** config epochs (v22: 28) |
+| `check_bench_freshness.py` | **0** | 20 parts, **0 STALE**, 20 with engine drift — ⬅ **at 24 engine commits** (v22: 17, v20: 6). Drift has quadrupled since v20 with **no bench part regenerated** |
+| `check_gate_a_provenance.py` | **1** | 🔴 **THREE stale rows** — M-1. **Exit 0 on this lane's branch** |
+| `check_golden_manifest.py` | **0** | 42 / 75 / 11 enforced, 0 pruned, **3 STALE** — M-6 (v22: 0 stale) |
+
+**Six of seven green on `main`; the seventh is repaired on this lane's branch.**
+Two gates carry silent degradation the exit codes do not show: **bench engine
+drift 17 → 24** and **stage-0 0 → 3 stale**.
+
+### M-9 · 🟢 FOUR-INSTRUMENT ALIGNMENT **HOLDS** AT {ERCOT, NEISO, PJM} — RE-DERIVED, FAIL-CLOSED
+
+| instrument | source | membership at `49bfbc49` |
+|---|---|---|
+| Determination = `CALIBRATED` | `status/<ISO>.js` | **{ERCOT, NEISO, PJM}** |
+| Rule-22 `complete` marker | `calibration-complete.json` `complete` | **{ERCOT, NEISO, PJM}** |
+| Active `frontier` | **`keepers/<ISO>.json`**, `withdrawn` honoured | **{ERCOT, NEISO, PJM}** — NYISO `frontier.withdrawn = 2026-08-30`; CAISO, MISO absent |
+| Forecast gate-(a) passers | `program-status.json` `gate.a_keeper_marker.status` | **{ERCOT, NEISO, PJM}** |
+
+**ALL FOUR AGREE**, and they agree **before and after job 0** — which is the
+point of a stamp-only re-key. `final` is **EMPTY**: **no ISO holds a locked-test
+grant**, consistent with rule 22 and NEISO's `locked_test` note reading *NEVER
+GRANTED, NOT SPENT*. **v22's L-12 method note was heeded** — `frontier` was read
+from `keepers/<ISO>.json`, never from `calibration-complete.json`.
+
+### M-10 · 🟠 KEEPER MOTION: **THREE ISOs, FIVE PROMOTIONS** — RECORDED, NEVER ADJUDICATED, AND THE FREEZE IS INTACT
+
+Across `68690427..49bfbc49`: **CAISO** `231-b1-ungrounded → 239-b1-stgas`;
+**MISO** `198-oomlevel → 200-unitroute → 201-stbasis`; **NYISO**
+`159-loss-surface → 177-vintage-matched` (by explicit owner ruling). All three
+still read **NOT-YET**; **no determination moved into or out of `CALIBRATED`**.
+
+**The R-V freeze on {ERCOT, NEISO, PJM} is NOT breached** — `git diff` over
+`keepers/` and `status/` touches **only the three explicitly-unfrozen lanes**.
+**This lane records the motion and adjudicates none of it**, per standing
+practice.
+
+### M-11 · 🟢 THE PROTOCOL'S YIELD, THIS CYCLE
+
+v22 adopted *"a dispatch may not upgrade a lane's own claim"* and recommended
+listing the runs of every workflow the board claims about. **Both fired here:**
+
+1. **The dispatch's job 0 target was stale** — `keepers/MISO.json` named
+   `201-stbasis`, not `200-unitroute` (M-1a). Re-reading the source beat quoting
+   the instruction.
+2. **The dispatch's G6 reading (`1`) was three** (M-1b) and its G7 reading
+   (`6/7 current`) was **4/7** (M-6). Both re-derived, both different.
+3. **`R-X` and `R-Y` returned zero artifacts at the first pin and merged PRs at
+   the second** — the dispatch-vs-launch instrument caught the transition *only*
+   because main was re-polled before writing. **G-14's non-launch tally does not
+   advance this cycle; it goes the other way.**
+4. **The charitable framing offered by the dispatch did not survive the
+   timestamps** (M-2) — and is recorded as it fell, not as it was offered.
+5. **No lane's claim was upgraded.** R-W, R-X and this lane all state leg 2
+   **NOT SATISFIED**; the board does not say otherwise.
+
+### M-12 · 🟢 RECORDS INTEGRITY — WHAT THIS LANE TOUCHED
+
+**Touched:** `frontend/data/forecast/program-status.json` (job 0, three gate-(a)
+rows + the provenance block, 12 leaf paths, verdicts unmoved), this board, and
+release-plan §8.
+
+**Verified NOT touched:** every `keepers/<ISO>.json`, every `status/<ISO>.js`,
+`calibration-complete.json`, `holdout-freeze.json`, every mechanism-matrix shard,
+every workflow under `.github/workflows/`, and every bundle, sidecar and registry
+file. **No solve, no score, no registration.** Rule 27 blob verification was run
+on the `program-status.json` push (1,156 lines): **remote blob sha ==
+local, line counts equal.**
+
+### M-13 · G2 ROLL-CALL AT `49bfbc49`
+
+1. **PERF-B merged byte-green** — 🟠 **IN MOTION, AND UNBLOCKED FOR THE FIRST
+   TIME.** R-Y repaired the instrument and **run #9 is green** (M-5) — *"merged
+   byte-green" is no longer blocked on tooling.* What remains is the work:
+   **(i)** the L-8 `markup` hand-back (471–601 s/yr, unattributed) adjudicated as
+   a charter item; **(ii)** stage-0 back to **7-of-7** — now a *re*-capture of
+   three (M-6); **(iii)** a `regression_gate.py --mode byte` run against those
+   current goldens, in-session, never in CI.
+2. **One completed fast-tier-green `ci.yml` run** — 🔴 **BLOCKED, BUT ON ONE
+   MERGE.** Refused a **fourth** time (run 2344, M-4) — and the refusals have
+   walked it down: **12 → 1 → 0 objects.** R-W repaired 11, R-X cleared the 12th,
+   and **the last one is this lane's job 0, executed and pushed.** Carry it as
+   R-X wrote it: *BLOCKED on the caiso-239 / miso-201 / nyiso-177 forecast-board
+   re-key.* **Leg 2 is one merge from satisfiable — and the merge is in flight.**
+3. **A keeper freeze** — 🟢 **SATISFIED**, R-V holding; five promotions, all in
+   unfrozen lanes (M-10).
+4. **Branch-protection flip** — 🔴 **NOT LIVE**, re-measured 30-for-30 (M-7).
+   Blocker (b) stays repaired; **blocker (a) has re-reddened from capx probe
+   scripts under `docs/handoffs/`**, which is a small cleanup, not a program
+   item. **Still the owner's Settings action alone.**
+
+**Net: three owner rulings discharged in one cycle; leg 1's instrument is green
+for the first time in nineteen days; leg 2 has gone from "unstaffed with one
+substantive object" to "one merge"; leg 4 is unchanged and still the owner's.**
+
+### M-14 · 🟢 WHAT A **G2 DECLARATION** WILL REQUIRE, AND THE DUTY THAT FOLLOWS IT
+
+**Restated because the legs are now close enough that the bar matters.** G2 is
+declarable only when **all four legs are verified AT ONE PIN, in one sitting, by
+one lane** — never assembled from four cycles' separate readings:
+
+1. **Leg 1** — a `regression_gate.py --mode byte` PASS against **7-of-7 current**
+   stage-0 goldens, plus the PERF-B charter hand-back adjudicated. *Today: 4/7,
+   gate not run.*
+2. **Leg 2** — **one completed `ci.yml` run whose `Fast test tier` job concludes
+   `success`**, quoted by run id and head sha from the API record. Not "required
+   checks green", not a local pass. *Today: job 0 in flight.*
+3. **Leg 3** — the R-V freeze intact over the declaring window, `keepers/` and
+   `status/` diffed. *Today: satisfied.*
+4. **Leg 4** — branch protection **observably live**: a merge blocked by a red
+   required check, or the ruleset read directly. **30-for-30 red-with-merges is
+   the disproof standing today.** *Today: not live.*
+
+**THE DECLARATION DUTY, unchanged and restated so it is not lost:** the PM
+session that declares G2 **notifies the FFR desk**, because the **FFR Q.2
+supersession battery is pinned to fire at G2** — it does not fire on its own and
+has not fired. **DOCS-B dispatches behind that notification**, not before it.
+**G2 is NOT declarable at this pin.**
 
 ## What moved — v22 (`0653bf13..dfc44d95`, "the discharge-and-unstaffed cycle")
 
@@ -4166,6 +4622,77 @@ re-score**: no scorer ran, no determination moved, and
 `check_forecast_staleness.py` exits 0 before and after.
 
 ## Owner queue at cycle end
+
+> ### ⬅ **v23 ADDITIONS AND STATE CHANGES, re-served at `49bfbc49`.** The v22 and
+> v20 lists below are retained; these amend them. **W-1 and W-3 are RETIRED BY
+> EXECUTION** (X-0).
+>
+> **X-0. 🟢 RETIREMENTS — TWO v22 QUEUE ITEMS CLOSE BY EXECUTION.** **W-1 (R-W not launched)
+> is RETIRED BY EXECUTION**: R-W landed as #4611 and is discharged (M-3), and
+> **R-X and R-Y launched, landed and merged inside this lane's own session**
+> (M-4, M-5). **G-14's non-launch tally does not advance this cycle.** **W-3 (the
+> reproducing parity defect) is RETIRED BY EXECUTION**: the calibration desk
+> registered both `miso200_*` legs in #4609 and
+> `check_registry_payload_parity.py` is **exit 0** (M-8) — the transient-class
+> resolution v21 predicted. **W-2 (the flip) STANDS, amended by X-1.**
+>
+> **X-1. 🔴 TOP OF THE QUEUE — THE FLIP'S BLOCKER (a) HAS RE-REDDENED, AND IT IS
+> NOW A THREE-FILE CLEANUP.** `Ruff lint + format` is red on `main` again, but
+> **not from the source tree**: 5 `ruff check` errors, **all in per-run capx probe
+> scripts** under `docs/handoffs/d37/` and `docs/handoffs/d45/` (`E731` ×3,
+> `E402`, `E401`), with **10 files** failing the format step behind it (M-7).
+> R-X's rider fixed R-W §7.2's three files and the job stayed red for a reason
+> nobody had tracked. **Two decisions belong to the owner/director, neither of
+> them large:** (i) do the cleanup — small and mechanical; (ii) decide whether
+> **per-run probe scripts checked into `docs/handoffs/` should be linted at all**,
+> since they are session artifacts, not maintained source, and they will keep
+> re-reddening this job. **Then the Settings action, which no lane can perform or
+> verify.** Everything else about W-2 is unchanged and executable as written.
+>
+> **X-2. 🟠 STAGE-0 HAS REGRESSED 7-of-7 → 4-of-7 — THREE RE-CAPTURES, AND THEY
+> ARE LEG 1's LAST STRUCTURAL ITEM.** The 2026-09-02 promotions left the CAISO,
+> MISO and NYISO stage-0 goldens stale (M-6), independently confirmed by R-Y §8.
+> **Capture-A's MISO capture is now a *re*-capture.** With R-Y's instrument green
+> again, this is the item standing between PERF-B and a byte-green claim against
+> live keepers. **Route: the PERF-B / stage-0 capture lane, under the R-O
+> partition schema.** *(Not a records act; this lane does not touch goldens.)*
+>
+> **X-3. 🟠 CARRIED FORWARD, UNCHANGED — THE WS3-NEXT CHARTER `markup` HAND-BACK.**
+> L-8's item stands exactly as written: **`markup` at 471–601 s/yr, ~50× the next
+> item, unattributed.** It is a **charter item, not a lane** (R-Y §9 reaches the
+> same conclusion independently and calls adjudicating it *"the substantive item
+> leg 1 waits on"*). Attribute it or close it; either discharges it.
+>
+> **X-4. 🟢 NEW, SMALL, OPTIONAL — SCRIPT HYGIENE ON THE TWO IMPORT-TIME ENV PINS.**
+> Per R-W §7.6. `scripts/capture_keeper_goldens.py` and
+> `scripts/replay_keeper.py` mutate `os.environ` **at import time**
+> (`MARKET_SIM_HIGHS_THREADS`, `MARKET_SIM_WARMSTART`, `MARKET_SIM_WARMSTART_XYEAR`).
+> That is correct for each script's own CLI process and **was the mechanism behind
+> every inflated local test count this program has recorded** (M-3). **The leak is
+> already closed on the test side**, where it did the damage — the question is
+> only whether the pins should move under `main()` so a future by-path load is
+> **safe by construction**. `replay_keeper.py` has no test loading it today and its
+> pinned value equals the `pipeline/solve.py` default. **Small optional charter,
+> not a defect.**
+>
+> **X-5. 🟠 STANDING TAX, NOT AN ITEM — MECHANISM-MATRIX ANCHOR DRIFT.** R-W §7.7
+> recorded an instance: 25 stale `scenarios.py:NNNN` anchors on run 2324, from
+> `main` commits that grew the file between two runs of the same PR. **It resolved
+> upstream on its own** and the guard is **green at this pin** (M-8). Recorded so
+> the class is named: **anchor drift is a standing tax on a heavily-crossed file,
+> and the digits-only repair belongs to whichever lane next touches
+> `scenarios.py` — never to a records lane, which is forbidden matrix edits.**
+> No owner action.
+>
+> **X-6. 🟠 TWO SILENT DEGRADATIONS THE EXIT CODES DO NOT SHOW.** Both gates exit
+> 0 and both are drifting: **`check_bench_freshness` is at 24 engine commits**
+> (v20: 6, v22: 17 — quadrupled) with **no bench part regenerated**, and
+> `check_forecast_staleness` now reports **35 config epochs** (v22: 28) with **25
+> of 65 verdict stamps carrying no scored-at date** (M-8). Neither blocks
+> anything today; both make a marginal C1 verdict and any cross-run delta less
+> trustworthy the longer they run. **Flagged for visibility, adjudicated by
+> nobody here.**
+>
 
 > ### ⬅ **v22 ADDITIONS AND STATE CHANGES, re-served at `dfc44d95`.** The v20
 > list below is retained; these amend it.
