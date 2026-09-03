@@ -10,6 +10,23 @@ years sequential.
 **Gates:** `results/calibration/PREREG-nyiso180-per-generator-dispatch.md`,
 committed and pushed at `2966b0c4` **before the first solve**, predictions and
 falsifiers fixed in advance.
+**PARALLEL LANE — READ THIS FIRST.** Two sessions ran concurrently under the
+number nyiso-180. The other is the ZERO-SOLVE lane
+(`docs/FINDING-nyiso180-st-gas-undispatch-2026-09-03.md`, merged to main as
+PR #4652), which closed the same candidates by code reading and landed its own
+prerequisite lift, the band-grain `class_band_hourly` sidecar. **Its structural
+closes of (a) and (b) are independently reproduced here and STAND**, and its
+premise correction — that an LP generator's optimality condition is its
+**reduced cost**, not `mc ≤ price_z` — is right, and is what this lane then
+*measures*. The two reconcile exactly, and the reconciliation is this session's
+main result: that lane reproduces nyiso-179's medians to 0.0001 (0.775 / 0.448 /
+0.816) because it uses the same **reconstructed** offer, while this lane measures
+**0.992 / 0.991 / 0.992** against the offer the LP actually installed — and the
+difference between the two is the reconstruction gap quantified in §4. The one
+place the lanes differ in conclusion is C3a-2025 blocking, amended in §6 with the
+evidence. The two sidecars are complementary, not duplicates: `class_band_hourly`
+is band-grain dispatch, this one adds unit-grain **offer and reduced cost**.
+
 **Machine artifacts:** `results/calibration/_nyiso180_unit_dispatch.json`,
 `_nyiso180_mc_reconstruction_gap.json`, `_nyiso180_topdecile_decomposition.json`;
 probe `scripts/probes/nyiso180_unit_dispatch_adjudication.py`.
