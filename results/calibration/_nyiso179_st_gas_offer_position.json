@@ -1,0 +1,380 @@
+{
+  "session": "nyiso-179",
+  "prereg": "results/calibration/PREREG-nyiso179-st-gas-offer-position.md",
+  "keeper": "2026-09-02-nyiso-177-vintage-matched",
+  "bundle": "results/calibration/nyiso177_vintage_B1p",
+  "solves": 0,
+  "registered_offer_curve_ST_GAS": {
+    "committed": 1.05,
+    "econ_low": 1.08,
+    "econ_high": 1.13,
+    "peak": 4.2,
+    "econ_low_share": 0.5,
+    "pct_peaking": 15.0,
+    "phys_committed": 1.104,
+    "phys_econ_low": 0.83,
+    "phys_econ_high": 0.828,
+    "phys_peak": 1.0
+  },
+  "envelope_twh": {
+    "2023": 29.9638,
+    "2024": 28.4049,
+    "2025": 32.433
+  },
+  "V1_band_heat_rates": {
+    "a_rising_ramp": {
+      "n_bins_checked": 11,
+      "n_bins_violating": 0,
+      "worst_relative_inversion": 0.0,
+      "example_violation": null,
+      "verdict": "PASS"
+    },
+    "b_pricing_rule_attribution_REPORT": {
+      "tolerance": 1e-06,
+      "base_hr_source": "bins frame hr_weighted (assembly.py:713)",
+      "committed_mw_priced_by_class_curve": 1874.7,
+      "committed_mw_priced_elsewhere": 0.0,
+      "committed_mw_bypassed_st_gas_peaker": 0.0,
+      "committed_hr_mult_min_max": [
+        1.05,
+        1.05
+      ]
+    },
+    "verdict": "PASS"
+  },
+  "V2_envelope_agreement": {
+    "tolerance": 0.001,
+    "per_year": [
+      {
+        "year": 2023,
+        "nyiso178_twh": 29.9638,
+        "nyiso179_twh": 29.9638,
+        "rel_diff": 1e-06
+      },
+      {
+        "year": 2024,
+        "nyiso178_twh": 28.4049,
+        "nyiso179_twh": 28.4049,
+        "rel_diff": 1e-06
+      },
+      {
+        "year": 2025,
+        "nyiso178_twh": 32.433,
+        "nyiso179_twh": 32.433,
+        "rel_diff": 0.0
+      }
+    ],
+    "max_rel_diff": 1e-06,
+    "verdict": "PASS"
+  },
+  "G0": {
+    "scalar_gas_st_committed_hr_mult": 1.32,
+    "consumed_only_by": "offer_curves.split_gas_tranches",
+    "call_site_gate": "assembly.py:1912 \u2014 not use_campd_bins and gas_offer_curve",
+    "keeper_use_campd_bins": true,
+    "keeper_gas_offer_curve": false,
+    "legacy_path_entered": false,
+    "keeper_plant_level_fleet": true,
+    "gas_st_committed_hr_override": null,
+    "registered_curve_committed": 1.05,
+    "class_default_hr_mult": 1.15,
+    "measured_nyiso_avg_committed_p50": 1.104,
+    "registered_phys_committed": 1.104,
+    "n_st_gas_plants": 11,
+    "n_bypassed_st_gas_peaker_plants": 0,
+    "bypassed_mw": 0.0,
+    "committed_mw_priced_by_class_curve": 1874.7,
+    "committed_mw_priced_elsewhere": 0.0,
+    "committed_hr_mult_min_max": [
+      1.05,
+      1.05
+    ],
+    "nyiso_in_measured_registry": false,
+    "verdict": "INERT"
+  },
+  "G1": {
+    "bar": {
+      "R_low": 0.7,
+      "R_high": 1.43
+    },
+    "per_year": {
+      "2023": {
+        "median_R": 0.7751,
+        "mean_R_top_decile": 3.6177,
+        "aggregate_R_all_hours_REPORT": 0.7671,
+        "aggregate_R_top_decile_REPORT": 0.8718,
+        "mean_itm_model_mw": 1785.6,
+        "mean_model_mw": 1369.7,
+        "mean_envelope_mw": 3420.5,
+        "mean_itm_top_decile_mw": 2446.1,
+        "mean_model_top_decile_mw": 2132.5,
+        "hours_itm_below_1mw": 105
+      },
+      "2024": {
+        "median_R": 0.4481,
+        "mean_R_top_decile": 11.8925,
+        "aggregate_R_all_hours_REPORT": 0.5224,
+        "aggregate_R_top_decile_REPORT": 0.7225,
+        "mean_itm_model_mw": 2141.1,
+        "mean_model_mw": 1118.6,
+        "mean_envelope_mw": 3242.6,
+        "mean_itm_top_decile_mw": 2266.0,
+        "mean_model_top_decile_mw": 1637.2,
+        "hours_itm_below_1mw": 149
+      },
+      "2025": {
+        "median_R": 0.8159,
+        "mean_R_top_decile": 58.4861,
+        "aggregate_R_all_hours_REPORT": 0.7402,
+        "aggregate_R_top_decile_REPORT": 0.9055,
+        "mean_itm_model_mw": 1544.4,
+        "mean_model_mw": 1143.2,
+        "mean_envelope_mw": 3702.4,
+        "mean_itm_top_decile_mw": 1592.4,
+        "mean_model_top_decile_mw": 1441.9,
+        "hours_itm_below_1mw": 470
+      }
+    },
+    "verdict": "NOT-OFFER-GOVERNED"
+  },
+  "G2": {
+    "bars": {
+      "reach": 0.5,
+      "top_decile_binding": 0.05
+    },
+    "reach": {
+      "2023": {
+        "st_gas_lp_capacity_mw": 8902.4,
+        "dual_fuel_capable_mw": 7424.0,
+        "reach_share": 0.8339,
+        "n_bins": 88,
+        "n_bins_capable": 64,
+        "capable_plant_codes": [
+          2500,
+          2511,
+          2516,
+          2517,
+          2625,
+          2682,
+          8006,
+          8906
+        ],
+        "incapable_plant_codes": [
+          2480,
+          2490,
+          2527
+        ]
+      },
+      "2024": {
+        "st_gas_lp_capacity_mw": 8902.4,
+        "dual_fuel_capable_mw": 7424.0,
+        "reach_share": 0.8339,
+        "n_bins": 88,
+        "n_bins_capable": 64,
+        "capable_plant_codes": [
+          2500,
+          2511,
+          2516,
+          2517,
+          2625,
+          2682,
+          8006,
+          8906
+        ],
+        "incapable_plant_codes": [
+          2480,
+          2490,
+          2527
+        ]
+      },
+      "2025": {
+        "st_gas_lp_capacity_mw": 8902.4,
+        "dual_fuel_capable_mw": 7424.0,
+        "reach_share": 0.8339,
+        "n_bins": 88,
+        "n_bins_capable": 64,
+        "capable_plant_codes": [
+          2500,
+          2511,
+          2516,
+          2517,
+          2625,
+          2682,
+          8006,
+          8906
+        ],
+        "incapable_plant_codes": [
+          2480,
+          2490,
+          2527
+        ]
+      }
+    },
+    "binding": {
+      "2023": {
+        "share_bin_hours_capped": 0.00199,
+        "share_top_decile_bin_hours_capped": 0.00747,
+        "mw_weighted_mean_relief_usd_per_mmbtu": 0.0853,
+        "mw_weighted_mean_relief_top_decile": 0.2806,
+        "max_relief_usd_per_mmbtu": 28.9572,
+        "mean_uncapped_gas_top_decile": 3.4031,
+        "mean_delivered_top_decile": 3.1225
+      },
+      "2024": {
+        "share_bin_hours_capped": 0.00598,
+        "share_top_decile_bin_hours_capped": 0.04317,
+        "mw_weighted_mean_relief_usd_per_mmbtu": 0.0143,
+        "mw_weighted_mean_relief_top_decile": 0.1166,
+        "max_relief_usd_per_mmbtu": 4.8289,
+        "mean_uncapped_gas_top_decile": 4.3429,
+        "mean_delivered_top_decile": 4.2263
+      },
+      "2025": {
+        "share_bin_hours_capped": 0.01519,
+        "share_top_decile_bin_hours_capped": 0.08748,
+        "mw_weighted_mean_relief_usd_per_mmbtu": 0.4984,
+        "mw_weighted_mean_relief_top_decile": 2.3708,
+        "max_relief_usd_per_mmbtu": 65.0769,
+        "mean_uncapped_gas_top_decile": 11.7599,
+        "mean_delivered_top_decile": 9.389
+      }
+    },
+    "verdict": "LINE CLOSED"
+  },
+  "G3": {
+    "bars": {
+      "oom_share": 0.4,
+      "oom_hours": 0.9
+    },
+    "per_year": {
+      "2023": {
+        "mean_actual_price_top_decile": 72.2,
+        "mean_model_mw_top_decile": 2132.5,
+        "mean_measured_mw_top_decile": 2113.6,
+        "total_oom_mw_top_decile": 952.0,
+        "total_itm_at_actual_price_mw_top_decile": 2946.4,
+        "peak_share_of_oom": 0.5338,
+        "by_band": {
+          "committed": {
+            "capacity_mw": 1874.7,
+            "mean_available_mw_top_decile": 878.1,
+            "mean_itm_mw_top_decile": 781.2,
+            "mean_oom_mw_top_decile": 96.9,
+            "share_top_decile_hours_oom": 0.1741,
+            "mean_mc_top_decile": 41.83
+          },
+          "econ*": {
+            "capacity_mw": 5692.4,
+            "mean_available_mw_top_decile": 2435.5,
+            "mean_itm_mw_top_decile": 2088.6,
+            "mean_oom_mw_top_decile": 346.9,
+            "share_top_decile_hours_oom": 0.2035,
+            "mean_mc_top_decile": 43.81
+          },
+          "peak": {
+            "capacity_mw": 1335.4,
+            "mean_available_mw_top_decile": 584.7,
+            "mean_itm_mw_top_decile": 76.6,
+            "mean_oom_mw_top_decile": 508.2,
+            "share_top_decile_hours_oom": 0.8912,
+            "mean_mc_top_decile": 155.3
+          }
+        }
+      },
+      "2024": {
+        "mean_actual_price_top_decile": 93.39,
+        "mean_model_mw_top_decile": 1637.2,
+        "mean_measured_mw_top_decile": 2404.7,
+        "total_oom_mw_top_decile": 826.5,
+        "total_itm_at_actual_price_mw_top_decile": 2562.1,
+        "peak_share_of_oom": 0.5273,
+        "by_band": {
+          "committed": {
+            "capacity_mw": 1874.7,
+            "mean_available_mw_top_decile": 772.9,
+            "mean_itm_mw_top_decile": 674.6,
+            "mean_oom_mw_top_decile": 98.3,
+            "share_top_decile_hours_oom": 0.1531,
+            "mean_mc_top_decile": 56.38
+          },
+          "econ*": {
+            "capacity_mw": 5692.4,
+            "mean_available_mw_top_decile": 2107.4,
+            "mean_itm_mw_top_decile": 1815.0,
+            "mean_oom_mw_top_decile": 292.4,
+            "share_top_decile_hours_oom": 0.1663,
+            "mean_mc_top_decile": 59.13
+          },
+          "peak": {
+            "capacity_mw": 1335.4,
+            "mean_available_mw_top_decile": 508.3,
+            "mean_itm_mw_top_decile": 72.5,
+            "mean_oom_mw_top_decile": 435.8,
+            "share_top_decile_hours_oom": 0.8628,
+            "mean_mc_top_decile": 213.53
+          }
+        }
+      },
+      "2025": {
+        "mean_actual_price_top_decile": 176.25,
+        "mean_model_mw_top_decile": 1441.9,
+        "mean_measured_mw_top_decile": 2596.9,
+        "total_oom_mw_top_decile": 1344.8,
+        "total_itm_at_actual_price_mw_top_decile": 2313.3,
+        "peak_share_of_oom": 0.3359,
+        "by_band": {
+          "committed": {
+            "capacity_mw": 1874.7,
+            "mean_available_mw_top_decile": 755.4,
+            "mean_itm_mw_top_decile": 562.3,
+            "mean_oom_mw_top_decile": 193.2,
+            "share_top_decile_hours_oom": 0.244,
+            "mean_mc_top_decile": 106.99
+          },
+          "econ*": {
+            "capacity_mw": 5692.4,
+            "mean_available_mw_top_decile": 2353.9,
+            "mean_itm_mw_top_decile": 1654.0,
+            "mean_oom_mw_top_decile": 699.9,
+            "share_top_decile_hours_oom": 0.2702,
+            "mean_mc_top_decile": 112.38
+          },
+          "peak": {
+            "capacity_mw": 1335.4,
+            "mean_available_mw_top_decile": 548.7,
+            "mean_itm_mw_top_decile": 97.0,
+            "mean_oom_mw_top_decile": 451.7,
+            "share_top_decile_hours_oom": 0.8062,
+            "mean_mc_top_decile": 415.94
+          }
+        }
+      }
+    },
+    "verdict": "PEAK-EXONERATED"
+  },
+  "G4": {
+    "bar": 0.6,
+    "n_common_bins": 88,
+    "n_bins_only_2023": 0,
+    "n_bins_only_2025": 0,
+    "band_heat_rate_max_drift": 0.0,
+    "band_vom_max_drift": 0.0,
+    "itm_actual_mean_mw_2023": 1186.7,
+    "itm_actual_mean_mw_2025": 1369.2,
+    "delta_itm_actual_mw": 182.5,
+    "channel_contribution_mw": {
+      "FUEL": -740.8,
+      "PRICE": 1163.1,
+      "AVAIL": -239.9
+    },
+    "channel_share_of_abs_delta": {
+      "FUEL": -4.0601,
+      "PRICE": 6.3749,
+      "AVAIL": -1.3148
+    },
+    "carrier": "PRICE",
+    "verdict": "CARRIER IDENTIFIED",
+    "share_denominator_is_small": true,
+    "shares_interpretable_as_fractions": false
+  }
+}

@@ -10254,6 +10254,70 @@ is now the live queue head.**)*
 
 ### 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — UPDATED 2026-09-03 (nyiso-179, ZERO SOLVE; the offer-POSITION
+type REFUTED, all three of nyiso-178's starting points CLOSED, one new object
+opened and one lane declared BLOCKED). Open gate: C1-2023 `ST_GAS` +3.86 TWh;
+C3a-2025 −11.2 % stays owner-court; C3c ledgered.**
+* **THE LANE IS BLOCKED ON C3a-2025.** The 2025 top-decile `ST_GAS` deficit
+  (measured 2,597 MW vs model 1,442 MW) decomposes **62.4 %** onto the model's
+  own price level — capacity its offer clears at the ACTUAL price but not at
+  the price it forms — **24.6 %** onto offer position proper, **13.0 %** onto
+  capacity in the money at its own price and still unrun. An accounting
+  identity at fixed offer, not a causal one, but it identifies the `ST_GAS` C1
+  lane and the C3a-2025 lane as **ONE OBJECT**. **Do not open an `ST_GAS` offer
+  lever expecting to move C1** until Q1 of
+  `DECISION-CARD-nyiso148-2025-level-remainder` is answered.
+* **THE OFFER-POSITION TYPE IS REFUTED (G1 `NOT-OFFER-GOVERNED`).** Against its
+  own P1 zonal prices the model dispatches only 0.767 / 0.522 / 0.740 of the
+  `ST_GAS` its own offer puts in the money — **3.84 / 9.09 / 3.99 TWh a year**
+  unrun. Robust to a strict-inequality sweep, to reserve holding (families bind
+  21 / 11 / 38 h of 8,760; overlap with withholding 0 / 2 / 0), and to the
+  P0/P1 bid-cost gap (structurally zero markup for `gas_st`).
+* **NEW OBJECT, OPEN — un-dispatched in-the-money `ST_GAS`.** Three candidate
+  explanations (finding §6.1): the armed `nyiso_zonal_loss_surface` delivery
+  factors (bounded at a few percent, so they cannot carry a 25–48 % gap), a
+  post-solve transform between the LP dual and the `system` sidecar's `price`,
+  or a capacity-basis mismatch. **Prerequisite: per-generator model dispatch,
+  absent from every keeper artifact (the nyiso-172 §2.5 limit, binding a third
+  consecutive session) — lifting it is worth more than any lever now queued.**
+* **CLOSED (a) — `gas_st_committed_hr_mult` and the caiso-239 transfer.**
+  Structurally unreachable: the 1.32 is consumed only by
+  `offer_curves.split_gas_tranches`, callable only from the non-CAMPD limb
+  (`assembly.py:1912`), and this keeper is `use_campd_bins=True`; every
+  committed band measures `base_hr × 1.05`. NYISO has **0 of 11**
+  `ST_GAS_PEAKER_PLANTS` members, and its own `avg_committed_p50` 1.104 is
+  already registered as `phys_committed`. A NYISO registry entry would be
+  **unreachable** (rule 24), so none was added. DO-NOT-REDO absent a NYISO
+  keeper that leaves the CAMPD path.
+* **CLOSED (b) — the downstate gas basis + `dual_fuel_switching` in the dear
+  hours**, on rule 19 executed rather than asserted: the ARMED cap reaches
+  **0.834** of `ST_GAS` capacity and bites hardest exactly where predicted —
+  2025's top decile, 0.0875 of bin-hours capped at **\$2.371/MMBtu**, delivered
+  gas \$11.76 → \$9.39. **Re-open condition:** reach below 0.50, or the
+  measured NY Harbor ULSD basis shown wrong.
+* **CLOSED (c) — the un-grounded `peak` 4.20 as this signature's carrier.**
+  `PEAK-EXONERATED` on both legs (0.336 of top-decile OOM MW against a 0.40
+  bar; OOM in 0.806 of hours against 0.90). At mean mc \$415.9 against a
+  \$176.25 price it is 2.4× the price, while **700 MW of econ-band steam sits
+  OOM at \$112**. It stays un-grounded with the nyiso-169b standing —
+  `nyiso_campd_marginal_hr_summary.csv` carries **no peak column**, so grounding
+  needs a new measured NYISO artifact, not a sweep.
+* **STANDING INSTRUMENT CONDITION.** Every in-the-money figure above is valid
+  *because* `gas_st_startup_cost = False` (`commitment.py:312` skips the
+  `gas_st` limb). A keeper that arms it must add `compute_monthly_markup` to the
+  reconstruction before reusing these probes.
+* **STILL UNSPENT — the missing rung** (nyiso-177 §7.2 / nyiso-178 §9.2),
+  unchanged: a `-merit-` PAIR on incumbent routing, both resolvers extended, and
+  the selector relaxed while preserving the pairing invariant.
+* Evidence: `docs/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md`,
+  `results/calibration/PREREG-nyiso179-st-gas-offer-position.md`,
+  `scripts/probes/nyiso179_st_gas_offer_position.py` +
+  `nyiso179_g1_robustness.py` →
+  `results/calibration/_nyiso179_st_gas_offer_position.json` +
+  `_nyiso179_g1_robustness.json`.
+
+PRIOR QUEUE (nyiso-178, superseded 2026-09-03, preserved verbatim):
+
 **LEVER QUEUE — UPDATED 2026-09-02 (nyiso-178, ZERO SOLVE; three lines CLOSED,
 nothing opened). Open gate: C1-2023 `ST_GAS` +3.86 TWh; C3a-2025 −11.2 % stays
 owner-court; C3c ledgered.**

@@ -424,3 +424,83 @@ non-CAMPD limb under `not use_campd_bins and config.gas_offer_curve`
 unreachable** at ercot-188. `G0 = LIVE` iff that limb is entered;
 `G0 = INERT` otherwise. The heat-rate attribution of V1(b) is reported
 alongside as corroboration, not as the test.
+
+---
+
+## 8. AMENDMENTS FOUND BY THE PROBE'S OWN OUTPUT (post-run, pre-finding)
+
+nyiso-178's third defect was caught this way — its reconstructed ceiling was
+falsified by a p99 utilisation above 1.0 — and answered by **replacing the
+INSTRUMENT, never softening the gate**. Three defects surfaced the same way
+here. All three are disclosed before the finding is written, and **no bar below
+is moved.**
+
+### 8.1 V1 returned `UNAVAILABLE` — it checked ZERO bins
+
+§7.5's V1(a) tests the rising ramp across `econlo ≤ econhi ≤ peak`. The NYISO
+`ST_GAS` bins carry **no `econlo` or `econhi` band at all**: the measured
+vocabulary is `committed` (1,874.7 MW) / `econc00…econc05` (six equal slices,
+948.7 MW each) / `peak` (1,335.4 MW) — the economic ramp is sliced by
+`offer_curves._econ_curve_steps`, whose suffixes are `econcNN`. §7.1 correctly
+identified `econcNN` as members of the econ family, and then §7.5's validator
+was written against the two-band names anyway. V1 therefore silently checked
+nothing and returned `UNAVAILABLE`, and V1(b)'s pricing attribution returned
+0 MW because it used `econlo` as its base-HR reference.
+
+**Repair (instrument, not gate).** V1(a) now walks the bin's bands in **LP fill
+order** — `mustrun → sync → committed → commitcyc → econlo → econhi →
+econc00…econcNN → peak`, restricted to those actually present — and requires the
+heat rate to be non-decreasing across it. V1(b) now takes the base heat rate
+from the **bins frame's own `hr_weighted`** keyed by `(Plant_Group, Plant_Code)`
+— the exact quantity `bins_to_fleet` reads at `assembly.py:713` — instead of
+back-solving it from a band that does not exist. **The bar is unchanged.**
+
+**G0 is unaffected**, and this is why §7.6 made it structural: its verdict is
+read off the call-site gate (`not use_campd_bins and gas_offer_curve`), not off
+heat-rate arithmetic. A validator that returned nothing could not and did not
+move it.
+
+### 8.2 G1's top-decile statistic is a MEAN OF RATIOS with a near-zero denominator
+
+The probe's own output falsifies it. G1's top-decile mean `R` reads
+**3.618 / 11.893 / 58.486**, i.e. "the model dispatches 58× the capacity its own
+offer puts in the money" — which the same rows' MW levels flatly contradict
+(2025 top decile: `ITM` 1,592 MW against model 1,442 MW, a ratio of 0.906).
+`R(t) = model_MW(t) / max(ITM_model(t), 1.0)` is unbounded wherever
+`ITM_model(t)` approaches zero, and the mean is dominated by those hours.
+
+**Repair (instrument, not gate).** The **aggregate** ratio
+`Σ_t model_MW(t) / Σ_t ITM_model(t)` over the same hour set — the quantity G1's
+own text means by "the class's dispatch tracks its own in-the-money stack" — is
+added as a REPORT alongside, per year, for all hours and for the top decile,
+together with `hours_itm_below_1mw` so the instability is auditable.
+
+**THE PRE-REGISTERED BAR AND STATISTIC ARE NOT CHANGED, AND THE VERDICT IS
+RECORDED ON THEM.** This matters because the two readings do **not** agree, and
+saying so is the honest result: the pre-registered **median** leg — which is
+robust to the blow-up and needs no repair — fails on its own terms
+(0.775 / **0.448** / 0.816 against a 0.70 floor), and the aggregate report
+agrees with it for all hours (0.767 / **0.523** / 0.740). The two readings
+diverge only on the top decile, where the aggregate is in band
+(0.872 / 0.722 / 0.906) and the mean-of-ratios is not. **G1 therefore stands at
+`NOT-OFFER-GOVERNED` on the pre-registered statistic, and S1 fires** — the
+repair does not rescue it, and no arm is built. The finding reports the
+all-hours-versus-top-decile split, which is the substantive content.
+
+### 8.3 G4's SHARE denominator is small, so its shares are not fractions
+
+`ΔITM_actual(2023→2025)` is **+182 MW**, while the individual channel
+contributions are **−741 (FUEL) / +1,163 (PRICE) / −240 (AVAIL)**. The shares
+therefore read −4.06 / +6.37 / −1.31 — they sum to 1.000 exactly, as a
+decomposition must, but they are **not interpretable as fractions of the
+change**, and the pre-registered `≥ 0.60` carrier bar is satisfied trivially by
+a near-cancellation of two large opposing channels rather than by one channel
+dominating.
+
+**No repair is possible and none is attempted** — the decomposition is
+arithmetically correct; the *bar* is the wrong shape for a near-cancelling
+delta, and moving a bar after seeing its inputs is exactly what this discipline
+forbids. **The verdict is reported as the bar reads it (`CARRIER IDENTIFIED`,
+`PRICE`) together with an explicit statement that the label is an artifact of
+the small denominator**, and the finding leads with the **MW contributions**,
+which are stable and are the real answer to the chartered question.

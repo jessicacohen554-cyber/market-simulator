@@ -136,6 +136,24 @@ def _decile_idx(px: np.ndarray) -> list[np.ndarray]:
     return np.array_split(np.argsort(px), DECILES)
 
 
+def st_gas_base_hr(year: int, cfg_obj) -> dict:
+    """{plant_code: hr_weighted} for ST_GAS, from the bins frame itself.
+
+    PREREG §8.1: this is the exact base heat rate ``bins_to_fleet`` reads
+    (``base_hr = float(b["hr_weighted"])``, ``assembly.py:713``), so V1(b)'s
+    committed multiplier is measured against the LP's own base, not a value
+    back-solved from another band.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.data.fleet.assembly import load_or_synthesize_bins
+
+    ic = get_iso_config(ISO)
+    bins = load_or_synthesize_bins(cfg_obj.with_overrides(weather_year=year),
+                                   ISO, ic, [])
+    sub = bins[bins["Plant_Group"] == KLASS]
+    return {int(r.Plant_Code): float(r.hr_weighted) for r in sub.itertuples()}
+
+
 def build_year(year: int, cfg_obj) -> dict:
     """Return the exact LP ST_GAS offer state for one year. Zero solve."""
     from market_sim.config.iso_configs import get_iso_config
@@ -186,34 +204,53 @@ _BAND_TO_OFFER_KEY = {
 }
 
 
-def v1_band_heat_rates(st: dict, offer: dict) -> dict:
+def _fill_order_key(band: str) -> tuple:
+    """LP fill order: mustrun -> sync -> committed -> commitcyc -> econ -> peak."""
+    fixed = {"mustrun": 0, "sync": 1, "committed": 2, "commitcyc": 3,
+             "econlo": 4, "econhi": 5, "peak": 9}
+    if band in fixed:
+        return (fixed[band], 0)
+    if band.startswith("econc"):
+        try:
+            return (6, int(band[5:]))
+        except ValueError:
+            return (6, 0)
+    if band.startswith("econ"):
+        return (6, 0)
+    return (8, 0)
+
+
+def v1_band_heat_rates(st: dict, offer: dict, base_hr: dict) -> dict:
     """(a) the offer ramp must RISE; (b) attribute each bin's pricing rule.
 
-    RESTRUCTURED before execution (PREREG §7.5). The first draft asserted
-    ``band_hr == base_hr x offer[key]`` for every bin and would have called any
-    departure an INSTRUMENT failure. That is wrong on the code: ``bins_to_fleet``
-    has a THIRD pricing route — the per-plant tranche sheet
-    (``if ov is not None``, ``assembly.py:796``) overwrites ``committed_hr`` and
-    ``peak_hr`` with the SHEET's own ``hr_mc`` / ``hr_pk`` multipliers, and the
-    keeper runs ``campd_per_unit_attribution=True``. A sheet-priced bin is still
-    the LP's real offer; it is simply not priced by the class curve. So:
+    REPAIRED (PREREG §8.1) after the first run returned ``UNAVAILABLE`` having
+    checked ZERO bins: NYISO ``ST_GAS`` carries no ``econlo``/``econhi`` band at
+    all — its economic ramp is sliced by ``offer_curves._econ_curve_steps`` into
+    ``econc00..econcNN`` — so a validator keyed on the two-band names matched
+    nothing. (a) now walks whatever bands are PRESENT in LP fill order; (b) now
+    takes the base heat rate from the bins frame's own ``hr_weighted``, the
+    exact quantity ``bins_to_fleet`` reads at ``assembly.py:713``, instead of
+    back-solving it from a band that does not exist. The bar is unchanged.
 
-    * **(a) is the instrument check and CAN FAIL** — within each bin the LP heat
-      rates must satisfy ``econlo <= econhi <= peak``, the rising-ramp contract
-      every pricing route obeys (registered 1.08 <= 1.13 <= 4.20). If band
-      parsing were wrong this breaks, which is precisely what it is for.
-    * **(b) is a REPORT and cannot fail** — the share of committed-band MW whose
-      heat rate reproduces the registered class multiplier exactly, versus MW
-      priced by the per-plant sheet or the ``ST_GAS_PEAKER_PLANTS`` bypass.
+    * **(a) is the instrument check and CAN FAIL** — heat rate must be
+      non-decreasing across the fill order, the rising-ramp contract every
+      pricing route obeys. This is what breaks if §7.1's band parsing is wrong.
+    * **(b) is a REPORT and cannot fail** — the committed band's realised
+      multiplier against the registered class value, and the MW split across
+      the three pricing routes (class curve / per-plant sheet / bypass).
     """
-    hr_by_bin: dict[str, dict[str, float]] = {}
+    per_bin: dict[str, list[tuple[tuple, str, float]]] = {}
     for i, uid in enumerate(st["unit_id"]):
-        hr_by_bin.setdefault(bin_of(uid), {})[st["band"][i]] = float(st["hr"][i])
+        b = st["band"][i]
+        per_bin.setdefault(bin_of(uid), []).append(
+            (_fill_order_key(b), b, float(st["hr"][i]))
+        )
 
     checked = violations = 0
     worst = 0.0
-    for vals in hr_by_bin.values():
-        seq = [vals[b] for b in ("econlo", "econhi", "peak") if b in vals]
+    example = None
+    for bin_id, items in per_bin.items():
+        seq = [hr for _k, _b, hr in sorted(items)]
         if len(seq) < 2:
             continue
         checked += 1
@@ -221,9 +258,12 @@ def v1_band_heat_rates(st: dict, offer: dict) -> dict:
             if hi < lo - 1e-9:
                 violations += 1
                 worst = max(worst, (lo - hi) / max(lo, 1e-9))
+                if example is None:
+                    example = {"bin": bin_id,
+                               "bands": [b for _k, b, _h in sorted(items)],
+                               "heat_rates": [round(h, 4) for h in seq]}
                 break
 
-    # (b) pricing-rule attribution on the committed band.
     mw_curve = mw_other = mw_bypass = 0.0
     ratios = []
     for i, uid in enumerate(st["unit_id"]):
@@ -233,10 +273,10 @@ def v1_band_heat_rates(st: dict, offer: dict) -> dict:
         if int(st["plant_code"][i]) in ST_GAS_PEAKER_PLANTS:
             mw_bypass += cap
             continue
-        base = hr_by_bin[bin_of(uid)].get("econlo")
+        base = base_hr.get(int(st["plant_code"][i]))
         if not base:
             continue
-        r = float(st["hr"][i]) / (base / float(offer["econ_low"]))
+        r = float(st["hr"][i]) / float(base)
         ratios.append(r)
         if abs(r - float(offer["committed"])) <= V1_TOL:
             mw_curve += cap
@@ -248,11 +288,13 @@ def v1_band_heat_rates(st: dict, offer: dict) -> dict:
             "n_bins_checked": checked,
             "n_bins_violating": violations,
             "worst_relative_inversion": round(worst, 9),
+            "example_violation": example,
             "verdict": "PASS" if (checked and violations == 0)
                        else ("FAIL" if checked else "UNAVAILABLE"),
         },
         "b_pricing_rule_attribution_REPORT": {
             "tolerance": V1_TOL,
+            "base_hr_source": "bins frame hr_weighted (assembly.py:713)",
             "committed_mw_priced_by_class_curve": round(mw_curve, 1),
             "committed_mw_priced_elsewhere": round(mw_other, 1),
             "committed_mw_bypassed_st_gas_peaker": round(mw_bypass, 1),
@@ -369,6 +411,15 @@ def g1_offer_governed(states: dict) -> dict:
         per_year[y] = {
             "median_R": round(float(np.median(r)), 4),
             "mean_R_top_decile": round(float(r[top].mean()), 4),
+            # PREREG §8.2 REPORT — the aggregate ratio, stable where the
+            # mean-of-ratios blows up. The BAR is still read on the two
+            # statistics above; this is reported alongside, never in place.
+            "aggregate_R_all_hours_REPORT": round(
+                float(mo.sum() / max(itm.sum(), 1.0)), 4
+            ),
+            "aggregate_R_top_decile_REPORT": round(
+                float(mo[top].sum() / max(itm[top].sum(), 1.0)), 4
+            ),
             "mean_itm_model_mw": round(float(itm.mean()), 1),
             "mean_model_mw": round(float(mo.mean()), 1),
             "mean_envelope_mw": round(float(env.mean()), 1),
@@ -493,6 +544,9 @@ def g3_band_attribution(states: dict) -> dict:
                 float(measured_hourly(y, KLASS)[top].mean()), 1
             ),
             "total_oom_mw_top_decile": round(tot_oom, 1),
+            "total_itm_at_actual_price_mw_top_decile": round(
+                sum(v["mean_itm_mw_top_decile"] for v in rows.values()), 1
+            ),
             "peak_share_of_oom": round(
                 rows.get("peak", {}).get("mean_oom_mw_top_decile", 0.0)
                 / max(tot_oom, 1e-9), 4
@@ -582,6 +636,14 @@ def g4_between_year(states: dict) -> dict:
         "carrier": top_ch,
         "verdict": ("CARRIER IDENTIFIED"
                     if abs(shares[top_ch]) >= G4_CARRIER_BAR else "DIFFUSE"),
+        # PREREG §8.3 — the shares sum to 1.000 by construction but are NOT
+        # fractions when the net delta is small against the channel magnitudes.
+        "share_denominator_is_small": bool(
+            abs(d_total) < 0.5 * max(abs(v) for v in mws.values())
+        ),
+        "shares_interpretable_as_fractions": bool(
+            abs(d_total) >= 0.5 * max(abs(v) for v in mws.values())
+        ),
     }
 
 
@@ -590,12 +652,13 @@ def main() -> None:
     offer = dict(cfg_obj.offer_curve_by_group["ST_GAS"])
 
     states = {y: build_year(y, cfg_obj) for y in YEARS}
+    base_hr = st_gas_base_hr(2023, cfg_obj)
     env_twh = {
         y: float((states[y]["pmax"][:, None] * states[y]["avail"]).sum()) / 1e6
         for y in YEARS
     }
 
-    v1 = v1_band_heat_rates(states[2023], offer)
+    v1 = v1_band_heat_rates(states[2023], offer, base_hr)
     v2 = v2_envelope_agreement(env_twh)
 
     rec = {
@@ -639,7 +702,8 @@ def main() -> None:
     for y in YEARS:
         p = rec["G1"]["per_year"][y]
         print(f"  {y}  median R {p['median_R']:.3f}  top-decile R "
-              f"{p['mean_R_top_decile']:.3f}   ITM {p['mean_itm_model_mw']:.0f} "
+              f"{p['mean_R_top_decile']:.3f}  [agg all {p['aggregate_R_all_hours_REPORT']:.3f} "
+              f"top {p['aggregate_R_top_decile_REPORT']:.3f}]  ITM {p['mean_itm_model_mw']:.0f} "
               f" model {p['mean_model_mw']:.0f}  env {p['mean_envelope_mw']:.0f}"
               f"  | top-dec ITM {p['mean_itm_top_decile_mw']:.0f} model "
               f"{p['mean_model_top_decile_mw']:.0f}")
@@ -658,7 +722,8 @@ def main() -> None:
         p = rec["G3"]["per_year"][y]
         print(f"  {y}  price {p['mean_actual_price_top_decile']:.1f}  model "
               f"{p['mean_model_mw_top_decile']:.0f}  measured "
-              f"{p['mean_measured_mw_top_decile']:.0f}  OOM "
+              f"{p['mean_measured_mw_top_decile']:.0f}  ITM@actual "
+              f"{p['total_itm_at_actual_price_mw_top_decile']:.0f}  OOM "
               f"{p['total_oom_mw_top_decile']:.0f}  peak-share "
               f"{p['peak_share_of_oom']:.3f}")
         for bnd, v in p["by_band"].items():
