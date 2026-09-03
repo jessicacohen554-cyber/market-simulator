@@ -11463,10 +11463,17 @@ the new open defect recorded inside it) — **no verdict moves**;
 `scripts/check_mechanism_matrix.py` clean. The §5.5 lever queue is rewritten,
 with the prior lane's queue preserved verbatim beneath it.
 
+**Tests:** `tests/unit` + `tests/iso/nyiso` — 4,475 passed, 28 skipped, 1
+xfailed, 200 subtests passed; the 4 failures in `tests/unit/results/test_export.py`
+are the pre-existing missing-`confirmed-retirements`-partition failure nyiso-177
+§9 recorded, **proved rather than asserted**: after regenerating that clean
+partition the file runs 14 passed / 0 failed, i.e. **4,489 passed, 0 failed**.
+
 **Side effect, disclosed:** `data/clean/` (gitignored, derived, disposable) was
-regenerated for `capacity-deliverability` and `nyiso-interface-flows`, which the
-no-LP reconstruction requires and which were absent in this container. No raw
-input was written.
+regenerated for `capacity-deliverability`, `nyiso-interface-flows` and
+`confirmed-retirements` — the first two because the no-LP reconstruction requires
+them and they were absent in this container, the third to discharge the test
+question above. No raw input was written.
 
 **Evidence:** `docs/FINDING-nyiso183-ravenswood-availability-2026-09-03.md`,
 `results/calibration/PREREG-nyiso183-ravenswood-availability.md`,
