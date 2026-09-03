@@ -4038,3 +4038,107 @@ the explicit close-out line: this was the once-only clearing-half charter — su
 is per-ISO repair lanes, and the mechanism-class question does not reopen without new
 evidence.
 ```
+
+## D46 — the post-repair-wave RE-MEASURE, staged (r#32; owner ruling Q32 on card C-3)
+
+```
+You are the D46 session of the capacity-expansion track — the BATCHED RE-MEASURE the director
+queued at r#30/r#31 and the owner scoped at r#32 (ruling Q32: STAGED — the cheap set now, the
+t1f tail later). It is a BASELINE REFRESH, not an A/B: every registered forecast bundle is stale
+on up to three independent axes that were each measured on their own lanes already —
+(i) Q30/D44: `fossil_announced_exits_enabled` flipped default-ON at `57088c33` (every ISO);
+(ii) D41: the CCS fixed-cost constants re-identified (PJM/MISO CCS waves; GOLDEN-2's CCS leg);
+(iii) keeper vintage: CAISO (231→239→240), MISO (198→200→201→202), NYISO (159→177).
+You re-solve at HEAD, register preserve-then-overwrite, refresh the board, and REPORT every
+gate-leg flip at full magnitude. You attribute nothing to an axis (no per-ISO controls — the
+axes were measured on D42/D41/the backcast lanes) and you arm nothing.
+
+DATA PROFILE: ercot, caiso, miso, neiso — hydrate incrementally, one ISO as its leg starts
+(`python3 scripts/hydrate_data.py --profile <iso>`); widen to pjm/nyiso only in Stage 2.
+MODEL ASSIGNMENT: Opus (ruled, pre-declared, mechanical execution; no adjudication).
+BRANCH: claude/capx-d46-remeasure-batch — FRESH off origin/main, rebase before every push.
+
+READ FIRST: capx ledger §0ac.7 (the priced inventory) + §0ac amendment 2 (the Q32 ruling) ·
+docs/handoffs/FINDING-capx-d44-fossil-dates-arm-2026-09-03.md (what the flip changed, the
+cache-key advance, the harness pin it repaired) · FINDING-capx-d41-* (the CCS constants) ·
+FINDING-capx-d37-neiso-t1h-armed-2026-09-02.md and FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md
+(the diagnostics-on live-posture hindcast pattern: pre-declared cache keys, run_config vintage
+lines, preserve-then-overwrite) · FINDING-capx-t3-golden2-2026-09-01.md (the golden recipe:
+`run_full_horizon.py --iso NEISO --start-year 2026 --end-year 2050 --golden-posture
+--full-solve-authorized`) · FINDING-capx-s6-pjm-ledger-2026-08-30.md (the t1f recipe:
+`run_full_horizon.py --golden-posture`, then `forecast_verdict.py --tier t1f`, then
+`register_forecast_run.py --summary … --kind t1f --label d46-remeasure`) ·
+scripts/register_forecast_run.py::VERDICT_MAP (the run-id → bare-key map; you ADD rows, never
+edit existing ones) · frontend/data/forecast/ff-verdicts.json (the committed verdict snapshot;
+suffixed keys are PRESERVED BASELINES).
+
+POSTURE RULE: each leg is the ISO's LIVE default posture at HEAD — read the last committed
+bare-key bundle's run_config.json for the flag set (diagnostics on, `entry_screen_diagnostics`,
+as D37/D45 did) and change NOTHING except what HEAD's defaults changed. Pre-declare each leg's
+expected cache key and record the realized one; record `fossil_announced_exits_enabled=True`
+and the keeper id per leg in the finding's vintage table. Rule 12: years sequential inside
+every solve; at most two solves concurrent, never MISO/PJM alongside another heavy one.
+
+STAGE 1 — EXECUTE NOW (≈8 h wall; this dispatch):
+  a. T1-H hindcasts 2021–2025 (`run_capacity_hindcast.py --iso <ISO> --start-year 2021
+     --end-year 2025 --out-dir results/hindcast/<iso>-2021-2025-realized-t1h-d46`), in this
+     order: NEISO (~6 min) · CAISO (~20 min) · ERCOT (~15 min) · MISO (~25 min).
+     Registration: MISO and NEISO OVERWRITE their bare keys (`miso-t1h`, `neiso-t1h`) with the
+     prior bare record preserved VERBATIM at `miso-t1h-pre-d46` / `neiso-t1h-pre-d46` (the
+     `-pre-d45` mechanism). ERCOT and CAISO have NO bare t1h key today (their hindcasts are
+     registered under long ids only) — MINT `ercot-t1h` and `caiso-t1h` as new bare keys via
+     VERDICT_MAP rows, pre-declared in the finding, and leave every existing long-id record
+     untouched (the D43 pair stays the dispersion baseline; the ERCOT c1joint/d12c legs stay).
+  b. GOLDEN-2 re-solve: NEISO 2026–2050 at HEAD, golden posture, full rubric scoring (FC-1..7,
+     the FC-6 battery at its own vintage as GOLDEN-2 did), registered on `neiso-t3` with the
+     prior record preserved at `neiso-t3-pre-d46` (~35 min, ~3.5 GB).
+  c. T1-F full-horizon 2026–2050 for the three PAIRABLE non-D45 ISOs — NEISO (~1.0 h), ERCOT
+     (~2.0 h), CAISO (~2.8 h) — `--golden-posture`, scored `forecast_verdict.py --tier t1f`,
+     registered `--summary --kind t1f --label d46-remeasure` on `neiso-t1f` / `ercot-t1f` /
+     `caiso-t1f`, priors preserved at `<key>-pre-d46`. Pair NEISO with ERCOT, then CAISO alone.
+  d. Board refresh: re-derive the FC legs and gate (b)/(c) rows of the four ISOs from the new
+     records ONLY where a record moved; assert byte-identity for every untouched row; never
+     move gate (a). Run `scripts/check_gate_a_provenance.py` and
+     `scripts/check_forecast_staleness.py` before the records commit.
+  e. Matrix (rule 28): NO mechanism is tested here, so NO cell verdict moves — with ONE
+     bounded exception: where an ISO's `-pre-d46` baseline differs from its new leg on the
+     fossil-dates axis ALONE (same keeper, no CCS decision in either leg — verify from the
+     evolution ledgers, never assume), you MAY stamp that ISO's `fossil_announced_exits_enabled`
+     cell with its own measured verdict + citation (rule 25: own data). Otherwise the cell stays
+     as D44 left it, with the evidence citation appended.
+
+STAGE 2 — GATED, do NOT start until D45's §9 close-out line is on origin/main (its finding's
+§4–§9 are placeholders at issuance; PJM/NYISO forecast surfaces are D45's until then):
+  PJM t1h + NYISO t1h (bare keys, priors at `-pre-d46`; D45's own L1 becomes `pjm-t1h-pre-d46`)
+  + NYISO t1f (~1.1 h). Same rules as Stage 1. If D45 has not closed when Stage 1 lands, STOP
+  after Stage 1, commit the finding with Stage 2 marked PENDING, and end the session — the
+  director re-releases Stage 2.
+
+STAGE 3 — NOT THIS DISPATCH: PJM t1f (~7.3 h, solo ~10 GB) and MISO t1f (~10.1 h, solo) are
+owner-scheduled separately (MISO's is the one D41 touches most). Do not start them.
+
+PRE-DECLARATION (commit `docs/handoffs/PREDECL-capx-d46-remeasure-<date>.md` BEFORE the first
+solve): per leg — the expected cache key, the keeper id, the posture line, and the DIRECTION
+you expect each FC-3 retirement row to move under the dates flip (rule-14 sign discipline:
+faithful inputs move exits toward recall and G3 may read WORSE — that is the expected
+signature, not a regression; you never re-tune anything to a band). Grade it at full magnitude
+in the finding, misses included.
+
+GUARDRAILS: rules 12, 13, 22 (nothing outside 2021–2025 hindcast / 2026+ forecast; no backcast
+namespace touch), 25, 27 (blob-verify every push touching a ≥300-line file; VERDICT_MAP lives
+in a ≥300-line script — edit locally, push exact bytes), 28. No new ScenarioConfig field, no
+parameter value, no keeper/shard/marker. If any solve fails or a key collides with an existing
+suffixed record, STOP and route — never overwrite a preserved baseline.
+
+COLLISION: D45 owns PJM/NYISO forecast surfaces (Stage 2 gate). The audit programme's stage-0
+re-captures (X-2) touch results/regression-goldens/ — disjoint. The owner's backcast lanes
+(caiso-24x, miso-20x, nyiso-18x) own the keeper shards — you read them, never write them.
+Nobody else touches ERCOT/CAISO/MISO/NEISO forecast surfaces this window.
+
+EXIT: Stage-1 keys re-registered with priors preserved, the board refreshed, the pre-declaration
+graded, and docs/handoffs/FINDING-capx-d46-remeasure-<date>.md with: a per-key table (old key
+→ preserved key, new record, cache key, keeper, posture), EVERY FC/gate-leg flip listed with
+before/after values, the stale-set inventory of ledger §0ac.7 marked closed for Stage-1 keys
+and PENDING for Stages 2/3, and one line per ISO on what the dates flip did to its exit rows.
+```
+
