@@ -10331,3 +10331,150 @@ not apply. Rule 22: 2023–2025 only.
 admissibility ruling outstanding) — the only named object that can reach a tail miss.
 
 Next shorthand: **miso-203**.
+
+---
+
+## miso-203 (2026-09-03) — the ambient derate at the NET-SUMMER RATING CONDITION: G-0 repaired, refused at G-D, and the tail is measured to be an EVENING NET-LOAD RAMP object
+
+**ZERO-SOLVE.** No LP solved, no keeper moved, no mechanism armed, no run
+registered, no `ScenarioConfig` field added, no parameter set, nothing written
+under `data/raw/`. Keeper unchanged at **`2026-09-03-miso-202-unitclip`**
+(NOT-YET on `{C3a-2025 −12.3845}` alone; C3c the single ledgered caveat; C6
+attested, ledger 41/2).
+
+**PREREG** `PREREG-miso203-summer-peak-anchor-2026-09-03.md`, pushed at
+**`011b2420`** before any adjudicating statistic — three gates with their
+decision rules fixed in advance, five scored predictions, five traps with
+pre-committed counter-measurements.
+
+**Charter:** queue item 1, the merchant ambient capability derate, whose MISO
+cell stood at `REFUSED-AT-G0` from miso-139. The rule-28(a) DO-NOT-REDO argument
+was recorded in PREREG §0 and **both limbs held**: the *object* had changed
+(miso-139 targeted the mean-LMP LEVEL miss; `_miso202_c3a_2025_anatomy.json` now
+measures C3a-2025 as entirely a 15-hour TAIL), and the *anchor* is neither
+convention miso-139 tested — which §4 proves by repairing G-0.
+
+**G-A — the anchor, from primary source.** The EIA glossary states no reference
+temperature for net summer capacity: the rating is *"demonstrated by a multi-hour
+test, **at the time of summer peak demand** (June 1 – September 30)"*. `pmax` **is**
+that rating (`fleet/eia860.py:1036`), so the anchor is fixed by the basis and is a
+*load* condition. Measured on MISO's own hourly zone dry-bulb, load-weighted over
+the top 1 % of Jun–Sep load hours (miso-139 G-1's committed construction, zero
+free parameters): **29.5–38.2 °C by zone-year**. The committed
+`gt_ambient_derate_ref_c = 35.0` is a single scalar that
+`docs/parameter-citations.md:1314` carries as **auto-generated, needs-citation**.
+
+**G-B PASSES — and this REPAIRS miso-139's G-0.** On the model's own
+`generators_to_fleet_arrays` → `_availability_matrix`, the rating-condition hinge
+moves summer-mean capability by **−0.0040/−0.0108/−0.0067 % (CT_PEAKER)** and
+**−0.0016/−0.0036/−0.0029 % (CC_REGULAR)** against the **same ±1 % basis rule
+inherited verbatim and not relaxed** — 100–600× inside it, where convention (A)
+failed at −3.6…−4.1 % and (B) on a −6.8 % annual capability cut. miso-139's
+TRAP 1 (a level cut in shape clothing) does **not** fire. The charter was right
+that the anchor was the objection; that objection is answered and should not be
+re-litigated.
+
+**G-D FAILS by three orders of magnitude.** In the 15 scarce hours the arm removes
+**1.3 / 15.3 / 6.7 MW** at MISO's own slopes against a reserve margin of
+**42,736 / 38,375 / 30,533 MW** — **0.00 / 0.04 / 0.02 %** against a 25 %
+licensing line. Reported in the arm's favour: on the **armed classes' own** idle
+the tail genuinely *is* tighter than miso-139's 732-hour window
+(**15,789 → 11,752 → 5,621 MW**, and in 2024/2025 those classes alone cannot cover
+the requirement — margins **−1,869** and **−5,759 MW**). It does not help: 6.7 MW
+is **0.12 %** of even that.
+
+**AND THE REASON IS LOCATION, NOT REACH — the session's real result.** In **18 of
+18 zone-years** the top-1 %-of-actual-price Jun–Jul hours sit **BELOW** the
+summer peak-demand rating condition, by **1.4 to 8.4 °C**. A hinge anchored there
+is at its **zero point** in exactly the hours the miss lives in. This holds at any
+slope and any admissible anchor — closing the 25 % line in 2025 would need a slope
+~**200×** MISO's measured CT value (0.73/°C). miso-139 closed the family on
+**reach** (30–39× against a 732-hour cushion); miso-203 closes it on **location**,
+which does not depend on the cushion, the slope or the convention, and is the
+ground to cite.
+
+**N-0 reproduction.** Production's `gt_ambient_derate` block is **structurally
+unreachable on the keeper** (its `arrays.py` guard is `and not _td_on`, GLOBAL,
+while `temp_derate_classes` is per-class), so the hinge was applied as an overlay
+and asserted against production on a `temp_dependent_derate=False` pair: **exact
+in 2024/2025** (1.11e-16) and a **strict upper bound** in 2023 — 99,528 cells
+where the overlay removes **more**, **zero** where it removes less, 35 CC/CT units
+in MISO-South. Diagnosed, not waved through: production composes with the later
+retiree CEMS cap (`arrays.py:1407`, an `np.minimum`) as `min(a·f, cap)` while the
+overlay computes `min(a, cap)·f`. Production is the correct composition; **the arm
+is refused on numbers that overstate it.**
+
+**G-E (descriptive, post-hoc, NOT pre-registered, carrying no gate and licensing
+nothing) — WHAT THE 15 HOURS ARE.** G-C falsified P1 in a direction that raises a
+question about the object, so the object was characterised
+(`_miso203_scarce_hour_identity.json`). **MISO's summer price tail is an EVENING
+NET-LOAD RAMP object, not a peak-load or peak-temperature one.** In 2025 the 15
+hours sit at only **p88.4 load / p94.3 net load / p89.6 dry-bulb** of Jun–Jul;
+**zero of 15** are top-15 load hours, **zero of 15** are top-15 dry-bulb hours,
+4 of 15 are top-15 net-load hours; **13 of 15 fall in h18–h21** over 9 distinct
+days. Against the 15 highest **gross-load** Jun–Jul hours they carry **11.6 GW
+less load** but only **2.2 GW less net load**, because solar collapses
+**11,435 → 1,859 MW**. The scarce-hour mean hour-of-day migrates **14.4 → 17.1 →
+18.3** across 2023–2025 as MISO's solar fleet grows, so **the tail is moving into
+the evening** — forward-relevant, not a backcast curiosity. The model is **not
+missing the hours, only their price**: $38.84–165.58 against an actual
+$244.22–1,669.52, with 44.3 GW of reserve-eligible idle and 0.0 MWh unserved.
+
+**Predictions, scored against interest.** P1 (scarce-hour ambient within ±2 °C of
+the anchor, conf. 0.75) **WRONG** — below by 1.4–8.4 °C in 18/18, and it is the
+load-bearing prediction, flagged as such in advance. P5 (margin ≥3× narrower than
+miso-139's cushion, conf. 0.60) **WRONG** — 1.75× broad, ~2.2× on the armed
+classes. P2/P3/P4 **RIGHT**, P2 and P3 badly under-stated by two orders of
+magnitude, with the same root cause P1 missed: I reasoned about the *summer*
+temperature distribution and assumed without checking that the *scarce* hours sat
+in the hinge's active region. **Getting P1 wrong is what produced the G-E finding**,
+which is the session's most useful output.
+
+**What this licenses — nothing armed.** (1) The ambient-derate family is CLOSED
+for this object on the location ground. (2) miso-139's G-0 is REPAIRED; a
+rating-condition anchor may still be worth building for **basis correctness**
+(rule 14 — the merchant classes carry a flat `SUMMER_CLASS_DERATE` on top of a
+`pmax` that is already the net-summer rating), but must **not** be chartered as a
+price lever. (3) Two bounded defects NAMED, neither chartered, neither a lever:
+`gt_ambient_derate` is **silently inert rather than merely off** whenever
+`temp_dependent_derate` is on, and `gt_ambient_derate_ref_c` is needs-citation and
+a scalar where the measured rating condition spans 29.5–38.2 °C. (4) **The queue
+is re-aimed**: any capability-removal lever keyed to heat or to peak load is aimed
+at hours the object is not in, and must be bounded at the object's own percentile
+in its own driver before a solve. Also NAMED, NOT CHARTERED: `model/reserves/spec.py`
+builds MISO's families as capacity reservations only (`miso_rbdc`,
+`miso_rbdc_regspin`, `miso_subregional_or_midwest`, `miso_zonal_or_miso_south`) —
+there is **no ramp-constrained product** — but whether MISO's real market prices
+one in these hours is a **primary-source question this session did not answer**
+(the MISO site returned HTTP 403) and needs its own phase 0 before any field is
+minted.
+
+**Governance.** Rule 15: no LP solved, so no run to register (the
+miso-131…139 / miso-179 / miso-194 zero-solve precedent). Rule 28(b): the
+`temp_dependent_derate` MISO cell **stays `K`** — its K is the committed **cogen**
+scope, untouched — with the merchant re-test recorded in the cell's evidence and a
+§5.4 queue stamp; no `ScenarioConfig` field was added so rule 28(c) does not
+apply; no other ISO's cell moved (28d). Rule 25: only MISO's shard and this log
+were touched; the pre-existing NYISO §5.x prose drift on main is not this lane's
+to repair. Rule 22: 2023–2025 only; MISO holds no `complete`/`final` marker and
+the locked-test freeze is active. Rule 13: every input is a registration rating, a
+measured zone dry-bulb or metered load; the keeper's committed sidecars were read
+for dispatch, demand and requirement only, never fed back. Rules 1/21/24: nothing
+sized to any residual — the scarce-hour set localises reporting only. Rule 19: no
+mechanism added; the five existing treatments of the same phenomenon were
+enumerated and reconciled, not stacked. Rule 27: no existing ≥300-line file
+rewritten.
+
+**Successor:** the **D-2 5(i) seam-response / binding-hour import excess** remains
+the largest named object and is untouched by this session (owner admissibility
+ruling still outstanding); G-E adds one datum to it — the binding-hour import
+arrives **into a ramp**. The **evening-ramp price-formation** object named in §10
+is new, measured, and needs its own primary-source phase 0.
+
+**Records:** `FINDING-miso203-scarce-hours-are-not-the-hot-hours-2026-09-03.md`,
+`PREREG-miso203-summer-peak-anchor-2026-09-03.md` @ `011b2420`,
+`_miso203_summer_peak_anchor_phase0.json`, `_miso203_scarce_hour_identity.json`,
+`scripts/probes/_miso203_summer_peak_anchor_phase0.py`,
+`scripts/probes/_miso203_scarce_hour_identity.py`.
+
+Next shorthand: **miso-204**.
