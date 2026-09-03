@@ -1082,6 +1082,7 @@ def apply_economic_new_entry(
         cf_arr = np.asarray(cf_zonal, dtype=float)
         if prices_arr.ndim != 2 or cf_arr.ndim != 2:
             return default_zone
+
         def _zone_revenue(zi: int, zname: str) -> float | None:
             """Screened revenue for ``tech`` sited in one zone, or None."""
             if zi >= cf_arr.shape[0] or zi >= prices_arr.shape[0]:
