@@ -10478,3 +10478,140 @@ is new, measured, and needs its own primary-source phase 0.
 `scripts/probes/_miso203_scarce_hour_identity.py`.
 
 Next shorthand: **miso-204**.
+
+## miso-204 (2026-09-03) — the C3a-2025 tail DECOMPOSED: it is an **ENERGY** object, not a congestion one; and the C3a comparator is a **SINGLE HUB** on a clock **one hour off** the model's
+
+**NO LP SOLVED. NO KEEPER MOVED. NO MECHANISM ARMED. NO RUN REGISTERED. NO
+`ScenarioConfig` FIELD ADDED. NO CELL VERDICT MOVED. NO SCORING ARTIFACT
+CHANGED.** Keeper unchanged at `2026-09-03-miso-202-unitclip`, determination
+unchanged at NOT-YET on `{C3a-2025 −12.3845}` alone.
+
+**PREREG** `PREREG-miso204-lmp-component-decomposition-2026-09-03.md`, pushed
+BLIND at `fd6c4dff` before any adjudicating statistic — four gates with decision
+rules fixed in advance, seven scored predictions, six traps each carrying a
+pre-committed counter-measurement, and a re-aim map applied mechanically.
+
+**The charter's phase 0.** miso-202 located C3a-2025 in 15 hours carrying 99.9 %
+of the mean gap; miso-203 characterised them. Neither read the **actual price's
+own published components** — both probes filter `value == "LMP"` and discard the
+`MCC`/`MLC` rows of the same file. `MEC = LMP − MCC − MLC` is MISO's settlement
+identity, zero DOF.
+
+**The pre-registered verdict: ENERGY, on both bases.** In the 15 scarce hours of
+2025 the energy component carries **125.5 %** of the model's shortfall on the
+frozen basis and **93.1 %** on the C3a instrument's own; congestion **−23.3 % /
++3.8 %**; loss **−2.2 % / +3.1 %**; **15 of 15 hours energy-largest** at the hour
+grain, both bases, every year. The sign convention is **proved, not assumed**:
+MEC is hub-invariant to **$0.02 in 100.00 %** of all 8,760 hours of all three
+years, while the alternative convention spreads up to **$4,933.68** (TRAP 1's
+pre-committed counter-measurement). G-2 returns **SPLIT at 11.53×** (2025 OBJ
+cross-hub max−min **$333.38** vs JJ **$28.91**) and **every dollar of the split
+is MCC** — so the two signatures the charter framed as alternatives are
+**simultaneous**: a system-wide energy event with heavy congestion superimposed.
+The model reproduces **$7.95** of that $333.38.
+
+**Then the congestion sign sent the session somewhere the PREREG did not
+anticipate.** `share_cong` came back **negative** — the eight hubs sit on the
+*cheap* side of congestion — which is only possible if the decomposed series is
+not the one C3a scores. It is not, on two counts:
+
+1. **The C3a actual is INDIANA.HUB.** `actual_lmp_hourly_MISO.parquet` — the
+   series behind `bench.avgLMP.rt`/`rt_lw` — is one hub, as
+   `derive_miso_hub_lmp.py`'s own docstring states; verified at max|diff|
+   **1.3e-05 / 2.7e-05 / 5.9e-05**. It runs **+$3.43 / +$3.92 / +$4.71** above
+   the eight-hub average both committed probes build.
+2. **Those probes are on the wrong clock.** They index the raw **EST
+   hour-ending** label; production applies **−1 h to fixed CST** and drops CST
+   Feb 29. Diagnosed by lag scan rather than asserted: **r = 1.000000 at exactly
+   k = −1** in 2023 and 2025, and in 2024 at **k = −1** for Jan 1–Feb 28
+   (1.000000) and **k = −25** for Mar 1–Dec 31 (0.999969). N-3 first: the
+   scoring-clock reconstruction reproduces the committed parquet at **max|diff|
+   = 0.0** on 70,080 / 70,080 / 70,072 hub-hours.
+
+**Invisible in the level, fatal in the hours.** The annual means agree to three
+decimals (28.358 / 26.881 / 38.136 both ways), so **C3a itself is unaffected** —
+but MISO RT's lag-1 autocorrelation is only **0.39 / 0.37 / 0.44**, so the
+hour-matched correlation of the committed series against the scoring reference is
+**0.296 / 0.229 / 0.432**. Only **2 / 1 / 4 of 15** committed hours are in the top
+1 % of the series C3a actually scores; the **clock alone** leaves 3 / 1 / 5, the
+**hub choice alone** 8 / 13 / 11 — the clock is the larger error.
+
+**The verdict survives it; miso-203's hour-of-day characterisation does not, in
+part.** On the corrected instrument miso-203's *"13 of 15 fall in h18–h21"*
+becomes **4 of 15**; the concentration is **11 of 15 in h15–h18 CST**; and the
+migration it read as a three-year march tracking the solar build
+(14.4 → 17.1 → 18.3) is **one large step then flat** (11.67 → 15.73 → **15.87**).
+The evening-migration claim is **not refuted** but rests on a single year-pair,
+and miso-203's net-load/solar-collapse contrast is **unmeasured** on the corrected
+instrument — a cheap zero-solve successor, NAMED, NOT CHARTERED. In the single
+largest hour of 2025 (**2025-07-28 HE18 CST**) MISO's system energy price was
+**$1,726.34** against a model **$161.39**; the tail is real, it is energy, and it
+is 5–11×.
+
+**A basis wedge inside C3a, reported and explicitly NOT a proposal.**
+Load-weighted over 2025, INDIANA.HUB carries **+$1.54/MWh congestion and
++$0.90/MWh loss** above MISO's own system energy price; scored against that
+instead, the C3a-2025 face reads **−7.41 %** rather than −12.38 % — roughly
+**40 % of the residual is a locational-basis artifact of the comparator**. The
+instrument reproduces the verdict to **0.0012 pp**, so this is C3a and not an
+approximation of it. It is **filed as an owner rule-14 `[R-ACCURATE]` item and
+acted on by nobody**: changing it would move every ISO's C3a basis and every
+historical MISO verdict (a rubric decision), and rule 1 `[R-STRUCT]` forbids
+moving a residual without making a mechanism more faithful.
+
+**Re-aim (PREREG §5's ENERGY row, applied mechanically).**
+`ordc_scarcity_overlay` **stays `G`** — a component share is not new evidence
+against miso-163 §1–§4's structural grounds (rule 28(a)); it describes the
+family's target better and licenses nothing. The congestion families **stay
+closed** (`internal_congestion_split` `G` — miso-79's NO-BUILD is fundamental;
+`zonal_loss_surface` `R`), and G-1 says the residual does not live there anyway.
+Queue item 2 (a ramp-constrained product) is untouched and still NAMED, NOT
+CHARTERED — but its phase 0 must re-establish its window on the corrected
+instrument first. The **D-2 5(i) seam-response object** remains the largest named
+candidate, untouched, owner ruling still outstanding.
+
+**Three instrument defects NAMED, none chartered, none a lever.** (a) the
+single-hub comparator and its wedge; (b) the wrong clock in
+`_miso202_c3a_2025_anatomy` (blocks a2/a4) and `_miso203_scarce_hour_identity` —
+cheap repair is to route both through the committed
+`actual_lmp_hourly_zonal_MISO.parquet` rather than re-deriving from the raw
+staging; (c) `derive_miso_hub_lmp._market_frame` hardcodes `value == "LMP"`, so
+the staged MCC/MLC reach no committed artifact — and if ever surfaced they must
+stay **diagnostic** (rule 13: a measured price outcome is answer-class).
+
+**Scored against interest.** P1 RIGHT decisively; P2 RIGHT and understated; P5
+RIGHT and badly understated; P4 RIGHT; **P3 HALF-WRONG — and the half I never
+wrote down is the one that mattered: I predicted congestion's magnitude and never
+its SIGN, and the negative sign is the only reason the instrument forensic
+exists**; **P6 WRONG** (0/15 congestion-largest against a ≥3 prediction); **P7's
+$80 model line was arbitrary** and holds by five cents on the frozen basis while
+failing by $1.46 on the corrected one. The PREREG contains **no prediction at all**
+about the comparator's provenance — the session's largest result was unpredicted.
+The headline correction lands on this lane's own two immediately preceding
+sessions.
+
+**Governance.** Rule 15: no LP solved, so no run to register (the
+miso-131…139 / miso-179 / miso-194 / miso-203 zero-solve precedent). Rule 28(b):
+**no mechanism tested, so no cell verdict moved** — `ordc_scarcity_overlay`,
+`internal_congestion_split` and `measured_ramp_capability` carry amended evidence
+citations in MISO's shard only, plus a §5.4 queue stamp. Rule 28(c): no
+`ScenarioConfig` field added. Rule 28(d)/25: no other ISO's shard touched. Rule
+22: 2023–2025 only; MISO holds no `complete`/`final` marker and the locked-test
+freeze is active. Rule 13: MISO's own published settlement components and the
+keeper's committed sidecars, read as a diagnostic decomposition of the residual;
+nothing enters a solve. Rule 1: the ~40 % basis artifact is **measured and not
+acted on**. Rule 27: two new probe files; no existing ≥300-line file rewritten.
+
+**Successor:** re-do miso-203's G-E driver characterisation on the corrected
+instrument (zero-solve, cheap) before any lever is keyed to the evening-ramp
+story; the D-2 5(i) ruling remains the gating owner item.
+
+**Records:**
+`FINDING-miso204-the-tail-is-energy-and-the-comparator-is-one-hub-2026-09-03.md`,
+`PREREG-miso204-lmp-component-decomposition-2026-09-03.md` @ `fd6c4dff`,
+`_miso204_lmp_component_decomposition.json`,
+`_miso204_scoring_reference_instrument.json`,
+`scripts/probes/_miso204_lmp_component_decomposition.py`,
+`scripts/probes/_miso204_scoring_reference_instrument.py`.
+
+Next shorthand: **miso-205**.

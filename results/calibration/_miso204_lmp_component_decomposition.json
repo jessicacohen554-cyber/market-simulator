@@ -1,0 +1,1365 @@
+{
+ "charter": "miso-204 phase 0 \u2014 the charter's (a)/(b)/(c): decompose the actual price in the 15 scarce hours into its published MEC / MCC / MLC and state which object the C3a-2025 residual is. PRE-REGISTERED at PREREG-miso204-lmp-component-decomposition-2026-09-03.md, pushed BLIND at fd6c4dff before any number here existed.",
+ "keeper": "2026-09-03-miso-202-unitclip",
+ "inputs": "committed artifacts only \u2014 no solve",
+ "identity": "MEC = LMP - MCC - MLC (MISO settlement identity, zero DOF)",
+ "prereg_commit": "fd6c4dff",
+ "years": {
+  "2023": {
+   "n2_identity": {
+    "hub_order_identical": true,
+    "hubs": [
+     "ARKANSAS.HUB",
+     "ILLINOIS.HUB",
+     "INDIANA.HUB",
+     "LOUISIANA.HUB",
+     "MICHIGAN.HUB",
+     "MINN.HUB",
+     "MS.HUB",
+     "TEXAS.HUB"
+    ],
+    "max_abs_reconstruction_residual": 1.1368683772161603e-13
+   },
+   "n1_hub_invariance": {
+    "convention_tested": "MEC = LMP - MCC - MLC",
+    "n_hours": 8760,
+    "frac_within_0.51": 1.0,
+    "max_spread": 0.02,
+    "p99_spread": 0.02,
+    "jun_jul_frac_within_0.51": 1.0,
+    "alt_convention_frac_within_0.51": 0.000114,
+    "alt_convention_max_spread": 1059.68
+   },
+   "populations": {
+    "OBJ": {
+     "n": 15,
+     "threshold_usd_per_mwh": 100.42
+    },
+    "JJ": {
+     "n": 1464
+    },
+    "YR1": {
+     "n": 88,
+     "threshold_usd_per_mwh": 93.54
+    }
+   },
+   "g1_shares_equal_weighted": {
+    "OBJ": {
+     "n_hours": 15,
+     "mean_excess": 100.537,
+     "mean_energy": 133.192,
+     "mean_cong": -31.36,
+     "mean_loss": -1.295,
+     "share_energy": 1.3248,
+     "share_cong": -0.3119,
+     "share_loss": -0.0129,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 89.258,
+     "median_energy": 96.739,
+     "median_cong": 2.389,
+     "median_loss": -0.97
+    },
+    "JJ": {
+     "n_hours": 1464,
+     "mean_excess": -2.254,
+     "mean_energy": -0.57,
+     "mean_cong": -1.451,
+     "mean_loss": -0.233,
+     "share_energy": 0.2531,
+     "share_cong": 0.6436,
+     "share_loss": 0.1034,
+     "r1_hours_largest_energy": 1294,
+     "r1_hours_largest_cong": 159,
+     "r1_hours_largest_loss": 11,
+     "median_excess": -5.751,
+     "median_energy": -5.16,
+     "median_cong": 0.0,
+     "median_loss": -0.132
+    },
+    "YR1": {
+     "n_hours": 88,
+     "mean_excess": 109.722,
+     "mean_energy": 137.991,
+     "mean_cong": -26.413,
+     "mean_loss": -1.855,
+     "share_energy": 1.2576,
+     "share_cong": -0.2407,
+     "share_loss": -0.0169,
+     "r1_hours_largest_energy": 86,
+     "r1_hours_largest_cong": 2,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 85.011,
+     "median_energy": 103.367,
+     "median_cong": -6.403,
+     "median_loss": -1.364
+    }
+   },
+   "g1_levels_OBJ": {
+    "mean_actual_lmp": 138.49,
+    "mean_actual_mec": 171.15,
+    "mean_actual_mcc": -31.36,
+    "mean_actual_mlc": -1.3,
+    "mean_model_price": 37.95,
+    "mean_jj_actual_mec": 31.6,
+    "mean_jj_model_price": 32.17
+   },
+   "trap4_shares_load_weighted": {
+    "basis": "hubs weighted by the keeper's own committed P1 zonal demand via HUB_TO_ZONES; MINN.HUB carries MISO-West AND MISO-Plains. ROBUSTNESS ONLY \u2014 cannot flip the verdict (PREREG TRAP 4).",
+    "OBJ": {
+     "n_hours": 15,
+     "mean_excess": 115.441,
+     "mean_energy": 133.192,
+     "mean_cong": -16.74,
+     "mean_loss": -1.011,
+     "share_energy": 1.1538,
+     "share_cong": -0.145,
+     "share_loss": -0.0088,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 95.592,
+     "median_energy": 96.739,
+     "median_cong": -5.552,
+     "median_loss": -1.087
+    }
+   },
+   "g2_dispersion": {
+    "LMP": {
+     "OBJ": {
+      "mean_max_minus_min": 193.781,
+      "median_max_minus_min": 169.77,
+      "mean_sd": 70.254
+     },
+     "JJ": {
+      "mean_max_minus_min": 16.365,
+      "median_max_minus_min": 4.81,
+      "mean_sd": 5.529
+     }
+    },
+    "MCC": {
+     "OBJ": {
+      "mean_max_minus_min": 178.407,
+      "median_max_minus_min": 154.23,
+      "mean_sd": 67.16
+     },
+     "JJ": {
+      "mean_max_minus_min": 13.689,
+      "median_max_minus_min": 2.465,
+      "mean_sd": 4.79
+     }
+    },
+    "MEC": {
+     "OBJ": {
+      "mean_max_minus_min": 0.012,
+      "median_max_minus_min": 0.01,
+      "mean_sd": 0.004
+     },
+     "JJ": {
+      "mean_max_minus_min": 0.01,
+      "median_max_minus_min": 0.01,
+      "mean_sd": 0.004
+     }
+    },
+    "MODEL_zone_price": {
+     "OBJ": {
+      "mean_max_minus_min": 0.0,
+      "median_max_minus_min": 0.0,
+      "mean_sd": 0.0
+     },
+     "JJ": {
+      "mean_max_minus_min": 0.446,
+      "median_max_minus_min": 0.0,
+      "mean_sd": 0.193
+     }
+    },
+    "obj_over_jj_ratio_LMP": 11.841
+   },
+   "hours": [
+    {
+     "hour_index": 3784,
+     "model_clock_stamp": "06-07 h16",
+     "true_calendar_stamp": "2023-06-07 HE17",
+     "actual_lmp": 120.62,
+     "actual_mec": 114.02,
+     "actual_mcc": 8.55,
+     "actual_mlc": -1.95,
+     "model_price": 34.67,
+     "excess": 85.96,
+     "energy": 79.36,
+     "cong": 8.55,
+     "loss": -1.95,
+     "hub_lmp_max_minus_min": 169.77,
+     "hub_mcc_max_minus_min": 154.23,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4187,
+     "model_clock_stamp": "06-24 h11",
+     "true_calendar_stamp": "2023-06-24 HE12",
+     "actual_lmp": 122.62,
+     "actual_mec": 131.65,
+     "actual_mcc": -8.86,
+     "actual_mlc": -0.16,
+     "model_price": 33.37,
+     "excess": 89.26,
+     "energy": 98.29,
+     "cong": -8.86,
+     "loss": -0.16,
+     "hub_lmp_max_minus_min": 136.38,
+     "hub_mcc_max_minus_min": 121.74,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4191,
+     "model_clock_stamp": "06-24 h15",
+     "true_calendar_stamp": "2023-06-24 HE16",
+     "actual_lmp": 135.24,
+     "actual_mec": 133.33,
+     "actual_mcc": 2.39,
+     "actual_mlc": -0.48,
+     "model_price": 36.59,
+     "excess": 98.65,
+     "energy": 96.74,
+     "cong": 2.39,
+     "loss": -0.48,
+     "hub_lmp_max_minus_min": 123.76,
+     "hub_mcc_max_minus_min": 111.27,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4192,
+     "model_clock_stamp": "06-24 h16",
+     "true_calendar_stamp": "2023-06-24 HE17",
+     "actual_lmp": 118.13,
+     "actual_mec": 109.74,
+     "actual_mcc": 9.03,
+     "actual_mlc": -0.64,
+     "model_price": 37.52,
+     "excess": 80.61,
+     "energy": 72.22,
+     "cong": 9.03,
+     "loss": -0.64,
+     "hub_lmp_max_minus_min": 128.31,
+     "hub_mcc_max_minus_min": 119.85,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4193,
+     "model_clock_stamp": "06-24 h17",
+     "true_calendar_stamp": "2023-06-24 HE18",
+     "actual_lmp": 164.31,
+     "actual_mec": 150.96,
+     "actual_mcc": 14.57,
+     "actual_mlc": -1.22,
+     "model_price": 37.52,
+     "excess": 126.79,
+     "energy": 113.44,
+     "cong": 14.57,
+     "loss": -1.22,
+     "hub_lmp_max_minus_min": 99.46,
+     "hub_mcc_max_minus_min": 89.98,
+     "hub_mec_max_minus_min": 0.02
+    },
+    {
+     "hour_index": 4194,
+     "model_clock_stamp": "06-24 h18",
+     "true_calendar_stamp": "2023-06-24 HE19",
+     "actual_lmp": 119.8,
+     "actual_mec": 108.77,
+     "actual_mcc": 12.09,
+     "actual_mlc": -1.06,
+     "model_price": 37.44,
+     "excess": 82.36,
+     "energy": 71.33,
+     "cong": 12.09,
+     "loss": -1.06,
+     "hub_lmp_max_minus_min": 80.89,
+     "hub_mcc_max_minus_min": 75.83,
+     "hub_mec_max_minus_min": 0.0
+    },
+    {
+     "hour_index": 4243,
+     "model_clock_stamp": "06-26 h19",
+     "true_calendar_stamp": "2023-06-26 HE20",
+     "actual_lmp": 100.99,
+     "actual_mec": 105.56,
+     "actual_mcc": -3.6,
+     "actual_mlc": -0.97,
+     "model_price": 37.0,
+     "excess": 63.99,
+     "energy": 68.56,
+     "cong": -3.6,
+     "loss": -0.97,
+     "hub_lmp_max_minus_min": 264.28,
+     "hub_mcc_max_minus_min": 254.92,
+     "hub_mec_max_minus_min": 0.02
+    },
+    {
+     "hour_index": 4449,
+     "model_clock_stamp": "07-05 h09",
+     "true_calendar_stamp": "2023-07-05 HE10",
+     "actual_lmp": 143.35,
+     "actual_mec": 254.54,
+     "actual_mcc": -108.79,
+     "actual_mlc": -2.4,
+     "model_price": 36.92,
+     "excess": 106.44,
+     "energy": 217.62,
+     "cong": -108.79,
+     "loss": -2.4,
+     "hub_lmp_max_minus_min": 243.24,
+     "hub_mcc_max_minus_min": 212.09,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4476,
+     "model_clock_stamp": "07-06 h12",
+     "true_calendar_stamp": "2023-07-06 HE13",
+     "actual_lmp": 193.06,
+     "actual_mec": 309.8,
+     "actual_mcc": -115.13,
+     "actual_mlc": -1.62,
+     "model_price": 37.18,
+     "excess": 155.88,
+     "energy": 272.63,
+     "cong": -115.13,
+     "loss": -1.62,
+     "hub_lmp_max_minus_min": 264.02,
+     "hub_mcc_max_minus_min": 231.81,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4501,
+     "model_clock_stamp": "07-07 h13",
+     "true_calendar_stamp": "2023-07-07 HE14",
+     "actual_lmp": 210.9,
+     "actual_mec": 344.44,
+     "actual_mcc": -132.34,
+     "actual_mlc": -1.2,
+     "model_price": 37.18,
+     "excess": 173.72,
+     "energy": 307.27,
+     "cong": -132.34,
+     "loss": -1.2,
+     "hub_lmp_max_minus_min": 290.02,
+     "hub_mcc_max_minus_min": 265.14,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4649,
+     "model_clock_stamp": "07-13 h17",
+     "true_calendar_stamp": "2023-07-13 HE18",
+     "actual_lmp": 135.72,
+     "actual_mec": 103.31,
+     "actual_mcc": 32.1,
+     "actual_mlc": 0.31,
+     "model_price": 39.61,
+     "excess": 96.11,
+     "energy": 63.7,
+     "cong": 32.1,
+     "loss": 0.31,
+     "hub_lmp_max_minus_min": 400.34,
+     "hub_mcc_max_minus_min": 393.68,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4669,
+     "model_clock_stamp": "07-14 h13",
+     "true_calendar_stamp": "2023-07-14 HE14",
+     "actual_lmp": 117.2,
+     "actual_mec": 187.27,
+     "actual_mcc": -69.32,
+     "actual_mlc": -0.75,
+     "model_price": 41.36,
+     "excess": 75.84,
+     "energy": 145.91,
+     "cong": -69.32,
+     "loss": -0.75,
+     "hub_lmp_max_minus_min": 150.7,
+     "hub_mcc_max_minus_min": 141.45,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4672,
+     "model_clock_stamp": "07-14 h16",
+     "true_calendar_stamp": "2023-07-14 HE17",
+     "actual_lmp": 102.1,
+     "actual_mec": 95.68,
+     "actual_mcc": 6.62,
+     "actual_mlc": -0.19,
+     "model_price": 42.46,
+     "excess": 59.65,
+     "energy": 53.22,
+     "cong": 6.62,
+     "loss": -0.19,
+     "hub_lmp_max_minus_min": 190.79,
+     "hub_mcc_max_minus_min": 177.78,
+     "hub_mec_max_minus_min": 0.02
+    },
+    {
+     "hour_index": 4740,
+     "model_clock_stamp": "07-17 h12",
+     "true_calendar_stamp": "2023-07-17 HE13",
+     "actual_lmp": 109.35,
+     "actual_mec": 100.46,
+     "actual_mcc": 9.3,
+     "actual_mlc": -0.41,
+     "model_price": 37.46,
+     "excess": 71.89,
+     "energy": 63.0,
+     "cong": 9.3,
+     "loss": -0.41,
+     "hub_lmp_max_minus_min": 65.72,
+     "hub_mcc_max_minus_min": 53.44,
+     "hub_mec_max_minus_min": 0.02
+    },
+    {
+     "hour_index": 4908,
+     "model_clock_stamp": "07-24 h12",
+     "true_calendar_stamp": "2023-07-24 HE13",
+     "actual_lmp": 183.96,
+     "actual_mec": 317.64,
+     "actual_mcc": -127.01,
+     "actual_mlc": -6.68,
+     "model_price": 43.04,
+     "excess": 140.92,
+     "energy": 274.6,
+     "cong": -127.01,
+     "loss": -6.68,
+     "hub_lmp_max_minus_min": 299.04,
+     "hub_mcc_max_minus_min": 272.89,
+     "hub_mec_max_minus_min": 0.01
+    }
+   ],
+   "trap2_calendar": {
+    "raw_file_days": 365,
+    "model_clock_days": 365,
+    "actual_vs_model_offset_after_feb28_hours": 0,
+    "note": "The decomposition is computed entirely within the actual series at one index, so all three components belong to the same real hour and are unaffected. Any MODEL-vs-ACTUAL hour-matched quantity in a leap year is offset by the hours above."
+   },
+   "e_posthoc_basis": {
+    "status": "POST-HOC, NOT PRE-REGISTERED, NO GATE, LICENSES NOTHING. Measured because G-1 returned a NEGATIVE congestion share.",
+    "load_weighted_annual": {
+     "actual_hub_lmp": 29.4777,
+     "actual_system_mec": 30.5291,
+     "model_price": 32.82,
+     "hub_congestion_wedge": -0.8828,
+     "hub_loss_wedge": -0.1686
+    },
+    "c3a_face_on_lmp_basis_pct": 11.3385,
+    "c3a_face_on_mec_basis_pct": 7.504,
+    "concentration_on_mec_basis": {
+     "annual_lw_energy_gap": -2.2909,
+     "obj_15h_contribution": 0.3016,
+     "yr1_88h_contribution": 1.6061
+    }
+   }
+  },
+  "2024": {
+   "n2_identity": {
+    "hub_order_identical": true,
+    "hubs": [
+     "ARKANSAS.HUB",
+     "ILLINOIS.HUB",
+     "INDIANA.HUB",
+     "LOUISIANA.HUB",
+     "MICHIGAN.HUB",
+     "MINN.HUB",
+     "MS.HUB",
+     "TEXAS.HUB"
+    ],
+    "max_abs_reconstruction_residual": 1.1368683772161603e-13
+   },
+   "n1_hub_invariance": {
+    "convention_tested": "MEC = LMP - MCC - MLC",
+    "n_hours": 8760,
+    "frac_within_0.51": 1.0,
+    "max_spread": 0.02,
+    "p99_spread": 0.02,
+    "jun_jul_frac_within_0.51": 1.0,
+    "alt_convention_frac_within_0.51": 0.0,
+    "alt_convention_max_spread": 2076.65
+   },
+   "populations": {
+    "OBJ": {
+     "n": 15,
+     "threshold_usd_per_mwh": 129.68
+    },
+    "JJ": {
+     "n": 1464
+    },
+    "YR1": {
+     "n": 88,
+     "threshold_usd_per_mwh": 103.61
+    }
+   },
+   "g1_shares_equal_weighted": {
+    "OBJ": {
+     "n_hours": 15,
+     "mean_excess": 272.073,
+     "mean_energy": 292.431,
+     "mean_cong": -16.392,
+     "mean_loss": -3.966,
+     "share_energy": 1.0748,
+     "share_cong": -0.0602,
+     "share_loss": -0.0146,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 227.415,
+     "median_energy": 234.773,
+     "median_cong": -9.136,
+     "median_loss": -2.759
+    },
+    "JJ": {
+     "n_hours": 1464,
+     "mean_excess": -0.988,
+     "mean_energy": 1.147,
+     "mean_cong": -1.879,
+     "mean_loss": -0.257,
+     "share_energy": -1.1602,
+     "share_cong": 1.9006,
+     "share_loss": 0.2596,
+     "r1_hours_largest_energy": 1292,
+     "r1_hours_largest_cong": 172,
+     "r1_hours_largest_loss": 0,
+     "median_excess": -6.036,
+     "median_energy": -5.379,
+     "median_cong": -0.095,
+     "median_loss": -0.153
+    },
+    "YR1": {
+     "n_hours": 88,
+     "mean_excess": 143.091,
+     "mean_energy": 165.056,
+     "mean_cong": -19.849,
+     "mean_loss": -2.116,
+     "share_energy": 1.1535,
+     "share_cong": -0.1387,
+     "share_loss": -0.0148,
+     "r1_hours_largest_energy": 75,
+     "r1_hours_largest_cong": 13,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 110.235,
+     "median_energy": 137.64,
+     "median_cong": -2.207,
+     "median_loss": -1.351
+    }
+   },
+   "g1_levels_OBJ": {
+    "mean_actual_lmp": 310.28,
+    "mean_actual_mec": 330.64,
+    "mean_actual_mcc": -16.39,
+    "mean_actual_mlc": -3.97,
+    "mean_model_price": 38.21,
+    "mean_jj_actual_mec": 30.75,
+    "mean_jj_model_price": 29.6
+   },
+   "trap4_shares_load_weighted": {
+    "basis": "hubs weighted by the keeper's own committed P1 zonal demand via HUB_TO_ZONES; MINN.HUB carries MISO-West AND MISO-Plains. ROBUSTNESS ONLY \u2014 cannot flip the verdict (PREREG TRAP 4).",
+    "OBJ": {
+     "n_hours": 15,
+     "mean_excess": 285.849,
+     "mean_energy": 292.431,
+     "mean_cong": -5.558,
+     "mean_loss": -1.024,
+     "share_energy": 1.023,
+     "share_cong": -0.0194,
+     "share_loss": -0.0036,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 234.194,
+     "median_energy": 234.775,
+     "median_cong": -5.672,
+     "median_loss": -0.719
+    }
+   },
+   "g2_dispersion": {
+    "LMP": {
+     "OBJ": {
+      "mean_max_minus_min": 141.785,
+      "median_max_minus_min": 113.04,
+      "mean_sd": 44.895
+     },
+     "JJ": {
+      "mean_max_minus_min": 18.696,
+      "median_max_minus_min": 8.275,
+      "mean_sd": 6.349
+     }
+    },
+    "MCC": {
+     "OBJ": {
+      "mean_max_minus_min": 113.75,
+      "median_max_minus_min": 92.82,
+      "mean_sd": 37.528
+     },
+     "JJ": {
+      "mean_max_minus_min": 16.333,
+      "median_max_minus_min": 6.51,
+      "mean_sd": 5.695
+     }
+    },
+    "MEC": {
+     "OBJ": {
+      "mean_max_minus_min": 0.01,
+      "median_max_minus_min": 0.01,
+      "mean_sd": 0.004
+     },
+     "JJ": {
+      "mean_max_minus_min": 0.011,
+      "median_max_minus_min": 0.01,
+      "mean_sd": 0.004
+     }
+    },
+    "MODEL_zone_price": {
+     "OBJ": {
+      "mean_max_minus_min": 0.633,
+      "median_max_minus_min": 0.0,
+      "mean_sd": 0.274
+     },
+     "JJ": {
+      "mean_max_minus_min": 1.816,
+      "median_max_minus_min": 0.0,
+      "mean_sd": 0.786
+     }
+    },
+    "obj_over_jj_ratio_LMP": 7.584
+   },
+   "hours": [
+    {
+     "hour_index": 3714,
+     "model_clock_stamp": "06-04 h18",
+     "true_calendar_stamp": "2024-06-03 HE19",
+     "actual_lmp": 267.09,
+     "actual_mec": 267.38,
+     "actual_mcc": 0.84,
+     "actual_mlc": -1.12,
+     "model_price": 32.6,
+     "excess": 234.48,
+     "energy": 234.77,
+     "cong": 0.84,
+     "loss": -1.12,
+     "hub_lmp_max_minus_min": 19.16,
+     "hub_mcc_max_minus_min": 2.4,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 3716,
+     "model_clock_stamp": "06-04 h20",
+     "true_calendar_stamp": "2024-06-03 HE21",
+     "actual_lmp": 143.88,
+     "actual_mec": 165.26,
+     "actual_mcc": -21.08,
+     "actual_mlc": -0.29,
+     "model_price": 31.2,
+     "excess": 112.68,
+     "energy": 134.06,
+     "cong": -21.08,
+     "loss": -0.29,
+     "hub_lmp_max_minus_min": 70.33,
+     "hub_mcc_max_minus_min": 57.76,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4029,
+     "model_clock_stamp": "06-17 h21",
+     "true_calendar_stamp": "2024-06-16 HE22",
+     "actual_lmp": 630.96,
+     "actual_mec": 631.23,
+     "actual_mcc": 0.0,
+     "actual_mlc": -0.28,
+     "model_price": 26.84,
+     "excess": 604.11,
+     "energy": 604.39,
+     "cong": 0.0,
+     "loss": -0.28,
+     "hub_lmp_max_minus_min": 2.59,
+     "hub_mcc_max_minus_min": 0.0,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4096,
+     "model_clock_stamp": "06-20 h16",
+     "true_calendar_stamp": "2024-06-19 HE17",
+     "actual_lmp": 492.13,
+     "actual_mec": 490.5,
+     "actual_mcc": 9.3,
+     "actual_mlc": -7.67,
+     "model_price": 38.67,
+     "excess": 453.46,
+     "energy": 451.83,
+     "cong": 9.3,
+     "loss": -7.67,
+     "hub_lmp_max_minus_min": 196.71,
+     "hub_mcc_max_minus_min": 145.22,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4337,
+     "model_clock_stamp": "06-30 h17",
+     "true_calendar_stamp": "2024-06-29 HE18",
+     "actual_lmp": 154.87,
+     "actual_mec": 157.55,
+     "actual_mcc": -2.07,
+     "actual_mlc": -0.61,
+     "model_price": 28.9,
+     "excess": 125.97,
+     "energy": 128.66,
+     "cong": -2.07,
+     "loss": -0.61,
+     "hub_lmp_max_minus_min": 169.22,
+     "hub_mcc_max_minus_min": 142.62,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4576,
+     "model_clock_stamp": "07-10 h16",
+     "true_calendar_stamp": "2024-07-09 HE17",
+     "actual_lmp": 317.12,
+     "actual_mec": 433.41,
+     "actual_mcc": -108.17,
+     "actual_mlc": -8.11,
+     "model_price": 36.97,
+     "excess": 280.15,
+     "energy": 396.43,
+     "cong": -108.17,
+     "loss": -8.11,
+     "hub_lmp_max_minus_min": 655.86,
+     "hub_mcc_max_minus_min": 584.5,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4580,
+     "model_clock_stamp": "07-10 h20",
+     "true_calendar_stamp": "2024-07-09 HE21",
+     "actual_lmp": 153.8,
+     "actual_mec": 177.82,
+     "actual_mcc": -19.8,
+     "actual_mlc": -4.22,
+     "model_price": 34.19,
+     "excess": 119.61,
+     "energy": 143.64,
+     "cong": -19.8,
+     "loss": -4.22,
+     "hub_lmp_max_minus_min": 133.25,
+     "hub_mcc_max_minus_min": 101.07,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4696,
+     "model_clock_stamp": "07-15 h16",
+     "true_calendar_stamp": "2024-07-14 HE17",
+     "actual_lmp": 176.6,
+     "actual_mec": 166.18,
+     "actual_mcc": 13.15,
+     "actual_mlc": -2.73,
+     "model_price": 45.8,
+     "excess": 130.8,
+     "energy": 120.38,
+     "cong": 13.15,
+     "loss": -2.73,
+     "hub_lmp_max_minus_min": 257.08,
+     "hub_mcc_max_minus_min": 249.89,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4883,
+     "model_clock_stamp": "07-23 h11",
+     "true_calendar_stamp": "2024-07-22 HE12",
+     "actual_lmp": 158.33,
+     "actual_mec": 175.46,
+     "actual_mcc": -14.37,
+     "actual_mlc": -2.76,
+     "model_price": 36.59,
+     "excess": 121.74,
+     "energy": 138.87,
+     "cong": -14.37,
+     "loss": -2.76,
+     "hub_lmp_max_minus_min": 46.14,
+     "hub_mcc_max_minus_min": 38.97,
+     "hub_mec_max_minus_min": 0.02
+    },
+    {
+     "hour_index": 5033,
+     "model_clock_stamp": "07-29 h17",
+     "true_calendar_stamp": "2024-07-28 HE18",
+     "actual_lmp": 193.66,
+     "actual_mec": 193.94,
+     "actual_mcc": 1.09,
+     "actual_mlc": -1.37,
+     "model_price": 49.71,
+     "excess": 143.94,
+     "energy": 144.23,
+     "cong": 1.09,
+     "loss": -1.37,
+     "hub_lmp_max_minus_min": 28.5,
+     "hub_mcc_max_minus_min": 15.98,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 5034,
+     "model_clock_stamp": "07-29 h18",
+     "true_calendar_stamp": "2024-07-28 HE19",
+     "actual_lmp": 694.2,
+     "actual_mec": 699.44,
+     "actual_mcc": 1.74,
+     "actual_mlc": -6.99,
+     "model_price": 46.93,
+     "excess": 647.27,
+     "energy": 652.51,
+     "cong": 1.74,
+     "loss": -6.99,
+     "hub_lmp_max_minus_min": 80.48,
+     "hub_mcc_max_minus_min": 22.05,
+     "hub_mec_max_minus_min": 0.0
+    },
+    {
+     "hour_index": 5055,
+     "model_clock_stamp": "07-30 h15",
+     "true_calendar_stamp": "2024-07-29 HE16",
+     "actual_lmp": 365.63,
+     "actual_mec": 394.73,
+     "actual_mcc": -23.02,
+     "actual_mlc": -6.07,
+     "model_price": 39.85,
+     "excess": 325.78,
+     "energy": 354.88,
+     "cong": -23.02,
+     "loss": -6.07,
+     "hub_lmp_max_minus_min": 122.4,
+     "hub_mcc_max_minus_min": 92.82,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 5056,
+     "model_clock_stamp": "07-30 h16",
+     "true_calendar_stamp": "2024-07-29 HE17",
+     "actual_lmp": 134.54,
+     "actual_mec": 167.89,
+     "actual_mcc": -30.85,
+     "actual_mlc": -2.5,
+     "model_price": 41.43,
+     "excess": 93.11,
+     "energy": 126.46,
+     "cong": -30.85,
+     "loss": -2.5,
+     "hub_lmp_max_minus_min": 113.04,
+     "hub_mcc_max_minus_min": 100.29,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 5057,
+     "model_clock_stamp": "07-30 h17",
+     "true_calendar_stamp": "2024-07-29 HE18",
+     "actual_lmp": 502.72,
+     "actual_mec": 556.25,
+     "actual_mcc": -43.47,
+     "actual_mlc": -10.06,
+     "model_price": 42.16,
+     "excess": 460.55,
+     "energy": 514.08,
+     "cong": -43.47,
+     "loss": -10.06,
+     "hub_lmp_max_minus_min": 171.6,
+     "hub_mcc_max_minus_min": 118.73,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 5082,
+     "model_clock_stamp": "07-31 h18",
+     "true_calendar_stamp": "2024-07-30 HE19",
+     "actual_lmp": 268.7,
+     "actual_mec": 282.56,
+     "actual_mcc": -9.14,
+     "actual_mlc": -4.72,
+     "model_price": 41.29,
+     "excess": 227.41,
+     "energy": 241.27,
+     "cong": -9.14,
+     "loss": -4.72,
+     "hub_lmp_max_minus_min": 60.42,
+     "hub_mcc_max_minus_min": 33.95,
+     "hub_mec_max_minus_min": 0.01
+    }
+   ],
+   "trap2_calendar": {
+    "raw_file_days": 366,
+    "model_clock_days": 365,
+    "actual_vs_model_offset_after_feb28_hours": 24,
+    "note": "The decomposition is computed entirely within the actual series at one index, so all three components belong to the same real hour and are unaffected. Any MODEL-vs-ACTUAL hour-matched quantity in a leap year is offset by the hours above."
+   },
+   "e_posthoc_basis": {
+    "status": "POST-HOC, NOT PRE-REGISTERED, NO GATE, LICENSES NOTHING. Measured because G-1 returned a NEGATIVE congestion share.",
+    "load_weighted_annual": {
+     "actual_hub_lmp": 28.0905,
+     "actual_system_mec": 29.8944,
+     "model_price": 30.7479,
+     "hub_congestion_wedge": -1.5861,
+     "hub_loss_wedge": -0.2178
+    },
+    "c3a_face_on_lmp_basis_pct": 9.4603,
+    "c3a_face_on_mec_basis_pct": 2.8553,
+    "concentration_on_mec_basis": {
+     "annual_lw_energy_gap": -0.8536,
+     "obj_15h_contribution": 0.6867,
+     "yr1_88h_contribution": 1.8935
+    }
+   }
+  },
+  "2025": {
+   "n2_identity": {
+    "hub_order_identical": true,
+    "hubs": [
+     "ARKANSAS.HUB",
+     "ILLINOIS.HUB",
+     "INDIANA.HUB",
+     "LOUISIANA.HUB",
+     "MICHIGAN.HUB",
+     "MINN.HUB",
+     "MS.HUB",
+     "TEXAS.HUB"
+    ],
+    "max_abs_reconstruction_residual": 2.2737367544323206e-13
+   },
+   "n1_hub_invariance": {
+    "convention_tested": "MEC = LMP - MCC - MLC",
+    "n_hours": 8760,
+    "frac_within_0.51": 1.0,
+    "max_spread": 0.02,
+    "p99_spread": 0.02,
+    "jun_jul_frac_within_0.51": 1.0,
+    "alt_convention_frac_within_0.51": 0.0,
+    "alt_convention_max_spread": 4933.68
+   },
+   "populations": {
+    "OBJ": {
+     "n": 15,
+     "threshold_usd_per_mwh": 238.93
+    },
+    "JJ": {
+     "n": 1464
+    },
+    "YR1": {
+     "n": 88,
+     "threshold_usd_per_mwh": 173.14
+    }
+   },
+   "g1_shares_equal_weighted": {
+    "OBJ": {
+     "n_hours": 15,
+     "mean_excess": 466.512,
+     "mean_energy": 585.326,
+     "mean_cong": -108.759,
+     "mean_loss": -10.055,
+     "share_energy": 1.2547,
+     "share_cong": -0.2331,
+     "share_loss": -0.0216,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 413.831,
+     "median_energy": 573.019,
+     "median_cong": -66.011,
+     "median_loss": -8.774
+    },
+    "JJ": {
+     "n_hours": 1464,
+     "mean_excess": 4.786,
+     "mean_energy": 11.929,
+     "mean_cong": -6.585,
+     "mean_loss": -0.558,
+     "share_energy": 2.4926,
+     "share_cong": -1.376,
+     "share_loss": -0.1166,
+     "r1_hours_largest_energy": 1128,
+     "r1_hours_largest_cong": 332,
+     "r1_hours_largest_loss": 4,
+     "median_excess": -6.309,
+     "median_energy": -3.955,
+     "median_cong": -1.427,
+     "median_loss": -0.306
+    },
+    "YR1": {
+     "n_hours": 88,
+     "mean_excess": 277.758,
+     "mean_energy": 323.251,
+     "mean_cong": -41.696,
+     "mean_loss": -3.796,
+     "share_energy": 1.1638,
+     "share_cong": -0.1501,
+     "share_loss": -0.0137,
+     "r1_hours_largest_energy": 87,
+     "r1_hours_largest_cong": 1,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 172.037,
+     "median_energy": 228.396,
+     "median_cong": -16.054,
+     "median_loss": -2.857
+    }
+   },
+   "g1_levels_OBJ": {
+    "mean_actual_lmp": 546.46,
+    "mean_actual_mec": 665.28,
+    "mean_actual_mcc": -108.76,
+    "mean_actual_mlc": -10.05,
+    "mean_model_price": 79.95,
+    "mean_jj_actual_mec": 51.81,
+    "mean_jj_model_price": 39.88
+   },
+   "trap4_shares_load_weighted": {
+    "basis": "hubs weighted by the keeper's own committed P1 zonal demand via HUB_TO_ZONES; MINN.HUB carries MISO-West AND MISO-Plains. ROBUSTNESS ONLY \u2014 cannot flip the verdict (PREREG TRAP 4).",
+    "OBJ": {
+     "n_hours": 15,
+     "mean_excess": 528.218,
+     "mean_energy": 585.326,
+     "mean_cong": -53.436,
+     "mean_loss": -3.672,
+     "share_energy": 1.1081,
+     "share_cong": -0.1012,
+     "share_loss": -0.007,
+     "r1_hours_largest_energy": 15,
+     "r1_hours_largest_cong": 0,
+     "r1_hours_largest_loss": 0,
+     "median_excess": 520.783,
+     "median_energy": 573.019,
+     "median_cong": -35.545,
+     "median_loss": -2.18
+    }
+   },
+   "g2_dispersion": {
+    "LMP": {
+     "OBJ": {
+      "mean_max_minus_min": 333.383,
+      "median_max_minus_min": 259.4,
+      "mean_sd": 137.057
+     },
+     "JJ": {
+      "mean_max_minus_min": 28.913,
+      "median_max_minus_min": 12.895,
+      "mean_sd": 10.957
+     }
+    },
+    "MCC": {
+     "OBJ": {
+      "mean_max_minus_min": 278.229,
+      "median_max_minus_min": 224.44,
+      "mean_sd": 120.662
+     },
+     "JJ": {
+      "mean_max_minus_min": 25.205,
+      "median_max_minus_min": 10.215,
+      "mean_sd": 9.984
+     }
+    },
+    "MEC": {
+     "OBJ": {
+      "mean_max_minus_min": 0.012,
+      "median_max_minus_min": 0.01,
+      "mean_sd": 0.005
+     },
+     "JJ": {
+      "mean_max_minus_min": 0.011,
+      "median_max_minus_min": 0.01,
+      "mean_sd": 0.004
+     }
+    },
+    "MODEL_zone_price": {
+     "OBJ": {
+      "mean_max_minus_min": 7.945,
+      "median_max_minus_min": 0.0,
+      "mean_sd": 3.44
+     },
+     "JJ": {
+      "mean_max_minus_min": 1.559,
+      "median_max_minus_min": 0.0,
+      "mean_sd": 0.675
+     }
+    },
+    "obj_over_jj_ratio_LMP": 11.531
+   },
+   "hours": [
+    {
+     "hour_index": 4026,
+     "model_clock_stamp": "06-17 h18",
+     "true_calendar_stamp": "2025-06-17 HE19",
+     "actual_lmp": 529.03,
+     "actual_mec": 537.81,
+     "actual_mcc": 0.0,
+     "actual_mlc": -8.77,
+     "model_price": 52.24,
+     "excess": 476.79,
+     "energy": 485.56,
+     "cong": 0.0,
+     "loss": -8.77,
+     "hub_lmp_max_minus_min": 44.89,
+     "hub_mcc_max_minus_min": 0.0,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4028,
+     "model_clock_stamp": "06-17 h20",
+     "true_calendar_stamp": "2025-06-17 HE21",
+     "actual_lmp": 333.58,
+     "actual_mec": 342.06,
+     "actual_mcc": -2.5,
+     "actual_mlc": -5.97,
+     "model_price": 48.98,
+     "excess": 284.6,
+     "energy": 293.08,
+     "cong": -2.5,
+     "loss": -5.97,
+     "hub_lmp_max_minus_min": 33.97,
+     "hub_mcc_max_minus_min": 5.0,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4125,
+     "model_clock_stamp": "06-21 h21",
+     "true_calendar_stamp": "2025-06-21 HE22",
+     "actual_lmp": 252.04,
+     "actual_mec": 243.02,
+     "actual_mcc": 12.34,
+     "actual_mlc": -3.32,
+     "model_price": 38.84,
+     "excess": 213.2,
+     "energy": 204.18,
+     "cong": 12.34,
+     "loss": -3.32,
+     "hub_lmp_max_minus_min": 236.65,
+     "hub_mcc_max_minus_min": 220.06,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4170,
+     "model_clock_stamp": "06-23 h18",
+     "true_calendar_stamp": "2025-06-23 HE19",
+     "actual_lmp": 519.43,
+     "actual_mec": 772.96,
+     "actual_mcc": -240.66,
+     "actual_mlc": -12.87,
+     "model_price": 127.64,
+     "excess": 391.79,
+     "energy": 645.32,
+     "cong": -240.66,
+     "loss": -12.87,
+     "hub_lmp_max_minus_min": 639.29,
+     "hub_mcc_max_minus_min": 571.73,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4171,
+     "model_clock_stamp": "06-23 h19",
+     "true_calendar_stamp": "2025-06-23 HE20",
+     "actual_lmp": 591.83,
+     "actual_mec": 937.77,
+     "actual_mcc": -329.48,
+     "actual_mlc": -16.46,
+     "model_price": 111.71,
+     "excess": 480.12,
+     "energy": 826.05,
+     "cong": -329.48,
+     "loss": -16.46,
+     "hub_lmp_max_minus_min": 865.96,
+     "hub_mcc_max_minus_min": 779.88,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4194,
+     "model_clock_stamp": "06-24 h18",
+     "true_calendar_stamp": "2025-06-24 HE19",
+     "actual_lmp": 772.62,
+     "actual_mec": 1108.33,
+     "actual_mcc": -323.74,
+     "actual_mlc": -11.97,
+     "model_price": 68.46,
+     "excess": 704.16,
+     "energy": 1039.87,
+     "cong": -323.74,
+     "loss": -11.97,
+     "hub_lmp_max_minus_min": 769.44,
+     "hub_mcc_max_minus_min": 687.5,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4195,
+     "model_clock_stamp": "06-24 h19",
+     "true_calendar_stamp": "2025-06-24 HE20",
+     "actual_lmp": 478.39,
+     "actual_mec": 724.43,
+     "actual_mcc": -237.59,
+     "actual_mlc": -8.44,
+     "model_price": 64.56,
+     "excess": 413.83,
+     "energy": 659.87,
+     "cong": -237.59,
+     "loss": -8.44,
+     "hub_lmp_max_minus_min": 551.3,
+     "hub_mcc_max_minus_min": 501.18,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4696,
+     "model_clock_stamp": "07-15 h16",
+     "true_calendar_stamp": "2025-07-15 HE17",
+     "actual_lmp": 297.21,
+     "actual_mec": 402.36,
+     "actual_mcc": -100.25,
+     "actual_mlc": -4.89,
+     "model_price": 53.0,
+     "excess": 244.21,
+     "energy": 349.36,
+     "cong": -100.25,
+     "loss": -4.89,
+     "hub_lmp_max_minus_min": 276.73,
+     "hub_mcc_max_minus_min": 231.96,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 4866,
+     "model_clock_stamp": "07-22 h18",
+     "true_calendar_stamp": "2025-07-22 HE19",
+     "actual_lmp": 633.79,
+     "actual_mec": 645.39,
+     "actual_mcc": -1.75,
+     "actual_mlc": -9.85,
+     "model_price": 53.88,
+     "excess": 579.91,
+     "energy": 591.51,
+     "cong": -1.75,
+     "loss": -9.85,
+     "hub_lmp_max_minus_min": 53.72,
+     "hub_mcc_max_minus_min": 9.37,
+     "hub_mec_max_minus_min": 0.02
+    },
+    {
+     "hour_index": 5010,
+     "model_clock_stamp": "07-28 h18",
+     "true_calendar_stamp": "2025-07-28 HE19",
+     "actual_lmp": 1669.52,
+     "actual_mec": 1726.33,
+     "actual_mcc": -24.44,
+     "actual_mlc": -32.37,
+     "model_price": 165.58,
+     "excess": 1503.94,
+     "energy": 1560.75,
+     "cong": -24.44,
+     "loss": -32.37,
+     "hub_lmp_max_minus_min": 287.5,
+     "hub_mcc_max_minus_min": 120.22,
+     "hub_mec_max_minus_min": 0.02
+    },
+    {
+     "hour_index": 5011,
+     "model_clock_stamp": "07-28 h19",
+     "true_calendar_stamp": "2025-07-28 HE20",
+     "actual_lmp": 589.26,
+     "actual_mec": 666.78,
+     "actual_mcc": -66.01,
+     "actual_mlc": -11.51,
+     "model_price": 93.76,
+     "excess": 495.5,
+     "energy": 573.02,
+     "cong": -66.01,
+     "loss": -11.51,
+     "hub_lmp_max_minus_min": 291.26,
+     "hub_mcc_max_minus_min": 231.97,
+     "hub_mec_max_minus_min": 0.02
+    },
+    {
+     "hour_index": 5012,
+     "model_clock_stamp": "07-28 h20",
+     "true_calendar_stamp": "2025-07-28 HE21",
+     "actual_lmp": 320.74,
+     "actual_mec": 383.65,
+     "actual_mcc": -58.63,
+     "actual_mlc": -4.28,
+     "model_price": 61.43,
+     "excess": 259.31,
+     "energy": 322.22,
+     "cong": -58.63,
+     "loss": -4.28,
+     "hub_lmp_max_minus_min": 220.44,
+     "hub_mcc_max_minus_min": 202.72,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 5034,
+     "model_clock_stamp": "07-29 h18",
+     "true_calendar_stamp": "2025-07-29 HE19",
+     "actual_lmp": 244.22,
+     "actual_mec": 359.42,
+     "actual_mcc": -110.41,
+     "actual_mlc": -4.79,
+     "model_price": 134.45,
+     "excess": 109.76,
+     "energy": 224.97,
+     "cong": -110.41,
+     "loss": -4.79,
+     "hub_lmp_max_minus_min": 259.4,
+     "hub_mcc_max_minus_min": 224.44,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 5035,
+     "model_clock_stamp": "07-29 h19",
+     "true_calendar_stamp": "2025-07-29 HE20",
+     "actual_lmp": 249.93,
+     "actual_mec": 348.65,
+     "actual_mcc": -93.89,
+     "actual_mlc": -4.83,
+     "model_price": 79.88,
+     "excess": 170.05,
+     "energy": 268.76,
+     "cong": -93.89,
+     "loss": -4.83,
+     "hub_lmp_max_minus_min": 252.65,
+     "hub_mcc_max_minus_min": 232.46,
+     "hub_mec_max_minus_min": 0.01
+    },
+    {
+     "hour_index": 5054,
+     "model_clock_stamp": "07-30 h14",
+     "true_calendar_stamp": "2025-07-30 HE15",
+     "actual_lmp": 715.34,
+     "actual_mec": 780.18,
+     "actual_mcc": -54.36,
+     "actual_mlc": -10.48,
+     "model_price": 44.82,
+     "excess": 670.52,
+     "energy": 735.36,
+     "cong": -54.36,
+     "loss": -10.48,
+     "hub_lmp_max_minus_min": 217.55,
+     "hub_mcc_max_minus_min": 154.94,
+     "hub_mec_max_minus_min": 0.01
+    }
+   ],
+   "trap2_calendar": {
+    "raw_file_days": 365,
+    "model_clock_days": 365,
+    "actual_vs_model_offset_after_feb28_hours": 0,
+    "note": "The decomposition is computed entirely within the actual series at one index, so all three components belong to the same real hour and are unaffected. Any MODEL-vs-ACTUAL hour-matched quantity in a leap year is offset by the hours above."
+   },
+   "e_posthoc_basis": {
+    "status": "POST-HOC, NOT PRE-REGISTERED, NO GATE, LICENSES NOTHING. Measured because G-1 returned a NEGATIVE congestion share.",
+    "load_weighted_annual": {
+     "actual_hub_lmp": 40.1435,
+     "actual_system_mec": 42.9609,
+     "model_price": 39.7046,
+     "hub_congestion_wedge": -2.5195,
+     "hub_loss_wedge": -0.2979
+    },
+    "c3a_face_on_lmp_basis_pct": -1.0933,
+    "c3a_face_on_mec_basis_pct": -7.5797,
+    "concentration_on_mec_basis": {
+     "annual_lw_energy_gap": 3.2563,
+     "obj_15h_contribution": 1.4148,
+     "yr1_88h_contribution": 3.9919
+    }
+   }
+  }
+ }
+}
