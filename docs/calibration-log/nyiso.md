@@ -10960,8 +10960,25 @@ case. **Sized before it was built, as pre-declared:** per-unit-hour is
 per-(klass, band), which is bounded by classes × bands and so stays committable
 in ERCOT/PJM. `klass` is the **pre-re-attribution** plant group (a new
 `klass_base` column captured before the dual-fuel overwrite), which is what makes
-(c)'s defect un-repeatable in any ISO. Four regression tests; no LP row, price or
+(c)'s defect un-repeatable in any ISO. Six regression tests; no LP row, price or
 dispatch value touched.
+
+**IT SHIPS IN THE KEEPER'S OWN BUNDLE.** Produced by a full 3-year replay of the
+keeper recipe (one invocation, years sequential) and verified before
+installation: **0 of 122,640 class-hour cells and 0 of 52,560 hourly zonal prices
+differ in every year** — the nyiso-177 G-CONTROL result reproduced, so the
+sidecar records the keeper's own dispatch and no calibration result changed.
+~255 KB/year, 376,680 rows, 12 bands. **It is an instrument, not a run, so it is
+NOT registered on the dashboard** (rule 15), and the scratch replay bundle is
+deleted. The round-trip holds exactly (residual 4.9e-4 MWh is float32 rounding on
+~10⁷ MWh sums, ~5 × 10⁻¹¹ relative).
+
+**The (c) defect is now quantified from committed artifacts:** `class_hourly`
+under-reports `ST_GAS` by exactly the oil-switched energy — 11.999 → 12.020 TWh
+(2023), 9.799 → 9.833 (2024), 10.014 → **10.169** (2025). Every `ST_GAS` figure
+in nyiso-178/179, and every C1 `ST_GAS` energy comparison reading `class_hourly`,
+carries this bias. It is small against the C1-2023 gate (+3.86 TWh) and does not
+move it, but it is **not zero in 2025** and is now correctable without a replay.
 
 **WHAT IS NOT DELIVERED, stated without softening.** **The object is NOT
 explained.** Four candidates are closed; the sustained ~1,000 MW gap is not
