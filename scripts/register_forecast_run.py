@@ -233,8 +233,11 @@ VERDICT_MAP = {
     # every block above gives: a run must never render a verdict its own score
     # contradicts, and the control's FC-3 band list differs from the armed arm's
     # (add.shares.gas_ct PASS in the control, FAIL under the arm). Determination
-    # HOLD on both, no flip.
-    "neiso-2021-2025-realized-t1h-d37-armed": "neiso-t1h",
+    # HOLD on both, no flip. RE-POINTED by capx-D46 (2026-09-03) to
+    # `neiso-t1h-pre-d46`: the bare key moved on to D46's live-posture
+    # re-measure and this record keeps its own verdict, the same
+    # preserve-then-overwrite the `-pre-d31` / `-pre-d33` chain uses.
+    "neiso-2021-2025-realized-t1h-d37-armed": "neiso-t1h-pre-d46",
     "neiso-2021-2025-realized-t1h-d37-control": "neiso-t1h-d37-control",
     # capx-D45 (2026-09-03), the once-only PJM + NYISO clearing-half / curve-ON
     # charter: the FIRST diagnostics-on T1-H solves of both ISOs at the LIVE
@@ -250,6 +253,31 @@ VERDICT_MAP = {
     "pjm-2021-2025-realized-t1h-d45-fixed": "pjm-t1h-d45-fixed",
     "nyiso-2021-2025-realized-t1h-d45": "nyiso-t1h",
     "nyiso-2021-2025-realized-t1h-d45-curveon": "nyiso-t1h-d45-curveon",
+    # capx-D46 (2026-09-03), the BATCHED RE-MEASURE (director r#30/r#31, owner
+    # ruling Q32 STAGED): a BASELINE REFRESH, not an A/B. Every registered
+    # forecast bundle was stale on up to three independent axes already measured
+    # on their own lanes -- the Q30/D44 fossil-dates default flip (`57088c33`),
+    # the D41 CCS fixed-cost re-identification, and keeper vintage (CAISO
+    # 231->240, MISO 198->202, NYISO 159->177). Each leg re-solves the bare
+    # key's own flag set at HEAD, changing only what HEAD's defaults changed;
+    # nothing is attributed to an axis and nothing arms.
+    #
+    # NEISO and MISO OVERWRITE their bare keys under the live-vintage
+    # convention, with the prior records preserved verbatim at `-pre-d46` (the
+    # `-pre-d45` / `-pre-d33` precedent) -- a run must never render a verdict its
+    # own score contradicts, and these scores differ (NEISO `retire.total_gw`
+    # 3.645 -> 4.447 GW with recall 4/6 -> 3/6; MISO re-measured at HEAD).
+    #
+    # ERCOT and CAISO MINT bare t1h keys: neither had one, their hindcasts were
+    # registered under long ids only, and every existing long-id record is left
+    # untouched (the D43 pair stays the dispersion baseline; the ERCOT c1joint /
+    # d12c legs stay where they are). A minted key cannot contradict any other
+    # run's score, so it IS this run's own verdict -- the same reasoning the
+    # capx-D10 `nyiso-t1x` block gives.
+    "neiso-2021-2025-realized-t1h-d46": "neiso-t1h",
+    "miso-2021-2025-realized-t1h-d46": "miso-t1h",
+    "caiso-2021-2025-realized-t1h-d46": "caiso-t1h",
+    "ercot-2021-2025-realized-t1h-d46": "ercot-t1h",
 }
 
 

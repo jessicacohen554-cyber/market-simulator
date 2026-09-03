@@ -3449,104 +3449,118 @@
   "tier": "t1f"
  },
  "neiso-t1h": {
-  "categories": {
-   "FC-1": {
-    "applicability": "optional",
-    "label": "FC-1 structural integrity (I1-I14)",
-    "rows": [
-     {
-      "detail": "no committed invariant record (summary.invariants / --invariants)",
-      "gating": true,
-      "row": "invariants I1-I14",
-      "status": "SKIPPED"
-     }
-    ],
-    "status": "SKIPPED"
-   },
-   "FC-2": {
-    "applicability": "n/a",
-    "label": "FC-2 adequacy & equilibrium behavior",
-    "rows": [],
-    "status": "n/a"
-   },
-   "FC-3": {
-    "applicability": "required",
-    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
-    "rows": [
-     {
-      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
-      "gating": true,
-      "row": "hindcast bands",
-      "status": "FAIL"
-     }
-    ],
-    "status": "FAIL"
-   },
-   "FC-4": {
-    "applicability": "n/a",
-    "label": "FC-4 crossover dispatch skill (T1-X)",
-    "rows": [],
-    "status": "n/a"
-   },
-   "FC-5": {
-    "applicability": "n/a",
-    "label": "FC-5 external corridor",
-    "rows": [],
-    "status": "n/a"
-   },
-   "FC-6": {
-    "applicability": "n/a",
-    "label": "FC-6 driver response",
-    "rows": [],
-    "status": "n/a"
-   },
-   "FC-7": {
-    "applicability": "required",
-    "label": "FC-7 provenance & DOF",
-    "rows": [
-     {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
-      "row": "dof ledger",
-      "status": "CAVEAT"
-     }
-    ],
-    "status": "CAVEAT"
-   },
-   "FC-8": {
-    "applicability": "runtime",
-    "label": "FC-8 runtime feasibility",
-    "rows": [
-     {
-      "detail": "no perf ledger (total_wall_s) in summary",
-      "gating": true,
-      "row": "runtime",
-      "status": "SKIPPED"
-     }
-    ],
-    "status": "SKIPPED"
-   }
-  },
-  "caveats": [],
-  "determination": "HOLD",
-  "iso": "NEISO",
-  "notes": [
-   "capx-D37 armed re-measure (owner ruling Q28): HEAD recipe + the D40 Net ICR requirement lever armed IN THIS RUN'S CONFIG ONLY; the SHIPPED DEFAULT of neiso_net_icr_requirement STAYS False. Determination HOLD -- UNCHANGED from the preserved FFR-3A-2 vintage, on FC-3 FAIL both times. FC-7 FAIL -> CAVEAT is an INSTRUMENT change (the harness now writes run_config.json, which the FFR-3A-2 leg predates), not a model improvement. The lever's real effect is NOT visible in this band list: it is in the adequacy POSITION, which the paired control isolates -- the armed post-evolution positions land +0.37 / -3.26 / +0.14 points of the real FCA 14/15/16 against the control's +21.13 / -1.44 / -5.34. See docs/handoffs/FINDING-capx-d37-neiso-t1h-armed-2026-09-02.md."
-  ],
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
   "provenance": {
-   "cache_epoch": "313ba0612435b963",
-   "run_id": "neiso-2021-2025-realized-t1h-d37-armed",
    "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-09-02",
-   "scored_at_sha": "11735c1f5d18",
-   "session": "capx-D37"
+   "scored_at_sha": "71d3f1a6e3c2",
+   "scored_at_date": "2026-09-03T09:01:45Z",
+   "cache_epoch": "da19b85495178949",
+   "run_id": "neiso-2021-2025-realized-t1h-d46",
+   "session": "capx-D46"
   },
+  "tier": "t1h",
+  "iso": "NEISO",
+  "determination": "HOLD",
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
-  "rubric_version": "1.0",
-  "schema": "forecast-verdict/v1",
-  "tier": "t1h"
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no per-ISO control, nothing attributed to an axis, nothing armed. Posture = the bare key's own flag set (HEAD defaults + --entry-screen-diagnostics + neiso_net_icr_requirement, D37's Q28 arming reproduced so the refresh stays single-axis), changing only what HEAD's defaults changed: fossil_announced_exits_enabled False -> True (Q30/D44, 57088c33). D41's CCS constants are INERT here and it is verified, not assumed \u2014 ccs_retrofits is the empty list in every solve year, because ccs_retrofit_available_year=2028 lies past the window. Keeper unmoved (2026-08-17-neiso-99-joint-p1). The channel armed 16 live rows / 2971 MW spanning 2021-2027. WHAT MOVED: retire.total_gw model 3.645 -> 4.447 GW (err_frac -0.271 -> -0.110, band FAIL both), oil 0.000 -> 0.547 GW and gas_ct 0.000 -> 0.006 GW off zero \u2014 and, NOT predicted, coal 0.791 -> 0.129 GW with gas_cc 1.414 -> 2.324 GW: the dates channel does not only ADD exits, it REPLACES them, because a plant carrying a filed date is EXEMPT from the economic screen (rule 19, D44's step-1 amendment). recall 4/6 -> 3/6 and false_retire 0.263 -> 0.315 therefore both read WORSE. Determination HOLD, unchanged. The FC-3 band-FAIL list is byte-identical at 11 rows: the gate leg is BLIND to every one of these moves \u2014 the same blindness D37 recorded of its own lever. Preserved verbatim: neiso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 778 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
  },
  "neiso-t1h-pre-d37": {
   "categories": {
@@ -8214,5 +8228,333 @@
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
   "tier": "t1h"
+ },
+ "neiso-t1h-pre-d46": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "NEISO",
+  "notes": [
+   "capx-D37 armed re-measure (owner ruling Q28): HEAD recipe + the D40 Net ICR requirement lever armed IN THIS RUN'S CONFIG ONLY; the SHIPPED DEFAULT of neiso_net_icr_requirement STAYS False. Determination HOLD -- UNCHANGED from the preserved FFR-3A-2 vintage, on FC-3 FAIL both times. FC-7 FAIL -> CAVEAT is an INSTRUMENT change (the harness now writes run_config.json, which the FFR-3A-2 leg predates), not a model improvement. The lever's real effect is NOT visible in this band list: it is in the adequacy POSITION, which the paired control isolates -- the armed post-evolution positions land +0.37 / -3.26 / +0.14 points of the real FCA 14/15/16 against the control's +21.13 / -1.44 / -5.34. See docs/handoffs/FINDING-capx-d37-neiso-t1h-armed-2026-09-02.md."
+  ],
+  "provenance": {
+   "cache_epoch": "313ba0612435b963",
+   "run_id": "neiso-2021-2025-realized-t1h-d37-armed",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-09-02",
+   "scored_at_sha": "11735c1f5d18",
+   "session": "capx-D37"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1h"
+ },
+ "caiso-t1h": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "71d3f1a6e3c2",
+   "scored_at_date": "2026-09-03T09:01:45Z",
+   "cache_epoch": "2c8cc7d19ccaed4c",
+   "run_id": "caiso-2021-2025-realized-t1h-d46",
+   "session": "capx-D46"
+  },
+  "tier": "t1h",
+  "iso": "CAISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed, nothing armed. MINTED bare key: CAISO had no `caiso-t1h`, its hindcasts were registered under long ids only, and every existing long-id record is untouched (the D43 pair stays the dispersion baseline). Posture = HEAD live default + --entry-screen-diagnostics. Two axes reach this leg: the Q30/D44 fossil-dates flip (channel armed 25 live rows / 4005 MW, 2021-2040) and keeper vintage 231 -> 240; D41's CCS axis is INERT and verified so (ccs_retrofits empty in every solve year \u2014 retrofits open in 2028, past the window). Against the indicative predecessor caiso-2021-2025-realized-t1h-d43-control (one axis apart, so nearly like-for-like): retire.total_gw model 2.240 -> 3.068 GW, err_frac +6.642 -> +9.469 \u2014 the run reads WORSE, which is the EXPECTED rule-14 signature of a faithful input at an ISO whose actual 2021-2025 exits are only 0.293 GW, not a regression. gas_st 0.000 -> 0.821 GW off zero (the OTC-driven filed dates), gas_ct 0.000 -> 0.007 GW. false_retire 2.240 -> 2.969 GW absolute but frac_of_model 1.000 -> 0.968, i.e. the model's exits are no longer 100 % false. The 2.240 GW NUCLEAR false-retire persists to the decimal and is untouched by the keeper move \u2014 read, not predicted. FC-3 band-FAIL membership is IDENTICAL to the predecessor's 11 rows; only magnitudes moved. Determination HOLD. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 778 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "ercot-t1h": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "71d3f1a6e3c2",
+   "scored_at_date": "2026-09-03T09:01:45Z",
+   "cache_epoch": "67d5dcc1ada2e2df",
+   "run_id": "ercot-2021-2025-realized-t1h-d46",
+   "session": "capx-D46"
+  },
+  "tier": "t1h",
+  "iso": "ERCOT",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed, nothing armed. MINTED bare key: ERCOT had no `ercot-t1h`; every existing long-id record (the c1joint and d12c legs) is untouched. Posture = HEAD live default + --entry-screen-diagnostics. THE HEADLINE IS A NULL, AND IT IS A DATA-COVERAGE NULL, NOT A SCREEN ONE: the fossil-dates channel is correctly armed and loads 3 live rows / 1309 MW \u2014 O W Sommers 1 (2027), J K Spruce (2028), O W Sommers 2 (2029) \u2014 and EVERY ONE OF THEM IS DATED PAST 2025, the window's last solve year. No row can fire in-window, so retire.total_gw stays at exactly 0.000 GW against 2.294 GW actual (err_frac -1.000) with every per-fuel model_gw at zero, and announced_derates is the empty list in all four solve years. ERCOT is the one Stage-1 ISO the flip cannot reach. It nonetheless MOVED ONE GATE LEG, in the worse direction: because the dates channel counts as an admissible exit channel, the reachable-set member rule (D-24) stops excluding one of the two >=300 MW targets, so retire.unit_recall_gt300 goes n/a (SKIP) -> a scored 0/1 FAIL and JOINS the FC-3 band-FAIL list. A board row got worse on an input that retired nothing. D41's CCS axis is INERT and verified so (ccs_retrofits empty every year). Keeper unmoved. Determination HOLD. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_cc', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 778 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
  }
 }
