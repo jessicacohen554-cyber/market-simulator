@@ -283,9 +283,14 @@ clean like-for-like statistic. **Ravenswood sits far below it and Astoria far
 above it, and they are the only two outliers.**
 
 At tranche grain the object is a single number. Ravenswood's `ST_GAS` committed
-tranche carries **9.975 MMBtu/MWh** (base ≈ **9.50** at the class's committed
-multiplier 1.05), against Northport's 11.432 (base 10.887) and Barrett's 11.630
-(base 11.076). Measured, on `ST_GAS` units only:
+tranche carries **9.975 MMBtu/MWh**, i.e. a base of **9.50** at the class's
+committed multiplier 1.05 — **cross-checked independently against its own peak
+tranche**, 39.900 ÷ the class peak multiplier 4.20 = **9.50** to four figures.
+The same identity holds at Northport (11.432 ÷ 1.05 = 45.727 ÷ 4.20 = **10.887**)
+and Barrett (11.630 ÷ 1.05 = 46.518 ÷ 4.20 = **11.076**), which confirms the
+fleet `heat_rate` array carries the plain multiplier form rather than the
+`phys_*` physical basis, so the recovered bases are exact and not an assumption
+about which multiplier applies. Measured, on `ST_GAS` units only:
 
 | plant | model base HR | measured HR | **model ÷ measured** |
 |---|---|---|---|
