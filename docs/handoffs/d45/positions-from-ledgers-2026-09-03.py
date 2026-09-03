@@ -240,3 +240,64 @@ def counterfactual(run_dir: Path, positions: dict[int, float] | None = None) -> 
             )
         )
     return out
+
+
+# ---------------------------------------------------------------------------
+# Firm-capacity decomposition (stage 2, both ISOs): restate the ledger's
+# post-evolution accredited firm capacity by component on the ISO's OWN
+# accreditation basis — thermal by fuel (PJM: the ELCC class ratings; NYISO:
+# 1 - EFORd, the registry default), hydro at the published accreditation
+# (ledger firm_clean_accredited_mw), wind/solar at the credits the ledger
+# recorded, storage at its ELCC (ledger storage_firm_mw), and the firm import
+# credit — and check the sum against the reserve_margin identity. Every term
+# is a committed ledger field or a HEAD registry constant.
+# ---------------------------------------------------------------------------
+def firm_decomposition(run_dir: Path) -> list[dict]:
+    from market_sim.config.capacity_market import ADEQUACY_EXTERNAL_TIE_FIRM_MW
+    from market_sim.model.capacity_evolution.retirements import (
+        resolve_internal_supply_accounting_ratio,
+        thermal_accreditation_fraction,
+    )
+    from market_sim.config.constants import EFORD
+
+    meta = json.loads((run_dir / "meta.json").read_text())
+    iso = meta["iso"]
+    bundle = REPO / meta["bundle"]
+    out = []
+    for p in sorted(bundle.glob("evolution_*.json")):
+        led = json.loads(p.read_text())
+        if led.get("reserve_margin") is None:
+            continue
+        y = int(p.stem.split("_")[1])
+        fleet = led.get("fleet_by_fuel_after") or {}
+        thermal = {
+            f: mw * thermal_accreditation_fraction(f, EFORD.get(f, 0.05), iso)
+            for f, mw in fleet.items()
+        }
+        cred = led.get("renewable_credit_applied") or {}
+        wind = float(led.get("wind_cap_mw") or 0.0) * float(cred.get("wind", 0.0))
+        solar = float(led.get("solar_cap_mw") or 0.0) * float(cred.get("solar", 0.0))
+        hydro = float(led.get("firm_clean_accredited_mw") or 0.0)
+        storage = float(led.get("storage_firm_mw") or 0.0)
+        internal = sum(thermal.values()) + wind + solar + hydro + storage
+        internal *= resolve_internal_supply_accounting_ratio(iso)
+        ties = ADEQUACY_EXTERNAL_TIE_FIRM_MW.get(iso, 0.0)
+        total = internal + ties
+        identity = led["peak_demand_mw"] * (1 + led["reserve_margin"])
+        out.append(
+            dict(
+                year=y,
+                thermal_nameplate_mw=sum(fleet.values()),
+                thermal_firm_by_fuel=thermal,
+                thermal_firm_mw=sum(thermal.values()),
+                wind_firm_mw=wind,
+                solar_firm_mw=solar,
+                hydro_firm_mw=hydro,
+                storage_firm_mw=storage,
+                tie_firm_mw=ties,
+                total_firm_mw=total,
+                ledger_identity_firm_mw=identity,
+                residual_mw=identity - total,
+            )
+        )
+    return out
