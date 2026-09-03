@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-03-caiso-241-a0-control",
+  "label": "caiso 241 a0 control",
+  "date": "2026-09-03",
+  "shorthand": "caiso-241-a0-control",
+  "definition": "caiso-241 A0 CONTROL: the caiso-240 keeper recipe replayed at HEAD with NO flag delta. The caiso-231 no-control-arms directive was AMENDED by owner ruling 2026-09-03 (PRECOMMIT-caiso241-ADDENDUM2 \u00a7B2) for an arm live in every solved year; G-CTRL form 3 is a HEAD-drift check and every gate is evaluated on B1 minus A0.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-03-caiso-241-a0-control.js",
+  "bundle": "results/calibration/caiso241_a0_control"
+}
