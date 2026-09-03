@@ -1,6 +1,6 @@
 # Model Audit Program — Director Status Board (2026-08)
 
-> # 🟢 v23 (2026-09-03, pin `49bfbc49`) — **R-W, R-X AND R-Y ALL DISCHARGED IN ONE CYCLE. LEG 1's INSTRUMENT IS GREEN FOR THE FIRST TIME SINCE 08-15; LEG 2 IS ONE MERGE AWAY, AND THAT MERGE IS THIS LANE'S OWN JOB 0.**
+> # 🟢 v23 (2026-09-03, pin `49bfbc49`) — **G2 LEG 2 IS *SATISFIED* — RUN 2351, `Fast test tier` GREEN, THE FIRST EVER. R-W, R-X AND R-Y ALL DISCHARGED IN THE SAME CYCLE; LEG 1's INSTRUMENT IS GREEN FOR THE FIRST TIME SINCE 08-15.**
 >
 > **THE PIN MOVED TWICE UNDER THIS DISPATCH.** The director pinned `68690427`
 > (#4628); `origin/main` was already **`c73f78f5`** (#4634) at this lane's first
@@ -30,6 +30,20 @@
 > exactly 12 leaf paths change, no verdict moves** (all three read NOT-YET and are
 > absent from `complete` on both sides), ERCOT/PJM/NEISO byte-unchanged,
 > `check_gate_a_provenance` **1 → 0**, all seven gates green.
+>
+> ### 🟢🟢 AND JOB 0's OWN PR RUN PRODUCED THE GREEN — **LEG 2 IS SATISFIED**
+>
+> **Run 2351 (`33707179376`, PR #4646, head `e8bc1990` = the job-0 commit alone),
+> status `completed`, `Fast test tier` job `100498709463` conclusion `success` —
+> `7823 passed, 34 skipped, 2 xfailed`, ZERO failures, 9 m 43 s.** The criterion is
+> *"a completed `ci.yml` run whose `Fast test tier` job concludes success"*, as v21
+> wrote it and R-W and R-X both restated it; **it is met, for the first time.** The
+> run's overall conclusion is still `failure` on `Ruff lint + format` and the two
+> **H-1 DO-NOT-REQUIRE** jobs — **the criterion has never been the run's
+> conclusion**, which is exactly why v21 could refuse run 2298 and R-X run 2344.
+> `FR-21` is green in the same run, on the very step job 0 was written to clear.
+> **The object count walked 12 → 1 → 1 → 0 across four lanes, and not one of them
+> claimed a green it did not have.** Full record and the honesty checks: **M-15**.
 >
 > ### 🟢 R-W **DISCHARGED**, COMPLETENESS-CHECKED — AND ITS COUNT LINEAGE REPLACES THE BOARD's
 >
@@ -1265,12 +1279,13 @@ local, line counts equal.**
    a charter item; **(ii)** stage-0 back to **7-of-7** — now a *re*-capture of
    three (M-6); **(iii)** a `regression_gate.py --mode byte` run against those
    current goldens, in-session, never in CI.
-2. **One completed fast-tier-green `ci.yml` run** — 🔴 **BLOCKED, BUT ON ONE
-   MERGE.** Refused a **fourth** time (run 2344, M-4) — and the refusals have
-   walked it down: **12 → 1 → 0 objects.** R-W repaired 11, R-X cleared the 12th,
-   and **the last one is this lane's job 0, executed and pushed.** Carry it as
-   R-X wrote it: *BLOCKED on the caiso-239 / miso-201 / nyiso-177 forecast-board
-   re-key.* **Leg 2 is one merge from satisfiable — and the merge is in flight.**
+2. **One completed fast-tier-green `ci.yml` run** — 🟢 **SATISFIED (M-15).**
+   **Run 2351, `Fast test tier` `success`, `7823 passed / 0 failed`** — the first
+   ever, produced by job 0's own PR run. The refusals walked the object down
+   **12 → 1 → 1 → 0** across R-U, R-W, R-X and this lane. ⚠️ **It is satisfied,
+   not secured:** the green rests on the gate-(a) stamp, and **four promotions in
+   one day left that stamp stale** (M-2) — **the next promotion that skips the
+   R-T duty re-reds this job.** Leg 2 and leg 4 are the same problem twice.
 3. **A keeper freeze** — 🟢 **SATISFIED**, R-V holding; five promotions, all in
    unfrozen lanes (M-10).
 4. **Branch-protection flip** — 🔴 **NOT LIVE**, re-measured 30-for-30 (M-7).
@@ -1279,8 +1294,9 @@ local, line counts equal.**
    item. **Still the owner's Settings action alone.**
 
 **Net: three owner rulings discharged in one cycle; leg 1's instrument is green
-for the first time in nineteen days; leg 2 has gone from "unstaffed with one
-substantive object" to "one merge"; leg 4 is unchanged and still the owner's.**
+for the first time in nineteen days; LEG 2 IS SATISFIED for the first time
+(M-15); leg 3 holds; leg 4 is unchanged and still the owner's. G2 now stands at
+two legs met, one in motion, and one waiting on a Settings action.**
 
 ### M-14 · 🟢 WHAT A **G2 DECLARATION** WILL REQUIRE, AND THE DUTY THAT FOLLOWS IT
 
@@ -1293,7 +1309,10 @@ one lane** — never assembled from four cycles' separate readings:
    gate not run.*
 2. **Leg 2** — **one completed `ci.yml` run whose `Fast test tier` job concludes
    `success`**, quoted by run id and head sha from the API record. Not "required
-   checks green", not a local pass. *Today: job 0 in flight.*
+   checks green", not a local pass. *Today: **MET** — run 2351, job
+   `100498709463`, head `e8bc1990` (M-15). A declaring lane must still re-verify
+   it at its own pin: the green depends on a stamp that goes stale on the next
+   un-re-keyed promotion.*
 3. **Leg 3** — the R-V freeze intact over the declaring window, `keepers/` and
    `status/` diffed. *Today: satisfied.*
 4. **Leg 4** — branch protection **observably live**: a merge blocked by a red
@@ -1305,6 +1324,60 @@ session that declares G2 **notifies the FFR desk**, because the **FFR Q.2
 supersession battery is pinned to fire at G2** — it does not fire on its own and
 has not fired. **DOCS-B dispatches behind that notification**, not before it.
 **G2 is NOT declarable at this pin.**
+
+### M-15 · 🟢🟢 **G2 LEG 2 IS SATISFIED — RUN 2351, `Fast test tier` = `success`. THE FIRST EVER, AND IT LANDED INSIDE THIS LANE.**
+
+**This supersedes the "one merge away" framing written earlier in this same
+cycle.** It is recorded as an amendment rather than by rewriting M-1 and M-13,
+so the sequence stays legible: this lane wrote leg 2 as *blocked on job 0*, then
+job 0's own PR run produced the green.
+
+**The criterion, verbatim from board v21 and restated unchanged by both R-W and
+R-X:** *"one completed fast-tier-green `ci.yml` run"* — **a completed `ci.yml`
+run whose `Fast test tier` job concludes `success`.**
+
+**The evidence, from the API record and nowhere else:**
+
+| field | value |
+|---|---|
+| run | **2351**, id **`33707179376`**, event `pull_request`, PR **#4646** |
+| head sha | **`e8bc1990`** — the job-0 commit alone |
+| run status | **`completed`** |
+| **`Fast test tier` job** | id **`100498709463`** — conclusion **`success`** |
+| step *Fast pytest tier* | **`success`**, 02:20:29Z → 02:30:12Z (**9 m 43 s**) |
+| pytest summary | **`7823 passed, 34 skipped, 2 xfailed, 23 warnings in 578.68s`** — **ZERO failures** |
+
+**Every other required-class job is green in the same run:** `Rule-22 quarantine
+gates`, `Cache-key registration guard`, `Pinned default cache key`, `Structural
+refactor guards`, `Rule-28 mechanism-matrix guard`, **and `FR-21 forecast-board
+staleness` — whose `check_gate_a_provenance` step is now `success`, the red that
+job 0 was written to clear.**
+
+**Stated with the same care the four refusals were.** The **run's** overall
+conclusion is `failure`, on three jobs: `Ruff lint + format` (M-7's capx probe
+scripts) and `FR-22 backcast->forecast parity` + `Forecast-invariant artifact
+audit`, **both named DO-NOT-REQUIRE by H-1**. **The criterion has never been the
+run's conclusion** — v21 refused run 2298 *because its job was red*, R-W wrote
+*"the criterion is the job, not a test"*, and R-X refused run 2344 on the same
+reading while its own chartered test was green. **On the criterion as written and
+thrice restated, leg 2 is MET.** Two further honesty checks, both passing: it is
+a **PR-branch run**, exactly as runs 2298, 2307 and 2344 were — the measurement
+basis is unchanged, not relaxed; and the head content is **`main` plus the
+three-row re-key and nothing else**, so **on merge it becomes `main`'s own
+state** — this is not a branch-local artifact.
+
+**How the object count actually walked down, across four lanes and three
+cycles:** R-U 56→33 local (CI 9) · R-W **12 → 1** by root cause + the §4b
+poisoner · R-X **1 → 1** with the object *swapped* (parity cleared, the re-key
+exposed beneath it) · **this lane 1 → 0.** Not one of the four claimed a green it
+did not have, and the fourth got one.
+
+**What leg 2 now needs to STAY satisfied:** nothing, if #4646 merges — but the
+green is only as durable as the gate-(a) stamp, which **four promotions in one
+day left stale** (M-2). **The next keeper promotion that skips the R-T duty
+re-reds this exact job.** Leg 2's satisfaction and leg 4's flip are therefore the
+same problem seen twice, which is the strongest argument this board has yet
+carried for the Settings action.
 
 ## What moved — v22 (`0653bf13..dfc44d95`, "the discharge-and-unstaffed cycle")
 

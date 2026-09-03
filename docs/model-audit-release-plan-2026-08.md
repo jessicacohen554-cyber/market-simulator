@@ -5745,8 +5745,8 @@ your branch when done.
   unstaffed**, leg 3 satisfied, **leg 4 now blocked ONLY on the owner's Settings
   action — both its code blockers are cleared.** The FFR desk's Q.2 supersession
   battery still does not fire. (L-14, L-15, queue W-2.)
-- 2026-09-03 — **RECORDS LANE v23 — THREE OWNER RULINGS DISCHARGED IN ONE CYCLE;
-  LEG 1's INSTRUMENT GREEN, LEG 2 ONE MERGE AWAY.** Board refresh at
+- 2026-09-03 — **RECORDS LANE v23 — G2 LEG 2 SATISFIED (FIRST EVER); THREE OWNER
+  RULINGS DISCHARGED IN ONE CYCLE; LEG 1's INSTRUMENT GREEN.** Board refresh at
   `origin/main` **`49bfbc49`** (two-poll stable). Branch
   `claude/audit-records-lane-v23-2bq33e`. **The pin moved twice under the
   dispatch**: the director pinned `68690427` (#4628), `origin/main` was
@@ -5846,18 +5846,36 @@ your branch when done.
   NYISO ×1), **recorded, never adjudicated**; **the R-V freeze on
   {ERCOT, NEISO, PJM} is intact** — every promotion is in an explicitly-unfrozen
   lane.
-  **(h) G2 ROLL-CALL: leg 1 🟠 in motion and unblocked for the first time** (R-Y's
-  instrument green; remaining = the L-8 `markup` hand-back, three stage-0
-  re-captures, and a `regression_gate.py --mode byte` run); **leg 2 🔴 BLOCKED ON
-  ONE MERGE** — refused a **fourth** time on run 2344, with the refusals walking
-  the object count **12 → 1 → 0**, the last being this lane's job 0, executed and
-  in flight; **leg 3 🟢 satisfied**; **leg 4 🔴 not live, still the owner's Settings
-  action alone.** **A G2 DECLARATION REQUIRES ALL FOUR LEGS VERIFIED AT ONE PIN,
+  **(h) G2 LEG 2 IS SATISFIED — THE FIRST FAST-TIER-GREEN RUN THIS PROGRAM HAS
+  EVER HAD, PRODUCED BY JOB 0's OWN PR RUN.** **Run 2351 (`33707179376`, PR #4646,
+  head `e8bc1990` — the job-0 commit alone), status `completed`, `Fast test tier`
+  job `100498709463` conclusion `success`, `7823 passed, 34 skipped, 2 xfailed`,
+  ZERO failures, 9 m 43 s.** The criterion, as v21 wrote it and R-W and R-X both
+  restated it, is *a completed `ci.yml` run whose `Fast test tier` **job**
+  concludes success* — **not** the run's own conclusion, which is still `failure`
+  on `Ruff lint + format` plus the two H-1 **DO-NOT-REQUIRE** jobs. That
+  distinction is precisely why v21 could refuse run 2298 and R-X run 2344, so it
+  is applied here in the same direction, not relaxed. Honesty checks: it is a
+  **PR-branch run, exactly as 2298 / 2307 / 2344 were** (basis unchanged), and its
+  head content is **`main` plus the three-row re-key and nothing else**, so it
+  becomes `main`'s own state on merge. `FR-21` is green in the same run, on the
+  step job 0 was written to clear. **The object count walked 12 → 1 → 1 → 0 across
+  four lanes (R-U, R-W, R-X, this one) and not one of them claimed a green it did
+  not have.** ⚠️ **Satisfied is not secured:** the green rests on the gate-(a)
+  stamp, and four promotions in one day left that stamp stale — **the next
+  promotion that skips the R-T duty re-reds this job**, which makes leg 2 and
+  leg 4 the same problem seen twice. **ROLL-CALL: leg 1 🟠 in motion and unblocked
+  for the first time** (R-Y's instrument green; remaining = the L-8 `markup`
+  hand-back, three stage-0 re-captures, and a `regression_gate.py --mode byte`
+  run); **leg 2 🟢 SATISFIED**; **leg 3 🟢 satisfied**; **leg 4 🔴 not live, still
+  the owner's Settings action alone.** **A G2 DECLARATION REQUIRES ALL FOUR LEGS VERIFIED AT ONE PIN,
   IN ONE SITTING, BY ONE LANE** — never assembled from separate cycles: a byte
   `regression_gate.py` PASS against 7-of-7 current goldens; one completed `ci.yml`
   run whose **`Fast test tier` job concludes `success`**, quoted by run id and head
-  sha; the freeze diffed intact over the declaring window; and branch protection
-  **observably live** (a merge blocked by a red required check, or the ruleset read
+  sha — **met today at run 2351, and to be RE-verified at the declaring pin, since
+  the green depends on a stamp that goes stale on the next un-re-keyed
+  promotion**; the freeze diffed intact over the declaring window; and branch
+  protection **observably live** (a merge blocked by a red required check, or the ruleset read
   directly). **DECLARATION DUTY, restated: the declaring PM session notifies the
   FFR desk — the Q.2 supersession battery is pinned to fire at G2 and has not
   fired — and DOCS-B dispatches behind that notification, never before it. G2 is
