@@ -153,6 +153,29 @@ def _clear_fleet_caches() -> None:
                 fn.cache_clear()
 
 
+#: DECLARED REBUILD DEVIATIONS, per ISO. A keeper whose recipe arms a mechanism
+#: whose raw corpus is NOT RECOVERABLE in this checkout cannot be replayed as
+#: recorded; rather than drop the ISO from the census, the mechanism is disarmed
+#: FOR THE REBUILD ONLY and the deviation is declared here, in the probe output's
+#: provenance block, and in the assessment.
+#:
+#: PJM ``pjm_da_virtual_bids``: ``data/raw/pjm-da-virtuals/`` is one of the
+#: BLOAT-B corpus conversions (CLAUDE.md, "Cloning & session data") — its bulk
+#: payload is untracked at tip and was stripped from history on 2026-08-16, so
+#: the directory holds only its README and the mechanism hard-fails ("never
+#: silently no-ops"). Recovery is a re-fetch, not a checkout.
+#:
+#: WHY IT CANNOT AFFECT THE MEASURED OBJECT. The census measures a DIFF of two
+#: rebuilds taken under the SAME config, and attributes a row to a cell by its
+#: HEAT-RATE ratio. Virtual bids add demand-side LP units; they never enter
+#: ``fleet_to_bins`` / ``bins_to_fleet``, which is where every thermal band heat
+#: rate is set. Any effect of the deviation is common to both rebuilds and
+#: cancels in the diff. The deviation is nevertheless declared, not assumed away.
+REBUILD_DEVIATIONS: dict[str, dict[str, object]] = {
+    "PJM": {"pjm_da_virtual_bids": False},
+}
+
+
 def rebuild(
     bundle: Path, year: int, mutation: dict[tuple[str, str], float] | None
 ) -> dict:
@@ -161,6 +184,10 @@ def rebuild(
     ``mutation`` maps (group, band) -> multiplicative factor applied IN PLACE to
     ``campd_bins._DEFAULT_HR_MULT_BY_GROUP``; the dict is restored before
     returning, so the process-global literal table is never left perturbed.
+
+    Any :data:`REBUILD_DEVIATIONS` entry for the bundle's ISO is applied to the
+    replayed kwargs and is identical across the baseline and perturbed rebuilds,
+    so it cancels in the diff the census actually reads.
     """
     from market_sim.data.fleet import campd_bins as cb
     from run_calibration import run_year
@@ -178,6 +205,9 @@ def rebuild(
         "must_run_mw",
     }
     kwargs = {k: v for k, v in meta.items() if k in params and k not in skip}
+    for k, v in REBUILD_DEVIATIONS.get(str(meta["iso"]).upper(), {}).items():
+        if k in params:
+            kwargs[k] = v
 
     original = {g: dict(v) for g, v in cb._DEFAULT_HR_MULT_BY_GROUP.items()}
     try:
@@ -528,6 +558,9 @@ def main() -> None:
             "cells": [f"{g}:{b}" for g, b in CELLS],
             "probe_factors": {f"{g}:{b}": v for (g, b), v in FACTORS.items()},
             "big_factor": BIG_FACTOR,
+            "rebuild_deviations": {
+                k: dict(v) for k, v in REBUILD_DEVIATIONS.items()
+            },
             "solves": 0,
         }
     }

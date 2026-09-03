@@ -1,0 +1,151 @@
+{
+ "G_STRUCT_presolve": {
+  "PASS": true
+ },
+ "_provenance": {
+  "bundle": "results/calibration/caiso239_b1_stgas_committed_measured",
+  "expected_ratio": 1.0599999999999998,
+  "flag": "caiso_st_gas_peak_measured",
+  "gate": "G-STRUCT, pre-solve leg",
+  "keeper_run_id": "2026-09-02-caiso-239-b1-stgas",
+  "session": "caiso-240",
+  "solves": 0
+ },
+ "per_year": {
+  "2023": {
+   "bands_moved": [
+    "peak"
+   ],
+   "n_fleet_rows": 1801,
+   "n_moved": 3,
+   "plants_moved": [
+    315,
+    335,
+    350
+   ],
+   "ratio_exact": true,
+   "rows": [
+    {
+     "hr_off": 13.035,
+     "hr_on": 13.8171,
+     "mc_mean_off": 116.8873,
+     "mc_mean_on": 122.6845,
+     "plant_code": 315,
+     "pmax_mw": 171.3,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p315_peak"
+    },
+    {
+     "hr_off": 13.035,
+     "hr_on": 13.8171,
+     "mc_mean_off": 115.1153,
+     "mc_mean_on": 120.9126,
+     "plant_code": 335,
+     "pmax_mw": 33.87,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p335_peak"
+    },
+    {
+     "hr_off": 13.029879,
+     "hr_on": 13.811672,
+     "mc_mean_off": 122.7314,
+     "mc_mean_on": 128.5263,
+     "plant_code": 350,
+     "pmax_mw": 223.65,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p350_peak"
+    }
+   ]
+  },
+  "2024": {
+   "bands_moved": [
+    "peak"
+   ],
+   "n_fleet_rows": 1795,
+   "n_moved": 3,
+   "plants_moved": [
+    315,
+    335,
+    350
+   ],
+   "ratio_exact": true,
+   "rows": [
+    {
+     "hr_off": 13.035,
+     "hr_on": 13.8171,
+     "mc_mean_off": 68.9162,
+     "mc_mean_on": 71.9133,
+     "plant_code": 315,
+     "pmax_mw": 171.3,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p315_peak"
+    },
+    {
+     "hr_off": 13.035,
+     "hr_on": 13.8171,
+     "mc_mean_off": 68.694,
+     "mc_mean_on": 71.6911,
+     "plant_code": 335,
+     "pmax_mw": 33.87,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p335_peak"
+    },
+    {
+     "hr_off": 13.029879,
+     "hr_on": 13.811672,
+     "mc_mean_off": 82.572,
+     "mc_mean_on": 85.5679,
+     "plant_code": 350,
+     "pmax_mw": 223.65,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p350_peak"
+    }
+   ]
+  },
+  "2025": {
+   "bands_moved": [
+    "peak"
+   ],
+   "n_fleet_rows": 1800,
+   "n_moved": 3,
+   "plants_moved": [
+    315,
+    335,
+    350
+   ],
+   "ratio_exact": true,
+   "rows": [
+    {
+     "hr_off": 13.035,
+     "hr_on": 13.8171,
+     "mc_mean_off": 76.3649,
+     "mc_mean_on": 79.9559,
+     "plant_code": 315,
+     "pmax_mw": 171.3,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p315_peak"
+    },
+    {
+     "hr_off": 13.035,
+     "hr_on": 13.8171,
+     "mc_mean_off": 76.094,
+     "mc_mean_on": 79.685,
+     "plant_code": 335,
+     "pmax_mw": 33.87,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p335_peak"
+    },
+    {
+     "hr_off": 13.029879,
+     "hr_on": 13.811672,
+     "mc_mean_off": 85.9963,
+     "mc_mean_on": 89.5859,
+     "plant_code": 350,
+     "pmax_mw": 223.65,
+     "ratio": 1.0599999999999998,
+     "uid": "ST_GAS_LA_BASIN_p350_peak"
+    }
+   ]
+  }
+ }
+}
