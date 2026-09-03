@@ -6319,106 +6319,118 @@
   "tier": "t1f"
  },
  "pjm-t1h": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "d6217f60e292",
+   "scored_at_date": "2026-09-03",
+   "cache_epoch": "ea767a6254b8e4af",
+   "run_id": "pjm-2021-2025-realized-t1h-d45",
+   "session": "capx-D45"
+  },
+  "tier": "t1h",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D45 (2026-09-03): the FIRST diagnostics-on PJM T1-H at the LIVE stack posture (curve-ON, entry_screen_diagnostics=True; pre-D44 fossil-dates posture). Determination HOLD -- UNCHANGED from the preserved FFR-3A-3 vintage, on FC-3 FAIL both times; FC-7 FAIL -> CAVEAT is an INSTRUMENT change (the harness now writes run_config.json), not a model improvement. Score identical to the decimal to the 2026-08-22 verified-exits leg (retire 18.147 GW, coal 18.137 vs 10.299 actual, recall 0.80, false 7.839). The object this leg measures is NOT in the band list: the ledgers now carry the entering CR-1 position (1.171 / 1.137 / 0.962 in 2023 / 2024 / 2025 -> the curve pays $0 / $0 / cap), which the D45 finding shows is a BASIS artifact -- restated on the auctions' own pre-CIFP UCAP design the same fleet sits at 1.057 vs the market's committed 1.049. See docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md."
+  ],
   "categories": {
    "FC-1": {
-    "applicability": "optional",
     "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
     "rows": [
      {
-      "detail": "no committed invariant record (summary.invariants / --invariants)",
-      "gating": true,
       "row": "invariants I1-I14",
-      "status": "SKIPPED"
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
      }
-    ],
-    "status": "SKIPPED"
+    ]
    },
    "FC-2": {
-    "applicability": "n/a",
     "label": "FC-2 adequacy & equilibrium behavior",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-3": {
-    "applicability": "required",
     "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
     "rows": [
      {
-      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.solar', 'add.by_tech.gas_cc', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_ct']",
-      "gating": true,
       "row": "hindcast bands",
-      "status": "FAIL"
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar']",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-4": {
-    "applicability": "n/a",
     "label": "FC-4 crossover dispatch skill (T1-X)",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-5": {
-    "applicability": "n/a",
     "label": "FC-5 external corridor",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-6": {
-    "applicability": "n/a",
     "label": "FC-6 driver response",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "PASS",
+      "detail": "mode=forecast; 775 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
-    "applicability": "runtime",
     "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
     "rows": [
      {
-      "detail": "no perf ledger (total_wall_s) in summary",
-      "gating": true,
       "row": "runtime",
-      "status": "SKIPPED"
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
      }
-    ],
-    "status": "SKIPPED"
+    ]
    }
-  },
-  "caveats": [],
-  "determination": "HOLD",
-  "iso": "PJM",
-  "notes": [],
-  "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba592814d92",
-   "session": "FFR-3A-2"
-  },
-  "reasons": [
-   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
-   "FC-7 provenance & DOF FAIL"
-  ],
-  "rubric_version": "1.0",
-  "schema": "forecast-verdict/v1",
-  "tier": "t1h"
+  }
  },
  "pjm-t1h-ff2d": {
   "categories": {
@@ -8098,5 +8110,109 @@
     ]
    }
   }
+ },
+ "pjm-t1h-pre-d45": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.solar', 'add.by_tech.gas_cc', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_ct']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "run_config.json absent",
+      "gating": true,
+      "row": "run_config",
+      "status": "FAIL"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "PJM",
+  "notes": [
+   "PRESERVED BASELINE -- the prior `pjm-t1h` record, moved here VERBATIM by capx lane D45 (2026-09-03) when the first diagnostics-on live-posture solve took the bare key. Valid at the sha it records (8ba592814d92); NEVER quote it as current state. Superseded by `pjm-t1h` (run pjm-2021-2025-realized-t1h-d45)."
+  ],
+  "provenance": {
+   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "scored_at_sha": "8ba592814d92",
+   "session": "FFR-3A-2"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1h"
  }
 }
