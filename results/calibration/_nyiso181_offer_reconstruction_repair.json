@@ -1,0 +1,157 @@
+{
+  "bundle": "results/calibration/nyiso181_control",
+  "status": "POST-HOC root-cause diagnosis; NOT a pre-registered gate",
+  "years": {
+    "2023": {
+      "year": 2023,
+      "units": 88,
+      "rggi_allowance_price_usd_per_tco2": 13.49,
+      "capacity_basis_max_abs_delta_mw": 1.7e-05,
+      "offer_identity": {
+        "nyiso179_assemble_mc_alone": {
+          "median_recon_minus_lp": -9.573623,
+          "mean_recon_minus_lp": -11.447696,
+          "max_abs_delta": 1458.986625,
+          "share_bin_hours_differing_gt_0_01": 1.0,
+          "EXACT": false
+        },
+        "plus_rggi_carbon": {
+          "median_recon_minus_lp": -2.052861,
+          "mean_recon_minus_lp": -3.872496,
+          "max_abs_delta": 1466.807129,
+          "share_bin_hours_differing_gt_0_01": 0.873879,
+          "EXACT": false
+        },
+        "plus_rggi_and_offer_margin": {
+          "median_recon_minus_lp": -0.0,
+          "mean_recon_minus_lp": -0.0,
+          "max_abs_delta": 2.7e-05,
+          "share_bin_hours_differing_gt_0_01": 0.0,
+          "EXACT": true
+        }
+      },
+      "nyiso179_G1_statistic": {
+        "nyiso179_published_basis": {
+          "median_R": 0.775079,
+          "aggregate_R_all_hours": 0.768425,
+          "mean_itm_cap_mw": 1785.602493,
+          "mean_class_dispatch_mw": 1372.101807,
+          "share_bin_hours_in_the_money": 0.369218
+        },
+        "repaired_basis": {
+          "median_R": 1.40919,
+          "aggregate_R_all_hours": 1.396154,
+          "mean_itm_cap_mw": 982.772231,
+          "mean_class_dispatch_mw": 1372.101807,
+          "share_bin_hours_in_the_money": 0.131805
+        }
+      },
+      "spurious_in_the_money": {
+        "share_of_bin_hours": 0.237567,
+        "mean_capacity_mw": 804.315941,
+        "median_lp_mc_minus_price_usd": 4.756597
+      }
+    },
+    "2024": {
+      "year": 2024,
+      "units": 88,
+      "rggi_allowance_price_usd_per_tco2": 20.71,
+      "capacity_basis_max_abs_delta_mw": 1.7e-05,
+      "offer_identity": {
+        "nyiso179_assemble_mc_alone": {
+          "median_recon_minus_lp": -15.387943,
+          "mean_recon_minus_lp": -17.246064,
+          "max_abs_delta": 686.576462,
+          "share_bin_hours_differing_gt_0_01": 1.0,
+          "EXACT": false
+        },
+        "plus_rggi_carbon": {
+          "median_recon_minus_lp": -3.705944,
+          "mean_recon_minus_lp": -5.719821,
+          "max_abs_delta": 698.266091,
+          "share_bin_hours_differing_gt_0_01": 0.875,
+          "EXACT": false
+        },
+        "plus_rggi_and_offer_margin": {
+          "median_recon_minus_lp": 0.0,
+          "mean_recon_minus_lp": -0.0,
+          "max_abs_delta": 1.5e-05,
+          "share_bin_hours_differing_gt_0_01": 0.0,
+          "EXACT": true
+        }
+      },
+      "nyiso179_G1_statistic": {
+        "nyiso179_published_basis": {
+          "median_R": 0.448232,
+          "aggregate_R_all_hours": 0.524248,
+          "mean_itm_cap_mw": 2141.055134,
+          "mean_class_dispatch_mw": 1122.444702,
+          "share_bin_hours_in_the_money": 0.618225
+        },
+        "repaired_basis": {
+          "median_R": 2.420642,
+          "aggregate_R_all_hours": 1.576612,
+          "mean_itm_cap_mw": 711.934568,
+          "mean_class_dispatch_mw": 1122.444702,
+          "share_bin_hours_in_the_money": 0.157478
+        }
+      },
+      "spurious_in_the_money": {
+        "share_of_bin_hours": 0.462241,
+        "mean_capacity_mw": 1433.088155,
+        "median_lp_mc_minus_price_usd": 7.874133
+      }
+    },
+    "2025": {
+      "year": 2025,
+      "units": 88,
+      "rggi_allowance_price_usd_per_tco2": 22.09,
+      "capacity_basis_max_abs_delta_mw": 1.7e-05,
+      "offer_identity": {
+        "nyiso179_assemble_mc_alone": {
+          "median_recon_minus_lp": -11.977461,
+          "mean_recon_minus_lp": -5.432433,
+          "max_abs_delta": 2914.033646,
+          "share_bin_hours_differing_gt_0_01": 0.999751,
+          "EXACT": false
+        },
+        "plus_rggi_carbon": {
+          "median_recon_minus_lp": 2e-06,
+          "mean_recon_minus_lp": 6.857533,
+          "max_abs_delta": 2926.642956,
+          "share_bin_hours_differing_gt_0_01": 0.872945,
+          "EXACT": false
+        },
+        "plus_rggi_and_offer_margin": {
+          "median_recon_minus_lp": -0.0,
+          "mean_recon_minus_lp": -0.0,
+          "max_abs_delta": 3e-05,
+          "share_bin_hours_differing_gt_0_01": 0.0,
+          "EXACT": true
+        }
+      },
+      "nyiso179_G1_statistic": {
+        "nyiso179_published_basis": {
+          "median_R": 0.820514,
+          "aggregate_R_all_hours": 0.751624,
+          "mean_itm_cap_mw": 1544.383107,
+          "mean_class_dispatch_mw": 1160.796143,
+          "share_bin_hours_in_the_money": 0.484567
+        },
+        "repaired_basis": {
+          "median_R": 1.747242,
+          "aggregate_R_all_hours": 1.408031,
+          "mean_itm_cap_mw": 824.41119,
+          "mean_class_dispatch_mw": 1160.796143,
+          "share_bin_hours_in_the_money": 0.28765
+        }
+      },
+      "spurious_in_the_money": {
+        "share_of_bin_hours": 0.204287,
+        "mean_capacity_mw": 743.519704,
+        "median_lp_mc_minus_price_usd": 5.87756
+      }
+    }
+  },
+  "identity_closes_all_years": true
+}

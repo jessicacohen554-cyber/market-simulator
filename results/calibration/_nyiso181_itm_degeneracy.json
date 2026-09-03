@@ -1,0 +1,154 @@
+{
+  "bundle": "results/calibration/nyiso181_control",
+  "years": {
+    "2023": {
+      "year": 2023,
+      "class_unit_hours": 814680,
+      "n_units": 93,
+      "hours": 8760,
+      "object": {
+        "itm_unrun_mwh": 73386.237699,
+        "itm_unrun_twh": 0.073386,
+        "mean_itm_unrun_mw": 8.377424
+      },
+      "G_D_degeneracy": {
+        "ladder_dshare_by_eps": {
+          "0.01": 0.942369,
+          "0.10": 0.94444,
+          "1.00": 0.976965,
+          "5.00": 0.983566
+        },
+        "deciding_eps": 1.0,
+        "dshare_at_deciding_eps": 0.976965,
+        "bar": 0.5,
+        "PASS": true
+      },
+      "G_P_plateau_vs_charged": {
+        "degenerate_mwh": 71695.764472,
+        "plateau_mwh": 68823.656845,
+        "charged_mwh": 2872.107627,
+        "pshare": 0.95994,
+        "bar": 0.5,
+        "PASS": true,
+        "omega_p50_on_charged": 1.079375,
+        "omega_p95_abs_on_charged": 4.939532
+      },
+      "G_S_successor_statistic": {
+        "u_strict_mwh": 1690.458569,
+        "u_strict_twh": 0.00169,
+        "mean_u_strict_mw": 0.192975,
+        "share_of_published_object": 0.023035
+      },
+      "G_L_level": {
+        "mean_plateau_cap_mw": 360.391792,
+        "mean_itm_unrun_mw": 8.377424,
+        "ratio_plateau_cap_over_unrun": 43.019402
+      }
+    },
+    "2024": {
+      "year": 2024,
+      "class_unit_hours": 814680,
+      "n_units": 93,
+      "hours": 8760,
+      "object": {
+        "itm_unrun_mwh": 61210.256948,
+        "itm_unrun_twh": 0.06121,
+        "mean_itm_unrun_mw": 6.987472
+      },
+      "G_D_degeneracy": {
+        "ladder_dshare_by_eps": {
+          "0.01": 0.835407,
+          "0.10": 0.84482,
+          "1.00": 0.974487,
+          "5.00": 0.994279
+        },
+        "deciding_eps": 1.0,
+        "dshare_at_deciding_eps": 0.974487,
+        "bar": 0.5,
+        "PASS": true
+      },
+      "G_P_plateau_vs_charged": {
+        "degenerate_mwh": 59648.570556,
+        "plateau_mwh": 53139.667276,
+        "charged_mwh": 6508.90328,
+        "pshare": 0.890879,
+        "bar": 0.5,
+        "PASS": true,
+        "omega_p50_on_charged": 1.018186,
+        "omega_p95_abs_on_charged": 3.104692
+      },
+      "G_S_successor_statistic": {
+        "u_strict_mwh": 1561.617637,
+        "u_strict_twh": 0.001562,
+        "mean_u_strict_mw": 0.178267,
+        "share_of_published_object": 0.025512
+      },
+      "G_L_level": {
+        "mean_plateau_cap_mw": 268.617026,
+        "mean_itm_unrun_mw": 6.987472,
+        "ratio_plateau_cap_over_unrun": 38.442661
+      }
+    },
+    "2025": {
+      "year": 2025,
+      "class_unit_hours": 814680,
+      "n_units": 93,
+      "hours": 8760,
+      "object": {
+        "itm_unrun_mwh": 69784.150539,
+        "itm_unrun_twh": 0.069784,
+        "mean_itm_unrun_mw": 7.966227
+      },
+      "G_D_degeneracy": {
+        "ladder_dshare_by_eps": {
+          "0.01": 0.702396,
+          "0.10": 0.711095,
+          "1.00": 0.942978,
+          "5.00": 0.981038
+        },
+        "deciding_eps": 1.0,
+        "dshare_at_deciding_eps": 0.942978,
+        "bar": 0.5,
+        "PASS": true
+      },
+      "G_P_plateau_vs_charged": {
+        "degenerate_mwh": 65804.940997,
+        "plateau_mwh": 50267.876468,
+        "charged_mwh": 15537.064529,
+        "pshare": 0.763892,
+        "bar": 0.5,
+        "PASS": true,
+        "omega_p50_on_charged": 1.002094,
+        "omega_p95_abs_on_charged": 6.427431
+      },
+      "G_S_successor_statistic": {
+        "u_strict_mwh": 3979.092538,
+        "u_strict_twh": 0.003979,
+        "mean_u_strict_mw": 0.454234,
+        "share_of_published_object": 0.05702
+      },
+      "G_L_level": {
+        "mean_plateau_cap_mw": 189.340335,
+        "mean_itm_unrun_mw": 7.966227,
+        "ratio_plateau_cap_over_unrun": 23.76788
+      }
+    }
+  },
+  "verdicts": {
+    "G_D": "DEGENERACY-CARRIES",
+    "G_P": "PLATEAU",
+    "years_scored": 3
+  },
+  "adjudication_status": {
+    "I1": true,
+    "I2": true,
+    "I3": false,
+    "I3_per_year_mean_mc_minus_price": {
+      "2023": -0.071397,
+      "2024": 0.014066,
+      "2025": -0.126572
+    },
+    "S1_FIRED": true,
+    "verdicts_are": "WITHHELD (PREREG \u00a74 S1)"
+  }
+}
