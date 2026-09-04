@@ -3642,6 +3642,7 @@ def solve_and_persist(
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
+    caiso_citygate_spot_coverage: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
@@ -3968,6 +3969,7 @@ def solve_and_persist(
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
             fleet_state_from_eia860=fleet_state_from_eia860,
+            caiso_citygate_spot_coverage=caiso_citygate_spot_coverage,
         )
         if pjm_offer_midcurve_segments is not None:
             # Meta-writer mirror of run_year's with_overrides (rule 25): the
@@ -5412,6 +5414,7 @@ def solve_and_persist(
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
             fleet_state_from_eia860=fleet_state_from_eia860,
+            caiso_citygate_spot_coverage=caiso_citygate_spot_coverage,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             nuclear_unit_availability=nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
@@ -6331,6 +6334,7 @@ def solve_and_persist(
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
         "nearby_fuel_price_zone_donor_guard": nearby_fuel_price_zone_donor_guard,
         "fleet_state_from_eia860": fleet_state_from_eia860,
+        "caiso_citygate_spot_coverage": caiso_citygate_spot_coverage,
         "pjm_offer_midcurve_segments": (
             list(pjm_offer_midcurve_segments)
             if pjm_offer_midcurve_segments is not None
@@ -8634,6 +8638,7 @@ def run_replay_bundle(
     caiso_ct_peaker_committed_measured: bool | None = None,
     nearby_fuel_price_zone_donor_guard: bool | None = None,
     fleet_state_from_eia860: bool | None = None,
+    caiso_citygate_spot_coverage: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
@@ -8736,6 +8741,8 @@ def run_replay_bundle(
         )
     if fleet_state_from_eia860 is not None:
         kwargs["fleet_state_from_eia860"] = fleet_state_from_eia860
+    if caiso_citygate_spot_coverage is not None:
+        kwargs["caiso_citygate_spot_coverage"] = caiso_citygate_spot_coverage
     if unit_outage_mixed_gas_routing is not None:
         kwargs["unit_outage_mixed_gas_routing"] = unit_outage_mixed_gas_routing
     if unit_outage_st_capacity_basis is not None:
@@ -10570,6 +10577,23 @@ def main() -> None:
         "every plant-level fleet (CAISO/PJM/MISO/NYISO/NEISO) skipped that "
         "tier fleet-wide. No new constant; rule 14 [R-ACCURATE]. Off by "
         "default, byte-identical; armed per lane (rule 25).",
+    )
+    parser.add_argument(
+        "--caiso-citygate-spot-coverage",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="COVERAGE-GATE REPAIR (caiso-246): under --caiso-citygate-spot-level "
+        "the hub overlay prices every covered month from the MEASURED CA "
+        "Composite daily citygate spot, but a month counts as covered only "
+        "where the EIA N3050CA3 monthly SURVEY has a basis row — and EIA "
+        "publishes that survey as NA for 2025-09/10/11, so those months fell "
+        "to the F923 plant layer while the daily spot carried 21/22/12 prints. "
+        "When set, a month with daily prints of its own is covered even "
+        "without a survey row (its day series is built exactly as every other "
+        "spot-level month; months with neither stay uncovered). No new "
+        "constant; rule 14 [R-ACCURATE]. Off by default, byte-identical; "
+        "CAISO-only (rule 25). Pre-registered: "
+        "PRECOMMIT-caiso246-spot-coverage-2026-09-04.md.",
     )
     parser.add_argument(
         "--caiso-offer-surface-conditional",
@@ -12552,6 +12576,12 @@ def main() -> None:
                 or "--no-fleet-state-from-eia860" in sys.argv
                 else None
             ),
+            caiso_citygate_spot_coverage=(
+                args.caiso_citygate_spot_coverage
+                if "--caiso-citygate-spot-coverage" in sys.argv
+                or "--no-caiso-citygate-spot-coverage" in sys.argv
+                else None
+            ),
             unit_outage_mixed_gas_routing=(
                 args.unit_outage_mixed_gas_routing
                 if "--unit-outage-mixed-gas-routing" in sys.argv
@@ -12891,6 +12921,7 @@ def main() -> None:
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=args.nearby_fuel_price_zone_donor_guard,
         fleet_state_from_eia860=args.fleet_state_from_eia860,
+        caiso_citygate_spot_coverage=args.caiso_citygate_spot_coverage,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False

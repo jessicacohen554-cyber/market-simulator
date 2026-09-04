@@ -1175,6 +1175,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # Registered WITH the fields, in the same commit (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard",
     "fleet_state_from_eia860",
+    # caiso-246: the spot-level overlay covers a month on its OWN daily prints
+    # (default off = the survey-row gate exactly as before, byte-identical); an
+    # armed run reprices the survey-NA months and hashes distinctly. Registered
+    # WITH the field, in the same commit (the nyiso-119 discipline).
+    "caiso_citygate_spot_coverage",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1740,6 +1745,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
     "fleet_state_from_eia860": "False",
+    # Added by caiso-246 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "caiso_citygate_spot_coverage": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -2136,6 +2144,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
     "caiso_citygate_flow_date": "flow-date placement of that measured series",
+    "caiso_citygate_spot_coverage": "own-print month coverage of that measured series",
     "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
     # --- measured availability / outage records ---
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
@@ -7235,6 +7244,28 @@ class ScenarioConfig:
     # Default off (byte-identical); CAISO backcast only; requires
     # caiso_citygate_spot_level's daily leg to be active via
     # gas_hub_basis_overlay.
+    caiso_citygate_spot_coverage: bool = False  # Cover a month on its OWN
+    # measured daily citygate prints under caiso_citygate_spot_level (caiso-246;
+    # PRECOMMIT-caiso246-spot-coverage-2026-09-04.md). The spot-level leg
+    # (caiso-84) prices every covered month entirely from the measured CA
+    # Composite daily spot — the N3050CA3 survey VALUE is never used where
+    # prints exist — yet a month is "covered" only where the survey has a basis
+    # row (_caiso_hub_daily_gas_prices: "never a coverage expansion"). EIA
+    # publishes N3050CA3 as NA for 2025-09/10/11 (and 2026-04), so those months
+    # fell to the F923 plant layer (caiso-242 §5, caiso-243's object, D3's
+    # 55077 row, the autumn-2025 slab) while the daily spot carried 21/22/12
+    # prints. When on, a month with daily prints of its own is covered even
+    # without a survey row and its day series is built exactly as every other
+    # spot-level month (flow-date staircase / calendar interpolation; the
+    # +$0.46 CAISO_CITYGATE_TRANSPORT_ADDER is layered by the caller); months
+    # with neither stay uncovered. ZERO new numbers (rule 21) — an
+    # already-committed measured series admitted into the months a gate keyed
+    # to a DIFFERENT series withheld it from; rule 14 [R-ACCURATE]: measured
+    # daily spot over the F923 gap-fill estimate; rule 19: the overlay reaches
+    # the months it was designed for, nothing stacked. Backcast-only like the
+    # spot-level leg it extends (_BACKCAST_ONLY_OVERLAY_FIELDS). Requires
+    # gas_hub_basis_overlay + caiso_citygate_spot_level. Default off
+    # (byte-identical); CAISO-only.
     caiso_dsw_surplus_clean: bool = False  # Carry the MEASURED surplus-hour
     # WEIM clean import depth on the south (Palo Verde / Path-46) corridor
     # (caiso-87; FINDING-caiso82 §3 "measured clean DEPTH" lane;
@@ -16913,6 +16944,7 @@ TIER_TAGS: dict[str, int] = {
     "nearby_fuel_price_min_state_plants": 3,
     "nearby_fuel_price_zone_donor_guard": 3,
     "fleet_state_from_eia860": 3,
+    "caiso_citygate_spot_coverage": 3,
     "class_aware_fuel_price_fallback": 3,
     "plant_level_fleet": 3,
     "gas_offer_curve": 3,

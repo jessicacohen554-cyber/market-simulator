@@ -494,6 +494,7 @@ def run_year(
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
+    caiso_citygate_spot_coverage: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
@@ -814,6 +815,7 @@ def run_year(
         caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
         fleet_state_from_eia860=fleet_state_from_eia860,
+        caiso_citygate_spot_coverage=caiso_citygate_spot_coverage,
     )
     if pjm_offer_midcurve_segments is not None:
         # Rule-19 scope: floor only the named measured segments (e.g.

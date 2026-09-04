@@ -970,8 +970,17 @@ def _caiso_hub_daily_gas_prices(
     citygate_path: Path | None = None,
     *,
     spot_level: bool = False,
+    spot_coverage: bool = False,
 ) -> np.ndarray | None:
     """CAISO daily-resolved citygate gas price ($/MMBtu), ``(hours,)``, or ``None``.
+
+    ``spot_coverage`` (caiso-246, ``config.caiso_citygate_spot_coverage``; only
+    meaningful with ``spot_level``): ALSO cover a month that has measured daily
+    prints of its own but NO survey basis row — EIA publishes N3050CA3 as
+    ``NA`` for 2025-09/10/11 — building its day series exactly as every other
+    spot-level month. The survey value is never used where prints exist, so
+    this lifts the gate, not the level. Default off keeps the coverage rule
+    described below byte-identical.
 
     The CAISO leg of :func:`iso_hub_daily_gas_prices`, structurally identical to
     the NYISO leg (:func:`_nyiso_hub_daily_gas_prices`): the monthly hub level
@@ -1053,9 +1062,11 @@ def _caiso_hub_daily_gas_prices(
         month_hours = n_days * 24
         hub_m = monthly[m]
         # Covered on the SAME months as the default path (survey basis row
-        # present); spot_level only changes the LEVEL within them.
-        if not np.isnan(hub_m) and hour < T:
-            dated = citygate_dated.get(m + 1, {})
+        # present); spot_level only changes the LEVEL within them — unless
+        # spot_coverage (caiso-246) also admits a month on its own daily prints.
+        dated = citygate_dated.get(m + 1, {})
+        own_prints = bool(spot_level and spot_coverage and dated)
+        if (not np.isnan(hub_m) or own_prints) and hour < T:
             if dated and flow_series is not None:
                 # Flow-date placement: the month's slice of the year-level
                 # staircase. spot_level keeps the absolute $/MMBtu; the
@@ -1303,7 +1314,13 @@ def apply_hub_basis_overlay(
         # caiso-84: level the overlay on the measured daily citygate SPOT series
         # itself (both level and shape), not the N3050CA3 survey (see
         # _caiso_hub_daily_gas_prices spot_level / caiso_citygate_spot_level).
-        hourly = _caiso_hub_daily_gas_prices(config, year, basis_path, spot_level=True)
+        hourly = _caiso_hub_daily_gas_prices(
+            config,
+            year,
+            basis_path,
+            spot_level=True,
+            spot_coverage=bool(getattr(config, "caiso_citygate_spot_coverage", False)),
+        )
         daily = hourly is not None
     elif getattr(config, "gas_hub_basis_daily", False):
         hourly = iso_hub_daily_gas_prices(config, year, basis_path)

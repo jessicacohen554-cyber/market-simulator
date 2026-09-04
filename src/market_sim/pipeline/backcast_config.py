@@ -1211,6 +1211,7 @@ def backcast_config(
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
+    caiso_citygate_spot_coverage: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -1665,6 +1666,10 @@ def backcast_config(
         # off; the ARM is per lane via the calibration CLI (rule 25).
         nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
         fleet_state_from_eia860=fleet_state_from_eia860,
+        # caiso-246: the spot-level overlay covers a month on its OWN daily
+        # prints (EIA N3050CA3 is NA for 2025-09/10/11). Default off; CAISO's
+        # arm via the calibration CLI (rule 25).
+        caiso_citygate_spot_coverage=caiso_citygate_spot_coverage,
         nearby_fuel_price_fallback=(iso.upper() != "ERCOT"),  # merchant-heavy
         #   ISOs (PJM) have many plants that file no EIA-923 delivered cost;
         #   fill those months from state/zone neighbours before the Henry Hub
