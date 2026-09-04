@@ -26,8 +26,8 @@ generation stale (it happened at r#25: a "dead" session recovered and ran a whol
 Re-derive your sitting number from the ledger's top entry and grade only the delta it missed.
 
 READ ON EVERY REFRESH, IN THIS ORDER:
-1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ac = r#32 is the
-   newest at this writing; it carries two mid-sitting amendments — read them), §1 scoreboard, §3 the THIRTY-ONE rulings Q1–Q31 (ALL SPENT — none
+1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ad = r#33 is the
+   newest at this writing; §0ac carries two mid-sitting amendments — read them), §1 scoreboard, §3 the THIRTY-ONE rulings Q1–Q31 (ALL SPENT — none
    open), §4 issuance record, §2 backcast watch.
 2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
    EVERY charter you issue is COMMITTED to the pack in the same sitting (the r#24 chat-only
@@ -65,15 +65,15 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#32 amendment 2, main HEAD c6e46b49, 2026-09-03 — VERIFY, DON'T TRUST):
+STATE AT HANDOFF (r#33, main HEAD b168260e, 2026-09-04 — VERIFY, DON'T TRUST):
 - KEEPERS: ERCOT two-config 2026-08-25-234-eastex-identity (+236-swcap 2023 carve-out),
   CALIBRATED · NEISO neiso-99-joint-p1 CALIBRATED · PJM pjm-162-inputclock CALIBRATED ·
   MISO 2026-09-03-miso-202-unitclip NOT-YET {C3a-2025 alone, −12.4 % — measured to be a
   scarcity TAIL, the C3c object} · NYISO
   2026-09-02-nyiso-177-vintage-matched (owner-ruled override) NOT-YET {C1-2023 ST_GAS,
-  C3a-2025, C3c — WIDENED} · CAISO 2026-09-03-caiso-240-b1-stgas NOT-YET {C3a alone}.
-  SIX consecutive promotions skipped the R-T gate-(a) re-key (audit v23 repaired three,
-  this desk two under C-2); read keepers from keepers/<ISO>.json only, and run
+  C3a-2025, C3c — WIDENED} · CAISO 2026-09-03-caiso-241-b1-ctpeaker NOT-YET {C3a alone}.
+  SEVEN consecutive promotions skipped the R-T gate-(a) re-key (audit v23 repaired three,
+  this desk two under C-2; caiso-241's is red at r#33 and blocks R-AB's flip — card C-5); read keepers from keepers/<ISO>.json only, and run
   scripts/check_gate_a_provenance.py at every refresh. Markers: complete = {ERCOT, NEISO, PJM}; final EMPTY (no locked-test
   year ever spent); freeze tier-scoped to the locked test. Stage-0 goldens: FIVE of six ISOs
   covered (PJM the gap).
@@ -91,10 +91,11 @@ STATE AT HANDOFF (r#32 amendment 2, main HEAD c6e46b49, 2026-09-03 — VERIFY, D
   dispersion the deterministic LP never priced (D43, cell I) — same family as the C3c ledger
   and the sub-unity price-response gain (nyiso-167's cross-ISO table). Do not charter lanes
   into that wall without new evidence.
-- IN FLIGHT: D44 LANDED (PR #4639; default ON, cache pins advanced by design). D45 is a
-  CHECKPOINT — PJM L1 registered (the $0-at-position is a BASIS artifact; the curve-ON
-  over-fire does not survive the market's own price; no default moves); OWED: NYISO
-  L2/L3, PJM L4, finding §4–§9 + the §9 close-out — ask if still absent. D45 (the
+- IN FLIGHT: D44 LANDED (PR #4639). D46 STAGE 1 LANDED IN FULL (r#33: the dates flip
+  RE-ROUTES exits with a per-ISO sign; GOLDEN-3 ends NEISO's CCS wave nine years early;
+  t1f cost estimates were 7–10× too high). D47 (GOLDEN-3 attestation, records) issued r#33.
+  D45 is a CHECKPOINT two sittings running — PJM L1 registered; OWED: NYISO L2/L3, PJM L4,
+  §4–§9 + the §9 close-out (card C-4 at r#33; D45-R absorbs D46 Stage 2). D45 (the
   ONCE-ONLY D6+R3 joint charter: PJM+NYISO first diagnostics-on T1-H solves, position/
   evaluation-quantity reconciliations, curve-ON adjudications; Fable; its close-out line
   retires the mechanism-class question) · owner-track: caiso-238 (both asks FUNDED, Q31),
