@@ -533,7 +533,7 @@ from §§3–8:
 the PJM/NYISO forecast surfaces until it closes. **Stage 2 was not started;
 Stage 3 was not touched.**
 
-### 11.1 NEW and routed — `caiso-241` re-opens CAISO's row, and CI is red on `main`
+### 11.1 NEW and routed — `caiso-241` re-opens CAISO's row, and leaves a gate-(a) failure every path-filtered PR inherits
 
 `a6c8db2f` (PR #4663) promoted **`2026-09-03-caiso-241-b1-ctpeaker`** *after* this
 lane's CAISO legs solved against `caiso-240`. Two consequences, **neither this
