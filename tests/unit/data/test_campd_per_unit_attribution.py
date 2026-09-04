@@ -331,6 +331,8 @@ class TestFleetGroupOverrideDisarmedOnTheRepairedPath:
 
         for pu in (False, True):
             assert (
-                _generic_unit_outage_target(2500, "X", "CT_PEAKER", per_unit_crosswalk=pu)
+                _generic_unit_outage_target(
+                    2500, "X", "CT_PEAKER", per_unit_crosswalk=pu
+                )
                 is None
             )

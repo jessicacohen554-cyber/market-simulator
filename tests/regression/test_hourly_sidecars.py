@@ -101,8 +101,10 @@ def _dual_fuel_unit_frame(year: int, pass_label: str, T: int = 4):
     aggregate undercount the class (nyiso-179 §6.1 candidate (c)).
     """
     rows = []
-    for unit, band in (("ST_GAS_NYC_p1_committed", "committed"),
-                       ("ST_GAS_NYC_p1_peak", "peak")):
+    for unit, band in (
+        ("ST_GAS_NYC_p1_committed", "committed"),
+        ("ST_GAS_NYC_p1_peak", "peak"),
+    ):
         for t in range(T):
             switched = band == "peak" and t >= T // 2
             rows.append(
@@ -162,9 +164,7 @@ class ClassBandHourlySidecarTest(unittest.TestCase):
     def test_schema_and_band_split(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir, out = self._write(tmp)
-            self.assertEqual(
-                out, run_dir / "hourly" / "class_band_hourly_2024.parquet"
-            )
+            self.assertEqual(out, run_dir / "hourly" / "class_band_hourly_2024.parquet")
             cb = pd.read_parquet(out)
             self.assertEqual(
                 sorted(cb.columns),
@@ -203,9 +203,8 @@ class ClassBandHourlySidecarTest(unittest.TestCase):
             for label in ("P0", "P1"):
                 b = cb[cb["pass"] == label]
                 h = ch[ch["pass"] == label]
-                gas = (
-                    (b[b["klass"] == "ST_GAS"]["mw"].sum())
-                    - (b[b["klass"] == "ST_GAS"]["mw_oil"].sum())
+                gas = (b[b["klass"] == "ST_GAS"]["mw"].sum()) - (
+                    b[b["klass"] == "ST_GAS"]["mw_oil"].sum()
                 )
                 self.assertAlmostEqual(
                     float(gas),

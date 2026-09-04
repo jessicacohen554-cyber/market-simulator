@@ -109,7 +109,7 @@ def g_control() -> dict:
         b = pd.read_parquet(CONTROL / "hourly" / f"system_{y}.parquet")
         a = a[a["pass"] == "P1"].sort_values(["zone", "hour"])
         b = b[b["pass"] == "P1"].sort_values(["zone", "hour"])
-        d = (a.price.values - b.price.values)
+        d = a.price.values - b.price.values
         n = int((abs(d) > 1e-9).sum())
         worst = max(worst, float(abs(d).max()))
         rows[y] = {"hours_differing": n, "of": int(len(d))}
@@ -186,7 +186,10 @@ def g_engage(bundle: Path) -> dict:
     for y in YEARS:
         k, a = _class_twh(KEEPER, y), _class_twh(bundle, y)
         rows[y] = {
-            "ST_GAS_twh": [round(k.get("ST_GAS", 0.0), 3), round(a.get("ST_GAS", 0.0), 3)],
+            "ST_GAS_twh": [
+                round(k.get("ST_GAS", 0.0), 3),
+                round(a.get("ST_GAS", 0.0), 3),
+            ],
             "CC_REGULAR_twh": [
                 round(k.get("CC_REGULAR", 0.0), 3),
                 round(a.get("CC_REGULAR", 0.0), 3),
@@ -196,9 +199,7 @@ def g_engage(bundle: Path) -> dict:
                 round(_lw_price(bundle, y), 2),
             ],
         }
-    moved = any(
-        rows[y]["ST_GAS_twh"][0] != rows[y]["ST_GAS_twh"][1] for y in YEARS
-    )
+    moved = any(rows[y]["ST_GAS_twh"][0] != rows[y]["ST_GAS_twh"][1] for y in YEARS)
     return {"by_year": rows, "engaged": moved, "pass": moved}
 
 

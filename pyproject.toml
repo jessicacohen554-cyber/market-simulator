@@ -68,6 +68,18 @@ extend-exclude = [
     "scripts/archive",
     "scripts/probes",
     "results",
+    # R-AC (owner ruling 2026-09-03; audit-program-director-board v23 X-1,
+    # docs/model-audit-release-plan-2026-08.md): per-run capx probe scripts
+    # committed under docs/handoffs/ (d37/, d45/, ...) are session artifacts
+    # kept alongside their finding, not maintained source — the same class as
+    # scripts/probes above. They re-reddened the `Ruff lint + format` job
+    # TWICE after the source tree itself had been repaired (R-W #4611/#4621,
+    # then R-X #4635), each time via a fresh probe landing with E731/E402/E401
+    # and unformatted layout. Excluding the tree is the fix; the probes are
+    # never edited to satisfy the linter (rule 27 [R-PUSH] would forbid
+    # rewriting them anyway). Lint scope for handoff .md/.json is unaffected —
+    # ruff only ever read the .py files here.
+    "docs/handoffs",
     # HOUSE-1 charter 2026-08-08 (incident: sitting Addendum T.1,
     # docs/handoffs/ffr-owner-sitting-2026-08-02.md): ruff format must never
     # reflow this ~4,100-line hand-formatted core file. On 2026-08-05 the
