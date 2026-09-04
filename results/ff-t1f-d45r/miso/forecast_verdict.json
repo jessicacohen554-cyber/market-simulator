@@ -1,0 +1,138 @@
+{
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "scored_at_sha": "e0d9f70c5682",
+    "scored_at_date": "2026-09-04T11:52:57Z",
+    "cache_epoch": "8d8bc63a0d4378a9"
+  },
+  "tier": "t1f",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+    "FC-1 structural integrity (I1-I14) FAIL",
+    "FC-2 adequacy & equilibrium behavior FAIL"
+  ],
+  "caveats": [
+    "FC-7 provenance & DOF",
+    "FC-8 runtime feasibility: over runtime budget"
+  ],
+  "notes": [],
+  "categories": {
+    "FC-1": {
+      "label": "FC-1 structural integrity (I1-I14)",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "invariants I1-I14",
+          "status": "FAIL",
+          "detail": "FAIL ['I12', 'I7']: I12: requirement-implied floor [0.7%, 15.7%]; out: 2026:-8.1% (band [0.7%, 15.7%]), 2027:-8.6% (band [0.7%, 15.7%]), 2028:-8.9% (band [0.7%, 15.7%]), 2029:-3.6% (band [0.7%, 15.7%]); I7: 2026: accredited firm 118091 < requirement 129467 MW; 2027: accredited firm 118727 < requirement 130809 MW; 2028: accredited firm 119698 < requirement 132275 MW; 2029: accredited firm 128138 < requirement 133871 MW",
+          "gating": true
+        }
+      ]
+    },
+    "FC-2": {
+      "label": "FC-2 adequacy & equilibrium behavior",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "row1",
+          "status": "FAIL",
+          "detail": "reserve-margin band (I12 FAIL): requirement-implied floor [0.7%, 15.7%]; out: 2026:-8.1% (band [0.7%, 15.7%]), 2027:-8.6% (band [0.7%, 15.7%]), 2028:-8.9% (band [0.7%, 15.7%]), 2029:-3.6% (band [0.7%, 15.7%])",
+          "gating": true
+        },
+        {
+          "row": "row3",
+          "status": "PASS",
+          "detail": "no cobweb (I13 PASS)",
+          "gating": true
+        },
+        {
+          "row": "row4",
+          "status": "FAIL",
+          "detail": "backstop share 33.6% > 30% (administrative over-build)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-3": {
+      "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-4": {
+      "label": "FC-4 crossover dispatch skill (T1-X)",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-5": {
+      "label": "FC-5 external corridor",
+      "applicability": "report",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "corridor",
+          "status": "SKIPPED",
+          "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-6": {
+      "label": "FC-6 driver response",
+      "applicability": "optional",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "driver response",
+          "status": "SKIPPED",
+          "detail": "no committed driver-battery or paired-invariant output",
+          "gating": true
+        }
+      ]
+    },
+    "FC-7": {
+      "label": "FC-7 provenance & DOF",
+      "applicability": "required",
+      "status": "CAVEAT",
+      "rows": [
+        {
+          "row": "run_config",
+          "status": "PASS",
+          "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
+          "gating": true
+        },
+        {
+          "row": "overlay-off",
+          "status": "PASS",
+          "detail": "no backcast overlay armed (outage_source='statistical')",
+          "gating": true
+        },
+        {
+          "row": "dof ledger",
+          "status": "CAVEAT",
+          "detail": "DOF ledger present as an UNATTESTED SKELETON: 4 of 5 entries carry identification='unattested' (entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+          "gating": true
+        }
+      ]
+    },
+    "FC-8": {
+      "label": "FC-8 runtime feasibility",
+      "applicability": "runtime",
+      "status": "CAVEAT",
+      "rows": [
+        {
+          "row": "runtime",
+          "status": "CAVEAT",
+          "detail": "wall 65.0 min > 45 min budget; peak RSS 10.0 GB \u2265 8.6 GB (no co-run)",
+          "gating": true
+        }
+      ]
+    }
+  }
+}

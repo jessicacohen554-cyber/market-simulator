@@ -1,0 +1,38 @@
+{
+  "schema": "dof-ledger/v1",
+  "lane": "forecast",
+  "status": "INSTRUMENT — ALL 1 ENTRIES IDENTIFIED",
+  "run_id": "pjm",
+  "iso": "PJM",
+  "run_git_sha": "bf54a4ad",
+  "generated_by": "scripts/build_forecast_dof_ledger.py (capx-D8, 2026-08-30) — the FC-7 DOF-ledger instrument, grown from the FFR-3B FR-27 skeleton. It REPORTS identifications committed to the repository (rule 21); it never supplies one. An UNIDENTIFIED entry keeps the `unattested` token and FC-7 keeps its CAVEAT.",
+  "how_to_fill": "Per UNIDENTIFIED entry: add a curated row to CURATED_IDENTIFICATIONS in scripts/build_forecast_dof_ledger.py citing committed evidence (registry citation, frozen derive script, or published-source intake finding), with its expected value or registry cross-check, then regenerate the ledger. A `residual` identification MUST carry `root_cause` naming an OPEN issue (CLAUDE.md rule 21 [R-DOF]). dispatch_mechanism entries should CITE the ISO's backcast keeper ledger entry and state whether the identification survives extrapolation forward. Never hand-edit the emitted JSON: the curated table is the reviewed, committed surface.",
+  "verdict_effect": "None from emission alone — this lane re-scores nothing. On a chartered FC-7 re-score: any UNIDENTIFIED entry keeps the same CAVEAT an absent ledger draws (forecast_verdict.py treats `unattested` as not-identified); only a ledger whose every entry carries a real identification can retire it.",
+  "scope": "NON-DEFAULT solve-affecting ScenarioConfig fields — the parameters THIS run chose relative to the shipped registry (tuple/list representation normalized). Registry defaults inherited by the run keep their identification burden in the registry citations and the backcast keeper DOF ledger (see registry_identification). Epoch drift is reported separately, never scored.",
+  "defaults_available": true,
+  "n_entries": 1,
+  "n_identified": 1,
+  "n_unidentified": 0,
+  "n_unattested": 0,
+  "n_by_group": {
+    "other": 1
+  },
+  "entries": [
+    {
+      "name": "forecast_xyear_warmstart",
+      "where": "ScenarioConfig",
+      "group": "other",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Owner decision D-10 (signed 2026-08-04, docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
+      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md",
+      "value": false,
+      "provenance": "runner-posture"
+    }
+  ],
+  "registry_identification": {
+    "note": "Registry defaults inherited by this run (offer surfaces, floors, passthrough sigmoids, ...) carry their identification in the registry's rule-5 citations and in the designated backcast keeper's rule-21 DOF ledger (calibration_attestation.json `free_parameters`); they are not re-enumerated per forecast bundle. Whether each identification survives extrapolation forward is the standing question the dispatch_mechanism group's guidance records.",
+    "backcast_keeper_at_build": "2026-08-15-pjm-162-inputclock",
+    "keeper_shard": "frontend/data/backcast/keepers/PJM.json"
+  }
+}

@@ -252,10 +252,33 @@ VERDICT_MAP = {
     # control) -- keep their OWN keys: each is one field from its baseline and
     # renders a score the bare key would contradict. Determination HOLD on all
     # four; nothing flips; no default moves.
-    "pjm-2021-2025-realized-t1h-d45": "pjm-t1h",
-    "pjm-2021-2025-realized-t1h-d45-fixed": "pjm-t1h-d45-fixed",
-    "nyiso-2021-2025-realized-t1h-d45": "nyiso-t1h",
-    "nyiso-2021-2025-realized-t1h-d45-curveon": "nyiso-t1h-d45-curveon",
+    # RE-POINTED by capx-D45R (2026-09-04): D45 died (owner ruling Q33) after
+    # L1 -- its NYISO L2/L3 and PJM L4 bundles NEVER EXISTED, so the three rows
+    # that pointed at them are rewritten in place to this lane's run ids (the
+    # D46 re-pointing precedent; a dead run id cannot render anything, and a
+    # second literal would be a duplicate key). The D45 L1 record keeps its own
+    # verdict under the preserved `pjm-t1h-pre-d45r` key; the bare `pjm-t1h`
+    # moves to the HEAD replay (post-D44 fossil-dates posture) under the
+    # live-vintage convention.
+    "pjm-2021-2025-realized-t1h-d45": "pjm-t1h-pre-d45r",
+    "pjm-2021-2025-realized-t1h-d45r-fixed": "pjm-t1h-d45r-fixed",
+    "nyiso-2021-2025-realized-t1h-d45r": "nyiso-t1h",
+    "nyiso-2021-2025-realized-t1h-d45r-curveon": "nyiso-t1h-d45r-curveon",
+    # capx-D45R (2026-09-04), the D45 close-out at HEAD plus D46 Stages 2 and 3
+    # (owner rulings Q33 + Q35). The PJM live-posture replay takes the bare key;
+    # the NEISO SHIPPED-posture leg (neiso_net_icr_requirement False, as
+    # shipped) takes the bare `neiso-t1h` under director ruling r#33 ("a bare
+    # key carries the SHIPPED posture"), with D46's Q28-armed record preserved
+    # verbatim at `neiso-t1h-pre-d45r`; the three T1-F re-measures take their
+    # bare keys with priors preserved at `-pre-d45r`. Every prior keeps its
+    # own verdict -- a run must never render a verdict its own score
+    # contradicts. Determination HOLD on every T1-H leg; nothing flips; no
+    # default moves.
+    "pjm-2021-2025-realized-t1h-d45r": "pjm-t1h",
+    "neiso-2021-2025-realized-t1h-d45r": "neiso-t1h",
+    "nyiso-2026-2030-d45r-remeasure": "nyiso-t1f",
+    "pjm-2026-2030-d45r-remeasure": "pjm-t1f",
+    "miso-2026-2030-d45r-remeasure": "miso-t1f",
     # capx-D46 (2026-09-03), the BATCHED RE-MEASURE (director r#30/r#31, owner
     # ruling Q32 STAGED): a BASELINE REFRESH, not an A/B. Every registered
     # forecast bundle was stale on up to three independent axes already measured
@@ -277,7 +300,10 @@ VERDICT_MAP = {
     # d12c legs stay where they are). A minted key cannot contradict any other
     # run's score, so it IS this run's own verdict -- the same reasoning the
     # capx-D10 `nyiso-t1x` block gives.
-    "neiso-2021-2025-realized-t1h-d46": "neiso-t1h",
+    # RE-POINTED by capx-D45R (2026-09-04) to `neiso-t1h-pre-d45r`: the bare
+    # key moved on to the shipped-posture leg and this (Q28-armed) record keeps
+    # its own verdict, continuing the same preserve-then-overwrite chain.
+    "neiso-2021-2025-realized-t1h-d46": "neiso-t1h-pre-d45r",
     "miso-2021-2025-realized-t1h-d46": "miso-t1h",
     "caiso-2021-2025-realized-t1h-d46": "caiso-t1h",
     "ercot-2021-2025-realized-t1h-d46": "ercot-t1h",
