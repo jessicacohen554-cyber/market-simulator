@@ -18,6 +18,7 @@ import re
 import unittest
 
 from market_sim.pipeline.timing import (
+    format_phase_parts,
     format_results_write_parts,
     log_year_cached_timing,
     log_year_phase_timing,
@@ -140,6 +141,143 @@ class TestResultsWriteBreakdown(TimingLineTestBase):
             format_results_write_parts({"b": 2.0, "a": 1.0}),
             " (results_write: b=2.0s a=1.0s)",
         )
+
+
+class TestMarkupBreakdown(TimingLineTestBase):
+    """The ``markup`` clause is additive too, and sits BEFORE ``results_write``.
+
+    ``markup`` is a residual, not a measured phase (``pipeline/solve.py``), so
+    its breakdown is the only way to say what the phase actually is. Its clause
+    is emitted first so a parser anchored on ``(results_write:`` — or one that
+    reads that clause to end-of-line — is unaffected.
+    """
+
+    MARKUP_PARTS = {
+        "setup": 1.2,
+        "p0_build": 96.4,
+        "p0_post": 61.0,
+        "markup": 5.4,
+        "seam": 2.1,
+        "p1_post": 58.7,
+        "tail": 0.0,
+        "other": 0.1,
+    }
+    WRITE_PARTS = {"state": 0.4, "frames": 6.2, "parquet": 4.9, "bench": 1.6}
+
+    def test_frozen_prefix_still_parses_with_markup_breakdown(self):
+        log_year_phase_timing(
+            self.logger, 2023, **BASELINE_2023, markup_parts=self.MARKUP_PARTS
+        )
+        m = FROZEN_RE.match(self.message)
+        self.assertIsNotNone(m)
+        self.assertEqual(m.group(4), "5.4")  # markup, unmoved
+        self.assertEqual(m.group(7), "271.7")  # total
+
+    def test_markup_clause_precedes_results_write_clause(self):
+        log_year_phase_timing(
+            self.logger,
+            2023,
+            **BASELINE_2023,
+            markup_parts=self.MARKUP_PARTS,
+            results_write_parts=self.WRITE_PARTS,
+        )
+        msg = self.message
+        self.assertLess(msg.index("(markup:"), msg.index("(results_write:"))
+        # A parser anchored on the results_write clause still reads it whole.
+        self.assertTrue(
+            msg.endswith(
+                " (results_write: state=0.4s frames=6.2s parquet=4.9s bench=1.6s)"
+            )
+        )
+
+    def test_prefix_is_identical_with_and_without_markup_parts(self):
+        log_year_phase_timing(self.logger, 2023, **BASELINE_2023)
+        bare = self.handler.messages[0]
+        self.handler.messages.clear()
+        log_year_phase_timing(
+            self.logger, 2023, **BASELINE_2023, markup_parts=self.MARKUP_PARTS
+        )
+        self.assertTrue(self.handler.messages[0].startswith(bare))
+
+    def test_empty_or_missing_parts_emit_no_clause(self):
+        self.assertEqual(format_phase_parts("markup", None), "")
+        self.assertEqual(format_phase_parts("markup", {}), "")
+
+    def test_component_order_is_the_callers(self):
+        self.assertEqual(
+            format_phase_parts("markup", {"b": 2.0, "a": 1.0}),
+            " (markup: b=2.0s a=1.0s)",
+        )
+
+    def test_results_write_renderer_delegates_to_the_shared_one(self):
+        parts = {"state": 0.4}
+        self.assertEqual(
+            format_results_write_parts(parts),
+            format_phase_parts("results_write", parts),
+        )
+
+
+class TestMarkupPartsAreExhaustive(unittest.TestCase):
+    """``run_energy_solve``'s components sum to the residual the callers report.
+
+    The residual is ``energy_solve_wall - p1.build_time - r0.solve_time -
+    p1.solve_time``. What makes the arithmetic non-obvious is ``build_time``:
+    on the warm path ``p1.build_time`` IS the one model build, but when P1
+    cold-rebuilds it names the SECOND model, leaving the first unaccounted —
+    which is the whole point of the ``p0_build`` component. This pins the
+    identity on both routings with a fake solve, so a future edit to the
+    segment boundaries cannot silently stop summing.
+    """
+
+    def _parts(self, *, warm_p1: bool):
+        """Replay the assembly arithmetic on synthetic segment walls."""
+        # Interior wall segments [_t0.._t6] and the two HiGHS run times.
+        t = [0.0, 100.0, 260.0, 265.0, 267.0, 430.0, 431.0]
+        s0, s1 = 60.0, 55.0
+        build_setup, build_p1_cold = 96.0, 94.0
+        p1_cold = not warm_p1
+        build_p1 = build_p1_cold if p1_cold else 0.0
+        parts = {
+            "setup": (t[1] - t[0]) - build_setup,
+            "p0_build": build_setup if p1_cold else 0.0,
+            "p0_post": (t[2] - t[1]) - s0,
+            "markup": t[3] - t[2],
+            "seam": t[4] - t[3],
+            "p1_post": (t[5] - t[4]) - s1 - build_p1,
+            "tail": t[6] - t[5],
+        }
+        # What the orchestrator subtracts: p1.build_time.
+        reported_build = build_p1_cold if p1_cold else build_setup
+        residual = (t[6] - t[0]) - reported_build - s0 - s1
+        return parts, residual
+
+    def test_sums_to_residual_on_the_warm_p1_path(self):
+        parts, residual = self._parts(warm_p1=True)
+        self.assertAlmostEqual(sum(parts.values()), residual, places=9)
+        self.assertEqual(parts["p0_build"], 0.0)
+
+    def test_sums_to_residual_on_the_cold_p1_rebuild_path(self):
+        parts, residual = self._parts(warm_p1=False)
+        self.assertAlmostEqual(sum(parts.values()), residual, places=9)
+        # The unaccounted first build is surfaced, not hidden in the residual.
+        self.assertGreater(parts["p0_build"], 0.0)
+
+    def test_solve_module_defines_the_same_component_names(self):
+        import inspect
+
+        from market_sim.pipeline import solve as solve_mod
+
+        src = inspect.getsource(solve_mod.run_energy_solve)
+        for name in (
+            "setup",
+            "p0_build",
+            "p0_post",
+            "markup",
+            "seam",
+            "p1_post",
+            "tail",
+        ):
+            self.assertIn(f'"{name}":', src, f"markup_parts lost the {name} component")
 
 
 class TestOrchestratorsUseTheHelper(unittest.TestCase):

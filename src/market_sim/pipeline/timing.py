@@ -22,6 +22,19 @@ fields keep their exact spelling, order and position, and ``results_write``
 remains their sum, so every existing parse of the line is unaffected; the
 component names are each orchestrator's own (the two write very different
 things), while the *line* stays a single owned format.
+
+**``markup`` sub-instrumentation (PERF-B session 2).** ``markup`` is not a
+measured phase at all — both orchestrators compute it as the RESIDUAL
+``energy_solve - build - solve_p0 - solve_p1``, so it absorbs every non-solve,
+non-build cost of ``pipeline.solve.run_energy_solve`` (both passes' objective
+assembly and solution marshalling, ``compute_monthly_markup``, the P0→P1 seam,
+the basis seam, and one whole matrix build whenever P1 cold-rebuilds). Callers
+may now pass ``markup_parts`` on the same contract as ``results_write_parts``:
+an *ordered* ``{component: seconds}`` mapping summing to ``markup``, rendered
+as a ``(markup: a=…s b=…s)`` clause. It is emitted **before** the
+``results_write`` clause so a parser anchored on ``(results_write:`` — or one
+reading that clause to end-of-line — keeps working, and the six frozen fields
+are again untouched.
 """
 
 from __future__ import annotations
@@ -34,9 +47,31 @@ import logging
 # caller passes no parts), so the six frozen fields never move.
 _PHASE_TIMING_FMT = (
     "year %d phase timing: data_prep=%.1fs solve_p0=%.1fs "
-    "markup=%.1fs solve_p1=%.1fs results_write=%.1fs total=%.1fs%s"
+    "markup=%.1fs solve_p1=%.1fs results_write=%.1fs total=%.1fs%s%s"
 )
 _CACHED_TIMING_FMT = "year %d phase timing: data_prep=%.1fs cached=True total=%.1fs"
+
+
+def format_phase_parts(label: str, parts: "dict[str, float] | None") -> str:
+    """Return a trailing ``(<label>: a=…s b=…s)`` clause, or ``""``.
+
+    The one renderer both sub-instrumentation clauses use, so they cannot drift
+    in spelling or number format.
+
+    Args:
+        label: The phase the breakdown decomposes (``"markup"`` /
+            ``"results_write"``) — it names the clause.
+        parts: Ordered ``{component: seconds}`` breakdown of that phase (the
+            components must sum to it), or ``None`` for no breakdown.
+
+    Returns:
+        The formatted clause with a leading space, or the empty string when
+        ``parts`` is empty/``None``.
+    """
+    if not parts:
+        return ""
+    body = " ".join(f"{name}={seconds:.1f}s" for name, seconds in parts.items())
+    return f" ({label}: {body})"
 
 
 def format_results_write_parts(parts: "dict[str, float] | None") -> str:
@@ -51,10 +86,7 @@ def format_results_write_parts(parts: "dict[str, float] | None") -> str:
         ``parts`` is empty/``None`` — in which case the emitted line is
         byte-identical to the pre-sub-instrumentation format.
     """
-    if not parts:
-        return ""
-    body = " ".join(f"{name}={seconds:.1f}s" for name, seconds in parts.items())
-    return f" (results_write: {body})"
+    return format_phase_parts("results_write", parts)
 
 
 def log_year_phase_timing(
@@ -68,6 +100,7 @@ def log_year_phase_timing(
     results_write: float,
     total: float,
     results_write_parts: "dict[str, float] | None" = None,
+    markup_parts: "dict[str, float] | None" = None,
 ) -> None:
     """Emit the frozen per-year phase-timing line for a solved (non-cached) year.
 
@@ -89,6 +122,9 @@ def log_year_phase_timing(
         results_write_parts: Optional ordered ``{component: seconds}``
             breakdown of ``results_write``; the components are the caller's own
             and must sum to ``results_write``.
+        markup_parts: Optional ordered ``{component: seconds}`` breakdown of
+            the residual ``markup`` phase (see the module docstring); rendered
+            BEFORE the ``results_write`` clause.
     """
     logger.info(
         _PHASE_TIMING_FMT,
@@ -99,6 +135,7 @@ def log_year_phase_timing(
         solve_p1,
         results_write,
         total,
+        format_phase_parts("markup", markup_parts),
         format_results_write_parts(results_write_parts),
     )
 

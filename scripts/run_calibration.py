@@ -5995,6 +5995,11 @@ def run_year(
             "build_s": energy_solve.p1.build_time,
             "solve_p0_s": energy_solve.r0.solve_time,
             "solve_p1_s": energy_solve.p1.solve_time,
+            # Attribution of the ``markup`` RESIDUAL the caller derives from
+            # the four fields above (PERF-B session 2). Interior segments only
+            # — ``solve_and_persist`` appends the ``other`` remainder that
+            # covers its own bracket edges, so the clause it logs is exhaustive.
+            "markup_parts": dict(energy_solve.markup_parts),
         },
     }
 

@@ -5844,6 +5844,16 @@ def solve_and_persist(
         #   frames — everything else in the per-pass loop (frame construction)
         _bench_s = (_t_campd_done - _t_state_done) + (_t_end - _t_frames_done)
         _frames_s = (_t_frames_done - _t_campd_done) - _parquet_s
+        # markup sub-instrumentation (PERF-B session 2): ``markup`` is a
+        # residual, not a phase, so the components come from inside
+        # ``run_energy_solve`` (pipeline/solve.py) and are exhaustive over its
+        # interior. ``other`` books the remainder — this frame's call/return
+        # edges around that function — so the clause sums to ``_markup``
+        # exactly. It reads negative only if the ``max(0.0, ...)`` clamp above
+        # fired, which is itself the signal worth seeing.
+        _markup_parts = dict(_ti.get("markup_parts") or {})
+        if _markup_parts:
+            _markup_parts["other"] = _markup - sum(_markup_parts.values())
         log_year_phase_timing(
             logger,
             year,
@@ -5853,6 +5863,7 @@ def solve_and_persist(
             solve_p1=_solve_p1,
             results_write=_results_write,
             total=_total,
+            markup_parts=_markup_parts,
             results_write_parts={
                 "state": _t_state_done - _t_post_solve,
                 "frames": _frames_s,

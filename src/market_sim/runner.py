@@ -3419,6 +3419,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _results_write = _t_end - _t_post_solve
             _total = _t_end - year_start
             _data_prep = _total - _solve_p0 - _markup_s - _solve_p1 - _results_write
+            # markup sub-instrumentation (PERF-B session 2): ``markup`` is the
+            # residual above, not a measured phase, so its components come from
+            # inside run_energy_solve and ``other`` books this frame's
+            # call/return edges around it — see pipeline/timing.py.
+            _markup_parts = dict(energy_solve.markup_parts)
+            if _markup_parts:
+                _markup_parts["other"] = _markup_s - sum(_markup_parts.values())
             log_year_phase_timing(
                 logger,
                 year,
@@ -3428,6 +3435,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 solve_p1=_solve_p1,
                 results_write=_results_write,
                 total=_total,
+                markup_parts=_markup_parts,
                 results_write_parts={
                     "legacy_p2": _t_pre_save - _t_post_solve,
                     "parquet": _t_end - _t_pre_save,
