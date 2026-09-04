@@ -6182,3 +6182,66 @@ your branch when done.
   `status/<ISO>.js`, `calibration-complete.json`, `holdout-freeze.json`,
   **`program-status.json`**, every matrix shard, every workflow, every
   bundle/sidecar/registry file. **No solve, no score, no registration.**
+- 2026-09-04 — **AUDIT RECORDS LANE v25b — SELF-CORRECTION** (re-derived at
+  **`8a18e9e1`**). Board gains a **v25b CORRECTION** block above v25 (append-only;
+  v25 and all history byte-identical by `cmp`, 120 lines inserted). Zero solves.
+  **v25's board Y-4 finding is WITHDRAWN.** v25 recorded *"Y-4 NOT LAUNCHED,
+  across three polls"* and moved G-14's non-launch tally to six. **Wrong.** The
+  lane is `claude/y4-caiso241-duties-nvcroc`, merged as **#4688** (`69194725`) with
+  **job 2** (`f4f17249`, files `caiso_ct_peaker_committed_measured` as an FR-22 GAP
+  — `forecast_parity_registry.py` +31 plus a finding) and **job 3** (`d94a6423`,
+  enrols the records + finding paths in `ci.yml`'s PR filter). It landed **between
+  v25's third poll and the CI run on v25's own PR**. **G-14's tally STAYS AT FIVE;
+  Y-4 is DISCHARGED on all three duties** (the stamp having been done earlier by
+  the director, `26d35d0e`).
+  **THE TWO ANOMALIES ON v25's OWN PR HAVE ONE CAUSE.** #4689 (`78b0eec2`, two
+  files both under `docs/`) ran all 10 `ci.yml` jobs and its `Fast test tier` came
+  back **`7869 passed, 0 failed`** — both contradicting the block it carried.
+  Cause: **`actions/checkout@v4` on a `pull_request` checks out the MERGE COMMIT
+  (`refs/pull/N/merge`), not the head**, so that run tested v25's branch merged
+  into a `main` that already carried #4688. Job 3 had widened the filter (so the
+  PR demonstrates the **FIX**, not the trap) and job 2 had filed the parity row (so
+  leg 2's last blocker was already closed). **v25's individual measurements each
+  re-verify at its own pin `a8464861`** — `check_forecast_parity.py` does report the
+  CAISO field UNACCOUNTED there and `test_all_six_keepers_resolve` does fail there
+  (reproduced locally, 1.47 s). **What was wrong was the inference to a
+  present-tense state from a pin already 27 commits stale.**
+  **v24's PATH-FILTER MECHANISM IS VINDICATED, NOT REFUTED** — job 3's own comment
+  states GitHub's rule verbatim (*a workflow skipped by PATH FILTERING leaves its
+  checks "Pending" and blocks a PR requiring them; a JOB skipped by a CONDITIONAL
+  reports "Success"*). v24's analysis was exactly right; v25 was wrong only that it
+  was still open. The enrolment is the records/finding paths — **not** a blanket
+  `docs/**` and **not** a weakened required set, as R-AE demands.
+  **GATES AT `8a18e9e1`: still five exit 0 / two exit 1**, but the parity red
+  **halved** — `check_registry_payload_parity` now names `nyiso185_control` alone
+  (`caiso243_b1_f923_fallback_guard` cleared by being REGISTERED as the new CAISO
+  keeper). `audit_keepers --check` still exit 1 on the **unchanged nyiso-185 E11**.
+  `check_gate_a_provenance` / `check_mechanism_matrix` / `check_bench_freshness` /
+  `check_golden_manifest` / `check_forecast_staleness` all 0.
+  **`test_all_six_keepers_resolve` PASSES at this pin** (1.35 s) and
+  `check_forecast_parity.py` fails on exactly the two documented open fields
+  (`ercot_storage_as_soc_reserve`, `nyiso_seam_deliverability_envelope`) — back to
+  the `_FR22_OPEN_UNACCOUNTED` baseline. **The CAISO gap is closed.**
+  **LEG 2 IS GREEN AGAIN AND R-AE's SET IS 5 OF 6**, measured job-by-job on run
+  `33853215685`: `Fast test tier` 🟢, `Ruff lint + format` 🟢, `Pinned default cache
+  key` 🟢, `Structural refactor guards` 🟢, `Cache-key registration guard` 🟢, and
+  **`Rule-22 quarantine gates` 🔴 alone** on the nyiso-185 E11. **v25's "4 of 6" is
+  superseded.** **KEEPER MOTION continued past v25's pin: CAISO 241 →
+  `2026-09-04-caiso-243-b1-f923`** (`4163d4a5`); R-V's frozen three untouched. Every
+  other v25 figure stands (alignment, `final` empty, freeze scope, legs 1/3, the
+  run-level vs ISO-level instrument split, R-T seven-for-eight, board Z-2).
+  **PROTOCOL LESSON (i), stronger than (h), with this lane as the counter-example:**
+  a non-launch may be asserted **only** from a poll taken at the END of the session,
+  immediately before the record is pushed — **and from `origin/main`'s merge log,
+  not `ls-remote --heads`, because a lane that has already merged leaves NO branch
+  to find.** v25's three polls returned only `main` **precisely because Y-4 had
+  merged and its branch was auto-deleted** — the identical signal to "never
+  started". **That ambiguity is not v25-specific: every prior non-launch call in
+  G-14's tally used the same instrument, so the tally is evidence-weak and should be
+  re-derived from merge history before it is cited again.** Recorded as **board Z-3**.
+  **QUEUE DELTA:** **Y-4 DISCHARGED**, remove from the queue; **Y-1 at 5 of 6**,
+  blocked on **Y-5(i) alone** (the path-filter blocker is closed); **Y-5(ii)
+  halved**; **Z-3 NEW**; Z-1/Z-2, X-1 (retired), X-2–X-6, Y-2, Y-3 unchanged.
+  **Records integrity:** touched only this plan and the board; no keeper shard,
+  status file, marker, freeze, `program-status.json`, matrix shard, workflow,
+  bundle or sidecar. **No solve, no score, no registration.**

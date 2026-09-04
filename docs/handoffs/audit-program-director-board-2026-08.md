@@ -1,5 +1,125 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🔴 v25b CORRECTION (2026-09-04, pin `8a18e9e1`) — **v25's Y-4 FINDING IS WITHDRAWN. THE LANE LAUNCHED *AND MERGED* DURING v25's OWN SESSION, AND BOTH "ANOMALIES" IN v25's OWN PR TRACE TO THAT ONE MERGE. LEG 2 IS GREEN AGAIN.**
+>
+> **This lane corrects itself.** v25 recorded *"board Y-4 — NOT LAUNCHED, across
+> three polls"* and moved G-14's non-launch tally to six. **That is WRONG, and the
+> evidence arrived on v25's own PR before it had even merged.** The Y-4 lane is
+> `claude/y4-caiso241-duties-nvcroc`, merged as **#4688** (`69194725`), carrying
+> **job 2** (`f4f17249`, file `caiso_ct_peaker_committed_measured` as an FR-22 GAP
+> — `scripts/lib/forecast_parity_registry.py` +31, plus a finding) and **job 3**
+> (`d94a6423`, enrol the records + finding paths in `ci.yml`'s PR filter). It
+> landed **between v25's third poll and the CI run on v25's own PR**.
+>
+> **G-14's non-launch tally STAYS AT FIVE. Y-4 is DISCHARGED, all three duties.**
+>
+> ### 🔴 THE TWO ANOMALIES ON v25's OWN PR HAVE **ONE** CAUSE — AND v25 SHOULD HAVE FOUND IT
+>
+> v25's PR (#4689, `78b0eec2`, two files both under `docs/`) produced two results
+> that contradicted the block it was carrying. Both resolve to the same fact:
+> **`actions/checkout@v4` on a `pull_request` event checks out the MERGE COMMIT
+> (`refs/pull/N/merge`), not the PR head** — so that CI run tested v25's branch
+> merged into a `main` that **already carried #4688**.
+>
+> | anomaly | v25's claim | what actually happened |
+> |---|---|---|
+> | All 10 `ci.yml` jobs ran on a docs-only PR | *"the path-filter remedy is UNDISCHARGED; `docs/**` still absent"* | **Job 3 had widened the filter.** The PR demonstrates the **FIX**, not the trap |
+> | `Fast test tier` **`7869 passed, 0 failed`** | *"Leg 2 is ONE registry row from green"* | **Job 2 filed that row.** The row was already closed |
+>
+> **The measurements v25 reported are each individually correct at v25's pin
+> `a8464861`** — re-verified here: `check_forecast_parity.py` at `a8464861` does
+> report `caiso_ct_peaker_committed_measured` UNACCOUNTED, and
+> `test_all_six_keepers_resolve` does fail there (reproduced locally, 1.47 s).
+> **What was wrong was the inference to a present-tense state.** A records lane
+> pins for reproducibility, but a *launch/non-launch* claim is a statement about
+> the world **now**, and v25 asserted one from a pin already 27 commits stale.
+>
+> ### 🟢 AND v24's PATH-FILTER MECHANISM IS **VINDICATED**, NOT REFUTED
+>
+> Job 3's own comment states GitHub's rule verbatim: *"a workflow SKIPPED BY PATH
+> FILTERING leaves its checks 'Pending', and a PR requiring them is blocked from
+> merging — but a JOB skipped by a CONDITIONAL reports 'Success'."* **v24's
+> analysis of the trap was exactly right**; v25 was wrong only that it was still
+> open. The enrolled paths are the records/finding paths — **not** a blanket
+> `docs/**`, and **not** a weakened required set, which is what R-AE demands.
+>
+> ### 🟠 GATES AT `8a18e9e1` — STILL FIVE EXIT 0 / TWO EXIT 1, BUT THE PARITY RED HALVED
+>
+> Re-run at this pin, each alone, `$?` read directly, never piped:
+>
+> | gate | exit | change vs v25's pin |
+> |---|---|---|
+> | `check_gate_a_provenance.py` | 🟢 0 | unchanged |
+> | `check_mechanism_matrix.py` / `check_bench_freshness.py` / `check_golden_manifest.py` / `check_forecast_staleness.py` | 🟢 0 | unchanged |
+> | `audit_keepers.py --check` | 🔴 1 | **unchanged — the nyiso-185 E11 persists** |
+> | `check_registry_payload_parity.py` | 🔴 1 | **halved — `nyiso185_control` alone**; `caiso243_b1_f923_fallback_guard` cleared by being REGISTERED |
+>
+> **`test_all_six_keepers_resolve` now PASSES at this pin** (1.35 s, local), and
+> `check_forecast_parity.py` fails on exactly the two documented open fields
+> (`ercot_storage_as_soc_reserve`, `nyiso_seam_deliverability_envelope`) — i.e.
+> back to the `_FR22_OPEN_UNACCOUNTED` baseline. **The CAISO gap is closed.**
+>
+> ### 🟢 LEG 2 IS **GREEN AGAIN**, AND R-AE's SET IS **5 OF 6**
+>
+> `Fast test tier` on run **33853215685** (v25's own PR, merge commit): **7869
+> passed, 34 skipped, 2 xfailed, 0 failed**, 571.81 s. Measured job-by-job on that
+> same run, R-AE's six: `Fast test tier` 🟢, `Ruff lint + format` 🟢, `Pinned
+> default cache key` 🟢, `Structural refactor guards` 🟢, `Cache-key registration
+> guard` 🟢 — and **`Rule-22 quarantine gates` 🔴 alone**, on the nyiso-185 E11.
+> **v25's "4 of 6" is superseded: it is 5 of 6, and the single red is board Y-5(i).**
+>
+> ### 🟠 KEEPER MOTION CONTINUED AFTER v25's PIN
+>
+> **CAISO 241 → `2026-09-04-caiso-243-b1-f923`** (`4163d4a5`, the F923 fallback
+> repair). Live keepers at `8a18e9e1`: CAISO `caiso-243-b1-f923`, ERCOT
+> `234-eastex-identity`, MISO `miso-202-unitclip`, NEISO `neiso-99-joint-p1`,
+> NYISO `nyiso-185-family-hr`, PJM `pjm-162-inputclock`. **R-V's frozen three are
+> untouched.** Every other v25 figure (four-instrument alignment, `final` empty,
+> the freeze scope, leg 1, leg 3, the run-level/ISO-level instrument split, the
+> R-T seven-for-eight count, board Z-2's short-circuit finding) stands as written.
+>
+> ### 🔴 PROTOCOL LESSON (i) — STRONGER THAN (h), AND THIS LANE IS THE COUNTER-EXAMPLE
+>
+> v23 wrote lesson (h): *"'no branch' is a snapshot — re-poll once before
+> classifying a non-launch."* v24 applied it and was saved. **v25 applied it three
+> times and was still wrong**, because all three polls fell inside its own working
+> window while the lane landed just after. The rule needs strengthening:
+>
+> > **(i) A non-launch may only be asserted from a poll taken at the END of the
+> > session, immediately before the record is pushed — and a records lane must
+> > re-read `origin/main`'s log, not only `ls-remote --heads`, because a lane that
+> > has already merged leaves NO branch to find.** `git ls-remote` returned only
+> > `main` on all three of v25's polls **precisely because Y-4 had merged and its
+> > branch was deleted** — the same signal as "never launched", read the wrong way.
+>
+> **That last point is the real defect and it is not v25-specific:** on this repo
+> branches are auto-deleted on merge, so **branch-absence is ambiguous between
+> "never started" and "already finished"**, and every prior non-launch call in
+> G-14's tally was made with the same ambiguous instrument. **The tally is
+> evidence-weak and should be re-derived from merge history, not branch listings**,
+> before it is cited again. Recorded as **board Z-3**.
+>
+> ### QUEUE DELTA (v25b)
+>
+> - **board Y-4 · DISCHARGED** — #4688, all three duties (stamp by the director
+>   `26d35d0e`; GAP filing job 2; path-filter widening job 3). Remove from the queue.
+> - **board Y-1 · the owner Settings flip (R-AE) — 5 of 6**, blocked on **Y-5(i)
+>   alone** (the nyiso-185 E11). The path-filter blocker is **closed**.
+> - **board Y-5 · (i) unchanged and now the SOLE flip blocker; (ii) halved** — only
+>   `nyiso185_control` remains unmapped.
+> - **board Z-3 · NEW** — branch-absence is ambiguous under auto-delete; re-derive
+>   G-14's non-launch tally from merge history before citing it.
+> - **board Z-1 / Z-2 · unchanged.** X-1 retired; X-2/X-3/X-4/X-5/X-6 unchanged;
+>   Y-2 precondition unmet; Y-3 unchanged at seven-for-eight.
+>
+> **Net: the program is in a better position than v25 reported and this lane was
+> the last to know. Y-4 is fully discharged, the path-filter trap is closed, leg 2
+> is green, and R-AE stands at 5 of 6 with one keeper-recipe declaration between it
+> and a flip. v25's error was not a mis-measurement — every number it published
+> re-verifies at its own pin — but a pinned lane asserting a present-tense fact
+> about the world. That is the failure mode a records desk exists to avoid, and it
+> is now lesson (i) and board Z-3.**
+
 > # 🟠 v25 (2026-09-04, pin `a8464861`) — **THE GATE LEDGER MOVED IN BOTH DIRECTIONS: gate-(a) IS REPAIRED, TWO OTHER GATES WENT RED. THE FAST TIER IS DOWN TO *ONE* FAILURE. AND THE R-T PATTERN BROKE AT EIGHT — WITHOUT THE FLIP.**
 >
 > **THE PIN MOVED UNDER THIS DISPATCH, AGAIN — AND THEN AGAIN MID-SESSION.** The
