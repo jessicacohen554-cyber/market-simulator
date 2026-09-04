@@ -174,3 +174,143 @@ established for this defect class — but the outage derive reads the raw
 parquets (`scripts/lib/outage_detect.py`), not `_normalize_campd`, so the
 remap alone does not reach it; the outage-derive lane owns the routing and the
 re-derivation of every CAMPD-fed NYISO artifact it changes.
+
+---
+
+## 4. The A/B, at full magnitude (keeper = baseline, bit-identical control; arm = `2026-09-04-nyiso-186-astoria-identity`)
+
+**G-DELTA:** the arm's `scenario_config` differs from the control's in ZERO
+fields; the identity artifact differs in exactly one row. **G-CONTROL:** 0 of
+52,560 hourly zonal prices differ in every year. **G-INPUTS / G-DOF / G-ENGAGE**
+all PASS (attestation `computed_checks`). Astoria Energy II's LP heat-rate
+base moves 6.70 → 7.379 (committed tranche 6.030 → 6.641).
+
+### 4.1 Where the energy went (unit-hourly sidecars, TWh)
+
+| year | Astoria Energy II 57664 | Astoria Energy I 55375 | class `CC_REGULAR` | `ST_GAS` | `CC_CHP` | load-weighted price $/MWh |
+|---|---|---|---|---|---|---|
+| 2023 | 4.833 → 4.679 (**−0.154**) | 4.129 → 4.134 | 33.587 → 33.489 (−0.098) | 10.299 → 10.342 (+0.043) | +0.035 | 33.75 → 33.79 |
+| 2024 | 4.795 → 4.683 (**−0.112**) | 4.057 → 4.064 | 37.934 → 37.861 (−0.073) | 8.821 → 8.851 (+0.030) | +0.030 | 38.25 → 38.29 |
+| 2025 | 4.764 → 4.661 (**−0.103**) | 2.616 → 2.617 | 36.117 → 36.069 (−0.048) | 9.370 → 9.391 (+0.021) | — | 59.48 → 59.54 |
+
+The released energy lands, in 2024, on Valley +0.006, Astoria Energy I +0.006,
+Cricket Valley +0.008 within the class, and on `ST_GAS` (Ravenswood +0.011,
+Arthur Kill +0.008), `CC_CHP` (+0.013 / +0.010) and East River `CT_CHP` +0.011
+outside it — exactly PREREG §7.3 expectations (i)–(iv): the plant falls every
+year, the siblings rise, the class cell moves LITTLE because the family total
+is pinned.
+
+### 4.2 Criteria
+
+| criterion | keeper | arm |
+|---|---|---|
+| C1 2023 `CC_REGULAR` (actual 33.012) | +0.58 TWh, +1.0 pp PASS | +0.48 TWh, +0.9 pp PASS |
+| C1 2023 `ST_GAS` | +2.16, +1.8 pp PASS | +2.20, +1.9 pp PASS |
+| **C1 2024 `CC_REGULAR`** (actual 34.060) | **+3.87 TWh, +3.2 pp FAIL (share)** | **+3.80 TWh, +3.1 pp FAIL (share)** |
+| C1 2024 `ST_GAS` | −1.09, −0.8 pp PASS | −1.06, −0.7 pp PASS |
+| C1 2024 `CC_CHP` / `CT_PEAKER` | +1.90 / −1.66 PASS | +1.93 / −1.66 PASS |
+| C1 2025 (SKIPPED, preliminary 923) | `CC_REGULAR` +2.57, `ST_GAS` −4.34 | +2.52, −4.32 |
+| C2 | PASS | PASS |
+| C3a 2023 / 2024 / **2025** | +4.7 % / +0.3 % / **−10.5 % FAIL** | +4.8 % / +0.5 % / **−10.4 % FAIL** |
+| C3b NRMSE | 0.122 / 0.173 / 0.191 PASS | 0.123 / 0.173 / 0.190 PASS |
+| C3c (h > $300) | 1/10, 0/13, 1/42 FAIL | identical |
+| C4 | PASS | PASS |
+| C6 | PASS (attested, computed premises) | PASS (attested, computed premises) |
+| C8 `CC_REGULAR` D-2 share | 0.049 / 0.034 / 0.033 PASS | see §4.3 |
+| C8 `ST_GAS` D-2 share | 0.192 / 0.253 / 0.203 PASS | see §4.3 |
+| **determination** | **NOT-YET, grade 5, fails 3** | **NOT-YET, grade 5, fails 3** (same fail set) |
+
+**Verdict under PREREG §4 (verbatim):** no criterion flips PASS → FAIL; G-DELTA
+holds; the arm is a **KEEPER CANDIDATE**. Every scored number moves toward the
+actual or is unchanged, by amounts that change no gate: C1-2024 `CC_REGULAR`
+−0.07 TWh / −0.1 pp, C3a-2025 +0.1 pp, C3a-2023 +0.1 pp the other way (in
+band). **No gate is claimed and none is bought**: the arm's case is rule 14
+(a measured seven-vintage identity replacing a class default at a 650 MW plant,
+at zero parameters), and its consequence is measured, not inferred.
+
+### 4.3 Legitimacy diagnostics (C8, D-4)
+
+D-1, D-2, D-5, D-9, D-10 PASS on both. **C8 (D-2 share):** `CC_REGULAR` 0.049 /
+0.034 / 0.033 (keeper 0.049 / 0.034 / 0.033), `ST_GAS` 0.191 / 0.252 / 0.203
+(keeper 0.192 / 0.253 / 0.203) — PASS, bar 0.30. **D-4** reads `passed: false`
+on BOTH, on the SAME five unit-conduct rider rows (`reliability_floor × ST_GAS`
+at 2480 and 2500 in 2023 / 2024, the gas bridge at 54574 in 2024); Ravenswood's
+rider share 0.0183 → 0.0188 (2023), 0.0207 → 0.0207 (2024). The nyiso-181 grain
+under-count escalation stands unchanged.
+
+### 4.4 LOYO
+
+The mechanism carries no fitted scalar (G-DOF: 0 added; the rate is pooled
+over seven eGRID vintages with a per-vintage span 7.26–7.54 and LOYO [7.355,
+7.404]), so leave-one-year-out reduces to the per-year record in §4.1–§4.2:
+the same direction and the same order of magnitude in every year, nothing
+fitted to any year.
+
+---
+
+## 5. What this session does NOT claim, and what it hands forward
+
+### 5.1 Not claimed
+
+* The C1-2024 `CC_REGULAR` cell is not closed and no CC-side lever closes it:
+  §2.4 shows the family total pinned and the class filling the CT / steam holes.
+* The attribution bars did not fire at any carrier; the Astoria repair is
+  licensed by rule 14 on the inputs, not by a bar (PREREG §7.2, stated before
+  the derive ran).
+* 57664's availability is NOT repaired (§3, second half); its 2025 +2.65 TWh
+  stays.
+
+### 5.2 Handed forward (the §5.5 queue, in order)
+
+1. **The 2024 `CC_REGULAR` cell is the CT-class deficit seen from the receiving
+   end** (`CT_PEAKER` −1.66, `CT_CHP` −1.29 in 2024; nyiso-175's two objects)
+   plus the `ST_GAS` −1.09 (nyiso-181). The carriers are the NYC blocks the
+   model loads flat when on (Zeltmann 0.96 vs 0.68) and Cricket Valley kept on
+   (0.995 vs 0.878): a merit-position question in the NYC and Capital-Hudson
+   zones between the CT / steam classes and the CCs. NEVER a CC volume lever.
+2. **The Astoria availability half** (§3): route CT3 / CT4 to 57664 in the
+   outage derive's crosswalk (the caiso-196 remap precedent; the derive reads
+   raw parquets, so `_normalize_campd`'s remap does not reach it), then
+   re-derive the `perunitmerit` extract, its lay-up companion and the tranche
+   artifact for NYISO, each citing the data change (rule 23). Its own A/B.
+3. **`cc_capacity_reconcile` (cell U)**: Zeltmann's H-B1 fires in 2023 and 2025
+   (`pmax`/p99.9 1.10 / 1.11 with dispatch above the deliverable energy); the
+   committed table caps Zeltmann 737 → 560, Cricket Valley 1,312.5 → 1,086.9,
+   Athens 1,221.6 → 1,064.7, Flynn 243 → 108. A registered flag with a measured
+   artifact; its own pre-registered A/B.
+4. **Bethlehem 2539's eGRID vintage artifact** (§2.1, §5.3 below).
+5. The Astoria merit-panel stack-duplicate defect (nyiso-184 §4.1) — not
+   opened; and the D-2 / C8 grain under-count escalation (nyiso-181 §6) stands.
+
+### 5.3 Bethlehem (2539), sized not repaired
+
+eGRID `PLHTRT` 6.87 / 6.94 / 6.87 / 6.86 (2018–21) → 8.26 (2022) → **9.67
+(2023, the applied vintage)** → 10.44 (2024), while CAMPD's per-unit
+running-hour HR reads 10.0–10.2 in 2022–23 and 6.6–7.1 in 2024–25, and
+2022–23 CAMPD gross (4.18 TWh in 2023) sits BELOW EIA-923 net (4.36) — a CEMS
+reporting regime change, not a plant property. The model prices Bethlehem at
+9.665 in every year: −2.28 TWh in 2023 (loading 0.30 of available vs a 0.94
+online share), 0.56 vs 0.75 loading when on in 2024. Opposite in sign to this
+object and cancelling inside the 2023 class total. A vintage-robust identity
+of the kind the identity derive already records per vintage (its LOYO
+column) is the natural instrument; not this session's.
+
+---
+
+## 6. Governance
+
+Rule 1: nothing adopted or rejected on a residual; the attribution bars were
+fixed before measurement and are reported as read, the A/B's verdict rule
+before the solve. Rules 5 / 21 / 23: zero parameters, zero new DOF entries
+(13 / 6 carried verbatim), the re-derivation cites its data change. Rule 13:
+CAMPD diagnosed only; the input the LP reads is a published eGRID field.
+Rule 14: the license for the one repair. Rule 15: the arm is registered
+(`2026-09-04-nyiso-186-astoria-identity`); the bit-identical control registers
+nothing (its slim files are committed as the instrument); retention pruned
+`2026-08-22-nyiso-153-incity-obligation`. Rules 16 / 12: one invocation each,
+years sequential, two concurrent solves under 15 GB. Rule 19: the identity
+mechanism is the existing owner of CAMPD-less plants' measured rates; nothing
+stacked. Rule 22: 2023–2025 only, no marker requested. Rule 24: no field
+added; the mechanism (`egrid_identity_heat_rates`, cell K) is already
+registered. Rules 25 / 28: NYISO shard only. Rule 27: on-disk bytes pushed,
+≥300-line blobs verified.

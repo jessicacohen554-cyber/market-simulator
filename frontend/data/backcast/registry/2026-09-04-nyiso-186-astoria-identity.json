@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-04-nyiso-186-astoria-identity",
+  "label": "nyiso 186 astoria identity",
+  "date": "2026-09-04",
+  "shorthand": "nyiso-186-astoria-identity",
+  "definition": "Calibration run from bundle nyiso186_astoria_identity.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-04-nyiso-186-astoria-identity.js",
+  "bundle": "results/calibration/nyiso186_astoria_identity"
+}
