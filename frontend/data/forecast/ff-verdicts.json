@@ -11226,5 +11226,119 @@
     ]
    }
   }
+ },
+ "miso-t1h-d51-ratio": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "71e2cca887e0",
+   "scored_at_date": "2026-09-04T23:30:34Z",
+   "cache_epoch": "b538d37b36a88247",
+   "run_id": "miso-2021-2025-realized-t1h-d51-ratio",
+   "session": "capx-D51"
+  },
+  "tier": "t1h",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D51 (2026-09-04): the MISO internal-supply accounting ratio RE-IDENTIFIED on the dates-ON fleet (adequacy_accounting_ratio_dated_net=True -> 0.893436, D31's 0.8546 with ONE term moved: the same PRA Summer offered Generation numerators over the same D27-ledger denominators net of the accredited dated exits the D46 ledgers record, 4,508.5 / 7,977.6 MW; D49 \u00a72.6, rule 23) against D46's bare miso-t1h (the gate OFF; keeper miso-210 stamped, same HEAD recipe, key eff2c890746ec966 unmoved). Cache key b538d37b36a88247, pre-declared (PREDECL-capx-d51-2026-09-04.md, pushed before the derive script existed) and MATCHED; 18.9 min; solved [2021, 2023, 2024, 2025], bridged [2022], SOLVE-YEAR PARITY held. SUFFIXED BY CHARTER, never the bare key; NOTHING ARMS -- the owner decides on the PREDECL \u00a75 condition. THE POSITIONS LAND WHERE THE IDENTITY SAID: ledger capacity_reserve_position 1.0322 / 0.9764 / 0.9488 -> 1.0777 / 1.0194 / 0.9875 (2023/24/25; predicted 1.078 / 1.019 / 0.965-0.995), requirements byte-identical (the ratio moves supply only), so the consumed 2024 position sits 1.5 pts short of the market's own 1.034 where D46 sat 5.8 short. THE CLIFF CROSSES: the coal capacity term the screens credit goes $0 / $113.6 / $458.4 -> $0 / $0 / $229.9 per kW-yr (2025 on the RBDC at 0.9875, not the $91-110 D49 \u00a72.6 quoted at the market's 1.0174 -- the model's fleet does not reach that position without the additions it lacks). THE REGIME FLIPS AS PRE-DECLARED: the 2024 screen fails 995 candidates / 79,692 MW (coal 36,729, gas_ct 22,799, gas_cc 10,473, gas_st 6,509, oil 3,183) at capacity_revenue 0 and the admission floor caps EVERY one of them; D46's 2024 carried zero pipeline rows. 2025 fails nothing in both. WHAT THE LONGER POSITION ADMITS: the 2022 bridge screen releases 477.4 MW of coal (5 tranches: John P Madgett p4271 123.2, R S Nelson p1393 170.3, D B Wilson p6823 178.9, Prairie Creek p1073 0.6, Muscatine p1167 4.5), re-confirmed 2023, executed 2024 -- PREDECL P5 said 1.5-5.5 GW, so MAGNITUDE MISS (the counterfactual at the cap horizon is longer by only ~0.4 GW accredited, not the 1.3-4.2 the pre-declaration bracketed); its plant-grain precision is 1.1 % (5.1 of 477.4 MW at real-exit plants; the three large tranches are D32's White Bluff/Independence class again), so the precision of ALL released MW falls 98.5 % -> 94.0 %. FC-3 ROWS: retire.total_gw 9.799 -> 10.276 GW (-43.6 % -> -40.8 %, band FAIL both), coal 7.877 -> 8.355, gas_st / oil / gas_ct / gas_cc IDENTICAL to the decimal (dates channel only), unit_recall_gt300 16/19 PASS both (plant 0.737), false_retire 0.0 PASS both, LOYO recall 9/16 / 14/15 / 15/18 holds 2/3 (D46 8/16 / 14/15 / 15/18), T-R10a/b PASS (first mover coal 2024, 0.477 GW). ADDITIONS: with the 2024 term at $0 the 2024 thermal entry decisions (gas_cc 3,000 + gas_ct 1,471.6 MW) do not fire and re-fire in 2025 at $230; the BLK-10 backstop, which built 2,414.8 MW gas_ct in 2025 on D46's short 2024 ledger, fires 0 (P6 said 0.9-2.5 GW -- MISS: the 2025 storage entry closes the residual gap before the backstop is tested); add.by_tech.gas_ct 4.415 -> 1.472 (FAIL -> PASS), by_tech wind / solar / gas_cc / storage identical, and because 2.4 GW leaves the total every SHARE moves: gas_ct 0.173 -> 0.065 (FAIL -> PASS), gas_cc 0.163 -> 0.184 (PASS -> FAIL), wind / solar / storage shares up (FAIL both). Band-FAIL list 8 -> 7 rows. The ledger reserve margins read +3.3 / +2.5 / +7.7 % where D46 read -1.0 / -1.5 / +5.2 % (the I7-class negatives D42 \u00a77.4 routed are gone). PREDECL \u00a75 ARMING CONDITION: (a) ratio in band, D31 exact -- MET; (b) 2024 position within 2.5 pts of 1.034 -- MET (1.5); (c) no scored row outside the retirement block and the two gas_ct rows moves -- NOT MET BY THE LETTER (add.shares.gas_cc PASS -> FAIL and the three other shares moved), though the cause is the backstop's 2.4 GW leaving the shares' denominator -- the pre-declared P6 consequence of the position itself, not a second object; (d) LOYO holds -- MET. The lane reports the letter (HOLD-and-route) and the substance (no second object; the D49 double-netting is closed to 1.5 pts) side by side and does not override its own pre-registration; the owner decides. Determination HOLD (FC-3 FAIL), unchanged. docs/handoffs/FINDING-capx-d51-2026-09-04.md \u00a73/\u00a75/\u00a77"
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'add.by_tech.solar', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 784 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
  }
 }
