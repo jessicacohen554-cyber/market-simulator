@@ -11481,3 +11481,69 @@ probes `scripts/probes/nyiso183_ravenswood_availability.py`,
 `nyiso183_g4c_offer_position.py`, `nyiso183_g4d_offer_anatomy.py` →
 `results/calibration/_nyiso183_ravenswood_availability.json`,
 `_nyiso183_g4c_offer_position.json`, `_nyiso183_g4d_offer_anatomy.json`.
+
+## nyiso-184 — the 9.50 is a HAND NUMBER in a per-plant dict lifting a PLANT-GRAIN eGRID blend; Astoria is a measured-side artifact; the zero-parameter repair is built default-off and NOT proposed (2026-09-04)
+
+**Branch:** `claude/nyiso-184-stgas-heat-rate-90z3qr`. **Solves: ZERO.**
+**Keeper unchanged:** `2026-09-02-nyiso-177-vintage-matched`, NOT-YET on
+{C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}. **Pre-registration**
+`results/calibration/PREREG-nyiso184-stgas-heat-rate-basis.md` pushed at
+`19d809d9` before the first gate measurement.
+
+**What was proved (G0/G1, identities not assertions).** Ravenswood's
+`CC_REGULAR` base 8.80 IS eGRID-2023 `PLNT23.PLHTRT` for ORISPL 2500 joined at
+PLANT grain to all five of its EIA-860 rows (parquet == `PLHTRT`/1000 to 0.0;
+`PLHTIAN`/`PLNGENAN` == `PLHTRT` to 1.2e-8). Its `ST_GAS` base 9.50 IS
+`fleet.models.MIXED_FACILITY_STEAM_HR[2500] = 9.5` — a hardcoded per-plant
+dict, always on, no `ScenarioConfig` field, lifting only the steam rows of the
+same blend (committed ÷ 1.05 = peak ÷ 4.20 = 9.50; CC committed ÷ 0.90 =
+8.8004). Its 9.5 is derived in its own comment from ASSUMED capacity factors
+that put 66 % of the site's energy on the steam; CAMPD 2023 puts 31 % there.
+nyiso-183 §8's unexplained CC/ST split is closed: it is the dict.
+
+**Astoria (G3, FIRES 2 of 3).** The 5.39–5.55 "measured" HR was the CAMPD
+stack-duplicate double count (`campd.CAMPD_STACK_DUPLICATE_UNITS`), unmerged in
+nyiso-183's helpers; merged it reads 11.01 / 10.88 / 10.60 and the G4d ratio
+1.697 / 1.717 / 1.761 sits inside the peer cluster. Two objects; Astoria closed
+as a model-side object. **G3b (sized, not repaired):** the merit-order guard's
+panel reads the raw halves too, so it prices Astoria's SRMC at ~half its
+physical value (281 extract rows / 70 lay-up rows on the keeper) — handed to
+the outage-derive lane.
+
+**The repair (R1, `egrid_family_heat_rates`), built default-off and NOT
+proposed.** eGRID at prime-mover-family grain (Σ`HTIAN`/Σ`GENNTAN` per family
+from the same vintage and window the join reads; zero parameters; supersedes
+the dict where it covers) puts the steam at **12.29**: G2a (window) and G2b
+(≥ the meter's 10.707) hold, **G2c FAILS** — like-for-like `r` 1.148 against
+the eight peers' [1.059, 1.121]. S2 fired: no solve. Post-hoc (no bar): heat
+side exact; annual/loaded 1.029 ordinary; the entire excess is gross→net, and
+at generator grain it is unit 30's EIA-923 net ÷ CAMPD gross 0.862 (sisters
+0.913 / 0.933; peers 0.923–0.959) — idle-period house load at CF 4.2 %. The
+per-vintage record rises 11.47 (2018) → 12.57 (2021) → 12.29 (2023) as the
+steam's generation falls. G4 footprint: 7 plants / 24 generator rows /
+6,238 MW; off path byte-identical (460 generators).
+
+**Rules.** 1: nothing adopted or rejected on a residual; the repair was not
+proposed when its own gate failed. 5/21/23: zero parameters; the join's inline
+3,000–30,000 window named once (`process_eia860.EGRID_HR_WINDOW_BTU_KWH`).
+13: the meter diagnoses; the construction reads published eGRID fields and
+regenerates per vintage. 15: zero solves, nothing to register. 19: discharged
+from the code, then proved; superseded not stacked. 22: 2023–2025 only, no
+marker requested. 24: one registered boolean, no per-plant dict added.
+25/28: NYISO shard verdicts only; the new field's row + a `U` cell in every
+shard (28c); `check_mechanism_matrix.py` clean. 27: on-disk bytes pushed,
+≥300-line blobs verified.
+
+**Disclosed instrument repairs (nyiso-183 §8 standard, no bar moved):** the
+first G1 read divided the already-MMBtu/MWh ratio by 1,000 again and read
+FAILED (preserved as `_nyiso184_heat_rate_basis_prefix_g1unit.json`); the first
+G0 CC base used the `ST_GAS` multiplier. The brief's "Astoria has zero extract
+rows" was an id-column grep on a name-first CSV.
+
+**Evidence:** `docs/FINDING-nyiso184-stgas-heat-rate-basis-2026-09-04.md`,
+`results/calibration/PREREG-nyiso184-stgas-heat-rate-basis.md`,
+`_nyiso184_heat_rate_basis.json`, probe
+`scripts/probes/nyiso184_heat_rate_basis.py`, derive
+`scripts/data/derive_egrid_family_heat_rates.py`, artifact
+`data/raw/_processed-legacy/egrid_family_heat_rates_NYISO.csv` (+ `_vintages`),
+tests `tests/unit/data/test_egrid_family_heat_rates.py`.

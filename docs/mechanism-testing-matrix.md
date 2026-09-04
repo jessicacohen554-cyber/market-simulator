@@ -10431,6 +10431,84 @@ is now the live queue head.**)*
 
 ### 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — REWRITTEN 2026-09-04 (nyiso-184 `stgas-heat-rate-basis`
+lane, ZERO SOLVES; THE TWO TERMS OF THE C1-2023 OFFER OBJECT ARE NAMED AND
+PROVED ON DATA, ASTORIA IS CLOSED AS A MODEL-SIDE OBJECT, AND THE
+ZERO-PARAMETER REPAIR IS BUILT DEFAULT-OFF BUT NOT PROPOSED — IT MISSED ITS
+OWN PRE-REGISTERED CONSISTENCY BAR BY 0.027). Open gate: C1-2023 `ST_GAS`
++3.86 TWh; C3a-2025 −11.2 % stays owner-court; C3c ledgered. Keeper,
+determination, gate set, every score and every parameter UNCHANGED; one
+`ScenarioConfig` field added default-off and byte-identical off
+(`egrid_family_heat_rates`, cell `O`); nothing registered (S2 fired, no
+non-control solve ran).**
+
+* **TOP OF QUEUE — THE RAVENSWOOD `ST_GAS` BASE IS `MIXED_FACILITY_STEAM_HR[2500]
+  = 9.5`, A HAND NUMBER LIFTING A PLANT-GRAIN eGRID BLEND.** Proved as two
+  identities, not asserted (G0/G1): the `CC_REGULAR` base 8.80 IS eGRID-2023
+  `PLNT23.PLHTRT` for ORISPL 2500 written to all five Ravenswood rows by
+  `process_eia860._join_egrid_heat_rate` (parquet == `PLHTRT`/1000 to 0.0;
+  `PLHTIAN`/`PLNGENAN` == `PLHTRT` to 1.2e-8), and the `ST_GAS` 9.50 is
+  `fleet/models.py::MIXED_FACILITY_STEAM_HR` — a hardcoded per-plant dict,
+  always on, no `ScenarioConfig` field — lifting only the steam rows
+  (committed ÷ 1.05 = peak ÷ 4.20 = 9.50). Its 9.5 is derived in its own
+  comment from ASSUMED capacity factors (CC 0.6 / steam 0.15 → 66 % of the
+  site's energy on the steam; CAMPD 2023 says 31 %): a rule-24 per-plant dict
+  AND a rule-21 hand value with no vintage. **nyiso-183 §8's "second term" is
+  closed: it is the dict.**
+* **THE REPAIR FORM EXISTS, DEFAULT-OFF, AND READS 12.29 FOR THE STEAM —
+  DO NOT ARM IT ON THE OLD BAR.** `egrid_family_heat_rates`: eGRID at
+  PRIME-MOVER-FAMILY grain (Σ`UNT23.HTIAN` ÷ Σ`GEN23.GENNTAN` per family
+  ST / CC / GT) at plants with ≥ 2 live families, from the SAME vintage and
+  window the join reads, zero parameters, superseding the dict where it
+  covers (rule 19). G2a (window) and G2b (≥ the meter's 10.707) hold; **G2c
+  FAILED**: like-for-like `r` = eGRID rate ÷ CAMPD running HR is **1.148** at
+  Ravenswood against the eight peers' **[1.059, 1.121]**. S2 fired, no solve.
+  POST-HOC (no bar): the heat side is EXACT (eGRID `HTIAN` == CAMPD heat to
+  2.5e-9); annual/loaded 1.029 is ordinary; the whole excess is gross→net
+  1.115, and at generator grain it is ONE machine — EIA-923 net ÷ CAMPD gross
+  0.862 at the 1,000 MW unit 30 (CF 4.2 %) against 0.913 / 0.933 at its
+  sisters and 0.923–0.959 at every peer: idle-period house load on the same
+  convention every peer carries. A successor must **pre-register a bar that
+  separates the loaded rate from the idle-load denominator effect** (per-unit
+  gross→net against the class's per-unit distribution, or a CAMPD-heat /
+  EIA-923-net-per-unit construction) BEFORE reading `_nyiso184_heat_rate_basis.json`
+  again. Expected consequence if armed (untested): Ravenswood `ST_GAS` falls
+  every year, 2024/2025 `ST_GAS` DEEPEN, its `CC_REGULAR` rises (8.80 → 7.35),
+  no price claim. G4 footprint: 7 plants / 24 generator rows / 6,238 MW, every
+  non-Ravenswood move ≤ 0.5 MMBtu/MWh; off path byte-identical (460 generators).
+* **ASTORIA (8906) IS CLOSED AS A HEAT-RATE OBJECT** (G3, 2 of 3 years). Its
+  "measured" 5.39–5.55 was the CAMPD stack-duplicate double count
+  (`31RH`/`32SH`, `51RH`/`52SH` repeat the boiler's full gross while splitting
+  its heat; `campd.CAMPD_STACK_DUPLICATE_UNITS`, nyiso-141), which nyiso-183's
+  `measured_hr` / `stgas_units` did not merge — merged it reads **11.01 /
+  10.88 / 10.60** and its G4d ratio **1.697 / 1.717 / 1.761** sits inside the
+  peer cluster. Two objects, decided ex ante and confirmed. **Any instrument
+  reading NYISO CAMPD at unit grain must apply `merge_stack_duplicate_units`
+  + `stack_duplicate_mask`.**
+* **HANDED TO THE OUTAGE-DERIVE LANE, SIZED NOT REPAIRED (G3b):**
+  `outage_detect.build_merit_order_panel` reads the raw halves too, so the
+  merit-order guard prices Astoria's SRMC at ~half its physical value (panel HR
+  5.55 vs merged 11.01) — it looks in merit more often, fewer dead spans clear
+  `MERIT_OOM_FRAC`, its keeper availability is biased LOW. Astoria carries
+  **281 rows / 7,412.8 window-days** in the keeper's `-perunitmerit-` extract
+  and **70 rows / 3,434.1 days** in the `-layup-` file. One call site;
+  solve-affecting; own A/B on that lane. Ravenswood's DO-NOT-REDO stands.
+* **UNCHANGED:** the availability route (DO-NOT-REDO), floor deletion /
+  narrowing and volume-buying levers, C3a-2025 (owner-court), C3c, the
+  D-2 / C8 grain under-count (scorer lane), CAISO's 315 / 335 dict entries.
+* Evidence: `docs/FINDING-nyiso184-stgas-heat-rate-basis-2026-09-04.md`,
+  `results/calibration/PREREG-nyiso184-stgas-heat-rate-basis.md` (pushed at
+  `19d809d9` before the first gate), `_nyiso184_heat_rate_basis.json` (+ the
+  preserved pre-repair `_prefix_g1unit.json`), probe
+  `scripts/probes/nyiso184_heat_rate_basis.py`, derive
+  `scripts/data/derive_egrid_family_heat_rates.py`, artifact
+  `data/raw/_processed-legacy/egrid_family_heat_rates_NYISO.csv` (+ `_vintages`).
+
+**PRIOR QUEUE (nyiso-183) PRESERVED BELOW — its DO-NOT-REDO items all stand;
+its "upstream join NOT PROVED" and "Astoria mirror-image outlier" bullets are
+SUPERSEDED by nyiso-184's G1 and G3 above and are left unedited as the
+record.**
+
 **LEVER QUEUE — REWRITTEN 2026-09-03 (nyiso-183 `ravenswood-availability`
 lane, ZERO SOLVES; THE AVAILABILITY HYPOTHESIS IS REFUTED ON ITS OWN
 PRE-REGISTERED GATE AND THE C1-2023 CARRIER IS AN **OFFER** OBJECT SITTING IN

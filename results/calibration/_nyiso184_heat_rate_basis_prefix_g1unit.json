@@ -1,0 +1,313 @@
+{
+  "session": "nyiso-184",
+  "prereg": "results/calibration/PREREG-nyiso184-stgas-heat-rate-basis.md",
+  "bundle": "results/calibration/nyiso177_vintage_B1p",
+  "artifact": "data/raw/_processed-legacy/egrid_family_heat_rates_NYISO.csv",
+  "applied_vintage": 2023,
+  "bars": {
+    "G0_hr_tol": 0.005,
+    "G0_base_tol": 0.01,
+    "G1_rel_tol": 1e-05,
+    "G2_window_btu_kwh": [
+      3000,
+      30000
+    ],
+    "G3_min_years": 2
+  },
+  "G0": {
+    "years": {
+      "2023": {
+        "worst_abs_diff_vs_committed": 0.00037,
+        "ravenswood_st_tranche_hr": [
+          9.975,
+          10.2996,
+          10.3787,
+          10.4579,
+          10.5371,
+          10.6162,
+          10.6954,
+          39.9
+        ],
+        "ravenswood_cc_tranche_hr": [
+          7.9204,
+          8.3971,
+          8.4704,
+          8.5438,
+          8.6171,
+          8.6904,
+          8.7638
+        ],
+        "base_st_from_committed_tranche": 9.5,
+        "base_st_from_peak_tranche": 9.5,
+        "base_cc_from_committed_tranche": 7.5432,
+        "pass": true,
+        "rows": [
+          {
+            "plant": 2480,
+            "model_hr": 17.5137,
+            "committed": 17.514,
+            "abs_diff": 0.0003070690560029732
+          },
+          {
+            "plant": 2490,
+            "model_hr": 17.4989,
+            "committed": 17.499,
+            "abs_diff": 0.000131426020018921
+          },
+          {
+            "plant": 2500,
+            "model_hr": 14.8018,
+            "committed": 14.802,
+            "abs_diff": 0.00019250000000248235
+          },
+          {
+            "plant": 2511,
+            "model_hr": 17.2886,
+            "committed": 17.289,
+            "abs_diff": 0.00037258524092820267
+          },
+          {
+            "plant": 2516,
+            "model_hr": 16.931,
+            "committed": 16.931,
+            "abs_diff": 3.887470651520175e-05
+          },
+          {
+            "plant": 2517,
+            "model_hr": 18.7683,
+            "committed": 18.768,
+            "abs_diff": 0.00027754219890496756
+          },
+          {
+            "plant": 2527,
+            "model_hr": 16.0797,
+            "committed": 16.08,
+            "abs_diff": 0.0002802713409515434
+          },
+          {
+            "plant": 2625,
+            "model_hr": 15.8668,
+            "committed": 15.867,
+            "abs_diff": 0.000190397886996152
+          },
+          {
+            "plant": 2682,
+            "model_hr": 14.529,
+            "committed": 14.529,
+            "abs_diff": 4.3421835750123705e-05
+          },
+          {
+            "plant": 8006,
+            "model_hr": 17.1021,
+            "committed": 17.102,
+            "abs_diff": 9.323138617389759e-05
+          },
+          {
+            "plant": 8906,
+            "model_hr": 18.6773,
+            "committed": 18.677,
+            "abs_diff": 0.0003150878114794864
+          }
+        ]
+      },
+      "2024": {
+        "worst_abs_diff_vs_committed": 0.00037,
+        "ravenswood_st_tranche_hr": [
+          9.975,
+          10.2996,
+          10.3787,
+          10.4579,
+          10.5371,
+          10.6162,
+          10.6954,
+          39.9
+        ],
+        "ravenswood_cc_tranche_hr": [
+          7.9204,
+          8.3971,
+          8.4704,
+          8.5438,
+          8.6171,
+          8.6904,
+          8.7638
+        ],
+        "base_st_from_committed_tranche": 9.5,
+        "base_st_from_peak_tranche": 9.5,
+        "base_cc_from_committed_tranche": 7.5432,
+        "pass": true,
+        "rows": [
+          {
+            "plant": 2480,
+            "model_hr": 17.5137,
+            "committed": 17.514,
+            "abs_diff": 0.0003070690560029732
+          },
+          {
+            "plant": 2490,
+            "model_hr": 17.4989,
+            "committed": 17.499,
+            "abs_diff": 0.000131426020018921
+          },
+          {
+            "plant": 2500,
+            "model_hr": 14.8018,
+            "committed": 14.802,
+            "abs_diff": 0.00019250000000248235
+          },
+          {
+            "plant": 2511,
+            "model_hr": 17.2886,
+            "committed": 17.289,
+            "abs_diff": 0.00037258524092820267
+          },
+          {
+            "plant": 2516,
+            "model_hr": 16.931,
+            "committed": 16.931,
+            "abs_diff": 3.887470651520175e-05
+          },
+          {
+            "plant": 2517,
+            "model_hr": 18.7683,
+            "committed": 18.768,
+            "abs_diff": 0.00027754219890496756
+          },
+          {
+            "plant": 2527,
+            "model_hr": 16.0797,
+            "committed": 16.08,
+            "abs_diff": 0.0002802713409515434
+          },
+          {
+            "plant": 2625,
+            "model_hr": 15.8668,
+            "committed": 15.867,
+            "abs_diff": 0.000190397886996152
+          },
+          {
+            "plant": 2682,
+            "model_hr": 14.529,
+            "committed": 14.529,
+            "abs_diff": 4.3421835750123705e-05
+          },
+          {
+            "plant": 8006,
+            "model_hr": 17.1021,
+            "committed": 17.102,
+            "abs_diff": 9.323138617389759e-05
+          },
+          {
+            "plant": 8906,
+            "model_hr": 18.6773,
+            "committed": 18.677,
+            "abs_diff": 0.0003150878114794864
+          }
+        ]
+      },
+      "2025": {
+        "worst_abs_diff_vs_committed": 0.00037,
+        "ravenswood_st_tranche_hr": [
+          9.975,
+          10.2996,
+          10.3787,
+          10.4579,
+          10.5371,
+          10.6162,
+          10.6954,
+          39.9
+        ],
+        "ravenswood_cc_tranche_hr": [
+          7.9204,
+          8.3971,
+          8.4704,
+          8.5438,
+          8.6171,
+          8.6904,
+          8.7638
+        ],
+        "base_st_from_committed_tranche": 9.5,
+        "base_st_from_peak_tranche": 9.5,
+        "base_cc_from_committed_tranche": 7.5432,
+        "pass": true,
+        "rows": [
+          {
+            "plant": 2480,
+            "model_hr": 17.5137,
+            "committed": 17.514,
+            "abs_diff": 0.0003070690560029732
+          },
+          {
+            "plant": 2490,
+            "model_hr": 17.4989,
+            "committed": 17.499,
+            "abs_diff": 0.000131426020018921
+          },
+          {
+            "plant": 2500,
+            "model_hr": 14.8018,
+            "committed": 14.802,
+            "abs_diff": 0.00019250000000248235
+          },
+          {
+            "plant": 2511,
+            "model_hr": 17.2886,
+            "committed": 17.289,
+            "abs_diff": 0.00037258524092820267
+          },
+          {
+            "plant": 2516,
+            "model_hr": 16.931,
+            "committed": 16.931,
+            "abs_diff": 3.887470651520175e-05
+          },
+          {
+            "plant": 2517,
+            "model_hr": 18.7683,
+            "committed": 18.768,
+            "abs_diff": 0.00027754219890496756
+          },
+          {
+            "plant": 2527,
+            "model_hr": 16.0797,
+            "committed": 16.08,
+            "abs_diff": 0.0002802713409515434
+          },
+          {
+            "plant": 2625,
+            "model_hr": 15.8668,
+            "committed": 15.867,
+            "abs_diff": 0.000190397886996152
+          },
+          {
+            "plant": 2682,
+            "model_hr": 14.529,
+            "committed": 14.529,
+            "abs_diff": 4.3421835750123705e-05
+          },
+          {
+            "plant": 8006,
+            "model_hr": 17.1021,
+            "committed": 17.102,
+            "abs_diff": 9.323138617389759e-05
+          },
+          {
+            "plant": 8906,
+            "model_hr": 18.6773,
+            "committed": 18.677,
+            "abs_diff": 0.0003150878114794864
+          }
+        ]
+      }
+    },
+    "fires": true
+  },
+  "G1": {
+    "parquet_heat_rate": 8.800451481,
+    "egrid_PLHTRT_mmbtu_mwh": 8.800451481,
+    "egrid_PLHTIAN_over_PLNGENAN": 0.008800451373807828,
+    "rel_diff_parquet_vs_PLHTRT": 0.0,
+    "rel_diff_PLHTRT_vs_ratio": 0.9990000000121803,
+    "fires": false
+  },
+  "stop": "S1: G1 did not fire \u2014 join hypothesis refuted; no repair built"
+}

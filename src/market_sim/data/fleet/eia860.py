@@ -57,6 +57,7 @@ from market_sim.data.fleet.models import (
     _clean_fleet_year,
     _read_clean,
     _use_clean,
+    egrid_prime_mover_family,
     operable_vintage_year,
 )
 from market_sim.data.fleet.models import _pkg_ns
@@ -875,6 +876,98 @@ def _reconcile_cc_pmax_to_nameplate(
     _CC_PMAX_RECONCILED_PLANTS[iso.upper()] = frozenset(reconciled)
 
 
+#: Plants whose eGRID prime-mover-FAMILY heat rates were applied on the last
+#: fleet load of each ISO (``ScenarioConfig.egrid_family_heat_rates``). Read
+#: by :func:`load_fleet_from_csv` so the hand-number channel
+#: (:func:`_correct_mixed_facility_steam_hr`) skips them — one mechanism per
+#: plant, never a stack (rule 19). Empty for every ISO while the flag is off.
+_EGRID_FAMILY_COVERED_PLANTS: dict[str, frozenset[int]] = {}
+
+
+def egrid_family_heat_rates_for(iso: str) -> dict[tuple[int, str], float]:
+    """Load the committed eGRID prime-mover-family heat-rate artifact.
+
+    ``{(plant_id, family): heat_rate}`` over the ``flag == "ok"`` rows of
+    ``data/raw/_processed-legacy/egrid_family_heat_rates_<ISO>.csv``
+    (``scripts/data/derive_egrid_family_heat_rates.py``): for a plant hosting
+    two or more prime-mover families (a 1960s steam station beside a 2003
+    combined cycle), each family's own Σ ``UNT.HTIAN`` ÷ Σ ``GEN.GENNTAN``
+    from the SAME eGRID vintage the plant-grain join reads, so the family
+    rate replaces the plant blend on the identical net-annual boundary.
+    Families are :data:`~market_sim.data.fleet.models.EGRID_PRIME_MOVER_FAMILIES`.
+    Empty when the ISO has no committed artifact — a no-op there by
+    construction (rule 25: each ISO's lane derives its own).
+    """
+    from market_sim.config.paths import PROCESSED_DIR
+
+    path = PROCESSED_DIR / f"egrid_family_heat_rates_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    need = {"plant_id", "family", "heat_rate_mmbtu_mwh", "flag"}
+    if df.empty or not need.issubset(df.columns):
+        return {}
+    df = df[df["flag"].astype(str) == "ok"]
+    return {
+        (int(r.plant_id), str(r.family)): float(r.heat_rate_mmbtu_mwh)
+        for r in df.itertuples()
+        if float(r.heat_rate_mmbtu_mwh) > 0.0
+    }
+
+
+def _apply_egrid_family_heat_rates(
+    df: pd.DataFrame, iso: str
+) -> tuple[pd.DataFrame, frozenset[int]]:
+    """Overwrite ``heat_rate`` with the family rate at covered plants (frame level).
+
+    Applied at the eGRID-input seam of :func:`_rows_to_generators` — right
+    after :func:`_apply_egrid_boundary_hr_repairs` — so it is a better read of
+    the SAME source the plant-grain join used, and every class-specific
+    measured mechanism downstream (``measured_ct_heat_rates`` in the row
+    loop, ``measured_chp_heat_rates`` / ``egrid_identity_heat_rates`` after
+    load) keeps exactly the precedence it has today. A row is keyed by its
+    own ``prime_mover``'s family; rows with no family (hydro, wind, storage,
+    fuel cells) and nuclear rows are never touched. Returns the frame and the
+    set of plants any row of which was repriced.
+
+    The nyiso-184 replacement for :data:`MIXED_FACILITY_STEAM_HR`'s hand
+    number at the plants the artifact covers (PREREG-nyiso184 §1, §3 R1):
+    zero free parameters, regenerates from whichever eGRID vintage the join
+    reads, responds to changed conditions (rule 13), no per-plant carve
+    (rule 24).
+    """
+    if "heat_rate" not in df.columns or "plant_id" not in df.columns:
+        return df, frozenset()
+    if "prime_mover" not in df.columns:
+        return df, frozenset()
+    rates = egrid_family_heat_rates_for(iso)
+    if not rates:
+        return df, frozenset()
+    codes = pd.to_numeric(df["plant_id"], errors="coerce")
+    families = df["prime_mover"].map(egrid_prime_mover_family)
+    nuclear = (
+        df["energy_source"].astype(str).str.strip().str.upper() == "NUC"
+        if "energy_source" in df.columns
+        else pd.Series(False, index=df.index)
+    )
+    keys = list(zip(codes.fillna(-1).astype(int), families.fillna("")))
+    new = pd.Series([rates.get(k) for k in keys], index=df.index, dtype="float64")
+    hit = new.notna() & ~nuclear
+    if not hit.any():
+        return df, frozenset()
+    df = df.copy()
+    df.loc[hit, "heat_rate"] = new[hit]
+    covered = frozenset(int(c) for c in codes[hit].dropna().unique())
+    logger.info(
+        "%s: eGRID prime-mover-family heat rates applied to %d generator row(s) "
+        "across %d plant(s)",
+        iso,
+        int(hit.sum()),
+        len(covered),
+    )
+    return df, covered
+
+
 def _rows_to_generators(
     df: pd.DataFrame,
     iso: str,
@@ -883,6 +976,7 @@ def _rows_to_generators(
     measured_ct_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
+    egrid_family_heat_rates: bool = False,
 ) -> list[Generator]:
     """Convert a normalized generator DataFrame into :class:`Generator` objects.
 
@@ -934,6 +1028,19 @@ def _rows_to_generators(
     # CEMS facilities (Riverside 55641). Single seam: every fleet read path — the
     # canonical snapshot, the per-year vintages, the mothball re-carry — lands here.
     df = _apply_egrid_boundary_hr_repairs(df)
+
+    # eGRID prime-mover-FAMILY heat rates (config.egrid_family_heat_rates,
+    # default off, byte-identical off): at a plant hosting two or more
+    # prime-mover families the plant-grain PLHTRT is a blend of both, so each
+    # family takes its own HTIAN/GENNTAN rate from the same vintage. Same seam
+    # as the boundary repair above, so every class-scoped measured mechanism
+    # below keeps its precedence. Covered plants are recorded per ISO so the
+    # hand-number channel (_correct_mixed_facility_steam_hr) skips them.
+    if egrid_family_heat_rates:
+        df, covered = _apply_egrid_family_heat_rates(df, iso)
+        _EGRID_FAMILY_COVERED_PLANTS[iso.upper()] = covered
+    else:
+        _EGRID_FAMILY_COVERED_PLANTS[iso.upper()] = frozenset()
 
     # Measured CT loaded heat rates (config.measured_ct_heat_rates). Resolved
     # once here rather than in the row loop; empty when the flag is off or the
@@ -1372,6 +1479,7 @@ def _load_fleet_from_parquet(
     measured_ct_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
+    egrid_family_heat_rates: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
 
@@ -1405,6 +1513,7 @@ def _load_fleet_from_parquet(
         measured_ct_heat_rates=measured_ct_heat_rates,
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
+        egrid_family_heat_rates=egrid_family_heat_rates,
     )
     if not generators:
         logger.warning("EIA-860 parquet has no generators for %s", iso)
@@ -1485,6 +1594,7 @@ def _load_fleet_from_clean(
     measured_ct_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
+    egrid_family_heat_rates: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the curated clean ``fleet`` registry.
 
@@ -1514,6 +1624,7 @@ def _load_fleet_from_clean(
         measured_ct_heat_rates=measured_ct_heat_rates,
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
+        egrid_family_heat_rates=egrid_family_heat_rates,
     )
     if not generators:
         logger.warning(
@@ -1688,6 +1799,7 @@ def load_fleet_from_csv(
     apply_chp_steam_credit_correction: bool = True,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
+    egrid_family_heat_rates: bool = False,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -1756,6 +1868,14 @@ def load_fleet_from_csv(
             rate and EFORd move. ISO-gated on
             :data:`~market_sim.config.plant_taxonomy.CC_STEAM_PART_RECLASS_ISOS`
             (rule 25 ``[R-ISO-SCOPE]``). Default off and byte-identical off.
+        egrid_family_heat_rates: When True (``ScenarioConfig.
+            egrid_family_heat_rates``), every generator at a plant the
+            committed per-ISO artifact covers — a plant hosting two or more
+            prime-mover families — takes its own family's eGRID
+            ``HTIAN``/``GENNTAN`` rate instead of the plant-grain blend, and
+            :data:`MIXED_FACILITY_STEAM_HR`'s hand number is skipped there
+            (rule 19). See :func:`_apply_egrid_family_heat_rates`. Default
+            off and byte-identical off.
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -1788,6 +1908,7 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
+            egrid_family_heat_rates=egrid_family_heat_rates,
         )
         source = csv_path
         logger.info(
@@ -1809,6 +1930,7 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
+            egrid_family_heat_rates=egrid_family_heat_rates,
         )
         if from_clean is None:
             raise FileNotFoundError(
@@ -1828,6 +1950,7 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
+            egrid_family_heat_rates=egrid_family_heat_rates,
         )
         if from_parquet is None:
             raise FileNotFoundError(
@@ -1838,7 +1961,11 @@ def load_fleet_from_csv(
         generators = from_parquet
         source = parquet_path
 
-    _correct_mixed_facility_steam_hr(generators)
+    # The hand-number channel skips every plant the eGRID family construction
+    # repriced on this load (empty while egrid_family_heat_rates is off).
+    _correct_mixed_facility_steam_hr(
+        generators, _EGRID_FAMILY_COVERED_PLANTS.get(iso, frozenset())
+    )
     # Measured power-only CHP heat rates FIRST (config.measured_chp_heat_rates,
     # default off): where the committed artifact covers a (plant, class) the
     # plant takes its own measured rate, and the legacy hand-factor correction
@@ -1867,7 +1994,9 @@ def load_fleet_from_csv(
     return generators
 
 
-def _correct_mixed_facility_steam_hr(generators: list[Generator]) -> None:
+def _correct_mixed_facility_steam_hr(
+    generators: list[Generator], skip_plants: frozenset[int] = frozenset()
+) -> None:
     """Reassign the steam-unit heat rate at mixed CC+ST facilities (in place).
 
     See :data:`MIXED_FACILITY_STEAM_HR`: at a combined CC+ST plant the single
@@ -1876,9 +2005,18 @@ def _correct_mixed_facility_steam_hr(generators: list[Generator]) -> None:
     lifts only the steam (``ST_GAS``) units of a listed plant to the steam-class
     value, and only when their current heat rate is *below* it (so a correctly
     metered steam unit is never lowered). The CC rows keep their measured blend.
+
+    ``skip_plants`` — the plants the eGRID prime-mover-family construction
+    (``ScenarioConfig.egrid_family_heat_rates``) already repriced from
+    measured unit-grain data — are left alone: the family rate supersedes the
+    hand number there rather than stacking on it (rule 19 ``[R-ONE-MECH]``).
+    Empty while that flag is off, so this runs exactly as it always has.
     """
     for gen in generators:
-        target = MIXED_FACILITY_STEAM_HR.get(int(gen.plant_code))
+        code = int(gen.plant_code)
+        if code in skip_plants:
+            continue
+        target = MIXED_FACILITY_STEAM_HR.get(code)
         if (
             target is not None
             and gen.plant_group == "ST_GAS"

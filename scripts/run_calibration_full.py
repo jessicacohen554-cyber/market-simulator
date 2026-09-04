@@ -3738,6 +3738,7 @@ def solve_and_persist(
     chp_layup_duty_split: bool | None = None,
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
+    egrid_family_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -4741,6 +4742,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 egrid_identity_heat_rates=egrid_identity_heat_rates
             )
+        if egrid_family_heat_rates is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                egrid_family_heat_rates=egrid_family_heat_rates
+            )
         if cc_reserve_duty_split is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_reserve_duty_split=cc_reserve_duty_split
@@ -5515,6 +5520,7 @@ def solve_and_persist(
             chp_layup_duty_split=chp_layup_duty_split,
             chp_layup_duty_curve=chp_layup_duty_curve,
             egrid_identity_heat_rates=egrid_identity_heat_rates,
+            egrid_family_heat_rates=egrid_family_heat_rates,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -6430,6 +6436,7 @@ def solve_and_persist(
         "chp_layup_duty_split": chp_layup_duty_split,
         "chp_layup_duty_curve": chp_layup_duty_curve,
         "egrid_identity_heat_rates": egrid_identity_heat_rates,
+        "egrid_family_heat_rates": egrid_family_heat_rates,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -8611,6 +8618,7 @@ def run_replay_bundle(
     unit_outage_per_unit_clip: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
+    egrid_family_heat_rates: bool | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8719,6 +8727,11 @@ def run_replay_bundle(
         # nyiso-177: the lay-up guard rides the SAME replay path, so a
         # vintage-matched availability basis is reachable from a keeper recipe.
         kwargs["campd_outage_merit_order_guard"] = campd_outage_merit_order_guard
+    if egrid_family_heat_rates is not None:
+        # nyiso-184: the eGRID family heat-rate construction rides the same
+        # replay path, so the single-field A/B arm is the keeper's recorded
+        # recipe plus exactly this one field.
+        kwargs["egrid_family_heat_rates"] = egrid_family_heat_rates
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
         # (the dashboard and audit_keepers pair twins by ablation_of).
@@ -12334,6 +12347,21 @@ def main() -> None:
         "rule; zero fitted parameters; no-op for an ISO with no artifact.",
     )
     parser.add_argument(
+        "--egrid-family-heat-rates",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="eGRID PRIME-MOVER-FAMILY heat rates (nyiso-184): at a plant "
+        "hosting two or more prime-mover families (steam beside a combined "
+        "cycle, e.g. Ravenswood 2500) each family takes its own eGRID "
+        "UNT.HTIAN / GEN.GENNTAN rate from the same vintage the plant-grain "
+        "join reads, instead of the plant blend, and the hand number in "
+        "fleet.models.MIXED_FACILITY_STEAM_HR is skipped there. Committed "
+        "per-ISO artifact egrid_family_heat_rates_<ISO>.csv "
+        "(scripts/data/derive_egrid_family_heat_rates.py); zero fitted "
+        "parameters; no-op for an ISO with no artifact. Composes with "
+        "--replay-bundle.",
+    )
+    parser.add_argument(
         "--cc-reserve-duty-split",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12471,6 +12499,12 @@ def main() -> None:
                 args.campd_outage_merit_order_guard
                 if "--campd-outage-merit-order-guard" in sys.argv
                 or "--no-campd-outage-merit-order-guard" in sys.argv
+                else None
+            ),
+            egrid_family_heat_rates=(
+                args.egrid_family_heat_rates
+                if "--egrid-family-heat-rates" in sys.argv
+                or "--no-egrid-family-heat-rates" in sys.argv
                 else None
             ),
             unit_outage_st_capacity_basis=(
@@ -12885,6 +12919,7 @@ def main() -> None:
         chp_layup_duty_split=args.chp_layup_duty_split,
         chp_layup_duty_curve=args.chp_layup_duty_curve,
         egrid_identity_heat_rates=args.egrid_identity_heat_rates,
+        egrid_family_heat_rates=args.egrid_family_heat_rates,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,

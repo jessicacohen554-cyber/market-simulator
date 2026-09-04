@@ -306,6 +306,41 @@ def _hour_to_month_index(hours: int) -> np.ndarray:
 # clear only at scarcity, matching their ~0.2-0.6 TWh measured 2023 dispatch.
 MIXED_FACILITY_STEAM_HR: dict[int, float] = {2500: 9.5, 315: 11.85, 335: 11.85}
 
+# Prime-mover FAMILIES for the eGRID family heat-rate construction (nyiso-184,
+# ``ScenarioConfig.egrid_family_heat_rates``). eGRID keys its per-unit heat
+# input (``UNT<yy>.HTIAN``) and per-generator net generation
+# (``GEN<yy>.GENNTAN``) on the same ``PRMVR`` codes EIA-860 carries as
+# ``prime_mover``, so one map serves both sides of the join. A combined cycle
+# is one family whatever half of it a row is (the CT burns the fuel, the CA
+# makes power from its exhaust); simple-cycle turbines and reciprocating
+# engines are one family (a single combustion path each); steam is its own.
+# The construction is the measured replacement for MIXED_FACILITY_STEAM_HR's
+# hand number at the plants it covers (PREREG-nyiso184 §1, §3 R1).
+EGRID_PRIME_MOVER_FAMILIES: dict[str, frozenset[str]] = {
+    "ST": frozenset({"ST"}),
+    "CC": frozenset({"CT", "CA", "CS", "CC"}),
+    "GT": frozenset({"GT", "IC"}),
+}
+
+
+def egrid_prime_mover_family(prime_mover: object) -> str | None:
+    """Return the :data:`EGRID_PRIME_MOVER_FAMILIES` key for a prime-mover code.
+
+    ``None`` for a code no family claims (hydro, wind, PV, storage, fuel
+    cells, ...), so those rows never enter a family sum.
+
+    Args:
+        prime_mover: An eGRID ``PRMVR`` or EIA-860 ``prime_mover`` code.
+
+    Returns:
+        ``"ST"``, ``"CC"``, ``"GT"`` or ``None``.
+    """
+    code = str(prime_mover or "").strip().upper()
+    for family, codes in EGRID_PRIME_MOVER_FAMILIES.items():
+        if code in codes:
+            return family
+    return None
+
 
 def _pkg_ns():
     """Return the package namespace (:mod:`market_sim.data.fleet`) at call time.

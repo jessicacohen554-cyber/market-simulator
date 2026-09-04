@@ -73,6 +73,14 @@ _GENERATOR_COLUMN_MAP: dict[str, str] = {
 # window and are deliberately omitted. Bump only if the supported window moves.
 RETIREMENT_WINDOW_START: int = 2023
 
+# Physical window for an eGRID heat rate, Btu/kWh: below it a plant with
+# near-zero net generation reports a negative or absurd ``PLHTRT``, above it
+# the same. The plant-grain join (:func:`_join_egrid_heat_rate`) and the
+# prime-mover-family derive (``scripts/data/derive_egrid_family_heat_rates``)
+# share this ONE window so a family rate is admitted on exactly the plant
+# rate's terms.
+EGRID_HR_WINDOW_BTU_KWH: tuple[int, int] = (3_000, 30_000)
+
 # Output parquet of within-window retirees (mid-window plant exits the latest
 # operable EIA-860 vintage no longer carries). Same canonical schema as the
 # operable fleet plus the month-precise ``operating_month`` /
@@ -225,7 +233,8 @@ def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
     hr = pd.to_numeric(egrid["PLHTRT"], errors="coerce")
     # Drop physically implausible plant heat rates -- negative or absurdly
     # large values appear for plants with near-zero net generation.
-    egrid["PLHTRT"] = hr.where((hr >= 3_000) & (hr <= 30_000))
+    lo, hi = EGRID_HR_WINDOW_BTU_KWH
+    egrid["PLHTRT"] = hr.where((hr >= lo) & (hr <= hi))
     egrid_hr = (
         egrid.dropna(subset=["ORISPL", "PLHTRT"])
         .drop_duplicates("ORISPL")
