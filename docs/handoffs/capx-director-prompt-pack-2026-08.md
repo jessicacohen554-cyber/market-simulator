@@ -4862,3 +4862,101 @@ D50/D52/D48 disjoint. The audit programme owns the goldens — you list, never r
 EXIT: the fix + test + scorer row landed, the suffixed A/B registered, the pre-declaration
 graded, the stale-golden list routed.
 ```
+
+## D56 — the NYISO `complete` re-declaration on nyiso-188 (r#35 amendment 1; owner ruling Q38)
+
+```
+You are the D56 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero
+solves, executing owner ruling Q38 (capx ledger §0af amendment 1, 2026-09-04): NYISO's
+`complete` marker, WITHDRAWN 2026-08-30 by owner ruling Q5 (lane Q5-W), is RE-DECLARED on the
+designated keeper `2026-09-04-nyiso-188-combined`, the first NYISO keeper to score CALIBRATED
+(grade 7 of 8, fails 0, C3c the lone ledgered caveat under the rubric v3.3 standing rule). The
+withdrawn block's own `reentry` clause is the licence: "a NEW explicit owner declaration …
+on a designated keeper that scores CALIBRATED". You write the declaration exactly as the
+file's own conventions record one; you decide nothing.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (a marker consequence — the one records act that changes what the
+program may spend).
+BRANCH: claude/capx-d56-nyiso-redeclaration — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md IN FULL (§3.1/§3.2 are the
+field-by-field record of the withdrawal you are reversing; §7 the re-entry condition; §4 the
+validation-tier consequence) · frontend/data/backcast/calibration-complete.json (the `withdrawn.
+NYISO` block — every field — and the PJM/NEISO/ERCOT `complete` entries as the schema: declared,
+keeper, by, determination, tier_authorized, locked_test, frontier_basis, freeze_interaction,
+keeper_at_declaration, keeper_rekey_policy) · CLAUDE.md rule 22 (the re-key-on-promotion
+clause, D-5(b), M1) · scripts/audit_keepers.py (M1a/M1b) · frontend/data/backcast/keepers/
+NYISO.json + status/NYISO.js (the live keeper and its determination_note) ·
+docs/FINDING-nyiso188-* (the keeper's own record; it requested no marker) ·
+frontend/data/forecast/program-status.json `isos.NYISO` (gate.a_keeper_marker, closed_on,
+note, marker_complete, keeper) + `headline` + `gate_reading` + the `q5w_marker_withdrawal`
+block (whose `what_changed` list is the inverse of your edit) · scripts/check_gate_a_provenance.py
+· frontend/data/backcast/holdout-freeze.json (tier-scoped: the validation tier is governed by
+the marker + --holdout-authorized; the locked tier stays frozen).
+
+THE WORK, in this order:
+1. RE-VERIFY FIRST, artifact-only: `scripts/calibration_verdict.py --run-id
+   2026-09-04-nyiso-188-combined` — record the determination string, grade, fail set and the
+   C3c caveat magnitude verbatim. If it does not read CALIBRATED, STOP and route (the ruling
+   was made on a CALIBRATED reading; a moved keeper voids it).
+2. THE MARKER (`calibration-complete.json`): add `complete.NYISO` with `declared` =
+   2026-09-04, `keeper` = `keeper_at_declaration` = `2026-09-04-nyiso-188-combined`, `by` =
+   the Q38 ruling verbatim with its ledger citation (capx ledger §0af amendment 1 / §3 Q38 —
+   the card's option label: "Re-declare now via a records lane"), `determination` = step 1's
+   text prefixed "CALIBRATED on … RE-VERIFIED <date> without a solve (scripts/
+   calibration_verdict.py --run-id, committed artifacts only)", `tier_authorized` =
+   validation ONLY (2020–2022 ladder; 2023–2025 remains the only tuned window),
+   `locked_test` = NOT AUTHORIZED (absent from `final`; never scored 2019 / H1-2026),
+   `freeze_interaction` = the tier-scoped freeze covers the locked test only; the validation
+   tier is spendable under this marker + --holdout-authorized, and NOTHING is spent by this
+   declaration, `keeper_rekey_policy` = D-5(b) re-key on every promotion with determination
+   re-verification, `redeclaration` = this is the THIRD grant (2026-07-13 withdrawn 07-19;
+   2026-07-31 withdrawn 08-30; today) and names both, `frontier_basis` = NONE CLAIMED (the
+   frontier claim was cleared 2026-08-06 and is not re-asserted here). Move the current
+   `withdrawn.NYISO` block WHOLE into the new entry (e.g. `prior_withdrawal_2026_08_30`),
+   exactly as the 2026-07-31 re-declaration nested the 2026-07-19 one — never delete a byte
+   of it. Leave `withdrawn.CAISO`, `final`, `intake_log` byte-identical (assert it).
+   Append a dated sentence to the top-level `note`.
+3. `scripts/audit_keepers.py --iso NYISO` must read PASS with M1a (marker keeper == shard) and
+   M1b (determination token == live verdict) both holding; run `build_status.py --iso NYISO`
+   only if the auditor asks for it.
+4. THE FORECAST BOARD (`program-status.json`): re-derive `isos.NYISO.gate.a_keeper_marker`
+   — status FAIL → PASS on the literal §2.1b(2)(a) test (designated full-span keeper AND a
+   `complete` entry), detail rewritten to the pass form the ERCOT/PJM/NEISO rows use, with
+   the Q38 citation and this lane's derivation stamp (`read_live_at`, `corrected_by`; NEVER
+   forecast-provenance field names); `closed_on` drops "a"; `marker_complete` true; the
+   NYISO `note`, the board `headline` and `gate_reading` rewritten to the new state (NYISO
+   holds (a) + (b) — `nyiso-t1f` PROMOTE — as at r#5; state plainly that this re-opens
+   NYISO's §2.1b candidacy and that a campaign is a SEPARATE owner grant the director serves
+   after D52 lands); append a `d56_nyiso_redeclaration` records block in the
+   `q5w_marker_withdrawal` convention (what_changed / what_did_NOT_change /
+   flagged_not_edited). Assert byte-identity of every other ISO's block and of legs
+   (b)/(c)/(d). `check_gate_a_provenance.py` must read OK 6/6 after. Note: this file is no
+   longer round-trippable through `json.dumps(indent=1)` — edit the leaves, preserve the
+   rest of the bytes, and say which serializer you used.
+5. RECORDS: docs/FINDING-capx-d56-nyiso-redeclaration-<date>.md with the before/after table of
+   every changed field on both surfaces (the Q5-W §3 format, inverted), the auditor and guard
+   outputs, the validation-tier consequence stated (re-authorized, nothing spent, the
+   touchpoint loop's rules per CLAUDE.md rule 22), and the explicit line that this lane spent
+   NOTHING and solved NOTHING. Calibration log `docs/calibration-log/nyiso.md` gets a dated
+   entry; the NYISO matrix shard's keeper/gates stamp gets the marker state (rule 28d — no
+   verdict letter moves).
+
+GUARDRAILS: zero solves; no year outside 2023–2025 is solved, scored or registered (the
+authorization RETURNS, it is not USED here); no keeper shard edit beyond the stamp the auditor
+requires; `final` untouched; the freeze file untouched; rule 27 on every ≥300-line file
+(calibration-complete.json and program-status.json are both — edit locally, push exact
+bytes, blob-verify). If the keeper moves while you work (NYISO promoted four times this
+week), STOP: re-run step 1 on the new keeper; if it reads CALIBRATED, re-key per D-5(b) and
+proceed with the new id and a dated note; if not, STOP and route — never declare on a
+NOT-YET keeper (the Q5 uniform rule).
+
+COLLISION: D52 owns NYISO FORECAST solves (`nyiso-t1h` suffixed arms) — you touch the board's
+NYISO gate-(a)/headline rows only, never its FC or t1h/t1f rows; the owner's NYISO backcast
+lane owns the keeper shard (read it, stamp only what the auditor requires). The audit
+programme's flip set (R-AE) reads `check_gate_a_provenance` — your edit must leave it OK.
+
+EXIT: the marker entry, auditor PASS, guard OK, the board re-derived, the finding + log +
+shard stamp, all blob-verified; NYISO reads (a) PASS · (b) PASS on the board.
+```
