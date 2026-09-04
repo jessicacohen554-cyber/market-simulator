@@ -459,9 +459,9 @@ keepers are still exactly the ones their D46 legs solved against.
    2026-08-03); `neiso-t1h-pre-d46` and `neiso-t3-pre-d46` are one- and three-axis
    respectively. Any future reading of a `-pre-d46` delta should carry §4.6's
    scope caveat.
-8. **CAISO's row re-opened and CI is red on `main`** — the `caiso-241` promotion, landed
-   after this lane's CAISO legs. Both halves are recorded in §11 and neither is this
-   lane's to close.
+8. **CAISO's row re-opened, and every path-filtered PR now inherits a failing
+   gate-(a) job** — the `caiso-241` promotion, landed after this lane's CAISO legs.
+   Both halves are recorded in §11 and neither is this lane's to close.
 
 ---
 
@@ -541,9 +541,18 @@ lane's to close**:
 
 1. **`check_gate_a_provenance.py` exits 1 at HEAD.** CAISO's `a_keeper_marker` in
    `frontend/data/forecast/program-status.json` still cites the superseded
-   `caiso-240`. That job is wired into `.github/workflows/ci.yml:213`, so **CI is
-   red on `origin/main` itself**, not merely on any branch cut from it — this is
-   the **eighth** real firing of the guard. Not repaired here, for two independent
+   `caiso-240`. This is the **eighth** real firing of the guard. **Stated
+   precisely, because the first draft of this section overstated it:** the job is
+   wired into `.github/workflows/ci.yml:213` (job `forecast-staleness-warn`), and
+   `ci.yml` triggers on **`pull_request` only — there is no `push:` trigger**, so
+   nothing runs against `main` directly and "CI is red on main" is the wrong
+   phrase. The correct one: the failure lives in `main`'s content, so **every PR
+   touching one of the workflow's filtered paths (`src/`, `scripts/`, `tests/`,
+   `frontend/data/{backcast,hindcast,forecast}/`, the matrix files, `CLAUDE.md`,
+   `ci.yml`) inherits a failing job it did not cause**, until the stamp is
+   re-keyed. This branch is not one of them — it touches only
+   `docs/handoffs/`, which no filter matches, so it triggers no CI run at all.
+   Not repaired here, for two independent
    reasons: this lane's charter says *never move gate (a)*, and the stamp's own
    detail records that its last two re-keys were made *"by the capx director desk
    under an owner one-push grant (capx ledger §0ac card C-2)"* — a grant this lane
@@ -570,6 +579,7 @@ remain current at HEAD.
 No solve ran, no key moved, no baseline was touched, no matrix verdict moved, and
 gate (a) was not moved. The re-dispatch's deliverable is this section: Stage 1
 verified landed, the Stage-2 gate re-verified closed **at the time of reading
-rather than assumed**, and one newly re-opened row routed to the director with the
-CI consequence named. **Stage 2 still awaits the director's re-release**, which
+rather than assumed**, and one newly re-opened row routed to the director with its
+CI consequence named precisely (§11.1: inherited by path-filtered PRs, not a
+`main` run — the first draft of that line was corrected before this one). **Stage 2 still awaits the director's re-release**, which
 D45's close-out gates.
