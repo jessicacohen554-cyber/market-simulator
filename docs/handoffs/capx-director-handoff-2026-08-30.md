@@ -100,7 +100,13 @@ STATE AT HANDOFF (r#33, main HEAD b168260e, 2026-09-04 — VERIFY, DON'T TRUST):
   PJM L4 at HEAD, §4–§9 + the §9 close-out, absorbing D46 Stage 2 AND the re-priced Stage 3
   (Q35) plus the NEISO default-posture leg — grade by content. Q34: this desk holds a
   STANDING gate-(a) re-key duty (execute at every refresh when the guard fails; log each
-  as a promoter miss). D45 (the
+  as a promoter miss). r#33 amendment 3 (owner challenge, recorded LAZY against interest):
+  D48 (PJM accreditation devintage, D45 §2.3, A/B gated on D45-R's PJM legs) and D49 (two
+  zero-solve Phase-0s on the D46 ledgers: ERCOT CCS at carbon 0; the MISO exit-side margin —
+  the D43 wall mirrored?) ISSUED; D45-R gained a NEISO dates-OFF control leg + conditional
+  CAISO legs; D47 gained the t1f c_cost correction. PROTOCOL: before writing "nothing else",
+  list every routed item of every finding landed this sitting with its precondition at the
+  pin. D45 (the
   ONCE-ONLY D6+R3 joint charter: PJM+NYISO first diagnostics-on T1-H solves, position/
   evaluation-quantity reconciliations, curve-ON adjudications; Fable; its close-out line
   retires the mechanism-class question) · owner-track: caiso-238 (both asks FUNDED, Q31),

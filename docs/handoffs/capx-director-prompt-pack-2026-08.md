@@ -4182,6 +4182,12 @@ THE WORK, in this order and no other:
    default-posture NEISO leg rides the D45-R batch. You add a dated note to the board's NEISO
    FC-3 row and the finding stating the discrepancy, its origin (D37 registered the armed leg
    bare with the control suffixed), and that D45-R replaces it.
+5. THE BOARD'S t1f COST FIELDS (r#33 amendment 3): D46 §2 measured the t1f legs at 8–23 min
+   against `c_cost` fields of 1.0–2.8 h. Correct `isos.<ISO>.gate.c_cost.detail` for ERCOT,
+   NEISO and CAISO to the MEASURED values (with the D46 citation and the container's ~55 min
+   data/clean regeneration named separately); mark PJM/MISO/NYISO's fields "unmeasured at the
+   t1f grain — D46 factor 7–10× suggests ~45–90 min" rather than rewriting them to a guess.
+   Records only; no verdict, no gate status, no stamp moves.
 
 GUARDRAILS: zero solves; no ScenarioConfig field, parameter, keeper, shard, marker or matrix
 verdict; gate (a) never moved; rule 27 on every ≥300-line file (VERDICT_MAP's script,
@@ -4250,6 +4256,16 @@ THE LEGS, in this order (rule 12: years sequential; at most two concurrent; PJM 
      STOP RULE: if PJM's or MISO's t1f exceeds 2 h wall, kill it, record the measured time, and
      leave that key stale with a dated note — the owner priced them at ~45–90 min on D46's
      measured factor and a 2 h overrun is a finding, not a licence.
+  7. NEISO DATES-OFF PAIRED CONTROL (r#33 amendment 3): leg 5's recipe with
+     `fossil_announced_exits_enabled=False` set EXPLICITLY (cache-neutral by b′-1, D44 §1) →
+     suffixed `neiso-t1h-d45r-datesoff`, NEVER the bare key. ~7 min. Pre-declare the expected
+     direction: if the flip alone carries NEISO's recall 4/6 → 3/6 and false_retire 0.263 →
+     0.315, say so at full magnitude — that is a rule-25 counter-example to Q30's default and
+     it returns to the owner as a finding, not a recommendation. Nothing arms or disarms here.
+  8. CONDITIONAL CAISO LEGS: read frontend/data/backcast/keepers/CAISO.json at launch. If the
+     keeper is no longer `2026-09-03-caiso-241-b1-ctpeaker` (caiso-243 was mid-solve at
+     issuance), include `caiso-t1h` (~10 min) and `caiso-t1f` (~23 min) on the same rules,
+     priors at `-pre-d45r`. If it is unchanged, skip both and say so.
   VERDICT_MAP: add rows for every new run id; the three D45 rows that point at bundles that
   never existed (`nyiso-2021-2025-realized-t1h-d45`, `…-d45-curveon`,
   `pjm-2021-2025-realized-t1h-d45-fixed`) are RE-POINTED to this lane's run ids (the D46
@@ -4285,7 +4301,153 @@ own results/regression-goldens/. Nobody else touches PJM/NYISO/MISO/NEISO foreca
 this window.
 
 EXIT: six bare keys current at HEAD (`pjm-t1h`, `nyiso-t1h`, `neiso-t1h`, `nyiso-t1f`,
-`pjm-t1f`, `miso-t1f`) with priors preserved, two suffixed probe legs registered, the D45
+`pjm-t1f`, `miso-t1f`) with priors preserved (plus CAISO's two if leg 8 fired), three
+suffixed probe/control legs registered (L3, L4, the NEISO dates-OFF control), the D45
 finding complete through §9 with its close-out line, both pre-declarations graded, the board
 refreshed, and the ledger §0ac.7 stale set marked CLOSED for every key except CAISO's.
+```
+
+## D48 — the PJM accreditation-design devintage (r#33 amendment 3; D45 §2.3 items 1–2)
+
+```
+You are the D48 session of the capacity-expansion track — the PJM per-ISO repair lane D45's
+PJM half identified WITH PUBLISHED SOURCES and ZERO FREE PARAMETERS, and which its §9
+close-out (being written by D45-R) names as successor work. D45 §2.2 established that PJM's
+"$0 capacity revenue where the model sits" is a BASIS artifact: HEAD accredits PJM's
+2021–2024 fleet on the 2025/26 ELCC-class design against a mixed-vintage composite
+requirement, where the auctions those years actually cleared on the pre-CIFP UCAP design
+against a published UCAP requirement. Restated on the auction's own basis the same fleet
+sits 2–4 points past the zero-cross, not 10.
+
+DATA PROFILE: pjm
+MODEL ASSIGNMENT: Fable (a mechanism with arming consequences; rule-14 sign adjudication).
+BRANCH: claude/capx-d48-pjm-accreditation-devintage — FRESH off origin/main, rebase before
+every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md §2.1–§2.3 IN FULL
+(the reconciliation, the two repairs, their sources: PJM Manual 18, the per-DY Planning Period
+Parameters workbooks committed in-repo, the 2025/26 CIFP ELCC filing ER24-99, BRA Tables 3A/6)
+· docs/handoffs/d45/published-positions-2026-09-03.{py,json} and
+positions-from-ledgers-2026-09-03.{py,json} (the instruments — reuse, do not rebuild) ·
+`THERMAL_ACCREDITATION_BASIS_BY_ISO` and `resolve_forecast_pool_requirement` in
+src/market_sim (the two seams named) · the D40 finding (the NEISO requirement-devintage
+precedent: default-off field, LOYO, P9-style pre-stated flip condition) · the D42/D44
+findings (the vintage-gate construction — a published value is admissible in year Y only
+because it was on file at the run's information cutoff) · docs/parameter-citations.md ·
+docs/mechanism-testing-matrix.md §5 PJM lever queue + the PJM shard.
+
+THE WORK, two phases, the second GATED:
+PHASE 0 — BUILD + PRE-DECLARE (now):
+  a. ONE gated field, default OFF, name it for the family (`pjm_accreditation_design_vintage`
+     or the repo's convention), that (i) accredits thermal at UCAP = 1 − EFORd for delivery
+     years ≤ 2024/25 and at the ELCC-class ratings from 2025/26, and (ii) resolves the pool
+     requirement from the PUBLISHED FPR per DY (1.0898 / 1.0868 / 1.0901 / 1.0894 pre-CIFP;
+     post-CIFP from 2025/26) — exactly as the published design switched, vintage-gated. Every
+     value cited at the definition (rule 5), zero free parameters (rule 21), registered in
+     ScenarioConfig + run_config (rule 24), matrix base row + a cell in EVERY shard in the
+     same PR (rule 28c), byte-inert while off (prove it: a HEAD replay of `pjm-t1h`'s recipe
+     with the field explicitly False must key identically).
+  b. DR AS COUNTED SUPPLY (§2.3 item 2): the published BRA offered/cleared DR UCAP per DY as
+     supply rather than a peak netting — the ONE repair that moves the position AWAY from the
+     curve (+~3 points). Build it as a second gated field or a documented limb of the first;
+     either way it is formulaic and published, never sized by a residual.
+  c. PRE-DECLARE docs/handoffs/PREDECL-capx-d48-<date>.md BEFORE any solve: the expected
+     entering positions per screen year on the corrected basis (D45 §2.2's restated numbers
+     are the prediction — 1.077 / 1.077 / 1.095, 2–4 points past the zero-cross), the expected
+     capacity-revenue direction (UP), the expected exit direction (HARDER; G3 may read WORSE —
+     rule 14's signature, not a failure), the FC-3 rows you expect to move and which way, a
+     P9-style flip condition for any arming recommendation, and the cache key of the A/B arm.
+     Push it. Then STOP if D45-R's PJM legs (`pjm-t1h` at HEAD, `pjm-t1h-d45r-fixed`) are not
+     yet on origin/main — the A/B's control IS D45-R's bare `pjm-t1h`, and solving before it
+     lands would collide on the key and double-solve the control.
+PHASE 1 — THE A/B (gated on D45-R's PJM legs landing; verify on origin/main, never assume):
+  d. ONE arm: D45-R's `pjm-t1h` recipe + the field(s) ON, diagnostics-on → suffixed
+     `pjm-t1h-d48-devintage`. NEVER the bare key. Score like-for-like against `pjm-t1h`; LOYO
+     within 2021–2025 per rule 22. Grade the pre-declaration at full magnitude.
+  e. Write docs/handoffs/FINDING-capx-d48-<date>.md: the position table on both bases, the
+     capacity-revenue and exit deltas, every FC row that moved, the D45 §2.3 item 3 (the
+     clearing half — clear the VRR curve against the net-ACR offer stack) explicitly NOT
+     built here and routed, and the arming recommendation on its pre-stated condition.
+     NOTHING ARMS — the recommendation returns to the owner.
+
+GUARDRAILS: rules 5, 12 (PJM solves solo, ~8 GB), 13 (a published auction parameter is a
+market-design input; an auction OUTCOME — cleared MW, price — is a validation observable,
+never a target), 14, 21, 22, 24, 25 (PJM's own values from PJM's own publications; nothing
+transfers from NEISO/MISO beyond the construction pattern), 27, 28. No keeper/shard/marker;
+backcast namespace untouched.
+
+COLLISION: D45-R owns `pjm-t1h` and the PJM forecast surface until its PJM legs land — that is
+the Phase-1 gate. D49 reads PJM/MISO/ERCOT ledgers only (zero-solve). Nobody else touches PJM
+forecast surfaces this window.
+
+EXIT: Phase 0 landed (field(s) default-off, matrix row + cells, PREDECL pushed, byte-inertness
+proven) and, once gated, the A/B arm registered suffixed, the finding with the arming
+recommendation, and the lever's cell stamped in the PJM shard.
+```
+
+## D49 — two zero-solve Phase-0s on the D46 ledgers: ERCOT's CCS at carbon = 0, and the MISO exit-side margin (r#33 amendment 3; D46 routed items 2 and 3)
+
+```
+You are the D49 session of the capacity-expansion track — a zero-solve diagnostic lane over
+artifacts D46 committed. Two objects, two halves, one finding. You solve nothing, arm
+nothing, and touch no ScenarioConfig field; every number is read from committed ledgers
+and dumps with a probe script you commit.
+
+DATA PROFILE: code (widen to ercot / miso only if a probe needs a clean-data input; say so)
+MODEL ASSIGNMENT: Fable (the second half is a mechanism-class adjudication).
+BRANCH: claude/capx-d49-d46-phase0s — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md §4.5 (the ERCOT CCS rows),
+§4.2 and §9 items 1–3 · FINDING-capx-d41-* (the corrected constants 900 → 1521.4 $/kW capex,
+25 → 65 $/kW-yr FOM, and D41 §4.3's PJM/MISO zero-clearing construction — REUSE its arithmetic)
+· FINDING-capx-d43-caiso-dispersion-2026-09-02.md (the dispersion-expectation construction at
+the screen grain — the SAME construction is what half 2 mirrors onto exits) · D31/D32/D42
+findings (the MISO exit residual's history: −74 % under on faithful inputs, floor-retention
+random selection, the dates channel covering 16/19) · model-methodology-spec.md §5.2 (the
+retirement screen: attainable margin Σ max(0, price − variable cost, reserve price) × pmax ×
+availability vs FOM-only going-forward cost, the per-fuel lags, the floor) and §5.6 (the CCS
+retrofit screen: incremental uplift over the best unabated state, 45Q window) · the committed
+bundles: results/hindcast/miso-2021-2025-realized-t1h-d46/MISO/<key>/ (evolution_<yr>.json +
+screen_signal_diag_<yr>_for_<yr+1>.npz) and the ERCOT t1f bundle registered as
+`ercot-2026-2030-d46-remeasure` (its evolution ledgers with `ccs_retrofits`).
+
+PRE-REGISTER FIRST (docs/handoffs/PREDECL-capx-d49-<date>.md, pushed before either probe
+runs): for half 1, the candidate explanations ranked with a decision rule each (e.g. (a) ERCOT
+host CCs carry higher energy margins so the 45Q-window uplift clears the corrected bar on
+economics; (b) an ERCOT-specific screen path — a carbon or EAC term that is non-zero at ERCOT
+though carbon is 0, or a cap/eligibility difference; (c) a construction defect — the uplift
+compared against the wrong unabated state); for half 2, the two hypotheses with a numeric
+discriminator fixed in advance (H-WALL: the undated cohort's screen margins cluster within a
+band of the bar narrower than the dispersion D43 measured, so priced dispersion would push a
+tail below it; H-BAR: the cohort sits far above the bar and the miss is the bar or the
+capacity-revenue term).
+
+HALF 1 — ERCOT CCS AT CARBON = 0. From the committed ERCOT t1f ledgers, reconstruct per
+converting unit the screen's own uplift arithmetic on the corrected constants and identify
+which term clears the bar. Run the identical reconstruction on PJM's and MISO's committed
+ledgers (D41 §4.3's own cases) so the three ISOs are compared like-for-like. State whether
+the ERCOT result is (a) economics, (b) an ERCOT-specific path, or (c) a defect; if (c), name
+the seam and STOP — a defect is routed to the director as a candidate repair lane, never
+fixed here. Physical-plausibility line, stated either way: no merchant gas-CC CCS retrofit has
+cleared on 45Q alone in any US market to date; a model that clears 2.7 GW of them by 2029
+without a carbon price owes an explanation, not a band.
+
+HALF 2 — THE MISO EXIT-SIDE MARGIN. From evolution_<yr>.json + the screen_signal_diag dumps,
+for every UNDATED fossil unit the screen evaluated in each window year: its attainable margin,
+its bar (FOM going-forward cost with the per-fuel lag), the gap, its capacity-revenue term at
+the repaired RBDC position, and whether it exited. Then apply the D43 construction: with the
+LP's own realized price dispersion discarded, what fraction of the cohort sits within the
+dispersion band of its bar (H-WALL) versus well above it (H-BAR)? Report the decomposition at
+full magnitude against the actual exits (the published retirement record D42 used) — how much
+of the −43.6 % `retire.total_gw` miss each hypothesis can account for. Rule-14 sign line: a
+faithful margin moves exits HARDER; nothing here is sized by the residual.
+
+EXIT: docs/handoffs/FINDING-capx-d49-<date>.md with both pre-registrations graded at full
+magnitude, the per-unit tables, the two verdicts, and the routing — for half 1 a named seam or
+a closed question; for half 2 either "the exit under-build is the D43 wall mirrored" (routed to
+the wall's record, no lane) or a named margin-side object with its identified repair and
+source. Matrix (rule 28): no mechanism tested, no verdict letter moves; append evidence
+citations to the ERCOT `ccs` cells and the MISO retirement cells only. GUARDRAILS: zero solves;
+rules 13, 14, 21, 22, 25, 27. COLLISION: none — read-only over committed artifacts; D45-R /
+D48 own the live forecast surfaces.
 ```
