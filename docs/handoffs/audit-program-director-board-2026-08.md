@@ -1,5 +1,282 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🟢 v26 (2026-09-04, pin `8a18e9e1`) — **Y-4 LANDED. THE PATH-FILTER TRAP IS CLOSED — AND IT HAS ALREADY FIRED ON A RECORDS PR. THE FLIP SET IS 5 OF 6, ONE KEEPER-RECIPE DECLARATION FROM DONE. AND R-AF IS RECORDED NOWHERE.**
+>
+> **THE PIN MOVED UNDER THIS DISPATCH FOR THE THIRD CONSECUTIVE CYCLE — AND A
+> SECOND v25 LANE HAD ALREADY LANDED.** The director pinned `b168260e`;
+> `origin/main` was **`8a18e9e1`** at first poll and **stable across three**
+> (08:2x, 08:3x, 08:4x). The window `b168260e..8a18e9e1` is **70 commits**.
+> ⚠️ **A records lane at pin `a8464861` had already written v25 and merged it**
+> (#4689, `78b0eec2`, inside my window). **This lane is therefore v26, not a
+> second v25** — v25 is retained verbatim below as history, and *nothing in it
+> is corrected*: every v25 figure re-derives correctly **at v25's own pin**.
+> What follows is what moved in `a8464861..8a18e9e1`.
+>
+> ### 🟢 BOARD Y-4 — **LAUNCHED, AND TWO THIRDS MERGED.** v25's "NOT LAUNCHED ACROSS THREE POLLS" WAS TRUE WHEN TAKEN AND IS NOW SUPERSEDED
+>
+> v25 recorded Y-4 as a non-launch on three polls and took **G-14's tally to
+> SIX**. Within the hour it launched. Measured, not inferred — branch, PR and
+> merge all located:
+>
+> | Y-4 duty | state at `8a18e9e1` | evidence |
+> |---|---|---|
+> | CAISO gate-(a) stamp re-key | 🟢 DISCHARGED (pre-Y-4) | `26d35d0e`, capx director, owner ruling Q34 — as v25 found |
+> | `caiso_ct_peaker_committed_measured` registry row | 🟢 **DISCHARGED** | **job 2, `f4f17249`**, merged #4688 (`69194725`); row live at `forecast_parity_registry.py:557`, disposition **GAP** on the R-X route |
+> | path-filter remedy | 🟢 **DISCHARGED** | **job 3, `d94a6423`**, same merge — the **narrow widening**, not a passthrough workflow |
+> | lane finding | 🟠 **IN FLIGHT** | job 4, `4ca5fa3f`, on `claude/y4-caiso241-duties-nvcroc` (head `b010eaa1`), **PR #4694 open**, CI runs 2391/2392 in progress |
+>
+> **This is the third time in three cycles that "no branch" proved to be a
+> snapshot** (R-X, R-Y at v24; Y-4 here). Lesson (i) is now load-bearing, and
+> **the inversion v25 flagged is confirmed in the other direction**: v24 used the
+> re-poll to upgrade a non-launch to IN FLIGHT and was right; v25 used it to
+> confirm a non-launch and was right *at its pin* and wrong within the hour. The
+> discipline is **re-poll before classifying**, and **a non-launch classification
+> carries an expiry**, which no prior record stated. Recorded as **board Z-3**.
+>
+> ### 🔴 THE DISPATCH'S CLOSING INSTRUCTION IS FALSE AT THIS PIN — AND THERE IS A RECEIPT
+>
+> The dispatch closes: *"Your PR is docs-only, so ci.yml will not run on it; the
+> flip has not happened; say so in the PR body."* **The first clause no longer
+> holds.** Y-4 job 3 widened `ci.yml`'s `pull_request.paths` (lines **69–94**),
+> and the three paths enrolled are exactly this lane's shape:
+>
+> ```
+> - "docs/handoffs/audit-program-director-board-2026-08.md"
+> - "docs/model-audit-release-plan-2026-08.md"
+> - "docs/FINDING-*.md"
+> ```
+>
+> **Both files this lane may touch are on that list. CI runs on this PR.** This
+> is not a prediction — **v25's own records-only PR already proved it**: run
+> **2385** (`33853215685`, head `78b0eec2`, two docs files and nothing else)
+> **ran all ten CI jobs and concluded `failure`.** Per the protocol's
+> *a-dispatch-may-not-upgrade-a-lane's-claim* clause, **the record governs and
+> the dispatch's clause is superseded** — stated here and in the PR body. The
+> second clause (*the flip has not happened*) **is confirmed**: no branch
+> protection is asserted anywhere in the repo, and R-AE's set is not yet green.
+>
+> ### 🟢 R-AE's SIX-CHECK FLIP SET — **5 OF 6**, UP FROM v25's 4 OF 6. THE FAST TIER WENT GREEN
+>
+> Measured job-by-job at run **2387** (`33853323644`, head `87e3afc0` — the
+> newest CI-covered head whose content is in `main`):
+>
+> | required check (R-AE) | run 2381 (v25) | run 2387 (here) |
+> |---|---|---|
+> | `Ruff lint + format` | 🟢 success | 🟢 success |
+> | `Pinned default cache key` | 🟢 success | 🟢 success |
+> | `Structural refactor guards` | 🟢 success | 🟢 success |
+> | `Cache-key registration guard` | 🟢 success | 🟢 success |
+> | **`Fast test tier`** | 🔴 failure | 🟢 **success — MOVED** |
+> | **`Rule-22 quarantine gates`** | 🔴 failure | 🔴 **failure — the sole blocker** |
+>
+> Both of v24's fast-tier failures are gone. Re-run locally at this pin, exit
+> code captured directly: `test_forecast_parity.py` + `test_gate_a_provenance.py`
+> → **34 passed, 1 xfailed, exit 0**. **The flip is one keeper-recipe
+> declaration away** — the nyiso-185 **E11**, which belongs to the NYISO lane.
+>
+> ### 🟠 SEVEN GATES — **FIVE EXIT 0, TWO EXIT 1.** COUNT UNCHANGED, ONE SUBJECT HALVED
+>
+> Each script invoked alone, `$?` read immediately, **never through a pipe**:
+>
+> | gate script | exit | reading at `8a18e9e1` | vs v25 |
+> |---|---|---|---|
+> | `audit_keepers.py --check` | 🔴 **1** | FAIL 1/0 — NYISO `2026-09-04-nyiso-185-family-hr` **E11** | unchanged |
+> | `check_registry_payload_parity.py` | 🔴 **1** | **ONE** dir unmapped: `nyiso185_control` (17 tracked files) | **HALVED** |
+> | `check_gate_a_provenance.py` | 🟢 0 | 6 rows, identity + marker match | unchanged |
+> | `check_mechanism_matrix.py` | 🟢 0 | 195 field + 49 row + 164 path anchors, 6 shards, stamps match | unchanged |
+> | `check_forecast_staleness.py` | 🟢 0 | Δ = 0; 2 WARNs (**25 of 75** verdicts undated) | 74 → **75** |
+> | `check_bench_freshness.py` | 🟢 0 | 20 parts, **0 STALE**, 20 engine-drift (9 engine commits) | unchanged |
+> | `check_golden_manifest.py` | 🟢 0 | 42 manifests, 75 entries (11 enforced), **3 stale** | unchanged |
+>
+> **The parity red halved by REGISTRATION, not by pruning.**
+> `caiso243_b1_f923_fallback_guard` (18 tracked files) now maps to sidecar
+> `registry/2026-09-04-caiso-243-b1-f923.json` — the caiso-243 promotion
+> registered the bundle it had checkpointed mid-solve. `nyiso185_control`
+> remains, still committed deliberately as a *"bit-identity instrument, not
+> registered"*. **Y-5(ii) is half-discharged; the NYISO half stands.**
+>
+> ### 🔴 A CORRECTION AGAINST INTEREST — "LEG 2 IS ONE REGISTRY ROW FROM GREEN" IS TRUE OF THE *TEST*, NOT OF THE *GATE*
+>
+> v25 wrote *"Leg 2 is ONE registry row from green"*; Y-4 job 4's own commit
+> message reports *"0 registry failures, CAISO off the unaccounted list, filed
+> gaps 12 → 13"*. **Both are literally true and neither is the gate's verdict.**
+> Measured from run 2381's job log against this pin's local run:
+>
+> | | run 2381 (v25's pin) | `8a18e9e1` (here) |
+> |---|---|---|
+> | `check_forecast_parity.py` exit | 🔴 1 | 🔴 **1 — still red** |
+> | unaccounted | **3** | **2** |
+> | filed gaps | 12 | 13 |
+> | FAIL rows | ERCOT · **CAISO** · NYISO | ERCOT · NYISO |
+>
+> The two survivors — ERCOT `ercot_storage_as_soc_reserve`, NYISO
+> `nyiso_seam_deliverability_envelope` — **predate this cycle and are nobody's
+> promotion duty**. `0 registry failure(s)` is a *different counter* in the same
+> summary line from `unaccounted`, and quoting it reads as a discharge it is not.
+>
+> **The two instruments disagree BY DESIGN, and the test says so out loud.**
+> `tests/scoring/test_forecast_parity.py` carries a declared frozenset
+> `_FR22_OPEN_UNACCOUNTED` naming exactly those two, and asserts on the **subset**
+> (*"a forecast lane clearing one of the open two must not red this test on its
+> way out"*); the companion `test_check_exits_zero_on_the_current_keepers` is
+> `@pytest.mark.xfail(strict=True)` **mirroring the FR-22 job's red**, with
+> `strict=True` so the marker cannot rot. So: **the pytest is a regression gate on
+> NEW misses; the FR-22 job is the standing red on the open two.** Neither is
+> lying. **The consequence for R-AE is that its six-check set is CORRECTLY scoped
+> and must stay so** — `FR-22 backcast→forecast parity` can never go green until a
+> forecast-program lane acts, so adding it to a required set would deadlock every
+> PR in the repo. Confirmed against the evidence, not assumed.
+>
+> ### 🔴 Z-2, THE OTHER HALF — CI's RUN CONCLUSION *OVER*-STATES THE FLIP-RELEVANT STATE
+>
+> v25 established that CI **under**-reports the gate ledger (the quarantine-gates
+> job short-circuits after `audit_keepers`, so steps 6/7/8 read `skipped` — still
+> true at run 2387). The complementary half is now measured: **every completed CI
+> run in the visible window is `failure` — 2369, 2370, 2371, 2372, 2373, 2374,
+> 2375, 2376, 2377, 2378, 2379, 2380, 2385, 2386, 2387: fifteen for fifteen.**
+> Yet 5 of R-AE's 6 are green. The overall conclusion is dominated by **two
+> chronically-red jobs that sit OUTSIDE the flip set** — `FR-22 backcast→forecast
+> parity` (by design, above) and `Forecast-invariant artifact audit`.
+> **So neither the run conclusion NOR the job summary substitutes for the gate
+> sweep: one under-reports, the other over-reports.** Z-2 is extended to say both.
+>
+> *(Method note, recorded because it nearly produced a false figure: run bare,
+> `check_forecast_invariants.py` exits **1 on `ModuleNotFoundError: numpy`** —
+> an exit code that is not a verdict. Under `uv run --frozen` it exits 1 on its
+> real finding: ~10 forecast-namespace runs whose invariant FAILs are undeclared
+> in `invariant-failures.json`. **An exit code is only evidence once you have
+> read the output that produced it.**)*
+>
+> ### 🟢 R-T ROUTING — **THE NINTH PROMOTION ALSO COMPLIED. TWO CONSECUTIVE, AND THIS ONE WENT 3-FOR-3**
+>
+> `git log 49bfbc49..8a18e9e1 -- frontend/data/forecast/program-status.json`
+> returns **seven** commits; the promoting commits in the same window are
+> `04e1c09c` (caiso-240), `97698fd6` (miso-202), `a6c8db2f` (caiso-241),
+> `1fe734bb` (nyiso-185), `4163d4a5` (caiso-243). **Two of the five touch
+> `program-status.json` in the promoting commit itself: nyiso-185 (the eighth,
+> v25's finding) and `4163d4a5`, caiso-243 — THE NINTH.** Verified from the
+> commits' own file lists.
+>
+> **And caiso-243 is the first promotion to clear the whole promotion-duty class
+> at once**, which nyiso-185 did not:
+>
+> | shared-surface duty | nyiso-185 | caiso-243 |
+> |---|---|---|
+> | gate-(a) stamp re-key (R-T) | 🟢 | 🟢 |
+> | keeper-recipe declaration (`audit_keepers` E11) | 🔴 **created the red** | 🟢 |
+> | registry/payload parity (bundle mapped) | 🔴 left `nyiso185_control` | 🟢 registered |
+> | FR-22 registry row | n/a (none armed) | 🟢 none armed |
+>
+> ⚠️ **Still NOT read as self-enforcing, for the same reason v25 gave and one
+> more.** Two compliances under a standing owner duty (Q34) are not a mechanism;
+> the flip is what makes them one. **But the direction of travel is now real and
+> should be recorded as such** — 7 non-compliant, then 2 compliant, the second
+> clean on all four duties. **Z-1 is unchanged in substance and strengthened in
+> evidence:** the promotion-duty class is **four** duties, all four sit inside
+> R-AE's six-check set, and the flip covers all four.
+>
+> ### 🟢 FOUR-INSTRUMENT ALIGNMENT **HOLDS** AT {ERCOT, NEISO, PJM} — RE-DERIVED FAIL-CLOSED
+>
+> | instrument | membership at `8a18e9e1` | source |
+> |---|---|---|
+> | `frontier` in `keepers/<ISO>.json` | **{ERCOT `2026-08-31`, PJM `2026-07-31`, NEISO `2026-07-11`}** — CAISO/MISO no key; **NYISO `withdrawn` ⇒ ABSENT** | keeper shards |
+> | `complete` marker | **{ERCOT, NEISO, PJM}** | `calibration-complete.json` |
+> | gate-(a) `status: pass` | **{ERCOT, NEISO, PJM}** — `check_gate_a_provenance` exit 0, 6 rows | `program-status.json` |
+> | **ISO-level** determination `CALIBRATED` | **{ERCOT, NEISO, PJM}** | `status/<ISO>.js` |
+>
+> Full ISO-level read: **ERCOT CALIBRATED · PJM CALIBRATED · NEISO CALIBRATED ·
+> CAISO NOT-YET · MISO NOT-YET · NYISO NOT-YET.** **`final` is EMPTY** (only
+> `_note`). **Freeze ACTIVE, `scope.tiers = ["locked_test"]`.** **No locked-test
+> year has ever been solved, scored or registered for any ISO.** Dispatch item
+> (a)'s instrument clause **confirmed unchanged**.
+>
+> **RUN-LEVEL vs ISO-LEVEL, named again because the distinction is structural.**
+> The fourth instrument above is **ISO-level** (`iso_determination` where a
+> partitioned keeper carries one — ERCOT alone — else `determination`, in
+> `status/<ISO>.js`). The **run-level** determination remains **not a committed
+> artifact anywhere**: it exists only as `calibration_verdict.py --run-id`
+> output, produced on demand. v25's finding re-verified, unchanged.
+>
+> ### 🟠 KEEPER MOTION — **ONE HOP, ONE ISO** (AGAIN), AND R-V HOLDS
+>
+> Since v25's pin: **CAISO `caiso-241-b1-ctpeaker` → `2026-09-04-caiso-243-b1-f923`**
+> (#4686, promoting commit `4163d4a5` — the F923 low-volume fallback repair).
+> NYISO stays at `nyiso-185-family-hr`, MISO at `miso-202-unitclip`. **R-V freeze
+> INTACT** — `keepers/{ERCOT,NEISO,PJM}.json` untouched across the window.
+>
+> **Stage-0 is 4 of 7 current — board X-2 count unchanged** (ERCOT,
+> ERCOT\_\_carveout-2023, NEISO, PJM CURRENT). **CAISO's stale row re-targets
+> again**, `perfb-stage0 [CAISO] 2026-09-01-caiso-231-b1-ungrounded` now stale
+> against **caiso-243** (it was caiso-241 one cycle ago, caiso-240 the cycle
+> before). NYISO's stands against `nyiso-185-family-hr`, MISO's against
+> `miso-202-unitclip`.
+>
+> ### 🔴 R-AF IS RECORDED NOWHERE IN `docs/` — AND BOTH ITS TRIGGERS HAVE NOW FIRED
+>
+> **Q-4 sweep result, and the one that matters.** Every board label was grepped
+> across `docs/` before closing. `R-AF` returns **exactly one file** —
+> `docs/mechanism-testing-matrix.md:7947` — and that hit is a **substring
+> collision inside the phrase "SUMME**R-AF**TERNOON"**, not a reference.
+> **Ruling R-AF (the stage-0 re-capture policy) appears in neither canonical
+> audit file nor anywhere else in the repository.** This lane's v26 entry is its
+> first record; it is transcribed in the plan §8 entry alongside this block.
+>
+> **And it is already overtaken by events on both limbs:**
+>
+> - **NYISO ("now, 177 held since 09-02")** — the premise **expired**. NYISO
+>   promoted to `2026-09-04-nyiso-185-family-hr` on `1fe734bb`, so "177 held" is
+>   no longer true and the re-capture target is a **different keeper**. The
+>   charter needs re-keying before it can be executed as written.
+> - **CAISO ("when their lane's next promotion lands")** — the condition
+>   **fired**: caiso-243 landed at `4163d4a5`. CAISO's stage-0 re-capture is now
+>   **due on R-AF's own terms**.
+> - **MISO** — no promotion since `miso-202-unitclip`; the 48 h limb is the live
+>   one.
+>
+> Other Q-4 results, all clean: `R-AE` and `Z-2` resolve to the plan + board only
+> (both minted last cycle, as expected); `X-1…X-6`, `Y-1…Y-4`, `Z-1`, `R-AB`,
+> `R-AD`, `R-T`, `R-V`, `R-X`, `R-Y`, `R-Z`, `R-AC`, `G-14`, `Q34`, `D-5(b)` all
+> resolve to real references.
+>
+> ### 🔴 THE OTHER TWO DISPATCHES — **NOT LAUNCHED**, ON THREE POLLS EACH
+>
+> `origin` carries **four** heads: `main`, `claude/y4-caiso241-duties-nvcroc`,
+> `claude/nyiso-186-cc-regular-2024-b16yp7`, and — appearing between poll 1 and
+> poll 3 — `claude/capx-d47-golden3-attestation-nrqtyq`. **None is the NYISO
+> stage-0 re-capture (R-AF) and none is PERF-B session 2 (X-3).** Classified as
+> non-launches **with Z-3's expiry attached**: this is a snapshot at
+> `8a18e9e1`, and Y-4 is this very cycle's proof that the classification can
+> invert within the hour. **G-14's non-launch tally: v25 took it to SIX and Y-4
+> has since retired one of those; this lane adds none — the two open dispatches
+> are same-day and not yet late.**
+>
+> ### QUEUE v26
+>
+> | item | state at `8a18e9e1` |
+> |---|---|
+> | **X-1** | RETIRED BY EXECUTION (v25) |
+> | **X-2** | 4/7; **CAISO re-capture now DUE under R-AF**; NYISO charter needs re-keying to nyiso-185; MISO on the 48 h limb |
+> | **X-3** | PERF-B s2 **NOT LAUNCHED** (3 polls, Z-3 expiry attached) |
+> | **X-4** | folded into X-3 |
+> | **X-5** | unchanged |
+> | **X-6** | ROUTED — X-6a bench (20/20 drift, 9 engine commits) → calibration desk; X-6b (25 of 75 undated) → capx director |
+> | **Y-1** | owner flip **5 of 6**, single blocker = nyiso-185 **E11** |
+> | **Y-2** | G2 sitting still pending the flip (R-AD unchanged) |
+> | **Y-3** | R-T now **7 non-compliant / 2 compliant**; record only, moot on flip |
+> | **Y-4** | **DISCHARGED on jobs 2+3** (#4688); job 4 IN FLIGHT (PR #4694) |
+> | **Y-5** | (i) E11 **stands** — the flip's sole blocker; (ii) **half-discharged**, `nyiso185_control` alone remains |
+> | **Z-1** | unchanged in substance, **strengthened**: the class is FOUR duties, all inside R-AE's six |
+> | **Z-2** | **EXTENDED** — CI under-reports (job short-circuit) *and* over-reports (run conclusion); 15-for-15 `failure` against 5-of-6 green |
+> | **Z-3 NEW** | a non-launch classification **carries an expiry**; three cycles running, "no branch" inverted within the hour |
+> | **R-AF** | **UNRECORDED until this entry**; NYISO limb's premise expired, CAISO limb fired |
+>
+> **Records integrity:** touched **only** this board and the plan. **Verified
+> untouched** (`git status --porcelain` empty at session start; diff confined to
+> two files at close): every keeper shard, every `status/<ISO>.js`,
+> `calibration-complete.json`, `holdout-freeze.json`, `program-status.json`,
+> every matrix shard, every workflow, every bundle / sidecar / registry file,
+> every golden manifest. **No solve, no score, no registration.**
+
 > # 🟠 v25 (2026-09-04, pin `a8464861`) — **THE GATE LEDGER MOVED IN BOTH DIRECTIONS: gate-(a) IS REPAIRED, TWO OTHER GATES WENT RED. THE FAST TIER IS DOWN TO *ONE* FAILURE. AND THE R-T PATTERN BROKE AT EIGHT — WITHOUT THE FLIP.**
 >
 > **THE PIN MOVED UNDER THIS DISPATCH, AGAIN — AND THEN AGAIN MID-SESSION.** The
