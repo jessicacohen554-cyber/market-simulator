@@ -4517,6 +4517,8 @@ pre-registration graded, the blast radius priced, the finding with the arming re
 
 ## D51 — the MISO adequacy-accounting ratio re-identified on the dates-ON fleet (r#34; D49 half 2)
 
+*r#34 amendment 1 (owner rulings Q36/Q37, same sitting): rider (d) is UNCONDITIONAL — leg 7 runs; rider (e) added — the rubric §5 amendment. The charter text below carries both.*
+
 ```
 You are the D51 session of the capacity-expansion track. D49 half 2 (FINDING-capx-d49-2026-09-04.md
 §2, esp. §2.6) established that MISO's exit under-build is NOT the D43 dispersion wall: the
@@ -4565,10 +4567,19 @@ THE WORK:
    item 4), preserving the GOLDEN-2 text beneath; (c) record D49 §5 item 5 — oil is not
    screened after 2022 (3.5 GW stays in `fleet_by_fuel_before`) — in the MISO matrix shard's
    retirement cell evidence so no successor reads "oil passes" as a margin fact.
-   (d) IF card C-7 ruled "D51 rider": run D45-R's leg 7 EXACTLY as its PREDECL §4.2 declared —
+   (d) RUN D45-R's leg 7 EXACTLY as its PREDECL §4.2 declared (owner ruling Q36) —
    `neiso-2021-2025-realized-t1h-d45r-datesoff` (L5's recipe + `--no-fossil-announced-exits`,
    pre-declared key `5925e67c572a910f`), registered suffixed `neiso-t1h-d45r-datesoff`, graded
-   against P16/P17 at full magnitude in your finding. ~7 min. If C-7 ruled otherwise, skip.
+   against P16/P17 at full magnitude in your finding. ~7 min; hydrate `neiso` for it. If the
+   realized key differs from the pre-declared one, register it anyway, state the drift, and
+   grade against P16/P17 as written. This decides whether Q30's default has a NEISO-side
+   counter-example: report the answer as a finding to the owner, never as a recommendation.
+   (e) RUBRIC §5 AMENDMENT (owner ruling Q37): add to the forecast rubric's attestation clause
+   the second limb — "a follow-up lane may author a forecast attestation iff it is PRE-DECLARED
+   before authoring, moves only the attestation row, and re-scores artifact-only" — citing
+   FINDING-capx-d47-golden3-attestation-2026-09-04.md §1 as the model case and capx ledger §3
+   Q37 as the signature; bump the rubric version per its own convention and note it in the
+   CHANGELOG. Text only; no verdict, no re-score.
 5. FINDING docs/handoffs/FINDING-capx-d51-<date>.md: the ratio's derivation table, the
    position/capacity-term/exit deltas, every FC row moved, the rider items, and the arming
    recommendation on the pre-stated condition. NOTHING ARMS — the default is the owner's.

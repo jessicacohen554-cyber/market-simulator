@@ -119,7 +119,7 @@ STATE AT HANDOFF (r#34, main HEAD 8f5cb32c, 2026-09-04 — VERIFY, DON'T TRUST):
   per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
   NYISO's zonal spread ($4.8–12.2) is the only promising instance and needs D45's
   diagnostics-on solve first · (3) nothing else — the capx queue emptied at r#31.
-- OWNER-TIER OPEN: C-7 / C-8 of r#34 if unanswered (§0ae.4). Q1–Q35 spent. Next cards come
+- OWNER-TIER OPEN: NONE — Q1–Q37 spent (Q36/Q37 at r#34, §0ae amendment 1). Next cards come
   from D48 Phase 1 (the PJM devintage default), D50 (the CCS repair's blast radius), D51/D52. New cards otherwise come only from D45's owed half
   (its §6 arming recommendations) and the audit board's X-1(ii) lint-scope question.
 
