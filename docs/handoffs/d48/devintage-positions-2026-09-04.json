@@ -1,0 +1,565 @@
+{
+ "run": "pjm-2021-2025-realized-t1h-d45",
+ "cache_key": "ea767a6254b8e4af",
+ "years": {
+  "2021": {
+   "note": "entering fleet (fleet_by_fuel_before) at the year's own peak",
+   "peak_mw": 149590.0,
+   "ledger_position": null,
+   "ledger_requirement_mw": 130295.367,
+   "published": {
+    "pos_cleared": 1.0417230892249945,
+    "pos_offered": 1.1873712785781452,
+    "pos_total_rm": 1.0492227979274613,
+    "real_price_kw_yr": 51.1,
+    "zero_cross": 1.0741002472087942
+   },
+   "arms": {
+    "OFF": {
+     "thermal_firm_mw": 137574.38447000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1847.176,
+      "coal": 38511.00068,
+      "gas_cc": 39331.248640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 10978.22972,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 148552.61419000005,
+     "requirement_mw": 130295.36680801916,
+     "position": 1.140121999954777,
+     "exit_budget_mw": 18257.247381980895,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 9.839891072978247
+    },
+    "V": {
+     "thermal_firm_mw": 164363.88647,
+     "thermal_firm_by_fuel": {
+      "biomass": 1847.176,
+      "coal": 42686.892320000006,
+      "gas_cc": 50492.8192,
+      "gas_ct": 24243.605799999998,
+      "gas_st": 9632.52615,
+      "nuclear": 31691.936999999998,
+      "oil": 3768.93
+     },
+     "vre_hydro_storage_tie_mw": 10978.22972,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 175342.11619000003,
+     "requirement_mw": 156557.15181834984,
+     "position": 1.1199879031616902,
+     "exit_budget_mw": 18784.96437165019,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 7.826481393669571
+    },
+    "D": {
+     "thermal_firm_mw": 137574.38447000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1847.176,
+      "coal": 38511.00068,
+      "gas_cc": 39331.248640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 10978.22972,
+     "dr_supply_mw": 11886.8,
+     "firm_mw": 160439.41419000004,
+     "requirement_mw": 135676.7483963056,
+     "position": 1.1825122291504497,
+     "exit_budget_mw": 24762.66579369444,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 14.078913992545527
+    },
+    "BOTH": {
+     "thermal_firm_mw": 164363.88647,
+     "thermal_firm_by_fuel": {
+      "biomass": 1847.176,
+      "coal": 42686.892320000006,
+      "gas_cc": 50492.8192,
+      "gas_ct": 24243.605799999998,
+      "gas_st": 9632.52615,
+      "nuclear": 31691.936999999998,
+      "oil": 3768.93
+     },
+     "vre_hydro_storage_tie_mw": 10978.22972,
+     "dr_supply_mw": 11886.8,
+     "firm_mw": 187228.91619000002,
+     "requirement_mw": 163023.18200000003,
+     "position": 1.1484803197498623,
+     "exit_budget_mw": 24205.73418999999,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 10.675723052486784
+    }
+   }
+  },
+  "2022": {
+   "note": "bridge year: 2021 post-evolution fleet, 2021 peak (the runner's prior-year peak)",
+   "peak_mw": 149590.0,
+   "ledger_position": null,
+   "ledger_requirement_mw": null,
+   "published": {
+    "pos_cleared": 1.0510375261163845,
+    "pos_offered": 1.2199654303456382,
+    "pos_total_rm": 1.0471615720524017,
+    "real_price_kw_yr": 18.25,
+    "zero_cross": 1.0655426679159854
+   },
+   "arms": {
+    "OFF": {
+     "thermal_firm_mw": 137574.38447000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1847.176,
+      "coal": 38511.00068,
+      "gas_cc": 39331.248640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 10978.22972,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 148552.61419000005,
+     "requirement_mw": 130295.36680801916,
+     "position": 1.140121999954777,
+     "exit_budget_mw": 18257.247381980895,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 8.908447383839246,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 111731.94009999998,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 1303
+     }
+    },
+    "V": {
+     "thermal_firm_mw": 164363.88647,
+     "thermal_firm_by_fuel": {
+      "biomass": 1847.176,
+      "coal": 42686.892320000006,
+      "gas_cc": 50492.8192,
+      "gas_ct": 24243.605799999998,
+      "gas_st": 9632.52615,
+      "nuclear": 31691.936999999998,
+      "oil": 3768.93
+     },
+     "vre_hydro_storage_tie_mw": 10978.22972,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 175342.11619000003,
+     "requirement_mw": 156126.18149769004,
+     "position": 1.1230795149665165,
+     "exit_budget_mw": 19215.934692309995,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 7.204198885013202,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 111731.94009999998,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 1303
+     }
+    },
+    "D": {
+     "thermal_firm_mw": 137574.38447000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1847.176,
+      "coal": 38511.00068,
+      "gas_cc": 39331.248640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 10978.22972,
+     "dr_supply_mw": 10513.0,
+     "firm_mw": 159065.61419000005,
+     "requirement_mw": 135676.7483963056,
+     "position": 1.1723866916781986,
+     "exit_budget_mw": 23388.86579369445,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 12.13491655618142,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 111731.94009999998,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 1303
+     }
+    },
+    "BOTH": {
+     "thermal_firm_mw": 164363.88647,
+     "thermal_firm_by_fuel": {
+      "biomass": 1847.176,
+      "coal": 42686.892320000006,
+      "gas_cc": 50492.8192,
+      "gas_ct": 24243.605799999998,
+      "gas_st": 9632.52615,
+      "nuclear": 31691.936999999998,
+      "oil": 3768.93
+     },
+     "vre_hydro_storage_tie_mw": 10978.22972,
+     "dr_supply_mw": 10513.0,
+     "firm_mw": 185855.11619000003,
+     "requirement_mw": 162574.412,
+     "position": 1.1432002976581581,
+     "exit_budget_mw": 23280.70419000002,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 9.216277154177366,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 111731.94009999998,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 1303
+     }
+    }
+   }
+  },
+  "2023": {
+   "note": "entering fleet (fleet_by_fuel_before) at the year's own peak",
+   "peak_mw": 147605.0,
+   "ledger_position": 1.170572,
+   "ledger_requirement_mw": 128566.399,
+   "published": {
+    "pos_cleared": 1.0552044372739755,
+    "pos_offered": 1.1407443286729333,
+    "pos_total_rm": 1.047909407665505,
+    "real_price_kw_yr": 12.457450000000001,
+    "zero_cross": 1.0652363766147213
+   },
+   "arms": {
+    "OFF": {
+     "thermal_firm_mw": 139715.61647,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 38511.00068,
+      "gas_cc": 41480.208640000004,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 10979.673719999999,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 150695.29019000003,
+     "requirement_mw": 128566.39894175861,
+     "position": 1.1721203318315383,
+     "exit_budget_mw": 22128.891248241416,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 11.69158945575628,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 89457.0621,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 795
+     }
+    },
+    "V": {
+     "thermal_firm_mw": 167114.95846999998,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 42686.892320000006,
+      "gas_cc": 53251.6192,
+      "gas_ct": 24243.605799999998,
+      "gas_st": 9632.52615,
+      "nuclear": 31691.936999999998,
+      "oil": 3768.93
+     },
+     "vre_hydro_storage_tie_mw": 10979.673719999999,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 178094.63219,
+     "requirement_mw": 154522.22562715173,
+     "position": 1.1525502656150344,
+     "exit_budget_mw": 23572.40656284828,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 9.734582834105886,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 89457.0621,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 795
+     }
+    },
+    "D": {
+     "thermal_firm_mw": 139715.61647,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 38511.00068,
+      "gas_cc": 41480.208640000004,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 10979.673719999999,
+     "dr_supply_mw": 10116.7,
+     "firm_mw": 160811.99019000004,
+     "requirement_mw": 133876.37172963895,
+     "position": 1.2011977028684129,
+     "exit_budget_mw": 26935.61846036109,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 14.599326559443737,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 89457.0621,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 795
+     }
+    },
+    "BOTH": {
+     "thermal_firm_mw": 167114.95846999998,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 42686.892320000006,
+      "gas_cc": 53251.6192,
+      "gas_ct": 24243.605799999998,
+      "gas_st": 9632.52615,
+      "nuclear": 31691.936999999998,
+      "oil": 3768.93
+     },
+     "vre_hydro_storage_tie_mw": 10979.673719999999,
+     "dr_supply_mw": 10116.7,
+     "firm_mw": 188211.33219000002,
+     "requirement_mw": 160904.21050000002,
+     "position": 1.1697104233950422,
+     "exit_budget_mw": 27307.12169,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 11.450598612106667,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 89457.0621,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 795
+     }
+    }
+   }
+  },
+  "2024": {
+   "note": "entering fleet (fleet_by_fuel_before) at the year's own peak",
+   "peak_mw": 153121.0,
+   "ledger_position": 1.13667,
+   "ledger_requirement_mw": 133370.926,
+   "published": {
+    "pos_cleared": 1.0555098698924799,
+    "pos_offered": 1.1262484531884176,
+    "pos_total_rm": 1.049694856146469,
+    "real_price_kw_yr": 10.555800000000001,
+    "zero_cross": 1.0642714973708678
+   },
+   "arms": {
+    "OFF": {
+     "thermal_firm_mw": 140613.97647000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 38511.00068,
+      "gas_cc": 42378.568640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 11859.36956,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 152473.34603000004,
+     "requirement_mw": 133370.92627188118,
+     "position": 1.1432277655414789,
+     "exit_budget_mw": 19102.419758118864,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 8.771789564899901,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 92878.66030000016,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 831
+     }
+    },
+    "V": {
+     "thermal_firm_mw": 168268.25847,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 42686.892320000006,
+      "gas_cc": 54404.919200000004,
+      "gas_ct": 24243.605799999998,
+      "gas_st": 9632.52615,
+      "nuclear": 31691.936999999998,
+      "oil": 3768.93
+     },
+     "vre_hydro_storage_tie_mw": 11859.36956,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 180127.62803000002,
+     "requirement_mw": 160193.78899691318,
+     "position": 1.1244357796760207,
+     "exit_budget_mw": 19933.839033086842,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 6.892590978354085,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 92878.66030000016,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 831
+     }
+    },
+    "D": {
+     "thermal_firm_mw": 140613.97647000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 38511.00068,
+      "gas_cc": 42378.568640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 11859.36956,
+     "dr_supply_mw": 10146.4,
+     "firm_mw": 162619.74603000004,
+     "requirement_mw": 138879.33278421493,
+     "position": 1.1709427369058,
+     "exit_budget_mw": 23740.41324578511,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 11.543286701332022,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 92878.66030000016,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 831
+     }
+    },
+    "BOTH": {
+     "thermal_firm_mw": 168268.25847,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 42686.892320000006,
+      "gas_cc": 54404.919200000004,
+      "gas_ct": 24243.605799999998,
+      "gas_st": 9632.52615,
+      "nuclear": 31691.936999999998,
+      "oil": 3768.93
+     },
+     "vre_hydro_storage_tie_mw": 11859.36956,
+     "dr_supply_mw": 10146.4,
+     "firm_mw": 190274.02803000002,
+     "requirement_mw": 166810.01739999998,
+     "position": 1.1406630788469665,
+     "exit_budget_mw": 23464.010630000033,
+     "curve_price_kw_yr": 0.0,
+     "gap_to_cleared_pts": 8.515320895448664,
+     "rescreen_at_own_position": {
+      "price_kw_yr": 0.0,
+      "failed_mw": 92878.66030000016,
+      "would_pass_mw": 0.0,
+      "would_pass_by_fuel": {},
+      "n": 831
+     }
+    }
+   }
+  },
+  "2025": {
+   "note": "entering fleet (fleet_by_fuel_before) at the year's own peak",
+   "peak_mw": 160560.0,
+   "ledger_position": 0.961672,
+   "ledger_requirement_mw": 144631.784,
+   "published": {
+    "pos_cleared": 1.0048924853025476,
+    "pos_offered": 1.0049539561290857,
+    "pos_total_rm": 1.005942275042445,
+    "real_price_kw_yr": 98.52080000000001,
+    "zero_cross": 1.0672646370925338
+   },
+   "arms": {
+    "OFF": {
+     "thermal_firm_mw": 125560.03573000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 23457.05994,
+      "gas_cc": 42378.568640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 12119.0494,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 137679.08513000005,
+     "requirement_mw": 144631.78424283906,
+     "position": 0.9519282766977049,
+     "exit_budget_mw": -6952.699112839007,
+     "curve_price_kw_yr": 164.83765,
+     "gap_to_cleared_pts": -5.296420860484274
+    },
+    "V": {
+     "thermal_firm_mw": 125560.03573000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 23457.05994,
+      "gas_cc": 42378.568640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 12119.0494,
+     "dr_supply_mw": 0.0,
+     "firm_mw": 137679.08513000005,
+     "requirement_mw": 144631.78424283906,
+     "position": 0.9519282766977049,
+     "exit_budget_mw": -6952.699112839007,
+     "curve_price_kw_yr": 164.83765,
+     "gap_to_cleared_pts": -5.296420860484274
+    },
+    "D": {
+     "thermal_firm_mw": 125560.03573000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 23457.05994,
+      "gas_cc": 42378.568640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 12119.0494,
+     "dr_supply_mw": 6084.8,
+     "firm_mw": 143763.88513000004,
+     "requirement_mw": 150605.28,
+     "position": 0.9545740038463462,
+     "exit_budget_mw": -6841.39486999996,
+     "curve_price_kw_yr": 164.83765,
+     "gap_to_cleared_pts": -5.031848145620144
+    },
+    "BOTH": {
+     "thermal_firm_mw": 125560.03573000002,
+     "thermal_firm_by_fuel": {
+      "biomass": 1839.448,
+      "coal": 23457.05994,
+      "gas_cc": 42378.568640000005,
+      "gas_ct": 15474.642,
+      "gas_st": 7561.01515,
+      "nuclear": 31038.495,
+      "oil": 3810.807
+     },
+     "vre_hydro_storage_tie_mw": 12119.0494,
+     "dr_supply_mw": 6084.8,
+     "firm_mw": 143763.88513000004,
+     "requirement_mw": 150605.28,
+     "position": 0.9545740038463462,
+     "exit_budget_mw": -6841.39486999996,
+     "curve_price_kw_yr": 164.83765,
+     "gap_to_cleared_pts": -5.031848145620144
+    }
+   }
+  }
+ }
+}
