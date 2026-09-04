@@ -1,0 +1,95 @@
+# Canonical schema: resource-adequacy IMPORT CAPABILITY ALLOCATIONS — who holds
+# how much RA import capability on which intertie branch group, per RA year.
+#
+# CAISO's annual Import Capability Allocation process (tariff §40.4.6.2)
+# assigns the published Maximum Import Capability (MIC) of each intertie
+# branch group to load-serving entities in numbered steps (existing contracts
+# and transmission ownership rights → pre-RA commitments → load-share
+# allocations → bilateral transfers → unassigned rounds). The ISO publishes the
+# resulting HOLDINGS each year as "Holders of Import Capability"
+# (https://www.caiso.com/library/<year>-import-allocations): one row per
+# (LSE, branch group, effective window) with the MW held. This datatype
+# curates those holdings onto one tidy frame.
+#
+# Why it exists (caiso-245): the model's firm-import block splits the DMM
+# RA-import capacity between the north (COI / PACI / NOB / Tracy) and south
+# (Palo Verde / Mead / Eldorado / …) corridors by the MIC CAPABILITY share.
+# The holdings are the published quantity that measures where LSEs actually
+# hold RA import rights — the key that a "capability share" only proxies.
+# Measured in caiso-245 (results/calibration/_caiso245_allocation_split.json):
+# the held north share is 48.3 / 45.5 / 45.1 % (2023–25) against the MIC share
+# 46.2 / 46.2 / 46.4 % — within the pre-registered 5-point stop rule, so NO
+# mechanism consumes this datatype yet (intake-only; the finding records that
+# RA import capability is held and shown north while the corridor's measured
+# energy is not, i.e. capability ≠ energy is the open object, not the split).
+#
+# Rule-13 class: a published capability RIGHT (a capacity-product allocation
+# that regenerates every July for the following RA year) — a physical/market
+# input, never a fit target. Rule 14 caveat carried by any consumer: an
+# allocation is neither a schedule nor an energy flow.
+#
+# NOT curated here (raw files kept alongside, see the corpus README): the
+# "Import Capability Used on Annual RA Plans" workbooks (a Yes/No flag per
+# SCID/branch group per RA month whose sheet interleaves LSE and branch-group
+# codes in one column with the flag on inconsistent rows — ambiguous grain)
+# and the Step-6 contractual-data workbooks (pre-RA / ETC / TOR locks; a
+# subset of the holdings).
+datatype: ra-import-allocations
+schema_version: 1
+title: RA import capability holdings by LSE and intertie branch group
+description: >-
+  One row per (ISO, RA delivery year, load-serving entity, intertie branch
+  group, effective window): the MW of resource-adequacy import capability the
+  LSE holds on that branch group after the ISO's annual allocation process and
+  bilateral transfers. Published by the ISO; a capability right, not an energy
+  flow.
+
+key_columns: [iso, delivery_year, lse, branch_group, start_date, end_date]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code (CAISO).
+  - name: delivery_year
+    dtype: string
+    unit: none
+    nullable: false
+    description: The RA (calendar) year the allocation applies to, e.g. "2024".
+  - name: lse
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Load-serving entity scheduling-coordinator ID as published (e.g. LCE1,
+      LPGE, LSCE, LANC). Not resolved to a name; the ISO publishes IDs.
+  - name: branch_group
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Intertie branch group as published (e.g. PALOVRDE_ITC, MALIN500_ISL,
+      NOB_ITC, TRACY500_BG). The suffix (_ITC / _BG / _ISL / _MSL) is the
+      ISO's own label variant and is kept verbatim; consumers map the stem.
+  - name: allocation_mw
+    dtype: float64
+    unit: MW
+    nullable: false
+    description: Import capability held (MW) for the effective window.
+  - name: start_date
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: Start of the holding's effective window (Pacific, tz-naive as published).
+  - name: end_date
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: End of the holding's effective window (Pacific, tz-naive as published).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: The published workbook the row was read from (caiso.com document URL).

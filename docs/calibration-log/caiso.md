@@ -12259,3 +12259,74 @@ verdict move) on `import_hub_pricing`, `caiso_firm_selfsched_floor`,
 `measured_offer_surface`.
 
 **Next number: caiso-245.**
+
+## caiso-245 (2026-09-04) — form (i) of the import LEVEL object REFUTED ON ITS OWN SOURCE: CAISO's published RA-import capability HOLDINGS put 48.3 / 45.5 / 45.1 % of LSE import capability on the north interties, the same share the MIC gives (46.2 / 46.2 / 46.4 %) — the pre-registered stop rule fired, the re-split arm was NOT built, the datatype is intaken; the object moves to "RA import CAPABILITY forced as ENERGY"; December's slab is common to import- and domestic-marginal hours. NO SOLVE, keeper unchanged
+
+**Keeper `2026-09-04-caiso-243-b1-f923` UNCHANGED**, NOT-YET (C3a the sole
+load-bearing FAIL +3.9 / +12.3 / +14.4 %; C3c the single ledgered caveat; C6
+attested; C8 PASS). No LP, no `ScenarioConfig` field, nothing armed, no run
+registered (rule 15 does not attach), **no cell verdict moved** (two evidence
+appends on the CAISO shard). No `complete`/`final` marker; freeze ACTIVE;
+2023–2025 only.
+
+**PRE-REGISTERED FIRST** (`PRECOMMIT-caiso245-firm-import-allocation-split-2026-09-04.md`,
+`51c9c628`, pushed before the key was computed): the firm block's north/south
+split re-keyed from the MIC CAPABILITY share to the share of RA import
+capability LSEs actually HOLD per branch group — form (i) of FINDING-caiso244
+§5, rule-13 admissible by inspection — with a STOP RULE: held north share
+within 5 points of the MIC share in every year ⇒ the arm is inert by
+construction and is not built.
+
+**THE KEY, MEASURED (`_caiso245_allocation_split.json`).** From CAISO's
+published "Holders of Import Capability" workbooks (library/<year>-import-
+allocations; LSE × branch group × MW), mapped to corridors by the MIC north
+list (same geography as `CAISO_CORRIDOR_DIBA`, unknown code = hard error):
+held north share **48.3 / 45.5 / 45.1 %** vs MIC **46.2 / 46.2 / 46.4 %** —
+**+2.1 / −0.7 / −1.3 points**. **STOP RULE FIRES IN EVERY YEAR; P-1 (≤ 36 %)
+FALSIFIED; the arm was NOT built; no solve was spent.** Total held 11.7 /
+11.5 / 11.2 GW = 5.1 / 3.4 / 3.3× the DMM RA-import capacity (P-2 holds).
+The north holders (PACI/Malin 2,426 → 1,669 MW, NOB 1,559 → 1,413, Tracy 500
+693 → 844) flag "used all capability" on their RA plans in **79 / 79 / 48 %**
+of rows vs the south's 28 % (P-3 FALSIFIED as written). **Reading:** CA LSEs
+hold and show ~5 GW of RA import rights on the Northwest interties while the
+corridor carried −0.55 / 2.06 / 4.73 TWh net — RA import is a CAPACITY
+product whose energy is scheduled economically. **The object is the floor's
+ENERGY basis (DMM capacity × total-system shape, clipped at a SYSTEM-level
+price-insensitive ceiling allocated to corridors pro rata by capability), not
+its split.** The intake is committed through the data contract
+(`ra-import-allocations`: schema, registry lib, curate, test, dictionary; 739
+holdings) so the refutation reproduces from committed bytes — intake-only.
+
+**QUEUE ITEM B, ZERO LP (`_caiso245_december_carrier.json`).** December hours
+split by what sets the landing-zone price (caiso-244's dual-merit
+reconstruction): Dec-2025 model lw **44.57 $/MWh in the 182 import-marginal
+hours vs 44.04 in the 562 domestic-marginal hours**, against an actual RT of
+34.97 — the +9.2 slab is common to both regimes; no single import row carries
+it. The marginal import row in **69 / 101 December hours of 2024 / 2025 is
+`DSW_solar_PV` at its FITTED $48** (the caiso-151 elastic slice) — the firm
+prices are margin-setting in 14 % of Dec-2025 hours, on top of caiso-244's
+bound-setting finding. The month-by-month model−actual RT series for 2025
+grows through the autumn (Sep +5.8, Oct +7.7, Dec +9.2), where the 2025
+overlay coverage gap and D3 already sit.
+
+**PREDICTIONS:** P-1 FALSIFIED, P-2 HOLDS, P-3 FALSIFIED, P-4…P-10
+UNSCORABLE (no arm) and quoted as nothing. The prediction that carried the
+design fell on the source the session recommended.
+
+**FORMS LEFT (FINDING §6, owner decision, none chosen):** **(ii)** the
+caiso-151 ceiling allocated by measured per-intertie price-insensitive bids
+(OASIS PUB_DAM_GRP at intertie grain — `caiso-public-bids` is a BLOAT-S2
+conversion, re-fetch only) — recommended, a data-intake session; (iv)
+capability-not-floor, which follows (ii); the two fitted firm prices as a
+G-26 honesty item now measured on the price path.
+
+**DO-NOT-REDO adds:** never re-key the split on RA import capability
+holdings (within 2.1 points of MIC); never attribute the December slab to
+import-marginal hours; never quote the firm prices as inert.
+
+**Deliverables:** the PRECOMMIT, `FINDING-caiso245-firm-import-allocation-split-2026-09-04.md`,
+the `ra-import-allocations` intake, `scripts/probes/_caiso245_{allocation_split,december_carrier}.py`
++ artifacts, evidence appends on `import_hub_pricing` and
+`caiso_firm_selfsched_floor`.
+
+**Next number: caiso-246.**

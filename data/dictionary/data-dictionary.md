@@ -44,16 +44,16 @@ for the market split.
 
 | datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
 |---|---|---|---|---|---|---|
-| lmp | — | — | — | — | — | — |
-| lmp-components | — | — | — | — | — | — |
-| load | — | — | — | — | — | — |
-| demand-profile | — | — | — | — | — | — |
-| ancillary-services | — | — | — | — | — | — |
+| lmp | — | 2023–2026 | 2018–2025 | — | 2022–2025 | 2018–2025 |
+| lmp-components | — | — | — | 2023–2025 | — | — |
+| load | 2015–2026 | 2018–2026 | 2018–2026 | 2018–2026 | 2018–2026 | 2015–2026 |
+| demand-profile | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 |
+| ancillary-services | 2025–2026 | — | 2018–2026 | — | 2018–2026 | — |
 | energy-offers | — | — | — | — | — | — |
 | dam-public-bids | — | — | — | — | — | — |
-| generation | — | — | — | — | — | — |
-| renewables | — | — | — | — | — | — |
-| validation | — | — | — | — | — | — |
+| generation | 2018–2026 | 2018–2026 | 2020–2026 | 2018–2026 | 2018–2026 | 2018–2026 |
+| renewables | 2023–2025 | 2019–2025 | — | — | — | — |
+| validation | 2018–2026 | 2021–2026 | 2018–2025 | 2021–2026 | 2018–2026 | 2018–2026 |
 | fuel-basis | — | — | — | — | — | — |
 | fuel-zonal-hub | — | — | — | — | — | — |
 | unit-outage-events | — | — | — | — | — | — |
@@ -61,19 +61,19 @@ for the market split.
 | capacity-deliverability | — | — | — | — | — | — |
 | confirmed-retirements | — | — | — | — | — | — |
 | nuclear-license-status | — | — | — | — | — | — |
-| gtc-limits | — | — | — | — | — | — |
-| transfer-interface-limits | — | — | — | — | — | — |
+| gtc-limits | 2019–2025 | — | — | — | — | — |
+| transfer-interface-limits | — | — | 2019–2025 | — | — | — |
 | transmission-expansion | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
-| nyiso-downstate-gas | — | — | — | — | — | — |
-| ercot-wtx-congestion | — | — | — | — | — | — |
+| nyiso-downstate-gas | — | — | — | — | 2022–2025 | — |
+| ercot-wtx-congestion | 2019–2025 | — | — | — | — | — |
 | nyiso-renewable-curtailment | — | — | — | — | — | — |
 | nyiso-renewable-curtailment-monthly | — | — | — | — | — | — |
 | nyiso-reserve-requirements | — | — | — | — | — | — |
 | nyiso-operating-events | — | — | — | — | — | — |
-| nyiso-interface-flows | — | — | — | — | — | — |
+| nyiso-interface-flows | — | — | — | — | 2018–2026 | — |
 | nyiso-som-hub-fuel-annual | — | — | — | — | — | — |
 | reserve-requirements | — | — | — | — | — | — |
 | som-competitive-conduct | — | — | — | — | — | — |
@@ -81,7 +81,7 @@ for the market split.
 | capacity-market-auction-price | — | — | — | — | — | — |
 | capacity-market-auction-supply | — | — | — | — | — | — |
 | capacity-market-elcc | — | — | — | — | — | — |
-| transfer-constraint-binding | — | — | — | — | — | — |
+| transfer-constraint-binding | — | — | — | 2023–2025 | — | — |
 | maxgen-events | — | — | — | — | — | — |
 | storage-as-awards | — | — | — | — | — | — |
 | capacity-market-avoidable-cost-rate | — | — | — | — | — | — |
@@ -90,6 +90,7 @@ for the market split.
 | miso-m2m-flowgates | — | — | — | — | — | — |
 | gas-ofo-events | — | — | — | — | — | — |
 | ps-water-state | — | — | — | — | — | — |
+| ra-import-allocations | — | 2023–2025 | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -100,9 +101,9 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
-| emissions-unit-annual | — | n/a |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
-| fleet | EIA-860 / eGRID / master registry | n/a |
+| emissions-unit-annual | — | 2019–2021, 2023–2025 |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | 2018–2026 |
+| fleet | EIA-860 / eGRID / master registry | 2018–2025 |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | fuel-hub-monthly | national (Henry Hub monthly) | n/a |
 | fuel-ercot-ep-gas | ERCOT / TX electric-power consumers | n/a |
@@ -112,7 +113,7 @@ snapshot).
 | wecc-west-supply | — | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | n/a |
+| egrid | national (EPA eGRID, by vintage year) | 2018–2024 |
 | pjm-outages | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
@@ -1559,14 +1560,14 @@ are validation observables. Never a quantity target. Schema:
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
-| `iso` | `string` | `none` | no | ISO/RTO publishing the accounting (MISO to date). |
-| `planning_year` | `string` | `none` | no | Planning/delivery year label the auction governs (e.g. "2025-2026" for a MISO Planning Year). |
+| `iso` | `string` | `none` | no | ISO/RTO publishing the accounting (MISO PRA; PJM RPM BRA Demand Resource offered/cleared UCAP per delivery year since capx D48, 2026-09-04). |
+| `planning_year` | `string` | `none` | no | Planning/delivery year label the auction governs, in the ISO's own convention (e.g. "2025-2026" for a MISO Planning Year; "2025/2026" for a PJM Delivery Year, matching the sibling demand-curve / auction-price datatypes). |
 | `season` | `string` | `none` | yes | Season the row applies to (summer \| fall \| winter \| spring) for seasonally-cleared auctions (MISO PRA from PY2023-24); null for annual-only records. |
 | `area` | `string` | `none` | no | Scope of the row: "System" for ISO-wide rows, a subregion label (MISO "North/Central" \| "South") for subregional ledger rows. |
 | `metric` | `string` | `none` | no | Canonical metric. Category quantities: offered \| cleared (paired with a non-null category — the posting's "Offered (ZRC)" / "Cleared (ZRC)" columns). Requirement/commitment ledger rows (category null): prmr (the vertical-era single Planning Reserve Margin Requirement) \| initial_prmr \| final_prmr (the RBDC-era pair: pre-auction requirement and the cleared curve-intersection quantity) \| offer_submitted (total offers incl. FRAP) \| frap (Fixed Resource Adequacy Plan self-supply) \| self_scheduled \| non_ss_offer_cleared \| committed (offer cleared + FRAP — the auction's committed total). |
 | `category` | `string` | `none` | yes | Planning-resource category for offered/cleared rows: generation \| external_resources \| behind_meter_generation \| demand_resources \| energy_efficiency \| total. Null for requirement/commitment ledger metrics. |
 | `value_mw` | `float64` | `MW` | no | The row's quantity in MW (ZRC or SAC per unit). |
-| `unit` | `string` | `none` | no | Quantity basis as the source labels it: mw_zrc (Zonal Resource Credits — the category trend tables) \| mw_sac (MW Seasonal Accredited Capacity — the zonal-results ledger rows). Numerically the same accredited-MW basis; the label preserves the source's own terminology. |
+| `unit` | `string` | `none` | no | Quantity basis as the source labels it: mw_zrc (Zonal Resource Credits — the MISO category trend tables) \| mw_sac (MW Seasonal Accredited Capacity — the MISO zonal-results ledger rows) \| mw_ucap (PJM Unforced Capacity — the BRA reports' offered/cleared UCAP rows). Numerically the same accredited-MW basis; the label preserves the source's own terminology. |
 | `vintage` | `string` | `none` | yes | The publishing document's own label/date (e.g. "PY2025-26 PRA Results Posting (05/29/2025, corrections)"), distinct from planning_year. |
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or citation) the value was read from. |
 | `source_page` | `string` | `none` | yes | Page / table locator within source_doc. |
@@ -2019,3 +2020,36 @@ records (caiso-201 Q2(a); intake caiso-227). Schema:
 | `lower_elevation_ft` | `float64` | `ft` | yes | Lower reservoir (Wishon) surface elevation, instantaneous. |
 | `lower_storage_af` | `float64` | `acre_ft` | yes | Lower reservoir (Wishon) storage, instantaneous. |
 | `source_doc` | `string` | `none` | no | Filename of the immutable raw snapshot under data/raw/ps-water-state/<iso>/ the row was parsed from, so every row traces to the exact retrieved document. |
+
+## ra-import-allocations
+
+Resource-adequacy IMPORT CAPABILITY HOLDINGS — the MW of RA import capability
+each load-serving entity holds on each intertie branch group per RA year, from
+the ISO's published annual allocation results (caiso-244 §5 form (i); intake
+caiso-245). Schema:
+[`schema/ra-import-allocations.schema.yaml`](schema/ra-import-allocations.schema.yaml).
+
+- **Keys:** `iso`, `delivery_year`, `lse`, `branch_group`, `start_date`,
+  `end_date`
+- **Reconciles:** Each ISO's published holders table onto one tidy `(iso,
+  delivery_year, lse, branch_group, start_date, end_date)` frame with the MW
+  held. CAISO = the annual `Holders of Import Capability` workbook (caiso.com
+  library/<year>-import-allocations), 2023–2025, 234–265 rows/yr over ~60 LSEs
+  and ~35 branch groups; the companion `used on annual RA plans` and Step-6
+  contractual workbooks are kept raw, not curated (ambiguous grain / subset).
+  Rule-13 line: a published capability RIGHT that regenerates every July for
+  the following RA year — INPUT-class, never a fit target; rule 14: an
+  allocation is neither a schedule nor an energy flow. INTAKE-ONLY — the
+  pre-registered firm-block re-split arm was stopped by its own rule (held
+  north share within 5 points of the MIC share), so no mechanism consumes it.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO code (CAISO). |
+| `delivery_year` | `string` | `none` | no | The RA (calendar) year the allocation applies to, e.g. "2024". |
+| `lse` | `string` | `none` | no | Load-serving entity scheduling-coordinator ID as published (e.g. LCE1, LPGE, LSCE, LANC). Not resolved to a name; the ISO publishes IDs. |
+| `branch_group` | `string` | `none` | no | Intertie branch group as published (e.g. PALOVRDE_ITC, MALIN500_ISL, NOB_ITC, TRACY500_BG). The suffix (_ITC / _BG / _ISL / _MSL) is the ISO's own label variant and is kept verbatim; consumers map the stem. |
+| `allocation_mw` | `float64` | `MW` | no | Import capability held (MW) for the effective window. |
+| `start_date` | `datetime64[ns]` | `local_timestamp` | no | Start of the holding's effective window (Pacific, tz-naive as published). |
+| `end_date` | `datetime64[ns]` | `local_timestamp` | no | End of the holding's effective window (Pacific, tz-naive as published). |
+| `source_doc` | `string` | `none` | no | The published workbook the row was read from (caiso.com document URL). |

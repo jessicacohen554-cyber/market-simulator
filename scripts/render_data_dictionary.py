@@ -124,6 +124,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "miso-m2m-flowgates",
     "gas-ofo-events",
     "ps-water-state",
+    "ra-import-allocations",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -416,6 +417,29 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "history analogy). Helms 2022-10\u2192present, Eastwood, and the "
             "DWR CDEC share are `DATA NEEDED`. INTAKE-ONLY \u2014 no "
             "mechanism consumes it."
+        ),
+    },
+    "ra-import-allocations": {
+        "summary": (
+            "Resource-adequacy IMPORT CAPABILITY HOLDINGS \u2014 the MW of RA "
+            "import capability each load-serving entity holds on each intertie "
+            "branch group per RA year, from the ISO's published annual "
+            "allocation results (caiso-244 \u00a75 form (i); intake caiso-245)."
+        ),
+        "reconciles": (
+            "Each ISO's published holders table onto one tidy `(iso, "
+            "delivery_year, lse, branch_group, start_date, end_date)` frame with "
+            "the MW held. CAISO = the annual `Holders of Import Capability` "
+            "workbook (caiso.com library/<year>-import-allocations), 2023\u2013"
+            "2025, 234\u2013265 rows/yr over ~60 LSEs and ~35 branch groups; "
+            "the companion `used on annual RA plans` and Step-6 contractual "
+            "workbooks are kept raw, not curated (ambiguous grain / subset). "
+            "Rule-13 line: a published capability RIGHT that regenerates every "
+            "July for the following RA year \u2014 INPUT-class, never a fit "
+            "target; rule 14: an allocation is neither a schedule nor an "
+            "energy flow. INTAKE-ONLY \u2014 the pre-registered firm-block "
+            "re-split arm was stopped by its own rule (held north share within "
+            "5 points of the MIC share), so no mechanism consumes it."
         ),
     },
     "miso-m2m-flowgates": {
