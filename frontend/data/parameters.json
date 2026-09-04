@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-09-02",
+  "generated": "2026-09-04",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -33194,6 +33194,177 @@
       ]
     },
     {
+      "param_id": "net_icr_hold_last_ratio_by_iso.NEISO",
+      "display_name": "Net Icr Hold Last Ratio By Iso / Neiso",
+      "value": 1.1301434682212212,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_icr_requirement_mw_by_iso.NEISO.2020/2021",
+      "display_name": "Net Icr Requirement Mw By Iso / Neiso / 2020/2021",
+      "value": 34075.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_icr_requirement_mw_by_iso.NEISO.2021/2022",
+      "display_name": "Net Icr Requirement Mw By Iso / Neiso / 2021/2022",
+      "value": 33725.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_icr_requirement_mw_by_iso.NEISO.2022/2023",
+      "display_name": "Net Icr Requirement Mw By Iso / Neiso / 2022/2023",
+      "value": 33750.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_icr_requirement_mw_by_iso.NEISO.2023/2024",
+      "display_name": "Net Icr Requirement Mw By Iso / Neiso / 2023/2024",
+      "value": 32490.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_icr_requirement_mw_by_iso.NEISO.2024/2025",
+      "display_name": "Net Icr Requirement Mw By Iso / Neiso / 2024/2025",
+      "value": 33270.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_icr_requirement_mw_by_iso.NEISO.2025/2026",
+      "display_name": "Net Icr Requirement Mw By Iso / Neiso / 2025/2026",
+      "value": 31645.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_icr_requirement_mw_by_iso.NEISO.2026/2027",
+      "display_name": "Net Icr Requirement Mw By Iso / Neiso / 2026/2027",
+      "value": 30305.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "net_icr_requirement_mw_by_iso.NEISO.2027/2028",
+      "display_name": "Net Icr Requirement Mw By Iso / Neiso / 2027/2028",
+      "value": 30550.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "new_entry_costs.gas_cc_ccs.base_cf",
       "display_name": "New Entry Costs / Gas Cc Ccs / Base Cf",
       "value": 0.8,
@@ -38091,6 +38262,24 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_ct_peaker_committed_measured",
+      "display_name": "Caiso Ct Peaker Committed Measured",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "THE CT_PEAKER `committed` BAND, GROUNDED ON ITS OWN MEASURED PHYSICAL COUNTERPART (caiso-241, default off, CAISO-gated, zero new numbers).  THE OBJECT. `_CAISO_OFFER_CURVE[\"CT_PEAKER\"][\"committed\"] = 1.35` is a fitted scalar whose own band dict already carries the measured counterpart `phys_committed = 0.991` (`avg_committed_p50`, `data/raw/reference/caiso_campd_marginal_hr_summary.csv`, n = 75, IQR [0.969, 1.085]). When armed, the band takes that value: the fitted multiplier retires to the measurement already resolved onto its own band, so there is no new literal, no registry value to pick and NO FREE PARAMETER (rule 21 [R-DOF]). Exactly one band moves; `econ_low` / `econ_high` / `peak` are untouched, which keeps this band-disjoint from `caiso_offer_surface_measured*` (rule 19 [R-ONE-MECH]).  WHY IT IS OUTSIDE THE LEVER-A / caiso-238 F4 REFUSAL. The refusal is ROUTE-scoped, and caiso-238 §3 said so in the assessment that issued the F4: it covers the measured BID committed multiplier (CT bucket 1.166 -- self-commitment conduct, and STILL NOT ARMED here); grounding on the measured PHYSICAL min-load burn is the instrument Lever A itself used. Three further grounds, each sufficient alone (PRECOMMIT-caiso241-ct-peaker-committed-2026-09-03.md §1): * rule 19 [R-ONE-MECH]. The `_committed` tranche is the ONLY tranche carrying the bin's start cost (`bins_to_fleet` docstring), and P1 already amortizes it -- BIN_STARTUP_COST_PER_MW[\"CT_PEAKER\"] = $20/MW (NREL/SR-5500-55433) divided by the P0 run length, with no CT exemption in `compute_monthly_markup` and `tranche_startup_amortization` off on the keeper. 1.35, which `_CAISO_OFFER_CURVE` itself calls a \"start-cost hurdle\", is a SECOND, unidentified start-cost mechanism on the same tranche. Grounding it removes the unidentified limb and leaves the identified one -- which is also why the resulting ZERO `gas_offer_net_revenue_margin` markup on this band is correct rather than incoherent: a min-load block's offer-curve margin IS its commitment cost, and P1 supplies it. * rule 25 [R-ISO-SCOPE]. `committed = 1.35` appears in the CAISO, NYISO and NEISO CT_PEAKER curves, each comment citing the others (\"NYISO-grounded\" / \"NYISO/CAISO-grounded\") and NONE citing a measurement, while those ISOs' own CAMPD samples read 0.843 (n=70) / 0.985 (n=18) / 0.991 (n=75). NYISO's and NEISO's cells are ASKS FOR THEIR OWN LANES; nothing transfers in either direction. * The merit order is INVERTED, and applying the refusal to one band of four is what inverted it. On the keeper the class reads committed 1.350 > peak 1.166 = econ_high 1.166 > econ_low 1.145 -- the min-load block is the class's MOST EXPENSIVE MW. When 1.35 was set the class read 1.35 / 1.10 / 1.50 / 4.0, a properly rising curve; caiso-231's measured static surface re-grounded econ/peak while withholding `committed`, leaving a LARGER unmeasured commitment adder standing above them. Lever A exists to remove exactly this defect (\"an INVERTED merit order\"), in the mirror-image direction.  NOT IN `_BACKCAST_ONLY_OVERLAY_FIELDS`, and deliberately so -- like its caiso-239 sibling and unlike caiso-240's. `avg_committed_p50` is a measured PHYSICAL heat-rate ratio that regenerates for a forward year from CAMPD conduct and responds to fleet change, so it is admissible in both modes (rule 13 [R-MEASURED]).  DIRECTION IS DISCLOSED, NOT HIDDEN, AND IS FAVOURABLE -- WHICH IS THE HAZARD, NOT THE ARGUMENT (rule 1 [R-STRUCT]). Lowering the band raises CT_PEAKER volume (the class runs at 2.5 / 0.8 / 0.4 % CF against a measured 7.4 / 7.5 / 4.1 %) and puts a cheaper rung into the evening merit order, which moves C3a DOWN in hours it is over. This flag is armed for structural integrity under rules 14 / 19 / 21 / 25 and MUST NEVER be proposed as a C3a lever.  A CAISO CT_PEAKER band with no `phys_committed` key, or arming on any other ISO, is a HARD ERROR -- never a silent no-op (rule 25).",
+      "source_date": "2026-09",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_dam_outages",
       "display_name": "Caiso Dam Outages",
       "value": false,
@@ -39118,6 +39307,43 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_st_gas_committed_measured",
+      "display_name": "Caiso St Gas Committed Measured",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "THE ST_GAS COMMITTED BAND, GROUNDED AT ITS TRUE LOCATION (caiso-239, default off, per-ISO registry). The two flags above re-ground CAISO's gas classes through `offer_curve_by_group`; caiso-239 measured that for ST_GAS that dictionary is NOT the scalar that does the work. `offer_curves._offer_curve_for_group` returns None for `group == \"ST_GAS\" and plant_code in ST_GAS_PEAKER_PLANTS`, and `data.outages.ST_GAS_PEAKER_PLANTS` names CAISO plants 315 (AES Alamitos), 335 (AES Huntington Beach) and 350 (Ormond Beach) explicitly. With `offer is None`, `fleet.assembly.bins_to_fleet` never reaches `committed_hr = base_hr x offer[\"committed\"]`, so the whole 2,858.8 MW once-through-cooling steam fleet takes the ERCOT-lineage class default `fleet.campd_bins._DEFAULT_HR_MULT_BY_GROUP[\"ST_GAS\"][\"mc\"] = 1.15` instead (verified on the rebuilt caiso-231 fleet: 11.850 x 1.15 = 13.63 MMBtu/MWh, exact). That literal is uncited, lives in a data/ module, and appears in NO run_config.json -- an off-registry channel on the binding path (rule 24 [R-REGISTRY]) carrying an out-of-ISO fitted value (rule 25 [R-ISO-SCOPE]).  When armed, a BYPASSED ST_GAS bin takes `base_hr x ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO[iso]` for its committed band instead of the class default. CAISO's entry is 1.683 = `avg_committed_p50` from `caiso_campd_marginal_hr_summary.csv`, whose ten CAMPD units are EXACTLY plants 315/335/350 -- so the statistic's population and the band's population coincide, which is what makes this a rule-14 [R-ACCURATE] measured-for-estimate substitution rather than a transplant. It is the same key already resolved onto this class as `phys_committed`, so it adds no new measurement and NO free parameter (rule 21 [R-DOF]). EXACTLY ONE BAND moves: `mr` / `econ` / `peak` keep their class defaults.  Deliberately NOT in `_BACKCAST_ONLY_OVERLAY_FIELDS`, unlike the two flags above. Those arm measured BID conduct (OASIS DAM bids), which has no forward analogue. This is a measured PHYSICAL heat-rate ratio -- the part-load burn of a boiler, a unit characteristic that does not depend on the year -- i.e. the family's own documented exclusion (\"measured PHYSICAL parameters with a forward story -- measured heat rates ... which rule 14 tells us to PREFER\"). It regenerates for a forward year and responds to changed conditions (rule 13 [R-MEASURED]).  DIRECTION IS DISCLOSED, NOT HIDDEN (rule 14): raising a min-load band makes C3a WORSE in the hours the band is marginal. The caiso-230 SS-H first-order bound, re-run on the caiso-231 keeper, is +0.0003 / +0.0265 / +0.0000 $/MWh (2023/2024/2025) -- 3.1 % of 2024's required move at its largest and identically zero in 2025. Armed for structural integrity under rules 14 / 24 / 25, NEVER as a C3a lever.  An ISO absent from the registry cannot arm it (hard error, never a silent fallback to the class default -- rule 25).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_st_gas_peak_measured",
+      "display_name": "Caiso St Gas Peak Measured",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "THE ST_GAS PEAK BAND AT THE SAME BYPASS (caiso-240, default off, per-ISO registry). The caiso-240 census measured every one of the 28 `fleet.campd_bins._DEFAULT_HR_MULT_BY_GROUP` literals on all six designated keepers and found that, after caiso-239, exactly TWO cells remain live on the CAISO keeper: `ST_GAS[\"econ\"] = 1.00` and `ST_GAS[\"peak\"] = 1.10`, both reaching the same three once-through-cooling steamers (315 / 335 / 350) through the same `_offer_curve_for_group` bypass. This flag repairs the `peak` one -- the only one of the two with a measured counterpart AT THE MODEL'S OWN GRAIN, since a bypassed plant's peak band is a single flat multiplier and the measurement is a single number. (`econ` is a single flat band against a measured TWO-ENDPOINT ramp; picking one endpoint would be a free parameter, so it is left un-armed and reported to the owner -- see the caiso-240 assessment.)  When armed, a BYPASSED ST_GAS bin takes `base_hr x ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO[iso]` for its peak band instead of the uncited ERCOT-lineage class default 1.10. CAISO's entry is 1.166 = `CT_PEAKER.bands.peak` in the committed `caiso_offer_curve_measured.json` -- the SAME value the CAISO ST_GAS class band already carries, armed there by `caiso_offer_surface_measured_ungrounded` at caiso-231. So this adds NO new measurement and NO free parameter (rule 21 [R-DOF]): it delivers a value already in the keeper's own `run_config.json` to the plants it was measured on. EXACTLY ONE BAND moves: `mr` / `mc` / `econ` are untouched, and the limb is unreachable for any plant that resolves an offer curve.  WHY THE CLASS BAND DOES NOT ALREADY DO THIS -- the census's CAISO headline. `derive_caiso_offer_surface.py` discloses that \"the three OTC/RMR steamers (ST_GAS ...) land in the CT bucket\", which is why caiso-231 re-grounded the ST_GAS class on that bucket. But `_offer_curve_for_group` returns None for every `ST_GAS_PEAKER_PLANTS` member, so the re-grounded class band reaches NONE of the steamers it was measured on -- on the keeper it prices only two EIA-860 retired-window units (356 AES Redondo Beach, 10446 SEGS IX). The measurement is withheld from its own population; this flag delivers it.  POPULATION MATCH IS CONTAINMENT, NOT COINCIDENCE -- disclosed against interest, and weaker than caiso-239's. The CT bucket is pooled CT_PEAKER + CT_CHP + ST_GAS conduct and the OASIS ids are masked, so the steamers cannot be isolated inside it. It is the same basis caiso-231 was promoted on.  REGISTERED IN `_BACKCAST_ONLY_OVERLAY_FIELDS`, unlike caiso-239's sibling. That one arms a measured PHYSICAL heat-rate ratio with a forward story; this one arms measured BID conduct keyed to a specific year's OASIS record, exactly like `caiso_offer_surface_measured*` (rule 13 [R-MEASURED]).  DIRECTION IS DISCLOSED, NOT HIDDEN (rule 14): 1.10 -> 1.166 RAISES the peak band (+6.0 %), i.e. C3a gets WORSE in the hours that band is marginal. Armed for structural integrity under rules 14 / 24 / 25, NEVER as a C3a lever.  An ISO absent from the registry cannot arm it (hard error, never a silent fallback to the class default -- rule 25).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_storage_adaptive_expectation",
       "display_name": "Caiso Storage Adaptive Expectation",
       "value": false,
@@ -39264,6 +39490,43 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.campd_outage_merit_order_guard",
+      "display_name": "Campd Outage Merit Order Guard",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177, GATED default off; PREREG-nyiso177-degradation-root-cause.md). Selects the '-perunitmerit-' pair -- the SAME per-unit attribution, derived with scripts/data/derive_campd_unit_outages.py --merit-order-guard, in which a detected full-stop window whose unit's measured SRMC (CAMPD heat rate x delivered fuel price) sat above the revealed marginal cost of the capacity that WAS running for at least MERIT_OOM_FRAC of the window is classified as ECONOMIC LAY-UP and LEAVES the availability envelope. An economically idle unit is AVAILABLE; the LP declines it on its own economics rather than losing it from the supply stack.  WHY IT EXISTS. nyiso-176 armed campd_per_unit_attribution and the backcast got worse (C1/C3b PASS -> FAIL, load-weighted price +14.7/+7.3/+5.4 %, ST_GAS -5.28/-2.39/-1.05 TWh). Rule 14 [R-ACCURATE] binds: the accurate input is kept and the degradation is a discovered bug. nyiso-177 attributes it -- NOT to the attribution repair but to the unguarded HEAD derivation the same gate imported alongside it, which books economic idling as mechanical outage. The guarded companion reproduces the KEEPER's availability envelope while carrying the accurate attribution: np.array_equal on (2500, ST_GAS) in all three years and a nameplate-weighted L1 distance of 0.0006 across every bin, against the unguarded companion's 0.0943.  WHAT IT DOES NOT CLAIM. It does NOT repair the overlay's over-booking: the NYISO ST_GAS bins still read 0.53/0.56/0.50 of the capacity-year as outage under it, against an EFOR+planned norm of 0.10-0.15 -- and the KEEPER reads 0.54/0.56/0.50, so that object is PRE-EXISTING and stays OPEN (PREREG-nyiso177 gate G2; G3 is recorded FAILED on exactly this).  ZERO FREE PARAMETERS (rule 21 [R-DOF]): MERIT_OOM_FRAC and MERIT_RCC_PCTL are the deriver's committed constants, untouched, and the inputs are measured heat rates and delivered fuel prices that regenerate for a forward year (rule 13 [R-MEASURED]). ONE field over BOTH artifacts, exactly as campd_per_unit_attribution is (rule 19 [R-ONE-MECH]) -- the tranche statistics are computed over an outage-derated denominator, so the two must never sit on different availability bases. Has no meaning without campd_per_unit_attribution and is forced False without it (data/fleet/campd_bins.py::campd_attribution_selectors). Byte-inert off: separate files, never an overwrite, with fallback to the unguarded companion and then the incumbent artifact, so no ISO but NYISO is reachable today (rule 25 [R-ISO-SCOPE]).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.campd_per_unit_attribution",
+      "display_name": "Campd Per Unit Attribution",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two CAMPD-derived NYISO solve inputs both attribute a MIXED plant's measured conduct by a PROXY rather than by the units' own meters, and the two proxies are different: derive_thermal_tranches._fleet_nameplate_and_group gives the plant's facility-summed CAMPD net to \"the group holding the most nameplate\", while derive_campd_unit_outages._resolve_unit_group short-circuits on a last-writer-wins fac_group. Both are wrong at the same plants, in different directions. This gate selects the \"-perunit-\" companions BOTH derivers write under --per-unit-attribution / --per-unit-crosswalk, in which each unit routes to the bin that CONTAINS it via the SINGLE shared crosswalk scripts/lib/campd_measured_classes. ONE field over BOTH artifacts by design (rule 19 [R-ONE-MECH]): the tranche row's online/committed statistics are computed over an outage-derated denominator, so a tranche artifact repaired against an UNREPAIRED outage extract is internally inconsistent — the coupling nyiso-175b measured and nyiso-176 confirmed as the dominant channel of the committed-vs-HEAD artifact drift (E F Barrett's 16 combustion turbines carry 610 of the 2023-2025 outage extract's 1,137 drifting windows purely through the fac_group short-circuit). Zero free parameters: the inputs are EIA-860 prime movers and CAMPD unit types, static attributes that regenerate for a forward year (rule 13 [R-MEASURED]). Falls back to the incumbent artifact wherever a companion has not been derived for the ISO, so the off path is byte-inert and no ISO but NYISO is reachable today. See docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -42542,6 +42805,24 @@
       ]
     },
     {
+      "param_id": "scenario.egrid_family_heat_rates",
+      "display_name": "Egrid Family Heat Rates",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "eGRID PRIME-MOVER-FAMILY heat rates at multi-family plants (nyiso-184; default OFF, byte-identical off). The fleet's heat rate is joined from eGRID at PLANT grain (process_eia860._join_egrid_heat_rate reads PLNT<yy>.PLHTRT), so a plant hosting two or more prime-mover families — a 1960s steam station beside a 2003 combined cycle (Ravenswood 2500: plant blend 8.80 MMBtu/MWh, steam meter ~11, CC meter ~7.1) — hands BOTH halves one generation-weighted blend, and the model then repaired the steam half of one such plant with a hand number (fleet.models.MIXED_FACILITY_STEAM_HR[2500] = 9.5, derived by its own comment from ASSUMED capacity factors that put two-thirds of the site's energy on the steam where the meter puts one-third). When True, each family at a covered plant takes its own Σ UNT.HTIAN / Σ GEN.GENNTAN from the SAME eGRID vintage the join reads (families ST / CC={CT,CA,CS,CC} / GT={GT,IC}; covered iff >= 2 families each with heat input and net generation > 0; the join's own 3,000-30,000 Btu/kWh window), applied at the eGRID-input seam so every class-scoped measured mechanism keeps its precedence, and the hand number is SKIPPED at covered plants (rule 19, never stacked). Zero free parameters (arithmetic on eGRID's published fields); rule 13: regenerates from any eGRID vintage and responds to changed conditions; rule 24: no per-plant carve; rule 25: per-ISO artifact (data/raw/_processed-legacy/egrid_family_heat_rates_<ISO>.csv, scripts/data/derive_egrid_family_heat_rates.py), a no-op for an ISO with none. See PREREG-nyiso184-stgas-heat-rate-basis.md §1, §3 R1.",
+      "source_date": "2003",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.egrid_identity_heat_rates",
       "display_name": "Egrid Identity Heat Rates",
       "value": false,
@@ -42700,6 +42981,25 @@
       "domain": "Structural",
       "tier": 1,
       "source": "GATED, default-OFF (FF-2A item 3).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.entry_dispersion_expectation_signal",
+      "display_name": "Entry Dispersion Expectation Signal",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "GATED default-OFF",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -42871,6 +43171,25 @@
       "domain": "Structural",
       "tier": 1,
       "source": "GATED, default-OFF (FF-2A item 1",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.entry_vre_zone_selection",
+      "display_name": "Entry Vre Zone Selection",
+      "value": false,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 1,
+      "source": "GATED, default-OFF (capx D33).",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -45102,6 +45421,25 @@
       ]
     },
     {
+      "param_id": "scenario.fossil_announced_exits_enabled",
+      "display_name": "Fossil Announced Exits Enabled",
+      "value": true,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "GATED, default-ON (FLIPPED",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.gas_daily_shape",
       "display_name": "Gas Daily Shape",
       "value": false,
@@ -47094,6 +47432,25 @@
       "domain": "Fuel Prices",
       "tier": 1,
       "source": "Cold-limb zero-crossing (~20 degF): above",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_net_icr_requirement",
+      "display_name": "Neiso Net Icr Requirement",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "GATED default-OFF (capx D40",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -50956,6 +51313,25 @@
       ]
     },
     {
+      "param_id": "scenario.unit_outage_per_unit_clip",
+      "display_name": "Unit Outage Per Unit Clip",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "miso-202: enforce, in the shared unit-outage accumulator, the invariant that ONE UNIT CANNOT BE MORE THAN 100 % OUT OF SERVICE.  THE DEFECT. outages.unit_outage_event_window reconstructs a day-granular extract row as the half-open window [outage_start, outage_end + 1 day). Two windows of the SAME unit whose first row's outage_end falls on the second row's outage_start therefore BOTH cover that boundary day, and _unit_outage_factors_from_events SUMS row shares into the bin rather than unioning them — so the unit's capacity is subtracted TWICE for 24 h. The measurement is unambiguous about the cause: across MISO's committed extracts every one of the 845 same-unit window overlaps is EXACTLY 24.0 h (std5d 648, layup 197, short 0 — a single-bin histogram), which is the fingerprint of the \"+ 1 day\" artifact and of nothing else.  THE REPAIR. Accumulate each UNIT's removed MW into its own hourly array, clip that array at the unit's own capacity, and only then sum the units into the bin. It is a ceiling on a sum, not a window-merging heuristic: no date arithmetic, no adjacency test, no tolerance. It bites in exactly the physically impossible case and is the identity everywhere else, which is why the arm's availability is >= the control's on every bin and hour (the miso-202 A/B's S-3 monotonicity check).  SCOPE, decided by measurement rather than inheritance. Shared by the std >= 5-day, short and partial layers AND by the lay-up loader, whose contract is that a lay-up share and an outage share for the same plant \"sit on the same basis and are additive\" (rule 19 [R-ONE-MECH]). The declared-event MAXGEN layer is OUT of scope because phase-0 N-5 measured ZERO same-unit overlaps in it over 544 unit-series — its windows are already hour-granular, so it cannot carry a boundary-DAY defect and the flag would be provably inert there while widening the blast radius.  MEASURED (the extract's own unit capacities), ZERO fitted scalars and zero free parameters (rule 21 [R-DOF]), rule-13 forward-regenerable (it is a property of the accumulator, not of any year's data, and regenerates identically for a forecast year), eligibility year-independent, and byte-inert while off.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.unit_outage_short_windows",
       "display_name": "Unit Outage Short Windows",
       "value": false,
@@ -50971,6 +51347,25 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.unit_outage_st_capacity_basis",
+      "display_name": "Unit Outage St Capacity Basis",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Unit-outage derate NUMERATOR on the LP's own capacity basis, for STEAM bins (unit_outage_st_capacity_basis, off by default; miso-201). The fourth member of the same consistency-repair family as the three flags above, and the one that closes the side unit_outage_lp_capacity_basis structurally CANNOT reach: outages._CC_NAMEPLATE_BASIS_GROUPS is (\"CC_REGULAR\", \"CC_CHP\"), so that flag's nameplate raise never touches an ST_GAS/ST_CHP bin. A repair, not a market feature (rule 14 [R-ACCURATE]).  THE DEFECT. The accumulator derates a bin by unit_capacity_mw / cap[bin]. For a steam bin the numerator is the extract's per-unit EIA-860 NAMEPLATE (capacity_source == eia_exact) or a CEMS observed peak, while cap[bin] is the fleet's NET-SUMMER pmax sum (eia860 sets pmax = net_summer_capacity_mw). The removed FRACTION is inflated by nameplate / net_summer and the model removes MORE MW than went out — the Stony Brook arithmetic (NEISO 6081, caiso-184) on the side the CC-only flag excludes. Measured at Ninemile Point 1403 generator \"5\": nameplate 895.1 MW against net summer 742.6 MW, so unit 5 alone out removes 895.1/1465.4 = 0.611 of the bin against a correct 742.6/1465.4 = 0.507.  WHY THE CC FLAG'S DIRECTION IS WRONG HERE. That flag RAISES the denominator to meet a numerator fleet_to_bins had already raised for the LP. For a steam bin nothing raises the denominator, so raising it would leave the LP applying the multiplier to a capacity the share was never taken against — at 1403 a nameplate denominator makes a full concurrent stop read 0.939, i.e. 89 MW of phantom availability at a plant that is entirely out. This flag therefore moves the NUMERATOR onto the LP's basis instead: each row's removed MW becomes the fleet unit's own pmax_mw, the exact capacity the availability multiplier is applied to, so a bin all of whose units are out lands on EXACTLY 1.0 — never 1.13, never 0.94.  ALL-OR-NOTHING PER BIN (outages._st_basis_pairmap): a bin is aligned only when every extract unit in it resolves 1-1 onto a distinct fleet unit, by exact normalised id, an unambiguous trailing-digit hit, or a unique 1-1 RESIDUAL pairing that is forced rather than chosen. Any unresolved unit leaves the whole bin on the production basis, because a half-aligned bin — some units on the LP basis, some on nameplate — is less coherent than either basis alone. Measured coverage at MISO: 32 of 55 steam bins, 8,553 of 12,291 MW (69.6 %); the refusals are an extract/fleet UNIT-SET mismatch and the whole-plant eia923_netzero synthetic rows, both separate open defects this flag deliberately does not touch.  Shared by the std >= 5-day, short and partial layers AND by the lay-up loader, whose contract is that a lay-up share and an outage share for the same plant \"sit on the same basis and are additive\" — aligning one and not the other would break exactly that invariant (rule 19 [R-ONE-MECH]). The declared-event MAXGEN layer is OUT of scope by construction and this is not the same question: its rows carry a measured derate_mw, a partial MW reduction and not a unit capacity, so a pmax substitution there would swap a capacity for a derate. MEASURED (the fleet's own pmax), ZERO fitted scalars (rule 21 [R-DOF]), rule-13 forward-regenerable (both the fleet pmax and the extract's unit ids exist for a forecast year, and the alignment responds to changed conditions because the fleet does), eligibility year-independent, non-ERCOT only (the ERCOT branch caps on its own CAMPD bin sheet, a different basis with no per-unit fleet roster), and byte-inert while off.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -51204,6 +51599,43 @@
       "tier": 2,
       "source": "Gas steam (legacy oil/gas boilers): high thermal inertia — slow to start, a real fuel/wear cost per start, and a long minimum run because a stop-start cycle is more expensive than idling at minimum load. The startup cost is far larger than a combustion turbine's and the min-run/min-down windows much longer, so these intermediate-duty units DRAG (hold online at part load) rather than cycle like peakers. ISO-gated on ScenarioConfig.gas_st_startup_cost (default OFF → ERCOT byte-identical); enabled for MISO's intermediate steam. Source: NREL/SR-5500-55433 (Kumar et al. 2012) gas-steam class, OEM specs.",
       "source_date": "2012",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "st_gas_committed_measured_hr_mult_by_iso.CAISO",
+      "display_name": "St Gas Committed Measured Hr Mult By Iso / Caiso",
+      "value": 1.683,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "MEASURED min-load block-average burn ratio of the ST_GAS plants that ``offer_curves._offer_curve_for_group`` EXCLUDES from ``offer_curve_by_group`` — its ``ST_GAS_PEAKER_PLANTS`` bypass — by ISO. Consumed ONLY under ``ScenarioConfig.caiso_st_gas_committed_measured`` (gated, default off).  WHY THE REGISTRY EXISTS (caiso-239, rule 24 [R-REGISTRY] / rule 14 [R-ACCURATE]). A bypassed ST_GAS bin never reaches ``committed_hr = base_hr x offer[\"committed\"]`` in ``fleet.assembly``, so its committed band falls through to the ERCOT-lineage class default ``fleet.campd_bins._DEFAULT_HR_MULT_BY_GROUP[\"ST_GAS\"][\"mc\"] = 1.15`` — an UNCITED literal in a data/ module, absent from ``run_config.json`` and from the DOF ledger's ``offer_curve_by_group`` count. For CAISO that literal prices the whole 2,858.8 MW once-through-cooling steam fleet (plants 315 AES Alamitos, 335 AES Huntington Beach, 350 Ormond Beach — the three plants ``ST_GAS_PEAKER_PLANTS`` names) while CAISO's own measurement of THOSE EXACT UNITS sits unused. This registry is the measured replacement.  CAISO 1.683 = ``avg_committed_p50`` for class ST_GAS in ``data/raw/reference/caiso_campd_marginal_hr_summary.csv`` (base HR 11.847, n_units 10). Those ten units are exactly plants 315/335/350 — ``data/raw/_processed-legacy/campd_gas_commitment_params_CAISO_units.csv`` lists Alamitos 3/4/5/CT1/CT2, Huntington Beach 2/CT1/CT2 and Ormond Beach 1/2 and no others — so the statistic's population and the band's population COINCIDE, which is what makes this a rule-14 measured-for-estimate substitution rather than a transplant. It is the SAME key already resolved onto this class as ``phys_committed`` in ``pipeline.backcast_config._CAISO_OFFER_CURVE``, so arming it adds no new measurement and no free parameter (rule 21 [R-DOF]).  DISPERSION, DISCLOSED (caiso-239 §1 F-5): ST_GAS is the only CAISO class whose ``avg_committed`` spread is wide — p25 0.682 / p50 1.683 / p75 3.275, ratio 4.80, against 1.12-1.27 for every other gas class. The spread is real physical bimodality (six steam units at LSL 7.6-10.0 % of HSL pooled with four colocated CTs at 22.0-28.2 %), and the tranche this value prices is sized 6.3-9.3 % of nameplate — the STEAM min-load block, whose own statistic sits near p75. The class p50 is therefore the CONSERVATIVE choice for this tranche, not a midpoint of convenience.  Re-derives ONLY when the CAMPD source updates (rule 23 [R-FROZEN-DERIVE]). No other ISO has a measured counterpart yet; an ISO absent from this registry cannot arm the mechanism (rule 25 [R-ISO-SCOPE] — the gate hard-errors rather than silently falling back to the class default).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "st_gas_peak_measured_hr_mult_by_iso.CAISO",
+      "display_name": "St Gas Peak Measured Hr Mult By Iso / Caiso",
+      "value": 1.166,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "MEASURED PEAK-band offer multiplier of the same bypassed ST_GAS plants, by ISO. Consumed ONLY under ``ScenarioConfig.caiso_st_gas_peak_measured`` (gated, default off). The ``mc`` sibling of the registry directly above; the two are DISJOINT BY BAND (rule 19 [R-ONE-MECH]) — that one moves the committed band and nothing else, this one the peak band and nothing else.  WHY THIS REGISTRY EXISTS (caiso-240, rule 24 [R-REGISTRY] / rule 14 [R-ACCURATE]). The caiso-240 census measured the full footprint of all 28 ``fleet.campd_bins._DEFAULT_HR_MULT_BY_GROUP`` literals on all six designated keepers, and found that after caiso-239 exactly TWO cells remain live on the CAISO keeper — ``ST_GAS[\"econ\"] = 1.00`` and ``ST_GAS[\"peak\"] = 1.10`` — both on the same 2,858.8 MW once-through-cooling steam fleet (plants 315 / 335 / 350) reached through the same ``ST_GAS_PEAKER_PLANTS`` offer-curve bypass. ``peak`` is the one of the two that has a measured counterpart AT THE MODEL'S OWN GRAIN: the bypassed plant's peak band is a single flat multiplier, and the measurement is a single number.  CAISO 1.166 = ``CT_PEAKER.bands.peak`` in the committed ``data/raw/_validation-source/caiso_offer_curve_measured.json`` (CAISO OASIS Public Bid Data, PUB_DAM_GRP masked DAM bids, trade years 2023-2025). It is the SAME value the CAISO ``ST_GAS`` class band already carries on the keeper, armed there by ``caiso_offer_surface_measured_ungrounded`` at caiso-231 — and ``derive_caiso_offer_surface.py`` discloses why that class assignment is sound: *\"the three OTC/RMR steamers (ST_GAS ...) and priced CT_CHP curves land in the CT bucket\"*. So the measurement's population CONTAINS exactly the plants this registry prices, while the class band it was written onto reaches none of them.  POPULATION MATCH IS CONTAINMENT, NOT COINCIDENCE — DISCLOSED AGAINST INTEREST. Unlike caiso-239's ``avg_committed_p50`` (whose ten CAMPD units ARE plants 315/335/350 and no others), the CT bucket is the pooled CT_PEAKER + CT_CHP + ST_GAS conduct and the OASIS ids are masked, so the steamers cannot be isolated inside it. This is the SAME basis on which caiso-231 re-grounded the ST_GAS class band and promoted the result, applied now to the plants the class band was measured on and never reaches.  BID CONDUCT, NOT PHYSICS — hence the rule-13 treatment DIFFERS from caiso-239's. That mechanism arms a measured PHYSICAL heat-rate ratio (a boiler's part-load burn, year-independent) and is deliberately NOT a backcast-only overlay. This one arms measured BID conduct from a specific year's OASIS record, exactly like its ``caiso_offer_surface_measured*`` siblings, so it IS registered in ``_BACKCAST_ONLY_OVERLAY_FIELDS``.  Re-derives ONLY when the OASIS source updates (rule 23 [R-FROZEN-DERIVE]). An ISO absent from this registry cannot arm the mechanism (rule 25 [R-ISO-SCOPE] — the gate hard-errors rather than silently falling back to the class default).",
+      "source_date": "2023",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",

@@ -1563,6 +1563,7 @@ def load_or_synthesize_bins(
             measured_ct_heat_rates=config.measured_ct_heat_rates,
             measured_chp_heat_rates=config.measured_chp_heat_rates,
             egrid_identity_heat_rates=config.egrid_identity_heat_rates,
+            egrid_family_heat_rates=config.egrid_family_heat_rates,
             cc_steam_part_capacity=config.cc_steam_part_capacity,
             cc_steam_part_reclass=config.cc_steam_part_reclass,
         )
@@ -1656,6 +1657,7 @@ def build_base_fleet(
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
                 egrid_identity_heat_rates=config.egrid_identity_heat_rates,
+                egrid_family_heat_rates=config.egrid_family_heat_rates,
                 cc_steam_part_capacity=config.cc_steam_part_capacity,
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
             )
@@ -1698,6 +1700,7 @@ def build_base_fleet(
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
                 egrid_identity_heat_rates=config.egrid_identity_heat_rates,
+                egrid_family_heat_rates=config.egrid_family_heat_rates,
                 cc_steam_part_capacity=config.cc_steam_part_capacity,
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
             )

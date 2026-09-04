@@ -225,6 +225,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key; an armed run carries a different fleet cost and so gets a distinct
     # key.
     "egrid_identity_heat_rates",
+    # eGRID prime-mover-family heat rates (nyiso-184, default off): dropped
+    # from the hash at its default so every pre-existing cached run keeps its
+    # key; an armed run carries a different fleet cost and so gets a distinct
+    # key.
+    "egrid_family_heat_rates",
     # Combined-cycle steam-part capacity repair (miso-126, default off):
     # dropped from the hash at its default so every pre-existing cached run
     # keeps its key; an armed run carries a different FLEET and so gets a
@@ -1401,6 +1406,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_ct_heat_rates": "False",
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
+    "egrid_family_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
     "crossover_forward_year": "None",
@@ -3764,6 +3770,31 @@ class ScenarioConfig:
     # changed conditions; rule 25: each ISO's lane derives its own artifact.
     # See FINDING-nyiso150-allegany-hr-identity-2026-08-22.md.
     egrid_identity_heat_rates: bool = False
+
+    # eGRID PRIME-MOVER-FAMILY heat rates at multi-family plants (nyiso-184;
+    # default OFF, byte-identical off). The fleet's heat rate is joined from
+    # eGRID at PLANT grain (process_eia860._join_egrid_heat_rate reads
+    # PLNT<yy>.PLHTRT), so a plant hosting two or more prime-mover families
+    # — a 1960s steam station beside a 2003 combined cycle (Ravenswood 2500:
+    # plant blend 8.80 MMBtu/MWh, steam meter ~11, CC meter ~7.1) — hands
+    # BOTH halves one generation-weighted blend, and the model then repaired
+    # the steam half of one such plant with a hand number
+    # (fleet.models.MIXED_FACILITY_STEAM_HR[2500] = 9.5, derived by its own
+    # comment from ASSUMED capacity factors that put two-thirds of the site's
+    # energy on the steam where the meter puts one-third). When True, each
+    # family at a covered plant takes its own Σ UNT.HTIAN / Σ GEN.GENNTAN from
+    # the SAME eGRID vintage the join reads (families ST / CC={CT,CA,CS,CC} /
+    # GT={GT,IC}; covered iff >= 2 families each with heat input and net
+    # generation > 0; the join's own 3,000-30,000 Btu/kWh window), applied at
+    # the eGRID-input seam so every class-scoped measured mechanism keeps its
+    # precedence, and the hand number is SKIPPED at covered plants (rule 19,
+    # never stacked). Zero free parameters (arithmetic on eGRID's published
+    # fields); rule 13: regenerates from any eGRID vintage and responds to
+    # changed conditions; rule 24: no per-plant carve; rule 25: per-ISO
+    # artifact (data/raw/_processed-legacy/egrid_family_heat_rates_<ISO>.csv,
+    # scripts/data/derive_egrid_family_heat_rates.py), a no-op for an ISO
+    # with none. See PREREG-nyiso184-stgas-heat-rate-basis.md §1, §3 R1.
+    egrid_family_heat_rates: bool = False
 
     # Combined-cycle STEAM-part capacity repair (miso-126; default OFF,
     # byte-identical off). EIA-860's ``Energy Source 1`` on a ``CA``
