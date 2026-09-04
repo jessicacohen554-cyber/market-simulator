@@ -151,6 +151,34 @@
 > try to** — R-AB is the owner's ruling and stands; what moved is the measurement
 > underneath it, taken 56 commits after the ruling was made.
 >
+> ### 🔴 R-AB, SECOND BLOCKER — **H-1's PATH-FILTER TRAP APPLIES TO ALL FIVE REQUIRED CHECKS, AND THIS LANE's OWN PR DEMONSTRATES IT**
+>
+> H-1 carries this as a `file-integrity-guard` problem: *"a required check that is
+> path-filtered blocks every PR it does not run on … requiring it strands every
+> docs-only PR, this records lane's included, forever."* **Measured at this pin,
+> the same trap applies to R-AB's entire required set, which H-1 does not yet
+> say.** `ci.yml`'s `pull_request` trigger is **path-filtered** (`src/**`,
+> `scripts/**`, `tests/**`, `pyproject.toml`, `uv.lock`, `.python-version`,
+> `conftest.py`, `frontend/data/{backcast,hindcast,forecast}/**`,
+> `tests/golden/**`, the two mechanism-matrix paths, `CLAUDE.md`,
+> `.github/workflows/ci.yml`) — and **`docs/**` is not among them.** All five
+> checks R-AB names are `ci.yml` jobs, so on a docs-only PR **none of the five
+> ever reports**, and GitHub treats a never-reporting required check as
+> **pending**, not passed.
+>
+> **This is demonstrated, not reasoned.** This lane's own PR (#4667) touches
+> exactly two files, both under `docs/`. Its head commit produced **one** check
+> run in total — `shrink-guard`, `success` — and **zero `ci.yml` jobs**
+> (`total_count: 0` for the branch on the runs API). Under R-AB as written that PR
+> would sit **pending on five checks forever**, and so would every future records
+> refresh, every plan/board edit and every handoff doc.
+>
+> **The fix is H-1's own, applied one level wider: a widened filter or an
+> always-run no-op job — never a weaker required set.** Recorded as a
+> **second blocker on Y-1**, alongside the `Fast test tier` red (Y-4). Both are
+> small; neither is a program item; and **neither is a reason to defer the flip
+> once they are cleared.**
+>
 > ### 🔴 LEG 4 — **30-FOR-30 A THIRD TIME**, ON A THIRD DISTINCT SET OF RUNS
 >
 > All 30 most recent completed `ci.yml` runs (**2342–2371**) are `pull_request`
@@ -260,7 +288,11 @@
 >   (PERF-B/capture lane, R-O schema); CAISO's row re-targets to caiso-241.
 > - **board X-3 / X-4 / X-5 / X-6 · UNCHANGED.**
 > - **board Y-1 · the owner Settings flip (R-AB)** — 4 of 5 required checks green;
->   gated in practice on Y-4, not on a program item.
+>   gated in practice on **two** small blockers, neither a program item: **Y-4**
+>   (the `Fast test tier` red) and **the path-filter trap** — `ci.yml` does not run
+>   on `docs/**`, so all five required checks would strand every docs-only PR as
+>   *pending*, this lane's own #4667 demonstrating it. H-1's remedy applies: widen
+>   the filter or add an always-run no-op job, never weaken the required set.
 > - **board Y-2 · G2 declaration sitting (R-AD)** — precondition (flip confirmed
 >   live) unmet; all four legs to be verified at ONE pin when it is.
 > - **board Y-3 · the R-T non-compliance pattern — now SEVEN for seven**, and no
