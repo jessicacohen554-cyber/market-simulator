@@ -401,6 +401,16 @@ frontend/data/forecast/program-status.js
 /results/ff-t1f-d46/*/*/*/hourly/
 /results/ff-t1f-d46/*/*/*/year_*_floor_retentions.json
 /results/ff-t1f-d46/*.log
+# capx D45-R (2026-09-04): D46 Stages 2 and 3 folded in (owner ruling Q35) --
+# the NYISO / PJM / MISO T1-F 2026-2030 re-measures at HEAD. Same class and same
+# slim-vs-heavy split as /results/ff-t1f-d46/ directly above: the committed record
+# is full_horizon_summary.json + run_config.json + forecast_verdict.json +
+# dof_ledger.json + the resolved config.yaml + the evolution_<year>.json ledgers.
+/results/ff-t1f-d45r/*/*/*/*.parquet
+/results/ff-t1f-d45r/*/*/*/*.npz
+/results/ff-t1f-d45r/*/*/*/hourly/
+/results/ff-t1f-d45r/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d45r/*.log
 
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
@@ -745,6 +755,13 @@ results/hindcast/*/*/*/evolution_*.json
 # entry_screen_diagnostics dumps D43 routed as the PJM/NYISO precondition.
 !results/hindcast/pjm-2021-2025-realized-t1h-d45*/*/*/evolution_*.json
 !results/hindcast/nyiso-2021-2025-realized-t1h-d45*/*/*/evolution_*.json
+# capx D45-R (2026-09-04): the D45 close-out at HEAD. The pjm-/nyiso-...-d45*
+# rules above already match this lane's four PJM/NYISO legs (-d45r, -d45r-fixed,
+# -d45r-curveon); the NEISO shipped-posture leg gets the same one-bundle carve-out
+# -- its ledgers are the sole committed evidence for the L5-vs-D46 (lever OFF vs
+# ON, dates ON both) and L5-vs-d37-control (dates OFF vs ON, lever OFF both)
+# position and channel readings in the D45 finding §5/§7.
+!results/hindcast/neiso-2021-2025-realized-t1h-d45r/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet
