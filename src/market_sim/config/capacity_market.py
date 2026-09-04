@@ -3432,6 +3432,115 @@ NET_ICR_HOLD_LAST_RATIO_BY_ISO: dict[str, float] = {
     "NEISO": 29_855.0 / 26_417.0,  # ARA 2 of CCP 2027/28: Net ICR / 50-50 peak
 }
 
+# --------------------------------------------------------------------------- #
+# NYISO adequacy-requirement devintage (capx D52, 2026-09-04, executing
+# FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md §5.2.4 items 1 and 2 — the
+# NYISO per-ISO repair lane D45's §9 close-out names). THREE registries, ONE
+# published source: NYSRC "New York Control Area Installed Capacity
+# Requirement for the Period May 2026 through April 2027" — Technical Report
+# Appendices (Dec 2025), Appendix D §D.1.1 Table D.2 "New York Control Area
+# ICAP to UCAP Translation" (report p.68 = PDF p.86; sha256
+# 714aeeb9156795108147982f93cf90f885ed110835e0a6f2fa257f809da419d5, D45 §8,
+# re-fetched and hash-matched by D52). Per capability year (May–April, labelled
+# by its start year, "YYYY/YYYY+1") the table publishes the ICAP-market
+# FORECAST PEAK LOAD (MW), the EC-approved INSTALLED CAPACITY REQUIREMENT (the
+# adopted IRM, %), the DERATE FACTOR (the NYCA ICAP→UCAP translation factor)
+# and the resulting ICAP / UCAP requirements — the NYISO analogue of PJM's
+# published FPR and ISO-NE's published Net ICR: a market-design PARAMETER on
+# file before the capability year begins, never a fit target (rules 13/23).
+# Every row is digitized into the committed
+# data/raw/capacity-market/demand-curve/nyiso/nyiso.csv (metrics
+# icap_market_forecast_peak / irm_adopted / icap_ucap_translation_factor /
+# ucap_requirement) and reconciled against it — and against the table's own
+# identity peak × (1 + IRM) × (1 − derate) = UCAP requirement (< 1 MW) — by
+# tests/unit/model/test_capacity.py::TestNyisoRequirementDevintage.
+#
+# WHAT IT REPAIRS (D45 §5.2, re-measured by D52's pre-declaration §1): at
+# default the NYISO requirement is peak × 1.244 × (1 − 0.1321) on the MODEL's
+# peak — the 2025-26 IRM crossed with the 2024-25 derate, a mixed single
+# vintage — and the capacity screens consume it on the capacity-screen seam's
+# growth-scaled weather-year peak, which in the 2021–2025 hindcast sits
+# 2.1–3.6 GW of requirement BELOW the published NYCA UCAP requirement in every
+# scored year (the position artifact behind the +189 % curve-ON over-fire).
+# CONSUMERS: two default-OFF ScenarioConfig gates, each consulting exactly one
+# registry object (rule 19), inside ``retirements.gross_adequacy_requirement_mw``:
+#   * ``nyiso_requirement_forecast_peak`` → NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO:
+#     the requirement is priced on the PUBLISHED forecast peak of the
+#     capability year (item 1). In-table years only; outside the table the
+#     model's own peak is the (forward) forecast and is used unchanged — no
+#     hold-last, because a held MW peak against a growing load would fail the
+#     rule-13 forward test.
+#   * ``nyiso_requirement_vintage_factors`` → NYCA_IRM_ADOPTED_BY_ISO +
+#     NYCA_ICAP_UCAP_TRANSLATION_BY_ISO: the factor is the capability year's
+#     adopted IRM × (1 − derate) (item 2, the D40 vintage axis); strictly
+#     beyond the last published pair HOLD-LAST (card C-A) as that pair's ratio
+#     (2025/26: 1.244 × 0.870 = 1.0823 vs the composite 1.0797, +0.24 %);
+#     pre-table years fall through to the composite.
+# Both on ⇒ the in-table requirement IS Table D.2's UCAP requirement, the
+# model's peak dropping out exactly as under the NEISO Net ICR / PJM FPR
+# paths. INFORMATION GATE (rule 13, the D42/D44 construction): a row of
+# capability year Y/Y+1 is read in model year Y only. Every parameter in it
+# is fixed BEFORE the capability year begins (May 1, Y): the IRM is adopted by
+# the NYSRC Executive Committee in December Y−1 (the committed csv rows carry
+# the dates — 2020-12-04 / 2021-12-03 / 2022-12-09 / 2023-12-08 / 2024-12-06),
+# the forecast peak is the load forecast NYISO adopts for that capability
+# year's ICAP requirement, and the summer translation factor is posted ahead
+# of the May capability period. A later capability year's row is never read
+# for an earlier model year and the hold-last extends the table's forward
+# edge only. FORWARD STORY: the same construction regenerates every capability
+# year from the then-current Gold Book forecast + adopted IRM + translation
+# factor; new rows land on publication (rule 23). Rule 25: NYISO only — the
+# registries hold one ISO and the gate predicates require an entry.
+# --------------------------------------------------------------------------- #
+NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO: dict[str, dict[str, float]] = {
+    "NYISO": {  # Table D.2 "Forecast Peak Load (MW)", capability year
+        "2020/2021": 32_296.0,
+        "2021/2022": 32_333.0,
+        "2022/2023": 31_767.0,
+        "2023/2024": 32_049.0,
+        "2024/2025": 31_542.0,
+        "2025/2026": 31_469.0,
+    },
+}
+
+# Table D.2 "Installed Capacity Requirement (%)" − 100 %, i.e. the EC-approved
+# (adopted) IRM as a fraction. Differs from the IRM STUDY base-case value the
+# `irm` csv rows carry in 2023/24 (study 19.9 → adopted 20.0) and 2024/25
+# (study 23.1 → adopted 22.0); the adopted value is what the ICAP market
+# requirement was set on (Table D.1 "EC Approved IRM"; 2020/21 = 18.9 % there
+# and in Table D.2's 118.9). EC approval dates for 2021/22–2025/26: 2020-12-04,
+# 2021-12-03, 2022-12-09, 2023-12-08, 2024-12-06 (the committed `irm` rows'
+# citations); 2020/21's date is not carried in-repo and is not invented here.
+NYCA_IRM_ADOPTED_BY_ISO: dict[str, dict[str, float]] = {
+    "NYISO": {
+        "2020/2021": 0.189,
+        "2021/2022": 0.207,
+        "2022/2023": 0.196,
+        "2023/2024": 0.200,
+        "2024/2025": 0.220,
+        "2025/2026": 0.244,
+    },
+}
+
+# Table D.2 "Derate Factor" — the NYCA-wide ICAP→UCAP translation factor for
+# the capability year's summer period (ICAP Manual §2.5: UCAP requirement =
+# ICAP requirement × (1 − factor)). The 2020/21–2024/25 values are the
+# committed `icap_ucap_translation_factor` csv rows (byte-equal, asserted by
+# test); 2025/26 (0.1300) is D52's intake from the 2026-27 appendices. The
+# single-vintage PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"]
+# above stays the 2024/25 value (1 − 0.1321) — the unarmed composite is
+# byte-identical by construction; only the armed path reads this table.
+NYCA_ICAP_UCAP_TRANSLATION_BY_ISO: dict[str, dict[str, float]] = {
+    "NYISO": {
+        "2020/2021": 0.0830,
+        "2021/2022": 0.0877,
+        "2022/2023": 0.0978,
+        "2023/2024": 0.1014,
+        "2024/2025": 0.1321,
+        "2025/2026": 0.1300,
+    },
+}
+
 # AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
 # the AS-eligible (mostly storage) fleet grows past the calibration point.
 # Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **

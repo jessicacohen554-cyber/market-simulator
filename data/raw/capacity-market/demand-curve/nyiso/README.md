@@ -94,3 +94,36 @@ Two coverage notes, both deliberate:
   publish the IRM — that comes from the NYSRC IRM Study for the capability year,
   which was not retrieved in this session. Left absent rather than carried
   forward from the 2025-2026 study (24.4 %), per the no-guessing rule.
+
+**STATUS (2026-09-04 addition, capx D52 — the NYISO adequacy-requirement
+devintage, D45 §5.2.4 items 1–2):** 19 NYCA rows intaken from the NYSRC
+2026-2027 IRM Study Technical Report **Appendices** (Dec 2025; sha256
+`714aeeb9156795108147982f93cf90f885ed110835e0a6f2fa257f809da419d5`, the D45 §8
+document, re-fetched and hash-matched), Appendix D §D.1.1 **Table D.2 "New York
+Control Area ICAP to UCAP Translation"** (report p.68 = PDF p.86), capability
+years 2020-2021 … 2025-2026:
+
+- `icap_market_forecast_peak` (mw) — Table D.2 "Forecast Peak Load (MW)", the
+  ICAP-market forecast peak the NYCA requirement of that capability year was
+  set on (32,296 / 32,333 / 31,767 / 32,049 / 31,542 / 31,469).
+- `irm_adopted` (pct) — Table D.2 "Installed Capacity Requirement (%)" − 100,
+  the EC-approved IRM (18.9 / 20.7 / 19.6 / 20.0 / 22.0 / 24.4). Distinct from
+  the existing `irm` rows, which carry the IRM STUDY base-case value and differ
+  in 2023-2024 (19.9 study → 20.0 adopted) and 2024-2025 (23.1 → 22.0); the
+  NYSRC EC approval dates are in each row's `source_page`.
+- `icap_ucap_translation_factor` (fraction) — one NEW row, 2025-2026 = 0.1300;
+  the 2020-2021 … 2024-2025 rows already on disk (cited to the 2025-2026
+  appendices) are byte-equal to the 2026-2027 table and were left as they are.
+- `ucap_requirement` (mw) — Table D.2 "UCAP Requirement (MW)" (35,213 / 35,604 /
+  34,277 / 34,559 / 33,397 / 34,059), a VALIDATION row for the identity
+  `peak × (1 + IRM) × (1 − derate) = UCAP requirement` the registries are
+  tested against (< 1 MW; the table rounds to MW) — never a fit target.
+
+Consumers: `NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO`, `NYCA_IRM_ADOPTED_BY_ISO`,
+`NYCA_ICAP_UCAP_TRANSLATION_BY_ISO` (`config/capacity_market.py`), armed only by
+the default-OFF `ScenarioConfig.nyiso_requirement_forecast_peak` /
+`nyiso_requirement_vintage_factors` gates; reconciled row-for-row by
+`tests/unit/model/test_capacity.py::TestNyisoRequirementDevintage`. The shipped
+composite `PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"]` stays
+pinned to the 2024-2025 factor (re-deriving it onto the 2025-2026 row is a
+rule-23 owner decision, routed in `docs/handoffs/FINDING-capx-d52-2026-09-04.md`).

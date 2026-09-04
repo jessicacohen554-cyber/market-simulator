@@ -1354,6 +1354,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field
     # (the nyiso-119 discipline).
     "ccs_retrofit_capex_co2_scaling",
+    # capx D52: the NYISO adequacy-requirement devintage gates (published
+    # forecast peak; per-capability-year adopted IRM × (1 − derate)) — both
+    # default-off, byte-identical unarmed (the requirement resolver returns
+    # the same peak object and falls through to the same composite). Dropped
+    # from the hash at their False defaults so every pre-existing cache key of
+    # all six ISOs is byte-stable; an armed run keys distinctly. nyiso_*
+    # cluster at the tuple's end per HOUSE-3. Registered IN THE SAME COMMIT as
+    # the fields (the nyiso-119 discipline).
+    "nyiso_requirement_forecast_peak",
+    "nyiso_requirement_vintage_factors",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1830,6 +1840,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D50: CCS retrofit capex-scaling + CHP-exclusion gate, registered at
     # its shipping False default (an armed run keys distinctly).
     "ccs_retrofit_capex_co2_scaling": "False",
+    # capx D52: NYISO adequacy-requirement devintage gates, registered at
+    # their shipping False defaults (armed runs key distinctly).
+    "nyiso_requirement_forecast_peak": "False",
+    "nyiso_requirement_vintage_factors": "False",
 }
 
 
@@ -14922,6 +14936,58 @@ class ScenarioConfig:
     # pjm_accreditation_design_vintage above (rules 22/24/25/28); the two
     # fields are separate gates so the owner can arm either alone, and the
     # D48 A/B arms both.
+    nyiso_requirement_forecast_peak: bool = False  # GATED default-OFF (capx
+    # D52 2026-09-04, executing FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md
+    # §5.2.4 item 1 — the NYCA requirement on the PUBLISHED ICAP-market
+    # forecast peak). Armed, retirements.resolve_nyiso_requirement_peak_mw
+    # prices the NYISO adequacy requirement (the CR-1 position, the reliability
+    # floor, the reserve-margin backstop — one requirement, rule 19) on the
+    # NYSRC forecast peak of the capability year (constants.NYCA_ICAP_FORECAST_
+    # PEAK_MW_BY_ISO — Table D.2 col. 1 of the NYSRC 2026-27 IRM Study
+    # Appendices, 2020/21–2025/26) instead of the model's own peak, for
+    # in-table capability years only; outside the table the model's peak is
+    # the forward forecast and is used unchanged (no hold-last of a MW peak —
+    # it would fail the rule-13 forward test). WHAT IT REPAIRS (D45 §5.2,
+    # re-measured in PREDECL-capx-d52-2026-09-04.md §1): the screens consume
+    # the requirement on the capacity-screen seam's growth-scaled weather-year
+    # peak (≈ 28.6–29.3 GW in the 2021–2025 hindcast) where NYSRC set the
+    # requirement on its 31.5–32.3 GW ICAP-market forecast — 2.1–3.6 GW of
+    # requirement low in every scored year, the position artifact behind the
+    # +189 % curve-ON over-fire. SIGN (rule 14): requirement UP ⇒ positions
+    # DOWN toward the market ⇒ capacity revenue UP under any curve ⇒ NYISO
+    # retirements HARDER; the curve-OFF default is position-independent, so
+    # the A/B is expected inert on FC-3. Zero free parameters: a published
+    # market-design input reconciled to its committed csv row by test (rules
+    # 5/13/21/23); vintage-gated — the row of capability year Y is fixed
+    # before May 1, Y and is read in model year Y only. WHY DEFAULT-OFF:
+    # arming is an owner decision (rules 5/24/28) scored leave-one-year-out
+    # within 2021–2025 on the D52 A/B (suffixed nyiso-t1h-d52-devintage vs
+    # the bare nyiso-t1h) BEFORE any default moves (rule 22). Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at False (unarmed keys byte-stable; armed
+    # keys distinctly); coerced to the default in a plain backcast (a
+    # forecast-lane mechanism — no backcast consumer of the requirement
+    # resolver exists). SCOPE: NYISO-only by construction (the registry holds
+    # one ISO and the predicate requires an entry) — rule 25; nothing transfers.
+    nyiso_requirement_vintage_factors: bool = False  # GATED default-OFF (capx
+    # D52 2026-09-04, D45 §5.2.4 item 2 — the per-capability-year ADOPTED IRM ×
+    # (1 − derate) in place of the single mixed vintage 1.244 × (1 − 0.1321),
+    # the D40 vintage axis on the NYISO composite). Armed,
+    # retirements.resolve_nyiso_requirement_factor returns the capability
+    # year's (1 + IRM_adopted) × (1 − derate) from constants.NYCA_IRM_ADOPTED_
+    # BY_ISO + NYCA_ICAP_UCAP_TRANSLATION_BY_ISO (Table D.2 cols. 2–3;
+    # 2020/21–2025/26), HOLDS-LAST beyond the table as the last published pair
+    # (2025/26: 1.244 × 0.870 = 1.0823, +0.24 % over the composite — the
+    # golden's 2026+ years essentially untouched, the D40 exposure split), and
+    # falls through to the composite pre-table. With nyiso_requirement_
+    # forecast_peak ON as well the in-table requirement IS Table D.2's
+    # published NYCA UCAP requirement (35,604 / 34,277 / 34,559 / 33,397 /
+    # 34,059 MW for 2021/22–2025/26). SIGN (rule 14): 2024 is the one year the
+    # factor half moves the requirement DOWN (adopted 22.0 % vs the vintage
+    # 24.4 %); 2021 UP; 2023 / 2025 within 0.3 pt. Zero free parameters;
+    # cache key / backcast coercion / scope / why-default-off exactly as
+    # nyiso_requirement_forecast_peak above; the two fields are separate
+    # gates so the owner can arm either alone (the D48 convention), and the
+    # D52 A/B arms both.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -15286,6 +15352,22 @@ class ScenarioConfig:
             )
             self.pjm_demand_response_supply = (
                 type(self).__dataclass_fields__["pjm_demand_response_supply"].default
+            )
+
+        # capx D52: the two NYISO adequacy-requirement devintage gates are
+        # likewise forecast-lane mechanisms — coerced to the DATACLASS DEFAULT,
+        # never a literal, in a plain backcast; kept in a hindcast
+        # (mode="forecast", hindcast=True).
+        if self.mode == "backcast":
+            self.nyiso_requirement_forecast_peak = (
+                type(self)
+                .__dataclass_fields__["nyiso_requirement_forecast_peak"]
+                .default
+            )
+            self.nyiso_requirement_vintage_factors = (
+                type(self)
+                .__dataclass_fields__["nyiso_requirement_vintage_factors"]
+                .default
             )
 
         # entry_lookahead_reprice is a FORECAST-only capacity-screen price
@@ -16600,6 +16682,8 @@ TIER_TAGS: dict[str, int] = {
     "neiso_net_icr_requirement": 1,
     "pjm_accreditation_design_vintage": 1,
     "pjm_demand_response_supply": 1,
+    "nyiso_requirement_forecast_peak": 1,
+    "nyiso_requirement_vintage_factors": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

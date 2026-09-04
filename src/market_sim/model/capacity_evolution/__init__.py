@@ -166,6 +166,10 @@ from .retirements import (
     resolve_demand_response_supply_mw,
     resolve_pre_reform_pool_requirement,
     resolve_thermal_accreditation_basis,
+    nyiso_requirement_forecast_peak_armed,
+    nyiso_requirement_vintage_factors_armed,
+    resolve_nyiso_requirement_factor,
+    resolve_nyiso_requirement_peak_mw,
     thermal_accreditation_fraction,
 )
 from .new_entry import (
@@ -300,6 +304,10 @@ __all__ = [
     "resolve_demand_response_supply_mw",
     "resolve_pre_reform_pool_requirement",
     "resolve_thermal_accreditation_basis",
+    "nyiso_requirement_forecast_peak_armed",
+    "nyiso_requirement_vintage_factors_armed",
+    "resolve_nyiso_requirement_factor",
+    "resolve_nyiso_requirement_peak_mw",
     "thermal_accreditation_fraction",
     # new entry
     "CumulativeDeployment",

@@ -89,7 +89,8 @@ columns:
       forecast_pool_requirement | icap_ucap_translation_factor | price_cap |
       curve_point | soft_offer_cap |
       ra_report_price | ra_mpb | reliability_requirement |
-      reliability_requirement_frr_adj | ee_addback | curve_point_ucap.
+      reliability_requirement_frr_adj | ee_addback | curve_point_ucap |
+      icap_market_forecast_peak | irm_adopted | ucap_requirement.
       net_cone is the Net
       Cost of New Entry anchor (CONE minus inframarginal energy/AS rents);
       gross_cone is the pre-inframarginal-rent Cost of New Entry where an ISO
