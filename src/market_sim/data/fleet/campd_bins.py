@@ -1433,9 +1433,7 @@ def assert_thermal_tranche_coverage(iso: str, config: ScenarioConfig) -> None:
         armed.append((gate, columns, groups))
     if not armed:
         return
-    path = thermal_tranche_csv_for_iso(
-        iso, *campd_attribution_selectors(config)
-    )
+    path = thermal_tranche_csv_for_iso(iso, *campd_attribution_selectors(config))
     if not path.exists():
         raise ValueError(
             f"thermal-tranche coverage guard: ISO {iso!r} arms "

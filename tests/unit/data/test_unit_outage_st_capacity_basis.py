@@ -231,16 +231,12 @@ class TestAccumulatorWiring:
 
     @staticmethod
     def _run(monkeypatch, df, cap, iso, flag):
-        monkeypatch.setattr(
-            outages, "_iso_plant_capacity", lambda *a, **k: cap
-        )
+        monkeypatch.setattr(outages, "_iso_plant_capacity", lambda *a, **k: cap)
         return outages._unit_outage_factors_from_events(
             df, 2024, 8760, "", iso, False, False, False, st_capacity_basis=flag
         )
 
-    def test_off_keeps_the_production_basis_and_on_aligns_it(
-        self, roster, monkeypatch
-    ):
+    def test_off_keeps_the_production_basis_and_on_aligns_it(self, roster, monkeypatch):
         roster({(1, "ST_GAS"): {"5": 100.0, "6": 100.0}})
         df = _events([(1, "5", "ST_GAS", 150.0)])
         cap = {(1, "ST_GAS"): 200.0}
@@ -279,9 +275,7 @@ class TestAccumulatorWiring:
         self, roster, monkeypatch
     ):
         roster({(1403, "ST_GAS"): {"5": 742.6, "64": 722.8}})
-        df = _events(
-            [(1403, "5", "ST_GAS", 895.1), (1403, "4", "ST_GAS", 786.0)]
-        )
+        df = _events([(1403, "5", "ST_GAS", 895.1), (1403, "4", "ST_GAS", 786.0)])
         cap = {(1403, "ST_GAS"): 1465.4}
         on = self._run(monkeypatch, df, cap, "MISO", True)
         assert on[(1403, "ST_GAS")].min() == pytest.approx(0.0, abs=1e-12)

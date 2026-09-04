@@ -55,7 +55,11 @@ def _moved(a: dict, b: dict) -> dict:
     out: dict = {}
     for g in set(a) | set(b):
         ba, bb = a.get(g) or {}, b.get(g) or {}
-        d = {k: (ba.get(k), bb.get(k)) for k in set(ba) | set(bb) if ba.get(k) != bb.get(k)}
+        d = {
+            k: (ba.get(k), bb.get(k))
+            for k in set(ba) | set(bb)
+            if ba.get(k) != bb.get(k)
+        }
         if d:
             out[g] = d
     return out
@@ -119,8 +123,11 @@ class TestCaisoCtPeakerCommittedMeasured(unittest.TestCase):
 
     def test_missing_phys_committed_is_a_hard_error_not_a_fallback(self):
         patched = {
-            k: ({kk: vv for kk, vv in v.items() if kk != "phys_committed"}
-                if k == "CT_PEAKER" else dict(v))
+            k: (
+                {kk: vv for kk, vv in v.items() if kk != "phys_committed"}
+                if k == "CT_PEAKER"
+                else dict(v)
+            )
             for k, v in bc._CAISO_OFFER_CURVE.items()
         }
         with mock.patch.object(bc, "_CAISO_OFFER_CURVE", patched):
