@@ -4142,7 +4142,7 @@ before/after values, the stale-set inventory of ledger §0ac.7 marked closed for
 and PENDING for Stages 2/3, and one line per ISO on what the dates flip did to its exit rows.
 ```
 
-## D47 — GOLDEN-3 attestation + the D46 records items (r#33; records-only)
+## D47 — GOLDEN-3 attestation + the D46 records items (r#33; records-only) — **LANDED at r#34** (PRs #4691/#4699 + D47b; FC-7 restored; routed items → D51 rider / card C-8)
 
 ```
 You are the D47 session of the capacity-expansion track — a RECORDS lane, zero solves, that
@@ -4203,7 +4203,7 @@ docs/handoffs/FINDING-capx-d47-golden3-attestation-<date>.md carrying the byte-i
 assertion, the like-for-like table and the posture disclosure.
 ```
 
-## D45-R — the D45 close-out + D46 Stages 2 and 3 (r#33; owner rulings Q33 + Q35)
+## D45-R — the D45 close-out + D46 Stages 2 and 3 (r#33; owner rulings Q33 + Q35) — **LANDED COMPLETE at r#34** (PRs #4690/#4697/#4708; the once-only question RETIRED; **leg 7 pre-declared but NOT RUN — card C-7**; leg 8 STOP-routed, CAISO keys unchanged)
 
 *Keeper vintage at issuance (read the shards, never this note): NYISO `2026-09-04-nyiso-185-family-hr` (promoted after §0ad was written — ledger §0ad amendment 2), PJM `2026-08-15-pjm-162-inputclock`, MISO `2026-09-03-miso-202-unitclip`, NEISO `2026-08-17-neiso-99-joint-p1`. Name the keeper id per leg in the finding's vintage table.*
 
@@ -4307,7 +4307,7 @@ finding complete through §9 with its close-out line, both pre-declarations grad
 refreshed, and the ledger §0ac.7 stale set marked CLOSED for every key except CAISO's.
 ```
 
-## D48 — the PJM accreditation-design devintage (r#33 amendment 3; D45 §2.3 items 1–2)
+## D48 — the PJM accreditation-design devintage (r#33 amendment 3; D45 §2.3 items 1–2) — **PHASE 0 LANDED (PR #4707), PHASE 1 RUNNING at r#34**; its PREDECL corrects this charter's '2–4 points' premise to 7–11 on a consistent basis — read it before Phase 1
 
 ```
 You are the D48 session of the capacity-expansion track — the PJM per-ISO repair lane D45's
@@ -4385,7 +4385,7 @@ proven) and, once gated, the A/B arm registered suffixed, the finding with the a
 recommendation, and the lever's cell stamped in the PJM shard.
 ```
 
-## D49 — two zero-solve Phase-0s on the D46 ledgers: ERCOT's CCS at carbon = 0, and the MISO exit-side margin (r#33 amendment 3; D46 routed items 2 and 3)
+## D49 — two zero-solve Phase-0s on the D46 ledgers: ERCOT's CCS at carbon = 0, and the MISO exit-side margin (r#33 amendment 3; D46 routed items 2 and 3) — **LANDED at r#34** (PRs #4700/#4706; both halves are construction defects with named repairs → §D50, §D51)
 
 ```
 You are the D49 session of the capacity-expansion track — a zero-solve diagnostic lane over
@@ -4450,4 +4450,207 @@ source. Matrix (rule 28): no mechanism tested, no verdict letter moves; append e
 citations to the ERCOT `ccs` cells and the MISO retirement cells only. GUARDRAILS: zero solves;
 rules 13, 14, 21, 22, 25, 27. COLLISION: none — read-only over committed artifacts; D45-R /
 D48 own the live forecast surfaces.
+```
+
+## D50 — CCS capex scaled to captured CO2: the D49 half-1 seam repair (r#34)
+
+```
+You are the D50 session of the capacity-expansion track. D49 half 1 (FINDING-capx-d49-2026-09-04.md
+§1) established, zero-solve and like-for-like across ERCOT / PJM / MISO, that the CCS retrofit
+screen clears merchant gas-CC retrofits at carbon = 0 because of a CONSTRUCTION SEAM, not
+economics: the §45Q credit scales with the host's measured CO2 flow per MWh while
+`ccs_retrofit_capex_kw` is the ATB capture-island increment for an H-class reference host
+charged FLAT per kW — so a host emitting 40–90 % more CO2 per kW is credited for all of it and
+charged to capture none of the excess. D41 §4.3's zero-clearing result never held at unit grain.
+You repair the seam, measure its blast radius, and return the arming question to the owner.
+
+DATA PROFILE: ercot, neiso, pjm (incremental).
+MODEL ASSIGNMENT: Fable (mechanism design with a default-flip consequence).
+BRANCH: claude/capx-d50-ccs-capex-scaling — FRESH off origin/main, rebase before every push.
+
+READ FIRST: FINDING-capx-d49-2026-09-04.md §1 IN FULL (§1.2 the 14 reconstructed rows, §1.3 the
+PJM/MISO like-for-like, §1.4 what the term is, §1.5 the three seams — you build THOSE, not a
+redesign) · FINDING-capx-d41-* (the ATB basis, dollar-year, the D41 §6.2 blast-radius precedent:
+a CCS constant change re-keys every forecast config) · FINDING-capx-d44-* §1 (the b′-1
+declared-default-flip mechanics) · model-methodology-spec.md §5.6 · src/market_sim/.../ccs.py
+::apply_ccs_retrofit · NEW_ENTRY_COSTS["gas_cc"] (the ATB reference host heat rate) ·
+docs/parameter-citations.md · the matrix CCS rows and every ISO shard's `ccs` cells.
+
+THE WORK:
+1. PRE-REGISTER (docs/handoffs/PREDECL-capx-d50-<date>.md, pushed before any code): per ISO
+   (ERCOT, NEISO, PJM), the expected conversion count and MW under the repair versus the
+   committed t1f/golden ledgers, derived from D49 §1.2/§1.3's own reconstruction with the
+   capex scaled — no new arithmetic; the expected cache keys; the expected direction of every
+   FC-1/FC-2 row the CCS wave touches; a STOP if the repaired screen clears MORE MW anywhere.
+   D49 §5 item 2 is an input: at unit grain 5.0–5.7 GW of PJM/MISO gas_cc clears at the ceiling
+   in 2028 cap-bound; state what the repair does to that.
+2. BUILD, default-off, zero DOF: (a) `retrofit_capex_per_mw = capex_kw × 1000 ×
+   (captured_t_per_mwh / captured_ref)` with `captured_ref` = 0.9 × the ATB gas_cc reference
+   host's rate (NEW_ENTRY_COSTS heat rate × 0.057) — the basis D41's increment already
+   carries, cited at the definition; (b) CHP hosts (`CC_CHP`) EXCLUDED from the retrofit
+   candidate set, or rated on electric-only fuel — pick ONE on the published basis and cite
+   it; (c) the p55470 row (hr 34.75) flagged in the ERCOT curated sheet's README as a
+   data-quality item, not silently filtered. One gated field (or the repo's convention for a
+   construction repair), registered in ScenarioConfig + run_config (rule 24), matrix base row +
+   a cell in EVERY shard (rule 28c), byte-inert while off (prove it on `ercot-t1f`'s recipe).
+3. A/B, t1f 2026–2030, `--golden-posture`: ERCOT (~12 min) and NEISO (~8 min) paired, then
+   PJM solo (~28 min measured by D45-R). Each arm suffixed `<iso>-t1f-d50-ccscapex`; NEVER the
+   bare keys. Score `forecast_verdict.py --tier t1f`; grade the pre-registration at full
+   magnitude. MISO t1f (~65 min) only if PJM's result contradicts the pre-registration.
+4. BLAST RADIUS, measured: list every committed forecast/hindcast key whose cache key the
+   default flip would advance (the D41 §6.2 / D44 pattern) and the solve-minutes to
+   re-measure them at the D45-R measured rates — that number goes on the owner's card.
+5. FINDING docs/handoffs/FINDING-capx-d50-<date>.md: the per-ISO conversion tables before /
+   after, the FC rows moved, the blast radius, and the ARMING RECOMMENDATION on the
+   pre-stated condition. NOTHING ARMS in this lane — the default flip is an owner ruling.
+
+GUARDRAILS: rules 5, 12, 13, 14 (a faithful capex makes retrofits HARDER — fewer conversions is
+the expected signature), 21, 22, 24, 25, 27, 28. No keeper/shard/marker; backcast untouched.
+
+COLLISION: D48 (PJM hindcast surfaces, `pjm-t1h`) — you touch only suffixed t1f keys; D51
+(MISO) and D52 (NYISO) are disjoint. Nobody else touches the CCS screen or the ERCOT/NEISO/PJM
+t1f surfaces this window.
+
+EXIT: the repair default-off with matrix duties, three suffixed A/B legs registered, the
+pre-registration graded, the blast radius priced, the finding with the arming recommendation.
+```
+
+## D51 — the MISO adequacy-accounting ratio re-identified on the dates-ON fleet (r#34; D49 half 2)
+
+```
+You are the D51 session of the capacity-expansion track. D49 half 2 (FINDING-capx-d49-2026-09-04.md
+§2, esp. §2.6) established that MISO's exit under-build is NOT the D43 dispersion wall: the
+undated cohort is floor-capped in 2022–23 and capacity-cliff-cleared in 2024–25, and the
+margin-side object is the reserve POSITION the screens consume, which is netted TWICE — D31's
+`ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO["MISO"] = 0.8546` was identified as PRA offered
+÷ the model's census internal supply on a fleet that still carried the 2021–2023 real exits, and
+since Q30/D44 the fossil-dates channel removes those same plants explicitly while the ratio
+still applies. The consumed position falls 5.8 / 6.9 pts SHORT of the market's own, and the
+vertical 2024 vintage pays a $123/kW-yr cliff to 98 GW. You re-identify the ratio on the
+fleet in the SAME posture the run applies, A/B it, and report.
+
+DATA PROFILE: miso (+ neiso only if the C-7 rider below is live).
+MODEL ASSIGNMENT: Opus (a rule-23 re-derivation with a pre-declared A/B; no design).
+BRANCH: claude/capx-d51-miso-accounting-ratio — FRESH off origin/main, rebase before every push.
+
+READ FIRST: FINDING-capx-d49-2026-09-04.md §2 IN FULL · FINDING-capx-d31-* §2 (the ratio's
+identification arithmetic — you move ONE term, nothing else) and §4 (the vertical-era floor
+adjudication) · FINDING-capx-d42/d44 (which plants the dates channel removes, by vintage) ·
+data/raw/miso-pra/ (the PRA offered record, the two overlap years) · the committed
+`miso-2021-2025-realized-t1h-d45r`… no: the bare `miso-t1h` at HEAD is D46's
+`miso-2021-2025-realized-t1h-d46` — read scripts/register_forecast_run.py::VERDICT_MAP for the
+live mapping and use THAT bundle's evolution ledgers as the control · FINDING-capx-d32-* (the
+floor-retention objects the repair hands the cohort back to).
+
+THE WORK:
+1. PRE-REGISTER (docs/handoffs/PREDECL-capx-d51-<date>.md, pushed before the re-derivation):
+   the re-identified ratio's expected range (D49's back-of-envelope ~0.88 / 0.91 — state it as
+   the prior, never as the target), the expected 2023 / 2024 / 2025 positions (near 1.03 in
+   2024), the expected capacity term per year (2024 → $0; 2025 ≈ $91–110/kW-yr against the
+   market's $79), the FC-3 rows expected to move and their DIRECTION (exits HARDER in 2025;
+   the cohort back to the floor-capped regime in 2024 — `retire.total_gw` may read WORSE, the
+   rule-14 signature), the A/B cache key, and a STOP if the ratio leaves [0.80, 0.95].
+2. RE-DERIVE (rule 23, citing the data/posture change: D44 flipped the fleet the ratio was
+   identified on): PRA offered ÷ model accredited internal supply NET of the dated exits, on
+   the same two overlap years, from the same PRA record, with the derive script's commit
+   citing this finding and D49 §2.6. Zero free parameters: the ratio is an accounting identity,
+   never sized by the exit residual. Ship it as a new registry value behind the SAME gated
+   field pattern D31 used (default-off until the owner rules), matrix cell updated.
+3. A/B: the bare `miso-t1h` recipe + the re-identified ratio ON, diagnostics-on → suffixed
+   `miso-t1h-d51-ratio` (~25 min, solo). Score like-for-like; LOYO within 2021–2025; grade
+   the pre-registration at full magnitude.
+4. RECORDS RIDER (zero solves): (a) mark `ercot-t1f-pre-d46` and `caiso-t1f-pre-d46` as
+   provenance-only stubs no delta may be read against (D47 §6 item 2), in ff-verdicts'
+   notes and the board; (b) repoint the board's NEISO `golden` field to GOLDEN-3 (D47 §6
+   item 4), preserving the GOLDEN-2 text beneath; (c) record D49 §5 item 5 — oil is not
+   screened after 2022 (3.5 GW stays in `fleet_by_fuel_before`) — in the MISO matrix shard's
+   retirement cell evidence so no successor reads "oil passes" as a margin fact.
+   (d) IF card C-7 ruled "D51 rider": run D45-R's leg 7 EXACTLY as its PREDECL §4.2 declared —
+   `neiso-2021-2025-realized-t1h-d45r-datesoff` (L5's recipe + `--no-fossil-announced-exits`,
+   pre-declared key `5925e67c572a910f`), registered suffixed `neiso-t1h-d45r-datesoff`, graded
+   against P16/P17 at full magnitude in your finding. ~7 min. If C-7 ruled otherwise, skip.
+5. FINDING docs/handoffs/FINDING-capx-d51-<date>.md: the ratio's derivation table, the
+   position/capacity-term/exit deltas, every FC row moved, the rider items, and the arming
+   recommendation on the pre-stated condition. NOTHING ARMS — the default is the owner's.
+
+GUARDRAILS: rules 12 (MISO solo, ~10 GB), 13, 14, 21, 22, 23, 24, 25, 27, 28. No keeper/shard/
+marker; backcast untouched. Never overwrite a preserved baseline.
+
+COLLISION: D50 (ERCOT/NEISO/PJM t1f suffixed keys) and D52 (NYISO) are disjoint; D48 owns PJM.
+The owner's MISO backcast lanes (miso-210) own the keeper shard — read only.
+
+EXIT: the re-identified ratio shipped default-off with citation, the A/B registered suffixed,
+the pre-registration graded, the records rider done, the finding with the recommendation.
+```
+
+## D52 — the NYISO adequacy devintage: requirement on the published forecast peak + per-year adopted IRM (r#34; D45 §5.2.4 items 1–2)
+
+```
+You are the D52 session of the capacity-expansion track — NYISO's per-ISO repair lane, the
+successor D45's §9 close-out names. D45 §5.2 (filled by D45-R) established on published data
+that the model's NYCA SUPPLY is the market's within 0.6 GW in every scored year, but its
+REQUIREMENT is 1.9–2.2 GW low in 2021–2024 because the hindcast sets it on the model's
+realized weather-year peak where NYSRC sets it on the ICAP-market FORECAST peak, plus a single
+2025-26 vintage IRM/derate factor where the adopted values were 20.0 / 22.0 / 24.4 %. That
+position error is why the latent curve-ON probe fired at +189 % (§5.3) and why the pre-stated
+arming conditions read 0 of 3. You build the two zero-DOF repairs, A/B them, and re-run the
+curve-ON probe ONLY if the position lands inside the ±3-point condition §6 fixed.
+
+DATA PROFILE: nyiso
+MODEL ASSIGNMENT: Fable (a mechanism whose result re-opens or keeps closed an arming question).
+BRANCH: claude/capx-d52-nyiso-adequacy-devintage — FRESH off origin/main, rebase before every push.
+
+READ FIRST: FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md §5 IN FULL (§5.2.1–§5.2.4 the
+reconciliation and the four identified repairs with sources; §5.3 the probe; §6 the
+recommendation and the re-open condition) · docs/handoffs/d45/nyiso-reconciliation-2026-09-04.{py,json}
+and published-positions-2026-09-03.{py,json} (the instruments — reuse) · the NYSRC IRM Study
+Appendices Table D.2 (sha256 in D45 §8; the committed rows) · data/raw/capacity-market/
+demand-curve/nyiso/nyiso.csv (the per-year IRMs and translation factors already committed) ·
+`PLANNING_RESERVE_MARGIN_BY_ISO`, `…ICAP_TO_UCAP_RATIO_BY_ISO`, `adequacy_requirement_mw` and
+its peak source in src/market_sim · the D40 finding (the NEISO requirement-devintage pattern:
+default-off, LOYO, P9-style flip condition) and the D48 PREDECL (the consistent-basis lesson:
+pair net supply with a net requirement or raw with raw, never mixed).
+
+THE WORK:
+1. PRE-REGISTER (docs/handoffs/PREDECL-capx-d52-<date>.md, before any code): the expected
+   requirement per capability year on the published forecast peak (Table D.2 column 1 ×
+   the adopted IRM × (1 − derate)), the expected entering positions (D45 §5.2.2's "model firm
+   on the PUBLISHED requirement" column — 1.046 / 1.040 / 1.052 — is the prediction), the
+   expected capacity term per year, the FC-3 rows expected to move and their direction
+   (requirement UP 1.5–2.7 GW ⇒ positions DOWN 5–8 pts ⇒ capacity revenue UP ⇒ exits HARDER
+   under any curve; 2025 the other way by 0.4 GW), the A/B cache keys, and the §6 re-open
+   condition verbatim: the curve-ON probe re-runs ONLY if the repaired L2 positions sit
+   within ±3 points of the published NYCA positions in every scored year.
+2. BUILD, default-off, zero DOF: (a) the NYCA requirement set on the NYSRC ICAP-market
+   forecast peak for the capability year — a published market-design input that regenerates
+   forward from the Gold Book forecast (rule 13), vintage-gated like D42/D44 (a value is
+   admissible in year Y only if published by the run's information cutoff); (b) the
+   per-capability-year adopted IRM + derate factor in place of the single 2025-26 vintage —
+   the D40 axis, on the committed csv rows. ONE gated field or two, the repo's convention;
+   ScenarioConfig + run_config (rule 24); matrix base row + a cell in EVERY shard (rule 28c);
+   byte-inert while off, proven on the bare `nyiso-t1h` recipe.
+3. A/B: the bare `nyiso-t1h` recipe (D45-R's L2 at HEAD) + the field(s) ON, diagnostics-on →
+   suffixed `nyiso-t1h-d52-devintage` (~12 min). LOYO within 2021–2025. Grade at full magnitude.
+4. THE CONDITIONAL PROBE: if and only if step 3's positions meet the ±3-point condition in
+   every scored year, re-run L3 on the repaired posture (`--capacity-market-clearing`) →
+   suffixed `nyiso-t1h-d52-curveon`, and grade it against D45's P9 (a)/(b)/(c) verbatim. If
+   the condition is not met, do NOT run it — say which year fails and by how much, and route
+   to §5.2.4 item 3 (the locality half), which this lane does NOT build.
+5. FINDING docs/handoffs/FINDING-capx-d52-<date>.md: the requirement/position tables on the
+   published basis before / after, the FC rows moved, the conditional probe's fate, and the
+   arming recommendations (the devintage default; the curve-ON flip) on their pre-stated
+   conditions. NOTHING ARMS — both return to the owner.
+
+GUARDRAILS: rules 5, 12, 13 (a published requirement parameter is a design input; the SOM
+margins and cleared quantities are validation observables, never targets), 14, 21, 22, 24, 25
+(NYISO's own values from NYISO/NYSRC publications only), 27, 28. No keeper/shard/marker;
+backcast untouched; the D45 §9 close-out line binds — no re-litigation of the mechanism class.
+
+COLLISION: D48 (PJM), D50 (ERCOT/NEISO/PJM t1f), D51 (MISO) are disjoint. The owner's NYISO
+backcast lane owns the keeper shard (nyiso-187 at issuance; read the shard, never this line).
+Nobody else touches NYISO forecast surfaces this window.
+
+EXIT: the repair default-off with matrix duties, the A/B registered suffixed, the conditional
+probe run or refused on the stated condition, the pre-registration graded, the finding with
+both recommendations.
 ```
