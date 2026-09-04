@@ -58,7 +58,7 @@
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -71,8 +71,8 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 4,
+    "scored": 8,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 3
