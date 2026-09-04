@@ -79,11 +79,22 @@ CANONICAL_COLUMNS: tuple[str, ...] = (
 # factor as a decimal, e.g. 0.1321). Published by NYSRC in the IRM Study
 # Technical Appendices, Appendix D Table D.2 "NYCA ICAP to UCAP Translation"
 # (FF-3D / RC-1D Option B).
+# icap_market_forecast_peak / irm_adopted / ucap_requirement are the OTHER
+# columns of that same NYSRC Table D.2 row (capx D52, 2026-09-04): the
+# ICAP-market forecast peak (mw) the NYCA requirement of the capability year
+# was set on, the EC-approved (adopted) IRM (pct — distinct from the `irm`
+# rows, which carry the IRM STUDY base-case value and differ in 2023-24 /
+# 2024-25), and the published UCAP requirement (mw) that the identity
+# peak x (1 + IRM) x (1 - derate) reproduces — a validation row for the
+# NYCA_* registries, never a fit target.
 METRIC_VOCAB: frozenset[str] = frozenset(
     {
         "net_cone",
         "gross_cone",
         "irm",
+        "irm_adopted",
+        "icap_market_forecast_peak",
+        "ucap_requirement",
         "forecast_pool_requirement",
         "icap_ucap_translation_factor",
         "price_cap",
