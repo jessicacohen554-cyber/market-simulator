@@ -3969,7 +3969,7 @@ conflict. Nobody else touches scenarios.py/CLAUDE.md/spec this window.
 EXIT: the flip + amendments + matrix + CHANGELOG + the finding, all blob-verified.
 ```
 
-## D45 — PJM + NYISO capacity curves: the once-only D6+R3 joint charter (r#31) — **CHECKPOINT at r#32** (PRs #4643/#4647/#4649: PJM L1 registered + stages 2/3 written; **OWED: NYISO L2/L3, PJM L4, finding §4–§9 and the §9 close-out** — graded a checkpoint, not lost; a session resuming this charter starts from the committed finding's placeholders)
+## D45 — PJM + NYISO capacity curves: the once-only D6+R3 joint charter (r#31) — **CHECKPOINT at r#32; owed half STILL ABSENT at r#33 (card C-4 — see §D45-R below once ruled)** (PRs #4643/#4647/#4649: PJM L1 registered + stages 2/3 written; **OWED: NYISO L2/L3, PJM L4, finding §4–§9 and the §9 close-out** — graded a checkpoint, not lost; a session resuming this charter starts from the committed finding's placeholders)
 
 *r#32 amendment (recorded OUTSIDE the charter text, which does not move): the NYISO keeper is now `2026-09-02-nyiso-177-vintage-matched` (promoted 2026-09-02 by owner ruling; NOT-YET on {C1-2023 ST_GAS, C3a-2025, C3c}); PJM's is unchanged (`2026-08-15-pjm-162-inputclock`). The charter names no keeper id, so nothing in it changes — but the per-leg vintage line it already requires must name the keeper id per ISO alongside the fossil-dates posture. Also note: the forecast board's gate-(a) stamps for NYISO/MISO/CAISO were stale at r#32 (ledger §0ac.2) — read the keeper from `keepers/<ISO>.json`, never from `program-status.json`.*
 
@@ -4039,7 +4039,7 @@ is per-ISO repair lanes, and the mechanism-class question does not reopen withou
 evidence.
 ```
 
-## D46 — the post-repair-wave RE-MEASURE, staged (r#32; owner ruling Q32 on card C-3)
+## D46 — the post-repair-wave RE-MEASURE, staged (r#32; owner ruling Q32 on card C-3) — **STAGE 1 LANDED IN FULL at r#33** (PRs #4661/#4668; finding `FINDING-capx-d46-remeasure-2026-09-03.md`); **Stage 2 PENDING on D45's §9 close-out — re-released via D45-R (r#33), never by re-pasting this charter** (the re-dispatch of 2026-09-04 correctly refused to re-execute: re-running would overwrite the `-pre-d46` baselines); Stage 3 re-priced at r#33 (card C-6)
 
 ```
 You are the D46 session of the capacity-expansion track — the BATCHED RE-MEASURE the director
@@ -4142,3 +4142,57 @@ before/after values, the stale-set inventory of ledger §0ac.7 marked closed for
 and PENDING for Stages 2/3, and one line per ISO on what the dates flip did to its exit rows.
 ```
 
+## D47 — GOLDEN-3 attestation + the D46 records items (r#33; records-only)
+
+```
+You are the D47 session of the capacity-expansion track — a RECORDS lane, zero solves, that
+closes three items D46 routed to the director (FINDING-capx-d46-remeasure-2026-09-03.md §4.6,
+§9 items 4, 6 and 7).
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Opus (mechanical, pre-declared; no adjudication).
+BRANCH: claude/capx-d47-golden3-attestation — FRESH off origin/main, rebase before every push.
+
+READ FIRST: the D46 finding §4.6 (why GOLDEN-3's FC-7 reads FAIL on the attestation row alone,
+and why the lane deliberately did not author one post-hoc) · FINDING-capx-t3-golden2-2026-09-01.md
+§3 (GOLDEN-2's own pre-declaration and its attestation — the template) · the committed GOLDEN-3
+bundle results/ff-t3-neiso-golden/ (the golden3 campaign dir, its DOF ledger, FC-6 battery and
+T1.6 ladder) · scripts/forecast_verdict.py (the FC-7 rows and what an attestation must carry) ·
+frontend/data/forecast/ff-verdicts.json `neiso-t3` + `neiso-t3-pre-d46`.
+
+THE WORK, in this order and no other:
+1. PRE-DECLARE FIRST. Commit docs/handoffs/PREDECL-capx-d47-golden3-attestation-<date>.md
+   stating, before writing the attestation: which FC-7 row moves (the attestation row only),
+   which rows must stay byte-identical (every other FC-7 row and every FC-1..FC-6 category),
+   that the determination stays HOLD, and that the attestation's content is READ from the
+   committed bundle (run_config.json, DOF ledger, cache key, keeper id, posture) — nothing is
+   authored that the bundle does not already carry. Push it before step 2.
+2. Author forecast_attestation.json for the GOLDEN-3 bundle from those committed inputs.
+   Re-score `neiso-t3` artifact-only (no solve); register preserve-then-overwrite with the
+   pre-attestation record kept at `neiso-t3-pre-d47`. Assert byte-identity of every category
+   except FC-7's attestation row, and state the HOLD unchanged.
+3. THE `-pre-d46` LIKE-FOR-LIKE TABLE (D46 §9 item 7): a short table in the finding — for each
+   `-pre-d46` key, its vintage (cache epoch / HEAD), which of the three axes its delta spans,
+   and whether a delta against it is attributable (NEISO t1h: one axis; GOLDEN-3: exactly the
+   three axes; ERCOT/CAISO t1f: FFR-3A-2 vintage plus a month of HEAD — NOT attributable).
+   Records only; it becomes the citation any later reading of a `-pre-d46` delta must carry.
+4. THE `neiso-t1h` POSTURE DISCLOSURE (D46 §9 item 4): the bare `neiso-t1h` carries D37's
+   Q28-armed Net ICR posture while the shipped default is OFF (the P9 flip failed). Director
+   ruling r#33: a bare key carries the SHIPPED posture. You do NOT re-solve here — the
+   default-posture NEISO leg rides the D45-R batch. You add a dated note to the board's NEISO
+   FC-3 row and the finding stating the discrepancy, its origin (D37 registered the armed leg
+   bare with the control suffixed), and that D45-R replaces it.
+
+GUARDRAILS: zero solves; no ScenarioConfig field, parameter, keeper, shard, marker or matrix
+verdict; gate (a) never moved; rule 27 on every ≥300-line file (VERDICT_MAP's script,
+program-status.json); rule 22 untouched. If the re-score moves ANY row other than the
+attestation row, STOP — do not register — and route to the director.
+
+COLLISION: D45-R owns PJM/NYISO forecast surfaces and the NEISO default-posture leg; the
+audit programme's stage-0 re-captures own results/regression-goldens/. You touch only the
+GOLDEN-3 bundle's attestation, `neiso-t3`'s registration, and the two records items.
+
+EXIT: PREDECL + attestation + re-scored `neiso-t3` (prior at `-pre-d47`) + a short
+docs/handoffs/FINDING-capx-d47-golden3-attestation-<date>.md carrying the byte-identity
+assertion, the like-for-like table and the posture disclosure.
+```
