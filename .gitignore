@@ -411,6 +411,17 @@ frontend/data/forecast/program-status.js
 /results/ff-t1f-d45r/*/*/*/hourly/
 /results/ff-t1f-d45r/*/*/*/year_*_floor_retentions.json
 /results/ff-t1f-d45r/*.log
+# capx D50 (2026-09-04): the CCS retrofit capex-scaling A/B arms (ERCOT / NEISO
+# / PJM T1-F 2026-2030, suffixed <iso>-t1f-d50-ccscapex, never a bare key).
+# Same class and same slim-vs-heavy split as /results/ff-t1f-d46/ above: the
+# committed record is full_horizon_summary.json + run_config.json +
+# forecast_verdict.json + dof_ledger.json + the resolved config.yaml + the
+# evolution_<year>.json ledgers.
+/results/ff-t1f-d50/*/*/*/*.parquet
+/results/ff-t1f-d50/*/*/*/*.npz
+/results/ff-t1f-d50/*/*/*/hourly/
+/results/ff-t1f-d50/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d50/*.log
 
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
