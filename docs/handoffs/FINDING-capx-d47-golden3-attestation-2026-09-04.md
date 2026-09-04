@@ -275,3 +275,147 @@ Three routed items closed; **zero solves**; every deliverable committed and push
 attestation exists because its pre-declaration was pushed first and the scorer's own
 stamp proves it. Exactly one row moved, and the determination is the same `HOLD` it was
 before — which is the point: an instrument row was restored, and nothing was promoted.
+
+---
+
+# ADDENDUM — capx D47b: the board's `c_cost` fields (r#33 amendment 3), and a correction to D46 §2
+
+**Appended 2026-09-04 by lane capx-D47b**, branch
+`claude/capx-d47-golden3-attestation-nrqtyq`, rebased on `origin/main` `8a18e9e1`. The
+five-item D47 dispatch's items 1–4 landed in PR #4691 (`bd4ba21d`) and are **verified in
+place at HEAD, not re-done**: `neiso-t3` reads FC-7 `PASS` / `HOLD` / session `capx-D47`,
+prior preserved at `neiso-t3-pre-d47` reading FC-7 `FAIL` / session `capx-D46`. Item 5 —
+the `c_cost` fields — was not covered by that PR and is closed here. Pre-declared before
+any field was edited: `docs/handoffs/PREDECL-capx-d47b-ccost-2026-09-04.md`, commit
+`fb80a6e3`. **Zero solves.**
+
+## 8. The `c_cost` correction — and why the dispatch's own numbers could not be used
+
+### 8.1 The defect: the two quantities are different measurements
+
+The dispatch read: *"D46 §2 measured the t1f legs at 8–23 min against `c_cost` fields of
+1.0–2.8 h. Correct … to the MEASURED values … mark PJM/MISO/NYISO's fields 'unmeasured at
+the t1f grain — D46 factor 7–10× suggests ~45–90 min'."* **Executed literally, that puts a
+wrong number on the board, in the dangerous direction.**
+
+| | span | source |
+|---|---|---|
+| the `c_cost` fields | **25 solve-years** (2026–2050, full horizon) | FF-3E projection table, `docs/handoffs/ff-poc-closeout-2026-07.md` §6 |
+| D46's measured t1f legs | **5 solve-years** (2026–2030) | `results/ff-t1f-d46/<iso>/full_horizon_summary.json`, `solved_years [2026…2030]` |
+
+D46 §2's headline — *"All three t1f estimates the board carries are wildly conservative —
+by factors of 7–10×"* — compares a 5-year total against a 25-year projection. **The factor
+is a span artifact:** 5× span × the projection's own ~1.7–2× super-linear uplift ≈ 8.5×,
+which is exactly the 7–10× reported. **This corrects D46 §2's comparison and §9 item 3's
+inference. It corrects no D46 solve, cache key, verdict or determination**, all of which
+stand untouched.
+
+### 8.2 The evidence, all from committed bytes (`per_year_perf`, `global_peak_rss_mb`)
+
+| leg | span | total | median/yr | FF-3E anchor | peak RSS |
+|---|---|---|---|---|---|
+| ERCOT t1f `ercot-2026-2030-d46-remeasure` | 5 yr | 11.81 min | **144.1 s** | 144 s → **+0.1 %** | 4,137.7 MB |
+| NEISO t1f `neiso-2026-2030-d46-remeasure` | 5 yr | 7.96 min | **86.3 s** | 78 s → +10.6 % | 3,336.7 MB |
+| CAISO t1f `caiso-2026-2030-d46-remeasure` | 5 yr | 22.59 min | **208.8 s** | 200 s → +4.4 % | 4,917.4 MB |
+| **NEISO GOLDEN-3** `neiso-2026-2050-t3-golden3-bau` | **25 yr** | **33.0 min = 0.55 h** | **77.6 s** | 78 s → **−0.5 %** | 3,694.0 MB |
+
+Year 2026 is a warm-up outlier in every 5-year leg (CAISO 499.7 s against a 201–243 s
+steady state), which is why the **median** and not the mean is the comparable statistic on
+a short window.
+
+### 8.3 The two halves of the projection grade oppositely
+
+1. **FF-3E's per-year anchors are ACCURATE** — within +0.1 % to +10.6 % on three ISOs at
+   the 5-year grain, and within **−0.5 %** on the one 25-year run. They are not "an order
+   out"; they are among the better-identified compute numbers on this board.
+2. **FF-3E's super-linear uplift is REFUTED, with the sign reversed.** §6's caution
+   ("late years grow super-linearly — do **not** extrapolate the median flat") predicted
+   growth. GOLDEN-3's 25 measured years run the other way: **years 21–25 mean 65.0 s
+   against years 1–5 mean 95.3 s, a 0.68× ratio.** Per-year cost *falls* across the
+   horizon. The total lands **1.8 % above the flat-median lower bound** (0.54 h) and
+   **1.73× under the projection** (0.95 h). **The whole projection error is the uplift.**
+
+So the span-corrected conservatism is **~1.7×, measured once** — not 7–10×.
+
+### 8.4 What was written, per ISO
+
+Six `detail` strings, nothing else. **ERCOT / NEISO / CAISO** carry their measured values
+with the span stated on the field's face, the prior number identified as FF-3E's
+projection, and its basis decomposed per §8.3. **NEISO is the one ISO whose full-horizon
+figure is now a measurement** (0.55 h against a 0.95 h projection) and is the evidence
+every other field cites.
+
+**PJM / MISO / NYISO are marked unmeasured at every grain and carry a bracket, not a point
+estimate:**
+
+| ISO | flat-median bound | FF-3E projection | uplift baked in | if NEISO's 1.73× transfers |
+|---|---|---|---|---|
+| NYISO | 0.62 h | 1.09 h | 1.76× | ~0.63 h — **the two routes converge** |
+| PJM | 1.63 h | 7.34 h | **4.50×** | ~4.2 h |
+| MISO | 2.25 h | 10.12 h | **4.50×** | ~5.9 h |
+
+**The refutation transfers least well to PJM and MISO**, whose projections carry a ~4.5×
+uplift tied to ~10 GB late-horizon growth that **no measured ISO exercises** — all three
+measured legs peak ≤ 4.9 GB and all are pairable. Nothing measured discriminates between
+the bracket's ends there, and the fields say so. At NYISO — light, pairable, a ~1.76×
+uplift essentially identical to NEISO's — both routes land on ~0.62–0.65 h, so the
+transfer is much better supported and the field says that too.
+
+**The ~10 GB (PJM) and ~10.5 GB (MISO) SOLO memory ceilings are preserved verbatim.** A
+wall-time correction must not erode a memory constraint, and rule 12's concurrency plan
+keys on exactly those numbers.
+
+**The container's ~55 min `regenerate_clean.py` prerequisite** (54 datatypes, D46 §2) is
+named in every corrected field as a **separate, per-container** cost, never folded into a
+leg's wall time.
+
+### 8.5 The `~45–90 min` figure is refused
+
+It derives from the span-confounded 7–10×. Applied to PJM it would under-price a **solo,
+memory-bound** run by 4–6× — the direction in which a scheduling error actually costs
+something, since rule 12 forbids co-running it. Against **D46 §9 item 3** (*"if PJM's
+7.3 h and MISO's 10.1 h carry the same factor, Stage 3 may be far cheaper than priced"*):
+the factor is ~1.7×, so PJM reads **~4.2 h** and MISO **~5.9 h**, or their flat-median
+bounds 1.63 h / 2.25 h if their horizons behave like NEISO's. Stage 3 is **cheaper than
+priced, but not an order cheaper**, and the memory constraint is untouched either way.
+
+### 8.6 Assertions, verified rather than claimed
+
+- **Exactly six lines changed** in `frontend/data/forecast/program-status.json`
+  (`git diff --numstat` → `6 6`; hunks at lines 125, 184, 242, 303, 366, 425).
+- **Semantic diff of the whole board: exactly six changed values**, all
+  `/isos/<ISO>/gate/c_cost/detail`. Nothing added, nothing removed.
+- **Every gate-leg `status` byte-identical**, checked programmatically across all six ISOs
+  and all legs. All six `c_cost` legs stay `info`; `info` is not a gate test.
+- `scripts/check_gate_a_provenance.py` → **OK (6 rows)**, before and after. Gate (a) not
+  moved.
+- `register_forecast_run.py --reindex` → **53 runs, manifest + program-status assembled
+  clean.**
+- **Rule 27:** the file is 1,155 lines. Edited locally with `Edit`, pushed as exact on-disk
+  bytes over `git push`, and the pushed blob fetched back and compared — **1,155 lines and
+  sha256 `37b9d4b596947378` on both sides, byte-identical.**
+- No `ScenarioConfig` field, parameter, keeper, shard, marker, matrix verdict or backcast
+  surface touched. No mechanism proposed or tested, so no rule-28 matrix duty arises.
+
+### 8.7 Pre-declaration, graded
+
+All three pre-declared failure modes cleared: no gate-leg status moved and no field
+outside the six changed (mode 1); gate (a) did not regress (mode 2); the JSON parses and
+the diff is exactly six lines, with no `json.dump` round-trip (mode 3). The pre-declaration
+also stated the §8.1 defect *before* the replacement numbers were written, which is the
+sequence that makes §8.3's conclusion a finding rather than a rationalization.
+
+## 9. Routed to the director (D47b)
+
+1. **D46 §2 and §9 item 3 should be annotated as span-confounded** — superseded on the
+   comparison, not on any solve or verdict. This addendum is the correction of record; the
+   D46 finding itself is another lane's artifact and was not edited.
+2. **FF-3E §2.4's super-linear caution is refuted at NEISO over 25 years** (0.68×, not
+   >1×). It still stands unmeasured at PJM/MISO, where it drives a 4.5× uplift and where
+   the ~10 GB memory growth that motivated it is real. Worth a single 25-year measurement
+   at one heavy ISO before Stage 3 is priced — that, not another light-ISO run, is the
+   measurement that would retire the bracket.
+3. **`c_cost` has no consumer beyond the board's own renderer**
+   (`docs/codebase-site/forecast-status.html` gate-order list). It is a human scheduling
+   input, not a gate test — which is why this lane could correct it as records. If the
+   §2.1b(2)(c) leg is ever meant to *test* cost, that is a charter change, not a field edit.
