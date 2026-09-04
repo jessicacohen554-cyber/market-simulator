@@ -43,11 +43,9 @@ sys.path.insert(0, str(REPO / "src"))
 # (objective/prices/total-gen bit-identical) but reshuffles marginal-tie
 # dispatch by ~0.003%, which would make a replay's per-plant parquet differ from
 # the cold-solved committed bundle and break the D-13 bench-repro byte-identity
-# gate. Set BEFORE importing run_calibration_full so the solve core
-# (pipeline.solve) reads the pinned value. Mirrors capture_keeper_goldens.py.
-# solve_and_persist is called directly here (not via the CLI main()), so it
-# never sees the calibration CLI's default-ON gate.
-os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "0"
+# gate. ``solve_and_persist`` is called directly here (not via the CLI
+# ``main()``), so it never sees the calibration CLI's default-ON gate.
+DETERMINISM_ENV = {"MARKET_SIM_WARMSTART_XYEAR": "0"}
 
 from scripts import run_calibration_full as rcf  # noqa: E402
 
@@ -399,7 +397,27 @@ def _restore_display_date(run_dir: Path, orig_ts: str) -> str:
     return new_meta["timestamp"]
 
 
+def pin_determinism_env() -> None:
+    """Apply :data:`DETERMINISM_ENV` to ``os.environ``.
+
+    Called from :func:`main`, not at import time. The pin is right for this
+    script's own process and wrong for anyone else's — a by-path or ordinary
+    import (``scripts/knob_jacobian.py`` imports this module for
+    :func:`build_kwargs`) would otherwise inherit it silently. It is the same
+    import-time pattern that poisoned the pytest process through
+    ``capture_keeper_goldens.py``
+    (``docs/FINDING-fast-tier-repair-2026-09.md`` §4b, routed for this script
+    at §7.6); here the pinned value equals ``pipeline/solve.py``'s own default,
+    so no CLI behaviour changes either way.
+    """
+    for _k, _v in DETERMINISM_ENV.items():
+        os.environ[_k] = _v
+
+
 def main() -> None:
+    # Reproducibility pin, applied here rather than at import time — see
+    # pin_determinism_env. main() is this module's only solve entry.
+    pin_determinism_env()
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundle", help="bundle dir, e.g. results/calibration/<name>")
     ap.add_argument(

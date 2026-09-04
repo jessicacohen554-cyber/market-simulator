@@ -147,8 +147,6 @@ DETERMINISM_ENV = {
     "MARKET_SIM_WARMSTART": "1",
     "MARKET_SIM_WARMSTART_XYEAR": "0",
 }
-for _k, _v in DETERMINISM_ENV.items():
-    os.environ[_k] = _v
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("capture_keeper_goldens")
@@ -697,6 +695,27 @@ def _partition_block(info: dict) -> dict | None:
     }
 
 
+def pin_determinism_env() -> None:
+    """Apply :data:`DETERMINISM_ENV` to ``os.environ``.
+
+    Called from :func:`main` and from :func:`capture_one` — i.e. at every entry
+    that can reach a solve — rather than at import time. The pin is right for
+    this script's own process and wrong for anyone else's: a by-path load
+    (``spec_from_file_location`` + ``exec_module``, which
+    ``tests/scoring/test_golden_manifest_provenance.py`` does three times) used
+    to leak ``MARKET_SIM_HIGHS_THREADS=1`` into the whole pytest process, and
+    HiGHS then refused every later LP whose ``threads`` differed from the
+    already-initialized process-global scheduler (``model status 'Not Set'``) —
+    the latent, scheduling-dependent CI red behind every inflated local test
+    count the program has recorded (``docs/FINDING-fast-tier-repair-2026-09.md``
+    §4b/§7.6). The test side wraps its loads in an environ snapshot; this closes
+    the same hole at the source, so a future by-path load is safe by
+    construction.
+    """
+    for _k, _v in DETERMINISM_ENV.items():
+        os.environ[_k] = _v
+
+
 def capture_one(key: str, stage_tag: str, info: dict) -> dict:
     """Re-solve one keeper config at HEAD into its golden dir; return its entry.
 
@@ -711,6 +730,11 @@ def capture_one(key: str, stage_tag: str, info: dict) -> dict:
         RuntimeError: if the fidelity oracle finds any applied-flag mismatch.
     """
     iso = info.get("iso") or key
+    # Pin here as well as in main(): this is the solve site, so a programmatic
+    # caller must not be able to capture a golden without the determinism env.
+    # It must precede the deferred heavy import below, exactly as the
+    # import-time pin did.
+    pin_determinism_env()
     # Heavy import deferred until after the determinism env is pinned.
     from scripts.run_calibration import _load_reference
     from scripts.run_calibration_full import solve_and_persist
@@ -886,6 +910,9 @@ def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
 
 def main() -> int:
     """Entry point."""
+    # Determinism pin, applied here (this process is the script's own) rather
+    # than at import — see pin_determinism_env.
+    pin_determinism_env()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--iso",
