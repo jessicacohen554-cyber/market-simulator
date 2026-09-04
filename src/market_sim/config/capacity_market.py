@@ -2676,6 +2676,38 @@ THERMAL_ELCC_CLASS_RATING_BY_ISO: dict[str, dict[str, float]] = {
     },
 }
 
+# First delivery year on which an ISO's CURRENT thermal accreditation design
+# (THERMAL_ACCREDITATION_BASIS_BY_ISO) applies, per ISO — the vintage axis of
+# the accreditation basis (capx D48, 2026-09-04, executing
+# FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md §2.3 item 1). Consumed ONLY
+# under the default-OFF ``ScenarioConfig.pjm_accreditation_design_vintage``
+# gate (rule 28 row ``pjm_accreditation_design_vintage``): for a delivery year
+# strictly BEFORE the entry the thermal fleet is accredited on the design the
+# auction of that year actually cleared on — UCAP, ``1 − EFORd`` — and from
+# the entry onward on the registry basis, exactly as the published design
+# switched. Off, every solve is byte-identical to the single-vintage basis.
+#
+# * PJM — "2025/2026": the Critical Issue Fast Path (CIFP) accreditation
+#   reform, PJM's ER24-99 filing (2023-10-13), accepted by FERC on 2024-01-30
+#   (166 FERC ¶ 61,058), first applied in the 2025/2026 BRA (held July 2024):
+#   every resource class, thermal included, is accredited at an ELCC-based
+#   class rating (Manual 21A "Determination of Accredited UCAP", Rev. 0
+#   eff. 2024-05-21). Before it (2021/22–2024/25) PJM Manual 18 §4.2.1 /
+#   Manual 21 §2 accredited a generation Capacity Resource at Installed
+#   Capacity × (1 − EFORd) — the UCAP design the registry default reproduces.
+#   D45 §2.2 measured the consequence of accrediting the 2021–2024 fleet on
+#   the 2025/26+ ELCC-class design: ELCC supply understates the UCAP fleet by
+#   ~15 % (137.6 vs ~162 GW thermal), and, paired with the composite
+#   requirement, lands the model's position at 1.14–1.18 where the auctions
+#   sat at 1.05. Rule 13: the design switch is a market-design date (an
+#   instrument on file at the run's information cutoff — the D42/D44 vintage
+#   gate), and the identical construction regenerates forward (the current
+#   design carries forward; a future re-design is intaken as a new entry).
+#   Rule 23: refresh on a published design change only, never a residual.
+THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO: dict[str, str] = {
+    "PJM": "2025/2026",
+}
+
 # Demand-response / load-management capacity products counted in the ISO's
 # own adequacy construction, expressed as the netting fraction applied to the
 # model's gross peak in :func:`market_sim.model.capacity.
@@ -2777,6 +2809,77 @@ ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
     # (rule 13). Refresh on a vintage re-anchor or a newer same-cycle
     # publication (source-data change, rule 23), never a residual.
     "NEISO": 2_639.682 / 30_050.0,
+}
+
+# Demand Resource capacity COUNTED AS SUPPLY in the ISO's own adequacy
+# construction, in accredited MW per delivery year — the supply-side
+# alternative to the peak-netting form above (capx D48, 2026-09-04,
+# executing FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md §2.3 item 2).
+# Consumed ONLY under the default-OFF ``ScenarioConfig.
+# pjm_demand_response_supply`` gate (rule 28 row ``pjm_demand_response_supply``)
+# by :func:`market_sim.model.capacity_evolution.retirements.
+# resolve_demand_response_supply_mw`: an in-table delivery year ADDS the
+# published MW to the accredited-supply ledger (``accredited_firm_capacity_mw``
+# — hence the CR-1 reserve position, the reliability floor and the backstop,
+# one ledger, rule 19) and the gross peak is NOT netted
+# (ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO is bypassed for that ISO-year), so
+# the position is stated on the auction's own RAW convention — DR in the
+# cleared quantity, the Reliability Requirement un-netted — which is exactly
+# the x-convention of PJM's VRR curve (Manual 18 §3.4: UCAP % of the
+# Reliability Requirement). Off, every solve is byte-identical to the netting.
+#
+# * PJM (RPM BRA, UCAP): the OFFERED Demand Resource quantity per delivery
+#   year, 2020/21–2027/28 — PJM's own RTO trend table (2027/2028 BRA Report,
+#   Dec 17 2025, Table 5 "Generation, DR and EE Resources offered and cleared
+#   in the RTO translated into UCAP"), digitized from and reconciled
+#   byte-for-byte against the committed rows
+#   data/raw/capacity-market/auction-supply/pjm/pjm.csv (metric ``offered``,
+#   category ``demand_resources``; every row cross-checked to its own
+#   delivery year's BRA report — see that file's README) by
+#   tests/unit/model/test_capacity.py. OFFERED, not cleared, because the
+#   model's position is a CENSUS position — the whole installed fleet
+#   against the requirement, whether or not a unit clears — and the market's
+#   census analogue for DR is the qualified DR that offers; the CLEARED rows
+#   (committed alongside) are the auction's outcome, a validation observable,
+#   never an input (rule 13). RPM-only: DR nominated in FRR plans is not in
+#   the series (2026/27: +264.4 MW would be), a conservative under-credit
+#   (the PRD-exclusion precedent). Rule 13 forward story: DR participation is
+#   a recurring market product that regenerates every auction and responds
+#   to conditions (11,887 → 6,085 MW over 2021/22 → 2025/26 as the annual
+#   Capacity Performance requirement tightened); strictly beyond the last
+#   published delivery year the resolver HOLDS-LAST (card C-A 2026-08-25) as
+#   the last published DR-to-Reliability-Requirement RATIO × the model's
+#   gross requirement (DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO — a ratio,
+#   the same construction the netting fraction above already uses, so the
+#   held quantity scales with load). Pre-table years fall through to the
+#   netting. Refresh on the next BRA report (rule 23), never on a residual.
+DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO: dict[str, dict[str, float]] = {
+    "PJM": {
+        "2020/2021": 9_846.7,
+        "2021/2022": 11_886.8,
+        "2022/2023": 10_513.0,
+        "2023/2024": 10_116.7,
+        "2024/2025": 10_146.4,
+        "2025/2026": 6_084.8,  # Table 8 annual 5,962.5 + 122.3 summer matched
+        "2026/2027": 5_530.6,
+        "2027/2028": 7_298.6,
+    },
+}
+
+# Hold-last object for delivery years strictly beyond the last published DR
+# supply row (card C-A convention; the NET_ICR_HOLD_LAST_RATIO_BY_ISO
+# precedent): the last delivery year's published offered DR over its
+# published RTO Reliability Requirement — 2027/2028: 7,298.6 MW UCAP DR
+# (above) over the 152,400 MW UCAP Reliability Requirement (2027/2028 BRA
+# Report, Dec 17 2025, "Reliability Requirement increase from 146,105 MW to
+# 152,400 MW (UCAP)"; the same operand the ADEQUACY_DEMAND_RESPONSE_FRACTION
+# _BY_ISO["PJM"] citation block records for the 2027/28 re-anchor). Applied
+# to the model's own gross (un-netted) requirement so the held DR scales
+# with load. Kept as an explicit expression so both published MW stay
+# traceable (rule 5). Supersedes itself when a later delivery year's row
+# lands above (rule 23).
+DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO: dict[str, float] = {
+    "PJM": 7_298.6 / 152_400.0,
 }
 
 # Internal-supply accounting ratio — the measured wedge between the model's
@@ -3201,6 +3304,47 @@ FORECAST_POOL_REQUIREMENT_BY_ISO: dict[str, dict[str, float]] = {
         # HOLD-LAST to 0.9401 in resolve_forecast_pool_requirement (card C-A
         # convention). Add the row here on publication (rule 23
         # [R-FROZEN-DERIVE]) — the hold supersedes itself automatically.
+    },
+}
+
+# Published PRE-REFORM Forecast Pool Requirement per ISO and delivery year —
+# the reliability requirement the auction ACTUALLY cleared on, stated as a
+# fraction of forecast peak on the pre-reform UCAP design (capx D48,
+# 2026-09-04, executing FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md §2.3
+# item 1 — the requirement half of the accreditation-design devintage).
+# Consumed ONLY under the default-OFF ``ScenarioConfig.
+# pjm_accreditation_design_vintage`` gate by :func:`market_sim.model.
+# capacity_evolution.retirements.resolve_pre_reform_pool_requirement`, which
+# is consulted BEFORE the post-reform table above inside
+# ``resolve_adequacy_requirement_mw``; off, every pre-reform delivery year
+# keeps the composite fallback byte-identically (the table above deliberately
+# starts at the reformed 2025/2026, so these rows are never reached unarmed).
+#
+# * PJM: FPR = (1 + IRM) × (1 − pool-average EFORd) under the pre-CIFP design
+#   (Manual 18 §4.2.1 — the UCAP Reliability Requirement is forecast peak ×
+#   FPR, so the published RTO Reliability Requirements 166,355.1 / 163,268.9 /
+#   163,166.2 / 164,107.6 MW UCAP divide by these to the forecast peaks). Each
+#   value is digitized from the committed demand-curve rows
+#   (data/raw/capacity-market/demand-curve/pjm/pjm.csv, metric
+#   ``forecast_pool_requirement``, delivery years 2021/2022–2024/2025 — the
+#   per-DY Planning Period Parameters workbooks committed beside them) and
+#   reconciled against them by tests/unit/model/test_capacity.py — a
+#   published market-design input, never a fit target (rules 13/23).
+#   Information gate (rule 13, the D42/D44 vintage construction): a delivery
+#   year's parameters are posted years before the delivery year begins
+#   (2021/22 posted 2018-02-01; 2022/23 2021-02-08; 2023/24 2022-02-28;
+#   2024/25 set for the Dec-2022 BRA), so the value screened in model year Y
+#   for delivery year Y/Y+1 was on file at every information cutoff the
+#   hindcast uses. Pre-2021/22 delivery years have no committed row and fall
+#   through to the composite exactly as the post-reform table's pre-table
+#   years do; the SAME delivery year is never in both tables (asserted by
+#   test), so the two resolvers can never disagree on a year.
+FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO: dict[str, dict[str, float]] = {
+    "PJM": {
+        "2021/2022": 1.0898,  # PPP posted 2018-02-01, Table 1 (IRM 15.8 %)
+        "2022/2023": 1.0868,  # PPP posted 2021-02-08, Table 1 (IRM 14.5 %)
+        "2023/2024": 1.0901,  # PPP posted 2022-02-28, Table 1 (IRM 14.8 %)
+        "2024/2025": 1.0894,  # PPP workbook, Planning Parameters sheet (IRM 14.7 %)
     },
 }
 

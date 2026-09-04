@@ -40,14 +40,19 @@ columns:
     dtype: string
     unit: none
     nullable: false
-    description: ISO/RTO publishing the accounting (MISO to date).
+    description: >-
+      ISO/RTO publishing the accounting (MISO PRA; PJM RPM BRA Demand
+      Resource offered/cleared UCAP per delivery year since capx D48,
+      2026-09-04).
   - name: planning_year
     dtype: string
     unit: none
     nullable: false
     description: >-
-      Planning/delivery year label the auction governs (e.g. "2025-2026" for a
-      MISO Planning Year).
+      Planning/delivery year label the auction governs, in the ISO's own
+      convention (e.g. "2025-2026" for a MISO Planning Year; "2025/2026" for
+      a PJM Delivery Year, matching the sibling demand-curve / auction-price
+      datatypes).
   - name: season
     dtype: string
     unit: none
@@ -97,9 +102,11 @@ columns:
     nullable: false
     description: >-
       Quantity basis as the source labels it: mw_zrc (Zonal Resource Credits —
-      the category trend tables) | mw_sac (MW Seasonal Accredited Capacity —
-      the zonal-results ledger rows). Numerically the same accredited-MW
-      basis; the label preserves the source's own terminology.
+      the MISO category trend tables) | mw_sac (MW Seasonal Accredited
+      Capacity — the MISO zonal-results ledger rows) | mw_ucap (PJM Unforced
+      Capacity — the BRA reports' offered/cleared UCAP rows). Numerically the
+      same accredited-MW basis; the label preserves the source's own
+      terminology.
   - name: vintage
     dtype: string
     unit: none

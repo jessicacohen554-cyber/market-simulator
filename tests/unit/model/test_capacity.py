@@ -8,7 +8,10 @@ import numpy as np
 
 from market_sim.config.constants import (
     ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+    DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO,
+    DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO,
     FORECAST_POOL_REQUIREMENT_BY_ISO,
+    FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO,
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HOURS_PER_YEAR,
     NET_ICR_HOLD_LAST_RATIO_BY_ISO,
@@ -18,6 +21,7 @@ from market_sim.config.constants import (
     PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
+    THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO,
     WRIGHT_REFERENCE_GW,
 )
 from market_sim.config.iso_configs import get_iso_config
@@ -40,6 +44,13 @@ from market_sim.model.capacity import (
     resolve_published_net_icr_mw,
     wind_ptc_levelized_per_mwh,
     wright_cost,
+)
+from market_sim.model.capacity_evolution.retirements import (
+    gross_adequacy_requirement_mw,
+    resolve_demand_response_supply_mw,
+    resolve_pre_reform_pool_requirement,
+    resolve_thermal_accreditation_basis,
+    thermal_accreditation_fraction,
 )
 from market_sim.model.capacity_evolution.adequacy import curve_convention_position
 from market_sim.model.storage import STORAGE_TECHS, compute_storage_annual_cost
@@ -5420,3 +5431,405 @@ class TestFossilAnnouncedLedgerReconciliation(TestEvolveFleetLedgerReconciliatio
             sum(d["derate_mw"] for d in events["announced_derates"]), 150.0
         )
         self._assert_reconciles(events)
+
+
+class TestPjmAccreditationDesignVintage(unittest.TestCase):
+    """capx D48 (2026-09-04) — PJM's adequacy accounting devintaged onto the
+    design each delivery year's auction actually cleared on (D45 §2.3 item 1):
+    thermal at UCAP + the published pre-CIFP FPR before 2025/26, the ELCC class
+    ratings + post-CIFP FPR from it. GATED default-OFF: every unarmed solve is
+    byte-identical to the single-vintage basis."""
+
+    PEAK = 149_590.0  # the D45 L1 2021 ledger peak
+
+    @staticmethod
+    def _csv_rows(sub, metric):
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / sub
+        with path.open(newline="") as fh:
+            return [r for r in csv.DictReader(fh) if r["metric"] == metric]
+
+    @staticmethod
+    def _cfg(armed, iso="PJM", **kw):
+        return ScenarioConfig(
+            iso=iso,
+            mode="forecast",
+            hindcast=True,
+            pjm_accreditation_design_vintage=armed,
+            **kw,
+        )
+
+    @staticmethod
+    def _composite(peak):
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
+        return (
+            peak
+            * (1.0 - dr)
+            * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["PJM"])
+            * PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["PJM"]
+        )
+
+    def test_pre_reform_fpr_reconciles_with_published_csv(self):
+        # Every pre-reform entry matches the committed forecast_pool_requirement
+        # row for its delivery year byte-for-byte, the two tables never share a
+        # delivery year, and every committed pre-2025/26 row is carried.
+        rows = self._csv_rows("demand-curve/pjm/pjm.csv", "forecast_pool_requirement")
+        by_dy = {r["delivery_year"]: float(r["y_value"]) for r in rows}
+        pre = FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO["PJM"]
+        post = FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"]
+        self.assertEqual(set(pre) & set(post), set())
+        reform = THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO["PJM"]
+        self.assertEqual(reform, "2025/2026")
+        self.assertEqual(
+            pre, {dy: v for dy, v in by_dy.items() if int(dy[:4]) < int(reform[:4])}
+        )
+        for dy, v in pre.items():
+            self.assertEqual(v, by_dy[dy])
+        self.assertTrue(all(v > 1.0 for v in pre.values()))  # (1+IRM)(1-EFORd) > 1
+        self.assertTrue(all(v < 1.0 for v in post.values()))  # post-CIFP FPR < 1
+        self.assertEqual(
+            set(THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO), {"PJM"}
+        )
+        self.assertEqual(set(FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO), {"PJM"})
+
+    def test_default_off_is_byte_identical(self):
+        cfg = self._cfg(False)
+        self.assertFalse(ScenarioConfig(iso="PJM").pjm_accreditation_design_vintage)
+        for year in (2019, 2021, 2023, 2024, 2025, 2028, None):
+            self.assertIsNone(resolve_pre_reform_pool_requirement(cfg, "PJM", year))
+            self.assertEqual(
+                resolve_thermal_accreditation_basis("PJM", cfg, year),
+                "elcc_class_rating",
+            )
+            self.assertEqual(
+                thermal_accreditation_fraction("coal", 0.08, "PJM", cfg, year), 0.83
+            )
+        for year in (2021, 2023, 2024):
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, year),
+                self._composite(self.PEAK),
+                places=6,
+            )
+        # The seams are byte-identical when neither config nor year is threaded.
+        self.assertEqual(thermal_accreditation_fraction("gas_ct", 0.06, "PJM"), 0.60)
+        self.assertEqual(
+            resolve_thermal_accreditation_basis("PJM"), "elcc_class_rating"
+        )
+
+    def test_armed_pre_reform_year_uses_ucap_and_published_fpr(self):
+        cfg = self._cfg(True)
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
+        for year, fpr in (
+            (2021, 1.0898),
+            (2022, 1.0868),
+            (2023, 1.0901),
+            (2024, 1.0894),
+        ):
+            self.assertEqual(resolve_pre_reform_pool_requirement(cfg, "PJM", year), fpr)
+            self.assertEqual(
+                resolve_thermal_accreditation_basis("PJM", cfg, year), "ucap"
+            )
+            self.assertAlmostEqual(
+                thermal_accreditation_fraction("coal", 0.08, "PJM", cfg, year), 0.92
+            )
+            self.assertAlmostEqual(
+                thermal_accreditation_fraction("gas_ct", 0.06, "PJM", cfg, year), 0.94
+            )
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, year),
+                self.PEAK * (1.0 - dr) * fpr,
+                places=6,
+            )
+        # The D45 §2.2 sign: the pre-reform requirement is ABOVE the composite
+        # (+20 %), and the UCAP fleet is above the ELCC-class fleet, so the
+        # position moves toward the curve on the requirement side.
+        self.assertGreater(
+            resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, 2021),
+            self._composite(self.PEAK) * 1.19,
+        )
+
+    def test_armed_post_reform_year_is_unchanged(self):
+        cfg, off = self._cfg(True), self._cfg(False)
+        for year in (2025, 2026, 2028, 2030, 2050):
+            self.assertIsNone(resolve_pre_reform_pool_requirement(cfg, "PJM", year))
+            self.assertEqual(
+                resolve_thermal_accreditation_basis("PJM", cfg, year),
+                "elcc_class_rating",
+            )
+            self.assertEqual(
+                resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, year),
+                resolve_adequacy_requirement_mw(off, "PJM", self.PEAK, year),
+            )
+        # No hold-last on the pre-reform table: nothing carries past the switch.
+        self.assertIsNone(resolve_pre_reform_pool_requirement(cfg, "PJM", 2025))
+        # Pre-table years (no committed row) fall through to the composite.
+        self.assertIsNone(resolve_pre_reform_pool_requirement(cfg, "PJM", 2019))
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, 2019),
+            self._composite(self.PEAK),
+            places=6,
+        )
+
+    def test_capacity_payment_priced_on_the_delivery_year_basis(self):
+        # The per-unit payment resolves through the same seam as the ledger:
+        # armed, a 2023 coal unit is paid on 0.92 not 0.83; unarmed 0.83.
+        from market_sim.model.capacity import capacity_revenue_per_mw_yr
+
+        cfg, off = self._cfg(True), self._cfg(False)
+        paid_on = capacity_revenue_per_mw_yr("PJM", "coal", 0.08, cfg, None, 2023)
+        paid_off = capacity_revenue_per_mw_yr("PJM", "coal", 0.08, off, None, 2023)
+        self.assertGreater(paid_off, 0.0)
+        self.assertAlmostEqual(paid_on / paid_off, 0.92 / 0.83, places=9)
+        self.assertEqual(
+            capacity_revenue_per_mw_yr("PJM", "coal", 0.08, cfg, None, 2026), paid_off
+        )
+
+    def test_other_isos_inert_with_the_flag_armed(self):
+        for iso in ("MISO", "NYISO", "NEISO", "ERCOT", "CAISO"):
+            on, off = self._cfg(True, iso=iso), self._cfg(False, iso=iso)
+            for year in (2021, 2023, 2025):
+                self.assertIsNone(resolve_pre_reform_pool_requirement(on, iso, year))
+                self.assertEqual(
+                    resolve_thermal_accreditation_basis(iso, on, year),
+                    resolve_thermal_accreditation_basis(iso, off, year),
+                )
+                self.assertEqual(
+                    resolve_adequacy_requirement_mw(on, iso, 30_000.0, year),
+                    resolve_adequacy_requirement_mw(off, iso, 30_000.0, year),
+                )
+
+    def test_backcast_coerces_hindcast_keeps_and_cache_key(self):
+        bc = ScenarioConfig(
+            iso="PJM", mode="backcast", pjm_accreditation_design_vintage=True
+        )
+        self.assertFalse(bc.pjm_accreditation_design_vintage)
+        self.assertTrue(self._cfg(True).pjm_accreditation_design_vintage)
+        off, on = self._cfg(False), self._cfg(True)
+        self.assertEqual(
+            off.cache_key(),
+            ScenarioConfig(iso="PJM", mode="forecast", hindcast=True).cache_key(),
+        )
+        self.assertNotEqual(off.cache_key(), on.cache_key())
+
+
+class TestPjmDemandResponseSupply(unittest.TestCase):
+    """capx D48 (2026-09-04) — PJM Demand Resources counted as adequacy SUPPLY
+    (the published per-delivery-year BRA offered DR UCAP) instead of a peak
+    netting (D45 §2.3 item 2). GATED default-OFF: every unarmed solve keeps the
+    netting byte-identically."""
+
+    PEAK = 149_590.0
+
+    @staticmethod
+    def _cfg(armed, iso="PJM", **kw):
+        return ScenarioConfig(
+            iso=iso,
+            mode="forecast",
+            hindcast=True,
+            pjm_demand_response_supply=armed,
+            **kw,
+        )
+
+    def test_registry_reconciles_with_committed_csv(self):
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "auction-supply" / "pjm" / "pjm.csv"
+        with path.open(newline="") as fh:
+            rows = list(csv.DictReader(fh))
+        offered = {
+            r["planning_year"]: float(r["value_mw"])
+            for r in rows
+            if r["metric"] == "offered" and r["category"] == "demand_resources"
+        }
+        self.assertEqual(DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO["PJM"], offered)
+        self.assertTrue(all(r["unit"] == "mw_ucap" for r in rows))
+        self.assertEqual(set(DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO), {"PJM"})  # rule 25
+        # Hold-last ratio: the last delivery year's offered DR over its
+        # published Reliability Requirement (an explicit expression).
+        last = max(offered, key=lambda l: int(l[:4]))
+        self.assertEqual(last, "2027/2028")
+        self.assertAlmostEqual(
+            DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO["PJM"],
+            offered[last] / 152_400.0,
+            places=12,
+        )
+
+    def test_default_off_is_byte_identical_to_netting(self):
+        cfg = self._cfg(False)
+        self.assertFalse(ScenarioConfig(iso="PJM").pjm_demand_response_supply)
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
+        for year in (2019, 2021, 2023, 2025, 2028, None):
+            self.assertIsNone(resolve_demand_response_supply_mw(cfg, "PJM", year, 1e5))
+        for year in (2021, 2025):
+            gross = gross_adequacy_requirement_mw(cfg, "PJM", self.PEAK, year)
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, year),
+                gross * (1.0 - dr),
+                places=6,
+            )
+        # accredited_firm_capacity_mw adds nothing unarmed / when not threaded.
+        from market_sim.model.capacity_evolution.adequacy import (
+            accredited_firm_capacity_mw,
+        )
+
+        base = accredited_firm_capacity_mw(
+            [], 0.0, 0.0, 0.0, iso="PJM", peak_demand_mw=self.PEAK
+        )
+        self.assertEqual(
+            accredited_firm_capacity_mw(
+                [],
+                0.0,
+                0.0,
+                0.0,
+                iso="PJM",
+                peak_demand_mw=self.PEAK,
+                config=cfg,
+                accreditation_year=2023,
+            ),
+            base,
+        )
+        self.assertEqual(
+            accredited_firm_capacity_mw(
+                [],
+                0.0,
+                0.0,
+                0.0,
+                iso="PJM",
+                peak_demand_mw=self.PEAK,
+                config=self._cfg(True),
+                accreditation_year=None,
+            ),
+            base,
+        )
+
+    def test_armed_in_table_year_counts_published_dr_and_stops_netting(self):
+        from market_sim.model.capacity_evolution.adequacy import (
+            accredited_firm_capacity_mw,
+        )
+
+        cfg, off = self._cfg(True), self._cfg(False)
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
+        for year, mw in (
+            (2021, 11_886.8),
+            (2023, 10_116.7),
+            (2024, 10_146.4),
+            (2025, 6_084.8),
+        ):
+            self.assertEqual(
+                resolve_demand_response_supply_mw(cfg, "PJM", year, None), mw
+            )
+            # Requirement: the gross (un-netted) bar — the netting is gone.
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, year),
+                resolve_adequacy_requirement_mw(off, "PJM", self.PEAK, year)
+                / (1.0 - dr),
+                places=6,
+            )
+            # Supply: the published DR is added outside the internal ratio.
+            base = accredited_firm_capacity_mw(
+                [],
+                0.0,
+                0.0,
+                0.0,
+                iso="PJM",
+                peak_demand_mw=self.PEAK,
+                config=off,
+                accreditation_year=year,
+            )
+            self.assertAlmostEqual(
+                accredited_firm_capacity_mw(
+                    [],
+                    0.0,
+                    0.0,
+                    0.0,
+                    iso="PJM",
+                    peak_demand_mw=self.PEAK,
+                    config=cfg,
+                    accreditation_year=year,
+                ),
+                base + mw,
+                places=6,
+            )
+
+    def test_hold_last_is_a_ratio_of_the_gross_requirement(self):
+        cfg = self._cfg(True)
+        ratio = DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO["PJM"]
+        for year in (2028, 2030, 2050):
+            gross = gross_adequacy_requirement_mw(cfg, "PJM", self.PEAK, year)
+            self.assertAlmostEqual(
+                resolve_demand_response_supply_mw(cfg, "PJM", year, gross),
+                gross * ratio,
+            )
+            # Scales with load.
+            self.assertAlmostEqual(
+                resolve_demand_response_supply_mw(cfg, "PJM", year, 2.0 * gross),
+                2.0 * gross * ratio,
+            )
+            # No gross requirement supplied → nothing is invented.
+            self.assertIsNone(resolve_demand_response_supply_mw(cfg, "PJM", year, None))
+        # Pre-table (no 2019/20 row) falls through to the netting.
+        self.assertIsNone(resolve_demand_response_supply_mw(cfg, "PJM", 2019, 1e5))
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, 2019),
+            gross_adequacy_requirement_mw(cfg, "PJM", self.PEAK, 2019) * (1.0 - dr),
+            places=6,
+        )
+
+    def test_position_is_on_the_raw_convention(self):
+        # With DR counted as supply the CR-1 position is (firm + DR) / gross —
+        # PJM's VRR x-basis — with NO curve_convention_position transform
+        # (that transform is the NEISO D40 R-B half and stays gated to NEISO).
+        from market_sim.model.capacity_evolution.adequacy import (
+            accredited_firm_capacity_mw,
+            capacity_reserve_position,
+        )
+
+        cfg, off = self._cfg(True), self._cfg(False)
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
+        args = ([], 0.0, 0.0, 50_000.0)
+        pos_off = capacity_reserve_position(*args, off, "PJM", self.PEAK, 2023)
+        pos_on = capacity_reserve_position(*args, cfg, "PJM", self.PEAK, 2023)
+        gross = gross_adequacy_requirement_mw(cfg, "PJM", self.PEAK, 2023)
+        firm_off = accredited_firm_capacity_mw(
+            *args,
+            iso="PJM",
+            peak_demand_mw=self.PEAK,
+            year=2023,
+            config=off,
+            accreditation_year=2023,
+        )
+        self.assertAlmostEqual(pos_off, firm_off / (gross * (1.0 - dr)), places=9)
+        self.assertAlmostEqual(pos_on, (firm_off + 10_116.7) / gross, places=9)
+        self.assertEqual(curve_convention_position(cfg, "PJM", 1.3), 1.3)
+
+    def test_other_isos_inert_and_cache_key(self):
+        for iso in ("MISO", "NYISO", "NEISO", "ERCOT", "CAISO"):
+            on, off = self._cfg(True, iso=iso), self._cfg(False, iso=iso)
+            for year in (2021, 2023, 2025):
+                self.assertIsNone(resolve_demand_response_supply_mw(on, iso, year, 1e5))
+                self.assertEqual(
+                    resolve_adequacy_requirement_mw(on, iso, 30_000.0, year),
+                    resolve_adequacy_requirement_mw(off, iso, 30_000.0, year),
+                )
+        bc = ScenarioConfig(iso="PJM", mode="backcast", pjm_demand_response_supply=True)
+        self.assertFalse(bc.pjm_demand_response_supply)
+        off, on = self._cfg(False), self._cfg(True)
+        self.assertEqual(
+            off.cache_key(),
+            ScenarioConfig(iso="PJM", mode="forecast", hindcast=True).cache_key(),
+        )
+        self.assertNotEqual(off.cache_key(), on.cache_key())
+        both = ScenarioConfig(
+            iso="PJM",
+            mode="forecast",
+            hindcast=True,
+            pjm_demand_response_supply=True,
+            pjm_accreditation_design_vintage=True,
+        )
+        self.assertEqual(len({off.cache_key(), on.cache_key(), both.cache_key()}), 3)

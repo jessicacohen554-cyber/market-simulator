@@ -4441,6 +4441,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             peak_demand_mw=peak_demand,
             elcc_curves_enabled=config.renewable_elcc_curves,
             nqc_curves_enabled=config.caiso_nqc_accreditation,
+            config=config,
+            accreditation_year=year,
         )
         # CR-3.1 observability: the credit each VRE class actually earned on
         # this year's own penetration (same resolver/basis as firm_mw above),
