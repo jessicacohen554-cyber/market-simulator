@@ -1,0 +1,1166 @@
+{
+ "charter": "miso-209 phase 0 \u2014 the coal-side availability object through unit_partial_outage_windows; zero-solve; nothing armed.",
+ "prereg": "results/calibration/PREREG-miso209-partial-derate-phase0-2026-09-04.md @ b7ed8e21",
+ "keeper": "2026-09-03-miso-202-unitclip",
+ "extract": "/tmp/claude-0/-home-user-market-simulator/1e13d39e-fb21-5f4b-a9d9-a6652aa36e5a/scratchpad/campd-partial-outages-MISO-noinmerit-DIAGNOSTIC.csv",
+ "production_extract_rows": 0,
+ "w1_extract": {
+  "exists": true,
+  "rows": 157,
+  "rows_by_group": {
+   "COAL": 157
+  },
+  "rows_by_year": {
+   "2023": 55,
+   "2024": 58,
+   "2025": 44
+  },
+  "distinct_units": 56,
+  "distinct_plants": 34,
+  "derate_factor_mean": 0.546,
+  "derate_factor_p10_p50_p90": [
+   0.43,
+   0.56,
+   0.624
+  ],
+  "duration_days_mean": 9.5,
+  "removed_mw_days_total": 358537.0
+ },
+ "consumer_flags": {
+  "cc_steam_part_reclass": false,
+  "cc_nameplate_basis": false,
+  "fleet_status_scope": true,
+  "st_capacity_basis": true,
+  "per_unit_clip": true
+ },
+ "w1_filter_trace_2025": [
+  {
+   "fac": 994,
+   "unit": "3",
+   "days": [
+    182,
+    196
+   ],
+   "factor": 0.52,
+   "high_hours": 49,
+   "ran_high": 48,
+   "down_high": 1,
+   "span_cf": 0.47
+  },
+  {
+   "fac": 994,
+   "unit": "4",
+   "days": [
+    137,
+    144
+   ],
+   "factor": 0.62,
+   "high_hours": 9,
+   "ran_high": 9,
+   "down_high": 0,
+   "span_cf": 0.39
+  },
+  {
+   "fac": 6213,
+   "unit": "1SG1",
+   "days": [
+    237,
+    244
+   ],
+   "factor": 0.6,
+   "high_hours": 5,
+   "ran_high": 5,
+   "down_high": 0,
+   "span_cf": 0.578
+  },
+  {
+   "fac": 6213,
+   "unit": "2SG1",
+   "days": [
+    238,
+    246
+   ],
+   "factor": 0.62,
+   "high_hours": 9,
+   "ran_high": 8,
+   "down_high": 1,
+   "span_cf": 0.495
+  },
+  {
+   "fac": 6705,
+   "unit": "1",
+   "days": [
+    2,
+    7
+   ],
+   "factor": 0.51,
+   "high_hours": 18,
+   "ran_high": 18,
+   "down_high": 0,
+   "span_cf": 0.494
+  },
+  {
+   "fac": 6705,
+   "unit": "1",
+   "days": [
+    186,
+    195
+   ],
+   "factor": 0.59,
+   "high_hours": 31,
+   "ran_high": 31,
+   "down_high": 0,
+   "span_cf": 0.536
+  },
+  {
+   "fac": 6705,
+   "unit": "4",
+   "days": [
+    185,
+    196
+   ],
+   "factor": 0.59,
+   "high_hours": 39,
+   "ran_high": 39,
+   "down_high": 0,
+   "span_cf": 0.47
+  },
+  {
+   "fac": 889,
+   "unit": "1",
+   "days": [
+    69,
+    75
+   ],
+   "factor": 0.73,
+   "high_hours": 14,
+   "ran_high": 11,
+   "down_high": 3,
+   "span_cf": 0.442
+  },
+  {
+   "fac": 889,
+   "unit": "2",
+   "days": [
+    240,
+    245
+   ],
+   "factor": 0.62,
+   "high_hours": 6,
+   "ran_high": 6,
+   "down_high": 0,
+   "span_cf": 0.452
+  },
+  {
+   "fac": 1710,
+   "unit": "1",
+   "days": [
+    123,
+    153
+   ],
+   "factor": 0.6,
+   "high_hours": 76,
+   "ran_high": 76,
+   "down_high": 0,
+   "span_cf": 0.634
+  },
+  {
+   "fac": 1710,
+   "unit": "1",
+   "days": [
+    238,
+    250
+   ],
+   "factor": 0.6,
+   "high_hours": 9,
+   "ran_high": 9,
+   "down_high": 0,
+   "span_cf": 0.609
+  },
+  {
+   "fac": 1710,
+   "unit": "1",
+   "days": [
+    261,
+    267
+   ],
+   "factor": 0.48,
+   "high_hours": 29,
+   "ran_high": 29,
+   "down_high": 0,
+   "span_cf": 0.495
+  },
+  {
+   "fac": 1710,
+   "unit": "1",
+   "days": [
+    292,
+    322
+   ],
+   "factor": 0.53,
+   "high_hours": 75,
+   "ran_high": 75,
+   "down_high": 0,
+   "span_cf": 0.557
+  },
+  {
+   "fac": 6090,
+   "unit": "3",
+   "days": [
+    329,
+    334
+   ],
+   "factor": 0.57,
+   "high_hours": 5,
+   "ran_high": 5,
+   "down_high": 0,
+   "span_cf": 0.475
+  },
+  {
+   "fac": 2823,
+   "unit": "B2",
+   "days": [
+    220,
+    225
+   ],
+   "factor": 0.62,
+   "high_hours": 30,
+   "ran_high": 30,
+   "down_high": 0,
+   "span_cf": 0.615
+  },
+  {
+   "fac": 2823,
+   "unit": "B2",
+   "days": [
+    229,
+    239
+   ],
+   "factor": 0.62,
+   "high_hours": 26,
+   "ran_high": 26,
+   "down_high": 0,
+   "span_cf": 0.615
+  },
+  {
+   "fac": 8222,
+   "unit": "B1",
+   "days": [
+    219,
+    224
+   ],
+   "factor": 0.69,
+   "high_hours": 24,
+   "ran_high": 18,
+   "down_high": 6,
+   "span_cf": 0.422
+  }
+ ],
+ "w1_filter_trace_note": "the production deriver detected these plateaus and DROPPED every one at scripts/lib/outage_detect.filter_revealed_outages: clause 1 drops a span in which the unit RAN (cf >= REAL_RUN_CF 0.05) through >= 24 high-net-load hours; a partial plateau is a running unit by definition, so it is dropped whenever it overlaps >= 24 high hours and fails the down/full-stop clauses otherwise \u2014 the partial shape is inert by construction wherever the EIA-930 net-load file exists",
+ "years": {
+  "2023": {
+   "n1": {
+    "n_shoulder": 351,
+    "n_tail": 15,
+    "gap": {
+     "SHOULDER": -10.958,
+     "TAIL": -151.537
+    },
+    "m208_gap": {
+     "SHOULDER": -10.958,
+     "TAIL": -151.537
+    }
+   },
+   "n2_consumer_vs_own": {
+    "bins_in_extract": 34,
+    "bins_in_consumer": 21,
+    "max_abs_diff": 0.3907,
+    "bins_missing_from_consumer": [
+     889,
+     963,
+     976,
+     1004,
+     1012,
+     1082,
+     1702,
+     1893,
+     4271,
+     6098,
+     6113,
+     6213,
+     8222
+    ],
+    "PASS": false
+   },
+   "w2_removed": {
+    "SHOULDER": {
+     "removed_nominal_gw_mean": 0.332,
+     "removed_effective_gw_mean": 0.168,
+     "removed_effective_gw_max": 0.513,
+     "active_bins_mean": 1.42,
+     "by_region_effective_gw": {
+      "North": 0.061,
+      "Central": 0.106,
+      "South": 0.0
+     },
+     "central_share": 0.636,
+     "window_layers_removed_gw_mean": 8.456,
+     "statistical_layer_removed_gw_mean": 1.632,
+     "coal_capability_gw_mean": 32.705,
+     "coal_nameplate_gw": 42.793,
+     "in_bracket": false
+    },
+    "TAIL": {
+     "removed_nominal_gw_mean": 0.334,
+     "removed_effective_gw_mean": 0.168,
+     "removed_effective_gw_max": 0.458,
+     "active_bins_mean": 1.33,
+     "by_region_effective_gw": {
+      "North": 0.041,
+      "Central": 0.126,
+      "South": 0.0
+     },
+     "central_share": 0.754,
+     "window_layers_removed_gw_mean": 9.094,
+     "statistical_layer_removed_gw_mean": 1.604,
+     "coal_capability_gw_mean": 32.095,
+     "coal_nameplate_gw": 42.793
+    },
+    "OTHER_JJ_DAYTIME": {
+     "removed_nominal_gw_mean": 0.376,
+     "removed_effective_gw_mean": 0.192,
+     "removed_effective_gw_max": 0.513,
+     "active_bins_mean": 1.67,
+     "by_region_effective_gw": {
+      "North": 0.029,
+      "Central": 0.163,
+      "South": 0.0
+     },
+     "central_share": 0.849,
+     "window_layers_removed_gw_mean": 9.728,
+     "statistical_layer_removed_gw_mean": 1.578,
+     "coal_capability_gw_mean": 31.487,
+     "coal_nameplate_gw": 42.793
+    },
+    "p75-90": {
+     "removed_nominal_gw_mean": 0.301,
+     "removed_effective_gw_mean": 0.153,
+     "removed_effective_gw_max": 0.513,
+     "active_bins_mean": 1.3,
+     "by_region_effective_gw": {
+      "North": 0.058,
+      "Central": 0.095,
+      "South": 0.0
+     },
+     "central_share": 0.621,
+     "window_layers_removed_gw_mean": 8.363,
+     "statistical_layer_removed_gw_mean": 1.635,
+     "coal_capability_gw_mean": 32.794,
+     "coal_nameplate_gw": 42.793
+    },
+    "p90-95": {
+     "removed_nominal_gw_mean": 0.388,
+     "removed_effective_gw_mean": 0.192,
+     "removed_effective_gw_max": 0.513,
+     "active_bins_mean": 1.66,
+     "by_region_effective_gw": {
+      "North": 0.076,
+      "Central": 0.117,
+      "South": 0.0
+     },
+     "central_share": 0.606,
+     "window_layers_removed_gw_mean": 8.293,
+     "statistical_layer_removed_gw_mean": 1.642,
+     "coal_capability_gw_mean": 32.858,
+     "coal_nameplate_gw": 42.793
+    },
+    "p95-99": {
+     "removed_nominal_gw_mean": 0.381,
+     "removed_effective_gw_mean": 0.191,
+     "removed_effective_gw_max": 0.513,
+     "active_bins_mean": 1.59,
+     "by_region_effective_gw": {
+      "North": 0.054,
+      "Central": 0.137,
+      "South": 0.0
+     },
+     "central_share": 0.717,
+     "window_layers_removed_gw_mean": 9.01,
+     "statistical_layer_removed_gw_mean": 1.607,
+     "coal_capability_gw_mean": 32.175,
+     "coal_nameplate_gw": 42.793
+    }
+   },
+   "w3_overlap": {
+    "plateau_unit_hours": 13032,
+    "overlapping_armed_unit_hours": 504,
+    "overlap_share": 0.0387,
+    "overlap_share_shoulder_hours": 0.0602
+   },
+   "w4_lift": {
+    "SHOULDER": {
+     "removal_gw_mean": 0.168,
+     "removal_gw_p50": 0.196,
+     "lift_usd_mean": 0.154,
+     "lift_usd_p50": 0.01,
+     "lift_usd_p90": 0.499,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.0141,
+     "reaches_25pct": false
+    },
+    "TAIL": {
+     "removal_gw_mean": 0.168,
+     "removal_gw_p50": 0.196,
+     "lift_usd_mean": 0.162,
+     "lift_usd_p50": 0.071,
+     "lift_usd_p90": 0.445,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.0011,
+     "reaches_25pct": false
+    },
+    "SHOULDER_nominal": {
+     "removal_gw_mean": 0.332,
+     "removal_gw_p50": 0.318,
+     "lift_usd_mean": 0.297,
+     "lift_usd_p50": 0.194,
+     "lift_usd_p90": 0.806,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.0271,
+     "reaches_25pct": false
+    }
+   },
+   "w6_feasibility": {
+    "SHOULDER": {
+     "n_days": 54,
+     "n_violation_days": 2,
+     "n_layer_caused": 0,
+     "days": [
+      {
+       "day": "2023-06-30",
+       "capped_gw": 83.79,
+       "measured_max_gw": 85.25,
+       "layer_caused": false
+      },
+      {
+       "day": "2023-07-28",
+       "capped_gw": 91.27,
+       "measured_max_gw": 91.71,
+       "layer_caused": false
+      }
+     ]
+    },
+    "TAIL": {
+     "n_days": 10,
+     "n_violation_days": 0,
+     "n_layer_caused": 0,
+     "days": []
+    },
+    "OTHER_JJ_DAYTIME": {
+     "n_days": 60,
+     "n_violation_days": 2,
+     "n_layer_caused": 0,
+     "days": [
+      {
+       "day": "2023-06-30",
+       "capped_gw": 83.79,
+       "measured_max_gw": 85.25,
+       "layer_caused": false
+      },
+      {
+       "day": "2023-07-28",
+       "capped_gw": 91.27,
+       "measured_max_gw": 91.71,
+       "layer_caused": false
+      }
+     ]
+    }
+   },
+   "r208_coal_excess_rescored": {
+    "SHOULDER": {
+     "model_coal_dispatch_gw": 31.01,
+     "model_coal_capability_gw": 32.705,
+     "capability_minus_partial_layer_gw": 32.538,
+     "campd_coal_gross_gw": 33.88,
+     "campd_coal_net_adjusted_gw": 31.325,
+     "e930_coal_gw": 29.577,
+     "excess_capability_over_net_adjusted_gw": 1.212,
+     "excess_dispatch_over_net_adjusted_gw": -0.315,
+     "excess_dispatch_over_e930_gw": 1.433
+    },
+    "TAIL": {
+     "model_coal_dispatch_gw": 29.548,
+     "model_coal_capability_gw": 32.095,
+     "capability_minus_partial_layer_gw": 31.927,
+     "campd_coal_gross_gw": 32.344,
+     "campd_coal_net_adjusted_gw": 29.913,
+     "e930_coal_gw": 28.405,
+     "excess_capability_over_net_adjusted_gw": 2.014,
+     "excess_dispatch_over_net_adjusted_gw": -0.365,
+     "excess_dispatch_over_e930_gw": 1.143
+    },
+    "OTHER_JJ_DAYTIME": {
+     "model_coal_dispatch_gw": 28.165,
+     "model_coal_capability_gw": 31.487,
+     "capability_minus_partial_layer_gw": 31.294,
+     "campd_coal_gross_gw": 30.368,
+     "campd_coal_net_adjusted_gw": 28.096,
+     "e930_coal_gw": 26.085,
+     "excess_capability_over_net_adjusted_gw": 3.199,
+     "excess_dispatch_over_net_adjusted_gw": 0.069,
+     "excess_dispatch_over_e930_gw": 2.08
+    },
+    "plants_with_factor": 15,
+    "plants_gross_only": 31
+   },
+   "w2b_shallow_subceiling_gap": {
+    "coal_boiler_units": 103,
+    "qualifying_units_cf_ge_0.55": 68,
+    "SHOULDER": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.417,
+     "gap_raw_gw_mean": 7.912
+    },
+    "TAIL": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.217,
+     "gap_raw_gw_mean": 8.114
+    },
+    "OTHER_JJ_DAYTIME": {
+     "gap_excl_armed_and_plateau_gw_mean": 2.164,
+     "gap_raw_gw_mean": 9.87
+    },
+    "p75-90": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.442,
+     "gap_raw_gw_mean": 7.804
+    },
+    "p90-95": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.344,
+     "gap_raw_gw_mean": 7.702
+    },
+    "p95-99": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.415,
+     "gap_raw_gw_mean": 8.587
+    },
+    "note": "\u03a3 over qualifying coal boiler units of max(0, ref - dmax_d) x unit capability (capability = p99.5 of the unit's own hourly gross; ref = the frozen detector's p90 of running daily maxima). NOT a mechanism: a diagnostic of how much revealed sub-ceiling running the deep-plateau form cannot see."
+   }
+  },
+  "2024": {
+   "n1": {
+    "n_shoulder": 351,
+    "n_tail": 15,
+    "gap": {
+     "SHOULDER": -18.652,
+     "TAIL": -290.021
+    },
+    "m208_gap": {
+     "SHOULDER": -18.652,
+     "TAIL": -290.021
+    }
+   },
+   "n2_consumer_vs_own": {
+    "bins_in_extract": 34,
+    "bins_in_consumer": 15,
+    "max_abs_diff": 0.1647,
+    "bins_missing_from_consumer": [
+     889,
+     963,
+     994,
+     1001,
+     1012,
+     1082,
+     1393,
+     1702,
+     2103,
+     4078,
+     4271,
+     6017,
+     6030,
+     6034,
+     6055,
+     6098,
+     6823,
+     8222,
+     56068
+    ],
+    "PASS": false
+   },
+   "w2_removed": {
+    "SHOULDER": {
+     "removed_nominal_gw_mean": 0.149,
+     "removed_effective_gw_mean": 0.103,
+     "removed_effective_gw_max": 1.138,
+     "active_bins_mean": 0.68,
+     "by_region_effective_gw": {
+      "North": 0.059,
+      "Central": 0.044,
+      "South": 0.0
+     },
+     "central_share": 0.43,
+     "window_layers_removed_gw_mean": 7.191,
+     "statistical_layer_removed_gw_mean": 1.751,
+     "coal_capability_gw_mean": 33.851,
+     "coal_nameplate_gw": 42.793,
+     "in_bracket": false
+    },
+    "TAIL": {
+     "removed_nominal_gw_mean": 0.218,
+     "removed_effective_gw_mean": 0.162,
+     "removed_effective_gw_max": 1.118,
+     "active_bins_mean": 0.67,
+     "by_region_effective_gw": {
+      "North": 0.117,
+      "Central": 0.044,
+      "South": 0.0
+     },
+     "central_share": 0.274,
+     "window_layers_removed_gw_mean": 7.16,
+     "statistical_layer_removed_gw_mean": 1.741,
+     "coal_capability_gw_mean": 33.892,
+     "coal_nameplate_gw": 42.793
+    },
+    "OTHER_JJ_DAYTIME": {
+     "removed_nominal_gw_mean": 0.458,
+     "removed_effective_gw_mean": 0.336,
+     "removed_effective_gw_max": 1.262,
+     "active_bins_mean": 1.78,
+     "by_region_effective_gw": {
+      "North": 0.224,
+      "Central": 0.112,
+      "South": 0.0
+     },
+     "central_share": 0.335,
+     "window_layers_removed_gw_mean": 8.279,
+     "statistical_layer_removed_gw_mean": 1.691,
+     "coal_capability_gw_mean": 32.823,
+     "coal_nameplate_gw": 42.793
+    },
+    "p75-90": {
+     "removed_nominal_gw_mean": 0.137,
+     "removed_effective_gw_mean": 0.095,
+     "removed_effective_gw_max": 1.138,
+     "active_bins_mean": 0.64,
+     "by_region_effective_gw": {
+      "North": 0.052,
+      "Central": 0.043,
+      "South": 0.0
+     },
+     "central_share": 0.456,
+     "window_layers_removed_gw_mean": 7.067,
+     "statistical_layer_removed_gw_mean": 1.756,
+     "coal_capability_gw_mean": 33.97,
+     "coal_nameplate_gw": 42.793
+    },
+    "p90-95": {
+     "removed_nominal_gw_mean": 0.189,
+     "removed_effective_gw_mean": 0.131,
+     "removed_effective_gw_max": 1.138,
+     "active_bins_mean": 0.81,
+     "by_region_effective_gw": {
+      "North": 0.072,
+      "Central": 0.059,
+      "South": 0.0
+     },
+     "central_share": 0.451,
+     "window_layers_removed_gw_mean": 7.194,
+     "statistical_layer_removed_gw_mean": 1.748,
+     "coal_capability_gw_mean": 33.851,
+     "coal_nameplate_gw": 42.793
+    },
+    "p95-99": {
+     "removed_nominal_gw_mean": 0.146,
+     "removed_effective_gw_mean": 0.1,
+     "removed_effective_gw_max": 1.138,
+     "active_bins_mean": 0.69,
+     "by_region_effective_gw": {
+      "North": 0.07,
+      "Central": 0.03,
+      "South": 0.0
+     },
+     "central_share": 0.298,
+     "window_layers_removed_gw_mean": 7.658,
+     "statistical_layer_removed_gw_mean": 1.734,
+     "coal_capability_gw_mean": 33.4,
+     "coal_nameplate_gw": 42.793
+    }
+   },
+   "w3_overlap": {
+    "plateau_unit_hours": 12480,
+    "overlapping_armed_unit_hours": 432,
+    "overlap_share": 0.0346,
+    "overlap_share_shoulder_hours": 0.1341
+   },
+   "w4_lift": {
+    "SHOULDER": {
+     "removal_gw_mean": 0.103,
+     "removal_gw_p50": 0.0,
+     "lift_usd_mean": 0.075,
+     "lift_usd_p50": 0.0,
+     "lift_usd_p90": 0.297,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.004,
+     "reaches_25pct": false
+    },
+    "TAIL": {
+     "removal_gw_mean": 0.162,
+     "removal_gw_p50": 0.0,
+     "lift_usd_mean": 0.104,
+     "lift_usd_p50": 0.0,
+     "lift_usd_p90": 0.442,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.0004,
+     "reaches_25pct": false
+    },
+    "SHOULDER_nominal": {
+     "removal_gw_mean": 0.149,
+     "removal_gw_p50": 0.0,
+     "lift_usd_mean": 0.11,
+     "lift_usd_p50": 0.0,
+     "lift_usd_p90": 0.437,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.0059,
+     "reaches_25pct": false
+    }
+   },
+   "w6_feasibility": {
+    "SHOULDER": {
+     "n_days": 50,
+     "n_violation_days": 1,
+     "n_layer_caused": 0,
+     "days": [
+      {
+       "day": "2024-07-29",
+       "capped_gw": 86.14,
+       "measured_max_gw": 87.26,
+       "layer_caused": false
+      }
+     ]
+    },
+    "TAIL": {
+     "n_days": 10,
+     "n_violation_days": 1,
+     "n_layer_caused": 0,
+     "days": [
+      {
+       "day": "2024-07-29",
+       "capped_gw": 86.14,
+       "measured_max_gw": 87.26,
+       "layer_caused": false
+      }
+     ]
+    },
+    "OTHER_JJ_DAYTIME": {
+     "n_days": 55,
+     "n_violation_days": 1,
+     "n_layer_caused": 0,
+     "days": [
+      {
+       "day": "2024-07-29",
+       "capped_gw": 86.14,
+       "measured_max_gw": 87.26,
+       "layer_caused": false
+      }
+     ]
+    }
+   },
+   "r208_coal_excess_rescored": {
+    "SHOULDER": {
+     "model_coal_dispatch_gw": 28.772,
+     "model_coal_capability_gw": 33.851,
+     "capability_minus_partial_layer_gw": 33.748,
+     "campd_coal_gross_gw": 31.89,
+     "campd_coal_net_adjusted_gw": 29.467,
+     "e930_coal_gw": 27.615,
+     "excess_capability_over_net_adjusted_gw": 4.281,
+     "excess_dispatch_over_net_adjusted_gw": -0.694,
+     "excess_dispatch_over_e930_gw": 1.157
+    },
+    "TAIL": {
+     "model_coal_dispatch_gw": 30.822,
+     "model_coal_capability_gw": 33.892,
+     "capability_minus_partial_layer_gw": 33.73,
+     "campd_coal_gross_gw": 34.987,
+     "campd_coal_net_adjusted_gw": 32.303,
+     "e930_coal_gw": 30.462,
+     "excess_capability_over_net_adjusted_gw": 1.427,
+     "excess_dispatch_over_net_adjusted_gw": -1.481,
+     "excess_dispatch_over_e930_gw": 0.361
+    },
+    "OTHER_JJ_DAYTIME": {
+     "model_coal_dispatch_gw": 25.574,
+     "model_coal_capability_gw": 32.823,
+     "capability_minus_partial_layer_gw": 32.487,
+     "campd_coal_gross_gw": 28.536,
+     "campd_coal_net_adjusted_gw": 26.382,
+     "e930_coal_gw": 24.436,
+     "excess_capability_over_net_adjusted_gw": 6.105,
+     "excess_dispatch_over_net_adjusted_gw": -0.808,
+     "excess_dispatch_over_e930_gw": 1.266
+    },
+    "plants_with_factor": 15,
+    "plants_gross_only": 31
+   },
+   "w2b_shallow_subceiling_gap": {
+    "coal_boiler_units": 100,
+    "qualifying_units_cf_ge_0.55": 68,
+    "SHOULDER": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.715,
+     "gap_raw_gw_mean": 7.315
+    },
+    "TAIL": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.1,
+     "gap_raw_gw_mean": 6.451
+    },
+    "OTHER_JJ_DAYTIME": {
+     "gap_excl_armed_and_plateau_gw_mean": 2.687,
+     "gap_raw_gw_mean": 9.478
+    },
+    "p75-90": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.759,
+     "gap_raw_gw_mean": 7.316
+    },
+    "p90-95": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.503,
+     "gap_raw_gw_mean": 7.059
+    },
+    "p95-99": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.818,
+     "gap_raw_gw_mean": 7.635
+    },
+    "note": "\u03a3 over qualifying coal boiler units of max(0, ref - dmax_d) x unit capability (capability = p99.5 of the unit's own hourly gross; ref = the frozen detector's p90 of running daily maxima). NOT a mechanism: a diagnostic of how much revealed sub-ceiling running the deep-plateau form cannot see."
+   }
+  },
+  "2025": {
+   "n1": {
+    "n_shoulder": 351,
+    "n_tail": 15,
+    "gap": {
+     "SHOULDER": -43.727,
+     "TAIL": -636.862
+    },
+    "m208_gap": {
+     "SHOULDER": -43.727,
+     "TAIL": -636.862
+    }
+   },
+   "n2_consumer_vs_own": {
+    "bins_in_extract": 34,
+    "bins_in_consumer": 19,
+    "max_abs_diff": 0.1725,
+    "bins_missing_from_consumer": [
+     976,
+     1004,
+     1702,
+     1893,
+     2103,
+     4078,
+     6017,
+     6030,
+     6034,
+     6055,
+     6254,
+     6823,
+     8023,
+     56068,
+     56456
+    ],
+    "PASS": false
+   },
+   "w2_removed": {
+    "SHOULDER": {
+     "removed_nominal_gw_mean": 0.29,
+     "removed_effective_gw_mean": 0.265,
+     "removed_effective_gw_max": 1.111,
+     "active_bins_mean": 1.28,
+     "by_region_effective_gw": {
+      "North": 0.102,
+      "Central": 0.163,
+      "South": 0.0
+     },
+     "central_share": 0.615,
+     "window_layers_removed_gw_mean": 8.247,
+     "statistical_layer_removed_gw_mean": 1.767,
+     "coal_capability_gw_mean": 32.778,
+     "coal_nameplate_gw": 42.793,
+     "in_bracket": false
+    },
+    "TAIL": {
+     "removed_nominal_gw_mean": 0.083,
+     "removed_effective_gw_mean": 0.075,
+     "removed_effective_gw_max": 0.448,
+     "active_bins_mean": 0.73,
+     "by_region_effective_gw": {
+      "North": 0.0,
+      "Central": 0.075,
+      "South": 0.0
+     },
+     "central_share": 1.0,
+     "window_layers_removed_gw_mean": 9.053,
+     "statistical_layer_removed_gw_mean": 1.721,
+     "coal_capability_gw_mean": 32.019,
+     "coal_nameplate_gw": 42.793
+    },
+    "OTHER_JJ_DAYTIME": {
+     "removed_nominal_gw_mean": 0.31,
+     "removed_effective_gw_mean": 0.255,
+     "removed_effective_gw_max": 1.111,
+     "active_bins_mean": 1.35,
+     "by_region_effective_gw": {
+      "North": 0.089,
+      "Central": 0.166,
+      "South": 0.0
+     },
+     "central_share": 0.65,
+     "window_layers_removed_gw_mean": 10.46,
+     "statistical_layer_removed_gw_mean": 1.661,
+     "coal_capability_gw_mean": 30.672,
+     "coal_nameplate_gw": 42.793
+    },
+    "p75-90": {
+     "removed_nominal_gw_mean": 0.257,
+     "removed_effective_gw_mean": 0.234,
+     "removed_effective_gw_max": 1.111,
+     "active_bins_mean": 1.2,
+     "by_region_effective_gw": {
+      "North": 0.079,
+      "Central": 0.155,
+      "South": 0.0
+     },
+     "central_share": 0.664,
+     "window_layers_removed_gw_mean": 8.237,
+     "statistical_layer_removed_gw_mean": 1.768,
+     "coal_capability_gw_mean": 32.788,
+     "coal_nameplate_gw": 42.793
+    },
+    "p90-95": {
+     "removed_nominal_gw_mean": 0.388,
+     "removed_effective_gw_mean": 0.357,
+     "removed_effective_gw_max": 1.111,
+     "active_bins_mean": 1.52,
+     "by_region_effective_gw": {
+      "North": 0.164,
+      "Central": 0.194,
+      "South": 0.0
+     },
+     "central_share": 0.542,
+     "window_layers_removed_gw_mean": 7.936,
+     "statistical_layer_removed_gw_mean": 1.782,
+     "coal_capability_gw_mean": 33.075,
+     "coal_nameplate_gw": 42.793
+    },
+    "p95-99": {
+     "removed_nominal_gw_mean": 0.296,
+     "removed_effective_gw_mean": 0.269,
+     "removed_effective_gw_max": 1.111,
+     "active_bins_mean": 1.33,
+     "by_region_effective_gw": {
+      "North": 0.115,
+      "Central": 0.154,
+      "South": 0.0
+     },
+     "central_share": 0.573,
+     "window_layers_removed_gw_mean": 8.68,
+     "statistical_layer_removed_gw_mean": 1.744,
+     "coal_capability_gw_mean": 32.368,
+     "coal_nameplate_gw": 42.793
+    }
+   },
+   "w3_overlap": {
+    "plateau_unit_hours": 10224,
+    "overlapping_armed_unit_hours": 396,
+    "overlap_share": 0.0387,
+    "overlap_share_shoulder_hours": 0.0943
+   },
+   "w4_lift": {
+    "SHOULDER": {
+     "removal_gw_mean": 0.265,
+     "removal_gw_p50": 0.09,
+     "lift_usd_mean": 0.383,
+     "lift_usd_p50": 0.095,
+     "lift_usd_p90": 0.825,
+     "hours_lifted_over_5": 3,
+     "share_of_gap": 0.0088,
+     "reaches_25pct": false
+    },
+    "TAIL": {
+     "removal_gw_mean": 0.075,
+     "removal_gw_p50": 0.05,
+     "lift_usd_mean": 1.42,
+     "lift_usd_p50": 0.096,
+     "lift_usd_p90": 5.187,
+     "hours_lifted_over_5": 2,
+     "share_of_gap": 0.0022,
+     "reaches_25pct": false
+    },
+    "SHOULDER_nominal": {
+     "removal_gw_mean": 0.29,
+     "removal_gw_p50": 0.094,
+     "lift_usd_mean": 0.436,
+     "lift_usd_p50": 0.105,
+     "lift_usd_p90": 0.875,
+     "hours_lifted_over_5": 3,
+     "share_of_gap": 0.01,
+     "reaches_25pct": false
+    }
+   },
+   "w6_feasibility": {
+    "SHOULDER": {
+     "n_days": 52,
+     "n_violation_days": 5,
+     "n_layer_caused": 0,
+     "days": [
+      {
+       "day": "2025-06-23",
+       "capped_gw": 78.13,
+       "measured_max_gw": 81.22,
+       "layer_caused": false
+      },
+      {
+       "day": "2025-06-24",
+       "capped_gw": 80.77,
+       "measured_max_gw": 82.03,
+       "layer_caused": false
+      },
+      {
+       "day": "2025-07-24",
+       "capped_gw": 77.75,
+       "measured_max_gw": 80.76,
+       "layer_caused": false
+      },
+      {
+       "day": "2025-07-28",
+       "capped_gw": 84.12,
+       "measured_max_gw": 86.56,
+       "layer_caused": false
+      },
+      {
+       "day": "2025-07-29",
+       "capped_gw": 82.21,
+       "measured_max_gw": 84.59,
+       "layer_caused": false
+      }
+     ]
+    },
+    "TAIL": {
+     "n_days": 7,
+     "n_violation_days": 3,
+     "n_layer_caused": 0,
+     "days": [
+      {
+       "day": "2025-06-23",
+       "capped_gw": 78.13,
+       "measured_max_gw": 81.22,
+       "layer_caused": false
+      },
+      {
+       "day": "2025-06-24",
+       "capped_gw": 80.77,
+       "measured_max_gw": 82.03,
+       "layer_caused": false
+      },
+      {
+       "day": "2025-07-28",
+       "capped_gw": 84.12,
+       "measured_max_gw": 86.56,
+       "layer_caused": false
+      }
+     ]
+    },
+    "OTHER_JJ_DAYTIME": {
+     "n_days": 56,
+     "n_violation_days": 1,
+     "n_layer_caused": 0,
+     "days": [
+      {
+       "day": "2025-07-24",
+       "capped_gw": 77.75,
+       "measured_max_gw": 80.76,
+       "layer_caused": false
+      }
+     ]
+    }
+   },
+   "r208_coal_excess_rescored": {
+    "SHOULDER": {
+     "model_coal_dispatch_gw": 32.024,
+     "model_coal_capability_gw": 32.778,
+     "capability_minus_partial_layer_gw": 32.513,
+     "campd_coal_gross_gw": 33.229,
+     "campd_coal_net_adjusted_gw": 30.687,
+     "e930_coal_gw": 28.597,
+     "excess_capability_over_net_adjusted_gw": 1.826,
+     "excess_dispatch_over_net_adjusted_gw": 1.337,
+     "excess_dispatch_over_e930_gw": 3.427
+    },
+    "TAIL": {
+     "model_coal_dispatch_gw": 31.919,
+     "model_coal_capability_gw": 32.019,
+     "capability_minus_partial_layer_gw": 31.944,
+     "campd_coal_gross_gw": 35.38,
+     "campd_coal_net_adjusted_gw": 32.651,
+     "e930_coal_gw": 30.174,
+     "excess_capability_over_net_adjusted_gw": -0.707,
+     "excess_dispatch_over_net_adjusted_gw": -0.732,
+     "excess_dispatch_over_e930_gw": 1.745
+    },
+    "OTHER_JJ_DAYTIME": {
+     "model_coal_dispatch_gw": 29.002,
+     "model_coal_capability_gw": 30.672,
+     "capability_minus_partial_layer_gw": 30.416,
+     "campd_coal_gross_gw": 30.072,
+     "campd_coal_net_adjusted_gw": 27.795,
+     "e930_coal_gw": 25.87,
+     "excess_capability_over_net_adjusted_gw": 2.621,
+     "excess_dispatch_over_net_adjusted_gw": 1.207,
+     "excess_dispatch_over_e930_gw": 3.132
+    },
+    "plants_with_factor": 15,
+    "plants_gross_only": 31
+   },
+   "w2b_shallow_subceiling_gap": {
+    "coal_boiler_units": 97,
+    "qualifying_units_cf_ge_0.55": 75,
+    "SHOULDER": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.627,
+     "gap_raw_gw_mean": 9.02
+    },
+    "TAIL": {
+     "gap_excl_armed_and_plateau_gw_mean": 0.648,
+     "gap_raw_gw_mean": 8.163
+    },
+    "OTHER_JJ_DAYTIME": {
+     "gap_excl_armed_and_plateau_gw_mean": 2.162,
+     "gap_raw_gw_mean": 11.655
+    },
+    "p75-90": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.683,
+     "gap_raw_gw_mean": 9.081
+    },
+    "p90-95": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.717,
+     "gap_raw_gw_mean": 8.951
+    },
+    "p95-99": {
+     "gap_excl_armed_and_plateau_gw_mean": 1.297,
+     "gap_raw_gw_mean": 8.879
+    },
+    "note": "\u03a3 over qualifying coal boiler units of max(0, ref - dmax_d) x unit capability (capability = p99.5 of the unit's own hourly gross; ref = the frozen detector's p90 of running daily maxima). NOT a mechanism: a diagnostic of how much revealed sub-ceiling running the deep-plateau form cannot see."
+   }
+  }
+ },
+ "verdict": {
+  "W1_rows": 157,
+  "W2_shoulder_effective_gw": 0.265,
+  "W2_in_bracket": false,
+  "W2_central_share": 0.615,
+  "W3_overlap_share": 0.0387,
+  "W3_statistical_gw": 1.767,
+  "W4_share_shoulder": 0.0088,
+  "W4_share_tail": 0.0022,
+  "W5_2023_2024_shoulder_gw": [
+   0.168,
+   0.103
+  ],
+  "W6_violation_days_shoulder": 5,
+  "R208_excess_capability_net_adjusted_gw": 1.826,
+  "W2b_shallow_gap_gw": 1.627,
+  "CHARTER": false
+ }
+}

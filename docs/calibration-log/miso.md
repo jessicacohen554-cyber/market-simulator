@@ -10953,3 +10953,68 @@ evidence appended to `campd_outage_windows`, `temp_dependent_derate`,
 2023–2025. Rule 27: blob-verified after push.
 
 Next shorthand: **miso-209**.
+
+## miso-209 (2026-09-04) — THE PARTIAL-DERATE SHAPE IS INERT BY CONSTRUCTION: the production deriver detects MISO's coal plateaus and drops every one at the revealed-availability filter (a partially-derated unit is a RUNNING unit); with the filter off the frozen form carries 0.27 GW of a 1.3–3.4 GW coal-side object (share 0.009); the coal-side lane is CLOSED — its whole reach is 13–34 % of the shoulder and ≤ 13 % of the tail; NOTHING CHARTERED, NO SOLVE
+
+**Keeper unchanged: `2026-09-03-miso-202-unitclip`.** NO LP, NO KEEPER MOVE, NO
+MECHANISM ARMED, NO FIELD, NO RUN REGISTERED, NO CELL VERDICT MOVED. PREREG
+`PREREG-miso209-partial-derate-phase0-2026-09-04.md` pushed blind at `b7ed8e21`
+BEFORE the extract was derived; record
+`FINDING-miso209-partial-shape-is-inert-by-construction-2026-09-04.md`;
+instrument `scripts/probes/_miso209_partial_derate_phase0.py` →
+`_miso209_partial_derate_phase0.json`; `_miso209_coal_side_reach_ceiling.json`.
+
+**W1 — the production extract is EMPTY, structurally.** `derive_campd_unit_outages.py
+--partial-windows --iso MISO --years 2023 2024 2025` → **0 rows** (committed with its
+`.meta.json`). Stage-by-stage on twelve coal units (2025): coal ✓, capability ✓,
+when-operable CF guard PASS (0.63–0.89), **17 plateaus detected** (factors 0.48–0.73,
+5–31 d), **0 kept** by `outage_detect.filter_revealed_outages` — clause 1 drops a span
+in which the unit RAN (cf ≥ 0.05) through ≥ 24 high-net-load hours, and a partial
+plateau is a running unit by definition (`ran_high == high_hours` in 14/17; the rest
+fail the down and full-stop clauses). The partial window shape cannot emit a row
+through the production chain for ANY ISO with an EIA-930 net-load file — the
+same-source explanation for the zeros read as "phenomenon absent" at ERCOT, CAISO,
+NEISO (NYISO's is genuine, no coal); **PJM's committed 76-row file is NOT reproducible
+at HEAD (re-derived through the current chain: 0 rows)**. NAMED for the director
+(cross-ISO deriver, rule 25): the admissible repair is a plateau-specific clause (kept
+iff the unit stayed CAPPED through the tight hours), its own cross-ISO A/B.
+
+**W2–W6 on a DIAGNOSTIC extract** (the deriver's own `--no-inmerit-filter`, scratchpad
+only, never under data/raw): 157 rows, all COAL, 56 units / 34 plants, factor mean
+0.546, duration 9.5 d. Through the PRODUCTION accumulator (keeper flags): **W2 shoulder
+removal 0.265 GW effective / 0.290 nominal** (bracket [3.4, 7.05] — 8 % of its floor),
+tail 0.075, Central 61.5 %, never MISO-South; the armed WINDOW layers remove **8.25 GW**
+of coal on the shoulder days and the statistical layer **1.77 GW** (6.7× the partial
+layer — a stack, rule 19). W3 overlap 3.9 %. **W4 share 0.009 / 0.002.** W5: 2023/2024
+0.168 / 0.103 GW. W6: 5 violation days, **0 layer-caused** (the keeper's own five,
+miso-208). **W2b, the shallow sub-ceiling running the deep form cannot see: 1.63 GW**
+on the shoulder days (97 boiler units, 75 qualifying; excluding armed windows and
+plateaus; raw 9.0) — the SAME size as the statistical layer (1.77): the envelope's
+statistical component is right-sized for it in aggregate; no additive shallow-derate
+object exists. N-2: aggregate reproduces (0.293 vs 0.290 GW), per bin up to 0.39 on the
+capacity basis (fleet pmax vs CAMPD nameplate) — the loader was read.
+
+**R-208, miso-208's coal-side excess re-scored:** model coal capability minus the layer
+32.51 GW vs EIA-930 28.60 (**+3.9**; dispatch +3.43) vs CAMPD net-adjusted 30.69
+(**+1.83**; dispatch +1.34; 31 of 46 plants gross-only × 0.93) vs CAMPD gross 33.23
+(−0.7). Survives positive on every net basis, FAILS its own ≥ +2.0 line on the
+CAMPD-net basis; basis spread 2 GW. **Reach ceiling (post-hoc, disclosed)** — a uniform
+coal removal re-priced up the keeper's census: 1.34 GW → 8.6 % shoulder / 3.1 % tail;
+1.83 → **13.1 % / 4.7 %**; 3.43 → **34.3 % / 13.1 %**; 4.94 → 59.9 % / 21.8 %. The
+coal-side object clears the 25 % line in the shoulder ONLY on the 930 basis and never in
+the tail: it fails the both-populations licensing on every basis.
+
+**Prior scored:** W1/W2/W3/W4/W6/P9 RIGHT; **W2b WRONG (3–6 predicted, 1.63)** — the
+line that closes the lane; R-208 WRONG on its own line (+1.83 < 2.0); W5 half; N-2
+failed per bin, cause identified. Ninth consecutive MISO session whose most useful
+output came from the wrong part of the prior.
+
+**What remains for the shoulder, none reaching 25 %:** the max-gen clock repair (own
+A/B); the RDT S→N binding state vs the LP's non-binding link (4.8 % by stranding); the
+deriver's plateau clause (director). The coal-availability lane is closed on MISO's own
+metered output. Rule 15 zero-solve; rule 28(b) evidence on `unit_outage_short_windows`
+(the partial-shape row) and `campd_outage_windows`, no verdict moves; §5.4 stamp; rule
+28(c) no field; rule 23 no constant touched (an existing documented switch produced the
+diagnostic); rule 25 MISO's shard only; rule 27 blob-verified.
+
+Next shorthand: **miso-210**.
