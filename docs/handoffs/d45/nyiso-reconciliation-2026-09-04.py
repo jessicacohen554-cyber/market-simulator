@@ -97,7 +97,10 @@ if __name__ == "__main__":
     for name, rows in res["runs"].items():
         print("==", name)
         for r in rows:
-            print(" ", r["year"], "bridge" if r["bridge"] else "     ",
+            if r["bridge"]:
+                print(" ", r["year"], "bridge (evolved, never solved; no ledger position)", "exits", r["retirements_mw"])
+                continue
+            print(" ", r["year"], "     ",
                   f"peak {r['model_peak_mw']:.0f} req {r['model_req_mw'] or 0:.0f} firm_after {r['model_firm_after_mw'] or 0:.0f}",
                   f"pos_enter {r['model_pos_entering_ledger'] or r['model_pos_entering_identity'] or 0:.3f} pos_after {r['model_pos_after'] or 0:.3f}",
                   f"pub_pos {r.get('pub_pos')} req_gap {r.get('req_gap_mw')} supply_gap_enter {r.get('supply_gap_entering_mw')}",

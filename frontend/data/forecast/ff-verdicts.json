@@ -5479,106 +5479,118 @@
   "tier": "t1f"
  },
  "nyiso-t1h": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "cbb225ece9ba",
+   "scored_at_date": "2026-09-04T09:43:06Z",
+   "cache_epoch": "91686abe7a744a88",
+   "run_id": "nyiso-2021-2025-realized-t1h-d45r",
+   "session": "capx-D45R"
+  },
+  "tier": "t1h",
+  "iso": "NYISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D45R (2026-09-04), the D45 close-out at HEAD (owner rulings Q33/Q35) -- D45's owed L2, which is also D46 Stage 2's NYISO leg: the FIRST diagnostics-on NYISO T1-H at the LIVE stack posture (curve-OFF, the flat $110/kW-yr anchor; NYISO absent from capacity_market_clearing_by_iso; fossil_announced_exits_enabled=True; keeper 2026-09-04-nyiso-186-astoria-identity; HEAD 334be8c2; cache key 91686abe7a744a88, pre-declared and matched; 12.2 min / 3.5 GB). Determination HOLD (FC-3 FAIL); FC-7 FAIL -> CAVEAT is an INSTRUMENT change (the harness now writes run_config.json), not a model improvement. The preserved nyiso-t1h-pre-d45r is the FFR-3A-2-vintage record (epoch 2026-08-03), so every delta against it is CONFOUNDED by a month of HEAD and is reported as the board row this replaces, never attributed. THE SCREEN DECIDED NOTHING: economic retirement events are exactly zero in every year -- the flat $110 pays every candidate through -- and every exit is exogenous (nuclear 1,036 MW announced 2022; gas_ct 420 MW via the D44 dates channel 2023, the only in-window fossil date NYISO has). retire.total_gw 1.457 vs 1.711 actual (err -0.149, FAIL by 5 points; the scoring target moved 1.488 -> 1.711 GW with the 2026-09-02 actuals rebuild, PR #4615); unit_recall_gt300 1/1 PASS; false_retire 0.256 GW / 0.176 FAIL (gas_ct 0.42 vs 0.189 actual). Storage entry exactly 0.000 GW (the D37-class shut channel recurs); wind 1.902 / solar 1.782 / gas_cc 2.0 / gas_ct 0.5 GW (the entry ladders now bound the 2026-07-14 over-build of 4.0 / 8.0 / 3.0 / 4.0). POSITION READING (the D45 stage-2 reconciliation, docs/handoffs/d45/nyiso-reconciliation-2026-09-04.json): entering positions 1.108 / 1.110 / 1.042 (2023 / 2024 / 2025, firm = peak x (1 + rm) identity) vs the published NYCA 1.043 / 1.058 / 1.058 -- +6.5 / +5.2 / -1.6 points -- and the excess is ENTIRELY the requirement half: the model's single-vintage 1.0797 x weather-year-peak bar sits 1.95 / 2.10 GW BELOW the published UCAP requirement in 2023 / 2024 (and 0.34 GW above in 2025), while the model's entering firm is within +0.10 / -0.59 / -0.21 GW of the published UCAP supplied. On the published requirement the same fleet sits 1.046 / 1.040 / 1.052 -- within 1.8 points of the market. Preserved verbatim: nyiso-t1h-pre-d45r. docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md section 5-7."
+  ],
   "categories": {
    "FC-1": {
-    "applicability": "optional",
     "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
     "rows": [
      {
-      "detail": "no committed invariant record (summary.invariants / --invariants)",
-      "gating": true,
       "row": "invariants I1-I14",
-      "status": "SKIPPED"
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
      }
-    ],
-    "status": "SKIPPED"
+    ]
    },
    "FC-2": {
-    "applicability": "n/a",
     "label": "FC-2 adequacy & equilibrium behavior",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-3": {
-    "applicability": "required",
     "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
     "rows": [
      {
-      "detail": "band FAIL: ['retire.total_gw', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
-      "gating": true,
       "row": "hindcast bands",
-      "status": "FAIL"
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-4": {
-    "applicability": "n/a",
     "label": "FC-4 crossover dispatch skill (T1-X)",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-5": {
-    "applicability": "n/a",
     "label": "FC-5 external corridor",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-6": {
-    "applicability": "n/a",
     "label": "FC-6 driver response",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
     "rows": [
      {
-      "detail": "run_config.json absent",
-      "gating": true,
       "row": "run_config",
-      "status": "FAIL"
+      "status": "PASS",
+      "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "DOF ledger absent (identification unproven)",
-      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
       "row": "dof ledger",
-      "status": "CAVEAT"
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
      }
-    ],
-    "status": "FAIL"
+    ]
    },
    "FC-8": {
-    "applicability": "runtime",
     "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
     "rows": [
      {
-      "detail": "no perf ledger (total_wall_s) in summary",
-      "gating": true,
       "row": "runtime",
-      "status": "SKIPPED"
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
      }
-    ],
-    "status": "SKIPPED"
+    ]
    }
-  },
-  "caveats": [],
-  "determination": "HOLD",
-  "iso": "NYISO",
-  "notes": [],
-  "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "scored_at_sha": "8ba592814d92",
-   "session": "FFR-3A-2"
-  },
-  "reasons": [
-   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
-   "FC-7 provenance & DOF FAIL"
-  ],
-  "rubric_version": "1.0",
-  "schema": "forecast-verdict/v1",
-  "tier": "t1h"
+  }
  },
  "nyiso-t1h-ff2d": {
   "categories": {
@@ -9580,6 +9592,222 @@
       "row": "run_config",
       "status": "PASS",
       "detail": "mode=forecast; 775 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "nyiso-t1h-pre-d45r": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "band FAIL: ['retire.total_gw', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "run_config.json absent",
+      "gating": true,
+      "row": "run_config",
+      "status": "FAIL"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "NYISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "scored_at_sha": "8ba592814d92",
+   "session": "FFR-3A-2"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1h"
+ },
+ "nyiso-t1h-d45r-curveon": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "cbb225ece9ba",
+   "scored_at_date": "2026-09-04T09:43:06Z",
+   "cache_epoch": "cad77112c804881d",
+   "run_id": "nyiso-2021-2025-realized-t1h-d45r-curveon",
+   "session": "capx-D45R"
+  },
+  "tier": "t1h",
+  "iso": "NYISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D45R (2026-09-04): D45's owed L3, the NYISO curve-ON PROBE (L2 + --capacity-market-clearing, {NYISO: True}; one field from the bare nyiso-t1h; keeper nyiso-186; HEAD 334be8c2; cache key cad77112c804881d, pre-declared and matched; 11.8 min / 3.5 GB). SUFFIXED BY CHARTER -- never the bare key, and NOTHING ARMS. Determination HOLD (FC-3 FAIL). THE D28 LATENT FLIP, MEASURED ON THE LIVE STACK: consulted at the model's own entering CR-1 position of 1.137 in 2023 (past the 1.12 zero-cross) the published curve pays exactly $0 where the flat anchor paid $110, and 3,496 MW of downstate gas_st fails its bar in the 2023 screen (decided + executed the same year, 1-yr gas_st lag); the fleet then goes SHORT (entering 1.006 / 1.028 in 2024 / 2025, paying $68.6 / $38.6 per kW-yr) -- the cobweb, one year deep. retire.total_gw 4.953 vs 1.711 actual (err +1.894, FAIL); gas_st 3.496 vs 0.000; false_retire 3.752 GW / 0.758 FAIL; recall 1/1 PASS; LOYO -2024 / -2025 folds tr10 FAIL/FAIL. Entry responds the other way: gas_ct 0.5 -> 0.0, gas_cc 2.0 -> 1.0 GW. THE ARMING CONDITION (pre-stated D45 P9 / D45R P9', all three required): (a) total in the +/-10 % band -- NO (+189 %); (b) false_retire in band -- NO (0.758); (c) entering positions within +/-3 points of the published NYCA positions -- NO (+9.4 in 2023). RECOMMENDATION TO THE OWNER: DO NOT ARM; the +189 % is a POSITION ARTIFACT FIRST (the requirement half sits 2 GW low, docs/handoffs/d45/nyiso-reconciliation-2026-09-04.json) and a curve question second -- at the PUBLISHED position the same curve pays $47.6 / $37.4 / $26.1 (within +/-15 % of the real $49.3 / $41.6 spot) and the 2023 screen would not have collapsed. Identified repairs (published sources, not built): the NYSRC per-capability-year adopted IRM + derate factor (Table D.2) in place of the single 2025-26 vintage; the NYSRC ICAP-market peak in place of the model's weather-year peak; the locality LCRs (NYC / LI / G-J) the model does not represent at default. docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md section 5-6."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
