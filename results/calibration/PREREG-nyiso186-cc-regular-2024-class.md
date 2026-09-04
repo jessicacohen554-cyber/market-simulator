@@ -265,3 +265,106 @@ S0 the control replay is not bit-identical and the drift cannot be named
 most two concurrent invocations. S3 every completed non-control solve is
 registered THIS session (rule 15). S4 G-DELTA fails ⇒ re-solve, never
 register. S5 a repair whose hypothesis did not fire is not built.
+
+---
+
+## §7 — ADDENDUM (written AFTER M0–M6 were read; every bar in §3–§6 is untouched, F8 honoured): the ONE A/B this session runs, its license, and its pre-declared consequence
+
+**Pushed to `origin` BEFORE the artifact is re-derived and BEFORE the arm is solved.**
+
+### 7.1 What the pre-registered bars read (full magnitude, control = keeper, bit-identical: 0 of 52,560 hourly zonal prices differ in every year)
+
+| year | class model / EIA-923 (unit sidecar, TWh) | E⁺ | top-3 | C3 | verdict |
+|---|---|---|---|---|---|
+| 2023 | 33.666 / 33.012 | 3.759 | 57185 +1.244, 56196 +1.109, 57664 +0.937 | **0.875** | CONCENTRATED |
+| **2024** | 38.175 / 34.060 | 4.715 | 57185 +1.838, 56196 +0.868, 57664 +0.805 | **0.745** | CONCENTRATED |
+| 2025 (prelim. 923) | 36.784 / 28.562 | 6.173 | 57664 +2.648, 56196 +1.397, 57185 +1.223 | 0.853 | CONCENTRATED |
+
+The same three plants in every year. **M4 (H-A) at the top-3, 2024:** `r` = 1.031
+(57185), 1.036 (56196), 0.950 (57664, on the facility meter) against the peers'
+[0.707, 1.412] — **none < min, H-A does not fire.** **M5 (H-B) at the top-3:** B1
+57185 `pmax/p99.9` 1.198 > 1.05 but dispatch 6.0 TWh < 8.4 TWh deliverable — does
+not fire; 56196 0.891 — no; B2 `a_p` 0.790 / 0.918 inside [0.532, 2.816] — no;
+57664 untestable on conduct as pre-declared (no own CAMPD record). **The bars are
+too loose to discriminate** — the M4 band is set by Flynn 0.707 and Carr Street
+0.816 (plants whose eGRID annual rate and CAMPD loaded rate disagree by 30–40 %)
+and the M5 band by the same two — and this is reported as a defect of the bars,
+not repaired post hoc. **§6 S5 stands: no repair is built on the bars.**
+
+**M6, 2024, class-sidecar basis:** the gas FAMILY is exact — model 67.80 TWh vs
+EIA-930 67.80 — so the `CC_REGULAR` +3.87 and `CC_CHP` +1.90 are the
+within-family fill of `CT_PEAKER` −1.66, `CT_CHP` −1.29 and `ST_GAS` −1.09
+(`ST_CHP` +0.12). **Mechanism, from the when-online comparison (2024):** Zeltmann
+runs at 0.96 loading when on against a 0.68 meter (on-share 0.90 vs 0.90); the
+Astoria facility 0.84 vs 0.77 (on 1.00 vs 1.00); Cricket Valley is on 0.995 of
+hours vs 0.878 (loading 0.54 vs 0.50); Athens and Valley track their meters
+(0.55/0.61, 0.77/0.84). The excess is the cheapest available NYC / Capital-Hudson
+combined cycles loading up to fill the CT-class and steam holes — the nyiso-175
+and nyiso-181 objects, not a CC mechanism.
+
+### 7.2 A data defect found on INPUTS during M2 (never on a residual): the Astoria registry split
+
+* EIA-860 files generators CT3 / CT4 / ST2 under plant **57664 Astoria Energy
+  II**; eGRID-2023 lists the same six generators (CT1–CT4, ST1, ST2) under ONE
+  plant, **55375**, with 1,245 MW; CAMPD facility 55375 carries four CT units;
+  **there is no eGRID row for 57664 in any vintage.**
+* **Identity, to the MWh:** eGRID `PLNGENAN(55375)` equals EIA-923 net generation
+  (55375) + (57664) to < 0.5 MWh in **all seven vintages 2018–2024**
+  (6,341,472 / 5,989,392 / 5,447,419 / 5,899,776 / 7,207,809 / 7,998,042 /
+  8,162,646). This is the committed identity rule's own exactness standard
+  (`derive_egrid_identity_heat_rates`, `MATCH_TOL_MWH` 0.5, `MIN_OVERLAPS` 2),
+  met at the TWO-plant sum. The derive's own docstring names "the Astoria
+  55375↔57664 family" as the object class; its one-to-one predicate cannot
+  reach it.
+* Consequence in the keeper: the fleet parquet carries `heat_rate = NaN` for
+  57664, so it takes the `HEAT_RATE_BINS['gas_cc']['f_class']` default **6.70**
+  while its sibling block at the same facility carries eGRID's 7.258 and the
+  facility meter reads 7.05 (running-hour, merged). A class-default estimate is
+  in use where a measured, seven-vintage, exact-identity input exists.
+
+**License: rule 14 `[R-ACCURATE]` + rule 1 `[R-STRUCT]`, NOT a §3 bar.** The
+brief's admissible form for H-A ("a repair of the NAMED JOIN by a generic rule
+reading published eGRID fields, zero parameters, regenerating per vintage")
+describes it exactly; only H-A's *firing* bar was missed, and §7.1 records why
+that bar cannot fire on anything. Direction: the repair makes Astoria Energy II
+DEARER; under M6's pinned family total the released energy goes to OTHER
+combined cycles first.
+
+### 7.3 The arm, fixed now
+
+* **Change:** `scripts/data/derive_egrid_identity_heat_rates.py` gains a
+  MERGED-identity leg: for a CAMPD-less EIA-923 plant `p`, an eGRID plant `q ≠
+  p` of the same state that is itself an EIA-923 plant, with `PLNGENAN(q) ==
+  netgen(p) + netgen(q)` to `MATCH_TOL_MWH` in EVERY overlapping vintage,
+  `≥ MIN_OVERLAPS`, run over the whole population. Same tolerance, same
+  overlap rule, same pooled `ΣPLHTIAN / ΣPLNGENAN` rate rule, same LOYO
+  record. **Dry-run result (read before this addendum, disclosed): exactly ONE
+  pair in the 187-plant NYISO fossil population — 57664 ↔ 55375, 7 vintages,
+  pooled 7.3792, per-vintage 7.2576–7.5436.** The one-to-one rows are unchanged
+  (Allegany 7784 byte-identical). Zero parameters; zero config fields.
+* **Arm:** `--replay-bundle results/calibration/nyiso185_family_hr --year 2023
+  2024 2025 --out-dir results/calibration/nyiso186_astoria_identity`, years
+  sequential, with the re-derived artifact on disk. **G-DELTA:** the arm's
+  `scenario_config` differs from the keeper's in ZERO fields; the artifact
+  differs in exactly one row (57664). **Verdict rule: §4 verbatim** (rejected
+  probe iff C2 / C3a / C3b / C8 flips PASS → FAIL; else keeper candidate, put
+  to the owner with every regression at full magnitude).
+* **Pre-declared expectations (falsifiable, not bars):** (i) 57664's energy
+  FALLS every year; (ii) 55375, 56196 and the other NYC CCs RISE; (iii) the
+  class C1-2024 cell moves LITTLE — its share leg may stay FAIL — because the
+  family total is pinned (M6); (iv) `ST_GAS` / CT classes ~unchanged; (v) no
+  price claim; C3a-2025 owner-court whatever it does.
+* **What this arm does NOT carry (F7):** the availability half of the same
+  split — the `perunitmerit` extract routes CT3 / CT4 (313.0 MW each, of a
+  1,221 MW plant denominator) and CT1 / CT2 (297.5 MW) ALL to 55375, so Astoria
+  Energy II is never derated and Astoria Energy I is derated for its sibling's
+  outages (2025: 57664's EIA-923 falls to 2.12 TWh on a long outage the model
+  cannot see, +2.65 TWh); and the tranche artifact reads 55375 at a 150 %
+  median CF. Sized and handed to the outage-derive lane (the caiso-196
+  `CAMPD_UNIT_PLANT_REMAP` precedent is the repair form there).
+* **Also NOT carried:** Bethlehem 2539 — eGRID `PLHTRT` 6.87 (2018–21) → 8.26
+  (2022) → 9.67 (2023) → 10.44 (2024) while CAMPD's per-unit running HR reads
+  10.0–10.2 in 2022–23 and 6.6–7.1 in 2024–25 with 2022–23 CAMPD gross BELOW
+  EIA-923 net — a CEMS reporting regime change, not a plant property. The model
+  prices it at 9.665 in every year; under-run −2.28 (2023) / loading 0.56 vs
+  0.75 when on (2024). Opposite sign to this object; handed forward.
