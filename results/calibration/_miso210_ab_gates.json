@@ -1,0 +1,297 @@
+{
+ "prereg": "PREREG-miso210-maxgen-clock-repair-2026-09-04.md \u00a74",
+ "keeper_at_open": "2026-09-03-miso-202-unitclip",
+ "delta": "maxgen_events.MODEL_TZ_BY_ISO['MISO'] Etc/GMT+5 -> Etc/GMT+6, the M-2 deriver's twin constant + DA-hub EST->model shift, and the re-derived M-2 extract. NO ScenarioConfig field.",
+ "control": "miso210_control_A",
+ "arm": "miso210_clock_B",
+ "scorer_written_and_committed_before_any_arm_result": true,
+ "c3a_is_never_a_gate": "rule 1 [R-STRUCT]; reported at full magnitude with the PREREG sign beside it",
+ "S0": {
+  "sidecars_checked": 9,
+  "missing": [],
+  "max_abs_diff": 0.0,
+  "passed": true
+ },
+ "S1": {
+  "n_fields": 783,
+  "config_diffs": [],
+  "git_sha": {
+   "control": "7812291a",
+   "arm": "a9b67b53"
+  },
+  "extract_sha256": {
+   "control_committed_at_open": "544bf750cc5bc3f8f96b53af7ddcf09b620db3522fbc53b532676961db272add",
+   "arm_rederived_expected": "de7e4f7786b351d824859565a97d5660fe567fcf48d86cb89b6f69b9a4ab4966",
+   "in_tree_now": "de7e4f7786b351d824859565a97d5660fe567fcf48d86cb89b6f69b9a4ab4966"
+  },
+  "passed": true
+ },
+ "S2": {
+  "source": "P-1 / S-2 block of _miso210_clock_phase0.json",
+  "tier_windows_shifted_exactly": {
+   "2023": true,
+   "2024": true,
+   "2025": true
+  },
+  "m2_windows_shifted_exactly": {
+   "2023": true,
+   "2024": true,
+   "2025": true
+  },
+  "detail": "tier cost off tier_slack_cost_from_registry; M-2 off unit_outage_maxgen_derate_factors on the committed vs re-derived extract",
+  "passed": true
+ },
+ "S3": {
+  "source": "P-2a block of _miso210_clock_phase0.json",
+  "n_cert_identical": true,
+  "blocks_identical": true,
+  "detail": "guard 2 n_cert per registry row, DA hub record shifted with the registry",
+  "passed": true
+ },
+ "K1": {
+  "band_twh": 8.0,
+  "prereg_delta_bound_twh": {
+   "2023": 0.04,
+   "2024": 0.04,
+   "2025": 0.06
+  },
+  "largest_class_year_move": {
+   "key": "CC_REGULAR|2024",
+   "abs_twh": 0.002
+  },
+  "named_ex_ante": {
+   "ST_GAS|2024": {
+    "prereg_control": -7.487,
+    "prereg_headroom": 0.513,
+    "measured_control": -7.487,
+    "measured_arm": -7.486,
+    "band_exit": false
+   },
+   "CC_REGULAR|2024": {
+    "prereg_control": 6.942,
+    "prereg_headroom": 1.058,
+    "measured_control": 6.942,
+    "measured_arm": 6.94,
+    "band_exit": false
+   },
+   "ST_GAS|2025": {
+    "prereg_control": -6.684,
+    "prereg_headroom": 1.316,
+    "measured_control": -6.684,
+    "measured_arm": -6.686,
+    "band_exit": false
+   },
+   "COAL_PRB|2025": {
+    "prereg_control": -4.907,
+    "prereg_headroom": 3.093,
+    "measured_control": -4.907,
+    "measured_arm": -4.907,
+    "band_exit": false
+   },
+   "ST_GAS|2023": {
+    "prereg_control": -3.516,
+    "prereg_headroom": 4.484,
+    "measured_control": -3.516,
+    "measured_arm": -3.517,
+    "band_exit": false
+   },
+   "CC_REGULAR|2023": {
+    "prereg_control": -3.408,
+    "prereg_headroom": 4.592,
+    "measured_control": -3.408,
+    "measured_arm": -3.407,
+    "band_exit": false
+   },
+   "CC_REGULAR|2025": {
+    "prereg_control": -2.177,
+    "prereg_headroom": 5.823,
+    "measured_control": -2.177,
+    "measured_arm": -2.176,
+    "band_exit": false
+   }
+  },
+  "all_band_exits": [],
+  "passed": true
+ },
+ "K2": {
+  "control": {
+   "2023": 0.081,
+   "2024": 0.109,
+   "2025": 0.182
+  },
+  "arm": {
+   "2023": 0.081,
+   "2024": 0.111,
+   "2025": 0.182
+  },
+  "pass_to_fail": [],
+  "passed": true
+ },
+ "K3": {
+  "d4_row_counts": {
+   "control": 57,
+   "arm": 57
+  },
+  "scorable": true,
+  "new_d4_failures": [],
+  "cleared": [],
+  "status": "SCORED",
+  "passed": true
+ },
+ "K4": {
+  "d1_row_counts": {
+   "control": 30,
+   "arm": 30
+  },
+  "scorable": true,
+  "control": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.762,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.956,
+    "cv_ratio": 1.246,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.485,
+    "verdict": "pass"
+   }
+  },
+  "arm": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.762,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.956,
+    "cv_ratio": 1.246,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.485,
+    "verdict": "pass"
+   }
+  },
+  "pass_to_fail": [],
+  "status": "SCORED",
+  "passed": true
+ },
+ "K5": {
+  "pass_to_non_pass": [],
+  "passed": true
+ },
+ "K6": {
+  "attestation_entries": {
+   "control": 41,
+   "arm": 41
+  },
+  "prereg": "no new ledger entry (41 -> 41); the arm corrects a constant to a measured clock",
+  "status": "SCORED",
+  "passed": true
+ },
+ "movement": {
+  "epsilons": {
+   "c1_twh": 0.01,
+   "c3a_pp": 0.01,
+   "c3b": 0.0005,
+   "c8_share": 0.0005
+  },
+  "d_c1_twh": {
+   "CC_CHP|2023": 0.0,
+   "CC_CHP|2024": 0.0,
+   "CC_CHP|2025": 0.0,
+   "CC_REGULAR|2023": 0.001,
+   "CC_REGULAR|2024": -0.002,
+   "CC_REGULAR|2025": 0.001,
+   "COAL_BIT|2023": 0.0,
+   "COAL_BIT|2024": 0.0,
+   "COAL_BIT|2025": -0.001,
+   "COAL_LIGNITE|2023": 0.0,
+   "COAL_LIGNITE|2024": 0.0,
+   "COAL_LIGNITE|2025": 0.0,
+   "COAL_PRB|2023": -0.001,
+   "COAL_PRB|2024": 0.001,
+   "COAL_PRB|2025": 0.0,
+   "CT_PEAKER|2023": 0.001,
+   "CT_PEAKER|2024": -0.001,
+   "CT_PEAKER|2025": 0.0,
+   "ST_CHP|2023": 0.0,
+   "ST_CHP|2024": 0.0,
+   "ST_CHP|2025": 0.0,
+   "ST_GAS|2023": -0.001,
+   "ST_GAS|2024": 0.001,
+   "ST_GAS|2025": -0.002
+  },
+  "c3a_control": {
+   "2023": 0.12176560121765341,
+   "2024": -4.613003095975228,
+   "2025": -12.384513858337005
+  },
+  "c3a_arm": {
+   "2023": 0.12176560121765341,
+   "2024": -4.396284829721357,
+   "2025": -12.384513858337005
+  },
+  "d_c3a_pp": {
+   "2023": 0.0,
+   "2024": 0.2167,
+   "2025": 0.0
+  },
+  "c3a_prereg_scored": {
+   "2023": {
+    "delta_pp": 0.0,
+    "prereg_band": {
+     "lo": -0.05,
+     "hi": 0.1
+    },
+    "inside": true
+   },
+   "2024": {
+    "delta_pp": 0.2167,
+    "prereg_band": {
+     "lo": 0.0,
+     "hi": 1.5
+    },
+    "inside": true
+   },
+   "2025": {
+    "delta_pp": 0.0,
+    "prereg_band": {
+     "lo": -0.05,
+     "hi": 0.1
+    },
+    "inside": true
+   }
+  },
+  "d_c3b": {
+   "2023": 0.0,
+   "2024": 0.002,
+   "2025": 0.0
+  },
+  "c8_share_control": {
+   "2023": 0.15525822777731177,
+   "2024": 0.15289001071383174,
+   "2025": 0.27136193981018586
+  },
+  "c8_share_arm": {
+   "2023": 0.15523139301859532,
+   "2024": 0.15288584632425709,
+   "2025": 0.2714207930640922
+  },
+  "d_c8_share": {
+   "2023": -3e-05,
+   "2024": -0.0,
+   "2025": 6e-05
+  },
+  "status_map_identical": true,
+  "arm_moved_values": true
+ },
+ "kills_fired": [],
+ "verdict": "KILLS SILENT and the arm MOVED values -> keeper candidate on its own gates. C3a is reported at full magnitude and is NEVER the justification."
+}

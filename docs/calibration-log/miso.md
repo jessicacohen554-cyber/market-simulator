@@ -11018,3 +11018,85 @@ metered output. Rule 15 zero-solve; rule 28(b) evidence on `unit_outage_short_wi
 diagnostic); rule 25 MISO's shard only; rule 27 blob-verified.
 
 Next shorthand: **miso-210**.
+
+## miso-210 (2026-09-04) — THE MAX-GEN CLOCK REPAIR: both armed declared-window mechanisms fired ONE HOUR LATE on the model clock (EST placement on a CST index); repaired as one constant + the extract it regenerates, adjudicated as a single-delta A/B against a BIT-IDENTICAL control; ALL TEN GATES PASSING → **PROMOTED, keeper → `2026-09-04-miso-210-clock`**; determination UNCHANGED (NOT-YET on C3a-2025 alone)
+
+**Keeper → `2026-09-04-miso-210-clock`** (bundle `results/calibration/miso210_clock_B`),
+superseding `2026-09-03-miso-202-unitclip`; control `2026-09-04-miso-210-control`
+(`miso210_control_A`). PREREG `PREREG-miso210-maxgen-clock-repair-2026-09-04.md` +
+scorer `_miso210_ab_gates.py` pushed BLIND at `83e73bf8` before any window was
+re-placed; phase-0 record `_miso210_clock_phase0.json` (`7812291a`); repair `a9b67b53`;
+finding `FINDING-miso210-maxgen-clock-repair-2026-09-04.md`; A/B record
+`_miso210_ab_gates.json`. Two LPs spent, in-session, years sequential, the arm only
+after the control finished.
+
+**The defect (miso-208 §0 item 2, settled, not re-derived).** The model's 8760 index is
+CST hour-beginning (two r = 1.000 witnesses); MISO declares in EST;
+`maxgen_events.MODEL_TZ_BY_ISO['MISO']` was `Etc/GMT+5`, so `maxgen_emergency_tier_pricing`
+(K) and, through the M-2 deriver sharing the constant, `unit_outage_maxgen_events` (K)
+placed every declared window one hour late. **The repair:** `Etc/GMT+6`; the deriver reads
+the SHARED loader/constant (one placement function for both consumers) and shifts its DA-hub
+certificate record by the same hour (guard-2 `n_cert` IDENTICAL on all 9 registry rows,
+S-3); both MISO M-2 extracts re-derived (2,174 → 2,171 rows, 41,874 → 41,677 MW, −0.47 %;
+the `-unitroute-` file byte-identical to the phase-0 scratchpad prediction). No
+ScenarioConfig field, no mechanism, no ledger entry (41/2 → 41/2). Pure helpers
+`registry_to_model_clock` / `da_hub_long_to_wide` pinned by 7 new tests (45 pass).
+
+**Found before the repair, neither pre-registered:** (i) the M-2 deriver could NOT run at
+HEAD — the 2021/2022 registry rows (rule-22 intake) demanded DA hub records that do not
+exist, and the committed `-unitroute-` extract was miso-200's RELABEL, never
+forward-derived; repaired (uncertifiable years dropped with notice). (ii) N-1: the forward
+deriver at the OLD clock reproduces the committed extract to ONE row (New Ulm 2001/7,
+ST_CHP, 1 MW), so the arm carries the clock plus 1 MW of fleet drift and nothing else.
+
+**Phase 0 (zero-solve), all against the PREREG:** every registry row shifts by EXACTLY one
+hour (gains its declared first hour, loses the hour after its declared end). P-1a/P-1c
+RIGHT; **P-1b RIGHT on its line and WRONG on its mechanism** — 2024's 19,384 MWh of $500
+slack sits in h13–h18 CST and the LOST hour (h19) carries **0.0 MWh**, so the PREREG's named
+2024 channel does not exist. P-2a/b/c RIGHT (certificates identical, blocks within ±1.2 %,
+F3 silent). **P-3 RIGHT: miso-208's "tier floor silent in every 2025 Warning+ hour" HOLDS on
+the corrected clock** (72 h, slack 0, min idle thermal 2.178 GW unchanged). V-KEY-LMP
+reproduces at r = 1.000 in 2023/2025 and on every 2024 window day. S-2: tier cost and M-2
+hour set shift by exactly −1 h off the production functions.
+
+**The A/B — every gate silent.** S-0 BIT-IDENTICAL (9 sidecars, 0.0; D1/D2/D4 byte-identical);
+S-1 zero config diffs (783 fields), legs `7812291a`/`a9b67b53`, extract sha as predicted;
+S-2/S-3 PASS; **K-1 no band exit, largest move 0.002 TWh** (CC_REGULAR-2024 +6.942 → +6.940;
+ST_GAS-2024 −7.487 → −7.486); K-2 C3b 0.081/0.109/0.182 → 0.081/0.111/0.182; K-3 zero new
+D-4 (57/57); K-4 identical; K-5 status map IDENTICAL; K-6 REAL. **C3a, reported never
+argued: 2023 +0.1218 UNCHANGED, 2025 −12.3845 UNCHANGED, 2024 −4.613 → −4.396 (+0.217 pp,
+inside the pre-registered [0, +1.5])** — from the GAINED hour, not the lost one: 12:00 CST
+Aug 26 2024 (the Warning's declared first hour) now takes the 10.2 GW M-2 derate and the
+$500 floor and prices $62.1 → $447.5 with 570 MWh of slack; 19:00 CST falls $66.2 → $49.2 as
+its misplaced derate is removed; window slack 19,384 → 19,567 MWh. 2023 edges: h11 Aug 24
+$44.9 → $53.7, h23 $36.1 → $33.7; 2025: h11 Jul 28 $50.8 → $58.5; the comparator unmoved.
+C8 ST_GAS 0.1553/0.1529/0.2714 → 0.1552/0.1529/0.2714.
+
+**Verdict: PROMOTE on the PREREG's own rule** (structural repair, single delta, ten gates
+passing); the justification is the defect, and would be identical had C3a-2024 moved the
+other way. Reported against the promotion: the arm is small (0.002 TWh; one +0.22 pp
+move); the 2024 move is favourable AND from a channel the PREREG did not name (right sign,
+wrong reason — disclosed, not counted); 1 MW of fleet drift rides along; the CAMPD
+plant-local skew moves from the CST majority to the EST minority (named for the deriver's
+cross-ISO owner, not built). **The 2025 object is untouched** (the corrected windows hold
+the same tail hours the misplaced ones did) — this was never a C3a-2025 lever; the lane's
+named items stand: the RDT S→N binding state (4.8 % by stranding), the deriver's plateau
+clause (director), the D-2 5(i) seam-response ruling.
+
+**Prior scored:** P-1a/c, P-2a/b/c, P-3, S-0, K-1..K-6, C3a-2023/2025, C8, verdict RIGHT;
+**C3a-2024 RIGHT on sign and band, WRONG on mechanism** (the lost-hour slack was 0.0 MWh);
+N-1 not pre-registered, found. Tenth consecutive MISO session whose most useful output came
+from the wrong part of the prior — here it changed nothing, because the repair was never
+justified by the number.
+
+**Governance.** Rule 15: both runs registered (payloads over `git push`; retention pruned
+`miso-190-ppexit`, `miso-191-bexit`); diagnostics + attestations on both
+(`gen_miso210_attestation.py`, no new entry). Rule 28(b): `maxgen_emergency_tier_pricing` and
+`unit_outage_short_windows` re-stamped K with this evidence; header stamps; §5.4 stamp. Rule
+28(c): no field. Rule 25: MISO's shard only. Rule 22: 2023–2025. Rule 23: the deriver re-ran
+because ITS CLOCK was repaired, citing the miso-208 witnesses, never a residual. Rule 27:
+`maxgen_events.py` and the deriver edited locally, blob-verified after push. Rule 1: promoted
+as structure. `keepers/MISO.json` → `2026-09-04-miso-210-clock`; `build_status.py --iso MISO`;
+`audit_keepers --iso MISO`.
+
+Next shorthand: **miso-211**.
