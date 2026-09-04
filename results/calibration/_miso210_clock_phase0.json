@@ -1,0 +1,1246 @@
+{
+ "charter": "miso-210 phase 0 \u2014 the max-gen clock repair; zero-solve; nothing under data/raw touched.",
+ "prereg": "results/calibration/PREREG-miso210-maxgen-clock-repair-2026-09-04.md @ 83e73bf8",
+ "keeper": "2026-09-03-miso-202-unitclip",
+ "clocks": {
+  "armed_at_head": "Etc/GMT+5",
+  "corrected": "Etc/GMT+6",
+  "est_to_model": -1
+ },
+ "head_loader_is_est": true,
+ "v_key_lmp": {
+  "2023": {
+   "r_at_est_to_model_minus1": 1.0,
+   "max_abs_diff_at_minus1": 0.0,
+   "r_at_zero_shift": 0.341334,
+   "key_reproduces": true
+  },
+  "2024": {
+   "r_at_est_to_model_minus1": 0.999597,
+   "max_abs_diff_at_minus1": 46.97,
+   "r_at_zero_shift": 0.330908,
+   "key_reproduces": false
+  },
+  "2025": {
+   "r_at_est_to_model_minus1": 1.0,
+   "max_abs_diff_at_minus1": 0.0,
+   "r_at_zero_shift": 0.48283,
+   "key_reproduces": true
+  }
+ },
+ "v_key_lmp_note": "A declared EST window [s, e) covers EST hour-beginning indices s..e-1; the model hour carrying EST label j is j + EST_TO_MODEL = j - 1 (r = 1.000 key above), so the corrected model-hour set is [s-1, e-1) \u2014 exactly the registry converted to Etc/GMT+6.",
+ "years": {
+  "2023": {
+   "p1_windows": [
+    {
+     "level": "maxgen_alert",
+     "region": "footprint",
+     "tier_priced": false,
+     "armed_est": {
+      "start": "2023-08-22 00:00:00",
+      "end_excl": "2023-08-24 12:00:00",
+      "n": 60
+     },
+     "corrected_cst": {
+      "start": "2023-08-21 23:00:00",
+      "end_excl": "2023-08-24 11:00:00",
+      "n": 60
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2023-08-21 HE24"
+      ],
+      "keeper_price_lw_mean": 30.604,
+      "keeper_price_lw_max": 30.604,
+      "actual_rt_hub_mean": 26.89,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 34.973,
+      "idle_thermal_gw_mean": 34.973,
+      "demand_minus_capability_gw_max": -24.209
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2023-08-24 HE12"
+      ],
+      "keeper_price_lw_mean": 44.894,
+      "keeper_price_lw_max": 44.894,
+      "actual_rt_hub_mean": 42.49,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 11.496,
+      "idle_thermal_gw_mean": 11.496,
+      "demand_minus_capability_gw_max": 2.119
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 60,
+      "stamps": [
+       "2023-08-22 HE01",
+       "2023-08-22 HE02",
+       "2023-08-22 HE03",
+       "2023-08-22 HE04",
+       "..."
+      ],
+      "keeper_price_lw_mean": 36.342,
+      "keeper_price_lw_max": 50.902,
+      "actual_rt_hub_mean": 33.567,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 8.389,
+      "idle_thermal_gw_mean": 24.663,
+      "demand_minus_capability_gw_max": 11.323
+     },
+     "corrected_window": {
+      "n": 60,
+      "stamps": [
+       "2023-08-21 HE24",
+       "2023-08-22 HE01",
+       "2023-08-22 HE02",
+       "2023-08-22 HE03",
+       "..."
+      ],
+      "keeper_price_lw_mean": 36.104,
+      "keeper_price_lw_max": 50.902,
+      "actual_rt_hub_mean": 33.307,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 8.389,
+      "idle_thermal_gw_mean": 25.054,
+      "demand_minus_capability_gw_max": 11.323
+     }
+    },
+    {
+     "level": "maxgen_event_step2",
+     "region": "footprint",
+     "tier_priced": true,
+     "armed_est": {
+      "start": "2023-08-24 12:00:00",
+      "end_excl": "2023-08-25 00:00:00",
+      "n": 12
+     },
+     "corrected_cst": {
+      "start": "2023-08-24 11:00:00",
+      "end_excl": "2023-08-24 23:00:00",
+      "n": 12
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2023-08-24 HE12"
+      ],
+      "keeper_price_lw_mean": 44.894,
+      "keeper_price_lw_max": 44.894,
+      "actual_rt_hub_mean": 42.49,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 11.496,
+      "idle_thermal_gw_mean": 11.496,
+      "demand_minus_capability_gw_max": 2.119
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2023-08-24 HE24"
+      ],
+      "keeper_price_lw_mean": 36.059,
+      "keeper_price_lw_max": 36.059,
+      "actual_rt_hub_mean": 26.36,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 19.013,
+      "idle_thermal_gw_mean": 19.013,
+      "demand_minus_capability_gw_max": -12.341
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 12,
+      "stamps": [
+       "2023-08-24 HE13",
+       "2023-08-24 HE14",
+       "2023-08-24 HE15",
+       "2023-08-24 HE16",
+       "..."
+      ],
+      "keeper_price_lw_mean": 108.212,
+      "keeper_price_lw_max": 242.864,
+      "actual_rt_hub_mean": 77.997,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": -2.478,
+      "idle_thermal_gw_mean": 4.589,
+      "demand_minus_capability_gw_max": 18.021
+     },
+     "corrected_window": {
+      "n": 12,
+      "stamps": [
+       "2023-08-24 HE12",
+       "2023-08-24 HE13",
+       "2023-08-24 HE14",
+       "2023-08-24 HE15",
+       "..."
+      ],
+      "keeper_price_lw_mean": 108.948,
+      "keeper_price_lw_max": 242.864,
+      "actual_rt_hub_mean": 79.341,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": -2.478,
+      "idle_thermal_gw_mean": 3.963,
+      "demand_minus_capability_gw_max": 18.021
+     }
+    }
+   ],
+   "p3_static_reach": {
+    "warning_plus_hours_corrected": {
+     "n": 12,
+     "stamps": [
+      "2023-08-24 HE12",
+      "2023-08-24 HE13",
+      "2023-08-24 HE14",
+      "2023-08-24 HE15",
+      "..."
+     ],
+     "keeper_price_lw_mean": 108.948,
+     "keeper_price_lw_max": 242.864,
+     "actual_rt_hub_mean": 79.341,
+     "slack_mwh": 0.0,
+     "idle_thermal_gw_min": -2.478,
+     "idle_thermal_gw_mean": 3.963,
+     "demand_minus_capability_gw_max": 18.021
+    },
+    "warning_plus_hours_armed": {
+     "n": 12,
+     "stamps": [
+      "2023-08-24 HE13",
+      "2023-08-24 HE14",
+      "2023-08-24 HE15",
+      "2023-08-24 HE16",
+      "..."
+     ],
+     "keeper_price_lw_mean": 108.212,
+     "keeper_price_lw_max": 242.864,
+     "actual_rt_hub_mean": 77.997,
+     "slack_mwh": 0.0,
+     "idle_thermal_gw_min": -2.478,
+     "idle_thermal_gw_mean": 4.589,
+     "demand_minus_capability_gw_max": 18.021
+    },
+    "tier_floor_reachable_corrected": true,
+    "tier_floor_printed_in_keeper_armed": false
+   },
+   "s2_tier": {
+    "cells_differing": 12,
+    "cells_priced_below_voll_armed": 72,
+    "cells_priced_below_voll_corrected": 72,
+    "exact_shift": true,
+    "external_buses_untouched": true
+   }
+  },
+  "2024": {
+   "p1_windows": [
+    {
+     "level": "maxgen_warning",
+     "region": "footprint",
+     "tier_priced": true,
+     "armed_est": {
+      "start": "2024-08-26 13:00:00",
+      "end_excl": "2024-08-26 20:00:00",
+      "n": 7
+     },
+     "corrected_cst": {
+      "start": "2024-08-26 12:00:00",
+      "end_excl": "2024-08-26 19:00:00",
+      "n": 7
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2024-08-26 HE13"
+      ],
+      "keeper_price_lw_mean": 62.135,
+      "keeper_price_lw_max": 62.135,
+      "actual_rt_hub_mean": 143.42,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 4.093,
+      "idle_thermal_gw_mean": 4.093,
+      "demand_minus_capability_gw_max": 11.317
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2024-08-26 HE20"
+      ],
+      "keeper_price_lw_mean": 66.205,
+      "keeper_price_lw_max": 66.205,
+      "actual_rt_hub_mean": 39.13,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 1.051,
+      "idle_thermal_gw_mean": 1.051,
+      "demand_minus_capability_gw_max": 12.335
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 7,
+      "stamps": [
+       "2024-08-26 HE14",
+       "2024-08-26 HE15",
+       "2024-08-26 HE16",
+       "2024-08-26 HE17",
+       "..."
+      ],
+      "keeper_price_lw_mean": 423.18,
+      "keeper_price_lw_max": 500.0,
+      "actual_rt_hub_mean": 129.45,
+      "slack_mwh": 19384.41,
+      "idle_thermal_gw_min": -0.653,
+      "idle_thermal_gw_mean": -0.392,
+      "demand_minus_capability_gw_max": 23.808
+     },
+     "corrected_window": {
+      "n": 7,
+      "stamps": [
+       "2024-08-26 HE13",
+       "2024-08-26 HE14",
+       "2024-08-26 HE15",
+       "2024-08-26 HE16",
+       "..."
+      ],
+      "keeper_price_lw_mean": 422.599,
+      "keeper_price_lw_max": 500.0,
+      "actual_rt_hub_mean": 144.349,
+      "slack_mwh": 19384.41,
+      "idle_thermal_gw_min": -0.653,
+      "idle_thermal_gw_mean": 0.043,
+      "demand_minus_capability_gw_max": 23.808
+     }
+    }
+   ],
+   "p1b_2024_slack_by_hour": {
+    "armed": {
+     "2024-08-26 HE14": 2045.0,
+     "2024-08-26 HE15": 3231.2,
+     "2024-08-26 HE16": 3705.3,
+     "2024-08-26 HE17": 4655.9,
+     "2024-08-26 HE18": 4420.2,
+     "2024-08-26 HE19": 1326.8,
+     "2024-08-26 HE20": 0.0
+    },
+    "corrected": {
+     "2024-08-26 HE13": 0.0,
+     "2024-08-26 HE14": 2045.0,
+     "2024-08-26 HE15": 3231.2,
+     "2024-08-26 HE16": 3705.3,
+     "2024-08-26 HE17": 4655.9,
+     "2024-08-26 HE18": 4420.2,
+     "2024-08-26 HE19": 1326.8
+    },
+    "lost_hour_share_of_window_slack": 0.0,
+    "window_slack_total_mwh": 19384.4,
+    "keeper_price_lw_at_gained_hour": 62.14,
+    "keeper_price_lw_by_hour_armed": {
+     "2024-08-26 HE14": 447.4,
+     "2024-08-26 HE15": 448.6,
+     "2024-08-26 HE16": 500.0,
+     "2024-08-26 HE17": 500.0,
+     "2024-08-26 HE18": 500.0,
+     "2024-08-26 HE19": 500.0,
+     "2024-08-26 HE20": 66.2
+    }
+   },
+   "p3_static_reach": {
+    "warning_plus_hours_corrected": {
+     "n": 7,
+     "stamps": [
+      "2024-08-26 HE13",
+      "2024-08-26 HE14",
+      "2024-08-26 HE15",
+      "2024-08-26 HE16",
+      "..."
+     ],
+     "keeper_price_lw_mean": 422.599,
+     "keeper_price_lw_max": 500.0,
+     "actual_rt_hub_mean": 144.349,
+     "slack_mwh": 19384.41,
+     "idle_thermal_gw_min": -0.653,
+     "idle_thermal_gw_mean": 0.043,
+     "demand_minus_capability_gw_max": 23.808
+    },
+    "warning_plus_hours_armed": {
+     "n": 7,
+     "stamps": [
+      "2024-08-26 HE14",
+      "2024-08-26 HE15",
+      "2024-08-26 HE16",
+      "2024-08-26 HE17",
+      "..."
+     ],
+     "keeper_price_lw_mean": 423.18,
+     "keeper_price_lw_max": 500.0,
+     "actual_rt_hub_mean": 129.45,
+     "slack_mwh": 19384.41,
+     "idle_thermal_gw_min": -0.653,
+     "idle_thermal_gw_mean": -0.392,
+     "demand_minus_capability_gw_max": 23.808
+    },
+    "tier_floor_reachable_corrected": true,
+    "tier_floor_printed_in_keeper_armed": true
+   },
+   "s2_tier": {
+    "cells_differing": 12,
+    "cells_priced_below_voll_armed": 42,
+    "cells_priced_below_voll_corrected": 42,
+    "exact_shift": true,
+    "external_buses_untouched": true
+   }
+  },
+  "2025": {
+   "p1_windows": [
+    {
+     "level": "maxgen_event_step1",
+     "region": "midwest",
+     "tier_priced": true,
+     "armed_est": {
+      "start": "2025-06-23 00:00:00",
+      "end_excl": "2025-06-24 00:00:00",
+      "n": 24
+     },
+     "corrected_cst": {
+      "start": "2025-06-22 23:00:00",
+      "end_excl": "2025-06-23 23:00:00",
+      "n": 24
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2025-06-22 HE24"
+      ],
+      "keeper_price_lw_mean": 37.04,
+      "keeper_price_lw_max": 37.04,
+      "actual_rt_hub_mean": 35.94,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 24.907,
+      "idle_thermal_gw_mean": 24.907,
+      "demand_minus_capability_gw_max": -7.766
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2025-06-23 HE24"
+      ],
+      "keeper_price_lw_mean": 48.268,
+      "keeper_price_lw_max": 48.268,
+      "actual_rt_hub_mean": 71.38,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 17.266,
+      "idle_thermal_gw_mean": 17.266,
+      "demand_minus_capability_gw_max": -9.745
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 24,
+      "stamps": [
+       "2025-06-23 HE01",
+       "2025-06-23 HE02",
+       "2025-06-23 HE03",
+       "2025-06-23 HE04",
+       "..."
+      ],
+      "keeper_price_lw_mean": 57.77,
+      "keeper_price_lw_max": 127.641,
+      "actual_rt_hub_mean": 169.933,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 2.538,
+      "idle_thermal_gw_mean": 15.323,
+      "demand_minus_capability_gw_max": 20.845
+     },
+     "corrected_window": {
+      "n": 24,
+      "stamps": [
+       "2025-06-22 HE24",
+       "2025-06-23 HE01",
+       "2025-06-23 HE02",
+       "2025-06-23 HE03",
+       "..."
+      ],
+      "keeper_price_lw_mean": 57.302,
+      "keeper_price_lw_max": 127.641,
+      "actual_rt_hub_mean": 168.456,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 2.538,
+      "idle_thermal_gw_mean": 15.642,
+      "demand_minus_capability_gw_max": 20.845
+     }
+    },
+    {
+     "level": "maxgen_warning",
+     "region": "midwest",
+     "tier_priced": true,
+     "armed_est": {
+      "start": "2025-06-24 00:00:00",
+      "end_excl": "2025-06-25 00:00:00",
+      "n": 24
+     },
+     "corrected_cst": {
+      "start": "2025-06-23 23:00:00",
+      "end_excl": "2025-06-24 23:00:00",
+      "n": 24
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2025-06-23 HE24"
+      ],
+      "keeper_price_lw_mean": 48.268,
+      "keeper_price_lw_max": 48.268,
+      "actual_rt_hub_mean": 71.38,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 17.266,
+      "idle_thermal_gw_mean": 17.266,
+      "demand_minus_capability_gw_max": -9.745
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2025-06-24 HE24"
+      ],
+      "keeper_price_lw_mean": 42.738,
+      "keeper_price_lw_max": 42.738,
+      "actual_rt_hub_mean": 52.81,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 20.803,
+      "idle_thermal_gw_mean": 20.803,
+      "demand_minus_capability_gw_max": -15.314
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 24,
+      "stamps": [
+       "2025-06-24 HE01",
+       "2025-06-24 HE02",
+       "2025-06-24 HE03",
+       "2025-06-24 HE04",
+       "..."
+      ],
+      "keeper_price_lw_mean": 52.182,
+      "keeper_price_lw_max": 68.46,
+      "actual_rt_hub_mean": 233.639,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 5.52,
+      "idle_thermal_gw_mean": 14.143,
+      "demand_minus_capability_gw_max": 10.647
+     },
+     "corrected_window": {
+      "n": 24,
+      "stamps": [
+       "2025-06-23 HE24",
+       "2025-06-24 HE01",
+       "2025-06-24 HE02",
+       "2025-06-24 HE03",
+       "..."
+      ],
+      "keeper_price_lw_mean": 52.412,
+      "keeper_price_lw_max": 68.46,
+      "actual_rt_hub_mean": 234.413,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 5.52,
+      "idle_thermal_gw_mean": 13.995,
+      "demand_minus_capability_gw_max": 10.647
+     }
+    },
+    {
+     "level": "capacity_advisory",
+     "region": "footprint",
+     "tier_priced": false,
+     "armed_est": {
+      "start": "2025-07-24 00:00:00",
+      "end_excl": "2025-07-25 00:00:00",
+      "n": 24
+     },
+     "corrected_cst": {
+      "start": "2025-07-23 23:00:00",
+      "end_excl": "2025-07-24 23:00:00",
+      "n": 24
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2025-07-23 HE24"
+      ],
+      "keeper_price_lw_mean": 37.254,
+      "keeper_price_lw_max": 37.254,
+      "actual_rt_hub_mean": 28.32,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 23.996,
+      "idle_thermal_gw_mean": 23.996,
+      "demand_minus_capability_gw_max": -15.557
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2025-07-24 HE24"
+      ],
+      "keeper_price_lw_mean": 44.844,
+      "keeper_price_lw_max": 44.844,
+      "actual_rt_hub_mean": 38.02,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 12.185,
+      "idle_thermal_gw_mean": 12.185,
+      "demand_minus_capability_gw_max": -9.091
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 24,
+      "stamps": [
+       "2025-07-24 HE01",
+       "2025-07-24 HE02",
+       "2025-07-24 HE03",
+       "2025-07-24 HE04",
+       "..."
+      ],
+      "keeper_price_lw_mean": 47.52,
+      "keeper_price_lw_max": 63.191,
+      "actual_rt_hub_mean": 49.67,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 4.059,
+      "idle_thermal_gw_mean": 12.577,
+      "demand_minus_capability_gw_max": 22.427
+     },
+     "corrected_window": {
+      "n": 24,
+      "stamps": [
+       "2025-07-23 HE24",
+       "2025-07-24 HE01",
+       "2025-07-24 HE02",
+       "2025-07-24 HE03",
+       "..."
+      ],
+      "keeper_price_lw_mean": 47.203,
+      "keeper_price_lw_max": 63.191,
+      "actual_rt_hub_mean": 49.266,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 4.059,
+      "idle_thermal_gw_mean": 13.069,
+      "demand_minus_capability_gw_max": 22.427
+     }
+    },
+    {
+     "level": "capacity_advisory",
+     "region": "footprint",
+     "tier_priced": false,
+     "armed_est": {
+      "start": "2025-07-28 12:00:00",
+      "end_excl": "2025-07-29 22:00:00",
+      "n": 34
+     },
+     "corrected_cst": {
+      "start": "2025-07-28 11:00:00",
+      "end_excl": "2025-07-29 21:00:00",
+      "n": 34
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2025-07-28 HE12"
+      ],
+      "keeper_price_lw_mean": 50.792,
+      "keeper_price_lw_max": 50.792,
+      "actual_rt_hub_mean": 98.33,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 11.024,
+      "idle_thermal_gw_mean": 11.024,
+      "demand_minus_capability_gw_max": 6.225
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2025-07-29 HE22"
+      ],
+      "keeper_price_lw_mean": 47.65,
+      "keeper_price_lw_max": 47.65,
+      "actual_rt_hub_mean": 41.67,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 10.815,
+      "idle_thermal_gw_mean": 10.815,
+      "demand_minus_capability_gw_max": -1.101
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 34,
+      "stamps": [
+       "2025-07-28 HE13",
+       "2025-07-28 HE14",
+       "2025-07-28 HE15",
+       "2025-07-28 HE16",
+       "..."
+      ],
+      "keeper_price_lw_mean": 68.29,
+      "keeper_price_lw_max": 183.224,
+      "actual_rt_hub_mean": 183.457,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 1.69,
+      "idle_thermal_gw_mean": 9.285,
+      "demand_minus_capability_gw_max": 18.188
+     },
+     "corrected_window": {
+      "n": 34,
+      "stamps": [
+       "2025-07-28 HE12",
+       "2025-07-28 HE13",
+       "2025-07-28 HE14",
+       "2025-07-28 HE15",
+       "..."
+      ],
+      "keeper_price_lw_mean": 68.382,
+      "keeper_price_lw_max": 183.224,
+      "actual_rt_hub_mean": 185.124,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 1.69,
+      "idle_thermal_gw_mean": 9.291,
+      "demand_minus_capability_gw_max": 18.188
+     }
+    },
+    {
+     "level": "maxgen_alert",
+     "region": "footprint",
+     "tier_priced": false,
+     "armed_est": {
+      "start": "2025-07-28 14:00:00",
+      "end_excl": "2025-07-28 22:00:00",
+      "n": 8
+     },
+     "corrected_cst": {
+      "start": "2025-07-28 13:00:00",
+      "end_excl": "2025-07-28 21:00:00",
+      "n": 8
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2025-07-28 HE14"
+      ],
+      "keeper_price_lw_mean": 64.24,
+      "keeper_price_lw_max": 64.24,
+      "actual_rt_hub_mean": 57.9,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 3.943,
+      "idle_thermal_gw_mean": 3.943,
+      "demand_minus_capability_gw_max": 16.609
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2025-07-28 HE22"
+      ],
+      "keeper_price_lw_mean": 54.137,
+      "keeper_price_lw_max": 54.137,
+      "actual_rt_hub_mean": 38.4,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 7.769,
+      "idle_thermal_gw_mean": 7.769,
+      "demand_minus_capability_gw_max": -1.246
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 8,
+      "stamps": [
+       "2025-07-28 HE15",
+       "2025-07-28 HE16",
+       "2025-07-28 HE17",
+       "2025-07-28 HE18",
+       "..."
+      ],
+      "keeper_price_lw_mean": 94.545,
+      "keeper_price_lw_max": 183.224,
+      "actual_rt_hub_mean": 404.461,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 1.69,
+      "idle_thermal_gw_mean": 3.748,
+      "demand_minus_capability_gw_max": 18.188
+     },
+     "corrected_window": {
+      "n": 8,
+      "stamps": [
+       "2025-07-28 HE14",
+       "2025-07-28 HE15",
+       "2025-07-28 HE16",
+       "2025-07-28 HE17",
+       "..."
+      ],
+      "keeper_price_lw_mean": 95.808,
+      "keeper_price_lw_max": 183.224,
+      "actual_rt_hub_mean": 406.899,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 1.69,
+      "idle_thermal_gw_mean": 3.27,
+      "demand_minus_capability_gw_max": 18.188
+     }
+    },
+    {
+     "level": "maxgen_warning",
+     "region": "footprint",
+     "tier_priced": true,
+     "armed_est": {
+      "start": "2025-07-29 00:00:00",
+      "end_excl": "2025-07-30 00:00:00",
+      "n": 24
+     },
+     "corrected_cst": {
+      "start": "2025-07-28 23:00:00",
+      "end_excl": "2025-07-29 23:00:00",
+      "n": 24
+     },
+     "gained": {
+      "n": 1,
+      "stamps": [
+       "2025-07-28 HE24"
+      ],
+      "keeper_price_lw_mean": 42.82,
+      "keeper_price_lw_max": 42.82,
+      "actual_rt_hub_mean": 43.02,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 16.495,
+      "idle_thermal_gw_mean": 16.495,
+      "demand_minus_capability_gw_max": -11.998
+     },
+     "lost": {
+      "n": 1,
+      "stamps": [
+       "2025-07-29 HE24"
+      ],
+      "keeper_price_lw_mean": 40.639,
+      "keeper_price_lw_max": 40.639,
+      "actual_rt_hub_mean": 52.43,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 19.103,
+      "idle_thermal_gw_mean": 19.103,
+      "demand_minus_capability_gw_max": -11.349
+     },
+     "exact_one_hour_shift": true,
+     "armed_window": {
+      "n": 24,
+      "stamps": [
+       "2025-07-29 HE01",
+       "2025-07-29 HE02",
+       "2025-07-29 HE03",
+       "2025-07-29 HE04",
+       "..."
+      ],
+      "keeper_price_lw_mean": 59.759,
+      "keeper_price_lw_max": 141.719,
+      "actual_rt_hub_mean": 117.144,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 2.178,
+      "idle_thermal_gw_mean": 11.757,
+      "demand_minus_capability_gw_max": 17.897
+     },
+     "corrected_window": {
+      "n": 24,
+      "stamps": [
+       "2025-07-28 HE24",
+       "2025-07-29 HE01",
+       "2025-07-29 HE02",
+       "2025-07-29 HE03",
+       "..."
+      ],
+      "keeper_price_lw_mean": 59.849,
+      "keeper_price_lw_max": 141.719,
+      "actual_rt_hub_mean": 116.752,
+      "slack_mwh": 0.0,
+      "idle_thermal_gw_min": 2.178,
+      "idle_thermal_gw_mean": 11.648,
+      "demand_minus_capability_gw_max": 17.897
+     }
+    }
+   ],
+   "p3_static_reach": {
+    "warning_plus_hours_corrected": {
+     "n": 72,
+     "stamps": [
+      "2025-06-22 HE24",
+      "2025-06-23 HE01",
+      "2025-06-23 HE02",
+      "2025-06-23 HE03",
+      "..."
+     ],
+     "keeper_price_lw_mean": 56.521,
+     "keeper_price_lw_max": 141.719,
+     "actual_rt_hub_mean": 173.207,
+     "slack_mwh": 0.0,
+     "idle_thermal_gw_min": 2.178,
+     "idle_thermal_gw_mean": 13.762,
+     "demand_minus_capability_gw_max": 20.845
+    },
+    "warning_plus_hours_armed": {
+     "n": 72,
+     "stamps": [
+      "2025-06-23 HE01",
+      "2025-06-23 HE02",
+      "2025-06-23 HE03",
+      "2025-06-23 HE04",
+      "..."
+     ],
+     "keeper_price_lw_mean": 56.57,
+     "keeper_price_lw_max": 141.719,
+     "actual_rt_hub_mean": 173.572,
+     "slack_mwh": 0.0,
+     "idle_thermal_gw_min": 2.178,
+     "idle_thermal_gw_mean": 13.741,
+     "demand_minus_capability_gw_max": 20.845
+    },
+    "tier_floor_reachable_corrected": true,
+    "tier_floor_printed_in_keeper_armed": false
+   },
+   "s2_tier": {
+    "cells_differing": 22,
+    "cells_priced_below_voll_armed": 384,
+    "cells_priced_below_voll_corrected": 384,
+    "exact_shift": true,
+    "external_buses_untouched": true
+   }
+  }
+ },
+ "S3_certificate_invariance": {
+  "n_cert_identical": true,
+  "rows": [
+   {
+    "level": "maxgen_alert",
+    "region": "footprint",
+    "start": "2023-08-22 00:00:00",
+    "n_cert": 0,
+    "n_cert_corrected": 0,
+    "start_corrected": "2023-08-21 23:00:00"
+   },
+   {
+    "level": "maxgen_event_step2",
+    "region": "footprint",
+    "start": "2023-08-24 12:00:00",
+    "n_cert": 5,
+    "n_cert_corrected": 5,
+    "start_corrected": "2023-08-24 11:00:00"
+   },
+   {
+    "level": "maxgen_warning",
+    "region": "footprint",
+    "start": "2024-08-26 13:00:00",
+    "n_cert": 2,
+    "n_cert_corrected": 2,
+    "start_corrected": "2024-08-26 12:00:00"
+   },
+   {
+    "level": "maxgen_event_step1",
+    "region": "midwest",
+    "start": "2025-06-23 00:00:00",
+    "n_cert": 8,
+    "n_cert_corrected": 8,
+    "start_corrected": "2025-06-22 23:00:00"
+   },
+   {
+    "level": "maxgen_warning",
+    "region": "midwest",
+    "start": "2025-06-24 00:00:00",
+    "n_cert": 9,
+    "n_cert_corrected": 9,
+    "start_corrected": "2025-06-23 23:00:00"
+   },
+   {
+    "level": "capacity_advisory",
+    "region": "footprint",
+    "start": "2025-07-24 00:00:00",
+    "n_cert": 6,
+    "n_cert_corrected": 6,
+    "start_corrected": "2025-07-23 23:00:00"
+   },
+   {
+    "level": "capacity_advisory",
+    "region": "footprint",
+    "start": "2025-07-28 12:00:00",
+    "n_cert": 16,
+    "n_cert_corrected": 16,
+    "start_corrected": "2025-07-28 11:00:00"
+   },
+   {
+    "level": "maxgen_alert",
+    "region": "footprint",
+    "start": "2025-07-28 14:00:00",
+    "n_cert": 7,
+    "n_cert_corrected": 7,
+    "start_corrected": "2025-07-28 13:00:00"
+   },
+   {
+    "level": "maxgen_warning",
+    "region": "footprint",
+    "start": "2025-07-29 00:00:00",
+    "n_cert": 8,
+    "n_cert_corrected": 8,
+    "start_corrected": "2025-07-28 23:00:00"
+   }
+  ],
+  "qualifying_windows": {
+   "armed": 8,
+   "corrected": 8
+  },
+  "blocks_identical": true,
+  "detail": "guard 2 n_cert per registry row, DA hub record shifted with the registry",
+  "passed": true
+ },
+ "P2_rederive": {
+  "scratchpad": "/tmp/claude-0/-home-user-market-simulator/ccb65b10-d751-5226-aeb3-8e4a91d68d0f/scratchpad",
+  "variants": {
+   "incumbent": {
+    "committed": "data/raw/campd-unit-outages-maxgen-MISO.csv",
+    "n1_forward_deriver_at_armed_clock_reproduces_committed": {
+     "rows": {
+      "committed": 2174,
+      "fresh": 2173
+     },
+     "solve_rows_identical": false,
+     "only_in_committed": 1,
+     "only_in_fresh": 0,
+     "derate_mw_total": {
+      "committed": 41874.0,
+      "fresh": 41873.0
+     },
+     "bytes_identical": false
+    },
+    "corrected_scratch": "/tmp/claude-0/-home-user-market-simulator/ccb65b10-d751-5226-aeb3-8e4a91d68d0f/scratchpad/campd-unit-outages-maxgen-MISO.corrected.csv",
+    "n_blocks": {
+     "committed": 5,
+     "corrected": 5
+    },
+    "blocks": {
+     "2023-08-24 12:00 | 2023-08-25 00:00 | footprint | maxgen_event_step2": {
+      "corrected_key": "2023-08-24 11:00 | 2023-08-24 23:00 | footprint | maxgen_event_step2",
+      "rows_committed": 474,
+      "rows_corrected": 473,
+      "rows_delta_pct": -0.21,
+      "mw_committed": 10171.0,
+      "mw_corrected": 10120.0,
+      "mw_delta_pct": -0.5
+     },
+     "2024-08-26 13:00 | 2024-08-26 20:00 | footprint | maxgen_warning": {
+      "corrected_key": "2024-08-26 12:00 | 2024-08-26 19:00 | footprint | maxgen_warning",
+      "rows_committed": 467,
+      "rows_corrected": 466,
+      "rows_delta_pct": -0.21,
+      "mw_committed": 10311.0,
+      "mw_corrected": 10187.0,
+      "mw_delta_pct": -1.2
+     },
+     "2025-06-23 00:00 | 2025-06-25 00:00 | midwest | maxgen_event_step1+maxgen_warning": {
+      "corrected_key": "2025-06-22 23:00 | 2025-06-24 23:00 | midwest | maxgen_event_step1+maxgen_warning",
+      "rows_committed": 295,
+      "rows_corrected": 295,
+      "rows_delta_pct": 0.0,
+      "mw_committed": 3066.0,
+      "mw_corrected": 3067.0,
+      "mw_delta_pct": 0.03
+     },
+     "2025-07-24 00:00 | 2025-07-25 00:00 | footprint | capacity_advisory": {
+      "corrected_key": "2025-07-23 23:00 | 2025-07-24 23:00 | footprint | capacity_advisory",
+      "rows_committed": 484,
+      "rows_corrected": 483,
+      "rows_delta_pct": -0.21,
+      "mw_committed": 10902.0,
+      "mw_corrected": 10872.0,
+      "mw_delta_pct": -0.28
+     },
+     "2025-07-28 12:00 | 2025-07-30 00:00 | footprint | capacity_advisory+maxgen_alert+maxgen_warning": {
+      "corrected_key": "2025-07-28 11:00 | 2025-07-29 23:00 | footprint | capacity_advisory+maxgen_alert+maxgen_warning",
+      "rows_committed": 454,
+      "rows_corrected": 454,
+      "rows_delta_pct": 0.0,
+      "mw_committed": 7424.0,
+      "mw_corrected": 7431.0,
+      "mw_delta_pct": 0.09
+     }
+    },
+    "total_mw": {
+     "committed": 41874.0,
+     "corrected": 41677.0
+    },
+    "total_rows": {
+     "committed": 2174,
+     "corrected": 2171
+    },
+    "f3_lines": [
+     "F3 check 2023-08-24 11:00 (footprint): pm45d 10.12 GW / event-month 8.00 GW \u2014 stable, pm45d kept",
+     "F3 check 2024-08-26 12:00 (footprint): pm45d 10.19 GW / event-month 7.51 GW \u2014 stable, pm45d kept",
+     "F3 check 2025-06-22 23:00 (midwest): pm45d 3.07 GW / event-month 1.93 GW \u2014 stable, pm45d kept",
+     "F3 check 2025-07-23 23:00 (footprint): pm45d 10.87 GW / event-month 8.18 GW \u2014 stable, pm45d kept",
+     "F3 check 2025-07-28 11:00 (footprint): pm45d 7.43 GW / event-month 4.79 GW \u2014 stable, pm45d kept"
+    ],
+    "cert_lines": [
+     "maxgen_alert           footprint 2023-08-21 23:00:00 .. 2023-08-24 11:00:00  hours>$150=  0  excluded (slack)",
+     "maxgen_event_step2     footprint 2023-08-24 11:00:00 .. 2023-08-24 23:00:00  hours>$150=  5  QUALIFIES",
+     "maxgen_warning         footprint 2024-08-26 12:00:00 .. 2024-08-26 19:00:00  hours>$150=  2  QUALIFIES",
+     "maxgen_event_step1     midwest   2025-06-22 23:00:00 .. 2025-06-23 23:00:00  hours>$150=  8  QUALIFIES",
+     "maxgen_warning         midwest   2025-06-23 23:00:00 .. 2025-06-24 23:00:00  hours>$150=  9  QUALIFIES",
+     "capacity_advisory      footprint 2025-07-23 23:00:00 .. 2025-07-24 23:00:00  hours>$150=  6  QUALIFIES",
+     "capacity_advisory      footprint 2025-07-28 11:00:00 .. 2025-07-29 21:00:00  hours>$150= 16  QUALIFIES",
+     "maxgen_alert           footprint 2025-07-28 13:00:00 .. 2025-07-28 21:00:00  hours>$150=  7  QUALIFIES",
+     "maxgen_warning         footprint 2025-07-28 23:00:00 .. 2025-07-29 23:00:00  hours>$150=  8  QUALIFIES"
+    ],
+    "sha256": {
+     "committed": "eb9bb7a65b4e7b78d33ec7dd26c3580c7c1d5f4a54812311c8004edb6ed7b9db",
+     "corrected": "f5a05a080097aee34dd6b304e58f8193199ce93e39d658670e33ee7a056d07bc"
+    }
+   },
+   "unitroute": {
+    "committed": "data/raw/campd-unit-outages-maxgen-unitroute-MISO.csv",
+    "n1_forward_deriver_at_armed_clock_reproduces_committed": {
+     "rows": {
+      "committed": 2174,
+      "fresh": 2173
+     },
+     "solve_rows_identical": false,
+     "only_in_committed": 1,
+     "only_in_fresh": 0,
+     "derate_mw_total": {
+      "committed": 41874.0,
+      "fresh": 41873.0
+     },
+     "bytes_identical": false
+    },
+    "corrected_scratch": "/tmp/claude-0/-home-user-market-simulator/ccb65b10-d751-5226-aeb3-8e4a91d68d0f/scratchpad/campd-unit-outages-maxgen-unitroute-MISO.corrected.csv",
+    "n_blocks": {
+     "committed": 5,
+     "corrected": 5
+    },
+    "blocks": {
+     "2023-08-24 12:00 | 2023-08-25 00:00 | footprint | maxgen_event_step2": {
+      "corrected_key": "2023-08-24 11:00 | 2023-08-24 23:00 | footprint | maxgen_event_step2",
+      "rows_committed": 474,
+      "rows_corrected": 473,
+      "rows_delta_pct": -0.21,
+      "mw_committed": 10171.0,
+      "mw_corrected": 10120.0,
+      "mw_delta_pct": -0.5
+     },
+     "2024-08-26 13:00 | 2024-08-26 20:00 | footprint | maxgen_warning": {
+      "corrected_key": "2024-08-26 12:00 | 2024-08-26 19:00 | footprint | maxgen_warning",
+      "rows_committed": 467,
+      "rows_corrected": 466,
+      "rows_delta_pct": -0.21,
+      "mw_committed": 10311.0,
+      "mw_corrected": 10187.0,
+      "mw_delta_pct": -1.2
+     },
+     "2025-06-23 00:00 | 2025-06-25 00:00 | midwest | maxgen_event_step1+maxgen_warning": {
+      "corrected_key": "2025-06-22 23:00 | 2025-06-24 23:00 | midwest | maxgen_event_step1+maxgen_warning",
+      "rows_committed": 295,
+      "rows_corrected": 295,
+      "rows_delta_pct": 0.0,
+      "mw_committed": 3066.0,
+      "mw_corrected": 3067.0,
+      "mw_delta_pct": 0.03
+     },
+     "2025-07-24 00:00 | 2025-07-25 00:00 | footprint | capacity_advisory": {
+      "corrected_key": "2025-07-23 23:00 | 2025-07-24 23:00 | footprint | capacity_advisory",
+      "rows_committed": 484,
+      "rows_corrected": 483,
+      "rows_delta_pct": -0.21,
+      "mw_committed": 10902.0,
+      "mw_corrected": 10872.0,
+      "mw_delta_pct": -0.28
+     },
+     "2025-07-28 12:00 | 2025-07-30 00:00 | footprint | capacity_advisory+maxgen_alert+maxgen_warning": {
+      "corrected_key": "2025-07-28 11:00 | 2025-07-29 23:00 | footprint | capacity_advisory+maxgen_alert+maxgen_warning",
+      "rows_committed": 454,
+      "rows_corrected": 454,
+      "rows_delta_pct": 0.0,
+      "mw_committed": 7424.0,
+      "mw_corrected": 7431.0,
+      "mw_delta_pct": 0.09
+     }
+    },
+    "total_mw": {
+     "committed": 41874.0,
+     "corrected": 41677.0
+    },
+    "total_rows": {
+     "committed": 2174,
+     "corrected": 2171
+    },
+    "f3_lines": [
+     "F3 check 2023-08-24 11:00 (footprint): pm45d 10.12 GW / event-month 8.00 GW \u2014 stable, pm45d kept",
+     "F3 check 2024-08-26 12:00 (footprint): pm45d 10.19 GW / event-month 7.51 GW \u2014 stable, pm45d kept",
+     "F3 check 2025-06-22 23:00 (midwest): pm45d 3.07 GW / event-month 1.93 GW \u2014 stable, pm45d kept",
+     "F3 check 2025-07-23 23:00 (footprint): pm45d 10.87 GW / event-month 8.18 GW \u2014 stable, pm45d kept",
+     "F3 check 2025-07-28 11:00 (footprint): pm45d 7.43 GW / event-month 4.79 GW \u2014 stable, pm45d kept"
+    ],
+    "cert_lines": [
+     "maxgen_alert           footprint 2023-08-21 23:00:00 .. 2023-08-24 11:00:00  hours>$150=  0  excluded (slack)",
+     "maxgen_event_step2     footprint 2023-08-24 11:00:00 .. 2023-08-24 23:00:00  hours>$150=  5  QUALIFIES",
+     "maxgen_warning         footprint 2024-08-26 12:00:00 .. 2024-08-26 19:00:00  hours>$150=  2  QUALIFIES",
+     "maxgen_event_step1     midwest   2025-06-22 23:00:00 .. 2025-06-23 23:00:00  hours>$150=  8  QUALIFIES",
+     "maxgen_warning         midwest   2025-06-23 23:00:00 .. 2025-06-24 23:00:00  hours>$150=  9  QUALIFIES",
+     "capacity_advisory      footprint 2025-07-23 23:00:00 .. 2025-07-24 23:00:00  hours>$150=  6  QUALIFIES",
+     "capacity_advisory      footprint 2025-07-28 11:00:00 .. 2025-07-29 21:00:00  hours>$150= 16  QUALIFIES",
+     "maxgen_alert           footprint 2025-07-28 13:00:00 .. 2025-07-28 21:00:00  hours>$150=  7  QUALIFIES",
+     "maxgen_warning         footprint 2025-07-28 23:00:00 .. 2025-07-29 23:00:00  hours>$150=  8  QUALIFIES"
+    ],
+    "sha256": {
+     "committed": "544bf750cc5bc3f8f96b53af7ddcf09b620db3522fbc53b532676961db272add",
+     "corrected": "de7e4f7786b351d824859565a97d5660fe567fcf48d86cb89b6f69b9a4ab4966"
+    }
+   }
+  }
+ },
+ "extract_sha256": {
+  "control_committed_at_open": "544bf750cc5bc3f8f96b53af7ddcf09b620db3522fbc53b532676961db272add",
+  "arm_rederived": "de7e4f7786b351d824859565a97d5660fe567fcf48d86cb89b6f69b9a4ab4966"
+ },
+ "S2_placement": {
+  "tier_exact_shift": {
+   "2023": true,
+   "2024": true,
+   "2025": true
+  },
+  "m2_exact_shift": {
+   "2023": true,
+   "2024": true,
+   "2025": true
+  },
+  "m2_detail": {
+   "2023": {
+    "bins": {
+     "committed": 196,
+     "corrected": 196,
+     "common": 196
+    },
+    "union_hours": {
+     "committed": 12,
+     "corrected": 12
+    },
+    "union_exact_shift": true,
+    "per_bin_exact_shift": 196,
+    "mean_removed_gw_in_window_committed": 0.1276
+   },
+   "2024": {
+    "bins": {
+     "committed": 196,
+     "corrected": 196,
+     "common": 195
+    },
+    "union_hours": {
+     "committed": 7,
+     "corrected": 7
+    },
+    "union_exact_shift": true,
+    "per_bin_exact_shift": 195,
+    "mean_removed_gw_in_window_committed": 0.1544
+   },
+   "2025": {
+    "bins": {
+     "committed": 196,
+     "corrected": 195,
+     "common": 195
+    },
+    "union_hours": {
+     "committed": 108,
+     "corrected": 108
+    },
+    "union_exact_shift": true,
+    "per_bin_exact_shift": 195,
+    "mean_removed_gw_in_window_committed": 0.1013
+   }
+  },
+  "detail": "tier cost off tier_slack_cost_from_registry; M-2 off unit_outage_maxgen_derate_factors on the committed vs re-derived extract",
+  "passed": true
+ }
+}
