@@ -430,6 +430,11 @@ re-routing costs more recall than it buys.
 | `pjm-t1h` `nyiso-t1h` `nyiso-t1f` | stale | **PENDING Stage 2** |
 | `pjm-t1f` `miso-t1f` | stale | **PENDING Stage 3** |
 
+**RE-OPENED 2026-09-04, after this table was written:** `caiso-t1h` and `caiso-t1f`
+return to stale on the keeper-vintage axis — `caiso-241` was promoted after this lane's
+CAISO legs solved. See §11. `neiso-*`, `miso-*` and `ercot-*` remain CLOSED: their live
+keepers are still exactly the ones their D46 legs solved against.
+
 ---
 
 ## 9. Routed to the director
@@ -454,6 +459,9 @@ re-routing costs more recall than it buys.
    2026-08-03); `neiso-t1h-pre-d46` and `neiso-t3-pre-d46` are one- and three-axis
    respectively. Any future reading of a `-pre-d46` delta should carry §4.6's
    scope caveat.
+8. **CAISO's row re-opened and CI is red on `main`** — the `caiso-241` promotion, landed
+   after this lane's CAISO legs. Both halves are recorded in §11 and neither is this
+   lane's to close.
 
 ---
 
@@ -488,3 +496,80 @@ before the next commit (rule 27): `register_forecast_run.py` at each of its five
 edits, `ff-verdicts.json` at each of six, all six `run_config.json` bundles, the
 GOLDEN-3 `full_horizon_summary.json`, the four mechanism-matrix shards and this
 finding. No mismatch occurred.
+
+---
+
+## 11. Re-dispatch of 2026-09-04 — Stage 1 verified landed, the Stage-2 gate re-verified closed, one row re-opened
+
+The D46 dispatch was **re-issued verbatim on 2026-09-04** on branch
+`claude/capx-d46-remeasure-batch-ofmvb8`, fresh off `origin/main` `8d5a3e16`.
+Stage 1 had already landed and merged from the first dispatch's branch
+(`…-oe1h77`). **Nothing was re-solved, nothing was re-registered, nothing was
+armed.** This section is the whole product of the re-dispatch.
+
+**Why re-execution was refused, on the dispatch's own terms.** Every `-pre-d46`
+key already holds its preserved baseline. Re-running Stage 1 would re-preserve
+the *D46* records over those baselines, destroying them — which the dispatch's
+own collision guardrail forbids outright (*"if … a key collides with an existing
+suffixed record, STOP and route — never overwrite a preserved baseline"*). At an
+unchanged HEAD the refresh also has nothing to add for three of the four ISOs.
+
+**Independent verification of the landed state** — read from the artifacts, not
+from §§3–8:
+
+| check | result |
+|---|---|
+| bare keys → D46 records | 8/8 resolve (`neiso/miso/caiso/ercot-t1h`, `ercot/neiso/caiso-t1f`, `neiso-t3`) |
+| `-pre-d46` preservations | 6/6 present, each carrying the prior determination; `caiso-t1h` / `ercot-t1h` have none, as chartered (minted keys) |
+| `VERDICT_MAP` (AST) | 45 rows, **0 duplicate keys**, all 9 D46 + re-pointed rows present |
+| committed artifacts | 232 tracked `d46`/`golden3` files (bundles, sidecars, hindcast reports) |
+| `check_forecast_staleness.py` | **exit 0** (WARN-level only) |
+| `check_mechanism_matrix.py` | **exit 0** — integrity, anchors, keeper stamps, §5.x headers |
+| matrix shards | ERCOT / CAISO / MISO / NEISO each carry their own measured `fossil_announced_exits` evidence; PJM / NYISO carry the D44 stamp alone, as Stage 2 requires |
+
+**Stage-2 gate: RE-VERIFIED CLOSED on 2026-09-04.** `FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md`
+§§4, 5, 6, 7, 8 **and 9** are still literal placeholders (`[filled]`,
+`[filled after L4]`, `[filled after L2/L3]`) on `origin/main` `8d5a3e16`. D45 owns
+the PJM/NYISO forecast surfaces until it closes. **Stage 2 was not started;
+Stage 3 was not touched.**
+
+### 11.1 NEW and routed — `caiso-241` re-opens CAISO's row, and CI is red on `main`
+
+`a6c8db2f` (PR #4663) promoted **`2026-09-03-caiso-241-b1-ctpeaker`** *after* this
+lane's CAISO legs solved against `caiso-240`. Two consequences, **neither this
+lane's to close**:
+
+1. **`check_gate_a_provenance.py` exits 1 at HEAD.** CAISO's `a_keeper_marker` in
+   `frontend/data/forecast/program-status.json` still cites the superseded
+   `caiso-240`. That job is wired into `.github/workflows/ci.yml:213`, so **CI is
+   red on `origin/main` itself**, not merely on any branch cut from it — this is
+   the **eighth** real firing of the guard. Not repaired here, for two independent
+   reasons: this lane's charter says *never move gate (a)*, and the stamp's own
+   detail records that its last two re-keys were made *"by the capx director desk
+   under an owner one-push grant (capx ledger §0ac card C-2)"* — a grant this lane
+   does not hold. The stamp text additionally records the standing
+   **"R-T ROUTING NON-COMPLIANCE"** dispute over which lane owes the re-key; a
+   silent repair from here would insert this lane into that dispute.
+2. **CAISO's keeper-vintage axis re-opens.** `caiso-t1h` and `caiso-t1f` now sit
+   on a superseded keeper, returning both to the §0ac.7 stale set one day after
+   this lane closed them. Per the ledger's own standing clause (§0ac amendment 2:
+   *"a keeper promotion in any ISO after D46's leg re-opens that ISO's row … the
+   promoting lane owes the re-solve decision, this desk only records the
+   staleness"*), the decision belongs to the promoting lane. **Recorded, not
+   taken** — and explicitly **not** re-solved here, which would have been this
+   lane taking a decision the ledger assigns elsewhere.
+
+**The other three Stage-1 ISOs are unaffected.** Their live keepers are exactly
+the ones their D46 legs solved against — ERCOT `2026-08-25-234-eastex-identity`,
+MISO `2026-09-03-miso-202-unitclip`, NEISO `2026-08-17-neiso-99-joint-p1` — so
+`ercot-t1h`, `miso-t1h`, `ercot-t1f`, `neiso-t1h`, `neiso-t1f` and `neiso-t3` all
+remain current at HEAD.
+
+### 11.2 Re-dispatch close-out
+
+No solve ran, no key moved, no baseline was touched, no matrix verdict moved, and
+gate (a) was not moved. The re-dispatch's deliverable is this section: Stage 1
+verified landed, the Stage-2 gate re-verified closed **at the time of reading
+rather than assumed**, and one newly re-opened row routed to the director with the
+CI consequence named. **Stage 2 still awaits the director's re-release**, which
+D45's close-out gates.
