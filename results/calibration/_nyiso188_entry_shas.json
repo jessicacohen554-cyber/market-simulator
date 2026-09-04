@@ -1,0 +1,6 @@
+{
+ "campd_ramp_envelopes_NYISO.csv": "280c0092b478a4f1d9ab13d26cd6727e1d8b805b820de9adaf0d98a626a35130",
+ "plant_emission_rates_v2.parquet": "0ac4ec8bc7d43862d83c622ca67850dde4927e85eecf81fb0748792d02e97f6f",
+ "cc_capacity_reconcile_NYISO.csv": "b3b7088765c728eca951237aea7ecefd0237d6e6cbd95046150cc45e9f52ef47",
+ "basis": "sha256 of the origin/main (8f5cb32c) blobs the control replay read"
+}

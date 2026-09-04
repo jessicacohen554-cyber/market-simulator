@@ -5,13 +5,273 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session nyiso-155 (2026-08-25). ZERO-DELTA CONTROL of the pre-registered hydro truncation repair A/B (results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md, pushed and blob-verified BEFORE any measurement): the committed keeper 2026-08-22-nyiso-152-duty-complete recipe replayed unchanged at HEAD ac194ba via scripts/replay_keeper.py. No lever, no parameter, no mechanism change \u2014 the ledger is the keeper's own, carried verbatim. G1 IDENT is REPORTED AGAINST THIS BUNDLE: the control is NOT bit-identical to the committed keeper in 2023/2024 (max |ddispatch| 658.4/457.9 MW, max hourly |dlambda| 2.18/2.61 $/MWh, annual mean lambda +0.016/+0.018 $/MWh; 2025 EXACTLY identical), with every pinned input extract content-identical, demand and reserve requirements bit-identical, and an identical package environment \u2014 the same-objective alternative-optima reshuffle signature, reported per the prereg G1 failure branch, never adjudicated in-session.",
-  "note": "THE COMPLETED DUTY-ROLE MECHANISM \u2014 the measured capacity-only CC cohort (reserve_duty_cc_NYISO.csv, pooled online-share/CF <= 0.1 against the population gap, 7 plants) is represented consistently in BOTH halves of commitment economics: the offer half (cc_reserve_duty_split routes the cohort's dispatchable capacity to the class peak band \u2014 the nyiso-146/149 lineage) and the commitment-population half (nyiso_gas_bridge_reserve_duty_exclusions scopes the cohort out of the NYISO gas commitment bridge through the detector's own min_load_frac_by_gen population gate \u2014 the nyiso-144 lay-up convention, second measured membership signal, one mechanism). The exclusion exists because the lay-up channel is CAMPD-defined and cannot test a CEMS-invisible plant: Allegany 7784 (e923_pooled_cf 0.0173) was the sole duty plant the bridge could still floor \u2014 1,804/2,797 h at min-load in 2023/24 under the armed split, rule 17 [R-FLOOR-WINDOW] scaffolding with every reserve-family dual zero in those hours (FINDING-nyiso152-phase0-reserve-posture-overturned-2026-08-22.md). Post-repair the plant runs peak-band spike-hour economics only: 90.9/111.9/0 GWh vs e923 11.7/15.5/0 \u2014 7.8x/7.2x, from the control's 43x/33x. Zero new scalars."
+  "attested_by": "session nyiso-188 (2026-09-04). Arm 'ccrecon' of the pre-registered A/B (results/calibration/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md \u00a71 / \u00a73, pushed BEFORE any arm was solved; record docs/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md): nyiso-188 Arm 2 (2026-09-04): the nyiso-187 keeper recipe plus the ONE registered flag cc_capacity_reconcile over the re-derived 15-row NYISO demonstrated-peak table. Zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim. Control = the same-HEAD replay on the committed artifacts, bit-identical to the keeper 2026-09-04-nyiso-187-astoria-routing (G-CONTROL below, computed). REPORTED AT FULL MAGNITUDE \u2014 see the finding; the disposition is the owner's.",
+  "note": "nyiso-188 Arm 2 (2026-09-04): the nyiso-187 keeper recipe plus the ONE registered flag cc_capacity_reconcile over the re-derived 15-row NYISO demonstrated-peak table. Zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim.",
+  "computed_checks": {
+   "G_CONTROL": {
+    "by_year": {
+     "2023": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2024": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2025": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     }
+    },
+    "max_abs_dprice": 0.0,
+    "bit_identical_to_keeper": true,
+    "baseline": "nyiso187_astoria_routing",
+    "pass": true
+   },
+   "G_DELTA": {
+    "baseline": "nyiso188_control",
+    "delta_fields": {
+     "cc_capacity_reconcile": [
+      false,
+      true
+     ]
+    },
+    "absence_normalized": {},
+    "rode_along": [],
+    "pass": true
+   },
+   "G_INPUTS": {
+    "cc_capacity_reconcile_NYISO.csv": {
+     "control_sha256": "b3b7088765c728eca951237aea7ecefd0237d6e6cbd95046150cc45e9f52ef47",
+     "arm_sha256": "a3d407f99a2109e3c806213dc30489d1507e8ed67c68d5921a34575bfa272354"
+    },
+    "table_rows": 15,
+    "caps": {
+     "7314": [
+      243.1,
+      108.2
+     ],
+     "54592": [
+      102.1,
+      53.6
+     ],
+     "54593": [
+      66.2,
+      42.9
+     ],
+     "50744": [
+      64.2,
+      43.9
+     ],
+     "10190": [
+      98.9,
+      71.2
+     ],
+     "56196": [
+      737.4,
+      560.0
+     ],
+     "57185": [
+      1312.5,
+      1086.9
+     ],
+     "10620": [
+      62.9,
+      53.6
+     ],
+     "55405": [
+      1221.6,
+      1064.7
+     ],
+     "54574": [
+      285.6,
+      251.5
+     ],
+     "54034": [
+      88.2,
+      78.0
+     ],
+     "56940": [
+      770.5,
+      696.1
+     ]
+    },
+    "raises": {
+     "55375": [
+      595.0,
+      610.4
+     ],
+     "56234": [
+      348.9,
+      361.7
+     ],
+     "50978": [
+      76.5,
+      80.0
+     ]
+    },
+    "pass": true
+   },
+   "G_DOF": {
+    "n_entries": 13,
+    "n_residual": 6,
+    "added_entries": 0,
+    "added_scalars": 0,
+    "basis": "a registered flag (ScenarioConfig.cc_capacity_reconcile) over a measured table (CAMPD p99.9 demonstrated peaks, derive_cc_capacity_reconcile.py --iso NYISO --mode both --years 2023 2024 2025, committed invocation reproduced + the 55375 raise row the routing creates); the derive's margins (_CAP_MARGIN 1.10, _CC_NET_OF_GROSS 0.975, _CAP_FEASIBLE_CF 0.90) are its frozen constants, none chosen here (PREREG-nyiso188 \u00a71 Object 2).",
+    "pass": true
+   },
+   "G_ENGAGE": {
+    "by_year": {
+     "2023": {
+      "CC_REGULAR_twh": [
+       33.473,
+       32.004
+      ],
+      "ST_GAS_twh": [
+       10.347,
+       11.12
+      ],
+      "load_weighted_price": [
+       33.8,
+       34.81
+      ],
+      "astoria_I_twh": [
+       4.503,
+       4.628
+      ],
+      "astoria_II_twh": [
+       4.275,
+       4.317
+      ],
+      "zeltmann_cap_mw": [
+       602.0,
+       540.4
+      ],
+      "zeltmann_twh": [
+       4.502,
+       4.041
+      ],
+      "cricket_valley_cap_mw": [
+       1266.6,
+       1048.9
+      ],
+      "cricket_valley_twh": [
+       6.471,
+       5.543
+      ],
+      "athens_cap_mw": [
+       1178.8,
+       1027.4
+      ],
+      "athens_twh": [
+       1.887,
+       1.705
+      ]
+     },
+     "2024": {
+      "CC_REGULAR_twh": [
+       37.857,
+       36.096
+      ],
+      "ST_GAS_twh": [
+       8.85,
+       9.599
+      ],
+      "load_weighted_price": [
+       38.3,
+       39.57
+      ],
+      "astoria_I_twh": [
+       4.503,
+       4.633
+      ],
+      "astoria_II_twh": [
+       4.229,
+       4.292
+      ],
+      "zeltmann_cap_mw": [
+       602.0,
+       540.4
+      ],
+      "zeltmann_twh": [
+       4.549,
+       4.084
+      ],
+      "cricket_valley_cap_mw": [
+       1266.6,
+       1048.9
+      ],
+      "cricket_valley_twh": [
+       6.01,
+       5.115
+      ],
+      "athens_cap_mw": [
+       1178.8,
+       1027.4
+      ],
+      "athens_twh": [
+       4.087,
+       3.658
+      ]
+     },
+     "2025": {
+      "CC_REGULAR_twh": [
+       36.005,
+       34.018
+      ],
+      "ST_GAS_twh": [
+       9.38,
+       10.346
+      ],
+      "load_weighted_price": [
+       59.61,
+       61.84
+      ],
+      "astoria_I_twh": [
+       4.068,
+       4.187
+      ],
+      "astoria_II_twh": [
+       3.067,
+       3.091
+      ],
+      "zeltmann_cap_mw": [
+       602.0,
+       540.4
+      ],
+      "zeltmann_twh": [
+       4.029,
+       3.617
+      ],
+      "cricket_valley_cap_mw": [
+       1266.6,
+       1048.9
+      ],
+      "cricket_valley_twh": [
+       6.039,
+       5.135
+      ],
+      "athens_cap_mw": [
+       1178.8,
+       1027.4
+      ],
+      "athens_twh": [
+       3.292,
+       2.974
+      ]
+     }
+    },
+    "pass": true
+   }
+  }
  },
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 10,
+  "n_entries": 13,
   "n_residual": 6,
   "entries": [
    {
@@ -222,6 +482,44 @@
     "n_scalars": 0,
     "source": "CAMPD plant-summed online share (grossLoad >= max(1 MW, 0.05 x HSL)) where a CEMS record exists, else EIA-923 pooled net CF over model pmax (derive_reserve_duty_cc.py); derived blind to the bridge's floor pattern and to every D-4 verdict",
     "root_cause": "duty-role misrepresentation: capacity-only plants carried competitive class offer curves (merit-order inversion, nyiso-145) and CAMPD-invisible members stayed in the bridge's day-ahead commitment population (membership-channel coverage gap, nyiso-152 phase-0)"
+   },
+   {
+    "name": "hydro_vintage_input_repair",
+    "where": "meta.hydro_backfill_year=2024 + meta.hydro_eia930_monthly=true (solve_and_persist kwargs -> data.hydro.build_hydro_fleet / load_hydro_budget)",
+    "identification": "measured",
+    "lineage_solves": "nyiso-108 A/B (2026-07-31, armed+promoted, owner override); nyiso-155 re-arm A/B (2026-08-25)",
+    "value": {
+     "hydro_backfill_year": 2024,
+     "hydro_eia930_monthly": true,
+     "n_scalars": 0,
+     "note": "Plant census backfilled from the complete 2024 EIA-923 vintage (2025 early release retains 2.0 % of NYIS HY plants); monthly energy level pinned to EIA-930 NG: WAT, independently validated by NYISO MIS P-63 Hydro (+1.30/+0.74/+0.60 % agreement). Both series are measured inputs derived blind to any residual; the pair regenerates forward via forecast_monthly_hydro (rule 13). Same-config identification as the CAISO/PJM/MISO/NEISO keepers' standing arm (PJM/MISO backfill-only, PS fold)."
+    }
+   },
+   {
+    "name": "nyiso_seam_par_attribution",
+    "where": "ScenarioConfig.nyiso_seam_par_attribution -> data.nyiso_par_attribution (PAR_REGISTRY, INTERFACE_ZONE, SEAM_ROW_ZONE, zone_shares, nyiso_par_attributed_ttc_hourly)",
+    "identification": "published",
+    "lineage_solves": "nyiso-127 A/B (2026-08-05, REJECTED on K3 at the nyiso-125 HEAD; PRs #3570/#3582/#3584/#3586); nyiso-157 re-test A/B (2026-08-30, owner ruling of that date; K3 does not re-fire at the nyiso-155 HEAD)",
+    "value": {
+     "shares": {
+      "ramapo": 0.32,
+      "jk": 0.15,
+      "abc": 0.21,
+      "west": 0.32
+     },
+     "n_scalars": 0,
+     "note": "NY-NJ PAR posting table 1 (published percentages, effective 5/1/2017; OBF 0 since 11/1/2019) x P-33 outSched published availability windows (ABC-B/C out 100 % of 2023-2025, so the hourly split is ~46/7/47, never the nameplate 47/21/32) x published tie landings (Gold Book / Operating Study). Regenerates forward from the standing JOA convention and forward PAR availability (rule 13). Supersedes the nyiso_seam_deliverability_envelope two-link mechanism at runtime (rule 19): exactly one of the two applies."
+    }
+   },
+   {
+    "name": "nyiso_zonal_loss_surface",
+    "where": "ScenarioConfig.nyiso_zonal_loss_surface -> interchange.nyiso.apply_nyiso_zonal_loss_links / build_nyiso_link_loss <- data.loss_surface.load_zone_month_deviation <- data/raw/iso-specific-transmission/NYISO_loss_surface.csv (scripts/data/derive_nyiso_loss_surface.py, frozen rule 23)",
+    "identification": "measured",
+    "lineage_solves": "nyiso-159 phase-0 (2026-08-30, committed-artifacts measurement, FINDING-nyiso159-loss-surface-phase0-2026-08-30.md); offline acceptance 12/12 pair-years pre-solve; nyiso-159 A/B (2026-08-30, _nyiso159_loss_ab_gates.json)",
+    "value": {
+     "n_scalars": 0,
+     "note": "Per-zone monthly delivery-factor deviations dev_z,m = sum(MCL_z)/sum(E) from NYISO's own posted RT LBMP components (LBMP = E + MCL - MCC, MST \u00a717.1/Manual 12), model-zone aggregation = the scoring actuals' own simple-mean crosswalk; per-year rows for backcast train years (the CEMS-rate admissibility class, rule 13 \u2014 regenerates for any year from the same public feed and responds to changed grid conditions), pooled year=0 rows as the forecast-mode forward analogue. The eps tiebreak (1e-3 $/MWh) is the rule-9 storage-epsilon numerical device, identical in construction and value to the PJM/CAISO twins, declared in NYISO's own module (rule 25)."
+    }
    }
   ]
  },
