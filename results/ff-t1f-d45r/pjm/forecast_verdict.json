@@ -1,0 +1,137 @@
+{
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "scored_at_sha": "bf54a4addbe0",
+    "scored_at_date": "2026-09-04T10:47:28Z",
+    "cache_epoch": "321f04e9060787f0"
+  },
+  "tier": "t1f",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+    "FC-1 structural integrity (I1-I14) FAIL",
+    "FC-2 adequacy & equilibrium behavior FAIL"
+  ],
+  "caveats": [
+    "FC-8 runtime feasibility: over runtime budget"
+  ],
+  "notes": [],
+  "categories": {
+    "FC-1": {
+      "label": "FC-1 structural integrity (I1-I14)",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "invariants I1-I14",
+          "status": "FAIL",
+          "detail": "FAIL ['I12', 'I7']: I12: requirement-implied floor [-11.9%, 3.1%]..[-9.7%, 5.3%]; out: 2027:-11.2% (band [-11.1%, 3.9%]), 2028:-13.5% (band [-9.7%, 5.3%]), 2029:-13.1% (band [-9.7%, 5.3%]), 2030:-13.0% (band [-9.7%, 5.3%]); I7: 2027: accredited firm 145259 < requirement 145509 MW; 2028: accredited firm 144037 < requirement 150263 MW; 2029: accredited firm 147201 < requirement 153001 MW; 2030: accredited firm 150299 < requirement 155946 MW",
+          "gating": true
+        }
+      ]
+    },
+    "FC-2": {
+      "label": "FC-2 adequacy & equilibrium behavior",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "row1",
+          "status": "FAIL",
+          "detail": "reserve-margin band (I12 FAIL): requirement-implied floor [-11.9%, 3.1%]..[-9.7%, 5.3%]; out: 2027:-11.2% (band [-11.1%, 3.9%]), 2028:-13.5% (band [-9.7%, 5.3%]), 2029:-13.1% (band [-9.7%, 5.3%]), 2030:-13.0% (band [-9.7%, 5.3%])",
+          "gating": true
+        },
+        {
+          "row": "row3",
+          "status": "PASS",
+          "detail": "no cobweb (I13 PASS)",
+          "gating": true
+        },
+        {
+          "row": "row4",
+          "status": "FAIL",
+          "detail": "backstop share 43.9% > 30% (administrative over-build)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-3": {
+      "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-4": {
+      "label": "FC-4 crossover dispatch skill (T1-X)",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-5": {
+      "label": "FC-5 external corridor",
+      "applicability": "report",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "corridor",
+          "status": "SKIPPED",
+          "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-6": {
+      "label": "FC-6 driver response",
+      "applicability": "optional",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "driver response",
+          "status": "SKIPPED",
+          "detail": "no committed driver-battery or paired-invariant output",
+          "gating": true
+        }
+      ]
+    },
+    "FC-7": {
+      "label": "FC-7 provenance & DOF",
+      "applicability": "required",
+      "status": "PASS",
+      "rows": [
+        {
+          "row": "run_config",
+          "status": "PASS",
+          "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
+          "gating": true
+        },
+        {
+          "row": "overlay-off",
+          "status": "PASS",
+          "detail": "no backcast overlay armed (outage_source='statistical')",
+          "gating": true
+        },
+        {
+          "row": "dof ledger",
+          "status": "PASS",
+          "detail": "1 entries well-formed (0 open residual DOF listed)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-8": {
+      "label": "FC-8 runtime feasibility",
+      "applicability": "runtime",
+      "status": "CAVEAT",
+      "rows": [
+        {
+          "row": "runtime",
+          "status": "CAVEAT",
+          "detail": "peak RSS 9.0 GB \u2265 8.6 GB (no co-run)",
+          "gating": true
+        }
+      ]
+    }
+  }
+}
