@@ -1,0 +1,146 @@
+{
+ "_provenance": {
+  "session": "caiso-246",
+  "precommit": "PRECOMMIT-caiso246-spot-coverage-2026-09-04.md \u00a71",
+  "bundle": "results/calibration/caiso243_b1_f923_fallback_guard",
+  "recipe": "replay_keeper.run_year_kwargs (on-recipe) + caiso_citygate_spot_coverage=True",
+  "note": "ZERO LP; footprint and price-leg envelope only"
+ },
+ "years": {
+  "2023": {
+   "footprint": {
+    "rows_moved": 0,
+    "rows_moved_nongas": 0,
+    "gas_rows_total": 1443,
+    "mw_moved": 0.0,
+    "months_moved": [],
+    "cells_moved_outside_months_9_10_11": 0,
+    "by_month": {}
+   },
+   "envelope": {
+    "rows": 0,
+    "lower": 0.0,
+    "upper": 0.0
+   },
+   "arm_overlay_log": []
+  },
+  "2024": {
+   "footprint": {
+    "rows_moved": 0,
+    "rows_moved_nongas": 0,
+    "gas_rows_total": 1448,
+    "mw_moved": 0.0,
+    "months_moved": [],
+    "cells_moved_outside_months_9_10_11": 0,
+    "by_month": {}
+   },
+   "envelope": {
+    "rows": 0,
+    "lower": 0.0,
+    "upper": 0.0
+   },
+   "arm_overlay_log": []
+  },
+  "2025": {
+   "footprint": {
+    "rows_moved": 1453,
+    "rows_moved_nongas": 0,
+    "gas_rows_total": 1453,
+    "mw_moved": 29277.8,
+    "months_moved": [
+     9,
+     10,
+     11
+    ],
+    "cells_moved_outside_months_9_10_11": 0,
+    "by_month": {
+     "9": {
+      "rows": 1453,
+      "mw": 29277.8,
+      "capwt_usd_mmbtu_keeper": 4.2134,
+      "capwt_usd_mmbtu_arm": 3.6353,
+      "d_fuel_mc_usd_mwh_capwt": -5.934,
+      "plant_55077_keeper_mean": 3.849,
+      "plant_55077_arm_mean": 3.635
+     },
+     "10": {
+      "rows": 1453,
+      "mw": 29277.8,
+      "capwt_usd_mmbtu_keeper": 4.3158,
+      "capwt_usd_mmbtu_arm": 3.1858,
+      "d_fuel_mc_usd_mwh_capwt": -11.259,
+      "plant_55077_keeper_mean": 11.304,
+      "plant_55077_arm_mean": 3.186
+     },
+     "11": {
+      "rows": 1453,
+      "mw": 29277.8,
+      "capwt_usd_mmbtu_keeper": 5.5714,
+      "capwt_usd_mmbtu_arm": 3.7643,
+      "d_fuel_mc_usd_mwh_capwt": -16.291,
+      "plant_55077_keeper_mean": 96.161,
+      "plant_55077_arm_mean": 3.764
+     }
+    }
+   },
+   "envelope": {
+    "rows": 1453,
+    "live_months": [
+     9,
+     10,
+     11
+    ],
+    "lower": -3.1376,
+    "upper": 0.1849,
+    "by_zone": {
+     "NP15": {
+      "repriced_rows": 606,
+      "repriced_mw": 10185.9,
+      "live_hours_price_above_new_offer": 2037,
+      "live_hours_price_above_old_offer": 1810,
+      "keeper_live_lw_price": 46.86,
+      "new_min_offer_live_mean": 34.28,
+      "old_min_offer_live_mean": 38.88
+     },
+     "ZP26": {
+      "repriced_rows": 190,
+      "repriced_mw": 3295.0,
+      "live_hours_price_above_new_offer": 2004,
+      "live_hours_price_above_old_offer": 1729,
+      "keeper_live_lw_price": 45.42,
+      "new_min_offer_live_mean": 34.3,
+      "old_min_offer_live_mean": 38.98
+     },
+     "LA_BASIN": {
+      "repriced_rows": 410,
+      "repriced_mw": 10228.3,
+      "live_hours_price_above_new_offer": 2026,
+      "live_hours_price_above_old_offer": 1795,
+      "keeper_live_lw_price": 45.83,
+      "new_min_offer_live_mean": 34.28,
+      "old_min_offer_live_mean": 38.88
+     },
+     "SDGE": {
+      "repriced_rows": 180,
+      "repriced_mw": 2753.3,
+      "live_hours_price_above_new_offer": 2083,
+      "live_hours_price_above_old_offer": 1831,
+      "keeper_live_lw_price": 46.92,
+      "new_min_offer_live_mean": 33.23,
+      "old_min_offer_live_mean": 37.68
+     },
+     "SP15_rest": {
+      "repriced_rows": 67,
+      "repriced_mw": 2815.2,
+      "live_hours_price_above_new_offer": 1829,
+      "live_hours_price_above_old_offer": 1570,
+      "keeper_live_lw_price": 44.69,
+      "new_min_offer_live_mean": 37.91,
+      "old_min_offer_live_mean": 43.17
+     }
+    }
+   },
+   "arm_overlay_log": []
+  }
+ }
+}
