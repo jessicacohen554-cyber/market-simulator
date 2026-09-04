@@ -10996,5 +10996,118 @@
     ]
    }
   }
+ },
+ "nyiso-t1h-d52-curveon": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "b4ded0bba29c",
+   "scored_at_date": "2026-09-04T23:34:05Z",
+   "cache_epoch": "589f031432b6dc7d",
+   "session": "capx-D52"
+  },
+  "tier": "t1h",
+  "iso": "NYISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D52 (2026-09-04): the CONDITIONAL curve-ON PROBE on the repaired posture (nyiso-t1h-d52-devintage + --capacity-market-clearing {NYISO: True}; key 589f031432b6dc7d, pre-declared and matched; 11.6 min; run ONLY because the A/B met D45 section 6's +/-3-pt condition in every scored year). SUFFIXED BY CHARTER, never the bare key; NOTHING ARMS. Determination HOLD (FC-3 FAIL). D45 P9 graded VERBATIM: (a) retire.total_gw 3.257 vs 1.711 (+90 %) -- NO; (b) false_retire 2.057 GW (0.631) -- NO; (c) entering positions 1.0175 / 1.0403 / 1.0520 vs published 1.043 / 1.058 / 1.058 (-2.6 / -1.8 / -0.6 pts) -- YES. One of three: the curve-ON recommendation stays DO NOT ARM, for a DIFFERENT and pre-stated reason than D45's: the POSITION ARTIFACT IS CLOSED (c), the 2023 screen that L3 collapsed (3.5 GW of downstate steam at $0) now pays $63.34/kW-yr and fails NOTHING, the 2024 screen pays $48.04 and fails nothing; the over-fire moved to the 2025 screen where the 2025/26 curve vintage (net-CONE reset to $50.55) pays $28.65 at position 1.052 -- a gas_st capacity leg of 0.93 x 28.65 = $26.6 against a $35.0 bar with ~$0.2 of energy margin -- so 17 gas_st units / 1,801 MW are decided and executed in 2025, sized by the 2025 admission budget (1,771 firm MW), with 7,567 MW of gas_st and 652 MW of gas_cc failing-but-capped behind them; entry gas_cc 1.0 (the 2022-decided unit; no 2024 decision at a $45.6k/MW-yr term) / gas_ct 0.0 / storage 0.000. PRE-DECLARED (PREDECL P5: total ~3.3 GW +90 %, gas_st ~1.9 GW in 2025, (a)/(b) NO, (c) YES). What remains is NOT the position: (i) the 2025/26 vintage curve pays HALF the real $51.36 spot at the published position ($26.12; a curve/records object, the same in both arms) and (ii) the NYCA-wide representation pays downstate steam the NYCA price where Zone J clears at $141/kW-yr (D45 section 5.2.4 item 3, the locality half -- routed, not built). Curve-attributable delta vs the A/B: retire +1.80 GW (all 2025 gas_st), false +1.80 GW, gas_cc entry -1.0 GW, gas_ct entry -0.5 GW. Evidence: docs/handoffs/FINDING-capx-d52-2026-09-04.md."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 785 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
  }
 }
