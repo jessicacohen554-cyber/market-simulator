@@ -5892,3 +5892,116 @@ your branch when done.
   `calibration-complete.json`, `holdout-freeze.json`, every matrix shard, every
   workflow, every bundle/sidecar/registry file. **No solve, no score, no
   registration.**
+- 2026-09-04 — **AUDIT RECORDS LANE v24** (dispatched at pin `c6e46b49`, executed and
+  re-derived at **`8d5a3e16`**, two-poll stable then confirmed on a third; window
+  `c6e46b49..8d5a3e16` = 56 commits / 12 merged PRs). Board refreshed to **v24**
+  (append-only above v23; v23 and all history byte-identical, verified by `cmp`
+  of the pre-insert head and tail against the post-insert file). **Records lane,
+  ZERO SOLVES** — the one `calibration_verdict.py --run-id` invocation reads
+  committed artifacts only and never re-solves the LP.
+  **HEADLINE — LEG 2's GREEN DID NOT SURVIVE ONE KEEPER PROMOTION.** Run **2371**
+  (`33799209070`, head `dc278084`, the branch whose merge is main's tip),
+  `Fast test tier` job `100794204431` **`failure`** — `2 failed, 7846 passed, 34
+  skipped, 2 xfailed`, against v23's run 2351 `7823 passed / 0 failed`. **Both
+  failures trace to the single caiso-241 promotion (#4661, `a6c8db2f`) and both
+  are unmet duties on a SHARED SURFACE that PR did not touch:** (1)
+  `test_gate_a_provenance.py::test_live_board_passes` — the CAISO gate-(a) stamp
+  still cites `caiso-240` against live keeper `caiso-241-b1-ctpeaker` (**R-T
+  non-compliance #7**); (2) `test_forecast_parity.py::test_all_six_keepers_resolve`
+  — `caiso_ct_peaker_committed_measured` armed in the keeper with no
+  forecast-orchestrator consumer and no `scripts/lib/forecast_parity_registry.py`
+  declaration, **the first recurrence of the R-X object class since R-X
+  discharged**. Rule 28 duty (c) was MET (the field is in the mechanism matrix;
+  `check_mechanism_matrix.py` exit 0) — the gap is in a different registry, which
+  is why no existing guard caught it. **Run 2351's green stands as a historical
+  fact and is NOT withdrawn; what v24 establishes is that leg 2 is satisfiable but
+  not self-sustaining.**
+  **SEVEN GATES: SIX EXIT 0, ONE EXIT 1** — each invoked alone, `$?` read
+  immediately, never through a pipe. The dispatch's item (a) ("all seven exit 0,
+  first all-green sitting on record") was true at `c6e46b49` and **does not hold
+  at `8d5a3e16`**: `check_gate_a_provenance.py` **exit 1** on one row (CAISO
+  identity). `audit_keepers --check` PASS 0/0 · `check_registry_payload_parity`
+  0 (64 runs / 100 dirs) · `check_mechanism_matrix` 0 (195 field + 49 row + 164
+  path anchors) · `check_forecast_staleness` 0 (Δ 0; 25-of-74 undated WARN) ·
+  `check_bench_freshness` 0 (20 parts, 0 STALE, 20 engine-drift) ·
+  `check_golden_manifest` 0 (42 manifests, 11 enforced, 3 stale vs live keeper).
+  **The red was recorded and ROUTED, not patched** — repairing it in this lane is
+  the eighth manual re-key the flip exists to end.
+  **FOUR-INSTRUMENT ALIGNMENT HOLDS at {ERCOT, NEISO, PJM}**, all four re-derived
+  fail-closed: `frontier` present (CAISO/MISO carry no key; **NYISO `withdrawn`
+  2026-08-30 ⇒ ABSENT**) = `complete` membership = gate-(a) passers = ISO-level
+  `CALIBRATED`. **`final` EMPTY** (only `_note`); **freeze ACTIVE with
+  `scope.tiers = ["locked_test"]`**; **no locked-test year ever solved, scored or
+  registered for any ISO.** The stale CAISO stamp moves no instrument — CAISO
+  fails gate (a) identically before and after (NOT-YET, absent from `complete`).
+  **KEEPER MOTION — three hops, one more than the dispatch recorded:** CAISO
+  239 → 240 (#4641) → **`2026-09-03-caiso-241-b1-ctpeaker`** (#4661); MISO 201 →
+  `2026-09-03-miso-202-unitclip` (#4651). Since the director's own pin, CAISO
+  240 → 241 alone. **caiso-241 is NOT-YET at run level** (C3a mean LMP FAIL: 2024
+  +12.3 %, 2025 +15.5 %; C1/C2/C3b/C4/C6/C8 PASS, C3c the lone ledgered caveat)
+  **and NOT-YET at ISO level** (absent from `complete`). **R-V freeze on
+  {ERCOT, NEISO, PJM} INTACT** — all three shards byte-unchanged. **Stage-0 4 of
+  7 current** (X-2 stands; CAISO's stale row re-targets 231 → 241).
+  **R-AB IS 4-OF-5 READY AND THE FIFTH IS Y-4's OBJECT.** Measured job-by-job at
+  run 2371: `Pinned default cache key`, `Structural refactor guards`,
+  `Cache-key registration guard`, `Rule-22 quarantine gates` all **green**;
+  **`Fast test tier` red**, on the two caiso-241 duties. Recorded without
+  recommending deferral — R-AB is the owner's ruling and stands; what moved is the
+  measurement under it, taken 56 commits later. **Leg 4 re-measured 30-for-30 a
+  THIRD time** on a third distinct run set (2342–2371, all `pull_request`, all
+  `failure`). **Leg 1 SATISFIED** (golden tier run #9 `33704730253` `success`,
+  still newest of 9; cron confirmed removed — `workflow_dispatch:` only).
+  **Leg 3 SATISFIED** (R-V). **No G2 declaration made and no FFR Q.2 notification
+  fired** — R-AD's precondition (flip confirmed live) is unmet.
+  **X-1 / R-Z / R-AC: THE LINT LANE LAUNCHED, AND v23's PROTOCOL LESSON (f) WAS
+  VINDICATED ON ITS FIRST APPLICATION** — this lane's first branch poll found no
+  lint branch; the mandated re-poll found `claude/lint-hygiene-r-z-ac-zooe9c`
+  (`3a3b445a` R-AC pyproject exclude, `b9384baf` ruff format on seven files), no
+  PR yet. **G-14's non-launch tally stays at five.** Independent measurement
+  agrees with that lane's scoping and records the non-obvious sequencing fact:
+  `ruff check` is **5 errors, all in `docs/handoffs/d37/`+`d45/` probe scripts**,
+  so **R-AC clears lint entirely — and thereby UNMASKS the format step, currently
+  `skipped` behind the failing lint step**, leaving **7 of the 11 format files**
+  (11 at this pin vs v23's 10). **R-AC alone does not green the Ruff job.** Two of
+  the seven are `src/market_sim/` core files ≥300 lines (`campd_bins.py` 2,684,
+  `offer_curves.py` 1,637) so **rule 27 `[R-PUSH]` blob verification is owed on
+  that push**; measured reassurance — the diffs are 14 and 39 lines, **not** the
+  HOUSE-1 reflow class.
+  **Q-4 SWEEP + A LABEL-HYGIENE FINDING:** `R-Z` / `R-AA` / `R-AB` / `R-AC` /
+  `R-AD` each return **zero word-boundary hits across `docs/`** before this
+  record — the 2026-09-03 sitting's five rulings existed only in the dispatch
+  prompt, and the board block plus this entry are their first artifacts. Recorded
+  so later sweeps are not misled: bare-substring greps for these are unusable
+  (`R-AC` matches **141 files**, because rule 14 is `[R-ACCURATE]`), and the
+  queue's own namespace is not unique — `X-1`/`X-2`/`X-3` collide with ERCOT probe
+  labels (18/18/11 files) and `Y-1`/`Y-3` with mathematical subscripts (year
+  `Y-1`; the PJM/ISO-NE `Y-3` forward-clearing lag) in four forecast docs. Only
+  `X-4`/`X-5`/`X-6` are clean. **Cite as "board X-N" / "board Y-N", never bare.**
+  **R-AA** ratified as issued (R-X's `nyiso_seam_par_attribution` GAP row under
+  the R-X route; wire-forward stays routed to the capx/forecast desk, undecided) —
+  no action fell to this lane and none was taken. **But the R-X object class
+  recurred at the next promotion**, so the route needs an owner on NEW fields, not
+  only the seven R-X adjudicated: that is the queue's one new item.
+  **QUEUE: Y-4 NEW and the only new dispatchable — the caiso-241 two-duty
+  repair** (re-key the CAISO gate-(a) stamp to `caiso-241-b1-ctpeaker`; declare or
+  account `caiso_ct_peaker_committed_measured` in `forecast_parity_registry.py`
+  under the R-X route). Stamp-only + one registry row; no solve, no score, no
+  registration, no keeper shard. **It is what stands between main's tip and a
+  green `Fast test tier`, and therefore between the program and an R-AB flip that
+  does not block every PR.** X-1 IN FLIGHT; X-2 unchanged (4 of 7); X-3/X-4/X-5/X-6
+  unchanged; Y-1 (owner flip) gated in practice on Y-4; Y-2 (G2 declaration)
+  precondition unmet; Y-3 (R-T pattern) now **seven for seven** and no longer
+  records-only — it has cost a G2 leg — still moot once the flip is live, record
+  not dispatch.
+  **DEVIATION FROM THE DISPATCH, DISCLOSED:** four items of its RECORD moved under
+  this lane's own measurement and are restated rather than repeated — (a) seven
+  gates is **6/7**; (c) keeper motion is **three hops**, adding caiso-241; (d) the
+  R-T count is **SEVEN**; (g) R-AB's required list contains one job **red at
+  main's tip**. Item (h)'s "X-1 → IN FLIGHT" is confirmed, on the second poll.
+  **Nothing in v23 is corrected** — every re-derived v23 figure agrees at v23's own
+  pin; all movement is `49bfbc49..8d5a3e16` motion.
+  **Records integrity:** touched **only** this plan and the board. **Verified
+  untouched:** every keeper shard, every `status/<ISO>.js`,
+  `calibration-complete.json`, `holdout-freeze.json`, **`program-status.json`**,
+  every matrix shard, every workflow, every bundle/sidecar/registry file. **No
+  solve, no score, no registration.**
