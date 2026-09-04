@@ -1,0 +1,423 @@
+{
+  "_provenance": {
+    "session": "caiso-242",
+    "bundle": "results/calibration/caiso241_b1_ctpeaker_committed",
+    "keeper_run_id": "2026-09-03-caiso-241-b1-ctpeaker",
+    "co2_factor_derive": 0.057,
+    "note": "no LP, no flag delta; derive round-trip identity vs the model as built"
+  },
+  "per_year_inputs": {
+    "2023": {
+      "citygate_mean": 5.2,
+      "model_fuel_capwt_mean": 7.4124,
+      "carbon_usd_per_t": 33.03
+    },
+    "2024": {
+      "citygate_mean": 2.4267,
+      "model_fuel_capwt_mean": 3.8321,
+      "carbon_usd_per_t": 35.23
+    },
+    "2025": {
+      "citygate_mean": 3.0367,
+      "model_fuel_capwt_mean": 5.2338,
+      "carbon_usd_per_t": 28.06
+    }
+  },
+  "classes": {
+    "CC_REGULAR": {
+      "bucket": "CC_REGULAR",
+      "base_hr": 7.442,
+      "vom": 2.0,
+      "per_year": {
+        "2023": {
+          "model_fuel_capwt": 7.4124,
+          "citygate": 5.2,
+          "emission_rate_capwt_t_per_mwh": 0.40258,
+          "carbon_usd_per_t": 33.03,
+          "A_gas_index_term": 0.95552,
+          "B_carbon_term": 0.24105,
+          "L1_gas_index_ratio_cg_over_model": 0.7015,
+          "L2_carbon_model_over_derive_assumed": 0.8903,
+          "measured_bid_at_armed_mult_usd_mwh": 58.188,
+          "model_econ_mc_capwt_usd_mwh": 70.911,
+          "model_minus_bid_usd_mwh": 12.723,
+          "model_over_bid": 1.2186,
+          "measured_mult_that_year": 1.063
+        },
+        "2024": {
+          "model_fuel_capwt": 3.8321,
+          "citygate": 2.4267,
+          "emission_rate_capwt_t_per_mwh": 0.39466,
+          "carbon_usd_per_t": 35.23,
+          "A_gas_index_term": 1.15728,
+          "B_carbon_term": 0.48753,
+          "L1_gas_index_ratio_cg_over_model": 0.6333,
+          "L2_carbon_model_over_derive_assumed": 0.8728,
+          "measured_bid_at_armed_mult_usd_mwh": 37.182,
+          "model_econ_mc_capwt_usd_mwh": 47.525,
+          "model_minus_bid_usd_mwh": 10.343,
+          "model_over_bid": 1.2782,
+          "measured_mult_that_year": 1.027
+        },
+        "2025": {
+          "model_fuel_capwt": 5.8612,
+          "citygate": 3.0367,
+          "emission_rate_capwt_t_per_mwh": 0.39393,
+          "carbon_usd_per_t": 28.06,
+          "A_gas_index_term": 0.79099,
+          "B_carbon_term": 0.25341,
+          "L1_gas_index_ratio_cg_over_model": 0.5181,
+          "L2_carbon_model_over_derive_assumed": 0.8712,
+          "measured_bid_at_armed_mult_usd_mwh": 38.779,
+          "model_econ_mc_capwt_usd_mwh": 57.711,
+          "model_minus_bid_usd_mwh": 18.932,
+          "model_over_bid": 1.4882,
+          "measured_mult_that_year": 1.085
+        }
+      },
+      "A": 0.96793,
+      "B": 0.32733,
+      "A_dispersion": 0.18315,
+      "B_dispersion": 0.12324,
+      "reconciled_bands": {
+        "econ_low": {
+          "armed": 1.066,
+          "reconciled": 0.70448,
+          "ratio": 0.6609,
+          "phys": 0.836,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "econ_high": {
+          "armed": 1.072,
+          "reconciled": 0.71028,
+          "ratio": 0.6626,
+          "phys": 0.968,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "peak": {
+          "armed": 1.386,
+          "reconciled": 1.01421,
+          "ratio": 0.7318,
+          "phys": 2.25,
+          "in_derive_G4_range_0p5_6p0": true
+        }
+      }
+    },
+    "CC_CHP": {
+      "bucket": "CC_REGULAR",
+      "base_hr": 7.442,
+      "vom": 2.0,
+      "per_year": {
+        "2023": {
+          "model_fuel_capwt": 7.4124,
+          "citygate": 5.2,
+          "emission_rate_capwt_t_per_mwh": 0.38422,
+          "carbon_usd_per_t": 33.03,
+          "A_gas_index_term": 0.95552,
+          "B_carbon_term": 0.23006,
+          "L1_gas_index_ratio_cg_over_model": 0.7015,
+          "L2_carbon_model_over_derive_assumed": 0.8497,
+          "measured_bid_at_armed_mult_usd_mwh": 58.188,
+          "model_econ_mc_capwt_usd_mwh": 70.312,
+          "model_minus_bid_usd_mwh": 12.124,
+          "model_over_bid": 1.2084,
+          "measured_mult_that_year": 1.063
+        },
+        "2024": {
+          "model_fuel_capwt": 3.8321,
+          "citygate": 2.4267,
+          "emission_rate_capwt_t_per_mwh": 0.38605,
+          "carbon_usd_per_t": 35.23,
+          "A_gas_index_term": 1.15728,
+          "B_carbon_term": 0.47691,
+          "L1_gas_index_ratio_cg_over_model": 0.6333,
+          "L2_carbon_model_over_derive_assumed": 0.8537,
+          "measured_bid_at_armed_mult_usd_mwh": 37.182,
+          "model_econ_mc_capwt_usd_mwh": 47.844,
+          "model_minus_bid_usd_mwh": 10.662,
+          "model_over_bid": 1.2867,
+          "measured_mult_that_year": 1.027
+        },
+        "2025": {
+          "model_fuel_capwt": 4.409,
+          "citygate": 3.0367,
+          "emission_rate_capwt_t_per_mwh": 0.38521,
+          "carbon_usd_per_t": 28.06,
+          "A_gas_index_term": 1.05151,
+          "B_carbon_term": 0.32943,
+          "L1_gas_index_ratio_cg_over_model": 0.6888,
+          "L2_carbon_model_over_derive_assumed": 0.8519,
+          "measured_bid_at_armed_mult_usd_mwh": 38.779,
+          "model_econ_mc_capwt_usd_mwh": 48.404,
+          "model_minus_bid_usd_mwh": 9.624,
+          "model_over_bid": 1.2482,
+          "measured_mult_that_year": 1.085
+        }
+      },
+      "A": 1.05477,
+      "B": 0.34547,
+      "A_dispersion": 0.10088,
+      "B_dispersion": 0.12342,
+      "reconciled_bands": {
+        "econ_low": {
+          "armed": 1.066,
+          "reconciled": 0.77892,
+          "ratio": 0.7307,
+          "phys": 0.88,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "econ_high": {
+          "armed": 1.072,
+          "reconciled": 0.78525,
+          "ratio": 0.7325,
+          "phys": 0.942,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "peak": {
+          "armed": 1.386,
+          "reconciled": 1.11645,
+          "ratio": 0.8055,
+          "phys": 2.25,
+          "in_derive_G4_range_0p5_6p0": true
+        }
+      }
+    },
+    "CT_PEAKER": {
+      "bucket": "CT_PEAKER",
+      "base_hr": 10.862,
+      "vom": 3.5,
+      "per_year": {
+        "2023": {
+          "model_fuel_capwt": 7.4124,
+          "citygate": 5.2,
+          "emission_rate_capwt_t_per_mwh": 0.52152,
+          "carbon_usd_per_t": 33.03,
+          "A_gas_index_term": 0.95552,
+          "B_carbon_term": 0.21395,
+          "L1_gas_index_ratio_cg_over_model": 0.7015,
+          "L2_carbon_model_over_derive_assumed": 0.7357,
+          "measured_bid_at_armed_mult_usd_mwh": 91.588,
+          "model_econ_mc_capwt_usd_mwh": 101.134,
+          "model_minus_bid_usd_mwh": 9.546,
+          "model_over_bid": 1.1042,
+          "measured_mult_that_year": 1.145
+        },
+        "2024": {
+          "model_fuel_capwt": 3.8321,
+          "citygate": 2.4267,
+          "emission_rate_capwt_t_per_mwh": 0.51567,
+          "carbon_usd_per_t": 35.23,
+          "A_gas_index_term": 1.15728,
+          "B_carbon_term": 0.43645,
+          "L1_gas_index_ratio_cg_over_model": 0.6333,
+          "L2_carbon_model_over_derive_assumed": 0.7274,
+          "measured_bid_at_armed_mult_usd_mwh": 58.656,
+          "model_econ_mc_capwt_usd_mwh": 74.846,
+          "model_minus_bid_usd_mwh": 16.19,
+          "model_over_bid": 1.276,
+          "measured_mult_that_year": 1.158
+        },
+        "2025": {
+          "model_fuel_capwt": 4.5808,
+          "citygate": 3.0367,
+          "emission_rate_capwt_t_per_mwh": 0.51262,
+          "carbon_usd_per_t": 28.06,
+          "A_gas_index_term": 1.01207,
+          "B_carbon_term": 0.28909,
+          "L1_gas_index_ratio_cg_over_model": 0.6629,
+          "L2_carbon_model_over_derive_assumed": 0.7231,
+          "measured_bid_at_armed_mult_usd_mwh": 61.159,
+          "model_econ_mc_capwt_usd_mwh": 76.878,
+          "model_minus_bid_usd_mwh": 15.719,
+          "model_over_bid": 1.257,
+          "measured_mult_that_year": 1.147
+        }
+      },
+      "A": 1.04162,
+      "B": 0.31316,
+      "A_dispersion": 0.10088,
+      "B_dispersion": 0.11125,
+      "reconciled_bands": {
+        "econ_low": {
+          "armed": 1.145,
+          "reconciled": 0.87949,
+          "ratio": 0.7681,
+          "phys": 0.686,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "econ_high": {
+          "armed": 1.166,
+          "reconciled": 0.90137,
+          "ratio": 0.773,
+          "phys": 0.71,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "peak": {
+          "armed": 1.166,
+          "reconciled": 0.90137,
+          "ratio": 0.773,
+          "phys": 1.0,
+          "in_derive_G4_range_0p5_6p0": true
+        }
+      }
+    },
+    "CT_CHP": {
+      "bucket": "CT_PEAKER",
+      "base_hr": 10.862,
+      "vom": 3.5,
+      "per_year": {
+        "2023": {
+          "model_fuel_capwt": 7.4124,
+          "citygate": 5.2,
+          "emission_rate_capwt_t_per_mwh": 0.57856,
+          "carbon_usd_per_t": 33.03,
+          "A_gas_index_term": 0.95552,
+          "B_carbon_term": 0.23735,
+          "L1_gas_index_ratio_cg_over_model": 0.7015,
+          "L2_carbon_model_over_derive_assumed": 0.8161,
+          "measured_bid_at_armed_mult_usd_mwh": 91.588,
+          "model_econ_mc_capwt_usd_mwh": 102.059,
+          "model_minus_bid_usd_mwh": 10.472,
+          "model_over_bid": 1.1143,
+          "measured_mult_that_year": 1.145
+        },
+        "2024": {
+          "model_fuel_capwt": 3.8321,
+          "citygate": 2.4267,
+          "emission_rate_capwt_t_per_mwh": 0.57331,
+          "carbon_usd_per_t": 35.23,
+          "A_gas_index_term": 1.15728,
+          "B_carbon_term": 0.48524,
+          "L1_gas_index_ratio_cg_over_model": 0.6333,
+          "L2_carbon_model_over_derive_assumed": 0.8087,
+          "measured_bid_at_armed_mult_usd_mwh": 58.656,
+          "model_econ_mc_capwt_usd_mwh": 79.005,
+          "model_minus_bid_usd_mwh": 20.35,
+          "model_over_bid": 1.3469,
+          "measured_mult_that_year": 1.158
+        },
+        "2025": {
+          "model_fuel_capwt": 4.4266,
+          "citygate": 3.0367,
+          "emission_rate_capwt_t_per_mwh": 0.57693,
+          "carbon_usd_per_t": 28.06,
+          "A_gas_index_term": 1.04733,
+          "B_carbon_term": 0.33669,
+          "L1_gas_index_ratio_cg_over_model": 0.686,
+          "L2_carbon_model_over_derive_assumed": 0.8138,
+          "measured_bid_at_armed_mult_usd_mwh": 61.159,
+          "model_econ_mc_capwt_usd_mwh": 78.952,
+          "model_minus_bid_usd_mwh": 17.793,
+          "model_over_bid": 1.2909,
+          "measured_mult_that_year": 1.147
+        }
+      },
+      "A": 1.05338,
+      "B": 0.35309,
+      "A_dispersion": 0.10088,
+      "B_dispersion": 0.12394,
+      "reconciled_bands": {
+        "econ_low": {
+          "armed": 1.145,
+          "reconciled": 0.85302,
+          "ratio": 0.745,
+          "phys": 0.594,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "econ_high": {
+          "armed": 1.166,
+          "reconciled": 0.87514,
+          "ratio": 0.7506,
+          "phys": 0.598,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "peak": {
+          "armed": 1.166,
+          "reconciled": 0.87514,
+          "ratio": 0.7506,
+          "phys": 1.0,
+          "in_derive_G4_range_0p5_6p0": true
+        }
+      }
+    },
+    "ST_GAS": {
+      "bucket": "CT_PEAKER",
+      "base_hr": 10.862,
+      "vom": 3.5,
+      "per_year": {
+        "2023": {
+          "model_fuel_capwt": 7.4124,
+          "citygate": 5.2,
+          "emission_rate_capwt_t_per_mwh": 0.6118,
+          "carbon_usd_per_t": 33.03,
+          "A_gas_index_term": 0.95552,
+          "B_carbon_term": 0.25098,
+          "L1_gas_index_ratio_cg_over_model": 0.7015,
+          "L2_carbon_model_over_derive_assumed": 0.863,
+          "measured_bid_at_armed_mult_usd_mwh": 91.588,
+          "model_econ_mc_capwt_usd_mwh": 172.417,
+          "model_minus_bid_usd_mwh": 80.829,
+          "model_over_bid": 1.8825,
+          "measured_mult_that_year": 1.145
+        },
+        "2024": {
+          "model_fuel_capwt": 3.8321,
+          "citygate": 2.4267,
+          "emission_rate_capwt_t_per_mwh": 0.68862,
+          "carbon_usd_per_t": 35.23,
+          "A_gas_index_term": 1.15728,
+          "B_carbon_term": 0.58283,
+          "L1_gas_index_ratio_cg_over_model": 0.6333,
+          "L2_carbon_model_over_derive_assumed": 0.9714,
+          "measured_bid_at_armed_mult_usd_mwh": 58.656,
+          "model_econ_mc_capwt_usd_mwh": 130.919,
+          "model_minus_bid_usd_mwh": 72.263,
+          "model_over_bid": 2.232,
+          "measured_mult_that_year": 1.158
+        },
+        "2025": {
+          "model_fuel_capwt": 4.5872,
+          "citygate": 3.0367,
+          "emission_rate_capwt_t_per_mwh": 0.67611,
+          "carbon_usd_per_t": 28.06,
+          "A_gas_index_term": 1.01065,
+          "B_carbon_term": 0.38075,
+          "L1_gas_index_ratio_cg_over_model": 0.662,
+          "L2_carbon_model_over_derive_assumed": 0.9537,
+          "measured_bid_at_armed_mult_usd_mwh": 61.159,
+          "model_econ_mc_capwt_usd_mwh": 133.631,
+          "model_minus_bid_usd_mwh": 72.472,
+          "model_over_bid": 2.185,
+          "measured_mult_that_year": 1.147
+        }
+      },
+      "A": 1.04115,
+      "B": 0.40486,
+      "A_dispersion": 0.10088,
+      "B_dispersion": 0.16593,
+      "reconciled_bands": {
+        "econ_low": {
+          "armed": 1.145,
+          "reconciled": 0.78726,
+          "ratio": 0.6876,
+          "phys": 0.725,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "econ_high": {
+          "armed": 1.166,
+          "reconciled": 0.80912,
+          "ratio": 0.6939,
+          "phys": 0.755,
+          "in_derive_G4_range_0p5_6p0": true
+        },
+        "peak": {
+          "armed": 1.166,
+          "reconciled": 0.80912,
+          "ratio": 0.6939,
+          "phys": 1.0,
+          "in_derive_G4_range_0p5_6p0": true
+        }
+      }
+    }
+  }
+}
