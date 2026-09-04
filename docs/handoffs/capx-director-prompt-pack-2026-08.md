@@ -3969,7 +3969,7 @@ conflict. Nobody else touches scenarios.py/CLAUDE.md/spec this window.
 EXIT: the flip + amendments + matrix + CHANGELOG + the finding, all blob-verified.
 ```
 
-## D45 — PJM + NYISO capacity curves: the once-only D6+R3 joint charter (r#31) — **CHECKPOINT at r#32; owed half STILL ABSENT at r#33 (card C-4 — see §D45-R below once ruled)** (PRs #4643/#4647/#4649: PJM L1 registered + stages 2/3 written; **OWED: NYISO L2/L3, PJM L4, finding §4–§9 and the §9 close-out** — graded a checkpoint, not lost; a session resuming this charter starts from the committed finding's placeholders)
+## D45 — PJM + NYISO capacity curves: the once-only D6+R3 joint charter (r#31) — **CHECKPOINT at r#32; RULED DEAD at r#33 (Q33) — superseded by §D45-R below; never re-paste this charter** (PRs #4643/#4647/#4649: PJM L1 registered + stages 2/3 written; **OWED: NYISO L2/L3, PJM L4, finding §4–§9 and the §9 close-out** — graded a checkpoint, not lost; a session resuming this charter starts from the committed finding's placeholders)
 
 *r#32 amendment (recorded OUTSIDE the charter text, which does not move): the NYISO keeper is now `2026-09-02-nyiso-177-vintage-matched` (promoted 2026-09-02 by owner ruling; NOT-YET on {C1-2023 ST_GAS, C3a-2025, C3c}); PJM's is unchanged (`2026-08-15-pjm-162-inputclock`). The charter names no keeper id, so nothing in it changes — but the per-leg vintage line it already requires must name the keeper id per ISO alongside the fossil-dates posture. Also note: the forecast board's gate-(a) stamps for NYISO/MISO/CAISO were stale at r#32 (ledger §0ac.2) — read the keeper from `keepers/<ISO>.json`, never from `program-status.json`.*
 
@@ -4195,4 +4195,95 @@ GOLDEN-3 bundle's attestation, `neiso-t3`'s registration, and the two records it
 EXIT: PREDECL + attestation + re-scored `neiso-t3` (prior at `-pre-d47`) + a short
 docs/handoffs/FINDING-capx-d47-golden3-attestation-<date>.md carrying the byte-identity
 assertion, the like-for-like table and the posture disclosure.
+```
+
+## D45-R — the D45 close-out + D46 Stages 2 and 3 (r#33; owner rulings Q33 + Q35)
+
+```
+You are the D45-R session of the capacity-expansion track. D45 (the once-only PJM + NYISO
+clearing-half + curve-ON charter) landed its PJM half and died before its NYISO half: on
+origin/main, docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md §4, §5, §6, §7,
+§8 and §9 are literal `[filled …]` placeholders, and no NYISO L2/L3 or PJM L4 bundle exists.
+The owner ruled it dead (Q33) and folded D46's Stages 2 and 3 into this lane (Q35). You
+finish D45 AT HEAD — the post-D44 posture supersedes D45's pre-D44 L1 anyway — and you close
+the program's forecast stale set in the same dispatch.
+
+DATA PROFILE: pjm, nyiso, miso, neiso — hydrate incrementally as each leg starts
+(`python3 scripts/hydrate_data.py --profile <iso>`).
+MODEL ASSIGNMENT: Fable (the once-only mechanism-class adjudication; arming recommendations).
+BRANCH: claude/capx-d45r-pjm-nyiso-close — FRESH off origin/main, rebase before every push.
+
+READ FIRST: pack §D45 (the original charter — its READ FIRST list, stages, rule-14 sign
+discipline and guardrails ALL still bind; this section only says what is different) · the D45
+finding as it stands (§0–§3 are DONE and stand; you fill §4–§9 IN PLACE, never rewrite §0–§3;
+where a HEAD result changes a §0–§3 reading you append a dated correction, you do not edit
+history) · docs/handoffs/PREDECL-capx-d45-pjm-nyiso-curves-2026-09-03.md (its cache keys are
+pre-D44 and WILL NOT match at HEAD — your own PREDECL re-declares every key) ·
+FINDING-capx-d46-remeasure-2026-09-03.md §1 (t1f is a 2026–2030 five-year tier, NOT 2026–2050;
+the run-id/label mechanics; the VERDICT_MAP re-pointing precedent; the -pre-<lane> preservation
+pattern) and §2 (measured wall times: t1f legs ran 8–23 min, the board's estimates were
+7–10× high) · FINDING-capx-d44-fossil-dates-arm-2026-09-03.md (the posture every leg now
+carries) · scripts/register_forecast_run.py::VERDICT_MAP.
+
+PRE-DECLARATION FIRST (docs/handoffs/PREDECL-capx-d45r-<date>.md, pushed before the first
+solve): every leg's expected cache key, keeper id, posture line
+(`fossil_announced_exits_enabled=True`), and — for the D45 legs — the SAME pre-stated flip
+conditions D45's PREDECL carried for L3/L4, re-affirmed or explicitly amended with reason.
+
+THE LEGS, in this order (rule 12: years sequential; at most two concurrent; PJM and MISO solo):
+  1. PJM L1 REPLAY at HEAD (live posture, diagnostics-on) → registered as the bare `pjm-t1h`;
+     D45's pre-D44 L1 preserved at `pjm-t1h-pre-d45r`. ~16 min.
+  2. NYISO L2 — live, curve-OFF (flat $110), diagnostics-on → the bare `nyiso-t1h`; prior
+     preserved at `nyiso-t1h-pre-d45r`. This is D46 Stage 2's NYISO leg, satisfied here.
+  3. NYISO L3 — L2 + `--capacity-market-clearing` (the D28 latent curve-ON probe) → suffixed
+     `nyiso-t1h-d45r-curveon`. NEVER the bare key.
+  4. PJM L4 — L1 + `--fixed-net-cone` (the FFR-2E comparison arm) → suffixed
+     `pjm-t1h-d45r-fixed`.
+  5. NEISO default-posture T1-H (the Net ICR lever OFF, as shipped) → the bare `neiso-t1h`;
+     D46's armed-posture record preserved at `neiso-t1h-pre-d45r` (director ruling r#33: a bare
+     key carries the SHIPPED posture; D37's armed leg keeps its own suffixed key). ~7 min.
+  6. T1-F 2026–2030, `--golden-posture`, `forecast_verdict.py --tier t1f`, registered
+     `--summary --kind t1f --label d45r-remeasure`: NYISO (paired with leg 5), then PJM solo,
+     then MISO solo — the bare `nyiso-t1f` / `pjm-t1f` / `miso-t1f`, priors at `-pre-d45r`.
+     STOP RULE: if PJM's or MISO's t1f exceeds 2 h wall, kill it, record the measured time, and
+     leave that key stale with a dated note — the owner priced them at ~45–90 min on D46's
+     measured factor and a 2 h overrun is a finding, not a licence.
+  VERDICT_MAP: add rows for every new run id; the three D45 rows that point at bundles that
+  never existed (`nyiso-2021-2025-realized-t1h-d45`, `…-d45-curveon`,
+  `pjm-2021-2025-realized-t1h-d45-fixed`) are RE-POINTED to this lane's run ids (the D46
+  precedent), disclosed in the finding. Zero duplicate keys, verified by AST.
+
+THEN THE D45 CHARTER'S STAGES 2 AND 3 FOR NYISO, exactly as pack §D45 wrote them: the position
++ evaluation-quantity reconciliation against the published ICAP/IRM/LCR record (rule 25, own
+parameters, published sources cited), and the curve-ON adjudication — after the reconciliation,
+never before. Fill §4 (L4), §5 (L2/L3 + the NYISO stages), §6 (the two arming recommendations
+on their pre-stated conditions — NOTHING ARMS; every recommendation returns to the owner),
+§7 (both pre-declarations graded at full magnitude, D45's original and yours), §8 (sources,
+sha256, governance attestation) and §9 — THE CLOSE-OUT LINE: this was the once-only
+clearing-half charter; successor work is per-ISO repair lanes, and the mechanism-class question
+does not reopen without new evidence. The director re-releases nothing behind §9.
+
+BOARD + MATRIX: refresh the FC legs and gate (b)/(c) rows of PJM/NYISO/MISO/NEISO only where a
+record moved; assert byte-identity elsewhere; never move gate (a) (run
+scripts/check_gate_a_provenance.py before the records commit — if it fails, STOP and route,
+the director holds the standing re-key duty). Rule 28: no mechanism is armed, so no verdict
+letter moves; PJM and NYISO may receive their own measured `fossil_announced_exits_enabled`
+evidence exactly as D46 §6 stamped the other four.
+
+GUARDRAILS: rules 12, 13, 14 (sign discipline: faithful positions/curves move capacity revenue
+UP and retirements HARDER; nothing sized by a residual), 22, 25, 27 (blob-verify every push
+touching a ≥300-line file), 28. No new ScenarioConfig field, no parameter value, no
+keeper/shard/marker; backcast namespace untouched. Never overwrite a preserved baseline; on any
+key collision STOP and route.
+
+COLLISION: D47 (records-only) touches the GOLDEN-3 attestation and `neiso-t3` — disjoint from
+every key here. The owner's backcast lanes own the keeper shards (CAISO is promoting again;
+`caiso-t1h/t1f` are deliberately NOT in this lane). The audit programme's stage-0 re-captures
+own results/regression-goldens/. Nobody else touches PJM/NYISO/MISO/NEISO forecast surfaces
+this window.
+
+EXIT: six bare keys current at HEAD (`pjm-t1h`, `nyiso-t1h`, `neiso-t1h`, `nyiso-t1f`,
+`pjm-t1f`, `miso-t1f`) with priors preserved, two suffixed probe legs registered, the D45
+finding complete through §9 with its close-out line, both pre-declarations graded, the board
+refreshed, and the ledger §0ac.7 stale set marked CLOSED for every key except CAISO's.
 ```
