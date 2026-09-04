@@ -10485,5 +10485,119 @@
   "rubric_version": "1.0",
   "schema": "forecast-verdict/v1",
   "tier": "t1f"
+ },
+ "pjm-t1h-d48-devintage": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "258d604f1aea",
+   "scored_at_date": "2026-09-04T16:12:22Z",
+   "cache_epoch": "bbe13b3f7b659d36",
+   "run_id": "pjm-2021-2025-realized-t1h-d48-devintage",
+   "session": "capx-D48"
+  },
+  "tier": "t1h",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D48 Phase 1 (2026-09-04): the PJM accreditation-design devintage + DR-as-supply A/B ARM (pjm_accreditation_design_vintage=True + pjm_demand_response_supply=True, D45 section 2.3 items 1-2) against D45-R's bare pjm-t1h (both fields absent/False; keeper pjm-162; HEAD 1cde85df; cache key bbe13b3f7b659d36, pre-declared and matched; 14.7 min / 9.85 GB). SUFFIXED BY CHARTER, never the bare key; NOTHING ARMS -- the owner decides on the PREDECL section 5 flip condition, which this leg FAILS on limb (a). Determination HOLD (FC-3 FAIL), unchanged. WHAT MOVED: the ledger requirement rows land exactly where the zero-solve instrument put them (160,904 / 166,810 / 150,605 MW in 2023 / 2024 / 2025, +25 % / +25 % / +4 %) and the entering CR-1 positions are within +0.10 / +0.26 pt of the control in 2023 / 2024 (1.1408 / 1.0990 vs 1.1398 / 1.0964; 2025 0.9566 vs 0.9617), so the curve pays $0 / $0 / cap in BOTH arms and every entry-screen capacity term is byte-identical (additions identical to the decimal, incl. the 2025 gas_ct backstop 1,012.8 MW). BUT FC-3 MOVED through a path the pre-declaration named and reasoned past: retire.total_gw 17.958 -> 19.361 (+1.403 GW, err +19.2 % -> +28.5 %), coal 16.990 -> 18.393, false_retire 6.691 -> 8.094 GW (0.373 -> 0.418), unit_recall_gt300 17/20 unchanged, LOYO -2023 / -2025 false 8.09 -> 9.49 / 6.80 -> 8.20 GW (recall folds unchanged 12/12, 8/19, 16/19). Every screen candidate's net revenue, going-forward cost and capacity leg is byte-identical between the arms; what changed is the pipeline ADMISSION CAP (retirements._apply_pipeline_retirements -> _apply_reliability_floor at the cap horizon), a FIRM-MW budget accredited(cap_fleet) - requirement(cap_year, cap_peak) that the devintage enlarges (+5.0 GW at the entering 2022 fleet, +1.2 GW at the 2024 cap horizon -- position-neutral is not budget-neutral: both sides scale ~x1.25) and whose merit key ($/firm-MW, firm = per-unit 1-EFORd under UCAP vs one class ELCC rating under HEAD) re-ranks the coal cohort: 38 coal units swap (5,376 MW capped->decided, 3,973 MW decided->capped, every one at the same $58.5/kW-yr going-forward cost), net +1,403 MW nameplate / ~+1.4-2.3 GW firm admitted in 2022 and executed in 2024. ADJUDICATION: the devintage is structurally correct and reproduces its pre-declared position/requirement rows to the decimal; its FC-3 effect is entirely the admission cap converting a consistently-larger budget into more admitted exits under an UNREPAIRED $0 clearing half (the published curve at the published cleared position pays $15-21/kW-yr, D45 section 2.1/3) -- the rule-14 signature of a faithful basis over an unfaithful price. Per the pre-stated condition the lane does NOT recommend arming now; the recommendation is routed with the clearing half (D45 section 2.3 item 3, explicitly NOT built here). P9 sign test: |position - published cleared| moves +0.10 / +0.26 / +0.51 pt AWAY in 2023 / 2024 / 2025 (the D half dominates by 0.1-0.3 pt; the V half alone moves TOWARD by 1.7 pt on the zero-solve decomposition). docs/handoffs/FINDING-capx-d48-2026-09-04.md."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 783 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
  }
 }

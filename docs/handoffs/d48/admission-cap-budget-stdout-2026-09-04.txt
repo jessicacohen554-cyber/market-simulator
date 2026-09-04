@@ -1,0 +1,4 @@
+ control: cap horizon 2024 peak 160,554 | entering firm 148,033 req 130,295 budget 17,738 pos 1.1361 | at cap: firm 143,538 req 139,845 budget 3,692 pos 1.0264 | admitted 11,415 MW (47) = 9,474 firm MW at coal fraction 0.830
+     arm: cap horizon 2024 peak 160,554 | entering firm 185,263 req 162,574 budget 22,689 pos 1.1396 | at cap: firm 179,810 req 174,908 budget 4,902 pos 1.0280 | admitted 12,818 MW (61) = 11,793 firm MW at coal fraction 0.920
+delta: budget entering +4,951 | budget at cap +1,210 | admitted firm +2,318 | admitted nameplate +1,403 | position at cap +0.16 pts
+swap: 38 units, capped->decided 5,376 MW, decided->capped 3,973 MW, fuels ['coal'], distinct $/kW-yr going-forward cost [58.5], screen economics identical on every unit: True

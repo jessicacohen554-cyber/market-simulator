@@ -1,0 +1,886 @@
+{
+ "control": {
+  "run": "pjm-2021-2025-realized-t1h-d45r",
+  "key": "c6091bd5b62bbc3f",
+  "gates": {
+   "pjm_accreditation_design_vintage": null,
+   "pjm_demand_response_supply": null
+  }
+ },
+ "arm": {
+  "run": "pjm-2021-2025-realized-t1h-d48-devintage",
+  "key": "bbe13b3f7b659d36",
+  "gates": {
+   "pjm_accreditation_design_vintage": true,
+   "pjm_demand_response_supply": true
+  }
+ },
+ "years": {
+  "2021": {
+   "control": {
+    "bridge": false,
+    "peak_mw": 149590.0,
+    "position": null,
+    "requirement_mw": 130295.367,
+    "reserve_margin_after": -0.010365,
+    "firm_after_mw": 148039.5,
+    "gap_to_cleared_pts": null,
+    "pub_cleared": 1.0417230892249945,
+    "pub_offered": 1.1873712785781452,
+    "pub_zero_cross": 1.0741002472087942,
+    "retire_mw_by_reason": {},
+    "retire_mw_by_fuel": {},
+    "screen_events": {},
+    "screen_capacity_leg_kw_yr": [],
+    "decided_mw_by_fuel": {},
+    "capped_mw_by_fuel": {},
+    "entry_capacity_rev_kw_yr": {},
+    "entry_decided": null,
+    "thermal_additions": [],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 2007.8,
+     "coal": 45885.521,
+     "gas_cc": 53083.211,
+     "gas_ct": 25791.07,
+     "gas_st": 10297.413333,
+     "nuclear": 32672.1,
+     "oil": 4187.7
+    },
+    "fleet_after": {
+     "biomass": 2007.8,
+     "coal": 45885.521,
+     "gas_cc": 53083.211,
+     "gas_ct": 25791.07,
+     "gas_st": 10297.413333,
+     "nuclear": 32672.1,
+     "oil": 4187.7
+    },
+    "renewable_credit": {
+     "solar": 0.1064,
+     "wind": 0.41
+    },
+    "storage_firm_mw": 3801.526,
+    "firm_clean_accredited_mw": 1247.806
+   },
+   "arm": {
+    "bridge": false,
+    "peak_mw": 149590.0,
+    "position": null,
+    "requirement_mw": 163023.182,
+    "reserve_margin_after": 0.2477,
+    "firm_after_mw": 186643.4,
+    "gap_to_cleared_pts": null,
+    "pub_cleared": 1.0417230892249945,
+    "pub_offered": 1.1873712785781452,
+    "pub_zero_cross": 1.0741002472087942,
+    "retire_mw_by_reason": {},
+    "retire_mw_by_fuel": {},
+    "screen_events": {},
+    "screen_capacity_leg_kw_yr": [],
+    "decided_mw_by_fuel": {},
+    "capped_mw_by_fuel": {},
+    "entry_capacity_rev_kw_yr": {},
+    "entry_decided": null,
+    "thermal_additions": [],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 2007.8,
+     "coal": 45885.521,
+     "gas_cc": 53083.211,
+     "gas_ct": 25791.07,
+     "gas_st": 10297.413333,
+     "nuclear": 32672.1,
+     "oil": 4187.7
+    },
+    "fleet_after": {
+     "biomass": 2007.8,
+     "coal": 45885.521,
+     "gas_cc": 53083.211,
+     "gas_ct": 25791.07,
+     "gas_st": 10297.413333,
+     "nuclear": 32672.1,
+     "oil": 4187.7
+    },
+    "renewable_credit": {
+     "solar": 0.1064,
+     "wind": 0.41
+    },
+    "storage_firm_mw": 3801.526,
+    "firm_clean_accredited_mw": 1247.806
+   }
+  },
+  "2022": {
+   "control": {
+    "bridge": true,
+    "peak_mw": null,
+    "position": null,
+    "requirement_mw": null,
+    "reserve_margin_after": null,
+    "firm_after_mw": null,
+    "gap_to_cleared_pts": null,
+    "pub_cleared": 1.0510375261163845,
+    "pub_offered": 1.2199654303456382,
+    "pub_zero_cross": 1.0655426679159854,
+    "retire_mw_by_reason": {
+     "announced": 3478.5583333333334
+    },
+    "retire_mw_by_fuel": {
+     "oil": 51.2,
+     "biomass": 8.399999999999999,
+     "gas_st": 42.95833333333332,
+     "coal": 3301.425,
+     "gas_cc": 74.575
+    },
+    "screen_events": {
+     "decided": 47,
+     "entry_capped": 1164
+    },
+    "screen_capacity_leg_kw_yr": [
+     0.0
+    ],
+    "decided_mw_by_fuel": {
+     "coal": 11415.039000000002
+    },
+    "capped_mw_by_fuel": {
+     "coal": 10999.369999999999,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 26795.514399999996,
+     "oil": 4136.500000000026,
+     "gas_ct": 25791.07000000002
+    },
+    "entry_capacity_rev_kw_yr": {
+     "wind": 0.0,
+     "solar": 0.0,
+     "gas_cc": 0.0,
+     "gas_ct": 0.0,
+     "nuclear_smr": 0.0
+    },
+    "entry_decided": {
+     "solar": 2440.6,
+     "wind": 1500.0
+    },
+    "thermal_additions": [
+     [
+      "gas_cc",
+      356.8,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      356.8,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      354.4,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      612.0,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      612.0,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      612.0,
+      "planned"
+     ]
+    ],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 2007.8,
+     "coal": 45885.521,
+     "gas_cc": 53083.211,
+     "gas_ct": 25791.07,
+     "gas_st": 10297.413333,
+     "nuclear": 32672.1,
+     "oil": 4187.7
+    },
+    "fleet_after": {
+     "biomass": 1999.4,
+     "coal": 41902.396,
+     "gas_cc": 55912.636,
+     "gas_ct": 25791.07,
+     "gas_st": 10254.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "renewable_credit": null,
+    "storage_firm_mw": null,
+    "firm_clean_accredited_mw": null
+   },
+   "arm": {
+    "bridge": true,
+    "peak_mw": null,
+    "position": null,
+    "requirement_mw": null,
+    "reserve_margin_after": null,
+    "firm_after_mw": null,
+    "gap_to_cleared_pts": null,
+    "pub_cleared": 1.0510375261163845,
+    "pub_offered": 1.2199654303456382,
+    "pub_zero_cross": 1.0655426679159854,
+    "retire_mw_by_reason": {
+     "announced": 3478.5583333333334
+    },
+    "retire_mw_by_fuel": {
+     "oil": 51.2,
+     "biomass": 8.399999999999999,
+     "gas_st": 42.95833333333332,
+     "coal": 3301.425,
+     "gas_cc": 74.575
+    },
+    "screen_events": {
+     "decided": 61,
+     "entry_capped": 1150
+    },
+    "screen_capacity_leg_kw_yr": [
+     0.0
+    ],
+    "decided_mw_by_fuel": {
+     "coal": 12818.341000000002
+    },
+    "capped_mw_by_fuel": {
+     "coal": 9596.067999999997,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 26795.514399999996,
+     "oil": 4136.500000000026,
+     "gas_ct": 25791.07000000002
+    },
+    "entry_capacity_rev_kw_yr": {
+     "wind": 0.0,
+     "solar": 0.0,
+     "gas_cc": 0.0,
+     "gas_ct": 0.0,
+     "nuclear_smr": 0.0
+    },
+    "entry_decided": {
+     "solar": 2440.6,
+     "wind": 1500.0
+    },
+    "thermal_additions": [
+     [
+      "gas_cc",
+      356.8,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      356.8,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      354.4,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      612.0,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      612.0,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      612.0,
+      "planned"
+     ]
+    ],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 2007.8,
+     "coal": 45885.521,
+     "gas_cc": 53083.211,
+     "gas_ct": 25791.07,
+     "gas_st": 10297.413333,
+     "nuclear": 32672.1,
+     "oil": 4187.7
+    },
+    "fleet_after": {
+     "biomass": 1999.4,
+     "coal": 41902.396,
+     "gas_cc": 55912.636,
+     "gas_ct": 25791.07,
+     "gas_st": 10254.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "renewable_credit": null,
+    "storage_firm_mw": null,
+    "firm_clean_accredited_mw": null
+   }
+  },
+  "2023": {
+   "control": {
+    "bridge": false,
+    "peak_mw": 147605.0,
+    "position": 1.139822,
+    "requirement_mw": 128566.399,
+    "reserve_margin_after": -0.009327,
+    "firm_after_mw": 146228.3,
+    "gap_to_cleared_pts": 8.46,
+    "pub_cleared": 1.0552044372739755,
+    "pub_offered": 1.1407443286729333,
+    "pub_zero_cross": 1.0652363766147213,
+    "retire_mw_by_reason": {
+     "announced": 1796.0
+    },
+    "retire_mw_by_fuel": {
+     "coal": 1005.9999999999999,
+     "gas_st": 790.0
+    },
+    "screen_events": {
+     "re_confirmed": 47,
+     "entry_capped": 745
+    },
+    "screen_capacity_leg_kw_yr": [
+     0.0
+    ],
+    "decided_mw_by_fuel": {},
+    "capped_mw_by_fuel": {
+     "coal": 10999.369999999999,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 27187.514399999996,
+     "gas_ct": 25789.970000000023
+    },
+    "entry_capacity_rev_kw_yr": {
+     "wind": 0.0,
+     "solar": 0.0,
+     "gas_cc": 0.0,
+     "gas_ct": 0.0,
+     "nuclear_smr": 0.0
+    },
+    "entry_decided": {
+     "solar": 2440.6
+    },
+    "thermal_additions": [
+     [
+      "gas_cc",
+      607.0,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      607.0,
+      "planned"
+     ]
+    ],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 1999.4,
+     "coal": 41902.396,
+     "gas_cc": 55912.636,
+     "gas_ct": 25791.07,
+     "gas_st": 10254.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "fleet_after": {
+     "biomass": 1999.4,
+     "coal": 40896.396,
+     "gas_cc": 57126.636,
+     "gas_ct": 25791.07,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "renewable_credit": {
+     "solar": 0.1064,
+     "wind": 0.41
+    },
+    "storage_firm_mw": 3801.526,
+    "firm_clean_accredited_mw": 1249.25
+   },
+   "arm": {
+    "bridge": false,
+    "peak_mw": 147605.0,
+    "position": 1.140774,
+    "requirement_mw": 160904.211,
+    "reserve_margin_after": 0.241802,
+    "firm_after_mw": 183296.2,
+    "gap_to_cleared_pts": 8.56,
+    "pub_cleared": 1.0552044372739755,
+    "pub_offered": 1.1407443286729333,
+    "pub_zero_cross": 1.0652363766147213,
+    "retire_mw_by_reason": {
+     "announced": 1796.0
+    },
+    "retire_mw_by_fuel": {
+     "coal": 1005.9999999999999,
+     "gas_st": 790.0
+    },
+    "screen_events": {
+     "re_confirmed": 61,
+     "entry_capped": 731
+    },
+    "screen_capacity_leg_kw_yr": [
+     0.0
+    ],
+    "decided_mw_by_fuel": {},
+    "capped_mw_by_fuel": {
+     "coal": 9596.067999999997,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 27187.514399999996,
+     "gas_ct": 25789.970000000023
+    },
+    "entry_capacity_rev_kw_yr": {
+     "wind": 0.0,
+     "solar": 0.0,
+     "gas_cc": 0.0,
+     "gas_ct": 0.0,
+     "nuclear_smr": 0.0
+    },
+    "entry_decided": {
+     "solar": 2440.6
+    },
+    "thermal_additions": [
+     [
+      "gas_cc",
+      607.0,
+      "planned"
+     ],
+     [
+      "gas_cc",
+      607.0,
+      "planned"
+     ]
+    ],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 1999.4,
+     "coal": 41902.396,
+     "gas_cc": 55912.636,
+     "gas_ct": 25791.07,
+     "gas_st": 10254.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "fleet_after": {
+     "biomass": 1999.4,
+     "coal": 40896.396,
+     "gas_cc": 57126.636,
+     "gas_ct": 25791.07,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "renewable_credit": {
+     "solar": 0.1064,
+     "wind": 0.41
+    },
+    "storage_firm_mw": 3801.526,
+    "firm_clean_accredited_mw": 1249.25
+   }
+  },
+  "2024": {
+   "control": {
+    "bridge": false,
+    "peak_mw": 153121.0,
+    "position": 1.096403,
+    "requirement_mw": 133370.926,
+    "reserve_margin_after": -0.102501,
+    "firm_after_mw": 137425.9,
+    "gap_to_cleared_pts": 4.09,
+    "pub_cleared": 1.0555098698924799,
+    "pub_offered": 1.1262484531884176,
+    "pub_zero_cross": 1.0642714973708678,
+    "retire_mw_by_reason": {
+     "announced": 244.0,
+     "economic": 11415.039000000004
+    },
+    "retire_mw_by_fuel": {
+     "coal": 11659.039
+    },
+    "screen_events": {
+     "re_confirmed": 47,
+     "entry_capped": 805,
+     "executed": 47
+    },
+    "screen_capacity_leg_kw_yr": [
+     0.0
+    ],
+    "decided_mw_by_fuel": {},
+    "capped_mw_by_fuel": {
+     "coal": 23814.356999999993,
+     "gas_st": 9464.454999999996,
+     "gas_cc": 23925.440900000005,
+     "oil": 4136.499999999999,
+     "gas_ct": 25791.069999999996
+    },
+    "entry_capacity_rev_kw_yr": {
+     "wind": 0.0,
+     "solar": 0.0,
+     "gas_cc": 0.0,
+     "gas_ct": 0.0,
+     "nuclear_smr": 0.0
+    },
+    "entry_decided": {
+     "solar": 2440.6,
+     "wind": 1500.0
+    },
+    "thermal_additions": [],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 1999.4,
+     "coal": 40896.396,
+     "gas_cc": 57126.636,
+     "gas_ct": 25791.07,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "fleet_after": {
+     "biomass": 1999.4,
+     "coal": 29237.357,
+     "gas_cc": 57126.636,
+     "gas_ct": 25791.07,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "renewable_credit": {
+     "solar": 0.1064,
+     "wind": 0.41
+    },
+    "storage_firm_mw": 3801.526,
+    "firm_clean_accredited_mw": 1254.266
+   },
+   "arm": {
+    "bridge": false,
+    "peak_mw": 153121.0,
+    "position": 1.09901,
+    "requirement_mw": 166810.017,
+    "reserve_margin_after": 0.124491,
+    "firm_after_mw": 172183.2,
+    "gap_to_cleared_pts": 4.35,
+    "pub_cleared": 1.0555098698924799,
+    "pub_offered": 1.1262484531884176,
+    "pub_zero_cross": 1.0642714973708678,
+    "retire_mw_by_reason": {
+     "announced": 244.0,
+     "economic": 12818.341000000002
+    },
+    "retire_mw_by_fuel": {
+     "coal": 13062.341000000002
+    },
+    "screen_events": {
+     "re_confirmed": 61,
+     "entry_capped": 791,
+     "executed": 61
+    },
+    "screen_capacity_leg_kw_yr": [
+     0.0
+    ],
+    "decided_mw_by_fuel": {},
+    "capped_mw_by_fuel": {
+     "coal": 22411.054999999997,
+     "gas_st": 9464.454999999996,
+     "gas_cc": 23925.440900000005,
+     "oil": 4136.499999999999,
+     "gas_ct": 25791.069999999996
+    },
+    "entry_capacity_rev_kw_yr": {
+     "wind": 0.0,
+     "solar": 0.0,
+     "gas_cc": 0.0,
+     "gas_ct": 0.0,
+     "nuclear_smr": 0.0
+    },
+    "entry_decided": {
+     "solar": 2440.6,
+     "wind": 1500.0
+    },
+    "thermal_additions": [],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 1999.4,
+     "coal": 40896.396,
+     "gas_cc": 57126.636,
+     "gas_ct": 25791.07,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "fleet_after": {
+     "biomass": 1999.4,
+     "coal": 27834.055,
+     "gas_cc": 57126.636,
+     "gas_ct": 25791.07,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "renewable_credit": {
+     "solar": 0.1064,
+     "wind": 0.41
+    },
+    "storage_firm_mw": 3801.526,
+    "firm_clean_accredited_mw": 1254.266
+   }
+  },
+  "2025": {
+   "control": {
+    "bridge": false,
+    "peak_mw": 160560.0,
+    "position": 0.961718,
+    "requirement_mw": 144631.784,
+    "reserve_margin_after": -0.140453,
+    "firm_after_mw": 138008.9,
+    "gap_to_cleared_pts": -4.32,
+    "pub_cleared": 1.0048924853025476,
+    "pub_offered": 1.0049539561290857,
+    "pub_zero_cross": 1.0672646370925338,
+    "retire_mw_by_reason": {
+     "announced": 1.0
+    },
+    "retire_mw_by_fuel": {
+     "biomass": 1.0
+    },
+    "screen_events": {},
+    "screen_capacity_leg_kw_yr": [],
+    "decided_mw_by_fuel": {},
+    "capped_mw_by_fuel": {},
+    "entry_capacity_rev_kw_yr": {
+     "wind": 0.0,
+     "solar": 0.0,
+     "gas_cc": 121.98,
+     "gas_ct": 98.9,
+     "nuclear_smr": 0.0
+    },
+    "entry_decided": {
+     "gas_cc": 4000.0,
+     "gas_ct": 1012.8,
+     "solar": 2440.6
+    },
+    "thermal_additions": [
+     [
+      "gas_ct",
+      1012.8,
+      "reserve_backstop"
+     ]
+    ],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 1999.4,
+     "coal": 29237.357,
+     "gas_cc": 57126.636,
+     "gas_ct": 25791.07,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "fleet_after": {
+     "biomass": 1998.4,
+     "coal": 28895.690333,
+     "gas_cc": 57126.636,
+     "gas_ct": 26803.87,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "renewable_credit": {
+     "solar": 0.1064,
+     "wind": 0.41
+    },
+    "storage_firm_mw": 3801.526,
+    "firm_clean_accredited_mw": 1254.266
+   },
+   "arm": {
+    "bridge": false,
+    "peak_mw": 160560.0,
+    "position": 0.956639,
+    "requirement_mw": 150605.28,
+    "reserve_margin_after": -0.10981,
+    "firm_after_mw": 142928.9,
+    "gap_to_cleared_pts": -4.83,
+    "pub_cleared": 1.0048924853025476,
+    "pub_offered": 1.0049539561290857,
+    "pub_zero_cross": 1.0672646370925338,
+    "retire_mw_by_reason": {
+     "announced": 1.0
+    },
+    "retire_mw_by_fuel": {
+     "biomass": 1.0
+    },
+    "screen_events": {},
+    "screen_capacity_leg_kw_yr": [],
+    "decided_mw_by_fuel": {},
+    "capped_mw_by_fuel": {},
+    "entry_capacity_rev_kw_yr": {
+     "wind": 0.0,
+     "solar": 0.0,
+     "gas_cc": 121.98,
+     "gas_ct": 98.9,
+     "nuclear_smr": 0.0
+    },
+    "entry_decided": {
+     "gas_cc": 4000.0,
+     "gas_ct": 1012.8,
+     "solar": 2440.6
+    },
+    "thermal_additions": [
+     [
+      "gas_ct",
+      1012.8,
+      "reserve_backstop"
+     ]
+    ],
+    "storage_additions_mw": 0,
+    "fleet_before": {
+     "biomass": 1999.4,
+     "coal": 27834.055,
+     "gas_cc": 57126.636,
+     "gas_ct": 25791.07,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "fleet_after": {
+     "biomass": 1998.4,
+     "coal": 27492.388333,
+     "gas_cc": 57126.636,
+     "gas_ct": 26803.87,
+     "gas_st": 9464.455,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    "renewable_credit": {
+     "solar": 0.1064,
+     "wind": 0.41
+    },
+    "storage_firm_mw": 3801.526,
+    "firm_clean_accredited_mw": 1254.266
+   }
+  }
+ },
+ "fc3": {
+  "control": {
+   "retire.total_gw": 17.958,
+   "retire.total_band": "FAIL",
+   "retire.err_frac": 0.192,
+   "retire.unit_recall_gt300": 0.85,
+   "retire.recall_matched": 17,
+   "retire.recall_band": "PASS",
+   "retire.false_retire_gw": 6.691,
+   "retire.false_retire_band": "FAIL",
+   "retire.by_fuel.biomass": 0.009,
+   "retire.by_fuel.coal": 16.99,
+   "retire.by_fuel.gas_cc": 0.075,
+   "retire.by_fuel.gas_ct": 0.0,
+   "retire.by_fuel.gas_st": 0.833,
+   "retire.by_fuel.oil": 0.051,
+   "add.by_tech.wind": 3.0,
+   "add.by_tech.wind.band": "FAIL",
+   "add.by_tech.solar": 9.762,
+   "add.by_tech.solar.band": "FAIL",
+   "add.by_tech.gas_cc": 8.118,
+   "add.by_tech.gas_cc.band": "PASS",
+   "add.by_tech.gas_ct": 1.013,
+   "add.by_tech.gas_ct.band": "FAIL",
+   "add.by_tech.storage": 0.0,
+   "add.by_tech.storage.band": "FAIL",
+   "add.model_total_gw": 21.893,
+   "loyo.2023.recall": 1.0,
+   "loyo.2023.matched": 12,
+   "loyo.2023.false_gw": 8.09,
+   "loyo.2024.recall": 0.421,
+   "loyo.2024.matched": 8,
+   "loyo.2024.false_gw": 0.0,
+   "loyo.2025.recall": 0.842,
+   "loyo.2025.matched": 16,
+   "loyo.2025.false_gw": 6.795
+  },
+  "arm": {
+   "retire.total_gw": 19.361,
+   "retire.total_band": "FAIL",
+   "retire.err_frac": 0.285,
+   "retire.unit_recall_gt300": 0.85,
+   "retire.recall_matched": 17,
+   "retire.recall_band": "PASS",
+   "retire.false_retire_gw": 8.094,
+   "retire.false_retire_band": "FAIL",
+   "retire.by_fuel.biomass": 0.009,
+   "retire.by_fuel.coal": 18.393,
+   "retire.by_fuel.gas_cc": 0.075,
+   "retire.by_fuel.gas_ct": 0.0,
+   "retire.by_fuel.gas_st": 0.833,
+   "retire.by_fuel.oil": 0.051,
+   "add.by_tech.wind": 3.0,
+   "add.by_tech.wind.band": "FAIL",
+   "add.by_tech.solar": 9.762,
+   "add.by_tech.solar.band": "FAIL",
+   "add.by_tech.gas_cc": 8.118,
+   "add.by_tech.gas_cc.band": "PASS",
+   "add.by_tech.gas_ct": 1.013,
+   "add.by_tech.gas_ct.band": "FAIL",
+   "add.by_tech.storage": 0.0,
+   "add.by_tech.storage.band": "FAIL",
+   "add.model_total_gw": 21.893,
+   "loyo.2023.recall": 1.0,
+   "loyo.2023.matched": 12,
+   "loyo.2023.false_gw": 9.493,
+   "loyo.2024.recall": 0.421,
+   "loyo.2024.matched": 8,
+   "loyo.2024.false_gw": 0.0,
+   "loyo.2025.recall": 0.842,
+   "loyo.2025.matched": 16,
+   "loyo.2025.false_gw": 8.198
+  },
+  "moved": {
+   "loyo.2023.false_gw": {
+    "control": 8.09,
+    "arm": 9.493
+   },
+   "loyo.2025.false_gw": {
+    "control": 6.795,
+    "arm": 8.198
+   },
+   "retire.by_fuel.coal": {
+    "control": 16.99,
+    "arm": 18.393
+   },
+   "retire.err_frac": {
+    "control": 0.192,
+    "arm": 0.285
+   },
+   "retire.false_retire_gw": {
+    "control": 6.691,
+    "arm": 8.094
+   },
+   "retire.total_gw": {
+    "control": 17.958,
+    "arm": 19.361
+   }
+  }
+ },
+ "p9_sign_test": {
+  "2023": {
+   "control_abs_gap": 8.46,
+   "arm_abs_gap": 8.56,
+   "arm_minus_control": 0.1,
+   "verdict": "degrades"
+  },
+  "2024": {
+   "control_abs_gap": 4.09,
+   "arm_abs_gap": 4.35,
+   "arm_minus_control": 0.26,
+   "verdict": "degrades"
+  },
+  "2025": {
+   "control_abs_gap": 4.32,
+   "arm_abs_gap": 4.83,
+   "arm_minus_control": 0.51,
+   "verdict": "degrades"
+  }
+ }
+}
