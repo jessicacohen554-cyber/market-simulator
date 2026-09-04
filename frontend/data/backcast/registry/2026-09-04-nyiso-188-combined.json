@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-04-nyiso-188-combined",
+  "label": "nyiso 188 combined",
+  "date": "2026-09-04",
+  "shorthand": "nyiso-188-combined",
+  "definition": "nyiso-188 COMBINED candidate: the nyiso-187 keeper recipe on the re-derived campd_ramp_envelopes_NYISO.csv and plant_emission_rates_v2.parquet (the Astoria routing's remaining footprint, Arm 1RE) plus the ONE registered flag cc_capacity_reconcile over the re-derived 15-row demonstrated-peak table (Arm 2). PREREG-nyiso188 \u00a71 Objects 1 and 2, scored as one bundle for promotion.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-04-nyiso-188-combined.js",
+  "bundle": "results/calibration/nyiso188_combined"
+}

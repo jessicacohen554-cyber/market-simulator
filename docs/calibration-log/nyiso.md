@@ -11688,3 +11688,64 @@ and emission-rate footprints of the routing (own A/B); `cc_capacity_reconcile`
 (U); Bethlehem's vintage artifact; the merit-panel defect. Evidence:
 `docs/FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md`,
 `results/calibration/PREREG-nyiso187-ct-steam-merit-position.md`.
+
+## 2026-09-04 — nyiso-188 (`backcast-calibration` lane): the Astoria routing's remaining footprint carried, `cc_capacity_reconcile` tested and PROMOTED, Bethlehem attributed — the first NYISO keeper to read CALIBRATED
+
+**Keeper at entry:** `2026-09-04-nyiso-187-astoria-routing` (NOT-YET, grade 5,
+{C1-2024 `CC_REGULAR` +3.80 TWh / +3.1 pp, C3a-2025 −10.3 %, C3c}).
+**Solves: five** — the same-HEAD control on the committed artifacts
+(`nyiso188_control`, bit-identical, registers nothing; slim files committed),
+Arm 1R `2026-09-04-nyiso-188-ramp`, Arm 1RE `-ramp-emis`, Arm 2 `-ccrecon`,
+and the combined candidate `2026-09-04-nyiso-188-combined`. Pre-registration
+pushed at `40536e07` before any arm was solved.
+
+**Object 1 (the routing's footprint, zero parameters):** the ramp artifact
+reproduces byte-identically from its committed invocation with the remap
+stripped; re-derived, 55375 splits 1,252 → 626 + 626 MW obs (469 / 622 →
+372 / 449 and 416 / 454) and the `(0, CC)` fallback moves 0.4907 / 0.5623 →
+0.5000 / 0.5904 (14 CC groups / 1,355 MW read it). Arm 1R: engaged but inert
+(318 / 2,565 / 5,307 price hours differ, largest per-plant annual |Δ| 0.0005
+TWh, every criterion identical). The v2 emission curate did not apply the
+remap (57664 at the 0.4206 default); repaired at the curate seam (+ derive
+`--merge` / `--out`): 12 rows move, everything else exact / float noise;
+57664 0.3947 / 0.3981 / 0.4144, 55375 0.3618 / 0.3639 / 0.3672. Arm 1RE −
+1R: Astoria II mc −0.34 / −0.50 / −0.13 $/MWh, +0.024 / +0.028 / +0.002
+TWh; no criterion moves.
+
+**Object 2 (`cc_capacity_reconcile`, U → K):** the table reproduces exactly +
+the 55375 raise row the routing creates (15 rows). The flag bounds final LP
+capacity at CAMPD p99.9: −740 MW (Cricket Valley 1,266.6 → 1,048.9, Athens
+1,178.8 → 1,027.4, Zeltmann 602.0 → 540.4, Valley, Flynn …); class
+`CC_REGULAR` −1.47 / −1.76 / −1.99 TWh onto `ST_GAS` / `CC_CHP`; price +3.0 /
++3.3 / +3.7 %. **NOT-YET → CALIBRATED (grade 7, fails 0, C3c ledgered):**
+C1-2024 `CC_REGULAR` +3.80 → +2.04 TWh PASS, C3a-2025 −10.3 → −6.9 % PASS;
+regressions in band: C3a-2023 +4.8 → +7.9 %, C3a-2024 +0.5 → +3.8 %,
+C3b-2023 0.123 → 0.134, C1-2023 `ST_GAS` +2.21 → +2.98. Cost of the pooled
+p99.9 stated: Zeltmann 21 h / 2,268 MWh above its cap in 2024.
+
+**Object 3 (Bethlehem 2539, measured, no solve):** the applied eGRID 2023
+`PLHTRT` 9.665 is an EIA-923 generator-filing artifact — the steam
+generator's net generation collapses to 6 % (2023) / 0.0 (2024) of its
+2018–2022 share while the CTs run ~8,000 h; heat per CT-MWh invariant
+(10.26–10.44); eGRID 2018–2021, CAMPD 2024–2025 full-block and the CT-heat
+identity agree at ≈ 6.9–7.0 (+40 % applied). No threshold-free
+source-internal identity reaches the applied vintage (S4); handed to the
+owner as a two-form decision (pooled-vintage basis 7.85 vs CT-heat identity
+with a cited steam share).
+
+**Combined candidate → KEEPER (owner's standing formula):** CALIBRATED, grade
+7, fails 0, C3c ledgered; keeper shard + `status/NYISO.js`, `audit_keepers
+--iso NYISO`, gate-(a) stamp re-keyed, NYISO shard re-stamped
+(`cc_capacity_reconcile` U → K; `ramp_envelopes`, `plant_emission_rates_v2`,
+`egrid_identity_heat_rates`, `campd_per_unit_attribution` annotated), §5.5
+rewritten. Retention pruned `2026-08-25-nyiso-155-hydro-control`,
+`-hydro-repair`, `2026-08-30-nyiso-157-iroquois-companion`,
+`-par-attribution`. **No marker requested** (NYISO holds neither `complete`
+nor `final`; freeze active; the `complete` question is the owner's).
+
+**Handed forward:** Bethlehem (owner decision, top); the 2024 residual as
+nyiso-187's disposition at +2.05 TWh; C3a-2025 −6.9 % (Q1); Zeltmann's 2024
+cold-weather record vs the pooled cap; the v2 artifact's frozen 2018 / 2022 /
+2026 rows (forecast lane); NYISO parasitic factors absent. Evidence:
+`docs/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md`,
+`results/calibration/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md`.

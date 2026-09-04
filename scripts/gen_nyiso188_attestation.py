@@ -79,6 +79,17 @@ ARMS: dict[str, dict] = {
         "allowed_delta": {"cc_capacity_reconcile"},
         "artifacts": {"cc_capacity_reconcile_NYISO.csv": RECON_CSV},
     },
+    # The promotion candidate: Arm 1RE's two re-derived artifacts + Arm 2's flag
+    # (+ its table), scored as ONE bundle so the keeper recipe is one recipe.
+    "combined": {
+        "bundle": "nyiso188_combined",
+        "allowed_delta": {"cc_capacity_reconcile"},
+        "artifacts": {
+            "campd_ramp_envelopes_NYISO.csv": RAMP_CSV,
+            "plant_emission_rates_v2.parquet": V2_PQ,
+            "cc_capacity_reconcile_NYISO.csv": RECON_CSV,
+        },
+    },
 }
 
 
@@ -196,7 +207,7 @@ def g_inputs(arm_key: str) -> dict:
         disk = hashlib.sha256(path.read_bytes()).hexdigest()
         out[name] = {"control_sha256": entry[name], "arm_sha256": disk}
         ok &= disk != entry[name]
-    if arm_key in ("ramp", "ramp_emis"):
+    if arm_key in ("ramp", "ramp_emis", "combined"):
         env = pd.read_csv(RAMP_CSV)
         rows = env[env.plant_code.isin([ASTORIA_I, ASTORIA_II])]
         out["astoria_rows"] = rows.to_dict("records")
@@ -212,16 +223,25 @@ def g_inputs(arm_key: str) -> dict:
         }
         out["remap_entries_to_57664"] = sorted(f"{k[0]}:{k[1]}" for k in nyiso_entries)
         ok &= set(nyiso_entries) == {(ASTORIA_I, "CT3"), (ASTORIA_I, "CT4")}
-    if arm_key == "ramp_emis":
+    if arm_key in ("ramp_emis", "combined"):
         v2 = pd.read_parquet(V2_PQ)
         v2 = v2[v2.iso == "NYISO"]
+        # The backcast years the LP reads (measured_plant_rates, backcast mode
+        # = the target year's own rows) must carry the routing; the frozen
+        # rows (2018: source stripped at BLOAT-S2; 2022 / 2026: the one-shot
+        # holdout-intake guard) are recorded as the declared footprint.
+        live = v2[v2.year.isin(YEARS)]
         units = {
-            int(p): sorted(set(v2[v2.plant_id == p].unit_id))
+            int(p): sorted(set(live[live.plant_id == p].unit_id))
             for p in (ASTORIA_I, ASTORIA_II)
         }
-        out["astoria_v2_units"] = units
+        out["astoria_v2_units_2023_2025"] = units
+        frozen = v2[(v2.plant_id == ASTORIA_I) & v2.unit_id.isin(["CT3", "CT4"])]
+        out["astoria_v2_frozen_rows_still_under_55375"] = sorted(
+            int(y) for y in set(frozen.year)
+        )
         ok &= units[ASTORIA_I] == ["CT1", "CT2"] and units[ASTORIA_II] == ["CT3", "CT4"]
-    if arm_key == "ccrecon":
+    if arm_key in ("ccrecon", "combined"):
         tab = pd.read_csv(RECON_CSV)
         out["table_rows"] = int(len(tab))
         out["caps"] = {
@@ -257,6 +277,12 @@ def g_dof(arm_key: str) -> dict:
             "takes its measured CT3 / CT4 CO2 / NOx / SO2 rates in place of the "
             "heat_rate x fuel-factor default, 55375 keeps CT1 / CT2; every other "
             "plant's rate reproduces to float noise (PREREG-nyiso188 §0 / §3)."
+        ),
+        "combined": (
+            "the union of the ramp_emis and ccrecon bases below — two zero-parameter "
+            "artifact re-derivations under one registry identity plus one registered "
+            "flag over a measured table; nothing chosen, swept or fitted "
+            "(PREREG-nyiso188 §1 Objects 1 and 2, scored as one bundle for promotion)."
         ),
         "ccrecon": (
             "a registered flag (ScenarioConfig.cc_capacity_reconcile) over a "
@@ -307,7 +333,7 @@ def g_engage(arm_key: str, arm: Path) -> dict:
                 round(_plant_twh(ua, ASTORIA_II), 3),
             ],
         }
-        if arm_key in ("ramp", "ramp_emis"):
+        if arm_key in ("ramp", "ramp_emis", "combined"):
             r["astoria_I_max_1h_ramp_mw"] = [
                 round(_plant_max_ramp(uc, ASTORIA_I), 1),
                 round(_plant_max_ramp(ua, ASTORIA_I), 1),
@@ -316,7 +342,7 @@ def g_engage(arm_key: str, arm: Path) -> dict:
                 round(_plant_max_ramp(uc, ASTORIA_II), 1),
                 round(_plant_max_ramp(ua, ASTORIA_II), 1),
             ]
-        if arm_key == "ramp_emis":
+        if arm_key in ("ramp_emis", "combined"):
             r["astoria_II_mean_mc"] = [
                 round(_plant_mc(uc, ASTORIA_II), 3),
                 round(_plant_mc(ua, ASTORIA_II), 3),
@@ -327,7 +353,7 @@ def g_engage(arm_key: str, arm: Path) -> dict:
             ]
             checks.append(r["astoria_II_mean_mc"][1] < r["astoria_II_mean_mc"][0])
             checks.append(r["astoria_I_mean_mc"][1] < r["astoria_I_mean_mc"][0])
-        if arm_key == "ccrecon":
+        if arm_key in ("ccrecon", "combined"):
             for name, p in (
                 ("zeltmann", ZELTMANN),
                 ("cricket_valley", CRICKET),
@@ -343,16 +369,36 @@ def g_engage(arm_key: str, arm: Path) -> dict:
                 ]
                 checks.append(r[f"{name}_cap_mw"][1] < r[f"{name}_cap_mw"][0])
         rows[y] = r
-    if arm_key in ("ramp", "ramp_emis"):
-        # The LP moved: the arm's hourlies are not bit-identical to the control's.
-        moved = any(
-            rows[y]["astoria_I_twh"][0] != rows[y]["astoria_I_twh"][1]
-            or rows[y]["astoria_II_twh"][0] != rows[y]["astoria_II_twh"][1]
-            or rows[y]["load_weighted_price"][0] != rows[y]["load_weighted_price"][1]
-            for y in YEARS
-        )
-        checks.append(moved)
-    return {"by_year": rows, "pass": all(checks)}
+    precise = {}
+    if arm_key in ("ramp", "ramp_emis", "combined"):
+        # The LP moved — measured at FULL precision, because a re-derived ramp
+        # envelope can be read by the fleet (G-INPUTS) and still leave every
+        # annual quantity unchanged to the rounding shown above: the arm is then
+        # ENGAGED but INERT at the annual grain, which is a finding, not a
+        # failure. Recorded: price hours differing, plant-hours differing, and
+        # the largest per-plant annual |delta| in TWh.
+        any_hour_moved = False
+        for y in YEARS:
+            a = pd.read_parquet(CONTROL / "hourly" / f"system_{y}.parquet")
+            b = pd.read_parquet(arm / "hourly" / f"system_{y}.parquet")
+            a = a[a["pass"] == "P1"].sort_values(["zone", "hour"])
+            b = b[b["pass"] == "P1"].sort_values(["zone", "hour"])
+            dprice = a.price.values - b.price.values
+            uc, ua = _unit(CONTROL, y), _unit(arm, y)
+            hc = uc.groupby(["plant_code", "hour"])["mw"].sum()
+            ha = ua.groupby(["plant_code", "hour"])["mw"].sum()
+            dh = (ha - hc).abs()
+            dp = ((ua.groupby("plant_code")["mw"].sum() - uc.groupby("plant_code")["mw"].sum()) / 1e6).abs()
+            precise[y] = {
+                "price_hours_differing": int((abs(dprice) > 1e-9).sum()),
+                "max_abs_dprice": round(float(abs(dprice).max()), 4),
+                "plant_hours_differing": int((dh > 1e-6).sum()),
+                "max_plant_annual_abs_dtwh": round(float(dp.max()), 6),
+                "plant_with_max": int(dp.idxmax()),
+            }
+            any_hour_moved |= precise[y]["price_hours_differing"] > 0 or precise[y]["plant_hours_differing"] > 0
+        checks.append(any_hour_moved)
+    return {"by_year": rows, "full_precision": precise, "pass": all(checks)}
 
 
 NOTES = {
@@ -369,6 +415,14 @@ NOTES = {
         "per (facility, unit); 57664 measured CT3 / CT4 rates, 55375 CT1 / CT2). "
         "Zero config fields, zero free parameters, zero new DOF entries; the "
         "ledger is the keeper's, verbatim."
+    ),
+    "combined": (
+        "nyiso-188 COMBINED candidate (2026-09-04): the nyiso-187 keeper recipe on "
+        "the re-derived campd_ramp_envelopes_NYISO.csv and plant_emission_rates_v2.parquet "
+        "(the Astoria routing's remaining footprint, Arm 1RE) plus the ONE registered "
+        "flag cc_capacity_reconcile over the re-derived 15-row demonstrated-peak "
+        "table (Arm 2). Zero free parameters, zero new DOF entries; the ledger is "
+        "the keeper's, verbatim."
     ),
     "ccrecon": (
         "nyiso-188 Arm 2 (2026-09-04): the nyiso-187 keeper recipe plus the ONE "

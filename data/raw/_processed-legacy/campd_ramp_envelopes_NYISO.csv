@@ -1,5 +1,5 @@
 plant_code,bucket,pmax_obs_mw,n_online_hours,ramp_up_mw,ramp_dn_mw,basis
-0,CC,,26,0.4907,0.5623,class_fraction
+0,CC,,27,0.5,0.5904,class_fraction
 2493,CC,445.0,26279,169.0,215.0,plant
 2500,CC,279.0,23643,136.0,223.0,plant
 2539,CC,930.0,24635,480.0,559.0,plant
@@ -29,7 +29,7 @@ plant_code,bucket,pmax_obs_mw,n_online_hours,ramp_up_mw,ramp_dn_mw,basis
 54592,CC,57.0,1060,54.0,43.0,sparse
 54593,CC,45.0,658,28.0,31.0,sparse
 54914,CC,241.0,25678,80.0,118.0,plant
-55375,CC,1252.0,26106,469.0,622.0,plant
+55375,CC,626.0,25016,372.0,449.0,plant
 55405,CC,1124.0,15549,384.0,488.0,plant
 56188,CC,81.0,4500,45.0,48.0,plant
 56196,CC,700.0,22857,345.0,449.0,plant
@@ -37,6 +37,7 @@ plant_code,bucket,pmax_obs_mw,n_online_hours,ramp_up_mw,ramp_dn_mw,basis
 56259,CC,652.0,22313,299.0,404.0,plant
 56940,CC,722.0,22953,233.0,342.0,plant
 57185,CC,1133.0,23740,683.0,445.0,plant
+57664,CC,626.0,24329,416.0,454.0,plant
 0,CT,,14,0.9173,0.895,class_fraction
 2494,CT,255.0,1758,255.0,190.0,sparse
 2499,CT,272.0,2765,270.0,238.0,sparse
