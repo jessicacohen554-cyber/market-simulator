@@ -11,5 +11,6 @@ plant_code,plant_name,current_mw,campd_p999_mw,eia860_winter_mw,reconciled_mw,de
 54574,Saranac Facility,285.6,251.5,255.2,251.5,-11.9,campd_demonstrated_peak,cap
 54034,Rensselaer Cogen,88.2,78.0,84.0,78.0,-11.6,campd_demonstrated_peak,cap
 56940,CPV Valley Energy Center,770.5,696.1,740.8,696.1,-9.6,campd_demonstrated_peak,cap
+55375,Astoria Energy,595.0,610.4,644.0,610.4,2.6,campd_demonstrated_peak,raise
 56234,Caithness Long Island Energy Center,348.9,361.7,365.2,361.7,3.7,campd_demonstrated_peak,raise
 50978,Carr Street Generating Station,76.5,80.0,105.0,80.0,4.6,campd_demonstrated_peak,raise

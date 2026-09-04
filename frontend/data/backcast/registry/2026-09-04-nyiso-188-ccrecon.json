@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-04-nyiso-188-ccrecon",
+  "label": "nyiso 188 ccrecon",
+  "date": "2026-09-04",
+  "shorthand": "nyiso-188-ccrecon",
+  "definition": "nyiso-188 Arm 2: the nyiso-187 keeper recipe plus the ONE registered flag cc_capacity_reconcile (per-plant CC_REGULAR LP capacity bounded at the CAMPD demonstrated peak; table re-derived at HEAD under its committed invocation, 15 rows). PREREG-nyiso188 \u00a71 Object 2.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-04-nyiso-188-ccrecon.js",
+  "bundle": "results/calibration/nyiso188_ccrecon"
+}
