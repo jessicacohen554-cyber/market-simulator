@@ -19,7 +19,7 @@
         "fleet_state_from_eia860": false
       },
       "rows_with_state": 213,
-      "rows": 1800,
+      "rows": 1845,
       "PASS": true
     },
     "a_2025": {
@@ -38,7 +38,7 @@
         "fleet_state_from_eia860": false
       },
       "rows_with_state": 213,
-      "rows": 1800,
+      "rows": 1845,
       "PASS": true
     },
     "ac_2025": {
@@ -57,8 +57,8 @@
         "nearby_fuel_price_zone_donor_guard": true,
         "fleet_state_from_eia860": true
       },
-      "rows_with_state": 1624,
-      "rows": 1800,
+      "rows_with_state": 1666,
+      "rows": 1845,
       "PASS": true
     },
     "ac_2024": {
@@ -77,8 +77,8 @@
         "nearby_fuel_price_zone_donor_guard": true,
         "fleet_state_from_eia860": true
       },
-      "rows_with_state": 1619,
-      "rows": 1795,
+      "rows_with_state": 1661,
+      "rows": 1840,
       "PASS": true
     },
     "ac_2023": {
@@ -97,8 +97,8 @@
         "nearby_fuel_price_zone_donor_guard": true,
         "fleet_state_from_eia860": true
       },
-      "rows_with_state": 1614,
-      "rows": 1801,
+      "rows_with_state": 1656,
+      "rows": 1846,
       "PASS": true
     }
   },

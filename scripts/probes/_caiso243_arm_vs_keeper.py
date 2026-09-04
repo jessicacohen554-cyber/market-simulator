@@ -40,7 +40,7 @@ YEARS = (2023, 2024, 2025)
 OUT = CAL / "_caiso243_arm_vs_keeper.json"
 
 #: PRECOMMIT §3 / §5.6 — the two-sided price-leg envelope on B1 − KEEPER.
-ENVELOPE = {2023: (0.0, 0.0), 2024: (0.0, 0.0), 2025: (-2.6339, 0.3109)}
+ENVELOPE = {2023: (0.0, 0.0), 2024: (0.0, 0.0), 2025: (-2.5006, 0.3109)}  # ADDENDUM §C, on-recipe
 #: PRECOMMIT §4 P-2 — the registered prediction window for 2025.
 P2_WINDOW = (-0.60, 0.00)
 #: caiso-240 §0.7(1) dispatch-identity tolerance (TWh per class).
