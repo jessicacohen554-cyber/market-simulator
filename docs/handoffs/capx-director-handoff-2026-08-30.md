@@ -26,8 +26,8 @@ generation stale (it happened at r#25: a "dead" session recovered and ran a whol
 Re-derive your sitting number from the ledger's top entry and grade only the delta it missed.
 
 READ ON EVERY REFRESH, IN THIS ORDER:
-1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ae = r#34 is the
-   newest at this writing; §0ac/§0ad carry mid-sitting amendments — read them), §1 scoreboard, §3 the THIRTY-ONE rulings Q1–Q31 (ALL SPENT — none
+1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0af = r#35 is the
+   newest at this writing; §0ac/§0ad/§0ae carry mid-sitting amendments — read them), §1 scoreboard, §3 the THIRTY-ONE rulings Q1–Q31 (ALL SPENT — none
    open), §4 issuance record, §2 backcast watch.
 2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
    EVERY charter you issue is COMMITTED to the pack in the same sitting (the r#24 chat-only
@@ -65,14 +65,15 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#34, main HEAD 8f5cb32c, 2026-09-04 — VERIFY, DON'T TRUST):
+STATE AT HANDOFF (r#35, main HEAD a35c9f9b, 2026-09-04 — VERIFY, DON'T TRUST):
 - KEEPERS: ERCOT two-config 2026-08-25-234-eastex-identity (+236-swcap 2023 carve-out),
   CALIBRATED · NEISO neiso-99-joint-p1 CALIBRATED · PJM pjm-162-inputclock CALIBRATED ·
   MISO 2026-09-03-miso-202-unitclip NOT-YET {C3a-2025 alone, −12.4 % — measured to be a
   scarcity TAIL, the C3c object} · NYISO
   2026-09-02-nyiso-177-vintage-matched (owner-ruled override) NOT-YET {C1-2023 ST_GAS,
-  C3a-2025, C3c — WIDENED} → nyiso-185 → 186 → 2026-09-04-nyiso-187-astoria-routing
-  NOT-YET {C1-2024 CC_REGULAR, C3a-2025 −10.3 %, C3c} (owner rulings) · CAISO
+  C3a-2025, C3c — WIDENED} → nyiso-185 → 186 → 187 → 2026-09-04-nyiso-188-combined
+  CALIBRATED (lone ledgered C3c; the FIRST NYISO CALIBRATED keeper; marker re-entry = card
+  C-9 at r#35) · MISO 2026-09-04-miso-210-clock NOT-YET {C3a-2025 alone} · CAISO
   2026-09-04-caiso-243-b1-f923 NOT-YET {C3a alone} — its root-cause defect (`state` never
   passed to Generator) is EVERY plant-level ISO's; forecast cache keys unchanged by it.
   SEVEN consecutive promotions skipped the R-T gate-(a) re-key; this desk holds a STANDING
@@ -102,7 +103,9 @@ STATE AT HANDOFF (r#34, main HEAD 8f5cb32c, 2026-09-04 — VERIFY, DON'T TRUST):
   D49: ERCOT CCS at carbon 0 is a CONSTRUCTION SEAM (credit ∝ CO2, capex flat) → D50; the
   MISO exit under-build is the POSITION NETTED TWICE, not the D43 wall → D51. D48 Phase 0
   LANDED, Phase 1 RUNNING (owner-confirmed). D50 / D51 / D52 (NYISO adequacy devintage, D45
-  §5.2.4 items 1–2) ISSUED at r#34 — grade all by content. Q34: standing gate-(a) re-key
+  §5.2.4 items 1–2) ISSUED at r#34; D53 (SECTOR GATE, D32 C5/R3), D54 (PJM clearing-half
+  DESIGN, docs-only, code gated on D48), D55 (D32 R2+R4 correctness) ISSUED at r#35 — seven
+  capx lanes in flight; grade all by content. Q34: standing gate-(a) re-key
   duty. PROTOCOL: before writing "nothing else", list every routed item of every landed
   finding with its precondition at the pin. D45 (the
   ONCE-ONLY D6+R3 joint charter: PJM+NYISO first diagnostics-on T1-H solves, position/
@@ -119,9 +122,9 @@ STATE AT HANDOFF (r#34, main HEAD 8f5cb32c, 2026-09-04 — VERIFY, DON'T TRUST):
   per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
   NYISO's zonal spread ($4.8–12.2) is the only promising instance and needs D45's
   diagnostics-on solve first · (3) nothing else — the capx queue emptied at r#31.
-- OWNER-TIER OPEN: NONE — Q1–Q37 spent (Q36/Q37 at r#34, §0ae amendment 1). Next cards come
-  from D48 Phase 1 (the PJM devintage default), D50 (the CCS repair's blast radius), D51/D52. New cards otherwise come only from D45's owed half
-  (its §6 arming recommendations) and the audit board's X-1(ii) lint-scope question.
+- OWNER-TIER OPEN: C-9 (NYISO `complete` re-declaration on nyiso-188) if unanswered (§0af.3).
+  Q1–Q37 spent. Next cards: D48 Phase 1 (PJM devintage default), D50 (CCS blast radius),
+  D51/D52/D53 arming, and a NYISO t3 campaign after C-9 + D52.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,
