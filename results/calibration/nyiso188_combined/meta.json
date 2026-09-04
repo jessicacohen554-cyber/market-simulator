@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-30T16:45:20",
+  "timestamp": "2026-09-04T16:24:43",
   "iso": "NYISO",
   "years": [
     2023,
@@ -100,7 +100,9 @@
     "nyiso_seam_deliverability_envelope": true,
     "nyiso_solar_market_generator_basis": true,
     "nyiso_li_tsl_n11_security": true,
-    "nyiso_seam_par_attribution": true
+    "nyiso_seam_par_attribution": true,
+    "nyiso_zonal_loss_surface": true,
+    "cc_capacity_reconcile": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -204,7 +206,13 @@
   "pjm_da_virtual_bids": false,
   "pjm_offer_midcurve_conditional": false,
   "caiso_offer_surface_measured": false,
+  "caiso_offer_surface_measured_ungrounded": false,
+  "caiso_st_gas_committed_measured": false,
+  "caiso_st_gas_peak_measured": false,
+  "caiso_ct_peaker_committed_measured": false,
   "caiso_offer_surface_conditional": false,
+  "nearby_fuel_price_zone_donor_guard": false,
+  "fleet_state_from_eia860": false,
   "pjm_offer_midcurve_segments": null,
   "ercot_nuclear_unit_availability": false,
   "nuclear_unit_availability": true,
@@ -260,7 +268,6 @@
   "caiso_import_hub_prices": null,
   "caiso_import_gas_coupling": null,
   "caiso_import_solar_shape": null,
-  "caiso_bidir_intertie": null,
   "caiso_per_hub_intertie": null,
   "caiso_perhub_firm_base": null,
   "caiso_corridor_flow_limit": null,
@@ -272,6 +279,11 @@
   "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
   "unit_outage_lp_capacity_basis": null,
+  "unit_outage_mixed_gas_routing": null,
+  "unit_outage_st_capacity_basis": null,
+  "unit_outage_per_unit_clip": null,
+  "campd_per_unit_attribution": true,
+  "campd_outage_merit_order_guard": true,
   "cc_winter_capability_basis": null,
   "ramp_limits": true,
   "local_capacity_constraints": null,
@@ -304,6 +316,7 @@
   "chp_layup_duty_split": null,
   "chp_layup_duty_curve": true,
   "egrid_identity_heat_rates": true,
+  "egrid_family_heat_rates": true,
   "nyiso_gas_bridge_cc_min_run_hours": 21.0,
   "nyiso_gas_bridge_st_min_run_hours": 13.0,
   "nyiso_spin_reserve_online": null,
@@ -342,7 +355,7 @@
   "shared_inputs": {
     "eia930": "../_shared/NYISO/eia930-d866a7741788.parquet",
     "eia923": "../_shared/NYISO/eia923-920c8b8bc1b1.parquet",
-    "campd": "../_shared/NYISO/campd-521a01f3ccd1.parquet",
+    "campd": "../_shared/NYISO/campd-c51cde2ea05a.parquet",
     "unit_outages": "../_shared/NYISO/unit_outages-c88468b270d6.parquet",
     "unit_outages_short": "../_shared/NYISO/unit_outages_short-8822de3c9c11.parquet",
     "unit_outages_partial": "../_shared/NYISO/unit_outages_partial-b00540584f5f.parquet",
@@ -350,19 +363,19 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a67f13721a3a.parquet"
   },
-  "git_sha": "5ce92f4",
-  "basis_sha": "5ce92f44a62d4ee21d21fc0ac9c62009612235e5",
-  "highspy_version": "1.14.0",
+  "git_sha": "61632cea",
+  "basis_sha": "8f5cb32ce7a1fafcc3bea6493ba46a75faac6b79",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v22-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
-      "pydantic": "2.13.4"
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "pydantic": "2.13.5"
     }
   }
 }

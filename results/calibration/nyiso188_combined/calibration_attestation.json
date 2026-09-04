@@ -5,13 +5,396 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session nyiso-157 (2026-08-30). SEAM ARM of the Leg-1 A/B (results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md + PREREG-nyiso127-addendum-eastern-seam-availability-source-2026-08-05.md + PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md + EXECNOTE-nyiso157-leg1-execution-2026-08-30.md), against same-HEAD control 2026-08-30-nyiso-157-par-control: --set nyiso_seam_par_attribution=true, the nyiso-127 construction re-tested at the nyiso-155 HEAD under the 2026-08-30 owner ruling (the R adjudicated 2026-08-05 predates the nyiso-128/129 solar-basis repair that moved the exact K3 quantity; K3 does NOT re-fire \u2014 C1 14/14 free 10/10 on BOTH arms). ZERO free parameters: eight published percentages, eight published PTID identities (P-33 outSched), one published outage state, published tie landings, and the definitional NYISO_SEAM_FLOW_PERCENTILE \u2014 nothing swept, nothing chosen in a bracket. Supersedes nyiso_seam_deliverability_envelope at runtime (rule 19; exactly one of the two applies \u2014 the envelope's ledger entry describes a flag the attribution now shadows). Gates: every standing kill gate silent (_nyiso157_par_ab_gates.json; two scorer-instrument artifacts documented there: the K1 dual-channel echo and a K5 conservation leg penalizing the arm for landing CLOSER to the measured annual net than the control). REPORTED AT FULL MAGNITUDE: C3a-2023 +6.8 -> +1.0; C3a-2025 -10.8 -> -12.0 (P3 confirmed: the seam alone was never predicted to close 2025); C3b-2025 NRMSE 0.197 -> 0.203 crosses the 0.20 bar (a knife-edge PASS->FAIL); C3c bit-identical 1/0/0; the west->east cutset binds (Jan+Feb-2025 spread-hours 34 -> 435; NYC-UW winter gradient 0.24 -> 4.60 vs measured 14.83).",
-  "note": "nyiso-157 chain (2026-08-30): the nyiso-155 keeper recipe, plus (arm bundles only) the eastern-seam PAR attribution and, on the companion, the iroquois winter spread \u2014 see attested_by for this bundle's exact role and evidence. The prior keeper lineage's mechanism notes (duty-role cohort, hydro repair) live in their own bundles' attestations and the keeper shard's promotion-note chain."
+  "attested_by": "session nyiso-188 (2026-09-04). Arm 'combined' of the pre-registered A/B (results/calibration/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md \u00a71 / \u00a73, pushed BEFORE any arm was solved; record docs/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md): nyiso-188 COMBINED candidate (2026-09-04): the nyiso-187 keeper recipe on the re-derived campd_ramp_envelopes_NYISO.csv and plant_emission_rates_v2.parquet (the Astoria routing's remaining footprint, Arm 1RE) plus the ONE registered flag cc_capacity_reconcile over the re-derived 15-row demonstrated-peak table (Arm 2). Zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim. Control = the same-HEAD replay on the committed artifacts, bit-identical to the keeper 2026-09-04-nyiso-187-astoria-routing (G-CONTROL below, computed). REPORTED AT FULL MAGNITUDE \u2014 see the finding; the disposition is the owner's.",
+  "note": "nyiso-188 COMBINED candidate (2026-09-04): the nyiso-187 keeper recipe on the re-derived campd_ramp_envelopes_NYISO.csv and plant_emission_rates_v2.parquet (the Astoria routing's remaining footprint, Arm 1RE) plus the ONE registered flag cc_capacity_reconcile over the re-derived 15-row demonstrated-peak table (Arm 2). Zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim.",
+  "computed_checks": {
+   "G_CONTROL": {
+    "by_year": {
+     "2023": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2024": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2025": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     }
+    },
+    "max_abs_dprice": 0.0,
+    "bit_identical_to_keeper": true,
+    "baseline": "nyiso187_astoria_routing",
+    "pass": true
+   },
+   "G_DELTA": {
+    "baseline": "nyiso188_control",
+    "delta_fields": {
+     "cc_capacity_reconcile": [
+      false,
+      true
+     ]
+    },
+    "absence_normalized": {},
+    "rode_along": [],
+    "pass": true
+   },
+   "G_INPUTS": {
+    "campd_ramp_envelopes_NYISO.csv": {
+     "control_sha256": "280c0092b478a4f1d9ab13d26cd6727e1d8b805b820de9adaf0d98a626a35130",
+     "arm_sha256": "a9a65c99ce5080d6c01ff2ad77a62ef3ae8b289f18a49a62d7fced9b4e7adcbf"
+    },
+    "plant_emission_rates_v2.parquet": {
+     "control_sha256": "0ac4ec8bc7d43862d83c622ca67850dde4927e85eecf81fb0748792d02e97f6f",
+     "arm_sha256": "15d634654db8f5c6b8cc30d614a702a1800904ffb086a46afcba444d04bdf7b7"
+    },
+    "cc_capacity_reconcile_NYISO.csv": {
+     "control_sha256": "b3b7088765c728eca951237aea7ecefd0237d6e6cbd95046150cc45e9f52ef47",
+     "arm_sha256": "a3d407f99a2109e3c806213dc30489d1507e8ed67c68d5921a34575bfa272354"
+    },
+    "astoria_rows": [
+     {
+      "plant_code": 55375,
+      "bucket": "CC",
+      "pmax_obs_mw": 626.0,
+      "n_online_hours": 25016,
+      "ramp_up_mw": 372.0,
+      "ramp_dn_mw": 449.0,
+      "basis": "plant"
+     },
+     {
+      "plant_code": 57664,
+      "bucket": "CC",
+      "pmax_obs_mw": 626.0,
+      "n_online_hours": 24329,
+      "ramp_up_mw": 416.0,
+      "ramp_dn_mw": 454.0,
+      "basis": "plant"
+     }
+    ],
+    "class_fraction_cc": {
+     "ramp_up_frac": 0.5,
+     "ramp_dn_frac": 0.5904,
+     "n_pool": 27
+    },
+    "remap_entries_to_57664": [
+     "55375:CT3",
+     "55375:CT4"
+    ],
+    "astoria_v2_units_2023_2025": {
+     "55375": [
+      "CT1",
+      "CT2"
+     ],
+     "57664": [
+      "CT3",
+      "CT4"
+     ]
+    },
+    "astoria_v2_frozen_rows_still_under_55375": [
+     2018,
+     2022,
+     2026
+    ],
+    "table_rows": 15,
+    "caps": {
+     "7314": [
+      243.1,
+      108.2
+     ],
+     "54592": [
+      102.1,
+      53.6
+     ],
+     "54593": [
+      66.2,
+      42.9
+     ],
+     "50744": [
+      64.2,
+      43.9
+     ],
+     "10190": [
+      98.9,
+      71.2
+     ],
+     "56196": [
+      737.4,
+      560.0
+     ],
+     "57185": [
+      1312.5,
+      1086.9
+     ],
+     "10620": [
+      62.9,
+      53.6
+     ],
+     "55405": [
+      1221.6,
+      1064.7
+     ],
+     "54574": [
+      285.6,
+      251.5
+     ],
+     "54034": [
+      88.2,
+      78.0
+     ],
+     "56940": [
+      770.5,
+      696.1
+     ]
+    },
+    "raises": {
+     "55375": [
+      595.0,
+      610.4
+     ],
+     "56234": [
+      348.9,
+      361.7
+     ],
+     "50978": [
+      76.5,
+      80.0
+     ]
+    },
+    "pass": true
+   },
+   "G_DOF": {
+    "n_entries": 13,
+    "n_residual": 6,
+    "added_entries": 0,
+    "added_scalars": 0,
+    "basis": "the union of the ramp_emis and ccrecon bases below \u2014 two zero-parameter artifact re-derivations under one registry identity plus one registered flag over a measured table; nothing chosen, swept or fitted (PREREG-nyiso188 \u00a71 Objects 1 and 2, scored as one bundle for promotion).",
+    "pass": true
+   },
+   "G_ENGAGE": {
+    "by_year": {
+     "2023": {
+      "CC_REGULAR_twh": [
+       33.473,
+       32.012
+      ],
+      "ST_GAS_twh": [
+       10.347,
+       11.113
+      ],
+      "load_weighted_price": [
+       33.8,
+       34.81
+      ],
+      "astoria_I_twh": [
+       4.503,
+       4.631
+      ],
+      "astoria_II_twh": [
+       4.275,
+       4.325
+      ],
+      "astoria_I_max_1h_ramp_mw": [
+       538.6,
+       552.5
+      ],
+      "astoria_II_max_1h_ramp_mw": [
+       627.2,
+       627.2
+      ],
+      "astoria_II_mean_mc": [
+       25.392,
+       24.71
+      ],
+      "astoria_I_mean_mc": [
+       24.171,
+       23.849
+      ],
+      "zeltmann_cap_mw": [
+       602.0,
+       540.4
+      ],
+      "zeltmann_twh": [
+       4.502,
+       4.041
+      ],
+      "cricket_valley_cap_mw": [
+       1266.6,
+       1048.9
+      ],
+      "cricket_valley_twh": [
+       6.471,
+       5.542
+      ],
+      "athens_cap_mw": [
+       1178.8,
+       1027.4
+      ],
+      "athens_twh": [
+       1.887,
+       1.705
+      ]
+     },
+     "2024": {
+      "CC_REGULAR_twh": [
+       37.857,
+       36.108
+      ],
+      "ST_GAS_twh": [
+       8.85,
+       9.591
+      ],
+      "load_weighted_price": [
+       38.3,
+       39.56
+      ],
+      "astoria_I_twh": [
+       4.503,
+       4.637
+      ],
+      "astoria_II_twh": [
+       4.229,
+       4.303
+      ],
+      "astoria_I_max_1h_ramp_mw": [
+       538.6,
+       589.0
+      ],
+      "astoria_II_max_1h_ramp_mw": [
+       627.2,
+       627.2
+      ],
+      "astoria_II_mean_mc": [
+       29.424,
+       28.788
+      ],
+      "astoria_I_mean_mc": [
+       28.165,
+       27.734
+      ],
+      "zeltmann_cap_mw": [
+       602.0,
+       540.4
+      ],
+      "zeltmann_twh": [
+       4.549,
+       4.084
+      ],
+      "cricket_valley_cap_mw": [
+       1266.6,
+       1048.9
+      ],
+      "cricket_valley_twh": [
+       6.01,
+       5.114
+      ],
+      "athens_cap_mw": [
+       1178.8,
+       1027.4
+      ],
+      "athens_twh": [
+       4.087,
+       3.657
+      ]
+     },
+     "2025": {
+      "CC_REGULAR_twh": [
+       36.005,
+       34.018
+      ],
+      "ST_GAS_twh": [
+       9.38,
+       10.345
+      ],
+      "load_weighted_price": [
+       59.61,
+       61.84
+      ],
+      "astoria_I_twh": [
+       4.068,
+       4.189
+      ],
+      "astoria_II_twh": [
+       3.067,
+       3.091
+      ],
+      "astoria_I_max_1h_ramp_mw": [
+       538.6,
+       552.5
+      ],
+      "astoria_II_max_1h_ramp_mw": [
+       521.2,
+       521.2
+      ],
+      "astoria_II_mean_mc": [
+       42.266,
+       42.123
+      ],
+      "astoria_I_mean_mc": [
+       41.006,
+       40.561
+      ],
+      "zeltmann_cap_mw": [
+       602.0,
+       540.4
+      ],
+      "zeltmann_twh": [
+       4.029,
+       3.617
+      ],
+      "cricket_valley_cap_mw": [
+       1266.6,
+       1048.9
+      ],
+      "cricket_valley_twh": [
+       6.039,
+       5.135
+      ],
+      "athens_cap_mw": [
+       1178.8,
+       1027.4
+      ],
+      "athens_twh": [
+       3.292,
+       2.974
+      ]
+     }
+    },
+    "full_precision": {
+     "2023": {
+      "price_hours_differing": 48703,
+      "max_abs_dprice": 124.9718,
+      "plant_hours_differing": 136267,
+      "max_plant_annual_abs_dtwh": 0.928059,
+      "plant_with_max": 57185
+     },
+     "2024": {
+      "price_hours_differing": 52150,
+      "max_abs_dprice": 95.0112,
+      "plant_hours_differing": 156621,
+      "max_plant_annual_abs_dtwh": 0.896206,
+      "plant_with_max": 57185
+     },
+     "2025": {
+      "price_hours_differing": 51994,
+      "max_abs_dprice": 107.2093,
+      "plant_hours_differing": 168865,
+      "max_plant_annual_abs_dtwh": 0.904601,
+      "plant_with_max": 57185
+     }
+    },
+    "pass": true
+   }
+  }
  },
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 12,
+  "n_entries": 13,
   "n_residual": 6,
   "entries": [
    {
@@ -249,6 +632,16 @@
      },
      "n_scalars": 0,
      "note": "NY-NJ PAR posting table 1 (published percentages, effective 5/1/2017; OBF 0 since 11/1/2019) x P-33 outSched published availability windows (ABC-B/C out 100 % of 2023-2025, so the hourly split is ~46/7/47, never the nameplate 47/21/32) x published tie landings (Gold Book / Operating Study). Regenerates forward from the standing JOA convention and forward PAR availability (rule 13). Supersedes the nyiso_seam_deliverability_envelope two-link mechanism at runtime (rule 19): exactly one of the two applies."
+    }
+   },
+   {
+    "name": "nyiso_zonal_loss_surface",
+    "where": "ScenarioConfig.nyiso_zonal_loss_surface -> interchange.nyiso.apply_nyiso_zonal_loss_links / build_nyiso_link_loss <- data.loss_surface.load_zone_month_deviation <- data/raw/iso-specific-transmission/NYISO_loss_surface.csv (scripts/data/derive_nyiso_loss_surface.py, frozen rule 23)",
+    "identification": "measured",
+    "lineage_solves": "nyiso-159 phase-0 (2026-08-30, committed-artifacts measurement, FINDING-nyiso159-loss-surface-phase0-2026-08-30.md); offline acceptance 12/12 pair-years pre-solve; nyiso-159 A/B (2026-08-30, _nyiso159_loss_ab_gates.json)",
+    "value": {
+     "n_scalars": 0,
+     "note": "Per-zone monthly delivery-factor deviations dev_z,m = sum(MCL_z)/sum(E) from NYISO's own posted RT LBMP components (LBMP = E + MCL - MCC, MST \u00a717.1/Manual 12), model-zone aggregation = the scoring actuals' own simple-mean crosswalk; per-year rows for backcast train years (the CEMS-rate admissibility class, rule 13 \u2014 regenerates for any year from the same public feed and responds to changed grid conditions), pooled year=0 rows as the forecast-mode forward analogue. The eps tiebreak (1e-3 $/MWh) is the rule-9 storage-epsilon numerical device, identical in construction and value to the PJM/CAISO twins, declared in NYISO's own module (rule 25)."
     }
    }
   ]
