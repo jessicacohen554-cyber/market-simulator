@@ -50,6 +50,7 @@ import contextlib
 import inspect
 import io
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -64,7 +65,10 @@ BUNDLE = REPO / "results/calibration/caiso241_b1_ctpeaker_committed"
 OUT = REPO / "results/calibration/_caiso243_fallback_footprint.json"
 EIA860_PLANT = REPO / "data/raw/eia-860/eia860_plant.parquet"
 CACHE = Path(
-    "/tmp/claude-0/-home-user-market-simulator/8996884f-b2f8-5b4c-a42b-d6af63597aea/scratchpad/c243"
+    os.environ.get(
+        "C243_CACHE",
+        "/tmp/claude-0/-home-user-market-simulator/8996884f-b2f8-5b4c-a42b-d6af63597aea/scratchpad/c243v2",
+    )
 )
 HOURS = 8760
 YEARS_ALL = (2023, 2024, 2025)
@@ -214,6 +218,38 @@ class Variant:
             facade._load_monthly_cache = orig_cache
 
 
+def keeper_recipe_kwargs(meta: dict, run_year) -> dict:
+    """The keeper recipe as ``run_year`` kwargs, via the SAME mapping the solve uses.
+
+    INSTRUMENT DEFECT FOUND AND FIXED IN caiso-243 (disclosed in the finding):
+    the lane's ``run_year(fleet_only=True)`` probe pattern (caiso-240 -> 243)
+    filtered ``meta.json`` keys by ``run_year``'s parameter NAMES, which silently
+    DROPPED every key whose solve kwarg is spelled differently — above all
+    ``coal_prb_sigmoid_overrides`` -> ``prb_overrides``, the 36-flag CAISO
+    structural override bag (``caiso_citygate_spot_level``,
+    ``capacity_deliverability_limits``, ``caiso_scarcity_pricing``, the RA
+    bridge, hydro and measured-heat-rate flags, ...). ``replay_keeper.build_kwargs``
+    is the sanctioned meta -> kwargs reconstruction (strict, remapping); the
+    subset that ``run_year`` accepts is exactly what ``solve_and_persist`` hands
+    it, so a rebuild here is the keeper's recipe, not a lookalike.
+    """
+    import replay_keeper as rk
+
+    params = inspect.signature(run_year).parameters
+    skip = {
+        "year",
+        "iso",
+        "hours",
+        "gas_price",
+        "ttc_overrides",
+        "fleet_only",
+        "xyear_cache",
+        "must_run_mw",
+    }
+    full = rk.build_kwargs(meta)
+    return {k: v for k, v in full.items() if k in params and k not in skip}
+
+
 def rebuild(year: int, variant: Variant) -> dict:
     """Rebuild the keeper recipe's fleet + fuel prices for ``year`` under ``variant``."""
     import importlib.util
@@ -227,18 +263,7 @@ def rebuild(year: int, variant: Variant) -> dict:
     spec.loader.exec_module(c240)
 
     meta = json.loads((BUNDLE / "meta.json").read_text())
-    params = inspect.signature(run_year).parameters
-    skip = {
-        "year",
-        "iso",
-        "hours",
-        "gas_price",
-        "ttc_overrides",
-        "fleet_only",
-        "xyear_cache",
-        "must_run_mw",
-    }
-    kwargs = {k: v for k, v in meta.items() if k in params and k not in skip}
+    kwargs = keeper_recipe_kwargs(meta, run_year)
     c240._clear_fleet_caches()
     buf = io.StringIO()
     with variant.active(), contextlib.redirect_stderr(buf):

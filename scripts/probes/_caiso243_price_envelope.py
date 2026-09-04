@@ -34,6 +34,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -42,7 +43,10 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results/calibration/caiso241_b1_ctpeaker_committed"
 CACHE = Path(
-    "/tmp/claude-0/-home-user-market-simulator/8996884f-b2f8-5b4c-a42b-d6af63597aea/scratchpad/c243"
+    os.environ.get(
+        "C243_CACHE",
+        "/tmp/claude-0/-home-user-market-simulator/8996884f-b2f8-5b4c-a42b-d6af63597aea/scratchpad/c243v2",
+    )
 )
 OUT = REPO / "results/calibration/_caiso243_price_envelope.json"
 HOURS = 8760
