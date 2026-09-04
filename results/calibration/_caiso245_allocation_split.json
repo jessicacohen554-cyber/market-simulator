@@ -1,0 +1,162 @@
+{
+ "_provenance": {
+  "session": "caiso-245",
+  "precommit": "PRECOMMIT-caiso245-firm-import-allocation-split-2026-09-04.md \u00a72 G-KEY",
+  "holdings_source": "clean ra-import-allocations (CAISO) <- data/raw/ra-import-allocations/CAISO/<year>-holders-of-import-capability.xlsx",
+  "used_source": "raw <year>-import-capability-used-on-annual-resource-adequacy-plans.xlsx (diagnostic only)",
+  "corridor_map": "branch-group stem -> north list of the IMPORT_TRANCHES_BY_YEAR comment (same geography as CAISO_CORRIDOR_DIBA); unmapped stem = hard error",
+  "stop_rule": "held north share within 5.0 points of the MIC share in every year => arm not built",
+  "note": "ZERO LP; nothing armed"
+ },
+ "years": {
+  "2023": {
+   "rows": 265,
+   "lses": 62,
+   "branch_groups": 30,
+   "partial_year_rows": 0,
+   "total_alloc_mw": 11740.6,
+   "north_mw": 5675.1,
+   "south_mw": 6065.5,
+   "north_share": 0.4834,
+   "mic_north_share": 0.462,
+   "diff_points": 2.1,
+   "dmm_ra_import_mw": 2323.0,
+   "alloc_over_dmm": 5.05,
+   "north_bgs_mw": {
+    "CASCADE_BG": 60.0,
+    "COTPISO_ITC": 30.0,
+    "CTW230_BG": 114.0,
+    "MARBLE_BG": 15.0,
+    "NOB_ITC": 1559.0,
+    "NWEST_ITC": 5.0,
+    "OAKDALE_BG": 194.0,
+    "PACI_MSL": 2426.0,
+    "STANDIFORD_BG": 176.0,
+    "SUMMIT_BG": 18.0,
+    "TRACY230_BG": 385.0,
+    "TRACY500_BG": 693.1
+   },
+   "top_bgs_mw": {
+    "PACI_MSL": 2426.0,
+    "PALOVRDE_ITC": 2311.0,
+    "NOB_ITC": 1559.0,
+    "MEAD_ITC": 1010.3,
+    "TRACY500_BG": 693.1,
+    "IPPDCADLN_ITC": 481.0,
+    "SYLMAR-AC_ITC": 462.0,
+    "ELDORADO_ITC": 391.2,
+    "TRACY230_BG": 385.0,
+    "IID-SCE_BG": 312.0
+   },
+   "used_all_share_by_corridor": {
+    "WECC_DSW": 0.28,
+    "WECC_PNW": 0.793
+   },
+   "rows_by_corridor": {
+    "WECC_DSW": 236,
+    "WECC_PNW": 164
+   },
+   "rows_dropped_non_branch_group_codes": 0
+  },
+  "2024": {
+   "rows": 234,
+   "lses": 63,
+   "branch_groups": 30,
+   "partial_year_rows": 0,
+   "total_alloc_mw": 11512.5,
+   "north_mw": 5242.0,
+   "south_mw": 6270.5,
+   "north_share": 0.4553,
+   "mic_north_share": 0.462,
+   "diff_points": -0.7,
+   "dmm_ra_import_mw": 3371.0,
+   "alloc_over_dmm": 3.42,
+   "north_bgs_mw": {
+    "CASCADE_ITC": 60.0,
+    "COTPISO_ITC": 20.0,
+    "CTW230_ITC": 40.0,
+    "MALIN500_ISL": 1832.0,
+    "MARBLE_ITC": 15.0,
+    "NOB_ITC": 1622.0,
+    "OAKDALE_ITC": 164.0,
+    "STANDIFORD_ITC": 306.0,
+    "SUMMIT_ITC": 13.0,
+    "TRACY230_ITC": 405.0,
+    "TRACY500_ITC": 765.0
+   },
+   "top_bgs_mw": {
+    "PALOVRDE_ITC": 2268.0,
+    "MALIN500_ISL": 1832.0,
+    "NOB_ITC": 1622.0,
+    "MEAD_ITC": 815.5,
+    "TRACY500_ITC": 765.0,
+    "IID-SCE_ITC": 540.0,
+    "SYLMAR-AC_ITC": 512.0,
+    "IPPDCADLN_ITC": 481.0,
+    "TRACY230_ITC": 405.0,
+    "MERCHANT_ITC": 357.0
+   },
+   "used_all_share_by_corridor": {
+    "WECC_DSW": 0.28,
+    "WECC_PNW": 0.793
+   },
+   "rows_by_corridor": {
+    "WECC_DSW": 236,
+    "WECC_PNW": 164
+   },
+   "rows_dropped_non_branch_group_codes": 1
+  },
+  "2025": {
+   "rows": 240,
+   "lses": 63,
+   "branch_groups": 26,
+   "partial_year_rows": 0,
+   "total_alloc_mw": 11232.8,
+   "north_mw": 5064.0,
+   "south_mw": 6168.8,
+   "north_share": 0.4508,
+   "mic_north_share": 0.464,
+   "diff_points": -1.3,
+   "dmm_ra_import_mw": 3371.0,
+   "alloc_over_dmm": 3.33,
+   "north_bgs_mw": {
+    "CASCADE_ITC": 40.0,
+    "COTPISO_ITC": 14.0,
+    "CTW230_ITC": 204.0,
+    "MALIN500_ISL": 1669.0,
+    "MARBLE_ITC": 15.0,
+    "NOB_ITC": 1413.0,
+    "OAKDALE_ITC": 164.0,
+    "STANDIFORD_ITC": 306.0,
+    "SUMMIT_ITC": 5.0,
+    "TRACY230_ITC": 390.0,
+    "TRACY500_ITC": 844.0
+   },
+   "top_bgs_mw": {
+    "PALOVRDE_ITC": 1812.1,
+    "MALIN500_ISL": 1669.0,
+    "NOB_ITC": 1413.0,
+    "MEAD_ITC": 1056.5,
+    "TRACY500_ITC": 844.0,
+    "ELDORADO_ITC": 637.0,
+    "IID-SCE_ITC": 540.0,
+    "IPPDCADLN_ITC": 481.0,
+    "SYLMAR-AC_ITC": 475.0,
+    "TRACY230_ITC": 390.0
+   },
+   "used_all_share_by_corridor": {
+    "WECC_DSW": 0.28,
+    "WECC_PNW": 0.478
+   },
+   "rows_by_corridor": {
+    "WECC_DSW": 250,
+    "WECC_PNW": 178
+   },
+   "rows_dropped_non_branch_group_codes": 0
+  }
+ },
+ "stop_rule_fires": true,
+ "P1_north_share_le_0p36_every_year": false,
+ "P2_alloc_ge_dmm_every_year": true,
+ "P3_north_used_le_south_every_year": false
+}

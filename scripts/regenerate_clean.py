@@ -91,6 +91,10 @@ DATATYPES: tuple[str, ...] = (
     # caiso-227: measured hourly pumped-storage plant operations (Helms FLA
     # App B1, FERC P-2735). Intake-only -- no mechanism consumes it yet.
     "ps-water-state",
+    # caiso-245: CAISO RA import capability HOLDINGS by LSE x intertie branch
+    # group (the published annual allocation results). Intake-only -- the
+    # pre-registered firm-block re-split arm's stop rule fired.
+    "ra-import-allocations",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent

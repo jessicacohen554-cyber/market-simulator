@@ -1,0 +1,816 @@
+{
+ "_provenance": {
+  "session": "caiso-245 (queue item B, zero LP)",
+  "bundle": "results/calibration/caiso243_b1_f923_fallback_guard",
+  "instrument": "_caiso244_import_level_anatomy reconstruct() on the committed P1 duals",
+  "actual_source": "bench avgLMP.rt_lw_mon (monthly RT load-weighted actual)"
+ },
+ "years": {
+  "2023": {
+   "months": {
+    "1": {
+     "model_lw_mean": 122.2,
+     "actual_rt_lw_mean": 129.69,
+     "actual_da_lw_mean": 140.41,
+     "hours_import_marginal_unbound": 40,
+     "share_import_marginal": 0.054,
+     "model_lw_mean_import_marginal_hours": 41.25,
+     "model_lw_mean_domestic_marginal_hours": 126.8,
+     "marginal_import_rows": {
+      "WECC_scarcity": 38,
+      "DSW_CCGT": 2
+     },
+     "marginal_import_offer_mean": 40.77
+    },
+    "2": {
+     "model_lw_mean": 67.16,
+     "actual_rt_lw_mean": 66.38,
+     "actual_da_lw_mean": 73.35,
+     "hours_import_marginal_unbound": 169,
+     "share_import_marginal": 0.251,
+     "model_lw_mean_import_marginal_hours": 50.78,
+     "model_lw_mean_domestic_marginal_hours": 72.66,
+     "marginal_import_rows": {
+      "WECC_scarcity": 121,
+      "DSW_CCGT": 48
+     },
+     "marginal_import_offer_mean": 50.49
+    },
+    "3": {
+     "model_lw_mean": 58.05,
+     "actual_rt_lw_mean": 62.12,
+     "actual_da_lw_mean": 71.47,
+     "hours_import_marginal_unbound": 234,
+     "share_import_marginal": 0.315,
+     "model_lw_mean_import_marginal_hours": 50.37,
+     "model_lw_mean_domestic_marginal_hours": 61.57,
+     "marginal_import_rows": {
+      "WECC_scarcity": 145,
+      "DSW_CCGT": 51,
+      "DSW_surplus_clean": 31,
+      "DSW_overnight_clean": 7
+     },
+     "marginal_import_offer_mean": 49.73
+    },
+    "4": {
+     "model_lw_mean": 38.36,
+     "actual_rt_lw_mean": 45.08,
+     "actual_da_lw_mean": 55.0,
+     "hours_import_marginal_unbound": 156,
+     "share_import_marginal": 0.217,
+     "model_lw_mean_import_marginal_hours": 32.23,
+     "model_lw_mean_domestic_marginal_hours": 40.05,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 133,
+      "DSW_overnight_clean": 20,
+      "PNW_midC": 3
+     },
+     "marginal_import_offer_mean": 32.74
+    },
+    "5": {
+     "model_lw_mean": 27.82,
+     "actual_rt_lw_mean": 17.05,
+     "actual_da_lw_mean": 19.94,
+     "hours_import_marginal_unbound": 255,
+     "share_import_marginal": 0.343,
+     "model_lw_mean_import_marginal_hours": 19.28,
+     "model_lw_mean_domestic_marginal_hours": 32.27,
+     "marginal_import_rows": {
+      "PNW_midC": 105,
+      "DSW_surplus_clean": 91,
+      "DSW_CCGT": 31,
+      "DSW_solar_PV": 18,
+      "DSW_overnight_clean": 9,
+      "WECC_scarcity": 1
+     },
+     "marginal_import_offer_mean": 19.51
+    },
+    "6": {
+     "model_lw_mean": 32.7,
+     "actual_rt_lw_mean": 26.93,
+     "actual_da_lw_mean": 28.62,
+     "hours_import_marginal_unbound": 151,
+     "share_import_marginal": 0.21,
+     "model_lw_mean_import_marginal_hours": 28.0,
+     "model_lw_mean_domestic_marginal_hours": 33.95,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 80,
+      "PNW_midC": 36,
+      "DSW_overnight_clean": 30,
+      "DSW_CCGT": 4,
+      "DSW_solar_PV": 1
+     },
+     "marginal_import_offer_mean": 28.02
+    },
+    "7": {
+     "model_lw_mean": 53.26,
+     "actual_rt_lw_mean": 60.85,
+     "actual_da_lw_mean": 67.91,
+     "hours_import_marginal_unbound": 86,
+     "share_import_marginal": 0.116,
+     "model_lw_mean_import_marginal_hours": 48.21,
+     "model_lw_mean_domestic_marginal_hours": 53.92,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 37,
+      "DSW_surplus_clean": 32,
+      "PNW_midC": 14,
+      "DSW_solar_PV": 3
+     },
+     "marginal_import_offer_mean": 48.85
+    },
+    "8": {
+     "model_lw_mean": 56.6,
+     "actual_rt_lw_mean": 53.37,
+     "actual_da_lw_mean": 78.07,
+     "hours_import_marginal_unbound": 150,
+     "share_import_marginal": 0.202,
+     "model_lw_mean_import_marginal_hours": 52.18,
+     "model_lw_mean_domestic_marginal_hours": 57.72,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 57,
+      "DSW_overnight_clean": 47,
+      "PNW_midC": 45,
+      "DSW_solar_PV": 1
+     },
+     "marginal_import_offer_mean": 52.29
+    },
+    "9": {
+     "model_lw_mean": 41.23,
+     "actual_rt_lw_mean": 37.34,
+     "actual_da_lw_mean": 40.59,
+     "hours_import_marginal_unbound": 151,
+     "share_import_marginal": 0.21,
+     "model_lw_mean_import_marginal_hours": 34.2,
+     "model_lw_mean_domestic_marginal_hours": 43.1,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 78,
+      "DSW_surplus_clean": 55,
+      "PNW_midC": 15,
+      "DSW_solar_PV": 3
+     },
+     "marginal_import_offer_mean": 34.18
+    },
+    "10": {
+     "model_lw_mean": 50.98,
+     "actual_rt_lw_mean": 52.43,
+     "actual_da_lw_mean": 59.91,
+     "hours_import_marginal_unbound": 86,
+     "share_import_marginal": 0.116,
+     "model_lw_mean_import_marginal_hours": 42.81,
+     "model_lw_mean_domestic_marginal_hours": 52.05,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 42,
+      "DSW_surplus_clean": 38,
+      "DSW_solar_PV": 6
+     },
+     "marginal_import_offer_mean": 42.62
+    },
+    "11": {
+     "model_lw_mean": 55.9,
+     "actual_rt_lw_mean": 55.14,
+     "actual_da_lw_mean": 57.67,
+     "hours_import_marginal_unbound": 132,
+     "share_import_marginal": 0.183,
+     "model_lw_mean_import_marginal_hours": 45.78,
+     "model_lw_mean_domestic_marginal_hours": 58.17,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 54,
+      "DSW_surplus_clean": 45,
+      "PNW_midC": 29,
+      "DSW_CCGT": 3,
+      "DSW_solar_PV": 1
+     },
+     "marginal_import_offer_mean": 45.23
+    },
+    "12": {
+     "model_lw_mean": 51.08,
+     "actual_rt_lw_mean": 47.05,
+     "actual_da_lw_mean": 49.3,
+     "hours_import_marginal_unbound": 135,
+     "share_import_marginal": 0.181,
+     "model_lw_mean_import_marginal_hours": 47.04,
+     "model_lw_mean_domestic_marginal_hours": 51.98,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 96,
+      "DSW_surplus_clean": 30,
+      "DSW_CCGT": 5,
+      "PNW_midC": 4
+     },
+     "marginal_import_offer_mean": 44.27
+    }
+   },
+   "december": {
+    "model_lw_mean": 51.08,
+    "actual_rt_lw_mean": 47.05,
+    "actual_da_lw_mean": 49.3,
+    "hours_import_marginal_unbound": 135,
+    "share_import_marginal": 0.181,
+    "model_lw_mean_import_marginal_hours": 47.04,
+    "model_lw_mean_domestic_marginal_hours": 51.98,
+    "marginal_import_rows": {
+     "DSW_overnight_clean": 96,
+     "DSW_surplus_clean": 30,
+     "DSW_CCGT": 5,
+     "PNW_midC": 4
+    },
+    "marginal_import_offer_mean": 44.27,
+    "model_minus_actual_rt": 4.03,
+    "hod_import_marginal_share": [
+     0.323,
+     0.29,
+     0.226,
+     0.226,
+     0.323,
+     0.161,
+     0.323,
+     0.29,
+     0.161,
+     0.065,
+     0.226,
+     0.161,
+     0.226,
+     0.258,
+     0.258,
+     0.258,
+     0.258,
+     0.194,
+     0.032,
+     0.0,
+     0.0,
+     0.0,
+     0.032,
+     0.065
+    ],
+    "hod_model_lw_mean": [
+     51.6,
+     50.58,
+     49.66,
+     49.37,
+     49.9,
+     52.18,
+     53.71,
+     53.24,
+     48.27,
+     45.76,
+     42.77,
+     41.1,
+     40.2,
+     39.69,
+     41.24,
+     48.62,
+     55.81,
+     57.35,
+     58.82,
+     58.73,
+     58.95,
+     59.88,
+     60.49,
+     58.02
+    ]
+   }
+  },
+  "2024": {
+   "months": {
+    "1": {
+     "model_lw_mean": 63.94,
+     "actual_rt_lw_mean": 68.66,
+     "actual_da_lw_mean": 71.55,
+     "hours_import_marginal_unbound": 126,
+     "share_import_marginal": 0.169,
+     "model_lw_mean_import_marginal_hours": 49.62,
+     "model_lw_mean_domestic_marginal_hours": 66.86,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 89,
+      "DSW_surplus_clean": 32,
+      "PNW_midC": 2,
+      "DSW_CCGT": 2,
+      "DSW_solar_PV": 1
+     },
+     "marginal_import_offer_mean": 48.6
+    },
+    "2": {
+     "model_lw_mean": 36.14,
+     "actual_rt_lw_mean": 33.69,
+     "actual_da_lw_mean": 37.57,
+     "hours_import_marginal_unbound": 150,
+     "share_import_marginal": 0.223,
+     "model_lw_mean_import_marginal_hours": 24.66,
+     "model_lw_mean_domestic_marginal_hours": 39.44,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 71,
+      "DSW_overnight_clean": 64,
+      "DSW_solar_PV": 11,
+      "DSW_CCGT": 4
+     },
+     "marginal_import_offer_mean": 23.78
+    },
+    "3": {
+     "model_lw_mean": 25.22,
+     "actual_rt_lw_mean": 21.05,
+     "actual_da_lw_mean": 23.04,
+     "hours_import_marginal_unbound": 113,
+     "share_import_marginal": 0.152,
+     "model_lw_mean_import_marginal_hours": 13.78,
+     "model_lw_mean_domestic_marginal_hours": 27.27,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 63,
+      "DSW_overnight_clean": 44,
+      "PNW_midC": 6
+     },
+     "marginal_import_offer_mean": 12.78
+    },
+    "4": {
+     "model_lw_mean": 20.81,
+     "actual_rt_lw_mean": 14.58,
+     "actual_da_lw_mean": 17.5,
+     "hours_import_marginal_unbound": 104,
+     "share_import_marginal": 0.144,
+     "model_lw_mean_import_marginal_hours": 10.93,
+     "model_lw_mean_domestic_marginal_hours": 22.48,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 60,
+      "DSW_overnight_clean": 38,
+      "PNW_midC": 6
+     },
+     "marginal_import_offer_mean": 10.31
+    },
+    "5": {
+     "model_lw_mean": 21.83,
+     "actual_rt_lw_mean": 12.02,
+     "actual_da_lw_mean": 14.45,
+     "hours_import_marginal_unbound": 129,
+     "share_import_marginal": 0.173,
+     "model_lw_mean_import_marginal_hours": 13.57,
+     "model_lw_mean_domestic_marginal_hours": 23.56,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 69,
+      "DSW_overnight_clean": 41,
+      "DSW_CCGT": 11,
+      "PNW_midC": 6,
+      "WECC_scarcity": 1,
+      "DSW_solar_PV": 1
+     },
+     "marginal_import_offer_mean": 13.26
+    },
+    "6": {
+     "model_lw_mean": 29.21,
+     "actual_rt_lw_mean": 23.88,
+     "actual_da_lw_mean": 25.79,
+     "hours_import_marginal_unbound": 132,
+     "share_import_marginal": 0.183,
+     "model_lw_mean_import_marginal_hours": 21.7,
+     "model_lw_mean_domestic_marginal_hours": 30.9,
+     "marginal_import_rows": {
+      "PNW_midC": 54,
+      "DSW_overnight_clean": 35,
+      "DSW_surplus_clean": 33,
+      "DSW_solar_PV": 8,
+      "PNW_hydro_base": 2
+     },
+     "marginal_import_offer_mean": 21.97
+    },
+    "7": {
+     "model_lw_mean": 43.77,
+     "actual_rt_lw_mean": 45.41,
+     "actual_da_lw_mean": 50.85,
+     "hours_import_marginal_unbound": 140,
+     "share_import_marginal": 0.188,
+     "model_lw_mean_import_marginal_hours": 42.43,
+     "model_lw_mean_domestic_marginal_hours": 44.08,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 86,
+      "PNW_midC": 43,
+      "DSW_surplus_clean": 6,
+      "DSW_solar_PV": 5
+     },
+     "marginal_import_offer_mean": 42.12
+    },
+    "8": {
+     "model_lw_mean": 38.4,
+     "actual_rt_lw_mean": 32.81,
+     "actual_da_lw_mean": 40.53,
+     "hours_import_marginal_unbound": 94,
+     "share_import_marginal": 0.126,
+     "model_lw_mean_import_marginal_hours": 34.06,
+     "model_lw_mean_domestic_marginal_hours": 39.02,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 52,
+      "PNW_midC": 22,
+      "DSW_surplus_clean": 16,
+      "DSW_solar_PV": 4
+     },
+     "marginal_import_offer_mean": 33.83
+    },
+    "9": {
+     "model_lw_mean": 36.29,
+     "actual_rt_lw_mean": 33.46,
+     "actual_da_lw_mean": 39.66,
+     "hours_import_marginal_unbound": 121,
+     "share_import_marginal": 0.168,
+     "model_lw_mean_import_marginal_hours": 28.71,
+     "model_lw_mean_domestic_marginal_hours": 37.83,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 65,
+      "DSW_surplus_clean": 46,
+      "PNW_midC": 9,
+      "PNW_hydro_base": 1
+     },
+     "marginal_import_offer_mean": 28.9
+    },
+    "10": {
+     "model_lw_mean": 43.6,
+     "actual_rt_lw_mean": 42.51,
+     "actual_da_lw_mean": 43.77,
+     "hours_import_marginal_unbound": 118,
+     "share_import_marginal": 0.159,
+     "model_lw_mean_import_marginal_hours": 40.38,
+     "model_lw_mean_domestic_marginal_hours": 44.21,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 87,
+      "DSW_surplus_clean": 21,
+      "DSW_solar_PV": 7,
+      "PNW_midC": 3
+     },
+     "marginal_import_offer_mean": 39.52
+    },
+    "11": {
+     "model_lw_mean": 39.31,
+     "actual_rt_lw_mean": 38.21,
+     "actual_da_lw_mean": 38.62,
+     "hours_import_marginal_unbound": 167,
+     "share_import_marginal": 0.232,
+     "model_lw_mean_import_marginal_hours": 32.84,
+     "model_lw_mean_domestic_marginal_hours": 41.26,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 92,
+      "DSW_surplus_clean": 41,
+      "DSW_solar_PV": 20,
+      "DSW_CCGT": 12,
+      "PNW_midC": 2
+     },
+     "marginal_import_offer_mean": 32.07
+    },
+    "12": {
+     "model_lw_mean": 46.83,
+     "actual_rt_lw_mean": 42.2,
+     "actual_da_lw_mean": 42.72,
+     "hours_import_marginal_unbound": 152,
+     "share_import_marginal": 0.204,
+     "model_lw_mean_import_marginal_hours": 46.16,
+     "model_lw_mean_domestic_marginal_hours": 47.0,
+     "marginal_import_rows": {
+      "DSW_solar_PV": 69,
+      "DSW_overnight_clean": 46,
+      "DSW_CCGT": 26,
+      "DSW_surplus_clean": 7,
+      "WECC_scarcity": 3,
+      "PNW_midC": 1
+     },
+     "marginal_import_offer_mean": 44.92
+    }
+   },
+   "december": {
+    "model_lw_mean": 46.83,
+    "actual_rt_lw_mean": 42.2,
+    "actual_da_lw_mean": 42.72,
+    "hours_import_marginal_unbound": 152,
+    "share_import_marginal": 0.204,
+    "model_lw_mean_import_marginal_hours": 46.16,
+    "model_lw_mean_domestic_marginal_hours": 47.0,
+    "marginal_import_rows": {
+     "DSW_solar_PV": 69,
+     "DSW_overnight_clean": 46,
+     "DSW_CCGT": 26,
+     "DSW_surplus_clean": 7,
+     "WECC_scarcity": 3,
+     "PNW_midC": 1
+    },
+    "marginal_import_offer_mean": 44.92,
+    "model_minus_actual_rt": 4.63,
+    "hod_import_marginal_share": [
+     0.387,
+     0.29,
+     0.161,
+     0.258,
+     0.355,
+     0.258,
+     0.323,
+     0.323,
+     0.387,
+     0.194,
+     0.032,
+     0.129,
+     0.129,
+     0.226,
+     0.097,
+     0.065,
+     0.387,
+     0.226,
+     0.129,
+     0.097,
+     0.097,
+     0.129,
+     0.097,
+     0.129
+    ],
+    "hod_model_lw_mean": [
+     48.26,
+     47.57,
+     46.76,
+     45.74,
+     45.71,
+     47.28,
+     49.6,
+     50.01,
+     45.67,
+     42.07,
+     40.18,
+     39.15,
+     37.91,
+     36.37,
+     37.6,
+     41.67,
+     49.13,
+     52.91,
+     53.29,
+     53.27,
+     53.26,
+     53.24,
+     53.26,
+     53.98
+    ]
+   }
+  },
+  "2025": {
+   "months": {
+    "1": {
+     "model_lw_mean": 43.62,
+     "actual_rt_lw_mean": 44.66,
+     "actual_da_lw_mean": 44.08,
+     "hours_import_marginal_unbound": 220,
+     "share_import_marginal": 0.296,
+     "model_lw_mean_import_marginal_hours": 36.15,
+     "model_lw_mean_domestic_marginal_hours": 46.76,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 74,
+      "DSW_solar_PV": 69,
+      "DSW_overnight_clean": 67,
+      "PNW_midC": 7,
+      "DSW_CCGT": 3
+     },
+     "marginal_import_offer_mean": 35.72
+    },
+    "2": {
+     "model_lw_mean": 34.03,
+     "actual_rt_lw_mean": 32.83,
+     "actual_da_lw_mean": 36.03,
+     "hours_import_marginal_unbound": 202,
+     "share_import_marginal": 0.301,
+     "model_lw_mean_import_marginal_hours": 22.29,
+     "model_lw_mean_domestic_marginal_hours": 39.08,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 92,
+      "DSW_surplus_clean": 91,
+      "DSW_solar_PV": 12,
+      "PNW_midC": 7
+     },
+     "marginal_import_offer_mean": 22.15
+    },
+    "3": {
+     "model_lw_mean": 27.78,
+     "actual_rt_lw_mean": 28.4,
+     "actual_da_lw_mean": 28.23,
+     "hours_import_marginal_unbound": 238,
+     "share_import_marginal": 0.32,
+     "model_lw_mean_import_marginal_hours": 23.73,
+     "model_lw_mean_domestic_marginal_hours": 29.69,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 97,
+      "DSW_overnight_clean": 85,
+      "DSW_solar_PV": 46,
+      "PNW_midC": 8,
+      "DSW_CCGT": 2
+     },
+     "marginal_import_offer_mean": 23.47
+    },
+    "4": {
+     "model_lw_mean": 25.53,
+     "actual_rt_lw_mean": 20.48,
+     "actual_da_lw_mean": 19.86,
+     "hours_import_marginal_unbound": 152,
+     "share_import_marginal": 0.211,
+     "model_lw_mean_import_marginal_hours": 14.71,
+     "model_lw_mean_domestic_marginal_hours": 28.42,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 65,
+      "DSW_overnight_clean": 47,
+      "PNW_midC": 40
+     },
+     "marginal_import_offer_mean": 15.33
+    },
+    "5": {
+     "model_lw_mean": 28.11,
+     "actual_rt_lw_mean": 24.25,
+     "actual_da_lw_mean": 24.82,
+     "hours_import_marginal_unbound": 138,
+     "share_import_marginal": 0.185,
+     "model_lw_mean_import_marginal_hours": 23.02,
+     "model_lw_mean_domestic_marginal_hours": 29.27,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 65,
+      "DSW_surplus_clean": 48,
+      "PNW_midC": 25
+     },
+     "marginal_import_offer_mean": 23.14
+    },
+    "6": {
+     "model_lw_mean": 33.71,
+     "actual_rt_lw_mean": 29.46,
+     "actual_da_lw_mean": 29.94,
+     "hours_import_marginal_unbound": 140,
+     "share_import_marginal": 0.194,
+     "model_lw_mean_import_marginal_hours": 31.68,
+     "model_lw_mean_domestic_marginal_hours": 34.21,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 67,
+      "DSW_surplus_clean": 44,
+      "PNW_midC": 27,
+      "DSW_solar_PV": 2
+     },
+     "marginal_import_offer_mean": 31.28
+    },
+    "7": {
+     "model_lw_mean": 38.6,
+     "actual_rt_lw_mean": 34.48,
+     "actual_da_lw_mean": 36.9,
+     "hours_import_marginal_unbound": 146,
+     "share_import_marginal": 0.196,
+     "model_lw_mean_import_marginal_hours": 35.33,
+     "model_lw_mean_domestic_marginal_hours": 39.4,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 77,
+      "PNW_midC": 38,
+      "DSW_surplus_clean": 30,
+      "DSW_solar_PV": 1
+     },
+     "marginal_import_offer_mean": 35.62
+    },
+    "8": {
+     "model_lw_mean": 42.0,
+     "actual_rt_lw_mean": 40.24,
+     "actual_da_lw_mean": 40.64,
+     "hours_import_marginal_unbound": 163,
+     "share_import_marginal": 0.219,
+     "model_lw_mean_import_marginal_hours": 38.7,
+     "model_lw_mean_domestic_marginal_hours": 42.93,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 115,
+      "PNW_midC": 23,
+      "DSW_surplus_clean": 23,
+      "DSW_solar_PV": 2
+     },
+     "marginal_import_offer_mean": 38.53
+    },
+    "9": {
+     "model_lw_mean": 46.31,
+     "actual_rt_lw_mean": 40.55,
+     "actual_da_lw_mean": 42.41,
+     "hours_import_marginal_unbound": 132,
+     "share_import_marginal": 0.183,
+     "model_lw_mean_import_marginal_hours": 43.9,
+     "model_lw_mean_domestic_marginal_hours": 46.85,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 95,
+      "DSW_surplus_clean": 28,
+      "PNW_midC": 5,
+      "DSW_solar_PV": 4
+     },
+     "marginal_import_offer_mean": 42.95
+    },
+    "10": {
+     "model_lw_mean": 42.83,
+     "actual_rt_lw_mean": 35.14,
+     "actual_da_lw_mean": 35.5,
+     "hours_import_marginal_unbound": 124,
+     "share_import_marginal": 0.167,
+     "model_lw_mean_import_marginal_hours": 32.26,
+     "model_lw_mean_domestic_marginal_hours": 44.94,
+     "marginal_import_rows": {
+      "DSW_surplus_clean": 51,
+      "DSW_overnight_clean": 49,
+      "DSW_solar_PV": 23,
+      "DSW_CCGT": 1
+     },
+     "marginal_import_offer_mean": 31.35
+    },
+    "11": {
+     "model_lw_mean": 47.02,
+     "actual_rt_lw_mean": 43.89,
+     "actual_da_lw_mean": 44.03,
+     "hours_import_marginal_unbound": 179,
+     "share_import_marginal": 0.249,
+     "model_lw_mean_import_marginal_hours": 45.26,
+     "model_lw_mean_domestic_marginal_hours": 47.6,
+     "marginal_import_rows": {
+      "DSW_overnight_clean": 145,
+      "DSW_surplus_clean": 15,
+      "PNW_midC": 12,
+      "DSW_solar_PV": 7
+     },
+     "marginal_import_offer_mean": 44.15
+    },
+    "12": {
+     "model_lw_mean": 44.17,
+     "actual_rt_lw_mean": 34.97,
+     "actual_da_lw_mean": 38.37,
+     "hours_import_marginal_unbound": 182,
+     "share_import_marginal": 0.245,
+     "model_lw_mean_import_marginal_hours": 44.57,
+     "model_lw_mean_domestic_marginal_hours": 44.04,
+     "marginal_import_rows": {
+      "DSW_solar_PV": 101,
+      "DSW_CCGT": 28,
+      "DSW_overnight_clean": 23,
+      "PNW_midC": 16,
+      "DSW_surplus_clean": 9,
+      "WECC_scarcity": 4,
+      "PNW_hydro_base": 1
+     },
+     "marginal_import_offer_mean": 43.93
+    }
+   },
+   "december": {
+    "model_lw_mean": 44.17,
+    "actual_rt_lw_mean": 34.97,
+    "actual_da_lw_mean": 38.37,
+    "hours_import_marginal_unbound": 182,
+    "share_import_marginal": 0.245,
+    "model_lw_mean_import_marginal_hours": 44.57,
+    "model_lw_mean_domestic_marginal_hours": 44.04,
+    "marginal_import_rows": {
+     "DSW_solar_PV": 101,
+     "DSW_CCGT": 28,
+     "DSW_overnight_clean": 23,
+     "PNW_midC": 16,
+     "DSW_surplus_clean": 9,
+     "WECC_scarcity": 4,
+     "PNW_hydro_base": 1
+    },
+    "marginal_import_offer_mean": 43.93,
+    "model_minus_actual_rt": 9.2,
+    "hod_import_marginal_share": [
+     0.29,
+     0.161,
+     0.129,
+     0.161,
+     0.129,
+     0.129,
+     0.258,
+     0.29,
+     0.129,
+     0.258,
+     0.194,
+     0.194,
+     0.161,
+     0.129,
+     0.129,
+     0.226,
+     0.387,
+     0.355,
+     0.387,
+     0.355,
+     0.355,
+     0.355,
+     0.323,
+     0.387
+    ],
+    "hod_model_lw_mean": [
+     45.84,
+     45.19,
+     44.52,
+     44.17,
+     44.38,
+     45.26,
+     47.45,
+     46.58,
+     41.59,
+     38.43,
+     37.34,
+     36.59,
+     36.23,
+     36.2,
+     37.28,
+     43.11,
+     48.71,
+     48.91,
+     48.96,
+     48.95,
+     48.84,
+     48.7,
+     48.59,
+     48.32
+    ]
+   }
+  }
+ }
+}
