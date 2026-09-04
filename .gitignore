@@ -779,6 +779,14 @@ results/hindcast/*/*/*/evolution_*.json
 # pipeline screen rows the D48 finding's decomposition and P2/P4/P6 grading
 # read against D45-R's bare `pjm-t1h` ledgers -- same one-bundle carve-out.
 !results/hindcast/pjm-2021-2025-realized-t1h-d48-devintage/*/*/evolution_*.json
+# capx D52 (2026-09-04): the NYISO adequacy-requirement devintage A/B arm
+# (suffixed nyiso-t1h-d52-devintage) and its CONDITIONAL curve-ON probe
+# (nyiso-t1h-d52-curveon). Their ledgers carry the new D52 seam observability
+# fields (screen_peak_demand_mw / screen_adequacy_requirement_mw /
+# screen_entering_firm_mw / screen_reserve_position) the D52 finding's
+# position tables, LOYO sign test and P9 grade read against D45-R's bare
+# `nyiso-t1h` ledgers -- same one-bundle carve-out.
+!results/hindcast/nyiso-2021-2025-realized-t1h-d52-*/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet
