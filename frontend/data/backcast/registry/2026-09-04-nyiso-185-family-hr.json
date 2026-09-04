@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-04-nyiso-185-family-hr",
+  "label": "nyiso 185 family hr",
+  "date": "2026-09-04",
+  "shorthand": "nyiso-185-family-hr",
+  "definition": "nyiso-185 ARM: the nyiso-177 keeper recipe (replay) + egrid_family_heat_rates=True, PREREG-nyiso185-stgas-family-hr-ab",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-04-nyiso-185-family-hr.js",
+  "bundle": "results/calibration/nyiso185_family_hr"
+}
