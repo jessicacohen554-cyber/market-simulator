@@ -11,9 +11,13 @@ citygate daily spot** (``data/raw/gas-prices/caiso_citygate_daily.csv``,
 trade+1 flow-day staircase).
 
 The solve then prices the tranche at ``mult x base_HR x fuel(t)``, where
-``fuel(t)`` is the model's delivered-gas series — the EIA **N3050CA3 monthly
-citygate** level from ``gas_basis_by_iso_month.csv`` plus
-``CAISO_CITYGATE_TRANSPORT_ADDER`` (+0.46 $/MMBtu), shaped within the month.
+``fuel(t)`` is the model's delivered-gas series AS THE KEEPER RECIPE BUILDS IT.
+(The caiso-242 run of this probe described that series as the EIA N3050CA3
+monthly citygate + 0.46 adder — which was the LOOKALIKE the by-name recipe
+pattern rebuilt, not the keeper; the keeper carries
+``caiso_citygate_spot_level=True``, the daily CA citygate spot level of
+caiso-84. Re-measured on-recipe at caiso-244; the caiso-242 §3 ratios
+1.298/1.310/1.327 are VOID.)
 
 A multiplier is dimensionless ONLY with respect to its own denominator. If the
 two series differ, every armed multiplier is applied against a different fuel
@@ -21,7 +25,8 @@ level than the one it was measured against, and the model's CAISO gas offer is
 scaled by exactly their ratio. This probe measures that ratio month by month and
 year by year, and converts it to $/MWh on the CT_PEAKER econ band.
 
-Writes ``results/calibration/_caiso242_gas_basis_identity.json``.
+Writes ``results/calibration/_caiso244_gas_basis_identity_onrecipe.json``
+(the caiso-242 artifact is frozen as the historical record).
 
 Usage:
     PYTHONPATH=.:src uv run python scripts/probes/_caiso242_gas_basis_identity.py
@@ -31,7 +36,6 @@ from __future__ import annotations
 
 import contextlib
 import importlib.util
-import inspect
 import io
 import json
 import sys
@@ -44,11 +48,14 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
-BUNDLE = REPO / "results/calibration/caiso241_b1_ctpeaker_committed"
+# caiso-244: re-measured ON-RECIPE against the CURRENT keeper. The caiso-242
+# artifact (``_caiso242_*.json``, measured on caiso241 through the by-name
+# pattern) is frozen as the historical record and never regenerated.
+BUNDLE = REPO / "results/calibration/caiso243_b1_f923_fallback_guard"
 CITYGATE = REPO / "data/raw/gas-prices/caiso_citygate_daily.csv"
 YEARS = (2023, 2024, 2025)
 HOURS = 8760
-OUT = REPO / "results/calibration/_caiso242_gas_basis_identity.json"
+OUT = REPO / "results/calibration/_caiso244_gas_basis_identity_onrecipe.json"
 
 #: CAMPD class base heat rate for CT_PEAKER — the derive's own ``base_HR_class``
 #: (``data/raw/reference/caiso_campd_marginal_hr_summary.csv``).
@@ -67,20 +74,16 @@ _spec.loader.exec_module(CENSUS)
 def model_gas_hourly(year: int) -> tuple[np.ndarray, float]:
     """Return the model's cap-weighted CT_PEAKER delivered gas ``(8760,)``."""
     from run_calibration import run_year
+    from replay_keeper import run_year_kwargs
 
     meta = json.loads((BUNDLE / "meta.json").read_text())
-    params = inspect.signature(run_year).parameters
-    skip = {
-        "year",
-        "iso",
-        "hours",
-        "gas_price",
-        "ttc_overrides",
-        "fleet_only",
-        "xyear_cache",
-        "must_run_mw",
-    }
-    kwargs = {k: v for k, v in meta.items() if k in params and k not in skip}
+    # ON-RECIPE (caiso-244 repair of the caiso-243 §7.3 instrument defect): the
+    # strict, remapping meta -> run_year reconstruction. The by-parameter-NAME
+    # filter this replaced dropped ``coal_prb_sigmoid_overrides`` ->
+    # ``prb_overrides`` (36 CAISO structural flags, incl. the daily citygate
+    # spot level) and rebuilt a lookalike recipe; every keeper-relative number
+    # this probe published at caiso-242 is VOID until re-measured here.
+    kwargs = run_year_kwargs(meta)
     CENSUS._clear_fleet_caches()
     buf = io.StringIO()
     with contextlib.redirect_stderr(buf):
@@ -117,18 +120,36 @@ def main() -> None:
     cg["date"] = pd.to_datetime(cg["date"])
     out: dict = {
         "_provenance": {
-            "session": "caiso-242",
+            "session": "caiso-244 (on-recipe re-run of the caiso-242 probe)",
             "bundle": str(BUNDLE.relative_to(REPO)),
-            "keeper_run_id": "2026-09-03-caiso-241-b1-ctpeaker",
+            "keeper_run_id": "2026-09-04-caiso-243-b1-f923",
             "derive_denominator": (
                 "CA-composite citygate daily spot, trade+1 flow-day staircase "
                 "(data/raw/gas-prices/caiso_citygate_daily.csv), per "
                 "caiso_offer_curve_measured.json _provenance.gas_basis"
             ),
             "model_numerator": (
-                "EIA N3050CA3 monthly citygate + CAISO_CITYGATE_TRANSPORT_ADDER "
-                "(0.46), within-month shape from the same CA-composite daily"
+                "the keeper recipe's own delivered-gas series, rebuilt ON-RECIPE "
+                "through replay_keeper.run_year_kwargs (caiso-244). The caiso-242 "
+                "run described this as 'EIA N3050CA3 monthly citygate + 0.46 "
+                "adder' — that was the LOOKALIKE recipe the by-name pattern "
+                "rebuilt; the keeper's actual gas level is set by the flags in "
+                "recipe_flags (caiso_citygate_spot_level = daily CA citygate "
+                "spot level, caiso-84)"
             ),
+            "recipe_flags": {
+                k: json.loads((BUNDLE / "run_config.json").read_text())[
+                    "scenario_config"
+                ].get(k)
+                for k in (
+                    "caiso_citygate_spot_level",
+                    "caiso_citygate_flow_date",
+                    "gas_hub_basis_overlay",
+                    "gas_hub_basis_daily",
+                    "gas_monthly_actuals",
+                )
+            },
+            "voided_caiso242_ratios": [1.298, 1.310, 1.327],
             "note": "no LP, no flag delta",
         },
         "years": {},

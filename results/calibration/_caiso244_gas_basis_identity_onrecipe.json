@@ -1,0 +1,285 @@
+{
+  "_provenance": {
+    "session": "caiso-244 (on-recipe re-run of the caiso-242 probe)",
+    "bundle": "results/calibration/caiso243_b1_f923_fallback_guard",
+    "keeper_run_id": "2026-09-04-caiso-243-b1-f923",
+    "derive_denominator": "CA-composite citygate daily spot, trade+1 flow-day staircase (data/raw/gas-prices/caiso_citygate_daily.csv), per caiso_offer_curve_measured.json _provenance.gas_basis",
+    "model_numerator": "the keeper recipe's own delivered-gas series, rebuilt ON-RECIPE through replay_keeper.run_year_kwargs (caiso-244). The caiso-242 run described this as 'EIA N3050CA3 monthly citygate + 0.46 adder' \u2014 that was the LOOKALIKE recipe the by-name pattern rebuilt; the keeper's actual gas level is set by the flags in recipe_flags (caiso_citygate_spot_level = daily CA citygate spot level, caiso-84)",
+    "recipe_flags": {
+      "caiso_citygate_spot_level": true,
+      "caiso_citygate_flow_date": true,
+      "gas_hub_basis_overlay": true,
+      "gas_hub_basis_daily": false,
+      "gas_monthly_actuals": true
+    },
+    "voided_caiso242_ratios": [
+      1.298,
+      1.31,
+      1.327
+    ],
+    "note": "no LP, no flag delta"
+  },
+  "years": {
+    "2023": {
+      "ct_peaker_cap_mw": 7528.5,
+      "model_gas_annual_mean": 5.6941,
+      "citygate_annual_mean": 5.2831,
+      "ratio_model_over_derive_basis": 1.0778,
+      "diff_usd_mmbtu": 0.411,
+      "months_ratio_min": 1.022,
+      "months_ratio_max": 1.1758,
+      "months_ratio_median": 1.0983,
+      "econ_low_offer_on_model_basis_usd_mwh": 70.818,
+      "econ_low_offer_on_derive_basis_usd_mwh": 65.706,
+      "econ_low_offer_inflation_usd_mwh": 5.112,
+      "by_month": {
+        "1": {
+          "model": 16.481,
+          "citygate": 16.1267,
+          "ratio": 1.022,
+          "diff": 0.3543
+        },
+        "2": {
+          "model": 7.5757,
+          "citygate": 7.0828,
+          "ratio": 1.0696,
+          "diff": 0.4929
+        },
+        "3": {
+          "model": 6.8048,
+          "citygate": 6.5017,
+          "ratio": 1.0466,
+          "diff": 0.3031
+        },
+        "4": {
+          "model": 4.8323,
+          "citygate": 4.3739,
+          "ratio": 1.1048,
+          "diff": 0.4584
+        },
+        "5": {
+          "model": 2.9868,
+          "citygate": 2.5814,
+          "ratio": 1.1571,
+          "diff": 0.4054
+        },
+        "6": {
+          "model": 2.9153,
+          "citygate": 2.5976,
+          "ratio": 1.1223,
+          "diff": 0.3177
+        },
+        "7": {
+          "model": 4.5613,
+          "citygate": 4.3168,
+          "ratio": 1.0566,
+          "diff": 0.2444
+        },
+        "8": {
+          "model": 4.8242,
+          "citygate": 4.3074,
+          "ratio": 1.12,
+          "diff": 0.5168
+        },
+        "9": {
+          "model": 3.373,
+          "citygate": 2.942,
+          "ratio": 1.1465,
+          "diff": 0.431
+        },
+        "10": {
+          "model": 4.3897,
+          "citygate": 4.1436,
+          "ratio": 1.0594,
+          "diff": 0.246
+        },
+        "11": {
+          "model": 5.443,
+          "citygate": 4.6293,
+          "ratio": 1.1758,
+          "diff": 0.8137
+        },
+        "12": {
+          "model": 4.1426,
+          "citygate": 3.7943,
+          "ratio": 1.0918,
+          "diff": 0.3483
+        }
+      }
+    },
+    "2024": {
+      "ct_peaker_cap_mw": 7535.0,
+      "model_gas_annual_mean": 3.0032,
+      "citygate_annual_mean": 2.4567,
+      "ratio_model_over_derive_basis": 1.2225,
+      "diff_usd_mmbtu": 0.5465,
+      "months_ratio_min": 1.1317,
+      "months_ratio_max": 1.3479,
+      "months_ratio_median": 1.2172,
+      "econ_low_offer_on_model_basis_usd_mwh": 37.351,
+      "econ_low_offer_on_derive_basis_usd_mwh": 30.554,
+      "econ_low_offer_inflation_usd_mwh": 6.797,
+      "by_month": {
+        "1": {
+          "model": 6.6152,
+          "citygate": 4.9079,
+          "ratio": 1.3479,
+          "diff": 1.7073
+        },
+        "2": {
+          "model": 2.9014,
+          "citygate": 2.423,
+          "ratio": 1.1975,
+          "diff": 0.4784
+        },
+        "3": {
+          "model": 2.2529,
+          "citygate": 1.8175,
+          "ratio": 1.2396,
+          "diff": 0.4354
+        },
+        "4": {
+          "model": 2.07,
+          "citygate": 1.6414,
+          "ratio": 1.2611,
+          "diff": 0.4286
+        },
+        "5": {
+          "model": 2.0497,
+          "citygate": 1.6186,
+          "ratio": 1.2663,
+          "diff": 0.431
+        },
+        "6": {
+          "model": 2.3007,
+          "citygate": 1.9162,
+          "ratio": 1.2007,
+          "diff": 0.3845
+        },
+        "7": {
+          "model": 2.9697,
+          "citygate": 2.5456,
+          "ratio": 1.1666,
+          "diff": 0.4241
+        },
+        "8": {
+          "model": 2.479,
+          "citygate": 2.0095,
+          "ratio": 1.2336,
+          "diff": 0.4695
+        },
+        "9": {
+          "model": 2.4973,
+          "citygate": 2.157,
+          "ratio": 1.1578,
+          "diff": 0.3403
+        },
+        "10": {
+          "model": 3.3006,
+          "citygate": 2.8832,
+          "ratio": 1.1448,
+          "diff": 0.4175
+        },
+        "11": {
+          "model": 2.932,
+          "citygate": 2.3177,
+          "ratio": 1.2651,
+          "diff": 0.6143
+        },
+        "12": {
+          "model": 3.6703,
+          "citygate": 3.2431,
+          "ratio": 1.1317,
+          "diff": 0.4272
+        }
+      }
+    },
+    "2025": {
+      "ct_peaker_cap_mw": 7538.7,
+      "model_gas_annual_mean": 3.6465,
+      "citygate_annual_mean": 3.0593,
+      "ratio_model_over_derive_basis": 1.192,
+      "diff_usd_mmbtu": 0.5873,
+      "months_ratio_min": 1.0304,
+      "months_ratio_max": 1.4599,
+      "months_ratio_median": 1.1501,
+      "econ_low_offer_on_model_basis_usd_mwh": 45.351,
+      "econ_low_offer_on_derive_basis_usd_mwh": 38.048,
+      "econ_low_offer_inflation_usd_mwh": 7.304,
+      "by_month": {
+        "1": {
+          "model": 4.3332,
+          "citygate": 3.7581,
+          "ratio": 1.153,
+          "diff": 0.5751
+        },
+        "2": {
+          "model": 3.9861,
+          "citygate": 3.5347,
+          "ratio": 1.1277,
+          "diff": 0.4513
+        },
+        "3": {
+          "model": 3.4055,
+          "citygate": 2.9876,
+          "ratio": 1.1399,
+          "diff": 0.4179
+        },
+        "4": {
+          "model": 2.6257,
+          "citygate": 2.2014,
+          "ratio": 1.1927,
+          "diff": 0.4242
+        },
+        "5": {
+          "model": 2.7974,
+          "citygate": 2.4543,
+          "ratio": 1.1398,
+          "diff": 0.3431
+        },
+        "6": {
+          "model": 3.2567,
+          "citygate": 2.83,
+          "ratio": 1.1508,
+          "diff": 0.4267
+        },
+        "7": {
+          "model": 3.4961,
+          "citygate": 3.0855,
+          "ratio": 1.1331,
+          "diff": 0.4106
+        },
+        "8": {
+          "model": 3.3329,
+          "citygate": 2.9,
+          "ratio": 1.1493,
+          "diff": 0.4329
+        },
+        "9": {
+          "model": 4.1955,
+          "citygate": 3.2443,
+          "ratio": 1.2932,
+          "diff": 0.9512
+        },
+        "10": {
+          "model": 4.1912,
+          "citygate": 2.8709,
+          "ratio": 1.4599,
+          "diff": 1.3203
+        },
+        "11": {
+          "model": 4.3871,
+          "citygate": 3.2042,
+          "ratio": 1.3692,
+          "diff": 1.1829
+        },
+        "12": {
+          "model": 3.7506,
+          "citygate": 3.64,
+          "ratio": 1.0304,
+          "diff": 0.1106
+        }
+      }
+    }
+  }
+}

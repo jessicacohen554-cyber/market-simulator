@@ -1,0 +1,305 @@
+{
+  "_provenance": {
+    "session": "caiso-244 (on-recipe re-run of the caiso-242 probe)",
+    "bundle": "results/calibration/caiso243_b1_f923_fallback_guard",
+    "keeper_run_id": "2026-09-04-caiso-243-b1-f923",
+    "anchor_usd_mmbtu": 4.7964,
+    "note": "no LP, no flag delta; measured surface vs armed decomposition"
+  },
+  "M1_gas_basis": {
+    "citygate_flowday": {
+      "2023": {
+        "mean": 5.2,
+        "median": 4.035,
+        "n_days": 232
+      },
+      "2024": {
+        "mean": 2.4267,
+        "median": 2.085,
+        "n_days": 224
+      },
+      "2025": {
+        "mean": 3.0367,
+        "median": 3.01,
+        "n_days": 224
+      }
+    },
+    "model_delivered": {
+      "2023": {
+        "capwt_hourly_mean": 5.6957,
+        "capwt_hourly_median": 4.48,
+        "capwt_p10": 2.91,
+        "capwt_p90": 11.85,
+        "base_hr_capwt": 11.5203
+      },
+      "2024": {
+        "capwt_hourly_mean": 3.0101,
+        "capwt_hourly_median": 2.59,
+        "capwt_p10": 1.99,
+        "capwt_p90": 3.87,
+        "base_hr_capwt": 11.5197
+      },
+      "2025": {
+        "capwt_hourly_mean": 3.644,
+        "capwt_hourly_median": 3.62,
+        "capwt_p10": 2.61,
+        "capwt_p90": 4.4388,
+        "base_hr_capwt": 11.5178
+      }
+    }
+  },
+  "M2_M3_passthrough": {
+    "CC_REGULAR": {
+      "committed": {
+        "armed_mult": 1.0,
+        "phys": 1.103,
+        "markup_mult": 0.0,
+        "fixed_margin_usd_mwh_at_anchor": NaN,
+        "measured_mult_range": 0.049,
+        "armed_implied_range": 0.0,
+        "per_year": {
+          "2023": {
+            "measured_mult": 1.042,
+            "armed_implied_mult": 1.103,
+            "delta_mult": 0.061,
+            "model_fuel": 5.6957,
+            "offer_error_usd_mwh": 4.003
+          },
+          "2024": {
+            "measured_mult": 1.022,
+            "armed_implied_mult": 1.103,
+            "delta_mult": 0.081,
+            "model_fuel": 3.0101,
+            "offer_error_usd_mwh": 2.809
+          },
+          "2025": {
+            "measured_mult": 1.071,
+            "armed_implied_mult": 1.103,
+            "delta_mult": 0.032,
+            "model_fuel": 3.644,
+            "offer_error_usd_mwh": 1.343
+          }
+        }
+      },
+      "econ_low": {
+        "armed_mult": 1.066,
+        "phys": 0.836,
+        "markup_mult": 0.23,
+        "fixed_margin_usd_mwh_at_anchor": NaN,
+        "measured_mult_range": 0.058,
+        "armed_implied_range": 0.1728,
+        "per_year": {
+          "2023": {
+            "measured_mult": 1.063,
+            "armed_implied_mult": 1.0297,
+            "delta_mult": -0.0333,
+            "model_fuel": 5.6957,
+            "offer_error_usd_mwh": -2.186
+          },
+          "2024": {
+            "measured_mult": 1.027,
+            "armed_implied_mult": 1.2025,
+            "delta_mult": 0.1755,
+            "model_fuel": 3.0101,
+            "offer_error_usd_mwh": 6.085
+          },
+          "2025": {
+            "measured_mult": 1.085,
+            "armed_implied_mult": 1.1387,
+            "delta_mult": 0.0537,
+            "model_fuel": 3.644,
+            "offer_error_usd_mwh": 2.255
+          }
+        }
+      },
+      "econ_high": {
+        "armed_mult": 1.072,
+        "phys": 0.968,
+        "markup_mult": 0.104,
+        "fixed_margin_usd_mwh_at_anchor": NaN,
+        "measured_mult_range": 0.039,
+        "armed_implied_range": 0.0781,
+        "per_year": {
+          "2023": {
+            "measured_mult": 1.06,
+            "armed_implied_mult": 1.0556,
+            "delta_mult": -0.0044,
+            "model_fuel": 5.6957,
+            "offer_error_usd_mwh": -0.29
+          },
+          "2024": {
+            "measured_mult": 1.099,
+            "armed_implied_mult": 1.1337,
+            "delta_mult": 0.0347,
+            "model_fuel": 3.0101,
+            "offer_error_usd_mwh": 1.204
+          },
+          "2025": {
+            "measured_mult": 1.098,
+            "armed_implied_mult": 1.1049,
+            "delta_mult": 0.0069,
+            "model_fuel": 3.644,
+            "offer_error_usd_mwh": 0.289
+          }
+        }
+      },
+      "peak": {
+        "armed_mult": 1.386,
+        "phys": 2.25,
+        "markup_mult": 0.0,
+        "fixed_margin_usd_mwh_at_anchor": NaN,
+        "measured_mult_range": 0.197,
+        "armed_implied_range": 0.0,
+        "per_year": {
+          "2023": {
+            "measured_mult": 1.306,
+            "armed_implied_mult": 2.25,
+            "delta_mult": 0.944,
+            "model_fuel": 5.6957,
+            "offer_error_usd_mwh": 61.942
+          },
+          "2024": {
+            "measured_mult": 1.503,
+            "armed_implied_mult": 2.25,
+            "delta_mult": 0.747,
+            "model_fuel": 3.0101,
+            "offer_error_usd_mwh": 25.903
+          },
+          "2025": {
+            "measured_mult": 1.457,
+            "armed_implied_mult": 2.25,
+            "delta_mult": 0.793,
+            "model_fuel": 3.644,
+            "offer_error_usd_mwh": 33.283
+          }
+        }
+      }
+    },
+    "CT_PEAKER": {
+      "committed": {
+        "armed_mult": 0.991,
+        "phys": 0.991,
+        "markup_mult": 0.0,
+        "fixed_margin_usd_mwh_at_anchor": 0.0,
+        "measured_mult_range": 0.25,
+        "armed_implied_range": 0.0,
+        "per_year": {
+          "2023": {
+            "measured_mult": 1.329,
+            "armed_implied_mult": 0.991,
+            "delta_mult": -0.338,
+            "model_fuel": 5.6957,
+            "offer_error_usd_mwh": -22.178
+          },
+          "2024": {
+            "measured_mult": 1.173,
+            "armed_implied_mult": 0.991,
+            "delta_mult": -0.182,
+            "model_fuel": 3.0101,
+            "offer_error_usd_mwh": -6.311
+          },
+          "2025": {
+            "measured_mult": 1.079,
+            "armed_implied_mult": 0.991,
+            "delta_mult": -0.088,
+            "model_fuel": 3.644,
+            "offer_error_usd_mwh": -3.693
+          }
+        }
+      },
+      "econ_low": {
+        "armed_mult": 1.145,
+        "phys": 0.686,
+        "markup_mult": 0.459,
+        "fixed_margin_usd_mwh_at_anchor": 25.361,
+        "measured_mult_range": 0.013,
+        "armed_implied_range": 0.3449,
+        "per_year": {
+          "2023": {
+            "measured_mult": 1.145,
+            "armed_implied_mult": 1.0725,
+            "delta_mult": -0.0725,
+            "model_fuel": 5.6957,
+            "offer_error_usd_mwh": -4.755
+          },
+          "2024": {
+            "measured_mult": 1.158,
+            "armed_implied_mult": 1.4174,
+            "delta_mult": 0.2594,
+            "model_fuel": 3.0101,
+            "offer_error_usd_mwh": 8.994
+          },
+          "2025": {
+            "measured_mult": 1.147,
+            "armed_implied_mult": 1.2902,
+            "delta_mult": 0.1432,
+            "model_fuel": 3.644,
+            "offer_error_usd_mwh": 6.008
+          }
+        }
+      },
+      "econ_high": {
+        "armed_mult": 1.166,
+        "phys": 0.71,
+        "markup_mult": 0.456,
+        "fixed_margin_usd_mwh_at_anchor": 25.195,
+        "measured_mult_range": 0.04,
+        "armed_implied_range": 0.3426,
+        "per_year": {
+          "2023": {
+            "measured_mult": 1.143,
+            "armed_implied_mult": 1.094,
+            "delta_mult": -0.049,
+            "model_fuel": 5.6957,
+            "offer_error_usd_mwh": -3.215
+          },
+          "2024": {
+            "measured_mult": 1.183,
+            "armed_implied_mult": 1.4366,
+            "delta_mult": 0.2536,
+            "model_fuel": 3.0101,
+            "offer_error_usd_mwh": 8.794
+          },
+          "2025": {
+            "measured_mult": 1.167,
+            "armed_implied_mult": 1.3102,
+            "delta_mult": 0.1432,
+            "model_fuel": 3.644,
+            "offer_error_usd_mwh": 6.011
+          }
+        }
+      },
+      "peak": {
+        "armed_mult": 1.166,
+        "phys": 1.0,
+        "markup_mult": 0.166,
+        "fixed_margin_usd_mwh_at_anchor": 9.172,
+        "measured_mult_range": 0.026,
+        "armed_implied_range": 0.1247,
+        "per_year": {
+          "2023": {
+            "measured_mult": 1.151,
+            "armed_implied_mult": 1.1398,
+            "delta_mult": -0.0112,
+            "model_fuel": 5.6957,
+            "offer_error_usd_mwh": -0.736
+          },
+          "2024": {
+            "measured_mult": 1.177,
+            "armed_implied_mult": 1.2645,
+            "delta_mult": 0.0875,
+            "model_fuel": 3.0101,
+            "offer_error_usd_mwh": 3.034
+          },
+          "2025": {
+            "measured_mult": 1.169,
+            "armed_implied_mult": 1.2185,
+            "delta_mult": 0.0495,
+            "model_fuel": 3.644,
+            "offer_error_usd_mwh": 2.077
+          }
+        }
+      }
+    }
+  }
+}

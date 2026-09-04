@@ -80,25 +80,57 @@ def ensure_probe_path() -> None:
 def full_run_year_kwargs(meta: dict) -> dict:
     """Rebuild a bundle's ``run_year`` kwargs from EVERY flag its meta records.
 
+    Since caiso-244 this is a thin wrapper over
+    :func:`scripts.replay_keeper.run_year_kwargs` — the strict, remapping
+    ``meta.json`` -> ``solve_and_persist`` reconstruction (``build_kwargs``)
+    restricted to the subset ``solve_and_persist`` hands to ``run_year``, under
+    ``run_year``'s own names. One mapping, one place: the hand-curated base
+    subset this function used to start from (``derive_pjm_ordc_overlay
+    ._run_year_kwargs``) and the by-parameter-name overlay it added are both
+    retired here, because a by-name overlay silently drops every key whose
+    ``run_year`` kwarg is spelled differently — the caiso-243 §7.3 instrument
+    defect (``coal_prb_sigmoid_overrides`` -> ``prb_overrides`` and its 36
+    structural flags). Measured on all six designated keepers before the
+    switch (caiso-244), the old path and the strict path agreed on every
+    recorded key except ``None`` vs ``{}`` for empty override dicts, which
+    ``run_year`` treats identically — so existing callers are unchanged in
+    effect and now fail loudly instead of silently on a future rename.
+
     Args:
         meta: The bundle's ``meta.json``.
 
     Returns:
-        The ``run_year`` kwargs, with ``fleet_only=True`` (no LP).
+        The ``run_year`` kwargs, with ``fleet_only=True`` (no LP) and
+        ``ttc_overrides={}`` (the solve's own value) — ready to splat after the
+        four positional arguments.
     """
-    import inspect
-
     ensure_probe_path()
-    from scripts.data.derive_pjm_ordc_overlay import _run_year_kwargs
-    from scripts.run_calibration import run_year
+    from scripts.replay_keeper import run_year_kwargs
 
-    kwargs = _run_year_kwargs(meta)
-    params = set(inspect.signature(run_year).parameters)
-    for key, value in meta.items():
-        if key in params and key not in kwargs and key not in POSITIONAL:
-            kwargs[key] = value
+    kwargs = run_year_kwargs(meta)
+    kwargs["ttc_overrides"] = {}
     kwargs["fleet_only"] = True
     return kwargs
+
+
+def clear_fleet_caches() -> None:
+    """Drop the fleet-builder caches that would defeat a second in-process rebuild.
+
+    ``campd_bins._CAMPD_BINS_CACHE`` memoizes the curated-CSV bin frame on a key
+    that does not see patched literals or monkeypatched seams, and several
+    loaders in the same module are ``lru_cache``d. A probe that rebuilds the
+    same year twice in one process (a keeper pass and a patched variant) must
+    clear both between passes or the second rebuild reads the first's fleet.
+    Promoted from the caiso-240 census probe (``_clear_fleet_caches``) so
+    every variant-diff probe shares one implementation.
+    """
+    from market_sim.data.fleet import campd_bins as cb
+
+    cb._CAMPD_BINS_CACHE.clear()
+    for name in dir(cb):
+        fn = getattr(cb, name, None)
+        if callable(fn) and hasattr(fn, "cache_clear"):
+            fn.cache_clear()
 
 
 def bundle_gas_price(meta: dict, year: int) -> float:
