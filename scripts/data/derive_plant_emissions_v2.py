@@ -254,6 +254,25 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--iso", nargs="+", default=list(ALL_ISOS))
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
     ap.add_argument(
+        "--merge",
+        action="store_true",
+        help="year-scoped merge into the existing artifact: replace only the "
+        "(iso, year) rows this run derives and carry every other row through "
+        "byte-frozen (other ISOs, other years, the quarantined-year intakes). "
+        "Default: the whole artifact is rewritten from --iso x --years, which "
+        "drops any row outside that product. Use --merge to re-derive one "
+        "ISO's rows after a source or routing change (rule 23) without "
+        "touching the rest.",
+    )
+    ap.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="write the parquet here (and its .csv sibling) instead of the "
+        "committed artifact path — for an A/B arm derived alongside the "
+        "committed control (the merge base is still the committed artifact).",
+    )
+    ap.add_argument(
         "--holdout-intake",
         default=None,
         metavar="ISO",
@@ -329,12 +348,37 @@ def main(argv: list[str] | None = None) -> int:
         if out.empty:
             logger.error("no rows derived — curate emissions-unit-annual first")
             return 1
-    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-    out.to_parquet(OUT_PATH, index=False)
-    out.to_csv(CSV_PATH, index=False)
+        if args.merge:
+            if not OUT_PATH.exists():
+                ap.error(f"--merge needs an existing artifact at {OUT_PATH}")
+            existing = pd.read_parquet(OUT_PATH)
+            derived_keys = set(zip(out["iso"].astype(str), out["year"].astype(int)))
+            keep_mask = [
+                (str(i), int(y)) not in derived_keys
+                for i, y in zip(existing["iso"], existing["year"])
+            ]
+            kept = existing[keep_mask]
+            logger.info(
+                "--merge: replacing %d (iso, year) block(s) [%s]; carrying %d of "
+                "%d pre-existing rows through byte-frozen",
+                len(derived_keys),
+                ", ".join(f"{i}:{y}" for i, y in sorted(derived_keys)),
+                len(kept),
+                len(existing),
+            )
+            out = (
+                pd.concat([kept, out], ignore_index=True)
+                .sort_values(["iso", "plant_id", "unit_id", "year"])
+                .reset_index(drop=True)
+            )
+    pq_path = args.out if args.out is not None else OUT_PATH
+    csv_path = pq_path.with_suffix(".csv") if args.out is not None else CSV_PATH
+    pq_path.parent.mkdir(parents=True, exist_ok=True)
+    out.to_parquet(pq_path, index=False)
+    out.to_csv(csv_path, index=False)
     logger.info(
         "wrote %s: %d rows, %d plants, ISOs %s, years %s",
-        OUT_PATH,
+        pq_path,
         len(out),
         out["plant_id"].nunique(),
         sorted(out["iso"].unique()),

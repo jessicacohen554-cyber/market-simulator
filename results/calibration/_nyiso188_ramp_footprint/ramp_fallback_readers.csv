@@ -1,0 +1,111 @@
+plant_code,name,bucket,group_pmax_mw,measured_row_committed,measured_row_arm,reads_class_fallback
+2480,Danskammer Generating Station,ST,497.3,False,False,True
+2487,Coxsackie,CT,19.8,False,False,False
+2490,Arthur Kill Generating Station,ST,876.6,True,True,False
+2493,East River,CT,306.0,False,False,False
+2493,East River,ST,309.5,False,False,True
+2494,Gowanus Gas Turbines Generating,CT,282.0,False,False,False
+2499,Narrows Gas Turbines Generating,CT,269.0,False,False,False
+2500,Ravenswood,CC,222.2,True,True,False
+2500,Ravenswood,ST,1724.8,True,True,False
+2503,59th Street,CT,14.5,False,False,False
+2511,E F Barrett,CT,281.4,True,True,False
+2511,E F Barrett,ST,372.2,True,True,False
+2516,Northport,ST,1592.2,True,True,False
+2517,Port Jefferson,CT,82.7,True,True,False
+2517,Port Jefferson,ST,385.0,True,True,False
+2527,Greenidge Generation LLC,ST,104.5,True,True,False
+2539,Bethlehem Energy Center,CC,812.7,True,True,False
+2625,Bowline Point,ST,1159.6,True,True,False
+2628,Hillburn,CT,33.1,False,False,False
+2632,Shoemaker,CT,33.0,False,False,False
+2679,Plant No 2 Freeport,CT,49.0,False,False,False
+2682,S A Carlson,CT,42.0,False,False,False
+2682,S A Carlson,ST,45.0,False,False,True
+2695,Charles P Keller,CT,28.8,False,False,False
+7314,Richard M Flynn,CC,170.0,True,True,False
+7784,Allegany Cogen,CC,60.0,False,False,True
+7869,Glenwood Landing,CT,85.1,True,True,False
+7909,Vernon Boulevard,CT,79.9,True,True,False
+7910,Joseph J Seymour Power Project,CT,79.9,True,True,False
+7912,Brentwood,CT,45.0,False,False,False
+7913,Hell Gate,CT,79.5,True,True,False
+7914,Harlem River Yard,CT,79.5,True,True,False
+7915,North 1st,CT,46.0,True,True,False
+8006,Roseton Generating Facility,ST,1222.0,False,False,True
+8053,Pouch,CT,44.7,True,True,False
+8906,Astoria Generating Station,ST,923.2,True,True,False
+10025,"RED-Rochester, LLC",CT,36.0,False,False,False
+10025,"RED-Rochester, LLC",ST,119.6,False,False,True
+10190,Castleton Energy Center,CC,72.0,True,True,False
+10521,Lederle Laboratories,CC,21.7,False,False,True
+10617,CH Resources Beaver Falls,CC,79.8,False,False,True
+10620,Carthage Energy LLC,CC,61.1,False,False,True
+10621,CH Resources Syracuse,CC,86.2,False,False,True
+10725,Selkirk Cogen,CC,596.6,False,False,True
+50006,Linden Cogen Plant,CC,915.3,True,True,False
+50136,South Oaks Hospital,CT,0.5,False,False,False
+50203,US Gypsum Oakfield,CT,4.9,False,False,False
+50292,Bethpage Power Plant,CC,129.0,True,True,False
+50292,Bethpage Power Plant,CT,44.1,True,True,False
+50368,Cornell University Central Heat,CC,29.9,False,False,True
+50427,Bronx Zoo,CT,2.6,False,False,False
+50449,Indeck Silver Springs Energy Center,CC,52.3,True,True,False
+50450,Indeck Oswego Energy Center,CC,67.8,True,True,False
+50451,Indeck Yerkes Energy Center,CC,65.8,False,False,True
+50458,Indeck Corinth Energy Center,CC,125.5,True,True,False
+50744,Sterling Power Plant,CC,54.8,False,False,True
+50978,Carr Street Generating Station,CC,58.0,True,True,False
+52168,Riverbay,CC,40.6,True,True,False
+54034,Rensselaer Cogen,CC,79.4,False,False,True
+54041,Lockport Energy Associates LP,CC,219.0,True,True,False
+54076,Indeck Olean Energy Center,CC,79.2,False,False,True
+54099,Ticonderoga Mill,ST,41.0,False,False,True
+54114,Kennedy International Airport Cogen,CC,123.2,True,True,False
+54131,World Generation X,CC,55.7,True,True,False
+54149,Stony Brook Cogen Plant,CT,44.5,True,True,False
+54547,Sithe Independence Station,CC,996.4,True,True,False
+54574,Saranac Facility,CC,237.8,True,True,False
+54592,Massena Energy Facility,CC,81.0,False,False,True
+54593,Batavia Power Plant,CC,48.8,False,False,True
+54808,New York University Central Plant,CC,11.0,False,False,True
+54914,Brooklyn Navy Yard Cogeneration,CC,260.0,True,True,False
+55375,Astoria Energy,CC,558.0,True,True,False
+55405,Athens Generating Plant,CC,984.4,True,True,False
+55699,Bayswater Peaking Facility LLC,CT,55.8,True,True,False
+55786,Edgewood Energy LLC,CT,85.0,False,False,False
+56032,Equus Freeport Power,CT,94.0,True,True,False
+56188,Pinelawn Power LLC,CC,74.5,True,True,False
+56196,Zeltmann,CC,560.0,True,True,False
+56234,Caithness Long Island Energy Center,CC,317.3,True,True,False
+56259,Empire Generating Co LLC,CC,580.0,True,True,False
+56940,CPV Valley Energy Center,CC,654.2,True,True,False
+56964,Bayonne Energy Center,CT,598.1,True,True,False
+57185,Cricket Valley Energy,CC,1016.1,True,True,False
+57664,Astoria Energy II,CC,540.0,False,True,False
+57789,Peak Power 1 Cogen,CT,6.0,False,False,False
+57798,OBP Cogen,CT,4.6,False,False,False
+58167,William Floyd School District,CT,2.6,False,False,False
+58186,HVCC Cogen Plant,CT,5.4,False,False,False
+58507,Montefieor Medical Center Moses Division,CT,4.8,False,False,False
+59453,Albany Medical Ctr Cogen Plant,CT,4.0,False,False,False
+61238,New York Presbyterian Hospital- 68th Street,CT,7.7,False,False,False
+61488,NYU LANGONE HEALTH,CT,7.5,False,False,False
+62456,Regeneron Tarrytown,CT,1.5,False,False,False
+62572,ATT Jericho,CT,1.0,False,False,False
+62576,MER Queens,CT,1.2,False,False,False
+63236,Kings Plaza Total Energy Plant (TEP),CT,12.8,False,False,False
+63647,SDM000 Clarkson Fuel Cell,CT,1.8,False,False,False
+63648,NHH003 Clarkson Fuel Cell,CT,1.1,False,False,False
+63649,NHH004 Winthrop Fuel Cell,CT,1.0,False,False,False
+63661,SWM Fuel Cell,CT,8.4,False,False,False
+64143,Bloom-Altice Fuel Cell,CT,2.0,False,False,False
+64350,Orbit Bloom Fuel Cell,CT,6.0,False,False,False
+64747,Fuel Cell 3245 Yates Avenue,CT,5.0,False,False,False
+64748,Fuel Cell 18A Sneden Avenue,CT,3.5,False,False,False
+64749,Fuel Cell 18B Sneden Avenue,CT,4.0,False,False,False
+65201,Certain Solar - Staten Island,CT,7.5,False,False,False
+65212,Altice - Hicksville,CT,2.0,False,False,False
+66150,Equinix - Elmsford,CT,1.7,False,False,False
+66457,Apple Staten Island - Industrial Loop,CT,5.0,False,False,False
+66460,Apple Staten Island - Winant Place,CT,5.0,False,False,False
