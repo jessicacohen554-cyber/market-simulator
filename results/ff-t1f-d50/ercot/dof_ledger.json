@@ -1,0 +1,149 @@
+{
+  "schema": "dof-ledger/v1",
+  "lane": "forecast",
+  "status": "INSTRUMENT — 2 IDENTIFIED / 8 UNIDENTIFIED",
+  "run_id": "ercot",
+  "iso": "ERCOT",
+  "run_git_sha": "9e48ff6",
+  "generated_by": "scripts/build_forecast_dof_ledger.py (capx-D8, 2026-08-30) — the FC-7 DOF-ledger instrument, grown from the FFR-3B FR-27 skeleton. It REPORTS identifications committed to the repository (rule 21); it never supplies one. An UNIDENTIFIED entry keeps the `unattested` token and FC-7 keeps its CAVEAT.",
+  "how_to_fill": "Per UNIDENTIFIED entry: add a curated row to CURATED_IDENTIFICATIONS in scripts/build_forecast_dof_ledger.py citing committed evidence (registry citation, frozen derive script, or published-source intake finding), with its expected value or registry cross-check, then regenerate the ledger. A `residual` identification MUST carry `root_cause` naming an OPEN issue (CLAUDE.md rule 21 [R-DOF]). dispatch_mechanism entries should CITE the ISO's backcast keeper ledger entry and state whether the identification survives extrapolation forward. Never hand-edit the emitted JSON: the curated table is the reviewed, committed surface.",
+  "verdict_effect": "None from emission alone — this lane re-scores nothing. On a chartered FC-7 re-score: any UNIDENTIFIED entry keeps the same CAVEAT an absent ledger draws (forecast_verdict.py treats `unattested` as not-identified); only a ledger whose every entry carries a real identification can retire it.",
+  "scope": "NON-DEFAULT solve-affecting ScenarioConfig fields — the parameters THIS run chose relative to the shipped registry (tuple/list representation normalized). Registry defaults inherited by the run keep their identification burden in the registry citations and the backcast keeper DOF ledger (see registry_identification). Epoch drift is reported separately, never scored.",
+  "defaults_available": true,
+  "n_entries": 10,
+  "n_identified": 2,
+  "n_unidentified": 8,
+  "n_unattested": 8,
+  "n_by_group": {
+    "capacity_market": 2,
+    "dispatch_mechanism": 1,
+    "entry": 3,
+    "other": 4
+  },
+  "entries": [
+    {
+      "name": "capacity_screen_scarcity_restoration",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_ercot_config)",
+      "group": "capacity_market",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "provenance": "iso-registry",
+      "value": true,
+      "attestation_question": "Capacity-market clearing, net-CONE and accreditation. Attest against the filed per-ISO curve/parameter documents; a forward-evolution rate is a modelling choice needing its own line."
+    },
+    {
+      "name": "capacity_screen_unified_lookahead",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_ercot_config)",
+      "group": "capacity_market",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "provenance": "iso-registry",
+      "value": true,
+      "attestation_question": "Capacity-market clearing, net-CONE and accreditation. Attest against the filed per-ISO curve/parameter documents; a forward-evolution rate is a modelling choice needing its own line."
+    },
+    {
+      "name": "ccs_retrofit_capex_co2_scaling",
+      "where": "ScenarioConfig",
+      "group": "other",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "capx D50 construction repair of the CCS retrofit screen (the D49 §1.5 seams): the capture island sized to the host's captured CO2 against the ATB 2024 reference host — captured_ref = capture_rate × min(HEAT_RATE_BINS[gas_cc]) × FUEL_CO2_FACTOR_PER_MMBTU[gas_cc] = 0.32319 t/MWh, the host new_entry._emerging_lcoe already charges the ATB increment against — and cogeneration (CC_CHP) hosts excluded on the electric-only cost basis of ATB/NETL. ZERO free parameters: every term is an existing cited constant; the gate is a construction choice, never a magnitude",
+      "evidence": "src/market_sim/model/capacity_evolution/ccs.py::ccs_retrofit_captured_ref_t_per_mwh; docs/handoffs/FINDING-capx-d49-2026-09-04.md §1.4-§1.5; docs/handoffs/PREDECL-capx-d50-2026-09-04.md §1; docs/handoffs/FINDING-capx-d50-2026-09-04.md",
+      "value": true,
+      "provenance": "runner-posture"
+    },
+    {
+      "name": "entry_forward_reserve_leg",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_ercot_config)",
+      "group": "entry",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "provenance": "iso-registry",
+      "value": true,
+      "attestation_question": "Economic-entry economics and dynamics (rate limits, commissioning lag, capacity-revenue terms, storage value stack). Attest: published source (ReEDS growth bound, LBNL queue medians, ATB) vs residual."
+    },
+    {
+      "name": "entry_margin_exhaustion",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_ercot_config)",
+      "group": "entry",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "provenance": "iso-registry",
+      "value": true,
+      "attestation_question": "Economic-entry economics and dynamics (rate limits, commissioning lag, capacity-revenue terms, storage value stack). Attest: published source (ReEDS growth bound, LBNL queue medians, ATB) vs residual."
+    },
+    {
+      "name": "entry_pipeline_aware_signal",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_ercot_config)",
+      "group": "entry",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "provenance": "iso-registry",
+      "value": true,
+      "attestation_question": "Economic-entry economics and dynamics (rate limits, commissioning lag, capacity-revenue terms, storage value stack). Attest: published source (ReEDS growth bound, LBNL queue medians, ATB) vs residual."
+    },
+    {
+      "name": "forecast_xyear_warmstart",
+      "where": "ScenarioConfig",
+      "group": "other",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Owner decision D-10 (signed 2026-08-04, docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
+      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md",
+      "value": false,
+      "provenance": "runner-posture"
+    },
+    {
+      "name": "scarcity_price_overlay",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_ercot_config)",
+      "group": "dispatch_mechanism",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "provenance": "iso-registry",
+      "value": true,
+      "attestation_question": "Dispatch/commitment mechanisms inherited from the backcast calibration. MOST WILL ALREADY BE ATTESTED in the ISO's backcast ledger — the forecast attestation should CITE that entry rather than re-derive it, and must state whether the identification survives extrapolation forward (a curve fitted on 2023-2025 conduct is not automatically identified for 2040)."
+    },
+    {
+      "name": "smr_available_year",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_ercot_config)",
+      "group": "other",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "provenance": "iso-registry",
+      "n_scalars": 1,
+      "value": 2030,
+      "attestation_question": "Ungrouped solve-affecting parameter. Attest individually, or extend GROUPS in scripts/build_forecast_dof_ledger.py if a family emerges."
+    },
+    {
+      "name": "vre_procurement_additions_enabled",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_ercot_config)",
+      "group": "other",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "provenance": "iso-registry",
+      "value": true,
+      "attestation_question": "Ungrouped solve-affecting parameter. Attest individually, or extend GROUPS in scripts/build_forecast_dof_ledger.py if a family emerges."
+    }
+  ],
+  "registry_identification": {
+    "note": "Registry defaults inherited by this run (offer surfaces, floors, passthrough sigmoids, ...) carry their identification in the registry's rule-5 citations and in the designated backcast keeper's rule-21 DOF ledger (calibration_attestation.json `free_parameters`); they are not re-enumerated per forecast bundle. Whether each identification survives extrapolation forward is the standing question the dispatch_mechanism group's guidance records.",
+    "backcast_keeper_at_build": "2026-08-25-234-eastex-identity",
+    "keeper_shard": "frontend/data/backcast/keepers/ERCOT.json"
+  }
+}
