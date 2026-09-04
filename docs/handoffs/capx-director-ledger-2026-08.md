@@ -237,6 +237,32 @@ Two records corrections fold into existing lanes: **D47 gains item 5** — the b
 
 **What this desk got wrong, stated plainly:** it graded the queue by carrying forward its own prior sentence instead of re-reading each landed finding's routed list against the artifacts on main. The refresh protocol gains a step: **before writing "nothing else", list every routed item of every finding landed this sitting and state per item whether its precondition is met at the pin.**
 
+**AMENDMENT 4 (lane capx D45-R, 2026-09-04 — recorded by the lane, not the desk: the §0ac.7 stale set CLOSES, CAISO excepted; D45 is CLOSED through §9):**
+
+- **D45-R LANDED** (branch `claude/capx-d45r-close-jwq3bf`; `PREDECL-capx-d45r-2026-09-04.md`
+  pushed before the first solve; finding `FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md`
+  §4–§9 filled in place, §9 close-out line written). Eight solves, eight pre-declared cache keys
+  realized exactly; every prior preserved at `-pre-d45r`; NOTHING ARMS; gate (a) untouched.
+- **§0ac.7 stale-set inventory, final:** `pjm-t1h` · `nyiso-t1h` · `neiso-t1h` (now the SHIPPED
+  posture per r#33; D46's armed record at `neiso-t1h-pre-d45r`) · `nyiso-t1f` · `pjm-t1f` ·
+  `miso-t1f` → **CLOSED**. `caiso-t1h` / `caiso-t1f` → **STILL STALE** (keeper-vintage axis:
+  caiso-241 → 243 promoted this window; the CAISO lane's, per amendment 2's standing clause).
+  With D46 Stage 1 the whole set is closed except CAISO's two rows.
+- **Stage 3 cost, MEASURED at the 5-year t1f grain (the D47b bracket resolved for PJM and
+  MISO):** PJM 28.2 min / 9.0 GB solo; MISO 65.2 min / 10.0 GB solo (2030 alone 28 min; FC-8 CAVEAT on both); NYISO 16.0 min / 3.3 GB.
+  Neither PJM nor MISO approached the 2 h STOP. The FF-3E full-horizon projections are
+  untouched (still unmeasured at 25 yr).
+- **The two arming questions, answered on the pre-stated conditions (finding §6):** NYISO
+  curve-ON — DO NOT ARM (none of (a)/(b)/(c) met; +189 % is a position artifact: the requirement
+  sits 2 GW low on the realized-peak basis and the NYC/LI/G-J locality is un-represented);
+  PJM curve-ON over-fire — does NOT survive the corrected position (the fixed-anchor control
+  fails nothing; the pair brackets the clearing half). No default moves in either ISO.
+- **Routed:** the PJM/NYISO repair lanes the finding names (§2.3 items 1–3; §5.2.4 items 1–3,
+  led by the requirement-on-the-published-ICAP-market-peak repair); the `-ff-t1-gate`
+  `VERDICT_MAP` rows and the superseded t1f sidecars' `verdict_key` overrides left as D46 left
+  theirs (records item); the PJM t1f CCS conversions at carbon = 0 vs D41 §4.3 (routed, not
+  inferred); the NEISO coal-economic sign under the shipped vs armed bar (P11 miss).
+
 ## 0ac. Refresh #32 (2026-09-03, main HEAD `c73f78f5`) — nothing capx lands and the queue stays empty; the owner's backcast track promotes THREE keepers in one day, which widens the re-measure's stale set and leaves the forecast board's gate-(a) stamps stale on all three — R-T's at-source routing missed its first three tests
 
 **0. FIRST ACT.** The handoff's newest-entry claim (§0ab = r#31) matched the ledger's actual
