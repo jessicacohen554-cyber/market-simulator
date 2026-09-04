@@ -12119,3 +12119,143 @@ rows with a cell in every ISO shard, and run
 **`2026-09-04-caiso-243-b1-f923`** (**keeper**).
 
 **Next number: caiso-244.**
+
+## caiso-244 (2026-09-04) — the lane's recipe instrument is REPAIRED STRUCTURALLY and caiso-242's voided ratios re-measure at a THIRD of their size; the `IMPORT_TRANCHES[CAISO]` LEVEL object is LOCATED with zero LP — the whole +8.4/+8.7/+5.3 TWh over-import is the NORTH corridor's firm block (its MIC-share split), NOT the 8,800 MW spot ladder; the scored pass has NO export outlet; imports set the CAISO price in one hour of five. NO SOLVE, keeper unchanged
+
+**Keeper `2026-09-04-caiso-243-b1-f923` UNCHANGED**, NOT-YET (C3a the sole
+load-bearing FAIL +3.9 / +12.3 / +14.4 %; C1 12/12 free 8/8; C3c the single
+ledgered caveat; C6 attested; C8 PASS). No LP, no `ScenarioConfig` field,
+nothing armed, no run registered (rule 15 does not attach), **no cell verdict
+moved** — three evidence appends on the CAISO shard. No `complete`/`final`
+marker; holdout freeze ACTIVE; every read and rebuild inside 2023–2025 (one
+incidental raw print of 2019–2022 / H1-2026 annual DIBA sums disclosed in the
+PRECOMMIT §0.2, used only to name caiso-235's regime break).
+
+**THE TWO OWED INSTRUMENT REPAIRS, DONE FIRST (handoff items 1–2).**
+`scripts/replay_keeper.run_year_kwargs` is now the ONE sanctioned
+`meta.json → run_year(fleet_only=True)` reconstruction — the strict, remapping
+`build_kwargs` restricted to the subset `solve_and_persist` hands `run_year`
+under its own names (`commitment → commitment_enabled`,
+`screen_coal → commitment_screen_coal`); `run_year_unreachable` discloses the
+recorded non-default solve kwargs a fleet-only rebuild cannot carry (CAISO:
+none). `scripts/lib/bundle_fleet.full_run_year_kwargs` (the pjm-124 helper the
+CAISO lane never used) now delegates to it — measured equal on all six
+designated keepers up to `None`-vs-`{}` on empty override dicts. **Measured
+before the switch: the by-name filter drops `prb_overrides` on EVERY ISO's
+keeper — 36 / 50 / 18 / 42 / 35 / 5 structural flags on CAISO / ERCOT / PJM /
+MISO / NYISO / NEISO — plus `coal_bit_sigmoid` and `bit_overrides`.**
+`tests/regression/test_run_year_kwargs_recipe.py` pins the remaps, the helper
+agreement, the disclosure, and confines the retired pattern to a frozen
+allowlist of nine pre-caiso-244 probes (a tenth fails CI). caiso-242's four
+probes were rewired and re-run on-recipe against the caiso-243 keeper
+(`_caiso244_*_onrecipe.json`; the `_caiso242_*.json` artifacts stay frozen as
+the historical record): **gas-basis identity ratio 1.078 / 1.223 / 1.192**
+(VOID were 1.298 / 1.310 / 1.327), residual **+0.41 / +0.55 / +0.59 $/MMBtu ≈
+the $0.46 `CAISO_CITYGATE_TRANSPORT_ADDER`**; CC_REGULAR econ offer ÷ measured
+bid **1.021 / 1.130 / 1.140** (was 1.22 / 1.28 / 1.49), CT_PEAKER **0.912 /
+1.116 / 1.081** (was 1.10 / 1.28 / 1.26 — 2023 is BELOW the bid); the CT
+cheapest-offer-above-price median gap **$3.74 / $1.38 / $3.66** (was $13–16).
+The "domestic gas priced ~30 % above the market's own bids" reading was mostly
+the instrument's artifact. What survives: caiso-242 §5's data defect (repaired
+at caiso-243), the CT_PEAKER VOLUME miss, and the fuel-invariant-margin
+FLATNESS — **larger on-recipe** (CT econ_low measured range 0.013 vs
+armed-implied 0.345, 26.5×). CT_PEAKER availability stays CLOSED (0 h).
+
+**THE OBJECT — handoff item A, Phase 0, measure-do-not-arm.** Pre-registered
+(`PRECOMMIT-caiso244-import-level-phase0-2026-09-04.md`, `873b1afe`, before the
+probe was written): row-level import dispatch reconstructed from the keeper's
+committed P1 zonal duals by LP complementarity, with its own falsifier
+G-RECON. **G-RECON PASSES EXACTLY on the GROSS basis** (0.000 % annual, 1e-4 MW
+RMSE on 3,000+ hours with no marginal import row) and the firm floor energy it
+recovers reproduces the committed D-2 `firm_import` rows to the fourth decimal
+(17.94 / 22.68 / 22.49 TWh) — two committed artifacts, one reconstruction.
+
+**RESULT 1 — the level is the NORTH corridor's firm block.** Against the
+committed EIA-930 corridor producer on the model clock, the model's
+**+8.43 / +8.69 / +5.31 TWh** net over-import is **PNW +11.30 / +10.65 / +8.76**
+and **DSW −2.87 / −1.96 / −3.45** (the south is UNDER-imported). The
+`PNW_hydro_base` FLOOR alone (7.70 / 9.74 / 9.99 TWh — the DMM RA-import
+capacity 2,323 / 3,371 / 3,371 MW × the published MIC north share 46 %, forced
+as energy) exceeds the ENTIRE measured COI-side NET import (−0.55 / 2.06 / 4.73)
+by **+8.25 / +7.68 / +5.26** and even the measured GROSS import (4.65 / 5.76 /
+7.05) by **+3.05 / +3.97 / +2.94**; the model puts 29–33 % of its net import on
+COI, the record −2 / 7 / 13 %. **The MIC north share is a transmission-
+CAPABILITY allocation key used as an ENERGY-source key, ~40 points off in
+2023–25.** NOT the 8,800 MW spot ladder: 23.5 / 3.5 / 2.9 % of import energy,
+`WECC_scarcity` live only in 2023 (2.68 TWh, marginal 1,647 h). The closed
+depth lane stays closed.
+
+**RESULT 2 — the scored P1 pass has NO export outlet, found by the
+instrument's own gate.** The NET basis failed G-RECON by 92–110 % because the
+probe's first run carried the fleet-only (P0) export bounds into P1 — corrected
+before any result was read: `pipeline/commitment._bridge_floored_fleet` lifts
+every `pmin < 0` leg to a zero lower bound unless `caiso_p1_export_sink_seam`
+(OFF on the keeper, cell `R`, caiso-142; caiso-138 §D). Verified from committed
+bytes: the ISO energy balance leaves **0.58 / 2.21 / 2.31 TWh** (≤ 509 MW in
+any hour — losses plus at most that much export) against **58.6 / 72.4 /
+63.9 TWh** the legs WOULD carry at the P1 duals. So the model's `import` klass
+is GROSS and net at once, while the measured comparator nets **5.6 / 4.1 /
+2.7 TWh** of real exports. The adjudicated cell is not re-opened.
+
+**RESULT 3 — imports set the CAISO landing-zone price in 19.9 / 17.7 / 23.0 %
+of hours** (an import row marginal at its WECC node with the corridor link
+unbound: the clean-depth rows at the RAW Palo Verde hub, `PNW_midC` at Malin +
+wheel). caiso-202 §C's "< 5 % direct-marginal" does not transfer to node
+complementarity. A measured property of the seam any C3a attribution has to
+carry, not a lever.
+
+**RESULT 4 — December is NOT an import-volume excess**: model net 4,243 /
+6,427 / 7,042 MW vs measured 3,826 / 6,232 / 7,302 MW. caiso-232's defect-2
+slab needs another carrier (Result 3's hub-marginal hours are the next
+measurement — an ask). **RESULT 5 — the two firm prices are LIVE as
+bound-setters**: under the caiso-151 clip the $28 / $48 offers decide 0.71 /
+2.41 / 3.32 TWh/yr (block at capability because the offer sits below λ);
+caiso-229's "inert by construction" is withdrawn on this keeper, caiso-188 §2
+reading 1 stands.
+
+**PREDICTIONS: five hold, four fall, scored against interest.** P-1 (G-RECON)
+HOLDS exact; **P-2** (PNW excess > DSW) HOLDS; **P-3** (PNW floor − measured
+≥ 4 TWh) HOLDS; P-4 (firm rows strictly between floor and capability ≥ 10 %)
+**FALSIFIED** as written (≤ 2.5 %) — I registered the wrong observable, and
+liveness holds by a different signature; P-5 first leg HOLDS, second leg
+**FALSIFIED** in 2023 (scarcity 19.4 % of capability-hours); **P-6 FALSIFIED**
+(18–23 % vs < 5 %); **P-7 FALSIFIED** (Dec-2025 forced 2.65 + 1.05 > economic
+1.53); P-8 HOLDS by construction (the balance bound alone would not have
+settled it).
+
+**HAZARD, STATED.** The PRECOMMIT §0.5 called a firm-floor REMOVAL C3a-adverse.
+The attribution that landed — a north→south RE-SPLIT — is **favourable on both
+zones** (caiso-215: NP15 under-prices, the south carries ~100 % of the gap):
+the **FOURTH consecutive favourable direction in this lane**. Never an argument
+(rule 1); any arm must exclude C3a's verdict from its promotion basis.
+
+**CANDIDATE FORMS, FOR THE OWNER, NONE ARMED (FINDING §5):** (i) CAISO's
+published annual RA-import capability ALLOCATION results by branch group — a
+published allocation key replacing the capability-share key; rule-13
+admissible by inspection; **a data-intake ask, recommended first**; (ii) the
+per-intertie self-schedule share from CAISO's own DAM intertie bids, if that
+grain exists (the committed caiso-151 ceiling is system-level); (iii) the
+EIA-930 corridor energy share of the series the firm SHAPE already uses —
+rule-13 tension stated, weakest; (iv) capability-not-floor — not recommended
+alone.
+
+**DO-NOT-REDO adds (FINDING §7):** never compare the `import` klass to measured
+NET interchange without saying it is gross and the pass exports nothing; never
+cite caiso-242 §3's voided ratios (cite FINDING-caiso244 §2.2); never attribute
+the over-import to the 8,800 MW ladder; never quote "firm prices inert by
+construction"; never quote < 5 % as the import-marginal share; never attribute
+the December slab to import volume; never rebuild a recipe by parameter name
+(CI-enforced).
+
+**Deliverables:** `scripts/replay_keeper.py` (`run_year_kwargs`,
+`run_year_unreachable`), `scripts/lib/bundle_fleet.py`,
+`tests/regression/test_run_year_kwargs_recipe.py`, the four rewired caiso-242
+probes + `_caiso244_*_onrecipe.json`,
+`scripts/probes/_caiso244_import_level_anatomy.py` +
+`_caiso244_import_level_anatomy.json`,
+`PRECOMMIT-caiso244-import-level-phase0-2026-09-04.md`,
+`FINDING-caiso244-import-level-phase0-2026-09-04.md`, evidence appends (no
+verdict move) on `import_hub_pricing`, `caiso_firm_selfsched_floor`,
+`measured_offer_surface`.
+
+**Next number: caiso-245.**
