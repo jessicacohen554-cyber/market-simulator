@@ -1,0 +1,39 @@
+control pjm-2021-2025-realized-t1h-d45r c6091bd5b62bbc3f gates {'pjm_accreditation_design_vintage': None, 'pjm_demand_response_supply': None}
+arm     pjm-2021-2025-realized-t1h-d48-devintage bbe13b3f7b659d36 gates {'pjm_accreditation_design_vintage': True, 'pjm_demand_response_supply': True}
+
+   yr      arm      peak  position        req  rm_after  firm_after  gap→clr  pub clr    zero  screen $/kW-yr                         retire by reason
+ 2021  control   149,590         -    130,295   -0.0104     148,040        -   1.0417  1.0741              []                                       {}
+ 2021      arm   149,590         -    163,023    0.2477     186,643        -   1.0417  1.0741              []                                       {}
+ 2022  control         -         -          -         -           -        -   1.0510  1.0655           [0.0]                      {'announced': 3479}
+ 2022      arm         -         -          -         -           -        -   1.0510  1.0655           [0.0]                      {'announced': 3479}
+ 2023  control   147,605    1.1398    128,566   -0.0093     146,228     8.46   1.0552  1.0652           [0.0]                      {'announced': 1796}
+ 2023      arm   147,605    1.1408    160,904    0.2418     183,296     8.56   1.0552  1.0652           [0.0]                      {'announced': 1796}
+ 2024  control   153,121    1.0964    133,371   -0.1025     137,426     4.09   1.0555  1.0643           [0.0]    {'announced': 244, 'economic': 11415}
+ 2024      arm   153,121    1.0990    166,810    0.1245     172,183     4.35   1.0555  1.0643           [0.0]    {'announced': 244, 'economic': 12818}
+ 2025  control   160,560    0.9617    144,632   -0.1405     138,009    -4.32   1.0049  1.0673              []                         {'announced': 1}
+ 2025      arm   160,560    0.9566    150,605   -0.1098     142,929    -4.83   1.0049  1.0673              []                         {'announced': 1}
+
+FC-3 rows that MOVED (arm vs control):
+  loyo.2023.false_gw: 8.09 -> 9.493
+  loyo.2025.false_gw: 6.795 -> 8.198
+  retire.by_fuel.coal: 16.99 -> 18.393
+  retire.err_frac: 0.192 -> 0.285
+  retire.false_retire_gw: 6.691 -> 8.094
+  retire.total_gw: 17.958 -> 19.361
+
+P9 sign test (|position - published cleared|, pts):
+  2023: control 8.46  arm 8.56  Δ +0.10  degrades
+  2024: control 4.09  arm 4.35  Δ +0.26  degrades
+  2025: control 4.32  arm 4.83  Δ +0.51  degrades
+
+entry-screen capacity revenue ($/kW-yr) by tech:
+  2021  control {}  thermal_adds []  decided_vre None
+  2021      arm {}  thermal_adds []  decided_vre None
+  2022  control {'wind': 0.0, 'solar': 0.0, 'gas_cc': 0.0, 'gas_ct': 0.0, 'nuclear_smr': 0.0}  thermal_adds [('gas_cc', 356.8, 'planned'), ('gas_cc', 356.8, 'planned'), ('gas_cc', 354.4, 'planned'), ('gas_cc', 612.0, 'planned'), ('gas_cc', 612.0, 'planned'), ('gas_cc', 612.0, 'planned')]  decided_vre {'solar': 2440.6, 'wind': 1500.0}
+  2022      arm {'wind': 0.0, 'solar': 0.0, 'gas_cc': 0.0, 'gas_ct': 0.0, 'nuclear_smr': 0.0}  thermal_adds [('gas_cc', 356.8, 'planned'), ('gas_cc', 356.8, 'planned'), ('gas_cc', 354.4, 'planned'), ('gas_cc', 612.0, 'planned'), ('gas_cc', 612.0, 'planned'), ('gas_cc', 612.0, 'planned')]  decided_vre {'solar': 2440.6, 'wind': 1500.0}
+  2023  control {'wind': 0.0, 'solar': 0.0, 'gas_cc': 0.0, 'gas_ct': 0.0, 'nuclear_smr': 0.0}  thermal_adds [('gas_cc', 607.0, 'planned'), ('gas_cc', 607.0, 'planned')]  decided_vre {'solar': 2440.6}
+  2023      arm {'wind': 0.0, 'solar': 0.0, 'gas_cc': 0.0, 'gas_ct': 0.0, 'nuclear_smr': 0.0}  thermal_adds [('gas_cc', 607.0, 'planned'), ('gas_cc', 607.0, 'planned')]  decided_vre {'solar': 2440.6}
+  2024  control {'wind': 0.0, 'solar': 0.0, 'gas_cc': 0.0, 'gas_ct': 0.0, 'nuclear_smr': 0.0}  thermal_adds []  decided_vre {'solar': 2440.6, 'wind': 1500.0}
+  2024      arm {'wind': 0.0, 'solar': 0.0, 'gas_cc': 0.0, 'gas_ct': 0.0, 'nuclear_smr': 0.0}  thermal_adds []  decided_vre {'solar': 2440.6, 'wind': 1500.0}
+  2025  control {'wind': 0.0, 'solar': 0.0, 'gas_cc': 121.98, 'gas_ct': 98.9, 'nuclear_smr': 0.0}  thermal_adds [('gas_ct', 1012.8, 'reserve_backstop')]  decided_vre {'gas_cc': 4000.0, 'gas_ct': 1012.8, 'solar': 2440.6}
+  2025      arm {'wind': 0.0, 'solar': 0.0, 'gas_cc': 121.98, 'gas_ct': 98.9, 'nuclear_smr': 0.0}  thermal_adds [('gas_ct', 1012.8, 'reserve_backstop')]  decided_vre {'gas_cc': 4000.0, 'gas_ct': 1012.8, 'solar': 2440.6}
