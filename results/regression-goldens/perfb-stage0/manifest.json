@@ -496,22 +496,21 @@
       ]
     },
     "NYISO": {
-      "bundle": "results/calibration/nyiso159_lossarm_B",
+      "bundle": "results/calibration/nyiso186_astoria_identity",
       "content_hashes": {
         "btm.parquet": "cfe076736c1f233af397984a516dd67630b2d6f07646907fae6b14bfed05d623",
-        "dispatch/2023_P1.parquet": "e266424e75abef69694dbc39679cfdb0b64c538531990d975e8f4e5241810a95",
-        "dispatch/2023_P1_fleet.parquet": "a10d18bb65484ceed281b928684016bdeca367001bc0beab17a0f1b5849d422e",
-        "dispatch/2024_P1.parquet": "c79009209c8e87439ac10040060613c241ae43ce6dd009d3da63902013728019",
-        "dispatch/2024_P1_fleet.parquet": "03dc58ad9c1d05a7571c2bd07edd7f613f4cc6f5f5b58fe86d435bc63b474ba3",
-        "dispatch/2025_P1.parquet": "c27e928588cde3e1c90c9072fc05918a593a2d49ade6ccb03a76c2bc82813101",
-        "dispatch/2025_P1_fleet.parquet": "ca78b4bb6e9801b53329ce01b7313862348bf24c693ca72a768f43fdb685ed08",
-        "flows.parquet": "1987d65ea4fafd6d919eca872d3240e68c57bd9a6939559706de8fe7163c993e",
-        "storage.parquet": "c556ae4c4f8a1b250d357583e16bccc0c1660ab958af573ac06026c4e689c462",
-        "system.parquet": "95bece4c1f8226acf2c135e6e9dbae530aec8f2a6f5a0c005620630d03716a3d"
+        "dispatch/2023_P1.parquet": "22e033bf1bc69e1571c04fa2ea95e90cb429a160268bd8fb2701130cbaf7de7a",
+        "dispatch/2023_P1_fleet.parquet": "2725c821f7d6625b71ddd7a78ed5f1d202875dff1e2f971a09a5f81fb7fa13d5",
+        "dispatch/2024_P1.parquet": "2067014991d50cc3f6d633f38eba9b3d321b96a84b541f22fb23b96a8dd39d76",
+        "dispatch/2024_P1_fleet.parquet": "a75b0ed0217d26abf25b5f18b3486bec64d106fcf9dc3d196d74cbf6574ec237",
+        "dispatch/2025_P1.parquet": "cb4864e493b6849e4d40c40cde4e4feed4ae000ade4cb4d6f646115e0cd0976a",
+        "dispatch/2025_P1_fleet.parquet": "7d5d7bf1ba3354944c7a623460e5dc56fcd680a470e4383963146ac0747923f1",
+        "flows.parquet": "8ee793be090eb95ea30b04a3e73df5976fbba04f0817e77fafe76985b180c42f",
+        "storage.parquet": "e9ea48112a2b0e9c5cd983d89d6f38eb03cd150e0e0636c53a51bb031272d28c",
+        "system.parquet": "09913008e36fb41e75e37dc9005eb93e9a9ce5d8d63fd774a2497735165070e4"
       },
       "defaulted_unrecorded_params": [
         "ablation_of",
-        "caiso_offer_surface_measured_ungrounded",
         "coal_takeorpay_from_data",
         "gt_ambient_derate",
         "gt_ambient_derate_ref_c",
@@ -521,41 +520,27 @@
         "persist_p0_commitment",
         "plant_tranche_config",
         "reuse_solved",
-        "unit_outage_mixed_gas_routing",
         "zero_forcing_ablation"
       ],
       "dropped_dead_config_keys": {},
       "fidelity": {
-        "meta_head_only": [
-          "caiso_offer_surface_measured_ungrounded",
-          "unit_outage_mixed_gas_routing"
-        ],
+        "meta_head_only": [],
         "meta_keeper_only": [],
-        "meta_matched": 271,
+        "meta_matched": 282,
         "scenario_config_drift": [],
-        "scenario_config_head_only": [
-          "caiso_offer_surface_measured_ungrounded",
-          "carbon_price_delta",
-          "entry_forward_reserve_leg",
-          "ercot_offer_surface_cleared_share_rt_room",
-          "ercot_offer_surface_cleared_share_rt_room_path",
-          "st_gas_mustrun_oom_level",
-          "storage_entry_availability_gate",
-          "storage_entry_cost_normalized_rank",
-          "unit_outage_mixed_gas_routing"
-        ],
-        "scenario_config_matched": 759
+        "scenario_config_head_only": [],
+        "scenario_config_matched": 781
       },
       "hours": 8760,
-      "keeper_id": "2026-08-30-nyiso-159-loss-surface",
+      "keeper_id": "2026-09-04-nyiso-186-astoria-identity",
       "keeper_snapshot": {
-        "bundle": "results/calibration/nyiso159_lossarm_B",
-        "date": "2026-08-30",
-        "definition": "nyiso-159 arm: + nyiso_zonal_loss_surface (PREREG-nyiso159; measured NYISO delivery-factor surface, zero fitted scalars)",
-        "id": "2026-08-30-nyiso-159-loss-surface",
+        "bundle": "results/calibration/nyiso186_astoria_identity",
+        "date": "2026-09-04",
+        "definition": "nyiso-186 ARM: the nyiso-185 keeper recipe (replay, ZERO scenario_config changes) with the re-derived egrid_identity_heat_rates artifact \u2014 MERGED-identity leg puts Astoria Energy II 57664 on eGRID 55375's pooled 7.3792 MMBtu/MWh in place of the gas_cc class default 6.70; PREREG-nyiso186-cc-regular-2024-class \u00a77",
+        "id": "2026-09-04-nyiso-186-astoria-identity",
         "iso": "NYISO",
-        "label": "nyiso 159 loss surface",
-        "shorthand": "nyiso-159-loss-surface",
+        "label": "nyiso 186 astoria identity",
+        "shorthand": "nyiso-186-astoria-identity",
         "sidecar_at_capture": "present",
         "years": [
           2023,
@@ -564,20 +549,20 @@
         ]
       },
       "provenance": {
-        "basis_sha": "8ffb34db7866c478eefff2f32d925041293976b8",
+        "basis_sha": "2ded868f1f204b8230e44fa928f3ae594201ef7b",
         "env": {
           "MARKET_SIM_HIGHS_THREADS": "1",
           "MARKET_SIM_WARMSTART": "1",
           "MARKET_SIM_WARMSTART_XYEAR": "0"
         },
         "git_dirty": false,
-        "git_sha": "75a55a4c",
-        "git_sha_full": "75a55a4cefa49ebf0ba285f182cf1e7280e63eea",
+        "git_sha": "2ded868f",
+        "git_sha_full": "2ded868f1f204b8230e44fa928f3ae594201ef7b",
         "highspy_version": "unknown",
-        "recorded_at": "2026-09-02T05:20:28Z",
+        "recorded_at": "2026-09-04T15:18:20Z",
         "source": "stamped-at-capture"
       },
-      "recorded_flag_count": 262,
+      "recorded_flag_count": 273,
       "years": [
         2023,
         2024,
