@@ -4199,6 +4199,8 @@ assertion, the like-for-like table and the posture disclosure.
 
 ## D45-R — the D45 close-out + D46 Stages 2 and 3 (r#33; owner rulings Q33 + Q35)
 
+*Keeper vintage at issuance (read the shards, never this note): NYISO `2026-09-04-nyiso-185-family-hr` (promoted after §0ad was written — ledger §0ad amendment 2), PJM `2026-08-15-pjm-162-inputclock`, MISO `2026-09-03-miso-202-unitclip`, NEISO `2026-08-17-neiso-99-joint-p1`. Name the keeper id per leg in the finding's vintage table.*
+
 ```
 You are the D45-R session of the capacity-expansion track. D45 (the once-only PJM + NYISO
 clearing-half + curve-ON charter) landed its PJM half and died before its NYISO half: on

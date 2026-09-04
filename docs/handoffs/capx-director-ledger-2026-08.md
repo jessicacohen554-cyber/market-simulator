@@ -205,6 +205,27 @@ Stage 3 folded into the D45-R batch at the re-measured price, or kept owner-sche
   the duty does not absolve the promoting lanes of step 4, it stops the miss from blocking
   anyone else.
 
+**AMENDMENT 2 (post-push delta, `b168260e..26c67788`, graded before close):**
+
+- **NYISO → `2026-09-04-nyiso-185-family-hr` BY OWNER RULING** (PR #4679). The arm is the
+  keeper recipe plus exactly one field, `egrid_family_heat_rates=True` — the zero-DOF grounding
+  of the Ravenswood heat-rate basis nyiso-183 located (its heat-side factor 1.029 lands inside
+  the peers' [1.0006, 1.0707]); the same-HEAD control reproduces the keeper **bit-identically
+  (0 of 52,560 hourly zonal prices differ, every year)**, which also proves the D44 default flip
+  is LP-inert for this backcast. Re-verified here: **NOT-YET, target grade 5, fails 3 — the
+  SAME grade and count with a DIFFERENT C1 cell:** C1-2023 ST_GAS +3.86 → +2.16 TWh (FAIL →
+  PASS — the Ravenswood object closes), C1-2024 CC_REGULAR +3.34 → +3.87 TWh, share 2.78 →
+  3.18 pp (PASS → FAIL on the share band), C3a-2025 −11.2 → −10.5 %, C3c unchanged. **The
+  first promotion in eight to re-key its own gate-(a) stamp** — the row's `detail` cites
+  nyiso-185 and the guard reads 6/6 OK at `26c67788` — **with one half-miss disclosed:** its
+  `corrected_by` field still reads audit v23's text (cosmetic, the guard does not read it;
+  logged, not repaired — the standing duty fires on guard failures only). **Consequence for
+  D45-R:** the NYISO keeper is nyiso-185, not nyiso-177; the charter reads the keeper from the
+  shard and names it per leg, so nothing in it moves — annotated in the pack.
+- **caiso-243 is MID-SOLVE** (checkpointed 2024 sidecars, PR #4680): the F923 low-volume
+  fallback guard, i.e. the 2.8 GW / $736 per MWh data defect caiso-242 found — a CAISO
+  promotion is imminent, which is exactly why `caiso-t1h/t1f` were left out of D45-R.
+
 ## 0ac. Refresh #32 (2026-09-03, main HEAD `c73f78f5`) — nothing capx lands and the queue stays empty; the owner's backcast track promotes THREE keepers in one day, which widens the re-measure's stale set and leaves the forecast board's gate-(a) stamps stale on all three — R-T's at-source routing missed its first three tests
 
 **0. FIRST ACT.** The handoff's newest-entry claim (§0ab = r#31) matched the ledger's actual
@@ -2940,6 +2961,8 @@ the gap.
 |---|---|
 | **CAISO (r#33)** | **KEEPER → `2026-09-03-caiso-241-b1-ctpeaker`** (#4663): CT_PEAKER `committed` ruled OUTSIDE the Lever-A refusal, grounded 1.350 → 0.991 (zero DOF), solved against a REAL control under two in-session owner rulings; the object SURVIVES (7 % closed); NOT-YET C3a alone. **caiso-242**: arm withdrawn by its own falsifier (availability never binds; gas-basis identity error 10–49 %); **DATA DEFECT: 2,816 MW priced at $736/MWh for all of Nov-2025** from one EIA-923 row, via empty `state` on 100 % of CAISO gas rows — the lane's next object. **Step 4 skipped again (7th)**; guard red on CAISO. |
 | **MISO (r#33)** | **miso-203/204/205** (zero solves): tail is ENERGY not congestion; **the C3a comparator is ONE HUB (INDIANA.HUB) and the committed probe records are on a clock 1 h off (25 h post-Feb-29)** — annual means unaffected, no determination moves, hour-matched stats in miso-202/203 affected; solar is ABOVE normal in the object's hours, the anomaly is WIND, the driver is LOAD (miso-203's mechanism refuted). Single-hub comparator = owner scoring-reference item, NOT a capx or calibration lever. Keeper unchanged at miso-202. |
+| **NYISO (r#33, post-push)** | **KEEPER → `2026-09-04-nyiso-185-family-hr` by owner ruling** (#4679): one field (`egrid_family_heat_rates`), zero DOF, control bit-identical; NOT-YET grade 5 / fails 3 with a DIFFERENT C1 cell — 2023 ST_GAS closes (Ravenswood), 2024 CC_REGULAR share opens; C3a-2025 −10.5 %. **First promotion in eight to re-key its gate-(a) stamp** (detail only; `corrected_by` stale — cosmetic, logged). |
+| **CAISO (r#33, post-push)** | **caiso-243 MID-SOLVE**: the F923 low-volume fallback guard (caiso-242's 2.8 GW / $736 per MWh defect) — promotion imminent; `caiso-t1h/t1f` deliberately outside D45-R. |
 | **NYISO (r#33)** | **nyiso-181/181b/182/183** (zero non-control solves): the in-the-money object was an offer-reconstruction artifact (3.8–9.1 → 0.06–0.07 TWh/yr); C1-2023 ST_GAS is **ONE PLANT — Ravenswood +5.47 TWh, ECONOMIC**, hidden by class-aggregate cancellation (which also hides ~1 TWh/yr of native-grain forced energy); availability refuted; **carrier = Ravenswood's heat-rate basis 9.50 vs measured 10.71 MMBtu/MWh**. Lever queue rewritten. Keeper unchanged at nyiso-177. |
 | **Audit programme (r#33)** | **v24**: leg 2's green lost to the caiso-241 stamp; **R-AB flip 4-of-5 ready, the fifth IS the stamp re-key**; path-filter trap covers all five required checks; R-Z + R-AC executed (ruff clean). Seven gates: six exit 0, `check_gate_a_provenance` exit 1. |
 | **CAISO (r#32, post-pin)** | **KEEPER → `2026-09-03-caiso-240-b1-stgas`** (#4641): rule-24 census of all 28 `_DEFAULT_HR_MULT_BY_GROUP` literals on all six keepers, zero solves — **22/28 DEAD in every ISO**; `ST_CHP`'s entire offer surface is uncited literals (an ask for MISO/PJM/NYISO/NEISO, rule 25); CAISO's one groundable cell `ST_GAS:peak` armed measured. NOT-YET C3a alone (+12.6/+15.6 %). **Skipped step 4 AGAIN** → re-keyed by this desk under C-2. |

@@ -71,7 +71,9 @@ STATE AT HANDOFF (r#33, main HEAD b168260e, 2026-09-04 — VERIFY, DON'T TRUST):
   MISO 2026-09-03-miso-202-unitclip NOT-YET {C3a-2025 alone, −12.4 % — measured to be a
   scarcity TAIL, the C3c object} · NYISO
   2026-09-02-nyiso-177-vintage-matched (owner-ruled override) NOT-YET {C1-2023 ST_GAS,
-  C3a-2025, C3c — WIDENED} · CAISO 2026-09-03-caiso-241-b1-ctpeaker NOT-YET {C3a alone}.
+  C3a-2025, C3c — WIDENED} → superseded 2026-09-04 by nyiso-185-family-hr NOT-YET {C1-2024
+  CC_REGULAR, C3a-2025 −10.5 %, C3c} (owner ruling; §0ad amendment 2) · CAISO
+  2026-09-03-caiso-241-b1-ctpeaker NOT-YET {C3a alone}; caiso-243 mid-solve.
   SEVEN consecutive promotions skipped the R-T gate-(a) re-key (audit v23 repaired three,
   this desk two under C-2; caiso-241's is red at r#33 and blocks R-AB's flip — card C-5); read keepers from keepers/<ISO>.json only, and run
   scripts/check_gate_a_provenance.py at every refresh. Markers: complete = {ERCOT, NEISO, PJM}; final EMPTY (no locked-test
