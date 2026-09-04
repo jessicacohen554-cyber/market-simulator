@@ -294,6 +294,130 @@ def build_kwargs(meta: dict) -> dict:
     return kwargs
 
 
+#: ``run_year`` parameters that are NEVER part of a bundle's recipe: the four
+#: positional arguments, the per-call plumbing ``solve_and_persist`` fills in
+#: itself (``ttc_overrides``, ``must_run_mw``, ``demand``, ``xyear_cache``) and
+#: the probe-only ``fleet_only`` switch. A fleet-only rebuild passes these
+#: itself; they are excluded from :func:`run_year_kwargs` so a probe can splat
+#: the result straight into ``run_year(year, iso, hours, gas_price, {}, ...)``.
+RUN_YEAR_NON_RECIPE: frozenset[str] = frozenset(
+    {
+        "year",
+        "iso",
+        "hours",
+        "gas_price",
+        "ttc_overrides",
+        "must_run_mw",
+        "demand",
+        "xyear_cache",
+        "fleet_only",
+    }
+)
+
+#: solve_and_persist kwarg -> run_year kwarg, where ``solve_and_persist`` hands
+#: the value to ``run_year`` under a DIFFERENT name (read off its own
+#: ``run_year(...)`` call). Everything else is passed name-for-name.
+RUN_YEAR_REMAP: dict[str, str] = {
+    "commitment": "commitment_enabled",
+    "screen_coal": "commitment_screen_coal",
+}
+# (``inject_biomass_mustrun`` and ``must_run_mw`` are also renamed in that call,
+# but from LOCALS ``solve_and_persist`` derives itself — not recorded kwargs —
+# so they are plumbing, not recipe; ``must_run_mw`` is in RUN_YEAR_NON_RECIPE.)
+
+
+def run_year_kwargs(meta: dict) -> dict:
+    """Return a bundle's recipe as ``run_calibration.run_year`` keyword arguments.
+
+    THE ONLY SANCTIONED FLEET-ONLY RECONSTRUCTION (caiso-243 §7.3 / caiso-244).
+    Every zero-LP probe that rebuilds a keeper's fleet, offers or fuel prices
+    with ``run_year(..., fleet_only=True)`` must take its kwargs from here.
+
+    Why this exists: from caiso-202 to caiso-243 the CAISO lane's probes
+    rebuilt the recipe as ``{k: v for k, v in meta.items() if k in
+    run_year's parameters}`` — a filter by parameter NAME. That silently drops
+    every meta key whose ``run_year`` kwarg is spelled differently, above all
+    ``coal_prb_sigmoid_overrides`` -> ``prb_overrides``, the generic override
+    bag that carries dozens of structural flags on EVERY ISO's keeper (36 on
+    CAISO: the daily citygate spot level, capacity deliverability, scarcity,
+    the RA bridge, hydro, measured heat rates, WEFOR, ...), plus
+    ``coal_bit_passthrough_sigmoid`` -> ``coal_bit_sigmoid`` and
+    ``coal_bit_sigmoid_overrides`` -> ``bit_overrides``. A probe on that
+    reconstruction measured a lookalike recipe, not the keeper — the CAISO
+    keeper prices gas at the daily spot level, the probes rebuilt it on the
+    monthly survey (``PRECOMMIT-caiso243-ADDENDUM-recipe-repair-2026-09-04.md``).
+
+    This function goes through :func:`build_kwargs` — the STRICT meta ->
+    ``solve_and_persist`` mapping that hard-errors on any unmapped key, applies
+    the rule-26 deletion registry and the env-gated-probe guard — and then
+    keeps exactly the subset ``solve_and_persist`` hands to ``run_year``, under
+    the names ``solve_and_persist`` uses in its own call
+    (:data:`RUN_YEAR_REMAP`). It is therefore the recipe the solve ran, not a
+    lookalike, and it fails loudly rather than dropping structure.
+
+    What a fleet-only rebuild still cannot reproduce, by construction: the
+    ``solve_and_persist`` kwargs that ``run_year`` does not take — the ERCOT
+    post-LP price overlays, ``btm_backfill_year`` (a benchmark-side mirror),
+    ``strict_demand_profile`` (which selects the ``demand`` object handed to
+    ``run_year``). None touches the fleet, the offers or the fuel prices, but a
+    probe that measures prices or demand must check them:
+    :func:`run_year_unreachable` lists the ones the bundle records away from
+    ``solve_and_persist``'s own default.
+
+    Args:
+        meta: The bundle's ``meta.json``.
+
+    Returns:
+        Keyword arguments for ``run_year`` — WITHOUT the positional four,
+        ``ttc_overrides``, ``fleet_only`` or the per-call plumbing
+        (:data:`RUN_YEAR_NON_RECIPE`); the caller supplies those.
+    """
+    from scripts.run_calibration import run_year
+
+    params = set(inspect.signature(run_year).parameters)
+    full = build_kwargs(meta)
+    out: dict = {}
+    for key, value in full.items():
+        target = RUN_YEAR_REMAP.get(key, key)
+        if target in params and target not in RUN_YEAR_NON_RECIPE:
+            out[target] = value
+    return out
+
+
+def run_year_unreachable(meta: dict) -> dict:
+    """Return the recorded solve kwargs a fleet-only ``run_year`` rebuild cannot carry.
+
+    The complement of :func:`run_year_kwargs` inside :func:`build_kwargs`:
+    every ``solve_and_persist`` kwarg the bundle records that ``run_year`` has
+    no parameter for (after :data:`RUN_YEAR_REMAP`), restricted to the ones
+    whose recorded value differs from ``solve_and_persist``'s own default — a
+    default-valued key is inert in the solve too, so only a non-default one
+    marks something the rebuild silently lacks. A probe records the result in
+    its provenance block; an empty dict means the rebuild is the whole
+    recipe the fleet/offer/fuel path ever saw.
+
+    Args:
+        meta: The bundle's ``meta.json``.
+
+    Returns:
+        ``{solve_kwarg: recorded_value}`` for the non-default unreachable keys.
+    """
+    from scripts.run_calibration import run_year
+
+    run_params = set(inspect.signature(run_year).parameters)
+    solve_params = inspect.signature(rcf.solve_and_persist).parameters
+    full = build_kwargs(meta)
+    out: dict = {}
+    for key, value in full.items():
+        target = RUN_YEAR_REMAP.get(key, key)
+        if target in run_params:
+            continue
+        default = solve_params[key].default if key in solve_params else None
+        if value != default:
+            out[key] = value
+    return out
+
+
 def _warn_on_environment_mismatch(meta: dict) -> None:
     """Print a loud (non-fatal) WARNING when the runtime environment drifted.
 

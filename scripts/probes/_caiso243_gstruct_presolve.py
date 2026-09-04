@@ -76,33 +76,16 @@ CASES = [
 def keeper_recipe_kwargs(meta: dict, run_year) -> dict:
     """The keeper recipe as ``run_year`` kwargs, via the SAME mapping the solve uses.
 
-    INSTRUMENT DEFECT FOUND AND FIXED IN caiso-243 (disclosed in the finding):
-    the lane's ``run_year(fleet_only=True)`` probe pattern (caiso-240 -> 243)
-    filtered ``meta.json`` keys by ``run_year``'s parameter NAMES, which silently
-    DROPPED every key whose solve kwarg is spelled differently — above all
-    ``coal_prb_sigmoid_overrides`` -> ``prb_overrides``, the 36-flag CAISO
-    structural override bag (``caiso_citygate_spot_level``,
-    ``capacity_deliverability_limits``, ``caiso_scarcity_pricing``, the RA
-    bridge, hydro and measured-heat-rate flags, ...). ``replay_keeper.build_kwargs``
-    is the sanctioned meta -> kwargs reconstruction (strict, remapping); the
-    subset that ``run_year`` accepts is exactly what ``solve_and_persist`` hands
-    it, so a rebuild here is the keeper's recipe, not a lookalike.
+    Since caiso-244 a thin wrapper over the shared
+    :func:`scripts.replay_keeper.run_year_kwargs` (the strict, remapping
+    reconstruction this probe first built inline at caiso-243 when the lane's
+    by-parameter-name pattern was found to drop ``prb_overrides``). The
+    ``run_year`` argument is kept for signature compatibility with the cached
+    artifacts' call sites; the helper introspects the canonical module itself.
     """
-    import replay_keeper as rk
+    from replay_keeper import run_year_kwargs
 
-    params = inspect.signature(run_year).parameters
-    skip = {
-        "year",
-        "iso",
-        "hours",
-        "gas_price",
-        "ttc_overrides",
-        "fleet_only",
-        "xyear_cache",
-        "must_run_mw",
-    }
-    full = rk.build_kwargs(meta)
-    return {k: v for k, v in full.items() if k in params and k not in skip}
+    return run_year_kwargs(meta)
 
 
 def rebuild(year: int, flags: dict) -> dict:

@@ -36,7 +36,10 @@ class: ``mult' = A x mult - B`` with
 
 both coefficients ratios of committed measured series, no free parameter.
 
-Writes ``results/calibration/_caiso242_roundtrip.json``.
+Writes ``results/calibration/_caiso244_roundtrip_onrecipe.json`` (re-measured ON-RECIPE at
+caiso-244 through ``replay_keeper.run_year_kwargs``; the ``_caiso242_roundtrip.json``
+artifact is frozen as the historical record — its keeper-relative numbers were
+measured on a lookalike recipe and are VOID).
 
 Usage:
     PYTHONPATH=.:src uv run python scripts/probes/_caiso242_roundtrip.py
@@ -46,7 +49,6 @@ from __future__ import annotations
 
 import contextlib
 import importlib.util
-import inspect
 import io
 import json
 import sys
@@ -59,12 +61,15 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
-BUNDLE = REPO / "results/calibration/caiso241_b1_ctpeaker_committed"
+# caiso-244: re-measured ON-RECIPE against the CURRENT keeper. The caiso-242
+# artifact (``_caiso242_*.json``, measured on caiso241 through the by-name
+# pattern) is frozen as the historical record and never regenerated.
+BUNDLE = REPO / "results/calibration/caiso243_b1_f923_fallback_guard"
 MEASURED = REPO / "data/raw/_validation-source/caiso_offer_curve_measured.json"
 CITYGATE = REPO / "data/raw/gas-prices/caiso_citygate_daily.csv"
 YEARS = (2023, 2024, 2025)
 HOURS = 8760
-OUT = REPO / "results/calibration/_caiso242_roundtrip.json"
+OUT = REPO / "results/calibration/_caiso244_roundtrip_onrecipe.json"
 
 #: The derive's own CO2 factor (t/MMBtu) and per-class VOM, from
 #: ``caiso_offer_curve_measured.json::_provenance``.
@@ -96,20 +101,16 @@ def _band(unit_id: str) -> str:
 def rebuild(year: int, gas_price: float) -> dict:
     """Rebuild the keeper fleet as recorded (no LP, no flag delta)."""
     from run_calibration import run_year
+    from replay_keeper import run_year_kwargs
 
     meta = json.loads((BUNDLE / "meta.json").read_text())
-    params = inspect.signature(run_year).parameters
-    skip = {
-        "year",
-        "iso",
-        "hours",
-        "gas_price",
-        "ttc_overrides",
-        "fleet_only",
-        "xyear_cache",
-        "must_run_mw",
-    }
-    kwargs = {k: v for k, v in meta.items() if k in params and k not in skip}
+    # ON-RECIPE (caiso-244 repair of the caiso-243 §7.3 instrument defect): the
+    # strict, remapping meta -> run_year reconstruction. The by-parameter-NAME
+    # filter this replaced dropped ``coal_prb_sigmoid_overrides`` ->
+    # ``prb_overrides`` (36 CAISO structural flags, incl. the daily citygate
+    # spot level) and rebuilt a lookalike recipe; every keeper-relative number
+    # this probe published at caiso-242 is VOID until re-measured here.
+    kwargs = run_year_kwargs(meta)
     CENSUS._clear_fleet_caches()
     buf = io.StringIO()
     with contextlib.redirect_stderr(buf):
@@ -164,9 +165,9 @@ def main() -> None:
 
     out: dict = {
         "_provenance": {
-            "session": "caiso-242",
+            "session": "caiso-244 (on-recipe re-run of the caiso-242 probe)",
             "bundle": str(BUNDLE.relative_to(REPO)),
-            "keeper_run_id": "2026-09-03-caiso-241-b1-ctpeaker",
+            "keeper_run_id": "2026-09-04-caiso-243-b1-f923",
             "co2_factor_derive": CO2_FACTOR,
             "note": "no LP, no flag delta; derive round-trip identity vs the model as built",
         },
