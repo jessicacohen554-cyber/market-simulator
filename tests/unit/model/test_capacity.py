@@ -17,6 +17,9 @@ from market_sim.config.constants import (
     NET_ICR_HOLD_LAST_RATIO_BY_ISO,
     NET_ICR_REQUIREMENT_MW_BY_ISO,
     NEW_ENTRY_COSTS,
+    NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO,
+    NYCA_ICAP_UCAP_TRANSLATION_BY_ISO,
+    NYCA_IRM_ADOPTED_BY_ISO,
     PLANNING_RESERVE_MARGIN_BY_ISO,
     PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     QUEUE_CAP_GW,
@@ -47,6 +50,10 @@ from market_sim.model.capacity import (
 )
 from market_sim.model.capacity_evolution.retirements import (
     gross_adequacy_requirement_mw,
+    nyiso_requirement_forecast_peak_armed,
+    nyiso_requirement_vintage_factors_armed,
+    resolve_nyiso_requirement_factor,
+    resolve_nyiso_requirement_peak_mw,
     resolve_demand_response_supply_mw,
     resolve_pre_reform_pool_requirement,
     resolve_thermal_accreditation_basis,
@@ -2189,8 +2196,16 @@ class TestNyisoIcapUcapTranslation(unittest.TestCase):
         rows = self._csv_translation_rows()
         self.assertTrue(rows, "expected published translation-factor rows on disk")
         by_year = {r["delivery_year"]: float(r["y_value"]) for r in rows}
-        latest = max(by_year)  # "2024-2025" sorts last among the CY labels
-        self.assertEqual(latest, "2024-2025")
+        # The registry's DOCUMENTED vintage is the 2024-2025 factor (Option B
+        # static proxy, FF-3D 2026-07-18). capx D52 (2026-09-04) intook the
+        # 2025-2026 row (0.1300) for its per-capability-year gate
+        # (NYCA_ICAP_UCAP_TRANSLATION_BY_ISO) WITHOUT moving this composite —
+        # re-deriving the shipped composite onto the newer row is a rule-23
+        # owner decision routed in FINDING-capx-d52-2026-09-04.md, so this test
+        # pins the registry's own vintage rather than the newest row on disk.
+        latest = "2024-2025"
+        self.assertIn(latest, by_year)
+        self.assertIn("2025-2026", by_year)  # the D52 intake is on disk
         self.assertAlmostEqual(
             PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"],
             1.0 - by_year[latest],
@@ -5833,3 +5848,284 @@ class TestPjmDemandResponseSupply(unittest.TestCase):
             pjm_accreditation_design_vintage=True,
         )
         self.assertEqual(len({off.cache_key(), on.cache_key(), both.cache_key()}), 3)
+
+
+class TestNyisoRequirementDevintage(unittest.TestCase):
+    """capx D52 (2026-09-04) — the NYISO adequacy requirement devintaged onto the
+    NYSRC ICAP-market FORECAST peak (D45 §5.2.4 item 1) and the capability year's
+    ADOPTED IRM × (1 − derate) (item 2, the D40 vintage axis), Table D.2 of the
+    NYSRC 2026-27 IRM Study Appendices. Two GATED default-OFF fields: every
+    unarmed solve is byte-identical to the single-vintage composite."""
+
+    MODEL_PEAK = 28_640.0  # the capacity-screen seam peak the 2023 screens saw
+    PUB = {  # Table D.2: forecast peak, adopted IRM %, derate, UCAP requirement
+        2020: (32_296.0, 18.9, 0.0830, 35_213.0),
+        2021: (32_333.0, 20.7, 0.0877, 35_604.0),
+        2022: (31_767.0, 19.6, 0.0978, 34_277.0),
+        2023: (32_049.0, 20.0, 0.1014, 34_559.0),
+        2024: (31_542.0, 22.0, 0.1321, 33_397.0),
+        2025: (31_469.0, 24.4, 0.1300, 34_059.0),
+    }
+
+    @staticmethod
+    def _csv_rows(metric):
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "demand-curve" / "nyiso" / "nyiso.csv"
+        with path.open(newline="") as fh:
+            return {
+                r["delivery_year"].replace("-", "/"): float(r["y_value"])
+                for r in csv.DictReader(fh)
+                if r["metric"] == metric and r["area"] == "NYCA"
+            }
+
+    @staticmethod
+    def _cfg(peak=False, factors=False, iso="NYISO", **kw):
+        return ScenarioConfig(
+            iso=iso,
+            mode="forecast",
+            hindcast=True,
+            nyiso_requirement_forecast_peak=peak,
+            nyiso_requirement_vintage_factors=factors,
+            **kw,
+        )
+
+    @staticmethod
+    def _composite(peak):
+        return (
+            peak
+            * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["NYISO"])
+            * PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"]
+        )
+
+    def test_registries_reconcile_with_published_csv_and_table_identity(self):
+        # Every registry row equals its committed csv row (rules 13/23), the
+        # three tables carry the SAME capability years, and each year satisfies
+        # Table D.2's own identity peak × (1 + IRM) × (1 − derate) = UCAP
+        # requirement to within 1 MW (the table rounds to MW). Rule 25: one ISO.
+        peaks, irms, derates = (
+            NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO["NYISO"],
+            NYCA_IRM_ADOPTED_BY_ISO["NYISO"],
+            NYCA_ICAP_UCAP_TRANSLATION_BY_ISO["NYISO"],
+        )
+        self.assertEqual(set(peaks), set(irms))
+        self.assertEqual(set(peaks), set(derates))
+        self.assertEqual(peaks, self._csv_rows("icap_market_forecast_peak"))
+        csv_irms = self._csv_rows("irm_adopted")
+        self.assertEqual(set(csv_irms), set(irms))
+        for label, pct in csv_irms.items():
+            self.assertAlmostEqual(irms[label], pct / 100.0, places=9, msg=label)
+        self.assertEqual(derates, self._csv_rows("icap_ucap_translation_factor"))
+        ucap = self._csv_rows("ucap_requirement")
+        self.assertEqual(set(ucap), set(peaks))
+        for label in peaks:
+            self.assertLess(
+                abs(peaks[label] * (1.0 + irms[label]) * (1.0 - derates[label]) - ucap[label]),
+                1.0,
+                label,
+            )
+        for reg in (
+            NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO,
+            NYCA_IRM_ADOPTED_BY_ISO,
+            NYCA_ICAP_UCAP_TRANSLATION_BY_ISO,
+        ):
+            self.assertEqual(set(reg), {"NYISO"})
+        # The single-vintage composite ratio is the 2024/25 derate, untouched.
+        self.assertAlmostEqual(
+            PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"],
+            1.0 - derates["2024/2025"],
+            places=9,
+        )
+
+    def test_default_off_is_byte_identical_to_composite(self):
+        off, plain = self._cfg(), ScenarioConfig(iso="NYISO", mode="forecast", hindcast=True)
+        for year in (*range(2019, 2036), None):
+            self.assertEqual(
+                resolve_adequacy_requirement_mw(off, "NYISO", self.MODEL_PEAK, year),
+                resolve_adequacy_requirement_mw(plain, "NYISO", self.MODEL_PEAK, year),
+            )
+            self.assertEqual(
+                resolve_adequacy_requirement_mw(off, "NYISO", self.MODEL_PEAK, year),
+                self._composite(self.MODEL_PEAK),
+            )
+        # The unarmed peak resolver hands back the caller's own float object.
+        self.assertIs(
+            resolve_nyiso_requirement_peak_mw(off, "NYISO", self.MODEL_PEAK, 2023),
+            self.MODEL_PEAK,
+        )
+        self.assertIsNone(resolve_nyiso_requirement_factor(off, "NYISO", 2023))
+
+    def test_both_armed_in_table_is_the_published_ucap_requirement(self):
+        # With both gates on the in-table requirement IS Table D.2's UCAP
+        # requirement (< 1 MW) whatever peak the model hands in — the model's
+        # peak drops out, the NEISO Net ICR / PJM FPR shape.
+        both = self._cfg(peak=True, factors=True)
+        for year, (_, _, _, ucap) in self.PUB.items():
+            for model_peak in (self.MODEL_PEAK, 31_857.0):
+                self.assertLess(
+                    abs(resolve_adequacy_requirement_mw(both, "NYISO", model_peak, year) - ucap),
+                    1.0,
+                    (year, model_peak),
+                )
+
+    def test_single_gate_arms_decompose(self):
+        # Peak-only: the composite factor on the PUBLISHED peak; factors-only:
+        # the capability year's pair on the MODEL peak. Multiplicative halves.
+        pk, fa = self._cfg(peak=True), self._cfg(factors=True)
+        for year, (pub_peak, irm, derate, _) in self.PUB.items():
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(pk, "NYISO", self.MODEL_PEAK, year),
+                self._composite(pub_peak),
+                places=6,
+            )
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(fa, "NYISO", self.MODEL_PEAK, year),
+                self.MODEL_PEAK * (1.0 + irm / 100.0) * (1.0 - derate),
+                places=6,
+            )
+        # 2024 is the one in-window year the factor half LOWERS the requirement
+        # (adopted 22.0 % vs the vintage 24.4 %); 2021 raises it (D45 item 2 sign).
+        self.assertLess(
+            resolve_adequacy_requirement_mw(fa, "NYISO", self.MODEL_PEAK, 2024),
+            self._composite(self.MODEL_PEAK),
+        )
+        self.assertGreater(
+            resolve_adequacy_requirement_mw(fa, "NYISO", self.MODEL_PEAK, 2021),
+            self._composite(self.MODEL_PEAK),
+        )
+
+    def test_pre_table_and_year_none_fall_through(self):
+        both = self._cfg(peak=True, factors=True)
+        for year in (2015, 2019, None):
+            self.assertEqual(
+                resolve_adequacy_requirement_mw(both, "NYISO", self.MODEL_PEAK, year),
+                self._composite(self.MODEL_PEAK),
+            )
+
+    def test_forecast_peak_has_no_hold_last(self):
+        # Beyond the table the model's own peak IS the forward forecast: the
+        # peak arm is the composite on the model peak, never a held MW.
+        pk = self._cfg(peak=True)
+        for year in (2026, 2030, 2050):
+            self.assertEqual(
+                resolve_adequacy_requirement_mw(pk, "NYISO", self.MODEL_PEAK, year),
+                self._composite(self.MODEL_PEAK),
+            )
+            self.assertIs(
+                resolve_nyiso_requirement_peak_mw(pk, "NYISO", self.MODEL_PEAK, year),
+                self.MODEL_PEAK,
+            )
+
+    def test_factors_hold_last_beyond_table_is_the_last_published_pair(self):
+        fa = self._cfg(factors=True)
+        held = (1.0 + 0.244) * (1.0 - 0.1300)
+        for year in (2026, 2030, 2050):
+            self.assertAlmostEqual(
+                resolve_nyiso_requirement_factor(fa, "NYISO", year), held, places=9
+            )
+            self.assertAlmostEqual(
+                resolve_adequacy_requirement_mw(fa, "NYISO", self.MODEL_PEAK, year),
+                self.MODEL_PEAK * held,
+                places=6,
+            )
+        # The held object is a RATIO: it scales with the peak.
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(fa, "NYISO", 40_000.0, 2030)
+            / resolve_adequacy_requirement_mw(fa, "NYISO", 20_000.0, 2030),
+            2.0,
+            places=9,
+        )
+        # +0.24 % over the composite — the D40 exposure split.
+        self.assertAlmostEqual(held / self._composite(1.0), 1.0024, places=3)
+
+    def test_hold_last_never_bridges_an_in_table_gap(self):
+        fa = self._cfg(factors=True)
+        with mock.patch.dict(NYCA_IRM_ADOPTED_BY_ISO["NYISO"], clear=False) as irms:
+            del irms["2023/2024"]
+            self.assertIsNone(resolve_nyiso_requirement_factor(fa, "NYISO", 2023))
+            self.assertEqual(
+                resolve_adequacy_requirement_mw(fa, "NYISO", self.MODEL_PEAK, 2023),
+                self._composite(self.MODEL_PEAK),
+            )
+            self.assertIsNotNone(resolve_nyiso_requirement_factor(fa, "NYISO", 2024))
+
+    def test_information_gate_a_later_row_is_never_read_earlier(self):
+        # The rule-13 vintage gate: model year Y reads capability year Y/Y+1
+        # ONLY. With just the 2024/25 row on file, 2023 sees nothing published.
+        both = self._cfg(peak=True, factors=True)
+        only = {"2024/2025": NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO["NYISO"]["2024/2025"]}
+        with (
+            mock.patch.dict(NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO, {"NYISO": only}),
+            mock.patch.dict(
+                NYCA_IRM_ADOPTED_BY_ISO,
+                {"NYISO": {"2024/2025": NYCA_IRM_ADOPTED_BY_ISO["NYISO"]["2024/2025"]}},
+            ),
+            mock.patch.dict(
+                NYCA_ICAP_UCAP_TRANSLATION_BY_ISO,
+                {"NYISO": {"2024/2025": NYCA_ICAP_UCAP_TRANSLATION_BY_ISO["NYISO"]["2024/2025"]}},
+            ),
+        ):
+            self.assertEqual(
+                resolve_adequacy_requirement_mw(both, "NYISO", self.MODEL_PEAK, 2023),
+                self._composite(self.MODEL_PEAK),
+            )
+            self.assertLess(
+                abs(resolve_adequacy_requirement_mw(both, "NYISO", self.MODEL_PEAK, 2024) - 33_397.0),
+                1.0,
+            )
+
+    def test_seam_position_sign_matches_the_pre_declaration(self):
+        # PREDECL-capx-d52 §1/P2 (rule 14 sign): on the 2023 seam peak the
+        # entering firm 35,163 MW sits at 1.137 over the composite and at
+        # 1.0175 over the published requirement — DOWN toward the market's
+        # 1.043, not past it.
+        off, both = self._cfg(), self._cfg(peak=True, factors=True)
+        firm = 35_163.0
+        pos_off = firm / resolve_adequacy_requirement_mw(off, "NYISO", self.MODEL_PEAK, 2023)
+        pos_on = firm / resolve_adequacy_requirement_mw(both, "NYISO", self.MODEL_PEAK, 2023)
+        self.assertAlmostEqual(pos_off, 1.137, places=3)
+        self.assertAlmostEqual(pos_on, 1.0175, places=3)
+        self.assertLess(abs(pos_on - 1.043), 0.03)
+
+    def test_other_isos_inert_with_the_flags_armed(self):
+        for iso, peak in (
+            ("PJM", 150_000.0),
+            ("MISO", 120_000.0),
+            ("NEISO", 24_000.0),
+            ("ERCOT", 85_000.0),
+            ("CAISO", 45_000.0),
+        ):
+            on, off = self._cfg(peak=True, factors=True, iso=iso), self._cfg(iso=iso)
+            for year in (2021, 2023, 2025, 2030):
+                self.assertEqual(
+                    resolve_adequacy_requirement_mw(on, iso, peak, year),
+                    resolve_adequacy_requirement_mw(off, iso, peak, year),
+                    (iso, year),
+                )
+            self.assertFalse(nyiso_requirement_forecast_peak_armed(on, iso))
+            self.assertFalse(nyiso_requirement_vintage_factors_armed(on, iso))
+        self.assertFalse(nyiso_requirement_forecast_peak_armed(None, "NYISO"))
+        self.assertFalse(nyiso_requirement_vintage_factors_armed(self._cfg(), None))
+
+    def test_backcast_coerces_hindcast_keeps_and_cache_key(self):
+        bc = ScenarioConfig(
+            iso="NYISO",
+            mode="backcast",
+            nyiso_requirement_forecast_peak=True,
+            nyiso_requirement_vintage_factors=True,
+        )
+        self.assertFalse(bc.nyiso_requirement_forecast_peak)
+        self.assertFalse(bc.nyiso_requirement_vintage_factors)
+        hc = self._cfg(peak=True, factors=True)
+        self.assertTrue(hc.nyiso_requirement_forecast_peak and hc.nyiso_requirement_vintage_factors)
+        off, explicit_off = self._cfg(), ScenarioConfig(iso="NYISO", mode="forecast", hindcast=True)
+        self.assertEqual(off.cache_key(), explicit_off.cache_key())
+        keys = {
+            off.cache_key(),
+            self._cfg(peak=True).cache_key(),
+            self._cfg(factors=True).cache_key(),
+            hc.cache_key(),
+        }
+        self.assertEqual(len(keys), 4)

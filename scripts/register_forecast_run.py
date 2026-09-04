@@ -264,6 +264,15 @@ VERDICT_MAP = {
     "pjm-2021-2025-realized-t1h-d45r-fixed": "pjm-t1h-d45r-fixed",
     "nyiso-2021-2025-realized-t1h-d45r": "nyiso-t1h",
     "nyiso-2021-2025-realized-t1h-d45r-curveon": "nyiso-t1h-d45r-curveon",
+    # capx-D52 (2026-09-04), the NYISO per-ISO requirement repair lane D45 §9
+    # names: the A/B arm (nyiso_requirement_forecast_peak +
+    # nyiso_requirement_vintage_factors ON, curve OFF) and the CONDITIONAL
+    # curve-ON probe on the repaired posture (run only if the A/B's positions
+    # met D45 §6's ±3-point condition). Both register SUFFIXED — each is one
+    # or two fields from the bare `nyiso-t1h` and renders a score the bare key
+    # would contradict; the bare key is untouched. NOTHING ARMS.
+    "nyiso-2021-2025-realized-t1h-d52-devintage": "nyiso-t1h-d52-devintage",
+    "nyiso-2021-2025-realized-t1h-d52-curveon": "nyiso-t1h-d52-curveon",
     # capx-D45R (2026-09-04), the D45 close-out at HEAD plus D46 Stages 2 and 3
     # (owner rulings Q33 + Q35). The PJM live-posture replay takes the bare key;
     # the NEISO SHIPPED-posture leg (neiso_net_icr_requirement False, as

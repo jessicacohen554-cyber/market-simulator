@@ -110,6 +110,7 @@ from market_sim.model.capacity import (
     renewable_credits_applied,
     resolve_adequacy_requirement_mw,
 )
+from market_sim.model.capacity_evolution.adequacy import curve_convention_position
 from market_sim.model.ancillary import (
     realized_storage_as_revenue_per_mw_yr,
     realized_thermal_as_revenue_per_mw_yr_by_fuel,
@@ -1979,6 +1980,62 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 year,
             )
 
+        # capx D52 observability (additive ledger fields, decision-neutral and
+        # cache-key-neutral — nothing reads them back): the capacity-screen
+        # SEAM peak this block's position and evolve_fleet's floor/backstop
+        # consume, the requirement resolved on it, the ENTERING accredited
+        # firm the screens price (the same ledger + pools the position uses),
+        # and their ratio on the ISO's curve convention — written whether or
+        # not the clearing gate is on. The ledger's ``peak_demand_mw`` /
+        # ``adequacy_requirement_mw`` below are re-derived from the LP's own
+        # (in a hindcast: measured) load, so in every hindcast year that is not
+        # the weather year they are NOT the values the screens saw; D45-R had
+        # to back the screens' position out of the curve-ON ledger against a
+        # class-EFORd reconstruction (PREDECL-capx-d52-2026-09-04.md §1).
+        screen_peak_demand: float = peak_demand
+        screen_requirement_mw: float | None = None
+        screen_entering_firm_mw: float | None = None
+        screen_reserve_position: float | None = None
+        if fleet is not None and prior_results is not None and peak_demand > 0.0:
+            screen_requirement_mw = resolve_adequacy_requirement_mw(
+                config, iso, peak_demand, year
+            )
+            screen_entering_firm_mw = accredited_firm_capacity_mw(
+                fleet,
+                float(prior_results.get("wind_cap_mw", 0.0) or 0.0),
+                float(prior_results.get("solar_cap_mw", 0.0) or 0.0),
+                float(prior_results.get("storage_firm_mw", 0.0) or 0.0),
+                iso=iso,
+                peak_demand_mw=peak_demand,
+                elcc_curves_enabled=config.renewable_elcc_curves,
+                year=year,
+                nqc_curves_enabled=config.caiso_nqc_accreditation,
+                config=config,
+                accreditation_year=year,
+            )
+            if screen_requirement_mw > 0.0:
+                screen_reserve_position = curve_convention_position(
+                    config, iso, screen_entering_firm_mw / screen_requirement_mw
+                )
+        screen_ledger_fields = dict(
+            screen_peak_demand_mw=round(float(screen_peak_demand), 3),
+            screen_adequacy_requirement_mw=(
+                round(float(screen_requirement_mw), 3)
+                if screen_requirement_mw is not None
+                else None
+            ),
+            screen_entering_firm_mw=(
+                round(float(screen_entering_firm_mw), 3)
+                if screen_entering_firm_mw is not None
+                else None
+            ),
+            screen_reserve_position=(
+                round(float(screen_reserve_position), 6)
+                if screen_reserve_position is not None
+                else None
+            ),
+        )
+
         if fleet is None:
             # First year: build the base fleet. With CAMPD binning the fleet
             # comes from the operational bin assignments (base + peak
@@ -2209,6 +2266,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 firm_clean_mw=None,
                 reserve_margin=None,
                 rps_dual=None,
+                # capx D52: the seam quantities the bridge year's screens
+                # consumed (the bridge evolves against the seam peak even
+                # though it never solves).
+                **screen_ledger_fields,
                 storage_additions=_storage_additions_since(
                     storage_units, prior_storage_ids, zone_names
                 ),
@@ -4525,6 +4586,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 if peak_demand > 0
                 else None
             ),
+            # capx D52: the SEAM peak / requirement / entering firm / position
+            # the screens actually consumed this year (see the observability
+            # block at the top of the loop) — distinct from the two LP-peak
+            # fields above in every hindcast year that is not the weather year.
+            **screen_ledger_fields,
             # Accreditation trail (CR-3.1): pool nameplates, resolved VRE
             # credits, and the storage fleet's power / pre-dilution firm MW
             # (dilution applies at the evolve consumer, capacity.py -- see

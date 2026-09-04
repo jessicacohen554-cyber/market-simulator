@@ -1,0 +1,463 @@
+{
+ "head_factor": 1.0796676,
+ "published": {
+  "2021": {
+   "capability_year": "2021/22",
+   "vintage": "2021-2022",
+   "irm_study_pct": 20.7,
+   "irm_adopted_pct": 20.7,
+   "nysrc_peak_mw": 32333.0,
+   "translation_factor": 0.0877,
+   "icap_requirement_mw": 39026.0,
+   "ucap_requirement_mw": 35604.0,
+   "ucap_supplied_mw": 37348.596,
+   "pos_published": 1.049,
+   "spot_kw_month": 4.18,
+   "spot_kw_yr": 50.16,
+   "head_curve_at_published_pos": 0.0,
+   "zero_cross": NaN
+  },
+  "2022": {
+   "capability_year": "2022/23",
+   "vintage": "2022-2023",
+   "irm_study_pct": 19.6,
+   "irm_adopted_pct": 19.6,
+   "nysrc_peak_mw": 31767.0,
+   "translation_factor": 0.0978,
+   "icap_requirement_mw": 37993.0,
+   "ucap_requirement_mw": 34277.0,
+   "ucap_supplied_mw": 37121.991,
+   "pos_published": 1.083,
+   "spot_kw_month": 3.05,
+   "spot_kw_yr": 36.599999999999994,
+   "head_curve_at_published_pos": 0.0,
+   "zero_cross": NaN
+  },
+  "2023": {
+   "capability_year": "2023/24",
+   "vintage": "2023-2024",
+   "irm_study_pct": 19.9,
+   "irm_adopted_pct": 20.0,
+   "nysrc_peak_mw": 32049.0,
+   "translation_factor": 0.1014,
+   "icap_requirement_mw": 38459.0,
+   "ucap_requirement_mw": 34559.0,
+   "ucap_supplied_mw": 36045.037,
+   "pos_published": 1.043,
+   "spot_kw_month": 4.11,
+   "spot_kw_yr": 49.32000000000001,
+   "head_curve_at_published_pos": 47.56675000000007,
+   "zero_cross": 1.12
+  },
+  "2024": {
+   "capability_year": "2024/25",
+   "vintage": "2024-2025",
+   "irm_study_pct": 23.1,
+   "irm_adopted_pct": 22.0,
+   "nysrc_peak_mw": 31542.0,
+   "translation_factor": 0.1321,
+   "icap_requirement_mw": 38481.0,
+   "ucap_requirement_mw": 33397.0,
+   "ucap_supplied_mw": 35334.026000000005,
+   "pos_published": 1.058,
+   "spot_kw_month": 3.47,
+   "spot_kw_yr": 41.64,
+   "head_curve_at_published_pos": 37.38083333333333,
+   "zero_cross": 1.12
+  },
+  "2025": {
+   "capability_year": "2025/26",
+   "vintage": "2025-2026",
+   "irm_study_pct": 24.4,
+   "irm_adopted_pct": 24.4,
+   "nysrc_peak_mw": 31469.0,
+   "translation_factor": 0.13,
+   "icap_requirement_mw": 39148.0,
+   "ucap_requirement_mw": 34059.0,
+   "ucap_supplied_mw": 36034.422,
+   "pos_published": 1.058,
+   "spot_kw_month": 4.28,
+   "spot_kw_yr": 51.36,
+   "head_curve_at_published_pos": 26.117499999999996,
+   "zero_cross": 1.12
+  }
+ },
+ "l2_bare_nyiso_t1h": [
+  {
+   "year": 2021,
+   "model_peak_mw": 30919.0,
+   "published_peak_mw": 32333.0,
+   "ledger_requirement_mw": 33382.243,
+   "ledger_position": null,
+   "requirement_mw": {
+    "OFF": 33382.242524400004,
+    "PEAK": 34908.892510800004,
+    "FACTORS": 34046.3362659,
+    "BOTH": 35603.3568513
+   },
+   "firm_entering_mw": null,
+   "firm_after_mw": 36144.92938,
+   "published_position": 1.049,
+   "published_ucap_supplied_mw": 37348.596,
+   "real_spot_kw_yr": 50.16,
+   "curve_at_published_position": null
+  },
+  {
+   "year": 2022,
+   "bridge": true
+  },
+  {
+   "year": 2023,
+   "model_peak_mw": 30206.0,
+   "published_peak_mw": 32049.0,
+   "ledger_requirement_mw": 32612.44,
+   "ledger_position": null,
+   "requirement_mw": {
+    "OFF": 32612.439525600003,
+    "PEAK": 34602.2669124,
+    "FACTORS": 32571.73392,
+    "BOTH": 34559.077679999995
+   },
+   "firm_entering_mw": 36144.92938,
+   "firm_after_mw": 34744.632736,
+   "published_position": 1.043,
+   "published_ucap_supplied_mw": 36045.037,
+   "real_spot_kw_yr": 49.32000000000001,
+   "curve_at_published_position": 47.56675000000007,
+   "position_entering": {
+    "OFF": 1.108317252735021,
+    "PEAK": 1.044582699494962,
+    "FACTORS": 1.1097023409553877,
+    "BOTH": 1.0458881372554039
+   },
+   "position_gap_pts": {
+    "OFF": 6.531725273502098,
+    "PEAK": 0.15826994949621476,
+    "FACTORS": 6.670234095538774,
+    "BOTH": 0.2888137255403933
+   },
+   "curve_at_entering": {
+    "OFF": 7.217017122940897,
+    "PEAK": 46.5890373869872,
+    "FACTORS": 6.361378874809331,
+    "BOTH": 45.782603210474285
+   },
+   "exit_budget_mw": {
+    "OFF": 3532.489854399999,
+    "PEAK": 1542.6624675999992,
+    "FACTORS": 3573.1954600000026,
+    "BOTH": 1585.8517000000065
+   }
+  },
+  {
+   "year": 2024,
+   "model_peak_mw": 28990.0,
+   "published_peak_mw": 31542.0,
+   "ledger_requirement_mw": 31299.564,
+   "ledger_position": null,
+   "requirement_mw": {
+    "OFF": 31299.563724000003,
+    "PEAK": 34054.875439200005,
+    "FACTORS": 30695.71362,
+    "BOTH": 33397.868195999996
+   },
+   "firm_entering_mw": 34744.632736,
+   "firm_after_mw": 35829.23383,
+   "published_position": 1.058,
+   "published_ucap_supplied_mw": 35334.026000000005,
+   "real_spot_kw_yr": 41.64,
+   "curve_at_published_position": 37.38083333333333,
+   "position_entering": {
+    "OFF": 1.1100676368009044,
+    "PEAK": 1.0202542892289082,
+    "FACTORS": 1.131905032934693,
+    "BOTH": 1.0403248654104607
+   },
+   "position_gap_pts": {
+    "OFF": 5.206763680090432,
+    "PEAK": -3.77457107710919,
+    "FACTORS": 7.390503293469286,
+    "BOTH": -1.7675134589539399
+   },
+   "curve_at_entering": {
+    "OFF": 5.988387312121467,
+    "PEAK": 60.13835145240413,
+    "FACTORS": 0.0,
+    "BOTH": 48.03746656294312
+   },
+   "exit_budget_mw": {
+    "OFF": 3445.0690119999963,
+    "PEAK": 689.757296799995,
+    "FACTORS": 4048.919116000001,
+    "BOTH": 1346.7645400000038
+   }
+  },
+  {
+   "year": 2025,
+   "model_peak_mw": 31857.0,
+   "published_peak_mw": 31469.0,
+   "ledger_requirement_mw": 34394.971,
+   "ledger_position": null,
+   "requirement_mw": {
+    "OFF": 34394.9707332,
+    "PEAK": 33976.0597044,
+    "FACTORS": 34478.19396,
+    "BOTH": 34058.26932
+   },
+   "firm_entering_mw": 35829.23383,
+   "firm_after_mw": 36438.833025,
+   "published_position": 1.058,
+   "published_ucap_supplied_mw": 36034.422,
+   "real_spot_kw_yr": 51.36,
+   "curve_at_published_position": 26.117499999999996,
+   "position_entering": {
+    "OFF": 1.041699791167886,
+    "PEAK": 1.0545435268751897,
+    "FACTORS": 1.0391853433961018,
+    "BOTH": 1.0519980769827326
+   },
+   "position_gap_pts": {
+    "OFF": -1.6300208832114027,
+    "PEAK": -0.3456473124810344,
+    "FACTORS": -1.881465660389825,
+    "BOTH": -0.600192301726743
+   },
+   "curve_at_entering": {
+    "OFF": 32.983962970528026,
+    "PEAK": 27.573539303826355,
+    "FACTORS": 34.04317409439213,
+    "BOTH": 28.6458100710239
+   },
+   "exit_budget_mw": {
+    "OFF": 1434.263096799994,
+    "PEAK": 1853.174125599995,
+    "FACTORS": 1351.0398700000005,
+    "BOTH": 1770.964509999998
+   }
+  }
+ ],
+ "l3_curveon": [
+  {
+   "year": 2021,
+   "model_peak_mw": 30919.0,
+   "published_peak_mw": 32333.0,
+   "ledger_requirement_mw": 33382.243,
+   "ledger_position": null,
+   "requirement_mw": {
+    "OFF": 33382.242524400004,
+    "PEAK": 34908.892510800004,
+    "FACTORS": 34046.3362659,
+    "BOTH": 35603.3568513
+   },
+   "firm_entering_mw": null,
+   "firm_after_mw": 36144.92938,
+   "published_position": 1.049,
+   "published_ucap_supplied_mw": 37348.596,
+   "real_spot_kw_yr": 50.16,
+   "curve_at_published_position": null
+  },
+  {
+   "year": 2022,
+   "bridge": true
+  },
+  {
+   "year": 2023,
+   "model_peak_mw": 30206.0,
+   "published_peak_mw": 32049.0,
+   "ledger_requirement_mw": 32612.44,
+   "ledger_position": 1.137138,
+   "requirement_mw": {
+    "OFF": 32612.439525600003,
+    "PEAK": 34602.2669124,
+    "FACTORS": 32571.73392,
+    "BOTH": 34559.077679999995
+   },
+   "firm_entering_mw": 36144.92938,
+   "firm_after_mw": 31493.198483999997,
+   "published_position": 1.043,
+   "published_ucap_supplied_mw": 36045.037,
+   "real_spot_kw_yr": 49.32000000000001,
+   "curve_at_published_position": 47.56675000000007,
+   "position_entering": {
+    "OFF": 1.108317252735021,
+    "PEAK": 1.044582699494962,
+    "FACTORS": 1.1097023409553877,
+    "BOTH": 1.0458881372554039
+   },
+   "position_gap_pts": {
+    "OFF": 6.531725273502098,
+    "PEAK": 0.15826994949621476,
+    "FACTORS": 6.670234095538774,
+    "BOTH": 0.2888137255403933
+   },
+   "curve_at_entering": {
+    "OFF": 7.217017122940897,
+    "PEAK": 46.5890373869872,
+    "FACTORS": 6.361378874809331,
+    "BOTH": 45.782603210474285
+   },
+   "exit_budget_mw": {
+    "OFF": 3532.489854399999,
+    "PEAK": 1542.6624675999992,
+    "FACTORS": 3573.1954600000026,
+    "BOTH": 1585.8517000000065
+   }
+  },
+  {
+   "year": 2024,
+   "model_peak_mw": 28990.0,
+   "published_peak_mw": 31542.0,
+   "ledger_requirement_mw": 31299.564,
+   "ledger_position": 1.006186,
+   "requirement_mw": {
+    "OFF": 31299.563724000003,
+    "PEAK": 34054.875439200005,
+    "FACTORS": 30695.71362,
+    "BOTH": 33397.868195999996
+   },
+   "firm_entering_mw": 31493.198483999997,
+   "firm_after_mw": 32577.802400000004,
+   "published_position": 1.058,
+   "published_ucap_supplied_mw": 35334.026000000005,
+   "real_spot_kw_yr": 41.64,
+   "curve_at_published_position": 37.38083333333333,
+   "position_entering": {
+    "OFF": 1.0061865002882298,
+    "PEAK": 0.9247779672612955,
+    "FACTORS": 1.0259803330807853,
+    "BOTH": 0.9429703207156163
+   },
+   "position_gap_pts": {
+    "OFF": -5.1813499711770294,
+    "PEAK": -13.322203273870459,
+    "FACTORS": -3.201966691921476,
+    "BOTH": -11.502967928438379
+   },
+   "curve_at_entering": {
+    "OFF": 68.62005586788814,
+    "PEAK": 117.70261723871059,
+    "FACTORS": 56.68602418004321,
+    "BOTH": 106.73414413520968
+   },
+   "exit_budget_mw": {
+    "OFF": 193.63475999999355,
+    "PEAK": -2561.676955200008,
+    "FACTORS": 797.4848639999982,
+    "BOTH": -1904.669711999999
+   }
+  },
+  {
+   "year": 2025,
+   "model_peak_mw": 31857.0,
+   "published_peak_mw": 31469.0,
+   "ledger_requirement_mw": 34394.971,
+   "ledger_position": 1.028294,
+   "requirement_mw": {
+    "OFF": 34394.9707332,
+    "PEAK": 33976.0597044,
+    "FACTORS": 34478.19396,
+    "BOTH": 34058.26932
+   },
+   "firm_entering_mw": 32577.802400000004,
+   "firm_after_mw": 32712.424164000004,
+   "published_position": 1.058,
+   "published_ucap_supplied_mw": 36034.422,
+   "real_spot_kw_yr": 51.36,
+   "curve_at_published_position": 26.117499999999996,
+   "position_entering": {
+    "OFF": 0.94716761507676,
+    "PEAK": 0.958845807413656,
+    "FACTORS": 0.9448813484196783,
+    "BOTH": 0.9565313520164508
+   },
+   "position_gap_pts": {
+    "OFF": -11.08323849232401,
+    "PEAK": -9.915419258634406,
+    "FACTORS": -11.311865158032175,
+    "BOTH": -10.146864798354926
+   },
+   "curve_at_entering": {
+    "OFF": 72.8082995390222,
+    "PEAK": 67.88827362146033,
+    "FACTORS": 73.77150436411837,
+    "BOTH": 68.86335437118511
+   },
+   "exit_budget_mw": {
+    "OFF": -1817.1683331999993,
+    "PEAK": -1398.2573043999982,
+    "FACTORS": -1900.3915599999928,
+    "BOTH": -1480.4669199999953
+   }
+  }
+ ],
+ "rescreen_l3_at_l2_both_position": [
+  {
+   "year": 2023,
+   "position_cf": 1.0458881372554039,
+   "curve_price_cf": 45.782603210474285,
+   "rows": {
+    "decided:gas_st": {
+     "n": 21,
+     "mw": 3496.156,
+     "pass_mw": 3496.156,
+     "nr_kw": 257.35705664027824,
+     "gfc_kw": 122365.45999999999,
+     "frac": 0.9299999999999999,
+     "nr_kw_per_kw": 0.07361143399787602,
+     "gfc_kw_per_kw": 35.0,
+     "capacity_leg_kw_yr_at_cf": 42.577820985741084
+    },
+    "entry_capped:gas_st": {
+     "n": 27,
+     "mw": 5871.144,
+     "pass_mw": 5871.144,
+     "nr_kw": 2494.334646679634,
+     "gfc_kw": 205490.03999999998,
+     "frac": 0.9299999999999999,
+     "nr_kw_per_kw": 0.42484644333023236,
+     "gfc_kw_per_kw": 34.99999999999999,
+     "capacity_leg_kw_yr_at_cf": 42.577820985741084
+    },
+    "entry_capped:gas_cc": {
+     "n": 102,
+     "mw": 7338.465299999999,
+     "pass_mw": 7338.465299999999,
+     "nr_kw": 78713.43759124387,
+     "gfc_kw": 220153.959,
+     "frac": 0.95,
+     "nr_kw_per_kw": 10.726144278592402,
+     "gfc_kw_per_kw": 30.000000000000004,
+     "capacity_leg_kw_yr_at_cf": 43.493473049950566
+    },
+    "entry_capped:gas_ct": {
+     "n": 118,
+     "mw": 3074.6840000000007,
+     "pass_mw": 3074.6840000000007,
+     "nr_kw": 3517.0333770075763,
+     "gfc_kw": 64568.364,
+     "frac": 0.94,
+     "nr_kw_per_kw": 1.1438682404460345,
+     "gfc_kw_per_kw": 20.999999999999996,
+     "capacity_leg_kw_yr_at_cf": 43.035647017845825
+    }
+   }
+  },
+  {
+   "year": 2024,
+   "position_cf": 1.0403248654104607,
+   "curve_price_cf": 48.03746656294312,
+   "rows": {}
+  },
+  {
+   "year": 2025,
+   "position_cf": 1.0519980769827326,
+   "curve_price_cf": 28.6458100710239,
+   "rows": {}
+  }
+ ],
+ "accreditation_fraction": {
+  "gas_st": 0.9299999999999999,
+  "gas_ct": 0.94,
+  "gas_cc": 0.95
+ }
+}

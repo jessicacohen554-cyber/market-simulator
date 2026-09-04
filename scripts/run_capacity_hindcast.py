@@ -486,6 +486,10 @@ META_RECORD_SPEC = RecordSpec(
         # FromConfig so the record reads the SOLVED gates (FFR-3R).
         "pjm_accreditation_design_vintage": FromConfig(cast=bool),
         "pjm_demand_response_supply": FromConfig(cast=bool),
+        # capx D52 NYISO adequacy-requirement devintage gates. FromConfig so
+        # the record reads the SOLVED gates (FFR-3R).
+        "nyiso_requirement_forecast_peak": FromConfig(cast=bool),
+        "nyiso_requirement_vintage_factors": FromConfig(cast=bool),
         "entry_rate_limits": FromConfig(cast=bool),
         "entry_commissioning_lag": FromConfig(cast=bool),
         "exit_rate_limits": FromConfig(cast=bool),
@@ -629,6 +633,8 @@ def build_config(
     neiso_net_icr_requirement: "bool | None" = None,
     pjm_accreditation_design_vintage: "bool | None" = None,
     pjm_demand_response_supply: "bool | None" = None,
+    nyiso_requirement_forecast_peak: "bool | None" = None,
+    nyiso_requirement_vintage_factors: "bool | None" = None,
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     exit_rate_limits: "bool | None" = None,
@@ -848,6 +854,11 @@ def build_config(
                 # arms the D48 A/B measurement posture (distinct cache key).
                 "pjm_accreditation_design_vintage": pjm_accreditation_design_vintage,
                 "pjm_demand_response_supply": pjm_demand_response_supply,
+                # capx D52: NYISO adequacy-requirement devintage gates —
+                # default-off; None inherits the shipped default, True arms
+                # the D52 A/B measurement posture (distinct cache key).
+                "nyiso_requirement_forecast_peak": nyiso_requirement_forecast_peak,
+                "nyiso_requirement_vintage_factors": nyiso_requirement_vintage_factors,
                 "entry_rate_limits": entry_rate_limits,
                 "entry_commissioning_lag": entry_commissioning_lag,
                 "exit_rate_limits": exit_rate_limits,
@@ -1516,6 +1527,34 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--nyiso-requirement-forecast-peak",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D52 (2026-09-04) NYISO-only arm: price the NYCA adequacy "
+            "requirement on the PUBLISHED NYSRC ICAP-market forecast peak of "
+            "the capability year (constants.NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO, "
+            "Table D.2) instead of the model's own peak, in-table years only. "
+            "Inert on every other ISO. OMIT to inherit the shipped default "
+            "(off, owner-armed only); --nyiso-requirement-forecast-peak arms "
+            "it (distinct cache key)."
+        ),
+    )
+    parser.add_argument(
+        "--nyiso-requirement-vintage-factors",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D52 (2026-09-04) NYISO-only arm: price the NYCA adequacy "
+            "requirement at the capability year's ADOPTED IRM x (1 - derate) "
+            "(constants.NYCA_IRM_ADOPTED_BY_ISO + NYCA_ICAP_UCAP_TRANSLATION_"
+            "BY_ISO, hold-last beyond 2025/26) instead of the single-vintage "
+            "1.244 x (1 - 0.1321) composite. Inert on every other ISO. OMIT to "
+            "inherit the shipped default (off, owner-armed only); "
+            "--nyiso-requirement-vintage-factors arms it (distinct cache key)."
+        ),
+    )
+    parser.add_argument(
         "--entry-vre-capacity-revenue",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1966,6 +2005,8 @@ def main(argv: list[str] | None = None) -> int:
         neiso_net_icr_requirement=args.neiso_net_icr_requirement,
         pjm_accreditation_design_vintage=args.pjm_accreditation_design_vintage,
         pjm_demand_response_supply=args.pjm_demand_response_supply,
+        nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
+        nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         exit_rate_limits=args.exit_rate_limits,

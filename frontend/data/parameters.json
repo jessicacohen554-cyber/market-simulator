@@ -34760,6 +34760,348 @@
       ]
     },
     {
+      "param_id": "nyca_icap_forecast_peak_mw_by_iso.NYISO.2020/2021",
+      "display_name": "Nyca Icap Forecast Peak Mw By Iso / Nyiso / 2020/2021",
+      "value": 32296.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_forecast_peak_mw_by_iso.NYISO.2021/2022",
+      "display_name": "Nyca Icap Forecast Peak Mw By Iso / Nyiso / 2021/2022",
+      "value": 32333.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_forecast_peak_mw_by_iso.NYISO.2022/2023",
+      "display_name": "Nyca Icap Forecast Peak Mw By Iso / Nyiso / 2022/2023",
+      "value": 31767.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_forecast_peak_mw_by_iso.NYISO.2023/2024",
+      "display_name": "Nyca Icap Forecast Peak Mw By Iso / Nyiso / 2023/2024",
+      "value": 32049.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_forecast_peak_mw_by_iso.NYISO.2024/2025",
+      "display_name": "Nyca Icap Forecast Peak Mw By Iso / Nyiso / 2024/2025",
+      "value": 31542.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_forecast_peak_mw_by_iso.NYISO.2025/2026",
+      "display_name": "Nyca Icap Forecast Peak Mw By Iso / Nyiso / 2025/2026",
+      "value": 31469.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_ucap_translation_by_iso.NYISO.2020/2021",
+      "display_name": "Nyca Icap Ucap Translation By Iso / Nyiso / 2020/2021",
+      "value": 0.083,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_ucap_translation_by_iso.NYISO.2021/2022",
+      "display_name": "Nyca Icap Ucap Translation By Iso / Nyiso / 2021/2022",
+      "value": 0.0877,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_ucap_translation_by_iso.NYISO.2022/2023",
+      "display_name": "Nyca Icap Ucap Translation By Iso / Nyiso / 2022/2023",
+      "value": 0.0978,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_ucap_translation_by_iso.NYISO.2023/2024",
+      "display_name": "Nyca Icap Ucap Translation By Iso / Nyiso / 2023/2024",
+      "value": 0.1014,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_ucap_translation_by_iso.NYISO.2024/2025",
+      "display_name": "Nyca Icap Ucap Translation By Iso / Nyiso / 2024/2025",
+      "value": 0.1321,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_icap_ucap_translation_by_iso.NYISO.2025/2026",
+      "display_name": "Nyca Icap Ucap Translation By Iso / Nyiso / 2025/2026",
+      "value": 0.13,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_irm_adopted_by_iso.NYISO.2020/2021",
+      "display_name": "Nyca Irm Adopted By Iso / Nyiso / 2020/2021",
+      "value": 0.189,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_irm_adopted_by_iso.NYISO.2021/2022",
+      "display_name": "Nyca Irm Adopted By Iso / Nyiso / 2021/2022",
+      "value": 0.207,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_irm_adopted_by_iso.NYISO.2022/2023",
+      "display_name": "Nyca Irm Adopted By Iso / Nyiso / 2022/2023",
+      "value": 0.196,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_irm_adopted_by_iso.NYISO.2023/2024",
+      "display_name": "Nyca Irm Adopted By Iso / Nyiso / 2023/2024",
+      "value": 0.2,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_irm_adopted_by_iso.NYISO.2024/2025",
+      "display_name": "Nyca Irm Adopted By Iso / Nyiso / 2024/2025",
+      "value": 0.22,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyca_irm_adopted_by_iso.NYISO.2025/2026",
+      "display_name": "Nyca Irm Adopted By Iso / Nyiso / 2025/2026",
+      "value": 0.244,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "nyiso_firm_import_floor_frac.HQ_hydro",
       "display_name": "Nyiso Firm Import Floor Frac / Hq Hydro",
       "value": 1.0,
@@ -48786,6 +49128,44 @@
       "domain": "Structural",
       "tier": 1,
       "source": "GATED, default-OFF",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_requirement_forecast_peak",
+      "display_name": "Nyiso Requirement Forecast Peak",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "GATED default-OFF (capx",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nyiso_requirement_vintage_factors",
+      "display_name": "Nyiso Requirement Vintage Factors",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "GATED default-OFF (capx",
       "source_date": "",
       "page_or_table": "",
       "url": "",

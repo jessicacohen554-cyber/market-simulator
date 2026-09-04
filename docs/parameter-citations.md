@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1879 parameters registered** (999 flagged `needs-citation`).
+**1899 parameters registered** (1019 flagged `needs-citation`).
 
 
 ## Calibration
@@ -1404,6 +1404,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.nyiso_rcpf_enabled` | False | 1 | Model design decision — post-solve NYISO Reserve Constraint Penalty… | 2021-07 |  |
 | `scenario.nyiso_rcpf_locational` | None | 2 | Model design decision — override of the NYISO locational reserve-re… | 2021-07 |  |
 | `scenario.nyiso_rcpf_products` | None | 2 | NYISO operating-reserve requirements (largest single contingency ~1… | 2021-07 |  |
+| `scenario.nyiso_requirement_forecast_peak` | False | 1 | GATED default-OFF (capx |  | auto-generated, needs-citation |
+| `scenario.nyiso_requirement_vintage_factors` | False | 1 | GATED default-OFF (capx |  | auto-generated, needs-citation |
 | `scenario.nyiso_scr_edrp` | False | 2 | NYISO SCR/EDRP emergency demand response as |  | auto-generated, needs-citation |
 | `scenario.nyiso_scr_edrp_strike` | 500.0 | 2 | DR block marginal cost ($/MWh): the |  | auto-generated, needs-citation |
 | `scenario.nyiso_seam_deliverability_envelope` | False | 2 | NYISO external seam |  | auto-generated, needs-citation |
@@ -1901,6 +1903,24 @@ inline comment and still need a dated primary source — search the table for
 | `net_icr_requirement_mw_by_iso.NEISO.2026/2027` | 30305.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `net_icr_requirement_mw_by_iso.NEISO.2027/2028` | 30550.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `nonfossil_announced_horizon_years` | 5 | 2 | Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 re… | 2040 | auto-generated |
+| `nyca_icap_forecast_peak_mw_by_iso.NYISO.2020/2021` | 32296.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_forecast_peak_mw_by_iso.NYISO.2021/2022` | 32333.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_forecast_peak_mw_by_iso.NYISO.2022/2023` | 31767.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_forecast_peak_mw_by_iso.NYISO.2023/2024` | 32049.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_forecast_peak_mw_by_iso.NYISO.2024/2025` | 31542.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_forecast_peak_mw_by_iso.NYISO.2025/2026` | 31469.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_ucap_translation_by_iso.NYISO.2020/2021` | 0.083 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_ucap_translation_by_iso.NYISO.2021/2022` | 0.0877 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_ucap_translation_by_iso.NYISO.2022/2023` | 0.0978 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_ucap_translation_by_iso.NYISO.2023/2024` | 0.1014 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_ucap_translation_by_iso.NYISO.2024/2025` | 0.1321 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_icap_ucap_translation_by_iso.NYISO.2025/2026` | 0.13 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_irm_adopted_by_iso.NYISO.2020/2021` | 0.189 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_irm_adopted_by_iso.NYISO.2021/2022` | 0.207 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_irm_adopted_by_iso.NYISO.2022/2023` | 0.196 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_irm_adopted_by_iso.NYISO.2023/2024` | 0.2 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_irm_adopted_by_iso.NYISO.2024/2025` | 0.22 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `nyca_irm_adopted_by_iso.NYISO.2025/2026` | 0.244 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `nyiso_firm_import_floor_frac.IESO_Ontario` | 0.0 | 2 | NYISO firm (must-flow) import baseload (transmission.inject_nyiso_f… | 2023 | auto-generated |
 | `nyiso_local_selfsupply_frac.Long_Island` | 0.45 | 2 | NYISO local self-supply floors (transmission.inject_nyiso_local_sel… | 2023 | auto-generated |
 | `nyiso_seam_flow_percentile` | 90.0 | 2 | NYISO analogue (nyiso-125): per-(month × hod) percentile of the mea… | 2026-08 | auto-generated |

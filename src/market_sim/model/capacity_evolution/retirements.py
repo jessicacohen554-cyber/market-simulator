@@ -56,6 +56,9 @@ from market_sim.config.constants import (
     MARKET_DESIGN,
     NET_ICR_HOLD_LAST_RATIO_BY_ISO,
     NET_ICR_REQUIREMENT_MW_BY_ISO,
+    NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO,
+    NYCA_ICAP_UCAP_TRANSLATION_BY_ISO,
+    NYCA_IRM_ADOPTED_BY_ISO,
     PLANNING_RESERVE_MARGIN_BY_ISO,
     PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     RENEWABLE_CAPACITY_CREDIT,
@@ -1374,9 +1377,23 @@ def gross_adequacy_requirement_mw(
         fpr = resolve_forecast_pool_requirement(iso, year)
     if fpr is not None:
         return peak_demand_mw * fpr
+    # capx D52 (NYISO, both GATED default-OFF): the requirement's PEAK is the
+    # published ICAP-market forecast peak of the capability year when
+    # ``nyiso_requirement_forecast_peak`` is armed and the year is in-table
+    # (else ``peak_demand_mw`` is returned unchanged — the same float, so the
+    # unarmed product below is byte-identical), and its FACTOR is the
+    # capability year's adopted IRM × (1 − derate) when
+    # ``nyiso_requirement_vintage_factors`` is armed (hold-last beyond the
+    # table; None pre-table / unarmed → the composite below, unchanged).
+    requirement_peak_mw = resolve_nyiso_requirement_peak_mw(
+        config, iso, peak_demand_mw, year
+    )
+    vintage_factor = resolve_nyiso_requirement_factor(config, iso, year)
+    if vintage_factor is not None:
+        return requirement_peak_mw * vintage_factor
     icap_to_ucap_ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO.get(iso, 1.0)
     return (
-        peak_demand_mw
+        requirement_peak_mw
         * (1.0 + resolve_planning_reserve_margin(config, iso))
         * icap_to_ucap_ratio
     )
@@ -1463,6 +1480,132 @@ def resolve_published_net_icr_mw(
             # hold; fall through to the composite rather than freeze a MW.
             return None
         return float(peak_demand_mw) * float(ratio)
+    return None
+
+
+def nyiso_requirement_forecast_peak_armed(
+    config: ScenarioConfig | None, iso: str | None
+) -> bool:
+    """True when ``iso`` prices its adequacy requirement on the PUBLISHED forecast peak.
+
+    The gate predicate (rule 19) behind the capx D52 item-1 repair
+    (``FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md`` §5.2.4 item 1):
+    requires BOTH the default-OFF ``ScenarioConfig.nyiso_requirement_forecast_peak``
+    gate AND an entry for ``iso`` in :data:`NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO`
+    (NYISO alone — rule 25 ``[R-ISO-SCOPE]``: the flag armed on any other ISO's
+    run is inert by construction). ``config=None`` / ``iso=None`` resolve False.
+    """
+    if config is None or iso is None:
+        return False
+    if not getattr(config, "nyiso_requirement_forecast_peak", False):
+        return False
+    return iso in NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO
+
+
+def nyiso_requirement_vintage_factors_armed(
+    config: ScenarioConfig | None, iso: str | None
+) -> bool:
+    """True when ``iso`` prices adequacy on the capability year's adopted IRM × (1 − derate).
+
+    The gate predicate (rule 19) behind the capx D52 item-2 repair (D45 §5.2.4
+    item 2, the D40 vintage axis on the NYISO composite): requires BOTH the
+    default-OFF ``ScenarioConfig.nyiso_requirement_vintage_factors`` gate AND
+    an entry for ``iso`` in BOTH :data:`NYCA_IRM_ADOPTED_BY_ISO` and
+    :data:`NYCA_ICAP_UCAP_TRANSLATION_BY_ISO` (NYISO alone — rule 25).
+    ``config=None`` / ``iso=None`` resolve False.
+    """
+    if config is None or iso is None:
+        return False
+    if not getattr(config, "nyiso_requirement_vintage_factors", False):
+        return False
+    return iso in NYCA_IRM_ADOPTED_BY_ISO and iso in NYCA_ICAP_UCAP_TRANSLATION_BY_ISO
+
+
+def _nyiso_capability_year_label(year: int) -> str:
+    """NYISO capability-year label (May Y – April Y+1) for model calendar ``year``.
+
+    Built here as ``"YYYY/YYYY+1"`` for the same reason
+    :func:`resolve_published_net_icr_mw` builds ISO-NE's CCP label itself: the
+    model's summer peak (the adequacy test) falls inside the capability year
+    that BEGINS in ``year``, so the row read for model year Y is the row every
+    parameter of which was fixed before May 1, Y (the rule-13 information gate
+    — see :data:`NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO`'s citation block).
+    """
+    return f"{int(year)}/{int(year) + 1}"
+
+
+def resolve_nyiso_requirement_peak_mw(
+    config: ScenarioConfig | None,
+    iso: str | None,
+    peak_demand_mw: float,
+    year: int | None,
+) -> float:
+    """The peak (MW) the adequacy requirement is priced on — published or the model's.
+
+    capx D52 item 1 (D45 §5.2.4): when :func:`nyiso_requirement_forecast_peak_armed`
+    holds and ``year``'s capability year is in
+    :data:`NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO`, return the PUBLISHED NYSRC
+    ICAP-market forecast peak of that capability year — the peak the NYCA
+    requirement was actually set on (Table D.2 column 1), so the requirement
+    stops depending on the model's realized/growth-scaled peak in exactly the
+    years the market's own requirement did not. Every other case — unarmed,
+    off-registry, ``year=None``, a capability year outside the table (before
+    it, or the forward horizon beyond it) — returns ``peak_demand_mw`` ITSELF
+    (the same object, not a copy or a recomputation), so the caller's product
+    is byte-identical. Deliberately NO hold-last: beyond the table the model's
+    own peak IS the forward load forecast (the Gold Book analogue), and a held
+    MW peak against a growing load would fail the rule-13 forward test.
+    """
+    if year is None or not nyiso_requirement_forecast_peak_armed(config, iso):
+        return peak_demand_mw
+    table = NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO.get(iso or "")
+    if not table:
+        return peak_demand_mw
+    published = table.get(_nyiso_capability_year_label(year))
+    if published is None:
+        return peak_demand_mw
+    return float(published)
+
+
+def resolve_nyiso_requirement_factor(
+    config: ScenarioConfig | None, iso: str | None, year: int | None
+) -> float | None:
+    """The capability year's adopted-IRM × (1 − derate) requirement factor, or None.
+
+    capx D52 item 2 (D45 §5.2.4; the D40 per-vintage axis on the NYISO
+    composite ``(1 + PRM) × icap_to_ucap_ratio``). Resolution, in order:
+
+    1. Gate: :func:`nyiso_requirement_vintage_factors_armed` must hold and
+       ``year`` must be given; otherwise ``None`` — the caller keeps the
+       single-vintage composite byte-identically.
+    2. An in-table capability year (both registries carry it) returns
+       ``(1 + IRM_adopted) × (1 − derate)`` for THAT capability year — the
+       published ``UCAP requirement ÷ forecast peak`` of Table D.2 (the two
+       tables are asserted to carry the same capability years by test).
+    3. Strictly beyond the last published capability year: HOLD-LAST (card
+       C-A 2026-08-25) as the last published pair's ratio (2025/26:
+       ``1.244 × 0.870``), so the held bar still scales with load exactly as
+       the composite does — superseded per capability year on publication
+       (rule 23).
+    4. Before the first published capability year, or an in-table gap: ``None``
+       (the composite fallback, the PJM/NEISO convention: the table's forward
+       edge only is extended).
+    """
+    if year is None or not nyiso_requirement_vintage_factors_armed(config, iso):
+        return None
+    irm_table = NYCA_IRM_ADOPTED_BY_ISO.get(iso or "")
+    derate_table = NYCA_ICAP_UCAP_TRANSLATION_BY_ISO.get(iso or "")
+    if not irm_table or not derate_table:
+        return None
+    label = _nyiso_capability_year_label(year)
+    irm, derate = irm_table.get(label), derate_table.get(label)
+    if irm is not None and derate is not None:
+        return (1.0 + float(irm)) * (1.0 - float(derate))
+    last_label = max(set(irm_table) & set(derate_table), key=lambda lbl: int(lbl[:4]))
+    if int(year) > int(last_label[:4]):
+        return (1.0 + float(irm_table[last_label])) * (
+            1.0 - float(derate_table[last_label])
+        )
     return None
 
 
