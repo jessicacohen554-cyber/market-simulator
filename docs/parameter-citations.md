@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1860 parameters registered** (983 flagged `needs-citation`).
+**1878 parameters registered** (999 flagged `needs-citation`).
 
 
 ## Calibration
@@ -160,6 +160,15 @@ inline comment and still need a dated primary source — search the table for
 | `demand_growth_rates.PJM.mid.near` | 0.036 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates_vintages` | {"2021": {"ERCOT": {"mid": {"near": 0… | 2 | As-of-vintage demand-growth rates for the full-forward hindcast (T1… | 2026-08 | modeled |
 | `demand_growth_transition_year` | 2030 | 2 | Year at which demand growth transitions from near-term to long-term… | 2030 | auto-generated |
+| `demand_response_supply_hold_last_ratio_by_iso.PJM` | 0.04789107611548556 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `demand_response_supply_ucap_mw_by_iso.PJM.2020/2021` | 9846.7 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `demand_response_supply_ucap_mw_by_iso.PJM.2021/2022` | 11886.8 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `demand_response_supply_ucap_mw_by_iso.PJM.2022/2023` | 10513.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `demand_response_supply_ucap_mw_by_iso.PJM.2023/2024` | 10116.7 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `demand_response_supply_ucap_mw_by_iso.PJM.2024/2025` | 10146.4 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `demand_response_supply_ucap_mw_by_iso.PJM.2025/2026` | 6084.8 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `demand_response_supply_ucap_mw_by_iso.PJM.2026/2027` | 5530.6 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `demand_response_supply_ucap_mw_by_iso.PJM.2027/2028` | 7298.6 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `electrification_layers.NEISO.heat_pump.mid` | {"2026": 0.0, "2035": 7165.0} | 2 | ISO-NE 2026 CELT (May 2026): Heating Electrification Forecast (HEF)… | 2026-05 | measured-external |
 | `heat_pump_balance_point_c` | 18.3 | 2 | NOAA NCEI / EIA standard degree-day base temperature, 65 F = 18.3 C… | 2026 | measured-external |
 | `miso_clean_tier_regions.MI.obligated_load_share` | 0.57 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
@@ -192,6 +201,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.nyiso_gas_bridge_cc_min_load_frac` | 0.523 | 2 | Minimum stable load of a bridged NYISO gas-CC / gas-steam unit as a… | 2023 | auto-generated |
 | `scenario.nyiso_gas_bridge_ct_min_load_frac` | 0.238 | 2 | Minimum stable load of a block-committed NYISO CT as a fraction of … |  | auto-generated, needs-citation |
 | `scenario.nyiso_gas_bridge_st_min_load_frac` | 0.239 | 2 | ST_GAS leg of the same measured statistic: 0.239 (p25 0.210 / p75 0… |  | auto-generated, needs-citation |
+| `scenario.pjm_demand_response_supply` | False | 1 | GATED default-OFF (capx D48 |  | auto-generated, needs-citation |
 | `scenario.pjm_offer_surface_netload_pcts` | [0.8, 0.9, 0.97] | 2 | Net-load percentile bin EDGES (same contract as the ERCOT/NEISO fie… |  | auto-generated, needs-citation |
 | `scenario.strict_demand_profile` | False | 2 | When True, threaded through to |  | auto-generated, needs-citation |
 
@@ -628,6 +638,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.miso_zonal_gas_basis` | False | 3 | MISO per-zone delivered-gas basis spread. MISO's three zones sit on… |  | auto-generated, needs-citation |
 | `scenario.nearby_fuel_price_fallback` | False | 3 | Tier 3 (calibration) — "nearby plant" fuel-cost fallback. When True… |  | auto-generated, needs-citation |
 | `scenario.nearby_fuel_price_min_state_plants` | 2 | 3 | state-mean sample floor; |  | auto-generated, needs-citation |
+| `scenario.nearby_fuel_price_zone_donor_guard` | False | 3 | caiso-243 (2026-09-04) — the F923 LOW-VOLUME FALLBACK DEFECT, repai… | 2026-09 | auto-generated |
 | `scenario.neiso_gas_coldsnap_derate` | False | 1 | NEISO winter gas-fired availability |  | auto-generated, needs-citation |
 | `scenario.neiso_gas_derate_cap` | 0.2 | 2 | Max incremental gas-fired forced-out |  | auto-generated, needs-citation |
 | `scenario.neiso_gas_derate_slope_per_c` | 0.018 | 3 | Incremental gas forced-out |  | auto-generated, needs-citation |
@@ -1319,6 +1330,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.federal_ces_premium_usd_per_mwh` | 0.0 | 1 | Owner decision D8 (docs/handoffs/national-ces-eac-premium-plan-2026… | 2026-07 |  |
 | `scenario.federal_ces_unabated_ci_threshold_t_per_mwh` | 0.45 | 1 | Owner-set unabated-CCGT eligibility line (docs/handoffs/national-ce… | 2026-07 |  |
 | `scenario.fixed_om_oil` | 25.0 | 2 | legacy oil/distillate steam & CT — high O&M, |  | auto-generated, needs-citation |
+| `scenario.fleet_state_from_eia860` | False | 3 | caiso-243 — repair form (c), the ROOT CAUSE of defect D1: the CAMPD… | 2026-09 | auto-generated |
 | `scenario.forecast_xyear_warmstart` | True | 2 | Cross-year LP warm-start on the FORECAST path (refactor-consolidati… | 2026-07 | auto-generated |
 | `scenario.fossil_announced_exits_enabled` | True | 2 | GATED, default-ON (FLIPPED |  | auto-generated, needs-citation |
 | `scenario.gt_ambient_derate` | False | 2 | Gas-turbine AMBIENT-TEMPERATURE capacity derate (gt_ambient_derate,… |  | auto-generated, needs-citation |
@@ -1408,6 +1420,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ordc_multistep_floor` | True | 2 | OBDRR048 multi-step RTORPA price floor, PUCT-approved 2023-10-12, e… | 2023-11 |  |
 | `scenario.partial_plant_exit_carry` | False | 2 | Partial-plant mid-window exit carry (partial_plant_exit_carry, off … | 2026-08 | auto-generated |
 | `scenario.per_tech_wacc_enabled` | False | 2 | Per-technology WACC OPTION (FF-1E, docs/handoffs/ ff-inputs-currenc… | 2026-07 | auto-generated |
+| `scenario.pjm_accreditation_design_vintage` | False | 1 | GATED default-OFF (capx |  | auto-generated, needs-citation |
 | `scenario.pjm_apsouth_interface_cut` | False | 3 | PJM measured AP-SOUTH interface cut (backcast/calibration overlay, … | 2026-07 | auto-generated |
 | `scenario.pjm_congestion` | False | 3 | PJM transmission-congestion lever (break the copper-plate). PJM cle… |  | auto-generated, needs-citation |
 | `scenario.pjm_da_virtual_bids` | False | 2 | PJM Day-Ahead virtual-bid layer (G-22 lever B — DA procurement dept… | 2024 | auto-generated |
@@ -1834,6 +1847,10 @@ inline comment and still need a dated primary source — search the table for
 | `forecast_pool_requirement_by_iso.PJM.2026/2027` | 0.917 | 2 | 146,105 MW UCAP / 159,329 MW peak; PPP 2025-05-09 | 2025-05 | auto-generated |
 | `forecast_pool_requirement_by_iso.PJM.2027/2028` | 0.926 | 2 | (1+0.200) x 0.7717; BRA report 2025-12-17 | 2025-12 | auto-generated |
 | `forecast_pool_requirement_by_iso.PJM.2028/2029` | 0.9401 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `forecast_pool_requirement_pre_reform_by_iso.PJM.2021/2022` | 1.0898 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `forecast_pool_requirement_pre_reform_by_iso.PJM.2022/2023` | 1.0868 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `forecast_pool_requirement_pre_reform_by_iso.PJM.2023/2024` | 1.0901 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `forecast_pool_requirement_pre_reform_by_iso.PJM.2024/2025` | 1.0894 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `global_annual_deployment_gw.compressed_air` | 0.3 | 2 | GW/yr global CAES additions. Source: IEA 2024 pipeline. | 2024 | auto-generated |
 | `global_annual_deployment_gw.flow_battery` | 0.8 | 2 | GW/yr global VRFB additions. Source: BNEF LDES tracker 2024. | 2024 | auto-generated |
 | `global_annual_deployment_gw.iron_air` | 1.0 | 2 | was 0.5. |  | auto-generated, needs-citation |
@@ -1961,6 +1978,7 @@ inline comment and still need a dated primary source — search the table for
 | `structural_prior_horizon_lambda` | 0.0 | 2 | Horizon-widening variance multiplier lambda(h), growing with years-… |  | auto-generated, needs-citation |
 | `structural_prior_student_t_nu` | 2.0 | 2 | Student-t degrees of freedom for the per-ISO structural-error distr… |  | auto-generated, needs-citation |
 | `structural_prior_version` | pb3-statmode-d7-2026-07 | 2 | Version tag stamped into every fitted prior artifact / ensemble_met… |  | auto-generated, needs-citation |
+| `thermal_accreditation_reform_delivery_year_by_iso.PJM` | 2025/2026 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `weather_year_pool_by_iso.CAISO` | [2019, 2020, 2021, 2023, 2024, 2025] | 2 | Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probabil… | 2026-07 | auto-generated |
 | `weather_year_pool_by_iso.ERCOT` | [2019, 2020, 2021, 2023, 2024, 2025] | 2 | Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probabil… | 2026-07 | auto-generated |
 | `weather_year_pool_by_iso.MISO` | [2019, 2020, 2021, 2023, 2024, 2025] | 2 | Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probabil… | 2026-07 | auto-generated |

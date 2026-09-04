@@ -116,6 +116,11 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         # the fast-tier repair lane.
         "NET_ICR_HOLD_LAST_RATIO_BY_ISO",
         "NET_ICR_REQUIREMENT_MW_BY_ISO",
+        # capx D48 (2026-09-04): PJM accreditation-design devintage + DR-as-supply
+        "THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO",
+        "FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO",
+        "DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO",
+        "DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO",
         "NONFOSSIL_ANNOUNCED_HORIZON_YEARS",
         "PJM_RGGI_ZONE_SHARE",
         "PLANNING_RESERVE_MARGIN_BY_ISO",

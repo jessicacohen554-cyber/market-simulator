@@ -33,7 +33,6 @@ from market_sim.config.constants import (
     RENEWABLE_CAPACITY_CREDIT,
     RENEWABLE_ELCC_CURVES_BY_ISO,
     RENEWABLE_NQC_CURVES_BY_ISO,
-    THERMAL_ACCREDITATION_BASIS_BY_ISO,
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
@@ -43,10 +42,13 @@ from .new_entry import _make_new_generator
 from .retirements import (
     _default_build_zone,
     _thermal_firm_mw,
+    gross_adequacy_requirement_mw,
     net_icr_requirement_armed,
     resolve_adequacy_requirement_mw,
+    resolve_demand_response_supply_mw,
     resolve_internal_supply_accounting_ratio,
     resolve_renewable_capacity_credit,
+    resolve_thermal_accreditation_basis,
 )
 
 logger = logging.getLogger(__name__)
@@ -270,6 +272,8 @@ def accredited_firm_capacity_mw(
     elcc_curves_enabled: bool = False,
     year: int | None = None,
     nqc_curves_enabled: bool = False,
+    config: ScenarioConfig | None = None,
+    accreditation_year: int | None = None,
 ) -> float:
     """Return the system's accredited firm (ELCC/UCAP) capacity in MW.
 
@@ -316,6 +320,24 @@ def accredited_firm_capacity_mw(
     byte-identically (UCAP thermal, generic credits, no tie MW), and
     ``elcc_curves_enabled=False`` (or an unavailable axis quantity) is the
     frozen-penetration byte-compat mode — the pre-CR-3.1 point basis.
+
+    ``config`` and ``accreditation_year`` (both optional, default ``None``)
+    carry the two capx D48 gated repairs and NOTHING else: (i) the thermal
+    basis is resolved per delivery year under
+    ``config.pjm_accreditation_design_vintage``
+    (:func:`~market_sim.model.capacity_evolution.retirements.
+    resolve_thermal_accreditation_basis` — UCAP before PJM's 2025/26 reform,
+    the registry basis after); (ii) under ``config.pjm_demand_response_supply``
+    the ISO's published Demand Resource supply for that delivery year
+    (:func:`~market_sim.model.capacity_evolution.retirements.
+    resolve_demand_response_supply_mw`) is ADDED as a market-counted term —
+    outside the internal-supply accounting ratio, exactly as the firm-import
+    credit is — and the requirement side stops netting it from the peak.
+    ``accreditation_year`` is deliberately separate from ``year`` (which
+    resolves the hydro budget) so a caller that never threaded ``year``
+    keeps its hydro term byte-identical while threading the delivery year
+    the two gates key on. Unarmed, or with either left ``None``, both terms
+    are inert and the ledger is byte-identical.
     """
     nameplate_by_fuel = _renewable_nameplate_by_fuel(
         fleet, wind_pool_mw, solar_pool_mw, iso
@@ -343,7 +365,7 @@ def accredited_firm_capacity_mw(
         if credit is not None:
             internal += g.pmax_mw * credit
         else:
-            internal += _thermal_firm_mw(g, iso)
+            internal += _thermal_firm_mw(g, iso, config, accreditation_year)
     # Internal-supply accounting ratio (capx D31): the measured wedge between
     # this census-accreditation aggregate and the market's own counted supply
     # (MISO: PRA offered Generation ZRC ÷ this ledger's internal firm — see
@@ -355,7 +377,26 @@ def accredited_firm_capacity_mw(
     # ERCOT/PJM ties absent from topology AND the RA/FCM firm imports of the
     # import-node ISOs (CAISO WECC_import, NEISO HQ_import) — additive, never
     # double-counted against the dispatch node (see :func:`_firm_import_mw`).
-    return internal + _firm_import_mw(iso)
+    # capx D48 DR-as-supply (gated, default off): the ISO's published Demand
+    # Resource supply for the delivery year — the market's own counted
+    # quantity, so, like the firm-import credit, it is NOT scaled by the
+    # internal-supply ratio. The hold-last branch scales by the gross
+    # (un-netted) requirement built on the same peak/year the position uses.
+    dr_supply_mw = 0.0
+    if config is not None and iso is not None and accreditation_year is not None:
+        dr_mw = resolve_demand_response_supply_mw(
+            config,
+            iso,
+            accreditation_year,
+            gross_adequacy_requirement_mw(
+                config, iso, peak_demand_mw, accreditation_year
+            )
+            if peak_demand_mw > 0.0
+            else None,
+        )
+        if dr_mw is not None:
+            dr_supply_mw = float(dr_mw)
+    return internal + _firm_import_mw(iso) + dr_supply_mw
 
 
 def capacity_reserve_position(
@@ -404,6 +445,8 @@ def capacity_reserve_position(
         elcc_curves_enabled=config.renewable_elcc_curves,
         year=year,
         nqc_curves_enabled=config.caiso_nqc_accreditation,
+        config=config,
+        accreditation_year=year,
     )
     return curve_convention_position(config, iso, accredited_mw / requirement_mw)
 
@@ -567,7 +610,9 @@ def apply_reserve_margin_build(
     # rides along so the built unit's LEDGER contribution — which carries the
     # ratio in accredited_firm_capacity_mw — actually closes the gap (one
     # basis, rule 19).
-    if THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso) == "seasonal_rating":
+    # capx D48: the basis is resolved per delivery year (byte-identical
+    # unarmed — the resolver returns the registry basis).
+    if resolve_thermal_accreditation_basis(iso, config, year) == "seasonal_rating":
         credit = 1.0
     else:
         credit = 1.0 - EFORD["gas_ct"]

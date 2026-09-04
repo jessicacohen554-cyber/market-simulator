@@ -75,7 +75,9 @@ CATEGORY_VOCAB: frozenset[str] = frozenset(
         "total",
     }
 )
-UNIT_VOCAB: frozenset[str] = frozenset({"mw_zrc", "mw_sac"})
+# mw_zrc / mw_sac: MISO's ZRC and SAC labels; mw_ucap: PJM's Unforced
+# Capacity basis (the BRA reports state DR/EE and generation offers in UCAP).
+UNIT_VOCAB: frozenset[str] = frozenset({"mw_zrc", "mw_sac", "mw_ucap"})
 
 _STRING_COLS = (
     "iso",
@@ -99,7 +101,7 @@ _R = make_registry(
         ("iso", str),
     ],
     package=__name__,
-    iso_modules=("miso",),
+    iso_modules=("miso", "pjm"),
     raw_subpath=("capacity-market", "auction-supply"),
     string_cols=_STRING_COLS,
     float_cols=_FLOAT_COLS,

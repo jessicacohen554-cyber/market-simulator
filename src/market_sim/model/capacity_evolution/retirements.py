@@ -49,7 +49,10 @@ from market_sim.config.constants import (
     ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
     ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO,
     DEFAULT_MARKET_DESIGN,
+    DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO,
+    DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO,
     FORECAST_POOL_REQUIREMENT_BY_ISO,
+    FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO,
     MARKET_DESIGN,
     NET_ICR_HOLD_LAST_RATIO_BY_ISO,
     NET_ICR_REQUIREMENT_MW_BY_ISO,
@@ -63,6 +66,7 @@ from market_sim.config.constants import (
     STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
     STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO,
     THERMAL_ACCREDITATION_BASIS_BY_ISO,
+    THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO,
     THERMAL_ELCC_CLASS_RATING_BY_ISO,
     evaluate_renewable_elcc_curve,
 )
@@ -970,7 +974,11 @@ def capacity_revenue_per_mw_yr(
     )
     if price <= 0.0:
         return 0.0
-    accredited = max(0.0, thermal_accreditation_fraction(fuel_type, eford, iso))
+    # capx D48: the payment is priced on the accreditation design of the
+    # delivery year (config/year threaded; byte-identical unarmed).
+    accredited = max(
+        0.0, thermal_accreditation_fraction(fuel_type, eford, iso, config, year)
+    )
     return price * accredited
 
 
@@ -1183,6 +1191,197 @@ def resolve_forecast_pool_requirement(iso: str, year: int | None) -> float | Non
     return None
 
 
+def accreditation_design_vintage_armed(
+    config: ScenarioConfig | None, iso: str | None
+) -> bool:
+    """True when ``iso`` accredits on the design of each delivery year's own auction.
+
+    The ONE gate predicate (rule 19) behind BOTH halves of the capx D48
+    accreditation-design devintage (``FINDING-capx-d45-pjm-nyiso-curves-
+    2026-09-03.md`` §2.3 item 1): the thermal basis resolver
+    (:func:`resolve_thermal_accreditation_basis`) and the pre-reform
+    requirement resolver (:func:`resolve_pre_reform_pool_requirement`)
+    consult it, so the supply and requirement halves can never be
+    devintaged apart (the mixed-basis ratio D45 §2.2 measured is exactly
+    the failure mode a one-sided arm would reproduce). Requires BOTH the
+    default-OFF ``ScenarioConfig.pjm_accreditation_design_vintage`` gate AND
+    an entry for ``iso`` in
+    :data:`THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO` (PJM alone —
+    rule 25 ``[R-ISO-SCOPE]``: the flag armed on any other ISO's run is inert
+    by construction). ``config=None`` / ``iso=None`` resolve False.
+    """
+    if config is None or iso is None:
+        return False
+    if not getattr(config, "pjm_accreditation_design_vintage", False):
+        return False
+    return iso in THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO
+
+
+def _delivery_year_before(label: str, reform_label: str) -> bool:
+    """True when delivery-year ``label`` starts strictly before ``reform_label``.
+
+    Delivery-year labels order by their leading start year (planning-year
+    ISOs ``"YYYY/YYYY+1"``, CAISO bare ``"YYYY"`` — the same ``int(label[:4])``
+    parse :func:`resolve_forecast_pool_requirement`'s hold-last uses).
+    """
+    return int(label[:4]) < int(reform_label[:4])
+
+
+def resolve_thermal_accreditation_basis(
+    iso: str | None,
+    config: ScenarioConfig | None = None,
+    year: int | None = None,
+) -> str | None:
+    """Thermal accreditation basis for ``iso`` in ``year`` (registry, or devintaged).
+
+    Returns the :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO` entry (``None`` for
+    an ISO absent from it — the UCAP default) unless the capx D48 devintage is
+    armed (:func:`accreditation_design_vintage_armed`) and ``year`` resolves
+    to a delivery year STRICTLY BEFORE the ISO's registered reform delivery
+    year (:data:`THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO`), in
+    which case it returns ``"ucap"`` — the ``1 − EFORd`` design the auction of
+    that delivery year actually cleared on (PJM Manual 18 §4.2.1 pre-CIFP).
+    From the reform delivery year onward the registry basis applies, exactly
+    as the published design switched. ``year=None`` (a caller that cannot
+    resolve a delivery year) keeps the registry basis, so every gate-off
+    path and every year-less call is byte-identical to the pre-D48 resolver.
+    """
+    basis = THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso or "")
+    if year is None or not accreditation_design_vintage_armed(config, iso):
+        return basis
+    reform_label = THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO[iso]
+    label = capdel.resolve_delivery_year(iso, year)
+    if _delivery_year_before(label, reform_label):
+        return "ucap"
+    return basis
+
+
+def resolve_pre_reform_pool_requirement(
+    config: ScenarioConfig | None, iso: str | None, year: int | None
+) -> float | None:
+    """Published PRE-REFORM FPR for ``iso``'s delivery year under the D48 arm, or None.
+
+    The requirement half of the accreditation-design devintage (capx D48):
+    when :func:`accreditation_design_vintage_armed` holds and ``year``
+    resolves to a delivery year carried in
+    :data:`FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO` (PJM 2021/22–2024/25,
+    the pre-CIFP ``(1 + IRM) × (1 − pool EFORd)`` FPRs the auctions cleared
+    on), returns that FPR; the caller prices the requirement as
+    ``firm_peak × FPR`` exactly as it does on the post-reform table. Every
+    other case — unarmed, off-registry ISO, ``year=None``, a delivery year
+    outside the pre-reform table (including every post-reform year, which the
+    post-reform resolver owns) — returns ``None`` and the caller's existing
+    ladder (published post-reform FPR → composite) runs byte-identically.
+    NO hold-last: the pre-reform table has a hard END at the design switch,
+    so nothing is ever carried forward from it.
+    """
+    if year is None or not accreditation_design_vintage_armed(config, iso):
+        return None
+    table = FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO.get(iso or "")
+    if not table:
+        return None
+    return table.get(capdel.resolve_delivery_year(iso, year))
+
+
+def demand_response_supply_armed(
+    config: ScenarioConfig | None, iso: str | None
+) -> bool:
+    """True when ``iso`` counts Demand Resources as adequacy SUPPLY, not a peak netting.
+
+    The gate predicate behind the capx D48 DR-as-supply repair
+    (``FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md`` §2.3 item 2):
+    requires BOTH the default-OFF ``ScenarioConfig.pjm_demand_response_supply``
+    gate AND an entry for ``iso`` in
+    :data:`DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO` (PJM alone — rule 25).
+    ``config=None`` / ``iso=None`` resolve False.
+    """
+    if config is None or iso is None:
+        return False
+    if not getattr(config, "pjm_demand_response_supply", False):
+        return False
+    return iso in DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO
+
+
+def resolve_demand_response_supply_mw(
+    config: ScenarioConfig | None,
+    iso: str | None,
+    year: int | None,
+    gross_requirement_mw: float | None = None,
+) -> float | None:
+    """Published DR supply (accredited MW) counted for ``iso``'s delivery year, or None.
+
+    The supply-side DR construction (capx D48 — see
+    :data:`DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO`'s citation block). Resolution:
+
+    1. Gate: :func:`demand_response_supply_armed` must hold and ``year`` must
+       be given; otherwise ``None`` — the caller keeps the peak-netting form
+       (:data:`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO`) byte-identically.
+    2. An in-table delivery year returns its ABSOLUTE published offered DR
+       (UCAP MW) — the auction's own counted quantity.
+    3. Strictly beyond the last published delivery year: HOLD-LAST (card
+       C-A 2026-08-25) as the last delivery year's published DR-to-
+       Reliability-Requirement RATIO
+       (:data:`DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO`) × the model's
+       ``gross_requirement_mw`` (the UN-netted requirement, peak × FPR), so
+       the held DR scales with load — the same construction the netting
+       fraction uses. A caller that cannot supply the gross requirement
+       (``None``) gets ``None`` (no MW is invented).
+    4. Before the first published delivery year, or an in-table gap:
+       ``None`` — the netting fallback, the PJM FPR convention.
+
+    Two verbs, one quantity (rule 19): the SAME MW that
+    :func:`~market_sim.model.capacity_evolution.adequacy.
+    accredited_firm_capacity_mw` adds to the supply ledger is the reason
+    :func:`resolve_adequacy_requirement_mw` stops netting the peak, so the
+    position is stated on the auction's raw convention on both sides.
+    """
+    if year is None or not demand_response_supply_armed(config, iso):
+        return None
+    table = DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO.get(iso or "")
+    if not table:
+        return None
+    label = capdel.resolve_delivery_year(iso, year)
+    mw = table.get(label)
+    if mw is not None:
+        return float(mw)
+    last_label = max(table, key=lambda lbl: int(lbl[:4]))
+    if int(label[:4]) > int(last_label[:4]):
+        ratio = DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO.get(iso or "")
+        if ratio is None or gross_requirement_mw is None:
+            return None
+        return float(gross_requirement_mw) * float(ratio)
+    return None
+
+
+def gross_adequacy_requirement_mw(
+    config: ScenarioConfig, iso: str, peak_demand_mw: float, year: int | None = None
+) -> float:
+    """The UN-netted adequacy requirement (before any DR netting), in MW.
+
+    The requirement ladder of :func:`resolve_adequacy_requirement_mw` applied
+    to the GROSS peak: published pre-reform FPR under the D48 arm
+    (:func:`resolve_pre_reform_pool_requirement`) → published post-reform /
+    held-last FPR (:func:`resolve_forecast_pool_requirement`) → the
+    ``(1 + PRM) × icap_to_ucap_ratio`` composite. Factored out so the D48
+    DR-as-supply hold-last (:func:`resolve_demand_response_supply_mw`) can
+    scale its held ratio by the same object the requirement is built on
+    (rule 19). The NEISO Net ICR path is NOT here — it returns an absolute
+    published MW, and :func:`resolve_adequacy_requirement_mw` consults it
+    first, unchanged.
+    """
+    fpr = resolve_pre_reform_pool_requirement(config, iso, year)
+    if fpr is None:
+        fpr = resolve_forecast_pool_requirement(iso, year)
+    if fpr is not None:
+        return peak_demand_mw * fpr
+    icap_to_ucap_ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO.get(iso, 1.0)
+    return (
+        peak_demand_mw
+        * (1.0 + resolve_planning_reserve_margin(config, iso))
+        * icap_to_ucap_ratio
+    )
+
+
 def net_icr_requirement_armed(config: ScenarioConfig | None, iso: str | None) -> bool:
     """True when ``iso`` prices adequacy on its published Net ICR series.
 
@@ -1331,16 +1530,20 @@ def resolve_adequacy_requirement_mw(
     net_icr_raw_mw = resolve_published_net_icr_mw(config, iso, peak_demand_mw, year)
     if net_icr_raw_mw is not None:
         return net_icr_raw_mw * (1.0 - dr_fraction)
-    firm_peak_mw = peak_demand_mw * (1.0 - dr_fraction)
-    fpr = resolve_forecast_pool_requirement(iso, year)
-    if fpr is not None:
-        return firm_peak_mw * fpr
-    icap_to_ucap_ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO.get(iso, 1.0)
-    return (
-        firm_peak_mw
-        * (1.0 + resolve_planning_reserve_margin(config, iso))
-        * icap_to_ucap_ratio
-    )
+    # capx D48: the gross (un-netted) requirement — pre-reform FPR under the
+    # accreditation-design devintage, else the published/held-last FPR, else
+    # the composite — factored out so the DR-as-supply hold-last can scale by
+    # it. Netting the gross requirement by (1 − f) is algebraically identical
+    # to netting the peak first (both paths are peak × (1 − f) × factor).
+    gross_mw = gross_adequacy_requirement_mw(config, iso, peak_demand_mw, year)
+    # capx D48 DR-as-supply: when the ISO's published DR is COUNTED on the
+    # supply ledger for this delivery year (resolve_demand_response_supply_mw
+    # returns a MW), the peak is NOT netted — the requirement is the auction's
+    # own un-netted Reliability Requirement (PJM Manual 18 §3.4's VRR x-basis).
+    # Unarmed / off-registry / pre-table / year-less → None → netting as before.
+    if resolve_demand_response_supply_mw(config, iso, year, gross_mw) is not None:
+        return gross_mw
+    return gross_mw * (1.0 - dr_fraction)
 
 
 def resolve_internal_supply_accounting_ratio(iso: str | None) -> float:
@@ -1364,7 +1567,11 @@ def resolve_internal_supply_accounting_ratio(iso: str | None) -> float:
 
 
 def thermal_accreditation_fraction(
-    fuel_type: str, eford: float, iso: str | None
+    fuel_type: str,
+    eford: float,
+    iso: str | None,
+    config: ScenarioConfig | None = None,
+    year: int | None = None,
 ) -> float:
     """Firm fraction of nameplate one dispatchable unit accredits, on the ISO's basis.
 
@@ -1388,9 +1595,14 @@ def thermal_accreditation_fraction(
       fuel class the ISO does not publish (rule 25 neutral fallback).
     * default / absent (``"ucap"``): ``1 - EFORd``.
 
-    ``iso=None`` keeps the legacy UCAP basis byte-identically.
+    ``iso=None`` keeps the legacy UCAP basis byte-identically. ``config`` and
+    ``year`` (both optional, default ``None``) thread the capx D48
+    accreditation-design devintage through
+    :func:`resolve_thermal_accreditation_basis`: armed, a delivery year
+    before the ISO's reform date resolves ``"ucap"`` whatever the registry
+    says; unarmed or year-less, the registry basis — byte-identical.
     """
-    basis = THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso or "")
+    basis = resolve_thermal_accreditation_basis(iso, config, year)
     if basis == "seasonal_rating":
         return 1.0
     if basis == "claimed_capability":
@@ -1406,15 +1618,23 @@ def thermal_accreditation_fraction(
     return 1.0 - float(eford)
 
 
-def _thermal_firm_mw(g: Generator, iso: str | None) -> float:
+def _thermal_firm_mw(
+    g: Generator,
+    iso: str | None,
+    config: ScenarioConfig | None = None,
+    year: int | None = None,
+) -> float:
     """Firm MW one dispatchable unit contributes to the adequacy ledger.
 
     ``pmax`` times the unit's basis-resolved accreditation fraction
     (:func:`thermal_accreditation_fraction` —
-    :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`). ``iso=None`` keeps the legacy
-    UCAP basis.
+    :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`, devintaged per delivery year
+    under the capx D48 arm when ``config``/``year`` are threaded). ``iso=None``
+    keeps the legacy UCAP basis.
     """
-    return float(g.pmax_mw) * thermal_accreditation_fraction(g.fuel_type, g.eford, iso)
+    return float(g.pmax_mw) * thermal_accreditation_fraction(
+        g.fuel_type, g.eford, iso, config, year
+    )
 
 
 def _renewable_credit(fuel_type: str, iso: str | None) -> float | None:
@@ -1495,7 +1715,7 @@ def resolve_renewable_capacity_credit(
 
 
 def _floor_retention_merit(
-    config: ScenarioConfig, g: Generator
+    config: ScenarioConfig, g: Generator, year: int | None = None
 ) -> tuple[float, float, float]:
     """Return the reliability-floor retention sort key for one eligible unit.
 
@@ -1512,7 +1732,7 @@ def _floor_retention_merit(
     fom_field = _THERMAL_FOM[g.fuel_type]
     multiplier = getattr(config, _FOM_MULTIPLIER.get(g.fuel_type, ""), 1.0)
     going_forward_cost = getattr(config, fom_field) * multiplier * g.pmax_mw * 1000.0
-    firm_mw = _thermal_firm_mw(g, config.iso)
+    firm_mw = _thermal_firm_mw(g, config.iso, config, year)
     cost_per_firm_mw = going_forward_cost / firm_mw if firm_mw > 0.0 else math.inf
     return (cost_per_firm_mw, float(g.emission_rate_co2), float(g.heat_rate))
 
@@ -1588,11 +1808,13 @@ def _apply_reliability_floor(
         peak_demand_mw=peak_demand,
         elcc_curves_enabled=config.renewable_elcc_curves,
         nqc_curves_enabled=config.caiso_nqc_accreditation,
+        config=config,
+        accreditation_year=year,
     )
     retention_log: list[dict] = []
     if accredited_mw >= requirement_mw:
         return retention_log
-    for g in sorted(eligible, key=lambda g: _floor_retention_merit(config, g)):
+    for g in sorted(eligible, key=lambda g: _floor_retention_merit(config, g, year)):
         if accredited_mw >= requirement_mw:
             break
         if g.unit_id not in retired:
@@ -1603,11 +1825,11 @@ def _apply_reliability_floor(
         # One basis with the aggregate test above (rule 19): the retained
         # unit's increment carries the same internal-supply accounting ratio
         # accredited_firm_capacity_mw applied to the ledger it adds to.
-        firm_mw = _thermal_firm_mw(g, config.iso) * (
+        firm_mw = _thermal_firm_mw(g, config.iso, config, year) * (
             resolve_internal_supply_accounting_ratio(config.iso)
         )
         accredited_mw += firm_mw
-        cost_per_firm_mw, co2_rate, _hr = _floor_retention_merit(config, g)
+        cost_per_firm_mw, co2_rate, _hr = _floor_retention_merit(config, g, year)
         retention_log.append(
             {
                 "year": year,

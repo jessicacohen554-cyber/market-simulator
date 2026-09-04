@@ -1336,6 +1336,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the armed default now enters the hash and advances both pins — which is
     # the point of (b'-1), not a defect in the registration.
     "fossil_announced_exits_enabled",
+    # capx D48: the PJM accreditation-design devintage + DR-as-supply gates
+    # (both default-off, byte-identical unarmed — the ledger, floor, backstop,
+    # CR-1 position and capacity payment keep the single-vintage basis and the
+    # peak netting). Dropped from the hash at their False defaults so every
+    # pre-existing cache key of all six ISOs is byte-stable; an armed run keys
+    # distinctly. pjm_* cluster at the tuple's end per HOUSE-3. Registered IN
+    # THE SAME COMMIT as the fields (the nyiso-119 discipline).
+    "pjm_accreditation_design_vintage",
+    "pjm_demand_response_supply",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1805,6 +1814,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D42: fossil announced-date step-1 channel, registered at its shipping
     # False default (an armed run keys distinctly).
     "fossil_announced_exits_enabled": "False",
+    # capx D48: PJM accreditation-design devintage + DR-as-supply gates,
+    # registered at their shipping False defaults (armed runs key distinctly).
+    "pjm_accreditation_design_vintage": "False",
+    "pjm_demand_response_supply": "False",
 }
 
 
@@ -14794,6 +14807,73 @@ class ScenarioConfig:
     # mechanism: no backcast consumer of resolve_adequacy_requirement_mw
     # exists (swept at D40, the S-123 sweep re-confirmed). Placed at the END
     # of the field list so no existing matrix `:line` anchor shifts.
+    pjm_accreditation_design_vintage: bool = False  # GATED default-OFF (capx
+    # D48 2026-09-04, executing FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md
+    # §2.3 item 1 — the accreditation-design DEVINTAGE, both halves on ONE
+    # gate). Armed, PJM's adequacy accounting follows the design each delivery
+    # year's auction actually cleared on: (i) the thermal fleet is accredited
+    # at UCAP = pmax × (1 − EFORd) for delivery years BEFORE the registered
+    # reform delivery year (constants.THERMAL_ACCREDITATION_REFORM_DELIVERY_
+    # YEAR_BY_ISO — PJM 2025/2026, the CIFP ELCC-class reform, ER24-99 accepted
+    # 2024-01-30) and at the published ELCC class ratings from it onward
+    # (retirements.resolve_thermal_accreditation_basis, the one seam the
+    # ledger, the reliability floor, the backstop, the CR-1 position and the
+    # per-unit capacity payment all resolve through); (ii) the pool
+    # requirement for those pre-reform delivery years is the PUBLISHED
+    # pre-CIFP Forecast Pool Requirement (constants.FORECAST_POOL_REQUIREMENT_
+    # PRE_REFORM_BY_ISO — 1.0898 / 1.0868 / 1.0901 / 1.0894 for 2021/22–2024/25,
+    # digitized from the committed Planning Period Parameters rows) instead
+    # of the mixed-vintage composite (1 + IRM_2026/27) × 0.7699 the fallback
+    # builds; post-reform years keep the existing published-FPR path
+    # unchanged. Zero free parameters: every value is a published market-
+    # design input reconciled to its committed source row by test (rules 5,
+    # 13, 21, 23); the design-switch date is an instrument on file at every
+    # hindcast information cutoff (the D42/D44 vintage gate). WHAT IT
+    # REPAIRS (D45 §2.2, measured on the committed L1 ledgers): HEAD's PJM
+    # position for 2021–2024 is ELCC-class supply ÷ composite requirement —
+    # both halves on the 2025/26+ design — and reads 1.14–1.18 where the
+    # auctions sat at 1.05; restated on the auction's own UCAP basis the same
+    # fleet sits 1.06–1.10. SIGN (rule 14): positions DOWN 6–9 points toward
+    # the curve → capacity revenue UP → PJM retirements HARDER in exactly the
+    # years the model over-retires (G3 may read WORSE — the expected
+    # signature, not a failure). WHY DEFAULT-OFF: arming is an owner decision
+    # (rules 5/24/28) scored leave-one-year-out within 2021–2025 on the D48
+    # A/B (suffixed pjm-t1h-d48-devintage vs D45-R's bare pjm-t1h) BEFORE any
+    # default moves (rule 22). Registered in _CACHE_KEY_OPTIONAL_FIELDS at
+    # False (unarmed keys byte-stable; armed keys distinctly); coerced to the
+    # default in a plain backcast (forecast-lane mechanism). SCOPE: PJM-only
+    # by construction (both registries hold one ISO and the predicate
+    # requires an entry) — rule 25; nothing transfers.
+    pjm_demand_response_supply: bool = False  # GATED default-OFF (capx D48
+    # 2026-09-04, executing FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md
+    # §2.3 item 2 — Demand Resources as COUNTED SUPPLY, not a peak netting).
+    # Armed, the ISO's published per-delivery-year offered DR (UCAP MW,
+    # constants.DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO — PJM 2020/21–2027/28
+    # from the BRA reports' own RTO trend table, committed at
+    # data/raw/capacity-market/auction-supply/pjm/pjm.csv) is ADDED to the
+    # accredited-supply ledger (adequacy.accredited_firm_capacity_mw — hence
+    # the CR-1 position, the floor and the backstop, one ledger) as a
+    # market-counted term outside the internal-supply ratio, and the gross
+    # peak is NOT netted by ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO for that
+    # ISO-year (retirements.resolve_adequacy_requirement_mw), so the position
+    # is stated on the auction's RAW convention — DR in the cleared quantity,
+    # the Reliability Requirement un-netted — which is the x-basis of PJM's
+    # VRR curve (Manual 18 §3.4); the D40 R-B question the PJM shard routed
+    # is answered by construction. Beyond the last published delivery year
+    # the resolver HOLDS-LAST (card C-A) as the last published DR-to-
+    # Reliability-Requirement RATIO × the model's gross requirement
+    # (constants.DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO), so the held
+    # DR scales with load; pre-table years keep the netting. OFFERED, not
+    # cleared: the model's position is a census position and the market's
+    # census analogue for DR is what offers; the cleared rows are validation
+    # observables (rule 13). SIGN (rule 14): +~5–6 GW of counted supply in
+    # 2021–2024 → positions UP ~3 points — the one D45 repair that moves AWAY
+    # from the curve; it is nonetheless the market's own accounting and
+    # enters formulaically, never sized by a residual. WHY DEFAULT-OFF /
+    # cache key / backcast coercion / scope: exactly as
+    # pjm_accreditation_design_vintage above (rules 22/24/25/28); the two
+    # fields are separate gates so the owner can arm either alone, and the
+    # D48 A/B arms both.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -15144,6 +15224,20 @@ class ScenarioConfig:
         if self.mode == "backcast":
             self.neiso_net_icr_requirement = (
                 type(self).__dataclass_fields__["neiso_net_icr_requirement"].default
+            )
+
+        # capx D48: the two PJM adequacy-accounting gates are likewise
+        # forecast-lane mechanisms (capacity evolution never runs in a plain
+        # backcast) — coerced to the DATACLASS DEFAULT, never a literal, in a
+        # plain backcast; kept in a hindcast (mode="forecast", hindcast=True).
+        if self.mode == "backcast":
+            self.pjm_accreditation_design_vintage = (
+                type(self)
+                .__dataclass_fields__["pjm_accreditation_design_vintage"]
+                .default
+            )
+            self.pjm_demand_response_supply = (
+                type(self).__dataclass_fields__["pjm_demand_response_supply"].default
             )
 
         # entry_lookahead_reprice is a FORECAST-only capacity-screen price
@@ -16455,6 +16549,8 @@ TIER_TAGS: dict[str, int] = {
     "neiso_winter_fuel_inventory": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,
+    "pjm_accreditation_design_vintage": 1,
+    "pjm_demand_response_supply": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

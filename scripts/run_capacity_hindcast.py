@@ -482,6 +482,10 @@ META_RECORD_SPEC = RecordSpec(
         # default_scenario_overrides, so it is ON in a bare MISO invocation.
         "entry_vre_zone_selection": FromConfig(cast=bool),
         "neiso_net_icr_requirement": FromConfig(cast=bool),
+        # capx D48 PJM accreditation-design devintage + DR-as-supply gates.
+        # FromConfig so the record reads the SOLVED gates (FFR-3R).
+        "pjm_accreditation_design_vintage": FromConfig(cast=bool),
+        "pjm_demand_response_supply": FromConfig(cast=bool),
         "entry_rate_limits": FromConfig(cast=bool),
         "entry_commissioning_lag": FromConfig(cast=bool),
         "exit_rate_limits": FromConfig(cast=bool),
@@ -623,6 +627,8 @@ def build_config(
     entry_screen_diagnostics: bool = False,
     entry_vre_capacity_revenue: "bool | None" = None,
     neiso_net_icr_requirement: "bool | None" = None,
+    pjm_accreditation_design_vintage: "bool | None" = None,
+    pjm_demand_response_supply: "bool | None" = None,
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     exit_rate_limits: "bool | None" = None,
@@ -837,6 +843,11 @@ def build_config(
                 # convention) gate — default-off; None inherits the shipped
                 # default, True arms the D37 T1-H measurement posture.
                 "neiso_net_icr_requirement": neiso_net_icr_requirement,
+                # capx D48: PJM accreditation-design devintage + DR-as-supply
+                # gates — default-off; None inherits the shipped default, True
+                # arms the D48 A/B measurement posture (distinct cache key).
+                "pjm_accreditation_design_vintage": pjm_accreditation_design_vintage,
+                "pjm_demand_response_supply": pjm_demand_response_supply,
                 "entry_rate_limits": entry_rate_limits,
                 "entry_commissioning_lag": entry_commissioning_lag,
                 "exit_rate_limits": exit_rate_limits,
@@ -1474,6 +1485,37 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--pjm-accreditation-design-vintage",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D48 (2026-09-04) PJM-only arm: accredit the thermal fleet "
+            "and resolve the pool requirement on the design each delivery "
+            "year's auction actually cleared on — UCAP (1 - EFORd) + the "
+            "published pre-CIFP FPR (constants.FORECAST_POOL_REQUIREMENT_"
+            "PRE_REFORM_BY_ISO) before the 2025/2026 CIFP reform, the ELCC "
+            "class ratings + post-CIFP FPR from it — instead of the 2025/26+ "
+            "design for every year. Inert on every other ISO. OMIT to inherit "
+            "the shipped default (off, owner-armed only); "
+            "--pjm-accreditation-design-vintage arms it (distinct cache key)."
+        ),
+    )
+    parser.add_argument(
+        "--pjm-demand-response-supply",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D48 (2026-09-04) PJM-only arm: count the published BRA "
+            "offered Demand Resource UCAP of each delivery year "
+            "(constants.DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO) as adequacy "
+            "SUPPLY on the accredited ledger and stop netting DR from the "
+            "peak, so the CR-1 position sits on PJM's own VRR x-convention. "
+            "Inert on every other ISO. OMIT to inherit the shipped default "
+            "(off, owner-armed only); --pjm-demand-response-supply arms it "
+            "(distinct cache key)."
+        ),
+    )
+    parser.add_argument(
         "--entry-vre-capacity-revenue",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1922,6 +1964,8 @@ def main(argv: list[str] | None = None) -> int:
         entry_screen_diagnostics=args.entry_screen_diagnostics,
         entry_vre_capacity_revenue=args.entry_vre_capacity_revenue,
         neiso_net_icr_requirement=args.neiso_net_icr_requirement,
+        pjm_accreditation_design_vintage=args.pjm_accreditation_design_vintage,
+        pjm_demand_response_supply=args.pjm_demand_response_supply,
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         exit_rate_limits=args.exit_rate_limits,

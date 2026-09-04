@@ -113,3 +113,31 @@ class TestCurateCapacityMarketAuctionSupply(unittest.TestCase):
         ].set_index("category")["value_mw"]
         self.assertEqual(float(s25.loc["external_resources"]), 3_505.9)
         self.assertEqual(float(s25.loc["demand_resources"]), 9_004.4)
+
+    def test_real_committed_pjm_csv_curates(self) -> None:
+        # capx D48 (2026-09-04): the PJM RPM BRA Demand Resource offered /
+        # cleared UCAP series — one offered + one cleared row per delivery
+        # year 2020/21-2027/28, RTO area, annual (season null), mw_ucap; the
+        # 2025/26 offered value is the report's own Table 5 trend value
+        # (5,962.5 annual + 122.3 matched summer).
+        repo_raw = Path(__file__).resolve().parents[2] / "data" / "raw"
+        df = asup.parse_iso("PJM", repo_raw)
+        self.assertEqual(len(df), 16)
+        self.assertEqual(set(df["unit"]), {"mw_ucap"})
+        self.assertEqual(set(df["area"]), {"RTO"})
+        self.assertEqual(set(df["category"]), {"demand_resources"})
+        self.assertTrue(df["season"].isna().all())
+        by = df.set_index(["planning_year", "metric"])["value_mw"]
+        self.assertEqual(float(by.loc[("2021/2022", "offered")]), 11_886.8)
+        self.assertEqual(float(by.loc[("2021/2022", "cleared")]), 11_125.8)
+        self.assertEqual(float(by.loc[("2025/2026", "offered")]), 6_084.8)
+        self.assertAlmostEqual(5_962.5 + 122.3, 6_084.8, places=6)
+        # Cleared never exceeds offered (a transcription tripwire).
+        for dy in sorted({p for p, _ in by.index}):
+            self.assertLessEqual(
+                by.loc[(dy, "cleared")], by.loc[(dy, "offered")] + 1e-9
+            )
+        # And the whole tree (MISO + PJM) curates through the dispatcher.
+        written = curate_asup.curate(raw_root=repo_raw, isos=["PJM"])
+        self.assertEqual(len(written), 1)
+        validate_clean(written[0])

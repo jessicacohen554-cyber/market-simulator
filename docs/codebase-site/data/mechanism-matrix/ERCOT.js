@@ -257,6 +257,8 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     reserve_margin_backstop: { cell: ".", fc: "." },
     adequacy_internal_supply_accounting: { cell: ".", fc: ".", ev: "n/a by market design (capx D31): energy-only — no capacity auction, no offered/cleared supply accounting to reconcile a census ledger against; ERCOT's ledger already counts on its own published CDR seasonal_rating basis" },
     neiso_net_icr_requirement: { cell: ".", fc: ".", ev: "n/a by market design (capx D40): energy-only — no capacity auction, no published procurement requirement series; the Board target RM composite is the only adequacy construct." },
+    pjm_accreditation_design_vintage: { cell: ".", fc: ".", ev: "n/a by market design (capx D48): energy-only — no capacity auction, no accreditation design to devintage (the CDR seasonal-rating basis is fixed by the accreditation audit)." },
+    pjm_demand_response_supply: { cell: ".", fc: ".", ev: "n/a by market design (capx D48): ERCOT's Load Resources / ERS ARE netted from the peak by its own CDR construction (the 'Firm Peak Load' the registry entry reproduces) — the netting IS the ISO's design here, so a supply-side form would be the wrong convention." },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },
