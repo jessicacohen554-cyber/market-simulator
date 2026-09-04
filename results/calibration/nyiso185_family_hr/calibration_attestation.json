@@ -5,13 +5,127 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session nyiso-152 (2026-08-22), promoted on the PRE-REGISTERED promotion rule of PREREG-nyiso152-bridge-reserve-duty-exclusion-2026-08-22.md SS5 (the nyiso-146c in-session convention: all gates pass, determination not worse, legitimacy strictly improves). Prereg + mechanism code committed and pushed BEFORE any solve. ARM SE = keeper recipe + cc_reserve_duty_split + nyiso_gas_bridge_reserve_duty_exclusions; control replay reproduces the keeper 2026-08-22-nyiso-151-identity-hr BIT-EXACTLY (IDENT max |dprice| = 0.0 over every zone-hour of all three years, proving the post-#4203-merge HEAD NYISO-inert); SE-K1 exact both ways (vs control = the two flags; vs the committed nyiso151_armHC mid-rung = the exclusion alone). SE-K2: the duty membership log line fires every year naming 7784 and Allegany's bridge floor is ZERO in all three years. SE-K3: the control-side capture predictions from the committed phase-0 record (90.4 / 111.8 / 0 GWh) land at 90.9 / 111.9 / 0.0 \u2014 within 0.6% / 0.09% / exact \u2014 and the Sterling/Massena/Batavia split collapses reproduce at 93.6-97.8%. SE-K4: zero new D-4, zero new D-1 (share upticks are denominator effects, K6-prime two-leg clean). SE-K5: criterion-for-criterion equal to the keeper's (C1 14/14, C2, C3a, C3b, C4, C8 PASS; C3c the identical lone failure at 1/0/0 h vs RT 10/13/42). Gates record _nyiso152_ab_gates.json; both prior rejections of the bare split (nyiso-150 armC, nyiso-151 armHC) stand unrewritten.",
-  "note": "THE COMPLETED DUTY-ROLE MECHANISM \u2014 the measured capacity-only CC cohort (reserve_duty_cc_NYISO.csv, pooled online-share/CF <= 0.1 against the population gap, 7 plants) is represented consistently in BOTH halves of commitment economics: the offer half (cc_reserve_duty_split routes the cohort's dispatchable capacity to the class peak band \u2014 the nyiso-146/149 lineage) and the commitment-population half (nyiso_gas_bridge_reserve_duty_exclusions scopes the cohort out of the NYISO gas commitment bridge through the detector's own min_load_frac_by_gen population gate \u2014 the nyiso-144 lay-up convention, second measured membership signal, one mechanism). The exclusion exists because the lay-up channel is CAMPD-defined and cannot test a CEMS-invisible plant: Allegany 7784 (e923_pooled_cf 0.0173) was the sole duty plant the bridge could still floor \u2014 1,804/2,797 h at min-load in 2023/24 under the armed split, rule 17 [R-FLOOR-WINDOW] scaffolding with every reserve-family dual zero in those hours (FINDING-nyiso152-phase0-reserve-posture-overturned-2026-08-22.md). Post-repair the plant runs peak-band spike-hour economics only: 90.9/111.9/0 GWh vs e923 11.7/15.5/0 \u2014 7.8x/7.2x, from the control's 43x/33x. Zero new scalars."
+  "attested_by": "session nyiso-185 (2026-09-04). THE ARM of the owner-authorized A/B (results/calibration/PREREG-nyiso185-stgas-family-hr-ab.md, committed BEFORE any measurement; record docs/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md): the committed keeper 2026-09-02-nyiso-177-vintage-matched recipe replayed at HEAD plus exactly ONE field, egrid_family_heat_rates=True \u2014 eGRID PRIME-MOVER-FAMILY heat rates at plants hosting two or more live families (\u03a3 UNT23.HTIAN / \u03a3 GEN23.GENNTAN per family ST / CC / GT, the SAME vintage and physical window the plant-grain join reads), applied at the eGRID-input seam so every class-scoped measured mechanism keeps its precedence, and SUPERSEDING fleet.models.MIXED_FACILITY_STEAM_HR's hand number at the plants it covers (rule 19, never stacked). WHY: nyiso-184 proved as identities that Ravenswood's ST_GAS base 9.50 IS that dict \u2014 a rule-24 per-plant enumeration whose 9.5 its own comment derives from ASSUMED capacity factors putting two-thirds of the site's energy on the steam where CAMPD puts one-third \u2014 lifting the plant-grain eGRID-2023 blend 8.80 that every Ravenswood row carries; the family construction reads the same eGRID at unit/generator grain and puts the steam at 12.29 and the combined cycle at 7.35. GROUNDING (PREREG-nyiso185 \u00a73, all three legs FIRE): the heat side is what the join controls and it matches the class \u2014 Ravenswood's annual/loaded factor 1.029 inside the eight peers' [1.0006, 1.0707]; the eGRID family heat input equals CEMS heat to 1e-9; plant-level EIA-923 net / CAMPD gross 0.948 inside the peers' [0.888, 0.959]. nyiso-184's G2c miss (r 1.148 vs [1.059, 1.121]) is recorded, not re-litigated: it sat entirely in EIA-923's net-generation denominator (unit 30 net/gross 0.862 at CF 4.2 %), the published convention every peer's basis carries, which a grounding bar on the construction must not gate. ZERO free parameters, ZERO new DOF entries; no lever swept, no band touched, no residual consulted. REPORTED AT FULL MAGNITUDE, INCLUDING WHAT IT COSTS \u2014 see the finding: C1-2023 ST_GAS clears (+3.86 -> +2.16 TWh) while C1-2024 CC_REGULAR crosses the share band (+3.34 -> +3.87 TWh, 2.78 -> 3.18 pp); C3a-2025 -11.2 -> -10.5 % (still FAIL, owner-court, no price claim banked); C3b, C2, C8 PASS; C3c unchanged. REGISTERED AS A KEEPER CANDIDATE UNDER THE PRE-REGISTERED VERDICT RULE; the disposition is the owner's.",
+  "note": "nyiso-185 (2026-09-04): the nyiso-177 keeper recipe plus egrid_family_heat_rates \u2014 the measured, vintage-reproducible replacement for the MIXED_FACILITY_STEAM_HR hand number at the plants the artifact covers. Zero free parameters and zero new DOF entries; the ledger is the keeper's, carried verbatim. The prior keeper lineage's mechanism notes live in their own bundles' attestations and the keeper shard's promotion-note chain.",
+  "computed_checks": {
+   "G_CONTROL": {
+    "by_year": {
+     "2023": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2024": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2025": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     }
+    },
+    "max_abs_dprice": 0.0,
+    "bit_identical_to_keeper": true,
+    "baseline": "nyiso177_vintage_B1p",
+    "pass": true
+   },
+   "G_DELTA": {
+    "baseline": "nyiso185_control",
+    "delta_fields": {
+     "egrid_family_heat_rates": [
+      false,
+      true
+     ]
+    },
+    "absence_normalized": {},
+    "rode_along": [],
+    "pass": true
+   },
+   "G_INPUTS": {
+    "control": {
+     "thermal_tranches": "data/raw/_processed-legacy/thermal_tranches-perunitmerit-NYISO.csv",
+     "campd_unit_outages": "data/raw/campd-unit-outages-perunitmerit-NYISO.csv",
+     "perunitmerit_basis": true
+    },
+    "arm": {
+     "thermal_tranches": "data/raw/_processed-legacy/thermal_tranches-perunitmerit-NYISO.csv",
+     "campd_unit_outages": "data/raw/campd-unit-outages-perunitmerit-NYISO.csv",
+     "perunitmerit_basis": true
+    },
+    "artifact": "data/raw/_processed-legacy/egrid_family_heat_rates_NYISO.csv",
+    "ravenswood_ST_rate": 12.2918,
+    "ravenswood_CC_rate": 7.3499,
+    "covered_plant_family_rows": 14,
+    "pass": true
+   },
+   "G_DOF": {
+    "n_entries": 13,
+    "n_residual": 6,
+    "added_entries": 0,
+    "added_scalars": 0,
+    "removed_hand_values_at_covered_plants": {
+     "MIXED_FACILITY_STEAM_HR[2500]": 9.5,
+     "note": "superseded at covered plants by the measured family rate (rule 19); the dict entry itself is untouched (CAISO 315/335 are CAISO's lane)"
+    },
+    "basis": "eGRID prime-mover-family heat rates are arithmetic on published fields (\u03a3 UNT23.HTIAN / \u03a3 GEN23.GENNTAN per family) from the SAME vintage and 3,000-30,000 Btu/kWh window the plant-grain join reads; no scalar was chosen, swept or fitted (PREREG-nyiso184 \u00a73 R1, PREREG-nyiso185 \u00a73).",
+    "pass": true
+   },
+   "G_ENGAGE": {
+    "by_year": {
+     "2023": {
+      "ST_GAS_twh": [
+       11.999,
+       10.299
+      ],
+      "CC_REGULAR_twh": [
+       32.796,
+       33.587
+      ],
+      "load_weighted_price": [
+       32.97,
+       33.75
+      ]
+     },
+     "2024": {
+      "ST_GAS_twh": [
+       9.799,
+       8.821
+      ],
+      "CC_REGULAR_twh": [
+       37.401,
+       37.934
+      ],
+      "load_weighted_price": [
+       37.79,
+       38.25
+      ]
+     },
+     "2025": {
+      "ST_GAS_twh": [
+       10.014,
+       9.37
+      ],
+      "CC_REGULAR_twh": [
+       35.807,
+       36.117
+      ],
+      "load_weighted_price": [
+       58.99,
+       59.48
+      ]
+     }
+    },
+    "st_gas_falls_every_year": true,
+    "pass": true
+   }
+  }
  },
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 10,
+  "n_entries": 13,
   "n_residual": 6,
   "entries": [
    {
@@ -222,6 +336,44 @@
     "n_scalars": 0,
     "source": "CAMPD plant-summed online share (grossLoad >= max(1 MW, 0.05 x HSL)) where a CEMS record exists, else EIA-923 pooled net CF over model pmax (derive_reserve_duty_cc.py); derived blind to the bridge's floor pattern and to every D-4 verdict",
     "root_cause": "duty-role misrepresentation: capacity-only plants carried competitive class offer curves (merit-order inversion, nyiso-145) and CAMPD-invisible members stayed in the bridge's day-ahead commitment population (membership-channel coverage gap, nyiso-152 phase-0)"
+   },
+   {
+    "name": "hydro_vintage_input_repair",
+    "where": "meta.hydro_backfill_year=2024 + meta.hydro_eia930_monthly=true (solve_and_persist kwargs -> data.hydro.build_hydro_fleet / load_hydro_budget)",
+    "identification": "measured",
+    "lineage_solves": "nyiso-108 A/B (2026-07-31, armed+promoted, owner override); nyiso-155 re-arm A/B (2026-08-25)",
+    "value": {
+     "hydro_backfill_year": 2024,
+     "hydro_eia930_monthly": true,
+     "n_scalars": 0,
+     "note": "Plant census backfilled from the complete 2024 EIA-923 vintage (2025 early release retains 2.0 % of NYIS HY plants); monthly energy level pinned to EIA-930 NG: WAT, independently validated by NYISO MIS P-63 Hydro (+1.30/+0.74/+0.60 % agreement). Both series are measured inputs derived blind to any residual; the pair regenerates forward via forecast_monthly_hydro (rule 13). Same-config identification as the CAISO/PJM/MISO/NEISO keepers' standing arm (PJM/MISO backfill-only, PS fold)."
+    }
+   },
+   {
+    "name": "nyiso_seam_par_attribution",
+    "where": "ScenarioConfig.nyiso_seam_par_attribution -> data.nyiso_par_attribution (PAR_REGISTRY, INTERFACE_ZONE, SEAM_ROW_ZONE, zone_shares, nyiso_par_attributed_ttc_hourly)",
+    "identification": "published",
+    "lineage_solves": "nyiso-127 A/B (2026-08-05, REJECTED on K3 at the nyiso-125 HEAD; PRs #3570/#3582/#3584/#3586); nyiso-157 re-test A/B (2026-08-30, owner ruling of that date; K3 does not re-fire at the nyiso-155 HEAD)",
+    "value": {
+     "shares": {
+      "ramapo": 0.32,
+      "jk": 0.15,
+      "abc": 0.21,
+      "west": 0.32
+     },
+     "n_scalars": 0,
+     "note": "NY-NJ PAR posting table 1 (published percentages, effective 5/1/2017; OBF 0 since 11/1/2019) x P-33 outSched published availability windows (ABC-B/C out 100 % of 2023-2025, so the hourly split is ~46/7/47, never the nameplate 47/21/32) x published tie landings (Gold Book / Operating Study). Regenerates forward from the standing JOA convention and forward PAR availability (rule 13). Supersedes the nyiso_seam_deliverability_envelope two-link mechanism at runtime (rule 19): exactly one of the two applies."
+    }
+   },
+   {
+    "name": "nyiso_zonal_loss_surface",
+    "where": "ScenarioConfig.nyiso_zonal_loss_surface -> interchange.nyiso.apply_nyiso_zonal_loss_links / build_nyiso_link_loss <- data.loss_surface.load_zone_month_deviation <- data/raw/iso-specific-transmission/NYISO_loss_surface.csv (scripts/data/derive_nyiso_loss_surface.py, frozen rule 23)",
+    "identification": "measured",
+    "lineage_solves": "nyiso-159 phase-0 (2026-08-30, committed-artifacts measurement, FINDING-nyiso159-loss-surface-phase0-2026-08-30.md); offline acceptance 12/12 pair-years pre-solve; nyiso-159 A/B (2026-08-30, _nyiso159_loss_ab_gates.json)",
+    "value": {
+     "n_scalars": 0,
+     "note": "Per-zone monthly delivery-factor deviations dev_z,m = sum(MCL_z)/sum(E) from NYISO's own posted RT LBMP components (LBMP = E + MCL - MCC, MST \u00a717.1/Manual 12), model-zone aggregation = the scoring actuals' own simple-mean crosswalk; per-year rows for backcast train years (the CEMS-rate admissibility class, rule 13 \u2014 regenerates for any year from the same public feed and responds to changed grid conditions), pooled year=0 rows as the forecast-mode forward analogue. The eps tiebreak (1e-3 $/MWh) is the rule-9 storage-epsilon numerical device, identical in construction and value to the PJM/CAISO twins, declared in NYISO's own module (rule 25)."
+    }
    }
   ]
  },

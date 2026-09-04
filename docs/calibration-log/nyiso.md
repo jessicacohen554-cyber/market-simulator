@@ -11547,3 +11547,62 @@ rows" was an id-column grep on a name-first CSV.
 `scripts/data/derive_egrid_family_heat_rates.py`, artifact
 `data/raw/_processed-legacy/egrid_family_heat_rates_NYISO.csv` (+ `_vintages`),
 tests `tests/unit/data/test_egrid_family_heat_rates.py`.
+
+## nyiso-185 — the family heat-rate A/B is SOLVED; registered as a KEEPER CANDIDATE, disposition to the owner (2026-09-04)
+
+**Branch:** `claude/nyiso-185-stgas-family-hr-ab`. **Solves: TWO** — arm
+`2026-09-04-nyiso-185-family-hr` (`results/calibration/nyiso185_family_hr`,
+registered) and the same-HEAD control (`nyiso185_control`, BIT-IDENTICAL to
+the committed keeper in all three years — an instrument, registers nothing).
+**Keeper unchanged:** `2026-09-02-nyiso-177-vintage-matched`. **Owner ruling
+carried:** "If structural integrity improves but gates regress that may still
+be a keeper.." — authorizing the A/B nyiso-184's S2 withheld; not a promotion.
+**Pre-registration** `PREREG-nyiso185-stgas-family-hr-ab.md` pushed at
+`588aa141` before the first measurement (its §0 discloses the author holds
+nyiso-184's post-hoc numbers).
+
+**Grounding (G1, all legs fire):** the bar gates what the join controls —
+Ravenswood's annual/loaded heat-side factor 1.029 inside the eight peers'
+[1.0006, 1.0707]; eGRID ST-family heat input == CEMS heat to 1e-9;
+plant-level EIA-923 net ÷ CAMPD gross 0.948 inside the peers' [0.888, 0.959].
+EIA-923's denominator convention (unit 30 net/gross 0.862 at CF 4.2 %) is
+reported, not gated. G0: the armed no-LP reconstruction moves exactly the
+nyiso-184 footprint at the expected ratios (1.29387 ST, 0.83517 CC).
+
+**A/B, keeper = baseline:** NOT-YET, grade 5, fails 3 on both, with a
+different C1 cell. C1-2023 `ST_GAS` +3.86 → **+2.16 TWh (FAIL → PASS)**;
+C1-2024 `CC_REGULAR` +3.34 → **+3.87 TWh, share 2.78 → 3.18 pp (PASS →
+FAIL)**; C3a-2025 −11.2 → −10.5 % (FAIL, owner-court); C3a-2023 +2.2 → +4.7 %;
+C3b 0.122 / 0.173 / 0.191 PASS; C2 / C4 / C8 PASS (`ST_GAS` D-2 0.192 / 0.253 /
+0.203); C3c identical; C6 attested (`gen_nyiso185_attestation.py`, computed
+G-CONTROL / G-DELTA / G-INPUTS / G-DOF / G-ENGAGE); DOF 13 / 6 verbatim.
+Energy: Ravenswood `ST_GAS` 6.328 → 4.181 / 3.468 → 2.317 / 2.688 → 1.851 TWh;
+other ten steam plants +0.44 / +0.17 / +0.18; Ravenswood's own CC +0.004 /
++0.034 / +0.010 (already ~82 % CF); `CC_REGULAR` ex-Ravenswood +0.79 / +0.50 /
++0.31. 2024 / 2025 `ST_GAS` deepen as pre-declared. D-4: the same five rule-17
+rider rows on both; Ravenswood's share 0.004 → 0.018 / 0.008 → 0.021.
+
+**Verdict rule (pre-registered):** no PASS → FAIL on C2 / C3a / C3b / C8, G1
+fired ⇒ **KEEPER CANDIDATE**, disposition to the owner. Session
+recommendation: promote (rules 14 + 1). Not promoted here.
+
+**Rules.** 1 / 5 / 13 / 14 / 19 / 21 / 22 / 23 / 24 / 25 / 28 as the finding
+§6. 15: arm registered; retention pruned `2026-08-22-nyiso-152-duty-complete`.
+16 / 12: one invocation each, years sequential, two concurrent solves.
+27: on-disk bytes pushed, ≥300-line blobs verified.
+
+**Evidence:** `docs/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md`,
+`results/calibration/PREREG-nyiso185-stgas-family-hr-ab.md`,
+`_nyiso185_grounding.json`, `scripts/probes/nyiso185_grounding.py`,
+`scripts/gen_nyiso185_attestation.py`, the arm bundle's
+`calibration_attestation.json` / `metrics.json` / `legitimacy_diagnostics.json`.
+
+**ADDENDUM 2026-09-04 — PROMOTED BY OWNER RULING** (verbatim: "Is this a
+recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper.."). NYISO keeper →
+`2026-09-04-nyiso-185-family-hr`; keeper shard + `status/NYISO.js`,
+`audit_keepers --iso NYISO` all checks passed, forecast gate-(a) stamp
+re-keyed (R-T), NYISO matrix shard re-stamped (cell `egrid_family_heat_rates`
+O → K), §5.5 header re-stamped. Fail set now {C1-2024 `CC_REGULAR` share,
+C3a-2025 −10.5 %, C3c}; top of queue: the 2024 `CC_REGULAR` over-run as a
+class object.

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-22T15:25:53",
+  "timestamp": "2026-09-04T07:04:21",
   "iso": "NYISO",
   "years": [
     2023,
@@ -99,7 +99,9 @@
     "nyiso_seny_rcpf_increment_step": true,
     "nyiso_seam_deliverability_envelope": true,
     "nyiso_solar_market_generator_basis": true,
-    "nyiso_li_tsl_n11_security": true
+    "nyiso_li_tsl_n11_security": true,
+    "nyiso_seam_par_attribution": true,
+    "nyiso_zonal_loss_surface": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -203,6 +205,10 @@
   "pjm_da_virtual_bids": false,
   "pjm_offer_midcurve_conditional": false,
   "caiso_offer_surface_measured": false,
+  "caiso_offer_surface_measured_ungrounded": false,
+  "caiso_st_gas_committed_measured": false,
+  "caiso_st_gas_peak_measured": false,
+  "caiso_ct_peaker_committed_measured": false,
   "caiso_offer_surface_conditional": false,
   "pjm_offer_midcurve_segments": null,
   "ercot_nuclear_unit_availability": false,
@@ -216,8 +222,8 @@
   "ercot_online_capacity_envelope_measured": false,
   "ercot_ordc_only_scarcity": false,
   "priced_interchange": true,
-  "hydro_backfill_year": null,
-  "hydro_eia930_monthly": false,
+  "hydro_backfill_year": 2024,
+  "hydro_eia930_monthly": true,
   "hydro_forecast_budget": false,
   "hydro_year": "normal",
   "interchange_shaping": false,
@@ -259,7 +265,6 @@
   "caiso_import_hub_prices": null,
   "caiso_import_gas_coupling": null,
   "caiso_import_solar_shape": null,
-  "caiso_bidir_intertie": null,
   "caiso_per_hub_intertie": null,
   "caiso_perhub_firm_base": null,
   "caiso_corridor_flow_limit": null,
@@ -271,6 +276,11 @@
   "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
   "unit_outage_lp_capacity_basis": null,
+  "unit_outage_mixed_gas_routing": null,
+  "unit_outage_st_capacity_basis": null,
+  "unit_outage_per_unit_clip": null,
+  "campd_per_unit_attribution": true,
+  "campd_outage_merit_order_guard": true,
   "cc_winter_capability_basis": null,
   "ramp_limits": true,
   "local_capacity_constraints": null,
@@ -303,6 +313,7 @@
   "chp_layup_duty_split": null,
   "chp_layup_duty_curve": true,
   "egrid_identity_heat_rates": true,
+  "egrid_family_heat_rates": null,
   "nyiso_gas_bridge_cc_min_run_hours": 21.0,
   "nyiso_gas_bridge_st_min_run_hours": 13.0,
   "nyiso_spin_reserve_online": null,
@@ -318,7 +329,7 @@
   "miso_seam_envelope_merit_cap": false,
   "miso_seam_envelope_hour_ending_key": false,
   "nyiso_seam_deliverability_envelope": true,
-  "nyiso_seam_par_attribution": false,
+  "nyiso_seam_par_attribution": true,
   "miso_pjm_border_anchor": false,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
@@ -349,19 +360,19 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a67f13721a3a.parquet"
   },
-  "git_sha": "372f50b",
-  "basis_sha": "cb7aadf8408a727ad7a06268232e250a54ae83a1",
-  "highspy_version": "1.14.0",
+  "git_sha": "e26dc030",
+  "basis_sha": "4b24ad3cdf220d81b3cbc75801f17e8b93921035",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v21-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
-      "pydantic": "2.13.4"
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "pydantic": "2.13.5"
     }
   }
 }
