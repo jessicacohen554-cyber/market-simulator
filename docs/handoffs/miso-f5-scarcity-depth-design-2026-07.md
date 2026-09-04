@@ -134,9 +134,18 @@ resources" leg is already inside the measured interchange. External buses
 are therefore outside every declared region by construction — the partial
 first launch was killed and re-run with the fix; no probe verdict was read
 from the 8-zone arm.)* Hour masks = `outages.outage_hour_mask` — the SAME
-half-open, no-leap (8760) model-clock convention the M-2 derates use, EST
-(Etc/GMT+5) year-round per MISO Tariff Module A, so the tier windows and the
-M-2 derate windows are hour-exact aligned by construction.
+half-open, no-leap (8760) model-clock convention the M-2 derates use, so the
+tier windows and the M-2 derate windows are hour-exact aligned by
+construction. *(Clock CORRECTED 2026-09-04, miso-210: this paragraph
+originally read "EST (Etc/GMT+5) year-round per MISO Tariff Module A". The
+registry's endpoints ARE declared in EST, but the MODEL clock is CST
+hour-beginning — miso-208 measured it with two r = 1.000 witnesses — so
+converting to EST placed every window one hour LATE on the model clock for
+both consumers. `maxgen_events.MODEL_TZ_BY_ISO["MISO"]` and the deriver's
+`MODEL_TZ` are now `Etc/GMT+6`, with the deriver's DA-hub certificate record
+shifted by the same hour; the rows below keep their declared EST endpoints
+and land on model hours one earlier, e.g. 13:00→20:00 EST = 12:00→19:00
+CST. Record: `results/calibration/FINDING-miso210-maxgen-clock-repair-2026-09-04.md`.)*
 
 Active rows for the 2023-2025 window (from `data/raw/maxgen-events/miso/miso.csv`):
 

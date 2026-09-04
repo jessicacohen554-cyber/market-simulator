@@ -78,13 +78,22 @@ availability-event overlay, backcast/calibration only — the registry +
 derates regenerate from each new CAMPD/declaration vintage, and a forecast
 year carries the class outage-rate machinery instead.
 
-Clock convention: MISO market operations run on EST (UTC-5) year-round
-(Tariff Module A; the registry stores UTC converted from declared EST). The
-model clock, the DA hub record (``he01``-``he24`` hour-ending EST) and the
-CAMPD extracts share that fixed-offset convention (CAMPD stamps plant local
-standard time — for the ISO's CST plants that is a <= 1 h skew on >= 7 h
-windows, inherited from the std/short extract family and made robust by the
-best-event-hour credit).
+Clock convention (CORRECTED 2026-09-04, miso-210): MISO declares its windows
+in EST (Tariff Module A; the registry stores UTC converted from declared
+EST), but the MODEL clock the emitted ``window_start``/``window_end`` are
+consumed on is CST hour-beginning — measured by miso-208 with two r = 1.000
+witnesses. The registry is therefore placed through the SAME loader and
+constant the tier-pricing consumer uses (:data:`MODEL_TZ`, mirroring
+``maxgen_events.MODEL_TZ_BY_ISO``), and the DA hub certificate record
+(``he01``-``he24`` hour-ending EST) is shifted by the same hour
+(:data:`DA_HUB_EST_TO_MODEL_HOURS`) so guard 2 compares the same physical
+hours. Until this repair the deriver converted to EST and every emitted
+window landed one hour LATE on the model clock (and the 2021/2022 registry
+rows landed 2026-07-31 had made the deriver unrunnable, see ``main``). The
+CAMPD grids stamp plant local standard time: on the corrected placement the
+<= 1 h skew sits on the ISO's EST-minority plants (IN/MI/KY) rather than the
+CST majority, inherited from the std/short extract family and made robust by
+the best-event-hour credit — named, not repaired here.
 
 Usage::
 
@@ -109,6 +118,10 @@ sys.path.insert(0, str(REPO))
 
 from market_sim.config.paths import EIA_860_DIR, RAW_DATA_DIR  # noqa: E402
 from market_sim.data import campd  # noqa: E402
+from market_sim.data.maxgen_events import (  # noqa: E402
+    MODEL_TZ_BY_ISO,
+    load_maxgen_registry_model_clock,
+)
 from market_sim.data.outages import (  # noqa: E402
     _iso_plant_capacity,
     unit_outage_csv_for_iso,
@@ -122,7 +135,6 @@ from scripts.data.derive_campd_unit_outages import (  # noqa: E402
     build_capacity_index,
     unit_capacity_mw,
 )
-from scripts.lib import clean_io  # noqa: E402
 
 # --- Frozen identification constants (design §3/M-2; cited in module doc) ---
 
@@ -138,8 +150,21 @@ CAPABILITY_WINDOW_DAYS: int = 45
 # F3 fallback: basis-instability trigger on an event block's total derate.
 F3_BASIS_RATIO: float = 2.0
 
-# MISO market/registry clock: EST (UTC-5) year-round — Etc/GMT+5 is UTC-5.
-MODEL_TZ: str = "Etc/GMT+5"
+# The MODEL clock the emitted windows are consumed on — the SAME constant the
+# tier-pricing consumer reads (``maxgen_events.MODEL_TZ_BY_ISO``), so the two
+# armed consumers can never drift apart again. MISO: ``Etc/GMT+6`` = CST
+# hour-beginning, MEASURED (miso-208, two r = 1.000 witnesses). The registry's
+# endpoints are declared in EST and converted from UTC by the shared loader;
+# until miso-210 this constant was ``Etc/GMT+5`` (EST) and every window
+# landed one hour LATE on the model clock.
+MODEL_TZ: str = MODEL_TZ_BY_ISO["MISO"]
+
+# The DA hub record (``he01``-``he24``) is hour-ENDING EST: ``he13`` is the EST
+# hour-beginning 12:00 interval, which on the CST model clock is 11:00. Shift
+# the certificate record by the same hour the registry conversion applies, so
+# guard 2 compares exactly the physical hours it always did (the miso-210
+# S-3 certificate-invariance line: n_cert per registry row is unchanged).
+DA_HUB_EST_TO_MODEL_HOURS: int = -1
 
 # DA hub record per declared region (design guard 2 "region-scoped hubs";
 # the North/South hub split of the design §1 July-2025 decomposition).
@@ -175,58 +200,66 @@ def _zone_in_region(zone: str, region: str) -> bool:
     raise ValueError(f"unknown declared region {region!r}")
 
 
-def load_registry_est(iso: str) -> pd.DataFrame:
-    """Return the ISO's maxgen-events registry on the naive EST model clock.
+def load_registry_model_clock(iso: str) -> pd.DataFrame:
+    """Return the ISO's maxgen-events registry on the naive MODEL clock.
 
-    Reads the curated ``maxgen-events`` partition through the frozen
-    ``clean_io`` seam (regenerating it from ``data/raw`` via
-    ``scripts.data.curate_maxgen_events`` when absent — ``data/clean`` is derived
-    and disposable). Adds ``start_est`` (hour-floored) and ``end_est_excl``
-    (hour-ceiled, half-open exclusive end: a declared ``23:59`` end-of-day
-    becomes the next midnight) naive-EST columns.
+    Delegates to :func:`market_sim.data.maxgen_events.load_maxgen_registry_model_clock`
+    — the tier-pricing consumer's own loader (curated partition through the
+    frozen ``clean_io`` seam, regenerated from ``data/raw`` when absent;
+    ``start_model`` hour-floored, ``end_model_excl`` hour-ceiled half-open) —
+    so the derate windows and the tier windows are placed by ONE function.
     """
-    if not clean_io.clean_exists("maxgen-events", iso=iso):
-        from scripts.data.curate_maxgen_events import curate
-
-        curate(isos=[iso])
-    ev = clean_io.read_clean("maxgen-events", iso=iso)
-    start = ev["start_utc"].dt.tz_convert(MODEL_TZ).dt.tz_localize(None)
-    end = ev["end_utc"].dt.tz_convert(MODEL_TZ).dt.tz_localize(None)
-    ev = ev.copy()
-    ev["start_est"] = start.dt.floor("h")
-    ev["end_est_excl"] = end.dt.ceil("h")
-    return ev
+    return load_maxgen_registry_model_clock(iso)
 
 
-def load_da_hub_wide(iso: str, year: int) -> pd.DataFrame:
-    """Return the year's DA hub LMP as a wide ``ts x hub`` frame (EST clock).
+def da_hub_path(iso: str, year: int) -> Path:
+    """Return the year's gzip DA hub LMP record path (may not exist).
 
-    Reads the committed ``miso_hub_lmp_<year>_da.csv.gz`` record
-    (``he01``-``he24`` hour-ending EST -> 0-based hour-beginning timestamps).
+    Only the gzip yearly files (2023-2025) are readable here; the 2022 /
+    2026 ``_p<NN>.csv`` chunk sets are a different staging format
+    (``data/raw/lmp-data/MISO/README.md``) and are NOT a certificate source.
     """
-    path = RAW_DATA_DIR / "lmp-data" / iso / f"{iso.lower()}_hub_lmp_{year}_da.csv.gz"
-    df = pd.read_csv(path)
+    return RAW_DATA_DIR / "lmp-data" / iso / f"{iso.lower()}_hub_lmp_{year}_da.csv.gz"
+
+
+def da_hub_long_to_wide(df: pd.DataFrame) -> pd.DataFrame:
+    """Reshape a DA hub LMP record to a wide ``ts x hub`` frame on the MODEL clock.
+
+    ``he01``-``he24`` are hour-ending EST labels -> 0-based EST hour-beginning
+    timestamps, then shifted by :data:`DA_HUB_EST_TO_MODEL_HOURS` onto the CST
+    model clock (the same hour the registry conversion applies). Pure, so the
+    placement is unit-testable on a synthetic row.
+    """
     df = df[df["value"] == "LMP"]
     he_cols = [f"he{h:02d}" for h in range(1, 25)]
     long = df.melt(
         id_vars=["date", "node"], value_vars=he_cols, var_name="he", value_name="lmp"
     )
-    long["hour"] = long["he"].str.slice(2).astype(int) - 1
+    long["hour"] = long["he"].str.slice(2).astype(int) - 1 + DA_HUB_EST_TO_MODEL_HOURS
     long["ts"] = pd.to_datetime(long["date"]) + pd.to_timedelta(long["hour"], unit="h")
     return long.pivot_table(index="ts", columns="node", values="lmp")
+
+
+def load_da_hub_wide(iso: str, year: int) -> pd.DataFrame:
+    """Return the year's DA hub LMP as a wide ``ts x hub`` frame (MODEL clock).
+
+    Reads the committed ``miso_hub_lmp_<year>_da.csv.gz`` record and places it
+    through :func:`da_hub_long_to_wide`.
+    """
+    return da_hub_long_to_wide(pd.read_csv(da_hub_path(iso, year)))
 
 
 def certificate_hours(
     hub_wide: pd.DataFrame,
     region: str,
-    start_est: pd.Timestamp,
-    end_est_excl: pd.Timestamp,
+    start_model: pd.Timestamp,
+    end_model_excl: pd.Timestamp,
     threshold: float = IN_MERIT_THRESHOLD_USD,
 ) -> int:
     """Count distinct window hours whose region-hub max DA LMP exceeds ``threshold``."""
     hubs = [h for h in REGION_HUBS[region] if h in hub_wide.columns]
     win = hub_wide.loc[
-        (hub_wide.index >= start_est) & (hub_wide.index < end_est_excl), hubs
+        (hub_wide.index >= start_model) & (hub_wide.index < end_model_excl), hubs
     ]
     if win.empty:
         return 0
@@ -245,11 +278,11 @@ def merge_event_blocks(qualified: pd.DataFrame) -> list[dict]:
     """
     blocks: list[dict] = []
     for region, sub in qualified.groupby("region"):
-        sub = sub.sort_values("start_est")
+        sub = sub.sort_values("start_model")
         cur: dict | None = None
         for r in sub.itertuples(index=False):
-            if cur is not None and r.start_est <= cur["end"]:
-                cur["end"] = max(cur["end"], r.end_est_excl)
+            if cur is not None and r.start_model <= cur["end"]:
+                cur["end"] = max(cur["end"], r.end_model_excl)
                 cur["levels"].append(str(r.level))
                 cur["n_windows"] += 1
             else:
@@ -257,8 +290,8 @@ def merge_event_blocks(qualified: pd.DataFrame) -> list[dict]:
                     blocks.append(cur)
                 cur = {
                     "region": str(region),
-                    "start": r.start_est,
-                    "end": r.end_est_excl,
+                    "start": r.start_model,
+                    "end": r.end_model_excl,
                     "levels": [str(r.level)],
                     "n_windows": 1,
                 }
@@ -396,8 +429,24 @@ def main() -> None:
     else:
         out_path = unit_outage_maxgen_csv_for_iso(iso)
 
-    ev = load_registry_est(iso)
-    years = sorted(ev["start_est"].dt.year.unique())
+    ev = load_registry_model_clock(iso)
+    # Guard 2 needs the year's DA hub record. Registry years without one (the
+    # 2021/2022 rows landed 2026-07-31 under the rule-22 intake channel; their
+    # hub record is absent or staged as unreadable chunks) cannot be
+    # certified and are dropped HERE, with notice -- they are outside the
+    # 2023-2025 training span in any case, and a window that cannot be
+    # certified never emits a derate (miso-210: the deriver could not run at
+    # all once those rows existed, so the committed extract had gone
+    # unreproducible).
+    years_all = sorted(int(y) for y in ev["start_model"].dt.year.unique())
+    years = [y for y in years_all if da_hub_path(iso, y).exists()]
+    skipped = sorted(set(years_all) - set(years))
+    if skipped:
+        print(
+            f"registry years with no DA hub record, dropped (uncertifiable): "
+            f"{skipped} -> {int(ev['start_model'].dt.year.isin(skipped).sum())} rows"
+        )
+        ev = ev[~ev["start_model"].dt.year.isin(skipped)].reset_index(drop=True)
     hub_by_year = {y: load_da_hub_wide(iso, int(y)) for y in years}
 
     # Guard 2: in-merit certificate per registry row, plus the stated
@@ -406,10 +455,10 @@ def main() -> None:
     n_cert, lo_flip, hi_flip = [], [], []
     lo_t, hi_t = CERT_SENSITIVITY_BAND
     for r in ev.itertuples(index=False):
-        hub = hub_by_year[r.start_est.year]
-        n = certificate_hours(hub, r.region, r.start_est, r.end_est_excl)
-        n_lo = certificate_hours(hub, r.region, r.start_est, r.end_est_excl, lo_t)
-        n_hi = certificate_hours(hub, r.region, r.start_est, r.end_est_excl, hi_t)
+        hub = hub_by_year[r.start_model.year]
+        n = certificate_hours(hub, r.region, r.start_model, r.end_model_excl)
+        n_lo = certificate_hours(hub, r.region, r.start_model, r.end_model_excl, lo_t)
+        n_hi = certificate_hours(hub, r.region, r.start_model, r.end_model_excl, hi_t)
         n_cert.append(n)
         q = n >= MIN_CERTIFICATE_HOURS
         if (n_lo >= MIN_CERTIFICATE_HOURS) != q:
@@ -418,7 +467,7 @@ def main() -> None:
             hi_flip.append(str(r.level))
         print(
             f"  {str(r.level):22s} {str(r.region):9s} "
-            f"{r.start_est} .. {r.end_est_excl}  hours>${IN_MERIT_THRESHOLD_USD:.0f}"
+            f"{r.start_model} .. {r.end_model_excl}  hours>${IN_MERIT_THRESHOLD_USD:.0f}"
             f"={n:3d}  {'QUALIFIES' if q else 'excluded (slack)'}"
         )
     ev = ev.assign(n_cert=n_cert)
