@@ -4665,3 +4665,200 @@ EXIT: the repair default-off with matrix duties, the A/B registered suffixed, th
 probe run or refused on the stated condition, the pre-registration graded, the finding with
 both recommendations.
 ```
+
+## D53 — the sector gate: who faces the merchant retirement screen (r#35; D32 C5 / R3)
+
+```
+You are the D53 session of the capacity-expansion track. D32 (FINDING-capx-d32-floor-retention-
+2026-09-02.md §4.3–§4.4, §5 row C5, §7 R3) measured on MISO's 2021–2025 record that 88–92 % of
+the coal / gas_st / oil MW that actually exited belonged to REGULATED UTILITIES — IRP decisions,
+filed as EIA-860 planned dates — while the model applies a merchant net-revenue screen to the
+WHOLE fleet, so the screen fails 77–92 % of a fleet 97 % of which stayed and the reliability
+floor masks 96 % of it. Q30/D44 armed the companion channel (C3, the filed dates). D49 half 2
+then measured the post-dates undated cohort STILL failing 73–77 GW at $0 capacity, every MW
+`entry_capped`. The structural remainder is C5: which owners face the screen at all. You design
+it, build it default-off, and A/B it. Rule 1 [R-STRUCT]: right market structure first.
+
+DATA PROFILE: miso (widen to pjm ONLY after D48 lands; see COLLISION).
+MODEL ASSIGNMENT: Fable (a structural mechanism with arming consequences).
+BRANCH: claude/capx-d53-sector-gate — FRESH off origin/main, rebase before every push.
+
+READ FIRST: D32 §4.3 (the sector row of the discriminator table: 0.88 / 0.09 / 0.46 / 0.90 /
+0.92 / 0.02 of exited MW by fuel), §4.4 (why the retention key is the WRONG place for this
+information), §5 C5 (driver, identification, rule-13/21 status), §7 R3 (the interactions the
+design must state: confirmed exits, RPS-credited clean units, CHP sectors, and the additions
+screen's mirror — utility builds are IRP-driven too) · FINDING-capx-d49-2026-09-04.md §2.3–§2.5
+(the post-dates cohort census you pre-declare against) · FINDING-capx-d42-* / d44 (the dates
+channel and reversal registry the gate partners with; rule 19: one exit decision per unit) ·
+model-methodology-spec.md §5.1–§5.2 · src/market_sim/model/capacity_evolution/retirements.py
+(the screen and floor; D51 is editing a registry constant and D55 `_floor_retention_merit` in
+the same file this window — touch neither) · the EIA-860 generator/plant `Sector` and
+`Regulatory Status` fields as they reach the fleet (data/raw/eia-860, the fleet assembly) ·
+the matrix `economic_retirement_screen` rows and every shard's cell.
+
+THE WORK, design before code:
+1. DESIGN DOC FIRST (docs/handoffs/DESIGN-capx-d53-sector-gate-<date>.md, pushed before any
+   code): the partition (EIA-860 Sector 1 = electric utility → exits ONLY through step 0
+   instruments and the step-1 filed-date channel; IPP / commercial / industrial sectors → the
+   economic screen as today), with every interaction D32 R3 names decided and cited: confirmed
+   exits (step 0, unchanged), RPS-credited clean units, CHP sectors (steam-host ownership),
+   utility-owned merchant affiliates (plant `Regulatory Status` = NR: state the rule), and the
+   additions-screen mirror (NOT built here — named). Rule 13 test: a published attribute that
+   regenerates forward. Rule 21: a partition, no weight — say so. State the EXPECTED
+   consequence from D49's census with zero solves: how many of the 73–77 GW failing MW are
+   Sector 1 and leave the screen; what that does to the admission floor's binding and the
+   `entry_capped` pool; whether the reachable 2.785 GW of undated real exits are IPP (the
+   screen's) or utility (the channel's, i.e. unreachable without a date). Then the
+   PRE-DECLARATION: FC-3 rows and direction (rule-14 sign: a gate that removes utility units
+   from the screen can only REDUCE economic exits — if total exits fall and G3 reads worse,
+   that is the expected signature of a screen that had been retiring units for the wrong
+   reason; composition and `false_retire` are where the gate should improve), the A/B cache
+   key, a P9-style flip condition.
+2. BUILD default-off, zero DOF: one gated field (repo convention, e.g. `retirement_sector_gate`),
+   registered in ScenarioConfig + run_config (rule 24), matrix base row + a cell in EVERY shard
+   (rule 28c), byte-inert while off (prove on the bare `miso-t1h` recipe). The per-unit sector
+   enters through the existing fleet assembly (rule 6 struct-of-arrays), never a hardcoded dict.
+3. A/B on MISO: the bare `miso-t1h` recipe + the gate ON, diagnostics-on → suffixed
+   `miso-t1h-d53-sectorgate` (~25 min, solo). LOYO within 2021–2025. Grade at full magnitude.
+4. FINDING docs/handoffs/FINDING-capx-d53-<date>.md: the partition census, the FC rows moved,
+   the floor's binding before / after, the composition against the real cohort, and the arming
+   recommendation on the pre-stated condition. NOTHING ARMS — the default is the owner's. Name
+   the PJM leg as the successor once D48 lands (D45 L1 showed PJM's 2022 screen failing 111.7 GW
+   of fossil candidates — the same shape).
+
+GUARDRAILS: rules 1, 5, 6, 12 (MISO solo), 13, 14, 19 (one exit decision per unit — the gate
+and the dates channel must be reconciled explicitly, never stacked), 21, 22, 24, 25, 27, 28.
+No keeper/shard/marker; backcast untouched.
+
+COLLISION: D51 edits a MISO registry constant + `miso-t1h-d51-ratio`; D55 edits
+`_floor_retention_merit`; you edit the screen's candidate set only — three lanes in
+retirements.py this window, so rebase before every push and keep the diff local to your seam.
+D48 owns PJM forecast surfaces — no PJM solve here. D50/D52 disjoint.
+
+EXIT: the design doc, the gated field with matrix duties, the suffixed A/B, the finding with
+the recommendation, the PJM successor named.
+```
+
+## D54 — the PJM clearing half: design and pre-declaration only (r#35; D45 §2.3 item 3)
+
+```
+You are the D54 session of the capacity-expansion track — a DESIGN lane, no code, no solve. D45
+(FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md §2.2–§2.3, §3, §4, §6, §9) closed the once-only
+clearing-half question with this residue: the model evaluates the published VRR curve at its
+CENSUS position, where PJM's market clears a SUPPLY CURVE of sell offers (each capped at the
+unit's avoidable cost net of E&AS — Manual 18 §6, the MSOC) against the VRR curve, so the price
+forms at the CLEARED quantity, 2–4 points short of the census on the auction's own basis. The
+model already carries every ingredient (per-unit going-forward cost and E&AS margin are the
+retirement screen's own operands). D48 is putting the position on the auctions' own
+accreditation basis right now; its PREDECL §3 says the clearing-half lane "inherits a position
+it can clear against". You write the design and the pre-declaration that D48's landing unlocks.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (mechanism design; the arming consequence is the largest in the chain).
+BRANCH: claude/capx-d54-pjm-clearing-design — FRESH off origin/main, rebase before every push.
+
+READ FIRST: D45 §2.1–§2.3, §3(a) (the zero-solve re-screen at the published cleared price —
+13.0 of 18.1 GW of 2022 coal decisions pass at $20.86/kW-yr), §4.1 (the L1/L4 bracket), §6
+(PJM: "clearing half + basis devintage, not a curve shape") · docs/handoffs/PREDECL-capx-d48-
+2026-09-04.md §0–§3 (the consistent basis and the seam `accredited_firm_capacity_mw`) ·
+FINDING-capx-d28-* §6.5 (the clearing-half statement, cross-ISO) · FINDING-capx-d31-* (MISO's
+worked example: PRA offered vs census) · docs/handoffs/d45/published-positions-2026-09-03.json
+(BRA offered / cleared / requirement per DY — VALIDATION OBSERVABLES, never targets) · PJM
+Manual 18 §6 and the MSOC rules (fetch, sha256, cite) · the retirement screen's net-revenue
+operands in retirements.py and the capacity-market clearing code behind
+`capacity_market_clearing` (FF-2C) · spec §5.2 / §5.8.
+
+THE DELIVERABLE (docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-<date>.md + a PREDECL):
+1. THE MECHANISM, stated so a successor can build it without design choices: per-unit sell
+   offer = max(0, going-forward cost − E&AS net revenue), capped at the published MSOC form
+   (avoidable cost rate net of E&AS); the offer stack (accredited MW on D48's basis, DR as
+   supply per D48) cleared against the VRR curve at the requirement; price at the intersection;
+   cleared units receive the price, uncleared units $0 — and it is the UNCLEARED set, not a
+   census-evaluated curve, that feeds the retirement screen's capacity leg. Zero DOF: every
+   number is a published cap or the screen's own operand. Rule 13: cleared MW and price are
+   observables the design is validated against, never inputs.
+2. INTERACTIONS decided and cited: the exit-rate cap (D45 §2.3 item 4, the D32/D42 object — how
+   the uncleared set relates to the admission floor); the dates channel (rule 19: a dated unit
+   does not offer); the reliability floor (a cleared market makes the floor's role explicit —
+   state what the floor still does); the entry side (does new entry offer into the same
+   stack?); the 2028/29+ price floor (D28 §4).
+3. PRE-DECLARATION, against the published BRA record, zero-solve: from D48's expected positions
+   and the committed net-revenue operands, the clearing price and cleared quantity the design
+   would produce per DY 2021/22–2025/26, beside the published $/MW-day and cleared UCAP — with
+   a stated tolerance and a stated rule-14 sign (a faithful clearing pays MORE than $0 where the
+   model sat and retires HARDER in the years it over-retired). Name the falsifier: a design that
+   reproduces the published price only by tuning is refused.
+4. THE SEAM LIST for the build lane: files, functions, the D48 field it depends on, the cache-key
+   consequence, the matrix row, the A/B plan (`pjm-t1h` control at HEAD post-D48 vs the arm,
+   suffixed), and the STOP conditions.
+
+GUARDRAILS: NO code, NO solve, NO ScenarioConfig field (rule 28 not triggered here); rules 13,
+14, 21, 25 (PJM's own rules and caps; NYISO's clearing half is a separate lane after D52).
+COLLISION: none — docs only. D48 owns PJM surfaces; you read its PREDECL, never its branch.
+
+EXIT: the design doc + PREDECL pushed; the build is a SEPARATE charter the director issues once
+D48 lands, unless D48's result changes the design — in which case say what changes.
+```
+
+## D55 — the retention-key float-noise fix + the release-precision diagnostic (r#35; D32 R2 + R4)
+
+```
+You are the D55 session of the capacity-expansion track — a small correctness lane. D32
+(FINDING-capx-d32-floor-retention-2026-09-02.md §3.2, §7 R2/R4) found that
+`_floor_retention_merit` key 1 is computed per unit as (FOM × pmax × 1000) / (pmax × (1 − EFORd))
+rather than as the class constant FOM × 1000 / (1 − EFORd), so IEEE-754 rounding puts same-fuel
+units on different floats at 1e-11 and the CO2 / heat-rate tie-breaks fire only inside rounding
+buckets — Marion (1.533 t/MWh, the dirtiest coal in MISO) was retained ahead of cleaner units.
+The guarding test uses two units of equal pmax and cannot see it. At `a35c9f9b` the defect is
+still in src/market_sim/model/capacity_evolution/retirements.py (the quotient form). R4: the
+scorer reports `plant_recall_frac` but not plant-grain RELEASE PRECISION (released MW at
+real-exit plants ÷ released MW; 13.5 % on D31).
+
+DATA PROFILE: miso
+MODEL ASSIGNMENT: Opus (correctness + a reported-only diagnostic; nothing to adjudicate).
+BRANCH: claude/capx-d55-retention-key-fix — FRESH off origin/main, rebase before every push.
+
+READ FIRST: D32 §3.1–§3.3 and §7 R2/R4 · `_floor_retention_merit` and `_apply_reliability_floor`
+in retirements.py · the guarding test D32 names (`test_retention_merit_cost_then_co2`) · the
+matrix `economic_retirement_screen` MISO cell (the defect citation belongs there when the repair
+lands, rule 28 note) · scripts/score_capacity_hindcast.py (the reported block around
+`plant_recall_frac`) · docs/FINDING-stage0-* and results/regression-goldens/ (which goldens
+exercise the floor — the fix changes within-fuel retention order wherever the floor binds, so
+those goldens go stale; that is the audit programme's R-AF re-capture, not yours to run).
+
+THE WORK:
+1. PRE-DECLARE (docs/handoffs/PREDECL-capx-d55-<date>.md, before the code): (a) the fix
+   changes NOTHING at the cross-fuel level — the A/B's per-fuel exit totals and every FC-3 band
+   verdict identical to the control; (b) within coal the 2022 MISO release becomes the
+   highest-CO2 tranches (D32 §3.2 names 976, 1073, 1012, 6098, 4271, 963, …) — list the expected
+   released set; (c) which committed stage-0 goldens will go stale (those whose floor binds);
+   (d) the A/B cache key (a code fix does not move the config key — say so, and say the golden
+   manifest is the instrument that catches it).
+2. FIX key 1 to the class constant (FOM × multiplier × 1000 / (1 − EFORd) per fuel, with the
+   ISO's accreditation-basis convention from `_thermal_firm_mw` preserved) or round it to a
+   documented precision — choose the form that keeps the existing three-key semantics and cite
+   D32 §3.2 at the definition. Add the heterogeneous-pmax tie-break test D32 §3.2 says would
+   fail today; keep the existing test. No parameter, no field (rule 28: no row; add the defect
+   citation to the MISO `economic_retirement_screen` cell note).
+3. R4: add `plant_release_precision` (released MW at real-exit plants ÷ released MW, per year
+   and window) to the scorer's REPORTED block beside `plant_recall_frac` — reported-only, no
+   band, no verdict, documented in the scorer's docstring and the rubric's reported-metrics
+   list. Re-score the committed `miso-t1h` bundle to show the new row (13.5 % on D31's basis
+   is the sanity anchor).
+4. A/B: the bare `miso-t1h` recipe at the fixed code, diagnostics-on → suffixed
+   `miso-t1h-d55-keyfix` (~25 min, solo). Show (a) and (b) from the pre-declaration at full
+   magnitude; a cross-fuel move is a STOP (a second mechanism is reading the key — route it).
+5. FINDING docs/handoffs/FINDING-capx-d55-<date>.md: the before/after retention order, the
+   cross-fuel byte-identity assertion, the stale-golden list handed to the audit programme,
+   the new scorer row. Nothing to arm.
+
+GUARDRAILS: rules 12 (MISO solo), 21 (no DOF), 22, 27 (retirements.py and the scorer are
+≥300-line files: edit locally, push exact bytes, blob-verify), 28. No keeper/shard/marker.
+
+COLLISION: D51 (registry constant) and D53 (screen candidate set) edit retirements.py this
+window — keep your diff to `_floor_retention_merit` + its test; rebase before every push.
+D50/D52/D48 disjoint. The audit programme owns the goldens — you list, never re-capture.
+
+EXIT: the fix + test + scorer row landed, the suffixed A/B registered, the pre-declaration
+graded, the stale-golden list routed.
+```
