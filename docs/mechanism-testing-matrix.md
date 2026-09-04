@@ -10431,6 +10431,66 @@ is now the live queue head.**)*
 
 ### 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — REWRITTEN 2026-09-04 (nyiso-185 `stgas-family-hr-ab` lane,
+TWO SOLVES; THE OWNER-AUTHORIZED FAMILY HEAT-RATE A/B IS SOLVED AND THE ARM
+IS REGISTERED AS A KEEPER CANDIDATE — `2026-09-04-nyiso-185-family-hr` —
+PENDING THE OWNER'S RULING). Keeper unchanged; determination of the candidate
+NOT-YET, grade 5, fails 3 — the SAME grade and count as the keeper with a
+DIFFERENT C1 cell: {C1-2024 `CC_REGULAR` share, C3a-2025 −10.5 %, C3c}
+against the keeper's {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}.**
+
+* **OWNER DECISION FIRST — promote `2026-09-04-nyiso-185-family-hr` or not.**
+  The arm is the keeper recipe plus exactly `egrid_family_heat_rates=True`
+  (G-DELTA one field; the same-HEAD control is BIT-IDENTICAL to the committed
+  keeper, 0 of 52,560 prices differ in every year). Grounded before the solve
+  on a bar that gates what the join controls (heat-side factor 1.029 inside
+  the peers' [1.0006, 1.0707]; eGRID family heat == CEMS heat; plant-level
+  EIA-923 net / CAMPD gross 0.948 inside [0.888, 0.959]). **Gain:** C1-2023
+  `ST_GAS` +3.86 → **+2.16 TWh, FAIL → PASS**; C3a-2025 −11.2 → −10.5 %.
+  **Cost:** C1-2024 `CC_REGULAR` +3.34 → **+3.87 TWh, share 2.78 → 3.18 pp,
+  PASS → FAIL** (the class absorbing Ravenswood's steam volume, in a band the
+  keeper sat marginally inside); 2024 / 2025 `ST_GAS` deepen as pre-declared
+  (−0.11 → −1.09 in band; −3.70 → −4.34 unscored); C3a-2023 +2.2 → +4.7 % in
+  band. Structural case (rules 14 + 1): a rule-24 per-plant dict and a
+  rule-21 hand value (9.5 from assumed CFs) replaced by a measured,
+  vintage-reproducible construction with zero parameters and zero new DOF
+  entries; C6 attested with computed premises; C8 PASS. **Session
+  recommendation: promote.** If promoted: keeper shard + `build_status.py
+  --iso NYISO`, `calibration-keeper-auditor`, cell `O` → `K`, this header
+  re-stamped; no `complete` marker, so no D-5(b) re-key.
+* **IF PROMOTED, TOP OF QUEUE = THE 2024 `CC_REGULAR` OVER-RUN AS A CLASS
+  OBJECT** (+3.87 TWh, share +3.18 pp against a ~3 pp band). Start from which
+  combined cycles absorbed Ravenswood's steam volume (+0.79 / +0.50 / +0.31 TWh
+  ex-Ravenswood; the arm's `unit_hourly_<year>.parquet` sidecars exist in the
+  bundle dir, gitignored) and whether their own bases are right — the same
+  join question at CC+GT sites is already in the family artifact's footprint
+  (Bethpage 9.82 → 9.56). Never a volume-buying lever (nyiso-181).
+* **THE OTHER-TEN-PLANT `ST_GAS` DEFICIT IS UNCHANGED** (−6.8 / −8.0 TWh
+  economically in 2024 / 2025; Arthur Kill took +0.39 TWh of the released
+  volume in 2023, the rest ≤ 0.05 each). It is the 2024 / 2025 object and it
+  is not this mechanism's.
+* **Ravenswood's own CC did not move** (+0.004 / +0.034 / +0.010 TWh at ~82 %
+  CF): a cheaper CC family rate is inert there; expectation (iv) held in sign
+  only.
+* **D-4 / rule 17:** the same five unit-conduct rider rows fail on keeper and
+  arm; Ravenswood's share rises 0.004 → 0.018 / 0.008 → 0.021 (the floor
+  holding it in metered-off hours its dearer offer no longer fills). Small,
+  real, reported; the D-2 / C8 grain under-count escalation stands (2024
+  `ST_GAS` C8 0.253 against 0.30 as a lower bound).
+* **NOT OPENED:** the Astoria merit-panel stack-duplicate defect (nyiso-184
+  §4.1, one call site, own A/B); C3a-2025 (owner-court); the availability
+  route (DO-NOT-REDO); nyiso-184's G2c (recorded, not re-litigated).
+* Evidence: `docs/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md`,
+  `results/calibration/PREREG-nyiso185-stgas-family-hr-ab.md` (pushed at
+  `588aa141` before the first measurement), `_nyiso185_grounding.json`, the
+  arm bundle `results/calibration/nyiso185_family_hr` (attestation
+  `computed_checks`, `metrics.json`, `legitimacy_diagnostics.json`),
+  `scripts/gen_nyiso185_attestation.py`, probe
+  `scripts/probes/nyiso185_grounding.py`.
+
+**PRIOR QUEUE (nyiso-184) PRESERVED BELOW — its "do not arm on the old bar"
+bullet is DISCHARGED by nyiso-185's new bar; everything else stands.**
+
 **LEVER QUEUE — REWRITTEN 2026-09-04 (nyiso-184 `stgas-heat-rate-basis`
 lane, ZERO SOLVES; THE TWO TERMS OF THE C1-2023 OFFER OBJECT ARE NAMED AND
 PROVED ON DATA, ASTORIA IS CLOSED AS A MODEL-SIDE OBJECT, AND THE
