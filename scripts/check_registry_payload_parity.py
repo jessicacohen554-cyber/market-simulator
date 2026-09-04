@@ -274,8 +274,9 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         # base-replay convention: a control identical to a registered run is
         # never registered twice). Their slim files + hourly sidecars are the
         # instrument the committed attestation generators RE-READ (G-CONTROL in
-        # scripts/gen_nyiso185/186/187/188_attestation.py reads
-        # <control>/hourly/system_<year>.parquet against the keeper's), so the
+        # scripts/gen_nyiso185_attestation.py, scripts/gen_nyiso186_attestation.py,
+        # scripts/gen_nyiso187_attestation.py and scripts/gen_nyiso188_attestation.py
+        # reads <control>/hourly/system_<year>.parquet against the keeper's), so the
         # keepers' C6 attestations are recomputable only while these dirs
         # carry their sidecars. REMOVAL CONDITION: the attestation generators
         # are retired or re-pointed at registered bundles.
