@@ -11192,3 +11192,106 @@ cells (MISO R, five `.`); §5.4 stamp. Rule 25: MISO's verdict only. Rule 22: 20
 Rule 13: PBC / rf_al / sr_gfm read as diagnostics, never LP inputs. Rule 27: blob-verify.
 
 Next shorthand: **miso-212**.
+
+## miso-212 (2026-09-04) — THE SOUTH GAS DELIVERED-COST BASIS: no South-specific basis error exists — the model's South gas is priced above the market that ran it by a cost CONVENTION the whole ISO shares (EIA-923 average delivered cost, not spot commodity; Midwest prints +$0.73 over HH while Chicago Citygate traded −$0.26 under it) plus a rule-19 layering worth ~$3/MWh; the G-5 trigger is met on the letter (fuel → spot recovers 2.10 GW of the 3.27) by a lever this lane cannot arm — DISCLOSED DEVIATION; `miso_south_gas_delivered_cost_basis` minted R, the convention SIZED for the owner, the layering NAMED for miso-213; NO SOLVE
+
+**Keeper unchanged: `2026-09-04-miso-210-clock`.** NO LP, NO KEEPER MOVE, NO MECHANISM
+ARMED, NO FIELD, NO RUN REGISTERED. PREREG
+`PREREG-miso212-south-gas-cost-basis-2026-09-04.md` pushed BLIND at `db893e8e`; record
+`FINDING-miso212-south-gas-cost-basis-2026-09-04.md`; instruments
+`scripts/probes/_miso212_south_gas_cost_basis.py` (first pass) and `_miso212_followup.py`
+(one disclosed post-hoc correction) → `_miso212_south_gas_cost_basis.json`. Rule 22:
+2023–2025 only. Data fetched this session: MISO's masked RT submitted-offer book, Jun–Jul
+2023–2025 (183 days; payload gitignored, curated to `data/clean/energy-offers/MISO/RT/`).
+
+**The block.** In the 177 Jun–Jul 2025 hours where MISO's RDT bound South→North
+(miso-211's object) the model's South gas leaves **3.27 GW idle within $20** of its South
+price ($48.3; actual South hubs $41.6) while the market ran 3.7 GW more gas. It is
+**CT_PEAKER 1.53 + ST_GAS 1.31** GW + CC_REGULAR 0.23 + CHP 0.20 — **econ tranches 2.26 GW**,
+committed 0.76, peak 0.25. **P-1 WRONG twice** (CC ≥ 50 % predicted, 7 % actual; peak
+≥ 30 %, 8 %): the idle gas is the cheap end of the peaking fleet, not the duct block.
+
+**The legs, each beside its measured counterpart (capacity-weighted, implied-HR basis).**
+Bid **$52.0 = fuel $43.3 + VOM $3.5 + fixed offer margin $2.8 + startup $2.4**. Delivered
+gas **F $4.08 vs HH daily spot $3.23: +$0.84/MMBtu = $8.7/MWh** at the implied 10.66
+MMBtu/MWh — the plant's own EIA-923 print **+$0.55** over HH, the mean-zero zonal basis
+(`zonal_gas_basis`, South leg) **+$0.29 = $3.1/MWh** on top of it (the un-overlaid
+trajectory alone would sit −$0.48 UNDER HH). Heat rates vs CAMPD Σheat/Σgross in the same
+hours: **CC 1.04 (16 plants), CT 1.02 (12), ST_GAS 1.05 (9)**. Fleet-wide South F − HH
++$0.62 (print +0.34, basis +0.29). **Midwest fleet F − HH +$0.53 = print +$0.73 with the
+basis −$0.20**, while Chicago Citygate traded **−$0.26 under HH** (Jun–Jul 2025; −$0.43 in
+2024, −$0.17 in 2023) — the over-pricing is a property of the average-delivered-cost
+convention ISO-wide, and the Midwest carries MORE of it than the South. Prior: P-2 F = HH +
+0.35–0.55 WRONG (+0.84); fuel ≤ $4 of the $17 WRONG ($8.7); layering $1.5–3 edge ($3.1 /
+$1.3 / $1.5); P-3 CC ±7 % RIGHT, ST_GAS ≥ 10 % WRONG; P-4 RIGHT; P-5 low in 2025.
+
+**Counterfactuals — GW of the block made economic at the model's own South price (a
+ceiling; the price is held fixed), 2025 / 2024 / 2023 shoulders [2025 tail].**
+(a) fuel → HH spot **2.10 / 2.03 / 1.56** [1.32]; (b) zonal-basis increment removed
+**0.78 / 0.37 / 0.46**; (c) HR → CAMPD burn 0.36 / 0.18 / 0.45; (a)+(b)+(c) 2.45 / 2.31 /
+1.97; (d) fixed margin zero (unmeasured) 0.71; (e) startup zero (unmeasured) 0.40;
+everything 3.17 with the marginal MW still **$46.6 vs the actual $41.6**. P-8 (same
+ordering every year) RIGHT. **P-7 WRONG on the letter**: one input, (a), carries ≥ 2.0 GW in
+2025 and holds sign in 2023/2024 — the G-5 condition as written.
+
+**Why G-5 did NOT fire — a disclosed deviation from the prereg's decision rule.** (a) is
+not a mis-measured South input; it is a **different input**: the 923 print is the plant's
+AVERAGE delivered cost (commodity + demand charges + contracted transport over the month's
+takes), HH spot + variable transport its MARGINAL commodity cost. Both are measured; which
+belongs in a dispatch offer is a methodology **convention** — exactly the "marginal-vs-average
+delivered-cost question" miso-189 §7.3 left in owner court as a cross-ISO change, and which
+the `gas_hub_basis_overlay` R cell carries. Rule 25 forbids a South-only fuel convention
+(no measured identification distinguishes the South's marginal cost from the Midwest's);
+a MISO-wide switch touches every gas tranche and miso-156's adjudication. The sign is
+C3a-adverse in every year — NOT the reason (rule 14), but why the owner rules before the
+solve. So the R branch applies to the object the row names — a South-specific basis — and
+the finding is that **no such thing exists**. `miso_south_gas_delivered_cost_basis` **R**
+(field-less base row + six cells).
+
+**The market's own declaration (P-6 RIGHT).** MISO's masked RT offer book, Region South,
+fuel-blind whole stack: the offered price at the measured South generation (29.9 GW) is
+**$30.0 p50** (2024 $22.8, 2023 $27.7) against the model's marginal gas MW at **$66**;
+**36.3 GW offered at ≤ the model's South price vs 25.3 GW of model capability** there. The
+against-interest outcome (offers clustered near $60+) did NOT occur; miso-211's "priced out"
+reading stands.
+
+**Instrument correction, disclosed.** The first pass reconstructed `mc` as `HR_tr × F + VOM
++ markup_hr × anchor` — the OFFER heat rate where the PHYSICAL one belongs (the prereg wrote
+the identity correctly; `apply_gas_offer_margin` makes `mc = HR_phys × F + markup × anchor`).
+Residual = `markup_hr × F` on the 139 markup-carrying tranches, max 1,525 on a CT peak
+tranche (phys 1.0× vs offer 4.0×) in a non-summer hour; 264 inside Jun–Jul. Re-run on the
+implied HR: (a) 2.28 → 2.10 (2024 2.22 → 2.03; 2023 1.73 → 1.56), (b) 0.85 → 0.78, (c)
+0.38 → 0.36. First-pass numbers stay under `years`, corrected ones under `post_hoc`. Had the
+probe's own identity check not been written, the deviation above would have looked less
+marginal than it is.
+
+**Hands on.** (1) **Owner question, sized, not a lane lever:** EIA-923 average delivered
+cost vs marginal commodity + variable transport for gas offers — 2.1 / 2.0 / 1.6 GW of the
+South's 3.3 GW shoulder gap, ~$1/MMBtu of Midwest over-cost, C3a-adverse; FOR = a spec
+change with a cross-ISO A/B program; AGAINST closes the item and the residual is offer
+conduct by construction. (2) **QUEUE HEAD FOR miso-213 — the rule-19 layering repair on
+`zonal_gas_basis`**, MISO-scoped, single-delta: the mean-zero increment is added to every
+gas tranche including those whose `F` was just set from their own 923 print (which already
+embeds the regional premium) — two mechanisms, one phenomenon. Phase 0 measures the
+923-priced vs fallback capacity split per zone (the concentration question of prereg §5,
+unanswered here, rides along); the arm skips the increment on 923-priced tranches only
+(fallback plants keep it — there it is the only regional signal); A/B on the miso-210
+ten-gate scorer with South boundary net / S→N flow / Indiana−South spread pre-registered.
+Predicted small and C3a-adverse in the South (South +0.29 over, Midwest −0.20 under);
+structural regardless (rule 1). Not chartered: margin/startup (unmeasured, R/I at
+miso-179/180); ST_GAS HR re-grounding (1.05× is within the measurement's noise).
+
+**Reported against interest.** The G-5 number was met and no solve was spent (above). The
+GW figures are ceilings at a fixed South price. (a) carries no transport adder, so it
+slightly overstates even the convention's own recovery. The offer comparison is whole-stack
+and fuel-blind. Twelfth consecutive MISO session whose most useful output came from the
+wrong part of the prior (P-1, P-2, P-7).
+
+**Governance.** Rule 15: zero-solve, nothing registered. Rule 28(a): no R/I/G cell
+re-tested. Rule 28(b)/(c): new row + six cells; evidence appended to `gas_hub_basis_overlay`
+(R, the owner-court residue sized), `zonal_gas_basis` (K, the layering named), `rdt_tcdc`
+(K, object status); §5.4 stamp. Rule 25: MISO only. Rule 22: 2023–2025. Rule 13: 923, HH
+spot, CAMPD, PBC, the RT offer book read as diagnostics, none an LP input. Rule 27:
+blob-verify.
+
+Next shorthand: **miso-213**.

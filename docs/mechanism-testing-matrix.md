@@ -5503,6 +5503,49 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-212 (2026-09-04) — THE SOUTH GAS DELIVERED-COST BASIS: NO
+> SOUTH-SPECIFIC BASIS ERROR EXISTS (`miso_south_gas_delivered_cost_basis` minted
+> R); THE $17 IS A COST CONVENTION THE WHOLE ISO SHARES (owner-court, now SIZED),
+> A RULE-19 LAYERING (miso-213 NAMED) AND OFFER CONDUCT; NO SOLVE.** Keeper
+> UNCHANGED at `2026-09-04-miso-210-clock`. PREREG pushed BLIND at `db893e8e`.
+> (i) The block: in the 177 real S→N RDT-binding 2025 shoulder hours the model's
+> South gas leaves **3.27 GW idle within $20** of its South price — **CT_PEAKER
+> 1.53 + ST_GAS 1.31** + CC 0.23 + CHP 0.20; **econ 2.26** / committed 0.76 /
+> peak 0.25 (P-1 predicted CC ≥ 50 % and peak ≥ 30 %: WRONG twice). (ii) Legs
+> (cap-weighted): bid **$52.0 = fuel $43.3 + VOM $3.5 + fixed margin $2.8 +
+> startup $2.4**; F **$4.08 vs HH spot $3.23** (+$0.84/MMBtu = **$8.7/MWh** at
+> the implied 10.66 HR) — the plant's own 923 print **+$0.55**, the zonal-basis
+> increment **+$0.29 ($3.1/MWh)**; heat rates **1.04 CC / 1.02 CT / 1.05 ST_GAS**
+> × CAMPD burn (P-3 CC RIGHT, ST_GAS WRONG). (iii) NOT a South property: the
+> Midwest fleet's prints sit **+$0.73 over HH** while Chicago Citygate traded
+> **−$0.26 under** it. (iv) Counterfactuals (GW of the block economic at the
+> South price, 2025 / 2024 / 2023): fuel → HH spot **2.10 / 2.03 / 1.56**;
+> basis increment removed 0.78 / 0.37 / 0.46; HR → CAMPD 0.36 / 0.18 / 0.45;
+> all measured 2.45 / 2.31 / 1.97; everything incl. unmeasured margin + startup
+> 3.17 with the marginal MW still $46.6 vs actual $41.6. (v) The G-5 trigger
+> (one measured input ≥ 2.0 GW, sign held) IS met by fuel → spot and the lane
+> did NOT arm it — **DISCLOSED DEVIATION**: it is a change of cost CONVENTION
+> (average delivered → marginal commodity), ISO-wide and cross-ISO, owner-court
+> since miso-156/189 (rule 25 forbids a South-only fuel convention). (vi) Market's
+> own RT offer book (Region South): offered price at the measured 29.9 GW
+> **$30.0 p50** (2024 $22.8, 2023 $27.7) vs the model's marginal gas MW **$66**;
+> 36.3 GW offered at ≤ the model's South price vs 25.3 GW model capability (P-6
+> RIGHT). (vii) Instrument correction disclosed: the first pass used the OFFER
+> heat rate in the mc identity where the PHYSICAL one belongs (residual =
+> markup_hr × F, max 1,525 on a CT peak tranche); re-run on the implied HR
+> (fuel → spot 2.28 → 2.10). **QUEUE HEAD FOR miso-213: the rule-19 layering of
+> `zonal_gas_basis` on 923-priced plants** — phase 0 the 923-priced vs fallback
+> capacity split per zone; the arm skips the increment on 923-priced tranches
+> only; single-delta A/B on the miso-210 ten-gate scorer with the South boundary
+> net / S→N flow / Indiana−South spread pre-registered; predicted small and
+> C3a-adverse, structural regardless. **OWNER QUESTION (not a lane lever):**
+> EIA-923 average delivered cost vs marginal commodity for gas offers — sized
+> at 2.1 / 2.0 / 1.6 GW of the South gap and ~$1/MMBtu of Midwest over-cost.
+> Records: `FINDING-miso212-south-gas-cost-basis-2026-09-04.md`,
+> `PREREG-miso212-south-gas-cost-basis-2026-09-04.md`,
+> `_miso212_south_gas_cost_basis.json` (years + post_hoc),
+> `scripts/probes/_miso212_south_gas_cost_basis.py`, `_miso212_followup.py`.
+
 > **QUEUE STAMP miso-211 (2026-09-04) — THE RDT SOUTH→NORTH BINDING STATE: THE
 > LEVER IS REFUSED (`miso_rdt_measured_limit` minted R), THE OBJECT IS LICENSED
 > FOR THE FIRST TIME SINCE miso-178, AND ITS CAUSE IS NAMED — SOUTH GAS PRICED
