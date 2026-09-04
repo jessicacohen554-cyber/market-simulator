@@ -136,8 +136,8 @@ class MergeEventBlocksTest(unittest.TestCase):
         return {
             "region": region,
             "level": level,
-            "start_est": pd.Timestamp(start),
-            "end_est_excl": pd.Timestamp(end),
+            "start_model": pd.Timestamp(start),
+            "end_model_excl": pd.Timestamp(end),
         }
 
     def test_overlapping_and_contiguous_same_region_merge(self):

@@ -13,12 +13,19 @@ ISO's bid cap to the declared tier's emergency offer floor —
 ``..TIER2..``). Frozen design:
 ``docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md`` §1.
 
-Clock and scoping conventions are IDENTICAL to the M-2 revealed-derate
-deriver (``scripts/data/derive_campd_maxgen_outages.py``), so the tier windows and
-the derate windows are hour-exact aligned by construction: MISO market
-operations run on EST (UTC-5) year-round (Tariff Module A; ``Etc/GMT+5``),
-window starts floor / ends ceil to the hour (a declared ``23:59`` end-of-day
-becomes the next midnight), hour masks go through
+Clock and scoping conventions are SHARED with the M-2 revealed-derate
+deriver (``scripts/data/derive_campd_maxgen_outages.py`` reads
+:data:`MODEL_TZ_BY_ISO` and :func:`load_maxgen_registry_model_clock` from
+here), so the tier windows and the derate windows are hour-exact aligned by
+construction. The registry declares its endpoints in MISO market time (EST,
+Tariff Module A) and stores UTC; they are converted onto the MODEL clock —
+for MISO **CST hour-beginning, ``Etc/GMT+6``**, measured by miso-208 with
+two r = 1.000 witnesses (the keeper's demand vs EIA-930 D; the INDIANA.HUB
+LMP hour-ending file vs the committed zonal ``rt``). *Until 2026-09-04
+(miso-210) the constant was ``Etc/GMT+5`` (EST) and every declared window
+landed ONE HOUR LATE on the model clock for both consumers.* Window starts
+floor / ends ceil to the hour (a declared ``23:59`` EST end-of-day becomes
+23:00 CST, i.e. the next EST midnight), hour masks go through
 :func:`market_sim.data.outages.outage_hour_mask` (half-open, no-leap 8760
 model clock), and declared regions crosswalk onto model zones as
 ``footprint`` -> all zones, ``midwest`` -> all but MISO-South, ``south`` ->
@@ -45,10 +52,16 @@ from market_sim.data.outages import outage_hour_mask
 
 logger = logging.getLogger(__name__)
 
-# ISO market/registry clock (naive local standard time, the model clock).
-# MISO market operations run on EST (UTC-5) year-round — Tariff Module A;
-# Etc/GMT+5 is UTC-5. Mirrors derive_campd_maxgen_outages.MODEL_TZ.
-MODEL_TZ_BY_ISO: dict[str, str] = {"MISO": "Etc/GMT+5"}
+# The MODEL clock per ISO (naive fixed standard time, no DST) that the
+# registry's UTC endpoints are converted onto. This is NOT the ISO's market
+# time: MISO declares in EST (Tariff Module A) but the model's 8760 index is
+# CST hour-beginning — MEASURED (miso-208, r = 1.000 on two independent
+# witnesses; the per-ISO input clocks are catalogued in
+# docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md). Etc/GMT+6 is UTC-6.
+# Read by derive_campd_maxgen_outages.MODEL_TZ so both consumers of the
+# registry place their windows with one constant. History: "Etc/GMT+5" from
+# the F5 build (2026-07) until miso-210 (2026-09-04) — one hour late.
+MODEL_TZ_BY_ISO: dict[str, str] = {"MISO": "Etc/GMT+6"}
 
 # Declared ladder level -> ELMP emergency-tier offer floor ($/MWh). The
 # level vocabulary is the registry schema's closed set (pre-2026 MISO
@@ -148,8 +161,7 @@ def load_maxgen_registry_model_clock(iso: str) -> pd.DataFrame:
     midnight) naive local-standard-time columns.
     """
     iso = (iso or "").upper()
-    tz = MODEL_TZ_BY_ISO.get(iso)
-    if tz is None:
+    if iso not in MODEL_TZ_BY_ISO:
         raise ValueError(
             f"maxgen-events model clock not registered for ISO {iso!r} "
             f"(known: {sorted(MODEL_TZ_BY_ISO)})"
@@ -159,10 +171,29 @@ def load_maxgen_registry_model_clock(iso: str) -> pd.DataFrame:
         from scripts.data.curate_maxgen_events import curate
 
         curate(isos=[iso])
-    ev = clean_io.read_clean("maxgen-events", iso=iso)
+    return registry_to_model_clock(clean_io.read_clean("maxgen-events", iso=iso), iso)
+
+
+def registry_to_model_clock(ev: pd.DataFrame, iso: str) -> pd.DataFrame:
+    """Pure core of :func:`load_maxgen_registry_model_clock` on a loaded frame.
+
+    Converts tz-aware ``start_utc`` / ``end_utc`` onto the ISO's MODEL clock
+    (:data:`MODEL_TZ_BY_ISO`), adding naive ``start_model`` (hour-floored)
+    and ``end_model_excl`` (hour-ceiled, half-open) columns. Separated from
+    the I/O so the placement is unit-testable on a synthetic frame
+    (``tests/unit/data/test_maxgen_model_clock.py`` pins the EST-declared ->
+    CST-placed hour).
+    """
+    iso = (iso or "").upper()
+    tz = MODEL_TZ_BY_ISO.get(iso)
+    if tz is None:
+        raise ValueError(
+            f"maxgen-events model clock not registered for ISO {iso!r} "
+            f"(known: {sorted(MODEL_TZ_BY_ISO)})"
+        )
+    ev = ev.copy()
     start = ev["start_utc"].dt.tz_convert(tz).dt.tz_localize(None)
     end = ev["end_utc"].dt.tz_convert(tz).dt.tz_localize(None)
-    ev = ev.copy()
     ev["start_model"] = start.dt.floor("h")
     ev["end_model_excl"] = end.dt.ceil("h")
     return ev

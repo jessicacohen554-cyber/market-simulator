@@ -89,8 +89,14 @@ WARNING_PLUS = tuple(k for k, v in TIER_FLOOR_BY_LEVEL.items() if v is not None)
 # The model clock, MEASURED (V-KEY-930 and V-KEY-LMP, r = 1.000 at the winning
 # shift in both): the keeper's hours are CST hour-beginning, ONE HOUR BEHIND
 # every EST-labelled MISO file (the LMP HE file, M2M settlement, PBC record,
-# and the maxgen registry's "model clock", which maxgen_events.MODEL_TZ_BY_ISO
-# pins to Etc/GMT+5). EST hour-beginning index j -> model index j + EST_TO_MODEL.
+# and — AT THE TIME THIS PROBE RAN — the maxgen registry's "model clock", which
+# maxgen_events.MODEL_TZ_BY_ISO pinned to Etc/GMT+5). EST hour-beginning index
+# j -> model index j + EST_TO_MODEL.
+# miso-210 (2026-09-04) REPAIRED that constant to Etc/GMT+6, so
+# load_maxgen_registry_model_clock now returns CST directly and window_masks()
+# below — which adds EST_TO_MODEL on top of it — would DOUBLE-SHIFT on a re-run.
+# This probe is the miso-208 record (its JSON is committed); do not re-run it
+# against the repaired loader without dropping that shift.
 EST_TZ = "Etc/GMT+5"
 EST_TO_MODEL = -1
 E930_FUELS = ("COL", "NG", "NUC", "WND", "SUN", "WAT", "OTH", "BAT")

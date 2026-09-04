@@ -3,7 +3,7 @@
 Covers the frozen design (``docs/handoffs/miso-f5-scarcity-depth-design-
 2026-07.md`` §5.7): the level→tier-floor keying, the declared-region zone
 scoping, the min(voll, floor) never-raise rule, the overlap minimum, the
-no-Warning+-window ``None`` (byte-identical LP), the EST no-leap model-clock
+no-Warning+-window ``None`` (byte-identical LP), the no-leap model-clock
 placement, the ``build_cost_vector``/``DispatchModel`` ``slack_cost`` seam's
 off-state byte identity, and — trivial case first (CLAUDE.md testing
 pattern) — a 1-gen/1-zone/24-hour LP whose shortage hours price at the tier
@@ -44,7 +44,7 @@ VOLL = 2000.0  # MISO ISOConfig.voll (FERC Order 831 bid cap)
 
 
 def _registry(rows):
-    """Build a synthetic model-clock registry frame (start/end naive EST)."""
+    """Build a synthetic model-clock registry frame (start/end naive model clock)."""
     return pd.DataFrame(
         [
             {
