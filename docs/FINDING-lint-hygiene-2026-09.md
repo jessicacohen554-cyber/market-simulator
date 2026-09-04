@@ -92,7 +92,7 @@ commit; https://github.com/jessicacohen554-cyber/market-simulator/actions/runs/3
 | job | conclusion | note |
 |---|---|---|
 | `Ruff lint + format` (job 100916660380) | **success** | step `Ruff lint` → success (`All checks passed!`); step `Ruff format check` → success (`1356 files already formatted`) |
-| `Fast test tier` (job 100916660350) | _in progress at the time this finding was committed; conclusion recorded in the PR body and in a follow-up edit here once the run's own record shows it_ | — |
+| `Fast test tier` (job 100916660350) | **failure** — INHERITED, not this lane's | `2 failed, 7846 passed, 34 skipped, 2 xfailed`. The two: `tests/scoring/test_forecast_parity.py::test_all_six_keepers_resolve` (CAISO `caiso_ct_peaker_committed_measured` armed in the keeper with no forecast consumer / registry declaration) and `tests/scoring/test_gate_a_provenance.py::test_live_board_passes` (the §4 CAISO gate.a re-key). The caiso-241 branch's last run 33799163697 (job 100794050048) failed on EXACTLY the same two tests with the same `2 failed, 7846 passed` summary before this branch existed; both are the pytest twins of the FR-22 / FR-21 script failures below, and every one of the seven formatted test files passed. |
 | ruff version CI installed | **0.15.17** | from the lint job's `Install dependencies` step log: `+ ruff==0.15.17`, i.e. the lockfile binary |
 
 Other jobs on the run, all inherited from main and untouched by this lane
