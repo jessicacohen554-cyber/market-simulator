@@ -71,7 +71,9 @@ STATE AT HANDOFF (r#33, main HEAD b168260e, 2026-09-04 — VERIFY, DON'T TRUST):
   MISO 2026-09-03-miso-202-unitclip NOT-YET {C3a-2025 alone, −12.4 % — measured to be a
   scarcity TAIL, the C3c object} · NYISO
   2026-09-02-nyiso-177-vintage-matched (owner-ruled override) NOT-YET {C1-2023 ST_GAS,
-  C3a-2025, C3c — WIDENED} · CAISO 2026-09-03-caiso-241-b1-ctpeaker NOT-YET {C3a alone}.
+  C3a-2025, C3c — WIDENED} → superseded 2026-09-04 by nyiso-185-family-hr NOT-YET {C1-2024
+  CC_REGULAR, C3a-2025 −10.5 %, C3c} (owner ruling; §0ad amendment 2) · CAISO
+  2026-09-03-caiso-241-b1-ctpeaker NOT-YET {C3a alone}; caiso-243 mid-solve.
   SEVEN consecutive promotions skipped the R-T gate-(a) re-key (audit v23 repaired three,
   this desk two under C-2; caiso-241's is red at r#33 and blocks R-AB's flip — card C-5); read keepers from keepers/<ISO>.json only, and run
   scripts/check_gate_a_provenance.py at every refresh. Markers: complete = {ERCOT, NEISO, PJM}; final EMPTY (no locked-test
@@ -94,8 +96,11 @@ STATE AT HANDOFF (r#33, main HEAD b168260e, 2026-09-04 — VERIFY, DON'T TRUST):
 - IN FLIGHT: D44 LANDED (PR #4639). D46 STAGE 1 LANDED IN FULL (r#33: the dates flip
   RE-ROUTES exits with a per-ISO sign; GOLDEN-3 ends NEISO's CCS wave nine years early;
   t1f cost estimates were 7–10× too high). D47 (GOLDEN-3 attestation, records) issued r#33.
-  D45 is a CHECKPOINT two sittings running — PJM L1 registered; OWED: NYISO L2/L3, PJM L4,
-  §4–§9 + the §9 close-out (card C-4 at r#33; D45-R absorbs D46 Stage 2). D45 (the
+  D45 RULED DEAD (Q33, r#33) → D45-R ISSUED (pack §D45-R; Fable): the owed NYISO L2/L3 +
+  PJM L4 at HEAD, §4–§9 + the §9 close-out, absorbing D46 Stage 2 AND the re-priced Stage 3
+  (Q35) plus the NEISO default-posture leg — grade by content. Q34: this desk holds a
+  STANDING gate-(a) re-key duty (execute at every refresh when the guard fails; log each
+  as a promoter miss). D45 (the
   ONCE-ONLY D6+R3 joint charter: PJM+NYISO first diagnostics-on T1-H solves, position/
   evaluation-quantity reconciliations, curve-ON adjudications; Fable; its close-out line
   retires the mechanism-class question) · owner-track: caiso-238 (both asks FUNDED, Q31),
@@ -110,8 +115,8 @@ STATE AT HANDOFF (r#33, main HEAD b168260e, 2026-09-04 — VERIFY, DON'T TRUST):
   per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
   NYISO's zonal spread ($4.8–12.2) is the only promising instance and needs D45's
   diagnostics-on solve first · (3) nothing else — the capx queue emptied at r#31.
-- OWNER-TIER OPEN: NONE — C-1/C-2/C-3 all answered and spent (§0ac amendments 1–2; C-3 =
-  Q32). Q1–Q32 all spent. New cards otherwise come only from D45's owed half
+- OWNER-TIER OPEN: NONE — Q1–Q35 all spent (Q33/Q34/Q35 at r#33, §0ad amendment 1). New
+  cards come only from D45-R's §6 arming recommendations and D47/D45-R landings. New cards otherwise come only from D45's owed half
   (its §6 arming recommendations) and the audit board's X-1(ii) lint-scope question.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
