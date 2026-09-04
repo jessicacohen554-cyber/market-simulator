@@ -11646,3 +11646,45 @@ lane); `cc_capacity_reconcile` (U, Zeltmann H-B1 in 2023 / 2025); Bethlehem's
 eGRID vintage artifact. Evidence:
 `docs/FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md`,
 `results/calibration/PREREG-nyiso186-cc-regular-2024-class.md`.
+
+## 2026-09-04 — nyiso-187 (`ct-steam-merit` lane): the CT / steam-vs-CC merit position decomposed (owner = out-of-market commitment); the Astoria routing A/B-solved and PROMOTED
+
+**Keeper at entry:** `2026-09-04-nyiso-186-astoria-identity` (NOT-YET, grade 5,
+{C1-2024 `CC_REGULAR` +3.80 TWh / +3.1 pp, C3a-2025 −10.4 %, C3c}).
+**Solves: two** — the arm `2026-09-04-nyiso-187-astoria-routing` (bundle
+`results/calibration/nyiso187_astoria_routing`) and the same-HEAD control on
+the committed artifacts (bit-identical, registers nothing; slim files committed).
+
+**Object 1 (PREREG §3, no LP, keeper sidecars 2024):** every NYC / LI / CH
+`CT_PEAKER` / `CT_CHP` / `ST_GAS` deficit MW filled from the cheapest un-run
+capacity at the LP's installed offer and bucketed against the model price and
+the actual RT price: out of the money at BOTH 0.57–0.89 in every cell;
+in-the-money-yet-unrun nil; no measured input wrong on its source. Owner =
+out-of-market commitment (G). Post-hoc: with every markup removed 96 % (NYC) /
+73 % (LI) of the `CT_PEAKER` deficit would clear at the model's own price — the
+owner-accepted markup stack (nyiso-96 trade) is the separator; `CT_CHP` /
+`ST_GAS` are out of merit on bare cost. **No CC lever; the 2024 cell is an
+owner disposition.**
+
+**Object 2 (rule 14):** `campd.CAMPD_UNIT_PLANT_REMAP` gains (55375, CT3 / CT4)
+→ 57664 (caiso-196 form); the `-perunitmerit-` outage extract and tranche
+artifact re-derived under their committed invocations (G-DELTA: only 55375 /
+57664 rows; ramp envelopes excluded by the pre-registered stop; pooled
+emissions not re-derived — footprint recorded). Zero config fields, zero DOF.
+**A/B:** Astoria Energy II 4.679 → 4.275 / 4.683 → 4.229 / 4.661 → 3.067 TWh
+(its 2025 outage now visible; EIA-923 2.116); Astoria Energy I 4.134 → 4.503 /
+4.064 → 4.503 / 2.617 → 4.068 (EIA-923 4.078 / 4.150 / 3.900); class −0.016 /
+−0.003 / −0.064. No criterion moves (C3a-2025 −10.4 → −10.3 %; C3b-2025 0.190 →
+0.192). NOT-YET, grade 5, fails 3. **KEEPER CANDIDATE → PROMOTED BY OWNER
+RULING** (standing formula): keeper shard + `status/NYISO.js`, `audit_keepers
+--iso NYISO` PASS, gate-(a) stamp re-keyed (R-T), NYISO shard re-stamped
+(`campd_per_unit_attribution`, `scuc_load_pocket_commitment`,
+`tranche_startup_amortization` annotated), §5.5 rewritten. Retention pruned
+`2026-08-22-nyiso-154-da-horizon`. Correction to nyiso-186 §3 / §5.2 appended
+(the remap DOES reach the derives).
+
+**Handed forward:** the 2024 cell as an owner disposition; the ramp-envelope
+and emission-rate footprints of the routing (own A/B); `cc_capacity_reconcile`
+(U); Bethlehem's vintage artifact; the merit-panel defect. Evidence:
+`docs/FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md`,
+`results/calibration/PREREG-nyiso187-ct-steam-merit-position.md`.

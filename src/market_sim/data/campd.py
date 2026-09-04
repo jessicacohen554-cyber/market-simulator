@@ -231,6 +231,20 @@ CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
     # PRECHECK-caiso196-elsegundo-remap-2026-08-15.md §1.
     (330, "5"): 57901,
     (330, "7"): 57901,
+    # Astoria Energy II (NYISO, CC_REGULAR): CEMS files the whole Astoria
+    # Energy site under facility 55375 (four CTs), while EIA-860 carries the
+    # 2011 block's CT3 / CT4 / ST2 under its own plant 57664 and eGRID has no
+    # row for 57664 in any vintage. The identity is exact: eGRID
+    # PLNGENAN(55375) == EIA-923 netgen(55375) + netgen(57664) to < 0.5 MWh in
+    # all seven vintages 2018-2024 (the merged-identity row of
+    # egrid_identity_heat_rates_NYISO.csv). Without the entry the outage derive
+    # booked CT3 / CT4 against plant 55375 (a 1,221 MW denominator), so 57664
+    # was never derated and 55375 was derated for its sibling's outages, and
+    # the tranche derive read 55375 at a 150 % median CF.
+    # [R-ACCURATE] FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md §3;
+    # PREREG-nyiso187-ct-steam-merit-position.md §1 Object 2.
+    (55375, "CT3"): 57664,
+    (55375, "CT4"): 57664,
 }
 
 # Facilities with at least one remapped unit (split facilities).

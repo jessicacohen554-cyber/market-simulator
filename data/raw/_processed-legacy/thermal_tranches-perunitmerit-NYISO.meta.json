@@ -1,7 +1,7 @@
 {
   "artifact": "thermal_tranches-perunitmerit-NYISO.csv",
-  "artifact_rows": 85,
-  "artifact_sha256": "2f4f137a613e8eec01689d544b5bd9fa271884b3d45026f0eaeac10979900779",
+  "artifact_rows": 86,
+  "artifact_sha256": "a3bbd6ef408ea8175c1fa73bb3f016bf2e4cd9e0984ceac08e6dfd93534d8376",
   "columns": [
     "plant_code",
     "plant_group",
@@ -28,7 +28,7 @@
       ],
       "CC_REGULAR": [
         0,
-        20
+        21
       ],
       "CT_CHP": [
         2,
@@ -50,7 +50,7 @@
       ],
       "CC_REGULAR": [
         0,
-        20
+        21
       ],
       "CT_CHP": [
         2,
@@ -71,8 +71,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         2,
@@ -93,8 +93,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         2,
@@ -115,8 +115,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         2,
@@ -137,8 +137,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         2,
@@ -159,8 +159,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         2,
@@ -181,8 +181,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         0,
@@ -203,8 +203,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         2,
@@ -225,8 +225,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         2,
@@ -247,8 +247,8 @@
         15
       ],
       "CC_REGULAR": [
-        20,
-        20
+        21,
+        21
       ],
       "CT_CHP": [
         0,
@@ -270,7 +270,7 @@
       ],
       "CC_REGULAR": [
         0,
-        20
+        21
       ],
       "CT_CHP": [
         2,
@@ -299,7 +299,7 @@
   "provenance": "derived",
   "row_counts_by_status": {
     "eia923_cf": 16,
-    "ok": 69
+    "ok": 70
   },
   "sidecar_schema_version": 1,
   "vintage": {

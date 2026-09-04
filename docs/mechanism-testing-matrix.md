@@ -10470,11 +10470,73 @@ is now the live queue head.**)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — **KEEPER 2026-09-04 (nyiso-186): `2026-09-04-nyiso-186-astoria-identity` — the nyiso-185 recipe with the re-derived `egrid_identity_heat_rates` artifact (the identity derive's new MERGED-identity leg: Astoria Energy II 57664 ↔ eGRID 55375, pooled 7.3792 over seven exact vintages, replacing the `gas_cc` f-class default 6.70; ZERO `scenario_config` changes, ZERO new DOF entries, control BIT-IDENTICAL to the superseded keeper). PROMOTED BY OWNER RULING on rule 14 `[R-ACCURATE]` + rule 1 `[R-STRUCT]` WITH NO GATE REGRESSION — determination NOT-YET, target grade 5, fail set UNCHANGED **{C1-2024 `CC_REGULAR` share +3.80 TWh / 3.1 pp, C3a-2025 −10.4 %, C3c}**, every scored number moved toward actual or unchanged. Evidence: `docs/FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md`, `PREREG-nyiso186-cc-regular-2024-class.md`, `_nyiso186_cc_attribution.json`, the bundle's computed `calibration_attestation.json`. **PRIOR (nyiso-185) HEADER PRESERVED BELOW.**
+### 5.5 NYISO — **KEEPER 2026-09-04 (nyiso-187): `2026-09-04-nyiso-187-astoria-routing` — the nyiso-186 recipe with the Astoria split-facility routing (`campd.CAMPD_UNIT_PLANT_REMAP` 55375 CT3 / CT4 → 57664, the caiso-196 form) and the `-perunitmerit-` outage extract + tranche artifact re-derived under their committed invocations; ZERO `scenario_config` changes, ZERO new DOF entries, control on the committed artifacts BIT-IDENTICAL to the superseded keeper. PROMOTED BY OWNER RULING on rule 14 `[R-ACCURATE]` + rule 1 `[R-STRUCT]` WITH NO GATE MOVING — determination NOT-YET, target grade 5, fail set UNCHANGED **{C1-2024 `CC_REGULAR` +3.80 TWh / 3.1 pp, C3a-2025 −10.3 %, C3c}**; per plant, Astoria Energy II's 2025 outage becomes visible (4.661 → 3.067 TWh vs EIA-923 2.116) and Astoria Energy I is no longer derated for its sibling (2.617 → 4.068 vs 3.900). THE 2024 `CC_REGULAR` CELL IS ATTRIBUTED AS A DISPOSITION, NOT A LANE (this session's Object 1): the CT / steam energy the market ran in NYC / LI / CH is out of the money at the ACTUAL price on the LP's installed offer (bucket B 0.57–0.89, in-the-money-unrun nil) — owner = out-of-market commitment (`scuc_load_pocket_commitment` G) + the owner-accepted CT markup trade + C3a. Evidence: `docs/FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md`, `PREREG-nyiso187-ct-steam-merit-position.md`, `_nyiso187_merit_position.json`. **PRIOR (nyiso-186) HEADER PRESERVED BELOW.**
+
+*(Prior header, nyiso-186, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-04 (nyiso-186): `2026-09-04-nyiso-186-astoria-identity` — the nyiso-185 recipe with the re-derived `egrid_identity_heat_rates` artifact (the identity derive's new MERGED-identity leg: Astoria Energy II 57664 ↔ eGRID 55375, pooled 7.3792 over seven exact vintages, replacing the `gas_cc` f-class default 6.70; ZERO `scenario_config` changes, ZERO new DOF entries, control BIT-IDENTICAL to the superseded keeper). PROMOTED BY OWNER RULING on rule 14 `[R-ACCURATE]` + rule 1 `[R-STRUCT]` WITH NO GATE REGRESSION — determination NOT-YET, target grade 5, fail set UNCHANGED **{C1-2024 `CC_REGULAR` share +3.80 TWh / 3.1 pp, C3a-2025 −10.4 %, C3c}**, every scored number moved toward actual or unchanged. Evidence: `docs/FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md`, `PREREG-nyiso186-cc-regular-2024-class.md`, `_nyiso186_cc_attribution.json`, the bundle's computed `calibration_attestation.json`. **PRIOR (nyiso-185) HEADER PRESERVED BELOW.**
 
 *(Prior header, nyiso-185, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-04 (nyiso-185): `2026-09-04-nyiso-185-family-hr` — the nyiso-177 recipe plus `egrid_family_heat_rates` (eGRID prime-mover-family heat rates at multi-family plants, the measured zero-parameter replacement for the `MIXED_FACILITY_STEAM_HR` hand number where it covers; ZERO new DOF entries, G-DELTA one field, control BIT-IDENTICAL to the superseded keeper). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, at full magnitude — determination NOT-YET, target grade 5, fail set {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c} → **{C1-2024 `CC_REGULAR` share +3.87 TWh / 3.18 pp, C3a-2025 −10.5 %, C3c}**: the 2023 `ST_GAS` cell open since nyiso-177 PASSES (+2.16 TWh) and the class absorbing Ravenswood's released steam volume crosses its 2024 share band. Evidence: `docs/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md`, `PREREG-nyiso185-stgas-family-hr-ab.md`, the bundle's computed `calibration_attestation.json`. **PRIOR (nyiso-177) HEADER PRESERVED BELOW.**
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
+
+**LEVER QUEUE — REWRITTEN 2026-09-04 (nyiso-187 `ct-steam-merit` lane, TWO
+SOLVES; THE CT / STEAM-vs-CC MERIT POSITION IS DECOMPOSED ON THE LP'S INSTALLED
+OFFER AND ATTRIBUTED TO OUT-OF-MARKET COMMITMENT; THE ASTORIA REGISTRY SPLIT'S
+AVAILABILITY HALF IS REPAIRED, A/B-SOLVED AND PROMOTED). Keeper
+`2026-09-04-nyiso-187-astoria-routing`; NOT-YET, grade 5, fails 3, fail set
+unchanged {C1-2024 `CC_REGULAR` share, C3a-2025 −10.3 %, C3c}.**
+
+* **WHAT THE DECOMPOSITION SAYS (PREREG-nyiso187 §3, bars fixed before
+  measurement; keeper sidecars, 2024).** Every deficit MW of NYC / Long Island
+  / Capital-Hudson `CT_PEAKER`, `CT_CHP` and `ST_GAS` was filled from the
+  model's cheapest un-run capacity at the installed offer and bucketed:
+  **OUT OF THE MONEY AT BOTH the model price and the actual RT price carries
+  0.85 / 0.83 (`CT_PEAKER` NYC / LI), 0.88 / 0.89 (`CT_CHP`), 0.89 / 0.75 /
+  0.57 (`ST_GAS` LI / CH / NYC)**; in-the-money-yet-unrun is nil; no measured
+  input departs from its source. Owner = **out-of-market commitment**
+  (`scuc_load_pocket_commitment`, G, owner-closed). Post-hoc, labelled: with
+  every markup removed, 96 % (NYC) / 73 % (LI) of the `CT_PEAKER` deficit
+  capacity would clear at the model's own price — the separator is the
+  **owner-accepted markup stack** (`tranche_startup_amortization` +
+  `_measured_runs` + the 1.35 committed band + the bid-cost markup; nyiso-96
+  §5 rejected the amortization on rule 1, the owner re-armed it as a
+  deliberately-accepted misrepresentation). `CT_CHP` and `ST_GAS` (LI, CH) are
+  out of merit on BARE cost; `ST_GAS @ NYC` is half the model's price level
+  (C3a / C3b).
+* **TOP OF QUEUE = AN OWNER DISPOSITION, NOT A LANE.** The 2024 `CC_REGULAR`
+  cell stands behind three owner-held objects: the load-pocket data route (G),
+  the CT markup trade (nyiso-96 re-arming), and C3a-2025 (DECISION-CARD-nyiso148
+  Q1). No mechanism lane moves it; a session sent to it will spend solves on a
+  cell the rubric cannot pass without one of those being re-opened by the
+  owner. **NEVER a CC volume lever, NEVER a band move.**
+* **THE ASTORIA ROUTING'S REMAINING FOOTPRINT (own A/B):** `campd_ramp_envelopes_NYISO.csv`
+  — the 55375 row (1,252 MW obs, 469 / 622 MW·h) splits into 55375 (626 MW,
+  372 / 449) + 57664 (626 MW, 416 / 454) AND the `(0, CC)` class-fraction
+  fallback moves 0.4907 / 0.5623 → 0.5000 / 0.5904 because it pools the plant
+  population (the pre-registered stop; excluded from the promoted arm);
+  `plant_emission_rates_v2` pooled block — 57664 at the class default 0.4206
+  t/MWh against 55375's measured 0.3807 (a `--repool` rebuilds every NYISO
+  plant, so it needs its own G-DELTA). Both zero-parameter, both the same
+  identity.
+* **`cc_capacity_reconcile` (U)** — unchanged from nyiso-186's queue (Zeltmann
+  H-B1 in 2023 / 2025; the committed table caps Zeltmann 737 → 560, Cricket
+  Valley 1,312.5 → 1,086.9, Athens 1,221.6 → 1,064.7).
+* **Bethlehem 2539's eGRID vintage artifact** — unchanged.
+* **The Astoria merit-panel stack-duplicate defect** (nyiso-184 §4.1) — the
+  panel still reads raw parquets; the remap corrects routing, not the panel's
+  Astoria heat rate.
+* **CORRECTION carried:** nyiso-186's queue bullet said the remap "does not
+  reach" the outage derive; it does (the derive applies it before its group
+  lookup; only the merit PANEL reads raw) — recorded in nyiso-186 §9.
+* Evidence: `docs/FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md`,
+  `results/calibration/PREREG-nyiso187-ct-steam-merit-position.md` (pushed at
+  `533e37e6` before the first measurement), `_nyiso187_merit_position.json`,
+  `_nyiso187_merit_position_bare_srmc.json` (post-hoc), probe
+  `scripts/probes/nyiso187_merit_position.py`, `scripts/gen_nyiso187_attestation.py`,
+  the arm bundle `results/calibration/nyiso187_astoria_routing`.
+
+**PRIOR QUEUE (nyiso-186) PRESERVED BELOW — its top-of-queue bullet (the
+CT-class and steam merit position) is DISCHARGED by the decomposition above and
+its item 2 (the Astoria availability half) is EXECUTED; everything else stands.**
 
 **LEVER QUEUE — REWRITTEN 2026-09-04 (nyiso-186 `cc-regular-2024-class` lane,
 TWO SOLVES; THE 2024 `CC_REGULAR` EXCESS IS ATTRIBUTED BY PLANT AND BY

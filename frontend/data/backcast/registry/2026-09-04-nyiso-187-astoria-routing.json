@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-04-nyiso-187-astoria-routing",
+  "label": "nyiso 187 astoria routing",
+  "date": "2026-09-04",
+  "shorthand": "nyiso-187-astoria-routing",
+  "definition": "nyiso-187 ARM: the nyiso-186 keeper recipe (replay, ZERO scenario_config changes) with the Astoria split-facility routing — campd.CAMPD_UNIT_PLANT_REMAP 55375 CT3/CT4 -> 57664 (caiso-196 form) and the -perunitmerit- outage extract + tranche artifact re-derived with their committed invocations; PREREG-nyiso187-ct-steam-merit-position §1 Object 2",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-04-nyiso-187-astoria-routing.js",
+  "bundle": "results/calibration/nyiso187_astoria_routing"
+}
