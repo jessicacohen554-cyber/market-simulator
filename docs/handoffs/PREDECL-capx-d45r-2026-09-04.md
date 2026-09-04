@@ -313,3 +313,120 @@ stamped the other four; NEISO's and MISO's cells gain the L5 / F3 citations only
 - **K-g — the preserved baselines.** `*-pre-d45`, `*-pre-d46`, `*-pre-d37`, `*-d42-*`,
   `*-d37-control` and every other suffixed record are never written; on any collision the
   lane STOPS and routes.
+
+---
+
+## 4. Re-verification at HEAD `8a18e9e1` by the D45-R RELAUNCH (session 2), pushed before its first solve
+
+**Provenance.** Session 1 (branch `claude/capx-d45r-close-jwq3bf`) pushed §1–§3 above at
+`a8464861` (merged as PR #4690 with the `.gitignore` carve-outs) and died before any solve
+started — no bundle, sidecar or verdict of this lane exists on `origin/main`. This relaunch
+runs on the harness-assigned branch **`claude/capx-d45r-close-iqlzck`**, FRESH off
+`origin/main` `8a18e9e1` (= a8464861 + nyiso-186's identity derive, miso-208's
+pre-registration, caiso-243's checkpoints + promotion, D47's records). Everything in
+§1–§3 stays binding and is graded as written; this section records only what the HEAD
+move changed and what it did not, plus the two legs (7 and 8) the charter added after §1–§3
+were written.
+
+### 4.1 Keys, keepers, posture — re-resolved, not assumed
+
+Every key was re-resolved at `8a18e9e1` through the same path (`build_config` /
+`reference_config` → `apply_iso_scenario_defaults` → `cache_key()`), and checked against
+**all 151 cache keys now committed under `results/`**:
+
+| leg | key | re-resolved at HEAD | keeper at HEAD (shard) |
+|---|---|---|---|
+| L1 `pjm-t1h` | `c6091bd5b62bbc3f` | **MATCH** | `2026-08-15-pjm-162-inputclock` (unchanged) |
+| L2 `nyiso-t1h` | `91686abe7a744a88` | **MATCH** | `2026-09-04-nyiso-185-family-hr` (unchanged) |
+| L3 `nyiso-t1h-d45r-curveon` | `cad77112c804881d` | **MATCH** | — |
+| L4 `pjm-t1h-d45r-fixed` | `896da48960560a29` | **MATCH** | — |
+| L5 `neiso-t1h` | `d6c0137e37bf3200` | **MATCH** | `2026-08-17-neiso-99-joint-p1` (unchanged) |
+| F1 `nyiso-t1f` | `cc7d1050a8090c76` | **MATCH** | nyiso-185 |
+| F2 `pjm-t1f` | `321f04e9060787f0` | **MATCH** | pjm-162 |
+| F3 `miso-t1f` | `8d8bc63a0d4378a9` | **MATCH** | `2026-09-03-miso-202-unitclip` (unchanged) |
+
+8/8 match; none of the eight collides with a committed bundle. Posture re-verified in every
+resolved config: `fossil_announced_exits_enabled=True`, `ccs_retrofit_capex_kw=1521.4`,
+`fixed_om_gas_cc_ccs=65.0`, `neiso_net_icr_requirement=False` on L5; the T1-H legs carry
+`entry_screen_diagnostics=True` + `hindcast_verified_announced_exits=True`; the T1-F legs
+resolve `capacity_market_clearing_by_iso={PJM,MISO,CAISO,NEISO: True}` (NYISO absent →
+curve-OFF) and `forecast_xyear_warmstart=False`. The two solve-affecting fields HEAD gained
+since §1 (`egrid_family_heat_rates`, nyiso-184; the two caiso-243 F923 nearby-fallback
+guards) are gated default-OFF, registered cache-key-optional at `False`, and armed in no
+ISO's `default_scenario_overrides` — which is why every key held.
+
+**Environment (stated, not absorbed):** 4 cores / 15 GB / no swap; full clone, `data/raw`
+entirely present (no hydration needed); `data/clean` was ABSENT and is rebuilt by
+`regenerate_clean.py` before the first solve (~1 h, the D46 §2 prerequisite recurring).
+
+### 4.2 Leg 7 — the NEISO dates-OFF paired control (charter r#33 amendment 3), declared
+
+| # | leg | run id | registers as | key | posture |
+|---|---|---|---|---|---|
+| L7 | NEISO shipped lever, dates OFF explicitly | `neiso-2021-2025-realized-t1h-d45r-datesoff` | suffixed **`neiso-t1h-d45r-datesoff`** (never the bare key) | **`5925e67c572a910f`** | L5's recipe + `--no-fossil-announced-exits` |
+
+**Its key EQUALS the committed `neiso-t1h-d37-control` key, by construction.** The
+charter's own line says why: the explicit `False` is "cache-neutral by b′-1" (D44 §1) —
+the frozen drop declaration stays `False`, so the explicit old value collapses onto the
+pre-flip key, and D37's control was exactly this config (lever OFF, diagnostics ON, dates
+OFF, same recipe) at the 2026-09-02 HEAD. This is therefore NOT the §1.4 STOP condition —
+the director pre-accepted the equality when it added the leg — and it is not a served
+bundle either: the harness redirects `CACHE_ROOT` to a fresh, verified-empty out-dir.
+It is disclosed here and in the finding as two committed bundles sharing one key across
+two out-dirs; the record's identity is its run id. What the leg buys over the d37-control
+is the removal of the HEAD-drift confound: **L5 vs L7 is a same-HEAD, one-field pair**
+(`fossil_announced_exits_enabled` True/False, lever OFF on both), where L5 vs d37-control
+spans 13 `src/` commits (D44's flip itself, D45's ledger position rows, miso-202's clip
+field, nyiso-180/184, caiso-240/241/243 — all gated or non-NEISO). If L7 reproduces
+d37-control to the decimal, that drift is measured inert for NEISO and the d37-control
+reading is confirmed at HEAD; if not, the difference is named, never attributed to the flip.
+
+**P16 — L7 reproduces d37-control up to HEAD drift.** `retire.total_gw` **7.0–8.0**
+(d37-control 7.566, FAIL +51 %); coal economic **0.6–0.9 GW** (0.791); gas_cc **4.5–5.5**
+(5.335); gas_st **1.438 exactly** (the value every NEISO leg of either posture has carried
+to the decimal); oil **0.000**, gas_ct **0.000**; `unit_recall_gt300` **4/6**;
+`false_retire` **0.50–0.60** (0.583). Additions byte-identical to d37-control's (wind 2.0,
+solar 2.056, gas_cc 2.0, gas_ct 0.5, storage 0.0). Falsifier: coal economic < 0.3 GW in
+L7, or recall ≠ 4/6.
+
+**P17 — the flip alone, at the SHIPPED lever (L5 − L7), reproduces D46's re-routing
+sign, and carries the recall loss.** Coal economic **0.79 → 0.0**; oil **0.0 → 0.5–0.7**
+(the announced derates/retires); gas_cc economic re-ranks DOWN (the longer position is
+not the object here — D46 measured the flip losing coal and gaining gas_cc at lever ON; at
+lever OFF the control already over-retires gas_cc by 3.5 GW, so the predicted direction is
+gas_cc **DOWN** toward the L5 band of P10, not up); total DOWN (P11). **Recall 4/6 → 3/6
+and `false_retire` rising in fraction terms are predicted to travel with the flip** —
+i.e. P17 predicts that the NEISO regression D46 measured at lever ON is the flip's, not
+the keeper's or HEAD's. Stated now, before either leg solves: **if it lands, it is a
+rule-25 counter-example to Q30's global default at NEISO and it returns to the owner as a
+FINDING, not a recommendation; nothing arms or disarms in this lane.** Falsifier: L5
+recall ≥ L7 recall, or L5 coal economic > 0.3 GW.
+
+### 4.3 Leg 8 — the conditional CAISO legs: the condition FIRES and the leg STOPS
+
+The charter's test — read `keepers/CAISO.json` at launch; include `caiso-t1h` / `caiso-t1f`
+if the keeper is no longer `2026-09-03-caiso-241-b1-ctpeaker` — fires: the keeper is
+**`2026-09-04-caiso-243-b1-f923`**. But the two keys re-resolve to **`2c8cc7d19ccaed4c`**
+(T1-H) and **`772b1e5abc7fc80c`** (T1-F) — **exactly D46's committed CAISO bundles**
+(`caiso-2021-2025-realized-t1h-d46`, `caiso-2026-2030-d46-remeasure`). The keeper move
+241 → 243 carried NO resolved-config change for a CAISO forecast leg (the caiso-243 guards
+are gated default-OFF and CAISO's `default_scenario_overrides` did not move), so the
+charter's premise for the leg — keeper-vintage staleness — is falsified by its own key.
+The charter's guardrail ("on any key collision STOP and route") governs and is applied
+literally: **both CAISO legs are NOT solved.** Unlike L7, this equality was not declared
+by the charter, and re-solving would spend ~35 min to reproduce D46's two bundles under a
+second out-dir with the same key, measuring only code drift (3 `src/` commits since
+D46's CAISO t1f solve: caiso-243's guards, nyiso-184's family heat rates, a ruff pass —
+all gated OFF or non-CAISO). ROUTED to the director as: **`caiso-t1h` / `caiso-t1f` are
+not config-stale at HEAD**; the §0ac.7 CAISO row stays open exactly as the charter EXIT
+already provides ("every key except CAISO's"), and re-opens on the config axis only when
+a CAISO promotion actually moves a resolved field. The bare CAISO keys, VERDICT_MAP rows,
+verdicts and board block are untouched by this lane.
+
+### 4.4 Amended tallies
+
+P15 now reads: every realized key matches its pre-declared value, **9/9** (the eight above
+plus L7). The registration plan (§1.4) gains `neiso-2021-2025-realized-t1h-d45r-datesoff` →
+`neiso-t1h-d45r-datesoff` and nothing for CAISO. Kills K-a…K-g unchanged; K-g additionally
+names `neiso-t1h-d37-control` as a preserved record this lane never writes (L7 registers
+under its own key beside it).
