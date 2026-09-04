@@ -73,7 +73,9 @@ from market_sim.pipeline.result import YearSolveResult
 from market_sim.pipeline.solve import (
     EnergySolveResult,
     apply_bid_max_target,
+    reset_pass_timing_log,
     run_energy_solve,
+    take_pass_timing_log,
 )
 from market_sim.pipeline.spec import UNSET, DispatchSpec, ReserveSpec
 from market_sim.pipeline.ttc import (
@@ -97,7 +99,9 @@ __all__ = [
     "apply_reserve_coopt",
     "apply_ercot_commitment_posture",
     "apply_bid_max_target",
+    "reset_pass_timing_log",
     "run_energy_solve",
+    "take_pass_timing_log",
     "run_commitment_pass",
     "build_caiso_ra_p1_prep",
     "build_caiso_reserve_p1_prep",

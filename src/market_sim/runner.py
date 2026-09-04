@@ -188,6 +188,7 @@ from market_sim.pipeline import (
     build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
+    reset_pass_timing_log,
     run_commitment_pass,
     run_energy_solve,
 )
@@ -3288,6 +3289,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config, iso, fleet_arrays
             )
             _t_pre_solve = time.perf_counter()
+            # Keep the shared per-pass timing log to this year (the forecast
+            # path is one energy solve per year) — PERF-B session 2.
+            reset_pass_timing_log()
             energy_solve = run_energy_solve(
                 dispatch_fleet,
                 fleet_arrays,
@@ -3419,6 +3423,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _results_write = _t_end - _t_post_solve
             _total = _t_end - year_start
             _data_prep = _total - _solve_p0 - _markup_s - _solve_p1 - _results_write
+            # markup sub-instrumentation (PERF-B session 2): ``markup`` is the
+            # residual above, not a measured phase, so its components come from
+            # inside run_energy_solve and ``other`` books this frame's
+            # call/return edges around it — see pipeline/timing.py.
+            _markup_parts = dict(energy_solve.markup_parts)
+            if _markup_parts:
+                _markup_parts["other"] = _markup_s - sum(_markup_parts.values())
             log_year_phase_timing(
                 logger,
                 year,
@@ -3428,6 +3439,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 solve_p1=_solve_p1,
                 results_write=_results_write,
                 total=_total,
+                markup_parts=_markup_parts,
                 results_write_parts={
                     "legacy_p2": _t_pre_save - _t_post_solve,
                     "parquet": _t_end - _t_pre_save,

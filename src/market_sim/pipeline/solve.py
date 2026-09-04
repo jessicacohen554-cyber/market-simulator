@@ -48,8 +48,11 @@ a function of prices, ``mc`` and capacity only
 
 from __future__ import annotations
 
+import logging
 import os
-from dataclasses import dataclass
+import time
+from collections import deque
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
@@ -62,6 +65,41 @@ from market_sim.model.lp.inplace_floor import (
     refloor_thermal_inplace,
 )
 from market_sim.pipeline.basis_cache import persist_year_basis, seed_year1_basis
+
+logger = logging.getLogger(__name__)
+
+# --- Per-pass timing log (PERF-B session 2) ---------------------------------
+# Every ``run_energy_solve`` call appends its build / P0 / P1 solve seconds and
+# its ``markup_parts`` here. The backcast orchestrator needs this because a year
+# is not always ONE energy solve: the ercot-221 adaptive-expectation offer runs
+# a SECOND P1 pass, and ercot-230's fixed point iterates. Its ``markup`` residual
+# subtracts only the LAST pass's build and two solve times (``_timing`` reads the
+# final ``EnergySolveResult``), so every earlier pass's ENTIRE build and both
+# HiGHS runs are booked as ``markup`` — the single largest term on an ERCOT year,
+# and invisible without this log. A bounded deque so a caller that never drains
+# it cannot leak; ``reset_pass_timing_log`` / ``take_pass_timing_log`` are the
+# orchestrators' drain seam. Diagnostics only: nothing here is read by a solve.
+_PASS_TIMING_LOG: "deque[dict]" = deque(maxlen=256)
+
+
+def reset_pass_timing_log() -> None:
+    """Drop any accumulated per-pass timings (call before a year's solves)."""
+    _PASS_TIMING_LOG.clear()
+
+
+def take_pass_timing_log() -> "list[dict]":
+    """Return the per-pass timings in call order and clear the log.
+
+    Returns:
+        One dict per :func:`run_energy_solve` call since the last reset, each
+        with ``build_s`` / ``solve_p0_s`` / ``solve_p1_s`` (that pass's own
+        ``p1.build_time``, ``r0.solve_time``, ``p1.solve_time``) and ``parts``
+        (that pass's ``markup_parts``).
+    """
+    out = list(_PASS_TIMING_LOG)
+    _PASS_TIMING_LOG.clear()
+    return out
+
 
 if TYPE_CHECKING:
     from market_sim.data.fleet import FleetArrays
@@ -85,6 +123,13 @@ class EnergySolveResult:
             ``p1_fleet_prep`` hook injects a floor (the P1-native CAISO RA
             must-offer bridge), this is the floored fleet the scored P1 saw, so
             the caller persists its ``min_gen`` as the P1 pass's floors.
+        markup_parts: Ordered ``{component: seconds}`` attribution of the
+            orchestrators' ``markup`` phase — which is not a measured phase at
+            all but the RESIDUAL ``energy_solve - build - solve_p0 - solve_p1``
+            (``runner.py``/``run_calibration_full.py``), so every non-solve,
+            non-build cost of this function lands in it. See
+            :func:`run_energy_solve` for the component definitions and the
+            arithmetic that makes them sum to that residual exactly.
     """
 
     r0: "DispatchResult"
@@ -92,6 +137,7 @@ class EnergySolveResult:
     mc_bid: np.ndarray
     markup: np.ndarray
     p1_fleet_arrays: "FleetArrays"
+    markup_parts: "dict[str, float]" = field(default_factory=dict)
 
 
 def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
@@ -245,18 +291,36 @@ def run_energy_solve(
             byte-identical.
 
     Returns:
-        :class:`EnergySolveResult` with the P0/P1 results, the bid MC, and the
-        ``FleetArrays`` P1 solved on.
+        :class:`EnergySolveResult` with the P0/P1 results, the bid MC, the
+        ``FleetArrays`` P1 solved on, and ``markup_parts`` — the attribution of
+        the orchestrators' residual ``markup`` phase (see the assembly block at
+        the end of this function).
     """
     # ERCOT SWCAP offer-domain clip (ercot_offer_swcap_clip): applied to the
     # P0 base cost HERE and to the fully-assembled P1 bid below, so "no
     # thermal energy offer above the cap" is the invariant the LP receives in
     # both passes. Off path (_swcap None) byte-identical.
+    # markup-residual sub-instrumentation (PERF-B session 2). Pure
+    # ``perf_counter`` reads bracketing the existing statements — no
+    # computation is reordered, added or removed, so every solved value is
+    # bit-identical. See the ``markup_parts`` assembly at the end for what the
+    # six interior segments mean and why they sum to the residual exactly.
+    _t0 = time.perf_counter()
     _swcap = _swcap_clip_level(config)
     if _swcap is not None:
         mc_base = np.minimum(mc_base, _swcap)
     _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
     model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
+    # The matrix build of the model constructed HERE. Captured now because the
+    # cold-P1 branch below rebinds ``model`` to None, and because this is the
+    # build the orchestrators' ``_build`` field does NOT account for whenever
+    # P1 cold-rebuilds (they read ``p1.build_time``, i.e. the SECOND model).
+    # ``getattr``, not attribute access: this is a TIMING read, and a timing
+    # read must never narrow the contract ``run_energy_solve`` places on the
+    # object it was handed. The tests' ``_CapturingDispatchModel`` double
+    # implements ``solve`` and nothing else, and a diagnostic has no business
+    # breaking it.
+    _build_setup_s = float(getattr(model, "build_time", 0.0) or 0.0)
     # Cross-year gate: an explicit ``xyear_warmstart`` bool is the caller's own
     # decision and wins; ``None`` (every backcast caller) keeps the env default,
     # so the backcast path is byte-identical to before.
@@ -287,11 +351,13 @@ def run_energy_solve(
         seed_year1_basis(xyear_cache, *_basis_key)
     if _xwarm and xyear_cache is not None and xyear_cache:
         model.apply_cross_year_basis(xyear_cache[0])
+    _t1 = time.perf_counter()
     # P0: solve with base MC to extract per-month run lengths.
     if _warm:
         r0 = model.solve(mc=mc_base)
     else:
         r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
+    _t2 = time.perf_counter()
     # P1: solve with bid MC = base MC + monthly startup amortization, so
     # clearing prices reflect CC/CT cycling costs.
     markup = compute_monthly_markup(
@@ -305,6 +371,7 @@ def run_energy_solve(
         coal_warm_committed=getattr(config, "coal_warm_committed", False),
         run_ratio_t=startup_run_ratio_t,
     )
+    _t3 = time.perf_counter()
     mc_bid = mc_base + markup
     # P1-only bid adjustment (ERCOT condition-responsive offer surface): an additive
     # (n_gen, T) markup applied to the P1 clearing objective ONLY — never to the P0
@@ -403,6 +470,65 @@ def run_energy_solve(
         _inplace_floored = refloor_thermal_inplace(
             model, p1_fleet_arrays, _avail_in_rows
         )
+    # P1 routing diagnostic (PERF-B session 2). Read-only, INFO-level: when a
+    # floor hook replaced the fleet, say which P1 route was taken and — on the
+    # cold route — WHY the in-place refloor did not fire, since that decision
+    # costs one whole extra matrix build (booked as ``markup``, see the
+    # attribution block below) and a lost warm start. There are two distinct
+    # reasons and they need different remedies: the toggle being off (a default,
+    # flippable only on the shipped warm-start-neutrality evidence) versus the
+    # floored availability feeding an LP row a P-column edit cannot reproduce
+    # (structural — ``refloor_thermal_inplace`` would decline even if flipped).
+    # Neither ``refloor_thermal_inplace`` nor the branch above logged anything,
+    # so the reason was previously unobservable from a run's own log.
+    if p1_fleet_arrays is not fleet_arrays and logger.isEnabledFor(logging.INFO):
+        try:
+            _diag_toggle = os.environ.get("MARKET_SIM_P1_FLOOR_INPLACE", "0")
+            _diag_rgi = dispatch_kwargs.get("ramp_gen_idx")
+            _diag_rows = (
+                availability_feeds_rows(
+                    model, _diag_rgi is not None and np.asarray(_diag_rgi).size > 0
+                )
+                if model is not None
+                else None
+            )
+            _diag_avail_changed = not np.array_equal(
+                np.asarray(p1_fleet_arrays.availability, dtype=float),
+                np.asarray(fleet_arrays.availability, dtype=float),
+            )
+            if _inplace_floored:
+                _diag_route, _diag_why = (
+                    "IN-PLACE REFLOOR (warm P1)",
+                    "toggle on, accepted",
+                )
+            elif not _warm:
+                _diag_route, _diag_why = "COLD REBUILD", "MARKET_SIM_WARMSTART=0"
+            elif p1_dispatch_kwargs is not dispatch_kwargs:
+                _diag_route, _diag_why = "COLD REBUILD", "P1 kwargs overridden"
+            elif _diag_toggle == "0":
+                _diag_route = "COLD REBUILD"
+                _diag_why = (
+                    "MARKET_SIM_P1_FLOOR_INPLACE off (default); would have been "
+                    + (
+                        "DECLINED anyway (availability changed and feeds a row)"
+                        if (_diag_rows and _diag_avail_changed)
+                        else "ACCEPTED"
+                    )
+                )
+            else:
+                _diag_route = "COLD REBUILD"
+                _diag_why = "in-place refloor DECLINED by the model"
+            logger.info(
+                "P1 route: %s on a floored fleet — %s "
+                "(availability_changed=%s, availability_feeds_rows=%s)",
+                _diag_route,
+                _diag_why,
+                _diag_avail_changed,
+                _diag_rows,
+            )
+        except Exception:  # pragma: no cover - a log line may never break a solve
+            logger.debug("P1 route diagnostic unavailable", exc_info=True)
+    _t4 = time.perf_counter()
     # P1-only storage discharge re-cost (the ercot-219 reservation-price
     # offer): applied AFTER the warm/cold routing above is decided, so the
     # override never forces a cold P1 by itself. Warm/in-place path: set on
@@ -432,6 +558,7 @@ def run_energy_solve(
                 "storage_discharge_cost": p1_storage_discharge_cost,
             }
         p1 = solve_dispatch(p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs)
+    _t5 = time.perf_counter()
 
     # Hand this year's optimal basis to the next year's P0 (cross-year warm
     # start). Exported only when the cross-year gate is armed (`_xwarm`) —
@@ -458,10 +585,86 @@ def run_energy_solve(
     # goldens/replay env retains nothing and the solve stays byte-identical.
     if _disk_basis_cache:
         persist_year_basis(xyear_cache, *_basis_key)
+    _t6 = time.perf_counter()
+
+    # --- ``markup``-residual attribution (PERF-B session 2) ----------------
+    # Both orchestrators report ``markup`` as a RESIDUAL, not a measured phase:
+    #     markup = energy_solve_wall - p1.build_time - r0.solve_time - p1.solve_time
+    # (``runner.py``, ``scripts/run_calibration_full.py``). Only ``h.run()`` is
+    # inside ``solve_time`` (``lp/model.py``) and only ``__init__`` is inside
+    # ``build_time``, so the residual absorbs the objective-vector assembly, the
+    # HiGHS solution marshalling and ``DispatchResult`` construction of BOTH
+    # passes, ``compute_monthly_markup``, the P0->P1 seam hooks, the basis
+    # seam — and, when P1 cold-rebuilds, one entire matrix build that
+    # ``p1.build_time`` does not cover (it names the SECOND model). The six
+    # interior segments below are disjoint and exhaustive over
+    # ``[_t0, _t6]``, and the three build terms are placed so the components
+    # sum to the residual exactly on all three solve paths:
+    #   * warm P0 + warm/in-place P1 — ``p1.build_time`` IS ``_build_setup_s``,
+    #     so it is removed from ``setup`` and ``p0_build`` is 0;
+    #   * warm P0 + cold P1 (a ``p1_fleet_prep`` floor with the in-place path
+    #     off or declined) — ``p1.build_time`` is the second build, sitting in
+    #     ``p1_post``; the first build is the unaccounted one and is reported
+    #     as ``p0_build``;
+    #   * MARKET_SIM_WARMSTART=0 (two cold solves) — same, with the P0 build
+    #     inside ``p0_post`` instead of ``setup``.
+    # An orchestrator's residual also spans its own call/return edges, so its
+    # sum(parts) is a hair under the reported ``markup``; the callers book that
+    # difference as a trailing ``other`` component (see run_calibration.py).
+    _p1_cold = not (_warm_p1 or _inplace_floored)
+    _build_p0_s = float(getattr(r0, "build_time", 0.0) or 0.0) if not _warm else 0.0
+    _build_p1_s = float(getattr(p1, "build_time", 0.0) or 0.0) if _p1_cold else 0.0
+    _solve_p0_s = float(getattr(r0, "solve_time", 0.0) or 0.0)
+    _solve_p1_s = float(getattr(p1, "solve_time", 0.0) or 0.0)
+    markup_parts = {
+        # Offer-domain clip, the P0 model construction (its matrix build
+        # excluded — see above) and the cross-year/disk basis seed + apply.
+        "setup": (_t1 - _t0) - _build_setup_s,
+        # The matrix build the ``_build`` field does not account for. Nonzero
+        # ONLY when P1 cold-rebuilds — the whole second-build cost of an armed
+        # P1-native floor bridge, booked against ``markup`` today.
+        "p0_build": (_build_setup_s + _build_p0_s) if _p1_cold else 0.0,
+        # Everything in the P0 pass that is not ``h.run()``: the cost-vector
+        # build + ``changeColsCost``, then ``getSolution`` and the whole
+        # ``DispatchResult`` extraction (duals, reduced costs, reshapes).
+        "p0_post": (_t2 - _t1) - _solve_p0_s - _build_p0_s,
+        # ``compute_monthly_markup`` alone — the phase the field is named for.
+        "markup": _t3 - _t2,
+        # The P0->P1 seam: bid assembly (markup add, additive/P0-conditioned
+        # adjustments, bid-max reconcile, SWCAP clip) and the floor/kwargs
+        # hooks incl. any in-place refloor.
+        "seam": _t4 - _t3,
+        # The P1 pass minus ``h.run()`` and minus its own build: same
+        # cost-vector + marshalling work as ``p0_post``, plus (cold path only,
+        # cross-year gate armed) the pre-rebuild P0 basis export.
+        "p1_post": (_t5 - _t4) - _solve_p1_s - _build_p1_s,
+        # Cross-year basis export (``getBasis``) + the disposable NPZ persist.
+        "tail": _t6 - _t5,
+    }
+
+    _PASS_TIMING_LOG.append(
+        {
+            "build_s": float(getattr(p1, "build_time", 0.0) or 0.0),
+            "solve_p0_s": _solve_p0_s,
+            "solve_p1_s": _solve_p1_s,
+            "parts": markup_parts,
+        }
+    )
 
     return EnergySolveResult(
-        r0=r0, p1=p1, mc_bid=mc_bid, markup=markup, p1_fleet_arrays=p1_fleet_arrays
+        r0=r0,
+        p1=p1,
+        mc_bid=mc_bid,
+        markup=markup,
+        p1_fleet_arrays=p1_fleet_arrays,
+        markup_parts=markup_parts,
     )
 
 
-__all__ = ["EnergySolveResult", "apply_bid_max_target", "run_energy_solve"]
+__all__ = [
+    "EnergySolveResult",
+    "apply_bid_max_target",
+    "reset_pass_timing_log",
+    "run_energy_solve",
+    "take_pass_timing_log",
+]
