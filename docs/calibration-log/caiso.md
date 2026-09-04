@@ -11873,3 +11873,103 @@ the one that broke.
 **`2026-09-03-caiso-241-a0-control`**.
 
 **Next number: caiso-242.**
+
+## caiso-242 (2026-09-03) — the CT_PEAKER residual is a PRICE defect, its diagnosis is a gas-basis identity error, the pre-registered falsifier KILLED the arm, and killing it exposed a live 2.8 GW data defect
+
+**ZERO SOLVES. ZERO LP MINUTES. Keeper unchanged** (`2026-09-03-caiso-241-b1-ctpeaker`,
+NOT-YET, C3a the sole load-bearing FAIL). No `ScenarioConfig` field added, no run
+registered, no dashboard change. Pre-registered in
+`PRECOMMIT-caiso242-offer-basis-identity-2026-09-03.md` (`8be74e81`, pushed to
+`origin` **before the arm was designed, before its footprint was measured, before
+any LP**). CAISO holds no `complete`/`final` marker; the freeze is ACTIVE; every
+read stayed in 2023–2025.
+
+**THE CHARTERED QUESTION IS ANSWERED ON MEASUREMENT.** Route (b), availability, is
+**FALSIFIED OUTRIGHT** — CT_PEAKER has **zero hours below 1 % headroom in any year**
+against a ~6 GW available envelope (nameplate 7,528/7,535/7,539 MW, available mean
+6,306/6,315/6,342, p05 5,917/5,929/5,995) while dispatching a mean of 186/85/43 MW.
+Route (a), price, **binds**: the cheapest *available* offer exceeds the load-weighted
+system price in **7,070 / 7,839 / 7,941 hours (80.7 / 89.5 / 90.7 %)**, median gap
++15.57/+12.63/+12.96 $/MWh. Route (c) is not an alternative — an offer surface pricing
+domestic gas ~30 % above the market's own bids is why imports (−8.4/−7.6/−5.6 TWh) win
+the ramp peakers should win. The charter's suspected band inversion is **real, is
+manufactured by `apply_gas_offer_margin` (its sign is the sign of `anchor − fuel`), and
+is IMMATERIAL** — 623.5 MW against 6,189, both sides above price in ~90 % of hours.
+
+**THE DIAGNOSIS: A GAS-BASIS IDENTITY ERROR.** `derive_caiso_offer_surface.py` builds
+every armed multiplier as `(bid − VOM) / (base_hr × (gas + CO2_FACTOR × carbon))` where
+`gas` is, in its own code, the **CA-composite citygate daily spot**; the solve evaluates
+it against the model's **delivered** series (EIA N3050CA3 + `CAISO_CITYGATE_TRANSPORT_ADDER`
+0.46). Measured: 7.4178/3.8416/4.5829 vs 5.2831/2.4567/3.0593 $/MMBtu (carbon-inclusive
+ratio 1.298/1.310/1.327), so **every CAISO gas class's econ band is offered 10–49 % above
+the bid its own multiplier encodes** (CT_PEAKER 2024: 74.85 vs 58.66 $/MWh). A **second**
+mismatch sits in the same `denom` line and partly offsets the first — the derive assumes
+the model charges carbon at `0.057 × tranche_HR`, the model charges the fleet's measured
+`emission_rate`, 27 % lower — which is very likely why it survived caiso-51 → caiso-241.
+Corroborated by the derive's **own** classifier: a CT-bucket Theil–Sen slope of
+9.2–10.4 MMBtu/MWh against the composite citygate (0.85–0.96 × `base_hr`).
+
+**THE ARM IS WITHDRAWN BY ITS OWN FALSIFIER, AND THE FUNDED SOLVE IS RETURNED UNSPENT.**
+The owner funded the solve, chose the **ISO-wide** scope and accepted **G-CTRL form 4**
+(code-path emptiness: 26 commits / 291 files since the keeper's `git_sha 607f9324`, **not
+one** under `src/market_sim/`, `scripts/run_calibration*.py` or `data/raw/`). P-1
+registered that `rho` must land in **[0.72, 0.80]** with per-year dispersion **≤ ±0.05**
+*or the arm is WITHDRAWN, not re-grained*. Measured: **CT_PEAKER 0.7686/0.7761/0.7596
+(±0.0083, HOLDS)**; **CC_REGULAR 0.7294/0.6999/0.5533 (±0.0881, two years out of range,
+FAILS)**. At the selected scope P-1 fails on both legs. **Withdrawn. No LP spent.** The
+temptation is named and refused: P-1 holds at the CT_PEAKER-only scope the owner did *not*
+choose, and re-narrowing after seeing which scope passes is the selection pre-registration
+exists to prevent — re-putting it is an owner decision needing a **fresh** falsifier
+(this P-1 is SPENT). The withdrawal is **independent of** the bug below: 2024's 0.6999 is
+out of range on clean data too.
+
+**WHAT THE FALSIFIER FOUND — the session's most actionable result.** CC_REGULAR's 2025
+`rho` outlier is a **data defect**. The CAISO hub-basis overlay covers **12/12 months in
+2023 and 2024 but 9/12 in 2025**; in the three uncovered months the F923 plant layer shows
+through and the classes diverge (CC_REGULAR's November 2025 delivered gas reads
+**20.78 $/MMBtu** against CT_PEAKER's 6.08 and a citygate of 3.20). Three compounding
+defects, each measured: **(D3)** EIA-923 plant 55077 (NV) reports **96.161 $/MMBtu on a
+quantity of 5,234** in 2025-11 (and 67.900 on 7,808 in 2025-12) against 115,774–674,308 in
+every other month — **2 % of its own normal volume**, a fixed charge over a near-zero
+denominator; **(D1)** `state` is **EMPTY on 100 % of CAISO's gas fleet** (1,411/1,411 LP
+rows, 29,319.3/29,319.3 MW), so the **state** tier — the only one carrying a donor-count
+guard (`nearby_fuel_price_min_state_plants = 2`) — is skipped fleet-wide; **(D2)** the
+**zone** tier it falls to has **no donor-count guard and no volume guard**, and its pool
+here holds **exactly one** reporting plant. The arithmetic proves the path: NV's ten
+reporting plants that month are quantity-weighted at **3.54**, CA's fifteen at ~4.5 —
+neither tier could produce 96.161 except from a pool of one. **CONSEQUENCE: 2,816.3 MW
+across 7 plants / 67 LP rows (2,700.1 MW of it CC_REGULAR) at a marginal cost of
+736.4 $/MWh for all 720 hours of November 2025**, against 102.7 in October — a 7.2× step,
+up to 2.03 TWh of capability removed, in the training window's worst C3a year. **Against
+interest:** the *realized* consequence is smaller — CC_REGULAR's monthly dispatch reads
+Oct 4,476 → Nov 5,348 → Dec 5,106 MW, no class-level hole, because CAISO's other ~11 GW of
+CC absorbs it; what is established is capability removed and cost misallocated, not a
+generation collapse. No keeper caught it because 12/12 coverage in 2023–24 makes the
+fallback unreachable.
+
+**CROSS-ISO CENSUS, and the repair's form is deliberately NOT chosen here.** 15,385 gas
+plant-months / 466 plants, 2023–25: price p50 3.41, p99 26.97, **max 198.46**; 226 rows
+over 20 $/MMBtu (93/53/80 by year) spanning MN, CO, VA, MI, ND, MS, NC, AZ, NM as well as
+CA/NV. At quantity ≤ 2 % of the plant-year's own median **and** price ≥ 2× its own
+volume-weighted mean: **43 rows / 33 plants, median 27.59, max 198.46 — and 0.0016 % of
+the fleet's gas volume** (0.0507 % at the loosest swept cut). *That share is the argument.*
+Thresholds are **swept, none selected** (rule 5 `[R-NO-MAGIC]`). Three candidate repairs,
+none armed: **(a)** extend the existing min-donor guard to the **zone** tier (no new
+constant); **(b)** a volume-admissibility guard on F923 rows (needs a threshold — a new
+parameter); **(c)** populate `state` on the CAISO fleet so the guarded tier is reachable
+(no new parameter). **(a)+(c) carry no free parameter and are the recommendation.**
+
+**PREDICTIONS: one scored, and it is the one that killed the session's own arm.** P-1
+FALSIFIED; P-6 holds on the keeper as it stands; P-7 holds trivially (nothing armed, not
+claimed as a confirmation); **P-2/P-3/P-4/P-5/P-8 are UNSCORABLE — no solve — and are
+quoted as nothing.** The four that would have flattered the arm are exactly the unscorable
+ones.
+
+**Owner asks carried:** the funded solve returned unspent; whether to re-put the narrow
+scope (needs a fresh falsifier); the F923 guard + empty-`state` repair (cross-ISO, the
+strongest standing ask); the 2025 overlay coverage gap. Deliverables:
+`PRECOMMIT-caiso242-offer-basis-identity-2026-09-03.md`,
+`FINDING-caiso242-offer-basis-identity-2026-09-03.md`, and five zero-LP probe/artifact
+pairs (`_caiso242_{ctpeaker_anatomy,passthrough_test,gas_basis_identity,roundtrip,f923_lowvolume_census}`).
+
+**Next number: caiso-243.**
