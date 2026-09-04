@@ -347,3 +347,17 @@ gates re-stamped, `egrid_identity_heat_rates` annotated, `cc_capacity_reconcile`
 annotated U) and the §5.5 header + queue; `docs/calibration-log/nyiso.md`.
 NYISO holds no `complete` marker, so no D-5(b) re-key. Every number in §1–§6
 stands; nothing was re-measured.
+
+## 9. CORRECTION (2026-09-04, session nyiso-187) — §3 second half and §5.2 item 2
+
+This finding said the `campd.CAMPD_UNIT_PLANT_REMAP` "alone does not reach" the
+outage derive because `scripts/lib/outage_detect.py` reads raw parquets. That
+is wrong for the routing: `scripts/data/derive_campd_unit_outages.py` applies
+the remap BEFORE its group lookup (lines 405 and 1568 at this HEAD), and
+`derive_thermal_tranches.py` loads through `campd.load_campd_hourly` →
+`_normalize_campd`. Only the merit-order PANEL (`build_merit_order_panel`)
+reads raw parquets — nyiso-184 §4.1's object, unchanged. The caiso-196
+registry form therefore reaches both artifacts directly; nyiso-187 applied it
+(`PREREG-nyiso187-ct-steam-merit-position.md` §1 Object 2,
+`FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md` §3). Every number in
+§1–§8 stands.
