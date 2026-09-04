@@ -388,7 +388,13 @@ def g_engage(arm_key: str, arm: Path) -> dict:
             hc = uc.groupby(["plant_code", "hour"])["mw"].sum()
             ha = ua.groupby(["plant_code", "hour"])["mw"].sum()
             dh = (ha - hc).abs()
-            dp = ((ua.groupby("plant_code")["mw"].sum() - uc.groupby("plant_code")["mw"].sum()) / 1e6).abs()
+            dp = (
+                (
+                    ua.groupby("plant_code")["mw"].sum()
+                    - uc.groupby("plant_code")["mw"].sum()
+                )
+                / 1e6
+            ).abs()
             precise[y] = {
                 "price_hours_differing": int((abs(dprice) > 1e-9).sum()),
                 "max_abs_dprice": round(float(abs(dprice).max()), 4),
@@ -396,7 +402,10 @@ def g_engage(arm_key: str, arm: Path) -> dict:
                 "max_plant_annual_abs_dtwh": round(float(dp.max()), 6),
                 "plant_with_max": int(dp.idxmax()),
             }
-            any_hour_moved |= precise[y]["price_hours_differing"] > 0 or precise[y]["plant_hours_differing"] > 0
+            any_hour_moved |= (
+                precise[y]["price_hours_differing"] > 0
+                or precise[y]["plant_hours_differing"] > 0
+            )
         checks.append(any_hour_moved)
     return {"by_year": rows, "full_precision": precise, "pass": all(checks)}
 
