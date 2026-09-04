@@ -1,0 +1,87 @@
+{
+  "adequacy_requirement_mw": 31752.602,
+  "announced_derates": [],
+  "announced_fossil_schedule": [
+    {
+      "disposition": "vintage",
+      "exit_month": null,
+      "exit_year": 2026,
+      "filed_vintage": 2025,
+      "first_change_vintage": null,
+      "fuel": "oil",
+      "generator_id": "B2",
+      "mw": 1.0,
+      "plant_id": 64291,
+      "plant_name": "Lincoln Medical and Mental Health Center",
+      "sector": 4,
+      "verified_vintage": null,
+      "vintage_exit_month": null,
+      "vintage_exit_year": 2026
+    },
+    {
+      "disposition": "vintage",
+      "exit_month": null,
+      "exit_year": 2027,
+      "filed_vintage": 2025,
+      "first_change_vintage": null,
+      "fuel": "gas_ct",
+      "generator_id": "GT1",
+      "mw": 21.3,
+      "plant_id": 2487,
+      "plant_name": "Coxsackie",
+      "sector": 1,
+      "verified_vintage": null,
+      "vintage_exit_month": null,
+      "vintage_exit_year": 2027
+    }
+  ],
+  "bridge": false,
+  "capacity_reserve_position": null,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "firm_clean_accredited_mw": 1763.281,
+  "firm_clean_mw": 4587.1,
+  "fleet_by_fuel_after": {
+    "biomass": 392.4,
+    "gas_cc": 11199.04,
+    "gas_ct": 3053.611,
+    "gas_st": 9372.5,
+    "nuclear": 3325.9,
+    "oil": 2904.5
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 392.4,
+    "gas_cc": 11199.04,
+    "gas_ct": 3053.611,
+    "gas_st": 9372.5,
+    "nuclear": 3325.9,
+    "oil": 2904.5
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NYISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 29409.609,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.1224,
+    "wind": 0.1684
+  },
+  "reserve_margin": 0.184461,
+  "retirements": [],
+  "rps_dual": 40.0,
+  "solar_cap_mw": 1500.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 1306.475,
+  "storage_power_mw": 1470.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 2400.0,
+  "year": 2026
+}

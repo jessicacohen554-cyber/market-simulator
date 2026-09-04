@@ -3466,11 +3466,11 @@
   "rubric_version": "1.0",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "71d3f1a6e3c2",
-   "scored_at_date": "2026-09-03T09:01:45Z",
-   "cache_epoch": "da19b85495178949",
-   "run_id": "neiso-2021-2025-realized-t1h-d46",
-   "session": "capx-D46"
+   "scored_at_sha": "0f22b42140e3",
+   "scored_at_date": "2026-09-04T10:18:41Z",
+   "cache_epoch": "d6c0137e37bf3200",
+   "run_id": "neiso-2021-2025-realized-t1h-d45r",
+   "session": "capx-D45R"
   },
   "tier": "t1h",
   "iso": "NEISO",
@@ -3482,7 +3482,7 @@
    "FC-7 provenance & DOF"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 nothing attributed to an axis, nothing armed. THIS LEG IS THE BATCH'S ONE CLEAN SINGLE-AXIS MEASUREMENT: the posture reproduces the bare key's own flag set (HEAD defaults + --entry-screen-diagnostics + neiso_net_icr_requirement, D37's Q28 arming) and the ONLY resolved-config difference from neiso-t1h-pre-d46 is fossil_announced_exits_enabled False -> True (Q30/D44, 57088c33). The keeper is unmoved (2026-08-17-neiso-99-joint-p1) and D41's CCS axis is VERIFIED inert (ccs_retrofits empty in every solve year; retrofits open in 2028, past the window). Channel armed 16 live rows / 2971 MW, 2021-2027. HEADLINE: retire.total_gw model 3.645 -> 4.447 GW (err_frac -0.271 -> -0.110), but the composition is REPLACED, not supplemented. Window totals by channel, from the evolution ledgers: dates OFF = coal retire:economic 791.5 MW + gas_st retire:economic 1438.2 + gas_cc retire:confirmed 706.8 (+706.8 derate); dates ON = coal retire:economic 0.0 + gas_cc retire:economic 849.4 (new) + gas_st retire:economic 1438.2 (unchanged to the decimal) + gas_cc derate:announced 539.5 + oil retire:announced 26.0. So NEISO LOSES 791.5 MW of coal economic exits and gains 849.4 MW of gas_cc economic exits: the screen RE-RANKS. Contrast MISO in the same batch, where the same flip re-routes the identical coal MW from the economic channel to the dates channel and loses no exit (reproducing capx-D42's own committed legs to the decimal, and consistent with its \"displaces nothing\" as rule 19 means it). NEISO's dated set contains essentially no in-window coal (Merrimack, 113.6 MW, dated 2027), so the coal that stops exiting was NOT exempted by its own filed date \u2014 the re-ranking runs through the derate path's effect on the margin surface. THE SIGN OF THE COAL EFFECT IS THEREFORE PER-ISO AND DOES NOT TRANSFER; the full causal decomposition needs a control this lane does not carry by charter, and is ROUTED, not inferred. recall 4/6 -> 3/6 and false_retire 0.263 -> 0.315 both read WORSE as a result. The FC-3 band-FAIL list is byte-identical at 11 rows through all of it \u2014 the gate leg is BLIND to every one of these moves, the same blindness D37 recorded of its own lever. Determination HOLD, unchanged. Preserved verbatim: neiso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D45R (2026-09-04), director ruling r#33 executed: A BARE KEY CARRIES THE SHIPPED POSTURE. NEISO T1-H at the shipped default -- neiso_net_icr_requirement=False (the D40 Net ICR lever OFF, as ScenarioConfig ships it), fossil_announced_exits_enabled=True, diagnostics on; keeper 2026-08-17-neiso-99-joint-p1 (unmoved); HEAD 334be8c2; cache key d6c0137e37bf3200, pre-declared and matched; 6.8 min / 3.0 GB. The D46 record (the Q28-ARMED lever, D37's posture) is preserved verbatim at neiso-t1h-pre-d45r and stays the armed-posture record; neiso-t1h-d37-control (lever OFF, dates OFF) is the second comparator. Determination HOLD (FC-3 FAIL), unchanged. WHAT THE LEVER DOES, MEASURED ONE FIELD APART AT THE POST-D44 POSTURE: the shipped requirement is peak x 1.1277 (25,819 / 24,147 / 24,949 / 26,639 MW) where the armed Net ICR requirement was 30,762 / 29,636 / 30,347 / 28,865 -- the lever RAISES the bar by ~5 GW -- so the shipped entering positions read 1.208 / 1.179 / 1.020 (2023 / 2024 / 2025) against the armed 1.046 / 1.013 / 1.079 and the FCA 14/15/16 real positions D37 matched to +/-3.3 pts: the shipped posture is the LONG one, the curve pays $0 / $0 / $56.9 where the armed leg paid $23.2 / $79.9 / $0, and the exits move UP and EARLIER. retire.total_gw 4.447 -> 6.763 GW (err -0.110 -> +0.353, FAIL both, sign flipping UNDER -> OVER); gas_cc economic 0.849 -> 2.632 GW (2024, was 2025); coal economic 0.0 -> 0.534 GW (2024 -- P11's falsifier tripped: at the shipped bar the dates channel does NOT take the coal exits away as it did under the armed lever); gas_st economic 1.438 unchanged (2022 + 2024); oil 0.547 announced unchanged; unit_recall_gt300 3/6 -> 4/6 (0.667, FAIL both); false_retire 0.315 -> 0.470 (3.182 GW, FAIL both). Against the D37 control (lever OFF, dates OFF: 7.566 GW, coal 0.791, gas_cc 5.335): the dates flip at the shipped posture LOWERS total exits by 0.8 GW and re-routes 0.55 GW of oil + 0.13 coal + 0.33 gas_cc derates into the announced channel -- the D46 re-routing sign reproduced, smaller. Additions: wind 2.0 / solar 2.056 / gas_cc 2.0 / gas_ct 0.5 / storage 0.000 (gas_ct 0.0 -> 0.5 vs D46; storage still the shut channel). FC-3 band-FAIL list 11 rows, membership unchanged except add.by_tech.gas_ct. D41 CCS axis inert (ccs_retrofits empty every year). NOTHING ARMS: the shipped default stays False; D37's own P9 flip condition failed and this leg does not re-open it. Preserved verbatim: neiso-t1h-pre-d45r. docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md section 7."
   ],
   "categories": {
    "FC-1": {
@@ -3512,7 +3512,7 @@
      {
       "row": "hindcast bands",
       "status": "FAIL",
-      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
       "gating": true
      }
     ]
@@ -3543,7 +3543,7 @@
      {
       "row": "run_config",
       "status": "PASS",
-      "detail": "mode=forecast; 778 config keys; gates ['capacity_market_clearing']",
+      "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -5149,139 +5149,140 @@
   "tier": "t1h"
  },
  "nyiso-t1f": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "0f22b42140e3",
+   "scored_at_date": "2026-09-04T10:19:47Z",
+   "cache_epoch": "cc7d1050a8090c76",
+   "run_id": "nyiso-2026-2030-d45r-remeasure",
+   "session": "capx-D45R"
+  },
+  "tier": "t1f",
+  "iso": "NYISO",
+  "determination": "PROMOTE",
+  "reasons": [],
+  "caveats": [],
+  "notes": [
+   "capx-D45R (2026-09-04), D46 Stage 2's NYISO T1-F re-measure folded into the D45 close-out (owner ruling Q35): a BASELINE REFRESH at HEAD, not an A/B -- no control, nothing attributed, nothing armed. Run nyiso-2026-2030-d45r-remeasure, cache key cc7d1050a8090c76 (pre-declared and matched), --golden-posture (NYISO resolves curve-OFF, matching production), 2026-2030, 16.0 min wall / 3.3 GB peak RSS (the first NYISO t1f measurement the board carries), HEAD 334be8c2, keeper 2026-09-04-nyiso-186-astoria-identity, fossil_announced_exits_enabled=True, D41 CCS constants 1521.4 / 65.0. Determination PROMOTE, caveats [] -- UNCHANGED from the preserved nyiso-t1f-pre-d45r (the capx-D2 extcap record, PROMOTE): all 14 invariants PASS both, every FC-2 row PASS both (I12 in band [8.0 %, 23.0 %] every year at 18.4 / 18.1 / 17.8 / 22.0 / 21.7 %; backstop share 0.0 %; no cobweb), FC-7 PASS via the DOF ledger built from this run's own run_config.json (1 entry, 0 UNIDENTIFIED -- the D46 instrument-parity step, pre-declared), FC-8 PASS, FC-5 SKIPPED where the preserved record reads CAVEAT (the D25 dispositions were authored against a different trajectory and are not re-applied; report-only at t1f, gates nothing). WHAT THE THREE AXES MOVED, MEASURED: the dates channel executes its ENTIRE NYISO forward set -- 19.8 MW of gas_ct in 2027 (plus the 8 MW biomass already there); the D41 constants thin the RGGI-state CCS retrofit wave 38 / 19 / 11 -> 37 / 18 / 8 rows and 3000 / 3000 / 2998 -> 2995 / 2997 / 2980 MW in 2028 / 2029 / 2030, the 3 GW/yr/ISO cap STILL binding in every year (the NEISO t1f reading of D46, reproduced at NYISO); the keeper vintage 159 -> 186 moves NOTHING observable in the trajectory (load-weighted price 50.3 / 49.2 / 52.9 / 55.4 / 62.8 $/MWh, reserve margins, the 2029 gas_cc 1,000 MW + 2,843 MW renewable entry all identical to the decimal) -- a forecast solve reads no backcast overlay, so a keeper promotion is a staleness axis only where it changed a shared default. The I7 base-year adequacy margin (+2.3 to +4.2 GW) and the extcap intake stand as capx-D2 left them. docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md section 7-8."
+  ],
   "categories": {
    "FC-1": {
-    "applicability": "required",
     "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "PASS",
     "rows": [
      {
-      "detail": "all 14 invariants PASS",
-      "gating": true,
       "row": "invariants I1-I14",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "all 14 invariants PASS",
+      "gating": true
      }
-    ],
-    "status": "PASS"
+    ]
    },
    "FC-2": {
-    "applicability": "required",
     "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "PASS",
     "rows": [
      {
-      "detail": "reserve-margin band (I12 PASS)",
-      "gating": true,
       "row": "row1",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true
      },
      {
-      "detail": "no cobweb (I13 PASS)",
-      "gating": true,
       "row": "row3",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
-      "gating": true,
       "row": "row4",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true
      }
-    ],
-    "status": "PASS"
+    ]
    },
    "FC-3": {
-    "applicability": "n/a",
     "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-4": {
-    "applicability": "n/a",
     "label": "FC-4 crossover dispatch skill (T1-X)",
-    "rows": [],
-    "status": "n/a"
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
    },
    "FC-5": {
-    "applicability": "report",
     "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
     "rows": [
      {
-      "detail": "explained divergences: ['capacity:total@2030', 'capacity:gas_cc@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030']",
-      "gating": true,
       "row": "corridor",
-      "status": "CAVEAT"
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true
      }
-    ],
-    "status": "CAVEAT"
+    ]
    },
    "FC-6": {
-    "applicability": "optional",
     "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
     "rows": [
      {
-      "detail": "no committed driver-battery or paired-invariant output",
-      "gating": true,
       "row": "driver response",
-      "status": "SKIPPED"
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
      }
-    ],
-    "status": "SKIPPED"
+    ]
    },
    "FC-7": {
-    "applicability": "required",
     "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "PASS",
     "rows": [
      {
-      "detail": "mode=forecast; 752 config keys; gates ['capacity_market_clearing']",
-      "gating": true,
       "row": "run_config",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
+      "gating": true
      },
      {
-      "detail": "no backcast overlay armed (outage_source='statistical')",
-      "gating": true,
       "row": "overlay-off",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
      },
      {
-      "detail": "1 entries well-formed (0 open residual DOF listed)",
-      "gating": true,
       "row": "dof ledger",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "1 entries well-formed (0 open residual DOF listed)",
+      "gating": true
      }
-    ],
-    "status": "PASS"
+    ]
    },
    "FC-8": {
-    "applicability": "runtime",
     "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
     "rows": [
      {
-      "detail": "wall 13.1 min within budget",
-      "gating": true,
       "row": "runtime",
-      "status": "PASS"
+      "status": "PASS",
+      "detail": "wall 15.9 min within budget",
+      "gating": true
      }
-    ],
-    "status": "PASS"
+    ]
    }
-  },
-  "caveats": [],
-  "determination": "PROMOTE",
-  "iso": "NYISO",
-  "notes": [
-   "FC-5 external corridor (report-only): CAVEAT"
-  ],
-  "provenance": {
-   "cache_epoch": "fdd84d51e31ffc82",
-   "schema": "forecast-provenance/v1",
-   "scored_at_date": "2026-09-01T01:10:11Z",
-   "scored_at_sha": "7b085947b0ee",
-   "session": "capx-D2-extcap-intake \u00b7 FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-extcap/nyiso/dof_ledger.json \u2014 the capx-D8 instrument's committed ledger, 1 entry, 0 UNIDENTIFIED: forecast_xyear_warmstart=False, owner decision D-10). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha ea4e4faf65de @ 2026-08-25T01:49:23Z (session capx-D2-extcap-intake). MOVED \u2014 exactly the D8 \u00a76 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('1 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] \u2014 NYISO's first clean FC map. NOT MOVED: every other category, row status and detail. docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. \u00b7 FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/nyiso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (PROMOTE). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
-  },
-  "reasons": [],
-  "rubric_version": "1.0",
-  "schema": "forecast-verdict/v1",
-  "tier": "t1f"
+  }
  },
  "nyiso-t1f-ff2d": {
   "categories": {
@@ -9952,5 +9953,254 @@
     ]
    }
   }
+ },
+ "neiso-t1h-pre-d45r": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "71d3f1a6e3c2",
+   "scored_at_date": "2026-09-03T09:01:45Z",
+   "cache_epoch": "da19b85495178949",
+   "run_id": "neiso-2021-2025-realized-t1h-d46",
+   "session": "capx-D46"
+  },
+  "tier": "t1h",
+  "iso": "NEISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 nothing attributed to an axis, nothing armed. THIS LEG IS THE BATCH'S ONE CLEAN SINGLE-AXIS MEASUREMENT: the posture reproduces the bare key's own flag set (HEAD defaults + --entry-screen-diagnostics + neiso_net_icr_requirement, D37's Q28 arming) and the ONLY resolved-config difference from neiso-t1h-pre-d46 is fossil_announced_exits_enabled False -> True (Q30/D44, 57088c33). The keeper is unmoved (2026-08-17-neiso-99-joint-p1) and D41's CCS axis is VERIFIED inert (ccs_retrofits empty in every solve year; retrofits open in 2028, past the window). Channel armed 16 live rows / 2971 MW, 2021-2027. HEADLINE: retire.total_gw model 3.645 -> 4.447 GW (err_frac -0.271 -> -0.110), but the composition is REPLACED, not supplemented. Window totals by channel, from the evolution ledgers: dates OFF = coal retire:economic 791.5 MW + gas_st retire:economic 1438.2 + gas_cc retire:confirmed 706.8 (+706.8 derate); dates ON = coal retire:economic 0.0 + gas_cc retire:economic 849.4 (new) + gas_st retire:economic 1438.2 (unchanged to the decimal) + gas_cc derate:announced 539.5 + oil retire:announced 26.0. So NEISO LOSES 791.5 MW of coal economic exits and gains 849.4 MW of gas_cc economic exits: the screen RE-RANKS. Contrast MISO in the same batch, where the same flip re-routes the identical coal MW from the economic channel to the dates channel and loses no exit (reproducing capx-D42's own committed legs to the decimal, and consistent with its \"displaces nothing\" as rule 19 means it). NEISO's dated set contains essentially no in-window coal (Merrimack, 113.6 MW, dated 2027), so the coal that stops exiting was NOT exempted by its own filed date \u2014 the re-ranking runs through the derate path's effect on the margin surface. THE SIGN OF THE COAL EFFECT IS THEREFORE PER-ISO AND DOES NOT TRANSFER; the full causal decomposition needs a control this lane does not carry by charter, and is ROUTED, not inferred. recall 4/6 -> 3/6 and false_retire 0.263 -> 0.315 both read WORSE as a result. The FC-3 band-FAIL list is byte-identical at 11 rows through all of it \u2014 the gate leg is BLIND to every one of these moves, the same blindness D37 recorded of its own lever. Determination HOLD, unchanged. Preserved verbatim: neiso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 778 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "nyiso-t1f-pre-d45r": {
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "all 14 invariants PASS",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   },
+   "FC-2": {
+    "applicability": "required",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true,
+      "row": "row1",
+      "status": "PASS"
+     },
+     {
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true,
+      "row": "row3",
+      "status": "PASS"
+     },
+     {
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true,
+      "row": "row4",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   },
+   "FC-3": {
+    "applicability": "n/a",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "explained divergences: ['capacity:total@2030', 'capacity:gas_cc@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030']",
+      "gating": true,
+      "row": "corridor",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "CAVEAT"
+   },
+   "FC-6": {
+    "applicability": "optional",
+    "label": "FC-6 driver response",
+    "rows": [
+     {
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true,
+      "row": "driver response",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "mode=forecast; 752 config keys; gates ['capacity_market_clearing']",
+      "gating": true,
+      "row": "run_config",
+      "status": "PASS"
+     },
+     {
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true,
+      "row": "overlay-off",
+      "status": "PASS"
+     },
+     {
+      "detail": "1 entries well-formed (0 open residual DOF listed)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "wall 13.1 min within budget",
+      "gating": true,
+      "row": "runtime",
+      "status": "PASS"
+     }
+    ],
+    "status": "PASS"
+   }
+  },
+  "caveats": [],
+  "determination": "PROMOTE",
+  "iso": "NYISO",
+  "notes": [
+   "FC-5 external corridor (report-only): CAVEAT"
+  ],
+  "provenance": {
+   "cache_epoch": "fdd84d51e31ffc82",
+   "schema": "forecast-provenance/v1",
+   "scored_at_date": "2026-09-01T01:10:11Z",
+   "scored_at_sha": "7b085947b0ee",
+   "session": "capx-D2-extcap-intake \u00b7 FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-extcap/nyiso/dof_ledger.json \u2014 the capx-D8 instrument's committed ledger, 1 entry, 0 UNIDENTIFIED: forecast_xyear_warmstart=False, owner decision D-10). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha ea4e4faf65de @ 2026-08-25T01:49:23Z (session capx-D2-extcap-intake). MOVED \u2014 exactly the D8 \u00a76 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('1 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] \u2014 NYISO's first clean FC map. NOT MOVED: every other category, row status and detail. docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. \u00b7 FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/nyiso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (PROMOTE). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
+  },
+  "reasons": [],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1f"
  }
 }
