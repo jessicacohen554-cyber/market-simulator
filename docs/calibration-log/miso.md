@@ -11100,3 +11100,95 @@ as structure. `keepers/MISO.json` → `2026-09-04-miso-210-clock`; `build_status
 `audit_keepers --iso MISO`.
 
 Next shorthand: **miso-211**.
+
+## miso-211 (2026-09-04) — THE RDT SOUTH→NORTH BINDING STATE: the LP's corridor sends ~360 MW north where MISO's ran at its limit in half the shoulder hours; the cause is not the limit but the South's supply (2.9 GW of export the model does not produce, all generation-side, South gas 3.3 GW under measured with 3.5 GW idle within $20 of the model's South price — PRICED OUT); the measured-limit LEVER is REFUSED (`miso_rdt_measured_limit` R) while the OBJECT — the absent Midwest−South separation, a ceiling of 0.675 / 0.472 of the 2025 shoulder / tail gaps — is LICENSED for the first time since miso-178; NOTHING CHARTERED, NO SOLVE
+
+**Keeper unchanged: `2026-09-04-miso-210-clock`.** NO LP, NO KEEPER MOVE, NO
+MECHANISM ARMED, NO FIELD, NO RUN REGISTERED. PREREG
+`PREREG-miso211-rdt-binding-state-2026-09-04.md` pushed BLIND at `5320e4dc`; record
+`FINDING-miso211-rdt-binding-state-2026-09-04.md`; instruments
+`scripts/probes/_miso211_rdt_binding_state.py` (first pass), `_miso211_rdt_followup.py`
+and `_miso211_rdt_south_gas.py` (two disclosed post-hoc blocks) →
+`_miso211_rdt_binding_state.json`. Rule 22: 2023–2025 only.
+
+**R-1, the corridor.** The keeper's S→N corridor is three priced tiers (2,300 MW free =
+0.92 × 2,500; 46 MW at $240; 154 MW at $700 with the RPE adder). In the 177 Jun–Jul 2025
+p75–p99 SHOULDER hours where MISO's RT PBC record shows `RDT_SO_MW` binding, the LP sends
+**357 MW mean (p90 1,197) north, reaches the free tier in 2.8 %, and runs the wheel N→S in
+60 %** (851 MW mean); model Indiana−South spread −$0.16 vs a real mean |shadow| of $30.5.
+Tail: 0/10 at the tier. Annual 2025: real S→N binding 1,395 h vs the LP's free tier 58 h;
+the LP's N→S free tier binds 4,668 h. miso-186's scarce-set signature (9/47 → 7/47 N→S) is
+the shoulder's everyday state. Binding shares reproduce miso-208 exactly; gaps reproduce
+miso-207 to the miso-210 price move (2025 −43.703 vs −43.727).
+
+**R-2, why.** (c) routing-around CLOSED: demand − generation − storage − slack = Σ into-South
+links to **0.004 MW** on the full dispatch. (b) South surplus: measured South boundary net
+(rf_al load − sr_gfm RT SE generation) **−2.857 GW** (exports) vs the model's **+0.050 GW**
+in those hours — a **2.907 GW** gap that is entirely GENERATION (model South gen 26.50 vs
+29.89 GW measured: **gas −3.33**, solar −0.26, coal +0.17, nuclear −0.05; model South load
+is 0.46 GW BELOW measured, working the other way). Same signs every year and both
+populations (2024 gap 2.16 / gas −3.23; 2023 1.19 / −2.66; 2025 tail 2.66 / −2.66). (a) the
+limit LEVEL is not operative: the corridor is slack by ~1.9 GW where the real one was at its
+limit (the RDT limit-MW series is unpublished — miso-183 — so the level is discriminated
+through the LP's own flow, not measured).
+
+**R-3, reach (both populations, 2025).** Strand (miso-208 verbatim): **0.048 / 0.007** —
+reproduces, retired as the wrong framing. Separation ceiling — the measured INDIANA.HUB −
+South-hubs separation in the binding hours, **$58.3 shoulder / $451 tail**, against the
+model's −$0.16 / −$0.01, applied to the model's Indiana price with the South fixed:
+**0.675 / 0.472** of the gaps (whole separation); **0.305 / 0.119** bounded by the RDT's own
+shadow ($30.5 / $120). 2024: 0.830 / 0.115 (0.496 / 0.065); 2023: 0.451 / 0.716
+(0.380 / 0.704). **The PREREG predicted $8–20 and a 0.10–0.25 shoulder share (NOT cleared,
+0.65) — WRONG by 3–4×, and it is the result:** the Midwest−South separation is the
+second-largest identified component of the shoulder gap after the level, and the model
+carries none of it.
+
+**R-4, the lever — REFUSED by the pre-registered R-2 rule.** R-1a and R-2b both hold, so
+"the LP does not bind the corridor because its South has no surplus at the Midwest price,
+and a measured RDT limit would be the wrong lever (it caps a flow the LP does not send)".
+`miso_rdt_measured_limit` minted **R** (field-less base row + six cells, rule 28c;
+`rdt_tcdc` K carries the binding-state evidence). No solve.
+
+**The discriminator (post-hoc block 2, disclosed): South gas is PRICED OUT, not
+unavailable.** In the 177 binding shoulder hours the model's South gas has **20.27 GW
+available**, runs **15.56**, measured **18.90**; **3.52 GW idle within $20** (2.25 within
+$10) of the model's South price **$48.3**, while the ACTUAL South hubs cleared at **$41.6**
+with 18.9 GW of gas running; the marginal MW to reach the measured level is offered at
+**$65 p50 / $117 mean**. Capability falls short of measured in 46/177 h by 0.24 GW mean
+(~7 % of the gap; the miso-186 availability class, secondary; larger in the tail, 5/10 h by
+0.43 GW). Same every year (2024 marginal $53 vs South $35, actual $27; 2023 $49 vs $37,
+actual $32).
+
+**Successor, named not built — QUEUE HEAD for miso-212: the South gas delivered-cost
+basis** — the delivered gas price and heat-rate basis the model assigns MISO-South gas
+plants (`miso_zonal_gas_basis` South leg, measured CC/CT heat rates, the CHP rows) checked
+against the South's own hub prices (Henry Hub / TETCO ELA / Columbia Gulf) and CAMPD heat
+input in the binding hours — a rule-14 accurate-input question with a measured source, NOT
+a fitted offer level (the offer family's level/spread cells R/I were system-wide dispersion
+levers and stay closed). Phase 0 must decompose the South gas mc into fuel × heat rate ×
+margin beside each measured counterpart, show the ~$17 reduction at the 3.3 GW margin is (or
+is not) explained by a measured input, and hold leave-one-year-out. A ~3 GW South export the
+LP then sends north would bind the corridor where MISO's did — only then does the limit
+question re-open.
+
+**Reported against interest.** (1) Instrument correction, disclosed: the first pass read
+model South generation from `hourly/unit_hourly`, which omits the LP's zonal wind/solar and
+the biomass/OTHER/oil bins — model South solar read 0.0 vs 1.95 measured and the identity
+left a 1–4 GW residual; re-computed from the zone-resolved dispatch parquet (residual 0.004
+MW, solar −0.26; the gas row unchanged). First-pass numbers stay in the record. (2) The
+separation ceiling holds the model's South price fixed — a ceiling, not a mechanism's reach;
+the shadow-bounded variant is the conservative reading and does NOT clear the tail (0.119).
+(3) The N-1 gap footing missed ±0.01 by 0.024 in 2025 — the keeper moved (miso-210), not the
+instrument. (4) The tail remains the system-energy / RT-dynamics regime (separation $451 ≫
+the RDT shadow $120).
+
+**Prior scored:** R-1a/b/c/d, R-2a/b/c, R-3a RIGHT; **R-3b and the R-3 verdict WRONG** (the
+result); R-4 outcome right by the other branch. Eleventh consecutive MISO session whose most
+useful output came from the wrong part of the prior.
+
+**Governance.** Rule 15: zero-solve, nothing registered. Rule 28(a): no R/I/G cell
+re-tested. Rule 28(b)/(c): `rdt_tcdc` evidence; `miso_rdt_measured_limit` base row + six
+cells (MISO R, five `.`); §5.4 stamp. Rule 25: MISO's verdict only. Rule 22: 2023–2025.
+Rule 13: PBC / rf_al / sr_gfm read as diagnostics, never LP inputs. Rule 27: blob-verify.
+
+Next shorthand: **miso-212**.

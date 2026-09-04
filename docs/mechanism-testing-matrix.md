@@ -5503,6 +5503,43 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-211 (2026-09-04) — THE RDT SOUTH→NORTH BINDING STATE: THE
+> LEVER IS REFUSED (`miso_rdt_measured_limit` minted R), THE OBJECT IS LICENSED
+> FOR THE FIRST TIME SINCE miso-178, AND ITS CAUSE IS NAMED — SOUTH GAS PRICED
+> OUT; NOTHING CHARTERED, NO SOLVE.** Keeper UNCHANGED at
+> `2026-09-04-miso-210-clock`. PREREG pushed BLIND at `5320e4dc`. (i) R-1: in
+> the 177 Jun–Jul 2025 p75–p99 shoulder hours MISO's RT PBC record shows the
+> RDT binding South→North, the LP's corridor sends **357 MW** mean north (p90
+> 1,197), reaches its 2,300 MW free tier in **2.8 %**, and runs the wheel N→S
+> in **60 %**; tail 0/10 at the tier. (ii) R-2: the balance identity closes to
+> 0.004 MW (no bypass); the model's South boundary net is **+0.05 GW vs the
+> measured −2.86 GW** in those hours — a 2.9 GW gap that is ALL generation
+> (South gas **15.6 vs 18.9 GW** measured; load −0.46 GW works the other way)
+> — so the limit LEVEL is not the cause (the corridor is slack by 1.9 GW). (iii)
+> R-3: the strand construction reproduces miso-208 (**0.048 / 0.007**) and is
+> retired as the wrong framing; the measured Indiana−South-hubs separation in
+> the binding hours is **$58 shoulder / $451 tail** against the model's
+> **−$0.16**, a ceiling of **0.675 / 0.472** of the 2025 gaps (**0.305 / 0.119**
+> bounded by the RDT's own $30 / $120 shadow). The PREREG predicted $8–20 and
+> 0.10–0.25 — WRONG in the interesting direction. (iv) R-4 by the pre-registered
+> R-2 rule: a measured hourly RDT limit caps a flow the LP does not send —
+> REFUSED as a lever, `R`; the object handed to the South supply side. (v)
+> Discriminator (post-hoc, disclosed): the South gas is **PRICED OUT, not
+> unavailable** — 20.27 GW available, 15.56 run, 18.90 measured, **3.52 GW idle
+> within $20** of the model's South price ($48.3; actual South hubs $41.6);
+> capability short of measured in 46/177 h by 0.24 GW mean (~7 %, the miso-186
+> class, secondary). **QUEUE HEAD FOR miso-212: the South gas delivered-cost
+> basis** (`miso_zonal_gas_basis` South leg, South CC/CT heat rates, CHP rows)
+> against the South's own hub prices and CAMPD heat input — a rule-14
+> accurate-input phase 0, not an offer level (offer family stays R/I). Also
+> named: instrument note — `hourly/unit_hourly` omits the LP's zonal wind/solar
+> and the biomass/OTHER/oil bins (first-pass South solar read 0.0; corrected
+> from the dispatch parquet). Records:
+> `FINDING-miso211-rdt-binding-state-2026-09-04.md`,
+> `PREREG-miso211-rdt-binding-state-2026-09-04.md`,
+> `_miso211_rdt_binding_state.json`, `scripts/probes/_miso211_rdt_binding_state.py`,
+> `_miso211_rdt_followup.py`, `_miso211_rdt_south_gas.py`.
+
 > **QUEUE STAMP miso-210 (2026-09-04) — THE MAX-GEN CLOCK REPAIR: PROMOTED,
 > KEEPER → `2026-09-04-miso-210-clock`, ALL TEN A/B GATES PASSING; determination
 > UNCHANGED (NOT-YET on C3a-2025 alone).** Two LPs spent (control + arm), PREREG +
