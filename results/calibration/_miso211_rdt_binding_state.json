@@ -1,0 +1,1624 @@
+{
+ "charter": "miso-211 phase 0 \u2014 the RDT South->North binding state; zero-solve.",
+ "prereg": "results/calibration/PREREG-miso211-rdt-binding-state-2026-09-04.md @ 5320e4dc",
+ "keeper": "2026-09-04-miso-210-clock",
+ "corridor_in_keeper": {
+  "s2n_tiers_mw": [
+   2300.0,
+   46.0,
+   154.0
+  ],
+  "s2n_tier_costs": [
+   0.0,
+   240.0,
+   700.0
+  ],
+  "n2s_tiers_mw": [
+   2760.0,
+   55.2,
+   184.8
+  ]
+ },
+ "years": {
+  "2023": {
+   "n1_footing": {
+    "n_tail": 15,
+    "n_shoulder": 351,
+    "gap_lw_minus_rt": {
+     "SHOULDER": -10.958,
+     "TAIL": -151.537,
+     "OTHER_DAYTIME": 4.222
+    },
+    "m207_gap": {
+     "SHOULDER": -10.958,
+     "TAIL": -151.537
+    },
+    "real_s2n_any_share": {
+     "SHOULDER": 0.1852,
+     "TAIL": 0.6667,
+     "OTHER_DAYTIME": 0.0936
+    },
+    "m208_real_s2n_share": {
+     "SHOULDER": 0.1852,
+     "TAIL": 0.6667,
+     "OTHER_DAYTIME": 0.0936
+    }
+   },
+   "r1_corridor": {
+    "SHOULDER": {
+     "n_hours": 351,
+     "real_s2n_any_hours": 65,
+     "real_s2n_majority_hours": 2,
+     "real_n2s_any_hours": 0,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 76.803,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 845.8,
+      "s2n_flow_p90_mw": 2300.0,
+      "s2n_at_free_tier_share": 0.1231,
+      "s2n_any_flow_share": 0.6615,
+      "n2s_any_flow_share": 0.3231,
+      "n2s_flow_mean_mw": 320.5,
+      "n2s_at_free_tier_share": 0.0,
+      "s2n_free_dual_mean": -0.144,
+      "spread_indiana_minus_south_mean": 0.144,
+      "spread_plains_minus_south_mean": 0.144,
+      "ext_south_flow_mean_mw": -569.8
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.037,
+      "n2s_at_free_tier_share": 0.1567,
+      "n2s_any_flow_share": 0.6895,
+      "s2n_flow_mean_mw": 338.9,
+      "spread_indiana_minus_south_mean": -0.314
+     }
+    },
+    "TAIL": {
+     "n_hours": 15,
+     "real_s2n_any_hours": 10,
+     "real_s2n_majority_hours": 0,
+     "real_n2s_any_hours": 0,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 295.934,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 1027.4,
+      "s2n_flow_p90_mw": 1890.3,
+      "s2n_at_free_tier_share": 0.1,
+      "s2n_any_flow_share": 0.9,
+      "n2s_any_flow_share": 0.1,
+      "n2s_flow_mean_mw": 13.3,
+      "n2s_at_free_tier_share": 0.0,
+      "s2n_free_dual_mean": -0.214,
+      "spread_indiana_minus_south_mean": 0.214,
+      "spread_plains_minus_south_mean": 0.214,
+      "ext_south_flow_mean_mw": -525.0
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.0667,
+      "n2s_at_free_tier_share": 0.0667,
+      "n2s_any_flow_share": 0.2667,
+      "s2n_flow_mean_mw": 854.6,
+      "spread_indiana_minus_south_mean": 0.079
+     }
+    },
+    "OTHER_DAYTIME": {
+     "n_hours": 342,
+     "real_s2n_any_hours": 32,
+     "real_s2n_majority_hours": 1,
+     "real_n2s_any_hours": 2,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 6.532,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 1137.0,
+      "s2n_flow_p90_mw": 2300.0,
+      "s2n_at_free_tier_share": 0.1875,
+      "s2n_any_flow_share": 0.7812,
+      "n2s_any_flow_share": 0.2188,
+      "n2s_flow_mean_mw": 103.4,
+      "n2s_at_free_tier_share": 0.0,
+      "s2n_free_dual_mean": -0.16,
+      "spread_indiana_minus_south_mean": 0.16,
+      "spread_plains_minus_south_mean": 0.16,
+      "ext_south_flow_mean_mw": -627.0
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.0175,
+      "n2s_at_free_tier_share": 0.2661,
+      "n2s_any_flow_share": 0.7602,
+      "s2n_flow_mean_mw": 197.7,
+      "spread_indiana_minus_south_mean": -0.835
+     }
+    },
+    "ANNUAL": {
+     "real_s2n_any_hours": 1197,
+     "real_n2s_any_hours": 29,
+     "lp_s2n_at_free_tier_hours": 589,
+     "lp_n2s_at_free_tier_hours": 1797,
+     "lp_s2n_binding_AND_real_s2n": 309,
+     "lp_n2s_binding_AND_real_s2n": 20,
+     "lp_s2n_max_dual": 725.64
+    }
+   },
+   "r2b_south_boundary": {
+    "SHOULDER": {
+     "hours_real_s2n": 65,
+     "measured_south_net_intake_gw_mean": -2.284,
+     "model_south_net_inflow_gw_mean": -1.095,
+     "gap_model_minus_measured_gw": 1.189,
+     "south_load_gw": {
+      "measured": 26.557,
+      "model": 25.725
+     },
+     "south_gen_total_gw": {
+      "measured": 28.841,
+      "model": 26.047
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": 0.322,
+      "Gas": -2.663,
+      "Nuclear": -0.058,
+      "Hydro": 0.145,
+      "Wind": NaN,
+      "Solar": -0.168,
+      "Other": -0.371
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 3.394,
+      "Gas": 19.561,
+      "Nuclear": 5.1,
+      "Hydro": 0.248,
+      "Wind": NaN,
+      "Solar": 0.168,
+      "Other": 0.371
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 3.715,
+      "Gas": 16.898,
+      "Nuclear": 5.041,
+      "Hydro": 0.392,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -1.612,
+     "whole_population_model_inflow_gw": 0.262
+    },
+    "TAIL": {
+     "hours_real_s2n": 10,
+     "measured_south_net_intake_gw_mean": -2.213,
+     "model_south_net_inflow_gw_mean": -1.539,
+     "gap_model_minus_measured_gw": 0.674,
+     "south_load_gw": {
+      "measured": 25.978,
+      "model": 25.042
+     },
+     "south_gen_total_gw": {
+      "measured": 28.191,
+      "model": 25.688
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": 0.289,
+      "Gas": -2.195,
+      "Nuclear": -0.045,
+      "Hydro": 0.139,
+      "Wind": NaN,
+      "Solar": -0.281,
+      "Other": -0.411
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 3.334,
+      "Gas": 18.792,
+      "Nuclear": 5.171,
+      "Hydro": 0.203,
+      "Wind": NaN,
+      "Solar": 0.281,
+      "Other": 0.411
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 3.623,
+      "Gas": 16.597,
+      "Nuclear": 5.126,
+      "Hydro": 0.341,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -2.085,
+     "whole_population_model_inflow_gw": -1.013
+    },
+    "OTHER_DAYTIME": {
+     "hours_real_s2n": 32,
+     "measured_south_net_intake_gw_mean": -2.294,
+     "model_south_net_inflow_gw_mean": -1.661,
+     "gap_model_minus_measured_gw": 0.633,
+     "south_load_gw": {
+      "measured": 25.711,
+      "model": 24.933
+     },
+     "south_gen_total_gw": {
+      "measured": 28.005,
+      "model": 25.87
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": 0.63,
+      "Gas": -2.486,
+      "Nuclear": -0.053,
+      "Hydro": 0.123,
+      "Wind": NaN,
+      "Solar": -0.136,
+      "Other": -0.212
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 2.953,
+      "Gas": 19.72,
+      "Nuclear": 4.733,
+      "Hydro": 0.251,
+      "Wind": NaN,
+      "Solar": 0.136,
+      "Other": 0.212
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 3.583,
+      "Gas": 17.234,
+      "Nuclear": 4.679,
+      "Hydro": 0.373,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -1.129,
+     "whole_population_model_inflow_gw": 0.586
+    }
+   },
+   "r2c_identity": {
+    "max_abs_residual_mw": 1136.46,
+    "mean_abs_residual_mw": 669.9,
+    "into_south_links": [
+     "MISO-Plains>MISO-South",
+     "MISO-South>MISO-Plains",
+     "MISO_external_South>MISO-South"
+    ],
+    "holds_under_1mw": false
+   },
+   "r3b_separation_ceiling": {
+    "SHOULDER": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 26.533,
+     "measured_sep_mean_whole_population": 7.118,
+     "model_spread_mean_in_binding_hours": 0.144,
+     "pbc_mean_abs_shadow_in_binding_hours": 76.803,
+     "lift_usd_mean_over_population": 4.941,
+     "share_of_gap": 0.4509,
+     "reaches_25pct": true
+    },
+    "TAIL": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 162.866,
+     "measured_sep_mean_whole_population": 120.198,
+     "model_spread_mean_in_binding_hours": 0.214,
+     "pbc_mean_abs_shadow_in_binding_hours": 295.934,
+     "lift_usd_mean_over_population": 108.434,
+     "share_of_gap": 0.7156,
+     "reaches_25pct": true
+    },
+    "OTHER_DAYTIME": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 4.229,
+     "measured_sep_mean_whole_population": -1.248,
+     "model_spread_mean_in_binding_hours": 0.16,
+     "pbc_mean_abs_shadow_in_binding_hours": 6.532,
+     "lift_usd_mean_over_population": 0.451,
+     "share_of_gap": 0.1067,
+     "reaches_25pct": false
+    }
+   },
+   "r3a_strand": {
+    "SHOULDER": {
+     "removal_gw_mean": 0.747,
+     "removal_gw_p50": 0.0,
+     "lift_usd_mean": 0.65,
+     "lift_usd_p50": 0.0,
+     "lift_usd_p90": 3.479,
+     "hours_lifted_over_5": 3,
+     "share_of_gap": 0.0593,
+     "reaches_25pct": false,
+     "south_cushion_gw_mean": 3.455,
+     "cushion_total_gw_mean": 13.252
+    },
+    "TAIL": {
+     "removal_gw_mean": 2.678,
+     "removal_gw_p50": 3.274,
+     "lift_usd_mean": 2.198,
+     "lift_usd_p50": 2.882,
+     "lift_usd_p90": 3.683,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.0145,
+     "reaches_25pct": false,
+     "south_cushion_gw_mean": 3.74,
+     "cushion_total_gw_mean": 14.265
+    },
+    "OTHER_DAYTIME": {
+     "removal_gw_mean": 0.299,
+     "removal_gw_p50": 0.0,
+     "lift_usd_mean": 0.294,
+     "lift_usd_p50": 0.0,
+     "lift_usd_p90": 0.0,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.0696,
+     "reaches_25pct": false,
+     "south_cushion_gw_mean": 4.003,
+     "cushion_total_gw_mean": 15.899
+    }
+   },
+   "r3a_m208_reference": {
+    "shoulder": 0.048,
+    "tail": 0.007
+   }
+  },
+  "2024": {
+   "n1_footing": {
+    "n_tail": 15,
+    "n_shoulder": 351,
+    "gap_lw_minus_rt": {
+     "SHOULDER": -18.652,
+     "TAIL": -290.021,
+     "OTHER_DAYTIME": 4.655
+    },
+    "m207_gap": {
+     "SHOULDER": -18.652,
+     "TAIL": -290.021
+    },
+    "real_s2n_any_share": {
+     "SHOULDER": 0.5413,
+     "TAIL": 0.3333,
+     "OTHER_DAYTIME": 0.2629
+    },
+    "m208_real_s2n_share": {
+     "SHOULDER": 0.5413,
+     "TAIL": 0.3333,
+     "OTHER_DAYTIME": 0.2629
+    }
+   },
+   "r1_corridor": {
+    "SHOULDER": {
+     "n_hours": 351,
+     "real_s2n_any_hours": 190,
+     "real_s2n_majority_hours": 31,
+     "real_n2s_any_hours": 1,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 23.836,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 423.9,
+      "s2n_flow_p90_mw": 1783.2,
+      "s2n_at_free_tier_share": 0.0632,
+      "s2n_any_flow_share": 0.3737,
+      "n2s_any_flow_share": 0.6263,
+      "n2s_flow_mean_mw": 838.7,
+      "n2s_at_free_tier_share": 0.0368,
+      "s2n_free_dual_mean": 0.003,
+      "spread_indiana_minus_south_mean": -0.003,
+      "spread_plains_minus_south_mean": -0.003,
+      "ext_south_flow_mean_mw": -792.6
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.0342,
+      "n2s_at_free_tier_share": 0.2479,
+      "n2s_any_flow_share": 0.7635,
+      "s2n_flow_mean_mw": 261.8,
+      "spread_indiana_minus_south_mean": -1.789
+     }
+    },
+    "TAIL": {
+     "n_hours": 15,
+     "real_s2n_any_hours": 5,
+     "real_s2n_majority_hours": 3,
+     "real_n2s_any_hours": 0,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 56.325,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 322.4,
+      "s2n_flow_p90_mw": 658.0,
+      "s2n_at_free_tier_share": 0.0,
+      "s2n_any_flow_share": 0.6,
+      "n2s_any_flow_share": 0.4,
+      "n2s_flow_mean_mw": 529.5,
+      "n2s_at_free_tier_share": 0.0,
+      "s2n_free_dual_mean": 0.0,
+      "spread_indiana_minus_south_mean": 0.0,
+      "spread_plains_minus_south_mean": 0.0,
+      "ext_south_flow_mean_mw": -675.0
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.0,
+      "n2s_at_free_tier_share": 0.1333,
+      "n2s_any_flow_share": 0.8,
+      "s2n_flow_mean_mw": 107.5,
+      "spread_indiana_minus_south_mean": -0.92
+     }
+    },
+    "OTHER_DAYTIME": {
+     "n_hours": 369,
+     "real_s2n_any_hours": 97,
+     "real_s2n_majority_hours": 11,
+     "real_n2s_any_hours": 6,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 3.138,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 100.7,
+      "s2n_flow_p90_mw": 344.3,
+      "s2n_at_free_tier_share": 0.0,
+      "s2n_any_flow_share": 0.1856,
+      "n2s_any_flow_share": 0.8144,
+      "n2s_flow_mean_mw": 1203.9,
+      "n2s_at_free_tier_share": 0.0928,
+      "s2n_free_dual_mean": 0.302,
+      "spread_indiana_minus_south_mean": -0.302,
+      "spread_plains_minus_south_mean": -0.302,
+      "ext_south_flow_mean_mw": -924.5
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.0,
+      "n2s_at_free_tier_share": 0.5908,
+      "n2s_any_flow_share": 0.9458,
+      "s2n_flow_mean_mw": 27.6,
+      "spread_indiana_minus_south_mean": -3.777
+     }
+    },
+    "ANNUAL": {
+     "real_s2n_any_hours": 2401,
+     "real_n2s_any_hours": 66,
+     "lp_s2n_at_free_tier_hours": 162,
+     "lp_n2s_at_free_tier_hours": 2510,
+     "lp_s2n_binding_AND_real_s2n": 111,
+     "lp_n2s_binding_AND_real_s2n": 125,
+     "lp_s2n_max_dual": 794.88
+    }
+   },
+   "r2b_south_boundary": {
+    "SHOULDER": {
+     "hours_real_s2n": 190,
+     "measured_south_net_intake_gw_mean": -2.54,
+     "model_south_net_inflow_gw_mean": -0.378,
+     "gap_model_minus_measured_gw": 2.162,
+     "south_load_gw": {
+      "measured": 25.603,
+      "model": 25.26
+     },
+     "south_gen_total_gw": {
+      "measured": 28.143,
+      "model": 24.31
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": 0.401,
+      "Gas": -3.228,
+      "Nuclear": -0.036,
+      "Hydro": 0.089,
+      "Wind": -0.035,
+      "Solar": -0.997,
+      "Other": -0.037
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 2.452,
+      "Gas": 19.058,
+      "Nuclear": 5.181,
+      "Hydro": 0.393,
+      "Wind": 0.035,
+      "Solar": 0.997,
+      "Other": 0.037
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 2.853,
+      "Gas": 15.83,
+      "Nuclear": 5.145,
+      "Hydro": 0.482,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -2.097,
+     "whole_population_model_inflow_gw": 0.387
+    },
+    "TAIL": {
+     "hours_real_s2n": 5,
+     "measured_south_net_intake_gw_mean": -2.35,
+     "model_south_net_inflow_gw_mean": -0.468,
+     "gap_model_minus_measured_gw": 1.882,
+     "south_load_gw": {
+      "measured": 25.017,
+      "model": 24.62
+     },
+     "south_gen_total_gw": {
+      "measured": 27.366,
+      "model": 23.941
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": 0.598,
+      "Gas": -3.016,
+      "Nuclear": -0.15,
+      "Hydro": 0.104,
+      "Wind": -0.05,
+      "Solar": -0.876,
+      "Other": -0.045
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 2.733,
+      "Gas": 18.302,
+      "Nuclear": 4.956,
+      "Hydro": 0.413,
+      "Wind": 0.05,
+      "Solar": 0.876,
+      "Other": 0.045
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 3.331,
+      "Gas": 15.286,
+      "Nuclear": 4.806,
+      "Hydro": 0.517,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -2.168,
+     "whole_population_model_inflow_gw": 0.653
+    },
+    "OTHER_DAYTIME": {
+     "hours_real_s2n": 97,
+     "measured_south_net_intake_gw_mean": -2.697,
+     "model_south_net_inflow_gw_mean": 0.179,
+     "gap_model_minus_measured_gw": 2.876,
+     "south_load_gw": {
+      "measured": 25.372,
+      "model": 25.04
+     },
+     "south_gen_total_gw": {
+      "measured": 28.069,
+      "model": 23.555
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": 0.068,
+      "Gas": -3.669,
+      "Nuclear": -0.002,
+      "Hydro": 0.022,
+      "Wind": -0.021,
+      "Solar": -0.879,
+      "Other": -0.036
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 2.258,
+      "Gas": 19.294,
+      "Nuclear": 5.202,
+      "Hydro": 0.382,
+      "Wind": 0.021,
+      "Solar": 0.879,
+      "Other": 0.036
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 2.326,
+      "Gas": 15.625,
+      "Nuclear": 5.2,
+      "Hydro": 0.404,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -1.482,
+     "whole_population_model_inflow_gw": 1.295
+    }
+   },
+   "r2c_identity": {
+    "max_abs_residual_mw": 2886.14,
+    "mean_abs_residual_mw": 947.154,
+    "into_south_links": [
+     "MISO-Plains>MISO-South",
+     "MISO-South>MISO-Plains",
+     "MISO_external_South>MISO-South"
+    ],
+    "holds_under_1mw": false
+   },
+   "r3b_separation_ceiling": {
+    "SHOULDER": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 28.584,
+     "measured_sep_mean_whole_population": 20.671,
+     "model_spread_mean_in_binding_hours": -0.003,
+     "pbc_mean_abs_shadow_in_binding_hours": 23.836,
+     "lift_usd_mean_over_population": 15.475,
+     "share_of_gap": 0.8296,
+     "reaches_25pct": true
+    },
+    "TAIL": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 100.064,
+     "measured_sep_mean_whole_population": 57.559,
+     "model_spread_mean_in_binding_hours": 0.0,
+     "pbc_mean_abs_shadow_in_binding_hours": 56.325,
+     "lift_usd_mean_over_population": 33.355,
+     "share_of_gap": 0.115,
+     "reaches_25pct": false
+    },
+    "OTHER_DAYTIME": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 4.603,
+     "measured_sep_mean_whole_population": -0.293,
+     "model_spread_mean_in_binding_hours": -0.302,
+     "pbc_mean_abs_shadow_in_binding_hours": 3.138,
+     "lift_usd_mean_over_population": 1.289,
+     "share_of_gap": 0.277,
+     "reaches_25pct": true
+    }
+   },
+   "r3a_strand": {
+    "SHOULDER": {
+     "removal_gw_mean": 2.024,
+     "removal_gw_p50": 1.686,
+     "lift_usd_mean": 1.641,
+     "lift_usd_p50": 1.453,
+     "lift_usd_p90": 4.251,
+     "hours_lifted_over_5": 10,
+     "share_of_gap": 0.088,
+     "reaches_25pct": false,
+     "south_cushion_gw_mean": 3.732,
+     "cushion_total_gw_mean": 14.902
+    },
+    "TAIL": {
+     "removal_gw_mean": 1.274,
+     "removal_gw_p50": 0.0,
+     "lift_usd_mean": 0.823,
+     "lift_usd_p50": 0.0,
+     "lift_usd_p90": 2.674,
+     "hours_lifted_over_5": 0,
+     "share_of_gap": 0.0028,
+     "reaches_25pct": false,
+     "south_cushion_gw_mean": 2.835,
+     "cushion_total_gw_mean": 11.131
+    },
+    "OTHER_DAYTIME": {
+     "removal_gw_mean": 1.033,
+     "removal_gw_p50": 0.0,
+     "lift_usd_mean": 0.88,
+     "lift_usd_p50": 0.0,
+     "lift_usd_p90": 3.604,
+     "hours_lifted_over_5": 9,
+     "share_of_gap": 0.1891,
+     "reaches_25pct": false,
+     "south_cushion_gw_mean": 4.189,
+     "cushion_total_gw_mean": 18.217
+    }
+   },
+   "r3a_m208_reference": {
+    "shoulder": 0.048,
+    "tail": 0.007
+   }
+  },
+  "2025": {
+   "n1_footing": {
+    "n_tail": 15,
+    "n_shoulder": 351,
+    "gap_lw_minus_rt": {
+     "SHOULDER": -43.703,
+     "TAIL": -636.853,
+     "OTHER_DAYTIME": 3.183
+    },
+    "m207_gap": {
+     "SHOULDER": -43.727,
+     "TAIL": -636.862
+    },
+    "real_s2n_any_share": {
+     "SHOULDER": 0.5043,
+     "TAIL": 0.6667,
+     "OTHER_DAYTIME": 0.3246
+    },
+    "m208_real_s2n_share": {
+     "SHOULDER": 0.5043,
+     "TAIL": 0.6667,
+     "OTHER_DAYTIME": 0.3246
+    }
+   },
+   "r1_corridor": {
+    "SHOULDER": {
+     "n_hours": 351,
+     "real_s2n_any_hours": 177,
+     "real_s2n_majority_hours": 7,
+     "real_n2s_any_hours": 0,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 30.459,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 357.2,
+      "s2n_flow_p90_mw": 1196.7,
+      "s2n_at_free_tier_share": 0.0282,
+      "s2n_any_flow_share": 0.4011,
+      "n2s_any_flow_share": 0.5989,
+      "n2s_flow_mean_mw": 850.6,
+      "n2s_at_free_tier_share": 0.0734,
+      "s2n_free_dual_mean": 0.158,
+      "spread_indiana_minus_south_mean": -0.158,
+      "spread_plains_minus_south_mean": -0.158,
+      "ext_south_flow_mean_mw": -443.1
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.0171,
+      "n2s_at_free_tier_share": 0.2194,
+      "n2s_any_flow_share": 0.6866,
+      "s2n_flow_mean_mw": 297.0,
+      "spread_indiana_minus_south_mean": -1.313
+     }
+    },
+    "TAIL": {
+     "n_hours": 15,
+     "real_s2n_any_hours": 10,
+     "real_s2n_majority_hours": 7,
+     "real_n2s_any_hours": 0,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 120.201,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 555.6,
+      "s2n_flow_p90_mw": 960.3,
+      "s2n_at_free_tier_share": 0.0,
+      "s2n_any_flow_share": 0.8,
+      "n2s_any_flow_share": 0.2,
+      "n2s_flow_mean_mw": 355.6,
+      "n2s_at_free_tier_share": 0.1,
+      "s2n_free_dual_mean": 0.011,
+      "spread_indiana_minus_south_mean": -0.011,
+      "spread_plains_minus_south_mean": -0.011,
+      "ext_south_flow_mean_mw": -53.3
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.0,
+      "n2s_at_free_tier_share": 0.1333,
+      "n2s_any_flow_share": 0.4667,
+      "s2n_flow_mean_mw": 370.4,
+      "spread_indiana_minus_south_mean": -0.427
+     }
+    },
+    "OTHER_DAYTIME": {
+     "n_hours": 382,
+     "real_s2n_any_hours": 124,
+     "real_s2n_majority_hours": 2,
+     "real_n2s_any_hours": 3,
+     "real_s2n_mean_abs_shadow_in_binding_hours": 5.624,
+     "lp_in_real_s2n_hours": {
+      "s2n_flow_mean_mw": 125.1,
+      "s2n_flow_p90_mw": 487.6,
+      "s2n_at_free_tier_share": 0.0,
+      "s2n_any_flow_share": 0.1694,
+      "n2s_any_flow_share": 0.8306,
+      "n2s_flow_mean_mw": 1260.4,
+      "n2s_at_free_tier_share": 0.129,
+      "s2n_free_dual_mean": 0.325,
+      "spread_indiana_minus_south_mean": -0.325,
+      "spread_plains_minus_south_mean": -0.325,
+      "ext_south_flow_mean_mw": -610.4
+     },
+     "lp_over_population": {
+      "s2n_at_free_tier_share": 0.0026,
+      "n2s_at_free_tier_share": 0.5,
+      "n2s_any_flow_share": 0.9058,
+      "s2n_flow_mean_mw": 81.8,
+      "spread_indiana_minus_south_mean": -3.301
+     }
+    },
+    "ANNUAL": {
+     "real_s2n_any_hours": 1395,
+     "real_n2s_any_hours": 43,
+     "lp_s2n_at_free_tier_hours": 58,
+     "lp_n2s_at_free_tier_hours": 4668,
+     "lp_s2n_binding_AND_real_s2n": 35,
+     "lp_n2s_binding_AND_real_s2n": 219,
+     "lp_s2n_max_dual": 810.14
+    }
+   },
+   "r2b_south_boundary": {
+    "SHOULDER": {
+     "hours_real_s2n": 177,
+     "measured_south_net_intake_gw_mean": -2.857,
+     "model_south_net_inflow_gw_mean": 0.05,
+     "gap_model_minus_measured_gw": 2.907,
+     "south_load_gw": {
+      "measured": 27.034,
+      "model": 26.57
+     },
+     "south_gen_total_gw": {
+      "measured": 29.891,
+      "model": 24.418
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": 0.167,
+      "Gas": -3.334,
+      "Nuclear": -0.052,
+      "Hydro": 0.072,
+      "Wind": -0.043,
+      "Solar": -1.951,
+      "Other": -0.338
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 3.063,
+      "Gas": 18.896,
+      "Nuclear": 5.182,
+      "Hydro": 0.424,
+      "Wind": 0.043,
+      "Solar": 1.951,
+      "Other": 0.338
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 3.231,
+      "Gas": 15.562,
+      "Nuclear": 5.129,
+      "Hydro": 0.496,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -2.623,
+     "whole_population_model_inflow_gw": 0.428
+    },
+    "TAIL": {
+     "hours_real_s2n": 10,
+     "measured_south_net_intake_gw_mean": -2.914,
+     "model_south_net_inflow_gw_mean": -0.253,
+     "gap_model_minus_measured_gw": 2.661,
+     "south_load_gw": {
+      "measured": 28.599,
+      "model": 28.131
+     },
+     "south_gen_total_gw": {
+      "measured": 31.513,
+      "model": 26.233
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": -0.109,
+      "Gas": -2.662,
+      "Nuclear": -0.018,
+      "Hydro": 0.161,
+      "Wind": -0.027,
+      "Solar": -2.17,
+      "Other": -0.464
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 2.829,
+      "Gas": 20.339,
+      "Nuclear": 5.241,
+      "Hydro": 0.453,
+      "Wind": 0.027,
+      "Solar": 2.17,
+      "Other": 0.464
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 2.72,
+      "Gas": 17.677,
+      "Nuclear": 5.222,
+      "Hydro": 0.614,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -2.447,
+     "whole_population_model_inflow_gw": 0.439
+    },
+    "OTHER_DAYTIME": {
+     "hours_real_s2n": 124,
+     "measured_south_net_intake_gw_mean": -2.774,
+     "model_south_net_inflow_gw_mean": 0.525,
+     "gap_model_minus_measured_gw": 3.299,
+     "south_load_gw": {
+      "measured": 26.978,
+      "model": 26.547
+     },
+     "south_gen_total_gw": {
+      "measured": 29.752,
+      "model": 23.96
+     },
+     "south_gen_by_fuel_gw_model_minus_measured": {
+      "Coal": 0.109,
+      "Gas": -3.63,
+      "Nuclear": -0.058,
+      "Hydro": 0.019,
+      "Wind": -0.042,
+      "Solar": -1.886,
+      "Other": -0.31
+     },
+     "south_gen_by_fuel_gw_measured": {
+      "Coal": 3.251,
+      "Gas": 18.678,
+      "Nuclear": 5.166,
+      "Hydro": 0.424,
+      "Wind": 0.042,
+      "Solar": 1.886,
+      "Other": 0.31
+     },
+     "south_gen_by_fuel_gw_model": {
+      "Coal": 3.36,
+      "Gas": 15.048,
+      "Nuclear": 5.107,
+      "Hydro": 0.443,
+      "Wind": 0.0,
+      "Solar": 0.0,
+      "Other": 0.0
+     },
+     "whole_population_measured_intake_gw": -1.719,
+     "whole_population_model_inflow_gw": 1.263
+    }
+   },
+   "r2c_identity": {
+    "max_abs_residual_mw": 3787.909,
+    "mean_abs_residual_mw": 1217.699,
+    "into_south_links": [
+     "MISO-Plains>MISO-South",
+     "MISO-South>MISO-Plains",
+     "MISO_external_South>MISO-South"
+    ],
+    "holds_under_1mw": false
+   },
+   "r3b_separation_ceiling": {
+    "SHOULDER": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 58.314,
+     "measured_sep_mean_whole_population": 42.485,
+     "model_spread_mean_in_binding_hours": -0.158,
+     "pbc_mean_abs_shadow_in_binding_hours": 30.459,
+     "lift_usd_mean_over_population": 29.486,
+     "share_of_gap": 0.6747,
+     "reaches_25pct": true
+    },
+    "TAIL": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 451.124,
+     "measured_sep_mean_whole_population": 337.925,
+     "model_spread_mean_in_binding_hours": -0.011,
+     "pbc_mean_abs_shadow_in_binding_hours": 120.201,
+     "lift_usd_mean_over_population": 300.756,
+     "share_of_gap": 0.4723,
+     "reaches_25pct": true
+    },
+    "OTHER_DAYTIME": {
+     "measured_sep_indiana_minus_south_hubs_mean_in_binding_hours": 9.717,
+     "measured_sep_mean_whole_population": 4.555,
+     "model_spread_mean_in_binding_hours": -0.325,
+     "pbc_mean_abs_shadow_in_binding_hours": 5.624,
+     "lift_usd_mean_over_population": 3.325,
+     "share_of_gap": 1.0445,
+     "reaches_25pct": true
+    }
+   },
+   "r3a_strand": {
+    "SHOULDER": {
+     "removal_gw_mean": 1.779,
+     "removal_gw_p50": 0.034,
+     "lift_usd_mean": 2.111,
+     "lift_usd_p50": 1.177,
+     "lift_usd_p90": 5.074,
+     "hours_lifted_over_5": 40,
+     "share_of_gap": 0.0483,
+     "reaches_25pct": false,
+     "south_cushion_gw_mean": 3.454,
+     "cushion_total_gw_mean": 10.863
+    },
+    "TAIL": {
+     "removal_gw_mean": 1.092,
+     "removal_gw_p50": 1.01,
+     "lift_usd_mean": 4.422,
+     "lift_usd_p50": 4.624,
+     "lift_usd_p90": 8.774,
+     "hours_lifted_over_5": 7,
+     "share_of_gap": 0.0069,
+     "reaches_25pct": false,
+     "south_cushion_gw_mean": 1.351,
+     "cushion_total_gw_mean": 3.174
+    },
+    "OTHER_DAYTIME": {
+     "removal_gw_mean": 1.291,
+     "removal_gw_p50": 0.0,
+     "lift_usd_mean": 1.187,
+     "lift_usd_p50": 0.0,
+     "lift_usd_p90": 3.835,
+     "hours_lifted_over_5": 8,
+     "share_of_gap": 0.3729,
+     "reaches_25pct": true,
+     "south_cushion_gw_mean": 3.825,
+     "cushion_total_gw_mean": 13.584
+    }
+   },
+   "r3a_m208_reference": {
+    "shoulder": 0.048,
+    "tail": 0.007
+   }
+  }
+ },
+ "post_hoc": {
+  "disclosure": "Computed AFTER the first pass. (1) unit_hourly omits the LP's zonal wind/solar variables and the biomass/OTHER/oil bins, so the first-pass R-2b by-fuel table read model South solar as 0.0 and R-2c left a residual; re-computed from the zone-resolved dispatch parquet. (2) R-3b adds the RDT-attributable (shadow-bounded) ceiling beside the whole-separation one. No threshold changed.",
+  "years": {
+   "2023": {
+    "r2c_identity_full_dispatch": {
+     "max_abs_residual_mw": 0.004,
+     "mean_abs_residual_mw": 0.001,
+     "holds_under_1mw": true
+    },
+    "r2b_full_dispatch": {
+     "SHOULDER": {
+      "hours_real_s2n": 65,
+      "measured_south_net_intake_gw": -2.284,
+      "model_south_net_inflow_gw": -1.095,
+      "gap_model_minus_measured_gw": 1.189,
+      "south_load_gw": {
+       "measured": 26.557,
+       "model": 25.725
+      },
+      "south_gen_total_gw": {
+       "measured": 28.841,
+       "model": 26.807
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": 0.322,
+       "Gas": -2.663,
+       "Nuclear": -0.058,
+       "Hydro": 0.145,
+       "Wind": 0.0,
+       "Solar": -0.017,
+       "Other": 0.238
+      },
+      "by_fuel_gw_model": {
+       "Coal": 3.715,
+       "Gas": 16.898,
+       "Nuclear": 5.041,
+       "Hydro": 0.392,
+       "Wind": 0.0,
+       "Solar": 0.151,
+       "Other": 0.609
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 3.394,
+       "Gas": 19.561,
+       "Nuclear": 5.1,
+       "Hydro": 0.248,
+       "Wind": 0.0,
+       "Solar": 0.168,
+       "Other": 0.371
+      },
+      "generation_term_share_of_gap": 1.711
+     },
+     "TAIL": {
+      "hours_real_s2n": 10,
+      "measured_south_net_intake_gw": -2.213,
+      "model_south_net_inflow_gw": -1.539,
+      "gap_model_minus_measured_gw": 0.674,
+      "south_load_gw": {
+       "measured": 25.978,
+       "model": 25.042
+      },
+      "south_gen_total_gw": {
+       "measured": 28.191,
+       "model": 26.571
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": 0.289,
+       "Gas": -2.195,
+       "Nuclear": -0.045,
+       "Hydro": 0.139,
+       "Wind": 0.0,
+       "Solar": -0.016,
+       "Other": 0.207
+      },
+      "by_fuel_gw_model": {
+       "Coal": 3.623,
+       "Gas": 16.597,
+       "Nuclear": 5.126,
+       "Hydro": 0.341,
+       "Wind": 0.0,
+       "Solar": 0.265,
+       "Other": 0.618
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 3.334,
+       "Gas": 18.792,
+       "Nuclear": 5.171,
+       "Hydro": 0.203,
+       "Wind": 0.0,
+       "Solar": 0.281,
+       "Other": 0.411
+      },
+      "generation_term_share_of_gap": 2.404
+     },
+     "OTHER_DAYTIME": {
+      "hours_real_s2n": 32,
+      "measured_south_net_intake_gw": -2.294,
+      "model_south_net_inflow_gw": -1.661,
+      "gap_model_minus_measured_gw": 0.633,
+      "south_load_gw": {
+       "measured": 25.711,
+       "model": 24.933
+      },
+      "south_gen_total_gw": {
+       "measured": 28.005,
+       "model": 26.584
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": 0.63,
+       "Gas": -2.486,
+       "Nuclear": -0.053,
+       "Hydro": 0.123,
+       "Wind": 0.0,
+       "Solar": -0.007,
+       "Other": 0.374
+      },
+      "by_fuel_gw_model": {
+       "Coal": 3.583,
+       "Gas": 17.234,
+       "Nuclear": 4.679,
+       "Hydro": 0.373,
+       "Wind": 0.0,
+       "Solar": 0.128,
+       "Other": 0.586
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 2.953,
+       "Gas": 19.72,
+       "Nuclear": 4.733,
+       "Hydro": 0.251,
+       "Wind": 0.0,
+       "Solar": 0.136,
+       "Other": 0.212
+      },
+      "generation_term_share_of_gap": 2.244
+     }
+    },
+    "r3b_shadow_bounded": {
+     "SHOULDER": {
+      "lift_shadow_bounded_usd_mean": 4.16,
+      "share_shadow_bounded": 0.3797,
+      "lift_whole_separation_usd_mean": 4.941,
+      "share_whole_separation": 0.4509,
+      "mean_abs_shadow_in_binding_hours": 76.803,
+      "reaches_25pct_shadow_bounded": true
+     },
+     "TAIL": {
+      "lift_shadow_bounded_usd_mean": 106.702,
+      "share_shadow_bounded": 0.7041,
+      "lift_whole_separation_usd_mean": 108.434,
+      "share_whole_separation": 0.7156,
+      "mean_abs_shadow_in_binding_hours": 295.934,
+      "reaches_25pct_shadow_bounded": true
+     },
+     "OTHER_DAYTIME": {
+      "lift_shadow_bounded_usd_mean": 0.25,
+      "share_shadow_bounded": 0.0592,
+      "lift_whole_separation_usd_mean": 0.451,
+      "share_whole_separation": 0.1067,
+      "mean_abs_shadow_in_binding_hours": 6.532,
+      "reaches_25pct_shadow_bounded": false
+     }
+    }
+   },
+   "2024": {
+    "r2c_identity_full_dispatch": {
+     "max_abs_residual_mw": 0.004,
+     "mean_abs_residual_mw": 0.001,
+     "holds_under_1mw": true
+    },
+    "r2b_full_dispatch": {
+     "SHOULDER": {
+      "hours_real_s2n": 190,
+      "measured_south_net_intake_gw": -2.54,
+      "model_south_net_inflow_gw": -0.378,
+      "gap_model_minus_measured_gw": 2.162,
+      "south_load_gw": {
+       "measured": 25.603,
+       "model": 25.26
+      },
+      "south_gen_total_gw": {
+       "measured": 28.143,
+       "model": 25.624
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": 0.401,
+       "Gas": -3.228,
+       "Nuclear": -0.036,
+       "Hydro": 0.089,
+       "Wind": -0.006,
+       "Solar": -0.238,
+       "Other": 0.488
+      },
+      "by_fuel_gw_model": {
+       "Coal": 2.853,
+       "Gas": 15.83,
+       "Nuclear": 5.145,
+       "Hydro": 0.482,
+       "Wind": 0.029,
+       "Solar": 0.76,
+       "Other": 0.526
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 2.452,
+       "Gas": 19.058,
+       "Nuclear": 5.181,
+       "Hydro": 0.393,
+       "Wind": 0.035,
+       "Solar": 0.997,
+       "Other": 0.037
+      },
+      "generation_term_share_of_gap": 1.165
+     },
+     "TAIL": {
+      "hours_real_s2n": 5,
+      "measured_south_net_intake_gw": -2.35,
+      "model_south_net_inflow_gw": -0.468,
+      "gap_model_minus_measured_gw": 1.882,
+      "south_load_gw": {
+       "measured": 25.017,
+       "model": 24.62
+      },
+      "south_gen_total_gw": {
+       "measured": 27.366,
+       "model": 25.074
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": 0.598,
+       "Gas": -3.016,
+       "Nuclear": -0.15,
+       "Hydro": 0.104,
+       "Wind": -0.027,
+       "Solar": -0.288,
+       "Other": 0.478
+      },
+      "by_fuel_gw_model": {
+       "Coal": 3.331,
+       "Gas": 15.286,
+       "Nuclear": 4.806,
+       "Hydro": 0.517,
+       "Wind": 0.023,
+       "Solar": 0.588,
+       "Other": 0.522
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 2.733,
+       "Gas": 18.302,
+       "Nuclear": 4.956,
+       "Hydro": 0.413,
+       "Wind": 0.05,
+       "Solar": 0.876,
+       "Other": 0.045
+      },
+      "generation_term_share_of_gap": 1.218
+     },
+     "OTHER_DAYTIME": {
+      "hours_real_s2n": 97,
+      "measured_south_net_intake_gw": -2.697,
+      "model_south_net_inflow_gw": 0.179,
+      "gap_model_minus_measured_gw": 2.876,
+      "south_load_gw": {
+       "measured": 25.372,
+       "model": 25.04
+      },
+      "south_gen_total_gw": {
+       "measured": 28.069,
+       "model": 24.849
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": 0.068,
+       "Gas": -3.669,
+       "Nuclear": -0.002,
+       "Hydro": 0.022,
+       "Wind": 0.011,
+       "Solar": -0.144,
+       "Other": 0.49
+      },
+      "by_fuel_gw_model": {
+       "Coal": 2.326,
+       "Gas": 15.625,
+       "Nuclear": 5.2,
+       "Hydro": 0.404,
+       "Wind": 0.032,
+       "Solar": 0.736,
+       "Other": 0.526
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 2.258,
+       "Gas": 19.294,
+       "Nuclear": 5.202,
+       "Hydro": 0.382,
+       "Wind": 0.021,
+       "Solar": 0.879,
+       "Other": 0.036
+      },
+      "generation_term_share_of_gap": 1.12
+     }
+    },
+    "r3b_shadow_bounded": {
+     "SHOULDER": {
+      "lift_shadow_bounded_usd_mean": 9.241,
+      "share_shadow_bounded": 0.4955,
+      "lift_whole_separation_usd_mean": 15.475,
+      "share_whole_separation": 0.8296,
+      "mean_abs_shadow_in_binding_hours": 23.836,
+      "reaches_25pct_shadow_bounded": true
+     },
+     "TAIL": {
+      "lift_shadow_bounded_usd_mean": 18.775,
+      "share_shadow_bounded": 0.0647,
+      "lift_whole_separation_usd_mean": 33.355,
+      "share_whole_separation": 0.115,
+      "mean_abs_shadow_in_binding_hours": 56.325,
+      "reaches_25pct_shadow_bounded": false
+     },
+     "OTHER_DAYTIME": {
+      "lift_shadow_bounded_usd_mean": 0.656,
+      "share_shadow_bounded": 0.1409,
+      "lift_whole_separation_usd_mean": 1.289,
+      "share_whole_separation": 0.277,
+      "mean_abs_shadow_in_binding_hours": 3.138,
+      "reaches_25pct_shadow_bounded": false
+     }
+    }
+   },
+   "2025": {
+    "r2c_identity_full_dispatch": {
+     "max_abs_residual_mw": 0.004,
+     "mean_abs_residual_mw": 0.001,
+     "holds_under_1mw": true
+    },
+    "r2b_full_dispatch": {
+     "SHOULDER": {
+      "hours_real_s2n": 177,
+      "measured_south_net_intake_gw": -2.857,
+      "model_south_net_inflow_gw": 0.05,
+      "gap_model_minus_measured_gw": 2.907,
+      "south_load_gw": {
+       "measured": 27.034,
+       "model": 26.57
+      },
+      "south_gen_total_gw": {
+       "measured": 29.891,
+       "model": 26.501
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": 0.167,
+       "Gas": -3.334,
+       "Nuclear": -0.052,
+       "Hydro": 0.072,
+       "Wind": 0.017,
+       "Solar": -0.256,
+       "Other": -0.011
+      },
+      "by_fuel_gw_model": {
+       "Coal": 3.231,
+       "Gas": 15.562,
+       "Nuclear": 5.129,
+       "Hydro": 0.496,
+       "Wind": 0.06,
+       "Solar": 1.695,
+       "Other": 0.328
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 3.063,
+       "Gas": 18.896,
+       "Nuclear": 5.182,
+       "Hydro": 0.424,
+       "Wind": 0.043,
+       "Solar": 1.951,
+       "Other": 0.338
+      },
+      "generation_term_share_of_gap": 1.166
+     },
+     "TAIL": {
+      "hours_real_s2n": 10,
+      "measured_south_net_intake_gw": -2.914,
+      "model_south_net_inflow_gw": -0.253,
+      "gap_model_minus_measured_gw": 2.661,
+      "south_load_gw": {
+       "measured": 28.599,
+       "model": 28.131
+      },
+      "south_gen_total_gw": {
+       "measured": 31.513,
+       "model": 28.351
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": -0.109,
+       "Gas": -2.662,
+       "Nuclear": -0.018,
+       "Hydro": 0.161,
+       "Wind": 0.024,
+       "Solar": -0.419,
+       "Other": -0.148
+      },
+      "by_fuel_gw_model": {
+       "Coal": 2.72,
+       "Gas": 17.677,
+       "Nuclear": 5.222,
+       "Hydro": 0.614,
+       "Wind": 0.051,
+       "Solar": 1.751,
+       "Other": 0.316
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 2.829,
+       "Gas": 20.339,
+       "Nuclear": 5.241,
+       "Hydro": 0.453,
+       "Wind": 0.027,
+       "Solar": 2.17,
+       "Other": 0.464
+      },
+      "generation_term_share_of_gap": 1.188
+     },
+     "OTHER_DAYTIME": {
+      "hours_real_s2n": 124,
+      "measured_south_net_intake_gw": -2.774,
+      "model_south_net_inflow_gw": 0.525,
+      "gap_model_minus_measured_gw": 3.299,
+      "south_load_gw": {
+       "measured": 26.978,
+       "model": 26.547
+      },
+      "south_gen_total_gw": {
+       "measured": 29.752,
+       "model": 26.006
+      },
+      "by_fuel_gw_model_minus_measured": {
+       "Coal": 0.109,
+       "Gas": -3.63,
+       "Nuclear": -0.058,
+       "Hydro": 0.019,
+       "Wind": 0.022,
+       "Solar": -0.232,
+       "Other": 0.018
+      },
+      "by_fuel_gw_model": {
+       "Coal": 3.36,
+       "Gas": 15.048,
+       "Nuclear": 5.107,
+       "Hydro": 0.443,
+       "Wind": 0.064,
+       "Solar": 1.654,
+       "Other": 0.328
+      },
+      "by_fuel_gw_measured": {
+       "Coal": 3.251,
+       "Gas": 18.678,
+       "Nuclear": 5.166,
+       "Hydro": 0.424,
+       "Wind": 0.042,
+       "Solar": 1.886,
+       "Other": 0.31
+      },
+      "generation_term_share_of_gap": 1.136
+     }
+    },
+    "r3b_shadow_bounded": {
+     "SHOULDER": {
+      "lift_shadow_bounded_usd_mean": 13.331,
+      "share_shadow_bounded": 0.305,
+      "lift_whole_separation_usd_mean": 29.486,
+      "share_whole_separation": 0.6747,
+      "mean_abs_shadow_in_binding_hours": 30.459,
+      "reaches_25pct_shadow_bounded": true
+     },
+     "TAIL": {
+      "lift_shadow_bounded_usd_mean": 75.759,
+      "share_shadow_bounded": 0.119,
+      "lift_whole_separation_usd_mean": 300.756,
+      "share_whole_separation": 0.4723,
+      "mean_abs_shadow_in_binding_hours": 120.201,
+      "reaches_25pct_shadow_bounded": false
+     },
+     "OTHER_DAYTIME": {
+      "lift_shadow_bounded_usd_mean": 1.754,
+      "share_shadow_bounded": 0.5509,
+      "lift_whole_separation_usd_mean": 3.325,
+      "share_whole_separation": 1.0445,
+      "mean_abs_shadow_in_binding_hours": 5.624,
+      "reaches_25pct_shadow_bounded": true
+     }
+    }
+   }
+  },
+  "south_gas": {
+   "disclosure": "Post-hoc, computed after the first pass and the R-2b correction; asks whether the South gas shortfall in the real S->N binding hours is availability or cost. No threshold; nothing armed.",
+   "years": {
+    "2023": {
+     "SHOULDER": {
+      "hours_real_s2n": 65,
+      "model_south_gas_available_gw_mean": 20.789,
+      "model_south_gas_dispatch_gw_mean": 16.898,
+      "measured_south_gas_gw_mean": 19.561,
+      "model_idle_south_gas_gw_mean": 3.891,
+      "hours_measured_exceeds_model_available": 20,
+      "capability_short_of_measured_gw_mean": 0.303,
+      "model_south_price_mean": 36.884,
+      "actual_south_hubs_mean": 32.348,
+      "actual_indiana_mean": 58.881,
+      "mc_of_marginal_mw_at_measured_gas_level_mean": 104.092,
+      "mc_of_marginal_mw_at_measured_gas_level_p50": 49.18,
+      "idle_south_gas_within_usd_of_south_price_gw_mean": {
+       "10": 2.788,
+       "20": 3.953,
+       "50": 4.283
+      }
+     },
+     "TAIL": {
+      "hours_real_s2n": 10,
+      "model_south_gas_available_gw_mean": 20.699,
+      "model_south_gas_dispatch_gw_mean": 16.597,
+      "measured_south_gas_gw_mean": 18.792,
+      "model_idle_south_gas_gw_mean": 4.103,
+      "hours_measured_exceeds_model_available": 1,
+      "capability_short_of_measured_gw_mean": 0.062,
+      "model_south_price_mean": 36.455,
+      "actual_south_hubs_mean": 48.417,
+      "actual_indiana_mean": 211.283,
+      "mc_of_marginal_mw_at_measured_gas_level_mean": 62.689,
+      "mc_of_marginal_mw_at_measured_gas_level_p50": 46.513,
+      "idle_south_gas_within_usd_of_south_price_gw_mean": {
+       "10": 2.729,
+       "20": 3.971,
+       "50": 4.257
+      }
+     }
+    },
+    "2024": {
+     "SHOULDER": {
+      "hours_real_s2n": 190,
+      "model_south_gas_available_gw_mean": 20.15,
+      "model_south_gas_dispatch_gw_mean": 15.83,
+      "measured_south_gas_gw_mean": 19.058,
+      "model_idle_south_gas_gw_mean": 4.32,
+      "hours_measured_exceeds_model_available": 45,
+      "capability_short_of_measured_gw_mean": 0.253,
+      "model_south_price_mean": 35.405,
+      "actual_south_hubs_mean": 27.183,
+      "actual_indiana_mean": 55.767,
+      "mc_of_marginal_mw_at_measured_gas_level_mean": 107.479,
+      "mc_of_marginal_mw_at_measured_gas_level_p50": 52.734,
+      "idle_south_gas_within_usd_of_south_price_gw_mean": {
+       "10": 2.7,
+       "20": 3.642,
+       "50": 4.006
+      }
+     },
+     "TAIL": {
+      "hours_real_s2n": 5,
+      "model_south_gas_available_gw_mean": 19.465,
+      "model_south_gas_dispatch_gw_mean": 15.286,
+      "measured_south_gas_gw_mean": 18.302,
+      "model_idle_south_gas_gw_mean": 4.178,
+      "hours_measured_exceeds_model_available": 1,
+      "capability_short_of_measured_gw_mean": 0.012,
+      "model_south_price_mean": 36.962,
+      "actual_south_hubs_mean": 106.255,
+      "actual_indiana_mean": 206.318,
+      "mc_of_marginal_mw_at_measured_gas_level_mean": 81.993,
+      "mc_of_marginal_mw_at_measured_gas_level_p50": 49.669,
+      "idle_south_gas_within_usd_of_south_price_gw_mean": {
+       "10": 3.04,
+       "20": 3.799,
+       "50": 4.185
+      }
+     }
+    },
+    "2025": {
+     "SHOULDER": {
+      "hours_real_s2n": 177,
+      "model_south_gas_available_gw_mean": 20.274,
+      "model_south_gas_dispatch_gw_mean": 15.562,
+      "measured_south_gas_gw_mean": 18.896,
+      "model_idle_south_gas_gw_mean": 4.712,
+      "hours_measured_exceeds_model_available": 46,
+      "capability_short_of_measured_gw_mean": 0.235,
+      "model_south_price_mean": 48.3,
+      "actual_south_hubs_mean": 41.597,
+      "actual_indiana_mean": 99.911,
+      "mc_of_marginal_mw_at_measured_gas_level_mean": 117.033,
+      "mc_of_marginal_mw_at_measured_gas_level_p50": 64.993,
+      "idle_south_gas_within_usd_of_south_price_gw_mean": {
+       "10": 2.248,
+       "20": 3.522,
+       "50": 4.44
+      }
+     },
+     "TAIL": {
+      "hours_real_s2n": 10,
+      "model_south_gas_available_gw_mean": 20.362,
+      "model_south_gas_dispatch_gw_mean": 17.677,
+      "measured_south_gas_gw_mean": 20.339,
+      "model_idle_south_gas_gw_mean": 2.685,
+      "hours_measured_exceeds_model_available": 5,
+      "capability_short_of_measured_gw_mean": 0.434,
+      "model_south_price_mean": 68.198,
+      "actual_south_hubs_mean": 222.218,
+      "actual_indiana_mean": 673.342,
+      "mc_of_marginal_mw_at_measured_gas_level_mean": 185.503,
+      "mc_of_marginal_mw_at_measured_gas_level_p50": 212.884,
+      "idle_south_gas_within_usd_of_south_price_gw_mean": {
+       "10": 1.0,
+       "20": 1.637,
+       "50": 1.97
+      }
+     }
+    }
+   }
+  }
+ }
+}
