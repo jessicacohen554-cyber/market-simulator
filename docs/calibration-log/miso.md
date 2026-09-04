@@ -10837,3 +10837,119 @@ extract's 2018–2021/2026 EST rows, and `pd.date_range` month masks in leap yea
 probes.
 
 Next shorthand: **miso-207**.
+
+## miso-207 (2026-09-04) — RECORD ENTRY WRITTEN BY miso-208: the shoulder bounded (zero-solve); its FINDING and log entry never reached `main`
+
+**Keeper unchanged: `2026-09-03-miso-202-unitclip`.** PR #4678 merged only
+`_miso207_bound_the_shoulder.json` + `scripts/probes/_miso207_bound_the_shoulder.py`
++ `PREREG-miso207-bound-the-shoulder-2026-09-04.md` (@ `e5f179d8`); the branch was
+then deleted, so the FINDING and this log entry were lost. What the committed
+record establishes (2025, INDIANA.HUB RT, model clock): SHOULDER = Jun–Jul
+[p75, p99) = **351 h / 52 days / h10–h20**, actual $90.82 (DA $83.36) vs model
+lw $47.09, gap **−43.73**, DA-foreseen **83 %**; TAIL 15 h, gap −636.86. Setter
+CT_PEAKER econ in both (57 / 48 %), price − setter mc $0.59 / $2.73. **Cushion
+within $20 of the zonal price: 10.85 GW shoulder (CT_PEAKER 6.56, ST_GAS 2.47,
+CC_REGULAR 1.05) / 3.18 GW tail.** THE CORRECTED MARGINS on the solve's own
+assembled chain: shoulder thermal avail 83.1 GW, dispatch 66.8, requirement 6.8,
+broad margin **+9.48 GW mean / −5.16 min**; tail **+0.14 / −5.22** — miso-203's
+42.7/38.4/30.5 GW were an instrument defect (the coal fleet's dispatch counted
+as idle; repaired by miso-208 §7). Seam import excess vs other Jun–Jul hours
++2,012 MW shoulder (lift 14.7 % of the gap) / +3,673 tail (14.3 %) — evidence
+about a CLOSED lane (miso-181 R / miso-182 G), refused. Night hole 11.9 GW.
+Ramp ratio 1.34 (fourth objection scored, refused). regspin bound 6 shoulder
+hours. P9: nothing reached the shoulder; no solve.
+
+## miso-208 (2026-09-04) — THE 8–11 GW HUNT: the market ran the model's CT fleet to 0.02 GW, 3 GW LESS coal and 8 GW MORE gas; the model's surplus is ~5 GW of COAL-SIDE availability that MISO's published unplanned record puts at 7 GW — infeasible as a cap on 24/52 shoulder days, feasibility-clipped it reaches 18 % of the shoulder and 0.5 % of the tail; NOTHING CHARTERED, NO SOLVE; miso-203's G-D REPAIRED; the MODEL CLOCK IS CST and the max-gen windows are armed one hour late
+
+**Keeper unchanged: `2026-09-03-miso-202-unitclip`.** NO LP, NO KEEPER MOVE, NO
+MECHANISM ARMED, NO FIELD, NO RUN REGISTERED, NO CELL VERDICT MOVED. PREREG
+`PREREG-miso208-find-the-supply-2026-09-04.md` pushed blind at `6a50d0fc`;
+record `FINDING-miso208-same-dispatch-different-price-2026-09-04.md`;
+instrument `scripts/probes/_miso208_find_the_supply.py` →
+`_miso208_find_the_supply.json`; repair
+`scripts/probes/_miso208_repair_miso203_gd.py`.
+
+**Found before any candidate was measured.** (1) The miso-207 FINDING never
+reached main (entry above). (2) **The model clock is CST hour-beginning**: the
+keeper's demand vs EIA-930 D and the published INDIANA.HUB LMP file vs the
+committed zonal `rt` both hit r = 1.000 one hour off every EST-labelled MISO
+file. `maxgen_events.MODEL_TZ_BY_ISO["MISO"] = "Etc/GMT+5"` therefore places
+the declared windows ONE HOUR LATE for both armed consumers
+(`maxgen_emergency_tier_pricing` K, `unit_outage_maxgen_events` K) — NAMED, a
+solve-affecting repair with its own A/B, not this session's. (3) The armed
+outage envelope at HEAD is 35.36 GW annual-mean vs miso-195's 36.82 (N-5 miss,
+cause identified: the miso-196…202 repairs + the dispatch-fleet basis, 108.7
+vs 115.3 GW population); `P_U` reproduces to 0.005 GW.
+
+**Item 0, the map (EIA-930 by fuel — its rows sum exactly to the 930 net-gen
+total — and CAMPD by model group, 2025 shoulder, model − actual):** coal
+**+3.43 GW** (the model runs coal at 97.7 % of its own capability, 32.0 of
+32.8, against a measured 28.6); gas **−7.81** (ST_GAS −2.0, CHP, small gas —
+NOT CC_REGULAR −0.9 and NOT CT_PEAKER); **CT_PEAKER +0.02 GW — the real CT
+fleet's online share 0.417 vs the model's 0.4165**; import +0.61 (tail +2.17);
+wind +0.33 (the gross-up); nuclear/hydro/solar 0. Same signs 2023/2024 at the
+same size (coal +2.1/+2.3, gas −7.3/−6.7): a chronic coal-for-gas-steam
+substitution, miso-197's defect seen from the coal side. Model-excess supply
+Σ max(0, model − actual): **5.50 GW shoulder (re-priced share 0.387) / 4.34 GW
+tail (0.140)**; CAMPD-refined 3.0 / 3.0 (0.13 / 0.09). **H1 fails as a
+quantity claim about the peakers**: reality had the same idle CT MW and did not
+clear them at $47–67; the surplus is half the size and on the coal side.
+
+**Item 1, the MOM unplanned record on the shoulder DAYS:** P_U − M = **+7.05 GW**
+mean (p50 6.97, binding 96.6 % of hours, Central 53 %); tail +6.79. W4 in the
+shoulder: leg A 8.0 %, leg B′ 27.4 %. Raw lift **$48.6 (share 1.11) shoulder /
+$185 (0.29) tail** — the only candidate over the line in both — and **W6:
+24 of 52 shoulder days infeasible** against MISO's metered coal+gas daily max
+(19 cap-caused, **5 where the keeper's OWN envelope is infeasible**: Jun 23/24,
+Jul 24/28/29 — Jul 28: 83.4 vs 86.6 GW measured). Feasibility-clipped (post-hoc,
+disclosed): **4.94 GW / share 0.182 shoulder; 1.21 GW / 0.005 tail** (clip
+binds 67 % / 93 % of hours). REFUSED as a lever; `campd_outage_windows` stays K
+with the R cap inside; the identification stands — the availability object is
+coal/steam-side, Central-weighted, ~5 GW on the shoulder days, and it is not
+the tail's object (the model is already tight there, miso-207).
+
+**Item 2, CT conduct: INERT** (+0.02 / −0.40 GW; 2024 +0.10 / −0.66; 2023
++1.24 / +0.56). The most useful wrong prediction: reality did NOT run more
+peakers. **Item 3, deliverability:** INDIANA.HUB MCC $1.95 = **4.5 %** of the
+shoulder gap (tail 3.8 %) — a system-energy object, H4 transfers; **the RDT
+bound South→North in 50.4 % of shoulder / 66.7 % of tail hours vs 32.5 % of
+other daytime** (2024 54 %) while the keeper's zone spread is $1.36 — the LP's
+2,500 MW S→N link does not bind where the real wheel did; South holds 31.8 % of
+the cushion (3.45 GW); stranding it in RDT hours lifts 0.048 / 0.007 —
+REFUSED, defect NAMED (no cell; not `measured_interface_limits` R, not
+`m2m_seam_entitlement_cap` G). **Item 4, declared windows (CST placement):**
+16.5 % of shoulder hours in a window carry **26.0 %** of the gap; out-of-window
+hours (actual mean $82.9) carry 74 % — NOT an emergency regime; tail 11/15
+in-window, 76.6 %. The armed tier floor is SILENT in every 2025 Warning+ hour
+(max $141.7, slack 0, min idle thermal 2.18 GW); it printed in 2024's Aug 26
+window ($500, 19.4 GWh slack). All 6 regspin binding hours are in-window.
+
+**G-D repair (second deliverable).** miso-203's block reproduced defective to
+±5 MW (R-1 PASS ×3), then the pooled COAL_* dispatch subtracted on miso-203's
+own hour set: broad margin min **42,736 → 12,612 / 38,375 → 4,407 / 30,533 →
+−524 MW**; mean 2025 37,115 → **4,902**; armed idle unchanged; G-D still FAIL
+(6.7 MW vs 4.9 GW); `pre_repair` preserved. The 42.7/38.4/30.5 figures are
+retired.
+
+**Prior scored:** P1a–c, P3a/d/e, P4a–d, P9 RIGHT; **P2b/c WRONG (the
+result)**, P3c WRONG (RDT 50 % not ≤ 20 %), P1d WRONG on the raw form (1.11 vs
+0.10–0.25; right after the clip), P0g/P0h/P10 WRONG in the tail, N-5 FAILED
+(cause identified). Eighth consecutive MISO session whose most useful output
+came from the wrong part of the prior.
+
+**Successor, named not built:** a fuel-identified, unit-grain unplanned
+PARTIAL-derate measurement on the coal/steam fleet (`unit_partial_outage_windows`,
+default OFF, registered under `unit_outage_short_windows`; forward analogue =
+per-class derate rates) whose phase 0 must show the 52-day sum lands between
+the coal-side excess (3.4 GW) and the raw 7 GW, is Central-weighted, is not
+already in the statistical stack (rule 19), and stays silent in 2023/2024
+(deficits 1.5–1.7 GW). Also named: the RDT binding state vs the LP's
+non-binding link; the max-gen clock defect.
+
+**Governance.** Rule 15: zero-solve, nothing registered. Rule 28(a)/(b):
+evidence appended to `campd_outage_windows`, `temp_dependent_derate`,
+`m2m_seam_entitlement_cap`, `maxgen_emergency_tier_pricing`; no verdict moves;
+§5.4 stamp. Rule 28(c): no field. Rule 25: MISO's shard only. Rule 22:
+2023–2025. Rule 27: blob-verified after push.
+
+Next shorthand: **miso-209**.

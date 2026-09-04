@@ -5503,6 +5503,47 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-208 (2026-09-04) — THE 8–11 GW HUNT: THE MARKET RAN THE
+> MODEL'S CT FLEET TO 0.02 GW, 3 GW LESS COAL AND 8 GW MORE GAS; THE MODEL'S
+> SURPLUS IS ~5 GW OF COAL-SIDE AVAILABILITY; NOTHING CHARTERED, NO SOLVE.** NO
+> LP, NO KEEPER MOVE, NO MECHANISM ARMED, NO FIELD, NO CELL VERDICT MOVED. Keeper
+> UNCHANGED at `2026-09-03-miso-202-unitclip`. PREREG pushed BLIND at `6a50d0fc`.
+> (i) Item 0, the supply-mix map (EIA-930 by fuel + CAMPD by model group, 2025
+> shoulder, model − actual): coal **+3.43 GW** (the model runs coal at 97.7 % of
+> its own capability against a measured 28.6 GW), gas **−7.81** (ST_GAS, CHP,
+> small gas — NOT CC_REGULAR, NOT CT), **CT_PEAKER +0.02** (real online share
+> 0.417 vs model 0.4165), import +0.61 / +2.17 tail; same signs and size in
+> 2023/2024. Model-excess supply 5.50 GW shoulder (re-priced share 0.387) /
+> 4.34 tail (0.140). **The charter's "8–11 GW idle within $20" is a COST-basis
+> statement, not a quantity the market lacked** — reality had the same idle CTs
+> and did not clear them at $47–67. (ii) Item 1, the MOM unplanned record on
+> the 52 shoulder DAYS: P_U − M **+7.05 GW** (Central 53 %), raw re-price 1.11 /
+> 0.29 — the only candidate over 25 % in both — and infeasible vs MISO's metered
+> coal+gas on **24/52 days** (5 with the keeper's OWN envelope infeasible);
+> feasibility-clipped **4.94 GW / 0.182 shoulder, 1.21 GW / 0.005 tail**.
+> REFUSED; `campd_outage_windows` K with the R cap inside; the identification
+> (coal/steam-side availability, ~5 GW, Central) stands and its successor is
+> NAMED: unit-grain partial derates (`unit_partial_outage_windows`, default off).
+> (iii) Item 2 CT conduct INERT. (iv) Item 3: INDIANA.HUB MCC 4.5 % of the
+> shoulder gap (energy object); the RDT bound S→N in 50 % of shoulder / 67 % of
+> tail hours vs 32 % other daytime while the LP's spread is $1.36 — NAMED, no
+> cell, strand-lift 0.048. (v) Item 4: 16.5 % of shoulder hours in declared
+> windows carry 26 % of the gap (out-of-window 74 % at $82.9 — not an emergency
+> regime); tail 11/15; the armed tier floor SILENT in every 2025 Warning+ hour
+> (2.18 GW min idle). (vi) **THE MODEL CLOCK IS CST** (two r = 1.000
+> witnesses); `maxgen_events.MODEL_TZ_BY_ISO['MISO']` is EST, so
+> `maxgen_emergency_tier_pricing` and `unit_outage_maxgen_events` apply their
+> windows ONE HOUR LATE — NAMED, own A/B. (vii) miso-203's G-D block REPAIRED
+> (coal dispatch had been counted idle): 2025 broad margin 30,533 → **−524 MW
+> min / 4,902 mean**; refusal stands; the 42.7/38.4/30.5 GW figures RETIRED.
+> (viii) miso-207's FINDING and log entry never reached main (PR #4678 carried
+> the JSON only); its record numbers are entered in the log by miso-208.
+> Records: `FINDING-miso208-same-dispatch-different-price-2026-09-04.md`,
+> `PREREG-miso208-find-the-supply-2026-09-04.md`, `_miso208_find_the_supply.json`,
+> `scripts/probes/_miso208_find_the_supply.py`,
+> `scripts/probes/_miso208_repair_miso203_gd.py`, repaired
+> `_miso203_summer_peak_anchor_phase0.json`.
+
 > **QUEUE STAMP miso-206 (2026-09-04) — QUEUE ITEM 1 (THE WIND-AVAILABILITY
 > OBJECT IN THE OBJECT'S HOURS) BOUNDED AND **REFUSED**; AND THE RECORD REPAIR
 > RE-CHARACTERISES THE OBJECT: **THE 15-HOUR TAIL IS HALF OF IT.** NO LP, NO
