@@ -28,6 +28,7 @@ import importlib.util
 import inspect
 import io
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -39,7 +40,10 @@ sys.path.insert(0, str(REPO / "scripts"))
 
 BUNDLE = REPO / "results/calibration/caiso241_b1_ctpeaker_committed"
 CACHE = Path(
-    "/tmp/claude-0/-home-user-market-simulator/8996884f-b2f8-5b4c-a42b-d6af63597aea/scratchpad/c243"
+    os.environ.get(
+        "C243_CACHE",
+        "/tmp/claude-0/-home-user-market-simulator/8996884f-b2f8-5b4c-a42b-d6af63597aea/scratchpad/c243v2",
+    )
 )
 OUT = REPO / "results/calibration/_caiso243_gstruct_presolve.json"
 HOURS = 8760
@@ -69,15 +73,23 @@ CASES = [
 ]
 
 
-def rebuild(year: int, flags: dict) -> dict:
-    from run_calibration import run_year
+def keeper_recipe_kwargs(meta: dict, run_year) -> dict:
+    """The keeper recipe as ``run_year`` kwargs, via the SAME mapping the solve uses.
 
-    spec = importlib.util.spec_from_file_location(
-        "_c240", REPO / "scripts/probes/_caiso240_default_hr_mult_census.py"
-    )
-    c240 = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(c240)
-    meta = json.loads((BUNDLE / "meta.json").read_text())
+    INSTRUMENT DEFECT FOUND AND FIXED IN caiso-243 (disclosed in the finding):
+    the lane's ``run_year(fleet_only=True)`` probe pattern (caiso-240 -> 243)
+    filtered ``meta.json`` keys by ``run_year``'s parameter NAMES, which silently
+    DROPPED every key whose solve kwarg is spelled differently — above all
+    ``coal_prb_sigmoid_overrides`` -> ``prb_overrides``, the 36-flag CAISO
+    structural override bag (``caiso_citygate_spot_level``,
+    ``capacity_deliverability_limits``, ``caiso_scarcity_pricing``, the RA
+    bridge, hydro and measured-heat-rate flags, ...). ``replay_keeper.build_kwargs``
+    is the sanctioned meta -> kwargs reconstruction (strict, remapping); the
+    subset that ``run_year`` accepts is exactly what ``solve_and_persist`` hands
+    it, so a rebuild here is the keeper's recipe, not a lookalike.
+    """
+    import replay_keeper as rk
+
     params = inspect.signature(run_year).parameters
     skip = {
         "year",
@@ -89,7 +101,21 @@ def rebuild(year: int, flags: dict) -> dict:
         "xyear_cache",
         "must_run_mw",
     }
-    kwargs = {k: v for k, v in meta.items() if k in params and k not in skip}
+    full = rk.build_kwargs(meta)
+    return {k: v for k, v in full.items() if k in params and k not in skip}
+
+
+def rebuild(year: int, flags: dict) -> dict:
+    from run_calibration import run_year
+
+    spec = importlib.util.spec_from_file_location(
+        "_c240", REPO / "scripts/probes/_caiso240_default_hr_mult_census.py"
+    )
+    c240 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(c240)
+    meta = json.loads((BUNDLE / "meta.json").read_text())
+    kwargs = keeper_recipe_kwargs(meta, run_year)
+    params = inspect.signature(run_year).parameters
     for k in flags:
         assert k in params, f"run_year has no kwarg {k!r} — plumbing missing"
     kwargs.update(flags)

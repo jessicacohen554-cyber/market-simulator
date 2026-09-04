@@ -25,7 +25,7 @@
     },
     "2025": {
       "a": {
-        "rows": 225,
+        "rows": 228,
         "live_months": [
           9,
           10,
@@ -35,8 +35,8 @@
         "upper": 0.0376,
         "by_zone": {
           "SDGE": {
-            "repriced_rows": 170,
-            "repriced_mw": 2203.1,
+            "repriced_rows": 173,
+            "repriced_mw": 2194.3,
             "live_hours_price_above_new_offer": 1858,
             "live_hours_price_above_old_offer": 1843,
             "keeper_live_lw_price": 48.64,
@@ -45,7 +45,7 @@
           },
           "SP15_rest": {
             "repriced_rows": 55,
-            "repriced_mw": 2446.2,
+            "repriced_mw": 2445.1,
             "live_hours_price_above_new_offer": 1599,
             "live_hours_price_above_old_offer": 588,
             "keeper_live_lw_price": 46.33,
@@ -55,36 +55,36 @@
         }
       },
       "c": {
-        "rows": 1322,
+        "rows": 1364,
         "live_months": [
           9,
           10,
           11
         ],
-        "lower": -2.6339,
+        "lower": -2.5006,
         "upper": 0.3109,
         "by_zone": {
           "NP15": {
-            "repriced_rows": 564,
-            "repriced_mw": 8575.0,
-            "live_hours_price_above_new_offer": 1917,
-            "live_hours_price_above_old_offer": 1942,
+            "repriced_rows": 575,
+            "repriced_mw": 8564.9,
+            "live_hours_price_above_new_offer": 1862,
+            "live_hours_price_above_old_offer": 1873,
             "keeper_live_lw_price": 48.05,
-            "new_min_offer_live_mean": 37.24,
-            "old_min_offer_live_mean": 36.57
+            "new_min_offer_live_mean": 38.88,
+            "old_min_offer_live_mean": 38.18
           },
           "ZP26": {
-            "repriced_rows": 172,
-            "repriced_mw": 3308.8,
-            "live_hours_price_above_new_offer": 1829,
-            "live_hours_price_above_old_offer": 1818,
+            "repriced_rows": 190,
+            "repriced_mw": 3295.0,
+            "live_hours_price_above_new_offer": 1839,
+            "live_hours_price_above_old_offer": 1824,
             "keeper_live_lw_price": 47.04,
-            "new_min_offer_live_mean": 39.55,
-            "old_min_offer_live_mean": 40.3
+            "new_min_offer_live_mean": 38.98,
+            "old_min_offer_live_mean": 39.72
           },
           "LA_BASIN": {
-            "repriced_rows": 361,
-            "repriced_mw": 9035.2,
+            "repriced_rows": 371,
+            "repriced_mw": 9027.5,
             "live_hours_price_above_new_offer": 1853,
             "live_hours_price_above_old_offer": 1693,
             "keeper_live_lw_price": 47.52,
@@ -92,8 +92,8 @@
             "old_min_offer_live_mean": 44.19
           },
           "SDGE": {
-            "repriced_rows": 170,
-            "repriced_mw": 2203.1,
+            "repriced_rows": 173,
+            "repriced_mw": 2194.3,
             "live_hours_price_above_new_offer": 1895,
             "live_hours_price_above_old_offer": 1843,
             "keeper_live_lw_price": 48.64,
@@ -102,7 +102,7 @@
           },
           "SP15_rest": {
             "repriced_rows": 55,
-            "repriced_mw": 2446.2,
+            "repriced_mw": 2445.1,
             "live_hours_price_above_new_offer": 1683,
             "live_hours_price_above_old_offer": 588,
             "keeper_live_lw_price": 46.33,
@@ -112,36 +112,36 @@
         }
       },
       "ac": {
-        "rows": 1322,
+        "rows": 1364,
         "live_months": [
           9,
           10,
           11
         ],
-        "lower": -2.6339,
+        "lower": -2.5006,
         "upper": 0.3109,
         "by_zone": {
           "NP15": {
-            "repriced_rows": 564,
-            "repriced_mw": 8575.0,
-            "live_hours_price_above_new_offer": 1917,
-            "live_hours_price_above_old_offer": 1942,
+            "repriced_rows": 575,
+            "repriced_mw": 8564.9,
+            "live_hours_price_above_new_offer": 1862,
+            "live_hours_price_above_old_offer": 1873,
             "keeper_live_lw_price": 48.05,
-            "new_min_offer_live_mean": 37.24,
-            "old_min_offer_live_mean": 36.57
+            "new_min_offer_live_mean": 38.88,
+            "old_min_offer_live_mean": 38.18
           },
           "ZP26": {
-            "repriced_rows": 172,
-            "repriced_mw": 3308.8,
-            "live_hours_price_above_new_offer": 1829,
-            "live_hours_price_above_old_offer": 1818,
+            "repriced_rows": 190,
+            "repriced_mw": 3295.0,
+            "live_hours_price_above_new_offer": 1839,
+            "live_hours_price_above_old_offer": 1824,
             "keeper_live_lw_price": 47.04,
-            "new_min_offer_live_mean": 39.55,
-            "old_min_offer_live_mean": 40.3
+            "new_min_offer_live_mean": 38.98,
+            "old_min_offer_live_mean": 39.72
           },
           "LA_BASIN": {
-            "repriced_rows": 361,
-            "repriced_mw": 9035.2,
+            "repriced_rows": 371,
+            "repriced_mw": 9027.5,
             "live_hours_price_above_new_offer": 1853,
             "live_hours_price_above_old_offer": 1693,
             "keeper_live_lw_price": 47.52,
@@ -149,8 +149,8 @@
             "old_min_offer_live_mean": 44.19
           },
           "SDGE": {
-            "repriced_rows": 170,
-            "repriced_mw": 2203.1,
+            "repriced_rows": 173,
+            "repriced_mw": 2194.3,
             "live_hours_price_above_new_offer": 1895,
             "live_hours_price_above_old_offer": 1843,
             "keeper_live_lw_price": 48.64,
@@ -159,7 +159,7 @@
           },
           "SP15_rest": {
             "repriced_rows": 55,
-            "repriced_mw": 2446.2,
+            "repriced_mw": 2445.1,
             "live_hours_price_above_new_offer": 1683,
             "live_hours_price_above_old_offer": 588,
             "keeper_live_lw_price": 46.33,
@@ -169,25 +169,25 @@
         }
       },
       "b_0.05_3.0": {
-        "rows": 239,
+        "rows": 257,
         "live_months": [
           11
         ],
-        "lower": -0.0732,
+        "lower": -0.0753,
         "upper": 0.0,
         "by_zone": {
           "ZP26": {
-            "repriced_rows": 172,
-            "repriced_mw": 3308.8,
-            "live_hours_price_above_new_offer": 640,
-            "live_hours_price_above_old_offer": 640,
+            "repriced_rows": 190,
+            "repriced_mw": 3295.0,
+            "live_hours_price_above_new_offer": 643,
+            "live_hours_price_above_old_offer": 642,
             "keeper_live_lw_price": 48.79,
-            "new_min_offer_live_mean": 40.38,
-            "old_min_offer_live_mean": 40.82
+            "new_min_offer_live_mean": 39.79,
+            "old_min_offer_live_mean": 40.22
           },
           "SP15_rest": {
             "repriced_rows": 67,
-            "repriced_mw": 2816.3,
+            "repriced_mw": 2815.2,
             "live_hours_price_above_new_offer": 585,
             "live_hours_price_above_old_offer": 0,
             "keeper_live_lw_price": 48.03,
