@@ -11749,3 +11749,24 @@ cold-weather record vs the pooled cap; the v2 artifact's frozen 2018 / 2022 /
 2026 rows (forecast lane); NYISO parasitic factors absent. Evidence:
 `docs/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md`,
 `results/calibration/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md`.
+
+## 2026-09-04 — nyiso-189 (`backcast-calibration` lane): the steam-generator collapse census (Step 0 of the Bethlehem object) — ZERO SOLVE, owner decision card
+
+**Keeper:** `2026-09-04-nyiso-188-combined` (CALIBRATED, grade 7, fails 0,
+C3c ledgered), untouched. **Pre-registration** pushed at `65dc4094` before the
+census ran. **Census (38 NYISO CCs with a filed CA generator):** T1 — steam
+generator at exactly zero net generation while the CTs run — fires at
+Bethlehem 2539 (2024 only), World Generation X 54131 (2023 only; applied
+9.807 vs a 7.0–7.3 block), and chronically at Flynn 7314, Ravenswood 2500,
+Lederle 10521. Bethlehem's APPLIED 2023 vintage (ST/CT 0.065 against its own
+0.49–0.52) is not reached by the zero test; where filings are intact the
+CT-heat identity reproduces eGRID's `PLHTRT` within 0.1 (its validation).
+**Decision card** (`docs/DECISION-CARD-nyiso189-bethlehem-vintage-form-2026-09-04.md`):
+A (pooled-vintage basis, fleet-wide, 2539 → 7.85) vs B1 (identity, T1-admitted,
+misses Bethlehem 2023) vs B2 (identity admitted by the plant's own T1-clean
+steam-share minimum; 2539 → 6.89, 54131 → 7.00); recommendation B2 with the
+plant's own median share; expected direction if built: Bethlehem −$7.5/MWh,
+C3a down in every year. Nothing built. Rule 28: `egrid_identity_heat_rates`
+annotated, §5.5 top bullet updated. Evidence:
+`results/calibration/_nyiso189_gen_collapse_census/`,
+`scripts/probes/nyiso189_gen_collapse_census.py`.
