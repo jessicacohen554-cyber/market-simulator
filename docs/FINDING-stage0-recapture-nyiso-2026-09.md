@@ -286,11 +286,28 @@ out-of-training year was solved, scored or registered.
 * Golden bundle under `results/regression-goldens/perfb-stage0/NYISO/` —
   gitignored by design, retained on disk in this container.
 
+**Golden tier exercised once, as R-V's exercise authority permits** (the
+workflow is `workflow_dispatch`-only since R-Y, 2026-09-02). Run
+**33889067608** (run #10, `workflow_dispatch`, head `a4c3d61a`) on this branch:
+**conclusion `success`**, 15:22:06 → 15:34:47 UTC = **12 min 41 s of billed
+runner minutes**. One run, not re-dispatched.
+
 **This golden is current only until NYISO's next promotion**, and that is not a
 formality in this lane: NYISO promoted three times in the three days to
-2026-09-04 (177 on 09-02, 185 and 186 on 09-04), and `nyiso-187` merged as a
-probe while this session was solving. The entry will read STALE the moment the
-next promotion lands.
+2026-09-04 (177 on 09-02, 185 and 186 on 09-04). The entry reads STALE the
+moment the next promotion lands.
+
+**IT ALREADY DOES — recorded here rather than left for the next lane to
+discover.** Within roughly two hours of this capture completing, NYISO promoted
+**twice more**: `2026-09-04-nyiso-187-astoria-routing` (`de75234f`) and then
+`2026-09-04-nyiso-188-combined` (`2cc95aa2`, *"the first NYISO keeper to read
+CALIBRATED"*). The committed golden names `2026-09-04-nyiso-186-astoria-identity`
+and is therefore **two promotions stale against the live keeper**, exactly as
+§7 item 5 anticipates. This is not a defect in the capture, which is faithful to
+the keeper it names and passed its oracle; it is the cadence problem stated as a
+measured fact. **Five NYISO promotions landed on 2026-09-04 alone** (185, 186,
+187, 188 — plus 177 the day before), against a ~13-minute capture. Whether to
+chase 188 is an owner decision, deliberately not taken in this lane.
 
 ## 7. Open items handed back
 
