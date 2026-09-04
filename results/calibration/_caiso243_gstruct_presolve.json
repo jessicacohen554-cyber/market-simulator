@@ -1,0 +1,106 @@
+{
+  "_provenance": {
+    "session": "caiso-243",
+    "bundle": "results/calibration/caiso241_b1_ctpeaker_committed",
+    "note": "real code path, no monkeypatch; reference = the footprint probe's cached rebuilds"
+  },
+  "cases": {
+    "off_2025": {
+      "year": 2025,
+      "flags": {},
+      "reference": "keeper",
+      "fleet_identity": true,
+      "fuel_byte_identical": true,
+      "fuel_max_abs_diff": 0.0,
+      "fuel_cells_differing": 0,
+      "mc_byte_identical": true,
+      "config_flags_resolved": {
+        "nearby_fuel_price_zone_donor_guard": false,
+        "fleet_state_from_eia860": false
+      },
+      "rows_with_state": 213,
+      "rows": 1800,
+      "PASS": true
+    },
+    "a_2025": {
+      "year": 2025,
+      "flags": {
+        "nearby_fuel_price_zone_donor_guard": true
+      },
+      "reference": "a",
+      "fleet_identity": true,
+      "fuel_byte_identical": true,
+      "fuel_max_abs_diff": 0.0,
+      "fuel_cells_differing": 0,
+      "mc_byte_identical": true,
+      "config_flags_resolved": {
+        "nearby_fuel_price_zone_donor_guard": true,
+        "fleet_state_from_eia860": false
+      },
+      "rows_with_state": 213,
+      "rows": 1800,
+      "PASS": true
+    },
+    "ac_2025": {
+      "year": 2025,
+      "flags": {
+        "nearby_fuel_price_zone_donor_guard": true,
+        "fleet_state_from_eia860": true
+      },
+      "reference": "ac",
+      "fleet_identity": true,
+      "fuel_byte_identical": true,
+      "fuel_max_abs_diff": 0.0,
+      "fuel_cells_differing": 0,
+      "mc_byte_identical": true,
+      "config_flags_resolved": {
+        "nearby_fuel_price_zone_donor_guard": true,
+        "fleet_state_from_eia860": true
+      },
+      "rows_with_state": 1624,
+      "rows": 1800,
+      "PASS": true
+    },
+    "ac_2024": {
+      "year": 2024,
+      "flags": {
+        "nearby_fuel_price_zone_donor_guard": true,
+        "fleet_state_from_eia860": true
+      },
+      "reference": "keeper",
+      "fleet_identity": true,
+      "fuel_byte_identical": true,
+      "fuel_max_abs_diff": 0.0,
+      "fuel_cells_differing": 0,
+      "mc_byte_identical": true,
+      "config_flags_resolved": {
+        "nearby_fuel_price_zone_donor_guard": true,
+        "fleet_state_from_eia860": true
+      },
+      "rows_with_state": 1619,
+      "rows": 1795,
+      "PASS": true
+    },
+    "ac_2023": {
+      "year": 2023,
+      "flags": {
+        "nearby_fuel_price_zone_donor_guard": true,
+        "fleet_state_from_eia860": true
+      },
+      "reference": "keeper",
+      "fleet_identity": true,
+      "fuel_byte_identical": true,
+      "fuel_max_abs_diff": 0.0,
+      "fuel_cells_differing": 0,
+      "mc_byte_identical": true,
+      "config_flags_resolved": {
+        "nearby_fuel_price_zone_donor_guard": true,
+        "fleet_state_from_eia860": true
+      },
+      "rows_with_state": 1614,
+      "rows": 1801,
+      "PASS": true
+    }
+  },
+  "G_STRUCT": "PASS"
+}

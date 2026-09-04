@@ -1,0 +1,201 @@
+{
+  "_provenance": {
+    "session": "caiso-243",
+    "bundle": "results/calibration/caiso241_b1_ctpeaker_committed",
+    "offers": "assembled P0 mc from run_year(fleet_only=True) per variant (fuel + VOM + carbon + NOx + margin reform)",
+    "price": "keeper system_<year>.parquet zonal P1 price, load-weighted by zonal demand",
+    "note": "two-sided envelope on the annual load-weighted mean price move; lower limb assumes the repaired capacity sets price in every live hour it undercuts, upper limb assumes the largest positive offer move passes fully into every live hour. Volume: NO falsifier (caiso-241 \u00a78.1)."
+  },
+  "years": {
+    "2023": {
+      "ac": {
+        "rows": 0,
+        "lower": 0.0,
+        "upper": 0.0,
+        "note": "inert \u2014 byte-identical offers; falsifier is identity"
+      }
+    },
+    "2024": {
+      "ac": {
+        "rows": 0,
+        "lower": 0.0,
+        "upper": 0.0,
+        "note": "inert \u2014 byte-identical offers; falsifier is identity"
+      }
+    },
+    "2025": {
+      "a": {
+        "rows": 225,
+        "live_months": [
+          9,
+          10,
+          11
+        ],
+        "lower": -0.3769,
+        "upper": 0.0376,
+        "by_zone": {
+          "SDGE": {
+            "repriced_rows": 170,
+            "repriced_mw": 2203.1,
+            "live_hours_price_above_new_offer": 1858,
+            "live_hours_price_above_old_offer": 1843,
+            "keeper_live_lw_price": 48.64,
+            "new_min_offer_live_mean": 38.38,
+            "old_min_offer_live_mean": 39.43
+          },
+          "SP15_rest": {
+            "repriced_rows": 55,
+            "repriced_mw": 2446.2,
+            "live_hours_price_above_new_offer": 1599,
+            "live_hours_price_above_old_offer": 588,
+            "keeper_live_lw_price": 46.33,
+            "new_min_offer_live_mean": 44.0,
+            "old_min_offer_live_mean": 243.81
+          }
+        }
+      },
+      "c": {
+        "rows": 1322,
+        "live_months": [
+          9,
+          10,
+          11
+        ],
+        "lower": -2.6339,
+        "upper": 0.3109,
+        "by_zone": {
+          "NP15": {
+            "repriced_rows": 564,
+            "repriced_mw": 8575.0,
+            "live_hours_price_above_new_offer": 1917,
+            "live_hours_price_above_old_offer": 1942,
+            "keeper_live_lw_price": 48.05,
+            "new_min_offer_live_mean": 37.24,
+            "old_min_offer_live_mean": 36.57
+          },
+          "ZP26": {
+            "repriced_rows": 172,
+            "repriced_mw": 3308.8,
+            "live_hours_price_above_new_offer": 1829,
+            "live_hours_price_above_old_offer": 1818,
+            "keeper_live_lw_price": 47.04,
+            "new_min_offer_live_mean": 39.55,
+            "old_min_offer_live_mean": 40.3
+          },
+          "LA_BASIN": {
+            "repriced_rows": 361,
+            "repriced_mw": 9035.2,
+            "live_hours_price_above_new_offer": 1853,
+            "live_hours_price_above_old_offer": 1693,
+            "keeper_live_lw_price": 47.52,
+            "new_min_offer_live_mean": 38.88,
+            "old_min_offer_live_mean": 44.19
+          },
+          "SDGE": {
+            "repriced_rows": 170,
+            "repriced_mw": 2203.1,
+            "live_hours_price_above_new_offer": 1895,
+            "live_hours_price_above_old_offer": 1843,
+            "keeper_live_lw_price": 48.64,
+            "new_min_offer_live_mean": 37.68,
+            "old_min_offer_live_mean": 39.43
+          },
+          "SP15_rest": {
+            "repriced_rows": 55,
+            "repriced_mw": 2446.2,
+            "live_hours_price_above_new_offer": 1683,
+            "live_hours_price_above_old_offer": 588,
+            "keeper_live_lw_price": 46.33,
+            "new_min_offer_live_mean": 43.17,
+            "old_min_offer_live_mean": 243.81
+          }
+        }
+      },
+      "ac": {
+        "rows": 1322,
+        "live_months": [
+          9,
+          10,
+          11
+        ],
+        "lower": -2.6339,
+        "upper": 0.3109,
+        "by_zone": {
+          "NP15": {
+            "repriced_rows": 564,
+            "repriced_mw": 8575.0,
+            "live_hours_price_above_new_offer": 1917,
+            "live_hours_price_above_old_offer": 1942,
+            "keeper_live_lw_price": 48.05,
+            "new_min_offer_live_mean": 37.24,
+            "old_min_offer_live_mean": 36.57
+          },
+          "ZP26": {
+            "repriced_rows": 172,
+            "repriced_mw": 3308.8,
+            "live_hours_price_above_new_offer": 1829,
+            "live_hours_price_above_old_offer": 1818,
+            "keeper_live_lw_price": 47.04,
+            "new_min_offer_live_mean": 39.55,
+            "old_min_offer_live_mean": 40.3
+          },
+          "LA_BASIN": {
+            "repriced_rows": 361,
+            "repriced_mw": 9035.2,
+            "live_hours_price_above_new_offer": 1853,
+            "live_hours_price_above_old_offer": 1693,
+            "keeper_live_lw_price": 47.52,
+            "new_min_offer_live_mean": 38.88,
+            "old_min_offer_live_mean": 44.19
+          },
+          "SDGE": {
+            "repriced_rows": 170,
+            "repriced_mw": 2203.1,
+            "live_hours_price_above_new_offer": 1895,
+            "live_hours_price_above_old_offer": 1843,
+            "keeper_live_lw_price": 48.64,
+            "new_min_offer_live_mean": 37.68,
+            "old_min_offer_live_mean": 39.43
+          },
+          "SP15_rest": {
+            "repriced_rows": 55,
+            "repriced_mw": 2446.2,
+            "live_hours_price_above_new_offer": 1683,
+            "live_hours_price_above_old_offer": 588,
+            "keeper_live_lw_price": 46.33,
+            "new_min_offer_live_mean": 43.17,
+            "old_min_offer_live_mean": 243.81
+          }
+        }
+      },
+      "b_0.05_3.0": {
+        "rows": 239,
+        "live_months": [
+          11
+        ],
+        "lower": -0.0732,
+        "upper": 0.0,
+        "by_zone": {
+          "ZP26": {
+            "repriced_rows": 172,
+            "repriced_mw": 3308.8,
+            "live_hours_price_above_new_offer": 640,
+            "live_hours_price_above_old_offer": 640,
+            "keeper_live_lw_price": 48.79,
+            "new_min_offer_live_mean": 40.38,
+            "old_min_offer_live_mean": 40.82
+          },
+          "SP15_rest": {
+            "repriced_rows": 67,
+            "repriced_mw": 2816.3,
+            "live_hours_price_above_new_offer": 585,
+            "live_hours_price_above_old_offer": 0,
+            "keeper_live_lw_price": 48.03,
+            "new_min_offer_live_mean": 44.08,
+            "old_min_offer_live_mean": 607.22
+          }
+        }
+      }
+    }
+  }
+}

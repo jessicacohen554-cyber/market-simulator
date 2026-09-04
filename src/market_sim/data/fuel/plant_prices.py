@@ -314,7 +314,14 @@ def apply_plant_monthly_fuel_prices(
     so ERCOT — whose plants overwhelmingly report — is unchanged. Under
     ``config.class_aware_fuel_price_fallback`` the fallback consults a
     same-class donor tier (the recipient's ``plant_group``) before the
-    class-blind fuel-group pools — see :class:`_NearbyFuelPrices`.
+    class-blind fuel-group pools — see :class:`_NearbyFuelPrices`. Under
+    ``config.nearby_fuel_price_zone_donor_guard`` (caiso-243) the zone tier
+    carries the same distinct-reporter floor as the state tier, so a
+    zone-month served by a single reporting plant is not trusted (a pool of
+    one returned that plant's price verbatim — the 55077 96.161 $/MMBtu
+    defect). The state tier is reachable only when the fleet carries
+    ``state`` — the plant-level CAMPD-bin fleet does so under
+    ``config.fleet_state_from_eia860`` (defect D1 of the same finding).
 
     **Backcast-only (mode gate).** Measured F923 delivered costs are a
     historic overlay (CLAUDE.md rule 22, methodology spec §1.7), so this
@@ -498,6 +505,17 @@ class _NearbyFuelPrices:
     ) -> None:
         self._year = year
         self._min_state = int(getattr(config, "nearby_fuel_price_min_state_plants", 2))
+        # caiso-243 repair form (a): the zone tier's distinct-reporter floor.
+        # The SAME registered floor as the state tier (no new constant); 0
+        # (the default-off path) keeps the historical unguarded zone mean.
+        self._min_zone = (
+            self._min_state
+            if bool(getattr(config, "nearby_fuel_price_zone_donor_guard", False))
+            else 0
+        )
+        # Per (fuel_group, class-or-None): zone reporter-count grids, the
+        # zone-tier companion of ``state_count`` (caiso-243).
+        self._zone_count: dict[tuple[str, str | None], dict[int, np.ndarray]] = {}
         iso_plants = {int(p) for p in fleet.plant_code if int(p) > 0}
         self._plant_to_zone = {
             int(p): int(z)
@@ -547,6 +565,7 @@ class _NearbyFuelPrices:
             sub = sub[sub["plant_id"].map(lambda p: donor_class.get(int(p))) == klass]
         state_price, state_count = state_month_price_grid(sub, self._year, fuel_group)
         zone_price: dict[int, np.ndarray] = {}
+        zone_count: dict[int, np.ndarray] = {}
         if not sub.empty:
             z = sub.assign(
                 zone=sub["plant_id"].map(self._plant_to_zone),
@@ -555,16 +574,37 @@ class _NearbyFuelPrices:
             for zone, grp in z.groupby("zone", sort=False):
                 wsum = np.zeros(12, dtype=float)
                 qsum = np.zeros(12, dtype=float)
+                # Distinct reporting plants per zone-month (caiso-243): the
+                # zone-tier analogue of ``state_month_price_grid``'s count.
+                reporters: list[set[int]] = [set() for _ in range(12)]
                 for _, row in grp.iterrows():
                     m = int(row["month"]) - 1
                     if 0 <= m < 12:
                         wsum[m] += float(row["weighted"])
                         qsum[m] += float(row["quantity"])
+                        reporters[m].add(int(row["plant_id"]))
                 with np.errstate(invalid="ignore", divide="ignore"):
                     zone_price[int(zone)] = np.where(qsum > 0.0, wsum / qsum, np.nan)
+                zone_count[int(zone)] = np.array(
+                    [float(len(r)) for r in reporters], dtype=float
+                )
         result = (state_price, state_count, zone_price)
         self._cache[(fuel_group, klass)] = result
+        self._zone_count[(fuel_group, klass)] = zone_count
         return result
+
+    def _zone_ok(self, fuel_group: str, klass: str | None, zone_idx: int) -> np.ndarray:
+        """Length-12 mask: zone-months clearing the zone-tier reporter floor.
+
+        All-True on the default-off path (``_min_zone == 0``), so the
+        historical unguarded zone mean is byte-identical (caiso-243).
+        """
+        if self._min_zone <= 0:
+            return np.ones(12, dtype=bool)
+        counts = self._zone_count.get((fuel_group, klass), {}).get(int(zone_idx))
+        if counts is None:
+            return np.zeros(12, dtype=bool)
+        return counts >= self._min_zone
 
     def month_prices(
         self,
@@ -577,14 +617,15 @@ class _NearbyFuelPrices:
 
         Each tier fills only the months still NaN after the tiers before it:
         same-class state → same-class zone (class-aware mode only), then
-        fuel-group state → fuel-group zone.
+        fuel-group state → fuel-group zone. Under the zone donor guard a
+        zone-month below the reporter floor is skipped like a thin state-month.
         """
         tiers = []
         if self.class_aware and klass:
-            tiers.append(self._grids(fuel_group, str(klass)))
-        tiers.append(self._grids(fuel_group))
+            tiers.append((str(klass), self._grids(fuel_group, str(klass))))
+        tiers.append((None, self._grids(fuel_group)))
         out = np.full(12, np.nan, dtype=float)
-        for state_price, state_count, zone_price in tiers:
+        for tier_klass, (state_price, state_count, zone_price) in tiers:
             sp = state_price.get(state)
             if sp is not None:
                 sc = state_count.get(state)
@@ -597,7 +638,11 @@ class _NearbyFuelPrices:
                 out[fill] = sp[fill]
             zp = zone_price.get(int(zone_idx))
             if zp is not None:
-                need = np.isnan(out) & ~np.isnan(zp)
+                need = (
+                    np.isnan(out)
+                    & ~np.isnan(zp)
+                    & self._zone_ok(fuel_group, tier_klass, int(zone_idx))
+                )
                 out[need] = zp[need]
         return out
 

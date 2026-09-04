@@ -3312,6 +3312,31 @@ def _eia860_plant_sector() -> dict[int, int]:
 
 
 @lru_cache(maxsize=1)
+def eia860_plant_states() -> dict[int, str]:
+    """Return ``{plant_code: USPS state}`` from the EIA-860 plant table.
+
+    The measured plant-location source for ``Generator.state`` on the
+    CAMPD-bin / plant-level fleet path (``ScenarioConfig.fleet_state_from_eia860``,
+    caiso-243): ``bins_to_fleet`` built every generator without a state, so
+    the F923 fallback's state-first donor tier was unreachable on every
+    plant-level fleet. Plants absent from the table (or with a null state)
+    are omitted and keep the empty string, i.e. the zonal tier as before.
+    Resolves through :func:`paths.active_eia860_dir` like the sibling
+    plant-table readers, so a vintage switch is honoured.
+    """
+    path = active_eia860_dir() / "eia860_plant.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path, columns=["Plant Code", "State"])
+    df = df.dropna(subset=["Plant Code", "State"])
+    return {
+        int(c): str(s).strip().upper()
+        for c, s in zip(df["Plant Code"], df["State"])
+        if str(s).strip()
+    }
+
+
+@lru_cache(maxsize=1)
 def eia860_regulated_plants() -> frozenset[int]:
     """Return the plant codes whose EIA-860 ``Regulatory Status`` is ``RE``.
 
