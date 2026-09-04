@@ -1345,6 +1345,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # THE SAME COMMIT as the fields (the nyiso-119 discipline).
     "pjm_accreditation_design_vintage",
     "pjm_demand_response_supply",
+    # capx D50: the CCS retrofit capex-scaling + CHP-exclusion construction
+    # repair (GATED default off, byte-identical unarmed — the off path never
+    # enters the scaling branch or the candidate filter). Dropped from the hash
+    # at its False default so every pre-existing cache key of all six ISOs is
+    # byte-stable (ercot-t1f 873d8c0e6cab52ae re-resolved unmoved with the
+    # field absent AND explicitly False); an armed run keys distinctly. SHARED
+    # field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field
+    # (the nyiso-119 discipline).
+    "ccs_retrofit_capex_co2_scaling",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1818,6 +1827,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # registered at their shipping False defaults (armed runs key distinctly).
     "pjm_accreditation_design_vintage": "False",
     "pjm_demand_response_supply": "False",
+    # capx D50: CCS retrofit capex-scaling + CHP-exclusion gate, registered at
+    # its shipping False default (an armed run keys distinctly).
+    "ccs_retrofit_capex_co2_scaling": "False",
 }
 
 
@@ -3618,6 +3630,42 @@ class ScenarioConfig:
         15  # Only retrofit units with ≥ N years remaining useful life.
     )
     # Avoids retrofitting units near retirement.
+
+    # capx D50 (2026-09-04) — the D49 §1.5 construction repair of the retrofit
+    # screen, GATED default OFF (the default flip is an owner ruling on the
+    # D50 A/B; docs/handoffs/FINDING-capx-d50-2026-09-04.md). THE SEAM
+    # (FINDING-capx-d49-2026-09-04.md §1.4): the screen credits §45Q on the
+    # HOST's measured CO2 per MWh (captured = 0.9 × er_host) while charging the
+    # capture island at ccs_retrofit_capex_kw FLAT per kW — the ATB 2024
+    # increment identified for an H-class reference host (hr 6.3, er 0.359
+    # t/MWh) — so a host emitting 40–90 % more CO2 per kW is credited for all
+    # of it and charged to capture none of the excess; the retrofit margin was
+    # monotone INCREASING in host emissions, the inverse of the docstring's
+    # "efficient hosts win" and of the market, where no merchant NGCC retrofit
+    # has cleared on §45Q alone. When True, apply_ccs_retrofit (a) sizes the
+    # island to the CO2 it captures — retrofit_capex_per_mw = capex_kw × 1000
+    # × captured_t_per_mwh / captured_ref, captured_ref = 0.9 × hr_ref ×
+    # FUEL_CO2_FACTOR_PER_MMBTU["gas_cc"] with hr_ref = min(HEAT_RATE_BINS
+    # ["gas_cc"]) = 6.3, the SAME reference host new_entry._emerging_lcoe
+    # charges the ATB gas_cc_ccs increment against (ccs.py::
+    # ccs_retrofit_captured_ref_t_per_mwh, 0.32319 t/MWh; every term an
+    # existing cited constant — zero DOF, rules 5/21/23); and (b) EXCLUDES
+    # cogeneration hosts (plant_group CC_CHP) from the candidate set, because
+    # the published capture-island cost bases (ATB 2024 NG-CC-CCS, the NETL
+    # NGCC-retrofit series) are electric-only NGCC costings, the fleet's CEMS
+    # rate per NET ELECTRIC MWh charges the steam host's fuel to electricity
+    # (eGRID publishes a CHP-adjusted rate for exactly this reason, and the
+    # model has no useful-thermal-output intake to apply that allocation), and
+    # the screen's uplift is the electric-market margin a cogen capture
+    # project is not decided on. The off path never enters either branch —
+    # byte-identical by construction (proved on the committed ercot-t1f key
+    # 873d8c0e6cab52ae). What linear capex scaling does NOT close, stated at
+    # the definition: the ΔFOM ($/MW-yr) and the capture VOM adder ($/MWh)
+    # stay reference-host-sized and dilute per captured tonne as er rises, so
+    # the clearing threshold moves (er ≥ ~0.46 → ≥ ~0.58–0.63 t/MWh at carbon
+    # 0) rather than vanishing; that residual is recorded, not built (D49
+    # named three seams; this field builds those three).
+    ccs_retrofit_capex_co2_scaling: bool = False
 
     # Tier 2 (expert/sensitivity) — Fleet aggregation control
     heat_rate_bin_count: int | None = None  # Override default bin count per fuel type.
@@ -16488,6 +16536,7 @@ TIER_TAGS: dict[str, int] = {
     "ccs_retrofit_available_year": 2,
     "ccs_retrofit_max_gw_per_year": 2,
     "ccs_retrofit_min_remaining_life": 2,
+    "ccs_retrofit_capex_co2_scaling": 2,
     "heat_rate_bin_count": 2,
     "use_campd_bins": 2,
     "campd_bins_path": 2,

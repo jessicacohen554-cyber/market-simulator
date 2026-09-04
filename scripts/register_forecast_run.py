@@ -322,6 +322,13 @@ VERDICT_MAP = {
     "ercot-2026-2030-d46-remeasure": "ercot-t1f",
     "neiso-2026-2030-d46-remeasure": "neiso-t1f",
     "caiso-2026-2030-d46-remeasure": "caiso-t1f",
+    # capx D50 (2026-09-04): the CCS retrofit capex-scaling A/B arms
+    # (ccs_retrofit_capex_co2_scaling=True, --golden-posture, 2026-2030),
+    # SUFFIXED BY CHARTER — never the bare keys, whose D46 / D45-R records are
+    # the controls and are untouched. --summary --label d50-ccscapex.
+    "ercot-2026-2030-d50-ccscapex": "ercot-t1f-d50-ccscapex",
+    "neiso-2026-2030-d50-ccscapex": "neiso-t1f-d50-ccscapex",
+    "pjm-2026-2030-d50-ccscapex": "pjm-t1f-d50-ccscapex",
 }
 
 

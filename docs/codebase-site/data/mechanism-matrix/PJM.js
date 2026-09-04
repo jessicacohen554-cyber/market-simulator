@@ -262,6 +262,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },
+    ccs_retrofit_capex_co2_scaling: { cell: ".", fc: "O", ev: "capx D50 (2026-09-04): BUILT default-off in this lane; the PJM t1f A/B arm pjm-t1f-d50-ccscapex is pre-declared (PREDECL-capx-d50-2026-09-04.md §2.2: 0 conversions vs the control 3,584.7 MW; seam 2 load-bearing for 722 MW of CHP rows) and stamped with its measured verdict in FINDING-capx-d50-2026-09-04.md. Backcast lane n/a (the screen is gated 2028)." },
     entry_lookahead_reprice: { cell: "K", fc: "K" },
     exit_rate_limits: { cell: "O", fc: "U" },
     entry_dampers: { cell: "U", fc: "U" },

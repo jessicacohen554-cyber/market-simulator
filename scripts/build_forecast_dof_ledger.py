@@ -353,6 +353,31 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "expected": False,
         "provenance": "runner-posture",
     },
+    # --- capx D50 A/B arm posture --------------------------------------------
+    ("*", "ccs_retrofit_capex_co2_scaling"): {
+        "identification": "design-decision",
+        "source": (
+            "capx D50 construction repair of the CCS retrofit screen (the "
+            "D49 §1.5 seams): the capture island sized to the host's captured "
+            "CO2 against the ATB 2024 reference host — captured_ref = "
+            "capture_rate × min(HEAT_RATE_BINS[gas_cc]) × "
+            "FUEL_CO2_FACTOR_PER_MMBTU[gas_cc] = 0.32319 t/MWh, the host "
+            "new_entry._emerging_lcoe already charges the ATB increment "
+            "against — and cogeneration (CC_CHP) hosts excluded on the "
+            "electric-only cost basis of ATB/NETL. ZERO free parameters: every "
+            "term is an existing cited constant; the gate is a construction "
+            "choice, never a magnitude"
+        ),
+        "evidence": (
+            "src/market_sim/model/capacity_evolution/ccs.py::"
+            "ccs_retrofit_captured_ref_t_per_mwh; "
+            "docs/handoffs/FINDING-capx-d49-2026-09-04.md §1.4-§1.5; "
+            "docs/handoffs/PREDECL-capx-d50-2026-09-04.md §1; "
+            "docs/handoffs/FINDING-capx-d50-2026-09-04.md"
+        ),
+        "expected": True,
+        "provenance": "runner-posture",
+    },
 }
 
 

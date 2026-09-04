@@ -1,0 +1,135 @@
+{
+  "adequacy_requirement_mw": 119832.557,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": null,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 2250.0
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 3000.0,
+      "seq": 0,
+      "tech": "gas_cc",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 2250.0,
+      "seq": 1,
+      "tech": "gas_ct",
+      "zone": "North"
+    }
+  ],
+  "firm_clean_accredited_mw": 273.15,
+  "firm_clean_mw": 546.3,
+  "fleet_by_fuel_after": {
+    "coal": 13397.9,
+    "gas_cc": 39259.84,
+    "gas_ct": 11726.167,
+    "gas_st": 10404.45,
+    "nuclear": 4980.0
+  },
+  "fleet_by_fuel_before": {
+    "coal": 13397.9,
+    "gas_cc": 37915.04,
+    "gas_ct": 11726.167,
+    "gas_st": 10850.45,
+    "nuclear": 4980.0
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "ERCOT",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 111833.655,
+  "pipeline_events": [
+    {
+      "as_annual_credit_usd": 0.0,
+      "as_pricing": "exogenous_flat",
+      "attribute_revenue_usd": 0.0,
+      "availability_mean": 0.8769763785325576,
+      "capacity_revenue_usd": 0.0,
+      "depth_usd_per_kw_yr": 15.602611070287937,
+      "energy_margin_usd": 439840.2318027035,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "going_forward_cost_usd": 916500.0,
+      "mc_mean_usd_mwh": 162.68461380136984,
+      "mw": 30.55,
+      "net_revenue_usd": 439840.2318027035,
+      "reserve_signal_mean_usd_mwh": 0.0,
+      "reserve_uplift_usd": 0.0,
+      "screen_price_max_usd_mwh": 162.68461380136984,
+      "screen_price_mean_usd_mwh": 63.47413373491707,
+      "unit_id": "CC_CHP_Houston_p55470_peak",
+      "year": 2029
+    }
+  ],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.21,
+    "wind": 0.2
+  },
+  "reserve_margin": -0.024823,
+  "retirements": [
+    {
+      "fuel": "gas_st",
+      "mw": 178.40000000000003,
+      "reason": "announced",
+      "unit_id": "ST_GAS_South_Central_p3611_committed"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 245.30000000000007,
+      "reason": "announced",
+      "unit_id": "ST_GAS_South_Central_p3611_econ"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 22.300000000000004,
+      "reason": "announced",
+      "unit_id": "ST_GAS_South_Central_p3611_peak"
+    }
+  ],
+  "rps_dual": 0.0,
+  "solar_cap_mw": 38100.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 11687.5,
+  "storage_power_mw": 17000.0,
+  "thermal_additions": [
+    {
+      "eia860_id": "planned_69566_GEN1",
+      "fuel": "gas_cc",
+      "mw": 672.4,
+      "source": "planned",
+      "unit_id": "planned_69566_GEN1",
+      "zone": "West"
+    },
+    {
+      "eia860_id": "planned_69566_GEN2",
+      "fuel": "gas_cc",
+      "mw": 672.4,
+      "source": "planned",
+      "unit_id": "planned_69566_GEN2",
+      "zone": "West"
+    }
+  ],
+  "wind_cap_mw": 42553.1,
+  "year": 2029
+}

@@ -21,7 +21,7 @@
    "FC-7 provenance & DOF"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed to an axis, nothing armed. Run caiso-2026-2030-d46-remeasure, cache key 772b1e5abc7fc80c (pre-declared and matched), --golden-posture, 2026-2030, 22.6 min wall / 4.9 GB peak RSS. SCOPE NOTE: the preserved caiso-t1f-pre-d46 is the FFR-3A-2 vintage (cache epoch \"2026-08-03\"), so the deltas below span a MONTH of HEAD movement PLUS this batch's three axes and are NOT attributable to any one of them; they are reported as \"the board row this replaces\". Determination HOLD, unchanged, with an identical category map (FC-1 FAIL, FC-2 FAIL, FC-7 CAVEAT, FC-8 PASS). THIS IS THE ONE STAGE-1 LEG THAT READS BETTER ON EVERY MOVED ROW: I12 reserve margin 2026 1.8 % -> 10.4 %, 2027 -3.1 % -> 7.7 %, 2028 -0.3 % -> 10.2 % (band [15.0 %, 30.0 %], still FAIL but no longer negative in any year), and 2029 leaves the out-of-band list entirely (was 12.3 % FAIL); FC-2 row4 backstop share 65.5 % -> 52.6 % against the 30 % bar, still FAIL \u2014 less administrative over-build. The FC-1 invariant FAIL SET SHRINKS in membership: ['I12','I3','I7'] -> ['I12','I7'] (I3's 2030 slack clears; I7 accredited-firm-below-requirement remains in 2026-2028). FC-7 stays CAVEAT on both, and the caveat is now INFORMATIVE rather than empty: a DOF ledger was built from this run's own run_config.json by the committed scripts/build_forecast_dof_ledger.py and reads 2 entries with 1 UNIDENTIFIED (negative_renewable_offers), so the artifact names what must be attested instead of being absent \u2014 an instrument improvement, not a model gain, and it changes no status. LEDGER READINGS. (1) The fossil-dates channel adds almost nothing at CAISO in this window, and that is rule 19 working: CAISO's big once-through-cooling exits are ALREADY held by the step-0 confirmed registry (gas_st retire:confirmed 1525.8 MW in 2027, nuclear retire:confirmed 1122.0 MW in 2030), so step 1b decides only the residual and contributes gas_ct 5.2 MW retire:announced in 2030. No unit is decided twice. (2) CCS retrofits CLEAR at CAISO on the corrected D41 constants and the 3 GW/yr/ISO cap BINDS IN EVERY YEAR: 2028 37 rows / 2997.1 MW, 2029 12 / 2997.9, 2030 11 / 2857.3. This lane made NO prediction for CAISO \u2014 D41 dispositioned only the zero-carbon pair (PJM/MISO) and the RGGI pair (NEISO/NYISO), leaving CAISO's state-carbon case unaddressed \u2014 so this is read, not graded. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B — no control, nothing attributed to an axis, nothing armed. Run caiso-2026-2030-d46-remeasure, cache key 772b1e5abc7fc80c (pre-declared and matched), --golden-posture, 2026-2030, 22.6 min wall / 4.9 GB peak RSS. SCOPE NOTE: the preserved caiso-t1f-pre-d46 is the FFR-3A-2 vintage (cache epoch \"2026-08-03\"), so the deltas below span a MONTH of HEAD movement PLUS this batch's three axes and are NOT attributable to any one of them; they are reported as \"the board row this replaces\". Determination HOLD, unchanged, with an identical category map (FC-1 FAIL, FC-2 FAIL, FC-7 CAVEAT, FC-8 PASS). THIS IS THE ONE STAGE-1 LEG THAT READS BETTER ON EVERY MOVED ROW: I12 reserve margin 2026 1.8 % -> 10.4 %, 2027 -3.1 % -> 7.7 %, 2028 -0.3 % -> 10.2 % (band [15.0 %, 30.0 %], still FAIL but no longer negative in any year), and 2029 leaves the out-of-band list entirely (was 12.3 % FAIL); FC-2 row4 backstop share 65.5 % -> 52.6 % against the 30 % bar, still FAIL — less administrative over-build. The FC-1 invariant FAIL SET SHRINKS in membership: ['I12','I3','I7'] -> ['I12','I7'] (I3's 2030 slack clears; I7 accredited-firm-below-requirement remains in 2026-2028). FC-7 stays CAVEAT on both, and the caveat is now INFORMATIVE rather than empty: a DOF ledger was built from this run's own run_config.json by the committed scripts/build_forecast_dof_ledger.py and reads 2 entries with 1 UNIDENTIFIED (negative_renewable_offers), so the artifact names what must be attested instead of being absent — an instrument improvement, not a model gain, and it changes no status. LEDGER READINGS. (1) The fossil-dates channel adds almost nothing at CAISO in this window, and that is rule 19 working: CAISO's big once-through-cooling exits are ALREADY held by the step-0 confirmed registry (gas_st retire:confirmed 1525.8 MW in 2027, nuclear retire:confirmed 1122.0 MW in 2030), so step 1b decides only the residual and contributes gas_ct 5.2 MW retire:announced in 2030. No unit is decided twice. (2) CCS retrofits CLEAR at CAISO on the corrected D41 constants and the 3 GW/yr/ISO cap BINDS IN EVERY YEAR: 2028 37 rows / 2997.1 MW, 2029 12 / 2997.9, 2030 11 / 2857.3. This lane made NO prediction for CAISO — D41 dispositioned only the zero-carbon pair (PJM/MISO) and the RGGI pair (NEISO/NYISO), leaving CAISO's state-carbon case unaddressed — so this is read, not graded. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
   ],
   "categories": {
    "FC-1": {
@@ -82,7 +82,7 @@
      {
       "row": "corridor",
       "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true
      }
     ]
@@ -120,7 +120,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger present as an UNATTESTED SKELETON: 1 of 2 entries carry identification='unattested' (negative_renewable_offers). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 1 of 2 entries carry identification='unattested' (negative_renewable_offers). Identification is unproven exactly as with no ledger — but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
       "gating": true
      }
     ]
@@ -262,13 +262,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5\u00d710% FAIL; price 2024 |41.2%|>15.0%=K1.5\u00d710% FAIL; price 2025 |22.5%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |49.2%|>15.0%=K1.5\u00d710% FAIL; co2 2024 |42.7%|>15.0%=K1.5\u00d710% FAIL; co2 2025 |50.6%|>15.0%=K1.5\u00d710% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2025 |37.2%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5×10% FAIL; price 2024 |41.2%|>15.0%=K1.5×10% FAIL; price 2025 |22.5%|>15.0%=K1.5×10% FAIL; co2 2023 |49.2%|>15.0%=K1.5×10% FAIL; co2 2024 |42.7%|>15.0%=K1.5×10% FAIL; co2 2025 |50.6%|>15.0%=K1.5×10% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5×5% FAIL; coal_twh 2025 |37.2%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -287,7 +287,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -309,7 +309,7 @@
      {
       "row": "run_config",
       "status": "CAVEAT",
-      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "detail": "run_config is a post-hoc reconstruction — mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -321,7 +321,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction — 1 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -346,10 +346,10 @@
   "determination": "HOLD",
   "iso": "ERCOT",
   "notes": [
-   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/ercot-2023-2027-crossover-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 §0s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/ercot-2023-2027-crossover-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "cache_epoch": "Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
    "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
@@ -386,7 +386,7 @@
    "FC-7 provenance & DOF"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed to an axis, nothing armed. Run ercot-2026-2030-t1f-d46, cache key 873d8c0e6cab52ae (pre-declared and matched), --golden-posture, 2026-2030, 11.8 min wall / 4.1 GB peak RSS. SCOPE NOTE: the preserved ercot-t1f-pre-d46 is the FFR-3A-2 vintage (cache epoch \"2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips\"), so the delta below spans a MONTH of HEAD movement and is NOT attributable to this batch's three axes; it is reported as \"the board row this replaces\", never as the flip's effect. Determination HOLD, unchanged, with an identical category map (FC-1 FAIL, FC-2 FAIL, FC-7 CAVEAT, FC-8 PASS). WHAT MOVED, at full magnitude and all in the WORSE direction: I12 reserve margin 2027 9.1 % -> 8.9 %, 2028 3.8 % -> 3.0 %, 2029 3.0 % -> -2.5 %, 2030 -1.5 % -> -7.1 % (band [13.8 %, 28.7 %], FAIL throughout, now negative two years earlier); FC-2 row6 sustained-VOLL hours_ge_500 peak 1137 h/yr -> 4039 h/yr against the 800 h bar. TWO SUBSTANTIVE READINGS FROM THE LEDGERS. (1) THE FOSSIL-DATES CHANNEL DOES REACH ERCOT HERE, which corrects the reading of its T1-H sibling: all three ERCOT filed rows are dated 2027-2029, outside the 2021-2025 hindcast window but INSIDE this one, and all three fire \u2014 gas_st 446.0 MW derate 2027 (O W Sommers 1), coal 566.0 MW derate 2028 (J K Spruce), gas_st 446.0 MW retire 2029 (O W Sommers 2). ERCOT's hindcast null is a WINDOW artifact, not an ERCOT-wide coverage gap. (2) CCS RETROFITS CLEAR AT ERCOT ON THE CORRECTED D41 CONSTANTS, falsifying this lane's pre-declared prediction of zero: 11 conversions / 2130.9 MW in 2028 and 3 / 610.9 MW in 2029, all gas_cc -> gas_cc_ccs. D41 \u00a74.3's \"at carbon = 0, NO host class clears the retrofit bar in any year\" was scoped to PJM and MISO and DOES NOT EXTEND to ERCOT, which is also carbon = 0. Why ERCOT's host economics clear a bar PJM's and MISO's do not is NOT answered here and is ROUTED, not inferred. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B — no control, nothing attributed to an axis, nothing armed. Run ercot-2026-2030-t1f-d46, cache key 873d8c0e6cab52ae (pre-declared and matched), --golden-posture, 2026-2030, 11.8 min wall / 4.1 GB peak RSS. SCOPE NOTE: the preserved ercot-t1f-pre-d46 is the FFR-3A-2 vintage (cache epoch \"2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips\"), so the delta below spans a MONTH of HEAD movement and is NOT attributable to this batch's three axes; it is reported as \"the board row this replaces\", never as the flip's effect. Determination HOLD, unchanged, with an identical category map (FC-1 FAIL, FC-2 FAIL, FC-7 CAVEAT, FC-8 PASS). WHAT MOVED, at full magnitude and all in the WORSE direction: I12 reserve margin 2027 9.1 % -> 8.9 %, 2028 3.8 % -> 3.0 %, 2029 3.0 % -> -2.5 %, 2030 -1.5 % -> -7.1 % (band [13.8 %, 28.7 %], FAIL throughout, now negative two years earlier); FC-2 row6 sustained-VOLL hours_ge_500 peak 1137 h/yr -> 4039 h/yr against the 800 h bar. TWO SUBSTANTIVE READINGS FROM THE LEDGERS. (1) THE FOSSIL-DATES CHANNEL DOES REACH ERCOT HERE, which corrects the reading of its T1-H sibling: all three ERCOT filed rows are dated 2027-2029, outside the 2021-2025 hindcast window but INSIDE this one, and all three fire — gas_st 446.0 MW derate 2027 (O W Sommers 1), coal 566.0 MW derate 2028 (J K Spruce), gas_st 446.0 MW retire 2029 (O W Sommers 2). ERCOT's hindcast null is a WINDOW artifact, not an ERCOT-wide coverage gap. (2) CCS RETROFITS CLEAR AT ERCOT ON THE CORRECTED D41 CONSTANTS, falsifying this lane's pre-declared prediction of zero: 11 conversions / 2130.9 MW in 2028 and 3 / 610.9 MW in 2029, all gas_cc -> gas_cc_ccs. D41 §4.3's \"at carbon = 0, NO host class clears the retrofit bar in any year\" was scoped to PJM and MISO and DOES NOT EXTEND to ERCOT, which is also carbon = 0. Why ERCOT's host economics clear a bar PJM's and MISO's do not is NOT answered here and is ROUTED, not inferred. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
   ],
   "categories": {
    "FC-1": {
@@ -422,7 +422,7 @@
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true
      },
      {
@@ -453,7 +453,7 @@
      {
       "row": "corridor",
       "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true
      }
     ]
@@ -633,13 +633,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5\u00d710% FAIL; price 2024 |41.2%|>15.0%=K1.5\u00d710% FAIL; price 2025 |22.5%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |49.2%|>15.0%=K1.5\u00d710% FAIL; co2 2024 |42.7%|>15.0%=K1.5\u00d710% FAIL; co2 2025 |50.6%|>15.0%=K1.5\u00d710% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2025 |37.2%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5×10% FAIL; price 2024 |41.2%|>15.0%=K1.5×10% FAIL; price 2025 |22.5%|>15.0%=K1.5×10% FAIL; co2 2023 |49.2%|>15.0%=K1.5×10% FAIL; co2 2024 |42.7%|>15.0%=K1.5×10% FAIL; co2 2025 |50.6%|>15.0%=K1.5×10% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5×5% FAIL; coal_twh 2025 |37.2%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -658,7 +658,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -709,10 +709,10 @@
   "determination": "HOLD",
   "iso": "ERCOT",
   "notes": [
-   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221249.2/\u221242.7/\u221250.6 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 46\u2013103 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-2 bundle was never committed (results/ffr3a2 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same ERCOT crossover question is `ercot-t1x-ffr2a` (co2 \u221225.2/\u221223.2/+1.3 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison)."
+   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md §0/§5.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (−49.2/−42.7/−50.6 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect — the DROP term is 46–103 % of the miss per the FINDING §2.2 — not dispatch error and not the emission-rate derivation, which is exonerated within ±5 %). The backing FFR-3A-2 bundle was never committed (results/ffr3a2 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same ERCOT crossover question is `ercot-t1x-ffr2a` (co2 −25.2/−23.2/+1.3 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error — the rate leg is measured separately (FINDING §2, own-rate comparison)."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -856,13 +856,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5\u00d710% FAIL; price 2024 |41.9%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |25.2%|>15.0%=K1.5\u00d710% FAIL; co2 2024 |23.2%|>15.0%=K1.5\u00d710% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2025 |38.1%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5×10% FAIL; price 2024 |41.9%|>15.0%=K1.5×10% FAIL; co2 2023 |25.2%|>15.0%=K1.5×10% FAIL; co2 2024 |23.2%|>15.0%=K1.5×10% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5×5% FAIL; coal_twh 2025 |38.1%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -881,7 +881,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -1110,7 +1110,7 @@
      {
       "row": "run_config",
       "status": "CAVEAT",
-      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "detail": "run_config is a post-hoc reconstruction — mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -1122,7 +1122,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction — 1 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -1147,10 +1147,10 @@
   "determination": "HOLD",
   "iso": "MISO",
   "notes": [
-   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/miso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 §0s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/miso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "cache_epoch": "Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
    "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
@@ -1222,13 +1222,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |13.9%| in (10%, 30.0%] CAVEAT; price 2025 |27.4%| in (10%, 30.0%] CAVEAT; co2 2023 |63.3%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |58.9%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |75.5%|>30.0%=K3.0\u00d710% FAIL; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |15.1%|>15.0%=K3.0\u00d75% FAIL",
+      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |13.9%| in (10%, 30.0%] CAVEAT; price 2025 |27.4%| in (10%, 30.0%] CAVEAT; co2 2023 |63.3%|>30.0%=K3.0×10% FAIL; co2 2024 |58.9%|>30.0%=K3.0×10% FAIL; co2 2025 |75.5%|>30.0%=K3.0×10% FAIL; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |15.1%|>15.0%=K3.0×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -1247,7 +1247,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -1269,7 +1269,7 @@
      {
       "row": "run_config",
       "status": "CAVEAT",
-      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 678 config keys; gates ['capacity_market_clearing']",
+      "detail": "run_config is a post-hoc reconstruction — mode=forecast; 678 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -1281,7 +1281,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 2 entries well-formed (0 open residual DOF listed)",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction — 2 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -1306,8 +1306,8 @@
   "determination": "HOLD",
   "iso": "MISO",
   "notes": [
-   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221263.3/\u221258.9/\u221275.5 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 97\u2013117 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-4 bundle was never committed (results/ffr3a4 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same MISO crossover question is `miso-t1x-ffr2a` (co2 +1.2/\u22121.8/+13.4 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison).",
-   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/miso-2023-2027-crossover-ffr3a4/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at 6fbd3f28eb9a @ 2026-08-04T08:00:24Z -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md §0/§5.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (−63.3/−58.9/−75.5 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect — the DROP term is 97–117 % of the miss per the FINDING §2.2 — not dispatch error and not the emission-rate derivation, which is exonerated within ±5 %). The backing FFR-3A-4 bundle was never committed (results/ffr3a4 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same MISO crossover question is `miso-t1x-ffr2a` (co2 +1.2/−1.8/+13.4 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error — the rate leg is measured separately (FINDING §2, own-rate comparison).",
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 §0s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/miso-2023-2027-crossover-ffr3a4/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at 6fbd3f28eb9a @ 2026-08-04T08:00:24Z -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
    "cache_epoch": null,
@@ -1407,7 +1407,7 @@
      {
       "row": "corridor",
       "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true
      }
     ]
@@ -1445,7 +1445,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger present as an UNATTESTED SKELETON: 4 of 5 entries carry identification='unattested' (entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 4 of 5 entries carry identification='unattested' (entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions). Identification is unproven exactly as with no ledger — but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
       "gating": true
      }
     ]
@@ -1458,7 +1458,7 @@
      {
       "row": "runtime",
       "status": "CAVEAT",
-      "detail": "wall 65.0 min > 45 min budget; peak RSS 10.0 GB \u2265 8.6 GB (no co-run)",
+      "detail": "wall 65.0 min > 45 min budget; peak RSS 10.0 GB ≥ 8.6 GB (no co-run)",
       "gating": true
      }
     ]
@@ -1568,7 +1568,7 @@
       "status": "PASS"
      },
      {
-      "detail": "backstop share 9.2% \u2264 10%",
+      "detail": "backstop share 9.2% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -1593,7 +1593,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -1644,7 +1644,7 @@
     "label": "FC-8 runtime feasibility",
     "rows": [
      {
-      "detail": "peak RSS 9.6 GB \u2265 8.6 GB (no co-run)",
+      "detail": "peak RSS 9.6 GB ≥ 8.6 GB (no co-run)",
       "gating": true,
       "row": "runtime",
       "status": "CAVEAT"
@@ -1664,7 +1664,7 @@
    "PRESERVED 2026-08-31 by session S-123-V: this is the PRE-PACKAGE MISO T1-F vintage (FFR-3A-2, cache epoch 2026-08-03), retained verbatim when the bare `miso-t1f` key was overwritten with the post-S-123 verification re-measure `miso-2026-2030-s123-verify`. Its FC-1 FAIL is on I7 (2026: 135,304 < 141,341; 2027: 139,147 < 142,806 MW); the S-123 adequacy package closes exactly that gap. Preserve-then-overwrite, the neiso-t1f-s4hydro convention (FINDING-capx-s4b-neiso-ara-2026-08-30.md)."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -1696,7 +1696,7 @@
    "FC-7 provenance & DOF"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed to an axis, nothing armed. Posture = the bare key's own flag set with only HEAD's defaults moved, plus --entry-screen-diagnostics (D37-verified output-only on the fleet outcome, though cache-keyed, so this is MISO's first diagnostics-on T1-H). Two axes reach this leg: the Q30/D44 fossil-dates flip (channel armed 99 live rows / 28255 MW, 2021-2040) and keeper vintage 198 -> 202; D41's CCS axis is VERIFIED inert (ccs_retrofits empty in every solve year, retrofits opening in 2028, past the window). THE GATE-LEG FLIP OF THE BATCH: retire.unit_recall_gt300 5/19 = 0.263 (FAIL) -> 16/19 = 0.842 (PASS), reproducing capx-D42's own A/B of this exact leg to the unit and LEAVING the FC-3 band-FAIL list. retire.total_gw model 4.469 -> 9.799 GW (err_frac -0.743 -> -0.436, band still FAIL \u2014 the dates channel closes the RECALL half of the retirement problem, not the MAGNITUDE half, which D27/D31 located on the margin side). Window totals by channel, from the evolution ledgers: dates OFF = coal retire:economic 3684.0 MW, the ONLY thermal exit; dates ON = ZERO economic exits of any fuel, everything through the dates channel \u2014 coal 2410.3 retire + 1495.9 derate, gas_st 504.1 retire + 313.8 derate, gas_ct 132.3 derate, oil 153.0 retire. THIS IS RULE 19 WORKING, NOT A DISPLACEMENT: the same coal capacity still exits (3684.0 -> 3906.2 MW) and simply moves out of the economic screen's jurisdiction into the channel that holds its filed date, which is exactly what D42's \"displaces nothing\" claims and what CLAUDE.md's step-1 amendment describes. Verified directly against D42's OWN committed legs, zero solves: its control shows coal retire:economic 3684.0 MW and its armed leg the identical announced breakdown above. false_retire stays 0.000 GW / PASS, so the added exits are real. Band-FAIL list 8 -> 8 rows: retire.unit_recall_gt300 and add.shares.gas_cc drop out, add.by_tech.gas_ct and add.shares.gas_ct enter. Determination HOLD, unchanged. Preserved verbatim: miso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B — no control, nothing attributed to an axis, nothing armed. Posture = the bare key's own flag set with only HEAD's defaults moved, plus --entry-screen-diagnostics (D37-verified output-only on the fleet outcome, though cache-keyed, so this is MISO's first diagnostics-on T1-H). Two axes reach this leg: the Q30/D44 fossil-dates flip (channel armed 99 live rows / 28255 MW, 2021-2040) and keeper vintage 198 -> 202; D41's CCS axis is VERIFIED inert (ccs_retrofits empty in every solve year, retrofits opening in 2028, past the window). THE GATE-LEG FLIP OF THE BATCH: retire.unit_recall_gt300 5/19 = 0.263 (FAIL) -> 16/19 = 0.842 (PASS), reproducing capx-D42's own A/B of this exact leg to the unit and LEAVING the FC-3 band-FAIL list. retire.total_gw model 4.469 -> 9.799 GW (err_frac -0.743 -> -0.436, band still FAIL — the dates channel closes the RECALL half of the retirement problem, not the MAGNITUDE half, which D27/D31 located on the margin side). Window totals by channel, from the evolution ledgers: dates OFF = coal retire:economic 3684.0 MW, the ONLY thermal exit; dates ON = ZERO economic exits of any fuel, everything through the dates channel — coal 2410.3 retire + 1495.9 derate, gas_st 504.1 retire + 313.8 derate, gas_ct 132.3 derate, oil 153.0 retire. THIS IS RULE 19 WORKING, NOT A DISPLACEMENT: the same coal capacity still exits (3684.0 -> 3906.2 MW) and simply moves out of the economic screen's jurisdiction into the channel that holds its filed date, which is exactly what D42's \"displaces nothing\" claims and what CLAUDE.md's step-1 amendment describes. Verified directly against D42's OWN committed legs, zero solves: its control shows coal retire:economic 3684.0 MW and its armed leg the identical announced breakdown above. false_retire stays 0.000 GW / PASS, so the added exits are real. Band-FAIL list 8 -> 8 rows: retire.unit_recall_gt300 and add.shares.gas_cc drop out, add.by_tech.gas_ct and add.shares.gas_ct enter. Determination HOLD, unchanged. Preserved verbatim: miso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
   ],
   "categories": {
    "FC-1": {
@@ -1998,7 +1998,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "501b5f64b8adf8d4",
-   "note": "HEAD re-measure of the MISO T1-H leg (capx lane D27, executing D17-R's routed PRIMARY R1), run `miso-2021-2025-realized-t1h-d27`, bare invocation at HEAD with every solve-affecting flag omitted. Scored against the CURRENT committed capacity_actuals_miso.csv; the prior bare-key record (FFR-3A-2 vintage) is preserved at `miso-t1h-pre-d27`. NOT an S-123-isolating A/B \u2014 five MISO-relevant defaults moved after the FFR-3A-3 baseline and no control arm was in budget; see docs/handoffs/FINDING-capx-d27-miso-t1h-remeasure-2026-09-01.md.",
+   "note": "HEAD re-measure of the MISO T1-H leg (capx lane D27, executing D17-R's routed PRIMARY R1), run `miso-2021-2025-realized-t1h-d27`, bare invocation at HEAD with every solve-affecting flag omitted. Scored against the CURRENT committed capacity_actuals_miso.csv; the prior bare-key record (FFR-3A-2 vintage) is preserved at `miso-t1h-pre-d27`. NOT an S-123-isolating A/B — five MISO-relevant defaults moved after the FFR-3A-3 baseline and no control arm was in budget; see docs/handoffs/FINDING-capx-d27-miso-t1h-remeasure-2026-09-01.md.",
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-09-01T05:10:02Z",
    "scored_at_sha": "360b83eebfec",
@@ -2101,8 +2101,8 @@
   "iso": "MISO",
   "notes": [],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
-   "preserved_note": "PRESERVED BASELINE \u2014 the FFR-3A-2-vintage measurement that occupied the bare `miso-t1h` key until capx lane D27 (2026-09-01) re-measured the MISO T1-H leg at HEAD and took the bare key under the LIVE-vintage convention. NEVER quote this record as MISO's current T1-H state; read `miso-t1h`. It remains valid at the sha it records.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "preserved_note": "PRESERVED BASELINE — the FFR-3A-2-vintage measurement that occupied the bare `miso-t1h` key until capx lane D27 (2026-09-01) re-measured the MISO T1-H leg at HEAD and took the bare key under the LIVE-vintage convention. NEVER quote this record as MISO's current T1-H state; read `miso-t1h`. It remains valid at the sha it records.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -2272,13 +2272,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |13.9%| in (10%, 30.0%] CAVEAT; price 2025 |27.4%| in (10%, 30.0%] CAVEAT; co2 2023 |63.3%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |58.9%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |75.5%|>30.0%=K3.0\u00d710% FAIL; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |15.1%|>15.0%=K3.0\u00d75% FAIL",
+      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |13.9%| in (10%, 30.0%] CAVEAT; price 2025 |27.4%| in (10%, 30.0%] CAVEAT; co2 2023 |63.3%|>30.0%=K3.0×10% FAIL; co2 2024 |58.9%|>30.0%=K3.0×10% FAIL; co2 2025 |75.5%|>30.0%=K3.0×10% FAIL; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |15.1%|>15.0%=K3.0×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -2297,7 +2297,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -2349,7 +2349,7 @@
   "iso": "MISO",
   "notes": [],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -2420,13 +2420,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |15.3%| in (10%, 30.0%] CAVEAT; price 2025 |30.3%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |13.4%| in (10%, 30.0%] CAVEAT; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |12.1%| in (5%, 15.0%] CAVEAT",
+      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |15.3%| in (10%, 30.0%] CAVEAT; price 2025 |30.3%|>30.0%=K3.0×10% FAIL; co2 2025 |13.4%| in (10%, 30.0%] CAVEAT; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |12.1%| in (5%, 15.0%] CAVEAT",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -2445,7 +2445,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -2674,7 +2674,7 @@
      {
       "row": "run_config",
       "status": "CAVEAT",
-      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "detail": "run_config is a post-hoc reconstruction — mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -2686,7 +2686,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction — 1 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -2711,10 +2711,10 @@
   "determination": "HOLD",
   "iso": "NEISO",
   "notes": [
-   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/neiso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 §0s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/neiso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "cache_epoch": "Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
    "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
@@ -2745,7 +2745,7 @@
   "reasons": [],
   "caveats": [],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed to an axis, nothing armed. Run neiso-2026-2030-d46-remeasure, cache key 6690e4d6d66bc819 (pre-declared and matched), --golden-posture, 2026-2030, 8.0 min wall / 3.3 GB peak RSS. Determination PROMOTE, caveats [] \u2014 UNCHANGED from the preserved neiso-t1f-pre-d46 (the capx-S4b ARA arm), with all 14 invariants PASS on both and every FC-2 row PASS on both. THE ONE GATE-ROW MOVE: FC-2 row4 backstop share 0.0 % -> 1.2 % (bar 10 %, PASS both) \u2014 the reserve-margin backstop now fires slightly, consistent with the dates channel removing capacity. INSTRUMENT PARITY, STATED: the first score of this run read PROMOTE-WITH-CAVEATS purely because no DOF ledger was passed; the ledger was then BUILT from this run's own run_config.json by the committed scripts/build_forecast_dof_ledger.py (7 entries, 0 UNIDENTIFIED \u2014 the same shape as the preserved record's) and the re-score reads PROMOTE. That is an instrument gap closed, not a model gain, and it is recorded rather than quietly absorbed. FC-5 stays SKIPPED here where the preserved record reads CAVEAT: D25's corridor disposition table was authored against the S4b trajectory and this lane declines to re-apply per-row dispositions to a different one; FC-5 is report-only at t1f and gates nothing, so the determination is unaffected. THE D41 CCS QUESTION, ANSWERED FOR THIS WINDOW AND AGAINST THIS LANE'S OWN PREDICTION: NEISO is the RGGI case D41 \u00a74.4 left open, where retrofits still clear but the bar rises from a 28-35 % capacity factor to 56-85 %, and D41 \u00a77 routed \"whether the cap still binds there\" as not determinable from committed artifacts. It STILL BINDS. On the corrected constants: 2028 17 rows / 2999.6 MW, 2029 23 / 2994.4, 2030 10 / 2948.6 \u2014 every year still at the 3 GW/yr/ISO cap, against the preserved arm's 2999.9 / 2999.4 / 2997.5. The corrected constants thin the conversion COUNT (58 -> 50 rows) and trim total MW 8996.8 -> 8942.6 (-0.6 %), but they do NOT unbind the cap in any year. This lane pre-declared that the cap would STOP binding in at least one year; it does not. The full-horizon reading is GOLDEN-3's. Exit channels: the dates channel fires (coal 108.0 MW retire:announced 2027, gas_cc 6.2 MW derate:announced 2027, gas_ct 1.6 MW 2029) and gas_cc economic exits move 2136.0 -> 2166.0 MW. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B — no control, nothing attributed to an axis, nothing armed. Run neiso-2026-2030-d46-remeasure, cache key 6690e4d6d66bc819 (pre-declared and matched), --golden-posture, 2026-2030, 8.0 min wall / 3.3 GB peak RSS. Determination PROMOTE, caveats [] — UNCHANGED from the preserved neiso-t1f-pre-d46 (the capx-S4b ARA arm), with all 14 invariants PASS on both and every FC-2 row PASS on both. THE ONE GATE-ROW MOVE: FC-2 row4 backstop share 0.0 % -> 1.2 % (bar 10 %, PASS both) — the reserve-margin backstop now fires slightly, consistent with the dates channel removing capacity. INSTRUMENT PARITY, STATED: the first score of this run read PROMOTE-WITH-CAVEATS purely because no DOF ledger was passed; the ledger was then BUILT from this run's own run_config.json by the committed scripts/build_forecast_dof_ledger.py (7 entries, 0 UNIDENTIFIED — the same shape as the preserved record's) and the re-score reads PROMOTE. That is an instrument gap closed, not a model gain, and it is recorded rather than quietly absorbed. FC-5 stays SKIPPED here where the preserved record reads CAVEAT: D25's corridor disposition table was authored against the S4b trajectory and this lane declines to re-apply per-row dispositions to a different one; FC-5 is report-only at t1f and gates nothing, so the determination is unaffected. THE D41 CCS QUESTION, ANSWERED FOR THIS WINDOW AND AGAINST THIS LANE'S OWN PREDICTION: NEISO is the RGGI case D41 §4.4 left open, where retrofits still clear but the bar rises from a 28-35 % capacity factor to 56-85 %, and D41 §7 routed \"whether the cap still binds there\" as not determinable from committed artifacts. It STILL BINDS. On the corrected constants: 2028 17 rows / 2999.6 MW, 2029 23 / 2994.4, 2030 10 / 2948.6 — every year still at the 3 GW/yr/ISO cap, against the preserved arm's 2999.9 / 2999.4 / 2997.5. The corrected constants thin the conversion COUNT (58 -> 50 rows) and trim total MW 8996.8 -> 8942.6 (-0.6 %), but they do NOT unbind the cap in any year. This lane pre-declared that the cap would STOP binding in at least one year; it does not. The full-horizon reading is GOLDEN-3's. Exit channels: the dates channel fires (coal 108.0 MW retire:announced 2027, gas_cc 6.2 MW derate:announced 2027, gas_ct 1.6 MW 2029) and gas_cc economic exits move 2136.0 -> 2166.0 MW. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
   ],
   "categories": {
    "FC-1": {
@@ -2781,7 +2781,7 @@
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 1.2% \u2264 10%",
+      "detail": "backstop share 1.2% ≤ 10%",
       "gating": true
      }
     ]
@@ -2806,7 +2806,7 @@
      {
       "row": "corridor",
       "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true
      }
     ]
@@ -2972,7 +2972,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -3040,7 +3040,7 @@
   "iso": "NEISO",
   "notes": [],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "note": "FFR-3A-2 measurement, preserved verbatim by capx-S4V-neiso-verification before the bare key was overwritten with the post-S4 verification re-score",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
@@ -3084,7 +3084,7 @@
       "status": "PASS"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -3109,7 +3109,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -3181,7 +3181,7 @@
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-08-31T04:04:26Z",
    "scored_at_sha": "4bdb2d603c68",
-   "session": "capx-S4b-neiso-ara (CONTROL arm: the three NEISO requirement registry values locally reverted to the FCA-17 prints \u2014 PRM 30,305/27,298-1, DR 2,940/30,305, import 567.0 \u2014 uncommitted diagnostic for attribution only, never a shippable configuration) \u00b7 FC-7 DOF-LEDGER RE-EMISSION 2026-08-31 by lane capx-D8-RE (director r#21): re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-s4b-ara/neiso-control/dof_ledger.json, the capx-D8 instrument's committed ledger \u2014 7 entries, 0 UNIDENTIFIED). ZERO SOLVES. Control: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte, so the ONLY delta is the ledger input. Prior stamp preserved here: scored_at_sha 88baa9d5c71b @ 2026-08-30T22:25:59Z (session capx-S4b-neiso-ara). MOVED: FC-7 'dof ledger' row CAVEAT->PASS, FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired. NOT MOVED: determination (PROMOTE-WITH-CAVEATS, held by the arm's own FC-1/FC-2 caveats) and every other row. The TREATMENT arm's identical re-emission (bare `neiso-t1f`, which WOULD flip PROMOTE-WITH-CAVEATS->PROMOTE) is deliberately NOT landed \u2014 STOPPED under the 2026-08-30 cross-lane re-grade ruling pending lane S-4b's own re-verification, so the two arms' FC-7 rows differ at HEAD for a RECORDS reason, never a control/treatment one (both arms share one run_config and one ledger content). docs/handoffs/FINDING-capx-d8-dof-ledger-2026-08-30.md \u00a78."
+   "session": "capx-S4b-neiso-ara (CONTROL arm: the three NEISO requirement registry values locally reverted to the FCA-17 prints — PRM 30,305/27,298-1, DR 2,940/30,305, import 567.0 — uncommitted diagnostic for attribution only, never a shippable configuration) · FC-7 DOF-LEDGER RE-EMISSION 2026-08-31 by lane capx-D8-RE (director r#21): re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-s4b-ara/neiso-control/dof_ledger.json, the capx-D8 instrument's committed ledger — 7 entries, 0 UNIDENTIFIED). ZERO SOLVES. Control: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte, so the ONLY delta is the ledger input. Prior stamp preserved here: scored_at_sha 88baa9d5c71b @ 2026-08-30T22:25:59Z (session capx-S4b-neiso-ara). MOVED: FC-7 'dof ledger' row CAVEAT->PASS, FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired. NOT MOVED: determination (PROMOTE-WITH-CAVEATS, held by the arm's own FC-1/FC-2 caveats) and every other row. The TREATMENT arm's identical re-emission (bare `neiso-t1f`, which WOULD flip PROMOTE-WITH-CAVEATS->PROMOTE) is deliberately NOT landed — STOPPED under the 2026-08-30 cross-lane re-grade ruling pending lane S-4b's own re-verification, so the two arms' FC-7 rows differ at HEAD for a RECORDS reason, never a control/treatment one (both arms share one run_config and one ledger content). docs/handoffs/FINDING-capx-d8-dof-ledger-2026-08-30.md §8."
   },
   "reasons": [],
   "rubric_version": "1.0",
@@ -3220,7 +3220,7 @@
       "status": "PASS"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -3245,7 +3245,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -3318,7 +3318,7 @@
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-08-30T18:31:28Z",
    "scored_at_sha": "60e19610e454",
-   "session": "capx-S4V-neiso-verification (CONTROL arm: HYDRO_ACCREDITATION_CREDIT_BY_ISO['NEISO'] locally reverted to the generic 0.50 fallback \u2014 uncommitted diagnostic for attribution only, never a shippable configuration)"
+   "session": "capx-S4V-neiso-verification (CONTROL arm: HYDRO_ACCREDITATION_CREDIT_BY_ISO['NEISO'] locally reverted to the generic 0.50 fallback — uncommitted diagnostic for attribution only, never a shippable configuration)"
   },
   "reasons": [],
   "rubric_version": "1.0",
@@ -3357,7 +3357,7 @@
       "status": "PASS"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -3382,7 +3382,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -3669,7 +3669,7 @@
    "PRESERVED BASELINE -- the FFR-3A-2-vintage `neiso-t1h` record, moved here VERBATIM by capx lane D37 (2026-09-02) when the armed Net ICR re-measure took the bare key under the LIVE-vintage convention. Valid at the sha it records (8ba592814d92); NEVER quote it as current state. Superseded by `neiso-t1h` (run neiso-2021-2025-realized-t1h-d37-armed)."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -3913,7 +3913,7 @@
       "status": "SKIPPED"
      },
      {
-      "detail": "backstop share 0% (reserve_margin_build_enabled off \u2014 no backstop channel, and no per-channel split to check it against)",
+      "detail": "backstop share 0% (reserve_margin_build_enabled off — no backstop channel, and no per-channel split to check it against)",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -3939,13 +3939,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.3%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |13.2%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |84.0%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.3%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |13.2%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |84.0%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -3964,7 +3964,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -4069,7 +4069,7 @@
       "status": "SKIPPED"
      },
      {
-      "detail": "backstop share 0% (reserve_margin_build_enabled off \u2014 no backstop channel, and no per-channel split to check it against)",
+      "detail": "backstop share 0% (reserve_margin_build_enabled off — no backstop channel, and no per-channel split to check it against)",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -4095,13 +4095,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |10.6%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |10.6%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -4120,7 +4120,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -4181,7 +4181,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "07e416f3f8072e7c",
-   "note": "pre-D5-R baseline, preserved verbatim by capx-d5r-scorer-coal-grain before the bare key was overwritten with the co2 class-grain-repaired re-score (FINDING-capx-d5-crossover-co2-2026-08-30 \u00a75.1; owner ruling Q12, r#15 sitting): its FC-4 co2 rows (+12.8/+10.6/\u22122.3 %) carry the pre-repair instrument, in which the model's unsplit COAL family energy (0.001/0.085/0.082 TWh) was dropped from the scored CO2",
+   "note": "pre-D5-R baseline, preserved verbatim by capx-d5r-scorer-coal-grain before the bare key was overwritten with the co2 class-grain-repaired re-score (FINDING-capx-d5-crossover-co2-2026-08-30 §5.1; owner ruling Q12, r#15 sitting): its FC-4 co2 rows (+12.8/+10.6/−2.3 %) carry the pre-repair instrument, in which the model's unsplit COAL family energy (0.001/0.085/0.082 TWh) was dropped from the scored CO2",
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-08-30T21:35:36Z",
    "scored_at_sha": "74775c4d661f"
@@ -4226,7 +4226,7 @@
       "status": "SKIPPED"
      },
      {
-      "detail": "backstop share 0% (reserve_margin_build_enabled off \u2014 no backstop channel, and no per-channel split to check it against)",
+      "detail": "backstop share 0% (reserve_margin_build_enabled off — no backstop channel, and no per-channel split to check it against)",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -4252,13 +4252,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -4277,7 +4277,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -4338,7 +4338,7 @@
   "notes": [],
   "provenance": {
    "cache_epoch": "07e416f3f8072e7c",
-   "note": "pre-NEISO-RC-R baseline, preserved verbatim by capx-neiso-rc-repair before the bare key was overwritten with the rcrepair treatment run's verdict (the namespace's preserve-then-overwrite convention, the -pre-d5r precedent; charter capx-director-prompt-pack-2026-08.md \u00a7NEISO-RC-R Phase B). This record is the capxd14 control's verdict (post-D5-R co2 class-grain re-emission) and stays that run's own verdict; determination HOLD on both sides \u2014 no verdict flip.",
+   "note": "pre-NEISO-RC-R baseline, preserved verbatim by capx-neiso-rc-repair before the bare key was overwritten with the rcrepair treatment run's verdict (the namespace's preserve-then-overwrite convention, the -pre-d5r precedent; charter capx-director-prompt-pack-2026-08.md §NEISO-RC-R Phase B). This record is the capxd14 control's verdict (post-D5-R co2 class-grain re-emission) and stays that run's own verdict; determination HOLD on both sides — no verdict flip.",
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-08-30T22:48:52Z",
    "scored_at_sha": "bd97c6ebaa68"
@@ -4376,8 +4376,8 @@
    "FC-6 driver response"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED) \u2014 the GOLDEN-2 re-solve at HEAD. Run neiso-2026-2050-t3-golden3-bau, cache key 67678e58b2d0526c (pre-declared and matched), --golden-posture --full-solve-authorized, 2026-2050, 33.0 min wall / 3.7 GB peak, 25/25 years solved, error None. Solved into a FRESH out-dir results/ff-t3-neiso-golden/bau-d46/ so GOLDEN-2's bau/ bundle stays byte-intact and self-describing; the prior verdict is preserved verbatim at neiso-t3-pre-d46 and the existing chain (-pre-fc5, -pre-fc6, -pre-fc6repair, -pre-p2scope, -prera-2026-08-31) is untouched. THIS IS THE BATCH'S CLEANEST THREE-AXIS LEG: the resolved-config delta from GOLDEN-2's own bundle is EXACTLY the fossil-dates flip plus the two D41 CCS constants, plus fields added since that all default False. FULL RUBRIC, FC-1..FC-8, with the FC-6 battery re-solved at this vintage as GOLDEN-2 did (four sequential paired arms, 32.5-32.9 min each: base 67678e58b2d0526c, carbon_plus25 56019f3b0850e9f9, gasup150 96984c538320d6d6, gaspm5 e84079053b581a9e; plus the T1.6 ladder, 11.0 min). THE REPRODUCTION GATE PASSES: the base arm is a full 25-year re-solve of the identical reference construction and keys at 67678e58b2d0526c, byte-equal to the campaign's own key. DETERMINATION HOLD \u2014 UNCHANGED \u2014 and the category map is IDENTICAL to GOLDEN-2's on seven of eight categories (FC-1 FAIL, FC-2 FAIL, FC-3 FAIL, FC-4 FAIL, FC-5 CAVEAT, FC-6 CAVEAT, FC-8 PASS). THE ONE CATEGORY THAT DIFFERS IS FC-7, PASS -> FAIL, AND IT IS PURELY INSTRUMENTAL, NOT A MODEL REGRESSION: its first three rows all PASS exactly as GOLDEN-2's did (run_config, overlay-off, and a DOF ledger of 7 entries / 0 UNIDENTIFIED built by the committed builder from this bundle's own run_config.json); the single failing row is \"no forecast_attestation.json (a golden run cannot be certified unattested)\". NO ATTESTATION WAS AUTHORED, DELIBERATELY. This lane's pre-declaration did not declare one \u2014 it treated the leg as a re-solve rather than a new campaign \u2014 and authoring one AFTER reading that the row fails without it is exactly the sequence golden-1 refused and GOLDEN-2 \u00a73 wrote its own pre-declaration to prevent (\"inventing an instrument after the pre-declaration to clear a row is forbidden\"). The governance value of that rule is in the SEQUENCE, not the content, so the row is left failing and reported. A properly pre-declared attestation is ROUTED to the director as a follow-up act; it would restore FC-7 without any re-solve. WHAT ACTUALLY MOVED IN THE MODEL: FC-2 row2 final reserve margin 6.6 % -> 5.4 % (in band both), row4 backstop share 0.0 % -> 0.3 % (PASS both), row3 cobweb WIDENS from gas_cc(7) to gas_ct(7); gas_cc(11) (FAIL both); FC-1's I3 renewable-dump failure is IDENTICAL year-by-year (2043 2.17 % \u2026 2050 7.74 %). FC-6's paired invariants all PASS on both, with P2 now clean where GOLDEN-2's carried a \"[not scored at this grain: objective\u2191]\" qualifier, and the T1.6 battery leg is vacuous-CAVEAT on both exactly as GOLDEN-2 pre-declared. THE D41 QUESTION \u00a77 ROUTED \u2014 \"whether the 3 GW/yr/ISO cap still binds under RGGI\" \u2014 IS ANSWERED ON THE FULL HORIZON, AND THE ANSWER IS THAT THE CORRECTED CONSTANTS END THE RETROFIT WAVE NINE YEARS EARLY: conversions fall 83 rows / 14774.5 MW -> 60 rows / 11208.9 MW (-24.1 %), and where GOLDEN-2 converted in 2028/2029/2030/2031/2032 and again in 2040 (that last year AT the 3 GW cap, 3000.0 MW), GOLDEN-3 converts in 2028/2029/2030/2031 and NOTHING THEREAFTER. The cap still binds in 2028-2030 (2999.6 / 2994.4 / 2948.6 MW) but 2040 no longer binds because no retrofit clears at all. This lane pre-declared \"fewer conversions AND the cap stops binding in at least one year it bound in GOLDEN-2\" and BOTH halves hold on the full horizon \u2014 note that the t1f 2026-2030 window CANNOT see it, since the wave outlives the window. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md",
-   "capx-D47 ATTESTATION RE-SCORE \u2014 ARTIFACT-ONLY, ZERO SOLVES. Executes the director's routed item (FINDING-capx-d46-remeasure-2026-09-03.md \u00a79 item 6): D46 left GOLDEN-3's FC-7 failing on the attestation row alone and deliberately did NOT author one post-hoc, because authoring an instrument after reading that a row fails without it is the sequence golden-1 refused and GOLDEN-2 \u00a73 pre-declared against. SEQUENCE PROVEN, NOT ASSERTED: the pre-declaration docs/handoffs/PREDECL-capx-d47-golden3-attestation-2026-09-04.md was committed AND PUSHED at 71dd390e before results/ff-t3-neiso-golden/bau-d46/forecast_attestation.json existed, and this record's own scored_at_sha IS 71dd390ed56f \u2014 the scorer ran at a HEAD that already carried the pre-declaration. CONTROL FIRST: the identical scorer invocation WITHOUT --attestation reproduces the preserved neiso-t3-pre-d47 record with ZERO non-provenance diffs (all eight categories, every row, determination, reasons, caveats), so the attestation artifact is the ONLY delta. Establishing that control mattered: GOLDEN-3's FC-3 consumes D46's own re-solved T1-H (neiso-2021-2025-realized-t1h-d46, da19b85495178949), NOT GOLDEN-2's neiso-2021-2025-curve leg \u2014 scoring with the latter yields a different FC-3 band list and would have been a silently wrong baseline. EXACTLY ONE ROW MOVED, as pre-declared: FC-7 row 4 'attestation' UNATTESTED -> PASS ('all \u00a75 checklist assertions present and true'). ASSERTED ROW-BY-ROW AND VERIFIED: every row of FC-1, FC-2, FC-3, FC-4, FC-5, FC-6, FC-8 and FC-7 rows 1-3 (run_config, overlay-off, dof ledger) is BYTE-IDENTICAL to the preserved record \u2014 same status, same detail string, same gating flag, same row count. The two derived surfaces moved exactly as the pre-declaration \u00a71.3 named them in advance: FC-7 category FAIL -> PASS (the roll-up of its four rows), and the reasons list drops its 'FC-7 provenance & DOF FAIL' line. DETERMINATION HOLD \u2014 UNCHANGED \u2014 and caveats unchanged at [FC-5 external corridor, FC-6 driver response]: GOLDEN-3 carries four independent FC failures (FC-1 I3 renewable dump, FC-2 cobweb, FC-3 T1-H bands, FC-4 T1-X dispatch skill) that this lane does not touch. THE ATTESTATION CERTIFIES PROVENANCE, NOT ACCURACY: it says the bundle's evidence is complete and attested, and nothing about whether the run is right. Its six \u00a75 assertions are all read from committed bytes \u2014 dof_ledger.json (sha256 c8cd36557f867961, 7 entries / 0 UNIDENTIFIED); fc6/arms/base as the FF-4B reproduction (base-arm cache key 67678e58b2d0526c equals the campaign's, trajectory and I1-I14 vector byte-identical, only wall/RSS/perf/path differ); the program-status honest_unfit register; forecast-mode 2026-2050 solve years for the quarantine row; a 778-key full resolved surface with the entire delta vs GOLDEN-2 being 2 changed D41 CCS constants + fossil_announced_exits_enabled=true + 12 False defaults + 1 removal; and D46's own registration. TWO DEVIATIONS DISCLOSED ON THE ARTIFACT'S FACE rather than buried: (1) the ATTESTING SESSION IS NOT THE PRODUCING SESSION \u2014 rubric \u00a75 names the producing session as author, and D46 produced this bundle; that deviation is the price of D46 having correctly refused the post-hoc route, and the routed item sanctions exactly this follow-up. (2) quarantine_attested is asserted about producing THIS bundle, which is what rubric \u00a75.4 asks; the FC-3 input's own solve spans [2021, 2023, 2024, 2025] with scored_years [2023, 2024, 2025] and cutoff 2020-12-31, and the FC-4 input spans 2023-2027 in the permitted crossover window \u2014 both consumed as committed bytes, each lane's quarantine posture its own record's business. The run itself is UNCHANGED: same run_id, same cache_epoch 67678e58b2d0526c, same bundle; only the scoring input set gained one artifact. Prior preserved BYTE-EQUAL at neiso-t3-pre-d47; the existing chain (-pre-fc5, -pre-fc6, -pre-fc6repair, -pre-p2scope, -prera-2026-08-31, -pre-d46) untouched. docs/handoffs/FINDING-capx-d47-golden3-attestation-2026-09-04.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED) — the GOLDEN-2 re-solve at HEAD. Run neiso-2026-2050-t3-golden3-bau, cache key 67678e58b2d0526c (pre-declared and matched), --golden-posture --full-solve-authorized, 2026-2050, 33.0 min wall / 3.7 GB peak, 25/25 years solved, error None. Solved into a FRESH out-dir results/ff-t3-neiso-golden/bau-d46/ so GOLDEN-2's bau/ bundle stays byte-intact and self-describing; the prior verdict is preserved verbatim at neiso-t3-pre-d46 and the existing chain (-pre-fc5, -pre-fc6, -pre-fc6repair, -pre-p2scope, -prera-2026-08-31) is untouched. THIS IS THE BATCH'S CLEANEST THREE-AXIS LEG: the resolved-config delta from GOLDEN-2's own bundle is EXACTLY the fossil-dates flip plus the two D41 CCS constants, plus fields added since that all default False. FULL RUBRIC, FC-1..FC-8, with the FC-6 battery re-solved at this vintage as GOLDEN-2 did (four sequential paired arms, 32.5-32.9 min each: base 67678e58b2d0526c, carbon_plus25 56019f3b0850e9f9, gasup150 96984c538320d6d6, gaspm5 e84079053b581a9e; plus the T1.6 ladder, 11.0 min). THE REPRODUCTION GATE PASSES: the base arm is a full 25-year re-solve of the identical reference construction and keys at 67678e58b2d0526c, byte-equal to the campaign's own key. DETERMINATION HOLD — UNCHANGED — and the category map is IDENTICAL to GOLDEN-2's on seven of eight categories (FC-1 FAIL, FC-2 FAIL, FC-3 FAIL, FC-4 FAIL, FC-5 CAVEAT, FC-6 CAVEAT, FC-8 PASS). THE ONE CATEGORY THAT DIFFERS IS FC-7, PASS -> FAIL, AND IT IS PURELY INSTRUMENTAL, NOT A MODEL REGRESSION: its first three rows all PASS exactly as GOLDEN-2's did (run_config, overlay-off, and a DOF ledger of 7 entries / 0 UNIDENTIFIED built by the committed builder from this bundle's own run_config.json); the single failing row is \"no forecast_attestation.json (a golden run cannot be certified unattested)\". NO ATTESTATION WAS AUTHORED, DELIBERATELY. This lane's pre-declaration did not declare one — it treated the leg as a re-solve rather than a new campaign — and authoring one AFTER reading that the row fails without it is exactly the sequence golden-1 refused and GOLDEN-2 §3 wrote its own pre-declaration to prevent (\"inventing an instrument after the pre-declaration to clear a row is forbidden\"). The governance value of that rule is in the SEQUENCE, not the content, so the row is left failing and reported. A properly pre-declared attestation is ROUTED to the director as a follow-up act; it would restore FC-7 without any re-solve. WHAT ACTUALLY MOVED IN THE MODEL: FC-2 row2 final reserve margin 6.6 % -> 5.4 % (in band both), row4 backstop share 0.0 % -> 0.3 % (PASS both), row3 cobweb WIDENS from gas_cc(7) to gas_ct(7); gas_cc(11) (FAIL both); FC-1's I3 renewable-dump failure is IDENTICAL year-by-year (2043 2.17 % … 2050 7.74 %). FC-6's paired invariants all PASS on both, with P2 now clean where GOLDEN-2's carried a \"[not scored at this grain: objective↑]\" qualifier, and the T1.6 battery leg is vacuous-CAVEAT on both exactly as GOLDEN-2 pre-declared. THE D41 QUESTION §7 ROUTED — \"whether the 3 GW/yr/ISO cap still binds under RGGI\" — IS ANSWERED ON THE FULL HORIZON, AND THE ANSWER IS THAT THE CORRECTED CONSTANTS END THE RETROFIT WAVE NINE YEARS EARLY: conversions fall 83 rows / 14774.5 MW -> 60 rows / 11208.9 MW (-24.1 %), and where GOLDEN-2 converted in 2028/2029/2030/2031/2032 and again in 2040 (that last year AT the 3 GW cap, 3000.0 MW), GOLDEN-3 converts in 2028/2029/2030/2031 and NOTHING THEREAFTER. The cap still binds in 2028-2030 (2999.6 / 2994.4 / 2948.6 MW) but 2040 no longer binds because no retrofit clears at all. This lane pre-declared \"fewer conversions AND the cap stops binding in at least one year it bound in GOLDEN-2\" and BOTH halves hold on the full horizon — note that the t1f 2026-2030 window CANNOT see it, since the wave outlives the window. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md",
+   "capx-D47 ATTESTATION RE-SCORE — ARTIFACT-ONLY, ZERO SOLVES. Executes the director's routed item (FINDING-capx-d46-remeasure-2026-09-03.md §9 item 6): D46 left GOLDEN-3's FC-7 failing on the attestation row alone and deliberately did NOT author one post-hoc, because authoring an instrument after reading that a row fails without it is the sequence golden-1 refused and GOLDEN-2 §3 pre-declared against. SEQUENCE PROVEN, NOT ASSERTED: the pre-declaration docs/handoffs/PREDECL-capx-d47-golden3-attestation-2026-09-04.md was committed AND PUSHED at 71dd390e before results/ff-t3-neiso-golden/bau-d46/forecast_attestation.json existed, and this record's own scored_at_sha IS 71dd390ed56f — the scorer ran at a HEAD that already carried the pre-declaration. CONTROL FIRST: the identical scorer invocation WITHOUT --attestation reproduces the preserved neiso-t3-pre-d47 record with ZERO non-provenance diffs (all eight categories, every row, determination, reasons, caveats), so the attestation artifact is the ONLY delta. Establishing that control mattered: GOLDEN-3's FC-3 consumes D46's own re-solved T1-H (neiso-2021-2025-realized-t1h-d46, da19b85495178949), NOT GOLDEN-2's neiso-2021-2025-curve leg — scoring with the latter yields a different FC-3 band list and would have been a silently wrong baseline. EXACTLY ONE ROW MOVED, as pre-declared: FC-7 row 4 'attestation' UNATTESTED -> PASS ('all §5 checklist assertions present and true'). ASSERTED ROW-BY-ROW AND VERIFIED: every row of FC-1, FC-2, FC-3, FC-4, FC-5, FC-6, FC-8 and FC-7 rows 1-3 (run_config, overlay-off, dof ledger) is BYTE-IDENTICAL to the preserved record — same status, same detail string, same gating flag, same row count. The two derived surfaces moved exactly as the pre-declaration §1.3 named them in advance: FC-7 category FAIL -> PASS (the roll-up of its four rows), and the reasons list drops its 'FC-7 provenance & DOF FAIL' line. DETERMINATION HOLD — UNCHANGED — and caveats unchanged at [FC-5 external corridor, FC-6 driver response]: GOLDEN-3 carries four independent FC failures (FC-1 I3 renewable dump, FC-2 cobweb, FC-3 T1-H bands, FC-4 T1-X dispatch skill) that this lane does not touch. THE ATTESTATION CERTIFIES PROVENANCE, NOT ACCURACY: it says the bundle's evidence is complete and attested, and nothing about whether the run is right. Its six §5 assertions are all read from committed bytes — dof_ledger.json (sha256 c8cd36557f867961, 7 entries / 0 UNIDENTIFIED); fc6/arms/base as the FF-4B reproduction (base-arm cache key 67678e58b2d0526c equals the campaign's, trajectory and I1-I14 vector byte-identical, only wall/RSS/perf/path differ); the program-status honest_unfit register; forecast-mode 2026-2050 solve years for the quarantine row; a 778-key full resolved surface with the entire delta vs GOLDEN-2 being 2 changed D41 CCS constants + fossil_announced_exits_enabled=true + 12 False defaults + 1 removal; and D46's own registration. TWO DEVIATIONS DISCLOSED ON THE ARTIFACT'S FACE rather than buried: (1) the ATTESTING SESSION IS NOT THE PRODUCING SESSION — rubric §5 names the producing session as author, and D46 produced this bundle; that deviation is the price of D46 having correctly refused the post-hoc route, and the routed item sanctions exactly this follow-up. (2) quarantine_attested is asserted about producing THIS bundle, which is what rubric §5.4 asks; the FC-3 input's own solve spans [2021, 2023, 2024, 2025] with scored_years [2023, 2024, 2025] and cutoff 2020-12-31, and the FC-4 input spans 2023-2027 in the permitted crossover window — both consumed as committed bytes, each lane's quarantine posture its own record's business. The run itself is UNCHANGED: same run_id, same cache_epoch 67678e58b2d0526c, same bundle; only the scoring input set gained one artifact. Prior preserved BYTE-EQUAL at neiso-t3-pre-d47; the existing chain (-pre-fc5, -pre-fc6, -pre-fc6repair, -pre-p2scope, -prera-2026-08-31, -pre-d46) untouched. docs/handoffs/FINDING-capx-d47-golden3-attestation-2026-09-04.md"
   ],
   "categories": {
    "FC-1": {
@@ -4413,13 +4413,13 @@
      {
       "row": "row3",
       "status": "FAIL",
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_ct(7); gas_cc(11)",
+      "detail": "cobweb (I13 WARN ⇒ row FAIL): gas_ct(7); gas_cc(11)",
       "gating": true
      },
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 0.3% \u2264 10%",
+      "detail": "backstop share 0.3% ≤ 10%",
       "gating": true
      }
     ]
@@ -4445,13 +4445,13 @@
      {
       "row": "quarantine",
       "status": "PASS",
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true
      },
      {
       "row": "dispatch skill",
       "status": "FAIL",
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.3%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |13.2%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |84.0%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.3%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |13.2%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |84.0%|>7.5%=K1.5×5% FAIL",
       "gating": true
      },
      {
@@ -4495,7 +4495,7 @@
      {
       "row": "paired P2",
       "status": "PASS",
-      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 35.01\u219234.77 TWh, LW price 82.50\u219291.55 $/MWh",
+      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 35.01→34.77 TWh, LW price 82.50→91.55 $/MWh",
       "gating": true
      },
      {
@@ -4532,7 +4532,7 @@
      {
       "row": "attestation",
       "status": "PASS",
-      "detail": "all \u00a75 checklist assertions present and true",
+      "detail": "all §5 checklist assertions present and true",
       "gating": true
      }
     ]
@@ -4578,7 +4578,7 @@
    "FC-6 driver response"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED) \u2014 the GOLDEN-2 re-solve at HEAD. Run neiso-2026-2050-t3-golden3-bau, cache key 67678e58b2d0526c (pre-declared and matched), --golden-posture --full-solve-authorized, 2026-2050, 33.0 min wall / 3.7 GB peak, 25/25 years solved, error None. Solved into a FRESH out-dir results/ff-t3-neiso-golden/bau-d46/ so GOLDEN-2's bau/ bundle stays byte-intact and self-describing; the prior verdict is preserved verbatim at neiso-t3-pre-d46 and the existing chain (-pre-fc5, -pre-fc6, -pre-fc6repair, -pre-p2scope, -prera-2026-08-31) is untouched. THIS IS THE BATCH'S CLEANEST THREE-AXIS LEG: the resolved-config delta from GOLDEN-2's own bundle is EXACTLY the fossil-dates flip plus the two D41 CCS constants, plus fields added since that all default False. FULL RUBRIC, FC-1..FC-8, with the FC-6 battery re-solved at this vintage as GOLDEN-2 did (four sequential paired arms, 32.5-32.9 min each: base 67678e58b2d0526c, carbon_plus25 56019f3b0850e9f9, gasup150 96984c538320d6d6, gaspm5 e84079053b581a9e; plus the T1.6 ladder, 11.0 min). THE REPRODUCTION GATE PASSES: the base arm is a full 25-year re-solve of the identical reference construction and keys at 67678e58b2d0526c, byte-equal to the campaign's own key. DETERMINATION HOLD \u2014 UNCHANGED \u2014 and the category map is IDENTICAL to GOLDEN-2's on seven of eight categories (FC-1 FAIL, FC-2 FAIL, FC-3 FAIL, FC-4 FAIL, FC-5 CAVEAT, FC-6 CAVEAT, FC-8 PASS). THE ONE CATEGORY THAT DIFFERS IS FC-7, PASS -> FAIL, AND IT IS PURELY INSTRUMENTAL, NOT A MODEL REGRESSION: its first three rows all PASS exactly as GOLDEN-2's did (run_config, overlay-off, and a DOF ledger of 7 entries / 0 UNIDENTIFIED built by the committed builder from this bundle's own run_config.json); the single failing row is \"no forecast_attestation.json (a golden run cannot be certified unattested)\". NO ATTESTATION WAS AUTHORED, DELIBERATELY. This lane's pre-declaration did not declare one \u2014 it treated the leg as a re-solve rather than a new campaign \u2014 and authoring one AFTER reading that the row fails without it is exactly the sequence golden-1 refused and GOLDEN-2 \u00a73 wrote its own pre-declaration to prevent (\"inventing an instrument after the pre-declaration to clear a row is forbidden\"). The governance value of that rule is in the SEQUENCE, not the content, so the row is left failing and reported. A properly pre-declared attestation is ROUTED to the director as a follow-up act; it would restore FC-7 without any re-solve. WHAT ACTUALLY MOVED IN THE MODEL: FC-2 row2 final reserve margin 6.6 % -> 5.4 % (in band both), row4 backstop share 0.0 % -> 0.3 % (PASS both), row3 cobweb WIDENS from gas_cc(7) to gas_ct(7); gas_cc(11) (FAIL both); FC-1's I3 renewable-dump failure is IDENTICAL year-by-year (2043 2.17 % \u2026 2050 7.74 %). FC-6's paired invariants all PASS on both, with P2 now clean where GOLDEN-2's carried a \"[not scored at this grain: objective\u2191]\" qualifier, and the T1.6 battery leg is vacuous-CAVEAT on both exactly as GOLDEN-2 pre-declared. THE D41 QUESTION \u00a77 ROUTED \u2014 \"whether the 3 GW/yr/ISO cap still binds under RGGI\" \u2014 IS ANSWERED ON THE FULL HORIZON, AND THE ANSWER IS THAT THE CORRECTED CONSTANTS END THE RETROFIT WAVE NINE YEARS EARLY: conversions fall 83 rows / 14774.5 MW -> 60 rows / 11208.9 MW (-24.1 %), and where GOLDEN-2 converted in 2028/2029/2030/2031/2032 and again in 2040 (that last year AT the 3 GW cap, 3000.0 MW), GOLDEN-3 converts in 2028/2029/2030/2031 and NOTHING THEREAFTER. The cap still binds in 2028-2030 (2999.6 / 2994.4 / 2948.6 MW) but 2040 no longer binds because no retrofit clears at all. This lane pre-declared \"fewer conversions AND the cap stops binding in at least one year it bound in GOLDEN-2\" and BOTH halves hold on the full horizon \u2014 note that the t1f 2026-2030 window CANNOT see it, since the wave outlives the window. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED) — the GOLDEN-2 re-solve at HEAD. Run neiso-2026-2050-t3-golden3-bau, cache key 67678e58b2d0526c (pre-declared and matched), --golden-posture --full-solve-authorized, 2026-2050, 33.0 min wall / 3.7 GB peak, 25/25 years solved, error None. Solved into a FRESH out-dir results/ff-t3-neiso-golden/bau-d46/ so GOLDEN-2's bau/ bundle stays byte-intact and self-describing; the prior verdict is preserved verbatim at neiso-t3-pre-d46 and the existing chain (-pre-fc5, -pre-fc6, -pre-fc6repair, -pre-p2scope, -prera-2026-08-31) is untouched. THIS IS THE BATCH'S CLEANEST THREE-AXIS LEG: the resolved-config delta from GOLDEN-2's own bundle is EXACTLY the fossil-dates flip plus the two D41 CCS constants, plus fields added since that all default False. FULL RUBRIC, FC-1..FC-8, with the FC-6 battery re-solved at this vintage as GOLDEN-2 did (four sequential paired arms, 32.5-32.9 min each: base 67678e58b2d0526c, carbon_plus25 56019f3b0850e9f9, gasup150 96984c538320d6d6, gaspm5 e84079053b581a9e; plus the T1.6 ladder, 11.0 min). THE REPRODUCTION GATE PASSES: the base arm is a full 25-year re-solve of the identical reference construction and keys at 67678e58b2d0526c, byte-equal to the campaign's own key. DETERMINATION HOLD — UNCHANGED — and the category map is IDENTICAL to GOLDEN-2's on seven of eight categories (FC-1 FAIL, FC-2 FAIL, FC-3 FAIL, FC-4 FAIL, FC-5 CAVEAT, FC-6 CAVEAT, FC-8 PASS). THE ONE CATEGORY THAT DIFFERS IS FC-7, PASS -> FAIL, AND IT IS PURELY INSTRUMENTAL, NOT A MODEL REGRESSION: its first three rows all PASS exactly as GOLDEN-2's did (run_config, overlay-off, and a DOF ledger of 7 entries / 0 UNIDENTIFIED built by the committed builder from this bundle's own run_config.json); the single failing row is \"no forecast_attestation.json (a golden run cannot be certified unattested)\". NO ATTESTATION WAS AUTHORED, DELIBERATELY. This lane's pre-declaration did not declare one — it treated the leg as a re-solve rather than a new campaign — and authoring one AFTER reading that the row fails without it is exactly the sequence golden-1 refused and GOLDEN-2 §3 wrote its own pre-declaration to prevent (\"inventing an instrument after the pre-declaration to clear a row is forbidden\"). The governance value of that rule is in the SEQUENCE, not the content, so the row is left failing and reported. A properly pre-declared attestation is ROUTED to the director as a follow-up act; it would restore FC-7 without any re-solve. WHAT ACTUALLY MOVED IN THE MODEL: FC-2 row2 final reserve margin 6.6 % -> 5.4 % (in band both), row4 backstop share 0.0 % -> 0.3 % (PASS both), row3 cobweb WIDENS from gas_cc(7) to gas_ct(7); gas_cc(11) (FAIL both); FC-1's I3 renewable-dump failure is IDENTICAL year-by-year (2043 2.17 % … 2050 7.74 %). FC-6's paired invariants all PASS on both, with P2 now clean where GOLDEN-2's carried a \"[not scored at this grain: objective↑]\" qualifier, and the T1.6 battery leg is vacuous-CAVEAT on both exactly as GOLDEN-2 pre-declared. THE D41 QUESTION §7 ROUTED — \"whether the 3 GW/yr/ISO cap still binds under RGGI\" — IS ANSWERED ON THE FULL HORIZON, AND THE ANSWER IS THAT THE CORRECTED CONSTANTS END THE RETROFIT WAVE NINE YEARS EARLY: conversions fall 83 rows / 14774.5 MW -> 60 rows / 11208.9 MW (-24.1 %), and where GOLDEN-2 converted in 2028/2029/2030/2031/2032 and again in 2040 (that last year AT the 3 GW cap, 3000.0 MW), GOLDEN-3 converts in 2028/2029/2030/2031 and NOTHING THEREAFTER. The cap still binds in 2028-2030 (2999.6 / 2994.4 / 2948.6 MW) but 2040 no longer binds because no retrofit clears at all. This lane pre-declared \"fewer conversions AND the cap stops binding in at least one year it bound in GOLDEN-2\" and BOTH halves hold on the full horizon — note that the t1f 2026-2030 window CANNOT see it, since the wave outlives the window. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
   ],
   "categories": {
    "FC-1": {
@@ -4614,13 +4614,13 @@
      {
       "row": "row3",
       "status": "FAIL",
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_ct(7); gas_cc(11)",
+      "detail": "cobweb (I13 WARN ⇒ row FAIL): gas_ct(7); gas_cc(11)",
       "gating": true
      },
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 0.3% \u2264 10%",
+      "detail": "backstop share 0.3% ≤ 10%",
       "gating": true
      }
     ]
@@ -4646,13 +4646,13 @@
      {
       "row": "quarantine",
       "status": "PASS",
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true
      },
      {
       "row": "dispatch skill",
       "status": "FAIL",
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.3%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |13.2%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |84.0%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.3%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |13.2%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |84.0%|>7.5%=K1.5×5% FAIL",
       "gating": true
      },
      {
@@ -4696,7 +4696,7 @@
      {
       "row": "paired P2",
       "status": "PASS",
-      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 35.01\u219234.77 TWh, LW price 82.50\u219291.55 $/MWh",
+      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 35.01→34.77 TWh, LW price 82.50→91.55 $/MWh",
       "gating": true
      },
      {
@@ -4785,13 +4785,13 @@
       "status": "PASS"
      },
      {
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(10)",
+      "detail": "cobweb (I13 WARN ⇒ row FAIL): gas_cc(10)",
       "gating": true,
       "row": "row3",
       "status": "FAIL"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -4817,13 +4817,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -4842,7 +4842,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -4919,7 +4919,7 @@
    "scored_at_sha": "271ad606c3fd"
   },
   "scored_at_sha_unverifiable": true,
-  "scored_at_sha_unverifiable_note": "R-M (owner ruling, 2026-09-01 sitting): the scored_at_sha above was minted from a branch commit that never reached main and is unresolvable in the repository (confirmed against the remote, not a local clone) \u2014 the historical value is kept verbatim and this verdict's scoring provenance is PERMANENTLY UNVERIFIABLE. Records-lane annotation only: it is not a provenance stamp, no instrument reads it, and the determination is untouched.",
+  "scored_at_sha_unverifiable_note": "R-M (owner ruling, 2026-09-01 sitting): the scored_at_sha above was minted from a branch commit that never reached main and is unresolvable in the repository (confirmed against the remote, not a local clone) — the historical value is kept verbatim and this verdict's scoring provenance is PERMANENTLY UNVERIFIABLE. Records-lane annotation only: it is not a provenance stamp, no instrument reads it, and the determination is untouched.",
   "reasons": [
    "FC-1 structural integrity (I1-I14) FAIL",
    "FC-2 adequacy & equilibrium behavior FAIL",
@@ -5096,7 +5096,7 @@
      {
       "row": "run_config",
       "status": "CAVEAT",
-      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "detail": "run_config is a post-hoc reconstruction — mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -5108,7 +5108,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction — 1 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -5133,10 +5133,10 @@
   "determination": "HOLD",
   "iso": "NYISO",
   "notes": [
-   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/nyiso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 §0s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/nyiso-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "cache_epoch": "Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
    "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
@@ -5203,7 +5203,7 @@
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true
      }
     ]
@@ -5228,7 +5228,7 @@
      {
       "row": "corridor",
       "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true
      }
     ]
@@ -5401,7 +5401,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -5469,7 +5469,7 @@
   "iso": "NYISO",
   "notes": [],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "note": "FFR-3A-2 measurement, preserved verbatim by capx-D2-extcap-intake before the bare key was overwritten with the post-intake re-score",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
@@ -5727,7 +5727,7 @@
       "status": "SKIPPED"
      },
      {
-      "detail": "backstop share 0% (reserve_margin_build_enabled off \u2014 no backstop channel, and no per-channel split to check it against)",
+      "detail": "backstop share 0% (reserve_margin_build_enabled off — no backstop channel, and no per-channel split to check it against)",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -5753,13 +5753,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |29.9%|>15.0%=K1.5\u00d710% FAIL; price 2025 |24.0%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |10.1%| in (10%, 15.0%] CAVEAT; co2 2024 |10.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |21.0%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |19.8%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |29.9%|>15.0%=K1.5×10% FAIL; price 2025 |24.0%|>15.0%=K1.5×10% FAIL; co2 2023 |10.1%| in (10%, 15.0%] CAVEAT; co2 2024 |10.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |21.0%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |19.8%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -5778,7 +5778,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -6014,7 +6014,7 @@
      {
       "row": "run_config",
       "status": "CAVEAT",
-      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "detail": "run_config is a post-hoc reconstruction — mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -6026,7 +6026,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction — 1 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -6051,10 +6051,10 @@
   "determination": "HOLD",
   "iso": "PJM",
   "notes": [
-   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/pjm-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 §0s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/pjm-2021-2025-realized-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "cache_epoch": "Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
    "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
@@ -6126,13 +6126,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=3.0; price 2025 |15.7%| in (10%, 30.0%] CAVEAT; co2 2023 |45.1%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |40.4%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |54.2%|>30.0%=K3.0\u00d710% FAIL; gas_twh 2024 |6.7%| in (5%, 15.0%] CAVEAT; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |23.9%|>15.0%=K3.0\u00d75% FAIL",
+      "detail": "K_iso=3.0; price 2025 |15.7%| in (10%, 30.0%] CAVEAT; co2 2023 |45.1%|>30.0%=K3.0×10% FAIL; co2 2024 |40.4%|>30.0%=K3.0×10% FAIL; co2 2025 |54.2%|>30.0%=K3.0×10% FAIL; gas_twh 2024 |6.7%| in (5%, 15.0%] CAVEAT; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |23.9%|>15.0%=K3.0×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -6151,7 +6151,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -6173,7 +6173,7 @@
      {
       "row": "run_config",
       "status": "CAVEAT",
-      "detail": "run_config is a post-hoc reconstruction \u2014 mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
+      "detail": "run_config is a post-hoc reconstruction — mode=forecast; 674 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -6185,7 +6185,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger is derived from a post-hoc reconstruction \u2014 1 entries well-formed (0 open residual DOF listed)",
+      "detail": "DOF ledger is derived from a post-hoc reconstruction — 1 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -6210,11 +6210,11 @@
   "determination": "HOLD",
   "iso": "PJM",
   "notes": [
-   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md \u00a70/\u00a75.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (\u221245.1/\u221240.4/\u221254.2 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect \u2014 the DROP term is 75\u201398 % of the miss per the FINDING \u00a72.2 \u2014 not dispatch error and not the emission-rate derivation, which is exonerated within \u00b15 %). The backing FFR-3A-3 bundle was never committed (results/ffr3a3 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same PJM crossover question is `pjm-t1x-ffr2a` (co2 \u22127.4/\u221210.3/\u22121.1 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error \u2014 the rate leg is measured separately (FINDING \u00a72, own-rate comparison).",
-   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 \u00a70s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/pjm-2023-2027-crossover-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
+   "D5-R co2-instrument note (2026-08-30, owner ruling Q12 r#15; docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md §0/§5.1, repair lane capx-d5r-scorer-coal-grain): this record's FC-4 co2 rows (−45.1/−40.4/−54.2 %) were measured by the PRE-REPAIR crossover scorer, which dropped the model's entire unsplit-COAL generation from the scored CO2 (a class-grain scoring defect — the DROP term is 75–98 % of the miss per the FINDING §2.2 — not dispatch error and not the emission-rate derivation, which is exonerated within ±5 %). The backing FFR-3A-3 bundle was never committed (results/ffr3a3 is gitignored by design), so the repaired scorer cannot re-emit this record zero-solve; it stands AS MEASURED, pre-repair, at full magnitude. The repaired, committed re-measure of the same PJM crossover question is `pjm-t1x-ffr2a` (co2 −7.4/−10.3/−1.1 %, class-grain rescore 2026-08-30). Price and volume rows are NOT affected by the repair and remain this leg's own measurements. Instrument property (FINDING corollary 2): as constructed, the FC-4 co2 metric applies bench intensities to the model mix on both sides, so it scores volume/mix + class mapping, never rate error — the rate leg is measured separately (FINDING §2, own-rate comparison).",
+   "capx-D20 reconstruction-provenance re-emission (2026-09-01; director ruling r#22 §0s.5, docs/handoffs/FINDING-capx-d20-reconstruction-provenance-2026-09-01.md): this leg's FC-7 rows -- and ONLY its FC-7 rows -- were re-derived by scripts/forecast_verdict.py against the capx-D8 RECONSTRUCTED run_config and DOF ledger (results/run-config-debt/pjm-2023-2027-crossover-ffr3a3/), now carrying the explicit provenance=\"reconstruction\" label. A reconstruction is capped at CAVEAT and can NEVER read PASS: adoption-as-original was REFUSED, so the only route to a clean FC-7 here is a genuine re-run, which is a charter decision and was not taken. Every other category (FC-1..FC-6, FC-8) is carried VERBATIM from the record scored at e2a422c191aa @ None -- the FFR-3A-3/-3A-4 bundles were never committed, so FC-3/FC-4 cannot be re-scored and were deliberately not touched."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "cache_epoch": "Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
    "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
    "scored_at_sha": "663605c58e0a",
    "session": "FFR-3A-3",
@@ -6312,7 +6312,7 @@
      {
       "row": "corridor",
       "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true
      }
     ]
@@ -6363,7 +6363,7 @@
      {
       "row": "runtime",
       "status": "CAVEAT",
-      "detail": "peak RSS 9.0 GB \u2265 8.6 GB (no co-run)",
+      "detail": "peak RSS 9.0 GB ≥ 8.6 GB (no co-run)",
       "gating": true
      }
     ]
@@ -6485,7 +6485,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -6536,7 +6536,7 @@
     "label": "FC-8 runtime feasibility",
     "rows": [
      {
-      "detail": "peak RSS 8.8 GB \u2265 8.6 GB (no co-run)",
+      "detail": "peak RSS 8.8 GB ≥ 8.6 GB (no co-run)",
       "gating": true,
       "row": "runtime",
       "status": "CAVEAT"
@@ -6554,7 +6554,7 @@
   "iso": "PJM",
   "notes": [],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "note": "FFR-3A-2 measurement, preserved verbatim by capx-S6-pjm-ledger before the bare key was overwritten with the first supply-side measure against the corrected (hold-last-FPR, owner card C-A) bar. Quotable as the pre-S5 vintage; its I7 row grades 2030 against the stale year-less composite.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
@@ -6838,13 +6838,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=3.0; price 2025 |15.7%| in (10%, 30.0%] CAVEAT; co2 2023 |45.1%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |40.4%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |54.2%|>30.0%=K3.0\u00d710% FAIL; gas_twh 2024 |6.7%| in (5%, 15.0%] CAVEAT; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |23.9%|>15.0%=K3.0\u00d75% FAIL",
+      "detail": "K_iso=3.0; price 2025 |15.7%| in (10%, 30.0%] CAVEAT; co2 2023 |45.1%|>30.0%=K3.0×10% FAIL; co2 2024 |40.4%|>30.0%=K3.0×10% FAIL; co2 2025 |54.2%|>30.0%=K3.0×10% FAIL; gas_twh 2024 |6.7%| in (5%, 15.0%] CAVEAT; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |23.9%|>15.0%=K3.0×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -6863,7 +6863,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -6915,7 +6915,7 @@
   "iso": "PJM",
   "notes": [],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -7037,13 +7037,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=3.0; price 2025 |17.2%| in (10%, 30.0%] CAVEAT; co2 2024 |10.3%| in (10%, 30.0%] CAVEAT; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |25.2%|>15.0%=K3.0\u00d75% FAIL",
+      "detail": "K_iso=3.0; price 2025 |17.2%| in (10%, 30.0%] CAVEAT; co2 2024 |10.3%| in (10%, 30.0%] CAVEAT; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |25.2%|>15.0%=K3.0×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -7062,7 +7062,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -7138,7 +7138,7 @@
    "cache_epoch": "a4b11ef4aaa1be35"
   },
   "scored_at_sha_unverifiable": true,
-  "scored_at_sha_unverifiable_note": "R-M (owner ruling, 2026-09-01 sitting): the scored_at_sha above was minted from a branch commit that never reached main and is unresolvable in the repository (confirmed against the remote, not a local clone) \u2014 the historical value is kept verbatim and this verdict's scoring provenance is PERMANENTLY UNVERIFIABLE. Records-lane annotation only: it is not a provenance stamp, no instrument reads it, and the determination is untouched.",
+  "scored_at_sha_unverifiable_note": "R-M (owner ruling, 2026-09-01 sitting): the scored_at_sha above was minted from a branch commit that never reached main and is unresolvable in the repository (confirmed against the remote, not a local clone) — the historical value is kept verbatim and this verdict's scoring provenance is PERMANENTLY UNVERIFIABLE. Records-lane annotation only: it is not a provenance stamp, no instrument reads it, and the determination is untouched.",
   "tier": "t3",
   "iso": "NEISO",
   "determination": "HOLD",
@@ -7187,13 +7187,13 @@
      {
       "row": "row3",
       "status": "FAIL",
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(10)",
+      "detail": "cobweb (I13 WARN ⇒ row FAIL): gas_cc(10)",
       "gating": true
      },
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true
      }
     ]
@@ -7219,13 +7219,13 @@
      {
       "row": "quarantine",
       "status": "PASS",
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true
      },
      {
       "row": "dispatch skill",
       "status": "FAIL",
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5×5% FAIL",
       "gating": true
      },
      {
@@ -7244,7 +7244,7 @@
      {
       "row": "corridor",
       "status": "SKIPPED",
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true
      }
     ]
@@ -7358,13 +7358,13 @@
       "status": "PASS"
      },
      {
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(10)",
+      "detail": "cobweb (I13 WARN ⇒ row FAIL): gas_cc(10)",
       "gating": true,
       "row": "row3",
       "status": "FAIL"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -7390,13 +7390,13 @@
     "label": "FC-4 crossover dispatch skill (T1-X)",
     "rows": [
      {
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true,
       "row": "quarantine",
       "status": "PASS"
      },
      {
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5×5% FAIL",
       "gating": true,
       "row": "dispatch skill",
       "status": "FAIL"
@@ -7510,7 +7510,7 @@
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-09-01T01:10:11Z",
    "scored_at_sha": "7b085947b0ee",
-   "session": "FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/neiso-t3.json (33 rows: 16 IN CORRIDOR / 17 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 89dacc4c0343 @ 2026-08-31T18:38:41Z. MOVED: FC-5 SKIPPED-required -> CAVEAT \u2014 the reasons list drops 'FC-5 external corridor SKIPPED (required, unscored)' and the caveats list gains 'FC-5 external corridor' (17 explained divergences across 2030/2035/2040, 0 UNEXPLAINED). Prior verdict preserved in full at neiso-t3-pre-fc5. NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (HOLD). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
+   "session": "FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 — the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/neiso-t3.json (33 rows: 16 IN CORRIDOR / 17 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 89dacc4c0343 @ 2026-08-31T18:38:41Z. MOVED: FC-5 SKIPPED-required -> CAVEAT — the reasons list drops 'FC-5 external corridor SKIPPED (required, unscored)' and the caveats list gains 'FC-5 external corridor' (17 explained divergences across 2030/2035/2040, 0 UNEXPLAINED). Prior verdict preserved in full at neiso-t3-pre-fc5. NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (HOLD). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) FAIL",
@@ -7532,7 +7532,7 @@
    "scored_at_sha": "7dffe3341158",
    "scored_at_date": "2026-09-01T06:12:01Z",
    "cache_epoch": "a4b11ef4aaa1be35",
-   "session": "FC-6 P1 RE-SCORED ON THE REPAIRED INSTRUMENT 2026-09-01 by lane capx-D26 (executing D23's attribution: the P1 FAIL was the ARM CONSTRUCTION \u2014 carbon_price=25 REPLACED the projected RGGI trajectory, a CUT of -$1.05 to -$107.16/t in every year). The repaired arm is base recipe + carbon_price_delta=25.0 (new instrument-grade additive field, default 0.0, forecast-only, cache-key registered): effective signal base+$25.00/t in ALL 25 years, premise row PASS with the year-by-year table in fc6/paired_invariants.json. CONTROL-FIRST, both halves: (a) the committed verdict reproduces from committed artifacts with zero non-provenance diffs under the amended scorer; (b) the base arm re-solved at the golden's 9e56f0f vintage + repair (delta present at 0.0) reproduces the golden EXACTLY \u2014 25 years x all trajectory fields + full I1-I14, key 0365174ab16cc318 \u2014 before the perturbed arm solved. THE RESULT: under a genuine +$25/t the model's response has the correct sign in every channel \u2014 cumulative CO2 FALLS 210.52 -> 174.96 Mt (-16.9%), LW price RISES in every year, CCS retrofits RISE (15,251 vs 15,049 MW by 2050). P1 FAIL -> PASS; D21's P1 FAIL does NOT survive the repaired instrument, exactly as D23's attribution predicted. MOVED: FC-6 FAIL -> CAVEAT (the surviving CAVEAT is the UNTOUCHED vacuous-T1.6 battery finding, renewable_buildout_pace still consumed by no model code); reasons drop 'FC-6 driver response FAIL', caveats gain 'FC-6 driver response'. NOT MOVED (re-grade audit PASS): every other category, row, reason and caveat, and the DETERMINATION (HOLD, on FC-1/2/3/4/7). P2/P3 rows carried verbatim from D21's committed record (their arms untouched by the carbon repair). docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md. Prior stamp preserved here: scored_at_sha 7b085947b0ee @ 2026-09-01T01:10:11Z. Prior verdict preserved in full at neiso-t3-pre-fc6repair."
+   "session": "FC-6 P1 RE-SCORED ON THE REPAIRED INSTRUMENT 2026-09-01 by lane capx-D26 (executing D23's attribution: the P1 FAIL was the ARM CONSTRUCTION — carbon_price=25 REPLACED the projected RGGI trajectory, a CUT of -$1.05 to -$107.16/t in every year). The repaired arm is base recipe + carbon_price_delta=25.0 (new instrument-grade additive field, default 0.0, forecast-only, cache-key registered): effective signal base+$25.00/t in ALL 25 years, premise row PASS with the year-by-year table in fc6/paired_invariants.json. CONTROL-FIRST, both halves: (a) the committed verdict reproduces from committed artifacts with zero non-provenance diffs under the amended scorer; (b) the base arm re-solved at the golden's 9e56f0f vintage + repair (delta present at 0.0) reproduces the golden EXACTLY — 25 years x all trajectory fields + full I1-I14, key 0365174ab16cc318 — before the perturbed arm solved. THE RESULT: under a genuine +$25/t the model's response has the correct sign in every channel — cumulative CO2 FALLS 210.52 -> 174.96 Mt (-16.9%), LW price RISES in every year, CCS retrofits RISE (15,251 vs 15,049 MW by 2050). P1 FAIL -> PASS; D21's P1 FAIL does NOT survive the repaired instrument, exactly as D23's attribution predicted. MOVED: FC-6 FAIL -> CAVEAT (the surviving CAVEAT is the UNTOUCHED vacuous-T1.6 battery finding, renewable_buildout_pace still consumed by no model code); reasons drop 'FC-6 driver response FAIL', caveats gain 'FC-6 driver response'. NOT MOVED (re-grade audit PASS): every other category, row, reason and caveat, and the DETERMINATION (HOLD, on FC-1/2/3/4/7). P2/P3 rows carried verbatim from D21's committed record (their arms untouched by the carbon repair). docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md. Prior stamp preserved here: scored_at_sha 7b085947b0ee @ 2026-09-01T01:10:11Z. Prior verdict preserved in full at neiso-t3-pre-fc6repair."
   },
   "tier": "t3",
   "iso": "NEISO",
@@ -7583,13 +7583,13 @@
      {
       "row": "row3",
       "status": "FAIL",
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(10)",
+      "detail": "cobweb (I13 WARN ⇒ row FAIL): gas_cc(10)",
       "gating": true
      },
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true
      }
     ]
@@ -7615,13 +7615,13 @@
      {
       "row": "quarantine",
       "status": "PASS",
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true
      },
      {
       "row": "dispatch skill",
       "status": "FAIL",
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5×5% FAIL",
       "gating": true
      },
      {
@@ -7779,13 +7779,13 @@
      {
       "row": "row3",
       "status": "FAIL",
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(7)",
+      "detail": "cobweb (I13 WARN ⇒ row FAIL): gas_cc(7)",
       "gating": true
      },
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true
      }
     ]
@@ -7811,13 +7811,13 @@
      {
       "row": "quarantine",
       "status": "PASS",
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true
      },
      {
       "row": "dispatch skill",
       "status": "FAIL",
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5×5% FAIL",
       "gating": true
      },
      {
@@ -7861,7 +7861,7 @@
      {
       "row": "paired P2",
       "status": "FAIL",
-      "detail": "P2 merit-order sign: year 2050: wrong: gas_cc\u2193",
+      "detail": "P2 merit-order sign: year 2050: wrong: gas_cc↓",
       "gating": true
      },
      {
@@ -7898,7 +7898,7 @@
      {
       "row": "attestation",
       "status": "PASS",
-      "detail": "all \u00a75 checklist assertions present and true",
+      "detail": "all §5 checklist assertions present and true",
       "gating": true
      }
     ]
@@ -7917,7 +7917,7 @@
     ]
    }
   },
-  "session_note": "T3-NEISO-GOLDEN-2 (owner ruling Q25, 2026-09-01): the second \u00a72.1b campaign \u2014 the ARMED-posture golden (storage_entry_availability_gate/cost_normalized_rank both true, cache key 706e7ba8e6582d42, solved at basis 5083e29e). PRESERVE-THEN-OVERWRITE: the prior live record (the D26 re-score of the pre-R-A golden) is preserved byte-equal at neiso-t3-prera-2026-08-31; its bundle is preserved at results/ff-t3-neiso-golden/bau-prera-2026-08-31/ with the posture-epoch caveat intact \u2014 it remains the pre-R-A record of note. Q13's/Q25's this-campaign-only scope: a third campaign needs a new owner act. \u00b7 T16-A RE-SCORE (owner ruling Q27, 2026-09-02): ARTIFACT-ONLY. T1.6's ladder was re-pointed from the deleted renewable_buildout_pace to entry_rate_limits and its two rungs solved; the FC-6 battery row's REASON changes from the out-of-service SKIP to a MEASURED all-constant series [1.0, 1.0], and NOTHING ELSE MOVES \u2014 a whole-document diff against a control re-score of the committed record shows exactly one differing leaf (categories.FC-6.rows[0].detail). Status CAVEAT, FC-6 FAIL (on paired P2) and determination HOLD are unchanged, so no preserved key is minted. See docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md."
+  "session_note": "T3-NEISO-GOLDEN-2 (owner ruling Q25, 2026-09-01): the second §2.1b campaign — the ARMED-posture golden (storage_entry_availability_gate/cost_normalized_rank both true, cache key 706e7ba8e6582d42, solved at basis 5083e29e). PRESERVE-THEN-OVERWRITE: the prior live record (the D26 re-score of the pre-R-A golden) is preserved byte-equal at neiso-t3-prera-2026-08-31; its bundle is preserved at results/ff-t3-neiso-golden/bau-prera-2026-08-31/ with the posture-epoch caveat intact — it remains the pre-R-A record of note. Q13's/Q25's this-campaign-only scope: a third campaign needs a new owner act. · T16-A RE-SCORE (owner ruling Q27, 2026-09-02): ARTIFACT-ONLY. T1.6's ladder was re-pointed from the deleted renewable_buildout_pace to entry_rate_limits and its two rungs solved; the FC-6 battery row's REASON changes from the out-of-service SKIP to a MEASURED all-constant series [1.0, 1.0], and NOTHING ELSE MOVES — a whole-document diff against a control re-score of the committed record shows exactly one differing leaf (categories.FC-6.rows[0].detail). Status CAVEAT, FC-6 FAIL (on paired P2) and determination HOLD are unchanged, so no preserved key is minted. See docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md."
  },
  "miso-t1h-d42-control": {
   "schema": "forecast-verdict/v1",
@@ -8451,7 +8451,7 @@
    "PRESERVED BASELINE -- the prior `pjm-t1h` record, moved here VERBATIM by capx lane D45 (2026-09-03) when the first diagnostics-on live-posture solve took the bare key. Valid at the sha it records (8ba592814d92); NEVER quote it as current state. Superseded by `pjm-t1h` (run pjm-2021-2025-realized-t1h-d45)."
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -8584,7 +8584,7 @@
    "FC-7 provenance & DOF"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed, nothing armed. MINTED bare key: CAISO had no `caiso-t1h`, its hindcasts were registered under long ids only, and every existing long-id record is untouched (the D43 pair stays the dispersion baseline). Posture = HEAD live default + --entry-screen-diagnostics. Two axes reach this leg: the Q30/D44 fossil-dates flip (channel armed 25 live rows / 4005 MW, 2021-2040) and keeper vintage 231 -> 240; D41's CCS axis is INERT and verified so (ccs_retrofits empty in every solve year \u2014 retrofits open in 2028, past the window). Against the indicative predecessor caiso-2021-2025-realized-t1h-d43-control (one axis apart, so nearly like-for-like): retire.total_gw model 2.240 -> 3.068 GW, err_frac +6.642 -> +9.469 \u2014 the run reads WORSE, which is the EXPECTED rule-14 signature of a faithful input at an ISO whose actual 2021-2025 exits are only 0.293 GW, not a regression. gas_st 0.000 -> 0.821 GW off zero (the OTC-driven filed dates), gas_ct 0.000 -> 0.007 GW. false_retire 2.240 -> 2.969 GW absolute but frac_of_model 1.000 -> 0.968, i.e. the model's exits are no longer 100 % false. The 2.240 GW NUCLEAR false-retire persists to the decimal and is untouched by the keeper move \u2014 read, not predicted. FC-3 band-FAIL membership is IDENTICAL to the predecessor's 11 rows; only magnitudes moved. Determination HOLD. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B — no control, nothing attributed, nothing armed. MINTED bare key: CAISO had no `caiso-t1h`, its hindcasts were registered under long ids only, and every existing long-id record is untouched (the D43 pair stays the dispersion baseline). Posture = HEAD live default + --entry-screen-diagnostics. Two axes reach this leg: the Q30/D44 fossil-dates flip (channel armed 25 live rows / 4005 MW, 2021-2040) and keeper vintage 231 -> 240; D41's CCS axis is INERT and verified so (ccs_retrofits empty in every solve year — retrofits open in 2028, past the window). Against the indicative predecessor caiso-2021-2025-realized-t1h-d43-control (one axis apart, so nearly like-for-like): retire.total_gw model 2.240 -> 3.068 GW, err_frac +6.642 -> +9.469 — the run reads WORSE, which is the EXPECTED rule-14 signature of a faithful input at an ISO whose actual 2021-2025 exits are only 0.293 GW, not a regression. gas_st 0.000 -> 0.821 GW off zero (the OTC-driven filed dates), gas_ct 0.000 -> 0.007 GW. false_retire 2.240 -> 2.969 GW absolute but frac_of_model 1.000 -> 0.968, i.e. the model's exits are no longer 100 % false. The 2.240 GW NUCLEAR false-retire persists to the decimal and is untouched by the keeper move — read, not predicted. FC-3 band-FAIL membership is IDENTICAL to the predecessor's 11 rows; only magnitudes moved. Determination HOLD. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
   ],
   "categories": {
    "FC-1": {
@@ -8698,7 +8698,7 @@
    "FC-7 provenance & DOF"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed, nothing armed. MINTED bare key: ERCOT had no `ercot-t1h`; every existing long-id record (the c1joint and d12c legs) is untouched. Posture = HEAD live default + --entry-screen-diagnostics. THE HEADLINE IS A NULL, AND IT IS A DATA-COVERAGE NULL, NOT A SCREEN ONE: the fossil-dates channel is correctly armed and loads 3 live rows / 1309 MW \u2014 O W Sommers 1 (2027), J K Spruce (2028), O W Sommers 2 (2029) \u2014 and EVERY ONE OF THEM IS DATED PAST 2025, the window's last solve year. No row can fire in-window, so retire.total_gw stays at exactly 0.000 GW against 2.294 GW actual (err_frac -1.000) with every per-fuel model_gw at zero, and announced_derates is the empty list in all four solve years. ERCOT is the one Stage-1 ISO the flip cannot reach. It nonetheless MOVED ONE GATE LEG, in the worse direction: because the dates channel counts as an admissible exit channel, the reachable-set member rule (D-24) stops excluding one of the two >=300 MW targets, so retire.unit_recall_gt300 goes n/a (SKIP) -> a scored 0/1 FAIL and JOINS the FC-3 band-FAIL list. A board row got worse on an input that retired nothing. D41's CCS axis is INERT and verified so (ccs_retrofits empty every year). Keeper unmoved. Determination HOLD. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B — no control, nothing attributed, nothing armed. MINTED bare key: ERCOT had no `ercot-t1h`; every existing long-id record (the c1joint and d12c legs) is untouched. Posture = HEAD live default + --entry-screen-diagnostics. THE HEADLINE IS A NULL, AND IT IS A DATA-COVERAGE NULL, NOT A SCREEN ONE: the fossil-dates channel is correctly armed and loads 3 live rows / 1309 MW — O W Sommers 1 (2027), J K Spruce (2028), O W Sommers 2 (2029) — and EVERY ONE OF THEM IS DATED PAST 2025, the window's last solve year. No row can fire in-window, so retire.total_gw stays at exactly 0.000 GW against 2.294 GW actual (err_frac -1.000) with every per-fuel model_gw at zero, and announced_derates is the empty list in all four solve years. ERCOT is the one Stage-1 ISO the flip cannot reach. It nonetheless MOVED ONE GATE LEG, in the worse direction: because the dates channel counts as an admissible exit channel, the reachable-set member rule (D-24) stops excluding one of the two >=300 MW targets, so retire.unit_recall_gt300 goes n/a (SKIP) -> a scored 0/1 FAIL and JOINS the FC-3 band-FAIL list. A board row got worse on an input that retired nothing. D41's CCS axis is INERT and verified so (ccs_retrofits empty every year). Keeper unmoved. Determination HOLD. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
   ],
   "categories": {
    "FC-1": {
@@ -8933,7 +8933,7 @@
       "status": "PASS"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -8964,7 +8964,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -9033,7 +9033,7 @@
    "FC-2 adequacy & equilibrium behavior / row6 (report): hours_ge_500 peaks 1137h/yr > 800 (sustained-VOLL)"
   ],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -9077,7 +9077,7 @@
       "status": "PASS"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -9173,7 +9173,7 @@
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-09-01T01:10:12Z",
    "scored_at_sha": "7b085947b0ee",
-   "session": "capx-S4b-neiso-ara \u00b7 FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-s4b-ara/neiso/dof_ledger.json \u2014 the capx-D8 instrument's committed ledger, 7 entries, 0 UNIDENTIFIED). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha 88baa9d5c71b @ 2026-08-30T22:25:51Z (session capx-S4b-neiso-ara). MOVED \u2014 exactly the D8 \u00a76 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('7 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] \u2014 NEISO's first clean FC map. NOT MOVED: every other category, row status and detail. This also closes the S-4b treatment/control FC-7 split D8-RE flagged (both arms now read the same FC-7 rows). docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. \u00b7 FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/neiso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (PROMOTE). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
+   "session": "capx-S4b-neiso-ara · FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-s4b-ara/neiso/dof_ledger.json — the capx-D8 instrument's committed ledger, 7 entries, 0 UNIDENTIFIED). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha 88baa9d5c71b @ 2026-08-30T22:25:51Z (session capx-S4b-neiso-ara). MOVED — exactly the D8 §6 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('7 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] — NEISO's first clean FC map. NOT MOVED: every other category, row status and detail. This also closes the S-4b treatment/control FC-7 split D8-RE flagged (both arms now read the same FC-7 rows). docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. · FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 — the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/neiso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (PROMOTE). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
   },
   "reasons": [],
   "rubric_version": "1.0",
@@ -9237,7 +9237,7 @@
     "label": "FC-5 external corridor",
     "rows": [
      {
-      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
       "gating": true,
       "row": "corridor",
       "status": "SKIPPED"
@@ -9304,7 +9304,7 @@
   "iso": "CAISO",
   "notes": [],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -9373,13 +9373,13 @@
      {
       "row": "row3",
       "status": "FAIL",
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(7)",
+      "detail": "cobweb (I13 WARN ⇒ row FAIL): gas_cc(7)",
       "gating": true
      },
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true
      }
     ]
@@ -9405,13 +9405,13 @@
      {
       "row": "quarantine",
       "status": "PASS",
-      "detail": "\u22652026 refusal marker present and clean",
+      "detail": "≥2026 refusal marker present and clean",
       "gating": true
      },
      {
       "row": "dispatch skill",
       "status": "FAIL",
-      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5\u00d75% FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.8%|>15.0%=K1.5×10% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.1%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5×5% FAIL; gas_twh 2024 |12.6%|>7.5%=K1.5×5% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5×5% FAIL; coal_twh 2024 |66.4%|>7.5%=K1.5×5% FAIL",
       "gating": true
      },
      {
@@ -9455,7 +9455,7 @@
      {
       "row": "paired P2",
       "status": "PASS",
-      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 36.53\u219235.36 TWh, LW price 79.16\u219293.95 $/MWh [not scored at this grain: objective\u2191]",
+      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 36.53→35.36 TWh, LW price 79.16→93.95 $/MWh [not scored at this grain: objective↑]",
       "gating": true
      },
      {
@@ -9492,7 +9492,7 @@
      {
       "row": "attestation",
       "status": "PASS",
-      "detail": "all \u00a75 checklist assertions present and true",
+      "detail": "all §5 checklist assertions present and true",
       "gating": true
      }
     ]
@@ -9511,7 +9511,7 @@
     ]
    }
   },
-  "session_note": "T3-NEISO-GOLDEN-2 (owner ruling Q25, 2026-09-01): the second \u00a72.1b campaign \u2014 the ARMED-posture golden (storage_entry_availability_gate/cost_normalized_rank both true, cache key 706e7ba8e6582d42, solved at basis 5083e29e). PRESERVE-THEN-OVERWRITE: the prior live record (the D26 re-score of the pre-R-A golden) is preserved byte-equal at neiso-t3-prera-2026-08-31; its bundle is preserved at results/ff-t3-neiso-golden/bau-prera-2026-08-31/ with the posture-epoch caveat intact \u2014 it remains the pre-R-A record of note. Q13's/Q25's this-campaign-only scope: a third campaign needs a new owner act. \u00b7 T16-A RE-SCORE (owner ruling Q27, 2026-09-02): ARTIFACT-ONLY. T1.6's ladder was re-pointed from the deleted renewable_buildout_pace to entry_rate_limits and its two rungs solved; the FC-6 battery row's REASON changes from the out-of-service SKIP to a MEASURED all-constant series [1.0, 1.0], and NOTHING ELSE MOVES \u2014 a whole-document diff against a control re-score of the committed record shows exactly one differing leaf (categories.FC-6.rows[0].detail). Status CAVEAT, FC-6 FAIL (on paired P2) and determination HOLD are unchanged, so no preserved key is minted. See docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md. || D35 (2026-09-02, lane capx-D35, FINDING-capx-d35-p2-scope-2026-09-02.md): FC-6 paired P2 RE-SCORED ARTIFACT-ONLY (zero solves) on the REPAIRED gas leg \u2014 the P2 gas sub-check is now TOTAL gas-fired generation over the model's own gas partition (gas_cc+gas_ct+gas_cc_ccs+gas_st, data/fuel/_shared._GAS_FUEL_IDX) instead of the per-class gas_cc key that crossed the CCS class migration on this 25-year pair (the base holds ZERO unabated CC at 2050, the gas x1.5 arm 6,000 MW \u2014 the label was the retrofit screen's composition response, not a merit-order sign). Scored from the committed arm summaries (generation_by_fuel_mwh is the checker's own _fuel_gen_mwh at 0.1 MWh): control reproduces the committed 'year 2050: wrong: gas_cc\u2193' exactly with the retired key; repaired leg PASS \u2014 gas-fired 36.53\u219235.36 TWh at 2050 and falls in all 25 years, LW price 79.16\u219293.95; objective\u2191 NOT scored at summary grain (named, never assumed). P1/P1.premise/P3 rows carried byte-verbatim; T16-A battery row untouched (CAVEAT, all-constant series [1.0, 1.0]). FC-6 FAIL \u2192 CAVEAT; determination HOLD (FC-1/2/3/4) unchanged; re-grade audit: 5 leaves moved, all FC-6 P2 + its rollup. Prior verdict preserved byte-equal at neiso-t3-pre-p2scope."
+  "session_note": "T3-NEISO-GOLDEN-2 (owner ruling Q25, 2026-09-01): the second §2.1b campaign — the ARMED-posture golden (storage_entry_availability_gate/cost_normalized_rank both true, cache key 706e7ba8e6582d42, solved at basis 5083e29e). PRESERVE-THEN-OVERWRITE: the prior live record (the D26 re-score of the pre-R-A golden) is preserved byte-equal at neiso-t3-prera-2026-08-31; its bundle is preserved at results/ff-t3-neiso-golden/bau-prera-2026-08-31/ with the posture-epoch caveat intact — it remains the pre-R-A record of note. Q13's/Q25's this-campaign-only scope: a third campaign needs a new owner act. · T16-A RE-SCORE (owner ruling Q27, 2026-09-02): ARTIFACT-ONLY. T1.6's ladder was re-pointed from the deleted renewable_buildout_pace to entry_rate_limits and its two rungs solved; the FC-6 battery row's REASON changes from the out-of-service SKIP to a MEASURED all-constant series [1.0, 1.0], and NOTHING ELSE MOVES — a whole-document diff against a control re-score of the committed record shows exactly one differing leaf (categories.FC-6.rows[0].detail). Status CAVEAT, FC-6 FAIL (on paired P2) and determination HOLD are unchanged, so no preserved key is minted. See docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md. || D35 (2026-09-02, lane capx-D35, FINDING-capx-d35-p2-scope-2026-09-02.md): FC-6 paired P2 RE-SCORED ARTIFACT-ONLY (zero solves) on the REPAIRED gas leg — the P2 gas sub-check is now TOTAL gas-fired generation over the model's own gas partition (gas_cc+gas_ct+gas_cc_ccs+gas_st, data/fuel/_shared._GAS_FUEL_IDX) instead of the per-class gas_cc key that crossed the CCS class migration on this 25-year pair (the base holds ZERO unabated CC at 2050, the gas x1.5 arm 6,000 MW — the label was the retrofit screen's composition response, not a merit-order sign). Scored from the committed arm summaries (generation_by_fuel_mwh is the checker's own _fuel_gen_mwh at 0.1 MWh): control reproduces the committed 'year 2050: wrong: gas_cc↓' exactly with the retired key; repaired leg PASS — gas-fired 36.53→35.36 TWh at 2050 and falls in all 25 years, LW price 79.16→93.95; objective↑ NOT scored at summary grain (named, never assumed). P1/P1.premise/P3 rows carried byte-verbatim; T16-A battery row untouched (CAVEAT, all-constant series [1.0, 1.0]). FC-6 FAIL → CAVEAT; determination HOLD (FC-1/2/3/4) unchanged; re-grade audit: 5 leaves moved, all FC-6 P2 + its rollup. Prior verdict preserved byte-equal at neiso-t3-pre-p2scope."
  },
  "pjm-t1h-pre-d45r": {
   "schema": "forecast-verdict/v1",
@@ -9717,7 +9717,7 @@
   "iso": "NYISO",
   "notes": [],
   "provenance": {
-   "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+   "cache_epoch": "Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",
    "session": "FFR-3A-2"
   },
@@ -9978,7 +9978,7 @@
    "FC-7 provenance & DOF"
   ],
   "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 nothing attributed to an axis, nothing armed. THIS LEG IS THE BATCH'S ONE CLEAN SINGLE-AXIS MEASUREMENT: the posture reproduces the bare key's own flag set (HEAD defaults + --entry-screen-diagnostics + neiso_net_icr_requirement, D37's Q28 arming) and the ONLY resolved-config difference from neiso-t1h-pre-d46 is fossil_announced_exits_enabled False -> True (Q30/D44, 57088c33). The keeper is unmoved (2026-08-17-neiso-99-joint-p1) and D41's CCS axis is VERIFIED inert (ccs_retrofits empty in every solve year; retrofits open in 2028, past the window). Channel armed 16 live rows / 2971 MW, 2021-2027. HEADLINE: retire.total_gw model 3.645 -> 4.447 GW (err_frac -0.271 -> -0.110), but the composition is REPLACED, not supplemented. Window totals by channel, from the evolution ledgers: dates OFF = coal retire:economic 791.5 MW + gas_st retire:economic 1438.2 + gas_cc retire:confirmed 706.8 (+706.8 derate); dates ON = coal retire:economic 0.0 + gas_cc retire:economic 849.4 (new) + gas_st retire:economic 1438.2 (unchanged to the decimal) + gas_cc derate:announced 539.5 + oil retire:announced 26.0. So NEISO LOSES 791.5 MW of coal economic exits and gains 849.4 MW of gas_cc economic exits: the screen RE-RANKS. Contrast MISO in the same batch, where the same flip re-routes the identical coal MW from the economic channel to the dates channel and loses no exit (reproducing capx-D42's own committed legs to the decimal, and consistent with its \"displaces nothing\" as rule 19 means it). NEISO's dated set contains essentially no in-window coal (Merrimack, 113.6 MW, dated 2027), so the coal that stops exiting was NOT exempted by its own filed date \u2014 the re-ranking runs through the derate path's effect on the margin surface. THE SIGN OF THE COAL EFFECT IS THEREFORE PER-ISO AND DOES NOT TRANSFER; the full causal decomposition needs a control this lane does not carry by charter, and is ROUTED, not inferred. recall 4/6 -> 3/6 and false_retire 0.263 -> 0.315 both read WORSE as a result. The FC-3 band-FAIL list is byte-identical at 11 rows through all of it \u2014 the gate leg is BLIND to every one of these moves, the same blindness D37 recorded of its own lever. Determination HOLD, unchanged. Preserved verbatim: neiso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B — nothing attributed to an axis, nothing armed. THIS LEG IS THE BATCH'S ONE CLEAN SINGLE-AXIS MEASUREMENT: the posture reproduces the bare key's own flag set (HEAD defaults + --entry-screen-diagnostics + neiso_net_icr_requirement, D37's Q28 arming) and the ONLY resolved-config difference from neiso-t1h-pre-d46 is fossil_announced_exits_enabled False -> True (Q30/D44, 57088c33). The keeper is unmoved (2026-08-17-neiso-99-joint-p1) and D41's CCS axis is VERIFIED inert (ccs_retrofits empty in every solve year; retrofits open in 2028, past the window). Channel armed 16 live rows / 2971 MW, 2021-2027. HEADLINE: retire.total_gw model 3.645 -> 4.447 GW (err_frac -0.271 -> -0.110), but the composition is REPLACED, not supplemented. Window totals by channel, from the evolution ledgers: dates OFF = coal retire:economic 791.5 MW + gas_st retire:economic 1438.2 + gas_cc retire:confirmed 706.8 (+706.8 derate); dates ON = coal retire:economic 0.0 + gas_cc retire:economic 849.4 (new) + gas_st retire:economic 1438.2 (unchanged to the decimal) + gas_cc derate:announced 539.5 + oil retire:announced 26.0. So NEISO LOSES 791.5 MW of coal economic exits and gains 849.4 MW of gas_cc economic exits: the screen RE-RANKS. Contrast MISO in the same batch, where the same flip re-routes the identical coal MW from the economic channel to the dates channel and loses no exit (reproducing capx-D42's own committed legs to the decimal, and consistent with its \"displaces nothing\" as rule 19 means it). NEISO's dated set contains essentially no in-window coal (Merrimack, 113.6 MW, dated 2027), so the coal that stops exiting was NOT exempted by its own filed date — the re-ranking runs through the derate path's effect on the margin surface. THE SIGN OF THE COAL EFFECT IS THEREFORE PER-ISO AND DOES NOT TRANSFER; the full causal decomposition needs a control this lane does not carry by charter, and is ROUTED, not inferred. recall 4/6 -> 3/6 and false_retire 0.263 -> 0.315 both read WORSE as a result. The FC-3 band-FAIL list is byte-identical at 11 rows through all of it — the gate leg is BLIND to every one of these moves, the same blindness D37 recorded of its own lever. Determination HOLD, unchanged. Preserved verbatim: neiso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
   ],
   "categories": {
    "FC-1": {
@@ -10103,7 +10103,7 @@
       "status": "PASS"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -10199,7 +10199,7 @@
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-09-01T01:10:11Z",
    "scored_at_sha": "7b085947b0ee",
-   "session": "capx-D2-extcap-intake \u00b7 FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-extcap/nyiso/dof_ledger.json \u2014 the capx-D8 instrument's committed ledger, 1 entry, 0 UNIDENTIFIED: forecast_xyear_warmstart=False, owner decision D-10). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha ea4e4faf65de @ 2026-08-25T01:49:23Z (session capx-D2-extcap-intake). MOVED \u2014 exactly the D8 \u00a76 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('1 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] \u2014 NYISO's first clean FC map. NOT MOVED: every other category, row status and detail. docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. \u00b7 FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/nyiso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (PROMOTE). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
+   "session": "capx-D2-extcap-intake · FC-7 DOF-LEDGER RE-VERIFICATION PUBLISHED 2026-08-31 by lane capx-D8-V (director r#22, executing capx-D8-RE's routed set): the affected lane's D-5(b)-style re-verification under the 2026-08-30 cross-lane re-grade ruling, recorded in that lane's own finding (docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md, Addendum). Re-scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--summary/--run-config unchanged, plus --dof-ledger results/ff-t1f-extcap/nyiso/dof_ledger.json — the capx-D8 instrument's committed ledger, 1 entry, 0 UNIDENTIFIED: forecast_xyear_warmstart=False, owner decision D-10). ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field, so the ledger input is the ONLY delta. Prior stamp preserved here: scored_at_sha ea4e4faf65de @ 2026-08-25T01:49:23Z (session capx-D2-extcap-intake). MOVED — exactly the D8 §6 pre-registration, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('1 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired, DETERMINATION PROMOTE-WITH-CAVEATS->PROMOTE with caveats [] — NYISO's first clean FC map. NOT MOVED: every other category, row status and detail. docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. · FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 — the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/nyiso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (PROMOTE). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
   },
   "reasons": [],
   "rubric_version": "1.0",
@@ -10314,7 +10314,7 @@
     "label": "FC-8 runtime feasibility",
     "rows": [
      {
-      "detail": "peak RSS 8.8 GB \u2265 8.6 GB (no co-run)",
+      "detail": "peak RSS 8.8 GB ≥ 8.6 GB (no co-run)",
       "gating": true,
       "row": "runtime",
       "status": "CAVEAT"
@@ -10336,7 +10336,7 @@
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-09-01T01:10:11Z",
    "scored_at_sha": "7b085947b0ee",
-   "session": "capx-S6-pjm-ledger \u00b7 FC-7 DOF LEDGER BUILT+COMMITTED AND RE-SCORED 2026-08-31 by lane capx-D8-V (director r#22, closing the D8 \u00a75.1 records gap D8-RE measured read-only): scripts/build_forecast_dof_ledger.py over the committed run_config wrote results/ff-t1f-s6-pjm/ledger/dof_ledger.json \u2014 1 entry, 0 UNIDENTIFIED (forecast_xyear_warmstart=False, owner decision D-10) \u2014 and the re-score consumed it. ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 54ca19ae0782 @ 2026-08-31T00:43:56Z (session capx-S6-pjm-ledger). MOVED \u2014 exactly D8-RE's \u00a78.4 measurement, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('1 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired. DETERMINATION UNCHANGED: HOLD, held by the FC-1/FC-2 FAILs (not a committed-verdict flip, so the cross-lane STOP does not bite). NOT MOVED: every other category, row status and detail. docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. \u00b7 FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/pjm-t1f.json (12 rows: 6 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (HOLD). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
+   "session": "capx-S6-pjm-ledger · FC-7 DOF LEDGER BUILT+COMMITTED AND RE-SCORED 2026-08-31 by lane capx-D8-V (director r#22, closing the D8 §5.1 records gap D8-RE measured read-only): scripts/build_forecast_dof_ledger.py over the committed run_config wrote results/ff-t1f-s6-pjm/ledger/dof_ledger.json — 1 entry, 0 UNIDENTIFIED (forecast_xyear_warmstart=False, owner decision D-10) — and the re-score consumed it. ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 54ca19ae0782 @ 2026-08-31T00:43:56Z (session capx-S6-pjm-ledger). MOVED — exactly D8-RE's §8.4 measurement, asserted row-by-row: FC-7 'dof ledger' row CAVEAT->PASS ('1 entries well-formed (0 open residual DOF listed)'), FC-7 category CAVEAT->PASS, caveat 'FC-7 provenance & DOF' retired. DETERMINATION UNCHANGED: HOLD, held by the FC-1/FC-2 FAILs (not a committed-verdict flip, so the cross-lane STOP does not bite). NOT MOVED: every other category, row status and detail. docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. · FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 — the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/pjm-t1f.json (12 rows: 6 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (HOLD). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) FAIL",
@@ -10378,7 +10378,7 @@
       "status": "PASS"
      },
      {
-      "detail": "backstop share 0.0% \u2264 10%",
+      "detail": "backstop share 0.0% ≤ 10%",
       "gating": true,
       "row": "row4",
       "status": "PASS"
@@ -10441,7 +10441,7 @@
       "status": "PASS"
      },
      {
-      "detail": "DOF ledger present as an UNATTESTED SKELETON: 3 of 4 entries carry identification='unattested' (entry_vre_capacity_revenue, miso_clean_tier_rows, miso_rps_compliance_regions). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 3 of 4 entries carry identification='unattested' (entry_vre_capacity_revenue, miso_clean_tier_rows, miso_rps_compliance_regions). Identification is unproven exactly as with no ledger — but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
       "gating": true,
       "row": "dof ledger",
       "status": "CAVEAT"
@@ -10454,7 +10454,7 @@
     "label": "FC-8 runtime feasibility",
     "rows": [
      {
-      "detail": "peak RSS 9.9 GB \u2265 8.6 GB (no co-run)",
+      "detail": "peak RSS 9.9 GB ≥ 8.6 GB (no co-run)",
       "gating": true,
       "row": "runtime",
       "status": "CAVEAT"
@@ -10477,7 +10477,7 @@
    "schema": "forecast-provenance/v1",
    "scored_at_date": "2026-09-01T01:10:11Z",
    "scored_at_sha": "7b085947b0ee",
-   "session": "S-123-V \u00b7 FC-7 DOF LEDGER BUILT+COMMITTED AND RE-SCORED 2026-08-31 by lane capx-D8-V (director r#22, closing the D8 \u00a75.1 records gap D8-RE measured read-only): scripts/build_forecast_dof_ledger.py over the committed run_config wrote results/ff-t1f-s123/verify/dof_ledger.json \u2014 4 entries, 3 UNIDENTIFIED (entry_vre_capacity_revenue, miso_clean_tier_rows, miso_rps_compliance_regions; the identified entry is forecast_xyear_warmstart=False, owner decision D-10) \u2014 and the re-score consumed it. ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field (the key's S-123-V board note is lane-authored, not scorer output, and is preserved verbatim). Prior stamp preserved here: scored_at_sha 54ca19ae0782 @ 2026-08-31T01:17:55Z (session S-123-V). MOVED \u2014 exactly D8-RE's \u00a78.4 measurement: the FC-7 'dof ledger' row DETAIL only, from 'DOF ledger absent' to the UNATTESTED-SKELETON text naming the three entries awaiting attestation. NOT MOVED: the row's CAVEAT status, the FC-7 category (CAVEAT), the caveat list, the DETERMINATION (HOLD, held by FC-1 I3) and every other row \u2014 the scorer treats an unattested-carrying ledger exactly as an absent one (rule 21 [R-DOF]: the three are NAMED attestation debt, deliberately not attested and not cleared by this lane). docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. \u00b7 FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 \u2014 the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/miso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (HOLD). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
+   "session": "S-123-V · FC-7 DOF LEDGER BUILT+COMMITTED AND RE-SCORED 2026-08-31 by lane capx-D8-V (director r#22, closing the D8 §5.1 records gap D8-RE measured read-only): scripts/build_forecast_dof_ledger.py over the committed run_config wrote results/ff-t1f-s123/verify/dof_ledger.json — 4 entries, 3 UNIDENTIFIED (entry_vre_capacity_revenue, miso_clean_tier_rows, miso_rps_compliance_regions; the identified entry is forecast_xyear_warmstart=False, owner decision D-10) — and the re-score consumed it. ZERO SOLVES. Control first: the same scorer run WITHOUT --dof-ledger reproduces the prior record byte-for-byte on every scorer field (the key's S-123-V board note is lane-authored, not scorer output, and is preserved verbatim). Prior stamp preserved here: scored_at_sha 54ca19ae0782 @ 2026-08-31T01:17:55Z (session S-123-V). MOVED — exactly D8-RE's §8.4 measurement: the FC-7 'dof ledger' row DETAIL only, from 'DOF ledger absent' to the UNATTESTED-SKELETON text naming the three entries awaiting attestation. NOT MOVED: the row's CAVEAT status, the FC-7 category (CAVEAT), the caveat list, the DETERMINATION (HOLD, held by FC-1 I3) and every other row — the scorer treats an unattested-carrying ledger exactly as an absent one (rule 21 [R-DOF]: the three are NAMED attestation debt, deliberately not attested and not cleared by this lane). docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md. · FC-5 CORRIDOR DISPOSITIONS AUTHORED AND RE-SCORED 2026-09-01 by lane capx-D25 (owner ruling Q16 half 2 — the FC-5 leg of the t3 ceiling): per-row disposition table authored at results/ff-corridor/dispositions/miso-t1f.json (11 rows: 5 IN CORRIDOR / 6 EXPLAINED DIVERGENCE / 0 UNEXPLAINED) against the D22 anchor table (results/ff-corridor/benchmark-corridor-anchors.json), scored through scripts/forecast_verdict.py on COMMITTED artifacts only (--corridor and --benchmark-corridor added; every prior input unchanged). ZERO SOLVES. Control first: the same scorer run WITHOUT the two corridor inputs reproduces the prior record byte-for-byte on every scorer field. Prior stamp preserved here: scored_at_sha 836e48e1efdc @ 2026-08-31T15:55:17Z. MOVED: FC-5 SKIPPED -> CAVEAT (report-only at t1f: surfaced as the notes line 'FC-5 external corridor (report-only): CAVEAT', never gating). NOT MOVED: every other category, row, reason and caveat, and the DETERMINATION (HOLD). docs/handoffs/FINDING-capx-d25-fc5-dispositions-2026-09-01.md."
   },
   "reasons": [
    "FC-1 structural integrity (I1-I14) FAIL"
@@ -10594,6 +10594,290 @@
       "row": "runtime",
       "status": "SKIPPED",
       "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "ercot-t1f-d50-ccscapex": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "9e48ff6820b0",
+   "scored_at_date": "2026-09-04T23:02:31Z",
+   "cache_epoch": "0c3e9cd5b5993bdf",
+   "run_id": "ercot-2026-2030-d50-ccscapex",
+   "session": "capx-D50"
+  },
+  "tier": "t1f",
+  "iso": "ERCOT",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D50 (2026-09-04): the CCS retrofit capex-scaling A/B ARM (ccs_retrofit_capex_co2_scaling=True — the capture island sized to the host's captured CO2 against the ATB reference host 0.323 t/MWh, cogeneration hosts excluded; the D49 §1.5 construction repair) against the bare ercot-t1f control ercot-2026-2030-d46-remeasure (873d8c0e6cab52ae, field absent/False). SUFFIXED BY CHARTER, never the bare key; NOTHING ARMS — the default flip is an owner ruling on FINDING-capx-d50-2026-09-04.md. Cache key 0c3e9cd5b5993bdf, pre-declared (PREDECL-capx-d50 §4) and matched; 10.2 min / 4.1 GB, paired with NEISO. One-field A/B: the resolved config differs from the control only in this field (plus five HEAD-added default-off fields at their cache-neutral drop values). RESULT, exactly as pre-declared (P1/P2 HIT): ZERO retrofit conversions in every year — 0 vs the control's 2028 11 rows / 2,130.9 MW + 2029 3 / 610.9 MW (2,741.8 MW). Every regular-CC host that converted in the control sits at 0.82-0.94 of the scaled ceiling bar; the one host above it (p55470, hr 34.75, 2.06 t/MWh) is the CHP data artifact seam 2 removes. Fleet MW, retirements, builds, backstop and the reserve margin are IDENTICAL to the control in every year; only 2028-2030 dispatch moves at the margin (lw_price 103.33->102.61 / 959.55->958.39 / 2342.05->2341.13; CO2 2030 285.04->285.32 Mt, the 2.74 GW no longer capturing). FC-1 FAIL [I12, I3] and FC-2 row1/row6 FAIL are byte-identical to the control (P9 HIT); determination HOLD -> HOLD. FC-7 CAVEAT both (control: no ledger; arm: ledger built, 8 of 10 entries are ERCOT's registry-armed scarcity/lookahead family with no curated identification row — an ERCOT lane's item, rule 25). FC-8 PASS.",
+   "FC-2 adequacy & equilibrium behavior / row6 (report): hours_ge_500 peaks 4039h/yr > 800 (sustained-VOLL)"
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I12', 'I3']: I12: scalar floor [13.8%, 28.7%]; out: 2027:8.9% (band [13.8%, 28.7%]), 2028:3.0% (band [13.8%, 28.7%]), 2029:-2.5% (band [13.8%, 28.7%]), 2030:-7.1% (band [13.8%, 28.7%]); I3: 2027: slack 0.08% of load (55 h, 500.4 GWh, peak 24,185 MW); 2028: slack 0.14% of load (78 h, 917.1 GWh, peak 29,818 MW); 2029: slack 0.59% of load (665 h, 4,119.4 GWh, peak 34,752 MW); 2030: slack 2.34% of load (2467 h, 17,685.1 GWh, peak 41,647 MW)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "FAIL",
+      "detail": "reserve-margin band (I12 FAIL): scalar floor [13.8%, 28.7%]; out: 2027:8.9% (band [13.8%, 28.7%]), 2028:3.0% (band [13.8%, 28.7%]), 2029:-2.5% (band [13.8%, 28.7%]), 2030:-7.1% (band [13.8%, 28.7%])",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "PASS",
+      "detail": "backstop share 0.0% ≤ 10%",
+      "gating": true
+     },
+     {
+      "row": "row6",
+      "status": "FAIL",
+      "detail": "hours_ge_500 peaks 4039h/yr > 800 (sustained-VOLL)",
+      "gating": false
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "driver response",
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 784 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 8 of 10 entries carry identification='unattested' (capacity_screen_scarcity_restoration, capacity_screen_unified_lookahead, entry_forward_reserve_leg, entry_margin_exhaustion, entry_pipeline_aware_signal, scarcity_price_overlay, smr_available_year, vre_procurement_additions_enabled). Identification is unproven exactly as with no ledger — but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "PASS",
+      "detail": "wall 10.2 min within budget",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "neiso-t1f-d50-ccscapex": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "9e48ff6820b0",
+   "scored_at_date": "2026-09-04T23:02:31Z",
+   "cache_epoch": "18515067bf4d2fbe",
+   "run_id": "neiso-2026-2030-d50-ccscapex",
+   "session": "capx-D50"
+  },
+  "tier": "t1f",
+  "iso": "NEISO",
+  "determination": "PROMOTE",
+  "reasons": [],
+  "caveats": [],
+  "notes": [
+   "capx-D50 (2026-09-04): the CCS retrofit capex-scaling A/B ARM (ccs_retrofit_capex_co2_scaling=True; the D49 §1.5 construction repair) against the bare neiso-t1f control neiso-2026-2030-d46-remeasure (6690e4d6d66bc819). SUFFIXED BY CHARTER, never the bare key; NOTHING ARMS. Cache key 18515067bf4d2fbe, pre-declared and matched; 6.7 min / 3.5 GB, paired with ERCOT. One-field A/B (five HEAD-added default-off fields at cache-neutral drops). RESULT: under RGGI (29.83 / 31.92 / 34.15 $/t) the 3 GW/yr cap STILL BINDS in every year, as pre-declared (P5 HIT): 2028 15 rows / 2,982.2 MW, 2029 12 / 2,996.7, 2030 12 / 2,982.6 (8,961.5 MW vs the control's 17 / 2,999.6 + 23 / 2,994.4 + 10 / 2,948.6 = 8,942.6) — every per-year delta within one cap-packing unit (-17.4 / +2.3 / +34.0 MW; STOP condition not met). The control's CC_CHP rows (139.6 / 226.8 / 8.4 MW) are gone (seam 2) and back-filled by regular-CC MW. The composition re-ranks: MW-weighted er of the converting set 0.608 -> 0.550 in 2028 (toward efficient hosts, P6 HIT), but 0.429 -> 0.431 in 2029 and 0.361 -> 0.393 in 2030 (P6 MISS — the residual pool after the re-ranked 2028 set is what 2029-2030 draw from). Fleet MW by fuel within 20 MW of the control, retirements / builds / backstop / reserve margin identical; generation shifts toward the converted set (gas_cc_ccs 18.27 -> 19.23 TWh in 2030) and CO2 2030 14.71 -> 14.98 Mt (lower-er hosts capture fewer tonnes). All 14 invariants PASS and every FC-2 row PASS on both (P9 HIT); determination PROMOTE -> PROMOTE, with the DOF ledger built from the arm's own run_config.json (8 entries, 0 UNIDENTIFIED after the field's curated design-decision row landed in build_forecast_dof_ledger.py — the D46 instrument-parity step, declared in the pre-declaration)."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "PASS",
+      "detail": "all 14 invariants PASS",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "PASS",
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "PASS",
+      "detail": "backstop share 1.2% ≤ 10%",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric §6 list pending)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "driver response",
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 784 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "PASS",
+      "detail": "8 entries well-formed (0 open residual DOF listed)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "PASS",
+      "detail": "wall 6.7 min within budget",
       "gating": true
      }
     ]

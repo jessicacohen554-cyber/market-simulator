@@ -224,6 +224,7 @@ def reference_config(
     caiso_ra_mpb_capacity_anchor: bool = False,
     miso_rps_compliance_regions: "bool | None" = None,
     miso_clean_tier_rows: "bool | None" = None,
+    ccs_retrofit_capex_co2_scaling: "bool | None" = None,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -325,6 +326,11 @@ def reference_config(
         # inherit the ISO/ScenarioConfig posture.
         "miso_rps_compliance_regions": miso_rps_compliance_regions,
         "miso_clean_tier_rows": miso_clean_tier_rows,
+        # capx D50: the CCS retrofit capex-scaling + CHP-exclusion gate
+        # (GATED default off; cache-optional at False). ``None`` = not
+        # passed = the shipped posture; the A/B arm passes True and keys
+        # distinctly. Same None-sentinel discipline as the two MISO gates.
+        "ccs_retrofit_capex_co2_scaling": ccs_retrofit_capex_co2_scaling,
     }
     return ScenarioConfig(
         iso=iso.upper(),
@@ -1066,6 +1072,22 @@ def main(argv: list[str] | None = None) -> int:
             "Solve-affecting, distinct cache key."
         ),
     )
+    ap.add_argument(
+        "--ccs-retrofit-capex-co2-scaling",
+        action="store_true",
+        default=None,
+        help=(
+            "capx D50 arm (ALL ISOs, DEFAULT OFF pending an owner ruling on the "
+            "D50 A/B): size the CCS retrofit capture island to the host's "
+            "captured CO2 per MWh against the ATB reference host "
+            "(ccs.py::ccs_retrofit_captured_ref_t_per_mwh, 0.323 t/MWh) instead "
+            "of charging ccs_retrofit_capex_kw flat per kW, and exclude "
+            "cogeneration (CC_CHP) hosts from the retrofit candidate set — the "
+            "D49 §1.5 construction repair. Solve-affecting from the first "
+            "retrofit year (2028); pair with an unarmed control. Omitting the "
+            "flag leaves the field UNSET (the shipped posture)."
+        ),
+    )
     args = ap.parse_args(argv)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
@@ -1094,6 +1116,7 @@ def main(argv: list[str] | None = None) -> int:
         caiso_ra_mpb_capacity_anchor=args.caiso_ra_mpb_capacity_anchor,
         miso_rps_compliance_regions=args.miso_rps_compliance_regions,
         miso_clean_tier_rows=args.miso_clean_tier_rows,
+        ccs_retrofit_capex_co2_scaling=args.ccs_retrofit_capex_co2_scaling,
     )
     summary = solve_and_summarize(
         config,
