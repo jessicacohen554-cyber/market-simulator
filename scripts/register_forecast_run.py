@@ -291,6 +291,22 @@ VERDICT_MAP = {
     # CHARTER, never the bare key; nothing arms -- the owner decides on the
     # pre-stated flip condition (PREDECL-capx-d48-2026-09-04.md §5).
     "pjm-2021-2025-realized-t1h-d48-devintage": "pjm-t1h-d48-devintage",
+    # capx-D51 (2026-09-04): the MISO internal-supply accounting ratio
+    # RE-IDENTIFIED on the dates-ON fleet (`adequacy_accounting_ratio_dated_net`
+    # ON; D49 §2.6, rule 23) against D46's bare `miso-t1h` (the gate OFF, the
+    # shipped posture). SUFFIXED BY CHARTER, never the bare key; nothing arms
+    # -- the owner decides on the pre-stated condition
+    # (PREDECL-capx-d51-2026-09-04.md §5).
+    "miso-2021-2025-realized-t1h-d51-ratio": "miso-t1h-d51-ratio",
+    # capx-D51 rider (d), owner ruling Q36: D45-R's pre-declared leg 7 -- the
+    # NEISO dates-OFF paired control at the SHIPPED lever
+    # (`--no-fossil-announced-exits`, neiso_net_icr_requirement False), the
+    # same-HEAD one-field pair to the bare `neiso-t1h` (D45-R L5). Its key
+    # EQUALS `neiso-t1h-d37-control`'s by construction (D45-R PREDECL §4.2 --
+    # the explicit False collapses onto the pre-flip key); the record's
+    # identity is its run id and its own fresh out-dir. SUFFIXED, never the
+    # bare key; the d37-control record is untouched.
+    "neiso-2021-2025-realized-t1h-d45r-datesoff": "neiso-t1h-d45r-datesoff",
     "neiso-2021-2025-realized-t1h-d45r": "neiso-t1h",
     "nyiso-2026-2030-d45r-remeasure": "nyiso-t1f",
     "pjm-2026-2030-d45r-remeasure": "pjm-t1f",

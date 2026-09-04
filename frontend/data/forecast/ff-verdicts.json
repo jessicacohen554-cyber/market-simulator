@@ -11112,5 +11112,119 @@
     ]
    }
   }
+ },
+ "neiso-t1h-d45r-datesoff": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "99371d49edb0",
+   "scored_at_date": "2026-09-04T23:11:02Z",
+   "cache_epoch": "5925e67c572a910f",
+   "run_id": "neiso-2021-2025-realized-t1h-d45r-datesoff",
+   "session": "capx-D51"
+  },
+  "tier": "t1h",
+  "iso": "NEISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D51 rider (d), owner ruling Q36 (r#34, card C-7): D45-R's pre-declared LEG 7, run EXACTLY as PREDECL-capx-d45r-2026-09-04.md \u00a74.2 declared -- the NEISO dates-OFF paired control at the SHIPPED lever (`--no-fossil-announced-exits`, neiso_net_icr_requirement=False, --entry-screen-diagnostics, vintage 2020, realized fuel), run neiso-2021-2025-realized-t1h-d45r-datesoff, cache key 5925e67c572a910f (pre-declared and MATCHED -- equal to neiso-t1h-d37-control's by construction, the explicit False collapsing onto the pre-flip key; a fresh out-dir, never a served bundle; the record's identity is its run id), 4.8 min wall, solved [2021, 2023, 2024, 2025], bridged [2022], SOLVE-YEAR PARITY held. SUFFIXED, never the bare key; nothing arms. P16 (L7 reproduces d37-control up to HEAD drift): HIT TO THE DECIMAL on EVERY score row and every window channel -- retire.total_gw 7.566 (+51.4 % FAIL), coal economic 0.791, gas_cc 5.335 (economic 3,977.9 + confirmed 650.3 + confirmed_derate 706.8), gas_st 1.438, oil 0.000, gas_ct 0.000, recall 4/6, false_retire 4.410 (58.3 %), the LOYO folds 4/6 / 0/4 / 3/4 with 4.41 / 1.47 / 4.404 GW, additions wind 2.0 / solar 2.056 / gas_cc 2.0 / gas_ct 0.5 / storage 0.0 -- so the 13 src/ commits between the 2026-09-02 and 2026-09-04 HEADs are MEASURED INERT for a NEISO T1-H solve, and the d37-control reading is confirmed at HEAD. What L7 adds over d37-control: the D45 position observability the older ledger lacks -- entering positions 1.2555 / 1.2399 / 1.0155 (2023/24/25) at dates OFF, against L5's 1.2082 / 1.1790 / 1.0199 at dates ON. P17 (the flip alone at the SHIPPED lever, L5 - L7, carries the D46 recall loss): the RE-ROUTING SIGN HOLDS -- oil 0.0 -> 0.547 GW (announced), gas_cc economic 3,977.9 -> 2,632.3 MW (DOWN, as predicted), total DOWN 7.566 -> 6.763 (+51 % -> +35 %) -- but its two counter-example limbs do NOT: coal economic 0.791 -> 0.534 GW, not 0.0 (the flip re-routes 128.8 MW into the announced channel and leaves 534 MW economic; falsifier '> 0.3 GW' FIRED), recall 4/6 -> 4/6 (plant-grain 0.667 -> 0.833, UP) and false_retire 4.410 -> 3.182 GW (58.3 % -> 47.0 %, DOWN). AT THE SHIPPED LEVER THE DATES FLIP IMPROVES EVERY GATED RETIREMENT ROW OR LEAVES IT UNCHANGED; the recall loss D46 measured (4/6 -> 3/6) belongs to the lever-ARMED pair (neiso-t1h-pre-d46 vs D46's armed leg), not to the flip as shipped. Reported to the owner as a FINDING, never a recommendation: Q30's global default has NO NEISO-side counter-example at the shipped posture. Determination HOLD (FC-3 FAIL, the same 10-row band list as d37-control and L5). docs/handoffs/FINDING-capx-d51-2026-09-04.md \u00a74"
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 784 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
  }
 }
