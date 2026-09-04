@@ -262,6 +262,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },
+    ccs_retrofit_capex_co2_scaling: { cell: ".", fc: "U", ev: "capx D50 (2026-09-04): built default-off; NOT solved for MISO in the D50 lane (solved only if the PJM arm contradicts its pre-declaration). Zero-solve expectation recorded in PREDECL-capx-d50-2026-09-04.md §2.4 (D49 §5 item 2 withdrawn: the 14 converting 2028 rows are all CC_CHP; ≤ 0.35 GW in the window). A MISO verdict needs a MISO lane's own solve (rule 25). Backcast lane n/a." },
     entry_lookahead_reprice: { cell: "K", fc: "K" },
     exit_rate_limits: { cell: "U", fc: "U" },
     entry_dampers: { cell: "O", fc: "O", ev: "FFR-2B (docs/handoffs/ffr-2b-retirement-entry-evidence-2026-08-02.md §1.3/§3; runs miso-2026-2030-ffr2b-t1f-{base,dampers}); FFR-3C (docs/handoffs/ffr-3c-collapse-attribution-2026-08-03.md §3 — MISO T1-F paired arms, treatment vs pre-decision control); FFR-3V (docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §5/§5.1 — the K = L knife-edge and the wind-validated cap reconstruction; §4.6 — the ungated thermal capacity payment against solar's zero)" },

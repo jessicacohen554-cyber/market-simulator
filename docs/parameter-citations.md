@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1878 parameters registered** (999 flagged `needs-citation`).
+**1879 parameters registered** (999 flagged `needs-citation`).
 
 
 ## Calibration
@@ -1588,6 +1588,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ccs_available_year` | 2030 | 1 | year CCUS enters the candidate pool |  | auto-generated, needs-citation |
 | `scenario.ccs_capture_rate` | 0.9 | 2 | NETL Cost & Performance Baseline for Fossil Energy Plants Rev 4 (20… | 2022 |  |
 | `scenario.ccs_retrofit_available_year` | 2028 | 2 | Earliest year retrofits can occur. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_capex_co2_scaling` | False | 2 | capx D50 construction repair of the CCS retrofit screen (GATED, def… | 2026-09 |  |
 | `scenario.ccs_retrofit_capex_kw` | 1521.4 | 2 | NREL ATB 2024 (v4.0.0 pin) capture-island CAPEX increment, Moderate… | 2024 |  |
 | `scenario.ccs_retrofit_capture_rate` | 0.9 | 2 | Fraction of CO2 captured. 0.90 = 90%. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_hr_penalty` | 0.12 | 2 | Fractional heat rate increase from capture parasitic load. |  | auto-generated, needs-citation |

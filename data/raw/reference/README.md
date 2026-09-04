@@ -17,6 +17,22 @@ named clean datatype. Each file's provenance:
 | `reliability_floor_coeffs_<ISO>.csv` (6 files) | per-ISO reliability-floor regression coefficients | `scripts/derive_reliability_coeffs.py` | model-side derivation |
 | `tx-jan-aug23-unit-outages.csv` | ERCOT-specific unit outage list, Jan–Aug 2023 | hand-curated — no producing script found | ERCOT outage reporting |
 
+**Data-quality flags (recorded, never silently filtered):**
+
+- `custom-bin-assignments.csv` row `CC_CHP,Houston,9,H_CHP9,55470,Green Power 2,611.0,34.75,…`
+  — `Plant_Avg_HR_MMBtu_MWh = 34.75` MMBtu/MWh (the CAMPD-derived CO2 rate
+  follows at 2.061 t/MWh, 5.7× a physical gas-CC). A CHP plant whose CEMS
+  fuel and emissions are charged to its NET ELECTRIC MWh — the steam host's
+  fuel counted against electricity. Flagged by capx D49
+  (`docs/handoffs/FINDING-capx-d49-2026-09-04.md` §1.2/§1.5 item 2) and
+  recorded here by capx D50; the row is left exactly as curated. Consequence
+  at HEAD: the unit dispatches at a $110+/MWh bid (in practice a peaker) and,
+  under the shipped CCS retrofit screen, clears a §45Q retrofit at a 1,408-hour
+  break-even on the inflated rate; the capx D50 gate
+  (`ScenarioConfig.ccs_retrofit_capex_co2_scaling`) excludes CC_CHP hosts from
+  that screen. Repairing the row itself needs the plant's useful-thermal-output
+  allocation (EIA-923 Page 3), which is not in-repo — routed, not done.
+
 **Regeneration:** files with a listed producing script regenerate by
 re-running it; files marked "hand-authored"/"hand-curated — no producing
 script found" are **hand-assembled — refetch procedure unknown** and should

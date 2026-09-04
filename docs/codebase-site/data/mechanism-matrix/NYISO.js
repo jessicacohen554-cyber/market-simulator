@@ -263,6 +263,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },
+    ccs_retrofit_capex_co2_scaling: { cell: ".", fc: "U", ev: "capx D50 (2026-09-04): built default-off, not solved for this ISO in the D50 lane; enters as U — a verdict needs this ISO's own solve (rule 25). Blast-radius key recorded in FINDING-capx-d50-2026-09-04.md. Backcast lane n/a (the screen is gated 2028)." },
     entry_lookahead_reprice: { cell: "K", fc: "K" },
     exit_rate_limits: { cell: "U", fc: "U" },
     entry_dampers: { cell: "U", fc: "U" },

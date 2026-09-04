@@ -787,5 +787,152 @@ class TestRetrofitCapexLearning(unittest.TestCase):
         self.assertEqual(_adjust_retrofit_capex(base, 2.0), base)
 
 
+class TestCapexCo2Scaling(unittest.TestCase):
+    """capx D50: the island sized to the host's captured CO2 (GATED, default off).
+
+    The D49 §1.4 seam: §45Q credited on the host's own captured tonnes while
+    the island is charged flat per kW. Under the gate a host capturing ``k``
+    times the reference host's CO2 per MWh pays ``k`` times the island, and
+    cogeneration hosts are not candidates. Off is byte-identical.
+    """
+
+    # The reference host pays exactly the reference increment (scale 1.0);
+    # a host at twice its rate pays twice the island.
+    ER_REF = 0.90 * 6.3 * 0.057 / 0.90  # 0.3591 t/MWh — hr_ref x CO2 factor
+
+    def test_captured_ref_is_the_reference_host_derivation(self):
+        from market_sim.config.constants import (
+            FUEL_CO2_FACTOR_PER_MMBTU,
+            HEAT_RATE_BINS,
+        )
+        from market_sim.model.capacity_evolution.ccs import (
+            ccs_retrofit_captured_ref_t_per_mwh,
+            ccs_retrofit_reference_host_heat_rate,
+        )
+
+        cfg = ScenarioConfig()
+        self.assertEqual(
+            ccs_retrofit_reference_host_heat_rate(),
+            min(HEAT_RATE_BINS["gas_cc"].values()),
+        )
+        self.assertAlmostEqual(
+            ccs_retrofit_captured_ref_t_per_mwh(cfg),
+            cfg.ccs_retrofit_capture_rate * 6.3 * FUEL_CO2_FACTOR_PER_MMBTU["gas_cc"],
+            places=12,
+        )
+        self.assertAlmostEqual(
+            ccs_retrofit_captured_ref_t_per_mwh(cfg), 0.32319, places=5
+        )
+
+    def test_off_is_byte_identical_and_cache_neutral(self):
+        # Default and explicit-False screens produce the same log, with the
+        # flat reference island (scale 1.0) and CHP hosts still candidates.
+        def fleet():
+            chp = _gas_cc("CHP", heat_rate=7.0, emission_rate=0.55)
+            chp.plant_group = "CC_CHP"
+            return [_gas_cc("REG", heat_rate=7.0, emission_rate=0.55), chp]
+
+        _, log_default = _screen(fleet(), HIGH_PRICES)
+        _, log_off = _screen(
+            fleet(),
+            HIGH_PRICES,
+            config=_fixture_config(ccs_retrofit_capex_co2_scaling=False),
+        )
+        self.assertEqual(log_default, log_off)
+        self.assertEqual({e["unit_id"] for e in log_off}, {"REG", "CHP"})
+        for entry in log_off:
+            self.assertEqual(entry["capex_scale"], 1.0)
+            self.assertEqual(
+                entry["retrofit_capex_per_mw"], _FIXTURE_RETROFIT_CAPEX_KW * 1000.0
+            )
+        # Registered cache-optional at False: the shipped default keys
+        # identically with the field absent or explicitly False, distinctly on.
+        base = ScenarioConfig()
+        self.assertEqual(
+            base.cache_key(),
+            ScenarioConfig(ccs_retrofit_capex_co2_scaling=False).cache_key(),
+        )
+        self.assertNotEqual(
+            base.cache_key(),
+            ScenarioConfig(ccs_retrofit_capex_co2_scaling=True).cache_key(),
+        )
+
+    def test_island_scales_with_captured_co2(self):
+        cfg = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
+        ref = _gas_cc("REF", heat_rate=6.3, emission_rate=self.ER_REF)
+        twice = _gas_cc("TWICE", heat_rate=6.3, emission_rate=2.0 * self.ER_REF)
+        _, log = _screen([ref, twice], HIGH_PRICES, config=cfg, carbon_price=120.0)
+        by_id = {e["unit_id"]: e for e in log}
+        self.assertEqual(set(by_id), {"REF", "TWICE"})
+        self.assertAlmostEqual(by_id["REF"]["capex_scale"], 1.0, places=9)
+        self.assertAlmostEqual(by_id["TWICE"]["capex_scale"], 2.0, places=9)
+        self.assertAlmostEqual(
+            by_id["REF"]["retrofit_capex_per_mw"], _FIXTURE_RETROFIT_CAPEX_KW * 1000.0
+        )
+        self.assertAlmostEqual(
+            by_id["TWICE"]["retrofit_capex_per_mw"],
+            2.0 * _FIXTURE_RETROFIT_CAPEX_KW * 1000.0,
+        )
+        # The same two hosts off the gate: the high emitter's payback was
+        # SHORTER than the reference host's (the D49 inversion); on, it pays
+        # twice the island and its payback lengthens against its own off value.
+        _, log_off = _screen(
+            [
+                _gas_cc("REF", heat_rate=6.3, emission_rate=self.ER_REF),
+                _gas_cc("TWICE", heat_rate=6.3, emission_rate=2.0 * self.ER_REF),
+            ],
+            HIGH_PRICES,
+            carbon_price=120.0,
+        )
+        off = {e["unit_id"]: e for e in log_off}
+        self.assertLess(off["TWICE"]["payback_years"], off["REF"]["payback_years"])
+        self.assertGreater(
+            by_id["TWICE"]["payback_years"], off["TWICE"]["payback_years"]
+        )
+        self.assertAlmostEqual(
+            by_id["REF"]["payback_years"], off["REF"]["payback_years"]
+        )
+
+    def test_high_emitter_stops_clearing_on_45q_alone(self):
+        # A 0.60 t/MWh host at carbon 0: at a $1,600/kW island it clears
+        # flat-per-kW (12 x uplift > 1.6 M) and FAILS once the island is
+        # sized to 1.67x the reference host's CO2 flow (2.67 M > 12 x uplift).
+        host = _gas_cc("HOT", heat_rate=7.0, emission_rate=0.60)
+        _, log_flat = _screen(
+            [host], HIGH_PRICES, config=_fixture_config(ccs_retrofit_capex_kw=1600.0)
+        )
+        self.assertEqual([e["unit_id"] for e in log_flat], ["HOT"])
+        host2 = _gas_cc("HOT", heat_rate=7.0, emission_rate=0.60)
+        _, log_scaled = _screen(
+            [host2],
+            HIGH_PRICES,
+            config=_fixture_config(
+                ccs_retrofit_capex_kw=1600.0, ccs_retrofit_capex_co2_scaling=True
+            ),
+        )
+        self.assertEqual(log_scaled, [])
+        self.assertEqual(host2.fuel_type, "gas_cc")
+
+    def test_cogeneration_host_excluded_only_when_armed(self):
+        def fleet():
+            chp = _gas_cc("CHP", heat_rate=7.0, emission_rate=0.55)
+            chp.plant_group = "CC_CHP"
+            reg = _gas_cc("REG", heat_rate=7.0, emission_rate=0.55)
+            reg.plant_group = "CC_REGULAR"
+            return [chp, reg]
+
+        f_off, log_off = _screen(fleet(), HIGH_PRICES, carbon_price=120.0)
+        self.assertEqual({e["unit_id"] for e in log_off}, {"CHP", "REG"})
+        f_on, log_on = _screen(
+            fleet(),
+            HIGH_PRICES,
+            config=_fixture_config(ccs_retrofit_capex_co2_scaling=True),
+            carbon_price=120.0,
+        )
+        self.assertEqual({e["unit_id"] for e in log_on}, {"REG"})
+        self.assertEqual({g.unit_id: g.fuel_type for g in f_on}["CHP"], "gas_cc")
+        self.assertEqual({g.unit_id: g.fuel_type for g in f_on}["REG"], "gas_cc_ccs")
+
+
 if __name__ == "__main__":
     unittest.main()

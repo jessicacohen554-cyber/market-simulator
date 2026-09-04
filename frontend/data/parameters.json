@@ -4805,6 +4805,22 @@
       "flags": []
     },
     {
+      "param_id": "scenario.ccs_retrofit_capex_co2_scaling",
+      "display_name": "CCS retrofit capex sized to captured CO2 (D50 gate)",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "capx D50 construction repair of the CCS retrofit screen (GATED, default False; the default flip is an owner ruling). When True: (a) retrofit_capex_per_mw = learning-adjusted ccs_retrofit_capex_kw × 1000 × captured / captured_ref, with captured_ref = ccs_retrofit_capture_rate × min(HEAT_RATE_BINS['gas_cc']) × FUEL_CO2_FACTOR_PER_MMBTU['gas_cc'] = 0.90 × 6.3 × 0.057 = 0.32319 t/MWh — the ATB 2024 capture-island increment (NEW_ENTRY_COSTS gas_cc_ccs − gas_cc, 2026$) sized to the reference host new_entry._emerging_lcoe already charges it against; (b) cogeneration hosts (plant_group CC_CHP) excluded from the candidate set — the ATB 2024 NG-CC-CCS and NETL NGCC-retrofit cost bases are electric-only NGCC costings, and a CHP's CAMPD CEMS CO2 rate per net electric MWh charges the steam host's fuel to electricity (eGRID's CHP allocation exists for this reason; no useful-thermal-output intake in-repo). Zero free parameters: every term is an existing cited constant. Seam adjudicated in FINDING-capx-d49-2026-09-04.md §1.4–§1.5; built and A/B'd in PREDECL-/FINDING-capx-d50-2026-09-04.md.",
+      "source_date": "2026-09",
+      "page_or_table": "ccs.py::ccs_retrofit_captured_ref_t_per_mwh; spec §5.6",
+      "url": "",
+      "notes": "Boolean gate, not a costed value — its cited inputs are ccs_retrofit_capex_kw (ATB 2024 2026$), HEAT_RATE_BINS gas_cc h_class (EIA Table 8) and FUEL_CO2_FACTOR_PER_MMBTU gas_cc (EPA eGRID 2022), each carrying its own registry row. Default-off is byte-identical (ercot-t1f 873d8c0e6cab52ae unmoved).",
+      "old_repo_location": "",
+      "last_verified": "2026-09-04",
+      "flags": []
+    },
+    {
       "param_id": "adequacy_demand_response_fraction_by_iso.ERCOT",
       "display_name": "Adequacy Demand Response Fraction By Iso / Ercot",
       "value": 0.058,

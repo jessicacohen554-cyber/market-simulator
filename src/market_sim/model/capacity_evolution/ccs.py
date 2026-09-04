@@ -23,6 +23,8 @@ import logging
 import numpy as np
 
 from market_sim.config.constants import (
+    FUEL_CO2_FACTOR_PER_MMBTU,
+    HEAT_RATE_BINS,
     HOURS_PER_YEAR,
     NEW_ENTRY_COSTS,
     WRIGHT_REFERENCE_GW,
@@ -62,6 +64,52 @@ def _adjust_retrofit_capex(base_capex_kw: float, cumulative_gw: float | None) ->
         return base_capex_kw
 
     return wright_cost(base_capex_kw, cumulative_gw, ref_gw, lr)
+
+
+def ccs_retrofit_reference_host_heat_rate() -> float:
+    """Return the reference-host heat rate the retrofit capex increment is sized for.
+
+    ``min(HEAT_RATE_BINS["gas_cc"])`` = 6.3 MMBtu/MWh (EIA Table 8, newest
+    H-class combined cycle) — the SAME host heat rate
+    :func:`market_sim.model.capacity_evolution.new_entry._emerging_lcoe`
+    charges the NREL ATB 2024 ``gas_cc_ccs`` increment against, so the
+    retrofit and new-build screens size one ATB capture island to one
+    reference host. (ATB 2024's own NG-CC F-frame heat rate is 6.36; the
+    model-internal value is used because it is the basis D41's increment is
+    already applied to — capx D50, ``PREDECL-capx-d50-2026-09-04.md`` §1.2.)
+    """
+    return float(min(HEAT_RATE_BINS["gas_cc"].values()))
+
+
+def ccs_retrofit_captured_ref_t_per_mwh(config: ScenarioConfig) -> float:
+    """Return the captured CO2 per MWh of the reference host, t/MWh.
+
+    ``capture_rate × hr_ref × FUEL_CO2_FACTOR_PER_MMBTU["gas_cc"]`` — at the
+    shipped constants 0.90 × 6.3 × 0.057 = 0.32319 t/MWh. The denominator
+    of the capx D50 capex scaling (:func:`apply_ccs_retrofit` under
+    ``config.ccs_retrofit_capex_co2_scaling``): ``ccs_retrofit_capex_kw`` is
+    the ATB 2024 capture-island increment for THIS host's CO2 flow, so a host
+    capturing ``k`` times as much CO2 per MWh needs ``k`` times the island per
+    kW. Every term is an existing cited constant; nothing is fitted (rules 5,
+    21, 23). Zero DOF.
+    """
+    return (
+        config.ccs_retrofit_capture_rate
+        * ccs_retrofit_reference_host_heat_rate()
+        * FUEL_CO2_FACTOR_PER_MMBTU["gas_cc"]
+    )
+
+
+def _is_cogeneration_host(gen: Generator) -> bool:
+    """True for a combined-heat-and-power host (fleet ``plant_group`` CC_CHP).
+
+    Read by the capx D50 candidate filter only under
+    ``config.ccs_retrofit_capex_co2_scaling``. ``plant_group`` is loader
+    provenance stamped by the CAMPD binning (ERCOT's curated sheet, the other
+    ISOs' synthesized bins), not a config tunable; a legacy equal-width-bin
+    fleet carries ``""`` and is never excluded.
+    """
+    return gen.plant_group == "CC_CHP"
 
 
 def _ccs_45q_window_years(config: ScenarioConfig, horizon_years: float) -> float:
@@ -205,6 +253,28 @@ def apply_ccs_retrofit(
     cap-displaced candidates stay unabated on the normal loss-year
     counter and are re-screened every year.
 
+    **Capex sized to the host's CO2 flow (capx D50, GATED
+    ``config.ccs_retrofit_capex_co2_scaling``, default off).** Off, the
+    capture island is charged at ``ccs_retrofit_capex_kw`` FLAT per kW for
+    every host while §45Q is credited on the host's OWN captured tonnes —
+    the construction seam ``FINDING-capx-d49-2026-09-04.md`` §1.4 named:
+    the credit scales with CO2 per MWh, the capex does not, so the
+    retrofit margin rises with host emissions. On, (a) the island is sized
+    to what it captures, ``retrofit_capex_per_mw = capex_kw × 1000 ×
+    captured / captured_ref`` with ``captured_ref`` the ATB reference
+    host's captured rate (:func:`ccs_retrofit_captured_ref_t_per_mwh`,
+    0.323 t/MWh), applied AFTER the Wright's-Law learning of the
+    reference-host increment; and (b) cogeneration hosts
+    (:func:`_is_cogeneration_host`) are not candidates — the published
+    island cost bases are electric-only NGCC costings and a CHP's CEMS
+    rate per net electric MWh charges the steam host's fuel to
+    electricity, so the credit would be paid on tonnes the electric
+    island does not exist to capture. The off path never enters either
+    branch (byte-identical by construction). What the scaling leaves
+    reference-host-sized, stated: ``ΔFOM`` ($/MW-yr) and the capture VOM
+    adder ($/MWh) — the clearing threshold in host emissions moves, it
+    does not vanish (``PREDECL-capx-d50-2026-09-04.md`` §1.2).
+
     Args:
         fleet: Current generator fleet.
         prices: ``(n_zones, T)`` zonal price signal from the prior year
@@ -253,7 +323,12 @@ def apply_ccs_retrofit(
         config.ccs_retrofit_capex_kw,
         cumulative.get("gas_cc_ccs") if cumulative else None,
     )
-    retrofit_capex_per_mw = adjusted_capex_kw * 1000.0
+    # The reference-host island: the ATB increment per kW of an H-class host,
+    # learning-adjusted. Under the capx D50 gate each candidate's island is
+    # re-sized below to the CO2 it actually captures.
+    retrofit_capex_per_mw_ref = adjusted_capex_kw * 1000.0
+    scale_capex = bool(config.ccs_retrofit_capex_co2_scaling)
+    captured_ref = ccs_retrofit_captured_ref_t_per_mwh(config) if scale_capex else None
 
     # Going-forward fixed-cost delta between the two states, $/MW-yr — the
     # same FOM × multiplier construction the retirement screen prices each
@@ -274,6 +349,11 @@ def apply_ccs_retrofit(
         remaining_life = max(0, _THERMAL_PLANT_LIFE_YEARS - age)
         if remaining_life < config.ccs_retrofit_min_remaining_life:
             continue
+        if scale_capex and _is_cogeneration_host(gen):
+            # capx D50 seam 2: a cogeneration host is not a candidate — its
+            # CEMS rate per net electric MWh carries the steam host's fuel,
+            # and no published capture-island cost exists on that basis.
+            continue
         price_row = _retrofit_price_row(prices, zone_names, gen.zone)
         if price_row is None:
             logger.debug(
@@ -290,6 +370,16 @@ def apply_ccs_retrofit(
         old_er = gen.emission_rate_co2
         new_er = old_er * (1.0 - config.ccs_retrofit_capture_rate)
         captured = old_er - new_er
+
+        # capx D50 seam 1: size the island to the CO2 it captures. The
+        # reference host (captured_ref) pays exactly the ATB increment; a
+        # host capturing k× as much per MWh pays k× the island per MW. Off,
+        # every host pays the flat reference increment (the shipped seam).
+        if scale_capex and captured_ref:
+            capex_scale = captured / captured_ref
+        else:
+            capex_scale = 1.0
+        retrofit_capex_per_mw = retrofit_capex_per_mw_ref * capex_scale
 
         # Full variable cost per state. Post-retrofit pays fuel at the
         # penalized heat rate, the capture VOM adder, carbon on the residual
@@ -376,6 +466,11 @@ def apply_ccs_retrofit(
                     "window_years": window_years,
                     "delta_fom_per_mw_yr": delta_fom_per_mw_yr,
                     "remaining_life_years": remaining_life,
+                    # capx D50: the island this host was actually charged
+                    # for, and its size relative to the ATB reference host
+                    # (1.0 whenever the scaling gate is off).
+                    "retrofit_capex_per_mw": retrofit_capex_per_mw,
+                    "capex_scale": capex_scale,
                 },
             )
         )
