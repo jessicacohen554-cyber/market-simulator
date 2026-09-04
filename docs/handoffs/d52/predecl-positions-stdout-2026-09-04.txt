@@ -1,0 +1,9 @@
+HEAD factor 1.0797
+2021 peak model/pub 30919 32333 req {'OFF': 33382, 'PEAK': 34909, 'FACTORS': 34046, 'BOTH': 35603} pos_enter {} pub 1.049 curve {} budget {}
+2022 bridge
+2023 peak model/pub 30206 32049 req {'OFF': 32612, 'PEAK': 34602, 'FACTORS': 32572, 'BOTH': 34559} pos_enter {'OFF': 1.1083, 'PEAK': 1.0446, 'FACTORS': 1.1097, 'BOTH': 1.0459} pub 1.043 curve {'OFF': 7.22, 'PEAK': 46.59, 'FACTORS': 6.36, 'BOTH': 45.78} budget {'OFF': 3532, 'PEAK': 1543, 'FACTORS': 3573, 'BOTH': 1586}
+2024 peak model/pub 28990 31542 req {'OFF': 31300, 'PEAK': 34055, 'FACTORS': 30696, 'BOTH': 33398} pos_enter {'OFF': 1.1101, 'PEAK': 1.0203, 'FACTORS': 1.1319, 'BOTH': 1.0403} pub 1.058 curve {'OFF': 5.99, 'PEAK': 60.14, 'FACTORS': 0.0, 'BOTH': 48.04} budget {'OFF': 3445, 'PEAK': 690, 'FACTORS': 4049, 'BOTH': 1347}
+2025 peak model/pub 31857 31469 req {'OFF': 34395, 'PEAK': 33976, 'FACTORS': 34478, 'BOTH': 34058} pos_enter {'OFF': 1.0417, 'PEAK': 1.0545, 'FACTORS': 1.0392, 'BOTH': 1.052} pub 1.058 curve {'OFF': 32.98, 'PEAK': 27.57, 'FACTORS': 34.04, 'BOTH': 28.65} budget {'OFF': 1434, 'PEAK': 1853, 'FACTORS': 1351, 'BOTH': 1771}
+rescreen 2023 pos 1.0459 px 45.78 {'decided:gas_st': (21, 3496, 3496, 0.1, 35.0, 42.6), 'entry_capped:gas_st': (27, 5871, 5871, 0.4, 35.0, 42.6), 'entry_capped:gas_cc': (102, 7338, 7338, 10.7, 30.0, 43.5), 'entry_capped:gas_ct': (118, 3075, 3075, 1.1, 21.0, 43.0)}
+rescreen 2024 pos 1.0403 px 48.04 {}
+rescreen 2025 pos 1.052 px 28.65 {}
