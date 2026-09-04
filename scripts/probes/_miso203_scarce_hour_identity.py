@@ -15,6 +15,17 @@ characterisation of the 15 hours rather than an assumption about them.
 Every input is a committed artifact; **no LP is solved**.  Rule 22
 ``[R-HOLDOUT]`` — 2023/2024/2025 only.
 
+**CLOCK REPAIR (miso-206, 2026-09-04).** The first committed version built its
+hourly actual as the eight-hub equal-weighted mean on the RAW EST hour-ending
+index of ``data/raw/lmp-data/MISO/*.csv.gz`` — one hour late against the
+model's fixed-CST clock, 25 h late after Feb 28 of a leap year (miso-204 §6),
+so only 2 / 1 / 4 of its 15 hours were in the top 1 % of the series C3a is
+scored against. The actual is now the COMMITTED
+``actual_lmp_hourly_zonal_MISO.parquet`` (hub ``INDIANA.HUB``, col ``rt``),
+i.e. miso-205's instrument; the pre-repair blocks are preserved under
+``pre_repair_defective_clock``. ``driver_contrast.top_gross_load_hours`` and
+``jun_jul_peaks_for_reference`` are defined on MODEL drivers and do not move.
+
 Usage::
 
     python3 scripts/probes/_miso203_scarce_hour_identity.py
@@ -39,8 +50,9 @@ ISO = "MISO"
 YEARS = (2023, 2024, 2025)
 HOURS = 8760
 KEEPER = REPO / "results/calibration/miso202_unitclip_B"
-HUB_LMP = REPO / "data/raw/lmp-data/MISO"
+ZONAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet"
 OUT = REPO / "results/calibration/_miso203_scarce_hour_identity.json"
+SCORING_HUB = "INDIANA.HUB"
 
 RENEW = ("wind", "solar")
 MONTH_LENS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -64,16 +76,21 @@ def _stamp(h: int) -> str:
 
 
 def hub_hourly_rt(year: int) -> np.ndarray | None:
-    """Hub-average hourly RT LMP — the anatomy's own series, same construction."""
-    path = HUB_LMP / f"miso_hub_lmp_{year}_rt.csv.gz"
-    if not path.exists():
+    """INDIANA.HUB hourly RT on the model's fixed-CST non-leap clock.
+
+    Read from the COMMITTED zonal scoring parquet — the C3a comparator itself —
+    never re-derived from the raw ``csv.gz`` staging, whose bare ``arr[:8760]``
+    indexing IS the clock defect this repair removes.
+    """
+    if not ZONAL.exists():
         return None
-    df = pd.read_csv(path)
-    df = df[df["value"] == "LMP"]
-    he = [f"he{i:02d}" for i in range(1, 25)]
-    df["date"] = pd.to_datetime(df["date"])
-    arr = df.groupby("date")[he].mean().sort_index().to_numpy().ravel()
-    return arr[:HOURS] if len(arr) >= HOURS else None
+    zon = pd.read_parquet(ZONAL)
+    s = zon[(zon.year == year) & (zon.hub == SCORING_HUB)].sort_values("hour")
+    arr = np.full(HOURS, np.nan)
+    idx = s["hour"].to_numpy(int)
+    keep = idx < HOURS
+    arr[idx[keep]] = s["rt"].to_numpy(float)[keep]
+    return arr if np.isfinite(arr).sum() >= HOURS - 48 else None
 
 
 def _pctile_rank(series: np.ndarray, idx: np.ndarray, within: np.ndarray) -> float:
@@ -107,7 +124,7 @@ def main() -> None:
             report["years"][str(year)] = {"error": "no committed hub RT file"}
             continue
         jj = np.where(jun_jul)[0]
-        thr = float(np.percentile(act[jj], 99.0))
+        thr = float(np.nanpercentile(act[jj], 99.0))
         scarce = jj[act[jj] >= thr]
 
         sysd = pd.read_parquet(KEEPER / "hourly" / f"system_{year}.parquet")
@@ -245,6 +262,25 @@ def main() -> None:
             "hours": rows,
         }
 
+    # ---- clock repair (miso-206): keep the defective hour-matched blocks ---
+    if OUT.exists():
+        prior = json.loads(OUT.read_text())
+        pre = prior.get("pre_repair_defective_clock") or {
+            "note": (
+                "as first committed (miso-203): eight-hub equal-weighted mean on "
+                "the RAW EST hour-ending index (miso-204 §6 defect: -1 h, and "
+                "-25 h after Feb 28 of a leap year). Kept for the record; "
+                "superseded. miso-205's record was measured against THESE values "
+                "as its 'miso203_committed_defective' baseline."
+            ),
+            "years": prior.get("years"),
+        }
+        report["pre_repair_defective_clock"] = pre
+    report["clock_repair"] = (
+        "miso-206 (2026-09-04): hourly actual = INDIANA.HUB RT from the committed "
+        "actual_lmp_hourly_zonal_MISO.parquet on the model's fixed-CST non-leap "
+        "clock (the C3a comparator; miso-205's instrument)."
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(report, indent=1))
     print(f"wrote {OUT}")

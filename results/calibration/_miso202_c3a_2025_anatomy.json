@@ -146,98 +146,98 @@
     },
     {
      "month": "Feb",
-     "model_lw": 29.54,
+     "model_lw": 29.71,
      "actual_lw": 26.99,
-     "gap": 2.55,
-     "load_share": 0.0747,
-     "contribution_usd_per_mwh": 0.1908
+     "gap": 2.72,
+     "load_share": 0.0721,
+     "contribution_usd_per_mwh": 0.1958
     },
     {
      "month": "Mar",
-     "model_lw": 25.92,
+     "model_lw": 25.88,
      "actual_lw": 23.73,
-     "gap": 2.19,
-     "load_share": 0.0757,
-     "contribution_usd_per_mwh": 0.166
+     "gap": 2.15,
+     "load_share": 0.0758,
+     "contribution_usd_per_mwh": 0.1633
     },
     {
      "month": "Apr",
-     "model_lw": 25.36,
+     "model_lw": 25.25,
      "actual_lw": 28.83,
-     "gap": -3.47,
-     "load_share": 0.0727,
-     "contribution_usd_per_mwh": -0.2523
+     "gap": -3.58,
+     "load_share": 0.0726,
+     "contribution_usd_per_mwh": -0.2598
     },
     {
      "month": "May",
-     "model_lw": 29.32,
+     "model_lw": 29.44,
      "actual_lw": 35.8,
-     "gap": -6.48,
-     "load_share": 0.0806,
-     "contribution_usd_per_mwh": -0.5221
+     "gap": -6.36,
+     "load_share": 0.0807,
+     "contribution_usd_per_mwh": -0.5128
     },
     {
      "month": "Jun",
-     "model_lw": 29.27,
+     "model_lw": 29.36,
      "actual_lw": 33.79,
-     "gap": -4.52,
-     "load_share": 0.0905,
-     "contribution_usd_per_mwh": -0.4096
+     "gap": -4.43,
+     "load_share": 0.0904,
+     "contribution_usd_per_mwh": -0.4008
     },
     {
      "month": "Jul",
-     "model_lw": 31.81,
+     "model_lw": 31.5,
      "actual_lw": 36.84,
-     "gap": -5.03,
-     "load_share": 0.098,
-     "contribution_usd_per_mwh": -0.4927
+     "gap": -5.34,
+     "load_share": 0.0972,
+     "contribution_usd_per_mwh": -0.5194
     },
     {
      "month": "Aug",
-     "model_lw": 34.69,
+     "model_lw": 34.94,
      "actual_lw": 32.53,
-     "gap": 2.16,
-     "load_share": 0.0972,
-     "contribution_usd_per_mwh": 0.2098
+     "gap": 2.41,
+     "load_share": 0.098,
+     "contribution_usd_per_mwh": 0.236
     },
     {
      "month": "Sep",
-     "model_lw": 29.37,
+     "model_lw": 29.07,
      "actual_lw": 32.91,
-     "gap": -3.54,
+     "gap": -3.84,
      "load_share": 0.0836,
-     "contribution_usd_per_mwh": -0.2959
+     "contribution_usd_per_mwh": -0.3209
     },
     {
      "month": "Oct",
-     "model_lw": 27.35,
+     "model_lw": 27.62,
      "actual_lw": 28.23,
-     "gap": -0.88,
-     "load_share": 0.0775,
-     "contribution_usd_per_mwh": -0.0683
+     "gap": -0.61,
+     "load_share": 0.0777,
+     "contribution_usd_per_mwh": -0.0475
     },
     {
      "month": "Nov",
-     "model_lw": 29.09,
+     "model_lw": 28.69,
      "actual_lw": 26.88,
-     "gap": 2.21,
-     "load_share": 0.0765,
-     "contribution_usd_per_mwh": 0.1692
+     "gap": 1.81,
+     "load_share": 0.0762,
+     "contribution_usd_per_mwh": 0.138
     },
     {
      "month": "Dec",
-     "model_lw": 35.43,
+     "model_lw": 35.48,
      "actual_lw": 34.42,
-     "gap": 1.01,
-     "load_share": 0.0825,
-     "contribution_usd_per_mwh": 0.0837
+     "gap": 1.06,
+     "load_share": 0.0853,
+     "contribution_usd_per_mwh": 0.0904
     }
    ],
-   "total_gap_usd_per_mwh": -1.4684,
-   "jun_sep_usd_per_mwh": -0.9884,
-   "jun_sep_share_of_gap": 0.6731,
-   "jun_jul_usd_per_mwh": -0.9023,
-   "jun_jul_share_of_gap": 0.6145
+   "total_gap_usd_per_mwh": -1.4847,
+   "jun_sep_usd_per_mwh": -1.0051,
+   "jun_sep_share_of_gap": 0.677,
+   "jun_jul_usd_per_mwh": -0.9202,
+   "jun_jul_share_of_gap": 0.6198
   },
   "2025": {
    "months": [
@@ -349,385 +349,613 @@
   "2023": {
    "full_year": {
     "n_hours": 8760,
-    "actual_mean": 28.36,
+    "actual_mean": 31.79,
     "model_mean": 32.32,
-    "mean_gap": 3.961,
+    "mean_gap": 0.531,
     "percentiles": {
      "p50": {
-      "actual": 25.18,
+      "actual": 27.14,
       "model": 32.0
      },
      "p75": {
-      "actual": 30.88,
+      "actual": 33.78,
       "model": 35.06
      },
      "p90": {
-      "actual": 38.97,
+      "actual": 43.75,
       "model": 38.02
      },
      "p95": {
-      "actual": 48.42,
+      "actual": 58.79,
       "model": 40.91
      },
      "p99": {
-      "actual": 93.54,
+      "actual": 118.17,
       "model": 46.55
      },
      "p99.9": {
-      "actual": 221.33,
+      "actual": 325.58,
       "model": 54.29
      }
     },
-    "actual_max": 569.17,
+    "actual_max": 585.12,
     "model_max": 194.9,
-    "hours_actual_over_200": 12,
+    "hours_actual_over_200": 30,
     "hours_model_over_200": 0,
     "top1pct_of_actual_hours": {
-     "n": 88,
-     "contribution_usd_per_mwh": -1.102,
-     "share_of_mean_gap": -0.2782
+     "n": 89,
+     "contribution_usd_per_mwh": -1.575,
+     "share_of_mean_gap": -2.9672
     },
-    "all_other_hours_contribution": 5.063
+    "all_other_hours_contribution": 2.106
    },
    "jun_jul": {
     "n_hours": 1464,
-    "actual_mean": 29.92,
+    "actual_mean": 31.76,
     "model_mean": 32.17,
-    "mean_gap": 2.255,
+    "mean_gap": 0.417,
     "percentiles": {
      "p50": {
-      "actual": 26.22,
+      "actual": 27.19,
       "model": 31.84
      },
      "p75": {
-      "actual": 34.91,
+      "actual": 35.55,
       "model": 36.1
      },
      "p90": {
-      "actual": 44.39,
+      "actual": 44.32,
       "model": 38.46
      },
      "p95": {
-      "actual": 56.99,
+      "actual": 58.5,
       "model": 40.34
      },
      "p99": {
-      "actual": 100.42,
+      "actual": 121.43,
       "model": 45.35
      },
      "p99.9": {
-      "actual": 188.84,
+      "actual": 316.47,
       "model": 52.91
      }
     },
-    "actual_max": 210.9,
+    "actual_max": 354.91,
     "model_max": 53.95,
-    "hours_actual_over_200": 1,
+    "hours_actual_over_200": 4,
     "hours_model_over_200": 0,
     "top1pct_of_actual_hours": {
      "n": 15,
-     "contribution_usd_per_mwh": -1.03,
-     "share_of_mean_gap": -0.4568
+     "contribution_usd_per_mwh": -1.553,
+     "share_of_mean_gap": -3.7215
     },
-    "all_other_hours_contribution": 3.285
+    "all_other_hours_contribution": 1.97
    },
    "jun_sep": {
     "n_hours": 2928,
-    "actual_mean": 30.77,
+    "actual_mean": 32.45,
     "model_mean": 32.53,
-    "mean_gap": 1.758,
+    "mean_gap": 0.076,
     "percentiles": {
      "p50": {
-      "actual": 26.63,
+      "actual": 27.5,
       "model": 32.15
      },
      "p75": {
-      "actual": 34.98,
+      "actual": 35.86,
       "model": 35.85
      },
      "p90": {
-      "actual": 44.55,
+      "actual": 45.23,
       "model": 38.63
      },
      "p95": {
-      "actual": 55.99,
+      "actual": 59.76,
       "model": 41.29
      },
      "p99": {
-      "actual": 100.16,
+      "actual": 118.09,
       "model": 45.86
      },
      "p99.9": {
-      "actual": 394.05,
+      "actual": 397.55,
       "model": 118.62
      }
     },
-    "actual_max": 569.17,
+    "actual_max": 585.12,
     "model_max": 194.9,
-    "hours_actual_over_200": 7,
+    "hours_actual_over_200": 11,
     "hours_model_over_200": 0,
     "top1pct_of_actual_hours": {
      "n": 30,
-     "contribution_usd_per_mwh": -1.462,
-     "share_of_mean_gap": -0.8317
+     "contribution_usd_per_mwh": -1.759,
+     "share_of_mean_gap": -23.0066
     },
-    "all_other_hours_contribution": 3.22
+    "all_other_hours_contribution": 1.835
+   },
+   "a2b_band_contributions__POSTHOC_miso206": {
+    "label": "POST-HOC (miso-206), NOT PRE-REGISTERED, NO GATE. Bands of the ACTUAL Jun-Jul price; each cell is sum(model - actual)/n over the band, so the cells sum to the mean gap.",
+    "indiana_hub__model_zone_mean": {
+     "p0-50": 3.786,
+     "p50-75": 0.824,
+     "p75-90": -0.196,
+     "p90-95": -0.618,
+     "p95-99": -1.884,
+     "p99-100": -1.494,
+     "mean_gap": 0.417,
+     "top_decile_share_of_mean_gap": -9.5827
+    },
+    "indiana_hub__model_load_weighted": {
+     "p0-50": 3.795,
+     "p50-75": 0.831,
+     "p75-90": -0.19,
+     "p90-95": -0.613,
+     "p95-99": -1.884,
+     "p99-100": -1.493,
+     "mean_gap": 0.446,
+     "top_decile_share_of_mean_gap": -8.9462
+    },
+    "eight_hub_model_clock__model_zone_mean": {
+     "p0-50": 4.163,
+     "p50-75": 1.017,
+     "p75-90": -0.132,
+     "p90-95": -0.513,
+     "p95-99": -1.289,
+     "p99-100": -0.993,
+     "mean_gap": 2.253,
+     "top_decile_share_of_mean_gap": -1.2406
+    },
+    "eight_hub_model_clock__model_load_weighted": {
+     "p0-50": 4.171,
+     "p50-75": 1.024,
+     "p75-90": -0.126,
+     "p90-95": -0.509,
+     "p95-99": -1.286,
+     "p99-100": -0.993,
+     "mean_gap": 2.281,
+     "top_decile_share_of_mean_gap": -1.2223
+    },
+    "jun_jul_levels": {
+     "actual_indiana_hub_mean": 31.76,
+     "actual_eight_hub_model_clock_mean": 29.92,
+     "actual_system_mec_mean__miso204_read": 31.6,
+     "model_zone_mean": 32.17,
+     "model_load_weighted": 32.2
+    },
+    "body_gap_by_hour_of_day__indiana_lw": {
+     "0": 8.7,
+     "1": 9.4,
+     "2": 9.6,
+     "3": 8.4,
+     "4": 6.3,
+     "5": 6.6,
+     "6": 4.8,
+     "7": 0.9,
+     "8": 0.5,
+     "9": 0.4,
+     "10": 0.2,
+     "11": -3.4,
+     "12": -1.5,
+     "13": -2.5,
+     "14": -2.4,
+     "15": -10.7,
+     "16": -5.2,
+     "17": -1.2,
+     "18": -0.8,
+     "19": -2.3,
+     "20": 4.5,
+     "21": 4.5,
+     "22": 5.7,
+     "23": 7.4
+    }
    }
   },
   "2024": {
    "full_year": {
     "n_hours": 8760,
-    "actual_mean": 26.88,
+    "actual_mean": 30.8,
     "model_mean": 29.9,
-    "mean_gap": 3.021,
+    "mean_gap": -0.894,
     "percentiles": {
      "p50": {
-      "actual": 22.43,
+      "actual": 24.55,
       "model": 28.73
      },
      "p75": {
-      "actual": 28.02,
+      "actual": 31.46,
       "model": 32.35
      },
      "p90": {
-      "actual": 37.77,
+      "actual": 45.65,
       "model": 36.97
      },
      "p95": {
-      "actual": 52.81,
+      "actual": 65.27,
       "model": 39.18
      },
      "p99": {
-      "actual": 103.61,
+      "actual": 138.94,
       "model": 52.26
      },
      "p99.9": {
-      "actual": 342.73,
+      "actual": 498.66,
       "model": 139.5
      }
     },
-    "actual_max": 694.2,
+    "actual_max": 704.06,
     "model_max": 500.0,
-    "hours_actual_over_200": 27,
+    "hours_actual_over_200": 37,
     "hours_model_over_200": 6,
     "top1pct_of_actual_hours": {
      "n": 88,
-     "contribution_usd_per_mwh": -1.437,
-     "share_of_mean_gap": -0.4757
+     "contribution_usd_per_mwh": -1.814,
+     "share_of_mean_gap": 2.028
     },
-    "all_other_hours_contribution": 4.459
+    "all_other_hours_contribution": 0.919
    },
    "jun_jul": {
     "n_hours": 1464,
-    "actual_mean": 28.79,
-    "model_mean": 29.73,
-    "mean_gap": 0.946,
+    "actual_mean": 33.25,
+    "model_mean": 29.6,
+    "mean_gap": -3.642,
     "percentiles": {
      "p50": {
-      "actual": 23.36,
-      "model": 29.27
+      "actual": 25.51,
+      "model": 29.22
      },
      "p75": {
-      "actual": 29.07,
+      "actual": 33.03,
       "model": 33.14
      },
      "p90": {
-      "actual": 39.21,
-      "model": 37.46
+      "actual": 49.2,
+      "model": 37.39
      },
      "p95": {
-      "actual": 54.94,
+      "actual": 73.9,
       "model": 39.34
      },
      "p99": {
-      "actual": 129.68,
+      "actual": 159.01,
       "model": 45.11
      },
      "p99.9": {
-      "actual": 571.58,
+      "actual": 590.92,
       "model": 49.71
      }
     },
-    "actual_max": 694.2,
+    "actual_max": 704.06,
     "model_max": 51.56,
-    "hours_actual_over_200": 8,
+    "hours_actual_over_200": 9,
     "hours_model_over_200": 0,
     "top1pct_of_actual_hours": {
      "n": 15,
-     "contribution_usd_per_mwh": -2.788,
-     "share_of_mean_gap": -2.9462
+     "contribution_usd_per_mwh": -2.972,
+     "share_of_mean_gap": 0.816
     },
-    "all_other_hours_contribution": 3.734
+    "all_other_hours_contribution": -0.67
    },
    "jun_sep": {
     "n_hours": 2928,
-    "actual_mean": 27.78,
-    "model_mean": 30.16,
-    "mean_gap": 2.383,
+    "actual_mean": 32.02,
+    "model_mean": 30.1,
+    "mean_gap": -1.919,
     "percentiles": {
      "p50": {
-      "actual": 22.79,
-      "model": 28.95
+      "actual": 25.02,
+      "model": 28.88
      },
      "p75": {
-      "actual": 28.8,
-      "model": 32.72
+      "actual": 32.53,
+      "model": 32.63
      },
      "p90": {
-      "actual": 39.32,
-      "model": 36.73
+      "actual": 48.3,
+      "model": 36.68
      },
      "p95": {
-      "actual": 54.89,
-      "model": 38.46
+      "actual": 68.14,
+      "model": 38.36
      },
      "p99": {
-      "actual": 108.68,
+      "actual": 151.06,
       "model": 45.54
      },
      "p99.9": {
-      "actual": 492.91,
+      "actual": 537.62,
       "model": 500.0
      }
     },
-    "actual_max": 694.2,
+    "actual_max": 704.06,
     "model_max": 500.0,
-    "hours_actual_over_200": 9,
+    "hours_actual_over_200": 14,
     "hours_model_over_200": 6,
     "top1pct_of_actual_hours": {
      "n": 30,
-     "contribution_usd_per_mwh": -1.638,
-     "share_of_mean_gap": -0.6873
+     "contribution_usd_per_mwh": -1.873,
+     "share_of_mean_gap": 0.9758
     },
-    "all_other_hours_contribution": 4.02
+    "all_other_hours_contribution": -0.046
+   },
+   "a2b_band_contributions__POSTHOC_miso206": {
+    "label": "POST-HOC (miso-206), NOT PRE-REGISTERED, NO GATE. Bands of the ACTUAL Jun-Jul price; each cell is sum(model - actual)/n over the band, so the cells sum to the mean gap.",
+    "indiana_hub__model_zone_mean": {
+     "p0-50": 3.084,
+     "p50-75": 0.745,
+     "p75-90": -0.717,
+     "p90-95": -1.131,
+     "p95-99": -2.727,
+     "p99-100": -2.896,
+     "mean_gap": -3.642,
+     "top_decile_share_of_mean_gap": 1.8545
+    },
+    "indiana_hub__model_load_weighted": {
+     "p0-50": 3.143,
+     "p50-75": 0.772,
+     "p75-90": -0.701,
+     "p90-95": -1.128,
+     "p95-99": -2.719,
+     "p99-100": -2.895,
+     "mean_gap": -3.529,
+     "top_decile_share_of_mean_gap": 1.9105
+    },
+    "eight_hub_model_clock__model_zone_mean": {
+     "p0-50": 3.794,
+     "p50-75": 1.388,
+     "p75-90": 0.309,
+     "p90-95": -0.498,
+     "p95-99": -1.464,
+     "p99-100": -2.717,
+     "mean_gap": 0.811,
+     "top_decile_share_of_mean_gap": -5.7694
+    },
+    "eight_hub_model_clock__model_load_weighted": {
+     "p0-50": 3.838,
+     "p50-75": 1.423,
+     "p75-90": 0.334,
+     "p90-95": -0.493,
+     "p95-99": -1.461,
+     "p99-100": -2.717,
+     "mean_gap": 0.924,
+     "top_decile_share_of_mean_gap": -5.0552
+    },
+    "jun_jul_levels": {
+     "actual_indiana_hub_mean": 33.25,
+     "actual_eight_hub_model_clock_mean": 28.79,
+     "actual_system_mec_mean__miso204_read": 30.75,
+     "model_zone_mean": 29.6,
+     "model_load_weighted": 29.72
+    },
+    "body_gap_by_hour_of_day__indiana_lw": {
+     "0": 6.8,
+     "1": 7.0,
+     "2": 6.8,
+     "3": 4.0,
+     "4": 2.6,
+     "5": 4.5,
+     "6": 5.4,
+     "7": 2.0,
+     "8": 0.0,
+     "9": -3.4,
+     "10": -4.2,
+     "11": -4.3,
+     "12": -2.4,
+     "13": -2.2,
+     "14": -6.0,
+     "15": -14.4,
+     "16": -7.2,
+     "17": -6.1,
+     "18": -1.5,
+     "19": -3.2,
+     "20": -1.4,
+     "21": -2.0,
+     "22": 2.1,
+     "23": 2.0
+    }
    }
   },
   "2025": {
    "full_year": {
-    "n_hours": 8760,
-    "actual_mean": 38.13,
+    "n_hours": 8759,
+    "actual_mean": 42.85,
     "model_mean": 38.88,
-    "mean_gap": 0.741,
+    "mean_gap": -3.974,
     "percentiles": {
      "p50": {
-      "actual": 30.28,
+      "actual": 32.74,
       "model": 37.04
      },
      "p75": {
-      "actual": 39.07,
+      "actual": 43.55,
       "model": 41.95
      },
      "p90": {
-      "actual": 53.97,
+      "actual": 63.03,
       "model": 47.63
      },
      "p95": {
-      "actual": 72.73,
+      "actual": 89.14,
       "model": 53.0
      },
      "p99": {
-      "actual": 173.14,
+      "actual": 200.12,
       "model": 78.64
      },
      "p99.9": {
-      "actual": 601.94,
+      "actual": 814.35,
       "model": 108.63
      }
     },
-    "actual_max": 1669.52,
+    "actual_max": 1782.55,
     "model_max": 165.58,
-    "hours_actual_over_200": 62,
+    "hours_actual_over_200": 88,
     "hours_model_over_200": 0,
     "top1pct_of_actual_hours": {
      "n": 88,
-     "contribution_usd_per_mwh": -2.79,
-     "share_of_mean_gap": -3.765
+     "contribution_usd_per_mwh": -3.521,
+     "share_of_mean_gap": 0.8859
     },
-    "all_other_hours_contribution": 3.531
+    "all_other_hours_contribution": -0.453
    },
    "jun_jul": {
     "n_hours": 1464,
-    "actual_mean": 44.66,
+    "actual_mean": 53.4,
     "model_mean": 39.88,
-    "mean_gap": -4.784,
+    "mean_gap": -13.527,
     "percentiles": {
      "p50": {
-      "actual": 32.73,
+      "actual": 36.23,
       "model": 37.47
      },
      "p75": {
-      "actual": 42.93,
+      "actual": 49.97,
       "model": 44.14
      },
      "p90": {
-      "actual": 61.77,
+      "actual": 79.57,
       "model": 48.12
      },
      "p95": {
-      "actual": 91.03,
+      "actual": 127.88,
       "model": 52.48
      },
      "p99": {
-      "actual": 238.93,
+      "actual": 373.02,
       "model": 69.04
      },
      "p99.9": {
-      "actual": 746.1,
+      "actual": 1130.12,
       "model": 148.92
      }
     },
-    "actual_max": 1669.52,
+    "actual_max": 1782.55,
     "model_max": 165.58,
-    "hours_actual_over_200": 20,
+    "hours_actual_over_200": 34,
     "hours_model_over_200": 0,
     "top1pct_of_actual_hours": {
      "n": 15,
-     "contribution_usd_per_mwh": -4.78,
-     "share_of_mean_gap": 0.9991
+     "contribution_usd_per_mwh": -6.54,
+     "share_of_mean_gap": 0.4835
     },
-    "all_other_hours_contribution": -0.004
+    "all_other_hours_contribution": -6.987
    },
    "jun_sep": {
     "n_hours": 2928,
-    "actual_mean": 40.91,
+    "actual_mean": 47.19,
     "model_mean": 38.17,
-    "mean_gap": -2.737,
+    "mean_gap": -9.019,
     "percentiles": {
      "p50": {
-      "actual": 30.46,
+      "actual": 33.33,
       "model": 36.76
      },
      "p75": {
-      "actual": 40.37,
+      "actual": 46.05,
       "model": 42.08
      },
      "p90": {
-      "actual": 55.44,
+      "actual": 67.92,
       "model": 46.47
      },
      "p95": {
-      "actual": 75.43,
+      "actual": 101.56,
       "model": 49.55
      },
      "p99": {
-      "actual": 203.92,
+      "actual": 302.37,
       "model": 62.2
      },
      "p99.9": {
-      "actual": 813.35,
+      "actual": 1058.03,
       "model": 128.14
      }
     },
-    "actual_max": 1669.52,
+    "actual_max": 1782.55,
     "model_max": 165.58,
-    "hours_actual_over_200": 31,
+    "hours_actual_over_200": 47,
     "hours_model_over_200": 0,
     "top1pct_of_actual_hours": {
      "n": 30,
-     "contribution_usd_per_mwh": -4.389,
-     "share_of_mean_gap": 1.6036
+     "contribution_usd_per_mwh": -5.512,
+     "share_of_mean_gap": 0.6112
     },
-    "all_other_hours_contribution": 1.652
+    "all_other_hours_contribution": -3.507
+   },
+   "a2b_band_contributions__POSTHOC_miso206": {
+    "label": "POST-HOC (miso-206), NOT PRE-REGISTERED, NO GATE. Bands of the ACTUAL Jun-Jul price; each cell is sum(model - actual)/n over the band, so the cells sum to the mean gap.",
+    "indiana_hub__model_zone_mean": {
+     "p0-50": 3.678,
+     "p50-75": -0.168,
+     "p75-90": -2.236,
+     "p90-95": -2.647,
+     "p95-99": -5.839,
+     "p99-100": -6.315,
+     "mean_gap": -13.527,
+     "top_decile_share_of_mean_gap": 1.0942
+    },
+    "indiana_hub__model_load_weighted": {
+     "p0-50": 3.71,
+     "p50-75": -0.145,
+     "p75-90": -2.23,
+     "p90-95": -2.646,
+     "p95-99": -5.833,
+     "p99-100": -6.3,
+     "mean_gap": -13.444,
+     "top_decile_share_of_mean_gap": 1.0993
+    },
+    "eight_hub_model_clock__model_zone_mean": {
+     "p0-50": 4.284,
+     "p50-75": 1.075,
+     "p75-90": -0.648,
+     "p90-95": -1.289,
+     "p95-99": -3.589,
+     "p99-100": -4.621,
+     "mean_gap": -4.788,
+     "top_decile_share_of_mean_gap": 1.9839
+    },
+    "eight_hub_model_clock__model_load_weighted": {
+     "p0-50": 4.309,
+     "p50-75": 1.095,
+     "p75-90": -0.633,
+     "p90-95": -1.288,
+     "p95-99": -3.587,
+     "p99-100": -4.601,
+     "mean_gap": -4.706,
+     "top_decile_share_of_mean_gap": 2.0136
+    },
+    "jun_jul_levels": {
+     "actual_indiana_hub_mean": 53.4,
+     "actual_eight_hub_model_clock_mean": 44.67,
+     "actual_system_mec_mean__miso204_read": 51.81,
+     "model_zone_mean": 39.88,
+     "model_load_weighted": 39.96
+    },
+    "body_gap_by_hour_of_day__indiana_lw": {
+     "0": 7.7,
+     "1": 8.9,
+     "2": 8.6,
+     "3": 4.8,
+     "4": -1.4,
+     "5": -1.0,
+     "6": 0.9,
+     "7": -0.6,
+     "8": -6.7,
+     "9": -4.6,
+     "10": -10.0,
+     "11": -13.6,
+     "12": -19.7,
+     "13": -19.7,
+     "14": -13.8,
+     "15": -15.7,
+     "16": -18.0,
+     "17": -23.7,
+     "18": -19.5,
+     "19": -18.7,
+     "20": -17.5,
+     "21": -0.9,
+     "22": 0.1,
+     "23": 3.1
+    }
    }
   }
  },
@@ -868,78 +1096,73 @@
  "a4_what_is_serving_those_hours": {
   "2023": {
    "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
-   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (100.42 $/MWh and above)",
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (121.43 $/MWh and above)",
    "n_scarce_hours": 15,
    "by_class": {
-    "CT_PEAKER": {
-     "mean_mw_actual_scarce_hours": 5143.6,
-     "mean_mw_other_jun_jul_hours": 2686.1,
-     "delta_mw": 2457.5
+    "COAL_PRB": {
+     "mean_mw_actual_scarce_hours": 20704.4,
+     "mean_mw_other_jun_jul_hours": 18539.6,
+     "delta_mw": 2164.8
     },
     "import": {
-     "mean_mw_actual_scarce_hours": 6702.5,
-     "mean_mw_other_jun_jul_hours": 4694.8,
-     "delta_mw": 2007.7
+     "mean_mw_actual_scarce_hours": 6177.3,
+     "mean_mw_other_jun_jul_hours": 4700.2,
+     "delta_mw": 1477.1
     },
-    "COAL_PRB": {
-     "mean_mw_actual_scarce_hours": 20430.3,
-     "mean_mw_other_jun_jul_hours": 18542.4,
-     "delta_mw": 1887.9
+    "CT_PEAKER": {
+     "mean_mw_actual_scarce_hours": 4119.9,
+     "mean_mw_other_jun_jul_hours": 2696.7,
+     "delta_mw": 1423.3
     },
     "CC_REGULAR": {
-     "mean_mw_actual_scarce_hours": 21340.5,
-     "mean_mw_other_jun_jul_hours": 19842.0,
-     "delta_mw": 1498.5
-    },
-    "ST_GAS": {
-     "mean_mw_actual_scarce_hours": 4009.8,
-     "mean_mw_other_jun_jul_hours": 2759.7,
-     "delta_mw": 1250.1
-    },
-    "hydro": {
-     "mean_mw_actual_scarce_hours": 1843.9,
-     "mean_mw_other_jun_jul_hours": 877.9,
-     "delta_mw": 966.0
+     "mean_mw_actual_scarce_hours": 21185.7,
+     "mean_mw_other_jun_jul_hours": 19843.6,
+     "delta_mw": 1342.1
     },
     "solar": {
-     "mean_mw_actual_scarce_hours": 1926.7,
-     "mean_mw_other_jun_jul_hours": 1030.9,
-     "delta_mw": 895.8
+     "mean_mw_actual_scarce_hours": 2267.8,
+     "mean_mw_other_jun_jul_hours": 1027.3,
+     "delta_mw": 1240.5
     },
-    "COAL_BIT": {
-     "mean_mw_actual_scarce_hours": 8074.3,
-     "mean_mw_other_jun_jul_hours": 7642.0,
-     "delta_mw": 432.3
+    "ST_GAS": {
+     "mean_mw_actual_scarce_hours": 3778.7,
+     "mean_mw_other_jun_jul_hours": 2762.1,
+     "delta_mw": 1016.6
+    },
+    "hydro": {
+     "mean_mw_actual_scarce_hours": 1471.7,
+     "mean_mw_other_jun_jul_hours": 881.8,
+     "delta_mw": 589.9
     },
     "CC_CHP": {
-     "mean_mw_actual_scarce_hours": 3110.8,
-     "mean_mw_other_jun_jul_hours": 2702.4,
-     "delta_mw": 408.4
+     "mean_mw_actual_scarce_hours": 3044.4,
+     "mean_mw_other_jun_jul_hours": 2703.1,
+     "delta_mw": 341.3
+    },
+    "COAL_BIT": {
+     "mean_mw_actual_scarce_hours": 7821.2,
+     "mean_mw_other_jun_jul_hours": 7644.6,
+     "delta_mw": 176.6
     },
     "nuclear": {
-     "mean_mw_actual_scarce_hours": 11355.5,
-     "mean_mw_other_jun_jul_hours": 11057.8,
-     "delta_mw": 297.7
-    },
-    "wind": {
-     "mean_mw_actual_scarce_hours": 6366.3,
-     "mean_mw_other_jun_jul_hours": 6075.3,
-     "delta_mw": 291.0
+     "mean_mw_actual_scarce_hours": 11192.7,
+     "mean_mw_other_jun_jul_hours": 11059.5,
+     "delta_mw": 133.3
     },
     "COAL_LIGNITE": {
-     "mean_mw_actual_scarce_hours": 1005.4,
-     "mean_mw_other_jun_jul_hours": 874.0,
-     "delta_mw": 131.4
+     "mean_mw_actual_scarce_hours": 999.2,
+     "mean_mw_other_jun_jul_hours": 874.1,
+     "delta_mw": 125.1
     },
     "ST_CHP": {
-     "mean_mw_actual_scarce_hours": 330.2,
+     "mean_mw_actual_scarce_hours": 327.2,
      "mean_mw_other_jun_jul_hours": 279.2,
-     "delta_mw": 51.0
+     "delta_mw": 48.0
     },
     "CT_CHP": {
-     "mean_mw_actual_scarce_hours": 703.2,
-     "mean_mw_other_jun_jul_hours": 661.5,
-     "delta_mw": 41.7
+     "mean_mw_actual_scarce_hours": 694.9,
+     "mean_mw_other_jun_jul_hours": 661.6,
+     "delta_mw": 33.3
     },
     "OTHER": {
      "mean_mw_actual_scarce_hours": 1277.9,
@@ -960,197 +1183,880 @@
      "mean_mw_actual_scarce_hours": 0.0,
      "mean_mw_other_jun_jul_hours": 0.0,
      "delta_mw": 0.0
+    },
+    "wind": {
+     "mean_mw_actual_scarce_hours": 5359.3,
+     "mean_mw_other_jun_jul_hours": 6085.7,
+     "delta_mw": -726.5
     }
    }
   },
   "2024": {
    "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
-   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (129.68 $/MWh and above)",
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (159.01 $/MWh and above)",
    "n_scarce_hours": 15,
    "by_class": {
     "CT_PEAKER": {
-     "mean_mw_actual_scarce_hours": 8110.0,
-     "mean_mw_other_jun_jul_hours": 2996.4,
-     "delta_mw": 5113.5
+     "mean_mw_actual_scarce_hours": 7993.1,
+     "mean_mw_other_jun_jul_hours": 2958.5,
+     "delta_mw": 5034.6
     },
     "COAL_PRB": {
-     "mean_mw_actual_scarce_hours": 21031.2,
-     "mean_mw_other_jun_jul_hours": 17229.0,
-     "delta_mw": 3802.2
-    },
-    "COAL_BIT": {
-     "mean_mw_actual_scarce_hours": 8995.2,
-     "mean_mw_other_jun_jul_hours": 7070.3,
-     "delta_mw": 1924.9
+     "mean_mw_actual_scarce_hours": 21305.9,
+     "mean_mw_other_jun_jul_hours": 17073.9,
+     "delta_mw": 4232.0
     },
     "import": {
-     "mean_mw_actual_scarce_hours": 4878.5,
-     "mean_mw_other_jun_jul_hours": 3194.5,
-     "delta_mw": 1684.0
+     "mean_mw_actual_scarce_hours": 5002.6,
+     "mean_mw_other_jun_jul_hours": 3152.4,
+     "delta_mw": 1850.2
     },
-    "CC_REGULAR": {
-     "mean_mw_actual_scarce_hours": 21857.1,
-     "mean_mw_other_jun_jul_hours": 20365.3,
-     "delta_mw": 1491.8
+    "COAL_BIT": {
+     "mean_mw_actual_scarce_hours": 8551.4,
+     "mean_mw_other_jun_jul_hours": 7017.0,
+     "delta_mw": 1534.5
     },
     "ST_GAS": {
-     "mean_mw_actual_scarce_hours": 3751.4,
-     "mean_mw_other_jun_jul_hours": 2344.1,
-     "delta_mw": 1407.3
+     "mean_mw_actual_scarce_hours": 3680.8,
+     "mean_mw_other_jun_jul_hours": 2306.0,
+     "delta_mw": 1374.8
+    },
+    "CC_REGULAR": {
+     "mean_mw_actual_scarce_hours": 21685.1,
+     "mean_mw_other_jun_jul_hours": 20312.8,
+     "delta_mw": 1372.3
     },
     "hydro": {
-     "mean_mw_actual_scarce_hours": 2189.2,
-     "mean_mw_other_jun_jul_hours": 1345.0,
-     "delta_mw": 844.2
+     "mean_mw_actual_scarce_hours": 2221.5,
+     "mean_mw_other_jun_jul_hours": 1337.2,
+     "delta_mw": 884.4
     },
     "solar": {
-     "mean_mw_actual_scarce_hours": 2520.4,
-     "mean_mw_other_jun_jul_hours": 2132.6,
-     "delta_mw": 387.8
+     "mean_mw_actual_scarce_hours": 2916.7,
+     "mean_mw_other_jun_jul_hours": 2114.5,
+     "delta_mw": 802.2
     },
     "CC_CHP": {
-     "mean_mw_actual_scarce_hours": 3047.9,
-     "mean_mw_other_jun_jul_hours": 2711.8,
-     "delta_mw": 336.1
+     "mean_mw_actual_scarce_hours": 3081.7,
+     "mean_mw_other_jun_jul_hours": 2707.4,
+     "delta_mw": 374.3
     },
     "COAL_LIGNITE": {
-     "mean_mw_actual_scarce_hours": 930.9,
-     "mean_mw_other_jun_jul_hours": 841.1,
-     "delta_mw": 89.8
+     "mean_mw_actual_scarce_hours": 946.9,
+     "mean_mw_other_jun_jul_hours": 837.9,
+     "delta_mw": 109.0
     },
     "ST_CHP": {
-     "mean_mw_actual_scarce_hours": 439.7,
-     "mean_mw_other_jun_jul_hours": 371.5,
-     "delta_mw": 68.2
+     "mean_mw_actual_scarce_hours": 445.9,
+     "mean_mw_other_jun_jul_hours": 370.6,
+     "delta_mw": 75.3
     },
     "CT_CHP": {
-     "mean_mw_actual_scarce_hours": 721.4,
-     "mean_mw_other_jun_jul_hours": 659.6,
-     "delta_mw": 61.9
+     "mean_mw_actual_scarce_hours": 715.7,
+     "mean_mw_other_jun_jul_hours": 658.5,
+     "delta_mw": 57.1
     },
-    "nuclear": {
-     "mean_mw_actual_scarce_hours": 11246.1,
-     "mean_mw_other_jun_jul_hours": 11242.4,
-     "delta_mw": 3.7
-    },
-    "biomass": {
-     "mean_mw_actual_scarce_hours": 837.9,
-     "mean_mw_other_jun_jul_hours": 834.3,
-     "delta_mw": 3.6
+    "OTHER": {
+     "mean_mw_actual_scarce_hours": 1092.0,
+     "mean_mw_other_jun_jul_hours": 1089.6,
+     "delta_mw": 2.4
     },
     "COAL": {
      "mean_mw_actual_scarce_hours": 18.2,
      "mean_mw_other_jun_jul_hours": 16.2,
-     "delta_mw": 1.9
+     "delta_mw": 2.0
     },
-    "OTHER": {
-     "mean_mw_actual_scarce_hours": 1093.4,
-     "mean_mw_other_jun_jul_hours": 1091.7,
-     "delta_mw": 1.7
+    "biomass": {
+     "mean_mw_actual_scarce_hours": 834.9,
+     "mean_mw_other_jun_jul_hours": 833.5,
+     "delta_mw": 1.4
     },
     "oil": {
      "mean_mw_actual_scarce_hours": 0.0,
      "mean_mw_other_jun_jul_hours": 0.0,
      "delta_mw": 0.0
     },
+    "nuclear": {
+     "mean_mw_actual_scarce_hours": 11201.5,
+     "mean_mw_other_jun_jul_hours": 11244.5,
+     "delta_mw": -43.0
+    },
     "wind": {
-     "mean_mw_actual_scarce_hours": 6716.4,
-     "mean_mw_other_jun_jul_hours": 8559.5,
-     "delta_mw": -1843.1
+     "mean_mw_actual_scarce_hours": 5821.6,
+     "mean_mw_other_jun_jul_hours": 8539.4,
+     "delta_mw": -2717.8
     }
    }
   },
   "2025": {
    "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
-   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (238.93 $/MWh and above)",
+   "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (373.02 $/MWh and above)",
    "n_scarce_hours": 15,
    "by_class": {
     "CT_PEAKER": {
-     "mean_mw_actual_scarce_hours": 13120.9,
-     "mean_mw_other_jun_jul_hours": 4337.5,
-     "delta_mw": 8783.4
+     "mean_mw_actual_scarce_hours": 13247.3,
+     "mean_mw_other_jun_jul_hours": 4336.2,
+     "delta_mw": 8911.1
     },
     "import": {
-     "mean_mw_actual_scarce_hours": 6351.3,
-     "mean_mw_other_jun_jul_hours": 2506.9,
-     "delta_mw": 3844.4
+     "mean_mw_actual_scarce_hours": 6181.7,
+     "mean_mw_other_jun_jul_hours": 2508.7,
+     "delta_mw": 3673.0
     },
     "ST_GAS": {
-     "mean_mw_actual_scarce_hours": 5087.0,
-     "mean_mw_other_jun_jul_hours": 2260.5,
-     "delta_mw": 2826.5
+     "mean_mw_actual_scarce_hours": 5017.1,
+     "mean_mw_other_jun_jul_hours": 2261.3,
+     "delta_mw": 2755.9
     },
     "COAL_PRB": {
-     "mean_mw_actual_scarce_hours": 22608.2,
-     "mean_mw_other_jun_jul_hours": 20433.4,
-     "delta_mw": 2174.8
-    },
-    "CC_REGULAR": {
-     "mean_mw_actual_scarce_hours": 20327.8,
-     "mean_mw_other_jun_jul_hours": 19209.2,
-     "delta_mw": 1118.7
-    },
-    "COAL_BIT": {
-     "mean_mw_actual_scarce_hours": 8756.1,
-     "mean_mw_other_jun_jul_hours": 7698.0,
-     "delta_mw": 1058.1
-    },
-    "hydro": {
-     "mean_mw_actual_scarce_hours": 2296.7,
-     "mean_mw_other_jun_jul_hours": 1325.9,
-     "delta_mw": 970.8
-    },
-    "nuclear": {
-     "mean_mw_actual_scarce_hours": 10728.9,
-     "mean_mw_other_jun_jul_hours": 10315.9,
-     "delta_mw": 413.0
-    },
-    "CC_CHP": {
-     "mean_mw_actual_scarce_hours": 2799.6,
-     "mean_mw_other_jun_jul_hours": 2614.4,
-     "delta_mw": 185.2
-    },
-    "ST_CHP": {
-     "mean_mw_actual_scarce_hours": 395.8,
-     "mean_mw_other_jun_jul_hours": 265.7,
-     "delta_mw": 130.1
-    },
-    "oil": {
-     "mean_mw_actual_scarce_hours": 63.1,
-     "mean_mw_other_jun_jul_hours": 0.3,
-     "delta_mw": 62.8
-    },
-    "COAL_LIGNITE": {
-     "mean_mw_actual_scarce_hours": 861.5,
-     "mean_mw_other_jun_jul_hours": 808.8,
-     "delta_mw": 52.7
-    },
-    "CT_CHP": {
-     "mean_mw_actual_scarce_hours": 707.4,
-     "mean_mw_other_jun_jul_hours": 682.1,
-     "delta_mw": 25.3
-    },
-    "OTHER": {
-     "mean_mw_actual_scarce_hours": 842.2,
-     "mean_mw_other_jun_jul_hours": 839.7,
-     "delta_mw": 2.5
-    },
-    "biomass": {
-     "mean_mw_actual_scarce_hours": 358.9,
-     "mean_mw_other_jun_jul_hours": 358.8,
-     "delta_mw": 0.2
-    },
-    "wind": {
-     "mean_mw_actual_scarce_hours": 5965.4,
-     "mean_mw_other_jun_jul_hours": 7989.3,
-     "delta_mw": -2023.9
+     "mean_mw_actual_scarce_hours": 22631.4,
+     "mean_mw_other_jun_jul_hours": 20433.2,
+     "delta_mw": 2198.2
     },
     "solar": {
-     "mean_mw_actual_scarce_hours": 1859.5,
-     "mean_mw_other_jun_jul_hours": 4667.9,
-     "delta_mw": -2808.5
+     "mean_mw_actual_scarce_hours": 6237.1,
+     "mean_mw_other_jun_jul_hours": 4622.6,
+     "delta_mw": 1614.4
+    },
+    "CC_REGULAR": {
+     "mean_mw_actual_scarce_hours": 20377.6,
+     "mean_mw_other_jun_jul_hours": 19208.7,
+     "delta_mw": 1168.9
+    },
+    "hydro": {
+     "mean_mw_actual_scarce_hours": 2332.0,
+     "mean_mw_other_jun_jul_hours": 1325.5,
+     "delta_mw": 1006.5
+    },
+    "COAL_BIT": {
+     "mean_mw_actual_scarce_hours": 8426.8,
+     "mean_mw_other_jun_jul_hours": 7701.4,
+     "delta_mw": 725.4
+    },
+    "nuclear": {
+     "mean_mw_actual_scarce_hours": 10672.9,
+     "mean_mw_other_jun_jul_hours": 10316.5,
+     "delta_mw": 356.4
+    },
+    "CC_CHP": {
+     "mean_mw_actual_scarce_hours": 2844.2,
+     "mean_mw_other_jun_jul_hours": 2614.0,
+     "delta_mw": 230.3
+    },
+    "ST_CHP": {
+     "mean_mw_actual_scarce_hours": 406.2,
+     "mean_mw_other_jun_jul_hours": 265.6,
+     "delta_mw": 140.6
+    },
+    "oil": {
+     "mean_mw_actual_scarce_hours": 67.6,
+     "mean_mw_other_jun_jul_hours": 0.2,
+     "delta_mw": 67.3
+    },
+    "COAL_LIGNITE": {
+     "mean_mw_actual_scarce_hours": 861.2,
+     "mean_mw_other_jun_jul_hours": 808.8,
+     "delta_mw": 52.4
+    },
+    "CT_CHP": {
+     "mean_mw_actual_scarce_hours": 715.4,
+     "mean_mw_other_jun_jul_hours": 682.0,
+     "delta_mw": 33.4
+    },
+    "biomass": {
+     "mean_mw_actual_scarce_hours": 358.0,
+     "mean_mw_other_jun_jul_hours": 358.8,
+     "delta_mw": -0.7
+    },
+    "OTHER": {
+     "mean_mw_actual_scarce_hours": 829.3,
+     "mean_mw_other_jun_jul_hours": 839.9,
+     "delta_mw": -10.6
+    },
+    "wind": {
+     "mean_mw_actual_scarce_hours": 5120.2,
+     "mean_mw_other_jun_jul_hours": 7998.1,
+     "delta_mw": -2877.9
     }
    }
   }
- }
+ },
+ "pre_repair_defective_clock": {
+  "note": "a2/a4 as first committed: eight-hub equal-weighted mean on the RAW EST hour-ending index (miso-204 \u00a76 defect: -1 h, and -25 h after Feb 28 of a leap year). Kept for the record; superseded.",
+  "a2_distribution": {
+   "2023": {
+    "full_year": {
+     "n_hours": 8760,
+     "actual_mean": 28.36,
+     "model_mean": 32.32,
+     "mean_gap": 3.961,
+     "percentiles": {
+      "p50": {
+       "actual": 25.18,
+       "model": 32.0
+      },
+      "p75": {
+       "actual": 30.88,
+       "model": 35.06
+      },
+      "p90": {
+       "actual": 38.97,
+       "model": 38.02
+      },
+      "p95": {
+       "actual": 48.42,
+       "model": 40.91
+      },
+      "p99": {
+       "actual": 93.54,
+       "model": 46.55
+      },
+      "p99.9": {
+       "actual": 221.33,
+       "model": 54.29
+      }
+     },
+     "actual_max": 569.17,
+     "model_max": 194.9,
+     "hours_actual_over_200": 12,
+     "hours_model_over_200": 0,
+     "top1pct_of_actual_hours": {
+      "n": 88,
+      "contribution_usd_per_mwh": -1.102,
+      "share_of_mean_gap": -0.2782
+     },
+     "all_other_hours_contribution": 5.063
+    },
+    "jun_jul": {
+     "n_hours": 1464,
+     "actual_mean": 29.92,
+     "model_mean": 32.17,
+     "mean_gap": 2.255,
+     "percentiles": {
+      "p50": {
+       "actual": 26.22,
+       "model": 31.84
+      },
+      "p75": {
+       "actual": 34.91,
+       "model": 36.1
+      },
+      "p90": {
+       "actual": 44.39,
+       "model": 38.46
+      },
+      "p95": {
+       "actual": 56.99,
+       "model": 40.34
+      },
+      "p99": {
+       "actual": 100.42,
+       "model": 45.35
+      },
+      "p99.9": {
+       "actual": 188.84,
+       "model": 52.91
+      }
+     },
+     "actual_max": 210.9,
+     "model_max": 53.95,
+     "hours_actual_over_200": 1,
+     "hours_model_over_200": 0,
+     "top1pct_of_actual_hours": {
+      "n": 15,
+      "contribution_usd_per_mwh": -1.03,
+      "share_of_mean_gap": -0.4568
+     },
+     "all_other_hours_contribution": 3.285
+    },
+    "jun_sep": {
+     "n_hours": 2928,
+     "actual_mean": 30.77,
+     "model_mean": 32.53,
+     "mean_gap": 1.758,
+     "percentiles": {
+      "p50": {
+       "actual": 26.63,
+       "model": 32.15
+      },
+      "p75": {
+       "actual": 34.98,
+       "model": 35.85
+      },
+      "p90": {
+       "actual": 44.55,
+       "model": 38.63
+      },
+      "p95": {
+       "actual": 55.99,
+       "model": 41.29
+      },
+      "p99": {
+       "actual": 100.16,
+       "model": 45.86
+      },
+      "p99.9": {
+       "actual": 394.05,
+       "model": 118.62
+      }
+     },
+     "actual_max": 569.17,
+     "model_max": 194.9,
+     "hours_actual_over_200": 7,
+     "hours_model_over_200": 0,
+     "top1pct_of_actual_hours": {
+      "n": 30,
+      "contribution_usd_per_mwh": -1.462,
+      "share_of_mean_gap": -0.8317
+     },
+     "all_other_hours_contribution": 3.22
+    }
+   },
+   "2024": {
+    "full_year": {
+     "n_hours": 8760,
+     "actual_mean": 26.88,
+     "model_mean": 29.9,
+     "mean_gap": 3.021,
+     "percentiles": {
+      "p50": {
+       "actual": 22.43,
+       "model": 28.73
+      },
+      "p75": {
+       "actual": 28.02,
+       "model": 32.35
+      },
+      "p90": {
+       "actual": 37.77,
+       "model": 36.97
+      },
+      "p95": {
+       "actual": 52.81,
+       "model": 39.18
+      },
+      "p99": {
+       "actual": 103.61,
+       "model": 52.26
+      },
+      "p99.9": {
+       "actual": 342.73,
+       "model": 139.5
+      }
+     },
+     "actual_max": 694.2,
+     "model_max": 500.0,
+     "hours_actual_over_200": 27,
+     "hours_model_over_200": 6,
+     "top1pct_of_actual_hours": {
+      "n": 88,
+      "contribution_usd_per_mwh": -1.437,
+      "share_of_mean_gap": -0.4757
+     },
+     "all_other_hours_contribution": 4.459
+    },
+    "jun_jul": {
+     "n_hours": 1464,
+     "actual_mean": 28.79,
+     "model_mean": 29.73,
+     "mean_gap": 0.946,
+     "percentiles": {
+      "p50": {
+       "actual": 23.36,
+       "model": 29.27
+      },
+      "p75": {
+       "actual": 29.07,
+       "model": 33.14
+      },
+      "p90": {
+       "actual": 39.21,
+       "model": 37.46
+      },
+      "p95": {
+       "actual": 54.94,
+       "model": 39.34
+      },
+      "p99": {
+       "actual": 129.68,
+       "model": 45.11
+      },
+      "p99.9": {
+       "actual": 571.58,
+       "model": 49.71
+      }
+     },
+     "actual_max": 694.2,
+     "model_max": 51.56,
+     "hours_actual_over_200": 8,
+     "hours_model_over_200": 0,
+     "top1pct_of_actual_hours": {
+      "n": 15,
+      "contribution_usd_per_mwh": -2.788,
+      "share_of_mean_gap": -2.9462
+     },
+     "all_other_hours_contribution": 3.734
+    },
+    "jun_sep": {
+     "n_hours": 2928,
+     "actual_mean": 27.78,
+     "model_mean": 30.16,
+     "mean_gap": 2.383,
+     "percentiles": {
+      "p50": {
+       "actual": 22.79,
+       "model": 28.95
+      },
+      "p75": {
+       "actual": 28.8,
+       "model": 32.72
+      },
+      "p90": {
+       "actual": 39.32,
+       "model": 36.73
+      },
+      "p95": {
+       "actual": 54.89,
+       "model": 38.46
+      },
+      "p99": {
+       "actual": 108.68,
+       "model": 45.54
+      },
+      "p99.9": {
+       "actual": 492.91,
+       "model": 500.0
+      }
+     },
+     "actual_max": 694.2,
+     "model_max": 500.0,
+     "hours_actual_over_200": 9,
+     "hours_model_over_200": 6,
+     "top1pct_of_actual_hours": {
+      "n": 30,
+      "contribution_usd_per_mwh": -1.638,
+      "share_of_mean_gap": -0.6873
+     },
+     "all_other_hours_contribution": 4.02
+    }
+   },
+   "2025": {
+    "full_year": {
+     "n_hours": 8760,
+     "actual_mean": 38.13,
+     "model_mean": 38.88,
+     "mean_gap": 0.741,
+     "percentiles": {
+      "p50": {
+       "actual": 30.28,
+       "model": 37.04
+      },
+      "p75": {
+       "actual": 39.07,
+       "model": 41.95
+      },
+      "p90": {
+       "actual": 53.97,
+       "model": 47.63
+      },
+      "p95": {
+       "actual": 72.73,
+       "model": 53.0
+      },
+      "p99": {
+       "actual": 173.14,
+       "model": 78.64
+      },
+      "p99.9": {
+       "actual": 601.94,
+       "model": 108.63
+      }
+     },
+     "actual_max": 1669.52,
+     "model_max": 165.58,
+     "hours_actual_over_200": 62,
+     "hours_model_over_200": 0,
+     "top1pct_of_actual_hours": {
+      "n": 88,
+      "contribution_usd_per_mwh": -2.79,
+      "share_of_mean_gap": -3.765
+     },
+     "all_other_hours_contribution": 3.531
+    },
+    "jun_jul": {
+     "n_hours": 1464,
+     "actual_mean": 44.66,
+     "model_mean": 39.88,
+     "mean_gap": -4.784,
+     "percentiles": {
+      "p50": {
+       "actual": 32.73,
+       "model": 37.47
+      },
+      "p75": {
+       "actual": 42.93,
+       "model": 44.14
+      },
+      "p90": {
+       "actual": 61.77,
+       "model": 48.12
+      },
+      "p95": {
+       "actual": 91.03,
+       "model": 52.48
+      },
+      "p99": {
+       "actual": 238.93,
+       "model": 69.04
+      },
+      "p99.9": {
+       "actual": 746.1,
+       "model": 148.92
+      }
+     },
+     "actual_max": 1669.52,
+     "model_max": 165.58,
+     "hours_actual_over_200": 20,
+     "hours_model_over_200": 0,
+     "top1pct_of_actual_hours": {
+      "n": 15,
+      "contribution_usd_per_mwh": -4.78,
+      "share_of_mean_gap": 0.9991
+     },
+     "all_other_hours_contribution": -0.004
+    },
+    "jun_sep": {
+     "n_hours": 2928,
+     "actual_mean": 40.91,
+     "model_mean": 38.17,
+     "mean_gap": -2.737,
+     "percentiles": {
+      "p50": {
+       "actual": 30.46,
+       "model": 36.76
+      },
+      "p75": {
+       "actual": 40.37,
+       "model": 42.08
+      },
+      "p90": {
+       "actual": 55.44,
+       "model": 46.47
+      },
+      "p95": {
+       "actual": 75.43,
+       "model": 49.55
+      },
+      "p99": {
+       "actual": 203.92,
+       "model": 62.2
+      },
+      "p99.9": {
+       "actual": 813.35,
+       "model": 128.14
+      }
+     },
+     "actual_max": 1669.52,
+     "model_max": 165.58,
+     "hours_actual_over_200": 31,
+     "hours_model_over_200": 0,
+     "top1pct_of_actual_hours": {
+      "n": 30,
+      "contribution_usd_per_mwh": -4.389,
+      "share_of_mean_gap": 1.6036
+     },
+     "all_other_hours_contribution": 1.652
+    }
+   }
+  },
+  "a4_what_is_serving_those_hours": {
+   "2023": {
+    "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
+    "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (100.42 $/MWh and above)",
+    "n_scarce_hours": 15,
+    "by_class": {
+     "CT_PEAKER": {
+      "mean_mw_actual_scarce_hours": 5143.6,
+      "mean_mw_other_jun_jul_hours": 2686.1,
+      "delta_mw": 2457.5
+     },
+     "import": {
+      "mean_mw_actual_scarce_hours": 6702.5,
+      "mean_mw_other_jun_jul_hours": 4694.8,
+      "delta_mw": 2007.7
+     },
+     "COAL_PRB": {
+      "mean_mw_actual_scarce_hours": 20430.3,
+      "mean_mw_other_jun_jul_hours": 18542.4,
+      "delta_mw": 1887.9
+     },
+     "CC_REGULAR": {
+      "mean_mw_actual_scarce_hours": 21340.5,
+      "mean_mw_other_jun_jul_hours": 19842.0,
+      "delta_mw": 1498.5
+     },
+     "ST_GAS": {
+      "mean_mw_actual_scarce_hours": 4009.8,
+      "mean_mw_other_jun_jul_hours": 2759.7,
+      "delta_mw": 1250.1
+     },
+     "hydro": {
+      "mean_mw_actual_scarce_hours": 1843.9,
+      "mean_mw_other_jun_jul_hours": 877.9,
+      "delta_mw": 966.0
+     },
+     "solar": {
+      "mean_mw_actual_scarce_hours": 1926.7,
+      "mean_mw_other_jun_jul_hours": 1030.9,
+      "delta_mw": 895.8
+     },
+     "COAL_BIT": {
+      "mean_mw_actual_scarce_hours": 8074.3,
+      "mean_mw_other_jun_jul_hours": 7642.0,
+      "delta_mw": 432.3
+     },
+     "CC_CHP": {
+      "mean_mw_actual_scarce_hours": 3110.8,
+      "mean_mw_other_jun_jul_hours": 2702.4,
+      "delta_mw": 408.4
+     },
+     "nuclear": {
+      "mean_mw_actual_scarce_hours": 11355.5,
+      "mean_mw_other_jun_jul_hours": 11057.8,
+      "delta_mw": 297.7
+     },
+     "wind": {
+      "mean_mw_actual_scarce_hours": 6366.3,
+      "mean_mw_other_jun_jul_hours": 6075.3,
+      "delta_mw": 291.0
+     },
+     "COAL_LIGNITE": {
+      "mean_mw_actual_scarce_hours": 1005.4,
+      "mean_mw_other_jun_jul_hours": 874.0,
+      "delta_mw": 131.4
+     },
+     "ST_CHP": {
+      "mean_mw_actual_scarce_hours": 330.2,
+      "mean_mw_other_jun_jul_hours": 279.2,
+      "delta_mw": 51.0
+     },
+     "CT_CHP": {
+      "mean_mw_actual_scarce_hours": 703.2,
+      "mean_mw_other_jun_jul_hours": 661.5,
+      "delta_mw": 41.7
+     },
+     "OTHER": {
+      "mean_mw_actual_scarce_hours": 1277.9,
+      "mean_mw_other_jun_jul_hours": 1272.1,
+      "delta_mw": 5.8
+     },
+     "COAL": {
+      "mean_mw_actual_scarce_hours": 23.5,
+      "mean_mw_other_jun_jul_hours": 21.9,
+      "delta_mw": 1.6
+     },
+     "biomass": {
+      "mean_mw_actual_scarce_hours": 941.0,
+      "mean_mw_other_jun_jul_hours": 941.1,
+      "delta_mw": -0.0
+     },
+     "oil": {
+      "mean_mw_actual_scarce_hours": 0.0,
+      "mean_mw_other_jun_jul_hours": 0.0,
+      "delta_mw": 0.0
+     }
+    }
+   },
+   "2024": {
+    "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
+    "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (129.68 $/MWh and above)",
+    "n_scarce_hours": 15,
+    "by_class": {
+     "CT_PEAKER": {
+      "mean_mw_actual_scarce_hours": 8110.0,
+      "mean_mw_other_jun_jul_hours": 2996.4,
+      "delta_mw": 5113.5
+     },
+     "COAL_PRB": {
+      "mean_mw_actual_scarce_hours": 21031.2,
+      "mean_mw_other_jun_jul_hours": 17229.0,
+      "delta_mw": 3802.2
+     },
+     "COAL_BIT": {
+      "mean_mw_actual_scarce_hours": 8995.2,
+      "mean_mw_other_jun_jul_hours": 7070.3,
+      "delta_mw": 1924.9
+     },
+     "import": {
+      "mean_mw_actual_scarce_hours": 4878.5,
+      "mean_mw_other_jun_jul_hours": 3194.5,
+      "delta_mw": 1684.0
+     },
+     "CC_REGULAR": {
+      "mean_mw_actual_scarce_hours": 21857.1,
+      "mean_mw_other_jun_jul_hours": 20365.3,
+      "delta_mw": 1491.8
+     },
+     "ST_GAS": {
+      "mean_mw_actual_scarce_hours": 3751.4,
+      "mean_mw_other_jun_jul_hours": 2344.1,
+      "delta_mw": 1407.3
+     },
+     "hydro": {
+      "mean_mw_actual_scarce_hours": 2189.2,
+      "mean_mw_other_jun_jul_hours": 1345.0,
+      "delta_mw": 844.2
+     },
+     "solar": {
+      "mean_mw_actual_scarce_hours": 2520.4,
+      "mean_mw_other_jun_jul_hours": 2132.6,
+      "delta_mw": 387.8
+     },
+     "CC_CHP": {
+      "mean_mw_actual_scarce_hours": 3047.9,
+      "mean_mw_other_jun_jul_hours": 2711.8,
+      "delta_mw": 336.1
+     },
+     "COAL_LIGNITE": {
+      "mean_mw_actual_scarce_hours": 930.9,
+      "mean_mw_other_jun_jul_hours": 841.1,
+      "delta_mw": 89.8
+     },
+     "ST_CHP": {
+      "mean_mw_actual_scarce_hours": 439.7,
+      "mean_mw_other_jun_jul_hours": 371.5,
+      "delta_mw": 68.2
+     },
+     "CT_CHP": {
+      "mean_mw_actual_scarce_hours": 721.4,
+      "mean_mw_other_jun_jul_hours": 659.6,
+      "delta_mw": 61.9
+     },
+     "nuclear": {
+      "mean_mw_actual_scarce_hours": 11246.1,
+      "mean_mw_other_jun_jul_hours": 11242.4,
+      "delta_mw": 3.7
+     },
+     "biomass": {
+      "mean_mw_actual_scarce_hours": 837.9,
+      "mean_mw_other_jun_jul_hours": 834.3,
+      "delta_mw": 3.6
+     },
+     "COAL": {
+      "mean_mw_actual_scarce_hours": 18.2,
+      "mean_mw_other_jun_jul_hours": 16.2,
+      "delta_mw": 1.9
+     },
+     "OTHER": {
+      "mean_mw_actual_scarce_hours": 1093.4,
+      "mean_mw_other_jun_jul_hours": 1091.7,
+      "delta_mw": 1.7
+     },
+     "oil": {
+      "mean_mw_actual_scarce_hours": 0.0,
+      "mean_mw_other_jun_jul_hours": 0.0,
+      "delta_mw": 0.0
+     },
+     "wind": {
+      "mean_mw_actual_scarce_hours": 6716.4,
+      "mean_mw_other_jun_jul_hours": 8559.5,
+      "delta_mw": -1843.1
+     }
+    }
+   },
+   "2025": {
+    "basis": "MODEL-SIDE ONLY \u2014 no hourly interchange actual is committed for MISO, so this is descriptive, not a residual against a benchmark.",
+    "scarce_hours_definition": "Jun-Jul hours whose ACTUAL hub RT price is in the top 1 % of Jun-Jul (238.93 $/MWh and above)",
+    "n_scarce_hours": 15,
+    "by_class": {
+     "CT_PEAKER": {
+      "mean_mw_actual_scarce_hours": 13120.9,
+      "mean_mw_other_jun_jul_hours": 4337.5,
+      "delta_mw": 8783.4
+     },
+     "import": {
+      "mean_mw_actual_scarce_hours": 6351.3,
+      "mean_mw_other_jun_jul_hours": 2506.9,
+      "delta_mw": 3844.4
+     },
+     "ST_GAS": {
+      "mean_mw_actual_scarce_hours": 5087.0,
+      "mean_mw_other_jun_jul_hours": 2260.5,
+      "delta_mw": 2826.5
+     },
+     "COAL_PRB": {
+      "mean_mw_actual_scarce_hours": 22608.2,
+      "mean_mw_other_jun_jul_hours": 20433.4,
+      "delta_mw": 2174.8
+     },
+     "CC_REGULAR": {
+      "mean_mw_actual_scarce_hours": 20327.8,
+      "mean_mw_other_jun_jul_hours": 19209.2,
+      "delta_mw": 1118.7
+     },
+     "COAL_BIT": {
+      "mean_mw_actual_scarce_hours": 8756.1,
+      "mean_mw_other_jun_jul_hours": 7698.0,
+      "delta_mw": 1058.1
+     },
+     "hydro": {
+      "mean_mw_actual_scarce_hours": 2296.7,
+      "mean_mw_other_jun_jul_hours": 1325.9,
+      "delta_mw": 970.8
+     },
+     "nuclear": {
+      "mean_mw_actual_scarce_hours": 10728.9,
+      "mean_mw_other_jun_jul_hours": 10315.9,
+      "delta_mw": 413.0
+     },
+     "CC_CHP": {
+      "mean_mw_actual_scarce_hours": 2799.6,
+      "mean_mw_other_jun_jul_hours": 2614.4,
+      "delta_mw": 185.2
+     },
+     "ST_CHP": {
+      "mean_mw_actual_scarce_hours": 395.8,
+      "mean_mw_other_jun_jul_hours": 265.7,
+      "delta_mw": 130.1
+     },
+     "oil": {
+      "mean_mw_actual_scarce_hours": 63.1,
+      "mean_mw_other_jun_jul_hours": 0.3,
+      "delta_mw": 62.8
+     },
+     "COAL_LIGNITE": {
+      "mean_mw_actual_scarce_hours": 861.5,
+      "mean_mw_other_jun_jul_hours": 808.8,
+      "delta_mw": 52.7
+     },
+     "CT_CHP": {
+      "mean_mw_actual_scarce_hours": 707.4,
+      "mean_mw_other_jun_jul_hours": 682.1,
+      "delta_mw": 25.3
+     },
+     "OTHER": {
+      "mean_mw_actual_scarce_hours": 842.2,
+      "mean_mw_other_jun_jul_hours": 839.7,
+      "delta_mw": 2.5
+     },
+     "biomass": {
+      "mean_mw_actual_scarce_hours": 358.9,
+      "mean_mw_other_jun_jul_hours": 358.8,
+      "delta_mw": 0.2
+     },
+     "wind": {
+      "mean_mw_actual_scarce_hours": 5965.4,
+      "mean_mw_other_jun_jul_hours": 7989.3,
+      "delta_mw": -2023.9
+     },
+     "solar": {
+      "mean_mw_actual_scarce_hours": 1859.5,
+      "mean_mw_other_jun_jul_hours": 4667.9,
+      "delta_mw": -2808.5
+     }
+    }
+   }
+  }
+ },
+ "clock_repair": "miso-206 (2026-09-04): (i) a2/a4 hourly actual = INDIANA.HUB RT from the committed actual_lmp_hourly_zonal_MISO.parquet on the model's fixed-CST non-leap clock (the C3a comparator) \u2014 a0/a1/a3 byte-identical under this step (PREREG R-0 PASS); (ii) SEPARATELY, the month mask moved from a pandas leap-year calendar to the model's fixed non-leap clock, which shifts every 2024 monthly/seasonal window by one day (a1/a2/a3/a4 2024 move slightly; 2023/2025 unchanged)."
 }

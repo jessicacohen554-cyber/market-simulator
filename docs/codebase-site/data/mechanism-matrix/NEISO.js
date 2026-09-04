@@ -184,6 +184,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     retiree_cems_cap: { cell: "." },
     solar_deliverability: { cell: "." },
     vre_avg_cf_level: { cell: "U", ev: "uncovered — identical Tier-3 0.15 + needs-citation, rule 25" },
+    vre_reference_rate_curtailment_grossup: { cell: ".", ev: "n/a: NEISO is not in _UNCURTAILED_FALLBACK_ISOS; delivered ISNE profile (delivered_pinned). Row minted miso-206 (rule 28c)." },
     vre_market_generator_basis: { cell: "." },
     vre_registry_cod_date_basis: { cell: "." },
     wtx_curtailment_driver: { cell: "." },

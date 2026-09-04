@@ -10719,3 +10719,121 @@ in its own driver before a solve — and must state which year's object it means
 `scripts/probes/_miso205_ge_repaired_clock.py`.
 
 Next shorthand: **miso-206**.
+
+## miso-206 (2026-09-04) — the wind-availability object BOUNDED in the object's own hours and REFUSED (the +5 TWh/yr excess is the curtailment gross-up, a flat 5.15 % in every hour); and the wrong-clock record repair shows **the 15-hour tail is HALF the Jun–Jul 2025 object, not all of it**
+
+**Keeper unchanged: `2026-09-03-miso-202-unitclip`.** NO LP, NO KEEPER MOVE, NO
+MECHANISM ARMED, NO FIELD, NO RUN REGISTERED, NO CELL VERDICT MOVED. PREREG
+`PREREG-miso206-wind-availability-object-hours-2026-09-04.md` pushed blind at
+`f55af87f` (with a §0 disclosure of the two numbers the instrument pre-condition
+had already produced); record
+`FINDING-miso206-the-wind-excess-is-the-grossup-and-the-tail-is-half-the-object-2026-09-04.md`;
+instrument `scripts/probes/_miso206_wind_availability_phase0.py` +
+`_miso206_wind_availability_phase0.json`.
+
+**Matrix check first (rule 28a).** `ercot_wind_zone_shape` K preserves the ISO
+aggregate exactly per hour and cannot touch the object; `vre_avg_cf_level` and the
+offer-side renewable rows are `.`; the charter's "`wefor_multiplier` 1.0 vs 0.7" is
+the THERMAL forced-outage family, not wind. The construction actually at issue —
+the reference-rate curtailment gross-up (`_forecast_uncurtailed_cf`, ungated, no
+field) — had **no row**; minted this session as
+`vre_reference_rate_curtailment_grossup` (base row + a cell in all six shards,
+rule 28c), MISO `K` (live in every MISO keeper), the other five `.`.
+
+**The instrument, asserted before anything was read.** N-1: the measured wind
+rebuilt from the raw `EIA930_BALANCE` files reproduces the production loader at
+**max|diff| 0.0 MW on every archive-carried hour**, all three years — after TRAP 1
+fired: the archive's MISO `Data Date`/`Local Time` are **EST labels**, one hour
+ahead of the model's fixed CST (r = 1.000000 only at k = +1 on the first run); key
+on UTC. N-2: the production wind bound is `delivered ÷ (1 − 0.048947)` at
+**0.0000 MW in 8,760/8,760 hours** and **P1 wind sits ON it in every hour of every
+year** (0 curtailed hours, ratio 1.051466 min = max). N-3: miso-205's object set
+reproduced exactly. Found on the way: two BALANCE archive holes (2024-06-30
+HE24–07-01 HE23; 2025-07-24 HE01–HE23, neither touching the object), the
+extract's ffilled `2025-12-31 HE24` (15,164 vs a measured 13,588), and a
+**vintage-inconsistent label convention inside the committed extract** — 2018–2021
+and 2026 rows EST, 2022–2025 CST — so the 2019–2021 touchpoint years would load
+one hour early. Named, not chartered.
+
+**(a)/(b) The excess is the gross-up and nothing else.** Annual **+4.720 / +5.057
+/ +5.092 TWh** = a constant 5.15 % of the EIA-930 series in every hour. In the 15
+object hours: **262 / 285 / 251 MW**; in the top-15 gross-load hours 360 / 282 /
+282; across Jun–Jul 298 / 417 / 390. The measured series' own ranks in the object
+hours are h-o-d-matched **p54.5 / p36.1 / p36.5** and the model's are identical
+to the digit (a constant multiple preserves rank) — the low-wind set is what
+MISO's wind DID, reproduced plus 5 %. Solar (control): model = measured to 0.0 MW
+in 15/15 hours every year.
+
+**(c)/(d) THE BOUND — REFUSED.** 0.6 / 0.7 / 0.8 % of miso-203 G-D's broad
+reserve margin (42.7 / 38.4 / 30.5 GW), 1.7 / 2.4 / 4.5 % of armed-class idle;
+**even total removal of object-hour wind** (5,359 / 5,822 / 5,120 MW) is 12.5 /
+15.2 / 16.8 %, under the 25 % line every year; 175 MW at the largest hour of
+2025. P7 mechanism rule: 2.6 / 1.5 / 1.0 % of the object's net-load elevation —
+not an availability object. **DEAD like the ambient derate; no solve.** Form
+defect NAMED: a uniform annual rate puts headroom in scarce hours where real
+curtailment is ~0 (a price-conditioned rate is the right form), but the LP never
+exercises the headroom anywhere, so in this keeper the gross-up is a flat
++5.1 TWh/yr wind LEVEL bias — nobody's scarce-hour lever.
+
+**The second deliverable produced the result.** `_miso202_c3a_2025_anatomy`
+(a2/a4) and `_miso203_scarce_hour_identity` now read the committed
+`actual_lmp_hourly_zonal_MISO.parquet` (INDIANA.HUB, the C3a comparator, model
+clock), pre-repair blocks preserved. R-0 (annual blocks byte-identical) PASS;
+R-2 the identity reproduces miso-205's drivers **exactly**; R-3 the anatomy's
+import excess **3,673.0** vs miso-205's 3,673.3 (and 2024: 1,850.2 vs 1,850.4
+after a SEPARATE, disclosed repair of the anatomy's leap-year month mask, which
+had run 2024's Jun–Jul window May 31–Jul 30). **R-4 FAILED against prediction:
+the top-1 % hours carry 48.4 % of the Jun–Jul 2025 mean gap on the scoring
+comparator, not the 99.9 % miso-202 §2 published.** The eight-hub equal-weighted
+mean the lane had been reading sits **$8.7 BELOW INDIANA.HUB and $7.1 below MISO's
+own system energy price** across Jun–Jul 2025 (summer negative congestion at the
+export hubs); INDIANA.HUB sits only $1.6 above the energy price, so the summer
+object is **88 % energy** and not a locational artifact. On the comparator the
+Jun–Jul 2025 gap is **−13.44 $/MWh** (lw): the lower half of hours **over-priced
++3.71**, p50–75 −0.15, the **p75–p99 shoulder (351 h) −10.71 = 80 %**, the p99+
+tail (15 h) −6.30 = 47 %; top decile 110 %. The body gap by hour of day is
+**+8 to +9 overnight and −14 to −24 across h11–h20** — miso-130's two-sided
+diurnal compression, now weighed on the scored residual. 2024 has the same
+shape at a third of the amplitude. **Withdrawn:** miso-202 §2 A-2's "entirely a
+TAIL miss … 15 hours carry 99.9 %". **Narrowed:** "not closable by anything that
+moves the price level" → not by a UNIFORM level move; the object is a top-decile
+daytime shoulder PLUS a 15-hour tail, and the shoulder is the larger half. Every
+bound argued at "the object's own hours" since miso-202 was argued against the
+tail half only.
+
+**Prior scored.** P1–P8/P10 right but arithmetically pre-determined by the
+disclosed identity; P6/P7 right and never close; T2 exactly right; T1 half-right
+(the trap fired and was diagnosed); **R-4 WRONG — the one line that tested an
+inherited headline rather than my own construction.** Five consecutive MISO
+sessions whose most useful output came from the part of the prior that was
+wrong or absent. **Successor discipline: when an instrument is repaired,
+re-score every headline the old instrument produced, each pre-registered as a
+claim that may fail.**
+
+**Governance.** Rule 15: zero-solve, nothing registered. Rule 28(b)/(c): new base
+row + six cells; `diurnal_price_amplitude` carries an amended MISO evidence
+citation, its G untouched; §5.4 stamp. Rule 28(a): no R/I/G cell re-tested or
+re-opened. Rule 25: MISO's shard is the only one carrying a verdict. Rule 22:
+2023–2025 only. Rule 13: production loaders + committed artifacts, diagnostic.
+Rule 1: nothing moved, nothing armed. Rule 27: three probe files edited locally,
+blob-verified after push.
+
+**Successor:** re-bound every live queue item against BOTH populations — the
+15-hour tail (47 %) and the 351-hour p75–p99 daytime shoulder (80 %, h10–h20,
+actual $60–370 vs model $44–69) — and prefer the lever that reaches the shoulder.
+The seam object is re-measured at +3,673 / +1,850 / +1,477 MW on the corrected
+anatomy (owner ruling still outstanding); the single-hub comparator item gains
+the Jun–Jul datum (hub +$1.6 over MEC in summer, the 8-hub mean −$7.1); a ramp
+product faces a fourth objection (a ten-hour daytime shoulder is not a ramp
+window). Three instrument defects named: BALANCE EST labels (key on UTC), the
+extract's 2018–2021/2026 EST rows, and `pd.date_range` month masks in leap years.
+
+**Records:**
+`FINDING-miso206-the-wind-excess-is-the-grossup-and-the-tail-is-half-the-object-2026-09-04.md`,
+`PREREG-miso206-wind-availability-object-hours-2026-09-04.md` @ `f55af87f`,
+`_miso206_wind_availability_phase0.json`,
+`scripts/probes/_miso206_wind_availability_phase0.py`; repaired
+`_miso202_c3a_2025_anatomy.json` / `_miso203_scarce_hour_identity.json` and their
+probes.
+
+Next shorthand: **miso-207**.
