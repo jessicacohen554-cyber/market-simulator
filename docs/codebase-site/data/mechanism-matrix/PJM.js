@@ -184,6 +184,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     retiree_cems_cap: { cell: "K" },
     solar_deliverability: { cell: "." },
     vre_avg_cf_level: { cell: "." },
+    vre_reference_rate_curtailment_grossup: { cell: ".", ev: "n/a: PJM is not in _UNCURTAILED_FALLBACK_ISOS; backcast wind/solar keep the delivered EIA-930 PJM hourly profile (delivered_pinned). Row minted miso-206 (rule 28c)." },
     vre_market_generator_basis: { cell: "." },
     vre_registry_cod_date_basis: { cell: "." },
     wtx_curtailment_driver: { cell: "." },

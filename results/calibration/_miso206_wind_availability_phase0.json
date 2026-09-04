@@ -1,0 +1,1650 @@
+{
+ "charter": "miso-206 phase 0 \u2014 bound the WIND-AVAILABILITY object in the object's own hours before any solve. Zero-solve; nothing armed.",
+ "prereg": "results/calibration/PREREG-miso206-wind-availability-object-hours-2026-09-04.md @ f55af87f",
+ "keeper": "2026-09-03-miso-202-unitclip",
+ "basis": "committed artifacts + production loaders only \u2014 no LP solved. Rule 22: 2023/2024/2025.",
+ "reference_curtailment_rate": {
+  "rate": 0.048947,
+  "latest_contributing_year": 2024,
+  "gross_up_factor": 1.051466,
+  "source": "data/raw/miso-hsl/miso_wind_curtailment_annual.csv, Potomac Economics SOM, firm 2023+2024 rows"
+ },
+ "extract_row_counts_by_local_year": {
+  "2018": 8760,
+  "2019": 8760,
+  "2020": 8784,
+  "2021": 8760,
+  "2022": 8760,
+  "2023": 8760,
+  "2024": 8784,
+  "2025": 8759,
+  "2026": 4344
+ },
+ "years": {
+  "2023": {
+   "n1_balance_rebuild_reproduces_production": {
+    "balance_files": [
+     {
+      "file": "EIA930_BALANCE_2022_Jul_Dec.parquet",
+      "present": true,
+      "new_taxonomy": false,
+      "rows": 4416
+     },
+     {
+      "file": "EIA930_BALANCE_2023_Jan_Jun.parquet",
+      "present": true,
+      "new_taxonomy": false,
+      "rows": 4344
+     },
+     {
+      "file": "EIA930_BALANCE_2023_Jul_Dec.parquet",
+      "present": true,
+      "new_taxonomy": false,
+      "rows": 4416
+     },
+     {
+      "file": "EIA930_BALANCE_2024_Jan_Jun.parquet",
+      "present": true,
+      "new_taxonomy": false,
+      "rows": 4368
+     }
+    ],
+    "rows_in_cst_year_ex_feb29": 8760,
+    "missing_utc_hours_in_balance_files": [],
+    "balance_file_local_label_utc_offset_h": {
+     "min": 5.0,
+     "max": 5.0,
+     "note": "5 = EST (MISO market time); the model clock is fixed CST (6)"
+    },
+    "T1_diagnosis": "the BALANCE file's Data Date / Local Time for MISO are EST labels; keying the year on them reproduces production only at a +1 h lag (first run: r = 1.000000 at k = +1, 0.989 at k = 0). The model, the C3a scoring reference and the production 2022-2025 frame are on fixed CST, so the rebuild keys the local year on UTC - 6 h.",
+    "extract_label_offset_by_year_h": {
+     "2018": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2019": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2020": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2021": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2022": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2023": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2024": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2025": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2026": {
+      "min": 5.0,
+      "max": 5.0
+     }
+    },
+    "wind_hours_differing_gt_0p5mw_stamps": [],
+    "with_battery_wind_sum_mw": 0.0,
+    "balance_archive_hole_hours": [],
+    "n_archive_hole_hours": 0,
+    "extract_missing_hours_production_filled": [],
+    "wind_max_abs_diff_vs_production_mw": 0.0,
+    "wind_max_abs_diff_on_archive_carried_hours_mw": 0.0,
+    "wind_hours_differing_gt_0p5mw": 0,
+    "wind_hours_differing_gt_0p5mw_outside_hole": 0,
+    "wind_jun_jul_max_abs_diff_mw": 0.0,
+    "solar_max_abs_diff_on_archive_carried_hours_mw": 0.0,
+    "solar_hours_differing_gt_0p5mw_outside_hole": 0,
+    "hole_note": "hours the BALANCE bulk archive does not carry for MISO at all; the API-built production extract carries measured values there, so a difference on those hours is an archive gap, not a transform error. Conversely an hour the EXTRACT lacks is filled by production (_eia_hourly_frame_filled: ffill/interpolate) while the archive carries the measured value \u2014 a production-side fill, reported.",
+    "lag_scan_r_rebuilt_vs_production": {
+     "-1": 0.98909,
+     "0": 1.0,
+     "1": 0.98909
+    },
+    "extract_rows_this_local_year": 8760,
+    "reproduces_production_on_archive_carried_hours": true
+   },
+   "n2_bound_identity_and_p1_on_bound": {
+    "bound_vs_delivered_over_1_minus_r_max_abs_diff_mw": 0.0,
+    "solar_bound_vs_delivered_max_abs_diff_mw": 0.0,
+    "p1_wind_below_bound_max_mw": 0.0021,
+    "hours_p1_wind_curtailed_gt_1mw": 0,
+    "hours_p1_wind_curtailed_gt_1mw_jun_jul": 0,
+    "endogenous_wind_curtailment_mwh": 0.0,
+    "hours_p1_solar_curtailed_gt_1mw": 0,
+    "endogenous_solar_curtailment_mwh": 0.0,
+    "installed_wind_mw": 31519.0,
+    "per_zone_installed_wind_mw": {
+     "MISO-West": 9414.0,
+     "MISO-Plains": 13386.0,
+     "MISO-Illinois": 3075.0,
+     "MISO-Indiana": 1240.0,
+     "MISO-East": 4404.0,
+     "MISO-South": 0.0
+    },
+    "p1_over_measured_ratio_min": 1.051466,
+    "p1_over_measured_ratio_max": 1.051466,
+    "identity_holds": true
+   },
+   "n3_object_set_reproduces_miso205": {
+    "threshold_usd_per_mwh": 121.43,
+    "miso205_threshold": 121.43,
+    "n_hours": 15,
+    "stamps": [
+     "2023-06-02 HE09",
+     "2023-06-06 HE14",
+     "2023-06-06 HE15",
+     "2023-06-21 HE09",
+     "2023-06-24 HE11",
+     "2023-06-24 HE15",
+     "2023-06-24 HE17",
+     "2023-07-05 HE09",
+     "2023-07-05 HE10",
+     "2023-07-06 HE12",
+     "2023-07-07 HE13",
+     "2023-07-14 HE11",
+     "2023-07-14 HE13",
+     "2023-07-23 HE20",
+     "2023-07-24 HE12"
+    ],
+    "reproduces_miso205": true,
+    "obj_hours_in_balance_archive_hole": 0,
+    "obj_hours_in_extract_missing": 0
+   },
+   "a_levels_and_ranks": {
+    "obj_hours": {
+     "n_hours": 15,
+     "model_wind_mw": 5359.3,
+     "measured_930_wind_mw": 5096.9,
+     "wind_excess_mw": 262.3,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 2267.8,
+     "measured_930_solar_mw": 2267.8,
+     "solar_diff_mw": 0.0,
+     "measured_wind_pct_jun_jul": 45.5,
+     "model_wind_pct_jun_jul": 45.5,
+     "measured_wind_pct_hod_matched": 54.5,
+     "model_wind_pct_hod_matched": 54.5,
+     "measured_solar_pct_jun_jul": 82.3,
+     "measured_solar_pct_hod_matched": 55.3,
+     "model_solar_pct_hod_matched": 55.3,
+     "load_mw": 92514.0,
+     "netload_mw": 84887.0
+    },
+    "top_gross_load_hours": {
+     "n_hours": 15,
+     "model_wind_mw": 7350.0,
+     "measured_930_wind_mw": 6990.3,
+     "wind_excess_mw": 359.8,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 2147.9,
+     "measured_930_solar_mw": 2147.9,
+     "solar_diff_mw": 0.0,
+     "measured_wind_pct_jun_jul": 68.7,
+     "model_wind_pct_jun_jul": 68.7,
+     "measured_wind_pct_hod_matched": 68.6,
+     "model_wind_pct_hod_matched": 68.6,
+     "measured_solar_pct_jun_jul": 80.2,
+     "measured_solar_pct_hod_matched": 75.2,
+     "model_solar_pct_hod_matched": 75.2,
+     "load_mw": 114090.0,
+     "netload_mw": 104592.0
+    },
+    "all_jun_jul": {
+     "n_hours": 1464,
+     "model_wind_mw": 6078.3,
+     "measured_930_wind_mw": 5780.8,
+     "wind_excess_mw": 297.5,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 1040.1,
+     "measured_930_solar_mw": 1040.1,
+     "solar_diff_mw": -0.0,
+     "measured_wind_pct_jun_jul": 50.0,
+     "model_wind_pct_jun_jul": 50.0,
+     "measured_wind_pct_hod_matched": 49.2,
+     "model_wind_pct_hod_matched": 49.2,
+     "measured_solar_pct_jun_jul": 47.6,
+     "measured_solar_pct_hod_matched": 42.4,
+     "model_solar_pct_hod_matched": 42.4,
+     "load_mw": 81955.0,
+     "netload_mw": 74837.0
+    }
+   },
+   "b_annual_excess": {
+    "model_p1_wind_twh": 96.435,
+    "measured_930_wind_twh": 91.715,
+    "excess_twh": 4.72,
+    "ratio_model_over_measured": 1.05147,
+    "model_p1_solar_twh": 6.348,
+    "measured_930_solar_twh": 6.348
+   },
+   "c_the_bound": {
+    "margins_source": "_miso203_summer_peak_anchor_phase0.json::g_d_reserve_binding (READ, not re-derived)",
+    "margin_broad_mw_min_scarce": 42735.7,
+    "idle_armed_classes_mw_mean_scarce": 15788.8,
+    "license_line": 0.25,
+    "obj_wind_excess_mw": 262.3,
+    "excess_share_of_broad_margin": 0.00614,
+    "excess_share_of_armed_idle": 0.01661,
+    "total_removal_ceiling_mw": 5359.3,
+    "total_removal_share_of_broad_margin": 0.1254,
+    "total_removal_share_of_armed_idle": 0.33943,
+    "largest_hour": {
+     "stamp": "2023-07-07 HE13",
+     "actual_usd": 354.91,
+     "model_lw_usd": 36.57,
+     "model_wind_mw": 3057.7,
+     "measured_930_wind_mw": 2908.0,
+     "excess_mw": 149.7,
+     "excess_share_of_broad_margin": 0.0035
+    },
+    "miso202_a3_ceiling": {
+     "jun_jul_price_max": 56.42,
+     "unserved_energy_mwh": 0.0,
+     "ordc_shortfall_hours": {
+      "miso_rbdc": 0,
+      "miso_rbdc_regspin": 5,
+      "miso_subregional_or_midwest": 0,
+      "miso_zonal_or_miso_south": 0
+     }
+    },
+    "P6_refuse_on_broad_limb": true,
+    "P6_refuse_even_at_total_removal_broad": true
+   },
+   "p7_mechanism_rule": {
+    "netload_elevation_over_jun_jul_mw": 10050.0,
+    "obj_wind_excess_mw": 262.3,
+    "excess_share_of_netload_elevation": 0.0261,
+    "materiality_line": 0.1,
+    "is_availability_object": false,
+    "model_wind_deficit_vs_jun_jul_mean_mw": 719.0,
+    "measured_930_wind_deficit_vs_jun_jul_mean_mw": 684.0,
+    "note": "the wind DEFICIT in the object's hours is a MEASURED fact (the 930 series is low there for the time of day), not a model error; the model's only departure from measurement is the constant gross-up"
+   },
+   "p8_headroom_liveness": {
+    "jun_jul_hours_wind_curtailed_gt_1mw": 0,
+    "obj_hours_wind_curtailed_gt_1mw": 0,
+    "jun_jul_hours_model_price_lw_le_0": 0
+   },
+   "hours": [
+    {
+     "hour": 3656,
+     "stamp": "2023-06-02 HE09",
+     "actual_indiana_hub_usd": 125.58,
+     "model_price_zone_mean_usd": 31.82,
+     "model_price_load_weighted_usd": 31.83,
+     "model_wind_mw": 3028.2,
+     "measured_930_wind_mw": 2880.0,
+     "wind_excess_mw": 148.2,
+     "measured_wind_pct_jj": 22.1,
+     "measured_wind_pct_hod": 42.6,
+     "model_solar_mw": 2518.0,
+     "measured_930_solar_mw": 2518.0,
+     "load_mw": 83897.0,
+     "netload_mw": 78351.0
+    },
+    {
+     "hour": 3757,
+     "stamp": "2023-06-06 HE14",
+     "actual_indiana_hub_usd": 121.54,
+     "model_price_zone_mean_usd": 34.95,
+     "model_price_load_weighted_usd": 34.95,
+     "model_wind_mw": 2681.2,
+     "measured_930_wind_mw": 2550.0,
+     "wind_excess_mw": 131.2,
+     "measured_wind_pct_jj": 16.9,
+     "measured_wind_pct_hod": 21.3,
+     "model_solar_mw": 2051.0,
+     "measured_930_solar_mw": 2051.0,
+     "load_mw": 90172.0,
+     "netload_mw": 85440.0
+    },
+    {
+     "hour": 3758,
+     "stamp": "2023-06-06 HE15",
+     "actual_indiana_hub_usd": 141.75,
+     "model_price_zone_mean_usd": 35.15,
+     "model_price_load_weighted_usd": 35.15,
+     "model_wind_mw": 3315.3,
+     "measured_930_wind_mw": 3153.0,
+     "wind_excess_mw": 162.3,
+     "measured_wind_pct_jj": 25.8,
+     "measured_wind_pct_hod": 29.5,
+     "model_solar_mw": 1802.0,
+     "measured_930_solar_mw": 1802.0,
+     "load_mw": 91171.0,
+     "netload_mw": 86054.0
+    },
+    {
+     "hour": 4112,
+     "stamp": "2023-06-21 HE09",
+     "actual_indiana_hub_usd": 160.73,
+     "model_price_zone_mean_usd": 32.68,
+     "model_price_load_weighted_usd": 32.68,
+     "model_wind_mw": 5607.5,
+     "measured_930_wind_mw": 5333.0,
+     "wind_excess_mw": 274.5,
+     "measured_wind_pct_jj": 52.3,
+     "measured_wind_pct_hod": 77.0,
+     "model_solar_mw": 2830.0,
+     "measured_930_solar_mw": 2830.0,
+     "load_mw": 84551.0,
+     "netload_mw": 76114.0
+    },
+    {
+     "hour": 4186,
+     "stamp": "2023-06-24 HE11",
+     "actual_indiana_hub_usd": 147.69,
+     "model_price_zone_mean_usd": 32.32,
+     "model_price_load_weighted_usd": 32.32,
+     "model_wind_mw": 10945.8,
+     "measured_930_wind_mw": 10410.0,
+     "wind_excess_mw": 535.8,
+     "measured_wind_pct_jj": 88.1,
+     "measured_wind_pct_hod": 93.4,
+     "model_solar_mw": 2878.0,
+     "measured_930_solar_mw": 2878.0,
+     "load_mw": 86864.0,
+     "netload_mw": 73040.0
+    },
+    {
+     "hour": 4190,
+     "stamp": "2023-06-24 HE15",
+     "actual_indiana_hub_usd": 136.65,
+     "model_price_zone_mean_usd": 35.78,
+     "model_price_load_weighted_usd": 35.81,
+     "model_wind_mw": 10973.1,
+     "measured_930_wind_mw": 10436.0,
+     "wind_excess_mw": 537.1,
+     "measured_wind_pct_jj": 88.3,
+     "measured_wind_pct_hod": 88.5,
+     "model_solar_mw": 2603.0,
+     "measured_930_solar_mw": 2603.0,
+     "load_mw": 97594.0,
+     "netload_mw": 84018.0
+    },
+    {
+     "hour": 4192,
+     "stamp": "2023-06-24 HE17",
+     "actual_indiana_hub_usd": 154.52,
+     "model_price_zone_mean_usd": 37.52,
+     "model_price_load_weighted_usd": 37.52,
+     "model_wind_mw": 8441.2,
+     "measured_930_wind_mw": 8028.0,
+     "wind_excess_mw": 413.2,
+     "measured_wind_pct_jj": 78.6,
+     "measured_wind_pct_hod": 73.8,
+     "model_solar_mw": 2064.0,
+     "measured_930_solar_mw": 2064.0,
+     "load_mw": 99317.0,
+     "netload_mw": 88812.0
+    },
+    {
+     "hour": 4448,
+     "stamp": "2023-07-05 HE09",
+     "actual_indiana_hub_usd": 265.49,
+     "model_price_zone_mean_usd": 33.92,
+     "model_price_load_weighted_usd": 33.92,
+     "model_wind_mw": 7785.1,
+     "measured_930_wind_mw": 7404.0,
+     "wind_excess_mw": 381.1,
+     "measured_wind_pct_jj": 73.9,
+     "measured_wind_pct_hod": 85.2,
+     "model_solar_mw": 2360.0,
+     "measured_930_solar_mw": 2360.0,
+     "load_mw": 88587.0,
+     "netload_mw": 78442.0
+    },
+    {
+     "hour": 4449,
+     "stamp": "2023-07-05 HE10",
+     "actual_indiana_hub_usd": 128.83,
+     "model_price_zone_mean_usd": 36.92,
+     "model_price_load_weighted_usd": 36.92,
+     "model_wind_mw": 6984.9,
+     "measured_930_wind_mw": 6643.0,
+     "wind_excess_mw": 341.9,
+     "measured_wind_pct_jj": 66.5,
+     "measured_wind_pct_hod": 83.6,
+     "model_solar_mw": 2449.0,
+     "measured_930_solar_mw": 2449.0,
+     "load_mw": 94014.0,
+     "netload_mw": 84580.0
+    },
+    {
+     "hour": 4475,
+     "stamp": "2023-07-06 HE12",
+     "actual_indiana_hub_usd": 324.18,
+     "model_price_zone_mean_usd": 36.9,
+     "model_price_load_weighted_usd": 36.9,
+     "model_wind_mw": 3691.7,
+     "measured_930_wind_mw": 3511.0,
+     "wind_excess_mw": 180.7,
+     "measured_wind_pct_jj": 32.4,
+     "measured_wind_pct_hod": 42.6,
+     "model_solar_mw": 2391.0,
+     "measured_930_solar_mw": 2391.0,
+     "load_mw": 91772.0,
+     "netload_mw": 85689.0
+    },
+    {
+     "hour": 4500,
+     "stamp": "2023-07-07 HE13",
+     "actual_indiana_hub_usd": 354.91,
+     "model_price_zone_mean_usd": 36.57,
+     "model_price_load_weighted_usd": 36.57,
+     "model_wind_mw": 3057.7,
+     "measured_930_wind_mw": 2908.0,
+     "wind_excess_mw": 149.7,
+     "measured_wind_pct_jj": 22.3,
+     "measured_wind_pct_hod": 29.5,
+     "model_solar_mw": 2417.0,
+     "measured_930_solar_mw": 2417.0,
+     "load_mw": 91422.0,
+     "netload_mw": 85947.0
+    },
+    {
+     "hour": 4666,
+     "stamp": "2023-07-14 HE11",
+     "actual_indiana_hub_usd": 123.95,
+     "model_price_zone_mean_usd": 38.51,
+     "model_price_load_weighted_usd": 38.51,
+     "model_wind_mw": 5361.4,
+     "measured_930_wind_mw": 5099.0,
+     "wind_excess_mw": 262.4,
+     "measured_wind_pct_jj": 50.5,
+     "measured_wind_pct_hod": 72.1,
+     "model_solar_mw": 2391.0,
+     "measured_930_solar_mw": 2391.0,
+     "load_mw": 95433.0,
+     "netload_mw": 87681.0
+    },
+    {
+     "hour": 4668,
+     "stamp": "2023-07-14 HE13",
+     "actual_indiana_hub_usd": 191.94,
+     "model_price_zone_mean_usd": 41.83,
+     "model_price_load_weighted_usd": 41.83,
+     "model_wind_mw": 6041.7,
+     "measured_930_wind_mw": 5746.0,
+     "wind_excess_mw": 295.7,
+     "measured_wind_pct_jj": 56.8,
+     "measured_wind_pct_hod": 65.6,
+     "model_solar_mw": 2398.0,
+     "measured_930_solar_mw": 2398.0,
+     "load_mw": 102417.0,
+     "netload_mw": 93977.0
+    },
+    {
+     "hour": 4891,
+     "stamp": "2023-07-23 HE20",
+     "actual_indiana_hub_usd": 129.69,
+     "model_price_zone_mean_usd": 37.18,
+     "model_price_load_weighted_usd": 37.18,
+     "model_wind_mw": 915.8,
+     "measured_930_wind_mw": 871.0,
+     "wind_excess_mw": 44.8,
+     "measured_wind_pct_jj": 1.8,
+     "measured_wind_pct_hod": 1.6,
+     "model_solar_mw": 14.0,
+     "measured_930_solar_mw": 14.0,
+     "load_mw": 89956.0,
+     "netload_mw": 89026.0
+    },
+    {
+     "hour": 4907,
+     "stamp": "2023-07-24 HE12",
+     "actual_indiana_hub_usd": 307.53,
+     "model_price_zone_mean_usd": 39.83,
+     "model_price_load_weighted_usd": 39.83,
+     "model_wind_mw": 1558.3,
+     "measured_930_wind_mw": 1482.0,
+     "wind_excess_mw": 76.3,
+     "measured_wind_pct_jj": 5.7,
+     "measured_wind_pct_hod": 11.5,
+     "model_solar_mw": 2851.0,
+     "measured_930_solar_mw": 2851.0,
+     "load_mw": 100544.0,
+     "netload_mw": 96135.0
+    }
+   ]
+  },
+  "2024": {
+   "n1_balance_rebuild_reproduces_production": {
+    "balance_files": [
+     {
+      "file": "EIA930_BALANCE_2023_Jul_Dec.parquet",
+      "present": true,
+      "new_taxonomy": false,
+      "rows": 4416
+     },
+     {
+      "file": "EIA930_BALANCE_2024_Jan_Jun.parquet",
+      "present": true,
+      "new_taxonomy": false,
+      "rows": 4368
+     },
+     {
+      "file": "EIA930_BALANCE_2024_Jul_Dec.parquet",
+      "present": true,
+      "new_taxonomy": true,
+      "rows": 4416
+     },
+     {
+      "file": "EIA930_BALANCE_2025_Jan_Jun.parquet",
+      "present": true,
+      "new_taxonomy": true,
+      "rows": 4344
+     }
+    ],
+    "rows_in_cst_year_ex_feb29": 8760,
+    "missing_utc_hours_in_balance_files": [],
+    "balance_file_local_label_utc_offset_h": {
+     "min": 5.0,
+     "max": 5.0,
+     "note": "5 = EST (MISO market time); the model clock is fixed CST (6)"
+    },
+    "T1_diagnosis": "the BALANCE file's Data Date / Local Time for MISO are EST labels; keying the year on them reproduces production only at a +1 h lag (first run: r = 1.000000 at k = +1, 0.989 at k = 0). The model, the C3a scoring reference and the production 2022-2025 frame are on fixed CST, so the rebuild keys the local year on UTC - 6 h.",
+    "extract_label_offset_by_year_h": {
+     "2018": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2019": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2020": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2021": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2022": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2023": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2024": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2025": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2026": {
+      "min": 5.0,
+      "max": 5.0
+     }
+    },
+    "wind_hours_differing_gt_0p5mw_stamps": [],
+    "with_battery_wind_sum_mw": 0.0,
+    "balance_archive_hole_hours": [
+     "2024-06-30 HE24",
+     "2024-07-01 HE01",
+     "2024-07-01 HE02",
+     "2024-07-01 HE03",
+     "2024-07-01 HE04",
+     "2024-07-01 HE05",
+     "2024-07-01 HE06",
+     "2024-07-01 HE07",
+     "2024-07-01 HE08",
+     "2024-07-01 HE09",
+     "2024-07-01 HE10",
+     "2024-07-01 HE11",
+     "2024-07-01 HE12",
+     "2024-07-01 HE13",
+     "2024-07-01 HE14",
+     "2024-07-01 HE15",
+     "2024-07-01 HE16",
+     "2024-07-01 HE17",
+     "2024-07-01 HE18",
+     "2024-07-01 HE19",
+     "2024-07-01 HE20",
+     "2024-07-01 HE21",
+     "2024-07-01 HE22",
+     "2024-07-01 HE23"
+    ],
+    "n_archive_hole_hours": 24,
+    "extract_missing_hours_production_filled": [],
+    "wind_max_abs_diff_vs_production_mw": 0.0008,
+    "wind_max_abs_diff_on_archive_carried_hours_mw": 0.0,
+    "wind_hours_differing_gt_0p5mw": 0,
+    "wind_hours_differing_gt_0p5mw_outside_hole": 0,
+    "wind_jun_jul_max_abs_diff_mw": 0.0008,
+    "solar_max_abs_diff_on_archive_carried_hours_mw": 0.0,
+    "solar_hours_differing_gt_0p5mw_outside_hole": 0,
+    "hole_note": "hours the BALANCE bulk archive does not carry for MISO at all; the API-built production extract carries measured values there, so a difference on those hours is an archive gap, not a transform error. Conversely an hour the EXTRACT lacks is filled by production (_eia_hourly_frame_filled: ffill/interpolate) while the archive carries the measured value \u2014 a production-side fill, reported.",
+    "lag_scan_r_rebuilt_vs_production": {
+     "-1": 0.988223,
+     "0": 1.0,
+     "1": 0.988223
+    },
+    "extract_rows_this_local_year": 8784,
+    "reproduces_production_on_archive_carried_hours": true
+   },
+   "n2_bound_identity_and_p1_on_bound": {
+    "bound_vs_delivered_over_1_minus_r_max_abs_diff_mw": 0.0,
+    "solar_bound_vs_delivered_max_abs_diff_mw": 0.0,
+    "p1_wind_below_bound_max_mw": 0.002,
+    "hours_p1_wind_curtailed_gt_1mw": 0,
+    "hours_p1_wind_curtailed_gt_1mw_jun_jul": 0,
+    "endogenous_wind_curtailment_mwh": -0.0,
+    "hours_p1_solar_curtailed_gt_1mw": 0,
+    "endogenous_solar_curtailment_mwh": 0.0,
+    "installed_wind_mw": 32144.0,
+    "per_zone_installed_wind_mw": {
+     "MISO-West": 9414.0,
+     "MISO-Plains": 13386.0,
+     "MISO-Illinois": 3515.0,
+     "MISO-Indiana": 1240.0,
+     "MISO-East": 4404.0,
+     "MISO-South": 184.0
+    },
+    "p1_over_measured_ratio_min": 1.051466,
+    "p1_over_measured_ratio_max": 1.051466,
+    "identity_holds": true
+   },
+   "n3_object_set_reproduces_miso205": {
+    "threshold_usd_per_mwh": 159.01,
+    "miso205_threshold": 159.01,
+    "n_hours": 15,
+    "stamps": [
+     "2024-06-03 HE18",
+     "2024-06-03 HE20",
+     "2024-06-16 HE21",
+     "2024-06-19 HE11",
+     "2024-06-19 HE16",
+     "2024-06-20 HE20",
+     "2024-06-29 HE17",
+     "2024-07-09 HE16",
+     "2024-07-22 HE11",
+     "2024-07-28 HE17",
+     "2024-07-28 HE18",
+     "2024-07-29 HE15",
+     "2024-07-29 HE16",
+     "2024-07-29 HE17",
+     "2024-07-30 HE18"
+    ],
+    "reproduces_miso205": true,
+    "obj_hours_in_balance_archive_hole": 0,
+    "obj_hours_in_extract_missing": 0
+   },
+   "a_levels_and_ranks": {
+    "obj_hours": {
+     "n_hours": 15,
+     "model_wind_mw": 5821.6,
+     "measured_930_wind_mw": 5536.7,
+     "wind_excess_mw": 285.0,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 2916.7,
+     "measured_930_solar_mw": 2916.7,
+     "solar_diff_mw": 0.0,
+     "measured_wind_pct_jun_jul": 34.5,
+     "model_wind_pct_jun_jul": 34.5,
+     "measured_wind_pct_hod_matched": 36.1,
+     "model_wind_pct_hod_matched": 36.1,
+     "measured_solar_pct_jun_jul": 59.8,
+     "measured_solar_pct_hod_matched": 38.0,
+     "model_solar_pct_hod_matched": 38.0,
+     "load_mw": 99291.0,
+     "netload_mw": 90552.0
+    },
+    "top_gross_load_hours": {
+     "n_hours": 15,
+     "model_wind_mw": 5758.0,
+     "measured_930_wind_mw": 5476.1,
+     "wind_excess_mw": 281.8,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 4958.8,
+     "measured_930_solar_mw": 4958.8,
+     "solar_diff_mw": 0.0,
+     "measured_wind_pct_jun_jul": 35.8,
+     "model_wind_pct_jun_jul": 35.8,
+     "measured_wind_pct_hod_matched": 38.6,
+     "model_wind_pct_hod_matched": 38.6,
+     "measured_solar_pct_jun_jul": 85.7,
+     "measured_solar_pct_hod_matched": 81.1,
+     "model_solar_pct_hod_matched": 81.1,
+     "load_mw": 112822.0,
+     "netload_mw": 102105.0
+    },
+    "all_jun_jul": {
+     "n_hours": 1464,
+     "model_wind_mw": 8511.5,
+     "measured_930_wind_mw": 8094.9,
+     "wind_excess_mw": 416.6,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 2122.7,
+     "measured_930_solar_mw": 2122.7,
+     "solar_diff_mw": 0.0,
+     "measured_wind_pct_jun_jul": 50.0,
+     "model_wind_pct_jun_jul": 50.0,
+     "measured_wind_pct_hod_matched": 49.2,
+     "model_wind_pct_hod_matched": 49.2,
+     "measured_solar_pct_jun_jul": 47.5,
+     "measured_solar_pct_hod_matched": 42.8,
+     "model_solar_pct_hod_matched": 42.8,
+     "load_mw": 82596.0,
+     "netload_mw": 71962.0
+    }
+   },
+   "b_annual_excess": {
+    "model_p1_wind_twh": 103.308,
+    "measured_930_wind_twh": 98.251,
+    "excess_twh": 5.057,
+    "ratio_model_over_measured": 1.05147,
+    "model_p1_solar_twh": 14.385,
+    "measured_930_solar_twh": 14.385
+   },
+   "c_the_bound": {
+    "margins_source": "_miso203_summer_peak_anchor_phase0.json::g_d_reserve_binding (READ, not re-derived)",
+    "margin_broad_mw_min_scarce": 38374.8,
+    "idle_armed_classes_mw_mean_scarce": 11751.6,
+    "license_line": 0.25,
+    "obj_wind_excess_mw": 285.0,
+    "excess_share_of_broad_margin": 0.00743,
+    "excess_share_of_armed_idle": 0.02425,
+    "total_removal_ceiling_mw": 5821.6,
+    "total_removal_share_of_broad_margin": 0.1517,
+    "total_removal_share_of_armed_idle": 0.49539,
+    "largest_hour": {
+     "stamp": "2024-07-28 HE18",
+     "actual_usd": 704.06,
+     "model_lw_usd": 34.84,
+     "model_wind_mw": 7897.6,
+     "measured_930_wind_mw": 7511.0,
+     "excess_mw": 386.6,
+     "excess_share_of_broad_margin": 0.01007
+    },
+    "miso202_a3_ceiling": {
+     "jun_jul_price_max": 52.0,
+     "unserved_energy_mwh": 19384.4,
+     "ordc_shortfall_hours": {
+      "miso_rbdc": 0,
+      "miso_rbdc_regspin": 6,
+      "miso_subregional_or_midwest": 2,
+      "miso_zonal_or_miso_south": 0
+     }
+    },
+    "P6_refuse_on_broad_limb": true,
+    "P6_refuse_even_at_total_removal_broad": true
+   },
+   "p7_mechanism_rule": {
+    "netload_elevation_over_jun_jul_mw": 18590.0,
+    "obj_wind_excess_mw": 285.0,
+    "excess_share_of_netload_elevation": 0.01533,
+    "materiality_line": 0.1,
+    "is_availability_object": false,
+    "model_wind_deficit_vs_jun_jul_mean_mw": 2690.0,
+    "measured_930_wind_deficit_vs_jun_jul_mean_mw": 2558.0,
+    "note": "the wind DEFICIT in the object's hours is a MEASURED fact (the 930 series is low there for the time of day), not a model error; the model's only departure from measurement is the constant gross-up"
+   },
+   "p8_headroom_liveness": {
+    "jun_jul_hours_wind_curtailed_gt_1mw": 0,
+    "obj_hours_wind_curtailed_gt_1mw": 0,
+    "jun_jul_hours_model_price_lw_le_0": 0
+   },
+   "hours": [
+    {
+     "hour": 3689,
+     "stamp": "2024-06-03 HE18",
+     "actual_indiana_hub_usd": 274.84,
+     "model_price_zone_mean_usd": 37.56,
+     "model_price_load_weighted_usd": 37.56,
+     "model_wind_mw": 6210.0,
+     "measured_930_wind_mw": 5906.0,
+     "wind_excess_mw": 304.0,
+     "measured_wind_pct_jj": 39.7,
+     "measured_wind_pct_hod": 42.6,
+     "model_solar_mw": 2220.0,
+     "measured_930_solar_mw": 2220.0,
+     "load_mw": 93005.0,
+     "netload_mw": 84575.0
+    },
+    {
+     "hour": 3691,
+     "stamp": "2024-06-03 HE20",
+     "actual_indiana_hub_usd": 175.89,
+     "model_price_zone_mean_usd": 35.44,
+     "model_price_load_weighted_usd": 35.44,
+     "model_wind_mw": 6808.2,
+     "measured_930_wind_mw": 6475.0,
+     "wind_excess_mw": 333.2,
+     "measured_wind_pct_jj": 44.5,
+     "measured_wind_pct_hod": 54.1,
+     "model_solar_mw": 31.0,
+     "measured_930_solar_mw": 31.0,
+     "load_mw": 87825.0,
+     "netload_mw": 80986.0
+    },
+    {
+     "hour": 4004,
+     "stamp": "2024-06-16 HE21",
+     "actual_indiana_hub_usd": 631.92,
+     "model_price_zone_mean_usd": 30.6,
+     "model_price_load_weighted_usd": 30.64,
+     "model_wind_mw": 13381.0,
+     "measured_930_wind_mw": 12726.0,
+     "wind_excess_mw": 655.0,
+     "measured_wind_pct_jj": 79.3,
+     "measured_wind_pct_hod": 78.7,
+     "model_solar_mw": 0.0,
+     "measured_930_solar_mw": 0.0,
+     "load_mw": 90825.0,
+     "netload_mw": 77444.0
+    },
+    {
+     "hour": 4066,
+     "stamp": "2024-06-19 HE11",
+     "actual_indiana_hub_usd": 162.0,
+     "model_price_zone_mean_usd": 35.37,
+     "model_price_load_weighted_usd": 35.37,
+     "model_wind_mw": 6644.2,
+     "measured_930_wind_mw": 6319.0,
+     "wind_excess_mw": 325.2,
+     "measured_wind_pct_jj": 42.9,
+     "measured_wind_pct_hod": 52.5,
+     "model_solar_mw": 4396.0,
+     "measured_930_solar_mw": 4396.0,
+     "load_mw": 95283.0,
+     "netload_mw": 84243.0
+    },
+    {
+     "hour": 4071,
+     "stamp": "2024-06-19 HE16",
+     "actual_indiana_hub_usd": 537.17,
+     "model_price_zone_mean_usd": 40.57,
+     "model_price_load_weighted_usd": 40.57,
+     "model_wind_mw": 4893.5,
+     "measured_930_wind_mw": 4654.0,
+     "wind_excess_mw": 239.5,
+     "measured_wind_pct_jj": 28.2,
+     "measured_wind_pct_hod": 31.1,
+     "model_solar_mw": 3435.0,
+     "measured_930_solar_mw": 3435.0,
+     "load_mw": 103937.0,
+     "netload_mw": 95608.0
+    },
+    {
+     "hour": 4099,
+     "stamp": "2024-06-20 HE20",
+     "actual_indiana_hub_usd": 212.87,
+     "model_price_zone_mean_usd": 36.51,
+     "model_price_load_weighted_usd": 36.51,
+     "model_wind_mw": 5053.3,
+     "measured_930_wind_mw": 4806.0,
+     "wind_excess_mw": 247.3,
+     "measured_wind_pct_jj": 29.6,
+     "measured_wind_pct_hod": 34.4,
+     "model_solar_mw": 100.0,
+     "measured_930_solar_mw": 100.0,
+     "load_mw": 94487.0,
+     "netload_mw": 89334.0
+    },
+    {
+     "hour": 4312,
+     "stamp": "2024-06-29 HE17",
+     "actual_indiana_hub_usd": 195.7,
+     "model_price_zone_mean_usd": 29.61,
+     "model_price_load_weighted_usd": 30.32,
+     "model_wind_mw": 17231.4,
+     "measured_930_wind_mw": 16388.0,
+     "wind_excess_mw": 843.4,
+     "measured_wind_pct_jj": 91.9,
+     "measured_wind_pct_hod": 85.2,
+     "model_solar_mw": 4320.0,
+     "measured_930_solar_mw": 4320.0,
+     "load_mw": 97961.0,
+     "netload_mw": 76410.0
+    },
+    {
+     "hour": 4551,
+     "stamp": "2024-07-09 HE16",
+     "actual_indiana_hub_usd": 301.75,
+     "model_price_zone_mean_usd": 40.85,
+     "model_price_load_weighted_usd": 40.85,
+     "model_wind_mw": 1437.4,
+     "measured_930_wind_mw": 1367.0,
+     "wind_excess_mw": 70.4,
+     "measured_wind_pct_jj": 6.3,
+     "measured_wind_pct_hod": 6.6,
+     "model_solar_mw": 2388.0,
+     "measured_930_solar_mw": 2388.0,
+     "load_mw": 95673.0,
+     "netload_mw": 91848.0
+    },
+    {
+     "hour": 4858,
+     "stamp": "2024-07-22 HE11",
+     "actual_indiana_hub_usd": 179.08,
+     "model_price_zone_mean_usd": 36.64,
+     "model_price_load_weighted_usd": 36.64,
+     "model_wind_mw": 78.9,
+     "measured_930_wind_mw": 75.0,
+     "wind_excess_mw": 3.9,
+     "measured_wind_pct_jj": 0.1,
+     "measured_wind_pct_hod": 0.0,
+     "model_solar_mw": 5210.0,
+     "measured_930_solar_mw": 5210.0,
+     "load_mw": 91469.0,
+     "netload_mw": 86180.0
+    },
+    {
+     "hour": 5008,
+     "stamp": "2024-07-28 HE17",
+     "actual_indiana_hub_usd": 195.71,
+     "model_price_zone_mean_usd": 34.84,
+     "model_price_load_weighted_usd": 34.84,
+     "model_wind_mw": 8628.3,
+     "measured_930_wind_mw": 8206.0,
+     "wind_excess_mw": 422.3,
+     "measured_wind_pct_jj": 57.9,
+     "measured_wind_pct_hod": 55.7,
+     "model_solar_mw": 3395.0,
+     "measured_930_solar_mw": 3395.0,
+     "load_mw": 99762.0,
+     "netload_mw": 87739.0
+    },
+    {
+     "hour": 5009,
+     "stamp": "2024-07-28 HE18",
+     "actual_indiana_hub_usd": 704.06,
+     "model_price_zone_mean_usd": 34.84,
+     "model_price_load_weighted_usd": 34.84,
+     "model_wind_mw": 7897.6,
+     "measured_930_wind_mw": 7511.0,
+     "wind_excess_mw": 386.6,
+     "measured_wind_pct_jj": 52.9,
+     "measured_wind_pct_hod": 54.1,
+     "model_solar_mw": 2167.0,
+     "measured_930_solar_mw": 2167.0,
+     "load_mw": 99012.0,
+     "netload_mw": 88947.0
+    },
+    {
+     "hour": 5030,
+     "stamp": "2024-07-29 HE15",
+     "actual_indiana_hub_usd": 384.09,
+     "model_price_zone_mean_usd": 46.72,
+     "model_price_load_weighted_usd": 46.72,
+     "model_wind_mw": 2017.8,
+     "measured_930_wind_mw": 1919.0,
+     "wind_excess_mw": 98.8,
+     "measured_wind_pct_jj": 9.2,
+     "measured_wind_pct_hod": 9.8,
+     "model_solar_mw": 5055.0,
+     "measured_930_solar_mw": 5055.0,
+     "load_mw": 109273.0,
+     "netload_mw": 102200.0
+    },
+    {
+     "hour": 5031,
+     "stamp": "2024-07-29 HE16",
+     "actual_indiana_hub_usd": 161.26,
+     "model_price_zone_mean_usd": 49.71,
+     "model_price_load_weighted_usd": 49.71,
+     "model_wind_mw": 1835.9,
+     "measured_930_wind_mw": 1746.0,
+     "wind_excess_mw": 89.9,
+     "measured_wind_pct_jj": 8.5,
+     "measured_wind_pct_hod": 8.2,
+     "model_solar_mw": 4389.0,
+     "measured_930_solar_mw": 4389.0,
+     "load_mw": 110341.0,
+     "netload_mw": 104116.0
+    },
+    {
+     "hour": 5032,
+     "stamp": "2024-07-29 HE17",
+     "actual_indiana_hub_usd": 543.36,
+     "model_price_zone_mean_usd": 51.56,
+     "model_price_load_weighted_usd": 51.56,
+     "model_wind_mw": 1828.5,
+     "measured_930_wind_mw": 1739.0,
+     "wind_excess_mw": 89.5,
+     "measured_wind_pct_jj": 8.4,
+     "measured_wind_pct_hod": 6.6,
+     "model_solar_mw": 3733.0,
+     "measured_930_solar_mw": 3733.0,
+     "load_mw": 110557.0,
+     "netload_mw": 104996.0
+    },
+    {
+     "hour": 5057,
+     "stamp": "2024-07-30 HE18",
+     "actual_indiana_hub_usd": 274.35,
+     "model_price_zone_mean_usd": 42.16,
+     "model_price_load_weighted_usd": 42.16,
+     "model_wind_mw": 3378.4,
+     "measured_930_wind_mw": 3213.0,
+     "wind_excess_mw": 165.4,
+     "measured_wind_pct_jj": 17.7,
+     "measured_wind_pct_hod": 21.3,
+     "model_solar_mw": 2911.0,
+     "measured_930_solar_mw": 2911.0,
+     "load_mw": 109950.0,
+     "netload_mw": 103661.0
+    }
+   ]
+  },
+  "2025": {
+   "n1_balance_rebuild_reproduces_production": {
+    "balance_files": [
+     {
+      "file": "EIA930_BALANCE_2024_Jul_Dec.parquet",
+      "present": true,
+      "new_taxonomy": true,
+      "rows": 4416
+     },
+     {
+      "file": "EIA930_BALANCE_2025_Jan_Jun.parquet",
+      "present": true,
+      "new_taxonomy": true,
+      "rows": 4344
+     },
+     {
+      "file": "EIA930_BALANCE_2025_Jul_Dec.parquet",
+      "present": true,
+      "new_taxonomy": true,
+      "rows": 4416
+     },
+     {
+      "file": "EIA930_BALANCE_2026_Jan_Jun.parquet",
+      "present": true,
+      "new_taxonomy": true,
+      "rows": 4344
+     }
+    ],
+    "rows_in_cst_year_ex_feb29": 8760,
+    "missing_utc_hours_in_balance_files": [],
+    "balance_file_local_label_utc_offset_h": {
+     "min": 5.0,
+     "max": 5.0,
+     "note": "5 = EST (MISO market time); the model clock is fixed CST (6)"
+    },
+    "T1_diagnosis": "the BALANCE file's Data Date / Local Time for MISO are EST labels; keying the year on them reproduces production only at a +1 h lag (first run: r = 1.000000 at k = +1, 0.989 at k = 0). The model, the C3a scoring reference and the production 2022-2025 frame are on fixed CST, so the rebuild keys the local year on UTC - 6 h.",
+    "extract_label_offset_by_year_h": {
+     "2018": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2019": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2020": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2021": {
+      "min": 5.0,
+      "max": 5.0
+     },
+     "2022": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2023": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2024": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2025": {
+      "min": 5.0,
+      "max": 6.0
+     },
+     "2026": {
+      "min": 5.0,
+      "max": 5.0
+     }
+    },
+    "wind_hours_differing_gt_0p5mw_stamps": [
+     "2025-07-24 HE01",
+     "2025-07-24 HE02",
+     "2025-07-24 HE03",
+     "2025-07-24 HE04",
+     "2025-07-24 HE05",
+     "2025-07-24 HE06",
+     "2025-07-24 HE07",
+     "2025-07-24 HE08",
+     "2025-07-24 HE09",
+     "2025-07-24 HE10"
+    ],
+    "with_battery_wind_sum_mw": 0.0,
+    "balance_archive_hole_hours": [
+     "2025-07-24 HE01",
+     "2025-07-24 HE02",
+     "2025-07-24 HE03",
+     "2025-07-24 HE04",
+     "2025-07-24 HE05",
+     "2025-07-24 HE06",
+     "2025-07-24 HE07",
+     "2025-07-24 HE08",
+     "2025-07-24 HE09",
+     "2025-07-24 HE10",
+     "2025-07-24 HE11",
+     "2025-07-24 HE12",
+     "2025-07-24 HE13",
+     "2025-07-24 HE14",
+     "2025-07-24 HE15",
+     "2025-07-24 HE16",
+     "2025-07-24 HE17",
+     "2025-07-24 HE18",
+     "2025-07-24 HE19",
+     "2025-07-24 HE20",
+     "2025-07-24 HE21",
+     "2025-07-24 HE22",
+     "2025-07-24 HE23"
+    ],
+    "n_archive_hole_hours": 23,
+    "extract_missing_hours_production_filled": [
+     {
+      "stamp": "2025-12-31 HE24",
+      "production_filled_mw": 15164.0,
+      "archive_measured_mw": 13588.0
+     }
+    ],
+    "wind_max_abs_diff_vs_production_mw": 9408.8333,
+    "wind_max_abs_diff_on_archive_carried_hours_mw": 0.0,
+    "wind_hours_differing_gt_0p5mw": 24,
+    "wind_hours_differing_gt_0p5mw_outside_hole": 0,
+    "wind_jun_jul_max_abs_diff_mw": 9408.8333,
+    "solar_max_abs_diff_on_archive_carried_hours_mw": 0.0,
+    "solar_hours_differing_gt_0p5mw_outside_hole": 0,
+    "hole_note": "hours the BALANCE bulk archive does not carry for MISO at all; the API-built production extract carries measured values there, so a difference on those hours is an archive gap, not a transform error. Conversely an hour the EXTRACT lacks is filled by production (_eia_hourly_frame_filled: ffill/interpolate) while the archive carries the measured value \u2014 a production-side fill, reported.",
+    "lag_scan_r_rebuilt_vs_production": {
+     "-1": 0.988709,
+     "0": 0.999094,
+     "1": 0.988476
+    },
+    "extract_rows_this_local_year": 8759,
+    "reproduces_production_on_archive_carried_hours": true
+   },
+   "n2_bound_identity_and_p1_on_bound": {
+    "bound_vs_delivered_over_1_minus_r_max_abs_diff_mw": 0.0,
+    "solar_bound_vs_delivered_max_abs_diff_mw": 0.0,
+    "p1_wind_below_bound_max_mw": 0.0021,
+    "hours_p1_wind_curtailed_gt_1mw": 0,
+    "hours_p1_wind_curtailed_gt_1mw_jun_jul": 0,
+    "endogenous_wind_curtailment_mwh": -0.0,
+    "hours_p1_solar_curtailed_gt_1mw": 0,
+    "endogenous_solar_curtailment_mwh": 0.0,
+    "installed_wind_mw": 33226.0,
+    "per_zone_installed_wind_mw": {
+     "MISO-West": 9414.0,
+     "MISO-Plains": 13386.0,
+     "MISO-Illinois": 4454.0,
+     "MISO-Indiana": 1240.0,
+     "MISO-East": 4404.0,
+     "MISO-South": 328.0
+    },
+    "p1_over_measured_ratio_min": 1.051466,
+    "p1_over_measured_ratio_max": 1.051466,
+    "identity_holds": true
+   },
+   "n3_object_set_reproduces_miso205": {
+    "threshold_usd_per_mwh": 373.02,
+    "miso205_threshold": 373.02,
+    "n_hours": 15,
+    "stamps": [
+     "2025-06-17 HE18",
+     "2025-06-23 HE18",
+     "2025-06-23 HE19",
+     "2025-06-24 HE11",
+     "2025-06-24 HE12",
+     "2025-06-24 HE16",
+     "2025-06-24 HE17",
+     "2025-06-24 HE18",
+     "2025-06-24 HE19",
+     "2025-07-15 HE16",
+     "2025-07-22 HE18",
+     "2025-07-28 HE18",
+     "2025-07-28 HE19",
+     "2025-07-28 HE20",
+     "2025-07-30 HE14"
+    ],
+    "reproduces_miso205": true,
+    "obj_hours_in_balance_archive_hole": 0,
+    "obj_hours_in_extract_missing": 0
+   },
+   "a_levels_and_ranks": {
+    "obj_hours": {
+     "n_hours": 15,
+     "model_wind_mw": 5120.2,
+     "measured_930_wind_mw": 4869.6,
+     "wind_excess_mw": 250.6,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 6237.1,
+     "measured_930_solar_mw": 6237.1,
+     "solar_diff_mw": 0.0,
+     "measured_wind_pct_jun_jul": 32.4,
+     "model_wind_pct_jun_jul": 32.4,
+     "measured_wind_pct_hod_matched": 36.5,
+     "model_wind_pct_hod_matched": 36.5,
+     "measured_solar_pct_jun_jul": 61.3,
+     "measured_solar_pct_hod_matched": 48.1,
+     "model_solar_pct_hod_matched": 48.1,
+     "load_mw": 109041.0,
+     "netload_mw": 97684.0
+    },
+    "top_gross_load_hours": {
+     "n_hours": 15,
+     "model_wind_mw": 5757.6,
+     "measured_930_wind_mw": 5475.8,
+     "wind_excess_mw": 281.8,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 11434.9,
+     "measured_930_solar_mw": 11434.9,
+     "solar_diff_mw": 0.0,
+     "measured_wind_pct_jun_jul": 36.3,
+     "model_wind_pct_jun_jul": 36.3,
+     "measured_wind_pct_hod_matched": 36.7,
+     "model_wind_pct_hod_matched": 36.7,
+     "measured_solar_pct_jun_jul": 90.2,
+     "measured_solar_pct_hod_matched": 88.6,
+     "model_solar_pct_hod_matched": 88.6,
+     "load_mw": 117415.0,
+     "netload_mw": 100223.0
+    },
+    "all_jun_jul": {
+     "n_hours": 1464,
+     "model_wind_mw": 7968.6,
+     "measured_930_wind_mw": 7578.6,
+     "wind_excess_mw": 390.0,
+     "wind_excess_share_of_model": 0.04895,
+     "model_solar_mw": 4639.2,
+     "measured_930_solar_mw": 4639.2,
+     "solar_diff_mw": -0.0,
+     "measured_wind_pct_jun_jul": 50.0,
+     "model_wind_pct_jun_jul": 50.0,
+     "measured_wind_pct_hod_matched": 49.2,
+     "model_wind_pct_hod_matched": 49.2,
+     "measured_solar_pct_jun_jul": 48.6,
+     "measured_solar_pct_hod_matched": 45.2,
+     "model_solar_pct_hod_matched": 45.2,
+     "load_mw": 86370.0,
+     "netload_mw": 73762.0
+    }
+   },
+   "b_annual_excess": {
+    "model_p1_wind_twh": 104.034,
+    "measured_930_wind_twh": 98.941,
+    "excess_twh": 5.092,
+    "ratio_model_over_measured": 1.05147,
+    "model_p1_solar_twh": 29.751,
+    "measured_930_solar_twh": 29.751
+   },
+   "c_the_bound": {
+    "margins_source": "_miso203_summer_peak_anchor_phase0.json::g_d_reserve_binding (READ, not re-derived)",
+    "margin_broad_mw_min_scarce": 30533.2,
+    "idle_armed_classes_mw_mean_scarce": 5620.9,
+    "license_line": 0.25,
+    "obj_wind_excess_mw": 250.6,
+    "excess_share_of_broad_margin": 0.00821,
+    "excess_share_of_armed_idle": 0.04459,
+    "total_removal_ceiling_mw": 5120.2,
+    "total_removal_share_of_broad_margin": 0.16769,
+    "total_removal_share_of_armed_idle": 0.91093,
+    "largest_hour": {
+     "stamp": "2025-07-28 HE18",
+     "actual_usd": 1782.55,
+     "model_lw_usd": 161.39,
+     "model_wind_mw": 3581.3,
+     "measured_930_wind_mw": 3406.0,
+     "excess_mw": 175.3,
+     "excess_share_of_broad_margin": 0.00574
+    },
+    "miso202_a3_ceiling": {
+     "jun_jul_price_max": 183.22,
+     "unserved_energy_mwh": 0.0,
+     "ordc_shortfall_hours": {
+      "miso_rbdc": 0,
+      "miso_rbdc_regspin": 3,
+      "miso_subregional_or_midwest": 0,
+      "miso_zonal_or_miso_south": 0
+     }
+    },
+    "P6_refuse_on_broad_limb": true,
+    "P6_refuse_even_at_total_removal_broad": true
+   },
+   "p7_mechanism_rule": {
+    "netload_elevation_over_jun_jul_mw": 23922.0,
+    "obj_wind_excess_mw": 250.6,
+    "excess_share_of_netload_elevation": 0.01048,
+    "materiality_line": 0.1,
+    "is_availability_object": false,
+    "model_wind_deficit_vs_jun_jul_mean_mw": 2848.0,
+    "measured_930_wind_deficit_vs_jun_jul_mean_mw": 2709.0,
+    "note": "the wind DEFICIT in the object's hours is a MEASURED fact (the 930 series is low there for the time of day), not a model error; the model's only departure from measurement is the constant gross-up"
+   },
+   "p8_headroom_liveness": {
+    "jun_jul_hours_wind_curtailed_gt_1mw": 0,
+    "obj_hours_wind_curtailed_gt_1mw": 0,
+    "jun_jul_hours_model_price_lw_le_0": 0
+   },
+   "hours": [
+    {
+     "hour": 4025,
+     "stamp": "2025-06-17 HE18",
+     "actual_indiana_hub_usd": 543.22,
+     "model_price_zone_mean_usd": 49.45,
+     "model_price_load_weighted_usd": 49.45,
+     "model_wind_mw": 5056.5,
+     "measured_930_wind_mw": 4809.0,
+     "wind_excess_mw": 247.5,
+     "measured_wind_pct_jj": 33.2,
+     "measured_wind_pct_hod": 41.0,
+     "model_solar_mw": 5678.0,
+     "measured_930_solar_mw": 5678.0,
+     "load_mw": 101518.0,
+     "netload_mw": 90783.0
+    },
+    {
+     "hour": 4169,
+     "stamp": "2025-06-23 HE18",
+     "actual_indiana_hub_usd": 838.9,
+     "model_price_zone_mean_usd": 85.31,
+     "model_price_load_weighted_usd": 85.31,
+     "model_wind_mw": 9913.2,
+     "measured_930_wind_mw": 9428.0,
+     "wind_excess_mw": 485.2,
+     "measured_wind_pct_jj": 72.5,
+     "measured_wind_pct_hod": 73.8,
+     "model_solar_mw": 6651.0,
+     "measured_930_solar_mw": 6651.0,
+     "load_mw": 113603.0,
+     "netload_mw": 97039.0
+    },
+    {
+     "hour": 4170,
+     "stamp": "2025-06-23 HE19",
+     "actual_indiana_hub_usd": 1046.69,
+     "model_price_zone_mean_usd": 127.64,
+     "model_price_load_weighted_usd": 127.64,
+     "model_wind_mw": 7484.3,
+     "measured_930_wind_mw": 7118.0,
+     "wind_excess_mw": 366.3,
+     "measured_wind_pct_jj": 54.4,
+     "measured_wind_pct_hod": 59.0,
+     "model_solar_mw": 2241.0,
+     "measured_930_solar_mw": 2241.0,
+     "load_mw": 109778.0,
+     "netload_mw": 100053.0
+    },
+    {
+     "hour": 4186,
+     "stamp": "2025-06-24 HE11",
+     "actual_indiana_hub_usd": 382.73,
+     "model_price_zone_mean_usd": 52.77,
+     "model_price_load_weighted_usd": 52.77,
+     "model_wind_mw": 4870.4,
+     "measured_930_wind_mw": 4632.0,
+     "wind_excess_mw": 238.4,
+     "measured_wind_pct_jj": 31.3,
+     "measured_wind_pct_hod": 44.3,
+     "model_solar_mw": 10454.0,
+     "measured_930_solar_mw": 10454.0,
+     "load_mw": 103335.0,
+     "netload_mw": 88011.0
+    },
+    {
+     "hour": 4187,
+     "stamp": "2025-06-24 HE12",
+     "actual_indiana_hub_usd": 406.29,
+     "model_price_zone_mean_usd": 58.45,
+     "model_price_load_weighted_usd": 58.45,
+     "model_wind_mw": 4080.7,
+     "measured_930_wind_mw": 3881.0,
+     "wind_excess_mw": 199.7,
+     "measured_wind_pct_jj": 22.7,
+     "measured_wind_pct_hod": 27.9,
+     "model_solar_mw": 10498.0,
+     "measured_930_solar_mw": 10498.0,
+     "load_mw": 106313.0,
+     "netload_mw": 91734.0
+    },
+    {
+     "hour": 4191,
+     "stamp": "2025-06-24 HE16",
+     "actual_indiana_hub_usd": 390.12,
+     "model_price_zone_mean_usd": 64.56,
+     "model_price_load_weighted_usd": 64.56,
+     "model_wind_mw": 3239.6,
+     "measured_930_wind_mw": 3081.0,
+     "wind_excess_mw": 158.6,
+     "measured_wind_pct_jj": 15.3,
+     "measured_wind_pct_hod": 16.4,
+     "model_solar_mw": 7881.0,
+     "measured_930_solar_mw": 7881.0,
+     "load_mw": 108114.0,
+     "netload_mw": 96993.0
+    },
+    {
+     "hour": 4192,
+     "stamp": "2025-06-24 HE17",
+     "actual_indiana_hub_usd": 451.42,
+     "model_price_zone_mean_usd": 64.61,
+     "model_price_load_weighted_usd": 64.61,
+     "model_wind_mw": 3343.7,
+     "measured_930_wind_mw": 3180.0,
+     "wind_excess_mw": 163.7,
+     "measured_wind_pct_jj": 16.3,
+     "measured_wind_pct_hod": 14.8,
+     "model_solar_mw": 7020.0,
+     "measured_930_solar_mw": 7020.0,
+     "load_mw": 107522.0,
+     "netload_mw": 97158.0
+    },
+    {
+     "hour": 4193,
+     "stamp": "2025-06-24 HE18",
+     "actual_indiana_hub_usd": 1202.05,
+     "model_price_zone_mean_usd": 64.61,
+     "model_price_load_weighted_usd": 64.61,
+     "model_wind_mw": 3199.6,
+     "measured_930_wind_mw": 3043.0,
+     "wind_excess_mw": 156.6,
+     "measured_wind_pct_jj": 14.8,
+     "measured_wind_pct_hod": 18.0,
+     "model_solar_mw": 5344.0,
+     "measured_930_solar_mw": 5344.0,
+     "load_mw": 105825.0,
+     "netload_mw": 97281.0
+    },
+    {
+     "hour": 4194,
+     "stamp": "2025-06-24 HE19",
+     "actual_indiana_hub_usd": 774.99,
+     "model_price_zone_mean_usd": 68.46,
+     "model_price_load_weighted_usd": 68.46,
+     "model_wind_mw": 3103.9,
+     "measured_930_wind_mw": 2952.0,
+     "wind_excess_mw": 151.9,
+     "measured_wind_pct_jj": 13.8,
+     "measured_wind_pct_hod": 18.0,
+     "model_solar_mw": 1911.0,
+     "measured_930_solar_mw": 1911.0,
+     "load_mw": 103323.0,
+     "netload_mw": 98308.0
+    },
+    {
+     "hour": 4695,
+     "stamp": "2025-07-15 HE16",
+     "actual_indiana_hub_usd": 413.32,
+     "model_price_zone_mean_usd": 50.65,
+     "model_price_load_weighted_usd": 50.65,
+     "model_wind_mw": 6862.9,
+     "measured_930_wind_mw": 6527.0,
+     "wind_excess_mw": 335.9,
+     "measured_wind_pct_jj": 48.5,
+     "measured_wind_pct_hod": 50.8,
+     "model_solar_mw": 9741.0,
+     "measured_930_solar_mw": 9741.0,
+     "load_mw": 113489.0,
+     "netload_mw": 96885.0
+    },
+    {
+     "hour": 4865,
+     "stamp": "2025-07-22 HE18",
+     "actual_indiana_hub_usd": 643.66,
+     "model_price_zone_mean_usd": 48.13,
+     "model_price_load_weighted_usd": 48.34,
+     "model_wind_mw": 8474.8,
+     "measured_930_wind_mw": 8060.0,
+     "wind_excess_mw": 414.8,
+     "measured_wind_pct_jj": 62.1,
+     "measured_wind_pct_hod": 59.0,
+     "model_solar_mw": 7954.0,
+     "measured_930_solar_mw": 7954.0,
+     "load_mw": 113184.0,
+     "netload_mw": 96755.0
+    },
+    {
+     "hour": 5009,
+     "stamp": "2025-07-28 HE18",
+     "actual_indiana_hub_usd": 1782.55,
+     "model_price_zone_mean_usd": 161.39,
+     "model_price_load_weighted_usd": 161.39,
+     "model_wind_mw": 3581.3,
+     "measured_930_wind_mw": 3406.0,
+     "wind_excess_mw": 175.3,
+     "measured_wind_pct_jj": 18.4,
+     "measured_wind_pct_hod": 21.3,
+     "model_solar_mw": 7668.0,
+     "measured_930_solar_mw": 7668.0,
+     "load_mw": 117206.0,
+     "netload_mw": 105957.0
+    },
+    {
+     "hour": 5010,
+     "stamp": "2025-07-28 HE19",
+     "actual_indiana_hub_usd": 683.21,
+     "model_price_zone_mean_usd": 165.58,
+     "model_price_load_weighted_usd": 183.22,
+     "model_wind_mw": 4079.7,
+     "measured_930_wind_mw": 3880.0,
+     "wind_excess_mw": 199.7,
+     "measured_wind_pct_jj": 22.7,
+     "measured_wind_pct_hod": 31.1,
+     "model_solar_mw": 2212.0,
+     "measured_930_solar_mw": 2212.0,
+     "load_mw": 113404.0,
+     "netload_mw": 107112.0
+    },
+    {
+     "hour": 5011,
+     "stamp": "2025-07-28 HE20",
+     "actual_indiana_hub_usd": 388.7,
+     "model_price_zone_mean_usd": 93.76,
+     "model_price_load_weighted_usd": 97.48,
+     "model_wind_mw": 4528.7,
+     "measured_930_wind_mw": 4307.0,
+     "wind_excess_mw": 221.7,
+     "measured_wind_pct_jj": 27.7,
+     "measured_wind_pct_hod": 34.4,
+     "model_solar_mw": 46.0,
+     "measured_930_solar_mw": 46.0,
+     "load_mw": 109946.0,
+     "netload_mw": 105371.0
+    },
+    {
+     "hour": 5053,
+     "stamp": "2025-07-30 HE14",
+     "actual_indiana_hub_usd": 826.91,
+     "model_price_zone_mean_usd": 44.87,
+     "model_price_load_weighted_usd": 44.88,
+     "model_wind_mw": 4983.9,
+     "measured_930_wind_mw": 4740.0,
+     "wind_excess_mw": 243.9,
+     "measured_wind_pct_jj": 32.5,
+     "measured_wind_pct_hod": 37.7,
+     "model_solar_mw": 8257.0,
+     "measured_930_solar_mw": 8257.0,
+     "load_mw": 109055.0,
+     "netload_mw": 95814.0
+    }
+   ]
+  }
+ },
+ "extract_label_convention": {
+  "utc_minus_local_label_h_by_year": {
+   "2018": {
+    "min": 5.0,
+    "max": 5.0
+   },
+   "2019": {
+    "min": 5.0,
+    "max": 5.0
+   },
+   "2020": {
+    "min": 5.0,
+    "max": 5.0
+   },
+   "2021": {
+    "min": 5.0,
+    "max": 5.0
+   },
+   "2022": {
+    "min": 5.0,
+    "max": 6.0
+   },
+   "2023": {
+    "min": 5.0,
+    "max": 6.0
+   },
+   "2024": {
+    "min": 5.0,
+    "max": 6.0
+   },
+   "2025": {
+    "min": 5.0,
+    "max": 6.0
+   },
+   "2026": {
+    "min": 5.0,
+    "max": 5.0
+   }
+  },
+  "first_utc_end_of_hour_by_year": {
+   "2018": "2018-01-01 06:00:00",
+   "2019": "2019-01-01 06:00:00",
+   "2020": "2020-01-01 06:00:00",
+   "2021": "2021-01-01 06:00:00",
+   "2022": "2022-01-01 07:00:00",
+   "2023": "2023-01-01 07:00:00",
+   "2024": "2024-01-01 07:00:00",
+   "2025": "2025-01-01 07:00:00",
+   "2026": "2026-01-01 06:00:00"
+  },
+  "finding": "vintage-inconsistent labels inside one committed extract: 2018-2021 and 2026 rows are EST-labelled (year starts at UTC 06:00), 2022-2025 rows are Chicago-labelled with the year starting at UTC 07:00 (fixed CST). The training years 2023-2025 are on the model's clock; the 2019-2021 touchpoint years would load ONE HOUR EARLY against the CST-converted LMP reference. NAMED, not chartered (rule 22: those years are not solvable for MISO)."
+ },
+ "verdict": {
+  "rule": "REFUSE iff obj-hour wind excess / margin_broad_mw_min_scarce < 0.25 in every year (miso-203 G-D's line, verbatim); the object is an availability object only if excess / net-load elevation >= 0.10",
+  "P6_refuse": true,
+  "P7_availability_object_any_year": false,
+  "verdict": "REFUSED \u2014 DEAD on the bound; nothing armed, no LP"
+ },
+ "scored_predictions_placeholder": "scored in FINDING-miso206 \u00a78"
+}

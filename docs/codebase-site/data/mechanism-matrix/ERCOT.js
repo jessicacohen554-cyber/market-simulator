@@ -184,6 +184,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     retiree_cems_cap: { cell: "." },
     solar_deliverability: { cell: "U" },
     vre_avg_cf_level: { cell: "." },
+    vre_reference_rate_curtailment_grossup: { cell: ".", ev: "dormant at HEAD: every ERCOT backcast year carries a built NP6 HSL parquet (measured_potential), so the fallback never fires; the same reference rate is used only under ercot_wtx_curtailment_driver in forecast mode (its own row). Row minted miso-206 (rule 28c); no ERCOT verdict taken (rule 28d)." },
     vre_market_generator_basis: { cell: "." },
     vre_registry_cod_date_basis: { cell: "." },
     wtx_curtailment_driver: { cell: "K" },

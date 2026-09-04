@@ -5502,6 +5502,49 @@ loss.
 > (solar) INVERTED ITS SIGN (-2,808.5 -> +1,614.4). Aggregate agreement is NOT
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
+>
+> **QUEUE STAMP miso-206 (2026-09-04) — QUEUE ITEM 1 (THE WIND-AVAILABILITY
+> OBJECT IN THE OBJECT'S HOURS) BOUNDED AND **REFUSED**; AND THE RECORD REPAIR
+> RE-CHARACTERISES THE OBJECT: **THE 15-HOUR TAIL IS HALF OF IT.** NO LP, NO
+> KEEPER MOVE, NO MECHANISM ARMED, NO FIELD, NO CELL VERDICT MOVED. Keeper
+> UNCHANGED at `2026-09-03-miso-202-unitclip`. PREREG pushed BLIND at `f55af87f`.
+> (i) The standing +4.7/+5.1/+5.1 TWh/yr MISO wind excess IS the Potomac
+> reference-rate curtailment gross-up and nothing else: the production bound is
+> `EIA-930 ÷ (1 − 0.048947)` at 0.0000 MW in 8,760/8,760 h and P1 wind sits ON it
+> in every hour of every year (0 curtailed hours) — a flat 5.15 % level
+> construction with no scarce-hour concentration. In the 15 object hours the
+> excess is **262 / 285 / 251 MW = 0.6 / 0.7 / 0.8 %** of the miso-203 G-D reserve
+> margin; even TOTAL removal of object-hour wind is 12.5 / 15.2 / 16.8 %, under
+> the 25 % line every year. The measured 930 wind is itself low there
+> (h-o-d-matched p54.5 / p36.1 / p36.5) and the model's ranks are identical to
+> the digit. DEAD like the ambient derate. The construction had NO matrix row;
+> minted `vre_reference_rate_curtailment_grossup` (MISO `K`, live in every
+> keeper; five shards `.`), form defect named (uniform rate puts headroom in
+> scarce hours), not chartered. (ii) `_miso202_c3a_2025_anatomy` and
+> `_miso203_scarce_hour_identity` REPAIRED onto the committed INDIANA.HUB
+> scoring series (miso-205 reproduced exactly; seam import excess now
+> +3,673 / +1,850 / +1,477 MW) — and on that comparator **the top-1 % hours
+> carry 48.4 % of the Jun–Jul 2025 mean gap, NOT 99.9 %**: the eight-hub mean
+> the lane had been reading sits $8.7 below INDIANA.HUB and $7.1 below MISO's
+> system energy price in Jun–Jul 2025. The header's "ENTIRELY A MISSING
+> SCARCITY TAIL … top 1 % of actual hours (15 h) carry 99.9 % of the mean gap" is
+> WITHDRAWN as an instrument artifact. On the C3a comparator the Jun–Jul 2025
+> gap is −13.44 $/MWh (88 % energy): lower half of hours OVER-priced +3.71, the
+> **p75–p99 daytime shoulder (351 h, h10–h20) −10.71 = 80 %**, the 15-h tail
+> −6.30 = 47 %; body gap +8 overnight / −14 to −24 across h11–h20 — miso-130's
+> two-sided diurnal compression weighed on the scored residual
+> (`diurnal_price_amplitude` stays `G`; this is evidence about its WEIGHT, raised
+> not re-opened). "Not closable by anything that moves the price level" narrows
+> to "not by a UNIFORM level move". Every bound argued at "the object's own
+> hours" since miso-202 was argued against the tail half only — the successor
+> re-bounds every live item against BOTH populations. Instrument defects named:
+> the BALANCE archive's MISO date columns are EST (key on UTC); the committed
+> extract's 2018–2021/2026 rows are EST-labelled vs CST for 2022–2025 (touchpoint
+> years would load one hour early); `pd.date_range` month masks are a leap-year
+> trap. Records
+> `FINDING-miso206-the-wind-excess-is-the-grossup-and-the-tail-is-half-the-object-2026-09-04.md`,
+> `_miso206_wind_availability_phase0.json`,
+> `scripts/probes/_miso206_wind_availability_phase0.py`.
 
 > **QUEUE STAMP miso-204 (2026-09-03) — THE C3a-2025 TAIL IS AN **ENERGY**
 > OBJECT, NOT A CONGESTION ONE (pre-registered verdict); AND THE C3a COMPARATOR

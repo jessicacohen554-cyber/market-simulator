@@ -35,6 +35,16 @@ Measurements
   **ORDC shortfall**. This is what distinguishes "the model is short of expensive
   units" from "the model never enters scarcity at all".
 
+**CLOCK REPAIR (miso-206, 2026-09-04).** The first committed version of this
+probe built its hourly actual (A-2 / A-4) as the eight-hub equal-weighted mean
+on the RAW EST hour-ending index of ``data/raw/lmp-data/MISO/*.csv.gz`` —
+one hour late against the model's fixed-CST clock, and 25 h late after Feb 28
+of a leap year (miso-204 §6). The hour-matched blocks are now routed through
+the COMMITTED ``actual_lmp_hourly_zonal_MISO.parquet`` (hub ``INDIANA.HUB``,
+col ``rt`` — the series C3a is scored against, on the model's clock). A-0 /
+A-1 / A-3 use bench aggregates and are unaffected; every pre-repair
+hour-matched statistic is preserved under ``pre_repair_defective_clock``.
+
 Nothing here is fitted and nothing is tuned, and nothing here is a lever: this is
 a diagnostic that names an object, and it deliberately proposes no mechanism.
 
@@ -54,12 +64,34 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 KEEPER = REPO / "results" / "calibration" / "miso201_stbasis_B"
 BENCH = REPO / "frontend" / "data" / "backcast" / "bench" / "MISO"
-HUB_LMP = REPO / "data" / "raw" / "lmp-data" / "MISO"
+ZONAL = (
+    REPO
+    / "data"
+    / "raw"
+    / "_validation-source"
+    / "actual_lmp_hourly_zonal_MISO.parquet"
+)
 OUT = REPO / "results" / "calibration" / "_miso202_c3a_2025_anatomy.json"
-
+SCORING_HUB = "INDIANA.HUB"
+M204 = REPO / "results" / "calibration" / "_miso204_lmp_component_decomposition.json"
+# Actual-price percentile bands for the A-2b contribution decomposition.
+BAND_EDGES = (0, 50, 75, 90, 95, 99, 100)
 YEARS = (2023, 2024, 2025)
 HOURS = 8760
-MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+MONTHS = (
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+)
 # The keeper's own scored C3a faces, read off calibration_verdict before this
 # probe existed. A-0 asserts the reconstruction against them.
 VERDICT_C3A = {2023: 0.1218, 2024: -4.5820, 2025: -12.3845}
@@ -81,23 +113,90 @@ def bench_avg_lmp(year: int) -> dict:
         return json.load(f)["bench"]["avgLMP"]
 
 
-def hub_hourly_rt(year: int) -> np.ndarray | None:
-    """Hub-average hourly RT LMP from the committed staging, or None.
+MONTH_LENS = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
-    The eight named trading hubs, equal-weighted — the same series behind the
-    bench's equal-hour ``rt`` field. The file carries LMP / MCC / MLC component
-    rows per (date, node); only ``LMP`` is the price.
+
+def _hour_month(hours: int = HOURS) -> np.ndarray:
+    """Calendar month per hour on the model's FIXED non-leap 8760 clock.
+
+    The first committed version used ``pd.date_range(f"{year}-01-01",
+    periods=8760)``, which in a LEAP year carries Feb 29 and so labels every
+    model hour after Feb 28 one calendar day EARLY — the 2024 Jun-Jul window
+    ran May 31 00:00 - Jul 30 23:00 on the model clock. Repaired miso-206.
     """
-    path = HUB_LMP / f"miso_hub_lmp_{year}_rt.csv.gz"
-    if not path.exists():
+    return np.concatenate([np.full(n * 24, m + 1) for m, n in enumerate(MONTH_LENS)])[
+        :hours
+    ]
+
+
+def hub_hourly_rt(year: int) -> np.ndarray | None:
+    """INDIANA.HUB hourly RT LMP on the model's fixed-CST non-leap clock.
+
+    Read from the COMMITTED zonal scoring parquet — the C3a comparator itself
+    (miso-204 §6.1) — never re-derived from the raw ``csv.gz`` staging, whose
+    bare ``arr[:8760]`` indexing IS the clock defect this repair removes.
+    """
+    if not ZONAL.exists():
         return None
-    df = pd.read_csv(path)
-    df = df[df["value"] == "LMP"]
-    he = [f"he{i:02d}" for i in range(1, 25)]
-    df["date"] = pd.to_datetime(df["date"])
-    piv = df.groupby("date")[he].mean().sort_index()
-    arr = piv.to_numpy().ravel()
-    return arr[:HOURS] if len(arr) >= HOURS else None
+    zon = pd.read_parquet(ZONAL)
+    s = zon[(zon.year == year) & (zon.hub == SCORING_HUB)].sort_values("hour")
+    arr = np.full(HOURS, np.nan)
+    idx = s["hour"].to_numpy(int)
+    keep = idx < HOURS
+    arr[idx[keep]] = s["rt"].to_numpy(float)[keep]
+    return arr if np.isfinite(arr).sum() >= HOURS - 48 else None
+
+
+def eight_hub_cst_rt(year: int) -> np.ndarray | None:
+    """Eight-hub equal-weighted RT on the MODEL clock — the HUB-error-only twin.
+
+    The pre-repair construction differed from the scoring reference in TWO
+    ways (miso-204 §6.3): the clock AND the hub basis. This series isolates
+    the hub half, so A-2b can attribute the change between the committed
+    record and the repaired one.
+    """
+    if not ZONAL.exists():
+        return None
+    zon = pd.read_parquet(ZONAL)
+    hubs = sorted(zon["hub"].unique())
+    stack = []
+    for hub in hubs:
+        s = zon[(zon.year == year) & (zon.hub == hub)].sort_values("hour")
+        arr = np.full(HOURS, np.nan)
+        idx = s["hour"].to_numpy(int)
+        keep = idx < HOURS
+        arr[idx[keep]] = s["rt"].to_numpy(float)[keep]
+        stack.append(arr)
+    return np.nanmean(np.vstack(stack), axis=0)
+
+
+def band_contributions(actual: np.ndarray, model: np.ndarray) -> dict:
+    """Contribution of each ACTUAL-price percentile band to the mean gap.
+
+    ``sum(model - actual over the band) / n_hours`` — the bands sum to the
+    mean gap exactly, so a level miss reads as a flat profile and a tail miss
+    as a profile concentrated in the top bands.
+    """
+    ok = np.isfinite(actual)
+    a, m = actual[ok], model[ok]
+    rank = (a.argsort().argsort() / len(a)) * 100.0
+    out = {}
+    for lo, hi in zip(BAND_EDGES[:-1], BAND_EDGES[1:]):
+        sel = (rank >= lo) & (rank < hi) if hi < 100 else rank >= lo
+        out[f"p{lo}-{hi}"] = round(float((m[sel] - a[sel]).sum() / len(a)), 3)
+    out["mean_gap"] = round(float(m.mean() - a.mean()), 3)
+    out["top_decile_share_of_mean_gap"] = (
+        round(
+            float(
+                sum(v for k, v in out.items() if k in ("p90-95", "p95-99", "p99-100"))
+                / out["mean_gap"]
+            ),
+            4,
+        )
+        if abs(out["mean_gap"]) > 1e-9
+        else None
+    )
+    return out
 
 
 def main() -> None:
@@ -119,8 +218,7 @@ def main() -> None:
     for year in YEARS:
         d = system_hourly(year)
         avg = bench_avg_lmp(year)
-        idx = pd.date_range(f"{year}-01-01", periods=HOURS, freq="h")
-        d = d.assign(month=idx.month[d["hour"].to_numpy()])
+        d = d.assign(month=_hour_month()[d["hour"].to_numpy()])
         w = d["demand"].to_numpy()
         model_lw = float((d["price"].to_numpy() * w).sum() / w.sum())
         actual = float(avg["rt_lw"])
@@ -190,23 +288,22 @@ def main() -> None:
             report["a2_distribution"][str(year)] = {"error": "no committed hub RT file"}
             continue
         d = system_hourly(year)
-        mod = (
-            d.groupby("hour")["price"].mean().reindex(range(HOURS)).to_numpy()
-        )
-        idx = pd.date_range(f"{year}-01-01", periods=HOURS, freq="h")
+        mod = d.groupby("hour")["price"].mean().reindex(range(HOURS)).to_numpy()
+        mon = _hour_month()
         entry: dict = {}
         for label, mask in (
             ("full_year", np.ones(HOURS, dtype=bool)),
-            ("jun_jul", np.isin(idx.month, (6, 7))),
-            ("jun_sep", np.isin(idx.month, (6, 7, 8, 9))),
+            ("jun_jul", np.isin(mon, (6, 7))),
+            ("jun_sep", np.isin(mon, (6, 7, 8, 9))),
         ):
-            a, m = act[mask], mod[mask]
+            ok = mask & np.isfinite(act)
+            a, m = act[ok], mod[ok]
             mean_gap = float(m.mean() - a.mean())
             thr = float(np.percentile(a, 99))
             top = a >= thr
             top_gap = float((m[top] - a[top]).sum() / len(a))
             entry[label] = {
-                "n_hours": int(mask.sum()),
+                "n_hours": int(ok.sum()),
                 "actual_mean": round(float(a.mean()), 2),
                 "model_mean": round(float(m.mean()), 2),
                 "mean_gap": round(mean_gap, 3),
@@ -232,11 +329,70 @@ def main() -> None:
             }
         report["a2_distribution"][str(year)] = entry
 
+    # ---- A-2b (miso-206, POST-HOC on the repaired instrument): WHERE in the
+    # actual-price distribution the Jun-Jul gap lives, on the C3a comparator
+    # (INDIANA.HUB) and on the hub-error-only twin (8-hub mean, model clock),
+    # with the model price on BOTH bases (zone-mean, as A-2 uses; and the C3a
+    # load-weighted), plus the hour-of-day profile of the BODY gap (the 1,449
+    # hours outside the top 1 %). The system-energy (MEC) Jun-Jul level is READ
+    # from miso-204's committed record, never re-derived.
+    m204 = json.loads(M204.read_text())["years"] if M204.exists() else {}
+    for year in YEARS:
+        ind = hub_hourly_rt(year)
+        eight = eight_hub_cst_rt(year)
+        if ind is None or eight is None:
+            continue
+        d = system_hourly(year)
+        zm = d.groupby("hour")["price"].mean().reindex(range(HOURS)).to_numpy()
+        num = d.assign(pw=d["price"] * d["demand"]).groupby("hour")["pw"].sum()
+        den = d.groupby("hour")["demand"].sum()
+        lw = (num / den).reindex(range(HOURS)).to_numpy()
+        jj = np.isin(_hour_month(), (6, 7))
+        hod = np.arange(HOURS) % 24
+        entry: dict = {
+            "label": (
+                "POST-HOC (miso-206), NOT PRE-REGISTERED, NO GATE. Bands of the "
+                "ACTUAL Jun-Jul price; each cell is sum(model - actual)/n over the "
+                "band, so the cells sum to the mean gap."
+            ),
+            "indiana_hub__model_zone_mean": band_contributions(ind[jj], zm[jj]),
+            "indiana_hub__model_load_weighted": band_contributions(ind[jj], lw[jj]),
+            "eight_hub_model_clock__model_zone_mean": band_contributions(
+                eight[jj], zm[jj]
+            ),
+            "eight_hub_model_clock__model_load_weighted": band_contributions(
+                eight[jj], lw[jj]
+            ),
+            "jun_jul_levels": {
+                "actual_indiana_hub_mean": round(float(np.nanmean(ind[jj])), 2),
+                "actual_eight_hub_model_clock_mean": round(
+                    float(np.nanmean(eight[jj])), 2
+                ),
+                "actual_system_mec_mean__miso204_read": (
+                    m204.get(str(year), {})
+                    .get("g1_levels_OBJ", {})
+                    .get("mean_jj_actual_mec")
+                ),
+                "model_zone_mean": round(float(np.nanmean(zm[jj])), 2),
+                "model_load_weighted": round(float(np.nanmean(lw[jj])), 2),
+            },
+        }
+        thr = float(np.nanpercentile(ind[jj], 99))
+        body = jj & np.isfinite(ind) & (ind < thr)
+        entry["body_gap_by_hour_of_day__indiana_lw"] = {
+            str(h): round(
+                float((lw[body & (hod == h)] - ind[body & (hod == h)]).mean()), 1
+            )
+            for h in range(24)
+        }
+        report["a2_distribution"][str(year)][
+            "a2b_band_contributions__POSTHOC_miso206"
+        ] = entry
+
     # ---- A-3: the ceiling, and whether scarcity ever fires ---------------
     for year in YEARS:
         d = system_hourly(year)
-        idx = pd.date_range(f"{year}-01-01", periods=HOURS, freq="h")
-        jj = d[np.isin(idx.month[d["hour"].to_numpy()], (6, 7))]
+        jj = d[np.isin(_hour_month()[d["hour"].to_numpy()], (6, 7))]
         rf = pd.read_parquet(KEEPER / "hourly" / f"reserve_family_{year}.parquet")
         rf = rf[rf["pass"] == "P1"]
         fam = {
@@ -274,9 +430,8 @@ def main() -> None:
             continue
         ch = pd.read_parquet(KEEPER / "hourly" / f"class_hourly_{year}.parquet")
         ch = ch[ch["pass"] == "P1"]
-        idx = pd.date_range(f"{year}-01-01", periods=HOURS, freq="h")
-        jj = np.isin(idx.month, (6, 7))
-        thr = float(np.percentile(act[jj], 99))
+        jj = np.isin(_hour_month(), (6, 7))
+        thr = float(np.nanpercentile(act[jj], 99))
         scarce = jj & (act >= thr)
         ordinary = jj & (act < thr)
         rows = {}
@@ -284,7 +439,9 @@ def main() -> None:
             mw = g.set_index("hour")["mw"].reindex(range(HOURS)).to_numpy()
             rows[k] = {
                 "mean_mw_actual_scarce_hours": round(float(np.nanmean(mw[scarce])), 1),
-                "mean_mw_other_jun_jul_hours": round(float(np.nanmean(mw[ordinary])), 1),
+                "mean_mw_other_jun_jul_hours": round(
+                    float(np.nanmean(mw[ordinary])), 1
+                ),
                 "delta_mw": round(
                     float(np.nanmean(mw[scarce]) - np.nanmean(mw[ordinary])), 1
                 ),
@@ -302,6 +459,30 @@ def main() -> None:
             "by_class": dict(sorted(rows.items(), key=lambda kv: -kv[1]["delta_mw"])),
         }
 
+    # ---- clock repair (miso-206): keep the defective hour-matched blocks ---
+    if OUT.exists():
+        prior = json.loads(OUT.read_text())
+        pre = prior.get("pre_repair_defective_clock") or {
+            "note": (
+                "a2/a4 as first committed: eight-hub equal-weighted mean on the "
+                "RAW EST hour-ending index (miso-204 §6 defect: -1 h, and -25 h "
+                "after Feb 28 of a leap year). Kept for the record; superseded."
+            ),
+            "a2_distribution": prior.get("a2_distribution"),
+            "a4_what_is_serving_those_hours": prior.get(
+                "a4_what_is_serving_those_hours"
+            ),
+        }
+        report["pre_repair_defective_clock"] = pre
+    report["clock_repair"] = (
+        "miso-206 (2026-09-04): (i) a2/a4 hourly actual = INDIANA.HUB RT from the "
+        "committed actual_lmp_hourly_zonal_MISO.parquet on the model's fixed-CST "
+        "non-leap clock (the C3a comparator) — a0/a1/a3 byte-identical under this "
+        "step (PREREG R-0 PASS); (ii) SEPARATELY, the month mask moved from a "
+        "pandas leap-year calendar to the model's fixed non-leap clock, which "
+        "shifts every 2024 monthly/seasonal window by one day (a1/a2/a3/a4 2024 "
+        "move slightly; 2023/2025 unchanged)."
+    )
     OUT.write_text(json.dumps(report, indent=1))
     print(f"wrote {OUT.relative_to(REPO)}")
     for y in YEARS:
