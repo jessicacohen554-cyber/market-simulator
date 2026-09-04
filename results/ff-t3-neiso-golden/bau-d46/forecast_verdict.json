@@ -3,8 +3,8 @@
   "rubric_version": "1.0",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "e659a6eaecdc",
-    "scored_at_date": "2026-09-03T11:42:51Z",
+    "scored_at_sha": "71dd390ed56f",
+    "scored_at_date": "2026-09-04T08:22:02Z",
     "cache_epoch": "67678e58b2d0526c"
   },
   "tier": "t3",
@@ -14,8 +14,7 @@
     "FC-1 structural integrity (I1-I14) FAIL",
     "FC-2 adequacy & equilibrium behavior FAIL",
     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
-    "FC-4 crossover dispatch skill (T1-X) FAIL",
-    "FC-7 provenance & DOF FAIL"
+    "FC-4 crossover dispatch skill (T1-X) FAIL"
   ],
   "caveats": [
     "FC-5 external corridor",
@@ -152,7 +151,7 @@
     "FC-7": {
       "label": "FC-7 provenance & DOF",
       "applicability": "required",
-      "status": "FAIL",
+      "status": "PASS",
       "rows": [
         {
           "row": "run_config",
@@ -174,8 +173,8 @@
         },
         {
           "row": "attestation",
-          "status": "UNATTESTED",
-          "detail": "no forecast_attestation.json (a golden run cannot be certified unattested)",
+          "status": "PASS",
+          "detail": "all \u00a75 checklist assertions present and true",
           "gating": true
         }
       ]
