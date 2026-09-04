@@ -11596,3 +11596,13 @@ recommendation: promote (rules 14 + 1). Not promoted here.
 `_nyiso185_grounding.json`, `scripts/probes/nyiso185_grounding.py`,
 `scripts/gen_nyiso185_attestation.py`, the arm bundle's
 `calibration_attestation.json` / `metrics.json` / `legitimacy_diagnostics.json`.
+
+**ADDENDUM 2026-09-04 — PROMOTED BY OWNER RULING** (verbatim: "Is this a
+recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper.."). NYISO keeper →
+`2026-09-04-nyiso-185-family-hr`; keeper shard + `status/NYISO.js`,
+`audit_keepers --iso NYISO` all checks passed, forecast gate-(a) stamp
+re-keyed (R-T), NYISO matrix shard re-stamped (cell `egrid_family_heat_rates`
+O → K), §5.5 header re-stamped. Fail set now {C1-2024 `CC_REGULAR` share,
+C3a-2025 −10.5 %, C3c}; top of queue: the 2024 `CC_REGULAR` over-run as a
+class object.

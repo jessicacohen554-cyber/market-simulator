@@ -225,3 +225,23 @@ pushed, ≥300-line blobs verified.
 3. The other-ten-plant `ST_GAS` deficit (−6.8 / −8.0 TWh) is unchanged and is
    the 2024 / 2025 object.
 4. The Astoria merit-panel defect (nyiso-184 §4.1) remains sized and unbuilt.
+
+## 8. ADDENDUM — the owner ruling, and what was executed (2026-09-04)
+
+§1–§7 were written and pushed with the arm registered as a CANDIDATE. The
+owner then ruled, in session and verbatim, on the registered candidate:
+
+> *"Is this a recommended keeper candidate? If so plz promote. If structural
+> integrity improves but gates regress that may still be a keeper.."*
+
+**`2026-09-04-nyiso-185-family-hr` is PROMOTED.** Executed in the same PR:
+`frontend/data/backcast/keepers/NYISO.json` (keeper, promotion note,
+determination note, the prior keeper moved into the `superseded` chain);
+`scripts/build_status.py --iso NYISO`; `scripts/audit_keepers.py --iso NYISO`
+(all checks passed); the forecast gate-(a) stamp in
+`frontend/data/forecast/program-status.json` re-keyed to the new id (R-T;
+`check_gate_a_provenance.py --iso NYISO` clean — the one remaining failure
+in the all-ISO run is CAISO's stale stamp, another lane's duty); the NYISO
+matrix shard (keeper + gates re-stamped, `egrid_family_heat_rates` O → K) and
+the §5.5 header. NYISO holds no `complete` marker, so no D-5(b) re-key. Every
+number in §1–§7 stands; nothing was re-measured.
