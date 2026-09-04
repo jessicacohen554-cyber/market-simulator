@@ -9838,5 +9838,119 @@
     ]
    }
   }
+ },
+ "pjm-t1h-d45r-fixed": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "455db0eaaed1",
+   "scored_at_date": "2026-09-04T10:02:22Z",
+   "cache_epoch": "896da48960560a29",
+   "run_id": "pjm-2021-2025-realized-t1h-d45r-fixed",
+   "session": "capx-D45R"
+  },
+  "tier": "t1h",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D45R (2026-09-04): D45's owed L4, the PJM fixed-anchor CONTROL (L1 + --fixed-net-cone: capacity_market_clearing_by_iso=None, the flat $77.43/kW-yr net-CONE stub, the FFR-2E comparison arm; one field from the bare pjm-t1h; keeper pjm-162; HEAD 334be8c2; cache key 896da48960560a29, pre-declared and matched; 20.5 min / 9.6 GB). SUFFIXED BY CHARTER, never the bare key; nothing arms. Determination HOLD (FC-3 FAIL). THE ONE-FIELD A/B, MEASURED ON THE LIVE STACK: at a $77.43 x UCAP capacity leg the economic screen fails NOTHING -- pipeline_events is the empty list in every solve year (L1 at $0 decided 11,415 MW of coal in 2022 and executed it in 2024) -- so every exit is the D44 dates channel, identical to L1's to the decimal (coal 4,551 MW announced + 1,023 MW derates, gas_st 833, gas_cc 75, oil 51). retire.total_gw 6.543 vs 15.062 actual (-56.6 %, FAIL) against L1's 17.958 (+19.2 %): the curve-ON leg retires 11.4 GW MORE than the fixed leg, reproducing the D6 signal (FFR-2E 33.7 vs 4.1 GW) on the live stack. false_retire 0.000 PASS (L1 6.691 FAIL); unit_recall_gt300 8/20 = 0.40 FAIL (L1 17/20 PASS) -- the dated channel alone carries 8 of the 20 large targets, the other 9 that L1 catches are ECONOMIC coal exits the flat anchor pays through. Additions identical except gas_ct 1.013 -> 0.000 (the 2025 reserve-margin backstop does not fire because the fixed leg is not short: rm_after 2025 -0.067 vs L1's -0.140). ADJUDICATION (D45 finding section 3-4): the pair brackets the truth from both sides -- $0 over-fires coal by 6.7 GW and the flat $77 under-fires by 4.7 GW -- which is exactly what a clearing half that forms the price at the CLEARED quantity would sit between (the published curve at the published cleared position pays $15-21/kW-yr in 2022-2024, the D45 section 3(a) re-screen passes 13.0 of 18.1 GW at that price). No PJM default moves: the curve stays ON (the published design), the repair is the basis devintage + the clearing half (section 2.3 items 1-3). docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md section 4."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
  }
 }
