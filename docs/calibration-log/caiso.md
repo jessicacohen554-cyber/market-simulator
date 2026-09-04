@@ -11973,3 +11973,149 @@ strongest standing ask); the 2025 overlay coverage gap. Deliverables:
 pairs (`_caiso242_{ctpeaker_anatomy,passthrough_test,gas_basis_identity,roundtrip,f923_lowvolume_census}`).
 
 **Next number: caiso-243.**
+
+## caiso-243 (2026-09-04) — the F923 LOW-VOLUME FALLBACK DEFECT REPAIRED AT ITS ROOT CAUSE, every pre-registered gate PASSES, PROMOTED — and the lane's own zero-LP probe instrument found broken and fixed before any result was read
+
+**Keeper `2026-09-03-caiso-241-b1-ctpeaker` → `2026-09-04-caiso-243-b1-f923`**
+(bundle `caiso243_b1_f923_fallback_guard`). Determination **UNCHANGED at
+NOT-YET**, C3a the sole load-bearing FAIL, C3c the single ledgered caveat.
+**ONE bundle, three years, one invocation; NO control solve spent** — G-CTRL
+took form 2 at the owner's choice. CAISO holds no `complete`/`final` marker; the
+freeze is ACTIVE; every read and the one solve stayed inside 2023–2025.
+
+**THE OBJECT** (caiso-242 §5–§6, that session's strongest standing ask): one
+EIA-923 row — plant **55077** (Desert Star, NV) reporting **96.161 $/MMBtu on
+5,234 MMBtu, 2.6 % of its own normal monthly volume**, a fixed/reservation
+charge over a near-zero denominator — priced **2,445 MW of its CAISO
+neighbours** (CC_REGULAR 55518 960.0, 55656 779.0, 55295 591.0 MW among them) at
+**≈$736/MWh for ALL 720 HOURS OF NOVEMBER 2025**, the training window's worst
+C3a year.
+
+**THE ROOT CAUSE IS ONE MISSING ARGUMENT, AND IT IS EVERY PLANT-LEVEL ISO'S.**
+`data/fleet/assembly.py::bins_to_fleet` constructed every `Generator(...)`
+**without a `state`**; the field defaults to `""` and only the EIA-860 loader
+ever set it — so `FleetArrays.state` was **EMPTY on 100 % of the CAISO gas fleet
+(1,443 / 1,448 / 1,453 of 1,443 / 1,448 / 1,453 rows, 29,278 MW)** and the
+fallback's documented state-first donor tier — **the only tier carrying a
+distinct-reporter floor** — was skipped **fleet-wide on CAISO, PJM, MISO, NYISO
+and NEISO alike**, while the `plant_level_fleet` docstring claims the fleet
+*"retains its EIA plant code, plant group and state."* (D2) the zone tier it
+fell to carried **no** floor and its pool for those rows held **exactly one**
+plant. Only **7** CAISO-fleet gas plants report in F923 at all, and **two zone
+pools are pools of ONE in every one of the 36 months** — SP15_rest (2,445.1 MW,
+the defect) and SDGE (2,194.3 MW, the same structure with a **sane** donor,
+$4.524), which is exactly why a pool-of-one guard alone is a guard and the state
+stamp is the repair.
+
+**THE REPAIR — form (a)+(c), THE OWNER'S CHOICE**, both ISO-generic, both
+default OFF (every other ISO replays byte-identical), armed on CAISO alone
+(rule 25): `fleet_state_from_eia860` (form (c), the root-cause repair of D1 —
+`bins_to_fleet` stamps each generator's USPS state from
+`data/raw/eia-860/eia860_plant.parquet`) and
+`nearby_fuel_price_zone_donor_guard` (form (a), D2 — the zone tier requires the
+**same registered floor** the state tier already carries). **NO new constant, NO
+value chosen, ZERO free parameters.** Form (b), a volume-admissibility cut, was
+**NOT armed**: every candidate is a new parameter pair with no measured
+identification (rule 5) and **the tightest swept 2 % cut MISSES the very row
+that motivated it** (55077-Nov is 2.62 %).
+
+**MEASURED PRE-SOLVE, ZERO LP:** (c) moves **1,364 rows / 25,526.9 MW** of CA
+gas onto the 6-reporter CA state mean in **Sep/Oct/Nov 2025 only** (Nov
+capacity-weighted **13.48 → 4.38 $/MMBtu**, fuel-side mc **119.1 → 42.5
+$/MWh**); (a) alone moves **228 rows / 4,639.4 MW**, the two pool-of-one zones,
+and is **byte-inert on top of (c)**; **0 non-gas rows; 0 rows in 2023 and 2024**
+(12/12 overlay coverage). **G-STRUCT: the coded mechanism reproduces that
+footprint BYTE FOR BYTE in all five cases.**
+
+**EVERY PRE-REGISTERED GATE PASSES.** G-CTRL took **form 2** — caiso-240's
+dispatch identity in a measured-inert year, which binds under the owner's
+caiso-241 §B2 carve-out (*"an arm with even one inert year takes the caiso-240
+dispatch-identity leg and spends nothing"*) — and **2023 and 2024 reproduce the
+predecessor EXACTLY: 0.000 TWh in every class, 0.000 $/MWh, zonal price arrays
+bit-identical**, not merely inside the 0.001 TWh tolerance. **Form 4 is VOID BY
+ITS LETTER and that is reported rather than used**: one commit since the
+predecessor's `git_sha 607f9324` touched the solve path (`b9384baf`, *"Apply
+ruff format"*, on `campd_bins.py` and `offer_curves.py`) and **both are
+AST-IDENTICAL** to the keeper's blobs. G-STRUCT, G-INERT, G-C1 (12/12, free
+8/8), G-C3b, G-C8, G-CAVEAT and G-C6 all PASS with **every scored criterion's
+verdict IDENTICAL** to the predecessor's; the **G-C3a envelope leg** passes with
+2025 at **−0.3867 $/MWh** inside the registered **[−2.5006, +0.3109]** and
+2023/2024 at exactly **0.000**.
+
+**PROMOTION BASIS IS STRUCTURAL AND EXCLUDES C3a BY PRE-REGISTRATION** (rule 1
+`[R-STRUCT]`): a documented tier order is restored from the plant's own measured
+EIA-860 state and a guard already in the registry is extended to the tier that
+lacked it, at zero free parameters. **C3a-2025 improves +15.5 % → +14.4 %** (2024
+untouched at +12.3 %, 2023 PASSES at +3.9 %) with **no verdict flip in any
+year** — declared the session's **HAZARD** before any solve, and it is the
+**THIRD consecutive favourable-direction repair in this lane** (caiso-241, -242,
+-243), stated as such rather than hidden. DOF ledger **9 entries / 6 residual,
+UNCHANGED** — P-7 predicted exactly that, and it is **not** claimed as progress.
+
+**THE 2025 DISPATCH RESPONSE:** imports **−0.4734 TWh**, CC_REGULAR **+0.4423**,
+CT_PEAKER −0.0301, CC_CHP +0.0296, ST_GAS +0.0107. CC_REGULAR's monthly mean
+rises Oct 4,476 → 4,770 and **Nov 5,348 → 5,744 MW (+396)**, exactly where the
+defect was.
+
+**PREDICTIONS: SEVEN OF EIGHT HOLD, AND THE FALSIFIED ONE IS ONE OF THE THREE
+WRITTEN TO BE UNCOMFORTABLE.** **P-5's second leg is FALSIFIED** — imports fall
+**0.473 TWh** against CC_REGULAR's **+0.442 TWh** rise, so the repaired domestic
+capacity displaces slightly **more** import energy than it adds to its own
+class. That is **the first measurement of the displacement caiso-242 §2.5
+predicted structurally**, and it lands on the standing unfunded
+`IMPORT_TRANCHES[CAISO]` object, not on this repair. **P-4 holds** (+0.442 TWh,
++396 MW in November), so caiso-242's against-interest reading — capability
+removed and cost misallocated **within** the class, not a class-level generation
+hole — **survives its own test**.
+
+**AN INSTRUMENT DEFECT IN THE LANE'S OWN PROBE PATTERN, FOUND, DISCLOSED AND
+REPAIRED MID-SESSION — BEFORE ANY SOLVE OUTPUT WAS READ**
+(`PRECOMMIT-caiso243-ADDENDUM-recipe-repair-2026-09-04.md`, pushed while the
+solve was in year 2023). **Every `run_year(fleet_only=True)` probe in this lane
+since caiso-202** reconstructed the keeper recipe as *"the meta.json keys whose
+names match `run_year`'s parameters"*, which **silently drops every key whose
+solve kwarg is spelled differently** — above all `coal_prb_sigmoid_overrides` →
+`prb_overrides`, the bag carrying **36 CAISO structural flags**
+(`caiso_citygate_spot_level`, `capacity_deliverability_limits`, scarcity, the RA
+bridge, hydro, measured heat rates, WEFOR). It surfaced because the live replay
+logged *"(CAISO 2023, **daily**): **1443** gas generators … 24.75"* where every
+probe logged *"**monthly**: **1401** … 28.08"*: **the keeper prices gas at the
+daily spot level (caiso-84); the probes rebuilt it on the monthly survey.**
+Repaired to `replay_keeper.build_kwargs`; footprint, G-STRUCT and envelope **all
+re-measured on-recipe** and the **envelope TIGHTENED** from [−2.634, +0.311] to
+**[−2.501, +0.311]** before the solve was read. **The object, its form, the
+inert years and every gate survive; the numbers moved at the second digit.**
+**CONSEQUENCE, filed and not minimised: caiso-242 §3's gas-basis identity ratios
+(1.298 / 1.310 / 1.327) were measured against the wrong model gas series and
+must be re-measured by their own lane before anyone cites them again.** That
+session's §5 defect — this keeper's object — is **CONFIRMED on-recipe** and needs
+nothing.
+
+**WHAT THIS DOES NOT REPAIR, STATED PLAINLY:** plant 55077's **OWN** November
+row (**370.1 MW of CC_REGULAR at ≈$736/MWh**) is untouched — tier 1 (*"the
+plant's own measured months win outright"*) is not a fallback — so **defect D3
+stays OPEN**, sized at **0.27 TWh**, 13 % of the caiso-242 headline. The 2025
+overlay coverage gap (9/12) and the CT_PEAKER volume object are untouched.
+
+**CROSS-ISO, MEASURED, FILED AS ASKS, NEVER ARMED** (rule 25; gas plant-months
+2023–25 by each ISO's own plant set, anomalous = qty ≤ 2 % of the plant-year
+median AND price ≥ 2× its VW mean): **PJM 4 rows / 3 plants (max 191.64
+$/MMBtu)** and **MISO 12 / 9 (max 198.46, the largest exposure of the six)**,
+both with **NO hub overlay** — so their fallback layer is live in all 36 months
+and their state tier is equally empty; NYISO 0, NEISO 0; ERCOT runs neither flag.
+
+**R-T DUTY DISCHARGED IN THE PROMOTION COMMIT:** the forecast board's CAISO
+gate-(a) keeper marker was **two promotions stale** (it named caiso-240) and is
+re-keyed to this run; `check_gate_a_provenance.py` exits 0.
+
+**Deliverables:** `PRECOMMIT-caiso243-f923-fallback-guard-2026-09-04.md`,
+`PRECOMMIT-caiso243-ADDENDUM-recipe-repair-2026-09-04.md`,
+`FINDING-caiso243-f923-fallback-guard-2026-09-04.md`,
+`scripts/probes/_caiso243_{fallback_footprint,price_envelope,gstruct_presolve,arm_vs_keeper}.py`
++ artifacts, `scripts/gen_caiso243_attestation.py`,
+`tests/unit/data/test_f923_fallback_guards.py`, two `ScenarioConfig` fields with
+CLI flags / replay overrides / cache-key registrations, two mechanism-matrix
+rows with a cell in every ISO shard, and run
+**`2026-09-04-caiso-243-b1-f923`** (**keeper**).
+
+**Next number: caiso-244.**

@@ -1,0 +1,378 @@
+{
+  "_provenance": {
+    "session": "caiso-243",
+    "keeper": "results/calibration/caiso241_b1_ctpeaker_committed",
+    "arm": "results/calibration/caiso243_b1_f923_fallback_guard",
+    "control": "NONE \u2014 G-CTRL form 2 (owner's choice): the arm's inert years are the control",
+    "solves_by_this_probe": 0
+  },
+  "verdicts": {
+    "keeper": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "FAIL",
+      "price_shape": "PASS",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "forced_share": "PASS"
+    },
+    "arm": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "FAIL",
+      "price_shape": "PASS",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "forced_share": "PASS"
+    },
+    "differing": {}
+  },
+  "determinations": {
+    "keeper": {
+      "determination": "NOT-YET",
+      "reasons": [
+        "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+      ],
+      "caveats": [
+        "C3c price tail / scarcity (RT hourly)"
+      ]
+    },
+    "arm": {
+      "determination": "NOT-YET",
+      "reasons": [
+        "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+      ],
+      "caveats": [
+        "C3c price tail / scarcity (RT hourly)"
+      ]
+    }
+  },
+  "per_year": {
+    "2023": {
+      "class_twh_keeper": {
+        "CC_CHP": 8.5217,
+        "CC_REGULAR": 48.7588,
+        "COAL": 0.0925,
+        "CT_CHP": 1.2486,
+        "CT_PEAKER": 1.6268,
+        "OTHER": 9.259,
+        "ST_GAS": 0.1547,
+        "biomass": 4.477,
+        "hydro": 24.3312,
+        "import": 37.2701,
+        "nuclear": 17.6263,
+        "oil": 0.0001,
+        "solar": 39.3169,
+        "wind": 16.5545
+      },
+      "class_twh_arm": {
+        "CC_CHP": 8.5217,
+        "CC_REGULAR": 48.7588,
+        "COAL": 0.0925,
+        "CT_CHP": 1.2486,
+        "CT_PEAKER": 1.6268,
+        "OTHER": 9.259,
+        "ST_GAS": 0.1547,
+        "biomass": 4.477,
+        "hydro": 24.3312,
+        "import": 37.2701,
+        "nuclear": 17.6263,
+        "oil": 0.0001,
+        "solar": 39.3169,
+        "wind": 16.5545
+      },
+      "class_twh_delta": {},
+      "max_abs_class_delta_twh": 0.0,
+      "year_is_inert_0.001TWh": true,
+      "lw_mean_price_keeper": 56.2862,
+      "lw_mean_price_arm": 56.2862,
+      "dC3a_lw_arm_minus_keeper": 0.0,
+      "envelope": [
+        0.0,
+        0.0
+      ],
+      "envelope_PASS": true,
+      "d_simple_mean_price": 0.0,
+      "price_max_abs_diff": 0.0,
+      "c3a_record_keeper": {
+        "status": "PASS",
+        "model": 56.29,
+        "actual": 54.17,
+        "magnitude": "+3.9%"
+      },
+      "c3a_record_arm": {
+        "status": "PASS",
+        "model": 56.29,
+        "actual": 54.17,
+        "magnitude": "+3.9%"
+      },
+      "h_gt200_keeper": 0,
+      "h_gt200_arm": 0
+    },
+    "2024": {
+      "class_twh_keeper": {
+        "CC_CHP": 7.6275,
+        "CC_REGULAR": 45.8014,
+        "COAL": 0.0535,
+        "CT_CHP": 1.2213,
+        "CT_PEAKER": 0.7442,
+        "OTHER": 8.0763,
+        "ST_GAS": 0.5521,
+        "biomass": 4.4101,
+        "hydro": 22.5244,
+        "import": 40.0167,
+        "nuclear": 18.1929,
+        "oil": 0.0,
+        "solar": 46.7432,
+        "wind": 20.2896
+      },
+      "class_twh_arm": {
+        "CC_CHP": 7.6275,
+        "CC_REGULAR": 45.8014,
+        "COAL": 0.0535,
+        "CT_CHP": 1.2213,
+        "CT_PEAKER": 0.7442,
+        "OTHER": 8.0763,
+        "ST_GAS": 0.5521,
+        "biomass": 4.4101,
+        "hydro": 22.5244,
+        "import": 40.0167,
+        "nuclear": 18.1929,
+        "oil": 0.0,
+        "solar": 46.7432,
+        "wind": 20.2896
+      },
+      "class_twh_delta": {},
+      "max_abs_class_delta_twh": 0.0,
+      "year_is_inert_0.001TWh": true,
+      "lw_mean_price_keeper": 38.9215,
+      "lw_mean_price_arm": 38.9215,
+      "dC3a_lw_arm_minus_keeper": 0.0,
+      "envelope": [
+        0.0,
+        0.0
+      ],
+      "envelope_PASS": true,
+      "d_simple_mean_price": 0.0,
+      "price_max_abs_diff": 0.0,
+      "c3a_record_keeper": {
+        "status": "FAIL",
+        "model": 38.92,
+        "actual": 34.65,
+        "magnitude": "+12.3%"
+      },
+      "c3a_record_arm": {
+        "status": "FAIL",
+        "model": 38.92,
+        "actual": 34.65,
+        "magnitude": "+12.3%"
+      },
+      "h_gt200_keeper": 0,
+      "h_gt200_arm": 0
+    },
+    "2025": {
+      "class_twh_keeper": {
+        "CC_CHP": 7.5652,
+        "CC_REGULAR": 38.9352,
+        "COAL": 0.0827,
+        "CT_CHP": 1.2035,
+        "CT_PEAKER": 0.3779,
+        "OTHER": 5.9206,
+        "ST_GAS": 0.0848,
+        "biomass": 3.2329,
+        "hydro": 21.2665,
+        "import": 41.715,
+        "nuclear": 17.4847,
+        "oil": 0.0,
+        "solar": 52.4586,
+        "wind": 20.098
+      },
+      "class_twh_arm": {
+        "CC_CHP": 7.5948,
+        "CC_REGULAR": 39.3774,
+        "COAL": 0.082,
+        "CT_CHP": 1.2012,
+        "CT_PEAKER": 0.3478,
+        "OTHER": 5.9206,
+        "ST_GAS": 0.0954,
+        "biomass": 3.2329,
+        "hydro": 21.2665,
+        "import": 41.2416,
+        "nuclear": 17.4847,
+        "oil": 0.0,
+        "solar": 52.4584,
+        "wind": 20.098
+      },
+      "class_twh_delta": {
+        "CC_CHP": 0.029581,
+        "CC_REGULAR": 0.44226,
+        "COAL": -0.000732,
+        "CT_CHP": -0.002333,
+        "CT_PEAKER": -0.0301,
+        "ST_GAS": 0.010651,
+        "hydro": 2.4e-05,
+        "import": -0.473376,
+        "solar": -0.000228
+      },
+      "max_abs_class_delta_twh": 0.473376,
+      "year_is_inert_0.001TWh": false,
+      "lw_mean_price_keeper": 39.7478,
+      "lw_mean_price_arm": 39.3611,
+      "dC3a_lw_arm_minus_keeper": -0.386725,
+      "envelope": [
+        -2.5006,
+        0.3109
+      ],
+      "envelope_PASS": true,
+      "d_simple_mean_price": -0.3277,
+      "c3a_record_keeper": {
+        "status": "FAIL",
+        "model": 39.74,
+        "actual": 34.42,
+        "magnitude": "+15.5%"
+      },
+      "c3a_record_arm": {
+        "status": "FAIL",
+        "model": 39.36,
+        "actual": 34.42,
+        "magnitude": "+14.4%"
+      },
+      "h_gt200_keeper": 0,
+      "h_gt200_arm": 0,
+      "cc_regular_monthly_mean_mw": {
+        "keeper": {
+          "1": 5601.9,
+          "2": 3565.5,
+          "3": 2735.8,
+          "4": 2114.1,
+          "5": 2825.4,
+          "6": 2810.0,
+          "7": 4504.5,
+          "8": 7494.5,
+          "9": 6641.2,
+          "10": 4476.2,
+          "11": 5348.0,
+          "12": 5105.7
+        },
+        "arm": {
+          "1": 5601.4,
+          "2": 3565.5,
+          "3": 2735.8,
+          "4": 2114.1,
+          "5": 2825.4,
+          "6": 2810.0,
+          "7": 4504.5,
+          "8": 7494.5,
+          "9": 6576.6,
+          "10": 4770.3,
+          "11": 5744.3,
+          "12": 5085.5
+        }
+      },
+      "cc_regular_nov_delta_mw": 396.3,
+      "CT_PEAKER_sep_oct_nov_mean_mw": {
+        "keeper": [
+          142.0,
+          47.7,
+          43.9
+        ],
+        "arm": [
+          162.8,
+          9.8,
+          20.3
+        ]
+      },
+      "import_sep_oct_nov_mean_mw": {
+        "keeper": [
+          5428.0,
+          5489.3,
+          5845.5
+        ],
+        "arm": [
+          5400.2,
+          5258.7,
+          5467.5
+        ]
+      }
+    }
+  },
+  "gates": {
+    "G_CTRL_form2": {
+      "PASS": true,
+      "falsifier": "an inert year's class energy moving > 0.001 TWh \u21d2 a control solve is spent (form 3)"
+    },
+    "G_INERT": {
+      "PASS": true,
+      "falsifier": "2025 byte-identical to the keeper"
+    },
+    "G_C3a_envelope": {
+      "PASS": true,
+      "falsifier": "any year outside its envelope \u21d2 estimator/mechanism defect, reported, never re-fitted"
+    },
+    "G_verdicts_identity_C1_C3b_C8_CAVEAT_C6": {
+      "PASS": true,
+      "differing": {}
+    }
+  },
+  "predictions": {
+    "P1_inert_years_reproduce_keeper": {
+      "HOLDS": true,
+      "max_delta_2023": 0.0,
+      "max_delta_2024": 0.0
+    },
+    "P2_dC3a_2025_in_window_and_no_verdict_flip": {
+      "window": [
+        -0.6,
+        0.0
+      ],
+      "measured": -0.386725,
+      "c3a_verdicts_keeper": {
+        "2023": "PASS",
+        "2024": "FAIL",
+        "2025": "FAIL"
+      },
+      "c3a_verdicts_arm": {
+        "2023": "PASS",
+        "2024": "FAIL",
+        "2025": "FAIL"
+      },
+      "HOLDS": true
+    },
+    "P3_dC3a_2023_2024_exactly_zero": {
+      "HOLDS": true
+    },
+    "P4_cc_regular_2025_rise_lt_0.5TWh_and_nov_lt_500MW": {
+      "delta_twh": 0.4423,
+      "nov_delta_mw": 396.3,
+      "HOLDS": true
+    },
+    "P5_ct_peaker_2025_falls_and_imports_fall_less_than_cc_rises": {
+      "ct_peaker_delta_twh": -0.0301,
+      "import_delta_twh": -0.4734,
+      "cc_regular_delta_twh": 0.4423,
+      "HOLDS": false
+    },
+    "P6_no_verdict_change_C3c2025_stays_0h": {
+      "differing": {},
+      "h_gt200_2025": [
+        0,
+        0
+      ],
+      "HOLDS": true
+    },
+    "P7_dof_ledger_unmoved": {
+      "keeper": {
+        "n_entries": 9,
+        "n_residual": 6
+      },
+      "arm": {
+        "n_entries": 9,
+        "n_residual": 6
+      },
+      "HOLDS": true
+    },
+    "P8_gstruct": "scored pre-solve in _caiso243_gstruct_presolve.json (PASS, byte-identical in every case)"
+  }
+}
