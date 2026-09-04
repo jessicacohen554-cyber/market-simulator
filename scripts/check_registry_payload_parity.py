@@ -263,6 +263,26 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         # defined vs it. REMOVAL CONDITION: the citing PREREG/RESULT docs are
         # retired or re-pointed at registered bundles.
         "nyiso152_control",
+        # sessions nyiso-185 / 186 / 187 / 188 (2026-09-04): the same-HEAD
+        # bit-identity controls of the four consecutive Astoria-lane A/Bs
+        # (PREREG-nyiso185-stgas-family-hr-ab, PREREG-nyiso186-cc-regular-
+        # 2024-class, PREREG-nyiso187-ct-steam-merit-position, PREREG-nyiso188-
+        # astoria-footprint-cc-reconcile-bethlehem). Each is the replay of the
+        # then-committed keeper recipe on the committed artifacts, proven
+        # BIT-IDENTICAL to that keeper (0 of 52,560 hourly zonal prices differ
+        # in every year) and deliberately NOT registered (the nyiso-149
+        # base-replay convention: a control identical to a registered run is
+        # never registered twice). Their slim files + hourly sidecars are the
+        # instrument the committed attestation generators RE-READ (G-CONTROL in
+        # scripts/gen_nyiso185/186/187/188_attestation.py reads
+        # <control>/hourly/system_<year>.parquet against the keeper's), so the
+        # keepers' C6 attestations are recomputable only while these dirs
+        # carry their sidecars. REMOVAL CONDITION: the attestation generators
+        # are retired or re-pointed at registered bundles.
+        "nyiso185_control",
+        "nyiso186_control",
+        "nyiso187_control",
+        "nyiso188_control",
     }
 )
 
