@@ -122,9 +122,10 @@ STATE AT HANDOFF (r#35, main HEAD a35c9f9b, 2026-09-04 — VERIFY, DON'T TRUST):
   per-ISO dispersion siblings — QUEUED-NAMED at LOW EV (the D43 wall);
   NYISO's zonal spread ($4.8–12.2) is the only promising instance and needs D45's
   diagnostics-on solve first · (3) nothing else — the capx queue emptied at r#31.
-- OWNER-TIER OPEN: C-9 (NYISO `complete` re-declaration on nyiso-188) if unanswered (§0af.3).
-  Q1–Q37 spent. Next cards: D48 Phase 1 (PJM devintage default), D50 (CCS blast radius),
-  D51/D52/D53 arming, and a NYISO t3 campaign after C-9 + D52.
+- OWNER-TIER OPEN: NONE — Q1–Q38 spent (Q38 at r#35: NYISO `complete` re-declared via D56).
+  Eight capx lanes in flight (D48 Ph.1, D50, D51, D52, D53, D54, D55, D56) — grade all by
+  content. Next cards: D48 Phase 1 (PJM devintage default), D50 (CCS blast radius),
+  D51/D52/D53 arming, and a NYISO t3 campaign once D56 + D52 have landed.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,
