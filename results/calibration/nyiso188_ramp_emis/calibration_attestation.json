@@ -5,8 +5,245 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session nyiso-157 (2026-08-30). COMPANION ARM: --set nyiso_iroquois_winter_spread=true ON TOP OF the seam arm, under PREREG-nyiso157-iroquois-companion-2026-08-30.md (pushed and blob-verified before this solve) \u2014 the nyiso-150 R-cell re-opened on its own recorded condition ('re-test as the companion of a locational mechanism that lets the west->east cutset bind \u2014 never alone'), the condition established by this session's seam A/B. Gates: nyiso-150 \u00a74 W-gates verbatim, control re-based to the seam arm (_nyiso157_iroq_gates.json). Zero fitted scalars (three reconciled measured series: SOM annual + AGT scarcity shape + Algonquin ceiling).",
-  "note": "nyiso-157 chain (2026-08-30): the nyiso-155 keeper recipe, plus (arm bundles only) the eastern-seam PAR attribution and, on the companion, the iroquois winter spread \u2014 see attested_by for this bundle's exact role and evidence. The prior keeper lineage's mechanism notes (duty-role cohort, hydro repair) live in their own bundles' attestations and the keeper shard's promotion-note chain."
+  "attested_by": "session nyiso-188 (2026-09-04). Arm 'ramp_emis' of the pre-registered A/B (results/calibration/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md \u00a71 / \u00a73, pushed BEFORE any arm was solved; record docs/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md): nyiso-188 Arm 1RE (2026-09-04): Arm 1R plus the re-derived plant_emission_rates_v2.parquet (curate seam applies CAMPD_UNIT_PLANT_REMAP per (facility, unit); 57664 measured CT3 / CT4 rates, 55375 CT1 / CT2). Zero config fields, zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim. Control = the same-HEAD replay on the committed artifacts, bit-identical to the keeper 2026-09-04-nyiso-187-astoria-routing (G-CONTROL below, computed). REPORTED AT FULL MAGNITUDE \u2014 see the finding; the disposition is the owner's.",
+  "note": "nyiso-188 Arm 1RE (2026-09-04): Arm 1R plus the re-derived plant_emission_rates_v2.parquet (curate seam applies CAMPD_UNIT_PLANT_REMAP per (facility, unit); 57664 measured CT3 / CT4 rates, 55375 CT1 / CT2). Zero config fields, zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim.",
+  "computed_checks": {
+   "G_CONTROL": {
+    "by_year": {
+     "2023": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2024": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2025": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     }
+    },
+    "max_abs_dprice": 0.0,
+    "bit_identical_to_keeper": true,
+    "baseline": "nyiso187_astoria_routing",
+    "pass": true
+   },
+   "G_DELTA": {
+    "baseline": "nyiso188_control",
+    "delta_fields": {},
+    "absence_normalized": {},
+    "rode_along": [],
+    "pass": true
+   },
+   "G_INPUTS": {
+    "campd_ramp_envelopes_NYISO.csv": {
+     "control_sha256": "280c0092b478a4f1d9ab13d26cd6727e1d8b805b820de9adaf0d98a626a35130",
+     "arm_sha256": "a9a65c99ce5080d6c01ff2ad77a62ef3ae8b289f18a49a62d7fced9b4e7adcbf"
+    },
+    "plant_emission_rates_v2.parquet": {
+     "control_sha256": "0ac4ec8bc7d43862d83c622ca67850dde4927e85eecf81fb0748792d02e97f6f",
+     "arm_sha256": "15d634654db8f5c6b8cc30d614a702a1800904ffb086a46afcba444d04bdf7b7"
+    },
+    "astoria_rows": [
+     {
+      "plant_code": 55375,
+      "bucket": "CC",
+      "pmax_obs_mw": 626.0,
+      "n_online_hours": 25016,
+      "ramp_up_mw": 372.0,
+      "ramp_dn_mw": 449.0,
+      "basis": "plant"
+     },
+     {
+      "plant_code": 57664,
+      "bucket": "CC",
+      "pmax_obs_mw": 626.0,
+      "n_online_hours": 24329,
+      "ramp_up_mw": 416.0,
+      "ramp_dn_mw": 454.0,
+      "basis": "plant"
+     }
+    ],
+    "class_fraction_cc": {
+     "ramp_up_frac": 0.5,
+     "ramp_dn_frac": 0.5904,
+     "n_pool": 27
+    },
+    "remap_entries_to_57664": [
+     "55375:CT3",
+     "55375:CT4"
+    ],
+    "astoria_v2_units_2023_2025": {
+     "55375": [
+      "CT1",
+      "CT2"
+     ],
+     "57664": [
+      "CT3",
+      "CT4"
+     ]
+    },
+    "astoria_v2_frozen_rows_still_under_55375": [
+     2018,
+     2022,
+     2026
+    ],
+    "pass": true
+   },
+   "G_DOF": {
+    "n_entries": 13,
+    "n_residual": 6,
+    "added_entries": 0,
+    "added_scalars": 0,
+    "basis": "as ramp, plus the v2 emission-rate artifact re-derived after the curate seam gained the same registry (per (facility, unit)); 57664 takes its measured CT3 / CT4 CO2 / NOx / SO2 rates in place of the heat_rate x fuel-factor default, 55375 keeps CT1 / CT2; every other plant's rate reproduces to float noise (PREREG-nyiso188 \u00a70 / \u00a73).",
+    "pass": true
+   },
+   "G_ENGAGE": {
+    "by_year": {
+     "2023": {
+      "CC_REGULAR_twh": [
+       33.473,
+       33.49
+      ],
+      "ST_GAS_twh": [
+       10.347,
+       10.339
+      ],
+      "load_weighted_price": [
+       33.8,
+       33.79
+      ],
+      "astoria_I_twh": [
+       4.503,
+       4.505
+      ],
+      "astoria_II_twh": [
+       4.275,
+       4.299
+      ],
+      "astoria_I_max_1h_ramp_mw": [
+       538.6,
+       538.6
+      ],
+      "astoria_II_max_1h_ramp_mw": [
+       627.2,
+       627.2
+      ],
+      "astoria_II_mean_mc": [
+       25.392,
+       25.057
+      ],
+      "astoria_I_mean_mc": [
+       24.171,
+       23.901
+      ]
+     },
+     "2024": {
+      "CC_REGULAR_twh": [
+       37.857,
+       37.874
+      ],
+      "ST_GAS_twh": [
+       8.85,
+       8.844
+      ],
+      "load_weighted_price": [
+       38.3,
+       38.29
+      ],
+      "astoria_I_twh": [
+       4.503,
+       4.507
+      ],
+      "astoria_II_twh": [
+       4.229,
+       4.257
+      ],
+      "astoria_I_max_1h_ramp_mw": [
+       538.6,
+       538.6
+      ],
+      "astoria_II_max_1h_ramp_mw": [
+       627.2,
+       627.2
+      ],
+      "astoria_II_mean_mc": [
+       29.424,
+       28.92
+      ],
+      "astoria_I_mean_mc": [
+       28.165,
+       27.756
+      ]
+     },
+     "2025": {
+      "CC_REGULAR_twh": [
+       36.005,
+       36.007
+      ],
+      "ST_GAS_twh": [
+       9.38,
+       9.379
+      ],
+      "load_weighted_price": [
+       59.61,
+       59.61
+      ],
+      "astoria_I_twh": [
+       4.068,
+       4.072
+      ],
+      "astoria_II_twh": [
+       3.067,
+       3.069
+      ],
+      "astoria_I_max_1h_ramp_mw": [
+       538.6,
+       538.6
+      ],
+      "astoria_II_max_1h_ramp_mw": [
+       521.2,
+       521.2
+      ],
+      "astoria_II_mean_mc": [
+       42.266,
+       42.132
+      ],
+      "astoria_I_mean_mc": [
+       41.006,
+       40.615
+      ]
+     }
+    },
+    "full_precision": {
+     "2023": {
+      "price_hours_differing": 15676,
+      "max_abs_dprice": 2.1835,
+      "plant_hours_differing": 12718,
+      "max_plant_annual_abs_dtwh": 0.02351,
+      "plant_with_max": 57664
+     },
+     "2024": {
+      "price_hours_differing": 29498,
+      "max_abs_dprice": 3.4976,
+      "plant_hours_differing": 14381,
+      "max_plant_annual_abs_dtwh": 0.028219,
+      "plant_with_max": 57664
+     },
+     "2025": {
+      "price_hours_differing": 18804,
+      "max_abs_dprice": 3.622,
+      "plant_hours_differing": 9137,
+      "max_plant_annual_abs_dtwh": 0.004783,
+      "plant_with_max": 55375
+     }
+    },
+    "pass": true
+   }
+  }
  },
  "free_parameters": {
   "schema": "dof-ledger/v1",
@@ -252,13 +489,13 @@
     }
    },
    {
-    "name": "nyiso_iroquois_winter_spread",
-    "where": "ScenarioConfig.nyiso_iroquois_winter_spread -> data.fuel.basis.nyiso.nyiso_reconciled_reference_monthly / nyiso_zonal_gas_ratios_monthly",
+    "name": "nyiso_zonal_loss_surface",
+    "where": "ScenarioConfig.nyiso_zonal_loss_surface -> interchange.nyiso.apply_nyiso_zonal_loss_links / build_nyiso_link_loss <- data.loss_surface.load_zone_month_deviation <- data/raw/iso-specific-transmission/NYISO_loss_surface.csv (scripts/data/derive_nyiso_loss_surface.py, frozen rule 23)",
     "identification": "measured",
-    "lineage_solves": "nyiso-122 construction gates (annual conservation Delta=0.00000 x3); nyiso-150 standalone A/B (2026-08-22, REJECTED-AS-ARMED on the coupled block); nyiso-157 companion A/B (2026-08-30, on the recorded re-open condition)",
+    "lineage_solves": "nyiso-159 phase-0 (2026-08-30, committed-artifacts measurement, FINDING-nyiso159-loss-surface-phase0-2026-08-30.md); offline acceptance 12/12 pair-years pre-solve; nyiso-159 A/B (2026-08-30, _nyiso159_loss_ab_gates.json)",
     "value": {
      "n_scalars": 0,
-     "note": "Reconciliation of three measured series \u2014 the SOM annual Iroquois-Transco spread (preserved exactly), the measured Algonquin monthly basis (the New England scarcity shape that physically causes the premium), and the Algonquin Citygate monthly ceiling \u2014 no fitted constant, nothing reads a model output; forward years regenerate from the forward basis seasonality (rule 13)."
+     "note": "Per-zone monthly delivery-factor deviations dev_z,m = sum(MCL_z)/sum(E) from NYISO's own posted RT LBMP components (LBMP = E + MCL - MCC, MST \u00a717.1/Manual 12), model-zone aggregation = the scoring actuals' own simple-mean crosswalk; per-year rows for backcast train years (the CEMS-rate admissibility class, rule 13 \u2014 regenerates for any year from the same public feed and responds to changed grid conditions), pooled year=0 rows as the forecast-mode forward analogue. The eps tiebreak (1e-3 $/MWh) is the rule-9 storage-epsilon numerical device, identical in construction and value to the PJM/CAISO twins, declared in NYISO's own module (rule 25)."
     }
    }
   ]

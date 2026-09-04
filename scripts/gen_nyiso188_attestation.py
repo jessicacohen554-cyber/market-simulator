@@ -226,11 +226,20 @@ def g_inputs(arm_key: str) -> dict:
     if arm_key in ("ramp_emis", "combined"):
         v2 = pd.read_parquet(V2_PQ)
         v2 = v2[v2.iso == "NYISO"]
+        # The backcast years the LP reads (measured_plant_rates, backcast mode
+        # = the target year's own rows) must carry the routing; the frozen
+        # rows (2018: source stripped at BLOAT-S2; 2022 / 2026: the one-shot
+        # holdout-intake guard) are recorded as the declared footprint.
+        live = v2[v2.year.isin(YEARS)]
         units = {
-            int(p): sorted(set(v2[v2.plant_id == p].unit_id))
+            int(p): sorted(set(live[live.plant_id == p].unit_id))
             for p in (ASTORIA_I, ASTORIA_II)
         }
-        out["astoria_v2_units"] = units
+        out["astoria_v2_units_2023_2025"] = units
+        frozen = v2[(v2.plant_id == ASTORIA_I) & v2.unit_id.isin(["CT3", "CT4"])]
+        out["astoria_v2_frozen_rows_still_under_55375"] = sorted(
+            int(y) for y in set(frozen.year)
+        )
         ok &= units[ASTORIA_I] == ["CT1", "CT2"] and units[ASTORIA_II] == ["CT3", "CT4"]
     if arm_key in ("ccrecon", "combined"):
         tab = pd.read_csv(RECON_CSV)
