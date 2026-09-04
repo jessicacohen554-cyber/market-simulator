@@ -348,3 +348,62 @@ slim bundles under `results/ff-t1f-d50/<iso>/` with `.gitignore` carve-outs on t
 template; the `VERDICT_MAP` rows and `ff-verdicts.json` entries; the ERCOT/NEISO/PJM
 shard cell stamps; spec §5.6 and CLAUDE.md step-2 amendments;
 `docs/handoffs/FINDING-capx-d50-2026-09-04.md` with this pre-declaration graded.
+
+---
+
+## Addendum A (2026-09-04, written AFTER the clean tree rebuilt and the §2.5 census ran — zero solve — and BEFORE the NEISO and PJM arms were launched; the ERCOT arm was already running on §2.1, which this addendum does not touch)
+
+The §2.5 instrument (`scripts/probes/_capxd50_scaled_ceiling_census.py`, output
+`results/calibration/capxd50_scaled_ceiling_census.json`) ran on the rebuilt base
+fleets through the same resolved golden-posture configs the arms solve. Everything
+above stands and is graded as written; this addendum adds what the census makes
+visible and states two refinements BEFORE the solves that could test them.
+
+### A.1 The census (P8 graded here, ahead of the solves)
+
+| ISO · year | eligible gas-CC | flat bar (shipped) | scaled (seam 1) | scaled + CHP excluded (seams 1+2) | CHP eligible |
+|---|---:|---:|---:|---:|---:|
+| ERCOT 2028 / 2029 / 2030 | 14.99 / 10.03 / 8.52 GW | 3.79 / 1.73 / 1.72 GW | 0.24 / 0 / 0 | **0 / 0 / 0** | 1.27 / 0.55 / 0.55 |
+| NEISO 2028 / 2029 / 2030 | 12.89 GW | 12.79 / 12.84 / 12.87 | 12.86 / 12.89 / 12.89 | **12.38 / 12.39 / 12.39 GW** (86–87 hosts; min er 0.340) | 0.49 |
+| PJM 2028 / 2029 / 2030 | 58.82 GW | 5.74 / 5.89 / 5.74 | 0.82 / 2.50 / 2.50 | **0 / 1.68 / 1.68 GW** (5 tranches, er ≥ 0.606) | 2.38 |
+| MISO 2028 / 2029 / 2030 | 34.45 GW | 5.00 / 5.23 / 5.00 | 1.59 / 3.37 / 3.52 | **0.05 / 0.38 / 0.53 GW** | 7.04 |
+
+P8 reads: ERCOT 0 GW (HIT, ≤ 0.1), PJM 2028 0 GW (HIT), MISO ≤ 0.53 GW (HIT, ≤ 0.5
+in 2028–2029, 0.53 in 2030 — at the edge), NEISO 96 % of its eligible fleet (HIT,
+≥ 80 %). The ERCOT 2028 scaled-bar set is exactly the two p55470 CHP tranches
+(1.373 / 1.294 of the bar), removed by seam 2 — the p55470 flag is load-bearing
+there in the same way seam 2 is at PJM.
+
+### A.2 §2.3a — the NEISO control's 50 rows on the scaled bar
+
+Every control row clears the scaled ceiling comfortably (ratio 1.15–1.84): 2028
+MW-weighted er 0.608 (CHP 139.6 MW), 2029 0.429 (CHP 226.8 MW), 2030 0.361 (CHP
+8.4 MW). Only five eligible NEISO tranches fail the scaled bar at all (p52061 /
+p57666 / p58084 CHP peaks and p55294_peak, ≤ 16 MW each). P5 therefore sharpens:
+**the cap binds in every NEISO year with HIGH confidence in all three, not just
+2028.** P6's re-ranking test stands as written (MW-weighted er of the arm's set ≤
+the control's, each year), and the CHP MW above is what seam 2 removes.
+
+### A.3 §2.2 refinement — a PJM channel the ceiling table in §2.2 did not enumerate
+
+§2.2 tested the control's OWN converting rows in the year each converted. Under the
+arm the 2028 regular-CC rows do NOT convert in 2028 (P3's 2028 leg stands: 0 MW
+clears the scaled 2028 bar) and therefore REMAIN candidates in 2029–2030 at the
+lower learned capex (1,271.8 / 1,232.3 $/kW, no own GW fed back), where the census
+puts five of them 1.0–3.6 % ABOVE the scaled ceiling bar: p55976 econ / committed
+(408.2 / 374.2 MW, er 0.607), p55337 econ / committed (501.6 / 228.8 MW, er 0.606)
+and p3096_econ (162.7 MW, er 0.679, hr 11.5) — 1.68 GW in total. A ceiling
+clearance at 1.01–1.03 needs the host in merit for ≥ 97 % of the year's hours on
+the prior-year zone signal. **Refined P3, stated before the PJM solve:** 2028 = 0
+(unchanged, HIGH); 2029–2030 = 0 rows expected (MED, down from HIGH), with the
+falsifier that a conversion of any of these five tranches is NOT a P3 miss on the
+mechanism — it is the surface (a zone-flat lookahead signal sitting above a $34–54
+unabated bid in ≥ 97 % of hours, the D49 §1.4 price-object seam) doing what D49
+already measured at ERCOT — and the finding must say which. The original §2.2 P3
+line is still graded at full magnitude as written.
+
+### A.4 What did NOT change
+
+Keys (§4), STOP conditions (§3), the FC-row predictions (§5), the blast-radius
+expectation (§6) and the kills (§7) are untouched. The NEISO arm launches after
+this addendum is pushed; the PJM arm after both.
