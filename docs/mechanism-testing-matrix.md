@@ -10547,6 +10547,14 @@ candidate; THE ASTORIA ROUTING'S REMAINING FOOTPRINT IS MEASURED AND CARRIED,
 HEAT RATE IS ATTRIBUTED TO AN EIA-923 FILING ARTIFACT). Keeper
 `2026-09-04-nyiso-188-combined`; CALIBRATED, grade 7, fails 0, C3c ledgered.**
 
+* **nyiso-189 (2026-09-04, ZERO SOLVE) — STEP 0 EXECUTED:** the pre-registered
+  GEN-sheet collapse census over all 38 NYISO CCs (T1 zero test fires at
+  Bethlehem 2024-only, World Generation X 2023-only, and chronically at
+  Flynn / Ravenswood / Lederle; Bethlehem's applied 2023 vintage is NOT reached
+  by the zero test). Owner decision card
+  `docs/DECISION-CARD-nyiso189-bethlehem-vintage-form-2026-09-04.md`: A vs B1
+  vs B2; the lane recommends B2 (identity admitted by the plant's own
+  T1-clean steam-share minimum, 2539 → 6.89). Blocked on the owner.
 * **TOP OF QUEUE = BETHLEHEM 2539, AN OWNER DECISION BETWEEN TWO INSTRUMENT
   FORMS (FINDING-nyiso188 §4).** The fleet prices Bethlehem at eGRID 2023
   `PLHTRT` 9.665 while three independent bases put the block at ≈ 6.9–7.0
