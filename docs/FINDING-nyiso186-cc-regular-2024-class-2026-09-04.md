@@ -314,3 +314,36 @@ stacked. Rule 22: 2023–2025 only, no marker requested. Rule 24: no field
 added; the mechanism (`egrid_identity_heat_rates`, cell K) is already
 registered. Rules 25 / 28: NYISO shard only. Rule 27: on-disk bytes pushed,
 ≥300-line blobs verified.
+
+## 7. Handed forward
+
+1. **Top of queue:** the CT-class and steam deficits in the NYC / Capital-Hudson
+   merit order (§2.4–§2.5) — the 2024 `CC_REGULAR` cell closes from the classes
+   that should take those hours, never from a CC volume lever.
+2. The Astoria availability half (§3) — outage-derive lane, own A/B.
+3. `cc_capacity_reconcile` (U) — own pre-registered A/B (§2.2).
+4. Bethlehem's eGRID vintage artifact (§5.3).
+5. Unchanged: C3a-2025 (owner-court); the Astoria merit-panel defect
+   (nyiso-184 §4.1); the D-2 / C8 grain under-count escalation (nyiso-181 §6).
+
+## 8. ADDENDUM — the owner ruling, and what was executed (2026-09-04)
+
+The owner's standing formula was delivered in-session before the arm was
+solved (verbatim: *"Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still be
+a keeper.."*). This session's recommendation on the registered candidate is
+**promote**: a measured, seven-vintage, exact-identity input replaces a class
+default at the ISO's largest merchant CC site at zero parameters, and here
+**no gate regresses at all** — every scored number moves toward actual or is
+unchanged. **`2026-09-04-nyiso-186-astoria-identity` is PROMOTED.** Executed in
+the same PR: `frontend/data/backcast/keepers/NYISO.json` (keeper, promotion
+note, determination note re-verified from committed artifacts — NOT worse, so
+the D-5(b) stop does not fire; the prior keeper moved into the `superseded`
+chain); `scripts/build_status.py --iso NYISO`; `scripts/audit_keepers.py --iso
+NYISO` (PASS); the forecast gate-(a) stamp in
+`frontend/data/forecast/program-status.json` re-keyed (R-T,
+`check_gate_a_provenance.py --iso NYISO` OK); the NYISO matrix shard (keeper +
+gates re-stamped, `egrid_identity_heat_rates` annotated, `cc_capacity_reconcile`
+annotated U) and the §5.5 header + queue; `docs/calibration-log/nyiso.md`.
+NYISO holds no `complete` marker, so no D-5(b) re-key. Every number in §1–§6
+stands; nothing was re-measured.

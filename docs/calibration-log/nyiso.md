@@ -11606,3 +11606,43 @@ re-keyed (R-T), NYISO matrix shard re-stamped (cell `egrid_family_heat_rates`
 O → K), §5.5 header re-stamped. Fail set now {C1-2024 `CC_REGULAR` share,
 C3a-2025 −10.5 %, C3c}; top of queue: the 2024 `CC_REGULAR` over-run as a
 class object.
+
+## 2026-09-04 — nyiso-186 (`cc-regular-2024-class` lane): the 2024 `CC_REGULAR` excess attributed; the Astoria merged-identity heat rate A/B-solved and PROMOTED
+
+**Keeper at entry:** `2026-09-04-nyiso-185-family-hr` (NOT-YET, grade 5,
+{C1-2024 `CC_REGULAR` +3.87 TWh / +3.18 pp, C3a-2025 −10.5 %, C3c}).
+**Solves: two** — the same-HEAD control (bit-identical, registers nothing;
+slim files committed as the instrument) and the arm
+`2026-09-04-nyiso-186-astoria-identity` (bundle
+`results/calibration/nyiso186_astoria_identity`).
+
+**Attribution (PREREG §3, bars fixed before measurement):** CONCENTRATED in
+every year at Cricket Valley 57185, Zeltmann 56196, Astoria Energy II 57664
+(C3 0.875 / 0.745 / 0.853); no plant-level bar fires; gas family EXACT (67.80
+vs 67.80 TWh) — the class is the within-family fill of `CT_PEAKER` −1.66 /
+`CT_CHP` −1.29 / `ST_GAS` −1.09; carriers load flat when on (Zeltmann 0.96 vs
+0.68) or stay on (Cricket Valley 0.995 vs 0.878).
+
+**The repair (rule 14, found on inputs):** eGRID files both Astoria blocks
+under 55375; 57664 has no eGRID row; `PLNGENAN(55375)` == netgen(55375) +
+netgen(57664) to < 0.5 MWh in all seven vintages. The identity derive gains a
+MERGED-identity leg (one pair found in 187 plants); 57664 6.70 → 7.3792.
+ZERO config fields, one artifact row, zero DOF.
+
+**A/B, full magnitude:** 57664 −0.154 / −0.112 / −0.103 TWh; class −0.098 /
+−0.073 / −0.048; C1-2024 `CC_REGULAR` +3.87 → +3.80 TWh, 3.2 → 3.1 pp (still
+FAIL); C3a-2025 −10.5 → −10.4 %; C3a-2023 +4.7 → +4.8 % (in band); C3b / C2 /
+C4 / C8 PASS; C3c identical; D-4 the same five rows. NOT-YET, grade 5, fails
+3. **Verdict rule: KEEPER CANDIDATE. PROMOTED BY OWNER RULING** (verbatim: "Is
+this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper.."): keeper
+shard + `status/NYISO.js`, `audit_keepers --iso NYISO` PASS, gate-(a) stamp
+re-keyed (R-T), NYISO matrix shard re-stamped, §5.5 rewritten. Retention
+pruned `2026-08-22-nyiso-153-incity-obligation`.
+
+**Handed forward:** the CT-class / steam merit position in NYC and
+Capital-Hudson (top of queue); the Astoria availability half (outage-derive
+lane); `cc_capacity_reconcile` (U, Zeltmann H-B1 in 2023 / 2025); Bethlehem's
+eGRID vintage artifact. Evidence:
+`docs/FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md`,
+`results/calibration/PREREG-nyiso186-cc-regular-2024-class.md`.
