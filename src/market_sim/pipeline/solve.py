@@ -48,6 +48,7 @@ a function of prices, ``mc`` and capacity only
 
 from __future__ import annotations
 
+import logging
 import os
 import time
 from dataclasses import dataclass, field
@@ -63,6 +64,8 @@ from market_sim.model.lp.inplace_floor import (
     refloor_thermal_inplace,
 )
 from market_sim.pipeline.basis_cache import persist_year_basis, seed_year1_basis
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from market_sim.data.fleet import FleetArrays
@@ -427,6 +430,58 @@ def run_energy_solve(
         )
         _inplace_floored = refloor_thermal_inplace(
             model, p1_fleet_arrays, _avail_in_rows
+        )
+    # P1 routing diagnostic (PERF-B session 2). Read-only, INFO-level: when a
+    # floor hook replaced the fleet, say which P1 route was taken and — on the
+    # cold route — WHY the in-place refloor did not fire, since that decision
+    # costs one whole extra matrix build (booked as ``markup``, see the
+    # attribution block below) and a lost warm start. There are two distinct
+    # reasons and they need different remedies: the toggle being off (a default,
+    # flippable only on the shipped warm-start-neutrality evidence) versus the
+    # floored availability feeding an LP row a P-column edit cannot reproduce
+    # (structural — ``refloor_thermal_inplace`` would decline even if flipped).
+    # Neither ``refloor_thermal_inplace`` nor the branch above logged anything,
+    # so the reason was previously unobservable from a run's own log.
+    if p1_fleet_arrays is not fleet_arrays and logger.isEnabledFor(logging.INFO):
+        _diag_toggle = os.environ.get("MARKET_SIM_P1_FLOOR_INPLACE", "0")
+        _diag_rgi = dispatch_kwargs.get("ramp_gen_idx")
+        _diag_rows = (
+            availability_feeds_rows(
+                model, _diag_rgi is not None and np.asarray(_diag_rgi).size > 0
+            )
+            if model is not None
+            else None
+        )
+        _diag_avail_changed = not np.array_equal(
+            np.asarray(p1_fleet_arrays.availability, dtype=float),
+            np.asarray(fleet_arrays.availability, dtype=float),
+        )
+        if _inplace_floored:
+            _diag_route, _diag_why = "IN-PLACE REFLOOR (warm P1)", "toggle on, accepted"
+        elif not _warm:
+            _diag_route, _diag_why = "COLD REBUILD", "MARKET_SIM_WARMSTART=0"
+        elif p1_dispatch_kwargs is not dispatch_kwargs:
+            _diag_route, _diag_why = "COLD REBUILD", "P1 kwargs overridden"
+        elif _diag_toggle == "0":
+            _diag_route = "COLD REBUILD"
+            _diag_why = (
+                "MARKET_SIM_P1_FLOOR_INPLACE off (default); would have been "
+                + (
+                    "DECLINED anyway (availability changed and feeds a row)"
+                    if (_diag_rows and _diag_avail_changed)
+                    else "ACCEPTED"
+                )
+            )
+        else:
+            _diag_route = "COLD REBUILD"
+            _diag_why = "in-place refloor DECLINED by the model"
+        logger.info(
+            "P1 route: %s on a floored fleet — %s "
+            "(availability_changed=%s, availability_feeds_rows=%s)",
+            _diag_route,
+            _diag_why,
+            _diag_avail_changed,
+            _diag_rows,
         )
     _t4 = time.perf_counter()
     # P1-only storage discharge re-cost (the ercot-219 reservation-price
