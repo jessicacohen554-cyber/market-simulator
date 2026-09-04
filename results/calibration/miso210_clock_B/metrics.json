@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-30-miso-191-bexit",
+  "run_id": "2026-09-04-miso-210-clock",
   "iso": "MISO",
-  "label": "miso 191 bexit",
+  "label": "miso 210 clock",
   "target_years": [
     2023,
     2024,
@@ -16,11 +16,10 @@
   "rubric_version": 3.5,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
   ],
   "notes": [
-    "C8 2023 CT_PEAKER: grounded above budget \u2014 15.6% forced (2.108 of 13.5436 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.971 (\u22650.8) & off-peak CV ratio 1.041 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 ST_GAS: grounded above budget \u2014 34.2% forced (6.6017 of 19.2823 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.977 (\u22650.8) & off-peak CV ratio 1.453 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 15.5% forced (2.1079 of 13.5624 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.97 (\u22650.8) & off-peak CV ratio 1.038 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -46,7 +45,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -56,7 +56,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -66,7 +66,9 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -74,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 5,
+    "scored": 8,
+    "target_grade": 6,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 2
+    "ledgered": 1,
+    "fails": 1
   },
   "reported": {
     "co2": {
@@ -92,9 +94,9 @@
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2023": "amplitude 33.9% of measured (hod range $7.59 vs $22.36); peak h17 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.880; 365 complete days",
-        "2024": "amplitude 31.8% of measured (hod range $9.09 vs $28.59); peak h17 vs h16, trough h02 vs h02 \u2014 phase OK; hod r +0.889; 365 complete days",
-        "2025": "amplitude 19.7% of measured (hod range $10.49 vs $53.27); peak h18 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.858; 364 complete days"
+        "2023": "amplitude 33.9% of measured (hod range $7.57 vs $22.36); peak h17 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.881; 365 complete days",
+        "2024": "amplitude 31.5% of measured (hod range $9.02 vs $28.59); peak h17 vs h16, trough h02 vs h02 \u2014 phase OK; hod r +0.879; 365 complete days",
+        "2025": "amplitude 19.5% of measured (hod range $10.39 vs $53.27); peak h18 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.857; 364 complete days"
       }
     }
   },
