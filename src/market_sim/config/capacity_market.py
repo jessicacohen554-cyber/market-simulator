@@ -2933,6 +2933,53 @@ ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO: dict[str, float] = {
     "MISO": (122_375.6 + 123_395.6) / (143_822.1 + 143_749.5),
 }
 
+# The SAME ratio re-identified on the fleet in the posture the run applies
+# (capx D51, 2026-09-04, executing FINDING-capx-d49-2026-09-04.md §2.6 —
+# rule 23 [R-FROZEN-DERIVE]: a re-derivation triggered by a POSTURE change of
+# the fleet the ratio was identified on, never by a residual). Resolved ONLY
+# under the default-off gate ``ScenarioConfig.adequacy_accounting_ratio_dated_
+# net`` (retirements.resolve_internal_supply_accounting_ratio); unarmed, the
+# D31 registry above keeps resolving byte-identically. ISOs absent here fall
+# through to the D31 registry even when armed (rule 25 [R-ISO-SCOPE]).
+#
+# * MISO: D31's denominators are the committed D27 T1-H entering-fleet
+#   ledgers — a census that still carried the 2021–2023 real exits (St Clair,
+#   Schahfer, Meramec, Edwards, Trenton Channel, Dolet Hills, River Rouge,
+#   Gallagher …) the PRA had already dropped, so the 0.8546 absorbed them.
+#   Since owner ruling Q30 / capx D44 (fossil_announced_exits_enabled default
+#   ON, 2026-09-03) the fossil-dates channel removes those same plants
+#   explicitly at step 1b AND the ratio still applies — the same MW netted
+#   TWICE, dropping the consumed position 5.8 / 6.9 pts short of the market's
+#   own (D49 §2.4). ONE term moved: the same PRA Summer offered Generation
+#   ZRC numerators over the same D31 denominators NET of the accredited dated
+#   exits, where the dated exits are the per-fuel D27 − D46 (dates-ON)
+#   ``fleet_by_fuel_before`` difference at 1 − EFORd — measured on the
+#   committed ledgers (results/hindcast/miso-2021-2025-realized-t1h-{d27,d46}),
+#   never retyped: 4,508.5 MW (2023 entering; the 893.6 MW pre-start backlog +
+#   the 2022 bridge's 2,108.6 MW fossil drops + 1,896.3 MW derates) and
+#   7,977.6 MW (2024 entering; + 2023's 2,162.3 drops + 1,602.4 derates).
+#   Per-year 122,375.6 / 139,313.6 = 0.87842 and 123,395.6 / 135,771.9 =
+#   0.90884; capacity-weighted two-year mean 0.893436 (a 1.04539× scale on
+#   the D31 value). Everything else is HELD exactly as D31 identified it: the
+#   numerators, the class bases (1 − EFORd; wind 0.166; solar 0.3875; hydro
+#   0.62; storage firm), the prior-solved-year pool convention, the Summer
+#   season, the two-year mean, the D27 pools (the D33 VRE additions are a
+#   model outcome and must not enter, exactly as D31 held) and the unscaled
+#   external tie. Derived and reconciled by test from those three committed
+#   inputs by scripts/data/derive_miso_adequacy_accounting_ratio.py
+#   (tests/curation/test_derive_miso_adequacy_accounting_ratio.py), so the
+#   value can never drift from the committed data. Zero free parameters.
+#   Rule 14 sign: the position moves UP ~4.5 % of internal supply — on the
+#   vertical PY2024 vintage the whole $113.6 → $0/kW-yr cliff for the fleet
+#   at once — so the undated cohort returns BELOW the bar into the
+#   floor-capped regime; exits do not get easier. Pre-declared
+#   docs/handoffs/PREDECL-capx-d51-2026-09-04.md; measured on the suffixed
+#   A/B `miso-t1h-d51-ratio` (FINDING-capx-d51-2026-09-04.md). The owner arms
+#   or declines; nothing here changes an unarmed solve.
+ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO: dict[str, float] = {
+    "MISO": (122_375.6 + 123_395.6) / (139_313.6 + 135_771.9),
+}
+
 # Firm import capacity counted by the ISO's own resource-adequacy ledger,
 # credited on the supply side of
 # :func:`market_sim.model.capacity.accredited_firm_capacity_mw` (via

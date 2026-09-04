@@ -4837,6 +4837,129 @@ class TestInternalSupplyAccountingRatio(unittest.TestCase):
         self.assertEqual(len(fleet), 1)
 
 
+class TestInternalSupplyAccountingRatioDatedNet(unittest.TestCase):
+    """capx D51 (2026-09-04): the MISO ratio re-identified on the dates-ON fleet.
+
+    GATED default-OFF behind ``adequacy_accounting_ratio_dated_net``: unarmed
+    (and for every ISO but MISO even when armed) the resolver, the ledger, the
+    floor increment and the backstop are byte-identical to D31's registry;
+    armed, all three seams resolve the ONE dated-net value (one basis, rule 19).
+    """
+
+    def test_value_is_the_documented_one_term_moved_arithmetic(self):
+        from market_sim.config.constants import (
+            ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO,
+            ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO,
+        )
+
+        # Same PRA numerators as D31; denominators net of the accredited dated
+        # exits the D46 ledgers record (4,508.5 / 7,977.6 MW).
+        expected = (122_375.6 + 123_395.6) / (
+            (143_822.1 - 4_508.5) + (143_749.5 - 7_977.6)
+        )
+        got = ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO["MISO"]
+        self.assertAlmostEqual(got, expected, places=9)
+        self.assertAlmostEqual(got, 0.893436, places=6)
+        # Inside the pre-declared STOP band, and strictly above the D31 value
+        # (the double-netting can only have made the census look SHORTER).
+        self.assertGreater(
+            got, ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO["MISO"]
+        )
+        self.assertTrue(0.80 <= got <= 0.95)
+        # MISO-only registry (rule 25).
+        self.assertEqual(
+            set(ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO), {"MISO"}
+        )
+
+    def test_unarmed_resolver_is_byte_identical_to_d31(self):
+        from market_sim.config.constants import (
+            ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO,
+        )
+        from market_sim.model.capacity import resolve_internal_supply_accounting_ratio
+
+        d31 = ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO["MISO"]
+        self.assertEqual(resolve_internal_supply_accounting_ratio("MISO"), d31)
+        self.assertEqual(
+            resolve_internal_supply_accounting_ratio("MISO", ScenarioConfig()), d31
+        )
+        self.assertFalse(ScenarioConfig().adequacy_accounting_ratio_dated_net)
+
+    def test_armed_resolver_returns_the_dated_net_value_for_miso_only(self):
+        from market_sim.config.constants import (
+            ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO,
+        )
+        from market_sim.model.capacity import resolve_internal_supply_accounting_ratio
+
+        armed = ScenarioConfig(adequacy_accounting_ratio_dated_net=True)
+        self.assertEqual(
+            resolve_internal_supply_accounting_ratio("MISO", armed),
+            ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO["MISO"],
+        )
+        # Every other ISO falls through to the D31 registry (neutral 1.0 —
+        # rule 25: nothing transfers), armed or not.
+        for iso in ("PJM", "NYISO", "NEISO", "CAISO", "ERCOT", None):
+            self.assertEqual(resolve_internal_supply_accounting_ratio(iso, armed), 1.0)
+
+    def test_armed_ledger_floor_increment_and_backstop_share_one_basis(self):
+        from market_sim.config.constants import EFORD
+        from market_sim.model.capacity import (
+            _thermal_firm_mw,
+            accredited_firm_capacity_mw,
+            apply_reserve_margin_build,
+            resolve_adequacy_requirement_mw,
+            resolve_internal_supply_accounting_ratio,
+        )
+
+        armed = ScenarioConfig(
+            adequacy_accounting_ratio_dated_net=True, reserve_margin_build_enabled=True
+        )
+        ratio = resolve_internal_supply_accounting_ratio("MISO", armed)
+        g = _gen("C1", "coal", pmax=1000.0)
+        with no_hydro_accreditation():
+            base = accredited_firm_capacity_mw([], iso="MISO", config=armed)
+            with_unit = accredited_firm_capacity_mw([g], iso="MISO", config=armed)
+        # The ledger increment carries the dated-net ratio …
+        self.assertAlmostEqual(
+            with_unit - base, _thermal_firm_mw(g, "MISO") * ratio, places=6
+        )
+        # … and so does the backstop's crediting of the unit it builds.
+        peak = 100_000.0
+        req = resolve_adequacy_requirement_mw(armed, "MISO", peak)
+        _fleet, built = apply_reserve_margin_build(
+            [], req - 5_000.0, peak, 2030, armed, "MISO"
+        )
+        self.assertAlmostEqual(
+            built, 5_000.0 / ((1.0 - EFORD["gas_ct"]) * ratio), places=3
+        )
+
+    def test_gate_is_cache_key_registered_and_backcast_coerced(self):
+        from market_sim.config.scenarios import (
+            _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS,
+            _CACHE_KEY_OPTIONAL_FIELDS,
+        )
+
+        self.assertIn("adequacy_accounting_ratio_dated_net", _CACHE_KEY_OPTIONAL_FIELDS)
+        self.assertEqual(
+            _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["adequacy_accounting_ratio_dated_net"],
+            "False",
+        )
+        # Unarmed key byte-stable; armed keys distinctly.
+        self.assertEqual(
+            ScenarioConfig().cache_key(),
+            ScenarioConfig(adequacy_accounting_ratio_dated_net=False).cache_key(),
+        )
+        self.assertNotEqual(
+            ScenarioConfig().cache_key(),
+            ScenarioConfig(adequacy_accounting_ratio_dated_net=True).cache_key(),
+        )
+        # Forecast-lane mechanism: coerced to the default in a plain backcast.
+        self.assertFalse(
+            ScenarioConfig(
+                mode="backcast", adequacy_accounting_ratio_dated_net=True
+            ).adequacy_accounting_ratio_dated_net
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
 

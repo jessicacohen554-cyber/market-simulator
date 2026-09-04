@@ -490,6 +490,9 @@ META_RECORD_SPEC = RecordSpec(
         # the record reads the SOLVED gates (FFR-3R).
         "nyiso_requirement_forecast_peak": FromConfig(cast=bool),
         "nyiso_requirement_vintage_factors": FromConfig(cast=bool),
+        # capx D51 MISO dated-net accounting-ratio gate. FromConfig so the
+        # record reads the SOLVED gate (FFR-3R).
+        "adequacy_accounting_ratio_dated_net": FromConfig(cast=bool),
         "entry_rate_limits": FromConfig(cast=bool),
         "entry_commissioning_lag": FromConfig(cast=bool),
         "exit_rate_limits": FromConfig(cast=bool),
@@ -635,6 +638,7 @@ def build_config(
     pjm_demand_response_supply: "bool | None" = None,
     nyiso_requirement_forecast_peak: "bool | None" = None,
     nyiso_requirement_vintage_factors: "bool | None" = None,
+    adequacy_accounting_ratio_dated_net: "bool | None" = None,
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     exit_rate_limits: "bool | None" = None,
@@ -859,6 +863,10 @@ def build_config(
                 # the D52 A/B measurement posture (distinct cache key).
                 "nyiso_requirement_forecast_peak": nyiso_requirement_forecast_peak,
                 "nyiso_requirement_vintage_factors": nyiso_requirement_vintage_factors,
+                # capx D51: the MISO dated-net accounting-ratio gate —
+                # default-off; None inherits the shipped default, True arms the
+                # D51 A/B measurement posture (distinct cache key).
+                "adequacy_accounting_ratio_dated_net": adequacy_accounting_ratio_dated_net,
                 "entry_rate_limits": entry_rate_limits,
                 "entry_commissioning_lag": entry_commissioning_lag,
                 "exit_rate_limits": exit_rate_limits,
@@ -1555,6 +1563,22 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--adequacy-accounting-ratio-dated-net",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D51 (2026-09-04) MISO-only arm: resolve the internal-supply "
+            "accounting ratio to its re-identification on the dates-ON fleet "
+            "(constants.ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_"
+            "ISO — D31's arithmetic with the denominators net of the fossil-"
+            "dates channel's exits, D49 §2.6) everywhere the D31 ratio is "
+            "applied (ledger / floor / backstop, one basis). Inert on every "
+            "other ISO. OMIT to inherit the shipped default (off, owner-armed "
+            "only); --adequacy-accounting-ratio-dated-net arms it (distinct "
+            "cache key)."
+        ),
+    )
+    parser.add_argument(
         "--entry-vre-capacity-revenue",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2007,6 +2031,7 @@ def main(argv: list[str] | None = None) -> int:
         pjm_demand_response_supply=args.pjm_demand_response_supply,
         nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
         nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,
+        adequacy_accounting_ratio_dated_net=args.adequacy_accounting_ratio_dated_net,
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         exit_rate_limits=args.exit_rate_limits,

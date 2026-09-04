@@ -372,7 +372,9 @@ def accredited_firm_capacity_mw(
     # ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO's citation block).
     # Applied to every internal term; the external-tie credit below is
     # already the market's own cleared external quantity and is NOT scaled.
-    internal *= resolve_internal_supply_accounting_ratio(iso)
+    # capx D51: ``config`` threads the default-off dated-net gate (the same
+    # ratio re-identified on the dates-ON fleet); ``None`` keeps D31's value.
+    internal *= resolve_internal_supply_accounting_ratio(iso, config)
     # Firm imports the ISO's own adequacy ledger counts (one resolver, rule 19):
     # ERCOT/PJM ties absent from topology AND the RA/FCM firm imports of the
     # import-node ISOs (CAISO WECC_import, NEISO HQ_import) — additive, never
@@ -616,7 +618,7 @@ def apply_reserve_margin_build(
         credit = 1.0
     else:
         credit = 1.0 - EFORD["gas_ct"]
-    credit *= resolve_internal_supply_accounting_ratio(iso)
+    credit *= resolve_internal_supply_accounting_ratio(iso, config)
     nameplate_needed = firm_gap / credit if credit > 0.0 else firm_gap
     iso_config = get_iso_config(iso)
     queue_cap_mw = QUEUE_CAP_GW.get(iso_config.name, 0.0) * 1000.0

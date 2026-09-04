@@ -264,6 +264,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     pjm_demand_response_supply: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D48): NEISO's DCR CSO is already reconciled as a fraction OF Net ICR on the requirement side (the D40 R-B convention transform re-expresses the position on the raw curve x); the per-CCP DCR CSO supply-side series is D33's routed R-C item, a NEISO derivation (rule 25)." },
     nyiso_requirement_forecast_peak: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D52): NEISO's published-basis requirement is the per-CCP Net ICR (neiso_net_icr_requirement, D40), an ABSOLUTE MW that already carries ISO-NE's own 50/50 forecast peak inside it — no separate peak-basis lever applies; n/a." },
     nyiso_requirement_vintage_factors: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D52): the NEISO per-vintage requirement axis IS neiso_net_icr_requirement (D40, the pattern this row mirrors); n/a." },
+    adequacy_accounting_ratio_dated_net: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D51): NEISO carries no D31 accounting ratio to re-identify (that cell is U, D28 R2's NEISO position lane); nothing transfers (rule 25)." },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-09-04",
+  "generated": "2026-09-05",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -4935,6 +4935,25 @@
       "param_id": "adequacy_internal_supply_accounting_ratio_by_iso.MISO",
       "display_name": "Adequacy Internal Supply Accounting Ratio By Iso / Miso",
       "value": 0.8546435044350695,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "adequacy_internal_supply_accounting_ratio_dated_net_by_iso.MISO",
+      "display_name": "Adequacy Internal Supply Accounting Ratio Dated Net By Iso / Miso",
+      "value": 0.8934356772712484,
       "unit": "",
       "domain": "Uncategorized",
       "tier": 2,
@@ -38603,6 +38622,25 @@
       ]
     },
     {
+      "param_id": "scenario.adequacy_accounting_ratio_dated_net",
+      "display_name": "Adequacy Accounting Ratio Dated Net",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "GATED default-OFF",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.as_reserve_formula",
       "display_name": "As Reserve Formula",
       "value": false,
@@ -38779,6 +38817,25 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Place each measured daily",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_citygate_spot_coverage",
+      "display_name": "Caiso Citygate Spot Coverage",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Cover a month on its OWN",
       "source_date": "",
       "page_or_table": "",
       "url": "",

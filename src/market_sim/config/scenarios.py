@@ -1369,6 +1369,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the fields (the nyiso-119 discipline).
     "nyiso_requirement_forecast_peak",
     "nyiso_requirement_vintage_factors",
+    # capx D51: the MISO internal-supply accounting ratio re-identified net of
+    # the dated exits (default-off, byte-identical unarmed — the D31 registry
+    # value keeps resolving). Dropped from the hash at its False default so
+    # every pre-existing cache key of all six ISOs is byte-stable; the armed
+    # A/B keys distinctly. Registered IN THE SAME COMMIT as the field.
+    "adequacy_accounting_ratio_dated_net",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1852,6 +1858,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # their shipping False defaults (armed runs key distinctly).
     "nyiso_requirement_forecast_peak": "False",
     "nyiso_requirement_vintage_factors": "False",
+    # capx D51: MISO dated-net accounting-ratio gate, registered at its
+    # shipping False default (the armed A/B keys distinctly).
+    "adequacy_accounting_ratio_dated_net": "False",
 }
 
 
@@ -15019,6 +15028,41 @@ class ScenarioConfig:
     # nyiso_requirement_forecast_peak above; the two fields are separate
     # gates so the owner can arm either alone (the D48 convention), and the
     # D52 A/B arms both.
+    adequacy_accounting_ratio_dated_net: bool = False  # GATED default-OFF
+    # (capx D51 2026-09-04, executing FINDING-capx-d49-2026-09-04.md §2.6 — the
+    # rule-23 [R-FROZEN-DERIVE] RE-IDENTIFICATION of the MISO internal-supply
+    # accounting ratio on the fleet in the SAME POSTURE the run applies).
+    # WHAT IT REPAIRS: D31 identified ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_
+    # RATIO_BY_ISO["MISO"] = 0.8546 as PRA Summer offered Generation ZRC ÷ the
+    # model's census internal firm on the D27 ledgers — a census that still
+    # carried the 2021–2023 real exits (St Clair, Schahfer, Meramec, Edwards,
+    # Trenton Channel, Dolet Hills, River Rouge, Gallagher …) the PRA had
+    # already dropped, so the ratio absorbed them. Since owner ruling Q30 /
+    # capx D44 (fossil_announced_exits_enabled default ON) the dates channel
+    # removes those same plants explicitly at step 1b AND the ratio still
+    # applies: the same MW is netted TWICE and the position the three capacity
+    # screens consume falls 5.8 / 6.9 pts short of the market's own (D49 §2.4:
+    # 0.976 / 0.949 vs 1.034 / 1.0174), which on the vertical PY2024 vintage is
+    # the whole $0 ↔ $113.6/kW-yr cliff for 98 GW at once. Armed, the resolver
+    # (retirements.resolve_internal_supply_accounting_ratio) returns the value
+    # re-identified with ONE term moved — the same PRA numerators over the same
+    # D27 denominators NET of the accredited dated exits the D46 dates-ON
+    # ledgers record (ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_
+    # ISO, derived and reconciled by test via scripts/data/
+    # derive_miso_adequacy_accounting_ratio.py) — everywhere the D31 ratio is
+    # applied (ledger, floor increments, backstop crediting; one basis, rule
+    # 19) and nowhere else. ZERO free parameters: an accounting identity from
+    # committed operands, never sized by the exit residual (rules 13/14/21).
+    # SIGN (rule 14): the position moves UP ~4.5 % of internal supply → the
+    # 2024 capacity term back to $0 → the undated cohort back BELOW the bar
+    # into the floor-capped regime; exits do not get easier. WHY DEFAULT-OFF:
+    # arming is an owner decision on the suffixed A/B `miso-t1h-d51-ratio`
+    # vs the bare `miso-t1h` (rules 22/24/28; LOYO within 2021–2025).
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS at False (unarmed keys
+    # byte-stable; armed keys distinctly); coerced to the default in a plain
+    # backcast (forecast-lane mechanism). SCOPE: MISO-only by construction
+    # (the dated-net registry holds one ISO; any other ISO resolves the D31
+    # registry unchanged) — rule 25; nothing transfers.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -15383,6 +15427,14 @@ class ScenarioConfig:
             )
             self.pjm_demand_response_supply = (
                 type(self).__dataclass_fields__["pjm_demand_response_supply"].default
+            )
+            # capx D51: the MISO dated-net accounting-ratio gate is the same
+            # class of forecast-lane adequacy mechanism — coerced to the
+            # dataclass default in a plain backcast, kept in a hindcast.
+            self.adequacy_accounting_ratio_dated_net = (
+                type(self)
+                .__dataclass_fields__["adequacy_accounting_ratio_dated_net"]
+                .default
             )
 
         # capx D52: the two NYISO adequacy-requirement devintage gates are
@@ -16715,6 +16767,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_demand_response_supply": 1,
     "nyiso_requirement_forecast_peak": 1,
     "nyiso_requirement_vintage_factors": 1,
+    "adequacy_accounting_ratio_dated_net": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

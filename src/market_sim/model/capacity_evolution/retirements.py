@@ -48,6 +48,7 @@ import numpy as np
 from market_sim.config.constants import (
     ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
     ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO,
+    ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO,
     DEFAULT_MARKET_DESIGN,
     DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO,
     DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO,
@@ -1689,7 +1690,9 @@ def resolve_adequacy_requirement_mw(
     return gross_mw * (1.0 - dr_fraction)
 
 
-def resolve_internal_supply_accounting_ratio(iso: str | None) -> float:
+def resolve_internal_supply_accounting_ratio(
+    iso: str | None, config: ScenarioConfig | None = None
+) -> float:
     """Ratio of the market's counted internal supply to the model's census ledger.
 
     The single resolver (rule 19) for the internal-supply accounting wedge
@@ -1705,8 +1708,25 @@ def resolve_internal_supply_accounting_ratio(iso: str | None) -> float:
     the aggregate wedge includes non-participants, while a unit that clears
     earns its own accredited revenue. ISOs absent from the registry — and
     ``iso=None`` — resolve the neutral 1.0 byte-identically.
+
+    ``config`` (optional; ``None`` keeps the D31 registry byte-identically)
+    carries the capx D51 gate ``adequacy_accounting_ratio_dated_net``: armed,
+    an ISO with an entry in
+    :data:`ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO` resolves
+    that value — the SAME ratio re-identified on the fleet in the posture the
+    run applies (net of the fossil-dates channel's exits, D49 §2.6) — at every
+    one of the three call sites above, so the one-basis property is
+    preserved; an ISO absent from the dated-net registry falls through to the
+    D31 value even when armed (rule 25 [R-ISO-SCOPE]).
     """
-    return ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO.get(iso or "", 1.0)
+    key = iso or ""
+    if config is not None and getattr(
+        config, "adequacy_accounting_ratio_dated_net", False
+    ):
+        dated = ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO.get(key)
+        if dated is not None:
+            return dated
+    return ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO.get(key, 1.0)
 
 
 def thermal_accreditation_fraction(
@@ -1969,7 +1989,7 @@ def _apply_reliability_floor(
         # unit's increment carries the same internal-supply accounting ratio
         # accredited_firm_capacity_mw applied to the ledger it adds to.
         firm_mw = _thermal_firm_mw(g, config.iso, config, year) * (
-            resolve_internal_supply_accounting_ratio(config.iso)
+            resolve_internal_supply_accounting_ratio(config.iso, config)
         )
         accredited_mw += firm_mw
         cost_per_firm_mw, co2_rate, _hr = _floor_retention_merit(config, g, year)
