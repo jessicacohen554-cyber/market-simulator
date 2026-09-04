@@ -315,7 +315,12 @@ def run_energy_solve(
     # cold-P1 branch below rebinds ``model`` to None, and because this is the
     # build the orchestrators' ``_build`` field does NOT account for whenever
     # P1 cold-rebuilds (they read ``p1.build_time``, i.e. the SECOND model).
-    _build_setup_s = model.build_time if model is not None else 0.0
+    # ``getattr``, not attribute access: this is a TIMING read, and a timing
+    # read must never narrow the contract ``run_energy_solve`` places on the
+    # object it was handed. The tests' ``_CapturingDispatchModel`` double
+    # implements ``solve`` and nothing else, and a diagnostic has no business
+    # breaking it.
+    _build_setup_s = float(getattr(model, "build_time", 0.0) or 0.0)
     # Cross-year gate: an explicit ``xyear_warmstart`` bool is the caller's own
     # decision and wins; ``None`` (every backcast caller) keeps the env default,
     # so the backcast path is byte-identical to before.
@@ -477,46 +482,52 @@ def run_energy_solve(
     # Neither ``refloor_thermal_inplace`` nor the branch above logged anything,
     # so the reason was previously unobservable from a run's own log.
     if p1_fleet_arrays is not fleet_arrays and logger.isEnabledFor(logging.INFO):
-        _diag_toggle = os.environ.get("MARKET_SIM_P1_FLOOR_INPLACE", "0")
-        _diag_rgi = dispatch_kwargs.get("ramp_gen_idx")
-        _diag_rows = (
-            availability_feeds_rows(
-                model, _diag_rgi is not None and np.asarray(_diag_rgi).size > 0
-            )
-            if model is not None
-            else None
-        )
-        _diag_avail_changed = not np.array_equal(
-            np.asarray(p1_fleet_arrays.availability, dtype=float),
-            np.asarray(fleet_arrays.availability, dtype=float),
-        )
-        if _inplace_floored:
-            _diag_route, _diag_why = "IN-PLACE REFLOOR (warm P1)", "toggle on, accepted"
-        elif not _warm:
-            _diag_route, _diag_why = "COLD REBUILD", "MARKET_SIM_WARMSTART=0"
-        elif p1_dispatch_kwargs is not dispatch_kwargs:
-            _diag_route, _diag_why = "COLD REBUILD", "P1 kwargs overridden"
-        elif _diag_toggle == "0":
-            _diag_route = "COLD REBUILD"
-            _diag_why = (
-                "MARKET_SIM_P1_FLOOR_INPLACE off (default); would have been "
-                + (
-                    "DECLINED anyway (availability changed and feeds a row)"
-                    if (_diag_rows and _diag_avail_changed)
-                    else "ACCEPTED"
+        try:
+            _diag_toggle = os.environ.get("MARKET_SIM_P1_FLOOR_INPLACE", "0")
+            _diag_rgi = dispatch_kwargs.get("ramp_gen_idx")
+            _diag_rows = (
+                availability_feeds_rows(
+                    model, _diag_rgi is not None and np.asarray(_diag_rgi).size > 0
                 )
+                if model is not None
+                else None
             )
-        else:
-            _diag_route = "COLD REBUILD"
-            _diag_why = "in-place refloor DECLINED by the model"
-        logger.info(
-            "P1 route: %s on a floored fleet — %s "
-            "(availability_changed=%s, availability_feeds_rows=%s)",
-            _diag_route,
-            _diag_why,
-            _diag_avail_changed,
-            _diag_rows,
-        )
+            _diag_avail_changed = not np.array_equal(
+                np.asarray(p1_fleet_arrays.availability, dtype=float),
+                np.asarray(fleet_arrays.availability, dtype=float),
+            )
+            if _inplace_floored:
+                _diag_route, _diag_why = (
+                    "IN-PLACE REFLOOR (warm P1)",
+                    "toggle on, accepted",
+                )
+            elif not _warm:
+                _diag_route, _diag_why = "COLD REBUILD", "MARKET_SIM_WARMSTART=0"
+            elif p1_dispatch_kwargs is not dispatch_kwargs:
+                _diag_route, _diag_why = "COLD REBUILD", "P1 kwargs overridden"
+            elif _diag_toggle == "0":
+                _diag_route = "COLD REBUILD"
+                _diag_why = (
+                    "MARKET_SIM_P1_FLOOR_INPLACE off (default); would have been "
+                    + (
+                        "DECLINED anyway (availability changed and feeds a row)"
+                        if (_diag_rows and _diag_avail_changed)
+                        else "ACCEPTED"
+                    )
+                )
+            else:
+                _diag_route = "COLD REBUILD"
+                _diag_why = "in-place refloor DECLINED by the model"
+            logger.info(
+                "P1 route: %s on a floored fleet — %s "
+                "(availability_changed=%s, availability_feeds_rows=%s)",
+                _diag_route,
+                _diag_why,
+                _diag_avail_changed,
+                _diag_rows,
+            )
+        except Exception:  # pragma: no cover - a log line may never break a solve
+            logger.debug("P1 route diagnostic unavailable", exc_info=True)
     _t4 = time.perf_counter()
     # P1-only storage discharge re-cost (the ercot-219 reservation-price
     # offer): applied AFTER the warm/cold routing above is decided, so the
@@ -601,8 +612,10 @@ def run_energy_solve(
     # sum(parts) is a hair under the reported ``markup``; the callers book that
     # difference as a trailing ``other`` component (see run_calibration.py).
     _p1_cold = not (_warm_p1 or _inplace_floored)
-    _build_p0_s = r0.build_time if not _warm else 0.0
-    _build_p1_s = p1.build_time if _p1_cold else 0.0
+    _build_p0_s = float(getattr(r0, "build_time", 0.0) or 0.0) if not _warm else 0.0
+    _build_p1_s = float(getattr(p1, "build_time", 0.0) or 0.0) if _p1_cold else 0.0
+    _solve_p0_s = float(getattr(r0, "solve_time", 0.0) or 0.0)
+    _solve_p1_s = float(getattr(p1, "solve_time", 0.0) or 0.0)
     markup_parts = {
         # Offer-domain clip, the P0 model construction (its matrix build
         # excluded — see above) and the cross-year/disk basis seed + apply.
@@ -614,7 +627,7 @@ def run_energy_solve(
         # Everything in the P0 pass that is not ``h.run()``: the cost-vector
         # build + ``changeColsCost``, then ``getSolution`` and the whole
         # ``DispatchResult`` extraction (duals, reduced costs, reshapes).
-        "p0_post": (_t2 - _t1) - r0.solve_time - _build_p0_s,
+        "p0_post": (_t2 - _t1) - _solve_p0_s - _build_p0_s,
         # ``compute_monthly_markup`` alone — the phase the field is named for.
         "markup": _t3 - _t2,
         # The P0->P1 seam: bid assembly (markup add, additive/P0-conditioned
@@ -624,16 +637,16 @@ def run_energy_solve(
         # The P1 pass minus ``h.run()`` and minus its own build: same
         # cost-vector + marshalling work as ``p0_post``, plus (cold path only,
         # cross-year gate armed) the pre-rebuild P0 basis export.
-        "p1_post": (_t5 - _t4) - p1.solve_time - _build_p1_s,
+        "p1_post": (_t5 - _t4) - _solve_p1_s - _build_p1_s,
         # Cross-year basis export (``getBasis``) + the disposable NPZ persist.
         "tail": _t6 - _t5,
     }
 
     _PASS_TIMING_LOG.append(
         {
-            "build_s": p1.build_time,
-            "solve_p0_s": r0.solve_time,
-            "solve_p1_s": p1.solve_time,
+            "build_s": float(getattr(p1, "build_time", 0.0) or 0.0),
+            "solve_p0_s": _solve_p0_s,
+            "solve_p1_s": _solve_p1_s,
             "parts": markup_parts,
         }
     )
