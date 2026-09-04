@@ -2,7 +2,7 @@
 
 **Lane:** capx D52 — NYISO's per-ISO repair lane, the successor D45's §9 close-out
 names. Branch `claude/capx-d52-nyiso-devintage-sl3rj2`, fresh off `origin/main`
-(`a35c9f9`; no rebase was needed — main did not move during the session). The
+(`a35c9f9`), rebased onto `f65efaf` (24 upstream commits — D50's CCS-capex gates, nyiso-188/189, caiso-245, miso-211) before the final push; the three shared registries that conflicted (the cache-key tuple + defaults in `scenarios.py`, the matrix base rows, `ff-verdicts.json`) were resolved keep-both and the generated files regenerated, every guard re-run green on the rebased tree. The
 pre-declaration `PREDECL-capx-d52-2026-09-04.md` was committed BEFORE any code
 (`08c02e9`), its §7 keys appended after the build and BEFORE any solve
 (`1b9c24d`, pushed), and is graded at full magnitude in §7, misses included.
