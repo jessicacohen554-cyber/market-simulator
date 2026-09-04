@@ -51,6 +51,7 @@ from __future__ import annotations
 import logging
 import os
 import time
+from collections import deque
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
@@ -66,6 +67,39 @@ from market_sim.model.lp.inplace_floor import (
 from market_sim.pipeline.basis_cache import persist_year_basis, seed_year1_basis
 
 logger = logging.getLogger(__name__)
+
+# --- Per-pass timing log (PERF-B session 2) ---------------------------------
+# Every ``run_energy_solve`` call appends its build / P0 / P1 solve seconds and
+# its ``markup_parts`` here. The backcast orchestrator needs this because a year
+# is not always ONE energy solve: the ercot-221 adaptive-expectation offer runs
+# a SECOND P1 pass, and ercot-230's fixed point iterates. Its ``markup`` residual
+# subtracts only the LAST pass's build and two solve times (``_timing`` reads the
+# final ``EnergySolveResult``), so every earlier pass's ENTIRE build and both
+# HiGHS runs are booked as ``markup`` — the single largest term on an ERCOT year,
+# and invisible without this log. A bounded deque so a caller that never drains
+# it cannot leak; ``reset_pass_timing_log`` / ``take_pass_timing_log`` are the
+# orchestrators' drain seam. Diagnostics only: nothing here is read by a solve.
+_PASS_TIMING_LOG: "deque[dict]" = deque(maxlen=256)
+
+
+def reset_pass_timing_log() -> None:
+    """Drop any accumulated per-pass timings (call before a year's solves)."""
+    _PASS_TIMING_LOG.clear()
+
+
+def take_pass_timing_log() -> "list[dict]":
+    """Return the per-pass timings in call order and clear the log.
+
+    Returns:
+        One dict per :func:`run_energy_solve` call since the last reset, each
+        with ``build_s`` / ``solve_p0_s`` / ``solve_p1_s`` (that pass's own
+        ``p1.build_time``, ``r0.solve_time``, ``p1.solve_time``) and ``parts``
+        (that pass's ``markup_parts``).
+    """
+    out = list(_PASS_TIMING_LOG)
+    _PASS_TIMING_LOG.clear()
+    return out
+
 
 if TYPE_CHECKING:
     from market_sim.data.fleet import FleetArrays
@@ -595,6 +629,15 @@ def run_energy_solve(
         "tail": _t6 - _t5,
     }
 
+    _PASS_TIMING_LOG.append(
+        {
+            "build_s": p1.build_time,
+            "solve_p0_s": r0.solve_time,
+            "solve_p1_s": p1.solve_time,
+            "parts": markup_parts,
+        }
+    )
+
     return EnergySolveResult(
         r0=r0,
         p1=p1,
@@ -605,4 +648,10 @@ def run_energy_solve(
     )
 
 
-__all__ = ["EnergySolveResult", "apply_bid_max_target", "run_energy_solve"]
+__all__ = [
+    "EnergySolveResult",
+    "apply_bid_max_target",
+    "reset_pass_timing_log",
+    "run_energy_solve",
+    "take_pass_timing_log",
+]

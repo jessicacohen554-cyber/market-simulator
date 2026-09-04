@@ -188,6 +188,7 @@ from market_sim.pipeline import (
     build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
+    reset_pass_timing_log,
     run_commitment_pass,
     run_energy_solve,
 )
@@ -3288,6 +3289,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config, iso, fleet_arrays
             )
             _t_pre_solve = time.perf_counter()
+            # Keep the shared per-pass timing log to this year (the forecast
+            # path is one energy solve per year) — PERF-B session 2.
+            reset_pass_timing_log()
             energy_solve = run_energy_solve(
                 dispatch_fleet,
                 fleet_arrays,

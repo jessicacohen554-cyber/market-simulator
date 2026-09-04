@@ -280,6 +280,110 @@ class TestMarkupPartsAreExhaustive(unittest.TestCase):
             self.assertIn(f'"{name}":', src, f"markup_parts lost the {name} component")
 
 
+class TestMultiPassAggregation(unittest.TestCase):
+    """A year with more than one energy solve must not lose the earlier passes.
+
+    ``markup`` subtracts the FINAL ``EnergySolveResult``'s build and two solve
+    times only, so on an ercot-221 two-pass year (or an ercot-230 fixed point)
+    every earlier pass's whole matrix build and both HiGHS runs sit inside the
+    residual. ``_aggregate_markup_parts`` names them ``prior_build`` /
+    ``prior_solve``; this pins that the identity still closes.
+    """
+
+    def _residual_and_parts(self, n_passes: int):
+        from market_sim.pipeline import solve as solve_mod
+
+        solve_mod.reset_pass_timing_log()
+        # Each pass: its own build, two HiGHS runs, and interior components.
+        per_pass = dict(
+            build_s=90.0,
+            solve_p0_s=260.0,
+            solve_p1_s=250.0,
+            parts={
+                "setup": 1.0,
+                "p0_build": 90.0,
+                "p0_post": 40.0,
+                "markup": 0.2,
+                "seam": 3.0,
+                "p1_post": 38.0,
+                "tail": 0.0,
+            },
+        )
+        for _ in range(n_passes):
+            solve_mod._PASS_TIMING_LOG.append(
+                {**per_pass, "parts": dict(per_pass["parts"])}
+            )
+        passes = solve_mod.take_pass_timing_log()
+
+        parts: dict[str, float] = {}
+        for entry in passes:
+            for name, seconds in entry["parts"].items():
+                parts[name] = parts.get(name, 0.0) + seconds
+        if len(passes) > 1:
+            parts["prior_build"] = sum(e["build_s"] for e in passes[:-1])
+            parts["prior_solve"] = sum(
+                e["solve_p0_s"] + e["solve_p1_s"] for e in passes[:-1]
+            )
+
+        # What the orchestrator sees: the whole bracket wall, minus the LAST
+        # pass's three fields. Interior wall of one pass = its parts + its own
+        # build + its two solves (the parts arithmetic, pinned above).
+        one_wall = (
+            sum(per_pass["parts"].values())
+            + per_pass["build_s"]
+            + per_pass["solve_p0_s"]
+            + per_pass["solve_p1_s"]
+        )
+        bracket = one_wall * n_passes
+        residual = (
+            bracket
+            - per_pass["build_s"]
+            - per_pass["solve_p0_s"]
+            - per_pass["solve_p1_s"]
+        )
+        return residual, parts
+
+    def test_single_pass_needs_no_prior_components(self):
+        residual, parts = self._residual_and_parts(1)
+        self.assertNotIn("prior_build", parts)
+        self.assertAlmostEqual(sum(parts.values()), residual, places=9)
+
+    def test_two_pass_year_is_still_exhaustive(self):
+        residual, parts = self._residual_and_parts(2)
+        self.assertAlmostEqual(sum(parts.values()), residual, places=9)
+        # The extra pass's build and both solves are named, not absorbed.
+        self.assertAlmostEqual(parts["prior_build"], 90.0, places=9)
+        self.assertAlmostEqual(parts["prior_solve"], 510.0, places=9)
+
+    def test_four_pass_year_is_still_exhaustive(self):
+        residual, parts = self._residual_and_parts(4)
+        self.assertAlmostEqual(sum(parts.values()), residual, places=9)
+
+    def test_take_drains_the_log(self):
+        from market_sim.pipeline import solve as solve_mod
+
+        solve_mod.reset_pass_timing_log()
+        solve_mod._PASS_TIMING_LOG.append(
+            {"build_s": 1.0, "solve_p0_s": 0.0, "solve_p1_s": 0.0, "parts": {}}
+        )
+        self.assertEqual(len(solve_mod.take_pass_timing_log()), 1)
+        self.assertEqual(solve_mod.take_pass_timing_log(), [])
+
+    def test_the_log_is_bounded(self):
+        from market_sim.pipeline import solve as solve_mod
+
+        self.assertIsNotNone(solve_mod._PASS_TIMING_LOG.maxlen)
+
+    def test_the_backcast_orchestrator_aggregates(self):
+        # The helper lives in the backcast orchestrator; pin that it exists and
+        # names both prior components, so the wiring cannot be dropped silently.
+        text = (REPO_ROOT / "scripts" / "run_calibration.py").read_text()
+        self.assertIn("def _aggregate_markup_parts(", text)
+        self.assertIn('parts["prior_build"]', text)
+        self.assertIn('parts["prior_solve"]', text)
+        self.assertIn("reset_pass_timing_log()", text)
+
+
 class TestOrchestratorsUseTheHelper(unittest.TestCase):
     """Both orchestrators route through this module (no drifting second copy).
 

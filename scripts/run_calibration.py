@@ -130,8 +130,10 @@ from market_sim.pipeline import (  # noqa: E402
     build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
+    reset_pass_timing_log,
     run_commitment_pass,
     run_energy_solve,
+    take_pass_timing_log,
 )
 import market_sim.pipeline.reference as _pipeline_reference  # noqa: E402
 import market_sim.pipeline.ttc as _pipeline_ttc  # noqa: E402
@@ -357,6 +359,44 @@ def p0_commitment_pattern(
     return np.packbits(
         np.asarray(p0_dispatch) > (0.05 * np.asarray(pmax))[:, None], axis=1
     )
+
+
+def _aggregate_markup_parts() -> "dict[str, float]":
+    """Attribute the ``markup`` residual across ALL of a year's energy solves.
+
+    ``markup`` is not a measured phase: ``run_calibration_full.solve_and_persist``
+    derives it as ``energy_solve_s - build_s - solve_p0_s - solve_p1_s``, and the
+    three subtrahends come from the FINAL :class:`EnergySolveResult` alone. A
+    year is not always one energy solve — the ercot-221 adaptive-expectation
+    offer runs a second P1 pass and ercot-230's fixed point iterates — so every
+    EARLIER pass's whole matrix build and both HiGHS runs are inside the
+    residual with nothing subtracting them.
+
+    This sums each pass's interior components (see
+    ``pipeline.solve.run_energy_solve``) and adds two components naming exactly
+    that: ``prior_build`` and ``prior_solve``, the builds and HiGHS seconds of
+    every pass but the last. The remainder — this frame's call edges and the
+    between-pass adaptive machinery (spike detection, P_hat, floor assembly) —
+    is booked by ``solve_and_persist`` as ``other``, so the emitted clause is
+    exhaustive over ``markup``.
+
+    Returns:
+        Ordered ``{component: seconds}``; empty when no pass was recorded (a
+        cached/skipped year), which emits no clause at all.
+    """
+    passes = take_pass_timing_log()
+    if not passes:
+        return {}
+    parts: dict[str, float] = {}
+    for entry in passes:
+        for name, seconds in entry["parts"].items():
+            parts[name] = parts.get(name, 0.0) + seconds
+    if len(passes) > 1:
+        parts["prior_build"] = sum(e["build_s"] for e in passes[:-1])
+        parts["prior_solve"] = sum(
+            e["solve_p0_s"] + e["solve_p1_s"] for e in passes[:-1]
+        )
+    return parts
 
 
 def run_year(
@@ -5484,6 +5524,9 @@ def run_year(
             "expectation (stage 3 prices stage 2's P_exhaust; armed alone "
             "there is nothing to price)."
         )
+    # Drain any stale per-pass timings before this year's solves so the
+    # markup attribution below covers exactly this year (PERF-B session 2).
+    reset_pass_timing_log()
     _t_solve_start = time.perf_counter()
     energy_solve = run_energy_solve(
         fleet,
@@ -5996,10 +6039,11 @@ def run_year(
             "solve_p0_s": energy_solve.r0.solve_time,
             "solve_p1_s": energy_solve.p1.solve_time,
             # Attribution of the ``markup`` RESIDUAL the caller derives from
-            # the four fields above (PERF-B session 2). Interior segments only
-            # — ``solve_and_persist`` appends the ``other`` remainder that
-            # covers its own bracket edges, so the clause it logs is exhaustive.
-            "markup_parts": dict(energy_solve.markup_parts),
+            # the four fields above (PERF-B session 2). ``solve_and_persist``
+            # appends the ``other`` remainder covering the bracket edges and
+            # the between-pass adaptive machinery, so the clause it logs is
+            # exhaustive. See _aggregate_markup_parts.
+            "markup_parts": _aggregate_markup_parts(),
         },
     }
 
