@@ -29,13 +29,14 @@ plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustr
 54574,CC_REGULAR,Saranac Facility,ok,237.8,10534,23.1,0.0,0.0,0.442,69.4,72.3,,,,25.0
 54592,CC_REGULAR,Massena Energy Facility,ok,81.0,1032,33.3,0.0,0.0,0.04,60.5,63.0,,,,3.6
 54593,CC_REGULAR,Batavia Power Plant,ok,48.8,648,14.3,0.0,0.0,0.025,67.1,71.7,,,,2.2
-55375,CC_REGULAR,Astoria Energy,ok,558.0,22104,70.0,0.0,0.0,0.992,100.0,150.0,,,,2.6
+55375,CC_REGULAR,Astoria Energy,ok,558.0,24757,60.6,0.0,0.0,0.951,86.0,99.5,,,,0.3
 55405,CC_REGULAR,Athens Generating Plant,ok,984.4,15106,49.7,0.0,0.0,0.59,96.5,110.2,,,,5.2
 56188,CC_REGULAR,Pinelawn Power LLC,ok,74.5,3842,52.3,0.0,0.0,0.171,71.1,79.2,,,,2.5
 56196,CC_REGULAR,Zeltmann,ok,560.0,22652,35.2,0.0,0.0,0.869,73.9,91.4,,,,0.4
 56234,CC_REGULAR,Caithness Long Island Energy Center,ok,317.3,22475,70.0,0.0,0.0,0.858,90.5,97.4,,,,2.7
 56940,CC_REGULAR,CPV Valley Energy Center,ok,654.2,22823,70.0,0.0,0.0,0.872,94.6,98.6,,,,2.1
 57185,CC_REGULAR,Cricket Valley Energy,ok,1016.1,23690,30.4,0.0,0.0,0.902,50.8,73.0,,,,5.7
+57664,CC_REGULAR,Astoria Energy II,ok,540.0,23879,38.9,0.0,0.0,0.925,66.7,102.0,,,,0.6
 2493,CT_CHP,East River,ok,306.0,26251,30.1,0.0,0.0,,55.2,81.0,28.4,merchant,81.0,
 10025,CT_CHP,"RED-Rochester, LLC",eia923_cf,36.0,0,,,,,,,0.0,industrial,26.8,
 50136,CT_CHP,South Oaks Hospital,eia923_cf,0.5,0,,,,,,,42.6,commercial,100.0,

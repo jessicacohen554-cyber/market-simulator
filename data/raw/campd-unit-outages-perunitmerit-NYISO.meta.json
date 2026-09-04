@@ -1,6 +1,6 @@
 {
   "artifact": "campd-unit-outages-perunitmerit-NYISO.csv",
-  "artifact_rows": 3674,
+  "artifact_rows": 3668,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -38,13 +38,13 @@
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
-    "2019": 506,
+    "2019": 505,
     "2020": 508,
     "2021": 521,
     "2022": 513,
     "2023": 528,
     "2024": 458,
-    "2025": 476,
+    "2025": 471,
     "2026": 164
   }
 }

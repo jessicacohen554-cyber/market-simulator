@@ -1,0 +1,353 @@
+{
+ "year": 2024,
+ "S0_offer_identity": {
+  "units": 704,
+  "max_abs_delta": 273.3999987792969,
+  "EXACT": false
+ },
+ "zonal_premium_sample": {
+  "NYC": [
+   2.8,
+   6
+  ],
+  "Capital_Hudson": [
+   0.17,
+   6
+  ],
+  "Long_Island": [
+   5.66,
+   6
+  ]
+ },
+ "class_zone": {
+  "CT_PEAKER@NYC": {
+   "measured_twh": 1.429,
+   "model_twh": 0.132,
+   "D_twh": 1.325,
+   "deficit_hours": 4621,
+   "unmet_no_headroom_twh": 0.0,
+   "bucket_share_of_filled": {
+    "A": 0.15,
+    "B": 0.848,
+    "C": 0.003
+   },
+   "bucket_share_with_zonal_premium": {
+    "A": 0.176,
+    "B": 0.822,
+    "C": 0.003
+   },
+   "bucket_C_charge_usd_per_mwh": {
+    "median": 0.0,
+    "p90": 0.0
+   },
+   "hourly_r_deficit_vs_cc_excess": -0.158,
+   "share_of_cc_excess_in_deficit_hours": 0.327,
+   "model_on_share": 0.03,
+   "meas_on_share": 0.41,
+   "M4_cheapest_unrun_in_deficit_hours": {
+    "mc_median": 53.94,
+    "model_price_median": 37.89,
+    "actual_rt_median": 36.24,
+    "fuel_median_usd_mmbtu": 1.641,
+    "heat_rate_median": 9.0,
+    "vom_median": 3.5,
+    "carbon_term_median": 10.62,
+    "markup_median": 24.14,
+    "fuel_x_hr_median": 15.42
+   },
+   "M5_cc_mirror": {
+    "cc_excess_in_deficit_hours_twh": 0.248,
+    "cc_depth_itm_median_usd_running": 11.68,
+    "cc_headroom_mean_mw_deficit_hours": 157.7
+   }
+  },
+  "CT_CHP@NYC": {
+   "measured_twh": 1.693,
+   "model_twh": 0.812,
+   "D_twh": 1.026,
+   "deficit_hours": 7060,
+   "unmet_no_headroom_twh": 0.041,
+   "bucket_share_of_filled": {
+    "A": 0.11,
+    "B": 0.881,
+    "C": 0.009
+   },
+   "bucket_share_with_zonal_premium": {
+    "A": 0.156,
+    "B": 0.835,
+    "C": 0.009
+   },
+   "bucket_C_charge_usd_per_mwh": {
+    "median": 0.0,
+    "p90": 0.0
+   },
+   "hourly_r_deficit_vs_cc_excess": 0.073,
+   "share_of_cc_excess_in_deficit_hours": 0.979,
+   "model_on_share": 0.43,
+   "meas_on_share": 1.0,
+   "M4_cheapest_unrun_in_deficit_hours": {
+    "mc_median": 34.13,
+    "model_price_median": 32.27,
+    "actual_rt_median": 26.9,
+    "fuel_median_usd_mmbtu": 1.571,
+    "heat_rate_median": 8.133,
+    "vom_median": 3.5,
+    "carbon_term_median": 13.34,
+    "markup_median": 2.06,
+    "fuel_x_hr_median": 14.87
+   },
+   "M5_cc_mirror": {
+    "cc_excess_in_deficit_hours_twh": 0.743,
+    "cc_depth_itm_median_usd_running": 7.38,
+    "cc_headroom_mean_mw_deficit_hours": 236.0
+   }
+  },
+  "ST_GAS@NYC": {
+   "measured_twh": 2.964,
+   "model_twh": 4.97,
+   "D_twh": 0.276,
+   "deficit_hours": 1610,
+   "unmet_no_headroom_twh": 0.006,
+   "bucket_share_of_filled": {
+    "A": 0.419,
+    "B": 0.57,
+    "C": 0.011
+   },
+   "bucket_share_with_zonal_premium": {
+    "A": 0.476,
+    "B": 0.513,
+    "C": 0.011
+   },
+   "bucket_C_charge_usd_per_mwh": {
+    "median": -0.0,
+    "p90": 0.0
+   },
+   "hourly_r_deficit_vs_cc_excess": 0.157,
+   "share_of_cc_excess_in_deficit_hours": 0.292,
+   "model_on_share": 0.917,
+   "meas_on_share": 0.731,
+   "M4_cheapest_unrun_in_deficit_hours": {
+    "mc_median": 41.72,
+    "model_price_median": 39.17,
+    "actual_rt_median": 36.97,
+    "fuel_median_usd_mmbtu": 2.213,
+    "heat_rate_median": 12.906,
+    "vom_median": 4.0,
+    "carbon_term_median": 8.95,
+    "markup_median": -0.0,
+    "fuel_x_hr_median": 28.56
+   },
+   "M5_cc_mirror": {
+    "cc_excess_in_deficit_hours_twh": 0.222,
+    "cc_depth_itm_median_usd_running": 9.47,
+    "cc_headroom_mean_mw_deficit_hours": 223.0
+   }
+  },
+  "CT_PEAKER@Capital_Hudson": {
+   "measured_twh": 0.001,
+   "model_twh": 0.006,
+   "D_twh": 0.001,
+   "deficit_hours": 57,
+   "unmet_no_headroom_twh": 0.0,
+   "bucket_share_of_filled": {
+    "A": 0.339,
+    "B": 0.661,
+    "C": 0.0
+   },
+   "bucket_share_with_zonal_premium": {
+    "A": 0.339,
+    "B": 0.661,
+    "C": 0.0
+   },
+   "bucket_C_charge_usd_per_mwh": {
+    "median": -0.0,
+    "p90": 0.0
+   },
+   "hourly_r_deficit_vs_cc_excess": 0.015,
+   "share_of_cc_excess_in_deficit_hours": 0.008,
+   "model_on_share": 0.008,
+   "meas_on_share": 0.007,
+   "M4_cheapest_unrun_in_deficit_hours": {
+    "mc_median": 58.31,
+    "model_price_median": 37.09,
+    "actual_rt_median": 40.85,
+    "fuel_median_usd_mmbtu": 2.341,
+    "heat_rate_median": 11.5,
+    "vom_median": 3.5,
+    "carbon_term_median": 12.42,
+    "markup_median": 15.15,
+    "fuel_x_hr_median": 25.99
+   },
+   "M5_cc_mirror": {
+    "cc_excess_in_deficit_hours_twh": 0.013,
+    "cc_depth_itm_median_usd_running": 10.26,
+    "cc_headroom_mean_mw_deficit_hours": 660.4
+   }
+  },
+  "ST_GAS@Capital_Hudson": {
+   "measured_twh": 1.629,
+   "model_twh": 0.52,
+   "D_twh": 1.188,
+   "deficit_hours": 2464,
+   "unmet_no_headroom_twh": 0.226,
+   "bucket_share_of_filled": {
+    "A": 0.244,
+    "B": 0.75,
+    "C": 0.006
+   },
+   "bucket_share_with_zonal_premium": {
+    "A": 0.248,
+    "B": 0.746,
+    "C": 0.006
+   },
+   "bucket_C_charge_usd_per_mwh": {
+    "median": 0.0,
+    "p90": 0.0
+   },
+   "hourly_r_deficit_vs_cc_excess": 0.389,
+   "share_of_cc_excess_in_deficit_hours": 0.517,
+   "model_on_share": 0.086,
+   "meas_on_share": 0.284,
+   "M4_cheapest_unrun_in_deficit_hours": {
+    "mc_median": 45.14,
+    "model_price_median": 39.93,
+    "actual_rt_median": 37.93,
+    "fuel_median_usd_mmbtu": 2.602,
+    "heat_rate_median": 10.695,
+    "vom_median": 4.0,
+    "carbon_term_median": 11.19,
+    "markup_median": 0.0,
+    "fuel_x_hr_median": 29.54
+   },
+   "M5_cc_mirror": {
+    "cc_excess_in_deficit_hours_twh": 0.904,
+    "cc_depth_itm_median_usd_running": 9.07,
+    "cc_headroom_mean_mw_deficit_hours": 600.1
+   }
+  },
+  "CT_PEAKER@Long_Island": {
+   "measured_twh": 0.645,
+   "model_twh": 0.11,
+   "D_twh": 0.569,
+   "deficit_hours": 4468,
+   "unmet_no_headroom_twh": 0.0,
+   "bucket_share_of_filled": {
+    "A": 0.167,
+    "B": 0.831,
+    "C": 0.002
+   },
+   "bucket_share_with_zonal_premium": {
+    "A": 0.232,
+    "B": 0.767,
+    "C": 0.002
+   },
+   "bucket_C_charge_usd_per_mwh": {
+    "median": 0.0,
+    "p90": 0.0
+   },
+   "hourly_r_deficit_vs_cc_excess": 0.118,
+   "share_of_cc_excess_in_deficit_hours": 0.531,
+   "model_on_share": 0.046,
+   "meas_on_share": 0.446,
+   "M4_cheapest_unrun_in_deficit_hours": {
+    "mc_median": 52.54,
+    "model_price_median": 38.98,
+    "actual_rt_median": 35.58,
+    "fuel_median_usd_mmbtu": 2.341,
+    "heat_rate_median": 9.0,
+    "vom_median": 3.5,
+    "carbon_term_median": 10.62,
+    "markup_median": 16.09,
+    "fuel_x_hr_median": 22.2
+   },
+   "M5_cc_mirror": {
+    "cc_excess_in_deficit_hours_twh": 0.203,
+    "cc_depth_itm_median_usd_running": 8.7,
+    "cc_headroom_mean_mw_deficit_hours": 142.5
+   }
+  },
+  "CT_CHP@Long_Island": {
+   "measured_twh": 0.528,
+   "model_twh": 0.081,
+   "D_twh": 0.452,
+   "deficit_hours": 8137,
+   "unmet_no_headroom_twh": 0.204,
+   "bucket_share_of_filled": {
+    "A": 0.107,
+    "B": 0.891,
+    "C": 0.002
+   },
+   "bucket_share_with_zonal_premium": {
+    "A": 0.19,
+    "B": 0.808,
+    "C": 0.002
+   },
+   "bucket_C_charge_usd_per_mwh": {
+    "median": 0.0,
+    "p90": 0.0
+   },
+   "hourly_r_deficit_vs_cc_excess": -0.122,
+   "share_of_cc_excess_in_deficit_hours": 0.939,
+   "model_on_share": 0.227,
+   "meas_on_share": 0.929,
+   "M4_cheapest_unrun_in_deficit_hours": {
+    "mc_median": 39.73,
+    "model_price_median": 34.74,
+    "actual_rt_median": 29.7,
+    "fuel_median_usd_mmbtu": 2.315,
+    "heat_rate_median": 10.897,
+    "vom_median": 3.5,
+    "carbon_term_median": 7.03,
+    "markup_median": 2.4,
+    "fuel_x_hr_median": 25.04
+   },
+   "M5_cc_mirror": {
+    "cc_excess_in_deficit_hours_twh": 0.358,
+    "cc_depth_itm_median_usd_running": 6.81,
+    "cc_headroom_mean_mw_deficit_hours": 176.4
+   }
+  },
+  "ST_GAS@Long_Island": {
+   "measured_twh": 5.34,
+   "model_twh": 2.987,
+   "D_twh": 2.415,
+   "deficit_hours": 8054,
+   "unmet_no_headroom_twh": 0.009,
+   "bucket_share_of_filled": {
+    "A": 0.107,
+    "B": 0.885,
+    "C": 0.007
+   },
+   "bucket_share_with_zonal_premium": {
+    "A": 0.201,
+    "B": 0.792,
+    "C": 0.007
+   },
+   "bucket_C_charge_usd_per_mwh": {
+    "median": 0.0,
+    "p90": 0.0
+   },
+   "hourly_r_deficit_vs_cc_excess": -0.027,
+   "share_of_cc_excess_in_deficit_hours": 0.915,
+   "model_on_share": 0.998,
+   "meas_on_share": 0.999,
+   "M4_cheapest_unrun_in_deficit_hours": {
+    "mc_median": 41.33,
+    "model_price_median": 34.2,
+    "actual_rt_median": 29.34,
+    "fuel_median_usd_mmbtu": 2.283,
+    "heat_rate_median": 11.1,
+    "vom_median": 4.0,
+    "carbon_term_median": 11.78,
+    "markup_median": -0.0,
+    "fuel_x_hr_median": 25.35
+   },
+   "M5_cc_mirror": {
+    "cc_excess_in_deficit_hours_twh": 0.349,
+    "cc_depth_itm_median_usd_running": 6.4,
+    "cc_headroom_mean_mw_deficit_hours": 180.9
+   }
+  }
+ },
+ "prereg": "results/calibration/PREREG-nyiso187-ct-steam-merit-position.md"
+}
