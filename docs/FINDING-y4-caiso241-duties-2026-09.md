@@ -149,8 +149,29 @@ On merge, the required set is the six `ci.yml` jobs — this lane added no job:
 is a completed `ci.yml` run whose fast-tier job succeeds, and this is one. Both
 tests named in the board's Y-4 context are green on this run.
 
-**One of the six is red on `main` content right now:** `Rule-22 quarantine gates`,
-on the NYISO `E11` of §4 — not this lane's, and not something this lane may touch
-(no keeper-shard edits). Flipping the required set before that clears would block
-every PR, so it is the one prerequisite left. The two duties this lane owed are
-discharged; the `E11` belongs to the nyiso-185 promotion lane.
+**TWO of the six are red on `main` content as of `8a18e9e1`, and BOTH belong to
+NYISO lanes, not this one.** Flipping the required set before they clear would
+block every PR.
+
+1. **`Rule-22 quarantine gates`** — the NYISO `E11` of §4
+   (`fossil_announced_exits_enabled` undeclared on `2026-09-04-nyiso-185-family-hr`).
+   The nyiso-185 promotion lane's; this lane may not touch keeper shards.
+2. **`Fast test tier`** — **NEW, and it appeared AFTER the run-2382 evidence
+   above.** `tests/unit/data/test_egrid_identity_heat_rates.py::TestCommittedArtifact::test_single_row_and_loyo_envelope`
+   fails `AssertionError: 2 != 1`. Cause, traced to the commit: `2ba0a29b`
+   (nyiso-186, merged to `main` as PR #4693 → `8a18e9e1`) re-derived
+   `egrid_identity_heat_rates_NYISO.csv` to add the merged-identity row
+   (57664 ↔ eGRID 55375, the Astoria Energy split) and did **not** update the
+   test asserting `len(df) == 1`. Artifact/test drift, reproduced locally on the
+   merged tree. This lane's diff touches neither the artifact nor the test, and
+   a test change is forbidden to it — the fix is the nyiso-186 lane's.
+
+**What this does and does not do to §4's leg-2 claim.** Run 2382's `Fast test
+tier` concluded **success**, and that remains a true statement about that run at
+that pin — leg 2's criterion was met and is not withdrawn. What has changed is
+flip *readiness*, which is a statement about `main` now: the fast tier is red on
+`main` content as of `8a18e9e1`, so the leg-2 evidence is a snapshot, not a
+standing guarantee. Reporting it otherwise would misrepresent the gate.
+
+The two duties this lane owed are discharged; both remaining blockers are other
+lanes'.
