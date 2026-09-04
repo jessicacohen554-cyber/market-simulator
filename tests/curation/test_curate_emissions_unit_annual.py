@@ -102,6 +102,27 @@ class TestCurateUnitAnnual(CleanDirRedirectMixin):
         df = pd.read_parquet(path)
         self.assertEqual(list(df["unit_id"]), ["ALL"])
 
+    def test_split_facility_unit_remap(self):
+        """A (facility, unit) in campd.CAMPD_UNIT_PLANT_REMAP lands on its EIA plant.
+
+        Astoria Energy II: CEMS files CT3 / CT4 under facility 55375 while
+        EIA-860 carries them under plant 57664 (nyiso-186 §3). The curate seam
+        must route them exactly as the plant-grain normalizer does, and leave
+        the facility's own units where they are.
+        """
+        raw = _raw_unit_48h()
+        raw["stateCode"] = "NY"
+        raw["facilityId"] = "55375"
+        ct1 = raw.copy()
+        ct3 = raw.copy()
+        ct3["unitId"] = "CT3"
+        pd.concat([ct1, ct3], ignore_index=True).to_parquet(
+            self.unit_dir / "NY_2018.parquet"
+        )
+        df = pd.read_parquet(curate_year(2018, unit_dir=self.unit_dir))
+        by_unit = dict(zip(df["unit_id"], df["plant_id"]))
+        self.assertEqual(by_unit, {"1": 55375, "CT3": 57664})
+
     def test_quarantined_year_refused(self):
         for yr in sorted(QUARANTINED_YEARS):
             with self.assertRaises(ValueError):

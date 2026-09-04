@@ -13,7 +13,10 @@ facility-grain rows keyed ``unit_id = "ALL"``. Standardization (masses to kg,
 heat in MMBtu) reuses the constants in ``src/market_sim/data/campd.py`` so
 there is one source of truth; the CO2 backfill and start-count conventions
 mirror ``campd._co2_total`` / ``campd._startup_factors`` (``gross_mw > 1 MW``
-off->on transitions on a gap-filled hourly clock).
+off->on transitions on a gap-filled hourly clock). The CEMS-to-EIA split-plant
+routing (``campd.CAMPD_UNIT_PLANT_REMAP``) is applied per ``(facility, unit)``
+at the same seam as the plant-grain normalizer, so a unit CEMS files under a
+sibling ORISPL lands on the EIA plant the fleet carries (nyiso-188).
 
 Quarantined holdout years (2022, H1-2026) are **hard-skipped** even though the
 files may sit on disk (CLAUDE.md rule 22): no quarantined-year row ever enters
@@ -42,6 +45,8 @@ import pandas as pd
 
 from market_sim.config import paths
 from market_sim.data.campd import (
+    _CAMPD_REMAP_FACILITY_IDS,
+    CAMPD_UNIT_PLANT_REMAP,
     DEFAULT_CO2_KG_PER_MMBTU,
     LB_TO_KG,
     SHORT_TON_TO_KG,
@@ -102,6 +107,25 @@ def _normalize_unit_hourly(raw: pd.DataFrame, year: int) -> pd.DataFrame:
     keep = plant_id.notna() & hour.notna()
     gross = pd.to_numeric(raw["grossLoad"], errors="coerce")
     if "unitId" in raw.columns:
+        # CEMS-to-EIA split-plant routing (campd.CAMPD_UNIT_PLANT_REMAP): a unit
+        # CEMS files under a legacy / sibling ORISPL is re-keyed to the EIA
+        # plant the fleet carries it under — the SAME registry, applied at the
+        # same point, as the plant-grain normalizer (campd._normalize_campd)
+        # and the outage / tranche / ramp derives, so every CAMPD-fed artifact
+        # routes one unit to one plant (rule 19 [R-ONE-MECH]; rule 14
+        # [R-ACCURATE]). Before this seam existed the v2 emission-rate artifact
+        # booked Astoria Energy II's CT3 / CT4 under facility 55375, so EIA
+        # plant 57664 carried no measured rate and priced CO2 at the
+        # heat-rate x fuel-factor default (nyiso-187 §3 footprint; nyiso-188).
+        fac = plant_id.fillna(-1).astype(int).to_numpy()
+        uid = raw["unitId"].astype(str).to_numpy()
+        remapped = fac.copy()
+        at_split = np.flatnonzero(np.isin(fac, _CAMPD_REMAP_FACILITY_IDS))
+        for i in at_split:
+            remapped[i] = CAMPD_UNIT_PLANT_REMAP.get((fac[i], uid[i]), fac[i])
+        plant_id = pd.Series(remapped, index=raw.index, dtype=float).where(
+            plant_id.notna()
+        )
         # Common-generator stack pairs: one generating unit monitored on two
         # flue paths, whose FULL grossLoad CAMPD repeats on both rows while
         # splitting heat and masses between them. Re-label the duplicate onto
