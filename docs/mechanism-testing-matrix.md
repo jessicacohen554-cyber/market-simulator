@@ -5503,6 +5503,34 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-209 (2026-09-04) — THE PARTIAL-DERATE SHAPE IS INERT BY
+> CONSTRUCTION, AND THE COAL-SIDE AVAILABILITY LANE IS CLOSED.** NO LP, NO KEEPER
+> MOVE, NO MECHANISM ARMED, NO FIELD, NO CELL VERDICT MOVED. Keeper UNCHANGED at
+> `2026-09-03-miso-202-unitclip`. PREREG pushed BLIND at `b7ed8e21` before the
+> extract was derived. (i) `derive_campd_unit_outages.py --partial-windows --iso
+> MISO` writes **0 rows**: the deriver detects 17 coal plateaus on 12 units (2025)
+> and `outage_detect.filter_revealed_outages` clause 1 drops every one, because a
+> unit on a partial plateau RUNS through its high-net-load hours and is thereby
+> "revealed available" — the partial window shape cannot emit a row for any ISO
+> with an EIA-930 net-load file (ERCOT/CAISO/NEISO zeros explained; PJM's
+> committed 76 rows NOT reproducible at HEAD). Director's item: a
+> plateau-specific clause, cross-ISO A/B. (ii) With the filter off (diagnostic,
+> scratchpad) the frozen form carries **0.265 GW** on the shoulder days vs the
+> [3.4, 7.05] bracket (share 0.009; tail 0.002); windows remove 8.25 GW of coal,
+> the statistical layer 1.77; the shallow sub-ceiling residual is **1.63 GW = the
+> statistical layer** — no additive object exists. (iii) R-208: the coal-side
+> excess is **+1.3 to +3.4 GW** (CAMPD net-adjusted vs EIA-930; 31/46 plants
+> gross-only); its whole reach re-priced is **13–34 % of the shoulder, 5–13 % of
+> the tail** — clears 25 % in one population on one basis only; REFUSED under the
+> both-populations line. What remains for the shoulder, none reaching 25 %: the
+> max-gen clock repair (own A/B), the RDT S→N binding state (4.8 %), the deriver
+> clause (director). Records:
+> `FINDING-miso209-partial-shape-is-inert-by-construction-2026-09-04.md`,
+> `PREREG-miso209-partial-derate-phase0-2026-09-04.md`,
+> `_miso209_partial_derate_phase0.json`, `_miso209_coal_side_reach_ceiling.json`,
+> `scripts/probes/_miso209_partial_derate_phase0.py`,
+> `data/raw/campd-partial-outages-MISO.csv` (0 rows) + `.meta.json`.
+
 > **QUEUE STAMP miso-208 (2026-09-04) — THE 8–11 GW HUNT: THE MARKET RAN THE
 > MODEL'S CT FLEET TO 0.02 GW, 3 GW LESS COAL AND 8 GW MORE GAS; THE MODEL'S
 > SURPLUS IS ~5 GW OF COAL-SIDE AVAILABILITY; NOTHING CHARTERED, NO SOLVE.** NO
