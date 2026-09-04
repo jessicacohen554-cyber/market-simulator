@@ -121,6 +121,11 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO",
         "DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO",
         "DEMAND_RESPONSE_SUPPLY_HOLD_LAST_RATIO_BY_ISO",
+        # capx D52 (2026-09-04): NYISO adequacy-requirement devintage registries
+        # (NYSRC Table D.2 forecast peak / adopted IRM / derate per capability year)
+        "NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO",
+        "NYCA_IRM_ADOPTED_BY_ISO",
+        "NYCA_ICAP_UCAP_TRANSLATION_BY_ISO",
         "NONFOSSIL_ANNOUNCED_HORIZON_YEARS",
         "PJM_RGGI_ZONE_SHARE",
         "PLANNING_RESERVE_MARGIN_BY_ISO",
