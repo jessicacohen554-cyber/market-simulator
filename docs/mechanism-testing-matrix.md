@@ -10470,9 +10470,81 @@ is now the live queue head.**)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — **KEEPER 2026-09-04 (nyiso-185): `2026-09-04-nyiso-185-family-hr` — the nyiso-177 recipe plus `egrid_family_heat_rates` (eGRID prime-mover-family heat rates at multi-family plants, the measured zero-parameter replacement for the `MIXED_FACILITY_STEAM_HR` hand number where it covers; ZERO new DOF entries, G-DELTA one field, control BIT-IDENTICAL to the superseded keeper). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, at full magnitude — determination NOT-YET, target grade 5, fail set {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c} → **{C1-2024 `CC_REGULAR` share +3.87 TWh / 3.18 pp, C3a-2025 −10.5 %, C3c}**: the 2023 `ST_GAS` cell open since nyiso-177 PASSES (+2.16 TWh) and the class absorbing Ravenswood's released steam volume crosses its 2024 share band. Evidence: `docs/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md`, `PREREG-nyiso185-stgas-family-hr-ab.md`, the bundle's computed `calibration_attestation.json`. **PRIOR (nyiso-177) HEADER PRESERVED BELOW.**
+### 5.5 NYISO — **KEEPER 2026-09-04 (nyiso-186): `2026-09-04-nyiso-186-astoria-identity` — the nyiso-185 recipe with the re-derived `egrid_identity_heat_rates` artifact (the identity derive's new MERGED-identity leg: Astoria Energy II 57664 ↔ eGRID 55375, pooled 7.3792 over seven exact vintages, replacing the `gas_cc` f-class default 6.70; ZERO `scenario_config` changes, ZERO new DOF entries, control BIT-IDENTICAL to the superseded keeper). PROMOTED BY OWNER RULING on rule 14 `[R-ACCURATE]` + rule 1 `[R-STRUCT]` WITH NO GATE REGRESSION — determination NOT-YET, target grade 5, fail set UNCHANGED **{C1-2024 `CC_REGULAR` share +3.80 TWh / 3.1 pp, C3a-2025 −10.4 %, C3c}**, every scored number moved toward actual or unchanged. Evidence: `docs/FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md`, `PREREG-nyiso186-cc-regular-2024-class.md`, `_nyiso186_cc_attribution.json`, the bundle's computed `calibration_attestation.json`. **PRIOR (nyiso-185) HEADER PRESERVED BELOW.**
+
+*(Prior header, nyiso-185, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-04 (nyiso-185): `2026-09-04-nyiso-185-family-hr` — the nyiso-177 recipe plus `egrid_family_heat_rates` (eGRID prime-mover-family heat rates at multi-family plants, the measured zero-parameter replacement for the `MIXED_FACILITY_STEAM_HR` hand number where it covers; ZERO new DOF entries, G-DELTA one field, control BIT-IDENTICAL to the superseded keeper). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, at full magnitude — determination NOT-YET, target grade 5, fail set {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c} → **{C1-2024 `CC_REGULAR` share +3.87 TWh / 3.18 pp, C3a-2025 −10.5 %, C3c}**: the 2023 `ST_GAS` cell open since nyiso-177 PASSES (+2.16 TWh) and the class absorbing Ravenswood's released steam volume crosses its 2024 share band. Evidence: `docs/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md`, `PREREG-nyiso185-stgas-family-hr-ab.md`, the bundle's computed `calibration_attestation.json`. **PRIOR (nyiso-177) HEADER PRESERVED BELOW.**
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
+
+**LEVER QUEUE — REWRITTEN 2026-09-04 (nyiso-186 `cc-regular-2024-class` lane,
+TWO SOLVES; THE 2024 `CC_REGULAR` EXCESS IS ATTRIBUTED BY PLANT AND BY
+MECHANISM ON THE KEEPER'S OWN UNIT-HOURLY DISPATCH, AND THE ONE MEASURED-DATA
+DEFECT FOUND ON THE INPUTS IS REPAIRED, A/B-SOLVED AND PROMOTED). Keeper
+`2026-09-04-nyiso-186-astoria-identity`; determination NOT-YET, grade 5, fails
+3, fail set unchanged {C1-2024 `CC_REGULAR` share, C3a-2025 −10.4 %, C3c}.**
+
+* **WHAT THE ATTRIBUTION SAYS (PREREG-nyiso186 §3, bars fixed before
+  measurement; control bit-identical to the keeper, 0 of 52,560 prices differ
+  in every year).** The excess is CONCENTRATED at the same three plants every
+  year — Cricket Valley 57185, Zeltmann 56196, Astoria Energy II 57664 (C3
+  0.875 / **0.745** / 0.853) — and **no plant-level bar fires** at any of them
+  (rate-to-meter `r` 1.031 / 1.036 inside the peers' band; phantom capacity
+  not the energy being run; availability inside the band; 57664 untestable
+  on conduct). The gas FAMILY is EXACT (67.80 vs EIA-930 67.80 TWh, 2024), so
+  the class's +3.87 is the within-family fill of `CT_PEAKER` −1.66, `CT_CHP`
+  −1.29 and `ST_GAS` −1.09, landing on the cheapest available NYC /
+  Capital-Hudson CCs — Zeltmann loaded 0.96 when on against a 0.68 meter,
+  Cricket Valley on 0.995 of hours against 0.878; Athens and Valley track
+  their meters. **The M4 / M5 bands were too loose to fire on anything**
+  (floor set by Flynn 0.707 and Carr Street 0.816, plants whose two rate
+  bases disagree by 30–40 %) — reported as a defect of the bars, not moved.
+* **TOP OF QUEUE = THE CT-CLASS AND STEAM DEFICITS IN THE NYC /
+  CAPITAL-HUDSON MERIT ORDER, SEEN FROM THE RECEIVING END.** The 2024
+  `CC_REGULAR` cell closes only when the classes that should take those
+  hours do (`CT_PEAKER` −1.66 / `CT_CHP` −1.29: nyiso-175's two objects;
+  `ST_GAS` −1.09: nyiso-181's other-ten-plant deficit). Whether the CCs are
+  too cheap or the CTs / steam too dear in those zones is a merit-POSITION
+  question between classes (the delivered-gas basis by zone, the CT
+  committed / start economics, the steam offer position) — NEVER a CC
+  volume lever, NEVER a band move.
+* **THE ASTORIA REGISTRY SPLIT'S AVAILABILITY HALF (sized, not repaired;
+  own A/B on the outage-derive lane).** The `perunitmerit` extract routes
+  all four CEMS units of facility 55375 to EIA plant 55375 (CT1 / CT2 297.5
+  MW, CT3 / CT4 313.0 MW, plant denominator 1,221 MW): Astoria Energy II is
+  never derated and Astoria Energy I is derated for its sibling's outages;
+  the tranche artifact reads 55375 at a 150 % median CF; 2025 shows +2.65 TWh
+  at 57664 on an outage the model cannot see. Repair form: route CT3 / CT4 →
+  57664 in the outage derive's crosswalk (the caiso-196 `CAMPD_UNIT_PLANT_REMAP`
+  precedent — but `scripts/lib/outage_detect.py` reads the raw parquets, so
+  `_normalize_campd`'s remap does not reach it), then re-derive the extract,
+  its lay-up companion and the tranche artifact, each citing the data change.
+* **`cc_capacity_reconcile` (cell U → annotated).** H-B1 fires at Zeltmann in
+  2023 / 2025 (not the scored 2024 cell); the committed 14-row table caps
+  Zeltmann 737 → 560, Cricket Valley 1,312.5 → 1,086.9, Athens 1,221.6 →
+  1,064.7. A registered flag with a measured artifact — its own
+  pre-registered A/B.
+* **BETHLEHEM 2539 (sized, not repaired).** eGRID `PLHTRT` 6.87 (2018–21) →
+  8.26 → **9.67 (2023, applied)** → 10.44 while CAMPD's per-unit running HR
+  reads 10.0–10.2 in 2022–23 and 6.6–7.1 in 2024–25 with 2022–23 gross BELOW
+  EIA-923 net — a CEMS reporting regime change. Priced at 9.665 every year:
+  −2.28 TWh in 2023 (cancelling inside the class total), loading 0.56 vs 0.75
+  when on in 2024. A vintage-robust identity is the instrument; opposite in
+  sign to the 2024 object.
+* **UNCHANGED / NOT OPENED:** C3a-2025 (owner-court); the Astoria
+  merit-panel stack-duplicate defect (nyiso-184 §4.1); the D-2 / C8 grain
+  under-count escalation (nyiso-181 §6; `ST_GAS` 2024 C8 0.252); the
+  availability route at Ravenswood (DO-NOT-REDO).
+* Evidence: `docs/FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md`,
+  `results/calibration/PREREG-nyiso186-cc-regular-2024-class.md` (pushed at
+  `3d9747aa` before the first per-plant measurement; §7 addendum at
+  `d926bf48` before the derive ran), `_nyiso186_cc_attribution.json`, probe
+  `scripts/probes/nyiso186_cc_attribution.py`, `scripts/gen_nyiso186_attestation.py`,
+  the arm bundle `results/calibration/nyiso186_astoria_identity`
+  (attestation `computed_checks`, `metrics.json`, `legitimacy_diagnostics.json`).
+
+**PRIOR QUEUE (nyiso-185) PRESERVED BELOW — its top-of-queue bullet (the 2024
+`CC_REGULAR` over-run as a class object) is DISCHARGED by the attribution
+above; everything else stands.**
 
 **LEVER QUEUE — REWRITTEN 2026-09-04 (nyiso-185 `stgas-family-hr-ab` lane,
 TWO SOLVES; THE OWNER-AUTHORIZED FAMILY HEAT-RATE A/B IS SOLVED AND THE ARM

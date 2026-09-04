@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-04-nyiso-186-astoria-identity",
+  "label": "nyiso 186 astoria identity",
+  "date": "2026-09-04",
+  "shorthand": "nyiso-186-astoria-identity",
+  "definition": "nyiso-186 ARM: the nyiso-185 keeper recipe (replay, ZERO scenario_config changes) with the re-derived egrid_identity_heat_rates artifact — MERGED-identity leg puts Astoria Energy II 57664 on eGRID 55375's pooled 7.3792 MMBtu/MWh in place of the gas_cc class default 6.70; PREREG-nyiso186-cc-regular-2024-class §7",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-04-nyiso-186-astoria-identity.js",
+  "bundle": "results/calibration/nyiso186_astoria_identity"
+}
