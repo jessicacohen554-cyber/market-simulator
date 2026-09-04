@@ -5947,7 +5947,20 @@ your branch when done.
   `Cache-key registration guard`, `Rule-22 quarantine gates` all **green**;
   **`Fast test tier` red**, on the two caiso-241 duties. Recorded without
   recommending deferral — R-AB is the owner's ruling and stands; what moved is the
-  measurement under it, taken 56 commits later. **Leg 4 re-measured 30-for-30 a
+  measurement under it, taken 56 commits later. **R-AB SECOND BLOCKER, NEW AND
+  DEMONSTRATED: H-1's path-filter trap applies to ALL FIVE required checks, not
+  just `file-integrity-guard`.** `ci.yml`'s `pull_request` trigger is
+  path-filtered and **`docs/**` is not among its paths**; all five checks R-AB
+  names are `ci.yml` jobs, so on a docs-only PR none of the five ever reports and
+  GitHub holds a never-reporting required check as **pending**, not passed. This
+  lane's own PR **#4667** proves it: two files, both under `docs/`, **one** check
+  run in total (`shrink-guard`, `success`) and **zero `ci.yml` jobs**. Under R-AB
+  as written it — and every future records refresh, board/plan edit and handoff
+  doc — would sit pending on five checks forever. H-1's remedy applies one level
+  wider: **a widened filter or an always-run no-op job, never a weaker required
+  set.** Attached to Y-1 as its second blocker; both blockers are small, neither
+  is a program item, and neither is a reason to defer the flip once cleared.
+  **Leg 4 re-measured 30-for-30 a
   THIRD time** on a third distinct run set (2342–2371, all `pull_request`, all
   `failure`). **Leg 1 SATISFIED** (golden tier run #9 `33704730253` `success`,
   still newest of 9; cron confirmed removed — `workflow_dispatch:` only).
