@@ -537,6 +537,37 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         finding="docs/FINDING-fr22-gap-leg2-2026-09.md",
         evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_par_attribution.py"),
     ),
+    # Same fork class again, one keeper later: armed by the caiso-241 promotion
+    # (2026-09-03, #4663) whose lane left the FR-22 duty undischarged. Filed by
+    # the Y-4 audit lane under the R-X route.
+    #
+    # BACKCAST_ONLY IS NOT AVAILABLE HERE, and the reason is the code's, not
+    # this row's: the field is DELIBERATELY absent from
+    # scenarios._BACKCAST_ONLY_OVERLAY_FIELDS, and its docstring states the
+    # positive claim -- `avg_committed_p50` is a measured PHYSICAL heat-rate
+    # ratio that regenerates for a forward year from CAMPD conduct and responds
+    # to fleet change, so it is rule-13 [R-MEASURED] admissible in BOTH modes
+    # (unlike its caiso-240 sibling caiso_st_gas_peak_measured, which IS
+    # registered there as measured BID conduct keyed to one year's OASIS
+    # record). A BACKCAST_ONLY row would assert a non-regenerability the code
+    # denies. PARAMETER_OF is unavailable too: the block requires no other
+    # CAISO offer-surface flag armed, is band-disjoint from all of them
+    # (`committed` only), and is applied LAST so it wins over them.
+    ParityDeclaration(
+        fields=("caiso_ct_peaker_committed_measured",),
+        disposition=GAP,
+        why="caiso-241 CT_PEAKER `committed` band grounded on its own measured "
+        "phys_committed (0.991 avg_committed_p50, n = 75) in place of the "
+        "fitted 1.35 — armed in the CAISO keeper and consumed only in "
+        "pipeline/backcast_config.py, the backcast config builder, exactly "
+        "like its caiso_offer_surface_measured sibling: the CAISO per-ISO "
+        "merge curve and every substitution into it live there, so a forecast "
+        "on the keeper config records the flag armed and still prices the "
+        "min-load block at 1.35. Wire-forward vs an evidenced BACKCAST_ONLY "
+        "is the forecast desk's call (owner ruling R-X), not this row's",
+        finding="docs/FINDING-caiso-ct-peaker-committed-measured-parity-2026-09.md",
+        evidence=("src/market_sim/pipeline/backcast_config.py",),
+    ),
 )
 
 

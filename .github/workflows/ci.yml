@@ -66,6 +66,35 @@ on:
       - "docs/codebase-site/data/mechanism-matrix/**"
       - "CLAUDE.md"
       - ".github/workflows/ci.yml"
+      # THE PATH-FILTER TRAP (audit rulings R-AB / R-AE, 2026-09-04; board v24
+      # addendum; H-1's remedy). GitHub's rule, verbatim from "Handling skipped
+      # but required checks": a workflow SKIPPED BY PATH FILTERING leaves its
+      # checks "Pending", and a PR requiring them is blocked from merging — but
+      # a JOB skipped by a CONDITIONAL reports "Success". So once the owner
+      # makes this file's six jobs required, a PR touching only paths absent
+      # from this list shows those checks pending FOREVER. Records and finding
+      # PRs are exactly that shape, so the three paths below are enrolled: they
+      # now run CI (~10 min of billed runner minutes per such PR) instead of
+      # deadlocking.
+      #
+      # WHY NOT A PASSTHROUGH WORKFLOW. The alternative considered was a second
+      # always-run workflow whose one echo job stands in for the skipped CI.
+      # GitHub's own workaround is narrower than that: the second workflow must
+      # carry THE SAME `name:` KEY AND THE SAME REQUIRED JOB NAMES as the first,
+      # with the INVERSE path filter. A passthrough job under a NEW name only
+      # adds a seventh always-green check; the six required ones still never
+      # report, so docs-only PRs stay blocked. Building the name-matching
+      # version instead means an inverse filter maintained in lockstep with this
+      # list, and six jobs that report green having tested nothing — a false
+      # green by construction. That is an owner decision, not a lane's, so this
+      # widens the filter rather than weakening what "green" means. The required
+      # set is NOT touched either way.
+      #
+      # Deliberately NOT `docs/**`: running the suite on every docs PR is the
+      # runner-minute cost the repo CI policy exists to avoid.
+      - "docs/handoffs/audit-program-director-board-2026-08.md"
+      - "docs/model-audit-release-plan-2026-08.md"
+      - "docs/FINDING-*.md"
 
 permissions:
   contents: read
