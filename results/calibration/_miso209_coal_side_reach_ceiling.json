@@ -1,0 +1,93 @@
+{
+ "note": "POST-HOC reach ceiling of the whole coal-side object: a UNIFORM removal of X GW re-priced up the keeper idle census (miso-208 engine), X = the coal-side excess on each basis (1.34 dispatch vs CAMPD net-adj; 1.83 capability vs CAMPD net-adj; 3.43 dispatch vs EIA-930; 4.94 MOM feasibility-clipped)",
+ "lifts": {
+  "1.34": {
+   "SHOULDER": {
+    "removal_gw_mean": 1.34,
+    "removal_gw_p50": 1.34,
+    "lift_usd_mean": 3.758,
+    "lift_usd_p50": 1.195,
+    "lift_usd_p90": 4.755,
+    "hours_lifted_over_5": 30,
+    "share_of_gap": 0.0859,
+    "reaches_25pct": false
+   },
+   "TAIL": {
+    "removal_gw_mean": 1.34,
+    "removal_gw_p50": 1.34,
+    "lift_usd_mean": 19.974,
+    "lift_usd_p50": 6.518,
+    "lift_usd_p90": 56.18,
+    "hours_lifted_over_5": 9,
+    "share_of_gap": 0.0314,
+    "reaches_25pct": false
+   }
+  },
+  "1.83": {
+   "SHOULDER": {
+    "removal_gw_mean": 1.83,
+    "removal_gw_p50": 1.83,
+    "lift_usd_mean": 5.733,
+    "lift_usd_p50": 1.639,
+    "lift_usd_p90": 6.561,
+    "hours_lifted_over_5": 42,
+    "share_of_gap": 0.1311,
+    "reaches_25pct": false
+   },
+   "TAIL": {
+    "removal_gw_mean": 1.83,
+    "removal_gw_p50": 1.83,
+    "lift_usd_mean": 29.773,
+    "lift_usd_p50": 19.148,
+    "lift_usd_p90": 76.326,
+    "hours_lifted_over_5": 9,
+    "share_of_gap": 0.0467,
+    "reaches_25pct": false
+   }
+  },
+  "3.43": {
+   "SHOULDER": {
+    "removal_gw_mean": 3.43,
+    "removal_gw_p50": 3.43,
+    "lift_usd_mean": 14.996,
+    "lift_usd_p50": 3.245,
+    "lift_usd_p90": 24.839,
+    "hours_lifted_over_5": 112,
+    "share_of_gap": 0.3429,
+    "reaches_25pct": true
+   },
+   "TAIL": {
+    "removal_gw_mean": 3.43,
+    "removal_gw_p50": 3.43,
+    "lift_usd_mean": 83.302,
+    "lift_usd_p50": 42.174,
+    "lift_usd_p90": 245.325,
+    "hours_lifted_over_5": 15,
+    "share_of_gap": 0.1308,
+    "reaches_25pct": false
+   }
+  },
+  "4.94": {
+   "SHOULDER": {
+    "removal_gw_mean": 4.94,
+    "removal_gw_p50": 4.94,
+    "lift_usd_mean": 26.189,
+    "lift_usd_p50": 5.1,
+    "lift_usd_p90": 47.817,
+    "hours_lifted_over_5": 189,
+    "share_of_gap": 0.5989,
+    "reaches_25pct": true
+   },
+   "TAIL": {
+    "removal_gw_mean": 4.94,
+    "removal_gw_p50": 4.94,
+    "lift_usd_mean": 138.716,
+    "lift_usd_p50": 104.454,
+    "lift_usd_p90": 348.371,
+    "hours_lifted_over_5": 15,
+    "share_of_gap": 0.2178,
+    "reaches_25pct": false
+   }
+  }
+ }
+}
