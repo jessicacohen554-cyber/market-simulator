@@ -1,0 +1,173 @@
+{
+  "session": "nyiso-185",
+  "prereg": "results/calibration/PREREG-nyiso185-stgas-family-hr-ab.md",
+  "G0": {
+    "base_st_off": 9.5,
+    "base_cc_off": 8.8005,
+    "rows_moved": 64,
+    "plants_moved": [
+      2490,
+      2500,
+      2511,
+      2516,
+      2517,
+      8906,
+      50292
+    ],
+    "plants_outside_footprint": [],
+    "st_ratio_on_over_off": [
+      1.29387
+    ],
+    "st_ratio_expected": 1.29387,
+    "cc_ratio_on_over_off": [
+      0.83517
+    ],
+    "cc_ratio_expected": 0.83517,
+    "mw_moved": 6335.0,
+    "fires": true
+  },
+  "G1": {
+    "peers": {
+      "2480": {
+        "name": "Danskammer",
+        "units": [
+          "4",
+          "2",
+          "1",
+          "3"
+        ],
+        "F_H": 1.0706605399653704,
+        "F_B": 1.0,
+        "F_D_st_family": 1.0477430103608059,
+        "plant_PLNGENAN_over_campd_gross_all_units": 0.9555257404094614
+      },
+      "2490": {
+        "name": "Arthur Kill",
+        "units": [
+          "30",
+          "20"
+        ],
+        "F_H": 1.0081950162018884,
+        "F_B": 1.0,
+        "F_D_st_family": 1.0710901518323455,
+        "plant_PLNGENAN_over_campd_gross_all_units": 0.9335050182530686
+      },
+      "2511": {
+        "name": "E F Barrett",
+        "units": [
+          "10",
+          "20"
+        ],
+        "F_H": 1.0020735043444924,
+        "F_B": 0.9999999999999999,
+        "F_D_st_family": 1.0674795508345232,
+        "plant_PLNGENAN_over_campd_gross_all_units": 0.9358122573723097
+      },
+      "2516": {
+        "name": "Northport",
+        "units": [
+          "3",
+          "4",
+          "2",
+          "1"
+        ],
+        "F_H": 1.006856071941193,
+        "F_B": 1.0,
+        "F_D_st_family": 1.0703353410058891,
+        "plant_PLNGENAN_over_campd_gross_all_units": 0.9342397282066155
+      },
+      "2517": {
+        "name": "Port Jefferson",
+        "units": [
+          "4",
+          "3"
+        ],
+        "F_H": 1.0188361807940463,
+        "F_B": 1.0,
+        "F_D_st_family": 1.1122906386228293,
+        "plant_PLNGENAN_over_campd_gross_all_units": 0.8884789770199407
+      },
+      "2527": {
+        "name": "Greenidge",
+        "units": [
+          "6"
+        ],
+        "F_H": 1.0005635818326972,
+        "F_B": 1.0,
+        "F_D_st_family": 1.0662505047138673,
+        "plant_PLNGENAN_over_campd_gross_all_units": 0.9378659101018237
+      },
+      "2625": {
+        "name": "Bowline Point",
+        "units": [
+          "2",
+          "1"
+        ],
+        "F_H": 1.015301781432659,
+        "F_B": 1.0,
+        "F_D_st_family": 1.0430869314800033,
+        "plant_PLNGENAN_over_campd_gross_all_units": 0.9586928661651732
+      },
+      "8006": {
+        "name": "Roseton",
+        "units": [
+          "2",
+          "1"
+        ],
+        "F_H": 1.033472151857402,
+        "F_B": 1.0,
+        "F_D_st_family": 1.0832529032659797,
+        "plant_PLNGENAN_over_campd_gross_all_units": 0.9231454602937372
+      }
+    },
+    "G1a_peer_F_H_range": [
+      1.0005635818326972,
+      1.0706605399653704
+    ],
+    "G1a_ravenswood_F_H": 1.0292862122841322,
+    "G1b_ravenswood_F_B": 1.0,
+    "G1c_peer_plant_net_over_gross_range": [
+      0.8884789770199407,
+      0.9586928661651732
+    ],
+    "G1c_ravenswood_plant_net_over_gross": 0.9482201169571767,
+    "G1a": true,
+    "G1b": true,
+    "G1c": true,
+    "fires": true,
+    "G1d_reported": {
+      "F_D_st_family": 1.1153148399004673,
+      "F_D_cc_family": 1.0294474196982575,
+      "per_generator": {
+        "gen 1 / unit 10": {
+          "net_over_gross": 0.9128961042648646,
+          "cf_2023": 0.08375665905631659
+        },
+        "gen 2 / unit 20": {
+          "net_over_gross": 0.9331022346418117,
+          "cf_2023": 0.06812146841604318
+        },
+        "gen 3 / unit 30": {
+          "net_over_gross": 0.8624085297657723,
+          "cf_2023": 0.04162033958416456
+        }
+      },
+      "peers_F_D_st_family": {
+        "2480": 1.0477430103608059,
+        "2490": 1.0710901518323455,
+        "2511": 1.0674795508345232,
+        "2516": 1.0703353410058891,
+        "2517": 1.1122906386228293,
+        "2527": 1.0662505047138673,
+        "2625": 1.0430869314800033,
+        "8006": 1.0832529032659797
+      }
+    }
+  },
+  "G3_rule19_code_check": {
+    "2500_in_campd_ct_heat_rates": false,
+    "2500_in_chp_power_only_heat_rates": false,
+    "2500_in_egrid_identity_heat_rates": false,
+    "note": "grep -c '^2500,' on the three artifacts = 0 each (2026-09-04); the dict skip is exercised by G0 (ST rows scale from 9.5, not 8.80)"
+  }
+}
