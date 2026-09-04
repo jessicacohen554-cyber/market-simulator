@@ -561,5 +561,2020 @@
     "n_failed": 0
    }
   ]
+ },
+ {
+  "run": "pjm-2021-2025-realized-t1h-d45r",
+  "iso": "PJM",
+  "cache_key": "c6091bd5b62bbc3f",
+  "rows": [
+   {
+    "year": 2021,
+    "bridge": false,
+    "peak_mw": 149590.0,
+    "requirement_mw": 130295.367,
+    "firm_after_mw": 148039.49965,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": 1.1361839108983822,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.0417230892249945,
+    "pub_pos_offered": 1.1873712785781452,
+    "curve_price_at_pub_pos": 57.36953815162182,
+    "real_price": 51.1,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 0,
+    "entry_diag_capacity_terms": [],
+    "thermal_additions": [],
+    "storage_firm_mw": 3801.526,
+    "wind_cap_mw": 10153.9,
+    "solar_cap_mw": 4549.8,
+    "firm_clean_accredited_mw": 1247.806
+   },
+   {
+    "year": 2022,
+    "bridge": true,
+    "peak_mw": null,
+    "requirement_mw": null,
+    "firm_after_mw": null,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": null,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.0510375261163845,
+    "pub_pos_offered": 1.2199654303456382,
+    "curve_price_at_pub_pos": 20.86492632760584,
+    "real_price": 18.25,
+    "retire_events_mw_by_fuel": {
+     "oil": 51.2,
+     "biomass": 8.399999999999999,
+     "gas_st": 42.95833333333332,
+     "coal": 3301.425,
+     "gas_cc": 74.575
+    },
+    "pipeline_events_mw": {
+     "decided:coal": 11415.039000000002,
+     "entry_capped:coal": 10999.369999999999,
+     "entry_capped:gas_st": 9464.454999999993,
+     "entry_capped:gas_cc": 26795.514399999996,
+     "entry_capped:oil": 4136.500000000026,
+     "entry_capped:gas_ct": 25791.07000000002
+    },
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [
+     0.0
+    ],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0
+    ],
+    "thermal_additions": [
+     [
+      "gas_cc",
+      356.8
+     ],
+     [
+      "gas_cc",
+      356.8
+     ],
+     [
+      "gas_cc",
+      354.4
+     ],
+     [
+      "gas_cc",
+      612.0
+     ],
+     [
+      "gas_cc",
+      612.0
+     ],
+     [
+      "gas_cc",
+      612.0
+     ]
+    ],
+    "storage_firm_mw": null,
+    "wind_cap_mw": null,
+    "solar_cap_mw": null,
+    "firm_clean_accredited_mw": null
+   },
+   {
+    "year": 2023,
+    "bridge": false,
+    "peak_mw": 147605.0,
+    "requirement_mw": 128566.399,
+    "firm_after_mw": 146228.288165,
+    "pos_entering_ledger": 1.139822,
+    "pos_entering_identity": 1.151463374578921,
+    "pos_after": 1.137375623042845,
+    "curve_price_at_model_entering": 0.0,
+    "pub_pos": 1.0552044372739755,
+    "pub_pos_offered": 1.1407443286729333,
+    "curve_price_at_pub_pos": 15.302490765642727,
+    "real_price": 12.457450000000001,
+    "retire_events_mw_by_fuel": {
+     "coal": 1005.9999999999999,
+     "gas_st": 790.0
+    },
+    "pipeline_events_mw": {
+     "re_confirmed:coal": 11415.039,
+     "entry_capped:coal": 10999.369999999999,
+     "entry_capped:gas_st": 9464.454999999993,
+     "entry_capped:gas_cc": 27187.514399999996,
+     "entry_capped:gas_ct": 25789.970000000023
+    },
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [
+     0.0
+    ],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0
+    ],
+    "thermal_additions": [
+     [
+      "gas_cc",
+      607.0
+     ],
+     [
+      "gas_cc",
+      607.0
+     ]
+    ],
+    "storage_firm_mw": 3801.526,
+    "wind_cap_mw": 10153.9,
+    "solar_cap_mw": 4549.8,
+    "firm_clean_accredited_mw": 1249.25
+   },
+   {
+    "year": 2024,
+    "bridge": false,
+    "peak_mw": 153121.0,
+    "requirement_mw": 133370.926,
+    "firm_after_mw": 137425.944379,
+    "pos_entering_ledger": 1.096403,
+    "pos_entering_identity": 1.0964030358835477,
+    "pos_after": 1.0304040655682332,
+    "curve_price_at_model_entering": 0.0,
+    "pub_pos": 1.0555098698924799,
+    "pub_pos_offered": 1.1262484531884176,
+    "curve_price_at_pub_pos": 14.46466182372309,
+    "real_price": 10.555800000000001,
+    "retire_events_mw_by_fuel": {
+     "coal": 11659.039
+    },
+    "pipeline_events_mw": {
+     "re_confirmed:coal": 11415.039,
+     "entry_capped:coal": 23814.356999999993,
+     "entry_capped:gas_st": 9464.454999999996,
+     "entry_capped:gas_cc": 23925.440900000005,
+     "entry_capped:oil": 4136.499999999999,
+     "entry_capped:gas_ct": 25791.069999999996,
+     "executed:coal": 11415.039000000004
+    },
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [
+     0.0
+    ],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": 3801.526,
+    "wind_cap_mw": 11653.9,
+    "solar_cap_mw": 6990.4,
+    "firm_clean_accredited_mw": 1254.266
+   },
+   {
+    "year": 2025,
+    "bridge": false,
+    "peak_mw": 160560.0,
+    "requirement_mw": 144631.784,
+    "firm_after_mw": 138008.86632,
+    "pos_entering_ledger": 0.961718,
+    "pos_entering_identity": 0.9501780354102525,
+    "pos_after": 0.9542084215735042,
+    "curve_price_at_model_entering": 164.83765,
+    "pub_pos": 1.0048924853025476,
+    "pub_pos_offered": 1.0049539561290857,
+    "curve_price_at_pub_pos": 104.47894554655875,
+    "real_price": 98.52080000000001,
+    "retire_events_mw_by_fuel": {
+     "biomass": 1.0
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     98902.6,
+     121979.9
+    ],
+    "thermal_additions": [
+     [
+      "gas_ct",
+      1012.8
+     ]
+    ],
+    "storage_firm_mw": 3801.526,
+    "wind_cap_mw": 11653.9,
+    "solar_cap_mw": 9431.0,
+    "firm_clean_accredited_mw": 1254.266
+   }
+  ],
+  "counterfactual_at_published_position": [
+   {
+    "year": 2021,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0417230892249945,
+    "price_counterfactual": 57.36953815162182,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2022,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0510375261163845,
+    "price_counterfactual": 20.86492632760584,
+    "failed_mw": 88601.94839999992,
+    "saved_mw": 17911.2421,
+    "saved_by_fuel": {
+     "coal": 14686.677000000001,
+     "gas_cc": 3224.5651000000003
+    },
+    "saved_by_event": {
+     "entry_capped:coal": 6216.729,
+     "entry_capped:gas_cc": 3224.5651000000003,
+     "decided:coal": 8469.948
+    },
+    "failed_by_event": {
+     "decided": 11415.039000000002,
+     "entry_capped": 77186.9093999999
+    },
+    "n_failed": 1211
+   },
+   {
+    "year": 2023,
+    "pos_model": 1.139822,
+    "price_model": 0.0,
+    "pos_counterfactual": 1.0552044372739755,
+    "price_counterfactual": 15.302490765642727,
+    "failed_mw": 73441.30940000001,
+    "saved_mw": 6403.9532,
+    "saved_by_fuel": {
+     "coal": 5520.293999999999,
+     "gas_cc": 883.6591999999997
+    },
+    "saved_by_event": {
+     "entry_capped:coal": 5520.293999999999,
+     "entry_capped:gas_cc": 883.6591999999997
+    },
+    "failed_by_event": {
+     "entry_capped": 73441.30940000001
+    },
+    "n_failed": 745
+   },
+   {
+    "year": 2024,
+    "pos_model": 1.096403,
+    "price_model": 0.0,
+    "pos_counterfactual": 1.0555098698924799,
+    "price_counterfactual": 14.46466182372309,
+    "failed_mw": 87131.82290000001,
+    "saved_mw": 12770.378499999997,
+    "saved_by_fuel": {
+     "gas_cc": 12770.378499999997
+    },
+    "saved_by_event": {
+     "entry_capped:gas_cc": 12770.378499999997
+    },
+    "failed_by_event": {
+     "entry_capped": 87131.82290000001
+    },
+    "n_failed": 805
+   },
+   {
+    "year": 2025,
+    "pos_model": 0.961718,
+    "price_model": 164.83765,
+    "pos_counterfactual": 1.0048924853025476,
+    "price_counterfactual": 104.47894554655875,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   }
+  ],
+  "firm_decomposition": [
+   {
+    "year": 2021,
+    "thermal_nameplate_mw": 173924.81533300004,
+    "thermal_firm_by_fuel": {
+     "biomass": 1847.176,
+     "coal": 38084.98243,
+     "gas_cc": 39281.576140000005,
+     "gas_ct": 15474.642,
+     "gas_st": 7517.11173309,
+     "nuclear": 31038.495,
+     "oil": 3810.807
+    },
+    "thermal_firm_mw": 137054.79030309,
+    "wind_firm_mw": 4163.098999999999,
+    "solar_firm_mw": 484.09872,
+    "hydro_firm_mw": 1247.806,
+    "storage_firm_mw": 3801.526,
+    "tie_firm_mw": 1281.7,
+    "total_firm_mw": 148033.02002309004,
+    "ledger_identity_firm_mw": 148039.49965,
+    "residual_mw": 6.479626909975195
+   },
+   {
+    "year": 2023,
+    "thermal_nameplate_mw": 172086.557,
+    "thermal_firm_by_fuel": {
+     "biomass": 1839.448,
+     "coal": 33944.00868,
+     "gas_cc": 42273.71064,
+     "gas_ct": 15474.642,
+     "gas_st": 6909.0521499999995,
+     "nuclear": 31038.495,
+     "oil": 3764.215
+    },
+    "thermal_firm_mw": 135243.57147,
+    "wind_firm_mw": 4163.098999999999,
+    "solar_firm_mw": 484.09872,
+    "hydro_firm_mw": 1249.25,
+    "storage_firm_mw": 3801.526,
+    "tie_firm_mw": 1281.7,
+    "total_firm_mw": 146223.24519000002,
+    "ledger_identity_firm_mw": 146228.288165,
+    "residual_mw": 5.042974999989383
+   },
+   {
+    "year": 2024,
+    "thermal_nameplate_mw": 160427.51799999998,
+    "thermal_firm_by_fuel": {
+     "biomass": 1839.448,
+     "coal": 24267.006309999997,
+     "gas_cc": 42273.71064,
+     "gas_ct": 15474.642,
+     "gas_st": 6909.0521499999995,
+     "nuclear": 31038.495,
+     "oil": 3764.215
+    },
+    "thermal_firm_mw": 125566.5691,
+    "wind_firm_mw": 4778.098999999999,
+    "solar_firm_mw": 743.77856,
+    "hydro_firm_mw": 1254.266,
+    "storage_firm_mw": 3801.526,
+    "tie_firm_mw": 1281.7,
+    "total_firm_mw": 137425.93866,
+    "ledger_identity_firm_mw": 137425.944379,
+    "residual_mw": 0.00571899997885339
+   },
+   {
+    "year": 2025,
+    "thermal_nameplate_mw": 161097.651333,
+    "thermal_firm_by_fuel": {
+     "biomass": 1838.5280000000002,
+     "coal": 23983.422976389997,
+     "gas_cc": 42273.71064,
+     "gas_ct": 16082.321999999998,
+     "gas_st": 6909.0521499999995,
+     "nuclear": 31038.495,
+     "oil": 3764.215
+    },
+    "thermal_firm_mw": 125889.74576638998,
+    "wind_firm_mw": 4778.098999999999,
+    "solar_firm_mw": 1003.4584,
+    "hydro_firm_mw": 1254.266,
+    "storage_firm_mw": 3801.526,
+    "tie_firm_mw": 1281.7,
+    "total_firm_mw": 138008.79516639002,
+    "ledger_identity_firm_mw": 138008.86632,
+    "residual_mw": 0.07115360998432152
+   }
+  ],
+  "pjm_ucap_restatement": [
+   {
+    "year": 2021,
+    "delivery_year": "2021/2022",
+    "firm_ucap_restated_mw": 175196.26126969003,
+    "thermal_ucap_mw": 163771.97296969,
+    "hydro_ucap_mw": 3119.515,
+    "vre_ucap_mw": 3221.5473,
+    "storage_mw": 3801.526,
+    "tie_mw": 1281.7,
+    "firm_elcc_basis_mw": 148039.49965,
+    "published_rto_requirement_ucap_mw": 166355.1,
+    "pos_ucap_vs_published_rto_requirement": 1.0531463193475283,
+    "published_fpr": 1.0898,
+    "model_peak_mw": 149590.0,
+    "pos_ucap_vs_fpr_on_model_peak": 1.0746708481600489
+   },
+   {
+    "year": 2023,
+    "delivery_year": "2023/2024",
+    "firm_ucap_restated_mw": 173622.67077000003,
+    "thermal_ucap_mw": 162194.77247,
+    "hydro_ucap_mw": 3123.125,
+    "vre_ucap_mw": 3221.5473,
+    "storage_mw": 3801.526,
+    "tie_mw": 1281.7,
+    "firm_elcc_basis_mw": 146228.288165,
+    "published_rto_requirement_ucap_mw": 163166.2,
+    "pos_ucap_vs_published_rto_requirement": 1.064084784532581,
+    "published_fpr": 1.0901,
+    "model_peak_mw": 147605.0,
+    "pos_ucap_vs_fpr_on_model_peak": 1.0790436759266782
+   },
+   {
+    "year": 2024,
+    "delivery_year": "2024/2025",
+    "firm_ucap_restated_mw": 164056.82289000007,
+    "thermal_ucap_mw": 151468.45659000002,
+    "hydro_ucap_mw": 3135.6649999999995,
+    "vre_ucap_mw": 4369.4753,
+    "storage_mw": 3801.526,
+    "tie_mw": 1281.7,
+    "firm_elcc_basis_mw": 137425.944379,
+    "published_rto_requirement_ucap_mw": 164107.6,
+    "pos_ucap_vs_published_rto_requirement": 0.9996905864810652,
+    "published_fpr": 1.0894,
+    "model_peak_mw": 153121.0,
+    "pos_ucap_vs_fpr_on_model_peak": 0.9834950289382326
+   },
+   {
+    "year": 2025,
+    "delivery_year": "2025/2026",
+    "firm_ucap_restated_mw": 165621.02955636004,
+    "thermal_ucap_mw": 152105.23525636,
+    "hydro_ucap_mw": 3135.6649999999995,
+    "vre_ucap_mw": 5296.9033,
+    "storage_mw": 3801.526,
+    "tie_mw": 1281.7,
+    "firm_elcc_basis_mw": 138008.86632,
+    "published_rto_requirement_ucap_mw": 144450.0,
+    "pos_ucap_vs_published_rto_requirement": 1.146563029119834,
+    "published_fpr": 0.938,
+    "model_peak_mw": 160560.0,
+    "pos_ucap_vs_fpr_on_model_peak": 1.099702676800973
+   }
+  ],
+  "counterfactual_at_total_reserve_margin_position": [
+   {
+    "year": 2021,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0492227979274613,
+    "price_counterfactual": 44.08069962084325,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2022,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0471615720524017,
+    "price_counterfactual": 26.44029381532044,
+    "failed_mw": 88601.94839999992,
+    "saved_mw": 31676.4088,
+    "saved_by_fuel": {
+     "coal": 16570.637000000002,
+     "gas_cc": 15105.7718
+    },
+    "saved_by_event": {
+     "entry_capped:coal": 8100.688999999999,
+     "entry_capped:gas_cc": 15105.7718,
+     "decided:coal": 8469.948
+    },
+    "failed_by_event": {
+     "decided": 11415.039000000002,
+     "entry_capped": 77186.9093999999
+    },
+    "n_failed": 1211
+   },
+   {
+    "year": 2023,
+    "pos_model": 1.139822,
+    "price_model": 0.0,
+    "pos_counterfactual": 1.047909407665505,
+    "price_counterfactual": 26.43016203906273,
+    "failed_mw": 73441.30940000001,
+    "saved_mw": 23282.508799999996,
+    "saved_by_fuel": {
+     "coal": 8100.688999999999,
+     "gas_cc": 15181.8198
+    },
+    "saved_by_event": {
+     "entry_capped:coal": 8100.688999999999,
+     "entry_capped:gas_cc": 15181.8198
+    },
+    "failed_by_event": {
+     "entry_capped": 73441.30940000001
+    },
+    "n_failed": 745
+   },
+   {
+    "year": 2024,
+    "pos_model": 1.096403,
+    "price_model": 0.0,
+    "pos_counterfactual": 1.049694856146469,
+    "price_counterfactual": 24.064728425941247,
+    "failed_mw": 87131.82290000001,
+    "saved_mw": 21947.683200000003,
+    "saved_by_fuel": {
+     "gas_ct": 280.3000000000001,
+     "gas_cc": 21667.383200000004
+    },
+    "saved_by_event": {
+     "entry_capped:gas_ct": 280.3000000000001,
+     "entry_capped:gas_cc": 21667.383200000004
+    },
+    "failed_by_event": {
+     "entry_capped": 87131.82290000001
+    },
+    "n_failed": 805
+   },
+   {
+    "year": 2025,
+    "pos_model": 0.961718,
+    "price_model": 164.83765,
+    "pos_counterfactual": 1.005942275042445,
+    "price_counterfactual": 100.46184732889729,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   }
+  ]
+ },
+ {
+  "run": "pjm-2021-2025-realized-t1h-d45r-fixed",
+  "iso": "PJM",
+  "cache_key": "896da48960560a29",
+  "rows": [
+   {
+    "year": 2021,
+    "bridge": false,
+    "peak_mw": 149590.0,
+    "requirement_mw": 130295.367,
+    "firm_after_mw": 148039.49965,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": 1.1361839108983822,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.0417230892249945,
+    "pub_pos_offered": 1.1873712785781452,
+    "curve_price_at_pub_pos": 57.36953815162182,
+    "real_price": 51.1,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 0,
+    "entry_diag_capacity_terms": [],
+    "thermal_additions": [],
+    "storage_firm_mw": 3801.526,
+    "wind_cap_mw": 10153.9,
+    "solar_cap_mw": 4549.8,
+    "firm_clean_accredited_mw": 1247.806
+   },
+   {
+    "year": 2022,
+    "bridge": true,
+    "peak_mw": null,
+    "requirement_mw": null,
+    "firm_after_mw": null,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": null,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.0510375261163845,
+    "pub_pos_offered": 1.2199654303456382,
+    "curve_price_at_pub_pos": 20.86492632760584,
+    "real_price": 18.25,
+    "retire_events_mw_by_fuel": {
+     "oil": 51.2,
+     "biomass": 8.399999999999999,
+     "gas_st": 42.95833333333332,
+     "coal": 3301.425,
+     "gas_cc": 74.575
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     46458.6,
+     57298.9
+    ],
+    "thermal_additions": [
+     [
+      "gas_cc",
+      356.8
+     ],
+     [
+      "gas_cc",
+      356.8
+     ],
+     [
+      "gas_cc",
+      354.4
+     ],
+     [
+      "gas_cc",
+      612.0
+     ],
+     [
+      "gas_cc",
+      612.0
+     ],
+     [
+      "gas_cc",
+      612.0
+     ]
+    ],
+    "storage_firm_mw": null,
+    "wind_cap_mw": null,
+    "solar_cap_mw": null,
+    "firm_clean_accredited_mw": null
+   },
+   {
+    "year": 2023,
+    "bridge": false,
+    "peak_mw": 147605.0,
+    "requirement_mw": 128566.399,
+    "firm_after_mw": 146228.288165,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": 1.151463374578921,
+    "pos_after": 1.137375623042845,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.0552044372739755,
+    "pub_pos_offered": 1.1407443286729333,
+    "curve_price_at_pub_pos": 15.302490765642727,
+    "real_price": 12.457450000000001,
+    "retire_events_mw_by_fuel": {
+     "coal": 1005.9999999999999,
+     "gas_st": 790.0
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     46458.6,
+     57298.9
+    ],
+    "thermal_additions": [
+     [
+      "gas_cc",
+      607.0
+     ],
+     [
+      "gas_cc",
+      607.0
+     ]
+    ],
+    "storage_firm_mw": 3801.526,
+    "wind_cap_mw": 10153.9,
+    "solar_cap_mw": 4549.8,
+    "firm_clean_accredited_mw": 1249.25
+   },
+   {
+    "year": 2024,
+    "bridge": false,
+    "peak_mw": 153121.0,
+    "requirement_mw": 133370.926,
+    "firm_after_mw": 146900.459375,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": 1.0964030358835477,
+    "pos_after": 1.101442898994343,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.0555098698924799,
+    "pub_pos_offered": 1.1262484531884176,
+    "curve_price_at_pub_pos": 14.46466182372309,
+    "real_price": 10.555800000000001,
+    "retire_events_mw_by_fuel": {
+     "coal": 244.0
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     46458.6,
+     57298.9
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": 3801.526,
+    "wind_cap_mw": 11653.9,
+    "solar_cap_mw": 6990.4,
+    "firm_clean_accredited_mw": 1254.266
+   },
+   {
+    "year": 2025,
+    "bridge": false,
+    "peak_mw": 160560.0,
+    "requirement_mw": 144631.784,
+    "firm_after_mw": 149835.55536,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": 1.0156858700920124,
+    "pos_after": 1.0359794452926059,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.0048924853025476,
+    "pub_pos_offered": 1.0049539561290857,
+    "curve_price_at_pub_pos": 104.47894554655875,
+    "real_price": 98.52080000000001,
+    "retire_events_mw_by_fuel": {
+     "biomass": 1.0
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     46458.6,
+     57298.9
+    ],
+    "thermal_additions": [
+     [
+      "gas_cc",
+      4000.0
+     ]
+    ],
+    "storage_firm_mw": 3801.526,
+    "wind_cap_mw": 11653.9,
+    "solar_cap_mw": 9431.0,
+    "firm_clean_accredited_mw": 1254.266
+   }
+  ],
+  "counterfactual_at_published_position": [
+   {
+    "year": 2021,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0417230892249945,
+    "price_counterfactual": 57.36953815162182,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2022,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0510375261163845,
+    "price_counterfactual": 20.86492632760584,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2023,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0552044372739755,
+    "price_counterfactual": 15.302490765642727,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2024,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0555098698924799,
+    "price_counterfactual": 14.46466182372309,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2025,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0048924853025476,
+    "price_counterfactual": 104.47894554655875,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   }
+  ],
+  "firm_decomposition": [
+   {
+    "year": 2021,
+    "thermal_nameplate_mw": 173924.81533300004,
+    "thermal_firm_by_fuel": {
+     "biomass": 1847.176,
+     "coal": 38084.98243,
+     "gas_cc": 39281.576140000005,
+     "gas_ct": 15474.642,
+     "gas_st": 7517.11173309,
+     "nuclear": 31038.495,
+     "oil": 3810.807
+    },
+    "thermal_firm_mw": 137054.79030309,
+    "wind_firm_mw": 4163.098999999999,
+    "solar_firm_mw": 484.09872,
+    "hydro_firm_mw": 1247.806,
+    "storage_firm_mw": 3801.526,
+    "tie_firm_mw": 1281.7,
+    "total_firm_mw": 148033.02002309004,
+    "ledger_identity_firm_mw": 148039.49965,
+    "residual_mw": 6.479626909975195
+   },
+   {
+    "year": 2023,
+    "thermal_nameplate_mw": 172086.557,
+    "thermal_firm_by_fuel": {
+     "biomass": 1839.448,
+     "coal": 33944.00868,
+     "gas_cc": 42273.71064,
+     "gas_ct": 15474.642,
+     "gas_st": 6909.0521499999995,
+     "nuclear": 31038.495,
+     "oil": 3764.215
+    },
+    "thermal_firm_mw": 135243.57147,
+    "wind_firm_mw": 4163.098999999999,
+    "solar_firm_mw": 484.09872,
+    "hydro_firm_mw": 1249.25,
+    "storage_firm_mw": 3801.526,
+    "tie_firm_mw": 1281.7,
+    "total_firm_mw": 146223.24519000002,
+    "ledger_identity_firm_mw": 146228.288165,
+    "residual_mw": 5.042974999989383
+   },
+   {
+    "year": 2024,
+    "thermal_nameplate_mw": 171842.557,
+    "thermal_firm_by_fuel": {
+     "biomass": 1839.448,
+     "coal": 33741.48868,
+     "gas_cc": 42273.71064,
+     "gas_ct": 15474.642,
+     "gas_st": 6909.0521499999995,
+     "nuclear": 31038.495,
+     "oil": 3764.215
+    },
+    "thermal_firm_mw": 135041.05146999998,
+    "wind_firm_mw": 4778.098999999999,
+    "solar_firm_mw": 743.77856,
+    "hydro_firm_mw": 1254.266,
+    "storage_firm_mw": 3801.526,
+    "tie_firm_mw": 1281.7,
+    "total_firm_mw": 146900.42103,
+    "ledger_identity_firm_mw": 146900.459375,
+    "residual_mw": 0.03834500000812113
+   },
+   {
+    "year": 2025,
+    "thermal_nameplate_mw": 175499.890333,
+    "thermal_firm_by_fuel": {
+     "biomass": 1838.5280000000002,
+     "coal": 33457.90534639,
+     "gas_cc": 45233.71064,
+     "gas_ct": 15474.642,
+     "gas_st": 6909.0521499999995,
+     "nuclear": 31038.495,
+     "oil": 3764.215
+    },
+    "thermal_firm_mw": 137716.54813639,
+    "wind_firm_mw": 4778.098999999999,
+    "solar_firm_mw": 1003.4584,
+    "hydro_firm_mw": 1254.266,
+    "storage_firm_mw": 3801.526,
+    "tie_firm_mw": 1281.7,
+    "total_firm_mw": 149835.59753639,
+    "ledger_identity_firm_mw": 149835.55536,
+    "residual_mw": -0.042176390008535236
+   }
+  ],
+  "pjm_ucap_restatement": [
+   {
+    "year": 2021,
+    "delivery_year": "2021/2022",
+    "firm_ucap_restated_mw": 175196.26126969003,
+    "thermal_ucap_mw": 163771.97296969,
+    "hydro_ucap_mw": 3119.515,
+    "vre_ucap_mw": 3221.5473,
+    "storage_mw": 3801.526,
+    "tie_mw": 1281.7,
+    "firm_elcc_basis_mw": 148039.49965,
+    "published_rto_requirement_ucap_mw": 166355.1,
+    "pos_ucap_vs_published_rto_requirement": 1.0531463193475283,
+    "published_fpr": 1.0898,
+    "model_peak_mw": 149590.0,
+    "pos_ucap_vs_fpr_on_model_peak": 1.0746708481600489
+   },
+   {
+    "year": 2023,
+    "delivery_year": "2023/2024",
+    "firm_ucap_restated_mw": 173622.67077000003,
+    "thermal_ucap_mw": 162194.77247,
+    "hydro_ucap_mw": 3123.125,
+    "vre_ucap_mw": 3221.5473,
+    "storage_mw": 3801.526,
+    "tie_mw": 1281.7,
+    "firm_elcc_basis_mw": 146228.288165,
+    "published_rto_requirement_ucap_mw": 163166.2,
+    "pos_ucap_vs_published_rto_requirement": 1.064084784532581,
+    "published_fpr": 1.0901,
+    "model_peak_mw": 147605.0,
+    "pos_ucap_vs_fpr_on_model_peak": 1.0790436759266782
+   },
+   {
+    "year": 2024,
+    "delivery_year": "2024/2025",
+    "firm_ucap_restated_mw": 174558.65877000007,
+    "thermal_ucap_mw": 161970.29247000001,
+    "hydro_ucap_mw": 3135.6649999999995,
+    "vre_ucap_mw": 4369.4753,
+    "storage_mw": 3801.526,
+    "tie_mw": 1281.7,
+    "firm_elcc_basis_mw": 146900.459375,
+    "published_rto_requirement_ucap_mw": 164107.6,
+    "pos_ucap_vs_published_rto_requirement": 1.0636841850712584,
+    "published_fpr": 1.0894,
+    "model_peak_mw": 153121.0,
+    "pos_ucap_vs_fpr_on_model_peak": 1.0464518947409456
+   },
+   {
+    "year": 2025,
+    "delivery_year": "2025/2026",
+    "firm_ucap_restated_mw": 178970.83343636006,
+    "thermal_ucap_mw": 165455.03913636002,
+    "hydro_ucap_mw": 3135.6649999999995,
+    "vre_ucap_mw": 5296.9033,
+    "storage_mw": 3801.526,
+    "tie_mw": 1281.7,
+    "firm_elcc_basis_mw": 149835.55536,
+    "published_rto_requirement_ucap_mw": 144450.0,
+    "pos_ucap_vs_published_rto_requirement": 1.2389811937442718,
+    "published_fpr": 0.938,
+    "model_peak_mw": 160560.0,
+    "pos_ucap_vs_fpr_on_model_peak": 1.1883436851374671
+   }
+  ],
+  "counterfactual_at_total_reserve_margin_position": [
+   {
+    "year": 2021,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0492227979274613,
+    "price_counterfactual": 44.08069962084325,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2022,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.0471615720524017,
+    "price_counterfactual": 26.44029381532044,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2023,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.047909407665505,
+    "price_counterfactual": 26.43016203906273,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2024,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.049694856146469,
+    "price_counterfactual": 24.064728425941247,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2025,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.005942275042445,
+    "price_counterfactual": 100.46184732889729,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   }
+  ]
+ },
+ {
+  "run": "nyiso-2021-2025-realized-t1h-d45r",
+  "iso": "NYISO",
+  "cache_key": "91686abe7a744a88",
+  "rows": [
+   {
+    "year": 2021,
+    "bridge": false,
+    "peak_mw": 30919.0,
+    "requirement_mw": 33382.243,
+    "firm_after_mw": 36144.92938,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": 1.0827591597125454,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.049,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": 50.16,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 0,
+    "entry_diag_capacity_terms": [],
+    "thermal_additions": [],
+    "storage_firm_mw": 1185.247,
+    "wind_cap_mw": 1988.9,
+    "solar_cap_mw": 664.1,
+    "firm_clean_accredited_mw": 1771.008
+   },
+   {
+    "year": 2022,
+    "bridge": true,
+    "peak_mw": null,
+    "requirement_mw": null,
+    "firm_after_mw": null,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": null,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.083,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": 36.599999999999994,
+    "retire_events_mw_by_fuel": {
+     "nuclear": 1036.3
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     103400.0,
+     104500.0
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": null,
+    "wind_cap_mw": null,
+    "solar_cap_mw": null,
+    "firm_clean_accredited_mw": null
+   },
+   {
+    "year": 2023,
+    "bridge": false,
+    "peak_mw": 30206.0,
+    "requirement_mw": 32612.44,
+    "firm_after_mw": 34744.632736,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": 1.1083172366127774,
+    "pos_after": 1.0653797365667825,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.043,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": 47.56675000000007,
+    "real_price": 49.32000000000001,
+    "retire_events_mw_by_fuel": {
+     "gas_ct": 420.306
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     103400.0,
+     104500.0
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": 1185.247,
+    "wind_cap_mw": 1988.9,
+    "solar_cap_mw": 664.1,
+    "firm_clean_accredited_mw": 1786.499
+   },
+   {
+    "year": 2024,
+    "bridge": false,
+    "peak_mw": 28990.0,
+    "requirement_mw": 31299.564,
+    "firm_after_mw": 35829.23383,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": 1.1100676270123124,
+    "pos_after": 1.144719901849112,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.058,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": 37.38083333333333,
+    "real_price": 41.64,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     103400.0,
+     104500.0
+    ],
+    "thermal_additions": [
+     [
+      "gas_cc",
+      1000.0
+     ]
+    ],
+    "storage_firm_mw": 1185.247,
+    "wind_cap_mw": 2464.5,
+    "solar_cap_mw": 1109.5,
+    "firm_clean_accredited_mw": 1763.281
+   },
+   {
+    "year": 2025,
+    "bridge": false,
+    "peak_mw": 31857.0,
+    "requirement_mw": 34394.971,
+    "firm_after_mw": 36438.833025,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": 1.0416997830874752,
+    "pos_after": 1.059423280949997,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.058,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": 26.117499999999996,
+    "real_price": 51.36,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     103400.0,
+     104500.0
+    ],
+    "thermal_additions": [
+     [
+      "gas_ct",
+      500.0
+     ]
+    ],
+    "storage_firm_mw": 1185.247,
+    "wind_cap_mw": 2940.1,
+    "solar_cap_mw": 1554.9,
+    "firm_clean_accredited_mw": 1763.281
+   }
+  ],
+  "counterfactual_at_published_position": [
+   {
+    "year": 2021,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.049,
+    "price_counterfactual": 0.0,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2022,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.083,
+    "price_counterfactual": 0.0,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2023,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.043,
+    "price_counterfactual": 47.56675000000007,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2024,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.058,
+    "price_counterfactual": 37.38083333333333,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2025,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.058,
+    "price_counterfactual": 26.117499999999996,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   }
+  ],
+  "firm_decomposition": [
+   {
+    "year": 2021,
+    "thermal_nameplate_mw": 31939.39,
+    "thermal_firm_by_fuel": {
+     "biomass": 414.276,
+     "gas_cc": 10603.9,
+     "gas_ct": 3287.7346,
+     "gas_st": 8711.588999999998,
+     "nuclear": 4112.121,
+     "oil": 2900.61
+    },
+    "thermal_firm_mw": 30030.230599999995,
+    "wind_firm_mw": 334.93076,
+    "solar_firm_mw": 81.28584,
+    "hydro_firm_mw": 1771.008,
+    "storage_firm_mw": 1185.247,
+    "tie_firm_mw": 2749.94115,
+    "total_firm_mw": 36152.64335,
+    "ledger_identity_firm_mw": 36144.92938,
+    "residual_mw": -7.713969999997062
+   },
+   {
+    "year": 2023,
+    "thermal_nameplate_mw": 30482.784,
+    "thermal_firm_by_fuel": {
+     "biomass": 414.276,
+     "gas_cc": 10603.9,
+     "gas_ct": 2892.64696,
+     "gas_st": 8711.588999999998,
+     "nuclear": 3106.91,
+     "oil": 2900.61
+    },
+    "thermal_firm_mw": 28629.931959999998,
+    "wind_firm_mw": 334.93076,
+    "solar_firm_mw": 81.28584,
+    "hydro_firm_mw": 1786.499,
+    "storage_firm_mw": 1185.247,
+    "tie_firm_mw": 2749.94115,
+    "total_firm_mw": 34767.83571,
+    "ledger_identity_firm_mw": 34744.632736,
+    "residual_mw": -23.202973999999813
+   },
+   {
+    "year": 2024,
+    "thermal_nameplate_mw": 31482.784,
+    "thermal_firm_by_fuel": {
+     "biomass": 414.276,
+     "gas_cc": 11553.9,
+     "gas_ct": 2892.64696,
+     "gas_st": 8711.588999999998,
+     "nuclear": 3106.91,
+     "oil": 2900.61
+    },
+    "thermal_firm_mw": 29579.931959999998,
+    "wind_firm_mw": 415.0218,
+    "solar_firm_mw": 135.8028,
+    "hydro_firm_mw": 1763.281,
+    "storage_firm_mw": 1185.247,
+    "tie_firm_mw": 2749.94115,
+    "total_firm_mw": 35829.22571,
+    "ledger_identity_firm_mw": 35829.23383,
+    "residual_mw": 0.00811999999859836
+   },
+   {
+    "year": 2025,
+    "thermal_nameplate_mw": 31982.784,
+    "thermal_firm_by_fuel": {
+     "biomass": 414.276,
+     "gas_cc": 11553.9,
+     "gas_ct": 3362.64696,
+     "gas_st": 8711.588999999998,
+     "nuclear": 3106.91,
+     "oil": 2900.61
+    },
+    "thermal_firm_mw": 30049.931959999998,
+    "wind_firm_mw": 495.11283999999995,
+    "solar_firm_mw": 190.31976,
+    "hydro_firm_mw": 1763.281,
+    "storage_firm_mw": 1185.247,
+    "tie_firm_mw": 2749.94115,
+    "total_firm_mw": 36433.83371,
+    "ledger_identity_firm_mw": 36438.833025,
+    "residual_mw": 4.999315000000934
+   }
+  ]
+ },
+ {
+  "run": "nyiso-2021-2025-realized-t1h-d45r-curveon",
+  "iso": "NYISO",
+  "cache_key": "cad77112c804881d",
+  "rows": [
+   {
+    "year": 2021,
+    "bridge": false,
+    "peak_mw": 30919.0,
+    "requirement_mw": 33382.243,
+    "firm_after_mw": 36144.92938,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": 1.0827591597125454,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.049,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": 50.16,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 0,
+    "entry_diag_capacity_terms": [],
+    "thermal_additions": [],
+    "storage_firm_mw": 1185.247,
+    "wind_cap_mw": 1988.9,
+    "solar_cap_mw": 664.1,
+    "firm_clean_accredited_mw": 1771.008
+   },
+   {
+    "year": 2022,
+    "bridge": true,
+    "peak_mw": null,
+    "requirement_mw": null,
+    "firm_after_mw": null,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": null,
+    "curve_price_at_model_entering": null,
+    "pub_pos": 1.083,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": 36.599999999999994,
+    "retire_events_mw_by_fuel": {
+     "nuclear": 1036.3
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     100053.6,
+     101118.0
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": null,
+    "wind_cap_mw": null,
+    "solar_cap_mw": null,
+    "firm_clean_accredited_mw": null
+   },
+   {
+    "year": 2023,
+    "bridge": false,
+    "peak_mw": 30206.0,
+    "requirement_mw": 32612.44,
+    "firm_after_mw": 31493.198483999997,
+    "pos_entering_ledger": 1.137138,
+    "pos_entering_identity": 1.1083172366127774,
+    "pos_after": 0.9656805342991814,
+    "curve_price_at_model_entering": 0.0,
+    "pub_pos": 1.043,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": 47.56675000000007,
+    "real_price": 49.32000000000001,
+    "retire_events_mw_by_fuel": {
+     "gas_ct": 420.306,
+     "gas_st": 3496.1559999999995
+    },
+    "pipeline_events_mw": {
+     "decided:gas_st": 3496.156,
+     "entry_capped:gas_st": 5871.144,
+     "entry_capped:gas_cc": 7338.465299999999,
+     "entry_capped:gas_ct": 3074.6840000000007,
+     "executed:gas_st": 3496.1559999999995
+    },
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [
+     0.0
+    ],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": 1185.247,
+    "wind_cap_mw": 1988.9,
+    "solar_cap_mw": 664.1,
+    "firm_clean_accredited_mw": 1786.499
+   },
+   {
+    "year": 2024,
+    "bridge": false,
+    "peak_mw": 28990.0,
+    "requirement_mw": 31299.564,
+    "firm_after_mw": 32577.802400000004,
+    "pos_entering_ledger": 1.006186,
+    "pos_entering_identity": 1.006186491415663,
+    "pos_after": 1.0408388564134634,
+    "curve_price_at_model_entering": 68.62035749999998,
+    "pub_pos": 1.058,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": 37.38083333333333,
+    "real_price": 41.64,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     64502.9,
+     65189.1
+    ],
+    "thermal_additions": [
+     [
+      "gas_cc",
+      1000.0
+     ]
+    ],
+    "storage_firm_mw": 1185.247,
+    "wind_cap_mw": 2464.5,
+    "solar_cap_mw": 1109.5,
+    "firm_clean_accredited_mw": 1763.281
+   },
+   {
+    "year": 2025,
+    "bridge": false,
+    "peak_mw": 31857.0,
+    "requirement_mw": 34394.971,
+    "firm_after_mw": 32712.424164000004,
+    "pos_entering_ledger": 1.028294,
+    "pos_entering_identity": 0.9471676077296302,
+    "pos_after": 0.9510816032960169,
+    "curve_price_at_model_entering": 38.63115249999999,
+    "pub_pos": 1.058,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": 26.117499999999996,
+    "real_price": 51.36,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     36313.4,
+     36699.7
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": 1185.247,
+    "wind_cap_mw": 2940.1,
+    "solar_cap_mw": 1554.9,
+    "firm_clean_accredited_mw": 1763.281
+   }
+  ],
+  "counterfactual_at_published_position": [
+   {
+    "year": 2021,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.049,
+    "price_counterfactual": 0.0,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2022,
+    "pos_model": null,
+    "price_model": null,
+    "pos_counterfactual": 1.083,
+    "price_counterfactual": 0.0,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2023,
+    "pos_model": 1.137138,
+    "price_model": 0.0,
+    "pos_counterfactual": 1.043,
+    "price_counterfactual": 47.56675000000007,
+    "failed_mw": 19780.44930000001,
+    "saved_mw": 19780.44930000001,
+    "saved_by_fuel": {
+     "gas_st": 9367.3,
+     "gas_cc": 7338.465299999999,
+     "gas_ct": 3074.6840000000007
+    },
+    "saved_by_event": {
+     "decided:gas_st": 3496.156,
+     "entry_capped:gas_st": 5871.144,
+     "entry_capped:gas_cc": 7338.465299999999,
+     "entry_capped:gas_ct": 3074.6840000000007
+    },
+    "failed_by_event": {
+     "decided": 3496.156,
+     "entry_capped": 16284.29330000001
+    },
+    "n_failed": 268
+   },
+   {
+    "year": 2024,
+    "pos_model": 1.006186,
+    "price_model": 68.62035749999998,
+    "pos_counterfactual": 1.058,
+    "price_counterfactual": 37.38083333333333,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   },
+   {
+    "year": 2025,
+    "pos_model": 1.028294,
+    "price_model": 38.63115249999999,
+    "pos_counterfactual": 1.058,
+    "price_counterfactual": 26.117499999999996,
+    "failed_mw": 0,
+    "saved_mw": 0.0,
+    "saved_by_fuel": {},
+    "saved_by_event": {},
+    "failed_by_event": {},
+    "n_failed": 0
+   }
+  ],
+  "firm_decomposition": [
+   {
+    "year": 2021,
+    "thermal_nameplate_mw": 31939.39,
+    "thermal_firm_by_fuel": {
+     "biomass": 414.276,
+     "gas_cc": 10603.9,
+     "gas_ct": 3287.7346,
+     "gas_st": 8711.588999999998,
+     "nuclear": 4112.121,
+     "oil": 2900.61
+    },
+    "thermal_firm_mw": 30030.230599999995,
+    "wind_firm_mw": 334.93076,
+    "solar_firm_mw": 81.28584,
+    "hydro_firm_mw": 1771.008,
+    "storage_firm_mw": 1185.247,
+    "tie_firm_mw": 2749.94115,
+    "total_firm_mw": 36152.64335,
+    "ledger_identity_firm_mw": 36144.92938,
+    "residual_mw": -7.713969999997062
+   },
+   {
+    "year": 2023,
+    "thermal_nameplate_mw": 26986.628,
+    "thermal_firm_by_fuel": {
+     "biomass": 414.276,
+     "gas_cc": 10603.9,
+     "gas_ct": 2892.64696,
+     "gas_st": 5460.16392,
+     "nuclear": 3106.91,
+     "oil": 2900.61
+    },
+    "thermal_firm_mw": 25378.50688,
+    "wind_firm_mw": 334.93076,
+    "solar_firm_mw": 81.28584,
+    "hydro_firm_mw": 1786.499,
+    "storage_firm_mw": 1185.247,
+    "tie_firm_mw": 2749.94115,
+    "total_firm_mw": 31516.41063,
+    "ledger_identity_firm_mw": 31493.198483999997,
+    "residual_mw": -23.212146000001667
+   },
+   {
+    "year": 2024,
+    "thermal_nameplate_mw": 27986.628,
+    "thermal_firm_by_fuel": {
+     "biomass": 414.276,
+     "gas_cc": 11553.9,
+     "gas_ct": 2892.64696,
+     "gas_st": 5460.16392,
+     "nuclear": 3106.91,
+     "oil": 2900.61
+    },
+    "thermal_firm_mw": 26328.50688,
+    "wind_firm_mw": 415.0218,
+    "solar_firm_mw": 135.8028,
+    "hydro_firm_mw": 1763.281,
+    "storage_firm_mw": 1185.247,
+    "tie_firm_mw": 2749.94115,
+    "total_firm_mw": 32577.800629999998,
+    "ledger_identity_firm_mw": 32577.802400000004,
+    "residual_mw": 0.0017700000062177423
+   },
+   {
+    "year": 2025,
+    "thermal_nameplate_mw": 27986.628,
+    "thermal_firm_by_fuel": {
+     "biomass": 414.276,
+     "gas_cc": 11553.9,
+     "gas_ct": 2892.64696,
+     "gas_st": 5460.16392,
+     "nuclear": 3106.91,
+     "oil": 2900.61
+    },
+    "thermal_firm_mw": 26328.50688,
+    "wind_firm_mw": 495.11283999999995,
+    "solar_firm_mw": 190.31976,
+    "hydro_firm_mw": 1763.281,
+    "storage_firm_mw": 1185.247,
+    "tie_firm_mw": 2749.94115,
+    "total_firm_mw": 32712.408629999998,
+    "ledger_identity_firm_mw": 32712.424164000004,
+    "residual_mw": 0.015534000005573034
+   }
+  ]
+ },
+ {
+  "run": "neiso-2021-2025-realized-t1h-d45r",
+  "iso": "NEISO",
+  "cache_key": "d6c0137e37bf3200",
+  "rows": [
+   {
+    "year": 2021,
+    "bridge": false,
+    "peak_mw": 25101.0,
+    "requirement_mw": 25819.063,
+    "firm_after_mw": 32135.705856,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": 1.2446503521835786,
+    "curve_price_at_model_entering": null,
+    "pub_pos": null,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": null,
+    "retire_events_mw_by_fuel": {},
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 0,
+    "entry_diag_capacity_terms": [],
+    "thermal_additions": [],
+    "storage_firm_mw": 1726.95,
+    "wind_cap_mw": 1500.4,
+    "solar_cap_mw": 1518.7,
+    "firm_clean_accredited_mw": 1401.765
+   },
+   {
+    "year": 2022,
+    "bridge": true,
+    "peak_mw": null,
+    "requirement_mw": null,
+    "firm_after_mw": null,
+    "pos_entering_ledger": null,
+    "pos_entering_identity": null,
+    "pos_after": null,
+    "curve_price_at_model_entering": null,
+    "pub_pos": null,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": null,
+    "retire_events_mw_by_fuel": {
+     "oil": 521.5,
+     "biomass": 1.8,
+     "coal": 128.8,
+     "gas_cc": 15.000000000000007,
+     "gas_ct": 6.333333333333334,
+     "gas_st": 1358.6
+    },
+    "pipeline_events_mw": {
+     "decided:coal": 533.9,
+     "decided:gas_st": 1358.6,
+     "executed:gas_st": 1358.6
+    },
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [
+     0.0
+    ],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": null,
+    "wind_cap_mw": null,
+    "solar_cap_mw": null,
+    "firm_clean_accredited_mw": null
+   },
+   {
+    "year": 2023,
+    "bridge": false,
+    "peak_mw": 23475.0,
+    "requirement_mw": 24146.548,
+    "firm_after_mw": 29414.714925,
+    "pos_entering_ledger": 1.208242,
+    "pos_entering_identity": 1.3308612831946,
+    "pos_after": 1.2181747438598678,
+    "curve_price_at_model_entering": 0.0,
+    "pub_pos": null,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": null,
+    "retire_events_mw_by_fuel": {
+     "oil": 26.0
+    },
+    "pipeline_events_mw": {
+     "re_confirmed:coal": 533.9
+    },
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [
+     0.0
+    ],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": 1726.95,
+    "wind_cap_mw": 1500.4,
+    "solar_cap_mw": 1518.7,
+    "firm_clean_accredited_mw": 1383.426
+   },
+   {
+    "year": 2024,
+    "bridge": false,
+    "peak_mw": 24255.0,
+    "requirement_mw": 24948.862,
+    "firm_after_mw": 25774.963830000004,
+    "pos_entering_ledger": 1.179,
+    "pos_entering_identity": 1.1790002656233378,
+    "pos_after": 1.0331118040574356,
+    "curve_price_at_model_entering": 0.0,
+    "pub_pos": null,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": null,
+    "retire_events_mw_by_fuel": {
+     "coal": 533.9,
+     "gas_cc": 2632.2687000000005,
+     "gas_st": 79.575
+    },
+    "pipeline_events_mw": {
+     "re_confirmed:coal": 533.9,
+     "decided:gas_st": 79.57499999999999,
+     "decided:gas_cc": 2632.2687,
+     "entry_capped:gas_cc": 7259.486500000001,
+     "entry_capped:oil": 4567.799999999999,
+     "entry_capped:gas_ct": 1827.5399999999997,
+     "executed:coal": 533.9,
+     "executed:gas_cc": 2632.2687000000005,
+     "executed:gas_st": 79.575
+    },
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [
+     0.0
+    ],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0
+    ],
+    "thermal_additions": [],
+    "storage_firm_mw": 1726.95,
+    "wind_cap_mw": 2215.6,
+    "solar_cap_mw": 2032.7,
+    "firm_clean_accredited_mw": 1396.472
+   },
+   {
+    "year": 2025,
+    "bridge": false,
+    "peak_mw": 25898.0,
+    "requirement_mw": 26638.863,
+    "firm_after_mw": 26717.464516,
+    "pos_entering_ledger": 1.019854,
+    "pos_entering_identity": 0.9675699683578839,
+    "pos_after": 1.0029506332909177,
+    "curve_price_at_model_entering": 56.892378265974806,
+    "pub_pos": null,
+    "pub_pos_offered": null,
+    "curve_price_at_pub_pos": null,
+    "real_price": null,
+    "retire_events_mw_by_fuel": {
+     "gas_cc": 195.6
+    },
+    "pipeline_events_mw": {},
+    "retire_capacity_revenue_usd": 0.0,
+    "pipeline_capacity_rev_per_kw_yr": [],
+    "floor_retained_n": 0,
+    "entry_diag_rows": 5,
+    "entry_diag_capacity_terms": [
+     0.0,
+     56892.6
+    ],
+    "thermal_additions": [
+     [
+      "gas_cc",
+      1000.0
+     ]
+    ],
+    "storage_firm_mw": 1726.95,
+    "wind_cap_mw": 2500.4,
+    "solar_cap_mw": 2546.7,
+    "firm_clean_accredited_mw": 1396.472
+   }
+  ],
+  "counterfactual_at_published_position": [],
+  "firm_decomposition": [
+   {
+    "year": 2021,
+    "thermal_nameplate_mw": 28089.555333,
+    "thermal_firm_by_fuel": {
+     "biomass": 1330.1,
+     "coal": 662.7,
+     "gas_cc": 14387.625,
+     "gas_ct": 1834.755333,
+     "gas_st": 1438.175,
+     "nuclear": 3320.9,
+     "oil": 5115.3
+    },
+    "thermal_firm_mw": 28089.555333,
+    "wind_firm_mw": 240.06400000000002,
+    "solar_firm_mw": 273.366,
+    "hydro_firm_mw": 1401.765,
+    "storage_firm_mw": 1726.95,
+    "tie_firm_mw": 409.31,
+    "total_firm_mw": 32141.010333,
+    "ledger_identity_firm_mw": 32135.705856,
+    "residual_mw": -5.30447699999786
+   },
+   {
+    "year": 2023,
+    "thermal_nameplate_mw": 25368.547,
+    "thermal_firm_by_fuel": {
+     "biomass": 1328.3,
+     "coal": 533.9,
+     "gas_cc": 13709.65,
+     "gas_ct": 1828.422,
+     "gas_st": 79.575,
+     "nuclear": 3320.9,
+     "oil": 4567.8
+    },
+    "thermal_firm_mw": 25368.547,
+    "wind_firm_mw": 240.06400000000002,
+    "solar_firm_mw": 273.366,
+    "hydro_firm_mw": 1383.426,
+    "storage_firm_mw": 1726.95,
+    "tie_firm_mw": 409.31,
+    "total_firm_mw": 29401.663,
+    "ledger_identity_firm_mw": 29414.714925,
+    "residual_mw": 13.051924999999756
+   },
+   {
+    "year": 2024,
+    "thermal_nameplate_mw": 21521.8533,
+    "thermal_firm_by_fuel": {
+     "biomass": 1328.3,
+     "gas_cc": 10476.4313,
+     "gas_ct": 1828.422,
+     "nuclear": 3320.9,
+     "oil": 4567.8
+    },
+    "thermal_firm_mw": 21521.8533,
+    "wind_firm_mw": 354.496,
+    "solar_firm_mw": 365.88599999999997,
+    "hydro_firm_mw": 1396.472,
+    "storage_firm_mw": 1726.95,
+    "tie_firm_mw": 409.31,
+    "total_firm_mw": 25774.9673,
+    "ledger_identity_firm_mw": 25774.963830000004,
+    "residual_mw": -0.0034699999960139394
+   },
+   {
+    "year": 2025,
+    "thermal_nameplate_mw": 22326.2533,
+    "thermal_firm_by_fuel": {
+     "biomass": 1328.3,
+     "gas_cc": 11280.8313,
+     "gas_ct": 1828.422,
+     "nuclear": 3320.9,
+     "oil": 4567.8
+    },
+    "thermal_firm_mw": 22326.2533,
+    "wind_firm_mw": 400.064,
+    "solar_firm_mw": 458.40599999999995,
+    "hydro_firm_mw": 1396.472,
+    "storage_firm_mw": 1726.95,
+    "tie_firm_mw": 409.31,
+    "total_firm_mw": 26717.4553,
+    "ledger_identity_firm_mw": 26717.464516,
+    "residual_mw": 0.00921599999855971
+   }
+  ]
  }
 ]
