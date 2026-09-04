@@ -9030,7 +9030,8 @@
   "determination": "HOLD",
   "iso": "ERCOT",
   "notes": [
-   "FC-2 adequacy & equilibrium behavior / row6 (report): hours_ge_500 peaks 1137h/yr > 800 (sustained-VOLL)"
+   "FC-2 adequacy & equilibrium behavior / row6 (report): hours_ge_500 peaks 1137h/yr > 800 (sustained-VOLL)",
+   "capx-D51 RECORDS RIDER (2026-09-04; D47 \u00a76 item 2, executing the director's dispatch): THIS KEY IS A PROVENANCE-ONLY STUB \u2014 NO DELTA MAY BE READ AGAINST IT. Its provenance carries NO resolved cache key (cache_epoch is the prose string 'Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips', run_id null, no scored_at_date, scoring sha 8ba592814d92), so no config-level diff against the bare `ercot-t1f` (D46 `ercot-2026-2030-d46-remeasure`, key 873d8c0e6cab52ae) \u2014 or against anything else \u2014 is possible in principle: a month of HEAD plus the D46 batch axes (the Q30/D44 fossil-dates flip, the D41 CCS constants, keeper vintage) with no way to separate them (FINDING-capx-d47-golden3-attestation-2026-09-04.md \u00a72, the -pre-d46 like-for-like table: 'UNKNOWABLE \u2014 the strongest form of not-attributable'). Retained as the historical record of what the FFR-3A-2 vintage scored, never as a comparison baseline. Determination and every row untouched by this note."
   ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
@@ -9302,7 +9303,9 @@
   ],
   "determination": "HOLD",
   "iso": "CAISO",
-  "notes": [],
+  "notes": [
+   "capx-D51 RECORDS RIDER (2026-09-04; D47 \u00a76 item 2, executing the director's dispatch): THIS KEY IS A PROVENANCE-ONLY STUB \u2014 NO DELTA MAY BE READ AGAINST IT. Its provenance carries NO resolved cache key (cache_epoch is the prose string 'Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips', run_id null, no scored_at_date, scoring sha 8ba592814d92), so no config-level diff against the bare `caiso-t1f` (D46 `caiso-2026-2030-d46-remeasure`, key 772b1e5abc7fc80c) \u2014 or against anything else \u2014 is possible in principle: a month of HEAD plus the D46 batch axes (the Q30/D44 fossil-dates flip, the D41 CCS constants, keeper vintage) with no way to separate them (FINDING-capx-d47-golden3-attestation-2026-09-04.md \u00a72, the -pre-d46 like-for-like table: 'UNKNOWABLE \u2014 the strongest form of not-attributable'). Retained as the historical record of what the FFR-3A-2 vintage scored, never as a comparison baseline. Determination and every row untouched by this note."
+  ],
   "provenance": {
    "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
    "scored_at_sha": "8ba592814d92",

@@ -75,7 +75,12 @@ from scripts.lib import forecast_provenance as _fp  # noqa: E402  (after sys.pat
 
 # Rubric version implemented by this scorer (rubric §0/§9). v1.0 = the FF-0A
 # initial rubric: categories FC-1..FC-8, tier ladder T0->T3, golden attestation.
-RUBRIC_VERSION = "1.0"
+# v1.1 (2026-09-04, owner ruling Q37, capx D51 rider (e)) = §5's second
+# attestation-authorship limb (a PRE-DECLARED follow-up lane may attest,
+# attestation row only, artifact-only re-score). Text-only amendment: no
+# threshold, row or category logic in this scorer changed; records scored
+# under "1.0" stand as scored.
+RUBRIC_VERSION = "1.1"
 
 # --- statuses (per row / per category) --------------------------------------
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
