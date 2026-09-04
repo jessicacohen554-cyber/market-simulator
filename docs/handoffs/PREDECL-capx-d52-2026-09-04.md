@@ -262,3 +262,29 @@ this lane does NOT build.
 
 *(filled in §7 of this file by the same lane once the fields exist; nothing
 below this line was written before the code.)*
+
+**Appended 2026-09-04 after the build, before any solve** (branch HEAD carries
+the two fields, the registries, the ledger observability fields, the tests, the
+csv intake and the matrix rows; nothing has been solved). Method: the D45-R /
+D48 path — `run_capacity_hindcast.build_config` → `apply_iso_scenario_defaults`
+→ `ScenarioConfig.cache_key()` — validated on TWO known answers at this HEAD
+(the bare recipe reproduces D45-R's `91686abe7a744a88`; the same recipe +
+`--capacity-market-clearing` reproduces D45-R's L3 `cad77112c804881d`).
+
+| leg / posture | recipe beyond the bare `nyiso-t1h` | key | status |
+|---|---|---:|---|
+| **control** — bare `nyiso-t1h` at this HEAD | none | **`91686abe7a744a88`** | = D45-R L2 → **HOLDS; the D45-R L2 IS the control, no control replay** (P7 first limb) |
+| same, both fields explicitly `False` | — | `91686abe7a744a88` | identical (drop-at-default registration works) |
+| **A/B arm** `nyiso-2021-2025-realized-t1h-d52-devintage` | `--nyiso-requirement-forecast-peak --nyiso-requirement-vintage-factors` | **`911371a8cf23d5c3`** | to be solved |
+| **conditional probe** `nyiso-2021-2025-realized-t1h-d52-curveon` | the A/B + `--capacity-market-clearing` | **`589f031432b6dc7d`** | solved ONLY if §6 holds on the A/B |
+| peak-only (NOT solved; recorded so a future single-gate probe is recognisable) | `--nyiso-requirement-forecast-peak` | `90e0ec4760c32c0e` | not run |
+| factors-only (NOT solved) | `--nyiso-requirement-vintage-factors` | `279fa55fa413e430` | not run |
+| pinned global default key | — | `4c6b03ae098b6e3e` | **unmoved** |
+
+Guards at this HEAD: `check_cache_key_registration.py --base origin/main` — ok
+(2 new fields registered at `"False"`); `check_mechanism_matrix.py --base
+origin/main` — integrity OK after `--fix-anchors` (digits only); the new tests
+(`TestNyisoRequirementDevintage`, 12) green; the NYISO shard's keeper stamp at
+this HEAD reads `2026-09-04-nyiso-188-combined` (the owner's backcast lane
+promoted 188 after the charter's "187 at issuance"; the shard is authoritative).
+No collision with any committed bundle key.
