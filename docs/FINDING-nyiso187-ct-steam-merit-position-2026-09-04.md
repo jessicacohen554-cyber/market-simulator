@@ -144,3 +144,28 @@ years 2019–2026; tranches `--per-unit-attribution --merit-order-guard`,
 | `campd_ramp_envelopes_NYISO.csv` | **STOP fired** — the `(0, CC)` class-fraction fallback row moves (0.4907 → 0.5000 up, 0.5623 → 0.5904 down) because it pools the plant population | 55375 splits into 55375 (626 MW obs, 372 / 449 MW·h) + 57664 (626 MW, 416 / 454); **EXCLUDED from the arm** per PREREG §3 S1, committed file restored; footprint recorded, handed forward |
 | `plant_emission_rates_v2` (pooled rows the LP reads) | not re-derived — a `--repool` rebuilds every NYISO plant's pool | 57664 carries a class-default 0.4206 t/MWh against 55375's measured 0.3807; the identity would give it the facility's measured rate. Handed forward as a measured footprint |
 | every other CAMPD-fed NYISO artifact | reads raw parquets (not the normalizer) | unaffected |
+
+---
+
+## 4. The Object-2 A/B, at full magnitude (control = same-HEAD replay on the committed artifacts, BIT-IDENTICAL to the keeper: 0 of 52,560 hourly zonal prices differ in every year; arm = `2026-09-04-nyiso-187-astoria-routing`)
+
+**G-DELTA:** zero `scenario_config` fields; the arm resolves the same artifact
+NAMES on the perunitmerit basis with the re-derived shas; the remap carries
+exactly the two Astoria entries beyond CAISO's. **G-INPUTS / G-DOF / G-ENGAGE**
+PASS (attestation `computed_checks`, `scripts/gen_nyiso187_attestation.py`).
+
+### 4.1 Where the energy went (P1 unit-hourly, TWh; mean available MW)
+
+| year | Astoria Energy I 55375 | avail MW | Astoria Energy II 57664 | avail MW | site | class `CC_REGULAR` | `ST_GAS` |
+|---|---|---|---|---|---|---|---|
+| 2023 | 4.134 → **4.503** (923: 4.078) | 487 → 531 | 4.679 → **4.275** (923: 3.896) | 592 → 540 | 8.813 → 8.778 (923: 7.974) | 33.568 → 33.552 (-0.016) | 10.360 → 10.365 |
+| 2024 | 4.064 → **4.503** (923: 4.150) | 480 → 531 | 4.683 → **4.229** (923: 3.990) | 592 → 536 | 8.747 → 8.732 (923: 8.140) | 38.101 → 38.098 (-0.003) | 8.882 → 8.881 |
+| 2025 | 2.617 → **4.068** (923: 3.900) | 311 → 482 | 4.661 → **3.067** (923: 2.116) | 592 → 392 | 7.278 → 7.135 (923: 6.016) | 36.736 → 36.672 (-0.064) | 9.529 → 9.517 |
+
+Every pre-declared expectation holds: (i) 57664's 2025 energy FALLS by 1.59 TWh
+as its outage becomes visible (residual +0.95 over EIA-923, from +2.55); (ii)
+55375 is no longer derated for its sibling and rises in every year (2025:
+−1.28 → +0.17 over EIA-923); (iii) the class cell moves by ≤ 0.06 TWh — the
+family is pinned; (iv) no price claim. **The site's representation is
+corrected while the class total is untouched: this is a rule-1 / rule-14
+repair, not a gate lever, and it is reported as such.**
