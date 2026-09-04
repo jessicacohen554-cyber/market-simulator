@@ -3640,6 +3640,8 @@ def solve_and_persist(
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
+    nearby_fuel_price_zone_donor_guard: bool = False,
+    fleet_state_from_eia860: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
@@ -3964,6 +3966,8 @@ def solve_and_persist(
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
+            nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
+            fleet_state_from_eia860=fleet_state_from_eia860,
         )
         if pjm_offer_midcurve_segments is not None:
             # Meta-writer mirror of run_year's with_overrides (rule 25): the
@@ -5406,6 +5410,8 @@ def solve_and_persist(
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
+            nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
+            fleet_state_from_eia860=fleet_state_from_eia860,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             nuclear_unit_availability=nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
@@ -6312,6 +6318,8 @@ def solve_and_persist(
         "caiso_st_gas_peak_measured": caiso_st_gas_peak_measured,
         "caiso_ct_peaker_committed_measured": caiso_ct_peaker_committed_measured,
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
+        "nearby_fuel_price_zone_donor_guard": nearby_fuel_price_zone_donor_guard,
+        "fleet_state_from_eia860": fleet_state_from_eia860,
         "pjm_offer_midcurve_segments": (
             list(pjm_offer_midcurve_segments)
             if pjm_offer_midcurve_segments is not None
@@ -8613,6 +8621,8 @@ def run_replay_bundle(
     caiso_st_gas_committed_measured: bool | None = None,
     caiso_st_gas_peak_measured: bool | None = None,
     caiso_ct_peaker_committed_measured: bool | None = None,
+    nearby_fuel_price_zone_donor_guard: bool | None = None,
+    fleet_state_from_eia860: bool | None = None,
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
@@ -8706,6 +8716,15 @@ def run_replay_bundle(
         kwargs["caiso_ct_peaker_committed_measured"] = (
             caiso_ct_peaker_committed_measured
         )
+    # caiso-243: the two F923 fallback guards compose exactly like the
+    # overrides above, so the structural arm is provably the committed keeper
+    # recipe plus these flags (``None`` keeps the recipe's own value).
+    if nearby_fuel_price_zone_donor_guard is not None:
+        kwargs["nearby_fuel_price_zone_donor_guard"] = (
+            nearby_fuel_price_zone_donor_guard
+        )
+    if fleet_state_from_eia860 is not None:
+        kwargs["fleet_state_from_eia860"] = fleet_state_from_eia860
     if unit_outage_mixed_gas_routing is not None:
         kwargs["unit_outage_mixed_gas_routing"] = unit_outage_mixed_gas_routing
     if unit_outage_st_capacity_basis is not None:
@@ -10513,6 +10532,33 @@ def main() -> None:
         "FAVOURABLE to C3a, which is the session's hazard, not its argument; "
         "this is NEVER a C3a lever. Non-CAISO, or a band with no "
         "phys_committed, is a hard error.",
+    )
+    parser.add_argument(
+        "--nearby-fuel-price-zone-donor-guard",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="DATA-INTEGRITY GUARD (caiso-243, repair form (a) of "
+        "FINDING-caiso242 §5): the F923 nearby-plant fallback's ZONE tier "
+        "requires the SAME distinct-reporter floor the state tier already "
+        "carries (nearby_fuel_price_min_state_plants), so a zone-month whose "
+        "donor pool is ONE reporting plant is not trusted (a pool of one "
+        "returned that plant's price verbatim — plant 55077's 96.161 $/MMBtu "
+        "on 2.6 % of its normal volume priced 2,446 MW of CAISO neighbours at "
+        "~$736/MWh for all of Nov-2025). No new constant. ISO-generic guard; "
+        "the ARM is per lane (rule 25). Off by default, byte-identical.",
+    )
+    parser.add_argument(
+        "--fleet-state-from-eia860",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="DATA-COMPLETENESS REPAIR (caiso-243, repair form (c), the ROOT "
+        "CAUSE of defect D1): stamp each CAMPD-bin / plant-level generator's "
+        "USPS state from the EIA-860 plant table so the F923 fallback's "
+        "documented state-first donor tier — the only tier with a "
+        "donor-count guard — is reachable. bins_to_fleet never set state, so "
+        "every plant-level fleet (CAISO/PJM/MISO/NYISO/NEISO) skipped that "
+        "tier fleet-wide. No new constant; rule 14 [R-ACCURATE]. Off by "
+        "default, byte-identical; armed per lane (rule 25).",
     )
     parser.add_argument(
         "--caiso-offer-surface-conditional",
@@ -12483,6 +12529,18 @@ def main() -> None:
                 or "--no-caiso-ct-peaker-committed-measured" in sys.argv
                 else None
             ),
+            nearby_fuel_price_zone_donor_guard=(
+                args.nearby_fuel_price_zone_donor_guard
+                if "--nearby-fuel-price-zone-donor-guard" in sys.argv
+                or "--no-nearby-fuel-price-zone-donor-guard" in sys.argv
+                else None
+            ),
+            fleet_state_from_eia860=(
+                args.fleet_state_from_eia860
+                if "--fleet-state-from-eia860" in sys.argv
+                or "--no-fleet-state-from-eia860" in sys.argv
+                else None
+            ),
             unit_outage_mixed_gas_routing=(
                 args.unit_outage_mixed_gas_routing
                 if "--unit-outage-mixed-gas-routing" in sys.argv
@@ -12820,6 +12878,8 @@ def main() -> None:
         caiso_st_gas_peak_measured=args.caiso_st_gas_peak_measured,
         caiso_ct_peaker_committed_measured=args.caiso_ct_peaker_committed_measured,
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
+        nearby_fuel_price_zone_donor_guard=args.nearby_fuel_price_zone_donor_guard,
+        fleet_state_from_eia860=args.fleet_state_from_eia860,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False

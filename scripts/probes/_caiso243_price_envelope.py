@@ -47,7 +47,9 @@ CACHE = Path(
 OUT = REPO / "results/calibration/_caiso243_price_envelope.json"
 HOURS = 8760
 _DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-MONTH_OF_HOUR = np.concatenate([np.full(d * 24, m + 1) for m, d in enumerate(_DAYS)])[:HOURS]
+MONTH_OF_HOUR = np.concatenate([np.full(d * 24, m + 1) for m, d in enumerate(_DAYS)])[
+    :HOURS
+]
 VARIANTS = ("a", "c", "ac", "b_0.05_3.0")
 
 
@@ -69,7 +71,12 @@ def envelope(year: int, name: str, zone_names: list[str]) -> dict:
     sys_ = _system(year)
     total_load = float(sys_["demand"].sum())
     if not rows.any():
-        return {"rows": 0, "lower": 0.0, "upper": 0.0, "note": "inert — byte-identical offers; falsifier is identity"}
+        return {
+            "rows": 0,
+            "lower": 0.0,
+            "upper": 0.0,
+            "note": "inert — byte-identical offers; falsifier is identity",
+        }
     # per zone-hour: the keeper's price and demand
     live_months = sorted(int(m) for m in np.unique(MONTH_OF_HOUR[moved.any(axis=0)]))
     lower_num = 0.0
@@ -99,9 +106,17 @@ def envelope(year: int, name: str, zone_names: list[str]) -> dict:
             "repriced_mw": round(float(base["pmax"][zr].sum()), 1),
             "live_hours_price_above_new_offer": int(((price > new_min) & live).sum()),
             "live_hours_price_above_old_offer": int(((price > old_min) & live).sum()),
-            "keeper_live_lw_price": round(float(np.average(price[live], weights=load[live])), 2) if live.any() else None,
-            "new_min_offer_live_mean": round(float(new_min[live].mean()), 2) if live.any() else None,
-            "old_min_offer_live_mean": round(float(old_min[live].mean()), 2) if live.any() else None,
+            "keeper_live_lw_price": round(
+                float(np.average(price[live], weights=load[live])), 2
+            )
+            if live.any()
+            else None,
+            "new_min_offer_live_mean": round(float(new_min[live].mean()), 2)
+            if live.any()
+            else None,
+            "old_min_offer_live_mean": round(float(old_min[live].mean()), 2)
+            if live.any()
+            else None,
         }
     return {
         "rows": int(rows.sum()),

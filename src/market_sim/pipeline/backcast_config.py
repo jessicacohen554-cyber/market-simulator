@@ -1209,6 +1209,8 @@ def backcast_config(
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
+    nearby_fuel_price_zone_donor_guard: bool = False,
+    fleet_state_from_eia860: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -1657,6 +1659,12 @@ def backcast_config(
         #   and out again on its Planned Retirement Month, for all three. PJM
         #   stays flat until its own recalibration pass. The --storage-vintage-
         #   ramp CLI flag can force it on for any other ISO.
+        # caiso-243: the two F923 fallback guards (repair forms (a) and (c)
+        # of FINDING-caiso242 §5 — the zone-tier donor floor and the EIA-860
+        # state stamp on the CAMPD-bin fleet). ISO-generic guards, default
+        # off; the ARM is per lane via the calibration CLI (rule 25).
+        nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
+        fleet_state_from_eia860=fleet_state_from_eia860,
         nearby_fuel_price_fallback=(iso.upper() != "ERCOT"),  # merchant-heavy
         #   ISOs (PJM) have many plants that file no EIA-923 delivered cost;
         #   fill those months from state/zone neighbours before the Henry Hub

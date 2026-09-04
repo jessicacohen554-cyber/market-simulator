@@ -70,7 +70,9 @@ HOURS = 8760
 YEARS_ALL = (2023, 2024, 2025)
 GAS_GROUPS = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
 _DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-MONTH_OF_HOUR = np.concatenate([np.full(d * 24, m) for m, d in enumerate(_DAYS)])[:HOURS]
+MONTH_OF_HOUR = np.concatenate([np.full(d * 24, m) for m, d in enumerate(_DAYS)])[
+    :HOURS
+]
 
 
 # --------------------------------------------------------------------------- #
@@ -80,7 +82,9 @@ def eia860_state_map() -> dict[int, str]:
     """``{plant_code: USPS state}`` from the EIA-860 plant table (form (c))."""
     df = pd.read_parquet(EIA860_PLANT, columns=["Plant Code", "State"])
     df = df.dropna()
-    return {int(p): str(s).strip().upper() for p, s in zip(df["Plant Code"], df["State"])}
+    return {
+        int(p): str(s).strip().upper() for p, s in zip(df["Plant Code"], df["State"])
+    }
 
 
 def keeper_min_state_plants() -> int:
@@ -103,7 +107,9 @@ def _guarded_nearby_class(min_zone: int):
             sub = self._iso_costs[self._iso_costs["fuel_group"] == fuel_group]
             if klass is not None:
                 donor_class = self._plant_class.get(fuel_group, {})
-                sub = sub[sub["plant_id"].map(lambda p: donor_class.get(int(p))) == klass]
+                sub = sub[
+                    sub["plant_id"].map(lambda p: donor_class.get(int(p))) == klass
+                ]
             zone_count: dict[int, np.ndarray] = {}
             if not sub.empty:
                 z = sub.assign(zone=sub["plant_id"].map(self._plant_to_zone)).dropna(
@@ -126,15 +132,19 @@ def _guarded_nearby_class(min_zone: int):
     return _Guarded
 
 
-def _filtered_costs(costs: pd.DataFrame, qty_frac: float, price_mult: float) -> pd.DataFrame:
+def _filtered_costs(
+    costs: pd.DataFrame, qty_frac: float, price_mult: float
+) -> pd.DataFrame:
     """Drop gas plant-months failing the (b) volume-admissibility cut."""
     d = costs.copy()
     gas = (d["fuel_group"] == "Natural Gas") & (d["quantity"] > 0)
     g = d[gas].groupby(["plant_id", "year"])
     qmed = g["quantity"].transform("median")
-    spend = (d.loc[gas, "price_per_mmbtu"] * d.loc[gas, "quantity"]).groupby(
-        [d.loc[gas, "plant_id"], d.loc[gas, "year"]]
-    ).transform("sum")
+    spend = (
+        (d.loc[gas, "price_per_mmbtu"] * d.loc[gas, "quantity"])
+        .groupby([d.loc[gas, "plant_id"], d.loc[gas, "year"]])
+        .transform("sum")
+    )
     qsum = g["quantity"].transform("sum")
     vw = spend / qsum
     bad = (d.loc[gas, "quantity"] <= qty_frac * qmed) & (
@@ -175,7 +185,10 @@ class Variant:
         def patched_apply(fuel_prices, fleet, config, year, monthly_costs_path=None):
             if smap is not None:
                 fleet.state = np.array(
-                    [smap.get(int(p), "") if int(p) > 0 else "" for p in fleet.plant_code],
+                    [
+                        smap.get(int(p), "") if int(p) > 0 else ""
+                        for p in fleet.plant_code
+                    ],
                     dtype=object,
                 )
             return orig_apply(fuel_prices, fleet, config, year, monthly_costs_path)
@@ -215,12 +228,29 @@ def rebuild(year: int, variant: Variant) -> dict:
 
     meta = json.loads((BUNDLE / "meta.json").read_text())
     params = inspect.signature(run_year).parameters
-    skip = {"year", "iso", "hours", "gas_price", "ttc_overrides", "fleet_only", "xyear_cache", "must_run_mw"}
+    skip = {
+        "year",
+        "iso",
+        "hours",
+        "gas_price",
+        "ttc_overrides",
+        "fleet_only",
+        "xyear_cache",
+        "must_run_mw",
+    }
     kwargs = {k: v for k, v in meta.items() if k in params and k not in skip}
     c240._clear_fleet_caches()
     buf = io.StringIO()
     with variant.active(), contextlib.redirect_stderr(buf):
-        st = run_year(year, meta["iso"], HOURS, float(meta["gas_prices"][str(year)]), {}, fleet_only=True, **kwargs)
+        st = run_year(
+            year,
+            meta["iso"],
+            HOURS,
+            float(meta["gas_prices"][str(year)]),
+            {},
+            fleet_only=True,
+            **kwargs,
+        )
     fa = st["fleet_arrays"]
     gens = st.get("fleet") or []
     fp = np.asarray(st["fuel_prices"], dtype=float)
@@ -243,14 +273,22 @@ def rebuild(year: int, variant: Variant) -> dict:
         "plant_code": np.asarray(fa.plant_code, int),
         "zone_idx": np.asarray(fa.zone_idx, int),
         "fuel_type_idx": np.asarray(fa.fuel_type_idx, int),
-        "group": np.array([str(getattr(g, "plant_group", "")) for g in gens], dtype=object),
-        "state": np.array([str(s) for s in (fa.state if fa.state is not None else [""] * fa.n_gen)], dtype=object),
+        "group": np.array(
+            [str(getattr(g, "plant_group", "")) for g in gens], dtype=object
+        ),
+        "state": np.array(
+            [str(s) for s in (fa.state if fa.state is not None else [""] * fa.n_gen)],
+            dtype=object,
+        ),
         "unit": np.array([str(u) for u in fa.unit_ids], dtype=object),
         "min_state": min_state,
         "log": buf.getvalue(),
     }
     CACHE.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(CACHE / f"{variant.name}_{year}.npz", **{k: v for k, v in out.items() if k not in ("log", "min_state")})
+    np.savez_compressed(
+        CACHE / f"{variant.name}_{year}.npz",
+        **{k: v for k, v in out.items() if k not in ("log", "min_state")},
+    )
     (CACHE / f"{variant.name}_{year}.log").write_text(out["log"])
     return out
 
@@ -261,7 +299,11 @@ def load_cached(year: int, name: str) -> dict | None:
         return None
     z = np.load(p, allow_pickle=True)
     d = {k: z[k] for k in z.files}
-    d["log"] = (CACHE / f"{name}_{year}.log").read_text() if (CACHE / f"{name}_{year}.log").exists() else ""
+    d["log"] = (
+        (CACHE / f"{name}_{year}.log").read_text()
+        if (CACHE / f"{name}_{year}.log").exists()
+        else ""
+    )
     return d
 
 
@@ -281,7 +323,9 @@ def gas_mask(d: dict) -> np.ndarray:
 
 def diff_footprint(base: dict, var: dict, year: int, zone_names: list[str]) -> dict:
     """Cells, rows, MW and $ that move between two rebuilds of the same year."""
-    assert base["unit"].shape == var["unit"].shape and (base["unit"] == var["unit"]).all(), "fleet identity"
+    assert (
+        base["unit"].shape == var["unit"].shape and (base["unit"] == var["unit"]).all()
+    ), "fleet identity"
     dfp = var["fuel"] - base["fuel"]
     moved = ~np.isclose(dfp, 0.0, atol=1e-9)
     rows = moved.any(axis=1)
@@ -292,7 +336,9 @@ def diff_footprint(base: dict, var: dict, year: int, zone_names: list[str]) -> d
         "rows_moved_nongas": int((rows & ~gm).sum()),
         "mw_moved": round(float(base["pmax"][rows].sum()), 1),
         "plants_moved": sorted(int(p) for p in np.unique(base["plant_code"][rows])),
-        "months_moved": sorted(int(m) + 1 for m in np.unique(MONTH_OF_HOUR[moved.any(axis=0)])),
+        "months_moved": sorted(
+            int(m) + 1 for m in np.unique(MONTH_OF_HOUR[moved.any(axis=0)])
+        ),
         "by_group_mw": {},
         "by_plant": [],
         "by_month": {},
@@ -304,8 +350,14 @@ def diff_footprint(base: dict, var: dict, year: int, zone_names: list[str]) -> d
     for p in out["plants_moved"]:
         sel = rows & (base["plant_code"] == p)
         w = base["pmax"][sel]
-        rec = {"plant": p, "state_eia860": eia860_state_map().get(p, ""), "zone": zone_names[int(base["zone_idx"][sel][0])],
-               "group": sorted(set(base["group"][sel].tolist())), "mw": round(float(w.sum()), 1), "months": {}}
+        rec = {
+            "plant": p,
+            "state_eia860": eia860_state_map().get(p, ""),
+            "zone": zone_names[int(base["zone_idx"][sel][0])],
+            "group": sorted(set(base["group"][sel].tolist())),
+            "mw": round(float(w.sum()), 1),
+            "months": {},
+        }
         for m in range(12):
             hm = MONTH_OF_HOUR == m
             cell = moved[sel][:, hm]
@@ -313,9 +365,16 @@ def diff_footprint(base: dict, var: dict, year: int, zone_names: list[str]) -> d
                 b = (base["fuel"][sel][:, hm] * w[:, None]).sum() / (w.sum() * hm.sum())
                 v = (var["fuel"][sel][:, hm] * w[:, None]).sum() / (w.sum() * hm.sum())
                 hr = base["heat_rate"][sel]
-                dmc = ((var["fuel"][sel][:, hm] - base["fuel"][sel][:, hm]) * hr[:, None] * w[:, None]).sum() / (w.sum() * hm.sum())
-                rec["months"][m + 1] = {"base_usd_mmbtu": round(float(b), 4), "variant_usd_mmbtu": round(float(v), 4),
-                                        "d_mc_usd_mwh_capwt": round(float(dmc), 3)}
+                dmc = (
+                    (var["fuel"][sel][:, hm] - base["fuel"][sel][:, hm])
+                    * hr[:, None]
+                    * w[:, None]
+                ).sum() / (w.sum() * hm.sum())
+                rec["months"][m + 1] = {
+                    "base_usd_mmbtu": round(float(b), 4),
+                    "variant_usd_mmbtu": round(float(v), 4),
+                    "d_mc_usd_mwh_capwt": round(float(dmc), 3),
+                }
         out["by_plant"].append(rec)
     for m in range(12):
         hm = MONTH_OF_HOUR == m
@@ -326,35 +385,67 @@ def diff_footprint(base: dict, var: dict, year: int, zone_names: list[str]) -> d
             b = (base["fuel"][r][:, hm] * w[:, None]).sum() / (w.sum() * hm.sum())
             v = (var["fuel"][r][:, hm] * w[:, None]).sum() / (w.sum() * hm.sum())
             hr = base["heat_rate"][r]
-            mcb = ((base["fuel"][r][:, hm] * hr[:, None] * w[:, None]).sum()) / (w.sum() * hm.sum())
-            mcv = ((var["fuel"][r][:, hm] * hr[:, None] * w[:, None]).sum()) / (w.sum() * hm.sum())
-            out["by_month"][m + 1] = {"rows": int(r.sum()), "mw": round(float(w.sum()), 1),
-                                      "base_usd_mmbtu_capwt": round(float(b), 4), "variant_usd_mmbtu_capwt": round(float(v), 4),
-                                      "base_fuel_mc_usd_mwh_capwt": round(float(mcb), 2), "variant_fuel_mc_usd_mwh_capwt": round(float(mcv), 2),
-                                      "capability_mwh_at_stake": round(float(w.sum() * hm.sum()), 0)}
+            mcb = ((base["fuel"][r][:, hm] * hr[:, None] * w[:, None]).sum()) / (
+                w.sum() * hm.sum()
+            )
+            mcv = ((var["fuel"][r][:, hm] * hr[:, None] * w[:, None]).sum()) / (
+                w.sum() * hm.sum()
+            )
+            out["by_month"][m + 1] = {
+                "rows": int(r.sum()),
+                "mw": round(float(w.sum()), 1),
+                "base_usd_mmbtu_capwt": round(float(b), 4),
+                "variant_usd_mmbtu_capwt": round(float(v), 4),
+                "base_fuel_mc_usd_mwh_capwt": round(float(mcb), 2),
+                "variant_fuel_mc_usd_mwh_capwt": round(float(mcv), 2),
+                "capability_mwh_at_stake": round(float(w.sum() * hm.sum()), 0),
+            }
     return out
 
 
-def tier_attribution(base: dict, year: int, live_months: list[int], zone_names: list[str], min_state: int) -> dict:
+def tier_attribution(
+    base: dict, year: int, live_months: list[int], zone_names: list[str], min_state: int
+) -> dict:
     """Which fallback tier prices each CAISO gas generator-month, on the keeper's own path (instrumented replica)."""
-    from market_sim.data.eia923 import load_monthly_fuel_costs, plant_month_price_grid, state_month_price_grid
-    from market_sim.data.zone_assignment import build_zone_lookup
+    from market_sim.data.eia923 import (
+        load_monthly_fuel_costs,
+        plant_month_price_grid,
+        state_month_price_grid,
+    )
 
     costs = load_monthly_fuel_costs()
-    zl = build_zone_lookup("CAISO")
     gm = gas_mask(base)
-    iso_costs = costs[(costs["year"] == year) & (costs["plant_id"].isin(set(int(p) for p in base["plant_code"] if p > 0)))]
+    iso_costs = costs[
+        (costs["year"] == year)
+        & (costs["plant_id"].isin(set(int(p) for p in base["plant_code"] if p > 0)))
+    ]
     sub = iso_costs[iso_costs["fuel_group"] == "Natural Gas"]
     own = plant_month_price_grid(costs, year, "Natural Gas")
     sp, sc = state_month_price_grid(sub, year, "Natural Gas")
-    zone_of = {int(p): int(z) for p, z in zip(base["plant_code"], base["zone_idx"]) if p > 0}
+    zone_of = {
+        int(p): int(z) for p, z in zip(base["plant_code"], base["zone_idx"]) if p > 0
+    }
     zone_n = {}
-    for zone, grp in sub.assign(zone=sub["plant_id"].map(zone_of)).dropna(subset=["zone"]).groupby("zone"):
-        zone_n[int(zone)] = {int(m): int(g["plant_id"].nunique()) for m, g in grp.groupby("month")}
-    out = {"live_months": live_months, "state_empty_gas_rows": int((base["state"][gm] == "").sum()), "gas_rows": int(gm.sum()),
-           "state_empty_gas_mw": round(float(base["pmax"][gm & (base["state"] == "")].sum()), 1), "gas_mw": round(float(base["pmax"][gm].sum()), 1),
-           "tiers_live_months": {}, "zone_pool_sizes": {zone_names[z]: n for z, n in zone_n.items()},
-           "state_reporter_counts": {s: [int(x) for x in c] for s, c in sc.items()}}
+    for zone, grp in (
+        sub.assign(zone=sub["plant_id"].map(zone_of))
+        .dropna(subset=["zone"])
+        .groupby("zone")
+    ):
+        zone_n[int(zone)] = {
+            int(m): int(g["plant_id"].nunique()) for m, g in grp.groupby("month")
+        }
+    out = {
+        "live_months": live_months,
+        "state_empty_gas_rows": int((base["state"][gm] == "").sum()),
+        "gas_rows": int(gm.sum()),
+        "state_empty_gas_mw": round(
+            float(base["pmax"][gm & (base["state"] == "")].sum()), 1
+        ),
+        "gas_mw": round(float(base["pmax"][gm].sum()), 1),
+        "tiers_live_months": {},
+        "zone_pool_sizes": {zone_names[z]: n for z, n in zone_n.items()},
+        "state_reporter_counts": {s: [int(x) for x in c] for s, c in sc.items()},
+    }
     smap = eia860_state_map()
     tiers = {}
     for i in np.flatnonzero(gm):
@@ -365,7 +456,9 @@ def tier_attribution(base: dict, year: int, live_months: list[int], zone_names: 
             mi = m - 1
             if p in own and not np.isnan(own[p][mi]):
                 t = "own"
-            elif st and st in sp and sc[st][mi] >= min_state and not np.isnan(sp[st][mi]):
+            elif (
+                st and st in sp and sc[st][mi] >= min_state and not np.isnan(sp[st][mi])
+            ):
                 t = "state"
             elif zone_n.get(z, {}).get(m, 0) > 0:
                 t = f"zone(pool={zone_n[z][m]})"
@@ -377,7 +470,14 @@ def tier_attribution(base: dict, year: int, live_months: list[int], zone_names: 
             rec["mw"] += float(base["pmax"][i])
             rec["plants"].add(p)
     out["tiers_live_months"] = [
-        {"tier": k[0], "zone": k[1], "eia860_state": k[2], "rows": v["rows"], "mw": round(v["mw"], 1), "plants": sorted(v["plants"])}
+        {
+            "tier": k[0],
+            "zone": k[1],
+            "eia860_state": k[2],
+            "rows": v["rows"],
+            "mw": round(v["mw"], 1),
+            "plants": sorted(v["plants"]),
+        }
         for k, v in sorted(tiers.items(), key=lambda kv: -kv[1]["mw"])
     ]
     return out
@@ -397,17 +497,22 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--years", type=int, nargs="+", default=[2025])
     ap.add_argument("--variants", nargs="+", default=["keeper", "a", "c", "ac"])
-    ap.add_argument("--reuse", action="store_true", help="use cached rebuilds where present")
+    ap.add_argument(
+        "--reuse", action="store_true", help="use cached rebuilds where present"
+    )
     args = ap.parse_args()
     from market_sim.config.iso_configs import get_iso_config
 
     zone_names = list(get_iso_config("CAISO").zone_names)
     result = json.loads(OUT.read_text()) if OUT.exists() else {}
     result["_provenance"] = {
-        "session": "caiso-243", "bundle": str(BUNDLE.relative_to(REPO)), "keeper_run_id": "2026-09-03-caiso-241-b1-ctpeaker",
+        "session": "caiso-243",
+        "bundle": str(BUNDLE.relative_to(REPO)),
+        "keeper_run_id": "2026-09-03-caiso-241-b1-ctpeaker",
         "note": "no LP, nothing armed; each variant is a monkeypatch on the F923 plant-monthly pass inside the real run_year(fleet_only=True) rebuild of the keeper recipe",
         "d1_root_cause": "data/fleet/assembly.py::bins_to_fleet constructs Generator(...) without `state`; Generator.state defaults to '' (data/fleet/__init__.py); only the EIA-860 loader path (data/fleet/eia860.py) sets it — so every ISO on plant_level_fleet/use_campd_bins has an empty state tier",
-        "state_source_for_c": str(EIA860_PLANT.relative_to(REPO)) + " (Plant Code -> State)",
+        "state_source_for_c": str(EIA860_PLANT.relative_to(REPO))
+        + " (Plant Code -> State)",
     }
     result.setdefault("years", {})
     for year in args.years:
@@ -422,22 +527,40 @@ def main() -> None:
                 print(f"[rebuild] {year} {name}", flush=True)
                 cached = rebuild(year, Variant(name))
             builds[name] = cached
-            hub_line = [ln for ln in cached["log"].splitlines() if "hub-basis overlay" in ln]
-            f923_line = [ln for ln in cached["log"].splitlines() if "F923 fuel costs" in ln]
-            yr.setdefault("log_lines", {})[name] = {"hub": hub_line[-1][-120:] if hub_line else "", "f923": f923_line[-1][-120:] if f923_line else ""}
+            hub_line = [
+                ln for ln in cached["log"].splitlines() if "hub-basis overlay" in ln
+            ]
+            f923_line = [
+                ln for ln in cached["log"].splitlines() if "F923 fuel costs" in ln
+            ]
+            yr.setdefault("log_lines", {})[name] = {
+                "hub": hub_line[-1][-120:] if hub_line else "",
+                "f923": f923_line[-1][-120:] if f923_line else "",
+            }
         base = builds.get("keeper") or load_cached(year, "keeper")
         if base is None:
             raise SystemExit("need the keeper rebuild first")
         min_state = int(np.asarray(base.get("min_state", 2)))
-        yr["tier_attribution_keeper"] = tier_attribution(base, year, live, zone_names, min_state)
+        yr["tier_attribution_keeper"] = tier_attribution(
+            base, year, live, zone_names, min_state
+        )
         yr["keeper_sidecar"] = keeper_sidecar_check(base, year)
         yr.setdefault("footprints", {})
         for name, b in builds.items():
             if name == "keeper":
                 continue
             yr["footprints"][name] = diff_footprint(base, b, year, zone_names)
-            print(f"{year} {name}: rows {yr['footprints'][name]['rows_moved']} mw {yr['footprints'][name]['mw_moved']} months {yr['footprints'][name]['months_moved']}")
-    OUT.write_text(json.dumps(result, indent=2, default=lambda o: int(o) if isinstance(o, np.integer) else float(o)) + "\n")
+            print(
+                f"{year} {name}: rows {yr['footprints'][name]['rows_moved']} mw {yr['footprints'][name]['mw_moved']} months {yr['footprints'][name]['months_moved']}"
+            )
+    OUT.write_text(
+        json.dumps(
+            result,
+            indent=2,
+            default=lambda o: int(o) if isinstance(o, np.integer) else float(o),
+        )
+        + "\n"
+    )
     print(f"wrote {OUT.relative_to(REPO)}")
 
 

@@ -1169,6 +1169,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # surface) and hashes distinctly. Registered WITH the field, in the same
     # commit, per the nyiso-119 discipline.
     "caiso_ct_peaker_committed_measured",
+    # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
+    # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
+    # before); an armed run re-tiers gap-fill months and hashes distinctly.
+    # Registered WITH the fields, in the same commit (the nyiso-119 discipline).
+    "nearby_fuel_price_zone_donor_guard",
+    "fleet_state_from_eia860",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1712,6 +1718,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-241 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "caiso_ct_peaker_committed_measured": "False",
+    # Added by caiso-243 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "nearby_fuel_price_zone_donor_guard": "False",
+    "fleet_state_from_eia860": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -13627,6 +13637,46 @@ class ScenarioConfig:
     nearby_fuel_price_min_state_plants: int = 2  # state-mean sample floor;
     #   below it the broader model-zone mean is used instead.
 
+    # caiso-243 (2026-09-04) — the F923 LOW-VOLUME FALLBACK DEFECT, repair
+    # form (a): extend the EXISTING donor-count guard to the ZONE tier. The
+    # state tier above requires >= ``nearby_fuel_price_min_state_plants``
+    # distinct reporters before its mean is trusted; the zone tier it falls
+    # to had NO such guard, so a zone-month whose pool is ONE reporting plant
+    # returned that plant's price to five decimals — and one EIA-923 row
+    # (plant 55077, NV: 96.161 $/MMBtu on 2.6 % of its own normal volume, a
+    # fixed charge over a near-zero denominator) priced 2,446 MW of its
+    # CAISO neighbours at ~$736/MWh for all of November 2025
+    # (FINDING-caiso242-offer-basis-identity-2026-09-03.md §5). When True the
+    # zone tier fills only zone-months with >= the SAME floor of distinct
+    # reporters; a thinner pool returns NaN and the plant keeps the next
+    # series (the ISO-month F923 mean / trajectory). NO new constant: it
+    # reuses the registered floor. ISO-generic guard, default off so every
+    # keeper replays byte-identical; the ARM is per lane (rule 25
+    # [R-ISO-SCOPE]) — armed on the CAISO keeper by caiso-243, where it is
+    # measured INERT on top of ``fleet_state_from_eia860`` (every CA recipient
+    # is served by the state tier first) and kept as the protective guard.
+    # Pre-registered: PRECOMMIT-caiso243-f923-fallback-guard-2026-09-04.md.
+    nearby_fuel_price_zone_donor_guard: bool = False
+
+    # caiso-243 — repair form (c), the ROOT CAUSE of defect D1: the CAMPD-bin
+    # / plant_level_fleet path (``fleet/assembly.py::bins_to_fleet``) never
+    # set ``Generator.state``, so ``FleetArrays.state`` was EMPTY on 100 % of
+    # every plant-level fleet (measured: 1,411/1,411 CAISO gas rows, 29,319
+    # MW) and the fallback's documented state-first tier — the ONLY tier
+    # carrying a donor-count guard — was skipped fleet-wide in every ISO on
+    # that path (CAISO, PJM, MISO, NYISO, NEISO). When True, ``bins_to_fleet``
+    # stamps each generator's USPS state from the EIA-860 plant table
+    # (``eia860_plant.parquet``, Plant Code -> State, already a solve-path
+    # source), making the designed tier order reachable. NO new constant, no
+    # value chosen; a data-completeness repair (rule 14 [R-ACCURATE]) that
+    # regenerates for any year from the same table (rule 13 [R-MEASURED]).
+    # Default off so every keeper replays byte-identical; armed per lane
+    # (rule 25). The only in-solve reader of ``FleetArrays.state`` is the
+    # F923 fallback (``data/fuel/plant_prices.py``), so the footprint is
+    # confined to gap-fill fuel prices in hub-overlay-uncovered months.
+    # Pre-registered: PRECOMMIT-caiso243-f923-fallback-guard-2026-09-04.md.
+    fleet_state_from_eia860: bool = False
+
     # Tier 3 (calibration) — class-aware "nearby plant" donor pools. When True
     # (with ``nearby_fuel_price_fallback`` on and a fleet that carries
     # ``plant_group``), a generator's gap-fill months are priced from reporting
@@ -16716,6 +16766,8 @@ TIER_TAGS: dict[str, int] = {
     "coal_plant_monthly_pricing": 3,
     "nearby_fuel_price_fallback": 3,
     "nearby_fuel_price_min_state_plants": 3,
+    "nearby_fuel_price_zone_donor_guard": 3,
+    "fleet_state_from_eia860": 3,
     "class_aware_fuel_price_fallback": 3,
     "plant_level_fleet": 3,
     "gas_offer_curve": 3,

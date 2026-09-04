@@ -59,6 +59,7 @@ from market_sim.data.fleet.models import (
     Generator,
 )
 from market_sim.data.fleet.eia860 import (
+    eia860_plant_states,
     BIN_GROUP_TO_FUEL,
     BIN_STARTUP_COST_PER_MW,
     CC_REGULAR_COMMITTED_PCT_BY_PLANT,
@@ -356,6 +357,17 @@ def bins_to_fleet(
     # times per fleet build. Every cell is coerced via ``int``/``float``/``str``
     # at point of use, and pandas 3.0 ``to_dict("records")`` preserves NaN (not
     # None), so the ``... or label`` fallbacks resolve identically — byte-neutral.
+    # caiso-243 (repair form (c), defect D1): the plant's USPS state from the
+    # EIA-860 plant table, stamped on every tranche row so the F923 fallback's
+    # documented state-first donor tier is reachable. Before this gate no
+    # generator built here carried a state at all (the field defaulted to "")
+    # and the tier — the only one with a donor-count guard — was skipped on
+    # every plant-level fleet. Off by default: byte-identical fleets.
+    _plant_states = (
+        eia860_plant_states()
+        if bool(getattr(config, "fleet_state_from_eia860", False))
+        else {}
+    )
     for b in bins.to_dict("records"):
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
@@ -475,6 +487,7 @@ def bins_to_fleet(
                     plant_group="CT_CHP",
                     bin_label=str(b["Bin_Label"]),
                     plant_code=PETRA_NOVA_PLANT_CODE,
+                    state=_plant_states.get(PETRA_NOVA_PLANT_CODE, ""),
                     chp_grid_pmin_mw=PETRA_NOVA_MIN_CF * _pn_cap,
                 )
             )
@@ -1466,6 +1479,7 @@ def bins_to_fleet(
                     bin_nameplate_mw=(nameplate if suffix == "committed" else 0.0),
                     coal_supply=coal_supply,
                     plant_code=plant_code,
+                    state=_plant_states.get(plant_code, ""),
                     chp_grid_pmin_mw=chp_floor_by_suffix.get(suffix, 0.0),
                     coal_sync_pmin_mw=sync_floor,
                     coal_sync_online_frac=(
