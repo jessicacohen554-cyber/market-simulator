@@ -169,3 +169,108 @@ as its outage becomes visible (residual +0.95 over EIA-923, from +2.55); (ii)
 family is pinned; (iv) no price claim. **The site's representation is
 corrected while the class total is untouched: this is a rule-1 / rule-14
 repair, not a gate lever, and it is reported as such.**
+
+### 4.2 Criteria (scorer, committed artifacts only)
+
+| criterion | keeper | arm |
+|---|---|---|
+| C1 2023 `CC_REGULAR` / `ST_GAS` / `CT_PEAKER` | +0.48 / +2.20 / −1.75 PASS | +0.46 / +2.21 / −1.75 PASS |
+| **C1 2024 `CC_REGULAR`** | **+3.80 TWh, +3.1 pp FAIL (share)** | **+3.80 TWh, +3.1 pp FAIL (share)** |
+| C1 2024 `ST_GAS` / `CT_PEAKER` / `CC_CHP` | −1.06 / −1.66 / +1.93 PASS | −1.06 / −1.66 / +1.93 PASS |
+| C2 | PASS | PASS |
+| C3a 2023 / 2024 / **2025** | +4.8 / +0.5 / **−10.4 % FAIL** | +4.8 / +0.5 / **−10.3 % FAIL** |
+| C3b NRMSE | 0.123 / 0.173 / 0.190 PASS | 0.123 / 0.173 / 0.192 PASS |
+| C3c | 1/10, 0/13, 1/42 FAIL | identical |
+| C4 / C6 | PASS / PASS (attested) | PASS / PASS (attested, computed premises) |
+| C8 `CC_REGULAR` D-2 | 0.049 / 0.034 / 0.033 PASS | 0.050 / 0.034 / 0.032 PASS |
+| C8 `ST_GAS` D-2 | 0.191 / 0.252 / 0.203 PASS | 0.190 / 0.252 / 0.203 PASS |
+| D-4 | `passed: false`, five rider rows | the same five rows (2500's 2024 share 0.0207 → 0.0206) |
+| **determination** | **NOT-YET, grade 5, fails 3** | **NOT-YET, grade 5, fails 3** (same fail set) |
+
+**Verdict under PREREG §3 (verbatim):** no criterion flips PASS → FAIL; G-DELTA
+holds; the arm is a **KEEPER CANDIDATE** — a representation repair at the
+ISO's largest merchant CC site, zero parameters, no gate claimed and none
+bought. **LOYO** reduces to the per-year record in §4.1 (no fitted scalar; the
+same direction in every year, largest where the data is — 2025's visible
+outage).
+
+### 4.3 Footprint recorded, not carried (PREREG §1 Object 2, S1)
+
+The bench's per-plant CAMPD series for 55375 / 57664 change with the routing
+(the registration regenerated `bench/NYISO/<year>.json.gz`; `classFull` and
+`e930` are byte-identical, only the two plant entries move) — the measured
+side of the same identity, which is why D-1 / D-4 read on the corrected
+plants. Not carried: the ramp-envelope artifact (class-fraction fallback
+moves) and the pooled emission-rate block (57664 at the 0.4206 t/MWh default
+against 55375's measured 0.3807).
+
+---
+
+## 5. What this session does NOT claim, and what it hands forward
+
+### 5.1 Not claimed
+
+* No CT / steam-side lever exists on the pre-registered bars: the deficit is
+  out of the money at the market's own price, and the inputs are their
+  sources. The 2024 `CC_REGULAR` cell is blocked behind an owner-closed data
+  route (G) and an owner-accepted markup trade (nyiso-96 re-arming), plus the
+  owner-court C3a lane for the `ST_GAS @ NYC` half.
+* The bare-SRMC sensitivity is a bound on what the markup stack does, not a
+  proposal to remove it (rule 1 was adjudicated at nyiso-96 and the owner
+  ruled; rule 21 makes the band a DOF entry).
+* The Object-2 arm moves no gate; its case is representation.
+
+### 5.2 Handed forward (the §5.5 queue, in order)
+
+1. **The 2024 `CC_REGULAR` cell is a disposition, not a lane:** owner
+   acknowledgement that it stands behind G + the accepted CT markup trade +
+   C3a-2025, or a re-opening of one of them by the owner. No mechanism lane
+   moves it.
+2. **The ramp-envelope and emission-rate footprints of the Astoria routing**
+   (§3 table): re-derive both under the identity, with the class-fraction
+   fallback's drift stated at full magnitude, as their own A/B.
+3. **`cc_capacity_reconcile` (U)** — unchanged from nyiso-186's queue.
+4. **Bethlehem 2539's eGRID vintage artifact** — unchanged.
+5. The Astoria merit-panel stack-duplicate defect (nyiso-184 §4.1): the panel
+   still reads raw parquets — the remap corrects routing, not the panel's
+   Astoria heat rate.
+
+---
+
+## 6. Governance
+
+Rule 1: nothing adopted or rejected on a residual; the bars were fixed before
+measurement and read verbatim; the A/B's verdict rule before the solve. Rules
+5 / 21 / 23: zero parameters, zero new DOF entries (13 / 6 verbatim); the
+re-derivations cite their data change. Rule 13: CAMPD diagnosed; the LP reads
+the re-derived measured artifacts. Rule 14: the license for the one repair.
+Rule 15: the arm is registered (`2026-09-04-nyiso-187-astoria-routing`); the
+bit-identical control registers nothing (slim files committed as the
+instrument); retention pruned `2026-08-22-nyiso-154-da-horizon`. Rules 16 /
+12: one invocation each, years sequential, the control solved after the arm
+on the committed artifacts. Rule 19: the routing seam is the existing
+`CAMPD_UNIT_PLANT_REMAP`; nothing stacked. Rule 22: 2023–2025 only, no marker
+requested. Rule 24: no field added; a registry entry in the accepted crosswalk
+form. Rules 25 / 28: NYISO shard only; CAISO's remap rows untouched. Rule 27:
+on-disk bytes pushed, ≥300-line blobs verified.
+
+## 7. ADDENDUM — the owner ruling, and what was executed (2026-09-04)
+
+The owner's standing formula was delivered in-session before the arm was
+solved (verbatim: *"Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still be
+a keeper.."*). This session's recommendation on the registered candidate is
+**promote**: the availability representation of the ISO's largest merchant
+combined-cycle site is corrected from a measured identity at zero parameters,
+and **no gate moves**. **`2026-09-04-nyiso-187-astoria-routing` is PROMOTED.**
+Executed in the same PR: `frontend/data/backcast/keepers/NYISO.json` (keeper,
+promotion note, determination note re-verified from committed artifacts — not
+worse, so the D-5(b) stop does not fire; the prior keeper into the
+`superseded` chain); `scripts/build_status.py --iso NYISO`;
+`scripts/audit_keepers.py --iso NYISO` (PASS); the forecast gate-(a) stamp
+re-keyed (R-T, `check_gate_a_provenance.py --iso NYISO` OK); the NYISO matrix
+shard (keeper + gates re-stamped; `campd_per_unit_attribution`,
+`scuc_load_pocket_commitment` and `tranche_startup_amortization` annotated;
+the `check_mechanism_matrix.py` guard clean) and the §5.5 header + queue;
+`docs/calibration-log/nyiso.md`. NYISO holds no `complete` marker, so no
+D-5(b) re-key. Every number in §1–§6 stands; nothing was re-measured.
