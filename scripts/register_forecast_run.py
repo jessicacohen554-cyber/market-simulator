@@ -275,6 +275,13 @@ VERDICT_MAP = {
     # contradicts. Determination HOLD on every T1-H leg; nothing flips; no
     # default moves.
     "pjm-2021-2025-realized-t1h-d45r": "pjm-t1h",
+    # capx-D48 Phase 1 (2026-09-04): the PJM accreditation-design devintage +
+    # DR-as-supply A/B arm (`pjm_accreditation_design_vintage` +
+    # `pjm_demand_response_supply`, both ON; D45 §2.3 items 1-2) against
+    # D45-R's bare `pjm-t1h` (both OFF, the shipped posture). SUFFIXED BY
+    # CHARTER, never the bare key; nothing arms -- the owner decides on the
+    # pre-stated flip condition (PREDECL-capx-d48-2026-09-04.md §5).
+    "pjm-2021-2025-realized-t1h-d48-devintage": "pjm-t1h-d48-devintage",
     "neiso-2021-2025-realized-t1h-d45r": "neiso-t1h",
     "nyiso-2026-2030-d45r-remeasure": "nyiso-t1f",
     "pjm-2026-2030-d45r-remeasure": "pjm-t1f",

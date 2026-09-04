@@ -762,6 +762,12 @@ results/hindcast/*/*/*/evolution_*.json
 # ON, dates ON both) and L5-vs-d37-control (dates OFF vs ON, lever OFF both)
 # position and channel readings in the D45 finding §5/§7.
 !results/hindcast/neiso-2021-2025-realized-t1h-d45r/*/*/evolution_*.json
+# capx D48 Phase 1 (2026-09-04): the PJM accreditation-design devintage +
+# DR-as-supply A/B arm (suffixed pjm-t1h-d48-devintage). Its ledgers carry the
+# armed `adequacy_requirement_mw` / `capacity_reserve_position` rows and the
+# pipeline screen rows the D48 finding's decomposition and P2/P4/P6 grading
+# read against D45-R's bare `pjm-t1h` ledgers -- same one-bundle carve-out.
+!results/hindcast/pjm-2021-2025-realized-t1h-d48-devintage/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet
