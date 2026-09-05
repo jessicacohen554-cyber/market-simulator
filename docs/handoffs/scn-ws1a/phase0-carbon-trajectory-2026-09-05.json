@@ -1,0 +1,3308 @@
+{
+ "ERCOT": {
+  "current": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  },
+  "tight": {
+   "resolved_fields": {
+    "carbon_price_path": "mid",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 3.75,
+     "program": 0.0,
+     "path": 3.75,
+     "floor": 3.75,
+     "additive": 3.75
+    },
+    "2028": {
+     "head": 7.5,
+     "program": 0.0,
+     "path": 7.5,
+     "floor": 7.5,
+     "additive": 7.5
+    },
+    "2029": {
+     "head": 11.25,
+     "program": 0.0,
+     "path": 11.25,
+     "floor": 11.25,
+     "additive": 11.25
+    },
+    "2030": {
+     "head": 15.0,
+     "program": 0.0,
+     "path": 15.0,
+     "floor": 15.0,
+     "additive": 15.0
+    },
+    "2031": {
+     "head": 17.0,
+     "program": 0.0,
+     "path": 17.0,
+     "floor": 17.0,
+     "additive": 17.0
+    },
+    "2032": {
+     "head": 19.0,
+     "program": 0.0,
+     "path": 19.0,
+     "floor": 19.0,
+     "additive": 19.0
+    },
+    "2033": {
+     "head": 21.0,
+     "program": 0.0,
+     "path": 21.0,
+     "floor": 21.0,
+     "additive": 21.0
+    },
+    "2034": {
+     "head": 23.0,
+     "program": 0.0,
+     "path": 23.0,
+     "floor": 23.0,
+     "additive": 23.0
+    },
+    "2035": {
+     "head": 25.0,
+     "program": 0.0,
+     "path": 25.0,
+     "floor": 25.0,
+     "additive": 25.0
+    },
+    "2036": {
+     "head": 27.0,
+     "program": 0.0,
+     "path": 27.0,
+     "floor": 27.0,
+     "additive": 27.0
+    },
+    "2037": {
+     "head": 29.0,
+     "program": 0.0,
+     "path": 29.0,
+     "floor": 29.0,
+     "additive": 29.0
+    },
+    "2038": {
+     "head": 31.0,
+     "program": 0.0,
+     "path": 31.0,
+     "floor": 31.0,
+     "additive": 31.0
+    },
+    "2039": {
+     "head": 33.0,
+     "program": 0.0,
+     "path": 33.0,
+     "floor": 33.0,
+     "additive": 33.0
+    },
+    "2040": {
+     "head": 35.0,
+     "program": 0.0,
+     "path": 35.0,
+     "floor": 35.0,
+     "additive": 35.0
+    },
+    "2041": {
+     "head": 36.5,
+     "program": 0.0,
+     "path": 36.5,
+     "floor": 36.5,
+     "additive": 36.5
+    },
+    "2042": {
+     "head": 38.0,
+     "program": 0.0,
+     "path": 38.0,
+     "floor": 38.0,
+     "additive": 38.0
+    },
+    "2043": {
+     "head": 39.5,
+     "program": 0.0,
+     "path": 39.5,
+     "floor": 39.5,
+     "additive": 39.5
+    },
+    "2044": {
+     "head": 41.0,
+     "program": 0.0,
+     "path": 41.0,
+     "floor": 41.0,
+     "additive": 41.0
+    },
+    "2045": {
+     "head": 42.5,
+     "program": 0.0,
+     "path": 42.5,
+     "floor": 42.5,
+     "additive": 42.5
+    },
+    "2046": {
+     "head": 44.0,
+     "program": 0.0,
+     "path": 44.0,
+     "floor": 44.0,
+     "additive": 44.0
+    },
+    "2047": {
+     "head": 45.5,
+     "program": 0.0,
+     "path": 45.5,
+     "floor": 45.5,
+     "additive": 45.5
+    },
+    "2048": {
+     "head": 47.0,
+     "program": 0.0,
+     "path": 47.0,
+     "floor": 47.0,
+     "additive": 47.0
+    },
+    "2049": {
+     "head": 48.5,
+     "program": 0.0,
+     "path": 48.5,
+     "floor": 48.5,
+     "additive": 48.5
+    },
+    "2050": {
+     "head": 50.0,
+     "program": 0.0,
+     "path": 50.0,
+     "floor": 50.0,
+     "additive": 50.0
+    }
+   }
+  },
+  "rollback": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": false
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  }
+ },
+ "CAISO": {
+  "current": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 30.02,
+     "program": 30.02,
+     "path": 0.0,
+     "floor": 30.02,
+     "additive": 30.02
+    },
+    "2027": {
+     "head": 32.13,
+     "program": 32.13,
+     "path": 0.0,
+     "floor": 32.13,
+     "additive": 32.13
+    },
+    "2028": {
+     "head": 34.37,
+     "program": 34.37,
+     "path": 0.0,
+     "floor": 34.37,
+     "additive": 34.37
+    },
+    "2029": {
+     "head": 36.78,
+     "program": 36.78,
+     "path": 0.0,
+     "floor": 36.78,
+     "additive": 36.78
+    },
+    "2030": {
+     "head": 39.36,
+     "program": 39.36,
+     "path": 0.0,
+     "floor": 39.36,
+     "additive": 39.36
+    },
+    "2031": {
+     "head": 42.11,
+     "program": 42.11,
+     "path": 0.0,
+     "floor": 42.11,
+     "additive": 42.11
+    },
+    "2032": {
+     "head": 45.06,
+     "program": 45.06,
+     "path": 0.0,
+     "floor": 45.06,
+     "additive": 45.06
+    },
+    "2033": {
+     "head": 48.21,
+     "program": 48.21,
+     "path": 0.0,
+     "floor": 48.21,
+     "additive": 48.21
+    },
+    "2034": {
+     "head": 51.59,
+     "program": 51.59,
+     "path": 0.0,
+     "floor": 51.59,
+     "additive": 51.59
+    },
+    "2035": {
+     "head": 55.2,
+     "program": 55.2,
+     "path": 0.0,
+     "floor": 55.2,
+     "additive": 55.2
+    },
+    "2036": {
+     "head": 59.06,
+     "program": 59.06,
+     "path": 0.0,
+     "floor": 59.06,
+     "additive": 59.06
+    },
+    "2037": {
+     "head": 63.2,
+     "program": 63.2,
+     "path": 0.0,
+     "floor": 63.2,
+     "additive": 63.2
+    },
+    "2038": {
+     "head": 67.62,
+     "program": 67.62,
+     "path": 0.0,
+     "floor": 67.62,
+     "additive": 67.62
+    },
+    "2039": {
+     "head": 72.35,
+     "program": 72.35,
+     "path": 0.0,
+     "floor": 72.35,
+     "additive": 72.35
+    },
+    "2040": {
+     "head": 77.42,
+     "program": 77.42,
+     "path": 0.0,
+     "floor": 77.42,
+     "additive": 77.42
+    },
+    "2041": {
+     "head": 82.84,
+     "program": 82.84,
+     "path": 0.0,
+     "floor": 82.84,
+     "additive": 82.84
+    },
+    "2042": {
+     "head": 88.64,
+     "program": 88.64,
+     "path": 0.0,
+     "floor": 88.64,
+     "additive": 88.64
+    },
+    "2043": {
+     "head": 94.84,
+     "program": 94.84,
+     "path": 0.0,
+     "floor": 94.84,
+     "additive": 94.84
+    },
+    "2044": {
+     "head": 101.48,
+     "program": 101.48,
+     "path": 0.0,
+     "floor": 101.48,
+     "additive": 101.48
+    },
+    "2045": {
+     "head": 108.58,
+     "program": 108.58,
+     "path": 0.0,
+     "floor": 108.58,
+     "additive": 108.58
+    },
+    "2046": {
+     "head": 116.18,
+     "program": 116.18,
+     "path": 0.0,
+     "floor": 116.18,
+     "additive": 116.18
+    },
+    "2047": {
+     "head": 124.32,
+     "program": 124.32,
+     "path": 0.0,
+     "floor": 124.32,
+     "additive": 124.32
+    },
+    "2048": {
+     "head": 133.02,
+     "program": 133.02,
+     "path": 0.0,
+     "floor": 133.02,
+     "additive": 133.02
+    },
+    "2049": {
+     "head": 142.33,
+     "program": 142.33,
+     "path": 0.0,
+     "floor": 142.33,
+     "additive": 142.33
+    },
+    "2050": {
+     "head": 152.29,
+     "program": 152.29,
+     "path": 0.0,
+     "floor": 152.29,
+     "additive": 152.29
+    }
+   }
+  },
+  "tight": {
+   "resolved_fields": {
+    "carbon_price_path": "mid",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 30.02,
+     "path": 0.0,
+     "floor": 30.02,
+     "additive": 30.02
+    },
+    "2027": {
+     "head": 3.75,
+     "program": 32.13,
+     "path": 3.75,
+     "floor": 32.13,
+     "additive": 35.88
+    },
+    "2028": {
+     "head": 7.5,
+     "program": 34.37,
+     "path": 7.5,
+     "floor": 34.37,
+     "additive": 41.87
+    },
+    "2029": {
+     "head": 11.25,
+     "program": 36.78,
+     "path": 11.25,
+     "floor": 36.78,
+     "additive": 48.03
+    },
+    "2030": {
+     "head": 15.0,
+     "program": 39.36,
+     "path": 15.0,
+     "floor": 39.36,
+     "additive": 54.36
+    },
+    "2031": {
+     "head": 17.0,
+     "program": 42.11,
+     "path": 17.0,
+     "floor": 42.11,
+     "additive": 59.11
+    },
+    "2032": {
+     "head": 19.0,
+     "program": 45.06,
+     "path": 19.0,
+     "floor": 45.06,
+     "additive": 64.06
+    },
+    "2033": {
+     "head": 21.0,
+     "program": 48.21,
+     "path": 21.0,
+     "floor": 48.21,
+     "additive": 69.21
+    },
+    "2034": {
+     "head": 23.0,
+     "program": 51.59,
+     "path": 23.0,
+     "floor": 51.59,
+     "additive": 74.59
+    },
+    "2035": {
+     "head": 25.0,
+     "program": 55.2,
+     "path": 25.0,
+     "floor": 55.2,
+     "additive": 80.2
+    },
+    "2036": {
+     "head": 27.0,
+     "program": 59.06,
+     "path": 27.0,
+     "floor": 59.06,
+     "additive": 86.06
+    },
+    "2037": {
+     "head": 29.0,
+     "program": 63.2,
+     "path": 29.0,
+     "floor": 63.2,
+     "additive": 92.2
+    },
+    "2038": {
+     "head": 31.0,
+     "program": 67.62,
+     "path": 31.0,
+     "floor": 67.62,
+     "additive": 98.62
+    },
+    "2039": {
+     "head": 33.0,
+     "program": 72.35,
+     "path": 33.0,
+     "floor": 72.35,
+     "additive": 105.35
+    },
+    "2040": {
+     "head": 35.0,
+     "program": 77.42,
+     "path": 35.0,
+     "floor": 77.42,
+     "additive": 112.42
+    },
+    "2041": {
+     "head": 36.5,
+     "program": 82.84,
+     "path": 36.5,
+     "floor": 82.84,
+     "additive": 119.34
+    },
+    "2042": {
+     "head": 38.0,
+     "program": 88.64,
+     "path": 38.0,
+     "floor": 88.64,
+     "additive": 126.64
+    },
+    "2043": {
+     "head": 39.5,
+     "program": 94.84,
+     "path": 39.5,
+     "floor": 94.84,
+     "additive": 134.34
+    },
+    "2044": {
+     "head": 41.0,
+     "program": 101.48,
+     "path": 41.0,
+     "floor": 101.48,
+     "additive": 142.48
+    },
+    "2045": {
+     "head": 42.5,
+     "program": 108.58,
+     "path": 42.5,
+     "floor": 108.58,
+     "additive": 151.08
+    },
+    "2046": {
+     "head": 44.0,
+     "program": 116.18,
+     "path": 44.0,
+     "floor": 116.18,
+     "additive": 160.18
+    },
+    "2047": {
+     "head": 45.5,
+     "program": 124.32,
+     "path": 45.5,
+     "floor": 124.32,
+     "additive": 169.82
+    },
+    "2048": {
+     "head": 47.0,
+     "program": 133.02,
+     "path": 47.0,
+     "floor": 133.02,
+     "additive": 180.02
+    },
+    "2049": {
+     "head": 48.5,
+     "program": 142.33,
+     "path": 48.5,
+     "floor": 142.33,
+     "additive": 190.83
+    },
+    "2050": {
+     "head": 50.0,
+     "program": 152.29,
+     "path": 50.0,
+     "floor": 152.29,
+     "additive": 202.29
+    }
+   }
+  },
+  "rollback": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": false
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  }
+ },
+ "PJM": {
+  "current": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  },
+  "tight": {
+   "resolved_fields": {
+    "carbon_price_path": "mid",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 3.75,
+     "program": 0.0,
+     "path": 3.75,
+     "floor": 3.75,
+     "additive": 3.75
+    },
+    "2028": {
+     "head": 7.5,
+     "program": 0.0,
+     "path": 7.5,
+     "floor": 7.5,
+     "additive": 7.5
+    },
+    "2029": {
+     "head": 11.25,
+     "program": 0.0,
+     "path": 11.25,
+     "floor": 11.25,
+     "additive": 11.25
+    },
+    "2030": {
+     "head": 15.0,
+     "program": 0.0,
+     "path": 15.0,
+     "floor": 15.0,
+     "additive": 15.0
+    },
+    "2031": {
+     "head": 17.0,
+     "program": 0.0,
+     "path": 17.0,
+     "floor": 17.0,
+     "additive": 17.0
+    },
+    "2032": {
+     "head": 19.0,
+     "program": 0.0,
+     "path": 19.0,
+     "floor": 19.0,
+     "additive": 19.0
+    },
+    "2033": {
+     "head": 21.0,
+     "program": 0.0,
+     "path": 21.0,
+     "floor": 21.0,
+     "additive": 21.0
+    },
+    "2034": {
+     "head": 23.0,
+     "program": 0.0,
+     "path": 23.0,
+     "floor": 23.0,
+     "additive": 23.0
+    },
+    "2035": {
+     "head": 25.0,
+     "program": 0.0,
+     "path": 25.0,
+     "floor": 25.0,
+     "additive": 25.0
+    },
+    "2036": {
+     "head": 27.0,
+     "program": 0.0,
+     "path": 27.0,
+     "floor": 27.0,
+     "additive": 27.0
+    },
+    "2037": {
+     "head": 29.0,
+     "program": 0.0,
+     "path": 29.0,
+     "floor": 29.0,
+     "additive": 29.0
+    },
+    "2038": {
+     "head": 31.0,
+     "program": 0.0,
+     "path": 31.0,
+     "floor": 31.0,
+     "additive": 31.0
+    },
+    "2039": {
+     "head": 33.0,
+     "program": 0.0,
+     "path": 33.0,
+     "floor": 33.0,
+     "additive": 33.0
+    },
+    "2040": {
+     "head": 35.0,
+     "program": 0.0,
+     "path": 35.0,
+     "floor": 35.0,
+     "additive": 35.0
+    },
+    "2041": {
+     "head": 36.5,
+     "program": 0.0,
+     "path": 36.5,
+     "floor": 36.5,
+     "additive": 36.5
+    },
+    "2042": {
+     "head": 38.0,
+     "program": 0.0,
+     "path": 38.0,
+     "floor": 38.0,
+     "additive": 38.0
+    },
+    "2043": {
+     "head": 39.5,
+     "program": 0.0,
+     "path": 39.5,
+     "floor": 39.5,
+     "additive": 39.5
+    },
+    "2044": {
+     "head": 41.0,
+     "program": 0.0,
+     "path": 41.0,
+     "floor": 41.0,
+     "additive": 41.0
+    },
+    "2045": {
+     "head": 42.5,
+     "program": 0.0,
+     "path": 42.5,
+     "floor": 42.5,
+     "additive": 42.5
+    },
+    "2046": {
+     "head": 44.0,
+     "program": 0.0,
+     "path": 44.0,
+     "floor": 44.0,
+     "additive": 44.0
+    },
+    "2047": {
+     "head": 45.5,
+     "program": 0.0,
+     "path": 45.5,
+     "floor": 45.5,
+     "additive": 45.5
+    },
+    "2048": {
+     "head": 47.0,
+     "program": 0.0,
+     "path": 47.0,
+     "floor": 47.0,
+     "additive": 47.0
+    },
+    "2049": {
+     "head": 48.5,
+     "program": 0.0,
+     "path": 48.5,
+     "floor": 48.5,
+     "additive": 48.5
+    },
+    "2050": {
+     "head": 50.0,
+     "program": 0.0,
+     "path": 50.0,
+     "floor": 50.0,
+     "additive": 50.0
+    }
+   }
+  },
+  "rollback": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": false
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  }
+ },
+ "MISO": {
+  "current": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  },
+  "tight": {
+   "resolved_fields": {
+    "carbon_price_path": "mid",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 3.75,
+     "program": 0.0,
+     "path": 3.75,
+     "floor": 3.75,
+     "additive": 3.75
+    },
+    "2028": {
+     "head": 7.5,
+     "program": 0.0,
+     "path": 7.5,
+     "floor": 7.5,
+     "additive": 7.5
+    },
+    "2029": {
+     "head": 11.25,
+     "program": 0.0,
+     "path": 11.25,
+     "floor": 11.25,
+     "additive": 11.25
+    },
+    "2030": {
+     "head": 15.0,
+     "program": 0.0,
+     "path": 15.0,
+     "floor": 15.0,
+     "additive": 15.0
+    },
+    "2031": {
+     "head": 17.0,
+     "program": 0.0,
+     "path": 17.0,
+     "floor": 17.0,
+     "additive": 17.0
+    },
+    "2032": {
+     "head": 19.0,
+     "program": 0.0,
+     "path": 19.0,
+     "floor": 19.0,
+     "additive": 19.0
+    },
+    "2033": {
+     "head": 21.0,
+     "program": 0.0,
+     "path": 21.0,
+     "floor": 21.0,
+     "additive": 21.0
+    },
+    "2034": {
+     "head": 23.0,
+     "program": 0.0,
+     "path": 23.0,
+     "floor": 23.0,
+     "additive": 23.0
+    },
+    "2035": {
+     "head": 25.0,
+     "program": 0.0,
+     "path": 25.0,
+     "floor": 25.0,
+     "additive": 25.0
+    },
+    "2036": {
+     "head": 27.0,
+     "program": 0.0,
+     "path": 27.0,
+     "floor": 27.0,
+     "additive": 27.0
+    },
+    "2037": {
+     "head": 29.0,
+     "program": 0.0,
+     "path": 29.0,
+     "floor": 29.0,
+     "additive": 29.0
+    },
+    "2038": {
+     "head": 31.0,
+     "program": 0.0,
+     "path": 31.0,
+     "floor": 31.0,
+     "additive": 31.0
+    },
+    "2039": {
+     "head": 33.0,
+     "program": 0.0,
+     "path": 33.0,
+     "floor": 33.0,
+     "additive": 33.0
+    },
+    "2040": {
+     "head": 35.0,
+     "program": 0.0,
+     "path": 35.0,
+     "floor": 35.0,
+     "additive": 35.0
+    },
+    "2041": {
+     "head": 36.5,
+     "program": 0.0,
+     "path": 36.5,
+     "floor": 36.5,
+     "additive": 36.5
+    },
+    "2042": {
+     "head": 38.0,
+     "program": 0.0,
+     "path": 38.0,
+     "floor": 38.0,
+     "additive": 38.0
+    },
+    "2043": {
+     "head": 39.5,
+     "program": 0.0,
+     "path": 39.5,
+     "floor": 39.5,
+     "additive": 39.5
+    },
+    "2044": {
+     "head": 41.0,
+     "program": 0.0,
+     "path": 41.0,
+     "floor": 41.0,
+     "additive": 41.0
+    },
+    "2045": {
+     "head": 42.5,
+     "program": 0.0,
+     "path": 42.5,
+     "floor": 42.5,
+     "additive": 42.5
+    },
+    "2046": {
+     "head": 44.0,
+     "program": 0.0,
+     "path": 44.0,
+     "floor": 44.0,
+     "additive": 44.0
+    },
+    "2047": {
+     "head": 45.5,
+     "program": 0.0,
+     "path": 45.5,
+     "floor": 45.5,
+     "additive": 45.5
+    },
+    "2048": {
+     "head": 47.0,
+     "program": 0.0,
+     "path": 47.0,
+     "floor": 47.0,
+     "additive": 47.0
+    },
+    "2049": {
+     "head": 48.5,
+     "program": 0.0,
+     "path": 48.5,
+     "floor": 48.5,
+     "additive": 48.5
+    },
+    "2050": {
+     "head": 50.0,
+     "program": 0.0,
+     "path": 50.0,
+     "floor": 50.0,
+     "additive": 50.0
+    }
+   }
+  },
+  "rollback": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": false
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  }
+ },
+ "NYISO": {
+  "current": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 23.64,
+     "program": 23.64,
+     "path": 0.0,
+     "floor": 23.64,
+     "additive": 23.64
+    },
+    "2027": {
+     "head": 25.29,
+     "program": 25.29,
+     "path": 0.0,
+     "floor": 25.29,
+     "additive": 25.29
+    },
+    "2028": {
+     "head": 27.06,
+     "program": 27.06,
+     "path": 0.0,
+     "floor": 27.06,
+     "additive": 27.06
+    },
+    "2029": {
+     "head": 28.96,
+     "program": 28.96,
+     "path": 0.0,
+     "floor": 28.96,
+     "additive": 28.96
+    },
+    "2030": {
+     "head": 30.98,
+     "program": 30.98,
+     "path": 0.0,
+     "floor": 30.98,
+     "additive": 30.98
+    },
+    "2031": {
+     "head": 33.15,
+     "program": 33.15,
+     "path": 0.0,
+     "floor": 33.15,
+     "additive": 33.15
+    },
+    "2032": {
+     "head": 35.47,
+     "program": 35.47,
+     "path": 0.0,
+     "floor": 35.47,
+     "additive": 35.47
+    },
+    "2033": {
+     "head": 37.95,
+     "program": 37.95,
+     "path": 0.0,
+     "floor": 37.95,
+     "additive": 37.95
+    },
+    "2034": {
+     "head": 40.61,
+     "program": 40.61,
+     "path": 0.0,
+     "floor": 40.61,
+     "additive": 40.61
+    },
+    "2035": {
+     "head": 43.45,
+     "program": 43.45,
+     "path": 0.0,
+     "floor": 43.45,
+     "additive": 43.45
+    },
+    "2036": {
+     "head": 46.5,
+     "program": 46.5,
+     "path": 0.0,
+     "floor": 46.5,
+     "additive": 46.5
+    },
+    "2037": {
+     "head": 49.75,
+     "program": 49.75,
+     "path": 0.0,
+     "floor": 49.75,
+     "additive": 49.75
+    },
+    "2038": {
+     "head": 53.23,
+     "program": 53.23,
+     "path": 0.0,
+     "floor": 53.23,
+     "additive": 53.23
+    },
+    "2039": {
+     "head": 56.96,
+     "program": 56.96,
+     "path": 0.0,
+     "floor": 56.96,
+     "additive": 56.96
+    },
+    "2040": {
+     "head": 60.95,
+     "program": 60.95,
+     "path": 0.0,
+     "floor": 60.95,
+     "additive": 60.95
+    },
+    "2041": {
+     "head": 65.21,
+     "program": 65.21,
+     "path": 0.0,
+     "floor": 65.21,
+     "additive": 65.21
+    },
+    "2042": {
+     "head": 69.78,
+     "program": 69.78,
+     "path": 0.0,
+     "floor": 69.78,
+     "additive": 69.78
+    },
+    "2043": {
+     "head": 74.66,
+     "program": 74.66,
+     "path": 0.0,
+     "floor": 74.66,
+     "additive": 74.66
+    },
+    "2044": {
+     "head": 79.89,
+     "program": 79.89,
+     "path": 0.0,
+     "floor": 79.89,
+     "additive": 79.89
+    },
+    "2045": {
+     "head": 85.48,
+     "program": 85.48,
+     "path": 0.0,
+     "floor": 85.48,
+     "additive": 85.48
+    },
+    "2046": {
+     "head": 91.47,
+     "program": 91.47,
+     "path": 0.0,
+     "floor": 91.47,
+     "additive": 91.47
+    },
+    "2047": {
+     "head": 97.87,
+     "program": 97.87,
+     "path": 0.0,
+     "floor": 97.87,
+     "additive": 97.87
+    },
+    "2048": {
+     "head": 104.72,
+     "program": 104.72,
+     "path": 0.0,
+     "floor": 104.72,
+     "additive": 104.72
+    },
+    "2049": {
+     "head": 112.05,
+     "program": 112.05,
+     "path": 0.0,
+     "floor": 112.05,
+     "additive": 112.05
+    },
+    "2050": {
+     "head": 119.89,
+     "program": 119.89,
+     "path": 0.0,
+     "floor": 119.89,
+     "additive": 119.89
+    }
+   }
+  },
+  "tight": {
+   "resolved_fields": {
+    "carbon_price_path": "mid",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 23.64,
+     "path": 0.0,
+     "floor": 23.64,
+     "additive": 23.64
+    },
+    "2027": {
+     "head": 3.75,
+     "program": 25.29,
+     "path": 3.75,
+     "floor": 25.29,
+     "additive": 29.04
+    },
+    "2028": {
+     "head": 7.5,
+     "program": 27.06,
+     "path": 7.5,
+     "floor": 27.06,
+     "additive": 34.56
+    },
+    "2029": {
+     "head": 11.25,
+     "program": 28.96,
+     "path": 11.25,
+     "floor": 28.96,
+     "additive": 40.21
+    },
+    "2030": {
+     "head": 15.0,
+     "program": 30.98,
+     "path": 15.0,
+     "floor": 30.98,
+     "additive": 45.98
+    },
+    "2031": {
+     "head": 17.0,
+     "program": 33.15,
+     "path": 17.0,
+     "floor": 33.15,
+     "additive": 50.15
+    },
+    "2032": {
+     "head": 19.0,
+     "program": 35.47,
+     "path": 19.0,
+     "floor": 35.47,
+     "additive": 54.47
+    },
+    "2033": {
+     "head": 21.0,
+     "program": 37.95,
+     "path": 21.0,
+     "floor": 37.95,
+     "additive": 58.95
+    },
+    "2034": {
+     "head": 23.0,
+     "program": 40.61,
+     "path": 23.0,
+     "floor": 40.61,
+     "additive": 63.61
+    },
+    "2035": {
+     "head": 25.0,
+     "program": 43.45,
+     "path": 25.0,
+     "floor": 43.45,
+     "additive": 68.45
+    },
+    "2036": {
+     "head": 27.0,
+     "program": 46.5,
+     "path": 27.0,
+     "floor": 46.5,
+     "additive": 73.5
+    },
+    "2037": {
+     "head": 29.0,
+     "program": 49.75,
+     "path": 29.0,
+     "floor": 49.75,
+     "additive": 78.75
+    },
+    "2038": {
+     "head": 31.0,
+     "program": 53.23,
+     "path": 31.0,
+     "floor": 53.23,
+     "additive": 84.23
+    },
+    "2039": {
+     "head": 33.0,
+     "program": 56.96,
+     "path": 33.0,
+     "floor": 56.96,
+     "additive": 89.96
+    },
+    "2040": {
+     "head": 35.0,
+     "program": 60.95,
+     "path": 35.0,
+     "floor": 60.95,
+     "additive": 95.95
+    },
+    "2041": {
+     "head": 36.5,
+     "program": 65.21,
+     "path": 36.5,
+     "floor": 65.21,
+     "additive": 101.71
+    },
+    "2042": {
+     "head": 38.0,
+     "program": 69.78,
+     "path": 38.0,
+     "floor": 69.78,
+     "additive": 107.78
+    },
+    "2043": {
+     "head": 39.5,
+     "program": 74.66,
+     "path": 39.5,
+     "floor": 74.66,
+     "additive": 114.16
+    },
+    "2044": {
+     "head": 41.0,
+     "program": 79.89,
+     "path": 41.0,
+     "floor": 79.89,
+     "additive": 120.89
+    },
+    "2045": {
+     "head": 42.5,
+     "program": 85.48,
+     "path": 42.5,
+     "floor": 85.48,
+     "additive": 127.98
+    },
+    "2046": {
+     "head": 44.0,
+     "program": 91.47,
+     "path": 44.0,
+     "floor": 91.47,
+     "additive": 135.47
+    },
+    "2047": {
+     "head": 45.5,
+     "program": 97.87,
+     "path": 45.5,
+     "floor": 97.87,
+     "additive": 143.37
+    },
+    "2048": {
+     "head": 47.0,
+     "program": 104.72,
+     "path": 47.0,
+     "floor": 104.72,
+     "additive": 151.72
+    },
+    "2049": {
+     "head": 48.5,
+     "program": 112.05,
+     "path": 48.5,
+     "floor": 112.05,
+     "additive": 160.55
+    },
+    "2050": {
+     "head": 50.0,
+     "program": 119.89,
+     "path": 50.0,
+     "floor": 119.89,
+     "additive": 169.89
+    }
+   }
+  },
+  "rollback": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": false
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  }
+ },
+ "NEISO": {
+  "current": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 26.05,
+     "program": 26.05,
+     "path": 0.0,
+     "floor": 26.05,
+     "additive": 26.05
+    },
+    "2027": {
+     "head": 27.88,
+     "program": 27.88,
+     "path": 0.0,
+     "floor": 27.88,
+     "additive": 27.88
+    },
+    "2028": {
+     "head": 29.83,
+     "program": 29.83,
+     "path": 0.0,
+     "floor": 29.83,
+     "additive": 29.83
+    },
+    "2029": {
+     "head": 31.92,
+     "program": 31.92,
+     "path": 0.0,
+     "floor": 31.92,
+     "additive": 31.92
+    },
+    "2030": {
+     "head": 34.15,
+     "program": 34.15,
+     "path": 0.0,
+     "floor": 34.15,
+     "additive": 34.15
+    },
+    "2031": {
+     "head": 36.54,
+     "program": 36.54,
+     "path": 0.0,
+     "floor": 36.54,
+     "additive": 36.54
+    },
+    "2032": {
+     "head": 39.1,
+     "program": 39.1,
+     "path": 0.0,
+     "floor": 39.1,
+     "additive": 39.1
+    },
+    "2033": {
+     "head": 41.84,
+     "program": 41.84,
+     "path": 0.0,
+     "floor": 41.84,
+     "additive": 41.84
+    },
+    "2034": {
+     "head": 44.77,
+     "program": 44.77,
+     "path": 0.0,
+     "floor": 44.77,
+     "additive": 44.77
+    },
+    "2035": {
+     "head": 47.9,
+     "program": 47.9,
+     "path": 0.0,
+     "floor": 47.9,
+     "additive": 47.9
+    },
+    "2036": {
+     "head": 51.25,
+     "program": 51.25,
+     "path": 0.0,
+     "floor": 51.25,
+     "additive": 51.25
+    },
+    "2037": {
+     "head": 54.84,
+     "program": 54.84,
+     "path": 0.0,
+     "floor": 54.84,
+     "additive": 54.84
+    },
+    "2038": {
+     "head": 58.68,
+     "program": 58.68,
+     "path": 0.0,
+     "floor": 58.68,
+     "additive": 58.68
+    },
+    "2039": {
+     "head": 62.79,
+     "program": 62.79,
+     "path": 0.0,
+     "floor": 62.79,
+     "additive": 62.79
+    },
+    "2040": {
+     "head": 67.18,
+     "program": 67.18,
+     "path": 0.0,
+     "floor": 67.18,
+     "additive": 67.18
+    },
+    "2041": {
+     "head": 71.89,
+     "program": 71.89,
+     "path": 0.0,
+     "floor": 71.89,
+     "additive": 71.89
+    },
+    "2042": {
+     "head": 76.92,
+     "program": 76.92,
+     "path": 0.0,
+     "floor": 76.92,
+     "additive": 76.92
+    },
+    "2043": {
+     "head": 82.3,
+     "program": 82.3,
+     "path": 0.0,
+     "floor": 82.3,
+     "additive": 82.3
+    },
+    "2044": {
+     "head": 88.06,
+     "program": 88.06,
+     "path": 0.0,
+     "floor": 88.06,
+     "additive": 88.06
+    },
+    "2045": {
+     "head": 94.23,
+     "program": 94.23,
+     "path": 0.0,
+     "floor": 94.23,
+     "additive": 94.23
+    },
+    "2046": {
+     "head": 100.82,
+     "program": 100.82,
+     "path": 0.0,
+     "floor": 100.82,
+     "additive": 100.82
+    },
+    "2047": {
+     "head": 107.88,
+     "program": 107.88,
+     "path": 0.0,
+     "floor": 107.88,
+     "additive": 107.88
+    },
+    "2048": {
+     "head": 115.43,
+     "program": 115.43,
+     "path": 0.0,
+     "floor": 115.43,
+     "additive": 115.43
+    },
+    "2049": {
+     "head": 123.51,
+     "program": 123.51,
+     "path": 0.0,
+     "floor": 123.51,
+     "additive": 123.51
+    },
+    "2050": {
+     "head": 132.16,
+     "program": 132.16,
+     "path": 0.0,
+     "floor": 132.16,
+     "additive": 132.16
+    }
+   }
+  },
+  "tight": {
+   "resolved_fields": {
+    "carbon_price_path": "mid",
+    "state_carbon_pricing": true
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 26.05,
+     "path": 0.0,
+     "floor": 26.05,
+     "additive": 26.05
+    },
+    "2027": {
+     "head": 3.75,
+     "program": 27.88,
+     "path": 3.75,
+     "floor": 27.88,
+     "additive": 31.63
+    },
+    "2028": {
+     "head": 7.5,
+     "program": 29.83,
+     "path": 7.5,
+     "floor": 29.83,
+     "additive": 37.33
+    },
+    "2029": {
+     "head": 11.25,
+     "program": 31.92,
+     "path": 11.25,
+     "floor": 31.92,
+     "additive": 43.17
+    },
+    "2030": {
+     "head": 15.0,
+     "program": 34.15,
+     "path": 15.0,
+     "floor": 34.15,
+     "additive": 49.15
+    },
+    "2031": {
+     "head": 17.0,
+     "program": 36.54,
+     "path": 17.0,
+     "floor": 36.54,
+     "additive": 53.54
+    },
+    "2032": {
+     "head": 19.0,
+     "program": 39.1,
+     "path": 19.0,
+     "floor": 39.1,
+     "additive": 58.1
+    },
+    "2033": {
+     "head": 21.0,
+     "program": 41.84,
+     "path": 21.0,
+     "floor": 41.84,
+     "additive": 62.84
+    },
+    "2034": {
+     "head": 23.0,
+     "program": 44.77,
+     "path": 23.0,
+     "floor": 44.77,
+     "additive": 67.77
+    },
+    "2035": {
+     "head": 25.0,
+     "program": 47.9,
+     "path": 25.0,
+     "floor": 47.9,
+     "additive": 72.9
+    },
+    "2036": {
+     "head": 27.0,
+     "program": 51.25,
+     "path": 27.0,
+     "floor": 51.25,
+     "additive": 78.25
+    },
+    "2037": {
+     "head": 29.0,
+     "program": 54.84,
+     "path": 29.0,
+     "floor": 54.84,
+     "additive": 83.84
+    },
+    "2038": {
+     "head": 31.0,
+     "program": 58.68,
+     "path": 31.0,
+     "floor": 58.68,
+     "additive": 89.68
+    },
+    "2039": {
+     "head": 33.0,
+     "program": 62.79,
+     "path": 33.0,
+     "floor": 62.79,
+     "additive": 95.79
+    },
+    "2040": {
+     "head": 35.0,
+     "program": 67.18,
+     "path": 35.0,
+     "floor": 67.18,
+     "additive": 102.18
+    },
+    "2041": {
+     "head": 36.5,
+     "program": 71.89,
+     "path": 36.5,
+     "floor": 71.89,
+     "additive": 108.39
+    },
+    "2042": {
+     "head": 38.0,
+     "program": 76.92,
+     "path": 38.0,
+     "floor": 76.92,
+     "additive": 114.92
+    },
+    "2043": {
+     "head": 39.5,
+     "program": 82.3,
+     "path": 39.5,
+     "floor": 82.3,
+     "additive": 121.8
+    },
+    "2044": {
+     "head": 41.0,
+     "program": 88.06,
+     "path": 41.0,
+     "floor": 88.06,
+     "additive": 129.06
+    },
+    "2045": {
+     "head": 42.5,
+     "program": 94.23,
+     "path": 42.5,
+     "floor": 94.23,
+     "additive": 136.73
+    },
+    "2046": {
+     "head": 44.0,
+     "program": 100.82,
+     "path": 44.0,
+     "floor": 100.82,
+     "additive": 144.82
+    },
+    "2047": {
+     "head": 45.5,
+     "program": 107.88,
+     "path": 45.5,
+     "floor": 107.88,
+     "additive": 153.38
+    },
+    "2048": {
+     "head": 47.0,
+     "program": 115.43,
+     "path": 47.0,
+     "floor": 115.43,
+     "additive": 162.43
+    },
+    "2049": {
+     "head": 48.5,
+     "program": 123.51,
+     "path": 48.5,
+     "floor": 123.51,
+     "additive": 172.01
+    },
+    "2050": {
+     "head": 50.0,
+     "program": 132.16,
+     "path": 50.0,
+     "floor": 132.16,
+     "additive": 182.16
+    }
+   }
+  },
+  "rollback": {
+   "resolved_fields": {
+    "carbon_price_path": "zero",
+    "state_carbon_pricing": false
+   },
+   "rows": {
+    "2026": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2027": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2028": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2029": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2030": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2031": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2032": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2033": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2034": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2035": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2036": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2037": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2038": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2039": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2040": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2041": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2042": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2043": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2044": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2045": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2046": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2047": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2048": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2049": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    },
+    "2050": {
+     "head": 0.0,
+     "program": 0.0,
+     "path": 0.0,
+     "floor": 0.0,
+     "additive": 0.0
+    }
+   }
+  }
+ }
+}

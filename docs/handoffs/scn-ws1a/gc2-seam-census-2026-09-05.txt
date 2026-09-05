@@ -1,0 +1,8 @@
+delta= 0.0 per_hub=False: resolved carbon=30.0242 $/t; expected adder=12.8504; spec.corridors carbon_adder=[]; runner-path border=12.8504; sample import gens vom=[]
+   all import gen ids: ['WECC_import_PNW_hydro_base', 'WECC_import_PNW_midC', 'WECC_import_DSW_solar_PV', 'WECC_import_DSW_CCGT', 'WECC_import_DSW_CT', 'WECC_import_WECC_scarcity', 'WECC_import_export_solar', 'WECC_import_export_curtail'] ... n= 8
+delta= 0.0 per_hub=True: resolved carbon=30.0242 $/t; expected adder=12.8504; spec.corridors carbon_adder=[('WECC_PNW', 0.0), ('WECC_DSW', 0.0)]; runner-path border=12.8504; sample import gens vom=[]
+   all import gen ids: ['WECC_PNW_PNW_hydro_base', 'WECC_PNW_PNW_midC', 'WECC_DSW_DSW_solar_PV', 'WECC_DSW_DSW_CCGT', 'WECC_DSW_DSW_CT', 'WECC_DSW_WECC_scarcity', 'WECC_PNW_export_MALIN', 'WECC_DSW_export_PALOVRDE'] ... n= 8
+delta=25.0 per_hub=False: resolved carbon=55.0242 $/t; expected adder=23.5504; spec.corridors carbon_adder=[]; runner-path border=23.5504; sample import gens vom=[]
+   all import gen ids: ['WECC_import_PNW_hydro_base', 'WECC_import_PNW_midC', 'WECC_import_DSW_solar_PV', 'WECC_import_DSW_CCGT', 'WECC_import_DSW_CT', 'WECC_import_WECC_scarcity', 'WECC_import_export_solar', 'WECC_import_export_curtail'] ... n= 8
+delta=25.0 per_hub=True: resolved carbon=55.0242 $/t; expected adder=23.5504; spec.corridors carbon_adder=[('WECC_PNW', 0.0), ('WECC_DSW', 0.0)]; runner-path border=23.5504; sample import gens vom=[]
+   all import gen ids: ['WECC_PNW_PNW_hydro_base', 'WECC_PNW_PNW_midC', 'WECC_DSW_DSW_solar_PV', 'WECC_DSW_DSW_CCGT', 'WECC_DSW_DSW_CT', 'WECC_DSW_WECC_scarcity', 'WECC_PNW_export_MALIN', 'WECC_DSW_export_PALOVRDE'] ... n= 8
