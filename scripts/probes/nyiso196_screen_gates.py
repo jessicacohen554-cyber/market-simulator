@@ -147,10 +147,40 @@ def main() -> int:
     rc_s = json.loads((B / "run_config.json").read_text())
     rc_k = json.loads((KEEPER / "run_config.json").read_text())
     sc_s, sc_k = rc_s["scenario_config"], rc_k["scenario_config"]
-    delta = {
+    raw_delta = {
         k: (sc_k.get(k), sc_s.get(k))
         for k in set(sc_k) | set(sc_s)
         if sc_k.get(k) != sc_s.get(k)
+    }
+    # G-DELTA classification (the gen_nyiso192_attestation.g_delta convention):
+    # (a) per-year solve parameters — the keeper's run_config records its FIRST
+    #     solve year's weather_year / gas_price_override, the single-year screen
+    #     records 2024's; (b) a field the keeper never serialised (None) or
+    #     recorded at a since-flipped default, which the arm records at
+    #     ScenarioConfig's HEAD default — a field added or re-defaulted after the
+    #     keeper solved (backcast-inert per PREREG §5 G-DRIFT), not a recipe
+    #     delta. What remains must be exactly the flag.
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    head_defaults = {
+        f.name: (f.default if f.default is not dataclasses.MISSING else None)
+        for f in dataclasses.fields(ScenarioConfig)
+    }
+    per_year = {"weather_year", "gas_price_override"}
+    head_default = sorted(
+        k
+        for k, (kv, av) in raw_delta.items()
+        if k != FLAG
+        and k not in per_year
+        and k in head_defaults
+        and av == head_defaults[k]
+    )
+    delta = {
+        k: v
+        for k, v in raw_delta.items()
+        if k not in per_year and k not in head_default
     }
     rb = json.loads(REBUILD_CHECKS.read_text())
     arm = pickle.load(open(ARM_REBUILD, "rb"))
@@ -162,7 +192,10 @@ def main() -> int:
         .set_index("unit_id")
         .pmax_mw
     )
-    fp = fls.reindex(U.unit_id.to_numpy())
+    # The persisted fleet parquet carries the LP's dispatchable units (the
+    # rebuild also lists zero-capacity / pseudo rows); compare on the join.
+    kp = kee["units"].set_index("unit_id").pmax
+    common = fls.index.intersection(kp.index)
     res["gates"]["F1_F2_carried"] = {
         "rebuild_checks": {
             k: rb[k].get("PASS") for k in ("F1_footprint", "F2_identity")
@@ -170,10 +203,17 @@ def main() -> int:
         "units_availability_moved": rb["F1_footprint"]["units_availability_moved"],
         "non_cc_units_moved": rb["F1_footprint"]["non_cc_units_moved"],
         "mc_base_max_abs_delta": rb["F1_footprint"]["mc_base_max_abs_delta"],
+        "screen_fleet_parquet_units": int(len(fls)),
+        "screen_fleet_parquet_units_matched_to_keeper_rebuild": int(len(common)),
         "screen_fleet_parquet_pmax_vs_keeper_rebuild_max_abs": round(
-            float((fp.to_numpy() - kee["units"].pmax.to_numpy()).__abs__().max()), 6
+            float((fls.loc[common] - kp.loc[common]).abs().max()), 6
         ),
-        "g_delta_scenario_config": {k: v for k, v in delta.items()},
+        "g_delta_raw": {k: list(v) for k, v in raw_delta.items()},
+        "g_delta_per_year_solve_parameters": sorted(
+            k for k in raw_delta if k in per_year
+        ),
+        "g_delta_head_defaults_not_recipe": head_default,
+        "g_delta_recipe": {k: list(v) for k, v in delta.items()},
         "g_delta_is_exactly_the_flag": bool(
             set(delta) == {FLAG} and sc_s.get(FLAG) is True
         ),
@@ -181,6 +221,8 @@ def main() -> int:
             rb["F1_footprint"]["PASS"]
             and rb["F2_identity"]["PASS"]
             and set(delta) == {FLAG}
+            and len(common) == len(fls)
+            and float((fls.loc[common] - kp.loc[common]).abs().max()) < 1e-6
         ),
     }
 
