@@ -28,7 +28,13 @@ from market_sim.config.constants import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.results import cache
-from market_sim.results.emissions import compute_emissions, compute_nox, compute_so2
+from market_sim.results.emissions import (
+    IMPORT_CO2_DISCLOSURE,
+    compute_emissions,
+    compute_nox,
+    compute_so2,
+    import_co2_tons,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +100,21 @@ def _summarize_year(result, context, config=None) -> dict:
     Returns:
         A dict of annual headline numbers for the year. All pre-W2-B keys
         are byte-identical to their historical values; ``clean_share``
-        and ``negative_price_hours`` are strictly additive.
+        and ``negative_price_hours`` are strictly additive, as are the
+        WS-0 emissions-grain keys:
+
+        * ``emissions_by_fuel_mt`` — CO2 (Mt) per fuel class, on the same
+          key set as ``generation_twh`` so the two join key-for-key.
+        * ``emissions_by_zone_mt`` — CO2 (Mt) per zone.
+        * ``import_co2_mt_reported`` — import-attributed CO2 (Mt),
+          **reported only, never inside** ``emissions_mt``.
+        * ``import_co2_basis`` — the disclosure string for the line above.
+        * ``unserved_mwh`` — annual unserved energy from the slack column.
+
+        ``emissions_by_fuel_mt`` and ``emissions_by_zone_mt`` each partition
+        ``emissions_mt``: both are the same ``dispatch x emission_rate``
+        product grouped differently, so each sums to the scalar up to the
+        dicts' 6-dp rounding.
     """
     dispatch = result.dispatch
     gen_per_unit = dispatch.sum(axis=1)  # MWh per generator over the year
@@ -135,6 +155,43 @@ def _summarize_year(result, context, config=None) -> dict:
     emissions_t = float(
         compute_emissions(dispatch, np.asarray(context.emission_rate)).sum()
     )
+
+    # Emissions grain (WS-0 deliverable 1; scenario-readiness plan §2.5 G-E1).
+    # Computed from the SAME cached ``dispatch x context.emission_rate`` product
+    # as ``emissions_mt`` — no LP change, no new cache column — so by-fuel and
+    # by-zone partition the scalar exactly (up to the shared 4-dp rounding).
+    # Vectorized over the generator axis; the hour axis is already collapsed in
+    # ``gen_per_unit`` (rule 2 [R-VECTOR]).
+    emis_per_unit = np.asarray(gen_per_unit, dtype=float) * np.asarray(
+        context.emission_rate, dtype=float
+    )
+    emissions_by_fuel_t: dict[str, float] = {}
+    emissions_by_zone_t: dict[str, float] = {}
+    for g, fuel in enumerate(context.fuel_types):
+        # Same exclusion as generation_twh above: demand-response blocks are
+        # avoided load, not generation. They carry emission_rate 0 by
+        # construction (FUEL_TYPE_MAP), so dropping them cannot move the sum.
+        if fuel == "demand_response":
+            continue
+        emissions_by_fuel_t[fuel] = emissions_by_fuel_t.get(fuel, 0.0) + float(
+            emis_per_unit[g]
+        )
+        zone = context.zones[g]
+        emissions_by_zone_t[zone] = emissions_by_zone_t.get(zone, 0.0) + float(
+            emis_per_unit[g]
+        )
+    # Same key set as generation_twh: the zonal wind/solar pools live outside
+    # the thermal fleet and emit nothing, but the two dicts must be joinable
+    # key-for-key by every downstream delta table.
+    for zero_carbon in ("wind", "solar"):
+        emissions_by_fuel_t.setdefault(zero_carbon, 0.0)
+
+    # Reported-only import-attributed CO2 (G-E3) and unserved energy (G-L4),
+    # both beside ``emissions_mt`` and NEVER inside it.
+    import_co2_t = import_co2_tons(
+        context.fuel_types, context.unit_ids, context.zones, gen_per_unit
+    )
+    unserved_mwh = float(np.asarray(result.slack, dtype=float).sum())
     # NOx/SO2 are secondary reporting pollutants (CO2 stays primary); older
     # cached contexts predate this wiring and carry empty rate lists.
     nox_tons = (
@@ -198,6 +255,15 @@ def _summarize_year(result, context, config=None) -> dict:
     return {
         "generation_twh": {k: round(v, 4) for k, v in generation_twh.items()},
         "emissions_mt": round(emissions_t / 1e6, 4),
+        "emissions_by_fuel_mt": {
+            k: round(v / 1e6, 6) for k, v in emissions_by_fuel_t.items()
+        },
+        "emissions_by_zone_mt": {
+            k: round(v / 1e6, 6) for k, v in emissions_by_zone_t.items()
+        },
+        "import_co2_mt_reported": round(import_co2_t / 1e6, 6),
+        "import_co2_basis": IMPORT_CO2_DISCLOSURE,
+        "unserved_mwh": round(unserved_mwh, 3),
         "nox_tonnes": round(nox_tons, 2),
         "so2_tonnes": round(so2_tons, 2),
         "avg_price": round(float(result.prices.mean()), 2),

@@ -110,6 +110,39 @@ def run_matrix(
     return run_member_configs(configs, iso, workers=workers, cap=MAX_CONCURRENT_CASES)
 
 
+# The frame's leading metric. Kept first among the metric columns so every
+# existing reader (``compute_envelope``, ``_write_summary_md``, the forecast
+# dashboard) sees the column it always saw in the position it always sat.
+PRIMARY_METRIC = "emissions_mt"
+
+
+def scalar_metrics(summary: dict) -> list[str]:
+    """Return the numeric scalar metric names of one annual summary, in order.
+
+    Every non-dict, non-string value in
+    :func:`market_sim.results.export._summarize_year`'s output is a per-year
+    scalar the matrix can carry, so the frame widens automatically whenever the
+    export path grows one — no list here to keep in sync (SCN-WS0 deliverable
+    2, scenario-readiness plan §2.5 G-E4). ``bool`` is excluded because it is
+    a flag, not a metric.
+
+    Args:
+        summary: One annual summary dict.
+
+    Returns:
+        The scalar metric names with :data:`PRIMARY_METRIC` first, the rest in
+        the summary's own key order.
+    """
+    names = [
+        k
+        for k, v in summary.items()
+        if isinstance(v, (int, float)) and not isinstance(v, bool)
+    ]
+    if PRIMARY_METRIC in names:
+        names = [PRIMARY_METRIC] + [n for n in names if n != PRIMARY_METRIC]
+    return names
+
+
 def build_matrix_frame(iso: str, members: dict[str, str]) -> pd.DataFrame:
     """Load every case's cached results and build the long-format trajectory table.
 
@@ -119,30 +152,41 @@ def build_matrix_frame(iso: str, members: dict[str, str]) -> pd.DataFrame:
             :func:`run_matrix`).
 
     Returns:
-        A long-format DataFrame with columns ``case``, ``year``,
-        ``emissions_mt``, ``cache_key``, ``label`` -- one row per
-        (case, year) actually cached (a partial/smoke run's missing years
-        are simply absent, not an error).
+        A long-format DataFrame with columns ``case``, ``year``, every
+        per-year scalar metric the annual summary carries
+        (:func:`scalar_metrics` — ``emissions_mt`` first, then the rest,
+        including ``unserved_mwh`` and ``import_co2_mt_reported``),
+        ``cache_key`` and ``label`` -- one row per (case, year) actually
+        cached (a partial/smoke run's missing years are simply absent, not an
+        error). Widening the frame is strictly additive: the column set and
+        order the envelope and the summary table read are unchanged, and a
+        year whose cached summary lacks a metric another year carries reads
+        NaN there rather than failing.
     """
     iso = iso.upper()
     rows: list[dict] = []
+    metrics: list[str] = []
     for case, key in members.items():
         for year in range(START_YEAR, END_YEAR + 1):
             if not cache.is_cached(iso, key, year):
                 continue
             summary = summarize_cached_run(iso, key, year)
+            names = scalar_metrics(summary)
+            for name in names:
+                if name not in metrics:
+                    metrics.append(name)
             rows.append(
                 {
                     "case": case,
                     "year": year,
-                    "emissions_mt": summary["emissions_mt"],
+                    **{name: summary[name] for name in names},
                     "cache_key": key,
                     "label": LABEL,
                 }
             )
-    return pd.DataFrame(
-        rows, columns=["case", "year", "emissions_mt", "cache_key", "label"]
-    )
+    if not metrics:
+        metrics = [PRIMARY_METRIC]
+    return pd.DataFrame(rows, columns=["case", "year", *metrics, "cache_key", "label"])
 
 
 def compute_envelope(matrix_df: pd.DataFrame) -> pd.DataFrame:

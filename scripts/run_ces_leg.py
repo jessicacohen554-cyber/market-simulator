@@ -66,7 +66,10 @@ from market_sim.matrix import matrix_configs, write_matrix_outputs  # noqa: E402
 from market_sim.policy.federal_ces import premium_for_year  # noqa: E402
 from scripts.lib.run_record import Derived, FromConfig, RecordSpec  # noqa: E402
 from scripts.run_full_horizon import (  # noqa: E402
+    add_set_argument,
+    apply_set_overrides,
     assert_schedulable,
+    parse_set_overrides,
     solve_and_summarize,
 )
 
@@ -130,15 +133,22 @@ def run_leg(
     full_solve_authorized: bool,
     sample_interval: float,
     campaign: str | None,
+    set_overrides: dict | None = None,
 ) -> dict:
-    """Solve one named ladder leg as its own invocation; return its summary."""
+    """Solve one named ladder leg as its own invocation; return its summary.
+
+    ``set_overrides`` are the generic ``--set FIELD=VALUE`` overrides
+    (``run_full_horizon.parse_set_overrides``), applied to the leg AFTER the
+    ladder's own case overrides so an explicit command-line ``--set`` is the
+    last word, and recorded in the leg's summary and ``run_config.json``.
+    """
     base, configs, iso = _load_ladder(config_path, matrix_path, iso_override)
     if case not in configs:
         raise SystemExit(
             f"case {case!r} is not in the ladder {matrix_path.name}; "
             f"available cases: {sorted(configs)}"
         )
-    leg = configs[case]
+    leg = apply_set_overrides(configs[case], set_overrides or {})
 
     # §2.1b window cap — mirrors run_full_horizon's gate. One leg is one
     # invocation; a >5-year leg needs the owner's per-campaign authorization.
@@ -161,6 +171,7 @@ def run_leg(
         redirect_cache=False,
         extra_summary=_leg_meta(case, leg, campaign),
         extra_spec=CES_LEG_SPEC,
+        set_overrides=set_overrides,
     )
 
 
@@ -250,7 +261,11 @@ def main(argv: list[str] | None = None) -> int:
             "authorization (plan §2.1b(d)). A T1 (≤5-year) leg needs none."
         ),
     )
+    add_set_argument(ap)
     args = ap.parse_args(argv)
+    set_overrides = parse_set_overrides(args.set_overrides)
+    if args.assemble and set_overrides:
+        raise SystemExit("--set has no meaning with --assemble (no solve happens)")
 
     if args.assemble:
         legs_dir = args.legs_dir or args.out_dir.parent
@@ -266,6 +281,7 @@ def main(argv: list[str] | None = None) -> int:
         args.full_solve_authorized,
         args.sample_interval,
         args.campaign,
+        set_overrides,
     )
     return 1 if summary.get("error") else 0
 
