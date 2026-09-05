@@ -11,10 +11,18 @@ import unittest
 from unittest import mock
 
 import numpy as np
+import pandas as pd
+import pytest
 
+from market_sim.config import paths
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.cod_ramp import (
     COD_FALLBACK_MONTH,
+    _RETIRED_WINDOW_NAME,
+    _cod_work_frame,
+    _load_cod_map,
+    _reduce_cod_groups,
+    _registry_year_built,
     class_cod_coverage,
     effective_cod,
     load_cod_map,
@@ -22,6 +30,7 @@ from market_sim.data.cod_ramp import (
     monthly_online_mask,
 )
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+from tests.helpers.base import requires_raw
 
 
 class TestMonthlyOnlineMask(unittest.TestCase):
@@ -450,6 +459,274 @@ class TestClassCodCoverage(unittest.TestCase):
     def test_blank_label_falls_back_to_unknown(self):
         cov = class_cod_coverage([""], [2005])
         self.assertEqual(cov, {"unknown": (1, 1)})
+
+
+def _ref_reduce_cod_groups(work):
+    """The SHIPPED (pre-A-1) per-group reduction, verbatim, as the reference.
+
+    Frozen copy of the ``for code, grp in work.groupby("pc")`` loop that
+    :func:`market_sim.data.cod_ramp._reduce_cod_groups` replaced (wall-clock
+    item A-1, ``docs/handoffs/wallclock-opportunities-2026-09.md`` §2 A-1).
+    The vectorized reducer is BYTE-IDENTICAL, so this stays as the oracle —
+    do not "modernize" it to match the new code; if the two ever diverge, the
+    new code is what changed.
+    """
+    cod = {}
+    for code, grp in work.groupby("pc"):
+        code = int(code)
+        weights = grp["w"].to_numpy()
+        if weights.sum() <= 0.0:
+            weights = np.ones(len(grp))
+        cont = grp["oy"].to_numpy() + (grp["om"].to_numpy() - 1.0) / 12.0
+        mean = float(np.average(cont, weights=weights))
+        online_year = int(np.floor(mean))
+        online_month = int(round((mean - online_year) * 12.0)) + 1
+        online_month = min(max(online_month, 1), 12)
+        ret_year = ret_month = None
+        ret = grp.dropna(subset=["ry"])
+        if len(ret) == len(grp) and len(ret) > 0:
+            last = ret.sort_values(["ry", "rm"]).iloc[-1]
+            ret_year = int(last["ry"])
+            ret_month = int(last["rm"]) if pd.notna(last["rm"]) else 12
+        cod[code] = (online_year, online_month, ret_year, ret_month)
+    return cod
+
+
+def _ref_load_cod_map(eia860_dir):
+    """The shipped ``_load_cod_map`` body around :func:`_ref_reduce_cod_groups`."""
+    cod = {}
+    frames = [
+        _cod_work_frame(
+            eia860_dir / "eia860_generator_operable.parquet",
+            {
+                "pc": "Plant Code",
+                "oy": "Operating Year",
+                "om": "Operating Month",
+                "cap": "Nameplate Capacity (MW)",
+                "ry": "Planned Retirement Year",
+                "rm": "Planned Retirement Month",
+            },
+        ),
+        _cod_work_frame(
+            eia860_dir / _RETIRED_WINDOW_NAME,
+            {
+                "pc": "plant_id",
+                "oy": "operating_year",
+                "om": "operating_month",
+                "cap": "nameplate_capacity_mw",
+                "ry": "planned_retirement_year",
+                "rm": "planned_retirement_month",
+            },
+        ),
+    ]
+    frames = [f for f in frames if f is not None]
+    work = pd.concat(frames, ignore_index=True) if frames else None
+
+    if work is not None and not work.empty:
+        work["om"] = work["om"].fillna(COD_FALLBACK_MONTH).clip(1, 12)
+        work["w"] = work["cap"].where(work["cap"] > 0.0, 0.0)
+        cod.update(_ref_reduce_cod_groups(work))
+
+    reg = _registry_year_built()
+    for code, year in zip(reg["plant_id"], reg["year_built"]):
+        code = int(code)
+        if code not in cod:
+            cod[code] = (int(year), COD_FALLBACK_MONTH, None, None)
+
+    return cod
+
+
+def _work_frame(rows):
+    """Build the reducer's prepared work frame from ``(pc, oy, om, cap, ry, rm)``."""
+    work = pd.DataFrame(
+        [dict(zip(("pc", "oy", "om", "cap", "ry", "rm"), r)) for r in rows],
+        columns=["pc", "oy", "om", "cap", "ry", "rm"],
+    ).astype("float64")
+    work["om"] = work["om"].fillna(COD_FALLBACK_MONTH).clip(1, 12)
+    work["w"] = work["cap"].where(work["cap"] > 0.0, 0.0)
+    return work
+
+
+class TestReduceCodGroupsMatchesShippedLoop(unittest.TestCase):
+    """A-1: the vectorized per-plant reduction is byte-identical to the loop.
+
+    Hermetic (fast-tier) half of the A-1 gate — the real-vintage half is
+    :class:`TestLoadCodMapVintageParity` below. Every case is checked against
+    :func:`_ref_reduce_cod_groups`, the frozen shipped implementation.
+    """
+
+    def _assert_parity(self, rows, msg=""):
+        work = _work_frame(rows)
+        self.assertEqual(
+            _reduce_cod_groups(work), _ref_reduce_cod_groups(work.copy()), msg
+        )
+
+    def test_single_unit_plants(self):
+        self._assert_parity([(1.0, 2001, 3, 100.0, None, None)])
+
+    def test_capacity_weighted_multi_unit_plant(self):
+        # Bulk of the nameplate is the 2019 unit -> COD tracks it.
+        self._assert_parity(
+            [
+                (7.0, 1998, 4, 12.0, None, None),
+                (7.0, 2019, 11, 800.0, None, None),
+                (7.0, 2005, 1, 30.0, None, None),
+            ]
+        )
+
+    def test_zero_and_missing_capacity_falls_back_to_equal_weight(self):
+        # Every unit reports no capacity -> the np.ones(len(grp)) branch.
+        self._assert_parity(
+            [
+                (9.0, 1990, 2, 0.0, None, None),
+                (9.0, 2010, 8, None, None, None),
+                (9.0, 2000, 5, -3.0, None, None),
+            ]
+        )
+
+    def test_half_integer_rounding_boundary(self):
+        """The cases a sequential segment sum gets wrong.
+
+        Eight equal-capacity units whose mean lands exactly on a half-month,
+        and a mean landing exactly on a year boundary — measured on the live
+        vintage as 15 of 14,334 plants (e.g. plant 448: ref month 9, a
+        sequential sum gives 10). Guards the reducer's summation order.
+        """
+        self._assert_parity(
+            [
+                (448.0, y, m, 53.0, None, None)
+                for y, m in (
+                    (1968, 6),
+                    (1968, 3),
+                    (1967, 11),
+                    (1967, 9),
+                    (1967, 8),
+                    (1967, 7),
+                    (1967, 5),
+                    (1967, 3),
+                )
+            ],
+            "half-month boundary",
+        )
+        self._assert_parity(
+            [
+                (2004.0, 1949, 1, 0.6, None, None),
+                (2004.0, 1954, 1, 1.1, None, None),
+                (2004.0, 1974, 1, 2.0, None, None),
+            ],
+            "exact year boundary",
+        )
+        self._assert_parity(
+            [
+                (1478.0, y, 1, cap, None, None)
+                for y, cap in ((1913, 0.4), (1913, 0.4), (1916, 0.4), (1929, 0.6))
+            ],
+            "december/january boundary",
+        )
+
+    def test_whole_plant_retirement_takes_the_latest_date(self):
+        self._assert_parity(
+            [
+                (11.0, 1980, 1, 100.0, 2027.0, 6.0),
+                (11.0, 1982, 1, 100.0, 2029.0, 3.0),
+                (11.0, 1981, 1, 100.0, 2029.0, 1.0),
+            ]
+        )
+
+    def test_partial_retirement_leaves_plant_online(self):
+        # One unit without a planned retirement -> no plant retirement at all.
+        self._assert_parity(
+            [
+                (12.0, 1980, 1, 100.0, 2027.0, 6.0),
+                (12.0, 1982, 1, 100.0, None, None),
+            ]
+        )
+
+    def test_missing_retirement_month_sorts_last_and_defaults_to_december(self):
+        # NaN `rm` is na_position="last" in the shipped sort_values, so it wins
+        # the tie on the latest `ry` and resolves to month 12.
+        self._assert_parity(
+            [
+                (13.0, 1980, 1, 100.0, 2030.0, None),
+                (13.0, 1981, 1, 100.0, 2030.0, 4.0),
+            ]
+        )
+
+    def test_retirement_month_ties_on_the_same_year(self):
+        self._assert_parity(
+            [
+                (14.0, 1980, 1, 100.0, 2030.0, 7.0),
+                (14.0, 1981, 1, 100.0, 2030.0, 7.0),
+            ]
+        )
+
+    def test_many_plants_of_mixed_shapes_together(self):
+        rng = np.random.default_rng(20260905)
+        rows = []
+        for code in range(1, 400):
+            for _ in range(int(rng.integers(1, 14))):
+                retires = bool(rng.integers(0, 2))
+                rows.append(
+                    (
+                        float(code),
+                        int(rng.integers(1950, 2025)),
+                        int(rng.integers(1, 13)),
+                        float(rng.choice([0.0, 0.4, 53.0, 800.0])),
+                        float(rng.integers(2026, 2040)) if retires else None,
+                        float(rng.integers(1, 13))
+                        if retires and rng.integers(0, 4)
+                        else None,
+                    )
+                )
+        self._assert_parity(rows)
+
+    def test_group_sizes_spanning_the_pairwise_summation_blocks(self):
+        # numpy's pairwise sum changes shape at 8 and 128 elements; the reducer
+        # buckets plants by unit count so each cohort reduces the same way.
+        rng = np.random.default_rng(7)
+        rows = []
+        for code, size in enumerate((1, 2, 7, 8, 9, 127, 128, 129, 300), start=1):
+            for _ in range(size):
+                rows.append(
+                    (
+                        float(code),
+                        int(rng.integers(1950, 2025)),
+                        int(rng.integers(1, 13)),
+                        float(rng.choice([1.0, 1e-6, 1e6])),
+                        None,
+                        None,
+                    )
+                )
+        self._assert_parity(rows)
+
+
+@requires_raw(paths.EIA_860_DIR)
+class TestLoadCodMapVintageParity(unittest.TestCase):
+    """A-1 gate (1): dict equality vs the shipped loop on EVERY vintage dir.
+
+    Enumerates the canonical ``data/raw/eia-860`` (whose map is the union of
+    the operable schedule AND the within-window retiree parquet) plus every
+    committed ``vintage_<year>/`` directory, and asserts the vectorized
+    ``_load_cod_map`` returns a dict equal to the frozen shipped
+    implementation's. Marked ``fulldata``/``slow``: the reference loop alone is
+    ~20 s per vintage.
+    """
+
+    def test_every_committed_vintage_is_dict_identical(self):
+        dirs = [paths.EIA_860_DIR] + sorted(
+            p for p in paths.EIA_860_DIR.glob("vintage_*") if p.is_dir()
+        )
+        # The canonical dir plus the committed year-matched vintages.
+        self.assertGreater(len(dirs), 1, "no EIA-860 vintage directories found")
+        for eia860_dir in dirs:
+            with self.subTest(vintage=eia860_dir.name):
+                _load_cod_map.cache_clear()
+                vec = _load_cod_map(eia860_dir)
+                self.assertGreater(len(vec), 100)
+                self.assertEqual(vec, _ref_load_cod_map(eia860_dir))
+
+
+TestLoadCodMapVintageParity = pytest.mark.slow(TestLoadCodMapVintageParity)
 
 
 if __name__ == "__main__":
