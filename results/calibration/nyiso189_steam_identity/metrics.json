@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-30-nyiso-157-par-control",
+  "run_id": "2026-09-05-nyiso-189-steam-identity",
   "iso": "NYISO",
-  "label": "nyiso 157 par control",
+  "label": "nyiso 189 steam identity",
   "target_years": [
     2023,
     2024,
@@ -14,9 +14,9 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 3.5,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_tail"
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [],
   "criteria": {
@@ -33,7 +33,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -43,7 +43,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -63,7 +64,9 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -72,26 +75,26 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 6,
+    "target_grade": 7,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 2
+    "ledgered": 1,
+    "fails": 0
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-1.1%",
-        "2024": "-1.4%",
-        "2025": "+2.4%"
+        "2023": "+1.8%",
+        "2024": "+1.0%",
+        "2025": "+4.8%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2023": "amplitude 56.3% of measured (hod range $10.61 vs $18.85); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.937; 365 complete days",
-        "2024": "amplitude 46.0% of measured (hod range $12.25 vs $26.63); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.889; 365 complete days",
-        "2025": "amplitude 37.4% of measured (hod range $17.99 vs $48.09); peak h18 vs h17, trough h03 vs h02 \u2014 phase OK; hod r +0.887; 365 complete days"
+        "2023": "amplitude 66.4% of measured (hod range $12.51 vs $18.85); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.926; 365 complete days",
+        "2024": "amplitude 49.8% of measured (hod range $13.25 vs $26.63); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.887; 365 complete days",
+        "2025": "amplitude 41.9% of measured (hod range $20.16 vs $48.09); peak h18 vs h17, trough h03 vs h02 \u2014 phase OK; hod r +0.887; 365 complete days"
       }
     }
   },

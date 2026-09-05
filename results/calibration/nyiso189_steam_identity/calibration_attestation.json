@@ -5,13 +5,275 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session nyiso-157 (2026-08-30). ZERO-DELTA CONTROL of the Leg-1 eastern-seam A/B (results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md + PREREG-nyiso127-addendum-eastern-seam-availability-source-2026-08-05.md + PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md + EXECNOTE-nyiso157-leg1-execution-2026-08-30.md; EXECNOTE pushed and blob-verified BEFORE any solve): the committed keeper 2026-08-25-nyiso-155-hydro-repair recipe replayed unchanged at HEAD 5ce92f4 via scripts/replay_keeper.py. No lever, no parameter, no mechanism change \u2014 the ledger is the keeper's own, carried verbatim. K6 (re-specified) PASSES: C3a +6.81/-1.74/-10.82 vs the committed +6.8/-1.7/-10.8, and the control is BIT-IDENTICAL to the committed keeper in zonal prices in all three years (max |dprice| 0.0 \u2014 the nyiso-155 G1 reshuffle is absent at this HEAD).",
-  "note": "nyiso-157 chain (2026-08-30): the nyiso-155 keeper recipe, plus (arm bundles only) the eastern-seam PAR attribution and, on the companion, the iroquois winter spread \u2014 see attested_by for this bundle's exact role and evidence. The prior keeper lineage's mechanism notes (duty-role cohort, hydro repair) live in their own bundles' attestations and the keeper shard's promotion-note chain."
+  "attested_by": "session nyiso-189 (2026-09-05). The single arm of the pre-registered A/B (results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md \u00a71 / \u00a73, pushed at a73d1df0 BEFORE the mechanism was built and before any solve; record docs/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md): nyiso-189 ARM (2026-09-05, owner ruling 2026-09-05 = form B2 of DECISION-CARD-nyiso189): the keeper 2026-09-04-nyiso-188-combined recipe plus the ONE new field egrid_steam_collapse_heat_rates \u2014 the CT-heat identity for combined cycles whose eGRID steam-generator filing collapsed in the applied vintage (Bethlehem 2539 9.665 -> 6.877, World Generation X 54131 9.807 -> 6.996; the derive over all 38 NYISO CCs with a filed steam generator). Zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim. Control = the same-HEAD replay on the committed artifacts (G-CONTROL below, computed against the keeper 2026-09-04-nyiso-188-combined). REPORTED AT FULL MAGNITUDE \u2014 see the finding; the disposition follows the owner's standing formula.",
+  "note": "nyiso-189 ARM (2026-09-05, owner ruling 2026-09-05 = form B2 of DECISION-CARD-nyiso189): the keeper 2026-09-04-nyiso-188-combined recipe plus the ONE new field egrid_steam_collapse_heat_rates \u2014 the CT-heat identity for combined cycles whose eGRID steam-generator filing collapsed in the applied vintage (Bethlehem 2539 9.665 -> 6.877, World Generation X 54131 9.807 -> 6.996; the derive over all 38 NYISO CCs with a filed steam generator). Zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim.",
+  "computed_checks": {
+   "G_CONTROL": {
+    "by_year": {
+     "2023": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2024": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     },
+     "2025": {
+      "hours_differing": 0,
+      "of": 52560,
+      "max_abs_dprice": 0.0
+     }
+    },
+    "max_abs_dprice": 0.0,
+    "bit_identical_to_keeper": true,
+    "baseline": "nyiso188_combined",
+    "pass": true
+   },
+   "G_DELTA": {
+    "baseline": "nyiso189_control",
+    "delta_fields": {
+     "egrid_steam_collapse_heat_rates": [
+      false,
+      true
+     ]
+    },
+    "absence_normalized": {},
+    "rode_along": [],
+    "pass": true
+   },
+   "G_INPUTS": {
+    "derive_check": [
+     "CHECK OK: /home/user/market-simulator/data/raw/_processed-legacy/egrid_steam_collapse_heat_rates_NYISO.csv reproduces byte-identically (258 row(s))"
+    ],
+    "n_plants": 38,
+    "t1_by_plant": {
+     "2500": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+     ],
+     "2539": [
+      2024
+     ],
+     "7314": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+     ],
+     "10521": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+     ],
+     "54131": [
+      2023
+     ]
+    },
+    "applied_admitted": {
+     "2539": {
+      "plhtrt": 9.6651,
+      "identity_hr": 6.8773,
+      "st_ct": 0.0655,
+      "ref_vintages": "2018;2019;2020;2021;2022",
+      "ref_st_ct_median": 0.4973,
+      "t1_zero": false,
+      "below_ref_fence": true,
+      "ct_side_intact": true
+     },
+     "54131": {
+      "plhtrt": 9.8065,
+      "identity_hr": 6.9955,
+      "st_ct": 0.0,
+      "ref_vintages": "2018;2019;2020;2021;2022;2024",
+      "ref_st_ct_median": 0.4018,
+      "t1_zero": true,
+      "below_ref_fence": true,
+      "ct_side_intact": true
+     }
+    },
+    "declined_one_member_records": {
+     "2500": 1,
+     "7314": 1,
+     "10521": 1
+    },
+    "fleet_generators_repriced": [
+     [
+      2539,
+      9.6651,
+      6.8773
+     ],
+     [
+      2539,
+      9.6651,
+      6.8773
+     ],
+     [
+      2539,
+      9.6651,
+      6.8773
+     ],
+     [
+      2539,
+      9.6651,
+      6.8773
+     ],
+     [
+      54131,
+      9.8065,
+      6.9955
+     ],
+     [
+      54131,
+      9.8065,
+      6.9955
+     ]
+    ],
+    "pass": true
+   },
+   "G_DOF": {
+    "n_entries": 13,
+    "n_residual": 6,
+    "added_entries": 0,
+    "added_scalars": 0,
+    "basis": "a registered flag (ScenarioConfig.egrid_steam_collapse_heat_rates) over an artifact that is arithmetic on eGRID's published GEN / PLNT fields and the plant's own record: identity = PLHTIAN / sum GENNTAN(CT) / (1 + median ST/CT over the plant's own T1-clean vintages other than the one under test); admission = (T1 zero test OR the steam share below the record's minimum by more than the record's own range) AND the heat per CT-MWh inside the record AND >= 2 reference vintages. The fence unit is the plant's own range, the guard is the plant's own range, the two-member minimum is definitional, APPLIED_VINTAGE = 2023 is the join's own; nothing chosen, swept or fitted (PREREG-nyiso189 \u00a71 / \u00a73 G-DOF).",
+    "pass": true
+   },
+   "G_ENGAGE": {
+    "by_year": {
+     "2023": {
+      "CC_REGULAR_twh": [
+       32.012,
+       34.008
+      ],
+      "ST_GAS_twh": [
+       11.113,
+       10.061
+      ],
+      "CC_CHP_twh": [
+       16.0,
+       15.503
+      ],
+      "load_weighted_price": [
+       34.81,
+       33.84
+      ],
+      "bethlehem_twh": [
+       2.448,
+       4.898
+      ],
+      "bethlehem_available_twh": [
+       6.997,
+       6.997
+      ],
+      "bethlehem_mean_mc": [
+       51.777,
+       39.783
+      ],
+      "world_gen_x_twh": [
+       0.077,
+       0.134
+      ],
+      "world_gen_x_mean_mc": [
+       59.802,
+       44.371
+      ]
+     },
+     "2024": {
+      "CC_REGULAR_twh": [
+       36.108,
+       37.391
+      ],
+      "ST_GAS_twh": [
+       9.591,
+       9.293
+      ],
+      "CC_CHP_twh": [
+       19.555,
+       18.84
+      ],
+      "load_weighted_price": [
+       39.56,
+       38.76
+      ],
+      "bethlehem_twh": [
+       4.171,
+       5.951
+      ],
+      "bethlehem_available_twh": [
+       6.68,
+       6.68
+      ],
+      "bethlehem_mean_mc": [
+       46.122,
+       35.562
+      ],
+      "world_gen_x_twh": [
+       0.2408,
+       0.2919
+      ],
+      "world_gen_x_mean_mc": [
+       50.951,
+       38.29
+      ]
+     },
+     "2025": {
+      "CC_REGULAR_twh": [
+       34.018,
+       35.218
+      ],
+      "ST_GAS_twh": [
+       10.345,
+       10.04
+      ],
+      "CC_CHP_twh": [
+       20.566,
+       20.051
+      ],
+      "load_weighted_price": [
+       61.84,
+       60.88
+      ],
+      "bethlehem_twh": [
+       4.11,
+       5.815
+      ],
+      "bethlehem_available_twh": [
+       6.701,
+       6.701
+      ],
+      "bethlehem_mean_mc": [
+       69.456,
+       52.296
+      ],
+      "world_gen_x_twh": [
+       0.3008,
+       0.3212
+      ],
+      "world_gen_x_mean_mc": [
+       49.249,
+       39.575
+      ]
+     }
+    },
+    "pass": true
+   }
+  }
  },
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 11,
+  "n_entries": 13,
   "n_residual": 6,
   "entries": [
    {
@@ -233,6 +495,32 @@
      "hydro_eia930_monthly": true,
      "n_scalars": 0,
      "note": "Plant census backfilled from the complete 2024 EIA-923 vintage (2025 early release retains 2.0 % of NYIS HY plants); monthly energy level pinned to EIA-930 NG: WAT, independently validated by NYISO MIS P-63 Hydro (+1.30/+0.74/+0.60 % agreement). Both series are measured inputs derived blind to any residual; the pair regenerates forward via forecast_monthly_hydro (rule 13). Same-config identification as the CAISO/PJM/MISO/NEISO keepers' standing arm (PJM/MISO backfill-only, PS fold)."
+    }
+   },
+   {
+    "name": "nyiso_seam_par_attribution",
+    "where": "ScenarioConfig.nyiso_seam_par_attribution -> data.nyiso_par_attribution (PAR_REGISTRY, INTERFACE_ZONE, SEAM_ROW_ZONE, zone_shares, nyiso_par_attributed_ttc_hourly)",
+    "identification": "published",
+    "lineage_solves": "nyiso-127 A/B (2026-08-05, REJECTED on K3 at the nyiso-125 HEAD; PRs #3570/#3582/#3584/#3586); nyiso-157 re-test A/B (2026-08-30, owner ruling of that date; K3 does not re-fire at the nyiso-155 HEAD)",
+    "value": {
+     "shares": {
+      "ramapo": 0.32,
+      "jk": 0.15,
+      "abc": 0.21,
+      "west": 0.32
+     },
+     "n_scalars": 0,
+     "note": "NY-NJ PAR posting table 1 (published percentages, effective 5/1/2017; OBF 0 since 11/1/2019) x P-33 outSched published availability windows (ABC-B/C out 100 % of 2023-2025, so the hourly split is ~46/7/47, never the nameplate 47/21/32) x published tie landings (Gold Book / Operating Study). Regenerates forward from the standing JOA convention and forward PAR availability (rule 13). Supersedes the nyiso_seam_deliverability_envelope two-link mechanism at runtime (rule 19): exactly one of the two applies."
+    }
+   },
+   {
+    "name": "nyiso_zonal_loss_surface",
+    "where": "ScenarioConfig.nyiso_zonal_loss_surface -> interchange.nyiso.apply_nyiso_zonal_loss_links / build_nyiso_link_loss <- data.loss_surface.load_zone_month_deviation <- data/raw/iso-specific-transmission/NYISO_loss_surface.csv (scripts/data/derive_nyiso_loss_surface.py, frozen rule 23)",
+    "identification": "measured",
+    "lineage_solves": "nyiso-159 phase-0 (2026-08-30, committed-artifacts measurement, FINDING-nyiso159-loss-surface-phase0-2026-08-30.md); offline acceptance 12/12 pair-years pre-solve; nyiso-159 A/B (2026-08-30, _nyiso159_loss_ab_gates.json)",
+    "value": {
+     "n_scalars": 0,
+     "note": "Per-zone monthly delivery-factor deviations dev_z,m = sum(MCL_z)/sum(E) from NYISO's own posted RT LBMP components (LBMP = E + MCL - MCC, MST \u00a717.1/Manual 12), model-zone aggregation = the scoring actuals' own simple-mean crosswalk; per-year rows for backcast train years (the CEMS-rate admissibility class, rule 13 \u2014 regenerates for any year from the same public feed and responds to changed grid conditions), pooled year=0 rows as the forecast-mode forward analogue. The eps tiebreak (1e-3 $/MWh) is the rule-9 storage-epsilon numerical device, identical in construction and value to the PJM/CAISO twins, declared in NYISO's own module (rule 25)."
     }
    }
   ]
