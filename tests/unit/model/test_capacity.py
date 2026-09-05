@@ -6429,10 +6429,9 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             ),
             "ccee17a4c1563727",  # = arm B
         )
-        self.assertEqual(
-            _key("MISO"), "eff2c890746ec966"
-        )  # D46's bare miso-t1h, unmoved
-        for iso in ("NYISO", "NEISO", "CAISO", "ERCOT"):
+        # Every other ISO resolves the three fields OFF (their own keys are
+        # their own lanes' — never pinned here, rule 25).
+        for iso in ("MISO", "NYISO", "NEISO", "CAISO", "ERCOT"):
             cfg = build_config(
                 iso, 2021, 2025, "realized", vintage=2020, entry_screen_diagnostics=True
             )
