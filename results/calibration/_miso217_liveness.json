@@ -1,0 +1,112 @@
+{
+  "charter": "miso-217 S-2 liveness + the PREREG \u00a76 F-4 footprint; zero-solve.",
+  "prereg": "results/calibration/PREREG-miso217-intermediate-phys-arm-2026-09-05.md @ 76c2574c",
+  "field": "miso_intermediate_gas_offer_margin",
+  "anchor_usd_mmbtu": 3.0492,
+  "keeper_bundle": "results/calibration/miso213_layering_B",
+  "years": {
+    "2023": {
+      "n_tranches": 2929,
+      "n_markup_rows_control": 533,
+      "n_markup_rows_arm": 1067,
+      "n_newly_marked_up": 534,
+      "n_changed": 534,
+      "n_existing_markups_moved": 0,
+      "n_changed_outside_econ_band": 0,
+      "all_newly_marked_positive": true,
+      "mc_rows_changed": 534,
+      "mc_changes_confined_to_marked_rows": true,
+      "max_abs_mc_delta_on_unmarked_rows": 0.0,
+      "by_cohort": {
+        "CT_INTERMEDIATE": {
+          "n_tranches": 264,
+          "capacity_mw": 6927.3,
+          "cap_w_markup_hr": 4.6574,
+          "cap_w_fixed_margin_usd_mwh": 14.201,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 7.809,
+          "cap_w_offer_usd_mwh": 52.151,
+          "F4_share_of_offer_pct": 14.97
+        },
+        "CC_INTERMEDIATE": {
+          "n_tranches": 234,
+          "capacity_mw": 11869.6,
+          "cap_w_markup_hr": 0.4938,
+          "cap_w_fixed_margin_usd_mwh": 1.506,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 0.413,
+          "cap_w_offer_usd_mwh": 25.48,
+          "F4_share_of_offer_pct": 1.62
+        },
+        "ST_GAS_INTERMEDIATE": {
+          "n_tranches": 36,
+          "capacity_mw": 2984.7,
+          "cap_w_markup_hr": 2.4517,
+          "cap_w_fixed_margin_usd_mwh": 7.476,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 10.053,
+          "cap_w_offer_usd_mwh": 65.458,
+          "F4_share_of_offer_pct": 15.36
+        }
+      },
+      "already_armed_parent_econ": {
+        "CT_PEAKER": {
+          "n_tranches": 243,
+          "capacity_mw": 11050.6,
+          "F4_footprint_usd_mwh": 13.051,
+          "cap_w_offer_usd_mwh": 68.008,
+          "F4_share_of_offer_pct": 19.19
+        },
+        "CC_REGULAR": {
+          "n_tranches": 30,
+          "capacity_mw": 1352.2,
+          "F4_footprint_usd_mwh": 0.213,
+          "cap_w_offer_usd_mwh": 23.306,
+          "F4_share_of_offer_pct": 0.91
+        },
+        "ST_GAS": {
+          "n_tranches": 36,
+          "capacity_mw": 4387.4,
+          "F4_footprint_usd_mwh": 3.209,
+          "cap_w_offer_usd_mwh": 51.427,
+          "F4_share_of_offer_pct": 6.24
+        }
+      }
+    }
+  },
+  "n_tranches_marked_up_new": 534,
+  "by_cohort": {
+    "CT_INTERMEDIATE": {
+      "n_tranches": 264,
+      "capacity_mw": 6927.3,
+      "cap_w_markup_hr": 4.6574,
+      "cap_w_fixed_margin_usd_mwh": 14.201,
+      "all_positive": true,
+      "F4_footprint_usd_mwh": 7.809,
+      "cap_w_offer_usd_mwh": 52.151,
+      "F4_share_of_offer_pct": 14.97
+    },
+    "CC_INTERMEDIATE": {
+      "n_tranches": 234,
+      "capacity_mw": 11869.6,
+      "cap_w_markup_hr": 0.4938,
+      "cap_w_fixed_margin_usd_mwh": 1.506,
+      "all_positive": true,
+      "F4_footprint_usd_mwh": 0.413,
+      "cap_w_offer_usd_mwh": 25.48,
+      "F4_share_of_offer_pct": 1.62
+    },
+    "ST_GAS_INTERMEDIATE": {
+      "n_tranches": 36,
+      "capacity_mw": 2984.7,
+      "cap_w_markup_hr": 2.4517,
+      "cap_w_fixed_margin_usd_mwh": 7.476,
+      "all_positive": true,
+      "F4_footprint_usd_mwh": 10.053,
+      "cap_w_offer_usd_mwh": 65.458,
+      "F4_share_of_offer_pct": 15.36
+    }
+  },
+  "flag_off_byte_identical": true,
+  "P1_expected_tranches": 534
+}

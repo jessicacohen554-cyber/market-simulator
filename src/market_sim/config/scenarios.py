@@ -581,6 +581,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario.
     "gas_offer_margin_zonal_anchor",
     "gas_offer_margin_anchor_by_zone",
+    # phys_* COVERAGE for the same mechanism's duty-split cohorts (miso-217):
+    # default-off and byte-identical for every config that does not arm it —
+    # ``_with_intermediate_phys`` returns the SAME curve object when the gate is
+    # off — so it is registered here at its default and every pre-existing cache
+    # key stays byte-stable. An armed run supplies phys_econ_* to three more
+    # classes and so enters the key as a distinct scenario.
+    "miso_intermediate_gas_offer_margin",
     # MISO POSITION-conditioned measured offer surface (miso-151): the gate,
     # its artifact path and its two frozen bin geometries. All default-off
     # (False / None) or at the registered cross-ISO geometry, and byte-identical
@@ -1648,6 +1655,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "gas_offer_margin_anchor": "None",
     "gas_offer_margin_zonal_anchor": "False",
     "gas_offer_margin_anchor_by_zone": "None",
+    "miso_intermediate_gas_offer_margin": "False",
     "miso_offer_surface_measured": "False",
     "miso_offer_surface_path": "None",
     "miso_offer_surface_netload_pcts": "(0.80, 0.90, 0.97)",
@@ -9256,6 +9264,47 @@ class ScenarioConfig:
     # re-solved.
     cc_intermediate_split: bool = False
     cc_intermediate_cf_threshold: float = 50.0
+
+    # `phys_*` COVERAGE for the three duty-split cohorts above (miso-217).
+    # ``gas_offer_net_revenue_margin`` decomposes a gas tranche's offer into a
+    # MEASURED physical basis (the band's ``phys_*`` keys) plus a markup that
+    # ``apply_gas_offer_margin`` reprices as a fuel-invariant $/MWh margin. Its
+    # ``phys_*`` keys are merged onto exactly five gas classes
+    # (``backcast_config._GENERIC_NEUTRAL_GAS_CLASSES`` / ``_MISO_OFFER_CURVE``:
+    # CC_REGULAR, CC_CHP, CT_CHP, CT_PEAKER, ST_GAS), so the three
+    # ``*_INTERMEDIATE`` curves the splits above route to carry NONE of them,
+    # ``gas_offer_margin_markup_mult`` returns its documented rule-24 neutral
+    # 0.0, and the mechanism SKIPS the whole cohort — 38,501.0 MW = 58.4 % of
+    # MISO's assembled gas capacity stays in the fully fuel-scaled multiplier
+    # form the mechanism exists to replace (miso-215 §2, measured off the
+    # assembled fleet).
+    #
+    # When set, ``offer_curves._offer_curve_for_group`` returns the intermediate
+    # curve with its PARENT class's already-registered, already-frozen
+    # ``phys_econ_low`` / ``phys_econ_high`` merged on (CT_PEAKER ->
+    # CT_INTERMEDIATE, CC_REGULAR -> CC_INTERMEDIATE, ST_GAS ->
+    # ST_GAS_INTERMEDIATE). ZERO free parameters: no value is computed here and
+    # none is minted — the borrowing is validated, not assumed, in 9 of 9
+    # cohort-years (each cohort's OWN measured marginal-HR multiplier, fitted
+    # from CEMS steady-state input-output slopes, lands within 0.0344 / 0.0388 /
+    # 0.0149 of the parent midpoint it borrows against a +-0.06 bar, on 94-100 %
+    # of the cohort's capacity; miso-215 §3).
+    #
+    # ECON-ONLY BY DESIGN (miso-217 PREREG §2, frozen before the solve).
+    # ``phys_peak`` is deliberately NOT merged: CT_INTERMEDIATE's registered
+    # peak 3.00 against CT_PEAKER's phys_peak 1.00 would replace a fuel-scaled
+    # scarcity wall with a ~$73/MWh fixed margin and LOWER the cohort's peak
+    # offer by $29.03 / 8.69 / 23.81 (ST_GAS_INTERMEDIATE by $38.96 / -4.25 /
+    # 10.23) in years where C3c is already the single ledgered caveat.
+    # ``phys_committed`` is likewise excluded: the intermediate curves' 1.00
+    # committed bands sit BELOW their parents' phys_committed (1.025 CT_PEAKER,
+    # 1.079 ST_GAS) and clip to 0 anyway, so including it would move only
+    # CC_INTERMEDIATE — one band family, one decision.
+    #
+    # MISO-gated (rule 25 [R-ISO-SCOPE]): PJM and CAISO carry the same coverage
+    # gap in kind, and it is their lanes' to adjudicate, never filled from here.
+    # Default off (keeper unchanged) until re-solved.
+    miso_intermediate_gas_offer_margin: bool = False
 
     # RESERVE-DUTY CC split (nyiso-146) — the duty-role MIRROR of the three
     # intermediate splits above: they flatten offers for the measured HIGH-CF
