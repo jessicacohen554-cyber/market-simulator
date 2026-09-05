@@ -4666,7 +4666,7 @@ probe run or refused on the stated condition, the pre-registration graded, the f
 both recommendations.
 ```
 
-## D53 — the sector gate: who faces the merchant retirement screen (r#35; D32 C5 / R3) — **IN FLIGHT at r#36 (branch `claude/capx-d53-sector-gate-redt3y`, design + build + both legs solved, unmerged; all four arming limbs MET on the branch; two template tokens unfilled in finding §6)** — never re-paste; the PJM leg is §D58
+## D53 — the sector gate: who faces the merchant retirement screen (r#35; D32 C5 / R3) — **LANDED at r#37 (PR #4766 + `107f8c79`) AND ARMED FOR MISO ONLY by in-lane owner instruction (Q43): `_miso_config` override, bare `miso-t1h` → the solved leg, D46 preserved at `miso-t1h-pre-d53`, cell K; PJM untouched** — never re-paste; the PJM leg is §D58
 
 ```
 You are the D53 session of the capacity-expansion track. D32 (FINDING-capx-d32-floor-retention-
@@ -4961,7 +4961,7 @@ EXIT: the marker entry, auditor PASS, guard OK, the board re-derived, the findin
 shard stamp, all blob-verified; NYISO reads (a) PASS · (b) PASS on the board.
 ```
 
-## D56-R — the NYISO `complete` re-declaration, relaunched on nyiso-189 (r#36; owner ruling Q38 + card C-10)
+## D56-R — the NYISO `complete` re-declaration, relaunched on nyiso-189 (r#36; owner ruling Q38 + card C-10) — **LANDED at r#37** (PR #4763: `complete.NYISO` on nyiso-189, M1 PASS, validation tier returns, gate (a) PASS; frontier NOT re-asserted → Q39 → §D56-R2)
 
 ```
 You are the D56-R session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero
@@ -5023,7 +5023,7 @@ marker, the board's NYISO gate-(a)/headline rows, the finding, the log, and the 
 the auditor requires (plus `frontier` only under option A); nothing else.
 ```
 
-## D57 — the PJM clearing half: BUILD + A/B (r#36; D54 §7 executed; the D48 §8 configuration)
+## D57 — the PJM clearing half: BUILD + A/B (r#36; D54 §7 executed; the D48 §8 configuration) — **IN FLIGHT at r#37** (branch `claude/capx-d57-pjm-clearing-build-gsdypm`: built, Phase 0 reproduced to 0.000, PREDECL addendum pushed, arms not yet solved; owes the ruff format of `capacity_market.py` / `retirements.py` / `runner.py` in its next commit)
 
 ```
 You are the D57 session of the capacity-expansion track — the BUILD lane for the PJM clearing
@@ -5134,7 +5134,7 @@ suffixed arms registered; the pre-declaration graded; the E&AS operand measured 
 the joint arming recommendation on the pre-stated condition. Nothing armed.
 ```
 
-## D58 — the PJM sector-gate leg (r#36; D53 routed item 1) — **RELEASED-CONDITIONAL: dispatch ONLY after D53 has merged to main AND D57 has landed (both write the PJM shard and PJM forecast surfaces)**
+## D58 — the PJM sector-gate leg (r#36; D53 routed item 1) — **RELEASED-CONDITIONAL: D53 merged ✓ (r#37); dispatch ONLY after D57 has landed (both write the PJM shard and PJM forecast surfaces)**
 
 ```
 You are the D58 session of the capacity-expansion track — the PJM leg of the sector gate D53
@@ -5201,7 +5201,7 @@ EXIT: the pre-declaration, the suffixed arm registered, the finding with the PJM
 and the recommendation.
 ```
 
-## D59 — the NYISO locality half: the short-locality demand curve (r#36; D45 §5.2.4 item 3, D52 §8 route)
+## D59 — the NYISO locality half: the short-locality demand curve (r#36; D45 §5.2.4 item 3, D52 §8 route) — **LANDED at r#37** (PRs #4760/#4764: `locality_capacity_curves` built; A/B byte-identical — NYC census +0.7–0.8 GW above the Gold Book; P9 one-of-three; DO NOT ARM either; cell I)
 
 ```
 You are the D59 session of the capacity-expansion track. D52 (FINDING-capx-d52-2026-09-04.md)
@@ -5298,7 +5298,7 @@ suffixed A/B registered; the P9 re-read; the finding with both recommendations; 
 transcription check answered.
 ```
 
-## D50-R — the D50 completion: the PJM arm, the blast radius, the finding (r#36; D50 checkpoint)
+## D50-R — the D50 completion: the PJM arm, the blast radius, the finding (r#36; D50 checkpoint) — **LANDED at r#37** (PR #4768: PJM 3,584.7 → 909.8 MW, MISO 4,631 → 0, blast radius 1.1 h residual, ARM recommended → Q42 ARM → §D60)
 
 ```
 You are the D50-R session of the capacity-expansion track — a COMPLETION lane. D50 (pack §D50)
@@ -5363,4 +5363,191 @@ t1f suffixed key and the PJM shard's CCS cell only; rebase before every push. D5
 
 EXIT: `pjm-t1f-d50-ccscapex` registered; the blast radius priced; the finding at the cited
 filename with §8's recommendation; the PJM cell stamped. Nothing armed.
+```
+
+## D56-R2 — the NYISO `frontier` re-declaration on nyiso-189 (r#37; owner ruling Q39 on card C-10)
+
+```
+You are the D56-R2 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero
+solves, executing owner ruling Q39 (capx ledger §0ah.3 / §3, 2026-09-05): NYISO's `frontier`
+declaration, WITHDRAWN 2026-08-30 together with the `complete` marker (lane Q5-W), is
+RE-DECLARED on `2026-09-05-nyiso-189-steam-identity` — the keeper D56-R (PR #4763) already
+restored `complete` on. The owner's ruling reads: both instruments, as the withdrawal removed
+both; the four-instrument test (frontier · complete · gate-(a) · determination) reads
+{ERCOT, NEISO, PJM, NYISO} together. You write the declaration in the file's own shape; you
+decide nothing.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (a marker consequence).
+BRANCH: claude/capx-d56r2-nyiso-frontier — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md IN FULL (the
+`complete` half you complete; its alignment table names the frontier leg as split "by the
+owner's pending choice") · docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md §3 (the
+field-by-field record of what the withdrawal removed from keepers/NYISO.json `frontier` and
+from the marker — your edit is its exact inverse on the new keeper) · frontend/data/backcast/
+keepers/ERCOT.json, PJM.json, NEISO.json `frontier` blocks (the schema you mirror: declared
+date, keeper, basis, the owner citation) · frontend/data/backcast/keepers/NYISO.json (the
+withdrawn `frontier` history: declared 2026-08-23, withdrawn 2026-08-30) ·
+frontend/data/backcast/calibration-complete.json `complete.NYISO.frontier_basis` (currently
+"NONE CLAIMED …") · docs/handoffs/audit-program-director-board-2026-08.md v27 "FOUR-INSTRUMENT
+ALIGNMENT" (the test your finding re-reads) · scripts/audit_keepers.py.
+
+THE WORK:
+1. RE-VERIFY FIRST, artifact-only: keepers/NYISO.json `keeper` is still
+   `2026-09-05-nyiso-189-steam-identity` and `scripts/calibration_verdict.py --run-id` reads
+   CALIBRATED. If the keeper moved: if the new one reads CALIBRATED, declare on it with a
+   dated note (D-5(b)); if NOT-YET, STOP and route (never a frontier on a NOT-YET keeper).
+2. keepers/NYISO.json: add the `frontier` block in the ERCOT/PJM/NEISO shape — declared
+   2026-09-05, keeper nyiso-189, `by` = the Q39 ruling verbatim with its ledger citation
+   (capx ledger §0ah.3 / §3 Q39; card C-10's option label "Re-declare frontier on nyiso-189"),
+   the withdrawn 2026-08-30 block PRESERVED beneath it (never delete a byte). Run
+   `build_status.py --iso NYISO` only if the auditor asks.
+3. calibration-complete.json: rewrite `complete.NYISO.frontier_basis` from NONE CLAIMED to
+   the declaration (keeper id + date + Q39 citation), preserving the prior text as a dated
+   "was:" clause. Every other field of the entry, every other ISO, `withdrawn`, `final`,
+   `intake_log` byte-identical (assert it).
+4. `scripts/audit_keepers.py --iso NYISO` PASS; `check_gate_a_provenance.py` OK 6/6 (no
+   gate-(a) leaf moves — frontier is not a gate-(a) input; say so); `check_mechanism_matrix.py`
+   OK (re-stamp the NYISO shard's keeper/gates header ONLY if the checker asks).
+5. RECORDS: docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-<date>.md with the before/after
+   table on both surfaces, the four-instrument alignment table re-read at your pin (all four
+   now {ERCOT, NEISO, PJM, NYISO}), the auditor/guard outputs, and the explicit line that this
+   lane spent NOTHING and solved NOTHING; a dated line in docs/calibration-log/nyiso.md; the
+   audit board is NOT yours to edit — the alignment result is stated in your finding for the
+   audit desk to read.
+
+GUARDRAILS: zero solves; no year outside 2023–2025 touched; `final` untouched; the freeze
+untouched; rule 27 on calibration-complete.json / keepers/NYISO.json / program-status.json
+(edit locally, push exact bytes, blob-verify; program-status.json should not need touching —
+if it does, targeted leaf edits only). Provenance stamps name the origin/main sha you actually
+read at, re-read after your final rebase (desk doctrine X-6b).
+
+COLLISION: D60 (the arming batch) writes NYISO FORECAST surfaces + scenarios.py/iso_configs.py
+— disjoint from your two files. The owner's NYISO backcast lane owns the keeper shard's
+promotion fields — you add the `frontier` block only.
+
+EXIT: the frontier block, the marker's `frontier_basis`, auditor PASS, guards OK, the finding
+with the alignment table, the log line; all blob-verified.
+```
+
+## D60 — the arming batch: Q40 (MISO ratio) + Q41 (NYISO requirement gates) + Q42 (CCS capex default), flip-first (r#37)
+
+```
+You are the D60 session of the capacity-expansion track — an ARMING EXECUTION lane. Three
+owner rulings, all given 2026-09-05 on measured records (capx ledger §0ah.3 / §3):
+  Q40 — ARM `adequacy_accounting_ratio_dated_net` for MISO (D51; FINDING-capx-d51-2026-09-04.md
+        §7: 0.8546 → 0.8934, zero DOF; form: `_miso_config` `default_scenario_overrides`, rule 25).
+  Q41 — ARM BOTH `nyiso_requirement_forecast_peak` and `nyiso_requirement_vintage_factors` as
+        NYISO's forecast default (D52; FINDING-capx-d52-2026-09-04.md §8(1); form: `_nyiso_config`
+        `default_scenario_overrides`, rule 25). The NYCA curve stays OFF (P9 failed, D52 + D59).
+  Q42 — ARM `ccs_retrofit_capex_co2_scaling` as THE DEFAULT for all six ISOs (D50/D50-R;
+        FINDING-capx-d50-2026-09-04.md §8; a posture, no ISO's fitted number; form: the
+        dataclass default flips True with a dated (b′-1) line in
+        `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`, the frozen drop value untouched — exactly
+        the D44 pattern) AND schedule its residual re-measure (D50 §6.3: CAISO t1f, NYISO
+        t1f, GOLDEN-3 ≈ 1.1 h).
+You execute all three FLIP-FIRST so every re-solve lands on the final posture once, you
+pre-declare every key, you preserve every prior, and you arm nothing else.
+
+DATA PROFILE: miso, nyiso, caiso, neiso (incremental — widen as each leg starts; the PJM /
+ERCOT t1f post-flip bare keys are the D50 arms, no solve).
+MODEL ASSIGNMENT: Opus (execution of rulings on pre-declared records; nothing to adjudicate —
+a surprise is a STOP, not a decision).
+BRANCH: claude/capx-d60-arming-batch — FRESH off origin/main, rebase before every push.
+
+READ FIRST: FINDING-capx-d44-* §1–§2 (the b′-1 declared-default-flip mechanics: post-flip bare
+key == the explicit-True arm key; explicit False keeps its key) · FINDING-capx-d50-2026-09-04.md
+§6 IN FULL (the blast-radius census: 153 configs, 7 bare keys, which are already measured,
+the 1.1 h residual, the two qualifications) · FINDING-capx-d53-2026-09-05.md §6.1 (the
+in-lane arming precedent you copy exactly: override form, the two-key VERDICT_MAP rename, the
+`-pre-d53` preservation, the board `t1h_provenance` re-key with prior stamps beneath, the
+"every other ISO's key unmoved" test) · FINDING-capx-d51 §7 (the arm form and what the ratio
+does to `miso-t1f`'s I7 rows) · FINDING-capx-d52 §8(1) · src/market_sim/config/iso_configs.py
+(`_miso_config` already carries `retirement_sector_gate: True` — you ADD the ratio beside it)
+· src/market_sim/config/scenarios.py (`_CACHE_KEY_OPTIONAL_FIELDS`, `_DEFAULT_FLIPS`, the three
+fields' defaults) · scripts/register_forecast_run.py `VERDICT_MAP` · scripts/run_full_horizon.py
+(`reference_config(..., golden_posture=True)`, GOLDEN-3's recipe: results/ff-golden-3 or the
+`neiso-t3` registry sidecar's run_config.json) · frontend/data/forecast/ff-verdicts.json +
+program-status.json (every bare key's current provenance) · the matrix rows for the three
+fields and every shard's cells · CLAUDE.md step-2/§ Capacity Evolution text on
+`ccs_retrofit_capex_co2_scaling` ("GATED default off … arming is an owner ruling on the D50
+A/B") and model-methodology-spec.md §5.6 — both need the dated amendment (rule 27 spine).
+
+THE WORK, in this order:
+0. HYGIENE COMMIT FIRST (routed by the director, §0ah.4): `ruff format` on exactly
+   `src/market_sim/model/capacity_evolution/new_entry.py`,
+   `scripts/gen_nyiso191_attestation.py`, `tests/curation/test_derive_cc_capacity_reconcile_
+   scope.py` — format only, no other change, one commit, blob-verified. Do NOT format
+   `capacity_market.py` / `retirements.py` / `runner.py` — D57 owns those this window.
+1. PRE-DECLARE (docs/handoffs/PREDECL-capx-d60-<date>.md, pushed before any code): (a) the
+   three edits and their form; (b) EVERY bare forecast key before and after, all six ISOs,
+   t1h / t1x / t1f / t3, resolved through the harness path at HEAD — the post-flip values
+   must equal D50 §6.1's right-hand column for the t1f keys, `c306ddc6…`-successor for
+   `miso-t1h` (gate + ratio + CCS-flag: compare with the D53 rider `6ea92547eaa62559`, which
+   carries gate + ratio but NOT the flipped CCS default — state the exact relation), and the
+   D52 arm key `911371a8cf23d5c3` similarly for `nyiso-t1h`; (c) for each bare key: RENAME
+   (byte-identical by construction — the t1h/t1x keys, whose horizons end ≤ 2027 and never
+   reach the 2028-gated CCS screen; for `miso-t1h` and `nyiso-t1h` this holds ONLY if the
+   committed suffixed leg already carries the ratio / the two gates — say which committed
+   bundle each bare key renames from) or RE-SOLVE (`miso-t1f`, `nyiso-t1f`, `caiso-t1f`,
+   `neiso-t3` GOLDEN-3; and `ercot/neiso/pjm-t1f` = the D50 arms, rename); (d) the expected
+   FC rows per re-solve, from the committed arms' evidence (MISO t1f: the ratio's I7 sign
+   from D51 §7 + the D50 MISO leg's null; NYISO t1f: D52's +0.24 % requirement; CAISO t1f:
+   D50 P-rows for CAISO, untested — pre-declare from the §1 census; GOLDEN-3: D50's NEISO
+   leg says the cap still binds, composition-only — the FC map should not move); (e) STOPs:
+   any key ≠ its pre-declared value; any t1h rename whose committed leg is not byte-identical
+   on every scored row to what the bare recipe would produce (if in doubt, RE-SOLVE it and say
+   so — 12–25 min beats a wrong rename); any FC-3 / FC-1 row moving in a direction the
+   committed arm did not show; any keeper / backcast key moving (the plain-backcast coercion
+   assertion, ScenarioConfig() and the bare backcast key unmoved, as D53's test asserts).
+2. THE FLIP COMMIT: the three edits + the b′-1 line + `validate_parameters.py` + tests
+   (D53's override test as the template: every OTHER ISO's forecast key unmoved; ERCOT /
+   PJM / CAISO / NEISO carry neither the ratio nor the NYISO gates); CLAUDE.md + spec §5.6 /
+   §5.x dated amendments; CHANGELOG; matrix: the three rows' cells re-stamped (MISO ratio K
+   on the D51 record; NYISO gates K on the D52 record; CCS capex: ERCOT/NEISO/PJM/MISO
+   measured K, CAISO/NYISO K-by-posture with their own t1f evidence appended when the
+   re-solve lands — rule 25: no ISO's letter is transferred, the POSTURE is global as Q30's
+   was). `check_cache_key_registration.py --base origin/main` green; `check_mechanism_matrix`
+   green.
+3. RENAMES (zero solve): for each bare key that renames, the D53 §6.1 procedure — VERDICT_MAP
+   two-key rename, the prior record preserved at `<key>-pre-d60` (never overwrite a
+   preserved baseline that already exists: `-pre-d53`, `-pre-d51`, `-pre-d46` … stay), the
+   board's provenance stamps re-keyed with the prior stamps beneath, `check_forecast_
+   staleness.py` read before and after.
+4. RE-SOLVES, sequential (rule 12; one solve at a time inside this session; `data/clean`
+   regenerated once before the first): (i) `miso-t1f` 2026–2030 (~65 min) → the new bare
+   `miso-t1f`, prior at `miso-t1f-pre-d60`; (ii) `nyiso-t1f` (~12 min); (iii) `caiso-t1f`
+   (~22.6 min); (iv) `neiso-t3` GOLDEN-3 (25 yr, ~33 min, the golden posture per its own
+   sidecar; prior at `neiso-t3-pre-d60`; its FC-5/FC-6 dispositions carry per D47's
+   attestation rules — a pre-declared follow-up attestation under the Q37 limb). Each:
+   `score` → `forecast_verdict --tier` → `register_forecast_run --bundle`, AFTER your final
+   rebase of that leg (desk doctrine X-6b: no orphaned `scored_at_sha`; if you rebase after
+   scoring, re-score artifact-only before merge). Push each leg as its own commit.
+5. FINDING docs/handoffs/FINDING-capx-d60-<date>.md: the pre-declaration graded at full
+   magnitude (every key, every rename's byte-identity evidence, every re-solve's FC rows vs
+   its committed arm); the board's per-ISO gate rows before/after (state plainly which
+   determinations moved, if any — expected: none; the MISO t1f I7 rows are the one place a
+   row may move, and D51 §7 said which way); the blast-radius reconciliation against D50 §6.2
+   (which of the 25 keys now carry a live re-measure, which stay preserved-only, which are
+   unregistered); the governance attestation (rule 27 blob checks on scenarios.py,
+   iso_configs.py, CLAUDE.md, the spec, program-status.json, ff-verdicts.json — all ≥300
+   lines).
+
+GUARDRAILS: rules 1, 5, 12, 13, 14, 19, 21 (no value changes — the ratio IS D51's 0.8934,
+`captured_ref` IS D50's constant), 22 (t1h 2021–2025 / t1f 2026–2030 / t3 2026–2050; nothing
+against measured H1-2026), 24, 25, 27, 28 (no new field; cells re-stamped). No keeper / shard
+promotion field / `complete` / `final` / freeze touched (D56-R2 owns NYISO's frontier this
+window). Nothing beyond the three rulings arms: `locality_capacity_curves` stays OFF (D59),
+the NYCA curve stays OFF, PJM's D48 fields and D57's gate stay OFF (D57 is measuring them).
+
+COLLISION: D57 (PJM: `scenarios.py` optional-field ledger APPEND, `capacity_market.py`,
+`retirements.py`, `runner.py`, PJM t1h surfaces) — you append to a DIFFERENT dict in
+`scenarios.py` (`_DEFAULT_FLIPS`) and to `iso_configs.py`; rebase before every push and keep
+D57's lines verbatim. D56-R2 (NYISO keeper shard `frontier` + marker) — disjoint. D58 is held.
+You are the only writer on MISO / NYISO / CAISO / NEISO forecast surfaces this window.
+
+EXIT: the hygiene commit; the pre-declaration; the flip commit with docs/matrix/tests; every
+bare key renamed or re-solved as pre-declared with priors preserved; the four re-solves
+registered; the finding; all blob-verified. Then the director serves the NYISO t3 card.
 ```
