@@ -1,0 +1,54 @@
+
+#### control pjm-t1h (results/hindcast/pjm-2021-2025-realized-t1h-d45r)
+2022 DY 2022/2023: req 130,295 firm 148,033 zero-offer 83,452 failing 64,581 firm / 88,602 nameplate (1211 units)
+   DESIGN: price   95.89 $/MW-day (35.00 $/kW-yr)  cleared 135,665  pos 1.0412  [marginal_offer_sets_price]
+   PUBLISHED (observable): price   50.00 $/MW-day (18.25 $/kW-yr)  pos cleared 1.0510  pos offered 1.2200  Δpos -0.98 pts
+   uncleared firm MW by fuel: coal 1,014, gas_cc 1,598, gas_ct 2,785, gas_st 6,909  | total 12,307 (nameplate 17,488)
+   BRA Table 7 uncleared (offered−cleared, UCAP): coal 6,524 gas 6,234 nuclear 5,805 oil 148 DR 1,701
+   model offers ABOVE the published price, firm MW by fuel: coal 6,415, gas_cc 17,573, gas_ct 15,475, gas_st 6,909, oil 3,764 | total 50,136
+   model stack's marginal offer AT the published cleared position: 95.89 $/MW-day (published price 50.00)
+   cleared-but-still-failing nameplate (retire anyway): none
+2023 DY 2023/2024: req 128,566 firm 146,737 zero-offer 85,631 failing 61,106 firm / 84,856 nameplate (792 units)
+   DESIGN: price   95.89 $/MW-day (35.00 $/kW-yr)  cleared 134,004  pos 1.0423  [marginal_offer_sets_price]
+   PUBLISHED (observable): price   34.13 $/MW-day (12.46 $/kW-yr)  pos cleared 1.0552  pos offered 1.1407  Δpos -1.29 pts
+   uncleared firm MW by fuel: coal 1,014, gas_cc 1,671, gas_ct 3,116, gas_st 6,909  | total 12,710 (nameplate 18,137)
+   BRA Table 7 uncleared (offered−cleared, UCAP): coal 5,353 gas 3,574 nuclear 0 oil 81 DR 2,021
+   model offers ABOVE the published price, firm MW by fuel: coal 8,005, gas_cc 19,465, gas_ct 15,474, gas_st 6,909 | total 49,853
+   model stack's marginal offer AT the published cleared position: 95.89 $/MW-day (published price 34.13)
+   cleared-but-still-failing nameplate (retire anyway): gas_ct 3,243
+2024 DY 2024/2025: req 133,371 firm 147,103 zero-offer 74,010 failing 73,093 firm / 98,547 nameplate (852 units)
+   DESIGN: price  175.11 $/MW-day (63.91 $/kW-yr)  cleared 136,779  pos 1.0256  [marginal_offer_sets_price]
+   PUBLISHED (observable): price   28.92 $/MW-day (10.56 $/kW-yr)  pos cleared 1.0555  pos offered 1.1262  Δpos -3.00 pts
+   uncleared firm MW by fuel: coal 9,829  | total 9,829 (nameplate 11,842)
+   BRA Table 7 uncleared (offered−cleared, UCAP): coal 3,582 gas 2,225 nuclear 206 oil 251 DR 2,161
+   model offers ABOVE the published price, firm MW by fuel: coal 29,240, gas_cc 8,301, gas_ct 15,475, gas_st 6,909, oil 3,764 | total 63,689
+   model stack's marginal offer AT the published cleared position: 190.55 $/MW-day (published price 28.92)
+   cleared-but-still-failing nameplate (retire anyway): coal 2,267
+2025 DY 2025/2026: no failing unit — all offers $0; clearing = census: pos 0.9520, price 451.61 $/MW-day (164.84 $/kW-yr); published 269.92 $/MW-day at pos 1.0049
+
+#### arm pjm-t1h-d48-devintage (results/hindcast/pjm-2021-2025-realized-t1h-d48-devintage)
+2022 DY 2022/2023: req 130,295 firm 148,033 zero-offer 83,452 failing 64,581 firm / 88,602 nameplate (1211 units)
+   DESIGN: price   95.89 $/MW-day (35.00 $/kW-yr)  cleared 135,665  pos 1.0412  [marginal_offer_sets_price]
+   PUBLISHED (observable): price   50.00 $/MW-day (18.25 $/kW-yr)  pos cleared 1.0510  pos offered 1.2200  Δpos -0.98 pts
+   uncleared firm MW by fuel: coal 1,014, gas_cc 1,598, gas_ct 2,785, gas_st 6,909  | total 12,307 (nameplate 17,488)
+   BRA Table 7 uncleared (offered−cleared, UCAP): coal 6,524 gas 6,234 nuclear 5,805 oil 148 DR 1,701
+   model offers ABOVE the published price, firm MW by fuel: coal 6,415, gas_cc 17,573, gas_ct 15,475, gas_st 6,909, oil 3,764 | total 50,136
+   model stack's marginal offer AT the published cleared position: 95.89 $/MW-day (published price 50.00)
+   cleared-but-still-failing nameplate (retire anyway): none
+2023 DY 2023/2024: req 128,566 firm 146,737 zero-offer 85,631 failing 61,106 firm / 84,856 nameplate (792 units)
+   DESIGN: price   95.89 $/MW-day (35.00 $/kW-yr)  cleared 134,004  pos 1.0423  [marginal_offer_sets_price]
+   PUBLISHED (observable): price   34.13 $/MW-day (12.46 $/kW-yr)  pos cleared 1.0552  pos offered 1.1407  Δpos -1.29 pts
+   uncleared firm MW by fuel: coal 1,014, gas_cc 1,671, gas_ct 3,116, gas_st 6,909  | total 12,710 (nameplate 18,137)
+   BRA Table 7 uncleared (offered−cleared, UCAP): coal 5,353 gas 3,574 nuclear 0 oil 81 DR 2,021
+   model offers ABOVE the published price, firm MW by fuel: coal 8,005, gas_cc 19,465, gas_ct 15,474, gas_st 6,909 | total 49,853
+   model stack's marginal offer AT the published cleared position: 95.89 $/MW-day (published price 34.13)
+   cleared-but-still-failing nameplate (retire anyway): gas_ct 3,243
+2024 DY 2024/2025: req 133,371 firm 147,103 zero-offer 74,010 failing 73,093 firm / 98,547 nameplate (852 units)
+   DESIGN: price  175.11 $/MW-day (63.91 $/kW-yr)  cleared 136,779  pos 1.0256  [marginal_offer_sets_price]
+   PUBLISHED (observable): price   28.92 $/MW-day (10.56 $/kW-yr)  pos cleared 1.0555  pos offered 1.1262  Δpos -3.00 pts
+   uncleared firm MW by fuel: coal 10,112  | total 10,112 (nameplate 12,184)
+   BRA Table 7 uncleared (offered−cleared, UCAP): coal 3,582 gas 2,225 nuclear 206 oil 251 DR 2,161
+   model offers ABOVE the published price, firm MW by fuel: coal 29,240, gas_cc 8,301, gas_ct 15,475, gas_st 6,909, oil 3,764 | total 63,689
+   model stack's marginal offer AT the published cleared position: 190.55 $/MW-day (published price 28.92)
+   cleared-but-still-failing nameplate (retire anyway): coal 2,267
+2025 DY 2025/2026: no failing unit — all offers $0; clearing = census: pos 0.9520, price 451.61 $/MW-day (164.84 $/kW-yr); published 269.92 $/MW-day at pos 1.0049
