@@ -753,6 +753,82 @@ def dated_plant_unit_ids(
     return frozenset(out)
 
 
+# EIA-860 Schedule 2 ``Sector`` code of a regulated electric utility (IOU,
+# municipal, cooperative, federal) — the ONE sector whose exit decision is an
+# IRP / rate-case outcome carried by the owner-filed Schedule-3 date rather
+# than a merchant net-revenue test (capx D53, D32 §4.3: 88–92 % of MISO's
+# 2021–2025 coal / gas_st / oil exit MW; design doc §1.1–§1.2). Sectors 2–7
+# (IPP, commercial, industrial; CHP and non-CHP) face the screen.
+UTILITY_SECTOR: int = 1
+
+
+def sector_gated_unit_ids(
+    fleet: list[Generator], sectors: dict[int, int]
+) -> tuple[frozenset[str], dict]:
+    """Unit ids EXOGENOUS to the economic screen because their plant's owner
+    is a regulated electric utility (capx D53, the retirement-screen SECTOR
+    GATE — ``ScenarioConfig.retirement_sector_gate``; design
+    ``docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md``).
+
+    The twin of :func:`dated_plant_unit_ids`, joining on the same key
+    (``Generator.plant_code``) at PLANT grain — EIA-860 assigns one ``Sector``
+    per plant, so every tranche of a binned plant and every unit of a
+    unit-grain plant carries its plant's sector. A unit whose plant maps to
+    :data:`UTILITY_SECTOR` in ``sectors`` (the active vintage's plant table,
+    :func:`market_sim.data.fleet.eia860_plant_sectors`) is returned; a unit
+    whose plant is ABSENT from ``sectors`` (a planned addition's new plant
+    code, a synthesized unit, ``plant_code == 0``) is NOT — the gate fails
+    OPEN to the screen rather than invent an owner (design §1.2). Only fuels
+    the screen can evaluate (``_THERMAL_FOM``) are counted, so the returned
+    set and the census describe the screen's candidate population, never
+    wind / solar / hydro rows the screen ignores anyway.
+
+    Rule-19 reconciliation with the fossil-dates channel: the caller UNIONS
+    this set with :func:`dated_plant_unit_ids` into the screen's one
+    ``exempt_unit_ids`` seam; neither declaration produces an exit (those come
+    from steps 0 / 1 / 1b only), so no unit's exit is decided twice. A gated
+    unit is never in ``margins`` and therefore never decided, entry-capped,
+    re-confirmed or pipelined.
+
+    Returns ``(gated_ids, census)`` where ``census`` is the ledger block the
+    evolve step records under ``sector_gated``: unit / MW totals, MW by fuel
+    and by sector for the GATED set, and the unknown-sector units / MW that
+    fell open to the screen. Empty ``sectors`` ⇒ ``(frozenset(), census)``
+    with zero gated MW.
+    """
+    gated: set[str] = set()
+    mw_by_fuel: dict[str, float] = {}
+    mw_by_sector: dict[str, float] = {}
+    unknown_units = 0
+    unknown_mw = 0.0
+    gated_mw = 0.0
+    for g in fleet:
+        if g.fuel_type not in _THERMAL_FOM:
+            continue
+        pc = int(g.plant_code or 0)
+        sector = sectors.get(pc) if pc else None
+        if sector is None:
+            unknown_units += 1
+            unknown_mw += float(g.pmax_mw)
+            continue
+        if int(sector) != UTILITY_SECTOR:
+            continue
+        gated.add(g.unit_id)
+        gated_mw += float(g.pmax_mw)
+        mw_by_fuel[g.fuel_type] = mw_by_fuel.get(g.fuel_type, 0.0) + float(g.pmax_mw)
+        key = str(int(sector))
+        mw_by_sector[key] = mw_by_sector.get(key, 0.0) + float(g.pmax_mw)
+    census = {
+        "units": len(gated),
+        "mw": gated_mw,
+        "mw_by_fuel": dict(sorted(mw_by_fuel.items())),
+        "mw_by_sector": dict(sorted(mw_by_sector.items())),
+        "unknown_sector_units": unknown_units,
+        "unknown_sector_mw": unknown_mw,
+    }
+    return frozenset(gated), census
+
+
 def _derate_generator(gen: Generator, factor: float) -> Generator:
     """Return a copy of ``gen`` with its MW-valued fields scaled by ``factor``.
 

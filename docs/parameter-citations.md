@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1903 parameters registered** (1022 flagged `needs-citation`).
+**1903 parameters registered** (1023 flagged `needs-citation`).
 
 
 ## Calibration
@@ -940,6 +940,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.retirement_fom_multiplier_nuclear` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_oil` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_rule` | pipeline | 2 | "legacy" \| "pipeline" (FF-1A, owner D1 = |  | auto-generated, needs-citation |
+| `scenario.retirement_sector_gate` | False | 1 | GATED default-OFF (capx D53, 2026-09-05; design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md; D32 C5/R3) |  | auto-generated, needs-citation |
 | `scenario.retirement_years_coal` | 3 | 2 | Measured EIA-860 announced-to-deactivation lag for coal (RE-status … | 2026-07-15 | curated |
 | `scenario.retirement_years_gas_cc` | 3 | 2 | modern CCs get 3 years (most flexible/valuable) |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_ct` | 2 | 2 | CTs get 2 years |  | auto-generated, needs-citation |

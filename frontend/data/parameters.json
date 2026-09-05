@@ -51121,6 +51121,25 @@
       ]
     },
     {
+      "param_id": "scenario.retirement_sector_gate",
+      "display_name": "Retirement Sector Gate",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "GATED default-OFF (capx D53, 2026-09-05; design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md; D32 C5/R3)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.retirement_years_gas_cc",
       "display_name": "Retirement Years Gas Cc",
       "value": 3,

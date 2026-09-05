@@ -267,6 +267,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     nyiso_requirement_forecast_peak: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D52): NEISO's published-basis requirement is the per-CCP Net ICR (neiso_net_icr_requirement, D40), an ABSOLUTE MW that already carries ISO-NE's own 50/50 forecast peak inside it — no separate peak-basis lever applies; n/a." },
     nyiso_requirement_vintage_factors: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D52): the NEISO per-vintage requirement axis IS neiso_net_icr_requirement (D40, the pattern this row mirrors); n/a." },
     adequacy_accounting_ratio_dated_net: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D51): NEISO carries no D31 accounting ratio to re-identify (that cell is U, D28 R2's NEISO position lane); nothing transfers (rule 25)." },
+    retirement_sector_gate: { cell: ".", fc: "U", ev: "capx D53 (2026-09-05): built default-off, ISO-agnostic by construction; untested on NEISO (rule 25 — MISO's verdict never fills this cell). Note for the NEISO lane: the ISO-NE fleet is sector 2 almost wholesale (restructured 1998-2000; the munis are small), so the gate is expected to be near-inert on the fleet the screen fails; the Mystic-class exits are step-0 instruments either way — its own census first. Backcast cell n/a." },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },

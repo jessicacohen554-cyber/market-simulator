@@ -304,6 +304,15 @@ VERDICT_MAP = {
     # that no second mechanism reads the key. SUFFIXED BY CHARTER; nothing arms
     # (PREDECL-capx-d55-2026-09-05.md §1).
     "miso-2021-2025-realized-t1h-d55-keyfix": "miso-t1h-d55-keyfix",
+    # capx-D53 (2026-09-05): the retirement-screen SECTOR GATE
+    # (`retirement_sector_gate` ON; D32 C5/R3) against D46's bare `miso-t1h`
+    # (the gate OFF, the shipped posture), plus the composition-observability
+    # rider (gate ON + D51's `adequacy_accounting_ratio_dated_net` ON) against
+    # `miso-t1h-d51-ratio`. SUFFIXED BY CHARTER, never the bare key; nothing
+    # arms -- the owner decides on the pre-stated condition
+    # (DESIGN-capx-d53-sector-gate-2026-09-05.md §6).
+    "miso-2021-2025-realized-t1h-d53-sectorgate": "miso-t1h-d53-sectorgate",
+    "miso-2021-2025-realized-t1h-d53-sectorgate-d51ratio": "miso-t1h-d53-sectorgate-d51ratio",
     # capx-D51 rider (d), owner ruling Q36: D45-R's pre-declared leg 7 -- the
     # NEISO dates-OFF paired control at the SHIPPED lever
     # (`--no-fossil-announced-exits`, neiso_net_icr_requirement False), the

@@ -493,6 +493,9 @@ META_RECORD_SPEC = RecordSpec(
         # capx D51 MISO dated-net accounting-ratio gate. FromConfig so the
         # record reads the SOLVED gate (FFR-3R).
         "adequacy_accounting_ratio_dated_net": FromConfig(cast=bool),
+        # capx D53 retirement-screen sector gate. FromConfig so the record
+        # reads the SOLVED gate (FFR-3R).
+        "retirement_sector_gate": FromConfig(cast=bool),
         "entry_rate_limits": FromConfig(cast=bool),
         "entry_commissioning_lag": FromConfig(cast=bool),
         "exit_rate_limits": FromConfig(cast=bool),
@@ -639,6 +642,7 @@ def build_config(
     nyiso_requirement_forecast_peak: "bool | None" = None,
     nyiso_requirement_vintage_factors: "bool | None" = None,
     adequacy_accounting_ratio_dated_net: "bool | None" = None,
+    retirement_sector_gate: "bool | None" = None,
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     exit_rate_limits: "bool | None" = None,
@@ -867,6 +871,10 @@ def build_config(
                 # default-off; None inherits the shipped default, True arms the
                 # D51 A/B measurement posture (distinct cache key).
                 "adequacy_accounting_ratio_dated_net": adequacy_accounting_ratio_dated_net,
+                # capx D53: the retirement-screen sector gate — default-off;
+                # None inherits the shipped default, True arms the D53 A/B
+                # measurement posture (distinct cache key).
+                "retirement_sector_gate": retirement_sector_gate,
                 "entry_rate_limits": entry_rate_limits,
                 "entry_commissioning_lag": entry_commissioning_lag,
                 "exit_rate_limits": exit_rate_limits,
@@ -1579,6 +1587,24 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--retirement-sector-gate",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D53 (2026-09-05) arm: the retirement-screen SECTOR GATE — "
+            "every thermal unit whose plant's EIA-860 Sector (the run's active "
+            "vintage) is 1, a regulated electric utility, is exogenous to the "
+            "step-3 economic screen and exits only through step 0's instruments "
+            "and step 1/1b's owner-filed dates; sectors 2-7 (IPP / commercial / "
+            "industrial, CHP and non-CHP) face the screen as before, an unknown "
+            "sector fails open to it (D32 C5/R3; design "
+            "docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md). ISO-"
+            "agnostic by construction. OMIT to inherit the shipped default "
+            "(off, owner-armed only); --retirement-sector-gate arms it "
+            "(distinct cache key)."
+        ),
+    )
+    parser.add_argument(
         "--entry-vre-capacity-revenue",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2032,6 +2058,7 @@ def main(argv: list[str] | None = None) -> int:
         nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
         nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,
         adequacy_accounting_ratio_dated_net=args.adequacy_accounting_ratio_dated_net,
+        retirement_sector_gate=args.retirement_sector_gate,
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         exit_rate_limits=args.exit_rate_limits,

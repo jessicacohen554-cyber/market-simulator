@@ -480,6 +480,7 @@ from market_sim.data.fleet.eia860 import (  # noqa: F401
     cc_steam_part_generators,
     dual_fuel_plant_groups,
     eia860_costofservice_majority_plants,
+    eia860_plant_sectors,
     eia860_plant_states,
     eia860_regulated_plants,
     eia860_selfcommit_scope_plants,

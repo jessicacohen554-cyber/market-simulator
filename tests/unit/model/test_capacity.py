@@ -1,10 +1,13 @@
 """Tests for fleet retirement mechanisms in ``market_sim.model.capacity``."""
 
+import tempfile
 import unittest
+from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
 import numpy as np
+import pandas as pd
 
 from market_sim.config.constants import (
     ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
@@ -6090,7 +6093,10 @@ class TestNyisoRequirementDevintage(unittest.TestCase):
         self.assertEqual(set(ucap), set(peaks))
         for label in peaks:
             self.assertLess(
-                abs(peaks[label] * (1.0 + irms[label]) * (1.0 - derates[label]) - ucap[label]),
+                abs(
+                    peaks[label] * (1.0 + irms[label]) * (1.0 - derates[label])
+                    - ucap[label]
+                ),
                 1.0,
                 label,
             )
@@ -6108,7 +6114,10 @@ class TestNyisoRequirementDevintage(unittest.TestCase):
         )
 
     def test_default_off_is_byte_identical_to_composite(self):
-        off, plain = self._cfg(), ScenarioConfig(iso="NYISO", mode="forecast", hindcast=True)
+        off, plain = (
+            self._cfg(),
+            ScenarioConfig(iso="NYISO", mode="forecast", hindcast=True),
+        )
         for year in (*range(2019, 2036), None):
             self.assertEqual(
                 resolve_adequacy_requirement_mw(off, "NYISO", self.MODEL_PEAK, year),
@@ -6133,7 +6142,10 @@ class TestNyisoRequirementDevintage(unittest.TestCase):
         for year, (_, _, _, ucap) in self.PUB.items():
             for model_peak in (self.MODEL_PEAK, 31_857.0):
                 self.assertLess(
-                    abs(resolve_adequacy_requirement_mw(both, "NYISO", model_peak, year) - ucap),
+                    abs(
+                        resolve_adequacy_requirement_mw(both, "NYISO", model_peak, year)
+                        - ucap
+                    ),
                     1.0,
                     (year, model_peak),
                 )
@@ -6232,7 +6244,13 @@ class TestNyisoRequirementDevintage(unittest.TestCase):
             ),
             mock.patch.dict(
                 NYCA_ICAP_UCAP_TRANSLATION_BY_ISO,
-                {"NYISO": {"2024/2025": NYCA_ICAP_UCAP_TRANSLATION_BY_ISO["NYISO"]["2024/2025"]}},
+                {
+                    "NYISO": {
+                        "2024/2025": NYCA_ICAP_UCAP_TRANSLATION_BY_ISO["NYISO"][
+                            "2024/2025"
+                        ]
+                    }
+                },
             ),
         ):
             self.assertEqual(
@@ -6240,7 +6258,12 @@ class TestNyisoRequirementDevintage(unittest.TestCase):
                 self._composite(self.MODEL_PEAK),
             )
             self.assertLess(
-                abs(resolve_adequacy_requirement_mw(both, "NYISO", self.MODEL_PEAK, 2024) - 33_397.0),
+                abs(
+                    resolve_adequacy_requirement_mw(
+                        both, "NYISO", self.MODEL_PEAK, 2024
+                    )
+                    - 33_397.0
+                ),
                 1.0,
             )
 
@@ -6251,8 +6274,12 @@ class TestNyisoRequirementDevintage(unittest.TestCase):
         # 1.043, not past it.
         off, both = self._cfg(), self._cfg(peak=True, factors=True)
         firm = 35_163.0
-        pos_off = firm / resolve_adequacy_requirement_mw(off, "NYISO", self.MODEL_PEAK, 2023)
-        pos_on = firm / resolve_adequacy_requirement_mw(both, "NYISO", self.MODEL_PEAK, 2023)
+        pos_off = firm / resolve_adequacy_requirement_mw(
+            off, "NYISO", self.MODEL_PEAK, 2023
+        )
+        pos_on = firm / resolve_adequacy_requirement_mw(
+            both, "NYISO", self.MODEL_PEAK, 2023
+        )
         self.assertAlmostEqual(pos_off, 1.137, places=3)
         self.assertAlmostEqual(pos_on, 1.0175, places=3)
         self.assertLess(abs(pos_on - 1.043), 0.03)
@@ -6287,8 +6314,13 @@ class TestNyisoRequirementDevintage(unittest.TestCase):
         self.assertFalse(bc.nyiso_requirement_forecast_peak)
         self.assertFalse(bc.nyiso_requirement_vintage_factors)
         hc = self._cfg(peak=True, factors=True)
-        self.assertTrue(hc.nyiso_requirement_forecast_peak and hc.nyiso_requirement_vintage_factors)
-        off, explicit_off = self._cfg(), ScenarioConfig(iso="NYISO", mode="forecast", hindcast=True)
+        self.assertTrue(
+            hc.nyiso_requirement_forecast_peak and hc.nyiso_requirement_vintage_factors
+        )
+        off, explicit_off = (
+            self._cfg(),
+            ScenarioConfig(iso="NYISO", mode="forecast", hindcast=True),
+        )
         self.assertEqual(off.cache_key(), explicit_off.cache_key())
         keys = {
             off.cache_key(),
@@ -6297,3 +6329,235 @@ class TestNyisoRequirementDevintage(unittest.TestCase):
             hc.cache_key(),
         }
         self.assertEqual(len(keys), 4)
+
+
+class TestRetirementSectorGate(unittest.TestCase):
+    """capx D53 (2026-09-05): the retirement-screen SECTOR GATE.
+
+    GATED default-OFF behind ``retirement_sector_gate``: unarmed, the screen's
+    candidate set is the whole thermal fleet and every ledger is
+    byte-identical; armed, every thermal unit whose PLANT's EIA-860 ``Sector``
+    is 1 (regulated electric utility) is exogenous to the step-3 screen through
+    the SAME ``exempt_unit_ids`` seam as the fossil-dates exemption (rule 19),
+    while sectors 2-7 and unknown-sector plants face the screen as before
+    (design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md).
+    """
+
+    SECTORS = {300: 1, 200: 1, 400: 2, 500: 7}
+
+    def _fleet(self):
+        return [
+            _unit(300, "1", 500.0, fuel="coal"),  # utility, unit grain
+            _unit(300, "2", 400.0, fuel="coal"),
+            _binned("H_C1", 200, 300.0),  # utility, plant-binned tranche
+            _binned("H_C2", 200, 200.0),
+            _unit(400, "1", 100.0, fuel="gas_ct"),  # IPP non-CHP
+            _unit(500, "1", 150.0, fuel="gas_cc"),  # industrial CHP
+            _unit(999, "1", 50.0, fuel="gas_ct"),  # plant absent from the table
+        ]
+
+    def test_gate_partitions_on_the_plants_sector_at_plant_grain(self):
+        from market_sim.model.capacity import UTILITY_SECTOR, sector_gated_unit_ids
+
+        self.assertEqual(UTILITY_SECTOR, 1)
+        gated, census = sector_gated_unit_ids(self._fleet(), self.SECTORS)
+        # Every tranche / unit of a sector-1 plant; nothing else.
+        self.assertEqual(gated, frozenset({"300_1", "300_2", "H_C1", "H_C2"}))
+        self.assertEqual(census["units"], 4)
+        self.assertAlmostEqual(census["mw"], 1400.0)
+        self.assertEqual(census["mw_by_fuel"], {"coal": 1400.0})
+        self.assertEqual(census["mw_by_sector"], {"1": 1400.0})
+        # The plant absent from the table fails OPEN to the screen and is
+        # counted, never gated.
+        self.assertEqual(census["unknown_sector_units"], 1)
+        self.assertAlmostEqual(census["unknown_sector_mw"], 50.0)
+
+    def test_gate_ignores_fuels_the_screen_cannot_evaluate_and_plant_code_zero(self):
+        from market_sim.model.capacity import sector_gated_unit_ids
+
+        wind = Generator(
+            unit_id="w1",
+            name="w",
+            zone="Z",
+            fuel_type="wind",
+            pmax_mw=100.0,
+            plant_code=300,
+        )
+        no_code = Generator(
+            unit_id="synth",
+            name="s",
+            zone="Z",
+            fuel_type="gas_ct",
+            pmax_mw=10.0,
+        )
+        gated, census = sector_gated_unit_ids([wind, no_code], self.SECTORS)
+        self.assertEqual(gated, frozenset())
+        self.assertEqual(census["units"], 0)
+        # plant_code == 0 is unknown, not sector 0.
+        self.assertEqual(census["unknown_sector_units"], 1)
+        # Empty table: nothing gated, everything unknown (fail-open).
+        gated, census = sector_gated_unit_ids(self._fleet(), {})
+        self.assertEqual(gated, frozenset())
+        self.assertEqual(census["unknown_sector_units"], 7)
+
+    def test_evolve_unions_the_gate_with_the_dated_exemption_only_when_armed(self):
+        from market_sim.model import capacity_evolution as pkg
+        from tests.unit.model.test_capacity import TestFossilAnnouncedExits as _F
+
+        fleet = [
+            _unit(300, "1", 500.0, fuel="coal"),  # utility, undated
+            _unit(400, "1", 100.0, fuel="gas_ct"),  # IPP, dated
+            _unit(500, "1", 150.0, fuel="gas_cc"),  # CHP, undated -> screened
+        ]
+        rows = [_F._row(_F(), 400, "1", 2030, mw=100.0)]
+        seen = {}
+
+        def spy(fleet_, *a, **kw):
+            seen["exempt"] = kw.get("exempt_unit_ids")
+            return fleet_, {}, []
+
+        prior = {
+            "fleet_arrays": object(),
+            "dispatch_result": object(),
+            "prices": np.zeros((1, 24)),
+            "peak_demand": 1000.0,
+        }
+        from market_sim.results.evolution_ledger import new_events
+
+        events = new_events()
+        with (
+            mock.patch.object(pkg, "apply_economic_retirements", side_effect=spy),
+            mock.patch(
+                "market_sim.data.fleet.eia860_plant_sectors",
+                return_value=self.SECTORS,
+            ),
+        ):
+            evolve_fleet(
+                fleet,
+                prior,
+                2028,
+                ScenarioConfig(
+                    fossil_announced_exits_enabled=True, retirement_sector_gate=True
+                ),
+                {},
+                announced_fossil_exits=rows,
+                events=events,
+            )
+        # The union: the dated IPP unit (D42) AND the undated utility unit
+        # (D53); the CHP unit is screened.
+        self.assertEqual(seen["exempt"], frozenset({"300_1", "400_1"}))
+        self.assertEqual(events["sector_gated"]["units"], 1)
+        self.assertAlmostEqual(events["sector_gated"]["mw"], 500.0)
+        self.assertEqual(events["sector_gated"]["year"], 2028)
+        # Off the gate: only the dated exemption, no ledger block.
+        seen.clear()
+        events = new_events()
+        with (
+            mock.patch.object(pkg, "apply_economic_retirements", side_effect=spy),
+            mock.patch(
+                "market_sim.data.fleet.eia860_plant_sectors",
+                return_value=self.SECTORS,
+            ),
+        ):
+            evolve_fleet(
+                fleet,
+                prior,
+                2028,
+                ScenarioConfig(fossil_announced_exits_enabled=True),
+                {},
+                announced_fossil_exits=rows,
+                events=events,
+            )
+        self.assertEqual(seen["exempt"], frozenset({"400_1"}))
+        self.assertNotIn("sector_gated", events)
+
+    def test_gated_unit_never_enters_margins_or_the_pipeline(self):
+        """A failing sector-1 unit passed through ``exempt_unit_ids`` carries no
+        pipeline row, is never decided, and cannot seed the pipeline state —
+        while the identical IPP unit fails and is decided (or capped)."""
+        from market_sim.model.capacity import apply_economic_retirements
+
+        cfg = ScenarioConfig(retirement_rule="pipeline", capacity_market_clearing=False)
+        fleet = [
+            _unit(300, "1", 500.0, fuel="coal"),  # utility (gated by the caller)
+            _unit(400, "1", 500.0, fuel="coal"),  # IPP (screened)
+        ]
+        fa = generators_to_fleet_arrays(fleet, ["Z0"], hours=24)
+        T = 24
+        prices = np.zeros((1, T))  # $0 every hour: both units fail the bar
+        dispatch = SimpleNamespace(dispatch=np.zeros((2, T)))
+        mc = np.full((2, T), 20.0)
+        sink: dict = {}
+        survivors, state, _log = apply_economic_retirements(
+            fleet,
+            fa,
+            dispatch,
+            prices,
+            cfg,
+            {},
+            peak_demand=10.0,  # tiny requirement: the floor never binds
+            mc=mc,
+            year=2028,
+            event_sink=sink,
+            exempt_unit_ids=frozenset({"300_1"}),
+        )
+        rows = sink.get("pipeline_events", [])
+        self.assertTrue(rows, "the screened IPP unit must carry a row")
+        self.assertEqual({r["unit_id"] for r in rows}, {"400_1"})
+        self.assertNotIn("300_1", state)
+        self.assertIn("300_1", {g.unit_id for g in survivors})
+
+    def test_cache_key_registration_and_backcast_coercion(self):
+        from market_sim.config.scenarios import (
+            _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS,
+            _CACHE_KEY_OPTIONAL_FIELDS,
+        )
+
+        self.assertIn("retirement_sector_gate", _CACHE_KEY_OPTIONAL_FIELDS)
+        self.assertEqual(
+            _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["retirement_sector_gate"], "False"
+        )
+        self.assertFalse(ScenarioConfig().retirement_sector_gate)
+        # The pinned default key is unmoved by the registration (D24-R option
+        # b'-1: dropped at its declared False default); the armed key differs.
+        self.assertEqual(ScenarioConfig().cache_key(), "4c6b03ae098b6e3e")
+        self.assertNotEqual(
+            ScenarioConfig(retirement_sector_gate=True).cache_key(),
+            ScenarioConfig().cache_key(),
+        )
+        # A plain backcast coerces the gate to its dataclass default (a
+        # backcast runs no capacity evolution); a hindcast keeps it.
+        self.assertFalse(
+            ScenarioConfig(
+                mode="backcast", retirement_sector_gate=True
+            ).retirement_sector_gate
+        )
+        self.assertEqual(
+            ScenarioConfig(mode="backcast", retirement_sector_gate=True).cache_key(),
+            ScenarioConfig(mode="backcast").cache_key(),
+        )
+        self.assertTrue(
+            ScenarioConfig(
+                mode="forecast", hindcast=True, retirement_sector_gate=True
+            ).retirement_sector_gate
+        )
+
+    def test_plant_sector_reader_is_vintage_keyed(self):
+        from market_sim.data.fleet import eia860_plant_sectors
+
+        with tempfile.TemporaryDirectory() as td:
+            a = Path(td) / "a"
+            b = Path(td) / "b"
+            a.mkdir()
+            b.mkdir()
+            pd.DataFrame({"Plant Code": [1, 2, 3], "Sector": [1, 2, None]}).to_parquet(
+                a / "eia860_plant.parquet"
+            )
+            pd.DataFrame({"Plant Code": [1], "Sector": [2]}).to_parquet(
+                b / "eia860_plant.parquet"
+            )
+            self.assertEqual(eia860_plant_sectors(a), {1: 1, 2: 2})
+            # A second directory is not served from the first's cache.
+            self.assertEqual(eia860_plant_sectors(b), {1: 2})
+            # A directory with no plant table reads empty (fail-open upstream).
+            self.assertEqual(eia860_plant_sectors(Path(td)), {})

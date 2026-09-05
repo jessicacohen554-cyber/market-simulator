@@ -3430,6 +3430,41 @@ def eia860_plant_states() -> dict[int, str]:
     }
 
 
+def eia860_plant_sectors(eia860_dir: Path | None = None) -> dict[int, int]:
+    """Return ``{plant_code: EIA-860 Sector}`` from the plant table at a vintage.
+
+    The per-plant ownership-sector attribute the retirement-screen sector gate
+    partitions on (capx D53, ``ScenarioConfig.retirement_sector_gate``;
+    ``docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md`` §1.2, §1.10):
+    Form EIA-860 Schedule 2 ``Sector`` — 1 Electric Utility, 2 IPP Non-CHP,
+    3 IPP CHP, 4 Commercial Non-CHP, 5 Commercial CHP, 6 Industrial Non-CHP,
+    7 Industrial CHP. Resolves through :func:`paths.active_eia860_dir` when
+    ``eia860_dir`` is not given, so a hindcast reads the vintage it initialised
+    from (the information gate: a post-vintage sale that re-sectors a plant is
+    not visible in a vintage-pinned run — the same gate step 0 applies to
+    ``instrument_date``), and defers to the directory-keyed cache below —
+    unlike the sibling :func:`_eia860_plant_sector` (``maxsize=1``, no
+    directory key, kept unchanged for its own consumer ``data.coal``), a
+    vintage switch after first use is honoured here. Plants absent from the
+    table (or with a null sector) are omitted; the gate treats them as
+    unknown and fails OPEN to the screen.
+    """
+    return _eia860_plant_sectors(
+        Path(eia860_dir) if eia860_dir is not None else active_eia860_dir()
+    )
+
+
+@lru_cache(maxsize=4)
+def _eia860_plant_sectors(eia860_dir: Path) -> dict[int, int]:
+    """Directory-keyed cache behind :func:`eia860_plant_sectors`."""
+    path = Path(eia860_dir) / "eia860_plant.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path, columns=["Plant Code", "Sector"])
+    df = df.dropna(subset=["Plant Code", "Sector"])
+    return {int(c): int(s) for c, s in zip(df["Plant Code"], df["Sector"])}
+
+
 @lru_cache(maxsize=1)
 def eia860_regulated_plants() -> frozenset[int]:
     """Return the plant codes whose EIA-860 ``Regulatory Status`` is ``RE``.

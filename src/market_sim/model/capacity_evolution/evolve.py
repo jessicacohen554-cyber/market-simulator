@@ -47,6 +47,7 @@ from .new_entry import (
 )
 from .retirements import (
     dated_plant_unit_ids,
+    sector_gated_unit_ids,
     _storage_portfolio_elcc_dilution,
     deliverability_headroom_by_zone,
     resolve_planning_reserve_margin,
@@ -224,7 +225,11 @@ def evolve_fleet(
             plants with a pending row are EXEMPT from the step-3 screen
             (:func:`dated_plant_unit_ids`) and the pending rows are handed to
             the screen as ``exogenous_exits`` so the R-NEW admission cap's
-            counterfactual nets them.
+            counterfactual nets them. Under ``config.retirement_sector_gate``
+            (capx D53, default off) the step-3 exemption set is additionally
+            the UNION with :func:`sector_gated_unit_ids` — every thermal unit
+            whose plant's EIA-860 ``Sector`` is 1 (regulated utility) — the
+            same seam, neither declaration producing an exit (rule 19).
         announced_reversal_plants: Plant codes whose announced retirement
             was reversed by a public counter-instrument (registry rows all
             superseded) — step 1 ignores their stale EIA-860 dates
@@ -520,6 +525,31 @@ def evolve_fleet(
     if _fossil_channel_on:
         _dated_exempt = dated_plant_unit_ids(fleet, announced_fossil_exits, year)
         _exogenous_pending = announced_fossil_exits
+    # capx D53 — the retirement-screen SECTOR GATE (GATED
+    # config.retirement_sector_gate, default OFF ⇒ this block is a no-op and
+    # every ledger is byte-identical). Armed, every thermal unit whose PLANT's
+    # EIA-860 ``Sector`` (the active vintage's plant table) is 1, a regulated
+    # electric utility, is EXOGENOUS to the step-3 economic screen: its exit
+    # decision is an IRP / rate-case outcome carried by step 0's instruments
+    # and step 1 / 1b's owner-filed dates, never a merchant net-revenue test
+    # (D32 §4.3; design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md
+    # §1.2). Sectors 2–7 face the screen as before; a plant absent from the
+    # vintage table fails OPEN to the screen. Rule 19 [R-ONE-MECH]: the gated
+    # ids join the SAME ``exempt_unit_ids`` seam as the dated-plant exemption
+    # (a set union — neither declaration produces an exit), so no unit's exit
+    # is decided twice and the floor / admission cap / backstop see a gated
+    # unit as ordinary surviving fleet. The gated set is ledgered per year
+    # (``sector_gated``) so the D-2 attribution can see what left the screen.
+    _sector_exempt: frozenset[str] = frozenset()
+    _sector_census: dict | None = None
+    if bool(getattr(config, "retirement_sector_gate", False)):
+        from market_sim.data.fleet import eia860_plant_sectors
+
+        _sector_exempt, _sector_census = sector_gated_unit_ids(
+            fleet, eia860_plant_sectors()
+        )
+    if _rec and _sector_census is not None:
+        events["sector_gated"] = {"year": year, **_sector_census}
 
     # Locational deliverability headroom per zone (empty no-op unless
     # capacity_deliverability_limits is on and the ISO has clean data). Prior-
@@ -618,7 +648,7 @@ def evolve_fleet(
             reserve_price_signal=reserve_price_signal,
             reserve_price_signal_slow=reserve_price_signal_slow,
             reserve_position=reserve_position,
-            exempt_unit_ids=_retrofitted_ids | _dated_exempt,
+            exempt_unit_ids=_retrofitted_ids | _dated_exempt | _sector_exempt,
             exogenous_exits=_exogenous_pending,
         )
         if _rec:
