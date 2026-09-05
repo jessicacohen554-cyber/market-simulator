@@ -3842,7 +3842,15 @@ def run_year(
     fuel_prices = resolve_fuel_prices(config, fleet_arrays, year, apply_monthly=False)
     if config.coal_supply_repricing:
         apply_coal_supply_pricing(fuel_prices, fleet, config, year)
-    apply_plant_monthly_fuel_prices(fuel_prices, fleet_arrays, config, year)
+    # The overlay returns the mask of cells it WROTE (own print or nearby pool);
+    # the MISO zonal-basis applier below consumes it under
+    # miso_zonal_gas_basis_skip_923_priced (miso-213, rule 19) — a print-derived
+    # cell already carries the regional delivered premium. This chain mirrors
+    # resolve_fuel_prices' apply_monthly=True branch, which threads it the same
+    # way, so the calibration and forecast paths agree.
+    print_cells = apply_plant_monthly_fuel_prices(
+        fuel_prices, fleet_arrays, config, year
+    )
     # Hub-basis overlay (NEISO only): replace the gas price with the measured
     # Algonquin Citygate hub spot in covered months — daily-resolved when
     # gas_hub_basis_daily is on. Because run_year resolves fuel prices with
@@ -3904,8 +3912,12 @@ def run_year(
     # (MISO only). See fuel.apply_miso_winter_citygate_daily.
     apply_miso_winter_citygate_daily(fuel_prices, fleet_arrays, config, year)
     # MISO per-zone gas basis (north/south gas gradient). Same mean-zero core as
-    # PJM. No-op unless miso_zonal_gas_basis is set (MISO only).
-    apply_miso_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # PJM. No-op unless miso_zonal_gas_basis is set (MISO only). The
+    # print-derived-cell mask is passed always; the applier consumes it only
+    # under miso_zonal_gas_basis_skip_923_priced (flag off => byte-identical).
+    apply_miso_zonal_gas_basis(
+        fuel_prices, fleet_arrays, config, year, skip_cells=print_cells
+    )
     # CAISO per-zone citygate basis (NP15/ZP26 on PG&E Citygate, SP15 on SoCal
     # Citygate — measured weekly prints, mean-zero). No-op unless
     # caiso_zonal_gas_basis is set (CAISO only).

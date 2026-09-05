@@ -1,0 +1,779 @@
+{
+ "prereg": "PREREG-miso213-zonal-basis-layering-2026-09-05.md \u00a73-\u00a74 @ a1a4a48",
+ "keeper_at_open": "2026-09-04-miso-210-clock",
+ "delta": "ScenarioConfig.miso_zonal_gas_basis_skip_923_priced False -> True on the keeper recipe (replay_keeper --set); the arm carries the code that threads the print-derived-cell mask",
+ "control": "miso210_clock_B (the keeper itself; not re-solved)",
+ "arm": "miso213_layering_B",
+ "scorer_written_and_committed_before_any_arm_result": true,
+ "c3a_is_never_a_gate": "rule 1 [R-STRUCT]; reported at full magnitude with the PREREG sign beside it",
+ "S0": {
+  "control_is_keeper_bundle": true,
+  "keeper_sidecars_present": 9,
+  "missing": [],
+  "miso210_s0": {
+   "sidecars_checked": 9,
+   "max_abs_diff": 0.0,
+   "passed": true
+  },
+  "passed": true
+ },
+ "S1": {
+  "n_fields": 789,
+  "in_common_diffs": [],
+  "fields_new_since_control": {
+   "adequacy_accounting_ratio_dated_net": {
+    "arm": false,
+    "default": false,
+    "at_default": true
+   },
+   "caiso_citygate_spot_coverage": {
+    "arm": false,
+    "default": false,
+    "at_default": true
+   },
+   "ccs_retrofit_capex_co2_scaling": {
+    "arm": false,
+    "default": false,
+    "at_default": true
+   },
+   "miso_zonal_gas_basis_skip_923_priced": {
+    "arm": true,
+    "default": false,
+    "at_default": false
+   },
+   "nyiso_requirement_forecast_peak": {
+    "arm": false,
+    "default": false,
+    "at_default": true
+   },
+   "nyiso_requirement_vintage_factors": {
+    "arm": false,
+    "default": false,
+    "at_default": true
+   }
+  },
+  "new_fields_off_default": [
+   "miso_zonal_gas_basis_skip_923_priced"
+  ],
+  "control_value": null,
+  "arm_value": true,
+  "git_sha": {
+   "control": "a9b67b53",
+   "arm": "cf55ab5"
+  },
+  "passed": true
+ },
+ "S2": {
+  "source": "L5_arm_liveness block of _miso213_basis_layering.json (post-code, zero-solve)",
+  "years": {
+   "2023": {
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "production_mask_share": 1.0,
+    "gas_cells_changed_share": 0.998782
+   },
+   "2024": {
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "production_mask_share": 1.0,
+    "gas_cells_changed_share": 0.99862
+   },
+   "2025": {
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "production_mask_share": 1.0,
+    "gas_cells_changed_share": 0.999086
+   }
+  },
+  "passed": true
+ },
+ "K1": {
+  "band_twh": 8.0,
+  "largest_class_year_move": {
+   "key": "CT_PEAKER|2025",
+   "abs_twh": 3.618
+  },
+  "named_ex_ante": {
+   "ST_GAS|2024": {
+    "prereg_control": -7.486,
+    "prereg_headroom": 0.514,
+    "measured_control": -7.486,
+    "measured_arm": -6.803,
+    "band_exit": false
+   },
+   "CC_REGULAR|2024": {
+    "prereg_control": 6.94,
+    "prereg_headroom": 1.06,
+    "measured_control": 6.94,
+    "measured_arm": 7.419,
+    "band_exit": false
+   },
+   "ST_GAS|2025": {
+    "prereg_control": -6.686,
+    "prereg_headroom": 1.314,
+    "measured_control": -6.686,
+    "measured_arm": -5.748,
+    "band_exit": false
+   },
+   "COAL_PRB|2025": {
+    "prereg_control": -4.907,
+    "prereg_headroom": 3.093,
+    "measured_control": -4.907,
+    "measured_arm": -4.208,
+    "band_exit": false
+   },
+   "ST_GAS|2023": {
+    "prereg_control": -3.516,
+    "prereg_headroom": 4.484,
+    "measured_control": -3.517,
+    "measured_arm": -2.182,
+    "band_exit": false
+   },
+   "CC_REGULAR|2023": {
+    "prereg_control": -3.408,
+    "prereg_headroom": 4.592,
+    "measured_control": -3.407,
+    "measured_arm": -2.774,
+    "band_exit": false
+   },
+   "CC_REGULAR|2025": {
+    "prereg_control": -2.177,
+    "prereg_headroom": 5.823,
+    "measured_control": -2.176,
+    "measured_arm": -2.423,
+    "band_exit": false
+   }
+  },
+  "all_band_exits": [],
+  "passed": true
+ },
+ "K2": {
+  "control": {
+   "2023": 0.081,
+   "2024": 0.111,
+   "2025": 0.182
+  },
+  "arm": {
+   "2023": 0.08,
+   "2024": 0.109,
+   "2025": 0.177
+  },
+  "pass_to_fail": [],
+  "passed": true
+ },
+ "K3": {
+  "d4_row_counts": {
+   "control": 57,
+   "arm": 56
+  },
+  "scorable": true,
+  "new_d4_failures": [],
+  "cleared": [
+   "(2023, 'unit-conduct', 'reliability_floor \u00d7 ST_GAS', '1122')"
+  ],
+  "status": "SCORED",
+  "passed": true
+ },
+ "K4": {
+  "d1_row_counts": {
+   "control": 30,
+   "arm": 30
+  },
+  "scorable": true,
+  "control": {
+   "2023": {
+    "profile_r": 0.941,
+    "cv_ratio": 1.762,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.956,
+    "cv_ratio": 1.246,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.977,
+    "cv_ratio": 1.485,
+    "verdict": "pass"
+   }
+  },
+  "arm": {
+   "2023": {
+    "profile_r": 0.951,
+    "cv_ratio": 1.708,
+    "verdict": "pass"
+   },
+   "2024": {
+    "profile_r": 0.957,
+    "cv_ratio": 1.137,
+    "verdict": "pass"
+   },
+   "2025": {
+    "profile_r": 0.982,
+    "cv_ratio": 1.532,
+    "verdict": "pass"
+   }
+  },
+  "pass_to_fail": [],
+  "status": "SCORED",
+  "passed": true
+ },
+ "K5": {
+  "pass_to_non_pass": [],
+  "passed": true
+ },
+ "K6": {
+  "attestation_entries": {
+   "control": 41,
+   "arm": 41
+  },
+  "prereg": "no new ledger entry (41 -> 41): a boolean scope on an existing measured input, zero free parameters",
+  "status": "SCORED",
+  "passed": true
+ },
+ "movement": {
+  "epsilons": {
+   "c1_twh": 0.01,
+   "c3a_pp": 0.01,
+   "c3b": 0.0005,
+   "c8_share": 0.0005
+  },
+  "d_c1_twh": {
+   "CC_CHP|2023": -1.171,
+   "CC_CHP|2024": -0.561,
+   "CC_CHP|2025": 0.362,
+   "CC_REGULAR|2023": 0.633,
+   "CC_REGULAR|2024": 0.479,
+   "CC_REGULAR|2025": -0.247,
+   "COAL_BIT|2023": 0.35,
+   "COAL_BIT|2024": 0.162,
+   "COAL_BIT|2025": 0.592,
+   "COAL_LIGNITE|2023": 0.049,
+   "COAL_LIGNITE|2024": 0.027,
+   "COAL_LIGNITE|2025": 0.031,
+   "COAL_PRB|2023": 0.854,
+   "COAL_PRB|2024": 0.541,
+   "COAL_PRB|2025": 0.699,
+   "CT_PEAKER|2023": -3.325,
+   "CT_PEAKER|2024": -2.315,
+   "CT_PEAKER|2025": -3.618,
+   "ST_CHP|2023": 0.094,
+   "ST_CHP|2024": 0.025,
+   "ST_CHP|2025": -0.04,
+   "ST_GAS|2023": 1.335,
+   "ST_GAS|2024": 0.683,
+   "ST_GAS|2025": 0.938
+  },
+  "c1_prereg_scored": {
+   "2023": {
+    "d_gas_classes_twh": -2.434,
+    "inside_prereg_lt_0.3": false,
+    "ST_GAS": 1.335,
+    "ST_GAS_inside": false,
+    "CC_REGULAR": 0.633,
+    "CC_REGULAR_inside": false
+   },
+   "2024": {
+    "d_gas_classes_twh": -1.689,
+    "inside_prereg_lt_0.3": false,
+    "ST_GAS": 0.683,
+    "ST_GAS_inside": false,
+    "CC_REGULAR": 0.479,
+    "CC_REGULAR_inside": false
+   },
+   "2025": {
+    "d_gas_classes_twh": -2.605,
+    "inside_prereg_lt_0.3": false,
+    "ST_GAS": 0.938,
+    "ST_GAS_inside": false,
+    "CC_REGULAR": -0.247,
+    "CC_REGULAR_inside": true
+   }
+  },
+  "c3a_control": {
+   "2023": 0.12176560121765341,
+   "2024": -4.396284829721357,
+   "2025": -12.384513858337005
+  },
+  "c3a_arm": {
+   "2023": 0.9132420091324114,
+   "2024": -3.839009287925692,
+   "2025": -11.74659040915091
+  },
+  "d_c3a_pp": {
+   "2023": 0.7915,
+   "2024": 0.5573,
+   "2025": 0.6379
+  },
+  "c3a_prereg_scored": {
+   "2023": {
+    "delta_pp": 0.7915,
+    "prereg_band": {
+     "lo": -0.5,
+     "hi": -0.05
+    },
+    "inside": false
+   },
+   "2024": {
+    "delta_pp": 0.5573,
+    "prereg_band": {
+     "lo": -0.5,
+     "hi": -0.05
+    },
+    "inside": false
+   },
+   "2025": {
+    "delta_pp": 0.6379,
+    "prereg_band": {
+     "lo": 0.2,
+     "hi": 1.5
+    },
+    "inside": true
+   }
+  },
+  "d_c3b": {
+   "2023": -0.001,
+   "2024": -0.002,
+   "2025": -0.005
+  },
+  "c8_share_control": {
+   "2023": 0.15523139301859532,
+   "2024": 0.15288584632425709,
+   "2025": 0.2714207930640922
+  },
+  "c8_share_arm": {
+   "2023": 0.1376856854583335,
+   "2024": 0.13769087930092846,
+   "2025": 0.21162967961820237
+  },
+  "d_c8_share": {
+   "2023": -0.01755,
+   "2024": -0.01519,
+   "2025": -0.05979
+  },
+  "status_map_identical": true,
+  "arm_moved_values": true
+ },
+ "object_gates": {
+  "bands": {
+   "O1_south_net_inflow_gw": [
+    -0.6,
+    -0.1
+   ],
+   "O2_s2n_flow_mean_mw": [
+    450.0,
+    1000.0
+   ],
+   "O3_s2n_free_tier_share": [
+    0.04,
+    0.12
+   ],
+   "O4_spread_indiana_minus_south": [
+    0.3,
+    3.0
+   ],
+   "O5_south_gas_gw": [
+    15.9,
+    16.4
+   ],
+   "O6_midwest_gas_delta_gw": [
+    -0.8,
+    -0.2
+   ]
+  },
+  "years": {
+   "2023": {
+    "SHOULDER": {
+     "hours_real_s2n": 65,
+     "gates": {
+      "O1_south_net_inflow_gw": {
+       "control": -1.095,
+       "arm": -1.591,
+       "band": [
+        -0.6,
+        -0.1
+       ],
+       "inside": false
+      },
+      "O2_s2n_flow_mean_mw": {
+       "control": 845.8,
+       "arm": 1193.0,
+       "band": [
+        450.0,
+        1000.0
+       ],
+       "inside": false
+      },
+      "O3_s2n_free_tier_share": {
+       "control": 0.1231,
+       "arm": 0.2462,
+       "band": [
+        0.04,
+        0.12
+       ],
+       "inside": false
+      },
+      "O4_spread_indiana_minus_south": {
+       "control": 0.144,
+       "arm": 0.408,
+       "band": [
+        0.3,
+        3.0
+       ],
+       "inside": true
+      },
+      "O5_south_gas_gw": {
+       "control": 16.898,
+       "arm": 17.396,
+       "band": [
+        15.9,
+        16.4
+       ],
+       "inside": false
+      },
+      "O6_midwest_gas_delta_gw": {
+       "control_midwest_gas_gw": 17.102,
+       "arm_midwest_gas_gw": 16.271,
+       "iso_gas_classes_gw": {
+        "control": 34.0,
+        "arm": 33.667
+       },
+       "delta": -0.831,
+       "band": [
+        -0.8,
+        -0.2
+       ],
+       "inside": false
+      }
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 10,
+     "gates": {
+      "O1_south_net_inflow_gw": {
+       "control": -1.539,
+       "arm": -2.262,
+       "band": [
+        -0.6,
+        -0.1
+       ],
+       "inside": false
+      },
+      "O2_s2n_flow_mean_mw": {
+       "control": 1027.4,
+       "arm": 1736.6,
+       "band": [
+        450.0,
+        1000.0
+       ],
+       "inside": false
+      },
+      "O3_s2n_free_tier_share": {
+       "control": 0.1,
+       "arm": 0.3,
+       "band": [
+        0.04,
+        0.12
+       ],
+       "inside": false
+      },
+      "O4_spread_indiana_minus_south": {
+       "control": 0.214,
+       "arm": 0.58,
+       "band": [
+        0.3,
+        3.0
+       ],
+       "inside": true
+      },
+      "O5_south_gas_gw": {
+       "control": 16.597,
+       "arm": 17.306,
+       "band": [
+        15.9,
+        16.4
+       ],
+       "inside": false
+      },
+      "O6_midwest_gas_delta_gw": {
+       "control_midwest_gas_gw": 16.58,
+       "arm_midwest_gas_gw": 15.484,
+       "iso_gas_classes_gw": {
+        "control": 33.177,
+        "arm": 32.79
+       },
+       "delta": -1.096,
+       "band": [
+        -0.8,
+        -0.2
+       ],
+       "inside": false
+      }
+     }
+    }
+   },
+   "2024": {
+    "SHOULDER": {
+     "hours_real_s2n": 190,
+     "gates": {
+      "O1_south_net_inflow_gw": {
+       "control": -0.378,
+       "arm": -0.717,
+       "band": [
+        -0.6,
+        -0.1
+       ],
+       "inside": false
+      },
+      "O2_s2n_flow_mean_mw": {
+       "control": 423.9,
+       "arm": 555.0,
+       "band": [
+        450.0,
+        1000.0
+       ],
+       "inside": true
+      },
+      "O3_s2n_free_tier_share": {
+       "control": 0.0632,
+       "arm": 0.0947,
+       "band": [
+        0.04,
+        0.12
+       ],
+       "inside": true
+      },
+      "O4_spread_indiana_minus_south": {
+       "control": -0.003,
+       "arm": 0.13,
+       "band": [
+        0.3,
+        3.0
+       ],
+       "inside": false
+      },
+      "O5_south_gas_gw": {
+       "control": 15.83,
+       "arm": 16.15,
+       "band": [
+        15.9,
+        16.4
+       ],
+       "inside": true
+      },
+      "O6_midwest_gas_delta_gw": {
+       "control_midwest_gas_gw": 19.13,
+       "arm_midwest_gas_gw": 18.642,
+       "iso_gas_classes_gw": {
+        "control": 34.96,
+        "arm": 34.792
+       },
+       "delta": -0.488,
+       "band": [
+        -0.8,
+        -0.2
+       ],
+       "inside": true
+      }
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 5,
+     "gates": {
+      "O1_south_net_inflow_gw": {
+       "control": -0.468,
+       "arm": -0.877,
+       "band": [
+        -0.6,
+        -0.1
+       ],
+       "inside": false
+      },
+      "O2_s2n_flow_mean_mw": {
+       "control": 322.4,
+       "arm": 522.4,
+       "band": [
+        450.0,
+        1000.0
+       ],
+       "inside": true
+      },
+      "O3_s2n_free_tier_share": {
+       "control": 0.0,
+       "arm": 0.0,
+       "band": [
+        0.04,
+        0.12
+       ],
+       "inside": false
+      },
+      "O4_spread_indiana_minus_south": {
+       "control": 0.0,
+       "arm": 0.0,
+       "band": [
+        0.3,
+        3.0
+       ],
+       "inside": false
+      },
+      "O5_south_gas_gw": {
+       "control": 15.286,
+       "arm": 15.692,
+       "band": [
+        15.9,
+        16.4
+       ],
+       "inside": false
+      },
+      "O6_midwest_gas_delta_gw": {
+       "control_midwest_gas_gw": 19.312,
+       "arm_midwest_gas_gw": 18.801,
+       "iso_gas_classes_gw": {
+        "control": 34.598,
+        "arm": 34.493
+       },
+       "delta": -0.511,
+       "band": [
+        -0.8,
+        -0.2
+       ],
+       "inside": true
+      }
+     }
+    }
+   },
+   "2025": {
+    "SHOULDER": {
+     "hours_real_s2n": 177,
+     "gates": {
+      "O1_south_net_inflow_gw": {
+       "control": 0.05,
+       "arm": -0.73,
+       "band": [
+        -0.6,
+        -0.1
+       ],
+       "inside": false
+      },
+      "O2_s2n_flow_mean_mw": {
+       "control": 357.2,
+       "arm": 709.6,
+       "band": [
+        450.0,
+        1000.0
+       ],
+       "inside": true
+      },
+      "O3_s2n_free_tier_share": {
+       "control": 0.0282,
+       "arm": 0.0678,
+       "band": [
+        0.04,
+        0.12
+       ],
+       "inside": true
+      },
+      "O4_spread_indiana_minus_south": {
+       "control": -0.158,
+       "arm": 0.163,
+       "band": [
+        0.3,
+        3.0
+       ],
+       "inside": false
+      },
+      "O5_south_gas_gw": {
+       "control": 15.562,
+       "arm": 16.332,
+       "band": [
+        15.9,
+        16.4
+       ],
+       "inside": true
+      },
+      "O6_midwest_gas_delta_gw": {
+       "control_midwest_gas_gw": 19.805,
+       "arm_midwest_gas_gw": 18.752,
+       "iso_gas_classes_gw": {
+        "control": 35.367,
+        "arm": 35.084
+       },
+       "delta": -1.053,
+       "band": [
+        -0.8,
+        -0.2
+       ],
+       "inside": false
+      }
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 10,
+     "gates": {
+      "O1_south_net_inflow_gw": {
+       "control": -0.253,
+       "arm": -0.716,
+       "band": [
+        -0.6,
+        -0.1
+       ],
+       "inside": false
+      },
+      "O2_s2n_flow_mean_mw": {
+       "control": 555.6,
+       "arm": 944.7,
+       "band": [
+        450.0,
+        1000.0
+       ],
+       "inside": true
+      },
+      "O3_s2n_free_tier_share": {
+       "control": 0.0,
+       "arm": 0.0,
+       "band": [
+        0.04,
+        0.12
+       ],
+       "inside": false
+      },
+      "O4_spread_indiana_minus_south": {
+       "control": -0.011,
+       "arm": 0.0,
+       "band": [
+        0.3,
+        3.0
+       ],
+       "inside": false
+      },
+      "O5_south_gas_gw": {
+       "control": 17.677,
+       "arm": 18.131,
+       "band": [
+        15.9,
+        16.4
+       ],
+       "inside": false
+      },
+      "O6_midwest_gas_delta_gw": {
+       "control_midwest_gas_gw": 24.463,
+       "arm_midwest_gas_gw": 23.917,
+       "iso_gas_classes_gw": {
+        "control": 42.14,
+        "arm": 42.048
+       },
+       "delta": -0.546,
+       "band": [
+        -0.8,
+        -0.2
+       ],
+       "inside": true
+      }
+     }
+    }
+   }
+  }
+ },
+ "kills_fired": [],
+ "verdict": "KILLS SILENT and the arm MOVED values -> keeper candidate, PROMOTED as a structural rule-19 repair (PREREG \u00a74). C3a is reported at full magnitude and is NEVER the justification."
+}

@@ -1,0 +1,3859 @@
+{
+ "charter": "miso-213 phase 0 \u2014 the rule-19 zonal-basis layering on 923-priced cells; zero-solve.",
+ "prereg": "results/calibration/PREREG-miso213-zonal-basis-layering-2026-09-05.md @ a1a4a48",
+ "keeper": "2026-09-04-miso-210-clock",
+ "anchor_usd_mmbtu": 3.0492,
+ "instrument": {
+  "print_cell_identification": "F_nobasis (miso_zonal_gas_basis off) != F_noplant (basis off + gas_plant_monthly_fuel_pricing off) on the same FleetArrays; own-print months from eia923.plant_month_price_grid on the production F923 table; pool = print-derived minus own-print",
+  "increment": "F_keeper - F_nobasis: the basis AFTER the dual-fuel oil-parity cap, i.e. what the LP saw",
+  "L3_bid_basis": "mc_base from build_year (NO P1 startup adder: the keeper's unit_hourly sidecars are gitignored and absent here). The miso-212 (b) all-cell removal is recomputed on the same instrument; the arm's reach is reported as a RATIO of it as well as a level.",
+  "heat_rate": "implied (mc - VOM - markup_hr x anchor) / F per cell (miso-212 \u00a76)"
+ },
+ "keeper_flags": {
+  "gas_plant_monthly_fuel_pricing": true,
+  "nearby_fuel_price_fallback": true,
+  "class_aware_fuel_price_fallback": true,
+  "nearby_fuel_price_min_state_plants": 2,
+  "miso_zonal_gas_basis": true,
+  "dual_fuel_switching": true,
+  "gas_daily_shape": true
+ },
+ "years": {
+  "2023": {
+   "n_gas_rows": 1448,
+   "n_gas_rows_carry": 1448,
+   "L1": {
+    "zone_spread_after_mean": {
+     "MISO-West": 0.3069,
+     "MISO-Plains": 0.3069,
+     "MISO-Illinois": -0.2601,
+     "MISO-Indiana": -0.2601,
+     "MISO-East": -0.2601,
+     "MISO-South": 0.1429
+    },
+    "capw_mean_removed": 0.1521,
+    "all_hours": {
+     "ISO": {
+      "gas_capacity_gw": 65.907,
+      "share_own_print": 0.7072,
+      "share_pool": 0.2919,
+      "share_trajectory": 0.0009,
+      "inc_capw_own_print": -0.0093,
+      "inc_capw_pool": 0.0231,
+      "inc_capw_trajectory": 0.0181,
+      "inc_capw_all": 0.0002
+     },
+     "MISO-West": {
+      "gas_capacity_gw": 6.411,
+      "share_own_print": 0.6407,
+      "share_pool": 0.3593,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.3034,
+      "inc_capw_pool": 0.3069,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.3046
+     },
+     "MISO-Plains": {
+      "gas_capacity_gw": 4.235,
+      "share_own_print": 0.6602,
+      "share_pool": 0.3398,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.3069,
+      "inc_capw_pool": 0.3069,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.3069
+     },
+     "MISO-Illinois": {
+      "gas_capacity_gw": 3.924,
+      "share_own_print": 0.6009,
+      "share_pool": 0.3991,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.2585,
+      "inc_capw_pool": -0.2594,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.2588
+     },
+     "MISO-Indiana": {
+      "gas_capacity_gw": 7.082,
+      "share_own_print": 0.8406,
+      "share_pool": 0.1594,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.2601,
+      "inc_capw_pool": -0.2601,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.2601
+     },
+     "MISO-East": {
+      "gas_capacity_gw": 16.697,
+      "share_own_print": 0.7264,
+      "share_pool": 0.2724,
+      "share_trajectory": 0.0011,
+      "inc_capw_own_print": -0.2581,
+      "inc_capw_pool": -0.2601,
+      "inc_capw_trajectory": -0.2601,
+      "inc_capw_all": -0.2587
+     },
+     "MISO-South": {
+      "gas_capacity_gw": 27.558,
+      "share_own_print": 0.6991,
+      "share_pool": 0.2994,
+      "share_trajectory": 0.0015,
+      "inc_capw_own_print": 0.1429,
+      "inc_capw_pool": 0.1429,
+      "inc_capw_trajectory": 0.1429,
+      "inc_capw_all": 0.1429
+     },
+     "by_class": {
+      "CC_CHP": {
+       "gas_capacity_gw": 3.621,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0766,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0766
+      },
+      "CC_REGULAR": {
+       "gas_capacity_gw": 27.42,
+       "share_own_print": 0.8796,
+       "share_pool": 0.1204,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0248,
+       "inc_capw_pool": 0.1637,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0415
+      },
+      "CT_CHP": {
+       "gas_capacity_gw": 0.896,
+       "share_own_print": 0.0852,
+       "share_pool": 0.9148,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.0479,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.056
+      },
+      "CT_PEAKER": {
+       "gas_capacity_gw": 22.282,
+       "share_own_print": 0.6349,
+       "share_pool": 0.3642,
+       "share_trajectory": 0.0009,
+       "inc_capw_own_print": -0.086,
+       "inc_capw_pool": -0.011,
+       "inc_capw_trajectory": -0.2601,
+       "inc_capw_all": -0.0588
+      },
+      "ST_CHP": {
+       "gas_capacity_gw": 0.698,
+       "share_own_print": 0.4576,
+       "share_pool": 0.5424,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0049,
+       "inc_capw_pool": 0.0413,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0201
+      },
+      "ST_GAS": {
+       "gas_capacity_gw": 10.991,
+       "share_own_print": 0.723,
+       "share_pool": 0.2732,
+       "share_trajectory": 0.0039,
+       "inc_capw_own_print": 0.0224,
+       "inc_capw_pool": 0.0719,
+       "inc_capw_trajectory": 0.1429,
+       "inc_capw_all": 0.0364
+      }
+     },
+     "by_zone_class": {
+      "MISO-South:CC_CHP": {
+       "gas_capacity_gw": 1.355,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:CC_REGULAR": {
+       "gas_capacity_gw": 14.963,
+       "share_own_print": 0.8396,
+       "share_pool": 0.1604,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:CT_CHP": {
+       "gas_capacity_gw": 0.594,
+       "share_own_print": 0.1284,
+       "share_pool": 0.8716,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:CT_PEAKER": {
+       "gas_capacity_gw": 3.143,
+       "share_own_print": 0.4385,
+       "share_pool": 0.5615,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:ST_CHP": {
+       "gas_capacity_gw": 0.133,
+       "share_own_print": 0.1048,
+       "share_pool": 0.8952,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:ST_GAS": {
+       "gas_capacity_gw": 7.37,
+       "share_own_print": 0.7102,
+       "share_pool": 0.284,
+       "share_trajectory": 0.0058,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": 0.1429,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-Indiana:CC_CHP": {
+       "gas_capacity_gw": 0.333,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:CC_REGULAR": {
+       "gas_capacity_gw": 2.094,
+       "share_own_print": 0.9408,
+       "share_pool": 0.0592,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:CT_CHP": {
+       "gas_capacity_gw": 0.072,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:CT_PEAKER": {
+       "gas_capacity_gw": 3.466,
+       "share_own_print": 0.8613,
+       "share_pool": 0.1387,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:ST_CHP": {
+       "gas_capacity_gw": 0.046,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:ST_GAS": {
+       "gas_capacity_gw": 1.072,
+       "share_own_print": 0.9315,
+       "share_pool": 0.0685,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-West:CC_CHP": {
+       "gas_capacity_gw": 0.178,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:CC_REGULAR": {
+       "gas_capacity_gw": 2.313,
+       "share_own_print": 0.6711,
+       "share_pool": 0.3289,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:CT_CHP": {
+       "gas_capacity_gw": 0.043,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:CT_PEAKER": {
+       "gas_capacity_gw": 3.663,
+       "share_own_print": 0.6809,
+       "share_pool": 0.3191,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3011,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3029
+      },
+      "MISO-West:ST_CHP": {
+       "gas_capacity_gw": 0.116,
+       "share_own_print": 0.5266,
+       "share_pool": 0.4734,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:ST_GAS": {
+       "gas_capacity_gw": 0.098,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:CC_CHP": {
+       "gas_capacity_gw": 0.03,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:CC_REGULAR": {
+       "gas_capacity_gw": 1.637,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:CT_CHP": {
+       "gas_capacity_gw": 0.034,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:CT_PEAKER": {
+       "gas_capacity_gw": 2.03,
+       "share_own_print": 0.4382,
+       "share_pool": 0.5618,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:ST_CHP": {
+       "gas_capacity_gw": 0.134,
+       "share_own_print": 0.5422,
+       "share_pool": 0.4578,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:ST_GAS": {
+       "gas_capacity_gw": 0.369,
+       "share_own_print": 0.5329,
+       "share_pool": 0.4671,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Illinois:CC_REGULAR": {
+       "gas_capacity_gw": 0.617,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Illinois:CT_CHP": {
+       "gas_capacity_gw": 0.013,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Illinois:CT_PEAKER": {
+       "gas_capacity_gw": 3.254,
+       "share_own_print": 0.5349,
+       "share_pool": 0.4651,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2579,
+       "inc_capw_pool": -0.2594,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2586
+      },
+      "MISO-Illinois:ST_CHP": {
+       "gas_capacity_gw": 0.038,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Illinois:ST_GAS": {
+       "gas_capacity_gw": 0.002,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:CC_CHP": {
+       "gas_capacity_gw": 1.724,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:CC_REGULAR": {
+       "gas_capacity_gw": 5.795,
+       "share_own_print": 0.9974,
+       "share_pool": 0.0026,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:CT_CHP": {
+       "gas_capacity_gw": 0.141,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:CT_PEAKER": {
+       "gas_capacity_gw": 6.726,
+       "share_own_print": 0.6929,
+       "share_pool": 0.3043,
+       "share_trajectory": 0.0028,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": -0.2601,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:ST_CHP": {
+       "gas_capacity_gw": 0.231,
+       "share_own_print": 0.7429,
+       "share_pool": 0.2571,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:ST_GAS": {
+       "gas_capacity_gw": 2.08,
+       "share_own_print": 0.7292,
+       "share_pool": 0.2708,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2443,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2486
+      }
+     }
+    },
+    "jun_jul": {
+     "ISO": {
+      "gas_capacity_gw": 65.907,
+      "share_own_print": 0.7496,
+      "share_pool": 0.2504,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.0096,
+      "inc_capw_pool": 0.0289,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.0
+     },
+     "MISO-West": {
+      "gas_capacity_gw": 6.411,
+      "share_own_print": 0.6432,
+      "share_pool": 0.3568,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.3069,
+      "inc_capw_pool": 0.3069,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.3069
+     },
+     "MISO-Plains": {
+      "gas_capacity_gw": 4.235,
+      "share_own_print": 0.6926,
+      "share_pool": 0.3074,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.3069,
+      "inc_capw_pool": 0.3069,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.3069
+     },
+     "MISO-Illinois": {
+      "gas_capacity_gw": 3.924,
+      "share_own_print": 0.6369,
+      "share_pool": 0.3631,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.2599,
+      "inc_capw_pool": -0.2601,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.26
+     },
+     "MISO-Indiana": {
+      "gas_capacity_gw": 7.082,
+      "share_own_print": 0.8733,
+      "share_pool": 0.1267,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.2601,
+      "inc_capw_pool": -0.2601,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.2601
+     },
+     "MISO-East": {
+      "gas_capacity_gw": 16.697,
+      "share_own_print": 0.772,
+      "share_pool": 0.228,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.2601,
+      "inc_capw_pool": -0.2601,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.2601
+     },
+     "MISO-South": {
+      "gas_capacity_gw": 27.558,
+      "share_own_print": 0.7538,
+      "share_pool": 0.2462,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.1429,
+      "inc_capw_pool": 0.1429,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.1429
+     },
+     "by_class": {
+      "CC_CHP": {
+       "gas_capacity_gw": 3.621,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0766,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0766
+      },
+      "CC_REGULAR": {
+       "gas_capacity_gw": 27.42,
+       "share_own_print": 0.8992,
+       "share_pool": 0.1008,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0251,
+       "inc_capw_pool": 0.1881,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0415
+      },
+      "CT_CHP": {
+       "gas_capacity_gw": 0.896,
+       "share_own_print": 0.0852,
+       "share_pool": 0.9148,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.0479,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.056
+      },
+      "CT_PEAKER": {
+       "gas_capacity_gw": 22.282,
+       "share_own_print": 0.6694,
+       "share_pool": 0.3306,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0843,
+       "inc_capw_pool": -0.0058,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0584
+      },
+      "ST_CHP": {
+       "gas_capacity_gw": 0.698,
+       "share_own_print": 0.4376,
+       "share_pool": 0.5624,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0117,
+       "inc_capw_pool": 0.0449,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0201
+      },
+      "ST_GAS": {
+       "gas_capacity_gw": 10.991,
+       "share_own_print": 0.8596,
+       "share_pool": 0.1404,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0164,
+       "inc_capw_pool": 0.143,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0342
+      }
+     },
+     "by_zone_class": {
+      "MISO-South:CC_CHP": {
+       "gas_capacity_gw": 1.355,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:CC_REGULAR": {
+       "gas_capacity_gw": 14.963,
+       "share_own_print": 0.8662,
+       "share_pool": 0.1338,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:CT_CHP": {
+       "gas_capacity_gw": 0.594,
+       "share_own_print": 0.1284,
+       "share_pool": 0.8716,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:CT_PEAKER": {
+       "gas_capacity_gw": 3.143,
+       "share_own_print": 0.4992,
+       "share_pool": 0.5008,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:ST_CHP": {
+       "gas_capacity_gw": 0.133,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-South:ST_GAS": {
+       "gas_capacity_gw": 7.37,
+       "share_own_print": 0.8366,
+       "share_pool": 0.1634,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1429,
+       "inc_capw_pool": 0.1429,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1429
+      },
+      "MISO-Indiana:CC_CHP": {
+       "gas_capacity_gw": 0.333,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:CC_REGULAR": {
+       "gas_capacity_gw": 2.094,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:CT_CHP": {
+       "gas_capacity_gw": 0.072,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:CT_PEAKER": {
+       "gas_capacity_gw": 3.466,
+       "share_own_print": 0.8711,
+       "share_pool": 0.1289,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:ST_CHP": {
+       "gas_capacity_gw": 0.046,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Indiana:ST_GAS": {
+       "gas_capacity_gw": 1.072,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-West:CC_CHP": {
+       "gas_capacity_gw": 0.178,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:CC_REGULAR": {
+       "gas_capacity_gw": 2.313,
+       "share_own_print": 0.6711,
+       "share_pool": 0.3289,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:CT_CHP": {
+       "gas_capacity_gw": 0.043,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:CT_PEAKER": {
+       "gas_capacity_gw": 3.663,
+       "share_own_print": 0.6853,
+       "share_pool": 0.3147,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:ST_CHP": {
+       "gas_capacity_gw": 0.116,
+       "share_own_print": 0.5266,
+       "share_pool": 0.4734,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-West:ST_GAS": {
+       "gas_capacity_gw": 0.098,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:CC_CHP": {
+       "gas_capacity_gw": 0.03,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:CC_REGULAR": {
+       "gas_capacity_gw": 1.637,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:CT_CHP": {
+       "gas_capacity_gw": 0.034,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:CT_PEAKER": {
+       "gas_capacity_gw": 2.03,
+       "share_own_print": 0.4917,
+       "share_pool": 0.5083,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:ST_CHP": {
+       "gas_capacity_gw": 0.134,
+       "share_own_print": 0.5422,
+       "share_pool": 0.4578,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Plains:ST_GAS": {
+       "gas_capacity_gw": 0.369,
+       "share_own_print": 0.6101,
+       "share_pool": 0.3899,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.3069,
+       "inc_capw_pool": 0.3069,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.3069
+      },
+      "MISO-Illinois:CC_REGULAR": {
+       "gas_capacity_gw": 0.617,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Illinois:CT_CHP": {
+       "gas_capacity_gw": 0.013,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Illinois:CT_PEAKER": {
+       "gas_capacity_gw": 3.254,
+       "share_own_print": 0.5783,
+       "share_pool": 0.4217,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2599,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.26
+      },
+      "MISO-Illinois:ST_CHP": {
+       "gas_capacity_gw": 0.038,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-Illinois:ST_GAS": {
+       "gas_capacity_gw": 0.002,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:CC_CHP": {
+       "gas_capacity_gw": 1.724,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:CC_REGULAR": {
+       "gas_capacity_gw": 5.795,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:CT_CHP": {
+       "gas_capacity_gw": 0.141,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:CT_PEAKER": {
+       "gas_capacity_gw": 6.726,
+       "share_own_print": 0.7341,
+       "share_pool": 0.2659,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:ST_CHP": {
+       "gas_capacity_gw": 0.231,
+       "share_own_print": 0.7429,
+       "share_pool": 0.2571,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      },
+      "MISO-East:ST_GAS": {
+       "gas_capacity_gw": 2.08,
+       "share_own_print": 0.954,
+       "share_pool": 0.046,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.2601,
+       "inc_capw_pool": -0.2601,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.2601
+      }
+     }
+    }
+   },
+   "L2": {
+    "SHOULDER": {
+     "hours_real_s2n": 65,
+     "hh_spot_mean": 2.4151,
+     "South": {
+      "own_print_plants": 30,
+      "own_print_capw_gw": 15.719,
+      "own_print_minus_hh": {
+       "p10": -0.0926,
+       "p50": 0.1711,
+       "p90": 0.6339
+      },
+      "own_print_minus_hh_capw_mean": 0.25,
+      "pool_plants": 55,
+      "pool_capw_gw": 5.07,
+      "pool_minus_hh": {
+       "p10": 0.1817,
+       "p50": 0.2199,
+       "p90": 0.7033
+      },
+      "pool_minus_hh_capw_mean": 0.3388,
+      "basis_increment_received_capw": 0.1429
+     },
+     "Midwest": {
+      "own_print_plants": 70,
+      "own_print_capw_gw": 23.653,
+      "own_print_minus_hh": {
+       "p10": -0.0616,
+       "p50": 0.5974,
+       "p90": 3.2436
+      },
+      "own_print_minus_hh_capw_mean": 1.697,
+      "pool_plants": 166,
+      "pool_capw_gw": 8.071,
+      "pool_minus_hh": {
+       "p10": 0.3014,
+       "p50": 0.8846,
+       "p90": 1.9163
+      },
+      "pool_minus_hh_capw_mean": 1.0918,
+      "basis_increment_received_capw": -0.0973
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 10,
+     "hh_spot_mean": 2.456,
+     "South": {
+      "own_print_plants": 30,
+      "own_print_capw_gw": 15.707,
+      "own_print_minus_hh": {
+       "p10": -0.1077,
+       "p50": 0.1426,
+       "p90": 0.6422
+      },
+      "own_print_minus_hh_capw_mean": 0.2342,
+      "pool_plants": 54,
+      "pool_capw_gw": 4.993,
+      "pool_minus_hh": {
+       "p10": 0.1659,
+       "p50": 0.2188,
+       "p90": 0.7026
+      },
+      "pool_minus_hh_capw_mean": 0.3326,
+      "basis_increment_received_capw": 0.1429
+     },
+     "Midwest": {
+      "own_print_plants": 70,
+      "own_print_capw_gw": 23.499,
+      "own_print_minus_hh": {
+       "p10": -0.0955,
+       "p50": 0.6032,
+       "p90": 2.5269
+      },
+      "own_print_minus_hh_capw_mean": 1.6355,
+      "pool_plants": 166,
+      "pool_capw_gw": 8.078,
+      "pool_minus_hh": {
+       "p10": 0.2682,
+       "p50": 0.8512,
+       "p90": 1.8694
+      },
+      "pool_minus_hh_capw_mean": 1.0427,
+      "basis_increment_received_capw": -0.0968
+     }
+    }
+   },
+   "L3": {
+    "SHOULDER": {
+     "hours_real_s2n": 65,
+     "south_price_mean": 36.884,
+     "indiana_price_mean": 37.028,
+     "south": {
+      "base_econ_gw_mc_base": 16.35,
+      "idle_within_20_gw_mc_base": 3.953,
+      "arm_923_only_removed_delta_gw": 0.58,
+      "all_cells_removed_delta_gw_miso212b_analogue": 0.58,
+      "arm_over_all_ratio": 1.0,
+      "share_print_cells_capw": 1.0,
+      "inc_capw_print_cells": 0.1429,
+      "usd_per_mwh_removed_capw_print_cells": 1.286,
+      "implied_hr_capw_print_cells": 9.001,
+      "by_class": {
+       "CC_CHP": {
+        "base_econ_gw": 1.113,
+        "arm_delta_gw": 0.029,
+        "all_removed_delta_gw": 0.029
+       },
+       "CC_REGULAR": {
+        "base_econ_gw": 11.149,
+        "arm_delta_gw": 0.053,
+        "all_removed_delta_gw": 0.053
+       },
+       "CT_CHP": {
+        "base_econ_gw": 0.478,
+        "arm_delta_gw": 0.014,
+        "all_removed_delta_gw": 0.014
+       },
+       "CT_PEAKER": {
+        "base_econ_gw": 0.753,
+        "arm_delta_gw": 0.165,
+        "all_removed_delta_gw": 0.165
+       },
+       "ST_CHP": {
+        "base_econ_gw": 0.093,
+        "arm_delta_gw": 0.003,
+        "all_removed_delta_gw": 0.003
+       },
+       "ST_GAS": {
+        "base_econ_gw": 2.763,
+        "arm_delta_gw": 0.315,
+        "all_removed_delta_gw": 0.315
+       }
+      },
+      "by_band": {
+       "committed": {
+        "base_econ_gw": 6.894,
+        "arm_delta_gw": 0.157
+       },
+       "econ": {
+        "base_econ_gw": 9.279,
+        "arm_delta_gw": 0.368
+       },
+       "peak": {
+        "base_econ_gw": 0.177,
+        "arm_delta_gw": 0.055
+       }
+      }
+     },
+     "midwest": {
+      "base_econ_gw_own_zone_price": 18.211,
+      "arm_delta_gw_own_zone_price": -1.519,
+      "base_econ_gw_indiana_price": 18.211,
+      "arm_delta_gw_indiana_price": -1.519,
+      "by_zone": {
+       "MISO-East": {
+        "base_econ_gw": 9.485,
+        "arm_delta_gw_own_price": -1.064,
+        "inc_capw_print_cells": -0.2601,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Illinois": {
+        "base_econ_gw": 0.659,
+        "arm_delta_gw_own_price": -0.074,
+        "inc_capw_print_cells": -0.2601,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Indiana": {
+        "base_econ_gw": 4.272,
+        "arm_delta_gw_own_price": -0.683,
+        "inc_capw_print_cells": -0.2601,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Plains": {
+        "base_econ_gw": 1.723,
+        "arm_delta_gw_own_price": 0.037,
+        "inc_capw_print_cells": 0.3069,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-West": {
+        "base_econ_gw": 2.072,
+        "arm_delta_gw_own_price": 0.264,
+        "inc_capw_print_cells": 0.3069,
+        "share_print_cells_capw": 1.0
+       }
+      }
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 10,
+     "south_price_mean": 36.455,
+     "indiana_price_mean": 36.669,
+     "south": {
+      "base_econ_gw_mc_base": 16.283,
+      "idle_within_20_gw_mc_base": 3.971,
+      "arm_923_only_removed_delta_gw": 0.742,
+      "all_cells_removed_delta_gw_miso212b_analogue": 0.742,
+      "arm_over_all_ratio": 1.0,
+      "share_print_cells_capw": 1.0,
+      "inc_capw_print_cells": 0.1429,
+      "usd_per_mwh_removed_capw_print_cells": 1.283,
+      "implied_hr_capw_print_cells": 8.981,
+      "by_class": {
+       "CC_CHP": {
+        "base_econ_gw": 1.169,
+        "arm_delta_gw": 0.025,
+        "all_removed_delta_gw": 0.025
+       },
+       "CC_REGULAR": {
+        "base_econ_gw": 11.204,
+        "arm_delta_gw": 0.008,
+        "all_removed_delta_gw": 0.008
+       },
+       "CT_CHP": {
+        "base_econ_gw": 0.484,
+        "arm_delta_gw": 0.016,
+        "all_removed_delta_gw": 0.016
+       },
+       "CT_PEAKER": {
+        "base_econ_gw": 0.597,
+        "arm_delta_gw": 0.181,
+        "all_removed_delta_gw": 0.181
+       },
+       "ST_CHP": {
+        "base_econ_gw": 0.088,
+        "arm_delta_gw": 0.013,
+        "all_removed_delta_gw": 0.013
+       },
+       "ST_GAS": {
+        "base_econ_gw": 2.741,
+        "arm_delta_gw": 0.499,
+        "all_removed_delta_gw": 0.499
+       }
+      },
+      "by_band": {
+       "committed": {
+        "base_econ_gw": 6.93,
+        "arm_delta_gw": 0.178
+       },
+       "econ": {
+        "base_econ_gw": 9.204,
+        "arm_delta_gw": 0.508
+       },
+       "peak": {
+        "base_econ_gw": 0.149,
+        "arm_delta_gw": 0.056
+       }
+      }
+     },
+     "midwest": {
+      "base_econ_gw_own_zone_price": 18.347,
+      "arm_delta_gw_own_zone_price": -1.863,
+      "base_econ_gw_indiana_price": 18.347,
+      "arm_delta_gw_indiana_price": -1.863,
+      "by_zone": {
+       "MISO-East": {
+        "base_econ_gw": 9.614,
+        "arm_delta_gw_own_price": -1.324,
+        "inc_capw_print_cells": -0.2601,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Illinois": {
+        "base_econ_gw": 0.614,
+        "arm_delta_gw_own_price": -0.067,
+        "inc_capw_print_cells": -0.2601,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Indiana": {
+        "base_econ_gw": 4.264,
+        "arm_delta_gw_own_price": -0.782,
+        "inc_capw_print_cells": -0.2601,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Plains": {
+        "base_econ_gw": 1.79,
+        "arm_delta_gw_own_price": 0.002,
+        "inc_capw_print_cells": 0.3069,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-West": {
+        "base_econ_gw": 2.065,
+        "arm_delta_gw_own_price": 0.307,
+        "inc_capw_print_cells": 0.3069,
+        "share_print_cells_capw": 1.0
+       }
+      }
+     }
+    }
+   }
+  },
+  "2024": {
+   "n_gas_rows": 1445,
+   "n_gas_rows_carry": 1445,
+   "L1": {
+    "zone_spread_after_mean": {
+     "MISO-West": 0.0867,
+     "MISO-Plains": 0.0867,
+     "MISO-Illinois": -0.1503,
+     "MISO-Indiana": -0.1503,
+     "MISO-East": -0.1503,
+     "MISO-South": 0.1177
+    },
+    "capw_mean_removed": 0.2703,
+    "all_hours": {
+     "ISO": {
+      "gas_capacity_gw": 65.904,
+      "share_own_print": 0.7048,
+      "share_pool": 0.2952,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.0033,
+      "inc_capw_pool": 0.0085,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.0002
+     },
+     "MISO-West": {
+      "gas_capacity_gw": 6.411,
+      "share_own_print": 0.6338,
+      "share_pool": 0.3662,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.0866,
+      "inc_capw_pool": 0.0867,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.0866
+     },
+     "MISO-Plains": {
+      "gas_capacity_gw": 4.235,
+      "share_own_print": 0.6205,
+      "share_pool": 0.3795,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.0866,
+      "inc_capw_pool": 0.0864,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.0865
+     },
+     "MISO-Illinois": {
+      "gas_capacity_gw": 3.922,
+      "share_own_print": 0.5425,
+      "share_pool": 0.4575,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.1498,
+      "inc_capw_pool": -0.1493,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.1496
+     },
+     "MISO-Indiana": {
+      "gas_capacity_gw": 7.085,
+      "share_own_print": 0.8401,
+      "share_pool": 0.1599,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.1501,
+      "inc_capw_pool": -0.1499,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.15
+     },
+     "MISO-East": {
+      "gas_capacity_gw": 16.697,
+      "share_own_print": 0.7277,
+      "share_pool": 0.2723,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.1495,
+      "inc_capw_pool": -0.1503,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.1497
+     },
+     "MISO-South": {
+      "gas_capacity_gw": 27.554,
+      "share_own_print": 0.7087,
+      "share_pool": 0.2913,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.1176,
+      "inc_capw_pool": 0.1176,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.1176
+     },
+     "by_class": {
+      "CC_CHP": {
+       "gas_capacity_gw": 3.621,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0364,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0364
+      },
+      "CC_REGULAR": {
+       "gas_capacity_gw": 27.42,
+       "share_own_print": 0.8708,
+       "share_pool": 0.1292,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0202,
+       "inc_capw_pool": 0.0964,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0301
+      },
+      "CT_CHP": {
+       "gas_capacity_gw": 0.896,
+       "share_own_print": 0.0852,
+       "share_pool": 0.9148,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1177,
+       "inc_capw_pool": 0.0413,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0478
+      },
+      "CT_PEAKER": {
+       "gas_capacity_gw": 22.282,
+       "share_own_print": 0.6253,
+       "share_pool": 0.3747,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0667,
+       "inc_capw_pool": -0.0269,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0518
+      },
+      "ST_CHP": {
+       "gas_capacity_gw": 0.698,
+       "share_own_print": 0.4372,
+       "share_pool": 0.5628,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0465,
+       "inc_capw_pool": 0.0107,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0143
+      },
+      "ST_GAS": {
+       "gas_capacity_gw": 10.987,
+       "share_own_print": 0.7515,
+       "share_pool": 0.2485,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0362,
+       "inc_capw_pool": 0.0519,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0401
+      }
+     },
+     "by_zone_class": {
+      "MISO-South:CC_CHP": {
+       "gas_capacity_gw": 1.355,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:CC_REGULAR": {
+       "gas_capacity_gw": 14.963,
+       "share_own_print": 0.8323,
+       "share_pool": 0.1677,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1177,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:CT_CHP": {
+       "gas_capacity_gw": 0.594,
+       "share_own_print": 0.1284,
+       "share_pool": 0.8716,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1177,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:CT_PEAKER": {
+       "gas_capacity_gw": 3.143,
+       "share_own_print": 0.4565,
+       "share_pool": 0.5435,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1175,
+       "inc_capw_pool": 0.1176,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1176
+      },
+      "MISO-South:ST_CHP": {
+       "gas_capacity_gw": 0.133,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:ST_GAS": {
+       "gas_capacity_gw": 7.365,
+       "share_own_print": 0.7552,
+       "share_pool": 0.2448,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1174,
+       "inc_capw_pool": 0.1173,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1174
+      },
+      "MISO-Indiana:CC_CHP": {
+       "gas_capacity_gw": 0.333,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:CC_REGULAR": {
+       "gas_capacity_gw": 2.094,
+       "share_own_print": 0.9698,
+       "share_pool": 0.0302,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:CT_CHP": {
+       "gas_capacity_gw": 0.072,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:CT_PEAKER": {
+       "gas_capacity_gw": 3.466,
+       "share_own_print": 0.8334,
+       "share_pool": 0.1666,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1498,
+       "inc_capw_pool": -0.1495,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1497
+      },
+      "MISO-Indiana:ST_CHP": {
+       "gas_capacity_gw": 0.046,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:ST_GAS": {
+       "gas_capacity_gw": 1.075,
+       "share_own_print": 0.9617,
+       "share_pool": 0.0383,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-West:CC_CHP": {
+       "gas_capacity_gw": 0.178,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:CC_REGULAR": {
+       "gas_capacity_gw": 2.313,
+       "share_own_print": 0.6516,
+       "share_pool": 0.3484,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:CT_CHP": {
+       "gas_capacity_gw": 0.043,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:CT_PEAKER": {
+       "gas_capacity_gw": 3.663,
+       "share_own_print": 0.6812,
+       "share_pool": 0.3188,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0865,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0866
+      },
+      "MISO-West:ST_CHP": {
+       "gas_capacity_gw": 0.116,
+       "share_own_print": 0.5266,
+       "share_pool": 0.4734,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:ST_GAS": {
+       "gas_capacity_gw": 0.098,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:CC_CHP": {
+       "gas_capacity_gw": 0.03,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:CC_REGULAR": {
+       "gas_capacity_gw": 1.637,
+       "share_own_print": 0.9729,
+       "share_pool": 0.0271,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:CT_CHP": {
+       "gas_capacity_gw": 0.034,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:CT_PEAKER": {
+       "gas_capacity_gw": 2.03,
+       "share_own_print": 0.3888,
+       "share_pool": 0.6112,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0865,
+       "inc_capw_pool": 0.0863,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0864
+      },
+      "MISO-Plains:ST_CHP": {
+       "gas_capacity_gw": 0.134,
+       "share_own_print": 0.5422,
+       "share_pool": 0.4578,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0864,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0865
+      },
+      "MISO-Plains:ST_GAS": {
+       "gas_capacity_gw": 0.369,
+       "share_own_print": 0.4689,
+       "share_pool": 0.5311,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Illinois:CC_REGULAR": {
+       "gas_capacity_gw": 0.617,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Illinois:CT_CHP": {
+       "gas_capacity_gw": 0.013,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Illinois:CT_PEAKER": {
+       "gas_capacity_gw": 3.254,
+       "share_own_print": 0.4642,
+       "share_pool": 0.5358,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1496,
+       "inc_capw_pool": -0.1493,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1495
+      },
+      "MISO-Illinois:ST_CHP": {
+       "gas_capacity_gw": 0.038,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:CC_CHP": {
+       "gas_capacity_gw": 1.724,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:CC_REGULAR": {
+       "gas_capacity_gw": 5.795,
+       "share_own_print": 0.9794,
+       "share_pool": 0.0206,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:CT_CHP": {
+       "gas_capacity_gw": 0.141,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:CT_PEAKER": {
+       "gas_capacity_gw": 6.726,
+       "share_own_print": 0.7157,
+       "share_pool": 0.2843,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1502,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1502
+      },
+      "MISO-East:ST_CHP": {
+       "gas_capacity_gw": 0.231,
+       "share_own_print": 0.7429,
+       "share_pool": 0.2571,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:ST_GAS": {
+       "gas_capacity_gw": 2.08,
+       "share_own_print": 0.7154,
+       "share_pool": 0.2846,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.144,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1458
+      }
+     }
+    },
+    "jun_jul": {
+     "ISO": {
+      "gas_capacity_gw": 65.904,
+      "share_own_print": 0.7377,
+      "share_pool": 0.2623,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.0037,
+      "inc_capw_pool": 0.0105,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.0
+     },
+     "MISO-West": {
+      "gas_capacity_gw": 6.411,
+      "share_own_print": 0.6432,
+      "share_pool": 0.3568,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.0867,
+      "inc_capw_pool": 0.0867,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.0867
+     },
+     "MISO-Plains": {
+      "gas_capacity_gw": 4.235,
+      "share_own_print": 0.6926,
+      "share_pool": 0.3074,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.0867,
+      "inc_capw_pool": 0.0867,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.0867
+     },
+     "MISO-Illinois": {
+      "gas_capacity_gw": 3.922,
+      "share_own_print": 0.557,
+      "share_pool": 0.443,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.1503,
+      "inc_capw_pool": -0.1503,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.1503
+     },
+     "MISO-Indiana": {
+      "gas_capacity_gw": 7.085,
+      "share_own_print": 0.8671,
+      "share_pool": 0.1329,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.1503,
+      "inc_capw_pool": -0.1503,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.1503
+     },
+     "MISO-East": {
+      "gas_capacity_gw": 16.697,
+      "share_own_print": 0.7714,
+      "share_pool": 0.2286,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.1503,
+      "inc_capw_pool": -0.1503,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.1503
+     },
+     "MISO-South": {
+      "gas_capacity_gw": 27.554,
+      "share_own_print": 0.7387,
+      "share_pool": 0.2613,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.1177,
+      "inc_capw_pool": 0.1177,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.1177
+     },
+     "by_class": {
+      "CC_CHP": {
+       "gas_capacity_gw": 3.621,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0364,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0364
+      },
+      "CC_REGULAR": {
+       "gas_capacity_gw": 27.42,
+       "share_own_print": 0.8992,
+       "share_pool": 0.1008,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0212,
+       "inc_capw_pool": 0.1091,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0301
+      },
+      "CT_CHP": {
+       "gas_capacity_gw": 0.896,
+       "share_own_print": 0.0852,
+       "share_pool": 0.9148,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1177,
+       "inc_capw_pool": 0.0413,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0478
+      },
+      "CT_PEAKER": {
+       "gas_capacity_gw": 22.282,
+       "share_own_print": 0.653,
+       "share_pool": 0.347,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0643,
+       "inc_capw_pool": -0.0288,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.052
+      },
+      "ST_CHP": {
+       "gas_capacity_gw": 0.698,
+       "share_own_print": 0.4372,
+       "share_pool": 0.5628,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0465,
+       "inc_capw_pool": 0.0107,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0143
+      },
+      "ST_GAS": {
+       "gas_capacity_gw": 10.987,
+       "share_own_print": 0.8219,
+       "share_pool": 0.1781,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0262,
+       "inc_capw_pool": 0.1004,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0394
+      }
+     },
+     "by_zone_class": {
+      "MISO-South:CC_CHP": {
+       "gas_capacity_gw": 1.355,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:CC_REGULAR": {
+       "gas_capacity_gw": 14.963,
+       "share_own_print": 0.8662,
+       "share_pool": 0.1338,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1177,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:CT_CHP": {
+       "gas_capacity_gw": 0.594,
+       "share_own_print": 0.1284,
+       "share_pool": 0.8716,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1177,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:CT_PEAKER": {
+       "gas_capacity_gw": 3.143,
+       "share_own_print": 0.4992,
+       "share_pool": 0.5008,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1177,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:ST_CHP": {
+       "gas_capacity_gw": 0.133,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-South:ST_GAS": {
+       "gas_capacity_gw": 7.365,
+       "share_own_print": 0.7805,
+       "share_pool": 0.2195,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.1177,
+       "inc_capw_pool": 0.1177,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1177
+      },
+      "MISO-Indiana:CC_CHP": {
+       "gas_capacity_gw": 0.333,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:CC_REGULAR": {
+       "gas_capacity_gw": 2.094,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:CT_CHP": {
+       "gas_capacity_gw": 0.072,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:CT_PEAKER": {
+       "gas_capacity_gw": 3.466,
+       "share_own_print": 0.8592,
+       "share_pool": 0.1408,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:ST_CHP": {
+       "gas_capacity_gw": 0.046,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Indiana:ST_GAS": {
+       "gas_capacity_gw": 1.075,
+       "share_own_print": 0.9976,
+       "share_pool": 0.0024,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-West:CC_CHP": {
+       "gas_capacity_gw": 0.178,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:CC_REGULAR": {
+       "gas_capacity_gw": 2.313,
+       "share_own_print": 0.6711,
+       "share_pool": 0.3289,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:CT_CHP": {
+       "gas_capacity_gw": 0.043,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:CT_PEAKER": {
+       "gas_capacity_gw": 3.663,
+       "share_own_print": 0.6853,
+       "share_pool": 0.3147,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:ST_CHP": {
+       "gas_capacity_gw": 0.116,
+       "share_own_print": 0.5266,
+       "share_pool": 0.4734,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-West:ST_GAS": {
+       "gas_capacity_gw": 0.098,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:CC_CHP": {
+       "gas_capacity_gw": 0.03,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:CC_REGULAR": {
+       "gas_capacity_gw": 1.637,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:CT_CHP": {
+       "gas_capacity_gw": 0.034,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:CT_PEAKER": {
+       "gas_capacity_gw": 2.03,
+       "share_own_print": 0.4917,
+       "share_pool": 0.5083,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:ST_CHP": {
+       "gas_capacity_gw": 0.134,
+       "share_own_print": 0.5422,
+       "share_pool": 0.4578,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Plains:ST_GAS": {
+       "gas_capacity_gw": 0.369,
+       "share_own_print": 0.6101,
+       "share_pool": 0.3899,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0867,
+       "inc_capw_pool": 0.0867,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0867
+      },
+      "MISO-Illinois:CC_REGULAR": {
+       "gas_capacity_gw": 0.617,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Illinois:CT_CHP": {
+       "gas_capacity_gw": 0.013,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Illinois:CT_PEAKER": {
+       "gas_capacity_gw": 3.254,
+       "share_own_print": 0.4816,
+       "share_pool": 0.5184,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-Illinois:ST_CHP": {
+       "gas_capacity_gw": 0.038,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:CC_CHP": {
+       "gas_capacity_gw": 1.724,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:CC_REGULAR": {
+       "gas_capacity_gw": 5.795,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:CT_CHP": {
+       "gas_capacity_gw": 0.141,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:CT_PEAKER": {
+       "gas_capacity_gw": 6.726,
+       "share_own_print": 0.7327,
+       "share_pool": 0.2673,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:ST_CHP": {
+       "gas_capacity_gw": 0.231,
+       "share_own_print": 0.7429,
+       "share_pool": 0.2571,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      },
+      "MISO-East:ST_GAS": {
+       "gas_capacity_gw": 2.08,
+       "share_own_print": 0.954,
+       "share_pool": 0.046,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1503,
+       "inc_capw_pool": -0.1503,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1503
+      }
+     }
+    }
+   },
+   "L2": {
+    "SHOULDER": {
+     "hours_real_s2n": 190,
+     "hh_spot_mean": 2.2034,
+     "South": {
+      "own_print_plants": 28,
+      "own_print_capw_gw": 15.378,
+      "own_print_minus_hh": {
+       "p10": -0.1985,
+       "p50": 0.2171,
+       "p90": 0.5631
+      },
+      "own_print_minus_hh_capw_mean": 0.546,
+      "pool_plants": 56,
+      "pool_capw_gw": 4.772,
+      "pool_minus_hh": {
+       "p10": 0.0741,
+       "p50": 0.3461,
+       "p90": 0.7303
+      },
+      "pool_minus_hh_capw_mean": 0.4209,
+      "basis_increment_received_capw": 0.1177
+     },
+     "Midwest": {
+      "own_print_plants": 69,
+      "own_print_capw_gw": 23.66,
+      "own_print_minus_hh": {
+       "p10": -0.168,
+       "p50": 0.3847,
+       "p90": 1.535
+      },
+      "own_print_minus_hh_capw_mean": 1.1171,
+      "pool_plants": 170,
+      "pool_capw_gw": 8.297,
+      "pool_minus_hh": {
+       "p10": -0.0505,
+       "p50": 0.4582,
+       "p90": 1.6262
+      },
+      "pool_minus_hh_capw_mean": 0.6914,
+      "basis_increment_received_capw": -0.0839
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 5,
+     "hh_spot_mean": 2.396,
+     "South": {
+      "own_print_plants": 27,
+      "own_print_capw_gw": 14.468,
+      "own_print_minus_hh": {
+       "p10": -0.2219,
+       "p50": 0.1216,
+       "p90": 0.6644
+      },
+      "own_print_minus_hh_capw_mean": 0.3332,
+      "pool_plants": 56,
+      "pool_capw_gw": 4.996,
+      "pool_minus_hh": {
+       "p10": 0.045,
+       "p50": 0.1914,
+       "p90": 0.7991
+      },
+      "pool_minus_hh_capw_mean": 0.3689,
+      "basis_increment_received_capw": 0.1177
+     },
+     "Midwest": {
+      "own_print_plants": 69,
+      "own_print_capw_gw": 23.207,
+      "own_print_minus_hh": {
+       "p10": -0.25,
+       "p50": 0.2453,
+       "p90": 1.3056
+      },
+      "own_print_minus_hh_capw_mean": 1.3541,
+      "pool_plants": 170,
+      "pool_capw_gw": 8.497,
+      "pool_minus_hh": {
+       "p10": -0.133,
+       "p50": 0.3588,
+       "p90": 1.4847
+      },
+      "pool_minus_hh_capw_mean": 0.6829,
+      "basis_increment_received_capw": -0.084
+     }
+    }
+   },
+   "L3": {
+    "SHOULDER": {
+     "hours_real_s2n": 190,
+     "south_price_mean": 35.405,
+     "indiana_price_mean": 35.402,
+     "south": {
+      "base_econ_gw_mc_base": 15.663,
+      "idle_within_20_gw_mc_base": 3.642,
+      "arm_923_only_removed_delta_gw": 0.448,
+      "all_cells_removed_delta_gw_miso212b_analogue": 0.448,
+      "arm_over_all_ratio": 1.0,
+      "share_print_cells_capw": 1.0,
+      "inc_capw_print_cells": 0.1177,
+      "usd_per_mwh_removed_capw_print_cells": 1.058,
+      "implied_hr_capw_print_cells": 8.992,
+      "by_class": {
+       "CC_CHP": {
+        "base_econ_gw": 1.138,
+        "arm_delta_gw": 0.018,
+        "all_removed_delta_gw": 0.018
+       },
+       "CC_REGULAR": {
+        "base_econ_gw": 10.925,
+        "arm_delta_gw": 0.073,
+        "all_removed_delta_gw": 0.073
+       },
+       "CT_CHP": {
+        "base_econ_gw": 0.474,
+        "arm_delta_gw": 0.01,
+        "all_removed_delta_gw": 0.01
+       },
+       "CT_PEAKER": {
+        "base_econ_gw": 0.794,
+        "arm_delta_gw": 0.126,
+        "all_removed_delta_gw": 0.126
+       },
+       "ST_CHP": {
+        "base_econ_gw": 0.091,
+        "arm_delta_gw": 0.003,
+        "all_removed_delta_gw": 0.003
+       },
+       "ST_GAS": {
+        "base_econ_gw": 2.242,
+        "arm_delta_gw": 0.218,
+        "all_removed_delta_gw": 0.218
+       }
+      },
+      "by_band": {
+       "committed": {
+        "base_econ_gw": 6.461,
+        "arm_delta_gw": 0.094
+       },
+       "econ": {
+        "base_econ_gw": 9.072,
+        "arm_delta_gw": 0.281
+       },
+       "peak": {
+        "base_econ_gw": 0.131,
+        "arm_delta_gw": 0.074
+       }
+      }
+     },
+     "midwest": {
+      "base_econ_gw_own_zone_price": 19.959,
+      "arm_delta_gw_own_zone_price": -0.645,
+      "base_econ_gw_indiana_price": 19.959,
+      "arm_delta_gw_indiana_price": -0.645,
+      "by_zone": {
+       "MISO-East": {
+        "base_econ_gw": 11.421,
+        "arm_delta_gw_own_price": -0.459,
+        "inc_capw_print_cells": -0.1503,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Illinois": {
+        "base_econ_gw": 0.733,
+        "arm_delta_gw_own_price": -0.066,
+        "inc_capw_print_cells": -0.1503,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Indiana": {
+        "base_econ_gw": 3.241,
+        "arm_delta_gw_own_price": -0.243,
+        "inc_capw_print_cells": -0.1503,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Plains": {
+        "base_econ_gw": 1.588,
+        "arm_delta_gw_own_price": 0.007,
+        "inc_capw_print_cells": 0.0867,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-West": {
+        "base_econ_gw": 2.977,
+        "arm_delta_gw_own_price": 0.117,
+        "inc_capw_print_cells": 0.0867,
+        "share_print_cells_capw": 1.0
+       }
+      }
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 5,
+     "south_price_mean": 36.962,
+     "indiana_price_mean": 36.962,
+     "south": {
+      "base_econ_gw_mc_base": 15.015,
+      "idle_within_20_gw_mc_base": 3.799,
+      "arm_923_only_removed_delta_gw": 0.479,
+      "all_cells_removed_delta_gw_miso212b_analogue": 0.479,
+      "arm_over_all_ratio": 1.0,
+      "share_print_cells_capw": 1.0,
+      "inc_capw_print_cells": 0.1177,
+      "usd_per_mwh_removed_capw_print_cells": 1.06,
+      "implied_hr_capw_print_cells": 9.012,
+      "by_class": {
+       "CC_CHP": {
+        "base_econ_gw": 1.173,
+        "arm_delta_gw": 0.0,
+        "all_removed_delta_gw": 0.0
+       },
+       "CC_REGULAR": {
+        "base_econ_gw": 10.335,
+        "arm_delta_gw": 0.085,
+        "all_removed_delta_gw": 0.085
+       },
+       "CT_CHP": {
+        "base_econ_gw": 0.492,
+        "arm_delta_gw": 0.013,
+        "all_removed_delta_gw": 0.013
+       },
+       "CT_PEAKER": {
+        "base_econ_gw": 0.672,
+        "arm_delta_gw": 0.068,
+        "all_removed_delta_gw": 0.068
+       },
+       "ST_CHP": {
+        "base_econ_gw": 0.105,
+        "arm_delta_gw": 0.0,
+        "all_removed_delta_gw": 0.0
+       },
+       "ST_GAS": {
+        "base_econ_gw": 2.238,
+        "arm_delta_gw": 0.313,
+        "all_removed_delta_gw": 0.313
+       }
+      },
+      "by_band": {
+       "committed": {
+        "base_econ_gw": 6.213,
+        "arm_delta_gw": 0.117
+       },
+       "econ": {
+        "base_econ_gw": 8.771,
+        "arm_delta_gw": 0.236
+       },
+       "peak": {
+        "base_econ_gw": 0.031,
+        "arm_delta_gw": 0.125
+       }
+      }
+     },
+     "midwest": {
+      "base_econ_gw_own_zone_price": 20.068,
+      "arm_delta_gw_own_zone_price": -0.57,
+      "base_econ_gw_indiana_price": 20.068,
+      "arm_delta_gw_indiana_price": -0.57,
+      "by_zone": {
+       "MISO-East": {
+        "base_econ_gw": 11.577,
+        "arm_delta_gw_own_price": -0.306,
+        "inc_capw_print_cells": -0.1503,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Illinois": {
+        "base_econ_gw": 0.683,
+        "arm_delta_gw_own_price": -0.102,
+        "inc_capw_print_cells": -0.1503,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Indiana": {
+        "base_econ_gw": 3.427,
+        "arm_delta_gw_own_price": -0.33,
+        "inc_capw_print_cells": -0.1503,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Plains": {
+        "base_econ_gw": 1.577,
+        "arm_delta_gw_own_price": 0.006,
+        "inc_capw_print_cells": 0.0867,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-West": {
+        "base_econ_gw": 2.804,
+        "arm_delta_gw_own_price": 0.162,
+        "inc_capw_print_cells": 0.0867,
+        "share_print_cells_capw": 1.0
+       }
+      }
+     }
+    }
+   }
+  },
+  "2025": {
+   "n_gas_rows": 1445,
+   "n_gas_rows_carry": 1445,
+   "L1": {
+    "zone_spread_after_mean": {
+     "MISO-West": -0.6415,
+     "MISO-Plains": -0.6415,
+     "MISO-Illinois": -0.0385,
+     "MISO-Indiana": -0.0385,
+     "MISO-East": -0.0385,
+     "MISO-South": 0.2865
+    },
+    "capw_mean_removed": 0.0565,
+    "all_hours": {
+     "ISO": {
+      "gas_capacity_gw": 65.904,
+      "share_own_print": 0.7135,
+      "share_pool": 0.2865,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.0121,
+      "inc_capw_pool": -0.0296,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.0001
+     },
+     "MISO-West": {
+      "gas_capacity_gw": 6.411,
+      "share_own_print": 0.5964,
+      "share_pool": 0.4036,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.6415,
+      "inc_capw_pool": -0.6415,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.6415
+     },
+     "MISO-Plains": {
+      "gas_capacity_gw": 4.235,
+      "share_own_print": 0.6551,
+      "share_pool": 0.3449,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.6415,
+      "inc_capw_pool": -0.6415,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.6415
+     },
+     "MISO-Illinois": {
+      "gas_capacity_gw": 3.922,
+      "share_own_print": 0.6213,
+      "share_pool": 0.3787,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.0374,
+      "inc_capw_pool": -0.0383,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.0377
+     },
+     "MISO-Indiana": {
+      "gas_capacity_gw": 7.085,
+      "share_own_print": 0.8579,
+      "share_pool": 0.1421,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.0385,
+      "inc_capw_pool": -0.0385,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.0385
+     },
+     "MISO-East": {
+      "gas_capacity_gw": 16.697,
+      "share_own_print": 0.7416,
+      "share_pool": 0.2584,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.038,
+      "inc_capw_pool": -0.0385,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.0382
+     },
+     "MISO-South": {
+      "gas_capacity_gw": 27.554,
+      "share_own_print": 0.7088,
+      "share_pool": 0.2912,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.2865,
+      "inc_capw_pool": 0.2865,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.2865
+     },
+     "by_class": {
+      "CC_CHP": {
+       "gas_capacity_gw": 3.621,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0484,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0484
+      },
+      "CC_REGULAR": {
+       "gas_capacity_gw": 27.42,
+       "share_own_print": 0.8687,
+       "share_pool": 0.1313,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0608,
+       "inc_capw_pool": -0.0062,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.052
+      },
+      "CT_CHP": {
+       "gas_capacity_gw": 0.896,
+       "share_own_print": 0.0782,
+       "share_pool": 0.9218,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.1115,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1252
+      },
+      "CT_PEAKER": {
+       "gas_capacity_gw": 22.282,
+       "share_own_print": 0.6584,
+       "share_pool": 0.3416,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1469,
+       "inc_capw_pool": -0.1459,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1466
+      },
+      "ST_CHP": {
+       "gas_capacity_gw": 0.698,
+       "share_own_print": 0.4372,
+       "share_pool": 0.5628,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.3027,
+       "inc_capw_pool": -0.1067,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1924
+      },
+      "ST_GAS": {
+       "gas_capacity_gw": 10.987,
+       "share_own_print": 0.7426,
+       "share_pool": 0.2574,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.165,
+       "inc_capw_pool": 0.1232,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1543
+      }
+     },
+     "by_zone_class": {
+      "MISO-South:CC_CHP": {
+       "gas_capacity_gw": 1.355,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:CC_REGULAR": {
+       "gas_capacity_gw": 14.963,
+       "share_own_print": 0.8446,
+       "share_pool": 0.1554,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:CT_CHP": {
+       "gas_capacity_gw": 0.594,
+       "share_own_print": 0.1179,
+       "share_pool": 0.8821,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:CT_PEAKER": {
+       "gas_capacity_gw": 3.143,
+       "share_own_print": 0.4992,
+       "share_pool": 0.5008,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:ST_CHP": {
+       "gas_capacity_gw": 0.133,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:ST_GAS": {
+       "gas_capacity_gw": 7.365,
+       "share_own_print": 0.7131,
+       "share_pool": 0.2869,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-Indiana:CC_CHP": {
+       "gas_capacity_gw": 0.333,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:CC_REGULAR": {
+       "gas_capacity_gw": 2.094,
+       "share_own_print": 0.976,
+       "share_pool": 0.024,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:CT_CHP": {
+       "gas_capacity_gw": 0.072,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:CT_PEAKER": {
+       "gas_capacity_gw": 3.466,
+       "share_own_print": 0.8649,
+       "share_pool": 0.1351,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:ST_CHP": {
+       "gas_capacity_gw": 0.046,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:ST_GAS": {
+       "gas_capacity_gw": 1.075,
+       "share_own_print": 0.9652,
+       "share_pool": 0.0348,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-West:CC_CHP": {
+       "gas_capacity_gw": 0.178,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:CC_REGULAR": {
+       "gas_capacity_gw": 2.313,
+       "share_own_print": 0.5415,
+       "share_pool": 0.4585,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:CT_CHP": {
+       "gas_capacity_gw": 0.043,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:CT_PEAKER": {
+       "gas_capacity_gw": 3.663,
+       "share_own_print": 0.6853,
+       "share_pool": 0.3147,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:ST_CHP": {
+       "gas_capacity_gw": 0.116,
+       "share_own_print": 0.5266,
+       "share_pool": 0.4734,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:ST_GAS": {
+       "gas_capacity_gw": 0.098,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:CC_CHP": {
+       "gas_capacity_gw": 0.03,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:CC_REGULAR": {
+       "gas_capacity_gw": 1.637,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:CT_CHP": {
+       "gas_capacity_gw": 0.034,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:CT_PEAKER": {
+       "gas_capacity_gw": 2.03,
+       "share_own_print": 0.4819,
+       "share_pool": 0.5181,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:ST_CHP": {
+       "gas_capacity_gw": 0.134,
+       "share_own_print": 0.5422,
+       "share_pool": 0.4578,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:ST_GAS": {
+       "gas_capacity_gw": 0.369,
+       "share_own_print": 0.2329,
+       "share_pool": 0.7671,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Illinois:CC_REGULAR": {
+       "gas_capacity_gw": 0.617,
+       "share_own_print": 0.9178,
+       "share_pool": 0.0822,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Illinois:CT_CHP": {
+       "gas_capacity_gw": 0.013,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Illinois:CT_PEAKER": {
+       "gas_capacity_gw": 3.254,
+       "share_own_print": 0.5748,
+       "share_pool": 0.4252,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.037,
+       "inc_capw_pool": -0.0383,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0376
+      },
+      "MISO-Illinois:ST_CHP": {
+       "gas_capacity_gw": 0.038,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:CC_CHP": {
+       "gas_capacity_gw": 1.724,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:CC_REGULAR": {
+       "gas_capacity_gw": 5.795,
+       "share_own_print": 0.9805,
+       "share_pool": 0.0195,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:CT_CHP": {
+       "gas_capacity_gw": 0.141,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:CT_PEAKER": {
+       "gas_capacity_gw": 6.726,
+       "share_own_print": 0.7053,
+       "share_pool": 0.2947,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:ST_CHP": {
+       "gas_capacity_gw": 0.231,
+       "share_own_print": 0.7429,
+       "share_pool": 0.2571,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:ST_GAS": {
+       "gas_capacity_gw": 2.08,
+       "share_own_print": 0.8576,
+       "share_pool": 0.1424,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0355,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0359
+      }
+     }
+    },
+    "jun_jul": {
+     "ISO": {
+      "gas_capacity_gw": 65.904,
+      "share_own_print": 0.7399,
+      "share_pool": 0.2601,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.0185,
+      "inc_capw_pool": -0.0527,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.0
+     },
+     "MISO-West": {
+      "gas_capacity_gw": 6.411,
+      "share_own_print": 0.5724,
+      "share_pool": 0.4276,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.6415,
+      "inc_capw_pool": -0.6415,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.6415
+     },
+     "MISO-Plains": {
+      "gas_capacity_gw": 4.235,
+      "share_own_print": 0.6797,
+      "share_pool": 0.3203,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.6415,
+      "inc_capw_pool": -0.6415,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.6415
+     },
+     "MISO-Illinois": {
+      "gas_capacity_gw": 3.922,
+      "share_own_print": 0.6372,
+      "share_pool": 0.3628,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.0385,
+      "inc_capw_pool": -0.0385,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.0385
+     },
+     "MISO-Indiana": {
+      "gas_capacity_gw": 7.085,
+      "share_own_print": 0.873,
+      "share_pool": 0.127,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.0385,
+      "inc_capw_pool": -0.0385,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.0385
+     },
+     "MISO-East": {
+      "gas_capacity_gw": 16.697,
+      "share_own_print": 0.7686,
+      "share_pool": 0.2314,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": -0.0385,
+      "inc_capw_pool": -0.0385,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": -0.0385
+     },
+     "MISO-South": {
+      "gas_capacity_gw": 27.554,
+      "share_own_print": 0.7512,
+      "share_pool": 0.2488,
+      "share_trajectory": 0.0,
+      "inc_capw_own_print": 0.2865,
+      "inc_capw_pool": 0.2865,
+      "inc_capw_trajectory": NaN,
+      "inc_capw_all": 0.2865
+     },
+     "by_class": {
+      "CC_CHP": {
+       "gas_capacity_gw": 3.621,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.0484,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.0484
+      },
+      "CC_REGULAR": {
+       "gas_capacity_gw": 27.42,
+       "share_own_print": 0.8827,
+       "share_pool": 0.1173,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.0674,
+       "inc_capw_pool": -0.064,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.052
+      },
+      "CT_CHP": {
+       "gas_capacity_gw": 0.896,
+       "share_own_print": 0.0852,
+       "share_pool": 0.9148,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.1102,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1252
+      },
+      "CT_PEAKER": {
+       "gas_capacity_gw": 22.282,
+       "share_own_print": 0.6669,
+       "share_pool": 0.3331,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.1465,
+       "inc_capw_pool": -0.1471,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1467
+      },
+      "ST_CHP": {
+       "gas_capacity_gw": 0.698,
+       "share_own_print": 0.4372,
+       "share_pool": 0.5628,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.3027,
+       "inc_capw_pool": -0.1067,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.1924
+      },
+      "ST_GAS": {
+       "gas_capacity_gw": 10.987,
+       "share_own_print": 0.8483,
+       "share_pool": 0.1517,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.163,
+       "inc_capw_pool": 0.1024,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.1538
+      }
+     },
+     "by_zone_class": {
+      "MISO-South:CC_CHP": {
+       "gas_capacity_gw": 1.355,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:CC_REGULAR": {
+       "gas_capacity_gw": 14.963,
+       "share_own_print": 0.8662,
+       "share_pool": 0.1338,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:CT_CHP": {
+       "gas_capacity_gw": 0.594,
+       "share_own_print": 0.1284,
+       "share_pool": 0.8716,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:CT_PEAKER": {
+       "gas_capacity_gw": 3.143,
+       "share_own_print": 0.4992,
+       "share_pool": 0.5008,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:ST_CHP": {
+       "gas_capacity_gw": 0.133,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-South:ST_GAS": {
+       "gas_capacity_gw": 7.365,
+       "share_own_print": 0.8273,
+       "share_pool": 0.1727,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": 0.2865,
+       "inc_capw_pool": 0.2865,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": 0.2865
+      },
+      "MISO-Indiana:CC_CHP": {
+       "gas_capacity_gw": 0.333,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:CC_REGULAR": {
+       "gas_capacity_gw": 2.094,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:CT_CHP": {
+       "gas_capacity_gw": 0.072,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:CT_PEAKER": {
+       "gas_capacity_gw": 3.466,
+       "share_own_print": 0.8711,
+       "share_pool": 0.1289,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:ST_CHP": {
+       "gas_capacity_gw": 0.046,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Indiana:ST_GAS": {
+       "gas_capacity_gw": 1.075,
+       "share_own_print": 0.9976,
+       "share_pool": 0.0024,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-West:CC_CHP": {
+       "gas_capacity_gw": 0.178,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:CC_REGULAR": {
+       "gas_capacity_gw": 2.313,
+       "share_own_print": 0.4748,
+       "share_pool": 0.5252,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:CT_CHP": {
+       "gas_capacity_gw": 0.043,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:CT_PEAKER": {
+       "gas_capacity_gw": 3.663,
+       "share_own_print": 0.6853,
+       "share_pool": 0.3147,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:ST_CHP": {
+       "gas_capacity_gw": 0.116,
+       "share_own_print": 0.5266,
+       "share_pool": 0.4734,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-West:ST_GAS": {
+       "gas_capacity_gw": 0.098,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:CC_CHP": {
+       "gas_capacity_gw": 0.03,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:CC_REGULAR": {
+       "gas_capacity_gw": 1.637,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:CT_CHP": {
+       "gas_capacity_gw": 0.034,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:CT_PEAKER": {
+       "gas_capacity_gw": 2.03,
+       "share_own_print": 0.4917,
+       "share_pool": 0.5083,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:ST_CHP": {
+       "gas_capacity_gw": 0.134,
+       "share_own_print": 0.5422,
+       "share_pool": 0.4578,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Plains:ST_GAS": {
+       "gas_capacity_gw": 0.369,
+       "share_own_print": 0.462,
+       "share_pool": 0.538,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.6415,
+       "inc_capw_pool": -0.6415,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.6415
+      },
+      "MISO-Illinois:CC_REGULAR": {
+       "gas_capacity_gw": 0.617,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Illinois:CT_CHP": {
+       "gas_capacity_gw": 0.013,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Illinois:CT_PEAKER": {
+       "gas_capacity_gw": 3.254,
+       "share_own_print": 0.5783,
+       "share_pool": 0.4217,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-Illinois:ST_CHP": {
+       "gas_capacity_gw": 0.038,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:CC_CHP": {
+       "gas_capacity_gw": 1.724,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:CC_REGULAR": {
+       "gas_capacity_gw": 5.795,
+       "share_own_print": 1.0,
+       "share_pool": 0.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": NaN,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:CT_CHP": {
+       "gas_capacity_gw": 0.141,
+       "share_own_print": 0.0,
+       "share_pool": 1.0,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": NaN,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:CT_PEAKER": {
+       "gas_capacity_gw": 6.726,
+       "share_own_print": 0.7257,
+       "share_pool": 0.2743,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:ST_CHP": {
+       "gas_capacity_gw": 0.231,
+       "share_own_print": 0.7429,
+       "share_pool": 0.2571,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      },
+      "MISO-East:ST_GAS": {
+       "gas_capacity_gw": 2.08,
+       "share_own_print": 0.954,
+       "share_pool": 0.046,
+       "share_trajectory": 0.0,
+       "inc_capw_own_print": -0.0385,
+       "inc_capw_pool": -0.0385,
+       "inc_capw_trajectory": NaN,
+       "inc_capw_all": -0.0385
+      }
+     }
+    }
+   },
+   "L2": {
+    "SHOULDER": {
+     "hours_real_s2n": 177,
+     "hh_spot_mean": 3.2323,
+     "South": {
+      "own_print_plants": 29,
+      "own_print_capw_gw": 15.576,
+      "own_print_minus_hh": {
+       "p10": -0.1499,
+       "p50": 0.2545,
+       "p90": 0.9045
+      },
+      "own_print_minus_hh_capw_mean": 0.327,
+      "pool_plants": 50,
+      "pool_capw_gw": 4.699,
+      "pool_minus_hh": {
+       "p10": 0.1388,
+       "p50": 0.2507,
+       "p90": 0.7153
+      },
+      "pool_minus_hh_capw_mean": 0.3698,
+      "basis_increment_received_capw": 0.2865
+     },
+     "Midwest": {
+      "own_print_plants": 67,
+      "own_print_capw_gw": 22.628,
+      "own_print_minus_hh": {
+       "p10": -0.4248,
+       "p50": 0.174,
+       "p90": 1.7652
+      },
+      "own_print_minus_hh_capw_mean": 0.8621,
+      "pool_plants": 151,
+      "pool_capw_gw": 7.886,
+      "pool_minus_hh": {
+       "p10": 0.0306,
+       "p50": 0.1918,
+       "p90": 1.1611
+      },
+      "pool_minus_hh_capw_mean": 0.3529,
+      "basis_increment_received_capw": -0.1964
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 10,
+     "hh_spot_mean": 3.309,
+     "South": {
+      "own_print_plants": 29,
+      "own_print_capw_gw": 15.515,
+      "own_print_minus_hh": {
+       "p10": -0.2184,
+       "p50": 0.3376,
+       "p90": 1.0993
+      },
+      "own_print_minus_hh_capw_mean": 0.4324,
+      "pool_plants": 50,
+      "pool_capw_gw": 4.847,
+      "pool_minus_hh": {
+       "p10": 0.1557,
+       "p50": 0.2925,
+       "p90": 0.8118
+      },
+      "pool_minus_hh_capw_mean": 0.4273,
+      "basis_increment_received_capw": 0.2865
+     },
+     "Midwest": {
+      "own_print_plants": 66,
+      "own_print_capw_gw": 21.863,
+      "own_print_minus_hh": {
+       "p10": -0.3595,
+       "p50": 0.2072,
+       "p90": 1.8493
+      },
+      "own_print_minus_hh_capw_mean": 0.9208,
+      "pool_plants": 149,
+      "pool_capw_gw": 7.629,
+      "pool_minus_hh": {
+       "p10": 0.067,
+       "p50": 0.2793,
+       "p90": 1.4244
+      },
+      "pool_minus_hh_capw_mean": 0.4436,
+      "basis_increment_received_capw": -0.1969
+     }
+    }
+   },
+   "L3": {
+    "SHOULDER": {
+     "hours_real_s2n": 177,
+     "south_price_mean": 48.3,
+     "indiana_price_mean": 48.142,
+     "south": {
+      "base_econ_gw_mc_base": 15.638,
+      "idle_within_20_gw_mc_base": 3.522,
+      "arm_923_only_removed_delta_gw": 0.842,
+      "all_cells_removed_delta_gw_miso212b_analogue": 0.842,
+      "arm_over_all_ratio": 1.0,
+      "share_print_cells_capw": 1.0,
+      "inc_capw_print_cells": 0.2865,
+      "usd_per_mwh_removed_capw_print_cells": 2.586,
+      "implied_hr_capw_print_cells": 9.024,
+      "by_class": {
+       "CC_CHP": {
+        "base_econ_gw": 1.077,
+        "arm_delta_gw": 0.044,
+        "all_removed_delta_gw": 0.044
+       },
+       "CC_REGULAR": {
+        "base_econ_gw": 10.888,
+        "arm_delta_gw": 0.069,
+        "all_removed_delta_gw": 0.069
+       },
+       "CT_CHP": {
+        "base_econ_gw": 0.48,
+        "arm_delta_gw": 0.013,
+        "all_removed_delta_gw": 0.013
+       },
+       "CT_PEAKER": {
+        "base_econ_gw": 0.848,
+        "arm_delta_gw": 0.257,
+        "all_removed_delta_gw": 0.257
+       },
+       "ST_CHP": {
+        "base_econ_gw": 0.059,
+        "arm_delta_gw": 0.011,
+        "all_removed_delta_gw": 0.011
+       },
+       "ST_GAS": {
+        "base_econ_gw": 2.286,
+        "arm_delta_gw": 0.448,
+        "all_removed_delta_gw": 0.448
+       }
+      },
+      "by_band": {
+       "committed": {
+        "base_econ_gw": 6.429,
+        "arm_delta_gw": 0.191
+       },
+       "econ": {
+        "base_econ_gw": 9.106,
+        "arm_delta_gw": 0.593
+       },
+       "peak": {
+        "base_econ_gw": 0.103,
+        "arm_delta_gw": 0.057
+       }
+      }
+     },
+     "midwest": {
+      "base_econ_gw_own_zone_price": 21.009,
+      "arm_delta_gw_own_zone_price": -1.595,
+      "base_econ_gw_indiana_price": 21.009,
+      "arm_delta_gw_indiana_price": -1.595,
+      "by_zone": {
+       "MISO-East": {
+        "base_econ_gw": 10.522,
+        "arm_delta_gw_own_price": -0.112,
+        "inc_capw_print_cells": -0.0385,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Illinois": {
+        "base_econ_gw": 0.512,
+        "arm_delta_gw_own_price": -0.021,
+        "inc_capw_print_cells": -0.0385,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Indiana": {
+        "base_econ_gw": 3.51,
+        "arm_delta_gw_own_price": -0.05,
+        "inc_capw_print_cells": -0.0385,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Plains": {
+        "base_econ_gw": 2.473,
+        "arm_delta_gw_own_price": -0.551,
+        "inc_capw_print_cells": -0.6415,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-West": {
+        "base_econ_gw": 3.991,
+        "arm_delta_gw_own_price": -0.861,
+        "inc_capw_print_cells": -0.6415,
+        "share_print_cells_capw": 1.0
+       }
+      }
+     }
+    },
+    "TAIL": {
+     "hours_real_s2n": 10,
+     "south_price_mean": 68.198,
+     "indiana_price_mean": 68.188,
+     "south": {
+      "base_econ_gw_mc_base": 18.246,
+      "idle_within_20_gw_mc_base": 1.637,
+      "arm_923_only_removed_delta_gw": 0.429,
+      "all_cells_removed_delta_gw_miso212b_analogue": 0.429,
+      "arm_over_all_ratio": 1.0,
+      "share_print_cells_capw": 1.0,
+      "inc_capw_print_cells": 0.2865,
+      "usd_per_mwh_removed_capw_print_cells": 2.597,
+      "implied_hr_capw_print_cells": 9.063,
+      "by_class": {
+       "CC_CHP": {
+        "base_econ_gw": 1.208,
+        "arm_delta_gw": 0.003,
+        "all_removed_delta_gw": 0.003
+       },
+       "CC_REGULAR": {
+        "base_econ_gw": 10.893,
+        "arm_delta_gw": 0.121,
+        "all_removed_delta_gw": 0.121
+       },
+       "CT_CHP": {
+        "base_econ_gw": 0.511,
+        "arm_delta_gw": 0.0,
+        "all_removed_delta_gw": 0.0
+       },
+       "CT_PEAKER": {
+        "base_econ_gw": 1.94,
+        "arm_delta_gw": 0.154,
+        "all_removed_delta_gw": 0.154
+       },
+       "ST_CHP": {
+        "base_econ_gw": 0.082,
+        "arm_delta_gw": 0.0,
+        "all_removed_delta_gw": 0.0
+       },
+       "ST_GAS": {
+        "base_econ_gw": 3.611,
+        "arm_delta_gw": 0.152,
+        "all_removed_delta_gw": 0.152
+       }
+      },
+      "by_band": {
+       "committed": {
+        "base_econ_gw": 6.814,
+        "arm_delta_gw": 0.079
+       },
+       "econ": {
+        "base_econ_gw": 10.926,
+        "arm_delta_gw": 0.179
+       },
+       "peak": {
+        "base_econ_gw": 0.506,
+        "arm_delta_gw": 0.172
+       }
+      }
+     },
+     "midwest": {
+      "base_econ_gw_own_zone_price": 25.364,
+      "arm_delta_gw_own_zone_price": -0.458,
+      "base_econ_gw_indiana_price": 25.364,
+      "arm_delta_gw_indiana_price": -0.458,
+      "by_zone": {
+       "MISO-East": {
+        "base_econ_gw": 12.033,
+        "arm_delta_gw_own_price": -0.027,
+        "inc_capw_print_cells": -0.0385,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Illinois": {
+        "base_econ_gw": 1.148,
+        "arm_delta_gw_own_price": -0.024,
+        "inc_capw_print_cells": -0.0385,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Indiana": {
+        "base_econ_gw": 4.985,
+        "arm_delta_gw_own_price": -0.005,
+        "inc_capw_print_cells": -0.0385,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-Plains": {
+        "base_econ_gw": 2.831,
+        "arm_delta_gw_own_price": -0.172,
+        "inc_capw_print_cells": -0.6415,
+        "share_print_cells_capw": 1.0
+       },
+       "MISO-West": {
+        "base_econ_gw": 4.367,
+        "arm_delta_gw_own_price": -0.23,
+        "inc_capw_print_cells": -0.6415,
+        "share_print_cells_capw": 1.0
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "L4_genealogy": {
+  "print_path_arming": "pipeline/backcast_config.py: gas_plant_monthly_fuel_pricing=(iso != 'ERCOT') \u2014 a HARNESS default for every non-ERCOT ISO, not a CLI flag (run_calibration_full.py has no --gas-plant-monthly flag). The gate-2 recipe (docs/multi-iso/miso-zonal-gate2.md) lists --miso-zonal-gas-basis explicitly and states every other flag is an argparse/harness default, so the print path was ON when the basis was armed.",
+  "basis_identification": "data/raw/miso_zonal_gas_hub.csv source column: '<ST> delivered-to-electric-power (EIA N3045<ST>3) minus Henry Hub monthly mean' (scripts/data/fetch_eia_delivered_gas.py: mean over published months of N3045/1.036 \u2212 HH). The N3045 series is the state aggregate of the same EIA-923 receipts the prints report \u2014 the basis is GROSS of the prints, never identified NET of them.",
+  "keeper_carries_both": true,
+  "conclusion": "The layering has been in every MISO keeper since the basis was armed (gate 2). Neither kill condition of PREREG \u00a74 holds: the print path does not exclude basis-carrying cells (L-1), and the basis was not identified net of the prints."
+ },
+ "L5_arm_liveness": {
+  "note": "post-code zero-solve check on the keeper's fleet chain: arm F vs keeper F and F_nobasis",
+  "years": {
+   "2023": {
+    "gas_cells": 12684480,
+    "production_mask_share": 1.0,
+    "phase0_inferred_print_share": 0.999355,
+    "print_cells_hidden_from_phase0_by_oil_parity_cap": 8184,
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "unmasked_cells": 0,
+    "gas_cells_changed_share": 0.998782,
+    "max_abs_arm_minus_nobasis_on_masked_cells": 0.0,
+    "capw_mean_abs_increment_removed_usd_mmbtu": 0.218,
+    "passed": true
+   },
+   "2024": {
+    "gas_cells": 12658200,
+    "production_mask_share": 1.0,
+    "phase0_inferred_print_share": 1.0,
+    "print_cells_hidden_from_phase0_by_oil_parity_cap": 0,
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "unmasked_cells": 0,
+    "gas_cells_changed_share": 0.99862,
+    "max_abs_arm_minus_nobasis_on_masked_cells": 0.0,
+    "capw_mean_abs_increment_removed_usd_mmbtu": 0.1261,
+    "passed": true
+   },
+   "2025": {
+    "gas_cells": 12658200,
+    "production_mask_share": 1.0,
+    "phase0_inferred_print_share": 1.0,
+    "print_cells_hidden_from_phase0_by_oil_parity_cap": 0,
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "unmasked_cells": 0,
+    "gas_cells_changed_share": 0.999086,
+    "max_abs_arm_minus_nobasis_on_masked_cells": 0.0,
+    "capw_mean_abs_increment_removed_usd_mmbtu": 0.2395,
+    "passed": true
+   }
+  },
+  "passed": true
+ }
+}

@@ -131,6 +131,7 @@ def _apply_meanzero_zonal_gas_basis(
     config_field: str,
     hub_path: Path,
     path_override: Path | None = None,
+    skip_cells: np.ndarray | None = None,
 ) -> None:
     """Shared core for mean-zero capacity-weighted zonal gas basis (PJM / MISO).
 
@@ -140,6 +141,17 @@ def _apply_meanzero_zonal_gas_basis(
     preserved and only the cross-zonal shape moves. Floored at
     :data:`_GAS_PRICE_FLOOR` so a deep negative basis cannot drive fuel cost
     below zero. Gated on ``config.<config_field>`` and ``config.iso == iso``.
+
+    ``skip_cells`` (miso-213, rule 19 ``[R-ONE-MECH]``): an optional
+    ``(n_gen, T)`` boolean mask of cells whose delivered price was SET by the
+    EIA-923 print path (:func:`~..plant_prices.apply_plant_monthly_fuel_prices`
+    returns it). A print already embeds the regional delivered premium the
+    N3045 state series measures, so on those cells the spread is NOT added
+    and the cell is left byte-untouched (no floor either). The
+    capacity-weighted mean is still computed over ALL gas rows, so the zonal
+    spread VALUES are unchanged by the mask — only the set of recipient cells
+    changes. ``None`` (every caller today except the MISO applier under
+    ``miso_zonal_gas_basis_skip_923_priced``) is the historical behaviour.
     """
     if not getattr(config, config_field, False):
         return
@@ -173,14 +185,21 @@ def _apply_meanzero_zonal_gas_basis(
     floored = np.maximum(
         fuel_prices[gas_rows, :] + zone_spread[:, np.newaxis], _GAS_PRICE_FLOOR
     )
+    skipped_share = 0.0
+    if skip_cells is not None:
+        keep = np.asarray(skip_cells, dtype=bool)[gas_rows, :]
+        skipped_share = float(keep.mean()) if keep.size else 0.0
+        floored = np.where(keep, fuel_prices[gas_rows, :], floored)
     fuel_prices[gas_rows, :] = floored
     logger.info(
         "%s zonal gas basis (%d): %d gas units; cap-weighted mean %+.2f removed, "
-        "zonal spread %.2f..%.2f $/MMBtu",
+        "zonal spread %.2f..%.2f $/MMBtu; %.1f%% of gas cells skipped as "
+        "print-derived",
         iso,
         year,
         gas_rows.size,
         weighted_mean,
         float(zone_spread.min()),
         float(zone_spread.max()),
+        100.0 * skipped_share,
     )
