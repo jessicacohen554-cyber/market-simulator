@@ -11642,3 +11642,68 @@ missed CT energy was produced below the plant's own delivered cost at the market
 and is unreachable by any offer or price mechanism.
 
 * Next number: **miso-217**.
+
+## miso-217 (2026-09-05) — THE `phys_*` COVERAGE-GAP ARM: one MISO-gated, zero-DOF field returns **38,501.0 MW = 58.4 % of MISO's assembled gas capacity** to the armed offer-margin mechanism; every kill silent → **PROMOTED, keeper → `2026-09-05-miso-217-intermphys`**; and the pre-registered, explicitly **un-instrumented** cross-class backfill **materialised**, consuming 91 % of `CC_REGULAR`-2024's headroom without exiting
+
+**KEEPER → `2026-09-05-miso-217-intermphys`** (bundle `results/calibration/miso217_intermphys_B`),
+superseding `2026-09-05-miso-213-layering`. Determination **UNCHANGED IN CLASS**: NOT-YET on
+C3a-2025 alone, C3c the single ledgered caveat, C6 attested 41/2. PREREG pushed BLIND at
+`76c2574c` **before the field existed**; scorer committed **before the solve** at `f3284261`;
+records `FINDING-miso217-intermediate-phys-arm-2026-09-05.md`, `_miso217_ab_gates.json`,
+`_miso217_liveness.json`. Rule 22: 2023–2025 only.
+
+**The defect and the repair.** `_GENERIC_NEUTRAL_GAS_CLASSES` names five gas classes and
+`_MISO_OFFER_CURVE` merges `phys_*` onto those same five, so the three duty-split
+`*_INTERMEDIATE` curves carried none, `gas_offer_margin_markup_mult` returned its documented
+rule-24 neutral **0.0** for every band, and `gas_offer_net_revenue_margin` **skipped 58.4 % of
+the gas fleet**. One MISO-gated boolean, `miso_intermediate_gas_offer_margin`, resolving at
+`_offer_curve_for_group` (fleet-assembly time, so a `replay --set` fires; a config-build-time
+merge would not) returns a **COPY** carrying the PARENT class's already-frozen `phys_econ_*`.
+**Coverage, not a lever** (rule 19 — they cannot stack): **zero free parameters**, ledger
+**41/2 unchanged**, borrowing **validated 9 of 9 cohort-years** at miso-215 §3 before the field
+existed. **Econ-only**, frozen in the PREREG: `phys_peak` deliberately not borrowed (it would
+lower the cohorts' scarcity walls by $10–39/MWh where C3c is already the single ledgered
+caveat). A repo-wide defect the freeze tests caught: the field had to be registered in
+`_CACHE_KEY_OPTIONAL_FIELDS` at its default or the pinned key moved off `4c6b03ae098b6e3e` and
+**orphaned every cached run**. 21 unit tests pin flag-off identity, the econ-only scope, the
+no-mutation copy contract and the rule-25 non-MISO gate.
+
+**Gates.** S-0 inherited; S-1 **789 fields in common, zero diffs**; **S-2 liveness measured
+before the solve at exactly 534 tranches** (264 CT + 234 CC + 36 ST — the PREREG's P-1 bar to
+the unit), every one positive, zero existing markups moved, zero changes outside the econ band,
+`mc` confined to those rows. Installed margins CT $14.20 / ST $7.48 / CC $1.51 per MWh.
+**K-1…K-6 all silent**; §6's F-4 disposition does not fire (CT_INTERMEDIATE 14.97 % of its own
+offer against CT_PEAKER's already-accepted econ-band 19.19 %, 4.22 pp below).
+
+**What it costs, at full magnitude, never the justification (rule 1).** The un-instrumented
+backfill the PREREG declared the screen could not see **happened**: `CT_PEAKER`-2024
+**−0.884 → −3.634** TWh and `CC_REGULAR`-2024 **+7.419 → +7.947**, leaving **0.053 of 0.581
+TWh** of band — no exit, but that cell is now effectively spent for any future CC-positive arm.
+`CT_PEAKER`-2023 −5.121 → −5.934. **C8** `CT_PEAKER` forced share 0.2044/0.1218/0.1421 →
+**0.2280/0.1573/0.1319**, with **2024 crossing the 0.15 peaker budget** (K-2 silent exactly as
+pre-registered — rule 20's conditional route still clears, zero new D-4 and D-1 failures).
+**C3a** +0.183 / +0.960 / **−0.550** pp; 2025, the criterion the determination hangs on, gets
+worse and nothing is offset against it.
+
+**A kill fired on the first pass and it was an instrument condition — disclosed, not
+renegotiated.** K-4 fired with C3c FAIL ×3 against CAVEAT in the control, on **byte-identical**
+tail values (3 vs 30, 7 vs 37, 0 vs 88 hours > $200/MWh). A replay writes no attestation, so C6
+read UNATTESTED and **guard (b) of the C3c standing rule** blocked the reclassification — the
+miso-200 vacuous-pass trap in mirror image. The attestation the charter already required was
+written and the arm re-scored; both passes are in the record and no bar was moved.
+
+**Prior scored against interest.** **P-1 RIGHT exactly** (534/534); P-2 RIGHT on both legs;
+**P-3 RIGHT by 0.053 TWh** — recorded as a near miss, not a clean call; P-4 RIGHT, though I did
+not predict 2024 crossing the budget and it did; **P-5's 2025 leg WRONG** (0.550 against my own
+< 0.5 bar); **P-6 RIGHT on the like-for-like econ basis and mis-specified as literally written**
+(miso-216's 24–30 % was all-band, mine econ-only — comparing them is a scope error);
+P-7 right direction at P(promote) = 0.40. Also reported: `ST_GAS_INTERMEDIATE`'s footprint is
+**+9.12 pp above** its parent's while CT's is 4.22 pp below its own, and §6's disposition keys
+on the CT cohort and does not reach it — a scope limit of my own PREREG.
+
+**The miso-214 standing result is not undone**: 62–70 % of the missed CT energy was produced
+below the plant's own delivered cost at the market's own price and is unreachable by any offer
+or price mechanism. This arm reached at most bucket C and part of bucket A, and in the event
+moved `CT_PEAKER` **further from** actual in 2023 and 2024.
+
+* Next number: **miso-218**.
