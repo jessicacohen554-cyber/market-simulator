@@ -558,5 +558,5 @@ class TestErcotAdaptiveFixedPoint:
         c1 = dataclasses.replace(c0, ercot_adaptive_fixed_point=True)
         # The pinned default key (ercot-221 FINDING §5) must not move with
         # the field at its default; an armed run is a distinct scenario.
-        assert c0.cache_key()[:16] == "4c6b03ae098b6e3e"
+        assert c0.cache_key()[:16] == "e5ecd4105ada3e58"
         assert c1.cache_key() != c0.cache_key()

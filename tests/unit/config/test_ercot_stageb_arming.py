@@ -84,6 +84,18 @@ armed ``71f20d708a810f0a`` -> ``ef70a350ac15fd0f``, pre-Stage-B
 -> ``4c6b03ae098b6e3e``. Cause block: the pins in
 ``tests/regression/test_persisted_identity.py``; cache-epoch ledger entry
 2026-09-03 in ``src/market_sim/results/cache.py``.
+
+ADVANCED AGAIN 2026-09-05 by capx D60 / owner ruling Q42 — the
+``ccs_retrofit_capex_co2_scaling`` default flip, the SECOND declared (b'-1)
+flip and again nothing to do with ERCOT's armings. Same reading as the
+paragraph above: an unrelated registered field left its declared default, so
+every pole here moves together by the same delta and every relation this file
+pins holds exactly as before. Advances: D12-A armed ``1e1002d480fc180d`` ->
+``b5ab30d0fae9f8a3``, Stage-B armed ``ef70a350ac15fd0f`` ->
+``2c3496db2252da1d``, pre-Stage-B ``11a94474a0c824e3`` ->
+``2286402c91a65cf5``, global pin ``4c6b03ae098b6e3e`` -> ``e5ecd4105ada3e58``.
+Cause block: the pins in ``tests/regression/test_persisted_identity.py``;
+cache-epoch ledger entry 2026-09-05 in ``src/market_sim/results/cache.py``.
 """
 
 from __future__ import annotations
@@ -216,9 +228,9 @@ class TestD30Arming:
         pre_arm = dataclasses.replace(
             resolved, **{f: getattr(defaults, f) for f in STAGE_B}
         )
-        assert resolved.cache_key() == "ef70a350ac15fd0f"
-        assert pre_arm.cache_key() == "11a94474a0c824e3"
-        assert ScenarioConfig().cache_key() == "4c6b03ae098b6e3e"
+        assert resolved.cache_key() == "2c3496db2252da1d"
+        assert pre_arm.cache_key() == "2286402c91a65cf5"
+        assert ScenarioConfig().cache_key() == "e5ecd4105ada3e58"
 
     def test_arming_does_not_disturb_the_scarcity_overlay_entry(self):
         """The pre-existing ERCOT override survives alongside the five."""
@@ -290,9 +302,9 @@ class TestD12AArming:
         pre_arm = dataclasses.replace(
             resolved, **{f: getattr(defaults, f) for f in D12A_PAIR}
         )
-        assert resolved.cache_key() == "1e1002d480fc180d"
-        assert pre_arm.cache_key() == "ef70a350ac15fd0f"
-        assert ScenarioConfig().cache_key() == "4c6b03ae098b6e3e"
+        assert resolved.cache_key() == "b5ab30d0fae9f8a3"
+        assert pre_arm.cache_key() == "2c3496db2252da1d"
+        assert ScenarioConfig().cache_key() == "e5ecd4105ada3e58"
 
     def test_the_pair_control_arm_is_expressible(self):
         """An explicit both-off caller wins over the override (OVERRIDE-FIX

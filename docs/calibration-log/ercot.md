@@ -13065,3 +13065,79 @@ registry and CI gates are untouched, and ERCOT's `complete` marker, its
 touched by this ruling**.
 
 **Next shorthand: ercot-248** (ercot-199 remains unclaimed)
+
+## ercot-248 — 2026-09-05 — THE TWO-CONFIG KEEPER REGISTERED AS ONE RUN (owner instruction, ZERO-SOLVE): `2026-09-05-ercot248-two-config-keeper` carries 2023 from the carve-out config and 2024/2025 from the forward config byte-for-byte, reads **CALIBRATED** on its full span (C3c the lone ledgered caveat ×2) and on both designated spans; the dashboard is pruned to the keeper alone — in EVERY lane
+
+**Owner instruction (verbatim, 2026-09-05):** *"Combine the ERCOT calibrated keeper
+config into one run for the run explorer html page so it should combine the 2023
+config that is calibrated plus the 2024/2025 config into one run then remove all
+the others that aren't that keeper so it's just showing one run. Also prune all
+the other non keeper runs from there so just show the keeper for each ISO for
+now."*
+
+**(1) What was built — a composite registration, not a solve.** The two designated
+configs of the 2026-08-26 partition ruling (ercot-237/246/247) are now ONE
+registered run, `2026-09-05-ercot248-two-config-keeper`
+(bundle `results/calibration/ercot248_two_config_keeper`):
+
+| year | config | source run (now pruned) | source bundle (RETAINED — perfb golden provenance) |
+|---|---|---|---|
+| 2023 | carve-out (`ercot_offer_swcap_clip` armed, `k_peak` 33.0) | `2026-08-25-236-swcap-clip-k33` | `results/calibration/ercot236_k33_clip` |
+| 2024, 2025 | forward (zero fitted scalars, repaired EASTEX crosswalk) | `2026-08-25-234-eastex-identity` | `results/calibration/ercot234_eastex_identity` |
+
+The solve parquet the renderer needs is gitignored, so composition is at the
+artifact level: the payload's per-year blocks, the `hourly/*_<year>.parquet`
+sidecars, the D-1/D-2/D-4/D-10 rows, the D-2 notes/failures and the exceptions
+ledger (the forward config's two 2024/2025 C3c entries; the 2023 entry is not
+carried because the carve-out passes C3c 180/181) are copied byte-for-byte from
+the bundle that solved that year. `meta.json` / `run_config.json` carry the
+FORWARD config (the one the model uses going forward, forecast lane included);
+`run_config_carveout_2023.json` carries the 2023 config; the DOF ledger is the
+carve-out's superset (the forward 9 + `offer_2023_discrete_peak_scale`, stamped
+`applies_to_years: [2023]`); `composite_provenance.json` records all of it.
+
+**(2) Re-verified on committed artifacts (`scripts/calibration_verdict.py
+--run-id`, no solve):** full span 2023–2025 **CALIBRATED** — C1 16/16, C2, C3a,
+C3b, C4, C6, C8 PASS; C3c the lone ledgered caveat ×2 (2024 22/53, 2025 1/31,
+ACCEPTED MODEL-CLASS LIMITATION, non-downgrading under rubric v3.3). Designated
+spans: `--years 2023` CALIBRATED (zero caveats: C3a −7.3 %, C3b 0.102, C3c
+180/181); `--years 2024 2025` CALIBRATED. Worst over designated spans =
+CALIBRATED — the ISO-level determination is unchanged, and it is now ALSO the
+run's own unrestricted registered determination: the forward config's former
+3-year NOT-YET record ({C3a-2023 −39.7 %, C3b-2023 0.730}) is superseded as a
+REGISTRATION only and stands in the shard prose, in
+`registered_determination_at_declaration` and in git history.
+
+**(3) Re-key, every surface in this one PR.** `keepers/ERCOT.json` `keeper` →
+the new id, both `config_partition.configs[].run_id` → the new id (former ids
+kept in `source_run_id`, so `build_status.py` and `audit_keepers` M1b still score
+each config on its designated span against ONE bundle), a `consolidation` block;
+`calibration-complete.json` `complete.ERCOT.keeper` re-keyed with the D-5(b)
+determination re-verification and a `keeper_rekey_history` entry
+(`keeper_at_declaration` untouched); `program-status.json` gate-(a) stamp
+(R-T duty); the matrix shard `keeper:` stamp + §5.1 prose header. Gates at HEAD:
+`audit_keepers --check` PASS, `check_registry_payload_parity` OK (6 runs, 56
+bundle dirs), `check_golden_manifest` OK, `legitimacy_diagnostics --keepers
+--no-d2-recompute` exit 0, `check_mechanism_matrix --base origin/main` 0 errors,
+`check_gate_a_provenance` OK, `build_status.py --check` in sync; 77 scoring/
+matrix tests pass.
+
+**(4) R-V (keeper freeze on ERCOT) — read, not breached.** No recipe changes for
+any year: this is the same two-config keeper registered as one run. The perfb
+stage-0 ERCOT goldens keep their bundles on disk and read STALE-by-id only
+(reported, never failed — every entry carries its `keeper_snapshot`).
+
+**(5) Site retention, every lane.** `scripts/prune_iso_runs.py --force-uncite` per
+ISO: ERCOT 15 pruned (incl. both source runs), CAISO 11, PJM 4, MISO 14, NYISO
+14, NEISO 3 — 61 runs off the site, 6 keepers remain. The script now RETAINS on
+disk any bundle a `results/regression-goldens/*/manifest.json` names or the
+parity checker's `KEEP_REQUIRED_UNMAPPED_BUNDLES` allowlist carries (previously
+it would have destroyed a golden's replay provenance and failed
+`test_live_allowlist_has_no_entry_for_an_absent_dir`); it prints
+`[bundle retained: …]` for each. Governance citations now dangle deliberately
+(each shard's `site_retention_note` says so); nothing is retracted. The PJM and
+NEISO 2022 validation-touchpoint runs came off too under the instruction's
+"keeper only" — their results stand in `calibration-complete.json` and the log,
+and any pruned run is restorable from git history.
+
+**Next shorthand: ercot-249** (ercot-199 remains unclaimed)

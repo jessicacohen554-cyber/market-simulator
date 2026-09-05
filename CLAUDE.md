@@ -379,6 +379,64 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     touch (duty b). The `.claude/hooks/mechanism-matrix-reminder.sh` SessionStart hook surfaces
     these duties at the start of every session.
 
+1. `[R-SCREEN]` **Screen a new config on ONE year before spending the full span — and screen it on
+    what the mechanism DOES, never on whether the residual moved.** *(Owner rule, 2026-09-05: "only
+    run in calibrated years thru new configs first … instead of wasting runs on 3 full years before
+    we've addressed whether config actually solves the issue".)* A 3-year CAISO/PJM/MISO/NYISO/NEISO
+    replay is ~35–70 min of LP **per arm**, and an A/B spends two of them. The order is now:
+    - **(0) Zero-LP phase 0 first, wherever one exists.** An on-recipe `fleet_only` rebuild, an
+      offer-array delta, a footprint census or a committed-sidecar reconstruction costs ~90 s and
+      kills more arms than any solve. An arm that has a computable pre-solve gate does not reach a
+      solve until that gate passes.
+    - **(1) A SCREEN solve on ONE year.** The screen year is **named in the PRECOMMIT before the
+      screen runs**, and it is the year the mechanism's **own measured footprint is largest**
+      (from step 0) — **never** the year with the biggest residual, which would make the choice a
+      residual-driven one. A control for the same single year is screened alongside it when
+      G-CTRL needs one.
+    - **(2) The full span only if the screen clears its pre-registered gate**, as one
+      `--year 2023 2024 2025` invocation and ONE bundle. Rule 16 `[R-ALLYEARS]` is untouched: the
+      screen bundle is a **throwaway diagnostic probe** — never registered on the dashboard, never
+      a keeper, never quoted as a keeper number, and its year is re-solved inside the full bundle.
+
+    **The screen gate is STRUCTURAL and it is a STOP gate only.** It asks whether the mechanism
+    does what its own arithmetic says it does — the dispatch response has the direction and order
+    of magnitude the pre-solve delta implies; the footprint is confined to the rows the mechanism
+    claims; the identity it asserts holds; no non-target load-bearing criterion flips PASS → FAIL.
+    It **may kill an arm; it may never promote one**, it never contributes to a determination, and
+    it is **never gated on the target residual** (a screen that reads "did C3a improve" is exactly
+    the fitted-mechanism selection rule 1 `[R-STRUCT]` forbids, done one year at a time).
+    A screen that kills an arm is reported as the session's result and the remaining years are
+    never spent.
+
+    **Where it does not apply:** a mechanism measured INERT in the candidate screen year (screen it
+    where it is live, or go straight to the full span — G-CTRL form 2's inert-year logic already
+    depends on that); and a year-scoped mechanism whose object only exists in one year, which is
+    the screen and the full span at once.
+
+    **(b) NO CONTROL SOLVES. The incumbent keeper's COMMITTED bundle IS the control** *(owner rule,
+    2026-09-05: "stop doing control solves … just use the last keeper as the control")*. G-CTRL
+    **form 4** — differencing the arm against the keeper's committed numbers — is the DEFAULT, and
+    a control solve is never spent to establish HEAD drift. The question form 4 was being voided
+    over ("solve-path files changed since the keeper's `git_sha`") is a **code** question, so it is
+    answered with a **code-level drift audit, `G-DRIFT`**, at zero LP cost:
+
+    > `git diff <keeper git_sha> HEAD -- src/market_sim scripts/run_calibration.py
+    > scripts/run_calibration_full.py scripts/lib data/raw/_validation-source data/raw/reference`,
+    > and classify **every** changed hunk on the backcast path as INERT for this ISO with its
+    > reason cited — forecast-only path (capacity evolution / capacity market, which a
+    > `mode="backcast"` run never enters), another ISO's branch, a `ScenarioConfig` flag that is
+    > default-off AND absent from the keeper's recipe, a per-ISO artifact this ISO does not have,
+    > or pure timing/diagnostics accounting — or as **LIVE**.
+
+    **All hunks INERT ⇒ form 4 is valid and the keeper is the control.** A **LIVE** hunk is the
+    only thing that earns a control solve, and then only for the years the screen needs (clause a).
+    G-DRIFT is *stronger* than a control solve for this question, not weaker: a control solve shows
+    that two numbers differ, while the audit says which line did it — and it costs seconds. The
+    audit is recorded in the PRECOMMIT (or its addendum) before the arm is solved, so it cannot be
+    written to fit the result. A "files changed, therefore void" heuristic with no audit behind it
+    is not a reason to spend an LP.
+
+
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
 amendment genealogy and the incident record: `docs/governance/rule-history.md`.
@@ -412,10 +470,11 @@ Mechanism detail is the spec's job (§5.2–§5.9) and the code's; what CLAUDE.m
 
 - **Step 0, confirmed exits** — `data.confirmed_retirements.load_confirmed_exits` over `data/raw/confirmed-retirements`, GATED `confirmed_exits_enabled` (default on), forecast-mode only. A row needs an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, regulatory order, RMR end); this is the **instrument-bound** exogenous fossil exit channel and it **bypasses the reliability floor**. *(It was the ONLY one until owner ruling Q30, 2026-09-02, armed the owner-filed-date limb at step 1b below — which is a different admissibility class: an owner's filed plan, not a binding instrument, and it rides this step's machinery.)* Hindcast information gate: a row applies only when `instrument_date` ≤ the vintage cutoff. (Spec §5.1–§5.2; `docs/handoffs/confirmed-retirement-plan-2026-07.md`.)
 - **Step 1, announced retirements** — `apply_announced_retirements`, `load_announced_reversal_plants`, `EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS` (default 5) bounds honored non-fossil dates. **For FOSSIL the owner's own filed EIA-860 Schedule-3 date is honored as an exogenous step-1 input** — limb 1b, `fossil_announced_exits_enabled` **default ON since 2026-09-02** (owner ruling Q30 on the capx D42 A/B, executed by D44) — **vintage-gated** (a date is admissible in year Y only because it was on file at the run's information cutoff, the same gate step 0 applies to `instrument_date`, and the identical construction regenerates for a forecast year from the then-current 860), with the **reversal registry armed** (a plant countered by a later public instrument is dropped; under `hindcast_verified_announced_exits` a re-filed or withdrawn date is honored per unit as the later vintage's information — it may defer or cancel a vintage exit, never inject or advance one). The rows ride step 0's own matcher/derate machinery, so they bypass the reliability floor like every exogenous exit. Rule 19 `[R-ONE-MECH]`: a plant carrying a pending filed date is **exempt from the economic screen**, which therefore decides only the **residual UNDATED fleet** — no unit's exit is decided twice, and `forecast_fossil_retirement_economic` (default True) now governs only what the date channel does not reach. Evidence: MISO T1-H unit recall 5/19 → 16/19, every non-coal exit class opened, `false_retire` 0.0, **zero** economic exits displaced (`docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md`). What it does not close, stated at the gate: the undated cohort, the December-dated majority-of-year roll into the next year, and genuine deferrals. (Spec §5.1.)
-- **Step 2, CCS retrofit** — `ccs_retrofit_available_year`, `eac_price_gas_cc_ccs`, `ira_ccus_45q_last_year`, `ira_45q_credit_window_years`; ≥15 yr remaining life, 3 GW/yr/ISO cap, valued as the **incremental uplift over the best unabated state**, screened jointly with retirement. `ccs_retrofit_capex_co2_scaling` (GATED default off, capx D50): sizes the capture island to the host's captured CO2 against the ATB reference host (0.323 t/MWh) and excludes CC_CHP hosts — the D49 §1.5 construction repair of the flat-per-kW seam; arming is an owner ruling on the D50 A/B. (Spec §5.6.)
+- **Step 2, CCS retrofit** — `ccs_retrofit_available_year`, `eac_price_gas_cc_ccs`, `ira_ccus_45q_last_year`, `ira_45q_credit_window_years`; ≥15 yr remaining life, 3 GW/yr/ISO cap, valued as the **incremental uplift over the best unabated state**, screened jointly with retirement. `ccs_retrofit_capex_co2_scaling` (capx D50, **default ON since 2026-09-05** — owner ruling Q42 on the D50/D50-R A/B, executed by capx D60): sizes the capture island to the host's captured CO2 against the ATB reference host (0.323 t/MWh — the same host the new-build CCS LCOE charges the ATB increment against, zero DOF) and excludes CC_CHP hosts — the D49 §1.5 construction repair of the flat-per-kW seam, under which the retrofit margin had risen with host emissions. A **posture, not a transfer** (rule 25 `[R-ISO-SCOPE]` intact: no ISO's fitted number is carried), landed as a (b′-1) declared default flip with the frozen cache-key drop value left at `False`, so an explicit `False` still selects the pre-flip construction and keeps its key. Inert below `ccs_retrofit_available_year` (2028) by construction, so every backcast, hindcast and crossover horizon is byte-identical. Evidence: at carbon 0 the repair closes the screen (ERCOT 3.79 GW → 0; PJM 5.74 → 0 in 2028; MISO 4,631.1 MW → 0 across the window) and under RGGI it does not (NEISO 12.79 → 12.38 GW) — the asymmetry, not the level, is its signature (`docs/handoffs/FINDING-capx-d50-2026-09-04.md`). (Spec §5.6.)
 - **Step 3, economic retirement** — screens the **attainable (pro-forma) inframarginal margin**, `Σ_t max(0, price − full variable cost, reserve price) × pmax × availability` (Potomac-SOM net revenue, `mc_cost` via `prior_results`): **never gross revenue, never realized dispatch**. Against FOM-only going-forward cost. Per-fuel thresholds are `ScenarioConfig` fields, not hardcoded, and apply to the **legacy** rule only (`retirement_rule="legacy"`; under the pipeline rule the decision is uniform and the per-fuel physics lives in `retirement_execution_lag_*`): coal=3yr, gas_ct=2yr, gas_cc=3yr; coal FOM multiplier 1.3×. *(Corrected 2026-08-02 by FFR-3B: this read "coal=1yr", but `scenarios.py` ships `retirement_years_coal: int = 3`, identified under rule 23 to the EIA-860 announced-to-deactivation capacity-weighted/≥300 MW median of 3 yr. Code is the source of truth.)* `screen_reserve_value_enabled` (default on) — the co-opt's own reserve duals under `ercot_thermal_as_endogenous`, else the ORDC scarcity adder; when present it is the **SOLE** thermal AS pricing (rule 19 `[R-ONE-MECH]`). Floor: `accredited_firm_capacity_mw` vs `peak × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)`, one requirement shared with the build backstop, `floor_retention_log` attribution. (Spec §5.2.)
 - **Steps 4–5, additions and entry** — `load_planned_additions` (EIA-860 proposed pipeline, construction-committed statuses, forecast mode only). **RPS is not a force-build step** — it is an annual LP constraint whose dual is the REC price. (Spec §5.3–§5.4, §1.4.)
 - **Storage entry** — an economics-based **value stack, not compound growth**: arbitrage net of cycling degradation **plus** RA capacity value, paid only where the per-ISO `MARKET_DESIGN` registry has a capacity market (energy-only ERCOT pays none). `STORAGE_TECH_BUILD_SHARE_CAP`, base-year fleet `storage_deployment` with all later growth endogenous; toggles `storage_capacity_value`, `storage_degradation`. (Spec §5.5.)
+- **PJM capacity-market clearing (the clearing half, capx D57)** — `capacity_market_supply_clearing_by_iso` (`{iso: bool}`, dataclass default `None`; requires the curve gate): the retirement screen clears the fleet's net-ACR sell-offer stack (`offer = max(0, going-forward cost − E&AS margin) / accredited MW`, every other accredited MW a $0 price taker) against the delivery year's published VRR curve — cleared units earn the clearing price, uncleared units $0, so **the screen's failing set IS the auction's uncleared set**; entry and storage read the clearing price as price takers through the one `capacity_price_per_firm_mw_yr` seam. **ARMED FOR PJM** with the two D48 accreditation-design fields through `iso_configs.py::_pjm_config` `default_scenario_overrides` (owner ruling 2026-09-05 on the D57 A/B; `FINDING-capx-d57-2026-09-05.md` §8.1) — the shared defaults stay off, every other ISO and every backcast keeper byte-identical, `--no-…` reaches the control. Measured: cleared position within 0.5 / 1.0 / 2.8 pts of the published; price 1.5–5.7× the published because the CT / ST / oil E&AS operand is zero in the hindcast prices (the named successor), never haircut. (Spec §5.9; `DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md`.)
 - **Locational deliverability** — `capacity_deliverability_limits`, GATED default off; published PJM CETO/CETL, MISO LRR/LCR/CIL, NYISO LCR/TSL, ISO-NE LSR/MCL, CAISO LCR/MIC crosswalked onto model zones. Structural mechanism (rule 1 `[R-STRUCT]`). In a backcast only the measured-seam-import half fires (CAISO MIC → WECC_import; the CAISO keeper enables it via `--capacity-deliverability-limits`, caiso-51); **the RA-saturation half remains unvalidated in any keeper**. (Spec §5.8; `docs/capacity-deliverability-wiring.md`.)
 
 ## Dispatch & Commitment (per year)

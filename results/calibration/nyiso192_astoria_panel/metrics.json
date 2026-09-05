@@ -1,0 +1,159 @@
+{
+<<<<<<<< HEAD:results/calibration/ercot248_two_config_keeper/metrics.json
+  "run_id": "2026-09-05-ercot248-two-config-keeper",
+  "iso": "ERCOT",
+  "label": "248 two-config keeper",
+========
+  "run_id": "2026-09-05-nyiso-192-astoria-panel",
+  "iso": "NYISO",
+  "label": "nyiso 192 astoria panel",
+>>>>>>>> 6c695a57 (Register the nyiso-192 Astoria merit-panel arm (NOT-YET, owner call) with its computed attestation):results/calibration/nyiso192_astoria_panel/metrics.json
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "rubric_version": 3.5,
+  "determination": "CALIBRATED",
+  "reasons": [
+<<<<<<<< HEAD:results/calibration/ercot248_two_config_keeper/metrics.json
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+========
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_tail"
+>>>>>>>> 6c695a57 (Register the nyiso-192 Astoria merit-panel arm (NOT-YET, owner call) with its computed attestation):results/calibration/nyiso192_astoria_panel/metrics.json
+  ],
+  "notes": [],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (RT hourly)",
+      "tier": "supporting",
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "status": "PASS"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "status": "PASS"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "status": "PASS"
+    }
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
+    "commercial_band": [],
+    "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+    }
+  },
+  "grade_summary": {
+    "scored": 8,
+    "target_grade": 7,
+    "commercial_grade": 0,
+    "ledgered": 1,
+    "fails": 0
+  },
+  "reported": {
+    "co2": {
+      "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+      "years": {
+<<<<<<<< HEAD:results/calibration/ercot248_two_config_keeper/metrics.json
+        "2023": "+0.7%",
+        "2024": "-0.5%",
+        "2025": "+1.8%"
+========
+        "2023": "+1.7%",
+        "2024": "+0.4%",
+        "2025": "+4.5%"
+>>>>>>>> 6c695a57 (Register the nyiso-192 Astoria merit-panel arm (NOT-YET, owner call) with its computed attestation):results/calibration/nyiso192_astoria_panel/metrics.json
+      }
+    },
+    "diurnal_amplitude": {
+      "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+      "years": {
+<<<<<<<< HEAD:results/calibration/ercot248_two_config_keeper/metrics.json
+        "2023": "amplitude 76.9% of measured (hod range $136.51 vs $177.51); peak h18 vs h18, trough h02 vs h02 \u2014 phase OK; hod r +0.982; 365 complete days",
+        "2024": "amplitude 77.2% of measured (hod range $48.10 vs $62.29); peak h19 vs h18, trough h02 vs h09 \u2014 phase OFF; hod r +0.950; 365 complete days",
+        "2025": "amplitude 49.1% of measured (hod range $21.93 vs $44.63); peak h19 vs h18, trough h10 vs h09 \u2014 phase OK; hod r +0.957; 365 complete days"
+========
+        "2023": "amplitude 65.8% of measured (hod range $12.41 vs $18.85); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.926; 365 complete days",
+        "2024": "amplitude 53.5% of measured (hod range $14.24 vs $26.63); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.894; 365 complete days",
+        "2025": "amplitude 43.3% of measured (hod range $20.80 vs $48.09); peak h18 vs h17, trough h03 vs h02 \u2014 phase OK; hod r +0.886; 365 complete days"
+>>>>>>>> 6c695a57 (Register the nyiso-192 Astoria merit-panel arm (NOT-YET, owner call) with its computed attestation):results/calibration/nyiso192_astoria_panel/metrics.json
+      }
+    }
+  },
+  "free_class_score": {
+    "iso": "ERCOT",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+<<<<<<<< HEAD:results/calibration/ercot248_two_config_keeper/metrics.json
+      "pass": 16,
+      "total": 16
+    },
+    "free": {
+      "pass": 12,
+      "total": 12
+    },
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
+========
+      "pass": 13,
+      "total": 14
+    },
+    "free": {
+      "pass": 9,
+      "total": 10
+    },
+    "headline": "C1 all 13/14 \u00b7 free 9/10"
+>>>>>>>> 6c695a57 (Register the nyiso-192 Astoria merit-panel arm (NOT-YET, owner call) with its computed attestation):results/calibration/nyiso192_astoria_panel/metrics.json
+  }
+}

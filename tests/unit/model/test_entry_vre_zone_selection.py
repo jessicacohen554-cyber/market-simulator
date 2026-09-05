@@ -165,7 +165,7 @@ class TestMisoIsArmedAndOthersAreNot(unittest.TestCase):
         # IS registered, and the key moving is what capx D24-R (b'-1) exists to
         # make happen — the drop is at the FROZEN declaration, so the armed
         # default enters the hash instead of colliding with the pre-flip bundle.
-        self.assertEqual(ScenarioConfig().cache_key(), "4c6b03ae098b6e3e")
+        self.assertEqual(ScenarioConfig().cache_key(), "e5ecd4105ada3e58")
 
 
 if __name__ == "__main__":  # pragma: no cover

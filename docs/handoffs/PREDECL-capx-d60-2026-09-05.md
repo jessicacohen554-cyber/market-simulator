@@ -448,3 +448,147 @@ magnitude. **No keeper, no shard promotion field, no `complete` / `final`
 marker, no freeze, no new field, no parameter value, nothing against measured
 H1-2026** (rule 22: t1h 2021–2025, t1f 2026–2030, t3 2026–2050 — all forecast
 mode, no measured actuals).
+
+---
+
+## Addendum A (2026-09-05) — written AFTER the three edits were applied LOCALLY and every bare key was re-resolved through the REAL harness path, and BEFORE any solve, any commit of the flip, and any rename
+
+§2 emulated each post-arm key by reconstructing the bare key's own committed
+`run_config.json` and setting the armed field(s). That is exact **only when the
+committed control's resolved posture already equals the bare recipe's**. It does
+for twelve of the thirteen keys. It does **not** for `miso-t1f`, and the
+pre-declaration is corrected here at full magnitude rather than quietly.
+
+### A.1 CORRECTION — `miso-t1f`'s post-D60 key is `b1a73a087064ffd8`, not `3f85ecc45d90c248`
+
+**Cause, measured:** MISO's `default_scenario_overrides` already carry
+`retirement_sector_gate: True` — landed at HEAD by **capx D53** on 2026-09-05,
+*before* this lane opened. The committed control `miso-2026-2030-d45r-remeasure`
+predates D53 and records the field absent, so reconstructing from it and adding
+only D60's two arms understated the recipe by exactly one field. Forcing the
+sector gate back off returns **`3f85ecc45d90c248`**, §2's value, which confirms
+the diagnosis to the digit and confirms nothing else moved.
+
+**This is a defect in my own pre-declaration, not a surprise in the rulings.**
+D53 §6.1 stated the consequence in terms when it armed the gate: *"the MISO t1f
+leg (2026–2030) was not re-solved here — its next solve resolves the gated screen
+by construction."* D60's MISO t1f re-solve **is** that next solve. Nothing about
+Q40, Q41 or Q42 changes; no STOP fires; the correction is to the number I wrote,
+and it is graded against me in the finding.
+
+### A.2 The harness-path resolution, for every key — the authoritative table
+
+Resolved through `run_full_horizon.reference_config(iso, …, golden_posture=True)`
+→ `apply_iso_scenario_defaults` → `cache_key()` for t1f/t3, and
+`run_capacity_hindcast.build_config(iso, 2021, 2025, "realized", vintage=2020,
+entry_screen_diagnostics=True)` → `apply_iso_scenario_defaults` → `cache_key()`
+for t1h (the recipe every committed t1h leg carries).
+
+| bare key | §2 pre-declared | harness-resolved | verdict |
+|---|---|---|---|
+| `ercot-t1f` | `0c3e9cd5b5993bdf` | `0c3e9cd5b5993bdf` | **HIT** |
+| `neiso-t1f` | `18515067bf4d2fbe` | `18515067bf4d2fbe` | **HIT** |
+| `pjm-t1f` | `167e65187f32056b` | `167e65187f32056b` | **HIT** |
+| `caiso-t1f` | `29f8eb372810195f` | `29f8eb372810195f` | **HIT** |
+| `nyiso-t1f` | `19a9690bb12c8459` | `19a9690bb12c8459` | **HIT** |
+| `neiso-t3` | `f04fd06348e1623d` | `f04fd06348e1623d` | **HIT** |
+| `ercot-t1h` | `82b27751be747552` | `82b27751be747552` | **HIT** |
+| `caiso-t1h` | `7da58199acd362ee` | `7da58199acd362ee` | **HIT** |
+| `neiso-t1h` | `f3988df3068020d1` | `f3988df3068020d1` | **HIT** |
+| `pjm-t1h` | `7297dcb3b92be3fb` | `7297dcb3b92be3fb` | **HIT** |
+| `miso-t1h` | `687bd75f2828bea1` | `687bd75f2828bea1` | **HIT** |
+| `nyiso-t1h` | `6e70a637b3465542` | `6e70a637b3465542` | **HIT** |
+| `miso-t1f` | `3f85ecc45d90c248` | **`b1a73a087064ffd8`** | **MISS — §A.1** |
+
+### A.3 STOP 2 discharged: the two t1h renames are byte-identical, measured field-by-field
+
+The harness-resolved bare recipe was diffed field-by-field against each rename
+target's own committed `run_config.json` (ignoring only fields ABSENT from the
+older config that resolve to a cache-neutral `False`/`None` — schema growth, not
+posture):
+
+- **`miso-t1h` ← `miso-2021-2025-realized-t1h-d53-sectorgate-d51ratio`**: the
+  **only** substantive difference is `ccs_retrofit_capex_co2_scaling: False →
+  True`. The committed rider records that field EXPLICITLY `False` (it was solved
+  after D50 built it), so the pair is a clean one-field A/B.
+- **`nyiso-t1h` ← `nyiso-2021-2025-realized-t1h-d52-devintage`**: the **only**
+  difference is `ccs_retrofit_capex_co2_scaling: <absent> → True`.
+
+Both fields are unreachable below 2028 (§4), so **every scored row of both
+targets is byte-identical to what the post-D60 bare recipe would produce**. STOP
+2 does not fire and neither leg is re-solved.
+
+### A.4 The mechanism delta of each re-solve, stated exactly
+
+| leg | control | post-D60 key | fields that differ |
+|---|---|---|---|
+| `miso-t1f` | `8d8bc63a0d4378a9` | **`b1a73a087064ffd8`** | `retirement_sector_gate` (D53), `adequacy_accounting_ratio_dated_net` (Q40), `ccs_retrofit_capex_co2_scaling` (Q42) — **three** |
+| `nyiso-t1f` | `cc7d1050a8090c76` | `19a9690bb12c8459` | `nyiso_requirement_forecast_peak`, `nyiso_requirement_vintage_factors` (Q41), `ccs_retrofit_capex_co2_scaling` (Q42) — **three** |
+| `caiso-t1f` | `772b1e5abc7fc80c` | `29f8eb372810195f` | `ccs_retrofit_capex_co2_scaling` — **one** |
+| `neiso-t3` | `67678e58b2d0526c` | `f04fd06348e1623d` | `ccs_retrofit_capex_co2_scaling` — **one** |
+
+### A.5 §6.1 EXTENDED — the MISO t1f leg carries a third mechanism, so a third expectation is pre-declared
+
+§6.1 pre-declared the CCS half (P1: 0 MW converted) and the ratio half (P2–P6).
+The sector gate is the third, and its expectation is pre-declared **now, before
+the solve**, from D53's own measured record:
+
+- **P17 (HIGH):** the gate is a **pure candidate-set partition** — it removes
+  regulated-utility (EIA-860 Sector 1) units from the *merchant* economic screen
+  and adds no unit to it. Where the reliability floor has **no headroom** it
+  therefore moves **nothing**: D53 §2.1/§2.3 measured every retirement row and
+  every non-screen row byte-identical on the shipped posture. *Falsifier: total
+  economic-exit MW rising in any year.*
+- **P18 (MED):** where the floor **does** have headroom — which is exactly what
+  the Q40 ratio buys (D51 opened 0.48 GW of it on t1h) — the gate **re-targets
+  which units take that headroom**, drawing from the merchant pool instead of at
+  random (D53 §3: 99.8 % vs 1.1 % plant-grain precision). So on this leg the two
+  D60/D53 mechanisms interact by design, and any exit-composition change is
+  attributed to the gate, any exit-volume change to the ratio. *Falsifier: a
+  sector-1 plant appearing in any `pipeline_events` economic-screen row.*
+- **P19 (HIGH):** the gate reaches **exits only**; the additions screen, the
+  requirement and the retrofit ledger are untouched by it, so P1–P6 stand as
+  written.
+
+Nothing else in §§1, 3–5, 6.2–6.5 or 7 changes. `miso-t1f`'s prior is still
+preserved at `miso-t1f-pre-d60`; the leg still re-solves; STOP 1 now reads
+against `b1a73a087064ffd8`.
+
+---
+
+## Addendum B (2026-09-05) — written BEFORE the GOLDEN-3 re-solve is launched: the T3 attestation this lane will author, pre-declared
+
+Rubric §5 names the **producing session** as the T3 attestation's author, and D47 §0
+established the discipline that makes such an attestation honest: **pre-declare it before
+the run exists, and record any assertion that turns out false as false, failing FC-7 on it
+at full magnitude.** D60 IS the producing session for `neiso-t3` at `f04fd06348e1623d`, so —
+unlike D47, which had to attest another session's bundle — it can author in the ordinary
+way. What it may not do is decide the assertions after reading the verdict. They are
+therefore fixed here, before the solve.
+
+**The six assertions, and what each will be read from — bytes only, no judgement call at
+authoring time:**
+
+| assertion | true iff |
+|---|---|
+| `dof_ledger_complete` | `dof_ledger.json`, built by the committed `scripts/build_forecast_dof_ledger.py` from THIS bundle's own `run_config.json`, carries **0 UNIDENTIFIED**, **0 unattested** and **0 entries whose identification is `residual`** |
+| `run_config_reproducible` | the bundle's `run_config.json` records `mode=forecast`, a clean git tree at a named sha, and a `cache_key` equal to `f04fd06348e1623d` — the value §A.2 pre-declared and the harness path resolves |
+| `honest_unfit_referenced` | the run's own `full_horizon_summary.json` invariant record is carried into the verdict, and the FC rows that fail are named in the finding against `program-status.json`'s `honest_unfit` block rather than only in the sidecar |
+| `quarantine_attested` | every solved year lies in 2026–2050, i.e. **forecast mode, no measured actuals, no holdout tier touched** (rule 22); asserted from `solved_years` |
+| `no_off_registry_knobs` | every solve-affecting non-default field in `run_config.json` appears in `ScenarioConfig`; no env knob, no per-plant dict, no `getattr` fallback (rule 24) |
+| `registered` | the run is registered through the single `scripts/register_forecast_run.py` path and its verdict key is `neiso-t3` |
+
+**Pre-declared expectation (P20, HIGH):** `dof_ledger_complete` reads **true** with the same
+**7 IDENTIFIED / 0 UNIDENTIFIED** ledger D47 recorded for `bau-d46` — `forecast_xyear_warmstart`
+plus NEISO's six published ORDC/scarcity registry fields. The D60 flip adds **no** eighth
+entry, because `ccs_retrofit_capex_co2_scaling` is now at its **dataclass default** and the
+ledger enumerates non-default solve-affecting fields. *Falsifier: any UNIDENTIFIED entry, or
+an entry for the CCS field.* Should the ledger come back with an UNIDENTIFIED row, the
+assertion is written **false** and FC-7 fails on it — the attestation is not re-scoped to fit.
+
+**And the one thing this attestation will NOT claim:** that the run's FC-5 (external
+corridor) or FC-6 (driver response) rows are satisfied. Both were `SKIPPED` on `bau-d46` for
+want of a committed benchmark-corridor table and a paired driver battery, neither of which
+D60 builds; they stay SKIPPED and are reported as such, exactly as the preserved record has
+them (`neiso-t3` carries them as caveats today). D60 produces no FC-5/FC-6 evidence and
+claims none.

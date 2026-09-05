@@ -253,8 +253,10 @@ def apply_ccs_retrofit(
     cap-displaced candidates stay unabated on the normal loss-year
     counter and are re-screened every year.
 
-    **Capex sized to the host's CO2 flow (capx D50, GATED
-    ``config.ccs_retrofit_capex_co2_scaling``, default off).** Off, the
+    **Capex sized to the host's CO2 flow (capx D50,
+    ``config.ccs_retrofit_capex_co2_scaling``, DEFAULT ON since 2026-09-05 —
+    owner ruling Q42, executed by capx D60; an explicit ``False`` still
+    selects the pre-flip construction and keeps its cache key).** Off, the
     capture island is charged at ``ccs_retrofit_capex_kw`` FLAT per kW for
     every host while §45Q is credited on the host's OWN captured tonnes —
     the construction seam ``FINDING-capx-d49-2026-09-04.md`` §1.4 named:

@@ -6605,3 +6605,123 @@ your branch when done.
   refactor guards 0; the three Rule-22 gates 0; cache-key 0; pinned-key 24 passed). **The
   flip-set count itself is still unread (API 403) and the flip is still NOT live.** This lane's
   branch is rebased onto `8342d74d`; the closing diff remains the two records files, 0 deletions.
+- 2026-09-05 — **AUDIT RULINGS RECORDS LANE v28b** (dispatched at pin `ee7754c1`; landed at
+  **`59d85ecc`** — the pin moved under the dispatch again, Z-3's sixth instance: `8342d74d` at
+  poll 1, 18:32Z, `59d85ecc` at poll 2, 18:37Z; branch finally rebased onto `139a0988`, #4779
+  at 18:41:49Z, which touches neither records file). **RECORDS
+  ONLY: four owner rulings from the 15:32Z sitting, R-AH … R-AK, recorded for the first
+  time.** Zero solves, zero scoring, zero registration; this lane executed none of the four
+  rulings and adjudicated nothing. **Q-4 premise verified before writing** (word-boundary
+  grep across `docs/` at the pin): `R-AH` **0 files**, `R-AI` **0**, `R-AJ` **0**, `R-AK`
+  **0** — the third consecutive cycle of the R-AF / R-AG defect (unrecorded until a records
+  lane finds it); this entry and the board block above v28 are their first artifacts.
+  **R-AH (card A, Y-1 branch-protection flip) — "On first 6-of-6 head".** The Settings
+  action is performed on the first CI-covered head whose R-AE six-check set reads 6 of 6.
+  **THAT CONDITION IS NOW MET:** CI run **2456** (`33979949551`), head **`dd555499`** — the
+  Y-7 lane's PR head, merged **#4771** at **18:06:46Z** — reads all six green (`Ruff lint +
+  format`, `Pinned default cache key`, `Structural refactor guards`, `Cache-key registration
+  guard`, `Fast test tier`, `Rule-22 quarantine gates`) with only the two chronic non-set
+  jobs red (`FR-22 backcast->forecast parity`, `Forecast-invariant artifact audit`); the
+  first 6-of-6 the program has recorded (v27 read 3 of 6, its coda projected 4). Verified
+  from the checkout: `dd555499` is on `main` via `d71fdfe6`, and the six names are exactly
+  `ci.yml`'s six required `name:` keys (:104, :299, :345, :393, :416, :541) while the two
+  named non-set jobs are its :151 and :246. The per-job results are the owner's record, not
+  re-read here. **LIVENESS NOT ESTABLISHED, and the instrument is unavailable rather than
+  silent:** branch protection is asserted nowhere in the tree, and every repository-scoped
+  GitHub REST path returns **403** to this session — *"GitHub access is not enabled for this
+  session. An org admin must connect the Claude GitHub App for this organization."* (`/user`
+  and `/rate_limit` answer, so it is a scope denial, not an outage; git smart-HTTP is
+  unaffected). Observed from git alone, and evidence in **neither** direction: **#4771 itself
+  and nine further PRs** merged into `main` in the 30 minutes after the 6-of-6 head (#4770
+  18:07:03Z, #4772 18:07:19Z, #4773 18:15:19Z, #4774 18:21:01Z, #4761 18:21:31Z, #4775
+  18:29:03Z, #4776 18:36:20Z, #4777 18:36:51Z, #4778 18:37:12Z) — the two chronically-red jobs
+  are outside the required set and would not block a merge with the flip live, and the six
+  required checks on those heads are unreadable here.
+  **The flip's liveness is UNREAD at this pin — not "not live".** The
+  disproof the dispatch named does not discriminate either: a merge past a **red non-set job**
+  cannot show the flip is off, since the non-set jobs are outside the required set and would
+  not block a merge with the flip live; and the in-session form (this lane's own records PR
+  merging) is unavailable, since this lane cannot merge it. v28 records the flip as **NOT
+  live** on tree-level grounds (its local six-of-six equivalents had fallen back to four of
+  six at `ee7754c1` while PRs kept merging); this lane neither confirms nor contradicts that —
+  it is an inference from local equivalents, not a reading of the required checks. **The same
+  403 was reproduced independently at two lanes two hours apart, so the lost instrument is a
+  standing condition, not one session's accident.**
+  **R-AI (card C, X-2 stage-0 re-captures) — "Hold until the 09-07 clocks".** No capture
+  dispatch; the three stale goldens are re-captured only if the keepers stay still through
+  R-AF's 48-hour limb. **Verified in full from `git log -- frontend/data/backcast/keepers`:**
+  per-shard last content commits are NYISO `e69fcd54` **01:03:41Z**, MISO `3a6e90b6`
+  **01:21:15Z**, CAISO `84e4ccb0` **02:08:00Z** (ERCOT `4bc8745a` 08-31; NEISO/PJM/index
+  `5aa9100f` 08-30), and `--no-merges --since=2026-09-05T02:08:01Z` over that directory
+  returns **EMPTY** — **no keeper moved between 02:08Z and this pin**, 16 h 29 m of
+  stillness. Clocks stand at **2026-09-07 01:03Z NYISO / 01:21Z MISO / 02:08Z CAISO**. The
+  three stale goldens re-derived against `results/regression-goldens/perfb-stage0/manifest.json`:
+  `2026-09-01-caiso-231-b1-ungrounded` vs live caiso-246, `2026-09-01-miso-198-oomlevel` vs
+  miso-213, `2026-09-04-nyiso-186-astoria-identity` vs nyiso-189. **Stage-0 stays 4 of 7; no
+  capture dispatched.**
+  **R-AJ (card D, G2 leg 1 + R-V) — "Golden-tier CI proof, then declare".** One
+  `workflow_dispatch` of `golden-data-tier.yml` on the merged PERF-B s3 head is the CI proof;
+  if green, leg 1 is declared satisfied and the R-V keeper-freeze question is served at the
+  next sitting. **THE DISPATCH IS THE DIRECTOR'S, NOT THIS LANE'S:** golden-data-tier run
+  **#11**, id **`33983249186`**, event `workflow_dispatch`, ref `main`, head **`a0014864`**,
+  started **18:10:58Z**, in progress at 18:22Z, timeout 90 min — **not re-triggered here, and
+  this lane dispatched no workflow at all.** Corroborated from the checkout: `a0014864` is
+  `main`'s merge of #4772 (18:07:19Z) and **PERF-B s3 is reachable from it** (#4753 / #4755,
+  `0e1bebfd` *"PERF-B s3: the finding, complete — full byte gate PASS…"*, 04:04:08Z); the
+  workflow is `workflow_dispatch`-only since R-Y, concurrency `golden-data-tier`,
+  `timeout-minutes: 90`. **STATUS AT CLOSE: UNREAD** — `/repos/…/actions/runs/33983249186` is
+  one of the 403s above, so this lane records **neither a conclusion nor "in progress at
+  close"**; both would be unobserved claims. The reference is carried in full so the next
+  lane reads it in one call. **G2 leg 1 is therefore NOT declared by this entry**, and R-V's
+  keeper-freeze question stays served at the next sitting.
+  **R-AK (card E, launch-failure routing) — "Opus for eligible lanes".** Until the failure
+  class clears, records / capture / small repair lanes are assigned to **Opus**; **Fable
+  stays** for adjudication-class lanes and core-infrastructure scope under rule 27, re-issued
+  on failure. **Basis as the director gave it:** four Fable sessions died at launch overnight
+  with the identical platform diagnostic (audit records v28 second issue 04:03Z, capx D57,
+  nyiso-189, miso-213) while every Opus session completed. **Session launch outcomes leave no
+  artifact in the tree**, so this is recorded on the director's attestation and **not claimed
+  as verified**; the tree corroborates only the re-issue half (capx D57 merged #4761 /
+  #4775; nyiso-189 and miso-213 both landed). **Recorded for completeness:** the **first v28b
+  session (Opus) did not die at launch** — it ran and **stalled at 18:17Z on a permission
+  question, pushing nothing**, and is archived: a **different class**, easy to conflate with
+  the four launch deaths, which is why it is on the record beside them.
+  **WHO EXECUTED WHAT:** the **director** triggered the golden-tier run; the **Y-7 lane**
+  (merged #4771, 18:06:46Z) cleared the flip set that satisfies R-AH's condition; **nothing
+  else was executed** — no capture (that is R-AI), no Settings flip visible to any instrument
+  reachable here, and R-AK produces no artifact. **This lane executed nothing.**
+  **QUEUE AMENDMENTS (dated; v27 and v28 rewritten nowhere):** **Y-1** — R-AH recorded, the
+  6-of-6 condition **met at 18:06:46Z**, so Y-1 now waits on the Settings action itself, whose
+  liveness is **unread**; **X-2** — R-AI recorded, **HOLD, no capture**, all three clocks
+  intact, stage-0 **4 of 7**; **G2 leg 1** (carried on X-3, served at Y-2) — R-AJ recorded,
+  **X-3's non-launch discharged** (PERF-B s3 merged, in `a0014864`), the one authorized proof
+  is run #11 / `33983249186`, **status unread**, leg 1 **not declared**; **R-AK (NEW)** —
+  launch-failure routing in force, standing until the failure class clears.
+  **SEQUENCING AGAINST v28, AND ONE DATED CORRECTION TO IT.** The parallel "Audit records
+  lane v28" had no branch when this lane started; `claude/audit-records-v28-r3kq9m` appeared
+  on `origin` at **18:32Z** (poll 1) and merged as **#4776** at **18:36:20Z** (poll 2,
+  18:37Z), inside the 45-minute window. This lane **rebased onto it** and its board block
+  sits **above** the v28 entry; **nothing in v27 or v28 is rewritten.** The correction:
+  v28's ruling-label sweep reads ***"`R-AH` → 0 files. Confirmed: none issued. Nothing
+  minted."*** — **the count was right and the conclusion is wrong.** R-AH was given at 15:32Z,
+  and v28's PR merged 3 h 04 m later. **A zero grep shows nothing was recorded, never that
+  nothing was issued.** v28's text stands untouched and its method is sound; this corrects
+  the inference, in the D-9 form. The shape has now produced a wrong record three cycles
+  running (R-AF, R-AG, here), and this instance is the sharpest: a records lane certified the
+  absence of a ruling that a *parallel records lane* was already dispatched to write.
+  **Q-4 AT CLOSE:** word-boundary grep across `docs/` after writing — `R-AH` **2** files,
+  `R-AI` **2**, `R-AJ` **2**, `R-AK` **2**. Exactly the two files this lane touched, for all
+  four; `R-AH`'s two hits include v28's own sweep line (corrected above), and
+  `R-AI`/`R-AJ`/`R-AK` appear nowhere else. Each job is diffed against a changed target file
+  in the PR body, one row per ruling.
+  **Records integrity:** touched **only** this plan and the board. **Verified untouched**
+  (clean tree after `reset --hard origin/main`, and again after the rebase onto merged v28;
+  closing diff confined to two files, **insertions only, zero deletions**): every keeper
+  shard, every `status/<ISO>.js`, `calibration-complete.json`, `holdout-freeze.json`,
+  **`program-status.json`**, every matrix shard, every workflow, every bundle/sidecar/registry
+  file, every golden manifest. **No solve, no score, no registration, no workflow dispatch.**
+  CI runs on this lane's PR — both files sit in `ci.yml`'s Y-4-widened path filter.
+  **ONE THING THIS LANE COULD NOT DO:** the dispatch's route was `git push -u origin <branch>`
+  plus `mcp__github__create_pull_request`. **That MCP tool is not attached to this session and
+  the REST fallback is the same 403**, so the branch is pushed and **the PR must be opened by
+  hand or by a lane that holds the tool** — recorded rather than left as a silent gap.

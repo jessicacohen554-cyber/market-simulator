@@ -2554,3 +2554,21 @@ rule-26 deletion pass CI and break the replay guard. A guard asserting every
 retired field appearing in a committed keeper meta is declared in the replay
 registry would close the class; not built here, as it wants an owner's view on
 which registry is canonical.
+
+## 2026-09-05 — OWNER DIRECTIVE, ALL LANES: the dashboard shows the KEEPER ALONE per ISO; ERCOT's two-config keeper is registered as ONE run (ercot-248)
+
+Verbatim: *"Combine the ERCOT calibrated keeper config into one run for the run
+explorer html page … then remove all the others that aren't that keeper so it's
+just showing one run. Also prune all the other non keeper runs from there so just
+show the keeper for each ISO for now."* Executed in session ercot-248
+(`docs/calibration-log/ercot.md` ercot-248 has the full record). Per lane, with
+`scripts/prune_iso_runs.py --force-uncite`: ERCOT 15 → keeper
+`2026-09-05-ercot248-two-config-keeper`; CAISO 11 → `2026-09-05-caiso-246-b1-spot`;
+PJM 4 → `2026-08-15-pjm-162-inputclock`; MISO 14 → `2026-09-05-miso-213-layering`;
+NYISO 14 → `2026-09-05-nyiso-189-steam-identity`; NEISO 3 →
+`2026-08-17-neiso-99-joint-p1`. No keeper, verdict, caveat, frontier declaration
+or holdout posture moved; every pruned run's evidence stays in the FINDING
+records, the per-ISO logs, the matrix cells and git history. Bundles a
+regression-golden manifest or the parity allowlist names are retained on disk
+(the prune script now honours both). Generalises the 2026-08-15 site-retention
+directive to "keeper only, for now".

@@ -836,6 +836,23 @@ def build_merit_order_panel(
     c = c.dropna(subset=["facilityId"])
     c["facilityId"] = c["facilityId"].astype(int)
     c["unitId"] = c["unitId"].astype(str)
+    # Common-generator stack pairs (campd.CAMPD_STACK_DUPLICATE_UNITS) repeat
+    # ONE generator's grossLoad on both monitored flue paths while splitting
+    # its heat input between them. Summed per unit below, that halves the
+    # pair's heat rate and prices the unit at half its SRMC, so its dead spans
+    # look IN merit more often and fewer of them clear the guard's
+    # MERIT_OOM_FRAC bar (nyiso-184 §4.1: Astoria 8906 panel HR 5.55 against a
+    # merged 11.01). Mirror campd._normalize_campd — drop the duplicate's
+    # grossLoad copy and re-label it onto its primary, so the per-unit group-by
+    # sums the pair into the single generator it physically is (generation
+    # once, heat over both paths). Byte-identical for every extract with no
+    # registered stack pair.
+    from market_sim.data.campd import merge_stack_duplicate_units, stack_duplicate_mask
+
+    _dup = stack_duplicate_mask(c["facilityId"], c["unitId"])
+    if bool(_dup.any()):
+        c.loc[_dup, "grossLoad"] = 0.0
+        c["unitId"] = merge_stack_duplicate_units(c["facilityId"], c["unitId"])
     c["date"] = pd.to_datetime(c["date"])
     c["hour"] = pd.to_numeric(c["hour"], errors="coerce")
     c = c.dropna(subset=["hour"])

@@ -21,7 +21,7 @@ from market_sim.model.lp.costs import build_cost_vector
 from market_sim.model.lp.layout import VariableLayout
 from market_sim.results.scarcity import within_day_forward_max
 
-_PINNED_DEFAULT_KEY = "4c6b03ae098b6e3e"
+_PINNED_DEFAULT_KEY = "e5ecd4105ada3e58"
 
 
 class TestStorageDischargeCostHourly(unittest.TestCase):

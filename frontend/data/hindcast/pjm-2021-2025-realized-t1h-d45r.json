@@ -686,11 +686,11 @@
       "detail": "in band"
     }
   ],
-  "registered_utc": "2026-09-04T09:29:59Z",
+  "registered_utc": "2026-09-05T18:35:36Z",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "5b18dc70d45b",
-    "scored_at_date": "2026-09-04T09:29:59Z",
+    "scored_at_sha": "c5019afaf3f3",
+    "scored_at_date": "2026-09-05T18:35:36Z",
     "cache_epoch": "c6091bd5b62bbc3f"
   }
 }

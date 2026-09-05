@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-05-nyiso-192-astoria-panel",
+  "label": "nyiso 192 astoria panel (ARM — NOT-YET, owner call Q40)",
+  "date": "2026-09-05",
+  "shorthand": "nyiso-192-astoria-panel",
+  "definition": "nyiso-192 ARM — NOT-YET (C1-2024 CC_REGULAR +3.33 -> +3.68 TWh / +3.0 pp flips PASS->FAIL; C3c then not lone; C2/C3a/C3b/C8 no flip) — NOT rejected under the pre-registered rule, the promote/hold call is the OWNER'S (docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md Q40). nyiso-192 ARM (PREREG-nyiso192 §7, pushed before this solve): the keeper 2026-09-05-nyiso-189-steam-identity recipe, ZERO ScenarioConfig changes, on the -perunitmerit- outage extract RE-DERIVED under its committed invocation after the merit-order panel's stack-duplicate repair (outage_detect.build_merit_order_panel applies campd.stack_duplicate_mask / merge_stack_duplicate_units, so Astoria 8906's paired flue paths enter the guard as one generator at its physical SRMC). Extract sha256 58799099... (repaired) vs 45714bb9... (committed); 106 Astoria windows leave, 155 windows at fifteen other plants enter.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-05-nyiso-192-astoria-panel.js",
+  "bundle": "results/calibration/nyiso192_astoria_panel"
+}

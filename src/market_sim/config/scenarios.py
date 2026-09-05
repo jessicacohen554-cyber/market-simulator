@@ -131,14 +131,19 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
 # 900.0 -> 1521.4 onto the ATB 2024 2026$ basis) until 2026-09-03; same
 # reading, same treatment.
 #
-# THE LIVE PIN IS ``4c6b03ae098b6e3e`` (backcast ``8211c72bb1960adc``),
-# advanced 2026-09-03 by capx D44 executing owner ruling Q30 — the
-# ``fossil_announced_exits_enabled`` default flip. That field IS registered
+# Many others name ``4c6b03ae098b6e3e`` (backcast ``8211c72bb1960adc``), the
+# value the pin held from 2026-09-03 (capx D44 executing owner ruling Q30 — the
+# ``fossil_announced_exits_enabled`` default flip) until 2026-09-05; same
+# reading, same treatment.
+#
+# THE LIVE PIN IS ``e5ecd4105ada3e58`` (backcast ``6a2845e50951394e``),
+# advanced 2026-09-05 by capx D60 executing owner ruling Q42 — the
+# ``ccs_retrofit_capex_co2_scaling`` default flip. That field IS registered
 # here, and the advance is the DESIGNED behaviour of capx D24-R option (b'-1),
 # not a registration failure: the key drops at the FROZEN declaration, so the
 # armed default enters the hash and cannot be served a pre-flip bundle, while
-# an explicit ``False`` still drops and still holds ``cedadc285f8603b9`` /
-# ``e006dfd7cef8bedd``. Authoritative values + full cause blocks:
+# an explicit ``False`` still drops and still holds ``4c6b03ae098b6e3e`` /
+# ``8211c72bb1960adc``. Authoritative values + full cause blocks:
 # ``tests/regression/test_persisted_identity.py``.
 _CACHE_KEY_OPTIONAL_FIELDS = (
     "start_year",
@@ -1374,7 +1379,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # byte-stable (ercot-t1f 873d8c0e6cab52ae re-resolved unmoved with the
     # field absent AND explicitly False); an armed run keys distinctly. SHARED
     # field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field
-    # (the nyiso-119 discipline).
+    # (the nyiso-119 discipline). DEFAULT FLIPPED False -> True on 2026-09-05
+    # (capx D60, owner ruling Q42), declared in
+    # ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS``: the registration STANDS and
+    # the frozen drop value stays ``False``, so the sentences above still read
+    # true of an EXPLICIT ``False`` (a pre-Q42 control arm keeps its key) while
+    # the armed default now enters the hash and advances both pins — the point
+    # of (b'-1), not a defect in the registration.
     "ccs_retrofit_capex_co2_scaling",
     # capx D52: the NYISO adequacy-requirement devintage gates (published
     # forecast peak; per-capability-year adopted IRM × (1 − derate)) — both
@@ -1986,6 +1997,49 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # director's batched post-repair re-measure decision; this lane re-ran
     # nothing.
     ("2026-09-03", "fossil_announced_exits_enabled", "True"),
+    #
+    # capx D60, executing OWNER RULING Q42 (director sitting r#37, 2026-09-05):
+    # the CCS-retrofit capex-scaling + CHP-exclusion construction repair ARMS AS
+    # THE DEFAULT POSTURE for all six ISOs, on the D50 / D50-R A/B
+    # (``docs/handoffs/FINDING-capx-d50-2026-09-04.md`` §8). The SECOND entry in
+    # this ledger.
+    #
+    # A POSTURE, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact). The repair
+    # carries no ISO's fitted value: the island is sized against
+    # ``ccs.ccs_retrofit_captured_ref_t_per_mwh`` = capture_rate x
+    # min(HEAT_RATE_BINS[gas_cc]) x FUEL_CO2_FACTOR_PER_MMBTU[gas_cc] = 0.90 x
+    # 6.3 x 0.057 = 0.32319 t/MWh — the SAME reference host
+    # ``new_entry._emerging_lcoe`` charges the ATB 2024 gas_cc_ccs increment
+    # against, so both screens size one island to one host. Zero DOF.
+    #
+    # BEHAVIORAL, and NOT a same-key collision. The frozen declaration above
+    # stays ``"False"``, so a post-flip default config no longer equals the drop
+    # value: it ENTERS the hash and takes its own key, while an EXPLICIT
+    # ``False`` still collapses onto the pre-flip key and keeps its bundle (one
+    # committed artifact already exercises that —
+    # ``results/hindcast/miso-2021-2025-realized-t1h-d55-keyfix``). Measured
+    # this session — forecast default ``4c6b03ae098b6e3e`` ->
+    # ``e5ecd4105ada3e58``, bare backcast ``8211c72bb1960adc`` ->
+    # ``6a2845e50951394e``; both pins advanced with dated cause blocks in
+    # ``tests/regression/test_persisted_identity.py`` and the cache-epoch ledger
+    # entry 2026-09-05 in ``src/market_sim/results/cache.py``. The cost is a
+    # one-time cache MISS per config, never a wrong answer.
+    #
+    # BACKCAST BEHAVIOUR IS BYTE-IDENTICAL and so is every hindcast/crossover
+    # horizon that ends before 2028: ``ccs.py::apply_ccs_retrofit`` returns at
+    # its first statement, ``if year < config.ccs_retrofit_available_year``
+    # (default 2028), which precedes EVERY read of this flag — and that call
+    # site is the field's only consumer in the source tree. No backcast year
+    # reaches 2028 and no measured backcast fleet contains a ``gas_cc_ccs``
+    # unit, so no keeper, sidecar, determination or dashboard row moves
+    # (committed artifacts are files, not cache lookups). Forecast bundles whose
+    # horizon reaches 2028 and were solved at the pre-flip default carry the
+    # SUPERSEDED posture: D60 renamed the three t1f bare keys onto the D50 arms
+    # already solved AT the post-flip key (ERCOT / NEISO / PJM) and re-solved
+    # the four the arms could not cover (MISO t1f, NYISO t1f, CAISO t1f and the
+    # NEISO GOLDEN-3 t3); the blast-radius reconciliation is
+    # FINDING-capx-d60-2026-09-05.md.
+    ("2026-09-05", "ccs_retrofit_capex_co2_scaling", "True"),
 )
 
 # The default each field carried WHEN IT WAS REGISTERED, for the seven fields
@@ -3716,8 +3770,10 @@ class ScenarioConfig:
     # Avoids retrofitting units near retirement.
 
     # capx D50 (2026-09-04) — the D49 §1.5 construction repair of the retrofit
-    # screen, GATED default OFF (the default flip is an owner ruling on the
-    # D50 A/B; docs/handoffs/FINDING-capx-d50-2026-09-04.md). THE SEAM
+    # screen. Built GATED default OFF; ARMED AS THE DEFAULT POSTURE FOR ALL SIX
+    # ISOs on 2026-09-05 by OWNER RULING Q42 on the D50 / D50-R A/B
+    # (docs/handoffs/FINDING-capx-d50-2026-09-04.md §8; executed by capx D60,
+    # the (b'-1) declared flip below). THE SEAM
     # (FINDING-capx-d49-2026-09-04.md §1.4): the screen credits §45Q on the
     # HOST's measured CO2 per MWh (captured = 0.9 × er_host) while charging the
     # capture island at ccs_retrofit_capex_kw FLAT per kW — the ATB 2024
@@ -3743,13 +3799,24 @@ class ScenarioConfig:
     # the screen's uplift is the electric-market margin a cogen capture
     # project is not decided on. The off path never enters either branch —
     # byte-identical by construction (proved on the committed ercot-t1f key
-    # 873d8c0e6cab52ae). What linear capex scaling does NOT close, stated at
+    # 873d8c0e6cab52ae, which re-resolved unmoved with the field absent AND
+    # explicitly False); since the 2026-09-05 flip "off" means an EXPLICIT
+    # ``False``, which still drops from the hash and still holds that key. What linear capex scaling does NOT close, stated at
     # the definition: the ΔFOM ($/MW-yr) and the capture VOM adder ($/MWh)
     # stay reference-host-sized and dilute per captured tonne as er rises, so
     # the clearing threshold moves (er ≥ ~0.46 → ≥ ~0.58–0.63 t/MWh at carbon
     # 0) rather than vanishing; that residual is recorded, not built (D49
     # named three seams; this field builds those three).
-    ccs_retrofit_capex_co2_scaling: bool = False
+    # DEFAULT FLIPPED False -> True on 2026-09-05 (capx D60, executing OWNER
+    # RULING Q42, director sitting r#37): the repair ARMS AS THE POSTURE FOR
+    # ALL SIX ISOs, declared in ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS``
+    # with the frozen drop value left at ``"False"`` (option (b'-1), exactly
+    # the D44 pattern). It carries no ISO's fitted number — every term is an
+    # already-cited constant and the reference host is the SAME one
+    # ``new_entry._emerging_lcoe`` charges the ATB increment against — so it
+    # is a POSTURE, the same admissibility class as Q30, not a transfer
+    # (rule 25 untouched). Evidence: FINDING-capx-d50-2026-09-04.md §8.
+    ccs_retrofit_capex_co2_scaling: bool = True
 
     # Tier 2 (expert/sensitivity) — Fleet aggregation control
     heat_rate_bin_count: int | None = None  # Override default bin count per fuel type.
