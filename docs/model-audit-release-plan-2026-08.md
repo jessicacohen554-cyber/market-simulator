@@ -6841,3 +6841,16 @@ your branch when done.
   `failure`** on the two chronic non-set jobs **and `Ruff lint + format` red** on the three
   miso-217 files, which this records-only lane did not create and does not fix. **The flip was
   NOT live when this PR was opened.**
+  **CODA (20:18Z, dated addendum to the v29 entry only).** (a) **The flip is still not live at
+  PR-open** — a third reading of the branches API as PR **#4804** was created returns `main` →
+  **`protected: false`**, i.e. 18:55Z + ~85 minutes; the finding now rests on three independent
+  readings. (b) **Y-8's second issue has produced work and it independently confirms this lane's
+  correction**: branch `claude/y8-bench-regen-p6nugt` appeared on `origin` at **20:17:08Z**
+  (after all three polls, which is why the entry records it absent — accurate as scoped), with a
+  single commit titled *"Y-8: re-render all **14** stale bench parts at builder `4e78c85427bb`"*
+  touching exactly **14 files, 0 insertions / 0 deletions** (ERCOT 2023-25, NEISO 2022-25, PJM
+  2022-25, CAISO 2023-25). **A separate lane arrived at 14, not the dispatch's 20**, at the same
+  fingerprint — so the gate-table correction is corroborated by an outside measurement rather
+  than merely asserted. **Y-8 remains UNMERGED**, so this entry's reading (**14 of 20 STALE,
+  exit 1**) stands as recorded; when it lands the bench gate should read **0 STALE**, which the
+  next records lane should confirm rather than assume. This lane neither reviewed nor merged it.

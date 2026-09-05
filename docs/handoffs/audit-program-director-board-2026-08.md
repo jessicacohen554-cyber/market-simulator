@@ -390,6 +390,33 @@
 > miso-217 files, which this lane did not create and does not fix (records-only
 > scope). **The flip was NOT live when this PR was opened** — recorded because
 > the dispatch asked.
+>
+> ### 🟢 CODA (dated addendum to THIS block only, 20:18Z — nothing else is rewritten)
+>
+> **Two facts landed after this lane's close and before its PR was opened.**
+>
+> 1. **The flip is still not live at PR-open.** A **third** reading of the
+>    branches API, taken as PR #4804 was created: `main` → **`protected: false`**.
+>    That is 18:55Z + **~85 minutes**. The finding above is unchanged, now on
+>    three independent readings.
+> 2. **🟢 Y-8's second issue HAS produced work, and it INDEPENDENTLY CONFIRMS
+>    THIS LANE'S CORRECTION.** Branch `claude/y8-bench-regen-p6nugt` appeared on
+>    `origin` at **20:17:08Z** — after all three polls, which is why the section
+>    above records it absent (accurate as scoped, and stated here so no reader
+>    concludes Y-8 produced nothing). Its single commit is titled **"Y-8:
+>    re-render all **14** stale bench parts at builder `4e78c85427bb`"**, and it
+>    touches exactly **14 files**, **0 insertions / 0 deletions** (binary
+>    re-renders): ERCOT 2023-25, NEISO 2022-25, PJM 2022-25, CAISO 2023-25.
+>    **A separate lane, working independently, arrived at 14 — not the
+>    dispatch's 20** — and at the same builder fingerprint this lane derived.
+>    The correction in the gate table is therefore corroborated by an outside
+>    measurement, not merely asserted. **Y-8 remains UNMERGED**, so the gate
+>    reading at this entry's pin (**14 of 20 STALE, exit 1**) stands as recorded;
+>    when Y-8 lands, the bench gate should read **0 STALE**, and the next records
+>    lane should confirm that rather than assume it. **This lane neither reviewed
+>    nor merged it** — R-AO's charter (content-invariance per part, C1
+>    re-derivation on NYISO artifact-only, **promote nothing**) is Y-8's to
+>    discharge and this desk's only to record.
 
 > # ⚖️ **OWNER RULINGS R-AH … R-AK (2026-09-05 15:32Z SITTING)** — RECORDS-ONLY LANE **v28b**, pin `59d85ecc`. **FOUR RULINGS THAT REACHED NO ARTIFACT UNTIL THIS BLOCK — AND v28, WRITING THE ENTRY DIRECTLY BELOW THIS ONE, RECORDED R-AH AS *"none issued. Nothing minted."* — ITS PR MERGED THREE HOURS AFTER THE RULING WAS GIVEN.**
 >
