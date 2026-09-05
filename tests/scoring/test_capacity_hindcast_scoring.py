@@ -1325,3 +1325,123 @@ def test_r3_model_retirements_reads_confirmed_derates():
     assert float(derate["mw"].iloc[0]) == 400.0
     assert int(derate["year"].iloc[0]) == 2024
     assert out["mw"].sum() == 500.0
+
+
+def test_plant_release_precision_reported_only():
+    """capx D55 (D32 §7 R4): released MW at real-exit plants ÷ released MW,
+    per window / year / channel — reported only, never banded.
+
+    Real exits: plant 6146 coal (486 MW), plant 1832 coal (50 MW, 2025), plant
+    999 gas_st. The economic channel releases 300 MW at 6146 and 100 MW at
+    1832 (hits), 700 MW at 7777 (a plant that never exited) and 400 MW with no
+    plant identity (a legacy zone aggregate — a counted miss); the announced
+    channel exits 200 MW at 999.
+    """
+    actuals = _actuals(
+        [
+            {
+                "kind": "retirement",
+                "fuel": "coal",
+                "mw": 486,
+                "year": 2023,
+                "plant_id": 6146,
+            },
+            {
+                "kind": "retirement",
+                "fuel": "coal",
+                "mw": 50,
+                "year": 2025,
+                "plant_id": 1832,
+            },
+            {
+                "kind": "retirement",
+                "fuel": "gas_st",
+                "mw": 200,
+                "year": 2024,
+                "plant_id": 999,
+            },
+        ]
+    )
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "COAL_NE_p6146_committed",
+                "fuel": "coal",
+                "mw": 300,
+                "year": 2024,
+                "reason": "economic",
+            },
+            {
+                "unit_id": "COAL_NE_p7777_econ",
+                "fuel": "coal",
+                "mw": 700,
+                "year": 2024,
+                "reason": "economic",
+            },
+            {
+                "unit_id": "COAL_NE_p1832_peak",
+                "fuel": "coal",
+                "mw": 100,
+                "year": 2023,
+                "reason": "economic",
+            },
+            {
+                "unit_id": "999_1",
+                "fuel": "gas_st",
+                "mw": 200,
+                "year": 2024,
+                "reason": "announced",
+            },
+            {
+                "unit_id": "coal_zone_agg",
+                "fuel": "coal",
+                "mw": 400,
+                "year": 2025,
+                "reason": "economic",
+            },
+        ]
+    )
+    ret = S.score_retirements(model, actuals)
+    prp = ret["plant_release_precision"]
+    assert prp["n_real_exit_plants"] == 3
+    econ = prp["window"]["economic"]
+    assert econ["released_mw"] == 1500.0
+    assert econ["released_mw_at_real_exit_plants"] == 400.0
+    assert econ["released_mw_no_plant_identity"] == 400.0
+    assert abs(econ["precision"] - 400.0 / 1500.0) < 1e-3
+    alls = prp["window"]["all"]
+    assert (
+        alls["released_mw"] == 1700.0
+        and alls["released_mw_at_real_exit_plants"] == 600.0
+    )
+    assert prp["per_year"]["2023"]["economic"]["precision"] == 1.0
+    assert prp["per_year"]["2024"]["economic"]["precision"] == 0.3
+    assert prp["per_year"]["2025"]["economic"]["precision"] == 0.0
+    # Reported only: no band anywhere in the block, and the gated rows are
+    # untouched by it (recall still scores on fuel-MW coverage).
+    assert "band" not in prp and "band" not in econ
+    assert ret["unit_recall_gt300"]["band"] in ("PASS", "FAIL")
+    # Same-fuel matching: a coal release at a gas_st real-exit plant is a miss.
+    cross = pd.DataFrame(
+        [
+            {
+                "unit_id": "COAL_NE_p999_econ",
+                "fuel": "coal",
+                "mw": 100,
+                "year": 2024,
+                "reason": "economic",
+            }
+        ]
+    )
+    assert (
+        S.score_retirements(cross, actuals)["plant_release_precision"]["window"][
+            "economic"
+        ]["precision"]
+        == 0.0
+    )
+    # An empty release reads None, never 0.
+    empty = S.score_retirements(model.iloc[:0], actuals)["plant_release_precision"]
+    assert empty["window"]["economic"]["precision"] is None
+    # The report renderer carries the row.
+    note = "\n".join(S.render_release_precision_note(prp))
+    assert "release precision" in note and "26.7%" in note

@@ -1,6 +1,6 @@
 # Capacity hindcast — MISO 2021→2025 (realized fuel)
 
-_Generated 2026-09-03 · W2-P5 · plan §1.4 · bundle `results/hindcast/miso-2021-2025-realized-t1h-d46/MISO/eff2c890746ec966`_
+_Generated 2026-09-05 · W2-P5 · plan §1.4 · bundle `results/hindcast/miso-2021-2025-realized-t1h-d55-keyfix/MISO/eff2c890746ec966`_
 
 Forecast machinery run from the **EIA-860 2020 vintage**, evolved 2021→2025. 2021 seeds the price signal (not scored); **2022 is the quarantine bridge — evolved, never solved (rule 22)**; 2023-2025 scored. A missed band is a root-cause investigation (rules 1/11/14), never widened, and nothing here is tuned.
 
@@ -13,6 +13,8 @@ Forecast machinery run from the **EIA-860 2020 vintage**, evolved 2021→2025. 2
 | false-retire (GW) | — | 0.0 | 0% of model | ✅ PASS |
 
 > **Grain (G-31):** recall and false-retire are scored at **per-fuel MW coverage**, not exact unit identity — a real retired unit is *recalled* when the model derated ≥ its MW of the same fuel (its plant-binned tranche is derated by its MW), and *false-retire* is the model's per-fuel MW in **excess** of what that fuel actually retired. This retires the 94% false-retire artifact the old 1:1 `fuel+size` match produced against lumpy tranche/zone derates. Stricter plant-exact recall (same plant, reported only): **74%** (14/19). A false-retire that stays high after the grain fix is a genuine over-retirement (screen root-cause, e.g. G-30), not a scoring artifact.
+
+> **Plant-grain release precision (D32 R4, reported only — no band, no verdict):** of the MW the model released, the share landing at a plant (same plant code + fuel) that really exited in the window. Economic channel **—** (0 / 0 MW); all channels 98.5% (9,650 / 9,799 MW); real-exit plant set 127. Economic by year — 2022: — (0 / 0 MW), 2023: — (0 / 0 MW), 2024: — (0 / 0 MW), 2025: — (0 / 0 MW). A perfect selector reads 100 %; a random one reads the real exit rate of the retained MW (D32 §2.3: 13.5 % released vs 14.1 % retained on D31).
 
 > **Gate membership (D-24, signed 2026-08-06 (sitting Addendum X.6)):** the >=300 MW recall denominator is the **reachable** set — a target exit gates only if the unit exists in the run's fleet basis AND an admissible channel could produce its exit (economic with no exclusion recorded, or an instrument dated on or before the run's vintage cutoff **2020-12-31**). Members: **19 of 19** target rows >=300 MW.
 
@@ -71,31 +73,3 @@ COD-basis comparison (**not** the graded instrument; model total 14.034 GW vs de
 | (a) frozen fleet | 0.0 | 0.0 | no evolution after 2020 |
 | (b) announced-only | 65.381 | 147.445 | 2020-vintage planned schedule |
 | (c) AEO2021 regional | — | — | report-only context (not computed here) |
-
----
-
-## IS-2020 re-score (T-R8, 2026-09-05) — no re-solve
-
-Scoring-hygiene re-score of the **committed** bundle against RC-0B §c.5: **raw** grades realized usefulness against latest truth; **IS-2020** grades forecast skill against what was knowable at the 2020 vintage cutoff (V = 2020-12-31). Both are reported side by side — neither replaces the other. No LP was solved; the originals above are preserved. The RD-5 actuals-coverage fix (plants 8907 Indian Point, 1715 Palisades) is already reflected in the raw pass; IS-2020 adds the Byron/Dresden reversal exclusion (§c.5-1).
-
-| retirement metric | raw | IS-2020 |
-|---|--:|--:|
-| false-retire (GW) | 0.0 (✅ PASS) | 0.0 (✅ PASS) |
-| false-retire (% of model) | 0% | 0% |
-| unit recall >300MW | 84% (16/19) | 84% (16/19) |
-| plant-exact recall (diagnostic) | 74% (14/19) | (same) |
-| reversal exposure (GW, §c.5-1) | — | 0.0 |
-
-> **Plant-grain release precision (D32 R4, reported only — no band, no verdict):** of the MW the model released, the share landing at a plant (same plant code + fuel) that really exited in the window. Economic channel **—** (0 / 0 MW); all channels 98.5% (9,650 / 9,799 MW); real-exit plant set 127. Economic by year — 2022: — (0 / 0 MW), 2023: — (0 / 0 MW), 2024: — (0 / 0 MW), 2025: — (0 / 0 MW). A perfect selector reads 100 %; a random one reads the real exit rate of the retained MW (D32 §2.3: 13.5 % released vs 14.1 % retained on D31).
-
-> **Gate membership (D-24, signed 2026-08-06 (sitting Addendum X.6)):** the >=300 MW recall denominator is the **reachable** set — a target exit gates only if the unit exists in the run's fleet basis AND an admissible channel could produce its exit (economic with no exclusion recorded, or an instrument dated on or before the run's vintage cutoff **2020-12-31**). Members: **19 of 19** target rows >=300 MW.
-
-No target exit is classified unreachable on committed evidence (fail-closed: the gate excludes only on positive, cited evidence).
-
-Per-channel recall + false-retire (§c.5-4, legacy `known` → announced):
-
-| channel | retired GW | false-retire GW | recall (matched / big-actual) |
-|---|--:|--:|--:|
-| announced | 9.799 | 0.0 | 16/19 |
-
-> **Additions (§c.5-2):** Post-V restart additions excluded from IS-2020 additions (§c.5-2). Inert in the RD-5 actuals as landed — the coverage fix booked only the physical exit, no restart addition row exists.

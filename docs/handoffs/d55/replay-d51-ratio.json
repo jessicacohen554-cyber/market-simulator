@@ -1,0 +1,291 @@
+{
+  "bundle": "results/hindcast/miso-2021-2025-realized-t1h-d51-ratio",
+  "cache_key": "b538d37b36a88247",
+  "iso": "MISO",
+  "n_fleet_units": 2189,
+  "accounting_ratio": 0.8934356772712484,
+  "years": {
+    "2022": {
+      "year": 2022,
+      "n_eligible": 1489,
+      "n_missing_attrs": 8,
+      "missing_attrs": [
+        "planned_61144_1",
+        "planned_10328_GEN7",
+        "planned_10328_GEN8",
+        "planned_10328_GEN9",
+        "planned_1206_R1",
+        "planned_1206_R2",
+        "planned_1206_R3",
+        "planned_63259_DEPS1"
+      ],
+      "n_capped": 1484,
+      "n_decided": 5,
+      "released_mw_committed": 477.438,
+      "defective_key_reproduces_committed_decision": false,
+      "committed_status_contradictions": [
+        "COAL_MISO-Plains_p1073_peak",
+        "COAL_MISO-South_p6641_econ"
+      ],
+      "coal_key1_rounding_buckets_defective": 4,
+      "pinned_to_committed_status": {
+        "retained": [
+          "COAL_MISO-South_p6641_econ"
+        ],
+        "released": [
+          "COAL_MISO-Plains_p1073_peak"
+        ]
+      },
+      "shortfall_bounds_firm_mw": [
+        62933.19,
+        63454.206
+      ],
+      "prediction_exact": false,
+      "committed_released_defective": [
+        {
+          "unit_id": "COAL_MISO-Plains_p1073_peak",
+          "plant": "1073",
+          "fuel": "coal",
+          "mw": 0.608,
+          "co2": 1.0716,
+          "heat_rate": 11.252
+        },
+        {
+          "unit_id": "COAL_MISO-Plains_p1167_peak",
+          "plant": "1167",
+          "fuel": "coal",
+          "mw": 4.46,
+          "co2": 1.0771,
+          "heat_rate": 11.163
+        },
+        {
+          "unit_id": "COAL_MISO-Indiana_p6823_econ",
+          "plant": "6823",
+          "fuel": "coal",
+          "mw": 178.893,
+          "co2": 1.086,
+          "heat_rate": 10.8
+        },
+        {
+          "unit_id": "COAL_MISO-South_p1393_committed",
+          "plant": "1393",
+          "fuel": "coal",
+          "mw": 170.3,
+          "co2": 1.1069,
+          "heat_rate": 12.42
+        },
+        {
+          "unit_id": "COAL_MISO-East_p4271_committed",
+          "plant": "4271",
+          "fuel": "coal",
+          "mw": 123.177,
+          "co2": 1.1672,
+          "heat_rate": 12.42
+        }
+      ],
+      "committed_released_by_fuel": {
+        "coal": 477.438
+      },
+      "committed_released_by_plant": {
+        "6823": 178.893,
+        "1393": 170.3,
+        "4271": 123.177,
+        "1167": 4.46,
+        "1073": 0.608
+      },
+      "predicted_released_fixed": [
+        {
+          "unit_id": "COAL_MISO-East_p4271_peak",
+          "plant": "4271",
+          "fuel": "coal",
+          "mw": 7.796,
+          "co2": 1.1672,
+          "heat_rate": 11.34
+        },
+        {
+          "unit_id": "COAL_MISO-East_p4271_committed",
+          "plant": "4271",
+          "fuel": "coal",
+          "mw": 123.177,
+          "co2": 1.1672,
+          "heat_rate": 12.42
+        },
+        {
+          "unit_id": "COAL_MISO-West_p6098_peak",
+          "plant": "6098",
+          "fuel": "coal",
+          "mw": 9.48,
+          "co2": 1.177,
+          "heat_rate": 11.34
+        },
+        {
+          "unit_id": "COAL_MISO-West_p6098_committed",
+          "plant": "6098",
+          "fuel": "coal",
+          "mw": 135.09,
+          "co2": 1.177,
+          "heat_rate": 12.42
+        },
+        {
+          "unit_id": "COAL_MISO-Illinois_p976_peak",
+          "plant": "976",
+          "fuel": "coal",
+          "mw": 2.4,
+          "co2": 1.5331,
+          "heat_rate": 11.34
+        },
+        {
+          "unit_id": "COAL_MISO-Plains_p1073_peak",
+          "plant": "1073",
+          "fuel": "coal",
+          "mw": 0.608,
+          "co2": 1.0716,
+          "heat_rate": 11.252
+        }
+      ],
+      "predicted_released_by_fuel": {
+        "coal": 278.551
+      },
+      "predicted_released_by_plant": {
+        "6098": 144.57,
+        "4271": 130.973,
+        "976": 2.4,
+        "1073": 0.608
+      },
+      "predicted_released_mw_fixed": 278.551,
+      "boundary_ambiguous_units": [
+        {
+          "unit_id": "COAL_MISO-Indiana_p6705_peak",
+          "plant": "6705",
+          "fuel": "coal",
+          "mw": 14.43,
+          "co2": 1.1014,
+          "heat_rate": 11.34
+        },
+        {
+          "unit_id": "COAL_MISO-Indiana_p6705_committed",
+          "plant": "6705",
+          "fuel": "coal",
+          "mw": 328.282,
+          "co2": 1.1014,
+          "heat_rate": 12.42
+        },
+        {
+          "unit_id": "COAL_MISO-South_p1393_peak",
+          "plant": "1393",
+          "fuel": "coal",
+          "mw": 10.48,
+          "co2": 1.1069,
+          "heat_rate": 11.34
+        },
+        {
+          "unit_id": "COAL_MISO-South_p1393_committed",
+          "plant": "1393",
+          "fuel": "coal",
+          "mw": 170.3,
+          "co2": 1.1069,
+          "heat_rate": 12.42
+        },
+        {
+          "unit_id": "COAL_MISO-East_p4271_econ",
+          "plant": "4271",
+          "fuel": "coal",
+          "mw": 258.827,
+          "co2": 1.1672,
+          "heat_rate": 10.8
+        }
+      ],
+      "cross_fuel_identical": true,
+      "retained_head_fixed_top10": [
+        {
+          "unit_id": "CT_CHP_MISO-South_p50625_econ",
+          "plant": "50625",
+          "fuel": "gas_ct",
+          "mw": 107.41,
+          "co2": 0.3649,
+          "heat_rate": 10.569
+        },
+        {
+          "unit_id": "CT_CHP_MISO-South_p50625_committed",
+          "plant": "50625",
+          "fuel": "gas_ct",
+          "mw": 326.9,
+          "co2": 0.3649,
+          "heat_rate": 11.625
+        },
+        {
+          "unit_id": "CT_CHP_MISO-South_p50625_peak",
+          "plant": "50625",
+          "fuel": "gas_ct",
+          "mw": 32.69,
+          "co2": 0.3649,
+          "heat_rate": 12.154
+        },
+        {
+          "unit_id": "CT_PEAKER_MISO-South_p55620_econ",
+          "plant": "55620",
+          "fuel": "gas_ct",
+          "mw": 139.407,
+          "co2": 0.3704,
+          "heat_rate": 10.5
+        },
+        {
+          "unit_id": "CT_PEAKER_MISO-South_p55620_peak",
+          "plant": "55620",
+          "fuel": "gas_ct",
+          "mw": 10.493,
+          "co2": 0.3704,
+          "heat_rate": 11.55
+        },
+        {
+          "unit_id": "CT_PEAKER_MISO-South_p55218_econ",
+          "plant": "55218",
+          "fuel": "gas_ct",
+          "mw": 25.761,
+          "co2": 0.3788,
+          "heat_rate": 9.0
+        },
+        {
+          "unit_id": "CT_PEAKER_MISO-South_p55218_peak",
+          "plant": "55218",
+          "fuel": "gas_ct",
+          "mw": 1.939,
+          "co2": 0.3788,
+          "heat_rate": 9.9
+        },
+        {
+          "unit_id": "CT_PEAKER_MISO-West_p1904_econ",
+          "plant": "1904",
+          "fuel": "gas_ct",
+          "mw": 197.16,
+          "co2": 0.4425,
+          "heat_rate": 9.0
+        },
+        {
+          "unit_id": "CT_PEAKER_MISO-West_p1904_peak",
+          "plant": "1904",
+          "fuel": "gas_ct",
+          "mw": 14.84,
+          "co2": 0.4425,
+          "heat_rate": 9.9
+        },
+        {
+          "unit_id": "CT_PEAKER_MISO-East_p55087_econ",
+          "plant": "55087",
+          "fuel": "gas_ct",
+          "mw": 293.322,
+          "co2": 0.4556,
+          "heat_rate": 10.5
+        }
+      ],
+      "released_co2_range_defective": [
+        1.0716,
+        1.1672
+      ],
+      "released_co2_range_fixed": [
+        1.0716,
+        1.5331
+      ]
+    }
+  }
+}
