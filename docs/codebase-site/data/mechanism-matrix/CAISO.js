@@ -311,6 +311,8 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
     carbon_price_delta: { cell: ".", fc: "." },
+    carbon_price_path: { cell: ".", fc: "O", ev: "SCN-WS1a (2026-09-05, ZERO SOLVE, docs/handoffs/FINDING-scn-ws1a-2026-09-05.md §0.1): REPLACE semantics at HEAD — mid path 0->50 $/t vs CARB escalator 30->152, a CUT in all 25 years; FLOOR would make low/mid a no-op and high never bind (max gap -5.06 $/t). O pending owner card D-1." },
+    policy_bundle: { cell: ".", fc: "O", ev: "SCN-WS1a (2026-09-05): tight = -24.36..-102.29 $/t vs current in every year (FINDING §0.1); O pending D-1 / D-1(b)." },
     plant_emission_rates_v2: { cell: "K" },
     startup_co2_reporting: { cell: "U" },
   },
