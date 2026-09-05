@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-09-05 — landing-page cleanup: root `index.html` + `model-updates.html` brought to the current model state
+
+Site-only. **No file under `src/`, `scripts/`, `results/` or `frontend/data/` is
+touched; nothing changes a solve, a keeper, a marker or a matrix shard.** Executes
+the two owner-signed SITE dispositions of `docs/model-audit-release-plan-2026-08.md`
+§6 (items 5–6, signed 2026-08-13) that touch the root pages, and the plan's
+standing instruction to remove hard page/ISO counts from prose because they rot.
+Every claim on the edited pages was re-verified against source before writing:
+
+| Claim as written | Source truth | Fix |
+|---|---|---|
+| root `index.html` hero + meta: "two ISOs (ERCOT and CAISO)" | `iso_configs.py::_ISO_BUILDERS` — six entries (ERCOT, CAISO, PJM, MISO, NYISO, NEISO); imported and counted: 37 zones (34 carry load), 46 links | "six ISOs … on one ISO-agnostic LP"; no zone/link counts on the landing page |
+| hero: forecast horizon only | `holdout_policy.CALIBRATION_YEARS = {2023, 2024, 2025}`; forecast 2026–2050 | states both modes: forecast 2026–2050, backcast against 2023–2025 to calibrate |
+| Codebase Explorer card: "Ten interactive pages … with D3 visualizations" | 22 `.html` under `docs/codebase-site/` incl. hub, five data dashboards and a redirect stub; count already contradicted the site's own hero | describes the arc without a count |
+| Backcast Run Explorer card: "for every registered calibration run" | rule 15 retention is KEEPER-ONLY since 2026-09-05 (`frontend/data/backcast/registry/` holds exactly the six keeper sidecars) | "for each ISO's keeper run; the dashboard retains keepers only" |
+| Calibration Status card: "C1–C6 criteria matrix" | `calibration_verdict.py::CRITERIA` runs to C8 under `RUBRIC_VERSION = 3.5` | "per-criterion scorecard", no letter range |
+| no link to the forecast dashboards or the mechanism matrix | `forecast-status.html`, `forecast-runs.html`, `mechanism-matrix.html` are live nav targets on the codebase site | three cards added; a nav row (Calibration · Backcast · Forecast · Explorer · Updates) added, matching `model-updates.html` |
+| `model-updates.html`: two hand-written entries dated 2026-06-04 comparing ERCOT probe runs 27/28 and 31/32, citing `inputs/raw-data/campd-unit-outages.csv` | those runs were pruned (keeper-only retention); the path moved to `data/raw/` in W1; the log had not been extended since | **repositioned as a pointer** per the signed disposition: URL kept, short intro, cards to `CHANGELOG.md`, `docs/calibration-log/`, Calibration Status, the Backcast and Forecast dashboards and the Mechanism Matrix; stale entries removed (git history is the record) |
+| `docs/codebase-site/index.html` hero "Sixteen pages, 19 visualizations" / intro "Ten pages … plus three live dashboards" | `forecast-validation.html` became a redirect stub after the 2026-08-19 count was taken; the Forecast menu has three dashboards | counts removed from both sentences |
+| `docs/codebase-site/index.html` Capacity Evolution card + system-diagram tooltip: "6-step … known retirements → economic retirements → known additions → CCS retrofit → new entry → backstop" | `model/capacity_evolution/`: step 0 confirmed exits, step 1 announced retirements, step 2 CCS retrofit (BEFORE economic retirements since W2-C), step 3 economic retirements, 4 known additions, 5 economic entry, 6 reserve-margin backstop | order corrected, "6-step" dropped |
+| `frontend/css/style.css` `.link-card-cta` coloured by the card's fuel accent | measured contrast on white: `--solar` 1.66:1, `--wind` 2.10, `--gas-ct` 2.24, `--hydro` 2.41, `--storage` 2.85 — all fail WCAG AA for text | CTA text is always `--accent-deep` (5.19:1); the accent stays on the decorative top border |
+
+Also verified, unchanged: the Learning Hub card (five explainers, `learning-hub/index.html`);
+`backcast-results.html` (frozen redirect stub, untouched by design); the `forecast-validation.html
+→ nav` disposition is moot — that page is itself a redirect to `forecast-status.html`, which the
+Forecast dropdown already carries. Both root pages validated for tag balance and every local
+`href` resolved on disk; both rendered headlessly in Chromium.
+
+**Deferred (narrative-page restructure, SITE-A scope, not this cleanup):**
+`docs/codebase-site/capacity-evolution.html` and its `viz-capacity-flow.js` flowchart still
+walk the pre-W2-C six-step order (known → economic retirements → additions → CCS → entry →
+backstop) with no step-0 confirmed-exit channel; the hub card and tooltip now state the code's
+order, the page behind them does not yet.
+
 ## 2026-09-05 — keeper-only retention + dead-code sweep (owner instruction: delete, never archive)
 
 **Owner instructions this session:** on the backcast side only KEEPER run data is
