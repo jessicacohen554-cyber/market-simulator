@@ -5503,6 +5503,106 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-219 (2026-09-05) — PHASE 0 ONLY, ZERO-SOLVE: THE EVENING SCARCITY
+> TAIL IS **UNREACHABLE BY ANY REGISTERED MISO FIELD**, AND THE REFUSAL IS ARITHMETIC RATHER
+> THAN ASSERTED — THE LP IS NEVER SHORT, BY **3.26× TO 10.62×** THE PUBLISHED RESERVE
+> REQUIREMENT. NO A/B CHARTERED (the charter's own instruction when its decision rule is not
+> met), NOTHING MINTED, NO FIELD, NO RUN, KEEPER UNCHANGED at `2026-09-05-miso-217-intermphys`
+> (NOT-YET on C3a-2025 alone −12.297 %, C3c ledgered 3/3, C6 attested 41/2). Rule 15 is not
+> engaged: no run was produced. Rule 22: 2023–2025 only. Instrument
+> `scripts/probes/_miso219_evening_tail_phase0.py` → `_miso219_evening_tail.json`, every input
+> a committed keeper artifact or a primary measured source.
+>
+> **A-1 — three of the four price-formation channels are INERT.** In 2023 and 2024 the
+> reserve-family dual and the ORDC shortfall are *exactly zero* in all 15 object hours; in 2025
+> the reserve channel fires in 2 of 15, capped at the $98 Reg+Spin step. Congestion is inert
+> ($0.43 / $0.69 / **$0.06** mean zonal dispersion) — which independently confirms **miso-204**'s
+> published-component decomposition from the model side. The energy dual carries essentially all
+> the price and reaches **$36.76 / $39.47 / $80.93** mean against an actual
+> **$187.67 / $328.94 / $718.32**. The model's annual ceiling is $234.04 / $500.00 / **$197.28** —
+> *lower* in 2025 than either earlier year, against an actual $1,782.55 — and the peak tranche is
+> only **58 %** used in 2025's object hours.
+>
+> **A-2 REJECTS THE CHARTER'S OWN FRAMING (requirement too small / held too large / curve never
+> consulted).** The curve is consulted every hour and the requirement met every hour:
+> `miso_rbdc`, the family carrying the $3,500 `MISO_RESERVE_DEMAND_CURVE_MAX`, records **ZERO
+> shortfall in all 26,280 hours of 2023–2025**. A real inversion does exist —
+> `miso_measured_reserve_requirements` sets the requirement from measured *cleared* MW, which
+> falls in a genuine shortage, so in 2025 the requirement sits at **p26.7** market-wide and
+> **p20.7** Midwest in exactly the object's hours — and it is already documented verbatim and
+> refused in `reserve_requirements.py`. **A-7 makes re-opening that refusal pointless:** for the
+> RBDC to bind, the requirement would have to be **10.62× / 6.40× / 3.26×** the published one,
+> measured against the fleet's own REALIZED annual ceiling (nameplate makes every multiple
+> larger). Full Midwest restoration is +463 MW; the static MSSC + 400 MW basis is +0.9 GW. Both
+> are an order of magnitude short. **The whole requirement-repair family dies on this table.**
+>
+> **A-5 IS THE SHARPEST RESULT — the right mechanism, armed, in-window, firing on nothing.** In
+> 2025, **11 of the 15 object hours fall INSIDE a DECLARED MISO capacity-emergency window** (Jun
+> 22–24 Max Gen Event Step 1 / Warning, midwest; Jul 23–29 footprint Advisory / Alert / Warning).
+> `maxgen_emergency_tier_pricing` is ARMED and correctly clocked on the miso-210 `Etc/GMT+6`
+> repair — and contributes **exactly $0**, because it prices load slack and slack is **0.000 MWh
+> in all 45 object hours**. (2024's whole-year 19,566.9 MWh over 7 hours is where that year's
+> $500.00 ceiling comes from — the tier *does* print when it can reach.) The cell already carried
+> a single-hour version of this; what is new is that it holds systematically over the object's
+> own hours, in the year the determination turns on.
+>
+> **A-3 — WHAT THE REAL MARKET DID.** All three RT ASM products clear TOGETHER at a 2025
+> object-hour mean of **$266.18 / $221.22 / $216.62** against annual means of
+> **$19.68 / $3.12 / $1.57** (maxima $1,151 / $1,097 / $1,097) — while cleared MW is *below* its
+> annual mean (2,577 vs 2,679 MW). Quantity flat-to-down, price up 14×: the reserve-demand-curve
+> signature, and how MISO reached $718 mean RT LMP **with all load served**. The escalation across
+> years ($32 → $185 → $266) tracks the model's own miss ($151 → $289 → $637) exactly.
+> **CLOCK SETTLED EMPIRICALLY, NOT ASSUMED, and recorded for reuse:** `DEMREGMCP` against the
+> committed LMP instrument returns **r = 0.6314 / 0.6821 / 0.8162 at the physical HE-EST → CST
+> −2 h transform**, against 0.10–0.29 at every other offset — miso-167's convention. miso-214's
+> no-shift reading was explicitly disclosed as such and is undone by nothing here.
+>
+> **A-6 CORRECTS THE CARRIED-IN PREMISE AND IS THE FINDING'S CENTRE OF GRAVITY.** "44.3 GW idle"
+> is *nameplate*. Against the fleet's own realized ceiling, and against the REAL MISO fleet on
+> the same clock (EIA-930 NG+COL+OTH, the miso-156 instrument, record complete in all 45 object
+> hours), the model runs at **72.3 / 82.7 / 92.8 %** of its own annual max where the real fleet
+> runs at **70.0 / 82.4 / 92.4 %** — **within 0.4 pp in EVERY year**. The model is not
+> under-committed and not idle relative to reality: **it reproduces the physical state of these
+> hours essentially exactly and prices it $637 low.** The failure is entirely in what the LP
+> charges for the last MW.
+>
+> **A-4 — the rule-19 census finds NO UNARMED SCARCITY MECHANISM LEFT.** Co-opt, zonal ORDC,
+> Midwest sub-regional + the published $200 RPE, the online-gated Reg+Spin nest, per-gen reserve,
+> measured requirements, the ELMP $500/$1,000 tiers, maxgen events and screen reserve value are
+> **all ON**; the ERCOT post-solve overlay is correctly OFF and is cell **`G`** for MISO by owner
+> ruling (miso-163, re-affirmed miso-204). Every published MISO curve is in the model; none can
+> be reached.
+>
+> **WHY EACH CANDIDATE FAILS THE DECISION RULE.** `ramp_limits` is the strongest — its own
+> docstring names this lane's object and `scenarios.py` names this lane's diagnosis outright
+> ("*a zone-aggregate ungated family clears inertly from ~10 GW of idle evening CC headroom at
+> zero opportunity cost — the MISO lesson*", issue #1492) — and it is **DO-NOT-REDO**: cell `I`
+> on miso-156's pre-registered kill rule, which fires **0 of 3** because MISO's model *under*-ramps
+> the real fleet by 12–41 % at p99. **A-6 is consistent with miso-156, not evidence against it**,
+> and no MISO ramp-envelope artifact exists (only NYISO/CAISO/PJM/ERCOT). PJM's `K` transfers
+> nothing (rule 25). The requirement-repair family fails on A-7. **Re-basing the ELMP tier from
+> load-slack onto an emergency-range MW cohort is structurally right** — it is what MISO actually
+> does, and A-5 shows the slack mapping is precisely why the armed tier cannot fire — but it fails
+> leg (a): the emergency-range MW is neither already-measured nor already-registered here, so it
+> is a BUILD (new field, new row, new measured input), **named for the successor and deliberately
+> NOT chartered**. The offer-curve top end is where the residual physically sits (A-1: 58 % of the
+> peak tranche unused at $81 while the market is at $718) but that family is exhausted — level `R`
+> (miso-218), spread `I`, within-unit surface `R`, anchor grain no-change (miso-216), `phys_*`
+> closed and armed (miso-217).
+>
+> **NOTHING RE-OPENED:** not `ordc_scarcity_overlay` (`G` — a reachability measurement is not
+> evidence against miso-163 §1–§4's structural grounds), not `ramp_envelopes` (`I`), not the
+> offer-level scale or its factor (miso-218), not the heat/peak-load capability family
+> (miso-203). No CT C1 movement is presented as closing that class's gap (the miso-214 standing
+> result: 62–70 % of the CT energy the model misses was produced BELOW the plant's own delivered
+> cost). **QUEUE HEAD FOR miso-220 — two heads, NEITHER a single-delta A/B:** (1) the **ELMP /
+> emergency-supply mapping**, owner-court, needing a new measured input and a new field; (2) the
+> **South PRICE separation** (miso-213 O-4 / miso-211 D-3, +$0.16 model vs +$58 measured),
+> untouched here and independent — though A-1 measures MISO-wide congestion as INERT in the
+> object's hours, which sharpens rather than answers it. Records:
+> `FINDING-miso219-evening-scarcity-tail-2026-09-05.md`, `_miso219_evening_tail.json`,
+> `scripts/probes/_miso219_evening_tail_phase0.py`.**
+>
 > **QUEUE STAMP miso-218 (2026-09-05) — THE RATIO-PRESERVING OFFER-LEVEL SCALE (×1.10),
 > OWNER-REQUESTED, RULE-13 DIAGNOSTIC PROBE: **THE OWNER'S PREMISE HELD AND MY DECISIVE
 > PRE-REGISTERED PREDICTION WAS WRONG** — ALL THREE C3a YEARS LAND INSIDE ±10 % AND THE
