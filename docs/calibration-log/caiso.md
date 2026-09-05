@@ -13059,4 +13059,85 @@ basis; never treat the CT volume miss as fleet-wide (it is Panoche), never pin
 Panoche, never re-price the CT class to reach it; never attribute the caiso-251
 C4 degradation to the import-drop hours (2.1 %).
 
+## caiso-252 PART II (2026-09-05, same session, owner-directed) — the EVENING-TRIM DISARM: `caiso_dsw_daytime_evening_trim` True → False on the caiso-251 recipe restores the caiso-94 daytime WEIM clean-transfer window to hod 6-21; screened 2025-FIRST under rule 29 with NO control, every registered gate and the owner criterion pass, the fresh 2023-2025 bundle reproduces the screen to 0.0 MW — **PROMOTED, DETERMINATION CALIBRATED (the lane's first)**
+
+**Keeper `2026-09-05-caiso-251-b1-nomargin` → `2026-09-05-caiso-252-b1-notrim`**
+(bundle `caiso252_b1_notrim`). Owner instruction: *"tackle the next run … that
+could address the 2025 miss on C4. Do not run a control and only run 2025 first
+… then if it does run 2023 and 2024."* Registered in
+`PRECOMMIT-caiso252-c4-gas-nrmse-anatomy-2026-09-05.md` **Addendum A** before
+the override was coded (`e03fa2b4`). Finding: FINDING-caiso252 Part II (§10–§13).
+
+**THE ARM:** ONE recorded override-bag value — the caiso-97 trim of the daytime
+WEIM clean-transfer row (`WECC_DSW_DSW_daytime_clean`) is disarmed, the window
+goes hod 6-17 → **6-21** at the committed, frozen untrimmed depth
+(5,441/5,762/5,998 MW; `derive_caiso_daytime_clean_depth.py`, CV 0.040, LOYO
+≤ 8.1 %). Zero new parameters, zero new fields, no derive re-run; DOF 9 / 6
+unchanged. Code added: the `--caiso-dsw-daytime-evening-trim` replay override
+(absent = byte-identical).
+
+**WHY (Part I §3.1 + Addendum A §A.1):** the C4 2025 cell is CC's DIURNAL error
+mirroring the import shape, and the import stack had NO at-hub clean row for
+hod 18-23 — caiso-97 trimmed the evening because the July keeper OVER-imported
+it (+1.9…+2.2 TWh); on the caiso-251 keeper the sign had REVERSED (hod 18-21
+under by 0.6-1.0 GW, CC +1.4 GW over there) — the rule-28(a) new evidence. The
+row's measured no-wedge admissibility (FINDING-caiso94 §4A) never changed. A
+competing AAH price-taking arm on the firm blocks was KILLED at phase 0
+(0.16 TWh deliverable; `_caiso252_firm_aah_phase0.json`). Phase-0 footprint of
+the disarm: 3.4-3.8 GW of capability at hod 18-21 in 2025, 1.56 TWh clearing at
+the keeper's own duals (`_caiso252_evening_trim_phase0.json`) — 2025 is the
+largest-footprint year AND the owner's screen year.
+
+**SCREEN (2025, `_caiso252_screen2025.json`):** G-FOOT PASS (90.7 % of the
+added import in 18-21; 6-17 −0.04 TWh; no non-WECC row moved); G-DIR PASS (the
+row carries **0.94 TWh** in its new window, keeper 0 by construction; CC 18-21
+−0.315); **G-OVERSHOOT PASS** (the caiso-97 objection as this arm's falsifier:
+18-21 import −0.28 TWh vs EIA-930, inside [−0.5, +0.8]; hod 18 alone +108 MW
+over, as predicted); G-NOBREAK PASS; G-OWNER PASS (C4 2025 r 0.870 → 0.877,
+NRMSE **0.305 → 0.297**). G-REPRO: the full bundle's 2025 = the screen to
+0.0 MW.
+
+**SCORED (keeper → arm):** C4 gas 0.285/0.264/**0.305** → 0.285/0.261/**0.297**
+(FAIL → PASS on the one cell); C3a +4.83/+9.44/+9.35 → **+4.65/+9.04/+8.86 %**
+(the SEVENTH consecutive favourable direction, declared in advance, EXCLUDED
+from the promotion basis with C4); C3b 0.090/0.150/0.120 → 0.088/0.148/0.116;
+C1 12/12 free 8/8; C2 PASS; C6 attested; C8 PASS (CC forced 6.6/6.7/8.8 %);
+C3c 2023 24 h vs 47 PASS, 2025 PASS, **2024 0 h vs 35 CAVEAT** (the single
+ledgered caveat). **`calibration_verdict`: CALIBRATED — 8 scored, target
+grade 7, fails 0, ledgered 1.** Dispatch: import +0.45/+0.59/+0.80 TWh,
+CC_REGULAR −0.39/−0.48/−0.69, CT −0.06/−0.09/−0.11; hod-18-21 import vs
+measured −0.47/−0.44/−1.17 → **−0.05/+0.16/−0.28**; CC 22-23 error moves
+−10/−51/−66 MW (the 22-23 gap is untouched by construction).
+
+**PREDICTIONS:** P-A1/A3/A4/A5/A7/A8 hold; **P-A2 FALSIFIED** (CC 18-21 fell
+0.32 TWh, not ≥ 0.5 — evening STORAGE discharge absorbed 0.47 TWh of the
+displacement); **P-A6 FALSIFIED LOW** (import +0.80 vs 1.0-1.8). Both against
+the arm's size, neither in its favour.
+
+**PROMOTED** on Addendum A §A.7 as registered: (a) the three structural gates
+on 2025, (b) no load-bearing criterion regresses to a new failure in any year,
+(c) governance holds — C3a and C4 entered none of them. Re-stamps in the same
+PR: `keepers/CAISO.json` (note rewritten in substance; prior note carried) +
+`status/CAISO.js`; CAISO matrix shard keeper + gates + `import_hub_pricing`
+evidence (the family row that registers the clean-depth sub-scalars); the
+§5.2 prose header rewritten (CALIBRATED, new keeper, prior keeper carried);
+the forecast board's gate-(a) stamp re-keyed (verdict unmoved: no `complete`
+marker); the `calibration-keeper-auditor` agent run on the shard edit. The
+registration re-rendered the three CAISO bench parts (the Part I §5 stale
+fingerprint); the prior keeper re-scores record-for-record identical on them.
+The caiso-246 artifacts were pruned on main mid-session (`8066f77c`); the
+caiso-251 run stays on the site as the control.
+
+**QUEUE (FINDING §11):** (1) the **hod 22-23 gap** between the daytime (6-21)
+and overnight (0-5) clean windows — CC +1.55 GW over at 22-23 in 2025, no row
+by construction; a window charter on a frozen derive, no-wedge already measured
+clean there; (2) Panoche; (3) **`complete` marker — an owner act (rule 22) now
+on a CALIBRATED determination**; (4) the DMM 2025 RA-import basis, the C3a
+weight basis, E/G carried.
+
+**DO-NOT-REDO adds (FINDING §12):** never re-arm the evening trim without
+re-measuring the evening sign (its falsifier is G-OVERSHOOT, not C4); never
+read the C4 pass as a C4 lever having worked (excluded from the basis); never
+reach 22-23 by extending either window without a charter.
+
 **Next number: caiso-253.**
