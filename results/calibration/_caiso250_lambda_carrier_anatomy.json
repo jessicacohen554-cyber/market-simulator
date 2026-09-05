@@ -1,0 +1,868 @@
+{
+ "_provenance": {
+  "session": "caiso-250 (what sets lambda when no thermal unit is marginal, ZERO LP)",
+  "bundle": "results/calibration/caiso246_b1_spot_coverage",
+  "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+  "precommit": "PRECOMMIT-caiso250-lambda-carrier-2026-09-05.md",
+  "instrument": "LP reduced-cost complementarity on the NON-thermal columns (hydro monthly-budget dual, storage SOC dual) over caiso-249's own-zone labelling, reproduced and gated; plus the exact-repeat dual signature, the caiso-168 belly-surplus overlap (carried), and the caiso-249 wedge re-read against LP optimality",
+  "fleet": "replay_keeper.run_year_kwargs + derived_run_year_inputs (caiso-248 repair)",
+  "scarcity_overlay": "NOT re-measured \u2014 caiso-229's arithmetic bound is cited: max $0.017/$0.006/$0.003 per MWh (2023/24/25)",
+  "note": "NOTHING ARMED, NO SOLVE, NO FIELD, NO FLAG."
+ },
+ "years": {
+  "2023": {
+   "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+   "tol": 0.05,
+   "G_REPRO": {
+    "max_abs_diff": 0.0,
+    "diffs": {
+     "HUB_FITTED.weight_share": 0.0,
+     "HUB_FITTED.gap_share": 0.0,
+     "HUB_MEASURED.weight_share": 0.0,
+     "HUB_MEASURED.gap_share": 0.0,
+     "DOM_GAS.weight_share": 0.0,
+     "DOM_GAS.gap_share": 0.0,
+     "DOM_OTHER.weight_share": 0.0,
+     "DOM_OTHER.gap_share": 0.0,
+     "STORAGE.weight_share": 0.0,
+     "STORAGE.gap_share": 0.0,
+     "SURPLUS.weight_share": 0.0,
+     "SURPLUS.gap_share": 0.0,
+     "UNRESOLVED.weight_share": 0.0,
+     "UNRESOLVED.gap_share": 0.0
+    },
+    "pass": true
+   },
+   "G_FLEET_PRIME": {
+    "authoritative_tuple": [
+     "OTHER",
+     "biomass"
+    ],
+    "shape_detected": [
+     "OTHER",
+     "biomass",
+     "oil"
+    ],
+    "injected_effective": [
+     "OTHER",
+     "biomass"
+    ],
+    "false_positives_dropped_by_the_repair": [
+     "oil"
+    ],
+    "sidecar_classes_with_no_lp_units": [],
+    "phantom_families_of_injected_classes": [],
+    "families_the_caiso249_gate_would_have_flagged": [
+     "fuel:oil"
+    ],
+    "pass": true
+   },
+   "G_CONSERVE": {
+    "gap_hourly": 1.3071,
+    "cells_sum": 1.3071,
+    "caiso248_published_gap": 1.3071,
+    "pass": true
+   },
+   "G_BENCH": {
+    "recomputed_rt_lw": 54.1748,
+    "committed_rt_lw": 54.17,
+    "pass": true
+   },
+   "G_HOLDOUT": {
+    "year": 2023,
+    "pass": true
+   },
+   "stage1_census": {
+    "gates_G_CAP": {
+     "li_ion": {
+      "fleet_power_cap_mw_dec": 7492.4,
+      "n_units": 5,
+      "max_chg_over_cap_mw": 0.0002,
+      "max_dis_over_cap_mw": 0.0002,
+      "hours_chg_at_cap": 837,
+      "hours_dis_at_cap": 717
+     },
+     "pumped_storage": {
+      "fleet_power_cap_mw_dec": 2077.6,
+      "n_units": 6,
+      "max_chg_over_cap_mw": 0.0,
+      "max_dis_over_cap_mw": 0.0001,
+      "hours_chg_at_cap": 966,
+      "hours_dis_at_cap": 139
+     }
+    },
+    "hydro_envelope_mw": {
+     "mean_lower": 1289.6,
+     "mean_upper": 6619.8,
+     "mean_dispatch": 2777.5,
+     "hours_interior": 8400
+    },
+    "STORAGE": {
+     "cell_weight_share": 0.2667,
+     "cell_gap_usd_per_mwh": 0.8368,
+     "split": {
+      "BOTH": {
+       "weight_share_of_cell": 0.8222,
+       "gap_share_of_cell": 1.3278,
+       "gap_usd_per_mwh": 1.111
+      },
+      "HYDRO_ONLY": {
+       "weight_share_of_cell": 0.0856,
+       "gap_share_of_cell": 0.0017,
+       "gap_usd_per_mwh": 0.0014
+      },
+      "STORAGE_ONLY": {
+       "weight_share_of_cell": 0.0408,
+       "gap_share_of_cell": -0.1011,
+       "gap_usd_per_mwh": -0.0846
+      },
+      "NEITHER": {
+       "weight_share_of_cell": 0.0515,
+       "gap_share_of_cell": -0.2283,
+       "gap_usd_per_mwh": -0.1911
+      }
+     }
+    },
+    "DOM_GAS": {
+     "cell_weight_share": 0.5932,
+     "cell_gap_usd_per_mwh": -0.1667,
+     "split": {
+      "BOTH": {
+       "weight_share_of_cell": 0.6459,
+       "gap_share_of_cell": 1.8333,
+       "gap_usd_per_mwh": -0.3057
+      },
+      "HYDRO_ONLY": {
+       "weight_share_of_cell": 0.3531,
+       "gap_share_of_cell": -0.7626,
+       "gap_usd_per_mwh": 0.1272
+      },
+      "STORAGE_ONLY": {
+       "weight_share_of_cell": 0.001,
+       "gap_share_of_cell": -0.0707,
+       "gap_usd_per_mwh": 0.0118
+      },
+      "NEITHER": {
+       "weight_share_of_cell": 0.0,
+       "gap_share_of_cell": -0.0,
+       "gap_usd_per_mwh": 0.0
+      }
+     }
+    },
+    "storage_column_states_hours": {
+     "li_ion_chg_interior": 1735,
+     "li_ion_dis_interior": 2038,
+     "pumped_storage_chg_interior": 1530,
+     "pumped_storage_dis_interior": 2531
+    }
+   },
+   "stage2_flatness": {
+    "STORAGE": {
+     "load_weight_share_of_year": 0.2667,
+     "share_on_lambda_repeating_ge_5": 0.4541,
+     "share_on_lambda_repeating_ge_10": 0.3347
+    },
+    "DOM_GAS": {
+     "load_weight_share_of_year": 0.5932,
+     "share_on_lambda_repeating_ge_5": 0.1762,
+     "share_on_lambda_repeating_ge_10": 0.083
+    },
+    "ALL": {
+     "load_weight_share_of_year": 1.0,
+     "share_on_lambda_repeating_ge_5": 0.2384,
+     "share_on_lambda_repeating_ge_10": 0.1455
+    }
+   },
+   "stage3_caiso168_overlap": {
+    "STORAGE": {
+     "weight_share_inside_belly_surplus": 0.2419,
+     "gap_share_inside_belly_surplus": 0.4402,
+     "gap_inside_usd_per_mwh": 0.3683
+    },
+    "DOM_GAS": {
+     "weight_share_inside_belly_surplus": 0.0201,
+     "gap_share_inside_belly_surplus": -1.2578,
+     "gap_inside_usd_per_mwh": 0.2097
+    },
+    "_belly_surplus_hours": 1116,
+    "_cut": "caiso-168 VERBATIM: Pacific [09,16) and measured CA DA hub <= $20/MWh"
+   },
+   "stage4_wedge_both_sides": {
+    "STORAGE": {
+     "median_to_nearest_offer_ABOVE": 1.39,
+     "median_to_nearest_offer_BELOW": 1.293,
+     "p25_ABOVE": 0.38,
+     "p25_BELOW": 0.312,
+     "ratio_below_over_above": 0.93
+    },
+    "DOM_GAS": {
+     "median_to_nearest_offer_ABOVE": 0.183,
+     "median_to_nearest_offer_BELOW": 0.177,
+     "p25_ABOVE": 0.05,
+     "p25_BELOW": 0.048,
+     "ratio_below_over_above": 0.967
+    }
+   },
+   "stage5_hydro_water_value": {
+    "n_zone_months": 60,
+    "weighted_median_within_zone_month_lambda_IQR": 14.835,
+    "weighted_p75_IQR": 19.249,
+    "hydro_mc_median_usd_per_mwh": 1.4,
+    "hydro_mc_p95_usd_per_mwh": 1.4
+   },
+   "stage5b_hydro_interiority_vacuity": {
+    "hours_hydro_interior": 8400,
+    "share_of_all_hours": 0.9589
+   },
+   "stage6_outside_belly_POST_REGISTRATION": {
+    "_note": "POST-REGISTRATION CHARACTERISATION \u2014 not a labelling rule, not a scored prediction",
+    "outside_belly_weight_share_of_year": 0.2022,
+    "outside_belly_gap_usd_per_mwh": 0.4684,
+    "gap_by_hour_of_day": {
+     "0": 0.0107,
+     "1": 0.0188,
+     "2": 0.0215,
+     "3": 0.0068,
+     "4": -0.0242,
+     "5": -0.042,
+     "6": -0.0307,
+     "7": 0.1151,
+     "8": 0.1937,
+     "9": 0.0857,
+     "10": 0.0279,
+     "11": 0.0536,
+     "12": 0.0739,
+     "13": 0.0643,
+     "14": 0.0717,
+     "15": 0.0785,
+     "16": 0.0215,
+     "17": -0.0433,
+     "18": -0.1141,
+     "19": -0.1124,
+     "20": -0.0678,
+     "21": -0.052,
+     "22": 0.0556,
+     "23": 0.0558
+    },
+    "gap_by_storage_column_state": {
+     "li_ion_chg_interior": {
+      "weight_share_of_year": 0.0552,
+      "gap_usd_per_mwh": 0.6575
+     },
+     "li_ion_dis_interior": {
+      "weight_share_of_year": 0.079,
+      "gap_usd_per_mwh": -0.2733
+     },
+     "pumped_storage_chg_interior": {
+      "weight_share_of_year": 0.0476,
+      "gap_usd_per_mwh": 0.5785
+     },
+     "pumped_storage_dis_interior": {
+      "weight_share_of_year": 0.0728,
+      "gap_usd_per_mwh": 0.0142
+     },
+     "no_storage_column_interior": {
+      "weight_share_of_year": 0.0169,
+      "gap_usd_per_mwh": -0.0908
+     }
+    }
+   },
+   "by_regime_reproduced": {
+    "HUB_FITTED": {
+     "weight_share": 0.0015,
+     "gap_share": 0.0138
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.088,
+     "gap_share": 0.3412
+    },
+    "DOM_GAS": {
+     "weight_share": 0.5932,
+     "gap_share": -0.1276
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0076,
+     "gap_share": 0.0271
+    },
+    "STORAGE": {
+     "weight_share": 0.2667,
+     "gap_share": 0.6402
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0429,
+     "gap_share": 0.1052
+    }
+   }
+  },
+  "2024": {
+   "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+   "tol": 0.05,
+   "G_REPRO": {
+    "max_abs_diff": 0.0,
+    "diffs": {
+     "HUB_FITTED.weight_share": 0.0,
+     "HUB_FITTED.gap_share": 0.0,
+     "HUB_MEASURED.weight_share": 0.0,
+     "HUB_MEASURED.gap_share": 0.0,
+     "DOM_GAS.weight_share": 0.0,
+     "DOM_GAS.gap_share": 0.0,
+     "DOM_OTHER.weight_share": 0.0,
+     "DOM_OTHER.gap_share": 0.0,
+     "STORAGE.weight_share": 0.0,
+     "STORAGE.gap_share": 0.0,
+     "SURPLUS.weight_share": 0.0,
+     "SURPLUS.gap_share": 0.0,
+     "UNRESOLVED.weight_share": 0.0,
+     "UNRESOLVED.gap_share": 0.0
+    },
+    "pass": true
+   },
+   "G_FLEET_PRIME": {
+    "authoritative_tuple": [
+     "OTHER",
+     "biomass"
+    ],
+    "shape_detected": [
+     "OTHER",
+     "biomass"
+    ],
+    "injected_effective": [
+     "OTHER",
+     "biomass"
+    ],
+    "false_positives_dropped_by_the_repair": [],
+    "sidecar_classes_with_no_lp_units": [],
+    "phantom_families_of_injected_classes": [],
+    "families_the_caiso249_gate_would_have_flagged": [],
+    "pass": true
+   },
+   "G_CONSERVE": {
+    "gap_hourly": 3.7812,
+    "cells_sum": 3.7812,
+    "caiso248_published_gap": 3.7812,
+    "pass": true
+   },
+   "G_BENCH": {
+    "recomputed_rt_lw": 34.6475,
+    "committed_rt_lw": 34.65,
+    "pass": true
+   },
+   "G_HOLDOUT": {
+    "year": 2024,
+    "pass": true
+   },
+   "stage1_census": {
+    "gates_G_CAP": {
+     "li_ion": {
+      "fleet_power_cap_mw_dec": 11131.3,
+      "n_units": 5,
+      "max_chg_over_cap_mw": 0.0004,
+      "max_dis_over_cap_mw": 0.0005,
+      "hours_chg_at_cap": 708,
+      "hours_dis_at_cap": 388
+     },
+     "pumped_storage": {
+      "fleet_power_cap_mw_dec": 2077.6,
+      "n_units": 6,
+      "max_chg_over_cap_mw": 0.0,
+      "max_dis_over_cap_mw": 0.0001,
+      "hours_chg_at_cap": 1105,
+      "hours_dis_at_cap": 43
+     }
+    },
+    "hydro_envelope_mw": {
+     "mean_lower": 1092.4,
+     "mean_upper": 6568.4,
+     "mean_dispatch": 2571.3,
+     "hours_interior": 8119
+    },
+    "STORAGE": {
+     "cell_weight_share": 0.2772,
+     "cell_gap_usd_per_mwh": 1.6395,
+     "split": {
+      "BOTH": {
+       "weight_share_of_cell": 0.8158,
+       "gap_share_of_cell": 0.9234,
+       "gap_usd_per_mwh": 1.5139
+      },
+      "HYDRO_ONLY": {
+       "weight_share_of_cell": 0.0263,
+       "gap_share_of_cell": 0.0266,
+       "gap_usd_per_mwh": 0.0436
+      },
+      "STORAGE_ONLY": {
+       "weight_share_of_cell": 0.0827,
+       "gap_share_of_cell": 0.0487,
+       "gap_usd_per_mwh": 0.0798
+      },
+      "NEITHER": {
+       "weight_share_of_cell": 0.0753,
+       "gap_share_of_cell": 0.0014,
+       "gap_usd_per_mwh": 0.0023
+      }
+     }
+    },
+    "DOM_GAS": {
+     "cell_weight_share": 0.5928,
+     "cell_gap_usd_per_mwh": 1.6377,
+     "split": {
+      "BOTH": {
+       "weight_share_of_cell": 0.6717,
+       "gap_share_of_cell": 0.6903,
+       "gap_usd_per_mwh": 1.1306
+      },
+      "HYDRO_ONLY": {
+       "weight_share_of_cell": 0.3281,
+       "gap_share_of_cell": 0.3079,
+       "gap_usd_per_mwh": 0.5042
+      },
+      "STORAGE_ONLY": {
+       "weight_share_of_cell": 0.0001,
+       "gap_share_of_cell": 0.0006,
+       "gap_usd_per_mwh": 0.0009
+      },
+      "NEITHER": {
+       "weight_share_of_cell": 0.0002,
+       "gap_share_of_cell": 0.0012,
+       "gap_usd_per_mwh": 0.002
+      }
+     }
+    },
+    "storage_column_states_hours": {
+     "li_ion_chg_interior": 2006,
+     "li_ion_dis_interior": 2372,
+     "pumped_storage_chg_interior": 1017,
+     "pumped_storage_dis_interior": 2760
+    }
+   },
+   "stage2_flatness": {
+    "STORAGE": {
+     "load_weight_share_of_year": 0.2772,
+     "share_on_lambda_repeating_ge_5": 0.5475,
+     "share_on_lambda_repeating_ge_10": 0.3716
+    },
+    "DOM_GAS": {
+     "load_weight_share_of_year": 0.5928,
+     "share_on_lambda_repeating_ge_5": 0.2756,
+     "share_on_lambda_repeating_ge_10": 0.1516
+    },
+    "ALL": {
+     "load_weight_share_of_year": 1.0,
+     "share_on_lambda_repeating_ge_5": 0.3321,
+     "share_on_lambda_repeating_ge_10": 0.205
+    }
+   },
+   "stage3_caiso168_overlap": {
+    "STORAGE": {
+     "weight_share_inside_belly_surplus": 0.341,
+     "gap_share_inside_belly_surplus": 0.6015,
+     "gap_inside_usd_per_mwh": 0.9861
+    },
+    "DOM_GAS": {
+     "weight_share_inside_belly_surplus": 0.0545,
+     "gap_share_inside_belly_surplus": 0.2843,
+     "gap_inside_usd_per_mwh": 0.4657
+    },
+    "_belly_surplus_hours": 1604,
+    "_cut": "caiso-168 VERBATIM: Pacific [09,16) and measured CA DA hub <= $20/MWh"
+   },
+   "stage4_wedge_both_sides": {
+    "STORAGE": {
+     "median_to_nearest_offer_ABOVE": 1.002,
+     "median_to_nearest_offer_BELOW": 0.657,
+     "p25_ABOVE": 0.269,
+     "p25_BELOW": 0.211,
+     "ratio_below_over_above": 0.656
+    },
+    "DOM_GAS": {
+     "median_to_nearest_offer_ABOVE": 0.156,
+     "median_to_nearest_offer_BELOW": 0.167,
+     "p25_ABOVE": 0.047,
+     "p25_BELOW": 0.047,
+     "ratio_below_over_above": 1.071
+    }
+   },
+   "stage5_hydro_water_value": {
+    "n_zone_months": 60,
+    "weighted_median_within_zone_month_lambda_IQR": 12.131,
+    "weighted_p75_IQR": 13.717,
+    "hydro_mc_median_usd_per_mwh": 1.4,
+    "hydro_mc_p95_usd_per_mwh": 1.4
+   },
+   "stage5b_hydro_interiority_vacuity": {
+    "hours_hydro_interior": 8119,
+    "share_of_all_hours": 0.9268
+   },
+   "stage6_outside_belly_POST_REGISTRATION": {
+    "_note": "POST-REGISTRATION CHARACTERISATION \u2014 not a labelling rule, not a scored prediction",
+    "outside_belly_weight_share_of_year": 0.1827,
+    "outside_belly_gap_usd_per_mwh": 0.6534,
+    "gap_by_hour_of_day": {
+     "0": 0.0109,
+     "1": 0.0108,
+     "2": 0.0122,
+     "3": 0.0127,
+     "4": 0.0093,
+     "5": -0.0013,
+     "6": 0.0458,
+     "7": 0.1009,
+     "8": 0.2397,
+     "9": 0.0049,
+     "10": 0.0133,
+     "11": 0.0267,
+     "12": 0.0399,
+     "13": 0.0198,
+     "14": 0.0267,
+     "15": 0.0227,
+     "16": 0.0073,
+     "17": -0.0346,
+     "18": -0.0338,
+     "19": 0.0104,
+     "20": 0.0058,
+     "21": 0.014,
+     "22": 0.0435,
+     "23": 0.0457
+    },
+    "gap_by_storage_column_state": {
+     "li_ion_chg_interior": {
+      "weight_share_of_year": 0.0457,
+      "gap_usd_per_mwh": 0.4282
+     },
+     "li_ion_dis_interior": {
+      "weight_share_of_year": 0.091,
+      "gap_usd_per_mwh": 0.0352
+     },
+     "pumped_storage_chg_interior": {
+      "weight_share_of_year": 0.0363,
+      "gap_usd_per_mwh": 0.4134
+     },
+     "pumped_storage_dis_interior": {
+      "weight_share_of_year": 0.0857,
+      "gap_usd_per_mwh": -0.0003
+     },
+     "no_storage_column_interior": {
+      "weight_share_of_year": 0.0076,
+      "gap_usd_per_mwh": 0.0093
+     }
+    }
+   },
+   "by_regime_reproduced": {
+    "HUB_FITTED": {
+     "weight_share": 0.0045,
+     "gap_share": -0.0036
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.0706,
+     "gap_share": 0.0817
+    },
+    "DOM_GAS": {
+     "weight_share": 0.5928,
+     "gap_share": 0.4331
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0146,
+     "gap_share": 0.0239
+    },
+    "STORAGE": {
+     "weight_share": 0.2772,
+     "gap_share": 0.4336
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0403,
+     "gap_share": 0.0313
+    }
+   }
+  },
+  "2025": {
+   "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+   "tol": 0.05,
+   "G_REPRO": {
+    "max_abs_diff": 0.0,
+    "diffs": {
+     "HUB_FITTED.weight_share": 0.0,
+     "HUB_FITTED.gap_share": 0.0,
+     "HUB_MEASURED.weight_share": 0.0,
+     "HUB_MEASURED.gap_share": 0.0,
+     "DOM_GAS.weight_share": 0.0,
+     "DOM_GAS.gap_share": 0.0,
+     "DOM_OTHER.weight_share": 0.0,
+     "DOM_OTHER.gap_share": 0.0,
+     "STORAGE.weight_share": 0.0,
+     "STORAGE.gap_share": 0.0,
+     "SURPLUS.weight_share": 0.0,
+     "SURPLUS.gap_share": 0.0,
+     "UNRESOLVED.weight_share": 0.0,
+     "UNRESOLVED.gap_share": 0.0
+    },
+    "pass": true
+   },
+   "G_FLEET_PRIME": {
+    "authoritative_tuple": [
+     "OTHER",
+     "biomass"
+    ],
+    "shape_detected": [
+     "OTHER",
+     "biomass"
+    ],
+    "injected_effective": [
+     "OTHER",
+     "biomass"
+    ],
+    "false_positives_dropped_by_the_repair": [],
+    "sidecar_classes_with_no_lp_units": [],
+    "phantom_families_of_injected_classes": [],
+    "families_the_caiso249_gate_would_have_flagged": [],
+    "pass": true
+   },
+   "G_CONSERVE": {
+    "gap_hourly": 3.1507,
+    "cells_sum": 3.1507,
+    "caiso248_published_gap": 3.1507,
+    "pass": true
+   },
+   "G_BENCH": {
+    "recomputed_rt_lw": 34.4233,
+    "committed_rt_lw": 34.42,
+    "pass": true
+   },
+   "G_HOLDOUT": {
+    "year": 2025,
+    "pass": true
+   },
+   "stage1_census": {
+    "gates_G_CAP": {
+     "li_ion": {
+      "fleet_power_cap_mw_dec": 15448.4,
+      "n_units": 5,
+      "max_chg_over_cap_mw": 0.0004,
+      "max_dis_over_cap_mw": 0.0006,
+      "hours_chg_at_cap": 626,
+      "hours_dis_at_cap": 433
+     },
+     "pumped_storage": {
+      "fleet_power_cap_mw_dec": 2077.6,
+      "n_units": 6,
+      "max_chg_over_cap_mw": 0.0,
+      "max_dis_over_cap_mw": 0.0001,
+      "hours_chg_at_cap": 1166,
+      "hours_dis_at_cap": 60
+     }
+    },
+    "hydro_envelope_mw": {
+     "mean_lower": 869.9,
+     "mean_upper": 6568.2,
+     "mean_dispatch": 2427.7,
+     "hours_interior": 8150
+    },
+    "STORAGE": {
+     "cell_weight_share": 0.4046,
+     "cell_gap_usd_per_mwh": 1.734,
+     "split": {
+      "BOTH": {
+       "weight_share_of_cell": 0.8903,
+       "gap_share_of_cell": 1.0207,
+       "gap_usd_per_mwh": 1.7698
+      },
+      "HYDRO_ONLY": {
+       "weight_share_of_cell": 0.0249,
+       "gap_share_of_cell": 0.0276,
+       "gap_usd_per_mwh": 0.0479
+      },
+      "STORAGE_ONLY": {
+       "weight_share_of_cell": 0.0425,
+       "gap_share_of_cell": -0.0318,
+       "gap_usd_per_mwh": -0.0551
+      },
+      "NEITHER": {
+       "weight_share_of_cell": 0.0423,
+       "gap_share_of_cell": -0.0165,
+       "gap_usd_per_mwh": -0.0286
+      }
+     }
+    },
+    "DOM_GAS": {
+     "cell_weight_share": 0.4456,
+     "cell_gap_usd_per_mwh": 1.165,
+     "split": {
+      "BOTH": {
+       "weight_share_of_cell": 0.7193,
+       "gap_share_of_cell": 0.7681,
+       "gap_usd_per_mwh": 0.8948
+      },
+      "HYDRO_ONLY": {
+       "weight_share_of_cell": 0.2794,
+       "gap_share_of_cell": 0.221,
+       "gap_usd_per_mwh": 0.2574
+      },
+      "STORAGE_ONLY": {
+       "weight_share_of_cell": 0.0013,
+       "gap_share_of_cell": 0.011,
+       "gap_usd_per_mwh": 0.0128
+      },
+      "NEITHER": {
+       "weight_share_of_cell": 0.0,
+       "gap_share_of_cell": 0.0,
+       "gap_usd_per_mwh": 0.0
+      }
+     }
+    },
+    "storage_column_states_hours": {
+     "li_ion_chg_interior": 2223,
+     "li_ion_dis_interior": 2869,
+     "pumped_storage_chg_interior": 1192,
+     "pumped_storage_dis_interior": 2805
+    }
+   },
+   "stage2_flatness": {
+    "STORAGE": {
+     "load_weight_share_of_year": 0.4046,
+     "share_on_lambda_repeating_ge_5": 0.612,
+     "share_on_lambda_repeating_ge_10": 0.4561
+    },
+    "DOM_GAS": {
+     "load_weight_share_of_year": 0.4456,
+     "share_on_lambda_repeating_ge_5": 0.3049,
+     "share_on_lambda_repeating_ge_10": 0.1768
+    },
+    "ALL": {
+     "load_weight_share_of_year": 1.0,
+     "share_on_lambda_repeating_ge_5": 0.4009,
+     "share_on_lambda_repeating_ge_10": 0.2765
+    }
+   },
+   "stage3_caiso168_overlap": {
+    "STORAGE": {
+     "weight_share_inside_belly_surplus": 0.2906,
+     "gap_share_inside_belly_surplus": 0.5702,
+     "gap_inside_usd_per_mwh": 0.9888
+    },
+    "DOM_GAS": {
+     "weight_share_inside_belly_surplus": 0.0307,
+     "gap_share_inside_belly_surplus": 0.1194,
+     "gap_inside_usd_per_mwh": 0.1392
+    },
+    "_belly_surplus_hours": 1623,
+    "_cut": "caiso-168 VERBATIM: Pacific [09,16) and measured CA DA hub <= $20/MWh"
+   },
+   "stage4_wedge_both_sides": {
+    "STORAGE": {
+     "median_to_nearest_offer_ABOVE": 1.227,
+     "median_to_nearest_offer_BELOW": 1.423,
+     "p25_ABOVE": 0.395,
+     "p25_BELOW": 0.398,
+     "ratio_below_over_above": 1.16
+    },
+    "DOM_GAS": {
+     "median_to_nearest_offer_ABOVE": 0.156,
+     "median_to_nearest_offer_BELOW": 0.171,
+     "p25_ABOVE": 0.041,
+     "p25_BELOW": 0.041,
+     "ratio_below_over_above": 1.096
+    }
+   },
+   "stage5_hydro_water_value": {
+    "n_zone_months": 60,
+    "weighted_median_within_zone_month_lambda_IQR": 11.399,
+    "weighted_p75_IQR": 13.557,
+    "hydro_mc_median_usd_per_mwh": 1.4,
+    "hydro_mc_p95_usd_per_mwh": 1.4
+   },
+   "stage5b_hydro_interiority_vacuity": {
+    "hours_hydro_interior": 8150,
+    "share_of_all_hours": 0.9304
+   },
+   "stage6_outside_belly_POST_REGISTRATION": {
+    "_note": "POST-REGISTRATION CHARACTERISATION \u2014 not a labelling rule, not a scored prediction",
+    "outside_belly_weight_share_of_year": 0.287,
+    "outside_belly_gap_usd_per_mwh": 0.7452,
+    "gap_by_hour_of_day": {
+     "0": 0.0167,
+     "1": 0.0208,
+     "2": 0.0182,
+     "3": 0.0199,
+     "4": 0.0159,
+     "5": -0.0353,
+     "6": 0.0357,
+     "7": 0.1378,
+     "8": 0.2115,
+     "9": 0.0413,
+     "10": 0.054,
+     "11": 0.044,
+     "12": 0.0297,
+     "13": 0.0403,
+     "14": 0.0349,
+     "15": 0.0116,
+     "16": -0.0214,
+     "17": -0.0304,
+     "18": 0.0069,
+     "19": 0.0111,
+     "20": 0.0021,
+     "21": -0.0086,
+     "22": 0.0484,
+     "23": 0.0402
+    },
+    "gap_by_storage_column_state": {
+     "li_ion_chg_interior": {
+      "weight_share_of_year": 0.0772,
+      "gap_usd_per_mwh": 0.4504
+     },
+     "li_ion_dis_interior": {
+      "weight_share_of_year": 0.1525,
+      "gap_usd_per_mwh": 0.0927
+     },
+     "pumped_storage_chg_interior": {
+      "weight_share_of_year": 0.0516,
+      "gap_usd_per_mwh": 0.3817
+     },
+     "pumped_storage_dis_interior": {
+      "weight_share_of_year": 0.1321,
+      "gap_usd_per_mwh": 0.1777
+     },
+     "no_storage_column_interior": {
+      "weight_share_of_year": 0.0067,
+      "gap_usd_per_mwh": 0.002
+     }
+    }
+   },
+   "by_regime_reproduced": {
+    "HUB_FITTED": {
+     "weight_share": 0.0084,
+     "gap_share": -0.0013
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.1002,
+     "gap_share": 0.0526
+    },
+    "DOM_GAS": {
+     "weight_share": 0.4456,
+     "gap_share": 0.3698
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.008,
+     "gap_share": 0.0123
+    },
+    "STORAGE": {
+     "weight_share": 0.4046,
+     "gap_share": 0.5504
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0333,
+     "gap_share": 0.0163
+    }
+   }
+  }
+ }
+}

@@ -12733,3 +12733,106 @@ verdict moved; no run registered; keeper unchanged.
 
 **Next number: caiso-250.**
 
+
+---
+
+## caiso-250 (2026-09-05) — the ranked-first object is NOT a new object: 44/60/57 % of the caiso-249 `STORAGE` cell is caiso-168's already-adjudicated belly-surplus object, the rest is the SAME charge-side state in the Pacific 07–08 morning ramp; HYDRO REFUTED. ZERO SOLVES, NOTHING ARMED
+
+**Object:** caiso-249 §6 item 1, taken as ranked. Pre-registered in
+`PRECOMMIT-caiso250-lambda-carrier-2026-09-05.md`, pushed before the estimator
+was written and before any cell was computed. Keeper
+`2026-09-05-caiso-246-b1-spot` unchanged; no field, no flag, no derive, no
+solve, no run registered, no promotion. Rule 22: 2023–2025 only, fail-closed.
+
+**INSTRUMENT.** LP reduced-cost complementarity on the NON-thermal columns over
+caiso-249's own-zone labelling, reproduced and gated (**G-REPRO matched the
+committed `_caiso249_ownzone_attribution.json` to MACHINE ZERO on every regime,
+every year**). The candidate carriers were read off the shipped LP builder and
+the keeper's `run_config.json` BEFORE measurement: hydro's monthly
+energy-budget dual (`_build_hydro_rows`, ARMED — invisible to every `mc = λ`
+test because the water value is not in `mc`), the storage SOC dual, and — as a
+recipe fact, not a measurement — **`ramp_limits = False` and
+`caiso_reserve_coopt = energy_reserve_coopt = False`, so two of the handoff's
+four named constraint falsifiers cannot exist in this LP at all.** The
+post-solve scarcity adder (which IS folded into the persisted price,
+`result.prices = result.prices + caiso_adder`) was **cited, never re-measured**
+— caiso-229's bound $0.017/$0.006/$0.003 per MWh.
+
+**RESULT — the object was mostly closed before the session opened.** The cell's
+gap is $0.8368/$1.6395/$1.7340 per MWh (2023/24/25), and **$0.3683/$0.9861/
+$0.9888 of it — 44.0/60.2/57.0 % of the cell, 28.2/26.1/31.4 % of the WHOLE
+year's C3a gap — lies inside caiso-168's belly-surplus mask** (Pacific
+`[09,16)`, measured CA DA hub ≤ $20, carried VERBATIM), where caiso-168 §1–§2
+already established with a matched control that a storage CHARGE column is the
+marginal buyer. With `DOM_GAS`'s own overlap those 1,116/1,604/1,623 hours
+(12.7/18.3/18.5 % of the year) carry **at least 44.2/38.4/35.8 %** of the year's
+gap. **The remainder is the SAME state in hours the cut excluded**: the
+outside-mask cell ($0.468/$0.653/$0.745) is carried by the charge-side columns
+(li_ion chg-interior +0.658/+0.428/+0.450; PS chg-interior +0.579/+0.413/+0.382;
+hours with NO storage column interior carry −0.091/+0.009/+0.002) and peaks in
+ONE hour of the day — **Pacific 07–08 = +0.309/+0.341/+0.349 $/MWh, 9–24 % of
+the whole C3a gap in two hours**, with the evening (17–19) negative or
+negligible. **caiso-168 §5's instrument census is over instrument CLASSES, not
+hours, so it transfers unchanged: widening the object's time window opens no
+admissible charge-side channel.**
+
+**HYDRO IS REFUTED**, on two independent measurements: it is strictly inside its
+hourly envelope in **8,400/8,119/8,150 of 8,760 hours (93–96 % of the year)**,
+so the census leg is near-vacuous; and in `STORAGE ∧ hydro-interior` zone-hours
+the within-(zone, month) λ IQR is **$14.84/$12.13/$11.40** against a registered
+≤ $3.00 — a monthly budget dual is one number per unit-month, and this is not it.
+
+**GATES:** G-REPRO / **G-FLEET′** / G-CONSERVE / G-BENCH / G-CAP / G-HOLDOUT all
+PASS in all three years. **G-FLEET′ closes caiso-249 queue item 3**, registered
+in advance: the phantom test re-keyed on the solver's authoritative
+`_INJECTED_MUSTRUN_CLASSES = ("biomass","OTHER")` passes 2023 and records exactly
+what the repair drops (`oil`, the documented caiso-248 §5.4 false positive).
+caiso-249's published record stands AS PUBLISHED with its FAIL — a committed
+evidence artifact is not rewritten to convert its own gate failure.
+
+**PREDICTIONS: 7 HOLD, 3 FALSIFIED — and one hold is VACUOUS.** P-6 FALSIFIED
+(the exact-repeat λ signature does NOT discriminate: `DOM_GAS` repeats at
+17.6/27.6/30.5 % against a registered < 10 %, because daily citygate spot
+pricing makes a marginal thermal unit's `mc` constant within a day). P-7
+FALSIFIED by 4–5× (hydro). P-10 FALSIFIED (the census collapses onto the joint
+cell at 132.8/92.3/102.1 % of the cell gap). P-4 HELD **VACUOUSLY** and is
+reported as such. P-8 held and larger than registered; P-9 held, which QUALIFIES
+caiso-249's own published sentence — λ sits roughly EQUIDISTANT between the rung
+above and below (ratio 0.93/0.66/1.16), so the positive wedge is mechanical
+(`mc ≥ λ` at any lower bound); what it really measures is that the offer stack
+near λ is **6–8× sparser** in `STORAGE` hours than in `DOM_GAS` hours.
+
+**DISCLOSED AGAINST INTEREST:** (a) the lane ranked this object FIRST while
+caiso-168 — cited five times in its own DO-NOT-REDO chains — had already
+adjudicated most of it; the overlap was never measured because the two sessions
+defined their masks differently. (b) Everything here is **ISO-AGGREGATE** (no
+zone in `storage_<year>.parquet` or `class_hourly`), so both interiority tests
+are fleet-level NECESSARY conditions and **no causal claim is made** — caiso-168
+had a matched control, this session has none. (c) My own caiso-249 wedge
+sentence is over-read and is qualified here.
+
+**QUEUE RE-RANK:** (1) **caiso-249 item 1 DE-RANKED — substantially CLOSED**,
+not to be funded again as a C3a lever. (2) NEW and concrete: the **Pacific
+07–08 morning-ramp slab**, which needs caiso-168's matched control re-run on
+that mask before anything else. (3) the missing **per-zone storage/class
+sidecar** (all-ISO instrument ask). (4) **the CC-hot / CT-cold split is now the
+highest-ranked genuinely-open C3a object.** (5) the DOM_GAS/STORAGE boundary
+stays unquotable. (6) import seam + the two fitted firm prices stay demoted.
+(7) owner asks carried.
+
+**DO-NOT-REDO adds (FINDING §7):** never re-fund "what sets λ in the STORAGE
+cell" as a new object; caiso-168 §5's instrument census is MASK-INDEPENDENT;
+hydro never sets the CAISO price usefully (93–96 % interior, IQR $11–15);
+exact-repeat λ multiplicity does not discriminate on this keeper; never read the
+nearest-offer wedge as evidence of a carrier; the committed sidecar `price` is
+`λ_LP + A(t)` with A bounded by caiso-229; `ramp_limits` and the reserve co-opt
+are OFF on this keeper.
+
+**Deliverables:** `PRECOMMIT-caiso250-lambda-carrier-2026-09-05.md`,
+`FINDING-caiso250-lambda-carrier-2026-09-05.md`,
+`scripts/probes/_caiso250_lambda_carrier_anatomy.py`,
+`results/calibration/_caiso250_lambda_carrier_anatomy.json`, this entry, an
+evidence-only CAISO matrix append. No cell verdict moved; no run registered;
+keeper unchanged.
+
+**Next number: caiso-251.**
