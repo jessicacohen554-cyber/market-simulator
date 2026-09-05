@@ -12029,3 +12029,46 @@ the audit desk (Z-4), whose board this lane does not edit. **Frontier is NOT
 `final`:** `final` still empty, the freeze untouched (locked tier frozen for
 every ISO), 2019 / H1-2026 never granted. **Spent: NOTHING. Solved: NOTHING.**
 Record: `docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`.
+### 2026-09-05 — nyiso-192 (`backcast-calibration`, frontier adjudication for card C-10 / Q39): the two nyiso-191 hand-forwards decomposed with NO LP, a dashboard-payload defect found and repaired, the Astoria merit-panel repair A/B-solved — keeper unchanged, frontier NOT declared
+
+**Result.** Keeper `2026-09-05-nyiso-189-steam-identity` unchanged (CALIBRATED,
+grade 7, fails 0, C3c ledgered; re-verified artifact-only after its payload was
+re-rendered). Two solves: the keeper replayed IN PLACE as the control (every
+committed sidecar byte-identical) and ONE arm, `2026-09-05-nyiso-192-astoria-panel`
+— the Astoria merit-panel stack-duplicate repair (nyiso-184 §4.1, the last live lever in the record), which moves the WHOLE steam fleet's availability (106 Astoria windows out, 155 windows at fifteen other plants in; Ravenswood 2024 0.478 → 0.260). Every B2 prediction held; C2 / C3a / C3b / C8 no flip (C3a-2025 −8.3 → −7.3 %); **C1-2024 `CC_REGULAR` flips PASS → FAIL (+3.33 → +3.68 TWh, +3.0 pp)**; NOT-YET; structural integrity better in 2024 / 2025, worse in 2023. Not rejected under the pre-registered rule — OWNER CALL (card Q40); promoting it would put a NOT-YET keeper under `complete` (Q5-W).
+
+**The instrument defect.** `render_calibration_html`'s model-payload CHP add-back
+used the 35 % sector share while the LP held out the MEASURED share (0 % at Sithe
+Independence): 6.6 TWh of flat phantom energy across the 2024 `CC_CHP` class,
+2.14 TWh at Sithe. Repaired at the call site (the run's own hold-out map; pinned
+by `tests/scoring/test_render_chp_addback_measured.py`), the keeper's payload
+re-rendered under its own id (non-CHP plants byte-identical; CHP identity closes
+to ≤ 0.0001 TWh). **nyiso-190 §3's ±8 TWh plant-grain misallocation reads
+8.4 / 7.0 / 6.9 TWh; nyiso-191's Sithe over-run +3.19 / +3.48 reads +1.04 /
++1.31.** Fourteen older NYISO payloads still carry the defect (flagged).
+
+**Object 1 — Sithe 54547:** INADMISSIBLE / IDENTIFICATION-BLOCKED. The census rule
+declines it correctly (0 of 18 zero-median cells, online 0.844); the corrected
+residual is level-when-on (four trains at 80 % of HSL), half of 2024's in
+trough-flip hours (the owner-court compression object), the rest unidentifiable
+in-repo (no F923 filing; no regulation product; NYCA reserves hydro-saturated).
+**Object 2 — `ST_GAS` zonal placement:** NYC over ← the zonal delivered-gas basis
+(Transco Z6 NY hub vs Iroquois Z2; plant-level receipts unfiled) → identification
+intake, with the one in-repo alternative (the CT leg's LDC index) REFUSED EX ANTE
+(shifts NYC steam +$34–53/MWh to 0.4–1.3 % in-merit → ~100 % floor-forced → C8 by
+construction → cell G); LI / CH under ← out-of-market commitment (G) + C3a-2025
+(Q1). Ravenswood's HR term is closed (nyiso-185 K).
+
+**Measured, not acted on:** on the current keeper, `ST_GAS` is forced **0.393 /
+0.414 / 0.305** at UNIT grain (D-2's own `at_floor_mask`) against the committed
+plant-grain C8 0.197 / 0.236 / 0.183 and the 0.30 cap — the C8 PASS is
+instrument-dependent (scorer lane, cross-ISO; nyiso-181 §6's escalation now
+measured).
+
+**Frontier:** mechanism set EXHAUSTED at the current representation (YES — every object since nyiso-154 dispositioned); a declaration NOT recommended until the owner rules the C8 grain and the Astoria arm (card C-10 / Q39, options A/B/C; Q40). Records:
+`results/calibration/ASSESSMENT-nyiso192-frontier-2026-09-05.md`,
+`docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md`,
+`docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md`,
+`results/calibration/PREREG-nyiso192-frontier-adjudication.md` (+ Amendment 1),
+`_nyiso192_*.json`, probes `scripts/probes/nyiso192_*.py`,
+`scripts/gen_nyiso192_attestation.py`, bundle `nyiso192_astoria_panel`.

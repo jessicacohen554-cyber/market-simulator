@@ -10970,6 +10970,79 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — REWRITTEN 2026-09-05 (nyiso-192 `backcast-calibration` lane,
+frontier adjudication for card C-10 / Q39. TWO SOLVES — the keeper replayed IN
+PLACE as the bit-identical control and ONE arm, `2026-09-05-nyiso-192-astoria-panel`,
+registered NOT-YET with the call to the owner). Keeper
+`2026-09-05-nyiso-189-steam-identity` — CALIBRATED, grade 7, fails 0, C3c
+ledgered — UNCHANGED; its dashboard PAYLOAD re-rendered under its own id on a
+repaired instrument. `complete` held; `final` empty; freeze active. Frontier NOT
+declared — `results/calibration/ASSESSMENT-nyiso192-frontier-2026-09-05.md` (the
+nyiso-154 successor) and `docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md`
+put Q39 (and the arm, Q40) to the owner with every object since nyiso-154
+dispositioned on their face.**
+
+* **THE nyiso-191 TOP-OF-QUEUE OBJECT WAS THREE-QUARTERS AN INSTRUMENT ARTIFACT.**
+  `render_calibration_html`'s model-payload CHP add-back used the 35 % sector
+  share while the LP held out the MEASURED share (0 % at Sithe): 6.6 TWh of flat
+  phantom energy across the 2024 `CC_CHP` class, 2.14 TWh at Sithe. Repaired at
+  the call site (`tests/scoring/test_render_chp_addback_measured.py`); the
+  keeper replayed in place (every committed sidecar byte-identical) and its
+  payload re-rendered (non-CHP plants byte-identical; CHP identity ≤ 0.0001 TWh).
+  **Sithe's over-run reads +0.17 / +1.04 / +1.31 TWh, not +1.59 / +3.19 / +3.48;
+  nyiso-190 §3's plant-grain misallocation reads 8.4 / 7.0 / 6.9 TWh, not
+  7.4 / 8.2 / 9.3; there is no phantom winter capacity at Sithe.** Fourteen
+  older NYISO payloads still carry the defect (flagged, not rewritten).
+* **SITHE 54547 — INADMISSIBLE / IDENTIFICATION-BLOCKED, CLOSED AS A QUEUE
+  ITEM.** The `chp_layup_duty_curve` census rule declines it correctly (0 of 18
+  zero-median cells; online 0.844; `operating`); the corrected residual is
+  level-when-on with four trains at 80 % of HSL, half of 2024's in trough-flip
+  hours (the owner-court compression object), the rest unidentifiable in-repo
+  (no F923 filing; no regulation product; NYCA reserves hydro-saturated).
+* **`ST_GAS` ZONAL PLACEMENT — DECOMPOSED TO TWO OWNERS, CLOSED AS A QUEUE
+  ITEM.** NYC over ← the zonal delivered-gas basis (Transco Z6 NY hub vs Iroquois
+  Z2; plant-level receipts unfiled → identification intake); the one in-repo
+  alternative (the CT leg's LDC index on NYC steam) is REFUSED EX ANTE — +$34–53
+  /MWh, in-merit 0.4–1.3 %, ~100 % floor-forced → C8 by construction → cell G.
+  LI / CH under ← out-of-market commitment (G, nyiso-187) + C3a-2025 (Q1).
+  Ravenswood's heat-rate term is closed (nyiso-185 K).
+* **THE ASTORIA MERIT-PANEL STACK-DUPLICATE REPAIR (nyiso-184 §4.1) — THE LAST
+  LIVE LEVER — A/B-SOLVED; OWNER CALL.** The panel now applies the canonical
+  stack-duplicate correction (NY 8906 only; byte-identical for every other ISO).
+  The re-derived extract moves the WHOLE steam fleet (106 Astoria windows out,
+  155 windows at fifteen other plants in; Ravenswood 2024 availability 0.478 →
+  0.260). Armed: every prediction held; C2 / C3a / C3b / C8 no flip (C3a-2025
+  −8.3 → −7.3 %); **C1-2024 `CC_REGULAR` flips PASS → FAIL (+3.33 → +3.68 TWh,
+  +3.0 pp) → NOT-YET**; structural integrity better in 2024 / 2025, worse in
+  2023. Not rejected under the pre-registered rule; promoting it would put a
+  NOT-YET keeper under `complete` (Q5-W). Repaired extract bundle-local; the
+  committed extract stays the keeper's pinned input.
+* **MEASURED, NOT ACTED ON — THE KEEPER'S C8 PASS IS INSTRUMENT-DEPENDENT.** At
+  unit grain with D-2's own `at_floor_mask`, `ST_GAS` is forced **0.393 / 0.414 /
+  0.305** on the current keeper against the committed plant-grain 0.197 / 0.236 /
+  0.183 and the 0.30 cap (nyiso-181 §6's escalation, now a number). Scorer lane,
+  cross-ISO; `_nyiso192_c8_unit_grain_keeper.json`.
+* **QUEUE STATUS: NO LIVE LANE LEVER.** Every remaining item is owner-court —
+  Q39 (frontier), Q40 (the arm), the C8 grain, Q1 (C3a-2025), the AORR fetch
+  (cell G), two identification intakes (NYC steam delivered gas; Sithe's basis /
+  a regulation product), the pooled CT-only test (cross-ISO derive lane) — or
+  ledgered (C3c). Observations with no admissible lever: Zeltmann's 2024 record
+  vs the pooled p99.9 cap; NYISO parasitic factors absent; the v2 artifact's
+  frozen rows.
+* **Forecast lane, carried:** `egrid_steam_collapse_heat_rates` regenerates per
+  eGRID vintage (`APPLIED_VINTAGE = 2023`); eGRID 2025 has NOT landed.
+* Evidence: `docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md`,
+  `results/calibration/ASSESSMENT-nyiso192-frontier-2026-09-05.md`,
+  `docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md`,
+  `results/calibration/PREREG-nyiso192-frontier-adjudication.md` (§0–§6 pushed
+  before the control; §7 before the arm), `_nyiso192_*.json`, probes
+  `scripts/probes/nyiso192_*.py` + `_nyiso192_common.py`,
+  `scripts/gen_nyiso192_attestation.py`, bundle `nyiso192_astoria_panel`.
+
+**PRIOR QUEUE (nyiso-191) PRESERVED BELOW — its top-of-queue item (Sithe) and
+its second (the `ST_GAS` zonal placement) are CLOSED above as identification-
+blocked objects; its third (the pooled CT-only test) stays cross-ISO.**
+
 **LEVER QUEUE — REWRITTEN 2026-09-05 (nyiso-191 `backcast-calibration` lane,
 TWO SOLVES — a BIT-IDENTICAL control and one arm, REGISTERED AS A REJECTED
 PROBE; THE `CC_CHP` SCOPE EXTENSION OF `cc_capacity_reconcile` IS TESTED AND
