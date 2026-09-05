@@ -244,6 +244,14 @@ status is the worst of its row statuses (`FAIL` > `CAVEAT` > `PASS`);
 - **T1-X capacity events (2 evolution steps)** are *(report-only)* context
   here — the program pre-declared them weak-alone (plan §2.2); they may
   annotate FC-3 but never gate it.
+- **Reported-only scorer rows** *(report-only, no band, no verdict)*: the
+  `score.json` `retirements` block also carries
+  `unit_recall_gt300.plant_recall_frac` (plant-exact recall, G-31) and
+  `plant_release_precision` (plant-grain release precision — released MW at
+  real-exit plants ÷ released MW, per window / year / channel; capx D55,
+  D32 §7 R4, 2026-09-05). They annotate the FC-3 reason line for a reader
+  and are never read by the scorer's aggregation: a `FAIL` can come only
+  from a gated `band`.
 - No committed hindcast score for the ISO ⇒ `SKIPPED` (the NEISO state —
   "evidence-free" is a recorded hold, not a pass).
 

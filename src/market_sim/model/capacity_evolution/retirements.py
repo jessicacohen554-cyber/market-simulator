@@ -1884,19 +1884,42 @@ def _floor_retention_merit(
 
     Cheapest firm adequacy first: annual going-forward cost per firm MW (the
     ISO's accreditation basis — UCAP by default, seasonal rating where the
-    ISO's published convention says so, ``_thermal_firm_mw``), tie-broken by
-    CO2 emission rate ascending so equal-cost adequacy is bought from the
-    cleaner unit (the heat-rate key this replaces retained coal over gas),
-    then by heat rate ascending so a within-fuel tie (per-fuel FOM and CO2
-    rates make same-fuel units identical on the first two keys)
-    deterministically retains the most efficient unit. All three keys are
-    physical unit attributes — no tunables (plan §3.2).
+    ISO's published convention says so, ``thermal_accreditation_fraction``,
+    the same resolver ``_thermal_firm_mw`` prices the unit's firm MW
+    through), tie-broken by CO2 emission rate ascending so equal-cost
+    adequacy is bought from the cleaner unit (the heat-rate key this
+    replaces retained coal over gas), then by heat rate ascending so a
+    within-fuel tie deterministically retains the most efficient unit. Key 1
+    is a CLASS quantity — per-fuel FOM × multiplier over the class
+    accreditation fraction — so same-fuel units tie on it exactly and keys
+    2–3 order them; keys 2–3 are physical unit attributes. No tunables
+    (plan §3.2).
+
+    **Key 1 is computed WITHOUT ``pmax`` (capx D55, 2026-09-05; the defect
+    is D32 §3.2, ``docs/handoffs/FINDING-capx-d32-floor-retention-2026-09-02.md``).**
+    It was formerly the per-unit quotient ``(FOM × pmax × 1000) /
+    (pmax × fraction)``, which is the same number in exact arithmetic but
+    NOT in IEEE-754: rounding put same-fuel units on 4–5 distinct floats at
+    the 1e-11 level (58.5e3 × p / (p × 0.92) over the run's actual coal
+    pmax values yields three distinct floats), so Python's tuple sort
+    consulted the CO2 / heat-rate keys only inside a rounding bucket and
+    the designed within-fuel order was reproduced only piecewise (MISO 2022:
+    Marion, 1.533 t/MWh, retained ahead of cleaner coal). The class-constant
+    form below is bit-identical for every unit of a fuel, restoring the
+    three-key semantics as designed; a unit with no firm value (``pmax``
+    ≤ 0 or a zero accreditation fraction) still sorts last (``inf``), as
+    before.
     """
     fom_field = _THERMAL_FOM[g.fuel_type]
     multiplier = getattr(config, _FOM_MULTIPLIER.get(g.fuel_type, ""), 1.0)
-    going_forward_cost = getattr(config, fom_field) * multiplier * g.pmax_mw * 1000.0
-    firm_mw = _thermal_firm_mw(g, config.iso, config, year)
-    cost_per_firm_mw = going_forward_cost / firm_mw if firm_mw > 0.0 else math.inf
+    firm_fraction = thermal_accreditation_fraction(
+        g.fuel_type, g.eford, config.iso, config, year
+    )
+    cost_per_firm_mw = (
+        getattr(config, fom_field) * multiplier * 1000.0 / firm_fraction
+        if firm_fraction > 0.0 and g.pmax_mw > 0.0
+        else math.inf
+    )
     return (cost_per_firm_mw, float(g.emission_rate_co2), float(g.heat_rate))
 
 

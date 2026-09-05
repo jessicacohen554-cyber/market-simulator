@@ -49,6 +49,7 @@ from market_sim.model.capacity import (
     wright_cost,
 )
 from market_sim.model.capacity_evolution.retirements import (
+    _floor_retention_merit,
     gross_adequacy_requirement_mw,
     nyiso_requirement_forecast_peak_armed,
     nyiso_requirement_vintage_factors_armed,
@@ -1674,6 +1675,50 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         self.assertEqual([g.unit_id for g in survivors], ["CT"])
         self.assertEqual(log[0]["unit_id"], "CT")
         self.assertEqual(log[0]["co2_rate"], 0.55)
+
+    def test_retention_merit_within_fuel_co2_order_heterogeneous_pmax(self):
+        # capx D55 (D32 §3.2 — FINDING-capx-d32-floor-retention-2026-09-02):
+        # key 1 must be the class constant, not the per-unit quotient
+        # (FOM x pmax x 1000) / (pmax x fraction). The quotient is the same
+        # number in exact arithmetic but not in IEEE-754 — at UCAP 0.95,
+        # pmax 291.535 / 1000 / 613.2 land on 61578.947368421046 / ...05 /
+        # ...07 — so the defective key sorted B (the dirtiest) FIRST and C
+        # (the cleanest) LAST, and the CO2 tie-break never fired. The
+        # sibling test above uses two units of EQUAL pmax (1000), where the
+        # quotient is bit-identical and the defect is invisible.
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+            ADEQUACY_EXTERNAL_TIE_FIRM_MW,
+            THERMAL_ACCREDITATION_BASIS_BY_ISO,
+        )
+
+        config = ScenarioConfig(retirement_rule="legacy").with_overrides(
+            planning_reserve_margin_override=0.0,
+            retirement_years_coal=1,  # pin (D1 default 3): screen-eligible now
+        )
+        fleet = [
+            _gen("A", "coal", pmax=1000.0, heat_rate=10.0, emission_rate_co2=0.95),
+            _gen("B", "coal", pmax=291.535, heat_rate=10.0, emission_rate_co2=1.50),
+            _gen("C", "coal", pmax=613.2, heat_rate=10.0, emission_rate_co2=0.60),
+        ]
+        # Legacy UCAP basis (registries cleared, as the nameplate test below):
+        # firm = 0.95 x pmax -> C 582.5, A 950.0, B 277.0. Requirement = peak
+        # 1000 (PRM 0). Designed order (CO2 ascending) retains C then A
+        # (1532.5 >= 1000) and releases B; the defective order (B, A, C by
+        # float noise) retained B then A (1227.0 >= 1000) and released C.
+        with (
+            mock.patch.dict(THERMAL_ACCREDITATION_BASIS_BY_ISO, clear=True),
+            mock.patch.dict(ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO, clear=True),
+            mock.patch.dict(ADEQUACY_EXTERNAL_TIE_FIRM_MW, clear=True),
+        ):
+            keys = [_floor_retention_merit(config, g) for g in fleet]
+            survivors, _, log = self._screen(fleet, config, peak=1000.0)
+        # Key 1 is bit-identical across the fuel whatever the pmax.
+        self.assertEqual(len({k[0] for k in keys}), 1)
+        self.assertEqual(keys[0][0], 45.0 * 1.3 * 1000.0 / 0.95)
+        self.assertEqual(sorted(g.unit_id for g in survivors), ["A", "C"])
+        self.assertEqual([r["unit_id"] for r in log], ["C", "A"])
+        self.assertEqual([r["co2_rate"] for r in log], [0.60, 0.95])
 
     def test_retention_merit_cost_is_primary(self):
         # Cost stays the primary key: a cheap-adequacy CT (8 $/kW-yr) beats
