@@ -5503,6 +5503,63 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-218 (2026-09-05) — THE RATIO-PRESERVING OFFER-LEVEL SCALE (×1.10),
+> OWNER-REQUESTED, RULE-13 DIAGNOSTIC PROBE: **THE OWNER'S PREMISE HELD AND MY DECISIVE
+> PRE-REGISTERED PREDICTION WAS WRONG** — ALL THREE C3a YEARS LAND INSIDE ±10 % AND THE
+> LANE'S STANDING **C3a-2025 FAILURE CLOSES (−12.297 → −6.313 PASS)** — BUT IT BREAKS A
+> **LOAD-BEARING C1 CELL** (`ST_GAS`-2024 −7.155 → **−8.030**, PASS → FAIL), PUSHES **EVERY**
+> C8 CLASS-YEAR FURTHER OVER BUDGET, AND LEAVES THE SCARCITY TAIL UNTOUCHED. **NOT A KEEPER,
+> PRE-COMMITTED BEFORE THE SOLVE.** Keeper UNCHANGED at `2026-09-05-miso-217-intermphys`;
+> registered `2026-09-05-miso-218-levelscale-probe`; PREREG BLIND at `1deae2b2`; record
+> `FINDING-miso218-offer-level-scale-2026-09-05.md`. **Nothing minted** — the scale rides the
+> existing `offer_curve_by_group` operator channel, no field, no row, ledger 41/2.
+>
+> **(i) WHAT WAS RUN.** Every band multiplier of all 13 fossil classes ×1.10; within-class
+> ratios preserved exactly, `phys_*` and structural shares untouched, **fossil merit order
+> preserved by construction**.
+>
+> **(ii) THE PREMISE HELD.** I pre-registered that C3a-2023, at +1.096 % against a ±10 %
+> band, would **EXIT**. It does not: **+8.402 % PASS**. Pass-through **+7.23 / +7.49 /
+> +6.82 %** — under 10 %, because `vom` and emission adders do not scale, which is exactly
+> why my pre-solve arithmetic was too pessimistic. C3a **+8.402 / +4.396 / −6.313, all
+> inside**.
+>
+> **(iii) WHY IT IS STILL NOT A KEEPER — TWO INDEPENDENT REASONS.** (1) **Pre-committed
+> before the solve**: a uniform multiplicative lift chosen to move a price residual is a
+> **fitted level scalar identified against that residual** — rule 1 `[R-STRUCT]` forecloses it
+> as a keeper mechanism, rule 13 admits it only as the default-off diagnostic probe this is.
+> (2) **Measured after, and independent: it is NOT a gates win.** `fuelmix` `ST_GAS`-2024
+> **exits the ±8.00 band** (the only PASS→FAIL flip on the board, load-bearing), so the
+> determination goes **NOT-YET on C3a-2025 → NOT-YET on fuelmix** — a substitution, not an
+> improvement. C8 rises on **every** class-year (`CT_PEAKER` → 0.2571 / 0.1756 / 0.1437, all
+> three now over the 0.15 budget). **The owner's standing formula does not reach it: structural
+> integrity does not improve, and the gates do not net improve either.**
+>
+> **(iv) THE TAIL IS UNTOUCHED — WHICH CONFIRMS THE OWNER'S OWN DIAGNOSIS, NOT THE LEVER.**
+> C3c hours of RT LMP > $200: **3 / 7 / 0 → 3 / 7 / 1** against an actual **30 / 37 / 88**. A
+> 10 % lift on a $183.22 maximum reaches ~$202 against an actual $1,669.52. The mean closed by
+> raising a Jun–Jul median miso-202/203 measured as **already above actual** (37.47 vs 32.73).
+> C3b 0.080 → 0.115 and 0.105 → 0.111 (worse) but **0.180 → 0.149 in 2025 (better)** — reported
+> against my own P-4 reasoning.
+>
+> **PRIOR SCORED AGAINST INTEREST**: **P-2 WRONG and it was the decisive one**; P-1 wrong on
+> its 2025 leg; P-3 substantively right, band missed by 0.31 pp; P-4 right on its bar, wrong on
+> its mechanism for 2025; P-5 right; **P-6 wrong on the cell** — I named `CC_REGULAR`-2024
+> (0.053 TWh of band left) and it moved the SAFE way while `ST_GAS`-2024 exited instead;
+> P-7 held. **Also reported**: the exit is only **0.030 TWh** past the line, and this finding
+> deliberately does **NOT** sweep for a smaller factor that would keep it inside — sweeping a
+> scalar against the gates is exactly the fitting rule 1 forbids.
+>
+> **WHAT THIS HANDS FORWARD.** A real, new bound: **a pure LEVEL lever can put all three C3a
+> years inside ±10 %**, at a measured cost of one load-bearing C1 cell and a uniformly worse
+> C8 — and it demonstrates, with the tail numbers beside it, that **closing C3a-2025 by level
+> is not the same as fixing the 2025 miss**. The object remains what miso-202/203 measured:
+> an evening net-load-ramp scarcity tail (13 of 15 scarce hours in h18–h21, top 1 % of hours
+> carrying 99.9 % of the mean gap, model max $183.22 vs actual $1,669.52 with 0.0 MWh unserved
+> and an ORDC that never climbs). **THE LARGEST UN-ADJUDICATED OBJECT REMAINS THE SOUTH PRICE
+> SEPARATION** (miso-213 O-4 / miso-211 D-3, +$0.16 model vs +$58 measured). Cells: none
+> changed — no field was added.
+
 > **QUEUE STAMP miso-217 (2026-09-05) — THE `phys_*` COVERAGE-GAP ARM: **PROMOTED**,
 > KEEPER → `2026-09-05-miso-217-intermphys`. ONE MISO-GATED, ZERO-DOF FIELD RETURNS
 > **38,501.0 MW = 58.4 % OF MISO'S ASSEMBLED GAS CAPACITY** TO THE ARMED OFFER-MARGIN

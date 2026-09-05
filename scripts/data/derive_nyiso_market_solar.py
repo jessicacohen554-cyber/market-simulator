@@ -115,7 +115,12 @@ COL_INSERVICE, COL_NAMEPLATE = 8, 9
 COL_UNIT_TYPE, COL_FUEL1 = 15, 16
 SKIPROWS: int = 8
 
-YEARS: tuple[int, ...] = (2023, 2024, 2025)
+# 2022 added 2026-09-05 for the rule-22 validation touchpoint: no 2022 Gold Book
+# workbook is on disk (2022 is a PDF vintage), so the 2022 rows are the 2023
+# vintage back-projected on each unit's published in-service date. Units that
+# deregistered during 2022 are invisible to this construction (none of the
+# three vintages lists them) — a stated limitation, not a free parameter.
+YEARS: tuple[int, ...] = (2022, 2023, 2024, 2025)
 OUT = RAW_DIR / "reference" / "nyiso-market-solar-capacity.csv"
 
 # EIA-860 operable generator schedule — the second published in-service date

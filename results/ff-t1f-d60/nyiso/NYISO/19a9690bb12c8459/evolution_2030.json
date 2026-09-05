@@ -1,0 +1,69 @@
+{
+  "adequacy_requirement_mw": 32162.703,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": null,
+  "ccs_retrofits": [
+    {
+      "from_fuel": "gas_cc",
+      "mw": 1000.0,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "gas_cc_h_class_Upstate_West"
+    }
+  ],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {},
+  "entry_pipeline": [],
+  "firm_clean_accredited_mw": 1763.281,
+  "firm_clean_mw": 4587.1,
+  "fleet_by_fuel_after": {
+    "biomass": 384.4,
+    "gas_cc": 5724.40357,
+    "gas_cc_ccs": 6474.63643,
+    "gas_ct": 3033.811,
+    "gas_st": 9372.5,
+    "nuclear": 3325.9,
+    "oil": 2904.5
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 384.4,
+    "gas_cc": 6724.40357,
+    "gas_cc_ccs": 5474.63643,
+    "gas_ct": 3033.811,
+    "gas_st": 9372.5,
+    "nuclear": 3325.9,
+    "oil": 2904.5
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NYISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 29717.544,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.1224,
+    "wind": 0.1684
+  },
+  "reserve_margin": 0.216541,
+  "retirements": [],
+  "rps_dual": 40.0,
+  "screen_adequacy_requirement_mw": 32162.703,
+  "screen_entering_firm_mw": 36152.606,
+  "screen_peak_demand_mw": 29717.544,
+  "screen_reserve_position": 1.124054,
+  "solar_cap_mw": 3343.4,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 1306.475,
+  "storage_power_mw": 1470.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 3400.0,
+  "year": 2030
+}

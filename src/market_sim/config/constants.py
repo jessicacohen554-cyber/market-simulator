@@ -2262,6 +2262,9 @@ NUCLEAR_DORMANT_UNTIL: dict[int, int] = {
 # Tier: 3 (calibration)
 NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     "ERCOT": {
+        # 2022 derived 2026-09-05 (same script, same EIA-923 source; 2023 row
+        # re-derived identically in the same run) for the rule-22 validation touchpoint.
+        2022: [1.00, 1.00, 1.00, 0.85, 0.87, 1.00, 1.00, 1.00, 0.93, 0.79, 0.91, 1.00],
         2023: [1.00, 1.00, 0.89, 0.75, 0.78, 0.95, 0.99, 0.99, 0.99, 0.87, 0.91, 1.00],
         2024: [0.93, 1.00, 0.82, 0.74, 0.78, 0.98, 0.92, 0.97, 0.99, 0.68, 0.75, 1.00],
         2025: [0.97, 1.00, 1.00, 0.92, 0.89, 1.00, 1.00, 0.99, 0.94, 0.76, 0.91, 1.00],

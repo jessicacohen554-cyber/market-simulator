@@ -57,19 +57,37 @@ honor all non-fossil dates). Renamed from the old `apply_known_retirements`
 
 For each thermal unit, computes a going-forward economic test:
 
-- **Net revenue** = `Σ_t (price[zone,t] − mc[g,t]) · dispatch[g,t]` — the
-  *inframarginal energy margin* (threaded as `prior_results["mc_cost"]`, **never**
-  gross revenue), plus attribute revenue (`max(exogenous EAC, RPS shadow price)` —
-  no stacking), plus capacity revenue (net-CONE × UCAP in capacity-market ISOs;
-  zero in energy-only ERCOT), plus ERCOT AS revenue (saturating on storage fleet).
+- **Net revenue** = the **attainable (pro-forma) inframarginal margin**
+  `Σ_t max(0, price[zone,t] − mc[g,t], r[g,t]) · pmax[g] · availability[g,t]`
+  (threaded as `prior_results["mc_cost"]`, **never** gross revenue and **never**
+  the prior LP's realized dispatch — a realized-dispatch margin structurally
+  misses the scarcity rent a peaker lives on), plus attribute revenue
+  (`max(exogenous EAC, RPS shadow price)` — no stacking), plus capacity revenue
+  (the one `capacity_price_per_firm_mw_yr` seam × the ISO's accreditation; zero in
+  energy-only ERCOT), plus AS revenue. `r[g,t]` is the hourly reserve-price signal
+  (`screen_reserve_value_enabled`, default on).
 - **Going-forward cost** = `fixed_om_per_kw_yr · fom_multiplier · pmax · 1000`.
   Coal carries a 1.3× FOM multiplier for regulatory/ESG risk.
-- A **consecutive-loss counter** per unit; the unit retires once losses persist
-  past the per-fuel threshold (`retirement_years_coal=3`, `gas_ct=2`, `gas_cc=3`,
-  …). Within a fuel, the highest-heat-rate (least efficient) units retire first.
-- A **reliability floor** prevents stripping thermal below
-  `(peak_demand − firm_clean) · (1 + retirement_reserve_margin)`; the most
-  efficient eligible units are kept online until the floor is met.
+- How a failing screen becomes a realized exit is selected by
+  **`retirement_rule`**, which defaults to **`"pipeline"`** (owner decision D-1,
+  2026-08-02):
+  - **`"pipeline"`** (default) — the R-NEW decision/execution split: a uniform
+    one-screen decision, joint adequacy-capped cross-fuel pipeline entry, an
+    annual soft re-confirmation latch, and deactivation after the measured
+    per-fuel `retirement_execution_lag_*` (coal 3, gas_ct 2, gas_cc 1, gas_st 1,
+    oil 1, nuclear 3 years). The unit dispatches normally until execution.
+  - **`"legacy"`** (non-default) — the per-unit consecutive-loss counter, retiring
+    once losses persist past the per-fuel `retirement_years_*` threshold
+    (`coal=3`, `gas_ct=2`, `gas_cc=3`, …). **These thresholds apply to this rule
+    only.**
+  Within a fuel, the highest-heat-rate (least efficient) units retire first.
+- A **reliability floor** on the accredited basis prevents stripping firm capacity
+  below the shared adequacy requirement (`resolve_adequacy_requirement_mw` — the
+  published FPR where one exists, else `peak · (1 + PLANNING_RESERVE_MARGIN_BY_ISO)`,
+  the same requirement the step-6 backstop tests); the cheapest-firm-adequacy
+  eligible units are un-retired until the floor is met, each retention recorded in
+  `floor_retention_log`. (`retirement_reserve_margin` was **deleted** with the
+  floor-accreditation rebuild — rule 26 `[R-DELETE]`.)
 
 ### Step 4 — CCS retrofit (`apply_ccs_retrofit`, line 1257)
 
@@ -107,7 +125,11 @@ IRA ITC/PTC applied, FOM added, spread over annual generation at base CF.
 An adequacy guarantee: if accredited firm capacity falls below
 `peak_demand · (1 + planning_reserve_margin)`, force-build the cheapest firm
 dispatchable (a gas_ct peaker) to close the gap, capped at the ISO annual queue
-throughput. Disabled by default (`reserve_margin_build_enabled`).
+throughput. `reserve_margin_build_enabled` is **tri-state**: `None` (the
+default) resolves per market design — ON for the ISOs whose design procures
+capacity to an adequacy requirement (PJM/MISO/NYISO/NEISO/CAISO), OFF for
+energy-only ERCOT and any ISO absent from `MARKET_DESIGN`; an explicit
+`True`/`False` is honoured verbatim.
 
 ### Learning curves
 

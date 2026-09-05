@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-05-miso-218-levelscale-probe",
+  "label": "miso 218 levelscale probe",
+  "date": "2026-09-05",
+  "shorthand": "miso-218-levelscale-probe",
+  "definition": "miso-218 DIAGNOSTIC PROBE (rule 13, never a keeper): ratio-preserving x1.10 on every fossil offer-curve band multiplier; phys_* and structural shares untouched; fossil merit order preserved by construction",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-05-miso-218-levelscale-probe.js",
+  "bundle": "results/calibration/miso218_levelscale_B"
+}

@@ -103,16 +103,16 @@ items parked for later. Do not commit/push unless the user asks.
 
 | Code area | Docs that describe it |
 |---|---|
-| `model/dispatch.py` (LP vars, objective, constraints, duals=price) | `model-methodology-spec.md` §1–2; `CLAUDE.md` (Objective / Key Constraints) |
-| `model/commitment.py` (P0/P1/P2, startup amortization, screens) | `model-methodology-spec.md` (Unit-commitment section) & §7.2; `docs/calibration-log.md`, `docs/calibration-session-log.md` |
-| `model/capacity.py` (retire / new entry / CCS retrofit) | `model-methodology-spec.md` §5; `CLAUDE.md` (Capacity Evolution) |
-| `model/transmission.py`, `config/iso_configs.py` (topology/TTC) | `model-methodology-spec.md` Scope & §1.3; `CLAUDE.md` (What This Is); `docs/multi-iso/00…`, `04…` |
+| `model/lp/` package — `layout` / `costs` / `rows` / `reserve_rows` / `bounds` / `model` (LP vars, objective, constraints, duals=price). `model/dispatch.py` is a **frozen facade** aliasing the package; cite the physical module | `model-methodology-spec.md` §1–2; `CLAUDE.md` (Objective / Key Constraints) |
+| `model/commitment.py` + `pipeline/commitment.py` (P0/P1 production, P2 archived, startup amortization, the three P1-native bridges) | `model-methodology-spec.md` §1.6 and §1.9 (the pure-LP / no-MIP commitment); `docs/calibration-log/<iso>.md`, `docs/calibration-session-log.md` |
+| `model/capacity_evolution/` — `evolve` / `retirements` / `new_entry` / `ccs` / `adequacy` (retire, new entry, CCS retrofit, adequacy backstop). `model/capacity.py` is the facade | `model-methodology-spec.md` §5; `CLAUDE.md` (Capacity Evolution) |
+| `model/interchange/` package, `config/iso_configs.py` (topology/TTC). `model/transmission.py` is a **frozen facade** onto it | `model-methodology-spec.md` Scope & §1.3; `CLAUDE.md` (What This Is); `docs/multi-iso/00…`, `04…` |
 | `model/storage.py` | `model-methodology-spec.md` §1.3, §1.5.5, §5.5; `CLAUDE.md` |
 | `data/fleet/` package (models, arrays, campd_bins, offer_surfaces, floors, withholding, eia860, legacy_bins, assembly) + `data/raw/reference/custom-bin-assignments.csv` (CAMPD bins, tranches, offer curves) | `docs/binning-methodology.md`; `model-methodology-spec.md` (Fleet representation); `CLAUDE.md` |
-| `data/outages.py` (backcast overlay) + `data/fleet/` seasonal POF/WEFOR (forecast) | `model-methodology-spec.md` (Outage modelling) & §7.2; `results/calibration/SUMMARY-outage-overlay.md` |
+| `data/outages.py` (backcast overlay) + `data/fleet/arrays.py` seasonal POF/WEFOR (forecast) | `model-methodology-spec.md` §1.7 and §1.9 (the overlay is a stated backcast-only device); `results/calibration/SUMMARY-outage-overlay.md` |
 | `data/fuel/` package (trajectories, hubs, `basis/<iso>.py`, coal, dual_fuel, plant_prices, resolve), `data/eia923.py`, `data/hydrogen.py` | `model-methodology-spec.md` §1.5.1; `docs/parameter-citations.md`; `docs/binning-methodology.md` (fuel pricing) |
 | `results/emissions.py`, `policy/carbon.py`, `policy/rps.py`, `policy/ira.py`, `policy/eac.py` | `model-methodology-spec.md` §1.4, §1.5, §5.3 |
-| `config/scenarios.py` (`ScenarioConfig`), `config/constants.py` | `model-methodology-spec.md` §4; `docs/parameter-citations.md`; `docs/thermal-cycling-adders.md` |
+| `config/scenarios.py` (`ScenarioConfig`), `config/constants.py`, `config/sweeps.py` | `model-methodology-spec.md` §4 (tiers, `cache_key`, sweep/cases expansion, caching); `docs/parameter-citations.md`; `docs/thermal-cycling-adders.md`. **A cache-key-registered field or a declared default flip syncs to §4.1** |
 | `results/calibration.py`, `scripts/run_calibration*.py` | `docs/calibration-log/<iso>.md` (per-ISO continuations; `governance.md` for cross-ISO) — `docs/calibration-log.md` is a FROZEN archive (≤2026-07-19), never appended to; `docs/calibration-session-log.md`, `docs/calibration-report.md`, `results/calibration/SUMMARY-*.md`. **Not** `docs/calibration-best-so-far*.md` — those are SUPERSEDED snapshots; current keeper truth is `frontend/data/backcast/keepers/<ISO>.json` + the Calibration Status page |
 | `results/cache.py`, `results/export.py`, `results/outputs.py` | `docs/data-dictionary.md`; `docs/user-manual.md` §6 (where outputs land — `results/{iso}/{cache_key}/`, bundles, dashboards) |
 | the **operator surface**: `runner.py`'s `_build_parser`/`main` (`market-sim run\|sweep\|ensemble\|matrix`), `scripts/run_calibration_full.py` + `scripts/run_calibration.py` argparse, `config/schedulable.py` (§2.1b cap), `pipeline/members.py` (worker caps), `scripts/hydrate_data.py` + `configs/data-profiles.yaml`, `scripts/regenerate_clean.py`, `run-simulator.{sh,bat}` + `tools/launcher.py` | `docs/user-manual.md` — THE user manual. **A flag, default, cap, output path or install step that changes syncs HERE.** Its §10 records known divergences in `docs/codebase/07-runner-and-cli.md` / `docs/testing.md`; clear them there rather than duplicating |
@@ -126,6 +126,7 @@ items parked for later. Do not commit/push unless the user asks.
 | the dashboard artifact chain (`scripts/render_backcast.py`, `build_manifest.py`, `build_status.py`, `dashboard_add_run.py`, `lib/rubric_consts.py`) | `docs/backcast-artifact-contract.md` — the field tables, byte codecs and FROZEN list. A wire-format or bundle-key change syncs HERE first |
 | any `src/market_sim/` subsystem — "what does the code do here?" | `docs/codebase/` (code-derived engineering pages + `codebase/README.md`) |
 | repo-wide conventions (naming, layout, workflow) | `CONVENTIONS.md`; `CLAUDE.md`; docs IA index `docs/README.md` |
+| `pipeline/members.py` worker caps, warm-start (`MARKET_SIM_WARMSTART_XYEAR`), `scripts/capture_keeper_goldens.py` + `scripts/regression_gate.py` | `model-methodology-spec.md` §6 (§6.1 parallelism, §6.2 performance, §6.4 warm-start, §6.5 the byte-identity contract); `docs/handoffs/wallclock-baseline-2026-07.md` — **measured wallclock lives there, never pinned into the spec**; `docs/cross-year-warmstart.md`; `docs/testing.md` |
 | anything | `CHANGELOG.md` (always append), `README.md` (only if the elevator pitch changed) |
 
 Keep this map current: when a new doc or major module is added, add the row

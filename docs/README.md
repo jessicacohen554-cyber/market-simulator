@@ -19,13 +19,18 @@ L3  dated records ................. diagnoses, findings, memos, handoffs, sessio
   is the market-design/economics spec (the authority when methodology is ambiguous;
   CLAUDE.md: "the spec wins"). [`codebase/`](codebase/) is the code-derived
   engineering reference — 8 pages + [`codebase/README.md`](codebase/README.md) — and
-  it **follows the code** where code and prose diverge.
+  it **follows the code** where code and prose diverge. (Known stale:
+  `codebase/07-runner-and-cli.md`, enumerated in
+  [`user-manual.md` §10](user-manual.md#10-known-doc-divergences-found-while-writing-this-manual)
+  — another lane's surface.)
 - **L2 — living per-area references.** Standing methodology and reference docs that
   are maintained, not frozen. Indexed one-row-each below.
 - **L3 — dated records.** Point-in-time diagnoses, findings, decision memos, plans,
   and session notes. These are the evidence base: cited, never rewritten. They are
-  **not** indexed row-per-file here (there are ~300 of them); they are reached
-  through their own class indexes — [`handoffs/README.md`](handoffs/README.md) and
+  **not** indexed row-per-file here — there are **well over a thousand**
+  (1,265 `.md` files under `docs/` at 2026-09-05, of which the L1/L2 living set
+  indexed on this page is under 60). They are reached through their own class
+  indexes — [`handoffs/README.md`](handoffs/README.md) and
   [`sessions/README.md`](sessions/README.md) — and by filename convention (below).
 
 ## Status-header convention (standing rule for new docs)
@@ -53,8 +58,8 @@ docs-governance task (refactor plan §7-G), not this index's job.
 
 | Path | Status | Area |
 |---|---|---|
-| [`../model-methodology-spec.md`](../model-methodology-spec.md) | ACTIVE | Spec — market design, LP formulation, capacity evolution (THE spec) |
-| [`../market-sim-build-plan.md`](../market-sim-build-plan.md) | ACTIVE | Spec — phase plan, extraction manifest, directory structure |
+| [`../model-methodology-spec.md`](../model-methodology-spec.md) | **FINALIZED 2026-09-05** | Spec — market design, LP formulation, capacity evolution (THE spec). Describes the shipped model; no build-agent content, no performance targets, rules cited by `[R-*]` ID only |
+| [`../market-sim-build-plan.md`](../market-sim-build-plan.md) | ACTIVE — **disposition is an open owner question** | Phase plan, extraction manifest, directory structure. This is Phase-0 build-plan content; whether it should survive alongside a finalized methodology spec was raised by the DOCS-A audit (§10) and is not a docs lane's call |
 | [`codebase/README.md`](codebase/README.md) | ACTIVE | Engineering reference — index of the 8 code-derived pages |
 
 ## L2 — living per-area references
@@ -143,17 +148,23 @@ L3 is the bulk of `docs/` and is **not** individually indexed here. Reach it by:
 
 | Class | Where | Index |
 |---|---|---|
-| Handoffs, design specs, decision memos, plans | [`handoffs/`](handoffs/) (~171 docs) | [`handoffs/README.md`](handoffs/README.md) |
-| Frozen session/investigation notes | [`sessions/`](sessions/) (+ `sessions/multi-iso/`) | [`sessions/README.md`](sessions/README.md) |
-| Hindcast run reports | [`hindcast-reports/`](hindcast-reports/) | — (filename = ISO-years-mode-date) |
-| Root-level dated diagnoses | `docs/DIAGNOSIS-*.md` (15) | — (filename = ISO-topic-date) |
-| Root-level dated findings | `docs/FINDING-*.md` (6) | — (filename = ISO-topic-date) |
-| Per-ISO dated investigation notes | `docs/{ercot,caiso,pjm,miso,nyiso,neiso}-*-2026-0{6,7}.md` | — |
+| Handoffs, design specs, decision memos, plans | [`handoffs/`](handoffs/) (**489** top-level docs + 4 in 3 per-lane subdirectories) | [`handoffs/README.md`](handoffs/README.md) — regenerated 2026-09-05 |
+| Frozen session/investigation notes | [`sessions/`](sessions/) (+ `sessions/multi-iso/`) — **41** | [`sessions/README.md`](sessions/README.md) |
+| Hindcast run reports | [`hindcast-reports/`](hindcast-reports/) — **180** | — (filename = ISO-years-mode-date) |
+| Root-level dated diagnoses | `docs/DIAGNOSIS-*.md` (**45**) | — (filename = ISO-topic-date) |
+| Root-level dated findings | `docs/FINDING-*.md` (**171**) | — (filename = ISO-topic-date) |
+| Per-ISO dated investigation notes | `docs/{ercot,caiso,pjm,miso,nyiso,neiso}-*-2026-*.md` | — |
 | Audits / peer reviews / prompt packs | `docs/*-audit-*.md`, `docs/*peer-review*.md`, `docs/*-prompt-pack-*.md` | — |
 
-Most root-level `docs/*.md` files with a `-2026-06`/`-2026-07` date suffix are L3
-records of this kind; when in doubt, open the doc — its own header (or, for newer
-docs, its status banner) is authoritative over this index.
+Most root-level `docs/*.md` files carry a date suffix and are L3 records of this
+kind — **419 of the 466** top-level files at 2026-09-05. When in doubt, open the
+doc: its own header (or, for newer docs, its status banner) is authoritative over
+this index.
+
+> **These counts are a dated snapshot and they move fast.** The handoffs index
+> sat at 172 rows against 489 files for seven weeks before the 2026-09-05
+> regeneration. Re-derive rather than trust a number here; the class *locations*
+> and the filename conventions are what this page is for.
 
 ## Further reading (newcomer path)
 
@@ -169,7 +180,8 @@ docs, its status banner) is authoritative over this index.
 
 ---
 
-*Index built 2026-07-19 against `claude/docs-index-layer-sdjsr0`. L2 statuses use
-in-file banners and the `forecast-development-plan-2026-07.md` §9 ledger; ambiguous
-plans are classified best-effort. The status-header convention above makes future
-docs self-describing so this index stays thin.*
+*Index built 2026-07-19 against `claude/docs-index-layer-sdjsr0`; L3 class counts
+and the `handoffs/` index re-derived 2026-09-05 by DOCS-B (model-audit WS4). L2
+statuses use in-file banners and the `forecast-development-plan-2026-07.md` §9
+ledger; ambiguous plans are classified best-effort. The status-header convention
+above makes future docs self-describing so this index stays thin.*

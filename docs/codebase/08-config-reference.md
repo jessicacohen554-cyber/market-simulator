@@ -88,13 +88,24 @@ separate surface).
 
 ### Economic retirement & adequacy
 
-Per-fuel grace periods: `retirement_years_coal=3`, `gas_ct=2`, `gas_cc=3`,
-`gas_st=2`, `oil=2`, `gas_cc_ccs=3`, `nuclear=3`. `retirement_reserve_margin=0.15`
-(reliability floor). Per-fuel FOM multipliers (coal 1.3×). Going-forward FOM:
-`fixed_om_gas_cc=12.0`, `fixed_om_coal=40.0`, `fixed_om_nuclear=130.0` ($/kW-yr).
-`forecast_fossil_retirement_economic=True` (fossils retire on economics, not
-announced dates). `reserve_margin_build_enabled=False`,
-`planning_reserve_margin=0.1375` (the per-ISO registry leads).
+`retirement_rule='pipeline'` (the default; `'legacy'` is the alternative)
+selects how a failing screen becomes an exit. Under **pipeline**, the per-fuel
+physics is the execution lag: `retirement_execution_lag_coal=3`, `gas_ct=2`,
+`gas_cc=1`, `gas_st=1`, `oil=1`, `nuclear=3` (`gas_cc_ccs=None`, inheriting
+gas_cc). Under **legacy only**, the per-fuel grace periods apply:
+`retirement_years_coal=3`, `gas_ct=2`, `gas_cc=3`, `gas_st=2`, `oil=2`,
+`gas_cc_ccs=3`, `nuclear=3`. Per-fuel FOM multipliers (coal 1.3×). Going-forward
+FOM: `fixed_om_gas_cc=12.0`, `fixed_om_coal=40.0`, `fixed_om_nuclear=130.0`
+($/kW-yr). `fossil_announced_exits_enabled=True` since 2026-09-02 — an owner-filed
+EIA-860 Schedule-3 fossil date is an exogenous step-1b exit and its plant is
+**exempt** from the economic screen, so `forecast_fossil_retirement_economic=True`
+now governs only the residual **undated** fossil fleet.
+`reserve_margin_build_enabled=None` (**tri-state** — resolves ON for the five
+capacity-market ISOs, OFF for energy-only ERCOT),
+`planning_reserve_margin=0.1375` (the per-ISO `PLANNING_RESERVE_MARGIN_BY_ISO`
+registry leads: ERCOT 0.1375, CAISO 0.15, PJM 0.178, MISO 0.157, NYISO 0.244,
+NEISO 0.1277). (`retirement_reserve_margin` was **deleted** with the
+floor-accreditation rebuild — rule 26 `[R-DELETE]`; it is no longer a field.)
 
 ### Storage
 

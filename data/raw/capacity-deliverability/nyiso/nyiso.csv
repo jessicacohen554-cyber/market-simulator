@@ -9,6 +9,7 @@ NYISO,2022/2023,annual,NYC,locality,import_limit,2900,,LCR2022-Report.pdf,4
 NYISO,2022/2023,annual,Long Island,locality,import_limit,325,,LCR2022-Report.pdf,4
 NYISO,2022/2023,annual,G-J,locality,import_limit,3425,,LCR2022-Report.pdf,4
 NYISO,2022/2023,annual,NYCA,rto,system_requirement,,0.196,LCR2022-Report.pdf,2
+NYISO,2022/2023,annual,Long Island,locality,transfer_security_limit,940,,2024-25-Locality-Bulk-Power-Transmission-Capability-Report.pdf,7
 NYISO,2023/2024,annual,NYC,locality,requirement,9224,0.817,2023-LCR-Report.pdf,5
 NYISO,2023/2024,annual,Long Island,locality,requirement,5400,1.052,2023-LCR-Report.pdf,2
 NYISO,2023/2024,annual,G-J,locality,requirement,13162,0.854,2023-LCR-Report.pdf,5

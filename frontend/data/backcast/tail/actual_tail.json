@@ -27,6 +27,30 @@
    }
   },
   "ERCOT": {
+   "2020": {
+    "da_coverage": 1.0,
+    "da_gt": 24,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 56,
+    "threshold": 200.0
+   },
+   "2021": {
+    "da_coverage": 1.0,
+    "da_gt": 214,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 258,
+    "threshold": 200.0
+   },
+   "2022": {
+    "da_coverage": 1.0,
+    "da_gt": 238,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 196,
+    "threshold": 200.0
+   },
    "2023": {
     "da_coverage": 1.0,
     "da_gt": 311,
