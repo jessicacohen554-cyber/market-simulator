@@ -554,6 +554,7 @@ class CapacityClearing:
     uncleared_nameplate_mw_by_fuel: dict[str, float]
     offer_usd_per_mw_day: dict[str, float]
     accredited_mw: dict[str, float]
+    fuel_by_unit: dict[str, str]
 
     @property
     def price_per_firm_mw_yr(self) -> float:
@@ -605,6 +606,22 @@ class CapacityClearing:
             "n_uncleared": self.n_uncleared,
             "marginal_unit": self.marginal_unit_id,
             "how": self.how,
+            # The whole sell-offer stack (sorted ascending by (offer, unit_id)),
+            # so the E&AS-operand measurement — how many firm MW of offers sit
+            # above any price, by fuel — reads off the ledger for CLEARED units
+            # too, which have no pipeline_events row. Output-only.
+            "offer_stack": [
+                [
+                    uid,
+                    self.fuel_by_unit.get(uid, ""),
+                    round(o, 4),
+                    round(self.accredited_mw.get(uid, 0.0), 3),
+                    uid in self.cleared_unit_ids,
+                ]
+                for o, uid in sorted(
+                    (o, uid) for uid, o in self.offer_usd_per_mw_day.items()
+                )
+            ],
         }
 
 
@@ -698,6 +715,7 @@ def clear_capacity_supply_stack(
         key=lambda r: (r[0], r[1]),
     )
     offer_by_unit = {uid: o for o, uid, _f, _a, _n in stack}
+    fuel_by_unit = {uid: f for _o, uid, f, _a, _n in stack}
     accredited_by_unit = {uid: a for _o, uid, _f, a, _n in stack}
     offered_mw = sum(a for _o, _u, _f, a, _n in stack)
     census_mw = q0 + offered_mw
@@ -764,6 +782,7 @@ def clear_capacity_supply_stack(
         uncleared_nameplate_mw_by_fuel=unc_name,
         offer_usd_per_mw_day=offer_by_unit,
         accredited_mw=accredited_by_unit,
+        fuel_by_unit=fuel_by_unit,
     )
 
 
