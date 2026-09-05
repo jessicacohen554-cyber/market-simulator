@@ -619,6 +619,30 @@ for §4. No attestation row is moved by this session and no bundle is re-scored 
 
 **What this session did NOT do.** No keeper, no shard verdict flip, no `complete`/`final`
 marker, no default flip, no backcast artifact, no ERCOT or NEISO re-solve, no matrix cell
-outside PJM's. **MISO WAS solved** — not as an expansion of scope but because PREDECL §2.4's
+outside PJM's and MISO's. **MISO WAS solved** — not as an expansion of scope but because PREDECL §2.4's
 own conditional fired on its literal terms when P3's 2029 leg missed (§7.2); its cell is
 stamped with its own measured evidence under rule 25, and it arms nothing.
+
+### 9.1 Rule-27 blob verification record
+
+Every file ≥ 300 lines pushed by this session, fetched back from
+`origin/claude/capx-d50r-completion-ik2giz` and compared to the local on-disk bytes
+(line count + SHA-256 prefix). All five verified **byte-identical**:
+
+| file | lines | sha256[:16] | verdict |
+|---|---:|---|---|
+| `frontend/data/forecast/ff-verdicts.json` | 11,966 | `20fe6be80c73711b` | **OK** |
+| `docs/codebase-site/data/mechanism-matrix/PJM.js` | 311 | `3af02c65975e560e` | **OK** |
+| `docs/codebase-site/data/mechanism-matrix/MISO.js` | 484 | `93134fa08dc3f53b` | **OK** |
+| `docs/handoffs/FINDING-capx-d50-2026-09-04.md` | 624 | `d83e9dad9c57ac70` | **OK** |
+| `CHANGELOG.md` | 5,518 | `c0ee1fde86b7e5d4` | **OK** |
+
+*(This table records the state at the verification push; the finding's own row is its
+pre-§9.1 revision, re-verified in the same way on the commit that adds this section.)*
+
+No file was rewritten from regenerated response content. `ff-verdicts.json` was edited
+through a writer that reproduces the committed formatting exactly (`indent=1`,
+`ensure_ascii=True`, trailing newline), verified by round-trip before use, so the diff is
+**283 insertions / 0 deletions** across a 400 KB file. Transport was `git push` on a pack
+freshly based on `origin/main`, per the Git & Pushing rule (the ≥ 400 KB payload is
+precisely the class `push_files` cannot carry).
