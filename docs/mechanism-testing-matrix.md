@@ -11205,6 +11205,38 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-05 (nyiso-195, ONE one-year screen, rule 29; keeper
+`2026-09-05-nyiso-192-astoria-panel` UNCHANGED, nothing registered).** The nyiso-194 "NEW TOP
+OF QUEUE" item — the `CC_REGULAR` econ ramp at its own registered physical basis (`econ_low
+0.784 / econ_high 0.925`, markup 0, zero DOF) — was pre-registered
+(`results/calibration/PREREG-nyiso195-cc-econ-basis-screen.md`, pushed before the solve) and
+run as the owner directed (*"Only run 2024 to see if it fixes the c1 gas cc miss"*, *"No control
+arm just use the last keeper"*). **Phase 0 (zero LP) refuted the premise before the solve:** the
+keeper's econ ramp is priced FLAT (the falling fixed markup 4.03 → 2.10 $/MWh cancels the rising
+phys basis; top − bottom $0.25/MWh; the six slices carry 2.78–2.80 TWh each), and of the class's
+28,778 plant-hours in 80–90 %, **71.8 % sit at the top of the AVAILABLE econ ramp**, 27.4 % in
+partial duct dispatch, **0.7 % on a marginal slice** — the "marginal-slice parking" reading below
+was an inference from the two killed arms, and it does not hold. **The 2024 screen confirmed it
+and is KILLED on its frozen E-3 gate:** E-1/E-2 PASS (exactly the 96 `CC_REGULAR` econ rows
+change; arm `mc` = keeper `mc` − markup × anchor to 2e-5); 80–90 % share 33.0 → 33.5 (CAMPD
+16.5), 90–100 % 19.8 → 19.6 (33.9). **The owner's question is answered in the negative: C1-2024
+`CC_REGULAR` WORSENS, +3.68 → +4.34 TWh / +3.0 → +3.5 pp** (a pure price cut on an over-running
+class; `CC_CHP` −0.45 TWh; C3a-like −0.72 → −1.63 %, gas family unchanged). Econ-basis direction
+**R**; the registered curve and the margin form stay K. C3c reported as the owner's accepted
+caveat, never a gate. Records: `docs/FINDING-nyiso195-cc-econ-basis-screen-2026-09-05.md`,
+`_nyiso195_econ_basis_phase0.json`, `_nyiso195_screen_gates.json`, `scripts/probes/nyiso195_*.py`.
+**NEW TOP OF QUEUE (U) — the AVAILABILITY side of the wall.** The 80–90 % mass is the top of
+the *available* econ ramp: the 860-gap duct band (nyiso-194 §1) lowered a further 5–12 points of
+pmax by the unit-outage / partial-derate series at the pile-up plants (static wall 0.910 / 0.849
+/ 0.831 vs available-mean 0.841 / 0.734 / 0.729 at 2539 / 56940 / 57664). Every offer-side lever
+on this class is now adjudicated R in NYISO's own lane (peak price, peak placement, econ basis);
+the next measured object is whether the `-perunitmerit-` partial-derate / outage series applied
+to these CC plants reproduces CAMPD's own hours above 90 % (30.1 k / 34.0 k / 30.2 k plant-hours
+vs the model's 20.7 k / 29.5 k / 31.3 k) — a rule-14 data question with zero DOF, phase 0 first.
+The C1-2024 over-run itself reads as an online-hours / commitment object (keeper 111 k vs CAMPD
+91 k online plant-hours; Cricket Valley 5,038 vs 4,241 GWh), which the owner-court D-2
+unit-grain card already names — unchanged here.
+
 **QUEUE STATUS UPDATE 2026-09-05 (nyiso-194, two one-year screens, rule 29; keeper
 `2026-09-05-nyiso-192-astoria-panel` UNCHANGED, nothing registered).** The owner-ruled
 item (1) below was executed as phase 0 + two 2024 screens

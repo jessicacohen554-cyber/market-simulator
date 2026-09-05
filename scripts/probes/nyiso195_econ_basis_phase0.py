@@ -81,6 +81,15 @@ RAMP_BAND = (0.50, 0.95)  # of the plant's own CAMPD p99.5 gross load
 LO_PT, HI_PT = 0.55, 0.92  # where the fitted marginal HR is read (ramp ends)
 
 
+def _fmt(v, w: int = 6, d: int = 3) -> str:
+    """Fixed-width cell: floats to ``d`` places, anything else right-aligned."""
+    return (
+        f"{v:{w}.{d}f}"
+        if isinstance(v, float)
+        else f"{str(v) if v is not None else '-':>{w}}"
+    )
+
+
 def _tranche(unit_id: str) -> str:
     t = unit_id.rsplit("_", 1)[1]
     return "econ" if t.startswith("econc") else t
@@ -348,7 +357,6 @@ def main() -> int:
             continue
         ci = u[u.trk == "committed"].i.to_numpy()
         ei = u[u.trk == "econ"].i.to_numpy()
-        pi = u[u.trk == "peak"].i.to_numpy()
         C = (
             (avail[ci] * u.set_index("i").loc[ci].pmax.to_numpy()[:, None]).sum(axis=0)[
                 :T
@@ -609,11 +617,7 @@ def main() -> int:
         k = r["keeper"]
         ms = r["measured"] or {}
         newh = sum(s["newly_in_money_h"] for s in r["slices"])
-        f = lambda v, w=6, d=3: (
-            f"{v:{w}.{d}f}"
-            if isinstance(v, float)
-            else f"{str(v) if v is not None else '-':>{w}}"
-        )
+        f = _fmt
         print(
             f"{r['plant']:>6} {r['pmax']:5.0f} {r['wall_frac_static']:5.3f} {f(r['wall_frac_available_mean'], 5)} | {k['on_h']:5d} {k['h_80_90']:5d} {k['h_80_90_at_available_wall']:5d} {k['h_80_90_mid_ramp']:5d} {k['h_80_90_in_peak']:4d} | {k['h_gt90']:5d} | {newh:6d} {r['newly_in_money_bound_gwh']:6.1f} | {f(ms.get('quad_marginal_hr_at_55pct'))} {f(ms.get('quad_marginal_hr_at_92pct'))} {f(ms.get('marginal_hr_rises_with_load'), 5)} {f(ms.get('marg_over_avgfull_lo'))} {f(ms.get('marg_over_avgfull_hi'))}"
         )

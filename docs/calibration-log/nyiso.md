@@ -12138,3 +12138,31 @@ the econ block at its measured marginal basis. Records: `docs/FINDING-nyiso194-c
 `results/calibration/PREREG-nyiso194-cc-peak-tranche-screen.md`, `_nyiso194_*.json`,
 `scripts/probes/nyiso194_*.py`; matrix cells `cc_duct_peaking` (cap R) / `offer_curve_by_group`
 (upward-peak direction R) updated. Screen bundles local, never registered.
+
+### 2026-09-05 — nyiso-195 (`backcast-calibration`, phase 0 + ONE one-year screen, rule 29): the `CC_REGULAR` econ ramp at its own measured marginal basis — phase 0 REFUTES the marginal-slice premise, the 2024 screen is KILLED on E-3, C1-2024 WORSENS; keeper unchanged
+Owner (in session): *"Only run 2024 to see if it fixes the c1 gas cc miss. C3c is an acceptable
+caveat and known limitation of this model type."* / *"No control arm just use the last keeper."*
+Keeper `2026-09-05-nyiso-192-astoria-panel` unchanged; nothing registered; no full span; no control solve.
+**Phase 0 (zero LP, `scripts/probes/nyiso195_econ_basis_phase0.py`, keeper committed artifacts only —
+its `dispatch/` is gitignored-absent, so the control is the on-recipe `fleet_only` rebuild + the
+payload-decoded per-plant hourlies + the hourly sidecars):** under the armed `gas_offer_net_revenue_margin`
+the econ ramp is the ONLY `CC_REGULAR` band carrying a markup (a falling 4.03 → 2.10 $/MWh fixed
+margin), and it cancels the rising phys basis so the keeper's ramp is FLAT within $0.25/MWh (the six
+slices carry 2.78–2.80 TWh each). Of the class's 28,778 plant-hours in 80–90 %, 71.8 % sit at the
+top of the AVAILABLE econ ramp, 27.4 % in partial duct dispatch, 0.7 % on a marginal slice — the
+nyiso-194 §3 premise does not hold. CAMPD ramp sign confirmed (10/14 plants rising; cap-weighted
+marginal/avg-full HR 0.833 → 1.056). **PREREG pushed `9a0b80fe` before the solve with the prediction
+written in it (E-3 fails; `CC_REGULAR` +≤0.95 TWh; C1-2024 worsens); G-DRIFT `d5bba63b..HEAD` all
+INERT.** **Screen 2024** (`replay_keeper --offer-curve-json '{"CC_REGULAR": {"econ_low": 0.784,
+"econ_high": 0.925}}'`, `scripts/probes/nyiso195_screen_gates.py`): E-1/E-2 PASS (exactly the 96
+`CC_REGULAR` econ rows change; arm `mc` = keeper `mc` − markup × anchor to 2e-5; nothing else
+moves); **E-3 FAIL** — 80–90 % share 33.0 → 33.5 (CAMPD 16.5), 90–100 % 19.8 → 19.6 (33.9);
+E-4 no flip (C3a-like −0.72 → −1.63 %, NRMSE 0.183 → 0.181, gas family 68.22 → 68.25 TWh).
+**C1-2024 `CC_REGULAR` +3.68 → +4.34 TWh / +3.0 → +3.5 pp (now out on volume AND share)** —
+the owner's question answered: a pure price cut on an over-running class cannot lower its energy.
+Direction R (matrix `offer_curve_by_group`, `gas_offer_net_revenue_margin` annotated; cells K).
+**Next (top of §5.5, U):** the AVAILABILITY side of the wall — the partial-derate / outage series
+at the pile-up CC plants vs CAMPD's hours above 90 % — a rule-14 data question, phase 0 first.
+Records: `docs/FINDING-nyiso195-cc-econ-basis-screen-2026-09-05.md`,
+`results/calibration/PREREG-nyiso195-cc-econ-basis-screen.md`, `_nyiso195_*.json`,
+`scripts/probes/nyiso195_*.py`. Screen bundle `results/calibration/nyiso195_screen_2024` local, never registered.
