@@ -111,6 +111,16 @@ KNOWN_DANGLING: dict[str, str] = {
     # allowlisted instead. Found reddening refactor-guards on main by the
     # 2026-08-14 debug sweep (ci.yml header had flagged it pre-existing).
     "scripts/gen_caisoNNN_attestation.py": "run-number placeholder in the caiso attestation-series prose, not a reference",
+    # Synthetic path tests/scoring/test_bench_stamp_ast.py (Y-12, commit
+    # 3d0fd19d, "hash the builder AST, not its bytes") writes into its tmp_path
+    # fixture tree — `rel = "scripts/fake_builder.py"` at its `tree` fixture and
+    # again in the absent-file test — to stand in for a builder source while it
+    # exercises bench_stamp.builder_fingerprint(). It must LOOK like a
+    # scripts/ path because BUILDER_SOURCES is monkeypatched to it, so the
+    # scanner necessarily sees it; it is never a reference to a script of this
+    # repo (same class as the file-integrity-guard fixture paths above). Found
+    # reddening `Structural refactor guards` on main at 5cc1e7ce (Y-13).
+    "scripts/fake_builder.py": "test_bench_stamp_ast.py tmp_path fixture path (Y-12, 3d0fd19d), not a reference",
 }
 
 
