@@ -1,0 +1,36 @@
+{
+  "probe": "miso-220 rule-29 SCREEN gates (structural, stop-only)",
+  "prereg": "PREREG-miso220-nonsteam-offer-lift-2026-09-05.md ADDENDUM A @ a4a72ece",
+  "screen_year": 2025,
+  "control": "results/calibration/miso217_intermphys_B",
+  "screen": "results/calibration/miso220_nonsteamlift_screen2025",
+  "G1_price_direction_magnitude": {
+    "control_lw_price_usd": 39.8685,
+    "screen_lw_price_usd": 42.2761,
+    "pass_through_pct": 6.0388,
+    "band_pct": [
+      3.0,
+      12.0
+    ],
+    "PASS": true
+  },
+  "G2_merit_order_identity_st_gas_rises": {
+    "control_twh": 16.0362,
+    "screen_twh": 18.3038,
+    "delta_twh": 2.2676,
+    "control_c1_error_twh": -5.82,
+    "PASS": true
+  },
+  "G3_no_non_target_load_bearing_flip": {
+    "flips": [],
+    "scored": false,
+    "PASS": true
+  },
+  "REPORTED_NOT_GATED": {
+    "c3a_screen_pct": null,
+    "note": "C3a carries NO decision weight in the screen (rule 29 / rule 1)"
+  },
+  "gates_failed": [],
+  "verdict": "SCREEN CLEARS - spend the full 2023-2025 span",
+  "licenses": "Clearing licenses ONLY spending the full span. It is NOT evidence the arm is a keeper: K-1 (CT_PEAKER-2023 band exit) and K-3 (ST_GAS-2024) cannot fire here."
+}
