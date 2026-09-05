@@ -538,6 +538,47 @@ offer delta: CC econ −2.08, CT econ −8.31, CT_CHP −10.44 $/MWh) and the sc
 `PRECOMMIT-caiso251-fuel-coupling-form-2026-09-05.md` Addendum A before the screen solve started.
 
 
+### 8.1 Clause (b) — no control solves; `G-DRIFT` replaces them (owner, 2026-09-05)
+
+**Origin.** Owner rule, same day, verbatim: *"stop doing control solves wtf they're a waste of time
+just use the last keeper as the control"*.
+
+**What was actually happening.** G-CTRL form 4 — differencing an arm against the incumbent
+keeper's committed numbers — was being declared VOID by a heuristic: *files under the solve path
+changed since the keeper's `git_sha`, therefore the keeper's numbers are not a valid control,
+therefore spend a control solve.* On a 3-year ISO that heuristic costs **35–70 min of LP per arm**
+and it was firing as the normal case, because `src/market_sim` receives commits from six ISO lanes
+and the forecast program continuously.
+
+**Why the heuristic was wrong.** "Did the solve path move for THIS ISO in THIS mode" is a question
+about code, and it is answerable by reading the diff. A control solve answers a strictly weaker
+version of it — it shows that two numbers differ, not which line did it — and it answers it for
+several thousand times the cost.
+
+**The replacement, `G-DRIFT`.** Diff the keeper's `git_sha` against HEAD over the backcast path and
+classify every changed hunk as INERT for this ISO with its reason cited, or LIVE. All INERT ⇒ form
+4 is valid. A LIVE hunk is the only thing that earns a control solve, and then only for the screen
+year. The audit is recorded before the arm is solved.
+
+**First application, and it vindicated the ruling on the merits.** caiso-251 audited
+`900402b → HEAD` (22 files, +2,527/−149) and found **every** hunk CAISO-backcast-inert:
+capacity-market / capacity-evolution paths a `mode="backcast"` run never enters
+(`capacity_market.py`, `capacity_evolution/*`, `iso_configs.py`'s `retirement_sector_gate`,
+`runner.py`'s locality block behind the default-off `locality_capacity_curves`, `storage.py`'s
+`locality_prices_by_zone` default `None`); MISO-only branches (`data/fuel/resolve.py`,
+`basis/miso.py`, `basis/meanzero.py`'s `skip_cells`, all behind `config.iso == "MISO"` and the
+default-off `miso_zonal_gas_basis_skip_923_priced`); a NYISO-only mechanism whose per-ISO artifact
+CAISO does not have (`egrid_steam_collapse_heat_rates`, default off and absent from the recipe —
+`egrid_steam_collapse_heat_rates_for` returns `{}` for CAISO by construction); an adaptive-pass
+skip guard reachable only under `*_storage_adaptive_expectation`, both **False** on the CAISO
+keeper (`run_calibration._p1_storage_cost_identical`); a return-type-only change
+(`plant_prices.apply_plant_monthly_fuel_prices`, `None` → mask, "every other caller may ignore the
+return"); and pure timing/diagnostics accounting (`pipeline/solve.py`, `pipeline/timing.py`,
+`run_calibration._aggregate_pass_timing` — "Diagnostics only: nothing here is read by a solve").
+The control solve that had been launched under the old heuristic was **killed mid-flight and its
+partial bundle deleted**; the keeper is the control.
+
+
 ## 9. Changes to this file
 
 | date | change |
