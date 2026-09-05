@@ -1,4 +1,6 @@
-> Status: ACTIVE — the operator-facing user manual (layer L2).
+> Status: **FINAL** — the operator-facing user manual (layer L2). Verified
+> command-by-command on a clean clone at the DOCS-B finalization pass
+> (2026-09-05, model-audit WS4 / gate G2).
 
 # market-sim — User Manual
 
@@ -8,8 +10,10 @@ launch a forecast or a backcast, and find the outputs. It is deliberately a
 
 **How this doc was built (and how to keep it honest).** Every command, flag,
 default and path below was verified against the code that implements it on
-`origin/main` @ `ce779f9` (2026-08-16) — argparse read directly and `--help`
-executed in a synced `uv` environment. Where prose elsewhere in the repo
+`origin/main`, argparse read directly and `--help` executed in a synced `uv`
+environment — first at `ce779f9` (2026-08-16), then **re-executed end to end on a
+clean clone** at the DOCS-B finalization pass (2026-09-05), which is where the
+counts and keys below were last re-derived. Where prose elsewhere in the repo
 disagrees with the code, the code wins and this manual follows the code; the
 divergences found while writing it are listed in
 [§10](#10-known-doc-divergences-found-while-writing-this-manual). Source
@@ -49,7 +53,7 @@ actuals (EIA-930, CAMPD, eGRID, EIA-923) for calibration.
 | | |
 |---|---|
 | Solver | HiGHS via `highspy` — **pure LP, no MIP**. Prices are LP duals. |
-| Python | ≥ 3.11 <!-- pyproject.toml:9 requires-python = ">=3.11" --> |
+| Python | ≥ 3.11 <!-- pyproject.toml requires-python = ">=3.11" --> |
 | ISOs | `ERCOT`, `CAISO`, `MISO`, `PJM`, `NYISO`, `NEISO` <!-- src/market_sim/config/iso_configs.py SUPPORTED_ISOS, verified at runtime --> |
 | Forecast horizon default | 2026 → 2050 <!-- config/constants.py START_YEAR=2026 END_YEAR=2050 --> |
 | Hours per year | 8760, fixed non-leap calendar (Feb 29 dropped) <!-- config/constants.py HOURS_PER_YEAR=8760 --> |
@@ -74,9 +78,12 @@ plant-to-zone assignment with varying backcast maturity.
 
 ### 2.1 Get the code — use a partial clone
 
-The git pack is ≈7.4 GiB, ~97 % of it immutable `data/raw` source data. A plain
-`git clone` frequently stalls. **A shallow clone is not the fix** (`--depth 1`
-still transfers the whole tip tree). Use a **blobless partial clone**:
+The git pack a full clone transfers is **≈5.5 GiB**, most of it immutable
+`data/raw` source data. Since the 2026-08-16 history rewrite a full bare clone
+does complete (≈162 s measured through the egress proxy), so it no longer stalls
+outright — but minutes versus seconds still argues for the partial clone. **A
+shallow clone is not the fix** (`--depth 1` still transfers the whole tip tree).
+Use a **blobless partial clone**:
 
 ```bash
 ORIGIN=https://github.com/jessicacohen554-cyber/market-simulator
@@ -87,9 +94,15 @@ git sparse-checkout set --no-cone '/*' '!/data/raw/'
 git checkout main
 ```
 
-That is the whole codebase — code, tests, docs, dashboard — without `data/raw`,
-in roughly 20 s / 311 MB. Full rationale, measurements and three non-obvious
-hydration traps: [`fast-clone.md`](fast-clone.md).
+That is the whole codebase — code, tests, docs, dashboard — without `data/raw`:
+a few seconds of transfer for a ~306 MB checkout. Full rationale, measurements
+and three non-obvious hydration traps: [`fast-clone.md`](fast-clone.md).
+
+> **In a partial clone, never resolve a blob you do not intend to download.**
+> Any git read of a missing blob silently fetches it, so a stray
+> `cat-file --batch-check` over `data/raw` pulls the whole corpus. Read trees
+> only, and run read-side git calls under `GIT_NO_LAZY_FETCH=1` so a regression
+> fails loudly.
 
 ### 2.2 `uv` — the canonical path
 
@@ -125,7 +138,7 @@ uv export --format requirements-txt --no-dev --no-emit-project --no-hashes > req
 `run-simulator.sh` (macOS/Linux) and `run-simulator.bat` (Windows) bootstrap a
 plain `venv` + `pip install -e .` on first run and open a local web UI at
 `http://127.0.0.1:8765/`.
-<!-- run-simulator.sh:20-33 — venv bootstrap then exec tools/launcher.py; PORT=8765 at tools/launcher.py -->
+<!-- run-simulator.sh — venv bootstrap then exec tools/launcher.py; PORT=8765 in tools/launcher.py -->
 
 ```bash
 ./run-simulator.sh
@@ -139,7 +152,7 @@ plain `venv` + `pip install -e .` on first run and open a local web UI at
 - It is **ERCOT-only**. The UI drives
   `run_calibration_full.py --plant-tranche-config <sheet>` against an editable
   per-plant tranche sheet and regenerates the ERCOT backcast payloads.
-  <!-- tools/launcher.py:1-16 module docstring -->
+  <!-- tools/launcher.py module docstring -->
 - Its comparison baseline resolves dynamically through the ERCOT keeper shard →
   registry sidecar → bundle dir, and **degrades to "no baseline"** if any link
   is missing (e.g. a clone without that bundle hydrated). It no longer hardcodes
@@ -195,10 +208,24 @@ local.
 
 ### 3.2 Per-corpus fetch — the untracked corpora
 
-Several `data/raw` corpora now have their **payloads untracked at tip**. History
-was kept (no rewrite), so each is recoverable two ways. Every converted corpus
-carries the same four tracked artifacts: `README.md`, `SHA256SUMS.txt`, the
-source-URL table, and a recorded **pin sha**.
+Several `data/raw` corpora now have their **payloads untracked at tip**. Every
+converted corpus keeps the same tracked artifacts: `README.md`,
+`SHA256SUMS.txt`, and a verified source-URL table.
+
+> ⚠ **Recovery is re-fetch ONLY. Do not reach for a pin sha.** An earlier
+> revision of this manual said history was kept and offered
+> `git restore --source=<pin-sha>` as an always-available route to the exact
+> bytes. **That is no longer true.** The
+> `cleanup-large-blobs.yml` history rewrite was executed for real on
+> **2026-08-16** (an explicit owner decision) and force-pushed: it stripped the
+> untracked payloads from history along with 7,254 superseded blobs, so the
+> pin shas recorded in the corpus READMEs are **dead references**, and so is
+> every pre-2026-08-16 commit-sha citation outside
+> `docs/governance/citation-commit-map.txt`. Some payloads are now
+> **unrecoverable from this repository at all** — the CAISO OASIS GRP dailies
+> and pre-slim SCED columns past MIS retention among them. Read the corpus
+> README before concluding data is missing.
+> <!-- CLAUDE.md "Cloning & session data"; docs/FINDING-history-rewrite-2026-08-16.md -->
 
 | Corpus | Why untracked |
 |---|---|
@@ -209,19 +236,11 @@ source-URL table, and a recorded **pin sha**.
 | `data/raw/NYISO/nyiso load reports *.zip` | Zero consumers. |
 | Three probe-only 60-day SCED extracts | Frozen-probe consumers only. |
 | `pjm-energy-offers`, `caiso-public-bids`, `miso-energy-offers`, `pjm-da-virtuals` | **Licensing**, not size — non-member redistribution restrictions. |
-<!-- .gitignore:754-833 BLOAT-B-2 / BLOAT-B-5 conversion blocks; docs/bloat-removal-plan-2026-08.md §8 -->
+<!-- .gitignore BLOAT-B-2 / BLOAT-B-5 conversion blocks; docs/bloat-removal-plan-2026-08.md §8 -->
 
-**Recovery, route 1 — exact bytes from history (always available):**
-
-```bash
-git restore --source=<pin-sha> -- data/raw/<corpus>/<path>
-```
-
-The pin sha is printed in that corpus's own `README.md`. In a blobless partial
-clone this triggers a lazy fetch of the payload.
-
-**Recovery, route 2 — re-fetch from source** (regenerates; byte-identity not
-guaranteed). Each corpus README names its fetch script, e.g.:
+**Recovery — re-fetch from source** (regenerates; byte-identity is not
+guaranteed). This is the primary and, for most corpora, the only route. Each
+corpus README names its fetch script, e.g.:
 
 ```bash
 python scripts/data/fetch_caiso_dam_outages.py 2021-06-18 <today>
@@ -249,16 +268,16 @@ no-op when their partition is absent, so a fresh clone aborts at input-load time
 before any LP work.
 
 ```bash
-python scripts/regenerate_clean.py --list      # 50 datatypes
+python scripts/regenerate_clean.py --list      # the datatype list (55 at 2026-09-05)
 python scripts/regenerate_clean.py             # all
 python scripts/regenerate_clean.py lmp load    # a subset
 ```
-<!-- verified: --list emits 50 datatypes; each datatype maps to scripts/data/curate_<datatype>.py -->
+<!-- re-verified 2026-09-05: --list emits 55 datatypes; each maps to scripts/data/curate_<datatype>.py -->
 
 **Budget ~2 hours** for a full rebuild across all ISOs. Curation scripts are
 independent — a failure in one is reported and the rest continue — and the only
 expected skips are genuinely absent non-local sources.
-<!-- docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md §8 item 1: 50 datatypes, ~2 h wall-clock measured -->
+<!-- docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md §8 item 1: ~2 h wall-clock measured over the then-50 datatypes -->
 
 > **Plan a fresh-clone replay accordingly.** A PJM keeper replay from a clean
 > container needs the ~2 h `regenerate_clean.py` rebuild **plus** the live
@@ -290,17 +309,17 @@ uv run python -m market_sim …
 
 **Every `market-sim` subcommand refuses a forecast window wider than 5
 solve-years** unless `--full-solve-authorized` is passed.
-<!-- src/market_sim/config/schedulable.py:46 MAX_UNAUTHORIZED_SOLVE_YEARS = 5; :151 add_authorization_flag; runner.py:3792 _add_authorization_flag attached to all four subparsers -->
+<!-- config/schedulable.py::MAX_UNAUTHORIZED_SOLVE_YEARS = 5, ::add_authorization_flag; runner.py::_add_authorization_flag attached to all four subparsers -->
 
 - The window is resolved from the config, falling back to `START_YEAR`/`END_YEAR`
   (2026–2050 = **25** solve-years) when the YAML carries no year fields — so a
   YAML that simply omits them is over-cap.
-  <!-- schedulable.py:99 config_horizon -->
+  <!-- config/schedulable.py::config_horizon -->
 - **Backcast configs are exempt**: a backcast window is governed by `[R-HOLDOUT]`'s
   tiers via `run_calibration_full.py --holdout-authorized`, not by §2.1b.
-  <!-- schedulable.py:145 — `if config.mode != "forecast": return None` -->
+  <!-- config/schedulable.py::assert_config_schedulable — `if config.mode != "forecast": return None` -->
 - `sweep` and `matrix` check **every expanded member**, not just the base.
-  <!-- runner.py:3992, :4040 -->
+  <!-- runner.py, the sweep and matrix dispatch branches of main() -->
 - The flag is *authorization*, not a bypass. Pass it only with an explicit,
   session-logged per-campaign owner authorization.
 
@@ -332,11 +351,11 @@ market-sim run --config <scenario.yaml> [--iso ISO] [--full-solve-authorized]
 | `--config` | *required* | Path to a scenario YAML. |
 | `--iso` | config's own `iso` | Override the ISO. |
 | `--full-solve-authorized` | off | §2.1b authorization ([§4.1](#41-the-21b-solve-window-cap--read-this-first)). |
-<!-- runner.py:3846-3855 -->
+<!-- runner.py::_build_parser, the `run` subparser -->
 
 Loads a `ScenarioConfig`, runs every year in the window **sequentially** for one
 ISO via `run_scenario_iso`, and returns the deterministic `cache_key`.
-<!-- runner.py:984 run_scenario_iso; :3983-3987 dispatch -->
+<!-- runner.py::run_scenario_iso; the `run` dispatch branch of main() -->
 
 ```bash
 market-sim run --config configs/scenarios/ercot_ces_poc_2026_2030.yaml
@@ -353,7 +372,7 @@ market-sim sweep --sweep <sweep.yaml> [--workers N] [--full-solve-authorized]
 |---|---|---|
 | `--sweep` | *required* | Path to a sweep YAML. |
 | `--workers` | `min(2, cpu_count − 1)` | Worker processes. |
-<!-- runner.py:3857-3866; default resolved by pipeline/members.py:64 resolve_workers with cap=DEFAULT_MEMBER_CAP=2 -->
+<!-- runner.py::_build_parser, the `sweep` subparser; default resolved by pipeline/members.py::resolve_workers with cap=DEFAULT_MEMBER_CAP=2 -->
 
 Expands a `SweepDefinition` into `(config, iso)` pairs and runs them across a
 process pool. **Separate members are the parallelism unit; years inside a member
@@ -362,7 +381,7 @@ stay sequential.**
 > ⚠ **An explicit `--workers` is honoured as given — it is not clamped.**
 > The `[R-PARALLEL]` cap of 2 is the *default*, not a ceiling, on `sweep` and
 > `ensemble`. Only `matrix` hard-caps. Raising it on a per-plant ISO OOMs.
-> <!-- pipeline/members.py:64-74 "an explicit value is honoured as given"; matrix.py:103 clamps -->
+> <!-- pipeline/members.py::resolve_workers "an explicit value is honoured as given"; matrix.py::run_matrix clamps -->
 
 ### 4.4 `market-sim ensemble` — weather-year or sampler distribution
 
@@ -389,12 +408,12 @@ Two mutually-shaping paths — the member axis is either the **weather year** or
 | `--out-dir` | none | Sampler output surface (draws/metrics/bands parquet + `ensemble_meta.json`). **Requires `--sampler`.** |
 | `--out` | none | Weather-year distribution JSON. Weather-only path; skipped if omitted. |
 | `--structural-prior` | off | Folds the D-7 structural-error prior into the emissions band (PB-3). **Requires `--sampler` and `--out-dir`.** |
-<!-- runner.py:3869-3933; dispatch at :3995-4031 -->
+<!-- runner.py::_build_parser, the `ensemble` subparser, and its dispatch branch in main() -->
 
 Note the cap arithmetic: an ensemble solves the window **once per member**, so an
 over-cap window is over-cap many times over. The §2.1b check is applied to the
 window (its unit); member count is reported by the drivers.
-<!-- runner.py:3998-4001 -->
+<!-- runner.py, the `ensemble` dispatch branch of main() -->
 
 ### 4.5 `market-sim matrix` — named-case scenario matrix
 
@@ -410,27 +429,37 @@ market-sim matrix --config <base.yaml> --matrix <cases.yaml> \
 | `--iso` | base config's own | Override the ISO. |
 | `--workers` | 2 | **Hard-capped at 2**, never exceeded even if you ask for more. |
 | `--out-dir` | `results/ensemble/<matrix_id>/` | Output directory. |
-<!-- runner.py:3935-3966; matrix.py:41 MAX_CONCURRENT_CASES = 2; :103 min(workers, MAX_CONCURRENT_CASES) -->
+<!-- runner.py::_build_parser, the `matrix` subparser; matrix.py::MAX_CONCURRENT_CASES = 2, applied as min(workers, MAX_CONCURRENT_CASES) -->
 
 `configs/scenario_matrix.yaml` ships **13 named AEO/IPM-style cases** over five
 axes. Its label is load-bearing: this is a *deterministic scenario range, **not**
 a probability band* — no likelihoods attach to the 13 points.
-<!-- matrix.py:43 LABEL; configs/scenario_matrix.yaml header + 13 cases verified -->
+<!-- matrix.py::LABEL; configs/scenario_matrix.yaml header + 13 cases verified -->
 
 The matrix CLI takes **no year arguments at all** — the horizon rides the base
 YAML and its cases may override it, which is exactly why an unguarded
 `market-sim matrix` was the forecast-readiness audit's headline FR-25 hole. Both
 the base and every expanded case are cap-checked.
-<!-- runner.py:4035-4041 -->
+<!-- runner.py, the `matrix` dispatch branch of main() -->
 
 ### 4.6 `scripts/run_calibration_full.py` — the backcast harness
 
 This is the entry point that produces **dashboard-registrable bundles**. It
-exposes **388 distinct long options** — the great majority of them per-ISO
+exposes several hundred long options — the great majority of them per-ISO
 mechanism gates that belong to a specific keeper recipe, not to routine
-operation. Treat `--help` as the catalogue; the tables below are the operational
-subset.
-<!-- 388 distinct long options counted from the rendered usage block, 2026-08-15; parser at scripts/run_calibration_full.py:7954 -->
+operation. The tables below are the operational subset.
+
+> ⚠ **`run_calibration_full.py --help` currently CRASHES.** At the
+> 2026-09-05 re-verification it exits with
+> `ValueError: unsupported format character ')'` from inside
+> `argparse.format_help()`. The cause is a literal `%` in the
+> `--caiso-st-gas-peak-measured` help string (`"(+6.0 %)"`), which argparse
+> tries to interpolate; it needs `%%`. **The parser itself is fine** — every
+> flag parses and every documented invocation below runs normally; only the
+> rendered `--help` catalogue is unavailable. Until it is fixed, read the flag
+> list from the argparse block in the script. Routed to the calibration desk by
+> DOCS-B (docs-only lane, cannot patch `scripts/`).
+> <!-- reproduced 2026-09-05 on a clean clone: uv run python scripts/run_calibration_full.py --help -->
 
 ```bash
 python scripts/run_calibration_full.py --iso PJM --year 2023 2024 2025
@@ -445,8 +474,8 @@ python scripts/run_calibration_full.py --iso PJM --year 2023 2024 2025
 | `--hours` | 8760 | Dispatch horizon; lower it only for a smoke test. |
 | `--out-dir` | `results/calibration/<iso>/<timestamp>` | Bundle root. |
 | `--note` | none | Free-text note recorded in the bundle's `run_config.json` beside the full config and git provenance. |
-| `--holdout-authorized` | off | Authorizes a solve over a designated holdout year (2022, H1-2026). **Also** requires the ISO to already carry a calibration-complete marker. Without both, an out-of-window `--year` hard-fails (`[R-HOLDOUT]`). |
-<!-- scripts/run_calibration_full.py:7958-7977, :8109 --out-dir region; --note/--out-dir help text verified from --help -->
+| `--holdout-authorized` | off | Authorizes a solve over an out-of-training year. **Also** requires the ISO to carry **that year's tier marker** — `complete` for a validation year (2020–2022), `final` for a locked-test year (2019, H1-2026). Without both, an out-of-window `--year` hard-fails (`[R-HOLDOUT]`, [§7.5](#75-holdout-discipline--r-holdout)). |
+<!-- scripts/run_calibration_full.py argparse block; --note/--out-dir help text verified from --help at ce779f9, before --help regressed (see the warning above) -->
 
 **Re-report and replay (no fresh dispatch):**
 
@@ -472,7 +501,7 @@ scored on P1**. The legacy P2 commitment flags (`--commitment`,
 `--ercot-as-aware-commitment`, `--run-p2`, `--no-coal-p2`,
 `--persist-p2-state`, `--class-commitment-overrides`) are hidden from `--help`
 and **hard-error** unless `--enable-legacy-p2` is passed. No keeper uses P2.
-<!-- run_calibration_full.py:8000-8021 (--enable-legacy-p2 gate, argparse.SUPPRESS on the P2 flags); run_calibration.py:5779-5784 raises parser.error -->
+<!-- run_calibration_full.py --enable-legacy-p2 gate with argparse.SUPPRESS on the P2 flags; run_calibration.py raises parser.error on the same set -->
 
 ### 4.7 `scripts/run_calibration.py` — light backcast diagnostic
 
@@ -497,11 +526,11 @@ python scripts/run_calibration.py --iso ERCOT --year 2024 --hours 168
 | `--mass-cap-enabled`, `--mass-cap-tons`, `--mass-cap-program` | off / none / none | Thread the carbon resolver's power-sector mass-cap row instead of the measured price adder. **Diagnostic-only; never a keeper default.** |
 | `--no-xyear-warmstart` | off (warm-start **ON**) | As in §4.6. |
 | `--enable-legacy-p2` | off | Unlocks the archived P2 pass. |
-<!-- scripts/run_calibration.py:5591-5727 argparse; verified against the rendered --help, which reports "Default per ISO: on for CAISO" -->
+<!-- scripts/run_calibration.py argparse block; re-verified 2026-09-05 against the rendered --help (which still renders), reporting "Default per ISO: on for CAISO" -->
 
 Warm-start precedence, highest first: `--no-xyear-warmstart` → an explicitly-set
 `MARKET_SIM_WARMSTART_XYEAR` env var → default **ON**.
-<!-- run_calibration.py:5730-5766 resolve_xyear_warmstart_default -->
+<!-- run_calibration.py::resolve_xyear_warmstart_default -->
 
 ---
 
@@ -521,9 +550,11 @@ configs/
 ### 5.2 Scenario YAML
 
 A scenario file lists **only overrides**; every unspecified field takes its
-`ScenarioConfig` default. `ScenarioConfig` has **713 fields**, so this is the
+`ScenarioConfig` default. `ScenarioConfig` carries **~800 fields** (794 at this pass), so this is the
 normal shape of a scenario:
-<!-- verified: len(dataclasses.fields(ScenarioConfig)) == 713 at ce779f9 -->
+<!-- re-derived 2026-09-05: len(dataclasses.fields(ScenarioConfig)) == 794. The
+     exact count moves with every gated mechanism; read it from the code, not
+     from here. -->
 
 ```yaml
 # configs/scenarios/ercot_base.yaml
@@ -542,7 +573,7 @@ Fields worth knowing before you write your first config:
 | `start_year` / `end_year` | `None` → 2026 / 2050 | **Omitting them is not "unset"** — it inherits 2026–2050, i.e. 25 solve-years, i.e. §2.1b-refused. |
 | `weather_year` | `2024` | Tier 0. |
 | `voll` | `5000.0` | $/MWh. |
-<!-- verified at runtime against ScenarioConfig(); schedulable.py:99 config_horizon documents the START_YEAR/END_YEAR fallback -->
+<!-- verified at runtime against ScenarioConfig(); config/schedulable.py::config_horizon documents the START_YEAR/END_YEAR fallback -->
 
 The **full resolved config** is written beside every cached result, so a run is
 always reconstructible from its own output ([§6.1](#61-the-forecast-run-cache)).
@@ -596,25 +627,29 @@ results/
         ├── …
         └── config.yaml              # the full resolved ScenarioConfig
 ```
-<!-- src/market_sim/results/cache.py:594 get_cache_path → CACHE_ROOT/iso/cache_key/year_{year}[_{pass}].parquet; :513 _CONFIG_FILENAME; :511 CACHE_ROOT = paths.RESULTS_ROOT = <repo>/results -->
+<!-- results/cache.py::get_cache_path → CACHE_ROOT/iso/cache_key/year_{year}[_{pass}].parquet; _CONFIG_FILENAME; CACHE_ROOT = paths.RESULTS_ROOT = <repo>/results. Cited by symbol, not line: the line numbers in this file drifted between ce779f9 and 2026-09-05. -->
 
 - `cache_key` is a deterministic 16-hex-char hash of the resolved config — not a
-  human-readable name; `config.yaml` supplies the readability. The default
-  config's key is `603c2498bf71d21d`.
-  <!-- verified at runtime: ScenarioConfig().cache_key() == "603c2498bf71d21d"; matches the pinned key in docs/handoffs/debug-sweep-2026-08.md -->
+  human-readable name; `config.yaml` supplies the readability. Read the current
+  default key from the code — `ScenarioConfig().cache_key()` — never from a doc:
+  it moves on every declared cache-key epoch (it was `603c2498bf71d21d` when this
+  manual was written and `e5ecd4105ada3e58` at the 2026-09-05 re-verification,
+  advanced by the `ccs_retrofit_capex_co2_scaling` default flip). The live pin is
+  recorded in `src/market_sim/results/cache.py`.
+  <!-- re-derived 2026-09-05; the epoch ledger lives in results/cache.py -->
 - Each parquet holds every hourly output for that ISO-year: dispatch by unit,
   zonal prices, emissions, storage SOC, curtailment, flows, slack.
 - **Before solving a scenario-year the runner checks for the parquet and skips
   if present**, so runs are stop/resume capable. To force a re-solve, delete the
   year file (or change the config, which changes the key).
-  <!-- cache.py:620 is_cached; runner.py per-year loop step 5 -->
+  <!-- results/cache.py::is_cached; runner.py per-year loop step 5 -->
 - `results/{ISO}/` is **gitignored for all six ISOs** — forecast caches are
   transient and reproducible from config. Only `results/calibration/` bundles are
   tracked.
-  <!-- .gitignore:260-269, verified with git check-ignore for all six -->
+  <!-- .gitignore results/ block, verified with git check-ignore for all six -->
 - `MARKET_SIM_DATA_ROOT` relocates the whole `data/` + `results/` root if you
   need the cache off the repo volume.
-  <!-- src/market_sim/config/paths.py:45 DATA_ROOT -->
+  <!-- config/paths.py::DATA_ROOT -->
 
 ### 6.2 Calibration (backcast) bundles
 
@@ -637,7 +672,7 @@ diagnostic sessions read the keeper's class-dispatch and price hourlies instead
 of replaying the solve. The heavy per-unit artifacts
 (`hourly/unit_hourly_*.parquet`, `network_*.parquet`, `dispatch/`, `solve.log`)
 are gitignored.
-<!-- CLAUDE.md:74 [R-DASHBOARD]; .gitignore:440-478 -->
+<!-- CLAUDE.md [R-DASHBOARD]; the .gitignore calibration-bundle block -->
 
 ### 6.3 Ensemble and matrix output
 
@@ -654,7 +689,7 @@ never cross.**
 |---|---|---|
 | **Backcast** | `docs/codebase-site/backcast-runs.html` (`#iso=<ISO>&run=<id>`) | `docs/codebase-site/calibration-status.html` |
 | **Forecast** | `docs/codebase-site/forecast-runs.html` | `docs/codebase-site/forecast-status.html` |
-<!-- CLAUDE.md:74 [R-DASHBOARD] -->
+<!-- CLAUDE.md [R-DASHBOARD] -->
 
 Registration path (backcast): `scripts/dashboard_add_run.py` → `build_manifest.py`.
 A run is **not done** until its bundle and dashboard files are committed and
@@ -683,7 +718,7 @@ These are not style preferences. Each one has a measured failure behind it.
 - **Across invocations, run independent solves concurrently** — different ISOs or
   configs, each with its own `--out-dir`, launched as concurrent background jobs.
 - **Cap separate-invocation concurrency at ~2** for per-plant multi-zone LPs.
-<!-- CLAUDE.md:71 [R-PARALLEL] -->
+<!-- CLAUDE.md [R-PARALLEL] -->
 
 ### 7.2 Worker defaults and caps
 
@@ -692,7 +727,7 @@ These are not style preferences. Each one has a measured failure behind it.
 | `market-sim sweep` | `min(2, cpu_count − 1)` | **honoured as given — not clamped** |
 | `market-sim ensemble` | `min(2, cpu_count − 1)` | **honoured as given — not clamped** |
 | `market-sim matrix` | 2 | **hard-capped at 2** |
-<!-- pipeline/members.py:61 DEFAULT_MEMBER_CAP=2, :64-74 resolve_workers; matrix.py:41,:103 -->
+<!-- pipeline/members.py::DEFAULT_MEMBER_CAP=2 and ::resolve_workers; matrix.py::MAX_CONCURRENT_CASES -->
 
 `workers == 1` runs members in-process with no subprocess overhead — the right
 choice when debugging.
@@ -707,7 +742,7 @@ Verified measurements, not folklore:
 | PJM zone-aggregate reserve co-optimization, single year | ~13.9 GB |
 | PJM zone-aggregate co-opt, tightest year of a 3-year run | ~14.5 GB |
 | Two concurrent ERCOT per-plant solves on a 15 GB box | **OOM** |
-<!-- docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md:260; docs/multi-iso/pjm-reserve-ordc.md Phase-2 EMPIRICAL re-gate -->
+<!-- docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md §RSS; docs/multi-iso/pjm-reserve-ordc.md Phase-2 EMPIRICAL re-gate -->
 
 Years release memory between them, so the **per-year peak** is what matters, not
 a multi-year sum.
@@ -730,10 +765,32 @@ instead.
 
 ### 7.5 Holdout discipline — `[R-HOLDOUT]`
 
-Train = 2023–2025. Locked-test years (2022, H1-2026) are **touch-once**;
-`scripts/lib/holdout_policy.py` is fail-closed and
+**There are three tiers, not two, and they carry separate markers** — one
+declaration must never spend both.
+
+| Tier | Years | Discipline | Marker that authorizes it |
+|---|---|---|---|
+| Train / calibration | 2023–2025 | The only years tuned against. Every keeper is built and scored here, all three in one bundle (`[R-ALLYEARS]`). | none needed |
+| Validation holdout | 2022, laddering back to 2020 | **Iterable.** A miss may send you back to re-tune 2023–2025 and re-solve — that is its purpose. A validation number is *selection evidence*, **never** a certified out-of-sample skill number. | `complete` |
+| Locked test | **2019** and **H1-2026** | **Touch-once, ever.** Scored exactly once per ISO on the frozen keeper config; the result is recorded whatever it is. No calibration change may respond to it. | `final` |
+
+The program's working span is **2019–2025** for all ISOs; 2018 and earlier are
+dropped and fail closed to locked-test tier. **No ISO has ever spent a
+locked-test year.**
+
+What is held out is the **score**, never the data or the architecture: measured
+inputs are collected once and applied consistently across *all* years, and the
+keeper recipe is one recipe. The only restricted act is looking at the answer —
+solving, scoring or registering an out-of-training year.
+
+`scripts/lib/holdout_policy.py` is the tier map and is **fail-closed** (a year in
+no enumerated set is treated as locked test).
 `run_calibration_full.py --holdout-authorized` additionally requires the ISO to
-already carry a calibration-complete marker. Do not route around either.
+carry **that year's tier marker** — `complete` for a validation year, `final` for
+a locked-test year — and a `--year` spanning both tiers needs both. The
+`holdout-freeze.json` spend freeze outranks the markers for the tiers in its
+scope and is checked first. Do not route around any of it.
+<!-- re-verified 2026-09-05 against CLAUDE.md [R-HOLDOUT] and scripts/lib/holdout_policy.py; the pre-finalization text mislabelled 2022 as locked-test and omitted 2019 entirely -->
 
 ### 7.6 Keepers span all years — `[R-ALLYEARS]`
 
@@ -872,7 +929,16 @@ git config http.version HTTP/1.1
 Then retry. Start from a freshly-fetched `origin/main` so the pack carries only
 your own objects.
 
-### 9.9 A solve is slower than expected
+### 9.9 `run_calibration_full.py --help` exits with a `ValueError`
+
+**Known, and it is not your environment.** `ValueError: unsupported format
+character ')'` out of `argparse.format_help()` — a literal `%` in the
+`--caiso-st-gas-peak-measured` help string that argparse tries to interpolate.
+Only the rendered `--help` is affected; **the parser works and every documented
+invocation runs**. Read the flag catalogue from the script's argparse block
+until it is fixed. See [§4.6](#46-scriptsrun_calibration_fullpy--the-backcast-harness).
+
+### 9.10 A solve is slower than expected
 
 The cold P0 solve is **74–83 %** of a year's wallclock (ERCOT ~183–272 s/yr,
 MISO ~292–339 s/yr) and the obvious solver levers — IPM+crossover, thread
@@ -887,16 +953,25 @@ and that you are not accidentally running more than ~2 concurrent solves.
 ## 10. Known doc divergences found while writing this manual
 
 Recorded here rather than silently fixed — `docs/codebase/07-runner-and-cli.md`
-is another lane's surface, and the methodology spec is frozen to this session.
-Routed to DOCS-B.
+is another lane's surface. Two of the three entries below are now resolved:
+`model-methodology-spec.md` was finalized by DOCS-B (2026-09-05), and this
+manual's own counts were re-derived in the same pass. The
+`07-runner-and-cli.md` rows remain open and are re-routed to that lane's owner.
+
+> **Why every "line N" claim below is stated as a symbol, not a number.** This
+> table originally rebutted stale line numbers *with* line numbers, and by the
+> 2026-09-05 re-verification every one of its own replacements had drifted too
+> (`_build_parser` 3838 → 4822, `main` 3971 → 4955, `run_scenario_iso` 984 →
+> 1232, the calibration parser 7954 → 8811). Line-number citations into source
+> are not maintainable at this repo's rate of change; cite `module::symbol`.
 
 **`docs/codebase/07-runner-and-cli.md`:**
 
 | Claim | Verified state |
 |---|---|
-| "`_build_parser()` (runner.py:1056) defines **three** subcommands; `main()` (line 1119)" | **Four** subcommands (`run`, `sweep`, `ensemble`, `matrix`); `_build_parser` at runner.py:3838, `main` at :3971. |
-| "`run_scenario_iso` (runner.py:137)" | runner.py:984. |
-| "`argparse` at line 4201" (run_calibration_full) | :7954. |
+| "`_build_parser()` (runner.py:1056) defines **three** subcommands; `main()` (line 1119)" | **Four** subcommands: `run`, `sweep`, `ensemble`, `matrix`. |
+| "`run_scenario_iso` (runner.py:137)" | The symbol exists; the line number does not resolve. |
+| "`argparse` at line 4201" (run_calibration_full) | Same — the parser is built near the end of the script, not at 4201. |
 | `sweep --workers` "default `cpu_count − 1`" | `min(2, cpu_count − 1)` — the uncapped default was an `[R-PARALLEL]` violation and was fixed. |
 | Example: `market-sim sweep --sweep configs/scenario_matrix.yaml --workers 8` | Wrong twice: `scenario_matrix.yaml` is a **cases** file (belongs to `matrix` with a `--config` base; via `sweep` it expands onto a bare default config and is §2.1b-refused), and `--workers 8` defeats the `[R-PARALLEL]` default. |
 | `--commitment` / `--no-coal-p2` listed as ordinary flags | Both are **archived**, hidden from `--help`, and hard-error without `--enable-legacy-p2`. |
@@ -905,13 +980,18 @@ Routed to DOCS-B.
 | Stray `</content>` at end of file | Line 161. |
 
 **`docs/testing.md`:** opens with "~355 files"; the tiered layout it documents is
-correct, the count is not — **447** `test_*.py` files (**454** `.py` in total,
-counting helpers and `conftest`). Prefer removing the hard count entirely rather
-than re-pinning it; it rots. Also AUDIT-A gap-register row D5.
-<!-- verified at ce779f9: find tests -name "test_*.py" | wc -l == 447; find tests -name "*.py" | wc -l == 454 -->
+correct, the count is not — and the point is proved by the count itself having
+moved twice since: **447** `test_*.py` at `ce779f9`, **524** at the 2026-09-05
+re-verification (**531** `.py` in total, counting helpers and `conftest`).
+**Remove the hard count entirely rather than re-pinning it.** Also AUDIT-A
+gap-register row D5.
+<!-- re-derived 2026-09-05: find tests -name "test_*.py" | wc -l == 524; find tests -name "*.py" | wc -l == 531 -->
 
-**`model-methodology-spec.md`:** audited separately —
-[`handoffs/methodology-finalization-audit-2026-08.md`](handoffs/methodology-finalization-audit-2026-08.md).
+**`model-methodology-spec.md`:** **RESOLVED.** Audited by DOCS-A
+([`handoffs/methodology-finalization-audit-2026-08.md`](handoffs/methodology-finalization-audit-2026-08.md))
+and finalized by DOCS-B on 2026-09-05 — the Phase-0 build-agent content and the
+never-met performance targets are gone, §5.2 is restructured around
+`retirement_rule`, and every rule citation carries a stable `[R-*]` ID.
 
 ---
 
