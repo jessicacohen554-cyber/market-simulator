@@ -108,8 +108,9 @@ STATE AT HANDOFF (r#39, main HEAD cf5425f7, 2026-09-05 — VERIFY, DON'T TRUST):
   re-solved so far: miso-t1f (HOLD, FC-2 row 4 → CAVEAT), nyiso-t1f (PROMOTE-WITH-CAVEATS on
   FC-7 only — an instrument gap D60 Am.2 repairs under Q37). Pending: caiso-t1f, pjm-t1f
   (09996eca), GOLDEN-3, the D60 finding §5.
-- IN FLIGHT / ISSUED: D60 RUNNING (Am.1 + Am.2) · D58 held on D60 · T3-NYISO-GOLDEN held on
-  D60 AND on the marker (Am.1) · D61 issued, unlaunched. Owner track: nyiso-192 promotion
+- IN FLIGHT / ISSUED: D60 DIED after legs 1–2 → D60-R issued (Opus; caiso/pjm/neiso: the three
+  re-solves + Addendum D / Q37 rows / re-scores + finding §5) · D58 held on D60-R ·
+  T3-NYISO-GOLDEN held on D60-R AND on the marker (Am.1) · D61 issued, unlaunched. Owner track: nyiso-192 promotion
   pending on its branch (+ the owner-named CC_REGULAR duct-burner tranche lever next), caiso-25x
   (C3a closed; C4 the object), miso-21x (phys_* armed; the level-scale probe correctly refused),
   the audit programme (flip NOT live, G2 not declared, R-V keeper freeze on ERCOT/NEISO/PJM in
