@@ -1,0 +1,318 @@
+{
+  "probe": "miso-220 S-1/S-2 liveness - the non-steam fossil x1.10 lift",
+  "keeper": "2026-09-05-miso-217-intermphys",
+  "bundle": "results/calibration/miso217_intermphys_B",
+  "solved": false,
+  "lift": 1.1,
+  "held_classes": [
+    "ST_GAS",
+    "ST_GAS_INTERMEDIATE"
+  ],
+  "owner_ruling_2026_09_05": "offer-curve multipliers are the intended channel for tuning on price and adjusting merit order; one config across 2023-2025; steam gas held as is",
+  "by_year": {
+    "2023": {
+      "year": 2023,
+      "n_tranches": 2929,
+      "S1_baseline_identity": {
+        "max_abs_mc_diff": 0.0,
+        "tranches_differing": 0,
+        "by_class": {},
+        "PASS": true
+      },
+      "S2_liveness_scope": {
+        "tranches_moved": 1604,
+        "held_class_tranches": 119,
+        "held_tranches_moved": 0,
+        "moved_outside_covered_classes": 0,
+        "max_move_on_held_usd": 0.0,
+        "moved_cap_mw": 74251.8,
+        "PASS": true
+      },
+      "by_class": {
+        "": {
+          "held": false,
+          "cap_mw": 16663.8,
+          "tranches": 872,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 58.403,
+          "cap_w_mc_arm_usd": 58.403
+        },
+        "CC_CHP": {
+          "held": false,
+          "cap_mw": 3620.6,
+          "tranches": 64,
+          "tranches_moved": 64,
+          "cap_w_mc_base_usd": 31.668,
+          "cap_w_mc_arm_usd": 34.545
+        },
+        "CC_REGULAR": {
+          "held": false,
+          "cap_mw": 27420.1,
+          "tranches": 333,
+          "tranches_moved": 333,
+          "cap_w_mc_base_usd": 27.444,
+          "cap_w_mc_arm_usd": 29.999
+        },
+        "COAL": {
+          "held": false,
+          "cap_mw": 42792.8,
+          "tranches": 446,
+          "tranches_moved": 360,
+          "cap_w_mc_base_usd": 14.606,
+          "cap_w_mc_arm_usd": 15.598
+        },
+        "CT_CHP": {
+          "held": false,
+          "cap_mw": 896.0,
+          "tranches": 114,
+          "tranches_moved": 114,
+          "cap_w_mc_base_usd": 26.297,
+          "cap_w_mc_arm_usd": 28.623
+        },
+        "CT_PEAKER": {
+          "held": false,
+          "cap_mw": 22281.8,
+          "tranches": 733,
+          "tranches_moved": 733,
+          "cap_w_mc_base_usd": 70.649,
+          "cap_w_mc_arm_usd": 75.756
+        },
+        "ST_CHP": {
+          "held": false,
+          "cap_mw": 697.6,
+          "tranches": 85,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 33.889,
+          "cap_w_mc_arm_usd": 33.889
+        },
+        "ST_GAS": {
+          "held": true,
+          "cap_mw": 10991.0,
+          "tranches": 119,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 60.493,
+          "cap_w_mc_arm_usd": 60.493
+        },
+        "hydro": {
+          "held": false,
+          "cap_mw": 2464.9,
+          "tranches": 163,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 1.4,
+          "cap_w_mc_arm_usd": 1.4
+        }
+      },
+      "S3_merit_reordering_midyear_hour": {
+        "hour": 4380,
+        "steam_gas_median_mc_usd": 35.543,
+        "non_steam_tranches_below_steam_before": 1346,
+        "non_steam_tranches_below_steam_after": 1253,
+        "net_tranches_crossing_above_steam": 93,
+        "note": "reordering is an INTENDED effect under the owner's 2026-09-05 ruling; measured, not gated"
+      }
+    },
+    "2024": {
+      "year": 2024,
+      "n_tranches": 2923,
+      "S1_baseline_identity": {
+        "max_abs_mc_diff": 0.0,
+        "tranches_differing": 0,
+        "by_class": {},
+        "PASS": true
+      },
+      "S2_liveness_scope": {
+        "tranches_moved": 1604,
+        "held_class_tranches": 115,
+        "held_tranches_moved": 0,
+        "moved_outside_covered_classes": 0,
+        "max_move_on_held_usd": 0.0,
+        "moved_cap_mw": 74251.8,
+        "PASS": true
+      },
+      "by_class": {
+        "": {
+          "held": false,
+          "cap_mw": 16663.8,
+          "tranches": 872,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 52.976,
+          "cap_w_mc_arm_usd": 52.976
+        },
+        "CC_CHP": {
+          "held": false,
+          "cap_mw": 3620.6,
+          "tranches": 64,
+          "tranches_moved": 64,
+          "cap_w_mc_base_usd": 26.726,
+          "cap_w_mc_arm_usd": 29.335
+        },
+        "CC_REGULAR": {
+          "held": false,
+          "cap_mw": 27420.1,
+          "tranches": 333,
+          "tranches_moved": 333,
+          "cap_w_mc_base_usd": 24.764,
+          "cap_w_mc_arm_usd": 27.062
+        },
+        "COAL": {
+          "held": false,
+          "cap_mw": 42792.8,
+          "tranches": 446,
+          "tranches_moved": 360,
+          "cap_w_mc_base_usd": 14.003,
+          "cap_w_mc_arm_usd": 14.936
+        },
+        "CT_CHP": {
+          "held": false,
+          "cap_mw": 896.0,
+          "tranches": 114,
+          "tranches_moved": 114,
+          "cap_w_mc_base_usd": 23.394,
+          "cap_w_mc_arm_usd": 25.72
+        },
+        "CT_PEAKER": {
+          "held": false,
+          "cap_mw": 22281.8,
+          "tranches": 733,
+          "tranches_moved": 733,
+          "cap_w_mc_base_usd": 57.965,
+          "cap_w_mc_arm_usd": 62.571
+        },
+        "ST_CHP": {
+          "held": false,
+          "cap_mw": 698.3,
+          "tranches": 86,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 31.772,
+          "cap_w_mc_arm_usd": 31.772
+        },
+        "ST_GAS": {
+          "held": true,
+          "cap_mw": 10987.1,
+          "tranches": 115,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 50.114,
+          "cap_w_mc_arm_usd": 50.114
+        },
+        "hydro": {
+          "held": false,
+          "cap_mw": 2371.5,
+          "tranches": 160,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 1.4,
+          "cap_w_mc_arm_usd": 1.4
+        }
+      },
+      "S3_merit_reordering_midyear_hour": {
+        "hour": 4380,
+        "steam_gas_median_mc_usd": 37.743,
+        "non_steam_tranches_below_steam_before": 1730,
+        "non_steam_tranches_below_steam_after": 1590,
+        "net_tranches_crossing_above_steam": 140,
+        "note": "reordering is an INTENDED effect under the owner's 2026-09-05 ruling; measured, not gated"
+      }
+    },
+    "2025": {
+      "year": 2025,
+      "n_tranches": 2923,
+      "S1_baseline_identity": {
+        "max_abs_mc_diff": 0.0,
+        "tranches_differing": 0,
+        "by_class": {},
+        "PASS": true
+      },
+      "S2_liveness_scope": {
+        "tranches_moved": 1604,
+        "held_class_tranches": 115,
+        "held_tranches_moved": 0,
+        "moved_outside_covered_classes": 0,
+        "max_move_on_held_usd": 0.0,
+        "moved_cap_mw": 74251.8,
+        "PASS": true
+      },
+      "by_class": {
+        "": {
+          "held": false,
+          "cap_mw": 16663.8,
+          "tranches": 872,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 50.302,
+          "cap_w_mc_arm_usd": 50.302
+        },
+        "CC_CHP": {
+          "held": false,
+          "cap_mw": 3620.6,
+          "tranches": 64,
+          "tranches_moved": 64,
+          "cap_w_mc_base_usd": 36.885,
+          "cap_w_mc_arm_usd": 40.051
+        },
+        "CC_REGULAR": {
+          "held": false,
+          "cap_mw": 27420.1,
+          "tranches": 333,
+          "tranches_moved": 333,
+          "cap_w_mc_base_usd": 36.552,
+          "cap_w_mc_arm_usd": 39.946
+        },
+        "COAL": {
+          "held": false,
+          "cap_mw": 42792.8,
+          "tranches": 446,
+          "tranches_moved": 360,
+          "cap_w_mc_base_usd": 13.471,
+          "cap_w_mc_arm_usd": 14.351
+        },
+        "CT_CHP": {
+          "held": false,
+          "cap_mw": 896.0,
+          "tranches": 114,
+          "tranches_moved": 114,
+          "cap_w_mc_base_usd": 31.064,
+          "cap_w_mc_arm_usd": 33.389
+        },
+        "CT_PEAKER": {
+          "held": false,
+          "cap_mw": 22281.8,
+          "tranches": 733,
+          "tranches_moved": 733,
+          "cap_w_mc_base_usd": 66.038,
+          "cap_w_mc_arm_usd": 71.015
+        },
+        "ST_CHP": {
+          "held": false,
+          "cap_mw": 698.3,
+          "tranches": 86,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 39.092,
+          "cap_w_mc_arm_usd": 39.092
+        },
+        "ST_GAS": {
+          "held": true,
+          "cap_mw": 10987.1,
+          "tranches": 115,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 58.353,
+          "cap_w_mc_arm_usd": 58.353
+        },
+        "hydro": {
+          "held": false,
+          "cap_mw": 2371.5,
+          "tranches": 160,
+          "tranches_moved": 0,
+          "cap_w_mc_base_usd": 1.4,
+          "cap_w_mc_arm_usd": 1.4
+        }
+      },
+      "S3_merit_reordering_midyear_hour": {
+        "hour": 4380,
+        "steam_gas_median_mc_usd": 44.985,
+        "non_steam_tranches_below_steam_before": 1756,
+        "non_steam_tranches_below_steam_after": 1635,
+        "net_tranches_crossing_above_steam": 121,
+        "note": "reordering is an INTENDED effect under the owner's 2026-09-05 ruling; measured, not gated"
+      }
+    }
+  },
+  "ALL_PASS": true
+}
