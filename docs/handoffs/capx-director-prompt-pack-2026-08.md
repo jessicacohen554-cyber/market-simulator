@@ -5023,7 +5023,7 @@ marker, the board's NYISO gate-(a)/headline rows, the finding, the log, and the 
 the auditor requires (plus `frontier` only under option A); nothing else.
 ```
 
-## D57 — the PJM clearing half: BUILD + A/B (r#36; D54 §7 executed; the D48 §8 configuration) — **IN FLIGHT at r#37** (branch `claude/capx-d57-pjm-clearing-build-gsdypm`: built, Phase 0 reproduced to 0.000, PREDECL addendum pushed, arms not yet solved; owes the ruff format of `capacity_market.py` / `retirements.py` / `runner.py` in its next commit)
+## D57 — the PJM clearing half: BUILD + A/B (r#36; D54 §7 executed; the D48 §8 configuration) — **LANDED + PROMOTED IN-SESSION (Q44) at r#38** (PRs #4761/#4775/#4786: cleared position within −0.5/−1.0/−2.8 pts of published, identity 8/8, price 1.5–5.7× because the CT/ST/oil E&AS operand is ZERO; joint PJM posture armed via `_pjm_config`; arm A = bare `pjm-t1h`; successor → §D61; `pjm-t1f` re-measure → §D60 Am.1)
 
 ```
 You are the D57 session of the capacity-expansion track — the BUILD lane for the PJM clearing
@@ -5134,7 +5134,7 @@ suffixed arms registered; the pre-declaration graded; the E&AS operand measured 
 the joint arming recommendation on the pre-stated condition. Nothing armed.
 ```
 
-## D58 — the PJM sector-gate leg (r#36; D53 routed item 1) — **RELEASED-CONDITIONAL: D53 merged ✓ (r#37); dispatch ONLY after D57 has landed (both write the PJM shard and PJM forecast surfaces)**
+## D58 — the PJM sector-gate leg (r#36; D53 routed item 1) — **RELEASED at r#38 (D53 merged ✓, D57 landed ✓) — dispatch AFTER D60's finding lands (D60 writes the PJM board t1f row); the control is the NEW bare `pjm-t1h` (the Q44 joint posture, `f0e050e820c1159a`); Opus per audit ruling R-AK**
 
 ```
 You are the D58 session of the capacity-expansion track — the PJM leg of the sector gate D53
@@ -5365,7 +5365,7 @@ EXIT: `pjm-t1f-d50-ccscapex` registered; the blast radius priced; the finding at
 filename with §8's recommendation; the PJM cell stamped. Nothing armed.
 ```
 
-## D56-R2 — the NYISO `frontier` re-declaration on nyiso-189 (r#37; owner ruling Q39 on card C-10)
+## D56-R2 — the NYISO `frontier` re-declaration on nyiso-189 (r#37; owner ruling Q39 on card C-10) — **LANDED at r#38** (PR #4780; all four instruments read {ERCOT, NEISO, NYISO, PJM})
 
 ```
 You are the D56-R2 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero
@@ -5431,7 +5431,7 @@ EXIT: the frontier block, the marker's `frontier_basis`, auditor PASS, guards OK
 with the alignment table, the log line; all blob-verified.
 ```
 
-## D60 — the arming batch: Q40 (MISO ratio) + Q41 (NYISO requirement gates) + Q42 (CCS capex default), flip-first (r#37)
+## D60 — the arming batch: Q40 (MISO ratio) + Q41 (NYISO requirement gates) + Q42 (CCS capex default), flip-first (r#37) — **CHECKPOINT, RUNNING at r#38** (PRs #4781/#4783/#4792: flip commit + four renames landed; the `pjm-t1f` rename REVERSED on STOP 1 after D57's promotion moved PJM's bare t1f key; owed: the four re-solves + finding + **Amendment 1 below**)
 
 ```
 You are the D60 session of the capacity-expansion track — an ARMING EXECUTION lane. Three
@@ -5550,4 +5550,194 @@ You are the only writer on MISO / NYISO / CAISO / NEISO forecast surfaces this w
 EXIT: the hygiene commit; the pre-declaration; the flip commit with docs/matrix/tests; every
 bare key renamed or re-solved as pre-declared with priors preserved; the four re-solves
 registered; the finding; all blob-verified. Then the director serves the NYISO t3 card.
+```
+
+### D60 — Amendment 1 (r#38; the owner's relaunch-protocol answer: the session is STILL RUNNING — this is appended to the live charter, nothing is re-issued)
+
+```
+D60 AMENDMENT 1 (director r#38, 2026-09-05; read before your next re-solve):
+
+1. THE FIFTH RE-SOLVE — `pjm-t1f`. Your STOP 1 on the pjm-t1f rename was correct and is now
+   resolved: D57 has LANDED (PR #4786) and its in-session owner ruling (Q44) armed the joint PJM
+   posture via `_pjm_config` overrides, so PJM forecast surfaces are FREE this window and the
+   bare `pjm-t1f` recipe resolves to `09996eca71ee80fd` — re-verify that key through the harness
+   path at your HEAD first (D57's overrides + your Q42 flip; if it differs, the difference is
+   the whole finding row — state it and use the resolved key). Re-solve `pjm-2026-2030` on the
+   bare recipe (~28 min, PJM solo, `--golden-posture` as the D50/D45-R legs), preserve the
+   D45-R record at `pjm-t1f-pre-d60`, register as the bare `pjm-t1f`. Pre-declare its FC rows
+   from the two committed records it supersedes: the D50 PJM arm (CCS window 3,584.7 → 909.8 MW
+   at the OLD posture) and D57's arm A (the clearing price $28.7/kW-yr replacing $0 at the entry
+   screen; the gas-steam exits) — the t1f leg is the FIRST solve in which both act together on
+   2026–2030, so its FC-1 I7/I12 rows may move; say which way before you run it.
+2. ORDER: your remaining legs are miso-t1f (~65), nyiso-t1f (~12), caiso-t1f (~23), pjm-t1f
+   (~28), neiso-t3 GOLDEN-3 (~33) — sequential (rule 12). If wall-clock is short, GOLDEN-3 last
+   and, if it cannot complete, say so in the finding and the director charters it separately;
+   never leave a half-registered golden.
+3. THE FINDING gains a §"D57 interaction": the MISO t1f leg carries THREE mechanisms (your
+   Addendum A.5) and the PJM t1f leg carries THREE too (Q42 + D48 ×2 + clearing) — each row that
+   moves is attributed to one, from the committed single-mechanism records, never by inference.
+4. HYGIENE: the ruff reds you were routed (§0ah.4) were formatted by the audit desk's Y-7 lane
+   (#4771) — skip step 0; do NOT touch miso-217's two new reds (`offer_curves.py`,
+   `test_miso_intermediate_gas_offer_margin.py`) — the owner's MISO track owns them.
+5. Everything else in §D60 binds unchanged: STOPs, priors, the X-6b re-stamp, rule 27 blob
+   checks, the arming scope (nothing beyond Q40/Q41/Q42 — and Q44 is D57's, already landed).
+```
+
+## T3-NYISO-GOLDEN — the THIRD §2.1b full-horizon campaign: NYISO BAU 2026–2050 (r#38; owner ruling Q45 on card C-14) — **RELEASED-CONDITIONAL: paste only after D60's finding has landed on main**
+
+```
+You are the T3-NYISO-GOLDEN session of the capacity-expansion track — the program's THIRD
+§2.1b full-horizon campaign and NYISO's first, authorized by owner ruling Q45 (capx ledger
+§0ai.3 / §3, 2026-09-05, card C-14: "Authorize — dispatch after D60's re-solves land"). NYISO
+holds gate legs (a) PASS (`complete` re-declared 2026-09-05 by D56-R, frontier by D56-R2, on
+keeper `2026-09-05-nyiso-189-steam-identity`, CALIBRATED), (b) PASS (`nyiso-t1f` PROMOTE),
+(c) PASS (`nyiso-t1x` measured); its requirement gates are ARMED (Q41: NYSRC Table D.2 forecast
+peak + per-capability-year IRM/derate), the CCS capex posture is armed program-wide (Q42), the
+NYCA curve and `locality_capacity_curves` stay OFF (D52/D59 P9). You cut the 25-year golden on
+that HEAD, score it on the full rubric, and register it as the bare `nyiso-t3`. You arm nothing.
+
+DATA PROFILE: nyiso
+MODEL ASSIGNMENT: Opus (a pre-declared campaign on a settled recipe — audit ruling R-AK; every
+discretionary question below returns to the director, never decided here).
+BRANCH: claude/capx-t3-nyiso-golden — FRESH off origin/main, rebase before every push.
+
+PRECONDITION (check first; STOP and say so if it fails): `docs/handoffs/FINDING-capx-d60-*.md`
+exists on origin/main and the bare `nyiso-t1f` verdict carries a post-D60 `scored_at_sha`. If
+D60 has not landed, stop — the director released you on its landing.
+
+READ FIRST: pack §T3-NEISO-GOLDEN and §T3-NEISO-GOLDEN-2 (the recipe you mirror; Q13 / Q25),
+FINDING-capx-golden2-* and FINDING-capx-d47-golden3-attestation-2026-09-04.md (the campaign
+shape: preserve-then-overwrite, the FC-5 disposition table, the FC-6 battery at the golden's
+own vintage, the DOF ledger / FC-7 attestation, `-pre-*` conventions) · docs/forecast-
+development-plan-2026-07.md §2.1b (the gate, the rubric FC-1…FC-7) · FINDING-capx-d52 §8(1)
+and FINDING-capx-d60 (the NYISO posture you run: which fields the bare `nyiso-t1f` resolves ON)
+· FINDING-capx-d59 §0/§8 (the NYC census object: the model's NYC ICAP census sits +0.7–0.8 GW
+above the Gold Book — a KNOWN long position your golden will carry; state it in the finding,
+never repair it here) · FINDING-capx-d25 (FC-5 dispositions: divergence is not failure,
+UNEXPLAINED divergence is) · D21/D26/D35 (the FC-6 battery + P1–P3 pairs; `carbon_price_delta`)
+· scripts/run_full_horizon.py (`reference_config(..., golden_posture=True)`), scripts/
+register_forecast_run.py, scripts/forecast_verdict.py · frontend/data/forecast/ff-verdicts.json
+(no `nyiso-t3` exists — this is a first registration, no prior to preserve) · the NYISO matrix
+shard.
+
+THE WORK:
+1. PRE-DECLARE (docs/handoffs/PREDECL-capx-t3-nyiso-<date>.md, before any solve): the recipe
+   (NYISO BAU 2026–2050, the bare posture at HEAD resolved through the harness path — list every
+   armed field and the cache key), expected wall/RAM from the NYISO t1f rate (~12 min / 5 yr →
+   ~1 h / 25 yr; the NEISO goldens ran 33–35 min / 3.5–3.7 GB), the FC-5 corridor rows NYISO can
+   score (which benchmark sources exist for NYISO in the corridor datatype — say which are
+   missing), the FC-6 battery plan (the Tier-1 ladder rungs live at NYISO + paired P1–P3 at this
+   golden's vintage; price the battery before running it), and the expected FC map from
+   `nyiso-t1f`'s record (PROMOTE, caveats [] — a 25-year run may open rows t1f cannot see:
+   storage entry timing (D36), CCS from 2028 (D50), the RPS/ACP ceiling (T16-A)); the STOPs:
+   wall > 2× estimate or RSS > 12 GB; any keeper / backcast key moving; any field resolving
+   differently from the pre-declared posture.
+2. THE GOLDEN: one 25-year solve, NYISO solo (rule 12), `--golden-posture`, diagnostics on;
+   `score` → the FC-5 disposition table authored (every corridor row IN CORRIDOR / EXPLAINED /
+   UNEXPLAINED with its reason — 0 UNEXPLAINED is a claim you audit adversarially, as D25 did) →
+   the FC-6 battery + pairs solved and scored → `forecast_verdict --tier t3` → register as the
+   bare `nyiso-t3` (first registration). Score and register AFTER your final rebase (desk
+   doctrine X-6b: no orphaned `scored_at_sha`).
+3. FC-7: the DOF ledger built from the run's own `run_config.json` (0 UNIDENTIFIED is the
+   target; every armed field has a curated design-decision row — D50/D52's rows exist; verify
+   D53/D51/D57 rows are NOT in NYISO's ledger since they are not armed for NYISO).
+4. FINDING docs/handoffs/FINDING-capx-t3-nyiso-<date>.md: the determination and full FC map at
+   full magnitude, the trajectory (fuel mix, retirements, entry, storage, CO2, REC dual, capacity
+   price per year — the D29 grain), the position path (NYCA and, reported-only, the NYC/LI
+   positions the D59 ledger block emits), the pre-declaration graded, the routed objects (the NYC
+   census; anything the golden opens), the matrix stamp (NYISO shard keeper/gates header; no
+   verdict letter moves — nothing is tested here), governance attestation (rule 22: 2026–2050,
+   no measured 2026 actual touched; rule 27 blob checks).
+
+GUARDRAILS: rules 5, 7, 8, 12, 13, 21 (no parameter), 22, 24, 27, 28d. Arm nothing; touch no
+keeper / shard promotion field / marker / freeze; no backcast file. NEISO's goldens and every
+other ISO's forecast key untouched.
+
+COLLISION: D58 (PJM) and D61 (docs) are disjoint; D60 has landed by your precondition. The
+owner's NYISO backcast lane (nyiso-19x) owns the keeper shard; you stamp the matrix header only.
+
+EXIT: `nyiso-t3` registered with its FC-5 table, FC-6 battery and FC-7 ledger; the finding; the
+board's NYISO t3 row; all blob-verified. The director serves any arming or repair question.
+```
+
+## D61 — the PJM CT / ST / oil E&AS operand: Phase 0, zero-solve (r#38; D57 §4's named successor)
+
+```
+You are the D61 session of the capacity-expansion track — a Phase-0 ADJUDICATION lane, zero
+solves. D57 (FINDING-capx-d57-2026-09-05.md §3–§4, §8) built the PJM clearing half and, armed
+by owner ruling Q44, it now prices PJM's capacity market at the auction's own cleared quantity
+(within 0.5–2.8 pts of the published BRA) — but at 1.5–5.7× the published price, because the
+sell offers of the gas-CT (404 units / 24.2 GW firm), gas-ST (115 / 8.8 GW) and oil (421 /
+3.7 GW) fleets carry EXACTLY ZERO E&AS margin in the hindcast prices and so offer at their full
+avoidable-cost bars — a 37 GW plateau at $61–103/MW-day where the published price is $29–50. D57
+measured that an E&AS margin of ≥ 3.8 / 18.0 / 8.6 $/kW-yr per CT / ST / oil unit (2022/23)
+would put those offers AT the published price, and named the operand as the successor. You
+adjudicate the operand: what the real market pays those fleets that the model's hindcast price
+does not, where in the model that revenue belongs, and how a faithful representation would be
+built with zero free parameters. You do not build, you do not tune, and a coefficient that
+lands the price is REFUSED (rule 21; D57 §4's own line).
+
+DATA PROFILE: pjm (start `code`; widen to pjm only if a ledger read needs the raw corpora)
+MODEL ASSIGNMENT: Fable (a mechanism adjudication with the largest downstream consequence in
+the PJM chain).
+BRANCH: claude/capx-d61-pjm-eas-operand — FRESH off origin/main, rebase before every push.
+
+READ FIRST: D57 §3.3–§3.5 and §4 IN FULL (the operand measurement and the "≥ X $/kW-yr" table;
+the arm ledgers' `capacity_clearing` block carries the whole sell-offer stack — your census
+reads off it) · DESIGN-capx-d54 §3.1 (the operands), §4.8 (the one-year vs three-year E&AS
+offset — the one admissible alternative operand, named) · FINDING-capx-d12-* and the pjm-164
+finding (the C3c program's Q1: PJM's reserve-dual channel is REAL — binds on opportunity cost,
+$187.90 max dual, zero shortfall hours) · FINDING-capx-d4i3-* / d4m (the ERCOT scarcity-slack /
+net-revenue half, the D12 scarcity-consistent basis) · model-methodology-spec.md §5.2 (the
+screen's attainable inframarginal margin: `Σ_t max(0, price − full variable cost, reserve price)
+× pmax × availability`) and the `screen_reserve_value_enabled` clause · retirements.py (where
+the E&AS margin the screen and the clearing consume is computed; which price series — energy
+λ, reserve duals, ORDC adder — it sees for PJM) · the PJM State of the Market reports (Monitoring
+Analytics) — the Net Revenue tables for a new CT / CC and, where published, the historical
+net-revenue analysis by unit type; the Ancillary Services and Uplift chapters (fetch, sha256,
+cite: VALIDATION OBSERVABLES, never inputs) · the PJM hindcast price ledgers (`pjm-t1h` arms:
+zonal λ, reserve prices if any) · the matrix `capacity_market_clearing`, `screen_reserve_value`,
+`ercot_thermal_as_endogenous` rows and the PJM cells.
+
+THE WORK (docs/handoffs/FINDING-capx-d61-<date>.md, one document, zero solves):
+1. THE CENSUS OF DENIED REVENUE: from the committed D57 arm ledgers, per fuel class (CT / ST /
+   oil) and per DY, the offer stack's E&AS margin distribution (how many units at exactly zero;
+   the bar each offers at) beside the published SOM net-revenue evidence for the same classes
+   and years (energy, reserves — synchronized / non-synchronized / secondary — regulation,
+   black start, reactive, uplift; $/MW-yr). State which streams the hindcast price CAN carry
+   (energy λ is there; are PJM reserve duals? — pjm-164 says the channel is real in the model —
+   is it wired into the screen's `reserve price` term for PJM, and does `screen_reserve_value_
+   enabled` reach the clearing's offer?) and which it structurally cannot (regulation, black
+   start, reactive, uplift — out-of-market or non-LP settlements).
+2. THE HOME OF THE OPERAND, adjudicated (rule 19 — one mechanism per phenomenon): (a) the
+   reserve co-opt channel (D12's scarcity-consistent basis; the ERCOT `ercot_thermal_as_
+   endogenous` form; PJM's own reserve market design — SR/NSR/30-min, the ORDC after 2022) —
+   does a faithful PJM reserve co-opt produce the missing margin for CTs at the published
+   scale? size it from the ledgers and the SOM without a solve where possible; (b) the
+   non-market streams (regulation, black start, reactive, uplift) — a published per-unit or
+   per-class revenue that regenerates forward (rule 13 test: could it be produced for 2035 from
+   forward drivers? a tariff-based reactive payment yes; a historical uplift average no — say
+   which passes); (c) the three-year E&AS offset (design §4.8) — what it changes and why it is
+   not the operand; (d) what the operand would do INSIDE the D57 clearing: the price ratio it
+   moves toward 1× WITHOUT a coefficient, and the composition (gas-steam exits 9.5 → ? GW;
+   coal retained) — derived from the offer stack arithmetic, not solved.
+3. RULE 13 / 14 / 21 DISCIPLINE, stated: every candidate stream is a published market-design
+   or tariff quantity or a co-optimized LP dual; none is identified from the price residual;
+   the falsifier for the eventual build (a mechanism that lands the published price only via a
+   fitted scalar is refused; a faithful operand that OVER-shoots — price ratio < 1 — is a
+   finding, not a failure).
+4. THE BUILD CHARTER (for the director to issue as D62): the mechanism, the field(s), the seam
+   (where the operand enters the screen AND the clearing offer — one object, design §4.8's
+   identity), the data intake if any (SOM tables → the data contract), the A/B plan on
+   `pjm-t1h` (the Q44 posture is the control now), the expected sign per DY, the STOPs. If
+   Phase 0 finds the operand's home is the existing reserve co-opt already armed for ERCOT,
+   say so and the build charter is a PJM arming of an existing mechanism (rule 25: PJM's own
+   parameters from PJM's own reserve market data).
+
+GUARDRAILS: zero solves; no ScenarioConfig field; no parameter value proposed as a number to
+fit; rules 13, 14, 19, 21, 25; the SOM figures are observables. Rule 27 does not bind (docs
+only). COLLISION: none — docs only; D58 / D60 / T3-NYISO are solve lanes on other surfaces.
+
+EXIT: the finding with the census, the adjudicated home, the arithmetic of what the operand
+would do to D57's price ratio and composition, and the D62 build charter draft; pushed.
 ```
