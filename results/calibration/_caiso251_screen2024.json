@@ -1,0 +1,164 @@
+{
+ "_provenance": {
+  "session": "caiso-251 SCREEN (rule 29 [R-SCREEN] clause a) \u2014 2024 ONLY",
+  "bundle": "results/calibration/caiso251_arm_screen2024 (THROWAWAY PROBE \u2014 never registered, never a keeper, rule 16)",
+  "control": "the committed keeper caiso246_b1_spot_coverage (G-CTRL form 4, restored by the G-DRIFT audit in PRECOMMIT Addendum B \u2014 NO control solve spent)",
+  "delta": "single flag --no-gas-offer-margin on the replayed keeper recipe",
+  "screen_year_chosen_on": "the phase-0 FOOTPRINT (largest |fuel - anchor|: median delivered gas 2.59 vs the 4.7964 anchor), never the residual",
+  "precommit": "PRECOMMIT-caiso251-fuel-coupling-form-2026-09-05.md Addendum A"
+ },
+ "G_SCREEN_A_confinement": {
+  "registered": "non-gas classes reproduce the control to <= 0.5 TWh each",
+  "deltas_twh": {
+   "solar": 0.0514,
+   "wind": 0.0,
+   "nuclear": 0.0,
+   "hydro": 0.0131,
+   "biomass": 0.0,
+   "OTHER": 0.0
+  },
+  "max_abs_twh": 0.0514,
+  "pass": true
+ },
+ "G_SCREEN_B_direction": {
+  "registered": "CT_PEAKER + CT_CHP 2024 dispatch RISES against the control",
+  "CT_PEAKER_twh": {
+   "keeper": 0.7442,
+   "screen": 1.4778,
+   "delta": 0.7336
+  },
+  "CT_CHP_twh": {
+   "keeper": 1.2213,
+   "screen": 1.2293,
+   "delta": 0.008
+  },
+  "combined_delta_twh": 0.7416,
+  "pass": true
+ },
+ "G_SCREEN_C_no_collateral_break": {
+  "registered": "no non-C3a SCORED criterion for 2024 flips PASS -> FAIL",
+  "status": "NOT EVALUABLE AS WRITTEN \u2014 calibration_verdict.py resolves only REGISTERED runs, and Addendum A forbids registering the screen bundle (rule 16). Reported as a defect in my own registered gate, not silently redefined; the scored question is answered on the FULL 3-year arm bundle, which is where it belongs.",
+  "proxy_C1_fuel_mix": {
+   "CC_CHP": {
+    "actual_twh": 6.7777,
+    "keeper_twh": 7.6275,
+    "screen_twh": 7.556,
+    "keeper_err": 0.8498,
+    "screen_err": 0.7783,
+    "abs_err_change": -0.0715
+   },
+   "CC_REGULAR": {
+    "actual_twh": 45.9917,
+    "keeper_twh": 45.8014,
+    "screen_twh": 46.7479,
+    "keeper_err": -0.1903,
+    "screen_err": 0.7562,
+    "abs_err_change": 0.5659
+   },
+   "COAL": {
+    "actual_twh": 0.0737,
+    "keeper_twh": 0.0535,
+    "screen_twh": 0.0461,
+    "keeper_err": -0.0202,
+    "screen_err": -0.0276,
+    "abs_err_change": 0.0074
+   },
+   "CT_CHP": {
+    "actual_twh": 2.0079,
+    "keeper_twh": 1.2213,
+    "screen_twh": 1.2293,
+    "keeper_err": -0.7866,
+    "screen_err": -0.7786,
+    "abs_err_change": -0.008
+   },
+   "CT_PEAKER": {
+    "actual_twh": 4.3261,
+    "keeper_twh": 0.7442,
+    "screen_twh": 1.4778,
+    "keeper_err": -3.5819,
+    "screen_err": -2.8483,
+    "abs_err_change": -0.7336
+   },
+   "OTHER": {
+    "actual_twh": 8.0763,
+    "keeper_twh": 8.0763,
+    "screen_twh": 8.0763,
+    "keeper_err": 0.0,
+    "screen_err": 0.0,
+    "abs_err_change": 0.0
+   },
+   "ST_GAS": {
+    "actual_twh": 0.1203,
+    "keeper_twh": 0.5521,
+    "screen_twh": 0.216,
+    "keeper_err": 0.4318,
+    "screen_err": 0.0957,
+    "abs_err_change": -0.3361
+   },
+   "biomass": {
+    "actual_twh": 4.4101,
+    "keeper_twh": 4.4101,
+    "screen_twh": 4.4101,
+    "keeper_err": 0.0,
+    "screen_err": 0.0,
+    "abs_err_change": 0.0
+   },
+   "hydro": {
+    "actual_twh": 21.3447,
+    "keeper_twh": 22.5244,
+    "screen_twh": 22.5375,
+    "keeper_err": 1.1797,
+    "screen_err": 1.1928,
+    "abs_err_change": 0.0131
+   },
+   "nuclear": {
+    "actual_twh": 18.3788,
+    "keeper_twh": 18.1929,
+    "screen_twh": 18.1929,
+    "keeper_err": -0.1859,
+    "screen_err": -0.1859,
+    "abs_err_change": 0.0
+   },
+   "oil": {
+    "actual_twh": 0.053,
+    "keeper_twh": 0.0,
+    "screen_twh": 0.0,
+    "keeper_err": -0.053,
+    "screen_err": -0.053,
+    "abs_err_change": 0.0
+   },
+   "solar": {
+    "actual_twh": 44.639,
+    "keeper_twh": 46.7432,
+    "screen_twh": 46.7946,
+    "keeper_err": 2.1042,
+    "screen_err": 2.1556,
+    "abs_err_change": 0.0514
+   },
+   "wind": {
+    "actual_twh": 20.061,
+    "keeper_twh": 20.2896,
+    "screen_twh": 20.2896,
+    "keeper_err": 0.2286,
+    "screen_err": 0.2286,
+    "abs_err_change": 0.0
+   }
+  },
+  "proxy_classes_whose_abs_error_GREW_gt_0p05_twh": {
+   "CC_REGULAR": 0.5659,
+   "solar": 0.0514
+  },
+  "proxy_net_abs_error_change_twh": -0.5114,
+  "pass": null
+ },
+ "C3a_2024_REPORTED_NOT_A_SCREEN_GATE": {
+  "note": "C3a is EXCLUDED from G-SCREEN and from the promotion basis in both directions (PRECOMMIT \u00a70.2 / Addendum A). Reported because P-6/P-7 are predictions about it.",
+  "actual_rt_lw": 34.65,
+  "keeper_model_lw": 38.9215,
+  "screen_model_lw": 37.9214,
+  "keeper_c3a_pct": 12.328,
+  "screen_c3a_pct": 9.441,
+  "delta_usd_per_mwh": -1.0001
+ },
+ "verdict": "G-SCREEN A and B PASS; C unevaluable as written. The remaining two years are EARNED."
+}
