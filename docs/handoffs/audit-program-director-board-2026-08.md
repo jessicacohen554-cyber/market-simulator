@@ -713,6 +713,93 @@
 > the CI configuration has not been audited against the way this repository is
 > actually used, and the branch-protection flip raises the cost of every one of
 > these from an annoyance to a merge block.**
+>
+> ### 🔴 SECOND CODA, 2026-09-05 22:52Z — **POST-MERGE ADDENDUM (v31's PR #4844 merged at ~22:45Z; this lands as a follow-up change).** THE REQUIRED-CHECK SET IS NOT A STATE, IT IS A WEATHER SYSTEM
+>
+> **The finding is the VOLATILITY, and it is now measured rather than inferred.**
+> Every reading below is per-job from a named run or a local `uv run --frozen`
+> invocation with `$?` read directly:
+>
+> | time | head | Ruff | Fast tier | Refactor guards | Rule-22 gates | flip set |
+> |---|---|---|---|---|---|---|
+> | 21:41Z | `26203a4b` (run 2495) | 🟢 | 🔴 5 pins | 🟢 | 🟢 | **5 of 6** |
+> | 22:07Z | `f9b8d716` (run 2502) | 🔴 | 🔴 | 🟢 | 🟢 | **4 of 6** |
+> | 22:37Z | `8e26a153` (run `33996435577`) | 🔴 | 🔴 | 🔴 **new** | 🔴 **new** | 🔴 **2 of 6** |
+> | **22:52Z** | **`9c44b984` (main, local)** | 🟢 **repaired again** | 🔴 **2 pins left** | 🔴 | 🔴 | **3 of 6** |
+>
+> **At least five state changes in ~70 minutes, in both directions.** ⚠️ **This
+> lane's own first coda is superseded by its own next measurement** — it recorded
+> **2 of 6** with `Ruff` red, and fifteen minutes later `ruff format --check .`
+> reads **exit 0, "1322 files already formatted"**. **That is the third time `Ruff`
+> has changed state today.** Recorded against itself, per the standing rule that a
+> zero/red reading shows a moment, never a state.
+>
+> **Y-11 (#4846) DELIVERED, PARTIALLY — 3 of the 5 R-AT pins are repaired.**
+> Measured at `9c44b984` by running the five directly:
+> 🟢 `test_cache_key_is_registered_dropped_at_default` ·
+> 🟢 `TestPjmCapacitySupplyClearing::test_pjm_iso_override_arms_forecast_only` ·
+> 🟢 `PartitionCaptureKeyTest::test_partition_run_id_resolves_the_carveout` ·
+> 🔴 `GoldenManifestSchemaTest::test_partition_entries_agree_with_the_keeper_shard`
+> (`SUBFAILED key='ERCOT__carveout-2023'`) ·
+> 🔴 `PartitionCaptureKeyTest::test_resolve_capture_targets_reaches_the_carveout_bundle`.
+> **Both survivors are the ERCOT carve-out pair**, still asserting
+> `2026-08-25-236-swcap-clip-k33` where the ercot-248 shard designates the
+> consolidated keeper — i.e. **the last unpaid cost of the 19:02Z consolidation.**
+>
+> ### 🔴 THE TWO STRUCTURAL REDS ARE UNREPAIRED AT `9c44b984`, AND NEITHER IS A LANE'S MISTAKE
+>
+> **(1) `Rule-22 quarantine gates` — a GOVERNANCE COLLISION, not a lane error.**
+> `check_registry_payload_parity` exit 1:
+> > `results/calibration/miso220_nonsteamlift_screen2025: bundle dir maps to no retained sidecar 'bundle' field and is not keep-required — dead solve output (Class-E retention rule point 4)`
+>
+> Added by `7ccdc4fd`, **22:22:33Z**; **absent at this lane's pin `fb51bd82`**,
+> where parity read *"6 runs checked, 39 bundle dirs swept, OK"*. **Rule 29
+> `[R-SCREEN]` calls a screen bundle a *"throwaway diagnostic probe — never
+> registered on the dashboard"*; Class-E retention point 4 requires every bundle
+> dir to map to a retained sidecar or be keep-required. A lane that obeys rule 29
+> exactly turns the parity gate red BY OBEYING IT.** The gate offers three
+> remedies — register (rule 29 forbids), prune, or allowlist — and **rule 29 names
+> none.** Since R-AS/R-AR made screens routine this recurs on every screen.
+> ⚠️ **Routed to the owner: rule 29 needs a stated disposal duty for the screen
+> bundle.** Not fixable here on any of the three routes (scope: registration,
+> `results/`, `scripts/`).
+>
+> **(2) `Structural refactor guards` — the FOURTH CI-PATH FALSE POSITIVE.**
+> `ci_refactor_guards` exit 1:
+> > `tests/scoring/test_bench_stamp_ast.py: references missing script 'scripts/fake_builder.py'`
+>
+> Added by `3d0fd19d`, **22:33:59Z** — *"Y-12: hash the builder AST, not its bytes,
+> in the bench fingerprint (R-AS)"*. **R-AS's own implementation turned a required
+> check red within 25 minutes of the ruling — and the implementation is CORRECT.**
+> `scripts/fake_builder.py` is a **`tmp_path` fixture**, read from the test's own
+> source: `(tmp_path / "scripts").mkdir()`, `rel = "scripts/fake_builder.py"`,
+> `monkeypatch.setattr(bench_stamp, "REPO", tmp_path)`. It never exists in the
+> tree. **The guard scans string literals and cannot distinguish a repo path from a
+> `tmp_path`-relative fixture name.** It already tolerates *"11 known-dangling"*
+> refs, so the repair is one entry in that list — **`scripts/` / `tests/`, outside
+> this lane; Y-12's to close.**
+>
+> ### 🔴 THE CORRECTED G2 STATEMENT
+>
+> v30 closed: *"G2 waits on a Settings toggle and three files that need `ruff
+> format`."* **True at 20:44Z; false now, and not because the files went unfixed —
+> they were fixed twice.** The corrected form:
+>
+> > **Leg 4 is one click. The click lands on a repository whose required set has
+> > changed state five times in seventy minutes, is 3 of 6 at this reading, and
+> > carries FOUR un-owned CI-path defects — two of which (`file-integrity-guard`'s
+> > base sha, `ci_refactor_guards`' fixture scan) are false positives that fail
+> > CORRECT work, and one of which (rule 29 vs Class-E) is a rule collision that
+> > punishes a lane for obeying the rule.** **The flip should follow a CI-plumbing
+> > pass, not precede one.**
+>
+> **This is not an argument against the flip** — legs 1–3 are clean, R-AH's
+> condition is the owner's, and a chronically-red required set is itself an
+> argument *for* gating. It is the measurement the declaration needs, and the
+> single actionable item it implies: **four defects, one owner, one routing** —
+> Y-9 §5's glob, DOCS-B's unenrolled docs PR, the `file-integrity-guard` base sha,
+> and the script-refs fixture scan. **No fix attempted here; all four are outside a
+> records-only lane.**
 
 > # 🔴 **G2 IS *NOT* DECLARED — RECORDS-ONLY LANE v30, pin `5eb5f38a` → `2a59d269`. THE LANE WAS DISPATCHED TO DECLARE IT, ON A STATED PRECONDITION THAT `main` READS `protected: true`. IT READS `protected: false` — AT 20:31Z AND AGAIN AT 20:44:46Z, THE FOURTH AND FIFTH SUCH READING ACROSS TWO INDEPENDENT LANES, 110 MINUTES AFTER "DOING IT NOW". R-AM's CONDITION IS UNMET, SO THE DECLARATION, THE R-V LIFT AND THE Q.2 NOTIFICATION ARE ALL WITHHELD.**
 >
