@@ -1387,6 +1387,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the armed default now enters the hash and advances both pins — the point
     # of (b'-1), not a defect in the registration.
     "ccs_retrofit_capex_co2_scaling",
+    # capx D65 Act A: the CCS retrofit FIXED-COST shape gate (ΔFOM and the
+    # capture VOM adder scaled by the same ``k`` seam 1 already applies to the
+    # island's capex). GATED default off, byte-identical unarmed — the off path
+    # never enters the branch. Dropped from the hash at its ``False`` default so
+    # every pre-existing cache key of all six ISOs is byte-stable (the default
+    # ``e5ecd4105ada3e58`` and the bare backcast ``6a2845e50951394e`` both
+    # re-resolve unmoved with the field absent AND explicitly ``False``); an
+    # armed run keys distinctly. SHARED field — very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "ccs_retrofit_fixed_cost_co2_scaling",
     # capx D52: the NYISO adequacy-requirement devintage gates (published
     # forecast peak; per-capability-year adopted IRM × (1 − derate)) — both
     # default-off, byte-identical unarmed (the requirement resolver returns
@@ -1916,6 +1926,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D50: CCS retrofit capex-scaling + CHP-exclusion gate, registered at
     # its shipping False default (an armed run keys distinctly).
     "ccs_retrofit_capex_co2_scaling": "False",
+    # capx D65 Act A: CCS retrofit fixed-cost shape gate, registered at its
+    # shipping False default (an armed run keys distinctly).
+    "ccs_retrofit_fixed_cost_co2_scaling": "False",
     # capx D52: NYISO adequacy-requirement devintage gates, registered at
     # their shipping False defaults (armed runs key distinctly).
     "nyiso_requirement_forecast_peak": "False",
@@ -3864,6 +3877,67 @@ class ScenarioConfig:
     # is a POSTURE, the same admissibility class as Q30, not a transfer
     # (rule 25 untouched). Evidence: FINDING-capx-d50-2026-09-04.md §8.
     ccs_retrofit_capex_co2_scaling: bool = True
+
+    # capx D65 Act A (2026-09-05) — the FOURTH SEAM of the same construction,
+    # adjudicated zero-solve by capx D64 (FINDING-capx-d64-2026-09-05.md §1).
+    # GATED, default OFF; requires the D50 field above (there is no ``k``
+    # without seam 1, so ``__post_init__`` refuses the pair).
+    # THE SEAM. D50 sized the capture ISLAND'S CAPEX to the host's captured
+    # CO2 (``capex_scale = captured / captured_ref``) and left the two
+    # fixed-cost legs at the reference host's per-MW / per-MWh values: ΔFOM
+    # ($/MW-yr, ``fixed_om_gas_cc_ccs`` − ``fixed_om_gas_cc``) and the capture
+    # VOM adder ($/MWh, ``ccs_retrofit_vom_adder``). Both therefore DILUTE per
+    # captured tonne as the host's rate rises — a host capturing 1.8× the
+    # reference flow pays 1.8× the island but only 1.0× the island's O&M — so
+    # the carbon-0 clearing threshold in host emissions MOVED (er ≳ 0.46 →
+    # ≳ 0.58–0.63 t/MWh) instead of vanishing, and the retrofit margin still
+    # rose with host emissions inside that band.
+    # WHAT THE SOURCE SAYS THE LEGS ARE (D64 §1.2 — the basis, not a fit).
+    # ATB 2024's fossil methodology page states it outright: "property taxes
+    # and insurance (FOM component) as well as maintenance labor (FOM
+    # component) and maintenance materials (VOM component) are calculated as a
+    # percentage of TPC", and out-year O&M "are adjusted for the CAPEX
+    # reductions". NETL Rev 4a's B31A→B31B.90 exhibits decompose the capture
+    # increment to 95.5 % TPC-proportional for the FIXED leg (taxes+insurance
+    # 64.7 % at 2 % of TPC, maintenance labor 24.6 %, admin/support 7.1 %; the
+    # residual 3.6 % is a +1.3 operators/shift headcount step) and 100 %
+    # island-proportional for the VARIABLE leg (maintenance material 58.5 % of
+    # TPC, plus per-tonne consumables: solvent makeup 19.4 %, TEG/reclaimer
+    # waste 9.9 %, capture-cooling water 12.1 %). Nothing in either increment
+    # is proportional to the HOST's MW or MWh.
+    # THE CONSTRUCTION (zero DOF, no new constant). Under seam 1 the island's
+    # TPC for host h is ``capex_ref × k_h``, so a leg that is a fraction of TPC
+    # scales by the same k_h: ``ΔFOM_h = ΔFOM_ref × k_h`` and
+    # ``vom_adder_h = vom_adder_ref × k_h``, with k_h the D50 factor unchanged
+    # (``capex_scale``, ``ccs.py::ccs_retrofit_captured_ref_t_per_mwh``,
+    # 0.32319 t/MWh). Every factor is an existing cited constant — rules 5, 21,
+    # 23. The one approximation, stated: folding the 3.6 % operating-labor
+    # headcount step into the TPC-proportional part costs
+    # ``0.036 × 35,000 × (k − 1)`` ≈ $1,300/MW-yr at k = 2 against a ~$200,000
+    # /MW-yr bar (0.6 %), below the cap-packing unit; splitting it out would
+    # add a constant to remove a 0.6 % effect and is NOT recommended.
+    # WHAT THIS FIELD DOES NOT TOUCH, stated at the definition:
+    #  * ``co2_transport_storage_cost`` is ALREADY per tonne and charged on
+    #    ``captured`` — outside this seam, and ATB excludes beyond-the-fence
+    #    CO2 costs from its FOM/VOM, so there is no double count.
+    #  * The HR-penalty leg (per host MWh × hr, physically the reboiler steam
+    #    draw) is D30 §5 row 5's question and is left where it is.
+    #  * The LEVEL of ``ccs_retrofit_vom_adder`` (8.0 $/MWh, registry
+    #    ``needs-citation``, 2.7–3.6× every published basis — ATB 2024
+    #    (4.8 − 2.1) × 1.0909 = 2.95 2026$; NETL Rev 4a 2.23). D64 §2.4 is the
+    #    measurement; re-identifying it is capx D65 ACT B = owner card C-15 /
+    #    Q47, NOT this field. This field scales whatever level is registered.
+    #  * DISCLOSED AND DEFERRED (director ruling r#41 = D64 §4.2 option (i)):
+    #    the CONVERTED unit's LATER retirement FOM. ``retirements.py::
+    #    _THERMAL_FOM`` reads FOM by fuel type (``fixed_om_gas_cc_ccs`` for
+    #    every ``gas_cc_ccs`` unit; ``Generator`` carries no per-unit FOM), so
+    #    a host converted at k = 1.8 is screened for retirement in later years
+    #    at the REFERENCE island's FOM, not its own — second-order (≤ $28,000
+    #    /MW-yr on a unit whose margin is §45Q-dominated) and a ROUTED
+    #    successor (option (ii): ``Generator.fom_adder_per_kw_yr``), not this
+    #    lane's: it touches the retirement screen and D65 stays one seam.
+    # The off path never enters the branch — byte-identical by construction.
+    ccs_retrofit_fixed_cost_co2_scaling: bool = False
 
     # Tier 2 (expert/sensitivity) — Fleet aggregation control
     heat_rate_bin_count: int | None = None  # Override default bin count per fuel type.
@@ -16606,6 +16680,26 @@ class ScenarioConfig:
                 "from forward load/VRE drivers; the measured-plan fallback "
                 "(ASPLANNP433) is zero for forecast years."
             )
+        # capx D65 Act A: the CCS retrofit fixed-cost shape gate has no meaning
+        # without seam 1. Its whole construction is "scale the two fixed-cost
+        # legs by the SAME k the island's capex is scaled by", and ``k``
+        # (``ccs.py::apply_ccs_retrofit``'s ``capex_scale``) is 1.0 for every
+        # host unless ``ccs_retrofit_capex_co2_scaling`` is on. Arming this
+        # alone would therefore be a silent no-op that nonetheless keys
+        # distinctly — refuse it loudly instead (rule 24: no tunable that
+        # cannot change a solve).
+        if self.ccs_retrofit_fixed_cost_co2_scaling and (
+            not self.ccs_retrofit_capex_co2_scaling
+        ):
+            raise ValueError(
+                "ccs_retrofit_fixed_cost_co2_scaling requires "
+                "ccs_retrofit_capex_co2_scaling: the fixed-cost legs are scaled "
+                "by the SAME captured/captured_ref factor seam 1 applies to the "
+                "capture island's capex, and that factor is 1.0 for every host "
+                "when seam 1 is off (capx D65 Act A / FINDING-capx-d64-2026-09-05.md "
+                "\u00a74.2). Enable ccs_retrofit_capex_co2_scaling or clear "
+                "ccs_retrofit_fixed_cost_co2_scaling."
+            )
 
     @property
     def real_discount_rate(self) -> float:
@@ -17270,6 +17364,7 @@ TIER_TAGS: dict[str, int] = {
     "ccs_retrofit_max_gw_per_year": 2,
     "ccs_retrofit_min_remaining_life": 2,
     "ccs_retrofit_capex_co2_scaling": 2,
+    "ccs_retrofit_fixed_cost_co2_scaling": 2,
     "heat_rate_bin_count": 2,
     "use_campd_bins": 2,
     "campd_bins_path": 2,

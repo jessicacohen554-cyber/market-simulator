@@ -272,10 +272,53 @@ def apply_ccs_retrofit(
     rate per net electric MWh charges the steam host's fuel to
     electricity, so the credit would be paid on tonnes the electric
     island does not exist to capture. The off path never enters either
-    branch (byte-identical by construction). What the scaling leaves
-    reference-host-sized, stated: ``ΔFOM`` ($/MW-yr) and the capture VOM
-    adder ($/MWh) — the clearing threshold in host emissions moves, it
-    does not vanish (``PREDECL-capx-d50-2026-09-04.md`` §1.2).
+    branch (byte-identical by construction).
+
+    **The fixed-cost legs sized to the same island (capx D65 Act A,
+    ``config.ccs_retrofit_fixed_cost_co2_scaling``, GATED default off;
+    requires the D50 gate above).** What seam 1 left reference-host-sized
+    was ``ΔFOM`` ($/MW-yr) and the capture VOM adder ($/MWh): both stayed
+    at the reference host's per-MW / per-MWh values while §45Q was credited
+    on the host's OWN tonnes, so both DILUTED per captured tonne as ``er``
+    rose and the carbon-0 clearing threshold merely MOVED (er ≳ 0.46 →
+    ≳ 0.58–0.63 t/MWh) instead of vanishing. Capx D64 read what the legs
+    are made of in their own sources — ATB 2024's fossil methodology states
+    that property taxes & insurance and maintenance labor (FOM) and
+    maintenance materials (VOM) "are calculated as a percentage of TPC",
+    and NETL Rev 4a's B31A→B31B.90 exhibits decompose the capture increment
+    to **95.5 %** TPC-proportional (fixed) and **100 %** island-proportional
+    (variable), with nothing in either proportional to the HOST's MW or MWh.
+    Under seam 1 the island's TPC is ``capex_ref × k``, so on, both legs
+    carry the SAME ``k = captured / captured_ref`` this function already
+    computes as ``capex_scale``: ``ΔFOM × k``, ``vom_adder × k``, and the
+    conversion adds the SAME scaled adder to ``gen.vom`` so a converted
+    unit's dispatch VOM is the VOM its own screen priced. Zero DOF — no new
+    constant, no new reference host — and a ``k = 1`` host is invariant to
+    the digit. The one approximation, stated: the 3.6 % operating-labor
+    headcount step is folded into the TPC-proportional part, worth
+    ``0.036 × ΔFOM_ref × (k − 1)`` ≈ $1,300/MW-yr at ``k = 2`` against a
+    ~$200,000/MW-yr bar (0.6 %). The off path never enters the branch
+    (byte-identical by construction).
+    ``co2_transport_storage_cost`` is already per tonne and is outside the
+    seam; the ``ccs_retrofit_vom_adder`` LEVEL (8.0 $/MWh, registry
+    ``needs-citation``, 2.7–3.6× every published basis) is capx D65 **Act
+    B** = owner card C-15 / Q47, not this gate — this gate scales whatever
+    level is registered.
+    (``FINDING-capx-d64-2026-09-05.md`` §§1.2–1.3, §4.2.)
+
+    **DISCLOSED AND DEFERRED (director ruling r#41 = D64 §4.2 option (i)):
+    the converted unit's LATER retirement FOM.**
+    ``retirements.py::_THERMAL_FOM`` reads FOM by FUEL TYPE
+    (``fixed_om_gas_cc_ccs`` for every ``gas_cc_ccs`` unit;
+    :class:`~market_sim.data.fleet.Generator` carries no per-unit FOM), so a
+    host converted here at ``k = 1.8`` is screened for retirement in later
+    years at the REFERENCE island's FOM rather than its own. It is
+    second-order (the going-forward bar moves by ≤ $28,000/MW-yr on a unit
+    whose margin is §45Q-dominated) and it is a ROUTED successor — option
+    (ii), a ``Generator.fom_adder_per_kw_yr`` set at conversion to
+    ``ΔFOM_ref × (k − 1)`` and added in the retirement FOM lookup — not this
+    lane's, because it touches the retirement screen and D65 stays one seam.
+    It is recorded here rather than silently absorbed.
 
     Args:
         fleet: Current generator fleet.
@@ -331,12 +374,19 @@ def apply_ccs_retrofit(
     retrofit_capex_per_mw_ref = adjusted_capex_kw * 1000.0
     scale_capex = bool(config.ccs_retrofit_capex_co2_scaling)
     captured_ref = ccs_retrofit_captured_ref_t_per_mwh(config) if scale_capex else None
+    # capx D65 seam 4: scale the two FIXED-COST legs by the same k. The
+    # config validator guarantees this is never armed without seam 1, so
+    # ``capex_scale`` below is a real per-host factor whenever it is True.
+    scale_fixed = bool(config.ccs_retrofit_fixed_cost_co2_scaling)
 
     # Going-forward fixed-cost delta between the two states, $/MW-yr — the
     # same FOM × multiplier construction the retirement screen prices each
     # state at, so the uplift stays consistent with the model's own
     # per-state accounting.
-    delta_fom_per_mw_yr = (
+    # Under seam 4 (capx D65) each candidate pays this REFERENCE value
+    # × its own k — the leg is 95.5 % a TPC fraction in its own source;
+    # off, every host pays it flat, which is what dilutes it per tonne.
+    delta_fom_per_mw_yr_ref = (
         config.fixed_om_gas_cc_ccs * config.retirement_fom_multiplier_gas_cc_ccs
         - config.fixed_om_gas_cc * config.retirement_fom_multiplier_gas_cc
     ) * 1000.0
@@ -383,16 +433,34 @@ def apply_ccs_retrofit(
             capex_scale = 1.0
         retrofit_capex_per_mw = retrofit_capex_per_mw_ref * capex_scale
 
+        # capx D65 seam 4: the island's O&M is the island's, not the host's.
+        # Both fixed-cost legs are fractions of the capture island's TPC in
+        # their own sources — ATB 2024 ("property taxes and insurance (FOM
+        # component) as well as maintenance labor (FOM component) and
+        # maintenance materials (VOM component) are calculated as a percentage
+        # of TPC"), NETL Rev 4a's B31A→B31B.90 exhibits at 95.5 % / 100 %
+        # (FINDING-capx-d64-2026-09-05.md §1.2) — and under seam 1 that TPC is
+        # ``capex_ref × k``. So both legs carry the SAME k, and per captured
+        # tonne every host then pays the same island O&M. Off, both stay at
+        # the reference host's per-MW / per-MWh values and dilute as er rises.
+        fixed_cost_scale = capex_scale if scale_fixed else 1.0
+        delta_fom_per_mw_yr = delta_fom_per_mw_yr_ref * fixed_cost_scale
+        vom_adder_per_mwh = config.ccs_retrofit_vom_adder * fixed_cost_scale
+
         # Full variable cost per state. Post-retrofit pays fuel at the
         # penalized heat rate, the capture VOM adder, carbon on the residual
         # rate only, and transport/storage on every captured tonne (the same
         # per-tonne cost the new-build CCS LCOE carries — a stored tonne
         # earning §45Q pays its way to the reservoir on either path).
+        # ``co2_transport_storage_cost`` is ALREADY per tonne and charged on
+        # ``captured``, so it sits OUTSIDE seam 4 and is never scaled again
+        # (ATB excludes beyond-the-fence CO2 costs from its FOM/VOM, so there
+        # is no double count — D64 §1.3).
         mc_unabated = old_hr * gas_price_per_mmbtu + gen.vom + old_er * carbon_price
         mc_post = (
             new_hr * gas_price_per_mmbtu
             + gen.vom
-            + config.ccs_retrofit_vom_adder
+            + vom_adder_per_mwh
             + new_er * carbon_price
             + captured * config.co2_transport_storage_cost
         )
@@ -473,6 +541,14 @@ def apply_ccs_retrofit(
                     # (1.0 whenever the scaling gate is off).
                     "retrofit_capex_per_mw": retrofit_capex_per_mw,
                     "capex_scale": capex_scale,
+                    # capx D65 seam 4: the factor the two FIXED-COST legs
+                    # were charged at (1.0 whenever the gate is off, so an
+                    # unarmed run's rows are byte-identical), and the capture
+                    # VOM adder this host actually paid — the SAME value the
+                    # conversion adds to ``gen.vom``, so a converted unit's
+                    # dispatch VOM is always the VOM the screen priced.
+                    "fixed_cost_scale": fixed_cost_scale,
+                    "vom_adder_per_mwh": vom_adder_per_mwh,
                 },
             )
         )
@@ -488,7 +564,11 @@ def apply_ccs_retrofit(
             continue
         # Convert the generator in place -- a retrofit is irreversible.
         gen.heat_rate = gen.heat_rate * (1.0 + config.ccs_retrofit_hr_penalty)
-        gen.vom = gen.vom + config.ccs_retrofit_vom_adder
+        # capx D65 seam 4: the converted unit's dispatch VOM must be the VOM
+        # the screen priced its uplift at, so the per-host scaled adder is
+        # read back off this candidate's own log row rather than re-read flat
+        # from config. Unarmed, ``vom_adder_per_mwh`` IS the config value.
+        gen.vom = gen.vom + log_entry["vom_adder_per_mwh"]
         gen.emission_rate_co2 = gen.emission_rate_co2 * (
             1.0 - config.ccs_retrofit_capture_rate
         )
