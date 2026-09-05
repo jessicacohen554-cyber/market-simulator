@@ -180,13 +180,45 @@ CES-premium rows 3/7; WS-3a → nothing (memo); WS-4a → Load-HI row 1 (partial
 
 Stems are recorded so a relaunch (`…-r2`) can never collide with the original.
 
-| refresh | lane | model | branch stem issued | data profile | plan §7 body used |
+| refresh | lane | model (id) | branch stem issued | data profile | plan §7 body used |
 |---|---|---|---|---|---|
-| r#1 | SCN-WS0 | Opus | `claude/scn-ws0-k7m2` | `neiso` | §7 "WS-0", verbatim |
-| r#1 | SCN-WS1a | Fable | `claude/scn-ws1a-p4qd` | `caiso` | §7 "WS-1a", verbatim + the D-1 gate split (item 1 conditional) |
-| r#1 | SCN-WS2a | Fable | `claude/scn-ws2a-t9xb` | `neiso` | §7 "WS-2a", verbatim |
-| r#1 | SCN-WS3a | Fable | `claude/scn-ws3a-r6vn` | `code` | §7 "WS-3a", verbatim |
-| r#1 | SCN-WS4a | Opus | `claude/scn-ws4a-h3zc` | `all` | §7 "WS-4" **items 2 and 5 only** (items 1/3/4 split to WS-4b/WS-4c, wave 2) |
+| r#1 | SCN-WS0 | **Opus** `claude-opus-5` | `claude/scn-ws0-k7m2` | `neiso` | §7 "WS-0", verbatim |
+| r#1 | SCN-WS1a | **Fable** `claude-fable-5-1` | `claude/scn-ws1a-p4qd` | `caiso` | §7 "WS-1a", verbatim + the D-1 gate split (item 1 conditional) |
+| r#1 | SCN-WS2a | **Fable** `claude-fable-5-1` | `claude/scn-ws2a-t9xb` | `neiso` | §7 "WS-2a", verbatim |
+| r#1 | SCN-WS3a | **Fable** `claude-fable-5-1` | `claude/scn-ws3a-r6vn` | `code` | §7 "WS-3a", verbatim |
+| r#1 | SCN-WS4a | **Opus** `claude-opus-5` | `claude/scn-ws4a-h3zc` | `all` | §7 "WS-4" **items 2 and 5 only** (items 1/3/4 split to WS-4b/WS-4c, wave 2) |
+
+### 5.1 Model assignment — the standing rule and the r#1 assignments
+
+**The rule, in force for every SCN lane at every refresh.** Rule 27 `[R-PUSH]` second half: any
+session whose scope writes core infrastructure — anything under `src/market_sim/`,
+`scripts/run_*.py` / `scripts/score_*.py`, `CLAUDE.md`, `model-methodology-spec.md`, or
+`.github/workflows/` — is **Opus or Fable, never Sonnet**. The desk charter tightens this to
+**no Sonnet on any SCN lane at all**, docs-only lanes included, so rule 27 is never the binding
+constraint here — the plan's own label is. Within Opus/Fable the split follows the director's
+r#20 doctrine, restated at plan §3: **`[FABLE]` for structural / adjudication work** (a design
+whose shape is still being decided, a semantics change, an argument against a standing ruling)
+and **`[OPUS]` for pre-declared execution** (a charter whose deliverables and gates are already
+written down and whose job is to carry them out exactly).
+
+| lane | label | model id | why this side of the split |
+|---|---|---|---|
+| SCN-WS0 | `[OPUS]` | `claude-opus-5` | Execution. Six enumerated deliverables, each with its own commit and its own trivial-first test; the paired T0's gate is arithmetic (by-fuel CO2 sums to `emissions_mt`). Nothing here is a judgment call. Writes `src/` + `scripts/` → rule 27 binds. |
+| SCN-WS1a | `[FABLE]` | `claude-fable-5-1` | Adjudication. It changes what an existing registered field *resolves to* on three ISOs, argues the D-1 evidence memo the owner rules on, and must prove byte-identity across every keeper key. Writes `src/` → rule 27 binds. |
+| SCN-WS2a | `[FABLE]` | `claude-fable-5-1` | Structural. A new LP row family, a coupling relaxation (`rows.py:1346`) that a later lane inherits, two new fields with a mutual-exclusion guard, and three postures to document. Writes `src/` → rule 27 binds. |
+| SCN-WS3a | `[FABLE]` | `claude-fable-5-1` | Pure adjudication — the memo argues, line by line, that a declared scenario axis is a different admissibility class from the driver `ffr-5b` ruled out. Docs-only, so rule 27's letter would permit Sonnet; **the charter forbids it**, and this is the least Sonnet-shaped task in the wave. |
+| SCN-WS4a | `[OPUS]` | `claude-opus-5` | Execution. Transcribe published siting geography with citations, hold shares to 1.0, re-check one immateriality arithmetic, enumerate a gap list. Rule 14 provenance work with a fixed shape. Writes `config/constants.py` → rule 27 binds. |
+
+**Queued lanes carry their labels forward** (assigned now so a relaunch cannot drift): SCN-WS1b
+Opus, SCN-WS2b Opus, SCN-WS4b **Fable** (it is the adequacy *adjudication* — it pre-declares how
+each ISO's high case is read, and pre-declaring a reading is the Fable half of plan §3 WS-4),
+SCN-WS4c Opus, SCN-WS3b **Fable** (build-from-a-signed-design, but it is the first writer of a
+new mechanism), SCN-WS3c Opus, SCN-WS5A-\<ISO\> ×6 + -SYNTH Opus.
+
+**The desk itself.** The charter assigns **Fable** to SCN-DESK; this session is configured
+`claude-opus-5` and the serving model may differ again. Recorded against interest — it is a
+divergence from the charter, it affects only adjudication tone and not any lane's assignment,
+and a successor desk session should be opened on Fable.
 
 **Splits and gates applied to the plan's §7 bodies (never widenings):**
 - WS-1a: plan item 1 is conditional on card D-1 reading FLOOR; unsigned → items 2–3 + the
