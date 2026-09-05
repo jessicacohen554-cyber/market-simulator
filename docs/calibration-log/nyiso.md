@@ -11919,3 +11919,77 @@ complete). **Pre-existing, not this lane's:**
 `test_walk_inputs_trivial_single_year` (integration-marked) fails identically
 at HEAD. **Spent: NOTHING. Solved: NOTHING.** Record:
 `docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md`.
+
+### 2026-09-05 — nyiso-191 (`backcast-calibration`): the `CC_CHP` scope extension of `cc_capacity_reconcile` is TESTED and **REJECTED on rule 19** — keeper unchanged, artifact reverted
+
+**Markers:** D56 had landed at entry; `complete.NYISO` was already keyed to the
+current keeper with its determination re-verified without a solve by the D56-R
+records lane and `audit_keepers --iso NYISO` PASS, so the **rule-22 D-5(b) duty
+was already discharged** — nothing re-keyed, no marker requested. Training years
+only.
+
+**Solves: TWO** — `nyiso191_control` (registered `2026-09-05-nyiso-191-control`,
+**BIT-IDENTICAL to the keeper**: 0 of 52,560 P1 zonal prices differ in each of
+2023/2024/2025) and the arm `nyiso191_ccchp_scope` (registered
+`2026-09-05-nyiso-191-ccchp-capacity`, **a REJECTED PROBE**). Bars pushed before
+the derive was edited and before any solve
+(`results/calibration/PREREG-nyiso191-ccchp-capacity-scope.md`).
+
+**Phase 0 refuted the session's own premise before the build.** The frozen
+population rule reaches none of the three over-runners nyiso-190 named: **Sithe
+Independence 54547** gets a **RAISE** (demonstrated peak 1,170 MW *exceeds* its
+1,157.8 MW model capacity — its +3.19 TWh over-run is a **DUTY** defect, not a
+capacity one), **Brooklyn Navy Yard 54914** is declined by the frozen CT-only
+guard, **Empire 56259** sits inside the frozen 1.10 margin. The widening reaches
+8 small/mid cogen rows, net −542.5 MW, and phase 0 predicted energy-inertness in
+advance (model energy above the caps 0.0000 / 0.0143 / 0.0000 TWh). It was run
+anyway on a rule 14 + rule 13 licence stated before the build.
+
+**Every bar came back as pre-registered.** V1 control bit-identical; V2 no other
+ISO's table moves (NEISO/CAISO/PJM/MISO byte-identical at the default; ERCOT's
+raise-path filter proven identical); G-DELTA the artifact alone; B1 engaged
+(19 caps / −1,282 MW vs 12 / −740 MW); **B2's falsifiable prediction HELD**
+(worst gas-family movement **0.0034 TWh** vs a 0.05 TWh bar); **B3 no
+criterion-level status flip** — CALIBRATED, grade 7, C3c ledgered on both sides,
+every magnitude ≤ 0.01 TWh (C1-2024 `CC_REGULAR` +3.33 → +3.34 TWh).
+
+**REJECTED ON RULE 19 `[R-ONE-MECH]`, NOT on the residual.** Chasing why only
+2 of 8 plants' LP capacity moved found the cause: **`chp_layup_duty_curve`**
+(row `offer_curve_by_group`, NYISO cell **K**, keeper-armed, nyiso-149) already
+withholds those plants to a **measured price-conditional duty that binds tighter
+than the demonstrated-peak cap at every one of its 6 cohort members** — Selkirk
+199.4 vs 378.0 MW, Lockport 48.9 vs 142.3, Yerkes 28.2 vs 54.6, Oswego 37.1 vs
+58.5, Beaver Falls 34.1 vs 84.6, Olean 45.5 vs 80.9. The widening would stack a
+second bound on an owned phenomenon. The two rows outside the cohort pull
+**opposite** ways: World Generation X improves (CF 0.675 → 0.523 vs a measured
+0.353) while **Sithe's raise pushes the worst over-runner further out** (0.932 →
+0.939 vs 0.618). **Structural integrity does not improve** — the plant-grain
+offsetting misallocation is unchanged (7.38 / 8.18 TWh) and 0.07 TWh *worse* in
+2025 — so it fails the *antecedent* of the owner's standing formula, not its
+consequent.
+
+**Disposition.** Keeper unchanged. The canonical
+`cc_capacity_reconcile_NYISO.csv` is **reverted** to the `origin/main` blob
+`e0b1610` (hash-verified) so the keeper reads its own table; both solves' tables
+are preserved bundle-local. The derive's `--classes` argument is **kept**
+(default `CC_REGULAR`, V2-proved a no-op for every ISO) with tests asserting no
+committed table carries a widened scope. NYISO matrix shard + §5.5 queue updated
+in-session.
+
+**Handed forward.** (1) **Sithe 54547 is an un-owned DUTY object** — CF 0.93 /
+0.97 vs a measured 0.62, outside both mechanisms' reach, the largest single
+per-plant over-run in the fleet. (2) **`ST_GAS` is a ZONAL placement error**
+(measured, no lever proposed): sign stable in all four zones, all three years —
+NYC over (+4.26 / +2.24 / +0.41), Long Island under (−1.65 / −2.26 / −2.28),
+Capital-Hudson under (−0.95 / −1.03 / −1.66), Upstate-West under; the class net
+hides 3.28 / 2.53 / 0.84 TWh of offsetting misallocation. (3) **The derive's
+CT-only test is pooled** and was diluted by World Generation X's zero 2025
+EIA-923 row — the bench's per-year test flags it at 1.378× — affecting exactly
+the one row that bound; a cross-ISO rule-23 repair.
+
+Evidence: `docs/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md`,
+`results/calibration/PREREG-nyiso191-ccchp-capacity-scope.md`,
+`_nyiso191_ccchp_scope_phase0.json`, `_nyiso191_stgas_placement.json`,
+`scripts/gen_nyiso191_attestation.py`, probes
+`scripts/probes/nyiso191_ccchp_scope_phase0.py` / `nyiso191_stgas_placement.py`,
+`tests/curation/test_derive_cc_capacity_reconcile_scope.py`.
