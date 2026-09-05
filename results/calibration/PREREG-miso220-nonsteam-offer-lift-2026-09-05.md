@@ -185,3 +185,76 @@ unchanged, and report why.
 
 **C8 forced share:** CT_PEAKER 0.2280 / 0.1573 / 0.1319 (budget 0.15);
 ST_GAS 0.1479 / 0.1555 / 0.2070 (budget 0.30); CC_REGULAR 0.0 / 0.0 / 0.0.
+
+---
+
+# ADDENDUM A — RULE 29 `[R-SCREEN]` SCREEN PRECOMMIT (written BEFORE the screen runs)
+
+**Process error, corrected on the owner's challenge (2026-09-05).** The arm was first
+launched as a full `--year 2023 2024 2025` span. That skips rule 29 `[R-SCREEN]`, which
+requires a SCREEN solve on ONE year before the full span is spent. The owner caught it;
+the 3-year invocation was **killed ~15 min in, before any year completed**, and no
+bundle from it exists. Nothing was read from it. This addendum is written **before the
+screen is launched**, as the rule requires.
+
+## A.1 The screen year, and why it is not a residual-driven choice
+
+Rule 29 requires the screen year be the one where the mechanism's **own measured
+footprint is largest** — explicitly NOT the year with the biggest residual. Measured
+from the committed `_miso220_liveness.json` (zero-LP, already run):
+
+| year | tranches moved | capacity moved | lifted capacity |
+|---|---:|---:|---:|
+| 2023 | 1,604 | 74,251.8 MW | 97,011.3 MW |
+| 2024 | 1,604 | 74,251.8 MW | 97,011.3 MW |
+| 2025 | 1,604 | 74,251.8 MW | 97,011.3 MW |
+
+**The footprint is IDENTICAL in all three years** — the lift is a static multiplier on a
+static tranche set, so it is exactly equally live everywhere. There is therefore no
+footprint-largest year, the rule's ordering criterion is silent, and **2025 is selected**
+as the year the arm must clear in any case. This is recorded so the choice cannot later
+be read as residual-driven selection: had the footprints differed, the largest would have
+been taken regardless of which year missed.
+
+**SCREEN YEAR: 2025.** Bundle `results/calibration/miso220_nonsteamlift_screen2025`,
+a **throwaway diagnostic probe** — never registered on the dashboard, never a keeper,
+never quoted as a keeper number, and 2025 is re-solved inside the full bundle if the
+screen clears (rule 16 `[R-ALLYEARS]` untouched).
+
+## A.2 The screen gate — STRUCTURAL, and a STOP gate only
+
+Per rule 29 the gate asks whether the mechanism does what its own arithmetic says, and
+**is never gated on the target residual**. It may kill the arm; it may not promote it.
+
+* **G-1 (direction and order of magnitude).** The pre-solve delta raises cap-weighted
+  offers by `CC_REGULAR` +9.29 %, `CC_CHP` +8.58 %, `CT_PEAKER` +7.54 %, `CT_CHP` +7.48 %,
+  `COAL` +6.53 %, `ST_GAS` +0.00 %. The system load-weighted price must therefore RISE,
+  by **between +3.0 % and +12.0 %**. A fall, or a rise outside that range, means the
+  mechanism is not doing what its arithmetic implies. **KILL.**
+* **G-2 (the merit-order identity the arm asserts).** The arm's whole rationale is that
+  holding steam gas makes it relatively cheaper so it gains dispatch. **`ST_GAS`
+  grid-delivered energy in 2025 must RISE against the control's** (C1 −5.820 TWh must
+  move toward zero). If `ST_GAS` energy falls, the merit-order story is refuted at the
+  screen. **KILL.**
+* **G-3 (footprint confinement).** No non-target load-bearing criterion may flip
+  PASS → FAIL in 2025. The 2025 C1 cells all carry room (CC_REGULAR −2.061,
+  CT_PEAKER −3.276, ST_GAS −5.820, COAL_PRB −4.231 against ±8.00), so a flip would be a
+  genuine surprise. **KILL.**
+
+**NOT A GATE, and pre-committed as such: C3a-2025.** It is REPORTED from the screen and
+carries no decision weight whatsoever. A screen that read "did C3a-2025 improve" would be
+the fitted-mechanism selection rule 1 `[R-STRUCT]` forbids, done one year at a time.
+
+## A.3 What the screen CANNOT do, stated now
+
+**The screen cannot adjudicate this arm, and clearing it is not evidence the arm is a
+keeper.** The two kills that actually decide admissibility live in the other two years:
+
+* **K-1** — the named ex-ante risk is `CT_PEAKER`-**2023** exiting ±8.00 TWh;
+* **K-3** — the decisive mechanism test is `ST_GAS`-**2024** landing better than −7.155 TWh.
+
+Neither can fire in a 2025-only screen. So the screen's value here is asymmetric and
+narrow: it kills the arm cheaply (~22 min instead of ~65) if the mechanism misbehaves
+structurally, and otherwise licenses nothing beyond spending the full span. **All of
+§5's predictions and §6's kills remain scored ONLY on the full 2023–2025 bundle**, which
+is the sole basis on which promotion may be considered.
