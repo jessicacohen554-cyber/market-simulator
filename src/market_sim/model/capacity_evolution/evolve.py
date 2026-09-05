@@ -100,6 +100,8 @@ def evolve_fleet(
     entry_rate_caps_mw: dict[str, float] | None = None,
     entry_pipeline: list[dict] | None = None,
     exit_rate_cap_mw: float | None = None,
+    locality_prices_by_zone: dict[str, float] | None = None,
+    locality_cost_ratio_by_zone: dict[str, float] | None = None,
 ) -> tuple[
     list[Generator],
     dict[str, int],
@@ -258,6 +260,14 @@ def evolve_fleet(
             exit-side counterpart of ``entry_rate_caps_mw`` on the SAME
             queue. Threaded into the step-3 retirement screen (pipeline rule
             only). ``None`` (default) is byte-identical.
+        locality_prices_by_zone, locality_cost_ratio_by_zone: capx D59
+            (``locality_capacity_curves``) — the per-zone locality capacity
+            prices ($/firm-MW-yr, the ICAP Manual §5.15.2 max is applied at
+            the price seam) and the published locality/NYCA Gross-CONE cost
+            ratios, computed once per year by the runner on the ENTERING
+            fleet beside ``reserve_position`` and threaded verbatim into the
+            retirement and thermal-entry screens. ``None`` / empty (default,
+            gate off) is byte-identical.
 
     Returns:
         Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log,
@@ -620,6 +630,7 @@ def evolve_fleet(
             reserve_position=reserve_position,
             exempt_unit_ids=_retrofitted_ids | _dated_exempt,
             exogenous_exits=_exogenous_pending,
+            locality_prices_by_zone=locality_prices_by_zone,
         )
         if _rec:
             events["retirements"].extend(
@@ -828,6 +839,8 @@ def evolve_fleet(
             peak_demand_mw=peak_demand_used,
             entry_rate_caps_mw=entry_rate_caps_mw,
             entry_pipeline=entry_pipeline,
+            locality_prices_by_zone=locality_prices_by_zone,
+            locality_cost_ratio_by_zone=locality_cost_ratio_by_zone,
             procured_flow_mw=_procured_flow_mw or None,
             entry_reprice=entry_reprice,
         )

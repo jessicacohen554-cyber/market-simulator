@@ -273,6 +273,9 @@ VERDICT_MAP = {
     # would contradict; the bare key is untouched. NOTHING ARMS.
     "nyiso-2021-2025-realized-t1h-d52-devintage": "nyiso-t1h-d52-devintage",
     "nyiso-2021-2025-realized-t1h-d52-curveon": "nyiso-t1h-d52-curveon",
+    # capx D59 (2026-09-05): the NYISO locality-half A/B arm (the D52 curve-ON
+    # posture + locality_capacity_curves), suffixed; the bare key is untouched.
+    "nyiso-2021-2025-realized-t1h-d59-locality": "nyiso-t1h-d59-locality",
     # capx-D45R (2026-09-04), the D45 close-out at HEAD plus D46 Stages 2 and 3
     # (owner rulings Q33 + Q35). The PJM live-posture replay takes the bare key;
     # the NEISO SHIPPED-posture leg (neiso_net_icr_requirement False, as

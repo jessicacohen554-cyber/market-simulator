@@ -266,6 +266,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     pjm_demand_response_supply: { cell: ".", fc: ".", ev: "n/a by market design (capx D48): ERCOT's Load Resources / ERS ARE netted from the peak by its own CDR construction (the 'Firm Peak Load' the registry entry reproduces) — the netting IS the ISO's design here, so a supply-side form would be the wrong convention." },
     nyiso_requirement_forecast_peak: { cell: ".", fc: ".", ev: "n/a by market design (capx D52): energy-only — no procurement requirement is set on any published forecast peak; the Board target RM composite on the model's peak is the only adequacy construct." },
     nyiso_requirement_vintage_factors: { cell: ".", fc: ".", ev: "n/a by market design (capx D52): energy-only — no IRM adoption or ICAP-UCAP translation exists." },
+    locality_capacity_curves: { cell: ".", fc: ".", ev: "n/a: energy-only, no capacity market (capx D59)." },
     adequacy_accounting_ratio_dated_net: { cell: ".", fc: ".", ev: "n/a by market design (capx D51): energy-only, no adequacy ledger ratio to re-identify (the D31 row is already n/a here)." },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },

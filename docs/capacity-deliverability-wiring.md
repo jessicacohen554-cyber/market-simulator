@@ -88,3 +88,20 @@ Docs to reconcile once the approach is settled:
   header and raw READMEs; cross-link if a consolidated table is desired.
 - **CHANGELOG** — add an entry: "Wire capacity-deliverability into the capacity
   screens behind `capacity_deliverability_limits` (default off)."
+
+## NYISO — the locality instance is `locality_capacity_curves`, not Part B (capx D59, 2026-09-05)
+
+NYISO's locality rows (NYC / Long Island LCR `requirement` MW, `import_limit` = the TSL)
+are consumed by the D59 mechanism, `ScenarioConfig.locality_capacity_curves` (GATED,
+default off; design `docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md`), NOT
+by Part B. Two reasons, both structural: (i) NYISO's spot market clears a price PER
+LOCALITY on the locality's own published demand curve, capped below by the NYCA price
+(ICAP Manual §5.15.2) — a sloped locational price, not a binary long-zone collapse;
+(ii) Part B's `deliverable = in-zone firm + import_limit` double-counts imports for
+NYISO, whose LCR is ALREADY net of the import capability (the TSL floor is
+`(peak − TSL)/peak`), so adding the TSL to supply would read NYC ~30 pts long. The
+`import_limit` rows are read by D59 only as a consistency assertion (`LCR ≥ TSL floor`).
+Rule 19: one locational mechanism per ISO — `__post_init__` refuses both fields on a
+NYISO config. G-J is not a union of model zones (Capital_Hudson = F+G) and stays
+excluded; NYC (J) and LI (K) are the representable localities. Part B is untouched for
+the other ISOs and Part A (the CAISO seam limit) is unaffected.

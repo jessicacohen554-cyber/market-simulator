@@ -480,6 +480,41 @@ vs 0.937/0.953/0.939).
 _(filled by this lane once the field exists; nothing below this line was written before
 the code.)_
 
+**Appended 2026-09-05 after the build, before any solve** (the branch carries the field,
+the registries, the seams, the ledger block, the harness flag, the csv intake, the matrix
+row + cells and 15 tests; nothing has been solved). Method: the D52 / D45-R path —
+`run_capacity_hindcast.build_config("NYISO", 2021, 2025, "realized", …)` →
+`apply_iso_scenario_defaults` → `ScenarioConfig.cache_key()`.
+
+**The bare `nyiso-t1h` key has MOVED upstream — stated, not absorbed.** At this branch's
+HEAD the bare recipe keys `095a6fc72a204a1c`, not D52's `91686abe7a744a88`, and the D52
+curve-ON recipe keys `ab3bc307278251ae`, not `589f031432b6dc7d`. Re-keyed in a clean
+worktree at `origin/main` (`db057c5d`, no D59 code): the SAME two keys — so the move is
+the upstream merges between the D52 merge (`660e2ae4`) and `db057c5d`, and NOT this
+field (which is dropped from the hash at its default: bare == bare + `False`
+explicitly). Card C-12 has NOT armed the D52 gates (both defaults still `False` on
+`origin/main`). Consequence for the A/B: the committed D52 curve-ON bundle
+(`589f…`) was solved at a different HEAD, so the like-for-like comparator is a **control
+replay** of the D52 curve-ON recipe at THIS HEAD (`ab3bc307278251ae`, the field OFF) —
+which doubles as the ledger-level byte-inertness proof: any difference between it and the
+committed `589f…` bundle is upstream drift, never this lane's; the D59 arm is then one
+field from it. Both legs register suffixed.
+
+| leg / posture | recipe beyond the bare `nyiso-t1h` | key | status |
+|---|---|---:|---|
+| bare `nyiso-t1h` at this HEAD (= at `origin/main`) | none | `095a6fc72a204a1c` | HEAD successor of `91686abe7a744a88`; not re-solved (no default of this lane touches it) |
+| same, field explicitly `False` | — | `095a6fc72a204a1c` | identical (drop-at-default registration works) |
+| **control replay** `nyiso-2021-2025-realized-t1h-d59-control` | `--nyiso-requirement-forecast-peak --nyiso-requirement-vintage-factors --capacity-market-clearing` (the D52 curve-ON recipe, field OFF) | **`ab3bc307278251ae`** | to be solved FIRST |
+| **A/B arm** `nyiso-2021-2025-realized-t1h-d59-locality` | the control + `--locality-capacity-curves` | **`3ea2a186cdeddfa6`** | to be solved SECOND |
+| locality field without the NYCA curve (NOT solved; inert by predicate, recorded so it is recognisable) | `--nyiso-requirement-forecast-peak --nyiso-requirement-vintage-factors --locality-capacity-curves` | `21265d21a22a9716` | not run |
+| pinned global default key | — | `4c6b03ae098b6e3e` | **unmoved** |
+
+Guards at this HEAD: `check_cache_key_registration.py --base origin/main` — ok (1 new
+field registered at `"False"`); `check_mechanism_matrix.py --base origin/main` — integrity
+OK after `--fix-anchors` (digits only, four upstream rows); `generate_parameter_registry.py
+--check` — OK; `TestNyisoLocalityCapacityCurves` (15) green; the NYISO shard's keeper stamp
+untouched. No collision with any committed bundle key.
+
 ## 9. Sources fetched this session (sha256)
 | document | sha256 | used for |
 |---|---|---|
