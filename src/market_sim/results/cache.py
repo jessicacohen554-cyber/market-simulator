@@ -56,6 +56,40 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-05 — capx D60 / owner ruling Q42: the CCS-retrofit capex
+construction repair ARMS AS THE DEFAULT POSTURE for all six ISOs. A KEY
+ADVANCE, NOT A SAME-KEY INVALIDATION**, by construction, exactly as the
+2026-09-03 entry below. ``ScenarioConfig.ccs_retrofit_capex_co2_scaling`` flips
+default ``False`` -> ``True``: the capture island is sized to the CO2 the host
+actually captures (against the ATB reference host, 0.32319 t/MWh — the same
+host ``new_entry._emerging_lcoe`` charges the ATB increment against) and
+cogeneration hosts (``plant_group`` CC_CHP) leave the candidate set. Owner
+ruling Q42 of the director sitting r#37 (2026-09-05) on the measurement
+``docs/handoffs/FINDING-capx-d50-2026-09-04.md`` §8; execution record
+``docs/handoffs/FINDING-capx-d60-2026-09-05.md``.
+
+**BOTH KEYS MOVE:** default ``4c6b03ae098b6e3e`` -> ``e5ecd4105ada3e58``, bare
+backcast ``8211c72bb1960adc`` -> ``6a2845e50951394e``. The field IS a
+``_CACHE_KEY_OPTIONAL_FIELDS`` member and the flip leaves its FROZEN
+declaration in ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`` at ``False``, so the
+armed default enters the hash and takes its own key. The flip is declared —
+the SECOND entry in ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` — so the
+registration guard's check 3 passes on the declaration, not on silence.
+
+**INVALIDATED — re-solve before quoting:** every ``results/<ISO>/<key>/``
+forecast bundle at a pre-2026-09-05 key **whose horizon reaches 2028**. A
+one-time cache MISS, never a wrong answer. **NOT invalidated:** (a) any arm
+that passed ``ccs_retrofit_capex_co2_scaling=False`` EXPLICITLY — still equal
+to the frozen declaration, still dropped, still addressing its pre-flip bundle
+(measured: explicit-False hashes ``4c6b03ae098b6e3e`` / ``8211c72bb1960adc``);
+(b) every BACKCAST and every hindcast/crossover horizon ending before 2028,
+whose behaviour is byte-identical because
+``capacity_evolution/ccs.py::apply_ccs_retrofit`` returns at its first
+statement, ``if year < config.ccs_retrofit_available_year`` (default 2028),
+which precedes every read of the flag — and that call site is the field's only
+consumer in the source tree. No keeper, sidecar, determination or dashboard row
+moves; committed artifacts are files, not cache lookups.
+
 **Epoch 2026-09-03 — capx D44 / owner ruling Q30: the fossil announced-date
 channel ARMS AS THE DEFAULT POSTURE. A KEY ADVANCE, NOT A SAME-KEY
 INVALIDATION** — and, unlike every earlier entry here, that is true BY

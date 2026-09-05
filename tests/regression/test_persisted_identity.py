@@ -162,7 +162,44 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # Forecast bundles solved at the pre-flip default now record a SUPERSEDED
 # posture; per ruling Q30 that staleness joins the director's batched
 # post-repair re-measure decision (no re-solve was run or owed by D44).
-PINNED_DEFAULT_CACHE_KEY = "4c6b03ae098b6e3e"
+#
+# ADVANCED 2026-09-05, 4c6b03ae098b6e3e -> e5ecd4105ada3e58 — capx D60
+# executing OWNER RULING Q42 (director sitting r#37, 2026-09-05: "ARM the CCS
+# capex default"). The SECOND declared (b'-1) flip, mechanically identical to
+# the D44 advance above.
+#
+# CAUSE. `ScenarioConfig.ccs_retrofit_capex_co2_scaling` flips default
+# False -> True: the capture island is sized to the CO2 the host actually
+# captures — `capex_kw x 1000 x captured / captured_ref`, `captured_ref` =
+# 0.90 x 6.3 x 0.057 = 0.32319 t/MWh, the SAME reference host
+# `new_entry._emerging_lcoe` charges the ATB 2024 gas_cc_ccs increment against
+# — and cogeneration hosts (`plant_group` CC_CHP) leave the retrofit candidate
+# set. Zero DOF: every term is an already-cited constant. Evidence:
+# `docs/handoffs/FINDING-capx-d50-2026-09-04.md` §§1-5 and §8 (four A/B arms;
+# at carbon 0 the repair closes the screen — ERCOT 3.79 GW -> 0, PJM 5.74 -> 0
+# in 2028, MISO 4,631.1 MW -> 0 across the window — and under RGGI it does not,
+# NEISO 12.79 -> 12.38 GW, which is the repair's signature rather than its
+# level); execution record `FINDING-capx-d60-2026-09-05.md`.
+#
+# WHY THE KEY MOVES: identical to the D44 block above. The field IS a
+# `_CACHE_KEY_OPTIONAL_FIELDS` member, `cache_key()` drops it at its FROZEN
+# declaration ("False", left untouched), so the armed default enters the hash
+# and takes its own key; the flip is DECLARED in
+# `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` — its second entry — so check 3 of
+# the registration guard passes on the declaration, not on silence.
+#
+# WHAT THIS COSTS, EXACTLY. A one-time cache MISS per forecast config whose
+# horizon REACHES 2028; every shorter horizon is byte-identical because
+# `capacity_evolution/ccs.py::apply_ccs_retrofit` returns at
+# `if year < config.ccs_retrofit_available_year` (2028) before any read of the
+# flag, and that call site is the field's only consumer in the source tree. An
+# explicit `ccs_retrofit_capex_co2_scaling=False` still equals the frozen
+# declaration, is still dropped, and still hashes 4c6b03ae098b6e3e — measured
+# this session, and one committed artifact already relies on it
+# (`results/hindcast/miso-2021-2025-realized-t1h-d55-keyfix`). D60 renamed the
+# three t1f bare keys onto the D50 arms already solved AT the post-flip key
+# (ERCOT / NEISO / PJM) and re-solved the four the arms could not cover.
+PINNED_DEFAULT_CACHE_KEY = "e5ecd4105ada3e58"
 
 # The BACKCAST default key, pinned by FFR-3D (2026-08-03) because the forecast
 # pin above CANNOT see a whole class of re-key: `__post_init__` coerces several
@@ -249,7 +286,24 @@ PINNED_DEFAULT_CACHE_KEY = "4c6b03ae098b6e3e"
 # keeper, sidecar, determination or dashboard row is affected and nothing needs
 # re-scoring (committed artifacts are files, not cache lookups). An explicit
 # `fossil_announced_exits_enabled=False` still hashes e006dfd7cef8bedd.
-PINNED_BACKCAST_CACHE_KEY = "8211c72bb1960adc"
+#
+# ADVANCED 2026-09-05, 8211c72bb1960adc -> 6a2845e50951394e — the SAME capx D60
+# / owner-ruling-Q42 default flip recorded in the forward pin's cause block
+# above. `ccs_retrofit_capex_co2_scaling` is NOT coerced in `__post_init__`
+# (nothing coerces it, before or after the flip), so the armed default enters
+# the backcast payload exactly as it enters the forward one and this pin moves
+# with it. NOT a `_DECLARED_BACKCAST_COERCION_REKEYS` case: no coercion is
+# knowingly off its default here.
+#
+# BEHAVIOUR IN BACKCAST IS BYTE-IDENTICAL, twice over: the production backcast
+# lane never evolves a fleet at all, and even if it did, no backcast year
+# reaches `ccs_retrofit_available_year` (2028) and no measured backcast fleet
+# contains a `gas_cc_ccs` unit. Cost is a one-time cache MISS per backcast
+# config; dispatch, scores and every other `run_config.json` value are unmoved,
+# so no keeper, sidecar, determination or dashboard row is affected and nothing
+# needs re-scoring. An explicit `ccs_retrofit_capex_co2_scaling=False` still
+# hashes 8211c72bb1960adc.
+PINNED_BACKCAST_CACHE_KEY = "6a2845e50951394e"
 
 # Registered cache-key-optional fields whose backcast coercion is KNOWINGLY off
 # their default, each having paid for its re-key in the block above. Only these
