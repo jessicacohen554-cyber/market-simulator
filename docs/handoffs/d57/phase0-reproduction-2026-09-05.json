@@ -1,0 +1,497 @@
+{
+ "tolerance": {
+  "price_mw_day": 1.0,
+  "position_pts": 0.1
+ },
+ "stops": [],
+ "years": {
+  "d48": {
+   "control pjm-t1h": {
+    "2022": {
+     "code": {
+      "price_mw_day": 82.81122220104915,
+      "cleared_mw": 169813.80348845848,
+      "position": 1.04452971042244,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 102417.80877969007,
+      "n_offers": 1211,
+      "n_uncleared": 211,
+      "uncleared_firm_by_fuel": {
+       "coal": 4120.689200000001,
+       "gas_cc": 2047.7684149999995,
+       "gas_st": 8801.943150000001
+      },
+      "marginal_unit": "COAL_PJM_AEP_Ohio_p2828_committed"
+     },
+     "instrument": {
+      "price_mw_day": 82.81122220104915,
+      "position": 1.04452971042244,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 50.0,
+      "pos_cleared": 1.0510375261163845
+     }
+    },
+    "2023": {
+     "code": {
+      "price_mw_day": 82.81122220104915,
+      "cleared_mw": 168212.62229711705,
+      "position": 1.0454208859694012,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 104304.15627999995,
+      "n_offers": 792,
+      "n_uncleared": 212,
+      "uncleared_firm_by_fuel": {
+       "coal": 4120.689200000001,
+       "gas_cc": 2140.8684149999995,
+       "gas_st": 8801.943150000001
+      },
+      "marginal_unit": "COAL_PJM_AEP_Ohio_p2828_committed"
+     },
+     "instrument": {
+      "price_mw_day": 82.81122220104915,
+      "position": 1.0454208859694012,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 34.13,
+      "pos_cleared": 1.0552044372739755
+     }
+    },
+    "2024": {
+     "code": {
+      "price_mw_day": 157.97798287837776,
+      "cleared_mw": 171704.91121363977,
+      "position": 1.0293441238717824,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 92291.92990499992,
+      "n_offers": 852,
+      "n_uncleared": 47,
+      "uncleared_firm_by_fuel": {
+       "coal": 12482.318040000002
+      },
+      "marginal_unit": "COAL_PJM_AEP_Ohio_p8102_committed"
+     },
+     "instrument": {
+      "price_mw_day": 157.97798287837776,
+      "position": 1.0293441238717824,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 28.92,
+      "pos_cleared": 1.0555098698924799
+     }
+    },
+    "2025": {
+     "code": {
+      "price_mw_day": 451.60999999999996,
+      "cleared_mw": 143770.4185,
+      "position": 0.9546173845963435,
+      "how": "all_offers_clear_curve_sets_price",
+      "price_takers_mw": 143770.4185,
+      "n_offers": 0,
+      "n_uncleared": 0,
+      "uncleared_firm_by_fuel": {},
+      "marginal_unit": null
+     },
+     "instrument": {
+      "price_mw_day": 451.60999999999996,
+      "position": 0.9546173845963435,
+      "how": null
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 269.92,
+      "pos_cleared": 1.0048924853025476
+     }
+    }
+   },
+   "arm pjm-t1h-d48-devintage": {
+    "2022": {
+     "code": {
+      "price_mw_day": 82.81122220104915,
+      "cleared_mw": 169813.80348845848,
+      "position": 1.04452971042244,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 102417.80877969007,
+      "n_offers": 1211,
+      "n_uncleared": 211,
+      "uncleared_firm_by_fuel": {
+       "coal": 4120.689200000001,
+       "gas_cc": 2047.7684149999995,
+       "gas_st": 8801.943150000001
+      },
+      "marginal_unit": "COAL_PJM_AEP_Ohio_p2828_committed"
+     },
+     "instrument": {
+      "price_mw_day": 82.81122220104915,
+      "position": 1.04452971042244,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 50.0,
+      "pos_cleared": 1.0510375261163845
+     }
+    },
+    "2023": {
+     "code": {
+      "price_mw_day": 82.81122220104915,
+      "cleared_mw": 168212.62229711705,
+      "position": 1.0454208859694012,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 104304.15627999995,
+      "n_offers": 792,
+      "n_uncleared": 212,
+      "uncleared_firm_by_fuel": {
+       "coal": 4120.689200000001,
+       "gas_cc": 2140.8684149999995,
+       "gas_st": 8801.943150000001
+      },
+      "marginal_unit": "COAL_PJM_AEP_Ohio_p2828_committed"
+     },
+     "instrument": {
+      "price_mw_day": 82.81122220104915,
+      "position": 1.0454208859694012,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 34.13,
+      "pos_cleared": 1.0552044372739755
+     }
+    },
+    "2024": {
+     "code": {
+      "price_mw_day": 157.97798287837776,
+      "cleared_mw": 171704.91121363977,
+      "position": 1.0293441238717824,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 92291.92990499994,
+      "n_offers": 852,
+      "n_uncleared": 47,
+      "uncleared_firm_by_fuel": {
+       "coal": 12482.318040000002
+      },
+      "marginal_unit": "COAL_PJM_AEP_Ohio_p8102_committed"
+     },
+     "instrument": {
+      "price_mw_day": 157.97798287837776,
+      "position": 1.0293441238717824,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 28.92,
+      "pos_cleared": 1.0555098698924799
+     }
+    },
+    "2025": {
+     "code": {
+      "price_mw_day": 451.60999999999996,
+      "cleared_mw": 143770.4185,
+      "position": 0.9546173845963435,
+      "how": "all_offers_clear_curve_sets_price",
+      "price_takers_mw": 143770.4185,
+      "n_offers": 0,
+      "n_uncleared": 0,
+      "uncleared_firm_by_fuel": {},
+      "marginal_unit": null
+     },
+     "instrument": {
+      "price_mw_day": 451.60999999999996,
+      "position": 0.9546173845963435,
+      "how": null
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 269.92,
+      "pos_cleared": 1.0048924853025476
+     }
+    }
+   }
+  },
+  "head": {
+   "control pjm-t1h": {
+    "2022": {
+     "code": {
+      "price_mw_day": 95.89041095890413,
+      "cleared_mw": 135664.95977443643,
+      "position": 1.0412109278937676,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 83452.47074709,
+      "n_offers": 1211,
+      "n_uncleared": 255,
+      "uncleared_firm_by_fuel": {
+       "gas_ct": 2844.52068,
+       "gas_cc": 1598.4426979999998,
+       "coal": 1014.25004,
+       "gas_st": 6909.052149999997
+      },
+      "marginal_unit": "CT_CHP_PJM_SWMAAC_p56038_committed"
+     },
+     "instrument": {
+      "price_mw_day": 95.89041095890413,
+      "position": 1.0412109278937676,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 50.0,
+      "pos_cleared": 1.0510375261163845
+     }
+    },
+    "2023": {
+     "code": {
+      "price_mw_day": 95.89041095890411,
+      "cleared_mw": 134003.63023470572,
+      "position": 1.0422912311280508,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 85630.81091399991,
+      "n_offers": 792,
+      "n_uncleared": 272,
+      "uncleared_firm_by_fuel": {
+       "gas_ct": 3090.2009399999997,
+       "gas_cc": 1670.9626979999998,
+       "coal": 1014.25004,
+       "gas_st": 6909.052149999997
+      },
+      "marginal_unit": "CT_PEAKER_PJM_West_APS_p55347_econ"
+     },
+     "instrument": {
+      "price_mw_day": 95.89041095890411,
+      "position": 1.0422912311280508,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 34.13,
+      "pos_cleared": 1.0552044372739755
+     }
+    },
+    "2024": {
+     "code": {
+      "price_mw_day": 175.1081256001296,
+      "cleared_mw": 136779.46280266688,
+      "position": 1.0255568183116408,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 74009.80693400002,
+      "n_offers": 852,
+      "n_uncleared": 42,
+      "uncleared_firm_by_fuel": {
+       "coal": 10242.33695
+      },
+      "marginal_unit": "COAL_PJM_West_APS_p6004_committed"
+     },
+     "instrument": {
+      "price_mw_day": 175.1081256001296,
+      "position": 1.0255568183116408,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 28.92,
+      "pos_cleared": 1.0555098698924799
+     }
+    },
+    "2025": {
+     "code": {
+      "price_mw_day": 451.60999999999996,
+      "cleared_mw": 137685.6185,
+      "position": 0.9519734491335852,
+      "how": "all_offers_clear_curve_sets_price",
+      "price_takers_mw": 137685.6185,
+      "n_offers": 0,
+      "n_uncleared": 0,
+      "uncleared_firm_by_fuel": {},
+      "marginal_unit": null
+     },
+     "instrument": {
+      "price_mw_day": 451.60999999999996,
+      "position": 0.9519734491335852,
+      "how": null
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 269.92,
+      "pos_cleared": 1.0048924853025476
+     }
+    }
+   },
+   "arm pjm-t1h-d48-devintage": {
+    "2022": {
+     "code": {
+      "price_mw_day": 95.89041095890413,
+      "cleared_mw": 135664.95977443643,
+      "position": 1.0412109278937676,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 83452.47074709,
+      "n_offers": 1211,
+      "n_uncleared": 255,
+      "uncleared_firm_by_fuel": {
+       "gas_ct": 2844.52068,
+       "gas_cc": 1598.4426979999998,
+       "coal": 1014.25004,
+       "gas_st": 6909.052149999997
+      },
+      "marginal_unit": "CT_CHP_PJM_SWMAAC_p56038_committed"
+     },
+     "instrument": {
+      "price_mw_day": 95.89041095890413,
+      "position": 1.0412109278937676,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 50.0,
+      "pos_cleared": 1.0510375261163845
+     }
+    },
+    "2023": {
+     "code": {
+      "price_mw_day": 95.89041095890411,
+      "cleared_mw": 134003.63023470572,
+      "position": 1.0422912311280508,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 85630.81091399991,
+      "n_offers": 792,
+      "n_uncleared": 272,
+      "uncleared_firm_by_fuel": {
+       "gas_ct": 3090.2009399999997,
+       "gas_cc": 1670.9626979999998,
+       "coal": 1014.25004,
+       "gas_st": 6909.052149999997
+      },
+      "marginal_unit": "CT_PEAKER_PJM_West_APS_p55347_econ"
+     },
+     "instrument": {
+      "price_mw_day": 95.89041095890411,
+      "position": 1.0422912311280508,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 34.13,
+      "pos_cleared": 1.0552044372739755
+     }
+    },
+    "2024": {
+     "code": {
+      "price_mw_day": 175.1081256001296,
+      "cleared_mw": 136779.46280266688,
+      "position": 1.0255568183116408,
+      "how": "marginal_offer_sets_price",
+      "price_takers_mw": 74009.80693400002,
+      "n_offers": 852,
+      "n_uncleared": 42,
+      "uncleared_firm_by_fuel": {
+       "coal": 10242.33695
+      },
+      "marginal_unit": "COAL_PJM_West_APS_p6004_committed"
+     },
+     "instrument": {
+      "price_mw_day": 175.1081256001296,
+      "position": 1.0255568183116408,
+      "how": "marginal_offer_sets_price"
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 28.92,
+      "pos_cleared": 1.0555098698924799
+     }
+    },
+    "2025": {
+     "code": {
+      "price_mw_day": 451.60999999999996,
+      "cleared_mw": 137685.6185,
+      "position": 0.9519734491335852,
+      "how": "all_offers_clear_curve_sets_price",
+      "price_takers_mw": 137685.6185,
+      "n_offers": 0,
+      "n_uncleared": 0,
+      "uncleared_firm_by_fuel": {},
+      "marginal_unit": null
+     },
+     "instrument": {
+      "price_mw_day": 451.60999999999996,
+      "position": 0.9519734491335852,
+      "how": null
+     },
+     "delta": {
+      "price_mw_day": 0.0,
+      "position_pts": 0.0,
+      "hit": true
+     },
+     "published": {
+      "price_mw_day": 269.92,
+      "pos_cleared": 1.0048924853025476
+     }
+    }
+   }
+  }
+ }
+}

@@ -291,6 +291,19 @@ VERDICT_MAP = {
     # CHARTER, never the bare key; nothing arms -- the owner decides on the
     # pre-stated flip condition (PREDECL-capx-d48-2026-09-04.md §5).
     "pjm-2021-2025-realized-t1h-d48-devintage": "pjm-t1h-d48-devintage",
+    # capx-D57 (2026-09-05): the PJM CLEARING HALF built from DESIGN-capx-d54
+    # (`capacity_market_supply_clearing_by_iso[PJM]` ON — clear the fleet's
+    # net-ACR sell-offer stack against the published VRR curve; the screen's
+    # failing set is the auction's uncleared set). Two arms, SUFFIXED BY
+    # CHARTER, never the bare key: arm A (primary) = D48's two fields ON +
+    # clearing ON, the D48 §8 configuration; arm B (isolating) = D48 fields
+    # OFF + clearing ON, completing the 2x2 with `pjm-t1h-d48-devintage`.
+    # Nothing arms -- the owner decides on the JOINT flip (D48 fields + this
+    # gate) per the pre-stated condition (PREDECL-capx-d57-2026-09-05.md).
+    "pjm-2021-2025-realized-t1h-d57-clearing": "pjm-t1h-d57-clearing",
+    "pjm-2021-2025-realized-t1h-d57-clearing-headbasis": (
+        "pjm-t1h-d57-clearing-headbasis"
+    ),
     # capx-D51 (2026-09-04): the MISO internal-supply accounting ratio
     # RE-IDENTIFIED on the dates-ON fleet (`adequacy_accounting_ratio_dated_net`
     # ON; D49 §2.6, rule 23) against D46's bare `miso-t1h` (the gate OFF, the

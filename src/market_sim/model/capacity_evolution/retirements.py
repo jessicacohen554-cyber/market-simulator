@@ -75,6 +75,7 @@ from market_sim.config.constants import (
     evaluate_renewable_elcc_curve,
 )
 from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
+from market_sim.config.capacity_market import resolve_capacity_market_supply_clearing
 from market_sim.config.reserve_config import (
     QUICK_START_FUEL_TYPES,
     RESERVE_FUEL_TYPES,
@@ -2299,6 +2300,168 @@ def _apply_pipeline_retirements(
     return survivors, state, floor_retention_log
 
 
+#: capx D57: relative tolerance of the marginal-unit indifference guard in
+#: :func:`_settle_capacity_supply_clearing` — a unit whose offer equals the
+#: clearing price is paid EXACTLY its cap ``bar − E&AS`` (the identity of
+#: design §3.5 by definition), so floating-point rounding in
+#: ``offer × 365 × A_g`` can never flip its bar test. A rounding guard, not a
+#: parameter: the difference it absorbs is ~1e-12 of the bar.
+_CLEARING_INDIFFERENCE_RTOL: float = 1e-9
+
+
+def _settle_capacity_supply_clearing(
+    fleet: list[Generator],
+    margins: list[tuple[Generator, float, float]],
+    margin_detail: dict[str, dict[str, float | str]],
+    config: ScenarioConfig,
+    peak_demand: float,
+    wind_pool_mw: float,
+    solar_pool_mw: float,
+    storage_firm_mw: float,
+    deliverability_headroom: dict[str, float] | None,
+    year: int,
+) -> tuple["object", list[tuple[Generator, float, float]]]:
+    """Clear the sell-offer stack and settle the screen's capacity leg per unit.
+
+    capx D57, building DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md §3
+    (the PJM instance of the D28 / D45 §2.3 item 3 clearing half). Called by
+    :func:`apply_economic_retirements` ONCE per screen year, after its margin
+    loop, when :func:`~market_sim.config.capacity_market.
+    resolve_capacity_market_supply_clearing` is on. ``margins`` carries, per
+    screened unit, the PRE-capacity net revenue (``EAS_g`` — energy margin +
+    reserve uplift + attribute revenue + §45U + AS credit) and the going-
+    forward cost (``GFC_g``, the gross-ACR proxy). Operands (design §3.1):
+
+    * ``offer_g = max(0, GFC_g − EAS_g) / (A_g × 365)`` $/MW-day, with ``A_g``
+      the unit's accredited MW on the ledger's own basis —
+      :func:`_thermal_firm_mw` (the D48 seam, UCAP before PJM's 2025/26
+      reform under the devintage, ELCC class otherwise) × the ISO's internal-
+      supply accounting ratio (1.0 for PJM; carried so ``Q_0 + Σ A_g`` is the
+      ledger's own sum for every ISO, rule 19);
+    * ``Q_0``, the price-taking block, is the ENTIRE accredited ledger of the
+      screen's fleet — :func:`~market_sim.model.capacity_evolution.adequacy.
+      accredited_firm_capacity_mw` on the same fleet, pools, config and
+      delivery year the floor tests — MINUS ``Σ A_g`` over the screened units,
+      so VRE / hydro / storage / firm imports / DR and every screen-EXEMPT
+      unit (dated plants, this-year retrofits) enter at $0 on their ledger
+      credit and ``Q_0 + Σ A_g == accredited`` by construction (I1);
+    * ``R`` is :func:`resolve_adequacy_requirement_mw` on the screen's peak
+      and year — the position's own denominator;
+    * the demand side is :func:`~market_sim.model.capacity_evolution.adequacy.
+      capacity_supply_curve` — the same seam the census evaluation prices.
+
+    Settlement (design §3.5): a cleared unit earns ``price × 365 × A_g``; an
+    uncleared unit earns $0; a unit in an RA-saturated zone
+    (``capacity_deliverability_limits``, ``_zone_is_long``) earns $0 as it
+    does on the census path (the two gates are not reconciled here — stated;
+    deliverability is off in every PJM arm). The marginal unit (offer ==
+    price) is paid exactly ``GFC − EAS`` (indifference by definition; the
+    guard absorbs float rounding only). Hence a screened unit passes the bar
+    iff it cleared — the failing set IS the uncleared set (I2). Ledger fields
+    ``capacity_offer_usd_per_mw_day``, ``capacity_accredited_mw`` and
+    ``capacity_cleared`` are written onto ``margin_detail`` for every
+    ``pipeline_events`` row; ``net_revenue_usd`` / ``capacity_revenue_usd``
+    are updated to the settled values.
+
+    Returns ``(clearing, settled_margins)``; the clearing is a
+    :class:`~market_sim.model.capacity_evolution.adequacy.CapacityClearing`.
+    """
+    # Imported here to avoid a module-level cycle (adequacy imports from us).
+    from .adequacy import (
+        accredited_firm_capacity_mw,
+        capacity_supply_curve,
+        clear_capacity_supply_stack,
+    )
+
+    iso = config.iso
+    ratio = resolve_internal_supply_accounting_ratio(iso, config)
+    accredited_total_mw = accredited_firm_capacity_mw(
+        fleet,
+        wind_pool_mw,
+        solar_pool_mw,
+        storage_firm_mw,
+        iso=iso,
+        peak_demand_mw=peak_demand,
+        elcc_curves_enabled=config.renewable_elcc_curves,
+        year=year,
+        nqc_curves_enabled=config.caiso_nqc_accreditation,
+        config=config,
+        accreditation_year=year,
+    )
+    requirement_mw = resolve_adequacy_requirement_mw(config, iso, peak_demand, year)
+    if requirement_mw <= 0.0:
+        raise ValueError(
+            "capacity supply clearing: the adequacy requirement resolved "
+            f"non-positive for {iso} {year} — the stack has nothing to clear against"
+        )
+
+    offers: list[tuple[str, str, float, float, float]] = []
+    eas_of: dict[str, float] = {}
+    gfc_of: dict[str, float] = {}
+    for g, eas, gfc in margins:
+        a_mw = _thermal_firm_mw(g, iso, config, year) * ratio
+        eas_of[g.unit_id] = eas
+        gfc_of[g.unit_id] = gfc
+        if a_mw <= 0.0:
+            # No accredited MW to offer (nameplate 0 or a zero-credit basis):
+            # outside the stack, paid nothing — it cannot clear what it does
+            # not offer.
+            continue
+        offer = max(0.0, gfc - eas) / (a_mw * 365.0)
+        offers.append((g.unit_id, g.fuel_type, offer, a_mw, float(g.pmax_mw)))
+
+    offered_mw = sum(o[3] for o in offers)
+    price_takers_mw = max(0.0, accredited_total_mw - offered_mw)
+    clearing = clear_capacity_supply_stack(
+        offers,
+        price_takers_mw,
+        requirement_mw,
+        capacity_supply_curve(config, iso, year),
+    )
+    pay_per_firm_mw = clearing.price_usd_per_mw_day * 365.0
+
+    settled: list[tuple[Generator, float, float]] = []
+    for g, eas, gfc in margins:
+        uid = g.unit_id
+        a_mw = clearing.accredited_mw.get(uid, 0.0)
+        cleared = uid in clearing.cleared_unit_ids
+        pay = 0.0
+        if cleared and not _zone_is_long(deliverability_headroom, g.zone):
+            pay = pay_per_firm_mw * a_mw
+            cap = gfc - eas
+            if cap > 0.0 and abs(pay - cap) <= _CLEARING_INDIFFERENCE_RTOL * cap:
+                pay = cap  # the marginal unit: indifferent by definition
+        settled.append((g, eas + pay, gfc))
+        detail = margin_detail.get(uid)
+        if detail is not None:
+            detail["net_revenue_usd"] = float(eas + pay)
+            detail["capacity_revenue_usd"] = float(pay)
+            detail["capacity_offer_usd_per_mw_day"] = float(
+                clearing.offer_usd_per_mw_day.get(uid, 0.0)
+            )
+            detail["capacity_accredited_mw"] = float(a_mw)
+            detail["capacity_cleared"] = bool(cleared)
+
+    logger.info(
+        "year %d %s capacity supply clearing: price %.2f $/MW-day (%.2f $/kW-yr), "
+        "cleared %.0f of %.0f MW (position %.4f; census %.4f), price takers "
+        "%.0f MW, %d offers / %d uncleared [%s]",
+        year,
+        iso,
+        clearing.price_usd_per_mw_day,
+        pay_per_firm_mw / 1000.0,
+        clearing.cleared_mw,
+        clearing.census_mw,
+        clearing.cleared_position,
+        clearing.census_position,
+        clearing.price_takers_mw,
+        clearing.n_offers,
+        clearing.n_uncleared,
+        clearing.how,
+    )
+    return clearing, settled
+
+
 def apply_economic_retirements(
     fleet: list[Generator],
     fleet_arrays: FleetArrays,
@@ -2530,12 +2693,31 @@ def apply_economic_retirements(
     idx_of = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
     loss_years = dict(consecutive_loss_years)
 
+    # capx D57 (DESIGN-capx-d54 §3.5): when the supply-clearing gate resolves
+    # ON for this ISO, the capacity leg is NOT the census price broadcast to
+    # every unit inside the loop below; it is settled AFTER the loop by
+    # clearing the fleet's net-ACR sell-offer stack (built from the loop's own
+    # pre-capacity net revenue and going-forward cost) against the delivery
+    # year's VRR curve — cleared units earn the clearing price on their
+    # accredited MW, uncleared units earn $0. Exactly one capacity-revenue
+    # mechanism per unit (rule 19): the census evaluation is REPLACED, never
+    # stacked. Requires a dated screen and a positive peak (the requirement
+    # the stack clears against); otherwise — and for every ISO whose row is
+    # off — the loop's census leg runs unchanged, byte-identically.
+    supply_clearing_armed = (
+        resolve_capacity_market_supply_clearing(config, config.iso)
+        and year is not None
+        and peak_demand > 0.0
+    )
+
     # Diagnostic-only revenue-stack accumulator (no decision effect): per-fuel
     # capacity-weighted screen net revenue vs going-forward cost, both in
     # $/kW-yr. Emitted once per screen call for the FOM+scarcity joint protocol
     # revenue-side audit (docs/handoffs/fom-scarcity-joint-protocol; rule 1 — the
     # revenue side must be identified against its own external observable, the
     # Potomac ERCOT SOM net-revenue tables, never tuned to the retirement pace).
+    # Filled from ``margins`` after the (D57) capacity settlement so the audit
+    # line carries the settled net revenue whichever capacity path ran.
     _screen_stack: dict[str, list[tuple[float, float, float]]] = {}
 
     # Per-unit screen margins, shared by both decision rules: the uniform
@@ -2769,7 +2951,12 @@ def apply_economic_retirements(
         # NO capacity payment (RA saturated there), so surplus in a long zone
         # retires as it should while short zones keep their units.
         capacity_revenue_usd = 0.0
-        if not _zone_is_long(deliverability_headroom, g.zone):
+        if supply_clearing_armed:
+            # capx D57: settled after the loop from the clearing (design
+            # §3.5); the E&AS operand this unit's offer is built from is the
+            # net_revenue accumulated up to (and after) this point.
+            pass
+        elif not _zone_is_long(deliverability_headroom, g.zone):
             capacity_revenue_usd = g.pmax_mw * capacity_revenue_per_mw_yr(
                 config.iso, g.fuel_type, g.eford, config, reserve_position, year
             )
@@ -2808,16 +2995,6 @@ def apply_economic_retirements(
         going_forward_cost = (
             getattr(config, fom_field) * multiplier * g.pmax_mw * 1000.0
         )
-
-        # Diagnostic accumulation only — does not affect the retire decision.
-        if g.pmax_mw > 0.0:
-            _screen_stack.setdefault(g.fuel_type, []).append(
-                (
-                    net_revenue / (g.pmax_mw * 1000.0),  # $/kW-yr revenue stack
-                    getattr(config, fom_field) * multiplier,  # $/kW-yr bar
-                    g.pmax_mw,
-                )
-            )
 
         margins.append((g, net_revenue, going_forward_cost))
 
@@ -2864,6 +3041,41 @@ def apply_economic_retirements(
                 / _pmax_total
             )
         margin_detail[g.unit_id] = detail
+
+    # capx D57: the clearing half (DESIGN-capx-d54 §3.2–§3.5). ONE clearing per
+    # screen year, after the margin loop: every screened unit's offer is
+    # max(0, bar − E&AS) on its accredited MW, the price-taking block is every
+    # other accredited MW the ledger counts, the stack clears against this
+    # delivery year's VRR curve, and the capacity leg is settled per unit from
+    # the result (two passes over ``margins``, no LP). Off ⇒ ``margins`` is
+    # untouched and byte-identical.
+    capacity_clearing = None
+    if supply_clearing_armed:
+        capacity_clearing, margins = _settle_capacity_supply_clearing(
+            fleet,
+            margins,
+            margin_detail,
+            config,
+            peak_demand,
+            wind_pool_mw,
+            solar_pool_mw,
+            storage_firm_mw,
+            deliverability_headroom,
+            year,  # type: ignore[arg-type]  # guarded by supply_clearing_armed
+        )
+        if event_sink is not None:
+            event_sink["capacity_clearing"] = capacity_clearing
+
+    # Diagnostic accumulation only — does not affect the retire decision.
+    for g, net_revenue, going_forward_cost in margins:
+        if g.pmax_mw > 0.0:
+            _screen_stack.setdefault(g.fuel_type, []).append(
+                (
+                    net_revenue / (g.pmax_mw * 1000.0),  # $/kW-yr revenue stack
+                    going_forward_cost / (g.pmax_mw * 1000.0),  # $/kW-yr bar
+                    g.pmax_mw,
+                )
+            )
 
     # Revenue-side audit line (diagnostic): capacity-weighted screen net
     # revenue and going-forward bar per fuel class, for the FOM+scarcity joint

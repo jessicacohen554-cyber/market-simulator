@@ -1,0 +1,23 @@
+
+===== basis d48 (D48 instrument arm BOTH; reference docs/handoffs/d54/clearing-predecl-2026-09-05.json) =====
+control pjm-t1h              2022 DY 2022/2023: CODE price   82.81 $/MW-day  pos 1.0445  [marginal_offer_sets_price]  | INSTRUMENT   82.81 / 1.0445  Δ +0.000 $ / +0.000 pt  -> HIT  | published  50.00 at 1.0510  | uncleared firm coal 4,121, gas_cc 2,048, gas_st 8,802
+control pjm-t1h              2023 DY 2023/2024: CODE price   82.81 $/MW-day  pos 1.0454  [marginal_offer_sets_price]  | INSTRUMENT   82.81 / 1.0454  Δ +0.000 $ / +0.000 pt  -> HIT  | published  34.13 at 1.0552  | uncleared firm coal 4,121, gas_cc 2,141, gas_st 8,802
+control pjm-t1h              2024 DY 2024/2025: CODE price  157.98 $/MW-day  pos 1.0293  [marginal_offer_sets_price]  | INSTRUMENT  157.98 / 1.0293  Δ +0.000 $ / +0.000 pt  -> HIT  | published  28.92 at 1.0555  | uncleared firm coal 12,482
+control pjm-t1h              2025 DY 2025/2026: CODE price  451.61 $/MW-day  pos 0.9546  [all_offers_clear_curve_sets_price]  | INSTRUMENT  451.61 / 0.9546  Δ +0.000 $ / +0.000 pt  -> HIT  | published 269.92 at 1.0049  | uncleared firm 
+arm pjm-t1h-d48-devintage    2022 DY 2022/2023: CODE price   82.81 $/MW-day  pos 1.0445  [marginal_offer_sets_price]  | INSTRUMENT   82.81 / 1.0445  Δ +0.000 $ / +0.000 pt  -> HIT  | published  50.00 at 1.0510  | uncleared firm coal 4,121, gas_cc 2,048, gas_st 8,802
+arm pjm-t1h-d48-devintage    2023 DY 2023/2024: CODE price   82.81 $/MW-day  pos 1.0454  [marginal_offer_sets_price]  | INSTRUMENT   82.81 / 1.0454  Δ +0.000 $ / +0.000 pt  -> HIT  | published  34.13 at 1.0552  | uncleared firm coal 4,121, gas_cc 2,141, gas_st 8,802
+arm pjm-t1h-d48-devintage    2024 DY 2024/2025: CODE price  157.98 $/MW-day  pos 1.0293  [marginal_offer_sets_price]  | INSTRUMENT  157.98 / 1.0293  Δ +0.000 $ / +0.000 pt  -> HIT  | published  28.92 at 1.0555  | uncleared firm coal 12,482
+arm pjm-t1h-d48-devintage    2025 DY 2025/2026: CODE price  451.61 $/MW-day  pos 0.9546  [all_offers_clear_curve_sets_price]  | INSTRUMENT  451.61 / 0.9546  Δ +0.000 $ / +0.000 pt  -> HIT  | published 269.92 at 1.0049  | uncleared firm 
+
+===== basis head (D48 instrument arm OFF; reference docs/handoffs/d54/clearing-predecl-headbasis-2026-09-05.json) =====
+control pjm-t1h              2022 DY 2022/2023: CODE price   95.89 $/MW-day  pos 1.0412  [marginal_offer_sets_price]  | INSTRUMENT   95.89 / 1.0412  Δ +0.000 $ / +0.000 pt  -> HIT  | published  50.00 at 1.0510  | uncleared firm coal 1,014, gas_cc 1,598, gas_ct 2,845, gas_st 6,909
+control pjm-t1h              2023 DY 2023/2024: CODE price   95.89 $/MW-day  pos 1.0423  [marginal_offer_sets_price]  | INSTRUMENT   95.89 / 1.0423  Δ +0.000 $ / +0.000 pt  -> HIT  | published  34.13 at 1.0552  | uncleared firm coal 1,014, gas_cc 1,671, gas_ct 3,090, gas_st 6,909
+control pjm-t1h              2024 DY 2024/2025: CODE price  175.11 $/MW-day  pos 1.0256  [marginal_offer_sets_price]  | INSTRUMENT  175.11 / 1.0256  Δ +0.000 $ / +0.000 pt  -> HIT  | published  28.92 at 1.0555  | uncleared firm coal 10,242
+control pjm-t1h              2025 DY 2025/2026: CODE price  451.61 $/MW-day  pos 0.9520  [all_offers_clear_curve_sets_price]  | INSTRUMENT  451.61 / 0.9520  Δ +0.000 $ / +0.000 pt  -> HIT  | published 269.92 at 1.0049  | uncleared firm 
+arm pjm-t1h-d48-devintage    2022 DY 2022/2023: CODE price   95.89 $/MW-day  pos 1.0412  [marginal_offer_sets_price]  | INSTRUMENT   95.89 / 1.0412  Δ +0.000 $ / +0.000 pt  -> HIT  | published  50.00 at 1.0510  | uncleared firm coal 1,014, gas_cc 1,598, gas_ct 2,845, gas_st 6,909
+arm pjm-t1h-d48-devintage    2023 DY 2023/2024: CODE price   95.89 $/MW-day  pos 1.0423  [marginal_offer_sets_price]  | INSTRUMENT   95.89 / 1.0423  Δ +0.000 $ / +0.000 pt  -> HIT  | published  34.13 at 1.0552  | uncleared firm coal 1,014, gas_cc 1,671, gas_ct 3,090, gas_st 6,909
+arm pjm-t1h-d48-devintage    2024 DY 2024/2025: CODE price  175.11 $/MW-day  pos 1.0256  [marginal_offer_sets_price]  | INSTRUMENT  175.11 / 1.0256  Δ +0.000 $ / +0.000 pt  -> HIT  | published  28.92 at 1.0555  | uncleared firm coal 10,242
+arm pjm-t1h-d48-devintage    2025 DY 2025/2026: CODE price  451.61 $/MW-day  pos 0.9520  [all_offers_clear_curve_sets_price]  | INSTRUMENT  451.61 / 0.9520  Δ +0.000 $ / +0.000 pt  -> HIT  | published 269.92 at 1.0049  | uncleared firm 
+
+STOP-1 tolerance: |Δprice| <= $1/MW-day and |Δposition| <= 0.1 pt in every year.
+RESULT: ALL HIT — the code's clearing reproduces the instrument (I5)

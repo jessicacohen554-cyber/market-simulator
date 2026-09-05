@@ -779,6 +779,13 @@ results/hindcast/*/*/*/evolution_*.json
 # pipeline screen rows the D48 finding's decomposition and P2/P4/P6 grading
 # read against D45-R's bare `pjm-t1h` ledgers -- same one-bundle carve-out.
 !results/hindcast/pjm-2021-2025-realized-t1h-d48-devintage/*/*/evolution_*.json
+# capx D57 (2026-09-05): the PJM clearing-half A/B arms (suffixed
+# pjm-t1h-d57-clearing / -headbasis). Their ledgers carry the `capacity_clearing`
+# block (price / cleared position / uncleared-by-fuel per screen year) and the
+# per-row `capacity_offer_usd_per_mw_day` / `capacity_cleared` fields the D57
+# finding's identity check (failing set == uncleared set), FC-3 attribution and
+# E&AS-operand measurement read -- same one-bundle carve-out.
+!results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing*/*/*/evolution_*.json
 # capx D52 (2026-09-04): the NYISO adequacy-requirement devintage A/B arm
 # (suffixed nyiso-t1h-d52-devintage) and its CONDITIONAL curve-ON probe
 # (nyiso-t1h-d52-curveon). Their ledgers carry the new D52 seam observability
