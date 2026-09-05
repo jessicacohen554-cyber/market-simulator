@@ -1,0 +1,100 @@
+{
+  "id": "2026-09-05-neiso-2020-2021-touchpoints",
+  "label": "neiso 2020 2021 touchpoints",
+  "date": "2026-09-05",
+  "shorthand": "neiso-2020-2021-touchpoints",
+  "definition": "NEISO 2020+2021 VALIDATION TOUCHPOINTS (rule 22 validation tier; freeze scope = locked_test only since the 2026-08-26 owner ruling). Byte-faithful replay of the 2026-08-17-neiso-99-joint-p1 keeper recipe on the two never-before-solved validation rungs. Frozen recipe, zero deltas: no parameter was tuned for, against, or in response to 2020 or 2021. The neiso-92 (2026-08-13) data-readiness REFUSAL of 2021 is OVERTAKEN: all four inputs it graded DEGRADED now carry per-year 2019-2025 coverage (nuclear-availability-NEISO.csv, NUCLEAR_MONTHLY_CF_BY_YEAR, IMPORT/EXPORT_TRANCHES_BY_YEAR, eia860_chp_by_year, parasitic_load_factors). ITERABLE model-SELECTION evidence, NEVER a certified out-of-sample skill number.",
+  "years": [
+    2020,
+    2021
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-09-05-neiso-2020-2021-touchpoints.js",
+  "bundle": "results/calibration/neiso_tp2021_2020_k99",
+  "holdout": {
+    "tier": "validation",
+    "year": 2020,
+    "keeper": "2026-08-17-neiso-99-joint-p1",
+    "keeperDetermination": "CALIBRATED",
+    "keeperYears": [
+      2023,
+      2024,
+      2025
+    ],
+    "holdoutDetermination": "NOT-YET",
+    "criteria": [
+      {
+        "key": "price_mean",
+        "label": "C3a mean LMP",
+        "tier": "load-bearing",
+        "inSample": "PASS",
+        "holdout": "FAIL",
+        "verdict": "degraded"
+      },
+      {
+        "key": "price_tail",
+        "label": "C3c price tail / scarcity (RT hourly)",
+        "tier": "supporting",
+        "inSample": "CAVEAT",
+        "holdout": "PASS",
+        "verdict": "improved"
+      },
+      {
+        "key": "dispatch_corr",
+        "label": "C4 fleet hourly dispatch correlation",
+        "tier": "supporting",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "forced_share",
+        "label": "C8 forced-energy share (D-2)",
+        "tier": "protective",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "fuelmix",
+        "label": "C1 fuel-mix by class (grid-delivered)",
+        "tier": "load-bearing",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "governance",
+        "label": "C6 governance gate",
+        "tier": "protective",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "price_shape",
+        "label": "C3b price duration/shape",
+        "tier": "load-bearing",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "sysvol",
+        "label": "C2 system volume (gas/coal families)",
+        "tier": "load-bearing",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      }
+    ],
+    "nDegraded": 1,
+    "nCarried": 0,
+    "tierCaveat": "Validation tier: ITERABLE model-SELECTION evidence. This is NOT a certified out-of-sample skill number and must never be quoted as one. THE RUN COVERS TWO RUNGS AND THEY DIVERGE \u2014 read `perYear`, not the single determination: 2021 scores CALIBRATED standalone with every criterion passing, and the run-level NOT-YET is driven entirely by 2020's C3a. The panel's criterion table is stamped on 2020, the year that carries the degradation. Neither rung is spent: the validation tier is re-runnable by design, which is what makes the rule-22 touchpoint loop (diagnose -> re-train on 2023-2025 -> re-test) legal. The touch-once locked test (2019 / H1-2026) is NOT spent here and NEISO has never been granted it.",
+    "envelopeCaveat": "SAME-ENVELOPE PARITY: 2020 and 2021 are built from the SAME uniform 2018-2026 CAMPD detector pass as the tuned years, carry the same merit-order guard, and sit in family on window count and MW-days (2020 401 windows / 2021 373 vs a 2023-2025 range of 260-338 on a declining fleet). The residual over-count that keeps the locked-test freeze active is therefore baked into the tuned years too: hold both sides' ABSOLUTE levels at arm's length, but the in-sample-to-holdout DELTA this table reports is measured like-for-like. TWO STATED LIMITS ON THE COMPARISON, neither of which the panel hides: (i) the keeper's in-sample column was solved at git b7904a1 (2026-08-17) and these rungs at 6619fb4a (2026-09-05) -- 26 solve kwargs were added in between, each verified in this bundle's calibration_attestation.json to sit at its ScenarioConfig default, but no same-HEAD in-sample control has been registered; (ii) the bench parts for 2020/2021 were written by the builder at HEAD while NEISO's 2022-2025 parts predate it (fingerprint b2f21b9a00d3), so C1's metered actuals are not on a single builder vintage across the span.",
+    "perYear": {
+      "2020": "NOT-YET \u2014 lone FAIL C3a mean LMP +13.7% (model $27.81 vs actual RT $23.39). C1/C2/C3b/C3c/C4/C6/C8 all PASS.",
+      "2021": "CALIBRATED \u2014 every criterion PASS, C3c included (0 actual RT hours > $300 in 2021, so the tail criterion is scored on the small-count rule and the model's 0h matches). Zero caveats."
+    }
+  }
+}
