@@ -1928,7 +1928,29 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
             wecc_border_carbon_adder,
         )
 
-        border = wecc_border_carbon_adder(getattr(config, "carbon_price", 0.0))
+        # The corridor inventory's border adder prices off the RESOLVED carbon
+        # signal (SCN-WS1a, plan §2.1 G-C2), the same resolution every other
+        # border site uses (runner.py's build_interchange_fleet border,
+        # interchange/caiso.py, import_nodes.py). Before this it read the raw
+        # config.carbon_price field, which is 0.0 under the default
+        # program-resolved posture, so the inventory reported a $0 adder where
+        # the CARB trajectory says ~$12.85/MWh in 2026. The year is the spec's
+        # own year when the caller passes one, else the run's start year (the
+        # runner builds the interchange fleet once at start_year and re-prices
+        # it per year through apply_interchange_injections). Lazy import:
+        # policy.carbon imports config.scenarios, and this module must stay
+        # importable from the config layer.
+        from market_sim.config.constants import START_YEAR
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        carbon_year = year
+        if carbon_year is None:
+            carbon_year = getattr(config, "start_year", None)
+        if carbon_year is None:
+            carbon_year = START_YEAR
+        border = wecc_border_carbon_adder(
+            resolve_carbon_price(config, int(carbon_year))
+        )
         # Informational corridor inventory (zones + per-hub tranche split).
         # The per-hub GENERATORS are built by the canonical
         # transmission.build_caiso_per_hub_intertie, which uses the static

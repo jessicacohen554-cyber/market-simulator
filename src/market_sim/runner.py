@@ -152,7 +152,10 @@ from market_sim.model.transmission import (
     get_ttc_array,
     wecc_border_carbon_adder,
 )
-from market_sim.policy.cap_and_trade import per_generator_membership
+from market_sim.policy.cap_and_trade import (
+    carbon_mc_column,
+    per_generator_membership,
+)
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
@@ -2559,6 +2562,26 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # lignite vs PRB by rail); no-op for the legacy fleet.
         apply_coal_supply_pricing(fuel_prices, dispatch_fleet, config, year)
         carbon_price = resolve_carbon_price(config, year)
+        # Partial-footprint carbon program (pjm-146 seam, SCN-WS1a G-C3): the
+        # same gate and arithmetic as scripts/run_calibration.py's assemble_mc
+        # call -- when the ISO's program maps membership per zone (today only
+        # PJM's RGGI footprint) and the resolved adder is nonzero, the scalar
+        # becomes the per-generator membership-weighted column
+        # emission_rate[g] x m[g] x p_allowance. Whole-ISO programs and
+        # program-less ISOs get the scalar back as the SAME object, so their
+        # solves stay byte-identical (policy.cap_and_trade.carbon_mc_column).
+        carbon_mc = carbon_mc_column(
+            config, iso, year, carbon_price, fleet_arrays, zone_names
+        )
+        if carbon_mc is not carbon_price:
+            logger.info(
+                "%s %d: partial-footprint carbon adder -- %d/%d generators "
+                "carry a nonzero membership-weighted allowance price",
+                iso,
+                year,
+                int((np.asarray(carbon_mc) > 0).sum()),
+                len(carbon_mc),
+            )
         # Full variable cost: fuel + VOM + carbon + NOx + SO2 -- computed
         # even on cached years because next year's economic retirement
         # screen nets it against price (inframarginal margin, not gross
@@ -2569,7 +2592,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         mc_cost = assemble_mc(
             fleet_arrays,
             fuel_prices,
-            carbon_price,
+            carbon_mc,
             config.nox_price,
             so2=(fleet_arrays.so2_rate, config.so2_price),
         )

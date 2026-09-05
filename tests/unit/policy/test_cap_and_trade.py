@@ -562,3 +562,178 @@ class TestNamedCarbonProgramPricePath:
     def test_pjm_no_measured_anchor_returns_zero(self):
         program = CAP_AND_TRADE_PROGRAMS["PJM"]
         assert named_program_price(program, "PJM", 2030, "high") == 0.0
+
+
+class TestCarbonMcColumn:
+    """SCN-WS1a G-C3: the forecast orchestrator's ``assemble_mc`` carbon argument.
+
+    ``carbon_mc_column`` is the backcast's partial-footprint gate lifted
+    verbatim so ``runner.py`` and ``scripts/run_calibration.py`` agree. The
+    load-bearing property is byte-identity on the scalar path: every ISO whose
+    program membership is uniform (or absent) must hand ``assemble_mc`` the
+    SAME scalar object it received before the seam existed.
+    """
+
+    @staticmethod
+    def _fleet(zone_idx, plant_code):
+        class _Fleet:
+            pass
+
+        f = _Fleet()
+        f.zone_idx = np.asarray(zone_idx, dtype=int)
+        f.plant_code = np.asarray(plant_code, dtype=int)
+        f.n_gen = len(f.zone_idx)
+        return f
+
+    @pytest.mark.parametrize("iso", ["ERCOT", "CAISO", "MISO", "NYISO", "NEISO"])
+    @pytest.mark.parametrize("mode", ["forecast", "backcast"])
+    def test_uniform_membership_isos_return_the_identical_scalar(self, iso, mode):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.policy.cap_and_trade import carbon_mc_column
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        cfg = ScenarioConfig(iso=iso, mode=mode)
+        year = 2024 if mode == "backcast" else 2030
+        zones = get_iso_config(iso).zone_names
+        price = resolve_carbon_price(cfg, year)
+        # Force a nonzero scalar so the gate's first leg cannot short-circuit
+        # for the program-less ISOs: the identity must hold on the value, not
+        # on "carbon was zero anyway".
+        if not price:
+            price = 12.5
+        fleet = self._fleet([0] * 3, [-1, -2, -3])
+        out = carbon_mc_column(cfg, iso, year, price, fleet, zones)
+        assert out is price
+
+    def test_zero_price_short_circuits_before_any_lookup(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.policy.cap_and_trade import carbon_mc_column
+
+        cfg = ScenarioConfig(iso="PJM", mode="forecast")
+        zones = get_iso_config("PJM").zone_names
+        price = 0.0
+        out = carbon_mc_column(cfg, "PJM", 2030, price, object(), zones)
+        assert out is price
+
+    def test_pjm_forecast_adder_is_zero_today_so_scalar_path(self):
+        # G-C3 is INERT at HEAD: projected_price has no PJM anchor, so the
+        # resolved forecast scalar is 0.0 and the column is never built.
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.policy.cap_and_trade import carbon_mc_column
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        cfg = ScenarioConfig(iso="PJM", mode="forecast")
+        price = resolve_carbon_price(cfg, 2030)
+        assert price == 0.0
+        zones = get_iso_config("PJM").zone_names
+        assert carbon_mc_column(cfg, "PJM", 2030, price, object(), zones) is price
+
+    def test_pjm_partial_footprint_builds_the_membership_column(self):
+        # The one live path: PJM's gated RGGI adder (backcast) with a synthetic
+        # fleet (plant_code <= 0 keeps the committed zone-share fallback).
+        from market_sim.config.constants import PJM_RGGI_ZONE_SHARE
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.policy.cap_and_trade import carbon_mc_column
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        cfg = ScenarioConfig(
+            iso="PJM", mode="backcast", pjm_rggi_allowance_pricing=True
+        )
+        zones = list(get_iso_config("PJM").zone_names)
+        year = 2024
+        price = resolve_carbon_price(cfg, year)
+        assert price == pytest.approx(22.83)
+        z_emaac = zones.index("PJM_EMAAC")
+        z_comed = zones.index("PJM_ComEd")
+        fleet = self._fleet([z_emaac, z_comed], [-1, -2])
+        out = carbon_mc_column(cfg, "PJM", year, price, fleet, zones, plant_state={})
+        assert isinstance(out, np.ndarray)
+        assert out.shape == (2,)
+        assert out[0] == pytest.approx(PJM_RGGI_ZONE_SHARE["PJM_EMAAC"][year] * price)
+        assert out[1] == pytest.approx(0.0)
+
+    def test_scalar_path_assemble_mc_is_byte_identical(self):
+        # The end-to-end statement of the byte-identity claim: for a uniform-
+        # membership ISO, assemble_mc over the seam's output equals
+        # assemble_mc over the scalar, bit for bit.
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+        from market_sim.data.fleet.legacy_bins import assemble_mc
+        from market_sim.policy.cap_and_trade import carbon_mc_column
+
+        iso = "NEISO"
+        zones = get_iso_config(iso).zone_names
+        gens = [
+            Generator(
+                unit_id=f"g{i}",
+                name=f"g{i}",
+                zone=zones[0],
+                fuel_type="gas_cc",
+                pmax_mw=100.0,
+                heat_rate=7.0 + i,
+                vom=2.0,
+                emission_rate_co2=0.4,
+            )
+            for i in range(3)
+        ]
+        fleet = generators_to_fleet_arrays(gens, zones, hours=24)
+        fuel = np.full((3, 24), 3.0)
+        cfg = ScenarioConfig(iso=iso, mode="forecast")
+        price = 26.05
+        col = carbon_mc_column(cfg, iso, 2026, price, fleet, zones)
+        assert col is price
+        a = assemble_mc(fleet, fuel, price, 0.0)
+        b = assemble_mc(fleet, fuel, col, 0.0)
+        assert a.tobytes() == b.tobytes()
+
+
+class TestBorderSeamResolvesCarbon:
+    """SCN-WS1a G-C2: ``spec.py``'s corridor border adder prices off the resolver."""
+
+    def _spec(self, **overrides):
+        from market_sim.model.interchange.spec import get_interchange_spec
+
+        cfg = ScenarioConfig(
+            iso="CAISO",
+            mode="forecast",
+            start_year=2026,
+            end_year=2026,
+            caiso_per_hub_intertie=True,
+            **overrides,
+        )
+        return cfg, get_interchange_spec(cfg, "CAISO", year=2026)
+
+    def test_corridor_adder_is_resolved_price_times_unspecified_ef(self):
+        from market_sim.config.constants import CARB_UNSPECIFIED_IMPORT_EF
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        cfg, spec = self._spec()
+        assert cfg.carbon_price == 0.0  # the program-resolved posture
+        price = resolve_carbon_price(cfg, 2026)
+        assert price > 0.0
+        assert spec.corridors, "per-hub posture must emit the corridor inventory"
+        for corridor in spec.corridors:
+            assert corridor.carbon_adder == pytest.approx(
+                CARB_UNSPECIFIED_IMPORT_EF * price
+            )
+
+    def test_corridor_adder_moves_by_ef_times_delta(self):
+        from market_sim.config.constants import CARB_UNSPECIFIED_IMPORT_EF
+
+        _, base = self._spec()
+        _, high = self._spec(carbon_price_delta=25.0)
+        for b, h in zip(base.corridors, high.corridors):
+            assert h.carbon_adder - b.carbon_adder == pytest.approx(
+                CARB_UNSPECIFIED_IMPORT_EF * 25.0
+            )
+
+    def test_corridor_adder_matches_runner_border(self):
+        # The inventory now agrees with the border the runner actually prices
+        # the import fleet with (runner.py's build_interchange_fleet border).
+        from market_sim.model.interchange.import_nodes import wecc_border_carbon_adder
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        cfg, spec = self._spec()
+        runner_border = wecc_border_carbon_adder(resolve_carbon_price(cfg, 2026))
+        for corridor in spec.corridors:
+            assert corridor.carbon_adder == pytest.approx(runner_border)
