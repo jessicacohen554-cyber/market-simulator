@@ -657,6 +657,62 @@
 > (records-only scope).** Both `docs/` files sit in `ci.yml`'s Y-4-widened path
 > filter; **`keepers/README.md` does not**, which is itself an instance of the
 > DOCS-B / Y-9 path-filter gap.
+>
+> ### 🔴 CODA AT PR-OPEN (dated addendum to THIS block only, 2026-09-05 22:40Z — nothing else is rewritten)
+>
+> **A THIRD INDEPENDENT CI-PATH DEFECT, FOUND BY THIS LANE'S OWN PR FAILING ON IT
+> 90 SECONDS AFTER IT OPENED.** `shrink-guard`
+> (`.github/workflows/file-integrity-guard.yml`) reported **`core file DELETED (was
+> 547 lines)`** on head `fe197d6e` — **on a diff of three files, insertions only,
+> zero deletions.**
+>
+> **It is a FALSE POSITIVE, and the mechanism is exact.** The guard takes its base
+> from the base branch's **TIP**, not the merge-base:
+>
+> ```
+> line  69:  BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+> line 116:  git diff --name-status -M "${BASE_SHA}" "${HEAD_SHA}" > /tmp/diff.tsv
+> ```
+>
+> That is a **two-dot** diff. `main` advanced from `48051605` (this branch's point)
+> to **`9e8de3dc`** (#4842, 22:34:19Z) in the ~7 minutes between the push and the
+> job, and **`9e8de3dc` is NOT an ancestor of `fe197d6e`** — so every file `main`
+> ADDED in that window appears in the diff as **`D` (deleted)**. Measured here:
+>
+> | form | deletions reported |
+> |---|---|
+> | `git diff --name-status -M 9e8de3dc fe197d6e` (**the guard**) | 🔴 **3** — `scripts/probes/nyiso195_screen_gates.py` (**547 lines**, the one that fired), `docs/FINDING-nyiso195-…md`, `results/calibration/_nyiso195_screen_gates.json` — **all three added by #4842, none touched by this branch** |
+> | `git diff --name-status -M 9e8de3dc...fe197d6e` (**merge-base**) | 🟢 **0** — exactly the three `M` rows of this lane's diff |
+>
+> **The one-line repair** is the three-dot form, or `BASE_SHA=$(git merge-base
+> "$BASE_SHA" "$HEAD_SHA")` before line 116. ⚠️ **NOT DONE HERE — `.github/` is
+> outside this lane's scope, and the fix is the owner's or an infrastructure lane's.**
+> Rebasing onto the newer tip clears the symptom and this lane did that, **but it
+> only masks the defect**: at ~15 merges/hour any PR whose head predates the base
+> tip when the job runs hits it again, and **the bigger the added file, the more
+> reliably it fires** (the guard only considers paths ≥300 lines at base — i.e. it
+> is *most* likely to false-positive on exactly the substantial files it exists to
+> protect).
+>
+> 🟢 **IT DOES NOT BLOCK THE FLIP, AND THAT IS WORTH STATING PRECISELY.**
+> `file-integrity-guard` is **not** one of R-AE's six required checks — **Y-9 §3
+> excludes it in terms**: *"`file-integrity-guard` lives in its own workflow and is
+> out of scope for this flip."* So this red neither gates a PR today nor will after
+> the toggle. **It is a correctness defect in a rule-27 guard, not a gating one** —
+> which is the worse half, because a guard that cries wolf on clean PRs is a guard
+> people learn to merge past, and **rule 27 exists precisely because a truncation
+> once went unnoticed.**
+>
+> ⚠️ **THE PATTERN IS NOW THREE-FOR-THREE IN ONE CYCLE, AND IT IS ONE PATTERN.**
+> Y-9 §5 (a glob that does not cross `/`, so `docs/handoffs/FINDING-*.md` is
+> unenrolled), DOCS-B's #4810 comment (a docs PR matching none of the enrolled
+> paths), and now this (a base sha that is not the merge-base). **All three are
+> CI-plumbing defects on the paths this program actually writes to; all three were
+> found by lanes tripping over them rather than by anyone auditing CI; and all
+> three are unassigned.** **Routed to the owner and the director as a single item:
+> the CI configuration has not been audited against the way this repository is
+> actually used, and the branch-protection flip raises the cost of every one of
+> these from an annoyance to a merge block.**
 
 > # 🔴 **G2 IS *NOT* DECLARED — RECORDS-ONLY LANE v30, pin `5eb5f38a` → `2a59d269`. THE LANE WAS DISPATCHED TO DECLARE IT, ON A STATED PRECONDITION THAT `main` READS `protected: true`. IT READS `protected: false` — AT 20:31Z AND AGAIN AT 20:44:46Z, THE FOURTH AND FIFTH SUCH READING ACROSS TWO INDEPENDENT LANES, 110 MINUTES AFTER "DOING IT NOW". R-AM's CONDITION IS UNMET, SO THE DECLARATION, THE R-V LIFT AND THE Q.2 NOTIFICATION ARE ALL WITHHELD.**
 >
