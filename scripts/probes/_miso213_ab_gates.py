@@ -234,21 +234,50 @@ def s0_inherited() -> dict:
 
 
 def s1_single_delta() -> dict:
+    """S-1 restated over the RECORDED configs (amended after the first scoring pass).
+
+    The control is the keeper's committed ``run_config.json`` (solved 2026-09-04
+    at a9b67b53); the arm solved at HEAD a day later, after main had added
+    five ScenarioConfig fields the keeper's record cannot carry. A set-union
+    diff (the miso-210 form, where both legs solved at adjacent HEADs) would
+    count those absent-vs-default fields as deltas. Restated: (i) zero diffs
+    over the fields PRESENT IN BOTH records; (ii) every field new since the
+    control sits at its dataclass default in the arm EXCEPT the tested field,
+    which reads True; (iii) the git sha differs. The kill/object gates and
+    every threshold are untouched by this amendment; it is disclosed in the
+    finding as a scoring-instrument correction.
+    """
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    defaults = {f.name: f.default for f in dataclasses.fields(ScenarioConfig)}
     rc_c = json.loads((CONTROL / "run_config.json").read_text())
     rc_a = json.loads((ARM / "run_config.json").read_text())
     ca, cb = rc_c["scenario_config"], rc_a["scenario_config"]
-    diffs = sorted(k for k in set(ca) | set(cb) if ca.get(k) != cb.get(k))
+    common_diffs = sorted(k for k in set(ca) & set(cb) if ca.get(k) != cb.get(k))
+    new_fields = {
+        k: {
+            "arm": cb[k],
+            "default": defaults.get(k),
+            "at_default": cb[k] == defaults.get(k),
+        }
+        for k in sorted(set(cb) - set(ca))
+    }
+    off_default_new = sorted(k for k, v in new_fields.items() if not v["at_default"])
     sha_c = (rc_c.get("git") or {}).get("sha")
     sha_a = (rc_a.get("git") or {}).get("sha")
     return {
         "n_fields": len(set(ca) | set(cb)),
-        "config_diffs": diffs,
+        "in_common_diffs": common_diffs,
+        "fields_new_since_control": new_fields,
+        "new_fields_off_default": off_default_new,
         "control_value": ca.get(FIELD),
         "arm_value": cb.get(FIELD),
         "git_sha": {"control": sha_c, "arm": sha_a},
         "passed": (
-            diffs == [FIELD]
-            and ca.get(FIELD) in (False, None)
+            common_diffs == []
+            and off_default_new == [FIELD]
             and cb.get(FIELD) is True
             and sha_c != sha_a
         ),

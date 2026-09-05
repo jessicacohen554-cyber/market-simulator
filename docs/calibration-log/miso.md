@@ -11295,3 +11295,119 @@ spot, CAMPD, PBC, the RT offer book read as diagnostics, none an LP input. Rule 
 blob-verify.
 
 Next shorthand: **miso-213**.
+
+## miso-213 (2026-09-05) — THE RULE-19 ZONAL-BASIS LAYERING ON 923-PRICED CELLS: the mean-zero `miso_zonal_gas_basis` increment was added to every gas cell the EIA-923 print path had already priced — and the print path prices 100 % of MISO gas capacity-hours, so the basis was fully redundant in a MISO backcast; repaired as ONE default-off field, single-delta A/B against the keeper itself, EVERY KILL SILENT, all six pre-registered object gates moving the South→North way → **PROMOTED, keeper → `2026-09-05-miso-213-layering`**; determination UNCHANGED in class (NOT-YET on C3a-2025 alone, −12.38 → −11.75 %)
+
+**Keeper → `2026-09-05-miso-213-layering`** (bundle `results/calibration/miso213_layering_B`),
+promoted on the PREREG's own §4 rule (kills silent, values moved) and under the owner's
+standing bar restated in-session ("If structural integrity improves but gates regress that
+may still be a keeper") — in the event no protective gate regressed. PREREG
+`PREREG-miso213-zonal-basis-layering-2026-09-05.md` pushed BLIND at `a1a4a48` (PR #4738);
+scorer `scripts/probes/_miso213_ab_gates.py` committed with the arm code BEFORE the solve;
+phase 0 `scripts/probes/_miso213_basis_layering_phase0.py` + `_miso213_arm_liveness.py`
+→ `_miso213_basis_layering.json`; A/B record `_miso213_ab_gates.json`; attestation
+`scripts/gen_miso213_attestation.py`; record `FINDING-miso213-zonal-basis-layering-2026-09-05.md`.
+Rule 22: 2023–2025 only. Rule 25: MISO's shard (plus one `.`/`U`-style cell per shard for the
+NEW field, rule 28c). Rule 27: `scenarios.py` (17,164 lines), `run_calibration.py`
+(6,646), `plant_prices.py` (670) edited locally and blob-verified after every push.
+
+**The object (miso-212 §8).** `resolve_fuel_prices` / `run_calibration.run_year` price every
+MISO gas cell first from the plant's own EIA-923 monthly print or the class-aware state/zone
+pool of other plants' prints (`gas_plant_monthly_fuel_pricing`, a `backcast_config` harness
+default for every non-ERCOT ISO — no CLI flag), then add the zone's `miso_zonal_gas_hub.csv`
+basis minus the capacity-weighted mean. The basis rows are `N3045<ST>3 / 1.036 − HH` — the
+state aggregate of the same receipts the prints apply per plant. One phenomenon, priced
+twice, in every MISO keeper since gate 2 (miso-38).
+
+**Phase 0 (zero-solve), against the PREREG.** L-1 population (P-1 RIGHT, at the ceiling):
+own print 75.0/73.8/74.0 % + pool 25.0/26.2/26.0 % of Jun–Jul gas capacity-hours (2023/2024/
+2025), **trajectory 0.0 %** in every zone and class; L-5 (post-code, the production mask)
+confirms 100.0 % in all three years — the 8,184 2023 cells the `F_nobasis ≠ F_noplant`
+inference called trajectory were prints hidden by the oil-parity cap. L-2 per-plant print −
+HH, South own p50 +0.17/+0.22/+0.25 $/MMBtu, p90 0.63/0.56/0.90 (P-2 predicted p50 0.3–0.6,
+p90 ≥ 1.0: WRONG, lower); Midwest own p50 +0.60/+0.38/+0.17 with cap-weighted means
++1.70/+1.12/+0.86 — the Midwest premium is concentrated in a few large-print plants (p90
+3.2/1.5/1.8), the South's is not. L-3 static reach (mc_base, implied HR — the keeper's
+unit_hourly is gitignored; the miso-212 all-cell number recomputed on the same instrument):
+South **+0.84 / +0.45 / +0.58 GW** made economic at the fixed South price in the real S→N
+binding shoulders (P-3 0.6–0.9 RIGHT), Midwest **−1.60 / −0.65 / −1.52 GW** at own zone
+prices (P-3 0.3–1.0 WRONG, larger — West/Plains lose a −0.64 discount in 2025); ratio
+arm/all-cell = 1.00 everywhere. L-4 genealogy (P-4 RIGHT). Neither §4 kill held.
+
+**The arm.** `apply_plant_monthly_fuel_prices` RETURNS its `(n_gen, T)` written-cell mask;
+both fuel chains hand it to `apply_miso_zonal_gas_basis`, which under the NEW default-off
+`ScenarioConfig.miso_zonal_gas_basis_skip_923_priced` passes it as `skip_cells` to the shared
+mean-zero core: masked cells byte-untouched, unmasked cells the same spread as before (the
+mean is still over ALL gas rows). Flag off ⇒ byte-identical (7 unit tests; pinned cache key
+unchanged via `_CACHE_KEY_OPTIONAL_FIELDS`). Zero free parameters (ledger 41 → 41). The
+solve log confirms "100.0 % of gas cells skipped as print-derived" in every year.
+
+**The A/B (arm `miso213_layering_B` at `cf55ab5` vs the keeper bundle itself).** S-0
+inherited (miso-210 bit-identity); **S-1 restated after the first scoring pass** — the
+set-union form read VOID on five `ScenarioConfig` fields main added after the keeper solved
+(absent from its record, at their defaults in the arm); restated as zero in-common diffs +
+every new field at default except the tested one: PASS (disclosed, no threshold moved);
+S-2 live. **K-1 PASS** no band exit — largest move **CT_PEAKER-2025 −3.62 TWh** (19.71 →
+16.10 vs 19.29 actual); ST_GAS-2024 −7.486 → −6.803, CC_REGULAR-2024 +6.940 → +7.419.
+**K-2** C3b 0.081/0.111/0.182 → 0.080/0.109/0.177. **K-3** 57 → 56 D-4 rows, zero new
+failures, one CLEARED ((2023, unit-conduct, reliability_floor × ST_GAS, 1122) — the miso-201
+kill cell). **K-4** D-1 ST_GAS profile_r 0.941/0.956/0.977 → 0.951/0.957/0.982. **K-5**
+status map IDENTICAL (the first pass flagged governance UNATTESTED and C3c CAVEAT → FAIL
+before the arm's attestation existed — the miso-200 vacuous trap, closed by
+`gen_miso213_attestation.py`). **K-6** 41/2 both legs.
+
+**Values moved FAR MORE than the PREREG said (P-5 < 0.3 TWh/yr: WRONG by an order of
+magnitude), reported at full magnitude:** arm − control, TWh, 2023/2024/2025 — CT_PEAKER
+**−3.33 / −2.32 / −3.62**, ST_GAS **+1.34 / +0.68 / +0.94**, CC_REGULAR +0.63/+0.48/−0.25,
+CC_CHP −1.17/−0.56/+0.36, COAL_PRB +0.85/+0.54/+0.70, COAL_BIT +0.35/0.00/+0.59; gas classes
+−2.43/−1.69/−2.61. The Midwest CT fleet lost the increment's discount (Illinois/Indiana/East
+−0.26/−0.15/−0.04, West/Plains +0.31/+0.09/−0.64 $/MMBtu removed) and now bids its own
+delivered cost; CT_PEAKER moves AWAY from actual in 2023 and 2025 (rule 14: the plant's own
+receipts are the accurate input — a discovered signal about the CT fleet, not a reason to
+keep the discount). ST_GAS moves toward actual in every year. **C8 ST_GAS forced share
+0.155/0.153/0.271 → 0.138/0.138/0.212** — less forcing everywhere. **C3a, never the
+justification: +0.79 / +0.56 / +0.64 pp** — 2023 +0.12 → **+0.91** (AWAY from zero; PREREG
+predicted −0.05..−0.5, WRONG sign), 2024 −4.40 → −3.84 (PREREG negative, WRONG sign), 2025
+−12.38 → **−11.75** (inside the pre-registered +0.2..+1.5). C3c 3/7/1 → 3/7/0 tail hours.
+
+**The object, all six gates in the pre-registered direction (2025 real S→N binding
+shoulder, 177 h; control from miso-211):** South boundary net **+0.05 → −0.73 GW**
+(measured −2.86; band −0.1..−0.6, OVERSHOOT); S→N corridor flow **357 → 710 MW** (inside
+450–1000); free-tier binding share **2.8 → 6.8 %** (inside 4–12); Indiana−South spread
+−0.16 → +0.16 $/MWh (band +0.3..+3, SHORT); South gas **15.56 → 16.33 GW** vs 18.90
+measured (inside 15.9–16.4); Midwest gas **−1.05 GW** (band −0.2..−0.8, OVERSHOOT). 2024
+shoulder: net −0.38 → −0.72, flow 424 → 555, share 6.3 → 9.5 %, South gas 15.83 → 16.15,
+Midwest −0.49. 2023 shoulder: net −1.10 → −1.59, flow 846 → 1,193, share 12 → 25 %, South
+gas 16.90 → 17.40, Midwest −0.83. The separation the model produces is dispatch and flow,
+not yet price: the Indiana−South spread opens only $0.3.
+
+**Honest headline (PREREG §5, stated before the measurement).** On this recipe the arm is
+behaviourally `miso_zonal_gas_basis=False` in backcast mode. The repair REMOVES a
+double-counted premium rather than adding structure; the mechanism keeps its forward story
+(the print path is a backcast-only overlay, so every forecast cell is a trajectory cell and
+receives the basis unchanged). `zonal_gas_basis` stays K on that forward story and the code
+path, with its backcast effect now zero — said so in the cell. Rule 25: PJM and CAISO share
+the mean-zero core and the print path, so the same layering exists there in kind; each
+enters its own lane as U, never from this verdict.
+
+**Prior, scored against interest.** P-1 RIGHT (ceiling); P-2 WRONG (South premium smaller,
+Midwest concentrated); P-3 South RIGHT, Midwest WRONG-high; P-4 RIGHT; P-5 WRONG on
+magnitude everywhere and on C3a sign in 2023/2024; P-6 RIGHT (all K silent). Two instrument
+corrections disclosed: the phase-0 print-cell inference (blind to the oil-parity cap; L-5
+re-based on the production mask) and S-1 (restated over the recorded configs after the
+first pass).
+
+**What it hands on (miso-214).** (1) CT_PEAKER −3.6 TWh at its own delivered cost — the
+Midwest peaker fleet's dispatch is now the largest C1 mover on the board and sits 3.2 TWh
+under actual in 2025 with the class SKIPPED (preliminary 923 vintage); the class's own
+offer/commitment conduct is the next object, not its fuel. (2) The South separation is
+present in dispatch and flow but not in price (+$0.16 vs a measured +$58 in the 2025
+binding shoulder): the miso-211 D-3 object remains. (3) The average-vs-marginal delivered-
+cost convention (miso-212 §8) is untouched and OWNER-COURT. (4) PJM/CAISO carry the same
+layering in kind — their lanes' call. Registered `2026-09-05-miso-213-layering` (retention
+pruned `2026-08-30-miso-191-control`); `keepers/MISO.json` → miso-213, `build_status --iso
+MISO`, `audit_keepers --iso MISO` PASS 0/0; §5.4 header re-keyed; MISO.js keeper/gates
+stamps, `miso_zonal_gas_basis_skip_923_priced` K (row added with the field), `zonal_gas_basis`
+evidence appended and its genealogy corrected (gate 2, not miso-119).
+
+* Next number: **miso-214**.
