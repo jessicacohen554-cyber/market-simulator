@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-05 — capx D64: the CCS retrofit's FOURTH seam adjudicated (Phase 0, zero solves) — both fixed-cost legs are TPC-fractions in their source and scale with the island; PJM's 2029 residual closes on the arithmetic; the capture VOM adder is found uncited and 2.7–3.6× every published basis
+
+Docs + one results JSON. **No `src/` file, no `ScenarioConfig` field, no constant, no matrix cell,
+no forecast surface, no solve.** `docs/handoffs/FINDING-capx-d64-2026-09-05.md` discharges D50 §8
+Disclosure 1 the way D49 §1 adjudicated the first three seams:
+
+- **Basis (§1).** ATB 2024 (fetched from OEDI, sha256 `567dde9d…`) publishes the capture island's
+  Fixed O&M ($/kW-yr) and Variable O&M ($/MWh) for a specific NETL reference plant and states in
+  terms that property taxes & insurance, maintenance labor and maintenance materials "are
+  calculated as a percentage of TPC". NETL Rev 4a (`da0027aa…`) B31A→B31B.90 decomposes to 95.5 %
+  TPC-proportional (fixed) and 100 % island-proportional (variable); the NGCC-retrofit report Rev 3
+  (`e66c0111…`) carries the retrofit's O&M as exactly the capture plant's. Construction: ΔFOM and
+  the VOM adder × `k = captured / captured_ref` — the D50 factor, zero new constants.
+- **Re-screen (§2).** The recovered D50 census instrument, extended and run on six ISOs
+  (`results/calibration/capxd64_fourth_seam_census.json`): every carbon-0 row lost (PJM 2029's two
+  converters fall to 0.633 / 0.638 of the bar — the residual closes), one sub-reference RGGI row
+  gained; NEISO / NYISO / CAISO stay cap-bound at the ceiling, with the hour requirement compressed
+  from 4,900–7,800 h to 6,500–7,700 h (efficient hosts win again).
+- **The VOM level (§2.4).** `ccs_retrofit_vom_adder` = 8.0 $/MWh is `needs-citation`; ATB says 2.95
+  (2026$), NETL 2.23. At the published level the carbon-0 screen reopens on the shipped shape
+  (6–11 GW per ISO at the ceiling) and sits on a 0.1–4 % knife-edge under seam 4 — the shipped
+  carbon-0 closure is carried by the uncited number, and the shape and the level are coupled.
+- **Blast radius (§3)** stated: every forecast bare key re-keys under (b′-1); behaviour can move only
+  in the six live ≥2028 ledgers with CCS rows; ≈ 53 min of marginal solve.
+- **D65 charter (§4):** one default-off field (`ccs_retrofit_fixed_cost_co2_scaling`, requires the
+  D50 field) + the rule-23 re-identification of the VOM adder onto the pinned ATB extract (widened
+  to carry `Variable O&M`), two NEISO t1f arms against the committed keeper, six STOPs (a k = 1 row
+  moving; seam 4 alone opening any carbon-0 row).
+
 ## 2026-09-05 — landing-page cleanup: root `index.html` + `model-updates.html` brought to the current model state
 
 Site-only. **No file under `src/`, `scripts/`, `results/` or `frontend/data/` is
