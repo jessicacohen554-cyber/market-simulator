@@ -296,7 +296,11 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
         path: Path to a ``.parquet`` file written by :func:`to_parquet`.
 
     Returns:
-        The reconstructed :class:`DispatchResult`.
+        The reconstructed :class:`DispatchResult`. Its ``emissions`` field
+        is the stored column when the file carries one and otherwise the
+        equivalent product derived from the file's own fleet context — see
+        the nested ``derived_emissions`` docstring for why the array is
+        reconstructed on read rather than persisted on write.
 
     Raises:
         FileNotFoundError: When ``path`` does not exist.
@@ -327,6 +331,41 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
     has_flows = meta["has_flows"]
     has_emissions = meta["has_emissions"]
 
+    def derived_emissions() -> np.ndarray | None:
+        """Return ``(n_gen, T)`` CO2 from the file's own fleet context.
+
+        WS-0 deliverable 1 (scenario-readiness plan §2.5 G-E1). The declared
+        ``DispatchResult.emissions`` field has never been populated on the
+        solve path, so every consumer — ``run_full_horizon._co2_tons``,
+        ``check_forecast_invariants``, ``score_crossover``,
+        ``score_capacity_hindcast`` — carries its own identical fallback:
+        dispatch x the context's per-generator rate. That product is exactly
+        reconstructible from two things this file already stores (the
+        ``dispatch`` column and ``emission_rate`` in the fleet metadata), so
+        it is derived on READ rather than persisted on write: persisting it
+        would add a second full ``(n_gen, T)`` float64 column — roughly
+        doubling the dispatch payload of every cached scenario-year across
+        six ISOs and 25 horizon years — to store a value already implied by
+        the file. The declared field therefore stops being a null for every
+        loaded result, at zero disk cost and with no change to the LP, the
+        cache key, or any scored number.
+
+        ``None`` when the file carries no fleet context, or when the stored
+        rate vector does not align with the generator axis (an older or
+        hand-built fixture), so a reader's own fallback still applies.
+        """
+        raw_fleet = (table.schema.metadata or {}).get(_FLEET_METADATA_KEY)
+        if raw_fleet is None:
+            return None
+        rate = json.loads(raw_fleet).get("emission_rate")
+        if not rate:
+            return None
+        rate_arr = np.asarray(rate, dtype=float)
+        dispatch_arr = array("dispatch")
+        if rate_arr.shape != (dispatch_arr.shape[0],):
+            return None
+        return dispatch_arr * rate_arr[:, None]
+
     return cls(
         dispatch=array("dispatch"),
         wind_dispatched=array("wind"),
@@ -342,7 +381,7 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
         status=meta["status"],
         build_time=meta["build_time"],
         solve_time=meta["solve_time"],
-        emissions=array("emissions") if has_emissions else None,
+        emissions=array("emissions") if has_emissions else derived_emissions(),
         # A list is the K-row grain's per-zone vector (stored via tolist());
         # a scalar/None passes through unchanged.
         rps_shadow_price=(
