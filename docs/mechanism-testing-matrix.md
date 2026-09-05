@@ -10760,6 +10760,93 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — REWRITTEN 2026-09-05 (nyiso-191 `backcast-calibration` lane,
+TWO SOLVES — a BIT-IDENTICAL control and one arm, REGISTERED AS A REJECTED
+PROBE; THE `CC_CHP` SCOPE EXTENSION OF `cc_capacity_reconcile` IS TESTED AND
+**REJECTED ON RULE 19**, AND THE OBJECT nyiso-190 HANDED FORWARD TURNS OUT NOT
+TO BE A CAPACITY OBJECT AT ALL). Keeper `2026-09-05-nyiso-189-steam-identity`;
+CALIBRATED, grade 7, fails 0, C3c ledgered — UNCHANGED. **NYISO now holds
+`complete`** (D56 landed; the D-5(b) re-key was already discharged by the
+records lane — the marker is keyed to the current keeper with its determination
+re-verified and `audit_keepers --iso NYISO` PASS). `final` empty, locked-test
+freeze active.**
+
+* **THE nyiso-190 PREMISE IS REFUTED BEFORE THE BUILD (phase 0, no LP).** The
+  frozen population rule reaches NONE of the three named over-runners:
+  **Sithe Independence 54547** gets a **RAISE** — its demonstrated peak
+  (1,170 MW) *exceeds* its model capacity (1,157.8 MW), so its +3.19 TWh
+  over-run is a **DUTY** defect, not a capacity one; **Brooklyn Navy Yard
+  54914** is declined by the frozen CT-only guard; **Empire 56259** sits inside
+  the frozen 1.10 margin. The widening reaches 8 rows of small/mid cogen
+  (net −542.5 MW) and phase 0 predicted energy-inertness in advance (model
+  energy above the caps 0.0000 / 0.0143 / 0.0000 TWh).
+* **REJECTED ON RULE 19 `[R-ONE-MECH]`, NOT ON THE RESIDUAL — the gates did not
+  move at all.** No criterion-level status flip (CALIBRATED grade 7 C3c-ledgered
+  on both sides; every magnitude ≤ 0.01 TWh; C1-2024 `CC_REGULAR` +3.33 →
+  +3.34 TWh); the pre-registered falsifiable bar **B2 HELD** (worst gas-family
+  movement **0.0034 TWh** against a 0.05 TWh bar). The reason to reject is
+  structural: **6 of the 8 new rows are already in the `chp_layup_duty_curve`
+  cohort** (row `offer_curve_by_group`, NYISO cell **K**, keeper-armed,
+  nyiso-149), whose MEASURED price-conditional duty binds **tighter** than the
+  demonstrated-peak cap at every one — Selkirk 199.4 vs 378.0 MW, Lockport 48.9
+  vs 142.3, Yerkes 28.2 vs 54.6, Oswego 37.1 vs 58.5, Beaver Falls 34.1 vs 84.6,
+  Olean 45.5 vs 80.9. Only 2 of 8 plants' LP capacity moved, in **opposite**
+  directions: World Generation X improves (CF 0.675 → 0.523 vs a measured
+  0.353), **Sithe's raise pushes the worst over-runner further out** (0.932 →
+  0.939 vs 0.618). Structural integrity does **not** improve — the plant-grain
+  offsetting misallocation is unchanged (7.38 / 8.18 TWh) and 0.07 TWh **worse**
+  in 2025 — so it fails the *antecedent* of the owner's standing formula.
+  Artifact **reverted** to the `origin/main` blob (hash-verified); the derive's
+  `--classes` argument is kept (default-preserving, V2-proved, tested).
+  **DO NOT REDO without new evidence.**
+* **NEW TOP OF QUEUE — SITHE INDEPENDENCE 54547 IS AN UN-OWNED DUTY OBJECT.**
+  Model CF **0.93 / 0.97 against a measured 0.62** in 2024 / 2025 (+3.19 /
+  +3.48 TWh), at a plant whose demonstrated peak the model already respects. It
+  is **not** in the `chp_layup_duty_curve` cohort (its meter never reads a zero
+  median), so neither that mechanism nor `cc_capacity_reconcile` reaches it — the
+  largest single per-plant over-run in the NYISO fleet, with no owner. Measure
+  the cohort-admission rule against it before proposing anything.
+* **SECOND: `ST_GAS` is a ZONAL placement error** (measured this session, no
+  lever proposed; `_nyiso191_stgas_placement.json`,
+  `scripts/probes/nyiso191_stgas_placement.py`). Sign **stable in all four zones
+  across all three years**: NYC **over** +4.26 / +2.24 / +0.41 TWh (Ravenswood,
+  Arthur Kill); Long Island **under** −1.65 / −2.26 / −2.28 (Northport, E F
+  Barrett); Capital-Hudson **under** −0.95 / −1.03 / −1.66 (Bowline Point,
+  Roseton); Upstate-West **under** −0.51 / −0.32 / −0.16 (Greenidge). The class
+  net (+1.15 / −1.37 / −3.70) hides 3.28 / 2.53 / 0.84 TWh of offsetting
+  misallocation. The model runs NYC steam where the market ran LI and CH steam —
+  a **locational** signature (zonal price formation, the LI import limit, zonal
+  delivered-gas basis), not a plant-cost one, and the zone-level view of the open
+  `offer_curve_by_group` Ravenswood merit-position defect (nyiso-183).
+* **THIRD: the derive's CT-only test is POOLED and can be diluted by an
+  incomplete EIA-923 vintage.** World Generation X reads `ct_only` 1.378× in 2024
+  on the bench's per-year test but 0.60 pooled, because its 2025 EIA-923 row is
+  0.0000 TWh — and that is exactly the one row the widening made bind. A per-year
+  (or complete-vintage-only) test is the rule-23 route; it touches every ISO's
+  table, so it is a cross-ISO change, not this lane's to make unilaterally.
+* **C3a-2025 −8.3 %** — `DECISION-CARD-nyiso148` Q1 **confirmed still pending**;
+  owner-court, untouched. **C3c** ledgered. Cell **G**
+  (`scuc_load_pocket_commitment`) stays `G` — nyiso-97 §5 and the nyiso-160
+  access closure stand.
+* **Forecast lane, carried:** `egrid_steam_collapse_heat_rates` regenerates per
+  eGRID vintage (`APPLIED_VINTAGE = 2023`). **eGRID 2025 has NOT landed** —
+  `data/raw/fleet-egrid` holds vintages through `egrid2024_data.xlsx` only.
+* Unchanged: Zeltmann's 2024 cold-weather record vs the pooled p99.9 cap; the v2
+  artifact's frozen 2018 / 2022 / 2026 rows; NYISO parasitic factors absent; the
+  Astoria merit-panel stack-duplicate defect (nyiso-184 §4.1); the D-2 / C8 grain
+  under-count escalation (nyiso-181 §6).
+* Evidence: `docs/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md`,
+  `results/calibration/PREREG-nyiso191-ccchp-capacity-scope.md` (pushed before
+  the derive was edited and before any solve),
+  `_nyiso191_ccchp_scope_phase0.json`, `_nyiso191_stgas_placement.json`, probes
+  `scripts/probes/nyiso191_ccchp_scope_phase0.py` /
+  `nyiso191_stgas_placement.py`, `scripts/gen_nyiso191_attestation.py`,
+  `tests/curation/test_derive_cc_capacity_reconcile_scope.py`, the bundles
+  `results/calibration/nyiso191_{control,ccchp_scope}`.
+
+**PRIOR QUEUE (nyiso-190) PRESERVED BELOW — its top-of-queue item (the `CC_CHP`
+scope gap) is DISCHARGED as REJECTED above; everything else stands.**
+
 **LEVER QUEUE — REWRITTEN 2026-09-05 (nyiso-190 `backcast-calibration` lane,
 **ZERO SOLVES**; THE nyiso-189 PROMOTION'S ONE UNMEASURED JUSTIFYING CLAUSE IS
 MEASURED ON PRE-REGISTERED BARS AND **REFUTED**; NO KEEPER CHANGE, NO MECHANISM
