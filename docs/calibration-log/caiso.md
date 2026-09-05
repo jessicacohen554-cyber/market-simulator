@@ -12836,3 +12836,107 @@ evidence-only CAISO matrix append. No cell verdict moved; no run registered;
 keeper unchanged.
 
 **Next number: caiso-251.**
+
+---
+
+## caiso-251 (2026-09-05) — the CAISO gas offer was carrying NEISO's functional form; removing it restores the fuel coupling CAISO's own OASIS record measures. C3a (LOAD-BEARING) FAIL → PASS, C4 (SUPPORTING) PASS → FAIL. PROMOTED
+
+**Keeper `2026-09-05-caiso-246-b1-spot` → `2026-09-05-caiso-251-b1-nomargin`**
+(bundle `caiso251_arm_nomargin`). Pre-registered in
+`PRECOMMIT-caiso251-fuel-coupling-form-2026-09-05.md` + Addenda A and B, each
+pushed before the stage it governs. Rule 22: 2023–2025 only.
+
+**THE OBJECT** (queue item A at its FORM, not its level): the prior keeper armed
+`gas_offer_net_revenue_margin` — `offer = phys·HR·fuel(t) + (mult−phys)·HR·anchor`,
+a fuel-INVARIANT $/MWh margin at a $4.7964/MMBtu anchor (1,269/1,274/1,279
+tranches, median $14.37/MWh). **Its identification is NEISO's** (the 2022 holdout
+rotation). CAISO's own record refutes it for CAISO: caiso-242 §3.5 measured the
+band multiplier FLAT across a 1.93× fuel swing (CT econ_low range **0.013** vs
+the **0.2775** the armed decomposition requires — **21.3×**), and caiso-229 §5
+measured the consequence (model CC coupling **2.18/2.18/4.34** vs a MEASURED DAM
+body coupling of **6.7–7.4** — UNDER-coupled) and named this flag as the cause.
+Neither had been charted.
+
+**THE ARM:** the single flag `--no-gas-offer-margin`. Zero new parameters; the
+anchor is REMOVED (rule 24). Rules 14 / 25 / 1 carry admissibility. Per-year
+measured multipliers are rule-13 inadmissible and were not proposed.
+
+**PHASE 0 (zero LP, two on-recipe rebuilds differing in ONE kwarg).** G-IDENT
+PASSES (the delta IS `(mult−phys)·HR·(fuel−anchor)`; max within-tranche spread
+**4e-12** MMBtu/MWh); G-FOOTPRINT PASSES, zero non-gas tranches; **G-COUPLE — the
+gate whose failure would have spent NO solve — PASSES all three years at 6.719
+MMBtu/MWh**, inside the pre-registered [6.0, 8.0] and the measured 6.7–7.4. Per
+class, as a ratio to its OWN base HR against a measured 0.9–1.0: **armed CC
+0.754/0.810/0.810 and CT 0.526/0.559/0.532; disarmed 0.903 and
+0.877/0.932/0.919** — **the fixed-margin form HALVES CT's physical fuel
+sensitivity** and flattens CC and CT onto nearly one slope. That asymmetry is the
+CC-hot/CT-cold mechanism, measured from CAISO's record, not the residual.
+
+**SCORED** (keeper → arm): `price_mean` (C3a, **LOAD-BEARING**) **FAIL → PASS**,
++3.91/+12.33/+11.45 → **+4.83/+9.44/+9.35 %**; `dispatch_corr` (C4,
+**SUPPORTING**) **PASS → FAIL** on ONE cell — 2025 gas NRMSE **0.298 → 0.305**
+against ≤0.30, r 0.872 → 0.870, with 2023/2024 still PASS; `fuelmix` 12/12 free
+8/8, `sysvol`, `price_shape` PASS unchanged; `price_tail` the single ledgered
+CAVEAT; C6/C8 PASS; **DOF 5 → 5 with the anchor removed**. **Determination
+NOT-YET on both, but the outstanding failure drops from LOAD-BEARING to
+SUPPORTING.** Dispatch: CT_PEAKER **+0.079/+0.734/+0.414 TWh** (the caiso-244
+volume miss narrows **−3.582 → −2.848 TWh** in 2024), CC_REGULAR
++0.184/+0.947/+0.740, import −0.213/−1.393/−1.083.
+
+**RULE 29 `[R-SCREEN]`, FIRST APPLICATION** (owner rule issued mid-session, added
+to CLAUDE.md with genealogy in `rule-history.md` §8/§8.1): the arm was screened on
+**2024 alone** before the full span — screen year chosen on the phase-0
+**FOOTPRINT**, never the residual — and G-SCREEN-A (non-gas confined, max 0.051
+TWh vs 0.5) and **G-SCREEN-B (CT_PEAKER 0.744 → 1.478 TWh, +99 %)** both passed,
+earning the remaining two years. **Clause (b): NO control solve.** G-CTRL is form
+4, restored by the **G-DRIFT** code audit of `900402b..HEAD` (22 files,
++2,527/−149, EVERY hunk CAISO-backcast-inert with its reason cited); the control
+solve launched under the withdrawn "files changed therefore void" heuristic was
+killed mid-flight and deleted. **G-REPRO**: the full arm's 2024 reproduces the
+screen's 2024 to **4e-5** on price, CT energy and all 13 class energies.
+
+**PREDICTIONS 5 HOLD / 5 FALSIFIED.** Falsified: P-2 (1,279 touched tranches vs
+the log's 1,285 — **unexplained, recorded as such**), P-3 (CC econ delta
+−2.08/−1.63, outside the registered −3 to −9), **P-6 (NO overshoot — I registered
+overshoot as the live risk)**, **P-7 (2023 got worse, +3.91 → +4.83 %, but did NOT
+fail its band)**, P-8 (CT 2025 +0.414 TWh, short of +0.5). Held: P-1, P-4, P-5
+(G-COUPLE), P-9 (a non-C3a criterion regressed — it did), P-10.
+
+**DISCLOSED AGAINST INTEREST:** (a) **three of the five falsifications ran in the
+ARM's FAVOUR** — a pre-registration whose uncomfortable predictions all fail
+favourably is weaker evidence, not stronger; the binding evidence is G-COUPLE and
+G-IDENT, both pre-solve with killing falsifiers, and P-9 which predicted a
+collateral regression and got one. (b) **G-SCREEN-C was NOT EVALUABLE as written**
+(`calibration_verdict` resolves only registered runs; Addendum A forbids
+registering a screen) — a defect in my own gate, filed not swapped. (c) **The
+CC-hot half of the split is UNCLOSED and this arm makes it WORSE**: CC_REGULAR's
+2024 fuel-mix error moves −0.190 → **+0.756 TWh** as CC absorbs the displaced
+import energy, and that is the prime suspect for the C4 regression. (d) The C4
+failure is 0.005 outside a tolerance the keeper sat 0.002 inside — **the margin is
+not an argument** and was not used as one. (e) **Sixth consecutive favourable
+direction**, declared before any measurement with C3a excluded from the promotion
+basis in both directions. (f) G-DRIFT is a reading of code and inherits my
+reading.
+
+**PROMOTED** on the §0.2 basis registered before any measurement: (a) G-COUPLE
+passes, (b) **no LOAD-BEARING criterion regresses to a new failure** — the one
+regression is supporting-tier, (c) governance holds. The rule would have refused
+the run had G-COUPLE failed even with C3a improving, and would not have permitted
+a load-bearing regression.
+
+**QUEUE:** (1) NEW, first: **C4 `dispatch_corr` 2025** (gas NRMSE 0.305) — decompose
+by class and hour-of-day before arming anything; prime suspect is the CC
+over-generation. (2) **The CC-hot half**, now the larger half. (3) the
+fuel-invariant-margin flatness object is **CLOSED** by this promotion. (4) demoted:
+the north-corridor firm block, the transport adder. (5) carried: the residual CT
+volume miss (−2.848 TWh, narrowed not closed), the C3a weight-basis ask, caiso-250's
+morning-ramp slab and the per-zone sidecar instrument ask.
+
+**DO-NOT-REDO adds (FINDING §8):** never re-arm `gas_offer_net_revenue_margin` on
+CAISO; this is NOT a verdict on any other ISO (rule 25 — NEISO's own
+identification is untouched); per-year measured band multipliers stay rule-13
+inadmissible; never read the C4 margin as a reason to promote or discount it;
+caiso-229 §5's refuted "marginal rung over-propagates fuel" stays refuted (this
+session moved coupling the OPPOSITE way).
+
+**Next number: caiso-252.**
