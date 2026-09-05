@@ -11411,3 +11411,94 @@ stamps, `miso_zonal_gas_basis_skip_923_priced` K (row added with the field), `zo
 evidence appended and its genealogy corrected (gate 2, not miso-119).
 
 * Next number: **miso-214**.
+
+---
+
+## miso-214 (2026-09-05) — THE MIDWEST CT_PEAKER FLEET AT ITS OWN DELIVERED COST: most of the CT gap is unreachable by any price or offer mechanism; **NO A/B CHARTERED (K-d)**; the census names an offer-form coverage gap for miso-215
+
+**ZERO SOLVE. Keeper UNCHANGED at `2026-09-05-miso-213-layering`. Nothing minted — no
+`ScenarioConfig` field, no matrix row, no run registered.** PREREG
+`PREREG-miso214-ct-peaker-conduct-2026-09-05.md` pushed BLIND at `067a305a` before any
+adjudicating statistic; probe `scripts/probes/_miso214_ct_peaker_conduct_phase0.py` →
+`results/calibration/_miso214_ct_peaker_conduct.json`; record
+`FINDING-miso214-ct-peaker-conduct-2026-09-05.md`. Rule 22: 2023–2025 only.
+
+**The discriminator, and it inverts the prior.** Over every missed plant-hour — a model
+CT_PEAKER plant CAMPD shows running that the price-taking screen has out of merit at the
+keeper's own P1 zone price — **80.1 / 76.2 / 68.7 %** of the missed MWh (8.60 / 8.31 /
+8.09 TWh, 53.5 / 45.2 / 42.9 % of the class's measured energy) was produced at an **actual
+market price below the plant's own measured delivered cost**. The reading survives every
+instrument check: 64.4 / 56.7 / 53.2 % on the model's own physical (incremental) leg,
+54.4 / 52.9 / 44.4 % on an independent per-unit CEMS input-output fit, 51.7 / 55.0 / 58.3 %
+with fuel re-priced at Henry Hub, and 59.9 / 55.4 / 44.1 % paying the unit the better of DA
+and RT. PREREG P-2 predicted A > B > C at 45–65 / 20–40 / 5–20 % and named the C3a tail;
+the exclusive partition is **C 0.167/0.257/0.167, A 0.131/0.130/0.215, B 0.701/0.613/0.618**
+— wrong in every year and in the ordering. Levels in the missed hours ($/MWh): actual RT
+39.30/36.11/52.52, model P1 35.33/32.37/42.34 (gap +3.96/+3.73/**+10.17**), all-in cost
+46.87/41.79/49.67. **The energy is not reachable by any offer or price mechanism, because
+the price itself is below the cost.**
+
+**K-d FIRES, so nothing is chartered.** K-a passes 3/3 (bar 0.40), K-b silent (A-flip
+0.343/0.489/0.460 vs the 0.60 kill — the miso-134 offer level does not explain A and cannot
+explain B), K-e passes (CEMS covers 90.2 % of CT capacity). But no measured, forward-
+regenerating input represents bucket B at MISO: the masked offer corpus carries no
+technology attribute and its class bridge was REFUTED at miso-138; `asm_rt_cleared_mw` is
+Region × product, never per unit; CAMPD records that units ran, never why. **And the B
+hours' own conduct refutes the P-5 guess** (a CAMPD min-run/min-load commitment bridge on
+the NYISO WP-3 construction): B-hour load factor **0.769/0.746/0.703** against 0.792/0.786/
+0.758 for all running hours — not min load — and B-hour share in the plant region's reserve
+top decile **0.120/0.123/0.105**, i.e. the unconditional 10 %. Refuted by measurement, not
+merely unbuilt.
+
+**L-1, P-1 RIGHT on all three legs.** Band: econ carries 0.742/0.741/0.757 of the class
+delta (bar 0.70). Zone (screen): 2023 IIE **1.000** (bar 0.60), 2024 IIE **1.000** (bar
+0.50), 2025 West+Plains **0.905** (bar 0.50) — the loss follows the zones whose miso-213
+discount was removed and switches hemisphere with the sign of the increment. Diurnal:
+0.651/0.691/0.673 of the lost MWh falls outside the reliability floor's own HOD 15–21 window
+(bar 0.60).
+
+**L-3, P-3 RIGHT.** The JJA share of the hour-level CT under-dispatch is 0.434/0.436/0.522
+against a 0.55 bar (JJA is 25.2 % of hours) — **all-hours with a summer tilt, not a summer
+tail**, in the year (2023) whose C3a is +0.91 %. 2024's net class gap is +0.03 TWh while
+4.65 TWh of under-dispatch and a comparable over-dispatch cancel: **a placement problem, not
+a level problem.**
+
+**L-4, P-4 mixed — and the census found the successor.** `reliability_floor` is the only
+D-2 mechanism on MISO CT_PEAKER; its forced share is 0.204/0.122/0.142, so **2023 is a real
+D-2 FAIL against the 15 % peaker budget**, reading PASS only on rule 20's conditional
+provenance+shape route (D-4 off-window 0.0000 all years; D-1 profile_r 0.962/0.973/0.986,
+cv_ratio 1.193/0.991/1.289). **THE NAMED OBJECT FOR miso-215**:
+`gas_offer_net_revenue_margin` (armed, cell K) structurally cannot reach the
+intermediate-duty cohorts — `CT_INTERMEDIATE`, `CC_INTERMEDIATE` and `ST_GAS_INTERMEDIATE`
+carry no `phys_*` keys, so `gas_offer_margin_markup_mult` returns its rule-24 neutral 0.0 and
+`apply_gas_offer_margin` skips them. On MISO's CT class that is **44 plants / 9,333.2 MW =
+41.9 % of class capacity carrying 55–57 % of its CAMPD energy**, at a cap-weighted econ offer
+HR of **12.465 with markup exactly 0.000**, against the true-peaker cohort's 8.649 + 3.906 —
+i.e. the cohort offers at 12.465 MMBtu/MWh against its own measured average burn of 11.07.
+Static reach measured, nothing built: repricing its 264 econ tranches into the margin form at
+the frozen class p50s (0.687/0.691, zero free parameters, byte-identical at fuel = anchor)
+moves the screen **−1.475 / −5.285 / +1.457 TWh** — **year-dependent and mostly ADVERSE**,
+because the margin prices at the 3.0492 $/MMBtu anchor while the cohort's own delivered fuel
+is 4.424/3.494/4.156 with only 0.606/0.435/0.840 of its econ capacity-hours above it. Two
+risks named in advance for miso-215's prereg: **K-1** (CC_REGULAR-2024 sits at +7.419 of
+±8.00 — 0.58 TWh of headroom — and CT displacement backfills to CC) and **C8** (CT_PEAKER-2023
+is already over the peaker budget).
+
+**Reported against interest.** The static screen runs 1.41–1.43 × the LP's own class energy
+and also runs plants CAMPD shows off in 9.7–16.2 TWh of plant-hours — every bucket share is a
+share of a population that bound defines. Bucket B is a residual category and identifies no
+mechanism; §4 says MISO's public data cannot identify one, not that none exists. The
+delivered-cost convention is the largest single quantified lever on this class and is
+OWNER-COURT (miso-212 §8): the resolved delivered price sits +1.89/+1.30/+0.64 (intermediate)
+and +3.81/+2.48/+2.10 (true peaker) $/MMBtu over Henry Hub daily, and re-pricing at the
+commodity floor cuts B to 0.517/0.550/0.583 — with two caveats that cut against reading too
+much into it (the per-plant excess is concentrated, and this session's excess is computed on
+the model's post-oil-parity resolved price, so part of it is oil, not a gas print). The
+candidate in §6 was found by the L-4 census, NOT by the pre-registered discriminator, and is
+not chartered here for that reason. **One instrument defect found and fixed mid-session**:
+the first three-year launch ran on the CONTROL config because `_miso212` transitively imports
+`_miso211`, which re-points `_miso134.BUNDLE` to `miso210_clock_B` at module scope; the T-1
+block now sits after the last import and carries a hard assert, and no number in the record
+comes from the bad run.
+
+* Next number: **miso-215**.
