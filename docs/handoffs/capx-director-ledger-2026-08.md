@@ -182,6 +182,15 @@ true at `4d4dc6ce`, false eleven merges later; a pinned state line is a snapshot
 (iii) D64 asked for a director design decision the charter had not anticipated; ruled (i) here
 without a card because it is one-seam scope discipline, not an owner-tier value.
 
+**AMENDMENT 1 (same sitting, main `2b9e4219`).** Four merges landed while this entry was written, none
+on a capx surface: **SCN-WS1a Phase 0** (#4856 — resolved carbon trajectory per ISO per bundle,
+G-C1 proven, G-C2 seam census, a CAISO T0 PRECOMMIT; `FINDING-scn-ws1a-2026-09-05.md`), the
+SCN-WS3a voluntary-clean-demand memo (#4857), the wall-clock desk log (#4854 — its owner
+instruction: "the desk does NOT launch sessions"), and **wallclock A-3** (#4858 — vectorized
+class-band sidecar + the sidecar block on the clock; `run_calibration_full.py` +173/−, rule-27
+core, a second edit to that file today after caiso-252's flag). D60-R2: still nothing. Pushed
+`a5928410`, all four touched files blob-verified MATCH against origin — **merged by the owner as PR #4861 and the branch deleted mid-cycle** (this amendment rides a recreated branch). **PR #4855 MERGED (`80695cb2`): rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` are now AMENDED ON MAIN — the registered `offer_curve_by_group` band multipliers are an AUTHORIZED price-tuning channel under conditions (a)–(e) (one config across every scored year, set ex ante, never swept, never `phys_*` / shares / a new adder), with the C6 `authorized_price_tuning` declaration path live in `calibration_verdict.py`.** The §2 MISO / Governance rows that read "OPEN" are superseded by this line; miso-220's honest-FALSE attestation now has a declared route to a well-formed C6 that did not exist when it was written. This desk takes no position on the backcast rule; it notes that rule 1's carve-out is a backcast-offer channel and touches NO forecast posture on this queue.
+
 ## 0ak. Refresh #40 (2026-09-05, main HEAD `4d4dc6ce`) — the pending NYISO promotion lands and takes the marker with it; D60-R2 launches clean and pre-declares its own two negatives; the owner-named NYISO lever dies on its one-year screens; keeper-only retention becomes rule 15's text
 
 **0. FIRST ACT.** Handoff claim (§0aj = r#39 + am.1/am.2) matched the top entry; this is r#40.
