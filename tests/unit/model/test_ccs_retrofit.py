@@ -993,5 +993,267 @@ class TestCapexCo2ScalingIsTheDefault(unittest.TestCase):
         self.assertGreater(entry["capex_scale"], 1.0)
 
 
+class TestFixedCostCo2Scaling(unittest.TestCase):
+    """capx D65 Act A: the two FIXED-COST legs sized to the same island.
+
+    ``ccs_retrofit_fixed_cost_co2_scaling`` (GATED, default off; requires the
+    D50 gate). Seam 1 sized the island's CAPEX to the host's captured CO2 and
+    left ΔFOM ($/MW-yr) and the capture VOM adder ($/MWh) at the reference
+    host's values, so both diluted per captured tonne as ``er`` rose. Both are
+    TPC fractions in their own sources (ATB 2024 fossil methodology; NETL
+    Rev 4a B31A->B31B.90 at 95.5 % / 100 % -- FINDING-capx-d64-2026-09-05.md
+    §1.2), and under seam 1 the island's TPC scales with ``k``, so on, both
+    legs carry the same ``k``. Off is byte-identical.
+    """
+
+    # The reference host: er = hr_ref x CO2 factor, so captured / captured_ref
+    # is exactly 1.0 and every seam-4 quantity must be invariant to the digit.
+    ER_REF = 6.3 * 0.057  # 0.3591 t/MWh
+
+    @staticmethod
+    def _armed(**overrides):
+        """Fixture config with BOTH seams on (seam 4 requires seam 1)."""
+        overrides.setdefault("ccs_retrofit_capex_co2_scaling", True)
+        overrides.setdefault("ccs_retrofit_fixed_cost_co2_scaling", True)
+        return _fixture_config(**overrides)
+
+    def test_validator_rejects_the_field_without_seam_1(self):
+        # There is no ``k`` without seam 1: arming this alone would be a silent
+        # no-op that nonetheless keys distinctly, so the config refuses it.
+        with self.assertRaises(ValueError) as ctx:
+            ScenarioConfig(
+                ccs_retrofit_fixed_cost_co2_scaling=True,
+                ccs_retrofit_capex_co2_scaling=False,
+            )
+        self.assertIn("ccs_retrofit_capex_co2_scaling", str(ctx.exception))
+        # ... and accepts the pair.
+        cfg = ScenarioConfig(
+            ccs_retrofit_fixed_cost_co2_scaling=True,
+            ccs_retrofit_capex_co2_scaling=True,
+        )
+        self.assertTrue(cfg.ccs_retrofit_fixed_cost_co2_scaling)
+
+    def test_off_is_byte_identical_and_cache_neutral(self):
+        # Same fleet, seam 1 armed, seam 4 absent vs explicitly False: the log
+        # must be identical, every host must pay the REFERENCE fixed-cost legs
+        # (scale 1.0), and the converted units must carry the flat adder.
+        def fleet():
+            return [
+                _gas_cc("REF", heat_rate=6.3, emission_rate=self.ER_REF),
+                _gas_cc("HOT", heat_rate=7.0, emission_rate=0.60),
+            ]
+
+        cfg_absent = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
+        cfg_false = _fixture_config(
+            ccs_retrofit_capex_co2_scaling=True,
+            ccs_retrofit_fixed_cost_co2_scaling=False,
+        )
+        f_absent, log_absent = _screen(
+            fleet(), HIGH_PRICES, config=cfg_absent, carbon_price=120.0
+        )
+        f_false, log_false = _screen(
+            fleet(), HIGH_PRICES, config=cfg_false, carbon_price=120.0
+        )
+        self.assertEqual(log_absent, log_false)
+        self.assertTrue(log_absent)
+        base_fom = (
+            cfg_absent.fixed_om_gas_cc_ccs
+            * cfg_absent.retirement_fom_multiplier_gas_cc_ccs
+            - cfg_absent.fixed_om_gas_cc * cfg_absent.retirement_fom_multiplier_gas_cc
+        ) * 1000.0
+        for entry in log_absent:
+            self.assertEqual(entry["fixed_cost_scale"], 1.0)
+            self.assertEqual(entry["delta_fom_per_mw_yr"], base_fom)
+            self.assertEqual(
+                entry["vom_adder_per_mwh"], cfg_absent.ccs_retrofit_vom_adder
+            )
+        converted = {g.unit_id: g for g in f_absent if g.fuel_type == "gas_cc_ccs"}
+        self.assertTrue(converted)
+        for uid, g in converted.items():
+            self.assertAlmostEqual(
+                g.vom, 2.0 + cfg_absent.ccs_retrofit_vom_adder, places=12
+            )
+        self.assertEqual(
+            {g.unit_id: (g.fuel_type, g.vom) for g in f_absent},
+            {g.unit_id: (g.fuel_type, g.vom) for g in f_false},
+        )
+        # Registered cache-optional at a FROZEN "False" declaration, so BOTH
+        # pinned keys stay byte-stable with the field absent AND explicitly
+        # False, and an armed run keys distinctly (the D50 shape).
+        base = ScenarioConfig()
+        self.assertFalse(base.ccs_retrofit_fixed_cost_co2_scaling)
+        self.assertEqual(
+            base.cache_key(),
+            ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=False).cache_key(),
+        )
+        self.assertEqual(base.cache_key(), "e5ecd4105ada3e58")
+        self.assertEqual(
+            ScenarioConfig(mode="backcast").cache_key(), "6a2845e50951394e"
+        )
+        self.assertNotEqual(
+            base.cache_key(),
+            ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=True).cache_key(),
+        )
+
+    def test_reference_host_is_invariant_on_and_off(self):
+        # STOP 1 of the D65 charter, as a test: a k = 1 host must not move in
+        # ANY log field, on or off. captured/captured_ref == 1 exactly, so
+        # every seam-4 factor is 1.0 by construction, not by tolerance.
+        from market_sim.model.capacity_evolution.ccs import (
+            ccs_retrofit_captured_ref_t_per_mwh,
+        )
+
+        cfg_off = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
+        cfg_on = self._armed()
+        self.assertAlmostEqual(
+            cfg_on.ccs_retrofit_capture_rate * self.ER_REF,
+            ccs_retrofit_captured_ref_t_per_mwh(cfg_on),
+            places=12,
+        )
+        f_off, log_off = _screen(
+            [_gas_cc("REF", heat_rate=6.3, emission_rate=self.ER_REF)],
+            HIGH_PRICES,
+            config=cfg_off,
+            carbon_price=120.0,
+        )
+        f_on, log_on = _screen(
+            [_gas_cc("REF", heat_rate=6.3, emission_rate=self.ER_REF)],
+            HIGH_PRICES,
+            config=cfg_on,
+            carbon_price=120.0,
+        )
+        self.assertEqual(len(log_on), 1)
+        self.assertAlmostEqual(log_on[0]["capex_scale"], 1.0, places=12)
+        self.assertAlmostEqual(log_on[0]["fixed_cost_scale"], 1.0, places=12)
+        # Every log field, not a chosen subset: the two seam-4 keys are
+        # written on BOTH paths (1.0 and the flat adder when off), so the key
+        # sets match and every value must match too.
+        self.assertEqual(set(log_off[0]), set(log_on[0]))
+        for key, off_val in log_off[0].items():
+            on_val = log_on[0][key]
+            if isinstance(off_val, float):
+                self.assertAlmostEqual(
+                    on_val, off_val, places=9, msg=f"k=1 row moved on {key}"
+                )
+            else:
+                self.assertEqual(on_val, off_val, msg=f"k=1 row moved on {key}")
+        # The converted unit is identical too.
+        self.assertEqual(
+            [(g.fuel_type, round(g.vom, 12), round(g.heat_rate, 12)) for g in f_off],
+            [(g.fuel_type, round(g.vom, 12), round(g.heat_rate, 12)) for g in f_on],
+        )
+
+    def test_legs_scale_with_captured_co2(self):
+        # A host at twice the reference CO2 flow pays twice the island AND
+        # twice the island's O&M -- the whole point of the seam.
+        cfg = self._armed()
+        ref = _gas_cc("REF", heat_rate=6.3, emission_rate=self.ER_REF)
+        twice = _gas_cc("TWICE", heat_rate=6.3, emission_rate=2.0 * self.ER_REF)
+        fleet, log = _screen(
+            [ref, twice], HIGH_PRICES, config=cfg, carbon_price=200.0
+        )
+        by_id = {e["unit_id"]: e for e in log}
+        self.assertEqual(set(by_id), {"REF", "TWICE"})
+        base_fom = (
+            cfg.fixed_om_gas_cc_ccs * cfg.retirement_fom_multiplier_gas_cc_ccs
+            - cfg.fixed_om_gas_cc * cfg.retirement_fom_multiplier_gas_cc
+        ) * 1000.0
+        self.assertAlmostEqual(by_id["REF"]["fixed_cost_scale"], 1.0, places=9)
+        self.assertAlmostEqual(by_id["TWICE"]["fixed_cost_scale"], 2.0, places=9)
+        self.assertAlmostEqual(by_id["REF"]["delta_fom_per_mw_yr"], base_fom, places=6)
+        self.assertAlmostEqual(
+            by_id["TWICE"]["delta_fom_per_mw_yr"], 2.0 * base_fom, places=6
+        )
+        self.assertAlmostEqual(
+            by_id["REF"]["vom_adder_per_mwh"], cfg.ccs_retrofit_vom_adder, places=12
+        )
+        self.assertAlmostEqual(
+            by_id["TWICE"]["vom_adder_per_mwh"],
+            2.0 * cfg.ccs_retrofit_vom_adder,
+            places=12,
+        )
+        # The fixed-cost legs move ONLY with k -- the island's capex scaling is
+        # untouched by this seam (STOP 1's other half).
+        self.assertAlmostEqual(by_id["TWICE"]["capex_scale"], 2.0, places=9)
+
+    def test_converted_unit_vom_carries_the_scaled_adder(self):
+        # The dispatch VOM of a converted unit must be the VOM the screen
+        # priced its uplift at -- otherwise the LP runs a unit the screen never
+        # evaluated.
+        cfg = self._armed()
+        twice = _gas_cc("TWICE", heat_rate=6.3, emission_rate=2.0 * self.ER_REF)
+        fleet, log = _screen([twice], HIGH_PRICES, config=cfg, carbon_price=200.0)
+        self.assertEqual([e["unit_id"] for e in log], ["TWICE"])
+        conv = {g.unit_id: g for g in fleet}["TWICE"]
+        self.assertEqual(conv.fuel_type, "gas_cc_ccs")
+        self.assertAlmostEqual(
+            conv.vom, 2.0 + log[0]["vom_adder_per_mwh"], places=12
+        )
+        self.assertAlmostEqual(
+            conv.vom, 2.0 + 2.0 * cfg.ccs_retrofit_vom_adder, places=9
+        )
+
+    def test_per_tonne_invariance_at_carbon_zero(self):
+        # Two hosts, EQUAL hr, er ratio 2:1, carbon 0. Per captured tonne the
+        # only surviving difference is the HR-PENALTY term (fuel burned to run
+        # the capture island), which is per host MWh and does NOT scale with
+        # er -- so per tonne it FALLS as er rises. Asserted analytically: the
+        # uplift-to-capex ratio of the high emitter minus the reference host's
+        # equals the HR-penalty term's per-tonne difference, and nothing else.
+        cfg = self._armed()
+        lo_er = self.ER_REF
+        hi_er = 2.0 * self.ER_REF
+        lo = _gas_cc("LO", heat_rate=6.3, emission_rate=lo_er)
+        hi = _gas_cc("HI", heat_rate=6.3, emission_rate=hi_er)
+        _, log = _screen([lo, hi], HIGH_PRICES, config=cfg, carbon_price=0.0)
+        by_id = {e["unit_id"]: e for e in log}
+        self.assertEqual(set(by_id), {"LO", "HI"})
+
+        # uplift_window / retrofit_capex_per_mw -- the per-captured-tonne
+        # economics, since capex is now proportional to captured tonnes.
+        def ratio(entry):
+            # ``annual_net_savings_per_mw`` IS the in-window uplift (key name
+            # kept for the runner's per-year retrofit logging).
+            return (
+                entry["annual_net_savings_per_mw"] / entry["retrofit_capex_per_mw"]
+            )
+
+        # The HR-penalty term, per host MWh, in $/MWh: the extra fuel burned.
+        hours = float(HIGH_PRICES.shape[1])
+        avail = 1.0 - lo.eford
+        annualize = 8760.0 / hours
+        hr_pen_per_mwh = 6.3 * cfg.ccs_retrofit_hr_penalty * 4.0  # hr x pen x gas
+        # Per MW-yr the HR penalty costs the same for BOTH hosts (equal hr),
+        # but each host's capex differs by k, so per dollar of island the
+        # high emitter carries HALF the HR-penalty burden.
+        hr_pen_per_mw_yr = hr_pen_per_mwh * hours * avail * annualize
+        capex_lo = by_id["LO"]["retrofit_capex_per_mw"]
+        capex_hi = by_id["HI"]["retrofit_capex_per_mw"]
+        self.assertAlmostEqual(capex_hi / capex_lo, 2.0, places=9)
+        expected_gap = hr_pen_per_mw_yr / capex_lo - hr_pen_per_mw_yr / capex_hi
+        self.assertAlmostEqual(
+            ratio(by_id["HI"]) - ratio(by_id["LO"]), expected_gap, places=9
+        )
+        # And the direction the seam exists to fix: per tonne the high emitter
+        # is now BETTER only by that HR-penalty term, never by the diluted
+        # fixed costs -- so the payback ordering no longer rewards emissions
+        # through the O&M legs. Off the seam the gap is strictly larger.
+        cfg_off = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
+        _, log_off = _screen(
+            [
+                _gas_cc("LO", heat_rate=6.3, emission_rate=lo_er),
+                _gas_cc("HI", heat_rate=6.3, emission_rate=hi_er),
+            ],
+            HIGH_PRICES,
+            config=cfg_off,
+            carbon_price=0.0,
+        )
+        off = {e["unit_id"]: e for e in log_off}
+        self.assertGreater(
+            ratio(off["HI"]) - ratio(off["LO"]),
+            ratio(by_id["HI"]) - ratio(by_id["LO"]),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

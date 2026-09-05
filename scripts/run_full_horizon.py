@@ -225,6 +225,7 @@ def reference_config(
     miso_rps_compliance_regions: "bool | None" = None,
     miso_clean_tier_rows: "bool | None" = None,
     ccs_retrofit_capex_co2_scaling: "bool | None" = None,
+    ccs_retrofit_fixed_cost_co2_scaling: "bool | None" = None,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -331,6 +332,14 @@ def reference_config(
         # passed = the shipped posture; the A/B arm passes True and keys
         # distinctly. Same None-sentinel discipline as the two MISO gates.
         "ccs_retrofit_capex_co2_scaling": ccs_retrofit_capex_co2_scaling,
+        # capx D65 Act A: the CCS retrofit FIXED-COST shape gate (ΔFOM and
+        # the capture VOM adder scaled by the same k seam 1 applies to the
+        # island capex). GATED default off; cache-optional at False, so an
+        # explicit False keeps the pre-D65 key and an armed arm keys apart.
+        # ``None`` = not passed = the shipped posture; ``--no-`` passes an
+        # explicit False. Requires the D50 gate (ScenarioConfig refuses the
+        # pair otherwise). Same None-sentinel discipline as the gates above.
+        "ccs_retrofit_fixed_cost_co2_scaling": ccs_retrofit_fixed_cost_co2_scaling,
     }
     return ScenarioConfig(
         iso=iso.upper(),
@@ -1221,6 +1230,40 @@ def main(argv: list[str] | None = None) -> int:
             "flag leaves the field UNSET (the shipped posture)."
         ),
     )
+    ap.add_argument(
+        "--ccs-retrofit-fixed-cost-co2-scaling",
+        dest="ccs_retrofit_fixed_cost_co2_scaling",
+        action="store_true",
+        default=None,
+        help=(
+            "capx D65 Act A arm (ALL ISOs, DEFAULT OFF): scale the CCS "
+            "retrofit's two FIXED-COST legs — ΔFOM ($/MW-yr) and the capture "
+            "VOM adder ($/MWh) — by the SAME captured/captured_ref factor the "
+            "D50 gate applies to the capture island's capex, because both legs "
+            "are TPC fractions in their own sources (ATB 2024 fossil "
+            "methodology; NETL Rev 4a B31A->B31B.90 at 95.5 %% / 100 %% — "
+            "FINDING-capx-d64-2026-09-05.md §1.2). The converted unit's "
+            "dispatch VOM carries the same scaled adder. REQUIRES "
+            "--ccs-retrofit-capex-co2-scaling (or an ISO/config posture that "
+            "arms it): without seam 1 the factor is 1.0 for every host and "
+            "ScenarioConfig refuses the pair. Zero DOF, no constant changed — "
+            "the VOM adder's LEVEL is capx D65 Act B (owner card C-15/Q47), "
+            "not this flag. Solve-affecting from the first retrofit year "
+            "(2028); omitting the flag leaves the field UNSET."
+        ),
+    )
+    ap.add_argument(
+        "--no-ccs-retrofit-fixed-cost-co2-scaling",
+        dest="ccs_retrofit_fixed_cost_co2_scaling",
+        action="store_false",
+        help=(
+            "Pass the capx D65 fixed-cost shape gate an EXPLICIT False (the "
+            "control arm). Distinct from omitting the flag: an explicit False "
+            "is recorded in run_config.json, and because the field is "
+            "registered cache-optional AT False it still drops from the hash, "
+            "so the control keeps its pre-D65 cache key."
+        ),
+    )
     add_set_argument(ap)
     args = ap.parse_args(argv)
     set_overrides = parse_set_overrides(args.set_overrides)
@@ -1252,6 +1295,7 @@ def main(argv: list[str] | None = None) -> int:
         miso_rps_compliance_regions=args.miso_rps_compliance_regions,
         miso_clean_tier_rows=args.miso_clean_tier_rows,
         ccs_retrofit_capex_co2_scaling=args.ccs_retrofit_capex_co2_scaling,
+        ccs_retrofit_fixed_cost_co2_scaling=args.ccs_retrofit_fixed_cost_co2_scaling,
     )
     config = apply_set_overrides(config, set_overrides)
     summary = solve_and_summarize(
