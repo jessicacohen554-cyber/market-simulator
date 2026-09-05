@@ -1,0 +1,24 @@
+{
+ "schema": "composite-bundle/v1",
+ "run_id": "2026-09-05-ercot248-two-config-keeper",
+ "composed": "2026-09-05",
+ "ruling": "Owner instruction 2026-09-05: combine the ERCOT calibrated keeper config into one run for the run explorer — the 2023 config that is calibrated plus the 2024/2025 config — under the 2026-08-26 two-config partition ruling (keepers/ERCOT.json config_partition).",
+ "years": {
+  "2023": {
+   "source_run_id": "2026-08-25-236-swcap-clip-k33",
+   "source_bundle": "results/calibration/ercot236_k33_clip",
+   "role": "carveout-2023"
+  },
+  "2024": {
+   "source_run_id": "2026-08-25-234-eastex-identity",
+   "source_bundle": "results/calibration/ercot234_eastex_identity",
+   "role": "forward"
+  },
+  "2025": {
+   "source_run_id": "2026-08-25-234-eastex-identity",
+   "source_bundle": "results/calibration/ercot234_eastex_identity",
+   "role": "forward"
+  }
+ },
+ "composition": "zero-solve; payload year blocks, hourly/*_<year>.parquet, D-1/D-2/D-4/D-10 rows and the exceptions ledger are copied byte-for-byte from the source bundle that solved that year. meta.json / run_config.json carry the FORWARD config; run_config_carveout_2023.json carries the 2023 config. official_2023.json + ercot236_point_score.json are the carve-out records."
+}

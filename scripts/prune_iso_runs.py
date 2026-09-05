@@ -19,7 +19,14 @@ not touched here.
 
 Deletes the registry sidecar, the ``runs/<id>.js`` payload and the mapped
 ``results/calibration/<bundle>/`` directory together, so the three stores cannot
-drift into orphans — the same three-store discipline ``prune_iso`` keeps.
+drift into orphans — the same three-store discipline ``prune_iso`` keeps. Two
+bundle classes are RETAINED on disk even when their run comes off the site,
+because the parity gate's Class-E point-4 sweep (``check_bundle_retention``)
+exempts them and something else still reads them: a bundle named by a
+``results/regression-goldens/*/manifest.json`` capture record (the golden's
+replay provenance), and a bundle on the checker's
+``KEEP_REQUIRED_UNMAPPED_BUNDLES`` allowlist (a keep-required bundle that
+legitimately outlives its sidecar). Both are printed as ``[bundle retained: …]``.
 
 Usage:
     python scripts/prune_iso_runs.py --iso NEISO \
@@ -122,6 +129,23 @@ def main() -> None:
             continue
         if rec.get("bundle"):
             live_bundles.add((REPO / rec["bundle"]).resolve())
+    # Keep-required bundles (see module docstring): regression-golden capture
+    # provenance + the parity checker's own allowlist. Deleting either would
+    # destroy a golden's replay record or fail
+    # tests/scoring/test_registry_payload_parity.py's live-allowlist check.
+    retained_bundles: dict[Path, str] = {}
+    for manifest in sorted(REPO.glob("results/regression-goldens/*/manifest.json")):
+        for entry in (json.loads(manifest.read_text()).get("keepers") or {}).values():
+            if isinstance(entry, dict) and entry.get("bundle"):
+                retained_bundles[(REPO / entry["bundle"]).resolve()] = (
+                    f"regression golden {manifest.parent.name}"
+                )
+    from scripts.check_registry_payload_parity import KEEP_REQUIRED_UNMAPPED_BUNDLES
+
+    for name in KEEP_REQUIRED_UNMAPPED_BUNDLES:
+        retained_bundles.setdefault(
+            (CALIB / name).resolve(), "KEEP_REQUIRED_UNMAPPED_BUNDLES"
+        )
 
     print(f"=== {args.iso}: {len(entries)} registered run(s) ===")
     print(f"KEEP ({len(kept)}):")
@@ -138,6 +162,9 @@ def main() -> None:
         payload = RUNS / f"{rid}.js"
         bundle = (REPO / rec["bundle"]).resolve() if rec.get("bundle") else None
         drop = bundle if (bundle and bundle not in live_bundles) else None
+        retained = retained_bundles.get(drop) if drop else None
+        if retained:
+            drop = None
         targets = [t for t in [sidecar, payload, drop] if t and t.exists()]
         note = [f for f, t in adv.items() if rid in t]
         print(
@@ -145,6 +172,11 @@ def main() -> None:
             + (
                 ", ".join(str(t.relative_to(REPO)) for t in targets)
                 or "(nothing on disk)"
+            )
+            + (
+                f"   [bundle retained: {bundle.relative_to(REPO)} — {retained}]"
+                if retained
+                else ""
             )
             + (
                 f"   [also cited in {', '.join(note)} — FINDING docs retained]"
