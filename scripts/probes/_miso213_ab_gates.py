@@ -19,9 +19,10 @@ the keeper itself
   EXACTLY ``{miso_zonal_gas_basis_skip_923_priced: False -> True}``; the
   ``git.sha`` differs (the arm carries the code). Any other diff VOIDS.
 * **S-2 placement liveness** — read from the post-code L-5 block of the
-  phase-0 record: on the keeper's own fleet chain every print-derived cell's
-  arm price equals ``F_nobasis`` and every trajectory cell keeps the
-  keeper's ``F`` (zero-solve, off the production ``resolve_fuel_prices``).
+  phase-0 record: on the keeper's own fleet chain every cell the production
+  print path wrote has an arm price equal to ``F_nobasis`` and every unmasked
+  cell keeps the keeper's ``F`` (zero-solve, off the production
+  ``resolve_fuel_prices``).
 
 S-0's K-gates (K-1..K-6) are the miso-202/210 gates unchanged, thresholds
 frozen from the keeper's own committed verdict. C3a and C8 are reported at
@@ -261,12 +262,13 @@ def s2_from_phase0() -> dict:
         "source": "L5_arm_liveness block of _miso213_basis_layering.json (post-code, zero-solve)",
         "years": {
             y: {
-                "print_cells_equal_F_nobasis_share": v.get(
-                    "print_cells_equal_F_nobasis_share"
+                "masked_cells_equal_F_nobasis_share": v.get(
+                    "masked_cells_equal_F_nobasis_share"
                 ),
-                "trajectory_cells_equal_keeper_F_share": v.get(
-                    "trajectory_cells_equal_keeper_F_share"
+                "unmasked_cells_equal_keeper_F_share": v.get(
+                    "unmasked_cells_equal_keeper_F_share"
                 ),
+                "production_mask_share": v.get("production_mask_share"),
                 "gas_cells_changed_share": v.get("gas_cells_changed_share"),
             }
             for y, v in (l5.get("years") or {}).items()

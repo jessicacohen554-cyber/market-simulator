@@ -3810,5 +3810,50 @@
   "basis_identification": "data/raw/miso_zonal_gas_hub.csv source column: '<ST> delivered-to-electric-power (EIA N3045<ST>3) minus Henry Hub monthly mean' (scripts/data/fetch_eia_delivered_gas.py: mean over published months of N3045/1.036 \u2212 HH). The N3045 series is the state aggregate of the same EIA-923 receipts the prints report \u2014 the basis is GROSS of the prints, never identified NET of them.",
   "keeper_carries_both": true,
   "conclusion": "The layering has been in every MISO keeper since the basis was armed (gate 2). Neither kill condition of PREREG \u00a74 holds: the print path does not exclude basis-carrying cells (L-1), and the basis was not identified net of the prints."
+ },
+ "L5_arm_liveness": {
+  "note": "post-code zero-solve check on the keeper's fleet chain: arm F vs keeper F and F_nobasis",
+  "years": {
+   "2023": {
+    "gas_cells": 12684480,
+    "production_mask_share": 1.0,
+    "phase0_inferred_print_share": 0.999355,
+    "print_cells_hidden_from_phase0_by_oil_parity_cap": 8184,
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "unmasked_cells": 0,
+    "gas_cells_changed_share": 0.998782,
+    "max_abs_arm_minus_nobasis_on_masked_cells": 0.0,
+    "capw_mean_abs_increment_removed_usd_mmbtu": 0.218,
+    "passed": true
+   },
+   "2024": {
+    "gas_cells": 12658200,
+    "production_mask_share": 1.0,
+    "phase0_inferred_print_share": 1.0,
+    "print_cells_hidden_from_phase0_by_oil_parity_cap": 0,
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "unmasked_cells": 0,
+    "gas_cells_changed_share": 0.99862,
+    "max_abs_arm_minus_nobasis_on_masked_cells": 0.0,
+    "capw_mean_abs_increment_removed_usd_mmbtu": 0.1261,
+    "passed": true
+   },
+   "2025": {
+    "gas_cells": 12658200,
+    "production_mask_share": 1.0,
+    "phase0_inferred_print_share": 1.0,
+    "print_cells_hidden_from_phase0_by_oil_parity_cap": 0,
+    "masked_cells_equal_F_nobasis_share": 1.0,
+    "unmasked_cells_equal_keeper_F_share": null,
+    "unmasked_cells": 0,
+    "gas_cells_changed_share": 0.999086,
+    "max_abs_arm_minus_nobasis_on_masked_cells": 0.0,
+    "capw_mean_abs_increment_removed_usd_mmbtu": 0.2395,
+    "passed": true
+   }
+  },
+  "passed": true
  }
 }
