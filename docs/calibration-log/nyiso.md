@@ -11803,3 +11803,70 @@ not landed — if it lands before this PR merges the merging session re-keys
 `docs/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md`,
 `results/calibration/_nyiso189_ab_report.json`,
 `scripts/gen_nyiso189_attestation.py`, `scripts/probes/nyiso189_ab_report.py`.
+
+### 2026-09-05 — nyiso-190 (`backcast-calibration`): the nyiso-189 promotion's one unmeasured justifying clause is measured on pre-registered bars and **REFUTED** — ZERO SOLVES, keeper unchanged
+
+**Object:** the single clause standing between C1-2024 `CC_REGULAR` (+3.33 TWh
+/ +2.8 pp, 0.2 pp inside its band) and a fail — FINDING-nyiso189 §3.1's *"the
+NYC steam it displaces is what the market committed anyway"*. **Solves: ZERO.**
+Bars pushed to `origin` before the first number
+(`results/calibration/PREREG-nyiso190-cc2024-displacement-provenance.md`).
+**Instrument:** the registered arm payload against `2026-09-04-nyiso-188-combined`
+(the nyiso-189 sitting established its same-HEAD control BIT-IDENTICAL to it,
+0 of 52,560 prices differing in every year) and the bench's per-plant CAMPD /
+EIA-923 record. V1 verified both payloads reproduce the FINDING's own class
+columns to ≤ 0.01 TWh before any bar was read.
+
+**Result.** **B1 SUPPORTED** — the market *did* have the displaced units on
+(`s_online` 0.750 / **0.839** / 0.834 of removed MWh at the 2 % bar).
+**B2 REFUTED** — the model was running them harder than the market did:
+**78.1 % of the 2024 displaced TWh moved TOWARD the plants' measured annual**
+(`w_away` 0.139 / **0.219** / 0.375 on CAMPD; 0.216 on EIA-923, both bases
+agreeing). The displacement *relieved a model over-run*; it did not deepen a
+market-committed deficit. **B3 HOLDS** — the arm moves the six-class gas family
+by 0.042 TWh at +1.87 from actual against ±3.82, so it is a genuine
+within-family reallocation. **B4 fails the naming bar** — only **0.42** of the
+2024 displaced TWh is downstate steam/cogen (0.76 `CC_CHP` / 0.46 `CC_REGULAR`
+/ 0.30 `ST_GAS`; NYC 0.74 / Capital-Hudson 0.71 / Upstate-West 0.21), so the
+set is not what the clause names. Every mover the lane was sent to check —
+Ravenswood 2500, Arthur Kill 2490, East River 2493, Empire 56259, Cricket
+Valley 57185 — is a plant the model was **over**-running on both actual bases.
+
+**Consequence, pre-committed in PREREG §4 and executed:** on the `B2 < 0.50`
+branch **no cell-G question goes to the owner** — the "re-open G vs accept"
+card rested on a premise the evidence refutes. `scuc_load_pocket_commitment`
+stays **`G`**; the nyiso-97 §5 bar and the nyiso-160 access closure stand, and
+stop S2 records why this session could never identify it (the bar forbids
+inferring the requirement from observed unit conduct — which this measurement
+is). The CT half of the nyiso-187 disposition stands verbatim.
+
+**What the measurement surfaced instead (POST-HOC, labelled, not a bar):** on
+the keeper, 72 benched plants carry **+11.25 TWh of over-run against −8.18 TWh
+of under-run** (net +3.07) — ~±8 TWh of offsetting plant-grain misallocation
+inside a family the class totals say is pinned (±7.4 in 2023, ±9.3 in 2025).
+The top of it is `CC_CHP` in all three years — Sithe Independence 54547 at an
+annual **CF 0.93 against a measured 0.62** (9.478 vs 6.286 CAMPD / 6.158
+EIA-923 TWh, 2024; 0.97 vs 0.62 in 2025), Brooklyn Navy Yard 54914 held at
+≥95 % of nameplate for **8,172 / 6,226 / 6,714 hours against ZERO measured
+hours** at that level, Empire 56259 2,041 h against 65 — and
+`cc_capacity_reconcile` (cell **K**), the mechanism that bounds exactly this at
+each plant's own CAMPD demonstrated peak, **is scoped to `CC_REGULAR` by
+construction**; its committed 15-row NYISO table contains no `CC_CHP` plant.
+**Neither built nor proposed here** (stops S1/S3): its direction on C1-2024 is
+UNKNOWN and could go either way, so it is put to the owner as one question in
+`docs/DECISION-CARD-nyiso190-cc2024-cell-disposition-2026-09-05.md` §4.
+
+**Governance.** Keeper `2026-09-05-nyiso-189-steam-identity` unchanged — no
+promotion, demotion, re-score or registration; no run was produced, so rule 15
+has nothing to register and the dashboard is untouched. No mechanism tested, so
+no matrix cell moves status; the NYISO shard's `scuc_load_pocket_commitment`
+and `cc_capacity_reconcile` evidence lines and the §5.5 queue are updated, and
+no other ISO's shard is touched. **No marker requested** — D56 has NOT landed
+(NYISO still in `calibration-complete.json`'s `withdrawn` block at `c9f1d26e`),
+so no rule-22 D-5(b) re-key applies. C3a-2025 untouched
+(`DECISION-CARD-nyiso148` Q1 confirmed still pending). Evidence:
+`docs/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md`,
+`results/calibration/_nyiso190_displacement_provenance.json`,
+`_nyiso190_plant_grain_posthoc.json`, probes
+`scripts/probes/nyiso190_displacement_provenance.py` /
+`nyiso190_plant_grain_posthoc.py`.
