@@ -72,6 +72,142 @@
           "F4_share_of_offer_pct": 6.24
         }
       }
+    },
+    "2024": {
+      "n_tranches": 2923,
+      "n_markup_rows_control": 531,
+      "n_markup_rows_arm": 1065,
+      "n_newly_marked_up": 534,
+      "n_changed": 534,
+      "n_existing_markups_moved": 0,
+      "n_changed_outside_econ_band": 0,
+      "all_newly_marked_positive": true,
+      "mc_rows_changed": 534,
+      "mc_changes_confined_to_marked_rows": true,
+      "max_abs_mc_delta_on_unmarked_rows": 0.0,
+      "by_cohort": {
+        "CT_INTERMEDIATE": {
+          "n_tranches": 264,
+          "capacity_mw": 6927.3,
+          "cap_w_markup_hr": 4.6574,
+          "cap_w_fixed_margin_usd_mwh": 14.201,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 6.432,
+          "cap_w_offer_usd_mwh": 44.912,
+          "F4_share_of_offer_pct": 14.32
+        },
+        "CC_INTERMEDIATE": {
+          "n_tranches": 234,
+          "capacity_mw": 11869.6,
+          "cap_w_markup_hr": 0.4938,
+          "cap_w_fixed_margin_usd_mwh": 1.506,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 0.543,
+          "cap_w_offer_usd_mwh": 23.134,
+          "F4_share_of_offer_pct": 2.35
+        },
+        "ST_GAS_INTERMEDIATE": {
+          "n_tranches": 36,
+          "capacity_mw": 2984.7,
+          "cap_w_markup_hr": 2.4517,
+          "cap_w_fixed_margin_usd_mwh": 7.476,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 2.409,
+          "cap_w_offer_usd_mwh": 33.819,
+          "F4_share_of_offer_pct": 7.12
+        }
+      },
+      "already_armed_parent_econ": {
+        "CT_PEAKER": {
+          "n_tranches": 243,
+          "capacity_mw": 11050.6,
+          "F4_footprint_usd_mwh": 9.471,
+          "cap_w_offer_usd_mwh": 55.604,
+          "F4_share_of_offer_pct": 17.03
+        },
+        "CC_REGULAR": {
+          "n_tranches": 30,
+          "capacity_mw": 1352.2,
+          "F4_footprint_usd_mwh": 0.456,
+          "cap_w_offer_usd_mwh": 22.184,
+          "F4_share_of_offer_pct": 2.06
+        },
+        "ST_GAS": {
+          "n_tranches": 34,
+          "capacity_mw": 4385.3,
+          "F4_footprint_usd_mwh": 5.144,
+          "cap_w_offer_usd_mwh": 58.331,
+          "F4_share_of_offer_pct": 8.82
+        }
+      }
+    },
+    "2025": {
+      "n_tranches": 2923,
+      "n_markup_rows_control": 531,
+      "n_markup_rows_arm": 1065,
+      "n_newly_marked_up": 534,
+      "n_changed": 534,
+      "n_existing_markups_moved": 0,
+      "n_changed_outside_econ_band": 0,
+      "all_newly_marked_positive": true,
+      "mc_rows_changed": 534,
+      "mc_changes_confined_to_marked_rows": true,
+      "max_abs_mc_delta_on_unmarked_rows": 0.0,
+      "by_cohort": {
+        "CT_INTERMEDIATE": {
+          "n_tranches": 264,
+          "capacity_mw": 6927.3,
+          "cap_w_markup_hr": 4.6574,
+          "cap_w_fixed_margin_usd_mwh": 14.201,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 5.45,
+          "cap_w_offer_usd_mwh": 49.916,
+          "F4_share_of_offer_pct": 10.92
+        },
+        "CC_INTERMEDIATE": {
+          "n_tranches": 234,
+          "capacity_mw": 11869.6,
+          "cap_w_markup_hr": 0.4938,
+          "cap_w_fixed_margin_usd_mwh": 1.506,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 0.791,
+          "cap_w_offer_usd_mwh": 34.779,
+          "F4_share_of_offer_pct": 2.27
+        },
+        "ST_GAS_INTERMEDIATE": {
+          "n_tranches": 36,
+          "capacity_mw": 2984.7,
+          "cap_w_markup_hr": 2.4517,
+          "cap_w_fixed_margin_usd_mwh": 7.476,
+          "all_positive": true,
+          "F4_footprint_usd_mwh": 2.34,
+          "cap_w_offer_usd_mwh": 43.959,
+          "F4_share_of_offer_pct": 5.32
+        }
+      },
+      "already_armed_parent_econ": {
+        "CT_PEAKER": {
+          "n_tranches": 243,
+          "capacity_mw": 11050.6,
+          "F4_footprint_usd_mwh": 9.528,
+          "cap_w_offer_usd_mwh": 62.359,
+          "F4_share_of_offer_pct": 15.28
+        },
+        "CC_REGULAR": {
+          "n_tranches": 30,
+          "capacity_mw": 1352.2,
+          "F4_footprint_usd_mwh": 0.459,
+          "cap_w_offer_usd_mwh": 30.58,
+          "F4_share_of_offer_pct": 1.5
+        },
+        "ST_GAS": {
+          "n_tranches": 34,
+          "capacity_mw": 4385.3,
+          "F4_footprint_usd_mwh": 4.879,
+          "cap_w_offer_usd_mwh": 64.521,
+          "F4_share_of_offer_pct": 7.56
+        }
+      }
     }
   },
   "n_tranches_marked_up_new": 534,
