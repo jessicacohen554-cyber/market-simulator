@@ -782,6 +782,13 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 | **D-5** | Per-campaign §2.1b grant for the **NEISO scenario campaign** (Stage B) once WS-0…WS-4 land, and the order in which other ISOs' campaigns are asked for as their gates open. | Ask when Stage A's T1-F results are on the dashboard, not before. | Leg (d) is never standing. |
 | **D-6** | Attribute netting rule between a federal CES row and a voluntary-demand row (voluntary counts toward the standard, or is additional to it). | Report both; default **counts toward** (one MWh, one claim — matches how RECs retire today). | Policy-design question, not a modelling one. |
 
+**Card status (maintained by SCN-DESK; the live copy is
+`docs/handoffs/scenario-desk-ledger-2026-09.md` §2).** **D-1, D-2, D-3, D-6 — PRESENTED
+2026-09-05 (SCN-DESK r#1), awaiting ruling.** D-4 is held until WS-4a delivers its
+constant-vs-published gap list; D-5 is held until Stage A's measured cost table is on the
+forecast dashboard. Rulings are appended to the row above as `RULED <date>: …` and numbered
+S1, S2, … in the ledger, in the refresh commit that receives them.
+
 ---
 
 ## 7. Session prompts (paste whole; house style per FF plan §6)
@@ -1016,3 +1023,17 @@ leg without the grant.
 
 - 2026-09-05 — v1. Planning session on branch `claude/market-sim-forecast-scenarios-md777o`;
   survey verified at `4d4dc6ce`. Zero solves, zero code, zero defaults. Owner boxes D-1…D-6 open.
+- 2026-09-05 — **Scenario Readiness Desk opens (SCN-DESK r#1, main HEAD `d01ab8b0`).** Ledger
+  created at `docs/handoffs/scenario-desk-ledger-2026-09.md`. **Wave 1 issued in full** —
+  SCN-WS0 (`claude/scn-ws0-k7m2`), SCN-WS1a (`…-p4qd`), SCN-WS2a (`…-t9xb`), SCN-WS3a
+  (`…-r6vn`), SCN-WS4a (`…-h3zc`); five disjoint-file lanes, none needing an owner ruling to
+  start. The §7 "WS-4" prompt is **split** — items 2+5 to WS-4a now, items 1+3 to WS-4b and
+  item 4 to WS-4c in wave 2 (both depend on WS-0's harness); WS-1a's item 1 is **gated** on
+  D-1. No other §7 body edited. **Cards D-1, D-2, D-3 and D-6 PRESENTED**; D-4 held for
+  WS-4a's gap list and D-5 for Stage A's cost table, per the plan's own §6 timing. Capx
+  deconfliction against director r#40: no HOLD required — D60-R2 (running) holds
+  `scripts/forecast_verdict.py` and `frontend/data/forecast/`, which no SCN lane touches; the
+  six matrix shards are the one live shared surface and carry the last-commit one-line
+  protocol. §2.1b gate at the pin: **NEISO only** (NYISO's `complete` withdrawn again
+  2026-09-05, so Q45's premise has lapsed) — no Stage-B lane is issuable and none is issued.
+  Zero solves, zero code, zero defaults, zero markers.
