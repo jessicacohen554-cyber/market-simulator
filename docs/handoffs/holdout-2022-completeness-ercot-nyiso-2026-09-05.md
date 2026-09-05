@@ -44,6 +44,35 @@ hourly DA LMPs (import hub pricing). Designed 2022 fallbacks (not gaps): `NYISO_
 uses its pooled (`year=0`) rows outside 2023–2025; NYSDEC 227-3 restrictions gate on
 effective dates, so none are active in 2022.
 
+
+### 1a. The NYISO 2022 touchpoint solve — executed, then UN-REGISTERED (record of result)
+
+The nyiso-189 recipe was replayed verbatim on 2022 (`--replay-bundle results/calibration/nyiso189_steam_identity
+--year 2022 --holdout-authorized`, HH 2022 = $6.45 auto-resolved) after the fleet rebuild above passed. While the
+LP ran, `main` **withdrew NYISO's `complete` marker** (nyiso-193: keeper → `2026-09-05-nyiso-192-astoria-panel`,
+NOT-YET, Q5 uniform rule) and the owner-directed keeper-only prune removed nyiso-189 from the site. A 2022 NYISO
+registration is therefore no longer rule-22- or CI-legal, so the registration commit was reverted on this branch
+(no sidecar, payload, `bench/NYISO/2022.json.gz` or bundle remains). The withdrawn-marker note carries a dated
+addendum saying so. **Numbers, recorded once as diagnostic evidence (never a skill number):**
+
+| criterion | keeper in-sample 2023–25 | 2022 touchpoint |
+|---|---|---|
+| C1 fuel-mix by class | PASS | **FAIL** — CC_REGULAR +5.19 TWh, share +3.9 pp (D-10 free-class 4/5) |
+| C2 system volume | PASS | PASS |
+| C3a mean LMP | PASS | **FAIL** — −12.2 % vs RT (−8.4 % vs DA; DA−RT premium −$3.33); model system avg $67.16/MWh |
+| C3b price duration/shape | PASS | **FAIL** — NRMSE 0.240 |
+| C3c price tail (RT > $300) | CAVEAT (3/10, 0/13, 4/42 h) | **FAIL** — 17 h vs 101 h (0.17×), carried and deeper |
+| C4 dispatch correlation | PASS | PASS |
+| C6 governance / C8 forced share | PASS / PASS | PASS / PASS |
+| C5a CO2 vs eGRID (reported) | +1.8 / +1.0 / +4.8 % | +2.5 % |
+| D-A diurnal amplitude (reported) | — | 66 % of measured, phase h17/h03 correct, hod r +0.87 |
+
+Reading (touchpoint loop step 2, not a tuning claim): the 2022 miss is a **gas-year level miss** — CC_REGULAR
+over-dispatched while the system price sits 12 % low — with shape, dispatch correlation and forcing legitimacy
+held. It is the same CC_REGULAR sign the in-sample keeper carries in 2024 (+3.68 TWh on nyiso-192), now in a
+$6.45 Henry Hub year with the largest downstate basis/oil-parity exposure. The unregistered bundle is preserved
+only in this session's scratch (lost at archive); re-running 2022 requires a re-declared `complete` marker.
+
 ## 2. ERCOT — COMPLETE for a touchpoint solve after three extensions; two items remain owner-side
 
 | item | before | action / status |
