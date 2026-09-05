@@ -1424,6 +1424,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "capacity_market_supply_clearing_by_iso",
+    # SCN-WS2a: the endogenous federal CES TARGET row (readiness plan 2026-09
+    # §3 WS-2 item 2). Both default None (no row, no escape) and dropped from
+    # the hash there, so every pre-existing cache key of all six ISOs — every
+    # backcast keeper included — is byte-stable; a configured row keys
+    # distinctly. SHARED fields — very end, per HOUSE-3. Registered IN THE
+    # SAME COMMIT as the fields.
+    "federal_ces_target_by_year",
+    "federal_ces_acp_usd_per_mwh",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1924,6 +1932,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D57: the capacity-market supply-clearing gate, registered at its
     # shipping None default (an armed {iso: True} row keys distinctly).
     "capacity_market_supply_clearing_by_iso": "None",
+    # SCN-WS2a: the endogenous federal CES TARGET row, registered at its two
+    # shipping defaults (None = no row / no escape declared; an armed row keys
+    # distinctly). Registered IN THE SAME COMMIT as the fields.
+    "federal_ces_target_by_year": "None",
+    "federal_ces_acp_usd_per_mwh": "None",
 }
 
 
@@ -3155,6 +3168,40 @@ class ScenarioConfig:
     # incl. PJM carries a row since the FF-1E-policy refresh, so the
     # suppression is live there (stale-comment fix, FFR-6B §5.4). Suppresses
     # the K-row per-region grain (miso_rps_compliance_regions) identically.
+    federal_ces_target_by_year: dict[int, float] | None = None  # ENDOGENOUS
+    # national CES TARGET row (SCN-WS2a; forecast-scenario-readiness-plan
+    # 2026-09 §3 WS-2 item 1, closing G-S1/G-S3): sparse {year: credited
+    # share} knots in [0, 1], linearly interpolated and edge-held (the
+    # federal_ces_premium_by_year knot convention; YAML str keys coerced by
+    # policy/federal_ces.py). None (default) = NO ROW, byte-identical. When
+    # set, ONE annual row per ISO rides the clean-tier family
+    # (model/lp/rows.py) as a federal region spanning EVERY load zone:
+    #   Σ_g credit[g]·P[g,t] + Σ W[z,t] + Σ S[z,t] + escape ≥ target(y)·Σ demand
+    # with the SAME crediting rule the premium path pays (policy/federal_ces
+    # .unit_credit_fractions — clean_capture and cesa_ci both unchanged: a
+    # CCS column carries 0.95), escaping at federal_ces_acp_usd_per_mwh. Its
+    # dual is the ENDOGENOUS federal EAC price, delivered through the
+    # existing clean_attribute_price_by_fuel → max(EAC, RPS dual, clean dual)
+    # screen seam (no new consumer). ONE MECHANISM PER PHENOMENON (rule 19
+    # [R-ONE-MECH]): the target row and a NON-ZERO EXOGENOUS premium are
+    # mutually exclusive in one config (__post_init__); the row requires
+    # federal_ces_enabled (the crediting gate) and a positive ACP, and
+    # refuses federal_ces_storage_eligible (no discharge column in the row)
+    # and an eligible-fuel list without wind+solar (the row's zone columns).
+    # Forecast-only (rule 13 — the premium's own backcast refusal applies).
+    # ILLUSTRATIVE, NOT A CAMPAIGN LEVEL: owner box D-2 (readiness plan §6,
+    # the CES target schedule + ACP) was PRESENTED at SCN-DESK r#1 and is
+    # OPEN as of 2026-09-05; the SCN-WS2a probe used {2026: 0.55, 2035: 0.80,
+    # 2050: 1.00} at ACP $50 as a placeholder and says so. No value here is a
+    # committed level.
+    federal_ces_acp_usd_per_mwh: float | None = None  # The target row's
+    # alternative-compliance ceiling in real 2026$/MWh: the escape column's
+    # objective price, so the row's dual can never exceed it — a
+    # certificate-short year pays the ACP instead of turning infeasible
+    # (FFR-6B §6.3; the same construction as STATE_RPS_ACP). REQUIRED (> 0)
+    # with federal_ces_target_by_year and refused without it (a dangling
+    # price with no row is an unregistered knob). None (default) =
+    # byte-identical. Illustrative $50 in the SCN-WS2a probe (D-2 open).
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     # FFR-7B Arm 2 (FFR-6B E-1; owner decision D-22(a), sitting Addendum
     # V.6). GATED default OFF — byte-identical off; forecast-mode, MISO-only
@@ -15587,6 +15634,89 @@ class ScenarioConfig:
                 "must be False in backcast mode (rule 13): a federal CES "
                 "premium never enters a scored backcast."
             )
+        # The endogenous federal CES TARGET row (SCN-WS2a). The guards below
+        # make the row's preconditions loud: it is one mechanism for the
+        # "what does an X%-by-Y standard imply" phenomenon, and it never
+        # coexists with the exogenous premium answering the same question
+        # (rule 19 [R-ONE-MECH]).
+        _ces_target = self.federal_ces_target_by_year
+        if _ces_target is not None and len(_ces_target) == 0:
+            raise ValueError(
+                "federal_ces_target_by_year must be None (no row) or carry at "
+                "least one {year: share} knot — an empty mapping is ambiguous"
+            )
+        if _ces_target:
+            if self.mode == "backcast":
+                raise ValueError(
+                    "federal_ces_target_by_year is a forecast-only policy "
+                    "lever (rule 13): a federal CES target row never enters a "
+                    "scored backcast."
+                )
+            if not self.federal_ces_enabled:
+                raise ValueError(
+                    "federal_ces_target_by_year requires federal_ces_enabled: "
+                    "the master gate is what credits the row's columns "
+                    "(unit_credit_fractions is all-zero with it off)."
+                )
+            _premium_armed = self.federal_ces_premium_usd_per_mwh != 0.0 or bool(
+                self.federal_ces_premium_by_year
+                and any(
+                    float(v) != 0.0 for v in self.federal_ces_premium_by_year.values()
+                )
+            )
+            if _premium_armed:
+                raise ValueError(
+                    "federal_ces_target_by_year and a non-zero exogenous "
+                    "federal CES premium (federal_ces_premium_usd_per_mwh / "
+                    "federal_ces_premium_by_year) are mutually exclusive in "
+                    "one config (rule 19 [R-ONE-MECH]): the target row's dual "
+                    "IS the federal EAC price; pricing it exogenously as well "
+                    "would pay the same certificate twice."
+                )
+            if (
+                self.federal_ces_acp_usd_per_mwh is None
+                or float(self.federal_ces_acp_usd_per_mwh) <= 0.0
+            ):
+                raise ValueError(
+                    "federal_ces_target_by_year requires a positive "
+                    "federal_ces_acp_usd_per_mwh: every clean row carries its "
+                    "own escape (FFR-6B §6.3) — a target row with no ACP is an "
+                    "infeasibility bomb."
+                )
+            if self.federal_ces_storage_eligible:
+                raise ValueError(
+                    "federal_ces_target_by_year does not support "
+                    "federal_ces_storage_eligible: the target row credits "
+                    "generator and wind/solar columns only (no discharge "
+                    "column) — a storage-crediting row is a separate design."
+                )
+            for _base in ("wind", "solar"):
+                if _base not in self.federal_ces_eligible_fuels:
+                    raise ValueError(
+                        f"federal_ces_target_by_year requires {_base!r} in "
+                        "federal_ces_eligible_fuels: the row's wind/solar zone "
+                        "columns always credit at 1.0 (the clean-tier family's "
+                        "construction), so an ineligible listing would be "
+                        "silently overridden."
+                    )
+            for _k, _v in _ces_target.items():
+                try:
+                    int(_k)
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(
+                        f"federal_ces_target_by_year knot key {_k!r} is not a year"
+                    ) from exc
+                if not (0.0 <= float(_v) <= 1.0):
+                    raise ValueError(
+                        f"federal_ces_target_by_year knot {_k!r}: {_v!r} is not "
+                        "a credited share in [0, 1]"
+                    )
+        elif self.federal_ces_acp_usd_per_mwh is not None:
+            raise ValueError(
+                "federal_ces_acp_usd_per_mwh has no row to price without "
+                "federal_ces_target_by_year — set both or neither (rule 24 "
+                "[R-REGISTRY]: no dangling knobs)."
+            )
         # The backcast-only MEASURED-OVERLAY family (audit FR-11). Same
         # construction as the two guards above, generalized: rule 13 lets a
         # measured input in only when it would regenerate for a forward year,
@@ -17075,6 +17205,8 @@ TIER_TAGS: dict[str, int] = {
     "federal_ces_eligible_fuels": 1,
     "federal_ces_storage_eligible": 1,
     "federal_ces_replaces_state_rps": 1,
+    "federal_ces_target_by_year": 1,
+    "federal_ces_acp_usd_per_mwh": 1,
     "rps_enabled": 1,
     "electrolyzer_type": 1,
     "h2_available_year": 1,

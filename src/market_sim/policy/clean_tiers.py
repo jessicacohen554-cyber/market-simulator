@@ -9,6 +9,15 @@ per statute: MN's carbon-free definition includes hydrogen and biomass,
 MI's clean definition admits qualified CCS gas), generated in its
 statute's eligible zones, with its own ACP-style feasibility escape.
 
+Since SCN-WS2a (``docs/handoffs/forecast-scenario-readiness-plan-2026-09.md``
+§3 WS-2) the family is also the carrier of the **federal CES target row**
+(``policy.federal_ces.build_federal_ces_region``): one region spanning every
+load zone whose qualifying spec is a per-generator credit-fraction VECTOR
+rather than a fuel-name tuple, appended after the state regions through
+:func:`append_clean_region`. The family no longer requires the RPS region
+grain (the G-S3 coupling relaxation lives in ``model.lp``), so it stands
+alone in every ISO or beside MISO's state rows.
+
 Composition with everything that already pays a clean MWh (rule 19
 [R-ONE-MECH], FFR-6B §6.4): the clean row's dual enters the EXISTING
 ``max(eac, rps_shadow)`` attribute doctrine at the capacity screens —
@@ -74,16 +83,28 @@ class CleanRegionArrays:
             obligated load share times the region's clean target.
         acp_price: ``(K,)`` float — each row's feasibility-escape price in
             $/MWh (the documented $30 MISO proxy).
-        qualifying_fuels: Per-region statutory qualifying fuel-name tuples
-            (``FUEL_TYPE_MAP`` names; nuclear admitted here, unlike the
-            renewable row).
+        qualifying_fuels: Per-region qualifying spec: a statutory fuel-name
+            tuple (``FUEL_TYPE_MAP`` names; nuclear admitted here, unlike the
+            renewable row — indicator coefficients in the LP), or an
+            ``(n_gen,)`` float credit-fraction vector aligned with the fleet
+            the LP solves on (the federal CES row — each generator column
+            carries its own fraction). The LP builder accepts both.
+        fuel_credit: Optional per-region ``{fuel_name: fraction}`` map used
+            ONLY by the consumer-side mapping (:func:`clean_credit_by_fuel`):
+            a vector-form region needs it because a per-generator vector has
+            no fuel axis for the capacity screens, which are keyed by fuel.
+            ``None`` entries (every state region) credit the region's
+            qualifying-fuel names at 1.0 exactly as before. ``None`` for the
+            whole tuple (the default — every MISO builder output) means every
+            region is a name-tuple region.
     """
 
     labels: tuple[str, ...]
     eligible_zone_mask: np.ndarray
     obligation_frac: np.ndarray
     acp_price: np.ndarray
-    qualifying_fuels: tuple[tuple[str, ...], ...]
+    qualifying_fuels: "tuple[tuple[str, ...] | np.ndarray, ...]"
+    fuel_credit: "tuple[dict[str, float] | None, ...] | None" = None
 
 
 def build_clean_region_arrays(
@@ -140,6 +161,95 @@ def build_clean_region_arrays(
     )
 
 
+def append_clean_region(
+    arrays: CleanRegionArrays | None,
+    *,
+    label: str,
+    eligible_zone_mask: np.ndarray,
+    obligation_frac: np.ndarray,
+    acp_price: float,
+    qualifying: "tuple[str, ...] | np.ndarray",
+    fuel_credit: "dict[str, float] | None" = None,
+) -> CleanRegionArrays:
+    """Return ``arrays`` with one more clean region appended (or a new K=1 spec).
+
+    The one composition point of the family (SCN-WS2a): the federal CES row
+    — and, later, any second consumer such as the voluntary-demand row
+    (SCN-WS3b) — joins the state regions as an extra region in region order,
+    so the LP's row/ACP-slot layout and the dual read-back stay the single
+    generic K2 path. ``arrays=None`` starts the family (the federal row
+    standing alone in an ISO with no state clean tier).
+
+    Args:
+        arrays: The existing family (``None`` to start one).
+        label: Region label (diagnostics / the runner's dual log).
+        eligible_zone_mask: ``(n_zones,)`` bool LHS mask for the new region.
+        obligation_frac: ``(n_zones,)`` float RHS weights for the new region.
+        acp_price: The new row's escape price in $/MWh.
+        qualifying: The new region's qualifying spec (name tuple or
+            ``(n_gen,)`` credit vector).
+        fuel_credit: The consumer-side ``{fuel: fraction}`` map for a
+            vector-form region (see :class:`CleanRegionArrays`).
+
+    Returns:
+        A new :class:`CleanRegionArrays`; ``arrays`` is never mutated.
+    """
+    mask_row = np.asarray(eligible_zone_mask, dtype=bool).reshape(1, -1)
+    frac_row = np.asarray(obligation_frac, dtype=float).reshape(1, -1)
+    if arrays is None:
+        return CleanRegionArrays(
+            labels=(label,),
+            eligible_zone_mask=mask_row,
+            obligation_frac=frac_row,
+            acp_price=np.array([float(acp_price)]),
+            qualifying_fuels=(qualifying,),
+            fuel_credit=(fuel_credit,),
+        )
+    if mask_row.shape[1] != arrays.eligible_zone_mask.shape[1]:
+        raise ValueError(
+            f"append_clean_region: zone axis mismatch ({mask_row.shape[1]} vs "
+            f"{arrays.eligible_zone_mask.shape[1]})"
+        )
+    k = len(arrays.labels)
+    prior_credit = arrays.fuel_credit if arrays.fuel_credit is not None else (None,) * k
+    return CleanRegionArrays(
+        labels=arrays.labels + (label,),
+        eligible_zone_mask=np.vstack([arrays.eligible_zone_mask, mask_row]),
+        obligation_frac=np.vstack([arrays.obligation_frac, frac_row]),
+        acp_price=np.concatenate([arrays.acp_price, [float(acp_price)]]),
+        qualifying_fuels=arrays.qualifying_fuels + (qualifying,),
+        fuel_credit=tuple(prior_credit) + (fuel_credit,),
+    )
+
+
+def _region_fuel_fractions(arrays: CleanRegionArrays) -> "list[dict[str, float]]":
+    """Return each region's ``{fuel: credit fraction}`` for the consumer map.
+
+    A name-tuple region credits every named fuel at 1.0 (the pre-SCN-WS2a
+    semantics, unchanged); a vector-form region must carry its
+    ``fuel_credit`` map, because a per-generator vector has no fuel axis —
+    a missing map is a construction error, never a silent zero.
+    """
+    credit = (
+        arrays.fuel_credit
+        if arrays.fuel_credit is not None
+        else (None,) * len(arrays.labels)
+    )
+    out: "list[dict[str, float]]" = []
+    for r, (spec, fc) in enumerate(zip(arrays.qualifying_fuels, credit)):
+        if isinstance(spec, np.ndarray):
+            if fc is None:
+                raise ValueError(
+                    f"clean region {arrays.labels[r]!r} carries a per-generator "
+                    "credit vector but no fuel_credit map for the capacity "
+                    "screens (CleanRegionArrays.fuel_credit)"
+                )
+            out.append({f: float(v) for f, v in fc.items() if float(v) > 0.0})
+        else:
+            out.append({f: 1.0 for f in spec})
+    return out
+
+
 def clean_credit_by_fuel(
     arrays: CleanRegionArrays, region_duals: np.ndarray
 ) -> dict[str, np.ndarray]:
@@ -150,7 +260,10 @@ def clean_credit_by_fuel(
     ``r``'s dual only where BOTH the zone is in ``r``'s eligibility mask
     AND the fuel is in ``r``'s statutory qualifying set (a gas_cc_ccs unit
     in MISO-West earns nothing from MN's row — MN's carbon-free definition
-    does not admit CCS gas).
+    does not admit CCS gas). A vector-form region (the federal CES row)
+    credits a fuel at ``dual × fraction`` from its ``fuel_credit`` map, so a
+    CCS candidate earns 0.95 of the federal dual — the same fraction the
+    LP row credits its column at.
 
     Args:
         arrays: The clean region spec the solve ran with.
@@ -158,17 +271,19 @@ def clean_credit_by_fuel(
 
     Returns:
         ``{fuel_name: (n_zones,) $/MWh}`` — max over the admitting regions,
-        0 where none admits. Only fuels named by at least one region appear.
+        0 where none admits. Only fuels credited by at least one region
+        appear.
     """
     duals = np.asarray(region_duals, dtype=float)
+    fractions = _region_fuel_fractions(arrays)
     out: dict[str, np.ndarray] = {}
-    all_fuels = sorted({f for fuels in arrays.qualifying_fuels for f in fuels})
+    all_fuels = sorted({f for fr in fractions for f in fr})
     for fuel in all_fuels:
-        admits = np.array(
-            [fuel in fuels for fuels in arrays.qualifying_fuels], dtype=bool
-        )
+        frac = np.array([fr.get(fuel, 0.0) for fr in fractions], dtype=float)
         masked = np.where(
-            arrays.eligible_zone_mask & admits[:, None], duals[:, None], 0.0
+            arrays.eligible_zone_mask & (frac[:, None] > 0.0),
+            (duals * frac)[:, None],
+            0.0,
         )
         out[fuel] = masked.max(axis=0)
     return out

@@ -144,10 +144,10 @@ def _resolve_rps_eligible_gen_idx(
 
 def _resolve_clean_region_gen_idx(
     fleet: FleetArrays,
-    region_fuels: "tuple[tuple[str, ...], ...]",
+    region_fuels: "tuple[tuple[str, ...] | np.ndarray, ...]",
     eligible_zone_mask: np.ndarray,
 ) -> "list[np.ndarray | None]":
-    """Resolve each clean-tier region's qualifying fuels to generator indices.
+    """Resolve each clean-tier region's qualifying spec to generator indices.
 
     The clean-family sibling of :func:`_resolve_rps_eligible_gen_idx`, with
     the ONE deliberate difference: NUCLEAR IS ADMITTED here. A clean/
@@ -159,6 +159,26 @@ def _resolve_clean_region_gen_idx(
     (data-driven — the statutes genuinely differ: MN admits hydrogen and
     biomass, MI admits qualified CCS gas). An unknown fuel name is a hard
     error, never a silent drop.
+
+    A region's qualifying spec takes ONE of two forms (SCN-WS2a, the
+    federal CES target row — plan §3 WS-2 item 1):
+
+    * a **fuel-name tuple** (every state statute): the region credits each
+      qualifying generator's MWh at 1.0 — an indicator coefficient;
+    * an **``(n_gen,)`` float vector** of per-generator credit fractions in
+      ``[0, 1]`` (``policy.federal_ces.unit_credit_fractions`` — the SAME
+      crediting rule the premium path pays, in both ``clean_capture`` and
+      ``cesa_ci`` modes, so a CCS unit credits 0.95 and an unabated unit
+      0): the region credits generator ``g`` at ``vector[g]``. A generator
+      with a zero fraction adds no column. The vector must be aligned with
+      ``fleet`` (``len == n_gen``), finite and within ``[0, 1]`` — any
+      other shape or value is a hard error, because a silently misaligned
+      crediting vector would credit the wrong units.
+
+    Both forms are zone-masked identically (below). The coefficient a
+    vector-form region puts on each resolved column is returned separately
+    by :func:`_resolve_clean_region_gen_coeff`, so the tuple-form path —
+    every MISO keeper's — stays byte-identical (the ones vector).
 
     ``eligible_zone_mask`` is the SAME ``(K, n_zones)`` bool mask the row
     builder applies to each region's wind/solar columns: a generator resolves
@@ -189,6 +209,13 @@ def _resolve_clean_region_gen_idx(
     gen_in_mask = mask[:, zone_idx]
     out: "list[np.ndarray | None]" = []
     for r, fuels in enumerate(region_fuels):
+        if isinstance(fuels, np.ndarray):
+            # Vector form: per-generator crediting fractions (the federal
+            # CES target row). Zero-fraction generators add no column.
+            vec = _validate_credit_vector(fuels, fuel_idx.shape[0], r)
+            gidx = np.flatnonzero((vec > 0.0) & gen_in_mask[r])
+            out.append(gidx if gidx.size else None)
+            continue
         extra = [f for f in fuels if f not in _RPS_ROW_BASE_FUELS]
         unknown = sorted(f for f in extra if f not in FUEL_TYPE_MAP)
         if unknown:
@@ -202,6 +229,53 @@ def _resolve_clean_region_gen_idx(
     return out
 
 
+def _validate_credit_vector(vec, n_gen: int, region: int) -> np.ndarray:
+    """Return a validated ``(n_gen,)`` float crediting vector, or raise.
+
+    The vector-form qualifying spec of :func:`_resolve_clean_region_gen_idx`
+    is per-generator data that must line up with the fleet the LP is built
+    on: a wrong length is a misaligned fleet (the P0→P1 fleet swap keeps
+    ``n_gen``, so a mismatch is a wiring error, never a benign one); a
+    non-finite or out-of-``[0, 1]`` entry is not a credit fraction.
+    """
+    out = np.asarray(vec, dtype=float).reshape(-1)
+    if out.shape[0] != n_gen:
+        raise ValueError(
+            f"clean-tier region {region}: crediting vector has {out.shape[0]} "
+            f"entries but the fleet has {n_gen} generators — a per-generator "
+            "credit vector must be built from the SAME fleet the LP solves on"
+        )
+    if not np.all(np.isfinite(out)) or out.min() < 0.0 or out.max() > 1.0:
+        raise ValueError(
+            f"clean-tier region {region}: crediting vector entries must be "
+            "finite fractions in [0, 1]"
+        )
+    return out
+
+
+def _resolve_clean_region_gen_coeff(
+    region_fuels: "tuple[tuple[str, ...] | np.ndarray, ...]",
+    region_gen_idx: "list[np.ndarray | None]",
+) -> "list[np.ndarray | None]":
+    """Return each region's per-column coefficients for its resolved generators.
+
+    Aligned entry-for-entry with ``region_gen_idx`` (the output of
+    :func:`_resolve_clean_region_gen_idx` on the same ``region_fuels``):
+    ``None`` for a fuel-name-tuple region (indicator coefficients — the
+    builder's unchanged ones vector), and ``vector[gidx]`` for a vector-form
+    region, so the row carries the crediting fraction itself on every
+    resolved generator column. Pure indexing; validation happened at
+    resolution.
+    """
+    out: "list[np.ndarray | None]" = []
+    for spec, gidx in zip(region_fuels, region_gen_idx):
+        if isinstance(spec, np.ndarray) and gidx is not None:
+            out.append(np.asarray(spec, dtype=float)[np.asarray(gidx, dtype=int)])
+        else:
+            out.append(None)
+    return out
+
+
 def _build_rps_region_rows(
     layout: VariableLayout,
     eligible_zone_mask: np.ndarray,
@@ -209,6 +283,7 @@ def _build_rps_region_rows(
     demand: np.ndarray,
     acp_k0: int = 0,
     region_gen_idx: "list[np.ndarray | None] | None" = None,
+    region_gen_coeff: "list[np.ndarray | None] | None" = None,
 ) -> tuple[sp.csr_matrix, np.ndarray]:
     """Return the K per-region annual RPS rows and their lower bounds.
 
@@ -251,6 +326,12 @@ def _build_rps_region_rows(
             so a row's generator credit is in-mask exactly as its VRE credit
             is (ARM3-FIX). ``None`` entries add no generator columns for
             that region.
+        region_gen_coeff: Optional per-region coefficient arrays aligned
+            with ``region_gen_idx`` (:func:`_resolve_clean_region_gen_coeff`):
+            region ``r``'s generator columns carry ``coeff[r][j]`` instead
+            of ``+1`` — the federal CES target row's per-generator credit
+            fraction (a CCS unit at 0.95). ``None`` (or a ``None`` entry)
+            keeps the ``+1`` indicator, byte-identical to before.
 
     Returns:
         Tuple ``(rows, rhs)``: a ``(K, total_columns)`` CSR block and the
@@ -266,27 +347,41 @@ def _build_rps_region_rows(
 
     row_idx_groups: list[np.ndarray] = []
     col_groups: list[np.ndarray] = []
+    data_groups: list[np.ndarray] = []
     for r in range(k_regions):  # r: compliance region (K <= 6, never hours)
         zones_r = np.flatnonzero(mask[r])  # z: eligible zone indices
         wind_cols = (hours * vph + layout._w_off + zones_r).ravel()
         solar_cols = (hours * vph + layout._s_off + zones_r).ravel()
         groups_r = [wind_cols, solar_cols]
+        data_r = [np.ones(wind_cols.size), np.ones(solar_cols.size)]
         gidx = region_gen_idx[r] if region_gen_idx is not None else None
         if gidx is not None:
             gidx = np.asarray(gidx, dtype=int)  # g: qualifying generators
             if gidx.size:
-                groups_r.append((hours * vph + layout._p_off + gidx).ravel())
+                gen_cols = (hours * vph + layout._p_off + gidx).ravel()
+                groups_r.append(gen_cols)
+                coeff = region_gen_coeff[r] if region_gen_coeff is not None else None
+                # Column order is hour-major (t outer, g inner), so the
+                # per-generator coefficient tiles across the T hours.
+                data_r.append(
+                    np.ones(gen_cols.size)
+                    if coeff is None
+                    else np.tile(np.asarray(coeff, dtype=float), T)
+                )
         # Region r's own ACP escape column (one per hour), +1 so paying its
         # ACP substitutes for physical certificates in THIS region only.
-        groups_r.append(np.arange(T) * vph + layout._rec_acp_off + acp_k0 + r)
+        acp_cols = np.arange(T) * vph + layout._rec_acp_off + acp_k0 + r
+        groups_r.append(acp_cols)
+        data_r.append(np.ones(acp_cols.size))
         cols_r = np.concatenate(groups_r)
         col_groups.append(cols_r)
+        data_groups.append(np.concatenate(data_r))
         row_idx_groups.append(np.full(cols_r.size, r, dtype=int))
 
     cols = np.concatenate(col_groups)
     rows_idx = np.concatenate(row_idx_groups)
     block = sp.coo_matrix(
-        (np.ones(cols.size), (rows_idx, cols)),
+        (np.concatenate(data_groups), (rows_idx, cols)),
         shape=(k_regions, layout.total_columns),
     ).tocsr()
     rhs = frac @ zone_annual  # (K,)
@@ -1341,19 +1436,26 @@ def build_constraints(
             zone) RHS weights — within-zone obligated load share times the
             region's statutory target.
         clean_region_zone_mask: ``(K2, n_zones)`` bool clean/carbon-free
-            tier eligibility mask (FFR-7B Arm 3, MISO West/East) — a SECOND
-            independent row family on the same region machinery, appended
-            after the RPS family; requires the RPS region family (the
-            model-level assembler enforces it). ``None`` (default) adds no
+            tier eligibility mask (FFR-7B Arm 3, MISO West/East; the
+            federal CES target row, SCN-WS2a) — a SECOND independent row
+            family on the same region machinery, appended after whichever
+            RPS family is present. Since SCN-WS2a it STANDS ALONE OR BESIDE
+            EITHER RPS GRAIN (the former "requires the RPS region family"
+            coupling, G-S3, is relaxed): its escape columns occupy the
+            region-major ACP slots after the RPS family's (zero of them
+            when no RPS row carries an escape). ``None`` (default) adds no
             rows (byte-identical).
         clean_region_obligation_frac: ``(K2, n_zones)`` float clean-tier
             RHS weights.
-        clean_region_fuels: Per-region statutory qualifying fuel-name
-            tuples resolved to generator columns via
-            :func:`_resolve_clean_region_gen_idx` under the region's
-            ``clean_region_zone_mask`` (nuclear ADMITTED — FFR-6B §6.3;
-            unknown names hard-error; out-of-mask generators excluded,
-            ARM3-FIX).
+        clean_region_fuels: Per-region qualifying spec — a statutory
+            fuel-name tuple (indicator coefficients; nuclear ADMITTED —
+            FFR-6B §6.3; unknown names hard-error; out-of-mask generators
+            excluded, ARM3-FIX) or an ``(n_gen,)`` per-generator credit-
+            fraction vector (the federal CES target row: each generator
+            column carries its own fraction). Resolved via
+            :func:`_resolve_clean_region_gen_idx` /
+            :func:`_resolve_clean_region_gen_coeff` under the region's
+            ``clean_region_zone_mask``.
         hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
             ``(n_hydro, n_months)``. When ``None`` the hydro family is
             omitted (identical LP); otherwise one budget row per hydro
@@ -1839,43 +1941,6 @@ def build_constraints(
         del region_block
         row_lower = np.concatenate([row_lower, region_rhs])
         row_upper = np.concatenate([row_upper, np.full(k_regions, np.inf)])
-        # Optional clean/carbon-free tier family (FFR-7B Arm 3, FFR-6B E-2):
-        # a SECOND independent row family on the same machinery, appended
-        # directly after the RPS family (dual layout [... | mass_cap |
-        # rps K1 | clean K2 | reserve]). Its ACP escape columns occupy the
-        # region-major slots AFTER the RPS family's (acp_k0 = K1). A wind
-        # MWh satisfying both its renewable row and its clean row is CORRECT
-        # — two constraints, one MWh (FFR-6B §6.4); the one-certificate
-        # revenue composition happens at the capacity screens (max(), never
-        # sum), not here.
-        if clean_region_zone_mask is not None:
-            clean_block, clean_rhs = _build_rps_region_rows(
-                layout,
-                clean_region_zone_mask,
-                clean_region_obligation_frac,
-                demand,
-                acp_k0=k_regions,
-                # The resolver gets the SAME zone mask the builder applies to
-                # the W/S columns: a clean row's nuclear/hydro/biomass/CCS
-                # credit is in-mask, never ISO-wide (ARM3-FIX — fuel-only
-                # resolution let MISO-South nuclear satisfy MI's East-only
-                # row, defeating MCL 460.1029).
-                region_gen_idx=_resolve_clean_region_gen_idx(
-                    fleet, clean_region_fuels, clean_region_zone_mask
-                ),
-            )
-            k_clean = clean_block.shape[0]
-            blocks.append(clean_block)
-            del clean_block
-            row_lower = np.concatenate([row_lower, clean_rhs])
-            row_upper = np.concatenate([row_upper, np.full(k_clean, np.inf)])
-    elif clean_region_zone_mask is not None:
-        raise ValueError(
-            "clean_region_zone_mask (clean-tier rows) requires the per-region "
-            "RPS family (rps_region_zone_mask) — E-2 rides E-1's machinery "
-            "and its ACP block slots (FFR-6B §6.2: the dependency is strict "
-            "and one-directional)"
-        )
     elif rps_target is not None and rps_target > 0.0:
         rps_row, rhs = _build_rps_row(
             layout,
@@ -1887,6 +1952,61 @@ def build_constraints(
         del rps_row
         row_lower = np.concatenate([row_lower, [rhs]])
         row_upper = np.concatenate([row_upper, [np.inf]])
+
+    # Optional clean/carbon-free tier family (FFR-7B Arm 3, FFR-6B E-2; the
+    # federal CES target row, SCN-WS2a): a SECOND independent row family on
+    # the same machinery, appended directly after whichever RPS family is
+    # present (dual layout [... | mass_cap | rps 0/1/K1 | clean K2 |
+    # reserve]). Its ACP escape columns occupy the region-major slots AFTER
+    # the RPS family's: acp_k0 = n_rec_acp - K2, which is K1 beside the
+    # region grain, 1 beside a legacy row with an escape, and 0 when the
+    # family stands alone (the G-S3 coupling relaxation — the family no
+    # longer requires the RPS region grain; the layout's ACP count, set by
+    # the model-level assembler, is the only contract). A wind MWh
+    # satisfying both its renewable row and its clean row is CORRECT — two
+    # constraints, one MWh (FFR-6B §6.4); the one-certificate revenue
+    # composition happens at the capacity screens (max(), never sum), not
+    # here.
+    #
+    # SEAM FOR A SECOND CONSUMER (SCN-WS3b, the voluntary-demand row): a new
+    # row family attaches here as additional clean regions — it supplies a
+    # ``(K, n_zones)`` mask, a ``(K, n_zones)`` obligation fraction, a
+    # ``(K,)`` escape price (the layout allocates one ACP column per region)
+    # and a per-region qualifying spec (fuel-name tuple OR ``(n_gen,)``
+    # credit vector); its duals come back as its slice of
+    # ``clean_region_duals`` in region order. Nothing else in the LP moves.
+    if clean_region_zone_mask is not None:
+        k_clean = int(np.asarray(clean_region_zone_mask).shape[0])
+        acp_k0 = int(layout.n_rec_acp) - k_clean
+        if acp_k0 < 0:
+            raise ValueError(
+                f"clean-tier rows need {k_clean} ACP escape column(s) but the "
+                f"layout carries {layout.n_rec_acp} — every clean row REQUIRES "
+                "its own escape (FFR-6B §6.3)"
+            )
+        # The resolver gets the SAME zone mask the builder applies to the
+        # W/S columns: a clean row's nuclear/hydro/biomass/CCS credit is
+        # in-mask, never ISO-wide (ARM3-FIX — fuel-only resolution let
+        # MISO-South nuclear satisfy MI's East-only row, defeating MCL
+        # 460.1029).
+        clean_gen_idx = _resolve_clean_region_gen_idx(
+            fleet, clean_region_fuels, clean_region_zone_mask
+        )
+        clean_block, clean_rhs = _build_rps_region_rows(
+            layout,
+            clean_region_zone_mask,
+            clean_region_obligation_frac,
+            demand,
+            acp_k0=acp_k0,
+            region_gen_idx=clean_gen_idx,
+            region_gen_coeff=_resolve_clean_region_gen_coeff(
+                clean_region_fuels, clean_gen_idx
+            ),
+        )
+        blocks.append(clean_block)
+        del clean_block
+        row_lower = np.concatenate([row_lower, clean_rhs])
+        row_upper = np.concatenate([row_upper, np.full(k_clean, np.inf)])
 
     # Optional energy+reserve co-optimization rows (shared headroom + reserve
     # balance). Appended last so the reserve-balance dual is recoverable by row

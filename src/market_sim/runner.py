@@ -160,7 +160,10 @@ from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
-from market_sim.policy.federal_ces import federal_ces_suppresses_state_rps
+from market_sim.policy.federal_ces import (
+    append_federal_ces_region,
+    federal_ces_suppresses_state_rps,
+)
 from market_sim.policy.clean_tiers import (
     build_clean_region_arrays,
     clean_credit_by_fuel,
@@ -1229,6 +1232,57 @@ def _rps_region_grain_active(config: ScenarioConfig, iso: str) -> bool:
         iso == "MISO"
         and config.mode == "forecast"
         and getattr(config, "miso_rps_compliance_regions", False)
+    )
+
+
+def _clean_region_arrays_for_year(
+    config: ScenarioConfig,
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    fleet_arrays,
+):
+    """Return the clean-tier row family this ISO-year solves with, or ``None``.
+
+    THE single resolver of the family's region list (SCN-WS2a), used by the
+    solve-side arming AND by the ``prior_results`` dual mapping — including
+    the cached-year path, which never assembles the solve-side arrays — so
+    the restored ``clean_region_duals`` always map onto the identical region
+    list the solve was built from. Two legs, in region order:
+
+    * **State clean rows** (FFR-7B Arm 3, MISO only): built iff the state RPS
+      rows are (``rps_enabled`` and not the pure-federal counterfactual), the
+      K-row grain is active (:func:`_rps_region_grain_active`) and
+      ``miso_clean_tier_rows`` is armed — exactly the pre-SCN-WS2a gate, so
+      every MISO keeper's family is unchanged (the tuple-form regions).
+    * **The federal CES target row** (SCN-WS2a), appended last through
+      ``policy.federal_ces.append_federal_ces_region`` when
+      ``federal_ces_target_by_year`` is set; it stands alone in every other
+      ISO. It is NOT suppressed by ``federal_ces_replaces_state_rps`` (that
+      flag removes the STATE rows — the pure-federal posture is exactly the
+      federal row standing alone).
+
+    Args:
+        config: The scenario configuration being run.
+        iso: Resolved ISO identifier, already upper-cased by the caller.
+        year: Simulation year.
+        zone_names: Model zone names in LP zone-index order.
+        fleet_arrays: The fleet the LP solves on (the federal row's
+            per-generator credit vector is aligned to it).
+
+    Returns:
+        The composed ``CleanRegionArrays`` or ``None`` (no clean row at all).
+    """
+    state_arrays = None
+    if (
+        config.rps_enabled
+        and not federal_ces_suppresses_state_rps(config)
+        and _rps_region_grain_active(config, iso)
+        and getattr(config, "miso_clean_tier_rows", False)
+    ):
+        state_arrays = build_clean_region_arrays(iso, year, zone_names)
+    return append_federal_ces_region(
+        config, year, zone_names, fleet_arrays, state_arrays
     )
 
 
@@ -2877,14 +2931,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # family is built, or the counterfactual stops being pure.
                 if _rps_region_grain_active(config, iso):
                     rps_region_arrays = build_rps_region_arrays(iso, year, zone_names)
-                    if getattr(config, "miso_clean_tier_rows", False):
-                        clean_region_arrays = build_clean_region_arrays(
-                            iso, year, zone_names
-                        )
                 if rps_region_arrays is None:
                     rps_target = get_rps_target(iso, year)
                     rps_acp_price = get_rps_acp(iso)
                     rps_eligible_fuels = get_rps_eligible_fuels(iso)
+            # Clean-tier family — MISO's state rows (Arm 3, gated exactly as
+            # before) plus the federal CES TARGET row (SCN-WS2a: one region
+            # spanning every load zone, credited by unit_credit_fractions,
+            # escaping at the ACP; its dual is the endogenous federal EAC
+            # price). ONE resolver, shared with the prior_results mapping
+            # below, so a cached year maps its duals onto the identical
+            # region list. None wherever neither exists (byte-identical).
+            clean_region_arrays = _clean_region_arrays_for_year(
+                config, iso, year, zone_names, fleet_arrays
+            )
             # CAISO solar deliverability derate (Lever D): reduce the solar CF
             # ceiling by the forward solar-penetration signal so the LP sees
             # the local-network congestion the reduced 3-zone topology misses.
@@ -4530,13 +4590,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 and np.ndim(result.rps_shadow_price) > 0
                 else (result.rps_shadow_price or 0.0)
             ),
-            # Clean-tier per-(fuel, zone) credits (FFR-7B Arm 3): the clean
-            # region spec is recomputed from the cited table (cheap, pure)
-            # so the cached-year path — which never assembles the solve-side
-            # arrays — maps its restored duals identically.
+            # Clean-tier per-(fuel, zone) credits (FFR-7B Arm 3 state rows +
+            # the SCN-WS2a federal CES target row): the region spec is
+            # recomputed through the ONE resolver the solve side uses
+            # (cheap, pure) so the cached-year path — which never assembles
+            # the solve-side arrays — maps its restored duals identically.
+            # The federal row's dual lands on every eligible fuel at
+            # dual × credit fraction, entering the screens' existing max().
             clean_attribute_price_by_fuel=(
                 clean_credit_by_fuel(
-                    build_clean_region_arrays(iso, year, zone_names),
+                    _clean_region_arrays_for_year(
+                        config, iso, year, zone_names, fleet_arrays
+                    ),
                     result.clean_region_duals,
                 )
                 if result.clean_region_duals is not None
