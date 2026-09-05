@@ -2944,8 +2944,39 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
     # order of magnitude under the ~1% materiality bar. Deferral CONFIRMED; {}
     # holds (no forward-sourceable MW-by-year DC trajectory to populate; forcing
     # one would violate rule 5/11).
+    # 2026-09-05 RE-VERIFICATION (SCN-WS4a, plan §7 WS-4 item 2) — the deferral is
+    # RE-CONFIRMED against the 2026 CELT with the immateriality arithmetic written
+    # out from primary numbers rather than carried as a ratio:
+    #   (a) The CELT-2026 large-load forecast contains exactly TWO projects (Final
+    #       Draft 2026 Large Load Forecast, LFC 2026-03-27, slide 14): a NEMA DATA
+    #       CENTER at 200 MW reported nameplate (thru 2027) and a CT general-
+    #       electrification project at 85 MW (thru 2040). Only the first is a data
+    #       center, so only it could populate this table.
+    #   (b) ISO-NE's own derates (same deck, slide 9): milestone factor 60% for a
+    #       project that has entered a study agreement (none of the listed projects
+    #       is under construction, slide 14) x a 70% data-center capacity-
+    #       utilization factor => effective nameplate 200 x 0.60 x 0.70 = 84 MW.
+    #   (c) Its published hourly profile (slide 11) peaks at 85% of nameplate mid-
+    #       day and holds 80% in all other hours, weekends 10% lower => peak
+    #       contribution 84 x 0.85 = 71.4 MW and annual energy ~584 GWh
+    #       (8 h x 0.85 + 16 h x 0.80 weekdays, x0.9 weekends => 0.793 x 84 MW x
+    #       8760 h).
+    #   (d) Against the 2026 CELT's own denominators — summer 50/50 peak 25,228 MW
+    #       (2026) -> 26,849 MW (2035), winter 50/50 20,483 MW (2026/27) ->
+    #       26,411 MW (2035/36), net annual energy 116,679 GWh (2026) ->
+    #       127,660 GWh (2035) — the DC project is 0.27% of the 2035 summer peak,
+    #       0.27% of the 2035/36 winter peak and 0.46% of 2035 net energy. The
+    #       WHOLE large-load forecast (both projects) is ~110 MW of peak in the
+    #       2030s rising to ~130 MW in the 2040s = 0.41% / 0.49% of that winter
+    #       peak.
+    # Every figure is an order of magnitude under the ~1% materiality bar, and
+    # ISO-NE still states New England "has not witnessed the scale of data center
+    # proposals" seen elsewhere (slide 3). {} HOLDS; DC stays implicit in the
+    # NEISO DEMAND_GROWTH_RATES near era. Because the block is 0 MW, NEISO's
+    # absence from DATACENTER_ZONE_SHARE is moot, not a second gap.
     # Source: ISO-NE 2026 CELT Report (2026-05-01) + Large Load Forecast deck
-    # (fx2026_large_loads.pdf, 2026-03-27).
+    # (fx2026_large_loads.pdf, 2026-03-27); CELT peak/energy figures via the
+    # ISO-NE 2026-05-01 forecast release.
     "NEISO": {},
 }
 
@@ -2953,9 +2984,11 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
 # share}} summing to 1.0 per ISO (memo §3.3). DEFAULT (ISO absent here) = each
 # zone's iso_configs load_share, applied by data.datacenter.datacenter_zone_shares.
 # Override ONLY where published queue siting geography differs from the load
-# distribution (memo names ERCOT North/West and PJM Dominion skews). PJM carries
-# a reconciled override (below); ERCOT and MISO stay on the load_share default
-# (their per-zone MW fractions are not yet sourceable — see the per-ISO notes).
+# distribution (memo names ERCOT North/West and PJM Dominion skews). PJM, ERCOT
+# and MISO all carry published overrides below; CAISO, NYISO and NEISO stay on
+# the load_share default (no per-zone DC magnitude published — see the per-ISO
+# notes; NEISO additionally ships an empty DATACENTER_ADDITIONS_MW, so its block
+# is 0 MW and the allocation is moot either way).
 # FF-1C (2026-07) confirmed the skew DIRECTIONS are published (ERCOT LFL queue
 # concentrates in North/Oncor + West; PJM DC concentrates in Dominion/DOM). The
 # exact per-zone MW FRACTION tables (PJM Load Forecast Table B-9b; ERCOT LFL
@@ -3000,11 +3033,57 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
 #     forecast vintage (rule 13), NOT an invented split. Source: ERCOT 2025
 #     Adjusted LTLF (ErcotAdjustedForecast.xlsb), per-weather-zone contracts +
 #     officer letters; end-use share from ERCOT Board Item 16.2 (Dec 2025).
-#   MISO — growth concentrates in the central region (IL/IN/MI) per the 2025 LTLF,
-#     a further siting candidate; likewise no per-zone MW fraction sourced ->
-#     stays load_share default.
-# MISO keeps the load_share default until a per-zone MW table lands (never an
-# invented split, memo §3.3 / rule 23).
+#   MISO — POPULATED 2026-09-05 (SCN-WS4a), superseding the earlier "no per-zone
+#     MW fraction sourced -> stays load_share default" deferral. MISO's 2026 LTLF
+#     publishes a DC decomposition BY REGION, which is what this table needs:
+#     slide 21 of the 2026 LTLF Results Summary ("Data Centers Net Energy, TWh;
+#     Current Trajectory") stacks DC net energy into MISO North / Central / South
+#     and defines those regions on the same slide as North = LRZs 1, 3;
+#     Central = LRZs 2, 4, 5, 6, 7; South = LRZs 8, 9, 10. The regional split is
+#     year-invariant in the published series (Central/North/South = 0.5824 /
+#     0.2347 / 0.1829 at 2046 and 0.5822 / 0.2349 / 0.1829 at 2030), and the
+#     series reproduces the deck's own published system totals exactly — 9.6 TWh
+#     in 2026 and 266.3 TWh in 2046 vs the published "data centers expand from
+#     9.6 TWh to 266 TWh" — which is the read's validation, together with the
+#     independently-reported ~58% Central share of 2046 DC energy. ENERGY share ==
+#     MW share here: MISO applies ONE footprint-wide ~93% DC load factor (slide 21
+#     key insights, 90% hyperscale at ~95% + 10% enterprise at ~75%; no regional LF
+#     is published) and our block is flat, so no basis conversion is involved.
+#     Region -> model zone via the LRZ unions iso_configs already documents
+#     (West = LRZ 1, Plains = LRZ 3+5, Illinois = LRZ 4, Indiana = LRZ 6,
+#     East = LRZ 2+7, South = LRZ 8+9+10): MISO-South IS the published South
+#     region (0.1829, no reconciliation needed), and MISO-West + the LRZ-3 half of
+#     MISO-Plains are the North region while MISO-Illinois + MISO-Indiana +
+#     MISO-East + the LRZ-5 half of MISO-Plains are the Central region. WITHIN each
+#     region the memo §3.3 default (load_share) distributes — the same one-published-
+#     anchor-plus-documented-default construction PJM ships, here with three
+#     anchors. MISO-Plains is the ONE model zone that straddles a published region
+#     boundary (LRZ 3 in North, LRZ 5 in Central) and the model carries no LRZ-3 vs
+#     LRZ-5 load split (EIA-930 reports them as the single sub-BA 0035), so the
+#     straddle is resolved on MISO's OWN published per-LRZ magnitudes: the
+#     PY2025/2026 summer Local Reliability Requirement, LRZ 3 = 13,574 MW vs
+#     LRZ 5 = 10,243 MW -> 0.5699 / 0.4301 (data/raw/capacity-deliverability/
+#     miso/miso.csv, sourced to the PY2025-26 LOLE Study Report). Rule 14 — a
+#     reconciled version of real data at a boundary our zones do not match
+#     exactly, never a guess; rule 13 — it regenerates from the next LTLF vintage
+#     by re-reading the same slide. The material result is that MISO-South is DC-
+#     LIGHT (0.183 vs its 0.271 load_share), which is MISO's own narrative: the
+#     southern LRZs grow on industrial drivers, oil-and-gas electrification and
+#     green hydrogen rather than data centers (2024 LTLF whitepaper p.13), while
+#     Central grows on "abundant low-cost land and industrial-focused incentives
+#     that attract large hyperscale campuses" (2026 LTLF slide 21).
+#     Documented limitation: the published decomposition is REGIONAL, so the
+#     within-region ordering is the load_share default, not a published per-LRZ DC
+#     table — MISO's driver-level per-LRZ forecast data would refine all six
+#     anchors (it is behind the 403-walled www.misoenergy.org host; see
+#     docs/handoffs/FINDING-scn-ws4a-2026-09-05.md §4 for the D-4 gap list).
+#     Source: MISO 2026 Long-Term Load Forecast Results Summary (LTLF Workshop
+#     2026-04-13, "20260413 LTLF Workshop 2026 Long Term Load Forecast
+#     Summary_UPDATED", cdn.misoenergy.org) slides 21 and 26; MISO December-2024
+#     Long-Term Load Forecast Whitepaper p.13; MISO PY2025-26 LOLE Study Report
+#     (per-LRZ LRR) via data/raw/capacity-deliverability/miso/miso.csv.
+#   CAISO / NYISO — no published per-zone DC magnitude at any read vintage; both
+#     keep the load_share default (never an invented split, memo §3.3 / rule 23).
 DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {
     # PJM — reconciled DOM-anchored siting (full derivation in the note above):
     # DOM at its published ~0.55 near-2030 DC share, residual 0.45 by load_share
@@ -3037,6 +3116,23 @@ DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {
         "Houston": 0.114021,  # COAST 5,964 MW (load-heavy, not DC-heavy; load_share 0.2649)
         "South_Central": 0.220032,  # SOUTH_C 11,509 MW (Austin/San Antonio corridor; load_share 0.1642)
         "South": 0.138932,  # SOUTHERN 7,267 MW (load_share 0.0800)
+    },
+    # MISO — published-region-anchored siting (full derivation in the note above):
+    # the 2026 LTLF's DC net-energy split across MISO North / Central / South
+    # (0.2347 / 0.5824 / 0.1829, year-invariant), mapped onto the model's six LRZ-
+    # union zones, with load_share distributing WITHIN each region and the one
+    # region-straddling zone (MISO-Plains = LRZ 3 North + LRZ 5 Central) split
+    # 0.5699/0.4301 on the published PY2025/26 per-LRZ LRR. Keys are the model
+    # zone_names in LP order; shares sum to 1.0 (datacenter_zone_shares raises
+    # otherwise). The material move vs the load_share default is MISO-South, which
+    # is load-heavy but NOT DC-heavy.
+    "MISO": {
+        "MISO-West": 0.152557,  # LRZ 1 (MN/ND), North region; load_share 0.1466
+        "MISO-Plains": 0.151060,  # LRZ 3 (IA, North) + LRZ 5 (MO, Central); load_share 0.1385
+        "MISO-Illinois": 0.078214,  # LRZ 4, Central region; load_share 0.0676
+        "MISO-Indiana": 0.155040,  # LRZ 6, Central region; load_share 0.1340
+        "MISO-East": 0.280229,  # LRZ 2+7 (WI/MI), Central region; load_share 0.2422
+        "MISO-South": 0.182900,  # LRZ 8+9+10 = the published South region exactly; load_share 0.2711
     },
 }
 
