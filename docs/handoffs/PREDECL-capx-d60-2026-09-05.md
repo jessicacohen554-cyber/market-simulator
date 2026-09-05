@@ -592,3 +592,97 @@ want of a committed benchmark-corridor table and a paired driver battery, neithe
 D60 builds; they stay SKIPPED and are reported as such, exactly as the preserved record has
 them (`neiso-t3` carries them as caveats today). D60 produces no FC-5/FC-6 evidence and
 claims none.
+
+---
+
+## Addendum C (2026-09-05) — DIRECTOR AMENDMENT 1 (r#38) absorbed: the fifth re-solve `pjm-t1f`, pre-declared BEFORE it is run
+
+Amendment 1 resolves D60's STOP 1 by removing its cause rather than waiving it: **D57 has
+landed and its owner ruling Q44 armed the joint PJM posture through `_pjm_config`
+overrides**, so PJM forecast surfaces are free this window and `pjm-t1f` becomes D60's fifth
+re-solve. Q44 is D57's arming, already landed — D60 arms nothing new (§1 unchanged: Q40, Q41,
+Q42 only).
+
+### C.1 The key, re-verified at HEAD through the harness path — **`09996eca71ee80fd`, confirmed**
+
+`reference_config("PJM", 2026, 2030, False, golden_posture=True)` →
+`apply_iso_scenario_defaults` → `cache_key()` at this branch's HEAD (which carries D57's
+`_pjm_config` overrides **and** D60's Q42 flip) resolves to **`09996eca71ee80fd`** — exactly
+the value Amendment 1 names, and exactly the value §4 of the finding recorded when STOP 1
+fired. No difference to report; the leg runs on that key.
+
+### C.2 The mechanism deltas, stated exactly — FOUR against the control, THREE against the D50 arm
+
+| against | key | fields that differ |
+|---|---|---|
+| the bare control `pjm-2026-2030-d45r-remeasure` | `321f04e9060787f0` | `ccs_retrofit_capex_co2_scaling` (Q42) · `pjm_accreditation_design_vintage` (D48) · `pjm_demand_response_supply` (D48) · `capacity_market_supply_clearing_by_iso={'PJM': True}` (D57) — **four** |
+| the D50 CCS arm `pjm-2026-2030-d50-ccscapex` | `167e65187f32056b` | the three D48/D57 gates only — the CCS half is already in it |
+
+**This is the attribution instrument.** Every FC row that moves is assigned to ONE mechanism
+by differencing against whichever committed record isolates it: the D50 arm isolates Q42 on
+this exact horizon, and D57's arms A/B isolate the clearing + D48 pair on 2021–2025. Nothing
+is attributed by inference (Amendment 1 item 3).
+
+### C.3 The FC rows, pre-declared — and this is the FIRST solve in which both act together on 2026–2030
+
+The control's own gated rows are the base:
+
+| row | control `pjm-t1f` | D50 arm (Q42 alone, same horizon) |
+|---|---|---|
+| FC-1 | FAIL `['I12','I7']`; I12 out 2027 **−11.2 %**, 2028 **−13.5 %**, 2029 **−13.1 %**, 2030 **−13.0 %**; I7 2027 accredited firm 145,259 < requirement 145,509 | FAIL `['I12','I7']`; I12 2028 **−13.8 %**, 2029 **−13.5 %**, 2030 **−12.6 %** (2027 identical at −11.2 %) |
+| FC-2 row1 / row3 / row4 | FAIL / PASS / **FAIL 43.9 %** | FAIL / PASS / **FAIL 48.9 %** |
+| FC-7 / FC-8 | PASS / CAVEAT (9.0 GB) | PASS / CAVEAT (9.0 GB) |
+| determination | HOLD | HOLD |
+
+- **P21 (HIGH) — the CCS half reproduces the D50 arm's direction.** Its window falls
+  3,584.7 → 909.8 MW, 2028 to zero, and its FC-2 row4 backstop share rises 43.9 → **48.9 %**
+  (D50 §4.2: the arm substitutes adequacy-backstop CT for economic-pipeline gas_ct in 2030).
+  *Falsifier: row4 falling below the control's 43.9 % on the CCS half's account alone.*
+- **P22 (HIGH) — the clearing half pushes FC-2 row4 the OTHER way, and it should dominate.**
+  D57 §3.5 measured the mechanism this leg newly carries: once the screen reads a **positive**
+  clearing price, a new gas CC's capacity term becomes **+$28,715/MW-yr** instead of $0 and
+  its margin flips **−$17,947 → +$10,768/MW-yr**, so the *economic entry pipeline* builds
+  where it previously did not (PJM t1h: gas_cc additions 8.118 → **12.118 GW**). Administrative
+  backstop build is what fills a gap the economic screen declines; paying entry a real
+  capacity price is precisely the thing that stops it. **So FC-2 row4's backstop share is
+  pre-declared DOWN against the control's 43.9 %** — the two halves oppose, and the clearing
+  half is the larger operand. *Falsifier: row4 above 48.9 %, i.e. the CCS half dominating.*
+- **P23 (MED) — I7 and I12 improve but do not clear.** Accreditation-design devintage plus
+  DR-as-supply both **raise** counted supply (D48's construction: UCAP + DR counted as supply
+  with the peak un-netted), and the clearing half adds real entry, so accredited firm rises
+  against an unchanged requirement in every year. The control is 11.2–13.5 points below an
+  I12 band whose floor is −11.1 %/−9.7 %, and 250 MW short on I7 in 2027 — so **2027 I7 is
+  the single row that can clear** (250 MW on a 145 GW ledger), while 2028–2030 stay short.
+  **FC-1 therefore stays `FAIL ['I12','I7']`** unless every year clears, which it cannot.
+  *Falsifier: any year's I12 moving further NEGATIVE than the control's.*
+- **P24 (HIGH) — determination HOLD → HOLD**, FC-7 PASS, FC-8 CAVEAT (~9 GB, ~28 min).
+- **P25 (MED) — the exit composition follows D57's t1h signature, not the control's:** coal
+  retained (a cleared unit is paid $28–60/kW-yr, above its zero-E&AS gap) and **gas steam
+  over-exiting** (at zero E&AS its offer is its whole bar, above every clearing price the
+  window forms). This is D57's own named open item — the E&AS operand, routed to the D12
+  scarcity-basis lane — and D60 inherits it, measures it on the forecast horizon and
+  **claims no repair of it**. *Falsifier: gas_st exits at or below the control's.*
+
+### C.4 STOPs for this leg
+
+STOP 1 re-reads against `09996eca71ee80fd` (confirmed above). Additionally: **any FC-2 row4
+move ABOVE 48.9 %** (P22's falsifier — it would mean the clearing half did not reach the
+entry screen on this horizon, which contradicts D57's measured +$28,715/MW-yr) and **any I12
+year more negative than the control's** (P23's falsifier) are STOPs — reported and escalated,
+never reverted.
+
+### C.5 Order, and the golden's protection
+
+Remaining legs, sequential (rule 12), longest first except the golden: `miso-t1f` (~65, **in
+flight, already on `b1a73a087064ffd8`**) → `nyiso-t1f` (~12) → `caiso-t1f` (~23) →
+`pjm-t1f` (~28) → `neiso-t3` GOLDEN-3 (~33). Per Amendment 1 item 2, **GOLDEN-3 runs last and
+is never left half-registered**: if it cannot complete inside this window, the finding says so
+and the director charters it separately. Its prior stays at `neiso-t3` untouched until a
+complete bundle exists.
+
+### C.6 Hygiene, re-stated under Amendment 1 item 4
+
+Step 0 was already a no-op at this lane's base (§0 of this pre-declaration recorded it, with
+the commit that did the work: `0b51f28e` — the audit desk's Y-7 lane). **miso-217's two new
+reds (`offer_curves.py`, `test_miso_intermediate_gas_offer_margin.py`) are NOT touched** —
+the owner's MISO track owns them, and this lane has not formatted, edited or staged either.
