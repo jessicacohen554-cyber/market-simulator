@@ -1,5 +1,532 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🟠 v28 (2026-09-05, pin `a0014864`) — **THE DISPATCH'S ONE MINTING JOB WAS OVERTAKEN BY ITS OWN LANE: Y-7 LANDED ELEVEN MINUTES BEFORE THIS PIN AND CLOSED ALL THREE FLIP-SET REDS. AND THE FLIP SET ITSELF IS UNREADABLE FROM THIS LANE — THE GITHUB API IS 403 HERE, THE FIRST INSTRUMENT THIS BOARD HAS EVER LOST.**
+>
+> **THE PIN MOVED UNDER THIS DISPATCH FOR THE FIFTH CONSECUTIVE CYCLE.** The
+> director pinned `182aa74a` (commit 15:27:57Z, derivation 15:32Z);
+> `origin/main` was **`a0014864`** at poll 1 (18:11Z) and poll 2 (18:12Z) —
+> stable across both. The window `3cdf1cac..a0014864` is **105 commits, 32
+> merges (#4740–#4772)**; the dispatch's own window at `182aa74a` was 95
+> commits, 29 merges, #4740–#4769. The three merges that moved it are
+> **#4771** (`d71fdfe6`, 18:06:46Z, the Y-7 lane), **#4770** (`d1e6d5bd`,
+> 18:07:03Z, miso-215) and **#4772** (`a0014864`, 18:07:19Z, caiso-250). **No
+> `claude/audit-records-v28-*` head existed on origin at either poll** — no
+> remnant; this lane is v28. **Zero solves, zero scoring, zero registration.**
+> Every figure below is re-derived at `a0014864`; where it differs from the
+> dispatch's record at `182aa74a`, the difference is stated and this reading
+> governs.
+>
+> ### 🟠 JOB 5's MINT — **SUPERSEDED BY EXECUTION. Y-7 RAN, AND FINISHED, WHILE THIS LANE WAS READING ITS DISPATCH**
+>
+> The dispatch's JOB 5 says *"Mint Y-7 (the flip-set closer lane: F401 fix,
+> six-file format, the eight facade re-exports)"* and names it as *"the
+> audit-program Y-7 lane launched alongside you"*. It launched **18 seconds**
+> after this lane (roster: Y-7 flip-set closer created **15:37:23Z**, Opus;
+> this lane **15:37:05Z**, Opus) and **completed**, landing all three items in
+> **PR #4771** at **18:06:46Z** — **eleven minutes before this pin**:
+>
+> | Y-7 item | commit | time | verified at `a0014864` |
+> |---|---|---|---|
+> | 1 — drop unused `subprocess` import (F401) | `d66aeb0c` | 15:42:33Z | `ruff check scripts/gen_nyiso191_attestation.py` → **All checks passed**; the import is gone from the file |
+> | 2 — `ruff format` the six named files | `0b51f28e` | 15:43:22Z | `ruff format --check .` → **1386 files already formatted** |
+> | 3 — register the capx D59 locality names on the frozen facade surface | `dd555499` | 15:45:12Z | `tests/regression/test_constants_facade.py` → **2 passed** |
+>
+> **So Y-7 is not minted here as an open item. It is recorded as EXECUTED.**
+> This is the **second consecutive cycle in which the board's assigned job was
+> already done by another lane before the records lane could write it** — v27's
+> JOB 0 by the capx desk ten minutes after the sitting, v28's JOB 5 by the Y-7
+> lane eleven minutes before the pin. The pattern is now a class, not a
+> coincidence: **a records dispatch written at pin P describes a world that no
+> longer exists by the time the lane reaches P+1.** Recorded for the owner as
+> the sharpest instance yet of what Z-3 measures.
+>
+> ### 🟢 SEVEN GATES — **ALL SEVEN EXIT 0**, exactly as the dispatch said; ONE FIGURE DIFFERS
+>
+> Each script invoked alone under `uv run --frozen`, `$?` read immediately,
+> never through a pipe:
+>
+> | gate script | exit | reading at `a0014864` | vs dispatch record (`182aa74a`) |
+> |---|---|---|---|
+> | `audit_keepers.py --check` | 🟢 0 | **PASS 0 failures / 0 warnings** — six keepers + holdout/marker/status | unchanged |
+> | `check_registry_payload_parity.py` | 🟢 0 | **66 runs, 108 bundle dirs, 0 known-unsynced tolerated** | unchanged |
+> | `check_gate_a_provenance.py` | 🟢 0 | **6 rows** — keeper identity + marker match, no determination read | unchanged |
+> | `check_mechanism_matrix.py` | 🟢 0 | **195 field + 49 row + 164 path** anchors, 6 shards, stamps + §5.x headers match | unchanged |
+> | `check_forecast_staleness.py` | 🟢 0 | **Δ = 7** (threshold 10); **25 of 97** verdicts undated; newest scored sha `921bb4cd` @ 06:40:20Z | **Δ 3 → 7** |
+> | `check_bench_freshness.py` | 🟢 0 | **20 parts, 0 STALE, 20 engine-drift** (NEISO/PJM 73 engine commits, NYISO 19) | unchanged |
+> | `check_golden_manifest.py` | 🟢 0 | **47 manifests, 88 entries (24 enforced / 64 legacy), 3 stale** | unchanged |
+>
+> **Six of the seven readings match the dispatch to the digit.** The one that
+> does not is **FR-21's solve-affecting Δ: 7, not 3** — still well under the
+> threshold of 10, so the gate's exit is unaffected, but the dispatch's figure
+> is superseded. **X-6b is discharged on its first leg**: the newest scored sha
+> is `921bb4cd`, and `921bb4cd` **is reachable** — it is merge **#4762**
+> (2026-09-04 22:14:44-07:00) in this very window, not an orphan. v27's
+> "Δ = unknown / rebased-away stamp" reading is superseded. **The undated half
+> stands unchanged: 25 of 97 verdict stamps carry no scored-at date**, so their
+> freshness is UNKNOWN regardless of what the newest scored one says.
+>
+> ### 🔴 THE FLIP SET — **NOT READ THIS SITTING. THE GITHUB API IS 403 AT THIS LANE.**
+>
+> **This is a new kind of gap and it must not be papered over.** Every prior
+> records lane read the flip set, the run-conclusion streak and the PR states
+> from the GitHub API. At this lane the API returns **HTTP 403** — body:
+> *"GitHub access is not enabled for this session. An org admin must connect
+> the Claude GitHub App for this organization."* — for every endpoint, with and
+> without the session's `GITHUB_TOKEN`. The agent proxy's own documentation is
+> explicit that a 403 of this class is an organization policy denial to be
+> **reported, not retried or routed around**, so it was not. `gh` is not
+> installed in this container.
+>
+> **Therefore this entry states NO flip-set count, NO run number, NO run id and
+> NO run-conclusion streak.** The dispatch's "run 2454, id 33974877017, head
+> `1e43fe10`", its "3 of 6", and its "2431–2454 all `failure`" are **carried as
+> the dispatch's record, unverified by this lane** — the one place in this
+> entry where a dispatch figure is neither confirmed nor superseded.
+>
+> **What CAN be established, and is:** the three reds the dispatch named are
+> repaired **in the tree** at `a0014864`, and the local equivalent of **all six**
+> flip-set jobs is green. Every command below run alone under `uv run --frozen`
+> at this pin:
+>
+> | flip-set job (`ci.yml`) | local equivalent | result at `a0014864` |
+> |---|---|---|
+> | `Ruff lint + format` | `ruff check` (that script) · `ruff format --check .` | 🟢 All checks passed · **1386 files already formatted** |
+> | `Fast test tier` | `pytest -n 2 -m "not slow and not integration and not fulldata"` | 🟢 **8021 passed, 35 skipped, 2 xfailed, 536 subtests, 0 failed** (341 s) |
+> | `Structural refactor guards` | `compileall` · `ci_refactor_guards.py` · facade + persisted-identity tests | 🟢 exit 0 · exit 0 (*import-walk OK, script-refs OK*) · **2 passed** |
+> | `Rule-22 quarantine gates` | `audit_keepers` · `parity` · `golden_manifest` | 🟢 all exit 0 (above) |
+> | `Cache-key registration guard` | `check_cache_key_registration.py` | 🟢 exit 0 — 792 fields, 247 registered, **247 declared defaults match HEAD** |
+> | `Pinned default cache key` | `test_persisted_identity.py` + `test_cache_key_default_flip_guard.py` | 🟢 **24 passed** |
+>
+> The dispatch's own evidence for the Fast-tier red was *"run 2451: 1 failed /
+> 8014 passed"*, the single failure being the facade test. At this pin that
+> test passes and the tier is **8021 passed / 0 failed**. **So every cause the
+> dispatch named is gone.** Whether CI has yet *run* a head containing #4771,
+> and what it concluded, **this lane cannot say.** The flip remains **NOT
+> live**; the precondition question is the owner's and is unchanged by this
+> entry.
+>
+> ### 🟢 KEEPERS — SIX SHARDS, **NO MOTION SINCE `e75250c7`**, AND THE CLAIM IS NOW STRONGER THAN THE DISPATCH'S
+>
+> | ISO | keeper at `a0014864` | last content commit | frontier |
+> |---|---|---|---|
+> | CAISO | `2026-09-05-caiso-246-b1-spot` | `84e4ccb0` **02:08:00Z** | no key |
+> | MISO | `2026-09-05-miso-213-layering` | `3a6e90b6` **01:21:15Z** | no key |
+> | NYISO | `2026-09-05-nyiso-189-steam-identity` | `e69fcd54` **01:03:41Z** | declared 08-23, **`withdrawn` 08-30 ⇒ ABSENT** |
+> | ERCOT | `2026-08-25-234-eastex-identity` | `4bc8745a` 08-31 03:51Z | **present** (08-31) |
+> | NEISO | `2026-08-17-neiso-99-joint-p1` | `ddf8e676` 08-18 01:00Z | **present** (07-11) |
+> | PJM | `2026-08-15-pjm-162-inputclock` | `a9a57f47` 08-16 05:11Z | **present** (07-31) |
+>
+> The three promotions are the dispatch's three, to the commit and the second.
+> **ERCOT / NEISO / PJM are byte-untouched — R-V's freeze is INTACT.** The
+> newest commit of any kind touching `keepers/` in the window is `e686fc78`
+> (#4751, **02:36:08Z**), which precedes `e75250c7` (**02:41:32Z**): so the
+> dispatch's *"no keeper motion since `e75250c7`"* holds — **and holds across
+> the fifteen further PRs (#4758–#4772) that landed after the dispatch was
+> written.** Sixteen hours of keeper stability at this pin.
+>
+> ### 🟢 MARKERS — EVERY FIELD THE DISPATCH NAMED, CONFIRMED FROM THE FILE
+>
+> `calibration-complete.json`: **`complete` = {ERCOT, NEISO, NYISO, PJM}**;
+> **`withdrawn` = {CAISO}**; **`final` = EMPTY** (deliberately, since
+> 2026-07-31). NYISO's entry: `declared` **2026-09-05**, `keeper`
+> **`2026-09-05-nyiso-189-steam-identity`** and `keeper_at_declaration` the
+> **same** run; `by` names **owner ruling Q38, 2026-09-04, at the
+> capacity-expansion director's refresh-#35 sitting on card C-9** (*"Re-declare
+> now via a records lane"*); `determination` **CALIBRATED on nyiso-189,
+> RE-VERIFIED 2026-09-05 without a solve** (`calibration_verdict.py --run-id`,
+> committed artifacts only, at `origin/main` **`921bb4cd`**);
+> `frontier_basis` **"NONE CLAIMED by this declaration"**;
+> `tier_authorized` validation only; `locked_test` **NOT AUTHORIZED**;
+> `redeclaration` records this as the **THIRD grant**, not a first.
+> `holdout-freeze.json`: **active**, **`scope.tiers = ["locked_test"]`** —
+> tier-scoped, so the validation tier is not frozen. **No locked-test year has
+> ever been solved, scored or registered for any ISO.**
+>
+> ### 🟢 JOB 2 — DIRECTOR RULING (f), RECORDED VERBATIM; THE TEST IS NOW THREE INSTRUMENTS AND **NYISO IS ALIGNED**
+>
+> > "`frontier` is not an alignment leg. It is a separate owner claim about
+> > mechanism exhaustion (NEISO's `complete`, 2026-07-07, preceded its
+> > `frontier`, 2026-07-11). The four-instrument test is henceforth three
+> > instruments — `complete`, gate-(a), ISO-level determination — with
+> > `frontier` reported beside them, never required to agree."
+>
+> | instrument | membership at `a0014864` | source |
+> |---|---|---|
+> | `complete` marker | **{ERCOT, NEISO, PJM, NYISO}** | `calibration-complete.json` |
+> | gate-(a) `status: pass` | **{ERCOT, NEISO, PJM, NYISO}** — guard exit 0, 6 rows | `program-status.json` |
+> | **ISO-level** determination `CALIBRATED` | **{ERCOT, NEISO, PJM, NYISO}** | `status/<ISO>.js` |
+> | *`frontier` (reported beside, not a leg)* | *{ERCOT, PJM, NEISO}* | *keeper shards* |
+>
+> **All three legs agree. NYISO is ALIGNED again.** Full ISO-level read:
+> **ERCOT CALIBRATED · NEISO CALIBRATED · NYISO CALIBRATED · PJM CALIBRATED ·
+> CAISO NOT-YET · MISO NOT-YET**; gate-(a) fails for CAISO and MISO, both of
+> which are also absent from `complete` — **the two non-aligned ISOs are
+> non-aligned consistently, on all three legs.** The split v27 opened is gone.
+>
+> **Z-4 is CLOSED.** Both rulings stand on the record and neither is
+> adjudicated here: **R-AG** (2026-09-04 22:20Z — route the NYISO
+> re-declaration question to the calibration director for a recommendation, no
+> audit-lane marker edit) and **Q38 / D56-R** (the capx desk's execution, 58
+> minutes later, without sight of R-AG). They coexist. **The marker was moved
+> by the capx desk's lane; this board records that and adjudicated nothing.**
+> The calibration director desk R-AG named exists — a session opened
+> **03:29:10Z**, still running at this pin — and the capx ledger's r#36 entry
+> records the cross-desk position in its own words: *"audit ruling R-AG …
+> routed the NYISO re-declaration to the calibration director for a
+> RECOMMENDATION with no audit-lane marker edit; Q38 … ruled the execution 58
+> minutes later without sight of it (R-AG was unrecorded until audit board
+> v27). Both are the owner's; they coexist; C-10 is the recommendation R-AG
+> asked for."* **v27's remedy worked**: `R-AG` grepped **zero** files at v27
+> and grep **7** now.
+>
+> ### 🟢 JOB 3 — **Z-5, MINTED AND DISCHARGED IN THE SAME ENTRY. THE SPLIT THE DESK FEARED DID NOT OCCUR.**
+>
+> The owner's two acts, plainly:
+>
+> 1. **The D56 charter keyed `nyiso-188`.** `nyiso-189` superseded it at
+>    **01:03:41Z** (`e69fcd54`), *before* D56 ran. A charter executed as
+>    written would have re-declared `complete` onto a keeper that was no longer
+>    live — the marker and the keeper shard would have disagreed the moment it
+>    landed, and gate-(a) would have gone red on the identity leg it exists to
+>    check.
+> 2. **The capx desk re-issued D56-R on the live keeper** (its refresh **#36**)
+>    and it landed **#4763** (`77d5a05d`) keyed to **`nyiso-189`**, with the
+>    determination **re-verified from committed artifacts only** — no solve, at
+>    `origin/main` `921bb4cd`.
+>
+> **No audit lane touched the marker at any point.** The split did not occur
+> **because the re-issue read the live keeper rather than the charter's**, and
+> the D-5(b) re-key duty attached on promotion is what made the live keeper
+> visible to it. **Z-5 is minted here for the record and discharged by that
+> execution in the same entry.**
+>
+> ### 🟢 R-T — MISS **#9** = `miso-213`; THE DESK'S OWN COUNT CONFIRMS IT, AND v27's ROUTED LEAF IS REPAIRED
+>
+> The MISO gate-(a) stamp was re-keyed to the live keeper by the **capx desk**,
+> commit **`337829b3`**, **03:50:03Z**, under its standing Q34 duty — not by
+> any audit lane. Its own message: *"eleventh guard firing, **ninth promoter
+> miss since R-T**; the r#35 `read_live_at` leaf repaired"*. **Both of the
+> dispatch's numbers are the desk's own** — eleventh firing, miss #9 —
+> confirmed from the commit, not inferred. **Compliant in the window:
+> `caiso-246` and `nyiso-189`.** No promotion since **02:08:00Z**, so the tally
+> does not move.
+>
+> **And v27's routed item is DISCHARGED by the same commit.** v27 recorded the
+> MISO row's `read_live_at` leaf stuck at the refresh-#32 pin `2b0b8796` beside
+> a `corrected_by` saying `a35c9f9b`, a leaf the guard does not read, and
+> **routed it to the capx desk**. The desk repaired it and said so in the same
+> line. **The route worked; nothing is outstanding on that leaf.**
+>
+> ### 🟠 STAGE-0 — **4 OF 7, THREE STALE, CLOCKS UNCHANGED**
+>
+> `check_golden_manifest` at `a0014864`: CAISO golden `caiso-231-b1-ungrounded`
+> **STALE** vs live `caiso-246-b1-spot`; MISO `miso-198-oomlevel` **STALE** vs
+> `miso-213-layering`; NYISO `nyiso-186-astoria-identity` **STALE** vs
+> `nyiso-189-steam-identity`. Current = {ERCOT, ERCOT\_\_carveout-2023, NEISO,
+> PJM}. **The 48-hour clocks, read from the promoting commits** — `84e4ccb0`
+> 02:08:00Z, `3a6e90b6` 01:21:15Z, `e69fcd54` 01:03:41Z — fall due
+> **2026-09-07 02:08Z (CAISO) / 01:21Z (MISO) / 01:03Z (NYISO)**, absent a
+> further promotion: **unchanged from the dispatch**, and none has fallen due
+> at this pin. *(R-AF's own text remains recorded only via the v26
+> transcription; the limb's exact wording is still not on the record and this
+> clock is this lane's reading of it — carried forward unresolved for the third
+> cycle.)*
+>
+> ### 🟠 JOB 4 — THE DISPATCH-VS-LAUNCH LEDGER, BOTH LEGS. **THE ROSTER LEG IS PRESENT AT THIS LANE, NOT ABSENT.**
+>
+> **The dispatch says the roster leg is "restored at the DESK and absent at
+> your lane". It is not absent: `list_sessions` returned 30 rows to this lane.**
+> Every roster figure below is this lane's own read, not the desk's relay. The
+> API leg is the one that is missing here (above) — the two legs have swapped
+> since the dispatch was written.
+>
+> | session | created | model | status | branch | outcome |
+> |---|---|---|---|---|---|
+> | **Y-6** flip-set closer | 03:59:32Z | **Opus** | ARCHIVED | **none** | completed, **pushed nothing** |
+> | Audit records lane v28 **#1** | 03:59:14Z | **Fable** | ARCHIVED | **none** | archived unrun (director) |
+> | Audit records lane v28 **#2** | 04:02:13Z | **Fable** | ARCHIVED | **none** | failed at launch |
+> | Audit records lane v28 **#3** — *this lane* | 15:37:05Z | **Opus** | RUNNING | `claude/audit-records-v28-r3kq9m` | this entry |
+> | **Y-7** flip-set closer | 15:37:23Z | **Opus** | ARCHIVED | — | **#4771 merged 18:06:46Z** |
+> | **"Audit rulings records v28b"** | **18:11:21Z** | **Opus** | **BLOCKED** | **none** | **needs input: repo permissions** |
+>
+> **Y-6 — DISCHARGED, confirmed on both legs.** Roster: Opus, archived, **no
+> branch**. Both of its conditional items were already closed at its pin by the
+> capx desk's **`337829b3`** (03:50:03Z, nine minutes before Y-6 launched): the
+> MISO re-key **and** the `test_clean_io` roster entry — the commit touches
+> exactly two files, `program-status.json` (12 lines) and
+> `tests/curation/test_clean_io.py` (+6/−1), its message naming *"add
+> `ra-import-allocations` to the frozen `test_clean_io` roster (the caiso-245
+> intake's orphaned Fast-tier red)"*. **So Y-6 correctly pushed nothing.
+> Retired by execution.**
+>
+> **A FOURTH v28 SESSION EXISTS, AND IT IS BLOCKED ON THE SAME WALL THIS LANE
+> HIT.** *"Audit rulings records v28b"* (Opus, **18:11:21Z**) is
+> `SESSION_STATUS_BUCKET_BLOCKED`, no branch, no push, its own post-turn
+> summary reading: *"How would you like to proceed — grant the git permissions
+> and a PR route, or re-dispatch this lane somewhere with them?"* **This lane
+> hit the identical wall**: at start-up the container had **no checkout at
+> all**, and both the repo attach and a direct `git clone` were refused by the
+> permission classifier. This lane only proceeded because a human intervened
+> and the attach was re-tried successfully; **v28b has not had that
+> intervention and is idle at the same point.** It is **not** a competing
+> writer — it holds no branch and can land nothing — so no remnant arises from
+> it.
+>
+> **This is a THIRD failure class, distinct from the dispatch's new one.** The
+> dispatch mints G-14's *"launched and died before its first push"* from v28 #2.
+> The roster now separates three:
+>
+> | class | signature | instances tonight |
+> |---|---|---|
+> | non-launch | no session row at all | (historic) |
+> | **launched-and-died-before-first-push** | session row, archived, no branch, tokens burned | **v28 #1, v28 #2** |
+> | **launched-and-blocked-on-repo-access** | session row, **still live**, no branch, awaiting input | **v28b**, and **this lane before intervention** |
+>
+> The third is the more dangerous of the two new ones **because it does not
+> archive**: it sits in the roster looking alive, indefinitely, having produced
+> nothing. From the desk's side it is indistinguishable from a lane that is
+> merely slow.
+>
+> **On the model observation — the roster supports LESS than the dispatch
+> claims, and the difference is stated.** What it *does* show: **both
+> Fable-assigned v28 attempts produced nothing (no branch, archived), and both
+> Opus-assigned records lanes ran** — v28 #3 is writing this, Y-6 and Y-7 both
+> completed. What it does **not** show is the dispatch's wider claim that *"the
+> same failure diagnostic hit three other Fable sessions the same night
+> (nyiso-189, miso-213, capx D57)"*: those three sessions all carry **branches**
+> (`claude/nyiso-190-cc-regular-2024-displacem…`,
+> `claude/miso-214-ct-peaker-conduct`, `claude/capx-d57-pjm-clearing-build-s4i321`)
+> and are archived in the ordinary way, and the roster exposes **status, not
+> failure reasons**. **The three-Fable-session claim is therefore recorded as
+> the dispatch's, unverified here.** An observation for the owner either way;
+> **adjudicated by nobody on this board.**
+>
+> ### 🟢 PERF-B s3 — **LAUNCHED AND COMPLETE**; X-3 DISCHARGED ON THE FINDING'S OWN NUMBERS
+>
+> v27 recorded PERF-B s3 as **NOT LAUNCHED** with a Z-3 expiry. **Z-3's fifth
+> inversion**: it launched, ran and finished. **C-2 / C-1a / C-1b merged in
+> #4745, #4752, #4753, #4755.** The finding
+> `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` is **FILLED — 278 lines**,
+> not a stub. Headline as the dispatch records it, confirmed from the document:
+> **full byte gate PASS at `atol=rtol=0`** on ERCOT forward 2023-25,
+> `ERCOT__carveout-2023` and NEISO against merge-base controls; **ERCOT forward
+> 4859.5 → 3592.3 s (−1267 s, −26 %)** over three years; **C-3 skipped as
+> optional**; **C-4 refuted** (0 s on ERCOT, never chartered); **caiso-205
+> deliberately left unwired**, to a CAISO lane.
+>
+> **X-3 (`markup`) is DISCHARGED**, and the residual is on the record at §5.1:
+> C-2 attributed the old `markup` to mis-booked builds and prior-pass solves
+> (control rows carry `prior_solve` **672.2 / 654.0 / 945.9 / 763.3 s**; those
+> clauses are simply **absent** from every shipped row), and shipped `markup`
+> now reads **37.1 / 41.3 / 27.9 s** on ERCOT forward 2023/24/25 and **33.9 s**
+> on the carve-out — **the dispatch's "28–41 s/yr", confirmed to the tenth.**
+>
+> ### 🟢 CAPX LANES — RECORDED ONLY WHERE THEY MOVE THIS BOARD'S SURFACES
+>
+> **D53** merged via the cleanup PR **#4766** (`98156e1f`; the D53 cleanup
+> merge `b6f5bdff` is one of the three commits that last touched the six files
+> Y-7 item 2 reformatted). **D54** #4746, **D55** #4747, **D56-R** #4763,
+> **D59** #4760 + #4764 — all merged. **D57 is OPEN**: `#4761` does not appear
+> in the window's merge list, and a *"PR merge conflict resolution"* session
+> (Opus, 18:08:34Z, branch `d57-merge`) is live at this pin. Their footprint on
+> this board is exactly three surfaces: **the marker** (D56-R), **the gate-(a)
+> row** (the Q34 re-key), and **the three CI reds** (D59's locality names, the
+> D53 cleanup merge, nyiso-191) — **all three of which Y-7 has now closed.**
+>
+> ### 🟢 JOB 7 — Q-4 CLOSE-OUT
+>
+> **(i) Ruling-label sweep, word-boundary, across `docs/`.** All of
+> `R-A … R-AG` resolve to real references (`R-A` 98 files … `R-AD`/`R-AA` 2
+> each). The two the dispatch predicted at zero:
+>
+> * **`R-AH` → 0 files. Confirmed: none issued. Nothing minted.**
+> * **`Q39` → 6 files — NOT zero, and the dispatch's prediction is wrong on the
+>   count while right on the substance.** No Q39 *ruling* has been issued; the
+>   label appears only as a **reserved forward range** in the capx ledger's
+>   r#36 entry — *"Rulings, when given, are Q39–Q41"* — and its echoes in the
+>   prompt pack, the handoff, the D56-R finding, the NYISO matrix shard and the
+>   NYISO calibration log. **Recorded as: reserved, unissued. Nothing minted.**
+>
+> Also swept: **`Z-5`, `Y-6`, `Y-7` → 0 files each before this entry** (Y-7's
+> three commits carry the label in `git log` only, never in `docs/`) — this
+> entry is the first `docs/` record of all three. **`R-AG` → 7** (v27's fix
+> holding). **`Q38` → 8**, **`D56` → 13**, **`D56-R` → 7**, **`Z-4` → 6**.
+> *(Hygiene note carried forward from v27: `Y-1`, `Y-3`, `X-2`, `X-3` and
+> `G-14` also collide with other programmes' item labels, so a bare count is
+> not a reference count for those five.)*
+>
+> **(ii) Each job diffed against a changed target file.**
+>
+> | job | target file | this lane's diff |
+> |---|---|---|
+> | 1 — gate/keeper/marker/stage-0 refresh | board | **written** (this entry) |
+> | 2 — ruling (f) + alignment + Z-4 close | board | **written** |
+> | 3 — Z-5 mint + discharge | board | **written** |
+> | 4 — dispatch-vs-launch ledger | board | **written** |
+> | 5 — queue v28, cards, Y-6/Y-7, X-6b | board | **written** |
+> | 6 — plan §8 ledger entry | plan | **written** |
+> | 7 — Q-4 close-out | board | **written** |
+> | *flip-set / run listings* | *—* | **NOT WRITTEN — API 403 (above)** |
+>
+> **(iii) Workflow run listings — BLOCKED, and this is the one dispatched item
+> this lane could not perform.** `ci.yml` and `golden-data-tier.yml` run
+> histories are API-only; the API is 403 here. **From the workflow files
+> themselves, which are readable:** `golden-data-tier.yml` is
+> **dispatch-only** — its `on:` block is `workflow_dispatch:` alone, commented
+> *"Dispatch-only since 2026-09-03 (R-Y). No `schedule:`"* — which **confirms
+> the dispatch's characterisation of the trigger**, though *"run #10 green
+> 09-04; no run since"* cannot be checked here. `ci.yml`'s `pull_request`
+> **path filter carries this board and this plan explicitly** (plus
+> `docs/FINDING-*.md`), the Y-4 widening, deliberately not `docs/**` — **so CI
+> does run on this lane's PR.**
+>
+> ### QUEUE v28
+>
+> | item | state at `a0014864` |
+> |---|---|
+> | **X-2** | 4/7; three stale, clocks **unchanged** — CAISO due 09-07 02:08Z, MISO 01:21Z, NYISO 01:03Z; **no promotion since 02:08Z**; hold the re-captures until the clocks (card C) |
+> | **X-3** | **DISCHARGED** — PERF-B s3 complete; shipped `markup` 27.9–41.3 s/yr |
+> | **X-4** | per its finding |
+> | **X-5** | unchanged |
+> | **X-6** | routed unchanged; **X-6b: first leg discharged** — `921bb4cd` is reachable (#4762), v27's orphaned-stamp reading superseded, **Δ = 7**; the undated half (**25 of 97**) stands |
+> | **Y-1** | owner flip pending; **flip-set count NOT READ this sitting (API 403)**; all three named causes repaired in-tree, six-of-six local equivalents green; **flip is NOT live** |
+> | **Y-2** | G2 sitting after the flip |
+> | **Y-3** | R-T **miss #9 = miso-213**; the desk's own count ("eleventh guard firing, ninth promoter miss"); **v27's `read_live_at` leaf REPAIRED by `337829b3`** |
+> | **Y-4** | RETIRED |
+> | **Y-5** | discharged at v27's coda |
+> | **Y-6** | **RETIRED BY EXECUTION** — completed without a PR; both conditional items pre-closed by `337829b3` |
+> | **Y-7** | **NOT MINTED AS OPEN — RECORDED AS EXECUTED**, #4771, all three items, 18:06:46Z |
+> | **Z-1** | unchanged |
+> | **Z-2** | **run-conclusion streak NOT READ this sitting (API 403)** |
+> | **Z-3** | applied; **fifth inversion** (PERF-B s3 launched and completed after v27 recorded it not-launched) |
+> | **Z-4** | **CLOSED** — R-AG and Q38/D56-R coexist on the record; marker moved by the capx desk's lane; this board adjudicated nothing; three-instrument test aligns |
+> | **Z-5** | **MINTED AND DISCHARGED** in this entry — D56 keyed nyiso-188, D56-R re-issued on live nyiso-189, no split |
+> | **G-14** | **two new classes separated**: *died-before-first-push* (v28 #1, #2) and *blocked-on-repo-access* (v28b, and this lane pre-intervention) |
+>
+> ### OWNER CARDS SERVED THIS SITTING — FOUR
+>
+> * **A (Y-1, the flip).** All three loose ends the dispatch assigned to Y-7 are
+>   **closed in-tree** by #4771, and the local equivalent of all six jobs is
+>   green at this pin. **The flip-set count itself was not read** (API 403).
+>   The standing condition is unchanged: **flip on the first 6-of-6 CI-covered
+>   head** — a reading someone with API access must take.
+> * **C (X-2).** **Hold** the three re-captures until the 09-07 clocks. No
+>   promotion since 02:08Z; nothing falls due at this pin.
+> * **D (G2 leg 1 + R-V).** PERF-B's WS3 charter is **complete on record**. The
+>   director recommends **one `golden-data-tier.yml` `workflow_dispatch` on the
+>   merged s3 head** as the CI proof, then a declaration on leg 1 and a
+>   **lift-or-keep decision on the R-V keeper freeze** — the owner's, both. The
+>   workflow is confirmed dispatch-only, so this is a deliberate manual act.
+> * **E (infrastructure, no ruling asked).** The launch-failure classes above —
+>   including the **new blocked-on-repo-access class**, of which there is a
+>   **live instance right now** (v28b). Two of the three v28 records attempts
+>   before this one produced nothing; a fourth is stalled on permissions. **The
+>   records lane's throughput is currently limited by session provisioning, not
+>   by the work.**
+>
+> **Records integrity:** touched **only** this board and the plan. **Verified
+> untouched** (clean tree at session start; closing diff confined to the two
+> files): every keeper shard, every `status/<ISO>.js`,
+> `calibration-complete.json`, `holdout-freeze.json`, `program-status.json`,
+> every matrix shard, every workflow, every bundle / sidecar / registry file,
+> every golden manifest. **No solve, no score, no registration.** *(Method
+> notes: the container held **no checkout at all** at start-up — the clone is
+> this lane's own, `--depth 1` then `fetch --depth=1000 origin main` to reach
+> `3cdf1cac`; read-side git only, no working-tree change. The GitHub API was
+> probed with and without the session token, returned 403 both ways, and was
+> **not** routed around.)*
+>
+>
+> ### 🔴 POST-CLOSE CODA AT `ee7754c1` — **Y-7's FIX SURVIVED FIFTEEN MINUTES. THE FACADE RED IS BACK, FROM THE NEXT CAPX LANE, AND D57 IS NO LONGER OPEN.**
+>
+> Between poll 2 (18:12Z) and the push, `origin/main` advanced **four merges**
+> to **`ee7754c1`**: **#4773** (`0d59d3d9`, miso-216 prereg, 18:15:19Z),
+> **#4774** (`b9cc07dd`, the calibration-workstream director desk),
+> **#4761 — capx D57** (`ee7754c1`, **18:21:31Z**), and the D57 branch's own
+> merge of main. This lane rebased onto `ee7754c1` and re-ran every gate and
+> check the four merges can move. **No protected surface moved**: no keeper
+> shard, no `calibration-complete.json`, no `holdout-freeze.json`, no
+> `status/<ISO>.js`, no `program-status.json`, no workflow. **So every keeper,
+> marker, alignment, R-T, stage-0 and Z-4/Z-5 reading in this entry stands
+> unchanged at `ee7754c1`.** The **six matrix shards and the matrix index did**
+> move, and `check_mechanism_matrix.py` re-run at the new head still exits
+> **0** with the **same 195 field + 49 row + 164 path anchors**.
+>
+> **Two corrections to this entry, both from D57's merge:**
+>
+> 1. **D57 IS MERGED, NOT OPEN.** The entry above records `#4761` as open on
+>    the evidence of the window's merge list at `a0014864`; it merged at
+>    **18:21:31Z**, four minutes after this lane's second poll. The `d57-merge`
+>    session recorded as live was resolving exactly that. **Every capx lane
+>    named in this entry (D53, D54, D55, D56-R, D57, D59) is now merged.**
+> 2. **THE FLIP SET'S FACADE RED IS BACK.** `capx D57` adds **+96 lines** to
+>    `src/market_sim/config/capacity_market.py`, and
+>    `tests/regression/test_constants_facade.py::test_moved_surface_is_complete`
+>    **fails at `ee7754c1`**:
+>
+>    > `market_sim.config.capacity_market grew names the facade does not re-export: ['ClearedCapacityPrice', '_SUPPLY_CLEARING_REFUSED_LOGGED', 'resolve_capacity_market_supply_clearing']`
+>
+>    **This is the same failure mode, on the same file, that Y-7 item 3 closed
+>    for capx D59 (`dd555499` 15:45:12Z, merged in #4771 at 18:06:46Z) —
+>    reopened by the next capx merge **fourteen minutes and forty-five seconds
+>    later.** `Structural refactor guards` and `Fast test tier` both
+>    depend on that test, so **two of the six flip-set jobs are red again in the
+>    tree at `ee7754c1`**. The lint leg holds: `ruff check .` **exit 0** and
+>    `ruff format --check .` **1386 files already formatted** at the new head,
+>    so **Y-7 items 1 and 2 survive; only item 3's class recurred.**
+>
+> **THIS CHANGES WHAT Y-7 MEANT, AND THE OWNER SHOULD SEE IT.** The entry above
+> reads Y-7 as draining a backlog of three merged lanes' loose ends. The coda
+> shows it is **not a backlog — it is a recurring leak.** Y-7 closed 3 of 3, landing at
+> 18:06:46Z; **the very next capx merge reopened one of them at 18:21:31Z**, by the
+> identical mechanism (a promoting lane grows
+> `market_sim.config.capacity_market` without registering the new names on the
+> frozen facade surface). A closer lane run after each such merge will always be
+> one merge behind. **The durable fix is not another closer lane; it is making
+> the facade registration part of the promoting lane's own duty** — the same
+> shape as D-5(b)'s re-key-on-promotion duty, which is precisely what kept the
+> marker and the keeper in step for Z-5. **Recorded as an owner observation;
+> adjudicated by nobody here, and no lane is minted for it** — card A's standing
+> condition (flip on the first 6-of-6 CI-covered head) already covers the
+> symptom, and this coda names the cause.
+>
+> **Card A is unchanged in form and worse in fact:** the flip-set count remains
+> unread (API 403), and the tree-level evidence that stood at `a0014864` —
+> six-of-six local equivalents green — **no longer holds at `ee7754c1`**: it is
+> now **four of six**, with `Structural refactor guards` and `Fast test tier`
+> red on the D57 names. **The flip is NOT live, and at this head it should not
+> be.** Everything else in this entry stands at `a0014864` and re-verified at
+> `ee7754c1`.
+>
+> ### 🟢 CODA ADDENDUM AT `8342d74d` — **THE PROMOTING LANE CLOSED ITS OWN RED IN EIGHT MINUTES. THE CODA'S RECOMMENDATION WAS ALREADY THE PRACTICE.**
+>
+> `origin/main` advanced twice more during the push. **#4775** (`8342d74d`,
+> **18:29:03Z**) carries `7e058c12` — *"capx D57: register the three new
+> `capacity_market` names in the constants facade + frozen inventory"* — **+3
+> lines to `src/market_sim/config/constants.py` and +11 to the facade test's
+> frozen inventory, and nothing else.** `test_constants_facade.py` **passes at
+> `8342d74d` (2 passed)**.
+>
+> **So the facade red of the coda above was an eight-minute transient**
+> (18:21:31Z → 18:29:03Z), closed **by the promoting lane itself**, not by a
+> closer lane. **The coda's reading must be qualified, and it is qualified
+> here rather than rewritten** (this board is append-only): the leak is real
+> and it recurred, but **it did not need a closer lane — D57 sealed it
+> unprompted, inside ten minutes, which is exactly the "promoting lane's own
+> duty" shape the coda recommended.** The recommendation was therefore not a
+> gap in practice but a **description of practice that already exists and is
+> simply not written down as a duty.** What remains for the owner is only
+> whether to make it explicit — the D-5(b) treatment — so that it does not
+> depend on each lane noticing.
+>
+> **Net effect on card A:** the coda's "four of six" is superseded. At
+> `8342d74d` **all six flip-set jobs' local equivalents are green again** —
+> `ruff check` 0, `ruff format --check` 1386 formatted, facade 2 passed,
+> refactor guards 0, the three Rule-22 gates 0, cache-key 0, pinned-key 24
+> passed. **The flip-set count itself is still unread (API 403), and the flip
+> is still NOT live.** This lane's branch is rebased onto `8342d74d`; the
+> closing diff remains the two records files, 0 deletions.
+
 > # 🟠 v27 (2026-09-05, pin `d9f034f0`) — **JOB 0 WAS ALREADY DONE — BY THE CAPX DESK, TEN MINUTES AFTER THE SITTING. THE FLIP SET FELL FROM 5 OF 6 TO 3 OF 6 ON THREE IN-FLIGHT LANES' LOOSE ENDS. AND THE ALIGNMENT SPLIT (Z-4) WAS OWNER-RULED *TWICE* IN ONE HOUR, BY TWO DESKS, THE SECOND UNABLE TO SEE THE FIRST — BECAUSE R-AG IS RECORDED NOWHERE.**
 >
 > **THE PIN MOVED UNDER THIS DISPATCH FOR THE FOURTH CONSECUTIVE CYCLE.** The
