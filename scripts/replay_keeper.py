@@ -367,6 +367,13 @@ def run_year_kwargs(meta: dict) -> dict:
     Args:
         meta: The bundle's ``meta.json``.
 
+    NOT INCLUDED, and the caller must add them:
+    :data:`DERIVED_RUN_YEAR_INPUTS` — the ``run_year`` inputs
+    ``solve_and_persist`` derives from its own locals and the bundle therefore
+    never records, so nothing here can map them and
+    :func:`run_year_unreachable` cannot report them either. Splat
+    :func:`derived_run_year_inputs` alongside this result (caiso-248).
+
     Returns:
         Keyword arguments for ``run_year`` — WITHOUT the positional four,
         ``ttc_overrides``, ``fleet_only`` or the per-call plumbing
@@ -382,6 +389,78 @@ def run_year_kwargs(meta: dict) -> dict:
         if target in params and target not in RUN_YEAR_NON_RECIPE:
             out[target] = value
     return out
+
+
+#: run_year inputs the bundle NEVER records, because ``solve_and_persist``
+#: derives them from its own locals rather than from a recorded kwarg. They are
+#: invisible to BOTH :func:`run_year_kwargs` (nothing to map) and
+#: :func:`run_year_unreachable` (which can only report recorded keys), so a
+#: fleet-only rebuild silently omits them unless the caller recovers them —
+#: which is what :func:`derived_run_year_inputs` is for.
+#:
+#: ``inject_biomass_mustrun``: ``solve_and_persist`` injects the residual
+#: must-run classes (``_INJECTED_MUSTRUN_CLASSES``) from measured EIA-923
+#: energy and sets this flag from ``"biomass" in must_run``; ``run_year`` then
+#: passes it as ``drop_biomass_units``, REMOVING the raw biomass LP units so
+#: they are not served twice. A rebuild that omits it carries phantom biomass
+#: units the scored solve never had (caiso-248; it invalidated caiso-247's
+#: DOM_OTHER attribution).
+DERIVED_RUN_YEAR_INPUTS: tuple[str, ...] = ("inject_biomass_mustrun",)
+
+
+def derived_run_year_inputs(bundle: "Path | str", year: int) -> dict:
+    """Recover the unrecorded ``run_year`` inputs from a bundle's own sidecars.
+
+    See :data:`DERIVED_RUN_YEAR_INPUTS`. Every fleet-only rebuild should splat
+    this into ``run_year`` alongside :func:`run_year_kwargs`.
+
+    ``inject_biomass_mustrun`` is recovered from the committed
+    ``hourly/class_hourly_<year>.parquet``: an injected class is a MONTHLY STEP
+    profile — annual measured energy shaped by a 12-vector, constant inside a
+    month — so it shows at most 12 distinct levels joined by at most 11 change
+    points. The test is deliberately calendar-agnostic: ``run_calibration_full``
+    builds its month map from the REAL calendar, so in a leap year the steps sit
+    on 8784-clock boundaries (CAISO 2024 biomass steps at hour 1440 = 31 d +
+    29 d) while the model clock is 8760 — a "flat within my months" test misses
+    that year entirely.
+
+    A near-zero class can meet the shape test by coincidence (CAISO 2023 ``oil``
+    is 65 MWh in two levels); harmless, because only ``biomass`` is consumed.
+
+    Args:
+        bundle: The keeper bundle directory.
+        year: The solve year whose sidecar to read.
+
+    Returns:
+        ``{"inject_biomass_mustrun": bool}``.
+
+    Raises:
+        FileNotFoundError: If the bundle has no ``class_hourly`` sidecar for
+            ``year`` — the caller must not silently assume ``False``.
+    """
+    import numpy as np
+    import pandas as pd
+
+    path = Path(bundle) / "hourly" / f"class_hourly_{int(year)}.parquet"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} — cannot recover {DERIVED_RUN_YEAR_INPUTS} without it; "
+            "a fleet-only rebuild that assumes False carries phantom biomass "
+            "LP units (caiso-248)."
+        )
+    frame = pd.read_parquet(path)
+    frame = frame[frame["pass"] == "P1"]
+    injected: set[str] = set()
+    for klass, grp in frame.groupby("klass", observed=True):
+        hours = int(grp["hour"].max()) + 1
+        series = np.zeros(max(hours, 1))
+        series[grp["hour"].to_numpy(int)] = grp["mw"].to_numpy(float)
+        if series.sum() <= 0:
+            continue
+        vals = np.round(series, 6)
+        if len(np.unique(vals)) <= 12 and int((np.diff(vals) != 0).sum()) <= 11:
+            injected.add(str(klass))
+    return {"inject_biomass_mustrun": "biomass" in injected}
 
 
 def run_year_unreachable(meta: dict) -> dict:

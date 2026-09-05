@@ -98,6 +98,47 @@ REGIMES = (
 )
 
 
+def injected_mustrun_classes(year: int) -> set[str]:
+    """Classes the SOLVE injected as a must-run profile, read off the sidecar.
+
+    THE caiso-248 DEFECT REPAIR. ``run_calibration_full`` nets the residual
+    must-run classes (``_INJECTED_MUSTRUN_CLASSES = ("biomass", "OTHER")``) out
+    of demand, re-adds them as pseudo-units, and — for biomass alone — passes
+    ``inject_biomass_mustrun`` into ``run_year``, which DROPS the raw biomass LP
+    units so they are not served twice. That flag is derived from
+    ``solve_and_persist``'s own locals, so it is **not recorded in meta.json**
+    and ``replay_keeper.run_year_kwargs`` cannot carry it: a fleet-only rebuild
+    silently keeps 184 CAISO biomass units the scored solve does not have.
+    caiso-247 measured its DOM_OTHER cell on exactly those phantom units.
+
+    An injected class is EXACTLY flat within every calendar month (the profile
+    is annual EIA-923 energy shaped by a monthly vector, flat inside a month),
+    which is the signature this reads — the same evidence caiso-202's probe
+    cites for the same conclusion. Detection from committed bytes, no meta key.
+    """
+    c = pd.read_parquet(BUNDLE / "hourly" / f"class_hourly_{year}.parquet")
+    c = c[c["pass"] == "P1"]
+    out: set[str] = set()
+    for klass, grp in c.groupby("klass", observed=True):
+        mw = np.zeros(HOURS)
+        hr = grp["hour"].to_numpy(int)
+        ok = hr < HOURS
+        mw[hr[ok]] = grp["mw"].to_numpy(float)[ok]
+        if mw.sum() <= 0:
+            continue
+        # CALENDAR-AGNOSTIC on purpose: ``run_calibration_full._hour_months``
+        # builds its month map from the REAL calendar, so in a leap year the
+        # injected steps sit on 8784-clock boundaries (2024 biomass steps at
+        # hour 1440 = 31 d + 29 d) while every array here is on the non-leap
+        # 8760 clock. Testing "flat within MY months" therefore MISSES 2024.
+        # A monthly step profile is instead identified by its shape: at most
+        # 12 distinct levels joined by at most 11 change points.
+        vals = np.round(mw, 6)
+        if len(np.unique(vals)) <= 12 and int((np.diff(vals) != 0).sum()) <= 11:
+            out.add(str(klass))
+    return out
+
+
 def rebuild_full(year: int) -> dict:
     """The caiso-244 on-recipe fleet rebuild, plus the DOMESTIC arrays it drops.
 
@@ -116,11 +157,19 @@ def rebuild_full(year: int) -> dict:
     from market_sim.config.iso_configs import get_iso_config
     from market_sim.model.interchange.caiso import split_caiso_import_node_per_hub
     from run_calibration import run_year
-    from replay_keeper import run_year_kwargs
+    from replay_keeper import derived_run_year_inputs, run_year_kwargs
     from scripts.lib.bundle_fleet import clear_fleet_caches
 
     meta = json.loads((BUNDLE / "meta.json").read_text())
     kwargs = run_year_kwargs(meta)
+    # The one recipe input meta.json does not record (see
+    # :func:`injected_mustrun_classes`). Recovered from the committed sidecar
+    # so the rebuilt fleet is the fleet the scored solve actually dispatched.
+    injected = injected_mustrun_classes(year)
+    # The shared helper is the authority (caiso-248 added it to replay_keeper so
+    # every ISO's fleet-only probes stop rebuilding phantom biomass units); the
+    # local detector above is kept only to report WHICH classes were injected.
+    kwargs.update(derived_run_year_inputs(BUNDLE, year))
     clear_fleet_caches()
     buf = io.StringIO()
     with contextlib.redirect_stderr(buf):
@@ -184,6 +233,7 @@ def rebuild_full(year: int) -> dict:
         "zone_idx": zidx,
         "group": group,
         "zone_names": zone_names,
+        "injected_mustrun_classes": sorted(injected),
         "log": buf.getvalue(),
     }
 
@@ -606,6 +656,8 @@ def analyse(year: int) -> dict:
     )
     return {
         "keeper_run_id": KEEPER_RUN_ID,
+        "injected_mustrun_classes": fl["injected_mustrun_classes"],
+        "biomass_lp_units_dropped": bool("biomass" in fl["injected_mustrun_classes"]),
         "G_BENCH": g_bench,
         "G_GAP": g_gap,
         "G_RECON": {
@@ -694,6 +746,13 @@ def main() -> None:
     # from the committed sidecars, not from the rebuild — reported anyway.
     from replay_keeper import run_year_unreachable
 
+    out["_provenance"]["injected_mustrun_note"] = (
+        "inject_biomass_mustrun is NOT in meta.json (derived from "
+        "solve_and_persist locals) and run_year_kwargs cannot carry it; it is "
+        "recovered here from the committed class_hourly sidecar's month-flat "
+        "signature. caiso-247's first run omitted it and rebuilt 184 phantom "
+        "biomass LP units — the caiso-248 defect repair."
+    )
     out["_provenance"]["run_year_unreachable"] = {
         k: (str(v) if not isinstance(v, (int, float, bool, type(None), str)) else v)
         for k, v in run_year_unreachable(
@@ -705,6 +764,8 @@ def main() -> None:
         out["years"][y] = rec
         print(f"\n===== {y} =====")
         print(
+            f"  injected must-run {rec['injected_mustrun_classes']}; biomass LP units dropped "
+            f"{rec['biomass_lp_units_dropped']}\n"
             f"  G-BENCH {rec['G_BENCH']['pass']} (recomputed {rec['G_BENCH']['recomputed_rt_lw']} vs committed {rec['G_BENCH']['committed_rt_lw']}, {rec['G_BENCH']['hours_actual_missing']} h missing)"
         )
         print(
