@@ -230,6 +230,18 @@ def to_parquet(
             if self.clean_region_duals is not None
             else None
         ),
+        # Endogenous power-sector allowance price(s), one per active emissions
+        # mass-cap row ($/tCO2 — the negated row dual). Persisted because it is
+        # the READ-OUT a quantity-instrument case exists for: without it a
+        # CAP-STATE-TIGHT arm's implied allowance price is discarded the moment
+        # the solve ends, and the price-vs-quantity comparison the case is run
+        # to make cannot be scored from the cache (SCN-WS1a FINDING §4.3, the
+        # G-E4 rider). A short list of floats, so it costs nothing. ``None``
+        # when no mass cap was active, which is every run at the shipped
+        # default.
+        "co2_cap_price": (
+            list(self.co2_cap_price) if self.co2_cap_price is not None else None
+        ),
     }
 
     schema_metadata = {_METADATA_KEY: json.dumps(metadata).encode()}
@@ -399,6 +411,10 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
             if meta.get("clean_region_duals") is not None
             else None
         ),
+        # ``.get`` because every result written before the key existed simply
+        # has no cap price to restore — an older cached year reads None, which
+        # is what it already meant.
+        co2_cap_price=meta.get("co2_cap_price"),
     )
 
 

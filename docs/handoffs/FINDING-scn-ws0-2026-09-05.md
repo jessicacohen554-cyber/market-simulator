@@ -10,7 +10,9 @@ writes `src/market_sim/` and `scripts/`)
 
 ## 0. Bottom line
 
-All six deliverables land. The paired NEISO 2026 T0 solves clean on both arms (0 FAIL /
+All six deliverables land, plus the G-E4 rider SCN-WS1a routed here after it merged
+(§4b: the mass-cap allowance price now persists and is exported; the tons-valued slack
+needs a `runner.py` region this lane does not hold and is routed back). The paired NEISO 2026 T0 solves clean on both arms (0 FAIL /
 0 WARN across the 14 forecast invariants, each) and **passes all five structural
 STOP-gate checks**. Both arms are registered in the forecast namespace under the new
 `scenario` kind, campaign `scn-ws0-smoke`.
@@ -188,6 +190,58 @@ lane's declared regions was edited.
 
 ---
 
+## 4b. The G-E4 rider from SCN-WS1a — CLOSED (the price half), scoped (the slack half)
+
+WS-1a landed on `main` while this lane was open and routed one item here
+(`FINDING-scn-ws1a-2026-09-05.md` §4.3): `DispatchResult.co2_cap_price` — the emissions
+mass-cap row's negated dual, i.e. the endogenous power-sector allowance price — had **no
+reader anywhere under `src/market_sim/results/`**, so a CAP-STATE-TIGHT arm "has no
+exported read-out and cannot be scored". The ask was `co2_cap_price` **and**
+`co2_cap_slack_t` in `summarize_year` and in the trajectory row.
+
+It was worse than "no reader": the field **was not persisted at all**. `to_parquet`'s
+metadata block carried `rps_shadow_price`, `rps_region_duals` and `clean_region_duals`
+and not this one, so the price was discarded the moment the solve ended and no cache
+read could have recovered it.
+
+**Closed here, in this lane's own two files:**
+
+* `results/outputs.py` — `co2_cap_price` now round-trips through the Parquet metadata (a
+  short list of floats; `from_parquet` reads it with `.get`, so a year written before the
+  key existed still loads and still means `None`).
+* `results/export.py::_summarize_year` — emits `co2_cap_price_usd_per_t` (the max across
+  active caps, a per-year SCALAR, so it rides `build_matrix_frame` and the headline delta
+  table on its own via `matrix.scalar_metrics`), `co2_cap_price_by_cap` (the full list),
+  and `n_co2_caps_binding` (a cap binds iff its dual is positive — the binding flag WS-1a
+  named as missing, as a count so it too reaches the frame). All three are present at
+  `0.0 / [] / 0` when no cap is active, so the frame's column set does not depend on
+  posture.
+
+That is the read-out the case exists for: WS-1a's own §4.2 says the row dual is "to be
+compared against the adder path's exogenous escalator in the same year — the
+price-vs-quantity instrument comparison the case exists for". It is now a column in the
+delta table beside the CO2 it bought.
+
+**Not closed, and why — `co2_cap_slack_t`.** Slack in tons is
+`cap_tons − Σ_g m[g]·rate[g]·gen_mwh[g]`. Neither `m[g]` (the per-generator membership
+weight from `per_generator_membership`) nor `cap_tons` is carried by the cached result or
+its `FleetContext`; both are assembled on the solve path in `runner.py:3294-3309`, which
+this lane may not write (`runner.py` has no SCN-WS0 region — desk ledger §4). Persisting
+them would mean threading the cap block into the `cache.save_result` call site, i.e. a
+`runner.py` edit. **Routed back to SCN-DESK** as a one-line change for whichever lane
+next holds a `runner.py` region: pass the cap labels + RHS + per-generator coefficient
+row-sums into `save_result`, and `outputs.py` will carry them the same way it now carries
+the price. Until then the binding COUNT stands in for the sign of the slack (binding, or
+room) without a tons figure that would have to be guessed. **The half that blocked
+scoring is closed**; the half outstanding is a diagnostic refinement, and no number is
+fabricated in its place.
+
+**Not attempted: the trajectory row.** The rider also asks for the cap price in
+`full_horizon_summary.json`'s trajectory row. That is `run_full_horizon.py::
+extract_trajectory`, and this lane's write scope in that file is **the `--set` override
+only** (desk ledger §4). Routed with the slack half; the `_summarize_year` half already
+reaches every delta table, which is where the comparison is actually read.
+
 ## 5. Routed to SCN-DESK
 
 1. **The NYISO seam's emission factor is a live number now, not a placeholder.**
@@ -202,11 +256,17 @@ lane's declared regions was edited.
    seam is the other. SCN-WS1b's six-ISO paired probe should read the import line in
    every arm — the harness now emits it — and the campaign's §4 caveat block should
    carry the leakage number per ISO, not a generic sentence.
-3. **`test_golden_manifest_provenance.py` fails on `origin/main`** (2 failures, ERCOT
-   `carveout-2023`: the golden manifest's partition entry and the keeper shard disagree
-   about which run holds that role). Pre-existing, reproduced on a clean checkout, and
-   outside every SCN lane's regions — it belongs to the backcast keeper lane. Flagged
-   only so a wave-2 lane does not spend time re-diagnosing it.
+3. **`co2_cap_slack_t` and the cap price's trajectory row** — §4b. Both need a
+   `runner.py` region this lane does not hold; both are one-line changes for whichever
+   lane next holds one. The scoring-blocking half is already closed.
+4. **`test_gate_a_provenance.py::test_live_board_passes` fails on `origin/main`**
+   (`108235d2`): MISO's `gate.a_keeper_marker` cites the superseded keeper
+   `2026-09-05-miso-217-intermphys` while the shard designates
+   `2026-09-05-miso-220-nonsteam-lift`. Pre-existing, reproduced on a clean checkout,
+   and outside every SCN lane's regions — it belongs to the MISO backcast lane. Flagged
+   only so a wave-2 lane does not spend time re-diagnosing it. (The earlier
+   `test_golden_manifest_provenance.py` failures this FINDING first reported were fixed
+   on main between this lane's two pushes and are green again.)
 4. **`data/clean` is a genuine session prerequisite** (FF plan §2.4). Four
    `tests/unit/results/test_export.py` cases fail on a fresh checkout until
    `scripts/data/curate_confirmed_retirements.py` has been run. Worth putting in the

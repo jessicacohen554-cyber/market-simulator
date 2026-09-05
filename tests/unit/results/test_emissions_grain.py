@@ -260,6 +260,70 @@ class TestImportLineStaysOutsideTheTotal(unittest.TestCase):
         )
 
 
+class TestMassCapAllowancePriceReadOut(unittest.TestCase):
+    """The cap row's dual survives the cache and reaches the annual summary.
+
+    SCN-WS1a FINDING §4.3 (the G-E4 rider): ``DispatchResult.co2_cap_price``
+    had no reader anywhere under ``results/`` and was not persisted at all, so
+    a quantity-instrument case's allowance price — the output the case exists
+    to produce — was discarded the moment the solve ended.
+    """
+
+    def _round_trip(self, cap_price):
+        result = _result(np.full((1, HOURS), 50.0))
+        result.co2_cap_price = cap_price
+        context = _context(["gas_cc"], [GAS_RATE], ["Z"])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = result.to_parquet(Path(tmp) / "year_2026.parquet", context=context)
+            loaded = DispatchResult.from_parquet(path)
+        return loaded, _summarize_year(loaded, context)
+
+    def test_cap_price_survives_the_parquet_round_trip(self):
+        loaded, _ = self._round_trip([42.5])
+        self.assertEqual(loaded.co2_cap_price, [42.5])
+
+    def test_summary_reports_the_max_the_list_and_the_binding_count(self):
+        _, summary = self._round_trip([12.0, 42.5])
+        self.assertEqual(summary["co2_cap_price_usd_per_t"], 42.5)
+        self.assertEqual(summary["co2_cap_price_by_cap"], [12.0, 42.5])
+        self.assertEqual(summary["n_co2_caps_binding"], 2)
+
+    def test_a_slack_cap_is_reported_as_not_binding(self):
+        # A zero dual is a cap with room; it is reported, not dropped.
+        _, summary = self._round_trip([0.0])
+        self.assertEqual(summary["co2_cap_price_usd_per_t"], 0.0)
+        self.assertEqual(summary["n_co2_caps_binding"], 0)
+
+    def test_no_cap_is_zero_not_absent(self):
+        # Every run at the shipped default has no cap; the keys must still be
+        # present so the matrix frame's column set does not depend on posture.
+        _, summary = self._round_trip(None)
+        self.assertEqual(summary["co2_cap_price_usd_per_t"], 0.0)
+        self.assertEqual(summary["co2_cap_price_by_cap"], [])
+        self.assertEqual(summary["n_co2_caps_binding"], 0)
+
+    def test_an_older_cached_year_without_the_key_still_loads(self):
+        # from_parquet reads the key with .get: a result written before it
+        # existed has no cap price to restore, which is what it already meant.
+        result = _result(np.full((1, HOURS), 50.0))
+        context = _context(["gas_cc"], [GAS_RATE], ["Z"])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = result.to_parquet(Path(tmp) / "year_2026.parquet", context=context)
+            import json as _json
+
+            import pyarrow.parquet as _pq
+
+            table = _pq.read_table(path)
+            meta = dict(table.schema.metadata)
+            payload = _json.loads(meta[b"market_sim"])
+            del payload["co2_cap_price"]
+            meta[b"market_sim"] = _json.dumps(payload).encode()
+            _pq.write_table(table.replace_schema_metadata(meta), path)
+            loaded = DispatchResult.from_parquet(path)
+        self.assertIsNone(loaded.co2_cap_price)
+        self.assertEqual(_summarize_year(loaded, context)["n_co2_caps_binding"], 0)
+
+
 class TestDispatchResultEmissionsRoundTrip(unittest.TestCase):
     """The declared ``emissions`` field stops being a null on a loaded run."""
 
