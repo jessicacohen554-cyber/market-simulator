@@ -1,0 +1,1079 @@
+{
+  "run_id": "2026-09-05-caiso-246-b1-spot",
+  "iso": "CAISO",
+  "label": "caiso 246 b1 spot",
+  "rubric_version": 3.5,
+  "reported": {
+    "co2": {
+      "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+      "records": [
+        {
+          "criterion": "co2",
+          "key": null,
+          "year": 2023,
+          "status": "FAIL",
+          "classification": "MODEL MISS",
+          "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
+          "model": 27.0,
+          "actual": 30.386,
+          "tol": "\u00b17% target / \u00b110% commercial",
+          "magnitude": "-11.1%"
+        },
+        {
+          "criterion": "co2",
+          "key": null,
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
+          "model": 25.217,
+          "actual": 26.982,
+          "tol": "\u00b17% target / \u00b110% commercial",
+          "magnitude": "-6.5%"
+        },
+        {
+          "criterion": "co2",
+          "key": null,
+          "year": 2025,
+          "status": "PASS",
+          "classification": null,
+          "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
+          "model": 22.391,
+          "actual": 23.354,
+          "tol": "\u00b17% target / \u00b110% commercial",
+          "magnitude": "-4.1%"
+        }
+      ]
+    },
+    "diurnal_amplitude": {
+      "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+      "records": [
+        {
+          "criterion": "diurnal_amplitude",
+          "key": null,
+          "year": 2023,
+          "status": "REPORTED",
+          "classification": null,
+          "metric": "hour-of-day price amplitude, model as % of measured RT (BAND-FREE: reported, never gated)",
+          "benchmark": "RT",
+          "model": 32.59,
+          "actual": 49.59,
+          "tol": null,
+          "magnitude": "amplitude 65.7% of measured (hod range $32.59 vs $49.59); peak h19 vs h18, trough h11 vs h12 \u2014 phase OK; hod r +0.964; 365 complete days",
+          "amplitude_pct": 65.7,
+          "phase_ok": true,
+          "hod_r": 0.964,
+          "days": 365
+        },
+        {
+          "criterion": "diurnal_amplitude",
+          "key": null,
+          "year": 2024,
+          "status": "REPORTED",
+          "classification": null,
+          "metric": "hour-of-day price amplitude, model as % of measured RT (BAND-FREE: reported, never gated)",
+          "benchmark": "RT",
+          "model": 27.13,
+          "actual": 37.89,
+          "tol": null,
+          "magnitude": "amplitude 71.6% of measured (hod range $27.13 vs $37.89); peak h19 vs h18, trough h13 vs h12 \u2014 phase OK; hod r +0.968; 365 complete days",
+          "amplitude_pct": 71.6,
+          "phase_ok": true,
+          "hod_r": 0.968,
+          "days": 365
+        },
+        {
+          "criterion": "diurnal_amplitude",
+          "key": null,
+          "year": 2025,
+          "status": "REPORTED",
+          "classification": null,
+          "metric": "hour-of-day price amplitude, model as % of measured RT (BAND-FREE: reported, never gated)",
+          "benchmark": "RT",
+          "model": 25.54,
+          "actual": 29.97,
+          "tol": null,
+          "magnitude": "amplitude 85.2% of measured (hod range $25.54 vs $29.97); peak h22 vs h18, trough h12 vs h13 \u2014 phase OFF; hod r +0.975; 365 complete days",
+          "amplitude_pct": 85.2,
+          "phase_ok": false,
+          "hod_r": 0.975,
+          "days": 365
+        }
+      ]
+    }
+  },
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "determination": "NOT-YET",
+  "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+  ],
+  "notes": [],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "hard": false,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "fuelmix",
+          "key": "CC_REGULAR",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+          "model": 48.749,
+          "actual": 51.837,
+          "share_pp": -1.13,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-3.09 TWh, share -1.1pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CC_CHP",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_CHP grid-delivered TWh + share of generation",
+          "model": 8.522,
+          "actual": 7.71,
+          "share_pp": 0.57,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+0.81 TWh, share +0.6pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CT_PEAKER",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+          "model": 1.624,
+          "actual": 4.128,
+          "share_pp": -1.4,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-2.50 TWh, share -1.4pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_GAS",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "ST_GAS grid-delivered TWh + share of generation",
+          "model": 0.155,
+          "actual": 1.308,
+          "share_pp": -0.65,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-1.15 TWh, share -0.7pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_CHP",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "ST_CHP grid-delivered TWh + share of generation",
+          "model": 0.0,
+          "actual": 0.059,
+          "share_pp": -0.03,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-0.06 TWh, share -0.0pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_BIT",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_BIT grid-delivered TWh + share of generation",
+          "model": 0.0,
+          "actual": 0.063,
+          "share_pp": -0.04,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-0.06 TWh, share -0.0pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CC_REGULAR",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+          "model": 45.801,
+          "actual": 45.992,
+          "share_pp": -0.09,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.29 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-0.19 TWh, share -0.1pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CC_CHP",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_CHP grid-delivered TWh + share of generation",
+          "model": 7.628,
+          "actual": 6.778,
+          "share_pp": 0.48,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.29 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+0.85 TWh, share +0.5pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CT_PEAKER",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+          "model": 0.744,
+          "actual": 4.326,
+          "share_pp": -2.03,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.29 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-3.58 TWh, share -2.0pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_GAS",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "ST_GAS grid-delivered TWh + share of generation",
+          "model": 0.552,
+          "actual": 0.12,
+          "share_pp": 0.25,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.29 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+0.43 TWh, share +0.2pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_CHP",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "ST_CHP grid-delivered TWh + share of generation",
+          "model": 0.0,
+          "actual": 0.033,
+          "share_pp": -0.02,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.29 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-0.03 TWh, share -0.0pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_BIT",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_BIT grid-delivered TWh + share of generation",
+          "model": 0.0,
+          "actual": 0.074,
+          "share_pp": -0.04,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.29 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-0.07 TWh, share -0.0pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CC_REGULAR",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+          "model": 40.844,
+          "actual": 40.001,
+          "share_pp": 0.15,
+          "tol": null,
+          "completeness": "incomplete",
+          "magnitude": "preliminary EIA-923 vintage: incomplete plant data (3/26 prior plants missing (88% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
+          "vintage_gap_twh": 0.843
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CC_CHP",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "CC_CHP grid-delivered TWh + share of generation",
+          "model": 7.615,
+          "actual": 7.093,
+          "share_pp": 0.24,
+          "tol": null,
+          "completeness": "incomplete",
+          "magnitude": "preliminary EIA-923 vintage: incomplete plant data (3/19 prior plants missing (84% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
+          "vintage_gap_twh": 0.522
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CT_PEAKER",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+          "model": 0.36,
+          "actual": 2.339,
+          "share_pp": -1.18,
+          "tol": null,
+          "completeness": "incomplete",
+          "magnitude": "preliminary EIA-923 vintage: incomplete plant data (23/37 prior plants missing (38% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
+          "vintage_gap_twh": -1.979
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_GAS",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "ST_GAS grid-delivered TWh + share of generation",
+          "model": 0.12,
+          "actual": 0.086,
+          "share_pp": 0.02,
+          "tol": null,
+          "completeness": "immaterial",
+          "magnitude": "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class",
+          "vintage_gap_twh": 0.035
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_CHP",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "ST_CHP grid-delivered TWh + share of generation",
+          "model": 0.0,
+          "actual": 0.013,
+          "share_pp": -0.01,
+          "tol": null,
+          "completeness": "immaterial",
+          "magnitude": "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class",
+          "vintage_gap_twh": -0.013
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_PRB",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "COAL_PRB grid-delivered TWh + share of generation",
+          "model": 0.0,
+          "actual": 0.0,
+          "share_pp": 0.0,
+          "tol": null,
+          "completeness": "immaterial",
+          "magnitude": "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class",
+          "vintage_gap_twh": 0.0
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_BIT",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "COAL_BIT grid-delivered TWh + share of generation",
+          "model": 0.0,
+          "actual": 0.075,
+          "share_pp": -0.04,
+          "tol": null,
+          "completeness": "immaterial",
+          "magnitude": "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class",
+          "vintage_gap_twh": -0.075
+        }
+      ]
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "hard": false,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "sysvol",
+          "key": "gas",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+          "model": 59.05,
+          "actual": 65.04,
+          "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share (via C1)",
+          "magnitude": "all classes in band (C1)",
+          "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+          "vintage_reconciled": false
+        },
+        {
+          "criterion": "sysvol",
+          "key": "coal",
+          "year": 2023,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C2 system volume (gas/coal families)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+        },
+        {
+          "criterion": "sysvol",
+          "key": "gas",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+          "model": 54.73,
+          "actual": 57.25,
+          "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.29 TWh & \u00b13pp share (via C1)",
+          "magnitude": "all classes in band (C1)",
+          "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+          "vintage_reconciled": false
+        },
+        {
+          "criterion": "sysvol",
+          "key": "coal",
+          "year": 2024,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C2 system volume (gas/coal families)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+        },
+        {
+          "criterion": "sysvol",
+          "key": "gas",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "gas family grid-delivered TWh (preliminary vintage, CEMS-anchored diagnostic \u2014 not gated, rubric v2.5)",
+          "model": 50.14,
+          "actual": 50.84,
+          "tol": "\u00b12.5% target / \u00b15.0% commercial (family, no per-class actual)",
+          "magnitude": "-1.4%",
+          "source": "CAMPD CEMS bench-gas + EIA-923 non-CEMS cogen block (930 NG cell corrupted; FINDING 2026-07-12)",
+          "vintage_reconciled": false
+        },
+        {
+          "criterion": "sysvol",
+          "key": "coal",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C2 system volume (gas/coal families)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+        }
+      ]
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "hard": false,
+      "status": "FAIL",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "price_mean",
+          "key": null,
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+          "benchmark": "RT",
+          "model": 56.29,
+          "actual": 54.17,
+          "tol": "\u00b110% target / \u00b110% commercial",
+          "magnitude": "+3.9%"
+        },
+        {
+          "criterion": "price_mean",
+          "key": "da_diagnostic",
+          "year": 2023,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
+          "benchmark": "DA",
+          "model": 56.29,
+          "actual": 61.68,
+          "tol": "not gated",
+          "magnitude": "-8.7% vs DA (DA\u2212RT premium $+7.51)"
+        },
+        {
+          "criterion": "price_mean",
+          "key": null,
+          "year": 2024,
+          "status": "FAIL",
+          "classification": "MODEL MISS",
+          "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+          "benchmark": "RT",
+          "model": 38.92,
+          "actual": 34.65,
+          "tol": "\u00b110% target / \u00b110% commercial",
+          "magnitude": "+12.3%"
+        },
+        {
+          "criterion": "price_mean",
+          "key": "da_diagnostic",
+          "year": 2024,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
+          "benchmark": "DA",
+          "model": 38.92,
+          "actual": 37.97,
+          "tol": "not gated",
+          "magnitude": "+2.5% vs DA (DA\u2212RT premium $+3.32)"
+        },
+        {
+          "criterion": "price_mean",
+          "key": null,
+          "year": 2025,
+          "status": "FAIL",
+          "classification": "MODEL MISS",
+          "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+          "benchmark": "RT",
+          "model": 38.36,
+          "actual": 34.42,
+          "tol": "\u00b110% target / \u00b110% commercial",
+          "magnitude": "+11.4%"
+        },
+        {
+          "criterion": "price_mean",
+          "key": "da_diagnostic",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
+          "benchmark": "DA",
+          "model": 38.36,
+          "actual": 35.4,
+          "tol": "not gated",
+          "magnitude": "+8.4% vs DA (DA\u2212RT premium $+0.98)"
+        }
+      ]
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "hard": false,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "price_shape",
+          "key": null,
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+          "model": 0.1,
+          "actual": null,
+          "tol": "\u22640.20 target / \u22640.20 commercial",
+          "magnitude": "NRMSE 0.100"
+        },
+        {
+          "criterion": "price_shape",
+          "key": null,
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+          "model": 0.177,
+          "actual": null,
+          "tol": "\u22640.20 target / \u22640.20 commercial",
+          "magnitude": "NRMSE 0.177"
+        },
+        {
+          "criterion": "price_shape",
+          "key": null,
+          "year": 2025,
+          "status": "PASS",
+          "classification": null,
+          "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+          "model": 0.137,
+          "actual": null,
+          "tol": "\u22640.20 target / \u22640.20 commercial",
+          "magnitude": "NRMSE 0.137"
+        }
+      ]
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (RT hourly)",
+      "tier": "supporting",
+      "hard": false,
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered",
+      "records": [
+        {
+          "criterion": "price_tail",
+          "key": null,
+          "year": 2023,
+          "status": "CAVEAT",
+          "classification": "ACCEPTED MEASURED-INPUT LIMITATION",
+          "metric": "hours RT-expressible LMP > $200/MWh",
+          "model": 0.0,
+          "actual": 47.0,
+          "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
+          "magnitude": "model 0h [energy-only LMP] vs RT actual 47h (0.00\u00d7, >$200); RT coverage 100% \u2014 count is a lower bound",
+          "ledger_reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. caiso-159 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-153 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-157 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-151 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-153 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-148 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-151 creates no new caveat and spends no new ledger slot. CARRIED FORWARD UNCHANGED from the caiso-147 keeper's ledger by caiso-148 (2026-07-31, single-flag nuclear_unit_availability delta). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. CARRIED FORWARD UNCHANGED by caiso-147 (2026-07-31, single-flag measured_chp_heat_rates delta on the caiso-146 keeper recipe). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. ADOPTED LEDGER (owner, 2026-07-30 \u2014 caiso-131 \u00a79 disposition A4, taken on the caiso-144 evidence after the in-model lever queue closed on EVERY route). CAISO's C3c residual is the same object the MISO and NEISO ledgers already name: the probabilistic real-time scarcity premium a deterministic perfect-foresight hourly LP does not contain. The MISO Scarcity Pricing White Paper (Mar-2024 \u00a73.2.1) anatomy applies directly \u2014 a real ISO's tail price is an administrative/probabilistic construct over 10-30 min net-load and outage uncertainty, not an emergent marginal-cost outcome \u2014 and CAISO now carries its own hour-level corroboration, measured on the keeper's committed bytes (FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md, instrument scripts/probes/_caiso144_coopt_dormancy_gates.py, no LP, re-runs in seconds on any bundle):\n  \u2022 \u00a7C RESERVE SLACK IN REALITY'S OWN TAIL HOURS \u2014 in the actual RT>$200 hours the completed in-LP reserve co-optimization's deliverable family-level slack is at minimum +1,568 MW (2023) / +1,632 MW (2024), mean +10,246 / +10,486 MW, with storage RS excluded from the supply tier (so each figure is a strict lower bound). No reserve co-optimization at ANY completion level can price scarcity while the model's own deliverable-reserve state there is slack by 1.6-10.5 GW. The armed design is provably inert on this keeper (\u00a7B: strictly positive slack in all 26,280 h at every supply tier \u21d2 zero shortfall and zero reserve duals at every optimum), so the in-LP route is closed as a matter of the model's STATE, not of mechanism granularity \u2014 the rule-19 [R-ONE-MECH] scarcity-owner question is fully adjudicated on the in-LP side.\n  \u2022 \u00a7D OVERLAY TIMING \u2014 the caiso-137b charter question (should the scored backcast lane carry a scarcity-pricing overlay at all?) is ANSWERED NEGATIVE BY MEASUREMENT, not refused on admissibility. Reproducing the forecast-path LOLP overlay on the keeper's committed bytes with r_online deliberately UNDER-stated (an over-estimate of the adder), its >$200 settle hours overlap reality's tail in 1 of 47 hours (2023) and 0 of 35 (2024) \u2014 \u22641 hour in 90 over three years. It fires Apr-Nov when the MODEL is tight; reality was tight on winter mornings. Wiring it into the scored lane closes nothing and invents a mis-timed tail.\n  \u2022 \u00a7E WHAT THE TAIL ACTUALLY IS \u2014 a WINTER-MORNING fuel/cold-snap tail already priced to its measured input ceiling. The keeper carries the measured daily-spot citygate fuel input at flow-date placement (caiso_citygate_spot_level + caiso_citygate_flow_date, both armed); at Jan-2023's measured $16-18/MMBtu daily spot the marginal-heat-rate SRMC is $150-180/MWh \u2014 exactly where the model prints (max zonal \u03bb $181 in 2023 / $155 in 2024 in those hours). The wedge above that ceiling is the RT premium above same-day fuel cost (deliverability/OFO events, cold-snap WECC-wide import conduct, sub-hourly ramp formation), which has no admissible hourly-LP representation on the inputs in hand.\nIN-MODEL QUEUE EMPTY ON EVERY ROUTE at adoption: offer rungs closed (caiso-131 \u00a710), reserve tiers closed (caiso-144 \u00a7B/\u00a7C, matrix energy_reserve_coopt / reserve_pergen CAISO \u2192 I), overlay refused on measurement (\u00a7D), fuel grain already armed to its measured daily ceiling (\u00a7E). The one unfunded intake that could still make an UNFITTED C3c-2024 trigger reachable is caiso-131 A3 \u2014 the SoCalGas OFO declaration record (nothing in data/raw/ carries it; re-verified caiso-144). This caveat is a measured-input limitation, NOT an open mechanism lane, and is NEVER closable by an offer adder, scarcity adder or any value tuned to the tail (rules 1/13). Precedent: miso101_tempgrain_B price_tail 2023 and neiso61_netrev_margin price_tail 2023/2024, both ledgered and frontier-declared on weaker per-hour evidence than this. CAISO ledger budget at adoption: 0 of 3 non-protective slots used."
+        },
+        {
+          "criterion": "price_tail",
+          "key": "da_diagnostic",
+          "year": 2023,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
+          "model": 0.0,
+          "actual": 80.0,
+          "tol": "not gated",
+          "magnitude": "model 0h vs DA actual 80h (out-of-representation companion)"
+        },
+        {
+          "criterion": "price_tail",
+          "key": null,
+          "year": 2024,
+          "status": "CAVEAT",
+          "classification": "ACCEPTED MEASURED-INPUT LIMITATION",
+          "metric": "hours RT-expressible LMP > $200/MWh",
+          "model": 0.0,
+          "actual": 35.0,
+          "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
+          "magnitude": "model 0h [energy-only LMP] vs RT actual 35h (0.00\u00d7, >$200)",
+          "ledger_reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. caiso-159 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-153 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-157 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-151 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-153 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-148 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-151 creates no new caveat and spends no new ledger slot. CARRIED FORWARD UNCHANGED from the caiso-147 keeper's ledger by caiso-148 (2026-07-31, single-flag nuclear_unit_availability delta). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. CARRIED FORWARD UNCHANGED by caiso-147 (2026-07-31, single-flag measured_chp_heat_rates delta on the caiso-146 keeper recipe). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. ADOPTED LEDGER (owner, 2026-07-30 \u2014 caiso-131 \u00a79 disposition A4, taken on the caiso-144 evidence after the in-model lever queue closed on EVERY route). CAISO's C3c residual is the same object the MISO and NEISO ledgers already name: the probabilistic real-time scarcity premium a deterministic perfect-foresight hourly LP does not contain. The MISO Scarcity Pricing White Paper (Mar-2024 \u00a73.2.1) anatomy applies directly \u2014 a real ISO's tail price is an administrative/probabilistic construct over 10-30 min net-load and outage uncertainty, not an emergent marginal-cost outcome \u2014 and CAISO now carries its own hour-level corroboration, measured on the keeper's committed bytes (FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md, instrument scripts/probes/_caiso144_coopt_dormancy_gates.py, no LP, re-runs in seconds on any bundle):\n  \u2022 \u00a7C RESERVE SLACK IN REALITY'S OWN TAIL HOURS \u2014 in the actual RT>$200 hours the completed in-LP reserve co-optimization's deliverable family-level slack is at minimum +1,568 MW (2023) / +1,632 MW (2024), mean +10,246 / +10,486 MW, with storage RS excluded from the supply tier (so each figure is a strict lower bound). No reserve co-optimization at ANY completion level can price scarcity while the model's own deliverable-reserve state there is slack by 1.6-10.5 GW. The armed design is provably inert on this keeper (\u00a7B: strictly positive slack in all 26,280 h at every supply tier \u21d2 zero shortfall and zero reserve duals at every optimum), so the in-LP route is closed as a matter of the model's STATE, not of mechanism granularity \u2014 the rule-19 [R-ONE-MECH] scarcity-owner question is fully adjudicated on the in-LP side.\n  \u2022 \u00a7D OVERLAY TIMING \u2014 the caiso-137b charter question (should the scored backcast lane carry a scarcity-pricing overlay at all?) is ANSWERED NEGATIVE BY MEASUREMENT, not refused on admissibility. Reproducing the forecast-path LOLP overlay on the keeper's committed bytes with r_online deliberately UNDER-stated (an over-estimate of the adder), its >$200 settle hours overlap reality's tail in 1 of 47 hours (2023) and 0 of 35 (2024) \u2014 \u22641 hour in 90 over three years. It fires Apr-Nov when the MODEL is tight; reality was tight on winter mornings. Wiring it into the scored lane closes nothing and invents a mis-timed tail.\n  \u2022 \u00a7E WHAT THE TAIL ACTUALLY IS \u2014 a WINTER-MORNING fuel/cold-snap tail already priced to its measured input ceiling. The keeper carries the measured daily-spot citygate fuel input at flow-date placement (caiso_citygate_spot_level + caiso_citygate_flow_date, both armed); at Jan-2023's measured $16-18/MMBtu daily spot the marginal-heat-rate SRMC is $150-180/MWh \u2014 exactly where the model prints (max zonal \u03bb $181 in 2023 / $155 in 2024 in those hours). The wedge above that ceiling is the RT premium above same-day fuel cost (deliverability/OFO events, cold-snap WECC-wide import conduct, sub-hourly ramp formation), which has no admissible hourly-LP representation on the inputs in hand.\nIN-MODEL QUEUE EMPTY ON EVERY ROUTE at adoption: offer rungs closed (caiso-131 \u00a710), reserve tiers closed (caiso-144 \u00a7B/\u00a7C, matrix energy_reserve_coopt / reserve_pergen CAISO \u2192 I), overlay refused on measurement (\u00a7D), fuel grain already armed to its measured daily ceiling (\u00a7E). The one unfunded intake that could still make an UNFITTED C3c-2024 trigger reachable is caiso-131 A3 \u2014 the SoCalGas OFO declaration record (nothing in data/raw/ carries it; re-verified caiso-144). This caveat is a measured-input limitation, NOT an open mechanism lane, and is NEVER closable by an offer adder, scarcity adder or any value tuned to the tail (rules 1/13). Precedent: miso101_tempgrain_B price_tail 2023 and neiso61_netrev_margin price_tail 2023/2024, both ledgered and frontier-declared on weaker per-hour evidence than this. CAISO ledger budget at adoption: 0 of 3 non-protective slots used."
+        },
+        {
+          "criterion": "price_tail",
+          "key": "da_diagnostic",
+          "year": 2024,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
+          "model": 0.0,
+          "actual": 52.0,
+          "tol": "not gated",
+          "magnitude": "model 0h vs DA actual 52h (out-of-representation companion)"
+        },
+        {
+          "criterion": "price_tail",
+          "key": null,
+          "year": 2025,
+          "status": "PASS",
+          "classification": null,
+          "metric": "hours RT-expressible LMP > $200/MWh",
+          "model": 0.0,
+          "actual": 8.0,
+          "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
+          "magnitude": "model 0h [energy-only LMP] vs RT actual 8h (small-count |\u0394|\u226410h, >$200)"
+        },
+        {
+          "criterion": "price_tail",
+          "key": "da_diagnostic",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
+          "model": 0.0,
+          "actual": 0.0,
+          "tol": "not gated",
+          "magnitude": "model 0h vs DA actual 0h (out-of-representation companion)"
+        }
+      ]
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "hard": false,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "dispatch_corr",
+          "key": "gas",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas fleet hourly r / NRMSE (CEMS hourly + flat cogen block; 930 NG cell corrupted \u2014 FINDING 2026-07-12)",
+          "model": "r=0.879 nrmse=0.283",
+          "actual": null,
+          "tol": "r\u22650.70, NRMSE\u22640.30",
+          "magnitude": "r=0.879, NRMSE=0.283"
+        },
+        {
+          "criterion": "dispatch_corr",
+          "key": "coal",
+          "year": 2023,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C4 fleet hourly dispatch correlation",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "coal fleet immaterial (<5 TWh); hourly correlation degenerate"
+        },
+        {
+          "criterion": "dispatch_corr",
+          "key": "gas",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas fleet hourly r / NRMSE (CEMS hourly + flat cogen block; 930 NG cell corrupted \u2014 FINDING 2026-07-12)",
+          "model": "r=0.905 nrmse=0.266",
+          "actual": null,
+          "tol": "r\u22650.70, NRMSE\u22640.30",
+          "magnitude": "r=0.905, NRMSE=0.266"
+        },
+        {
+          "criterion": "dispatch_corr",
+          "key": "coal",
+          "year": 2024,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C4 fleet hourly dispatch correlation",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "coal fleet immaterial (<5 TWh); hourly correlation degenerate"
+        },
+        {
+          "criterion": "dispatch_corr",
+          "key": "gas",
+          "year": 2025,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas fleet hourly r / NRMSE (CEMS hourly + flat cogen block; 930 NG cell corrupted \u2014 FINDING 2026-07-12)",
+          "model": "r=0.872 nrmse=0.298",
+          "actual": null,
+          "tol": "r\u22650.70, NRMSE\u22640.30",
+          "magnitude": "r=0.872, NRMSE=0.298"
+        },
+        {
+          "criterion": "dispatch_corr",
+          "key": "coal",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C4 fleet hourly dispatch correlation",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "coal fleet immaterial (<5 TWh); hourly correlation degenerate"
+        }
+      ]
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "hard": true,
+      "status": "PASS",
+      "records": [
+        {
+          "criterion": "governance",
+          "key": null,
+          "year": null,
+          "status": "PASS",
+          "classification": null,
+          "metric": "every lever measured; no residual fit / pinning; exogenous outages",
+          "model": null,
+          "actual": null,
+          "tol": "pass/fail",
+          "magnitude": "THIS BUNDLE IS THE B1 ARM (single-flag delta). caiso-246 session (2026-09-04): the RULE 14 [R-ACCURATE] / RULE 19 [R-ONE-MECH] / RULE 21 [R-DOF] / RULE 25 [R-ISO-SCOPE] COVERAGE repair of the keeper's own designed gas-pricing mechanism. THE OBJECT (PRECOMMIT-caiso246-spot-coverage-2026-09-04.md \u00a70.2, queue item C of caiso-244/245): the CAISO hub-basis overlay covered 9/12 months in 2025 (Sep/Oct/Nov open) against 12/12 in 2023-24, which is what let the F923 plant-level fallback layer show through (caiso-242 \u00a75, caiso-243's object, D3, the autumn-2025 slab). MEASURED FROM THE SOURCE, not inferred: EIA publishes N3050CA3 (CA citygate, monthly) as NA for 2025-09, -10, -11 (evidence data/raw/gas-prices/eia_citygate_CA_monthly.csv, parsed from the fetched xls) while the measured DAILY CA composite citygate spot the keeper prices gas at (caiso_citygate_spot_level, caiso-84) carries 21 / 22 / 12 prints in those months (means 3.24 / 2.87 / 3.20 $/MMBtu; HH 2.97 / 3.20 / 3.79). Under spot_level the survey VALUE is never used where prints exist, so the survey row was a GATE and nothing else \u2014 the coverage gap is a GATE ARTIFACT keyed to a series EIA did not publish, not a data hole. THE ARM: ScenarioConfig.caiso_citygate_spot_coverage (default off; backcast-only overlay field; requires gas_hub_basis_overlay + caiso_citygate_spot_level; CAISO-only) \u2014 data/fuel/hubs.py::_caiso_hub_daily_gas_prices covers a month with measured daily prints of its OWN even when the survey has no basis row, its day series built EXACTLY as every other spot-level month (flow-date staircase / calendar interpolation, +CAISO_CITYGATE_TRANSPORT_ADDER 0.46 layered by the caller); months with neither stay uncovered. NO new constant, NO value chosen, ZERO free parameters. MEASURED PRE-SOLVE, zero LP (_caiso246_coverage_footprint.json): the on-recipe rebuild with the flag ON differs from the keeper rebuild in gas rows x Sep-Nov-2025 hours ONLY -- all 1,453 gas rows / 29,277.8 MW, 0 non-gas rows, 0 cells outside Sep-Nov, 0 rows in 2023 and 2024; capacity-weighted CA gas price Sep 4.2134 -> 3.6353 (fuel-side mc -5.93 $/MWh), Oct 4.3158 -> 3.1858 (-11.26), Nov 5.5714 -> 3.7643 (-16.29); plant 55077's own November row 96.161 -> 3.764 $/MMBtu, so caiso-243's open D3 closes BY CONSEQUENCE (the overlay overwrites the plant layer), reported as a consequence not a purpose; the F923 fallback reaches 0 of 36 training-window months. G-CTRL: form 2 (caiso-240 dispatch identity in the two measured-inert years) under the owner's caiso-241 \u00a7B2 carve-out: no control solved, 2023/2024 must reproduce the keeper at 0.000 TWh per class and 0.000 $/MWh. DIRECTION DISCLOSED BEFORE ANY SOLVE AND NEVER ARGUED FROM (rule 1 [R-STRUCT]): the spot means sit BELOW the F923 state-mean fallback (~4.2 / 4.4 / 4.38) in all three months, so ~29 GW of CA gas is repriced DOWN for Sep-Nov 2025 and C3a-2025 moves DOWN -- the FIFTH consecutive favourable direction in this lane (caiso-241, -242, -243, -246 after caiso-244/245's zero-arm measurements), stated as such; the pre-registered price-leg envelope on the assembled offers is [-3.1376, +0.1849] $/MWh for 2025 and exactly [0, 0] for 2023/2024, and P-3 predicted the measured move lands in [-1.0, -0.2] with NO verdict change in any year (the arm does NOT close C3a-2025, required -1.498). The promotion basis is STRUCTURAL and excludes C3a's verdict in either direction (\u00a74). Form (ii) of the import object was CLOSED AT PHASE A from the committed record (OASIS public bids are masked, no intertie id -- the caiso-150 wall). HOLDOUT: CAISO holds no `complete` and no `final` marker, the spend freeze is ACTIVE, and every read and the one solve stayed inside 2023-2025.",
+          "machine_issues": []
+        }
+      ]
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "hard": true,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "forced_share",
+          "key": "CC_REGULAR",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
+          "model": 0.0634,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "6.3% forced (3.0914 of 48.7493 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL",
+          "year": 2023,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "COAL immaterial (0.0% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "CT_PEAKER",
+          "year": 2023,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "CT_PEAKER immaterial (2.0% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "ST_GAS",
+          "year": 2023,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "ST_GAS immaterial (0.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "hydro",
+          "year": 2023,
+          "status": "PASS",
+          "classification": null,
+          "metric": "hydro energy at binding non-exempt floors (D-2)",
+          "model": 0.0,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "0.0% forced (0.0 of 24.3312 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "CC_REGULAR",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
+          "model": 0.0714,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "7.1% forced (3.2677 of 45.7945 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL",
+          "year": 2024,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "COAL immaterial (0.0% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "CT_PEAKER",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CT_PEAKER energy at binding non-exempt floors (D-2)",
+          "model": 0.0,
+          "actual": null,
+          "tol": "< 15% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "0.0% forced (0.0 of 0.7511 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "ST_GAS",
+          "year": 2024,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "ST_GAS immaterial (0.3% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "hydro",
+          "year": 2024,
+          "status": "PASS",
+          "classification": null,
+          "metric": "hydro energy at binding non-exempt floors (D-2)",
+          "model": 0.0,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "0.0% forced (0.0 of 22.5244 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "CC_REGULAR",
+          "year": 2025,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
+          "model": 0.0915,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "9.2% forced (3.736 of 40.8439 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "COAL immaterial (0.0% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "CT_PEAKER",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "CT_PEAKER immaterial (1.1% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "ST_GAS",
+          "year": 2025,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "ST_GAS immaterial (0.1% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "hydro",
+          "year": 2025,
+          "status": "PASS",
+          "classification": null,
+          "metric": "hydro energy at binding non-exempt floors (D-2)",
+          "model": 0.0,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "0.0% forced (0.0 of 21.2664 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        }
+      ]
+    }
+  },
+  "free_class_score": {
+    "iso": "CAISO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 12,
+      "total": 12
+    },
+    "free": {
+      "pass": 8,
+      "total": 8
+    },
+    "headline": "C1 all 12/12 \u00b7 free 8/8"
+  },
+  "grade_summary": {
+    "scored": 8,
+    "target_grade": 6,
+    "commercial_grade": 0,
+    "ledgered": 1,
+    "fails": 1
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
+    "commercial_band": [],
+    "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+    }
+  },
+  "ledger_entries": [
+    {
+      "criterion": "price_tail",
+      "year": 2023,
+      "metric": "hours RT-expressible LMP > $200/MWh (C3c scarcity tail, actual RT hourly gate; DA = report-only diagnostic)",
+      "magnitude": "model 0 h vs actual RT 47 h > $200/MWh (re-measured on the caiso-246 B1 arm)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (probabilistic real-time scarcity premium above the measured same-day fuel-cost ceiling \u2014 outside hourly perfect-foresight LP representation; in-model queue empty on every route)",
+      "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. caiso-159 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-153 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-157 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-151 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-153 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-148 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-151 creates no new caveat and spends no new ledger slot. CARRIED FORWARD UNCHANGED from the caiso-147 keeper's ledger by caiso-148 (2026-07-31, single-flag nuclear_unit_availability delta). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. CARRIED FORWARD UNCHANGED by caiso-147 (2026-07-31, single-flag measured_chp_heat_rates delta on the caiso-146 keeper recipe). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. ADOPTED LEDGER (owner, 2026-07-30 \u2014 caiso-131 \u00a79 disposition A4, taken on the caiso-144 evidence after the in-model lever queue closed on EVERY route). CAISO's C3c residual is the same object the MISO and NEISO ledgers already name: the probabilistic real-time scarcity premium a deterministic perfect-foresight hourly LP does not contain. The MISO Scarcity Pricing White Paper (Mar-2024 \u00a73.2.1) anatomy applies directly \u2014 a real ISO's tail price is an administrative/probabilistic construct over 10-30 min net-load and outage uncertainty, not an emergent marginal-cost outcome \u2014 and CAISO now carries its own hour-level corroboration, measured on the keeper's committed bytes (FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md, instrument scripts/probes/_caiso144_coopt_dormancy_gates.py, no LP, re-runs in seconds on any bundle):\n  \u2022 \u00a7C RESERVE SLACK IN REALITY'S OWN TAIL HOURS \u2014 in the actual RT>$200 hours the completed in-LP reserve co-optimization's deliverable family-level slack is at minimum +1,568 MW (2023) / +1,632 MW (2024), mean +10,246 / +10,486 MW, with storage RS excluded from the supply tier (so each figure is a strict lower bound). No reserve co-optimization at ANY completion level can price scarcity while the model's own deliverable-reserve state there is slack by 1.6-10.5 GW. The armed design is provably inert on this keeper (\u00a7B: strictly positive slack in all 26,280 h at every supply tier \u21d2 zero shortfall and zero reserve duals at every optimum), so the in-LP route is closed as a matter of the model's STATE, not of mechanism granularity \u2014 the rule-19 [R-ONE-MECH] scarcity-owner question is fully adjudicated on the in-LP side.\n  \u2022 \u00a7D OVERLAY TIMING \u2014 the caiso-137b charter question (should the scored backcast lane carry a scarcity-pricing overlay at all?) is ANSWERED NEGATIVE BY MEASUREMENT, not refused on admissibility. Reproducing the forecast-path LOLP overlay on the keeper's committed bytes with r_online deliberately UNDER-stated (an over-estimate of the adder), its >$200 settle hours overlap reality's tail in 1 of 47 hours (2023) and 0 of 35 (2024) \u2014 \u22641 hour in 90 over three years. It fires Apr-Nov when the MODEL is tight; reality was tight on winter mornings. Wiring it into the scored lane closes nothing and invents a mis-timed tail.\n  \u2022 \u00a7E WHAT THE TAIL ACTUALLY IS \u2014 a WINTER-MORNING fuel/cold-snap tail already priced to its measured input ceiling. The keeper carries the measured daily-spot citygate fuel input at flow-date placement (caiso_citygate_spot_level + caiso_citygate_flow_date, both armed); at Jan-2023's measured $16-18/MMBtu daily spot the marginal-heat-rate SRMC is $150-180/MWh \u2014 exactly where the model prints (max zonal \u03bb $181 in 2023 / $155 in 2024 in those hours). The wedge above that ceiling is the RT premium above same-day fuel cost (deliverability/OFO events, cold-snap WECC-wide import conduct, sub-hourly ramp formation), which has no admissible hourly-LP representation on the inputs in hand.\nIN-MODEL QUEUE EMPTY ON EVERY ROUTE at adoption: offer rungs closed (caiso-131 \u00a710), reserve tiers closed (caiso-144 \u00a7B/\u00a7C, matrix energy_reserve_coopt / reserve_pergen CAISO \u2192 I), overlay refused on measurement (\u00a7D), fuel grain already armed to its measured daily ceiling (\u00a7E). The one unfunded intake that could still make an UNFITTED C3c-2024 trigger reachable is caiso-131 A3 \u2014 the SoCalGas OFO declaration record (nothing in data/raw/ carries it; re-verified caiso-144). This caveat is a measured-input limitation, NOT an open mechanism lane, and is NEVER closable by an offer adder, scarcity adder or any value tuned to the tail (rules 1/13). Precedent: miso101_tempgrain_B price_tail 2023 and neiso61_netrev_margin price_tail 2023/2024, both ledgered and frontier-declared on weaker per-hour evidence than this. CAISO ledger budget at adoption: 0 of 3 non-protective slots used.",
+      "carried_from": "2026-08-16-caiso-197-w2-r5 -> 2026-08-15-caiso-196-e1-elsegundo -> 2026-08-09-caiso-188-d1-micseam -> 2026-08-09-caiso-184-c1-lpbasis -> 2026-08-02-caiso157-partition-restore-b -> 2026-07-31-caiso153-reid-b -> 2026-07-31-caiso-151-firm-selfsched -> 2026-07-31-caiso148-nuclear-availability (owner ledger, caiso-145)"
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2024,
+      "metric": "hours RT-expressible LMP > $200/MWh (C3c scarcity tail, actual RT hourly gate; DA = report-only diagnostic)",
+      "magnitude": "model 0 h vs actual RT 35 h > $200/MWh (re-measured on the caiso-246 B1 arm)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (probabilistic real-time scarcity premium above the measured same-day fuel-cost ceiling \u2014 outside hourly perfect-foresight LP representation; in-model queue empty on every route)",
+      "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. caiso-159 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-153 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-157 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-151 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-153 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-148 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-151 creates no new caveat and spends no new ledger slot. CARRIED FORWARD UNCHANGED from the caiso-147 keeper's ledger by caiso-148 (2026-07-31, single-flag nuclear_unit_availability delta). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. CARRIED FORWARD UNCHANGED by caiso-147 (2026-07-31, single-flag measured_chp_heat_rates delta on the caiso-146 keeper recipe). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. ADOPTED LEDGER (owner, 2026-07-30 \u2014 caiso-131 \u00a79 disposition A4, taken on the caiso-144 evidence after the in-model lever queue closed on EVERY route). CAISO's C3c residual is the same object the MISO and NEISO ledgers already name: the probabilistic real-time scarcity premium a deterministic perfect-foresight hourly LP does not contain. The MISO Scarcity Pricing White Paper (Mar-2024 \u00a73.2.1) anatomy applies directly \u2014 a real ISO's tail price is an administrative/probabilistic construct over 10-30 min net-load and outage uncertainty, not an emergent marginal-cost outcome \u2014 and CAISO now carries its own hour-level corroboration, measured on the keeper's committed bytes (FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md, instrument scripts/probes/_caiso144_coopt_dormancy_gates.py, no LP, re-runs in seconds on any bundle):\n  \u2022 \u00a7C RESERVE SLACK IN REALITY'S OWN TAIL HOURS \u2014 in the actual RT>$200 hours the completed in-LP reserve co-optimization's deliverable family-level slack is at minimum +1,568 MW (2023) / +1,632 MW (2024), mean +10,246 / +10,486 MW, with storage RS excluded from the supply tier (so each figure is a strict lower bound). No reserve co-optimization at ANY completion level can price scarcity while the model's own deliverable-reserve state there is slack by 1.6-10.5 GW. The armed design is provably inert on this keeper (\u00a7B: strictly positive slack in all 26,280 h at every supply tier \u21d2 zero shortfall and zero reserve duals at every optimum), so the in-LP route is closed as a matter of the model's STATE, not of mechanism granularity \u2014 the rule-19 [R-ONE-MECH] scarcity-owner question is fully adjudicated on the in-LP side.\n  \u2022 \u00a7D OVERLAY TIMING \u2014 the caiso-137b charter question (should the scored backcast lane carry a scarcity-pricing overlay at all?) is ANSWERED NEGATIVE BY MEASUREMENT, not refused on admissibility. Reproducing the forecast-path LOLP overlay on the keeper's committed bytes with r_online deliberately UNDER-stated (an over-estimate of the adder), its >$200 settle hours overlap reality's tail in 1 of 47 hours (2023) and 0 of 35 (2024) \u2014 \u22641 hour in 90 over three years. It fires Apr-Nov when the MODEL is tight; reality was tight on winter mornings. Wiring it into the scored lane closes nothing and invents a mis-timed tail.\n  \u2022 \u00a7E WHAT THE TAIL ACTUALLY IS \u2014 a WINTER-MORNING fuel/cold-snap tail already priced to its measured input ceiling. The keeper carries the measured daily-spot citygate fuel input at flow-date placement (caiso_citygate_spot_level + caiso_citygate_flow_date, both armed); at Jan-2023's measured $16-18/MMBtu daily spot the marginal-heat-rate SRMC is $150-180/MWh \u2014 exactly where the model prints (max zonal \u03bb $181 in 2023 / $155 in 2024 in those hours). The wedge above that ceiling is the RT premium above same-day fuel cost (deliverability/OFO events, cold-snap WECC-wide import conduct, sub-hourly ramp formation), which has no admissible hourly-LP representation on the inputs in hand.\nIN-MODEL QUEUE EMPTY ON EVERY ROUTE at adoption: offer rungs closed (caiso-131 \u00a710), reserve tiers closed (caiso-144 \u00a7B/\u00a7C, matrix energy_reserve_coopt / reserve_pergen CAISO \u2192 I), overlay refused on measurement (\u00a7D), fuel grain already armed to its measured daily ceiling (\u00a7E). The one unfunded intake that could still make an UNFITTED C3c-2024 trigger reachable is caiso-131 A3 \u2014 the SoCalGas OFO declaration record (nothing in data/raw/ carries it; re-verified caiso-144). This caveat is a measured-input limitation, NOT an open mechanism lane, and is NEVER closable by an offer adder, scarcity adder or any value tuned to the tail (rules 1/13). Precedent: miso101_tempgrain_B price_tail 2023 and neiso61_netrev_margin price_tail 2023/2024, both ledgered and frontier-declared on weaker per-hour evidence than this. CAISO ledger budget at adoption: 0 of 3 non-protective slots used.",
+      "carried_from": "2026-08-16-caiso-197-w2-r5 -> 2026-08-15-caiso-196-e1-elsegundo -> 2026-08-09-caiso-188-d1-micseam -> 2026-08-09-caiso-184-c1-lpbasis -> 2026-08-02-caiso157-partition-restore-b -> 2026-07-31-caiso153-reid-b -> 2026-07-31-caiso-151-firm-selfsched -> 2026-07-31-caiso148-nuclear-availability (owner ledger, caiso-145)"
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2025,
+      "metric": "system load-weighted mean LMP $/MWh (C3a, vs RT load-weighted)",
+      "magnitude": "RE-MEASURED on caiso200_h1_memberpanel at the caiso-200 promotion (2026-08-17), from the bundle's own committed scored records via calibration_verdict \u2014 no solve: system load-weighted mean LMP 39.82 $/MWh vs RT actual 34.42 (+15.7 %, outside the +/-10 % band). The carried magnitude is REFRESHED against this bundle. INERT UNDER THE RUBRIC (v3.1+): LEDGERABLE_CRITERIA is price_tail alone, so this entry reclassifies nothing and C3a's FAIL stands at full magnitude; carried as the historical record. CARRIED MAGNITUDE, verbatim from 2026-08-16-caiso-197-w2-r5: RE-MEASURED on caiso197_w2_r5 at the caiso-197 promotion (2026-08-16), from the bundle's own committed scored records via calibration_verdict \u2014 no solve: system load-weighted mean LMP 39.78 $/MWh vs RT actual 34.42 (+15.6 %, outside the +/-10 % band). The carried magnitude is REFRESHED against this bundle. INERT UNDER THE RUBRIC (v3.1+): LEDGERABLE_CRITERIA is price_tail alone, so this entry reclassifies nothing and C3a's FAIL stands at full magnitude; carried as the historical record. CARRIED MAGNITUDE, verbatim from 2026-08-15-caiso-196-e1-elsegundo: RE-MEASURED on caiso196_e1_elsegundo at the caiso-196 promotion (2026-08-16), from the bundle's own committed scored records via calibration_verdict \u2014 no solve: system load-weighted mean LMP 39.41 $/MWh vs RT actual 34.42 (+14.5 %, outside the +/-10 % band). The carried magnitude is REFRESHED against this bundle. INERT UNDER RUBRIC v3.1: LEDGERABLE_CRITERIA is price_tail alone, so this entry reclassifies nothing and C3a's FAIL stands at full magnitude; it is carried as the historical record. CARRIED MAGNITUDE, verbatim from 2026-08-09-caiso-188-d1-micseam: RE-MEASURED on caiso188_d1_micseam by caiso-189 (2026-08-11), from the bundle's own committed scored records via calibration_verdict \u2014 no solve: system load-weighted mean LMP 38.87 $/MWh vs RT actual 34.42 (+12.9 %, outside the +/-10 % band). The carried magnitude is REFRESHED against this bundle. INERT UNDER RUBRIC v3.1: LEDGERABLE_CRITERIA is price_tail alone, so this entry reclassifies nothing and C3a's FAIL stands at full magnitude; it is carried as the historical record. CARRIED MAGNITUDE, verbatim from 2026-08-09-caiso-184-c1-lpbasis: RE-MEASURED on caiso166_measured_loss_zones: load-weighted lambda 39.3543 $/MWh vs the same-HEAD control's 38.5613 (+0.7930, +2.0564% of level). THIS ARM IS NOT A C3a ARM AND DOES NOT CLAIM TO BE ONE: PRECHECK-caiso166 \u00a77 registered BEFORE the solve that it is a rule-14 measured-input upgrade kept regardless of the backcast, bounded ex ante at the measured pocket dMCL. The caveat remains the OWNER's, on the caiso-141 A2 non-public hourly pumped-storage data wall.",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (no public hourly pumped-storage \u2194 conventional-hydro split exists for CAISO; the water-state input the residual requires is unmeasurable on public data \u2014 caiso-141 wall)",
+      "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. caiso-159 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-153 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-157 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-151 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-153 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-148 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-151 creates no new caveat and spends no new ledger slot. CARRIED FORWARD UNCHANGED from the caiso-147 keeper's ledger by caiso-148 (2026-07-31, single-flag nuclear_unit_availability delta). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. CARRIED FORWARD UNCHANGED by caiso-147 (2026-07-31, single-flag measured_chp_heat_rates delta on the caiso-146 keeper recipe). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. ADOPTED LEDGER (owner, 2026-07-30 \u2014 disposition taken on the caiso-141 A2 data wall after caiso-140/142/143 emptied the in-model lever queue). The +10.9% is a SEPTEMBER-DECEMBER BELLY/NIGHT price-level residual whose identified driver is the model's unrestrained pumped-storage pumping: FINDING-caiso140 \u00a7B measures a +793 MW belly wedge from a 2,078 MW PS fleet the LP dispatches on economics alone. Closing it needs the hourly water state, and that input is WALLED:\n  \u2022 A2 (the identified fix) \u2014 FINDING-caiso141-water-intake-walled-2026-07-30.md surveyed six public source families to a verdict on LIVE bytes (instrument scripts/probes/_caiso141_water_source_survey.py, committed so the wall is re-checkable the day a source appears). NO public source anywhere separates CAISO pumped storage from conventional hydro at hourly grain for 2023-2025: every hourly hydro series CAISO or EIA publishes is the same single PS-NET EMS feed, and Helms (1,053 MW, 50.7% of the fleet) plus Eastwood (199.8 MW) \u2014 60.3% of the fleet together \u2014 have NO public hourly telemetry at all. The charter's own stop-if-walled branch fired: no intake, no mechanism, no solve, and explicitly NO fabricated shape (rule 13 [R-MEASURED] \u2014 a shaped PS profile chosen to move the residual is a fitted answer key, not an input).\n  \u2022 A1 (per-plant own-p25 committed-gas ride-through floor) is arithmetically insufficient: +757/+304 MW belly/night delivers \u2264 \u22120.13 of the \u22120.31 the gate needs \u2014 under half \u2014 and is DO-NOT-REDO standalone (caiso-140 \u00a7D/\u00a7G).\n  \u2022 A3 (the P1 export-sink seam) is REJECTED ON SIGN, ex ante and then by solved A/B: an absorption column can only ADD demand, so it can only weakly RAISE \u03bb, and the export leg prices below the plateau's own marginal-import \u03bb by the corridor's OATT wheel + 2\u03b5 (caiso-142 \u00a7C/\u00a7D/\u00a7H; the restored outlet is node-level resale, not export \u2014 \u00a7J). The seam's real infrastructure defect was fixed flag-gated and default-off (caiso_p1_export_sink_seam). caiso-143 closes the follow-on lane: the node-level constraint is algebraically redundant with the corridor group's limit_dn AND a sound sink is not LP-representable (the soundness set is non-convex; the tightest linear surrogate reduces to F + I_econ \u2264 0, infeasible against the 11.7 + 15.6 TWh must-flow block), and the export netback price is NOT IDENTIFIABLE without a fitted value (PNW p50 $4.74 vs the import basis's $1.25, $7.70-10.48 season/depth cell range, 2023 sign flip; DSW stable but wrong sign \u2014 CA clears ABOVE the raw hub in 62-72% of real DSW net-export hours, so hub \u2212 \u03b5 under-prices that outlet by ~$4.4).\nThe whole export/absorption family is DO-NOT-REDO for this gate \u2014 caiso-142 \u00a7H generalises the sign argument to every basis and bound. What remains is owner-level: land NON-PUBLIC hourly PS data (the only unfitted path), or accept the limitation. The owner accepted it here, on the nyiso-97-style diagnosed-unclosed precedent. Note the standing interaction recorded at caiso-131 \u00a78: no C3c mechanism may later be re-opened that would spend C3a-2025's negative headroom \u2014 this ledger does not license one. Never closable by a price adder, haircut or any value tuned to the level residual (rules 1/13).",
+      "carried_from": "2026-08-16-caiso-197-w2-r5 -> 2026-08-15-caiso-196-e1-elsegundo -> 2026-08-09-caiso-188-d1-micseam -> 2026-08-09-caiso-184-c1-lpbasis -> 2026-08-02-caiso157-partition-restore-b -> 2026-07-31-caiso153-reid-b -> 2026-07-31-caiso-151-firm-selfsched -> 2026-07-31-caiso148-nuclear-availability (owner ledger, caiso-145)"
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2024,
+      "metric": "load-weighted mean LMP vs measured RT actuals (C3a, +/-10%)",
+      "magnitude": "RE-MEASURED on caiso200_h1_memberpanel at the caiso-200 promotion (2026-08-17), from the bundle's own committed scored records via calibration_verdict \u2014 no solve: system load-weighted mean LMP 39.07 $/MWh vs RT actual 34.65 (+12.8 %, outside the +/-10 % band). The carried magnitude is REFRESHED against this bundle. INERT UNDER THE RUBRIC (v3.1+): LEDGERABLE_CRITERIA is price_tail alone, so this entry reclassifies nothing and C3a's FAIL stands at full magnitude; carried as the historical record. CARRIED MAGNITUDE, verbatim from 2026-08-16-caiso-197-w2-r5: RE-MEASURED on caiso197_w2_r5 at the caiso-197 promotion (2026-08-16), from the bundle's own committed scored records via calibration_verdict \u2014 no solve: system load-weighted mean LMP 38.83 $/MWh vs RT actual 34.65 (+12.1 %, outside the +/-10 % band). The carried magnitude is REFRESHED against this bundle. INERT UNDER THE RUBRIC (v3.1+): LEDGERABLE_CRITERIA is price_tail alone, so this entry reclassifies nothing and C3a's FAIL stands at full magnitude; carried as the historical record. CARRIED MAGNITUDE, verbatim from 2026-08-15-caiso-196-e1-elsegundo: RE-MEASURED on caiso196_e1_elsegundo at the caiso-196 promotion (2026-08-16), from the bundle's own committed scored records via calibration_verdict \u2014 no solve: system load-weighted mean LMP 38.72 $/MWh vs RT actual 34.65 (+11.7 %, outside the +/-10 % band). The carried magnitude is REFRESHED against this bundle. INERT UNDER RUBRIC v3.1: LEDGERABLE_CRITERIA is price_tail alone, so this entry reclassifies nothing and C3a's FAIL stands at full magnitude; it is carried as the historical record. CARRIED MAGNITUDE, verbatim from 2026-08-09-caiso-188-d1-micseam: RE-MEASURED on caiso188_d1_micseam by caiso-189 (2026-08-11), from the bundle's own committed scored records via calibration_verdict \u2014 no solve: system load-weighted mean LMP 38.27 $/MWh vs RT actual 34.65 (+10.4 %, outside the +/-10 % band). The carried magnitude is REFRESHED against this bundle. INERT UNDER RUBRIC v3.1: LEDGERABLE_CRITERIA is price_tail alone, so this entry reclassifies nothing and C3a's FAIL stands at full magnitude; it is carried as the historical record. CARRIED MAGNITUDE, verbatim from 2026-08-09-caiso-184-c1-lpbasis: MEASURED on caiso166_measured_loss_zones: load-weighted lambda 38.5678 $/MWh vs the same-HEAD control's 37.8801 (+0.6877, +1.8155% of level), moving C3a from +9.5% (PASS) to +11.5% (out of the +/-10% band). The DIRECTION IS PHYSICALLY OBLIGATORY: losses consume MWh, so representing them must raise the delivered price level. The arm did not CREATE a high bias \u2014 CAISO's mean LMP was ALREADY +9.5% hot against RT with the control sitting only 0.5pp inside the band, and the measured losses pushed a pre-existing bias across a threshold it was already touching. Against CAISO's own DAY-AHEAD basis \u2014 the basis this surface is DERIVED on \u2014 the control sits -0.1% and the arm +1.8%, i.e. the arm is closer to DA than the control is to RT (DA-RT premium +$3.30). No compensating adder, haircut or offset was added.",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (CAISO price level runs hot against RT for reasons outside this lane; the standing owner caveat is the caiso-141 A2 non-public hourly pumped-storage data wall, which no in-model lever can close without an outcome pin)",
+      "ledgered_by": "OWNER, 2026-08-04 \u2014 results/calibration/AMENDMENT-caiso166-S3-recharter-2026-08-04.md \u00a74",
+      "carried_from": "2026-08-16-caiso-197-w2-r5 -> 2026-08-15-caiso-196-e1-elsegundo -> 2026-08-09-caiso-188-d1-micseam -> 2026-08-09-caiso-184-c1-lpbasis"
+    }
+  ]
+}
