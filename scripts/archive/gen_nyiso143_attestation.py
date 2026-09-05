@@ -36,7 +36,7 @@ import json
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parent.parent.parent
 INCUMBENT = REPO / "results" / "calibration" / "nyiso142_stackdup"
 
 _ATTESTED_BY = (

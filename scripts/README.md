@@ -61,6 +61,28 @@ needed no action — it was already in `archive/`, which is why
 `scripts/data/derive_caiso_supply_consistent_demand.py` already cites the
 `archive/` path.
 
+**Keeper-only rotation, 2026-09-05.** Owner instruction: on the backcast side
+only KEEPER run data is retained. 53 top-level `gen_*_attestation.py`
+generators rotated to `archive/` in one pass (`git mv` + `parents[1]` →
+`parents[2]` / `parent.parent` → `parent.parent.parent` re-anchoring; the
+MISO chain generators use cwd-relative `results/calibration/...` paths and
+needed no edit). The keep-set was re-derived from
+`frontend/data/backcast/keepers/<ISO>.json` at execution time and is **5**:
+`gen_caiso246_attestation.py` (caiso-246 keeper), `gen_miso213_attestation.py`
+(miso-213), `gen_neiso99_attestation.py` (neiso-99),
+`gen_nyiso189_attestation.py` (nyiso-189) and
+`gen_pjm163_inputclock_attestation.py` (writes the pjm-162 keeper's
+attestation). ERCOT's two-config keeper (ercot-248, composed from ercot-234 /
+ercot-236) has no top-level generator, so every `gen_ercot*` rotated. The
+same prune deleted every unmapped solve-output bundle under
+`results/calibration/` (the NYISO same-HEAD controls, the caiso-224 /
+miso-170 pairs, and the superseded caiso-231 / miso-198 / neiso-97 /
+nyiso-186 / nyiso-192 bundles) and emptied
+`check_registry_payload_parity.KEEP_REQUIRED_UNMAPPED_BUNDLES`, so the
+retained generators' G-CONTROL legs are no longer recomputable against a
+control bundle — the committed `calibration_attestation.json` in each keeper
+bundle is the record.
+
 ## Bootstrap & shared CLI helpers
 
 `market_sim` is always importable (editable install), but the `scripts`

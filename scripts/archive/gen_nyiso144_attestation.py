@@ -44,7 +44,7 @@ import json
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parent.parent.parent
 INCUMBENT = REPO / "results" / "calibration" / "nyiso143_n11tsl_arm"
 LAYUP_CSV = REPO / "data/raw/_processed-legacy/campd_bridge_layup_exclusions_NYISO.csv"
 

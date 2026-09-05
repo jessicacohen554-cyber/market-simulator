@@ -31,7 +31,7 @@ import json
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parent.parent.parent
 INCUMBENT = REPO / "results" / "calibration" / "nyiso140_exclusion_arm"
 
 _ATTESTED_BY = "nyiso-142 arm (Astoria CAMPD stack-duplication data correction)"

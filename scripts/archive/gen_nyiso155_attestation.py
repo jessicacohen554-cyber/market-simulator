@@ -29,7 +29,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parent.parent.parent
 KEEPER = REPO / "results" / "calibration" / "nyiso152_armSE"
 CONTROL = REPO / "results" / "calibration" / "nyiso155_hydro_control"
 ARM = REPO / "results" / "calibration" / "nyiso155_hydro_repair"

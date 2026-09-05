@@ -19,7 +19,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
 KEEPER = REPO / "results" / "calibration" / "miso132_ccmin_B"
 CONTROL = REPO / "results" / "calibration" / "miso148_basis_A"
 ARM = REPO / "results" / "calibration" / "miso148_basis_B"

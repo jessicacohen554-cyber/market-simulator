@@ -27,7 +27,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
 SRC = REPO / "results/calibration/miso202_unitclip_B/calibration_attestation.json"
 CONTROL = REPO / "results/calibration/miso210_control_A"
 ARM = REPO / "results/calibration/miso210_clock_B"

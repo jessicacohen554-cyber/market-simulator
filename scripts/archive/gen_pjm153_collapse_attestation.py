@@ -43,7 +43,7 @@ import argparse
 import json
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
 CAL = REPO / "results" / "calibration"
 INCUMBENT = CAL / "pjm151_seam_B"
 ARM = CAL / "pjm152_collapse_A"
