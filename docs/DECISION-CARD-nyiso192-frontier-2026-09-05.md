@@ -37,7 +37,7 @@ that cut against the first half. This session adjudicated every one of them.
 | C3a-2025 −8.3 % | **OWNER-HELD** (DECISION-CARD-nyiso148 Q1, pending) |
 | Cell G `scuc_load_pocket_commitment`; CT deficit | **INADMISSIBLE-BLOCKED** (nyiso-97 §5; AORR Leg 2 owner-executable) |
 | D-2 / C8 grain under-count | **OWNER-HELD (scorer lane) — NOW MEASURED on the current keeper:** `ST_GAS` forced **0.393 / 0.414 / 0.305** at unit grain vs 0.197 / 0.236 / 0.183 plant-grain and a 0.30 cap |
-| Astoria merit-panel stack-duplicate defect | **ADJUDICATED — A/B-solved, YOUR CALL (Q40 below):** the repair moves the whole steam fleet's availability (not Astoria alone); every pre-registered prediction held; C2 / C3a / C3b / C8 do not flip (C3a-2025 −8.3 → −7.3 %); **C1-2024 `CC_REGULAR` flips PASS → FAIL (+3.33 → +3.68 TWh, +3.0 pp)** so the arm reads NOT-YET; structural integrity better in 2024 / 2025, worse in 2023 |
+| Astoria merit-panel stack-duplicate defect | **ADJUDICATED — A/B-solved, YOUR CALL (nyiso192-Q1 below):** the repair moves the whole steam fleet's availability (not Astoria alone); every pre-registered prediction held; C2 / C3a / C3b / C8 do not flip (C3a-2025 −8.3 → −7.3 %); **C1-2024 `CC_REGULAR` flips PASS → FAIL (+3.33 → +3.68 TWh, +3.0 pp)** so the arm reads NOT-YET; structural integrity better in 2024 / 2025, worse in 2023 |
 | C3c | **LEDGERED** |
 | Winter locational premium / congestion gradient / CC availability / `CC_CHP` floor / un-dispatched in-the-money `ST_GAS` / Ravenswood HR / Astoria + Bethlehem identities / reproducibility / AS reference / loss surface / PAR / hydro repair | **CLOSED or REJECTED** on their own records (assessment rows 12–21) |
 | Zeltmann cap note; parasitic factors; v2 frozen rows | **OBSERVATIONS**, no admissible lever named, immaterial |
@@ -51,10 +51,10 @@ enumeration found was solved in this session; the two remaining observations
 name no admissible lever and move no gate. **But a declaration is NOT
 recommended now**, because (1) the keeper's CALIBRATED limb rests on a C8 the
 committed scorer's own mask does not reproduce at unit grain (0.393 / 0.414 /
-0.305 vs 0.30), and (2) the last adjudicated lever awaits your call (Q40). A
+0.305 vs 0.30), and (2) the last adjudicated lever awaits your call (nyiso192-Q1). A
 frontier declared over either would repeat the nyiso-130 / Q5-W pattern.
 
-**Q40 — the Astoria-panel arm** (`2026-09-05-nyiso-192-astoria-panel`, NOT-YET on
+**nyiso192-Q1 — the Astoria-panel arm** (`2026-09-05-nyiso-192-astoria-panel`, NOT-YET on
 C1-2024 + C3c-not-lone; the repaired extract bundle-local; keeper unchanged):
 * **(i) Promote under the standing formula** (structure over gates): the accurate
   input; C3a-2025 improves a full point; Ravenswood / Arthur Kill 2024 and
@@ -73,6 +73,22 @@ C1-2024 + C3c-not-lone; the repaired extract bundle-local; keeper unchanged):
   acceptance recorded where the rubric lives, so the determination reads
   CALIBRATED-with-an-accepted-miss rather than NOT-YET. This is a rubric act,
   not a lane act, and is listed only because the evidence supports it.
+
+> **STATUS AT nyiso-193 (2026-09-05, later the same day) — read before §4.** (1) **Q39 WAS
+> RULED before this card reached you**: capx ledger §0ah.3 / §3, r#37, on card C-10 — option
+> A, *"RE-DECLARE FRONTIER ON nyiso-189 (both instruments)"* — and executed by records lane
+> D56-R2 (`docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`): `frontier` is
+> DECLARED on `2026-09-05-nyiso-189-steam-identity` at `origin/main`, `frontier_basis` names
+> it, and r#38's card C-14 (Q45) authorised the NYISO §2.1b campaign on that footing. §3's
+> "not recommended now" therefore stands as the lane's recommendation of record, overtaken by
+> the owner's act; the two conditions it named (the D-2 grain, §2 row 9; the arm, below) are
+> now conditions on the DECLARED frontier's durability rather than on a pending declaration.
+> (2) The arm question below was labelled "Q40" in this card's first version; the ledger's
+> Q40 is card C-11 (MISO). It is re-labelled **nyiso192-Q1** everywhere and remains UNRULED.
+> (3) The "fourteen historical payloads" records item is **MOOT**: the r#38 keeper-only site
+> prune (commit `4b7a515e`) removed every non-keeper NYISO payload from the dashboard; the
+> only NYISO payloads left are the keeper (re-rendered on the repaired instrument) and the
+> arm (rendered on it).
 
 ## 4. THE OPTIONS
 
