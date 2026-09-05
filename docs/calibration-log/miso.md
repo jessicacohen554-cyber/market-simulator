@@ -11564,3 +11564,81 @@ the plant's own delivered cost at the market's own price and is unreachable by a
 mechanism; this family could address at most bucket C and part of bucket A.
 
 * Next number: **miso-216**.
+
+## miso-216 (2026-09-05) — THE GAS-OFFER MARGIN ANCHOR'S BASIS/CLASS GRAIN: **no grain dominates**, the registered anchor is within **0.25–1.24 %** of the best scalar that exists on the two material classes in 2023–2024, and **87.8–99.5 % of the distortion is irreducible by ANY scalar** — it is the fixed-margin FORM's footprint, not the anchor's location; **RECOMMENDATION: NO CHANGE**, miso-215's §4c reading softened against interest and its anchor prerequisite **DISCHARGED**; nothing armed, nothing minted, zero solve
+
+**Keeper UNCHANGED at `2026-09-05-miso-213-layering`**, NOT-YET on C3a-2025 alone (−11.747 %),
+C3c ledgered 3/3, C6 attested 41/2. **No `ScenarioConfig` field, no registry entry, no matrix
+row, no solve, no cell verdict changed — an OWNER PACKET, not a lever.** PREREG
+`PREREG-miso216-anchor-basis-grain-2026-09-05.md` pushed BLIND at `9fcd69cd`; record
+`FINDING-miso216-anchor-basis-grain-2026-09-05.md`; probe
+`scripts/probes/_miso216_anchor_basis_grain_phase0.py` → `_miso216_anchor_basis_grain.json`.
+Rule 22: 2023–2025 only. Footing PASSED exactly (`CT_PEAKER` econ-band markup 3.9059 in all
+three years, 65,907.1 MW gas capacity), which is what proves the T-1 re-point landed on the
+keeper and not the miso-210 control.
+
+**The grains, priced.** (a) status quo ISO `_gas_series` **3.0492**; (b) fleet capacity-hour
+MEAN **3.9736**; (c) fleet capacity-hour MEDIAN **3.1425**; (d) per-CLASS (`CT_PEAKER` mean
+4.7197 / median 3.4275, `ST_GAS` 4.3196 / 3.1725, `CC_REGULAR` 3.3539 / 2.9575); (e)
+energy-weighted fleet mean **3.2417**. The fleet capacity-hour MEDIAN sits **0.093** from the
+registered anchor and the 2023 energy-weighted fleet mean lands within **0.0017** of it — the
+ISO series tracks where the fleet's energy and its typical hour actually sit, and the gap
+opens only on the capacity-hour MEAN, pulled by a fat right tail on the peaking and steam
+classes.
+
+**The decisive measurement: the best scalar that exists**, grid-searched 1.50–9.00 at 0.02
+rather than picked from a statistic. `CT_PEAKER`'s cap-weighted mean ABSOLUTE deviation from
+the registered multiplier form is **$21.55 / 15.64 / 15.76 per MWh** at the registered anchor
+against a floor of **$21.29 / 15.57 / 13.84** — **87.8–99.5 % survives the best possible
+choice**, because it is driven by the class's own delivered-fuel dispersion (p25 2.78 → p75
+4.67, mean 5.22 in 2023). Against `CT_PEAKER`'s own offer of **$70.65 / 57.97 / 66.04** that
+residue is **24–30 % of the offer**. The largest saving available anywhere is **$1.92/MWh**.
+**K-3 FIRES — no grain dominates on both L1 and L2**, and L1 is minimized at the weighted
+MEDIAN by construction (disclosed before use, which is why all three metrics are reported).
+
+**The one axis on which the anchor IS wrong: signed bias.** The reformed `CT_PEAKER` offer
+sits **−$19.51 / −10.26 / −15.37 per MWh** below the registered form in every year (`ST_GAS`
+−2.16 / −3.57 / −4.84; `CC_REGULAR` ≈ 0). Only the per-class MEAN grain removes it, and that
+grain is the worst available on L1/L2 for the same class and the most costly: every
+anchor-raising grain removes `CT_PEAKER` screen energy in 3 of 3 years, −0.46 TWh (fleet
+median) to −6.9 TWh (class mean), on a class 5–35 % under actual and with C8
+`CT_PEAKER`-2023 already 0.2044 over the 0.15 budget. `CC_REGULAR`'s reach never exceeds
+0.121 TWh, so the pre-registered C1 face is **not** materially exposed.
+
+**Recommendation: NO CHANGE**, with the strongest counter-argument on the packet's face — the
+bias is real, systematic and one-directional, and under rule 1 "correcting it costs 6 TWh" is
+not a reason to keep a wrong structure. The L1/L2 reading (the correction moves `CT_PEAKER`
+*away* from the registered form on a typical hour in two of three years) is what makes the
+bias a symptom of the FORM rather than the anchor; **if the owner reads the identity as a
+statement about the offer's LEVEL rather than its typical hour, the recommendation inverts.**
+
+**Against this lane's own previous session.** miso-215 §4c reported the armed `CT_PEAKER`
+margin as installed 35–52 % below what the identity requires. That arithmetic is right and
+**the reading was too strong**: no scalar recovers more than **12.2 %** of the deviation on
+that class. miso-215 found a real bias and over-attributed it to the grain. **Its anchor
+prerequisite is DISCHARGED** and the `phys_*` coverage-gap arm is unblocked on this ground.
+
+**Cross-ISO, COUNTED not tested, filling no other shard:** 5 of 6 ISOs are basis-grain
+exposed; **ERCOT alone is not** (`gas_plant_monthly_fuel_pricing=(iso != "ERCOT")`). Handed
+to PJM's lane and adjudicated nowhere here: PJM arms `pjm_zonal_gas_basis` with
+`gas_offer_margin_zonal_anchor` off although a resolved by-zone table already exists.
+
+**Reported against interest.** The L1 metric's minimizer is the weighted median by
+construction, so a single-metric packet would have manufactured its own answer — all three
+metrics and a grid-searched best scalar are reported for that reason. Every reach is a
+static-screen bound (1.41–1.43× the LP, blind to cross-class backfill). The 2025 column
+carries the weakest actuals and is also where the best-scalar gain is largest, so the case
+for changing the grain rests on the least settled year. This session's class-level `markup_hr`
+spans every marked-up band while miso-215's spanned econ only (3.9059 vs 6.4523 on
+`CT_PEAKER`), so the two sessions' margin figures are the same quantity on different
+populations. **P-5 WRONG** (I predicted the evidence would favour per-CLASS; it does not, and
+not for the reason I pre-registered), **P-1's mean leg WRONG**, **P-2's decisive clause
+WRONG**; P-3, P-4, P-6 RIGHT.
+
+**Successor named, not chartered, owner-court on `gas_offer_net_revenue_margin`'s own cell:**
+whether a fixed-margin decomposition is appropriate at all for a class carrying that much
+delivered-fuel dispersion. **The miso-214 standing result is not undone** — 62–70 % of the
+missed CT energy was produced below the plant's own delivered cost at the market's own price
+and is unreachable by any offer or price mechanism.
+
+* Next number: **miso-217**.

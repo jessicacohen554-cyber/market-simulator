@@ -5503,6 +5503,108 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-216 (2026-09-05) — THE GAS-OFFER MARGIN ANCHOR'S BASIS/CLASS GRAIN:
+> **NO GRAIN DOMINATES**, THE REGISTERED ANCHOR IS WITHIN **0.25–1.24 %** OF THE BEST SCALAR
+> THAT EXISTS ON THE TWO MATERIAL CLASSES IN 2023–2024, AND **87.8–99.5 % OF THE DISTORTION
+> IS IRREDUCIBLE BY *ANY* SCALAR** — IT IS THE FIXED-MARGIN **FORM'S** FOOTPRINT (24–30 % OF
+> `CT_PEAKER`'S OWN OFFER), NOT THE ANCHOR'S LOCATION. **RECOMMENDATION TO THE OWNER: NO
+> CHANGE.** miso-215's §4c READING IS **SOFTENED AGAINST INTEREST** AND ITS ANCHOR
+> PREREQUISITE IS **DISCHARGED**; NOTHING ARMED, NOTHING MINTED, ZERO SOLVE.** Keeper
+> UNCHANGED at `2026-09-05-miso-213-layering`. PREREG pushed BLIND at `9fcd69cd` before any
+> adjudicating statistic; record `FINDING-miso216-anchor-basis-grain-2026-09-05.md`;
+> instrument `scripts/probes/_miso216_anchor_basis_grain_phase0.py` →
+> `_miso216_anchor_basis_grain.json`. **Footing PASSED exactly** — the probe reproduces
+> miso-215's `CT_PEAKER` econ-band markup **3.9059** in all three years and the 65,907.1 MW
+> gas capacity, which is what proves the T-1 re-point landed on the keeper.
+>
+> **(i) THE GRAINS, PRICED.** (a) status quo ISO `_gas_series` **3.0492**; (b) fleet
+> capacity-hour MEAN **3.9736**; (c) fleet capacity-hour MEDIAN **3.1425**; (d) per-CLASS
+> (`CT_PEAKER` mean 4.7197 / median 3.4275, `ST_GAS` 4.3196 / 3.1725, `CC_REGULAR` 3.3539 /
+> 2.9575); (e) energy-weighted fleet mean **3.2417**. Two facts before any argument: the
+> fleet capacity-hour MEDIAN sits **0.093** from the registered anchor, and the 2023
+> energy-weighted fleet mean lands at **3.0475** against 3.0492 — within **0.0017**. The ISO
+> series is not an arbitrary basis; it tracks where the fleet's energy and its typical hour
+> actually sit, and the gap opens only on the capacity-hour MEAN, pulled by a fat right tail
+> on the peaking and steam classes.
+>
+> **(ii) THE DECISIVE MEASUREMENT — THE BEST SCALAR THAT EXISTS**, grid-searched 1.50–9.00 at
+> 0.02 rather than picked from a statistic. `CT_PEAKER`'s cap-weighted mean ABSOLUTE
+> deviation from the registered multiplier form is **$21.55 / 15.64 / 15.76 per MWh** at the
+> registered anchor against a floor of **$21.29 / 15.57 / 13.84** — **87.8–99.5 % survives
+> the best possible choice**, because it is driven by the class's own delivered-fuel
+> DISPERSION (p25 2.78 → p75 4.67, mean 5.22 in 2023). Against `CT_PEAKER`'s own offer of
+> **$70.65 / 57.97 / 66.04** that residue is **24–30 % OF THE OFFER**. The largest dollar
+> saving available anywhere in the study is **$1.92/MWh**. **K-3 FIRES: no grain dominates on
+> both L1 and L2** — and the L1 metric is **minimized at the weighted MEDIAN by
+> construction**, disclosed before use, which is why all three metrics (L1, L2, signed bias)
+> are reported at every grain.
+>
+> **(iii) THE ONE AXIS ON WHICH THE ANCHOR IS CLEARLY WRONG: SIGNED BIAS.** The reformed
+> `CT_PEAKER` offer sits **−$19.51 / −10.26 / −15.37 per MWh** below the registered form in
+> every year (`ST_GAS` −2.16 / −3.57 / −4.84; `CC_REGULAR` ≈ 0 — the ISO series effectively
+> tracks the 27.4 GW CC class). **Only the per-class MEAN grain removes it** (bias is zero at
+> the weighted mean by identity), and that grain is the **WORST** available on L1/L2 for the
+> same class (**$23.33 / 20.08 / 15.18**) and the most costly.
+>
+> **(iv) WHAT EVERY GRAIN COSTS.** Every anchor-raising grain removes `CT_PEAKER` screen
+> energy in **3 of 3 years**, from **−0.46 TWh** at the fleet median to **−6.9 TWh** at the
+> class mean, on a class **5–35 % under actual**, and raises the C8 `CT_PEAKER`-2023 forced
+> share already at **0.2044** against the **0.15** budget. `CC_REGULAR`'s reach never exceeds
+> **0.121 TWh** under any grain, so the pre-registered C1 face (+7.419 of ±8.00) is **not**
+> materially exposed by this question — worth saying, since it was registered as a risk. All
+> reaches are static-screen BOUNDS (1.41–1.43× the LP, blind to cross-class backfill).
+>
+> **(v) THE PACKET'S RECOMMENDATION AND ITS STRONGEST COUNTER-ARGUMENT, BOTH ON ITS FACE.**
+> **NO CHANGE**, on three grounds: the distortion is nearly irreducible; no grain dominates;
+> and every bias-correcting grain is measurably costly on a protective gate already over
+> budget. **Against it:** the −$10 to −$20/MWh bias is real, systematic and one-directional,
+> and under rule 1 `[R-STRUCT]` "correcting it costs 6 TWh" is **not** a reason to keep a
+> wrong structure. The L1/L2 reading — that the correction moves `CT_PEAKER` *away* from the
+> registered form on a typical hour in two of three years — is what makes the bias a symptom
+> of the **FORM** rather than the anchor; **if the owner reads the identity as a statement
+> about the offer's LEVEL rather than its typical hour, the recommendation inverts.** That is
+> a reading about what the mechanism means, and it is the owner's to make.
+>
+> **(vi) AGAINST THIS LANE'S OWN PREVIOUS SESSION.** miso-215 §4c reported the armed
+> `CT_PEAKER` margin as installed **35–52 % below** what the identity requires. The
+> arithmetic is right and **the reading was too strong**: measured against the identity
+> criterion itself, no scalar recovers more than **12.2 %** of the deviation on that class.
+> miso-215 found a real **bias** and over-attributed it to the **grain**. **The miso-215
+> anchor prerequisite is therefore DISCHARGED** and the `phys_*` coverage-gap arm is
+> **unblocked on this ground** (its K-a and K-b already passed 9 of 9).
+>
+> **(vii) CROSS-ISO EXPOSURE, COUNTED NOT TESTED, FILLING NO OTHER SHARD (rule 25):** **5 of
+> 6** ISOs are basis-grain exposed (the margin armed while the keeper prices the fleet
+> per-plant, which `_gas_series` cannot carry). **ERCOT alone is not**, because
+> `backcast_config` sets `gas_plant_monthly_fuel_pricing=(iso != "ERCOT")`. Handed to PJM's
+> lane and adjudicated nowhere here: PJM's keeper arms `pjm_zonal_gas_basis` with
+> `gas_offer_margin_zonal_anchor` OFF although a resolved by-zone table for PJM already
+> exists — the nyiso-109 situation, un-adopted. On MISO the same combination is **moot in a
+> backcast** since miso-213.
+>
+> **PRIOR SCORED AGAINST INTEREST**: **P-5 WRONG** — I predicted the evidence would favour
+> (d) per-CLASS and it does not; the per-class MEAN, the variant miso-215's own table pointed
+> at, is the worst available for `CT_PEAKER` on both distortion axes, and my pre-registered
+> counter-argument (a rule-21 DOF concern) is **not** why it fails. **P-1's mean leg WRONG**
+> (+0.9244 against a predicted +0.35…+0.85; I under-predicted the tail), its median leg
+> RIGHT. **P-2's decisive clause WRONG** ("only (d) reduces CT by ≥ 50 %" — nothing reduces it
+> by more than 13.9 %). P-3 RIGHT on both legs, P-4 RIGHT, P-6 RIGHT and executed.
+>
+> **QUEUE HEAD FOR miso-217: the `phys_*` COVERAGE-GAP ARM, now UNBLOCKED** — one MISO-gated
+> boolean at `data/offer_curves._offer_curve_for_group`, zero free parameters, borrowing
+> validated 9 of 9 cohort-years (miso-215 §3), across 38,501 MW = 58.4 % of MISO's assembled
+> gas capacity. It must carry this session's form-footprint measurement as a stated fact: the
+> `CT_INTERMEDIATE` markup it would install (4.6574) is **larger** than `CT_PEAKER`'s
+> econ-band 3.9059, so the same 24–30 %-of-offer footprint would extend to 9.3 GW more.
+> **SUCCESSOR NAMED, NOT CHARTERED, OWNER-COURT ON `gas_offer_net_revenue_margin`'s OWN
+> CELL:** whether a fixed-margin decomposition is appropriate at all for a class carrying
+> that much delivered-fuel dispersion. **ALTERNATIVE HEAD, STILL OPEN AND INDEPENDENT:** the
+> South PRICE separation (miso-213 O-4 / the miso-211 D-3 object, +$0.16 model vs +$58
+> measured). Cells: `gas_offer_net_revenue_margin` **K** (evidence appended, verdict
+> UNCHANGED). OWNER-COURT and untouched: the average-vs-marginal delivered-cost convention
+> (miso-212 §8 — adjacent to but DISTINCT from this question) and the D-2 5(i) seam-response
+> object.
+
 > **QUEUE STAMP miso-215 (2026-09-05) — THE `phys_*` COVERAGE GAP ON THE INTERMEDIATE-DUTY
 > COHORTS: THE GAP IS **58.4 % OF MISO'S ASSEMBLED GAS CAPACITY**, THE ARM IS ONE ZERO-DOF
 > FIELD AND THE FROZEN CLASS p50s **ARE** THE COHORTS' OWN PHYSICS (9 of 9 cohort-years) —

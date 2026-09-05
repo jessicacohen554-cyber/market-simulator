@@ -1,0 +1,1781 @@
+{
+  "charter": "miso-216 phase 0 \u2014 the gas-offer margin anchor's BASIS/CLASS grain; zero-solve, OWNER PACKET, nothing armed.",
+  "prereg": "results/calibration/PREREG-miso216-anchor-basis-grain-2026-09-05.md @ 9fcd69cd",
+  "keeper": "2026-09-05-miso-213-layering",
+  "keeper_bundle": "results/calibration/miso213_layering_B",
+  "registered_anchor_usd_mmbtu": 3.0492,
+  "instrument": {
+    "model_plant_grain": "PRICE-TAKING STATIC SCREEN on the keeper's own committed P1 zone prices \u2014 the keeper ships no unit_hourly/ or dispatch/. miso-214 \u00a71 measured it at 1.41-1.43x the LP's own CT class energy. A BOUND, not the LP.",
+    "backfill_blind": "the screen holds the PRICE FIXED, so cross-class backfill is INVISIBLE; the C1 exposure is an un-instrumented risk, never a measurement.",
+    "M0_weighting": "every mean AND quantile below is CAPACITY-HOUR weighted (one unit of histogram mass = one MW-hour of capacity), on a 0.005 $/MMBtu grid \u2014 the F-3 repair of miso-215, whose cohort means were capacity-hour weighted while its percentiles were not.",
+    "A2_shift_algebra": "under the margin form the anchor move is exactly markup_hr x (A' - anchor), a per-row CONSTANT, so A-2 is evaluated on a dense anchor grid once per year and every grain read off it.",
+    "monthly_923": "the EIA-923 print is a MONTHLY ALL-IN delivered cost applied to an HOURLY decision \u2014 the average-vs-marginal convention (miso-212 \u00a78) is OWNER-COURT, ADJACENT TO BUT DISTINCT FROM this question, and untouched.",
+    "metric_identity_disclosed": "A-3's L1 mean-absolute distortion is MINIMIZED AT THE WEIGHTED MEDIAN by construction, and its L2/RMS sibling at the weighted MEAN \u2014 so a single-metric packet would have built its own answer in. All three (L1, L2, signed bias) are reported at every grain, and the decisive comparator is each class-year's BEST ACHIEVABLE SCALAR (best_scalar below), against which the registered anchor is scored.",
+    "nothing_armed": "no ScenarioConfig field, no registry entry, no matrix row, no solve."
+  },
+  "protective_faces_preregistered": {
+    "C1_CC_REGULAR_2024_pct": 7.419,
+    "C1_band_pct": 8.0,
+    "C8_CT_PEAKER_2023_forced_share": 0.2044,
+    "C8_peaker_budget": 0.15
+  },
+  "kill_bars": {
+    "K1_fleet_tol": 0.35,
+    "K2_distortion_bar": 2.0
+  },
+  "years": {
+    "2023": {
+      "N1_footing": {
+        "n_gas_tranches": 1448,
+        "gas_capacity_mw": 65907.1,
+        "gas_capacity_marked_up_mw": 19272.0,
+        "n_tranches_marked_up": 533,
+        "screen_gas_twh": 199.031,
+        "oil_parity_binding_cap_hour_share": 0.0,
+        "max_abs_fp_minus_fpgas_usd_mmbtu": 198.0888
+      },
+      "A1_class_stats": {
+        "CT_PEAKER": {
+          "capacity_mw": 22281.8,
+          "capacity_marked_up_mw": 11952.3,
+          "cap_w_markup_hr_over_marked": 6.4523,
+          "cap_w_mean_fuel": 5.222,
+          "cap_w_p25_p50_p75": [
+            2.7775,
+            3.3575,
+            4.6725
+          ],
+          "energy_w_mean_fuel": 2.9645,
+          "energy_w_median_fuel": 2.7425,
+          "screen_twh": 17.046,
+          "cap_w_markup_hr_ECON_ONLY": 3.9059,
+          "cap_w_offer_usd_mwh": 70.649,
+          "dualfuel_diverge_cap_hour_share": 0.003,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 21.285,
+            "L1_argmin_anchor": 3.44,
+            "L1_at_registered_anchor": 21.549,
+            "L1_excess_of_registered_over_best_pct": 1.24,
+            "L2_min_rms_usd_mwh": 26.557,
+            "L2_argmin_anchor": 3.5,
+            "L2_at_registered_anchor": 26.985,
+            "signed_bias_at_registered_anchor_usd_mwh": -19.514
+          },
+          "screen_twh_base": 17.0464
+        },
+        "CC_REGULAR": {
+          "capacity_mw": 27420.1,
+          "capacity_marked_up_mw": 1352.2,
+          "cap_w_markup_hr_over_marked": 0.4862,
+          "cap_w_mean_fuel": 3.1526,
+          "cap_w_p25_p50_p75": [
+            2.4475,
+            2.8025,
+            3.3825
+          ],
+          "energy_w_mean_fuel": 2.9858,
+          "energy_w_median_fuel": 2.7575,
+          "screen_twh": 143.179,
+          "cap_w_markup_hr_ECON_ONLY": 0.4862,
+          "cap_w_offer_usd_mwh": 27.444,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.191,
+            "L1_argmin_anchor": 2.84,
+            "L1_at_registered_anchor": 0.213,
+            "L1_excess_of_registered_over_best_pct": 11.31,
+            "L2_min_rms_usd_mwh": 0.28,
+            "L2_argmin_anchor": 2.9,
+            "L2_at_registered_anchor": 0.291,
+            "signed_bias_at_registered_anchor_usd_mwh": 0.07
+          },
+          "screen_twh_base": 143.1791
+        },
+        "ST_GAS": {
+          "capacity_mw": 10991.0,
+          "capacity_marked_up_mw": 4387.4,
+          "cap_w_markup_hr_over_marked": 2.0475,
+          "cap_w_mean_fuel": 4.231,
+          "cap_w_p25_p50_p75": [
+            2.5175,
+            2.8675,
+            3.3975
+          ],
+          "energy_w_mean_fuel": 3.8121,
+          "energy_w_median_fuel": 2.7425,
+          "screen_twh": 12.637,
+          "cap_w_markup_hr_ECON_ONLY": 2.0475,
+          "cap_w_offer_usd_mwh": 60.493,
+          "dualfuel_diverge_cap_hour_share": 0.0084,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 3.189,
+            "L1_argmin_anchor": 2.92,
+            "L1_at_registered_anchor": 3.209,
+            "L1_excess_of_registered_over_best_pct": 0.62,
+            "L2_min_rms_usd_mwh": 4.582,
+            "L2_argmin_anchor": 3.16,
+            "L2_at_registered_anchor": 4.594,
+            "signed_bias_at_registered_anchor_usd_mwh": -2.162
+          },
+          "screen_twh_base": 12.6373
+        },
+        "CC_CHP": {
+          "capacity_mw": 3620.6,
+          "capacity_marked_up_mw": 709.8,
+          "cap_w_markup_hr_over_marked": 0.0445,
+          "cap_w_mean_fuel": 3.2472,
+          "cap_w_p25_p50_p75": [
+            2.7225,
+            3.0575,
+            3.4525
+          ],
+          "energy_w_mean_fuel": 3.1073,
+          "energy_w_median_fuel": 2.9225,
+          "screen_twh": 18.33,
+          "cap_w_markup_hr_ECON_ONLY": 0.0445,
+          "cap_w_offer_usd_mwh": 31.668,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.025,
+            "L1_argmin_anchor": 3.0,
+            "L1_at_registered_anchor": 0.025,
+            "L1_excess_of_registered_over_best_pct": 0.25,
+            "L2_min_rms_usd_mwh": 0.035,
+            "L2_argmin_anchor": 3.06,
+            "L2_at_registered_anchor": 0.035,
+            "signed_bias_at_registered_anchor_usd_mwh": -0.007
+          },
+          "screen_twh_base": 18.3297
+        },
+        "CT_CHP": {
+          "capacity_mw": 896.0,
+          "capacity_marked_up_mw": 870.2,
+          "cap_w_markup_hr_over_marked": 1.2918,
+          "cap_w_mean_fuel": 2.9361,
+          "cap_w_p25_p50_p75": [
+            2.4975,
+            2.7775,
+            3.1475
+          ],
+          "energy_w_mean_fuel": 2.8204,
+          "energy_w_median_fuel": 2.7475,
+          "screen_twh": 5.35,
+          "cap_w_markup_hr_ECON_ONLY": 1.47,
+          "cap_w_offer_usd_mwh": 26.297,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.647,
+            "L1_argmin_anchor": 2.76,
+            "L1_at_registered_anchor": 0.735,
+            "L1_excess_of_registered_over_best_pct": 13.54,
+            "L2_min_rms_usd_mwh": 0.831,
+            "L2_argmin_anchor": 2.74,
+            "L2_at_registered_anchor": 0.927,
+            "signed_bias_at_registered_anchor_usd_mwh": 0.141
+          },
+          "screen_twh_base": 5.3496
+        },
+        "ST_CHP": {
+          "capacity_mw": 697.6,
+          "capacity_marked_up_mw": 0.0,
+          "cap_w_markup_hr_over_marked": 0.0,
+          "cap_w_mean_fuel": 3.8591,
+          "cap_w_p25_p50_p75": [
+            2.8225,
+            3.6425,
+            4.5475
+          ],
+          "energy_w_mean_fuel": 3.3348,
+          "energy_w_median_fuel": 2.9775,
+          "screen_twh": 2.489,
+          "cap_w_markup_hr_ECON_ONLY": 0.0,
+          "cap_w_offer_usd_mwh": 33.889,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "screen_twh_base": 2.4888
+        }
+      },
+      "A1_fleet_stats": {
+        "cap_w_mean_fuel": 4.0418,
+        "cap_w_p25_p50_p75": [
+          2.5675,
+          2.9775,
+          3.8025
+        ],
+        "energy_w_mean_fuel": 3.0475,
+        "energy_w_median_fuel": 2.7775
+      }
+    },
+    "2024": {
+      "N1_footing": {
+        "n_gas_tranches": 1445,
+        "gas_capacity_mw": 65903.8,
+        "gas_capacity_marked_up_mw": 19269.8,
+        "n_tranches_marked_up": 531,
+        "screen_gas_twh": 219.785,
+        "oil_parity_binding_cap_hour_share": 0.0,
+        "max_abs_fp_minus_fpgas_usd_mmbtu": 108.0049
+      },
+      "A1_class_stats": {
+        "CT_PEAKER": {
+          "capacity_mw": 22281.8,
+          "capacity_marked_up_mw": 11952.3,
+          "cap_w_markup_hr_over_marked": 6.4523,
+          "cap_w_mean_fuel": 3.9555,
+          "cap_w_p25_p50_p75": [
+            2.1825,
+            2.7925,
+            3.8975
+          ],
+          "energy_w_mean_fuel": 2.6706,
+          "energy_w_median_fuel": 2.2425,
+          "screen_twh": 25.869,
+          "cap_w_markup_hr_ECON_ONLY": 3.9059,
+          "cap_w_offer_usd_mwh": 57.965,
+          "dualfuel_diverge_cap_hour_share": 0.0023,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 15.567,
+            "L1_argmin_anchor": 2.84,
+            "L1_at_registered_anchor": 15.638,
+            "L1_excess_of_registered_over_best_pct": 0.46,
+            "L2_min_rms_usd_mwh": 31.094,
+            "L2_argmin_anchor": 3.2,
+            "L2_at_registered_anchor": 31.125,
+            "signed_bias_at_registered_anchor_usd_mwh": -10.259
+          },
+          "screen_twh_base": 25.8688
+        },
+        "CC_REGULAR": {
+          "capacity_mw": 27420.1,
+          "capacity_marked_up_mw": 1352.2,
+          "cap_w_markup_hr_over_marked": 0.4862,
+          "cap_w_mean_fuel": 2.7896,
+          "cap_w_p25_p50_p75": [
+            1.9825,
+            2.4025,
+            2.9025
+          ],
+          "energy_w_mean_fuel": 2.7441,
+          "energy_w_median_fuel": 2.3975,
+          "screen_twh": 152.385,
+          "cap_w_markup_hr_ECON_ONLY": 0.4862,
+          "cap_w_offer_usd_mwh": 24.764,
+          "dualfuel_diverge_cap_hour_share": 0.0001,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.347,
+            "L1_argmin_anchor": 2.44,
+            "L1_at_registered_anchor": 0.456,
+            "L1_excess_of_registered_over_best_pct": 31.26,
+            "L2_min_rms_usd_mwh": 0.979,
+            "L2_argmin_anchor": 2.7,
+            "L2_at_registered_anchor": 0.996,
+            "signed_bias_at_registered_anchor_usd_mwh": 0.15
+          },
+          "screen_twh_base": 152.3848
+        },
+        "ST_GAS": {
+          "capacity_mw": 10987.1,
+          "capacity_marked_up_mw": 4385.3,
+          "cap_w_markup_hr_over_marked": 2.0473,
+          "cap_w_mean_fuel": 3.9718,
+          "cap_w_p25_p50_p75": [
+            2.1625,
+            2.6725,
+            3.5825
+          ],
+          "energy_w_mean_fuel": 2.9715,
+          "energy_w_median_fuel": 2.4575,
+          "screen_twh": 12.023,
+          "cap_w_markup_hr_ECON_ONLY": 2.0473,
+          "cap_w_offer_usd_mwh": 50.114,
+          "dualfuel_diverge_cap_hour_share": 0.0063,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 5.131,
+            "L1_argmin_anchor": 2.9,
+            "L1_at_registered_anchor": 5.144,
+            "L1_excess_of_registered_over_best_pct": 0.25,
+            "L2_min_rms_usd_mwh": 9.58,
+            "L2_argmin_anchor": 3.62,
+            "L2_at_registered_anchor": 9.687,
+            "signed_bias_at_registered_anchor_usd_mwh": -3.572
+          },
+          "screen_twh_base": 12.0227
+        },
+        "CC_CHP": {
+          "capacity_mw": 3620.6,
+          "capacity_marked_up_mw": 709.8,
+          "cap_w_markup_hr_over_marked": 0.0445,
+          "cap_w_mean_fuel": 2.7094,
+          "cap_w_p25_p50_p75": [
+            2.2125,
+            2.4725,
+            2.8275
+          ],
+          "energy_w_mean_fuel": 2.7036,
+          "energy_w_median_fuel": 2.4625,
+          "screen_twh": 21.251,
+          "cap_w_markup_hr_ECON_ONLY": 0.0445,
+          "cap_w_offer_usd_mwh": 26.726,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.026,
+            "L1_argmin_anchor": 2.46,
+            "L1_at_registered_anchor": 0.036,
+            "L1_excess_of_registered_over_best_pct": 38.6,
+            "L2_min_rms_usd_mwh": 0.072,
+            "L2_argmin_anchor": 2.7,
+            "L2_at_registered_anchor": 0.073,
+            "signed_bias_at_registered_anchor_usd_mwh": 0.015
+          },
+          "screen_twh_base": 21.2507
+        },
+        "CT_CHP": {
+          "capacity_mw": 896.0,
+          "capacity_marked_up_mw": 870.2,
+          "cap_w_markup_hr_over_marked": 1.2918,
+          "cap_w_mean_fuel": 2.5093,
+          "cap_w_p25_p50_p75": [
+            1.9525,
+            2.3275,
+            2.7025
+          ],
+          "energy_w_mean_fuel": 2.4909,
+          "energy_w_median_fuel": 2.2875,
+          "screen_twh": 5.485,
+          "cap_w_markup_hr_ECON_ONLY": 1.47,
+          "cap_w_offer_usd_mwh": 23.394,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.741,
+            "L1_argmin_anchor": 2.32,
+            "L1_at_registered_anchor": 1.141,
+            "L1_excess_of_registered_over_best_pct": 53.96,
+            "L2_min_rms_usd_mwh": 1.656,
+            "L2_argmin_anchor": 2.48,
+            "L2_at_registered_anchor": 1.815,
+            "signed_bias_at_registered_anchor_usd_mwh": 0.697
+          },
+          "screen_twh_base": 5.4845
+        },
+        "ST_CHP": {
+          "capacity_mw": 698.3,
+          "capacity_marked_up_mw": 0.0,
+          "cap_w_markup_hr_over_marked": 0.0,
+          "cap_w_mean_fuel": 3.4795,
+          "cap_w_p25_p50_p75": [
+            2.2625,
+            2.7725,
+            3.5875
+          ],
+          "energy_w_mean_fuel": 3.0636,
+          "energy_w_median_fuel": 2.4925,
+          "screen_twh": 2.773,
+          "cap_w_markup_hr_ECON_ONLY": 0.0,
+          "cap_w_offer_usd_mwh": 31.772,
+          "dualfuel_diverge_cap_hour_share": 0.0003,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "screen_twh_base": 2.773
+        }
+      },
+      "A1_fleet_stats": {
+        "cap_w_mean_fuel": 3.38,
+        "cap_w_p25_p50_p75": [
+          2.0925,
+          2.5475,
+          3.2875
+        ],
+        "energy_w_mean_fuel": 2.7417,
+        "energy_w_median_fuel": 2.3925
+      }
+    },
+    "2025": {
+      "N1_footing": {
+        "n_gas_tranches": 1445,
+        "gas_capacity_mw": 65903.8,
+        "gas_capacity_marked_up_mw": 19269.8,
+        "n_tranches_marked_up": 531,
+        "screen_gas_twh": 206.703,
+        "oil_parity_binding_cap_hour_share": 0.0,
+        "max_abs_fp_minus_fpgas_usd_mmbtu": 45.9119
+      },
+      "A1_class_stats": {
+        "CT_PEAKER": {
+          "capacity_mw": 22281.8,
+          "capacity_marked_up_mw": 11952.3,
+          "cap_w_markup_hr_over_marked": 6.4523,
+          "cap_w_mean_fuel": 4.9816,
+          "cap_w_p25_p50_p75": [
+            3.2725,
+            3.7925,
+            4.7375
+          ],
+          "energy_w_mean_fuel": 3.7179,
+          "energy_w_median_fuel": 3.4225,
+          "screen_twh": 22.799,
+          "cap_w_markup_hr_ECON_ONLY": 3.9059,
+          "cap_w_offer_usd_mwh": 66.038,
+          "dualfuel_diverge_cap_hour_share": 0.0034,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 13.837,
+            "L1_argmin_anchor": 3.86,
+            "L1_at_registered_anchor": 15.759,
+            "L1_excess_of_registered_over_best_pct": 13.89,
+            "L2_min_rms_usd_mwh": 17.836,
+            "L2_argmin_anchor": 4.12,
+            "L2_at_registered_anchor": 20.056,
+            "signed_bias_at_registered_anchor_usd_mwh": -15.367
+          },
+          "screen_twh_base": 22.7993
+        },
+        "CC_REGULAR": {
+          "capacity_mw": 27420.1,
+          "capacity_marked_up_mw": 1352.2,
+          "cap_w_markup_hr_over_marked": 0.4862,
+          "cap_w_mean_fuel": 4.1196,
+          "cap_w_p25_p50_p75": [
+            3.1175,
+            3.5275,
+            4.1775
+          ],
+          "energy_w_mean_fuel": 4.0267,
+          "energy_w_median_fuel": 3.5175,
+          "screen_twh": 147.618,
+          "cap_w_markup_hr_ECON_ONLY": 0.4862,
+          "cap_w_offer_usd_mwh": 36.552,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.329,
+            "L1_argmin_anchor": 3.66,
+            "L1_at_registered_anchor": 0.459,
+            "L1_excess_of_registered_over_best_pct": 39.61,
+            "L2_min_rms_usd_mwh": 0.575,
+            "L2_argmin_anchor": 3.92,
+            "L2_at_registered_anchor": 0.718,
+            "signed_bias_at_registered_anchor_usd_mwh": -0.448
+          },
+          "screen_twh_base": 147.6183
+        },
+        "ST_GAS": {
+          "capacity_mw": 10987.1,
+          "capacity_marked_up_mw": 4385.3,
+          "cap_w_markup_hr_over_marked": 2.0473,
+          "cap_w_mean_fuel": 4.7561,
+          "cap_w_p25_p50_p75": [
+            3.4175,
+            3.8975,
+            4.7575
+          ],
+          "energy_w_mean_fuel": 3.8852,
+          "energy_w_median_fuel": 3.6475,
+          "screen_twh": 9.254,
+          "cap_w_markup_hr_ECON_ONLY": 2.0473,
+          "cap_w_offer_usd_mwh": 58.353,
+          "dualfuel_diverge_cap_hour_share": 0.0126,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 3.881,
+            "L1_argmin_anchor": 4.08,
+            "L1_at_registered_anchor": 4.879,
+            "L1_excess_of_registered_over_best_pct": 25.7,
+            "L2_min_rms_usd_mwh": 5.592,
+            "L2_argmin_anchor": 4.58,
+            "L2_at_registered_anchor": 6.761,
+            "signed_bias_at_registered_anchor_usd_mwh": -4.835
+          },
+          "screen_twh_base": 9.2539
+        },
+        "CC_CHP": {
+          "capacity_mw": 3620.6,
+          "capacity_marked_up_mw": 709.8,
+          "cap_w_markup_hr_over_marked": 0.0445,
+          "cap_w_mean_fuel": 3.821,
+          "cap_w_p25_p50_p75": [
+            3.2675,
+            3.5325,
+            4.0725
+          ],
+          "energy_w_mean_fuel": 3.8133,
+          "energy_w_median_fuel": 3.5325,
+          "screen_twh": 19.039,
+          "cap_w_markup_hr_ECON_ONLY": 0.0445,
+          "cap_w_offer_usd_mwh": 36.885,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.026,
+            "L1_argmin_anchor": 3.54,
+            "L1_at_registered_anchor": 0.035,
+            "L1_excess_of_registered_over_best_pct": 37.83,
+            "L2_min_rms_usd_mwh": 0.046,
+            "L2_argmin_anchor": 3.82,
+            "L2_at_registered_anchor": 0.058,
+            "signed_bias_at_registered_anchor_usd_mwh": -0.035
+          },
+          "screen_twh_base": 19.0389
+        },
+        "CT_CHP": {
+          "capacity_mw": 896.0,
+          "capacity_marked_up_mw": 870.2,
+          "cap_w_markup_hr_over_marked": 1.2918,
+          "cap_w_mean_fuel": 3.7055,
+          "cap_w_p25_p50_p75": [
+            3.1775,
+            3.4425,
+            3.9925
+          ],
+          "energy_w_mean_fuel": 3.6835,
+          "energy_w_median_fuel": 3.4275,
+          "screen_twh": 5.385,
+          "cap_w_markup_hr_ECON_ONLY": 1.47,
+          "cap_w_offer_usd_mwh": 31.064,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "best_scalar": {
+            "L1_min_distortion_usd_mwh": 0.727,
+            "L1_argmin_anchor": 3.46,
+            "L1_at_registered_anchor": 0.916,
+            "L1_excess_of_registered_over_best_pct": 26.04,
+            "L2_min_rms_usd_mwh": 1.225,
+            "L2_argmin_anchor": 3.7,
+            "L2_at_registered_anchor": 1.491,
+            "signed_bias_at_registered_anchor_usd_mwh": -0.865
+          },
+          "screen_twh_base": 5.3853
+        },
+        "ST_CHP": {
+          "capacity_mw": 698.3,
+          "capacity_marked_up_mw": 0.0,
+          "cap_w_markup_hr_over_marked": 0.0,
+          "cap_w_mean_fuel": 4.4974,
+          "cap_w_p25_p50_p75": [
+            3.5175,
+            4.0975,
+            4.9975
+          ],
+          "energy_w_mean_fuel": 4.2442,
+          "energy_w_median_fuel": 3.8675,
+          "screen_twh": 2.607,
+          "cap_w_markup_hr_ECON_ONLY": 0.0,
+          "cap_w_offer_usd_mwh": 39.092,
+          "dualfuel_diverge_cap_hour_share": 0.0,
+          "dualfuel_resolved_above_noswitch_share": 0.0,
+          "screen_twh_base": 2.6074
+        }
+      },
+      "A1_fleet_stats": {
+        "cap_w_mean_fuel": 4.4991,
+        "cap_w_p25_p50_p75": [
+          3.2175,
+          3.6675,
+          4.4275
+        ],
+        "energy_w_mean_fuel": 3.9604,
+        "energy_w_median_fuel": 3.5175
+      }
+    }
+  },
+  "M0_miso215_unweighted_reference": {
+    "what": "miso-215's cap-weighted MEAN beside its UNWEIGHTED p25/p50/p75 for the same cohorts \u2014 the defect F-3 names. The repaired, capacity-hour-weighted values are in years.<y>.A1_class_stats below.",
+    "rows": {
+      "2023": {
+        "CT_INTERMEDIATE": {
+          "cap_w_mean": 4.4244,
+          "unweighted_p25_p50_p75": [
+            2.8332,
+            3.3049,
+            4.3865
+          ]
+        },
+        "CC_INTERMEDIATE": {
+          "cap_w_mean": 3.1673,
+          "unweighted_p25_p50_p75": [
+            2.4705,
+            2.8269,
+            3.5689
+          ]
+        },
+        "ST_GAS_INTERMEDIATE": {
+          "cap_w_mean": 6.342,
+          "unweighted_p25_p50_p75": [
+            2.4527,
+            2.9294,
+            3.6052
+          ]
+        }
+      },
+      "2024": {
+        "CT_INTERMEDIATE": {
+          "cap_w_mean": 3.4943,
+          "unweighted_p25_p50_p75": [
+            2.1322,
+            2.6977,
+            3.6811
+          ]
+        },
+        "CC_INTERMEDIATE": {
+          "cap_w_mean": 2.8439,
+          "unweighted_p25_p50_p75": [
+            1.999,
+            2.4084,
+            2.9025
+          ]
+        },
+        "ST_GAS_INTERMEDIATE": {
+          "cap_w_mean": 2.6917,
+          "unweighted_p25_p50_p75": [
+            2.0472,
+            2.4702,
+            2.9027
+          ]
+        }
+      },
+      "2025": {
+        "CT_INTERMEDIATE": {
+          "cap_w_mean": 4.1557,
+          "unweighted_p25_p50_p75": [
+            3.1976,
+            3.6575,
+            4.3866
+          ]
+        },
+        "CC_INTERMEDIATE": {
+          "cap_w_mean": 4.5363,
+          "unweighted_p25_p50_p75": [
+            3.1156,
+            3.5185,
+            4.195
+          ]
+        },
+        "ST_GAS_INTERMEDIATE": {
+          "cap_w_mean": 3.9105,
+          "unweighted_p25_p50_p75": [
+            3.119,
+            3.6275,
+            4.2039
+          ]
+        }
+      }
+    }
+  },
+  "A1_grains": {
+    "a_status_quo_iso_series": {
+      "what": "the registered anchor: the mean of the ISO-level _gas_series (annual Henry Hub + the flat GAS_BASIS_DIFFERENTIAL 0.30), 2023-2025.",
+      "window_anchor": 3.0492,
+      "per_year": {
+        "2023": 3.0492,
+        "2024": 3.0492,
+        "2025": 3.0492
+      },
+      "weighting": "none \u2014 an ISO price series, not a fleet statistic"
+    },
+    "b_fleet_cap_hour_mean": {
+      "what": "the gas fleet's own capacity-hour MEAN resolved delivered price.",
+      "window_anchor": 3.9736,
+      "per_year": {
+        "2023": 4.0418,
+        "2024": 3.38,
+        "2025": 4.4991
+      },
+      "weighting": "capacity-hour (MW x h)"
+    },
+    "c_fleet_cap_hour_median": {
+      "what": "the gas fleet's own capacity-hour MEDIAN resolved delivered price.",
+      "window_anchor": 3.1425,
+      "per_year": {
+        "2023": 2.9775,
+        "2024": 2.5475,
+        "2025": 3.6675
+      },
+      "weighting": "capacity-hour (MW x h)"
+    },
+    "e_fleet_energy_weighted_mean": {
+      "what": "ENERGY-weighted mean (weights = each tranche's own static-screen dispatch MWh) rather than capacity-hour weighted.",
+      "window_anchor": 3.2417,
+      "per_year": {
+        "2023": 3.0475,
+        "2024": 2.7417,
+        "2025": 3.9604
+      },
+      "weighting": "screen-dispatch energy (MWh) \u2014 a BOUND, the screen runs 1.41-1.43x the LP"
+    },
+    "d_per_class": {
+      "what": "a per-CLASS registry \u2014 the natural sibling of the existing per-ZONE GAS_OFFER_MARGIN_ANCHOR_BY_ZONE. Window mean and median per class.",
+      "weighting": "capacity-hour (MW x h), within the class",
+      "window_anchor_by_class_mean": {
+        "CC_CHP": 3.2592,
+        "CC_REGULAR": 3.3539,
+        "CT_CHP": 3.0503,
+        "CT_PEAKER": 4.7197,
+        "ST_CHP": 3.9454,
+        "ST_GAS": 4.3196
+      },
+      "window_anchor_by_class_median": {
+        "CC_CHP": 3.1275,
+        "CC_REGULAR": 2.9575,
+        "CT_CHP": 2.9025,
+        "CT_PEAKER": 3.4275,
+        "ST_CHP": 3.5675,
+        "ST_GAS": 3.1725
+      },
+      "window_anchor_by_class_energy_mean": {
+        "CC_CHP": 3.1902,
+        "CC_REGULAR": 3.2494,
+        "CT_CHP": 2.9955,
+        "CT_PEAKER": 3.1102,
+        "ST_CHP": 3.5405,
+        "ST_GAS": 3.534
+      }
+    }
+  },
+  "A1_window_fleet": {
+    "capacity_hour": {
+      "cap_w_mean": 3.9736,
+      "cap_w_median": 3.1425
+    },
+    "energy": {
+      "cap_w_mean": 3.2417,
+      "cap_w_median": 2.9125
+    }
+  },
+  "A2_A3_by_grain": {
+    "a_status_quo_iso_series": {
+      "CC_CHP": {
+        "anchor_used": 3.0492,
+        "anchor_minus_registered": 0.0,
+        "A3_distortion_usd_mwh_by_year": [
+          0.025,
+          0.036,
+          0.035
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.035,
+          0.073,
+          0.058
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -0.007,
+          0.015,
+          -0.035
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0,
+          -0.0001,
+          0.0
+        ],
+        "fixed_margin_usd_mwh": 0.136
+      },
+      "CC_REGULAR": {
+        "anchor_used": 3.0492,
+        "anchor_minus_registered": 0.0,
+        "A3_distortion_usd_mwh_by_year": [
+          0.213,
+          0.456,
+          0.459
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.291,
+          0.996,
+          0.718
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.07,
+          0.15,
+          -0.448
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0031,
+          -0.0027,
+          -0.0047
+        ],
+        "fixed_margin_usd_mwh": 1.483
+      },
+      "CT_CHP": {
+        "anchor_used": 3.0492,
+        "anchor_minus_registered": 0.0,
+        "A3_distortion_usd_mwh_by_year": [
+          0.735,
+          1.141,
+          0.916
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.927,
+          1.815,
+          1.491
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.141,
+          0.697,
+          -0.865
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0001,
+          -0.0001,
+          -0.0001
+        ],
+        "fixed_margin_usd_mwh": 3.939
+      },
+      "CT_PEAKER": {
+        "anchor_used": 3.0492,
+        "anchor_minus_registered": 0.0,
+        "A3_distortion_usd_mwh_by_year": [
+          21.549,
+          15.638,
+          15.759
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          26.985,
+          31.125,
+          20.056
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -19.514,
+          -10.259,
+          -15.367
+        ],
+        "A2_reach_twh_by_year": [
+          0.0039,
+          0.0022,
+          0.0005
+        ],
+        "fixed_margin_usd_mwh": 19.674
+      },
+      "ST_GAS": {
+        "anchor_used": 3.0492,
+        "anchor_minus_registered": 0.0,
+        "A3_distortion_usd_mwh_by_year": [
+          3.209,
+          5.144,
+          4.879
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          4.594,
+          9.687,
+          6.761
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -2.162,
+          -3.572,
+          -4.835
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0184,
+          -0.0175,
+          -0.0161
+        ],
+        "fixed_margin_usd_mwh": 6.243
+      }
+    },
+    "b_fleet_cap_hour_mean": {
+      "CC_CHP": {
+        "anchor_used": 3.9736,
+        "anchor_minus_registered": 0.9244,
+        "A3_distortion_usd_mwh_by_year": [
+          0.046,
+          0.07,
+          0.03
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.05,
+          0.091,
+          0.047
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.034,
+          0.056,
+          0.007
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0227,
+          -0.0133,
+          -0.0178
+        ],
+        "fixed_margin_usd_mwh": 0.177
+      },
+      "CC_REGULAR": {
+        "anchor_used": 3.9736,
+        "anchor_minus_registered": 0.9244,
+        "A3_distortion_usd_mwh_by_year": [
+          0.564,
+          0.816,
+          0.357
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.597,
+          1.173,
+          0.576
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.52,
+          0.6,
+          0.001
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0897,
+          -0.0878,
+          -0.1212
+        ],
+        "fixed_margin_usd_mwh": 1.932
+      },
+      "CT_CHP": {
+        "anchor_used": 3.9736,
+        "anchor_minus_registered": 0.9244,
+        "A3_distortion_usd_mwh_by_year": [
+          1.58,
+          2.158,
+          0.906
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          1.698,
+          2.545,
+          1.272
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          1.335,
+          1.891,
+          0.33
+        ],
+        "A2_reach_twh_by_year": [
+          -0.2898,
+          -0.3257,
+          -0.2462
+        ],
+        "fixed_margin_usd_mwh": 5.133
+      },
+      "CT_PEAKER": {
+        "anchor_used": 3.9736,
+        "anchor_minus_registered": 0.9244,
+        "A3_distortion_usd_mwh_by_year": [
+          21.655,
+          17.45,
+          13.862
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          26.875,
+          31.785,
+          17.873
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -13.549,
+          -4.294,
+          -9.402
+        ],
+        "A2_reach_twh_by_year": [
+          -3.8146,
+          -4.4114,
+          -4.487
+        ],
+        "fixed_margin_usd_mwh": 25.639
+      },
+      "ST_GAS": {
+        "anchor_used": 3.9736,
+        "anchor_minus_registered": 0.9244,
+        "A3_distortion_usd_mwh_by_year": [
+          3.935,
+          5.699,
+          3.891
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          5.018,
+          9.619,
+          5.783
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -0.27,
+          -1.679,
+          -2.943
+        ],
+        "A2_reach_twh_by_year": [
+          -0.976,
+          -0.6418,
+          -0.508
+        ],
+        "fixed_margin_usd_mwh": 8.135
+      }
+    },
+    "c_fleet_cap_hour_median": {
+      "CC_CHP": {
+        "anchor_used": 3.1425,
+        "anchor_minus_registered": 0.0933,
+        "A3_distortion_usd_mwh_by_year": [
+          0.026,
+          0.039,
+          0.032
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.035,
+          0.074,
+          0.055
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -0.003,
+          0.019,
+          -0.031
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0017,
+          -0.001,
+          -0.0011
+        ],
+        "fixed_margin_usd_mwh": 0.14
+      },
+      "CC_REGULAR": {
+        "anchor_used": 3.1425,
+        "anchor_minus_registered": 0.0933,
+        "A3_distortion_usd_mwh_by_year": [
+          0.234,
+          0.484,
+          0.424
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.306,
+          1.006,
+          0.691
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.116,
+          0.196,
+          -0.403
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0121,
+          -0.0125,
+          -0.0208
+        ],
+        "fixed_margin_usd_mwh": 1.528
+      },
+      "CT_CHP": {
+        "anchor_used": 3.1425,
+        "anchor_minus_registered": 0.0933,
+        "A3_distortion_usd_mwh_by_year": [
+          0.793,
+          1.228,
+          0.836
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.98,
+          1.868,
+          1.426
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.262,
+          0.818,
+          -0.744
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0269,
+          -0.0292,
+          -0.0248
+        ],
+        "fixed_margin_usd_mwh": 4.059
+      },
+      "CT_PEAKER": {
+        "anchor_used": 3.1425,
+        "anchor_minus_registered": 0.0933,
+        "A3_distortion_usd_mwh_by_year": [
+          21.428,
+          15.715,
+          15.336
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          26.819,
+          31.098,
+          19.698
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -18.912,
+          -9.657,
+          -14.765
+        ],
+        "A2_reach_twh_by_year": [
+          -0.4614,
+          -0.5234,
+          -0.4895
+        ],
+        "fixed_margin_usd_mwh": 20.276
+      },
+      "ST_GAS": {
+        "anchor_used": 3.1425,
+        "anchor_minus_registered": 0.0933,
+        "A3_distortion_usd_mwh_by_year": [
+          3.242,
+          5.168,
+          4.713
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          4.582,
+          9.654,
+          6.634
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -1.971,
+          -3.381,
+          -4.644
+        ],
+        "A2_reach_twh_by_year": [
+          -0.161,
+          -0.096,
+          -0.0938
+        ],
+        "fixed_margin_usd_mwh": 6.434
+      }
+    },
+    "d_per_class_mean": {
+      "CC_CHP": {
+        "anchor_used": 3.2592,
+        "anchor_minus_registered": 0.21,
+        "A3_distortion_usd_mwh_by_year": [
+          0.027,
+          0.042,
+          0.029
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.035,
+          0.076,
+          0.052
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.002,
+          0.025,
+          -0.025
+        ],
+        "A2_reach_twh_by_year": [
+          -0.006,
+          -0.0025,
+          -0.0034
+        ],
+        "fixed_margin_usd_mwh": 0.145
+      },
+      "CC_REGULAR": {
+        "anchor_used": 3.3539,
+        "anchor_minus_registered": 0.3047,
+        "A3_distortion_usd_mwh_by_year": [
+          0.303,
+          0.557,
+          0.363
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.361,
+          1.035,
+          0.64
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.218,
+          0.298,
+          -0.3
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0309,
+          -0.0294,
+          -0.0448
+        ],
+        "fixed_margin_usd_mwh": 1.631
+      },
+      "CT_CHP": {
+        "anchor_used": 3.0503,
+        "anchor_minus_registered": 0.0011,
+        "A3_distortion_usd_mwh_by_year": [
+          0.735,
+          1.142,
+          0.915
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.927,
+          1.815,
+          1.491
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.142,
+          0.699,
+          -0.863
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0004,
+          -0.0005,
+          -0.0004
+        ],
+        "fixed_margin_usd_mwh": 3.94
+      },
+      "CT_PEAKER": {
+        "anchor_used": 4.7197,
+        "anchor_minus_registered": 1.6705,
+        "A3_distortion_usd_mwh_by_year": [
+          23.333,
+          20.077,
+          15.181
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          28.306,
+          33.465,
+          18.473
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -8.735,
+          0.52,
+          -4.588
+        ],
+        "A2_reach_twh_by_year": [
+          -5.7345,
+          -6.6091,
+          -6.9059
+        ],
+        "fixed_margin_usd_mwh": 30.453
+      },
+      "ST_GAS": {
+        "anchor_used": 4.3196,
+        "anchor_minus_registered": 1.2704,
+        "A3_distortion_usd_mwh_by_year": [
+          4.347,
+          6.047,
+          3.92
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          5.363,
+          9.726,
+          5.626
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.439,
+          -0.971,
+          -2.234
+        ],
+        "A2_reach_twh_by_year": [
+          -1.2416,
+          -0.8165,
+          -0.6331
+        ],
+        "fixed_margin_usd_mwh": 8.844
+      }
+    },
+    "d_per_class_median": {
+      "CC_CHP": {
+        "anchor_used": 3.1275,
+        "anchor_minus_registered": 0.0783,
+        "A3_distortion_usd_mwh_by_year": [
+          0.026,
+          0.038,
+          0.033
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.035,
+          0.074,
+          0.056
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -0.003,
+          0.019,
+          -0.031
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0016,
+          -0.001,
+          -0.0011
+        ],
+        "fixed_margin_usd_mwh": 0.139
+      },
+      "CC_REGULAR": {
+        "anchor_used": 2.9575,
+        "anchor_minus_registered": -0.0917,
+        "A3_distortion_usd_mwh_by_year": [
+          0.198,
+          0.43,
+          0.497
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.282,
+          0.988,
+          0.746
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.026,
+          0.106,
+          -0.493
+        ],
+        "A2_reach_twh_by_year": [
+          0.0054,
+          0.0055,
+          0.0109
+        ],
+        "fixed_margin_usd_mwh": 1.438
+      },
+      "CT_CHP": {
+        "anchor_used": 2.9025,
+        "anchor_minus_registered": -0.1467,
+        "A3_distortion_usd_mwh_by_year": [
+          0.669,
+          1.01,
+          1.07
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.862,
+          1.746,
+          1.608
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -0.048,
+          0.508,
+          -1.054
+        ],
+        "A2_reach_twh_by_year": [
+          0.0419,
+          0.0426,
+          0.0368
+        ],
+        "fixed_margin_usd_mwh": 3.749
+      },
+      "CT_PEAKER": {
+        "anchor_used": 3.4275,
+        "anchor_minus_registered": 0.3783,
+        "A3_distortion_usd_mwh_by_year": [
+          21.286,
+          16.112,
+          14.362
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          26.568,
+          31.158,
+          18.776
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -17.073,
+          -7.818,
+          -12.926
+        ],
+        "A2_reach_twh_by_year": [
+          -1.7616,
+          -2.0013,
+          -1.9355
+        ],
+        "fixed_margin_usd_mwh": 22.115
+      },
+      "ST_GAS": {
+        "anchor_used": 3.1725,
+        "anchor_minus_registered": 0.1233,
+        "A3_distortion_usd_mwh_by_year": [
+          3.256,
+          5.177,
+          4.661
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          4.582,
+          9.645,
+          6.594
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -1.91,
+          -3.319,
+          -4.583
+        ],
+        "A2_reach_twh_by_year": [
+          -0.1998,
+          -0.122,
+          -0.1136
+        ],
+        "fixed_margin_usd_mwh": 6.495
+      }
+    },
+    "e_fleet_energy_weighted_mean": {
+      "CC_CHP": {
+        "anchor_used": 3.2417,
+        "anchor_minus_registered": 0.1925,
+        "A3_distortion_usd_mwh_by_year": [
+          0.027,
+          0.042,
+          0.029
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.035,
+          0.075,
+          0.053
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.002,
+          0.024,
+          -0.026
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0051,
+          -0.0023,
+          -0.0034
+        ],
+        "fixed_margin_usd_mwh": 0.144
+      },
+      "CC_REGULAR": {
+        "anchor_used": 3.2417,
+        "anchor_minus_registered": 0.1925,
+        "A3_distortion_usd_mwh_by_year": [
+          0.264,
+          0.517,
+          0.392
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          0.329,
+          1.018,
+          0.665
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.164,
+          0.244,
+          -0.354
+        ],
+        "A2_reach_twh_by_year": [
+          -0.02,
+          -0.0202,
+          -0.0306
+        ],
+        "fixed_margin_usd_mwh": 1.576
+      },
+      "CT_CHP": {
+        "anchor_used": 3.2417,
+        "anchor_minus_registered": 0.1925,
+        "A3_distortion_usd_mwh_by_year": [
+          0.868,
+          1.325,
+          0.774
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          1.045,
+          1.93,
+          1.364
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          0.39,
+          0.946,
+          -0.616
+        ],
+        "A2_reach_twh_by_year": [
+          -0.0565,
+          -0.0642,
+          -0.0523
+        ],
+        "fixed_margin_usd_mwh": 4.188
+      },
+      "CT_PEAKER": {
+        "anchor_used": 3.2417,
+        "anchor_minus_registered": 0.1925,
+        "A3_distortion_usd_mwh_by_year": [
+          21.345,
+          15.828,
+          14.943
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          26.69,
+          31.096,
+          19.346
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -18.272,
+          -9.016,
+          -14.124
+        ],
+        "A2_reach_twh_by_year": [
+          -0.9394,
+          -1.0626,
+          -0.981
+        ],
+        "fixed_margin_usd_mwh": 20.917
+      },
+      "ST_GAS": {
+        "anchor_used": 3.2417,
+        "anchor_minus_registered": 0.1925,
+        "A3_distortion_usd_mwh_by_year": [
+          3.294,
+          5.202,
+          4.545
+        ],
+        "A3_rms_usd_mwh_by_year": [
+          4.587,
+          9.625,
+          6.504
+        ],
+        "A3_signed_bias_usd_mwh_by_year": [
+          -1.768,
+          -3.178,
+          -4.441
+        ],
+        "A2_reach_twh_by_year": [
+          -0.2749,
+          -0.1737,
+          -0.1529
+        ],
+        "fixed_margin_usd_mwh": 6.637
+      }
+    }
+  },
+  "A4_cross_iso_exposure": {
+    "what": "COUNTED from committed artifacts only \u2014 GAS_SERIES_FLAGS, GAS_BASIS_DIFFERENTIAL, each keeper's own run_config.json gas flags, the by-zone registry. NO other ISO's fleet is built, NO other ISO's delivered price is measured, NO other ISO's matrix cell is filled (rule 25 [R-ISO-SCOPE]).",
+    "criterion": "basis_grain_exposed = the margin is ARMED and the keeper prices the fleet per-plant (gas_plant_monthly_fuel_pricing), which _gas_series cannot carry \u2014 so the anchor and the fleet's delivered price are identified on different bases.",
+    "isos": {
+      "ERCOT": {
+        "keeper_bundle": "results/calibration/ercot234_eastex_identity",
+        "margin_armed": true,
+        "registered_anchor": 2.2494,
+        "gas_basis_differential": -0.5,
+        "derive_recipe": {
+          "gas_seasonality": true
+        },
+        "keeper_gas_flags": {
+          "gas_plant_monthly_fuel_pricing": false,
+          "gas_monthly_actuals": false,
+          "gas_hub_basis_overlay": false,
+          "gas_hub_basis_daily": false,
+          "gas_daily_shape": true,
+          "gas_seasonality": true,
+          "gas_offer_net_revenue_margin": true,
+          "gas_offer_margin_zonal_anchor": true,
+          "ercot_zonal_gas_basis": true
+        },
+        "per_plant_923_pricing": false,
+        "zonal_basis_armed": true,
+        "in_ZONAL_BASIS_ISOS": true,
+        "zonal_anchor_armed": true,
+        "has_by_zone_registry": true,
+        "basis_grain_exposed": false,
+        "zone_grain_residual": false
+      },
+      "PJM": {
+        "keeper_bundle": "results/calibration/pjm_debugb_inputclock_A",
+        "margin_armed": true,
+        "registered_anchor": 3.3483,
+        "gas_basis_differential": 0.67,
+        "derive_recipe": {
+          "gas_seasonality": true,
+          "gas_monthly_actuals": true,
+          "gas_daily_shape": true,
+          "pjm_zonal_gas_basis": true
+        },
+        "keeper_gas_flags": {
+          "gas_plant_monthly_fuel_pricing": true,
+          "gas_monthly_actuals": true,
+          "gas_hub_basis_overlay": false,
+          "gas_hub_basis_daily": false,
+          "gas_daily_shape": true,
+          "gas_seasonality": true,
+          "gas_offer_net_revenue_margin": true,
+          "gas_offer_margin_zonal_anchor": false,
+          "pjm_zonal_gas_basis": true
+        },
+        "per_plant_923_pricing": true,
+        "zonal_basis_armed": true,
+        "in_ZONAL_BASIS_ISOS": true,
+        "zonal_anchor_armed": false,
+        "has_by_zone_registry": true,
+        "basis_grain_exposed": true,
+        "zone_grain_residual": true
+      },
+      "CAISO": {
+        "keeper_bundle": "results/calibration/caiso246_b1_spot_coverage",
+        "margin_armed": true,
+        "registered_anchor": 4.7964,
+        "gas_basis_differential": 1.2,
+        "derive_recipe": {
+          "gas_seasonality": true,
+          "gas_monthly_actuals": true,
+          "gas_hub_basis_overlay": true,
+          "gas_daily_shape": true
+        },
+        "keeper_gas_flags": {
+          "gas_plant_monthly_fuel_pricing": true,
+          "gas_monthly_actuals": true,
+          "gas_hub_basis_overlay": true,
+          "gas_hub_basis_daily": false,
+          "gas_daily_shape": true,
+          "gas_seasonality": true,
+          "gas_offer_net_revenue_margin": true,
+          "gas_offer_margin_zonal_anchor": false,
+          "caiso_zonal_gas_basis": false
+        },
+        "per_plant_923_pricing": true,
+        "zonal_basis_armed": false,
+        "in_ZONAL_BASIS_ISOS": false,
+        "zonal_anchor_armed": false,
+        "has_by_zone_registry": false,
+        "basis_grain_exposed": true,
+        "zone_grain_residual": false
+      },
+      "MISO": {
+        "keeper_bundle": "results/calibration/miso213_layering_B",
+        "margin_armed": true,
+        "registered_anchor": 3.0492,
+        "gas_basis_differential": 0.3,
+        "derive_recipe": {
+          "gas_seasonality": true,
+          "gas_daily_shape": true,
+          "miso_zonal_gas_basis": true
+        },
+        "keeper_gas_flags": {
+          "gas_plant_monthly_fuel_pricing": true,
+          "gas_monthly_actuals": false,
+          "gas_hub_basis_overlay": false,
+          "gas_hub_basis_daily": false,
+          "gas_daily_shape": true,
+          "gas_seasonality": true,
+          "gas_offer_net_revenue_margin": true,
+          "gas_offer_margin_zonal_anchor": false,
+          "miso_zonal_gas_basis": true
+        },
+        "per_plant_923_pricing": true,
+        "zonal_basis_armed": true,
+        "in_ZONAL_BASIS_ISOS": true,
+        "zonal_anchor_armed": false,
+        "has_by_zone_registry": true,
+        "basis_grain_exposed": true,
+        "zone_grain_residual": true
+      },
+      "NYISO": {
+        "keeper_bundle": "results/calibration/nyiso189_steam_identity",
+        "margin_armed": true,
+        "registered_anchor": 3.9046,
+        "gas_basis_differential": 0.55,
+        "derive_recipe": {
+          "gas_seasonality": true,
+          "gas_monthly_actuals": true,
+          "gas_hub_basis_overlay": true,
+          "gas_hub_basis_daily": true,
+          "gas_daily_shape": true,
+          "nyiso_zonal_gas_basis": true
+        },
+        "keeper_gas_flags": {
+          "gas_plant_monthly_fuel_pricing": true,
+          "gas_monthly_actuals": true,
+          "gas_hub_basis_overlay": true,
+          "gas_hub_basis_daily": true,
+          "gas_daily_shape": true,
+          "gas_seasonality": true,
+          "gas_offer_net_revenue_margin": true,
+          "gas_offer_margin_zonal_anchor": true,
+          "nyiso_zonal_gas_basis": true
+        },
+        "per_plant_923_pricing": true,
+        "zonal_basis_armed": true,
+        "in_ZONAL_BASIS_ISOS": true,
+        "zonal_anchor_armed": true,
+        "has_by_zone_registry": true,
+        "basis_grain_exposed": true,
+        "zone_grain_residual": false
+      },
+      "NEISO": {
+        "keeper_bundle": "results/calibration/neiso99_joint_B",
+        "margin_armed": true,
+        "registered_anchor": 4.0763,
+        "gas_basis_differential": 1.1,
+        "derive_recipe": {
+          "gas_seasonality": true,
+          "gas_monthly_actuals": true,
+          "gas_hub_basis_overlay": true,
+          "gas_hub_basis_daily": true
+        },
+        "keeper_gas_flags": {
+          "gas_plant_monthly_fuel_pricing": true,
+          "gas_monthly_actuals": true,
+          "gas_hub_basis_overlay": true,
+          "gas_hub_basis_daily": true,
+          "gas_daily_shape": true,
+          "gas_seasonality": true,
+          "gas_offer_net_revenue_margin": true,
+          "gas_offer_margin_zonal_anchor": false
+        },
+        "per_plant_923_pricing": true,
+        "zonal_basis_armed": false,
+        "in_ZONAL_BASIS_ISOS": false,
+        "zonal_anchor_armed": false,
+        "has_by_zone_registry": false,
+        "basis_grain_exposed": true,
+        "zone_grain_residual": false
+      }
+    },
+    "n_exposed": 5
+  },
+  "kills": {
+    "K1_fleet_grain_fine": {
+      "window_fleet_cap_w_mean": 3.9736,
+      "window_fleet_cap_w_median": 3.1425,
+      "abs_mean_minus_anchor": 0.9244,
+      "abs_median_minus_anchor": 0.0933,
+      "bar": 0.35,
+      "K1_FIRES": false
+    },
+    "K2_immaterial": {
+      "max_status_quo_distortion_usd_mwh": 21.549,
+      "bar": 2.0,
+      "K2_FIRES": false
+    },
+    "K3_no_dominant_grain": {
+      "by_grain": {
+        "b_fleet_cap_hour_mean": {
+          "L1": {
+            "class_years_improved": 5,
+            "class_years_worsened": 10,
+            "dominates_status_quo": false
+          },
+          "L2": {
+            "class_years_improved": 7,
+            "class_years_worsened": 8,
+            "dominates_status_quo": false
+          }
+        },
+        "c_fleet_cap_hour_median": {
+          "L1": {
+            "class_years_improved": 6,
+            "class_years_worsened": 9,
+            "dominates_status_quo": false
+          },
+          "L2": {
+            "class_years_improved": 9,
+            "class_years_worsened": 5,
+            "dominates_status_quo": false
+          }
+        },
+        "d_per_class_mean": {
+          "L1": {
+            "class_years_improved": 5,
+            "class_years_worsened": 9,
+            "dominates_status_quo": false
+          },
+          "L2": {
+            "class_years_improved": 4,
+            "class_years_worsened": 7,
+            "dominates_status_quo": false
+          }
+        },
+        "d_per_class_median": {
+          "L1": {
+            "class_years_improved": 8,
+            "class_years_worsened": 7,
+            "dominates_status_quo": false
+          },
+          "L2": {
+            "class_years_improved": 10,
+            "class_years_worsened": 4,
+            "dominates_status_quo": false
+          }
+        },
+        "e_fleet_energy_weighted_mean": {
+          "L1": {
+            "class_years_improved": 6,
+            "class_years_worsened": 9,
+            "dominates_status_quo": false
+          },
+          "L2": {
+            "class_years_improved": 9,
+            "class_years_worsened": 5,
+            "dominates_status_quo": false
+          }
+        }
+      },
+      "note": "L1 is minimized at the weighted MEDIAN and L2 at the weighted MEAN by construction; a grain that dominates on ONE metric only has not been shown to dominate.",
+      "K3_FIRES": true
+    }
+  }
+}
