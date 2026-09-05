@@ -56,6 +56,12 @@ class _FakeConfig:
     weather_year: int | None = None
     mode: str = "backcast"
     carbon_price: float = 0.0
+    # spec.py prices the WECC border adder through
+    # policy.carbon.resolve_carbon_price(config, year) since SCN-WS1a G-C2
+    # (1ab91a93), and the resolver reads the ISO off the config the way the
+    # production ScenarioConfig always carries it; the stand-in has to too.
+    # CAISO is the only ISO whose corridor inventory reaches that call.
+    iso: str = "CAISO"
 
 
 # ---------------------------------------------------------------------------
