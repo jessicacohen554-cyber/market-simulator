@@ -386,12 +386,13 @@ VERDICT_MAP = {
     # (MISO's post-flip bare key adds D53's sector gate AND Q40's ratio, NYISO's
     # adds Q41's two gates), so both bare keys are RE-SOLVED by capx D60 and these
     # records are preserved at `<iso>-t1f-pre-d60` in that commit.
-    "nyiso-2026-2030-d45r-remeasure": "nyiso-t1f",
+    "nyiso-2026-2030-d45r-remeasure": "nyiso-t1f-pre-d60",
     # capx D60 (2026-09-05) — the re-solves the flip owes, each landing on the
     # BARE key of its ISO because no committed arm carried its post-D60 posture.
     # Each supersedes the row above/below it, whose record is preserved at
     # `<iso>-t1f-pre-d60` in the same commit.
     "miso-2026-2030-d60-arm": "miso-t1f",
+    "nyiso-2026-2030-d60-arm": "nyiso-t1f",
     # PJM is NOT re-pointed: capx D60 pre-declared this rename (the D50 arm was
     # solved AT what would become the post-flip bare key, 167e65187f32056b) and
     # then REVERSED it before pushing when capx D57 merged and armed three PJM
