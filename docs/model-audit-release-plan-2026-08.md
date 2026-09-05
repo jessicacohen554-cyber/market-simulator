@@ -7262,3 +7262,195 @@ your branch when done.
   tier` red** on the five R-AT pins — **none this lane's, none fixed here.** Both
   `docs/` files sit in `ci.yml`'s Y-4-widened path filter; **`keepers/README.md` does
   not — itself an instance of the DOCS-B / Y-9 path-filter gap.**
+- 2026-09-05 — **RECORDS-ONLY LANE v32. FOUR OWNER RULINGS RECORDED — `R-AU`, `R-AV`,
+  `R-AW`, `R-AX` (audit-program director sitting ~23:00Z, cards "Flip", "Rule 29",
+  "ERCOT key", "Card N", all four answered). `G-2` (the rule-29 amendment) CHARTERED
+  AND IN EXECUTION VIA Y-13; `Y-13` AND `Y-14` CHARTERED; `Z-6` OPENED. G2 IS NOT
+  DECLARED — leg 4 reads `protected: false` at an ELEVENTH reading.** Director pin
+  `5cc1e7ce` (22:56Z); **this lane's pin `2886235c`** (PR #4854, +3 commits);
+  `origin/main` moved on to `4db660cb` (PR #4856) mid-session — **motion, not a
+  correction of the director.** Full block: the director board, appended **above
+  v31**.
+  **🔵 HEADLINE — THE GITHUB API IS *NOT* 403 IN THIS RECORDS LANE.** v29/v30/v31's
+  "API is 403 in records lanes" is a **lane-local environment fact, not a
+  program-wide one**: `list_branches`, `list_pull_requests` and `actions_list` all
+  returned normally here, so **leg 4, the flip set, the PR list and the golden-tier
+  run are this lane's OWN calls**, not transcriptions. ⚠️ It says nothing about the
+  *branch-protection* endpoint Y-9 found 403 on — a different route, **not attempted
+  here** — so **R-AP's ROUTE 2 finding stands and is not reopened.**
+  **THE FOUR RULINGS.** **`R-AU`** (card "Flip") → *"Charter Y-13, flip at next
+  6-of-6 (Recommended)"*: **Y-13 chartered**; **the flip lands at the first head
+  reading 6-of-6 AFTER Y-13 AND Y-14 merge.** ⚠️ **R-AH's condition is UNCHANGED —
+  R-AU SEQUENCES it, it does not weaken it.** **`R-AV`** (card "Rule 29") → *"Delete
+  before merge (Recommended)"*: a screen bundle **and any rule-29(b) control
+  bundle** is **deleted from `results/calibration/` before its PR merges**, the
+  finding doc carries the numbers, `check_registry_payload_parity` enforces it —
+  **resolving the collision v31's second coda (`da99f34b`) routed**, in which a lane
+  obeying rule 29 turned the gate red **by obeying it**. Executed as **G-2** by
+  **Y-13** across four surfaces (`CLAUDE.md` rule 29 · `docs/governance/rule-history.md`
+  §8 · the Class-E note in `keepers/README.md` · the gate's own failure message),
+  which **also prunes the two currently-red dirs**. ⚠️ **`neiso_headctrl_k99` is a
+  rule-29(b) CONTROL bundle, not a screen bundle** — covered by the ruling's
+  parenthetical, but **G-2's text must name BOTH classes** or the next
+  control-solving lane reproduces the collision. **`R-AW`** (card "ERCOT key") —
+  **ANSWERED OFF-MENU**; owner text recorded **verbatim** (*"The golden config
+  should be the 2024:2025 one not 2023"*) and the **director's reading recorded
+  separately and so labelled** (the ERCOT stage-0 golden captures the **forward**
+  config on **{2024, 2025}**; the `ERCOT__carveout-2023` capture key **retires**).
+  **Y-14 chartered** for `capture_keeper_goldens.py` / `check_golden_manifest.py` +
+  the two Y-11 STOP-test rewrites; **the re-capture itself waits for the R-AI clock,
+  2026-09-07 19:02Z.** **`R-AX`** (card "Card N") → *"Void it; the other cards
+  covered it (Recommended)"*: **card N is a transcription hole carrying no ruling,
+  nothing re-ruled, and v31's routed-back item is CLOSED** — vindicating v31's
+  refusal to invent a sixth label.
+  **THE NINE-CHECK LEDGER AT `2886235c`, `uv run --frozen`, `$?` READ DIRECTLY:**
+  `audit_keepers --check` **EXIT 1** (S1 `status/NEISO.js` stale vs current
+  verdicts, from the #4839/#4852 registrations landing without `build_status`; plus
+  warning **E11**, NYISO former keeper `2026-09-05-nyiso-189-steam-identity` bundle
+  pruned before a lineage diff could run) · `check_registry_payload_parity`
+  **EXIT 1** (`miso220_nonsteamlift_screen2025` 2.6 MB, `neiso_headctrl_k99` 3.0 MB,
+  both verified on disk) · `check_gate_a_provenance` **0** · `check_mechanism_matrix`
+  **0** · `check_forecast_staleness` **0** · `check_bench_freshness` **0** (builder
+  fingerprint **`4254168edcfe`**, **22 parts, 0 STALE** — Y-12's AST fingerprint
+  live) · `check_golden_manifest` **0** (47/88/24, 15 pruned-provenance, 15 stale) ·
+  `ruff check` **0** · `ruff format --check` **0** (*"1323 files already
+  formatted"*). **All nine reproduce the director's 22:56Z reading exactly; nothing
+  to record as motion.** ⚠️ **METHOD ERROR RECORDED AGAINST THIS LANE:** a first
+  pass piped each gate through `tail`, so `$?` reported **`tail`'s** status and
+  would have logged **nine green gates**; the readings above are a second pass with
+  output discarded. **The director's S1 repair claim (a 1-line `build_status --iso
+  NEISO` diff, after which `audit_keepers` reads PASS + E11) is recorded as the
+  DIRECTOR'S and deliberately NOT re-verified — `status/*.js` is on this dispatch's
+  own prohibited list.**
+  **FLIP SET 3 OF 6 — AND ALL THREE REDS REPRODUCED IN-SESSION, AT THE ARTIFACT
+  LEVEL, INDEPENDENTLY OF THE API.** Heads (this lane's own `actions_list`): run
+  **2514** `33996807236` head `46e08e5b` #4852 · **2513** `33996750885` head
+  `da99f34b` #4851 · **2512** `33996645374` head `86f13c50` #4850, all `failure`
+  overall — which **means nothing**, the two chronic non-set jobs (FR-22 parity,
+  Forecast-invariant audit) being red as always. Job by job (**the DIRECTOR'S**
+  reading): `Ruff lint + format` 🟢 · `Pinned default cache key` 🟢 · `Cache-key
+  registration guard` 🟢 · `Structural refactor guards` 🔴 · `Fast test tier` 🔴 ·
+  `Rule-22 quarantine gates` 🔴. **This lane's addition, and the substantive
+  contribution of v32:** (1) `ci_refactor_guards.py` exits 1 here, and the ref is a
+  **confirmed false positive** — `tests/scoring/test_bench_stamp_ast.py:45,130` set
+  `rel = "scripts/fake_builder.py"` as a **`tmp_path` fixture name**, and the
+  allowlist already exists (`KNOWN_DANGLING`, `ci_refactor_guards.py:58`, consumed
+  :204, counted :236) → **one dict entry**; (2) both Y-11 STOP tests run red here on
+  the identical assertion **`'2026-09-05-ercot248-two-config-keeper' !=
+  '2026-08-25-236-swcap-clip-k33'`** (`test_golden_manifest_provenance.py:579`;
+  local **2 failed, 1 passed, 8200 deselected**) — **neither has a literal a pin
+  refresh can move**, which is why R-AW is a test **rewrite**; (3) both rule-22
+  gates exit 1 as above. **So the three reds and the three assigned repairs are in
+  one-to-one correspondence with nothing left over** — which is why *"charter Y-13"*
+  is the right disposition rather than *"wait for green"*, and it is the complement
+  to v31's volatility finding: **the ruff oscillation was the volatile part; what
+  remains is stable, diagnosed and now assigned.** v31's fourth un-owned defect —
+  `file-integrity-guard.yml` diffing the **base tip** (line 69 `base.sha`, line 116
+  two-dot) rather than the merge-base — is **also Y-13's**, and is **not** one of
+  R-AE's six. **Open PRs at ~23:13Z: ONE, #4855** (opened 23:05:26Z, ten minutes
+  after the director's *"none"*) — **motion, not this desk's to adjudicate.**
+  **LEG 4, READING ELEVEN**, this lane's own `list_branches` at ~23:13Z: `main`
+  (sha `4db660cb`) and both live branches all **`"protected": false`** — **~236
+  minutes** after *"doing it now"*, **R-AM unmet for the fourth consecutive records
+  lane, G2 NOT declared here.** Legs 1–3 unmoved: `golden-data-tier.yml` **run #11**
+  `33983249186` `success` **still newest of 11** (own call) · leg 2 satisfied
+  historically, **not reproducible at HEAD** · leg 3 lifted at R-AR.
+  **KEEPERS / MARKERS / ALIGNMENT / STAGE-0, re-derived not transcribed:** six
+  keepers **unchanged** from `4d4dc6ce` (ERCOT `…ercot248-two-config-keeper`, CAISO
+  `…caiso-251-b1-nomargin`, MISO `…miso-217-intermphys`, NYISO
+  `…nyiso-192-astoria-panel`, NEISO `2026-08-17-neiso-99-joint-p1`, PJM
+  `2026-08-15-pjm-162-inputclock`) · **`complete` = {ERCOT, NEISO, PJM}**, `withdrawn`
+  = {CAISO, NYISO}, **`final` = [] — EMPTY, no locked test ever granted** · freeze
+  `active: true`, **`scope.tiers = ["locked_test"]`** · three-instrument alignment
+  **{ERCOT, NEISO, PJM}** · **stage-0 2 of 7 current (NEISO, PJM)**. **R-AI clocks**
+  from the shard-touching commits: **ERCOT 09-07 19:02Z** (`4b7a515e`) · **MISO
+  09-07 19:57Z** (`58f89ecf` merge — ⚠️ **the promoting commit `7d585522` reads
+  19:48:38Z and BOTH are recorded**) · **CAISO 09-07 20:57Z** (`ecd90508`) ·
+  **NYISO 09-07 21:28Z** (`e840d93a`). NEISO/PJM shards last touched by `4b7a515e`,
+  so no independent clock.
+  **WINDOW `4d4dc6ce..5cc1e7ce` — 27 merges, PRs #4827–#4853** (verified). This
+  desk: **v31 #4844 + coda #4851** · **Y-11 #4846** (3 of 5 pins repaired, 2
+  STOPped — now Y-14's) · **Y-12 #4845** (fingerprint confirmed live at gate 6).
+  **Other desks, recorded as THEIR records with citations and NOT adjudicated:**
+  NEISO validation ladder on `neiso-99` (#4839/#4852; ASSESSMENT verified present —
+  **2022 CALIBRATED, 2021 CALIBRATED, 2020 NOT-YET on a lone C3a +13.7 %**; PJM 2020
+  not data-ready on three blockers; **NEISO holds `complete` so the spend was
+  authorized**, confirmed against the marker file and the locked-test-only freeze
+  scope; control bundle `neiso_headctrl_k99` left unregistered — now Y-13's prune) ·
+  2022 holdout data completeness (#4850, handoff §1a verified present) · caiso-252
+  and miso-220 screens (the miso-220 lane set its **own** attestation
+  `no_fit_to_price_residuals` to **FALSE**, `ed07a641` 22:28:31Z) · nyiso-195 KILLED
+  · capx D61/D64 · SCN-DESK charter (#4843/#4853).
+  **`Z-6` OPENED — the NYISO 2022 spend under a mid-solve marker withdrawal.
+  RECORDED AS A GOVERNANCE OBSERVATION, NOT A BREACH:** authorized at launch under
+  the live D56-R marker, un-registered on discovery (no bundle, sidecar, payload or
+  bench part reached the branch), recorded once as diagnostic with a dated marker
+  addendum. **The open question, ROUTED TO THE OWNER QUEUE AND NOT RULED HERE:**
+  rule 22's tier gate is checked **at launch** — should it also be re-checked **at
+  registration**, so a marker withdrawn during a multi-hour LP cannot be raced? Two
+  facts for the card: the gate is already fail-closed on *tier*, so the gap is
+  purely **temporal**; and **the discipline held without the gate** — the lane
+  caught it and un-registered itself — so the question is whether to encode a
+  discipline that worked. **A SECOND, RELATED OBSERVATION ALSO ROUTED:** E11 is the
+  mirror image of R-AV — R-AV prunes never-registered probe/control output *before*
+  merge, E11 is the cost of a *former keeper's* bundle having been pruned before its
+  successor's lineage diff could run. **Neither is wrong and they do not conflict**,
+  but the program now carries **two prune-timing rules in two documents with no
+  single statement of which bundle classes are prunable when.** Not folded into
+  G-2's scope.
+  **ROSTER — G-14 HOLDS FOR THIS ACCOUNT TOO.** The director's `list_sessions` at
+  22:55Z shows **two** sessions created today (this desk
+  `session_01LypYLYkxGomTz6Ayn57WYk`; an owner-launched iOS NYISO CC_REGULAR
+  root-cause session `session_01UxkY8aLaBEEgKwpF9QPCtC`, 22:49Z). **Today's v31 /
+  Y-11 / Y-12 sessions are absent** (`01PgpURWpZsmYB7wnNzhsEd4`,
+  `01DQJzGtoj2Zfqs9tEoRnKCH`, `014ioT6UgheK4Ay9PDXHRkcc`, read from the merged
+  commits' trailers) **though all three demonstrably ran and landed** — and this
+  lane's own window sweep names four further absent ids
+  (`01MiTNitUJfzMgKLKHBMgMm9`, `01GhsDSAni6aNTL6pWcJCzbR`, `01W9k19DAp7xMJnqRmnReKUZ`,
+  `01GAngEkGGuH863nspXduvbZ`). ⚠️ **Launch state is read from PRs and commits; NO
+  NON-LAUNCH IS CLASSIFIED FROM THE ROSTER ALONE.**
+  **QUEUE AMENDED:** the flip item now reads **"at the first 6-of-6 after Y-13 +
+  Y-14 (R-AU)"** · the **G2 declaration prompt stays HELD** until `protected` reads
+  true (**R-AM unchanged**) · the **rule-29 collision item is CHARTERED, NOT
+  CLOSED** — **no PR number, because Y-13 is chartered by this dispatch and is not
+  merged at this pin** (verified: `Y-13` word-boundary → **0** files in `docs/`
+  before this entry, and the only open PR is #4855) — **it closes on Y-13's merge**
+  · **ERCOT stage-0 re-capture on the forward config {2024, 2025} is QUEUED, NOT
+  CHARTERED**, pending the R-AI clock.
+  **Q-4 AT CLOSE.** **(i) Sweep before minting**, word-boundary across `docs/`:
+  **`R-AW`, `R-AX`, `Y-13`, `Y-14`, `Z-6` → 0** (all clean, all minted here);
+  **`R-AU` → 2** and **`R-AV` → 2**, **both pairs being v31's own "deliberately NOT
+  allocated" reservations** (plan **7046**, **7238**; board **96**, **608**,
+  **622**) — **no collision, the reservations are redeemed exactly as v31 wrote
+  them, and v31's text is left standing.** **(ii) 🟡 ONE REAL COLLISION FOUND:**
+  **`G-2` → 13 files, and it is already a BOARD SECTION ANCHOR** — board **6126**
+  (*"### G-2 · 🟢 RULING R-K — STAGE-0 CAPTURES HOLD"*) and this plan **4782**
+  (*"(board G-2)"*). **Pre-existing and systemic, not introduced by this sitting:**
+  v31's governance-lane `G-1` (#4823) collides identically with **board section
+  `G-1`** (plan **4762**). **Two series share one glyph.** **G-2 is minted as
+  dispatched** — a records desk does not rename a director's label — **and every use
+  in v32 is written "governance lane G-2" or "G-2 (the rule-29 amendment)", never
+  bare.** **Routed as a naming-hygiene item; nothing renamed.** **(iii)
+  Job-vs-changed-file:** JOB 1 **EXECUTED** (four rulings; R-AW's verbatim text and
+  the director's reading recorded **separately and so labelled**) · JOB 2
+  **EXECUTED**, all nine, `$?` direct, the `tail` method error recorded against this
+  lane · JOB 3 **EXECUTED and UPGRADED to first-hand** · JOB 4 **EXECUTED**, MISO's
+  two timestamps both recorded · JOB 5 **EXECUTED** (board window + Z-6 + **this
+  entry**) · JOB 6 **EXECUTED** (queue) · JOB 7 **EXECUTED and it found a live
+  collision**.
+  **Records integrity:** clean tree at session start, branch cut fresh from
+  `origin/main`. ⚠️ **Branch is `claude/audit-records-v32-ri1ky4`, NOT the
+  dispatch's `claude/audit-records-v32-p9d3wt`** — the harness designated the former
+  at session creation; recorded so the director can match PR to dispatch.
+  **Closing diff confined to TWO files** — this plan and the director board —
+  **insertions only, zero deletions.** **Verified untouched:** every keeper shard,
+  every `status/<ISO>.js`, `calibration-complete.json`, `holdout-freeze.json`,
+  `program-status.json`, every matrix shard, every workflow, every bundle / sidecar /
+  registry file, every golden manifest, `CLAUDE.md`, `keepers/README.md`,
+  `results/calibration/`. **No solve, no score, no registration, no workflow
+  dispatch, no prune.** ⚠️ **Expect on this PR:** overall `failure` on the two
+  chronic non-set jobs and **the three catalogued reds — none this lane's, none
+  fixed here, all three now assigned**; plus a possible **`file-integrity-guard`
+  false positive** if `main` advances between push and job (v31 coda `8e26a153`) —
+  **if it fires on a file this lane did not shrink it is recorded and NOT "fixed" by
+  a blind rebase; Y-13 repairs the guard.**
