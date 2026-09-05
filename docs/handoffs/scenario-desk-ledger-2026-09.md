@@ -115,11 +115,11 @@ State at r#1 = plan v1, unmoved. Each landing lane updates BOTH this table and t
 
 | Criterion (plan §1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (semantics defect G-C1) | yes | **no** | **no** | partial — **siting sourced** for ERCOT/PJM/MISO (SCN-WS4a), still **no named case** | — |
-| 2 reaches dispatch + deployment | yes | yes | **no** | **no** | yes | — |
+| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — repair gated on D-1; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **no** | **no** | partial — **siting sourced** for ERCOT/PJM/MISO (SCN-WS4a), still **no named case** | — |
+| 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider to WS-0) | yes | **no** | **no** | yes | — |
 | 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | **no** | **no** | **no** | — |
-| 4 backcast byte-identity | yes | yes | — | — | yes | — |
-| 5 matrix duty | stamped | stamped | — | — | stamped | — |
+| 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | — | — | yes | — |
+| 5 matrix duty | stamped (`carbon_price_path` + `policy_bundle` rows minted at WS-1a) | stamped | — | — | stamped | — |
 | 6 emissions grain | scalar only | scalar only | — | — | scalar only | **G-E1..E5 open** |
 | 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | — | — | none | — |
 
