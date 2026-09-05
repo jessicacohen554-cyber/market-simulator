@@ -10,8 +10,9 @@
 #   as grid supply double-counts it.
 # ZERO FREE PARAMETERS. Rule 13 input, rule 23 frozen (re-derive only on
 #   a new Gold Book vintage), rule 25 NYISO-only.
-# TWO PUBLISHED DATE BASES, same membership and same nameplate (nyiso-133,
-#   ScenarioConfig.nyiso_solar_registry_cod_dates):
+# TWO PUBLISHED DATE BASES, same membership and same nameplate (nyiso-133;
+#   the solve path reads capacity_mw_cod UNCONDITIONALLY since nyiso-136,
+#   2026-08-15 — the selecting gate was collapsed, rule 26 [R-DELETE]):
 #     capacity_mw     — Gold Book 'In-Service Date' (a registration /
 #                       interconnection-service date), the historical basis;
 #     capacity_mw_cod — EIA-860 capacity-weighted Operating Year/Month for
@@ -21,6 +22,66 @@
 #   Evidence: results/calibration/_nyiso133_commissioning_ramp.json.
 # Regenerate: python scripts/data/derive_nyiso_market_solar.py
 iso,year,month,model_zone,capacity_mw,n_units,capacity_mw_cod,n_units_cod
+NYISO,2022,1,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,1,Long_Island,31.5,1,31.5,1
+NYISO,2022,1,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,1,NYC,0.0,0,0.0,0
+NYISO,2022,1,Upstate_West,0.0,0,0.0,0
+NYISO,2022,2,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,2,Long_Island,31.5,1,31.5,1
+NYISO,2022,2,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,2,NYC,0.0,0,0.0,0
+NYISO,2022,2,Upstate_West,0.0,0,0.0,0
+NYISO,2022,3,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,3,Long_Island,31.5,1,31.5,1
+NYISO,2022,3,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,3,NYC,0.0,0,0.0,0
+NYISO,2022,3,Upstate_West,0.0,0,0.0,0
+NYISO,2022,4,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,4,Long_Island,31.5,1,31.5,1
+NYISO,2022,4,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,4,NYC,0.0,0,0.0,0
+NYISO,2022,4,Upstate_West,0.0,0,0.0,0
+NYISO,2022,5,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,5,Long_Island,31.5,1,31.5,1
+NYISO,2022,5,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,5,NYC,0.0,0,0.0,0
+NYISO,2022,5,Upstate_West,0.0,0,0.0,0
+NYISO,2022,6,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,6,Long_Island,54.4,2,31.5,1
+NYISO,2022,6,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,6,NYC,0.0,0,0.0,0
+NYISO,2022,6,Upstate_West,0.0,0,0.0,0
+NYISO,2022,7,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,7,Long_Island,54.4,2,31.5,1
+NYISO,2022,7,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,7,NYC,0.0,0,0.0,0
+NYISO,2022,7,Upstate_West,0.0,0,0.0,0
+NYISO,2022,8,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,8,Long_Island,54.4,2,54.4,2
+NYISO,2022,8,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,8,NYC,0.0,0,0.0,0
+NYISO,2022,8,Upstate_West,0.0,0,0.0,0
+NYISO,2022,9,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,9,Long_Island,54.4,2,54.4,2
+NYISO,2022,9,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,9,NYC,0.0,0,0.0,0
+NYISO,2022,9,Upstate_West,20.0,1,0.0,0
+NYISO,2022,10,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,10,Long_Island,54.4,2,54.4,2
+NYISO,2022,10,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,10,NYC,0.0,0,0.0,0
+NYISO,2022,10,Upstate_West,20.0,1,20.0,1
+NYISO,2022,11,Capital_Hudson,20.0,1,20.0,1
+NYISO,2022,11,Long_Island,54.4,2,54.4,2
+NYISO,2022,11,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,11,NYC,0.0,0,0.0,0
+NYISO,2022,11,Upstate_West,20.0,1,20.0,1
+NYISO,2022,12,Capital_Hudson,40.0,2,40.0,2
+NYISO,2022,12,Long_Island,54.4,2,54.4,2
+NYISO,2022,12,Lower_Hudson,0.0,0,0.0,0
+NYISO,2022,12,NYC,0.0,0,0.0,0
+NYISO,2022,12,Upstate_West,20.0,1,20.0,1
 NYISO,2023,1,Capital_Hudson,40.0,2,40.0,2
 NYISO,2023,1,Long_Island,54.4,2,54.4,2
 NYISO,2023,1,Lower_Hudson,0.0,0,0.0,0
