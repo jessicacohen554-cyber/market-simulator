@@ -283,8 +283,12 @@ the entry screen as an attribute price exactly the way the RPS dual does today.
 - The **data-center block** (`datacenter_load_path`, default `mid` since FF-1F;
   `data/datacenter.py:239-320`): a flat 0.85-CF block relocated energy-invariantly out of
   the DC-inclusive growth, trajectories in `DATACENTER_ADDITIONS_MW` (`constants.py:2858+`;
-  ERCOT mid 37 GW / high 122 GW by 2030, PJM mid 30 GW), zone shares only for PJM
-  (`DATACENTER_ZONE_SHARE`, Dominion 0.55 anchor), NEISO `{}`.
+  ERCOT mid 37 GW / high 122 GW by 2030, PJM mid 30 GW), zone shares for PJM
+  (`DATACENTER_ZONE_SHARE`, Dominion 0.55 anchor), **ERCOT** (a full published
+  per-weather-zone decomposition since 2026-07-21 — this line previously read "only for PJM",
+  corrected by SCN-WS4a 2026-09-05 after verifying it at this plan's own pin) and **MISO**
+  (the 2026 LTLF regional DC decomposition, SCN-WS4a); NEISO `{}` (re-confirmed against the
+  2026 CELT with the arithmetic written out, `FINDING-scn-ws4a-2026-09-05.md` §3).
 - **Electrification end-use layers** (FF-G4 Option B, `electrification_path`,
   `scenarios.py:2872`): built, default `off`, populated in exactly one cell (NEISO
   heat_pump mid, `constants.py:3078-3139`); `ev` empty in every ISO; the hourly-profile
@@ -761,7 +765,7 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 
 | Criterion (§1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (semantics defect G-C1) | yes | **no** | **no** | partial (no named case) | — |
+| 1 expressible in committed config | yes (semantics defect G-C1) | yes | **no** | **no** | partial — **siting sourced** for ERCOT/PJM/MISO (SCN-WS4a), still **no named case** | — |
 | 2 reaches dispatch + deployment | yes | yes | **no** | **no** | yes | — |
 | 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | **no** | **no** | **no** | — |
 | 4 backcast byte-identity | yes | yes | — | — | yes | — |
