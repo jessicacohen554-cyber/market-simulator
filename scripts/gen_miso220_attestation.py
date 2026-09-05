@@ -1,0 +1,104 @@
+"""Generate the miso-220 arm's calibration attestation from the keeper's.
+
+miso-220 is a **KEEPER CANDIDATE**, which is what separates it from miso-218. The
+distinction rests on an explicit OWNER RULING of 2026-09-05, recorded in
+``PREREG-miso220-nonsteam-offer-lift-2026-09-05.md`` §1: the offer-curve band
+multipliers ARE the intended channel for tuning on price and adjusting merit order,
+and ONE CONFIG HELD ACROSS 2023-2025 is the discipline that separates tuning from
+per-year fitting. miso-218 was rejected on two independent grounds — (a) rule 1
+[R-STRUCT], a level scalar identified against a price residual is not a keeper
+mechanism, and (b) it broke a load-bearing C1 cell. **The ruling disposes of (a);
+(b) is untouched and is exactly what this arm's pre-registered kills test.**
+
+The attestation exists so the arm can be SCORED: a replay writes none, and without
+one the C6 governance gate reads UNATTESTED, guard (b) of the C3c standing rule
+blocks reclassification, and C3c scores FAIL on values identical to the control's
+(the miso-200 vacuous-pass trap, hit and documented at miso-217 §5, closed in
+advance here as PREREG §6 K-4).
+
+**No new ledger entry and no new parameter.** The lift rides the EXISTING
+``offer_curve_by_group`` operator channel and is recorded verbatim in the bundle's
+``run_config.json``; no ``ScenarioConfig`` field is minted and no matrix row is
+added. ``n_entries`` stays 41 and ``n_residual`` 2.
+
+Usage:
+    python3 scripts/gen_miso220_attestation.py
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
+SRC = REPO / "results/calibration/miso217_intermphys_B/calibration_attestation.json"
+ARM = REPO / "results/calibration/miso220_nonsteamlift_B"
+
+DISCLOSURE = (
+    "THE ARM: the four offer-curve band multipliers (committed, econ_low, econ_high, "
+    "peak) of ELEVEN fossil classes scaled x1.10 - CC_REGULAR, CC_INTERMEDIATE, "
+    "CC_CHP, CT_CHP, CT_PEAKER, CT_INTERMEDIATE, COAL, COAL_PRB, COAL_BIT, "
+    "COAL_LIGNITE, COAL_WC - with ST_GAS and ST_GAS_INTERMEDIATE HELD BYTE-IDENTICAL "
+    "per the owner's 2026-09-05 scoping answer, and with phys_* keys (measured "
+    "physics) and the structural shares econ_low_share / pct_peaking NEVER scaled in "
+    "any class. Within-class band ratios are preserved exactly for every lifted "
+    "class, so merit order is preserved WITHIN each lifted class; what moves is the "
+    "lifted classes against the held steam-gas pair, which is the merit-order "
+    "adjustment the owner's ruling names as an intended effect. "
+    "WHY STEAM GAS IS HELD, measured before the solve and not fitted: "
+    "_miso220_marginal_class.json establishes that CT_PEAKER holds the margin in 24 "
+    "of the 45 object hours (CT_PEAKER|econ alone in 22) while ST_GAS holds it in 4, "
+    "with a merit-order reconstruction residual of at most $0.07/$0.48/$1.18 against "
+    "the committed P1 duals - so steam gas is not the price setter in the hours the "
+    "determination turns on, and it is the class the model most under-produces "
+    "(2024 -7.155 TWh). "
+    "THE SINGLE-DELTA PROOF: the keeper records only ONE explicit "
+    "offer_curve_by_group row (ST_GAS_INTERMEDIATE) and resolves the rest implicitly, "
+    "so a full explicit table is a single delta only if its unlifted half reproduces "
+    "that implicit resolution exactly. _miso220_liveness.json S-1 measures "
+    "max |delta mc| = 0.0 across all 2,923 tranches in EACH of 2023, 2024 and 2025; "
+    "S-2 measures 1,604 tranches moved, ZERO in a held class and ZERO outside the "
+    "covered classes, 74,251.8 MW lifted, with ST_GAS's cap-weighted offer moving "
+    "+0.00 %. "
+    "DECLARED LIMITS, not discovered afterwards (PREREG §3): oil (3,278.8 MW), "
+    "biomass (1,865.7 MW) and ST_CHP (698.3 MW) carry no offer_curve_by_group entry "
+    "and are UNLIFTED BY OMISSION, since adding entries would be a second delta and a "
+    "new tuning surface; oil is fossil and already holds the marginal unit in 1 of "
+    "2025's 15 object hours. "
+    "AND THE NON-CLAIM, pre-committed (PREREG §5 P-6): this arm targets the MEAN. The "
+    "phase-0 ladder shows the price pinned inside a ~15 GW near-flat CT_PEAKER|econ "
+    "block with the whole stack topping out near $490 against actuals to $1,782 and "
+    "an implied marginal-to-actual multiplier of 4.07/7.12/8.28, so NO TAIL CLAIM is "
+    "made from this run whatever C3c returns."
+)
+
+
+def build(dst: Path) -> None:
+    """Copy the keeper's attestation onto the arm, restamped and disclosed."""
+    d = json.loads(SRC.read_text())
+    d["governance"]["attested_by"] = (
+        "miso-220 KEEPER CANDIDATE (2026-09-05) under the OWNER RULING of 2026-09-05 "
+        "(PREREG-miso220 §1: the offer-curve band multipliers are the intended "
+        "channel for tuning on price and adjusting merit order; one config held "
+        "across 2023-2025; steam gas held as is): control = the miso-217 keeper "
+        "bundle miso217_intermphys_B itself (already attested, never re-solved, "
+        "rule 29(b) form 4) vs arm miso220_nonsteamlift_B, MISO 2023+2024+2025 in "
+        "ONE invocation, years sequential, solved in-session and never on CI "
+        "(rules 12/16), from the SAME committed keeper recipe via replay_keeper "
+        "--set on the existing offer_curve_by_group operator channel. No "
+        "ScenarioConfig field minted, no matrix row, ledger 41/2 unchanged. This "
+        "attestation exists so the arm can be SCORED (without it C6 reads "
+        "UNATTESTED and guard (b) of the C3c standing rule blocks reclassification "
+        "- PREREG §6 K-4); it certifies the run's provenance, NOT that its gates "
+        "pass, which _miso220_ab_gates.json adjudicates against kills frozen before "
+        "the solve."
+    )
+    d.setdefault("disclosures", {})["miso220_nonsteam_lift"] = DISCLOSURE
+    dst.write_text(json.dumps(d, indent=1))
+    print(f"wrote {dst.relative_to(REPO)} "
+          f"(n_entries={d['free_parameters']['n_entries']}, "
+          f"n_residual={d['free_parameters']['n_residual']})")
+
+
+if __name__ == "__main__":
+    build(ARM / "calibration_attestation.json")
