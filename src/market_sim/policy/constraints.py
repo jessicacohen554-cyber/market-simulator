@@ -2,8 +2,15 @@
 
 Extension point for constraint-type policies -- caps and standards that
 enter the dispatch optimization as additional constraint rows rather than
-as price adders. Examples include NOx emission caps and RPS energy
-constraints.
+as price adders. What this module implements today is the emissions
+**mass cap** only (:func:`get_active_policy_constraints` surfaces the
+``MassCapSpec`` of the unified carbon resolver). The share-standard rows are
+NOT assembled here (readiness-plan finding G-S6, 2026-09): the state RPS row
+and its MISO per-region grain live in ``policy.rps`` and ``model.lp.rows``,
+the state clean/carbon-free tiers in ``policy.clean_tiers``, and the federal
+CES target row in ``policy.federal_ces`` -- all on the clean-tier row family
+wired directly by the runner. A future NOx cap or similar system-wide
+constraint-type policy is what this module's seam is for.
 """
 
 from __future__ import annotations
