@@ -30736,6 +30736,564 @@
       ]
     },
     {
+      "param_id": "locality_capacity_areas_by_iso.NYISO.LI",
+      "display_name": "Locality Capacity Areas By Iso / Nyiso / Li",
+      "value": "Long Island",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_capacity_areas_by_iso.NYISO.NYC",
+      "display_name": "Locality Capacity Areas By Iso / Nyiso / Nyc",
+      "value": "NYC",
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2023/2024.G-J",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2023/2024 / G-J",
+      "value": 157.61,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2023/2024.LI",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2023/2024 / Li",
+      "value": 168.15,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2023/2024.NYC",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2023/2024 / Nyc",
+      "value": 212.81,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2023/2024.NYCA",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2023/2024 / Nyca",
+      "value": 120.04,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2024/2025.G-J",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2024/2025 / G-J",
+      "value": 174.72,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2024/2025.LI",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2024/2025 / Li",
+      "value": 186.37,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2024/2025.NYC",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2024/2025 / Nyc",
+      "value": 229.11,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2024/2025.NYCA",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2024/2025 / Nyca",
+      "value": 132.98,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2025/2026.G-J",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2025/2026 / G-J",
+      "value": 127.58,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2025/2026.LI",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2025/2026 / Li",
+      "value": 137.03,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2025/2026.NYC",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2025/2026 / Nyc",
+      "value": 222.73,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2025/2026.NYCA",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2025/2026 / Nyca",
+      "value": 127.71,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2026/2027.G-J",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2026/2027 / G-J",
+      "value": 131.8,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2026/2027.LI",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2026/2027 / Li",
+      "value": 141.57,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2026/2027.NYC",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2026/2027 / Nyc",
+      "value": 230.1,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_gross_cone_by_iso.NYISO.2026/2027.NYCA",
+      "display_name": "Locality Gross Cone By Iso / Nyiso / 2026/2027 / Nyca",
+      "value": 131.94,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_market_design_vintages.NYISO.LI",
+      "display_name": "Locality Market Design Vintages / Nyiso / Li",
+      "value": [
+        {
+          "delivery_year": "2021-2022",
+          "net_cone_curve_per_kw_yr": 211.20000000000002,
+          "demand_curve": [],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2022-2023",
+          "net_cone_curve_per_kw_yr": 211.07999999999998,
+          "demand_curve": [],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2023-2024",
+          "net_cone_curve_per_kw_yr": 66.26,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.8468348623853211,
+              "price_frac_net_cone": 1.8509174311926606
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.18,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2024-2025",
+          "net_cone_curve_per_kw_yr": 61.24,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.7560673162090346,
+              "price_frac_net_cone": 2.355181576616475
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.18,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2025-2026",
+          "net_cone_curve_per_kw_yr": 49.61,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.4345882352941176,
+              "price_frac_net_cone": 4.141176470588236
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.18,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2026-2027",
+          "net_cone_curve_per_kw_yr": 57.58,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.5163498098859316,
+              "price_frac_net_cone": 3.6869455006337137
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.18,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        }
+      ],
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "locality_market_design_vintages.NYISO.NYC",
+      "display_name": "Locality Market Design Vintages / Nyiso / Nyc",
+      "value": [
+        {
+          "delivery_year": "2021-2022",
+          "net_cone_curve_per_kw_yr": 255.36,
+          "demand_curve": [],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2022-2023",
+          "net_cone_curve_per_kw_yr": 273.24,
+          "demand_curve": [],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2023-2024",
+          "net_cone_curve_per_kw_yr": 154.53,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.9284245283018868,
+              "price_frac_net_cone": 1.3976415094339623
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.18,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2024-2025",
+          "net_cone_curve_per_kw_yr": 150.98,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.8930342741935484,
+              "price_frac_net_cone": 1.5942540322580645
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.18,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2025-2026",
+          "net_cone_curve_per_kw_yr": 140.47,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.7520207253886011,
+              "price_frac_net_cone": 2.377662636729994
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.18,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2026-2027",
+          "net_cone_curve_per_kw_yr": 144.08,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.7487478944413251,
+              "price_frac_net_cone": 2.3958450308815276
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.18,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        }
+      ],
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "maintenance_monthly_shape.CC_CHP",
       "display_name": "Maintenance Monthly Shape / Cc Chp",
       "value": [
@@ -47113,6 +47671,25 @@
       ]
     },
     {
+      "param_id": "scenario.locality_capacity_curves",
+      "display_name": "Locality Capacity Curves",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "GATED default-OFF (capx D59",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.maintenance_monthly_shape",
       "display_name": "Maintenance Monthly Shape",
       "value": true,
@@ -47873,6 +48450,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.miso_zonal_gas_basis_skip_923_priced",
+      "display_name": "Miso Zonal Gas Basis Skip 923 Priced",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "miso-213 (2026-09-05), rule 19 [R-ONE-MECH]: SCOPE of the mean-zero MISO zonal basis above. A gas cell whose delivered price the EIA-923 print path SET (gas_plant_monthly_fuel_pricing: the plant's own reported month, or the nearby state/zone pool of other plants' prints) already embeds the regional delivered premium — the N3045<ST>3 state series the basis rows are built from is the aggregate of those same receipts — so adding the zonal increment on top prices one phenomenon twice. With this set the MISO applier leaves print-derived cells byte-untouched and adds the increment ONLY to cells still on the Henry-Hub trajectory, where the basis is the sole regional signal. The capacity-weighted mean is still taken over ALL gas rows, so the spread VALUES are unchanged (the mask changes only who receives them). ZERO free parameters: a boolean scope on an existing measured input; nothing is fitted. Forecast-mode inert by construction: the print path is a backcast-only overlay, so every forecast cell is a trajectory cell and the basis fires on all of them as before — the mechanism's forward story is untouched. Backcast MISO measurement (miso-213 phase 0, _miso213_basis_layering.json): 100 % of 2024/2025 and 99.9 % of 2023 gas capacity-hours are print-derived under the keeper's class-aware state/zone pools, so on the keeper this scope removes the increment from essentially every gas cell — disclosed, not a motive. Off by default (every existing keeper byte-identical; in _CACHE_KEY_OPTIONAL_FIELDS). Consumed by market_sim.data.fuel.basis.miso.apply_miso_zonal_gas_basis via the written-cell mask apply_plant_monthly_fuel_prices returns (resolve_fuel_prices and run_calibration.run_year both thread it).",
+      "source_date": "2026-09",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -51125,6 +51720,25 @@
       "domain": "Reliability",
       "tier": 2,
       "source": "\"legacy\" | \"pipeline\" (FF-1A, owner D1 =",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.retirement_sector_gate",
+      "display_name": "Retirement Sector Gate",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "GATED default-OFF (capx D53, 2026-09-05; design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md; D32 C5/R3)",
       "source_date": "",
       "page_or_table": "",
       "url": "",

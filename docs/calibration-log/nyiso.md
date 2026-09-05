@@ -11803,3 +11803,193 @@ not landed — if it lands before this PR merges the merging session re-keys
 `docs/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md`,
 `results/calibration/_nyiso189_ab_report.json`,
 `scripts/gen_nyiso189_attestation.py`, `scripts/probes/nyiso189_ab_report.py`.
+
+### 2026-09-05 — nyiso-190 (`backcast-calibration`): the nyiso-189 promotion's one unmeasured justifying clause is measured on pre-registered bars and **REFUTED** — ZERO SOLVES, keeper unchanged
+
+**Object:** the single clause standing between C1-2024 `CC_REGULAR` (+3.33 TWh
+/ +2.8 pp, 0.2 pp inside its band) and a fail — FINDING-nyiso189 §3.1's *"the
+NYC steam it displaces is what the market committed anyway"*. **Solves: ZERO.**
+Bars pushed to `origin` before the first number
+(`results/calibration/PREREG-nyiso190-cc2024-displacement-provenance.md`).
+**Instrument:** the registered arm payload against `2026-09-04-nyiso-188-combined`
+(the nyiso-189 sitting established its same-HEAD control BIT-IDENTICAL to it,
+0 of 52,560 prices differing in every year) and the bench's per-plant CAMPD /
+EIA-923 record. V1 verified both payloads reproduce the FINDING's own class
+columns to ≤ 0.01 TWh before any bar was read.
+
+**Result.** **B1 SUPPORTED** — the market *did* have the displaced units on
+(`s_online` 0.750 / **0.839** / 0.834 of removed MWh at the 2 % bar).
+**B2 REFUTED** — the model was running them harder than the market did:
+**78.1 % of the 2024 displaced TWh moved TOWARD the plants' measured annual**
+(`w_away` 0.139 / **0.219** / 0.375 on CAMPD; 0.216 on EIA-923, both bases
+agreeing). The displacement *relieved a model over-run*; it did not deepen a
+market-committed deficit. **B3 HOLDS** — the arm moves the six-class gas family
+by 0.042 TWh at +1.87 from actual against ±3.82, so it is a genuine
+within-family reallocation. **B4 fails the naming bar** — only **0.42** of the
+2024 displaced TWh is downstate steam/cogen (0.76 `CC_CHP` / 0.46 `CC_REGULAR`
+/ 0.30 `ST_GAS`; NYC 0.74 / Capital-Hudson 0.71 / Upstate-West 0.21), so the
+set is not what the clause names. Every mover the lane was sent to check —
+Ravenswood 2500, Arthur Kill 2490, East River 2493, Empire 56259, Cricket
+Valley 57185 — is a plant the model was **over**-running on both actual bases.
+
+**Consequence, pre-committed in PREREG §4 and executed:** on the `B2 < 0.50`
+branch **no cell-G question goes to the owner** — the "re-open G vs accept"
+card rested on a premise the evidence refutes. `scuc_load_pocket_commitment`
+stays **`G`**; the nyiso-97 §5 bar and the nyiso-160 access closure stand, and
+stop S2 records why this session could never identify it (the bar forbids
+inferring the requirement from observed unit conduct — which this measurement
+is). The CT half of the nyiso-187 disposition stands verbatim.
+
+**What the measurement surfaced instead (POST-HOC, labelled, not a bar):** on
+the keeper, 72 benched plants carry **+11.25 TWh of over-run against −8.18 TWh
+of under-run** (net +3.07) — ~±8 TWh of offsetting plant-grain misallocation
+inside a family the class totals say is pinned (±7.4 in 2023, ±9.3 in 2025).
+The top of it is `CC_CHP` in all three years — Sithe Independence 54547 at an
+annual **CF 0.93 against a measured 0.62** (9.478 vs 6.286 CAMPD / 6.158
+EIA-923 TWh, 2024; 0.97 vs 0.62 in 2025), Brooklyn Navy Yard 54914 held at
+≥95 % of nameplate for **8,172 / 6,226 / 6,714 hours against ZERO measured
+hours** at that level, Empire 56259 2,041 h against 65 — and
+`cc_capacity_reconcile` (cell **K**), the mechanism that bounds exactly this at
+each plant's own CAMPD demonstrated peak, **is scoped to `CC_REGULAR` by
+construction**; its committed 15-row NYISO table contains no `CC_CHP` plant.
+**Neither built nor proposed here** (stops S1/S3): its direction on C1-2024 is
+UNKNOWN and could go either way, so it is put to the owner as one question in
+`docs/DECISION-CARD-nyiso190-cc2024-cell-disposition-2026-09-05.md` §4.
+
+**Governance.** Keeper `2026-09-05-nyiso-189-steam-identity` unchanged — no
+promotion, demotion, re-score or registration; no run was produced, so rule 15
+has nothing to register and the dashboard is untouched. No mechanism tested, so
+no matrix cell moves status; the NYISO shard's `scuc_load_pocket_commitment`
+and `cc_capacity_reconcile` evidence lines and the §5.5 queue are updated, and
+no other ISO's shard is touched. **No marker requested** — D56 has NOT landed
+(NYISO still in `calibration-complete.json`'s `withdrawn` block at `c9f1d26e`),
+so no rule-22 D-5(b) re-key applies. C3a-2025 untouched
+(`DECISION-CARD-nyiso148` Q1 confirmed still pending). Evidence:
+`docs/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md`,
+`results/calibration/_nyiso190_displacement_provenance.json`,
+`_nyiso190_plant_grain_posthoc.json`, probes
+`scripts/probes/nyiso190_displacement_provenance.py` /
+`nyiso190_plant_grain_posthoc.py`.
+
+## 2026-09-05 — D56-R (capx governance records lane, ZERO SOLVES): NYISO `complete` RE-DECLARED on `2026-09-05-nyiso-189-steam-identity` — owner ruling Q38, executed per the withdrawn block's own `reentry` clause; validation tier returns, nothing spent; `frontier` NOT re-asserted (card C-10 / Q39 pending)
+
+**Keeper:** `2026-09-05-nyiso-189-steam-identity`, untouched (no shard edit;
+`frontier` stays withdrawn 2026-08-30). **Re-verified first, artifact-only**
+(`scripts/calibration_verdict.py --run-id`, at origin/main `921bb4cd`):
+CALIBRATED — C1 14/14 (free 10/10), C2 / C3a (+4.9 / +1.7 / −8.3 %) / C3b
+(0.119 / 0.166 / 0.177) / C4 / C6 / C8 PASS; C3c the lone ledgered caveat
+(RT >$300 h: 3 / 0 / 4 vs 10 / 13 / 42), grade 7, fails 0. **The ruling:**
+Q38 (2026-09-04, capx r#35 card C-9, verbatim option "Re-declare now via a
+records lane", ledger §0af amendment 1 / §3) was made on nyiso-188; D56 never
+launched and the keeper moved to nyiso-189 (CALIBRATED → CALIBRATED), so the
+charter's stop clause re-ran step 1 on the new id before anything was written
+(D56-R, ledger §0ag.3). Cross-desk record: audit ruling R-AG (22:20Z) routed
+the question to the calibration director for a recommendation; Q38 (23:18Z)
+ruled the execution without sight of it; both the owner's, coexisting; card
+C-10 is the recommendation R-AG asked for. **Written:** `complete.NYISO`
+(declared 2026-09-05, keeper = keeper_at_declaration = nyiso-189, `by` = Q38
+verbatim, determination as above, validation-only tier, locked test NOT
+AUTHORIZED, `frontier_basis` NONE CLAIMED pending C-10, D-5(b) re-key policy,
+THIRD-grant genealogy) with the 2026-08-30 withdrawal record moved WHOLE
+beneath it (`prior_withdrawal_2026_08_30`, one dated `superseded` field added,
+nothing deleted); `withdrawn` now holds CAISO alone; dated sentence appended
+to the file note; `final`, `intake_log`, `withdrawn.CAISO`, the three other
+`complete` entries and the freeze file byte-identical (asserted).
+`audit_keepers --iso NYISO` PASS (M1a/M1b hold), `--check` PASS 0/0;
+`holdout_policy.authorized(NYISO, validation)` False → True, locked False
+unchanged, `frozen_tiers` = {locked_test}. **Forecast board:** NYISO gate (a)
+FAIL → PASS on the literal §2.1b(2)(a) test (pass-form detail with the Q38
+citation, derivation stamp `read_live_at`/`corrected_by` — never
+forecast-provenance names), `closed_on` ['a'] → [], `marker_complete` true,
+keeper display re-keyed, gate note / headline / gate_reading rewritten by
+prepend + in-place annotation (the D19 text kept verbatim), two sources,
+`gate_a_provenance` re-stamped (passers {ERCOT, NEISO, NYISO, PJM}),
+`d56r_nyiso_redeclaration` records block; every other ISO's block and NYISO's
+legs (b)/(c)/(d) byte-identical (asserted). `check_gate_a_provenance` OK 6/6;
+`check_forecast_staleness` exit 0; `legitimacy_diagnostics --keepers` D-6/D-9
+PASS. NYISO reads (a) PASS · (b) PASS · (c) PASS · (d) none — its §2.1b
+candidacy re-opens; a campaign is a SEPARATE owner grant (D52 landed, C-12
+arming; D59 issued). **Rule 28d:** NYISO matrix shard keeper/gates stamp
+carries the marker state; no cell verdict moved; the shard's pre-existing
+missing comma at the `egrid_steam_collapse_heat_rates` line (the nyiso-172
+class — the file did not `node --check`, so the NYISO column was not
+rendering) repaired by one character, disclosed. **Test pin moved with the
+marker:** `test_marker_state_reflects_committed_markers` (NYISO withdrawn →
+complete). **Pre-existing, not this lane's:**
+`test_walk_inputs_trivial_single_year` (integration-marked) fails identically
+at HEAD. **Spent: NOTHING. Solved: NOTHING.** Record:
+`docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md`.
+
+### 2026-09-05 — nyiso-191 (`backcast-calibration`): the `CC_CHP` scope extension of `cc_capacity_reconcile` is TESTED and **REJECTED on rule 19** — keeper unchanged, artifact reverted
+
+**Markers:** D56 had landed at entry; `complete.NYISO` was already keyed to the
+current keeper with its determination re-verified without a solve by the D56-R
+records lane and `audit_keepers --iso NYISO` PASS, so the **rule-22 D-5(b) duty
+was already discharged** — nothing re-keyed, no marker requested. Training years
+only.
+
+**Solves: TWO** — `nyiso191_control` (registered `2026-09-05-nyiso-191-control`,
+**BIT-IDENTICAL to the keeper**: 0 of 52,560 P1 zonal prices differ in each of
+2023/2024/2025) and the arm `nyiso191_ccchp_scope` (registered
+`2026-09-05-nyiso-191-ccchp-capacity`, **a REJECTED PROBE**). Bars pushed before
+the derive was edited and before any solve
+(`results/calibration/PREREG-nyiso191-ccchp-capacity-scope.md`).
+
+**Phase 0 refuted the session's own premise before the build.** The frozen
+population rule reaches none of the three over-runners nyiso-190 named: **Sithe
+Independence 54547** gets a **RAISE** (demonstrated peak 1,170 MW *exceeds* its
+1,157.8 MW model capacity — its +3.19 TWh over-run is a **DUTY** defect, not a
+capacity one), **Brooklyn Navy Yard 54914** is declined by the frozen CT-only
+guard, **Empire 56259** sits inside the frozen 1.10 margin. The widening reaches
+8 small/mid cogen rows, net −542.5 MW, and phase 0 predicted energy-inertness in
+advance (model energy above the caps 0.0000 / 0.0143 / 0.0000 TWh). It was run
+anyway on a rule 14 + rule 13 licence stated before the build.
+
+**Every bar came back as pre-registered.** V1 control bit-identical; V2 no other
+ISO's table moves (NEISO/CAISO/PJM/MISO byte-identical at the default; ERCOT's
+raise-path filter proven identical); G-DELTA the artifact alone; B1 engaged
+(19 caps / −1,282 MW vs 12 / −740 MW); **B2's falsifiable prediction HELD**
+(worst gas-family movement **0.0034 TWh** vs a 0.05 TWh bar); **B3 no
+criterion-level status flip** — CALIBRATED, grade 7, C3c ledgered on both sides,
+every magnitude ≤ 0.01 TWh (C1-2024 `CC_REGULAR` +3.33 → +3.34 TWh).
+
+**REJECTED ON RULE 19 `[R-ONE-MECH]`, NOT on the residual.** Chasing why only
+2 of 8 plants' LP capacity moved found the cause: **`chp_layup_duty_curve`**
+(row `offer_curve_by_group`, NYISO cell **K**, keeper-armed, nyiso-149) already
+withholds those plants to a **measured price-conditional duty that binds tighter
+than the demonstrated-peak cap at every one of its 6 cohort members** — Selkirk
+199.4 vs 378.0 MW, Lockport 48.9 vs 142.3, Yerkes 28.2 vs 54.6, Oswego 37.1 vs
+58.5, Beaver Falls 34.1 vs 84.6, Olean 45.5 vs 80.9. The widening would stack a
+second bound on an owned phenomenon. The two rows outside the cohort pull
+**opposite** ways: World Generation X improves (CF 0.675 → 0.523 vs a measured
+0.353) while **Sithe's raise pushes the worst over-runner further out** (0.932 →
+0.939 vs 0.618). **Structural integrity does not improve** — the plant-grain
+offsetting misallocation is unchanged (7.38 / 8.18 TWh) and 0.07 TWh *worse* in
+2025 — so it fails the *antecedent* of the owner's standing formula, not its
+consequent.
+
+**Disposition.** Keeper unchanged. The canonical
+`cc_capacity_reconcile_NYISO.csv` is **reverted** to the `origin/main` blob
+`e0b1610` (hash-verified) so the keeper reads its own table; both solves' tables
+are preserved bundle-local. The derive's `--classes` argument is **kept**
+(default `CC_REGULAR`, V2-proved a no-op for every ISO) with tests asserting no
+committed table carries a widened scope. NYISO matrix shard + §5.5 queue updated
+in-session.
+
+**Handed forward.** (1) **Sithe 54547 is an un-owned DUTY object** — CF 0.93 /
+0.97 vs a measured 0.62, outside both mechanisms' reach, the largest single
+per-plant over-run in the fleet. (2) **`ST_GAS` is a ZONAL placement error**
+(measured, no lever proposed): sign stable in all four zones, all three years —
+NYC over (+4.26 / +2.24 / +0.41), Long Island under (−1.65 / −2.26 / −2.28),
+Capital-Hudson under (−0.95 / −1.03 / −1.66), Upstate-West under; the class net
+hides 3.28 / 2.53 / 0.84 TWh of offsetting misallocation. (3) **The derive's
+CT-only test is pooled** and was diluted by World Generation X's zero 2025
+EIA-923 row — the bench's per-year test flags it at 1.378× — affecting exactly
+the one row that bound; a cross-ISO rule-23 repair.
+
+Evidence: `docs/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md`,
+`results/calibration/PREREG-nyiso191-ccchp-capacity-scope.md`,
+`_nyiso191_ccchp_scope_phase0.json`, `_nyiso191_stgas_placement.json`,
+`scripts/gen_nyiso191_attestation.py`, probes
+`scripts/probes/nyiso191_ccchp_scope_phase0.py` / `nyiso191_stgas_placement.py`,
+`tests/curation/test_derive_cc_capacity_reconcile_scope.py`.

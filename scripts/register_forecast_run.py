@@ -273,6 +273,13 @@ VERDICT_MAP = {
     # would contradict; the bare key is untouched. NOTHING ARMS.
     "nyiso-2021-2025-realized-t1h-d52-devintage": "nyiso-t1h-d52-devintage",
     "nyiso-2021-2025-realized-t1h-d52-curveon": "nyiso-t1h-d52-curveon",
+    # capx D59 (2026-09-05): the NYISO locality-half A/B arm (the D52 curve-ON
+    # posture + locality_capacity_curves), suffixed; the bare key is untouched.
+    # The D52 curve-ON recipe replayed at the D59 HEAD (the bare key moved upstream
+    # between the D52 merge and this HEAD, DESIGN-capx-d59 §8.4), field OFF — the
+    # like-for-like comparator and the ledger-level byte-inertness proof.
+    "nyiso-2021-2025-realized-t1h-d59-control": "nyiso-t1h-d59-control",
+    "nyiso-2021-2025-realized-t1h-d59-locality": "nyiso-t1h-d59-locality",
     # capx-D45R (2026-09-04), the D45 close-out at HEAD plus D46 Stages 2 and 3
     # (owner rulings Q33 + Q35). The PJM live-posture replay takes the bare key;
     # the NEISO SHIPPED-posture leg (neiso_net_icr_requirement False, as
@@ -317,6 +324,18 @@ VERDICT_MAP = {
     # that no second mechanism reads the key. SUFFIXED BY CHARTER; nothing arms
     # (PREDECL-capx-d55-2026-09-05.md §1).
     "miso-2021-2025-realized-t1h-d55-keyfix": "miso-t1h-d55-keyfix",
+    # capx-D53 (2026-09-05): the retirement-screen SECTOR GATE
+    # (`retirement_sector_gate` ON; D32 C5/R3) against D46's bare `miso-t1h`
+    # (the gate OFF, the shipped posture), plus the composition-observability
+    # rider (gate ON + D51's `adequacy_accounting_ratio_dated_net` ON) against
+    # `miso-t1h-d51-ratio`. SUFFIXED BY CHARTER, never the bare key; nothing
+    # arms -- the owner decides on the pre-stated condition
+    # (DESIGN-capx-d53-sector-gate-2026-09-05.md §6).
+    # ARMED FOR MISO 2026-09-05 (owner instruction on the measured A/B): the
+    # gated leg IS the bare `miso-t1h` recipe now (key c306ddc6d28c60c2), so
+    # it carries the bare verdict key; the D46 record is preserved above.
+    "miso-2021-2025-realized-t1h-d53-sectorgate": "miso-t1h",
+    "miso-2021-2025-realized-t1h-d53-sectorgate-d51ratio": "miso-t1h-d53-sectorgate-d51ratio",
     # capx-D51 rider (d), owner ruling Q36: D45-R's pre-declared leg 7 -- the
     # NEISO dates-OFF paired control at the SHIPPED lever
     # (`--no-fossil-announced-exits`, neiso_net_icr_requirement False), the
@@ -355,7 +374,12 @@ VERDICT_MAP = {
     # key moved on to the shipped-posture leg and this (Q28-armed) record keeps
     # its own verdict, continuing the same preserve-then-overwrite chain.
     "neiso-2021-2025-realized-t1h-d46": "neiso-t1h-pre-d45r",
-    "miso-2021-2025-realized-t1h-d46": "miso-t1h",
+    # RE-POINTED by capx-D53 (2026-09-05) to `miso-t1h-pre-d53`: the bare key
+    # moved on to the sector-gated leg once the owner armed the gate for MISO
+    # (iso_configs default_scenario_overrides); every scored row of this
+    # record and D53's are identical (a pure candidate-set partition), so the
+    # preserved verdict is HOLD on both — the preserve-then-overwrite chain.
+    "miso-2021-2025-realized-t1h-d46": "miso-t1h-pre-d53",
     "caiso-2021-2025-realized-t1h-d46": "caiso-t1h",
     "ercot-2021-2025-realized-t1h-d46": "ercot-t1h",
     # The T1-F legs of the same batch. Run ids are the registrar's derived
@@ -373,6 +397,10 @@ VERDICT_MAP = {
     "ercot-2026-2030-d50-ccscapex": "ercot-t1f-d50-ccscapex",
     "neiso-2026-2030-d50-ccscapex": "neiso-t1f-d50-ccscapex",
     "pjm-2026-2030-d50-ccscapex": "pjm-t1f-d50-ccscapex",
+    # MISO added by capx D50-R (2026-09-05): PREDECL §2.4 made this leg
+    # conditional on the PJM arm contradicting §2.2, and it did (P3's 2029 leg
+    # missed on its own falsifier), so the conditional fired on its literal terms.
+    "miso-2026-2030-d50-ccscapex": "miso-t1f-d50-ccscapex",
 }
 
 

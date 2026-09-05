@@ -1,0 +1,15 @@
+{
+ "id": "2026-09-05-nyiso-191-ccchp-capacity",
+ "label": "nyiso 191 ccchp-scope (PROBE)",
+ "date": "2026-09-05",
+ "shorthand": "nyiso-191-ccchp-capacity",
+ "definition": "(PROBE \u2014 REJECTED, not a keeper.) The CC_CHP scope extension of cc_capacity_reconcile: the derive's screened population parameterised to --classes (default CC_REGULAR, so no other ISO moves; bar V2 proved byte-identity for CAISO/MISO/NEISO/PJM) and NYISO re-derived at --classes CC_REGULAR CC_CHP (15 -> 23 rows, net -542.5 MW). Zero new/retuned constants, zero new ScenarioConfig fields, zero new DOF entries; the delta is the artifact alone, and the same-HEAD control (2026-09-05-nyiso-191-control) is BIT-IDENTICAL to the keeper (0 of 52,560 prices differ, all years). GATES: no criterion-level status flip \u2014 CALIBRATED, grade 7, C3c ledgered, identical to the control; every magnitude moves <= 0.01 TWh (C1-2024 CC_REGULAR +3.33 -> +3.34 TWh). REJECTED ON RULE 19 [R-ONE-MECH], not on the residual: 6 of the 8 new rows are already in the chp_layup_duty_curve cohort (matrix row offer_curve_by_group, NYISO cell K, keeper-armed), whose MEASURED price-conditional duty binds TIGHTER than the demonstrated-peak cap at every one (Selkirk 199.4 vs 378.0 MW; Lockport 48.9 vs 142.3; Yerkes 28.2 vs 54.6; Oswego 37.1 vs 58.5; Beaver Falls 34.1 vs 84.6; Olean 45.5 vs 80.9) \u2014 so the cap is slack and the widening would stack a second bound on an owned phenomenon. The only two rows outside that cohort pull in OPPOSITE directions: World Generation X 54131 caps 41.5 -> 28.9 MW of LP capacity (CF 0.675 -> 0.523 vs a measured 0.353, an improvement, though the bench flags the plant ct_only at 1.378x in 2024 while the derive's POOLED ct_only test admits it because its 2025 EIA-923 row is 0), and Sithe Independence 54547 takes a RAISE (+11.9 MW) that pushes the model's single largest over-runner further out (CF 0.932 -> 0.939 vs a measured 0.618). Structural integrity does NOT improve: the plant-grain offsetting misallocation is unchanged at 7.38 / 8.18 TWh in 2023 / 2024 and 0.07 TWh WORSE in 2025 (9.29 -> 9.36). Evidence: docs/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md, PREREG-nyiso191-ccchp-capacity-scope.md (pushed before the derive was edited and before any solve), _nyiso191_ccchp_scope_phase0.json.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-09-05-nyiso-191-ccchp-capacity.js",
+ "bundle": "results/calibration/nyiso191_ccchp_scope"
+}

@@ -6,8 +6,18 @@ percentile of net MW across the backcast years, robust to single-hour glitches)
 — a measured capability (CLAUDE.md rule 13; re-derives only on CAMPD vintage
 change, rule 23), not a residual fit:
 
+The screened population is the ``--classes`` argument, defaulting to
+``CC_REGULAR`` — the basis every committed ``cc_capacity_reconcile_<ISO>.csv``
+was derived under, so re-deriving any ISO at the default reproduces its table
+byte-for-byte (rule 25). An ISO whose cogeneration combined cycles carry the same
+phantom-capacity defect widens it on that ISO's own evidence
+(``--classes CC_REGULAR CC_CHP``; NYISO does, see
+``docs/FINDING-nyiso191-*``). Widening argues the POPULATION only: every
+threshold below, the demonstrated-peak authority and both screen branches are
+frozen and unaffected (rules 23/24 — no tunable is added).
+
 * ``--mode both`` (recommended for the synthesized-bins ISOs): FULL bidirectional
-  coverage — every CC_REGULAR plant whose demonstrated peak differs from its
+  coverage — every screened plant whose demonstrated peak differs from its
   (un-guarded) model capacity in EITHER direction gets a row, so the reconcile
   is the primary measured bound and the nameplate summer-capacity guard
   (``fleet._reconcile_cc_pmax_to_nameplate``) is a pure fallback. Caps a plant
@@ -64,6 +74,14 @@ from market_sim.config.paths import (  # noqa: E402
     PROCESSED_DIR,
 )
 
+#: Plant groups screened by default -- the behaviour EVERY committed
+#: ``cc_capacity_reconcile_<ISO>.csv`` was derived under, kept as the default so
+#: re-deriving any ISO at HEAD reproduces its table byte-for-byte (CLAUDE.md rule
+#: 25 ``[R-ISO-SCOPE]``). ``--classes`` widens it per ISO on that ISO's own
+#: evidence; it is a POPULATION argument, never a threshold (rule 24 -- no tunable
+#: is added, and the frozen constants below are unchanged by any widening).
+DEFAULT_CLASSES: tuple[str, ...] = ("CC_REGULAR",)
+
 # Minimum fractional change to bother writing a row (avoid float noise).
 _MIN_DELTA = 0.01
 # Cap mode: only cap when model capacity exceeds the demonstrated peak by this
@@ -90,15 +108,25 @@ _PURE_PLAY_CC_SHARE = 0.90
 _CAP_FEASIBLE_CF = 0.90
 
 
-def _model_cc_capacity(iso: str, year: int) -> dict[int, tuple[str, float]]:
-    """Per-plant model CC_REGULAR capacity (MW) as the LP will carry it.
+def _model_cc_capacity(
+    iso: str, year: int, classes: tuple[str, ...] = DEFAULT_CLASSES
+) -> dict[int, tuple[str, float]]:
+    """Per-plant model capacity (MW), over ``classes``, as the LP will carry it.
 
     Sums the fleet's per-generator net-summer ratings per plant and, when the
     ISO runs ``cc_nameplate_summer_derate`` (PJM/NYISO/NEISO/CAISO), rescales
     to full nameplate by the plant's measured summer-derate ratio — the exact
     transform ``fleet_to_bins`` applies — so the cap screen compares the
     demonstrated peak against the same number the reconcile hook will cap.
-    Restricted to pure-play CC plants (see ``_PURE_PLAY_CC_SHARE``).
+    Restricted to pure-play plants -- at least ``_PURE_PLAY_CC_SHARE`` of the
+    plant's model capacity must sit in ``classes`` (see that constant). The
+    class set is a PARAMETER, not a literal: it defaults to ``CC_REGULAR``
+    alone, which is the behaviour every committed table was derived under, and
+    a caller may widen it (``--classes CC_REGULAR CC_CHP``) where an ISO's
+    cogeneration combined cycles carry the same phantom-capacity defect. Widening
+    changes WHICH plants are screened and nothing else: every threshold, the
+    demonstrated-peak authority and both screen branches are untouched (rule 23 --
+    the constants are frozen; only the population is argued).
     """
     from market_sim.config.iso_configs import get_iso_config
     from market_sim.data.fleet import cc_summer_derate_ratio, load_fleet_from_csv
@@ -115,16 +143,18 @@ def _model_cc_capacity(iso: str, year: int) -> dict[int, tuple[str, float]]:
     plant_cap: dict[int, float] = {}
     cc_cap: dict[int, float] = {}
     names: dict[int, str] = {}
+    groups: dict[int, str] = {}
     for g in gens:
         pc = int(g.plant_code)
         if pc <= 0:
             continue
         plant_cap[pc] = plant_cap.get(pc, 0.0) + float(g.pmax_mw)
-        if g.plant_group == "CC_REGULAR":
+        if g.plant_group in classes:
             cc_cap[pc] = cc_cap.get(pc, 0.0) + float(g.pmax_mw)
             names[pc] = g.name
+            groups[pc] = g.plant_group
     summer_derate_isos = ("PJM", "NYISO", "NEISO", "CAISO")
-    out: dict[int, tuple[str, float]] = {}
+    out: dict[int, tuple[str, float, str]] = {}
     for pc, cap in cc_cap.items():
         if cap / plant_cap[pc] < _PURE_PLAY_CC_SHARE:
             continue
@@ -132,7 +162,7 @@ def _model_cc_capacity(iso: str, year: int) -> dict[int, tuple[str, float]]:
             ratio = cc_summer_derate_ratio(pc)
             if ratio is not None and ratio > 0.0:
                 cap = cap / ratio
-        out[pc] = (names[pc], cap)
+        out[pc] = (names[pc], cap, groups[pc])
     return out
 
 
@@ -229,18 +259,33 @@ def main() -> None:
         default=[2023, 2024, 2025],
         help="backcast years pooled into the demonstrated peak (cap/both mode)",
     )
+    ap.add_argument(
+        "--classes",
+        nargs="+",
+        default=list(DEFAULT_CLASSES),
+        help="plant groups to screen (default: CC_REGULAR — the basis every "
+        "committed table was derived under). Widen per ISO on that ISO's own "
+        "evidence, e.g. --classes CC_REGULAR CC_CHP where the ISO's cogeneration "
+        "combined cycles carry the same phantom-capacity defect. A population "
+        "argument only: every threshold below is frozen and unaffected.",
+    )
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
     iso = args.iso.upper()
+    classes = tuple(args.classes)
     out_path = args.out or (PROCESSED_DIR / f"cc_capacity_reconcile_{iso}.csv")
 
     if args.mode == "raise":
         # Original ERCOT path, unchanged: curated bin nameplates vs a solved
         # bundle's campd.parquet.
         csv = pd.read_csv(CAMPD_BINS_CSV)
-        cc = csv[csv["Plant_Group"] == "CC_REGULAR"]
+        cc = csv[csv["Plant_Group"].isin(classes)]
         plants = {
-            int(r["Plant_Code"]): (str(r["Plant_Name"]), float(r["Nameplate_MW"]))
+            int(r["Plant_Code"]): (
+                str(r["Plant_Name"]),
+                float(r["Nameplate_MW"]),
+                str(r["Plant_Group"]),
+            )
             for _, r in cc.iterrows()
         }
         campd = pd.read_parquet(args.campd)
@@ -255,7 +300,7 @@ def main() -> None:
         # carry it, un-guarded) vs the demonstrated peak from the raw CAMPD
         # extracts. ``both`` additionally emits raise rows where the model
         # under-rates a plant (cold-weather over-rating), for full coverage.
-        plants = _model_cc_capacity(iso, max(args.years))
+        plants = _model_cc_capacity(iso, max(args.years), classes)
         p999, campd_annual = _campd_p999_and_annual(iso, set(plants), args.years)
         from market_sim.data.eia923 import load_monthly_generation
 
@@ -275,7 +320,7 @@ def main() -> None:
     winter = e860.groupby("Plant Code")["Winter Capacity (MW)"].sum()
 
     rows = []
-    for code, (name, cur) in plants.items():
+    for code, (name, cur, group) in plants.items():
         peak = float(p999.get(code, np.nan))
         win = float(winter.get(code, np.nan))
         if np.isnan(peak) or peak <= 0.0 or cur <= 0.0:
@@ -352,6 +397,7 @@ def main() -> None:
             "reconciled_mw": round(reconciled, 1),
             "delta_pct": round(100 * delta, 1),
             "source": "campd_demonstrated_peak",
+            "plant_group": group,
         }
         if row_mode is not None:
             row["mode"] = row_mode
@@ -364,12 +410,12 @@ def main() -> None:
         n_cap = int((out["mode"] == "cap").sum()) if not out.empty else 0
         n_raise = int((out["mode"] == "raise").sum()) if not out.empty else 0
         print(
-            f"wrote {out_path}  ({len(out)} CC_REGULAR plants: {n_cap} capped, "
-            f"{n_raise} raised)"
+            f"wrote {out_path}  ({len(out)} {'/'.join(classes)} plants: "
+            f"{n_cap} capped, {n_raise} raised)"
         )
     else:
         verb = "raised" if args.mode == "raise" else "capped"
-        print(f"wrote {out_path}  ({len(out)} CC_REGULAR plants {verb})")
+        print(f"wrote {out_path}  ({len(out)} {'/'.join(classes)} plants {verb})")
     print(out.to_string(index=False))
 
 

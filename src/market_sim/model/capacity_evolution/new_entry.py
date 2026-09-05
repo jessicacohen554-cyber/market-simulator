@@ -819,6 +819,8 @@ def apply_economic_new_entry(
     entry_rate_caps_mw: dict[str, float] | None = None,
     entry_pipeline: list[dict] | None = None,
     procured_flow_mw: dict[str, float] | None = None,
+    locality_prices_by_zone: dict[str, float] | None = None,
+    locality_cost_ratio_by_zone: dict[str, float] | None = None,
     entry_reprice=None,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
@@ -951,6 +953,20 @@ def apply_economic_new_entry(
             independent of ``entry_pipeline_aware_signal``. ``None``
             (default, and always ``None`` while the gate is off) is
             byte-identical.
+        locality_prices_by_zone: capx D59 (``locality_capacity_curves``) —
+            ``{zone: locality capacity price $/firm-MW-yr}`` from
+            :func:`~market_sim.model.capacity_evolution.retirements.
+            locality_prices_by_zone`. A VRE candidate's RA payment is settled
+            at max(NYCA, its sited zone's locality price) (ICAP Manual
+            §5.15.2), and every thermal candidate is ALSO screened sited in
+            each priced locality — that zone's own hourly LP prices, its
+            settled capacity price and its published Gross-CONE cost ratio
+            (``locality_cost_ratio_by_zone``) — and built where its margin is
+            highest, a tie keeping the default zone (DESIGN §5.5). ``None`` /
+            empty is byte-identical.
+        locality_cost_ratio_by_zone: ``{zone: GrossCONE_locality / GrossCONE_NYCA}``
+            of the delivery year's published vintage (capx D59); absent zones
+            cost 1.0.
         entry_reprice: D11-R margin-exhaustion walk state
             (``runner._EntryRepriceWalk``, GATED ``entry_margin_exhaustion``).
             When supplied, the bang-bang allocation — each clearing tech
@@ -1037,6 +1053,9 @@ def apply_economic_new_entry(
     # eligibility masks are statute, the CFs and prices are the model's own.
     _zone_selection_on = bool(getattr(config, "entry_vre_zone_selection", False))
     _vre_zone_by_tech: dict[str, str] = {}
+    # capx D59: the locality a thermal candidate was sited in by the locality
+    # siting leg (absent ⇒ the default build zone, byte-identical).
+    _thermal_zone_by_tech: dict[str, str] = {}
 
     def _vre_cap_payment(tech: str, ra_zone: str) -> float:
         """The RA capacity payment a VRE candidate earns sited in ``ra_zone``.
@@ -1053,6 +1072,11 @@ def apply_economic_new_entry(
         firm_price = design.capacity_price_per_firm_mw_yr(
             config, reserve_position, iso=iso_config.name, year=year
         )
+        # capx D59: the sited zone's locality price, max-stacked on the NYCA
+        # leg (ICAP Manual §5.15.2); None / absent zone is byte-identical.
+        _lp = (locality_prices_by_zone or {}).get(ra_zone)
+        if _lp is not None and design.capacity_market:
+            firm_price = max(firm_price, float(_lp))
         if firm_price <= 0.0:
             return 0.0
         credit = resolve_renewable_capacity_credit(
@@ -1280,6 +1304,53 @@ def apply_economic_new_entry(
                 as_credit = thermal_as_revenue_per_mw_yr.get(tech, 0.0)
             else:
                 as_credit = as_revenue_per_mw_yr(tech, storage_power_mw, config)
+            # capx D59 (locality_capacity_curves): the same candidate screened
+            # sited in each priced locality — that zone's own hourly LP prices
+            # (the same reserve legs), the settled capacity price
+            # max(NYCA, locality) through the ONE seam, and the annualized
+            # fixed cost scaled by the published locality/NYCA Gross-CONE
+            # ratio. Sited at the argmax margin; a tie keeps the default zone
+            # (D33's discipline). Empty dicts ⇒ this block is skipped and the
+            # default-zone screen is byte-identical.
+            if locality_prices_by_zone and zone_names:
+                _best_zone, _best = (
+                    zone,
+                    energy_margin + capacity_payment + as_credit - fixed_cost,
+                )
+                _prices_2d = np.asarray(prices, dtype=float)
+                for _lz in sorted(locality_prices_by_zone):
+                    if _lz == zone or _lz not in zone_names or _prices_2d.ndim != 2:
+                        continue
+                    _zi = zone_names.index(_lz)
+                    if _zi >= _prices_2d.shape[0]:
+                        continue
+                    _hv = np.maximum(_prices_2d[_zi] - var_cost, 0.0)
+                    if r_tech is not None:
+                        _n = min(_hv.size, r_tech.size)
+                        _hv = np.maximum(_hv[:_n], r_tech[:_n])
+                    _em = float(_hv.sum())
+                    _cp = (
+                        0.0
+                        if _zone_is_long(deliverability_headroom, _lz)
+                        else capacity_revenue_per_mw_yr(
+                            iso_config.name,
+                            tech,
+                            EFORD[tech],
+                            config,
+                            reserve_position,
+                            year,
+                            locality_price_per_firm_mw_yr=locality_prices_by_zone[_lz],
+                        )
+                    )
+                    _fc = fixed_cost * float(
+                        (locality_cost_ratio_by_zone or {}).get(_lz, 1.0)
+                    )
+                    _mz = _em + _cp + as_credit - _fc
+                    if _mz > _best:
+                        _best, _best_zone = _mz, _lz
+                        energy_margin, capacity_payment, fixed_cost = _em, _cp, _fc
+                if _best_zone != zone:
+                    _thermal_zone_by_tech[tech] = _best_zone
             effective_revenue = energy_margin + capacity_payment + as_credit
             margin = effective_revenue - fixed_cost
             if margin > 0.0:
@@ -1307,6 +1378,7 @@ def apply_economic_new_entry(
                 _rows[tech] = {
                     "tech": tech,
                     "kind": "thermal",
+                    "build_zone": _thermal_zone_by_tech.get(tech, zone),
                     "energy_revenue_per_mw_yr": float(energy_margin),
                     "attribute_revenue_per_mw_yr": 0.0,
                     "capacity_revenue_per_mw_yr": float(capacity_payment),
@@ -1641,7 +1713,7 @@ def apply_economic_new_entry(
                     {
                         "tech": tech,
                         "mw": float(build_mw),
-                        "zone": zone,
+                        "zone": _thermal_zone_by_tech.get(tech, zone),
                         "decision_year": int(year),
                         "cod_year": int(year) + _cod_lag,
                         "seq": int(seq),
@@ -1651,7 +1723,13 @@ def apply_economic_new_entry(
             else:
                 new_fleet.append(
                     _make_new_generator(
-                        tech, build_mw, zone, year, seq, config, iso_config.name
+                        tech,
+                        build_mw,
+                        _thermal_zone_by_tech.get(tech, zone),
+                        year,
+                        seq,
+                        config,
+                        iso_config.name,
                     )
                 )
 

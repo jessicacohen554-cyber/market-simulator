@@ -794,6 +794,12 @@ results/hindcast/*/*/*/evolution_*.json
 # position tables, LOYO sign test and P9 grade read against D45-R's bare
 # `nyiso-t1h` ledgers -- same one-bundle carve-out.
 !results/hindcast/nyiso-2021-2025-realized-t1h-d52-*/*/*/evolution_*.json
+# capx D59 (2026-09-05): the NYISO locality-half A/B arm (suffixed
+# nyiso-t1h-d59-locality). Its ledgers carry the new `locality_capacity` block
+# (per-locality ICAP census / requirement / position / prices) the D59
+# finding's position tables and P9 grade read against the D52 curve-ON ledgers
+# -- same one-bundle carve-out.
+!results/hindcast/nyiso-2021-2025-realized-t1h-d59-*/*/*/evolution_*.json
 # capx D51 (2026-09-04): the MISO accounting-ratio re-identification A/B arm
 # (suffixed miso-t1h-d51-ratio) and D45-R's leg 7, the NEISO dates-OFF paired
 # control (suffixed neiso-t1h-d45r-datesoff, owner ruling Q36). Their ledgers
@@ -803,6 +809,13 @@ results/hindcast/*/*/*/evolution_*.json
 # carve-out.
 !results/hindcast/miso-2021-2025-realized-t1h-d51-ratio/*/*/evolution_*.json
 !results/hindcast/neiso-2021-2025-realized-t1h-d45r-datesoff/*/*/evolution_*.json
+# capx D53 (2026-09-05): the retirement-screen sector-gate A/B arm (suffixed
+# miso-t1h-d53-sectorgate) and its composition-observability rider (gate +
+# D51's ratio, suffixed miso-t1h-d53-sectorgate-d51ratio). Their ledgers carry
+# the `sector_gated` census block and the post-gate pipeline screen rows the
+# D53 finding's P1-P7 grading reads against the D46 / D51 ledgers -- same
+# one-bundle carve-out.
+!results/hindcast/miso-2021-2025-realized-t1h-d53-sectorgate*/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet

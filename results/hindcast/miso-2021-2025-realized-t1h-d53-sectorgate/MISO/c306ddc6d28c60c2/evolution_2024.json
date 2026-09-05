@@ -1,0 +1,387 @@
+{
+  "adequacy_requirement_mw": 122428.556,
+  "announced_derates": [
+    {
+      "derate_mw": 78.1521,
+      "fuel": "coal",
+      "mw_after": 55.682900000000004,
+      "mw_before": 133.835,
+      "unit_id": "COAL_MISO-Illinois_p963_mustrun"
+    },
+    {
+      "derate_mw": 78.98130000000002,
+      "fuel": "coal",
+      "mw_after": 56.273700000000005,
+      "mw_before": 135.25500000000002,
+      "unit_id": "COAL_MISO-Illinois_p963_committed"
+    },
+    {
+      "derate_mw": 46.02059999999999,
+      "fuel": "coal",
+      "mw_after": 32.789399999999986,
+      "mw_before": 78.80999999999997,
+      "unit_id": "COAL_MISO-Illinois_p963_econ"
+    },
+    {
+      "derate_mw": 4.146,
+      "fuel": "coal",
+      "mw_after": 2.9539999999999997,
+      "mw_before": 7.1,
+      "unit_id": "COAL_MISO-Illinois_p963_peak"
+    }
+  ],
+  "bridge": false,
+  "capacity_reserve_position": 0.976427,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 1471.6,
+    "solar": 1236.4,
+    "wind": 4000.0
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2026,
+      "decision_year": 2024,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 4000.0,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "cod_year": 2026,
+      "decision_year": 2024,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1236.4,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "cod_year": 2026,
+      "decision_year": 2024,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 3000.0,
+      "seq": 2,
+      "tech": "gas_cc",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "cod_year": 2026,
+      "decision_year": 2024,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 1471.6,
+      "seq": 3,
+      "tech": "gas_ct",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "cod_year": 2024,
+      "decision_year": 2022,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 4000.0,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "cod_year": 2024,
+      "decision_year": 2022,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 1236.4,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "MISO-East"
+    }
+  ],
+  "entry_screen_diagnostics": [
+    {
+      "annual_cost_per_mw_yr": 99757.24391127692,
+      "attribute_price": 30.0,
+      "attribute_revenue_per_mw_yr": 102939.48962125649,
+      "binding_cap": "per_tech_cap",
+      "build_mw": 4000.0,
+      "build_zone": "MISO-Illinois",
+      "capacity_revenue_per_mw_yr": 20501.0,
+      "capex_after_credit_per_kw": 1588.693821220418,
+      "capex_base_per_kw": 1676.6,
+      "capex_wright_per_kw": 1588.693821220418,
+      "cf_base": 0.38,
+      "cf_expected": 0.39170277633659245,
+      "cf_shape_aware": true,
+      "crf": 0.07014179091512122,
+      "cumulative_gw": 1540.0,
+      "energy_revenue_per_mw_yr": 90350.40576635544,
+      "fom_per_kw_yr": 33.7,
+      "itc_solar": 0.0,
+      "kind": "vre",
+      "lcoe_per_mwh": 29.96792955758139,
+      "margin_per_mw_yr": 114033.65147633501,
+      "per_tech_cap_gw": 4.0,
+      "profitable": true,
+      "ptc_wind": 26.0,
+      "ptc_wind_levelized_per_mwh": 13.631514637380018,
+      "queue_budget_gw": 10.0,
+      "rps_shadow_price": 30.0,
+      "tech": "wind",
+      "total_revenue_per_mw_yr": 213790.89538761193
+    },
+    {
+      "annual_cost_per_mw_yr": 87371.70386013274,
+      "attribute_price": 30.0,
+      "attribute_revenue_per_mw_yr": 57804.390194140804,
+      "binding_cap": "growth_ladder",
+      "build_mw": 1236.4,
+      "build_zone": "MISO-Illinois",
+      "capacity_revenue_per_mw_yr": 47856.25,
+      "capex_after_credit_per_kw": 927.7166010613583,
+      "capex_base_per_kw": 1562.2,
+      "capex_wright_per_kw": 1325.3094300876548,
+      "cf_base": 0.27,
+      "cf_expected": 0.21995582265654795,
+      "cf_shape_aware": true,
+      "crf": 0.07014179091512122,
+      "cumulative_gw": 3000.0,
+      "energy_revenue_per_mw_yr": 55141.613273649215,
+      "fom_per_kw_yr": 22.3,
+      "itc_solar": 0.3,
+      "kind": "vre",
+      "lcoe_per_mwh": 36.94051406229187,
+      "margin_per_mw_yr": 73430.54960765729,
+      "per_tech_cap_gw": 6.0,
+      "profitable": true,
+      "ptc_wind": 0.0,
+      "ptc_wind_levelized_per_mwh": 0.0,
+      "queue_budget_gw": 10.0,
+      "rps_shadow_price": 30.0,
+      "tech": "solar",
+      "total_revenue_per_mw_yr": 160802.25346779003
+    },
+    {
+      "annual_cost_per_mw_yr": 146993.89717288726,
+      "as_credit_per_mw_yr": 0.0,
+      "attribute_revenue_per_mw_yr": 0.0,
+      "binding_cap": "per_tech_cap",
+      "build_mw": 3000.0,
+      "capacity_revenue_per_mw_yr": 117325.0,
+      "capex_after_credit_per_kw": 1580.9960898643185,
+      "capex_base_per_kw": 1583.3,
+      "capex_wright_per_kw": 1580.9960898643185,
+      "crf": 0.07014179091512122,
+      "cumulative_gw": 1282.5012,
+      "energy_revenue_per_mw_yr": 82816.98861756136,
+      "fom_per_kw_yr": 36.1,
+      "kind": "thermal",
+      "margin_per_mw_yr": 53148.09144467409,
+      "per_tech_cap_gw": 3.0,
+      "profitable": true,
+      "queue_budget_gw": 10.0,
+      "tech": "gas_cc",
+      "total_revenue_per_mw_yr": 200141.98861756135,
+      "var_cost_per_mwh": 17.686999999999998
+    },
+    {
+      "annual_cost_per_mw_yr": 128111.5766804337,
+      "as_credit_per_mw_yr": 0.0,
+      "attribute_revenue_per_mw_yr": 0.0,
+      "binding_cap": "growth_ladder",
+      "build_mw": 1471.6,
+      "capacity_revenue_per_mw_yr": 116090.0,
+      "capex_after_credit_per_kw": 1428.7,
+      "capex_base_per_kw": 1428.7,
+      "capex_wright_per_kw": 1428.7,
+      "crf": 0.07014179091512122,
+      "cumulative_gw": null,
+      "energy_revenue_per_mw_yr": 16601.012836168637,
+      "fom_per_kw_yr": 27.9,
+      "kind": "thermal",
+      "margin_per_mw_yr": 4579.436155734933,
+      "per_tech_cap_gw": 2.0,
+      "profitable": true,
+      "queue_budget_gw": 10.0,
+      "tech": "gas_ct",
+      "total_revenue_per_mw_yr": 132691.01283616864,
+      "var_cost_per_mwh": 25.909999999999997
+    },
+    {
+      "annual_cost_per_mw_yr": 816969.4902996991,
+      "attribute_price": 0.0,
+      "attribute_revenue_per_mw_yr": 0.0,
+      "binding_cap": "unprofitable",
+      "build_mw": 0.0,
+      "build_zone": null,
+      "capacity_revenue_per_mw_yr": 0.0,
+      "capex_after_credit_per_kw": 10485.699333094359,
+      "capex_base_per_kw": 10527.6,
+      "capex_wright_per_kw": 10485.699333094359,
+      "cf_base": 0.9,
+      "cf_expected": 0.9,
+      "cf_shape_aware": false,
+      "crf": 0.06376012405673304,
+      "cumulative_gw": 460.0,
+      "energy_revenue_per_mw_yr": 213979.5977558052,
+      "fom_per_kw_yr": 148.4,
+      "itc_solar": 0.0,
+      "kind": "must_run",
+      "lcoe_per_mwh": 103.62373037794255,
+      "margin_per_mw_yr": -602989.8925438939,
+      "per_tech_cap_gw": 1.0,
+      "profitable": false,
+      "ptc_wind": 0.0,
+      "ptc_wind_levelized_per_mwh": 0.0,
+      "queue_budget_gw": 10.0,
+      "rps_shadow_price": 0.0,
+      "tech": "nuclear_smr",
+      "total_revenue_per_mw_yr": 213979.5977558052
+    }
+  ],
+  "firm_clean_accredited_mw": 1470.336,
+  "firm_clean_mw": 2371.51,
+  "fleet_by_fuel_after": {
+    "biomass": 1990.2,
+    "coal": 46931.24,
+    "gas_cc": 33540.4,
+    "gas_ct": 24385.041,
+    "gas_st": 12986.225,
+    "nuclear": 11658.8,
+    "oil": 3506.0
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1990.2,
+    "coal": 47628.54,
+    "gas_cc": 33540.4,
+    "gas_ct": 24385.041,
+    "gas_st": 13248.375,
+    "nuclear": 11658.8,
+    "oil": 3506.0
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "MISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 121560.0,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 4000.0,
+      "tech": "wind",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "mw": 1236.4,
+      "tech": "solar",
+      "zone": "MISO-East"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.3875,
+    "wind": 0.166
+  },
+  "reserve_margin": -0.014784,
+  "retirements": [
+    {
+      "fuel": "gas_st",
+      "mw": 74.145,
+      "reason": "announced",
+      "unit_id": "ST_GAS_MISO-South_p2050_committed"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 135.9325,
+      "reason": "announced",
+      "unit_id": "ST_GAS_MISO-South_p2050_econ"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 37.0725,
+      "reason": "announced",
+      "unit_id": "ST_GAS_MISO-South_p2050_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 220.5,
+      "reason": "announced",
+      "unit_id": "COAL_MISO-Indiana_p6137_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 24.5,
+      "reason": "announced",
+      "unit_id": "COAL_MISO-Indiana_p6137_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 235.2,
+      "reason": "announced",
+      "unit_id": "COAL_MISO-Indiana_p6137_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.8,
+      "reason": "announced",
+      "unit_id": "COAL_MISO-Indiana_p6137_peak"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 4.5,
+      "reason": "announced",
+      "unit_id": "ST_CHP_MISO-Illinois_p10612_committed"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 8.25,
+      "reason": "announced",
+      "unit_id": "ST_CHP_MISO-Illinois_p10612_econ"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 2.25,
+      "reason": "announced",
+      "unit_id": "ST_CHP_MISO-Illinois_p10612_peak"
+    }
+  ],
+  "rps_dual": 30.0,
+  "screen_adequacy_requirement_mw": 122428.556,
+  "screen_entering_firm_mw": 119542.505,
+  "screen_peak_demand_mw": 121560.0,
+  "screen_reserve_position": 0.976427,
+  "sector_gated": {
+    "mw": 101302.86999999995,
+    "mw_by_fuel": {
+      "coal": 40032.09999999999,
+      "gas_cc": 21769.1,
+      "gas_ct": 18459.969999999998,
+      "gas_st": 11322.000000000002,
+      "nuclear": 9396.699999999999,
+      "oil": 323.0
+    },
+    "mw_by_sector": {
+      "1": 101302.86999999995
+    },
+    "units": 732,
+    "unknown_sector_mw": 5880.599999999999,
+    "unknown_sector_units": 9,
+    "year": 2024
+  },
+  "solar_cap_mw": 3284.4,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 1963.718,
+  "storage_power_mw": 2142.4,
+  "thermal_additions": [],
+  "wind_cap_mw": 30050.0,
+  "year": 2024
+}

@@ -1085,6 +1085,19 @@ def _miso_config() -> ISOConfig:
             "entry_vre_zone_selection": True,
             "miso_rps_compliance_regions": True,
             "miso_clean_tier_rows": True,
+            # capx D53 (2026-09-05): the retirement-screen SECTOR GATE, ARMED
+            # FOR MISO ONLY by owner instruction on the measured A/B
+            # (FINDING-capx-d53-2026-09-05.md §6 — all four pre-stated limbs
+            # met: a pure candidate-set partition, 59 GW of regulated-utility
+            # capacity removed from a merchant screen, the floor's release
+            # drawn from the merchant pool at 99.8 % plant-grain precision
+            # instead of 1.1 %). Rule 25 [R-ISO-SCOPE]: the ScenarioConfig
+            # default STAYS False; every other ISO measures its own sector
+            # census before its cell moves (the PJM leg is the named
+            # successor). The bare `miso-t1h` recipe now resolves to key
+            # c306ddc6d28c60c2 (the solved D53 arm); the D46 record is
+            # preserved at `miso-t1h-pre-d53`.
+            "retirement_sector_gate": True,
         },
     )
 

@@ -3694,6 +3694,242 @@ NYCA_ICAP_UCAP_TRANSLATION_BY_ISO: dict[str, dict[str, float]] = {
 ERCOT_AS_SATURATION_REF_GW: float = 4.0
 ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 
+# --------------------------------------------------------------------------- #
+# NYISO LOCALITY capacity demand curves (capx D59, 2026-09-05 — executing
+# FINDING-capx-d52-2026-09-04.md §8(2) route 1 / D45 §5.2.4 item 3; design
+# docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md). GATED by the
+# default-OFF ``ScenarioConfig.locality_capacity_curves``; NYISO-only in DATA
+# (rule 25 [R-ISO-SCOPE]: every registry below holds one ISO, and the gate
+# predicate ``retirements.locality_capacity_curves_armed`` requires an entry).
+#
+# NYISO's ICAP Spot Market Auction clears a Market-Clearing Price for the NYCA
+# AND for each Locality (New York City = Load Zone J, Long Island = Zone K, the
+# G-J Locality = zones G–J): "The Market-Clearing Price for a Locality will be
+# the price at which the supply curve for that Locality intersects the Demand
+# Curve for that Locality unless the Market-Clearing Price determined for Rest
+# of State is higher in which case the Market-Clearing Price for that Locality
+# will be set at the Market-Clearing Price for Rest of State." (NYISO Installed
+# Capacity Manual §5.15.2, manual p.206; sha256 b0104a503be85aa705250221360fd101
+# 6addaee6ccf41a78aed7fe488659a497, fetched 2026-09-05). The locality demand
+# curves are published per capability year on the SAME sheet as the NYCA curve
+# (NYISO "Demand Curve Parameters" / the ICAPWG annual-update decks) and are
+# digitized in the committed data/raw/capacity-market/demand-curve/nyiso/
+# nyiso.csv (areas NYC / LI / G-J beside NYCA), reconciled row-for-row by
+# tests/unit/model/test_capacity.py::TestNyisoLocalityCapacityCurves. Each
+# vintage is the IDENTICAL straight-line construction the NYCA vintages use
+# (``_nyiso_icap_vintage_curve``): net-CONE fraction 1.0 at the locality's
+# requirement, zero at 1 + the locality's published Demand Curve Length (18 %
+# for NYC and LI, 15 % for G-J, vs 12 % NYCA — Analysis Group DCR Table 2), the
+# cap where the summer max-clearing / reference-point ratio meets the line;
+# anchor = the locality's Annual Reference Value ($/kW-yr). 2021-22 / 2022-23
+# published no ARV → flat anchor = the reference-point price × 12 with a
+# ()-shape, exactly the NYCA convention for those two vintages.
+#
+# Only NYC and LI are representable on the 5-zone model (a locality must be a
+# UNION of model zones; G-J spans Capital_Hudson = F+G, so it is not — DESIGN
+# §1); G-J's rows stay in the csv, unconsumed, and the crosswalk keeps its
+# ``aggregate`` exclusion. ``LOCALITY_CAPACITY_AREAS_BY_ISO`` maps each
+# representable locality's demand-curve label onto the capacity-deliverability
+# area label whose ``requirement`` rows (the published Locational Minimum ICAP
+# Requirement, LCR Report table row [G]) the mechanism reads through the
+# EXISTING curated reader ``data.capacity_deliverability.requirement_by_area``
+# (rule 6 — never a re-typed dict), and whose model zones come from the
+# crosswalk's ``leaf`` rows (``capacity_area_crosswalk.map_area``).
+_NYISO_LOCALITY_CURVE_LENGTH: float = (
+    0.18  # NYC and LI Demand Curve Length, all vintages
+)
+
+LOCALITY_CAPACITY_AREAS_BY_ISO: dict[str, dict[str, str]] = {
+    "NYISO": {"NYC": "NYC", "LI": "Long Island"},
+}
+
+LOCALITY_MARKET_DESIGN_VINTAGES: dict[
+    str, dict[str, tuple[MarketDesignVintage, ...]]
+] = {
+    "NYISO": {
+        "NYC": (
+            MarketDesignVintage("2021-2022", 21.28 * 12.0),
+            MarketDesignVintage("2022-2023", 22.77 * 12.0),
+            MarketDesignVintage(
+                "2023-2024",
+                154.53,
+                _nyiso_icap_vintage_curve(21.20, 29.63, _NYISO_LOCALITY_CURVE_LENGTH),
+            ),
+            MarketDesignVintage(
+                "2024-2025",
+                150.98,
+                _nyiso_icap_vintage_curve(19.84, 31.63, _NYISO_LOCALITY_CURVE_LENGTH),
+            ),
+            MarketDesignVintage(
+                "2025-2026",
+                140.47,
+                _nyiso_icap_vintage_curve(17.37, 41.30, _NYISO_LOCALITY_CURVE_LENGTH),
+            ),
+            MarketDesignVintage(
+                "2026-2027",
+                144.08,
+                _nyiso_icap_vintage_curve(17.81, 42.67, _NYISO_LOCALITY_CURVE_LENGTH),
+            ),
+        ),
+        "LI": (
+            MarketDesignVintage("2021-2022", 17.60 * 12.0),
+            MarketDesignVintage("2022-2023", 17.59 * 12.0),
+            MarketDesignVintage(
+                "2023-2024",
+                66.26,
+                _nyiso_icap_vintage_curve(13.08, 24.21, _NYISO_LOCALITY_CURVE_LENGTH),
+            ),
+            MarketDesignVintage(
+                "2024-2025",
+                61.24,
+                _nyiso_icap_vintage_curve(11.29, 26.59, _NYISO_LOCALITY_CURVE_LENGTH),
+            ),
+            MarketDesignVintage(
+                "2025-2026",
+                49.61,
+                _nyiso_icap_vintage_curve(6.80, 28.16, _NYISO_LOCALITY_CURVE_LENGTH),
+            ),
+            MarketDesignVintage(
+                "2026-2027",
+                57.58,
+                _nyiso_icap_vintage_curve(7.89, 29.09, _NYISO_LOCALITY_CURVE_LENGTH),
+            ),
+        ),
+    },
+}
+
+# External Unforced Capacity Deliverability Rights INTO each locality — the
+# locality-attributable part of the D2 external-capacity tie (which the NYCA
+# ledger already carries inside ADEQUACY_EXTERNAL_TIE_FIRM_MW["NYISO"]; these
+# rows enter the LOCALITY ICAP census only, never the NYCA half, so nothing is
+# double-counted). ICAP Manual §4.9.6 "UDRs awarded, not subject to the above
+# limits" (manual p.94): Cross Sound Cable 330 MW (ISO-NE → K), Neptune 660 MW
+# (PJM → K), Linden VFT 315 MW (PJM → J), Hudson Transmission Project 660 MW
+# (PJM → J; footnote 1: "On April 30, 2022, the CRIS Rights for the Hudson
+# Transmission Project expired … in 2024 … elected partial CRIS of 85 MW"),
+# Champlain Hudson Power Express 1,250 MW (HQ → J; in service CY 2026/27).
+# Rows are (locality curve label, line, ICAP MW, first capability-year start,
+# last capability-year start inclusive); a right applies in model year Y iff
+# first ≤ Y ≤ last (the information gate: the CRIS lapse and the CHPE
+# in-service date are on file). Rule 13: rights are re-published in every
+# manual revision and respond to conditions (the HTP lapse IS such a response).
+NYISO_LOCALITY_UDR_ICAP_MW: tuple[tuple[str, str, float, int, int], ...] = (
+    ("LI", "Cross Sound Cable (ISO-NE -> Zone K)", 330.0, 0, 9999),
+    ("LI", "Neptune (PJM -> Zone K)", 660.0, 0, 9999),
+    ("NYC", "Linden VFT (PJM -> Zone J)", 315.0, 0, 9999),
+    (
+        "NYC",
+        "Hudson Transmission Project (PJM -> Zone J), CRIS through CY 2021/22",
+        660.0,
+        0,
+        2021,
+    ),
+    ("NYC", "Hudson Transmission Project, 85 MW CRIS elected 2024", 85.0, 2024, 9999),
+    (
+        "NYC",
+        "Champlain Hudson Power Express (HQ -> Zone J), in service CY 2026/27",
+        1250.0,
+        2026,
+        9999,
+    ),
+)
+
+# Published peaking-plant GROSS Cost of New Entry ($/kW-yr) by capacity region
+# and capability year — the same "Demand Curve Parameters" sheets as the ARV
+# rows (nyiso.csv ``gross_cone`` rows; 2023-2024 / 2024-2025 from the ICAPWG
+# annual-update decks p.31 / p.30, 2025-2026 from the posted parameter sheet,
+# 2026-2027 already committed by FFR-2C). The entry screen's locality siting
+# leg (DESIGN §5.5) scales a candidate's annualized fixed cost by
+# ``GrossCONE_L / GrossCONE_NYCA`` of the delivery year's vintage — NYISO's own
+# published locality cost differential (rule 13; no zone premium is invented).
+# Hold-last beyond the table (a RATIO, like the D52 factor pair); hold-first
+# before it (the 2021-25 DCR cycle's earliest published sheet on disk).
+LOCALITY_GROSS_CONE_BY_ISO: dict[str, dict[str, dict[str, float]]] = {
+    "NYISO": {
+        "2023/2024": {"NYCA": 120.04, "G-J": 157.61, "NYC": 212.81, "LI": 168.15},
+        "2024/2025": {"NYCA": 132.98, "G-J": 174.72, "NYC": 229.11, "LI": 186.37},
+        "2025/2026": {"NYCA": 127.71, "G-J": 127.58, "NYC": 222.73, "LI": 137.03},
+        "2026/2027": {"NYCA": 131.94, "G-J": 131.80, "NYC": 230.10, "LI": 141.57},
+    },
+}
+
+
+def resolve_locality_curve_vintage(
+    iso: "str | None", locality: str, year: "int | None"
+) -> "MarketDesignVintage | None":
+    """Return the locality demand-curve vintage governing ``iso``/``locality``/``year``.
+
+    The locality analogue of :func:`resolve_demand_curve_vintage`, with the
+    same step-function resolution (hold-first before the earliest published
+    vintage, hold-last beyond the latest — the forward carry a forecast uses).
+    Returns ``None`` when the ISO or locality has no table, so a caller keeps
+    the NYCA price alone.
+    """
+    if iso is None or year is None:
+        return None
+    vintages = LOCALITY_MARKET_DESIGN_VINTAGES.get(iso, {}).get(locality)
+    if not vintages:
+        return None
+    chosen = vintages[0]
+    for v in vintages:
+        if year >= int(v.delivery_year[:4]):
+            chosen = v
+        else:
+            break
+    return chosen
+
+
+def locality_curve_price_per_firm_mw_yr(
+    iso: "str | None", locality: str, year: "int | None", position: float
+) -> "float | None":
+    """The locality's published curve at ``position``, in $/firm-MW-yr, or ``None``.
+
+    ``evaluate_demand_curve(vintage.demand_curve, position) × ARV × 1000`` on the
+    delivery year's vintage; a ()-shape vintage prices its flat anchor (the
+    NYCA convention). ``None`` when no vintage exists — the caller then settles
+    on the NYCA price alone (ICAP Manual §5.15.2: a locality is never paid
+    below Rest of State).
+    """
+    vintage = resolve_locality_curve_vintage(iso, locality, year)
+    if vintage is None:
+        return None
+    anchor = float(vintage.net_cone_curve_per_kw_yr)
+    if vintage.demand_curve:
+        return (
+            evaluate_demand_curve(vintage.demand_curve, float(position))
+            * anchor
+            * 1000.0
+        )
+    return anchor * 1000.0
+
+
+def resolve_locality_gross_cone_ratio(
+    iso: "str | None", locality: str, year: "int | None"
+) -> "float | None":
+    """Published ``GrossCONE_locality / GrossCONE_NYCA`` for the delivery year, or ``None``.
+
+    Step-function vintage resolution as :func:`resolve_locality_curve_vintage`
+    (hold-first / hold-last). ``None`` when the ISO has no table or the
+    locality is absent from it.
+    """
+    if iso is None or year is None:
+        return None
+    table = LOCALITY_GROSS_CONE_BY_ISO.get(iso)
+    if not table:
+        return None
+    labels = sorted(table, key=lambda lbl: int(lbl[:4]))
+    chosen = labels[0]
+    for lbl in labels:
+        if int(year) >= int(lbl[:4]):
+            chosen = lbl
+        else:
+            break
+    row = table[chosen]
+    if locality not in row or "NYCA" not in row or row["NYCA"] <= 0.0:
+        return None
+    return float(row[locality]) / float(row["NYCA"])
+
+
 # Per-ISO exogenous AS-revenue registry — the modular generalization of the
 # ERCOT-only rates above. ``model.ancillary.as_revenue_per_mw_yr`` resolves the
 # credit from here by the run's ISO, so ANY ISO slots in by adding its

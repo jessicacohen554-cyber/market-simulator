@@ -1,0 +1,2185 @@
+{
+ "charter": "miso-214 phase 0 \u2014 the Midwest CT_PEAKER fleet at its own delivered cost; zero-solve.",
+ "prereg": "results/calibration/PREREG-miso214-ct-peaker-conduct-2026-09-05.md @ 067a305a",
+ "keeper": "2026-09-05-miso-213-layering",
+ "keeper_bundle": "results/calibration/miso213_layering_B",
+ "control_bundle": "results/calibration/miso210_clock_B",
+ "anchor_usd_mmbtu": 3.0492,
+ "instrument": {
+  "model_plant_grain": "PRICE-TAKING STATIC SCREEN on mc_base (no P1 startup adder) at the keeper's own committed P1 zone price \u2014 neither bundle ships unit_hourly/ or dispatch/. A BOUND, not the LP; N-1 reports it beside the LP's own class_hourly total.",
+  "control_leg": "miso210_clock_B committed class_band_hourly / class_hourly / system (the pre-repair keeper); the class x band x hour delta is LP output, not reconstructed.",
+  "campd": "load_campd_hourly(prefer_unit_level=True), SIMPLE-CYCLE units only (unitType startswith 'Combustion turbine'); facility-level extracts absent for 12 of 14 MISO states here.",
+  "own_cost": "plant's own resolved delivered fuel price (the 923 print path, cap-weighted over its CT tranches, MONTHLY) x its own CAMPD burn heat rate (sum heat / sum gross, same month) + cap-weighted VOM + nox/so2 adders.",
+  "actual_price": "measured RT LMP, miso-204 TRAP-4 HUB_TO_ZONES (South = mean of ARKANSAS/LOUISIANA/MS/TEXAS; MINN.HUB carries West AND Plains).",
+  "gross_vs_net": "CAMPD GROSS MW against the model's NET tranches; reported, never adjusted.",
+  "monthly_923": "a MONTHLY average print applied to an HOURLY decision \u2014 the average-vs-marginal convention (miso-212 \u00a78) is OWNER-COURT and untouched; it biases 'out-of-merit' upward."
+ },
+ "config_footing": {
+  "fields_in_both": 783,
+  "diffs_arm_vs_control": {},
+  "arm_only_fields": [
+   "adequacy_accounting_ratio_dated_net",
+   "caiso_citygate_spot_coverage",
+   "ccs_retrofit_capex_co2_scaling",
+   "miso_zonal_gas_basis_skip_923_priced",
+   "nyiso_requirement_forecast_peak",
+   "nyiso_requirement_vintage_factors"
+  ],
+  "control_only_fields": []
+ },
+ "kill_bars": {
+  "K_a_B_share": 0.4,
+  "K_b_A_flip": 0.6,
+  "K_e_cems_cov": 0.6
+ },
+ "years": {
+  "2023": {
+   "N1_footing": {
+    "n_ct_tranches": 733,
+    "n_ct_plants_model": 166,
+    "n_ct_plants_cems": 90,
+    "ct_capacity_mw_model": 22281.8,
+    "ct_capacity_mw_cems_covered": 20094.6,
+    "cems_covered_capacity_share": 0.9018,
+    "lp_class_twh_arm": 11.92,
+    "lp_class_twh_control": 15.244,
+    "screen_class_twh_arm": 17.046,
+    "screen_class_twh_control": 22.571,
+    "screen_over_lp_arm": 1.4301,
+    "campd_ct_twh_gross": 16.076
+   },
+   "L1_band": {
+    "bands": {
+     "committed": {
+      "control_twh": 3.824,
+      "arm_twh": 2.965,
+      "delta_twh": -0.859
+     },
+     "econ": {
+      "control_twh": 11.419,
+      "arm_twh": 8.954,
+      "delta_twh": -2.465
+     },
+     "peak": {
+      "control_twh": 0.001,
+      "arm_twh": 0.001,
+      "delta_twh": 0.0
+     }
+    },
+    "class_delta_twh": -3.324,
+    "econ_share_of_delta": 0.7416,
+    "P1a_bar": 0.7
+   },
+   "L1_diurnal": {
+    "lost_mwh": 3339068.0,
+    "share_outside_h15_21": 0.6508,
+    "share_in_h15_21": 0.3492,
+    "share_summer_JJA": 0.2925,
+    "by_hod_mwh": [
+     75392.0,
+     67169.0,
+     63904.0,
+     66743.0,
+     83633.0,
+     112366.0,
+     133489.0,
+     148493.0,
+     166787.0,
+     178816.0,
+     180565.0,
+     174234.0,
+     177394.0,
+     175168.0,
+     168205.0,
+     167688.0,
+     174245.0,
+     187944.0,
+     196833.0,
+     180810.0,
+     150948.0,
+     107629.0,
+     110725.0,
+     89887.0
+    ],
+    "by_month_mwh": [
+     94050.0,
+     228675.0,
+     294998.0,
+     257644.0,
+     327253.0,
+     342945.0,
+     344725.0,
+     288935.0,
+     274243.0,
+     402818.0,
+     265048.0,
+     217734.0
+    ],
+    "P1c_bar": 0.6
+   },
+   "L1_zone_screen": {
+    "delta_twh_by_zone_screen_loss": {
+     "MISO-West": -0.6962,
+     "MISO-Plains": -0.0073,
+     "MISO-Illinois": 0.2038,
+     "MISO-Indiana": 2.332,
+     "MISO-East": 4.5383,
+     "MISO-South": -0.8458
+    },
+    "loss_share_IIE": 1.0,
+    "loss_share_WestPlains": 0.0,
+    "loss_share_South": 0.0,
+    "P1b_bar": "IIE>=0.60"
+   },
+   "L2": {
+    "missed_plant_hours": 64777,
+    "missed_mwh_campd_gross": 8596658.0,
+    "missed_share_of_campd_ct_mwh": 0.5348,
+    "actual_price_nan_hours": 0,
+    "B_share_literal": 0.801,
+    "A_share_literal": 0.1313,
+    "C_share_literal": 0.1674,
+    "exclusive_C_A_B": {
+     "C": 0.1674,
+     "A": 0.1313,
+     "B": 0.7013
+    },
+    "B1_share_incremental_oom": 0.6441,
+    "B2_share_commitment_band": 0.157,
+    "B1_share_on_io_fit_sensitivity": 0.5443,
+    "settlement_sensitivity_day_ahead": {
+     "B_share_allin_vs_DA": 0.6616,
+     "B1_share_incremental_vs_DA": 0.5691,
+     "B_share_allin_vs_max_DA_RT": 0.5988,
+     "mean_DA_price_missed": 40.4,
+     "note": "a DA-committed unit is paid the DA price for its scheduled energy; the RT leg is the headline, this is the robustness check."
+    },
+    "fuel_convention_sensitivity_henry_hub": {
+     "B_share_allin_at_HH": 0.5173,
+     "B1_share_incremental_at_HH": 0.4363,
+     "print_excess_over_HH_capw_usd_mmbtu": 2.951,
+     "print_excess_by_zone_capw": {
+      "MISO-West": 5.597,
+      "MISO-Plains": 2.032,
+      "MISO-Illinois": 10.06,
+      "MISO-Indiana": 0.748,
+      "MISO-East": 0.544,
+      "MISO-South": 0.682
+     },
+     "note": "OWNER-COURT (miso-212 \u00a78): the 923 print is an all-in delivered cost including fixed firm-transport demand charges; HH daily spot is the pure commodity floor. Reported as the bound on the convention's contribution, never adjudicated here."
+    },
+    "margin_actual_minus_allin": {
+     "p10": -33.62,
+     "p50": -9.13,
+     "p90": 11.49
+    },
+    "margin_actual_minus_incremental": {
+     "p10": -29.38,
+     "p50": -8.4,
+     "p90": 16.05
+    },
+    "margin_actual_minus_incremental_io_fit": {
+     "p10": -23.44,
+     "p50": -1.13,
+     "p90": 20.7
+    },
+    "margin_model_minus_allin": {
+     "p10": -31.8,
+     "p50": -5.32,
+     "p90": 1.28
+    },
+    "mean_actual_price_missed": 39.3,
+    "mean_model_price_missed": 35.33,
+    "mean_price_gap_actual_minus_model_missed": 3.96,
+    "mean_allin_cost_missed": 46.87,
+    "mean_incremental_cost_missed": 43.92,
+    "mean_incremental_cost_missed_io_fit": 37.13,
+    "heat_rate_mmbtu_per_mwh": {
+     "campd_average_burn_capw": 11.532,
+     "measured_incremental_offer_basis_capw": 10.241,
+     "campd_io_fit_incremental_capw": 8.76,
+     "model_offer_implied_econ_capw": 10.119,
+     "io_fit_capacity_coverage": 0.7767,
+     "class_measured_marg_over_avg": 0.6856287425149701
+    },
+    "noload_fuel_mmbtu_per_h_fleet": 43148.0,
+    "K_a_bar": 0.4,
+    "K_b_offer_level_flip": {
+     "A_mwh": 1128765.0,
+     "A_flipped_mwh": 386687.0,
+     "flip_share": 0.3426,
+     "margin_removed_usd_mwh_capw": 7.32,
+     "K_b_bar": 0.6
+    },
+    "block_anatomy_unit_grain": {
+     "n_units": 286,
+     "all_running": {
+      "mwh": 16075987.0,
+      "mw_w_mean_block_len_h": 76.75,
+      "share_len_le_4h": 0.0121,
+      "share_len_ge_12h": 0.7511,
+      "first_hour_mw_share": 0.0291,
+      "last_hour_mw_share": 0.0315
+     },
+     "missed": {
+      "mwh": 8596658.0,
+      "mw_w_mean_block_len_h": 68.97,
+      "share_len_le_4h": 0.0179,
+      "share_len_ge_12h": 0.7097,
+      "first_hour_mw_share": 0.0382,
+      "last_hour_mw_share": 0.0428
+     },
+     "B_hours": {
+      "mwh": 6886338.0,
+      "mw_w_mean_block_len_h": 76.66,
+      "share_len_le_4h": 0.0164,
+      "share_len_ge_12h": 0.7417,
+      "first_hour_mw_share": 0.0379,
+      "last_hour_mw_share": 0.0466
+     },
+     "B1_hours": {
+      "mwh": 5536724.0,
+      "mw_w_mean_block_len_h": 73.84,
+      "share_len_le_4h": 0.0159,
+      "share_len_ge_12h": 0.7587,
+      "first_hour_mw_share": 0.0368,
+      "last_hour_mw_share": 0.046
+     },
+     "B2_hours": {
+      "mwh": 1349614.0,
+      "mw_w_mean_block_len_h": 88.25,
+      "share_len_le_4h": 0.0187,
+      "share_len_ge_12h": 0.6719,
+      "first_hour_mw_share": 0.0422,
+      "last_hour_mw_share": 0.0489
+     }
+    },
+    "B_by_zone_mwh": {
+     "MISO-West": 1623136.0,
+     "MISO-Plains": 399665.0,
+     "MISO-Illinois": 415035.0,
+     "MISO-Indiana": 661534.0,
+     "MISO-East": 2987656.0,
+     "MISO-South": 799312.0
+    },
+    "B_diurnal": {
+     "share_in_floor_window": 0.3645,
+     "share_summer_JJA": 0.3966
+    },
+    "B_driver_screen": {
+     "region_of_zone_note": "MISO market region by plant STATE on the published LRZ map (North = LRZ 1; Central = LRZ 2-7; South = LRZ 8-10; Iowa assigned Central, declared).",
+     "asm_regions_found": [
+      "Central",
+      "North",
+      "South"
+     ],
+     "all_running": {
+      "mwh": 16075987.0,
+      "mw_w_load_factor": 0.7915,
+      "mw_w_region_cleared_reserve_mw": 1019.0,
+      "share_in_region_reserve_top_decile": 0.1243
+     },
+     "missed": {
+      "mwh": 8596658.0,
+      "mw_w_load_factor": 0.7756,
+      "mw_w_region_cleared_reserve_mw": 1021.0,
+      "share_in_region_reserve_top_decile": 0.1238
+     },
+     "B_hours": {
+      "mwh": 6886338.0,
+      "mw_w_load_factor": 0.7686,
+      "mw_w_region_cleared_reserve_mw": 1031.0,
+      "share_in_region_reserve_top_decile": 0.1204
+     },
+     "B1_hours": {
+      "mwh": 5536724.0,
+      "mw_w_load_factor": 0.775,
+      "mw_w_region_cleared_reserve_mw": 1030.0,
+      "share_in_region_reserve_top_decile": 0.1199
+     },
+     "A_hours": {
+      "mwh": 1128765.0,
+      "mw_w_load_factor": 0.808,
+      "mw_w_region_cleared_reserve_mw": 982.0,
+      "share_in_region_reserve_top_decile": 0.1402
+     }
+    },
+    "top15_missed_plants": [
+     {
+      "plant": 55402,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 652.0,
+      "missed_mwh": 720412.0,
+      "campd_mwh": 1532952.0,
+      "B_share": 0.9155,
+      "burn_hr": 10.87,
+      "incremental_hr": 12.09,
+      "print_excess_over_HH": 0.381
+     },
+     {
+      "plant": 56241,
+      "zone": "MISO-West",
+      "state": "MN",
+      "cap_mw": 316.0,
+      "missed_mwh": 706156.0,
+      "campd_mwh": 710930.0,
+      "B_share": 0.8538,
+      "burn_hr": 11.21,
+      "incremental_hr": 12.74,
+      "print_excess_over_HH": 2.481
+     },
+     {
+      "plant": 55718,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 312.0,
+      "missed_mwh": 491700.0,
+      "campd_mwh": 596358.0,
+      "B_share": 0.8857,
+      "burn_hr": 11.91,
+      "incremental_hr": 12.91,
+      "print_excess_over_HH": 0.666
+     },
+     {
+      "plant": 1904,
+      "zone": "MISO-West",
+      "state": "MN",
+      "cap_mw": 209.0,
+      "missed_mwh": 422176.0,
+      "campd_mwh": 423453.0,
+      "B_share": 0.9262,
+      "burn_hr": 10.64,
+      "incremental_hr": 7.23,
+      "print_excess_over_HH": 6.071
+     },
+     {
+      "plant": 55087,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 318.2,
+      "missed_mwh": 390658.0,
+      "campd_mwh": 1318866.0,
+      "B_share": 0.8454,
+      "burn_hr": 11.0,
+      "incremental_hr": 7.53,
+      "print_excess_over_HH": -0.049
+     },
+     {
+      "plant": 55111,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 576.0,
+      "missed_mwh": 310346.0,
+      "campd_mwh": 601505.0,
+      "B_share": 0.7047,
+      "burn_hr": 12.17,
+      "incremental_hr": 8.82,
+      "print_excess_over_HH": 0.309
+     },
+     {
+      "plant": 55135,
+      "zone": "MISO-East",
+      "state": "WI",
+      "cap_mw": 351.1,
+      "missed_mwh": 294877.0,
+      "campd_mwh": 619682.0,
+      "B_share": 0.8397,
+      "burn_hr": 11.08,
+      "incremental_hr": 12.48,
+      "print_excess_over_HH": 0.614
+     },
+     {
+      "plant": 56166,
+      "zone": "MISO-East",
+      "state": "WI",
+      "cap_mw": 346.1,
+      "missed_mwh": 291705.0,
+      "campd_mwh": 574467.0,
+      "B_share": 0.8138,
+      "burn_hr": 10.74,
+      "incremental_hr": 12.33,
+      "print_excess_over_HH": 0.617
+     },
+     {
+      "plant": 7237,
+      "zone": "MISO-West",
+      "state": "SD",
+      "cap_mw": 343.0,
+      "missed_mwh": 244460.0,
+      "campd_mwh": 246492.0,
+      "B_share": 0.8774,
+      "burn_hr": 12.09,
+      "incremental_hr": 8.37,
+      "print_excess_over_HH": 3.455
+     },
+     {
+      "plant": 990,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 288.0,
+      "missed_mwh": 240539.0,
+      "campd_mwh": 305998.0,
+      "B_share": 0.6612,
+      "burn_hr": 11.16,
+      "incremental_hr": 8.38,
+      "print_excess_over_HH": 0.64
+     },
+     {
+      "plant": 55234,
+      "zone": "MISO-Plains",
+      "state": "MO",
+      "cap_mw": 600.0,
+      "missed_mwh": 202144.0,
+      "campd_mwh": 207199.0,
+      "B_share": 0.683,
+      "burn_hr": 11.44,
+      "incremental_hr": 13.16,
+      "print_excess_over_HH": 2.145
+     },
+     {
+      "plant": 59926,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 405.8,
+      "missed_mwh": 196764.0,
+      "campd_mwh": 843800.0,
+      "B_share": 0.9219,
+      "burn_hr": 10.57,
+      "incremental_hr": 7.01,
+      "print_excess_over_HH": -0.043
+     },
+     {
+      "plant": 55237,
+      "zone": "MISO-Illinois",
+      "state": "IL",
+      "cap_mw": 336.0,
+      "missed_mwh": 176515.0,
+      "campd_mwh": 187492.0,
+      "B_share": 0.8135,
+      "burn_hr": 9.27,
+      "incremental_hr": 11.24,
+      "print_excess_over_HH": 5.533
+     },
+     {
+      "plant": 7988,
+      "zone": "MISO-South",
+      "state": "MS",
+      "cap_mw": 225.0,
+      "missed_mwh": 175042.0,
+      "campd_mwh": 222421.0,
+      "B_share": 0.7655,
+      "burn_hr": 10.98,
+      "incremental_hr": 12.65,
+      "print_excess_over_HH": 0.845
+     },
+     {
+      "plant": 4076,
+      "zone": "MISO-East",
+      "state": "WI",
+      "cap_mw": 153.0,
+      "missed_mwh": 166968.0,
+      "campd_mwh": 196598.0,
+      "B_share": 0.8041,
+      "burn_hr": 12.86,
+      "incremental_hr": 9.11,
+      "print_excess_over_HH": 0.452
+     }
+    ],
+    "bucket_C_by_cohort_mwh": {
+     "CT_INTERMEDIATE": 622160.0,
+     "CT_PEAKER_true": 817082.0
+    },
+    "over_dispatch": {
+     "plant_hours": 163978,
+     "screen_mwh": 9740419.0
+    }
+   },
+   "L4_offer_form_cohorts": {
+    "ct_intermediate_split": true,
+    "ct_intermediate_cf_threshold": 50.0,
+    "n_plants_in_iso_cohort": 44,
+    "gas_offer_margin_anchor": 3.0492,
+    "curve_has_phys_keys": {
+     "CT_PEAKER": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [],
+     "CC_REGULAR": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [],
+     "ST_GAS": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": []
+    },
+    "CT_INTERMEDIATE_cohort": {
+     "n_plants": 44,
+     "capacity_mw": 9333.2,
+     "econ_tranches": 264,
+     "cap_w_offer_hr_econ": 12.465,
+     "cap_w_physical_leg_hr_econ": 12.465,
+     "cap_w_markup_hr_econ": 0.0,
+     "campd_avg_burn_hr_capw": 11.065,
+     "cap_w_delivered_fuel_usd_mmbtu": 4.424,
+     "econ_cap_hour_share_fuel_above_anchor": 0.6055,
+     "campd_mwh": 9230729.0,
+     "screen_mwh": 7438917.0,
+     "missed_mwh": 4818271.0,
+     "B_mwh": 3962290.0
+    },
+    "CT_PEAKER_true_cohort": {
+     "n_plants": 122,
+     "capacity_mw": 12948.6,
+     "econ_tranches": 243,
+     "cap_w_offer_hr_econ": 12.555,
+     "cap_w_physical_leg_hr_econ": 8.649,
+     "cap_w_markup_hr_econ": 3.906,
+     "campd_avg_burn_hr_capw": 11.937,
+     "cap_w_delivered_fuel_usd_mmbtu": 6.34,
+     "econ_cap_hour_share_fuel_above_anchor": 0.6212,
+     "campd_mwh": 6845258.0,
+     "screen_mwh": 9607454.0,
+     "missed_mwh": 3778387.0,
+     "B_mwh": 2924048.0
+    }
+   },
+   "L4_candidate_static_reach": {
+    "what": "CT_INTERMEDIATE econ tranches repriced into the net-revenue-margin form at the frozen class p50s; zero free parameters; byte-identical at fuel == anchor.",
+    "tranches_repriced": 264,
+    "cap_w_fixed_margin_usd_mwh": 14.2,
+    "screen_twh_arm": 17.046,
+    "screen_twh_candidate": 15.572,
+    "screen_delta_twh": -1.475,
+    "missed_mwh_flipped_in": 91401.0,
+    "missed_flip_share": 0.0106,
+    "flip_share_of_bucket_C": 0.039,
+    "flip_share_of_bucket_A": 0.0083,
+    "flip_share_of_bucket_B": 0.0076
+   },
+   "L3_gap_shape": {
+    "campd_twh": 16.076,
+    "lp_class_twh": 11.92,
+    "net_gap_twh": 4.156,
+    "under_mwh": 5872624.0,
+    "under_share_summer_JJA": 0.4341,
+    "under_share_h15_21": 0.3136,
+    "under_by_month_mwh": [
+     111910.0,
+     36509.0,
+     180809.0,
+     382372.0,
+     864716.0,
+     678079.0,
+     1078788.0,
+     792316.0,
+     581825.0,
+     511250.0,
+     521671.0,
+     132380.0
+    ],
+    "under_by_hod_mwh": [
+     130523.0,
+     132724.0,
+     136295.0,
+     145193.0,
+     158848.0,
+     175187.0,
+     186899.0,
+     207881.0,
+     229435.0,
+     263629.0,
+     318231.0,
+     370170.0,
+     409454.0,
+     432516.0,
+     446419.0,
+     356952.0,
+     347661.0,
+     319590.0,
+     288118.0,
+     237495.0,
+     178965.0,
+     112973.0,
+     157296.0,
+     130168.0
+    ],
+    "hours_share_JJA": 0.252,
+    "P3_bar": 0.55
+   }
+  },
+  "2024": {
+   "N1_footing": {
+    "n_ct_tranches": 733,
+    "n_ct_plants_model": 166,
+    "n_ct_plants_cems": 90,
+    "ct_capacity_mw_model": 22281.8,
+    "ct_capacity_mw_cems_covered": 20094.6,
+    "cems_covered_capacity_share": 0.9018,
+    "lp_class_twh_arm": 18.351,
+    "lp_class_twh_control": 20.662,
+    "screen_class_twh_arm": 25.869,
+    "screen_class_twh_control": 29.395,
+    "screen_over_lp_arm": 1.4097,
+    "campd_ct_twh_gross": 18.381
+   },
+   "L1_band": {
+    "bands": {
+     "committed": {
+      "control_twh": 5.251,
+      "arm_twh": 4.652,
+      "delta_twh": -0.598
+     },
+     "econ": {
+      "control_twh": 15.409,
+      "arm_twh": 13.696,
+      "delta_twh": -1.713
+     },
+     "peak": {
+      "control_twh": 0.003,
+      "arm_twh": 0.002,
+      "delta_twh": -0.001
+     }
+    },
+    "class_delta_twh": -2.312,
+    "econ_share_of_delta": 0.7409,
+    "P1a_bar": 0.7
+   },
+   "L1_diurnal": {
+    "lost_mwh": 2358475.0,
+    "share_outside_h15_21": 0.6913,
+    "share_in_h15_21": 0.3087,
+    "share_summer_JJA": 0.2898,
+    "by_hod_mwh": [
+     80393.0,
+     75781.0,
+     72302.0,
+     74638.0,
+     89935.0,
+     99591.0,
+     105549.0,
+     113948.0,
+     112054.0,
+     112098.0,
+     106252.0,
+     104221.0,
+     101495.0,
+     93880.0,
+     97707.0,
+     96277.0,
+     100775.0,
+     103263.0,
+     110423.0,
+     109418.0,
+     107793.0,
+     100137.0,
+     100899.0,
+     89647.0
+    ],
+    "by_month_mwh": [
+     215856.0,
+     154345.0,
+     184765.0,
+     282449.0,
+     203063.0,
+     207867.0,
+     249400.0,
+     226255.0,
+     191132.0,
+     199299.0,
+     163437.0,
+     80606.0
+    ],
+    "P1c_bar": 0.6
+   },
+   "L1_zone_screen": {
+    "delta_twh_by_zone_screen_loss": {
+     "MISO-West": -0.3518,
+     "MISO-Plains": -0.0061,
+     "MISO-Illinois": 0.3168,
+     "MISO-Indiana": 1.0318,
+     "MISO-East": 3.3644,
+     "MISO-South": -0.8286
+    },
+    "loss_share_IIE": 1.0,
+    "loss_share_WestPlains": 0.0,
+    "loss_share_South": 0.0,
+    "P1b_bar": "IIE>=0.50"
+   },
+   "L2": {
+    "missed_plant_hours": 62969,
+    "missed_mwh_campd_gross": 8307833.0,
+    "missed_share_of_campd_ct_mwh": 0.452,
+    "actual_price_nan_hours": 0,
+    "B_share_literal": 0.7618,
+    "A_share_literal": 0.1303,
+    "C_share_literal": 0.2569,
+    "exclusive_C_A_B": {
+     "C": 0.2569,
+     "A": 0.1303,
+     "B": 0.6128
+    },
+    "B1_share_incremental_oom": 0.5673,
+    "B2_share_commitment_band": 0.1946,
+    "B1_share_on_io_fit_sensitivity": 0.529,
+    "settlement_sensitivity_day_ahead": {
+     "B_share_allin_vs_DA": 0.6223,
+     "B1_share_incremental_vs_DA": 0.4714,
+     "B_share_allin_vs_max_DA_RT": 0.5544,
+     "mean_DA_price_missed": 38.11,
+     "note": "a DA-committed unit is paid the DA price for its scheduled energy; the RT leg is the headline, this is the robustness check."
+    },
+    "fuel_convention_sensitivity_henry_hub": {
+     "B_share_allin_at_HH": 0.5499,
+     "B1_share_incremental_at_HH": 0.4058,
+     "print_excess_over_HH_capw_usd_mmbtu": 1.892,
+     "print_excess_by_zone_capw": {
+      "MISO-West": 2.596,
+      "MISO-Plains": 2.743,
+      "MISO-Illinois": 6.098,
+      "MISO-Indiana": 0.869,
+      "MISO-East": 0.26,
+      "MISO-South": 0.787
+     },
+     "note": "OWNER-COURT (miso-212 \u00a78): the 923 print is an all-in delivered cost including fixed firm-transport demand charges; HH daily spot is the pure commodity floor. Reported as the bound on the convention's contribution, never adjudicated here."
+    },
+    "margin_actual_minus_allin": {
+     "p10": -29.12,
+     "p50": -7.46,
+     "p90": 16.66
+    },
+    "margin_actual_minus_incremental": {
+     "p10": -30.4,
+     "p50": -3.08,
+     "p90": 21.53
+    },
+    "margin_actual_minus_incremental_io_fit": {
+     "p10": -22.58,
+     "p50": -0.76,
+     "p90": 24.18
+    },
+    "margin_model_minus_allin": {
+     "p10": -25.54,
+     "p50": -3.47,
+     "p90": 2.74
+    },
+    "mean_actual_price_missed": 36.11,
+    "mean_model_price_missed": 32.37,
+    "mean_price_gap_actual_minus_model_missed": 3.73,
+    "mean_allin_cost_missed": 41.79,
+    "mean_incremental_cost_missed": 38.7,
+    "mean_incremental_cost_missed_io_fit": 34.08,
+    "heat_rate_mmbtu_per_mwh": {
+     "campd_average_burn_capw": 11.623,
+     "measured_incremental_offer_basis_capw": 10.241,
+     "campd_io_fit_incremental_capw": 9.03,
+     "model_offer_implied_econ_capw": 10.119,
+     "io_fit_capacity_coverage": 0.7839,
+     "class_measured_marg_over_avg": 0.6856287425149701
+    },
+    "noload_fuel_mmbtu_per_h_fleet": 42272.0,
+    "K_a_bar": 0.4,
+    "K_b_offer_level_flip": {
+     "A_mwh": 1082729.0,
+     "A_flipped_mwh": 529130.0,
+     "flip_share": 0.4887,
+     "margin_removed_usd_mwh_capw": 7.32,
+     "K_b_bar": 0.6
+    },
+    "block_anatomy_unit_grain": {
+     "n_units": 287,
+     "all_running": {
+      "mwh": 18380569.0,
+      "mw_w_mean_block_len_h": 97.86,
+      "share_len_le_4h": 0.0105,
+      "share_len_ge_12h": 0.7908,
+      "first_hour_mw_share": 0.0258,
+      "last_hour_mw_share": 0.0251
+     },
+     "missed": {
+      "mwh": 8307833.0,
+      "mw_w_mean_block_len_h": 80.37,
+      "share_len_le_4h": 0.0173,
+      "share_len_ge_12h": 0.7551,
+      "first_hour_mw_share": 0.0346,
+      "last_hour_mw_share": 0.0358
+     },
+     "B_hours": {
+      "mwh": 6329293.0,
+      "mw_w_mean_block_len_h": 84.14,
+      "share_len_le_4h": 0.0173,
+      "share_len_ge_12h": 0.7752,
+      "first_hour_mw_share": 0.0359,
+      "last_hour_mw_share": 0.0394
+     },
+     "B1_hours": {
+      "mwh": 4712705.0,
+      "mw_w_mean_block_len_h": 78.5,
+      "share_len_le_4h": 0.02,
+      "share_len_ge_12h": 0.7783,
+      "first_hour_mw_share": 0.0374,
+      "last_hour_mw_share": 0.0431
+     },
+     "B2_hours": {
+      "mwh": 1616588.0,
+      "mw_w_mean_block_len_h": 100.57,
+      "share_len_le_4h": 0.0097,
+      "share_len_ge_12h": 0.7661,
+      "first_hour_mw_share": 0.0315,
+      "last_hour_mw_share": 0.0284
+     }
+    },
+    "B_by_zone_mwh": {
+     "MISO-West": 1486751.0,
+     "MISO-Plains": 300811.0,
+     "MISO-Illinois": 416453.0,
+     "MISO-Indiana": 1219873.0,
+     "MISO-East": 2046788.0,
+     "MISO-South": 858617.0
+    },
+    "B_diurnal": {
+     "share_in_floor_window": 0.3443,
+     "share_summer_JJA": 0.3735
+    },
+    "B_driver_screen": {
+     "region_of_zone_note": "MISO market region by plant STATE on the published LRZ map (North = LRZ 1; Central = LRZ 2-7; South = LRZ 8-10; Iowa assigned Central, declared).",
+     "asm_regions_found": [
+      "Central",
+      "North",
+      "South"
+     ],
+     "all_running": {
+      "mwh": 18380569.0,
+      "mw_w_load_factor": 0.7855,
+      "mw_w_region_cleared_reserve_mw": 1095.0,
+      "share_in_region_reserve_top_decile": 0.1296
+     },
+     "missed": {
+      "mwh": 8307833.0,
+      "mw_w_load_factor": 0.7569,
+      "mw_w_region_cleared_reserve_mw": 1095.0,
+      "share_in_region_reserve_top_decile": 0.1196
+     },
+     "B_hours": {
+      "mwh": 6329293.0,
+      "mw_w_load_factor": 0.7456,
+      "mw_w_region_cleared_reserve_mw": 1090.0,
+      "share_in_region_reserve_top_decile": 0.1228
+     },
+     "B1_hours": {
+      "mwh": 4712705.0,
+      "mw_w_load_factor": 0.7458,
+      "mw_w_region_cleared_reserve_mw": 1059.0,
+      "share_in_region_reserve_top_decile": 0.1166
+     },
+     "A_hours": {
+      "mwh": 1082729.0,
+      "mw_w_load_factor": 0.7929,
+      "mw_w_region_cleared_reserve_mw": 1108.0,
+      "share_in_region_reserve_top_decile": 0.1085
+     }
+    },
+    "top15_missed_plants": [
+     {
+      "plant": 56241,
+      "zone": "MISO-West",
+      "state": "MN",
+      "cap_mw": 316.0,
+      "missed_mwh": 744312.0,
+      "campd_mwh": 814666.0,
+      "B_share": 0.8807,
+      "burn_hr": 11.36,
+      "incremental_hr": 12.74,
+      "print_excess_over_HH": 1.553
+     },
+     {
+      "plant": 55087,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 318.2,
+      "missed_mwh": 615057.0,
+      "campd_mwh": 1737406.0,
+      "B_share": 0.7534,
+      "burn_hr": 11.0,
+      "incremental_hr": 7.53,
+      "print_excess_over_HH": -0.175
+     },
+     {
+      "plant": 55111,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 576.0,
+      "missed_mwh": 531232.0,
+      "campd_mwh": 771519.0,
+      "B_share": 0.7036,
+      "burn_hr": 12.12,
+      "incremental_hr": 8.82,
+      "print_excess_over_HH": 0.5
+     },
+     {
+      "plant": 6034,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 224.0,
+      "missed_mwh": 421807.0,
+      "campd_mwh": 696094.0,
+      "B_share": 0.7487,
+      "burn_hr": 11.92,
+      "incremental_hr": 8.34,
+      "print_excess_over_HH": -0.076
+     },
+     {
+      "plant": 7759,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 316.4,
+      "missed_mwh": 410306.0,
+      "campd_mwh": 671795.0,
+      "B_share": 0.723,
+      "burn_hr": 12.1,
+      "incremental_hr": 8.63,
+      "print_excess_over_HH": 0.366
+     },
+     {
+      "plant": 990,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 288.0,
+      "missed_mwh": 391864.0,
+      "campd_mwh": 447972.0,
+      "B_share": 0.6957,
+      "burn_hr": 11.46,
+      "incremental_hr": 8.38,
+      "print_excess_over_HH": 0.683
+     },
+     {
+      "plant": 55718,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 312.0,
+      "missed_mwh": 351483.0,
+      "campd_mwh": 770592.0,
+      "B_share": 0.8552,
+      "burn_hr": 11.49,
+      "incremental_hr": 12.91,
+      "print_excess_over_HH": 0.299
+     },
+     {
+      "plant": 8027,
+      "zone": "MISO-West",
+      "state": "MN",
+      "cap_mw": 328.2,
+      "missed_mwh": 333176.0,
+      "campd_mwh": 335373.0,
+      "B_share": 0.9303,
+      "burn_hr": 12.06,
+      "incremental_hr": 13.29,
+      "print_excess_over_HH": 4.706
+     },
+     {
+      "plant": 55402,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 652.0,
+      "missed_mwh": 301709.0,
+      "campd_mwh": 1108466.0,
+      "B_share": 0.8432,
+      "burn_hr": 10.78,
+      "incremental_hr": 12.09,
+      "print_excess_over_HH": 0.944
+     },
+     {
+      "plant": 2070,
+      "zone": "MISO-South",
+      "state": "MS",
+      "cap_mw": 150.0,
+      "missed_mwh": 244660.0,
+      "campd_mwh": 353818.0,
+      "B_share": 0.834,
+      "burn_hr": 12.02,
+      "incremental_hr": 8.37,
+      "print_excess_over_HH": 0.307
+     },
+     {
+      "plant": 1904,
+      "zone": "MISO-West",
+      "state": "MN",
+      "cap_mw": 209.0,
+      "missed_mwh": 198703.0,
+      "campd_mwh": 485394.0,
+      "B_share": 0.7949,
+      "burn_hr": 10.66,
+      "incremental_hr": 7.23,
+      "print_excess_over_HH": 0.483
+     },
+     {
+      "plant": 55237,
+      "zone": "MISO-Illinois",
+      "state": "IL",
+      "cap_mw": 336.0,
+      "missed_mwh": 177106.0,
+      "campd_mwh": 223433.0,
+      "B_share": 0.6883,
+      "burn_hr": 8.87,
+      "incremental_hr": 11.24,
+      "print_excess_over_HH": 3.619
+     },
+     {
+      "plant": 7237,
+      "zone": "MISO-West",
+      "state": "SD",
+      "cap_mw": 343.0,
+      "missed_mwh": 156603.0,
+      "campd_mwh": 251842.0,
+      "B_share": 0.7942,
+      "burn_hr": 11.92,
+      "incremental_hr": 8.37,
+      "print_excess_over_HH": 0.62
+     },
+     {
+      "plant": 7159,
+      "zone": "MISO-East",
+      "state": "WI",
+      "cap_mw": 367.2,
+      "missed_mwh": 151652.0,
+      "campd_mwh": 188469.0,
+      "B_share": 0.6056,
+      "burn_hr": 12.47,
+      "incremental_hr": 8.74,
+      "print_excess_over_HH": 0.833
+     },
+     {
+      "plant": 7270,
+      "zone": "MISO-East",
+      "state": "WI",
+      "cap_mw": 359.8,
+      "missed_mwh": 150589.0,
+      "campd_mwh": 240193.0,
+      "B_share": 0.5969,
+      "burn_hr": 12.62,
+      "incremental_hr": 8.83,
+      "print_excess_over_HH": 0.629
+     }
+    ],
+    "bucket_C_by_cohort_mwh": {
+     "CT_INTERMEDIATE": 653029.0,
+     "CT_PEAKER_true": 1481337.0
+    },
+    "over_dispatch": {
+     "plant_hours": 232484,
+     "screen_mwh": 16240766.0
+    }
+   },
+   "L4_offer_form_cohorts": {
+    "ct_intermediate_split": true,
+    "ct_intermediate_cf_threshold": 50.0,
+    "n_plants_in_iso_cohort": 44,
+    "gas_offer_margin_anchor": 3.0492,
+    "curve_has_phys_keys": {
+     "CT_PEAKER": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [],
+     "CC_REGULAR": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [],
+     "ST_GAS": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": []
+    },
+    "CT_INTERMEDIATE_cohort": {
+     "n_plants": 44,
+     "capacity_mw": 9333.2,
+     "econ_tranches": 264,
+     "cap_w_offer_hr_econ": 12.465,
+     "cap_w_physical_leg_hr_econ": 12.465,
+     "cap_w_markup_hr_econ": 0.0,
+     "campd_avg_burn_hr_capw": 11.013,
+     "cap_w_delivered_fuel_usd_mmbtu": 3.494,
+     "econ_cap_hour_share_fuel_above_anchor": 0.4349,
+     "campd_mwh": 10146138.0,
+     "screen_mwh": 14530177.0,
+     "missed_mwh": 3859538.0,
+     "B_mwh": 3107224.0
+    },
+    "CT_PEAKER_true_cohort": {
+     "n_plants": 122,
+     "capacity_mw": 12948.6,
+     "econ_tranches": 243,
+     "cap_w_offer_hr_econ": 12.555,
+     "cap_w_physical_leg_hr_econ": 8.649,
+     "cap_w_markup_hr_econ": 3.906,
+     "campd_avg_burn_hr_capw": 12.153,
+     "cap_w_delivered_fuel_usd_mmbtu": 4.671,
+     "econ_cap_hour_share_fuel_above_anchor": 0.4439,
+     "campd_mwh": 8234431.0,
+     "screen_mwh": 11338657.0,
+     "missed_mwh": 4448295.0,
+     "B_mwh": 3222069.0
+    }
+   },
+   "L4_candidate_static_reach": {
+    "what": "CT_INTERMEDIATE econ tranches repriced into the net-revenue-margin form at the frozen class p50s; zero free parameters; byte-identical at fuel == anchor.",
+    "tranches_repriced": 264,
+    "cap_w_fixed_margin_usd_mwh": 14.2,
+    "screen_twh_arm": 25.869,
+    "screen_twh_candidate": 20.584,
+    "screen_delta_twh": -5.285,
+    "missed_mwh_flipped_in": 64309.0,
+    "missed_flip_share": 0.0077,
+    "flip_share_of_bucket_C": 0.022,
+    "flip_share_of_bucket_A": 0.0064,
+    "flip_share_of_bucket_B": 0.0042
+   },
+   "L3_gap_shape": {
+    "campd_twh": 18.381,
+    "lp_class_twh": 18.351,
+    "net_gap_twh": 0.03,
+    "under_mwh": 4654375.0,
+    "under_share_summer_JJA": 0.4362,
+    "under_share_h15_21": 0.3096,
+    "under_by_month_mwh": [
+     59223.0,
+     77762.0,
+     131659.0,
+     268731.0,
+     357494.0,
+     515873.0,
+     926082.0,
+     588383.0,
+     622931.0,
+     692052.0,
+     189936.0,
+     224249.0
+    ],
+    "under_by_hod_mwh": [
+     125425.0,
+     132635.0,
+     142921.0,
+     150266.0,
+     160706.0,
+     154391.0,
+     144556.0,
+     166991.0,
+     180176.0,
+     196664.0,
+     221165.0,
+     262364.0,
+     286218.0,
+     296619.0,
+     323527.0,
+     281311.0,
+     276145.0,
+     234788.0,
+     207293.0,
+     183568.0,
+     158384.0,
+     99552.0,
+     140903.0,
+     127806.0
+    ],
+    "hours_share_JJA": 0.252,
+    "P3_bar": 0.55
+   }
+  },
+  "2025": {
+   "N1_footing": {
+    "n_ct_tranches": 733,
+    "n_ct_plants_model": 166,
+    "n_ct_plants_cems": 90,
+    "ct_capacity_mw_model": 22281.8,
+    "ct_capacity_mw_cems_covered": 20094.6,
+    "cems_covered_capacity_share": 0.9018,
+    "lp_class_twh_arm": 16.097,
+    "lp_class_twh_control": 19.715,
+    "screen_class_twh_arm": 22.799,
+    "screen_class_twh_control": 29.023,
+    "screen_over_lp_arm": 1.4164,
+    "campd_ct_twh_gross": 18.852
+   },
+   "L1_band": {
+    "bands": {
+     "committed": {
+      "control_twh": 4.157,
+      "arm_twh": 3.276,
+      "delta_twh": -0.881
+     },
+     "econ": {
+      "control_twh": 15.558,
+      "arm_twh": 12.82,
+      "delta_twh": -2.738
+     },
+     "peak": {
+      "control_twh": 0.0,
+      "arm_twh": 0.0,
+      "delta_twh": 0.0
+     }
+    },
+    "class_delta_twh": -3.619,
+    "econ_share_of_delta": 0.7565,
+    "P1a_bar": 0.7
+   },
+   "L1_diurnal": {
+    "lost_mwh": 3690105.0,
+    "share_outside_h15_21": 0.6729,
+    "share_in_h15_21": 0.3271,
+    "share_summer_JJA": 0.4642,
+    "by_hod_mwh": [
+     127566.0,
+     115683.0,
+     107829.0,
+     113825.0,
+     131624.0,
+     150506.0,
+     161103.0,
+     163582.0,
+     161757.0,
+     169432.0,
+     169710.0,
+     155081.0,
+     145571.0,
+     143223.0,
+     146199.0,
+     149602.0,
+     162561.0,
+     174689.0,
+     177515.0,
+     184281.0,
+     191121.0,
+     167321.0,
+     172763.0,
+     147560.0
+    ],
+    "by_month_mwh": [
+     142223.0,
+     143690.0,
+     37296.0,
+     203591.0,
+     406748.0,
+     517278.0,
+     550915.0,
+     644738.0,
+     493747.0,
+     350290.0,
+     135631.0,
+     63956.0
+    ],
+    "P1c_bar": 0.6
+   },
+   "L1_zone_screen": {
+    "delta_twh_by_zone_screen_loss": {
+     "MISO-West": 4.8101,
+     "MISO-Plains": 1.8465,
+     "MISO-Illinois": 0.026,
+     "MISO-Indiana": 0.1579,
+     "MISO-East": 0.5151,
+     "MISO-South": -1.1319
+    },
+    "loss_share_IIE": 0.095,
+    "loss_share_WestPlains": 0.905,
+    "loss_share_South": 0.0,
+    "P1b_bar": "WP>=0.50"
+   },
+   "L2": {
+    "missed_plant_hours": 64457,
+    "missed_mwh_campd_gross": 8091733.0,
+    "missed_share_of_campd_ct_mwh": 0.4292,
+    "actual_price_nan_hours": 6,
+    "B_share_literal": 0.6866,
+    "A_share_literal": 0.2151,
+    "C_share_literal": 0.167,
+    "exclusive_C_A_B": {
+     "C": 0.167,
+     "A": 0.2151,
+     "B": 0.618
+    },
+    "B1_share_incremental_oom": 0.5323,
+    "B2_share_commitment_band": 0.1543,
+    "B1_share_on_io_fit_sensitivity": 0.444,
+    "settlement_sensitivity_day_ahead": {
+     "B_share_allin_vs_DA": 0.5072,
+     "B1_share_incremental_vs_DA": 0.4333,
+     "B_share_allin_vs_max_DA_RT": 0.441,
+     "mean_DA_price_missed": 53.57,
+     "note": "a DA-committed unit is paid the DA price for its scheduled energy; the RT leg is the headline, this is the robustness check."
+    },
+    "fuel_convention_sensitivity_henry_hub": {
+     "B_share_allin_at_HH": 0.583,
+     "B1_share_incremental_at_HH": 0.4877,
+     "print_excess_over_HH_capw_usd_mmbtu": 1.454,
+     "print_excess_by_zone_capw": {
+      "MISO-West": 0.626,
+      "MISO-Plains": 0.488,
+      "MISO-Illinois": 7.118,
+      "MISO-Indiana": 0.718,
+      "MISO-East": 0.174,
+      "MISO-South": 0.728
+     },
+     "note": "OWNER-COURT (miso-212 \u00a78): the 923 print is an all-in delivered cost including fixed firm-transport demand charges; HH daily spot is the pure commodity floor. Reported as the bound on the convention's contribution, never adjudicated here."
+    },
+    "margin_actual_minus_allin": {
+     "p10": -23.76,
+     "p50": -7.77,
+     "p90": 30.46
+    },
+    "margin_actual_minus_incremental": {
+     "p10": -26.14,
+     "p50": -3.44,
+     "p90": 36.07
+    },
+    "margin_actual_minus_incremental_io_fit": {
+     "p10": -14.1,
+     "p50": 1.64,
+     "p90": 40.92
+    },
+    "margin_model_minus_allin": {
+     "p10": -17.72,
+     "p50": -5.29,
+     "p90": 1.8
+    },
+    "mean_actual_price_missed": 52.52,
+    "mean_model_price_missed": 42.34,
+    "mean_price_gap_actual_minus_model_missed": 10.17,
+    "mean_allin_cost_missed": 49.67,
+    "mean_incremental_cost_missed": 46.92,
+    "mean_incremental_cost_missed_io_fit": 39.67,
+    "heat_rate_mmbtu_per_mwh": {
+     "campd_average_burn_capw": 11.7,
+     "measured_incremental_offer_basis_capw": 10.241,
+     "campd_io_fit_incremental_capw": 8.83,
+     "model_offer_implied_econ_capw": 10.119,
+     "io_fit_capacity_coverage": 0.7972,
+     "class_measured_marg_over_avg": 0.6856287425149701
+    },
+    "noload_fuel_mmbtu_per_h_fleet": 46658.0,
+    "K_a_bar": 0.4,
+    "K_b_offer_level_flip": {
+     "A_mwh": 1740408.0,
+     "A_flipped_mwh": 800343.0,
+     "flip_share": 0.4599,
+     "margin_removed_usd_mwh_capw": 7.32,
+     "K_b_bar": 0.6
+    },
+    "block_anatomy_unit_grain": {
+     "n_units": 287,
+     "all_running": {
+      "mwh": 18851751.0,
+      "mw_w_mean_block_len_h": 63.84,
+      "share_len_le_4h": 0.0153,
+      "share_len_ge_12h": 0.7234,
+      "first_hour_mw_share": 0.0324,
+      "last_hour_mw_share": 0.0325
+     },
+     "missed": {
+      "mwh": 8091733.0,
+      "mw_w_mean_block_len_h": 62.64,
+      "share_len_le_4h": 0.0258,
+      "share_len_ge_12h": 0.6904,
+      "first_hour_mw_share": 0.0479,
+      "last_hour_mw_share": 0.0507
+     },
+     "B_hours": {
+      "mwh": 5555452.0,
+      "mw_w_mean_block_len_h": 66.69,
+      "share_len_le_4h": 0.027,
+      "share_len_ge_12h": 0.6951,
+      "first_hour_mw_share": 0.0494,
+      "last_hour_mw_share": 0.0576
+     },
+     "B1_hours": {
+      "mwh": 4306861.0,
+      "mw_w_mean_block_len_h": 64.53,
+      "share_len_le_4h": 0.0273,
+      "share_len_ge_12h": 0.7038,
+      "first_hour_mw_share": 0.0495,
+      "last_hour_mw_share": 0.0619
+     },
+     "B2_hours": {
+      "mwh": 1248591.0,
+      "mw_w_mean_block_len_h": 74.15,
+      "share_len_le_4h": 0.026,
+      "share_len_ge_12h": 0.6649,
+      "first_hour_mw_share": 0.0488,
+      "last_hour_mw_share": 0.0427
+     }
+    },
+    "B_by_zone_mwh": {
+     "MISO-West": 943063.0,
+     "MISO-Plains": 135442.0,
+     "MISO-Illinois": 283896.0,
+     "MISO-Indiana": 956948.0,
+     "MISO-East": 2272810.0,
+     "MISO-South": 963293.0
+    },
+    "B_diurnal": {
+     "share_in_floor_window": 0.3384,
+     "share_summer_JJA": 0.3756
+    },
+    "B_driver_screen": {
+     "region_of_zone_note": "MISO market region by plant STATE on the published LRZ map (North = LRZ 1; Central = LRZ 2-7; South = LRZ 8-10; Iowa assigned Central, declared).",
+     "asm_regions_found": [
+      "Central",
+      "North",
+      "South"
+     ],
+     "all_running": {
+      "mwh": 18851751.0,
+      "mw_w_load_factor": 0.7576,
+      "mw_w_region_cleared_reserve_mw": 1005.0,
+      "share_in_region_reserve_top_decile": 0.1046
+     },
+     "missed": {
+      "mwh": 8091733.0,
+      "mw_w_load_factor": 0.7258,
+      "mw_w_region_cleared_reserve_mw": 1001.0,
+      "share_in_region_reserve_top_decile": 0.1006
+     },
+     "B_hours": {
+      "mwh": 5555452.0,
+      "mw_w_load_factor": 0.7029,
+      "mw_w_region_cleared_reserve_mw": 996.0,
+      "share_in_region_reserve_top_decile": 0.1053
+     },
+     "B1_hours": {
+      "mwh": 4306861.0,
+      "mw_w_load_factor": 0.7084,
+      "mw_w_region_cleared_reserve_mw": 970.0,
+      "share_in_region_reserve_top_decile": 0.1006
+     },
+     "A_hours": {
+      "mwh": 1740408.0,
+      "mw_w_load_factor": 0.7693,
+      "mw_w_region_cleared_reserve_mw": 1031.0,
+      "share_in_region_reserve_top_decile": 0.0921
+     }
+    },
+    "top15_missed_plants": [
+     {
+      "plant": 55402,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 652.0,
+      "missed_mwh": 839331.0,
+      "campd_mwh": 1281215.0,
+      "B_share": 0.7441,
+      "burn_hr": 10.79,
+      "incremental_hr": 12.09,
+      "print_excess_over_HH": 1.648
+     },
+     {
+      "plant": 56241,
+      "zone": "MISO-West",
+      "state": "MN",
+      "cap_mw": 316.0,
+      "missed_mwh": 554017.0,
+      "campd_mwh": 828636.0,
+      "B_share": 0.7197,
+      "burn_hr": 11.54,
+      "incremental_hr": 12.74,
+      "print_excess_over_HH": 0.432
+     },
+     {
+      "plant": 55087,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 318.2,
+      "missed_mwh": 545423.0,
+      "campd_mwh": 1387658.0,
+      "B_share": 0.7424,
+      "burn_hr": 10.9,
+      "incremental_hr": 7.53,
+      "print_excess_over_HH": -0.058
+     },
+     {
+      "plant": 990,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 288.0,
+      "missed_mwh": 320454.0,
+      "campd_mwh": 434929.0,
+      "B_share": 0.6366,
+      "burn_hr": 11.18,
+      "incremental_hr": 8.38,
+      "print_excess_over_HH": 0.701
+     },
+     {
+      "plant": 8027,
+      "zone": "MISO-West",
+      "state": "MN",
+      "cap_mw": 328.2,
+      "missed_mwh": 320208.0,
+      "campd_mwh": 456035.0,
+      "B_share": 0.5952,
+      "burn_hr": 11.85,
+      "incremental_hr": 13.29,
+      "print_excess_over_HH": 0.714
+     },
+     {
+      "plant": 6034,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 224.0,
+      "missed_mwh": 297352.0,
+      "campd_mwh": 493381.0,
+      "B_share": 0.7851,
+      "burn_hr": 11.98,
+      "incremental_hr": 8.34,
+      "print_excess_over_HH": 0.024
+     },
+     {
+      "plant": 56603,
+      "zone": "MISO-South",
+      "state": "TX",
+      "cap_mw": 146.0,
+      "missed_mwh": 279769.0,
+      "campd_mwh": 310181.0,
+      "B_share": 0.8545,
+      "burn_hr": 12.08,
+      "incremental_hr": 14.08,
+      "print_excess_over_HH": 0.651
+     },
+     {
+      "plant": 59926,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 405.8,
+      "missed_mwh": 236023.0,
+      "campd_mwh": 796822.0,
+      "B_share": 0.7435,
+      "burn_hr": 10.14,
+      "incremental_hr": 7.01,
+      "print_excess_over_HH": 0.406
+     },
+     {
+      "plant": 6137,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 597.9,
+      "missed_mwh": 232310.0,
+      "campd_mwh": 239041.0,
+      "B_share": 0.8076,
+      "burn_hr": 11.27,
+      "incremental_hr": 8.59,
+      "print_excess_over_HH": 2.916
+     },
+     {
+      "plant": 56604,
+      "zone": "MISO-South",
+      "state": "TX",
+      "cap_mw": 140.6,
+      "missed_mwh": 230273.0,
+      "campd_mwh": 274105.0,
+      "B_share": 0.8298,
+      "burn_hr": 11.58,
+      "incremental_hr": 13.62,
+      "print_excess_over_HH": 0.651
+     },
+     {
+      "plant": 55391,
+      "zone": "MISO-East",
+      "state": "WI",
+      "cap_mw": 489.0,
+      "missed_mwh": 187520.0,
+      "campd_mwh": 510526.0,
+      "B_share": 0.7245,
+      "burn_hr": 12.01,
+      "incremental_hr": 12.77,
+      "print_excess_over_HH": 0.13
+     },
+     {
+      "plant": 7763,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 126.0,
+      "missed_mwh": 176508.0,
+      "campd_mwh": 295369.0,
+      "B_share": 0.7038,
+      "burn_hr": 10.13,
+      "incremental_hr": 11.38,
+      "print_excess_over_HH": 0.568
+     },
+     {
+      "plant": 7759,
+      "zone": "MISO-Indiana",
+      "state": "IN",
+      "cap_mw": 316.4,
+      "missed_mwh": 170655.0,
+      "campd_mwh": 499677.0,
+      "B_share": 0.6371,
+      "burn_hr": 12.23,
+      "incremental_hr": 8.63,
+      "print_excess_over_HH": -0.219
+     },
+     {
+      "plant": 7159,
+      "zone": "MISO-East",
+      "state": "WI",
+      "cap_mw": 367.2,
+      "missed_mwh": 167937.0,
+      "campd_mwh": 219882.0,
+      "B_share": 0.5702,
+      "burn_hr": 12.61,
+      "incremental_hr": 8.74,
+      "print_excess_over_HH": 0.875
+     },
+     {
+      "plant": 6035,
+      "zone": "MISO-East",
+      "state": "MI",
+      "cap_mw": 224.0,
+      "missed_mwh": 164857.0,
+      "campd_mwh": 243304.0,
+      "B_share": 0.6832,
+      "burn_hr": 12.94,
+      "incremental_hr": 8.6,
+      "print_excess_over_HH": 0.896
+     }
+    ],
+    "bucket_C_by_cohort_mwh": {
+     "CT_INTERMEDIATE": 864468.0,
+     "CT_PEAKER_true": 486542.0
+    },
+    "over_dispatch": {
+     "plant_hours": 242957,
+     "screen_mwh": 12326644.0
+    }
+   },
+   "L4_offer_form_cohorts": {
+    "ct_intermediate_split": true,
+    "ct_intermediate_cf_threshold": 50.0,
+    "n_plants_in_iso_cohort": 44,
+    "gas_offer_margin_anchor": 3.0492,
+    "curve_has_phys_keys": {
+     "CT_PEAKER": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [],
+     "CC_REGULAR": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [],
+     "ST_GAS": [
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": []
+    },
+    "CT_INTERMEDIATE_cohort": {
+     "n_plants": 44,
+     "capacity_mw": 9333.2,
+     "econ_tranches": 264,
+     "cap_w_offer_hr_econ": 12.465,
+     "cap_w_physical_leg_hr_econ": 12.465,
+     "cap_w_markup_hr_econ": 0.0,
+     "campd_avg_burn_hr_capw": 11.106,
+     "cap_w_delivered_fuel_usd_mmbtu": 4.156,
+     "econ_cap_hour_share_fuel_above_anchor": 0.8402,
+     "campd_mwh": 10830553.0,
+     "screen_mwh": 9782807.0,
+     "missed_mwh": 4446940.0,
+     "B_mwh": 3134180.0
+    },
+    "CT_PEAKER_true_cohort": {
+     "n_plants": 122,
+     "capacity_mw": 12948.6,
+     "econ_tranches": 243,
+     "cap_w_offer_hr_econ": 12.555,
+     "cap_w_physical_leg_hr_econ": 8.649,
+     "cap_w_markup_hr_econ": 3.906,
+     "campd_avg_burn_hr_capw": 12.218,
+     "cap_w_delivered_fuel_usd_mmbtu": 5.619,
+     "econ_cap_hour_share_fuel_above_anchor": 0.8747,
+     "campd_mwh": 8021198.0,
+     "screen_mwh": 13016524.0,
+     "missed_mwh": 3644793.0,
+     "B_mwh": 2421272.0
+    }
+   },
+   "L4_candidate_static_reach": {
+    "what": "CT_INTERMEDIATE econ tranches repriced into the net-revenue-margin form at the frozen class p50s; zero free parameters; byte-identical at fuel == anchor.",
+    "tranches_repriced": 264,
+    "cap_w_fixed_margin_usd_mwh": 14.2,
+    "screen_twh_arm": 22.799,
+    "screen_twh_candidate": 24.256,
+    "screen_delta_twh": 1.457,
+    "missed_mwh_flipped_in": 649126.0,
+    "missed_flip_share": 0.0802,
+    "flip_share_of_bucket_C": 0.3299,
+    "flip_share_of_bucket_A": 0.0449,
+    "flip_share_of_bucket_B": 0.0524
+   },
+   "L3_gap_shape": {
+    "campd_twh": 18.852,
+    "lp_class_twh": 16.097,
+    "net_gap_twh": 2.755,
+    "under_mwh": 5246991.0,
+    "under_share_summer_JJA": 0.5223,
+    "under_share_h15_21": 0.3085,
+    "under_by_month_mwh": [
+     185654.0,
+     79646.0,
+     176345.0,
+     293601.0,
+     104311.0,
+     583647.0,
+     1420174.0,
+     736836.0,
+     343913.0,
+     422528.0,
+     470624.0,
+     429710.0
+    ],
+    "under_by_hod_mwh": [
+     138082.0,
+     132696.0,
+     136910.0,
+     143869.0,
+     163930.0,
+     161567.0,
+     177739.0,
+     227118.0,
+     260246.0,
+     274487.0,
+     277510.0,
+     265418.0,
+     269428.0,
+     290462.0,
+     314342.0,
+     293705.0,
+     297822.0,
+     251081.0,
+     208043.0,
+     204987.0,
+     195414.0,
+     167427.0,
+     224971.0,
+     169737.0
+    ],
+    "hours_share_JJA": 0.252,
+    "P3_bar": 0.55
+   }
+  }
+ },
+ "L4_census": {
+  "D2_rows_CT_PEAKER": [
+   {
+    "year": 2023,
+    "class": "CT_PEAKER",
+    "mechanism": "reliability_floor",
+    "forced_twh": 2.195,
+    "class_total_twh": 10.7404,
+    "share_of_class": 0.2044
+   },
+   {
+    "year": 2024,
+    "class": "CT_PEAKER",
+    "mechanism": "reliability_floor",
+    "forced_twh": 2.0027,
+    "class_total_twh": 16.4366,
+    "share_of_class": 0.1218
+   },
+   {
+    "year": 2025,
+    "class": "CT_PEAKER",
+    "mechanism": "reliability_floor",
+    "forced_twh": 1.9965,
+    "class_total_twh": 14.0548,
+    "share_of_class": 0.142
+   }
+  ],
+  "D2_mechanisms": [
+   "reliability_floor"
+  ],
+  "D2_max_share_of_class": 0.2044,
+  "D2_summary_CT_PEAKER": [
+   {
+    "year": 2023,
+    "class": "CT_PEAKER",
+    "forced_twh": 2.195,
+    "class_total_twh": 10.7404,
+    "forced_share": 0.2044,
+    "limit": 0.15,
+    "load_share": null,
+    "immaterial": false,
+    "lower_bound": true,
+    "upper_bound": false,
+    "verdict": "FAIL"
+   },
+   {
+    "year": 2024,
+    "class": "CT_PEAKER",
+    "forced_twh": 2.0027,
+    "class_total_twh": 16.4366,
+    "forced_share": 0.1218,
+    "limit": 0.15,
+    "load_share": null,
+    "immaterial": false,
+    "lower_bound": true,
+    "upper_bound": false,
+    "verdict": "pass"
+   },
+   {
+    "year": 2025,
+    "class": "CT_PEAKER",
+    "forced_twh": 1.9965,
+    "class_total_twh": 14.0548,
+    "forced_share": 0.142,
+    "limit": 0.15,
+    "load_share": null,
+    "immaterial": false,
+    "lower_bound": true,
+    "upper_bound": false,
+    "verdict": "pass"
+   }
+  ],
+  "D2_failures_all": [
+   "2023 CT_PEAKER: forced share 20.4% > 15% (2.20 of 10.74 TWh at binding non-exempt floors)"
+  ],
+  "D2_notes": [
+   "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+  ],
+  "d2_peaker_max_share_gate": 0.15,
+  "D4_rows_touching_those_mechanisms": [
+   {
+    "year": 2023,
+    "check": "window",
+    "floor": "reliability_floor \u00d7 CT_PEAKER",
+    "window": "h14-21",
+    "plant": "",
+    "floored_twh": 2.195,
+    "offwindow_twh": 0.0,
+    "offwindow_share": 0.0,
+    "binding_hours": "",
+    "measured_median_mw": "",
+    "measured_zero_share": "",
+    "verdict": "pass"
+   },
+   {
+    "year": 2024,
+    "check": "window",
+    "floor": "reliability_floor \u00d7 CT_PEAKER",
+    "window": "h14-21",
+    "plant": "",
+    "floored_twh": 2.0027,
+    "offwindow_twh": 0.0,
+    "offwindow_share": 0.0,
+    "binding_hours": "",
+    "measured_median_mw": "",
+    "measured_zero_share": "",
+    "verdict": "pass"
+   },
+   {
+    "year": 2025,
+    "check": "window",
+    "floor": "reliability_floor \u00d7 CT_PEAKER",
+    "window": "h14-21",
+    "plant": "",
+    "floored_twh": 1.9965,
+    "offwindow_twh": 0.0,
+    "offwindow_share": 0.0,
+    "binding_hours": "",
+    "measured_median_mw": "",
+    "measured_zero_share": "",
+    "verdict": "pass"
+   }
+  ],
+  "D1_rows_CT_PEAKER": [
+   {
+    "year": 2023,
+    "class": "CT_PEAKER",
+    "profile_r": 0.962,
+    "model_offpeak_cv": 0.688,
+    "actual_offpeak_cv": 0.577,
+    "cv_ratio": 1.193,
+    "gated": true,
+    "verdict": "pass"
+   },
+   {
+    "year": 2024,
+    "class": "CT_PEAKER",
+    "profile_r": 0.973,
+    "model_offpeak_cv": 0.453,
+    "actual_offpeak_cv": 0.457,
+    "cv_ratio": 0.991,
+    "gated": true,
+    "verdict": "pass"
+   },
+   {
+    "year": 2025,
+    "class": "CT_PEAKER",
+    "profile_r": 0.986,
+    "model_offpeak_cv": 0.613,
+    "actual_offpeak_cv": 0.476,
+    "cv_ratio": 1.289,
+    "gated": true,
+    "verdict": "pass"
+   }
+  ],
+  "reliability_floor_limbs": [
+   {
+    "zone": "MISO-East",
+    "driver": "tmax",
+    "enabled": false,
+    "threshold": 30.44,
+    "floor_pct": 0.2676,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-East",
+    "driver": "tmin",
+    "enabled": false,
+    "threshold": -16.04,
+    "floor_pct": 0.1435,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-East",
+    "driver": "netload",
+    "enabled": true,
+    "threshold": 78.52,
+    "floor_pct": 0.1991,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Illinois",
+    "driver": "tmax",
+    "enabled": false,
+    "threshold": 32.8,
+    "floor_pct": 0.1716,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Illinois",
+    "driver": "tmin",
+    "enabled": false,
+    "threshold": -17.14,
+    "floor_pct": 0.0367,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Illinois",
+    "driver": "netload",
+    "enabled": true,
+    "threshold": 78.52,
+    "floor_pct": 0.0994,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Indiana",
+    "driver": "tmax",
+    "enabled": false,
+    "threshold": 32.2,
+    "floor_pct": 0.3136,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Indiana",
+    "driver": "tmin",
+    "enabled": false,
+    "threshold": -16.6,
+    "floor_pct": 0.1592,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Indiana",
+    "driver": "netload",
+    "enabled": true,
+    "threshold": 78.52,
+    "floor_pct": 0.2459,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Plains",
+    "driver": "tmax",
+    "enabled": false,
+    "threshold": 33.35,
+    "floor_pct": 0.196,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Plains",
+    "driver": "tmin",
+    "enabled": false,
+    "threshold": -17.44,
+    "floor_pct": 0.0409,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-Plains",
+    "driver": "netload",
+    "enabled": true,
+    "threshold": 78.52,
+    "floor_pct": 0.131,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-South",
+    "driver": "tmax",
+    "enabled": false,
+    "threshold": 35.95,
+    "floor_pct": 0.2743,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-South",
+    "driver": "tmin",
+    "enabled": false,
+    "threshold": -6.06,
+    "floor_pct": 0.1851,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-South",
+    "driver": "netload",
+    "enabled": true,
+    "threshold": 78.52,
+    "floor_pct": 0.1892,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-West",
+    "driver": "tmax",
+    "enabled": false,
+    "threshold": 31.7,
+    "floor_pct": 0.2378,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-West",
+    "driver": "tmin",
+    "enabled": false,
+    "threshold": -22.14,
+    "floor_pct": 0.045,
+    "window": "h15-21",
+    "min_event_hours": 24
+   },
+   {
+    "zone": "MISO-West",
+    "driver": "netload",
+    "enabled": true,
+    "threshold": 78.52,
+    "floor_pct": 0.1927,
+    "window": "h15-21",
+    "min_event_hours": 24
+   }
+  ],
+  "reliability_floor_armed": true,
+  "reliability_floor_overrides": {},
+  "offer_band_CT_PEAKER": {
+   "committed": 1.025,
+   "econ_low": 1.0,
+   "econ_high": 1.0,
+   "peak": 4.0,
+   "econ_low_share": 0.526,
+   "pct_peaking": 7.0,
+   "phys_committed": 1.025,
+   "phys_econ_low": 0.687,
+   "phys_econ_high": 0.691,
+   "phys_peak": 1.0
+  },
+  "ct_knobs": {
+   "ct_intermediate_split": true,
+   "ct_intermediate_cf_threshold": 50.0,
+   "ct_committed_hr_mult": 1.28,
+   "ct_econ_hr_mult": 0.97,
+   "ct_peak_hr_penalty": 1.1,
+   "ct_mustrun_floor_frac": 1.0,
+   "ct_mustrun_per_plant": false,
+   "ct_netload_drag": false,
+   "ct_deployment_overlay": false,
+   "ct_deployment_floor_frac": 1.0,
+   "measured_ct_heat_rates": true,
+   "tranche_startup_amortization": true,
+   "miso_commitment_posture": false,
+   "gas_offer_net_revenue_margin": true,
+   "gas_offer_margin_anchor": 3.0492
+  },
+  "commitment_bridges_armed_for_MISO": [],
+  "P4_bar": {
+   "only_mechanism": "reliability_floor",
+   "c8_share_max": 0.15
+  }
+ },
+ "decision": {
+  "B_share_by_year": {
+   "2023": 0.801,
+   "2024": 0.7618,
+   "2025": 0.6866
+  },
+  "B1_share_by_year_incremental_oom": {
+   "2023": 0.6441,
+   "2024": 0.5673,
+   "2025": 0.5323
+  },
+  "B2_share_by_year_commitment_band": {
+   "2023": 0.157,
+   "2024": 0.1946,
+   "2025": 0.1543
+  },
+  "K_a_on_incremental_years_over_bar": 3,
+  "K_a_on_incremental_pass": true,
+  "K_a_years_over_bar": 3,
+  "K_a_pass": true,
+  "A_flip_share_by_year": {
+   "2023": 0.3426,
+   "2024": 0.4887,
+   "2025": 0.4599
+  },
+  "K_b_years_over_bar": 0,
+  "K_b_kill_fires": false,
+  "cems_cov_by_year": {
+   "2023": 0.9018,
+   "2024": 0.9018,
+   "2025": 0.9018
+  },
+  "K_e_pass": true,
+  "charter_ab": true
+ }
+}

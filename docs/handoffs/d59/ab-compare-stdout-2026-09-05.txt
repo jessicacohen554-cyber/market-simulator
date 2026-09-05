@@ -1,0 +1,167 @@
+== (1) locality block (ARM) vs pre-declared (DESIGN §8.2) vs published (§2.5)
+year loc | supply  req    | pos     predecl pub   | P_loc   P_NYCA  settled | pub spot | settled/spot
+2023 NYC |   10280   9224 | 1.1145 1.0307 1.026 | 56.2554   63.34   63.34 |    191.6 | 0.33
+2023 LI  |    6254   5400 | 1.1582 1.1617 1.131 |  8.0175   63.34   63.34 |     49.3 | 1.28
+2024 NYC |    9948   8985 | 1.1072 1.0675 1.057 | 61.0348   48.04   61.03 |    141.1 | 0.43
+2024 LI  |    6254   5348 | 1.1695 1.1730 1.117 |  3.5786   48.04   48.04 |     43.2 | 1.11
+2025 NYC |    9948   8673 | 1.1471 1.1059 1.078 | 25.7022   28.65   28.65 |    131.8 | 0.22
+2025 LI  |    6254   5423 | 1.1533 1.1568 1.122 |  7.3567   28.65   28.65 |     51.4 | 0.56
+  2023 NYCA seam position: control 1.017473 arm 1.017473 d52 1.017473 published 1.043
+  2024 NYCA seam position: control 1.040324 arm 1.040324 d52 1.040324 published 1.058
+  2025 NYCA seam position: control 1.051998 arm 1.051998 d52 1.051998 published 1.035
+== (2) retirement rows by zone/fuel/reason
+2022 {"d52": {"?/nuclear/announced": 1036.3}, "control": {"?/nuclear/announced": 1036.3}, "arm": {"?/nuclear/announced": 1036.3}}
+2023 {"d52": {"NYC/gas_ct/announced": 416.4, "Upstate_West/gas_ct/announced": 3.9}, "control": {"NYC/gas_ct/announced": 416.4, "Upstate_West/gas_ct/announced": 3.9}, "arm": {"NYC/gas_ct/announced": 416.4, "Upstate_West/gas_ct/announced": 3.9}}
+2024 {"d52": {}, "control": {}, "arm": {}}
+2025 {"d52": {"Capital_Hudson/gas_st/economic": 656.9, "NYC/gas_st/economic": 946.0, "Upstate_West/gas_st/economic": 197.9}, "control": {"Capital_Hudson/gas_st/economic": 495.8, "NYC/gas_st/economic": 1266.6, "Upstate_West/gas_st/economic": 141.5}, "arm": {"Capital_Hudson/gas_st/economic": 495.8, "NYC/gas_st/economic": 1266.6, "Upstate_West/gas_st/economic": 141.5}}
+thermal additions: {'d52': {2023: [], 2024: [{'eia860_id': None, 'fuel': 'gas_cc', 'mw': 1000.0, 'source': 'economic', 'unit_id': 'gas_cc_new_2022c2024_2', 'zone': 'Upstate_West'}], 2025: []}, 'control': {2023: [], 2024: [{'eia860_id': None, 'fuel': 'gas_cc', 'mw': 1000.0, 'source': 'economic', 'unit_id': 'gas_cc_new_2022c2024_2', 'zone': 'Upstate_West'}], 2025: []}, 'arm': {2023: [], 2024: [{'eia860_id': None, 'fuel': 'gas_cc', 'mw': 1000.0, 'source': 'economic', 'unit_id': 'gas_cc_new_2022c2024_2', 'zone': 'Upstate_West'}], 2025: []}}
+entry decided: {'d52': {2023: {'solar': 445.4, 'wind': 475.6}, 2024: {'solar': 445.4, 'wind': 475.6}, 2025: {'solar': 445.4, 'wind': 475.6}}, 'control': {2023: {'solar': 445.4, 'wind': 475.6}, 2024: {'solar': 445.4, 'wind': 475.6}, 2025: {'solar': 445.4, 'wind': 475.6}}, 'arm': {2023: {'solar': 445.4, 'wind': 475.6}, 2024: {'solar': 445.4, 'wind': 475.6}, 2025: {'solar': 445.4, 'wind': 475.6}}}
+== (3) FC-3 rows
+  additions.by_tech.gas_cc.actual_gw                           d52=0.0  control=0.0  arm=0.0
+  additions.by_tech.gas_cc.band                                d52=SKIP  control=SKIP  arm=SKIP
+  additions.by_tech.gas_cc.err_frac                            d52=None  control=None  arm=None
+  additions.by_tech.gas_cc.model_gw                            d52=1.0  control=1.0  arm=1.0
+  additions.by_tech.gas_ct.actual_gw                           d52=0.072  control=0.072  arm=0.072
+  additions.by_tech.gas_ct.band                                d52=FAIL  control=FAIL  arm=FAIL
+  additions.by_tech.gas_ct.err_frac                            d52=-1.0  control=-1.0  arm=-1.0
+  additions.by_tech.gas_ct.model_gw                            d52=0.0  control=0.0  arm=0.0
+  additions.by_tech.solar.actual_gw                            d52=2.197  control=2.197  arm=2.197
+  additions.by_tech.solar.band                                 d52=FAIL  control=FAIL  arm=FAIL
+  additions.by_tech.solar.err_frac                             d52=-0.189  control=-0.189  arm=-0.189
+  additions.by_tech.solar.model_gw                             d52=1.782  control=1.782  arm=1.782
+  additions.by_tech.storage.actual_gw                          d52=0.184  control=0.184  arm=0.184
+  additions.by_tech.storage.band                               d52=FAIL  control=FAIL  arm=FAIL
+  additions.by_tech.storage.err_frac                           d52=-1.0  control=-1.0  arm=-1.0
+  additions.by_tech.storage.model_gw                           d52=0.0  control=0.0  arm=0.0
+  additions.by_tech.wind.actual_gw                             d52=0.89  control=0.89  arm=0.89
+  additions.by_tech.wind.band                                  d52=FAIL  control=FAIL  arm=FAIL
+  additions.by_tech.wind.err_frac                              d52=1.137  control=1.137  arm=1.137
+  additions.by_tech.wind.model_gw                              d52=1.902  control=1.902  arm=1.902
+  blk10_backstop.fired_gw_total                                d52=0.0  control=0.0  arm=0.0
+  blk10_backstop.fired_mw_total                                d52=0  control=0  arm=0
+  blk10_backstop.thermal_additions_mw_by_source.economic       d52=1000.0  control=1000.0  arm=1000.0
+  loyo.folds.2023.false_retire_band_raw                        d52=FAIL  control=FAIL  arm=FAIL
+  loyo.folds.2023.false_retire_gw_is2020                       d52=1.825  control=1.928  arm=1.928  <-- differs
+  loyo.folds.2023.false_retire_gw_raw                          d52=1.825  control=1.928  arm=1.928  <-- differs
+  loyo.folds.2023.held_out_year                                d52=2023  control=2023  arm=2023
+  loyo.folds.2023.matched                                      d52=1  control=1  arm=1
+  loyo.folds.2023.n_big_actual                                 d52=1  control=1  arm=1
+  loyo.folds.2023.recall                                       d52=1.0  control=1.0  arm=1.0
+  loyo.folds.2023.recall_band                                  d52=PASS  control=PASS  arm=PASS
+  loyo.folds.2023.tr10a                                        d52=FAIL  control=FAIL  arm=FAIL
+  loyo.folds.2023.tr10b                                        d52=FAIL  control=FAIL  arm=FAIL
+  loyo.folds.2024.false_retire_band_raw                        d52=FAIL  control=FAIL  arm=FAIL
+  loyo.folds.2024.false_retire_gw_is2020                       d52=2.075  control=2.178  arm=2.178  <-- differs
+  loyo.folds.2024.false_retire_gw_raw                          d52=2.075  control=2.178  arm=2.178  <-- differs
+  loyo.folds.2024.held_out_year                                d52=2024  control=2024  arm=2024
+  loyo.folds.2024.matched                                      d52=1  control=1  arm=1
+  loyo.folds.2024.n_big_actual                                 d52=1  control=1  arm=1
+  loyo.folds.2024.recall                                       d52=1.0  control=1.0  arm=1.0
+  loyo.folds.2024.recall_band                                  d52=PASS  control=PASS  arm=PASS
+  loyo.folds.2024.tr10a                                        d52=FAIL  control=FAIL  arm=FAIL
+  loyo.folds.2024.tr10b                                        d52=FAIL  control=FAIL  arm=FAIL
+  loyo.folds.2025.false_retire_band_raw                        d52=FAIL  control=FAIL  arm=FAIL
+  loyo.folds.2025.false_retire_gw_is2020                       d52=0.353  control=0.353  arm=0.353
+  loyo.folds.2025.false_retire_gw_raw                          d52=0.353  control=0.353  arm=0.353
+  loyo.folds.2025.held_out_year                                d52=2025  control=2025  arm=2025
+  loyo.folds.2025.matched                                      d52=1  control=1  arm=1
+  loyo.folds.2025.n_big_actual                                 d52=1  control=1  arm=1
+  loyo.folds.2025.recall                                       d52=1.0  control=1.0  arm=1.0
+  loyo.folds.2025.recall_band                                  d52=PASS  control=PASS  arm=PASS
+  loyo.folds.2025.tr10a                                        d52=PASS  control=PASS  arm=PASS
+  loyo.folds.2025.tr10b                                        d52=PASS  control=PASS  arm=PASS
+  retirements.false_retire.band                                d52=FAIL  control=FAIL  arm=FAIL
+  retirements.false_retire.false_gw                            d52=2.057  control=2.16  arm=2.16  <-- differs
+  retirements.false_retire.frac_of_model                       d52=0.631  control=0.643  arm=0.643  <-- differs
+  retirements.false_retire.grain                               d52=per-fuel-excess  control=per-fuel-excess  arm=per-fuel-excess
+  retirements.per_fuel.biomass.actual_gw                       d52=0.064  control=0.064  arm=0.064
+  retirements.per_fuel.biomass.err_frac                        d52=-1.0  control=-1.0  arm=-1.0
+  retirements.per_fuel.biomass.model_gw                        d52=0.0  control=0.0  arm=0.0
+  retirements.per_fuel.gas_cc.actual_gw                        d52=0.057  control=0.057  arm=0.057
+  retirements.per_fuel.gas_cc.err_frac                         d52=-1.0  control=-1.0  arm=-1.0
+  retirements.per_fuel.gas_cc.model_gw                         d52=0.0  control=0.0  arm=0.0
+  retirements.per_fuel.gas_ct.actual_gw                        d52=0.189  control=0.189  arm=0.189
+  retirements.per_fuel.gas_ct.err_frac                         d52=1.227  control=1.227  arm=1.227
+  retirements.per_fuel.gas_ct.model_gw                         d52=0.42  control=0.42  arm=0.42
+  retirements.per_fuel.gas_st.actual_gw                        d52=0.0  control=0.0  arm=0.0
+  retirements.per_fuel.gas_st.err_frac                         d52=None  control=None  arm=None
+  retirements.per_fuel.gas_st.model_gw                         d52=1.801  control=1.904  arm=1.904  <-- differs
+  retirements.per_fuel.nuclear.actual_gw                       d52=1.012  control=1.012  arm=1.012
+  retirements.per_fuel.nuclear.err_frac                        d52=0.024  control=0.024  arm=0.024
+  retirements.per_fuel.nuclear.model_gw                        d52=1.036  control=1.036  arm=1.036
+  retirements.per_fuel.oil.actual_gw                           d52=0.39  control=0.39  arm=0.39
+  retirements.per_fuel.oil.err_frac                            d52=-1.0  control=-1.0  arm=-1.0
+  retirements.per_fuel.oil.model_gw                            d52=0.0  control=0.0  arm=0.0
+  retirements.total_gw.actual                                  d52=1.711  control=1.711  arm=1.711
+  retirements.total_gw.band                                    d52=FAIL  control=FAIL  arm=FAIL
+  retirements.total_gw.err_frac                                d52=0.904  control=0.964  arm=0.964  <-- differs
+  retirements.total_gw.model                                   d52=3.257  control=3.36  arm=3.36  <-- differs
+  retirements.unit_recall_gt300.recall                         d52=1.0  control=1.0  arm=1.0
+  tr10.first_mover_year                                        d52=2025  control=2025  arm=2025
+  tr10.tr10a                                                   d52=FAIL  control=FAIL  arm=FAIL
+  tr10.tr10b                                                   d52=FAIL  control=FAIL  arm=FAIL
+== (4) control (D59 HEAD, field OFF) vs D52 curve-ON (D52 HEAD): differences
+  86 difference(s)
+   score co2.model.2025 d52= 22651279.20371063 control= 22651167.534856014
+   score generated_utc d52= 2026-09-04T23:34:04Z control= 2026-09-05T05:17:35Z
+   score loyo.folds.2023.false_retire_gw_is2020 d52= 1.825 control= 1.928
+   score loyo.folds.2023.false_retire_gw_raw d52= 1.825 control= 1.928
+   score loyo.folds.2024.false_retire_gw_is2020 d52= 2.075 control= 2.178
+   score loyo.folds.2024.false_retire_gw_raw d52= 2.075 control= 2.178
+   score retirements.false_retire.false_gw d52= 2.057 control= 2.16
+   score retirements.false_retire.frac_of_model d52= 0.631 control= 0.643
+   score retirements.per_fuel.gas_st.model_gw d52= 1.801 control= 1.904
+   score retirements.plant_release_precision.grain d52= None control= plant-code+fuel, window real-exit set; reported only (D32 R4)
+   score retirements.plant_release_precision.n_real_exit_plants d52= None control= 39
+   score retirements.plant_release_precision.per_year.2022.all.precision d52= None control= 1.0
+   score retirements.plant_release_precision.per_year.2022.all.released_mw d52= None control= 1036.3
+   score retirements.plant_release_precision.per_year.2022.all.released_mw_at_real_exit_plants d52= None control= 1036.3
+   score retirements.plant_release_precision.per_year.2022.all.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2022.economic.released_mw d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2022.economic.released_mw_at_real_exit_plants d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2022.economic.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2023.all.precision d52= None control= 0.009
+   score retirements.plant_release_precision.per_year.2023.all.released_mw d52= None control= 420.306
+   score retirements.plant_release_precision.per_year.2023.all.released_mw_at_real_exit_plants d52= None control= 3.906
+   score retirements.plant_release_precision.per_year.2023.all.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2023.economic.released_mw d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2023.economic.released_mw_at_real_exit_plants d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2023.economic.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2025.all.precision d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2025.all.released_mw d52= None control= 1903.87
+   score retirements.plant_release_precision.per_year.2025.all.released_mw_at_real_exit_plants d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2025.all.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2025.economic.precision d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2025.economic.released_mw d52= None control= 1903.87
+   score retirements.plant_release_precision.per_year.2025.economic.released_mw_at_real_exit_plants d52= None control= 0.0
+   score retirements.plant_release_precision.per_year.2025.economic.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements.plant_release_precision.window.all.precision d52= None control= 0.31
+   score retirements.plant_release_precision.window.all.released_mw d52= None control= 3360.476
+   score retirements.plant_release_precision.window.all.released_mw_at_real_exit_plants d52= None control= 1040.206
+   score retirements.plant_release_precision.window.all.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements.plant_release_precision.window.economic.precision d52= None control= 0.0
+   score retirements.plant_release_precision.window.economic.released_mw d52= None control= 1903.87
+   score retirements.plant_release_precision.window.economic.released_mw_at_real_exit_plants d52= None control= 0.0
+   score retirements.plant_release_precision.window.economic.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements.total_gw.err_frac d52= 0.904 control= 0.964
+   score retirements.total_gw.model d52= 3.257 control= 3.36
+   score retirements_is.false_retire.false_gw d52= 2.057 control= 2.16
+   score retirements_is.false_retire.frac_of_model d52= 0.631 control= 0.643
+   score retirements_is.per_fuel.gas_st.model_gw d52= 1.801 control= 1.904
+   score retirements_is.plant_release_precision.grain d52= None control= plant-code+fuel, window real-exit set; reported only (D32 R4)
+   score retirements_is.plant_release_precision.n_real_exit_plants d52= None control= 39
+   score retirements_is.plant_release_precision.per_year.2022.all.precision d52= None control= 1.0
+   score retirements_is.plant_release_precision.per_year.2022.all.released_mw d52= None control= 1036.3
+   score retirements_is.plant_release_precision.per_year.2022.all.released_mw_at_real_exit_plants d52= None control= 1036.3
+   score retirements_is.plant_release_precision.per_year.2022.all.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements_is.plant_release_precision.per_year.2022.economic.released_mw d52= None control= 0.0
+   score retirements_is.plant_release_precision.per_year.2022.economic.released_mw_at_real_exit_plants d52= None control= 0.0
+   score retirements_is.plant_release_precision.per_year.2022.economic.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements_is.plant_release_precision.per_year.2023.all.precision d52= None control= 0.009
+   score retirements_is.plant_release_precision.per_year.2023.all.released_mw d52= None control= 420.306
+   score retirements_is.plant_release_precision.per_year.2023.all.released_mw_at_real_exit_plants d52= None control= 3.906
+   score retirements_is.plant_release_precision.per_year.2023.all.released_mw_no_plant_identity d52= None control= 0.0
+   score retirements_is.plant_release_precision.per_year.2023.economic.released_mw d52= None control= 0.0
+== (4b) arm vs control: score rows that moved
+   generated_utc control= 2026-09-05T05:17:35Z arm= 2026-09-05T05:17:45Z
+== (5) P9: {"a_total_within_10pct": false, "a_err_frac": 0.964, "b_false_retire_in_band": false, "b_frac": 0.643, "c_positions_within_3pts": true}

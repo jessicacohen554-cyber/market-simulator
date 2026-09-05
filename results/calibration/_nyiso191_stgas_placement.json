@@ -1,0 +1,390 @@
+{
+  "session": "nyiso-191",
+  "object": "2 (measurement only \u2014 no lever proposed, PREREG stop S7)",
+  "run": "2026-09-05-nyiso-189-steam-identity",
+  "klass": "ST_GAS",
+  "basis": "keeper m_ann vs bench c_ann (CAMPD), per plant, summed by model zone",
+  "by_year": {
+    "2023": {
+      "n_plants": 11,
+      "class_net_twh": 1.149,
+      "gross_over_twh": 4.428,
+      "gross_under_twh": -3.278,
+      "offsetting_misallocation_twh": 3.278,
+      "by_zone_twh": {
+        "NYC": 4.258,
+        "Long_Island": -1.647,
+        "Capital_Hudson": -0.948,
+        "Upstate_West": -0.513
+      },
+      "rows": [
+        {
+          "key": "2500:ST_GAS",
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "npl_mw": 1828,
+          "model_twh": 3.9838,
+          "campd_twh": 0.8565,
+          "e923_twh": 0.8,
+          "model_minus_campd": 3.1273
+        },
+        {
+          "key": "2490",
+          "name": "Arthur Kill Generating Station",
+          "zone": "NYC",
+          "npl_mw": 878,
+          "model_twh": 2.4122,
+          "campd_twh": 1.1187,
+          "e923_twh": 1.0443,
+          "model_minus_campd": 1.2935
+        },
+        {
+          "key": "2480",
+          "name": "Danskammer Generating Station",
+          "zone": "Capital_Hudson",
+          "npl_mw": 537,
+          "model_twh": 0.0269,
+          "campd_twh": 0.0201,
+          "e923_twh": 0.0192,
+          "model_minus_campd": 0.0068
+        },
+        {
+          "key": "2682:ST_GAS",
+          "name": "S A Carlson",
+          "zone": "Upstate_West",
+          "npl_mw": 49,
+          "model_twh": 0.0,
+          "campd_twh": 0.0165,
+          "e923_twh": 0.0106,
+          "model_minus_campd": -0.0165
+        },
+        {
+          "key": "8006",
+          "name": "Roseton Generating Facility",
+          "zone": "Capital_Hudson",
+          "npl_mw": 1242,
+          "model_twh": 0.0723,
+          "campd_twh": 0.2088,
+          "e923_twh": 0.1927,
+          "model_minus_campd": -0.1365
+        },
+        {
+          "key": "8906",
+          "name": "Astoria Generating Station",
+          "zone": "NYC",
+          "npl_mw": 1345,
+          "model_twh": 0.617,
+          "campd_twh": 0.7803,
+          "e923_twh": 0.7298,
+          "model_minus_campd": -0.1633
+        },
+        {
+          "key": "2517:ST_GAS",
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "npl_mw": 376,
+          "model_twh": 0.0821,
+          "campd_twh": 0.3248,
+          "e923_twh": 0.293,
+          "model_minus_campd": -0.2427
+        },
+        {
+          "key": "2527",
+          "name": "Greenidge Generation LLC",
+          "zone": "Upstate_West",
+          "npl_mw": 112,
+          "model_twh": 0.1693,
+          "campd_twh": 0.6655,
+          "e923_twh": 0.6241,
+          "model_minus_campd": -0.4962
+        },
+        {
+          "key": "2516",
+          "name": "Northport",
+          "zone": "Long_Island",
+          "npl_mw": 1564,
+          "model_twh": 1.9247,
+          "campd_twh": 2.5584,
+          "e923_twh": 2.3902,
+          "model_minus_campd": -0.6337
+        },
+        {
+          "key": "2511:ST_GAS",
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "npl_mw": 376,
+          "model_twh": 0.6151,
+          "campd_twh": 1.3862,
+          "e923_twh": 1.3004,
+          "model_minus_campd": -0.7711
+        },
+        {
+          "key": "2625",
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "npl_mw": 1242,
+          "model_twh": 0.1578,
+          "campd_twh": 0.9762,
+          "e923_twh": 0.9358,
+          "model_minus_campd": -0.8184
+        }
+      ]
+    },
+    "2024": {
+      "n_plants": 11,
+      "class_net_twh": -1.37,
+      "gross_over_twh": 2.528,
+      "gross_under_twh": -3.898,
+      "offsetting_misallocation_twh": 2.528,
+      "by_zone_twh": {
+        "Long_Island": -2.257,
+        "NYC": 2.244,
+        "Capital_Hudson": -1.034,
+        "Upstate_West": -0.323
+      },
+      "rows": [
+        {
+          "key": "2500:ST_GAS",
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "npl_mw": 1828,
+          "model_twh": 2.4191,
+          "campd_twh": 0.6815,
+          "e923_twh": 0.6355,
+          "model_minus_campd": 1.7376
+        },
+        {
+          "key": "2490",
+          "name": "Arthur Kill Generating Station",
+          "zone": "NYC",
+          "npl_mw": 878,
+          "model_twh": 2.1285,
+          "campd_twh": 1.3532,
+          "e923_twh": 1.272,
+          "model_minus_campd": 0.7753
+        },
+        {
+          "key": "2480",
+          "name": "Danskammer Generating Station",
+          "zone": "Capital_Hudson",
+          "npl_mw": 537,
+          "model_twh": 0.0353,
+          "campd_twh": 0.0199,
+          "e923_twh": 0.0192,
+          "model_minus_campd": 0.0154
+        },
+        {
+          "key": "2682:ST_GAS",
+          "name": "S A Carlson",
+          "zone": "Upstate_West",
+          "npl_mw": 49,
+          "model_twh": 0.0015,
+          "campd_twh": 0.0084,
+          "e923_twh": 0.0052,
+          "model_minus_campd": -0.0069
+        },
+        {
+          "key": "2517:ST_GAS",
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "npl_mw": 376,
+          "model_twh": 0.1667,
+          "campd_twh": 0.2877,
+          "e923_twh": 0.2598,
+          "model_minus_campd": -0.121
+        },
+        {
+          "key": "8006",
+          "name": "Roseton Generating Facility",
+          "zone": "Capital_Hudson",
+          "npl_mw": 1242,
+          "model_twh": 0.1227,
+          "campd_twh": 0.2562,
+          "e923_twh": 0.2367,
+          "model_minus_campd": -0.1335
+        },
+        {
+          "key": "8906",
+          "name": "Astoria Generating Station",
+          "zone": "NYC",
+          "npl_mw": 1345,
+          "model_twh": 0.6609,
+          "campd_twh": 0.9295,
+          "e923_twh": 0.8709,
+          "model_minus_campd": -0.2686
+        },
+        {
+          "key": "2527",
+          "name": "Greenidge Generation LLC",
+          "zone": "Upstate_West",
+          "npl_mw": 112,
+          "model_twh": 0.4039,
+          "campd_twh": 0.7201,
+          "e923_twh": 0.6735,
+          "model_minus_campd": -0.3162
+        },
+        {
+          "key": "2511:ST_GAS",
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "npl_mw": 376,
+          "model_twh": 0.782,
+          "campd_twh": 1.1373,
+          "e923_twh": 1.0646,
+          "model_minus_campd": -0.3553
+        },
+        {
+          "key": "2625",
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "npl_mw": 1242,
+          "model_twh": 0.4379,
+          "campd_twh": 1.3533,
+          "e923_twh": 1.2859,
+          "model_minus_campd": -0.9154
+        },
+        {
+          "key": "2516",
+          "name": "Northport",
+          "zone": "Long_Island",
+          "npl_mw": 1564,
+          "model_twh": 2.1343,
+          "campd_twh": 3.9153,
+          "e923_twh": 3.7051,
+          "model_minus_campd": -1.781
+        }
+      ]
+    },
+    "2025": {
+      "n_plants": 11,
+      "class_net_twh": -3.697,
+      "gross_over_twh": 0.842,
+      "gross_under_twh": -4.539,
+      "offsetting_misallocation_twh": 0.842,
+      "by_zone_twh": {
+        "Long_Island": -2.277,
+        "Capital_Hudson": -1.664,
+        "NYC": 0.406,
+        "Upstate_West": -0.161
+      },
+      "rows": [
+        {
+          "key": "2500:ST_GAS",
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "npl_mw": 1828,
+          "model_twh": 1.9115,
+          "campd_twh": 1.0701,
+          "e923_twh": 0.9978,
+          "model_minus_campd": 0.8414
+        },
+        {
+          "key": "2480",
+          "name": "Danskammer Generating Station",
+          "zone": "Capital_Hudson",
+          "npl_mw": 537,
+          "model_twh": 0.0284,
+          "campd_twh": 0.0279,
+          "e923_twh": 0.0,
+          "model_minus_campd": 0.0005
+        },
+        {
+          "key": "2682:ST_GAS",
+          "name": "S A Carlson",
+          "zone": "Upstate_West",
+          "npl_mw": 49,
+          "model_twh": 0.0008,
+          "campd_twh": 0.0143,
+          "e923_twh": 0.0143,
+          "model_minus_campd": -0.0135
+        },
+        {
+          "key": "2527",
+          "name": "Greenidge Generation LLC",
+          "zone": "Upstate_West",
+          "npl_mw": 112,
+          "model_twh": 0.5214,
+          "campd_twh": 0.6692,
+          "e923_twh": 0.6692,
+          "model_minus_campd": -0.1478
+        },
+        {
+          "key": "2517:ST_GAS",
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "npl_mw": 376,
+          "model_twh": 0.1281,
+          "campd_twh": 0.3088,
+          "e923_twh": 0.2825,
+          "model_minus_campd": -0.1807
+        },
+        {
+          "key": "8906",
+          "name": "Astoria Generating Station",
+          "zone": "NYC",
+          "npl_mw": 1345,
+          "model_twh": 1.1605,
+          "campd_twh": 1.359,
+          "e923_twh": 1.359,
+          "model_minus_campd": -0.1985
+        },
+        {
+          "key": "2511:ST_GAS",
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "npl_mw": 376,
+          "model_twh": 0.8011,
+          "campd_twh": 1.0352,
+          "e923_twh": 0.9693,
+          "model_minus_campd": -0.2341
+        },
+        {
+          "key": "2490",
+          "name": "Arthur Kill Generating Station",
+          "zone": "NYC",
+          "npl_mw": 878,
+          "model_twh": 1.923,
+          "campd_twh": 2.16,
+          "e923_twh": 2.0565,
+          "model_minus_campd": -0.237
+        },
+        {
+          "key": "8006",
+          "name": "Roseton Generating Facility",
+          "zone": "Capital_Hudson",
+          "npl_mw": 1242,
+          "model_twh": 0.4311,
+          "campd_twh": 0.7247,
+          "e923_twh": 0.6761,
+          "model_minus_campd": -0.2936
+        },
+        {
+          "key": "2625",
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "npl_mw": 1242,
+          "model_twh": 0.6902,
+          "campd_twh": 2.0614,
+          "e923_twh": 1.9594,
+          "model_minus_campd": -1.3712
+        },
+        {
+          "key": "2516",
+          "name": "Northport",
+          "zone": "Long_Island",
+          "npl_mw": 1564,
+          "model_twh": 2.4441,
+          "campd_twh": 4.3068,
+          "e923_twh": 4.0886,
+          "model_minus_campd": -1.8627
+        }
+      ]
+    }
+  },
+  "zone_sign_stable": {
+    "Capital_Hudson": true,
+    "Long_Island": true,
+    "NYC": true,
+    "Upstate_West": true
+  }
+}

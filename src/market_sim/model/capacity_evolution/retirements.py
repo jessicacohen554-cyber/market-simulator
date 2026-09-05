@@ -60,6 +60,11 @@ from market_sim.config.constants import (
     NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO,
     NYCA_ICAP_UCAP_TRANSLATION_BY_ISO,
     NYCA_IRM_ADOPTED_BY_ISO,
+    LOCALITY_CAPACITY_AREAS_BY_ISO,
+    LOCALITY_MARKET_DESIGN_VINTAGES,
+    NYISO_LOCALITY_UDR_ICAP_MW,
+    locality_curve_price_per_firm_mw_yr,
+    resolve_capacity_market_clearing,
     PLANNING_RESERVE_MARGIN_BY_ISO,
     PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     RENEWABLE_CAPACITY_CREDIT,
@@ -74,7 +79,7 @@ from market_sim.config.constants import (
     THERMAL_ELCC_CLASS_RATING_BY_ISO,
     evaluate_renewable_elcc_curve,
 )
-from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
+from market_sim.config.capacity_area_crosswalk import aggregate_by_zone, map_area
 from market_sim.config.capacity_market import resolve_capacity_market_supply_clearing
 from market_sim.config.reserve_config import (
     QUICK_START_FUEL_TYPES,
@@ -754,6 +759,82 @@ def dated_plant_unit_ids(
     return frozenset(out)
 
 
+# EIA-860 Schedule 2 ``Sector`` code of a regulated electric utility (IOU,
+# municipal, cooperative, federal) — the ONE sector whose exit decision is an
+# IRP / rate-case outcome carried by the owner-filed Schedule-3 date rather
+# than a merchant net-revenue test (capx D53, D32 §4.3: 88–92 % of MISO's
+# 2021–2025 coal / gas_st / oil exit MW; design doc §1.1–§1.2). Sectors 2–7
+# (IPP, commercial, industrial; CHP and non-CHP) face the screen.
+UTILITY_SECTOR: int = 1
+
+
+def sector_gated_unit_ids(
+    fleet: list[Generator], sectors: dict[int, int]
+) -> tuple[frozenset[str], dict]:
+    """Unit ids EXOGENOUS to the economic screen because their plant's owner
+    is a regulated electric utility (capx D53, the retirement-screen SECTOR
+    GATE — ``ScenarioConfig.retirement_sector_gate``; design
+    ``docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md``).
+
+    The twin of :func:`dated_plant_unit_ids`, joining on the same key
+    (``Generator.plant_code``) at PLANT grain — EIA-860 assigns one ``Sector``
+    per plant, so every tranche of a binned plant and every unit of a
+    unit-grain plant carries its plant's sector. A unit whose plant maps to
+    :data:`UTILITY_SECTOR` in ``sectors`` (the active vintage's plant table,
+    :func:`market_sim.data.fleet.eia860_plant_sectors`) is returned; a unit
+    whose plant is ABSENT from ``sectors`` (a planned addition's new plant
+    code, a synthesized unit, ``plant_code == 0``) is NOT — the gate fails
+    OPEN to the screen rather than invent an owner (design §1.2). Only fuels
+    the screen can evaluate (``_THERMAL_FOM``) are counted, so the returned
+    set and the census describe the screen's candidate population, never
+    wind / solar / hydro rows the screen ignores anyway.
+
+    Rule-19 reconciliation with the fossil-dates channel: the caller UNIONS
+    this set with :func:`dated_plant_unit_ids` into the screen's one
+    ``exempt_unit_ids`` seam; neither declaration produces an exit (those come
+    from steps 0 / 1 / 1b only), so no unit's exit is decided twice. A gated
+    unit is never in ``margins`` and therefore never decided, entry-capped,
+    re-confirmed or pipelined.
+
+    Returns ``(gated_ids, census)`` where ``census`` is the ledger block the
+    evolve step records under ``sector_gated``: unit / MW totals, MW by fuel
+    and by sector for the GATED set, and the unknown-sector units / MW that
+    fell open to the screen. Empty ``sectors`` ⇒ ``(frozenset(), census)``
+    with zero gated MW.
+    """
+    gated: set[str] = set()
+    mw_by_fuel: dict[str, float] = {}
+    mw_by_sector: dict[str, float] = {}
+    unknown_units = 0
+    unknown_mw = 0.0
+    gated_mw = 0.0
+    for g in fleet:
+        if g.fuel_type not in _THERMAL_FOM:
+            continue
+        pc = int(g.plant_code or 0)
+        sector = sectors.get(pc) if pc else None
+        if sector is None:
+            unknown_units += 1
+            unknown_mw += float(g.pmax_mw)
+            continue
+        if int(sector) != UTILITY_SECTOR:
+            continue
+        gated.add(g.unit_id)
+        gated_mw += float(g.pmax_mw)
+        mw_by_fuel[g.fuel_type] = mw_by_fuel.get(g.fuel_type, 0.0) + float(g.pmax_mw)
+        key = str(int(sector))
+        mw_by_sector[key] = mw_by_sector.get(key, 0.0) + float(g.pmax_mw)
+    census = {
+        "units": len(gated),
+        "mw": gated_mw,
+        "mw_by_fuel": dict(sorted(mw_by_fuel.items())),
+        "mw_by_sector": dict(sorted(mw_by_sector.items())),
+        "unknown_sector_units": unknown_units,
+        "unknown_sector_mw": unknown_mw,
+    }
+    return frozenset(gated), census
+
+
 def _derate_generator(gen: Generator, factor: float) -> Generator:
     """Return a copy of ``gen`` with its MW-valued fields scaled by ``factor``.
 
@@ -933,6 +1014,7 @@ def capacity_revenue_per_mw_yr(
     config: ScenarioConfig | None = None,
     reserve_position: float | None = None,
     year: int | None = None,
+    locality_price_per_firm_mw_yr: float | None = None,
 ) -> float:
     """Return the resource-adequacy capacity payment in $/MW-yr (Module M1).
 
@@ -977,6 +1059,16 @@ def capacity_revenue_per_mw_yr(
     price = design.capacity_price_per_firm_mw_yr(
         config, reserve_position, iso=iso, year=year
     )
+    # capx D59 (locality_capacity_curves, GATED default-OFF): the ICAP Manual
+    # §5.15.2 stacking rule — a Locality clears on its own Demand Curve
+    # "unless the Market-Clearing Price determined for Rest of State is
+    # higher", so a unit in a locality earns max(NYCA, locality). The caller
+    # supplies the zone's locality price (``locality_prices_by_zone``); every
+    # gate-off / non-locality caller passes None and is byte-identical. The
+    # max is applied ONLY where the ISO has a capacity market (price > 0 is
+    # not required: a short locality can price above a $0 NYCA leg).
+    if locality_price_per_firm_mw_yr is not None and design.capacity_market:
+        price = max(price, float(locality_price_per_firm_mw_yr))
     if price <= 0.0:
         return 0.0
     # capx D48: the payment is priced on the accreditation design of the
@@ -985,6 +1077,233 @@ def capacity_revenue_per_mw_yr(
         0.0, thermal_accreditation_fraction(fuel_type, eford, iso, config, year)
     )
     return price * accredited
+
+
+class LocalityPosition:
+    """One representable locality's ICAP census, requirement, position and prices.
+
+    capx D59 (``ScenarioConfig.locality_capacity_curves``, GATED default-OFF;
+    design ``docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md``).
+    Plain attributes (no LP consumer): ``locality`` (the demand-curve label,
+    "NYC" / "LI"), ``area`` (the capacity-deliverability area label), ``zones``
+    (the model zones the locality is the union of), the ICAP census terms in
+    MW (``fleet_icap_mw``, ``wind_mw``, ``solar_mw``, ``storage_mw``,
+    ``udr_icap_mw``, ``supply_icap_mw``), ``requirement_icap_mw`` (the published
+    Locational Minimum ICAP Requirement), ``position`` (supply ÷ requirement —
+    the ICAP Manual §2.6 translation-factor identity makes this the market's
+    own UCAP position, DESIGN §2.2), ``price_per_firm_mw_yr`` (the locality's
+    published vintage curve at the position; ``None`` when no vintage exists)
+    and ``requirement_source`` ("published" / "hold_last_lcr").
+    """
+
+    __slots__ = (
+        "locality",
+        "area",
+        "zones",
+        "fleet_icap_mw",
+        "wind_mw",
+        "solar_mw",
+        "storage_mw",
+        "udr_icap_mw",
+        "supply_icap_mw",
+        "requirement_icap_mw",
+        "position",
+        "price_per_firm_mw_yr",
+        "requirement_source",
+    )
+
+    def __init__(self, **kw: object) -> None:
+        for name in self.__slots__:
+            setattr(self, name, kw.get(name))
+
+    def as_ledger_row(self) -> dict:
+        """Rounded, JSON-ready dict for the evolution ledger (observability only)."""
+        return {
+            "locality": self.locality,
+            "area": self.area,
+            "zones": list(self.zones or ()),
+            "fleet_icap_mw": round(float(self.fleet_icap_mw), 3),
+            "wind_mw": round(float(self.wind_mw), 3),
+            "solar_mw": round(float(self.solar_mw), 3),
+            "storage_mw": round(float(self.storage_mw), 3),
+            "udr_icap_mw": round(float(self.udr_icap_mw), 3),
+            "supply_icap_mw": round(float(self.supply_icap_mw), 3),
+            "requirement_icap_mw": round(float(self.requirement_icap_mw), 3),
+            "requirement_source": self.requirement_source,
+            "position": round(float(self.position), 6),
+            "price_per_kw_yr": (
+                round(float(self.price_per_firm_mw_yr) / 1000.0, 4)
+                if self.price_per_firm_mw_yr is not None
+                else None
+            ),
+        }
+
+
+def locality_capacity_curves_armed(
+    config: ScenarioConfig | None, iso: str | None
+) -> bool:
+    """True when ``iso`` settles capacity on its published LOCALITY demand curves.
+
+    The ONE gate predicate (rule 19) behind capx D59: requires the default-OFF
+    ``ScenarioConfig.locality_capacity_curves`` field, an entry for ``iso`` in
+    :data:`LOCALITY_MARKET_DESIGN_VINTAGES` (NYISO alone — rule 25
+    ``[R-ISO-SCOPE]``: the flag armed on any other ISO's run is inert by
+    construction), AND the CR-1 curve gate resolving ON for the ISO
+    (:func:`resolve_capacity_market_clearing`) — the ICAP Manual §5.15.2
+    stacking max is meaningless against the flat legacy anchor (DESIGN §3),
+    so the field is inert when the NYCA leg is not the published curve.
+    ``config=None`` / ``iso=None`` resolve False.
+    """
+    if config is None or iso is None:
+        return False
+    if not getattr(config, "locality_capacity_curves", False):
+        return False
+    if iso not in LOCALITY_MARKET_DESIGN_VINTAGES:
+        return False
+    return bool(resolve_capacity_market_clearing(config, iso))
+
+
+def _locality_udr_icap_mw(locality: str, year: int) -> float:
+    """Published External UDR rights (ICAP MW) into ``locality`` live in model ``year``."""
+    return float(
+        sum(
+            mw
+            for loc, _line, mw, first, last in NYISO_LOCALITY_UDR_ICAP_MW
+            if loc == locality and first <= int(year) <= last
+        )
+    )
+
+
+def _locality_requirement_icap_mw(
+    iso: str, area: str, year: int, locality_peak_mw: float | None
+) -> tuple[float | None, str]:
+    """The locality's published Locational Minimum ICAP Requirement for ``year``.
+
+    Read through the EXISTING curated reader (rule 6) for the capability year
+    that BEGINS in ``year`` (the same information gate the D52 Table D.2
+    rows use). Beyond the last committed capability year the LCR RATIO of the
+    last row (``value_pu``) is held on ``locality_peak_mw`` — the model's own
+    locality peak — because a held MW requirement would fail the rule-13
+    forward test (DESIGN §2.1). Before the first committed row, or with no
+    row at all: ``(None, "none")`` — the locality is not priced that year.
+    """
+    label = capdel.resolve_delivery_year(iso, int(year))
+    years = capdel.available_delivery_years(iso)
+    if not years:
+        return None, "none"
+    if label in years:
+        req = capdel.requirement_by_area(iso, label).get(area)
+        if req is not None and req > 0.0:
+            return float(req), "published"
+        return None, "none"
+    last = max(years)
+    if label > last and locality_peak_mw is not None and locality_peak_mw > 0.0:
+        df = capdel._read(iso)
+        if df is None or df.empty:
+            return None, "none"
+        sub = df[
+            (df["metric"] == "requirement")
+            & (df["delivery_year"] == last)
+            & (df["area"] == area)
+        ]
+        sub = sub[sub["value_pu"].notna()]
+        if sub.empty:
+            return None, "none"
+        return float(sub["value_pu"].iloc[0]) * float(locality_peak_mw), "hold_last_lcr"
+    return None, "none"
+
+
+def locality_capacity_positions(
+    iso: str,
+    year: int,
+    fleet: list[Generator],
+    config: ScenarioConfig,
+    wind_pool_by_zone: dict[str, float] | None = None,
+    solar_pool_by_zone: dict[str, float] | None = None,
+    storage_power_by_zone: dict[str, float] | None = None,
+    locality_peak_by_zone: dict[str, float] | None = None,
+) -> dict[str, LocalityPosition]:
+    """Return ``{locality: LocalityPosition}`` for the ISO's representable localities.
+
+    capx D59 (DESIGN §2): computed ONCE per year on the ENTERING fleet by the
+    runner, beside the NYCA ``curve_reserve_position``, and threaded into the
+    three capacity screens through :func:`locality_prices_by_zone`. For each
+    locality in :data:`LOCALITY_CAPACITY_AREAS_BY_ISO` whose crosswalk mapping
+    is a contributing (``leaf``) row: ICAP supply = Σ ``pmax_mw`` of the
+    fleet's units in the locality's zones + the LP's zonal renewable nameplate
+    + in-zone storage power + the published UDR rights into the locality;
+    requirement = the published Locational Minimum ICAP Requirement
+    (:func:`_locality_requirement_icap_mw`); position = supply ÷ requirement
+    (the ICAP Manual §2.6 identity — no translation factor enters); price =
+    the locality's published vintage curve at that position. The published
+    ``import_limit`` (TSL) rows are NOT added to supply — NYISO's LCR is
+    already net of the import capability (DESIGN §2.1).
+
+    Returns ``{}`` — a total no-op — when :func:`locality_capacity_curves_armed`
+    is False, so every caller gates cleanly and the unarmed path is
+    byte-identical.
+    """
+    if not locality_capacity_curves_armed(config, iso):
+        return {}
+    areas = LOCALITY_CAPACITY_AREAS_BY_ISO.get(iso, {})
+    out: dict[str, LocalityPosition] = {}
+    for locality, area in areas.items():
+        mapping = map_area(iso, area, "locality")
+        if not mapping.contributes:
+            continue
+        zones = tuple(mapping.zones)
+        fleet_icap = sum(float(g.pmax_mw) for g in fleet if g.zone in zones)
+        wind = sum(float((wind_pool_by_zone or {}).get(z, 0.0)) for z in zones)
+        solar = sum(float((solar_pool_by_zone or {}).get(z, 0.0)) for z in zones)
+        storage = sum(float((storage_power_by_zone or {}).get(z, 0.0)) for z in zones)
+        udr = _locality_udr_icap_mw(locality, year)
+        supply = fleet_icap + wind + solar + storage + udr
+        peak = (
+            sum(float((locality_peak_by_zone or {}).get(z, 0.0)) for z in zones)
+            if locality_peak_by_zone
+            else None
+        )
+        requirement, source = _locality_requirement_icap_mw(iso, area, year, peak)
+        if requirement is None or requirement <= 0.0:
+            continue
+        position = supply / requirement
+        price = locality_curve_price_per_firm_mw_yr(iso, locality, year, position)
+        out[locality] = LocalityPosition(
+            locality=locality,
+            area=area,
+            zones=zones,
+            fleet_icap_mw=fleet_icap,
+            wind_mw=wind,
+            solar_mw=solar,
+            storage_mw=storage,
+            udr_icap_mw=udr,
+            supply_icap_mw=supply,
+            requirement_icap_mw=requirement,
+            position=position,
+            price_per_firm_mw_yr=price,
+            requirement_source=source,
+        )
+    return out
+
+
+def locality_prices_by_zone(
+    positions: dict[str, LocalityPosition] | None,
+) -> dict[str, float]:
+    """``{zone: locality price $/firm-MW-yr}`` — the max over the localities containing the zone.
+
+    The per-zone operand the three screens hand to
+    :func:`capacity_revenue_per_mw_yr` (``locality_price_per_firm_mw_yr``),
+    which applies the ICAP Manual §5.15.2 max against the NYCA seam price.
+    Zones in no priced locality are absent (→ NYCA price alone). Empty /
+    ``None`` positions give ``{}``.
+    """
+    out: dict[str, float] = {}
+    for pos in (positions or {}).values():
+        if pos.price_per_firm_mw_yr is None:
+            continue
+        for z in pos.zones or ():
+            out[z] = max(out.get(z, 0.0), float(pos.price_per_firm_mw_yr))
+    return out
 
 
 # A zone whose deliverable firm capacity exceeds its locational requirement by
@@ -2487,6 +2806,7 @@ def apply_economic_retirements(
     exempt_unit_ids: frozenset[str] = frozenset(),
     exit_rate_cap_mw: float | None = None,
     exogenous_exits: list | None = None,
+    locality_prices_by_zone: dict[str, float] | None = None,
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -2950,7 +3270,11 @@ def apply_economic_retirements(
         # zone already long on deliverable firm capacity vs its requirement earns
         # NO capacity payment (RA saturated there), so surplus in a long zone
         # retires as it should while short zones keep their units.
+        # capx D59 (locality_capacity_curves): a unit in a priced locality is
+        # settled at max(NYCA, locality) — ICAP Manual §5.15.2 — through the
+        # ONE price seam; None (gate off / zone in no locality) is byte-identical.
         capacity_revenue_usd = 0.0
+        _locality_price = (locality_prices_by_zone or {}).get(g.zone)
         if supply_clearing_armed:
             # capx D57: settled after the loop from the clearing (design
             # §3.5); the E&AS operand this unit's offer is built from is the
@@ -2958,7 +3282,13 @@ def apply_economic_retirements(
             pass
         elif not _zone_is_long(deliverability_headroom, g.zone):
             capacity_revenue_usd = g.pmax_mw * capacity_revenue_per_mw_yr(
-                config.iso, g.fuel_type, g.eford, config, reserve_position, year
+                config.iso,
+                g.fuel_type,
+                g.eford,
+                config,
+                reserve_position,
+                year,
+                locality_price_per_firm_mw_yr=_locality_price,
             )
             net_revenue += capacity_revenue_usd
 
@@ -3013,6 +3343,9 @@ def apply_economic_retirements(
             "reserve_uplift_usd": float(reserve_uplift_usd),
             "attribute_revenue_usd": float(attribute_revenue_usd),
             "capacity_revenue_usd": float(capacity_revenue_usd),
+            "locality_price_per_kw_yr": (
+                float(_locality_price) / 1000.0 if _locality_price is not None else 0.0
+            ),
             "as_annual_credit_usd": float(as_annual_credit_usd),
             "as_pricing": as_pricing,
             "screen_price_mean_usd_mwh": float(np.mean(prices[zone])),
