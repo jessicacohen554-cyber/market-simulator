@@ -1,5 +1,38 @@
 # FINDING — caiso-247: the CAISO C3a residual is NOT a hub-basis residual. On the corrected node-complementarity definition the hub-marginal regime carries **4.0 % / 3.6 %** of the 2024 / 2025 gap on **3.9 % / 5.7 %** of the weight (CR **1.03 / 0.64**) — the handoff's own ACQUITTAL falsifier fires, and caiso-202 §C's ~5 % survives its instrument's repair. The carriers are the DOMESTIC surface (DOM_GAS 47 / 40 %, CC_REGULAR + CC_CHP), **BIOMASS** (18 / 18 % of the gap on 7 % of the weight, mean residual **+$9.85 / +$7.84 /MWh** — a NEW named object), and a storage bucket that is largely a loss-surface artifact. ZERO SOLVES. **5 of 10 predictions FALSIFIED**, including the headline.
 
+> # ⚠ CORRECTION — 2026-09-05, caiso-248, AGAINST INTEREST
+>
+> **RESULT 3 (BIOMASS) IS WITHDRAWN ENTIRELY.** This session's fleet rebuild
+> carried **184 phantom biomass LP units the scored solve does not have**:
+> `run_calibration_full` injects biomass as a measured EIA-923 monthly must-run
+> profile and passes `inject_biomass_mustrun` into `run_year`, which DROPS the
+> raw biomass LP units — and that flag is derived from `solve_and_persist`'s
+> own locals, is never recorded in `meta.json`, and is therefore invisible to
+> BOTH `run_year_kwargs` and `run_year_unreachable`. Biomass **cannot set price
+> in this model.** Corrected: DOM_OTHER falls from 18.1 % / 18.0 % of the gap
+> to **2.6 % / 1.0 %** (2024 / 2025) and the share moves to STORAGE
+> (28.7 % → **43.2 %**, 36.5 % → **53.3 %**).
+>
+> **RESULTS 1 AND 2 ARE BIT-IDENTICAL AND STAND** — the HUB acquittal
+> (CR 1.026 / 0.642, all variants) and the caiso-202 §C confirmation. HUB is
+> identified from import-row complementarity and never touched the domestic
+> fleet.
+>
+> **ALSO WITHDRAWN:** §4.4's "STORAGE collapses to 3.4 % at tol 0.75"
+> (corrected: 8.7 % / 10.3 % of weight, 18.4 % / 23.8 % of gap); §7 item 1
+> (biomass ranked first); and this document's claim that caiso-202 §C "folded
+> biomass into unmatched" — **§C excluded it deliberately and correctly, and
+> said so in the probe.**
+>
+> Full account, corrected tables, blast-radius measurement and the
+> `replay_keeper` instrument repair:
+> **`FINDING-caiso248-mustrun-fleet-defect-2026-09-05.md`**. The committed
+> `_caiso247_residual_regime_anatomy.json` has been REGENERATED on the correct
+> fleet; every number in this document's tables below that involves DOM_OTHER,
+> STORAGE or UNRESOLVED is superseded by caiso-248 §2.
+
+
+
 **Session caiso-247, 2026-09-05.** Branch
 `claude/caiso-backcast-calibration-247-zxaba3` off `main` `c9f1d26e`. Keeper
 **`2026-09-05-caiso-246-b1-spot`** (`caiso246_b1_spot_coverage`, `git_sha`

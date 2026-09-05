@@ -12527,3 +12527,116 @@ matrix shard (`import_hub_pricing`, `measured_offer_surface`) with **no cell
 verdict moved**. No run registered (zero solves); keeper unchanged.
 
 **Next number: caiso-248.**
+
+> **⚠ CORRECTION (2026-09-05, caiso-248, against interest).** RESULT 3 of this
+> entry — BIOMASS as a new ranked object — is **WITHDRAWN ENTIRELY**. The
+> caiso-247 fleet rebuild carried 184 phantom biomass LP units the scored solve
+> does not have: `run_calibration_full` injects biomass as a measured EIA-923
+> monthly must-run profile and `run_year(inject_biomass_mustrun=...)` DROPS the
+> raw biomass LP units, and that flag is derived from `solve_and_persist`'s own
+> locals, never recorded in `meta.json`, invisible to BOTH `run_year_kwargs`
+> and `run_year_unreachable`. **Biomass cannot set price in this model.**
+> Corrected: DOM_OTHER 18.1 %/18.0 % → **2.6 %/1.0 %** of the gap, the share
+> moving to STORAGE (28.7 % → **43.2 %**, 36.5 % → **53.3 %**). **RESULTS 1 AND
+> 2 — the HUB acquittal (CR 1.026/0.642) and the caiso-202 §C confirmation —
+> are BIT-IDENTICAL and stand.** Also withdrawn: the "STORAGE collapses to
+> 3.4 % at tol 0.75" disclosure (corrected to 8.7 %/10.3 % weight,
+> 18.4 %/23.8 % gap) and the claim that caiso-202 §C "folded biomass into
+> unmatched" — §C excluded it deliberately and correctly. See
+> `FINDING-caiso248-mustrun-fleet-defect-2026-09-05.md`.
+
+---
+
+## caiso-248 (2026-09-05) — STOP-THE-LINE: the fleet-only rebuild carried PHANTOM BIOMASS LP UNITS; caiso-247 result 3 WITHDRAWN, results 1–2 stand bit-identical; `replay_keeper` repaired for every ISO. ZERO SOLVES
+
+**Opened on the caiso-248 handoff's ranked item A (the biomass offer surface)
+and stopped at the first check: the object does not exist.** Keeper
+`2026-09-05-caiso-246-b1-spot` unchanged; nothing armed, no solve, no run
+registered, no promotion.
+
+**THE DEFECT.** `run_calibration_full` nets the residual must-run classes
+(`_INJECTED_MUSTRUN_CLASSES = ("biomass", "OTHER")`) out of demand, re-adds
+them from measured EIA-923 energy, and sets `inject_biomass = "biomass" in
+must_run` (L5242) → `run_year(inject_biomass_mustrun=...)` (L5438) →
+`drop_biomass_units` (`run_calibration.py` L3292, BEFORE the `fleet_only` exit
+at L4999), **removing the raw biomass LP units so biomass is not served
+twice.** The flag is derived from `solve_and_persist`'s LOCALS, so the bundle
+never records it and it is invisible to BOTH `run_year_kwargs` (nothing to
+map) and `run_year_unreachable` (which reports only recorded keys). A
+fleet-only rebuild therefore silently kept 184 CAISO biomass units (847.3 MW,
+near-flat mc median $31.13) whose offers price-matched λ and absorbed 18 % of
+the C3a gap into caiso-247's DOM_OTHER cell. The keeper's own sidecar proves
+the injection: `biomass` is a MONTHLY STEP profile — 12 levels, 11 change
+points — in all three years (2025: 3.2329 TWh). **caiso-202 §C had already
+excluded biomass for exactly this reason and said so in the probe; caiso-247
+misread that as "folded into unmatched".**
+
+**CORRECTED DECOMPOSITION** (2025, $3.151 gap): DOM_GAS **40.2 %** (unchanged)
+· STORAGE **53.3 %** (was 36.5) · HUB **3.6 %** (unchanged) · DOM_OTHER
+**1.0 %** (was 18.0) · UNRESOLVED 1.9 %. **2024** ($3.781): DOM_GAS **47.1 %**
+(unchanged) · STORAGE **43.2 %** (was 28.7) · HUB **4.0 %** (unchanged) ·
+DOM_OTHER **2.6 %** (was 18.1) · UNRESOLVED 3.2 %. **2023**: DOM_OTHER
+14.8 % → **6.2 %**, STORAGE 55.5 % → **63.0 %**, HUB unchanged at 37.8 %.
+
+**WHY THE HUB CELLS DO NOT MOVE AT ALL** — HUB is identified from the caiso-244
+import-row complementarity plus the landing-zone reach test, neither of which
+touches the domestic fleet; and DOM_GAS precedes DOM_OTHER in the priority
+order, so dropping blank-group units can only move zone-hours DOM_OTHER →
+STORAGE/UNRESOLVED. Both are what the corrected run shows — the internal
+consistency check on the repair.
+
+**INSTRUMENT REPAIR, every ISO:** `scripts/replay_keeper.py` gains
+`DERIVED_RUN_YEAR_INPUTS` (the documented list of `run_year` inputs
+`solve_and_persist` derives from locals and the bundle never records) and
+`derived_run_year_inputs(bundle, year)`, which recovers them from committed
+sidecars and RAISES rather than defaulting to False; `run_year_kwargs`' docstring
+now tells every caller to splat it. The detector is **calendar-agnostic on
+purpose**: `_hour_months` uses the REAL calendar, so in a leap year the steps
+sit on 8784-clock boundaries (CAISO 2024 biomass steps at hour 1440 = 31 d +
+29 d) while the model clock is 8760 — a "flat within my months" test misses
+2024 entirely, and **this session's first repair attempt did exactly that.**
+The shape test (≤ 12 levels, ≤ 11 change points) catches all three years.
+
+**BLAST RADIUS, MEASURED:** caiso-244 and caiso-245 used the same rebuild but
+read ONLY the import rows and a `GAS_GROUPS`-restricted diagnostic, which
+blank-group biomass never enters — **their findings are unaffected.** caiso-202
+and caiso-230 already excluded biomass explicitly. **caiso-247 is the only
+casualty.**
+
+**DISCLOSED AGAINST INTEREST:** my own error, found on my own re-reading one day
+after publication and after the finding was merged, with the caiso-202 comment
+naming the mechanism in a file I had open; PRECOMMIT-caiso247 §1.1 asserted the
+rebuild was "the fleet the LP saw" and **no gate tested that claim** — a G-FLEET
+gate (reconstructed class energy vs the committed `class_hourly` totals) would
+have caught it instantly and is now the obvious missing gate for every
+fleet-only probe; the withdrawn result was the session's most quotable one while
+the two that survive were already unfavourable to the lane's hypotheses; and the
+corrected picture is **WORSE for attribution, not better** — DOM_GAS + STORAGE is
+now 90.3 %/93.5 % of the gap and the residual "nothing price-matched" bucket is
+the single largest 2025 cell.
+
+**QUEUE RE-RANK:** (1) separate DOM_GAS from STORAGE with a **loss-adjusted
+price match** (`CAISO_loss_surface.csv` delivery factors; caiso-247 item C,
+promoted here) — the precondition for quoting any DOM_GAS number, zero LP;
+(2) add a **G-FLEET gate** to the fleet-only probe protocol; (3) the CC-hot /
+CT-cold split, unchanged; (4) the import seam and the two fitted firm prices
+stay demoted as C3a objects; (5) the C3a weight-basis owner ask, carried;
+(6) **biomass is CLOSED as a C3a object** — the open question it leaves is a
+VOLUME one (whether 3.2–4.5 TWh/yr of price-insensitive injected biomass is the
+right representation), not a C3a lever.
+
+**DO-NOT-REDO adds (FINDING §8):** never rebuild a keeper fleet with
+`run_year_kwargs` alone — splat `derived_run_year_inputs` too, and an empty
+`run_year_unreachable` does NOT mean the rebuild is complete; never test
+"injected must-run" by flatness within a non-leap month map; biomass never sets
+the CAISO price; caiso-202 §C excluded biomass deliberately and correctly;
+never quote caiso-247 §4.4's "STORAGE collapses to 3.4 %".
+
+**Deliverables:** `FINDING-caiso248-mustrun-fleet-defect-2026-09-05.md`, the
+REGENERATED `_caiso247_residual_regime_anatomy.json`, the repaired probe,
+`DERIVED_RUN_YEAR_INPUTS` + `derived_run_year_inputs` in `replay_keeper.py`,
+correction banners on the caiso-247 finding and log entry, corrected
+`measured_offer_surface` matrix evidence. No cell verdict moved; no run
+registered; keeper unchanged.
+
+**Next number: caiso-249.**
