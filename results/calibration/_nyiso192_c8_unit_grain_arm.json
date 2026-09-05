@@ -1,0 +1,84 @@
+{
+  "session": "nyiso-192",
+  "bundle": "results/calibration/nyiso192_astoria_panel",
+  "by_year": {
+    "2023": {
+      "ST_GAS": {
+        "units": 88,
+        "class_twh": 9.9294,
+        "unit_grain_forced_twh": 3.6654,
+        "unit_grain_forced_share": 0.3691
+      },
+      "CC_REGULAR": {
+        "units": 122,
+        "class_twh": 34.1721,
+        "unit_grain_forced_twh": 4.199,
+        "unit_grain_forced_share": 0.1229
+      },
+      "CT_PEAKER": {
+        "units": 128,
+        "class_twh": 0.4409,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_forced_share": 0.0
+      },
+      "CC_CHP": {
+        "units": 108,
+        "class_twh": 15.5773,
+        "unit_grain_forced_twh": 4.1884,
+        "unit_grain_forced_share": 0.2689
+      }
+    },
+    "2024": {
+      "ST_GAS": {
+        "units": 88,
+        "class_twh": 8.5165,
+        "unit_grain_forced_twh": 3.4295,
+        "unit_grain_forced_share": 0.4027
+      },
+      "CC_REGULAR": {
+        "units": 129,
+        "class_twh": 37.9938,
+        "unit_grain_forced_twh": 4.5749,
+        "unit_grain_forced_share": 0.1204
+      },
+      "CT_PEAKER": {
+        "units": 130,
+        "class_twh": 0.3849,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_forced_share": 0.0
+      },
+      "CC_CHP": {
+        "units": 107,
+        "class_twh": 19.1997,
+        "unit_grain_forced_twh": 4.1329,
+        "unit_grain_forced_share": 0.2153
+      }
+    },
+    "2025": {
+      "ST_GAS": {
+        "units": 88,
+        "class_twh": 9.6572,
+        "unit_grain_forced_twh": 2.7748,
+        "unit_grain_forced_share": 0.2873
+      },
+      "CC_REGULAR": {
+        "units": 129,
+        "class_twh": 36.1103,
+        "unit_grain_forced_twh": 4.0592,
+        "unit_grain_forced_share": 0.1124
+      },
+      "CT_PEAKER": {
+        "units": 130,
+        "class_twh": 1.4529,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_forced_share": 0.0
+      },
+      "CC_CHP": {
+        "units": 107,
+        "class_twh": 20.427,
+        "unit_grain_forced_twh": 4.1062,
+        "unit_grain_forced_share": 0.201
+      }
+    }
+  }
+}
