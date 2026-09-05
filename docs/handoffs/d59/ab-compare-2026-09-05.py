@@ -95,7 +95,7 @@ def main() -> None:
             pre = next(r for r in PREDECL["rows"] if r["year"] == y and r["locality"] == ("NYC" if loc == "NYC" else "Long Island"))
             pub_pos, pub_spot = PUB[(y, loc)]
             ratio = row["settled_price_per_kw_yr"] / pub_spot
-            loc_rows.append(dict(year=y, locality=loc, **row, predecl_position=pre["position"], published_position=pub_pos, published_spot_kw_yr=pub_spot, settled_over_spot=round(ratio, 3), gap_pts=round((row["position"] - pub_pos) * 100, 1)))
+            loc_rows.append(dict(year=y, **row, predecl_position=pre["position"], published_position=pub_pos, published_spot_kw_yr=pub_spot, settled_over_spot=round(ratio, 3), gap_pts=round((row["position"] - pub_pos) * 100, 1)))
             print(f"{y} {loc:<4}| {row['supply_icap_mw']:7.0f} {row['requirement_icap_mw']:6.0f} | {row['position']:.4f} {pre['position']:.4f} {pub_pos:.3f} | {str(row['price_per_kw_yr']):>7} {row['nyca_price_per_kw_yr']:7.2f} {row['settled_price_per_kw_yr']:7.2f} | {pub_spot:8.1f} | {ratio:.2f}")
     out["locality_rows"] = loc_rows
     for y in (2023, 2024, 2025):

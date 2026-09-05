@@ -509,6 +509,21 @@ field from it. Both legs register suffixed.
 | locality field without the NYCA curve (NOT solved; inert by predicate, recorded so it is recognisable) | `--nyiso-requirement-forecast-peak --nyiso-requirement-vintage-factors --locality-capacity-curves` | `21265d21a22a9716` | not run |
 | pinned global default key | — | `4c6b03ae098b6e3e` | **unmoved** |
 
+**CORRECTION (appended 2026-09-05 after the solves, at full magnitude — a records error of
+this lane, not a model finding).** The table above was computed on an INCOMPLETE recipe: my
+key script omitted `--entry-screen-diagnostics` and `--vintage 2020`, which the D45-R / D52
+recipe carries. On the complete recipe the keys at this HEAD are: bare `nyiso-t1h`
+**`91686abe7a744a88`** (UNMOVED — identical to D52's; the "moved upstream" paragraph above
+is WITHDRAWN, as is the worktree attribution, which re-keyed the same incomplete recipe);
+bare + field explicitly `False` `91686abe7a744a88` (identical — the drop-at-default
+registration works); the D52 curve-ON recipe **`589f031432b6dc7d`** (identical to D52's —
+so the control replay solved at this HEAD carries the SAME key as the committed D52 bundle
+and is a same-key, different-HEAD replay: every difference between them is upstream drift
+between the D52 HEAD `881c11d` and `db057c5d`, and the arm-vs-control pair is like-for-like
+at one key posture); the D59 arm **`4bb6dd6a798147b2`**; the locality field without the
+NYCA curve `ae6ed8ffd4035268` (not run). The harness printed exactly these keys for the two
+legs. The pinned default key `4c6b03ae098b6e3e` is unmoved.
+
 Guards at this HEAD: `check_cache_key_registration.py --base origin/main` — ok (1 new
 field registered at `"False"`); `check_mechanism_matrix.py --base origin/main` — integrity
 OK after `--fix-anchors` (digits only, four upstream rows); `generate_parameter_registry.py
