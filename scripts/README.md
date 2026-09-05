@@ -66,7 +66,7 @@ not a current keeper), together with the whole `scripts/archive/` tree (292
 retired one-offs) and the 1,229 probe scripts nothing in live code imports or
 names; `regen_caiso_bench_cems.py` moved to `scripts/data/` and
 `bench_cold_solve.py` to `scripts/diagnostics/` because live scripts still call
-them. The surviving generators are the current keepers': `gen_caiso246`,
+them. The surviving generators are the current keepers': `gen_caiso251`,
 `gen_miso217`, `gen_neiso99`, `gen_nyiso189` and `gen_pjm163_inputclock`
 (writes the pjm-162 keeper's attestation); ERCOT's two-config keeper
 (ercot-248) has none. The same prune deleted every unmapped solve-output
