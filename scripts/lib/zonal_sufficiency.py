@@ -1,7 +1,7 @@
 """Shared helpers for the NYISO / NEISO zonal-sufficiency tests.
 
 Both ISOs gate a multi-zone topology on the actual day-ahead LMP spreads — the
-same empirical test as ``scripts/caiso_zonal_sufficiency.py``: if the zones
+same empirical test as ``caiso_zonal_sufficiency.py (retired CLI, deleted 2026-09-05)``: if the zones
 rarely diverge a single copper-plate price suffices; if they part by tens of
 $/MWh for a meaningful share of hours the topology carries real information a
 single zone cannot reproduce. This module holds the per-spread duration-curve
@@ -10,8 +10,8 @@ the table renderer; each per-ISO script supplies the model-zone hourly frames
 (from ``scripts/data/derive_actual_lmp.py``) and the zone pairs to report.
 
 Usage (per-ISO scripts):
-    python scripts/nyiso_zonal_sufficiency.py [--years ...] [--kind da|rt] [--md]
-    python scripts/neiso_zonal_sufficiency.py [--years ...] [--kind da|rt] [--md]
+    python nyiso_zonal_sufficiency.py (retired CLI, deleted 2026-09-05) [--years ...] [--kind da|rt] [--md]
+    python neiso_zonal_sufficiency.py (retired CLI, deleted 2026-09-05) [--years ...] [--kind da|rt] [--md]
 """
 
 from __future__ import annotations

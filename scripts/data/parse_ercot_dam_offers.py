@@ -18,7 +18,7 @@ with the 10 curve points spread across 20 columns. This script reshapes it to a
 melted ``point / mw / price`` plus the per-resource three-part fields
 (startup/min-gen), the operating envelope (HSL/LSL/awarded), the settlement point
 and price, and the per-resource ancillary-service awards. That tidy form is what
-``scripts/archive/analyze_dam_offer_multipliers.py`` normalizes into heat-rate-multiplier
+``analyze_dam_offer_multipliers.py (retired script, deleted 2026-09-05)`` normalizes into heat-rate-multiplier
 space to ground the model's thermal offer-curve bands against the real ERCOT
 offer distribution.
 

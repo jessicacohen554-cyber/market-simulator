@@ -34,15 +34,16 @@ src/market_sim/
   model/     → the ISO-agnostic LP: dispatch (LP core, duals=price), commitment, transmission, storage, capacity evolution, ancillary
   policy/    → IRA, RPS, carbon / cap-and-trade, EAC, constraints
   results/   → caching, outputs, emissions, export, calibration/scoring, scarcity overlays, evolution ledger
-  pipeline/  → shared per-year solve core (spec, kwargs, prior, result, backcast_config, commitment, solve)
+  pipeline/  → shared per-year solve core (spec, kwargs, prior, backcast_config, commitment, solve)
   ensemble / matrix / uncertainty / structural_prior → ensemble & forecast-uncertainty layer
   runner.py  → main orchestrator (P0→P1 solve loop, year evolution)
   (full, current per-module inventory: docs/codebase/01-architecture.md — kept in sync with the code; this tree is the elevator view)
 tests/       → pytest, one file per module
 scripts/     → core entry points & standing tooling ONLY (calibration/hindcast/forecast runners, scoring, dashboard, governance) — see scripts/README.md
   data/      → data fetching & processing (fetch_*, curate_*, derive_*, per-source build_*) — not core engine
-  archive/   → retired one-off run drivers/probes/analyses; historical record, not maintained
-  lib/       → shared helpers; probes/ → per-run probe scripts (calibration record)
+  lib/       → shared helpers; probes/ → only the probe scripts live code still imports or names
+               (scripts/archive/ and the record-only probes were DELETED 2026-09-05, owner instruction:
+               superseded per-run scripts are deleted, never archived; git history is the record)
 data/        → all on-disk inputs; every path resolves through config/paths.py (never Path(__file__).parents[...])
   raw/       → immutable source downloads, NEVER modified in place — the single source root (W1 collapsed the old inputs/ + data/ roots into data/raw/)
                eia-930*/, eia-860/, fleet-egrid/, campd-{unit,facility}-level/, gas-prices/, lmp-data/, zone-specific-demand/, …

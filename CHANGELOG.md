@@ -1,5 +1,48 @@
 # Changelog
 
+## 2026-09-05 — keeper-only retention + dead-code sweep (owner instruction: delete, never archive)
+
+**Owner instructions this session:** on the backcast side only KEEPER run data is
+retained; stale forecast runs are not retained either; superseded scripts are
+DELETED, never archived; the branch is refreshed onto main. No solve, no
+mechanism, no determination change anywhere.
+
+- **Backcast (`results/calibration/`):** 20 unmapped solve-output bundles deleted —
+  every same-HEAD A/B control (nyiso-150/151/152/185-189, caiso-224, miso-170) and
+  every superseded arm (caiso-231, miso-198, neiso-97, nyiso-186, nyiso-192, and
+  miso-213 once main promoted miso-217). Kept: the six keeper bundles, the
+  ercot-248 two-config keeper's constituent bundles (ercot234 / ercot236), the
+  class R/P pre-registered artifacts and the `_`-prefixed working dirs.
+  `check_registry_payload_parity.KEEP_REQUIRED_UNMAPPED_BUNDLES` is now EMPTY.
+  The two non-keeper registrations main added (nyiso-192, miso-213) were pruned
+  with `scripts/prune_iso_runs.py`; MISO's forecast gate-(a) stamp re-keyed to
+  miso-217 (R-T step 4, which the promotion had skipped).
+- **Forecast (`frontend/data/hindcast/` + `results/hindcast/`, `results/ff*`):** 36
+  stale sidecars deleted with their results dirs — kept per ISO every run holding
+  a current bare FF-2D verdict key, every run the `program-status.json` board
+  seed cites, the registered crossovers and the T3 goldens (41 sidecars). 109
+  `results/hindcast/` dirs no sidecar referenced and the sidecar-less
+  `ffr3p/3v/4b-4f/ffrsc/arm3arm/ffr-sa-smoke/baselines` lane outputs deleted
+  (their READMEs stay). `VERDICT_MAP` and `invariant-failures.json` drop the
+  pruned runs' lines; `ff-verdicts.json` untouched.
+- **Scripts:** the whole `scripts/archive/` tree (292 files) deleted; 54
+  `gen_*_attestation.py` for non-keeper runs deleted; 1,229 record-only
+  `scripts/probes/` files deleted (the 69 that live code imports or names stay);
+  21 dead top-level/data one-offs deleted (miso-148 helpers, ffr3a2/3a3 scorecard
+  trio, ownership attribution pair, zonal-sufficiency CLIs, bench regens, …).
+  `regen_caiso_bench_cems.py` → `scripts/data/`, `bench_cold_solve.py` →
+  `scripts/diagnostics/` (still called). `scripts/README.md` keeper-rotation rule
+  now reads DELETE; CLAUDE.md tree updated.
+- **`src/market_sim`:** dead modules `results/metrics.py`, `data/som_conduct.py`,
+  `pipeline/result.py` (placeholder `YearSolveResult`) and 7 unreferenced
+  functions / 6 unreferenced constants removed. ScenarioConfig fields with no
+  production reader are REPORTED in the session summary, not removed
+  (rules 24/26/28 govern those).
+- **Verification:** parity, audit_keepers, legitimacy --keepers, golden-manifest,
+  gate-(a), refactor-guards and forecast --reindex all pass; fast pytest tier
+  shows only the failures already red on main (ERCOT golden partition ×3, the
+  miso intermediate cache-key pin, the PJM override test) plus the pre-existing
+  forecast-invariant undeclared-FAIL rows.
 ## 2026-09-05 — DOCS-B (model-audit WS4): methodology spec FINALIZED, user manual FINAL, CHANGELOG catch-up, index refresh
 
 Docs-only. **No file under `src/`, `scripts/`, `frontend/`, `results/` or

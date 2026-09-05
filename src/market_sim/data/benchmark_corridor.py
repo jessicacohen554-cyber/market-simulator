@@ -59,30 +59,6 @@ _CONTEXT_FIELDS: tuple[str, ...] = (
 )
 
 
-def load_benchmark_corridor(
-    *,
-    iso: str | None = None,
-    source: str | None = None,
-    quantity: str | None = None,
-    validate: bool = True,
-) -> pd.DataFrame:
-    """Read the curated benchmark-corridor anchors, optionally filtered.
-
-    Returns the tidy long frame (one row per source/iso/region/scenario/
-    target_year/quantity/tech). Raises ``FileNotFoundError`` with a regenerate
-    hint if the clean partition is absent (the clean tree is gitignored /
-    regenerated from committed raw by ``curate_benchmark_corridor.py``).
-    """
-    df = clean_io.read_clean(DATATYPE, validate=validate)
-    if iso is not None:
-        df = df[df["iso"] == iso]
-    if source is not None:
-        df = df[df["source"] == source]
-    if quantity is not None:
-        df = df[df["quantity"] == quantity]
-    return df.reset_index(drop=True)
-
-
 def iso_totals(df: pd.DataFrame) -> pd.DataFrame:
     """Sum the region rows to per-ISO totals (extensive quantities only).
 

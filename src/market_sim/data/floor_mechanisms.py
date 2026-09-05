@@ -340,28 +340,6 @@ def ensure_mechanism(fleet_arrays) -> np.ndarray:
     return mech
 
 
-def tag_raised(
-    mech: np.ndarray,
-    rows,
-    before: np.ndarray,
-    after: np.ndarray,
-    mech_id: int,
-) -> None:
-    """Tag ``mech[rows]`` with ``mech_id`` wherever ``after`` > ``before``.
-
-    ``before``/``after`` are the floor values for the same ``rows`` slice,
-    captured around a ``np.maximum`` (or assignment) composition. Strict
-    inequality implements maximum-composition: ties keep the incumbent
-    mechanism's id.
-    """
-    raised = after > before
-    if not np.any(raised):
-        return
-    sub = mech[rows]
-    sub[raised] = mech_id
-    mech[rows] = sub
-
-
 def clear_where_unfloored(mech: np.ndarray, min_gen: np.ndarray) -> None:
     """Zero mechanism ids wherever the composed floor is not positive.
 

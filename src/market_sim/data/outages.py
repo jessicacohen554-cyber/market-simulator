@@ -98,30 +98,6 @@ def _clean_io():
     return clean_io
 
 
-def read_clean_outages(
-    year: int, *, columns: list[str] | None = None, validate: bool = True
-) -> pd.DataFrame:
-    """Load per-unit hourly availability for ``year`` from the clean tree.
-
-    The clean-backed read seam (gated by :func:`_use_clean`). Returns the
-    per-``(plant_id, unit_id)`` hourly outage / availability rows curated by
-    ``scripts/data/curate_outages.py`` and validated against
-    ``data/dictionary/schema/outages.schema.yaml`` — ``outage_mw`` is the
-    capacity offline during the interval and ``available_mw`` the capacity
-    available (plant nameplate minus that). Rows are unit-grain (the
-    facility-summed ``unit_id == "ALL"`` source was removed 2026-07-17).
-
-    Reads through :func:`scripts.lib.clean_io.read_clean`, which raises
-    :class:`FileNotFoundError` (with a regenerate hint) when the partition is
-    absent. The clean tree is gitignored, so regenerate it from raw with
-    ``python scripts/regenerate_clean.py outages`` first.
-    """
-    clean_io = _clean_io()
-    return clean_io.read_clean(
-        "outages", year=int(year), columns=columns, validate=validate
-    )
-
-
 # Default CAMPD bin-assignment CSV, the plant_code -> Plant_Group source used
 # to decide which plants are coal/CC. Matches ScenarioConfig.campd_bins_path.
 BINS_CSV_DEFAULT: str = str(CAMPD_BINS_CSV)
@@ -2106,10 +2082,6 @@ def ct_deployment_csv(iso: str = "ERCOT") -> Path:
     from its own CEMS + LMP measurement.
     """
     return _CT_DEPLOYMENT_DIR / f"ct_deployment_floor_{iso.upper()}.parquet"
-
-
-# Backward-compatible alias: the default ERCOT artifact path.
-CT_DEPLOYMENT_CSV: Path = ct_deployment_csv("ERCOT")
 
 
 @lru_cache(maxsize=None)

@@ -101,12 +101,6 @@ def fuel930_of(key: str) -> str:
     return c.fuel930 if c else "other"
 
 
-def is_fossil(key: str) -> bool:
-    """Whether a class is a fossil class (shown in the fossil tables)."""
-    c = _BY_KEY.get(key)
-    return bool(c and c.fossil)
-
-
 def fossil_classes() -> tuple[str, ...]:
     """Fossil class keys in canonical display order."""
     return tuple(c.key for c in PLANT_CLASSES if c.fossil)

@@ -19,7 +19,7 @@ against:
 Every term is a measured input (rule 14): the 930 cells from the committed
 ``CISO hourly`` extract, the CEMS gas hourly and the cogen/fold-in anchors
 from the committed CEMS-anchored bench parts (the owner-signed bench-rework
-basis, ``scripts/archive/regen_caiso_bench_cems.py``). The series regenerates for any
+basis, ``scripts/data/regen_caiso_bench_cems.py``). The series regenerates for any
 year from source data and re-derives only when the sources update (rule 23).
 It is built on the generation frame's clock (the same rows the renewables
 ride), so the Demand cell's +1 h clock convention (caiso-75) never enters.
@@ -107,7 +107,7 @@ def main() -> int:
         if "gas_cems_grid" not in e930:
             raise SystemExit(
                 f"{ISO} {year}: bench part carries no CEMS anchor — run "
-                "scripts/archive/regen_caiso_bench_cems.py first."
+                "scripts/data/regen_caiso_bench_cems.py first."
             )
 
         # CEMS bench-gas hourly, grid-delivered: decoded committed per-plant

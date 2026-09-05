@@ -259,17 +259,6 @@ EGRID_UNIT_VINTAGE_TOL_YEARS: int = 1
 # less-efficient sibling technology to bound it against).
 EGRID_CC_HR_PHYSICAL_CEILING: float = HEAT_RATE_BINS["gas_ct"]["older"]
 
-# CCS retrofit heat rate penalty: parasitic load from amine scrubbing + CO2 compression.
-# NETL Cost & Performance Baseline Rev 4 (2021): 10-14% for supercritical PC, 12-16% for NGCC.
-# Default 12% reflects modern NGCC with optimized heat integration.
-# The retrofit heat rate is DERIVED per unit as source_hr × (1 + penalty); it is not a
-# fixed bin. At 12% penalty: H-class (6.3) → 7.06, F-class (6.9) → 7.73, older (7.5) → 8.40.
-CCS_RETROFIT_HR_PENALTY_REFERENCE: dict[str, object] = {
-    "netl_ngcc_range": (0.10, 0.16),
-    "default": 0.12,
-    "source": "NETL Cost & Performance Baseline for Fossil Energy Plants, Rev 4, 2021",
-}
-
 # Commitment parameters by thermal class.
 # Each entry: (heat_rate_cutoff, {startup_per_mw, min_run_hours, min_down_hours})
 # Source: NREL/SR-5500-55433 (Kumar et al. 2012), OEM specs.
@@ -4246,14 +4235,6 @@ NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
     },
 }
 
-# ERCOT SCED cadence: one SCED execution every ~5 minutes (ERCOT Nodal
-# Protocols §6.5.7.1), i.e. 12 intervals per clock hour. Used to time-average
-# the per-interval measured GTC limits (gtc-limits clean datatype) onto the
-# hourly LP clock: an hour's transfer-energy cap is the mean of its
-# per-interval caps, with intervals where the constraint was not in SCED's
-# active set standing in at the constraint's measured envelope.
-ERCOT_SCED_INTERVALS_PER_HOUR: int = 12
-
 # Crosswalk from ERCOT's published Generic Transmission Constraints (GTCs, the
 # stability-limited export interfaces reported in NP6-86 "SCED Shadow Prices
 # and Binding Transmission Constraints") onto the reduced 7-zone topology's
@@ -4312,10 +4293,6 @@ ERCOT_DC_TIE_ZONE_MAP: dict[str, list[tuple[str, float]]] = {
     "SWPP": [("Northeast", 600.0 / 820.0), ("North", 220.0 / 820.0)],
     "CEN": [("South", 1.0)],
 }
-# Total DC-tie transfer capability (MW) implied by the same published
-# ratings — Phase-0 context only (import share of capability), never an LP
-# bound: 600 + 220 + 300 + 36 + 100.
-ERCOT_DC_TIE_CAPABILITY_MW: float = 1256.0
 
 # Percentile of the per-(month × hour-of-day) measured net-import distribution
 # used as each seam's deliverability ceiling. 90 = the upper envelope minus the
