@@ -11707,3 +11707,53 @@ or price mechanism. This arm reached at most bucket C and part of bucket A, and 
 moved `CT_PEAKER` **further from** actual in 2023 and 2024.
 
 * Next number: **miso-218**.
+
+## miso-218 (2026-09-05) — THE RATIO-PRESERVING OFFER-LEVEL SCALE (×1.10), OWNER-REQUESTED, RULE-13 DIAGNOSTIC PROBE: **the owner's premise held and my decisive pre-registered prediction was WRONG** — all three C3a years land inside ±10 % and C3a-2025 CLOSES (−12.297 → **−6.313 PASS**) — but it breaks a **load-bearing C1 cell** (`ST_GAS`-2024 −7.155 → **−8.030**, PASS → FAIL), pushes **every** C8 class-year further over budget, and leaves the scarcity tail untouched; **NOT a keeper, pre-committed before the solve**
+
+**Keeper UNCHANGED at `2026-09-05-miso-217-intermphys`.** Registered as
+`2026-09-05-miso-218-levelscale-probe` (bundle `results/calibration/miso218_levelscale_B`).
+PREREG pushed BLIND at `1deae2b2` before the solve; record
+`FINDING-miso218-offer-level-scale-2026-09-05.md`. **No `ScenarioConfig` field minted, no
+matrix row, ledger 41/2 unchanged** — the scale rides the existing `offer_curve_by_group`
+operator channel and is recorded verbatim in the probe's `run_config.json`. Rule 22:
+2023–2025 only.
+
+**What was run.** Every band multiplier (`committed`/`econ_low`/`econ_high`/`peak`) of all 13
+fossil classes ×1.10; within-class ratios preserved exactly, `phys_*` and structural shares
+untouched, **fossil merit order preserved by construction** since every class scales alike.
+
+**The owner's premise HELD and my decisive prediction was WRONG.** I pre-registered that
+C3a-2023, at +1.096 % against a ±10 % band, would **exit**. It does not: **+8.402 % PASS**.
+Measured price pass-through **+7.23 / +7.49 / +6.82 %** (below 10 %, because `vom` and
+emission adders do not scale — which is why my pre-solve arithmetic was too pessimistic).
+**All three C3a years inside the band: +8.402 / +4.396 / −6.313, and the lane's standing
+C3a-2025 failure CLOSES.**
+
+**Why it is still not a keeper — two independent reasons.** (1) **Pre-committed before the
+solve**: a uniform multiplicative lift chosen to move a price residual is a fitted level
+scalar identified against that residual — rule 1 forecloses it as a keeper mechanism and rule
+13 admits it only as the default-off diagnostic probe this is. (2) **Measured after, and
+independent**: it is **not a gates win**. `fuelmix` `ST_GAS`-2024 **exits the ±8.00 band**
+(−7.155 → **−8.030**, the only PASS→FAIL flip on the board, load-bearing), so the
+determination goes **NOT-YET on C3a-2025 → NOT-YET on fuelmix** — a substitution, not an
+improvement. C8 rises on **every** class-year (`CT_PEAKER` 0.2280/0.1573/0.1319 →
+**0.2571/0.1756/0.1437**, all three now over the 0.15 budget; `ST_GAS`
+0.1479/0.1555/0.2070 → 0.1665/0.1784/0.2162).
+
+**The tail is untouched, which confirms the owner's own diagnosis rather than the lever.**
+C3c hours of RT LMP > $200: **3 / 7 / 0 → 3 / 7 / 1** against an actual **30 / 37 / 88**. A
+10 % lift on a $183.22 maximum reaches ~$202 against an actual $1,669.52. The mean closed by
+raising a Jun–Jul median miso-202/203 measured as **already above actual** (37.47 vs 32.73),
+not by adding the missing peaks.
+
+**Prior scored against interest.** **P-2 WRONG and it was the decisive one** (C3a-2023 stayed
+inside); **P-1 wrong on its 2025 leg** (6.82 vs a 7.0 floor); P-3 substantively right, band
+missed by 0.31 pp; **P-4 right on its bar, wrong on its mechanism for 2025** (C3b-2025
+*improved*, 0.180 → 0.149); P-5 right; **P-6 wrong on the cell** — I named `CC_REGULAR`-2024
+(0.053 TWh of band left) as the danger and it moved the **safe** way (+7.947 → +6.564) while
+`ST_GAS`-2024 exited instead; P-7 held. **Also reported**: the exit is only **0.030 TWh**
+past the line, and this finding deliberately does **not** sweep for a smaller scale factor
+that would keep it inside — sweeping a scalar against the gates is exactly the fitting rule 1
+forbids.
+
+* Next number: **miso-219**.
