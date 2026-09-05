@@ -66,6 +66,9 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO",
         "ADEQUACY_EXTERNAL_TIE_FIRM_MW",
         "ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO",
+        # capx D51 (2026-09-04): the dates-ON re-identification of the MISO
+        # ratio, resolved only under the default-off gate.
+        "ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO",
         "AS_REVENUE_PER_KW_YR_BY_ISO",
         "AS_SATURATION_REF_GW_BY_ISO",
         # FFR-4F (2026-08-09, commit 675b9782) added the CAISO RA-MPB capacity

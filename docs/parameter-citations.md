@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-09-04. Every numeric input to the model traces to a primary source
+_Generated 2026-09-05. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1899 parameters registered** (1019 flagged `needs-citation`).
+**1902 parameters registered** (1022 flagged `needs-citation`).
 
 
 ## Calibration
@@ -1137,6 +1137,7 @@ inline comment and still need a dated primary source — search the table for
 | `nyiso_rcpf_locational.NYC.zones` | ["NYC"] | 2 | NYISO 'New York City' operating-reserve region = load zone J, the m… | 2021-07 |  |
 | `nyiso_rcpf_locational.SENY.products` | [["seny_30min_total", 1100.0, 0.0, 50… | 2 | SENY 30-minute reserve demand-curve maximum $500/MWh is sourced (FE… | 2021-07 |  |
 | `nyiso_rcpf_locational.SENY.zones` | ["Lower_Hudson", "NYC", "Long_Island"] | 2 | NYISO 'Southeastern New York' (SENY) operating-reserve region = loa… | 2021-07 |  |
+| `scenario.adequacy_accounting_ratio_dated_net` | False | 1 | GATED default-OFF |  | auto-generated, needs-citation |
 | `scenario.as_revenue_enabled` | False | 1 | Credit ERCOT ancillary-service market |  | auto-generated, needs-citation |
 | `scenario.as_revenue_multiplier` | 1.0 | 2 | Scenario scale on the calibrated AS |  | auto-generated, needs-citation |
 | `scenario.caiso_adaptive_beta` | 0.5945 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
@@ -1145,6 +1146,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_bidir_intertie` | False | 2 | Model CAISO's WECC tie as a SINGLE |  | auto-generated, needs-citation |
 | `scenario.caiso_charge_allocation_schedule` | False | 1 | Constrain the CAISO battery |  | auto-generated, needs-citation |
 | `scenario.caiso_citygate_flow_date` | False | 2 | Place each measured daily |  | auto-generated, needs-citation |
+| `scenario.caiso_citygate_spot_coverage` | False | 3 | Cover a month on its OWN |  | auto-generated, needs-citation |
 | `scenario.caiso_citygate_spot_level` | False | 2 | Level the CAISO gas hub overlay |  | auto-generated, needs-citation |
 | `scenario.caiso_corridor_atc_forward` | False | 1 | Cap each CAISO per-hub corridor's |  | auto-generated, needs-citation |
 | `scenario.caiso_corridor_flow_limit` | False | 2 | Cap each CAISO per-hub corridor's |  | auto-generated, needs-citation |
@@ -1750,6 +1752,7 @@ inline comment and still need a dated primary source — search the table for
 | `adequacy_external_tie_firm_mw.NEISO` | 409.31 | 2 | Net import Capacity Supply Obligation for CCP 2026/2027 INCLUDING A… | 2026-05-01 |  |
 | `adequacy_external_tie_firm_mw.NYISO` | 2749.94115 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `adequacy_internal_supply_accounting_ratio_by_iso.MISO` | 0.8546435044350695 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `adequacy_internal_supply_accounting_ratio_dated_net_by_iso.MISO` | 0.8934356772712484 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `as_saturation_ref_gw_by_iso.CAISO` | 5.517 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `as_saturation_ref_gw_by_iso.ERCOT` | 4.0 | 2 | ERCOT AS-eligible (storage) fleet at the 2023 AS-revenue calibratio… | 2023 | auto-generated |
 | `atb_tech_wacc_real.solar` | 0.042271 | 2 | ATB 2024 WACC Real Market, UtilityPV @2026 | 2024 | auto-generated |

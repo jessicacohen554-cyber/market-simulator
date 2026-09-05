@@ -1,7 +1,8 @@
-# Forecast Determination Rubric (v1.0)
+# Forecast Determination Rubric (v1.1)
 
-Status: **canonical for the Forecast Finalization Program. RUBRIC VERSION 1.0**
-(2026-07-17, FF-0A — authored per `docs/forecast-development-plan-2026-07.md` §3;
+Status: **canonical for the Forecast Finalization Program. RUBRIC VERSION 1.1**
+(v1.0 2026-07-17, FF-0A — authored per `docs/forecast-development-plan-2026-07.md`
+§3; v1.1 2026-09-04, owner ruling Q37 — the §5 follow-up-attestation limb;
 changes are owner-signed amendments, mirroring the backcast rubric's version
 discipline). This document is the single auditable definition of how a
 **forecast bundle** is judged at each tier of the test ladder (plan §2.1) and
@@ -52,7 +53,7 @@ it reads (all optional inputs recorded `SKIPPED`, never silently passed):
 | corridor table JSON | FF-0D intake → committed benchmark tables (§6) | FC-5: external anchors (AEO2025 / StdScen / ISO planning docs) + per-row divergence dispositions |
 | `run_config.json` | the run | FC-7 machine checks (mode, flags, registry completeness) |
 | `dof_ledger.json` | the producing session | FC-7: free parameters → identification sources |
-| `forecast_attestation.json` | the producing session (T3) | §5 golden attestation |
+| `forecast_attestation.json` | the producing session (T3), or a PRE-DECLARED follow-up lane under §5's second limb (v1.1) | §5 golden attestation |
 
 **Namespace discipline:** every artifact lives in the forecast-validation
 namespaces (`results/hindcast/`, `results/full-horizon/`, future
@@ -476,6 +477,30 @@ The scorer verifies presence + internal consistency (machine-checkable
 parts); the truth of the assertions is the attesting session's auditable
 responsibility, exactly as backcast C6.
 
+**Who may author the attestation — two limbs (v1.1, owner ruling Q37,
+2026-09-04).**
+
+1. **The producing session (T3)** — the default, as above.
+2. **A follow-up lane may author a forecast attestation iff it is PRE-DECLARED
+   before authoring, moves only the attestation row, and re-scores
+   artifact-only.** Concretely: (a) the pre-declaration naming the bundle, the
+   attestation and the one FC-7 row it will move is committed AND pushed
+   before `forecast_attestation.json` exists, and the re-scored record's own
+   `provenance.scored_at_sha` post-dates that push (the sequence is proven by
+   the artifacts, never asserted); (b) every other row of FC-1..FC-8 and FC-7
+   rows 1–3 is byte-identical to the preserved prior record, and the prior is
+   preserved under its own key first (preserve-then-overwrite); (c) no solve —
+   the scorer's inputs gain exactly one artifact. A follow-up attestation that
+   moves any other row, or that follows a read of the failing row without a
+   pushed pre-declaration, is the post-hoc route golden-1 refused and GOLDEN-2
+   §3 pre-declared against, and is refused here. The model case is
+   `docs/handoffs/FINDING-capx-d47-golden3-attestation-2026-09-04.md` §1
+   (GOLDEN-3: pre-declaration at `71dd390e`, `scored_at_sha 71dd390ed56f`,
+   exactly one row moved, determination unchanged); the ruling's signature is
+   `docs/handoffs/capx-director-ledger-2026-08.md` §3 Q37. The limb provides
+   for the deviation D47 had to disclose; it certifies provenance, not
+   accuracy, exactly as limb 1.
+
 ---
 
 ## 6. FC-5 benchmark inventory — on disk today vs intake gaps (for FF-0D)
@@ -583,6 +608,16 @@ dashboard's per-run rubric block (plan §8 / FF-5A).
 
 ## 9. Version history
 
+- **v1.1 (2026-09-04, owner ruling Q37 — director sitting r#34, card C-8;
+  recorded by the capx D51 records rider, item (e))** — §5 gains its second
+  attestation-authorship limb: a follow-up lane may author a forecast
+  attestation iff it is pre-declared before authoring, moves only the
+  attestation row, and re-scores artifact-only. Model case
+  `FINDING-capx-d47-golden3-attestation-2026-09-04.md` §1; signature capx
+  ledger §3 Q37. Text only: no threshold, category, tier rule or verdict
+  changes; no bundle re-scored; every committed `rubric_version: "1.0"` record
+  stands as scored. The §0 artifact table's author column and the scorer's
+  `RUBRIC_VERSION` stamp move with it.
 - **v1.0 (2026-07-17, FF-0A)** — initial rubric: categories FC-1..FC-8 per
   plan §3, tier ladder T0→T3 promotion logic, golden-attestation checklist,
   FC-5 benchmark-intake inventory, research grounding (§1). All thresholds

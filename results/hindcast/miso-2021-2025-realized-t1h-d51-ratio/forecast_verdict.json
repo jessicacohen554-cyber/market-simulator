@@ -1,0 +1,110 @@
+{
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "scored_at_sha": "71e2cca887e0",
+    "scored_at_date": "2026-09-04T23:30:34Z",
+    "cache_epoch": "b538d37b36a88247"
+  },
+  "tier": "t1h",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+    "FC-7 provenance & DOF"
+  ],
+  "notes": [],
+  "categories": {
+    "FC-1": {
+      "label": "FC-1 structural integrity (I1-I14)",
+      "applicability": "optional",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "invariants I1-I14",
+          "status": "SKIPPED",
+          "detail": "no committed invariant record (summary.invariants / --invariants)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-2": {
+      "label": "FC-2 adequacy & equilibrium behavior",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-3": {
+      "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+      "applicability": "required",
+      "status": "FAIL",
+      "rows": [
+        {
+          "row": "hindcast bands",
+          "status": "FAIL",
+          "detail": "band FAIL: ['retire.total_gw', 'add.by_tech.solar', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+          "gating": true
+        }
+      ]
+    },
+    "FC-4": {
+      "label": "FC-4 crossover dispatch skill (T1-X)",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-5": {
+      "label": "FC-5 external corridor",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-6": {
+      "label": "FC-6 driver response",
+      "applicability": "n/a",
+      "status": "n/a",
+      "rows": []
+    },
+    "FC-7": {
+      "label": "FC-7 provenance & DOF",
+      "applicability": "required",
+      "status": "CAVEAT",
+      "rows": [
+        {
+          "row": "run_config",
+          "status": "PASS",
+          "detail": "mode=forecast; 784 config keys; gates ['capacity_market_clearing']",
+          "gating": true
+        },
+        {
+          "row": "overlay-off",
+          "status": "PASS",
+          "detail": "no backcast overlay armed (outage_source='statistical')",
+          "gating": true
+        },
+        {
+          "row": "dof ledger",
+          "status": "CAVEAT",
+          "detail": "DOF ledger absent (identification unproven)",
+          "gating": true
+        }
+      ]
+    },
+    "FC-8": {
+      "label": "FC-8 runtime feasibility",
+      "applicability": "runtime",
+      "status": "SKIPPED",
+      "rows": [
+        {
+          "row": "runtime",
+          "status": "SKIPPED",
+          "detail": "no perf ledger (total_wall_s) in summary",
+          "gating": true
+        }
+      ]
+    }
+  }
+}

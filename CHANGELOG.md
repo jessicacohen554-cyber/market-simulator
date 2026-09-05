@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-09-04 — capx D51: the MISO internal-supply accounting ratio re-identified on the dates-ON fleet (default-off, rule 23); forecast rubric v1.1 (owner ruling Q37, the pre-declared follow-up-attestation limb)
+
+**Mechanism (default-off, nothing armed).** D49 §2.6 routed it:
+`ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO["MISO"] = 0.8546` (capx D31)
+was identified on the D27 census fleet, which still carried the 2021–2023 real
+exits the PRA had already dropped; since owner ruling Q30 / capx D44 the
+fossil-dates channel removes those same plants explicitly at step 1b while the
+ratio still applies — the same MW netted twice, the consumed reserve position
+5.8 / 6.9 pts short of the market's own (D49 §2.4). One term of D31's
+arithmetic moved: the same PRA Summer offered Generation numerators over the
+same D27-ledger denominators (reproduced to the decimal, 143,822.1 / 143,749.5)
+NET of the accredited dated exits the D46 dates-ON ledgers record (4,508.5 /
+7,977.6 MW) → **0.893436** (per-year 0.878 / 0.909), zero free parameters,
+derived and reconciled by test from three committed inputs
+(`scripts/data/derive_miso_adequacy_accounting_ratio.py`,
+`tests/curation/test_derive_miso_adequacy_accounting_ratio.py`). Ships as
+`ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO` behind the new
+gate `ScenarioConfig.adequacy_accounting_ratio_dated_net` (default `False`;
+registered in `_CACHE_KEY_OPTIONAL_FIELDS` at `False`, so the default key
+`4c6b03ae098b6e3e` and the bare `miso-t1h` recipe key `eff2c890746ec966` are
+unmoved; the armed A/B keys `b538d37b36a88247`; backcast-coerced), resolved at
+all three D31 seams (ledger / floor increments / backstop) through the one
+resolver `resolve_internal_supply_accounting_ratio(iso, config)`; harness flag
+`run_capacity_hindcast.py --adequacy-accounting-ratio-dated-net`; matrix base
+row + six shard cells (MISO `fc: O`, the other five ISO-exclusive `·`).
+Pre-declared `docs/handoffs/PREDECL-capx-d51-2026-09-04.md` (pushed before the
+derive script existed); measured on the suffixed `miso-t1h-d51-ratio`
+(`docs/handoffs/FINDING-capx-d51-2026-09-04.md`). The owner arms or declines.
+
+**Forecast rubric v1.0 → v1.1** (`docs/forecast-determination-rubric.md` §5,
+§0, §9; `scripts/forecast_verdict.py::RUBRIC_VERSION`): a follow-up lane may
+author a forecast attestation iff it is pre-declared before authoring, moves
+only the attestation row, and re-scores artifact-only (model case
+`FINDING-capx-d47-golden3-attestation-2026-09-04.md` §1; signature capx ledger
+§3 Q37). Text only — no threshold, no re-score; records scored under `"1.0"`
+stand.
+
+**Records rider (zero solves):** `ercot-t1f-pre-d46` / `caiso-t1f-pre-d46`
+marked provenance-only stubs no delta may be read against (D47 §6 item 2); the
+board's NEISO `golden` field repointed to GOLDEN-3 with the GOLDEN-2 text
+preserved beneath (D47 §6 item 4); D49 §5 item 5 (oil unscreened after 2022)
+recorded in the MISO matrix retirement cell. NEISO leg 7
+(`neiso-t1h-d45r-datesoff`, owner ruling Q36) is registered by the same lane.
+
 ## 2026-09-03 — capx D44: the fossil announced-date channel ARMS AS THE DEFAULT POSTURE (owner ruling Q30). One default flip, both pins advanced, no solve
 
 `ScenarioConfig.fossil_announced_exits_enabled` flips default `False` →
