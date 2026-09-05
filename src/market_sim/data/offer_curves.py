@@ -200,8 +200,9 @@ def _with_intermediate_phys(
     )
     if not parent:
         return inter
-    add = {k: parent[k] for k in _INTERMEDIATE_PHYS_KEYS
-           if k in parent and k not in inter}
+    add = {
+        k: parent[k] for k in _INTERMEDIATE_PHYS_KEYS if k in parent and k not in inter
+    }
     if not add:
         return inter
     return {**inter, **add}

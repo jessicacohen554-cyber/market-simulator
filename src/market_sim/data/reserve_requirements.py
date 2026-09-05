@@ -579,4 +579,3 @@ RESERVE_REQUIREMENT_SPECS: dict[str, ReserveRequirementSpec] = {
         ),
     ),
 }
-

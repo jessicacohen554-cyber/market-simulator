@@ -415,7 +415,14 @@ def exp2(iso: str, years: list[int], coopt: bool) -> None:
     print(
         f"  full apply_cross_year_basis (both lists + setBasis): {t_full * 1e3:.1f} ms"
     )
-    del m1
+    # Drop the model reference before collecting. Rebinding to None rather
+    # than ``del m1``: ``full_apply`` above closes over ``m1``, and a ``del``
+    # in this enclosing scope makes that closure read as an unbound free
+    # variable to static analysis (ruff F821), even though the call at
+    # :414 happens before the delete and is correct at runtime. Rebinding
+    # releases the DispatchModel identically — it was the sole reference —
+    # while keeping the binding the closure resolves against.
+    m1 = None
     gc.collect()
     print(
         "  NOTE: apply overhead is cross-year warm-start SETUP, not solve wall;"
