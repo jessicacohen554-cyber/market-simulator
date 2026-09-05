@@ -423,6 +423,21 @@ frontend/data/forecast/program-status.js
 /results/ff-t1f-d50/*/*/*/year_*_floor_retentions.json
 /results/ff-t1f-d50/*.log
 
+# capx D60 (2026-09-05): the three-ruling arming batch's re-solves (owner
+# rulings Q40 / Q41 / Q42) — the MISO / NYISO / CAISO T1-F 2026-2030 legs whose
+# bare keys no committed arm could carry, each landing on the BARE key of its
+# ISO (b1a73a087064ffd8 / 19a9690bb12c8459 / 29f8eb372810195f). Same class and
+# same slim-vs-heavy split as /results/ff-t1f-d46/ and /results/ff-t1f-d50/
+# above: the committed record is full_horizon_summary.json + run_config.json +
+# forecast_verdict.json + dof_ledger.json + the resolved config.yaml + the
+# evolution_<year>.json ledgers; the per-year parquet, npz, hourly sidecars and
+# floor-retention dumps are heavy and regenerable from the config.
+/results/ff-t1f-d60/*/*/*/*.parquet
+/results/ff-t1f-d60/*/*/*/*.npz
+/results/ff-t1f-d60/*/*/*/hourly/
+/results/ff-t1f-d60/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d60/*.log
+
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is
