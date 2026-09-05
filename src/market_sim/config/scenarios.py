@@ -1391,6 +1391,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # pre-existing cache key of all six ISOs is byte-stable; the armed A/B
     # keys distinctly. Registered IN THE SAME COMMIT as the field.
     "retirement_sector_gate",
+    # capx D59: the NYISO locality capacity-curve gate (default-off,
+    # byte-identical unarmed). Dropped from the hash at its False default so
+    # every pre-existing cache key of all six ISOs is byte-stable; the armed
+    # A/B keys distinctly. Registered IN THE SAME COMMIT as the field.
+    "locality_capacity_curves",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1884,6 +1889,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D53: the retirement-screen sector gate, registered at its
     # shipping False default (the armed A/B keys distinctly).
     "retirement_sector_gate": "False",
+    # capx D59: NYISO locality capacity-curve gate, registered at its shipping
+    # False default (the armed A/B keys distinctly).
+    "locality_capacity_curves": "False",
 }
 
 
@@ -15214,6 +15222,59 @@ class ScenarioConfig:
     # screen's mirror (utility builds are IRP-driven too) and the CHP-host
     # (sectors 3/5/7) steam-economics screen — separate partitions with
     # their own evidence.
+    locality_capacity_curves: bool = False  # GATED default-OFF (capx D59
+    # 2026-09-05, executing FINDING-capx-d52-2026-09-04.md §8(2) route 1 /
+    # D45 §5.2.4 item 3; design docs/handoffs/DESIGN-capx-d59-nyiso-locality-
+    # 2026-09-05.md). THE NYISO LOCALITY HALF: New York City (Zone J) and Long
+    # Island (Zone K) — the two localities that are unions of model zones (G-J
+    # is not: Capital_Hudson fuses F with G) — are each priced on their OWN
+    # published ICAP demand curve (constants.LOCALITY_MARKET_DESIGN_VINTAGES,
+    # the same straight-line construction as the NYCA vintages on the
+    # locality's published reference point / max clearing price / 18 % curve
+    # length / Annual Reference Value) at their OWN position = in-locality
+    # ICAP census (entering-fleet pmax + the LP's zonal renewable nameplate +
+    # in-zone storage power + the published External UDR rights into the
+    # locality, constants.NYISO_LOCALITY_UDR_ICAP_MW) ÷ the published
+    # Locational Minimum ICAP Requirement (the capacity-deliverability
+    # `requirement` rows, through the existing curated reader) — the ICAP
+    # Manual §2.6 translation-factor identity makes that ratio the market's
+    # own UCAP position, so no translation factor enters. A unit, an entry
+    # candidate or a storage MW in zone z is settled at max(NYCA price, the
+    # price of every locality containing z) × its accredited MW — the ICAP
+    # Manual §5.15.2 Spot Market Auction rule verbatim ("unless the Market-
+    # Clearing Price determined for Rest of State is higher") — through the
+    # ONE price seam retirements.capacity_revenue_per_mw_yr (rule 19). Thermal
+    # entry is ALSO screened sited in each locality at that zone's own LP
+    # prices, its settled price and the published locality/NYCA Gross-CONE
+    # ratio (constants.LOCALITY_GROSS_CONE_BY_ISO), so exits and entry see the
+    # same locational price. Positions are computed once per year by the
+    # runner on the ENTERING fleet beside the NYCA position; the ledger block
+    # `locality_capacity` records census, requirement, position and prices.
+    # REQUIRES the NYCA curve gate ON for the ISO (the predicate
+    # retirements.locality_capacity_curves_armed consults
+    # resolve_capacity_market_clearing): against the flat legacy anchor the
+    # §5.15.2 max is meaningless, so the field is inert there. WHAT IT
+    # REPAIRS: D52 §4 — with the NYCA position inside the market's ±3-pt band,
+    # the 2025 curve-ON screen still fires 1,801 MW of gas_st at the NYCA
+    # $28.65/kW-yr, 946 MW of it in NYC where the market paid Zone J
+    # $131.8–191.6/kW-yr (2.6–3.9× NYCA) in 2023/24–2025/26. SIGN (rule 14):
+    # downstate steam retires HARDER; the Rest-of-State share of that wave is
+    # NOT reached (by construction). ZERO free parameters: every number is a
+    # published curve parameter, a published requirement or the published
+    # rights table (rules 5/13/21/23); cleared spot prices and SOM margins
+    # enter nothing (validation observables). RULE 19: supersedes the shipped
+    # Part-B long-zone collapse for NYISO — __post_init__ REFUSES both
+    # `locality_capacity_curves` and `capacity_deliverability_limits` on a
+    # NYISO config (one locational mechanism per ISO; Part B counts the TSL
+    # as supply, which NYISO's LCR is already net of — DESIGN §2.1/§5.2).
+    # WHY DEFAULT-OFF: arming is an owner decision on the suffixed A/B
+    # `nyiso-t1h-d59-locality` vs `nyiso-t1h-d52-curveon` (rules 22/24/28),
+    # graded against the pre-declaration. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at False (unarmed keys byte-stable; armed
+    # keys distinctly); coerced to the default in a plain backcast (a
+    # forecast-lane mechanism), kept in a hindcast. SCOPE: NYISO-only by
+    # construction (every registry holds one ISO and the predicate requires
+    # an entry) — rule 25; nothing transfers.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -15611,6 +15672,27 @@ class ScenarioConfig:
         if self.mode == "backcast":
             self.retirement_sector_gate = (
                 type(self).__dataclass_fields__["retirement_sector_gate"].default
+            )
+
+        # capx D59: the NYISO locality capacity-curve gate is likewise a
+        # forecast-lane mechanism — coerced to the DATACLASS DEFAULT in a plain
+        # backcast, kept in a hindcast. Rule 19: it SUPERSEDES the shipped
+        # Part-B long-zone collapse for NYISO (one locational mechanism per
+        # ISO), so both armed on a NYISO config is refused, fail-closed.
+        if self.mode == "backcast":
+            self.locality_capacity_curves = (
+                type(self).__dataclass_fields__["locality_capacity_curves"].default
+            )
+        if (
+            self.locality_capacity_curves
+            and self.capacity_deliverability_limits
+            and str(self.iso).upper() == "NYISO"
+        ):
+            raise ValueError(
+                "locality_capacity_curves and capacity_deliverability_limits are "
+                "mutually exclusive on a NYISO config: one locational capacity "
+                "mechanism per ISO (rule 19 [R-ONE-MECH]) — the locality curves "
+                "supersede the Part-B long-zone collapse (DESIGN-capx-d59 §5.2)."
             )
 
         # entry_lookahead_reprice is a FORECAST-only capacity-screen price
@@ -16929,6 +17011,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_requirement_vintage_factors": 1,
     "adequacy_accounting_ratio_dated_net": 1,
     "retirement_sector_gate": 1,
+    "locality_capacity_curves": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

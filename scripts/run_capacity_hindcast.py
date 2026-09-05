@@ -490,6 +490,9 @@ META_RECORD_SPEC = RecordSpec(
         # the record reads the SOLVED gates (FFR-3R).
         "nyiso_requirement_forecast_peak": FromConfig(cast=bool),
         "nyiso_requirement_vintage_factors": FromConfig(cast=bool),
+        # capx D59 NYISO locality capacity-curve gate. FromConfig so the
+        # record reads the SOLVED gate (FFR-3R).
+        "locality_capacity_curves": FromConfig(cast=bool),
         # capx D51 MISO dated-net accounting-ratio gate. FromConfig so the
         # record reads the SOLVED gate (FFR-3R).
         "adequacy_accounting_ratio_dated_net": FromConfig(cast=bool),
@@ -641,6 +644,7 @@ def build_config(
     pjm_demand_response_supply: "bool | None" = None,
     nyiso_requirement_forecast_peak: "bool | None" = None,
     nyiso_requirement_vintage_factors: "bool | None" = None,
+    locality_capacity_curves: "bool | None" = None,
     adequacy_accounting_ratio_dated_net: "bool | None" = None,
     retirement_sector_gate: "bool | None" = None,
     entry_rate_limits: "bool | None" = None,
@@ -867,6 +871,10 @@ def build_config(
                 # the D52 A/B measurement posture (distinct cache key).
                 "nyiso_requirement_forecast_peak": nyiso_requirement_forecast_peak,
                 "nyiso_requirement_vintage_factors": nyiso_requirement_vintage_factors,
+                # capx D59: the NYISO locality capacity-curve gate — default-off;
+                # None inherits the shipped default, True arms the D59 A/B
+                # measurement posture (distinct cache key).
+                "locality_capacity_curves": locality_capacity_curves,
                 # capx D51: the MISO dated-net accounting-ratio gate —
                 # default-off; None inherits the shipped default, True arms the
                 # D51 A/B measurement posture (distinct cache key).
@@ -1571,6 +1579,22 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--locality-capacity-curves",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D59 (2026-09-05) NYISO-only arm: settle capacity revenue in "
+            "NYC (Zone J) and Long Island (Zone K) at max(NYCA, the locality's "
+            "own published ICAP demand curve at its own published LCR "
+            "requirement) — ICAP Manual §5.15.2 — with thermal entry also "
+            "screened sited in each locality at the published Gross-CONE cost "
+            "ratio. Requires the NYCA curve gate ON (--capacity-market-clearing "
+            "for NYISO); inert on every other ISO. OMIT to inherit the shipped "
+            "default (off, owner-armed only); --locality-capacity-curves arms it "
+            "(distinct cache key)."
+        ),
+    )
+    parser.add_argument(
         "--adequacy-accounting-ratio-dated-net",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2057,6 +2081,7 @@ def main(argv: list[str] | None = None) -> int:
         pjm_demand_response_supply=args.pjm_demand_response_supply,
         nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
         nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,
+        locality_capacity_curves=args.locality_capacity_curves,
         adequacy_accounting_ratio_dated_net=args.adequacy_accounting_ratio_dated_net,
         retirement_sector_gate=args.retirement_sector_gate,
         entry_rate_limits=args.entry_rate_limits,

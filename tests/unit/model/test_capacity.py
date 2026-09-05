@@ -6561,3 +6561,561 @@ class TestRetirementSectorGate(unittest.TestCase):
             self.assertEqual(eia860_plant_sectors(b), {1: 2})
             # A directory with no plant table reads empty (fail-open upstream).
             self.assertEqual(eia860_plant_sectors(Path(td)), {})
+
+
+class TestNyisoLocalityCapacityCurves(unittest.TestCase):
+    """capx D59 (2026-09-05) — the NYISO LOCALITY half: NYC (Zone J) and Long Island
+    (Zone K) priced on their own published ICAP demand curves at their own published
+    Locational Minimum ICAP Requirement, settled by the ICAP Manual §5.15.2
+    max(NYCA, locality) rule. ONE gated default-OFF field
+    (``locality_capacity_curves``); every unarmed path is byte-identical.
+    Design: docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md."""
+
+    @staticmethod
+    def _csv_rows():
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "demand-curve" / "nyiso" / "nyiso.csv"
+        with path.open(newline="") as fh:
+            return list(csv.DictReader(fh))
+
+    @staticmethod
+    def _cfg(armed=True, curve=True, iso="NYISO", **kw):
+        return ScenarioConfig(
+            iso=iso,
+            mode="forecast",
+            hindcast=True,
+            locality_capacity_curves=armed,
+            capacity_market_clearing_by_iso=({iso: True} if curve else None),
+            **kw,
+        )
+
+    @staticmethod
+    def _gen(unit_id, zone, pmax, eford=0.05, fuel="gas_st"):
+        return Generator(
+            unit_id=unit_id,
+            name=unit_id,
+            zone=zone,
+            fuel_type=fuel,
+            pmax_mw=pmax,
+            eford=eford,
+        )
+
+    # --- registries reconcile to the committed csv (rules 13 / 23) -------------
+    def test_locality_vintages_reconcile_with_published_csv(self):
+        from market_sim.config.capacity_market import (
+            LOCALITY_MARKET_DESIGN_VINTAGES,
+            _NYISO_LOCALITY_CURVE_LENGTH,
+        )
+
+        rows = self._csv_rows()
+        self.assertEqual(set(LOCALITY_MARKET_DESIGN_VINTAGES), {"NYISO"})
+        for locality in ("NYC", "LI"):
+            for v in LOCALITY_MARKET_DESIGN_VINTAGES["NYISO"][locality]:
+                mine = [
+                    r
+                    for r in rows
+                    if r["area"] == locality and r["delivery_year"] == v.delivery_year
+                ]
+                summer = [r for r in mine if r["season"] in ("summer", "")]
+                ref = [
+                    r
+                    for r in summer
+                    if r["metric"] == "curve_point" and r["point_index"] == "0"
+                ]
+                zero = [
+                    r
+                    for r in summer
+                    if r["metric"] == "curve_point" and r["point_index"] == "1"
+                ]
+                arv = [r for r in mine if r["metric"] == "net_cone"]
+                cap = [r for r in summer if r["metric"] == "price_cap"]
+                self.assertTrue(ref and zero, (locality, v.delivery_year))
+                if not arv:
+                    # 2021-22 / 2022-23: no ARV published → flat anchor = ref × 12, () shape.
+                    self.assertEqual(v.demand_curve, ())
+                    self.assertAlmostEqual(
+                        v.net_cone_curve_per_kw_yr, float(ref[0]["y_value"]) * 12.0, 6
+                    )
+                    continue
+                self.assertAlmostEqual(
+                    v.net_cone_curve_per_kw_yr, float(arv[0]["y_value"]), 6
+                )
+                self.assertAlmostEqual(
+                    v.demand_curve[-1].reserve_ratio, float(zero[0]["x_value"]), 6
+                )
+                self.assertAlmostEqual(
+                    v.demand_curve[-1].reserve_ratio,
+                    1.0 + _NYISO_LOCALITY_CURVE_LENGTH,
+                    6,
+                )
+                self.assertAlmostEqual(v.demand_curve[1].reserve_ratio, 1.0, 9)
+                self.assertAlmostEqual(v.demand_curve[1].price_frac_net_cone, 1.0, 9)
+                self.assertAlmostEqual(
+                    v.demand_curve[0].price_frac_net_cone,
+                    float(cap[0]["y_value"]) / float(ref[0]["y_value"]),
+                    6,
+                )
+
+    def test_gross_cone_registry_reconciles_with_published_csv(self):
+        from market_sim.config.capacity_market import LOCALITY_GROSS_CONE_BY_ISO
+
+        rows = self._csv_rows()
+        self.assertEqual(set(LOCALITY_GROSS_CONE_BY_ISO), {"NYISO"})
+        for label, by_area in LOCALITY_GROSS_CONE_BY_ISO["NYISO"].items():
+            dy = label.replace("/", "-")
+            for area, val in by_area.items():
+                got = [
+                    r
+                    for r in rows
+                    if r["metric"] == "gross_cone"
+                    and r["area"] == area
+                    and r["delivery_year"] == dy
+                ]
+                self.assertEqual(len(got), 1, (label, area))
+                self.assertAlmostEqual(float(got[0]["y_value"]), val, 6)
+
+    def test_gross_cone_ratio_resolution(self):
+        from market_sim.config.capacity_market import (
+            resolve_locality_gross_cone_ratio as g,
+        )
+
+        self.assertAlmostEqual(g("NYISO", "NYC", 2025), 222.73 / 127.71, 9)
+        self.assertAlmostEqual(g("NYISO", "LI", 2023), 168.15 / 120.04, 9)
+        self.assertAlmostEqual(g("NYISO", "NYC", 2040), 230.10 / 131.94, 9)  # hold-last
+        self.assertAlmostEqual(
+            g("NYISO", "NYC", 2019), 212.81 / 120.04, 9
+        )  # hold-first
+        self.assertIsNone(g("PJM", "NYC", 2025))
+        self.assertIsNone(g("NYISO", "NYC", None))
+
+    def test_tsl_floor_consistency_of_committed_lcr_rows(self):
+        # DESIGN §2.1: the TSL is NOT supply — the LCR is already ≥ the TSL floor
+        # (peak − TSL) / peak in every committed capability year (peak = MW / LCR).
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-deliverability" / "nyiso" / "nyiso.csv"
+        with path.open(newline="") as fh:
+            rows = list(csv.DictReader(fh))
+        checked = 0
+        for r in rows:
+            if r["metric"] != "requirement" or not r["value_mw"] or not r["value_pu"]:
+                continue
+            tsl = [
+                float(x["value_mw"])
+                for x in rows
+                if x["metric"] == "import_limit"
+                and x["area"] == r["area"]
+                and x["delivery_year"] == r["delivery_year"]
+            ]
+            if not tsl:
+                continue
+            peak = float(r["value_mw"]) / float(r["value_pu"])
+            self.assertGreaterEqual(
+                float(r["value_pu"]) + 1e-9, (peak - tsl[0]) / peak, r
+            )
+            checked += 1
+        self.assertGreaterEqual(checked, 6)
+
+    # --- the published UDR rights, dated ----------------------------------------
+    def test_udr_rights_dating(self):
+        from market_sim.model.capacity_evolution.retirements import (
+            _locality_udr_icap_mw as u,
+        )
+
+        self.assertAlmostEqual(u("LI", 2023), 990.0)
+        self.assertAlmostEqual(u("NYC", 2021), 315.0 + 660.0)
+        self.assertAlmostEqual(u("NYC", 2023), 315.0)
+        self.assertAlmostEqual(u("NYC", 2024), 400.0)
+        self.assertAlmostEqual(u("NYC", 2026), 400.0 + 1250.0)
+        self.assertAlmostEqual(u("G-J", 2025), 0.0)
+
+    # --- the §5.15.2 stacking max at the ONE price seam --------------------------
+    def test_stacking_max_at_price_seam(self):
+        from market_sim.model.capacity_evolution.retirements import (
+            capacity_revenue_per_mw_yr as f,
+        )
+
+        cfg = self._cfg(curve=False)
+        base = f("NYISO", "gas_st", 0.07, cfg, None, 2025)
+        self.assertGreater(base, 0.0)
+        self.assertEqual(
+            f(
+                "NYISO",
+                "gas_st",
+                0.07,
+                cfg,
+                None,
+                2025,
+                locality_price_per_firm_mw_yr=None,
+            ),
+            base,
+        )
+        self.assertEqual(
+            f(
+                "NYISO",
+                "gas_st",
+                0.07,
+                cfg,
+                None,
+                2025,
+                locality_price_per_firm_mw_yr=1.0,
+            ),
+            base,
+        )
+        higher = f(
+            "NYISO",
+            "gas_st",
+            0.07,
+            cfg,
+            None,
+            2025,
+            locality_price_per_firm_mw_yr=base / 0.93 * 2.0,
+        )
+        self.assertAlmostEqual(higher, base * 2.0, 3)
+        # Energy-only ERCOT earns nothing in both modes.
+        self.assertEqual(
+            f(
+                "ERCOT",
+                "gas_st",
+                0.07,
+                cfg,
+                None,
+                2025,
+                locality_price_per_firm_mw_yr=1e9,
+            ),
+            0.0,
+        )
+
+    def test_locality_prices_by_zone_is_the_max_over_containing_localities(self):
+        from market_sim.model.capacity_evolution.retirements import (
+            LocalityPosition,
+            locality_prices_by_zone,
+        )
+
+        a = LocalityPosition(
+            locality="A", zones=("Z1", "Z2"), price_per_firm_mw_yr=10.0
+        )
+        b = LocalityPosition(locality="B", zones=("Z2",), price_per_firm_mw_yr=25.0)
+        c = LocalityPosition(locality="C", zones=("Z3",), price_per_firm_mw_yr=None)
+        self.assertEqual(
+            locality_prices_by_zone({"A": a, "B": b, "C": c}), {"Z1": 10.0, "Z2": 25.0}
+        )
+        self.assertEqual(locality_prices_by_zone({}), {})
+        self.assertEqual(locality_prices_by_zone(None), {})
+
+    # --- the gate predicate and byte-identity --------------------------------------
+    def test_gate_predicate(self):
+        from market_sim.model.capacity_evolution.retirements import (
+            locality_capacity_curves_armed as armed,
+        )
+
+        self.assertTrue(armed(self._cfg(), "NYISO"))
+        self.assertFalse(armed(self._cfg(armed=False), "NYISO"))
+        self.assertFalse(
+            armed(self._cfg(curve=False), "NYISO")
+        )  # needs the NYCA curve ON
+        for iso in ("PJM", "MISO", "NEISO", "CAISO", "ERCOT"):
+            self.assertFalse(armed(self._cfg(iso=iso), iso))
+        self.assertFalse(armed(None, "NYISO"))
+        self.assertFalse(armed(self._cfg(), None))
+
+    def _patched_reader(self, req):
+        from market_sim.model.capacity_evolution import retirements as r
+
+        return (
+            mock.patch.object(
+                r.capdel, "available_delivery_years", return_value={"2025/2026"}
+            ),
+            mock.patch.object(r.capdel, "requirement_by_area", return_value=req),
+        )
+
+    def test_position_is_the_icap_identity_independent_of_eford(self):
+        # ICAP Manual §2.6: position = ΣICAP / ICAP requirement (DESIGN §2.2) — the
+        # class EFORd assumption drops out; the TSL is NOT added to supply.
+        from market_sim.model.capacity_evolution.retirements import (
+            locality_capacity_positions,
+        )
+
+        req = {"NYC": 8673.0, "Long Island": 5423.0}
+        p1, p2 = self._patched_reader(req)
+        with p1, p2:
+            fleet_a = [
+                self._gen("a", "NYC", 8000.0, eford=0.02),
+                self._gen("u", "Upstate_West", 500.0),
+            ]
+            fleet_b = [
+                self._gen("a", "NYC", 8000.0, eford=0.40),
+                self._gen("u", "Upstate_West", 500.0),
+            ]
+            pos_a = locality_capacity_positions("NYISO", 2025, fleet_a, self._cfg())
+            pos_b = locality_capacity_positions("NYISO", 2025, fleet_b, self._cfg())
+        self.assertEqual(set(pos_a), {"NYC", "LI"})
+        self.assertAlmostEqual(pos_a["NYC"].position, (8000.0 + 400.0) / 8673.0, 9)
+        self.assertAlmostEqual(pos_a["NYC"].position, pos_b["NYC"].position, 12)
+        self.assertAlmostEqual(pos_a["NYC"].udr_icap_mw, 400.0)
+        self.assertEqual(pos_a["NYC"].requirement_source, "published")
+        self.assertAlmostEqual(
+            pos_a["LI"].position, 990.0 / 5423.0, 9
+        )  # UDR rights only
+        # The price is the locality curve at the position (2025/26 NYC vintage).
+        from market_sim.config.capacity_market import (
+            locality_curve_price_per_firm_mw_yr as lp,
+        )
+
+        self.assertAlmostEqual(
+            pos_a["NYC"].price_per_firm_mw_yr,
+            lp("NYISO", "NYC", 2025, pos_a["NYC"].position),
+            6,
+        )
+        self.assertAlmostEqual(lp("NYISO", "NYC", 2025, 1.0), 140.47 * 1000.0, 6)
+        self.assertAlmostEqual(lp("NYISO", "NYC", 2025, 1.18), 0.0, 6)
+        row = pos_a["NYC"].as_ledger_row()
+        self.assertEqual(row["zones"], ["NYC"])
+        self.assertAlmostEqual(
+            row["price_per_kw_yr"], pos_a["NYC"].price_per_firm_mw_yr / 1000.0, 3
+        )
+
+    def test_positions_count_zonal_pools_and_storage_never_load_share(self):
+        from market_sim.model.capacity_evolution.retirements import (
+            locality_capacity_positions,
+        )
+
+        p1, p2 = self._patched_reader({"NYC": 8673.0})
+        with p1, p2:
+            pos = locality_capacity_positions(
+                "NYISO",
+                2025,
+                [self._gen("a", "NYC", 8000.0)],
+                self._cfg(),
+                wind_pool_by_zone={"NYC": 10.0, "Upstate_West": 5000.0},
+                solar_pool_by_zone={"NYC": 20.0},
+                storage_power_by_zone={"NYC": 30.0, "Long_Island": 99.0},
+            )
+        self.assertAlmostEqual(
+            pos["NYC"].supply_icap_mw, 8000.0 + 10.0 + 20.0 + 30.0 + 400.0, 6
+        )
+        self.assertNotIn("LI", pos)  # no requirement row → not priced
+
+    def test_hold_last_lcr_beyond_the_table_and_none_before(self):
+        from market_sim.model.capacity_evolution import retirements as r
+
+        import pandas as pd
+
+        df = pd.DataFrame(
+            [
+                {
+                    "metric": "requirement",
+                    "delivery_year": "2025/2026",
+                    "area": "NYC",
+                    "value_mw": 8673.0,
+                    "value_pu": 0.785,
+                },
+            ]
+        )
+        with (
+            mock.patch.object(
+                r.capdel, "available_delivery_years", return_value={"2025/2026"}
+            ),
+            mock.patch.object(
+                r.capdel, "requirement_by_area", return_value={"NYC": 8673.0}
+            ),
+            mock.patch.object(r.capdel, "_read", return_value=df),
+        ):
+            pos = r.locality_capacity_positions(
+                "NYISO",
+                2030,
+                [self._gen("a", "NYC", 8000.0)],
+                self._cfg(),
+                locality_peak_by_zone={"NYC": 12000.0},
+            )
+            self.assertAlmostEqual(pos["NYC"].requirement_icap_mw, 0.785 * 12000.0, 6)
+            self.assertEqual(pos["NYC"].requirement_source, "hold_last_lcr")
+            self.assertEqual(
+                r.locality_capacity_positions(
+                    "NYISO", 2019, [self._gen("a", "NYC", 8000.0)], self._cfg()
+                ),
+                {},
+            )
+
+    def test_default_off_and_other_iso_return_empty(self):
+        from market_sim.model.capacity_evolution.retirements import (
+            locality_capacity_positions,
+        )
+
+        p1, p2 = self._patched_reader({"NYC": 8673.0})
+        fleet = [self._gen("a", "NYC", 8000.0)]
+        with p1, p2:
+            self.assertEqual(
+                locality_capacity_positions(
+                    "NYISO", 2025, fleet, self._cfg(armed=False)
+                ),
+                {},
+            )
+            self.assertEqual(
+                locality_capacity_positions(
+                    "NYISO", 2025, fleet, self._cfg(curve=False)
+                ),
+                {},
+            )
+            self.assertEqual(
+                locality_capacity_positions("PJM", 2025, fleet, self._cfg(iso="PJM")),
+                {},
+            )
+
+    def test_storage_capacity_value_load_share_weighting(self):
+        from market_sim.model.storage import estimate_capacity_value
+
+        cfg = ScenarioConfig(
+            iso="NYISO", mode="forecast", hindcast=True, storage_capacity_value=True
+        )
+        base = estimate_capacity_value(
+            "li_ion_4h" if "li_ion_4h" in STORAGE_TECHS else next(iter(STORAGE_TECHS)),
+            0.0,
+            cfg,
+            "NYISO",
+            None,
+            2025,
+        )
+        tech = (
+            "li_ion_4h" if "li_ion_4h" in STORAGE_TECHS else next(iter(STORAGE_TECHS))
+        )
+        same = estimate_capacity_value(
+            tech, 0.0, cfg, "NYISO", None, 2025, locality_prices_by_zone={}
+        )
+        self.assertEqual(same, base)
+        from market_sim.config.iso_configs import get_iso_config
+
+        shares = {z.name: z.load_share for z in get_iso_config("NYISO").zones}
+        # NYC priced at 3× the flat NYCA price: the weighted price rises by NYC's load share × 2.
+        from market_sim.config.constants import MARKET_DESIGN
+
+        flat = MARKET_DESIGN["NYISO"].capacity_price_per_firm_mw_yr(
+            cfg, None, iso="NYISO", year=2025
+        )
+        lifted = estimate_capacity_value(
+            tech,
+            0.0,
+            cfg,
+            "NYISO",
+            None,
+            2025,
+            locality_prices_by_zone={"NYC": 3.0 * flat},
+        )
+        expected = base * (1.0 + shares["NYC"] * 2.0 / sum(shares.values()))
+        self.assertAlmostEqual(lifted, expected, 3)
+
+    def test_config_semantics(self):
+        base = ScenarioConfig(iso="NYISO", mode="forecast", hindcast=True)
+        self.assertEqual(
+            ScenarioConfig(
+                iso="NYISO",
+                mode="forecast",
+                hindcast=True,
+                locality_capacity_curves=False,
+            ).cache_key(),
+            base.cache_key(),
+        )
+        self.assertNotEqual(
+            ScenarioConfig(
+                iso="NYISO",
+                mode="forecast",
+                hindcast=True,
+                locality_capacity_curves=True,
+            ).cache_key(),
+            base.cache_key(),
+        )
+        self.assertFalse(
+            ScenarioConfig(
+                iso="NYISO", mode="backcast", locality_capacity_curves=True
+            ).locality_capacity_curves
+        )
+        self.assertTrue(
+            ScenarioConfig(
+                iso="NYISO",
+                mode="forecast",
+                hindcast=True,
+                locality_capacity_curves=True,
+            ).locality_capacity_curves
+        )
+        with self.assertRaises(ValueError):
+            ScenarioConfig(
+                iso="NYISO",
+                mode="forecast",
+                locality_capacity_curves=True,
+                capacity_deliverability_limits=True,
+            )
+        # Any other ISO may carry both (Part B stays theirs; the field is inert there).
+        ScenarioConfig(
+            iso="PJM",
+            mode="forecast",
+            locality_capacity_curves=True,
+            capacity_deliverability_limits=True,
+        )
+
+    def test_thermal_locality_siting_leg(self):
+        # DESIGN §5.5: a thermal candidate is also screened sited in each priced
+        # locality (that zone's LP prices, the settled price, the Gross-CONE cost
+        # ratio) and built where its margin is highest; a tie keeps the default.
+        from market_sim.config.iso_configs import get_iso_config as _gic
+
+        iso = "NYISO"
+        zone_names = [z.name for z in _gic(iso).zones]
+        T = 8760
+        prices = np.full((len(zone_names), T), 40.0)
+        cfg = ScenarioConfig(
+            iso=iso,
+            mode="forecast",
+            hindcast=True,
+            entry_screen_diagnostics=True,
+            capacity_market_clearing_by_iso={iso: True},
+            locality_capacity_curves=True,
+        )
+
+        def _zone_of(**kw):
+            ledger: list[dict] = []
+            apply_economic_new_entry(
+                [],
+                prices,
+                2030,
+                cfg,
+                iso,
+                gas_price_per_mmbtu=3.0,
+                zone_names=zone_names,
+                screen_ledger=ledger,
+                reserve_position=1.0,
+                **kw,
+            )
+            rows = {r["tech"]: r for r in ledger if r.get("kind") == "thermal"}
+            self.assertIn("gas_ct", rows)
+            return rows["gas_ct"]["build_zone"], rows["gas_ct"][
+                "capacity_revenue_per_mw_yr"
+            ]
+
+        default_zone, base_cap = _zone_of()
+        self.assertEqual(default_zone, "Upstate_West")
+        # A locality price far above NYCA (cost ratio 1.0) sites the candidate in NYC
+        # and its capacity leg is the settled (locality) price × accreditation.
+        z, cap = _zone_of(
+            locality_prices_by_zone={"NYC": 10.0 * base_cap + 1e6},
+            locality_cost_ratio_by_zone={"NYC": 1.0},
+        )
+        self.assertEqual(z, "NYC")
+        self.assertGreater(cap, base_cap)
+        # The published cost ratio can undo it: a 1000× fixed cost loses the tie-break.
+        z, _ = _zone_of(
+            locality_prices_by_zone={"NYC": 10.0 * base_cap + 1e6},
+            locality_cost_ratio_by_zone={"NYC": 1000.0},
+        )
+        self.assertEqual(z, "Upstate_West")
+        # A locality price BELOW NYCA is a tie (max = NYCA both places) → default zone.
+        z, cap = _zone_of(
+            locality_prices_by_zone={"NYC": 1.0},
+            locality_cost_ratio_by_zone={"NYC": 1.0},
+        )
+        self.assertEqual(z, "Upstate_West")
+        self.assertAlmostEqual(cap, base_cap, 6)

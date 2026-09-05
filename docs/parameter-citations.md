@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1903 parameters registered** (1023 flagged `needs-citation`).
+**1926 parameters registered** (1044 flagged `needs-citation`).
 
 
 ## Calibration
@@ -636,6 +636,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.miso_cc_coal_rebalance` | False | 1 | MISO CC_REGULAR / COAL_BIT offer-curve |  | auto-generated, needs-citation |
 | `scenario.miso_coal_night_floor` | False | 1 | MISO regulated-coal WITHIN-RUN NIGHT FLOOR (miso-113, MISO-gated, d… | 2024 | auto-generated |
 | `scenario.miso_zonal_gas_basis` | False | 3 | MISO per-zone delivered-gas basis spread. MISO's three zones sit on… |  | auto-generated, needs-citation |
+| `scenario.miso_zonal_gas_basis_skip_923_priced` | False | 3 | miso-213 (2026-09-05), rule 19 [R-ONE-MECH]: SCOPE of the mean-zero… | 2026-09 | auto-generated |
 | `scenario.nearby_fuel_price_fallback` | False | 3 | Tier 3 (calibration) — "nearby plant" fuel-cost fallback. When True… |  | auto-generated, needs-citation |
 | `scenario.nearby_fuel_price_min_state_plants` | 2 | 3 | state-mean sample floor; |  | auto-generated, needs-citation |
 | `scenario.nearby_fuel_price_zone_donor_guard` | False | 3 | caiso-243 (2026-09-04) — the F923 LOW-VOLUME FALLBACK DEFECT, repai… | 2026-09 | auto-generated |
@@ -721,6 +722,8 @@ inline comment and still need a dated primary source — search the table for
 |---|---|---|---|---|---|
 | `ercot_ecrs_release_reform_hour` | 5088 | 1 | 212 days (Jan-Jul) x 24 h = 5088 — 2024-08-01 00:00 on the model's … | 2024-08-01 |  |
 | `ercot_ecrs_release_reform_year` | 2024 | 1 | ERCOT operating-procedure change effective 2024-08-01: ECRS release… | 2024-08-01 |  |
+| `locality_market_design_vintages.NYISO.LI` | [{"delivery_year": "2021-2022", "net_… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_market_design_vintages.NYISO.NYC` | [{"delivery_year": "2021-2022", "net_… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `market_design.CAISO` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
 | `market_design.ERCOT` | {"capacity_market": false, "net_cone_… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
 | `market_design.MISO` | {"capacity_market": true, "net_cone_p… | 2 | MISO seasonal Planning Resource Auction (PRA). Anchored on MISO's p… | 2024-09-23 |  |
@@ -940,7 +943,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.retirement_fom_multiplier_nuclear` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_oil` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_rule` | pipeline | 2 | "legacy" \| "pipeline" (FF-1A, owner D1 = |  | auto-generated, needs-citation |
-| `scenario.retirement_sector_gate` | False | 1 | GATED default-OFF (capx D53, 2026-09-05; design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md; D32 C5/R3) |  | auto-generated, needs-citation |
+| `scenario.retirement_sector_gate` | False | 1 | GATED default-OFF (capx D53, 2026-09-05; design docs/handoffs/DESIG… |  | auto-generated, needs-citation |
 | `scenario.retirement_years_coal` | 3 | 2 | Measured EIA-860 announced-to-deactivation lag for coal (RE-status … | 2026-07-15 | curated |
 | `scenario.retirement_years_gas_cc` | 3 | 2 | modern CCs get 3 years (most flexible/valuable) |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_ct` | 2 | 2 | CTs get 2 years |  | auto-generated, needs-citation |
@@ -1350,6 +1353,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.iso` | ERCOT | 0 | Market simulator model design decision | 2026-05 |  |
 | `scenario.limited_foresight_dispatch` | False | 2 | GATED, default-OFF (G-30 in-year |  | auto-generated, needs-citation |
 | `scenario.local_capacity_constraints` | False | 3 | GATED, default-OFF local- |  | auto-generated, needs-citation |
+| `scenario.locality_capacity_curves` | False | 1 | GATED default-OFF (capx D59 |  | auto-generated, needs-citation |
 | `scenario.maintenance_monthly_shape` | True | 3 | FORECAST-mode planned-maintenance |  | auto-generated, needs-citation |
 | `scenario.mass_cap_enabled` | False | 1 | Emissions mass-cap / cap-and-trade LP row (PP-2.1 IPM parity). GATE… | 2026-07 | auto-generated |
 | `scenario.mass_cap_program` | None | 1 | pollutant/program label for the row |  | auto-generated, needs-citation |
@@ -1871,6 +1875,24 @@ inline comment and still need a dated primary source — search the table for
 | `inflation_rate` | 0.022 | 2 | Assumed long-run inflation rate for nominal-to-real conversion. Use… |  | auto-generated, needs-citation |
 | `interface_neighbors.MISO` | [{"name": "PJM", "ba_code": "PJM", "g… | 2 | Per-ISO neighbor registry for the reference-price interface. ISO-ag… | 2024 | auto-generated |
 | `interface_neighbors.PJM` | [{"name": "MISO", "ba_code": "MISO", … | 2 | Per-ISO neighbor registry for the reference-price interface. ISO-ag… | 2024 | auto-generated |
+| `locality_capacity_areas_by_iso.NYISO.LI` | Long Island | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_capacity_areas_by_iso.NYISO.NYC` | NYC | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2023/2024.G-J` | 157.61 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2023/2024.LI` | 168.15 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2023/2024.NYC` | 212.81 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2023/2024.NYCA` | 120.04 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2024/2025.G-J` | 174.72 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2024/2025.LI` | 186.37 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2024/2025.NYC` | 229.11 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2024/2025.NYCA` | 132.98 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2025/2026.G-J` | 127.58 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2025/2026.LI` | 137.03 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2025/2026.NYC` | 222.73 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2025/2026.NYCA` | 127.71 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2026/2027.G-J` | 131.8 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2026/2027.LI` | 141.57 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2026/2027.NYC` | 230.1 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `locality_gross_cone_by_iso.NYISO.2026/2027.NYCA` | 131.94 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `maintenance_monthly_shape.CC_CHP` | [0.574, 0.851, 1.658, 2.217, 1.775, 0… | 2 | Forecast-mode monthly planned-maintenance shape (12 weights, Jan..D… | 2023 | auto-generated |
 | `maintenance_monthly_shape.CC_REGULAR` | [0.608, 0.961, 1.765, 2.175, 1.591, 0… | 2 | Forecast-mode monthly planned-maintenance shape (12 weights, Jan..D… | 2023 | auto-generated |
 | `maintenance_monthly_shape.CT_CHP` | [1.261, 1.336, 1.692, 2.107, 1.582, 0… | 2 | Forecast-mode monthly planned-maintenance shape (12 weights, Jan..D… | 2023 | auto-generated |

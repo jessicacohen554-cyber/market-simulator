@@ -1,0 +1,245 @@
+{
+ "2023": {
+  "source": "data/raw/NYISO/2023-NYCA-Generators.xlsx sheet Table III-2a (NYISO Gold Book Table III-2a, summer capability column m)",
+  "zones": {
+   "J": {
+    "summer_capability_total_mw": 9231.9,
+    "cris_summer_total_mw": 9870.8,
+    "nameplate_total_mw": 10575.9,
+    "by_unit_type_summer_mw": {
+     "CC": 3296.9,
+     "GT": 1052.0,
+     "IC": 11.1,
+     "JE": 1033.3,
+     "ST": 3838.6
+    },
+    "n_rows": 110,
+    "nj_sited_rows": [
+     [
+      "Linden Cogen",
+      789.5
+     ],
+     [
+      "Bayonne EC  CTG1",
+      61.8
+     ],
+     [
+      "Bayonne EC  CTG2",
+      60.2
+     ],
+     [
+      "Bayonne EC  CTG3",
+      58.1
+     ],
+     [
+      "Bayonne EC  CTG4",
+      60.9
+     ],
+     [
+      "Bayonne EC  CTG5",
+      59.7
+     ],
+     [
+      "Bayonne EC  CTG6",
+      59.6
+     ],
+     [
+      "Bayonne EC  CTG7",
+      60.0
+     ],
+     [
+      "Bayonne EC  CTG8",
+      60.3
+     ],
+     [
+      "Bayonne EC  CTG9",
+      60.5
+     ],
+     [
+      "Bayonne EC  CTG10",
+      60.5
+     ]
+    ],
+    "nj_sited_total_mw": 1391.1
+   },
+   "K": {
+    "summer_capability_total_mw": 5005.7,
+    "cris_summer_total_mw": 5388.2,
+    "nameplate_total_mw": 5636.8,
+    "by_unit_type_summer_mw": {
+     "CC": 612.4,
+     "GT": 1030.3,
+     "IC": 35.7,
+     "JE": 877.3,
+     "PV": 54.4,
+     "ST": 2395.6
+    },
+    "n_rows": 86,
+    "nj_sited_rows": [],
+    "nj_sited_total_mw": 0
+   }
+  }
+ },
+ "2024": {
+  "source": "data/raw/NYISO/2024-NYCA-Generators.xlsx sheet Table III-2a (NYISO Gold Book Table III-2a, summer capability column m)",
+  "zones": {
+   "J": {
+    "summer_capability_total_mw": 8718.9,
+    "cris_summer_total_mw": 9537.9,
+    "nameplate_total_mw": 10206.3,
+    "by_unit_type_summer_mw": {
+     "CC": 3249.9,
+     "GT": 1013.9,
+     "IC": 11.1,
+     "JE": 598.6,
+     "ST": 3845.4
+    },
+    "n_rows": 91,
+    "nj_sited_rows": [
+     [
+      "Linden Cogen",
+      737.1
+     ],
+     [
+      "Bayonne EC  CTG1",
+      62.0
+     ],
+     [
+      "Bayonne EC  CTG2",
+      58.0
+     ],
+     [
+      "Bayonne EC  CTG3",
+      58.0
+     ],
+     [
+      "Bayonne EC  CTG4",
+      61.1
+     ],
+     [
+      "Bayonne EC  CTG5",
+      58.5
+     ],
+     [
+      "Bayonne EC  CTG6",
+      59.0
+     ],
+     [
+      "Bayonne EC  CTG7",
+      59.3
+     ],
+     [
+      "Bayonne EC  CTG8",
+      60.0
+     ],
+     [
+      "Bayonne EC  CTG9",
+      61.3
+     ],
+     [
+      "Bayonne EC  CTG10",
+      61.4
+     ]
+    ],
+    "nj_sited_total_mw": 1335.7
+   },
+   "K": {
+    "summer_capability_total_mw": 5072.5,
+    "cris_summer_total_mw": 5302.3,
+    "nameplate_total_mw": 5541.8,
+    "by_unit_type_summer_mw": {
+     "CC": 647.8,
+     "GT": 1027.2,
+     "IC": 33.0,
+     "JE": 865.9,
+     "PV": 54.4,
+     "ST": 2444.2
+    },
+    "n_rows": 81,
+    "nj_sited_rows": [],
+    "nj_sited_total_mw": 0
+   }
+  }
+ },
+ "2025": {
+  "source": "data/raw/NYISO/2025-NYCA-Existing-Generating-Facilities.xlsx sheet Table III-2a (NYISO Gold Book Table III-2a, summer capability column m)",
+  "zones": {
+   "J": {
+    "summer_capability_total_mw": 8704.7,
+    "cris_summer_total_mw": 8985.8,
+    "nameplate_total_mw": 9615.1,
+    "by_unit_type_summer_mw": {
+     "CC": 3259.8,
+     "GT": 1006.4,
+     "JE": 604.8,
+     "ST": 3833.7
+    },
+    "n_rows": 76,
+    "nj_sited_rows": [
+     [
+      "Linden Cogen",
+      748.2
+     ],
+     [
+      "Bayonne EC  CTG1",
+      62.0
+     ],
+     [
+      "Bayonne EC  CTG2",
+      58.0
+     ],
+     [
+      "Bayonne EC  CTG3",
+      58.1
+     ],
+     [
+      "Bayonne EC  CTG4",
+      61.1
+     ],
+     [
+      "Bayonne EC  CTG5",
+      61.8
+     ],
+     [
+      "Bayonne EC  CTG6",
+      61.4
+     ],
+     [
+      "Bayonne EC  CTG7",
+      59.7
+     ],
+     [
+      "Bayonne EC  CTG8",
+      60.0
+     ],
+     [
+      "Bayonne EC  CTG9",
+      61.3
+     ],
+     [
+      "Bayonne EC  CTG10",
+      61.4
+     ]
+    ],
+    "nj_sited_total_mw": 1353.0
+   },
+   "K": {
+    "summer_capability_total_mw": 5195.5,
+    "cris_summer_total_mw": 5438.3,
+    "nameplate_total_mw": 5677.8,
+    "by_unit_type_summer_mw": {
+     "CC": 653.3,
+     "GT": 987.4,
+     "IC": 29.5,
+     "JE": 873.5,
+     "PV": 54.4,
+     "ST": 2465.4,
+     "WT": 132.0
+    },
+    "n_rows": 82,
+    "nj_sited_rows": [],
+    "nj_sited_total_mw": 0
+   }
+  }
+ }
+}

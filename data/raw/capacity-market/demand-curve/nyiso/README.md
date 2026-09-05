@@ -127,3 +127,22 @@ the default-OFF `ScenarioConfig.nyiso_requirement_forecast_peak` /
 composite `PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"]` stays
 pinned to the 2024-2025 factor (re-deriving it onto the 2025-2026 row is a
 rule-23 owner decision, routed in `docs/handoffs/FINDING-capx-d52-2026-09-04.md`).
+
+## capx D59 intake (2026-09-05): locality Gross CONE, 2023-2024 / 2024-2025 / 2025-2026
+
+Twelve `gross_cone` rows (usd_per_kw_yr) — the "Gross Cost of New Entry ($/kW-Year) [1]"
+row of the SAME three Demand Curve Parameters sheets the committed locality ARV /
+reference-point / max-clearing rows already cite (ICAPWG annual-update decks 2022-11-14
+p.31 and 2023-11-17 p.30; the posted 2025-2026 parameter sheet), per capacity region
+(NYCA / G-J / NYC / LI); the 2026-2027 rows were already committed by FFR-2C. Values:
+2023-24 120.04 / 157.61 / 212.81 / 168.15; 2024-25 132.98 / 174.72 / 229.11 / 186.37;
+2025-26 127.71 / 127.58 / 222.73 / 137.03. Consumer: `LOCALITY_GROSS_CONE_BY_ISO`
+(`config/capacity_market.py`) — the D59 locality entry siting leg scales a thermal
+candidate's annualized fixed cost by the published `GrossCONE_locality / GrossCONE_NYCA`
+ratio of the delivery year's vintage (NYISO's own peaking-plant cost differential; no
+zone premium is invented), armed only by the default-OFF
+`ScenarioConfig.locality_capacity_curves`. The locality CURVES themselves
+(`net_cone` / `curve_point` / `price_cap` rows for NYC / LI) were already on disk and
+were re-verified row-for-row against the fetched sheets this session (sha256 in
+`docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md` §9); they are reconciled
+by `tests/unit/model/test_capacity.py::TestNyisoLocalityCapacityCurves`.

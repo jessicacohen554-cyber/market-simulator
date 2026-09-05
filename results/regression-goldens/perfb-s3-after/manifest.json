@@ -1,6 +1,151 @@
 {
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "keepers": {
+    "ERCOT": {
+      "bundle": "results/calibration/ercot234_eastex_identity",
+      "content_hashes": {
+        "btm.parquet": "12a3a86bf89e3b6b25664588937575bfc6df7ade12b90d4973355b87c07942c4",
+        "dispatch/2023_P1.parquet": "969f6c92f3280177c8e199c3720a19cb0144fbc46253e8267d3be782ac97dd7c",
+        "dispatch/2023_P1_fleet.parquet": "d923162032ea20df5c5d523d53398e73367f7204c32587193018923e20f92357",
+        "dispatch/2024_P1.parquet": "9cf87f3357eef84d49a603834366daa3d37cfac06930c7bd049b47b4833f725f",
+        "dispatch/2024_P1_fleet.parquet": "9fea7e346b8d7e54f78d1333b681eac13891294a4cd6b301a322c1dafecbe30e",
+        "dispatch/2025_P1.parquet": "c97f07416a23a4cd31d6357ecea8574433d44dc39aab8465ab88694b4d0a08b8",
+        "dispatch/2025_P1_fleet.parquet": "b548129b68272387c0268b375f370cc8ef067059bee8c9f5411b0004a6169be2",
+        "flows.parquet": "8c8e9a35c0b1e3fe31d70501ab202203a852fe78f1103beabd18833094009117",
+        "storage.parquet": "3eef6d6bda000027f2c6eab934a6dddf39e84032c5f1bd12c748e23ecfe72843",
+        "system.parquet": "d6a22c9a54e03fc576e63f1288232e1914252591bb080979cf8c2dd317b8df74"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "caiso_citygate_spot_coverage",
+        "caiso_ct_peaker_committed_measured",
+        "caiso_offer_surface_measured_ungrounded",
+        "caiso_st_gas_committed_measured",
+        "caiso_st_gas_peak_measured",
+        "campd_outage_merit_order_guard",
+        "campd_per_unit_attribution",
+        "coal_takeorpay_from_data",
+        "egrid_family_heat_rates",
+        "fleet_state_from_eia860",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nearby_fuel_price_zone_donor_guard",
+        "persist_p0_commitment",
+        "plant_tranche_config",
+        "reuse_solved",
+        "unit_outage_mixed_gas_routing",
+        "unit_outage_per_unit_clip",
+        "unit_outage_st_capacity_basis",
+        "zero_forcing_ablation"
+      ],
+      "dropped_dead_config_keys": {},
+      "fidelity": {
+        "meta_head_only": [
+          "caiso_citygate_spot_coverage",
+          "caiso_ct_peaker_committed_measured",
+          "caiso_offer_surface_measured_ungrounded",
+          "caiso_st_gas_committed_measured",
+          "caiso_st_gas_peak_measured",
+          "campd_outage_merit_order_guard",
+          "campd_per_unit_attribution",
+          "egrid_family_heat_rates",
+          "fleet_state_from_eia860",
+          "nearby_fuel_price_zone_donor_guard",
+          "unit_outage_mixed_gas_routing",
+          "unit_outage_per_unit_clip",
+          "unit_outage_st_capacity_basis"
+        ],
+        "meta_keeper_only": [
+          "caiso_bidir_intertie"
+        ],
+        "meta_matched": 270,
+        "scenario_config_drift": [
+          "ccs_retrofit_capex_kw",
+          "fixed_om_gas_cc_ccs"
+        ],
+        "scenario_config_head_only": [
+          "adequacy_accounting_ratio_dated_net",
+          "caiso_citygate_spot_coverage",
+          "caiso_ct_peaker_committed_measured",
+          "caiso_fsno_subzonal_topology",
+          "caiso_offer_surface_measured_ungrounded",
+          "caiso_st_gas_committed_measured",
+          "caiso_st_gas_peak_measured",
+          "campd_outage_merit_order_guard",
+          "campd_per_unit_attribution",
+          "carbon_price_delta",
+          "ccs_retrofit_capex_co2_scaling",
+          "egrid_family_heat_rates",
+          "entry_dispersion_expectation_signal",
+          "entry_forward_expectation_signal",
+          "entry_forward_reserve_leg",
+          "entry_margin_exhaustion",
+          "entry_vre_zone_selection",
+          "ercot_offer_surface_cleared_share_rt_room",
+          "ercot_offer_surface_cleared_share_rt_room_path",
+          "ercot_offer_swcap_clip",
+          "fleet_state_from_eia860",
+          "fossil_announced_exits_enabled",
+          "nearby_fuel_price_zone_donor_guard",
+          "neiso_net_icr_requirement",
+          "nyiso_requirement_forecast_peak",
+          "nyiso_requirement_vintage_factors",
+          "nyiso_zonal_loss_surface",
+          "partial_plant_exit_carry",
+          "pjm_accreditation_design_vintage",
+          "pjm_demand_response_supply",
+          "retiree_vintage_status_scope",
+          "st_gas_mustrun_oom_level",
+          "storage_entry_availability_gate",
+          "storage_entry_cost_normalized_rank",
+          "unit_outage_fleet_status_scope",
+          "unit_outage_mixed_gas_routing",
+          "unit_outage_per_unit_clip",
+          "unit_outage_st_capacity_basis"
+        ],
+        "scenario_config_matched": 748
+      },
+      "hours": 8760,
+      "keeper_id": "2026-08-25-234-eastex-identity",
+      "keeper_snapshot": {
+        "bundle": "results/calibration/ercot234_eastex_identity",
+        "date": "2026-08-25",
+        "definition": "ercot-234 KEEPER (card Z-A identity repair, owner-signed 2026-08-25): EASTEX \u2014 ERCOT's East Texas GTC, the constraint that physically exists at the model's Northeast->North boundary \u2014 replaces the geographically mis-attributed NE_LOB (North Edinburg-Lobo, a Rio Grande Valley corridor read as 'Northeast lobe' since the zone was built) in the measured-GTC crosswalk; static export rating re-derived 1,300 -> 2,300 MW (NP6-86 mean-limit-at-bind 2023+2024). Zero fitted scalars. All P-6 gates PASS: no new shed, coal rise <= 0.21 TWh, G-SPUR 2023 21 -> 11 (the ercot-231 promotion's named cost dissolves), NE|N separation 2,155/1,128/1,354 -> 29/45/45 h (the real EASTEX scale). Officials: 2023 -39.7% / 0.730 / C3c 72 (the mis-attributed gain returned per rule 14), 2024 -0.2% / 0.131 / 22, 2025 -7.9% / 0.101 / 1; NOT-YET on {C3a-2023, C3b-2023}, C3c ledgered x3.",
+        "id": "2026-08-25-234-eastex-identity",
+        "iso": "ERCOT",
+        "label": "234 eastex identity",
+        "shorthand": "234-eastex-identity",
+        "sidecar_at_capture": "present",
+        "years": [
+          2023,
+          2024,
+          2025
+        ]
+      },
+      "provenance": {
+        "basis_sha": "c3e8eb00c2e37f7c15e3ede40efa03ae4ac07044",
+        "env": {
+          "MARKET_SIM_HIGHS_THREADS": "1",
+          "MARKET_SIM_WARMSTART": "1",
+          "MARKET_SIM_WARMSTART_XYEAR": "0"
+        },
+        "git_dirty": false,
+        "git_sha": "c3e8eb00",
+        "git_sha_full": "c3e8eb00c2e37f7c15e3ede40efa03ae4ac07044",
+        "highspy_version": "unknown",
+        "recorded_at": "2026-09-05T03:58:42Z",
+        "source": "stamped-at-capture"
+      },
+      "recorded_flag_count": 261,
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
     "ERCOT__carveout-2023": {
       "bundle": "results/calibration/ercot236_k33_clip",
       "content_hashes": {
