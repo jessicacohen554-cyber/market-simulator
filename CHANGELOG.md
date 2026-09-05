@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-05 — wallclock B-0: owner decision memo for seeding the cold-rebuilt P1 from the same year's P0 basis, with the ERCOT bench the assessment doc was missing
+
+Docs only. **No `src/` file, no `ScenarioConfig` default, no keeper shard / marker / matrix shard /
+registry / workflow touched; nothing promoted, nothing registered.**
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md` is the plan-§6 memo the wallclock desk
+gates wave 2a on: what changes (simplex starting point only — the P0 basis handed to the second
+`DispatchModel` through the shipped `apply_cross_year_basis`), who pays today (the ERCOT / NYISO /
+CAISO cold-P1 keepers, P1 ≈ P0 on the anchor tables), the neutrality class and its
+`diff_warmstart_bundles.py` gate, what stays cold (goldens/replay pin `MARKET_SIM_WARMSTART_XYEAR=0`
+⇒ seed off), the proposed surface (calibration-CLI default ON, `--no-p1-basis-seed`, env var
+honored, forecast path unchanged, adaptive pass seeded from the previous pass's P1 basis), two
+options and an owner signature block. The measurement it cites did not exist at HEAD
+(`wallclock-opportunities-2026-09.md` §3 placeholder): supplied here — ERCOT forward keeper
+config, 2025, determinism pin, scratch monkeypatch driver never committed: `solve_p1` 287.1 →
+139.3 s (2.06×), 273,893 → 78,856 iterations, objective / total gen / served load / prices
+identical (0 dual-degenerate hours), 16 offsetting marginal-tie unit-hours. Both placeholders in
+the opportunities doc (§3 table, §6.3 bench record) are filled. Recommendation: (A) flip.
+
 ## 2026-09-05 — Y-14: the ERCOT stage-0 golden captures the FORWARD 2024–2025 config; the `ERCOT__carveout-2023` capture key is retired (owner ruling R-AW)
 
 Two scripts, one test file, one manifest block. **No shard, marker, bench, status page,
