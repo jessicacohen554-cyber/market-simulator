@@ -5810,6 +5810,12 @@ def run_year(
                 p1_bid_max_target=p1_bid_max_target,
                 startup_run_ratio_t=startup_run_ratio_t,
                 p1_storage_discharge_cost=_adaptive_cost,
+                # C-1b (PERF-B session 3): every argument above is the same
+                # object pass 1 received and the discharge cost applies to P1
+                # only, so pass 1's P0 IS this pass's P0 — reuse it instead of
+                # rebuilding and cold-solving the identical LP (honoured only
+                # when pass 1's P1 was cold; see run_energy_solve).
+                reuse_p0_from=energy_solve,
             )
         # ercot-230 FIXED-POINT ITERATION (PRECOMMIT-ercot230-adaptive-fixed-
         # point-2026-08-23.md §1; the FINDING-ercot221 §4 first named
@@ -5910,6 +5916,9 @@ def run_year(
                     p1_bid_max_target=p1_bid_max_target,
                     startup_run_ratio_t=startup_run_ratio_t,
                     p1_storage_discharge_cost=np.maximum(_vom_s, _fl_k[None, :]),
+                    # C-1b: same premise as pass 2 — the previous iteration's
+                    # P0 is this iteration's P0.
+                    reuse_p0_from=energy_solve,
                 )
                 _fp_floors.append(_fl_k)
                 ercot230_iteration["n_adapt_passes"] += 1

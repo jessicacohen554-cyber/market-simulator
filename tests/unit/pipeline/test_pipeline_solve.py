@@ -246,3 +246,83 @@ def test_result_totals_count_every_build_and_both_solves(monkeypatch):
     # The interior components plus every build and both solves are the whole
     # wall the caller brackets, so the residual identity closes by construction.
     assert sum(warm.markup_parts.values()) >= 0.0
+
+
+def _floor_hook(fleet_arrays):
+    """A p1_fleet_prep that always returns a (trivially) replaced fleet copy."""
+    import dataclasses
+
+    calls = []
+
+    def _prep(r0):
+        calls.append(r0)
+        # A zero min_gen floor (the trivial fleet carries None): the LP it
+        # clears is unchanged, but ``is not fleet_arrays`` routes P1 cold,
+        # exactly as a real floor bridge does.
+        return dataclasses.replace(
+            fleet_arrays, min_gen=np.zeros((fleet_arrays.n_gen, T))
+        )
+
+    return _prep, calls
+
+
+def test_reuse_p0_is_honoured_only_after_a_cold_p1(monkeypatch):
+    """C-1b (PERF-B session 3): a previous pass's P0 is reused iff its P1 was cold.
+
+    Warm path (no floor hook): pass 1's P1 re-solves the live P0 model, so
+    ``p1_cold`` is False and a hand-over is IGNORED — the second pass builds and
+    solves its own P0. Cold-P1 path (a floor hook replaces the fleet): pass 1's
+    P1 solved a fresh model, ``p1_cold`` is True, and the second pass reuses
+    pass 1's ``r0`` (the same object), skips the P0 build + solve, books 0 s
+    of P0, and clears the identical P1.
+    """
+    from market_sim.pipeline import solve as solve_mod
+
+    gens, fa, demand, mc_base, dk = _trivial_inputs()
+    monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+
+    # Warm path: reuse is not admissible.
+    p1_warm = run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg())
+    assert p1_warm.p1_cold is False and p1_warm.p0_reused is False
+    again = run_energy_solve(
+        gens, fa, demand, mc_base, dk, _Cfg(), reuse_p0_from=p1_warm
+    )
+    assert again.p0_reused is False
+    assert again.r0 is not p1_warm.r0
+    assert again.solve_p0_s == again.r0.solve_time
+
+    # Cold-P1 path: the hook replaces the fleet, so P1 cold-rebuilds.
+    prep, calls = _floor_hook(fa)
+    first = run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg(), p1_fleet_prep=prep)
+    assert first.p1_cold is True and first.p0_reused is False
+    assert len(calls) == 1
+    solve_mod.reset_pass_timing_log()
+    second = run_energy_solve(
+        gens, fa, demand, mc_base, dk, _Cfg(), p1_fleet_prep=prep, reuse_p0_from=first
+    )
+    (entry,) = solve_mod.take_pass_timing_log()
+    assert second.p0_reused is True and second.p1_cold is True
+    assert second.r0 is first.r0  # the same object, not a re-solve
+    assert calls[-1] is first.r0  # the hook still ran, on the reused r0
+    assert second.solve_p0_s == 0.0 and entry["solve_p0_s"] == 0.0
+    assert entry["p0_reused"] is True
+    # Only the second model was built in the reused pass.
+    assert second.build_s == second.p1.build_time
+    # The P1 it clears is the P1 pass 1 cleared (identical LP, identical bid).
+    assert np.array_equal(second.mc_bid, first.mc_bid)
+    assert np.array_equal(second.p1.dispatch, first.p1.dispatch)
+    assert np.array_equal(second.p1.prices, first.p1.prices)
+
+
+def test_reuse_p0_under_two_cold_solves(monkeypatch):
+    """WARMSTART=0: both passes are cold, so P1 is cold and reuse is honoured."""
+    monkeypatch.setenv("MARKET_SIM_WARMSTART", "0")
+    gens, fa, demand, mc_base, dk = _trivial_inputs()
+    first = run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg())
+    assert first.p1_cold is True
+    second = run_energy_solve(
+        gens, fa, demand, mc_base, dk, _Cfg(), reuse_p0_from=first
+    )
+    assert second.p0_reused is True and second.r0 is first.r0
+    assert second.build_s == second.p1.build_time
+    assert np.array_equal(second.p1.dispatch, first.p1.dispatch)

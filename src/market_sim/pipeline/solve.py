@@ -100,9 +100,11 @@ def take_pass_timing_log() -> "list[dict]":
         One dict per :func:`run_energy_solve` call since the last reset, each
         with ``build_s`` (EVERY ``DispatchModel`` matrix build of that pass —
         the P0 model plus, on the cold-P1 route, the second model),
-        ``solve_p0_s`` / ``solve_p1_s`` (that pass's two ``h.run()`` seconds)
-        and ``parts`` (that pass's ``markup_parts``). Identical to the
-        same-named fields of the :class:`EnergySolveResult` the call returned.
+        ``solve_p0_s`` / ``solve_p1_s`` (that pass's two ``h.run()`` seconds;
+        ``solve_p0_s`` is 0 for a pass that reused a previous P0), ``p0_reused``
+        (charter C-1b) and ``parts`` (that pass's ``markup_parts``). Identical
+        to the same-named fields of the :class:`EnergySolveResult` the call
+        returned.
     """
     out = list(_PASS_TIMING_LOG)
     _PASS_TIMING_LOG.clear()
@@ -145,8 +147,20 @@ class EnergySolveResult:
             which names ONE model — is what the orchestrators subtract
             (PERF-B session 3, charter C-2), so a cold-P1 year's first build
             is no longer booked as ``markup``.
-        solve_p0_s: ``r0.solve_time`` — this pass's P0 ``h.run()`` seconds.
+        solve_p0_s: ``r0.solve_time`` — this pass's P0 ``h.run()`` seconds
+            (``0.0`` when the P0 was reused from a previous pass, whose own
+            result already counted it).
         solve_p1_s: ``p1.solve_time`` — this pass's P1 ``h.run()`` seconds.
+        p1_cold: Whether this pass's P1 solved a freshly built model
+            (``solve_dispatch`` on a replaced fleet / overridden kwargs /
+            declined in-place refloor / ``MARKET_SIM_WARMSTART=0``) rather than
+            re-solving the live P0 model. This is the admissibility flag for
+            handing the result to a later pass as ``reuse_p0_from`` (PERF-B
+            session 3, charter C-1b): only a cold-P1 pass can be reproduced
+            without a live P0 model.
+        p0_reused: Whether this pass skipped its own P0 build + solve and
+            reused ``reuse_p0_from.r0`` (C-1b). ``r0`` is then the SAME object
+            the previous pass returned.
     """
 
     r0: "DispatchResult"
@@ -158,6 +172,8 @@ class EnergySolveResult:
     build_s: float = 0.0
     solve_p0_s: float = 0.0
     solve_p1_s: float = 0.0
+    p1_cold: bool = False
+    p0_reused: bool = False
 
 
 def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
@@ -224,6 +240,7 @@ def run_energy_solve(
     p1_bid_max_target: Optional[np.ndarray] = None,
     startup_run_ratio_t: Optional[np.ndarray] = None,
     p1_storage_discharge_cost: Optional[np.ndarray] = None,
+    reuse_p0_from: Optional[EnergySolveResult] = None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
 
@@ -309,6 +326,18 @@ def run_energy_solve(
             warm/cold routing is decided, so it never forces a cold P1 by
             itself). ``None`` (every flag-off / non-ERCOT path) is
             byte-identical.
+        reuse_p0_from: Optional previous-pass :class:`EnergySolveResult` whose
+            P0 this pass may reuse instead of building and solving its own
+            (PERF-B session 3, charter C-1b). Meant for an adaptive-expectation
+            re-solve that passes the SAME ``fleet`` / ``fleet_arrays`` /
+            ``demand`` / ``mc_base`` / ``dispatch_kwargs`` / hooks as the pass
+            it hands over and differs only in ``p1_storage_discharge_cost``
+            (P1-only), so its P0 is the identical LP already solved. Honoured
+            ONLY when that result's ``p1_cold`` is ``True`` — a pass whose P1
+            warm-solved the live P0 model is never reproduced without one, so
+            such a hand-over is ignored and a full P0 runs. The caller owns the
+            "same inputs" premise; this function does not re-verify it.
+            ``None`` (every non-adaptive path) is byte-identical.
 
     Returns:
         :class:`EnergySolveResult` with the P0/P1 results, the bid MC, the
@@ -330,7 +359,38 @@ def run_energy_solve(
     if _swcap is not None:
         mc_base = np.minimum(mc_base, _swcap)
     _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
-    model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
+    # P0 reuse (PERF-B session 3, charter C-1b). An adaptive-expectation pass
+    # (ercot-221 pass 2, the ercot-230 iterations) calls this function with
+    # every argument the SAME OBJECT the previous pass received and differs
+    # only in ``p1_storage_discharge_cost``, which is applied to P1 ONLY — so
+    # its P0 would build a matrix and cold-solve an LP that is bit-identical,
+    # objective included, to the previous pass's P0, then discard the answer
+    # (measured 6.6 s build + 372.8 s ``h.run()`` on ERCOT 2023;
+    # docs/FINDING-perfb-s2-markup-attribution-2026-09.md §0). When the caller
+    # hands over the previous pass's result, its ``r0`` is reused and the P0
+    # build + solve are skipped. ADMISSIBLE ONLY when the previous pass's P1
+    # was COLD (``p1_cold``): on that route P1 solves a freshly built model, so
+    # no live P0 model is needed for anything — the reused pass takes the
+    # identical cold route (same hooks on the same ``r0`` -> same replaced
+    # fleet / kwargs; the in-place refloor is skipped below because there is
+    # no model, exactly as it was declined or off before). A previous pass
+    # whose P1 warm-solved the live P0 model is never reused: that P1 needs the
+    # model and its basis, and a cold P1 in its place would move marginal ties
+    # — the warm-start-class change the byte gate cannot prove.
+    # Cross-year holder (``xyear_cache``): untouched by a reused pass — the
+    # seed/apply below need a model, and the previous pass's cold-P1 route
+    # already exported ITS P0 basis into the holder (the basis of the identical
+    # LP), so the holder reads the same either way; under the goldens/replay
+    # pin (XYEAR=0) it is never read or written on any route.
+    _reuse_p0 = reuse_p0_from is not None and bool(
+        getattr(reuse_p0_from, "p1_cold", False)
+    )
+    if _reuse_p0:
+        model = None
+    else:
+        model = (
+            DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
+        )
     # The matrix build of the model constructed HERE. Captured now because the
     # cold-P1 branch below rebinds ``model`` to None, and because this is the
     # build the orchestrators' ``_build`` field did NOT account for whenever
@@ -368,13 +428,21 @@ def run_energy_solve(
     # is None (forecast) / non-empty (in-run warm) / the gate is off
     # (goldens/replay); opportunistic and basis-neutral — apply_cross_year_basis
     # remaps/repairs and falls back cold, so a stale seed costs iterations only.
-    if _disk_basis_cache:
+    if _disk_basis_cache and not _reuse_p0:
         seed_year1_basis(xyear_cache, *_basis_key)
-    if _xwarm and xyear_cache is not None and xyear_cache:
+    if _xwarm and xyear_cache is not None and xyear_cache and model is not None:
         model.apply_cross_year_basis(xyear_cache[0])
     _t1 = time.perf_counter()
-    # P0: solve with base MC to extract per-month run lengths.
-    if _warm:
+    # P0: solve with base MC to extract per-month run lengths — or reuse the
+    # previous pass's (C-1b, see above): the identical LP was already solved.
+    if _reuse_p0:
+        r0 = reuse_p0_from.r0
+        logger.info(
+            "P0 reused from the previous pass (C-1b): identical fleet, demand, "
+            "kwargs and base cost; only the P1 storage discharge cost differs "
+            "and it applies to P1 alone — P0 build + solve skipped"
+        )
+    elif _warm:
         r0 = model.solve(mc=mc_base)
     else:
         r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
@@ -479,6 +547,7 @@ def run_energy_solve(
     _inplace_floored = False
     if (
         _warm
+        and model is not None  # a reused-P0 pass has no live model (C-1b)
         and not _warm_p1
         and p1_fleet_arrays is not fleet_arrays
         and p1_dispatch_kwargs is dispatch_kwargs
@@ -558,6 +627,16 @@ def run_energy_solve(
     # thermal ``mc=mc_bid`` re-cost, and P0 (already solved) is untouched.
     # Cold path: merged over the P1 kwargs at the call below.
     if _warm_p1 or _inplace_floored:
+        if model is None:
+            # Unreachable by construction: reuse is admitted only when the
+            # previous pass's P1 was cold, and the same hooks on the same r0
+            # resolve the same route. Fail loudly rather than cold-solve a P1
+            # the previous pass warm-solved (that would move marginal ties).
+            raise RuntimeError(
+                "run_energy_solve: reuse_p0_from was admitted (previous P1 "
+                "cold) but this pass's P1 resolved to the warm route; the "
+                "P1 hooks did not reproduce the previous pass's decision"
+            )
         if p1_storage_discharge_cost is not None:
             model.storage_discharge_cost = p1_storage_discharge_cost
         p1 = model.solve(mc=mc_bid)
@@ -634,9 +713,16 @@ def run_energy_solve(
     # sum(parts) is a hair under the reported ``markup``; the callers book that
     # difference as a trailing ``other`` component (see run_calibration.py).
     _p1_cold = not (_warm_p1 or _inplace_floored)
-    _build_p0_s = float(getattr(r0, "build_time", 0.0) or 0.0) if not _warm else 0.0
+    # A reused P0 (C-1b) was neither built nor solved in THIS pass — its
+    # seconds were counted by the pass that produced it — so both read 0 here
+    # (``r0.build_time`` / ``r0.solve_time`` would double-count them).
+    _build_p0_s = (
+        float(getattr(r0, "build_time", 0.0) or 0.0)
+        if (not _warm and not _reuse_p0)
+        else 0.0
+    )
     _build_p1_s = float(getattr(p1, "build_time", 0.0) or 0.0) if _p1_cold else 0.0
-    _solve_p0_s = float(getattr(r0, "solve_time", 0.0) or 0.0)
+    _solve_p0_s = 0.0 if _reuse_p0 else float(getattr(r0, "solve_time", 0.0) or 0.0)
     _solve_p1_s = float(getattr(p1, "solve_time", 0.0) or 0.0)
     # Every matrix build this pass performed. The three terms are mutually
     # exclusive by route: ``_build_setup_s`` is the warm P0 model (0 under
@@ -670,6 +756,7 @@ def run_energy_solve(
             "build_s": build_s,
             "solve_p0_s": _solve_p0_s,
             "solve_p1_s": _solve_p1_s,
+            "p0_reused": _reuse_p0,
             "parts": markup_parts,
         }
     )
@@ -684,6 +771,8 @@ def run_energy_solve(
         build_s=build_s,
         solve_p0_s=_solve_p0_s,
         solve_p1_s=_solve_p1_s,
+        p1_cold=_p1_cold,
+        p0_reused=_reuse_p0,
     )
 
 
