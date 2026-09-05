@@ -766,3 +766,74 @@ once (if WS-2a lands a different seam, §2.1 is re-pointed at it and this memo g
 addendum); (c) **the EIA-861 state × sector sales intake** (one public CSV, not on disk) belongs
 in WS-3b's data profile as ordinary data intake, no authorization needed. No file outside this
 memo was touched, no solve was run, no default moved, no matrix cell written.
+
+---
+
+## Addendum A — second-instance cross-check (SCN-WS3a, branch `claude/scn-ws3a-voluntary-demand-9f1you`, 2026-09-05)
+
+**Why this addendum exists.** Two instances of SCN-WS3a ran concurrently from the same r#1
+prompt. The instance on `…-s8iukw` merged first (PR #4857) and the memo above is the record;
+this instance's draft reached the same design (annual volumetric row on the region family, WTP
+escape, DC-linked volume, 24/7 deferred to the portfolio tool, entry-only adder rejected) and is
+**superseded, not archived** — git history holds it (commit `a646d537` on the branch). What
+follows is only what the draft carried that the memo above does not: anchor numbers verified
+over the proxy in this session, one dissent for the owner to weigh on D-6, and one refinement
+of the phase-0 regimes. Nothing above is edited; no ruling is assumed; the plan §5.1 Voluntary
+column stays UNMOVED.
+
+### A.1 Anchor numbers verified this session (moves §3.3 cells from "needs-citation" to "sourced")
+
+| §3.3 row | Verified value | Source (public, re-queryable) |
+|---|---|---|
+| 6 — national voluntary volume | **319 million MWh** in 2023, ≈ **9.7 million** customers, **+17 %** over 2022 (⇒ 2022 ≈ 273 million MWh by arithmetic); ≈ **8 %** of all U.S. retail sales; ≈ 44 % of non-hydro renewable sales | O'Shaughnessy, Jena, Salyer, *Status and Trends in the U.S. Voluntary Power Market: 2023 Data*, NREL/TP-6A20-92289, Aug 2025, DOI 10.2172/2584242 (OSTI abstract read; the PDF host `docs.nrel.gov` does not resolve through this container's proxy, so the product tables — row 6's breakdown and row 7 — stay needs-citation) |
+| 8 — PPA trend context | **150.2 GW** cumulative corporate procurement since 2014 (Jan–Jun 2026 update); **19.7 GW** announced H1-2026; **27.3 GW** in 2025; **21.7 GW** in 2024 | CEBA Deal Tracker public page + CEBA releases. **Confirmed aggregate-only:** the deal-level download is form-gated and the public page carries no state or ISO split — exactly ffr-5b sentence 1's finding, so the row stays "trend context only" |
+| 11 — hyperscaler commitments | Google 24/7 CFE by 2030 (2020 pledge); Microsoft 100/100/0 by 2030; Amazon 100 % annual matching reached 2023; **Meta 100 % annual matching since 2020 but EXITED RE100 in July 2026 while backing new gas plants for AI data centers** | company sustainability pages; TechCrunch 2026-07-23 for the Meta exit. **Consequence for `f_commit`:** the commitment fraction is **not monotone**; the `low` path should carry a *falling* fraction rather than a flat floor |
+| 12 — committed share of the DC block | correction to "proprietary market research": the hyperscale / colocation / enterprise split of U.S. DC energy **is published** in the LBNL 2024 report the repo already cites for the load factor (`scenarios.py:2864-2867`) | Shehabi et al., LBNL 2024 U.S. Data Center Energy Usage Report — the split was not read here, so the cell stays needs-citation, but it is public, not owner-level by necessity |
+
+### A.2 Dissent on D-6, for the owner to weigh beside §4.3
+
+§4.3 recommends **counts-toward** as the default and states the honest counter. This instance
+reached the opposite default — **additional** — and the reason is the certificate fact §4.3's
+Posture 2 already names: a certificate is retired once, and a REC retired for a voluntary
+claim is unavailable for compliance (the Green-e / state-RPS double-claiming prohibition —
+needs-citation). Two points the memo above does not make:
+
+1. **The plan's stated reason for "counts toward" inverts that fact.** Plan §6 D-6 reads
+   *"matches how RECs retire today"*; one-certificate-one-retirement is the "additional"
+   reading, so the plan's row appears to be a slip rather than a finding, and the owner should
+   rule on the mechanics, not the row text.
+2. **"Additional" has a cleaner LP form than an RHS adjustment.** One row with **two escapes**
+   — `Σ eligible + ESC_ces + ESC_vol ≥ target × load + V`, `ESC_ces` priced at the ACP,
+   `ESC_vol` at the WTP — is a single certificate market in which voluntary and compliance
+   buyers compete for the same MWh and the **cheaper escape fires first**: the voluntary buyer,
+   whose reservation price is below the ACP, forgoes its claim before the LSE pays the penalty.
+   That is the observed order of exit in a short REC market, and it yields one dual (capped at
+   `min(ACP, WTP)`) for both buyers. Under "counts toward", a compliance-compelled MWh is
+   claimed twice at a zero voluntary premium — the double claim plan §4 says the campaign must
+   not make.
+
+Both instances agree on what matters operationally: D-6 has content **only** against the CES
+*target* row and the state RPS rows; it is moot under the premium ladder and in ERCOT (no state
+row, `capacity_market.py:4276`), so it gates neither WS-3b's build nor WS-3c's ERCOT probe —
+only the `CES-T80+VOL-HI` / `CES-P20+VOL-HI` interaction cases, which are reported both ways
+regardless. The fourth field is the same under either default; only its default value differs.
+
+### A.3 Phase-0 regimes, stated as four (refines §6 step 2)
+
+With `G` = REF eligible generation, `D` = REF eligible curtailment, `C` = the eligible energy
+ceiling `Σ cf × cap`, the PRECOMMIT declares one of four regimes before the solve:
+(i) `V ≤ G` — slack, dual 0, LP byte-identical, arm inert in 2026 (screen where live);
+(ii) `G < V ≤ G + D` — binds by un-curtailing only, dual ≈ the dump-redirect margin, thermal
+unchanged ("curtailment falls before dispatch changes"); (iii) `G + D < V ≤ C` — thermal
+displacement, dual rises toward the clean-minus-dirty gap, CO2 falls; (iv) `V > C` — escape
+fires, `ESC = V − C` and dual `= w` exactly. §6's G-BIND / G-ID / G-ORDER legs then test that
+the arm landed in the declared regime, which is the strongest form of "the mechanism does what
+its own arithmetic says" the rule-29 gate can take.
+
+### A.4 Box mapping
+
+This instance's boxes were numbered M-1…M-8; they map onto §7 as: M-1 = Box 1 (D-3),
+M-2 = Box 2 (D-3b), M-3 = Box 4 (D-6, with A.2's dissent), M-4 = Box 3 (D-3c), M-5 = Box 5
+(D-2 sub-levels). M-6 (EIA-861 intake) and M-7 (the fourth field vs the ≤ 3 budget) are §8's
+routing items (c) and (a); M-8 (a per-zone buyer grain on the region mask) is record-only and
+deferred. No new box is opened by this addendum.
