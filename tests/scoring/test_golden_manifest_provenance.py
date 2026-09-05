@@ -21,6 +21,16 @@ in the capture tool and the gate's staleness lookup, including the property the
 whole design rests on: adding a partition entry leaves the bare-ISO entry
 byte-identical.
 
+and, since 2026-09-05, **R-AW** (owner ruling, verbatim *"The golden config
+should be the 2024:2025 one not 2023"*;
+``docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md``): a
+partitioned ISO's BARE key is its ``forward`` role replayed on that role's
+designated span (never the composed run's whole registered span), a designated
+span is never a superset of the registered span (rule 22, asserted in both
+scripts and the gate), and the ``ERCOT__carveout-2023`` capture key is RETIRED
+— its historical manifest entries stay as written and are reported, not
+compared to the live shard.
+
 ``check_golden_manifest`` is loaded by path (it is a loose ``scripts/`` module)
 and its directory constants are monkeypatched per test onto temp trees, so no
 test reads or writes the real registry.
@@ -74,14 +84,31 @@ cgm = _load_script(
 LIVE_MANIFEST = (
     REPO_ROOT / "results" / "regression-goldens" / "perfb-stage0" / "manifest.json"
 )
+LIVE_ERCOT_SHARD = (
+    REPO_ROOT / "frontend" / "data" / "backcast" / "keepers" / "ERCOT.json"
+)
+LIVE_REGISTRY = REPO_ROOT / "frontend" / "data" / "backcast" / "registry"
+
+# R-AW's object, spelled out once: the retired key, the role the bare key now
+# resolves to, and that role's designated span.
+RETIRED_KEY = "ERCOT__carveout-2023"
+FORWARD_SPAN = [2024, 2025]
 
 
-def _entry(keeper_id="2026-01-01-x-1", iso="PJM", *, snapshot=True, provenance=True):
+def _entry(
+    keeper_id="2026-01-01-x-1",
+    iso="PJM",
+    *,
+    snapshot=True,
+    provenance=True,
+    years=(2023, 2024, 2025),
+):
     """Return a minimal well-formed schema-v2 manifest entry."""
+    years = list(years)
     e = {
         "keeper_id": keeper_id,
         "bundle": "results/calibration/x_1",
-        "years": [2023, 2024, 2025],
+        "years": years,
         "hours": 8760,
         "content_hashes": {"system.parquet": "0" * 64},
     }
@@ -104,7 +131,7 @@ def _entry(keeper_id="2026-01-01-x-1", iso="PJM", *, snapshot=True, provenance=T
             "date": "2026-01-01",
             "shorthand": "x-1",
             "definition": "a run",
-            "years": [2023, 2024, 2025],
+            "years": years,
             "bundle": "results/calibration/x_1",
             "sidecar_at_capture": "present",
         }
@@ -192,23 +219,28 @@ class GoldenManifestSchemaTest(unittest.TestCase):
         The whole point of deriving the key from the shard: the entry cannot
         drift into naming a config that was never ruled.
 
-        Y-11 STOP (2026-09-05), left RED deliberately -- there is no literal
-        here to refresh. This compares the LIVE shard designation against the
-        COMMITTED manifest's ``keeper_id``, so the only thing that greens it is
-        changing the manifest -- a capture-lane act under R-AI, out of scope for
-        a pin lane. It is also not a one-line re-key: six capture records carry
-        pre-consolidation ERCOT ids (perfb-stage0, perfb-s2-{after,before,final},
-        perfb-s3-{after,before}), the bare ``ERCOT`` entry is equally stale at
-        2026-08-25-234-eastex-identity, and a manifest ``keeper_id`` records
-        which run's outputs were ACTUALLY captured -- so re-keying without
-        re-capturing would make the provenance record false. Routed to the
-        capture desk as the ercot-248 follow-up.
+        Two cases since R-AW (2026-09-05; replaces the Y-11 STOP that held this
+        test red after the ercot-248 consolidation re-keyed both roles onto one
+        run):
+
+        * a LIVE partition key must still name the run the shard designates
+          for that role — the original assertion, unchanged;
+        * a RETIRED key (``check_golden_manifest.RETIRED_CAPTURE_KEYS``) is a
+          historical capture record. Its ``keeper_id`` records which run's
+          outputs were ACTUALLY captured, so it is never re-keyed to the live
+          designation; instead it must (a) be retired by the gate's constant,
+          (b) carry a ``retired`` block citing the ruling, and (c) still agree
+          with the shard's PROVENANCE for that role — the consolidation kept
+          the pre-consolidation run in ``source_run_id``, and that is the run
+          this record captured. Stronger than a live-id equality for a record
+          that, by ruling, never moves again.
         """
-        found = 0
+        shard = json.loads(LIVE_ERCOT_SHARD.read_text())
+        by_role = {c["role"]: c for c in shard["config_partition"]["configs"]}
+        live, retired = 0, 0
         for key, entry in self.man["keepers"].items():
             if cgm.PARTITION_KEY_SEP not in key:
                 continue
-            found += 1
             with self.subTest(key=key):
                 iso, _, role = key.partition(cgm.PARTITION_KEY_SEP)
                 part = entry.get("partition")
@@ -217,29 +249,97 @@ class GoldenManifestSchemaTest(unittest.TestCase):
                 )
                 self.assertEqual(part["iso"], iso)
                 self.assertEqual(part["role"], role)
-                self.assertEqual(
-                    cgm.live_keeper(key),
-                    entry["keeper_id"],
-                    f"{key}: shard does not designate this run for that role",
-                )
-        self.assertGreaterEqual(
-            found, 1, "expected at least the ERCOT 2023 carve-out partition entry"
+                if key in cgm.RETIRED_CAPTURE_KEYS:
+                    retired += 1
+                    self.assertIn("R-AW", cgm.RETIRED_CAPTURE_KEYS[key])
+                    ret = entry.get("retired")
+                    self.assertIsInstance(ret, dict, f"{key}: needs a retired block")
+                    self.assertEqual(ret["ruling"], "R-AW")
+                    self.assertEqual(
+                        ret["ruling_verbatim"],
+                        "The golden config should be the 2024:2025 one not 2023",
+                    )
+                    # (c): the record still traces to the shard's provenance.
+                    self.assertEqual(
+                        by_role[role]["source_run_id"],
+                        entry["keeper_id"],
+                        f"{key}: the retired record must be the run the shard "
+                        f"names as this role's source",
+                    )
+                    self.assertEqual(by_role[role]["source_bundle"], entry["bundle"])
+                    self.assertEqual(entry["keeper_snapshot"]["id"], entry["keeper_id"])
+                else:
+                    live += 1
+                    self.assertEqual(
+                        cgm.live_keeper(key),
+                        entry["keeper_id"],
+                        f"{key}: shard does not designate this run for that role",
+                    )
+                    self.assertEqual(
+                        cgm.designated_years(key), sorted(part["designated_years"])
+                    )
+        self.assertEqual(
+            retired, 1, "expected exactly the retired ERCOT 2023 carve-out entry"
         )
+        self.assertIn(RETIRED_KEY, self.man["keepers"])
 
-    def test_the_ercot_partition_covers_the_year_the_forward_entry_does_not(self):
-        """Full ERCOT coverage is 7-not-6: both designated configs are captured.
+    def test_the_bare_ercot_entry_is_the_forward_config_on_its_designated_span(
+        self,
+    ):
+        """R-AW: the ERCOT stage-0 golden is the forward config on {2024, 2025}.
 
-        Coverage is over DESIGNATED spans (keepers/ERCOT.json coverage_invariant),
-        not the runs' registered spans — the forward keeper's bundle is 3-year
-        but 2023 is designated to the carve-out.
+        Three facts, each read from the LIVE shard + registry and the
+        COMMITTED manifest, so the test is green before AND after the R-AI
+        re-capture (whose target this pins):
+
+        1. the bare key resolves to the forward role, span [2024, 2025];
+        2. that designated span is a strict subset of the composed run's
+           registered span — rule 22, "never widened", on live data;
+        3. a bare ERCOT entry that is CURRENT (i.e. the re-capture has landed)
+           replays exactly that span. Today's entry is the pre-consolidation
+           234 capture and reads STALE — the gate carries the same check as a
+           hard failure the moment a CURRENT entry violates it.
+
+        The retired carve-out record stays in the manifest as written
+        (designated and replayed [2023] — the run's own registered span at
+        capture time), and is not compared to the shard.
         """
         keepers = self.man["keepers"]
         self.assertIn("ERCOT", keepers, "the forward entry must stay in place")
-        self.assertIn("ERCOT__carveout-2023", keepers)
-        carve = keepers["ERCOT__carveout-2023"]
+        # 1.
+        self.assertEqual(cgm.resolve_role("ERCOT"), ("ERCOT", cgm.FORWARD_ROLE))
+        self.assertEqual(cgm.designated_years("ERCOT"), FORWARD_SPAN)
+        self.assertEqual(cgm.designated_years("ERCOT__forward"), FORWARD_SPAN)
+        live = cgm.live_keeper("ERCOT")
+        self.assertEqual(live, cgm.live_keeper("ERCOT__forward"))
+        # 2.
+        reg = json.loads((LIVE_REGISTRY / f"{live}.json").read_text())
+        registered = sorted(int(y) for y in reg["years"])
+        self.assertLess(set(FORWARD_SPAN), set(registered))
+        self.assertEqual(registered, [2023, 2024, 2025])
+        # 3.
+        fwd = keepers["ERCOT"]
+        if fwd["keeper_id"] == live:
+            self.assertEqual(sorted(fwd["years"]), FORWARD_SPAN)
+            self.assertEqual(sorted(fwd["registered_years"]), registered)
+            self.assertEqual(fwd["partition"]["role"], cgm.FORWARD_ROLE)
+        else:
+            # Pre-re-capture: STALE by id, and the span it replayed was its
+            # own run's registered span — still inside rule 22.
+            self.assertLessEqual(
+                set(fwd["years"]), set(fwd["keeper_snapshot"]["years"])
+            )
+        carve = keepers[RETIRED_KEY]
         self.assertEqual(carve["partition"]["designated_years"], [2023])
-        # Rule 22: the capture replays the carve-out's REGISTERED span only.
         self.assertEqual(carve["years"], [2023])
+        self.assertIn(RETIRED_KEY, cgm.RETIRED_CAPTURE_KEYS)
+        # Every year of the training window is covered by exactly one
+        # designated config (keepers/ERCOT.json coverage_invariant); the golden
+        # program captures the forward one, by ruling.
+        self.assertEqual(
+            sorted(set(FORWARD_SPAN) | set(carve["partition"]["designated_years"])),
+            registered,
+        )
 
 
 class RetentionInvariantTest(unittest.TestCase):
@@ -348,7 +448,13 @@ class RetentionInvariantTest(unittest.TestCase):
 
 
 class PartitionStalenessLookupTest(unittest.TestCase):
-    """``live_keeper`` resolves both key forms; no regression on bare ISOs."""
+    """``live_keeper`` resolves both key forms; no regression on bare ISOs.
+
+    The temp shard uses a hypothetical second role, ``carveout-x``, rather
+    than the real ``carveout-2023``: that key is RETIRED by R-AW and takes the
+    gate's historical-record branch, which has its own tests below. The
+    generic partition mechanics must stay tested independently of one ruling.
+    """
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
@@ -378,7 +484,7 @@ class PartitionStalenessLookupTest(unittest.TestCase):
                 "configs": [
                     {"role": "forward", "run_id": "run-forward", "years": [2024, 2025]},
                     {
-                        "role": "carveout-2023",
+                        "role": "carveout-x",
                         "run_id": "run-carveout",
                         "years": [2023],
                     },
@@ -402,22 +508,50 @@ class PartitionStalenessLookupTest(unittest.TestCase):
         """The six existing entries must be unaffected by the new key form."""
         self.assertEqual(cgm.live_keeper("ERCOT"), "run-forward")
 
+    def test_bare_key_of_a_partitioned_iso_is_its_forward_role(self):
+        """R-AW: the bare key IS the forward role — role, run id and span.
+
+        When the ``keeper`` field and the forward role's ``run_id`` ever
+        disagree, the role the ruling names wins, so a golden captured under
+        the bare key is compared against the forward config, not against
+        whatever the headline field happens to say.
+        """
+        self.assertEqual(cgm.resolve_role("ERCOT"), ("ERCOT", "forward"))
+        self.assertEqual(cgm.designated_years("ERCOT"), [2024, 2025])
+        self._write_shard(keeper="run-headline")
+        self.assertEqual(cgm.live_keeper("ERCOT"), "run-forward")
+
+    def test_partition_without_a_forward_role_falls_back_to_the_keeper_field(self):
+        self._write_shard(
+            config_partition={
+                "configs": [{"role": "carveout-x", "run_id": "run-carveout"}]
+            }
+        )
+        self.assertEqual(cgm.resolve_role("ERCOT"), ("ERCOT", None))
+        self.assertEqual(cgm.live_keeper("ERCOT"), "run-forward")
+        self.assertIsNone(cgm.designated_years("ERCOT"))
+
     def test_partition_key_resolves_through_config_partition(self):
-        self.assertEqual(cgm.live_keeper("ERCOT__carveout-2023"), "run-carveout")
+        self.assertEqual(cgm.live_keeper("ERCOT__carveout-x"), "run-carveout")
         self.assertEqual(cgm.live_keeper("ERCOT__forward"), "run-forward")
+        self.assertEqual(cgm.designated_years("ERCOT__carveout-x"), [2023])
+        self.assertEqual(cgm.designated_years("ERCOT__forward"), [2024, 2025])
 
     def test_role_match_is_case_insensitive_and_iso_half_is_upcased(self):
-        self.assertEqual(cgm.live_keeper("ercot__CARVEOUT-2023"), "run-carveout")
+        self.assertEqual(cgm.live_keeper("ercot__CARVEOUT-X"), "run-carveout")
 
     def test_unknown_role_resolves_to_none(self):
         self.assertIsNone(cgm.live_keeper("ERCOT__no-such-role"))
+        self.assertIsNone(cgm.designated_years("ERCOT__no-such-role"))
 
     def test_iso_without_a_partition_block_resolves_only_the_bare_key(self):
         (self.keepers / "PJM.json").write_text(
             json.dumps({"iso": "PJM", "keeper": "run-pjm"})
         )
         self.assertEqual(cgm.live_keeper("PJM"), "run-pjm")
-        self.assertIsNone(cgm.live_keeper("PJM__carveout-2023"))
+        self.assertEqual(cgm.resolve_role("PJM"), ("PJM", None))
+        self.assertIsNone(cgm.designated_years("PJM"))
+        self.assertIsNone(cgm.live_keeper("PJM__carveout-x"))
 
     def test_missing_or_unreadable_shard_resolves_to_none(self):
         self.assertIsNone(cgm.live_keeper("MISO"))
@@ -430,23 +564,27 @@ class PartitionStalenessLookupTest(unittest.TestCase):
     def test_current_partition_entry_reports_current(self):
         (self.registry / "run-carveout.json").write_text("{}")
         p = self._manifest(
-            {"ERCOT__carveout-2023": _entry(keeper_id="run-carveout", iso="ERCOT")}
+            {
+                "ERCOT__carveout-x": _entry(
+                    keeper_id="run-carveout", iso="ERCOT", years=[2023]
+                )
+            }
         )
         fails, notes = cgm.check_manifest(p)
         self.assertEqual(fails, [])
         self.assertTrue(any("golden CURRENT" in n for n in notes))
-        self.assertTrue(any("ERCOT__carveout-2023" in n for n in notes))
+        self.assertTrue(any("ERCOT__carveout-x" in n for n in notes))
 
     def test_superseded_partition_member_reports_stale_with_the_live_run(self):
         self._write_shard(
             config_partition={
                 "configs": [
-                    {"role": "carveout-2023", "run_id": "run-newer", "years": [2023]}
+                    {"role": "carveout-x", "run_id": "run-newer", "years": [2023]}
                 ]
             }
         )
         p = self._manifest(
-            {"ERCOT__carveout-2023": _entry(keeper_id="run-carveout", iso="ERCOT")}
+            {"ERCOT__carveout-x": _entry(keeper_id="run-carveout", iso="ERCOT")}
         )
         fails, notes = cgm.check_manifest(p)
         self.assertEqual(fails, [])
@@ -454,34 +592,38 @@ class PartitionStalenessLookupTest(unittest.TestCase):
             any("golden STALE (live keeper: run-newer)" in n for n in notes)
         )
 
-    def test_retired_role_says_so_instead_of_live_keeper_none(self):
-        """A retired role must not read like an ordinary supersession."""
+    def test_undesignated_role_says_so_instead_of_live_keeper_none(self):
+        """An un-ruled role must not read like an ordinary supersession."""
         self._write_shard(config_partition={"configs": []})
         p = self._manifest(
-            {"ERCOT__carveout-2023": _entry(keeper_id="run-carveout", iso="ERCOT")}
+            {"ERCOT__carveout-x": _entry(keeper_id="run-carveout", iso="ERCOT")}
         )
         fails, notes = cgm.check_manifest(p)
         self.assertEqual(fails, [])
         joined = " ".join(notes)
-        self.assertIn("designates no config_partition role 'carveout-2023'", joined)
+        self.assertIn("designates no config_partition role 'carveout-x'", joined)
         self.assertNotIn("live keeper: None", joined)
 
     def test_partition_entry_is_held_to_every_v2_invariant(self):
         """Additive means the existing enforcement applies unchanged."""
         p = self._manifest(
             {
-                "ERCOT__carveout-2023": _entry(
+                "ERCOT__carveout-x": _entry(
                     keeper_id="run-carveout", iso="ERCOT", snapshot=False
                 )
             }
         )
         fails, _ = cgm.check_manifest(p)
         self.assertTrue(any("keeper_snapshot" in f for f in fails))
-        self.assertTrue(any("ERCOT__carveout-2023" in f for f in fails))
+        self.assertTrue(any("ERCOT__carveout-x" in f for f in fails))
 
     def test_partition_entry_survives_a_pruned_sidecar_via_its_snapshot(self):
         p = self._manifest(
-            {"ERCOT__carveout-2023": _entry(keeper_id="run-carveout", iso="ERCOT")}
+            {
+                "ERCOT__carveout-x": _entry(
+                    keeper_id="run-carveout", iso="ERCOT", years=[2023]
+                )
+            }
         )
         fails, notes = cgm.check_manifest(p)
         self.assertEqual(fails, [])
@@ -493,14 +635,142 @@ class PartitionStalenessLookupTest(unittest.TestCase):
         (self.registry / "run-carveout.json").write_text("{}")
         p = self._manifest(
             {
-                "ERCOT": _entry(keeper_id="run-forward", iso="ERCOT"),
-                "ERCOT__carveout-2023": _entry(keeper_id="run-carveout", iso="ERCOT"),
+                "ERCOT": _entry(
+                    keeper_id="run-forward", iso="ERCOT", years=[2024, 2025]
+                ),
+                "ERCOT__carveout-x": _entry(
+                    keeper_id="run-carveout", iso="ERCOT", years=[2023]
+                ),
             }
         )
         fails, notes = cgm.check_manifest(p)
         self.assertEqual(fails, [])
         current = [n for n in notes if "golden CURRENT" in n]
         self.assertEqual(len(current), 2, current)
+
+    # --- R-AW: designated span, rule-22 inclusion, retired keys ---
+
+    def test_current_bare_entry_of_a_partitioned_iso_must_replay_the_forward_span(
+        self,
+    ):
+        """The defect R-AW's enforcement exists to stop: a CURRENT bare golden
+        that replayed the composed run's whole registered span — i.e. the
+        carve-out year under the forward config."""
+        (self.registry / "run-forward.json").write_text("{}")
+        p = self._manifest(
+            {
+                "ERCOT": _entry(
+                    keeper_id="run-forward", iso="ERCOT", years=[2023, 2024, 2025]
+                )
+            }
+        )
+        fails, _ = cgm.check_manifest(p)
+        self.assertTrue(fails, "a whole-span forward golden must FAIL")
+        joined = " ".join(fails)
+        self.assertIn("designates [2024, 2025]", joined)
+        self.assertIn("role 'forward'", joined)
+        self.assertIn("R-AW", joined)
+
+    def test_current_partition_key_entry_must_replay_its_designated_span(self):
+        (self.registry / "run-carveout.json").write_text("{}")
+        p = self._manifest(
+            {
+                "ERCOT__carveout-x": _entry(
+                    keeper_id="run-carveout", iso="ERCOT", years=[2023, 2024]
+                )
+            }
+        )
+        fails, _ = cgm.check_manifest(p)
+        self.assertTrue(any("designates [2023]" in f for f in fails))
+
+    def test_stale_entries_are_never_held_to_the_designated_span(self):
+        """Historical captures replayed what their own run registered; the
+        span rule binds only what is compared as CURRENT."""
+        p = self._manifest(
+            {
+                "ERCOT": _entry(
+                    keeper_id="run-older", iso="ERCOT", years=[2023, 2024, 2025]
+                )
+            }
+        )
+        fails, notes = cgm.check_manifest(p)
+        self.assertEqual(fails, [])
+        self.assertTrue(
+            any("golden STALE (live keeper: run-forward)" in n for n in notes)
+        )
+
+    def test_non_partitioned_iso_is_unconstrained_by_the_span_rule(self):
+        (self.keepers / "PJM.json").write_text(json.dumps({"keeper": "run-pjm"}))
+        (self.registry / "run-pjm.json").write_text("{}")
+        p = self._manifest({"PJM": _entry(keeper_id="run-pjm", iso="PJM")})
+        fails, notes = cgm.check_manifest(p)
+        self.assertEqual(fails, [])
+        self.assertTrue(any("golden CURRENT" in n for n in notes))
+
+    def test_years_must_be_inside_registered_years_when_recorded(self):
+        """Rule 22 on the entry itself: the slice is never wider than the run."""
+        (self.registry / "run-forward.json").write_text("{}")
+        good = _entry(keeper_id="run-forward", iso="ERCOT", years=[2024, 2025])
+        good["registered_years"] = [2023, 2024, 2025]
+        fails, _ = cgm.check_manifest(self._manifest({"ERCOT": good}))
+        self.assertEqual(fails, [])
+        bad = _entry(keeper_id="run-forward", iso="ERCOT", years=[2024, 2025])
+        bad["registered_years"] = [2024]
+        fails, _ = cgm.check_manifest(self._manifest({"ERCOT": bad}, tag="s2"))
+        self.assertTrue(any("never a superset" in f for f in fails))
+
+    def test_retired_key_is_validated_but_not_compared_to_the_shard(self):
+        """R-AW: a retired key's entry is a historical capture record.
+
+        The shard has moved on (it designates ``run-newer`` for the role) and
+        the entry's keeper_id is the run that was ACTUALLY captured; the gate
+        must neither fail it nor call it STALE, only report it as retired —
+        while still holding it to every v2 invariant.
+        """
+        self.assertIn("ERCOT__carveout-2023", cgm.RETIRED_CAPTURE_KEYS)
+        self._write_shard(
+            config_partition={
+                "configs": [
+                    {"role": "forward", "run_id": "run-forward", "years": [2024, 2025]},
+                    {"role": "carveout-2023", "run_id": "run-newer", "years": [2023]},
+                ]
+            }
+        )
+        p = self._manifest(
+            {
+                "ERCOT__carveout-2023": _entry(
+                    keeper_id="run-carveout", iso="ERCOT", years=[2023]
+                )
+            }
+        )
+        fails, notes = cgm.check_manifest(p)
+        self.assertEqual(fails, [])
+        joined = " ".join(notes)
+        self.assertIn("capture key RETIRED (R-AW", joined)
+        self.assertIn("historical capture record", joined)
+        self.assertIn("carries no retired block", joined)
+        self.assertNotIn("golden STALE", joined)
+        self.assertNotIn("golden CURRENT", joined)
+        # Still every v2 invariant: no snapshot → hard failure, retired or not.
+        p = self._manifest(
+            {
+                "ERCOT__carveout-2023": _entry(
+                    keeper_id="run-carveout", iso="ERCOT", snapshot=False
+                )
+            },
+            tag="s2",
+        )
+        fails, _ = cgm.check_manifest(p)
+        self.assertTrue(any("keeper_snapshot" in f for f in fails))
+
+    def test_retired_key_with_a_retired_block_is_reported_as_marked(self):
+        e = _entry(keeper_id="run-carveout", iso="ERCOT", years=[2023])
+        e["retired"] = {"declared": "2026-09-05", "ruling": "R-AW"}
+        fails, notes = cgm.check_manifest(self._manifest({"ERCOT__carveout-2023": e}))
+        self.assertEqual(fails, [])
+        joined = " ".join(notes)
+        self.assertIn("capture key RETIRED", joined)
+        self.assertNotIn("carries no retired block", joined)
 
 
 class PartitionCaptureKeyTest(unittest.TestCase):
@@ -532,6 +802,8 @@ class PartitionCaptureKeyTest(unittest.TestCase):
         self.assertNotEqual(m.capture_key("ERCOT"), m.capture_key("ERCOT", "forward"))
 
     def test_live_ercot_shard_declares_both_configs(self):
+        """The SHARD still designates both configs — R-AW retired the carve-out
+        CAPTURE KEY, not the keeper's 2023 designation."""
         roles = [c["role"] for c in self.mod.partition_configs("ERCOT")]
         self.assertIn("forward", roles)
         self.assertIn("carveout-2023", roles)
@@ -555,40 +827,140 @@ class PartitionCaptureKeyTest(unittest.TestCase):
         self.assertIsNone(m.partition_run_id("ERCOT", "no-such-role"))
         self.assertEqual(self.mod.partition_configs("PJM"), [])
 
-    def test_resolve_capture_targets_reaches_the_carveout_bundle(self):
-        """Blocker 1: the carve-out was unreachable through keeper_list().
+    def test_retired_key_is_shared_with_the_gate_and_refused(self):
+        """R-AW: the ERCOT__carveout-2023 capture key is retired.
 
-        Y-11 STOP (2026-09-05), left RED deliberately -- not a stale pin.
-        The ercot-248 consolidation points both roles at one run, so
-        ``resolve_capture_targets`` now returns an IDENTICAL bundle AND an
-        identical span for ``ERCOT__carveout-2023`` and ``ERCOT__forward``:
-        ``years`` is the composed run's registered [2023, 2024, 2025], not the
-        carve-out's [2023]. Repairing this test needs TWO assertions changed,
-        and the ``years`` one would encode that collapse as intended -- it
-        would assert the carve-out golden now replays all three years, which
-        retires the rule-22 guard the line was placed here to hold ("the run's
-        own REGISTERED span, never widened") and makes the two partition
-        captures byte-identical, voiding the Blocker-1 purpose of the key.
-        That is a capture/calibration-desk decision (re-capture? slice on
-        designated years? retire the partition key?), not a pin refresh, so it
-        is routed to the ercot-248 follow-up rather than fitted here.
+        Replaces ``test_resolve_capture_targets_reaches_the_carveout_bundle``
+        (the Y-11 STOP). The capture tool reads the retired-key table FROM the
+        gate, so the two cannot disagree, and refuses the key loudly with the
+        ruling in the message — a new golden can never be written under it.
         """
-        info = self.mod.resolve_capture_targets(["ERCOT__carveout-2023"])[
-            "ERCOT__carveout-2023"
-        ]
-        self.assertEqual(info["keeper_id"], "2026-08-25-236-swcap-clip-k33")
-        self.assertEqual(info["iso"], "ERCOT")
-        self.assertEqual(info["role"], "carveout-2023")
-        # Rule 22: the run's own REGISTERED span, never widened.
-        self.assertEqual(info["years"], [2023])
+        m = self.mod
+        # (cgm is loaded by path, so a distinct module object: equality, not
+        # identity, is the testable statement of "one table".)
+        self.assertEqual(m.RETIRED_CAPTURE_KEYS, cgm.RETIRED_CAPTURE_KEYS)
+        self.assertEqual(m.FORWARD_ROLE, cgm.FORWARD_ROLE)
+        self.assertIn("ERCOT__carveout-2023", m.RETIRED_CAPTURE_KEYS)
+        with self.assertRaises(KeyError) as ctx:
+            m.resolve_capture_targets(["ERCOT__carveout-2023"])
+        msg = str(ctx.exception)
+        self.assertIn("RETIRED", msg)
+        self.assertIn("R-AW", msg)
+        self.assertIn("2024:2025", msg)
+        # Case-normalized on the ISO half, exactly like every other key.
+        with self.assertRaises(KeyError):
+            m.resolve_capture_targets(["ercot__carveout-2023"])
 
-    def test_resolve_capture_targets_still_handles_a_bare_iso(self):
-        info = self.mod.resolve_capture_targets(["ERCOT"])["ERCOT"]
-        self.assertIsNone(info["role"])
-        self.assertIsNone(info["partition_config"])
+    def test_bare_ercot_resolves_to_the_forward_config_on_its_designated_span(
+        self,
+    ):
+        """R-AW's target, well-defined for the R-AI re-capture lane.
+
+        The bare key is the forward role: the composed run's REGISTERED bundle
+        (the only ERCOT run with a live sidecar; its meta.json is the forward
+        config verbatim — ercot248 composite_provenance.json) sliced to the
+        forward role's designated [2024, 2025], with the run's registered
+        3-year span kept beside it. Rule 22's guard is now an inclusion, held
+        on both the resolved info and the manifest entry: the designated span
+        is a strict subset of the registered span, never wider.
+        """
+        m = self.mod
+        info = m.resolve_capture_targets(["ERCOT"])["ERCOT"]
+        self.assertEqual(info["iso"], "ERCOT")
+        self.assertEqual(info["role"], m.FORWARD_ROLE)
+        self.assertEqual(info["role"], "forward")
+        self.assertEqual(info["keeper_id"], "2026-09-05-ercot248-two-config-keeper")
         self.assertEqual(
             info["keeper_id"], cgm.live_keeper("ERCOT"), "bare key = designated keeper"
         )
+        self.assertEqual(
+            info["bundle"], REPO_ROOT / "results/calibration/ercot248_two_config_keeper"
+        )
+        self.assertEqual(info["years"], [2024, 2025])
+        self.assertEqual(info["registered_years"], [2023, 2024, 2025])
+        self.assertLess(set(info["years"]), set(info["registered_years"]))
+        self.assertEqual(info["partition_config"]["role"], "forward")
+        # The gate agrees on every one of these.
+        self.assertEqual(cgm.designated_years("ERCOT"), info["years"])
+        self.assertEqual(cgm.resolve_role("ERCOT"), ("ERCOT", info["role"]))
+        # The snapshot the entry will absorb replays the same slice and keeps
+        # the sidecar's span, so the slice stays visible after the prune.
+        snap = m._keeper_snapshot(info)
+        self.assertEqual(snap["years"], [2024, 2025])
+        self.assertEqual(snap["registered_years"], [2023, 2024, 2025])
+        self.assertEqual(snap["sidecar_at_capture"], "present")
+        self.assertEqual(snap["iso"], "ERCOT")
+
+    def test_ercot_forward_key_is_the_same_capture_as_the_bare_key(self):
+        m = self.mod
+        bare = m.resolve_capture_targets(["ERCOT"])["ERCOT"]
+        fwd = m.resolve_capture_targets(["ERCOT__forward"])["ERCOT__forward"]
+        for k in ("keeper_id", "bundle", "years", "registered_years", "role"):
+            self.assertEqual(bare[k], fwd[k], k)
+        self.assertEqual(m._partition_block(bare), m._partition_block(fwd))
+
+    def test_resolve_capture_targets_still_handles_a_bare_iso(self):
+        """A one-config ISO is untouched: no role, no block, registered span."""
+        info = self.mod.resolve_capture_targets(["NEISO"])["NEISO"]
+        self.assertIsNone(info["role"])
+        self.assertIsNone(info["partition_config"])
+        self.assertNotIn("registered_years", info)
+        self.assertEqual(
+            info["keeper_id"], cgm.live_keeper("NEISO"), "bare key = designated keeper"
+        )
+        self.assertEqual(info["years"], [2023, 2024, 2025])
+
+    def test_a_designated_span_is_never_a_superset_of_the_registered_span(self):
+        """Rule 22 as a hard assertion in the capture tool.
+
+        A shard edit that designated a year the run never registered (the
+        way a 2022 or 2026 solve could otherwise enter through a partition)
+        must fail at resolution, before any solve.
+        """
+        m = self.mod
+        info = {"years": [2023, 2024, 2025]}
+        out = m.slice_to_designated_span(dict(info), {"years": [2024, 2025]}, what="t")
+        self.assertEqual(out["years"], [2024, 2025])
+        self.assertEqual(out["registered_years"], [2023, 2024, 2025])
+        # Identity slice is fine (a role designated the whole span).
+        out = m.slice_to_designated_span(
+            dict(info), {"years": [2025, 2023, 2024]}, what="t"
+        )
+        self.assertEqual(out["years"], [2023, 2024, 2025])
+        for bad in ([2022, 2023], [2024, 2026], [2019], []):
+            with self.subTest(designated=bad), self.assertRaises(ValueError) as ctx:
+                m.slice_to_designated_span(dict(info), {"years": bad}, what="t")
+            if bad:
+                self.assertIn("never a superset", str(ctx.exception))
+        # ...and through resolve_capture_targets, against the LIVE registered
+        # span, with the shard's forward config widened by one year.
+        real = m.partition_configs
+        widened = [
+            dict(c, years=[2022, 2024, 2025]) if c["role"] == "forward" else c
+            for c in real("ERCOT")
+        ]
+        m.partition_configs = lambda iso: widened if iso == "ERCOT" else real(iso)
+        try:
+            with self.assertRaises(ValueError) as ctx:
+                m.resolve_capture_targets(["ERCOT"])
+            self.assertIn("[2022, 2024, 2025]", str(ctx.exception))
+        finally:
+            m.partition_configs = real
+
+    def test_a_partitioned_shard_without_a_forward_role_fails_loud(self):
+        m = self.mod
+        real = m.partition_configs
+        m.partition_configs = lambda iso: (
+            [c for c in real(iso) if c["role"] != "forward"]
+            if iso == "ERCOT"
+            else real(iso)
+        )
+        try:
+            with self.assertRaises(KeyError) as ctx:
+                m.resolve_capture_targets(["ERCOT"])
+            self.assertIn("no 'forward' role", str(ctx.exception))
+        finally:
+            m.partition_configs = real
 
     def test_an_undesignated_role_fails_loud(self):
         """A typo must never write a golden the gate then calls STALE forever."""
@@ -604,9 +976,15 @@ class PartitionCaptureKeyTest(unittest.TestCase):
         block = m._partition_block(info)
         self.assertEqual(block["role"], "forward")
         self.assertEqual(block["designated_years"], [2024, 2025])
-        # ...while the run it replays is registered 3-year. Conflating the two
-        # is the gloss FINDING-stage0-capture-neiso-ercot-2026-09 §2 warns of.
-        self.assertEqual(info["years"], [2023, 2024, 2025])
+        # Since R-AW the capture REPLAYS the designated span, so the two agree
+        # — while the run it replays stays registered 3-year, recorded apart.
+        # Conflating designated with registered is the gloss
+        # FINDING-stage0-capture-neiso-ercot-2026-09 §2 warns of.
+        self.assertEqual(info["years"], block["designated_years"])
+        self.assertEqual(info["registered_years"], [2023, 2024, 2025])
+        # The bare key carries the same block: it IS the forward role.
+        bare = m.resolve_capture_targets(["ERCOT"])["ERCOT"]
+        self.assertEqual(m._partition_block(bare), block)
 
     def test_partition_block_is_absent_for_a_bare_capture(self):
         info = self.mod.resolve_capture_targets(["NEISO"])["NEISO"]
@@ -664,22 +1042,25 @@ class CaptureToolSchemaTest(unittest.TestCase):
             (self.mod.GOLDENS_ROOT / "t" / "manifest.json").read_text()
         )["keepers"]["ERCOT"]
 
+        # A hypothetical sibling role: write_manifest is key-agnostic (the
+        # retirement of ERCOT__carveout-2023 is enforced at resolution and by
+        # the gate, not here), and the property under test is additivity.
         carve = _entry(keeper_id="2026-08-25-236-swcap-clip-k33", iso="ERCOT")
         carve["partition"] = {
             "iso": "ERCOT",
-            "role": "carveout-2023",
+            "role": "carveout-x",
             "designated_years": [2023],
         }
-        p = self.mod.write_manifest("t", {"ERCOT__carveout-2023": carve})
+        p = self.mod.write_manifest("t", {"ERCOT__carveout-x": carve})
 
         man = json.loads(p.read_text())
         self.assertEqual(man["keepers"]["ERCOT"], before)
         self.assertEqual(man["keepers"]["ERCOT"], forward)
         self.assertEqual(
-            man["keepers"]["ERCOT__carveout-2023"]["keeper_id"],
+            man["keepers"]["ERCOT__carveout-x"]["keeper_id"],
             "2026-08-25-236-swcap-clip-k33",
         )
-        self.assertEqual(sorted(man["keepers"]), ["ERCOT", "ERCOT__carveout-2023"])
+        self.assertEqual(sorted(man["keepers"]), ["ERCOT", "ERCOT__carveout-x"])
 
     def test_basis_sha_helper_is_origin_durable(self):
         """basis_sha must resolve in main even when git_sha is a branch commit."""
