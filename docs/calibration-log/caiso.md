@@ -12940,3 +12940,123 @@ caiso-229 §5's refuted "marginal rung over-propagates fuel" stays refuted (this
 session moved coupling the OPPOSITE way).
 
 **Next number: caiso-252.**
+
+## caiso-252 (2026-09-05) — the C4 2025 cell is NOT the object the handoff named: CC_REGULAR carries 90/87/95 % of the gas-fleet MSE as a DIURNAL error that is, hour for hour, the MIRROR of the model's too-flat import shape; the caiso-251 degradation is HALF CT (three LA-basin/SDGE peakers clearing into the evening while the real CT energy is ONE plant, Panoche); the missing night imports were price-taking VOLUME at a matched price, not mis-priced economic imports; the DMM 2025 annual report has published and its RA-import figure is NOT like-for-like. ZERO SOLVES, NOTHING ARMED, keeper unchanged
+
+**Keeper `2026-09-05-caiso-251-b1-nomargin` UNCHANGED** (NOT-YET on the lone
+supporting-tier C4 2025 cell, 0.305 vs ≤ 0.30). Pre-registered in
+`PRECOMMIT-caiso252-c4-gas-nrmse-anatomy-2026-09-05.md` (pushed before the
+estimator was coded; its §4 G-DRIFT audit `90b2ef51 → 95739d60`, 26 files, all
+INERT, recorded and unspent). Finding:
+`FINDING-caiso252-c4-gas-nrmse-anatomy-2026-09-05.md`. Probe
+`scripts/probes/_caiso252_c4_gas_nrmse_anatomy.py` →
+`_caiso252_c4_gas_nrmse_anatomy.json`. Rule 22: 2023–2025 only.
+
+**THE INSTRUMENT IS THE SCORER.** `_cems_gas_hourly_fit` rebuilt plant-for-plant
+from the two committed run payloads and the CAISO bench parts; all six (r, NRMSE)
+pairs reproduce `_verdict.json` EXACTLY (keeper 0.877/0.285, 0.905/0.264,
+0.870/0.305; prior 0.879/0.283, 0.905/0.266, 0.872/0.298). Fleet bias is fixed
+by the fuel row (+37 MW on 5,805; mean² = 0.04 % of MSE): the cell is SHAPE.
+
+**BY CLASS (exact covariance attribution):** CC_REGULAR **0.901 / 0.874 /
+0.946** of `var(e)`; CT_PEAKER 0.07 / 0.09 / 0.05; the rest ≤ 0.02. Top-5
+plants 39 / 42 / 45 % (the NP15 CC fleet). On the CEMS basis 2025 CC is **+3.22
+TWh** high (41.59 vs 38.36; C1's 2025 CC row is SKIPPED on preliminary 923),
+concentrated in Sep–Dec (+361/+796/+553/+701 GWh) and January; the prior keeper
+already carried +2.48 of it.
+
+**BY HOUR-OF-DAY:** the sign flips twice a day. 2025 CC error +0.9…+1.6 GW at
+night and in the evening (peak **+1,619 MW at 22h**), +1.0…+1.4 GW in the 05–06
+morning ramp, −0.6…−0.8 GW through the solar belly. The model's CC cycles
+HARDER than the real fleet. Evening 17–21 carries only 0.239 of the MSE and
+mid-day 0.251 — a two-sided diurnal amplitude error, not an evening-ramp error.
+
+**KEEPER vs PRIOR KEEPER (rule 29(b), the committed prior payload as control):**
+2025 ΔMSE **56 % CC_REGULAR / 59 % CT_PEAKER** (cross-terms negative); **entirely
+in Aug–Dec** (Sep–Nov 62 %, Jan–Jul net −17 %) — not because the arm added CC
+there but because the CC error was ALREADY large and positive there (`e·Δe > 0`).
+The 822 hours where import fell > 500 MW absorb 0.67 of the arm's +0.74 TWh CC
+rise (mean ΔCC +816 MW) yet carry **2.1 %** of the ΔMSE — the substitution
+landed in the afternoon where CC was UNDER. By hour: CC +252…+404 MW over 00–05
+against import −280…−403; CT +94…+161 MW over 17–23 against ST_GAS and storage.
+**ΔMSE_CT > 0 in BOTH 2024 (+125.6 k) and 2025 (+91.6 k)**: the CT caiso-251
+added clears in the wrong hours at the wrong plants.
+
+**THE COUNTERPART (post-registration, EIA-930 diurnal budget):** hour for hour,
+the CC over-generation at night/evening is the model's import SHORTFALL in the
+same hours (2025: night −0.2…−1.7 GW, evening −0.6…−1.7 GW) and the mid-day CC
+under-generation is the model's mid-day OVER-import (+1.4…+2.0 GW; the clean-
+depth tranches + no export outlet, both adjudicated). Measured 2025 net import
+swings 1.3 → 6.2 GW across the day, the model's 3.2 → 5.9. Measured overnight
+imports rose 5.3 → 6.2 GW from 2023 to 2025 while the model's stayed 5.9 → 5.8
+(firm level = RA capability; 3,371 carried) — in 2023 the model OVER-imported
+overnight and UNDER-generated CC; by 2025 both signs flipped. The DMM 2025
+report confirms from outside: California net imports +430 MW all-hours (17 %)
+before, +580 MW (26 %) after dynamic transfers.
+
+**NOT ECONOMIC IMPORTS (post-registration spread test):** at night in 2025 the
+measured CAISO DA sits within $0.3 of BOTH hubs (DA 42.2 vs Malin 42.6 / Palo
+Verde 42.3) and exceeds hub + wheel in **2–5 %** of night hours; the model's λ
+(42.8) matches it within $0.5. Market and model agree no delivered-cost import
+is in merit at night; the market moved 6.2 GW anyway. The missing volume is
+price-taking (contracted / self-scheduled / WEIM) energy at a DEGENERATE
+margin, which the model fills with CC at the same λ — which is why caiso-251's
+small CC offer cut moved C4 without moving C3a's night prices.
+
+**PANOCHE (post-registration):** CEMS-basis CT_PEAKER 2025 actual 1.64 TWh,
+model 0.71. Panoche Energy Center (56803, NP15, 432 MW) alone: **0.736 / 1.421 /
+0.852 TWh actual vs 0.164 / 0.130 / 0.053 model — 39 / 68 / 86 % of the CT
+miss**, running 3,027–4,839 h/yr at 87–211 MW overnight: out-of-market
+committed conduct, exactly caiso-119 R4's reading. The plants caiso-251 cleared
+instead (Walnut Creek 0.20 vs 0.06 actual, Pio Pico 0.17 vs 0.06, Sentinel) are
+the top three ΔMSE contributors. Object C is one plant's commitment, not a
+fleet-wide offer/availability question; the R4 guardrail (obligation-keyed
+instrument with a cited D-4 window only; no plant pin) governs.
+
+**DMM 2025 ANNUAL REPORT (published 2026-06-26, sha256 7c89fdc4…15ea9):** the
+`IMPORT_TRANCHES_BY_YEAR` 2025 OPEN DATA GAP is adjudicated, NOT filled. Table
+16.7 "Imports" reads 1,710 MW on a CHANGED analysis-hour basis (60 spring-heavy
+AAH hours; total RA 46,169 vs 52,646 MW; "lower during the summer months but
+higher during other periods") — a different aggregation from the 2023/2024
+summer-day rows, so adopting it would make the firm block less representative.
+Rule-14 misalignment exception applied and recorded at the source
+(`interchange/spec.py`, `capacity_market.py`, comments only). A reconciled
+value needs a same-basis source (a summer cut, or the CPUC RA filings).
+
+**PREDICTIONS: 3 hold, 7 FALSIFIED — against the handoff's framing**, not in
+the arm's favour (there is no arm): P-2 (CC 0.946, above the [0.45, 0.75]
+band — CC is the WHOLE object), P-3 (CC 56 % < 60 %; CT carries 59 %), P-4
+(import-drop hours 2.1 % of ΔMSE), P-5 (two-sided, not evening-peaked), P-6
+(CC bias +368 MW, a +3.2 TWh level term under a shape error), P-7 (Sep–Nov
+62 % of ΔMSE), P-10 (ΔMSE_CT > 0 both years). P-1, P-8, P-9 hold.
+
+**NO ARM, stated why:** every mechanism behind the carriers is adjudicated
+(`caiso_p1_export_sink_seam` R; clean-depth lane closed; storage charge-side
+census closed; `gas_offer_net_revenue_margin` R), an owner ask (the transport
+adder — and the spread test shows the adder is not where the night volume is),
+a data question with no like-for-like source yet, or a per-plant commitment
+with no admissible instrument. Solving any of them on this residual would be
+rule-1/13 fitting.
+
+**QUEUE, RE-RANKED (FINDING §6):** (1) object A RE-NAMED — the night/evening
+price-taking import VOLUME beyond the RA capability; candidate source the DMM
+native-load-need "shown RA + non-RA contracted imports" series (report §17,
+Figures 17.3–17.5), a data intake whose rule-13 admissibility is to be
+adjudicated; (2) object C RE-NAMED — Panoche: find the obligation instrument or
+close as un-groundable; (3) the CT evening mis-allocation is a symptom of (2);
+(4) reconcile the 2025 DMM RA-import value on a same-basis source; (5) object B
+DEMOTED — never sold as a C4 lever; (6) D/E/F/G carried (D's 07–08 slab
+coincides with CC's 05–07 morning over-run); (7) cross-ISO housekeeping: all 14
+bench parts STALE at HEAD (one comment edit in a `BUILDER_SOURCES` file, PR
+#4808), and the lane's named reusable probes were deleted by the same PR (read
+from `d6891edd` when needed).
+
+**DO-NOT-REDO adds (FINDING §7):** never read the C4 2025 cell as a CC OFFER
+question (diurnal VOLUME error, import-shape mirror); never propose a ladder
+price/adder move to recover night/evening imports (price-taking volume at a
+matched price); never quote DMM 2025 Table 16.7's 1,710 MW on the 2023/2024
+basis; never treat the CT volume miss as fleet-wide (it is Panoche), never pin
+Panoche, never re-price the CT class to reach it; never attribute the caiso-251
+C4 degradation to the import-drop hours (2.1 %).
+
+**Next number: caiso-253.**
