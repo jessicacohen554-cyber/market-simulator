@@ -1,6 +1,151 @@
 {
   "hash_scheme": "sha256-of-canonical-column-float64-bytes",
   "keepers": {
+    "ERCOT__carveout-2023": {
+      "bundle": "results/calibration/ercot236_k33_clip",
+      "content_hashes": {
+        "btm.parquet": "1e8f296d32aa7877a168dfc2037d18886935446fb95c9f7b1852d79a61c65800",
+        "dispatch/2023_P1.parquet": "fe1195045b86c717c63110ff36f358e2e637a9e8393fa19ae8955ea10a628d8b",
+        "dispatch/2023_P1_fleet.parquet": "d923162032ea20df5c5d523d53398e73367f7204c32587193018923e20f92357",
+        "flows.parquet": "b6c481e8cfb783e3055ef7027840449883fede861616a168f8042c60262b2afd",
+        "storage.parquet": "14ead0ba5ebfa297e61b7ed0b6d7842102b70e6a57c62c778e0c2c1b11e37f5e",
+        "system.parquet": "b2e2822cfda5ee0b9859037aab0b59a12e1cd71c6d3682648c3d582e3f84627c"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "caiso_citygate_spot_coverage",
+        "caiso_ct_peaker_committed_measured",
+        "caiso_offer_surface_measured_ungrounded",
+        "caiso_st_gas_committed_measured",
+        "caiso_st_gas_peak_measured",
+        "campd_outage_merit_order_guard",
+        "campd_per_unit_attribution",
+        "coal_takeorpay_from_data",
+        "egrid_family_heat_rates",
+        "fleet_state_from_eia860",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nearby_fuel_price_zone_donor_guard",
+        "persist_p0_commitment",
+        "plant_tranche_config",
+        "reuse_solved",
+        "unit_outage_mixed_gas_routing",
+        "unit_outage_per_unit_clip",
+        "unit_outage_st_capacity_basis",
+        "zero_forcing_ablation"
+      ],
+      "dropped_dead_config_keys": {},
+      "fidelity": {
+        "meta_head_only": [
+          "caiso_citygate_spot_coverage",
+          "caiso_ct_peaker_committed_measured",
+          "caiso_offer_surface_measured_ungrounded",
+          "caiso_st_gas_committed_measured",
+          "caiso_st_gas_peak_measured",
+          "campd_outage_merit_order_guard",
+          "campd_per_unit_attribution",
+          "egrid_family_heat_rates",
+          "fleet_state_from_eia860",
+          "nearby_fuel_price_zone_donor_guard",
+          "unit_outage_mixed_gas_routing",
+          "unit_outage_per_unit_clip",
+          "unit_outage_st_capacity_basis"
+        ],
+        "meta_keeper_only": [
+          "caiso_bidir_intertie"
+        ],
+        "meta_matched": 270,
+        "scenario_config_drift": [
+          "ccs_retrofit_capex_kw",
+          "fixed_om_gas_cc_ccs"
+        ],
+        "scenario_config_head_only": [
+          "adequacy_accounting_ratio_dated_net",
+          "caiso_citygate_spot_coverage",
+          "caiso_ct_peaker_committed_measured",
+          "caiso_fsno_subzonal_topology",
+          "caiso_offer_surface_measured_ungrounded",
+          "caiso_st_gas_committed_measured",
+          "caiso_st_gas_peak_measured",
+          "campd_outage_merit_order_guard",
+          "campd_per_unit_attribution",
+          "carbon_price_delta",
+          "ccs_retrofit_capex_co2_scaling",
+          "egrid_family_heat_rates",
+          "entry_dispersion_expectation_signal",
+          "entry_forward_expectation_signal",
+          "entry_forward_reserve_leg",
+          "entry_margin_exhaustion",
+          "entry_vre_zone_selection",
+          "ercot_offer_surface_cleared_share_rt_room",
+          "ercot_offer_surface_cleared_share_rt_room_path",
+          "fleet_state_from_eia860",
+          "fossil_announced_exits_enabled",
+          "nearby_fuel_price_zone_donor_guard",
+          "neiso_net_icr_requirement",
+          "nyiso_requirement_forecast_peak",
+          "nyiso_requirement_vintage_factors",
+          "nyiso_zonal_loss_surface",
+          "partial_plant_exit_carry",
+          "pjm_accreditation_design_vintage",
+          "pjm_demand_response_supply",
+          "retiree_vintage_status_scope",
+          "st_gas_mustrun_oom_level",
+          "storage_entry_availability_gate",
+          "storage_entry_cost_normalized_rank",
+          "unit_outage_mixed_gas_routing",
+          "unit_outage_per_unit_clip",
+          "unit_outage_st_capacity_basis"
+        ],
+        "scenario_config_matched": 750
+      },
+      "hours": 8760,
+      "keeper_id": "2026-08-25-236-swcap-clip-k33",
+      "keeper_snapshot": {
+        "bundle": "results/calibration/ercot236_k33_clip",
+        "date": "2026-08-25",
+        "definition": "ercot-236 h4097 SHED REPAIR + re-selection \u2014 THE FIRST ERCOT RUN TO PASS ALL THREE 2023 PRICE CRITERIA (C3a -7.3% / C3b 0.102 / C3c 180 of 181), DETERMINATION CALIBRATED, zero caveats. 2023-only under the owner's invoked rule-16 waiver (the ercot-235 2023-DISCRETE-CONFIG charter, cited from the log entry). The ercot-235 keeper recipe + TWO deltas: (1) ercot_offer_swcap_clip=true \u2014 the STRUCTURAL system-wide offer cap (every real SCED energy offer is capped at SWCAP $5,000 = VOLL; the uncapped tuned surface at k_peak > 24 walked implied offers past VOLL and manufactured the June-20 h4097 shed against physically-available capacity \u2014 D-1 measured: thermal -48.28 MW undispatched at all-zone $5,000, storage +12.33 refutes SOC starvation, net reserve held 0.0 refutes withholding; zero fitted values, measured INERT below the cap: V-0 k24+clip reproduces the prior keeper's officials to the digit); (2) k_peak 24 -> 33.0, re-selected on the repaired surface by the precommitted kill-gated {27, 30, 33} re-bracket (all clean: zero shed, off-season intact, coal +0.099 TWh vs the ercot-234 baseline). August lands $221.18 vs actual $220.16; the >=$1,000 tail is 59 vs 61 h [CORRECTED 2026-08-26 by owner authorization, per ercot-237 Amendment 1: originally registered 'EXACT (59 vs 59 h)' \u2014 the actual-side 59 was a hardcoded constant, never computed from data; true actual count 61, 77+43+61 = 181 = actual_tail.json rt_gt; no scored criterion moves]; reported structure residual: [500,1000) under (18 vs 43), [200,500) over (103 vs 77); spur 68 banded / 74 lidless (unchanged from k24). PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md (Amendments 1-2) + docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md.",
+        "id": "2026-08-25-236-swcap-clip-k33",
+        "iso": "ERCOT",
+        "label": "236 swcap clip k33",
+        "shorthand": "236-swcap-clip-k33",
+        "sidecar_at_capture": "present",
+        "years": [
+          2023
+        ]
+      },
+      "partition": {
+        "declared": "2026-08-26",
+        "designated_years": [
+          2023
+        ],
+        "iso": "ERCOT",
+        "label": "2023 CARVE-OUT - the discrete 2023 config for the ECRS-era regime (ECRS introduced 2023-06-10)",
+        "role": "carveout-2023",
+        "ruling_source": "Owner, program-director sitting 2026-08-26 (verbatim). Executed by the governance-records session the same day; record: docs/FINDING-ercot-two-config-keeper-2026-08-26.md."
+      },
+      "provenance": {
+        "basis_sha": "09f99f0f44bfe84fd874ebdab366c80cc5e992d3",
+        "env": {
+          "MARKET_SIM_HIGHS_THREADS": "1",
+          "MARKET_SIM_WARMSTART": "1",
+          "MARKET_SIM_WARMSTART_XYEAR": "0"
+        },
+        "git_dirty": false,
+        "git_sha": "184c78e",
+        "git_sha_full": "184c78ee6094ea2b32e0505df48253286b76d615",
+        "highspy_version": "unknown",
+        "recorded_at": "2026-09-05T02:52:42Z",
+        "source": "stamped-at-capture"
+      },
+      "recorded_flag_count": 261,
+      "years": [
+        2023
+      ]
+    },
     "NEISO": {
       "bundle": "results/calibration/neiso99_joint_B",
       "content_hashes": {
