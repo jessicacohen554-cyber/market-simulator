@@ -495,15 +495,20 @@ def solve_dispatch(
             (REQUIRED with the region rows — each row's feasibility escape).
         clean_region_zone_mask: ``(K2, n_zones)`` bool clean/carbon-free tier
             eligibility mask (FFR-7B Arm 3, MISO West/East —
-            ``policy.clean_tiers.build_clean_region_arrays``). A second
-            independent row family; REQUIRES the RPS region family. ``None``
-            (default) adds no rows, byte-identical to before.
+            ``policy.clean_tiers.build_clean_region_arrays``; the federal
+            CES target row, ``policy.federal_ces.build_federal_ces_region``).
+            A second independent row family that stands alone or beside
+            either RPS grain (SCN-WS2a relaxed the former "requires the RPS
+            region family" coupling). ``None`` (default) adds no rows,
+            byte-identical to before.
         clean_region_obligation_frac: ``(K2, n_zones)`` float clean-tier RHS
             weights.
         clean_region_acp_price: ``(K2,)`` clean-row feasibility-escape prices
             in $/MWh (REQUIRED with the clean rows).
-        clean_region_fuels: Per-region statutory qualifying fuel-name tuples
-            (nuclear admitted; unknown names hard-error).
+        clean_region_fuels: Per-region qualifying spec — a statutory
+            fuel-name tuple (nuclear admitted; unknown names hard-error) or an
+            ``(n_gen,)`` per-generator credit-fraction vector (the federal CES
+            row's ``unit_credit_fractions``).
         mass_cap_coeffs: Optional ``(k, n_gen)`` emissions mass-cap row
             coefficients (``m[g] * emission_rate[g]``); one inequality row per
             cap bounds in-region fossil emissions. ``None`` (default) adds no

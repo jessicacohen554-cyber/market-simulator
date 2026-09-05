@@ -373,21 +373,19 @@ class DispatchModel:
         else:
             n_rps_rows = 1 if (rps_target is not None and rps_target > 0.0) else 0
             n_rec_acp = 1 if (n_rps_rows and rps_acp_price is not None) else 0
-        # Clean/carbon-free tier family (FFR-7B Arm 3): a SECOND independent
-        # row family riding the region machinery — requires the RPS region
-        # family (its ACP escape columns occupy the region-major slots after
-        # the RPS family's), and every clean row likewise REQUIRES its own
-        # escape (FFR-6B §6.3: a hard 100%-by-2040 row is an infeasibility
-        # bomb).
+        # Clean/carbon-free tier family (FFR-7B Arm 3; the federal CES target
+        # row, SCN-WS2a): a SECOND independent row family riding the region
+        # machinery. Its ACP escape columns occupy the region-major slots
+        # AFTER the RPS family's (K1 of them under the region grain, 1 beside
+        # a legacy row with an escape, 0 otherwise) — since SCN-WS2a the
+        # family STANDS ALONE OR BESIDE EITHER RPS GRAIN (the former
+        # "requires the RPS region family" coupling, G-S3, is relaxed so a
+        # federal all-zone clean row can exist in every ISO). Every clean row
+        # still REQUIRES its own escape (FFR-6B §6.3: a hard 100%-by-2040 row
+        # is an infeasibility bomb).
         clean_region_on = clean_region_zone_mask is not None
         n_clean_rows = 0
         if clean_region_on:
-            if not rps_region_on:
-                raise ValueError(
-                    "clean_region_zone_mask (clean-tier rows) requires the "
-                    "per-region RPS family (rps_region_zone_mask) — E-2 rides "
-                    "E-1's machinery and its ACP block slots (FFR-6B §6.2)"
-                )
             if (
                 clean_region_obligation_frac is None
                 or clean_region_acp_price is None
@@ -752,11 +750,16 @@ class DispatchModel:
         # matching the rows' acp_k0 = K1 slot assignment.
         self._n_clean_rows = n_clean_rows
         if clean_region_on:
+            # The RPS leg of the ACP block: the K1 region escapes, the one
+            # legacy-row escape, or nothing (clean family standing alone).
+            if rps_region_on:
+                rps_acp_leg = self.rps_region_acp_price
+            elif n_rps_rows and rps_acp_price is not None:
+                rps_acp_leg = np.array([float(rps_acp_price)])
+            else:
+                rps_acp_leg = np.zeros(0, dtype=float)
             self.rps_region_acp_price = np.concatenate(
-                [
-                    self.rps_region_acp_price,
-                    np.asarray(clean_region_acp_price, dtype=float),
-                ]
+                [rps_acp_leg, np.asarray(clean_region_acp_price, dtype=float)]
             )
         self._lcr_row_offset = lcr_row_offset
         self._n_lcr_areas = n_lcr_areas
