@@ -10760,6 +10760,100 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**LEVER QUEUE — REWRITTEN 2026-09-05 (nyiso-190 `backcast-calibration` lane,
+**ZERO SOLVES**; THE nyiso-189 PROMOTION'S ONE UNMEASURED JUSTIFYING CLAUSE IS
+MEASURED ON PRE-REGISTERED BARS AND **REFUTED**; NO KEEPER CHANGE, NO MECHANISM
+TESTED, NO CELL STATUS MOVED, NOTHING REGISTERED). Keeper
+`2026-09-05-nyiso-189-steam-identity`; CALIBRATED, grade 7, fails 0, C3c
+ledgered — UNCHANGED.**
+
+* **THE CLAUSE IS WITHDRAWN AS A STATEMENT OF FACT.** FINDING-nyiso189 §3.1 and
+  the §5.5 header above justify the C1-2024 `CC_REGULAR` regression (+2.05 →
+  +3.33 TWh, +1.8 → +2.8 pp against a 3.0 pp band) with *"the NYC steam it
+  displaces is what the market committed anyway"*. Measured on the keeper's own
+  registered dispatch against the bit-identical nyiso-188 payload, on bars
+  pushed before the first number: **B1 SUPPORTED** — the market DID have the
+  displaced units on (`s_online` 0.750 / **0.839** / 0.834 of removed MWh at the
+  2 % bar); **B2 REFUTED** — the model was running them HARDER than the market
+  did, **78.1 % of the 2024 displaced TWh moved TOWARD the plants' measured
+  annual** (`w_away` 0.139 / **0.219** / 0.375 on CAMPD, 0.216 on EIA-923, both
+  bases agreeing), so the displacement RELIEVED a model over-run instead of
+  deepening a market-committed deficit; **B3 HOLDS** — the arm moves the
+  six-class gas family by 0.042 TWh at +1.87 from actual against ±3.82, so it IS
+  a within-family reallocation; **B4 FAILS the naming bar** — only **0.42** of
+  the 2024 displaced TWh is downstate steam/cogen (0.76 TWh `CC_CHP` / 0.46
+  `CC_REGULAR` / 0.30 `ST_GAS`; NYC 0.74 / Capital-Hudson 0.71 / Upstate-West
+  0.21), so it must not be called "NYC steam / cogen displacement". Every mover
+  the lane was sent to check — Ravenswood 2500, Arthur Kill 2490, East River
+  2493, Empire 56259, Cricket Valley 57185 — is a plant the model was
+  **over**-running on both actual bases. **The keeper is untouched**: what is
+  withdrawn is a reason offered in prose, not a result, and the promotion's
+  license (rules 14 + 13 + 1 on a measured-input repair) never rested on it.
+* **NO cell-G QUESTION GOES TO THE OWNER** — pre-committed in PREREG §4 for the
+  `B2 < 0.50` branch and executed. `scuc_load_pocket_commitment` stays **`G`**,
+  the nyiso-97 §5 re-open bar and the nyiso-160 access closure stand, and stop
+  S2 records why this session could never identify it: the bar forbids inferring
+  the requirement from observed unit conduct, which is exactly what this
+  measurement is. **The CT half of the nyiso-187 disposition stands verbatim**
+  (`CT_PEAKER` −1.59, `CT_CHP` −1.20 TWh in 2024).
+* **NEW TOP OF QUEUE — AN OWNER QUESTION WITH A CONCRETE LANE BEHIND IT (the
+  `CC_CHP` scope gap of `cc_capacity_reconcile`).** POST-HOC and labelled: on
+  the keeper, 72 benched plants carry **+11.25 TWh of over-run against
+  −8.18 TWh of under-run** (net +3.07) — ~±8 TWh of offsetting plant-grain
+  misallocation inside a family the class totals say is pinned (±7.4 in 2023,
+  ±9.3 in 2025). The top of it is `CC_CHP` in all three years: **Sithe
+  Independence 54547** 9.478 vs 6.286 CAMPD / 6.158 EIA-923 TWh in 2024 (annual
+  **CF 0.93 against a measured 0.62**; 0.97 vs 0.62 in 2025), **Brooklyn Navy
+  Yard 54914** held at ≥95 % of nameplate for **8,172 / 6,226 / 6,714 hours
+  against ZERO measured hours** at that level, **Empire 56259** 2,041 h against
+  65. `cc_capacity_reconcile` (cell **K**) is the mechanism that fixes exactly
+  this, and **its derive is scoped to `CC_REGULAR` by construction** — its
+  committed 15-row NYISO table contains no `CC_CHP` plant. **Direction on
+  C1-2024 is UNKNOWN and could go either way** (released energy may land on
+  `CC_REGULAR`, pushing the cell past its band, or on the deficit classes,
+  improving both) — which is why nyiso-190 neither built nor proposed it and put
+  it to the owner as one question:
+  `docs/DECISION-CARD-nyiso190-cc2024-cell-disposition-2026-09-05.md` §4.
+  **Headroom on the cell is 0.49 TWh / 0.2 pp.**
+* **SECOND: the `ST_GAS` internal misallocation** — Ravenswood +1.74 / Arthur
+  Kill +0.78 TWh **over** in 2024 against Northport −1.78 / Bowline Point −0.92
+  **under**, on a class that is only −0.62 net. A class-total reading cannot see
+  it. (Ravenswood's *availability* was adjudicated at nyiso-183; this is its
+  energy placement against Long Island and Capital-Hudson steam — a different
+  object.)
+* **THIRD: Bethlehem 2539 has no headroom left, in any year.** The arm puts it
+  **above** its measured CAMPD output in all three — 4.880 vs 4.180 (+0.70),
+  5.896 vs 5.539 (+0.36), 5.664 vs 5.267 (+0.40) — where the 2024 control was
+  1.39 TWh under. Any further in-merit repair there now moves away from actual.
+  (Its EIA-923 rows sit on the same understated filing basis nyiso-189 repaired;
+  CAMPD is the instrument for this plant.)
+* **C3a-2025 −8.3 %** — `DECISION-CARD-nyiso148` Q1 **confirmed still pending**;
+  owner-court, untouched (stop S5). **C3c** ledgered.
+* **Forecast lane, carried unchanged:** `egrid_steam_collapse_heat_rates`
+  regenerates per eGRID vintage (`APPLIED_VINTAGE = 2023`, the fleet join's own).
+  **eGRID 2025 has NOT landed** — `data/raw/fleet-egrid` holds vintages through
+  `egrid2024_data.xlsx` only. When it lands, re-derive
+  (`scripts/data/derive_egrid_steam_collapse_heat_rates.py --iso NYISO`) and
+  re-check the applied vintage's admissions (rule 23). Record-only caution
+  stands: Bethpage 50292 (2022) and Cornell 50368 (2024) fire the fence with
+  non-physical identities, so a future applied vintage admitting such a row
+  needs the class-band check nyiso-189 §5.2 item 4 names.
+* Unchanged: Zeltmann's 2024 cold-weather record vs the pooled p99.9 cap
+  (recorded, not a lever); the v2 artifact's frozen 2018 / 2022 / 2026 rows;
+  NYISO parasitic factors absent; the Astoria merit-panel stack-duplicate defect
+  (nyiso-184 §4.1); the D-2 / C8 grain under-count escalation (nyiso-181 §6).
+* Evidence: `docs/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md`,
+  `results/calibration/PREREG-nyiso190-cc2024-displacement-provenance.md`
+  (pushed before the first number was read),
+  `docs/DECISION-CARD-nyiso190-cc2024-cell-disposition-2026-09-05.md`,
+  `_nyiso190_displacement_provenance.json`, `_nyiso190_plant_grain_posthoc.json`,
+  probes `scripts/probes/nyiso190_displacement_provenance.py` /
+  `nyiso190_plant_grain_posthoc.py`.
+
+**PRIOR QUEUE (nyiso-188/-189) PRESERVED BELOW — its top-of-queue item (the
+C1-2024 `CC_REGULAR` cell as a disposition behind cell G) is SUPERSEDED by the
+measurement above; everything else stands.**
+
 **LEVER QUEUE — REWRITTEN 2026-09-04 (nyiso-188 `backcast-calibration` lane,
 FOUR SOLVES — one bit-identical control and three arms plus the combined
 candidate; THE ASTORIA ROUTING'S REMAINING FOOTPRINT IS MEASURED AND CARRIED,

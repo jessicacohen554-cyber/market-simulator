@@ -19,6 +19,9 @@ from dataclasses import asdict
 import numpy as np
 
 from market_sim.config.constants import (
+    DEFAULT_MARKET_DESIGN,
+    MARKET_DESIGN,
+    resolve_locality_gross_cone_ratio,
     END_YEAR,
     ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
@@ -104,6 +107,9 @@ from market_sim.model.capacity import (
     accredited_firm_capacity_mw,
     capacity_reserve_position,
     deliverability_headroom_by_zone,
+    locality_capacity_curves_armed,
+    locality_capacity_positions,
+    locality_prices_by_zone,
     evolve_fleet,
     modelled_hydro_nameplate_mw,
     pipeline_lookahead_units,
@@ -1980,6 +1986,47 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 year,
             )
 
+        # capx D59 (locality_capacity_curves, GATED default-OFF): the NYISO
+        # LOCALITY positions and prices, computed ONCE per year on the SAME
+        # entering fleet as the NYCA position above (rule 19 — the two
+        # positions the §5.15.2 settlement compares are contemporaneous) and
+        # threaded verbatim into the retirement, thermal-entry and storage
+        # screens. Empty (gate off / not NYISO / base year) ⇒ every screen
+        # receives None and is byte-identical. The ICAP census uses the LP's
+        # own zonal renewable nameplate and the storage fleet by zone, never a
+        # load-share split (DESIGN §2.2).
+        locality_positions: dict = {}
+        locality_prices: dict[str, float] = {}
+        locality_cost_ratio: dict[str, float] = {}
+        if (
+            locality_capacity_curves_armed(config, iso)
+            and fleet is not None
+            and prior_results is not None
+        ):
+            _storage_by_zone: dict[str, float] = {}
+            for _su in storage_units:
+                _storage_by_zone[_su.zone] = _storage_by_zone.get(_su.zone, 0.0) + float(
+                    _su.power_cap_mw
+                )
+            locality_positions = locality_capacity_positions(
+                iso,
+                year,
+                fleet,
+                config,
+                wind_pool_by_zone={z: float(wind_cap[i]) for i, z in enumerate(zone_names)},
+                solar_pool_by_zone={z: float(solar_cap[i]) for i, z in enumerate(zone_names)},
+                storage_power_by_zone=_storage_by_zone,
+                locality_peak_by_zone={
+                    z.name: float(peak_demand) * float(z.load_share) for z in iso_config.zones
+                },
+            )
+            locality_prices = locality_prices_by_zone(locality_positions)
+            for _loc, _pos in locality_positions.items():
+                _ratio = resolve_locality_gross_cone_ratio(iso, _loc, year)
+                if _ratio is not None:
+                    for _z in _pos.zones or ():
+                        locality_cost_ratio[_z] = float(_ratio)
+
         # capx D52 observability (additive ledger fields, decision-neutral and
         # cache-key-neutral — nothing reads them back): the capacity-screen
         # SEAM peak this block's position and evolve_fleet's floor/backstop
@@ -2017,7 +2064,34 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 screen_reserve_position = curve_convention_position(
                     config, iso, screen_entering_firm_mw / screen_requirement_mw
                 )
+        # capx D59 ledger block (additive, decision-neutral, cache-key-neutral):
+        # per representable locality the ICAP census terms, requirement,
+        # position, locality curve price, the NYCA seam price and the §5.15.2
+        # settled price — written whenever the gate is armed; [] otherwise.
+        _nyca_price_kw_yr = (
+            MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN).capacity_price_per_firm_mw_yr(
+                config, curve_reserve_position, iso=iso, year=year
+            )
+            / 1000.0
+            if locality_positions
+            else None
+        )
+        locality_ledger_rows = []
+        for _loc, _pos in locality_positions.items():
+            _row = _pos.as_ledger_row()
+            _row["nyca_price_per_kw_yr"] = round(float(_nyca_price_kw_yr), 4)
+            _row["settled_price_per_kw_yr"] = round(
+                max(
+                    float(_nyca_price_kw_yr),
+                    (_row["price_per_kw_yr"] if _row["price_per_kw_yr"] is not None else 0.0),
+                ),
+                4,
+            )
+            _row["gross_cone_ratio"] = resolve_locality_gross_cone_ratio(iso, _loc, year)
+            _row["below_requirement"] = bool(_pos.position < 1.0)
+            locality_ledger_rows.append(_row)
         screen_ledger_fields = dict(
+            locality_capacity=locality_ledger_rows,
             screen_peak_demand_mw=round(float(screen_peak_demand), 3),
             screen_adequacy_requirement_mw=(
                 round(float(screen_requirement_mw), 3)
@@ -2118,6 +2192,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 ),
                 entry_pipeline=entry_pipeline,
                 exit_rate_cap_mw=exit_rate_cap_mw,
+                locality_prices_by_zone=(locality_prices or None),
+                locality_cost_ratio_by_zone=(locality_cost_ratio or None),
             )
             # Growth-ladder update (entry_rate_limits): this year's decision-
             # grain builds raise the prior max, so a tech building at its
@@ -2200,6 +2276,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     "storage_as_revenue_per_mw_yr"
                 ),
                 reserve_position=curve_reserve_position,
+                locality_prices_by_zone=(locality_prices or None),
                 # D11-R: the SAME walk state the thermal screen just walked
                 # (evolve_fleet step 5), so this year's thermal tranches are
                 # already in the storage walk's starting signal. None

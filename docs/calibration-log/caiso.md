@@ -12430,3 +12430,100 @@ the bundle's `_verdict.json`, matrix cell `caiso_citygate_spot_coverage` → K
 forecast board's gate-(a) re-key (R-T).
 
 **Next number: caiso-247.**
+
+---
+
+## caiso-247 (2026-09-05) — PHASE-0 RESIDUAL REGIME ANATOMY: the C3a gap is NOT a hub-basis residual. ZERO SOLVES, NOTHING ARMED, keeper unchanged
+
+**Object:** handoff queue item **A**, taken as ranked (measure-don't-arm).
+Pre-registered in `PRECOMMIT-caiso247-residual-regime-anatomy-2026-09-05.md`
+(`004c0d39`), pushed to `origin` **before the probe was written and before any
+cell of the object was computed**. Keeper `2026-09-05-caiso-246-b1-spot`
+throughout; no field, no flag, no solve, no run registered, no promotion.
+
+**Instrument:** every 2023/2024/2025 **zone-hour** labelled by what sets the
+model's price (taxonomy frozen in PRECOMMIT §1.3: HUB_FITTED / HUB_MEASURED /
+DOM_GAS / DOM_OTHER / STORAGE / SURPLUS / UNRESOLVED), with the C3a gap
+decomposed by month × regime on the **caiso-131 §2 / caiso-140 §A
+common-weight convention** so the cells sum exactly to the reconstructed gap.
+Import states from the **caiso-244 dual-merit reconstruction imported
+verbatim**; fleet rebuilt on-recipe (`replay_keeper.run_year_kwargs`,
+`fleet_only=True`). **All five gates PASS** — G-BENCH (recomputed `rt_lw`
+54.1748/34.6475/34.4233 vs committed 54.17/34.65/34.42), G-RECON (gross,
+all three years, on the NEW keeper), G-GAP (0.813/0.489/0.789 ≤ 1.00),
+G-CLASS (UNRESOLVED 3.7/3.0/3.4 %), G-ORDER (P-5 verdict stable under
+DOM_GAS-first).
+
+**RESULT 1 — THE HUB IS ACQUITTED ON THE SCORED STATISTIC.** `CR(HUB)` =
+gap share ÷ weight share = **1.026 (2024) / 0.642 (2025)**; the hub-marginal
+regime carries **4.0 % / 3.6 %** of the gap on **3.9 % / 5.7 %** of the
+weight. The PRECOMMIT's own falsifier fires: *CR < 1.0 → the Palo Verde hub +
+adder chain is ACQUITTED and the object is the domestic offer surface.* Robust
+to both variants (G-ORDER 1.188/0.583; tol = 0.75 0.959/0.516).
+
+**RESULT 2 — caiso-202 §C's ~5 % SURVIVES ITS OWN INSTRUMENT'S REPAIR.** On
+the like-for-like positive-part basis caiso-202 used, the import legs carry
+**3.6 % (2024) / 5.1 % (2025)** of the positive gap against its ~5 %/~5 % —
+reproduced on a new keeper, the corrected node-complementarity marginal-hour
+definition (caiso-244 §3.6) and an independent estimator. **The HOUR count was
+wrong; the gap attribution was right.**
+
+**RESULT 3 — A NEW NAMED OBJECT: BIOMASS.** `DOM_OTHER` is 96 %/86 % biomass —
+**184 units, 847.3 MW**, offering near-flat at **mc mean $33.32 / median
+$31.13** (2025), parked mid-distribution. It price-sets in **6.9 %/7.3 %** of
+the load-weighted zone-hours and the model runs **+$9.85 / +$7.84 per MWh over
+the actual RT there** — the largest mean residual of any regime, carrying
+**18.1 %/18.0 %** of the gap — and it STRENGTHENS at tol = 0.75 (CR 2.60→3.62,
+2.49→3.79). Never named in this lane; caiso-202 §C folded it into "unmatched".
+
+**Full 2025 split ($3.151 reconstructed gap):** DOM_GAS 40.2 % (CC_REGULAR
++$2.63, CC_CHP +$4.30 per MWh) · STORAGE 36.5 % · biomass 18.0 % · HUB 3.6 %
+(fitted 1.6 %) · UNRESOLVED 1.6 %. **2024 ($3.781):** DOM_GAS 47.1 % · STORAGE
+28.7 % · biomass 18.1 % · HUB 4.0 % · UNRESOLVED 2.1 %. **December-2025 is now
+attributed**: 50 % DOM_GAS, 31 % STORAGE, 9.4 % HUB.
+
+**PREDICTIONS: 5 HOLD, 5 FALSIFIED** (P-1/P-2/P-3/P-6/P-8 hold; **P-4** HUB
+weight share 10.9/3.9/5.7 % against a registered 20–34 % — my registration
+carried caiso-244's HOUR share across to a load-weighted zone-hour share and
+ignored the zonal loss surface; **P-5** the headline, falsified into its own
+ACQUITTAL branch; **P-7** falsified in the direction OPPOSITE the registered
+concern — 2023, the year C3a PASSES, has CR(HUB) **3.461**, four times the
+failing years', so the hub is least concentrated exactly when the residual is
+worst; **P-9** STORAGE 31.3 % vs 5–20 %; **P-10** falsified — a carrier IS
+named).
+
+**DISCLOSED AGAINST INTEREST:** (a) the **STORAGE bucket is largely a
+loss-surface artifact** — at tol = 0.75 it collapses 31.3 %→3.4 % of weight and
++1.151→−0.125 of gap while DOM_GAS rises to 2.032, so only the SUM
+(DOM_GAS+STORAGE = 75.8 %/76.7 %) and the HUB and biomass cells are robust;
+(b) **11–38 % of the printed C3a gap is a WEIGHT-BASIS term** — the rubric's
+model side is MODEL-demand-weighted and its actual side MEASURED-load-weighted
+(model demand 205.6–212.2 TWh vs measured load 218.2–224.0 TWh), measured at
++0.804/+0.493/+0.788 $/MWh — **filed as an owner ask and explicitly NOT offered
+as a reduction of C3a**; (c) `mc = λ` is necessary, not sufficient, so
+DOM_GAS/DOM_OTHER can over-identify; (d) **CT_PEAKER's residual is NEGATIVE**
+(−$7.79/−$2.38/−$1.63) and 2023's whole DOM_GAS cell is −0.189 — the domestic
+surface is not uniformly hot, CC carries it and the peaking family sits under
+the actual. No direction claimed on C3a; the favourable-direction count stays
+at **five**.
+
+**QUEUE RE-RANK (FINDING §7):** biomass first; **items C and B DEMOTED as C3a
+objects** (the import seam is 4 % of the gap, the two fitted prices 1.6 %) —
+form (ii) remains right as a rule-1 structural matter, not as a C3a lever;
+items E/F stay live but must reckon with the CC-hot / CT-cold split; new owner
+ask on the C3a weight basis.
+
+**DO-NOT-REDO adds (FINDING §8):** the hub-basis reading of the C3a residual is
+CLOSED for 2024/2025; never quote caiso-244 §3.6's 18–23 % HOUR share as a
+weight or gap share; never quote this probe's DOM_GAS/STORAGE split (only their
+sum); never quote the weight-basis term as a reduction of C3a; caiso-202 §C's
+gap attribution is CONFIRMED, not superseded.
+
+**Deliverables:** `PRECOMMIT-caiso247-residual-regime-anatomy-2026-09-05.md`,
+`FINDING-caiso247-residual-regime-anatomy-2026-09-05.md`,
+`scripts/probes/_caiso247_residual_regime_anatomy.py` +
+`_caiso247_residual_regime_anatomy.json`, evidence-only appends to the CAISO
+matrix shard (`import_hub_pricing`, `measured_offer_surface`) with **no cell
+verdict moved**. No run registered (zero solves); keeper unchanged.
+
+**Next number: caiso-248.**
