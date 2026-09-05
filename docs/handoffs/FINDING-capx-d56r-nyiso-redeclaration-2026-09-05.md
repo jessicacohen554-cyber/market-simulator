@@ -281,3 +281,22 @@ at `c9f1d26e` before any edit, on the same assertion lines. Recorded; not repair
 were edited locally through their own serializers and pushed as the exact on-disk bytes over
 `git push`; the pushed blobs were fetched back and compared to local — §11 below carries the
 verification.
+
+---
+
+## 11. Push verification (rule 27, both ≥300-line files, `git push` transport)
+
+Commit `554cef8b` on `claude/capx-d56r-nyiso-redeclaration-rme0qs` (base `db057c5d`, a
+single-commit pack of six text files). Each pushed blob fetched back through the GitHub
+contents API on the branch ref and compared to the local `git hash-object`:
+
+| file | local blob | remote blob | bytes / lines |
+|---|---|---|---|
+| `frontend/data/backcast/calibration-complete.json` | `00ae35c0…` | `00ae35c0…` ✓ | 157,317 / 282 |
+| `frontend/data/forecast/program-status.json` | `0ab26932…` | `0ab26932…` ✓ | 279,682 / 1,175 |
+| `docs/codebase-site/data/mechanism-matrix/NYISO.js` | `1202f2aa…` | `1202f2aa…` ✓ | 320,870 / 906 |
+| `tests/scoring/test_ff_readiness_battery.py` | `126f64ae…` | `126f64ae…` ✓ | 18,809 / 415 |
+
+No mismatch; no stop-the-line event. The final rebase (`f539ca3c` → `db057c5d`) preceded the
+push, and every `read_live_at` / `derived_at_sha` / determination-text pin names `db057c5d`,
+the sha the keeper, marker and verdict were re-read at.
