@@ -3742,6 +3742,7 @@ def solve_and_persist(
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
+    egrid_steam_collapse_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -4752,6 +4753,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 egrid_family_heat_rates=egrid_family_heat_rates
             )
+        if egrid_steam_collapse_heat_rates is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                egrid_steam_collapse_heat_rates=egrid_steam_collapse_heat_rates
+            )
         if cc_reserve_duty_split is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_reserve_duty_split=cc_reserve_duty_split
@@ -5530,6 +5535,7 @@ def solve_and_persist(
             chp_layup_duty_curve=chp_layup_duty_curve,
             egrid_identity_heat_rates=egrid_identity_heat_rates,
             egrid_family_heat_rates=egrid_family_heat_rates,
+            egrid_steam_collapse_heat_rates=egrid_steam_collapse_heat_rates,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
             nyiso_gas_bridge_st_min_run_hours=nyiso_gas_bridge_st_min_run_hours,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
@@ -6460,6 +6466,7 @@ def solve_and_persist(
         "chp_layup_duty_curve": chp_layup_duty_curve,
         "egrid_identity_heat_rates": egrid_identity_heat_rates,
         "egrid_family_heat_rates": egrid_family_heat_rates,
+        "egrid_steam_collapse_heat_rates": egrid_steam_collapse_heat_rates,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
         "nyiso_gas_bridge_st_min_run_hours": nyiso_gas_bridge_st_min_run_hours,
         "nyiso_spin_reserve_online": nyiso_spin_reserve_online,
@@ -8645,6 +8652,7 @@ def run_replay_bundle(
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
+    egrid_steam_collapse_heat_rates: bool | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8769,6 +8777,11 @@ def run_replay_bundle(
         # replay path, so the single-field A/B arm is the keeper's recorded
         # recipe plus exactly this one field.
         kwargs["egrid_family_heat_rates"] = egrid_family_heat_rates
+    if egrid_steam_collapse_heat_rates is not None:
+        # nyiso-189: the steam-collapse identity rides the same replay path, so
+        # the single-field A/B arm is the keeper's recorded recipe plus exactly
+        # this one field.
+        kwargs["egrid_steam_collapse_heat_rates"] = egrid_steam_collapse_heat_rates
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
         # (the dashboard and audit_keepers pair twins by ablation_of).
@@ -12443,6 +12456,23 @@ def main() -> None:
         "--replay-bundle.",
     )
     parser.add_argument(
+        "--egrid-steam-collapse-heat-rates",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="eGRID STEAM-COLLAPSE identity heat rates (nyiso-189, owner ruling "
+        "2026-09-05 form B2): a combined cycle whose eGRID steam-generator "
+        "filing collapsed in the applied vintage (the CA generator at exactly "
+        "zero net generation while the CTs run, or a steam share below the "
+        "plant's own T1-clean record by more than the record's range, with the "
+        "heat per CT-MWh inside that record) takes the CT-heat identity "
+        "PLHTIAN / sum GENNTAN(CT) / (1 + the plant's own median steam share) "
+        "instead of the inflated plant-grain PLHTRT (Bethlehem 2539: 9.665 -> "
+        "6.877). Committed per-ISO artifact egrid_steam_collapse_heat_rates_"
+        "<ISO>.csv (scripts/data/derive_egrid_steam_collapse_heat_rates.py); "
+        "zero fitted parameters; no-op for an ISO with no artifact. Composes "
+        "with --replay-bundle.",
+    )
+    parser.add_argument(
         "--cc-reserve-duty-split",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12604,6 +12634,12 @@ def main() -> None:
                 args.egrid_family_heat_rates
                 if "--egrid-family-heat-rates" in sys.argv
                 or "--no-egrid-family-heat-rates" in sys.argv
+                else None
+            ),
+            egrid_steam_collapse_heat_rates=(
+                args.egrid_steam_collapse_heat_rates
+                if "--egrid-steam-collapse-heat-rates" in sys.argv
+                or "--no-egrid-steam-collapse-heat-rates" in sys.argv
                 else None
             ),
             unit_outage_st_capacity_basis=(
@@ -13022,6 +13058,7 @@ def main() -> None:
         chp_layup_duty_curve=args.chp_layup_duty_curve,
         egrid_identity_heat_rates=args.egrid_identity_heat_rates,
         egrid_family_heat_rates=args.egrid_family_heat_rates,
+        egrid_steam_collapse_heat_rates=args.egrid_steam_collapse_heat_rates,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
         nyiso_gas_bridge_st_min_run_hours=args.nyiso_gas_bridge_st_min_run_hours,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,

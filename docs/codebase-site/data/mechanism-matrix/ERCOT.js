@@ -155,6 +155,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     measured_chp_heat_rates: { cell: "U" },
     egrid_identity_heat_rates: { cell: "U" },
     egrid_family_heat_rates: { cell: "U" },
+    egrid_steam_collapse_heat_rates: { cell: "U" },
     da_virtual_bids: { cell: "." },
     negative_renewable_offers: { cell: "G" },
     wind_ptc_vintage_offers: { cell: "I" },
