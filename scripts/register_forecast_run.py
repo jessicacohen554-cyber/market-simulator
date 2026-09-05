@@ -108,6 +108,13 @@ INV_NAMES = {
 # uniformly match run ids, and a wrong attachment would mislabel a run, so the
 # gate runs are mapped explicitly rather than heuristically. A run's meta may
 # also carry ``verdict_key`` to override (future runs); ``--verdict-key`` sets it.
+# 2026-09-05 keeper-only prune (owner instruction: stale forecast runs are not
+# retained): the map entries for the pruned hindcast sidecars — every run that
+# was neither a current bare verdict-key holder, nor cited by the §2.1b board
+# seed, nor an ISO's registered crossover — were deleted here together with
+# their sidecars and results dirs. The narrative comments that explained those
+# entries stay as history; ``ff-verdicts.json`` keeps their verdict keys (a
+# verdict with no run renders nowhere, exactly like the -ff2d keys).
 VERDICT_MAP = {
     "ercot-2026-2030-ff-t1-gate": "ercot-t1f",
     "caiso-2026-2030-ff-t1-gate": "caiso-t1f",
@@ -152,13 +159,9 @@ VERDICT_MAP = {
     # BOTH legs SUFFIXED by charter (plus the ex-ante diagnostic leg); the
     # bare `miso-t1h` key is NOT taken by this lane (owner posture decision
     # pending; nothing armed).
-    "miso-2021-2025-realized-t1h-d42-control": "miso-t1h-d42-control",
-    "miso-2021-2025-realized-t1h-d42-dates": "miso-t1h-d42-dates",
-    "miso-2021-2025-realized-t1h-d42-dates-exante": "miso-t1h-d42-dates-exante",
     # The first verified-arm solve, on the PLANT-WIDE derate (superseded by the
     # fuel-scoped derate the same session landed; kept registered as the
     # measurement of that composition artifact — finding §4.3).
-    "miso-2021-2025-realized-t1h-d42-dates-plantwide": "miso-t1h-d42-dates-plantwide",
     "ercot-2023-2027-crossover-ffr3a3": "ercot-2023-2027-crossover-ffr3a3-t1x",
     "pjm-2023-2027-crossover-ffr3a3": "pjm-2023-2027-crossover-ffr3a3-t1x",
     # FFR-3A-4 measured the ONE leg the FFR-3A battery never got: MISO T1-X,
@@ -241,7 +244,6 @@ VERDICT_MAP = {
     # re-measure and this record keeps its own verdict, the same
     # preserve-then-overwrite the `-pre-d31` / `-pre-d33` chain uses.
     "neiso-2021-2025-realized-t1h-d37-armed": "neiso-t1h-pre-d46",
-    "neiso-2021-2025-realized-t1h-d37-control": "neiso-t1h-d37-control",
     # capx-D45 (2026-09-03), the once-only PJM + NYISO clearing-half / curve-ON
     # charter: the FIRST diagnostics-on T1-H solves of both ISOs at the LIVE
     # stack posture take the bare keys under the live-vintage convention,
@@ -281,14 +283,11 @@ VERDICT_MAP = {
     # resolves to 6e70a637b3465542, this leg was solved at 911371a8cf23d5c3, and
     # the single difference is the flipped CCS default, unreachable below 2028.
     "nyiso-2021-2025-realized-t1h-d52-devintage": "nyiso-t1h",
-    "nyiso-2021-2025-realized-t1h-d52-curveon": "nyiso-t1h-d52-curveon",
     # capx D59 (2026-09-05): the NYISO locality-half A/B arm (the D52 curve-ON
     # posture + locality_capacity_curves), suffixed; the bare key is untouched.
     # The D52 curve-ON recipe replayed at the D59 HEAD (the bare key moved upstream
     # between the D52 merge and this HEAD, DESIGN-capx-d59 §8.4), field OFF — the
     # like-for-like comparator and the ledger-level byte-inertness proof.
-    "nyiso-2021-2025-realized-t1h-d59-control": "nyiso-t1h-d59-control",
-    "nyiso-2021-2025-realized-t1h-d59-locality": "nyiso-t1h-d59-locality",
     # capx-D45R (2026-09-04), the D45 close-out at HEAD plus D46 Stages 2 and 3
     # (owner rulings Q33 + Q35). The PJM live-posture replay takes the bare key;
     # the NEISO SHIPPED-posture leg (neiso_net_icr_requirement False, as
@@ -314,7 +313,6 @@ VERDICT_MAP = {
     # D45-R's bare `pjm-t1h` (both OFF, the shipped posture). SUFFIXED BY
     # CHARTER, never the bare key; nothing arms -- the owner decides on the
     # pre-stated flip condition (PREDECL-capx-d48-2026-09-04.md §5).
-    "pjm-2021-2025-realized-t1h-d48-devintage": "pjm-t1h-d48-devintage",
     # capx-D57 (2026-09-05): the PJM CLEARING HALF built from DESIGN-capx-d54
     # (`capacity_market_supply_clearing_by_iso[PJM]` ON — clear the fleet's
     # net-ACR sell-offer stack against the published VRR curve; the screen's
@@ -330,22 +328,17 @@ VERDICT_MAP = {
     # the bare `pjm-t1h` key; the D45-R census leg moves to `pjm-t1h-pre-d57`
     # (above). Arm B keeps its suffix as the isolating control.
     "pjm-2021-2025-realized-t1h-d57-clearing": "pjm-t1h",
-    "pjm-2021-2025-realized-t1h-d57-clearing-headbasis": (
-        "pjm-t1h-d57-clearing-headbasis"
-    ),
     # capx-D51 (2026-09-04): the MISO internal-supply accounting ratio
     # RE-IDENTIFIED on the dates-ON fleet (`adequacy_accounting_ratio_dated_net`
     # ON; D49 §2.6, rule 23) against D46's bare `miso-t1h` (the gate OFF, the
     # shipped posture). SUFFIXED BY CHARTER, never the bare key; nothing arms
     # -- the owner decides on the pre-stated condition
     # (PREDECL-capx-d51-2026-09-04.md §5).
-    "miso-2021-2025-realized-t1h-d51-ratio": "miso-t1h-d51-ratio",
     # capx-D55 (2026-09-05): the floor-retention key repaired to the class
     # constant (D32 §3.2 / R2 -- a CODE fix, no field, same key
     # eff2c890746ec966 as the bare miso-t1h D46) -- the byte-identity A/B
     # that no second mechanism reads the key. SUFFIXED BY CHARTER; nothing arms
     # (PREDECL-capx-d55-2026-09-05.md §1).
-    "miso-2021-2025-realized-t1h-d55-keyfix": "miso-t1h-d55-keyfix",
     # capx-D53 (2026-09-05): the retirement-screen SECTOR GATE
     # (`retirement_sector_gate` ON; D32 C5/R3) against D46's bare `miso-t1h`
     # (the gate OFF, the shipped posture), plus the composition-observability
@@ -380,7 +373,6 @@ VERDICT_MAP = {
     # the explicit False collapses onto the pre-flip key); the record's
     # identity is its run id and its own fresh out-dir. SUFFIXED, never the
     # bare key; the d37-control record is untouched.
-    "neiso-2021-2025-realized-t1h-d45r-datesoff": "neiso-t1h-d45r-datesoff",
     "neiso-2021-2025-realized-t1h-d45r": "neiso-t1h",
     # NYISO and MISO are NOT re-pointed here: no D50 arm carries their D60 posture
     # (MISO's post-flip bare key adds D53's sector gate AND Q40's ratio, NYISO's
@@ -465,7 +457,6 @@ VERDICT_MAP = {
     # MISO added by capx D50-R (2026-09-05): PREDECL §2.4 made this leg
     # conditional on the PJM arm contradicting §2.2, and it did (P3's 2029 leg
     # missed on its own falsifier), so the conditional fired on its literal terms.
-    "miso-2026-2030-d50-ccscapex": "miso-t1f-d50-ccscapex",
 }
 
 
