@@ -494,7 +494,51 @@ DO-NOT-REDO discipline exists to prevent.
   tail hours remain out of deterministic reach, and the annual band does not need
   them).
 
-## 8. Changes to this file
+## 8. Rule 29 `[R-SCREEN]` — screen a new config on one year before spending the full span
+
+**Origin.** Owner rule, **2026-09-05**, given verbatim as: *"only run in calibrated years thru
+new configs first then if those show calibration under new configs launch the other years instead
+of wasting runs on 3 full years before we've addressed whether config actually solves the issue"*.
+
+**The cost it addresses.** A 3-year replay on the larger ISOs is ~35–70 min of LP **per arm**, and
+a properly controlled A/B spends two of them (G-CTRL form 4 is void whenever the solve path has
+moved since the keeper's `git_sha`, which by 2026-09 is the normal case). Before this rule the
+lane routinely spent six year-solves to learn that a mechanism did not do what its own offer
+arithmetic said it would.
+
+**The guardrail that makes it admissible.** The obvious version of this rule — "solve one year,
+look at the residual, continue if it improved" — is **fitted-mechanism selection done one year at
+a time**, which rule 1 `[R-STRUCT]` forbids outright, and it would additionally make the choice of
+screen year a residual-driven one. The rule as written therefore fixes two things in the
+PRECOMMIT, before the screen runs:
+
+1. **the screen year** — the year the mechanism's own *measured footprint* is largest, taken from
+   the zero-LP phase 0, never the year with the largest residual;
+2. **the screen gate** — structural only (direction and order of magnitude of the dispatch
+   response against the pre-solve delta; footprint confined to the claimed rows; the asserted
+   identity; no non-target load-bearing criterion flipping PASS → FAIL). The target residual is
+   **excluded from the screen gate** exactly as it is excluded from a favourable-direction arm's
+   promotion basis.
+
+**It is a STOP gate only.** A screen may kill an arm; it may never promote one, never contributes
+to a determination, and its bundle is a throwaway probe.
+
+**Interaction with rule 16 `[R-ALLYEARS]`, which is UNCHANGED.** Rule 16 already permits a
+one-year solve "*only* as a throwaway diagnostic probe to isolate a single-year effect"; this rule
+makes that the standard *first* step for a new config and leaves the keeper requirement exactly as
+it was — the keeper bundle is still every scorable year in ONE invocation and ONE bundle, and the
+screen year is re-solved inside it. The screen therefore costs one extra year-solve when it passes
+and saves N−1 per arm when it fails.
+
+**First application.** caiso-251 (the gas-offer fuel-coupling form). Its zero-LP phase 0 already
+carried the step-0 gate (G-COUPLE, which would have stopped the session with no solve at all had
+it failed); the rule was issued mid-session and applied to the arm from that point, with 2024
+named as the screen year on the phase-0 footprint (the largest |fuel − anchor|, hence the largest
+offer delta: CC econ −2.08, CT econ −8.31, CT_CHP −10.44 $/MWh) and the screen gate registered in
+`PRECOMMIT-caiso251-fuel-coupling-form-2026-09-05.md` Addendum A before the screen solve started.
+
+
+## 9. Changes to this file
 
 | date | change |
 |---|---|

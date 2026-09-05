@@ -379,6 +379,42 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     touch (duty b). The `.claude/hooks/mechanism-matrix-reminder.sh` SessionStart hook surfaces
     these duties at the start of every session.
 
+1. `[R-SCREEN]` **Screen a new config on ONE year before spending the full span — and screen it on
+    what the mechanism DOES, never on whether the residual moved.** *(Owner rule, 2026-09-05: "only
+    run in calibrated years thru new configs first … instead of wasting runs on 3 full years before
+    we've addressed whether config actually solves the issue".)* A 3-year CAISO/PJM/MISO/NYISO/NEISO
+    replay is ~35–70 min of LP **per arm**, and an A/B spends two of them. The order is now:
+    - **(0) Zero-LP phase 0 first, wherever one exists.** An on-recipe `fleet_only` rebuild, an
+      offer-array delta, a footprint census or a committed-sidecar reconstruction costs ~90 s and
+      kills more arms than any solve. An arm that has a computable pre-solve gate does not reach a
+      solve until that gate passes.
+    - **(1) A SCREEN solve on ONE year.** The screen year is **named in the PRECOMMIT before the
+      screen runs**, and it is the year the mechanism's **own measured footprint is largest**
+      (from step 0) — **never** the year with the biggest residual, which would make the choice a
+      residual-driven one. A control for the same single year is screened alongside it when
+      G-CTRL needs one.
+    - **(2) The full span only if the screen clears its pre-registered gate**, as one
+      `--year 2023 2024 2025` invocation and ONE bundle. Rule 16 `[R-ALLYEARS]` is untouched: the
+      screen bundle is a **throwaway diagnostic probe** — never registered on the dashboard, never
+      a keeper, never quoted as a keeper number, and its year is re-solved inside the full bundle.
+
+    **The screen gate is STRUCTURAL and it is a STOP gate only.** It asks whether the mechanism
+    does what its own arithmetic says it does — the dispatch response has the direction and order
+    of magnitude the pre-solve delta implies; the footprint is confined to the rows the mechanism
+    claims; the identity it asserts holds; no non-target load-bearing criterion flips PASS → FAIL.
+    It **may kill an arm; it may never promote one**, it never contributes to a determination, and
+    it is **never gated on the target residual** (a screen that reads "did C3a improve" is exactly
+    the fitted-mechanism selection rule 1 `[R-STRUCT]` forbids, done one year at a time).
+    A screen that kills an arm is reported as the session's result and the remaining years are
+    never spent.
+
+    **Where it does not apply:** a mechanism measured INERT in the candidate screen year (screen it
+    where it is live, or go straight to the full span — G-CTRL form 2's inert-year logic already
+    depends on that); a re-solve of an existing keeper recipe (a control, a HEAD-drift check, a
+    re-gate), which reproduces its full span by rule 16; and a year-scoped mechanism whose object
+    only exists in one year, which is the screen and the full span at once.
+
+
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
 amendment genealogy and the incident record: `docs/governance/rule-history.md`.
