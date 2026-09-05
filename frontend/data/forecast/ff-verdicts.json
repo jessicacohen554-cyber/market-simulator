@@ -1323,7 +1323,7 @@
   "schema": "forecast-verdict/v1",
   "tier": "t1x"
  },
- "miso-t1f": {
+ "miso-t1f-pre-d60": {
   "schema": "forecast-verdict/v1",
   "rubric_version": "1.0",
   "provenance": {
@@ -1459,6 +1459,148 @@
       "row": "runtime",
       "status": "CAVEAT",
       "detail": "wall 65.0 min > 45 min budget; peak RSS 10.0 GB \u2265 8.6 GB (no co-run)",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "miso-t1f": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "2ef4326e4b59",
+   "scored_at_date": "2026-09-05T20:34:52Z",
+   "cache_epoch": "b1a73a087064ffd8",
+   "run_id": "miso-2026-2030-d60-arm",
+   "session": "capx-D60"
+  },
+  "tier": "t1f",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF",
+   "FC-8 runtime feasibility: over runtime budget"
+  ],
+  "notes": [
+   "capx D60 (2026-09-05) \u2014 OWNER RULINGS Q40 + Q42 executed. The bare miso-t1f re-solved on the post-arming recipe, cache key b1a73a087064ffd8 (pre-declared in PREDECL-capx-d60-2026-09-05.md Addendum A \u00a7A.1 and matched; 5/5 years, 49.6 min, 9.68 GB). THREE mechanisms act together here for the first time on 2026-2030 and each moved row is attributed to ONE of them from a committed single-mechanism record, never by inference: (i) retirement_sector_gate (capx D53, armed for MISO earlier the same day) \u2014 a pure candidate-set partition that gates 87.8-103.1 GW of regulated-utility capacity out of the merchant screen and moves NOTHING on exits, every retirement row byte-identical to the control in all five years (announced + confirmed only, zero economic in either arm); (ii) adequacy_accounting_ratio_dated_net (Q40, D51's 0.854600 -> 0.893436, zero DOF) \u2014 the position lengthens in every year (2027 0.90278 -> 0.94254, 2030 0.944977 -> 0.986696), accredited firm rises 118,091 -> 123,292 MW in 2026, and the 2030 adequacy backstop stops buying 6,584.5 MW of gas_ct (entry gas_ct 10,650.2 -> 4,065.7), which is what takes FC-2 row4 from 33.6 % FAIL to 23.0 % CAVEAT; (iii) ccs_retrofit_capex_co2_scaling (Q42) \u2014 a measured NULL on this ISO, 0 MW converted in every year against the control's 4,631.1 MW, reproducing the D50 \u00a74b arm exactly. Determination HOLD -> HOLD; FC-1 stays FAIL ['I12','I7'] with every year improving by ~4 points and 2029 I7 landing 76 MW short of clearing (133,795 vs 133,871). The D45-R record is preserved at miso-t1f-pre-d60."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I12', 'I7']: I12: requirement-implied floor [0.7%, 15.7%]; out: 2026:-4.1% (band [0.7%, 15.7%]), 2027:-4.6% (band [0.7%, 15.7%]), 2028:-4.8% (band [0.7%, 15.7%]), 2029:0.7% (band [0.7%, 15.7%]); I7: 2026: accredited firm 123292 < requirement 129467 MW; 2027: accredited firm 123956 < requirement 130809 MW; 2028: accredited firm 124971 < requirement 132275 MW; 2029: accredited firm 133795 < requirement 133871 MW",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "FAIL",
+      "detail": "reserve-margin band (I12 FAIL): requirement-implied floor [0.7%, 15.7%]; out: 2026:-4.1% (band [0.7%, 15.7%]), 2027:-4.6% (band [0.7%, 15.7%]), 2028:-4.8% (band [0.7%, 15.7%]), 2029:0.7% (band [0.7%, 15.7%])",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "CAVEAT",
+      "detail": "backstop share 23.0% in (10%, 30%]",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "driver response",
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 794 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 6 of 7 entries carry identification='unattested' (adequacy_accounting_ratio_dated_net, entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions, retirement_sector_gate). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "CAVEAT",
+      "detail": "wall 49.6 min > 45 min budget; peak RSS 9.9 GB \u2265 8.6 GB (no co-run)",
       "gating": true
      }
     ]
@@ -5148,7 +5290,7 @@
   "schema": "forecast-verdict/v1",
   "tier": "t1h"
  },
- "nyiso-t1f": {
+ "nyiso-t1f-pre-d60": {
   "schema": "forecast-verdict/v1",
   "rubric_version": "1.0",
   "provenance": {
@@ -5278,6 +5420,144 @@
       "row": "runtime",
       "status": "PASS",
       "detail": "wall 15.9 min within budget",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "nyiso-t1f": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "e7412237e4e1",
+   "scored_at_date": "2026-09-05T20:47:38Z",
+   "cache_epoch": "19a9690bb12c8459",
+   "run_id": "nyiso-2026-2030-d60-arm",
+   "session": "capx-D60"
+  },
+  "tier": "t1f",
+  "iso": "NYISO",
+  "determination": "PROMOTE-WITH-CAVEATS",
+  "reasons": [],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx D60 (2026-09-05) \u2014 OWNER RULINGS Q41 + Q42 executed. Bare nyiso-t1f re-solved at 19a9690bb12c8459 (pre-declared PREDECL-capx-d60 \u00a72, matched; 5/5 years, 10.9 min, 3.37 GB). THE DETERMINATION MOVED OFF PROMOTE AND THE CAUSE IS AN INSTRUMENT, NOT THE MODEL \u2014 reported under the pre-declaration's own P10 STOP, not softened. EVERY MODEL ROW IS UNCHANGED OR BETTER: FC-1 all 14 invariants PASS (as in the control), FC-2 every row PASS including backstop share 0.0 %, FC-8 PASS at 10.9 min against the control's 15.9. The single moved row is FC-7's DOF ledger: the control's ledger holds ONE entry (forecast_xyear_warmstart, IDENTIFIED) and reads PASS; arming the two gates adds them as ledger entries, and because no curated identification row exists for either they enter as identification='unattested', so FC-7 reads CAVEAT and the determination becomes PROMOTE-WITH-CAVEATS. This is the mirror of the instrument difference D50 \u00a75 declared in the other direction ('never a model gain'); here it is never a model regression. THE FIX WAS DELIBERATELY NOT APPLIED IN THIS SESSION: both fields carry ZERO free parameters and their identification is already committed (D52 \u00a78(1) \u2014 published NYSRC Table D.2 forecast peak and adopted IRM x (1 - derate), vintage-gated, reconciled to demand-curve/nyiso/nyiso.csv by test), so the rows are writable \u2014 but authoring an instrument AFTER reading that it fails a row is the sequence D46 refused and PREDECL-capx-d60 Addendum B pre-declared against. ROUTED to the director as a records item. DISCLOSED SEPARATELY: NYISO's confirmed-exit channel is EMPTY AT SOURCE (data/raw/confirmed-retirements/nyiso.csv is a documented 'DATA NEEDED (zero qualifying rows)' stub), so step 0 contributes nothing for this ISO \u2014 identically in control and arm, whose retirement ledgers are byte-identical (12 rows / 27.8 MW announced in 2027, nothing else). Not introduced by this leg; routed. The D45-R record is preserved at nyiso-t1f-pre-d60."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "PASS",
+      "detail": "all 14 invariants PASS",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "PASS",
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "PASS",
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "driver response",
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 794 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 2 of 3 entries carry identification='unattested' (nyiso_requirement_forecast_peak, nyiso_requirement_vintage_factors). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "PASS",
+      "detail": "wall 10.9 min within budget",
       "gating": true
      }
     ]
