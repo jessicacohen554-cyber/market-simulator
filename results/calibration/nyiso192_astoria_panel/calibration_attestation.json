@@ -5,10 +5,12 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session nyiso-189 (2026-09-05). The single arm of the pre-registered A/B (results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md \u00a71 / \u00a73, pushed at a73d1df0 BEFORE the mechanism was built and before any solve; record docs/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md): nyiso-189 ARM (2026-09-05, owner ruling 2026-09-05 = form B2 of DECISION-CARD-nyiso189): the keeper 2026-09-04-nyiso-188-combined recipe plus the ONE new field egrid_steam_collapse_heat_rates \u2014 the CT-heat identity for combined cycles whose eGRID steam-generator filing collapsed in the applied vintage (Bethlehem 2539 9.665 -> 6.877, World Generation X 54131 9.807 -> 6.996; the derive over all 38 NYISO CCs with a filed steam generator). Zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim. Control = the same-HEAD replay on the committed artifacts (G-CONTROL below, computed against the keeper 2026-09-04-nyiso-188-combined). REPORTED AT FULL MAGNITUDE \u2014 see the finding; the disposition follows the owner's standing formula.",
-  "note": "nyiso-189 ARM (2026-09-05, owner ruling 2026-09-05 = form B2 of DECISION-CARD-nyiso189): the keeper 2026-09-04-nyiso-188-combined recipe plus the ONE new field egrid_steam_collapse_heat_rates \u2014 the CT-heat identity for combined cycles whose eGRID steam-generator filing collapsed in the applied vintage (Bethlehem 2539 9.665 -> 6.877, World Generation X 54131 9.807 -> 6.996; the derive over all 38 NYISO CCs with a filed steam generator). Zero free parameters, zero new DOF entries; the ledger is the keeper's, verbatim.",
+  "attested_by": "session nyiso-192 (2026-09-05). The single arm of the pre-registered A/B (results/calibration/PREREG-nyiso192-frontier-adjudication.md \u00a77, pushed BEFORE the arm was solved; record docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md): the Astoria merit-panel stack-duplicate repair: build_merit_order_panel drops the duplicate flue path's grossLoad copy and merges it onto its primary (campd.CAMPD_STACK_DUPLICATE_UNITS, NY 8906 only), so the guard prices the generator at its physical SRMC; the keeper's -perunitmerit- extract re-derived under its committed invocation. Zero new or retuned constants, zero new ScenarioConfig fields, zero new DOF entries; the delta is the committed artifact alone. Control = the keeper replayed in place on the committed extract (G-CONTROL below, bit-identical to the committed keeper). The realised movement is reported at full magnitude in B2_EFFECT against the pre-registered directional predictions.",
+  "note": "the Astoria merit-panel stack-duplicate repair: build_merit_order_panel drops the duplicate flue path's grossLoad copy and merges it onto its primary (campd.CAMPD_STACK_DUPLICATE_UNITS, NY 8906 only), so the guard prices the generator at its physical SRMC; the keeper's -perunitmerit- extract re-derived under its committed invocation. Zero new or retuned constants, zero new ScenarioConfig fields, zero new DOF entries; the delta is the committed artifact alone.",
   "computed_checks": {
    "G_CONTROL": {
+    "control": "in-place replay of the keeper bundle on the committed extract",
+    "control_base": "HEAD",
     "by_year": {
      "2023": {
       "hours_differing": 0,
@@ -28,117 +30,64 @@
     },
     "max_abs_dprice": 0.0,
     "bit_identical_to_keeper": true,
-    "baseline": "nyiso188_combined",
     "pass": true
    },
    "G_DELTA": {
-    "baseline": "nyiso189_control",
-    "delta_fields": {
-     "egrid_steam_collapse_heat_rates": [
-      false,
-      true
-     ]
-    },
-    "absence_normalized": {},
-    "rode_along": [],
+    "baseline": "nyiso189_steam_identity",
+    "delta_fields": {},
+    "newly_serialised_defaults_not_deltas": [
+     "locality_capacity_curves",
+     "miso_zonal_gas_basis_skip_923_priced",
+     "retirement_sector_gate"
+    ],
+    "guard_true_on_both": true,
+    "per_unit_true_on_both": true,
     "pass": true
    },
    "G_INPUTS": {
-    "derive_check": [
-     "CHECK OK: /home/user/market-simulator/data/raw/_processed-legacy/egrid_steam_collapse_heat_rates_NYISO.csv reproduces byte-identically (258 row(s))"
+    "keeper_pin": {
+     "path": "data/raw/campd-unit-outages-perunitmerit-NYISO.csv",
+     "sha256": "45714bb9cfb5f2af1257527b425e38506aa243403dafa0a00e75e47ede5c13af"
+    },
+    "arm_pin": {
+     "path": "data/raw/campd-unit-outages-perunitmerit-NYISO.csv",
+     "sha256": "58799099037ce48f1cb8014233b365b7199b5fc1384a34dc8435ff073af784ec"
+    },
+    "committed_extract_sha256": "45714bb9cfb5f2af1257527b425e38506aa243403dafa0a00e75e47ede5c13af",
+    "repaired_extract_sha256": "58799099037ce48f1cb8014233b365b7199b5fc1384a34dc8435ff073af784ec",
+    "keeper_read_committed": true,
+    "arm_read_repaired": true,
+    "rows": {
+     "committed": 3668,
+     "repaired": 3717
+    },
+    "windows_leaving": 106,
+    "windows_leaving_facilities": [
+     8906
     ],
-    "n_plants": 38,
-    "t1_by_plant": {
-     "2500": [
-      2019,
-      2020,
-      2021,
-      2022,
-      2023,
-      2024
-     ],
-     "2539": [
-      2024
-     ],
-     "7314": [
-      2019,
-      2020,
-      2021,
-      2022,
-      2023,
-      2024
-     ],
-     "10521": [
-      2019,
-      2020,
-      2021,
-      2022,
-      2023,
-      2024
-     ],
-     "54131": [
-      2023
-     ]
-    },
-    "applied_admitted": {
-     "2539": {
-      "plhtrt": 9.6651,
-      "identity_hr": 6.8773,
-      "st_ct": 0.0655,
-      "ref_vintages": "2018;2019;2020;2021;2022",
-      "ref_st_ct_median": 0.4973,
-      "t1_zero": false,
-      "below_ref_fence": true,
-      "ct_side_intact": true
-     },
-     "54131": {
-      "plhtrt": 9.8065,
-      "identity_hr": 6.9955,
-      "st_ct": 0.0,
-      "ref_vintages": "2018;2019;2020;2021;2022;2024",
-      "ref_st_ct_median": 0.4018,
-      "t1_zero": true,
-      "below_ref_fence": true,
-      "ct_side_intact": true
-     }
-    },
-    "declined_one_member_records": {
-     "2500": 1,
-     "7314": 1,
-     "10521": 1
-    },
-    "fleet_generators_repriced": [
-     [
-      2539,
-      9.6651,
-      6.8773
-     ],
-     [
-      2539,
-      9.6651,
-      6.8773
-     ],
-     [
-      2539,
-      9.6651,
-      6.8773
-     ],
-     [
-      2539,
-      9.6651,
-      6.8773
-     ],
-     [
-      54131,
-      9.8065,
-      6.9955
-     ],
-     [
-      54131,
-      9.8065,
-      6.9955
-     ]
+    "windows_entering": 155,
+    "windows_entering_facilities": [
+     2480,
+     2490,
+     2493,
+     2500,
+     2516,
+     2517,
+     2527,
+     2539,
+     2625,
+     8006,
+     8906,
+     10725,
+     50744,
+     52168,
+     54149,
+     54914
     ],
+    "stack_pair_facilities": [
+     8906
+    ],
+    "derive_invocation": "python scripts/data/derive_campd_unit_outages.py --iso NYISO --years 2019 2020 2021 2022 2023 2024 2025 2026 --per-unit-crosswalk --merit-order-guard --out <bundle-local repaired extract>",
     "pass": true
    },
    "G_DOF": {
@@ -146,126 +95,89 @@
     "n_residual": 6,
     "added_entries": 0,
     "added_scalars": 0,
-    "basis": "a registered flag (ScenarioConfig.egrid_steam_collapse_heat_rates) over an artifact that is arithmetic on eGRID's published GEN / PLNT fields and the plant's own record: identity = PLHTIAN / sum GENNTAN(CT) / (1 + median ST/CT over the plant's own T1-clean vintages other than the one under test); admission = (T1 zero test OR the steam share below the record's minimum by more than the record's own range) AND the heat per CT-MWh inside the record AND >= 2 reference vintages. The fence unit is the plant's own range, the guard is the plant's own range, the two-member minimum is definitional, APPLIED_VINTAGE = 2023 is the join's own; nothing chosen, swept or fitted (PREREG-nyiso189 \u00a71 / \u00a73 G-DOF).",
+    "basis": "a DATA-HANDLING repair inside the measured input of an already-registered mechanism (campd_outage_merit_order_guard, NYISO cell K): the panel now applies the same stack-duplicate correction campd._normalize_campd applies. No threshold moved (MERIT_OOM_FRAC, MERIT_RCC_PCTL, MERIT_HR_MIN/MAX, FULL_STOP_OVERRIDE_*, HIGH_LOAD_PCTL, MIN_INMERIT_HOURS read at their committed values); nothing chosen, swept or fitted (PREREG \u00a77).",
     "pass": true
    },
    "G_ENGAGE": {
-    "by_year": {
-     "2023": {
-      "CC_REGULAR_twh": [
-       32.012,
-       34.008
-      ],
-      "ST_GAS_twh": [
-       11.113,
-       10.061
-      ],
-      "CC_CHP_twh": [
-       16.0,
-       15.503
-      ],
-      "load_weighted_price": [
-       34.81,
-       33.84
-      ],
-      "bethlehem_twh": [
-       2.448,
-       4.898
-      ],
-      "bethlehem_available_twh": [
-       6.997,
-       6.997
-      ],
-      "bethlehem_mean_mc": [
-       51.777,
-       39.783
-      ],
-      "world_gen_x_twh": [
-       0.077,
-       0.134
-      ],
-      "world_gen_x_mean_mc": [
-       59.802,
-       44.371
-      ]
+    "by_plant_year": {
+     "2023:8906": {
+      "name": "Astoria",
+      "mean_lp_cap_control_mw": 142.8,
+      "mean_lp_cap_arm_mw": 286.7
      },
-     "2024": {
-      "CC_REGULAR_twh": [
-       36.108,
-       37.391
-      ],
-      "ST_GAS_twh": [
-       9.591,
-       9.293
-      ],
-      "CC_CHP_twh": [
-       19.555,
-       18.84
-      ],
-      "load_weighted_price": [
-       39.56,
-       38.76
-      ],
-      "bethlehem_twh": [
-       4.171,
-       5.951
-      ],
-      "bethlehem_available_twh": [
-       6.68,
-       6.68
-      ],
-      "bethlehem_mean_mc": [
-       46.122,
-       35.562
-      ],
-      "world_gen_x_twh": [
-       0.2408,
-       0.2919
-      ],
-      "world_gen_x_mean_mc": [
-       50.951,
-       38.29
-      ]
+     "2023:2500": {
+      "name": "Ravenswood",
+      "mean_lp_cap_control_mw": 1105.5,
+      "mean_lp_cap_arm_mw": 1105.5
      },
-     "2025": {
-      "CC_REGULAR_twh": [
-       34.018,
-       35.218
-      ],
-      "ST_GAS_twh": [
-       10.345,
-       10.04
-      ],
-      "CC_CHP_twh": [
-       20.566,
-       20.051
-      ],
-      "load_weighted_price": [
-       61.84,
-       60.88
-      ],
-      "bethlehem_twh": [
-       4.11,
-       5.815
-      ],
-      "bethlehem_available_twh": [
-       6.701,
-       6.701
-      ],
-      "bethlehem_mean_mc": [
-       69.456,
-       52.296
-      ],
-      "world_gen_x_twh": [
-       0.3008,
-       0.3212
-      ],
-      "world_gen_x_mean_mc": [
-       49.249,
-       39.575
-      ]
+     "2023:2490": {
+      "name": "Arthur Kill",
+      "mean_lp_cap_control_mw": 607.3,
+      "mean_lp_cap_arm_mw": 588.2
+     },
+     "2024:8906": {
+      "name": "Astoria",
+      "mean_lp_cap_control_mw": 188.3,
+      "mean_lp_cap_arm_mw": 387.3
+     },
+     "2024:2500": {
+      "name": "Ravenswood",
+      "mean_lp_cap_control_mw": 671.6,
+      "mean_lp_cap_arm_mw": 379.4
+     },
+     "2024:2490": {
+      "name": "Arthur Kill",
+      "mean_lp_cap_control_mw": 644.2,
+      "mean_lp_cap_arm_mw": 328.2
+     },
+     "2025:8906": {
+      "name": "Astoria",
+      "mean_lp_cap_control_mw": 261.5,
+      "mean_lp_cap_arm_mw": 354.2
+     },
+     "2025:2500": {
+      "name": "Ravenswood",
+      "mean_lp_cap_control_mw": 442.7,
+      "mean_lp_cap_arm_mw": 179.7
+     },
+     "2025:2490": {
+      "name": "Arthur Kill",
+      "mean_lp_cap_control_mw": 385.6,
+      "mean_lp_cap_arm_mw": 385.6
      }
     },
+    "pass": true
+   },
+   "B2_EFFECT": {
+    "by_year": {
+     "2023": {
+      "astoria_control_twh": 0.6175,
+      "astoria_arm_twh": 0.9781,
+      "ravenswood_control_twh": 3.9884,
+      "ravenswood_arm_twh": 4.0066,
+      "roseton_control_twh": 0.0723,
+      "roseton_arm_twh": 0.0724
+     },
+     "2024": {
+      "astoria_control_twh": 0.6609,
+      "astoria_arm_twh": 1.2082,
+      "ravenswood_control_twh": 2.4222,
+      "ravenswood_arm_twh": 1.729,
+      "roseton_control_twh": 0.1227,
+      "roseton_arm_twh": 0.127
+     },
+     "2025": {
+      "astoria_control_twh": 1.1632,
+      "astoria_arm_twh": 1.4839,
+      "ravenswood_control_twh": 1.9373,
+      "ravenswood_arm_twh": 1.0793,
+      "roseton_control_twh": 0.4452,
+      "roseton_arm_twh": 0.3689
+     }
+    },
+    "prediction_a_astoria_rises_all_years": true,
+    "prediction_b_ravenswood_falls_2024_2025_flat_2023": true,
+    "prediction_c_roseton_2025_falls": true,
     "pass": true
    }
   }

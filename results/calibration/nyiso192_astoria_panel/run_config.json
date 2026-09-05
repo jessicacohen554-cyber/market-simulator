@@ -1,14 +1,19 @@
 {
-  "timestamp": "2026-09-05T00:52:20",
+  "timestamp": "2026-09-05T19:20:45",
   "git": {
-    "sha": "fdf9c1b",
-    "basis_sha": "09f99f0f44bfe84fd874ebdab366c80cc5e992d3",
-    "branch": "claude/nyiso-189-bethlehem-heat-rate-7suj05",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "sha": "d5bba63b",
+    "basis_sha": "a00148646ecbc9d31d9f49fea2560ca51d4663b5",
+    "branch": "claude/nyiso-192-frontier-adjudication-mo2nrq",
+    "dirty": true,
+    "changed_files": [
+      "ata/raw/campd-unit-outages-layup-perunitmerit-NYISO.csv",
+      "data/raw/campd-unit-outages-perunitmerit-NYISO.csv",
+      "docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md",
+      "docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md"
+    ],
+    "diffstat": "...campd-unit-outages-layup-perunitmerit-NYISO.csv | 459 +++++++++------------\n data/raw/campd-unit-outages-perunitmerit-NYISO.csv | 261 +++++++-----\n 2 files changed, 360 insertions(+), 360 deletions(-)"
   },
-  "model_changes_note": "nyiso-189 ARM (owner form B2, ruling 2026-09-05): the keeper 2026-09-04-nyiso-188-combined recipe plus the ONE new field egrid_steam_collapse_heat_rates \u2014 the CT-heat identity for combined cycles whose eGRID steam-generator filing collapsed in the applied vintage (Bethlehem 2539 9.665 -> 6.877, World Generation X 54131 9.807 -> 6.996; derive over all 38 NYISO CCs). PREREG-nyiso189-steam-collapse-identity-ab.md \u00a71 / \u00a73.",
+  "model_changes_note": "nyiso-192 ARM (PREREG-nyiso192 \u00a77, pushed before this solve): the keeper 2026-09-05-nyiso-189-steam-identity recipe, ZERO ScenarioConfig changes, on the -perunitmerit- outage extract RE-DERIVED under its committed invocation after the merit-order panel's stack-duplicate repair (outage_detect.build_merit_order_panel applies campd.stack_duplicate_mask / merge_stack_duplicate_units, so Astoria 8906's paired flue paths enter the guard as one generator at its physical SRMC). Extract sha256 58799099... (repaired) vs 45714bb9... (committed); 106 Astoria windows leave, 155 windows at fifteen other plants enter.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -109,7 +114,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "fdf9c1b"
+    "git_sha": "d5bba63b"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -1026,6 +1031,7 @@
     "nyiso_downstate_ct_gas_daily": true,
     "pjm_zonal_gas_basis": false,
     "miso_zonal_gas_basis": false,
+    "miso_zonal_gas_basis_skip_923_priced": false,
     "miso_winter_citygate_daily": false,
     "caiso_zonal_gas_basis": false,
     "caiso_asymmetric_path_ratings": false,
@@ -1077,7 +1083,9 @@
     "pjm_demand_response_supply": false,
     "nyiso_requirement_forecast_peak": false,
     "nyiso_requirement_vintage_factors": false,
-    "adequacy_accounting_ratio_dated_net": false
+    "adequacy_accounting_ratio_dated_net": false,
+    "retirement_sector_gate": false,
+    "locality_capacity_curves": false
   },
   "environment": {
     "python_version": "3.11.15",
@@ -1139,8 +1147,8 @@
       "armed": true,
       "path": "data/raw/campd-unit-outages-perunitmerit-NYISO.csv",
       "present": true,
-      "sha256": "45714bb9cfb5f2af1257527b425e38506aa243403dafa0a00e75e47ede5c13af",
-      "bytes": 373938
+      "sha256": "58799099037ce48f1cb8014233b365b7199b5fc1384a34dc8435ff073af784ec",
+      "bytes": 378102
     },
     "thermal_tranches": {
       "armed": true,

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T00:52:20",
+  "timestamp": "2026-09-05T19:20:45",
   "iso": "NYISO",
   "years": [
     2023,
@@ -366,8 +366,8 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a67f13721a3a.parquet"
   },
-  "git_sha": "fdf9c1b",
-  "basis_sha": "09f99f0f44bfe84fd874ebdab366c80cc5e992d3",
+  "git_sha": "d5bba63b",
+  "basis_sha": "a00148646ecbc9d31d9f49fea2560ca51d4663b5",
   "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",

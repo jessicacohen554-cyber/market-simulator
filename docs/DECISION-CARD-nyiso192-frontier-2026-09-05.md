@@ -90,6 +90,15 @@ C1-2024 + C3c-not-lone; the repaired extract bundle-local; keeper unchanged):
 > only NYISO payloads left are the keeper (re-rendered on the repaired instrument) and the
 > arm (rendered on it).
 
+> **nyiso192-Q1 RULED 2026-09-05 (owner, in session nyiso-193, later the same day) — OPTION (i), PROMOTE.**
+> Verbatim: *"Ok promote it ugh how does this keep happening with NYISO? Promote it and then tune the cc regular offer curve up for the duct burner peaking tranche because it's merit order is wrong it runs more often at lower CF and is running hot over 80% CF in all years"* Executed the same session: keeper → `2026-09-05-nyiso-192-astoria-panel`
+> (NOT-YET); `complete` and the Q39 `frontier` WITHDRAWN under the Q5 uniform rule, the cost this
+> option stated; forecast gate (a) pass → fail; nyiso-189 pruned from the site. The ruling's second
+> clause is the lane's next lever (top of the §5.5 queue): the `CC_REGULAR` duct-burner peaking
+> tranche offer tuned upward from measured duct-firing conduct, pre-registered and rule-29 screened.
+> Options (A)–(C) below on the frontier leg are MOOT for now — the frontier fell with the marker and
+> re-entry is a new owner declaration on a CALIBRATED keeper.
+
 ## 4. THE OPTIONS
 
 * **(A) Re-declare `frontier` on nyiso-189 now** (D56-R's conditional limb; the

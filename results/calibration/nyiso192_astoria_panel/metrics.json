@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-05-nyiso-189-steam-identity",
+  "run_id": "2026-09-05-nyiso-192-astoria-panel",
   "iso": "NYISO",
-  "label": "nyiso 189 steam identity",
+  "label": "nyiso 192 astoria panel",
   "target_years": [
     2023,
     2024,
@@ -14,16 +14,16 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 3.5,
-  "determination": "CALIBRATED",
+  "determination": "NOT-YET",
   "reasons": [
-    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_tail"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -43,8 +43,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -64,9 +63,7 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C3c price tail / scarcity (RT hourly)"
-    ],
+    "ledgered": [],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -75,26 +72,26 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 7,
+    "target_grade": 6,
     "commercial_grade": 0,
-    "ledgered": 1,
-    "fails": 0
+    "ledgered": 0,
+    "fails": 2
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "+1.8%",
-        "2024": "+1.0%",
-        "2025": "+4.8%"
+        "2023": "+1.7%",
+        "2024": "+0.4%",
+        "2025": "+4.5%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2023": "amplitude 66.4% of measured (hod range $12.51 vs $18.85); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.926; 365 complete days",
-        "2024": "amplitude 49.8% of measured (hod range $13.25 vs $26.63); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.887; 365 complete days",
-        "2025": "amplitude 41.9% of measured (hod range $20.16 vs $48.09); peak h18 vs h17, trough h03 vs h02 \u2014 phase OK; hod r +0.887; 365 complete days"
+        "2023": "amplitude 65.8% of measured (hod range $12.41 vs $18.85); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.926; 365 complete days",
+        "2024": "amplitude 53.5% of measured (hod range $14.24 vs $26.63); peak h18 vs h17, trough h03 vs h03 \u2014 phase OK; hod r +0.894; 365 complete days",
+        "2025": "amplitude 43.3% of measured (hod range $20.80 vs $48.09); peak h18 vs h17, trough h03 vs h02 \u2014 phase OK; hod r +0.886; 365 complete days"
       }
     }
   },
@@ -115,13 +112,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 13,
       "total": 14
     },
     "free": {
-      "pass": 10,
+      "pass": 9,
       "total": 10
     },
-    "headline": "C1 all 14/14 \u00b7 free 10/10"
+    "headline": "C1 all 13/14 \u00b7 free 9/10"
   }
 }
