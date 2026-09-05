@@ -1,5 +1,65 @@
 # Changelog
 
+## 2026-09-05 — capx D50-R: the CCS capex-scaling repair completed — PJM + the conditional MISO arm, the blast radius priced, the arming question returned to the owner (nothing armed)
+
+**The completion of capx D50** (built default-off in PR #4728, ERCOT + NEISO arms
+registered there): `docs/handoffs/FINDING-capx-d50-2026-09-04.md` now exists at the
+filename all four ISO shard cells cite, with the pre-declaration
+(`PREDECL-capx-d50-2026-09-04.md`) graded at full magnitude — P1/P2/P4/P5/P7/P9 HIT,
+**P3 SPLIT**, **P6 MISS 1-of-3**, and **P8 SPLIT with Addendum A.1's own grading corrected**
+(A.1 graded PJM on 2028 alone and called MISO's 0.53 GW a hit "at the edge"; at full
+magnitude P8 holds in 2028 for every carbon-0 ISO and fails in 2029–2030 at PJM 1.68 GW and
+marginally at MISO 2030).
+
+**PJM** `pjm-t1f-d50-ccscapex` (`pjm-2026-2030-d50-ccscapex`, key `167e65187f32056b`,
+pre-declared and matched; 27.3 min / 9.0 GB, solo): 2028 converts **zero** vs the control's
+16 rows / 2,832.6 MW, but 2029 converts 2 rows / 909.8 MW vs 3 / 752.1 — the **window falls
+3,584.7 → 909.8 MW (−74.6 %)** while the **year 2029 rises +157.7 MW**, so **PREDECL §3
+STOP 1 FIRED** and is recorded and diagnosed rather than waived: the two converters
+(`p55337_econ`, `p55976_econ`) are two of the exact five tranches Addendum A.3 pre-named,
+and in the control they had already converted in 2028, so the arm **defers** rather than
+adds. A.3's own falsifier clause assigns the 2029 conversion to the **surface** (the D49
+§1.4 price-object seam, unbuilt), and P3's 2029–30 leg is still graded a MISS. Fleet MW is
+retrofit-preserving to the decimal; what moves is the capacity path (accredited firm
+−595 / −562 / +639 MW, and in 2030 the adequacy backstop builds 5,874.3 MW of CT against the
+control's 3,874.3 while the control instead decides 2,000 MW of `gas_ct` through the
+economic pipeline at COD 2032). FC rows status-identical; HOLD → HOLD.
+
+**MISO** `miso-t1f-d50-ccscapex` (`miso-2026-2030-d50-ccscapex`, key `f3f96e14bb75c9d9`,
+matched; 64.3 min / 10.0 GB, solo): solved because **PREDECL §2.4's conditional fired on its
+literal terms** when PJM's P3 2029 leg missed. **Zero conversions in every year** vs the
+control's 4,631.1 MW (**P7 HIT with room**; seam 2 removes 3,909.2 MW, seam 1 the remaining
+722.0 MW of regular-CC). The arm is **capacity-identical to the control in every year** —
+`gas_cc + gas_cc_ccs` identical to the decimal, reserve margins identical to six decimals,
+and the FC-1 invariant detail string **byte-identical** — the wave's cleanest confirmation
+that a retrofit is MW-, zone- and accreditation-preserving. HOLD → HOLD.
+
+**Blast radius, measured (the number for the owner's card).** The (b′-1) flip mechanic was
+verified at HEAD rather than assumed: the frozen drop value stays `False`, so **a post-flip
+bare config hashes identically to today's explicit-`True` arm** — the arm-key column of
+PREDECL §4 *is* the post-flip bare-key column, and all 12 keys re-resolve to their
+pre-declared values. Of **153** committed forecast-mode `run_config.json`, 150 re-key; 108
+end ≤ 2027 and are byte-identical (the screen is gated 2028); 42 reach ≥ 2028, of which
+**31 bundles / 25 distinct keys** carry a decided CCS retrofit. Those split into **7 bare
+keys** (the six t1f + GOLDEN-3 — exactly the set PREDECL §6 named), 6 preserved historical
+keys that are never re-solved, and 12 unregistered keys §6 did not enumerate. Re-measuring
+the bare set costs **180.4 min ≈ 3.0 h**, but **four of the seven are already paid** by this
+programme's own arms, leaving **CAISO 22.6 + NYISO 12 + GOLDEN-3 33.0 = 67.6 min ≈ 1.1 h**.
+No committed artifact moves; backcast keys advance byte-identically.
+
+**Recommendation: ARM the default** (finding §8), on the pre-stated condition — which D50
+declared as a *direction plus a STOP set*, not a numeric threshold, and which is quoted
+verbatim and graded there. Two disclosures ride with it: the **fourth seam is not closed**
+(ΔFOM and the capture VOM adder stay reference-host-sized and dilute per tonne, moving the
+clearing threshold rather than removing it), and the **PJM 2029–30 surface channel is live**.
+**NOTHING ARMS in this lane** — the field ships default-off and the flip is an owner ruling.
+
+**Records.** `VERDICT_MAP` gains the MISO row; `ff-verdicts.json` gains the two suffixed
+keys **purely additively** (283 insertions, 0 deletions); the **PJM and MISO matrix shard
+cells** carry their own measured verdicts (MISO `U → O` on its own solve, rule 25 — nothing
+transferred); no keeper, shard verdict outside those two cells, marker, default flip or
+backcast artifact moves.
+
 ## 2026-09-04 — capx D51: the MISO internal-supply accounting ratio re-identified on the dates-ON fleet (default-off, rule 23); forecast rubric v1.1 (owner ruling Q37, the pre-declared follow-up-attestation limb)
 
 **Mechanism (default-off, nothing armed).** D49 §2.6 routed it:

@@ -10885,6 +10885,289 @@
    }
   }
  },
+ "pjm-t1f-d50-ccscapex": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "921bb4cdf304",
+   "scored_at_date": "2026-09-05T05:27:30Z",
+   "cache_epoch": "167e65187f32056b",
+   "run_id": "pjm-2026-2030-d50-ccscapex",
+   "session": "capx-D50-R"
+  },
+  "tier": "t1f",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL"
+  ],
+  "caveats": [
+   "FC-8 runtime feasibility: over runtime budget"
+  ],
+  "notes": [
+   "capx-D50-R (2026-09-05): the CCS retrofit capex-scaling A/B ARM (ccs_retrofit_capex_co2_scaling=True -- the capture island sized to the host's captured CO2 against the ATB reference host 0.323 t/MWh, cogeneration hosts excluded; the D49 \u00a71.5 construction repair) against the bare pjm-t1f control pjm-2026-2030-d45r-remeasure (321f04e9060787f0, field absent/False). SUFFIXED BY CHARTER, never the bare key; NOTHING ARMS -- the default flip is an owner ruling on FINDING-capx-d50-2026-09-04.md \u00a78. Cache key 167e65187f32056b, pre-declared (PREDECL-capx-d50 \u00a74) and matched; 27.3 min / 9.0 GB, solo (rule 12). One-field A/B: the resolved config differs from the control only in this field. RESULT, a SPLIT against the pre-declaration: 2028 converts ZERO vs the control's 16 rows / 2,832.6 MW (P3's 2028 leg HIT, pre-declared HIGH), but 2029 converts 2 rows / 909.8 MW vs the control's 3 / 752.1 -- so the WINDOW falls 3,584.7 -> 909.8 MW (-74.6 %) while the YEAR 2029 rises +157.7 MW. PREDECL \u00a73 STOP 1 (more MW in a non-cap-bound ISO-year) therefore FIRED and is diagnosed from the ledger rather than waived: the two converting tranches are p55337_econ (501.6 MW, er 0.606) and p55976_econ (408.2 MW, er 0.607) -- two of the exact five tranches PREDECL Addendum A.3 pre-named as the 2029-2030 residual channel, sitting 1.023 / 1.030 above the scaled ceiling bar at the lower 2029 learned capex (1,271.8 $/kW). In the control those same units had ALREADY converted in 2028, so the control's 2029 candidate pool was depleted by its own 2028 conversions and the per-year comparison is not like-for-like; the arm DEFERS them, it does not add them. A.3 pre-declared this reading and its falsifier clause (\"a conversion of any of these five tranches is NOT a P3 miss on the mechanism -- it is the surface ... the D49 \u00a71.4 price-object seam, and the finding must say which\"): it is the SURFACE, i.e. unbuilt seam 3, not the capex repair. P3's 2029-30 leg (refined MED by A.3) is a MISS, reported at full magnitude. Seam 2 is LOAD-BEARING here exactly as P4 pre-declared: 722.2 MW of the control's 2028 conversions (p10633, p10805, p55216, p58933) and 99.9 MW of 2029's clear the scaled ceiling at ratios 1.011-1.130 and are removed ONLY by the CHP exclusion. Fleet MW is retrofit-preserving to the decimal (gas_cc + gas_cc_ccs identical to the control in every year); requirements identical every year; what moves is the capacity PATH -- accredited firm -595 / -562 MW in 2028/2029 and +639 in 2030, and in 2030 the adequacy backstop builds 5,874.3 MW of CT against the control's 3,874.3 while the control instead decides a 2,000 MW gas_ct through the ECONOMIC entry pipeline at COD 2032 (outside the window). FC-1 FAIL ['I12','I7'] and FC-2 row1 FAIL / row3 PASS / row4 FAIL are status-identical to the control (P9 HIT), with row4's backstop share 43.9 % -> 48.9 % and I12 2028/2029 -13.5/-13.1 -> -13.8/-13.5 but 2030 -13.0 -> -12.6; FC-7 PASS both; FC-8 CAVEAT both (9.0 GB). Determination HOLD -> HOLD. Solved at c9f1d26e and scored at the rebased HEAD; the only src/ drift between them is capx D59's locality_capacity_curves, GATED default-off and NYISO-only, and the cache key is unmoved through it."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I12', 'I7']: I12: requirement-implied floor [-11.9%, 3.1%]..[-9.7%, 5.3%]; out: 2027:-11.2% (band [-11.1%, 3.9%]), 2028:-13.8% (band [-9.7%, 5.3%]), 2029:-13.5% (band [-9.7%, 5.3%]), 2030:-12.6% (band [-9.7%, 5.3%]); I7: 2027: accredited firm 145259 < requirement 145509 MW; 2028: accredited firm 143442 < requirement 150263 MW; 2029: accredited firm 146639 < requirement 153001 MW; 2030: accredited firm 150938 < requirement 155946 MW",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "FAIL",
+      "detail": "reserve-margin band (I12 FAIL): requirement-implied floor [-11.9%, 3.1%]..[-9.7%, 5.3%]; out: 2027:-11.2% (band [-11.1%, 3.9%]), 2028:-13.8% (band [-9.7%, 5.3%]), 2029:-13.5% (band [-9.7%, 5.3%]), 2030:-12.6% (band [-9.7%, 5.3%])",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "FAIL",
+      "detail": "backstop share 48.9% > 30% (administrative over-build)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "driver response",
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 790 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "PASS",
+      "detail": "2 entries well-formed (0 open residual DOF listed)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "CAVEAT",
+      "detail": "peak RSS 9.0 GB \u2265 8.6 GB (no co-run)",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "miso-t1f-d50-ccscapex": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "921bb4cdf304",
+   "scored_at_date": "2026-09-05T06:40:20Z",
+   "cache_epoch": "f3f96e14bb75c9d9",
+   "run_id": "miso-2026-2030-d50-ccscapex",
+   "session": "capx-D50-R"
+  },
+  "tier": "t1f",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF",
+   "FC-8 runtime feasibility: over runtime budget"
+  ],
+  "notes": [
+   "capx-D50-R (2026-09-05): the CCS retrofit capex-scaling A/B ARM for MISO (ccs_retrofit_capex_co2_scaling=True) against the bare miso-t1f control miso-2026-2030-d45r-remeasure (8d8bc63a0d4378a9, field absent/False). SUFFIXED BY CHARTER; NOTHING ARMS. Cache key f3f96e14bb75c9d9, pre-declared (PREDECL-capx-d50 \u00a74) and matched; 64.3 min / 10.0 GB, solo (rule 12). WHY THIS LEG EXISTS: PREDECL \u00a72.4 and the D50 charter made MISO conditional -- \"solved only if \u00a72.2 misses\" -- and the PJM arm's P3 2029 leg DID miss on its own falsifier, so the conditional fired on its literal terms and the leg was solved rather than argued away (the A.3 pre-attribution to the surface explains the miss but does not un-fire the condition it was written to trigger). RESULT: ZERO retrofit conversions in every year vs the control's 12 rows / 2,985.2 MW (2028) + 18 / 1,645.9 (2029) = 4,631.1 MW -- P7 HIT with room (it predicted <= 0.35 GW). The control's converting set is overwhelmingly cogeneration: 2028 is 12 of 12 CC_CHP (2,985.2 MW, 100 %), 2029 is 924.0 MW CHP + 722.0 MW regular-CC (p1007, p7985), so seam 2 removes 3,909.2 MW and seam 1 removes the remaining 722.0 MW of regular-CC -- PREDECL \u00a72.4's reading confirmed, with its row COUNT off (it said 14 of 14 in 2028, reading the stale S123 ledger; the live d45r control carries 12) and its \"at most p7985_econ (334.5 MW) marginal\" resolving to zero. THE ARM IS CAPACITY-IDENTICAL TO THE CONTROL IN EVERY YEAR: gas_cc + gas_cc_ccs identical to the decimal (36,327.000 / 39,327.000 / 39,327.000 MW), reserve margins identical to six decimals (-0.088622 / -0.035983 / +0.030874), and the FC-1 invariant detail string is BYTE-IDENTICAL to the control's. Every FC row is status-identical -- FC-1 FAIL ['I12','I7'], FC-2 row1 FAIL / row3 PASS / row4 FAIL at the SAME 33.6 % backstop share, FC-7 CAVEAT both (unattested DOF skeleton, a MISO lane's item under rule 25), FC-8 CAVEAT both. Determination HOLD -> HOLD. This is the cleanest confirmation in the wave of P9's reasoning that a retrofit is MW-, zone- and accreditation-preserving, so removing 4.6 GW of it moves no gated row. U -> O: the cell now carries this ISO's OWN measured evidence (rule 25 -- nothing transferred from ERCOT/NEISO/PJM), and the default flip remains an owner ruling."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I12', 'I7']: I12: requirement-implied floor [0.7%, 15.7%]; out: 2026:-8.1% (band [0.7%, 15.7%]), 2027:-8.6% (band [0.7%, 15.7%]), 2028:-8.9% (band [0.7%, 15.7%]), 2029:-3.6% (band [0.7%, 15.7%]); I7: 2026: accredited firm 118091 < requirement 129467 MW; 2027: accredited firm 118727 < requirement 130809 MW; 2028: accredited firm 119698 < requirement 132275 MW; 2029: accredited firm 128138 < requirement 133871 MW",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "FAIL",
+      "detail": "reserve-margin band (I12 FAIL): requirement-implied floor [0.7%, 15.7%]; out: 2026:-8.1% (band [0.7%, 15.7%]), 2027:-8.6% (band [0.7%, 15.7%]), 2028:-8.9% (band [0.7%, 15.7%]), 2029:-3.6% (band [0.7%, 15.7%])",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "FAIL",
+      "detail": "backstop share 33.6% > 30% (administrative over-build)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "driver response",
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 791 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 4 of 6 entries carry identification='unattested' (entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "CAVEAT",
+      "detail": "wall 64.3 min > 45 min budget; peak RSS 10.0 GB \u2265 8.6 GB (no co-run)",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
  "nyiso-t1h-d52-devintage": {
   "schema": "forecast-verdict/v1",
   "rubric_version": "1.0",

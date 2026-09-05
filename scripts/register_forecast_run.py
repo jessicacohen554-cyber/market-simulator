@@ -384,6 +384,10 @@ VERDICT_MAP = {
     "ercot-2026-2030-d50-ccscapex": "ercot-t1f-d50-ccscapex",
     "neiso-2026-2030-d50-ccscapex": "neiso-t1f-d50-ccscapex",
     "pjm-2026-2030-d50-ccscapex": "pjm-t1f-d50-ccscapex",
+    # MISO added by capx D50-R (2026-09-05): PREDECL §2.4 made this leg
+    # conditional on the PJM arm contradicting §2.2, and it did (P3's 2029 leg
+    # missed on its own falsifier), so the conditional fired on its literal terms.
+    "miso-2026-2030-d50-ccscapex": "miso-t1f-d50-ccscapex",
 }
 
 
