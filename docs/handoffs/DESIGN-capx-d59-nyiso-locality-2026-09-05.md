@@ -406,6 +406,80 @@ _(§8.2 table, §8.3 census check and §8.4 keys: appended by this lane before t
 before any solve, in that order — nothing below this line was written before the
 instrument ran.)_
 
+### 8.2 The instrument's readings (appended 2026-09-05 after the instrument ran, BEFORE any code was committed)
+
+`docs/handoffs/d59/locality-predecl-2026-09-05.py` → `.json` + `-stdout-….txt` beside it,
+plus `goldbook-zone-jk-summer-capability-2026-09-05.json` (Gold Book Table III-2a sums).
+**Reconstruction caveat, stated up front:** the instrument rebuilds the base fleet through
+the hindcast's own loaders but does not reproduce the runner's base fleet exactly at the
+NYCA level (per fuel vs the D52 2021 ledger: gas_ct −444 MW because the announced NYC
+gas_ct exits of 2023 are applied at the base rather than in 2023; nuclear +123; oil −317;
+biomass −58; gas_cc +35; gas_st +5 — loader-posture details the runner threads that this
+zero-code instrument does not). The NYC and LI subsets are what matter here and are
+checked against the published census (§8.3). The A/B ledger's own `locality_capacity`
+block is the exact record the finding grades against; these are the expected values.
+
+| CY | locality | fleet ICAP (model) | +VRE +storage | +UDR rights | supply | published ICAP req | **position** | published summer margin ⇒ position | gap (pts) | SCR-adjusted gap (info) | locality curve @ position | NYCA @ ledger position | **settled** | published spot |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2023 | NYC | 9,187 (+416 gas_ct still entering in the runner ⇒ 9,603) | 5 | 315 | 9,507 (9,923) | 9,224 | **1.031 (1.076 with the 416)** | 1.026 | +0.5 (+5.0) | +5.0 (+9.5) | $128.2 ($89.3) | $63.34 | **$128.2 ($89.3)** | $191.6 |
+| 2023 | LI | 5,145 | 138 | 990 | 6,273 | 5,400 | **1.162** | 1.131 | +3.1 | +3.7 | $6.7 | $63.34 | **$63.34** | $49.3 |
+| 2024 | NYC | 9,187 | 5 | 400 | 9,592 | 8,985 | **1.067** | 1.057 | +1.0 | +6.0 | $94.3 | $48.04 | **$94.3** | $141.1 |
+| 2024 | LI | 5,145 | 138 | 990 | 6,273 | 5,348 | **1.173** | 1.117 | +5.6 | +6.3 | $2.4 | $48.04 | **$48.04** | $43.2 |
+| 2025 | NYC | 9,187 | 5 | 400 | 9,592 | 8,673 | **1.106** | 1.078 (implied, §6) | +2.8 | +8.3 | $57.8 | $28.65 | **$57.8** | $131.8 |
+| 2025 | LI | 5,145 | 138 | 990 | 6,273 | 5,423 | **1.157** | 1.122 (implied) | +3.5 | +4.1 | $6.4 | $28.65 | **$28.65** | $51.4 |
+
+Readings, pre-stated:
+- **P1 resolves to the first branch.** The model's 2025 NYC position (1.106) is below the
+  1.132 threshold, so the NYC gas_st cohort (946.0 MW, 5 units) is expected to PASS at a
+  settled $57.8/kW-yr (× 0.93 = $53.8 ≫ the ~$35 bar) and NOT fire; the Rest-of-State
+  855 MW fires again. **Expected FC-3: `retire.total_gw` ≈ 2.31 (+35 %), `false_retire`
+  ≈ 1.11 GW / 0.48; `gas_st` model 0.855 GW; LOYO −2023 / −2024 folds' false ≈ 0.88 GW,
+  −2025 ≈ 0.35; T-R10a/b still FAIL (gas_st still the first mover).** P9 stays (c) YES,
+  (a) NO, (b) NO.
+- **P4 (positions vs the market): expected to HOLD on the bare census** — every locality
+  within +0.5…+5.6 pts of the published position (the 2023 NYC reading is +5.0 if the
+  416 MW of announced gas_ct are still entering, as the runner has them). The
+  SCR-adjusted information row overshoots (+4…+8 pts), which says the market's counted
+  ΣICAP sits BELOW the Gold Book summer capability (DMNC / ICAP-ineligible / mothballed
+  units) by about the SCR term; recorded, not adjusted for.
+- **P6 (the price observable, the flip condition's limb (iii)): expected to FAIL.** At the
+  model's positions the NYC settled price reads 0.47 / 0.67 / 0.44 of the published NYC
+  spot (2023 / 2024 / 2025); even at the published positions the annualized curve reads
+  0.69 / 0.73 / 0.60 (§2.4: the ARV-at-1.0 convention against a two-season reference-
+  point construction, plus monthly-position variation). LI prices settle at the NYCA
+  price in every year (the locality curve reads $2–7 at 1.16–1.17, below NYCA), which
+  matches the SOM's own narrative ("the Long Island price was set by the NYCA price in
+  all months of 2023/24"). **The expected recommendation is therefore DO NOT ARM on limb
+  (iii), with the cause named as the shared annualization construction (a CR-3 object,
+  identical in both arms, not this lane's) — while the mechanism moves FC-3 in the
+  pre-stated direction.** If the A/B's NYC price lands within 1.5× in every year, the
+  recommendation flips to ARM; the condition is fixed now either way.
+- **The 2023 NYC price is the one that decides nothing:** $89–128 > $63 NYCA, but the
+  2023 screen fails nothing in the comparator, so no 2023 row can move.
+
+### 8.3 The census check (STOP condition §10 — cleared)
+
+| CY | Gold Book Zone J summer capability | of which NJ-sited (Linden Cogen, Bayonne EC — Zone J resources) | model NYC fleet ICAP | Δ model − Gold Book | Gold Book Zone K | model LI | Δ |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2023 | 9,231.9 | 1,391.1 | 9,187 (9,603 with the 416) | −45 (+371) | 5,005.7 | 5,145 | +139 |
+| 2024 | 8,718.9 | 1,335.7 | 9,187 | +468 | 5,072.5 | 5,145 | +72 |
+| 2025 | 8,704.7 | 1,353.0 | 9,187 | +482 | 5,195.5 | 5,145 | −50 |
+
+The model's NYC fleet already carries Linden Cogen (p50006, 915 MW) and Bayonne Energy
+Center (p56964, 598 MW) as NYC units — the master plant registry places them electrically
+in Zone J — so the NJ-siting concern of §8.1 P4 does NOT arise. The +468 / +482 MW in
+2024–2025 is the 2023–24 Peaker-Rule / DEC exit set the Gold Book has dropped and the
+2020-vintage hindcast fleet still carries (the reachable-set question of the retirement
+scorer, not a census defect). LI is within 3 %. **STOP condition not triggered.**
+The published TSL-floor consistency assertion (`LCR ≥ TSL floor`) holds in every
+committed row (NYC 0.817/0.804/0.785 vs floors 0.745/0.743/0.718; LI 1.052/1.053/1.065
+vs 0.937/0.953/0.939).
+
+### 8.4 Cache keys — appended after the build, before any solve
+
+_(filled by this lane once the field exists; nothing below this line was written before
+the code.)_
+
 ## 9. Sources fetched this session (sha256)
 | document | sha256 | used for |
 |---|---|---|
