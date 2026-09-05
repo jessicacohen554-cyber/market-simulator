@@ -6389,6 +6389,64 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
         self.assertEqual(sink["capacity_clearing"].n_uncleared, 0)
         self.assertEqual(sink.get("pipeline_events", []), [])
 
+    def test_pjm_iso_override_arms_forecast_only(self):
+        # Owner ruling 2026-09-05 (FINDING-capx-d57 §8): the joint PJM
+        # configuration is armed through ISOConfig.default_scenario_overrides,
+        # not the shared dataclass defaults — so the bare PJM T1-H recipe
+        # resolves to arm A's own key, an explicit all-off caller still
+        # resolves the D45-R control key, every other ISO is untouched, and a
+        # PJM plain backcast is coerced back to the off posture (key unmoved).
+        from market_sim.config.iso_configs import apply_iso_scenario_defaults
+        from scripts.run_capacity_hindcast import build_config
+
+        def _key(iso, **kw):
+            cfg = build_config(
+                iso,
+                2021,
+                2025,
+                "realized",
+                vintage=2020,
+                entry_screen_diagnostics=True,
+                **kw,
+            )
+            return apply_iso_scenario_defaults(cfg, iso).cache_key()
+
+        self.assertEqual(_key("PJM"), "f0e050e820c1159a")  # = arm A
+        self.assertEqual(
+            _key(
+                "PJM",
+                pjm_accreditation_design_vintage=False,
+                pjm_demand_response_supply=False,
+                capacity_market_supply_clearing=False,
+            ),
+            "c6091bd5b62bbc3f",  # = D45-R's bare key, the explicit control
+        )
+        self.assertEqual(
+            _key(
+                "PJM",
+                pjm_accreditation_design_vintage=False,
+                pjm_demand_response_supply=False,
+            ),
+            "ccee17a4c1563727",  # = arm B
+        )
+        self.assertEqual(
+            _key("MISO"), "eff2c890746ec966"
+        )  # D46's bare miso-t1h, unmoved
+        for iso in ("NYISO", "NEISO", "CAISO", "ERCOT"):
+            cfg = build_config(
+                iso, 2021, 2025, "realized", vintage=2020, entry_screen_diagnostics=True
+            )
+            res = apply_iso_scenario_defaults(cfg, iso)
+            self.assertFalse(res.pjm_accreditation_design_vintage)
+            self.assertFalse(res.pjm_demand_response_supply)
+            self.assertIsNone(res.capacity_market_supply_clearing_by_iso)
+        back = ScenarioConfig(iso="PJM", mode="backcast")
+        res = apply_iso_scenario_defaults(back, "PJM")
+        self.assertFalse(res.pjm_accreditation_design_vintage)
+        self.assertFalse(res.pjm_demand_response_supply)
+        self.assertIsNone(res.capacity_market_supply_clearing_by_iso)
+        self.assertEqual(res.cache_key(), back.cache_key())
+
     def test_i6_byte_identity_unarmed_and_backcast_coercion(self):
         # Cache keys: None (the default) hashes as if the field were absent;
         # an armed row keys distinctly; a plain backcast coerces to None.

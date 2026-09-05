@@ -1200,11 +1200,15 @@ Y-3 forward lag, and locational LDA-specific curves (composes later with §5.8
 part B). Full supply-curve auction clearing with unit offers — the first of the
 original out-of-scope items — is now the GATED supply-clearing mode below.
 
-**Supply-clearing mode — the clearing half (capx D57, 2026-09-05; GATED
-default-off, `ScenarioConfig.capacity_market_supply_clearing_by_iso`, a
-`{iso: bool}` sibling of the curve gate resolved through
+**Supply-clearing mode — the clearing half (capx D57, 2026-09-05;
+`ScenarioConfig.capacity_market_supply_clearing_by_iso`, a `{iso: bool}`
+sibling of the curve gate resolved through
 `config/capacity_market.resolve_capacity_market_supply_clearing`, which also
-REQUIRES the curve gate ON for the ISO).** The curve mode above evaluates the
+REQUIRES the curve gate ON for the ISO; the dataclass default stays `None`, and
+PJM is ARMED — together with the two D48 accreditation-design fields — through
+`iso_configs.py::_pjm_config` `default_scenario_overrides`, owner ruling
+2026-09-05 on the D57 A/B, so only PJM's forecast posture carries it and every
+other ISO and every backcast keeper is byte-identical).** The curve mode above evaluates the
 published curve at the installed-fleet *census* position and broadcasts that
 price to every unit. PJM's RPM does not: every existing unit must submit a
 sell offer capped at its net Avoidable Cost Rate (gross ACR minus E&AS net

@@ -11,19 +11,28 @@ leg side by side. Zero free parameters.
 
 Run from the repo root: ``uv run python docs/handoffs/d57/ab-compare-2026-09-05.py [out.json]``
 """
+
 import glob
 import json
 import sys
 
 PUB = {
     r["delivery_year"]: r
-    for r in json.load(open("docs/handoffs/d45/published-positions-2026-09-03.json"))["pjm"]
+    for r in json.load(open("docs/handoffs/d45/published-positions-2026-09-03.json"))[
+        "pjm"
+    ]
 }
 DY = {2022: "2022/2023", 2023: "2023/2024", 2024: "2024/2025", 2025: "2025/2026"}
 LEGS = [
     ("control pjm-t1h", "results/hindcast/pjm-2021-2025-realized-t1h-d45r"),
-    ("d48 pjm-t1h-d48-devintage", "results/hindcast/pjm-2021-2025-realized-t1h-d48-devintage"),
-    ("arm A pjm-t1h-d57-clearing", "results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing"),
+    (
+        "d48 pjm-t1h-d48-devintage",
+        "results/hindcast/pjm-2021-2025-realized-t1h-d48-devintage",
+    ),
+    (
+        "arm A pjm-t1h-d57-clearing",
+        "results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing",
+    ),
     (
         "arm B pjm-t1h-d57-clearing-headbasis",
         "results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing-headbasis",
@@ -32,7 +41,11 @@ LEGS = [
 # The screen bars ($/kW-yr, nameplate) the offers are built from — read for the operand statement
 # only (the ScenarioConfig defaults; identical in every leg).
 sys.path.insert(0, "src")
+from market_sim.config.capacity_market import THERMAL_ELCC_CLASS_RATING_BY_ISO  # noqa: E402
+from market_sim.config.constants import EFORD  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+
+ELCC = THERMAL_ELCC_CLASS_RATING_BY_ISO["PJM"]
 
 _cfg = ScenarioConfig(iso="PJM", mode="forecast", hindcast=True)
 BAR = {
@@ -66,10 +79,17 @@ def fmt_by_fuel(d):
 report = {}
 for label, bundle in LEGS:
     L = ledgers(bundle)
+    meta = (
+        json.load(open(f"{bundle}/meta.json"))
+        if glob.glob(f"{bundle}/meta.json")
+        else {}
+    )
     if not L:
         print(f"\n#### {label}: NOT SOLVED ({bundle} absent)")
         continue
-    print(f"\n#### {label} ({bundle}; key {list(glob.glob(f'{bundle}/PJM/*'))[0].split('/')[-1]})")
+    print(
+        f"\n#### {label} ({bundle}; key {list(glob.glob(f'{bundle}/PJM/*'))[0].split('/')[-1]})"
+    )
     report[label] = {"years": {}}
     for y in (2022, 2023, 2024, 2025):
         led = L.get(y)
@@ -105,7 +125,9 @@ for label, bundle in LEGS:
             f"| floor_retained {yr['floor_retained_mw']:,.0f} MW | failing rows {len(failing)}"
         )
         if cc is None:
-            print("   (no capacity_clearing block: the census evaluation priced this screen)")
+            print(
+                "   (no capacity_clearing block: the census evaluation priced this screen)"
+            )
             report[label]["years"][y] = yr
             continue
         ratio = cc["price_usd_per_mw_day"] / pub_day if pub_day > 0 else float("nan")
@@ -129,13 +151,27 @@ for label, bundle in LEGS:
         fail_but_cleared = sorted(fail_ids & cleared)
         unc_but_passing = sorted(uncleared - fail_ids)
         ident_ok = (not fail_but_cleared) and (not unc_but_passing)
-        bad_flag = [u for u, e in failing.items() if e.get("capacity_cleared") is not False]
+        bad_flag = [
+            u for u, e in failing.items() if e.get("capacity_cleared") is not False
+        ]
         print(
             f"   IDENTITY: failing {len(fail_ids)} vs uncleared {len(uncleared)} -> "
             f"{'HOLDS' if ident_ok and not bad_flag else 'VIOLATED'}"
-            + (f" (failing-but-cleared {fail_but_cleared[:5]})" if fail_but_cleared else "")
-            + (f" (uncleared-but-passing {unc_but_passing[:5]})" if unc_but_passing else "")
-            + (f" (rows with capacity_cleared != False: {bad_flag[:5]})" if bad_flag else "")
+            + (
+                f" (failing-but-cleared {fail_but_cleared[:5]})"
+                if fail_but_cleared
+                else ""
+            )
+            + (
+                f" (uncleared-but-passing {unc_but_passing[:5]})"
+                if unc_but_passing
+                else ""
+            )
+            + (
+                f" (rows with capacity_cleared != False: {bad_flag[:5]})"
+                if bad_flag
+                else ""
+            )
         )
         # The E&AS operand: offers above the published price by fuel, and the per-unit margin
         # that would put the stack's marginal offer at the published price at the published
@@ -156,31 +192,31 @@ for label, bundle in LEGS:
                 at_pub = offer
                 break
             cum += a_mw
-        # Per-fuel E&AS uplift that would lower a FULL-BAR offer to the published price:
-        # ΔE_f = bar_f − P* × 365 × a_f / 1000 ($/kW-yr), a_f the class accreditation observed on
-        # the stack (firm/nameplate not stored; use the fuel's median offer-implied A from rows
-        # where offer == bar/(A×365), i.e. the zero-margin units).
+        # Per-fuel E&AS uplift that would lower a FULL-BAR (zero-margin) offer to the
+        # published price: ΔE_f = bar_f − P* × 365 × a_f / 1000 ($/kW-yr), a_f the class
+        # accreditation on the leg's basis (UCAP 1−EFORd through DY 2024/25 under the D48
+        # devintage — arm A — and ELCC class otherwise; the D54 instrument's construction).
+        # Units AT the full bar are those whose offer is within 0.1 % of bar/(a×365).
+        devintage = bool((meta or {}).get("pjm_accreditation_design_vintage"))
         need = {}
         for fuel, bar in BAR.items():
-            units = [
-                (offer, a_mw)
-                for uid, f, offer, a_mw, _c in stack
-                if f == fuel and offer > 0
-            ]
+            units = [(offer, a_mw) for uid, f, offer, a_mw, _c in stack if f == fuel]
             if not units:
                 continue
-            # offer = (bar×1000×pmax − EAS)/(A×365); at zero E&AS offer = bar×1000/(a×365)
-            # with a = A/pmax. The highest offer in the class is the zero-E&AS offer.
-            o_max = max(o for o, _a in units)
-            a_frac = bar * 1000.0 / (o_max * 365.0)
+            ucap = 1.0 - EFORD.get(fuel, 0.08)
+            a_frac = ucap if (devintage and y <= 2024) else ELCC.get(fuel, ucap)
+            zero_offer = bar * 1000.0 / (a_frac * 365.0)
+            at_bar = [a for o, a in units if o >= 0.999 * zero_offer]
             need[fuel] = {
-                "zero_eas_offer_mw_day": o_max,
-                "implied_class_accreditation": a_frac,
+                "zero_eas_offer_mw_day": zero_offer,
+                "class_accreditation": a_frac,
                 "eas_kw_yr_to_reach_published_price": max(
                     0.0, bar - pub_day * 365.0 * a_frac / 1000.0
                 ),
                 "firm_mw_above_published": above.get(fuel, 0.0),
                 "n_above_published": above_n.get(fuel, 0),
+                "n_at_full_bar": len(at_bar),
+                "firm_mw_at_full_bar": sum(at_bar),
             }
         print(
             f"   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: {fmt_by_fuel(above)} "
@@ -190,9 +226,10 @@ for label, bundle in LEGS:
         for fuel, v in sorted(need.items()):
             print(
                 f"      {fuel:8s} zero-E&AS offer {v['zero_eas_offer_mw_day']:7.2f} $/MW-day "
-                f"(class accreditation {v['implied_class_accreditation']:.3f}); an E&AS margin of "
-                f">= {v['eas_kw_yr_to_reach_published_price']:5.1f} $/kW-yr per zero-margin unit would put "
-                f"its offer AT the published price ({v['n_above_published']} units / "
+                f"(class accreditation {v['class_accreditation']:.3f}); {v['n_at_full_bar']} units / "
+                f"{v['firm_mw_at_full_bar']:,.0f} firm MW sit AT the full bar (zero E&AS); an E&AS margin "
+                f"of >= {v['eas_kw_yr_to_reach_published_price']:5.1f} $/kW-yr per such unit would put its "
+                f"offer AT the published price ({v['n_above_published']} units / "
                 f"{v['firm_mw_above_published']:,.0f} firm MW above it today)"
             )
         yr.update(

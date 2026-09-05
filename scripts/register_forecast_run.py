@@ -290,7 +290,15 @@ VERDICT_MAP = {
     # own verdict -- a run must never render a verdict its own score
     # contradicts. Determination HOLD on every T1-H leg; nothing flips; no
     # default moves.
-    "pjm-2021-2025-realized-t1h-d45r": "pjm-t1h",
+    # RE-POINTED by capx-D57 (2026-09-05, OWNER RULING in-session): the joint
+    # PJM configuration (D48's two fields + the supply-clearing gate) was ARMED
+    # for PJM through its ISOConfig overrides, so the shipped-posture bare key
+    # is now arm A's (f0e050e820c1159a) and D45-R's census-evaluation leg
+    # (c6091bd5b62bbc3f) is preserved verbatim at `pjm-t1h-pre-d57` — it is the
+    # explicit `--no-pjm-accreditation-design-vintage --no-pjm-demand-response-
+    # supply --no-capacity-market-supply-clearing` control from here on. Its own
+    # verdict (HOLD) stands under the preserved key; nothing is re-scored.
+    "pjm-2021-2025-realized-t1h-d45r": "pjm-t1h-pre-d57",
     # capx-D48 Phase 1 (2026-09-04): the PJM accreditation-design devintage +
     # DR-as-supply A/B arm (`pjm_accreditation_design_vintage` +
     # `pjm_demand_response_supply`, both ON; D45 §2.3 items 1-2) against
@@ -307,7 +315,12 @@ VERDICT_MAP = {
     # OFF + clearing ON, completing the 2x2 with `pjm-t1h-d48-devintage`.
     # Nothing arms -- the owner decides on the JOINT flip (D48 fields + this
     # gate) per the pre-stated condition (PREDECL-capx-d57-2026-09-05.md).
-    "pjm-2021-2025-realized-t1h-d57-clearing": "pjm-t1h-d57-clearing",
+    # OWNER RULING 2026-09-05 (in-session, on the measured A/B — FINDING-capx-
+    # d57 §8): the joint configuration is ARMED for PJM (iso_configs PJM
+    # default_scenario_overrides), so arm A IS the shipped posture and takes
+    # the bare `pjm-t1h` key; the D45-R census leg moves to `pjm-t1h-pre-d57`
+    # (above). Arm B keeps its suffix as the isolating control.
+    "pjm-2021-2025-realized-t1h-d57-clearing": "pjm-t1h",
     "pjm-2021-2025-realized-t1h-d57-clearing-headbasis": (
         "pjm-t1h-d57-clearing-headbasis"
     ),

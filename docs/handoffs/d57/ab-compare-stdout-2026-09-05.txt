@@ -1,0 +1,113 @@
+
+#### control pjm-t1h (results/hindcast/pjm-2021-2025-realized-t1h-d45r; key c6091bd5b62bbc3f)
+2022 DY 2022/2023: entering census pos None  | decided coal 11,415 | entry_capped coal 10,999, gas_cc 26,796, gas_ct 25,791, gas_st 9,464, oil 4,137 | floor_retained 0 MW | failing rows 1211
+   (no capacity_clearing block: the census evaluation priced this screen)
+2023 DY 2023/2024: entering census pos 1.139822  | decided none | entry_capped coal 10,999, gas_cc 27,188, gas_ct 25,790, gas_st 9,464 | floor_retained 0 MW | failing rows 792
+   (no capacity_clearing block: the census evaluation priced this screen)
+2024 DY 2024/2025: entering census pos 1.096403  | decided none | entry_capped coal 23,814, gas_cc 23,925, gas_ct 25,791, gas_st 9,464, oil 4,136 | floor_retained 0 MW | failing rows 852
+   (no capacity_clearing block: the census evaluation priced this screen)
+2025 DY 2025/2026: entering census pos 0.961718  | decided none | entry_capped none | floor_retained 0 MW | failing rows 0
+   (no capacity_clearing block: the census evaluation priced this screen)
+   FC-3: retire.total 17.958 GW (FAIL; actual 15.062) per fuel {'biomass': 0.009, 'coal': 16.99, 'gas_cc': 0.075, 'gas_ct': 0.0, 'gas_st': 0.833, 'oil': 0.051} | recall 17/20 (PASS) | false_retire 6.691 (FAIL) | add {'wind': 3.0, 'solar': 9.762, 'gas_cc': 8.118, 'gas_ct': 1.013, 'storage': 0.0} | backstop 1012.8 MW | LOYO {'2023': (1.0, 8.09), '2024': (0.421, 0.0), '2025': (0.842, 6.795)}
+   determination: HOLD
+
+#### d48 pjm-t1h-d48-devintage (results/hindcast/pjm-2021-2025-realized-t1h-d48-devintage; key bbe13b3f7b659d36)
+2022 DY 2022/2023: entering census pos None  | decided coal 12,818 | entry_capped coal 9,596, gas_cc 26,796, gas_ct 25,791, gas_st 9,464, oil 4,137 | floor_retained 0 MW | failing rows 1211
+   (no capacity_clearing block: the census evaluation priced this screen)
+2023 DY 2023/2024: entering census pos 1.140774  | decided none | entry_capped coal 9,596, gas_cc 27,188, gas_ct 25,790, gas_st 9,464 | floor_retained 0 MW | failing rows 792
+   (no capacity_clearing block: the census evaluation priced this screen)
+2024 DY 2024/2025: entering census pos 1.09901  | decided none | entry_capped coal 22,411, gas_cc 23,925, gas_ct 25,791, gas_st 9,464, oil 4,136 | floor_retained 0 MW | failing rows 852
+   (no capacity_clearing block: the census evaluation priced this screen)
+2025 DY 2025/2026: entering census pos 0.956639  | decided none | entry_capped none | floor_retained 0 MW | failing rows 0
+   (no capacity_clearing block: the census evaluation priced this screen)
+   FC-3: retire.total 19.361 GW (FAIL; actual 15.062) per fuel {'biomass': 0.009, 'coal': 18.393, 'gas_cc': 0.075, 'gas_ct': 0.0, 'gas_st': 0.833, 'oil': 0.051} | recall 17/20 (PASS) | false_retire 8.094 (FAIL) | add {'wind': 3.0, 'solar': 9.762, 'gas_cc': 8.118, 'gas_ct': 1.013, 'storage': 0.0} | backstop 1012.8 MW | LOYO {'2023': (1.0, 9.493), '2024': (0.421, 0.0), '2025': (0.842, 8.198)}
+   determination: HOLD
+
+#### arm A pjm-t1h-d57-clearing (results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing; key f0e050e820c1159a)
+2022 DY 2022/2023: entering census pos None  | decided coal 5,835, gas_st 7,334 | entry_capped gas_cc 2,160, gas_st 2,131, oil 3,329 | floor_retained 0 MW | failing rows 429
+   CLEARING: price   76.10 $/MW-day ( 27.78 $/kW-yr)  cleared 162,216 pos 1.0462  census(screen fleet) 1.1702  Q_0 30,578  offers 1370 / uncleared 429  [marginal_offer_sets_price, marginal 7779_5]
+   PUBLISHED (observable):  50.00 $/MW-day at pos 1.0510  -> ratio 1.52x, Δpos -0.48 pt; uncleared firm by fuel: coal 5,368, gas_cc 2,052, gas_st 8,802, oil 2,996
+   IDENTITY: failing 429 vs uncleared 429 -> HOLDS
+   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: coal 7,110, gas_cc 22,357, gas_ct 24,244, gas_st 8,802, oil 3,723 | total 66,235; the stack's offer AT the published cleared position: 76.10 $/MW-day (published 50.00)
+      coal     zero-E&AS offer  174.21 $/MW-day (class accreditation 0.920); 2 units / 30 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  41.7 $/kW-yr per such unit would put its offer AT the published price (48 units / 7,110 firm MW above it today)
+      gas_cc   zero-E&AS offer   86.52 $/MW-day (class accreditation 0.950); 40 units / 1,145 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  12.7 $/kW-yr per such unit would put its offer AT the published price (157 units / 22,357 firm MW above it today)
+      gas_ct   zero-E&AS offer   61.21 $/MW-day (class accreditation 0.940); 330 units / 22,728 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   3.8 $/kW-yr per such unit would put its offer AT the published price (404 units / 24,244 firm MW above it today)
+      gas_st   zero-E&AS offer  103.11 $/MW-day (class accreditation 0.930); 115 units / 8,802 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  18.0 $/kW-yr per such unit would put its offer AT the published price (115 units / 8,802 firm MW above it today)
+      nuclear  zero-E&AS offer  367.18 $/MW-day (class accreditation 0.970); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >= 112.3 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      oil      zero-E&AS offer   76.10 $/MW-day (class accreditation 0.900); 421 units / 3,723 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   8.6 $/kW-yr per such unit would put its offer AT the published price (421 units / 3,723 firm MW above it today)
+2023 DY 2023/2024: entering census pos 1.098442  | decided gas_cc 2,254, gas_st 2,131 | entry_capped none | floor_retained 0 MW | failing rows 168
+   CLEARING: price   82.81 $/MW-day ( 30.23 $/kW-yr)  cleared 168,435 pos 1.0454  census(screen fleet) 1.0881  Q_0 36,375  offers 907 / uncleared 168  [marginal_offer_sets_price, marginal COAL_PJM_AEP_Ohio_p2832_committed]
+   PUBLISHED (observable):  34.13 $/MW-day at pos 1.0552  -> ratio 2.43x, Δpos -0.98 pt; uncleared firm by fuel: coal 2,465, gas_cc 2,141, gas_st 1,982
+   IDENTITY: failing 168 vs uncleared 168 -> HOLDS
+   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: coal 8,873, gas_cc 22,932, gas_ct 24,243, gas_st 1,982 | total 58,029; the stack's offer AT the published cleared position: 82.81 $/MW-day (published 34.13)
+      coal     zero-E&AS offer  174.21 $/MW-day (class accreditation 0.920); 2 units / 30 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  47.0 $/kW-yr per such unit would put its offer AT the published price (79 units / 8,873 firm MW above it today)
+      gas_cc   zero-E&AS offer   86.52 $/MW-day (class accreditation 0.950); 41 units / 1,238 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  18.2 $/kW-yr per such unit would put its offer AT the published price (162 units / 22,932 firm MW above it today)
+      gas_ct   zero-E&AS offer   61.21 $/MW-day (class accreditation 0.940); 330 units / 22,728 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   9.3 $/kW-yr per such unit would put its offer AT the published price (403 units / 24,243 firm MW above it today)
+      gas_st   zero-E&AS offer  103.11 $/MW-day (class accreditation 0.930); 77 units / 1,982 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  23.4 $/kW-yr per such unit would put its offer AT the published price (77 units / 1,982 firm MW above it today)
+      nuclear  zero-E&AS offer  367.18 $/MW-day (class accreditation 0.970); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >= 117.9 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+2024 DY 2024/2025: entering census pos 1.033409  | decided none | entry_capped none | floor_retained 0 MW | failing rows 8
+   CLEARING: price  165.84 $/MW-day ( 60.53 $/kW-yr)  cleared 171,415 pos 1.0276  census(screen fleet) 1.0321  Q_0 27,960  offers 769 / uncleared 8  [marginal_offer_sets_price, marginal COAL_PJM_Dominion_p7213_econ]
+   PUBLISHED (observable):  28.92 $/MW-day at pos 1.0555  -> ratio 5.73x, Δpos -2.79 pt; uncleared firm by fuel: coal 406
+   IDENTITY: failing 8 vs uncleared 8 -> HOLDS
+   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: coal 32,411, gas_cc 4, gas_ct 23,980, oil 3,723 | total 60,118; the stack's offer AT the published cleared position: 0.00 $/MW-day (published 28.92)
+      coal     zero-E&AS offer  174.21 $/MW-day (class accreditation 0.920); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  48.8 $/kW-yr per such unit would put its offer AT the published price (165 units / 32,411 firm MW above it today)
+      gas_cc   zero-E&AS offer   86.52 $/MW-day (class accreditation 0.950); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  20.0 $/kW-yr per such unit would put its offer AT the published price (1 units / 4 firm MW above it today)
+      gas_ct   zero-E&AS offer   61.21 $/MW-day (class accreditation 0.940); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  11.1 $/kW-yr per such unit would put its offer AT the published price (364 units / 23,980 firm MW above it today)
+      nuclear  zero-E&AS offer  367.18 $/MW-day (class accreditation 0.970); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >= 119.8 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      oil      zero-E&AS offer   76.10 $/MW-day (class accreditation 0.900); 8 units / 3,723 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  15.5 $/kW-yr per such unit would put its offer AT the published price (8 units / 3,723 firm MW above it today)
+2025 DY 2025/2026: entering census pos 0.968039  | decided none | entry_capped none | floor_retained 0 MW | failing rows 0
+   CLEARING: price  451.61 $/MW-day (164.84 $/kW-yr)  cleared 143,758 pos 0.9661  census(screen fleet) 0.9661  Q_0 24,000  offers 761 / uncleared 0  [all_offers_clear_curve_sets_price, marginal None]
+   PUBLISHED (observable): 269.92 $/MW-day at pos 1.0049  -> ratio 1.67x, Δpos -3.88 pt; uncleared firm by fuel: none
+   IDENTITY: failing 0 vs uncleared 0 -> HOLDS
+   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: none | total 0; the stack's offer AT the published cleared position: 0.00 $/MW-day (published 269.92)
+      coal     zero-E&AS offer  193.10 $/MW-day (class accreditation 0.830); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   0.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      gas_cc   zero-E&AS offer  111.07 $/MW-day (class accreditation 0.740); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   0.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      gas_ct   zero-E&AS offer   95.89 $/MW-day (class accreditation 0.600); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   0.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      nuclear  zero-E&AS offer  374.91 $/MW-day (class accreditation 0.950); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  36.4 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      oil      zero-E&AS offer   75.27 $/MW-day (class accreditation 0.910); 8 units / 3,764 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   0.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+   FC-3: retire.total 18.702 GW (FAIL; actual 15.062) per fuel {'biomass': 0.009, 'coal': 6.016, 'gas_cc': 2.328, 'gas_ct': 0.0, 'gas_st': 10.297, 'oil': 0.051} | recall 12/20 (FAIL) | false_retire 9.49 (FAIL) | add {'wind': 3.0, 'solar': 9.762, 'gas_cc': 12.118, 'gas_ct': 1.013, 'storage': 0.0} | backstop 1012.8 MW | LOYO {'2023': (0.583, 7.237), '2024': (0.579, 9.499), '2025': (0.579, 9.505)}
+   determination: HOLD
+
+#### arm B pjm-t1h-d57-clearing-headbasis (results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing-headbasis; key ccee17a4c1563727)
+2022 DY 2022/2023: entering census pos None  | decided coal 1,222, gas_cc 2,160, gas_ct 133, gas_st 9,464 | entry_capped gas_ct 9,325 | floor_retained 0 MW | failing rows 310
+   CLEARING: price   95.89 $/MW-day ( 35.00 $/kW-yr)  cleared 129,384 pos 1.0412  census(screen fleet) 1.1636  Q_0 19,224  offers 1370 / uncleared 310  [marginal_offer_sets_price, marginal CT_PEAKER_PJM_Dominion_p55285_peak]
+   PUBLISHED (observable):  50.00 $/MW-day at pos 1.0510  -> ratio 1.92x, Δpos -0.98 pt; uncleared firm by fuel: coal 1,014, gas_cc 1,598, gas_ct 5,675, gas_st 6,909
+   IDENTITY: failing 310 vs uncleared 310 -> HOLDS
+   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: coal 6,415, gas_cc 17,573, gas_ct 15,475, gas_st 6,909, oil 3,764 | total 50,136; the stack's offer AT the published cleared position: 95.89 $/MW-day (published 50.00)
+      coal     zero-E&AS offer  193.10 $/MW-day (class accreditation 0.830); 2 units / 27 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  43.4 $/kW-yr per such unit would put its offer AT the published price (48 units / 6,415 firm MW above it today)
+      gas_cc   zero-E&AS offer  111.07 $/MW-day (class accreditation 0.740); 40 units / 892 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  16.5 $/kW-yr per such unit would put its offer AT the published price (159 units / 17,573 firm MW above it today)
+      gas_ct   zero-E&AS offer   95.89 $/MW-day (class accreditation 0.600); 330 units / 14,507 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  10.1 $/kW-yr per such unit would put its offer AT the published price (404 units / 15,475 firm MW above it today)
+      gas_st   zero-E&AS offer  131.36 $/MW-day (class accreditation 0.730); 115 units / 6,909 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  21.7 $/kW-yr per such unit would put its offer AT the published price (115 units / 6,909 firm MW above it today)
+      nuclear  zero-E&AS offer  374.91 $/MW-day (class accreditation 0.950); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >= 112.7 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      oil      zero-E&AS offer   75.27 $/MW-day (class accreditation 0.910); 421 units / 3,764 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   8.4 $/kW-yr per such unit would put its offer AT the published price (421 units / 3,764 firm MW above it today)
+2023 DY 2023/2024: entering census pos 1.073737  | decided gas_cc 98, gas_ct 2,557 | entry_capped none | floor_retained 0 MW | failing rows 38
+   CLEARING: price   95.89 $/MW-day ( 35.00 $/kW-yr)  cleared 134,181 pos 1.0423  census(screen fleet) 1.0628  Q_0 24,794  offers 756 / uncleared 38  [marginal_offer_sets_price, marginal CT_PEAKER_PJM_ComEd_p55640_peak]
+   PUBLISHED (observable):  34.13 $/MW-day at pos 1.0552  -> ratio 2.81x, Δpos -1.29 pt; uncleared firm by fuel: coal 1,014, gas_cc 73, gas_ct 1,534
+   IDENTITY: failing 38 vs uncleared 38 -> HOLDS
+   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: coal 8,005, gas_cc 17,866, gas_ct 15,474 | total 41,345; the stack's offer AT the published cleared position: 111.80 $/MW-day (published 34.13)
+      coal     zero-E&AS offer  193.10 $/MW-day (class accreditation 0.830); 2 units / 27 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  48.2 $/kW-yr per such unit would put its offer AT the published price (79 units / 8,005 firm MW above it today)
+      gas_cc   zero-E&AS offer  111.07 $/MW-day (class accreditation 0.740); 1 units / 73 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  20.8 $/kW-yr per such unit would put its offer AT the published price (94 units / 17,866 firm MW above it today)
+      gas_ct   zero-E&AS offer   95.89 $/MW-day (class accreditation 0.600); 330 units / 14,507 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  13.5 $/kW-yr per such unit would put its offer AT the published price (403 units / 15,474 firm MW above it today)
+      nuclear  zero-E&AS offer  374.91 $/MW-day (class accreditation 0.950); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >= 118.2 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+2024 DY 2024/2025: entering census pos 1.032071  | decided none | entry_capped coal 595 | floor_retained 0 MW | failing rows 9
+   CLEARING: price  183.57 $/MW-day ( 67.00 $/kW-yr)  cleared 136,530 pos 1.0237  census(screen fleet) 1.0306  Q_0 17,325  offers 768 / uncleared 9  [marginal_offer_sets_price, marginal COAL_PJM_AEP_Ohio_p1384_econ]
+   PUBLISHED (observable):  28.92 $/MW-day at pos 1.0555  -> ratio 6.35x, Δpos -3.18 pt; uncleared firm by fuel: coal 860
+   IDENTITY: failing 9 vs uncleared 9 -> HOLDS
+   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: coal 29,240, gas_ct 15,475, oil 3,764 | total 48,479; the stack's offer AT the published cleared position: 0.00 $/MW-day (published 28.92)
+      coal     zero-E&AS offer  193.10 $/MW-day (class accreditation 0.830); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  49.7 $/kW-yr per such unit would put its offer AT the published price (165 units / 29,240 firm MW above it today)
+      gas_cc   zero-E&AS offer  111.07 $/MW-day (class accreditation 0.740); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  22.2 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      gas_ct   zero-E&AS offer   95.89 $/MW-day (class accreditation 0.600); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  14.7 $/kW-yr per such unit would put its offer AT the published price (404 units / 15,475 firm MW above it today)
+      nuclear  zero-E&AS offer  374.91 $/MW-day (class accreditation 0.950); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >= 120.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      oil      zero-E&AS offer   75.27 $/MW-day (class accreditation 0.910); 8 units / 3,764 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  15.4 $/kW-yr per such unit would put its offer AT the published price (8 units / 3,764 firm MW above it today)
+2025 DY 2025/2026: entering census pos 0.965415  | decided none | entry_capped none | floor_retained 0 MW | failing rows 0
+   CLEARING: price  451.61 $/MW-day (164.84 $/kW-yr)  cleared 137,670 pos 0.9634  census(screen fleet) 0.9634  Q_0 17,915  offers 760 / uncleared 0  [all_offers_clear_curve_sets_price, marginal None]
+   PUBLISHED (observable): 269.92 $/MW-day at pos 1.0049  -> ratio 1.67x, Δpos -4.15 pt; uncleared firm by fuel: none
+   IDENTITY: failing 0 vs uncleared 0 -> HOLDS
+   E&AS OPERAND: offers ABOVE the published price, firm MW by fuel: none | total 0; the stack's offer AT the published cleared position: 0.00 $/MW-day (published 269.92)
+      coal     zero-E&AS offer  193.10 $/MW-day (class accreditation 0.830); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   0.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      gas_cc   zero-E&AS offer  111.07 $/MW-day (class accreditation 0.740); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   0.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      gas_ct   zero-E&AS offer   95.89 $/MW-day (class accreditation 0.600); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   0.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      nuclear  zero-E&AS offer  374.91 $/MW-day (class accreditation 0.950); 0 units / 0 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=  36.4 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+      oil      zero-E&AS offer   75.27 $/MW-day (class accreditation 0.910); 8 units / 3,764 firm MW sit AT the full bar (zero E&AS); an E&AS margin of >=   0.0 $/kW-yr per such unit would put its offer AT the published price (0 units / 0 firm MW above it today)
+   FC-3: retire.total 18.707 GW (FAIL; actual 15.062) per fuel {'biomass': 0.009, 'coal': 6.016, 'gas_cc': 2.333, 'gas_ct': 0.0, 'gas_st': 10.297, 'oil': 0.051} | recall 12/20 (FAIL) | false_retire 9.494 (FAIL) | add {'wind': 3.0, 'solar': 9.762, 'gas_cc': 12.118, 'gas_ct': 1.013, 'storage': 0.0} | backstop 1012.8 MW | LOYO {'2023': (0.583, 11.169), '2024': (0.579, 9.504), '2025': (0.579, 9.509)}
+   determination: HOLD

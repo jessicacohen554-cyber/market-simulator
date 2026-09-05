@@ -1,0 +1,1093 @@
+{
+ "control pjm-t1h": {
+  "years": {
+   "2022": {
+    "capacity_reserve_position": null,
+    "decided_mw_by_fuel": {
+     "coal": 11415.039000000002
+    },
+    "entry_capped_mw_by_fuel": {
+     "coal": 10999.369999999999,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 26795.514399999996,
+     "oil": 4136.500000000026,
+     "gas_ct": 25791.07000000002
+    },
+    "n_failing": 1211,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 50.0,
+     "pos_cleared": 1.0510375261163845
+    }
+   },
+   "2023": {
+    "capacity_reserve_position": 1.139822,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {
+     "coal": 10999.369999999999,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 27187.514399999996,
+     "gas_ct": 25789.970000000023
+    },
+    "n_failing": 792,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 34.13,
+     "pos_cleared": 1.0552044372739755
+    }
+   },
+   "2024": {
+    "capacity_reserve_position": 1.096403,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {
+     "coal": 23814.356999999993,
+     "gas_st": 9464.454999999996,
+     "gas_cc": 23925.440900000005,
+     "oil": 4136.499999999999,
+     "gas_ct": 25791.069999999996
+    },
+    "n_failing": 852,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 28.92,
+     "pos_cleared": 1.0555098698924799
+    }
+   },
+   "2025": {
+    "capacity_reserve_position": 0.961718,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {},
+    "n_failing": 0,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 269.92,
+     "pos_cleared": 1.0048924853025476
+    }
+   }
+  },
+  "fc3": {
+   "retire_total_gw": 17.958,
+   "retire_band": "FAIL",
+   "per_fuel_model_gw": {
+    "biomass": 0.009,
+    "coal": 16.99,
+    "gas_cc": 0.075,
+    "gas_ct": 0.0,
+    "gas_st": 0.833,
+    "oil": 0.051
+   },
+   "recall": "17/20",
+   "recall_band": "PASS",
+   "false_retire_gw": 6.691,
+   "false_retire_band": "FAIL",
+   "add_by_tech_model_gw": {
+    "wind": 3.0,
+    "solar": 9.762,
+    "gas_cc": 8.118,
+    "gas_ct": 1.013,
+    "storage": 0.0
+   },
+   "blk10_backstop_mw": 1012.8,
+   "loyo": {
+    "2023": [
+     1.0,
+     8.09
+    ],
+    "2024": [
+     0.421,
+     0.0
+    ],
+    "2025": [
+     0.842,
+     6.795
+    ]
+   }
+  },
+  "determination": "HOLD"
+ },
+ "d48 pjm-t1h-d48-devintage": {
+  "years": {
+   "2022": {
+    "capacity_reserve_position": null,
+    "decided_mw_by_fuel": {
+     "coal": 12818.341000000002
+    },
+    "entry_capped_mw_by_fuel": {
+     "coal": 9596.067999999997,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 26795.514399999996,
+     "oil": 4136.500000000026,
+     "gas_ct": 25791.07000000002
+    },
+    "n_failing": 1211,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 50.0,
+     "pos_cleared": 1.0510375261163845
+    }
+   },
+   "2023": {
+    "capacity_reserve_position": 1.140774,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {
+     "coal": 9596.067999999997,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 27187.514399999996,
+     "gas_ct": 25789.970000000023
+    },
+    "n_failing": 792,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 34.13,
+     "pos_cleared": 1.0552044372739755
+    }
+   },
+   "2024": {
+    "capacity_reserve_position": 1.09901,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {
+     "coal": 22411.054999999997,
+     "gas_st": 9464.454999999996,
+     "gas_cc": 23925.440900000005,
+     "oil": 4136.499999999999,
+     "gas_ct": 25791.069999999996
+    },
+    "n_failing": 852,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 28.92,
+     "pos_cleared": 1.0555098698924799
+    }
+   },
+   "2025": {
+    "capacity_reserve_position": 0.956639,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {},
+    "n_failing": 0,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 269.92,
+     "pos_cleared": 1.0048924853025476
+    }
+   }
+  },
+  "fc3": {
+   "retire_total_gw": 19.361,
+   "retire_band": "FAIL",
+   "per_fuel_model_gw": {
+    "biomass": 0.009,
+    "coal": 18.393,
+    "gas_cc": 0.075,
+    "gas_ct": 0.0,
+    "gas_st": 0.833,
+    "oil": 0.051
+   },
+   "recall": "17/20",
+   "recall_band": "PASS",
+   "false_retire_gw": 8.094,
+   "false_retire_band": "FAIL",
+   "add_by_tech_model_gw": {
+    "wind": 3.0,
+    "solar": 9.762,
+    "gas_cc": 8.118,
+    "gas_ct": 1.013,
+    "storage": 0.0
+   },
+   "blk10_backstop_mw": 1012.8,
+   "loyo": {
+    "2023": [
+     1.0,
+     9.493
+    ],
+    "2024": [
+     0.421,
+     0.0
+    ],
+    "2025": [
+     0.842,
+     8.198
+    ]
+   }
+  },
+  "determination": "HOLD"
+ },
+ "arm A pjm-t1h-d57-clearing": {
+  "years": {
+   "2022": {
+    "capacity_reserve_position": null,
+    "decided_mw_by_fuel": {
+     "coal": 5834.581000000001,
+     "gas_st": 7333.700000000001
+    },
+    "entry_capped_mw_by_fuel": {
+     "gas_st": 2130.7549999999997,
+     "gas_cc": 2160.0577,
+     "oil": 3329.400000000002
+    },
+    "n_failing": 429,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 50.0,
+     "pos_cleared": 1.0510375261163845
+    },
+    "clearing": {
+     "census_mw": 181435.072,
+     "census_position": 1.17019,
+     "cleared_mw": 162215.659,
+     "cleared_position": 1.046232,
+     "how": "marginal_offer_sets_price",
+     "marginal_unit": "7779_5",
+     "n_offers": 1370,
+     "n_uncleared": 429,
+     "offered_mw": 150857.184,
+     "price_per_firm_mw_yr": 27777.778,
+     "price_takers_mw": 30577.888,
+     "price_usd_per_mw_day": 76.103501,
+     "requirement_mw": 155047.538,
+     "uncleared_mw_by_fuel": {
+      "coal": 5367.815,
+      "gas_cc": 2052.055,
+      "gas_st": 8801.943,
+      "oil": 2996.46
+     },
+     "uncleared_nameplate_mw_by_fuel": {
+      "coal": 5834.581,
+      "gas_cc": 2160.058,
+      "gas_st": 9464.455,
+      "oil": 3329.4
+     }
+    },
+    "identity": {
+     "holds": true,
+     "n_failing": 429,
+     "n_uncleared": 429,
+     "failing_but_cleared": [],
+     "uncleared_but_passing": []
+    },
+    "ratio_to_published": 1.52207002,
+    "delta_pos_pts": -0.48055261163844065,
+    "offers_above_published_firm_by_fuel": {
+     "coal": 7110.304000000001,
+     "gas_cc": 22356.765000000003,
+     "gas_ct": 24243.596999999998,
+     "oil": 3722.8500000000026,
+     "gas_st": 8801.937
+    },
+    "offer_at_published_pos": 76.1035,
+    "eas_operand": {
+     "coal": {
+      "zero_eas_offer_mw_day": 174.21083978558664,
+      "class_accreditation": 0.92,
+      "eas_kw_yr_to_reach_published_price": 41.71,
+      "firm_mw_above_published": 7110.304000000001,
+      "n_above_published": 48,
+      "n_at_full_bar": 2,
+      "firm_mw_at_full_bar": 30.36
+     },
+     "gas_cc": {
+      "zero_eas_offer_mw_day": 86.51766402307138,
+      "class_accreditation": 0.95,
+      "eas_kw_yr_to_reach_published_price": 12.662500000000001,
+      "firm_mw_above_published": 22356.765000000003,
+      "n_above_published": 157,
+      "n_at_full_bar": 40,
+      "firm_mw_at_full_bar": 1144.6290000000001
+     },
+     "gas_ct": {
+      "zero_eas_offer_mw_day": 61.20664529291752,
+      "class_accreditation": 0.94,
+      "eas_kw_yr_to_reach_published_price": 3.844999999999999,
+      "firm_mw_above_published": 24243.596999999998,
+      "n_above_published": 404,
+      "n_at_full_bar": 330,
+      "firm_mw_at_full_bar": 22727.710000000003
+     },
+     "gas_st": {
+      "zero_eas_offer_mw_day": 103.10796877301517,
+      "class_accreditation": 0.9299999999999999,
+      "eas_kw_yr_to_reach_published_price": 18.0275,
+      "firm_mw_above_published": 8801.937,
+      "n_above_published": 115,
+      "n_at_full_bar": 115,
+      "firm_mw_at_full_bar": 8801.937
+     },
+     "oil": {
+      "zero_eas_offer_mw_day": 76.10350076103501,
+      "class_accreditation": 0.9,
+      "eas_kw_yr_to_reach_published_price": 8.575,
+      "firm_mw_above_published": 3722.8500000000026,
+      "n_above_published": 421,
+      "n_at_full_bar": 421,
+      "firm_mw_at_full_bar": 3722.8500000000026
+     },
+     "nuclear": {
+      "zero_eas_offer_mw_day": 367.17977686767404,
+      "class_accreditation": 0.97,
+      "eas_kw_yr_to_reach_published_price": 112.2975,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     }
+    }
+   },
+   "2023": {
+    "capacity_reserve_position": 1.098442,
+    "decided_mw_by_fuel": {
+     "gas_st": 2130.7549999999997,
+     "gas_cc": 2253.545699999999
+    },
+    "entry_capped_mw_by_fuel": {},
+    "n_failing": 168,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 34.13,
+     "pos_cleared": 1.0552044372739755
+    },
+    "clearing": {
+     "census_mw": 175317.505,
+     "census_position": 1.088138,
+     "cleared_mw": 168435.067,
+     "cleared_position": 1.045421,
+     "how": "marginal_offer_sets_price",
+     "marginal_unit": "COAL_PJM_AEP_Ohio_p2832_committed",
+     "n_offers": 907,
+     "n_uncleared": 168,
+     "offered_mw": 138942.394,
+     "price_per_firm_mw_yr": 30226.096,
+     "price_takers_mw": 36375.111,
+     "price_usd_per_mw_day": 82.811222,
+     "requirement_mw": 161116.99,
+     "uncleared_mw_by_fuel": {
+      "coal": 2464.669,
+      "gas_cc": 2140.868,
+      "gas_st": 1981.602
+     },
+     "uncleared_nameplate_mw_by_fuel": {
+      "coal": 2678.988,
+      "gas_cc": 2253.546,
+      "gas_st": 2130.755
+     }
+    },
+    "identity": {
+     "holds": true,
+     "n_failing": 168,
+     "n_uncleared": 168,
+     "failing_but_cleared": [],
+     "uncleared_but_passing": []
+    },
+    "ratio_to_published": 2.4263469674772926,
+    "delta_pos_pts": -0.978343727397557,
+    "offers_above_published_firm_by_fuel": {
+     "coal": 8872.964,
+     "gas_cc": 22932.158000000003,
+     "gas_ct": 24242.563,
+     "gas_st": 1981.5950000000007
+    },
+    "offer_at_published_pos": 82.8112,
+    "eas_operand": {
+     "coal": {
+      "zero_eas_offer_mw_day": 174.21083978558664,
+      "class_accreditation": 0.92,
+      "eas_kw_yr_to_reach_published_price": 47.039146,
+      "firm_mw_above_published": 8872.964,
+      "n_above_published": 79,
+      "n_at_full_bar": 2,
+      "firm_mw_at_full_bar": 30.36
+     },
+     "gas_cc": {
+      "zero_eas_offer_mw_day": 86.51766402307138,
+      "class_accreditation": 0.95,
+      "eas_kw_yr_to_reach_published_price": 18.1654225,
+      "firm_mw_above_published": 22932.158000000003,
+      "n_above_published": 162,
+      "n_at_full_bar": 41,
+      "firm_mw_at_full_bar": 1237.729
+     },
+     "gas_ct": {
+      "zero_eas_offer_mw_day": 61.20664529291752,
+      "class_accreditation": 0.94,
+      "eas_kw_yr_to_reach_published_price": 9.289997,
+      "firm_mw_above_published": 24242.563,
+      "n_above_published": 403,
+      "n_at_full_bar": 330,
+      "firm_mw_at_full_bar": 22727.710000000003
+     },
+     "gas_st": {
+      "zero_eas_offer_mw_day": 103.10796877301517,
+      "class_accreditation": 0.9299999999999999,
+      "eas_kw_yr_to_reach_published_price": 23.4145715,
+      "firm_mw_above_published": 1981.5950000000007,
+      "n_above_published": 77,
+      "n_at_full_bar": 77,
+      "firm_mw_at_full_bar": 1981.5950000000007
+     },
+     "nuclear": {
+      "zero_eas_offer_mw_day": 367.17977686767404,
+      "class_accreditation": 0.97,
+      "eas_kw_yr_to_reach_published_price": 117.9162735,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     }
+    }
+   },
+   "2024": {
+    "capacity_reserve_position": 1.033409,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {},
+    "n_failing": 8,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 28.92,
+     "pos_cleared": 1.0555098698924799
+    },
+    "clearing": {
+     "census_mw": 172158.571,
+     "census_position": 1.032064,
+     "cleared_mw": 171415.088,
+     "cleared_position": 1.027607,
+     "how": "marginal_offer_sets_price",
+     "marginal_unit": "COAL_PJM_Dominion_p7213_econ",
+     "n_offers": 769,
+     "n_uncleared": 8,
+     "offered_mw": 144198.873,
+     "price_per_firm_mw_yr": 60530.326,
+     "price_takers_mw": 27959.698,
+     "price_usd_per_mw_day": 165.83651,
+     "requirement_mw": 166810.017,
+     "uncleared_mw_by_fuel": {
+      "coal": 405.925
+     },
+     "uncleared_nameplate_mw_by_fuel": {
+      "coal": 441.223
+     }
+    },
+    "identity": {
+     "holds": true,
+     "n_failing": 8,
+     "n_uncleared": 8,
+     "failing_but_cleared": [],
+     "uncleared_but_passing": []
+    },
+    "ratio_to_published": 5.734319156293222,
+    "delta_pos_pts": -2.790286989247992,
+    "offers_above_published_firm_by_fuel": {
+     "gas_ct": 23980.118000000028,
+     "coal": 32411.044000000013,
+     "gas_cc": 4.286,
+     "oil": 3722.8499999999995
+    },
+    "offer_at_published_pos": 0.0,
+    "eas_operand": {
+     "coal": {
+      "zero_eas_offer_mw_day": 174.21083978558664,
+      "class_accreditation": 0.92,
+      "eas_kw_yr_to_reach_published_price": 48.788664,
+      "firm_mw_above_published": 32411.044000000013,
+      "n_above_published": 165,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "gas_cc": {
+      "zero_eas_offer_mw_day": 86.51766402307138,
+      "class_accreditation": 0.95,
+      "eas_kw_yr_to_reach_published_price": 19.971989999999998,
+      "firm_mw_above_published": 4.286,
+      "n_above_published": 1,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "gas_ct": {
+      "zero_eas_offer_mw_day": 61.20664529291752,
+      "class_accreditation": 0.94,
+      "eas_kw_yr_to_reach_published_price": 11.077547999999998,
+      "firm_mw_above_published": 23980.118000000028,
+      "n_above_published": 364,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "oil": {
+      "zero_eas_offer_mw_day": 76.10350076103501,
+      "class_accreditation": 0.9,
+      "eas_kw_yr_to_reach_published_price": 15.49978,
+      "firm_mw_above_published": 3722.8499999999995,
+      "n_above_published": 8,
+      "n_at_full_bar": 8,
+      "firm_mw_at_full_bar": 3722.8499999999995
+     },
+     "nuclear": {
+      "zero_eas_offer_mw_day": 367.17977686767404,
+      "class_accreditation": 0.97,
+      "eas_kw_yr_to_reach_published_price": 119.760874,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     }
+    }
+   },
+   "2025": {
+    "capacity_reserve_position": 0.968039,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {},
+    "n_failing": 0,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 269.92,
+     "pos_cleared": 1.0048924853025476
+    },
+    "clearing": {
+     "census_mw": 143757.827,
+     "census_position": 0.966127,
+     "cleared_mw": 143757.827,
+     "cleared_position": 0.966127,
+     "how": "all_offers_clear_curve_sets_price",
+     "marginal_unit": null,
+     "n_offers": 761,
+     "n_uncleared": 0,
+     "offered_mw": 119757.622,
+     "price_per_firm_mw_yr": 164837.65,
+     "price_takers_mw": 24000.204,
+     "price_usd_per_mw_day": 451.61,
+     "requirement_mw": 148798.088,
+     "uncleared_mw_by_fuel": {},
+     "uncleared_nameplate_mw_by_fuel": {}
+    },
+    "identity": {
+     "holds": true,
+     "n_failing": 0,
+     "n_uncleared": 0,
+     "failing_but_cleared": [],
+     "uncleared_but_passing": []
+    },
+    "ratio_to_published": 1.6731253704801423,
+    "delta_pos_pts": -3.876548530254764,
+    "offers_above_published_firm_by_fuel": {},
+    "offer_at_published_pos": 0.0,
+    "eas_operand": {
+     "coal": {
+      "zero_eas_offer_mw_day": 193.1011718105298,
+      "class_accreditation": 0.83,
+      "eas_kw_yr_to_reach_published_price": 0.0,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "gas_cc": {
+      "zero_eas_offer_mw_day": 111.0699740836727,
+      "class_accreditation": 0.74,
+      "eas_kw_yr_to_reach_published_price": 0.0,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "gas_ct": {
+      "zero_eas_offer_mw_day": 95.89041095890411,
+      "class_accreditation": 0.6,
+      "eas_kw_yr_to_reach_published_price": 0.0,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "oil": {
+      "zero_eas_offer_mw_day": 75.26719855486978,
+      "class_accreditation": 0.91,
+      "eas_kw_yr_to_reach_published_price": 0.0,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 8,
+      "firm_mw_at_full_bar": 3764.215
+     },
+     "nuclear": {
+      "zero_eas_offer_mw_day": 374.9098774333093,
+      "class_accreditation": 0.95,
+      "eas_kw_yr_to_reach_published_price": 36.405240000000006,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     }
+    }
+   }
+  },
+  "fc3": {
+   "retire_total_gw": 18.702,
+   "retire_band": "FAIL",
+   "per_fuel_model_gw": {
+    "biomass": 0.009,
+    "coal": 6.016,
+    "gas_cc": 2.328,
+    "gas_ct": 0.0,
+    "gas_st": 10.297,
+    "oil": 0.051
+   },
+   "recall": "12/20",
+   "recall_band": "FAIL",
+   "false_retire_gw": 9.49,
+   "false_retire_band": "FAIL",
+   "add_by_tech_model_gw": {
+    "wind": 3.0,
+    "solar": 9.762,
+    "gas_cc": 12.118,
+    "gas_ct": 1.013,
+    "storage": 0.0
+   },
+   "blk10_backstop_mw": 1012.8,
+   "loyo": {
+    "2023": [
+     0.583,
+     7.237
+    ],
+    "2024": [
+     0.579,
+     9.499
+    ],
+    "2025": [
+     0.579,
+     9.505
+    ]
+   }
+  },
+  "determination": "HOLD"
+ },
+ "arm B pjm-t1h-d57-clearing-headbasis": {
+  "years": {
+   "2022": {
+    "capacity_reserve_position": null,
+    "decided_mw_by_fuel": {
+     "coal": 1221.988,
+     "gas_st": 9464.454999999993,
+     "gas_cc": 2160.0577,
+     "gas_ct": 132.8592
+    },
+    "entry_capped_mw_by_fuel": {
+     "gas_ct": 9324.692600000002
+    },
+    "n_failing": 310,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 50.0,
+     "pos_cleared": 1.0510375261163845
+    },
+    "clearing": {
+     "census_mw": 144587.111,
+     "census_position": 1.163558,
+     "cleared_mw": 129383.941,
+     "cleared_position": 1.041211,
+     "how": "marginal_offer_sets_price",
+     "marginal_unit": "CT_PEAKER_PJM_Dominion_p55285_peak",
+     "n_offers": 1370,
+     "n_uncleared": 310,
+     "offered_mw": 125363.113,
+     "price_per_firm_mw_yr": 35000.0,
+     "price_takers_mw": 19223.998,
+     "price_usd_per_mw_day": 95.890411,
+     "requirement_mw": 124262.949,
+     "uncleared_mw_by_fuel": {
+      "coal": 1014.25,
+      "gas_cc": 1598.443,
+      "gas_ct": 5674.531,
+      "gas_st": 6909.052
+     },
+     "uncleared_nameplate_mw_by_fuel": {
+      "coal": 1221.988,
+      "gas_cc": 2160.058,
+      "gas_ct": 9457.552,
+      "gas_st": 9464.455
+     }
+    },
+    "identity": {
+     "holds": true,
+     "n_failing": 310,
+     "n_uncleared": 310,
+     "failing_but_cleared": [],
+     "uncleared_but_passing": []
+    },
+    "ratio_to_published": 1.91780822,
+    "delta_pos_pts": -0.9826526116384349,
+    "offers_above_published_firm_by_fuel": {
+     "gas_cc": 17572.869000000006,
+     "coal": 6414.729999999998,
+     "oil": 3764.214999999988,
+     "gas_ct": 15474.651000000005,
+     "gas_st": 6909.05
+    },
+    "offer_at_published_pos": 95.8904,
+    "eas_operand": {
+     "coal": {
+      "zero_eas_offer_mw_day": 193.1011718105298,
+      "class_accreditation": 0.83,
+      "eas_kw_yr_to_reach_published_price": 43.3525,
+      "firm_mw_above_published": 6414.729999999998,
+      "n_above_published": 48,
+      "n_at_full_bar": 2,
+      "firm_mw_at_full_bar": 27.391000000000002
+     },
+     "gas_cc": {
+      "zero_eas_offer_mw_day": 111.0699740836727,
+      "class_accreditation": 0.74,
+      "eas_kw_yr_to_reach_published_price": 16.494999999999997,
+      "firm_mw_above_published": 17572.869000000006,
+      "n_above_published": 159,
+      "n_at_full_bar": 40,
+      "firm_mw_at_full_bar": 891.6069999999999
+     },
+     "gas_ct": {
+      "zero_eas_offer_mw_day": 95.89041095890411,
+      "class_accreditation": 0.6,
+      "eas_kw_yr_to_reach_published_price": 10.05,
+      "firm_mw_above_published": 15474.651000000005,
+      "n_above_published": 404,
+      "n_at_full_bar": 330,
+      "firm_mw_at_full_bar": 14507.059000000003
+     },
+     "gas_st": {
+      "zero_eas_offer_mw_day": 131.35672734096454,
+      "class_accreditation": 0.73,
+      "eas_kw_yr_to_reach_published_price": 21.677500000000002,
+      "firm_mw_above_published": 6909.05,
+      "n_above_published": 115,
+      "n_at_full_bar": 115,
+      "firm_mw_at_full_bar": 6909.05
+     },
+     "oil": {
+      "zero_eas_offer_mw_day": 75.26719855486978,
+      "class_accreditation": 0.91,
+      "eas_kw_yr_to_reach_published_price": 8.392499999999998,
+      "firm_mw_above_published": 3764.214999999988,
+      "n_above_published": 421,
+      "n_at_full_bar": 421,
+      "firm_mw_at_full_bar": 3764.214999999988
+     },
+     "nuclear": {
+      "zero_eas_offer_mw_day": 374.9098774333093,
+      "class_accreditation": 0.95,
+      "eas_kw_yr_to_reach_published_price": 112.6625,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     }
+    }
+   },
+   "2023": {
+    "capacity_reserve_position": 1.073737,
+    "decided_mw_by_fuel": {
+     "gas_cc": 98.0,
+     "gas_ct": 2556.7346000000002
+    },
+    "entry_capped_mw_by_fuel": {},
+    "n_failing": 38,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 34.13,
+     "pos_cleared": 1.0552044372739755
+    },
+    "clearing": {
+     "census_mw": 136817.39,
+     "census_position": 1.062771,
+     "cleared_mw": 134180.837,
+     "cleared_position": 1.042291,
+     "how": "marginal_offer_sets_price",
+     "marginal_unit": "CT_PEAKER_PJM_ComEd_p55640_peak",
+     "n_offers": 756,
+     "n_uncleared": 38,
+     "offered_mw": 112023.146,
+     "price_per_firm_mw_yr": 35000.0,
+     "price_takers_mw": 24794.245,
+     "price_usd_per_mw_day": 95.890411,
+     "requirement_mw": 128736.415,
+     "uncleared_mw_by_fuel": {
+      "coal": 1014.25,
+      "gas_cc": 72.52,
+      "gas_ct": 1534.041
+     },
+     "uncleared_nameplate_mw_by_fuel": {
+      "coal": 1221.988,
+      "gas_cc": 98.0,
+      "gas_ct": 2556.735
+     }
+    },
+    "identity": {
+     "holds": true,
+     "n_failing": 38,
+     "n_uncleared": 38,
+     "failing_but_cleared": [],
+     "uncleared_but_passing": []
+    },
+    "ratio_to_published": 2.809563756226194,
+    "delta_pos_pts": -1.2913437273975426,
+    "offers_above_published_firm_by_fuel": {
+     "coal": 8004.954999999997,
+     "gas_cc": 17866.410000000003,
+     "gas_ct": 15473.991000000005
+    },
+    "offer_at_published_pos": 111.7979,
+    "eas_operand": {
+     "coal": {
+      "zero_eas_offer_mw_day": 193.1011718105298,
+      "class_accreditation": 0.83,
+      "eas_kw_yr_to_reach_published_price": 48.1603165,
+      "firm_mw_above_published": 8004.954999999997,
+      "n_above_published": 79,
+      "n_at_full_bar": 2,
+      "firm_mw_at_full_bar": 27.391000000000002
+     },
+     "gas_cc": {
+      "zero_eas_offer_mw_day": 111.0699740836727,
+      "class_accreditation": 0.74,
+      "eas_kw_yr_to_reach_published_price": 20.781487,
+      "firm_mw_above_published": 17866.410000000003,
+      "n_above_published": 94,
+      "n_at_full_bar": 1,
+      "firm_mw_at_full_bar": 72.52
+     },
+     "gas_ct": {
+      "zero_eas_offer_mw_day": 95.89041095890411,
+      "class_accreditation": 0.6,
+      "eas_kw_yr_to_reach_published_price": 13.52553,
+      "firm_mw_above_published": 15473.991000000005,
+      "n_above_published": 403,
+      "n_at_full_bar": 330,
+      "firm_mw_at_full_bar": 14507.059000000003
+     },
+     "nuclear": {
+      "zero_eas_offer_mw_day": 374.9098774333093,
+      "class_accreditation": 0.95,
+      "eas_kw_yr_to_reach_published_price": 118.1654225,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     }
+    }
+   },
+   "2024": {
+    "capacity_reserve_position": 1.032071,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {
+     "coal": 594.606
+    },
+    "n_failing": 9,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 28.92,
+     "pos_cleared": 1.0555098698924799
+    },
+    "clearing": {
+     "census_mw": 137445.726,
+     "census_position": 1.030552,
+     "cleared_mw": 136529.913,
+     "cleared_position": 1.023686,
+     "how": "marginal_offer_sets_price",
+     "marginal_unit": "COAL_PJM_AEP_Ohio_p1384_econ",
+     "n_offers": 768,
+     "n_uncleared": 9,
+     "offered_mw": 120120.499,
+     "price_per_firm_mw_yr": 67003.479,
+     "price_takers_mw": 17325.228,
+     "price_usd_per_mw_day": 183.571175,
+     "requirement_mw": 133370.926,
+     "uncleared_mw_by_fuel": {
+      "coal": 859.738
+     },
+     "uncleared_nameplate_mw_by_fuel": {
+      "coal": 1035.829
+     }
+    },
+    "identity": {
+     "holds": true,
+     "n_failing": 9,
+     "n_uncleared": 9,
+     "failing_but_cleared": [],
+     "uncleared_but_passing": []
+    },
+    "ratio_to_published": 6.347551002766251,
+    "delta_pos_pts": -3.182386989247976,
+    "offers_above_published_firm_by_fuel": {
+     "gas_ct": 15474.651000000005,
+     "coal": 29240.396999999997,
+     "oil": 3764.215
+    },
+    "offer_at_published_pos": 0.0,
+    "eas_operand": {
+     "coal": {
+      "zero_eas_offer_mw_day": 193.1011718105298,
+      "class_accreditation": 0.83,
+      "eas_kw_yr_to_reach_published_price": 49.738686,
+      "firm_mw_above_published": 29240.396999999997,
+      "n_above_published": 165,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "gas_cc": {
+      "zero_eas_offer_mw_day": 111.0699740836727,
+      "class_accreditation": 0.74,
+      "eas_kw_yr_to_reach_published_price": 22.188708,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "gas_ct": {
+      "zero_eas_offer_mw_day": 95.89041095890411,
+      "class_accreditation": 0.6,
+      "eas_kw_yr_to_reach_published_price": 14.666519999999998,
+      "firm_mw_above_published": 15474.651000000005,
+      "n_above_published": 404,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "oil": {
+      "zero_eas_offer_mw_day": 75.26719855486978,
+      "class_accreditation": 0.91,
+      "eas_kw_yr_to_reach_published_price": 15.394221999999997,
+      "firm_mw_above_published": 3764.215,
+      "n_above_published": 8,
+      "n_at_full_bar": 8,
+      "firm_mw_at_full_bar": 3764.215
+     },
+     "nuclear": {
+      "zero_eas_offer_mw_day": 374.9098774333093,
+      "class_accreditation": 0.95,
+      "eas_kw_yr_to_reach_published_price": 119.97199,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     }
+    }
+   },
+   "2025": {
+    "capacity_reserve_position": 0.965415,
+    "decided_mw_by_fuel": {},
+    "entry_capped_mw_by_fuel": {},
+    "n_failing": 0,
+    "floor_retained_mw": 0,
+    "published": {
+     "price_mw_day": 269.92,
+     "pos_cleared": 1.0048924853025476
+    },
+    "clearing": {
+     "census_mw": 137669.688,
+     "census_position": 0.963424,
+     "cleared_mw": 137669.688,
+     "cleared_position": 0.963424,
+     "how": "all_offers_clear_curve_sets_price",
+     "marginal_unit": null,
+     "n_offers": 760,
+     "n_uncleared": 0,
+     "offered_mw": 119754.284,
+     "price_per_firm_mw_yr": 164837.65,
+     "price_takers_mw": 17915.404,
+     "price_usd_per_mw_day": 451.61,
+     "requirement_mw": 142896.271,
+     "uncleared_mw_by_fuel": {},
+     "uncleared_nameplate_mw_by_fuel": {}
+    },
+    "identity": {
+     "holds": true,
+     "n_failing": 0,
+     "n_uncleared": 0,
+     "failing_but_cleared": [],
+     "uncleared_but_passing": []
+    },
+    "ratio_to_published": 1.6731253704801423,
+    "delta_pos_pts": -4.146848530254765,
+    "offers_above_published_firm_by_fuel": {},
+    "offer_at_published_pos": 0.0,
+    "eas_operand": {
+     "coal": {
+      "zero_eas_offer_mw_day": 193.1011718105298,
+      "class_accreditation": 0.83,
+      "eas_kw_yr_to_reach_published_price": 0.0,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "gas_cc": {
+      "zero_eas_offer_mw_day": 111.0699740836727,
+      "class_accreditation": 0.74,
+      "eas_kw_yr_to_reach_published_price": 0.0,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "gas_ct": {
+      "zero_eas_offer_mw_day": 95.89041095890411,
+      "class_accreditation": 0.6,
+      "eas_kw_yr_to_reach_published_price": 0.0,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     },
+     "oil": {
+      "zero_eas_offer_mw_day": 75.26719855486978,
+      "class_accreditation": 0.91,
+      "eas_kw_yr_to_reach_published_price": 0.0,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 8,
+      "firm_mw_at_full_bar": 3764.215
+     },
+     "nuclear": {
+      "zero_eas_offer_mw_day": 374.9098774333093,
+      "class_accreditation": 0.95,
+      "eas_kw_yr_to_reach_published_price": 36.405240000000006,
+      "firm_mw_above_published": 0.0,
+      "n_above_published": 0,
+      "n_at_full_bar": 0,
+      "firm_mw_at_full_bar": 0
+     }
+    }
+   }
+  },
+  "fc3": {
+   "retire_total_gw": 18.707,
+   "retire_band": "FAIL",
+   "per_fuel_model_gw": {
+    "biomass": 0.009,
+    "coal": 6.016,
+    "gas_cc": 2.333,
+    "gas_ct": 0.0,
+    "gas_st": 10.297,
+    "oil": 0.051
+   },
+   "recall": "12/20",
+   "recall_band": "FAIL",
+   "false_retire_gw": 9.494,
+   "false_retire_band": "FAIL",
+   "add_by_tech_model_gw": {
+    "wind": 3.0,
+    "solar": 9.762,
+    "gas_cc": 12.118,
+    "gas_ct": 1.013,
+    "storage": 0.0
+   },
+   "blk10_backstop_mw": 1012.8,
+   "loyo": {
+    "2023": [
+     0.583,
+     11.169
+    ],
+    "2024": [
+     0.579,
+     9.504
+    ],
+    "2025": [
+     0.579,
+     9.509
+    ]
+   }
+  },
+  "determination": "HOLD"
+ }
+}
