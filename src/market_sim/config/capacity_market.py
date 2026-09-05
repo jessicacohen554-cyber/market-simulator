@@ -3639,44 +3639,64 @@ ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 # EXISTING curated reader ``data.capacity_deliverability.requirement_by_area``
 # (rule 6 — never a re-typed dict), and whose model zones come from the
 # crosswalk's ``leaf`` rows (``capacity_area_crosswalk.map_area``).
-_NYISO_LOCALITY_CURVE_LENGTH: float = 0.18  # NYC and LI Demand Curve Length, all vintages
+_NYISO_LOCALITY_CURVE_LENGTH: float = (
+    0.18  # NYC and LI Demand Curve Length, all vintages
+)
 
 LOCALITY_CAPACITY_AREAS_BY_ISO: dict[str, dict[str, str]] = {
     "NYISO": {"NYC": "NYC", "LI": "Long Island"},
 }
 
-LOCALITY_MARKET_DESIGN_VINTAGES: dict[str, dict[str, tuple[MarketDesignVintage, ...]]] = {
+LOCALITY_MARKET_DESIGN_VINTAGES: dict[
+    str, dict[str, tuple[MarketDesignVintage, ...]]
+] = {
     "NYISO": {
         "NYC": (
             MarketDesignVintage("2021-2022", 21.28 * 12.0),
             MarketDesignVintage("2022-2023", 22.77 * 12.0),
             MarketDesignVintage(
-                "2023-2024", 154.53, _nyiso_icap_vintage_curve(21.20, 29.63, _NYISO_LOCALITY_CURVE_LENGTH)
+                "2023-2024",
+                154.53,
+                _nyiso_icap_vintage_curve(21.20, 29.63, _NYISO_LOCALITY_CURVE_LENGTH),
             ),
             MarketDesignVintage(
-                "2024-2025", 150.98, _nyiso_icap_vintage_curve(19.84, 31.63, _NYISO_LOCALITY_CURVE_LENGTH)
+                "2024-2025",
+                150.98,
+                _nyiso_icap_vintage_curve(19.84, 31.63, _NYISO_LOCALITY_CURVE_LENGTH),
             ),
             MarketDesignVintage(
-                "2025-2026", 140.47, _nyiso_icap_vintage_curve(17.37, 41.30, _NYISO_LOCALITY_CURVE_LENGTH)
+                "2025-2026",
+                140.47,
+                _nyiso_icap_vintage_curve(17.37, 41.30, _NYISO_LOCALITY_CURVE_LENGTH),
             ),
             MarketDesignVintage(
-                "2026-2027", 144.08, _nyiso_icap_vintage_curve(17.81, 42.67, _NYISO_LOCALITY_CURVE_LENGTH)
+                "2026-2027",
+                144.08,
+                _nyiso_icap_vintage_curve(17.81, 42.67, _NYISO_LOCALITY_CURVE_LENGTH),
             ),
         ),
         "LI": (
             MarketDesignVintage("2021-2022", 17.60 * 12.0),
             MarketDesignVintage("2022-2023", 17.59 * 12.0),
             MarketDesignVintage(
-                "2023-2024", 66.26, _nyiso_icap_vintage_curve(13.08, 24.21, _NYISO_LOCALITY_CURVE_LENGTH)
+                "2023-2024",
+                66.26,
+                _nyiso_icap_vintage_curve(13.08, 24.21, _NYISO_LOCALITY_CURVE_LENGTH),
             ),
             MarketDesignVintage(
-                "2024-2025", 61.24, _nyiso_icap_vintage_curve(11.29, 26.59, _NYISO_LOCALITY_CURVE_LENGTH)
+                "2024-2025",
+                61.24,
+                _nyiso_icap_vintage_curve(11.29, 26.59, _NYISO_LOCALITY_CURVE_LENGTH),
             ),
             MarketDesignVintage(
-                "2025-2026", 49.61, _nyiso_icap_vintage_curve(6.80, 28.16, _NYISO_LOCALITY_CURVE_LENGTH)
+                "2025-2026",
+                49.61,
+                _nyiso_icap_vintage_curve(6.80, 28.16, _NYISO_LOCALITY_CURVE_LENGTH),
             ),
             MarketDesignVintage(
-                "2026-2027", 57.58, _nyiso_icap_vintage_curve(7.89, 29.09, _NYISO_LOCALITY_CURVE_LENGTH)
+                "2026-2027",
+                57.58,
+                _nyiso_icap_vintage_curve(7.89, 29.09, _NYISO_LOCALITY_CURVE_LENGTH),
             ),
         ),
     },
@@ -3701,9 +3721,21 @@ NYISO_LOCALITY_UDR_ICAP_MW: tuple[tuple[str, str, float, int, int], ...] = (
     ("LI", "Cross Sound Cable (ISO-NE -> Zone K)", 330.0, 0, 9999),
     ("LI", "Neptune (PJM -> Zone K)", 660.0, 0, 9999),
     ("NYC", "Linden VFT (PJM -> Zone J)", 315.0, 0, 9999),
-    ("NYC", "Hudson Transmission Project (PJM -> Zone J), CRIS through CY 2021/22", 660.0, 0, 2021),
+    (
+        "NYC",
+        "Hudson Transmission Project (PJM -> Zone J), CRIS through CY 2021/22",
+        660.0,
+        0,
+        2021,
+    ),
     ("NYC", "Hudson Transmission Project, 85 MW CRIS elected 2024", 85.0, 2024, 9999),
-    ("NYC", "Champlain Hudson Power Express (HQ -> Zone J), in service CY 2026/27", 1250.0, 2026, 9999),
+    (
+        "NYC",
+        "Champlain Hudson Power Express (HQ -> Zone J), in service CY 2026/27",
+        1250.0,
+        2026,
+        9999,
+    ),
 )
 
 # Published peaking-plant GROSS Cost of New Entry ($/kW-yr) by capacity region
@@ -3767,7 +3799,11 @@ def locality_curve_price_per_firm_mw_yr(
         return None
     anchor = float(vintage.net_cone_curve_per_kw_yr)
     if vintage.demand_curve:
-        return evaluate_demand_curve(vintage.demand_curve, float(position)) * anchor * 1000.0
+        return (
+            evaluate_demand_curve(vintage.demand_curve, float(position))
+            * anchor
+            * 1000.0
+        )
     return anchor * 1000.0
 
 

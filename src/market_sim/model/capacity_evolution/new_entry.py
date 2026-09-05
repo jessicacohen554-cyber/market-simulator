@@ -1313,7 +1313,10 @@ def apply_economic_new_entry(
             # (D33's discipline). Empty dicts ⇒ this block is skipped and the
             # default-zone screen is byte-identical.
             if locality_prices_by_zone and zone_names:
-                _best_zone, _best = zone, energy_margin + capacity_payment + as_credit - fixed_cost
+                _best_zone, _best = (
+                    zone,
+                    energy_margin + capacity_payment + as_credit - fixed_cost,
+                )
                 _prices_2d = np.asarray(prices, dtype=float)
                 for _lz in sorted(locality_prices_by_zone):
                     if _lz == zone or _lz not in zone_names or _prices_2d.ndim != 2:
@@ -1339,7 +1342,9 @@ def apply_economic_new_entry(
                             locality_price_per_firm_mw_yr=locality_prices_by_zone[_lz],
                         )
                     )
-                    _fc = fixed_cost * float((locality_cost_ratio_by_zone or {}).get(_lz, 1.0))
+                    _fc = fixed_cost * float(
+                        (locality_cost_ratio_by_zone or {}).get(_lz, 1.0)
+                    )
                     _mz = _em + _cp + as_credit - _fc
                     if _mz > _best:
                         _best, _best_zone = _mz, _lz

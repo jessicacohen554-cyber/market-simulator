@@ -2005,19 +2005,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         ):
             _storage_by_zone: dict[str, float] = {}
             for _su in storage_units:
-                _storage_by_zone[_su.zone] = _storage_by_zone.get(_su.zone, 0.0) + float(
-                    _su.power_cap_mw
-                )
+                _storage_by_zone[_su.zone] = _storage_by_zone.get(
+                    _su.zone, 0.0
+                ) + float(_su.power_cap_mw)
             locality_positions = locality_capacity_positions(
                 iso,
                 year,
                 fleet,
                 config,
-                wind_pool_by_zone={z: float(wind_cap[i]) for i, z in enumerate(zone_names)},
-                solar_pool_by_zone={z: float(solar_cap[i]) for i, z in enumerate(zone_names)},
+                wind_pool_by_zone={
+                    z: float(wind_cap[i]) for i, z in enumerate(zone_names)
+                },
+                solar_pool_by_zone={
+                    z: float(solar_cap[i]) for i, z in enumerate(zone_names)
+                },
                 storage_power_by_zone=_storage_by_zone,
                 locality_peak_by_zone={
-                    z.name: float(peak_demand) * float(z.load_share) for z in iso_config.zones
+                    z.name: float(peak_demand) * float(z.load_share)
+                    for z in iso_config.zones
                 },
             )
             locality_prices = locality_prices_by_zone(locality_positions)
@@ -2083,11 +2088,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _row["settled_price_per_kw_yr"] = round(
                 max(
                     float(_nyca_price_kw_yr),
-                    (_row["price_per_kw_yr"] if _row["price_per_kw_yr"] is not None else 0.0),
+                    (
+                        _row["price_per_kw_yr"]
+                        if _row["price_per_kw_yr"] is not None
+                        else 0.0
+                    ),
                 ),
                 4,
             )
-            _row["gross_cone_ratio"] = resolve_locality_gross_cone_ratio(iso, _loc, year)
+            _row["gross_cone_ratio"] = resolve_locality_gross_cone_ratio(
+                iso, _loc, year
+            )
             _row["below_requirement"] = bool(_pos.position < 1.0)
             locality_ledger_rows.append(_row)
         screen_ledger_fields = dict(

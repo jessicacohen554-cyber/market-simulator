@@ -129,6 +129,18 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO",
         "NYCA_IRM_ADOPTED_BY_ISO",
         "NYCA_ICAP_UCAP_TRANSLATION_BY_ISO",
+        # capx D59 (2026-09-05, d6256c6c): the NYISO LOCALITY (NYC / LI)
+        # capacity-area registries, published locality demand-curve vintages,
+        # UDR ICAP tranches and gross-CONE table, plus the three locality
+        # resolvers. constants.py already re-exported all but
+        # _NYISO_LOCALITY_CURVE_LENGTH, so the facade contract was never
+        # broken for those seven — this is the inventory catching up, exactly
+        # as NET_ICR_HOLD_LAST_RATIO_BY_ISO and STORAGE_TECH_AVAILABLE_YEAR
+        # did. No value touched.
+        "LOCALITY_CAPACITY_AREAS_BY_ISO",
+        "LOCALITY_GROSS_CONE_BY_ISO",
+        "LOCALITY_MARKET_DESIGN_VINTAGES",
+        "NYISO_LOCALITY_UDR_ICAP_MW",
         "NONFOSSIL_ANNOUNCED_HORIZON_YEARS",
         "PJM_RGGI_ZONE_SHARE",
         "PLANNING_RESERVE_MARGIN_BY_ISO",
@@ -210,6 +222,10 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "_NEISO_MRI_CLEARING_POINTS",
         "_NEISO_MRI_ZERO_X",
         "_NYISO_ICAP_CURVE",
+        # capx D59, see the note above. Private names are in scope for this
+        # inventory and for the facade (cf. _NYISO_NYCA_CURVE_LENGTH below);
+        # this one is the single genuinely missing constants.py re-export.
+        "_NYISO_LOCALITY_CURVE_LENGTH",
         "_NYISO_NYCA_CURVE_LENGTH",
         "_PJM_VRR_CURVE",
         "_PJM_VRR_CURVE_2027_2028",
@@ -219,10 +235,13 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "evaluate_demand_curve",
         "evaluate_renewable_elcc_curve",
         "forward_net_cone_anchor",
+        "locality_curve_price_per_firm_mw_yr",  # capx D59, see the note above.
         "resolve_caiso_ra_mpb_anchor",  # FFR-4F, see the note above.
         "resolve_capacity_curve_eligible",
         "resolve_capacity_market_clearing",
         "resolve_demand_curve_vintage",
+        "resolve_locality_curve_vintage",  # capx D59, see the note above.
+        "resolve_locality_gross_cone_ratio",  # capx D59, see the note above.
         "seasonal_rbdc_price_per_firm_mw_yr",
     ),
     "market_sim.config.ercot_envelopes": (

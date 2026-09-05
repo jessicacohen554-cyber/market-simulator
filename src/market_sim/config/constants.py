@@ -114,6 +114,7 @@ from market_sim.config.capacity_market import (
     _NEISO_MRI_CLEARING_POINTS,
     _NEISO_MRI_ZERO_X,
     _NYISO_ICAP_CURVE,
+    _NYISO_LOCALITY_CURVE_LENGTH,
     _NYISO_NYCA_CURVE_LENGTH,
     _PJM_VRR_CURVE,
     _PJM_VRR_CURVE_2027_2028,
