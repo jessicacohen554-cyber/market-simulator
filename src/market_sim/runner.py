@@ -3476,9 +3476,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _t_pre_save = time.perf_counter()
             save_result(result, config, iso, year, context=context, demand=year_demand)
             _t_end = time.perf_counter()
-            _solve_p0 = energy_solve.r0.solve_time
-            _solve_p1 = energy_solve.p1.solve_time
-            _build = energy_solve.p1.build_time
+            # The three subtrahends are the pass's OWN totals (PERF-B session 3,
+            # charter C-2): ``build_s`` is EVERY matrix build run_energy_solve
+            # performed — ``p1.build_time`` names one model and left the P0
+            # model's build inside ``markup`` whenever P1 cold-rebuilt on a
+            # floored fleet. The forecast path is one energy solve per year,
+            # so the result's fields are the whole accounting here.
+            _solve_p0 = energy_solve.solve_p0_s
+            _solve_p1 = energy_solve.solve_p1_s
+            _build = energy_solve.build_s
             _energy_s = _t_post_solve - _t_pre_solve
             _markup_s = max(0.0, _energy_s - _build - _solve_p0 - _solve_p1)
             _results_write = _t_end - _t_post_solve
