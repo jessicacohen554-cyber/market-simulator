@@ -2644,13 +2644,84 @@ def _skip(criterion: str, year: int, reason: str, key: str | None = None) -> dic
     }
 
 
-def score_governance(config: dict | None, attestation: dict | None) -> dict:
+#: Fields an ``authorized_price_tuning`` declaration must carry to be well-formed
+#: (rule 1 ``[R-STRUCT]`` carve-out, owner ruling 2026-09-05, conditions (a)-(e)).
+AUTHORIZED_TUNING_FIELDS = (
+    "channel",  # (a) which registered channel — must be the offer-curve bands
+    "ruling",  # the owner ruling authorizing it
+    "value",  # the multiplier(s) actually applied
+    "years_held",  # (b) the scored years the ONE config is held across
+    "set_ex_ante",  # (c) declared in the PREREG before the solve
+    "not_swept",  # (c) never selected by sweeping against the gates
+)
+#: (a) The ONLY channel the carve-out authorizes.
+AUTHORIZED_TUNING_CHANNEL = "offer_curve_by_group"
+
+
+def _authorized_tuning_finding(gov: dict, years: list | None) -> tuple[bool, str]:
+    """Validate an ``authorized_price_tuning`` declaration; ``(ok, detail)``.
+
+    Implements rule 1 ``[R-STRUCT]``'s 2026-09-05 carve-out as a machine check so
+    the amendment is enforced rather than merely asserted in prose. A run that
+    tunes on price must DECLARE it here; the declaration is what lets C6 read the
+    two affected assertions as scoped ("no residual fit outside a declared,
+    authorized channel") instead of as false.
+    """
+    dec = gov.get("authorized_price_tuning")
+    if not isinstance(dec, dict):
+        return False, "authorized_price_tuning declaration missing or malformed"
+    missing = [f for f in AUTHORIZED_TUNING_FIELDS if f not in dec]
+    if missing:
+        return False, "authorized_price_tuning incomplete: " + ", ".join(missing)
+    if dec.get("channel") != AUTHORIZED_TUNING_CHANNEL:
+        return False, (
+            f"authorized_price_tuning channel {dec.get('channel')!r} is not the "
+            f"only authorized channel ({AUTHORIZED_TUNING_CHANNEL})"
+        )
+    # (c) both conditions are affirmative claims; absence or falsity fails closed.
+    if not dec.get("set_ex_ante"):
+        return (
+            False,
+            "authorized_price_tuning: set_ex_ante is not asserted (rule 1 (c))",
+        )
+    if not dec.get("not_swept"):
+        return False, "authorized_price_tuning: not_swept is not asserted (rule 1 (c))"
+    # (b) ONE config across EVERY scored year — a per-year value is per-year fitting.
+    held = dec.get("years_held") or []
+    if years and sorted({int(y) for y in held}) != sorted({int(y) for y in years}):
+        return False, (
+            f"authorized_price_tuning years_held {sorted(held)} does not cover every "
+            f"scored year {sorted(years)} (rule 1 (b): ONE config across all years)"
+        )
+    return (
+        True,
+        f"authorized price tuning declared on {dec.get('channel')} = {dec.get('value')}",
+    )
+
+
+def score_governance(
+    config: dict | None, attestation: dict | None, years: list | None = None
+) -> dict:
     """C6 — governance gate (machine cross-check + required attestation).
 
     PASS iff config is clean (exogenous outage source, no forbidden flags) AND an
     attestation is present with all four assertions true. FAIL if the machine
     check trips or any assertion is false. UNATTESTED (-> NOT-YET) if no
     attestation file exists — a run cannot be certified unattested.
+
+    **Rule 1 ``[R-STRUCT]`` carve-out (owner ruling 2026-09-05).** The registered
+    offer-curve band multipliers are an authorized price-tuning channel, so
+    ``no_fit_to_price_residuals`` and ``levers_trace_to_measured_input`` are read
+    as SCOPED — "no residual fit, and every lever measured, OUTSIDE a declared
+    authorized channel" — for a run that carries a well-formed
+    ``governance.authorized_price_tuning`` declaration. The declaration is
+    mandatory and machine-checked (:func:`_authorized_tuning_finding`): a run that
+    tuned on price and does NOT declare it still FAILS, and a declaration that is
+    incomplete, names another channel, omits the ex-ante/not-swept claims, or does
+    not hold one config across every scored year FAILS too. The carve-out reaches
+    those two assertions and nothing else — ``no_pinning_to_actuals`` and
+    ``outage_filter_exogenous_net_load`` are never scoped, and the forbidden-flag
+    machine check is untouched.
     """
     sc = (config or {}).get("scenario_config", {})
     meta = (config or {}).get("meta", {})
@@ -2682,13 +2753,36 @@ def score_governance(config: dict | None, attestation: dict | None) -> dict:
     else:
         gov = attestation.get("governance", {})
         false_asserts = [a for a in assertions if not gov.get(a, False)]
+        # Rule 1 [R-STRUCT] carve-out: the two channel-scoped assertions may read
+        # false ONLY when a well-formed authorized_price_tuning declaration is
+        # present. Everything else about C6 is unchanged, and the declaration is
+        # itself validated, so this can never become a blanket exemption.
+        tuning_note = ""
+        scoped = {"no_fit_to_price_residuals", "levers_trace_to_measured_input"}
+        if false_asserts and set(false_asserts) <= scoped:
+            ok, tuning_detail = _authorized_tuning_finding(gov, years)
+            if ok:
+                false_asserts = []
+                tuning_note = "; " + tuning_detail
+            else:
+                tuning_note = "; " + tuning_detail
+        elif gov.get("authorized_price_tuning") is not None:
+            # Declared even though neither scoped assertion is false — validate it
+            # anyway so a malformed declaration is never silently carried.
+            ok, tuning_detail = _authorized_tuning_finding(gov, years)
+            tuning_note = "; " + tuning_detail
+            if not ok:
+                machine_issues.append(tuning_detail)
         if machine_issues:
             status, detail = FAIL, "; ".join(machine_issues)
         elif false_asserts:
-            status, detail = FAIL, "attestation false: " + ", ".join(false_asserts)
+            status, detail = (
+                FAIL,
+                ("attestation false: " + ", ".join(false_asserts) + tuning_note),
+            )
         else:
             status = PASS
-            detail = gov.get("attested_by", "attested")
+            detail = gov.get("attested_by", "attested") + tuning_note
     if attestation is None and machine_issues:
         detail = "; ".join(machine_issues) + "; and no attestation"
     return {
@@ -2824,7 +2918,9 @@ def determine_from_artifacts(
     for r in records:
         _apply_ledger(r, exceptions)
 
-    gov = score_governance(art["config"], art["attestation"])
+    # scorable_years feeds rule 1 (b): the ONE config must be held across EVERY
+    # scored year, so the check needs to know which years those are.
+    gov = score_governance(art["config"], art["attestation"], scorable_years)
 
     # Owner STANDING RULE (2026-08-06) — auto-ledger a LONE C3c failure on an
     # out-of-training year. Runs AFTER the explicit ledger and AFTER governance,

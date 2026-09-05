@@ -382,12 +382,32 @@ def attestation_shape_finding(att: dict | None) -> tuple[str, str]:
             "which alone forces NOT-YET"
         )
     else:
+        # Rule 1 [R-STRUCT] carve-out (owner ruling 2026-09-05): the registered
+        # offer-curve band multipliers are an authorized price-tuning channel, so
+        # the two channel-scoped assertions may read false WHEN the run carries a
+        # well-formed governance.authorized_price_tuning declaration. Mirrors
+        # calibration_verdict.score_governance, and fails closed the same way: an
+        # absent or malformed declaration leaves the false assertion a problem.
+        scoped = {"no_fit_to_price_residuals", "levers_trace_to_measured_input"}
+        declared = isinstance(gov.get("authorized_price_tuning"), dict) and all(
+            f in gov["authorized_price_tuning"]
+            for f in (
+                "channel",
+                "ruling",
+                "value",
+                "years_held",
+                "set_ex_ante",
+                "not_swept",
+            )
+        )
         for a in GOVERNANCE_ASSERTIONS:
             if a not in gov:
                 problems.append(f"governance.{a} missing")
             elif not isinstance(gov[a], bool):
                 problems.append(f"governance.{a} is {gov[a]!r}, not a bool")
             elif not gov[a]:
+                if a in scoped and declared:
+                    continue  # scoped by a declared authorized tuning channel
                 problems.append(f"governance.{a} is false")
     if not isinstance(att.get("exceptions"), list):
         problems.append('no "exceptions" list (use [] when nothing is ledgered)')
