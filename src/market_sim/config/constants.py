@@ -26,6 +26,7 @@ from market_sim.config.capacity_market import (
     CARB_FLOOR_PRICE,
     CapAndTradeProgram,
     CapacityDemandCurvePoint,
+    ClearedCapacityPrice,
     DEFAULT_MARKET_DESIGN,
     ERCOT_AS_REVENUE_PER_KW_YR,
     ERCOT_AS_SATURATION_EXPONENT,
@@ -119,6 +120,7 @@ from market_sim.config.capacity_market import (
     _PJM_VRR_CURVE,
     _PJM_VRR_CURVE_2027_2028,
     _PJM_VRR_CURVE_2028_2029,
+    _SUPPLY_CLEARING_REFUSED_LOGGED,
     _neiso_fca_vintage_curve,
     _nyiso_icap_vintage_curve,
     evaluate_demand_curve,
@@ -127,6 +129,7 @@ from market_sim.config.capacity_market import (
     resolve_caiso_ra_mpb_anchor,
     resolve_capacity_curve_eligible,
     resolve_capacity_market_clearing,
+    resolve_capacity_market_supply_clearing,
     resolve_demand_curve_vintage,
     seasonal_rbdc_price_per_firm_mw_yr,
 )
