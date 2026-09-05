@@ -1,5 +1,229 @@
 # Changelog
 
+## 2026-09-05 — DOCS-B (model-audit WS4): methodology spec FINALIZED, user manual FINAL, CHANGELOG catch-up, index refresh
+
+Docs-only. **No file under `src/`, `scripts/`, `frontend/`, `results/` or
+`.github/` is touched; no keeper shard, marker, matrix shard or
+`program-status.json`; nothing changes a solve.** Executes DOCS-A's gap-audit
+checklist (`docs/handoffs/methodology-finalization-audit-2026-08.md`), verifying
+every claim against source before writing — where the memo and the code
+disagreed, the code won.
+
+- **`model-methodology-spec.md` is FINALIZED** and carries a status banner
+  saying so. It stops being a build specification with as-built patches: §7
+  "Build Agent Instructions" is deleted (its durable content rehomed to a new
+  §1.9 "Modelling Commitments & Stated Limitations"; the rules themselves live
+  only in `CLAUDE.md` and §7 is now a cite-by-ID index), §2.3 becomes
+  "Construction invariants", the §6.2 performance-target table is deleted, and
+  the Phase-0 as-built note is gone. The words "Build Agent" no longer appear.
+- **Five P1 corrections.** §5.2 is restructured around
+  `ScenarioConfig.retirement_rule` — default **`"pipeline"`**, which the spec
+  never mentioned, so its entire economic-retirement section had been
+  documenting the non-default `"legacy"` branch. Coal's threshold 1 → 3
+  consecutive loss years. CAISO's topology 3 zones → **5 in-state zones + the
+  WECC import node**, naming the three SP15 children. The §6.1 parallelism
+  snippet (the uncapped `ProcessPoolExecutor` that was removed from `run_sweep`
+  as a rule 12 `[R-PARALLEL]` violation) is replaced by `pipeline/members.py`
+  and `DEFAULT_MEMBER_CAP = 2`.
+- **Five further divergences found while re-deriving the audit's number list,
+  none of them in the memo:** `ccs_retrofit_capex_kw` ≈$900/kW → **1,521.4**
+  (the ATB 2024 capture-island increment); the IRA "other clean" credit's
+  2028→2033 cliff → the **four-knot 2033/34/35/36 ladder**;
+  `use_plant_emission_rates_v2` "default off" → **on**;
+  `reserve_margin_build_enabled` "default off" → **tri-state `None`**, resolving
+  ON for the five capacity-market ISOs; ERCOT 9 links → 10 and CAISO 4 → 6.
+- **Seven shipped mechanisms the spec did not describe** are now in it: the
+  §2.1b solve-window cap, the `matrix` subcommand and cases-mode expansion, the
+  `_p1` pass-tagged cache file, `MARKET_SIM_DATA_ROOT`, the real `cache_key`
+  construction (drop-at-default over registered optional fields, the CI-enforced
+  registration ledger, key moves as declared epochs), warm-start, and
+  byte-identity as a reproducibility contract.
+- **Citations repaired and rule citations stabilized.** Five `tests/` paths
+  repointed to the tiered layout; `model/dispatch.py` and `data/fleet.py`
+  citations repointed to `model/lp/` and `data/fleet/` with one note that both
+  facades are frozen import surfaces. The duplicate **§1.8 heading** is resolved
+  by relocating benchmark basis to the delegation block (the determination
+  rubric §0b specifies it in full, including a fallback path the spec never
+  carried). **All ~37 bare-ordinal rule citations now carry stable `[R-*]`
+  IDs**, each referent read in its own sentence — including four that were not
+  CLAUDE.md ordinals at all but the older legitimacy-audit numbering
+  ("rule #12" → `[R-MEASURED]`, "repo rule #1" → `[R-STRUCT]`, §5.8's
+  "rule #12" → `[R-ACCURATE]`, "#9/#11").
+- **The delegation boundary is intact** — nothing re-absorbed from
+  `calibration-and-validation-methodology.md` or either rubric.
+- **`docs/user-manual.md` swept command-by-command on a clean clone, draft →
+  FINAL.** Two substantive errors corrected: §7.5 described **two** holdout
+  tiers and placed 2022 in the wrong one ("Locked-test years (2022, H1-2026)"),
+  where `[R-HOLDOUT]` has **three** tiers with separate markers — train
+  2023–2025, validation 2022 laddering to 2020 (**iterable**, `complete`), and
+  locked test **2019** and H1-2026 (touch-once, `final`), with 2019 missing
+  entirely; and §3.2 said "History was kept (no rewrite)" and offered
+  `git restore --source=<pin-sha>` as an always-available recovery route, when
+  the 2026-08-16 history rewrite **was executed and force-pushed**, making the
+  pin shas dead references and some payloads unrecoverable from this repository.
+  Counts and keys re-derived rather than transcribed (ScenarioConfig fields
+  713 → 794; default cache key → `e5ecd4105ada3e58`; `regenerate_clean --list`
+  50 → 55; test files 447/454 → 524/531), and all ~30 `file.py:NNN` citations
+  converted to `module::symbol` because every one of them had drifted.
+
+## 2026-09-05 — `run_calibration_full.py --help` regression found (parser unaffected; routed, not fixed here)
+
+Found by DOCS-B while verifying the manual on a clean clone.
+`python scripts/run_calibration_full.py --help` exits with
+`ValueError: unsupported format character ')' (0x29)` raised inside
+`argparse.HelpFormatter._expand_help`. The cause is a literal `%` in the
+`--caiso-st-gas-peak-measured` help string (`"(+6.0 %), so it makes C3a WORSE"`),
+which argparse interpolates; it needs `%%`.
+
+**The parser itself is unaffected** — every flag parses and every documented
+invocation runs; only the rendered `--help` catalogue is unavailable, and
+`run_calibration.py --help` still renders. Recorded in the manual (§4.6 warning
++ a new §9.9 troubleshooting entry) and **routed to the calibration desk**:
+DOCS-B is a docs-only lane and cannot patch `scripts/`.
+
+## 2026-09-05 — Keeper wave: four ISOs promoted across 2026-09-04/05; ERCOT, NYISO, NEISO and PJM read CALIBRATED
+
+Catch-up entry — these promotions merged without CHANGELOG entries. Each is
+recorded in its own ISO's keeper shard, calibration log and finding; this entry
+is the index, not a re-adjudication.
+
+| ISO | Designated keeper | Determination |
+|---|---|---|
+| ERCOT | `2026-09-05-ercot248-two-config-keeper` | CALIBRATED |
+| PJM | `2026-08-15-pjm-162-inputclock` (unchanged) | CALIBRATED |
+| NYISO | `2026-09-05-nyiso-189-steam-identity` | CALIBRATED |
+| NEISO | `2026-08-17-neiso-99-joint-p1` (unchanged) | CALIBRATED |
+| CAISO | `2026-09-05-caiso-246-b1-spot` | NOT-YET |
+| MISO | `2026-09-05-miso-217-intermphys` | NOT-YET |
+
+- **NYISO** advanced three times in two days: `nyiso-187` (Astoria routing +
+  `cc_capacity_reconcile`, promoted by owner ruling), `nyiso-188` — **the first
+  NYISO keeper to read CALIBRATED** — and `nyiso-189` (the eGRID steam-collapse
+  CT heat-rate identity), promoted under the owner's standing-disposition
+  formula. Each is a measured-input or identity repair at **zero free
+  parameters** under rules 13 `[R-MEASURED]` / 14 `[R-ACCURATE]` / 1
+  `[R-STRUCT]`; the rejections stand beside them (nyiso-190 refuted clause,
+  nyiso-191 CC_CHP scope rejected on rule 19 `[R-ONE-MECH]`).
+- **MISO** ran `miso-210` (clock, all ten A/B gates passing) → `miso-213`
+  (zonal gas-basis layering) → `miso-217` (the `phys_*` coverage gap closed).
+  MISO stays **NOT-YET on C3a-2025 alone**.
+- **CAISO** promoted `caiso-246`, a coverage-gate repair of the keeper's own
+  designed gas-pricing mechanism at zero free parameters — the EIA N3050CA3
+  monthly survey publishes NA for 2025-09/10/11, so those months fell out of the
+  measured spot overlay's coverage test. CAISO stays **NOT-YET**.
+- **ERCOT** registered its two-config partition as one run (`ercot-248`) and
+  pruned the dashboards to keepers only.
+
+## 2026-09-05 — NYISO `complete` and `frontier` re-declared on nyiso-189 (owner rulings Q38 and Q39; records lanes D56-R and D56-R2)
+
+Two records lanes, **zero solves**, executing two owner rulings from the
+capacity-expansion director's refresh sittings. Both halves of the 2026-08-30
+withdrawal are now reversed, because the withdrawal removed both instruments
+together and its stated cause was never a merits finding against the frontier
+claim — it was that the then-designated keeper read NOT-YET.
+
+- **`complete` (validation tier) re-declared 2026-09-05** by owner ruling **Q38**
+  (2026-09-04, r#35, card C-9: "Re-declare now via a records lane"), executed by
+  records lane **D56-R**. The licence is the withdrawn block's own `reentry`
+  clause: re-entry is a new explicit owner declaration on a designated keeper
+  that scores CALIBRATED. The original D56 never launched and its target keeper
+  `nyiso-188` was superseded by `nyiso-189` before execution.
+- **`frontier` re-declared 2026-09-05** by owner ruling **Q39** (r#37, card
+  C-10), executed by records lane **D56-R2**, closing the split the D56-R finding
+  recorded on the frontier leg. The determination was re-verified artifact-only
+  (`calibration_verdict.py --run-id`, committed artifacts, no solve) before the
+  declaration was written, per rule 22 `[R-HOLDOUT]` D-5(b).
+- **Nothing is granted beyond the validation tier.** `final` remains **empty for
+  every ISO**, the holdout spend freeze is active and tier-scoped to the locked
+  test, and NYISO's 2019 and H1-2026 are **never granted and unspent** — as they
+  are for every ISO. `final` readiness reads NOT-YET on the merits. Frontier is
+  not `final`.
+- The genealogy is preserved in place, five layers deep: declared 2026-07-31 →
+  cleared 2026-08-06 → ratified 2026-08-23 → reverted 2026-08-30 → **re-declared
+  2026-09-05**.
+
+With this, the four-instrument test (frontier · `complete` · forecast-board gate
+(a) · ISO-level determination) reads {ERCOT, NEISO, NYISO, PJM} on all four.
+
+## 2026-09-05 — PERF-B session 3: the vacuous adaptive pass eliminated; full byte gate PASS at atol=rtol=0
+
+Executes the WS3-next charter (`docs/handoffs/perfb-session2-markup-charter-2026-09.md`).
+Three items, one PR each, merged in order (#4741 → #4742/#4744 → #4752/#4753),
+with the finding at `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md`.
+
+- **C-2** — count every build and every pass in the phase-timing accounting.
+- **C-1a** — skip the ercot-221 adaptive pass when its P1 objective is
+  elementwise identical to pass 1's.
+- **C-1b** — reuse pass-1's P0 in the adaptive passes instead of re-solving the
+  identical LP.
+
+**Byte-gated, not merely regression-tested:** `regression_gate.py --mode byte`
+at `atol = rtol = 0` reads **PASS** on ERCOT forward 2023–25,
+`ERCOT__carveout-2023` and NEISO — 0.000 % reshuffle in every year, manifest
+`content_hashes` agreeing 10/10, 6/6 and 10/10, and every bundle parquet
+(`hourly/` sidecars included) frame-identical at 34/34, 14/14 and 31/31.
+
+Measured removal, from the merge-base control's own solve log: ERCOT forward
+2025 loses the whole adaptive pass (**−823 s**, 4 → 2 HiGHS runs) and the other
+years lose their duplicated P0 (−298.5 / −352.6 / −369.7 s). The three-year
+ERCOT forward wall goes **4,859.5 → 3,592.3 s (−26 %)**, 12 → 8 HiGHS runs.
+
+No `ScenarioConfig` default changed; no keeper shard, marker, matrix shard,
+registry or workflow touched; nothing promoted.
+
+## 2026-09-05 — Governance: owner rulings R-AH … R-AK recorded (audit records lane v28b)
+
+Four rulings from the 2026-09-05 15:32Z audit sitting, on the record for the
+first time. They had grepped **zero files** before this lane — the third
+consecutive cycle of the R-AF / R-AG defect, in which a ruling given verbally
+goes unrecorded until a records lane writes it.
+
+- **R-AH** (card A, Y-1) — the branch-protection flip is performed on the first
+  CI-covered head whose R-AE six-check set reads 6 of 6. The condition was met at
+  18:06:46Z; the Settings action itself is unread from here.
+- **R-AI** (card C, X-2) — hold the stage-0 golden re-captures until the 09-07
+  clocks; no capture taken, all three clocks intact, stage-0 at 4 of 7.
+- **R-AJ** (card D, G2 leg 1 + R-V) — golden-tier CI proof, **then** declare.
+  X-3's non-launch is discharged (PERF-B s3 merged), the one authorized proof is
+  run #11 / `33983249186`, **status unread — so leg 1 is NOT declared by that
+  entry.**
+- **R-AK** (card E) — launch-failure routing: until the failure class clears,
+  records / capture / small-repair lanes are assigned to **Opus**; Fable stays
+  for adjudication-class lanes and rule-27 core-infrastructure scope. Recorded on
+  the director's attestation, not claimed as verified — session launch outcomes
+  leave no artifact in the tree.
+
+One dated correction carried with them: the parallel v28 lane's sweep read
+"`R-AH` → 0 files. Confirmed: none issued." **The count was right and the
+conclusion is wrong** — a zero grep shows nothing was *recorded*, never that
+nothing was *issued*.
+
+## 2026-09-05 — Gate G2: released to DOCS-B by dispatch; NOT recorded as declared in the tree
+
+**Recorded as a discrepancy rather than resolved, because resolving it is the
+owner's act, not a docs lane's.**
+
+DOCS-B (this lane, model-audit WS4) was released by a director dispatch citing
+**owner ruling R-AM, 2026-09-05**, as the G2 declaration — WS4's charter holds
+it until G2 (`docs/model-audit-release-plan-2026-08.md` §4.9).
+
+**At this pin the repository carries no record of either.** A word-boundary grep
+across `docs/` and `CHANGELOG.md` returns **zero files** for `R-AL`, `R-AM` and
+`R-AN`; there is no "G2 DECLARED" line anywhere; and the newest board entry
+states the opposite — under **R-AJ**, "G2 leg 1 is therefore NOT declared by this
+entry", with the one authorized golden-tier proof (run `33983249186`) recorded as
+**status unread**. The plan's §2 preconditions also list PERF-B merged
+byte-green, which is now satisfied (see the PERF-B s3 entry above).
+
+This entry therefore records what is verifiable: **the dispatch asserts G2; the
+tree does not show it.** That is the exact shape of the R-AF / R-AG / R-AH defect
+the audit board has now documented three cycles running — a ruling given
+verbally and unrecorded until a records lane writes it — and it is logged here
+in the same form the board uses for R-AK: on attestation, not claimed as
+verified. **A governance records lane should confirm R-AM and write the G2
+declaration with its date**; this docs lane does not mint an owner act it cannot
+observe, and no CHANGELOG line here should be read as that declaration.
+
 ## 2026-09-05 — capx D60: the three-ruling arming batch (Q40 · Q41 · Q42) — the MISO ratio, both NYISO requirement gates, and the CCS capex repair as the global default
 
 **Execution of three owner rulings** given 2026-09-05 at director sitting r#37 (capx ledger
