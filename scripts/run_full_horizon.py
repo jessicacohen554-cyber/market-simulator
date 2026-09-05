@@ -635,6 +635,7 @@ def solve_and_summarize(
     redirect_cache: bool = True,
     extra_summary: dict | None = None,
     extra_spec: "RecordSpec | None" = None,
+    set_overrides: dict | None = None,
 ) -> dict:
     """Solve one forecast config with instrumentation, write its summary, return it.
 
@@ -662,6 +663,11 @@ def solve_and_summarize(
         extra_summary: Optional dict merged into the summary verbatim (a leg
             records its ``case`` / ``premium_usd_per_mwh`` / ``crediting`` /
             ``campaign`` there for the CES sidecar).
+        set_overrides: The generic ``--set FIELD=VALUE`` overrides this
+            invocation applied to ``config`` before solving (see
+            :func:`parse_set_overrides`). Recorded verbatim in the summary and
+            in ``run_config.json``; it does not itself change the config, which
+            the caller has already overridden.
         extra_spec: Optional :class:`RecordSpec` declaring any config-describing
             keys ``extra_summary`` contributes (FFR-3R). Required whenever
             ``extra_summary`` carries a key naming a ``ScenarioConfig`` field:
@@ -802,8 +808,17 @@ def solve_and_summarize(
         iso=iso,
         cache_key=cache_key,
         solved_years=solved_years,
+        # The generic --set overrides this invocation applied, recorded
+        # verbatim beside the resolved config they acted on (SCN-WS0
+        # deliverable 4). The resolved scenario_config block already CARRIES
+        # their effect; this says which fields a human named on the command
+        # line, which is what a reader of a probe bundle needs to know.
+        set_overrides=dict(set_overrides or {}),
     )
     summary["run_config_path"] = str(run_config_path) if run_config_path else None
+    # Same record in the summary the registrar reads, so a probe's overrides
+    # travel with the artifact a reader actually opens.
+    summary["set_overrides"] = dict(set_overrides or {})
 
     if extra_summary:
         summary.update(extra_summary)
@@ -863,6 +878,124 @@ def solve_and_summarize(
         print("  run_config.json NOT written — no resolved config.yaml to read")
     print(f"  wrote {summary_path}")
     return summary
+
+
+# --------------------------------------------------------------------------- #
+# Generic --set field overrides (SCN-WS0 deliverable 4)
+# --------------------------------------------------------------------------- #
+def add_set_argument(ap: "argparse.ArgumentParser") -> None:
+    """Register the generic ``--set FIELD=VALUE`` override on a runner parser.
+
+    Shared by this runner and ``scripts/run_ces_leg.py`` so a scenario probe
+    never needs a throwaway config file for a one-field what-if. Repeatable.
+
+    Args:
+        ap: The parser to register the argument on.
+    """
+    ap.add_argument(
+        "--set",
+        action="append",
+        default=[],
+        dest="set_overrides",
+        metavar="FIELD=VALUE",
+        help=(
+            "Override one ScenarioConfig field on the resolved config, e.g. "
+            "--set carbon_price_delta=25. Repeatable. FIELD is validated "
+            "against ScenarioConfig's own field names (an unknown name is a "
+            "hard error, never a silent no-op — rule 24 [R-REGISTRY]: an "
+            "override that does not name a registered field is not a tuning "
+            "channel, it is a typo). VALUE is parsed as YAML, so numbers, "
+            "booleans, null, lists and mappings all work. Every override is "
+            "recorded in the run's run_config.json and summary."
+        ),
+    )
+
+
+def parse_set_overrides(specs: "list[str] | None") -> dict:
+    """Parse ``FIELD=VALUE`` strings into a validated override mapping.
+
+    Args:
+        specs: The raw ``--set`` strings, or ``None``.
+
+    Returns:
+        ``{field: value}`` with each value parsed as YAML and coerced to the
+        field's declared scalar type where that type is a plain
+        ``int``/``float``/``bool``/``str``.
+
+    Raises:
+        SystemExit: On a malformed spec, an unknown field name, a repeated
+            field, or a value that will not coerce to the declared type.
+    """
+    import dataclasses
+
+    import yaml as _yaml
+
+    if not specs:
+        return {}
+    declared = {f.name: f.type for f in dataclasses.fields(ScenarioConfig)}
+    out: dict = {}
+    for spec in specs:
+        if "=" not in spec:
+            raise SystemExit(f"--set expects FIELD=VALUE, got {spec!r}")
+        field, _, raw = spec.partition("=")
+        field = field.strip()
+        if field not in declared:
+            raise SystemExit(
+                f"--set {field}=...: {field!r} is not a ScenarioConfig field. "
+                "Every solve-affecting tunable is registered there (rule 24 "
+                "[R-REGISTRY]); there is no off-registry override channel."
+            )
+        if field in out:
+            raise SystemExit(f"--set {field}=... given more than once")
+        value = _yaml.safe_load(raw)
+        annotation = str(declared[field])
+        # Coerce only the unambiguous scalar annotations. A union, an Optional
+        # or a container keeps YAML's own parse — the config's __post_init__
+        # and the LP are the authority on those, not this parser.
+        try:
+            if annotation == "bool":
+                if not isinstance(value, bool):
+                    raise ValueError(f"{value!r} is not a boolean")
+            elif annotation == "int" and not isinstance(value, bool):
+                value = int(value)
+            elif annotation == "float" and not isinstance(value, bool):
+                value = float(value)
+            elif annotation == "str":
+                value = str(value)
+        except (TypeError, ValueError) as exc:
+            raise SystemExit(
+                f"--set {field}={raw!r}: cannot read as {annotation} ({exc})"
+            ) from exc
+        out[field] = value
+    return out
+
+
+def apply_set_overrides(config: ScenarioConfig, overrides: dict) -> ScenarioConfig:
+    """Return ``config`` with ``overrides`` applied, re-validated.
+
+    Applied AFTER the runner's own posture resolution, so an explicit ``--set``
+    is the last word on the field it names and nothing silently re-derives over
+    it. ``dataclasses.replace`` re-runs ``__post_init__``, so every registered
+    guard (the D23/D34 carbon inversion warnings, the mutual-exclusion checks)
+    fires on the overridden config exactly as it would on a YAML that set the
+    same field.
+
+    Args:
+        config: The resolved forecast config.
+        overrides: The mapping from :func:`parse_set_overrides`.
+
+    Returns:
+        The overridden config, or ``config`` itself when there is nothing to do.
+    """
+    import dataclasses
+
+    if not overrides:
+        return config
+    print(
+        "  --set overrides: "
+        + ", ".join(f"{k}={v!r}" for k, v in sorted(overrides.items()))
+    )
+    return dataclasses.replace(config, **overrides)
 
 
 # --------------------------------------------------------------------------- #
@@ -1088,7 +1221,9 @@ def main(argv: list[str] | None = None) -> int:
             "flag leaves the field UNSET (the shipped posture)."
         ),
     )
+    add_set_argument(ap)
     args = ap.parse_args(argv)
+    set_overrides = parse_set_overrides(args.set_overrides)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
     # forecast/hindcast invocation under this program may span > 5 solve-years
@@ -1118,12 +1253,14 @@ def main(argv: list[str] | None = None) -> int:
         miso_clean_tier_rows=args.miso_clean_tier_rows,
         ccs_retrofit_capex_co2_scaling=args.ccs_retrofit_capex_co2_scaling,
     )
+    config = apply_set_overrides(config, set_overrides)
     summary = solve_and_summarize(
         config,
         iso,
         args.out_dir,
         sample_interval=args.sample_interval,
         redirect_cache=True,
+        set_overrides=set_overrides,
     )
     return 1 if summary.get("error") else 0
 
