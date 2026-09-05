@@ -221,12 +221,16 @@ nothing was spent.**
 
 ## 8. Push verification (rule 27 — every edited data file, `git push` transport)
 
-Single-commit pack on `claude/capx-d56r2-nyiso-frontier-6b5xmj`, base `8342d74d`. Each pushed
-blob fetched back through the GitHub contents API on the branch ref and compared to the local
-`git hash-object` — see the table stamped below after the push.
+Commit `8645c08e` on `claude/capx-d56r2-nyiso-frontier-6b5xmj`, base `8342d74d`, a single-commit
+pack of five text files over `git push` (first try, no 413/408). Each pushed blob fetched back
+through the GitHub contents API on the branch ref (the marker, too large for the API response,
+was compared on the fetched remote ref `origin/<branch>:<path>` instead) and compared to the
+local `git hash-object`. No mismatch; no stop-the-line event. This table is filled by a
+follow-up docs-only commit, itself verified the same way.
 
 | file | local blob | remote blob | bytes / lines |
 |---|---|---|---|
-| `frontend/data/backcast/keepers/NYISO.json` | `1c18e0167016` | _(filled after push)_ | 40,050 / 107 |
-| `frontend/data/backcast/calibration-complete.json` | `d50684315d8c` | _(filled after push)_ | 159,325 / 282 |
-| `frontend/data/backcast/status/NYISO.js` | `1eddbb8e71b1` | _(filled after push)_ | 39,438 / 1 |
+| `frontend/data/backcast/keepers/NYISO.json` | `1c18e0167016` | `1c18e0167016` ✓ | 40,050 / 107 |
+| `frontend/data/backcast/calibration-complete.json` | `d50684315d8c` | `d50684315d8c` ✓ | 159,325 / 282 |
+| `frontend/data/backcast/status/NYISO.js` | `1eddbb8e71b1` | `1eddbb8e71b1` ✓ | 39,438 / 1 |
+| `docs/calibration-log/nyiso.md` | `671275d4df5b` | `671275d4df5b` ✓ | (log entry appended) |
