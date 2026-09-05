@@ -1,0 +1,3 @@
+case,year,emissions_mt,import_co2_mt_reported,emissions_mt_bau,import_co2_mt_reported_bau,emissions_mt_delta,import_co2_mt_reported_delta,cumulative_emissions_mt_delta,cumulative_import_co2_mt_reported_delta
+CARB,2026,13.5987,6.426592,16.3081,4.571793,-2.7094000000000005,1.8547989999999999,-2.7094000000000005,1.8547989999999999
+REF,2026,16.3081,4.571793,16.3081,4.571793,0.0,0.0,0.0,0.0

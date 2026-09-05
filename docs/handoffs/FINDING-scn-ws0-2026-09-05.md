@@ -235,6 +235,12 @@ edited by this lane.
   `[R-DASHBOARD]`, FF plan §7.5), rebuilt by the Pages deploy.
 - The manifest carries the campaign block: both arms group under `scn-ws0-smoke`, CARB
   showing `co2_delta_mt [[2026, -2.71]]` and REF its explicit `[[2026, 0.0]]` baseline.
-- The solve caches, matrix bundle, delta report and rollup live under
-  `results/scn-ws0-smoke/` and are **not committed** — `results/` is a working tree, and
-  a T0 harness exercise is not a keeper.
+- `results/scn-ws0-smoke/` follows the committed `ffr-sa-smoke` T0 convention exactly:
+  the **slim artifacts are committed** (192 KB — each arm's `full_horizon_summary.json`
+  and `run_config.json`, the matrix bundle, and the delta-report / campaign-rollup
+  tables that are the evidence behind every number in §2), while the nested per-ISO LP
+  cache each arm writes is gitignored as transient and regenerable from config
+  (`.gitignore` `/results/scn-ws0-smoke/*/*/NEISO/`, the same class as
+  `/results/<ISO>/`). A T0 harness exercise is not a keeper and is not
+  dashboard-registered as one — the registered record is the pair of
+  `frontend/data/hindcast` sidecars above.

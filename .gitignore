@@ -280,6 +280,13 @@ frontend/data/forecast/program-status.js
 # transient class as /results/<ISO>/ above — regenerable from config.
 /results/ffr-sa-smoke/*/PJM/
 /results/ffr-sa-smoke/*/NEISO/
+# SCN-WS0 paired T0 smoke (results/scn-ws0-smoke/): identical class to the
+# ffr-sa-smoke legs above. The slim artifacts ARE committed — each arm's
+# summary + run_config, the matrix bundle, and the delta-report / campaign-rollup
+# tables that are the evidence behind docs/handoffs/FINDING-scn-ws0-2026-09-05.md
+# — while the nested per-ISO LP cache dir each self-contained arm writes is
+# transient and regenerable from config.
+/results/scn-ws0-smoke/*/*/NEISO/
 # Full-horizon forecast runs and ad-hoc forecast probes: disposable diagnostic
 # cache, never committed (forecast probes are not dashboard-registered —
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their
