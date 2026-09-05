@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-09-05 — Y-14: the ERCOT stage-0 golden captures the FORWARD 2024–2025 config; the `ERCOT__carveout-2023` capture key is retired (owner ruling R-AW)
+
+Two scripts, one test file, one manifest block. **No shard, marker, bench, status page,
+`results/calibration/` file, solve or re-capture.** Owner ruling R-AW (audit-program director
+sitting 2026-09-05, verbatim *"The golden config should be the 2024:2025 one not 2023"*), executed
+per `docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md`:
+
+- **`scripts/check_golden_manifest.py`** — `FORWARD_ROLE` / `RETIRED_CAPTURE_KEYS` constants;
+  `resolve_role` / `designated_years`; a partitioned ISO's bare key resolves through its `forward`
+  role; a CURRENT golden of a partitioned config must replay exactly its designated span (hard);
+  `registered_years ⊇ years` (rule 22, hard); a retired key's entries are validated as v2 and
+  reported as historical capture records, never compared to the live shard. Exit 0 unchanged;
+  every bare-ERCOT report line byte-identical (9 stale + 6 retired where 15 stale read before).
+- **`scripts/capture_keeper_goldens.py`** — imports both constants from the gate; the bare
+  `ERCOT` key (and `ERCOT__forward`) resolves to the composed run's registered bundle
+  `ercot248_two_config_keeper` (its `meta.json` is the forward config verbatim, 280/280 keys) sliced
+  to [2024, 2025] with `registered_years` [2023, 2024, 2025] kept on the entry and snapshot;
+  `slice_to_designated_span` raises unless designated ⊆ registered; `ERCOT__carveout-2023` is
+  refused with the citation.
+- **`results/regression-goldens/perfb-stage0/manifest.json`** — the carve-out entry gains a
+  `retired` block; every other byte identical. The five perfb-s2/s3 refactor-pair manifests are
+  untouched (a `keeper_id` records what was actually captured).
+- **`tests/scoring/test_golden_manifest_provenance.py`** — the two Y-11 STOP reds rewritten to the
+  new semantics (retired-record provenance chain; forward config on its designated span) plus
+  eleven new tests; 57 passed. Fast tier 8114 passed, exit 0.
+- The R-AI re-capture (ERCOT clock 2026-09-07 19:02Z) is NOT run; its command is in the finding §7.
+
 ## 2026-09-05 — capx D64: the CCS retrofit's FOURTH seam adjudicated (Phase 0, zero solves) — both fixed-cost legs are TPC-fractions in their source and scale with the island; PJM's 2029 residual closes on the arithmetic; the capture VOM adder is found uncited and 2.7–3.6× every published basis
 
 Docs + one results JSON. **No `src/` file, no `ScenarioConfig` field, no constant, no matrix cell,
