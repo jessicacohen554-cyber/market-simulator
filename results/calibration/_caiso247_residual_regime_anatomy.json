@@ -1,0 +1,2160 @@
+{
+ "_provenance": {
+  "session": "caiso-247 (queue item A, PHASE-0 residual anatomy, ZERO LP)",
+  "bundle": "results/calibration/caiso246_b1_spot_coverage",
+  "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+  "precommit": "PRECOMMIT-caiso247-residual-regime-anatomy-2026-09-05.md",
+  "instrument": "_caiso244_import_level_anatomy reconstruct() on the committed P1 duals; caiso-131/140 common-weight gap decomposition over ZONE-HOURS",
+  "comparator": "data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet (rt) \u2014 the series avgLMP.rt_lw is built from",
+  "weights": "rubric rt_lw weights (eia_loader measured system load), applied to BOTH sides",
+  "tol_usd_mwh": 0.05,
+  "note": "NOTHING ARMED, NO SOLVE, NO FIELD, NO FLAG. Taxonomy frozen in PRECOMMIT \u00a71.3 before any measurement.",
+  "run_year_unreachable": {}
+ },
+ "years": {
+  "2023": {
+   "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+   "G_BENCH": {
+    "recomputed_rt_lw": 54.1748,
+    "committed_rt_lw": 54.17,
+    "abs_diff": 0.0048,
+    "hours_actual_missing": 48,
+    "pass": true
+   },
+   "G_GAP": {
+    "gap_hourly": 1.3071,
+    "printed_model": 56.29,
+    "printed_actual": 54.17,
+    "printed_gap": 2.12,
+    "abs_diff": 0.8129,
+    "pass": true,
+    "basis_decomposition": {
+     "model_rubric_basis_all_hours": 56.2862,
+     "model_rubric_basis_ok_hours": 55.7691,
+     "model_measured_load_weighted_ok_hours": 55.4819,
+     "weight_basis_term_usd_per_mwh": 0.8043,
+     "share_of_printed_gap": 0.3794,
+     "model_demand_twh": 207.404,
+     "measured_load_twh": 218.1814,
+     "note": "rubric model side = MODEL-demand-weighted; rubric actual side = MEASURED-load-weighted. Reported as a like-for-like observation, NOT as a reduction of C3a: the rubric's basis is the rubric's."
+    }
+   },
+   "G_RECON": {
+    "basis_selected": "gross",
+    "pass": true,
+    "gross": {
+     "annual_twh_klass": 37.27014285960913,
+     "annual_twh_recon": 37.27014291339035,
+     "annual_energy_err_pct": 1.4430110042759148e-07,
+     "hourly_rmse_mw": 6.165143277188069e-05,
+     "hourly_rmse_mw_determined_hours": 0.00010145558746271209,
+     "hours_determined": 3018,
+     "hours_with_marginal_import_row": 5742,
+     "hours_with_gt1_marginal_rows": 3445,
+     "hours_residual_clipped": 0,
+     "max_abs_err_mw": 0.0004653151963793789,
+     "G_RECON_pass": true
+    },
+    "net": {
+     "annual_twh_klass": 37.27014285960913,
+     "annual_twh_recon": -3.601987804811505,
+     "annual_energy_err_pct": -109.66453983924784,
+     "hourly_rmse_mw": 7955.084365722882,
+     "hourly_rmse_mw_determined_hours": 13283.407204516447,
+     "hours_determined": 3000,
+     "hours_with_marginal_import_row": 5760,
+     "hours_with_gt1_marginal_rows": 3449,
+     "hours_residual_clipped": 4156,
+     "max_abs_err_mw": 15423.00041502271,
+     "G_RECON_pass": false
+    }
+   },
+   "G_CLASS": {
+    "unresolved_weight_share": 0.0366,
+    "pass": true
+   },
+   "by_regime": {
+    "HUB_FITTED": {
+     "weight_share": 0.0022,
+     "gap_contribution_usd_per_mwh": 0.0237,
+     "gap_share": 0.0181,
+     "CR": 8.131,
+     "mean_residual_usd_per_mwh": 10.628,
+     "positive_gap_share": 0.0035
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.1071,
+     "gap_contribution_usd_per_mwh": 0.4709,
+     "gap_share": 0.3602,
+     "CR": 3.363,
+     "mean_residual_usd_per_mwh": 4.396,
+     "positive_gap_share": 0.1072
+    },
+    "DOM_GAS": {
+     "weight_share": 0.6014,
+     "gap_contribution_usd_per_mwh": -0.189,
+     "gap_share": -0.1446,
+     "CR": -0.24,
+     "mean_residual_usd_per_mwh": -0.314,
+     "positive_gap_share": 0.5526
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0248,
+     "gap_contribution_usd_per_mwh": 0.1939,
+     "gap_share": 0.1484,
+     "CR": 5.982,
+     "mean_residual_usd_per_mwh": 7.819,
+     "positive_gap_share": 0.0362
+    },
+    "STORAGE": {
+     "weight_share": 0.2278,
+     "gap_contribution_usd_per_mwh": 0.7255,
+     "gap_share": 0.555,
+     "CR": 2.437,
+     "mean_residual_usd_per_mwh": 3.185,
+     "positive_gap_share": 0.2677
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0366,
+     "gap_contribution_usd_per_mwh": 0.0822,
+     "gap_share": 0.0629,
+     "CR": 1.716,
+     "mean_residual_usd_per_mwh": 2.243,
+     "positive_gap_share": 0.0329
+    },
+    "_total_gap_usd_per_mwh": 1.3071,
+    "_positive_gap_usd_per_mwh": 8.0513
+   },
+   "by_regime_gasfirst_G_ORDER": {
+    "HUB_FITTED": {
+     "weight_share": 0.0005,
+     "gap_contribution_usd_per_mwh": 0.0077,
+     "gap_share": 0.0059,
+     "CR": 10.918,
+     "mean_residual_usd_per_mwh": 14.271,
+     "positive_gap_share": 0.001
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.0695,
+     "gap_contribution_usd_per_mwh": 0.3618,
+     "gap_share": 0.2768,
+     "CR": 3.983,
+     "mean_residual_usd_per_mwh": 5.206,
+     "positive_gap_share": 0.0765
+    },
+    "DOM_GAS": {
+     "weight_share": 0.6408,
+     "gap_contribution_usd_per_mwh": -0.064,
+     "gap_share": -0.049,
+     "CR": -0.076,
+     "mean_residual_usd_per_mwh": -0.1,
+     "positive_gap_share": 0.5858
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0248,
+     "gap_contribution_usd_per_mwh": 0.1939,
+     "gap_share": 0.1484,
+     "CR": 5.982,
+     "mean_residual_usd_per_mwh": 7.819,
+     "positive_gap_share": 0.0362
+    },
+    "STORAGE": {
+     "weight_share": 0.2278,
+     "gap_contribution_usd_per_mwh": 0.7255,
+     "gap_share": 0.555,
+     "CR": 2.437,
+     "mean_residual_usd_per_mwh": 3.185,
+     "positive_gap_share": 0.2677
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0366,
+     "gap_contribution_usd_per_mwh": 0.0822,
+     "gap_share": 0.0629,
+     "CR": 1.716,
+     "mean_residual_usd_per_mwh": 2.243,
+     "positive_gap_share": 0.0329
+    },
+    "_total_gap_usd_per_mwh": 1.3071,
+    "_positive_gap_usd_per_mwh": 8.0509
+   },
+   "by_regime_tol075_SENSITIVITY": {
+    "HUB_FITTED": {
+     "weight_share": 0.0025,
+     "gap_contribution_usd_per_mwh": 0.0225,
+     "gap_share": 0.0172,
+     "CR": 6.845,
+     "mean_residual_usd_per_mwh": 8.947,
+     "positive_gap_share": 0.0036
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.1428,
+     "gap_contribution_usd_per_mwh": 0.5516,
+     "gap_share": 0.422,
+     "CR": 2.956,
+     "mean_residual_usd_per_mwh": 3.864,
+     "positive_gap_share": 0.1354
+    },
+    "DOM_GAS": {
+     "weight_share": 0.7683,
+     "gap_contribution_usd_per_mwh": 0.3001,
+     "gap_share": 0.2296,
+     "CR": 0.299,
+     "mean_residual_usd_per_mwh": 0.391,
+     "positive_gap_share": 0.7362
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0546,
+     "gap_contribution_usd_per_mwh": 0.7184,
+     "gap_share": 0.5497,
+     "CR": 10.063,
+     "mean_residual_usd_per_mwh": 13.153,
+     "positive_gap_share": 0.104
+    },
+    "STORAGE": {
+     "weight_share": 0.0317,
+     "gap_contribution_usd_per_mwh": -0.2893,
+     "gap_share": -0.2213,
+     "CR": -6.991,
+     "mean_residual_usd_per_mwh": -9.138,
+     "positive_gap_share": 0.0204
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0002,
+     "gap_contribution_usd_per_mwh": 0.0037,
+     "gap_share": 0.0028,
+     "CR": 16.702,
+     "mean_residual_usd_per_mwh": 21.831,
+     "positive_gap_share": 0.0005
+    },
+    "_total_gap_usd_per_mwh": 1.3071,
+    "_positive_gap_usd_per_mwh": 8.0702
+   },
+   "taxonomy_overlap_tol075": {
+    "hub_and_gas_zonehours": 3860,
+    "hub_zonehours": 7035,
+    "gas_zonehours": 36269
+   },
+   "hub_total": {
+    "weight_share": 0.1093,
+    "gap_share": 0.3783,
+    "CR": 3.461,
+    "CR_tol075": 3.023,
+    "weight_share_tol075": 0.1453,
+    "CR_gasfirst": 4.039
+   },
+   "hub_marginal_row_gap_usd_per_mwh": {
+    "DSW_surplus_clean": 0.1842,
+    "PNW_midC": 0.1087,
+    "WECC_scarcity": 0.1072,
+    "DSW_CCGT": 0.0523,
+    "DSW_solar_PV": 0.0237,
+    "DSW_overnight_clean": 0.0183
+   },
+   "taxonomy_overlap": {
+    "hub_and_gas_zonehours": 1853,
+    "hub_zonehours": 5501,
+    "gas_zonehours": 26939
+   },
+   "domestic_group_characterisation": {
+    "DOM_GAS": {
+     "CT_PEAKER": {
+      "gap_contribution_usd_per_mwh": -1.3166,
+      "weight_share": 0.1691,
+      "mean_residual_usd_per_mwh": -7.788,
+      "zonehours": 6264
+     },
+     "CT_CHP": {
+      "gap_contribution_usd_per_mwh": -0.8737,
+      "weight_share": 0.084,
+      "mean_residual_usd_per_mwh": -10.402,
+      "zonehours": 3142
+     },
+     "CC_REGULAR": {
+      "gap_contribution_usd_per_mwh": 0.6947,
+      "weight_share": 0.4102,
+      "mean_residual_usd_per_mwh": 1.693,
+      "zonehours": 17511
+     },
+     "CC_CHP": {
+      "gap_contribution_usd_per_mwh": 0.6253,
+      "weight_share": 0.144,
+      "mean_residual_usd_per_mwh": 4.342,
+      "zonehours": 6014
+     },
+     "ST_GAS": {
+      "gap_contribution_usd_per_mwh": -0.3797,
+      "weight_share": 0.0145,
+      "mean_residual_usd_per_mwh": -26.245,
+      "zonehours": 488
+     },
+     "fuel:biomass": {
+      "gap_contribution_usd_per_mwh": 0.1891,
+      "weight_share": 0.0337,
+      "mean_residual_usd_per_mwh": 5.603,
+      "zonehours": 1483
+     },
+     "COAL": {
+      "gap_contribution_usd_per_mwh": 0.1067,
+      "weight_share": 0.0089,
+      "mean_residual_usd_per_mwh": 12.004,
+      "zonehours": 422
+     }
+    },
+    "DOM_OTHER": {
+     "fuel:biomass": {
+      "gap_contribution_usd_per_mwh": 0.1761,
+      "weight_share": 0.0184,
+      "mean_residual_usd_per_mwh": 9.594,
+      "zonehours": 795
+     },
+     "COAL": {
+      "gap_contribution_usd_per_mwh": 0.0926,
+      "weight_share": 0.0076,
+      "mean_residual_usd_per_mwh": 12.118,
+      "zonehours": 254
+     },
+     "hydro": {
+      "gap_contribution_usd_per_mwh": -0.0117,
+      "weight_share": 0.0024,
+      "mean_residual_usd_per_mwh": -4.814,
+      "zonehours": 116
+     }
+    }
+   },
+   "month_regime": {
+    "1": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0165,
+      "weight_share": 0.0024
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.4545,
+      "weight_share": 0.0509
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": -0.003,
+      "weight_share": 0.0003
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": -0.0746,
+      "weight_share": 0.0214
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": -0.0607,
+      "weight_share": 0.0017
+     },
+     "_month_gap_usd_per_mwh": -0.6093
+    },
+    "2": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.081,
+      "weight_share": 0.0099
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.0337,
+      "weight_share": 0.0391
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0058,
+      "weight_share": 0.0005
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0943,
+      "weight_share": 0.0205
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0023,
+      "weight_share": 0.0021
+     },
+     "_month_gap_usd_per_mwh": 0.1498
+    },
+    "3": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0558,
+      "weight_share": 0.0128
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.3552,
+      "weight_share": 0.0372
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0165,
+      "weight_share": 0.0009
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0551,
+      "weight_share": 0.0273
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0133,
+      "weight_share": 0.0014
+     },
+     "_month_gap_usd_per_mwh": -0.2145
+    },
+    "4": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0571,
+      "weight_share": 0.0095
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.2657,
+      "weight_share": 0.035
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.018,
+      "weight_share": 0.0026
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": -0.1442,
+      "weight_share": 0.0232
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0273,
+      "weight_share": 0.0026
+     },
+     "_month_gap_usd_per_mwh": -0.3075
+    },
+    "5": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0233,
+      "weight_share": 0.0011
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.1474,
+      "weight_share": 0.0151
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.4392,
+      "weight_share": 0.0325
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.02,
+      "weight_share": 0.004
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.3387,
+      "weight_share": 0.0265
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "_month_gap_usd_per_mwh": 0.9687
+    },
+    "6": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.002,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0394,
+      "weight_share": 0.009
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.2677,
+      "weight_share": 0.0388
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0009,
+      "weight_share": 0.0024
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.2382,
+      "weight_share": 0.0291
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "_month_gap_usd_per_mwh": 0.5481
+    },
+    "7": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": -0.0017,
+      "weight_share": 0.0002
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0131,
+      "weight_share": 0.0057
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.4705,
+      "weight_share": 0.078
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0083,
+      "weight_share": 0.002
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": -0.08,
+      "weight_share": 0.014
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": -0.0068,
+      "weight_share": 0.003
+     },
+     "_month_gap_usd_per_mwh": -0.5375
+    },
+    "8": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0005,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0778,
+      "weight_share": 0.01
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.2553,
+      "weight_share": 0.0759
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0087,
+      "weight_share": 0.0013
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0825,
+      "weight_share": 0.0105
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0445,
+      "weight_share": 0.0064
+     },
+     "_month_gap_usd_per_mwh": 0.4694
+    },
+    "9": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0006,
+      "weight_share": 0.0002
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0316,
+      "weight_share": 0.0098
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.2688,
+      "weight_share": 0.0586
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.026,
+      "weight_share": 0.0038
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0837,
+      "weight_share": 0.013
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0095,
+      "weight_share": 0.0025
+     },
+     "_month_gap_usd_per_mwh": 0.4202
+    },
+    "10": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": -0.0014,
+      "weight_share": 0.0003
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0032,
+      "weight_share": 0.0049
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.1768,
+      "weight_share": 0.0552
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0209,
+      "weight_share": 0.0016
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0861,
+      "weight_share": 0.016
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0235,
+      "weight_share": 0.0071
+     },
+     "_month_gap_usd_per_mwh": -0.051
+    },
+    "11": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0004,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0143,
+      "weight_share": 0.0096
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.0993,
+      "weight_share": 0.0483
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.024,
+      "weight_share": 0.0016
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": -0.0047,
+      "weight_share": 0.0143
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0065,
+      "weight_share": 0.0039
+     },
+     "_month_gap_usd_per_mwh": 0.1112
+    },
+    "12": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0018,
+      "weight_share": 0.0083
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.2369,
+      "weight_share": 0.0519
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0478,
+      "weight_share": 0.004
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0504,
+      "weight_share": 0.0119
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0226,
+      "weight_share": 0.0061
+     },
+     "_month_gap_usd_per_mwh": 0.3595
+    }
+   },
+   "model_lw_hourly": 55.482,
+   "actual_lw_hourly": 54.175
+  },
+  "2024": {
+   "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+   "G_BENCH": {
+    "recomputed_rt_lw": 34.6475,
+    "committed_rt_lw": 34.65,
+    "abs_diff": 0.0025,
+    "hours_actual_missing": 0,
+    "pass": true
+   },
+   "G_GAP": {
+    "gap_hourly": 3.7812,
+    "printed_model": 38.92,
+    "printed_actual": 34.65,
+    "printed_gap": 4.27,
+    "abs_diff": 0.4888,
+    "pass": true,
+    "basis_decomposition": {
+     "model_rubric_basis_all_hours": 38.9215,
+     "model_rubric_basis_ok_hours": 38.9215,
+     "model_measured_load_weighted_ok_hours": 38.4287,
+     "weight_basis_term_usd_per_mwh": 0.4928,
+     "share_of_printed_gap": 0.1154,
+     "model_demand_twh": 212.1945,
+     "measured_load_twh": 223.4708,
+     "note": "rubric model side = MODEL-demand-weighted; rubric actual side = MEASURED-load-weighted. Reported as a like-for-like observation, NOT as a reduction of C3a: the rubric's basis is the rubric's."
+    }
+   },
+   "G_RECON": {
+    "basis_selected": "gross",
+    "pass": true,
+    "gross": {
+     "annual_twh_klass": 40.016726731437686,
+     "annual_twh_recon": 40.016726835307416,
+     "annual_energy_err_pct": 2.5956579830156156e-07,
+     "hourly_rmse_mw": 9.825282326151123e-05,
+     "hourly_rmse_mw_determined_hours": 0.00014392070193773576,
+     "hours_determined": 3573,
+     "hours_with_marginal_import_row": 5187,
+     "hours_with_gt1_marginal_rows": 2876,
+     "hours_residual_clipped": 0,
+     "max_abs_err_mw": 0.0005075511271570576,
+     "G_RECON_pass": true
+    },
+    "net": {
+     "annual_twh_klass": 40.016726731437686,
+     "annual_twh_recon": -3.240035673953348,
+     "annual_energy_err_pct": -108.09670340030067,
+     "hourly_rmse_mw": 8059.2342068800435,
+     "hourly_rmse_mw_determined_hours": 12221.054365099617,
+     "hours_determined": 3561,
+     "hours_with_marginal_import_row": 5199,
+     "hours_with_gt1_marginal_rows": 2884,
+     "hours_residual_clipped": 4643,
+     "max_abs_err_mw": 15423.000390936566,
+     "G_RECON_pass": false
+    }
+   },
+   "G_CLASS": {
+    "unresolved_weight_share": 0.0299,
+    "pass": true
+   },
+   "by_regime": {
+    "HUB_FITTED": {
+     "weight_share": 0.0019,
+     "gap_contribution_usd_per_mwh": -0.0035,
+     "gap_share": -0.0009,
+     "CR": -0.478,
+     "mean_residual_usd_per_mwh": -1.807,
+     "positive_gap_share": 0.0011
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.0371,
+     "gap_contribution_usd_per_mwh": 0.1547,
+     "gap_share": 0.0409,
+     "CR": 1.104,
+     "mean_residual_usd_per_mwh": 4.176,
+     "positive_gap_share": 0.0352
+    },
+    "DOM_GAS": {
+     "weight_share": 0.6463,
+     "gap_contribution_usd_per_mwh": 1.7809,
+     "gap_share": 0.471,
+     "CR": 0.729,
+     "mean_residual_usd_per_mwh": 2.756,
+     "positive_gap_share": 0.5736
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0693,
+     "gap_contribution_usd_per_mwh": 0.6827,
+     "gap_share": 0.1806,
+     "CR": 2.604,
+     "mean_residual_usd_per_mwh": 9.847,
+     "positive_gap_share": 0.108
+    },
+    "STORAGE": {
+     "weight_share": 0.2155,
+     "gap_contribution_usd_per_mwh": 1.0866,
+     "gap_share": 0.2874,
+     "CR": 1.333,
+     "mean_residual_usd_per_mwh": 5.042,
+     "positive_gap_share": 0.2597
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0299,
+     "gap_contribution_usd_per_mwh": 0.0797,
+     "gap_share": 0.0211,
+     "CR": 0.704,
+     "mean_residual_usd_per_mwh": 2.664,
+     "positive_gap_share": 0.0223
+    },
+    "_total_gap_usd_per_mwh": 3.7812,
+    "_positive_gap_usd_per_mwh": 7.2013
+   },
+   "by_regime_gasfirst_G_ORDER": {
+    "HUB_FITTED": {
+     "weight_share": 0.0007,
+     "gap_contribution_usd_per_mwh": -0.004,
+     "gap_share": -0.0011,
+     "CR": -1.594,
+     "mean_residual_usd_per_mwh": -6.026,
+     "positive_gap_share": 0.0002
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.0232,
+     "gap_contribution_usd_per_mwh": 0.1115,
+     "gap_share": 0.0295,
+     "CR": 1.268,
+     "mean_residual_usd_per_mwh": 4.796,
+     "positive_gap_share": 0.0243
+    },
+    "DOM_GAS": {
+     "weight_share": 0.6613,
+     "gap_contribution_usd_per_mwh": 1.8247,
+     "gap_share": 0.4826,
+     "CR": 0.73,
+     "mean_residual_usd_per_mwh": 2.759,
+     "positive_gap_share": 0.5854
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0693,
+     "gap_contribution_usd_per_mwh": 0.6827,
+     "gap_share": 0.1806,
+     "CR": 2.604,
+     "mean_residual_usd_per_mwh": 9.847,
+     "positive_gap_share": 0.108
+    },
+    "STORAGE": {
+     "weight_share": 0.2155,
+     "gap_contribution_usd_per_mwh": 1.0866,
+     "gap_share": 0.2874,
+     "CR": 1.333,
+     "mean_residual_usd_per_mwh": 5.042,
+     "positive_gap_share": 0.2597
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0299,
+     "gap_contribution_usd_per_mwh": 0.0797,
+     "gap_share": 0.0211,
+     "CR": 0.704,
+     "mean_residual_usd_per_mwh": 2.664,
+     "positive_gap_share": 0.0223
+    },
+    "_total_gap_usd_per_mwh": 3.7812,
+    "_positive_gap_usd_per_mwh": 7.2009
+   },
+   "by_regime_tol075_SENSITIVITY": {
+    "HUB_FITTED": {
+     "weight_share": 0.0037,
+     "gap_contribution_usd_per_mwh": -0.0019,
+     "gap_share": -0.0005,
+     "CR": -0.139,
+     "mean_residual_usd_per_mwh": -0.524,
+     "positive_gap_share": 0.0022
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.0891,
+     "gap_contribution_usd_per_mwh": 0.3385,
+     "gap_share": 0.0895,
+     "CR": 1.004,
+     "mean_residual_usd_per_mwh": 3.797,
+     "positive_gap_share": 0.0811
+    },
+    "DOM_GAS": {
+     "weight_share": 0.8126,
+     "gap_contribution_usd_per_mwh": 2.7079,
+     "gap_share": 0.7162,
+     "CR": 0.881,
+     "mean_residual_usd_per_mwh": 3.332,
+     "positive_gap_share": 0.7672
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0518,
+     "gap_contribution_usd_per_mwh": 0.7077,
+     "gap_share": 0.1872,
+     "CR": 3.615,
+     "mean_residual_usd_per_mwh": 13.671,
+     "positive_gap_share": 0.1043
+    },
+    "STORAGE": {
+     "weight_share": 0.0427,
+     "gap_contribution_usd_per_mwh": 0.0291,
+     "gap_share": 0.0077,
+     "CR": 0.18,
+     "mean_residual_usd_per_mwh": 0.68,
+     "positive_gap_share": 0.0452
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "_total_gap_usd_per_mwh": 3.7812,
+    "_positive_gap_usd_per_mwh": 7.2179
+   },
+   "taxonomy_overlap_tol075": {
+    "hub_and_gas_zonehours": 2530,
+    "hub_zonehours": 4896,
+    "gas_zonehours": 36521
+   },
+   "hub_total": {
+    "weight_share": 0.039,
+    "gap_share": 0.04,
+    "CR": 1.026,
+    "CR_tol075": 0.959,
+    "weight_share_tol075": 0.0928,
+    "CR_gasfirst": 1.188
+   },
+   "hub_marginal_row_gap_usd_per_mwh": {
+    "DSW_surplus_clean": 0.0706,
+    "PNW_midC": 0.0442,
+    "DSW_overnight_clean": 0.0253,
+    "DSW_CCGT": 0.0131,
+    "DSW_solar_PV": -0.0046,
+    "WECC_scarcity": 0.0015,
+    "PNW_hydro_base": 0.0011
+   },
+   "taxonomy_overlap": {
+    "hub_and_gas_zonehours": 1021,
+    "hub_zonehours": 2603,
+    "gas_zonehours": 27633
+   },
+   "domestic_group_characterisation": {
+    "DOM_GAS": {
+     "CC_REGULAR": {
+      "gap_contribution_usd_per_mwh": 1.3793,
+      "weight_share": 0.451,
+      "mean_residual_usd_per_mwh": 3.058,
+      "zonehours": 18890
+     },
+     "CC_CHP": {
+      "gap_contribution_usd_per_mwh": 1.0646,
+      "weight_share": 0.2126,
+      "mean_residual_usd_per_mwh": 5.008,
+      "zonehours": 8578
+     },
+     "fuel:biomass": {
+      "gap_contribution_usd_per_mwh": 0.616,
+      "weight_share": 0.0964,
+      "mean_residual_usd_per_mwh": 6.391,
+      "zonehours": 3938
+     },
+     "CT_CHP": {
+      "gap_contribution_usd_per_mwh": -0.3805,
+      "weight_share": 0.049,
+      "mean_residual_usd_per_mwh": -7.769,
+      "zonehours": 1643
+     },
+     "CT_PEAKER": {
+      "gap_contribution_usd_per_mwh": -0.3585,
+      "weight_share": 0.1508,
+      "mean_residual_usd_per_mwh": -2.377,
+      "zonehours": 5670
+     },
+     "COAL": {
+      "gap_contribution_usd_per_mwh": 0.1321,
+      "weight_share": 0.0283,
+      "mean_residual_usd_per_mwh": 4.675,
+      "zonehours": 1318
+     },
+     "ST_GAS": {
+      "gap_contribution_usd_per_mwh": 0.0001,
+      "weight_share": 0.0185,
+      "mean_residual_usd_per_mwh": 0.003,
+      "zonehours": 457
+     }
+    },
+    "DOM_OTHER": {
+     "fuel:biomass": {
+      "gap_contribution_usd_per_mwh": 0.585,
+      "weight_share": 0.0563,
+      "mean_residual_usd_per_mwh": 10.383,
+      "zonehours": 2201
+     },
+     "COAL": {
+      "gap_contribution_usd_per_mwh": 0.063,
+      "weight_share": 0.0078,
+      "mean_residual_usd_per_mwh": 8.097,
+      "zonehours": 355
+     },
+     "hydro": {
+      "gap_contribution_usd_per_mwh": 0.0321,
+      "weight_share": 0.0052,
+      "mean_residual_usd_per_mwh": 6.237,
+      "zonehours": 204
+     },
+     "fuel:nuclear": {
+      "gap_contribution_usd_per_mwh": 0.0025,
+      "weight_share": 0.0,
+      "mean_residual_usd_per_mwh": 56.314,
+      "zonehours": 2
+     }
+    }
+   },
+   "month_regime": {
+    "1": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0049,
+      "weight_share": 0.0013
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.2885,
+      "weight_share": 0.0501
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0216,
+      "weight_share": 0.0025
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": -0.0717,
+      "weight_share": 0.0227
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0037,
+      "weight_share": 0.0016
+     },
+     "_month_gap_usd_per_mwh": -0.3301
+    },
+    "2": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": -0.0002,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0246,
+      "weight_share": 0.0028
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.0625,
+      "weight_share": 0.0447
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0567,
+      "weight_share": 0.005
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0726,
+      "weight_share": 0.0119
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0037,
+      "weight_share": 0.0043
+     },
+     "_month_gap_usd_per_mwh": 0.22
+    },
+    "3": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0023,
+      "weight_share": 0.0022
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.1377,
+      "weight_share": 0.0397
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0793,
+      "weight_share": 0.005
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.147,
+      "weight_share": 0.0226
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": -0.0027,
+      "weight_share": 0.0025
+     },
+     "_month_gap_usd_per_mwh": 0.3636
+    },
+    "4": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0028,
+      "weight_share": 0.0044
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.2121,
+      "weight_share": 0.0337
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0948,
+      "weight_share": 0.0072
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.1866,
+      "weight_share": 0.0234
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0082,
+      "weight_share": 0.0008
+     },
+     "_month_gap_usd_per_mwh": 0.5045
+    },
+    "5": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0017,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0365,
+      "weight_share": 0.0061
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.4611,
+      "weight_share": 0.0349
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0831,
+      "weight_share": 0.0082
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.2484,
+      "weight_share": 0.0268
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0007,
+      "weight_share": 0.0001
+     },
+     "_month_gap_usd_per_mwh": 0.8314
+    },
+    "6": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": -0.007,
+      "weight_share": 0.0006
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0453,
+      "weight_share": 0.0062
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.3258,
+      "weight_share": 0.0505
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0817,
+      "weight_share": 0.0076
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.1197,
+      "weight_share": 0.0201
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0102,
+      "weight_share": 0.0017
+     },
+     "_month_gap_usd_per_mwh": 0.5758
+    },
+    "7": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0004,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.012,
+      "weight_share": 0.0035
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.2104,
+      "weight_share": 0.0823
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0559,
+      "weight_share": 0.0067
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0657,
+      "weight_share": 0.0114
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0093,
+      "weight_share": 0.0027
+     },
+     "_month_gap_usd_per_mwh": -0.0672
+    },
+    "8": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0121,
+      "weight_share": 0.0029
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.5316,
+      "weight_share": 0.0841
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0366,
+      "weight_share": 0.0039
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0496,
+      "weight_share": 0.0083
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0187,
+      "weight_share": 0.0032
+     },
+     "_month_gap_usd_per_mwh": 0.6486
+    },
+    "9": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0001,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0098,
+      "weight_share": 0.0025
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.2313,
+      "weight_share": 0.066
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0365,
+      "weight_share": 0.0063
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0694,
+      "weight_share": 0.015
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0111,
+      "weight_share": 0.003
+     },
+     "_month_gap_usd_per_mwh": 0.3583
+    },
+    "10": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0002,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0001,
+      "weight_share": 0.0012
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.0546,
+      "weight_share": 0.0596
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0547,
+      "weight_share": 0.0064
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0713,
+      "weight_share": 0.0169
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0073,
+      "weight_share": 0.0036
+     },
+     "_month_gap_usd_per_mwh": 0.1881
+    },
+    "11": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": -0.0018,
+      "weight_share": 0.0003
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0018,
+      "weight_share": 0.0031
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.0366,
+      "weight_share": 0.0481
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0352,
+      "weight_share": 0.0054
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0308,
+      "weight_share": 0.0148
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0056
+     },
+     "_month_gap_usd_per_mwh": 0.1027
+    },
+    "12": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.003,
+      "weight_share": 0.0006
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0028,
+      "weight_share": 0.0008
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.2264,
+      "weight_share": 0.0525
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0467,
+      "weight_share": 0.0051
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.097,
+      "weight_share": 0.0217
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0096,
+      "weight_share": 0.0009
+     },
+     "_month_gap_usd_per_mwh": 0.3855
+    }
+   },
+   "model_lw_hourly": 38.429,
+   "actual_lw_hourly": 34.648
+  },
+  "2025": {
+   "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+   "G_BENCH": {
+    "recomputed_rt_lw": 34.4233,
+    "committed_rt_lw": 34.42,
+    "abs_diff": 0.0033,
+    "hours_actual_missing": 0,
+    "pass": true
+   },
+   "G_GAP": {
+    "gap_hourly": 3.1507,
+    "printed_model": 38.36,
+    "printed_actual": 34.42,
+    "printed_gap": 3.94,
+    "abs_diff": 0.7893,
+    "pass": true,
+    "basis_decomposition": {
+     "model_rubric_basis_all_hours": 38.3623,
+     "model_rubric_basis_ok_hours": 38.3623,
+     "model_measured_load_weighted_ok_hours": 37.5739,
+     "weight_basis_term_usd_per_mwh": 0.7883,
+     "share_of_printed_gap": 0.2001,
+     "model_demand_twh": 205.59,
+     "measured_load_twh": 224.0321,
+     "note": "rubric model side = MODEL-demand-weighted; rubric actual side = MEASURED-load-weighted. Reported as a like-for-like observation, NOT as a reduction of C3a: the rubric's basis is the rubric's."
+    }
+   },
+   "G_RECON": {
+    "basis_selected": "gross",
+    "pass": true,
+    "gross": {
+     "annual_twh_klass": 39.71086097952461,
+     "annual_twh_recon": 39.710860970111895,
+     "annual_energy_err_pct": -2.3703139562497562e-08,
+     "hourly_rmse_mw": 9.580776995323226e-05,
+     "hourly_rmse_mw_determined_hours": 0.00014691836394182403,
+     "hours_determined": 3531,
+     "hours_with_marginal_import_row": 5229,
+     "hours_with_gt1_marginal_rows": 2960,
+     "hours_residual_clipped": 0,
+     "max_abs_err_mw": 0.000561742483114358,
+     "G_RECON_pass": true
+    },
+    "net": {
+     "annual_twh_klass": 39.71086097952461,
+     "annual_twh_recon": -6.883227426255975,
+     "annual_energy_err_pct": -117.33336235093226,
+     "hourly_rmse_mw": 8466.432952841515,
+     "hourly_rmse_mw_determined_hours": 12870.902233678253,
+     "hours_determined": 3508,
+     "hours_with_marginal_import_row": 5252,
+     "hours_with_gt1_marginal_rows": 2969,
+     "hours_residual_clipped": 4787,
+     "max_abs_err_mw": 15423.000431564087,
+     "G_RECON_pass": false
+    }
+   },
+   "G_CLASS": {
+    "unresolved_weight_share": 0.0335,
+    "pass": true
+   },
+   "by_regime": {
+    "HUB_FITTED": {
+     "weight_share": 0.0073,
+     "gap_contribution_usd_per_mwh": 0.0498,
+     "gap_share": 0.0158,
+     "CR": 2.175,
+     "mean_residual_usd_per_mwh": 6.854,
+     "positive_gap_share": 0.0099
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.0494,
+     "gap_contribution_usd_per_mwh": 0.0649,
+     "gap_share": 0.0206,
+     "CR": 0.417,
+     "mean_residual_usd_per_mwh": 1.315,
+     "positive_gap_share": 0.0408
+    },
+    "DOM_GAS": {
+     "weight_share": 0.5241,
+     "gap_contribution_usd_per_mwh": 1.2669,
+     "gap_share": 0.4021,
+     "CR": 0.767,
+     "mean_residual_usd_per_mwh": 2.417,
+     "positive_gap_share": 0.4554
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0725,
+     "gap_contribution_usd_per_mwh": 0.5684,
+     "gap_share": 0.1804,
+     "CR": 2.488,
+     "mean_residual_usd_per_mwh": 7.839,
+     "positive_gap_share": 0.1166
+    },
+    "STORAGE": {
+     "weight_share": 0.3133,
+     "gap_contribution_usd_per_mwh": 1.1512,
+     "gap_share": 0.3654,
+     "CR": 1.166,
+     "mean_residual_usd_per_mwh": 3.675,
+     "positive_gap_share": 0.3518
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0335,
+     "gap_contribution_usd_per_mwh": 0.0494,
+     "gap_share": 0.0157,
+     "CR": 0.468,
+     "mean_residual_usd_per_mwh": 1.474,
+     "positive_gap_share": 0.0254
+    },
+    "_total_gap_usd_per_mwh": 3.1507,
+    "_positive_gap_usd_per_mwh": 6.0301
+   },
+   "by_regime_gasfirst_G_ORDER": {
+    "HUB_FITTED": {
+     "weight_share": 0.0054,
+     "gap_contribution_usd_per_mwh": 0.0452,
+     "gap_share": 0.0143,
+     "CR": 2.653,
+     "mean_residual_usd_per_mwh": 8.358,
+     "positive_gap_share": 0.0082
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.0325,
+     "gap_contribution_usd_per_mwh": 0.0246,
+     "gap_share": 0.0078,
+     "CR": 0.24,
+     "mean_residual_usd_per_mwh": 0.756,
+     "positive_gap_share": 0.0277
+    },
+    "DOM_GAS": {
+     "weight_share": 0.5428,
+     "gap_contribution_usd_per_mwh": 1.3118,
+     "gap_share": 0.4164,
+     "CR": 0.767,
+     "mean_residual_usd_per_mwh": 2.417,
+     "positive_gap_share": 0.4702
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0725,
+     "gap_contribution_usd_per_mwh": 0.5684,
+     "gap_share": 0.1804,
+     "CR": 2.488,
+     "mean_residual_usd_per_mwh": 7.839,
+     "positive_gap_share": 0.1167
+    },
+    "STORAGE": {
+     "weight_share": 0.3133,
+     "gap_contribution_usd_per_mwh": 1.1512,
+     "gap_share": 0.3654,
+     "CR": 1.166,
+     "mean_residual_usd_per_mwh": 3.675,
+     "positive_gap_share": 0.3518
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0335,
+     "gap_contribution_usd_per_mwh": 0.0494,
+     "gap_share": 0.0157,
+     "CR": 0.468,
+     "mean_residual_usd_per_mwh": 1.474,
+     "positive_gap_share": 0.0254
+    },
+    "_total_gap_usd_per_mwh": 3.1507,
+    "_positive_gap_usd_per_mwh": 6.0299
+   },
+   "by_regime_tol075_SENSITIVITY": {
+    "HUB_FITTED": {
+     "weight_share": 0.0129,
+     "gap_contribution_usd_per_mwh": 0.0421,
+     "gap_share": 0.0134,
+     "CR": 1.035,
+     "mean_residual_usd_per_mwh": 3.259,
+     "positive_gap_share": 0.0121
+    },
+    "HUB_MEASURED": {
+     "weight_share": 0.1142,
+     "gap_contribution_usd_per_mwh": 0.1644,
+     "gap_share": 0.0522,
+     "CR": 0.457,
+     "mean_residual_usd_per_mwh": 1.44,
+     "positive_gap_share": 0.0913
+    },
+    "DOM_GAS": {
+     "weight_share": 0.7516,
+     "gap_contribution_usd_per_mwh": 2.0319,
+     "gap_share": 0.6449,
+     "CR": 0.858,
+     "mean_residual_usd_per_mwh": 2.703,
+     "positive_gap_share": 0.6812
+    },
+    "DOM_OTHER": {
+     "weight_share": 0.0869,
+     "gap_contribution_usd_per_mwh": 1.0369,
+     "gap_share": 0.3291,
+     "CR": 3.789,
+     "mean_residual_usd_per_mwh": 11.938,
+     "positive_gap_share": 0.1823
+    },
+    "STORAGE": {
+     "weight_share": 0.0344,
+     "gap_contribution_usd_per_mwh": -0.1247,
+     "gap_share": -0.0396,
+     "CR": -1.151,
+     "mean_residual_usd_per_mwh": -3.626,
+     "positive_gap_share": 0.0332
+    },
+    "SURPLUS": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "UNRESOLVED": {
+     "weight_share": 0.0,
+     "gap_contribution_usd_per_mwh": 0.0,
+     "gap_share": 0.0,
+     "CR": null,
+     "mean_residual_usd_per_mwh": null,
+     "positive_gap_share": 0.0
+    },
+    "_total_gap_usd_per_mwh": 3.1507,
+    "_positive_gap_usd_per_mwh": 6.0888
+   },
+   "taxonomy_overlap_tol075": {
+    "hub_and_gas_zonehours": 3691,
+    "hub_zonehours": 6547,
+    "gas_zonehours": 35016
+   },
+   "hub_total": {
+    "weight_share": 0.0567,
+    "gap_share": 0.0364,
+    "CR": 0.642,
+    "CR_tol075": 0.516,
+    "weight_share_tol075": 0.1271,
+    "CR_gasfirst": 0.583
+   },
+   "hub_marginal_row_gap_usd_per_mwh": {
+    "DSW_solar_PV": 0.0485,
+    "PNW_midC": 0.0483,
+    "DSW_overnight_clean": 0.0303,
+    "DSW_surplus_clean": -0.0201,
+    "DSW_CCGT": 0.0062,
+    "PNW_hydro_base": 0.0008,
+    "WECC_scarcity": 0.0007
+   },
+   "taxonomy_overlap": {
+    "hub_and_gas_zonehours": 1368,
+    "hub_zonehours": 3832,
+    "gas_zonehours": 22896
+   },
+   "domestic_group_characterisation": {
+    "DOM_GAS": {
+     "CC_REGULAR": {
+      "gap_contribution_usd_per_mwh": 1.0276,
+      "weight_share": 0.3911,
+      "mean_residual_usd_per_mwh": 2.628,
+      "zonehours": 16227
+     },
+     "CC_CHP": {
+      "gap_contribution_usd_per_mwh": 0.602,
+      "weight_share": 0.14,
+      "mean_residual_usd_per_mwh": 4.299,
+      "zonehours": 5492
+     },
+     "fuel:biomass": {
+      "gap_contribution_usd_per_mwh": 0.261,
+      "weight_share": 0.0677,
+      "mean_residual_usd_per_mwh": 3.856,
+      "zonehours": 2727
+     },
+     "CT_PEAKER": {
+      "gap_contribution_usd_per_mwh": -0.1507,
+      "weight_share": 0.0922,
+      "mean_residual_usd_per_mwh": -1.634,
+      "zonehours": 3557
+     },
+     "CT_CHP": {
+      "gap_contribution_usd_per_mwh": -0.1084,
+      "weight_share": 0.0245,
+      "mean_residual_usd_per_mwh": -4.415,
+      "zonehours": 854
+     },
+     "COAL": {
+      "gap_contribution_usd_per_mwh": 0.0703,
+      "weight_share": 0.0157,
+      "mean_residual_usd_per_mwh": 4.492,
+      "zonehours": 668
+     },
+     "ST_GAS": {
+      "gap_contribution_usd_per_mwh": 0.0123,
+      "weight_share": 0.0049,
+      "mean_residual_usd_per_mwh": 2.512,
+      "zonehours": 87
+     }
+    },
+    "DOM_OTHER": {
+     "fuel:biomass": {
+      "gap_contribution_usd_per_mwh": 0.5462,
+      "weight_share": 0.0665,
+      "mean_residual_usd_per_mwh": 8.217,
+      "zonehours": 2994
+     },
+     "COAL": {
+      "gap_contribution_usd_per_mwh": 0.0391,
+      "weight_share": 0.0053,
+      "mean_residual_usd_per_mwh": 7.401,
+      "zonehours": 261
+     },
+     "hydro": {
+      "gap_contribution_usd_per_mwh": -0.007,
+      "weight_share": 0.0017,
+      "mean_residual_usd_per_mwh": -4.085,
+      "zonehours": 77
+     },
+     "fuel:nuclear": {
+      "gap_contribution_usd_per_mwh": -0.0009,
+      "weight_share": 0.0001,
+      "mean_residual_usd_per_mwh": -13.955,
+      "zonehours": 2
+     }
+    }
+   },
+   "month_regime": {
+    "1": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": -0.0006,
+      "weight_share": 0.0006
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0117,
+      "weight_share": 0.0025
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.0788,
+      "weight_share": 0.036
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0536,
+      "weight_share": 0.0064
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": -0.0406,
+      "weight_share": 0.0293
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": -0.0102,
+      "weight_share": 0.0046
+     },
+     "_month_gap_usd_per_mwh": -0.0883
+    },
+    "2": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0157,
+      "weight_share": 0.0053
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.0282,
+      "weight_share": 0.0292
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0394,
+      "weight_share": 0.0058
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0707,
+      "weight_share": 0.0256
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": -0.0047,
+      "weight_share": 0.0036
+     },
+     "_month_gap_usd_per_mwh": 0.1178
+    },
+    "3": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": -0.002,
+      "weight_share": 0.0004
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0227,
+      "weight_share": 0.0057
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": -0.0192,
+      "weight_share": 0.0328
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0291,
+      "weight_share": 0.0047
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0414,
+      "weight_share": 0.0275
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": -0.0017,
+      "weight_share": 0.003
+     },
+     "_month_gap_usd_per_mwh": 0.0249
+    },
+    "4": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.042,
+      "weight_share": 0.0084
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.1177,
+      "weight_share": 0.0317
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0854,
+      "weight_share": 0.0071
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.1606,
+      "weight_share": 0.0258
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0012,
+      "weight_share": 0.0002
+     },
+     "_month_gap_usd_per_mwh": 0.4068
+    },
+    "5": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0166,
+      "weight_share": 0.005
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.1347,
+      "weight_share": 0.0354
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0597,
+      "weight_share": 0.007
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.1616,
+      "weight_share": 0.0335
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0052,
+      "weight_share": 0.0007
+     },
+     "_month_gap_usd_per_mwh": 0.3777
+    },
+    "6": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0003,
+      "weight_share": 0.0001
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0119,
+      "weight_share": 0.0038
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.1558,
+      "weight_share": 0.0425
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0378,
+      "weight_share": 0.0076
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.1906,
+      "weight_share": 0.0304
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.014,
+      "weight_share": 0.002
+     },
+     "_month_gap_usd_per_mwh": 0.4105
+    },
+    "7": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0168,
+      "weight_share": 0.0031
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.2345,
+      "weight_share": 0.0551
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0289,
+      "weight_share": 0.0062
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.1194,
+      "weight_share": 0.0259
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0222,
+      "weight_share": 0.004
+     },
+     "_month_gap_usd_per_mwh": 0.4218
+    },
+    "8": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0081,
+      "weight_share": 0.0034
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.1354,
+      "weight_share": 0.0699
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0184,
+      "weight_share": 0.0042
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0654,
+      "weight_share": 0.0198
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.005,
+      "weight_share": 0.0057
+     },
+     "_month_gap_usd_per_mwh": 0.2323
+    },
+    "9": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": -0.0,
+      "weight_share": 0.0
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.005,
+      "weight_share": 0.0019
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.1259,
+      "weight_share": 0.0606
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0911,
+      "weight_share": 0.0083
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0805,
+      "weight_share": 0.0207
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0147,
+      "weight_share": 0.0039
+     },
+     "_month_gap_usd_per_mwh": 0.3171
+    },
+    "10": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.001,
+      "weight_share": 0.0002
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0033,
+      "weight_share": 0.0051
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.0735,
+      "weight_share": 0.0447
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0564,
+      "weight_share": 0.0064
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0759,
+      "weight_share": 0.0235
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": -0.0019,
+      "weight_share": 0.0029
+     },
+     "_month_gap_usd_per_mwh": 0.2016
+    },
+    "11": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.002,
+      "weight_share": 0.0002
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": -0.0002,
+      "weight_share": 0.0028
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.004,
+      "weight_share": 0.0437
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0079,
+      "weight_share": 0.004
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.0081,
+      "weight_share": 0.0248
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": -0.0045,
+      "weight_share": 0.0017
+     },
+     "_month_gap_usd_per_mwh": 0.0172
+    },
+    "12": {
+     "HUB_FITTED": {
+      "gap_contribution_usd_per_mwh": 0.049,
+      "weight_share": 0.0055
+     },
+     "HUB_MEASURED": {
+      "gap_contribution_usd_per_mwh": 0.0182,
+      "weight_share": 0.0024
+     },
+     "DOM_GAS": {
+      "gap_contribution_usd_per_mwh": 0.3553,
+      "weight_share": 0.0424
+     },
+     "DOM_OTHER": {
+      "gap_contribution_usd_per_mwh": 0.0608,
+      "weight_share": 0.0048
+     },
+     "STORAGE": {
+      "gap_contribution_usd_per_mwh": 0.2177,
+      "weight_share": 0.0264
+     },
+     "SURPLUS": {
+      "gap_contribution_usd_per_mwh": 0.0,
+      "weight_share": 0.0
+     },
+     "UNRESOLVED": {
+      "gap_contribution_usd_per_mwh": 0.0102,
+      "weight_share": 0.0012
+     },
+     "_month_gap_usd_per_mwh": 0.7113
+    }
+   },
+   "model_lw_hourly": 37.574,
+   "actual_lw_hourly": 34.423
+  }
+ }
+}
