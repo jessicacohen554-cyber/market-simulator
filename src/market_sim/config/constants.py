@@ -624,8 +624,22 @@ GAS_TRANCHE_SHARES_BY_GROUP: dict[str, tuple[float, float, float]] = {
 #     (keeper --gas-monthly-actuals; +GAS_BASIS_DIFFERENTIAL PJM).
 #   CAISO: 4.7964 = mean(6.9524, 3.3721, 4.0646) — SoCal/PG&E Citygate
 #     hub-basis overlay (the 2023 western-gas-crisis year lifts the mean).
-#   MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — per-plant EIA-923 monthly
-#     level + mean-preserving daily shape.
+#   MISO:  3.0492 = mean(2.8392, 2.4893, 3.8190) — annual Henry Hub + the flat
+#     GAS_BASIS_DIFFERENTIAL["MISO"] = 0.30 Chicago-Citygate footprint blend,
+#     with mean-preserving seasonality + daily shape.
+#     *(DESCRIPTION CORRECTED 2026-09-05 by miso-215, MEASURED, VALUE UNTOUCHED:
+#     this read "per-plant EIA-923 monthly level + mean-preserving daily shape".
+#     GAS_SERIES_FLAGS["MISO"] is {gas_seasonality, gas_daily_shape,
+#     miso_zonal_gas_basis} and `_gas_series` is ISO-level, so it cannot carry a
+#     per-plant 923 level; reproducing it gives series − HH = +0.2992 / +0.2993 /
+#     +0.2990 in 2023/2024/2025 — the flat 0.30 basis constant, in every year.
+#     The per-plant EIA-923 print (gas_plant_monthly_fuel_pricing) applies on the
+#     (n_gen, T) array AFTER this series and is invisible to the derive, so the
+#     ANCHOR and the FLEET's delivered price are identified on different bases:
+#     `results/calibration/_miso215_intermediate_phys.json` M3a, and
+#     `FINDING-miso215-intermediate-phys-coverage-2026-09-05.md` §4. Whether the
+#     identification point should stay the ISO series is an OWNER question this
+#     lane routed; nothing here changes the value or any solve.)*
 #   NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal
 #     pipeline-hub basis + Transco Z6 daily overlay.
 #   NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis
