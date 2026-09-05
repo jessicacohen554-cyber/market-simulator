@@ -1,0 +1,21 @@
+{
+  "id": "2026-09-05-ercot248-two-config-keeper",
+  "label": "248 two-config keeper",
+  "date": "2026-09-05",
+  "shorthand": "ercot248-two-config-keeper",
+  "definition": "ercot-248 THE ERCOT KEEPER AS ONE RUN (owner instruction 2026-09-05, zero-solve consolidation): the two designated configs of the 2026-08-26 two-config partition ruling registered together, each year carried by the config designated for it. 2023 = the CARVE-OUT config (from 2026-08-25-236-swcap-clip-k33: the ercot-235 recipe + ercot_offer_swcap_clip armed [SWCAP $5,000 = VOLL offer cap, structural] + k_peak 33.0 \u2014 the ECRS-era regime, under the owner's 2026-08-25 rule-16 waiver): C3a -7.3% / C3b 0.102 / C3c 180 of 181, every criterion PASS, zero caveats. 2024/2025 = the FORWARD config (from 2026-08-25-234-eastex-identity: zero fitted scalars, repaired EASTEX crosswalk \u2014 the config the model uses going forward, forecast lane included): 2024 -0.2% / 0.131 / C3c 22 of 53, 2025 -7.9% / 0.101 / C3c 1 of 31; C3c the lone ledgered caveat x2 (ACCEPTED MODEL-CLASS LIMITATION, non-downgrading under rubric v3.3). DETERMINATION CALIBRATED. Coverage invariant: every year 2023-2025 covered by exactly one designated config. The carve-out's two 2023 deltas do NOT leak into forward runs. Provenance: composite_provenance.json in the bundle; records docs/FINDING-ercot-two-config-keeper-2026-08-26.md, docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-05-ercot248-two-config-keeper.js",
+  "bundle": "results/calibration/ercot248_two_config_keeper",
+  "market_story": "2023 (carve-out config): The 2023 ECRS-era scarcity price level the LP cannot form competitively is carried by the DOF-ledgered k_peak scalar on the gas peak bands \u2014 at k=33 the top tranches saturate at the offer cap ($4,999.99 clip), which is exactly the documented 2023 conduct: submitted evening asks clustered at the $5,000 SWCAP (ercot-161/162). The SWCAP clip is the market's own rule (offers cannot exceed the cap; firm-load shed is an EEA action, never an economic outcome), so scarce hours price AT the cap through dispatched supply instead of shedding. Gas peak tranches clear the Jun-Sep afternoon-evening ramps at the lifted band levels; coal, storage and renewables carry their measured curves unchanged (coal within 0.1 TWh of the pre-lift recipe in every leg); storage cycles into the same evening scarcity windows the adaptive-expectation floor prices. || 2024-2025 (forward config): Northeast (East Texas) lobe: ~8 GW of coal+gas behind ERCOT's EASTEX voltage-stability export interface serves ~3.5% of load; the real market congests this boundary rarely (EASTEX bound ~69/16/<1 h-equivalents 2023-2025 at a ~2.3-2.4 GW limit, effectively unconstrained by 2025 after VSAT-based GTLs) \u2014 so Martin Lake / Welsh / the NE CCs clear at near-system prices almost every hour, and the model now reproduces that (29/45/45 separated hours) instead of manufacturing 1,100-2,200 congested hours from the Rio Grande Valley's NE_LOB series. The Valley corridors (NE_LOB, VALEXP, NELRIO, RV_RH) are intra-South pockets this 7-zone topology cannot represent and are excluded from the crosswalk rather than mis-placed. Tie-zone interchange attribution (ercot-231) stays armed: measured EIA-930 per-neighbor DC-tie flows at the tie-host zones (Monticello DC-East in Northeast, Oklaunion in North, Mexico ties in South).",
+  "composed_from": {
+    "2023": "2026-08-25-236-swcap-clip-k33",
+    "2024": "2026-08-25-234-eastex-identity",
+    "2025": "2026-08-25-234-eastex-identity"
+  }
+}
