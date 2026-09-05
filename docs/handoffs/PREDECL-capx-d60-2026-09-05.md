@@ -686,3 +686,141 @@ Step 0 was already a no-op at this lane's base (§0 of this pre-declaration reco
 the commit that did the work: `0b51f28e` — the audit desk's Y-7 lane). **miso-217's two new
 reds (`offer_curves.py`, `test_miso_intermediate_gas_offer_margin.py`) are NOT touched** —
 the owner's MISO track owns them, and this lane has not formatted, edited or staged either.
+
+---
+
+## Addendum R2 (2026-09-05) — the D60-R2 relaunch: STATE AT START, before any solve, any row and any registration
+
+D60's own session died after landing its flip commit, four renames and two of five
+re-solves; the first relaunch (**D60-R**) never launched; **D60-R2** is this session
+(director r#39 amendment 2). This addendum is the relaunch's first commit and it carries
+**zero solve**: it establishes, from the committed record alone, that the pins D60 wrote
+are still the pins HEAD resolves — because every remaining leg's STOP 1 reads against
+them, and a relaunch that inherited drifted keys would spend three LPs on the wrong
+recipes.
+
+### R2.1 The twin check — CLEAR
+
+The charter's first instruction is a collision check: two writers on `ff-verdicts.json` is
+the one collision this program cannot absorb. Executed at session start with
+`git fetch origin --prune`:
+
+- **No `claude/capx-d60r*` branch exists on origin** — neither D60-R's stem nor this
+  session's. (The fetch pruned a stale remote-tracking ref for this session's own branch
+  name; origin has never held it.)
+- The only commits anywhere mentioning **"D60-R"** are the director's own two records
+  (`ca3a8703`, `7dd401d9`, r#39 amendment 2), and **both are on the director branch, not
+  on `origin/main`** — they are the issuance of this session, not a twin's output.
+- **Two owner-track merges are newer than `c3addecc`**, neither a twin:
+  `1b9af38b` (PR #4819, `caiso-252`) — **one file, +229 lines**, the backcast PRECOMMIT
+  `docs/handoffs/PRECOMMIT-caiso252-c4-gas-nrmse-anatomy-2026-09-05.md`, touching no `src/`,
+  no `scripts/` and no forecast surface; and **`6619fb4a` (PR #4817, the `nyiso-192`
+  promotion), which merged DURING this session's first commit** and is handled in §R2.1a.
+- No open branch is writing `ff-verdicts.json`.
+
+No twin is mid-flight. D60-R2 proceeds.
+
+### R2.1a The `nyiso-192` promotion merged mid-commit — kept verbatim, and it moves no forecast key
+
+The charter named this one in advance ("the pending nyiso-192 promotion (if it merges) moves
+NYISO's marker and gate-(a) row — rebase before every push and keep its edits verbatim"). It
+merged as `6619fb4a` while this addendum was being written, so this lane's base is
+`6619fb4a`, not `1b9af38b`, and the §R2.2 table below was **re-measured at the new base**
+rather than left standing on the old one.
+
+What it changed on the ONE forecast surface it touches, `program-status.json`, read as a
+structural diff of the JSON rather than as a text diff — **NYISO only, and records-only**:
+`isos.NYISO.marker_complete` `True → False`; `gate.a_keeper_marker.status` `pass → fail`
+with its `detail` / `read_live_at` / `corrected_by` re-stamped onto the new keeper;
+`gate.closed_on` gaining one entry; `isos.NYISO.keeper`
+`2026-09-05-nyiso-189-steam-identity → 2026-09-05-nyiso-192-astoria-panel`; the `headline`,
+`gate_reading` and `sources` prose; and a new `nyiso193_promotion_withdrawal` block whose own
+note records that **no forecast run was solved or re-scored**. **No `isos.*` entry of any
+other ISO moves, and no verdict, no cache key and no bundle is touched.**
+
+Two consequences this lane states rather than absorbs:
+
+1. **It changes nothing D60-R2 does.** Every one of this lane's edits is a forecast verdict
+   row, a `-pre-d60` prior, a bundle or a document. It authors **no marker, no gate-(a) row,
+   no keeper and no `complete` / `frontier` field**, and it rebases before every push so
+   these edits survive verbatim.
+2. **It is a start precondition of a DIFFERENT card.** `T3-NYISO-GOLDEN` Amendment 1 makes
+   `complete.NYISO` a start precondition, and this merge withdraws it. That is the
+   director's call to make on its own card, not this lane's, and it is flagged here only so
+   the release decision after D60 closes is made with it in view.
+
+### R2.2 Every bare forecast key re-resolved through the harness path at HEAD `6619fb4a` — **ZERO DRIFT**
+
+Resolved exactly as Addendum A §A.2 resolved them:
+`run_full_horizon.reference_config(iso, 2026, 2030|2050, False, golden_posture=True)` →
+`apply_iso_scenario_defaults(cfg, iso)` → `cache_key()` for t1f/t3, and
+`run_capacity_hindcast.build_config(iso, 2021, 2025, "realized", vintage=2020,
+entry_screen_diagnostics=True)` → `apply_iso_scenario_defaults(cfg, iso)` → `cache_key()`
+for t1h. Config construction only; no fleet build, no solve.
+
+| bare key | D60's pin (source) | resolved at HEAD `6619fb4a` | verdict |
+|---|---|---|---|
+| `ercot-t1f` | `0c3e9cd5b5993bdf` (§A.2) | `0c3e9cd5b5993bdf` | **HIT** |
+| `caiso-t1f` | `29f8eb372810195f` (§A.2) | `29f8eb372810195f` | **HIT** — leg 3 runs on it |
+| `pjm-t1f` | `09996eca71ee80fd` (Addendum C.1) | `09996eca71ee80fd` | **HIT** — leg 4 runs on it |
+| `miso-t1f` | `b1a73a087064ffd8` (§A.1 correction) | `b1a73a087064ffd8` | **HIT** — leg 1, registered |
+| `nyiso-t1f` | `19a9690bb12c8459` (§A.2) | `19a9690bb12c8459` | **HIT** — leg 2, registered |
+| `neiso-t1f` | `18515067bf4d2fbe` (§A.2) | `18515067bf4d2fbe` | **HIT** |
+| `neiso-t3` | `f04fd06348e1623d` (§A.2) | `f04fd06348e1623d` | **HIT** — leg 5 runs on it |
+| `ercot-t1h` | `82b27751be747552` (§A.2) | `82b27751be747552` | **HIT** |
+| `caiso-t1h` | `7da58199acd362ee` (§A.2) | `7da58199acd362ee` | **HIT** |
+| `pjm-t1h` | `aef81c84c4609c76` (finding §3, D57's move) | `aef81c84c4609c76` | **HIT** |
+| `miso-t1h` | `687bd75f2828bea1` (§A.2) | `687bd75f2828bea1` | **HIT** |
+| `nyiso-t1h` | `6e70a637b3465542` (§A.2) | `6e70a637b3465542` | **HIT** |
+| `neiso-t1h` | `f3988df3068020d1` (§A.2) | `f3988df3068020d1` | **HIT** |
+
+And the four pinned defaults, against finding §6:
+
+| config | finding §6 "after" | resolved at HEAD | verdict |
+|---|---|---|---|
+| `ScenarioConfig()` | `e5ecd4105ada3e58` | `e5ecd4105ada3e58` | **HIT** |
+| `ScenarioConfig(mode="backcast")` | `6a2845e50951394e` | `6a2845e50951394e` | **HIT** |
+| `ScenarioConfig(ccs_retrofit_capex_co2_scaling=False)` | `4c6b03ae098b6e3e` (unmoved) | `4c6b03ae098b6e3e` | **HIT** |
+| same, backcast | `8211c72bb1960adc` (unmoved) | `8211c72bb1960adc` | **HIT** |
+
+**Seventeen of seventeen, measured twice** — once at `1b9af38b` and again after rebasing
+onto `6619fb4a`, with **identical results both times**. The assertion the charter asked for
+is therefore a MEASUREMENT, not an argument: **both** owner-track merges landed since D60's
+pins leave **every forecast key unmoved**, and so do the two (b′-1) protection rows. **STOP 1
+stands unchanged for all three remaining legs**, reading against `29f8eb372810195f`,
+`09996eca71ee80fd` and `f04fd06348e1623d`.
+
+### R2.3 What the committed record already holds, and what D60-R2 owes
+
+**Landed on main and NOT re-done** (verified in `ff-verdicts.json` and
+`register_forecast_run.VERDICT_MAP` at HEAD): the flip commit `13f711bc` (Q40/Q41/Q42); the
+four zero-solve renames `6fc29446` with the fifth reversed on STOP 1; leg 1 `e7412237`
+(`miso-t1f` → `b1a73a087064ffd8`, run `miso-2026-2030-d60-arm`, **HOLD**); leg 2 `091023a3`
+(`nyiso-t1f` → `19a9690bb12c8459`, run `nyiso-2026-2030-d60-arm`,
+**PROMOTE-WITH-CAVEATS** on FC-7 alone — the P10 STOP); the finding's §§0–4, 6–7 (`84a0839b`).
+Six `-pre-d60` priors exist and are untouched by this lane:
+
+| prior | preserves |
+|---|---|
+| `ercot-t1f-pre-d60` | `ercot-2026-2030-d46-remeasure` (`873d8c0e6cab52ae`) |
+| `neiso-t1f-pre-d60` | `neiso-2026-2030-d46-remeasure` (`6690e4d6d66bc819`) |
+| `miso-t1f-pre-d60` | `miso-2026-2030-d45r-remeasure` (`8d8bc63a0d4378a9`) |
+| `nyiso-t1f-pre-d60` | `nyiso-2026-2030-d45r-remeasure` (`cc7d1050a8090c76`, PROMOTE) |
+| `miso-t1h-pre-d60` | `miso-2021-2025-realized-t1h-d53-sectorgate` (`c306ddc6d28c60c2`) |
+| `nyiso-t1h-pre-d60` | `nyiso-2021-2025-realized-t1h-d45r` (`91686abe7a744a88`) |
+
+**OWED, and the only thing this session writes:** three re-solves — `caiso-t1f`
+(prior `caiso-2026-2030-d46-remeasure`, `772b1e5abc7fc80c`, HOLD → `caiso-t1f-pre-d60`),
+`pjm-t1f` (prior `pjm-2026-2030-d45r-remeasure`, `321f04e9060787f0`, HOLD →
+`pjm-t1f-pre-d60`), `neiso-t3` GOLDEN-3 (prior `neiso-2026-2050-t3-golden3-bau`,
+`67678e58b2d0526c`, HOLD → `neiso-t3-pre-d60`); the Q37 attestation rows and the
+artifact-only re-scores (Addendum D); the finding's §5 and §8.
+
+### R2.4 The one environment fact worth recording
+
+This container had **no `data/clean`** (it is derived and gitignored) and no installed
+dependency set. Both were built before the first leg — `pip install -r requirements.txt`
+plus an editable install of the package, then one `scripts/regenerate_clean.py` pass — the
+D60 discipline of regenerating `data/clean` **once** before the first solve, not per leg.
+Recorded because the wall-clock figures in §5 of the finding are per-leg solve times and do
+not include it.
