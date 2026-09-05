@@ -1675,7 +1675,7 @@
   "schema": "forecast-verdict/v1",
   "tier": "t1f"
  },
- "miso-t1h": {
+ "miso-t1h-pre-d53": {
   "schema": "forecast-verdict/v1",
   "rubric_version": "1.0",
   "provenance": {
@@ -11454,7 +11454,7 @@
    }
   }
  },
- "miso-t1h-d53-sectorgate": {
+ "miso-t1h": {
   "schema": "forecast-verdict/v1",
   "rubric_version": "1.1",
   "provenance": {

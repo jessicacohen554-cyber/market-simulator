@@ -6,10 +6,15 @@ channel (Q30 / D44). Design + pre-declaration `DESIGN-capx-d53-sector-gate-2026-
 registered in this session.
 **Branch:** `claude/capx-d53-sector-gate-redt3y`, off `origin/main` `09f99f0`.
 **Date:** 2026-09-05. **Model:** Fable.
-**NOTHING ARMS.** `retirement_sector_gate` ships `False`; both legs registered SUFFIXED
-(`miso-t1h-d53-sectorgate`, `miso-t1h-d53-sectorgate-d51ratio`); the bare `miso-t1h` verdict
-key, `miso-t1h-d51-ratio`, every keeper / shard verdict / marker and the backcast namespace are
-untouched. The owner arms or declines on the design's §6 condition, graded in §6 below.
+**ARMED FOR MISO ONLY — owner instruction, same session (§6.1).** `retirement_sector_gate`
+ships `False` (the dataclass default is unmoved, every other ISO's key byte-stable); the
+owner's standing instruction for this session ("if so plz promote") was executed in the
+conservative form the design named — `iso_configs` MISO `default_scenario_overrides`
+(rule 25) — AFTER the §6 condition was graded MET on all four limbs. The bare `miso-t1h`
+verdict key now points at the gated leg (which IS the bare recipe under the override, key
+`c306ddc6d28c60c2`), the D46 record is preserved at `miso-t1h-pre-d53`, the rider stays
+suffixed (`miso-t1h-d53-sectorgate-d51ratio`); `miso-t1h-d51-ratio`, every keeper / marker
+and the backcast namespace are untouched.
 
 ---
 
@@ -245,10 +250,44 @@ move is +0.0007); `add.*` identical to D51. **P8 HIT.** 24.9 min, solved after t
 |---|---|---|
 | (a) purity | P1 + P3: every retirement row and every non-screen row identical on the bare recipe | **MET** |
 | (b) partition fidelity | gated-failing MW within ±5 % of 58.9 GW; zero sector-1 pipeline rows | 59.29 GW (+0.6 %); 0 rows — **MET** |
-| (c) composition where it can be seen | rider: every economic decision non-sector-1 AND newly-admitted plant-grain precision ≥ D51's 1.1 % | MET_ROW |
-| (d) LOYO | `retire.unit_recall_gt300` LOYO ≥ 2/3 on both legs | MET_ROW |
+| (c) composition where it can be seen | rider: every economic decision non-sector-1 AND newly-admitted plant-grain precision ≥ D51's 1.1 % | 0 sector-1 rows; 99.8 % vs 1.1 % — **MET** |
+| (d) LOYO | `retire.unit_recall_gt300` LOYO ≥ 2/3 on both legs | 8/16 · 14/15 · 15/18 on both — **MET** |
 
-**all four limbs are met and the recommendation is ARM**, put to the owner in §6_PARAGRAPH
+**Recommendation: ARM** — `retirement_sector_gate=True` as the `ScenarioConfig` default (the
+gate carries no ISO's numbers and every ISO's EIA-860 plant table carries `Sector`, the same
+posture class as Q30), or MISO-only via `default_scenario_overrides` if the owner prefers to
+wait for the PJM leg (§7 item 1). The pre-stated rule reads ARM iff all four limbs are met;
+they are. What arming buys is stated at full magnitude and is structural (rule 1): the
+merchant screen stops failing 59 GW of rate-based capacity its owners never subject to a
+merchant test, so the pool the floor masks is the merchant pool, at 10 % real-exit density
+instead of 4 %, and the moment the floor has headroom (D51 opened 0.48 GW of it; the
+additions lane will open more) the release lands at plants that actually exit (99.8 %)
+instead of at random (1.1 %). What it does NOT do, stated with equal weight: on the shipped
+posture the residual is unmoved (−43.6 %), because the floor has zero headroom there;
+1.18 GW of D49's reachable undated cohort is now unreachable by any channel until a later
+vintage files its date; and `retire.total_gw` under the rider reads 0.7 points WORSE in band
+terms than D51 (10.166 vs 10.276) — the pre-declared rule-14 signature of a screen that had
+been retiring utility units for the wrong reason, and explicitly not a condition.
+
+### 6.1 Executed — armed for MISO, by owner instruction, in this session
+
+The owner's standing instruction for the session ("Is this a recommended keeper candidate? If
+so plz promote … if structural integrity improves but gates regress that may still be a
+keeper") was applied once the condition above read MET on all four limbs. Form: the
+MISO-only override (`iso_configs._miso_config` `default_scenario_overrides`
+`retirement_sector_gate: True`), NOT the dataclass default — rule 25, and the PJM census is
+still the discriminating test. Consequences, all records-side, no new solve: (i) the bare
+`miso-t1h` recipe now resolves to `c306ddc6d28c60c2`, the key of the leg already solved and
+registered here, so that leg carries the bare `miso-t1h` verdict key (`register_forecast_run.
+VERDICT_MAP`, `ff-verdicts.json` — a two-key rename) and the D46 record is preserved verbatim
+at `miso-t1h-pre-d53` (HOLD → HOLD; every scored row identical, so no gate row on the board
+moves); (ii) the board's MISO `t1h_provenance` / `t1h_retire_g3` stamps are re-keyed with
+the D33 stamps preserved beneath; (iii) the MISO matrix cell reads `K` on the measured
+record; (iv) `ScenarioConfig()` `4c6b03ae098b6e3e` and the bare backcast `8211c72bb1960adc`
+are unmoved, and every other ISO's forecast key is unmoved (asserted by test). What the
+arming does NOT do: the MISO t1f leg (2026–2030) was not re-solved here — its next solve
+resolves the gated screen by construction, and its board row keeps its current provenance
+until then; D51's ratio question is unchanged by the gate and stays the owner's.
 
 ---
 

@@ -15200,7 +15200,10 @@ class ScenarioConfig:
     # composition and ``false_retire`` are where the gate can improve. WHY
     # DEFAULT-OFF: arming is an owner decision on the suffixed A/B
     # ``miso-t1h-d53-sectorgate`` vs the bare ``miso-t1h`` (rules 22/24/28;
-    # LOYO within 2021–2025). Registered in _CACHE_KEY_OPTIONAL_FIELDS at
+    # LOYO within 2021–2025). ARMED FOR MISO ONLY on that A/B by owner
+    # instruction 2026-09-05 (iso_configs MISO default_scenario_overrides,
+    # rule 25 — the finding's §6 condition met on all four limbs); the
+    # dataclass default stays False. Registered in _CACHE_KEY_OPTIONAL_FIELDS at
     # False (unarmed keys byte-stable; armed keys distinctly); coerced to the
     # default in a plain backcast (a backcast runs no capacity evolution).
     # SCOPE: ISO-agnostic by construction (every ISO's EIA-860 plant table
