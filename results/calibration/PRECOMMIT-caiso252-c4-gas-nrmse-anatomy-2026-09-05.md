@@ -227,3 +227,146 @@ This PRECOMMIT (pushed first); the probe + JSON; a FINDING; the
 cell the carrier lands on (rule 28(b)); and, only via a registered addendum, any
 arm with its screen, full-span bundle, post-solve chain and same-session
 registration (rules 12 / 15 / 16 / 29).
+
+---
+
+## ADDENDUM A — THE ARM: DISARM `caiso_dsw_daytime_evening_trim` (restore the daytime WEIM clean-transfer window to hod 6–21), screened on 2025 FIRST
+
+**Registered BEFORE the override is coded and before any year is solved.** Owner
+instruction (2026-09-05, this session, verbatim): *"tackle the next run in this
+session that you think could address the 2025 miss on C4. Do not run a control
+and only run 2025 first to see if it passes then if it does run 2023 and 2024."*
+
+### A.1 — Why this arm, from the phase-0 evidence
+
+FINDING-caiso252 §3.1 put the C4 2025 cell's counterpart at the model's import
+diurnal shape: hour for hour the CC over-generation at **18–23** is an import
+shortfall (2025, hod 18–21: **−590 / −925 / −970 / −894 MW** vs EIA-930 net; ≈
+**−1.24 TWh** over the four hours; CC error **+1,425 / +1,423 / +1,379 / +1,402
+MW**). The zero-LP structural read of the import stack shows WHY: the WEIM
+clean-transfer depth rows cover **hod 0–5** (overnight, caiso-93), **hod 6–17**
+(daytime, caiso-94 as trimmed by caiso-97) and the surplus-trigger hours
+(caiso-87) — **no at-hub row exists for 18–23**, and the spot ladder there
+(Malin + $5 wheel; Palo Verde + $4 wheel + border carbon on the gas rungs) is
+priced above the evening λ. The firm blocks are already floored at 85 % of
+capability in those hours (`_caiso252_firm_aah_phase0.json`: an
+availability-assessment-hour price-taking arm on them would deliver **0.16
+TWh** in 2025 — killed at phase 0, not coded).
+
+**The trim's own record supplies the new evidence rule 28(a) requires to re-test
+an owner-armed cell.** caiso-97 trimmed the daytime window 6–21 → 6–17 because,
+on the 2026-07-18 keeper, the model OVER-imported in the evening (hod 17–21
+**+1.9 / +2.1 / +2.2 TWh/yr** above EIA-930; FINDING-caiso94 §4A: evening ×
+non-autumn "model UNDER-prices the peak, a clean-import lever there
+overshoots"). The measured admissibility of the row itself was never in
+question — §4A measured the evening 18–21 raw-hub spread **clean (0 % wedge)** in
+autumn and clean in non-autumn. On the current keeper the sign has **reversed**:
+the evening is UNDER-imported by 0.6–1.0 GW and CC over-generates in exactly
+those hours. The condition that justified the trim no longer holds; the
+condition that admits the row (measured no-wedge) still does.
+
+### A.2 — The arm, exactly
+
+`--replay-bundle results/calibration/caiso251_arm_nomargin` plus **ONE**
+recipe delta: the recorded override bag's `caiso_dsw_daytime_evening_trim`
+**True → False**. Effect (`inject_caiso_dsw_daytime_clean`, unchanged code):
+the `WECC_DSW_DSW_daytime_clean` row's window becomes hod 6–21 and its depth
+the already-committed untrimmed measurement `CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR`
+(5,441 / 5,762 / **5,998** MW; p95 corridor net import over the 6–21
+trigger-OFF window, CV 0.040, LOYO ≤ 8.1 %, `derive_caiso_daytime_clean_depth.py`
+— frozen, not re-derived here). **Zero new parameters, zero new fields, no
+derive re-run.** Priced at the raw Palo Verde hub, EF 0, no wheel, `pmin` 0 —
+a capability the LP clears below, never a floor (no D-2 row). A
+`run_replay_bundle` override + CLI flag (`--caiso-dsw-daytime-evening-trim /
+--no-…`, default `None` = the recipe's value) is added mirroring the
+caiso-251 `gas_offer_margin` override; with the flag absent the path is
+byte-identical.
+
+**Phase-0 footprint (`scripts/probes/_caiso252_evening_trim_phase0.py`, two
+on-recipe rebuilds differing in this one override):** the disarm ADDS
+**3,770 / 3,755 / 3,645 / 3,371 MW** of capability at hod 18 / 19 / 20 / 21 in
+2025, armed in **355–361** trigger-OFF hours per evening hour (2,965 armed
+hours in all; the 6–17 hours move by 30–210 MW from the depth change, 1,528 h);
+no other WECC row moves; the unit count is identical. At the keeper's
+committed duals the row would clear in **35 %** of its armed hours —
+**1.562 TWh** in 2025 (hod 18: 1,255 MW mean; 19: 769; 20: 827; 21: 1,045).
+2024: 1.236 TWh; 2023: 1.032 TWh. **2025 carries the largest footprint**, so it
+is the rule-29(a) screen year on the footprint criterion as well as by the
+owner's instruction.
+
+### A.3 — Admissibility
+
+* Rule 1 `[R-STRUCT]`: the row is the WEIM clean-transfer construction the
+  lane has carried since caiso-87/93/94; the question is only its window.
+* Rule 13 `[R-MEASURED]`: the depth is a frozen measured percentile of the
+  corridor series; the window is the caiso-94 daytime band as originally
+  registered; the hub price is measured and forward-substitutable. No
+  same-year outcome enters.
+* Rule 14 `[R-ACCURATE]`: the measured no-wedge admissibility (§4A) holds in
+  the evening; the trim was a model-state judgement, not a measurement.
+* Rule 19 `[R-ONE-MECH]`: nothing is stacked — one row's window widens; the
+  overnight (0–5) and surplus rows are untouched; the 22–23 gap is NOT touched
+  (a second change to a differently-charted window, queued, not bundled).
+* Rule 23 `[R-FROZEN-DERIVE]`: no derive is re-run; the untrimmed depth is the
+  committed 2026-07-17 measurement.
+* Rule 28(a): re-testing an owner-armed trim on **new, sign-reversed
+  evidence** (A.1) and with the trim's own pre-registered rationale as the
+  falsifier (A.5, G-OVERSHOOT).
+
+### A.4 — Direction hazard, declared
+
+More evening import at the raw hub → evening λ falls → **C3a favourable**
+(model too high). **This is the SEVENTH consecutive favourable direction** for
+the CAISO lane (caiso-241/242/243/246/246§5.2/251, now 252). Declared here:
+**C3a is EXCLUDED from the promotion basis in both directions, and so is C4**
+(the target). The owner's continuation criterion (A.6) governs whether 2023
+and 2024 are solved; it does not promote anything.
+
+### A.5 — Gates
+
+| gate | passes iff | kind |
+|---|---|---|
+| **G-FOOT** | ≥ 90 % of the `DSW_daytime_clean` row's ADDED energy (arm − keeper, 2025) lands in hod 18–21; no non-WECC row's capability differs from the keeper's | structural, STOP |
+| **G-DIR** | the row's 2025 energy rises by ≥ 0.5 TWh AND CC_REGULAR's 2025 dispatch in hod 18–21 FALLS | structural, STOP |
+| **G-OVERSHOOT** (the caiso-97 objection, re-armed as this arm's falsifier) | the arm's 2025 evening (hod 18–21) net import lands within **[measured − 0.5 TWh, measured + 0.8 TWh]** of the EIA-930 hod-18–21 total (the keeper sits at −1.24). Above +0.8 the trim's original justification stands and the arm is REFUSED regardless of C4 | structural, STOP |
+| **G-NOBREAK** | on 2025, computed from the bundle's own sidecars against the committed bench: no C1 class row moves from inside its band to outside it; the load-weighted price stays inside the ±10 % C3a band | structural, STOP |
+| **G-OWNER** | the owner's continuation criterion: 2025 gas-fleet C4 recomputed by the scorer's own `_cems_gas_hourly_fit` construction from the screen bundle's `dispatch/2025_P1.parquet` (plant series built exactly as `render_calibration_html` builds `mw_pc`) reads **NRMSE ≤ 0.30 and r ≥ 0.70**. PASS → solve 2023 + 2024 into the same bundle; FAIL → stop, report | owner-directed continuation, NOT a promotion basis |
+| G-HOLDOUT | every solved year ∈ {2023, 2024, 2025} | — |
+| G-C6/C8/DOF | attested C6, C8 PASS, DOF ledger residual count does not rise (the trim is not a ledger row) | governance |
+
+G-CTRL form 4 is VALID (PRECOMMIT §4, every hunk INERT); the owner has also
+ruled no control. The only LIVE hunk at solve time will be this session's own
+override plumbing, inert when the flag is absent.
+
+### A.6 — Predictions, written to bind
+
+| # | prediction | uncomfortable reading if it fails |
+|---|---|---|
+| **P-A1** | the row's 2025 energy rises by **[0.8, 2.0] TWh** (the phase-0 1.56 at fixed duals, shaded down because the arm lowers the very λ it clears against, up for the 6–17 depth change) | < 0.8: the LP re-prices the evening below the hub and the row barely clears — the deficit is not this row's; > 2.0: the phase-0 duals understated the margin |
+| **P-A2** | CC_REGULAR 2025 dispatch in hod 18–21 falls by **≥ 0.5 TWh**, and CT_PEAKER's by ≥ 0.05 TWh | the import displaces storage or ST_GAS instead of CC — the C4 counterpart was mis-named |
+| **P-A3** | **OVERSHOOT at the window's first hour**: the arm's hod-18 import lands ABOVE measured (the keeper's hod-17 already sits +1.6 GW over), while hod 19–21 land at or below measured; the 18–21 block lands within [−0.5, +0.8] TWh (G-OVERSHOOT passes) | block > +0.8: caiso-97 was right on this keeper too, arm refused |
+| **P-A4** | 2025 C4 gas NRMSE lands in **[0.285, 0.300)** — PASS by a small margin (the 22–23 and 05–06 errors are untouched by construction) | ≥ 0.300: the evening is not enough of the cell (owner stop); < 0.285: I under-sized the evening's share |
+| **P-A5** | 2025 C3a falls by **0.3–1.0 pp** and stays PASS (reported, excluded) | > 1.0 pp: the row is setting λ in far more hours than the 35 % phase-0 count |
+| **P-A6** | the 2025 `import` klass rises by 1.0–1.8 TWh; C1's 2025 rows keep their status (CC/CT SKIPPED on preliminary 923; no PASS→FAIL) | |
+| **P-A7** | if 2023/2024 are solved: C4 stays PASS in both (2023 ≤ 0.285, 2024 ≤ 0.264 — i.e. it does not WORSEN either), and no load-bearing criterion regresses to a new failure | a 2023/2024 C4 worsening means the window helps only where the evening is under-imported — the arm would then be year-specific, which is the caiso-97 objection in another form |
+| **P-A8** | the 2025 22–23 CC error is essentially unchanged (within ±150 MW) — the arm does not reach the night gap | a large move at 22–23 means the LP re-commits CC across the boundary |
+
+### A.7 — Promotion rule, registered now
+
+The arm is a keeper candidate **iff** (a) G-FOOT, G-DIR and G-OVERSHOOT pass on
+2025, (b) 2023 and 2024 are solved into the same bundle (rule 16) with no
+load-bearing criterion regressing to a NEW failure in any year, and (c) the
+governance gates hold. **C3a and C4 do not enter (a)–(c).** If G-OWNER fails
+on 2025 the full span is not solved and the keeper is unchanged — the owner's
+instruction — and that is reported as the result, not re-run. If G-OVERSHOOT
+fails the arm is refused **even if C4 passes**.
+
+### A.8 — Stop rule
+
+1. G-FOOT / G-DIR / G-OVERSHOOT / G-NOBREAK failing on the 2025 screen ⇒ the
+   remaining years are never spent; the screen bundle is deleted after its
+   numbers are extracted to `_caiso252_screen2025.json` (rule 29; ~90 MB).
+2. No second flag, no window other than 6–21, no depth re-derive, no touch of
+   the 22–23 gap, no tuning under any outcome.
+3. No gate is re-run to a pass or redefined after its result.
+4. The screen bundle is never registered and never quoted as a keeper number.
