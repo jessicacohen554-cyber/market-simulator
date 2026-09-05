@@ -33,7 +33,6 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import pyarrow.parquet as pq
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -145,7 +144,10 @@ def main() -> int:
         for r in rows:
             ms = r["measured"] or {}
             hb = (ms.get("hr_base_band") or {}).get("mean_hr"); ht = (ms.get("hr_top_band") or {}).get("mean_hr")
-            f = lambda v, w=6, d=3: (f"{v:{w}.{d}f}" if isinstance(v, float) else f"{str(v) if v is not None else '-':>{w}}")
+
+            def f(v, w=6, d=3):
+                return f"{v:{w}.{d}f}" if isinstance(v, float) else f"{str(v) if v is not None else '-':>{w}}"
+
             print(f"    {r['plant']:>6} {r['pmax_mw']:5.0f} {r['pct_peak'] or 0:5.1f} | {r['model']['cf']:5.3f} {f(ms.get('cf_gross_on_pmax'),5)} | {r['model']['h_gt80']:6d} {f(ms.get('h_gt80'),6)} | {r['model']['h_gt90']:6d} {f(ms.get('h_gt90'),6)} | {r['model']['on_h']:5d} {f(ms.get('on_h'),5)} | {r['model']['peak_h']:5d} | {f(hb,6,2)} {f(ht,6,2)} {f(ms.get('top_over_base_slope'),8)} {f(ms.get('p995_over_pmax'),9)}")
     dst = ROOT / "results/calibration/_nyiso194_cc_peak_phase0.json"
     def _py(o):
