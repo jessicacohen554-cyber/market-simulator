@@ -11875,7 +11875,7 @@ so no rule-22 D-5(b) re-key applies. C3a-2025 untouched
 
 **Keeper:** `2026-09-05-nyiso-189-steam-identity`, untouched (no shard edit;
 `frontier` stays withdrawn 2026-08-30). **Re-verified first, artifact-only**
-(`scripts/calibration_verdict.py --run-id`, at origin/main `db057c5d`):
+(`scripts/calibration_verdict.py --run-id`, at origin/main `921bb4cd`):
 CALIBRATED — C1 14/14 (free 10/10), C2 / C3a (+4.9 / +1.7 / −8.3 %) / C3b
 (0.119 / 0.166 / 0.177) / C4 / C6 / C8 PASS; C3c the lone ledgered caveat
 (RT >$300 h: 3 / 0 / 4 vs 10 / 13 / 42), grade 7, fails 0. **The ruling:**

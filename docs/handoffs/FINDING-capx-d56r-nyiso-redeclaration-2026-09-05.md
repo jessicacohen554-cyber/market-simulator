@@ -4,7 +4,7 @@
 ledger §0ag.3; the original §D56 charter binds verbatim with nyiso-188 replaced by nyiso-189).
 **Model:** Fable (a marker consequence). **Branch:**
 `claude/capx-d56r-nyiso-redeclaration-rme0qs`, fresh off `origin/main` `c9f1d26e`, rebased
-onto `f539ca3c` and then `db057c5d` before the push; every provenance leaf below names `db057c5d`, the sha the
+onto `f539ca3c` and then `921bb4cd` before the push; every provenance leaf below names `921bb4cd`, the sha the
 keeper, marker and verdict were RE-READ at after that rebase (desk doctrine X-6b).
 **Scope:** RECORDS ONLY — zero LP, zero solve, zero re-score, zero registration, no keeper
 change, no out-of-training year touched in any way.
@@ -23,7 +23,7 @@ False; the forecast board's NYISO gate (a) re-derives FAIL → PASS on the liter
 §2.1b(2)(a) test with `check_gate_a_provenance.py` OK 6/6. NYISO reads (a) PASS · (b) PASS ·
 (c) PASS · (d) none — its §2.1b candidacy re-opens; a campaign remains a separate owner
 grant. **The frontier leg is NOT re-asserted**: card C-10 carries no Q39 ruling in ledger
-§3 at `db057c5d`, so `frontier_basis` reads NONE CLAIMED, `keepers/NYISO.json` `frontier`
+§3 at `921bb4cd`, so `frontier_basis` reads NONE CLAIMED, `keepers/NYISO.json` `frontier`
 stays withdrawn, and the four-instrument alignment is split on `frontier` alone by the
 owner's pending choice — stated, never silent. **This lane spent NOTHING and solved
 NOTHING.**
@@ -67,7 +67,7 @@ if it reads CALIBRATED. It does (§2).
 ## 2. Step 1 — the artifact-only re-verification (run FIRST, and again after the rebase)
 
 `python3 scripts/calibration_verdict.py --run-id 2026-09-05-nyiso-189-steam-identity`
-at `c9f1d26e` and again at `db057c5d` (identical output):
+at `c9f1d26e` and again at `921bb4cd` (identical output):
 
 | criterion | tier | status | detail |
 |---|---|---|---|
@@ -86,11 +86,15 @@ This is the same reading the keeper's own promotion recorded (`keepers/NYISO.jso
 superseded nyiso-188. The charter premise ("a CALIBRATED reading") holds on the live keeper.
 
 **Stop-clause C, executed before every push:** `keepers/NYISO.json` re-read at `c9f1d26e`
-at `f539ca3c` and at `db057c5d` (the lane rebased twice; every stamp names the last pin) →
+at `f539ca3c` and at `921bb4cd` (the lane rebased three times; every stamp names the last pin, `921bb4cd`) →
 `2026-09-05-nyiso-189-steam-identity` each time. The commits that landed on `origin/main`
-during this lane (`c9f1d26e..db057c5d`) are three PREREG documents (caiso-247, miso-214,
-nyiso-190) and the PERF-B s3 finding (#4755); none touches a keeper shard, the marker, the
-board or any file this lane edits. No re-key was needed.
+during this lane (`c9f1d26e..921bb4cd`) are three PREREG documents (caiso-247, miso-214,
+nyiso-190), the PERF-B s3 finding (#4755), and — after the first push — the nyiso-190 finding
+(#4759, a zero-solve provenance decomposition; keeper UNCHANGED), capx D59 (#4760) and caiso-247
+(#4762). The third rebase (`db057c5d` → `921bb4cd`) conflicted only on the calibration log's
+append point (both entries kept, upstream first) and auto-merged two shard cell-evidence edits
+that do not touch this lane's stamp. No keeper shard, marker or board byte moved upstream; no
+re-key was needed.
 
 ---
 
@@ -107,7 +111,7 @@ programmatically (`intake_log`, `final`, `withdrawn.CAISO`, `complete.ERCOT`,
 | Field | Before (`c9f1d26e`) | After |
 |---|---|---|
 | `complete` membership | {ERCOT, NEISO, PJM} | {ERCOT, NEISO, **NYISO**, PJM} — the three existing entries byte-identical |
-| `complete.NYISO` | — | **NEW 12-field entry in the PJM/ERCOT schema:** `declared` 2026-09-05 · `keeper` = `keeper_at_declaration` = `2026-09-05-nyiso-189-steam-identity` · `by` = Q38 verbatim with §0af amendment 1 / §3 citations, the `reentry` licence, the D56 → D56-R relaunch, and the R-AG / Q38 / C-10 cross-desk record · `determination` = "CALIBRATED on … RE-VERIFIED 2026-09-05 without a solve (scripts/calibration_verdict.py --run-id, committed artifacts only, at origin/main db057c5d): …" with every criterion and the C3c magnitudes (§2) · `tier_authorized` validation ONLY (2022 + 2020/2021 ladder; the touchpoint loop's rules) · `locked_test` NOT AUTHORIZED (absent from `final`; never scored 2019/H1-2026; freeze covers the tier) · `frontier_basis` **NONE CLAIMED** (§6) · `freeze_interaction` tier-scoped, validation spendable, NOTHING spent · `keeper_rekey_policy` D-5(b) with the Q5 uniform rule stated · `redeclaration` THIRD grant naming both prior grants and withdrawals · `prior_withdrawal_2026_08_30` (next row) |
+| `complete.NYISO` | — | **NEW 12-field entry in the PJM/ERCOT schema:** `declared` 2026-09-05 · `keeper` = `keeper_at_declaration` = `2026-09-05-nyiso-189-steam-identity` · `by` = Q38 verbatim with §0af amendment 1 / §3 citations, the `reentry` licence, the D56 → D56-R relaunch, and the R-AG / Q38 / C-10 cross-desk record · `determination` = "CALIBRATED on … RE-VERIFIED 2026-09-05 without a solve (scripts/calibration_verdict.py --run-id, committed artifacts only, at origin/main 921bb4cd): …" with every criterion and the C3c magnitudes (§2) · `tier_authorized` validation ONLY (2022 + 2020/2021 ladder; the touchpoint loop's rules) · `locked_test` NOT AUTHORIZED (absent from `final`; never scored 2019/H1-2026; freeze covers the tier) · `frontier_basis` **NONE CLAIMED** (§6) · `freeze_interaction` tier-scoped, validation spendable, NOTHING spent · `keeper_rekey_policy` D-5(b) with the Q5 uniform rule stated · `redeclaration` THIRD grant naming both prior grants and withdrawals · `prior_withdrawal_2026_08_30` (next row) |
 | `withdrawn.NYISO` | the 2026-08-30 withdrawal record (20 fields, 11-entry `rekey_history`, the 2026-07-19 record nested as `prior_withdrawal_2026_07_19`) | **MOVED WHOLE** to `complete.NYISO.prior_withdrawal_2026_08_30` — byte-verbatim (asserted against the pre-edit serialization), plus ONE added dated field `superseded` ("SUPERSEDED 2026-09-05: NYISO re-declared … Retained WHOLE as the historical record …"), exactly as the 2026-07-31 re-declaration nested the 2026-07-19 record. Nothing deleted. `withdrawn` now holds CAISO alone. |
 | top-level `note` | ended at the Q5 UNIFORM RULE sentence | **appended** (dated): NYISO re-declared 2026-09-05 by Q38 on nyiso-189, third grant, withdrawal nested whole, validation re-authorized / nothing spent, `final` and freeze untouched, `frontier` not re-asserted pending C-10 |
 | `withdrawn.CAISO`, `final`, `intake_log` | — | **byte-identical**, asserted |
@@ -129,8 +133,8 @@ byte-identity asserted for every other ISO's block, for every NYISO field outsid
 |---|---|---|
 | `generated` | 2026-09-01 | 2026-09-05 |
 | `isos.NYISO.gate.a_keeper_marker.status` | **fail** | **pass** — on the re-declared marker; charter §2.1b(2)(a)'s second condition holds again |
-| `…a_keeper_marker.detail` | fail-form, keyed to nyiso-189 (re-keyed by the promoting lane), carrying the Q5-W withdrawal narrative and the v23 / nyiso-186/187/189 re-key genealogy | **rewritten in the ERCOT/PJM/NEISO pass form**: `keeper 2026-09-05-nyiso-189-steam-identity (full-span 2023-2025, rule 16); determination CALIBRATED …; marker complete=True final=False.` + the Q38 citation, the relaunch, the artifact-only re-verification, the R-AG record, the frontier leg stated as split pending C-10, what the marker grants, the (a)/(b)/(c)/(d) reading, and the re-key genealogy carried forward in one sentence. The prior fail-form text is preserved in git at `db057c5d` and its sha256[:12] `dfa6d55a1fd4` is named inside the new detail. |
-| `…a_keeper_marker.read_live_at` / `corrected_by` | `c73f78f5` / audit records lane v23 (2026-09-03) | `db057c5d` / capx records lane D56-R (2026-09-05) executing Q38, "THE GATE VERDICT MOVED (fail → pass) on the marker" — derivation-stamp convention only; **no forecast-provenance field names written** |
+| `…a_keeper_marker.detail` | fail-form, keyed to nyiso-189 (re-keyed by the promoting lane), carrying the Q5-W withdrawal narrative and the v23 / nyiso-186/187/189 re-key genealogy | **rewritten in the ERCOT/PJM/NEISO pass form**: `keeper 2026-09-05-nyiso-189-steam-identity (full-span 2023-2025, rule 16); determination CALIBRATED …; marker complete=True final=False.` + the Q38 citation, the relaunch, the artifact-only re-verification, the R-AG record, the frontier leg stated as split pending C-10, what the marker grants, the (a)/(b)/(c)/(d) reading, and the re-key genealogy carried forward in one sentence. The prior fail-form text is preserved in git at `921bb4cd` and its sha256[:12] `dfa6d55a1fd4` is named inside the new detail. |
+| `…a_keeper_marker.read_live_at` / `corrected_by` | `c73f78f5` / audit records lane v23 (2026-09-03) | `921bb4cd` / capx records lane D56-R (2026-09-05) executing Q38, "THE GATE VERDICT MOVED (fail → pass) on the marker" — derivation-stamp convention only; **no forecast-provenance field names written** |
 | `isos.NYISO.gate.closed_on` | `["a"]` | `[]` — the board's 'd'-omission convention left as flagged (D7 / Q5-W); `open` stays false on the absent leg (d) |
 | `isos.NYISO.gate.note` | "NO LONGER THE PROGRAM'S LEAD ISO … (a) fail · (b) PASS · (c) PASS · (d) none" | rewritten: (a)+(b)+(c) held, (d) none, `open` false and why, §2.1b candidacy re-opened, a campaign a SEPARATE owner grant (D52 landed at r#36 — arming is card C-12; D59 issued); **prior note preserved verbatim inside it** |
 | `isos.NYISO.marker_complete` | false | true |
@@ -138,7 +142,7 @@ byte-identity asserted for every other ISO's block, for every NYISO field outsid
 | `headline` | the D19 reconcile text | a dated D56-R lead paragraph **prepended**; the D19 text kept verbatim with its two stale facts **annotated in place** (`complete` membership; the leg-count line) |
 | `gate_reading` | the D19 leg map | the leg-(a) membership sentence and the "WHERE THAT LEAVES THE SIX" sentence **annotated in place** (`[D56-R 2026-09-05: …]`); everything else byte-unchanged |
 | `sources` | 29 | 31 — the Q38 / §0ag citation and this finding appended |
-| `gate_a_provenance` | derived at `e75250c7` (r#36 MISO re-key), passers {ERCOT, PJM, NEISO} | `derived_at_sha` `db057c5d`, `derived_at_date` 2026-09-05, `derived_by` rewritten (one row re-derived, passers {ERCOT, NEISO, NYISO, PJM} = `complete` membership); `note` and `inputs` byte-identical |
+| `gate_a_provenance` | derived at `e75250c7` (r#36 MISO re-key), passers {ERCOT, PJM, NEISO} | `derived_at_sha` `921bb4cd`, `derived_at_date` 2026-09-05, `derived_by` rewritten (one row re-derived, passers {ERCOT, NEISO, NYISO, PJM} = `complete` membership); `note` and `inputs` byte-identical |
 | *(new)* `d56r_nyiso_redeclaration` | — | records block in the `q5w_marker_withdrawal` convention: note (not a scoring stamp) · lane · derived_at_date/sha · derived_from · what_changed · what_did_NOT_change · flagged_not_edited |
 
 **Untouched on the board, asserted programmatically:** leg (b) `b_t1f_verdict` (bare
@@ -194,7 +198,7 @@ byte-identical (still `_note` only).
 
 Card **C-10** (ledger §0ag.5): the director's recommendation, as R-AG asked, is option **A** —
 re-declare `complete` AND `frontier` together on nyiso-189. Options B (`complete` only,
-frontier read as optional) and C (decline both) were also served. **At `db057c5d` ledger §3
+frontier read as optional) and C (decline both) were also served. **At `921bb4cd` ledger §3
 carries NO Q39 row** (grep over the ledger and the audit board: the only "Q39" is the r#36
 header's "Rulings, when given, are Q39–Q41"). Pack §D56-R limb A therefore applies its
 no-ruling branch: `frontier_basis` = NONE CLAIMED, the shard's `frontier` untouched, and the
@@ -286,7 +290,7 @@ verification.
 
 ## 11. Push verification (rule 27, both ≥300-line files, `git push` transport)
 
-Commit `554cef8b` on `claude/capx-d56r-nyiso-redeclaration-rme0qs` (base `db057c5d`, a
+Commit `554cef8b` on `claude/capx-d56r-nyiso-redeclaration-rme0qs` (base `921bb4cd`, a
 single-commit pack of six text files). Each pushed blob fetched back through the GitHub
 contents API on the branch ref and compared to the local `git hash-object`:
 
@@ -297,6 +301,6 @@ contents API on the branch ref and compared to the local `git hash-object`:
 | `docs/codebase-site/data/mechanism-matrix/NYISO.js` | `1202f2aa…` | `1202f2aa…` ✓ | 320,870 / 906 |
 | `tests/scoring/test_ff_readiness_battery.py` | `126f64ae…` | `126f64ae…` ✓ | 18,809 / 415 |
 
-No mismatch; no stop-the-line event. The final rebase (`f539ca3c` → `db057c5d`) preceded the
-push, and every `read_live_at` / `derived_at_sha` / determination-text pin names `db057c5d`,
+No mismatch; no stop-the-line event. The final rebase (`f539ca3c` → `921bb4cd`) preceded the
+push, and every `read_live_at` / `derived_at_sha` / determination-text pin names `921bb4cd`,
 the sha the keeper, marker and verdict were re-read at.
