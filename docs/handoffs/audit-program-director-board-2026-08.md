@@ -294,6 +294,26 @@
 > overall `failure` on the two chronic non-set jobs, `Ruff lint + format` red on
 > the three miso-217 files, and `FR-21` red on the MISO gate-(a) stamp — none of
 > them this lane's, and none of them fixed here (records-only scope).**
+>
+> ### 🔴 CODA AT PR-OPEN (dated addendum to THIS block only, 20:52Z — nothing else is rewritten)
+>
+> **A SIXTH reading, taken as this lane's PR was created, after a rebase onto
+> `77eddaff` (#4811, the 2022-touchpoint measured-input extension, which touches
+> no surface measured here):** `list_branches` → `main` →
+> **`"protected": false`**. That is **~117 minutes** after the owner's *"doing it
+> now"*, and it is the **sixth** consecutive negative reading across **two**
+> records lanes and **three** distinct pins (`db095953`, `2a59d269`,
+> `77eddaff`). ⚠️ **Every branch on `origin` reads `protected: false`, this
+> lane's own included** — so the reading is not an artefact of asking about the
+> wrong branch.
+>
+> **The refusal above therefore stands at PR-open, not merely at close.** If the
+> Settings action lands between this PR's creation and its merge, **G2 is still
+> not declared by this entry** — R-AM attaches the declaration to *the entry that
+> reads `protected: true`*, and no entry has. **It is the next records lane's,
+> and it should be dispatched the moment the toggle is confirmed — with the three
+> `ruff format` files fixed first**, or the flip's own first PR will be blocked by
+> a red required check.
 
 > # 🔴 **OWNER RULINGS R-AL … R-AO (2026-09-05 18:55Z SITTING)** — RECORDS-ONLY LANE **v29**, pin `5eb5f38a` → `db095953`. **THE GITHUB API IS BACK AT THIS LANE, AND THE FIRST THING IT SHOWS IS THAT THE FLIP IS *STILL NOT LIVE* 80 MINUTES AFTER "DOING IT NOW" — SO G2 IS NOT DECLARED HERE. IT ALSO SHOWS R-AH's 6-OF-6 CONDITION, MET AT 18:06Z, HAS SINCE BEEN *LOST AT HEAD*: `ruff format` IS RED AGAIN ON MAIN.**
 >
