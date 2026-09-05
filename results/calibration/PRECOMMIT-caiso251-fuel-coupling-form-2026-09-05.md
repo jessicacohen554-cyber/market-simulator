@@ -235,3 +235,48 @@ dashboard registration of the arm run **in this session** (rule 15);
 `gas_offer_net_revenue_margin` updated with its tested verdict (rule 28(b)); and,
 **only if the §0.2 promotion rule is satisfied**, the keeper promotion with all
 of its re-stamps (rule 28 + `keepers/README.md` step 4).
+
+---
+
+## ADDENDUM A — RULE 29 `[R-SCREEN]` APPLIED TO THE ARM (owner rule, mid-session 2026-09-05)
+
+**Registered BEFORE the screen solve is started and before any arm year is solved.** The owner
+issued rule 29 `[R-SCREEN]` while this session's CONTROL solve was running: a new config is
+screened on ONE year before the full span is spent, on a gate that asks whether the mechanism
+does what it claims — never on whether the target residual moved.
+
+**Applied here from this point.** The CONTROL (the incumbent keeper recipe, needed in full for
+G-CTRL and exempt under rule 29's "re-solve of an existing keeper recipe" clause) runs its full
+span as launched. **The ARM is screened first.**
+
+**Screen year: 2024.** Chosen on the phase-0 **footprint**, not on any residual: 2024 carries the
+largest |fuel − anchor| (median delivered gas $2.59/MMBtu against the $4.7964 anchor; only 4.66 %
+of hours above it) and therefore the largest offer delta of the three years — CC_REGULAR econ
+**−2.081**, CT_PEAKER econ **−8.305**, CT_CHP econ **−10.437** $/MWh capacity-weighted
+(`_caiso251_fuel_coupling_form.json`). 2023 is excluded as the screen year precisely because its
+delta is small and sign-flipped, and 2025 because its delta is smaller than 2024's. **That 2024 is
+also the worst C3a year is NOT the reason and is not used as one.**
+
+**G-SCREEN, the pre-registered structural stop gate** — all three legs must pass for the remaining
+two years to be spent:
+
+* **G-SCREEN-A (confinement).** The 2024 non-gas classes (`solar`, `wind`, `nuclear`, `hydro`,
+  `biomass`, `OTHER`) reproduce the control's annual energy to **≤ 0.5 TWh** each. The delta must
+  be the gas stack and what it displaces, not a global perturbation.
+* **G-SCREEN-B (direction).** `CT_PEAKER` + `CT_CHP` 2024 dispatch **RISES** against the control.
+  This is the direction the phase-0 arithmetic requires — CT's offers fall four to five times
+  further than CC's — and it is the whole structural claim: the fixed-margin form was holding CT
+  out of the merit order. If CT does **not** rise, the mechanism does not do what its own offer
+  delta says, and the arm is **dead on the screen** with the remaining years unspent.
+* **G-SCREEN-C (no collateral break).** No non-C3a scored criterion for 2024 flips PASS → FAIL.
+
+**C3a is NOT in G-SCREEN, in either direction.** The screen may kill this arm; it can never
+promote it, it contributes nothing to a determination, and the screen bundle
+(`caiso251_arm_screen2024`) is a **throwaway probe** — never registered on the dashboard, never a
+keeper, never quoted as a keeper number (rule 16 `[R-ALLYEARS]` unchanged). If G-SCREEN passes,
+the full `--year 2023 2024 2025` arm bundle is solved in ONE invocation as originally registered,
+and 2024 is re-solved inside it.
+
+**Nothing else in this PRECOMMIT changes.** G-COUPLE, G-IDENT, G-FOOTPRINT, G-CTRL, the ten
+predictions, the §0.2 promotion rule (C3a excluded in both directions; structural faithfulness may
+keep the run even if C3a worsens) and the §3 stop rule all stand exactly as registered.
