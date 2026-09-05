@@ -209,7 +209,18 @@ def test_cache_key_is_registered_dropped_at_default() -> None:
     dropped from the hash — the repo-wide pinned default key is unmoved — while
     an armed run keys as a distinct scenario.
     """
-    assert ScenarioConfig().cache_key() == "4c6b03ae098b6e3e"
+    # 2026-09-05: 4c6b03ae098b6e3e -> e5ecd4105ada3e58, capx D60's declared
+    # flip of ccs_retrofit_capex_co2_scaling (owner ruling Q42, director
+    # sitting r#37; execution record FINDING-capx-d60-2026-09-05.md, cause
+    # block in src/market_sim/results/cache.py). Nothing about miso-217's own
+    # registration moved: the field is still in _CACHE_KEY_OPTIONAL_FIELDS,
+    # its frozen declaration is still False, and it still drops at its default
+    # -- measured, ScenarioConfig(ccs_retrofit_capex_co2_scaling=False) still
+    # hashes to 4c6b03ae098b6e3e exactly. The literal was a dated measurement
+    # of the REPO-WIDE pin, advanced by an unrelated owner-ruled default flip;
+    # re-pinned by the Y-11 fast-tier pin lane on the D44 precedent in
+    # tests/unit/model/test_entry_vre_zone_selection.py.
+    assert ScenarioConfig().cache_key() == "e5ecd4105ada3e58"
     assert (
         ScenarioConfig(miso_intermediate_gas_offer_margin=True).cache_key()
         != ScenarioConfig().cache_key()

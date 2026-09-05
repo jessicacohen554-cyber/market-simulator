@@ -6396,6 +6396,21 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
         # resolves to arm A's own key, an explicit all-off caller still
         # resolves the D45-R control key, every other ISO is untouched, and a
         # PJM plain backcast is coerced back to the off posture (key unmoved).
+        #
+        # 2026-09-05, all three pins re-keyed by the Y-11 fast-tier pin lane:
+        # capx D60 (commit 13f711bc) landed the declared flip of
+        # ccs_retrofit_capex_co2_scaling (owner ruling Q42, director sitting
+        # r#37) AFTER D57 (5bb70047) wrote these literals, advancing every
+        # resolved key by one field. The Q44 posture this test asserts is
+        # UNCHANGED -- arm A / arm B / control are still three distinct keys
+        # reached through the same override path, and setting
+        # ccs_retrofit_capex_co2_scaling=False restores all three pre-flip
+        # values exactly (f0e050e820c1159a / ccee17a4c1563727 /
+        # c6091bd5b62bbc3f). D60's own §3 table independently records the
+        # post-arm bare PJM key as aef81c84c4609c76 and its pre-declared
+        # all-off key as 7297dcb3b92be3fb ("moved by D57, not by D60" --
+        # FINDING-capx-d60-2026-09-05.md §3/§4, STOP 1, which is why D60's
+        # sweep left PJM's pins behind).
         from market_sim.config.iso_configs import apply_iso_scenario_defaults
         from scripts.run_capacity_hindcast import build_config
 
@@ -6411,7 +6426,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             )
             return apply_iso_scenario_defaults(cfg, iso).cache_key()
 
-        self.assertEqual(_key("PJM"), "f0e050e820c1159a")  # = arm A
+        self.assertEqual(_key("PJM"), "aef81c84c4609c76")  # = arm A
         self.assertEqual(
             _key(
                 "PJM",
@@ -6419,7 +6434,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 pjm_demand_response_supply=False,
                 capacity_market_supply_clearing=False,
             ),
-            "c6091bd5b62bbc3f",  # = D45-R's bare key, the explicit control
+            "7297dcb3b92be3fb",  # = D45-R's bare key, the explicit control
         )
         self.assertEqual(
             _key(
@@ -6427,7 +6442,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 pjm_accreditation_design_vintage=False,
                 pjm_demand_response_supply=False,
             ),
-            "ccee17a4c1563727",  # = arm B
+            "6cf8ee2c9f31e528",  # = arm B
         )
         # Every other ISO resolves the three fields OFF (their own keys are
         # their own lanes' — never pinned here, rule 25).

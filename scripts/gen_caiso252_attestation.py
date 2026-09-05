@@ -73,7 +73,10 @@ _SHARED = (
     "load-bearing failure in any year and the governance gates."
 )
 
-_B1 = "THIS BUNDLE IS THE ARM (single recorded-override delta on the caiso-251 keeper). " + _SHARED
+_B1 = (
+    "THIS BUNDLE IS THE ARM (single recorded-override delta on the caiso-251 keeper). "
+    + _SHARED
+)
 
 _ATTEST = {"b1": _B1}
 
