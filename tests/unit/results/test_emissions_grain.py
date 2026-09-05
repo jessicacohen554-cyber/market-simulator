@@ -234,6 +234,22 @@ class TestImportLineStaysOutsideTheTotal(unittest.TestCase):
             import_tranche_ef("WECC_import_DSW_CCGT", "WECC_import"), 0.37
         )
 
+    def test_export_sinks_are_outside_the_line_not_netted_against_it(self):
+        # An export sink is the SAME "import" fuel type with pmax 0 / pmin
+        # -capacity, so it dispatches negative. Netting it would credit this
+        # ISO for the neighbour's generation at the neighbour's unspecified
+        # rate — an unearned offset, not a disclosure.
+        ctx = _context(
+            ["import", "import"],
+            [0.0, 0.0],
+            ["HQ_import", "HQ_import"],
+            unit_ids=["HQ_import_import_scarcity", "HQ_import_export_NYISO"],
+        )
+        gen = np.array([100.0 * HOURS, -500.0 * HOURS])
+        tons = import_co2_tons(ctx.fuel_types, ctx.unit_ids, ctx.zones, gen)
+        self.assertAlmostEqual(tons, 100.0 * HOURS * 0.428, places=6)
+        self.assertGreater(tons, 0.0)
+
     def test_iso_without_an_import_node_reports_zero(self):
         ctx = _context(["gas_cc"], [GAS_RATE], ["Houston"], unit_ids=["CC1"])
         self.assertEqual(

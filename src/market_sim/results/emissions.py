@@ -445,6 +445,18 @@ def import_co2_tons(
     Returns:
         Import-attributed CO2 in metric tons. ``0.0`` for an ISO with no
         import node (e.g. ERCOT, whose DC-tie interchange rides in demand).
+
+    Note:
+        EXPORT sinks share the ``"import"`` fuel type — they are the same
+        external-zone pseudo-generator with ``pmax_mw=0`` and
+        ``pmin_mw=-capacity``, so they dispatch NEGATIVE
+        (``import_nodes.build_export_sinks``). Their energy is therefore
+        clamped out rather than differenced: an export is energy leaving this
+        ISO, and its combustion emissions belong to whoever burns the fuel on
+        the other side. Netting exports against imports here would CREDIT this
+        ISO for the neighbour's generation at the neighbour's unspecified
+        rate, which is not a disclosure — it is an offset, and an unearned
+        one. Exports are simply outside this line.
     """
     gen_mwh = np.asarray(gen_mwh, dtype=float)
     rates = np.array(
@@ -454,4 +466,4 @@ def import_co2_tons(
         ],
         dtype=float,
     )
-    return float((gen_mwh * rates).sum())
+    return float((np.maximum(gen_mwh, 0.0) * rates).sum())

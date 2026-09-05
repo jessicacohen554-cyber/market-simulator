@@ -77,7 +77,7 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 
 | lane | scope | status | branch | model | evidence / notes |
 |---|---|---|---|---|---|
-| **SCN-WS0** | Emissions grain (by fuel / by zone / import line / unserved) + multi-metric matrix frame + `report_scenario_deltas.py` + `collate_scenario_campaign.py` + the scenario YAML set + `--set` override + `scenario` registration kind; one paired NEISO T0 to exercise it | **ISSUED r#1** | `claude/scn-ws0-k7m2` | **Opus** | Plan §3 WS-0. Blocks WS-1b, WS-2b, WS-4b/c, WS-5. Sole writer of `configs/scenario_campaign_matrix.yaml` this wave. |
+| **SCN-WS0** | Emissions grain (by fuel / by zone / import line / unserved) + multi-metric matrix frame + `report_scenario_deltas.py` + `collate_scenario_campaign.py` + the scenario YAML set + `--set` override + `scenario` registration kind; one paired NEISO T0 to exercise it | **LANDED 2026-09-05** | `claude/scn-ws0-k7m2-8743yi` | **Opus** | Plan §3 WS-0. All six deliverables in; T0 STOP gate PASS; both arms registered (`scn-ws0-smoke`). `FINDING-scn-ws0-2026-09-05.md`. **Unblocks WS-1b, WS-2b, WS-4b/c, WS-5.** Four items routed to the desk (FINDING §5), incl. a measured NEISO import-leakage number that bears on card D-4. |
 | **SCN-WS1a** | Federal carbon-price semantics (G-C1, gated on D-1) + the two seam defects (G-C2, G-C3) + the pre-declared `CAP-STATE-TIGHT` case | **ISSUED r#1** | `claude/scn-ws1a-p4qd` | **Fable** | Plan §3 WS-1 items 1–3. Item 1 gated: D-1 open at issuance → items 2–3 + the Phase-0 trajectory table + a D-1 evidence memo, then stop. |
 | **SCN-WS2a** | The endogenous national CES **target** row (G-S1, G-S3) + the two new fields + the three state/federal postures | **ISSUED r#1** | `claude/scn-ws2a-t9xb` | **Fable** | Plan §3 WS-2 items 1–2. Its `rows.py:1346` coupling relaxation is WS-3b's precondition. Uses the illustrative target if D-2 is unsigned and says so. |
 | **SCN-WS3a** | Voluntary clean-demand **design memo** (no code, no solve) | **ISSUED r#1** | `claude/scn-ws3a-r6vn` | **Fable** | Plan §3 WS-3 item 1. Its signed boxes + card D-3 gate WS-3b. |
@@ -120,11 +120,13 @@ State at r#1 = plan v1, unmoved. Each landing lane updates BOTH this table and t
 | 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | **no** | **no** | **no** | — |
 | 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | — | — | yes | — |
 | 5 matrix duty | stamped (`carbon_price_path` + `policy_bundle` rows minted at WS-1a) | stamped | — | — | stamped | — |
-| 6 emissions grain | scalar only | scalar only | — | — | scalar only | **G-E1..E5 open** |
-| 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | — | — | none | — |
+| 6 emissions grain | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | **G-E1..E5 CLOSED** (SCN-WS0) |
+| 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | — | — | none | `scn-ws0-smoke` REF/CARB pair |
 
-**Open lane assignments against the scorecard:** WS-0 → the Emissions column entire (criterion
-6) + criterion 1's harness half; WS-1a → Carbon row 1 (the G-C1 defect) and rows 4/5; WS-1b →
+**Open lane assignments against the scorecard:** ~~WS-0 → the Emissions column entire
+(criterion 6) + criterion 1's harness half~~ — **LANDED 2026-09-05**, G-E1..E5 closed,
+G-E6/G-E7 remain open as declared disclosure items
+(`docs/handoffs/FINDING-scn-ws0-2026-09-05.md`); WS-1a → Carbon row 1 (the G-C1 defect) and rows 4/5; WS-1b →
 Carbon rows 3/7; WS-2a → the CES-target column rows 1/2/4/5 and its probe half of row 3; WS-2b →
 CES-premium rows 3/7; WS-3a → nothing (memo); WS-4a → Load-HI row 1 (partial → the siting half)
 — **LANDED 2026-09-05**: MISO populated from the 2026 LTLF regional DC decomposition, ERCOT
