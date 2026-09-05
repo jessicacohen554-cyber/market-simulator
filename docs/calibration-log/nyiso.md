@@ -11770,3 +11770,36 @@ C3a down in every year. Nothing built. Rule 28: `egrid_identity_heat_rates`
 annotated, §5.5 top bullet updated. Evidence:
 `results/calibration/_nyiso189_gen_collapse_census/`,
 `scripts/probes/nyiso189_gen_collapse_census.py`.
+
+## 2026-09-05 — nyiso-189 (`backcast-calibration` lane, second sitting): the owner-chosen form B2 built, A/B-solved and PROMOTED — `egrid_steam_collapse_heat_rates`, Bethlehem 2539 at its CT-heat identity
+
+**Owner ruling (this sitting, `AskUserQuestion` on the decision card's three
+questions):** form B2, the plant's own T1-clean median steam share, the
+plant-history bound authorized. **Pre-registration**
+`results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md` pushed
+BEFORE the build and before any solve; it fixes the operational bound (the
+literal "below the plant's own minimum" fires at 35 of 38 plants — the
+mechanism reads the record's minimum minus the record's own range) and the
+CT-side guard. **Built:** ONE field (default off), the derive over all 38
+NYISO CCs (`egrid_steam_collapse_heat_rates_NYISO.csv`, `--check` reproduces;
+applied-vintage reach EXACTLY Bethlehem 2539 9.665 → 6.877 and World
+Generation X 54131 9.807 → 6.996), the identity-seam apply, CLI + replay
+plumbing, tests, matrix row + six shard cells. **Solved:** the same-HEAD
+control (BIT-IDENTICAL to the keeper, 0 of 52,560 prices differ ×3) and the
+arm `2026-09-05-nyiso-189-steam-identity` (G-DELTA exactly the one field;
+attestation with computed premises). **Result:** CALIBRATED → CALIBRATED
+(grade 7, fails 0, C3c ledgered), no rejection-rule flip; Bethlehem 2.448 →
+4.898 / 4.171 → 5.951 / 4.110 → 5.815 TWh, load-weighted price −2.8 / −2.0 /
+−1.5 %; C3a +7.9 / +3.8 / −6.9 → +4.9 / +1.7 / −8.3 %; C3b 0.134 / 0.175 /
+0.171 → 0.119 / 0.166 / 0.177; C1-2024 `CC_REGULAR` +2.05 → +3.33 TWh /
++2.8 pp (band 3.0 pp — the closest cell, nyiso-187's disposition at a larger
+magnitude); C8 `ST_GAS` 19.7 / 23.6 / 18.3 %. **PROMOTED** under the owner's
+standing formula: keeper shard, `status/NYISO.js`, `audit_keepers --iso
+NYISO`, gate-(a) stamp re-keyed (R-T), NYISO matrix shard (cell
+`egrid_steam_collapse_heat_rates` O → K, keeper + gates re-stamped), §5.5
+header + queue. No marker requested; D56 (NYISO `complete`) is issued and
+not landed — if it lands before this PR merges the merging session re-keys
+`complete.NYISO` (D-5(b)). Evidence:
+`docs/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md`,
+`results/calibration/_nyiso189_ab_report.json`,
+`scripts/gen_nyiso189_attestation.py`, `scripts/probes/nyiso189_ab_report.py`.
