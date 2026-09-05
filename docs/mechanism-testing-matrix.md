@@ -11205,6 +11205,33 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-05 (nyiso-194, two one-year screens, rule 29; keeper
+`2026-09-05-nyiso-192-astoria-panel` UNCHANGED, nothing registered).** The owner-ruled
+item (1) below was executed as phase 0 + two 2024 screens
+(`results/calibration/PREREG-nyiso194-cc-peak-tranche-screen.md`, pushed before the solves;
+`docs/FINDING-nyiso194-cc-peak-tranche-screens-2026-09-05.md`). **Both arms KILLED on
+their frozen structural gates:** the measured form (the 8 % physical cap on the 860 duct
+gap) moves plants up to the new wall and the class 80–90 % share RISES 33.0 → 36.3 %
+(CAMPD 16.5); the literal direction (peak 2.25 → 2.50, a diagnostic — no NYISO measurement
+identifies a higher peak) cuts peak-band energy 1,253 → 680 GWh and moves the 90–100 %
+share 19.8 → 17.2 % (CAMPD 33.9), AWAY from measured, while lowering `CC_REGULAR` 0.45 TWh —
+the rule-1 residual-by-wrong-shape case. The symptom itself is CONFIRMED at full magnitude
+(80–90 % share 27.9 / 33.0 / 26.8 % vs CAMPD 6.0 / 5.8 / 7.1; +20–25 k online plant-hours
+in 2024/2025).
+**NEW TOP OF QUEUE — the `CC_REGULAR` ECON RAMP at its own measured marginal basis (U).**
+Neither wall price nor wall placement moves the mass: the LP parks each CC where its econ
+ramp's marginal slice (`offer_curve_smoothing_n` 6, `econ_low 0.95 → econ_high 1.0`) meets
+the LMP, an operating point the real fleet does not have (CAMPD: 48 % of hours at 20–50 % or
+90–100 %, 6 % at 80–90 %). NYISO's own registered physical basis says the ramp's top is
+cheaper at the margin than its middle (`phys_econ_low 0.784 → phys_econ_high 0.925`,
+`nyiso_campd_marginal_hr_summary.csv` p50s), the opposite slope to the registered 0.95 → 1.0.
+Candidate single delta (zero DOF, measured, already registered): offer the econ block at its
+`phys_*` basis (econ_low 0.784 / econ_high 0.925, i.e. registered = physical, markup 0) and
+screen 2024 on the same gate family (80–90 % → 90–100 % mass toward CAMPD; footprint confined
+to `CC_REGULAR` econ slices; C2/C3a/C3b companions). Expect `CC_REGULAR` energy UP (never a
+gate). Rule 25: NYISO's own p50s, no transfer. Needs its own PREREG.
+* (1) **DONE — REJECTED on shape (nyiso-194).** The owner's directed upward peak offer.
+
 **QUEUE STATUS UPDATE 2026-09-05 (nyiso-193, later the same day — PROMOTION, ZERO NEW
 SOLVE; keeper → `2026-09-05-nyiso-192-astoria-panel`).** The owner ruled nyiso192-Q1 in session,
 option (i), verbatim: *"Ok promote it ugh how does this keep happening with NYISO? Promote it and then tune the cc regular offer curve up for the duct burner peaking tranche because it's merit order is wrong it runs more often at lower CF and is running hot over 80% CF in all years"* The arm is PROMOTED (rules 14 / 13 / 1, the standing

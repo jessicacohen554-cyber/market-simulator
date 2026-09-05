@@ -1,0 +1,1125 @@
+{
+ "arm": "D",
+ "screen_bundle": "results/calibration/nyiso194_screen_peak250_2024",
+ "control": "keeper committed 2024 (form 4)",
+ "gates": {
+  "footprint_fleet": {
+   "units_with_pmax_change": 0,
+   "plants": [],
+   "all_changed_plants_have_860_gap_gt_8": null,
+   "classes": [],
+   "rows": []
+  },
+  "identity_cap8": [],
+  "class_loading_bins_pct": {
+   "bins": "0-10 .. 90-100 % of pmax, MW-weighted share of online plant-hours (2500 excluded)",
+   "keeper": [
+    0.5,
+    2.0,
+    5.5,
+    6.4,
+    8.6,
+    4.5,
+    11.8,
+    8.0,
+    33.0,
+    19.8
+   ],
+   "screen": [
+    0.5,
+    1.9,
+    5.5,
+    6.7,
+    9.3,
+    4.5,
+    12.0,
+    10.3,
+    32.0,
+    17.2
+   ],
+   "campd": [
+    0.5,
+    1.6,
+    5.3,
+    8.8,
+    5.4,
+    7.0,
+    15.2,
+    5.8,
+    16.5,
+    33.9
+   ],
+   "share_80_90": {
+    "keeper": 32.96,
+    "screen": 31.97,
+    "campd": 16.51
+   },
+   "share_90_100": {
+    "keeper": 19.76,
+    "screen": 17.25,
+    "campd": 33.88
+   },
+   "moved_toward_campd_80_90": true,
+   "moved_toward_campd_90_100": false
+  },
+  "plants": [
+   {
+    "plant": 57185,
+    "pmax": 1087,
+    "old_wall_frac": 0.774,
+    "h_above_old_wall": {
+     "keeper": 92,
+     "screen": 0,
+     "campd": 450
+    },
+    "h_gt80": {
+     "keeper": 37,
+     "screen": 0,
+     "campd": 422
+    },
+    "h_gt90": {
+     "keeper": 37,
+     "screen": 0,
+     "campd": 264
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 2.0
+    },
+    "share_90_100": {
+     "keeper": 0.4,
+     "screen": 0.0,
+     "campd": 3.4
+    },
+    "energy_gwh": {
+     "keeper": 5037.7998046875,
+     "screen": 4944.7001953125,
+     "campd_gross": 4240.9
+    },
+    "peak_tranche": {
+     "h_keeper": 1321,
+     "h_screen": 519,
+     "gwh_keeper": 196.9499969482422,
+     "gwh_screen": 75.29000091552734
+    }
+   },
+   {
+    "plant": 55405,
+    "pmax": 1065,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 100
+    },
+    "h_gt80": {
+     "keeper": 288,
+     "screen": 289,
+     "campd": 1542
+    },
+    "h_gt90": {
+     "keeper": 270,
+     "screen": 278,
+     "campd": 1317
+    },
+    "share_80_90": {
+     "keeper": 0.3,
+     "screen": 0.2,
+     "campd": 3.7
+    },
+    "share_90_100": {
+     "keeper": 4.3,
+     "screen": 4.4,
+     "campd": 21.6
+    },
+    "energy_gwh": {
+     "keeper": 3572.300048828125,
+     "screen": 3600.60009765625,
+     "campd_gross": 4046.2
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 2539,
+    "pmax": 893,
+    "old_wall_frac": 0.91,
+    "h_above_old_wall": {
+     "keeper": 182,
+     "screen": 15,
+     "campd": 2625
+    },
+    "h_gt80": {
+     "keeper": 6242,
+     "screen": 5332,
+     "campd": 5211
+    },
+    "h_gt90": {
+     "keeper": 182,
+     "screen": 15,
+     "campd": 3190
+    },
+    "share_80_90": {
+     "keeper": 74.9,
+     "screen": 65.7,
+     "campd": 25.1
+    },
+    "share_90_100": {
+     "keeper": 2.3,
+     "screen": 0.2,
+     "campd": 39.7
+    },
+    "energy_gwh": {
+     "keeper": 6020.2001953125,
+     "screen": 5960.5,
+     "campd_gross": 5539.0
+    },
+    "peak_tranche": {
+     "h_keeper": 1885,
+     "h_screen": 759,
+     "gwh_keeper": 134.39999389648438,
+     "gwh_screen": 53.68000030517578
+    }
+   },
+   {
+    "plant": 56940,
+    "pmax": 696,
+    "old_wall_frac": 0.849,
+    "h_above_old_wall": {
+     "keeper": 189,
+     "screen": 15,
+     "campd": 6833
+    },
+    "h_gt80": {
+     "keeper": 5688,
+     "screen": 5002,
+     "campd": 7114
+    },
+    "h_gt90": {
+     "keeper": 189,
+     "screen": 15,
+     "campd": 4620
+    },
+    "share_80_90": {
+     "keeper": 66.4,
+     "screen": 60.3,
+     "campd": 30.0
+    },
+    "share_90_100": {
+     "keeper": 2.3,
+     "screen": 0.2,
+     "campd": 55.7
+    },
+    "energy_gwh": {
+     "keeper": 4336.89990234375,
+     "screen": 4259.60009765625,
+     "campd_gross": 4981.9
+    },
+    "peak_tranche": {
+     "h_keeper": 1624,
+     "h_screen": 674,
+     "gwh_keeper": 139.8000030517578,
+     "gwh_screen": 58.04999923706055
+    }
+   },
+   {
+    "plant": 57664,
+    "pmax": 650,
+    "old_wall_frac": 0.831,
+    "h_above_old_wall": {
+     "keeper": 1987,
+     "screen": 974,
+     "campd": 4796
+    },
+    "h_gt80": {
+     "keeper": 7041,
+     "screen": 6869,
+     "campd": 5270
+    },
+    "h_gt90": {
+     "keeper": 1979,
+     "screen": 973,
+     "campd": 3016
+    },
+    "share_80_90": {
+     "keeper": 61.5,
+     "screen": 71.6,
+     "campd": 27.3
+    },
+    "share_90_100": {
+     "keeper": 24.0,
+     "screen": 11.8,
+     "campd": 36.6
+    },
+    "energy_gwh": {
+     "keeper": 4298.60009765625,
+     "screen": 4172.89990234375,
+     "campd_gross": 4136.7
+    },
+    "peak_tranche": {
+     "h_keeper": 4337,
+     "h_screen": 3054,
+     "gwh_keeper": 400.7300109863281,
+     "gwh_screen": 274.9100036621094
+    }
+   },
+   {
+    "plant": 55375,
+    "pmax": 610,
+    "old_wall_frac": 0.938,
+    "h_above_old_wall": {
+     "keeper": 2387,
+     "screen": 1437,
+     "campd": 3315
+    },
+    "h_gt80": {
+     "keeper": 8261,
+     "screen": 8261,
+     "campd": 5899
+    },
+    "h_gt90": {
+     "keeper": 7635,
+     "screen": 7429,
+     "campd": 4194
+    },
+    "share_80_90": {
+     "keeper": 7.6,
+     "screen": 10.0,
+     "campd": 20.4
+    },
+    "share_90_100": {
+     "keeper": 92.2,
+     "screen": 89.7,
+     "campd": 50.3
+    },
+    "energy_gwh": {
+     "keeper": 4633.2998046875,
+     "screen": 4591.2998046875,
+     "campd_gross": 4282.3
+    },
+    "peak_tranche": {
+     "h_keeper": 4734,
+     "h_screen": 3560,
+     "gwh_keeper": 167.07000732421875,
+     "gwh_screen": 125.08000183105469
+    }
+   },
+   {
+    "plant": 56196,
+    "pmax": 560,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 140
+    },
+    "h_gt80": {
+     "keeper": 7843,
+     "screen": 7843,
+     "campd": 5992
+    },
+    "h_gt90": {
+     "keeper": 4909,
+     "screen": 4909,
+     "campd": 5149
+    },
+    "share_80_90": {
+     "keeper": 37.3,
+     "screen": 37.3,
+     "campd": 10.0
+    },
+    "share_90_100": {
+     "keeper": 62.4,
+     "screen": 62.4,
+     "campd": 65.7
+    },
+    "energy_gwh": {
+     "keeper": 4083.10009765625,
+     "screen": 4083.10009765625,
+     "campd_gross": 3782.4
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 56234,
+    "pmax": 362,
+    "old_wall_frac": 0.909,
+    "h_above_old_wall": {
+     "keeper": 690,
+     "screen": 142,
+     "campd": 2244
+    },
+    "h_gt80": {
+     "keeper": 5899,
+     "screen": 5017,
+     "campd": 4521
+    },
+    "h_gt90": {
+     "keeper": 690,
+     "screen": 142,
+     "campd": 2361
+    },
+    "share_80_90": {
+     "keeper": 83.2,
+     "screen": 77.8,
+     "campd": 34.8
+    },
+    "share_90_100": {
+     "keeper": 11.0,
+     "screen": 2.3,
+     "campd": 38.1
+    },
+    "energy_gwh": {
+     "keeper": 1996.699951171875,
+     "screen": 1953.800048828125,
+     "campd_gross": 1913.3
+    },
+    "peak_tranche": {
+     "h_keeper": 2158,
+     "h_screen": 717,
+     "gwh_keeper": 64.33000183105469,
+     "gwh_screen": 21.1200008392334
+    }
+   },
+   {
+    "plant": 2500,
+    "pmax": 268,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 3106
+    },
+    "h_gt80": {
+     "keeper": 5096,
+     "screen": 5096,
+     "campd": 7392
+    },
+    "h_gt90": {
+     "keeper": 5095,
+     "screen": 5096,
+     "campd": 6809
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 7.4
+    },
+    "share_90_100": {
+     "keeper": 63.4,
+     "screen": 63.4,
+     "campd": 86.5
+    },
+    "energy_gwh": {
+     "keeper": 1949.0,
+     "screen": 1949.0,
+     "campd_gross": 2659.2
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 54574,
+    "pmax": 252,
+    "old_wall_frac": 0.833,
+    "h_above_old_wall": {
+     "keeper": 23,
+     "screen": 0,
+     "campd": 163
+    },
+    "h_gt80": {
+     "keeper": 235,
+     "screen": 207,
+     "campd": 171
+    },
+    "h_gt90": {
+     "keeper": 23,
+     "screen": 0,
+     "campd": 135
+    },
+    "share_80_90": {
+     "keeper": 3.8,
+     "screen": 3.7,
+     "campd": 0.8
+    },
+    "share_90_100": {
+     "keeper": 0.4,
+     "screen": 0.0,
+     "campd": 3.1
+    },
+    "energy_gwh": {
+     "keeper": 467.8999938964844,
+     "screen": 459.1000061035156,
+     "campd_gross": 372.0
+    },
+    "peak_tranche": {
+     "h_keeper": 1710,
+     "h_screen": 1046,
+     "gwh_keeper": 27.59000015258789,
+     "gwh_screen": 16.31999969482422
+    }
+   },
+   {
+    "plant": 50292,
+    "pmax": 180,
+    "old_wall_frac": 0.718,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 1143
+    },
+    "h_gt80": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 909
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 485
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 6.0
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 6.9
+    },
+    "energy_gwh": {
+     "keeper": 311.79998779296875,
+     "screen": 314.29998779296875,
+     "campd_gross": 607.6
+    },
+    "peak_tranche": {
+     "h_keeper": 434,
+     "h_screen": 296,
+     "gwh_keeper": 13.970000267028809,
+     "gwh_screen": 9.630000114440918
+    }
+   },
+   {
+    "plant": 7314,
+    "pmax": 108,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 23
+    },
+    "h_gt80": {
+     "keeper": 1046,
+     "screen": 1103,
+     "campd": 1628
+    },
+    "h_gt90": {
+     "keeper": 1020,
+     "screen": 1072,
+     "campd": 454
+    },
+    "share_80_90": {
+     "keeper": 0.3,
+     "screen": 0.4,
+     "campd": 28.8
+    },
+    "share_90_100": {
+     "keeper": 13.3,
+     "screen": 13.9,
+     "campd": 11.1
+    },
+    "energy_gwh": {
+     "keeper": 391.1000061035156,
+     "screen": 400.79998779296875,
+     "campd_gross": 319.1
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 10621,
+    "pmax": 103,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 53,
+     "screen": 37,
+     "campd": 251
+    },
+    "h_gt80": {
+     "keeper": 43,
+     "screen": 25,
+     "campd": 118
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 5
+    },
+    "share_80_90": {
+     "keeper": 81.1,
+     "screen": 67.6,
+     "campd": 45.0
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 2.0
+    },
+    "energy_gwh": {
+     "keeper": 4.0,
+     "screen": 2.700000047683716,
+     "campd_gross": 17.8
+    },
+    "peak_tranche": {
+     "h_keeper": 53,
+     "h_screen": 37,
+     "gwh_keeper": 4.039999961853027,
+     "gwh_screen": 2.690000057220459
+    }
+   },
+   {
+    "plant": 56188,
+    "pmax": 82,
+    "old_wall_frac": 0.909,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 370
+    },
+    "h_gt80": {
+     "keeper": 583,
+     "screen": 581,
+     "campd": 485
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 431
+    },
+    "share_80_90": {
+     "keeper": 23.5,
+     "screen": 22.8,
+     "campd": 3.8
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 30.4
+    },
+    "energy_gwh": {
+     "keeper": 156.1999969482422,
+     "screen": 160.89999389648438,
+     "campd_gross": 83.7
+    },
+    "peak_tranche": {
+     "h_keeper": 60,
+     "h_screen": 44,
+     "gwh_keeper": 0.38999998569488525,
+     "gwh_screen": 0.28999999165534973
+    }
+   },
+   {
+    "plant": 50978,
+    "pmax": 80,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 696
+    },
+    "h_gt80": {
+     "keeper": 3694,
+     "screen": 3795,
+     "campd": 813
+    },
+    "h_gt90": {
+     "keeper": 3627,
+     "screen": 3725,
+     "campd": 763
+    },
+    "share_80_90": {
+     "keeper": 0.8,
+     "screen": 0.9,
+     "campd": 1.9
+    },
+    "share_90_100": {
+     "keeper": 45.4,
+     "screen": 46.3,
+     "campd": 27.8
+    },
+    "energy_gwh": {
+     "keeper": 492.29998779296875,
+     "screen": 501.20001220703125,
+     "campd_gross": 134.4
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 54034,
+    "pmax": 78,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 278
+    },
+    "h_gt80": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 224
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 209
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 5.4
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 75.2
+    },
+    "energy_gwh": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd_gross": 19.0
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 10190,
+    "pmax": 71,
+    "old_wall_frac": 0.931,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 331
+    },
+    "h_gt80": {
+     "keeper": 1206,
+     "screen": 1255,
+     "campd": 1108
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 359
+    },
+    "share_80_90": {
+     "keeper": 82.9,
+     "screen": 85.1,
+     "campd": 47.7
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 22.9
+    },
+    "energy_gwh": {
+     "keeper": 82.30000305175781,
+     "screen": 84.19999694824219,
+     "campd_gross": 89.2
+    },
+    "peak_tranche": {
+     "h_keeper": 9,
+     "h_screen": 4,
+     "gwh_keeper": 0.03999999910593033,
+     "gwh_screen": 0.019999999552965164
+    }
+   },
+   {
+    "plant": 7784,
+    "pmax": 67,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 1287,
+     "screen": 574,
+     "campd": null
+    },
+    "h_gt80": {
+     "keeper": 1008,
+     "screen": 416,
+     "campd": null
+    },
+    "h_gt90": {
+     "keeper": 231,
+     "screen": 48,
+     "campd": null
+    },
+    "share_80_90": {
+     "keeper": 60.4,
+     "screen": 64.1,
+     "campd": null
+    },
+    "share_90_100": {
+     "keeper": 17.9,
+     "screen": 8.4,
+     "campd": null
+    },
+    "energy_gwh": {
+     "keeper": 68.0,
+     "screen": 29.0,
+     "campd_gross": null
+    },
+    "peak_tranche": {
+     "h_keeper": 1287,
+     "h_screen": 574,
+     "gwh_keeper": 68.05000305175781,
+     "gwh_screen": 29.010000228881836
+    }
+   },
+   {
+    "plant": 10620,
+    "pmax": 54,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 83
+    },
+    "h_gt80": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 59
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 57
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 2.4
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 69.5
+    },
+    "energy_gwh": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd_gross": 3.5
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 54592,
+    "pmax": 54,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 329,
+     "screen": 139,
+     "campd": 169
+    },
+    "h_gt80": {
+     "keeper": 1,
+     "screen": 0,
+     "campd": 148
+    },
+    "h_gt90": {
+     "keeper": 1,
+     "screen": 0,
+     "campd": 145
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 1.8
+    },
+    "share_90_100": {
+     "keeper": 0.3,
+     "screen": 0.0,
+     "campd": 85.8
+    },
+    "energy_gwh": {
+     "keeper": 11.399999618530273,
+     "screen": 4.699999809265137,
+     "campd_gross": 7.9
+    },
+    "peak_tranche": {
+     "h_keeper": 329,
+     "h_screen": 139,
+     "gwh_keeper": 11.390000343322754,
+     "gwh_screen": 4.659999847412109
+    }
+   },
+   {
+    "plant": 50744,
+    "pmax": 44,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 594,
+     "screen": 231,
+     "campd": 101
+    },
+    "h_gt80": {
+     "keeper": 441,
+     "screen": 142,
+     "campd": 11
+    },
+    "h_gt90": {
+     "keeper": 42,
+     "screen": 0,
+     "campd": 7
+    },
+    "share_80_90": {
+     "keeper": 67.2,
+     "screen": 61.5,
+     "campd": 4.0
+    },
+    "share_90_100": {
+     "keeper": 7.1,
+     "screen": 0.0,
+     "campd": 6.9
+    },
+    "energy_gwh": {
+     "keeper": 19.0,
+     "screen": 6.800000190734863,
+     "campd_gross": 2.8
+    },
+    "peak_tranche": {
+     "h_keeper": 594,
+     "h_screen": 231,
+     "gwh_keeper": 19.020000457763672,
+     "gwh_screen": 6.840000152587891
+    }
+   },
+   {
+    "plant": 54593,
+    "pmax": 43,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 210,
+     "screen": 92,
+     "campd": 106
+    },
+    "h_gt80": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 10
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 2
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 7.7
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 1.9
+    },
+    "energy_gwh": {
+     "keeper": 5.300000190734863,
+     "screen": 2.200000047683716,
+     "campd_gross": 2.7
+    },
+    "peak_tranche": {
+     "h_keeper": 210,
+     "h_screen": 92,
+     "gwh_keeper": 5.320000171661377,
+     "gwh_screen": 2.180000066757202
+    }
+   },
+   {
+    "plant": 54808,
+    "pmax": 11,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": null
+    },
+    "h_gt80": {
+     "keeper": 3646,
+     "screen": 3869,
+     "campd": null
+    },
+    "h_gt90": {
+     "keeper": 3602,
+     "screen": 3811,
+     "campd": null
+    },
+    "share_80_90": {
+     "keeper": 0.6,
+     "screen": 0.8,
+     "campd": null
+    },
+    "share_90_100": {
+     "keeper": 49.8,
+     "screen": 51.5,
+     "campd": null
+    },
+    "energy_gwh": {
+     "keeper": 56.599998474121094,
+     "screen": 58.5,
+     "campd_gross": null
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   }
+  ],
+  "wall_plants_direction": {
+   "plants": [
+    57664,
+    56940,
+    54574,
+    50292
+   ],
+   "h_above_old_wall_keeper": 2199,
+   "h_above_old_wall_screen": 989,
+   "h_above_old_wall_campd": 12935,
+   "share_80_90_keeper": 32.9,
+   "share_80_90_screen": 33.9,
+   "share_80_90_campd": 16.0
+  },
+  "class_energy_twh": {
+   "CC_CHP": {
+    "keeper": 19.2,
+    "screen": 19.347,
+    "delta": 0.148
+   },
+   "CC_REGULAR": {
+    "keeper": 37.994,
+    "screen": 37.54,
+    "delta": -0.454
+   },
+   "CT_CHP": {
+    "keeper": 1.076,
+    "screen": 1.116,
+    "delta": 0.04
+   },
+   "CT_PEAKER": {
+    "keeper": 0.385,
+    "screen": 0.406,
+    "delta": 0.021
+   },
+   "OTHER": {
+    "keeper": 2.201,
+    "screen": 2.201,
+    "delta": 0.0
+   },
+   "ST_CHP": {
+    "keeper": 1.045,
+    "screen": 1.076,
+    "delta": 0.031
+   },
+   "ST_GAS": {
+    "keeper": 8.516,
+    "screen": 8.694,
+    "delta": 0.178
+   },
+   "biomass": {
+    "keeper": 0.76,
+    "screen": 0.76,
+    "delta": 0.0
+   },
+   "hydro": {
+    "keeper": 26.739,
+    "screen": 26.739,
+    "delta": 0.0
+   },
+   "import": {
+    "keeper": 20.705,
+    "screen": 20.741,
+    "delta": 0.036
+   },
+   "nuclear": {
+    "keeper": 26.953,
+    "screen": 26.953,
+    "delta": 0.0
+   },
+   "oil": {
+    "keeper": 0.001,
+    "screen": 0.001,
+    "delta": 0.0
+   },
+   "solar": {
+    "keeper": 0.586,
+    "screen": 0.586,
+    "delta": 0.0
+   },
+   "wind": {
+    "keeper": 6.012,
+    "screen": 6.012,
+    "delta": 0.0
+   }
+  },
+  "gas_family_twh": {
+   "keeper": 68.216,
+   "screen": 68.18
+  },
+  "peak_tranche_cc_regular": {
+   "gwh_keeper": 1253.1,
+   "gwh_screen": 679.8,
+   "tranche_hours_keeper": 20745,
+   "tranche_hours_screen": 11746
+  },
+  "price_companions_2024": {
+   "screen": {
+    "lw_mean_model": 39.712,
+    "lw_mean_actual_same_weights": 39.634,
+    "c3a_like_pct": 0.2,
+    "c3b_like_monthly_nrmse": 0.1856
+   },
+   "keeper": {
+    "lw_mean_model": 39.347,
+    "lw_mean_actual_same_weights": 39.634,
+    "c3a_like_pct": -0.72,
+    "c3b_like_monthly_nrmse": 0.1826
+   }
+  },
+  "mean_unit_lmp": {
+   "keeper": 37.873,
+   "screen": 38.22
+  }
+ }
+}

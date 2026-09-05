@@ -12118,3 +12118,23 @@ phase 0 → pre-registration → rule-29 one-year screen (this keeper's committe
 full span. **Marker consequence at full magnitude:** the third NYISO structure-over-gates promotion
 to take the marker down (07-19, 08-30, today); `complete` = {ERCOT, NEISO, PJM}; nothing spent;
 `final` untouched.
+### 2026-09-05 — nyiso-194 (`backcast-calibration`, phase 0 + TWO one-year screens, rule 29): the owner-ruled `CC_REGULAR` duct-burner peaking-tranche lever — symptom CONFIRMED, both arms KILLED on frozen structural gates, keeper unchanged
+Keeper `2026-09-05-nyiso-192-astoria-panel` unchanged; nothing registered; no full span.
+**Phase 0 (zero LP, `scripts/probes/nyiso194_cc_peak_phase0.py`):** the owner's two claims hold at
+full magnitude — the class's MW-weighted 80–90 % loading share is 27.9 / 33.0 / 26.8 % vs CAMPD
+6.0 / 5.8 / 7.1 %, 90–100 % 18.6 / 19.7 / 16.6 vs 27.6 / 33.9 / 27.1, online plant-hours +20–25 k
+in 2024/2025. But no measurement identifies a HIGHER peak offer (CAMPD top-band incremental HR
+1.0–1.5× base; duct firing appears at the LBMP the model's peak tranche already clears); the band
+SIZE is what disagrees with conduct (860 gap 22.6 / 28.2 / 16.9 % vs CAMPD reach 5.7 / 5.8 / 0.6 %).
+**PREREG pushed `aa3038d1` before the solves; screen year 2024 (largest footprint, 1.15 TWh); control =
+keeper (form 4; G-DRIFT `d5bba63b..HEAD` all INERT).** **Arm S** `cc_duct_peaking_cap_pct=8.0`: S-1/S-2
+PASS, **S-3 FAIL** — class 80–90 % share 33.0 → 36.3 % (plants park under the new 92 % wall).
+**Arm D** peak 2.25 → 2.50 (diagnostic): D-1 PASS, **D-2 shape AWAY from CAMPD** as predicted —
+peak energy 1,253 → 680 GWh, 90–100 % share 19.8 → 17.2 %, `CC_REGULAR` −0.45 TWh (would put
+C1-2024 in band by the wrong shape — rule 1). **What both locate:** the econ ramp's marginal slice
+is the parking point; NYISO's registered `phys_econ_low 0.784 → phys_econ_high 0.925` slopes the
+other way from the registered 0.95 → 1.0. **Next (top of §5.5 queue, U, needs its own PREREG):**
+the econ block at its measured marginal basis. Records: `docs/FINDING-nyiso194-cc-peak-tranche-screens-2026-09-05.md`,
+`results/calibration/PREREG-nyiso194-cc-peak-tranche-screen.md`, `_nyiso194_*.json`,
+`scripts/probes/nyiso194_*.py`; matrix cells `cc_duct_peaking` (cap R) / `offer_curve_by_group`
+(upward-peak direction R) updated. Screen bundles local, never registered.
