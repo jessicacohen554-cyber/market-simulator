@@ -5503,6 +5503,114 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-215 (2026-09-05) — THE `phys_*` COVERAGE GAP ON THE INTERMEDIATE-DUTY
+> COHORTS: THE GAP IS **58.4 % OF MISO'S ASSEMBLED GAS CAPACITY**, THE ARM IS ONE ZERO-DOF
+> FIELD AND THE FROZEN CLASS p50s **ARE** THE COHORTS' OWN PHYSICS (9 of 9 cohort-years) —
+> BUT ITS WHOLE MAGNITUDE IS SET BY AN ANCHOR WHOSE BASIS GRAIN IS UNSETTLED **ON THE ARMED
+> CLASSES TOO**, AND CORRECTING THE ANCHOR MAKES THE ARM *MORE* ADVERSE, NOT LESS;
+> **NO A/B CHARTERED (decision-rule (b) / M-3), NOTHING MINTED**, the anchor question ROUTED
+> TO THE OWNER and one measured documentation defect REPAIRED.** ZERO SOLVE, keeper UNCHANGED
+> at `2026-09-05-miso-213-layering`. PREREG pushed BLIND at `cae766ec` before any adjudicating
+> statistic and before any arm was designed; record
+> `FINDING-miso215-intermediate-phys-coverage-2026-09-05.md`; instrument
+> `scripts/probes/_miso215_intermediate_phys_phase0.py` → `_miso215_intermediate_phys.json`.
+> Footing: the probe reproduces miso-214's CT numbers **to the last published digit** (9,333.2 MW,
+> econ offer HR 12.465, markup 0.000, reach −1.4746/−5.2847/+1.4566), which is what proves the
+> T-1 re-point landed on the keeper and not the control.
+>
+> **(i) M-1 — THE GAP IS AN ORDER OF MAGNITUDE BIGGER THAN miso-214 COULD SEE.**
+> `_neutralize_generic_gas_bands` names exactly five gas classes and `_MISO_OFFER_CURVE` merges
+> `phys_*` onto those same five, so all three duty-split curves return the rule-24 neutral markup
+> 0.0 and `apply_gas_offer_margin` skips them: **CT_INTERMEDIATE 44 plants / 9,333.2 MW (41.9 %
+> of its class), CC_INTERMEDIATE 39 / 24,877.0 MW (90.7 % of the CC class, 64.6 % of the
+> uncovered capacity, 134–147 TWh CAMPD), ST_GAS_INTERMEDIATE 6 / 4,290.8 MW — 38,501.0 MW =
+> 0.5842 of the 65,907 MW assembled MISO gas capacity**, identically in all three years. K-e
+> (materiality) misses by a factor of twelve. The dominant cohort is **not** the CT one miso-214
+> found.
+>
+> **(ii) K-a AND K-b BOTH PASS — the arm is ready except for one thing.** K-a: one MISO-gated
+> boolean at `data/offer_curves._offer_curve_for_group` (the seam a `--set` replay would miss),
+> zero free parameters, values = the parent class's already-frozen p50s. **K-b: the borrowing is
+> VALID in 9 of 9 cohort-years** — each cohort's OWN measured marginal-HR multiplier (CEMS
+> steady-state input-output slopes, `opTime ≥ 0.98`, p3–p97 envelope, cap-weighted per plant;
+> a DIAGNOSTIC, the frozen `miso_campd_marginal_hr_summary.csv` is read and never rewritten)
+> lands within **0.0344 / 0.0388 / 0.0149** of the borrowed parent midpoint against a ±0.06 bar,
+> on 94–100 % of each cohort's capacity. The pooled class p50 is not a convenient substitute; it
+> is the cohort's own incremental burn to within 4 % of the class base heat rate.
+>
+> **(iii) M-3 — THE ANCHOR IS NOT WHAT ITS OWN CITATION SAYS, AND ITS GRAIN DECIDES THE ARM.**
+> `gas_offer_margin_anchor` 3.0492 reproduces as **annual Henry Hub + the flat
+> `GAS_BASIS_DIFFERENTIAL["MISO"] = 0.30`** — series-minus-HH **+0.2992 / +0.2993 / +0.2990**, a
+> constant in every year — not the "per-plant EIA-923 monthly level" its `constants.py` comment
+> claimed (**CORRECTED this session, measured, value untouched, no solve affected**). The fleet
+> is priced by the per-plant 923 print, which applies on the `(n_gen, T)` array after the series
+> and is invisible to the derive. Against the cohorts' own delivered fuel the anchor is **within
+> ±0.82 $/MMBtu of EVERY cohort-year MEDIAN but 0.45–3.29 below the capacity-hour MEAN** of the
+> two cohorts where the arm has magnitude — the distribution is fat-tailed and the two readings
+> disagree. **That sizes the fixed margin `markup_hr × anchor`, and the question is LIVE ON THE
+> KEEPER**: armed `CT_PEAKER` $11.91/MWh at the anchor against $24.76 / 18.25 / 21.95 at its own
+> mean fuel; armed `ST_GAS` $6.24 against $8.29 / 9.86 / 11.02; armed `CC_REGULAR` $1.48 against
+> $1.41 / 1.33 / 1.92. **BASIS/CLASS grain — DISTINCT from the ZONAL grain
+> (`gas_offer_margin_zonal_anchor`, `I` at miso-119/120), which is NOT re-tested and NOT
+> re-opened.** The dual-fuel confound miso-214 §8(3) could not resolve is **CLOSED**: a second
+> fleet build with `dual_fuel_switching=False` shows the oil-parity step binding in **0.000** of
+> the econ capacity-hours of all six cohorts in all three years — the CT/ST premium is a gas
+> print, not oil.
+>
+> **(iv) THE EASY RESCUE IS REFUTED BEFORE IT WAS PROPOSED.** Re-anchoring the reach on each
+> cohort-year's own delivered mean does not reverse the arm's direction, it **deepens** it
+> (CT_INTERMEDIATE 2023 −1.475 → **−4.218** TWh, 2024 −5.285 → **−7.043**; ST 2023 −0.702 →
+> −4.494). The mechanism is measured: a fixed $/MWh margin prices UP exactly the low-fuel hours
+> the cohort is marginal in (cap-w mean offer shift −6.35 / −2.03 / −5.02 $/MWh at a raised share
+> of only 0.395 / 0.565 / 0.160). **The pre-registered M-3c "vanish share" estimator is
+> MIS-SPECIFIED for a threshold statistic; its verdict is reported as frozen and NOT
+> renegotiated, so K-c does NOT fire** (vanish leg 0 / 1 / 0 of 3 against its 0.70 bar, while its
+> fuel-gap leg fires 3 / 1 / 2 of 3).
+>
+> **(v) BAND SCOPE — econ-only pre-committed and confirmed.** The peak leg is inert on the screen
+> (nothing past the fourth decimal) but NOT on price: `CT_INTERMEDIATE`'s peak 3.00 against a
+> borrowed `phys_peak` 1.00 is a **$73.4/MWh** fixed margin replacing a fuel-scaled wall and
+> LOWERS the peak offer by **$29.03 / 8.69 / 23.81**, `ST_GAS_INTERMEDIATE`'s by $38.96 / −4.25 /
+> 10.23; `CC_INTERMEDIATE`'s peak 2.25 equals `CC_REGULAR`'s `phys_peak` 2.25 and clips to
+> exactly 0. Lowering a deliberate scarcity wall by $24–29/MWh in the two years C3c is already
+> ledgered is not something to slip in beside a form repair.
+>
+> **(vi) RULE 1 `[R-STRUCT]` APPLIED, NOT EVADED.** Closing the gap is structurally right in FORM
+> and the finding says so — there is no market reason for an intermediate-duty gas unit's offer
+> to be fully fuel-scaled while the same technology's peaking curve is decomposed into measured
+> physics plus a margin, and `_MISO_OFFER_CURVE`'s own comment already accepts that reading for
+> `CT_PEAKER`'s neutral 1.0 econ bands. **The adverse reach is NOT the reason.** K-d fires
+> (reach −1.475/−5.285/+1.457 CT, −0.702/−1.350/+0.506 ST on classes 5–35 % under actual;
+> C8 `CT_PEAKER`-2023 already 0.2044 against the 0.15 peaker budget; CC adds energy in the two
+> years CC is over actual with `CC_REGULAR`-2024 at +7.419 of ±8.00) and is reported as
+> **corroboration only**, with its K-1 half called weak for the CC cohort (+0.029 TWh in 2024 on
+> a bound that runs 1.41–1.43× the LP and is blind to cross-class backfill). **The refusal is
+> decision-rule (b)**: do not arm a mis-sized margin across three more classes and 58 % of the
+> gas fleet before the anchor that sizes it is settled.
+>
+> **PRIOR SCORED AGAINST INTEREST**: P-1 two legs RIGHT one WRONG (ST_GAS_INTERMEDIATE 4.29 GW,
+> not < 4); P-2 RIGHT on all four legs; **P-3 half WRONG and the wrong half is the informative
+> one** (the ≥ +0.30 gap holds in 6 of 9 cohort-years on the mean and 0 of 9 on the median — the
+> CC cohort, 64.6 % of the uncovered capacity, is WELL ANCHORED, which I did not predict);
+> P-3b RIGHT; P-4 mixed (count RIGHT, the ≥ $2/MWh startup-amortization leg WRONG at $1.942);
+> **P-5 right outcome, WRONG reasoning** — I predicted K-c would fire and it did not, my own
+> estimator was mis-specified, and the substantive result is the OPPOSITE of the mechanism I
+> named.
+>
+> **QUEUE HEAD FOR miso-216: the anchor's BASIS/CLASS grain, as an OWNER question** — at what
+> grain should `GAS_OFFER_MARGIN_ANCHOR_BY_ISO` be identified, given that it is an ISO-level
+> HH+0.30 series while the fleet pays a per-plant 923 print whose class means sit +0.9 to +3.3
+> above it for `CT_PEAKER`/`ST_GAS` and whose medians sit within ±0.82 for everything? It moves
+> five ALREADY-ARMED MISO classes at once, PJM/CAISO/NYISO/NEISO carry the same construction, and
+> rule 23 does not reach it (an identification change, not a re-derivation on new source data).
+> **THE COVERAGE GAP STAYS ON THE QUEUE, NOT REJECTED** — K-a and K-b say the arm is ready the
+> moment the anchor is. **Rule 25: PJM and CAISO carry the same `*_INTERMEDIATE` `phys_*` gap in
+> kind (shared `_neutralize_generic_gas_bands` + per-ISO merge) — their lanes' `U`, never MISO's
+> business.** Cells: `gas_offer_net_revenue_margin` **K** (evidence appended, verdict UNCHANGED),
+> `offer_curve_by_group` **K** (evidence appended, verdict UNCHANGED). STILL OPEN and untouched:
+> the South PRICE separation (miso-211 D-3 / miso-213 O-4); the average-vs-marginal
+> delivered-cost convention and the D-2 5(i) seam-response object stay OWNER-COURT.
+
 > **QUEUE STAMP miso-214 (2026-09-05) — THE MIDWEST CT_PEAKER FLEET AT ITS OWN DELIVERED
 > COST: 62–70 % OF THE CT ENERGY THE MODEL MISSES WAS PRODUCED BY THE REAL MARKET *BELOW THE
 > PLANT'S OWN DELIVERED COST, AT THE REAL MARKET'S OWN PRICE* — SO MOST OF THE CT GAP IS NOT

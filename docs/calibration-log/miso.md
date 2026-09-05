@@ -11502,3 +11502,65 @@ block now sits after the last import and carries a hard assert, and no number in
 comes from the bad run.
 
 * Next number: **miso-215**.
+
+## miso-215 (2026-09-05) — THE `phys_*` COVERAGE GAP ON THE INTERMEDIATE-DUTY COHORTS: the gap is **58.4 % of MISO's assembled gas capacity**, the arm is one zero-DOF field and the frozen class p50s **are** the cohorts' own physics — but its whole magnitude is set by an anchor whose basis grain is unsettled **on the armed classes too**, and correcting the anchor makes the arm *more* adverse; **NO A/B CHARTERED (decision-rule (b))**, the anchor routed to the owner, one documentation defect repaired
+
+**Keeper UNCHANGED at `2026-09-05-miso-213-layering`**, NOT-YET on C3a-2025 alone (−11.747 %),
+C3c ledgered 3/3, C6 attested 41/2. **Zero solve, nothing minted, no field, no matrix row, no
+cell verdict changed.** PREREG `PREREG-miso215-intermediate-phys-2026-09-05.md` pushed BLIND at
+`cae766ec`; record `FINDING-miso215-intermediate-phys-coverage-2026-09-05.md`; probe
+`scripts/probes/_miso215_intermediate_phys_phase0.py` → `_miso215_intermediate_phys.json`.
+Rule 22: 2023–2025 only.
+
+**The gap, sized.** `_neutralize_generic_gas_bands` names exactly five gas classes and
+`_MISO_OFFER_CURVE` merges `phys_*` onto those same five, so `CT_INTERMEDIATE`,
+`CC_INTERMEDIATE` and `ST_GAS_INTERMEDIATE` return the documented rule-24 neutral markup 0.0 and
+`apply_gas_offer_margin` skips them: **44 / 9,333.2 MW, 39 / 24,877.0 MW (90.7 % of the CC class,
+134–147 TWh CAMPD) and 6 / 4,290.8 MW — 38,501.0 MW = 0.5842 of the 65,907 MW assembled MISO gas
+capacity**, identically in all three years. The dominant cohort is not the CT one miso-214 found.
+
+**Both structural kills PASS.** K-a: one MISO-gated boolean at `_offer_curve_for_group` (the seam
+a `--set` replay would miss), zero free parameters, values = the parent class's already-frozen
+p50s. **K-b: the borrowing is VALID in 9 of 9 cohort-years** — each cohort's own measured
+marginal-HR multiplier (CEMS steady-state I-O slopes, a diagnostic; the frozen artifact is read,
+never rewritten) lands within **0.0344 / 0.0388 / 0.0149** of the borrowed parent midpoint against
+±0.06, on 94–100 % of each cohort's capacity.
+
+**What stops it is the anchor.** `gas_offer_margin_anchor` 3.0492 reproduces as **annual Henry Hub
++ the flat `GAS_BASIS_DIFFERENTIAL` 0.30** (series−HH = +0.2992 / +0.2993 / +0.2990, constant in
+every year), **not** the "per-plant EIA-923 monthly level" its `constants.py` citation claimed —
+that comment is CORRECTED here, measured, value untouched. The fleet pays the per-plant 923 print,
+applied after the series and invisible to its derive. The anchor sits **within ±0.82 $/MMBtu of
+every cohort-year MEDIAN but 0.45–3.29 below the capacity-hour MEAN** of the two cohorts where the
+arm has magnitude; the distribution is fat-tailed and the two readings disagree. That sizes the
+fixed margin `markup_hr × anchor`, **and the question is live on the KEEPER**: armed `CT_PEAKER`
+$11.91/MWh at the anchor against $24.76 / 18.25 / 21.95 at its own mean fuel, armed `ST_GAS` $6.24
+against $8.29 / 9.86 / 11.02. BASIS/CLASS grain — distinct from the ZONAL grain
+(`gas_offer_margin_zonal_anchor`, `I`), not re-tested. **The easy rescue is refuted before it was
+proposed**: re-anchoring on each cohort-year's own delivered mean deepens the arm rather than
+reversing it (CT 2023 −1.475 → −4.218 TWh, 2024 −5.285 → −7.043), because a fixed $/MWh margin
+prices UP exactly the low-fuel hours the cohort is marginal in.
+
+**Rule 1 applied, not evaded.** Closing the gap is structurally right in FORM and the finding says
+so; the adverse reach is NOT the reason and K-d (which fires) is corroboration only, with its K-1
+half called weak for the CC cohort. The refusal is decision-rule (b): do not arm a mis-sized margin
+across three more classes and 58 % of the gas fleet before the anchor that sizes it is settled. The
+gap is **not rejected** — it stays on the queue behind the owner question.
+
+**Reported against interest.** The static screen is a 1.41–1.43× bound and is blind to cross-class
+backfill, so K-d's K-1 half is a risk, not a measurement. The C1 direction context is my own
+summation of the run payload's `volErr` zone-months, not the C1 scorer's normalization — signs only.
+The anchor reading turns on mean-vs-median, which I did not anticipate; on the median there is
+arguably nothing to route, and both are reported rather than the one that suits the argument. Two
+instrument defects were found in the 2023 smoke test and fixed **before** the scoring run (a
+per-unit weighting error in the marginal-HR fit; the dual-fuel confound, now closed — the
+oil-parity step binds in **0.000** of all six cohorts' econ capacity-hours, so the CT/ST premium is
+a gas print, not oil). **P-5 right outcome, wrong reasoning**: I predicted K-c would fire, it did
+not, my own M-3c estimator was mis-specified for a threshold statistic, and the substantive result
+is the opposite of the mechanism I named.
+
+**The miso-214 standing result is not undone**: 62–70 % of the missed CT energy was produced below
+the plant's own delivered cost at the market's own price and is unreachable by any offer or price
+mechanism; this family could address at most bucket C and part of bucket A.
+
+* Next number: **miso-216**.
