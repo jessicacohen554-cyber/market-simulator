@@ -35,57 +35,31 @@ Danskammer Generating Station,2480,2,73.5,532.0,13.8,ST_GAS,eia_exact,2024-01-01
 Danskammer Generating Station,2480,2,73.5,532.0,13.8,ST_GAS,eia_exact,2024-04-02,2024-07-15,103.4,3,4,1.0
 Danskammer Generating Station,2480,2,73.5,532.0,13.8,ST_GAS,eia_exact,2024-07-16,2024-09-04,49.5,3,4,1.0
 Danskammer Generating Station,2480,2,73.5,532.0,13.8,ST_GAS,eia_exact,2024-09-04,2024-12-31,118.1,3,4,1.0
-Danskammer Generating Station,2480,4,239.4,532.0,45.0,ST_GAS,eia_exact,2025-03-12,2025-06-23,102.4,3,4,0.948
-Arthur Kill,2490,20,349.0,903.0,38.6,ST_GAS,observed_peak,2019-05-09,2019-05-16,6.8,2,3,1.0
 Arthur Kill,2490,20,349.0,903.0,38.6,ST_GAS,observed_peak,2019-12-02,2019-12-08,6.8,2,3,1.0
-Arthur Kill,2490,20,349.0,903.0,38.6,ST_GAS,observed_peak,2019-12-09,2019-12-15,6.7,2,3,1.0
+Arthur Kill,2490,20,349.0,903.0,38.6,ST_GAS,observed_peak,2019-12-09,2019-12-15,6.7,2,3,0.901
 Arthur Kill,2490,20,349.0,903.0,38.6,ST_GAS,observed_peak,2019-12-20,2019-12-31,12.0,2,3,0.941
-Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-01-24,2022-02-02,8.5,2,3,0.985
-Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-02-05,2022-03-21,44.3,2,3,0.999
-Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-05-05,2022-05-10,5.4,2,3,1.0
-Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-10-02,2022-10-09,7.8,2,3,1.0
-Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-10-14,2022-10-24,10.8,2,3,0.985
+Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-02-05,2022-03-21,44.3,2,3,0.976
 Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-11-24,2022-12-04,10.5,2,3,1.0
-Arthur Kill,2490,20,373.0,931.0,40.1,ST_GAS,observed_peak,2023-12-09,2023-12-31,23.0,2,3,0.947
-Arthur Kill,2490,20,372.0,926.0,40.2,ST_GAS,observed_peak,2024-05-25,2024-06-03,9.2,2,3,0.932
-Arthur Kill,2490,20,372.0,926.0,40.2,ST_GAS,observed_peak,2024-11-16,2024-12-01,15.8,2,3,1.0
 Arthur Kill,2490,30,539.0,903.0,59.7,ST_GAS,observed_peak,2019-02-04,2019-02-19,15.4,2,3,0.992
 Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-01-03,2020-01-13,9.5,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-01-17,2020-02-04,17.5,2,3,1.0
+Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-01-17,2020-02-04,17.5,2,3,0.993
 Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-02-07,2020-03-02,24.1,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-03-05,2020-03-23,18.1,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-03-26,2020-04-14,19.2,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-04-16,2020-04-30,14.7,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-06-05,2020-06-18,12.8,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-06-26,2020-07-07,11.2,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-07-09,2020-07-20,11.2,2,3,0.996
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-07-21,2020-07-28,7.0,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-07-30,2020-08-10,11.3,2,3,1.0
+Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-03-05,2020-03-23,18.1,2,3,0.995
 Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-08-14,2020-08-24,10.0,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-09-16,2020-09-24,8.1,2,3,1.0
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-09-26,2020-12-21,85.8,2,3,0.986
-Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-12-24,2020-12-31,7.9,2,3,1.0
+Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-09-16,2020-09-24,8.1,2,3,0.985
+Arthur Kill,2490,30,536.0,904.0,59.3,ST_GAS,observed_peak,2020-12-24,2020-12-31,7.9,2,3,0.921
 Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-01-01,2023-01-10,9.2,2,3,1.0
 Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-01-19,2023-02-14,26.2,2,3,0.981
-Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-02-18,2023-04-07,48.4,2,3,1.0
+Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-02-18,2023-04-07,48.4,2,3,0.993
 Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-04-07,2023-06-02,55.9,2,3,1.0
 Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-06-05,2023-06-13,8.2,2,3,0.909
 Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-06-15,2023-07-03,18.0,2,3,1.0
 Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-07-19,2023-07-24,5.3,2,3,1.0
 Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-07-30,2023-08-21,22.3,2,3,1.0
 Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-08-22,2023-08-29,7.3,2,3,1.0
-Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-10-28,2023-12-31,65.0,2,3,0.996
+Arthur Kill,2490,30,543.0,931.0,58.3,ST_GAS,observed_peak,2023-10-28,2023-12-31,65.0,2,3,0.96
 Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-01-01,2024-01-12,11.2,2,3,0.989
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-01-24,2024-02-04,11.9,2,3,1.0
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-02-13,2024-05-23,100.3,2,3,0.967
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-05-24,2024-06-11,17.7,2,3,0.911
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-06-28,2024-07-07,9.4,2,3,0.947
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-07-18,2024-07-23,5.3,2,3,1.0
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-08-10,2024-08-28,18.2,2,3,0.916
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-08-29,2024-09-22,24.4,2,3,0.983
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-09-26,2024-11-15,50.5,2,3,1.0
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-11-15,2024-12-01,15.8,2,3,1.0
-Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-12-18,2024-12-26,8.2,2,3,1.0
+Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-01-24,2024-02-04,11.9,2,3,0.982
 Arthur Kill,2490,CT0001,15.0,903.0,1.7,ST_GAS,observed_peak,2019-01-01,2019-05-10,129.3,2,3,1.0
 Arthur Kill,2490,CT0001,15.0,903.0,1.7,ST_GAS,observed_peak,2019-05-11,2019-06-06,26.1,2,3,1.0
 Arthur Kill,2490,CT0001,15.0,903.0,1.7,ST_GAS,observed_peak,2019-06-06,2019-06-25,18.9,2,3,1.0
@@ -156,8 +130,6 @@ Arthur Kill,2490,CT0001,16.0,921.0,1.7,ST_GAS,observed_peak,2025-01-15,2025-02-0
 Arthur Kill,2490,CT0001,16.0,921.0,1.7,ST_GAS,observed_peak,2025-02-19,2025-04-05,45.4,2,3,1.0
 Arthur Kill,2490,CT0001,16.0,921.0,1.7,ST_GAS,observed_peak,2025-04-05,2025-11-07,215.8,2,3,1.0
 Arthur Kill,2490,CT0001,16.0,921.0,1.7,ST_GAS,observed_peak,2025-11-07,2025-12-31,54.5,2,3,1.0
-East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2021-03-27,2021-04-19,23.4,3,4,1.0
-East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2022-04-23,2022-05-15,22.1,3,4,1.0
 East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2023-03-17,2023-04-01,15.3,3,4,1.0
 East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2024-02-01,2024-02-08,6.5,3,4,1.0
 East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2024-04-05,2024-04-29,23.7,3,4,1.0
@@ -165,79 +137,43 @@ East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2024-10-19,2024-11-03,15.1,3
 East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2025-04-26,2025-05-11,15.8,3,4,1.0
 East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2025-10-25,2025-11-10,16.1,3,4,1.0
 East River,2493,1,180.0,669.5,26.9,CT_CHP,eia_exact,2025-12-17,2025-12-23,6.1,3,4,1.0
-East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2023-04-01,2023-05-20,49.8,3,4,1.0
-East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2024-01-23,2024-01-30,7.4,3,4,1.0
-East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2024-05-06,2024-05-24,18.5,3,4,0.998
-East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2024-10-02,2024-10-18,16.6,3,4,1.0
-East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2025-03-15,2025-04-18,34.5,3,4,1.0
-East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2025-08-18,2025-09-02,15.5,3,4,1.0
-East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2025-10-14,2025-10-24,10.7,3,4,0.984
-Ravenswood Generating Station,2500,10,389.0,2136.0,18.2,ST_GAS,observed_peak,2020-09-11,2020-09-23,12.3,6,21,0.922
-Ravenswood Generating Station,2500,10,389.0,2136.0,18.2,ST_GAS,observed_peak,2020-10-02,2020-10-16,14.8,6,21,0.93
-Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-01-01,2021-03-17,75.4,6,14,0.984
-Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-03-19,2021-06-27,100.6,6,14,0.993
-Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-07-18,2021-07-26,8.0,6,14,0.974
-Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-07-28,2021-08-09,12.0,6,14,0.958
-Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-08-28,2021-09-13,16.0,6,14,1.0
+East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2023-04-01,2023-05-20,49.8,3,4,0.991
+East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2024-01-23,2024-01-30,7.4,3,4,0.994
+East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2025-03-15,2025-04-18,34.5,3,4,0.994
+East River,2493,2,180.0,669.5,26.9,CT_CHP,eia_exact,2025-08-18,2025-09-02,15.5,3,4,0.936
+Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-03-19,2021-06-27,100.6,6,14,0.954
+Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-08-28,2021-09-13,16.0,6,14,0.987
 Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-11-25,2021-12-19,24.5,6,14,1.0
 Ravenswood Generating Station,2500,10,386.0,2140.0,18.0,ST_GAS,observed_peak,2021-12-21,2021-12-31,10.1,6,14,1.0
-Ravenswood Generating Station,2500,10,386.0,2102.0,18.4,ST_GAS,observed_peak,2022-01-01,2022-01-11,10.0,4,7,0.963
-Ravenswood Generating Station,2500,10,386.0,2102.0,18.4,ST_GAS,observed_peak,2022-01-21,2022-03-22,59.4,4,7,0.997
-Ravenswood Generating Station,2500,10,386.0,2102.0,18.4,ST_GAS,observed_peak,2022-09-21,2022-10-20,29.8,4,7,0.901
-Ravenswood Generating Station,2500,10,386.0,2102.0,18.4,ST_GAS,observed_peak,2022-10-27,2022-12-31,66.0,4,7,0.916
 Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-01-01,2023-01-06,5.3,4,7,1.0
-Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-01-07,2023-02-03,27.0,4,7,0.977
-Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-02-05,2023-05-13,97.0,4,7,0.978
-Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-05-19,2023-07-03,45.4,4,7,0.983
-Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-08-24,2023-09-03,11.0,4,7,1.0
-Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-11-07,2023-12-31,55.0,4,7,0.995
-Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-01-01,2024-02-20,50.1,3,7,1.0
-Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-02-24,2024-06-18,115.5,3,7,1.0
-Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-06-21,2024-07-04,12.8,3,7,1.0
-Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-07-17,2024-07-23,5.1,3,7,1.0
+Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-01-07,2023-02-03,27.0,4,7,0.94
+Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-02-05,2023-05-13,97.0,4,7,0.974
+Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-05-19,2023-07-03,45.4,4,7,0.911
+Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-08-24,2023-09-03,11.0,4,7,0.954
+Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,ST_GAS,observed_peak,2023-11-07,2023-12-31,55.0,4,7,0.977
+Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-01-01,2024-02-20,50.1,3,7,0.999
+Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-02-24,2024-06-18,115.5,3,7,0.956
+Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-06-21,2024-07-04,12.8,3,7,0.984
+Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-07-17,2024-07-23,5.1,3,7,0.976
 Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-07-24,2024-07-30,7.0,3,7,1.0
 Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-08-06,2024-08-26,20.0,3,7,1.0
-Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-08-29,2024-09-18,20.2,3,7,1.0
-Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-09-26,2024-12-31,96.6,3,7,1.0
-Ravenswood Generating Station,2500,10,385.0,2084.0,18.5,ST_GAS,observed_peak,2025-01-01,2025-01-20,20.0,3,4,0.979
-Ravenswood Generating Station,2500,10,385.0,2084.0,18.5,ST_GAS,observed_peak,2025-03-18,2025-04-14,27.8,3,4,0.984
-Ravenswood Generating Station,2500,10,385.0,2084.0,18.5,ST_GAS,observed_peak,2025-04-16,2025-06-18,63.8,3,4,0.948
-Ravenswood Generating Station,2500,10,385.0,2084.0,18.5,ST_GAS,observed_peak,2025-07-19,2025-07-24,5.3,3,4,1.0
+Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-08-29,2024-09-18,20.2,3,7,0.998
+Ravenswood Generating Station,2500,10,380.0,2084.0,18.2,ST_GAS,observed_peak,2024-09-26,2024-12-31,96.6,3,7,0.927
 Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-01-01,2021-01-24,23.8,6,14,1.0
-Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-02-04,2021-04-28,82.8,6,14,0.999
-Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-04-30,2021-06-06,37.3,6,14,0.999
+Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-02-04,2021-04-28,82.8,6,14,0.953
+Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-04-30,2021-06-06,37.3,6,14,0.96
 Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-06-09,2021-06-21,11.3,6,14,0.996
 Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-06-23,2021-06-28,5.2,6,14,1.0
-Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-07-28,2021-08-06,8.1,6,14,1.0
-Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-08-14,2021-08-25,11.2,6,14,0.959
-Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-09-01,2021-09-14,13.8,6,14,0.991
-Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-01-01,2022-01-19,18.2,4,7,0.995
-Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-01-21,2022-03-01,39.0,4,7,1.0
+Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,ST_GAS,observed_peak,2021-09-01,2021-09-14,13.8,6,14,0.958
+Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-01-21,2022-03-01,39.0,4,7,0.956
 Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-03-04,2022-03-24,19.4,4,7,1.0
-Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-04-01,2022-06-17,76.8,4,7,0.99
-Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-06-18,2022-07-12,24.0,4,7,0.925
-Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-07-29,2022-08-19,20.2,4,7,0.947
-Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-09-02,2022-09-25,23.8,4,7,0.988
-Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-10-17,2022-12-28,72.1,4,7,0.987
-Ravenswood Generating Station,2500,20,395.0,2084.0,19.0,ST_GAS,observed_peak,2024-02-27,2024-05-19,82.8,3,7,0.953
-Ravenswood Generating Station,2500,20,395.0,2084.0,19.0,ST_GAS,observed_peak,2024-08-29,2024-11-18,81.3,3,7,0.955
-Ravenswood Generating Station,2500,20,394.0,2084.0,18.9,ST_GAS,observed_peak,2025-01-01,2025-01-18,17.9,3,4,0.977
-Ravenswood Generating Station,2500,20,394.0,2084.0,18.9,ST_GAS,observed_peak,2025-02-07,2025-04-12,64.5,3,4,0.926
-Ravenswood Generating Station,2500,20,394.0,2084.0,18.9,ST_GAS,observed_peak,2025-04-22,2025-06-05,44.5,3,4,0.925
-Ravenswood Generating Station,2500,20,394.0,2084.0,18.9,ST_GAS,observed_peak,2025-06-06,2025-06-22,16.1,3,4,1.0
-Ravenswood Generating Station,2500,20,394.0,2084.0,18.9,ST_GAS,observed_peak,2025-08-01,2025-08-11,10.0,3,4,0.946
-Ravenswood Generating Station,2500,20,394.0,2084.0,18.9,ST_GAS,observed_peak,2025-12-24,2025-12-31,8.0,3,4,0.937
-Ravenswood Generating Station,2500,30,1000.0,2109.0,47.4,ST_GAS,observed_peak,2019-01-01,2019-03-12,70.3,6,21,0.996
-Ravenswood Generating Station,2500,30,1000.0,2109.0,47.4,ST_GAS,observed_peak,2019-03-24,2019-07-15,114.0,6,21,0.994
-Ravenswood Generating Station,2500,30,1000.0,2109.0,47.4,ST_GAS,observed_peak,2019-07-22,2019-08-08,17.0,6,21,0.963
-Ravenswood Generating Station,2500,30,1000.0,2109.0,47.4,ST_GAS,observed_peak,2019-08-09,2019-08-19,9.3,6,21,0.942
-Ravenswood Generating Station,2500,30,1000.0,2109.0,47.4,ST_GAS,observed_peak,2019-08-23,2019-10-02,39.2,6,21,0.99
-Ravenswood Generating Station,2500,30,1000.0,2109.0,47.4,ST_GAS,observed_peak,2019-10-03,2019-12-31,90.0,6,21,0.957
-Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-01-01,2021-02-26,56.2,6,14,1.0
-Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-02-27,2021-06-29,122.9,6,14,1.0
-Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-07-01,2021-07-26,24.7,6,14,1.0
+Ravenswood Generating Station,2500,20,388.0,2102.0,18.5,ST_GAS,observed_peak,2022-10-17,2022-12-28,72.1,4,7,0.947
+Ravenswood Generating Station,2500,30,1000.0,2109.0,47.4,ST_GAS,observed_peak,2019-01-01,2019-03-12,70.3,6,21,0.944
+Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-01-01,2021-02-26,56.2,6,14,0.973
+Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-02-27,2021-06-29,122.9,6,14,0.99
+Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-07-01,2021-07-26,24.7,6,14,0.978
 Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-07-27,2021-08-11,14.1,6,14,1.0
-Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-08-13,2021-10-14,61.3,6,14,1.0
+Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-08-13,2021-10-14,61.3,6,14,0.972
 Ravenswood Generating Station,2500,30,1025.0,2140.0,47.9,ST_GAS,observed_peak,2021-10-19,2021-12-31,73.8,6,14,1.0
 Ravenswood Generating Station,2500,30,1030.0,2082.0,49.5,ST_GAS,observed_peak,2023-01-01,2023-01-18,18.0,4,7,1.0
 Ravenswood Generating Station,2500,30,1030.0,2082.0,49.5,ST_GAS,observed_peak,2023-01-20,2023-06-07,138.2,4,7,1.0
@@ -246,9 +182,6 @@ Ravenswood Generating Station,2500,30,1030.0,2082.0,49.5,ST_GAS,observed_peak,20
 Ravenswood Generating Station,2500,30,1030.0,2082.0,49.5,ST_GAS,observed_peak,2023-07-29,2023-09-10,42.2,4,7,1.0
 Ravenswood Generating Station,2500,30,1030.0,2082.0,49.5,ST_GAS,observed_peak,2023-10-21,2023-12-18,58.0,4,7,1.0
 Ravenswood Generating Station,2500,30,1030.0,2082.0,49.5,ST_GAS,observed_peak,2023-12-19,2023-12-31,12.0,4,7,1.0
-Ravenswood Generating Station,2500,30,1030.0,2084.0,49.4,ST_GAS,observed_peak,2024-04-10,2024-06-12,62.4,3,7,0.928
-Ravenswood Generating Station,2500,30,1030.0,2084.0,49.4,ST_GAS,observed_peak,2024-07-18,2024-07-25,7.3,3,7,0.915
-Ravenswood Generating Station,2500,30,1027.0,2084.0,49.3,ST_GAS,observed_peak,2025-08-20,2025-09-11,22.2,3,4,1.0
 Ravenswood Generating Station,2500,CT0010,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-01-01,2019-04-01,90.4,6,21,1.0
 Ravenswood Generating Station,2500,CT0010,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-04-02,2019-04-08,5.9,6,21,1.0
 Ravenswood Generating Station,2500,CT0010,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-04-08,2019-04-13,5.1,6,21,1.0
@@ -321,13 +254,8 @@ Ravenswood Generating Station,2500,CT0010,21.0,2082.0,1.0,CC_REGULAR,observed_pe
 Ravenswood Generating Station,2500,CT0010,21.0,2082.0,1.0,CC_REGULAR,observed_peak,2023-03-21,2023-03-31,10.1,4,7,1.0
 Ravenswood Generating Station,2500,CT0010,21.0,2082.0,1.0,CC_REGULAR,observed_peak,2023-04-05,2023-04-13,7.6,4,7,1.0
 Ravenswood Generating Station,2500,CT0010,21.0,2082.0,1.0,CC_REGULAR,observed_peak,2023-04-25,2023-12-31,250.1,4,7,1.0
-Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-04-08,2019-04-13,5.1,6,21,0.934
-Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-04-14,2019-04-19,5.3,6,21,0.984
 Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-04-19,2019-04-30,10.9,6,21,1.0
-Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-04-30,2019-05-10,10.3,6,21,1.0
-Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-05-10,2019-05-17,6.9,6,21,1.0
-Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-05-20,2019-06-03,14.1,6,21,1.0
-Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-06-03,2019-06-28,24.9,6,21,0.91
+Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-04-30,2019-05-10,10.3,6,21,0.935
 Ravenswood Generating Station,2500,CT0011,18.0,2136.0,0.8,CC_REGULAR,observed_peak,2020-01-01,2020-06-06,157.5,6,21,1.0
 Ravenswood Generating Station,2500,CT0011,18.0,2136.0,0.8,CC_REGULAR,observed_peak,2020-06-06,2020-06-22,15.8,6,21,1.0
 Ravenswood Generating Station,2500,CT0011,18.0,2136.0,0.8,CC_REGULAR,observed_peak,2020-06-22,2020-07-02,10.0,6,21,1.0
@@ -344,44 +272,27 @@ Ravenswood Generating Station,2500,CT0011,22.0,2140.0,1.0,CC_REGULAR,observed_pe
 E F Barrett,2511,10,41.8,539.8,7.7,ST_GAS,eia_exact,2025-01-01,2025-03-28,86.4,16,17,1.0
 E F Barrett,2511,10,41.8,539.8,7.7,ST_GAS,eia_exact,2025-03-28,2025-09-19,175.2,16,17,1.0
 Northport,2516,2,387.0,1583.0,24.4,ST_GAS,eia_exact,2019-01-01,2019-01-07,6.1,4,5,0.946
-Northport,2516,2,387.0,1583.0,24.4,ST_GAS,eia_exact,2019-02-01,2019-02-22,21.1,4,5,0.907
-Northport,2516,2,387.0,1586.0,24.4,ST_GAS,eia_exact,2020-01-01,2020-01-14,14.0,4,5,0.985
-Northport,2516,2,387.0,1582.0,24.5,ST_GAS,eia_exact,2021-04-03,2021-04-15,11.6,4,5,0.953
+Northport,2516,2,387.0,1586.0,24.4,ST_GAS,eia_exact,2020-01-01,2020-01-14,14.0,4,5,0.938
 Northport,2516,3,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-12-23,2023-12-31,8.6,4,5,0.908
-Northport,2516,3,387.0,1569.0,24.7,ST_GAS,eia_exact,2025-05-02,2025-05-08,6.2,4,5,1.0
-Northport,2516,3,387.0,1569.0,24.7,ST_GAS,eia_exact,2025-08-19,2025-09-07,19.2,4,5,0.915
 Northport,2516,3,387.0,1548.0,25.0,ST_GAS,eia_exact,2026-02-12,2026-03-31,48.0,3,5,1.0
-Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-01-01,2023-01-13,12.9,4,5,0.945
-Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-01-19,2023-02-02,14.8,4,5,0.907
-Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-02-05,2023-06-13,128.3,4,5,0.919
-Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-06-17,2023-07-03,15.3,4,5,1.0
-Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-07-30,2023-08-15,16.1,4,5,0.91
-Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-10-28,2023-12-31,65.0,4,5,0.981
-Northport,2516,4,387.0,1574.0,24.6,ST_GAS,eia_exact,2024-11-07,2024-11-14,7.4,3,5,0.966
-Northport,2516,4,387.0,1569.0,24.7,ST_GAS,eia_exact,2025-08-27,2025-09-06,10.1,4,5,0.942
-Northport,2516,4,387.0,1548.0,25.0,ST_GAS,eia_exact,2026-01-06,2026-01-22,16.5,3,5,0.929
-Northport,2516,4,387.0,1548.0,25.0,ST_GAS,eia_exact,2026-02-26,2026-03-22,24.2,3,5,1.0
+Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-06-17,2023-07-03,15.3,4,5,0.967
+Northport,2516,4,387.0,1548.0,25.0,ST_GAS,eia_exact,2026-02-26,2026-03-22,24.2,3,5,0.915
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-01-01,2021-01-09,8.3,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-01-15,2021-01-28,13.8,4,5,0.979
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-02-02,2021-02-10,8.2,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-02-20,2021-04-20,59.5,4,5,0.999
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-04-22,2021-05-23,31.3,4,5,0.996
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-05-28,2021-06-05,8.2,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-06-10,2021-06-29,19.2,4,5,0.959
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-09-24,2021-10-16,22.2,4,5,0.91
+Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-02-20,2021-04-20,59.5,4,5,0.953
+Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-05-28,2021-06-05,8.2,4,5,0.99
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-10-21,2021-10-28,7.3,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-01-01,2022-01-07,6.2,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-02-02,2022-02-28,26.5,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-03-01,2022-04-26,56.1,4,5,1.0
+Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-03-01,2022-04-26,56.1,4,5,0.997
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-04-29,2022-05-04,5.2,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-05-05,2022-05-10,5.8,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-05-13,2022-05-21,8.2,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-05-24,2022-05-30,6.3,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-06-01,2022-06-17,16.4,4,5,1.0
+Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-06-01,2022-06-17,16.4,4,5,0.997
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-06-18,2022-06-25,7.0,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-08-10,2022-08-24,14.3,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-08-30,2022-09-14,15.5,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-09-20,2022-10-13,23.2,4,5,1.0
+Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-09-20,2022-10-13,23.2,4,5,0.973
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-10-14,2022-11-07,24.3,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2022-11-15,2022-12-23,38.5,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,484.0,38.8,ST_GAS,eia_exact,2023-01-01,2023-02-02,32.5,4,5,1.0
@@ -393,89 +304,64 @@ Port Jefferson Energy Center,2517,3,188.0,484.0,38.8,ST_GAS,eia_exact,2023-06-17
 Port Jefferson Energy Center,2517,3,188.0,484.0,38.8,ST_GAS,eia_exact,2023-07-20,2023-07-25,5.3,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,484.0,38.8,ST_GAS,eia_exact,2023-07-29,2023-08-08,9.4,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,484.0,38.8,ST_GAS,eia_exact,2023-10-30,2023-11-13,14.3,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,484.0,38.8,ST_GAS,eia_exact,2023-11-22,2023-12-31,40.0,4,5,1.0
+Port Jefferson Energy Center,2517,3,188.0,484.0,38.8,ST_GAS,eia_exact,2023-11-22,2023-12-31,40.0,4,5,0.99
 Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-01-01,2024-01-15,14.5,3,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-01-20,2024-03-27,67.5,3,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-03-28,2024-06-22,85.3,3,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-06-28,2024-07-05,7.3,3,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-07-24,2024-07-30,6.2,3,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-08-17,2024-10-21,65.4,3,5,1.0
+Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-08-17,2024-10-21,65.4,3,5,0.991
 Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-10-24,2024-11-06,13.4,3,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,470.0,40.0,ST_GAS,eia_exact,2024-11-08,2024-12-31,54.0,3,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-01-01,2025-01-08,7.5,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-01-10,2025-01-18,8.2,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-01-24,2025-02-18,25.4,4,5,0.995
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-02-22,2025-02-27,5.1,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-02-28,2025-05-23,84.8,4,5,1.0
+Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-02-28,2025-05-23,84.8,4,5,0.998
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-05-25,2025-06-04,9.5,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-06-06,2025-06-11,6.0,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-06-13,2025-06-19,6.3,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-08-06,2025-08-11,5.3,4,5,1.0
-Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-08-16,2025-10-06,51.4,4,5,1.0
+Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-08-16,2025-10-06,51.4,4,5,0.999
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-10-06,2025-10-12,6.4,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-10-31,2025-11-10,10.5,4,5,1.0
 Port Jefferson Energy Center,2517,3,188.0,472.0,39.8,ST_GAS,eia_exact,2025-12-19,2025-12-31,13.0,4,5,1.0
 Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-01-01,2019-01-19,18.6,4,5,1.0
 Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-02-02,2019-02-11,8.8,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-03-16,2019-04-11,26.5,4,5,0.984
-Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-04-15,2019-06-10,56.9,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-06-14,2019-06-27,13.3,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-07-07,2019-07-17,9.5,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-08-03,2019-08-12,9.3,4,5,1.0
+Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-03-16,2019-04-11,26.5,4,5,0.972
+Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-04-15,2019-06-10,56.9,4,5,0.971
+Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-08-03,2019-08-12,9.3,4,5,0.938
 Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-08-23,2019-08-30,7.3,4,5,1.0
 Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-09-05,2019-09-11,6.3,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-09-12,2019-10-02,20.3,4,5,0.994
-Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-10-03,2019-11-16,44.2,4,5,0.914
-Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-11-28,2019-12-31,34.0,4,5,0.999
-Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-01-01,2020-02-11,41.5,4,5,0.997
-Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-02-11,2020-06-03,112.8,4,5,0.905
-Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-06-10,2020-07-06,25.5,4,5,0.977
-Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-09-01,2020-11-02,62.1,4,5,0.975
-Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-11-06,2020-12-01,25.5,4,5,0.953
-Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-12-03,2020-12-14,11.4,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-12-19,2020-12-29,10.3,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,488.0,38.5,ST_GAS,eia_exact,2021-06-10,2021-06-19,9.2,4,5,0.95
-Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-01-01,2023-05-02,121.4,4,5,0.997
+Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-11-28,2019-12-31,34.0,4,5,0.972
+Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-01-01,2020-02-11,41.5,4,5,0.949
+Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-12-03,2020-12-14,11.4,4,5,0.982
+Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-01-01,2023-05-02,121.4,4,5,0.996
 Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-05-24,2023-06-03,9.2,4,5,1.0
 Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-06-03,2023-06-12,8.8,4,5,0.943
 Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-06-12,2023-06-19,6.5,4,5,1.0
 Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-06-22,2023-07-03,11.4,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-07-03,2023-07-09,5.5,4,5,0.908
 Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-07-30,2023-08-08,9.3,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-11-04,2023-12-31,58.0,4,5,1.0
+Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-11-04,2023-12-31,58.0,4,5,0.979
 Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-01-06,2024-01-13,6.9,3,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-01-23,2024-02-14,22.4,3,5,1.0
+Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-01-23,2024-02-14,22.4,3,5,0.998
 Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-02-16,2024-03-12,24.6,3,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-03-14,2024-04-29,46.2,3,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-05-10,2024-05-22,12.2,3,5,0.997
-Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-07-25,2024-08-01,7.4,3,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-08-13,2024-08-26,13.3,3,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-08-30,2024-09-13,14.4,3,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-09-14,2024-12-31,108.8,3,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-01-01,2025-02-03,33.7,4,5,0.996
-Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-02-04,2025-02-10,5.9,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-02-11,2025-02-19,7.8,4,5,1.0
+Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-03-14,2024-04-29,46.2,3,5,0.959
+Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-05-10,2024-05-22,12.2,3,5,0.925
+Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-08-13,2024-08-26,13.3,3,5,0.984
+Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-08-30,2024-09-13,14.4,3,5,0.997
+Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-09-14,2024-12-31,108.8,3,5,0.935
+Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-02-04,2025-02-10,5.9,4,5,0.922
 Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-02-19,2025-03-04,13.0,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-03-04,2025-07-18,135.8,4,5,1.0
+Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-03-04,2025-07-18,135.8,4,5,0.99
 Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-07-18,2025-07-24,6.0,4,5,1.0
 Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-07-31,2025-08-10,10.5,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-08-18,2025-09-10,23.2,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-09-13,2025-09-23,10.2,4,5,1.0
+Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-08-18,2025-09-10,23.2,4,5,0.957
+Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-09-13,2025-09-23,10.2,4,5,0.992
 Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-09-27,2025-10-05,8.4,4,5,1.0
-Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-10-09,2025-11-10,32.5,4,5,0.973
-Port Jefferson Energy Center,2517,4,188.0,472.0,39.8,ST_GAS,eia_exact,2025-11-11,2025-12-31,50.0,4,5,1.0
 Greenidge Generation LLC,2527,6,113.0,113.0,100.0,ST_GAS,observed_peak,2019-01-01,2019-01-11,10.2,0,1,1.0
-Greenidge Generation LLC,2527,6,113.0,113.0,100.0,ST_GAS,observed_peak,2019-05-31,2019-06-24,24.1,0,1,0.969
 Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2019-01-01,2019-01-11,10.6,2,3,1.0
-Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2019-05-03,2019-05-20,17.3,2,3,1.0
-Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2019-05-20,2019-05-30,9.2,2,3,1.0
-Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2019-04-03,2019-07-10,97.4,1,2,0.92
-Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2021-10-07,2021-10-13,5.3,1,2,0.953
-Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2023-05-25,2023-06-02,8.2,1,2,0.974
-Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2023-12-06,2023-12-31,25.1,1,2,0.925
-Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-02-08,2025-02-14,5.5,1,2,0.985
-Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-03-05,2025-05-15,71.5,1,2,0.963
-Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-06-13,2025-06-19,6.2,1,2,1.0
+Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2019-05-20,2019-05-30,9.2,2,3,0.905
 Richard M Flynn (Holtsville),7314,001,111.0,111.0,100.0,CC_REGULAR,observed_peak,2019-02-03,2019-02-18,15.2,0,1,1.0
 Richard M Flynn (Holtsville),7314,001,111.0,111.0,100.0,CC_REGULAR,observed_peak,2019-02-27,2019-03-11,12.0,0,1,1.0
 Richard M Flynn (Holtsville),7314,001,111.0,111.0,100.0,CC_REGULAR,observed_peak,2019-03-21,2019-04-08,17.5,0,1,1.0
@@ -543,18 +429,8 @@ Richard M Flynn (Holtsville),7314,001,113.0,113.0,100.0,CC_REGULAR,observed_peak
 Richard M Flynn (Holtsville),7314,001,113.0,113.0,100.0,CC_REGULAR,observed_peak,2026-02-09,2026-02-23,13.9,0,1,1.0
 Richard M Flynn (Holtsville),7314,001,113.0,113.0,100.0,CC_REGULAR,observed_peak,2026-02-25,2026-03-03,6.2,0,1,1.0
 Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2024-01-01,2024-01-10,9.3,1,2,1.0
-Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-01-01,2025-01-19,18.4,1,2,0.952
-Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-03-26,2025-06-19,84.8,1,2,0.954
-Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-08-17,2025-09-11,25.2,1,2,0.985
-Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-12-18,2025-12-31,13.4,1,2,0.941
-Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-01-01,2025-02-01,31.4,1,2,0.952
-Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-02-01,2025-03-27,53.7,1,2,0.913
 Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-03-28,2025-04-02,5.3,1,2,1.0
-Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-04-03,2025-06-22,80.1,1,2,0.958
-Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-08-18,2025-09-17,29.2,1,2,1.0
-Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-09-30,2025-10-06,6.4,1,2,0.954
-Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-12-09,2025-12-15,5.2,1,2,0.984
-Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-12-16,2025-12-31,15.1,1,2,0.967
+Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-04-03,2025-06-22,80.1,1,2,0.914
 Astoria Generating Station,8906,20,153.0,1705.0,9.0,ST_GAS,observed_peak,2019-01-01,2019-03-19,77.9,5,8,1.0
 Astoria Generating Station,8906,20,153.0,1705.0,9.0,ST_GAS,observed_peak,2019-03-21,2019-07-19,120.1,5,8,1.0
 Astoria Generating Station,8906,20,153.0,1705.0,9.0,ST_GAS,observed_peak,2019-07-21,2019-12-31,163.0,5,8,1.0
@@ -587,16 +463,120 @@ Astoria Generating Station,8906,20,140.0,1693.0,8.3,ST_GAS,observed_peak,2025-06
 Astoria Generating Station,8906,20,140.0,1693.0,8.3,ST_GAS,observed_peak,2025-07-18,2025-07-24,6.3,5,6,1.0
 Astoria Generating Station,8906,20,140.0,1693.0,8.3,ST_GAS,observed_peak,2025-07-31,2025-08-11,10.5,5,6,1.0
 Astoria Generating Station,8906,20,140.0,1693.0,8.3,ST_GAS,observed_peak,2025-08-18,2025-12-31,136.0,5,6,1.0
-Astoria Generating Station,8906,CT0001,17.0,1704.0,1.0,ST_GAS,observed_peak,2021-02-19,2021-03-16,24.9,5,6,0.945
-Astoria Generating Station,8906,CT0001,17.0,1704.0,1.0,ST_GAS,observed_peak,2021-11-22,2021-12-20,28.0,5,6,0.911
+Astoria Generating Station,8906,31RH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-01-01,2019-01-20,19.3,5,8,1.0
+Astoria Generating Station,8906,31RH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-02-03,2019-02-27,24.2,5,8,1.0
+Astoria Generating Station,8906,31RH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-02-28,2019-04-12,42.9,5,8,0.983
+Astoria Generating Station,8906,31RH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-04-18,2019-05-10,22.5,5,8,1.0
+Astoria Generating Station,8906,31RH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-07-11,2019-07-17,6.0,5,8,1.0
+Astoria Generating Station,8906,31RH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-08-01,2019-08-08,6.5,5,8,1.0
+Astoria Generating Station,8906,31RH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-11-14,2019-12-12,28.2,5,8,0.993
+Astoria Generating Station,8906,31RH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-12-18,2019-12-31,13.5,5,8,0.997
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-01-01,2020-01-13,12.5,5,8,1.0
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-01-24,2020-02-10,16.9,5,8,1.0
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-02-13,2020-03-04,20.2,5,8,1.0
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-03-07,2020-05-07,61.0,5,8,0.971
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-06-04,2020-06-12,7.5,5,8,0.972
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-06-24,2020-07-08,14.2,5,8,0.915
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-07-22,2020-07-27,5.0,5,8,0.983
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-07-31,2020-08-24,24.0,5,8,0.955
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-08-29,2020-09-28,30.0,5,8,0.999
+Astoria Generating Station,8906,31RH,379.0,1710.0,22.2,ST_GAS,observed_peak,2020-12-22,2020-12-28,6.0,5,8,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2021-01-01,2021-02-21,51.1,5,6,0.998
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2021-04-10,2021-05-29,49.2,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2021-07-10,2021-08-10,31.8,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2021-08-13,2021-08-26,12.5,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2021-08-27,2021-09-14,18.2,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2021-09-18,2021-10-03,15.8,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2021-10-09,2021-12-31,84.0,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2022-01-01,2022-01-18,17.5,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2022-02-01,2022-04-05,63.7,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2022-05-24,2022-07-18,55.2,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2022-10-21,2022-12-02,42.5,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2022-12-09,2022-12-18,8.5,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1704.0,22.3,ST_GAS,observed_peak,2022-12-19,2022-12-31,12.1,5,6,0.997
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-01-15,2023-02-01,17.5,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-02-05,2023-03-17,40.7,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-04-05,2023-04-30,24.8,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-05-02,2023-05-12,10.3,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-06-14,2023-06-26,11.1,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-08-01,2023-08-07,6.3,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-08-28,2023-09-04,7.2,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-12-11,2023-12-18,7.4,5,6,0.977
+Astoria Generating Station,8906,31RH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-12-19,2023-12-31,12.3,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-01-01,2024-01-26,25.8,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-02-06,2024-02-12,6.8,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-02-17,2024-03-10,23.0,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-04-16,2024-04-25,9.0,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-05-12,2024-05-21,10.0,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-05-25,2024-06-03,9.1,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-06-29,2024-07-07,7.6,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-08-11,2024-08-26,15.1,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-08-28,2024-09-11,14.2,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-09-21,2024-09-26,5.2,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-10-15,2024-12-10,56.5,5,6,1.0
+Astoria Generating Station,8906,31RH,380.0,1689.0,22.5,ST_GAS,observed_peak,2024-12-12,2024-12-19,7.1,5,6,1.0
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-01-08,2025-01-19,11.3,5,6,1.0
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-01-29,2025-02-05,7.1,5,6,0.982
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-02-18,2025-03-26,36.0,5,6,0.995
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-03-27,2025-04-02,6.0,5,6,1.0
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-04-09,2025-04-20,11.5,5,6,1.0
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-04-26,2025-05-05,9.1,5,6,1.0
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-05-07,2025-06-03,27.1,5,6,1.0
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-09-20,2025-10-05,15.8,5,6,0.997
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-10-18,2025-11-29,42.5,5,6,1.0
+Astoria Generating Station,8906,31RH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-12-16,2025-12-24,7.9,5,6,1.0
+Astoria Generating Station,8906,51RH,388.0,1705.0,22.8,ST_GAS,observed_peak,2019-01-01,2019-01-13,12.8,5,8,1.0
+Astoria Generating Station,8906,51RH,388.0,1705.0,22.8,ST_GAS,observed_peak,2019-01-31,2019-03-04,32.5,5,8,0.994
+Astoria Generating Station,8906,51RH,388.0,1705.0,22.8,ST_GAS,observed_peak,2019-04-12,2019-05-04,22.2,5,8,0.985
+Astoria Generating Station,8906,51RH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-01-01,2020-03-12,71.5,5,8,1.0
+Astoria Generating Station,8906,51RH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-04-03,2020-04-08,5.8,5,8,1.0
+Astoria Generating Station,8906,51RH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-05-08,2020-06-03,26.0,5,8,1.0
+Astoria Generating Station,8906,51RH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-06-13,2020-06-23,10.1,5,8,1.0
+Astoria Generating Station,8906,51RH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-07-09,2020-07-19,9.9,5,8,1.0
+Astoria Generating Station,8906,51RH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-09-30,2020-10-12,12.5,5,8,1.0
+Astoria Generating Station,8906,51RH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-12-04,2020-12-15,11.5,5,8,1.0
+Astoria Generating Station,8906,51RH,388.0,1704.0,22.8,ST_GAS,observed_peak,2021-01-01,2021-01-20,19.1,5,6,1.0
+Astoria Generating Station,8906,51RH,388.0,1704.0,22.8,ST_GAS,observed_peak,2021-02-21,2021-04-05,42.9,5,6,1.0
+Astoria Generating Station,8906,51RH,388.0,1704.0,22.8,ST_GAS,observed_peak,2021-04-13,2021-05-01,17.7,5,6,1.0
+Astoria Generating Station,8906,51RH,388.0,1704.0,22.8,ST_GAS,observed_peak,2021-05-26,2021-07-08,42.7,5,6,1.0
+Astoria Generating Station,8906,51RH,388.0,1704.0,22.8,ST_GAS,observed_peak,2021-10-16,2021-11-29,44.1,5,6,1.0
+Astoria Generating Station,8906,51RH,388.0,1704.0,22.8,ST_GAS,observed_peak,2021-11-30,2021-12-31,31.4,5,6,1.0
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-01-01,2022-01-07,6.3,5,6,1.0
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-01-17,2022-01-30,12.3,5,6,0.993
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-02-05,2022-02-11,6.3,5,6,1.0
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-02-16,2022-03-06,18.5,5,6,1.0
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-04-05,2022-05-21,45.2,5,6,0.998
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-08-10,2022-08-18,8.0,5,6,1.0
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-08-23,2022-09-19,26.8,5,6,0.989
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-09-23,2022-10-23,30.9,5,6,0.993
+Astoria Generating Station,8906,51RH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-11-08,2022-12-31,53.4,5,6,0.996
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-01-01,2023-04-06,95.1,5,6,1.0
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-04-06,2023-05-19,42.7,5,6,1.0
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-05-19,2023-06-21,32.6,5,6,0.997
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-06-22,2023-07-06,14.5,5,6,1.0
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-08-10,2023-08-29,18.7,5,6,1.0
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-10-08,2023-10-16,7.8,5,6,0.914
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-11-08,2023-11-14,6.0,5,6,1.0
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-11-17,2023-11-29,12.1,5,6,1.0
+Astoria Generating Station,8906,51RH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-12-20,2023-12-31,11.9,5,6,1.0
+Astoria Generating Station,8906,51RH,385.0,1689.0,22.8,ST_GAS,observed_peak,2024-01-01,2024-04-29,119.1,5,6,1.0
+Astoria Generating Station,8906,51RH,385.0,1689.0,22.8,ST_GAS,observed_peak,2024-04-29,2024-05-19,20.5,5,6,1.0
+Astoria Generating Station,8906,51RH,385.0,1689.0,22.8,ST_GAS,observed_peak,2024-05-29,2024-06-13,15.3,5,6,1.0
+Astoria Generating Station,8906,51RH,385.0,1689.0,22.8,ST_GAS,observed_peak,2024-07-25,2024-07-30,5.2,5,6,1.0
+Astoria Generating Station,8906,51RH,385.0,1689.0,22.8,ST_GAS,observed_peak,2024-08-21,2024-08-27,6.8,5,6,1.0
+Astoria Generating Station,8906,51RH,385.0,1689.0,22.8,ST_GAS,observed_peak,2024-09-07,2024-10-06,29.8,5,6,1.0
+Astoria Generating Station,8906,51RH,385.0,1689.0,22.8,ST_GAS,observed_peak,2024-11-10,2024-11-18,8.0,5,6,1.0
+Astoria Generating Station,8906,51RH,385.0,1689.0,22.8,ST_GAS,observed_peak,2024-12-18,2024-12-31,14.0,5,6,1.0
+Astoria Generating Station,8906,51RH,387.0,1693.0,22.9,ST_GAS,observed_peak,2025-04-23,2025-05-31,38.8,5,6,0.933
+Astoria Generating Station,8906,51RH,387.0,1693.0,22.9,ST_GAS,observed_peak,2025-08-16,2025-08-25,9.0,5,6,0.903
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-01-03,2022-01-12,8.8,5,6,1.0
-Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-01-13,2022-02-08,26.1,5,6,1.0
+Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-01-13,2022-02-08,26.1,5,6,0.997
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-02-08,2022-02-13,5.0,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-02-13,2022-02-25,11.6,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-02-25,2022-03-14,17.2,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-03-15,2022-03-28,12.9,5,6,1.0
-Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-04-01,2022-04-19,17.9,5,6,1.0
-Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-04-19,2022-05-16,26.8,5,6,1.0
+Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-04-01,2022-04-19,17.9,5,6,0.998
+Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-04-19,2022-05-16,26.8,5,6,0.998
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-05-16,2022-05-21,5.0,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-05-21,2022-05-31,9.7,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-05-31,2022-06-07,6.7,5,6,1.0
@@ -604,10 +584,10 @@ Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-06-13,2022-07-02,18.8,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-07-02,2022-07-12,9.8,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-07-28,2022-08-03,5.8,5,6,1.0
-Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-08-09,2022-08-26,16.6,5,6,1.0
-Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-08-29,2022-09-13,14.8,5,6,1.0
+Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-08-09,2022-08-26,16.6,5,6,0.997
+Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-08-29,2022-09-13,14.8,5,6,0.997
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-09-13,2022-09-22,8.5,5,6,1.0
-Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-09-22,2022-11-10,48.9,5,6,1.0
+Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-09-22,2022-11-10,48.9,5,6,0.996
 Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-11-10,2022-12-31,51.3,5,6,0.996
 Astoria Generating Station,8906,CT0001,15.0,1699.0,0.9,ST_GAS,observed_peak,2023-01-01,2023-02-04,34.6,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1699.0,0.9,ST_GAS,observed_peak,2023-02-06,2023-03-07,28.9,5,6,1.0
@@ -621,38 +601,23 @@ Astoria Generating Station,8906,CT0001,15.0,1699.0,0.9,ST_GAS,observed_peak,2023
 Astoria Generating Station,8906,CT0001,15.0,1699.0,0.9,ST_GAS,observed_peak,2023-09-09,2023-09-18,8.8,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1699.0,0.9,ST_GAS,observed_peak,2023-09-18,2023-11-21,64.4,5,6,1.0
 Astoria Generating Station,8906,CT0001,15.0,1699.0,0.9,ST_GAS,observed_peak,2023-11-21,2023-12-31,40.2,5,6,1.0
-Astoria Generating Station,8906,CT0001,15.0,1689.0,0.9,ST_GAS,observed_peak,2024-01-27,2024-04-05,69.1,5,6,0.948
-Astoria Generating Station,8906,CT0001,15.0,1689.0,0.9,ST_GAS,observed_peak,2024-04-05,2024-06-06,61.7,5,6,0.948
-Astoria Generating Station,8906,CT0001,15.0,1689.0,0.9,ST_GAS,observed_peak,2024-08-14,2024-09-11,27.7,5,6,0.908
-Astoria Generating Station,8906,CT0001,15.0,1689.0,0.9,ST_GAS,observed_peak,2024-09-11,2024-11-08,58.0,5,6,0.938
-Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-01-01,2021-03-16,74.5,2,3,0.999
-Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-03-16,2021-06-10,85.5,2,3,1.0
-Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-06-10,2021-06-29,18.5,2,3,1.0
-Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-06-30,2021-07-15,14.5,2,3,0.994
-Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-07-21,2021-08-11,21.4,2,3,0.982
-Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-08-13,2021-08-25,11.5,2,3,1.0
-Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-08-27,2021-10-19,52.6,2,3,0.93
+Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-01-01,2021-03-16,74.5,2,3,0.969
+Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-03-16,2021-06-10,85.5,2,3,0.988
+Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-06-10,2021-06-29,18.5,2,3,0.982
+Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-07-21,2021-08-11,21.4,2,3,0.928
+Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-08-13,2021-08-25,11.5,2,3,0.953
+Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-08-27,2021-10-19,52.6,2,3,0.918
 Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-10-19,2021-11-09,20.7,2,3,1.0
 Selkirk Cogen Partners,10725,CTG101,141.0,439.0,32.1,CC_CHP,observed_peak,2021-11-09,2021-12-31,52.1,2,3,1.0
-Sterling Power Plant,50744,00001,43.0,43.0,100.0,CC_REGULAR,observed_peak,2019-01-01,2019-02-24,54.2,0,1,0.995
-Sterling Power Plant,50744,00001,43.0,43.0,100.0,CC_REGULAR,observed_peak,2019-02-25,2019-07-19,143.6,0,1,0.918
-Sterling Power Plant,50744,00001,43.0,43.0,100.0,CC_REGULAR,observed_peak,2019-07-30,2019-08-19,19.3,0,1,0.927
-Sterling Power Plant,50744,00001,43.0,43.0,100.0,CC_REGULAR,observed_peak,2019-08-20,2019-09-30,40.3,0,1,0.951
-Sterling Power Plant,50744,00001,43.0,43.0,100.0,CC_REGULAR,observed_peak,2019-10-16,2019-12-31,76.1,0,1,0.963
-Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-01-01,2020-04-01,91.5,0,1,1.0
-Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-04-01,2020-07-08,97.4,0,1,1.0
-Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-07-10,2020-07-20,9.3,0,1,1.0
-Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-07-20,2020-07-27,6.6,0,1,1.0
-Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-07-27,2020-08-11,14.5,0,1,1.0
-Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-08-11,2020-10-26,75.5,0,1,1.0
-Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-10-26,2020-12-17,51.8,0,1,0.977
-Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-12-17,2020-12-31,14.1,0,1,1.0
-Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-01-01,2021-06-28,178.4,0,1,1.0
+Sterling Power Plant,50744,00001,43.0,43.0,100.0,CC_REGULAR,observed_peak,2019-01-01,2019-02-24,54.2,0,1,0.928
+Sterling Power Plant,50744,00001,43.0,43.0,100.0,CC_REGULAR,observed_peak,2019-10-16,2019-12-31,76.1,0,1,0.916
+Sterling Power Plant,50744,00001,44.0,44.0,100.0,CC_REGULAR,observed_peak,2020-01-01,2020-04-01,91.5,0,1,0.99
+Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-01-01,2021-06-28,178.4,0,1,0.996
 Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-06-29,2021-07-06,6.5,0,1,1.0
-Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-07-06,2021-07-19,12.2,0,1,1.0
+Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-07-06,2021-07-19,12.2,0,1,0.997
 Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-07-23,2021-08-02,9.2,0,1,1.0
 Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-08-06,2021-08-16,9.2,0,1,1.0
-Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-08-26,2021-10-22,56.6,0,1,1.0
+Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-08-26,2021-10-22,56.6,0,1,0.997
 Sterling Power Plant,50744,00001,39.0,39.0,100.0,CC_REGULAR,observed_peak,2021-10-22,2021-12-31,70.2,0,1,1.0
 Sterling Power Plant,50744,00001,47.0,47.0,100.0,CC_REGULAR,observed_peak,2022-01-01,2022-01-21,20.5,0,1,1.0
 Sterling Power Plant,50744,00001,47.0,47.0,100.0,CC_REGULAR,observed_peak,2022-01-27,2022-07-19,172.5,0,1,1.0
@@ -828,21 +793,11 @@ Carr Street Generating Station,50978,B,40.0,89.0,44.9,CC_REGULAR,observed_peak,2
 Carr Street Generating Station,50978,B,40.0,89.0,44.9,CC_REGULAR,observed_peak,2025-11-25,2025-12-08,13.0,1,2,1.0
 Carr Street Generating Station,50978,B,41.0,41.0,100.0,CC_REGULAR,observed_peak,2026-01-18,2026-02-20,33.7,0,2,1.0
 Carr Street Generating Station,50978,B,41.0,41.0,100.0,CC_REGULAR,observed_peak,2026-02-21,2026-03-01,8.4,0,2,1.0
-Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2019-01-01,2019-04-30,120.0,1,4,0.927
-Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2019-06-08,2019-06-15,7.1,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2019-06-22,2019-07-06,14.1,1,4,0.962
-Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2019-07-06,2019-07-13,7.0,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2019-08-10,2019-08-19,9.2,1,4,0.901
-Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2019-08-20,2019-09-13,23.9,1,4,0.923
-Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2019-10-01,2019-12-31,92.0,1,4,0.948
-Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-01-01,2020-05-01,121.5,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-05-01,2020-05-07,5.8,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-07-10,2020-07-18,8.2,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-08-08,2020-08-15,7.0,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-08-28,2020-09-06,9.1,1,4,1.0
+Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-01-01,2020-05-01,121.5,1,4,0.957
+Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-05-01,2020-05-07,5.8,1,4,0.95
+Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-08-28,2020-09-06,9.1,1,4,0.977
 Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-09-12,2020-09-19,7.0,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-10-01,2020-12-31,92.0,1,4,0.987
-Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2021-01-01,2021-05-01,120.6,1,5,1.0
+Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2021-01-01,2021-05-01,120.6,1,5,0.999
 Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2021-06-11,2021-06-22,10.8,1,5,1.0
 Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2021-10-01,2021-12-31,92.0,1,5,1.0
 Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2022-01-01,2022-05-03,122.7,1,5,1.0
@@ -865,12 +820,10 @@ Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2025
 Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2025-08-29,2025-09-05,7.0,1,5,1.0
 Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2025-09-12,2025-09-21,8.5,1,5,1.0
 Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2025-09-30,2025-12-31,92.0,1,5,1.0
-Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-01-01,2019-04-30,120.0,1,4,0.994
-Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-05-05,2019-05-14,8.5,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-05-20,2019-05-25,5.0,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-06-03,2019-06-08,5.2,1,4,1.0
-Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-07-27,2019-08-10,13.7,1,4,0.954
-Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-09-27,2019-12-31,95.4,1,4,0.96
+Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-01-01,2019-04-30,120.0,1,4,0.958
+Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-05-05,2019-05-14,8.5,1,4,0.97
+Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-05-20,2019-05-25,5.0,1,4,0.967
+Riverbay Corp. - Co-Op City,52168,00006,13.0,25.0,52.0,CC_CHP,observed_peak,2019-06-03,2019-06-08,5.2,1,4,0.92
 Riverbay Corp. - Co-Op City,52168,00006,13.0,26.0,50.0,CC_CHP,observed_peak,2020-01-01,2020-04-30,121.0,1,4,1.0
 Riverbay Corp. - Co-Op City,52168,00006,13.0,26.0,50.0,CC_CHP,observed_peak,2020-05-11,2020-05-23,11.8,1,4,1.0
 Riverbay Corp. - Co-Op City,52168,00006,13.0,26.0,50.0,CC_CHP,observed_peak,2020-06-12,2020-06-23,10.7,1,4,1.0
@@ -1112,7 +1065,7 @@ Lockport,54041,011856,51.0,153.0,33.3,CC_CHP,observed_peak,2026-01-07,2026-01-15
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2020-07-28,2020-08-03,5.2,0,1,1.0
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2020-08-03,2020-08-10,6.3,0,1,1.0
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2020-08-13,2020-08-25,11.4,0,1,1.0
-"World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2020-09-02,2020-12-31,120.8,0,1,1.0
+"World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2020-09-02,2020-12-31,120.8,0,1,0.999
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2021-01-01,2021-02-09,39.6,0,1,1.0
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2021-02-11,2021-07-06,144.5,0,1,1.0
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2021-07-07,2021-07-26,18.3,0,1,1.0
@@ -1148,8 +1101,7 @@ Lockport,54041,011856,51.0,153.0,33.3,CC_CHP,observed_peak,2026-01-07,2026-01-15
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2025-01-01,2025-01-28,27.3,0,1,1.0
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2025-09-28,2025-10-08,10.6,0,1,1.0
 "World Generation X, LLC",54131,NTCT1,65.7,65.7,100.0,CC_CHP,eia_digits_cc,2026-01-29,2026-02-10,11.8,0,1,1.0
-Nissequogue Energy Center,54149,1,47.0,47.0,100.0,CT_CHP,eia_digits,2019-05-24,2019-06-05,11.9,0,1,1.0
-Nissequogue Energy Center,54149,1,47.0,47.0,100.0,CT_CHP,eia_digits,2019-10-05,2019-10-15,10.0,0,1,0.946
+Nissequogue Energy Center,54149,1,47.0,47.0,100.0,CT_CHP,eia_digits,2019-05-24,2019-06-05,11.9,0,1,0.961
 Massena Energy Facility,54592,001,55.0,55.0,100.0,CC_REGULAR,observed_peak,2019-01-01,2019-04-03,92.4,0,1,1.0
 Massena Energy Facility,54592,001,55.0,55.0,100.0,CC_REGULAR,observed_peak,2019-04-03,2019-08-07,125.7,0,1,1.0
 Massena Energy Facility,54592,001,55.0,55.0,100.0,CC_REGULAR,observed_peak,2019-08-07,2019-09-12,35.6,0,1,1.0
@@ -1242,14 +1194,13 @@ Brooklyn Navy Yard Cogeneration,54914,1,120.0,241.0,49.8,CC_CHP,observed_peak,20
 Brooklyn Navy Yard Cogeneration,54914,1,120.0,241.0,49.8,CC_CHP,observed_peak,2019-04-23,2019-04-29,5.6,1,2,1.0
 Brooklyn Navy Yard Cogeneration,54914,1,120.0,241.0,49.8,CC_CHP,observed_peak,2019-09-27,2019-10-03,5.9,1,2,1.0
 Brooklyn Navy Yard Cogeneration,54914,1,120.0,240.0,50.0,CC_CHP,observed_peak,2020-05-07,2020-05-13,5.6,1,2,1.0
-Brooklyn Navy Yard Cogeneration,54914,1,120.0,240.0,50.0,CC_CHP,observed_peak,2020-09-30,2020-11-11,41.7,1,2,1.0
+Brooklyn Navy Yard Cogeneration,54914,1,120.0,240.0,50.0,CC_CHP,observed_peak,2020-09-30,2020-11-11,41.7,1,2,0.976
 Brooklyn Navy Yard Cogeneration,54914,1,120.0,240.0,50.0,CC_CHP,observed_peak,2020-12-07,2020-12-13,6.2,1,2,1.0
-Brooklyn Navy Yard Cogeneration,54914,1,120.0,241.0,49.8,CC_CHP,observed_peak,2021-05-02,2021-05-08,5.2,1,2,1.0
 Brooklyn Navy Yard Cogeneration,54914,1,119.0,239.0,49.8,CC_CHP,observed_peak,2023-05-20,2023-06-02,12.4,1,2,1.0
 Brooklyn Navy Yard Cogeneration,54914,1,120.0,241.0,49.8,CC_CHP,observed_peak,2025-03-28,2025-05-09,41.5,1,2,1.0
 Brooklyn Navy Yard Cogeneration,54914,2,121.0,241.0,50.2,CC_CHP,observed_peak,2019-01-11,2019-01-18,6.4,1,2,1.0
 Brooklyn Navy Yard Cogeneration,54914,2,121.0,241.0,50.2,CC_CHP,observed_peak,2019-03-22,2019-03-28,5.5,1,2,1.0
 Brooklyn Navy Yard Cogeneration,54914,2,121.0,241.0,50.2,CC_CHP,observed_peak,2019-04-23,2019-04-30,6.7,1,2,1.0
 Brooklyn Navy Yard Cogeneration,54914,2,121.0,241.0,50.2,CC_CHP,observed_peak,2019-05-23,2019-06-11,18.6,1,2,1.0
-Brooklyn Navy Yard Cogeneration,54914,2,120.0,240.0,50.0,CC_CHP,observed_peak,2020-10-25,2020-10-31,5.5,1,2,1.0
+Brooklyn Navy Yard Cogeneration,54914,2,120.0,240.0,50.0,CC_CHP,observed_peak,2020-10-25,2020-10-31,5.5,1,2,0.97
 Brooklyn Navy Yard Cogeneration,54914,2,121.0,241.0,50.2,CC_CHP,observed_peak,2025-04-13,2025-04-23,10.2,1,2,1.0
