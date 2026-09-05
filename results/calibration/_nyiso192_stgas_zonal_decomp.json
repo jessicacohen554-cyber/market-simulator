@@ -1,0 +1,1063 @@
+{
+  "session": "nyiso-192",
+  "object": "2 \u2014 ST_GAS zonal placement decomposition (phase 0, no LP)",
+  "run": "2026-09-05-nyiso-189-steam-identity",
+  "by_year": {
+    "2023": {
+      "offer_anatomy": [
+        {
+          "plant_code": 2682,
+          "name": "",
+          "zone": "Upstate_West",
+          "cap_mw": 45.0,
+          "hr_cap_weighted": 14.529,
+          "hr_committed": 9.825,
+          "fuel_usd_mmbtu": 1.822,
+          "vom": 4.0,
+          "co2_plus_margin": 9.67,
+          "mc_cap_weighted": 40.14,
+          "mc_committed": 30.32
+        },
+        {
+          "plant_code": 2527,
+          "name": "",
+          "zone": "Upstate_West",
+          "cap_mw": 104.5,
+          "hr_cap_weighted": 16.08,
+          "hr_committed": 11.01,
+          "fuel_usd_mmbtu": 1.897,
+          "vom": 4.0,
+          "co2_plus_margin": 7.91,
+          "mc_cap_weighted": 42.41,
+          "mc_committed": 32.02
+        },
+        {
+          "plant_code": 2490,
+          "name": "Arthur Kill",
+          "zone": "NYC",
+          "cap_mw": 876.6,
+          "hr_cap_weighted": 17.488,
+          "hr_committed": 11.825,
+          "fuel_usd_mmbtu": 2.017,
+          "vom": 4.0,
+          "co2_plus_margin": 12.95,
+          "mc_cap_weighted": 52.22,
+          "mc_committed": 35.5
+        },
+        {
+          "plant_code": 2500,
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "cap_mw": 1724.8,
+          "hr_cap_weighted": 19.152,
+          "hr_committed": 12.906,
+          "fuel_usd_mmbtu": 1.941,
+          "vom": 4.0,
+          "co2_plus_margin": 12.72,
+          "mc_cap_weighted": 53.89,
+          "mc_committed": 35.13
+        },
+        {
+          "plant_code": 8906,
+          "name": "Astoria",
+          "zone": "NYC",
+          "cap_mw": 923.2,
+          "hr_cap_weighted": 18.67,
+          "hr_committed": 12.542,
+          "fuel_usd_mmbtu": 1.941,
+          "vom": 4.0,
+          "co2_plus_margin": 15.12,
+          "mc_cap_weighted": 55.36,
+          "mc_committed": 36.77
+        },
+        {
+          "plant_code": 2625,
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "cap_mw": 1159.6,
+          "hr_cap_weighted": 15.867,
+          "hr_committed": 10.695,
+          "fuel_usd_mmbtu": 3.277,
+          "vom": 4.0,
+          "co2_plus_margin": 11.3,
+          "mc_cap_weighted": 67.3,
+          "mc_committed": 46.15
+        },
+        {
+          "plant_code": 2511,
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "cap_mw": 372.2,
+          "hr_cap_weighted": 16.501,
+          "hr_committed": 11.1,
+          "fuel_usd_mmbtu": 3.277,
+          "vom": 4.0,
+          "co2_plus_margin": 12.01,
+          "mc_cap_weighted": 70.09,
+          "mc_committed": 47.93
+        },
+        {
+          "plant_code": 2516,
+          "name": "Northport",
+          "zone": "Long_Island",
+          "cap_mw": 1592.2,
+          "hr_cap_weighted": 16.929,
+          "hr_committed": 11.43,
+          "fuel_usd_mmbtu": 3.277,
+          "vom": 4.0,
+          "co2_plus_margin": 11.84,
+          "mc_cap_weighted": 71.32,
+          "mc_committed": 48.9
+        },
+        {
+          "plant_code": 8006,
+          "name": "Roseton",
+          "zone": "Capital_Hudson",
+          "cap_mw": 1222.0,
+          "hr_cap_weighted": 17.102,
+          "hr_committed": 11.498,
+          "fuel_usd_mmbtu": 3.277,
+          "vom": 4.0,
+          "co2_plus_margin": 12.49,
+          "mc_cap_weighted": 72.54,
+          "mc_committed": 49.52
+        },
+        {
+          "plant_code": 2480,
+          "name": "Danskammer",
+          "zone": "Capital_Hudson",
+          "cap_mw": 497.3,
+          "hr_cap_weighted": 17.514,
+          "hr_committed": 11.846,
+          "fuel_usd_mmbtu": 3.357,
+          "vom": 4.0,
+          "co2_plus_margin": 11.71,
+          "mc_cap_weighted": 74.5,
+          "mc_committed": 51.58
+        },
+        {
+          "plant_code": 2517,
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "cap_mw": 385.0,
+          "hr_cap_weighted": 19.314,
+          "hr_committed": 12.982,
+          "fuel_usd_mmbtu": 3.277,
+          "vom": 4.0,
+          "co2_plus_margin": 13.13,
+          "mc_cap_weighted": 80.42,
+          "mc_committed": 54.41
+        }
+      ],
+      "st_gas_fuel_by_zone": {
+        "NYC": 1.966,
+        "Long_Island": 3.277,
+        "Capital_Hudson": 3.304
+      },
+      "nyc_ct_peaker_ldc_index_mean": 4.533,
+      "price_formation": {
+        "zones": {
+          "Upstate_West": {
+            "actual_mean": 25.32,
+            "model_mean": 24.64,
+            "model_minus_actual": -0.67
+          },
+          "Capital_Hudson": {
+            "actual_mean": 33.25,
+            "model_mean": 35.7,
+            "model_minus_actual": 2.45
+          },
+          "Lower_Hudson": {
+            "actual_mean": 32.77,
+            "model_mean": 36.3,
+            "model_minus_actual": 3.54
+          },
+          "NYC": {
+            "actual_mean": 33.46,
+            "model_mean": 36.6,
+            "model_minus_actual": 3.14
+          },
+          "Long_Island": {
+            "actual_mean": 41.05,
+            "model_mean": 37.44,
+            "model_minus_actual": -3.61
+          }
+        },
+        "spreads": {
+          "NYC-Capital_Hudson": {
+            "actual": 0.21,
+            "model": 0.9
+          },
+          "Long_Island-Capital_Hudson": {
+            "actual": 7.79,
+            "model": 1.74
+          },
+          "Long_Island-NYC": {
+            "actual": 7.58,
+            "model": 0.84
+          },
+          "NYC-Upstate_West": {
+            "actual": 8.15,
+            "model": 11.96
+          }
+        }
+      },
+      "in_merit_ladder": [
+        {
+          "plant_code": 2500,
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "mc_committed": 35.13,
+          "S0_model_offer_vs_model_price": 0.529,
+          "S1_model_offer_vs_actual_price": 0.331,
+          "S2_reference_basis_vs_model_price": 0.051,
+          "model_on_share": 0.997,
+          "campd_on_share": 0.696,
+          "model_twh": 3.951,
+          "campd_twh": 0.859
+        },
+        {
+          "plant_code": 2490,
+          "name": "Arthur Kill",
+          "zone": "NYC",
+          "mc_committed": 35.5,
+          "S0_model_offer_vs_model_price": 0.572,
+          "S1_model_offer_vs_actual_price": 0.339,
+          "S2_reference_basis_vs_model_price": 0.064,
+          "model_on_share": 0.997,
+          "campd_on_share": 0.776,
+          "model_twh": 2.414,
+          "campd_twh": 1.118
+        },
+        {
+          "plant_code": 8906,
+          "name": "Astoria",
+          "zone": "NYC",
+          "mc_committed": 36.77,
+          "S0_model_offer_vs_model_price": 0.43,
+          "S1_model_offer_vs_actual_price": 0.283,
+          "S2_reference_basis_vs_model_price": 0.038,
+          "model_on_share": 0.575,
+          "campd_on_share": 0.57,
+          "model_twh": 0.62,
+          "campd_twh": 0.774
+        },
+        {
+          "plant_code": 2516,
+          "name": "Northport",
+          "zone": "Long_Island",
+          "mc_committed": 48.9,
+          "S0_model_offer_vs_model_price": 0.101,
+          "S1_model_offer_vs_actual_price": 0.165,
+          "S2_reference_basis_vs_model_price": 0.099,
+          "model_on_share": 0.982,
+          "campd_on_share": 0.891,
+          "model_twh": 1.939,
+          "campd_twh": 2.558
+        },
+        {
+          "plant_code": 2511,
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "mc_committed": 47.93,
+          "S0_model_offer_vs_model_price": 0.121,
+          "S1_model_offer_vs_actual_price": 0.173,
+          "S2_reference_basis_vs_model_price": 0.119,
+          "model_on_share": 0.995,
+          "campd_on_share": 0.931,
+          "model_twh": 0.621,
+          "campd_twh": 1.386
+        },
+        {
+          "plant_code": 2517,
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "mc_committed": 54.41,
+          "S0_model_offer_vs_model_price": 0.052,
+          "S1_model_offer_vs_actual_price": 0.133,
+          "S2_reference_basis_vs_model_price": 0.046,
+          "model_on_share": 0.133,
+          "campd_on_share": 0.307,
+          "model_twh": 0.082,
+          "campd_twh": 0.324
+        },
+        {
+          "plant_code": 2625,
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "mc_committed": 46.15,
+          "S0_model_offer_vs_model_price": 0.086,
+          "S1_model_offer_vs_actual_price": 0.101,
+          "S2_reference_basis_vs_model_price": 0.086,
+          "model_on_share": 0.077,
+          "campd_on_share": 0.225,
+          "model_twh": 0.158,
+          "campd_twh": 0.977
+        },
+        {
+          "plant_code": 8006,
+          "name": "Roseton",
+          "zone": "Capital_Hudson",
+          "mc_committed": 49.52,
+          "S0_model_offer_vs_model_price": 0.06,
+          "S1_model_offer_vs_actual_price": 0.081,
+          "S2_reference_basis_vs_model_price": 0.06,
+          "model_on_share": 0.022,
+          "campd_on_share": 0.086,
+          "model_twh": 0.072,
+          "campd_twh": 0.209
+        },
+        {
+          "plant_code": 2480,
+          "name": "Danskammer",
+          "zone": "Capital_Hudson",
+          "mc_committed": 51.58,
+          "S0_model_offer_vs_model_price": 0.051,
+          "S1_model_offer_vs_actual_price": 0.076,
+          "S2_reference_basis_vs_model_price": 0.051,
+          "model_on_share": 0.062,
+          "campd_on_share": 0.026,
+          "model_twh": 0.027,
+          "campd_twh": 0.02
+        }
+      ],
+      "ex_ante_nyc_steam_ldc_arm": {
+        "shift_usd_mmbtu_mean": 2.567,
+        "plants": [
+          {
+            "plant_code": 2500,
+            "name": "Ravenswood",
+            "mc_committed_keeper": 35.13,
+            "mc_committed_arm": 68.59,
+            "in_merit_keeper": 0.529,
+            "in_merit_arm": 0.008
+          },
+          {
+            "plant_code": 2490,
+            "name": "Arthur Kill",
+            "mc_committed_keeper": 35.5,
+            "mc_committed_arm": 65.25,
+            "in_merit_keeper": 0.572,
+            "in_merit_arm": 0.009
+          },
+          {
+            "plant_code": 8906,
+            "name": "Astoria",
+            "mc_committed_keeper": 36.77,
+            "mc_committed_arm": 69.28,
+            "in_merit_keeper": 0.43,
+            "in_merit_arm": 0.008
+          }
+        ],
+        "nyc_st_gas_model_twh": 6.985,
+        "nyc_st_gas_campd_twh": 2.751,
+        "nyc_st_gas_floor_energy_twh": 2.845,
+        "nyc_st_gas_floor_mean_mw": 325.0
+      }
+    },
+    "2024": {
+      "offer_anatomy": [
+        {
+          "plant_code": 2682,
+          "name": "",
+          "zone": "Upstate_West",
+          "cap_mw": 45.0,
+          "hr_cap_weighted": 14.529,
+          "hr_committed": 9.825,
+          "fuel_usd_mmbtu": 1.711,
+          "vom": 4.0,
+          "co2_plus_margin": 14.6,
+          "mc_cap_weighted": 43.45,
+          "mc_committed": 33.49
+        },
+        {
+          "plant_code": 2527,
+          "name": "",
+          "zone": "Upstate_West",
+          "cap_mw": 104.5,
+          "hr_cap_weighted": 16.08,
+          "hr_committed": 11.01,
+          "fuel_usd_mmbtu": 1.727,
+          "vom": 4.0,
+          "co2_plus_margin": 12.59,
+          "mc_cap_weighted": 44.36,
+          "mc_committed": 33.88
+        },
+        {
+          "plant_code": 2490,
+          "name": "Arthur Kill",
+          "zone": "NYC",
+          "cap_mw": 876.6,
+          "hr_cap_weighted": 17.488,
+          "hr_committed": 11.825,
+          "fuel_usd_mmbtu": 2.087,
+          "vom": 4.0,
+          "co2_plus_margin": 16.49,
+          "mc_cap_weighted": 56.99,
+          "mc_committed": 40.37
+        },
+        {
+          "plant_code": 2500,
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "cap_mw": 1724.8,
+          "hr_cap_weighted": 19.152,
+          "hr_committed": 12.906,
+          "fuel_usd_mmbtu": 2.068,
+          "vom": 4.0,
+          "co2_plus_margin": 14.57,
+          "mc_cap_weighted": 58.17,
+          "mc_committed": 39.64
+        },
+        {
+          "plant_code": 8906,
+          "name": "Astoria",
+          "zone": "NYC",
+          "cap_mw": 923.2,
+          "hr_cap_weighted": 18.67,
+          "hr_committed": 12.542,
+          "fuel_usd_mmbtu": 2.068,
+          "vom": 4.0,
+          "co2_plus_margin": 17.96,
+          "mc_cap_weighted": 60.56,
+          "mc_committed": 42.23
+        },
+        {
+          "plant_code": 2625,
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "cap_mw": 1159.6,
+          "hr_cap_weighted": 15.867,
+          "hr_committed": 10.695,
+          "fuel_usd_mmbtu": 2.772,
+          "vom": 4.0,
+          "co2_plus_margin": 18.77,
+          "mc_cap_weighted": 66.75,
+          "mc_committed": 44.84
+        },
+        {
+          "plant_code": 2511,
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "cap_mw": 372.2,
+          "hr_cap_weighted": 16.501,
+          "hr_committed": 11.1,
+          "fuel_usd_mmbtu": 2.772,
+          "vom": 4.0,
+          "co2_plus_margin": 19.84,
+          "mc_cap_weighted": 69.58,
+          "mc_committed": 46.55
+        },
+        {
+          "plant_code": 2516,
+          "name": "Northport",
+          "zone": "Long_Island",
+          "cap_mw": 1592.2,
+          "hr_cap_weighted": 16.929,
+          "hr_committed": 11.43,
+          "fuel_usd_mmbtu": 2.772,
+          "vom": 4.0,
+          "co2_plus_margin": 19.37,
+          "mc_cap_weighted": 70.29,
+          "mc_committed": 47.11
+        },
+        {
+          "plant_code": 8006,
+          "name": "Roseton",
+          "zone": "Capital_Hudson",
+          "cap_mw": 1222.0,
+          "hr_cap_weighted": 17.102,
+          "hr_committed": 11.498,
+          "fuel_usd_mmbtu": 2.772,
+          "vom": 4.0,
+          "co2_plus_margin": 20.25,
+          "mc_cap_weighted": 71.65,
+          "mc_committed": 47.72
+        },
+        {
+          "plant_code": 2480,
+          "name": "Danskammer",
+          "zone": "Capital_Hudson",
+          "cap_mw": 497.3,
+          "hr_cap_weighted": 17.514,
+          "hr_committed": 11.846,
+          "fuel_usd_mmbtu": 2.797,
+          "vom": 4.0,
+          "co2_plus_margin": 20.23,
+          "mc_cap_weighted": 73.21,
+          "mc_committed": 49.5
+        },
+        {
+          "plant_code": 2517,
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "cap_mw": 385.0,
+          "hr_cap_weighted": 19.314,
+          "hr_committed": 12.982,
+          "fuel_usd_mmbtu": 2.772,
+          "vom": 4.0,
+          "co2_plus_margin": 21.19,
+          "mc_cap_weighted": 78.73,
+          "mc_committed": 51.67
+        }
+      ],
+      "st_gas_fuel_by_zone": {
+        "NYC": 2.074,
+        "Long_Island": 2.772,
+        "Capital_Hudson": 2.78
+      },
+      "nyc_ct_peaker_ldc_index_mean": 4.895,
+      "price_formation": {
+        "zones": {
+          "Upstate_West": {
+            "actual_mean": 33.08,
+            "model_mean": 34.64,
+            "model_minus_actual": 1.56
+          },
+          "Capital_Hudson": {
+            "actual_mean": 36.63,
+            "model_mean": 37.64,
+            "model_minus_actual": 1.01
+          },
+          "Lower_Hudson": {
+            "actual_mean": 37.64,
+            "model_mean": 38.34,
+            "model_minus_actual": 0.71
+          },
+          "NYC": {
+            "actual_mean": 39.54,
+            "model_mean": 38.8,
+            "model_minus_actual": -0.74
+          },
+          "Long_Island": {
+            "actual_mean": 42.26,
+            "model_mean": 39.39,
+            "model_minus_actual": -2.88
+          }
+        },
+        "spreads": {
+          "NYC-Capital_Hudson": {
+            "actual": 2.91,
+            "model": 1.16
+          },
+          "Long_Island-Capital_Hudson": {
+            "actual": 5.63,
+            "model": 1.75
+          },
+          "Long_Island-NYC": {
+            "actual": 2.72,
+            "model": 0.59
+          },
+          "NYC-Upstate_West": {
+            "actual": 6.46,
+            "model": 4.16
+          }
+        }
+      },
+      "in_merit_ladder": [
+        {
+          "plant_code": 2500,
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "mc_committed": 39.64,
+          "S0_model_offer_vs_model_price": 0.469,
+          "S1_model_offer_vs_actual_price": 0.382,
+          "S2_reference_basis_vs_model_price": 0.102,
+          "model_on_share": 0.992,
+          "campd_on_share": 0.49,
+          "model_twh": 2.436,
+          "campd_twh": 0.681
+        },
+        {
+          "plant_code": 2490,
+          "name": "Arthur Kill",
+          "zone": "NYC",
+          "mc_committed": 40.37,
+          "S0_model_offer_vs_model_price": 0.397,
+          "S1_model_offer_vs_actual_price": 0.353,
+          "S2_reference_basis_vs_model_price": 0.101,
+          "model_on_share": 1.0,
+          "campd_on_share": 0.784,
+          "model_twh": 2.132,
+          "campd_twh": 1.353
+        },
+        {
+          "plant_code": 8906,
+          "name": "Astoria",
+          "zone": "NYC",
+          "mc_committed": 42.23,
+          "S0_model_offer_vs_model_price": 0.311,
+          "S1_model_offer_vs_actual_price": 0.308,
+          "S2_reference_basis_vs_model_price": 0.077,
+          "model_on_share": 0.704,
+          "campd_on_share": 0.69,
+          "model_twh": 0.656,
+          "campd_twh": 0.924
+        },
+        {
+          "plant_code": 2516,
+          "name": "Northport",
+          "zone": "Long_Island",
+          "mc_committed": 47.11,
+          "S0_model_offer_vs_model_price": 0.14,
+          "S1_model_offer_vs_actual_price": 0.226,
+          "S2_reference_basis_vs_model_price": 0.138,
+          "model_on_share": 0.989,
+          "campd_on_share": 0.999,
+          "model_twh": 2.14,
+          "campd_twh": 3.916
+        },
+        {
+          "plant_code": 2511,
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "mc_committed": 46.55,
+          "S0_model_offer_vs_model_price": 0.163,
+          "S1_model_offer_vs_actual_price": 0.234,
+          "S2_reference_basis_vs_model_price": 0.163,
+          "model_on_share": 0.992,
+          "campd_on_share": 0.898,
+          "model_twh": 0.788,
+          "campd_twh": 1.137
+        },
+        {
+          "plant_code": 2517,
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "mc_committed": 51.67,
+          "S0_model_offer_vs_model_price": 0.095,
+          "S1_model_offer_vs_actual_price": 0.174,
+          "S2_reference_basis_vs_model_price": 0.094,
+          "model_on_share": 0.276,
+          "campd_on_share": 0.279,
+          "model_twh": 0.166,
+          "campd_twh": 0.287
+        },
+        {
+          "plant_code": 2625,
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "mc_committed": 44.84,
+          "S0_model_offer_vs_model_price": 0.132,
+          "S1_model_offer_vs_actual_price": 0.188,
+          "S2_reference_basis_vs_model_price": 0.132,
+          "model_on_share": 0.118,
+          "campd_on_share": 0.266,
+          "model_twh": 0.439,
+          "campd_twh": 1.354
+        },
+        {
+          "plant_code": 8006,
+          "name": "Roseton",
+          "zone": "Capital_Hudson",
+          "mc_committed": 47.72,
+          "S0_model_offer_vs_model_price": 0.091,
+          "S1_model_offer_vs_actual_price": 0.149,
+          "S2_reference_basis_vs_model_price": 0.091,
+          "model_on_share": 0.029,
+          "campd_on_share": 0.083,
+          "model_twh": 0.123,
+          "campd_twh": 0.256
+        },
+        {
+          "plant_code": 2480,
+          "name": "Danskammer",
+          "zone": "Capital_Hudson",
+          "mc_committed": 49.5,
+          "S0_model_offer_vs_model_price": 0.076,
+          "S1_model_offer_vs_actual_price": 0.131,
+          "S2_reference_basis_vs_model_price": 0.076,
+          "model_on_share": 0.079,
+          "campd_on_share": 0.025,
+          "model_twh": 0.035,
+          "campd_twh": 0.02
+        }
+      ],
+      "ex_ante_nyc_steam_ldc_arm": {
+        "shift_usd_mmbtu_mean": 2.821,
+        "plants": [
+          {
+            "plant_code": 2500,
+            "name": "Ravenswood",
+            "mc_committed_keeper": 39.64,
+            "mc_committed_arm": 76.13,
+            "in_merit_keeper": 0.469,
+            "in_merit_arm": 0.006
+          },
+          {
+            "plant_code": 2490,
+            "name": "Arthur Kill",
+            "mc_committed_keeper": 40.37,
+            "mc_committed_arm": 73.57,
+            "in_merit_keeper": 0.397,
+            "in_merit_arm": 0.007
+          },
+          {
+            "plant_code": 8906,
+            "name": "Astoria",
+            "mc_committed_keeper": 42.23,
+            "mc_committed_arm": 77.69,
+            "in_merit_keeper": 0.311,
+            "in_merit_arm": 0.005
+          }
+        ],
+        "nyc_st_gas_model_twh": 5.224,
+        "nyc_st_gas_campd_twh": 2.958,
+        "nyc_st_gas_floor_energy_twh": 2.306,
+        "nyc_st_gas_floor_mean_mw": 263.0
+      }
+    },
+    "2025": {
+      "offer_anatomy": [
+        {
+          "plant_code": 2682,
+          "name": "",
+          "zone": "Upstate_West",
+          "cap_mw": 45.0,
+          "hr_cap_weighted": 14.529,
+          "hr_committed": 9.825,
+          "fuel_usd_mmbtu": 2.097,
+          "vom": 4.0,
+          "co2_plus_margin": 11.59,
+          "mc_cap_weighted": 46.06,
+          "mc_committed": 36.56
+        },
+        {
+          "plant_code": 2527,
+          "name": "",
+          "zone": "Upstate_West",
+          "cap_mw": 104.5,
+          "hr_cap_weighted": 16.08,
+          "hr_committed": 11.01,
+          "fuel_usd_mmbtu": 2.539,
+          "vom": 4.0,
+          "co2_plus_margin": 9.19,
+          "mc_cap_weighted": 54.01,
+          "mc_committed": 43.97
+        },
+        {
+          "plant_code": 2500,
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "cap_mw": 1724.8,
+          "hr_cap_weighted": 19.152,
+          "hr_committed": 12.906,
+          "fuel_usd_mmbtu": 3.705,
+          "vom": 4.0,
+          "co2_plus_margin": 2.2,
+          "mc_cap_weighted": 77.16,
+          "mc_committed": 61.67
+        },
+        {
+          "plant_code": 8906,
+          "name": "Astoria",
+          "zone": "NYC",
+          "cap_mw": 923.2,
+          "hr_cap_weighted": 18.67,
+          "hr_committed": 12.542,
+          "fuel_usd_mmbtu": 3.705,
+          "vom": 4.0,
+          "co2_plus_margin": 5.06,
+          "mc_cap_weighted": 78.24,
+          "mc_committed": 63.24
+        },
+        {
+          "plant_code": 2490,
+          "name": "Arthur Kill",
+          "zone": "NYC",
+          "cap_mw": 876.6,
+          "hr_cap_weighted": 17.488,
+          "hr_committed": 11.825,
+          "fuel_usd_mmbtu": 4.18,
+          "vom": 4.0,
+          "co2_plus_margin": 1.87,
+          "mc_cap_weighted": 78.97,
+          "mc_committed": 65.41
+        },
+        {
+          "plant_code": 2625,
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "cap_mw": 1159.6,
+          "hr_cap_weighted": 15.867,
+          "hr_committed": 10.695,
+          "fuel_usd_mmbtu": 5.056,
+          "vom": 4.0,
+          "co2_plus_margin": 3.92,
+          "mc_cap_weighted": 88.15,
+          "mc_committed": 69.7
+        },
+        {
+          "plant_code": 2511,
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "cap_mw": 372.2,
+          "hr_cap_weighted": 16.501,
+          "hr_committed": 11.1,
+          "fuel_usd_mmbtu": 5.056,
+          "vom": 4.0,
+          "co2_plus_margin": 5.53,
+          "mc_cap_weighted": 92.96,
+          "mc_committed": 73.85
+        },
+        {
+          "plant_code": 2516,
+          "name": "Northport",
+          "zone": "Long_Island",
+          "cap_mw": 1592.2,
+          "hr_cap_weighted": 16.929,
+          "hr_committed": 11.43,
+          "fuel_usd_mmbtu": 5.056,
+          "vom": 4.0,
+          "co2_plus_margin": 4.25,
+          "mc_cap_weighted": 93.85,
+          "mc_committed": 74.12
+        },
+        {
+          "plant_code": 8006,
+          "name": "Roseton",
+          "zone": "Capital_Hudson",
+          "cap_mw": 1222.0,
+          "hr_cap_weighted": 17.102,
+          "hr_committed": 11.498,
+          "fuel_usd_mmbtu": 5.056,
+          "vom": 4.0,
+          "co2_plus_margin": 4.75,
+          "mc_cap_weighted": 95.22,
+          "mc_committed": 75.43
+        },
+        {
+          "plant_code": 2480,
+          "name": "Danskammer",
+          "zone": "Capital_Hudson",
+          "cap_mw": 497.3,
+          "hr_cap_weighted": 17.514,
+          "hr_committed": 11.846,
+          "fuel_usd_mmbtu": 5.56,
+          "vom": 4.0,
+          "co2_plus_margin": 0.85,
+          "mc_cap_weighted": 102.23,
+          "mc_committed": 82.48
+        },
+        {
+          "plant_code": 2517,
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "cap_mw": 385.0,
+          "hr_cap_weighted": 19.314,
+          "hr_committed": 12.982,
+          "fuel_usd_mmbtu": 5.056,
+          "vom": 4.0,
+          "co2_plus_margin": 3.39,
+          "mc_cap_weighted": 105.05,
+          "mc_committed": 82.7
+        }
+      ],
+      "st_gas_fuel_by_zone": {
+        "NYC": 3.864,
+        "Long_Island": 5.056,
+        "Capital_Hudson": 5.224
+      },
+      "nyc_ct_peaker_ldc_index_mean": 7.661,
+      "price_formation": {
+        "zones": {
+          "Upstate_West": {
+            "actual_mean": 55.51,
+            "model_mean": 53.44,
+            "model_minus_actual": -2.08
+          },
+          "Capital_Hudson": {
+            "actual_mean": 62.7,
+            "model_mean": 58.74,
+            "model_minus_actual": -3.97
+          },
+          "Lower_Hudson": {
+            "actual_mean": 63.75,
+            "model_mean": 59.56,
+            "model_minus_actual": -4.19
+          },
+          "NYC": {
+            "actual_mean": 67.15,
+            "model_mean": 60.15,
+            "model_minus_actual": -7.0
+          },
+          "Long_Island": {
+            "actual_mean": 70.34,
+            "model_mean": 60.66,
+            "model_minus_actual": -9.68
+          }
+        },
+        "spreads": {
+          "NYC-Capital_Hudson": {
+            "actual": 4.45,
+            "model": 1.41
+          },
+          "Long_Island-Capital_Hudson": {
+            "actual": 7.64,
+            "model": 1.92
+          },
+          "Long_Island-NYC": {
+            "actual": 3.19,
+            "model": 0.51
+          },
+          "NYC-Upstate_West": {
+            "actual": 11.64,
+            "model": 6.71
+          }
+        }
+      },
+      "in_merit_ladder": [
+        {
+          "plant_code": 2500,
+          "name": "Ravenswood",
+          "zone": "NYC",
+          "mc_committed": 61.67,
+          "S0_model_offer_vs_model_price": 0.466,
+          "S1_model_offer_vs_actual_price": 0.421,
+          "S2_reference_basis_vs_model_price": 0.092,
+          "model_on_share": 0.841,
+          "campd_on_share": 0.365,
+          "model_twh": 1.913,
+          "campd_twh": 1.07
+        },
+        {
+          "plant_code": 2490,
+          "name": "Arthur Kill",
+          "zone": "NYC",
+          "mc_committed": 65.41,
+          "S0_model_offer_vs_model_price": 0.504,
+          "S1_model_offer_vs_actual_price": 0.435,
+          "S2_reference_basis_vs_model_price": 0.122,
+          "model_on_share": 0.912,
+          "campd_on_share": 0.869,
+          "model_twh": 1.922,
+          "campd_twh": 2.16
+        },
+        {
+          "plant_code": 8906,
+          "name": "Astoria",
+          "zone": "NYC",
+          "mc_committed": 63.24,
+          "S0_model_offer_vs_model_price": 0.394,
+          "S1_model_offer_vs_actual_price": 0.379,
+          "S2_reference_basis_vs_model_price": 0.072,
+          "model_on_share": 0.734,
+          "campd_on_share": 0.756,
+          "model_twh": 1.152,
+          "campd_twh": 1.354
+        },
+        {
+          "plant_code": 2516,
+          "name": "Northport",
+          "zone": "Long_Island",
+          "mc_committed": 74.12,
+          "S0_model_offer_vs_model_price": 0.147,
+          "S1_model_offer_vs_actual_price": 0.249,
+          "S2_reference_basis_vs_model_price": 0.116,
+          "model_on_share": 0.978,
+          "campd_on_share": 0.997,
+          "model_twh": 2.444,
+          "campd_twh": 4.307
+        },
+        {
+          "plant_code": 2511,
+          "name": "E F Barrett",
+          "zone": "Long_Island",
+          "mc_committed": 73.85,
+          "S0_model_offer_vs_model_price": 0.154,
+          "S1_model_offer_vs_actual_price": 0.251,
+          "S2_reference_basis_vs_model_price": 0.117,
+          "model_on_share": 0.978,
+          "campd_on_share": 0.946,
+          "model_twh": 0.805,
+          "campd_twh": 1.035
+        },
+        {
+          "plant_code": 2517,
+          "name": "Port Jefferson",
+          "zone": "Long_Island",
+          "mc_committed": 82.7,
+          "S0_model_offer_vs_model_price": 0.05,
+          "S1_model_offer_vs_actual_price": 0.199,
+          "S2_reference_basis_vs_model_price": 0.037,
+          "model_on_share": 0.143,
+          "campd_on_share": 0.343,
+          "model_twh": 0.128,
+          "campd_twh": 0.308
+        },
+        {
+          "plant_code": 2625,
+          "name": "Bowline Point",
+          "zone": "Capital_Hudson",
+          "mc_committed": 69.7,
+          "S0_model_offer_vs_model_price": 0.186,
+          "S1_model_offer_vs_actual_price": 0.234,
+          "S2_reference_basis_vs_model_price": 0.186,
+          "model_on_share": 0.205,
+          "campd_on_share": 0.403,
+          "model_twh": 0.694,
+          "campd_twh": 2.061
+        },
+        {
+          "plant_code": 8006,
+          "name": "Roseton",
+          "zone": "Capital_Hudson",
+          "mc_committed": 75.43,
+          "S0_model_offer_vs_model_price": 0.089,
+          "S1_model_offer_vs_actual_price": 0.191,
+          "S2_reference_basis_vs_model_price": 0.089,
+          "model_on_share": 0.102,
+          "campd_on_share": 0.268,
+          "model_twh": 0.432,
+          "campd_twh": 0.724
+        },
+        {
+          "plant_code": 2480,
+          "name": "Danskammer",
+          "zone": "Capital_Hudson",
+          "mc_committed": 82.48,
+          "S0_model_offer_vs_model_price": 0.081,
+          "S1_model_offer_vs_actual_price": 0.182,
+          "S2_reference_basis_vs_model_price": 0.081,
+          "model_on_share": 0.085,
+          "campd_on_share": 0.033,
+          "model_twh": 0.028,
+          "campd_twh": 0.028
+        }
+      ],
+      "ex_ante_nyc_steam_ldc_arm": {
+        "shift_usd_mmbtu_mean": 3.797,
+        "plants": [
+          {
+            "plant_code": 2500,
+            "name": "Ravenswood",
+            "mc_committed_keeper": 61.67,
+            "mc_committed_arm": 112.72,
+            "in_merit_keeper": 0.466,
+            "in_merit_arm": 0.012
+          },
+          {
+            "plant_code": 2490,
+            "name": "Arthur Kill",
+            "mc_committed_keeper": 65.41,
+            "mc_committed_arm": 106.56,
+            "in_merit_keeper": 0.504,
+            "in_merit_arm": 0.013
+          },
+          {
+            "plant_code": 8906,
+            "name": "Astoria",
+            "mc_committed_keeper": 63.24,
+            "mc_committed_arm": 112.85,
+            "in_merit_keeper": 0.394,
+            "in_merit_arm": 0.012
+          }
+        ],
+        "nyc_st_gas_model_twh": 4.987,
+        "nyc_st_gas_campd_twh": 4.584,
+        "nyc_st_gas_floor_energy_twh": 1.671,
+        "nyc_st_gas_floor_mean_mw": 191.0
+      }
+    }
+  }
+}
