@@ -12330,3 +12330,103 @@ the `ra-import-allocations` intake, `scripts/probes/_caiso245_{allocation_split,
 `caiso_firm_selfsched_floor`.
 
 **Next number: caiso-246.**
+
+## caiso-246 (2026-09-05) — the 2025 hub-overlay COVERAGE GAP was a GATE ARTIFACT (EIA N3050CA3 published NA for Sep–Nov 2025 while the daily spot the keeper prices gas at had 21/22/12 prints); the arm covers those months on their own prints, every pre-registered gate PASSES, the F923 fallback has 0 reachable months in the training window and D3 closes by consequence — PROMOTED; three of six post-solve predictions FALSIFIED and reported
+
+**Keeper `2026-09-04-caiso-243-b1-f923` → `2026-09-05-caiso-246-b1-spot`**
+(bundle `caiso246_b1_spot_coverage`, `git_sha 900402b`). Determination
+**UNCHANGED at NOT-YET**: C1 12/12 free 8/8, C2/C3b/C4 PASS, C3c the single
+ledgered caveat (2023/2024; 2025 PASSES at 0 h), C6 attested, C8 PASS, DOF
+ledger 9 entries / 6 residual (unchanged). C3a the sole load-bearing FAIL
+**+3.9 / +12.3 / +11.4 %** (2025 from +14.4; no verdict flips). **ONE bundle,
+three years, one invocation; NO control solve spent** (G-CTRL form 2). No
+`complete`/`final` marker; freeze ACTIVE; 2023–2025 only.
+
+**Two sessions, one number.** The first caiso-246 session (2026-09-04)
+pre-registered the object (`PRECOMMIT-caiso246-spot-coverage-2026-09-04.md`,
+`4f573fe`, pushed before the arm was coded), coded and gated the arm
+(`82c162e`: `ScenarioConfig.caiso_citygate_spot_coverage`, CLI, replay
+override, cache key, unit test, matrix row + six cells), measured G-STRUCT and
+the envelope pre-solve (`1e388cb`), wrote the scorer and attestation generator
+(`33d04b0`), started the B1 solve and checkpointed 2023 before it stopped
+(`25abe52`). This session dropped that partial sidecar set (`20a47b5`) and
+re-solved 2023 2024 2025 fresh in ONE invocation on `--replay-bundle
+caiso243_b1_f923_fallback_guard` + the single flag.
+
+**THE OBJECT** (queue item C of caiso-244/245): the keeper prices CAISO gas
+at the **measured daily CA-composite citygate spot** (`caiso_citygate_spot_level`,
+caiso-84), but a month counted as covered only where the EIA **N3050CA3
+monthly survey** carried a basis row — and EIA publishes it as **NA for
+2025-09/10/11** (committed evidence: `data/raw/gas-prices/eia_citygate_CA_monthly.csv`
++ the fetched xls). Under `spot_level` the survey VALUE is never used where
+prints exist; the row was **a gate and nothing else**, and the three months it
+withheld fell to the F923 plant layer (caiso-242 §5, caiso-243's object, D3,
+the autumn-2025 slab). **The arm** admits a month on its own daily prints
+(day series built exactly as every other spot-level month; +0.46 transport
+adder layered as today). **Zero new numbers, zero free parameters** (rule 21);
+rule 14 measured spot over the F923 gap-fill; rule 19 one mechanism reaching
+the months it was designed for; rule 25 CAISO-only; backcast-only by
+construction.
+
+**EVERY PRE-REGISTERED GATE PASSES** (`_caiso246_arm_vs_keeper.json`,
+FINDING §2): G-SOURCE (NA cells committed); G-STRUCT at HOURLY grain — 1,453
+gas rows / 29,277.8 MW in Sep/Oct/Nov 2025 ONLY, **0 cells outside those
+months, 0 non-gas, 0 rows in 2023/2024**; G-CTRL **form 2** with 2023 and 2024
+reproducing the keeper at **0.0 TWh in every class, 0.0 $/MWh, zonal price
+arrays bit-identical**; G-INERT; the G-C3a ENVELOPE leg (2025 **−0.9988
+$/MWh** inside the registered two-sided [−3.1376, +0.1849]; 2023/2024 exactly
+0); verdict identity on every scored criterion. Live-solve cross-check: the
+2025 overlay line reads **12/12 months** (keeper 9/12); 2023/2024 lines
+identical to the keeper's.
+
+**THE STRUCTURAL RESULT, THE PROMOTION BASIS (C3a EXCLUDED by
+pre-registration):** the keeper's own designed mechanism — marginal gas at
+the measured daily spot — reaches every month of the training window; the
+F923 nearby-fallback layer has **zero reachable months in 36**; plant 55077's
+own $96.161/MMBtu November row (D3, 0.27 TWh) is overwritten by the overlay at
+$3.76 — closed by consequence, never by a cut. Nov-2025 capacity-weighted CA
+gas 5.57 → **3.76 $/MMBtu**.
+
+**THE DISPATCH RESPONSE, 2025:** CC_REGULAR **+1.467 TWh** (Sep/Oct/Nov +447 /
++846 / +450 GWh), import (gross) **−1.531**, ST_GAS +0.025, CC_CHP +0.020,
+CT_PEAKER +0.012. Load-weighted price 39.36 → 38.36 $/MWh (actual 34.42);
+required move −1.498 → **≈ −0.50**. Model−actual RT: Sep +5.76 → +2.88, Oct
++7.69 → +2.44, Nov +3.13 → **+0.26**; December +9.20 → +8.60.
+
+**PREDICTIONS: 2/2 pre-solve HOLD; post-solve 3 HOLD, 3 FALSIFIED** — P-3
+(ΔC3a-2025 ∈ [−1.0, −0.2]) holds by **0.0012** and is reported as a near-miss
+on the large side; P-4 and P-7 hold. **P-5 FALSIFIED** on two legs: CC_REGULAR
+rose **3.3× caiso-243's** response (+1.467 vs a +0.3–1.0 window) and
+CT_PEAKER ROSE (+0.012) rather than fell; the imports-fall-more leg holds
+(−1.531). **P-6 FALSIFIED on its December leg**: December moved **−0.60**
+against a ≤ 0.3 registration WITH NO FUEL-INPUT CHANGE IN DECEMBER (hourly
+G-STRUCT: 0 cells) — the carrier is **storage**, measured: monthly discharge
+arm−keeper **Jan +43, Aug +91, Sep −23, Oct −261, Nov −94, Dec +235 GWh**,
+hydro flat; the LP moves battery cycling out of the now-cheaper autumn across
+the cyclic SOC boundary and the December discharge displaces gas at the
+margin. The December slab (+8.60 remaining) is still NOT this object;
+caiso-245 §3's reading stands. **P-8 FALSIFIED**: import-marginal share 23.01
+→ 23.62 % (+0.61, not ≥ 1).
+
+**DISCLOSED:** the FIFTH consecutive favourable direction (caiso-241 → -246),
+declared as the hazard in PRECOMMIT §0.6 and never argued from; the
+under-registered CC elasticity (an estimator miss, not re-fitted); imports
+falling by more than CC rises (the caiso-243 §7.1 displacement at 3.2×,
+landing on the north firm block, not here).
+
+**DO-NOT-REDO adds (FINDING §8):** the 2025 coverage gap is CLOSED — never
+re-propose an F923-side repair for Sep–Nov 2025; never predict a month-scoped
+fuel arm leaves adjacent months at 0.000 (storage coupling); never quote
+caiso-243's +0.442 TWh as the CC elasticity to a repricing.
+
+**Owner asks carried (FINDING §7):** the EIA-NA back-fill question for the
+other lanes (rule 25); storage cross-month coupling as a standing caveat for
+month-scoped predictions; caiso-245 §8, caiso-244 asks E/F, caiso-243 §9 5–7.
+
+**Deliverables:** `FINDING-caiso246-spot-coverage-2026-09-05.md`, run
+`2026-09-05-caiso-246-b1-spot` (**keeper**), `_caiso246_arm_vs_keeper.json`,
+the bundle's `_verdict.json`, matrix cell `caiso_citygate_spot_coverage` → K
++ CAISO shard re-stamp + §5.2 header, keeper shard + `status/CAISO.js`, the
+forecast board's gate-(a) re-key (R-T).
+
+**Next number: caiso-247.**
