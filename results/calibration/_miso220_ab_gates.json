@@ -1,0 +1,259 @@
+{
+  "probe": "miso-220 A/B gates - non-steam fossil x1.10 offer lift",
+  "prereg": "results/calibration/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md",
+  "control": "results/calibration/miso217_intermphys_B",
+  "arm": "results/calibration/miso220_nonsteamlift_B",
+  "kills": {
+    "K1_c1_pass_to_fail": {
+      "fired": false,
+      "flips": []
+    },
+    "K2_c3a_out_of_band": {
+      "fired": false,
+      "years": [],
+      "c3a": {
+        "2023": 7.1537,
+        "2024": 3.3746,
+        "2025": -6.9952
+      }
+    },
+    "K3_st_gas_2024_not_improved": {
+      "fired": false,
+      "arm": -5.035,
+      "control": -7.155
+    },
+    "K4_governance_unattested": {
+      "fired": false,
+      "status": "PASS"
+    },
+    "K5_determination_worse": {
+      "fired": false,
+      "determination": "CALIBRATED",
+      "reasons": [
+        "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+      ]
+    }
+  },
+  "predictions": {
+    "P1_passthrough_pct": {
+      "value": {
+        "2023": 5.9922,
+        "2024": 6.4393,
+        "2025": 6.0446
+      },
+      "band": [
+        5.5,
+        7.5
+      ],
+      "held": true
+    },
+    "P2a_all_c3a_in_band": {
+      "value": {
+        "2023": 7.1537,
+        "2024": 3.3746,
+        "2025": -6.9952
+      },
+      "held": true
+    },
+    "P2b_c3a_2025": {
+      "value": -6.9952,
+      "band": [
+        -8.0,
+        -5.0
+      ],
+      "held": true
+    },
+    "P2c_c3a_2023": {
+      "value": 7.1537,
+      "band": [
+        6.5,
+        9.0
+      ],
+      "held": true
+    },
+    "P3_st_gas_2024": {
+      "value": -5.035,
+      "band": [
+        -6.8,
+        -5.0
+      ],
+      "control": -7.155,
+      "improved_vs_control": true,
+      "held": true
+    },
+    "P4_ct_peaker_2023": {
+      "value": -7.985,
+      "band": [
+        -8.5,
+        -7.0
+      ],
+      "exited_band": false,
+      "held": true
+    },
+    "P5_cc_regular_2024": {
+      "value": 6.1,
+      "band": [
+        5.5,
+        7.5
+      ],
+      "held": true
+    },
+    "P6_tail_unchanged": {
+      "control": {
+        "None|2023": {
+          "model": 3.0,
+          "actual": 30.0,
+          "status": "CAVEAT"
+        },
+        "da_diagnostic|2023": {
+          "model": 3.0,
+          "actual": 1.0,
+          "status": "SKIPPED"
+        },
+        "None|2024": {
+          "model": 7.0,
+          "actual": 37.0,
+          "status": "CAVEAT"
+        },
+        "da_diagnostic|2024": {
+          "model": 7.0,
+          "actual": 24.0,
+          "status": "SKIPPED"
+        },
+        "None|2025": {
+          "model": 0.0,
+          "actual": 88.0,
+          "status": "CAVEAT"
+        },
+        "da_diagnostic|2025": {
+          "model": 0.0,
+          "actual": 38.0,
+          "status": "SKIPPED"
+        }
+      },
+      "arm": {
+        "None|2023": {
+          "model": 3.0,
+          "actual": 30.0,
+          "status": "CAVEAT"
+        },
+        "da_diagnostic|2023": {
+          "model": 3.0,
+          "actual": 1.0,
+          "status": "SKIPPED"
+        },
+        "None|2024": {
+          "model": 7.0,
+          "actual": 37.0,
+          "status": "CAVEAT"
+        },
+        "da_diagnostic|2024": {
+          "model": 7.0,
+          "actual": 24.0,
+          "status": "SKIPPED"
+        },
+        "None|2025": {
+          "model": 0.0,
+          "actual": 88.0,
+          "status": "CAVEAT"
+        },
+        "da_diagnostic|2025": {
+          "model": 0.0,
+          "actual": 38.0,
+          "status": "SKIPPED"
+        }
+      },
+      "note": "pre-committed as a NON-claim; no tail claim is made from this arm"
+    },
+    "P7_c8": {
+      "ct_peaker": {
+        "control": {
+          "2023": 0.228,
+          "2024": 0.1573,
+          "2025": 0.1319
+        },
+        "arm": {
+          "2023": 0.2652,
+          "2024": 0.1833,
+          "2025": 0.1528
+        }
+      },
+      "st_gas": {
+        "control": {
+          "2023": 0.1479,
+          "2024": 0.1555,
+          "2025": 0.207
+        },
+        "arm": {
+          "2023": 0.1164,
+          "2024": 0.1289,
+          "2025": 0.1698
+        }
+      }
+    }
+  },
+  "c1_control": {
+    "CC_REGULAR|2023": -2.288,
+    "CC_CHP|2023": -0.914,
+    "CT_PEAKER|2023": -5.934,
+    "ST_GAS|2023": -2.402,
+    "ST_CHP|2023": -2.861,
+    "COAL_PRB|2023": 1.071,
+    "COAL_LIGNITE|2023": -0.568,
+    "COAL_BIT|2023": -2.272,
+    "CC_REGULAR|2024": 7.947,
+    "CC_CHP|2024": 0.417,
+    "CT_PEAKER|2024": -3.634,
+    "ST_GAS|2024": -7.155,
+    "ST_CHP|2024": -2.869,
+    "COAL_PRB|2024": -2.159,
+    "COAL_LIGNITE|2024": -0.744,
+    "COAL_BIT|2024": -3.39,
+    "CC_REGULAR|2025": -2.061,
+    "CC_CHP|2025": 1.787,
+    "CT_PEAKER|2025": -3.276,
+    "ST_GAS|2025": -5.82,
+    "ST_CHP|2025": -2.184,
+    "COAL_PRB|2025": -4.231,
+    "COAL_LIGNITE|2025": -0.726,
+    "COAL_BIT|2025": -1.465
+  },
+  "c1_arm": {
+    "CC_REGULAR|2023": -4.172,
+    "CC_CHP|2023": -1.684,
+    "CT_PEAKER|2023": -7.985,
+    "ST_GAS|2023": 0.543,
+    "ST_CHP|2023": -2.673,
+    "COAL_PRB|2023": -1.557,
+    "COAL_LIGNITE|2023": -0.665,
+    "COAL_BIT|2023": -2.923,
+    "CC_REGULAR|2024": 6.1,
+    "CC_CHP|2024": -0.226,
+    "CT_PEAKER|2024": -6.108,
+    "ST_GAS|2024": -5.035,
+    "ST_CHP|2024": -2.715,
+    "COAL_PRB|2024": -3.513,
+    "COAL_LIGNITE|2024": -0.778,
+    "COAL_BIT|2024": -3.732,
+    "CC_REGULAR|2025": -3.557,
+    "CC_CHP|2025": 1.013,
+    "CT_PEAKER|2025": -5.403,
+    "ST_GAS|2025": -3.826,
+    "ST_CHP|2025": -1.994,
+    "COAL_PRB|2025": -5.977,
+    "COAL_LIGNITE|2025": -0.774,
+    "COAL_BIT|2025": -2.403
+  },
+  "c3a_control": {
+    "2023": 1.0959,
+    "2024": -2.8793,
+    "2025": -12.2965
+  },
+  "c3a_arm": {
+    "2023": 7.1537,
+    "2024": 3.3746,
+    "2025": -6.9952
+  },
+  "promotion_rule": "K1,K2,K4,K5 all silent AND |C3a-2025| <= 10%",
+  "verdict": "PROMOTE"
+}
