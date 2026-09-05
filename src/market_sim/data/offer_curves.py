@@ -150,6 +150,63 @@ def split_gas_tranches(
 # ---------------------------------------------------------------------------
 
 
+#: Parent gas class -> the duty-split ``*_INTERMEDIATE`` curve it routes to.
+#: The parent is the class whose registered ``phys_*`` keys the intermediate
+#: cohort borrows under ``miso_intermediate_gas_offer_margin`` (miso-217).
+_INTERMEDIATE_PHYS_PARENT: dict[str, str] = {
+    "CT_INTERMEDIATE": "CT_PEAKER",
+    "CC_INTERMEDIATE": "CC_REGULAR",
+    "ST_GAS_INTERMEDIATE": "ST_GAS",
+}
+
+#: The ONLY bands whose physical basis is borrowed. Econ-only by design
+#: (miso-217 PREREG §2): ``phys_peak`` would replace a deliberate fuel-scaled
+#: scarcity wall with a fixed margin and LOWER the cohorts' peak offers by
+#: $10-39/MWh in years where C3c is already the single ledgered caveat, and
+#: ``phys_committed`` clips to 0 on two of the three cohorts anyway.
+_INTERMEDIATE_PHYS_KEYS: tuple[str, ...] = ("phys_econ_low", "phys_econ_high")
+
+
+def _with_intermediate_phys(
+    inter: dict[str, float], inter_key: str, config: ScenarioConfig
+) -> dict[str, float]:
+    """Return ``inter`` with the PARENT class's ``phys_econ_*`` keys merged on.
+
+    The ``gas_offer_net_revenue_margin`` coverage repair (miso-217; the gap
+    measured at miso-215 §2). ``backcast_config`` merges ``phys_*`` onto exactly
+    five gas classes, so a duty-split ``*_INTERMEDIATE`` curve carries none and
+    :func:`gas_offer_margin_markup_mult` returns its rule-24 neutral 0.0 for
+    every band — the mechanism skips the cohort and its offer stays in the fully
+    fuel-scaled multiplier form the mechanism exists to replace.
+
+    Gated on ``config.miso_intermediate_gas_offer_margin`` AND ``iso == "MISO"``
+    (rule 25 [R-ISO-SCOPE] — PJM and CAISO share the gap in kind and it is their
+    lanes' to adjudicate). No value is computed: the merged keys are the parent
+    class's own already-registered, already-frozen p50s, so the repair carries
+    ZERO free parameters (rule 21 [R-DOF]). A key the intermediate curve already
+    carries is never overwritten, and a parent that carries none is a no-op.
+
+    Returns a COPY whenever it merges — ``config.offer_curve_by_group`` is the
+    recorded config and must never be mutated through this read path. Returns
+    ``inter`` itself (same object) when the gate is off, so the flag-off path is
+    byte-identical.
+    """
+    if not getattr(config, "miso_intermediate_gas_offer_margin", False):
+        return inter
+    if str(getattr(config, "iso", "ERCOT")) != "MISO":
+        return inter
+    parent = (getattr(config, "offer_curve_by_group", None) or {}).get(
+        _INTERMEDIATE_PHYS_PARENT[inter_key]
+    )
+    if not parent:
+        return inter
+    add = {k: parent[k] for k in _INTERMEDIATE_PHYS_KEYS
+           if k in parent and k not in inter}
+    if not add:
+        return inter
+    return {**inter, **add}
+
+
 def _offer_curve_for_group(
     group: str, plant_code: int, config: ScenarioConfig
 ) -> dict[str, float] | None:
@@ -174,6 +231,14 @@ def _offer_curve_for_group(
     the flatter ``CC_INTERMEDIATE`` curve, whose econ ramp matches a committed
     CC's near-flat full-load incremental cost (the duct-burner peak band is
     unchanged).
+
+    Under ``config.miso_intermediate_gas_offer_margin`` (MISO-gated, default
+    off) each of the three ``*_INTERMEDIATE`` curves comes back as a COPY
+    carrying its PARENT class's registered ``phys_econ_low`` /
+    ``phys_econ_high`` — see :func:`_with_intermediate_phys`. Without it those
+    curves carry no ``phys_*`` keys at all, so
+    :func:`gas_offer_margin_markup_mult` returns its rule-24 neutral 0.0 and
+    ``gas_offer_net_revenue_margin`` silently skips the whole cohort.
     """
     from market_sim.data.coal import coal_supply_class
     from market_sim.data.fleet import (
@@ -203,7 +268,7 @@ def _offer_curve_for_group(
         ):
             inter = curves.get("ST_GAS_INTERMEDIATE")
             if inter:
-                return inter
+                return _with_intermediate_phys(inter, "ST_GAS_INTERMEDIATE", config)
     if group == "CT_PEAKER" and getattr(config, "ct_intermediate_split", False):
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "ct_intermediate_cf_threshold", 50.0))
@@ -215,7 +280,7 @@ def _offer_curve_for_group(
         ):
             inter = curves.get("CT_INTERMEDIATE")
             if inter:
-                return inter
+                return _with_intermediate_phys(inter, "CT_INTERMEDIATE", config)
     if group == "CC_REGULAR" and getattr(config, "cc_intermediate_split", False):
         iso = str(getattr(config, "iso", "ERCOT"))
         thr = float(getattr(config, "cc_intermediate_cf_threshold", 50.0))
@@ -227,7 +292,7 @@ def _offer_curve_for_group(
         ):
             inter = curves.get("CC_INTERMEDIATE")
             if inter:
-                return inter
+                return _with_intermediate_phys(inter, "CC_INTERMEDIATE", config)
     return curves.get(group) or None
 
 
