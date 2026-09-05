@@ -421,6 +421,65 @@ def _aggregate_pass_timing(final: "EnergySolveResult") -> "dict":
     }
 
 
+def _p1_storage_cost_identical(
+    candidate: np.ndarray,
+    pass1_override: "np.ndarray | None",
+    dispatch_kwargs: dict,
+) -> bool:
+    """Is an adaptive pass's P1 storage discharge cost the one pass 1 solved with?
+
+    The exact-equality guard of PERF-B session 3 charter item C-1a. An
+    adaptive-expectation pass (ercot-221) re-runs :func:`run_energy_solve`
+    with every argument the SAME OBJECT as pass 1's except
+    ``p1_storage_discharge_cost``. That array is the ONLY thing that can
+    differ between the two LPs, and ``lp.costs.build_cost_vector`` writes it
+    into the discharge columns elementwise — a static ``(n_storage,)`` /
+    scalar cost broadcast across hours, an hourly ``(n_storage, T)`` cost
+    transposed — so two costs that are elementwise equal after broadcasting
+    produce the identical cost vector on the identical matrix. When that
+    holds, the pass would hand HiGHS the LP pass 1 already solved and pass 1's
+    result IS the answer; the caller skips the pass.
+
+    Exact ``np.array_equal`` — no tolerance, no ``isclose``: the claim is
+    identity of the LP, not proximity, so the guard must be an equality. NaN
+    anywhere reads as not-identical (``array_equal`` semantics), which is the
+    conservative side.
+
+    Args:
+        candidate: The adaptive pass's ``(n_storage, T)`` discharge cost.
+        pass1_override: Pass 1's own ``p1_storage_discharge_cost`` (the
+            ercot-219 reservation offer) or ``None`` when pass 1 solved on
+            the kwargs default.
+        dispatch_kwargs: The shared LP kwargs; ``storage_discharge_cost`` is
+            what pass 1's P1 used when ``pass1_override`` is ``None`` (the
+            LP default ``0.0`` if the key is absent, mirroring
+            ``solve_dispatch``'s signature default).
+
+    Returns:
+        ``True`` iff ``candidate`` equals pass 1's resolved cost at every
+        ``(unit, hour)``.
+    """
+    cand = np.asarray(candidate, dtype=float)
+    base = (
+        pass1_override
+        if pass1_override is not None
+        else dispatch_kwargs.get("storage_discharge_cost", 0.0)
+    )
+    base = np.asarray(base, dtype=float)
+    try:
+        if base.ndim == 2:
+            ref = base
+        else:
+            # Static per-unit (n_storage,) or scalar: broadcast across hours
+            # exactly as build_cost_vector does (rows = units, cols = hours).
+            ref = np.broadcast_to(
+                base.reshape(-1, 1) if base.ndim == 1 else base, cand.shape
+            )
+    except ValueError:
+        return False
+    return cand.shape == ref.shape and bool(np.array_equal(cand, ref))
+
+
 def run_year(
     year: int,
     iso: str,
@@ -5686,43 +5745,72 @@ def run_year(
 
         _s_m, _p_hat, _floor_t, _settle_t = _ercot_adaptive_floor(energy_solve.p1)
         _adaptive_cost = np.maximum(_vom_s, _floor_t[None, :])
+        # PERF-B session 3, charter C-1a: pass 2 solves the SAME LP as pass 1
+        # — same fleet, demand, kwargs, base cost and hooks (every argument
+        # below is the same object pass 1 received) — and differs ONLY in the
+        # P1 storage discharge objective, ``_adaptive_cost`` against the cost
+        # pass 1's P1 actually solved with (``p1_storage_discharge_cost`` when
+        # set, else the kwargs default ``storage_discharge_cost``, which is
+        # what ``lp.costs.build_cost_vector`` broadcast). When the two are
+        # ELEMENTWISE EQUAL (exact ``np.array_equal``, no tolerance — a unit
+        # whose VOM sits below the fleet-max VOM is why the ``floor > vom``
+        # counter on the log line is a symptom, never the test) pass 2 would
+        # hand HiGHS the identical cost vector on the identical matrix, so
+        # pass 1's EnergySolveResult IS what pass 2 would have produced, and
+        # the pass is skipped. In the ERCOT 2025 keeper year that pass was
+        # 926 s (half the year) for a bit-identical answer
+        # (docs/FINDING-perfb-s2-markup-attribution-2026-09.md §4.4); in 2023
+        # / 2024 the floor rises above VOM in hundreds of window hours and the
+        # guard stays down. The adaptive sidecar (s_model / p_hat / floor_t)
+        # is recorded either way — it describes the floor construction, which
+        # is unchanged by whether the LP had to be re-solved to apply it.
+        _pass2_identical = _p1_storage_cost_identical(
+            _adaptive_cost, p1_storage_discharge_cost, dispatch_kwargs
+        )
         logger.info(
             "ERCOT adaptive-expectation offer (%d): pass-1 model spike days "
-            "%d, P_hat max %.3f, floor > vom in %d of %d window hours; "
-            "re-solving P1 (pass 2, THE scored pass)",
+            "%d, P_hat max %.3f, floor > vom in %d of %d window hours; %s",
             year,
             int(_s_m.sum()),
             float(_p_hat.max()),
             int((_floor_t[_in_win] > float(_vom_s.max())).sum()),
             int(_in_win.sum()),
+            (
+                "pass-2 storage discharge cost is elementwise IDENTICAL to the "
+                "cost pass 1 solved with (max(vom, floor) == vom for every "
+                "unit-hour) — pass 2 SKIPPED, pass 1 IS the scored pass (C-1a)"
+                if _pass2_identical
+                else "re-solving P1 (pass 2, THE scored pass)"
+            ),
         )
         ercot221_adaptive = {
             "s_model": _s_m,
             "p_hat": _p_hat,
             "floor_t": _floor_t,
         }
-        energy_solve = run_energy_solve(
-            fleet,
-            fleet_arrays,
-            demand,
-            mc_base,
-            dispatch_kwargs,
-            config,
-            xyear_cache=xyear_cache,
-            p1_fleet_prep=(
-                ra_p1_prep
-                or ercot_bridge_prep
-                or nyiso_bridge_prep
-                or miso_night_floor_prep
-                or pjm_fleet_prep
-            ),
-            p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
-            mc_bid_adjust=offer_surface_mc_bid_adjust,
-            p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
-            p1_bid_max_target=p1_bid_max_target,
-            startup_run_ratio_t=startup_run_ratio_t,
-            p1_storage_discharge_cost=_adaptive_cost,
-        )
+        if not _pass2_identical:
+            energy_solve = run_energy_solve(
+                fleet,
+                fleet_arrays,
+                demand,
+                mc_base,
+                dispatch_kwargs,
+                config,
+                xyear_cache=xyear_cache,
+                p1_fleet_prep=(
+                    ra_p1_prep
+                    or ercot_bridge_prep
+                    or nyiso_bridge_prep
+                    or miso_night_floor_prep
+                    or pjm_fleet_prep
+                ),
+                p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
+                mc_bid_adjust=offer_surface_mc_bid_adjust,
+                p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
+                p1_bid_max_target=p1_bid_max_target,
+                startup_run_ratio_t=startup_run_ratio_t,
+                p1_storage_discharge_cost=_adaptive_cost,
+            )
         # ercot-230 FIXED-POINT ITERATION (PRECOMMIT-ercot230-adaptive-fixed-
         # point-2026-08-23.md §1; the FINDING-ercot221 §4 first named
         # successor, owner-chartered). The incumbent pass-2 floors were
