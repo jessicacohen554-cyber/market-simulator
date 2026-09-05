@@ -309,6 +309,8 @@ window.MECH_MATRIX_SHARDS.PJM = {
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
     carbon_price_delta: { cell: ".", fc: "." },
+    carbon_price_path: { cell: ".", fc: "U", ev: "SCN-WS1a (2026-09-05): PJM forecast program adder is $0 (no anchor), so the path resolves as written (FINDING §0.1); the partial-footprint column at the runner assemble_mc seam is built (G-C3, FINDING §2) but inert until the adder is non-zero; D-1(c) names the per-generator floor question. Never solved." },
+    policy_bundle: { cell: ".", fc: "U", ev: "SCN-WS1a (2026-09-05): tight resolves to 0->50 $/t here (FINDING §0.1); never solved." },
     plant_emission_rates_v2: { cell: "K" },
     startup_co2_reporting: { cell: "U" },
   },

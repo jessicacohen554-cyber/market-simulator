@@ -309,6 +309,8 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
     carbon_price_delta: { cell: ".", fc: ".", ev: "D26 (2026-09-01, the FC-6 P1 arm-construction repair lane): INSTRUMENT FIELD, '.' BY DESIGN \u2014 never a lever; default 0.0 in every posture. Exercised and validated on NEISO's own repaired FC-6 P1 arm at the t3 golden's vintage: carbon_plus25 = golden base recipe + carbon_price_delta=25.0, effective signal base+$25.00/t in ALL 25 years 2026-2050 (base $26.05->$132.16 projected RGGI escalator stays armed in both legs), premise row PASS; default-neutrality PROVEN by the D26 base-arm re-solve reproducing the golden trajectory exactly with the field present at 0.0. Replaces the retired carbon_price=25 replacement construction (D23 premise inversion). Evidence: docs/handoffs/FINDING-capx-d26-p1-arm-construction-2026-09-01.md." },
+    carbon_price_path: { cell: ".", fc: "O", ev: "SCN-WS1a (2026-09-05, ZERO SOLVE, docs/handoffs/FINDING-scn-ws1a-2026-09-05.md §0.1): REPLACE semantics at HEAD — mid path vs RGGI escalator 26->132 $/t, a CUT in all 25 years (the D23 inversion via a second field; the FC-6 P1 pair used carbon_price_delta and is unaffected); under FLOOR only high binds, 2033-2042 (max +3.32 $/t). O pending owner card D-1." },
+    policy_bundle: { cell: ".", fc: "O", ev: "SCN-WS1a (2026-09-05): tight = -19.15..-82.16 $/t vs current in every year (FINDING §0.1); O pending D-1 / D-1(b)." },
     plant_emission_rates_v2: { cell: "K" },
     startup_co2_reporting: { cell: "U" },
   },

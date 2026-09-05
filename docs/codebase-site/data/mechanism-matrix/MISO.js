@@ -309,6 +309,8 @@ window.MECH_MATRIX_SHARDS.MISO = {
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
     carbon_price_delta: { cell: ".", fc: "." },
+    carbon_price_path: { cell: ".", fc: "U", ev: "SCN-WS1a (2026-09-05): no program, path resolves as written (FINDING §0.1); never solved in a forecast; WS-1b runs the paired probe." },
+    policy_bundle: { cell: ".", fc: "U", ev: "SCN-WS1a (2026-09-05): tight resolves to 0->50 $/t here (FINDING §0.1); never solved." },
     plant_emission_rates_v2: { cell: "K", ev: "miso-88" },
     startup_co2_reporting: { cell: "U" },
   },

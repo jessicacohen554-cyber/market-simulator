@@ -309,6 +309,8 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: "O", fc: "O" },
     carbon_price_delta: { cell: ".", fc: "." },
+    carbon_price_path: { cell: ".", fc: "U", ev: "SCN-WS1a (2026-09-05): no program, so the path resolves as written (mid 0->50 $/t, FINDING §0.1) — arithmetic correct, never solved in a forecast; WS-1b runs the paired probe." },
+    policy_bundle: { cell: ".", fc: "U", ev: "SCN-WS1a (2026-09-05): tight resolves to a genuine 0->50 $/t federal price here (FINDING §0.1); never solved." },
     plant_emission_rates_v2: { cell: "K" },
     startup_co2_reporting: { cell: "U" },
   },
