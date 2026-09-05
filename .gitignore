@@ -1183,3 +1183,10 @@ results/calibration/ercot231_combo2023/
 # miso_regional_{load,genmix}_<year>.csv.gz are the deliverable and
 # scripts/data/fetch_miso_regional_balance.py is the reproducibility path.
 data/raw/miso-regional-balance/_daily/
+
+# eGRID sheet parquet mirrors (wall-clock item A-2,
+# src/market_sim/data/egrid_sheets.py). Content-addressed derivatives of the
+# tracked workbooks — <xlsx-stem>.<sha256[:16]>.<sheet>.parquet — written on
+# first miss beside the source and rebuilt automatically whenever a workbook's
+# bytes change. Disposable, machine-local, never committed.
+data/raw/fleet-egrid/*.parquet

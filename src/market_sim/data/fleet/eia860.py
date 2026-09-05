@@ -44,6 +44,7 @@ from market_sim.config.plant_taxonomy import (
     classify_plant,
 )
 from market_sim.data.coal import _coal_class_for
+from market_sim.data.egrid_sheets import read_egrid_sheet
 from pathlib import Path
 from market_sim.data.fleet.models import (
     BA_CODE_TO_ISO,
@@ -616,19 +617,22 @@ def _egrid_boundary_hr_repairs_for(
     for the four acceptance conditions and the rule posture. Keyed on the
     resolved paths so each EIA-860 vintage gets its own entry. Returns ``{}``
     when either workbook/parquet does not carry the expected columns.
+
+    The two eGRID sheets come through
+    :func:`market_sim.data.egrid_sheets.read_egrid_sheet`, which serves them from
+    a content-addressed parquet mirror beside the workbook after the first miss —
+    the same frames, without openpyxl on the solve path (wall-clock item A-2).
     """
     try:
-        plants = pd.read_excel(
+        plants = read_egrid_sheet(
             egrid_path,
-            sheet_name="PLNT23",
-            skiprows=1,
-            usecols=["ORISPL", "LAT", "LON", "PLHTIAN", "PLNGENAN", "PLHTRT"],
+            "PLNT23",
+            ["ORISPL", "LAT", "LON", "PLHTIAN", "PLNGENAN", "PLHTRT"],
         )
-        units = pd.read_excel(
+        units = read_egrid_sheet(
             egrid_path,
-            sheet_name="UNT23",
-            skiprows=1,
-            usecols=["ORISPL", "HTIAN", "UNTYRONL"],
+            "UNT23",
+            ["ORISPL", "HTIAN", "UNTYRONL"],
         )
         gens = pd.read_parquet(
             eia_path, columns=["plant_id", "technology", "operating_year", "status"]

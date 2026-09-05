@@ -29,6 +29,7 @@ from market_sim.config.paths import (
     EIA_860_DIR,
     FLEET_DIR,
 )
+from market_sim.data.egrid_sheets import read_egrid_sheet
 from market_sim.data.local_capacity import (
     BOUNDARY_LAT_MAX as _LA_BASIN_BOUNDARY_LAT_MAX,
 )
@@ -513,6 +514,11 @@ def _plnt23() -> pd.DataFrame:
     ``scripts/data/curate_egrid.py``), the sheet is read from there instead of the
     21 MB workbook, with columns renamed back to the legacy eGRID short codes
     this module's lookups key on; otherwise it falls back to the raw parse.
+
+    That raw parse goes through
+    :func:`market_sim.data.egrid_sheets.read_egrid_sheet`, which serves the sheet
+    from a content-addressed parquet mirror beside the workbook after the first
+    miss — same frame, without openpyxl on the solve path (wall-clock item A-2).
     """
     global _PLNT23_CACHE
     if _PLNT23_CACHE is None:
@@ -527,11 +533,10 @@ def _plnt23() -> pd.DataFrame:
                 )
                 _PLNT23_CACHE = df.rename(columns=_EGRID_CLEAN_TO_SHORT)
         if _PLNT23_CACHE is None:
-            _PLNT23_CACHE = pd.read_excel(
+            _PLNT23_CACHE = read_egrid_sheet(
                 _EGRID_PATH,
-                sheet_name="PLNT23",
-                skiprows=1,
-                usecols=["ORISPL", "LAT", "LON", "FIPSST", "FIPSCNTY", "BACODE"],
+                "PLNT23",
+                ["ORISPL", "LAT", "LON", "FIPSST", "FIPSCNTY", "BACODE"],
             )
     return _PLNT23_CACHE
 
