@@ -106,6 +106,18 @@ def base_fleet_attrs(config: ScenarioConfig, iso: str, year: int) -> dict[str, d
     value, post-derate), never from here. Exit channels are deliberately not
     applied — a unit's attributes do not depend on which other units left.
     """
+    # The runner's vintage seam (runner.py, before any load): a hindcast
+    # initialises from the EIA-860 vintage snapshot, not the canonical one —
+    # without this the rebuilt fleet is the 2025ER census (Erickson 1832
+    # already gone, plant 2790's coal units missing) and ~13 % of the run's
+    # event ids match nothing.
+    from market_sim.config.paths import set_eia860_vintage
+
+    set_eia860_vintage(
+        config.eia860_vintage_year
+        if (config.mode == "backcast" or config.hindcast)
+        else None
+    )
     iso_config = get_iso_config(iso)
     spec = get_interchange_spec(config, iso)
     import_generators = build_interchange_fleet(spec, 0.0)
@@ -197,7 +209,13 @@ def replay(
     # Validation: under the defective key every retained unit precedes every
     # released one (the greedy prefix IS the committed capped set).
     old_prefix = [e["unit_id"] for e in by_old[: len(capped)]]
-    valid = set(old_prefix) == capped
+    # Units whose committed status contradicts the replay order: a retained
+    # unit sorting into the released tail (or vice versa). The base-fleet
+    # attribute the key reads (a tranche's CO2 rate) can differ from the
+    # screen-year value the run held, which the ledger does not persist; such
+    # a unit is reported and PINNED to its committed status in the prediction.
+    contradictions = sorted(set(old_prefix) ^ capped)
+    valid = not contradictions
     n_buckets = len(
         {
             key_defective(config, attrs[e["unit_id"]], float(e["mw"]), year)[0]
@@ -217,6 +235,7 @@ def replay(
             sum(float(e["mw"]) for e in rows if e["unit_id"] in decided), 3
         ),
         "defective_key_reproduces_committed_decision": valid,
+        "committed_status_contradictions": contradictions,
         "coal_key1_rounding_buckets_defective": n_buckets,
     }
     if not decided:
@@ -228,18 +247,28 @@ def replay(
         out["predicted_released_fixed"] = []
         out["prediction_exact"] = True
         return out
-    if not valid:
+    if len(contradictions) > max(2, len(decided) // 4):
         out["note"] = (
-            "defective-key replay does not reproduce the committed decision; prediction withheld"
+            "defective-key replay does not reproduce the committed decision "
+            "(too many contradictions); prediction withheld"
         )
         return out
-    # Shortfall bounds from the committed decision.
-    r_sum = sum(firm(e) for e in by_old[: len(capped)])
-    last = firm(by_old[len(capped) - 1])
+    # Pinned to committed status: a contradicting retained unit stays retained
+    # (its firm MW counted up front), a contradicting released unit stays
+    # released — both drop out of the fixed-key ordering.
+    pinned = {u for u in contradictions if u in capped}
+    pinned_released = {u for u in contradictions if u in decided}
+    # Shortfall bounds from the committed decision: R = the committed retained
+    # firm sum; the last retained unit (in defective-key order) bounds it below.
+    committed_retained = [e for e in by_old if e["unit_id"] in capped]
+    r_sum = sum(firm(e) for e in committed_retained)
+    last = firm(committed_retained[-1])
     lo, hi = r_sum - last, r_sum
+    by_new = [e for e in by_new if e["unit_id"] not in pinned | pinned_released]
+    pinned_firm = sum(firm(e) for e in rows if e["unit_id"] in pinned)
 
     def prefix_for(shortfall: float) -> int:
-        acc = 0.0
+        acc = pinned_firm
         for i, e in enumerate(by_new):
             if acc >= shortfall:
                 return i
@@ -261,9 +290,15 @@ def replay(
             "heat_rate": round(a["heat_rate"], 3),
         }
 
-    released_new = [rowdict(e) for e in by_new[n_hi:]]
+    released_new = [rowdict(e) for e in by_new[n_hi:]] + [
+        rowdict(e) for e in rows if e["unit_id"] in pinned_released
+    ]
     ambiguous = [rowdict(e) for e in by_new[n_lo:n_hi]]
-    released_old = [rowdict(e) for e in by_old[len(capped) :]]
+    released_old = [rowdict(e) for e in by_old if e["unit_id"] in decided]
+    out["pinned_to_committed_status"] = {
+        "retained": sorted(pinned),
+        "released": sorted(pinned_released),
+    }
 
     def fuel_tot(rs: list[dict]) -> dict:
         t: dict[str, float] = {}
@@ -341,7 +376,8 @@ def main() -> int:
         print(
             f"[{args.bundle.name}] {y}: eligible {r['n_eligible']} (missing attrs {r['n_missing_attrs']}), "
             f"capped {r['n_capped']}, decided {r['n_decided']} / {r['released_mw_committed']} MW; "
-            f"defective key reproduces decision: {r['defective_key_reproduces_committed_decision']}; "
+            f"defective key reproduces decision: {r['defective_key_reproduces_committed_decision']} "
+            f"(contradictions {r['committed_status_contradictions']}); "
             f"coal key-1 buckets (defective): {r['coal_key1_rounding_buckets_defective']}"
         )
         if r.get("predicted_released_fixed") is not None and r["n_decided"]:

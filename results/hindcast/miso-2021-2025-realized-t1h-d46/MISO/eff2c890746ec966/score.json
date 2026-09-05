@@ -64,6 +64,82 @@
       "plant_matched": 14,
       "band": "PASS"
     },
+    "plant_release_precision": {
+      "grain": "plant-code+fuel, window real-exit set; reported only (D32 R4)",
+      "n_real_exit_plants": 127,
+      "window": {
+        "economic": {
+          "released_mw": 0.0,
+          "released_mw_at_real_exit_plants": 0.0,
+          "released_mw_no_plant_identity": 0.0,
+          "precision": null
+        },
+        "all": {
+          "released_mw": 9798.867,
+          "released_mw_at_real_exit_plants": 9649.667,
+          "released_mw_no_plant_identity": 0.9,
+          "precision": 0.985
+        }
+      },
+      "per_year": {
+        "2022": {
+          "economic": {
+            "released_mw": 0.0,
+            "released_mw_at_real_exit_plants": 0.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": null
+          },
+          "all": {
+            "released_mw": 4773.467,
+            "released_mw_at_real_exit_plants": 4772.567,
+            "released_mw_no_plant_identity": 0.9,
+            "precision": 1.0
+          }
+        },
+        "2023": {
+          "economic": {
+            "released_mw": 0.0,
+            "released_mw_at_real_exit_plants": 0.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": null
+          },
+          "all": {
+            "released_mw": 3780.65,
+            "released_mw_at_real_exit_plants": 3764.65,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": 0.996
+          }
+        },
+        "2024": {
+          "economic": {
+            "released_mw": 0.0,
+            "released_mw_at_real_exit_plants": 0.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": null
+          },
+          "all": {
+            "released_mw": 959.45,
+            "released_mw_at_real_exit_plants": 959.45,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": 1.0
+          }
+        },
+        "2025": {
+          "economic": {
+            "released_mw": 0.0,
+            "released_mw_at_real_exit_plants": 0.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": null
+          },
+          "all": {
+            "released_mw": 285.3,
+            "released_mw_at_real_exit_plants": 153.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": 0.536
+          }
+        }
+      }
+    },
     "false_retire": {
       "false_gw": 0.0,
       "frac_of_model": 0.0,
@@ -392,7 +468,8 @@
     },
     "commissioned_in_window_decided_before_window_gw": {},
     "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
-    "entry_commissioning_lag": true
+    "entry_commissioning_lag": null,
+    "config_source": "run_config.yaml absent from the bundle \u2014 entry_commissioning_lag not verifiable against the solved config"
   },
   "co2": {
     "model": {
@@ -513,5 +590,311 @@
     "task": "FF-1A",
     "note": "T-R10 no-inversion guard + LOYO folds (2023-2025) + BLK-10 backstop-fired MW \u2014 scorer-side, no re-solve.",
     "utc": "2026-09-03T09:27:41Z"
+  },
+  "retirements_is2020": {
+    "total_gw": {
+      "actual": 17.369,
+      "model": 9.799,
+      "err_frac": -0.436,
+      "band": "FAIL"
+    },
+    "per_fuel": {
+      "biomass": {
+        "actual_gw": 0.196,
+        "model_gw": 0.016,
+        "err_frac": -0.919
+      },
+      "coal": {
+        "actual_gw": 12.434,
+        "model_gw": 7.877,
+        "err_frac": -0.366
+      },
+      "gas_cc": {
+        "actual_gw": 0.858,
+        "model_gw": 0.002,
+        "err_frac": -0.998
+      },
+      "gas_ct": {
+        "actual_gw": 0.399,
+        "model_gw": 0.132,
+        "err_frac": -0.668
+      },
+      "gas_st": {
+        "actual_gw": 2.127,
+        "model_gw": 0.849,
+        "err_frac": -0.601
+      },
+      "nuclear": {
+        "actual_gw": 0.812,
+        "model_gw": 0.768,
+        "err_frac": -0.053
+      },
+      "oil": {
+        "actual_gw": 0.543,
+        "model_gw": 0.154,
+        "err_frac": -0.716
+      }
+    },
+    "unit_recall_gt300": {
+      "n_big_actual": 19,
+      "matched": 16,
+      "recall": 0.842,
+      "grain": "fuel-mw-coverage",
+      "member_rule": "reachable-set (D-24)",
+      "n_target_large": 19,
+      "n_excluded_unreachable": 0,
+      "n_a": false,
+      "n_a_reason": null,
+      "plant_recall_frac": 0.737,
+      "plant_matched": 14,
+      "band": "PASS"
+    },
+    "plant_release_precision": {
+      "grain": "plant-code+fuel, window real-exit set; reported only (D32 R4)",
+      "n_real_exit_plants": 127,
+      "window": {
+        "economic": {
+          "released_mw": 0.0,
+          "released_mw_at_real_exit_plants": 0.0,
+          "released_mw_no_plant_identity": 0.0,
+          "precision": null
+        },
+        "all": {
+          "released_mw": 9798.867,
+          "released_mw_at_real_exit_plants": 9649.667,
+          "released_mw_no_plant_identity": 0.9,
+          "precision": 0.985
+        }
+      },
+      "per_year": {
+        "2022": {
+          "economic": {
+            "released_mw": 0.0,
+            "released_mw_at_real_exit_plants": 0.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": null
+          },
+          "all": {
+            "released_mw": 4773.467,
+            "released_mw_at_real_exit_plants": 4772.567,
+            "released_mw_no_plant_identity": 0.9,
+            "precision": 1.0
+          }
+        },
+        "2023": {
+          "economic": {
+            "released_mw": 0.0,
+            "released_mw_at_real_exit_plants": 0.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": null
+          },
+          "all": {
+            "released_mw": 3780.65,
+            "released_mw_at_real_exit_plants": 3764.65,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": 0.996
+          }
+        },
+        "2024": {
+          "economic": {
+            "released_mw": 0.0,
+            "released_mw_at_real_exit_plants": 0.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": null
+          },
+          "all": {
+            "released_mw": 959.45,
+            "released_mw_at_real_exit_plants": 959.45,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": 1.0
+          }
+        },
+        "2025": {
+          "economic": {
+            "released_mw": 0.0,
+            "released_mw_at_real_exit_plants": 0.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": null
+          },
+          "all": {
+            "released_mw": 285.3,
+            "released_mw_at_real_exit_plants": 153.0,
+            "released_mw_no_plant_identity": 0.0,
+            "precision": 0.536
+          }
+        }
+      }
+    },
+    "false_retire": {
+      "false_gw": 0.0,
+      "frac_of_model": 0.0,
+      "grain": "per-fuel-excess",
+      "band": "PASS"
+    },
+    "reachability": {
+      "decision": "D-24, signed 2026-08-06 (sitting Addendum X.6)",
+      "rule": "a target exit gates the >=300 MW recall metric only if the unit exists in the run's fleet basis AND its exit is reachable by an admissible channel \u2014 economic (no exclusion recorded) or instrument-driven with instrument_date <= the run's vintage cutoff. Unreachable exits leave the denominator and are reported here, NON-GATED.",
+      "vintage_cutoff": "2020-12-31",
+      "large_unit_mw": 300.0,
+      "evidence": {
+        "target": "data/raw/_validation-source/capacity_actuals_miso.csv",
+        "confirmed_registry": "data/raw/confirmed-retirements/miso.csv",
+        "exit_decode": null,
+        "exit_decode_citation": null
+      },
+      "applicability": {
+        "use_campd_bins": true,
+        "fleet_evidence_applied": true,
+        "forecast_fossil_retirement_economic": true,
+        "fossil_announced_exits_enabled": true,
+        "economic_evidence_applied": false
+      },
+      "fail_closed": "excludes only on positive, cited evidence; a unit with no evidence either way stays IN the member set",
+      "applied": true,
+      "members": [
+        "1715_1",
+        "6090_2",
+        "51_1",
+        "6055_1",
+        "6155_1",
+        "6155_2",
+        "6085_15",
+        "2050_1",
+        "1743_7",
+        "6085_14",
+        "1745_9",
+        "994_ST2",
+        "8056_1",
+        "856_3",
+        "2104_4",
+        "1740_3",
+        "1743_6",
+        "1400_3",
+        "4143_ST3"
+      ],
+      "excluded": [],
+      "n_target_large": 19,
+      "n_members": 19,
+      "n_excluded_gated": 0,
+      "note": "NON-GATED diagnostic. Rows here left the recall denominator (or were never in it, below the size threshold); nothing in this block bands, and no verdict reads off it."
+    },
+    "reversal_exposure_gw": 0.0,
+    "reversal_instruments": [],
+    "reversal_rows": []
+  },
+  "retirement_channels": {
+    "announced": {
+      "retired_gw": 9.799,
+      "false_retire_gw": 0.0,
+      "model_fuel_gw": {
+        "biomass": 0.016,
+        "coal": 7.877,
+        "gas_cc": 0.002,
+        "gas_ct": 0.132,
+        "gas_st": 0.849,
+        "nuclear": 0.768,
+        "oil": 0.154
+      },
+      "recall_matched": 16
+    },
+    "_n_big_actual": 19,
+    "_legacy_known_mapped_to": "announced"
+  },
+  "additions_is2020": {
+    "restart_excluded_gw": 0.075,
+    "restart_rows": [
+      {
+        "plant_id": "1868",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "1868",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "1868",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "1868",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "1191",
+        "fuel": "oil",
+        "mw": 1.8
+      },
+      {
+        "plant_id": "1191",
+        "fuel": "oil",
+        "mw": 1.8
+      },
+      {
+        "plant_id": "1191",
+        "fuel": "oil",
+        "mw": 1.8
+      },
+      {
+        "plant_id": "50935",
+        "fuel": "gas_ct",
+        "mw": 3.0
+      },
+      {
+        "plant_id": "50935",
+        "fuel": "gas_ct",
+        "mw": 1.8
+      },
+      {
+        "plant_id": "2023",
+        "fuel": "oil",
+        "mw": 3.1
+      },
+      {
+        "plant_id": "2023",
+        "fuel": "oil",
+        "mw": 3.1
+      },
+      {
+        "plant_id": "1177",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      }
+    ],
+    "note": "Post-V restart additions excluded from IS-2020 additions (\u00a7c.5-2). Inert in the RD-5 actuals as landed \u2014 the coverage fix booked only the physical exit, no restart addition row exists."
+  },
+  "is2020_cutoff": "2020-12-31",
+  "rescore": {
+    "task": "T-R8",
+    "note": "IS-2020 scoring hygiene (RC-0B \u00a7c.5) \u2014 raw + IS-2020 + per-channel. No re-solve; RD-5 actuals; co2/baselines preserved (unchanged by RD-5).",
+    "utc": "2026-09-05T00:47:34Z"
   }
 }
