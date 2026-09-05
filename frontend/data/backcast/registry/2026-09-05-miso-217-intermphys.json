@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-05-miso-217-intermphys",
+  "label": "miso 217 intermphys",
+  "date": "2026-09-05",
+  "shorthand": "miso-217-intermphys",
+  "definition": "miso-217: phys_* coverage for the three duty-split intermediate cohorts (econ-only, parent phys_econ_* borrowed, zero DOF)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-05-miso-217-intermphys.js",
+  "bundle": "results/calibration/miso217_intermphys_B"
+}

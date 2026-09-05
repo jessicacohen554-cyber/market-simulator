@@ -1,4 +1,4 @@
-# Capacity-Expansion Director — successor handoff (2026-09-05, refresh #37; r#31 REWRITE base)
+# Capacity-Expansion Director — successor handoff (2026-09-05, refresh #38; r#31 REWRITE base)
 
 Supersedes the r#32 revision as the live successor prompt. Paste the block below verbatim
 to open the next director session. The ledger (`capx-director-ledger-2026-08.md`) remains
@@ -31,8 +31,8 @@ the r#35 desk graded D48 Phase 1 "running" when it had merged 13 hours before th
 
 READ ON EVERY REFRESH, IN THIS ORDER:
 1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ag = r#36 is the
-   newest at this writing — §0ah = r#37), §1 scoreboard, §3 the rulings Q1–Q43 (ALL SPENT;
-   Q39–Q42 ruled live at r#37, Q43 the D53 in-lane arming), §4 issuance record, §2 backcast watch.
+   newest at this writing — §0ai = r#38), §1 scoreboard, §3 the rulings Q1–Q45 (ALL SPENT;
+   Q44 the D57 in-lane promotion, Q45 the NYISO t3 authorization), §4 issuance record, §2 backcast watch.
 2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
    EVERY charter you issue is COMMITTED to the pack in the same sitting (the r#24 chat-only
    lesson: unlanded work restarts FRESH from the committed charter, so one must exist).
@@ -78,50 +78,51 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
 - PROVENANCE STAMPS (r#36, the audit board's X-6b): every charter says "score and register
   AFTER the final rebase; a rebase after scoring re-stamps `scored_at_sha` by an artifact-only
   re-score before merge". An orphaned stamp names a commit that exists nowhere.
+- MODEL ROUTING (audit ruling R-AK, adopted r#38): records, capture and small-repair lanes and
+  pre-declared campaigns → Opus; adjudication-class lanes and rule-27 core scope stay Fable.
+- RULE 29 [R-SCREEN] (owner, 2026-09-05): every BACKCAST prompt this desk offers names a one-year
+  screen (the mechanism's largest-footprint year, fixed in the PRECOMMIT) before the full span;
+  the screen is a structural STOP gate only. Forecast hindcast legs (≤ 25 min) are their own screen.
 - TRANSPORT: a silent push hang with reads flowing is the proxy's UPLOAD GATE, not transport
   death — rebase fresh, then ONE long-window (~9 min) background push. HTTP/1.1 fixes fast
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#37, main HEAD 182aa74a, 2026-09-05 — VERIFY, DON'T TRUST):
-- KEEPERS: ERCOT two-config 2026-08-25-234-eastex-identity (+236-swcap 2023 carve-out),
-  CALIBRATED · NEISO neiso-99-joint-p1 CALIBRATED · PJM pjm-162-inputclock CALIBRATED ·
-  NYISO 2026-09-05-nyiso-189-steam-identity CALIBRATED (lone ledgered C3c) · MISO
-  2026-09-05-miso-213-layering NOT-YET {C3a-2025 alone, −11.75 %} · CAISO
-  2026-09-05-caiso-246-b1-spot NOT-YET {C3a alone}. Markers: **complete = {ERCOT, NEISO,
-  NYISO, PJM}** (NYISO re-declared by D56-R, PR #4763); frontier for NYISO re-declares via
-  D56-R2 (Q39); final EMPTY; freeze tier-scoped to the locked test. Gate-(a) guard 6/6.
-  Stage-0 goldens: CAISO/MISO/NYISO STALE vs their 09-05 keepers (the audit desk's X-2).
-- FORECAST BOARD: NYISO reads (a)+(b)+(c) PASS — a §2.1b candidate; its t3 card is served
-  when D60 lands (armed requirement basis). neiso-t3 HOLD on {FC-1..FC-4}. ARMED postures:
-  fossil dates (Q30), MISO sector gate (Q43, in-lane), and — once D60 lands — MISO ratio
-  (Q40), NYISO requirement gates (Q41), CCS capex ∝ captured CO2 default (Q42). Every bare
-  forecast key re-keys on Q42 (b′-1); D60 pre-declares all of them, renames the t1h ones,
-  re-solves miso/nyiso/caiso-t1f + GOLDEN-3 with priors at `-pre-d60`.
-- WHAT THE r#36 WAVE ESTABLISHED: D59 — the NYISO locality half is built the way the spot
-  market works and is INERT because the model's NYC census sits +0.7–0.8 GW above the Gold
-  Book (NYC reads 5–9 pts long; its curve pays below NYCA); the NYCA curve stays OFF on P9
-  (twice). D50-R — the CCS capex seam closes ERCOT and MISO entirely, PJM −74.6 % (a live
-  seam-3 price channel at 1.02–1.03× the bar), NEISO cap-bound; fourth seam (ΔFOM/VOM)
-  unbuilt. D53 — landed and ARMED for MISO by the owner in-lane. D57 — built, Phase 0 exact,
-  arms pending. D56-R — NYISO complete again, nothing spent.
-- THE MODEL-CLASS WALL (D43, cell I; the C3c ledger; the sub-unity price-response gain) is
-  unchanged: do not charter lanes into it without new evidence.
-- IN FLIGHT / ISSUED (r#37): D57 (Fable, pjm — arms A/B pending; owes ruff format on its three
-  files) · D56-R2 (Fable, code — NYISO frontier, Q39) · D60 (Opus, miso/nyiso/caiso/neiso —
-  the arming batch, Q40–Q42, ≈ 2.2 h; hygiene commit first) · D58 (Opus, pjm — HELD until D57
-  lands). Grade all by content. Owner track: caiso-24x (the C3a residual is NOT hub-basis;
-  the STORAGE bucket 43–55 % of the gap, no thermal unit marginal), miso-21x (CT gap mostly
-  unreachable by any price/offer mechanism; offer-form coverage gap for miso-215), nyiso-19x
-  (the NYC census object from D59 is theirs), the audit programme (v27; flip set red on ruff
-  format ×6 until D57 + D60 land).
-- OWNER-TIER OPEN: NONE — Q1–Q43 spent. NEXT cards: the NYISO t3 campaign (on D60 landing);
-  the D48+D57 joint PJM flip (on D57's result); D58 arming (on its result); the D50 fourth
-  seam and seam-3 price object (charter decisions, not cards).
-- QUEUED-NAMED, NOT ISSUED (§0ah.5): the ARV-annualization CR-3 object; the D50 fourth seam
-  + seam-3 price object; the D48 DR-convention probe pair; the VRE ELCC two-date limb; D51's
-  position-observability question; the `pipeline_events` co2_rate ledger field; the I7/I12
-  seam re-basing records lane; D53's additions mirror + CHP-host screen; dispersion siblings.
+STATE AT HANDOFF (r#38, main HEAD aa86890e, 2026-09-05 — VERIFY, DON'T TRUST):
+- KEEPERS: ERCOT 2026-09-05-ercot248-two-config-keeper (the two configs as ONE composite run;
+  CALIBRATED) · NEISO neiso-99-joint-p1 CALIBRATED · PJM pjm-162-inputclock CALIBRATED · NYISO
+  2026-09-05-nyiso-189-steam-identity CALIBRATED · MISO 2026-09-05-miso-213-layering NOT-YET
+  {C3a-2025} · CAISO 2026-09-05-caiso-246-b1-spot NOT-YET {C3a}. Markers: complete = {ERCOT,
+  NEISO, NYISO, PJM}; frontier = the same four (NYISO by D56-R2, Q39) — all four instruments
+  aligned; final EMPTY; freeze tier-scoped. Guard 6/6. THE SITE IS PRUNED TO KEEPERS ONLY
+  (owner directive, ercot-248) — top-15 retention superseded "for now"; goldens carry pruned
+  provenance runs by design. Rule 29 [R-SCREEN] is live for backcast lanes.
+- FORECAST POSTURES ARMED: fossil dates (Q30) · MISO sector gate (Q43) · MISO ratio (Q40) ·
+  NYISO requirement gates (Q41) · CCS capex ∝ captured CO2 default (Q42; both pinned default
+  keys advanced by design) · PJM JOINT posture — D48 devintage + DR + the D57 clearing half
+  (Q44, `_pjm_config` overrides; bare `pjm-t1h` = D57 arm A). Every t1h bare key renamed onto
+  its armed leg with `-pre-d60` priors; the t1f re-solves are D60's owed half.
+- D57 ESTABLISHED: the clearing half reproduces the market's cleared QUANTITY (0.5–2.8 pts) and
+  the identity (failing set = uncleared set) exactly; the PRICE reads 1.5–5.7× because the
+  CT/ST/oil E&AS operand is ZERO in hindcast prices — the named successor (D61). Composition
+  reads worse under the joint flip (gas-steam over-exits, coal retained) and stays by rule 1.
+- IN FLIGHT / ISSUED (r#38): D60 RUNNING (owner-confirmed; flip + 4 renames landed; owes
+  miso/nyiso/caiso/pjm-t1f + GOLDEN-3 re-solves + finding — Amendment 1 adds pjm-t1f) · D58
+  RELEASED, dispatch after D60 (Opus) · T3-NYISO-GOLDEN issued, RELEASED-CONDITIONAL on D60's
+  finding (Opus, Q45) · D61 issued (Fable, zero-solve; the PJM E&AS operand's home + a D62 build
+  charter). Grade all by content. Owner track: nyiso-192 (Astoria merit-panel duplicate
+  A/B-armed, unpromoted; payload CHP add-back instrument repaired), miso-215/216/217 (anchor
+  NO CHANGE; phys_* arm built blind), caiso-250/251 (STORAGE cell = caiso-168's object; the
+  fuel-coupling form pre-registered), audit v28/v28b (R-AH..R-AK; Y-1 flip pending on a 6-of-6
+  read the audit lane cannot take — API 403).
+- OWNER-TIER OPEN: NONE — Q1–Q45 spent. NEXT cards: D58 arming (on its result); D61 → D62
+  (on Phase 0); NYISO t3 arming/repair questions (on the golden). Parity red on two in-flight
+  checkpoints (caiso251_ctrl, nyiso192_astoria_panel) and ruff red ×2 (miso-217) are the
+  owner's backcast lanes' loose ends — not this desk's to fix.
+- QUEUED-NAMED, NOT ISSUED (§0ai.4): the D50 fourth seam + seam-3 price object; the ARV
+  annualization (CR-3); D59's NYC census object (owner's NYISO track); D51's position
+  observability; `co2_rate` in `pipeline_events`; the I7/I12 seam re-basing lane; D53's
+  additions mirror + CHP-host screen; the D48 DR-convention probes; dispersion siblings.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,

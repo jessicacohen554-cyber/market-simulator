@@ -1,0 +1,390 @@
+{
+  "charter": "miso-217 A/B \u2014 the phys_* coverage-gap arm; scorer COMMITTED BEFORE THE SOLVE.",
+  "prereg": "results/calibration/PREREG-miso217-intermediate-phys-arm-2026-09-05.md @ 76c2574c",
+  "control": "results/calibration/miso213_layering_B",
+  "arm": "results/calibration/miso217_intermphys_B",
+  "field": "miso_intermediate_gas_offer_margin",
+  "rule_1_note": "An adverse C1/C3a residual that stays in band is EXPECTED (PREREG F-5) and is NOT a kill. It is reported at full magnitude and never argued.",
+  "S0": {
+    "control_is_keeper_bundle": true,
+    "keeper_sidecars_present": 12,
+    "missing": [],
+    "note": "S-0 inherited: the control is the keeper's OWN committed bundle, not a re-solve, so bit-identity is definitional.",
+    "passed": true
+  },
+  "S1": {
+    "fields_in_both": 789,
+    "diffs": {},
+    "arm_only_fields": [
+      "capacity_market_supply_clearing_by_iso",
+      "egrid_steam_collapse_heat_rates",
+      "locality_capacity_curves",
+      "miso_intermediate_gas_offer_margin",
+      "retirement_sector_gate"
+    ],
+    "arm_only_at_nondefault": {},
+    "expected_single_delta": "miso_intermediate_gas_offer_margin",
+    "passed": true
+  },
+  "S2": {
+    "source": "results/calibration/_miso217_liveness.json",
+    "n_newly_marked_up_tranches": 534,
+    "P1_expected": 534,
+    "by_cohort": {
+      "CT_INTERMEDIATE": {
+        "n_tranches": 264,
+        "capacity_mw": 6927.3,
+        "cap_w_markup_hr": 4.6574,
+        "cap_w_fixed_margin_usd_mwh": 14.201,
+        "all_positive": true,
+        "F4_footprint_usd_mwh": 7.809,
+        "cap_w_offer_usd_mwh": 52.151,
+        "F4_share_of_offer_pct": 14.97
+      },
+      "CC_INTERMEDIATE": {
+        "n_tranches": 234,
+        "capacity_mw": 11869.6,
+        "cap_w_markup_hr": 0.4938,
+        "cap_w_fixed_margin_usd_mwh": 1.506,
+        "all_positive": true,
+        "F4_footprint_usd_mwh": 0.413,
+        "cap_w_offer_usd_mwh": 25.48,
+        "F4_share_of_offer_pct": 1.62
+      },
+      "ST_GAS_INTERMEDIATE": {
+        "n_tranches": 36,
+        "capacity_mw": 2984.7,
+        "cap_w_markup_hr": 2.4517,
+        "cap_w_fixed_margin_usd_mwh": 7.476,
+        "all_positive": true,
+        "F4_footprint_usd_mwh": 10.053,
+        "cap_w_offer_usd_mwh": 65.458,
+        "F4_share_of_offer_pct": 15.36
+      }
+    },
+    "flag_off_byte_identical": true,
+    "passed": true
+  },
+  "K1_c1_band_exit": {
+    "band_twh": 8.0,
+    "named_face": "CC_REGULAR|2024",
+    "named_face_control": 7.419,
+    "named_face_arm": 7.947,
+    "second_exposure_note": "CT_PEAKER|2023 at -5.121 has 2.879 TWh of headroom \u2014 the second exposure, surfaced while FREEZING this table before the solve, and covered by K-1 as the PREREG wrote it.",
+    "cells": {
+      "CC_CHP|2023": {
+        "control": -0.971,
+        "arm": -0.914,
+        "delta": 0.057,
+        "control_headroom": 7.029
+      },
+      "CC_CHP|2024": {
+        "control": 0.161,
+        "arm": 0.417,
+        "delta": 0.256,
+        "control_headroom": 7.839
+      },
+      "CC_CHP|2025": {
+        "control": 1.917,
+        "arm": 1.787,
+        "delta": -0.13,
+        "control_headroom": 6.083
+      },
+      "CC_REGULAR|2023": {
+        "control": -2.774,
+        "arm": -2.288,
+        "delta": 0.486,
+        "control_headroom": 5.226
+      },
+      "CC_REGULAR|2024": {
+        "control": 7.419,
+        "arm": 7.947,
+        "delta": 0.528,
+        "control_headroom": 0.581
+      },
+      "CC_REGULAR|2025": {
+        "control": -2.423,
+        "arm": -2.061,
+        "delta": 0.362,
+        "control_headroom": 5.577
+      },
+      "COAL_BIT|2023": {
+        "control": -2.348,
+        "arm": -2.272,
+        "delta": 0.076,
+        "control_headroom": 5.652
+      },
+      "COAL_BIT|2024": {
+        "control": -3.644,
+        "arm": -3.39,
+        "delta": 0.254,
+        "control_headroom": 4.356
+      },
+      "COAL_BIT|2025": {
+        "control": -1.451,
+        "arm": -1.465,
+        "delta": -0.014,
+        "control_headroom": 6.549
+      },
+      "COAL_LIGNITE|2023": {
+        "control": -0.577,
+        "arm": -0.568,
+        "delta": 0.009,
+        "control_headroom": 7.423
+      },
+      "COAL_LIGNITE|2024": {
+        "control": -0.776,
+        "arm": -0.744,
+        "delta": 0.032,
+        "control_headroom": 7.224
+      },
+      "COAL_LIGNITE|2025": {
+        "control": -0.724,
+        "arm": -0.726,
+        "delta": -0.002,
+        "control_headroom": 7.276
+      },
+      "COAL_PRB|2023": {
+        "control": 0.835,
+        "arm": 1.071,
+        "delta": 0.236,
+        "control_headroom": 7.165
+      },
+      "COAL_PRB|2024": {
+        "control": -3.166,
+        "arm": -2.159,
+        "delta": 1.007,
+        "control_headroom": 4.834
+      },
+      "COAL_PRB|2025": {
+        "control": -4.208,
+        "arm": -4.231,
+        "delta": -0.023,
+        "control_headroom": 3.792
+      },
+      "CT_PEAKER|2023": {
+        "control": -5.121,
+        "arm": -5.934,
+        "delta": -0.813,
+        "control_headroom": 2.879
+      },
+      "CT_PEAKER|2024": {
+        "control": -0.884,
+        "arm": -3.634,
+        "delta": -2.75,
+        "control_headroom": 7.116
+      },
+      "CT_PEAKER|2025": {
+        "control": -3.194,
+        "arm": -3.276,
+        "delta": -0.082,
+        "control_headroom": 4.806
+      },
+      "ST_CHP|2023": {
+        "control": -2.869,
+        "arm": -2.861,
+        "delta": 0.008,
+        "control_headroom": 5.131
+      },
+      "ST_CHP|2024": {
+        "control": -2.902,
+        "arm": -2.869,
+        "delta": 0.033,
+        "control_headroom": 5.098
+      },
+      "ST_CHP|2025": {
+        "control": -2.173,
+        "arm": -2.184,
+        "delta": -0.011,
+        "control_headroom": 5.827
+      },
+      "ST_GAS|2023": {
+        "control": -2.182,
+        "arm": -2.402,
+        "delta": -0.22,
+        "control_headroom": 5.818
+      },
+      "ST_GAS|2024": {
+        "control": -6.803,
+        "arm": -7.155,
+        "delta": -0.352,
+        "control_headroom": 1.197
+      },
+      "ST_GAS|2025": {
+        "control": -5.748,
+        "arm": -5.82,
+        "delta": -0.072,
+        "control_headroom": 2.252
+      }
+    },
+    "band_exits": [],
+    "backfill_note": "the phase-0 static screen is BLIND to cross-class backfill (it holds price fixed); this gate is the only instrument that can see it.",
+    "FIRES": false
+  },
+  "K2_c8_conditional_route": {
+    "budget": 0.15,
+    "ct_peaker_share_control": {
+      "2023": 0.2044,
+      "2024": 0.1218,
+      "2025": 0.1421
+    },
+    "ct_peaker_share_arm": {
+      "2023": 0.228,
+      "2024": 0.1573,
+      "2025": 0.1319
+    },
+    "control_2023": 0.2044,
+    "d4_new_failures": [],
+    "d1_new_failures_ct_peaker": [],
+    "note": "a RISE is not a kill (PREREG \u00a75 K-2); the conditional provenance+shape route ceasing to clear is.",
+    "FIRES": false
+  },
+  "K3_caveat_budget": {
+    "control": {
+      "protective": [],
+      "ledgered": [
+        "C3c price tail / scarcity (RT hourly)"
+      ],
+      "commercial_band": [],
+      "budget": {
+        "protective_max": 0,
+        "ledgered_max": 1
+      }
+    },
+    "arm": {
+      "protective": [],
+      "ledgered": [
+        "C3c price tail / scarcity (RT hourly)"
+      ],
+      "commercial_band": [],
+      "budget": {
+        "protective_max": 0,
+        "ledgered_max": 1
+      }
+    },
+    "n_ledgered_arm": 1,
+    "n_protective_arm": 0,
+    "FIRES": false
+  },
+  "K4_determination": {
+    "control": "NOT-YET",
+    "arm": "NOT-YET",
+    "control_fails": [
+      "price_mean|None|2025"
+    ],
+    "arm_fails": [
+      "price_mean|None|2025"
+    ],
+    "new_fails": [],
+    "FIRES": false
+  },
+  "K5_instrument": {
+    "S1_passed": true,
+    "S2_passed": true,
+    "FIRES": false
+  },
+  "K6_pass_to_fail": {
+    "flips": [],
+    "FIRES": false
+  },
+  "reported_never_argued": {
+    "C3a_control": {
+      "2023": 0.9132,
+      "2024": -3.839,
+      "2025": -11.7466
+    },
+    "C3a_arm": {
+      "2023": 1.0959,
+      "2024": -2.8793,
+      "2025": -12.2965
+    },
+    "C3a_delta_pp": {
+      "2023": 0.1827,
+      "2024": 0.9597,
+      "2025": -0.5499
+    },
+    "P5_bars": {
+      "2025_pp": 0.5,
+      "other_pp": 1.5
+    },
+    "C1_largest_movers": [
+      {
+        "cell": "CT_PEAKER|2024",
+        "control": -0.884,
+        "arm": -3.634,
+        "delta": -2.75,
+        "control_headroom": 7.116
+      },
+      {
+        "cell": "COAL_PRB|2024",
+        "control": -3.166,
+        "arm": -2.159,
+        "delta": 1.007,
+        "control_headroom": 4.834
+      },
+      {
+        "cell": "CT_PEAKER|2023",
+        "control": -5.121,
+        "arm": -5.934,
+        "delta": -0.813,
+        "control_headroom": 2.879
+      },
+      {
+        "cell": "CC_REGULAR|2024",
+        "control": 7.419,
+        "arm": 7.947,
+        "delta": 0.528,
+        "control_headroom": 0.581
+      },
+      {
+        "cell": "CC_REGULAR|2023",
+        "control": -2.774,
+        "arm": -2.288,
+        "delta": 0.486,
+        "control_headroom": 5.226
+      },
+      {
+        "cell": "CC_REGULAR|2025",
+        "control": -2.423,
+        "arm": -2.061,
+        "delta": 0.362,
+        "control_headroom": 5.577
+      },
+      {
+        "cell": "ST_GAS|2024",
+        "control": -6.803,
+        "arm": -7.155,
+        "delta": -0.352,
+        "control_headroom": 1.197
+      },
+      {
+        "cell": "CC_CHP|2024",
+        "control": 0.161,
+        "arm": 0.417,
+        "delta": 0.256,
+        "control_headroom": 7.839
+      }
+    ],
+    "P3_cc2024_band": [
+      7.2,
+      8.0
+    ],
+    "P4_c8_ct2023_band": [
+      0.21,
+      0.26
+    ],
+    "P2_screen_ct_bound": {
+      "2023": -1.4746,
+      "2024": -5.2847,
+      "2025": 1.4566
+    },
+    "P2_bar": 0.75,
+    "miso214_standing": "62-70 % of the missed CT energy was produced BELOW the plant's own delivered cost at the market's own price and is unreachable by any offer or price mechanism; this arm reaches at most bucket C and part of bucket A."
+  },
+  "verdict": {
+    "kills_fired": [],
+    "gates_passed": true,
+    "PROMOTE_ELIGIBLE": true,
+    "note": "PROMOTE_ELIGIBLE is necessary, not sufficient: PREREG \u00a76's F-4 footprint disposition is adjudicated in the FINDING, not here."
+  }
+}
