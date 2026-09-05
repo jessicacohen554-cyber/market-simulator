@@ -1,4 +1,4 @@
-# Capacity-Expansion Director — successor handoff (2026-09-05, refresh #39; r#31 REWRITE base)
+# Capacity-Expansion Director — successor handoff (2026-09-05, refresh #40; r#31 REWRITE base)
 
 Supersedes the r#32 revision as the live successor prompt. Paste the block below verbatim
 to open the next director session. The ledger (`capx-director-ledger-2026-08.md`) remains
@@ -31,8 +31,8 @@ the r#35 desk graded D48 Phase 1 "running" when it had merged 13 hours before th
 
 READ ON EVERY REFRESH, IN THIS ORDER:
 1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ag = r#36 is the
-   newest at this writing — §0aj = r#39), §1 scoreboard, §3 the rulings Q1–Q45 (ALL SPENT) plus
-   PENDING Q46 (the nyiso192-Q1 in-lane promotion on an unmerged branch), §4 issuance record, §2 backcast watch.
+   newest at this writing — §0ak = r#40), §1 scoreboard, §3 the rulings Q1–Q46 (ALL SPENT;
+   Q45's premise LAPSED at r#40 when Q46 withdrew NYISO's marker), §4 issuance record, §2 backcast watch.
 2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
    EVERY charter you issue is COMMITTED to the pack in the same sitting (the r#24 chat-only
    lesson: unlanded work restarts FRESH from the committed charter, so one must exist).
@@ -92,34 +92,32 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#39, main HEAD cf5425f7, 2026-09-05 — VERIFY, DON'T TRUST):
+STATE AT HANDOFF (r#40, main HEAD 4d4dc6ce, 2026-09-05 — VERIFY, DON'T TRUST):
 - KEEPERS: ERCOT 2026-09-05-ercot248-two-config-keeper CALIBRATED · NEISO neiso-99-joint-p1
-  CALIBRATED · PJM pjm-162-inputclock CALIBRATED · NYISO 2026-09-05-nyiso-189-steam-identity
-  CALIBRATED ON MAIN — an UNMERGED branch (nyiso-192-frontier-adjudication-mo2nrq) promotes the
-  NOT-YET Astoria arm and WITHDRAWS complete + frontier by in-lane owner ruling (pending Q46;
-  check whether it merged FIRST) · MISO 2026-09-05-miso-217-intermphys NOT-YET {C3a-2025} ·
-  CAISO 2026-09-05-caiso-251-b1-nomargin NOT-YET {C4 one cell — C3a PASSES all three years}.
-  Markers on main: complete = {ERCOT, NEISO, NYISO, PJM}, frontier the same four; final EMPTY.
-  Guard 6/6; parity 0 (allowlist emptied by the cleanup). Site pruned to keepers only; the
-  cleanup deleted scripts/archive, 1,229 probes, 18 bundles, 36 forecast sidecars — zero
-  verdict keys lost. Rule 29 (a)+(b) live for backcast lanes.
+  CALIBRATED · PJM pjm-162-inputclock CALIBRATED · NYISO 2026-09-05-nyiso-192-astoria-panel
+  NOT-YET (grade 6; Q46 — complete + frontier WITHDRAWN, gate (a) FAIL, validation tier lapsed)
+  · MISO 2026-09-05-miso-217-intermphys NOT-YET {C3a-2025} · CAISO 2026-09-05-caiso-251-b1-
+  nomargin NOT-YET {C4 one cell; C3a passes}. Markers: complete = {ERCOT, NEISO, PJM}; frontier
+  = {ERCOT, NEISO, PJM}; withdrawn = {CAISO, NYISO}; final EMPTY. Guard 6/6; parity 0; ruff
+  green (Y-10). Rule 15 retention is KEEPER-ONLY (text amended, G-1). Rule 29 (a)+(b) live.
 - FORECAST POSTURES ARMED: fossil dates (Q30) · MISO sector gate (Q43) · MISO ratio (Q40) ·
   NYISO requirement gates (Q41) · CCS capex default (Q42) · PJM joint posture (Q44). Bare keys
-  re-solved so far: miso-t1f (HOLD, FC-2 row 4 → CAVEAT), nyiso-t1f (PROMOTE-WITH-CAVEATS on
-  FC-7 only — an instrument gap D60 Am.2 repairs under Q37). Pending: caiso-t1f, pjm-t1f
-  (09996eca), GOLDEN-3, the D60 finding §5.
-- IN FLIGHT / ISSUED: D60 DIED after legs 1–2 → D60-R never launched → D60-R2 issued (Opus; caiso/pjm/neiso: the three
-  re-solves + Addendum D / Q37 rows / re-scores + finding §5) · D58 held on D60-R ·
-  T3-NYISO-GOLDEN held on D60-R AND on the marker (Am.1) · D61 issued, unlaunched. Owner track: nyiso-192 promotion
-  pending on its branch (+ the owner-named CC_REGULAR duct-burner tranche lever next), caiso-25x
-  (C3a closed; C4 the object), miso-21x (phys_* armed; the level-scale probe correctly refused),
-  the audit programme (flip NOT live, G2 not declared, R-V keeper freeze on ERCOT/NEISO/PJM in
-  force, stage-0 2 of 7; Y-1 red on five ruff files from miso-217/218 + the cleanup's F401).
-- OWNER-TIER OPEN: NONE. NEXT cards: D58 arming; D62 (from D61); if nyiso-192 merges, the
-  NYISO t3 re-authorization question (Q45 lapses with the marker) and the validation-tier
-  lapse; the D60 finding's FC rows. Every backcast prompt cites rule 29 (a)+(b).
-- QUEUED-NAMED (§0aj.4): NYISO's empty confirmed-exit channel at source (owner's track); the
-  NYC steam delivered-gas intake (nyiso-193, owner-court); plus §0ai.4's list unchanged.
+  re-solved: miso-t1f, nyiso-t1f (FC-7 CAVEAT, instrument). D60-R2 RUNNING: state-at-start
+  clean (17 keys unmoved), Addendum D pushed; owes caiso-t1f / pjm-t1f / GOLDEN-3, the rows,
+  the re-scores, finding §5/§8. Pre-declared: miso-t1f's FC-7 will NOT clear (five pre-batch
+  MISO overrides without rows → D63); CAISO keeps its negative_renewable_offers caveat.
+- IN FLIGHT / ISSUED: D60-R2 RUNNING · D58 held on it · T3-NYISO-GOLDEN HELD (Q45 lapsed with
+  the marker; re-served only when a CALIBRATED NYISO keeper re-enters `complete`) · D61 issued,
+  unlaunched · D63 (MISO/CAISO DOF-row identification records lane) NAMED, issue on D60-R2's
+  landing. Owner track: nyiso-194 killed the owner-named duct-burner lever on its one-year
+  screens (rule 29); caiso-252 named the import DIURNAL shape as the CC_REGULAR C4 object;
+  miso-219 found the evening tail unreachable by any registered field; the audit desk holds
+  the branch-protection flip (owner click-path), the bench-fingerprint proposal, and the
+  path-filter gap on docs/handoffs/FINDING-*.md.
+- OWNER-TIER OPEN: NONE — Q1–Q46 spent. NEXT cards: D58 arming; D62 (from D61); the NYISO
+  campaign re-authorization only when NYISO reads CALIBRATED again.
+- QUEUED-NAMED (§0ak.4): D63; NYISO's empty confirmed-exit channel (owner's track); the NYC
+  steam delivered-gas intake; plus §0ai.4's list unchanged.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,

@@ -5712,7 +5712,7 @@ closed; all blob-verified. Then the director releases D58 and (marker permitting
 golden.
 ```
 
-## D60-R2 — the D60 relaunch, re-issued (r#39 amendment 2; D60-R never launched — audit ruling R-AK's launch-failure class, re-issued on failure)
+## D60-R2 — the D60 relaunch, re-issued (r#39 amendment 2; D60-R never launched — audit ruling R-AK's launch-failure class, re-issued on failure) — **LAUNCHED + RUNNING at r#40 (PR #4824: state-at-start clean, Addendum D pushed; legs 3–5 pending)**
 
 ```
 You are the D60-R2 session of the capacity-expansion track — the RELAUNCH of D60 (pack §D60 +
@@ -5806,7 +5806,7 @@ closed; all blob-verified. Then the director releases D58 and (marker permitting
 golden.
 ```
 
-## T3-NYISO-GOLDEN — the THIRD §2.1b full-horizon campaign: NYISO BAU 2026–2050 (r#38; owner ruling Q45 on card C-14) — **RELEASED-CONDITIONAL: paste only after D60's finding has landed on main AND `complete.NYISO` is still present (Amendment 1 below, r#39)**
+## T3-NYISO-GOLDEN — the THIRD §2.1b full-horizon campaign: NYISO BAU 2026–2050 (r#38; owner ruling Q45 on card C-14) — **HELD at r#40: Q46 (#4817) WITHDREW `complete.NYISO`; Amendment 1's precondition fails and Q45's premise has lapsed — do NOT paste until a CALIBRATED NYISO keeper re-enters the marker and the director re-serves the card**
 
 ```
 You are the T3-NYISO-GOLDEN session of the capacity-expansion track — the program's THIRD
