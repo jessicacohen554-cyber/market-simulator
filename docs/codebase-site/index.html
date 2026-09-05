@@ -145,7 +145,7 @@
       <p class="header__subtitle">
         A visual, interactive guide to the LP-based electricity market dispatch model —
         from raw EIA data and fleet offer curves through the linear program, zonal prices,
-        and multi-year capacity evolution. Sixteen pages, 19 visualizations, zero jargon walls.
+        and multi-year capacity evolution. Narrative pages, interactive visualizations, live dashboards, zero jargon walls.
       </p>
     </div>
     <div class="header-accent" aria-hidden="true"></div>
@@ -191,9 +191,9 @@
             Explore the Model
           </h2>
           <p style="color:var(--text-muted);font-size:1rem;margin-top:10px;max-width:580px;margin-left:auto;margin-right:auto;">
-            Ten pages built around the narrative arc — from intuition to LP formulation
-            to calibration and backcast results — plus three live dashboards. Jump to any
-            page or follow the sequence.
+            A numbered narrative arc — from intuition to LP formulation to calibration
+            and backcast results — plus the live backcast dashboards. The Forecast and
+            Backcast menus above carry the rest. Jump to any page or follow the sequence.
           </p>
         </div>
 
@@ -315,7 +315,7 @@
             </div>
             <div class="page-card__num">07 — Evolution &amp; Policy</div>
             <div class="page-card__title">Capacity Evolution</div>
-            <p class="page-card__desc">The 6-step annual loop: known retirements → economic retirements → known additions → CCS retrofit → new entry → backstop. How prior-year prices drive next-year investment.</p>
+            <p class="page-card__desc">The one-pass annual loop: confirmed and announced exits → CCS retrofit screen → economic retirements → known additions → economic new entry → reserve-margin backstop. How prior-year prices drive next-year investment.</p>
             <div class="page-card__arrow">Read <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5h9M7.5 3l4 3.5-4 3.5"/></svg></div>
           </a>
 
@@ -494,8 +494,8 @@
         tip: { title: 'LP Solver (HiGHS)', body: 'Two solves per year: P0 base-cost → P1 bid-cost (startup markup). P1 is the production path and what every run is scored on; the legacy P2 commitment pass is archived. Direct CSC matrix → HiGHS. No Pyomo, PuLP, or scipy. Vectorized — no Python loops over hours.' } },
       { id: 'lmps',   label: 'LMPs',      sub: 'Shadow prices',   color: '#22C55E', fill: 'rgba(34,197,94,0.16)',   stroke: 'rgba(34,197,94,0.65)',
         tip: { title: 'LMPs — Locational Marginal Prices', body: 'The dual variables on energy-balance constraints. No separate pricing model — prices ARE the LP duals. Zonal separation emerges when transmission hits TTC limits. Scarcity via VOLL × slack dispatch.' } },
-      { id: 'capevo', label: 'Capacity Evolution', sub: '6-step annual loop', color: '#22C55E', fill: 'rgba(34,197,94,0.14)', stroke: 'rgba(34,197,94,0.60)',
-        tip: { title: 'Capacity Evolution', body: '6 steps per year: known retirements → economic retirements (inframarginal margin vs. FOM) → known additions → CCS retrofit → economic new entry → reliability backstop. One-pass, no within-year iteration.' } },
+      { id: 'capevo', label: 'Capacity Evolution', sub: 'One-pass annual loop', color: '#22C55E', fill: 'rgba(34,197,94,0.14)', stroke: 'rgba(34,197,94,0.60)',
+        tip: { title: 'Capacity Evolution', body: 'Once per year: confirmed and announced exits → CCS retrofit screen → economic retirements (inframarginal margin vs. FOM) → known additions → economic new entry → reserve-margin backstop. One-pass, no within-year iteration.' } },
     ];
 
     const edges = [

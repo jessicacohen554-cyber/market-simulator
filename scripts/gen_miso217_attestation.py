@@ -111,8 +111,7 @@ def build(dst: Path, gates: dict) -> None:
         "scripts/probes/_miso217_ab_gates.py, COMMITTED BEFORE THE SOLVE with "
         "every band frozen from the PREREG and the control's own committed "
         "verdict; S-0 inherited, S-1 single delta, S-2 liveness measured before "
-        "the solve, K-1..K-6. "
-        + str(gates.get("verdict", "verdict pending"))
+        "the solve, K-1..K-6. " + str(gates.get("verdict", "verdict pending"))
     )
     d.setdefault("disclosures", {})["miso217_ab"] = DISCLOSURE
     dst.parent.mkdir(parents=True, exist_ok=True)

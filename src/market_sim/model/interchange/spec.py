@@ -311,11 +311,29 @@ CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_STATIC: float = 5442.0  # pooled 2023-2025 me
 #      internal metered subsystems, not boundary imports):
 #        2023: 2,323 MW (2023 report, Jul 2024, RA chapter capacity table)
 #        2024: 3,371 MW (2024 report, Aug 2025, Table 15.6)
-#        2025: not yet published (annual report due ~Aug 2026) → carry the
-#              latest measured year (2024, 3,371 MW). OPEN DATA GAP: replace
-#              when the DMM 2025 annual report lands; the 2025 quarterlies
-#              publish only mixed YoY bid-volume changes (+256/-6/-28/-37%)
-#              off unpublished monthly bases, insufficient for an annual MW.
+#        2025: carries the latest LIKE-FOR-LIKE measured year (2024,
+#              3,371 MW). ADJUDICATED caiso-252 (2026-09-05): the DMM 2025
+#              annual report HAS published (2026-06-26, caiso.com/documents/
+#              2025-annual-report-on-market-issues-and-performance.pdf,
+#              sha256 7c89fdc4…15ea9) and its Table 16.7 "Imports" row reads
+#              1,710 MW — but that table is NOT the same measurement: DMM
+#              changed the analysis-hour methodology for 2025 (60 availability
+#              assessment hours, many in SPRING, "notably lower than in
+#              previous years that use the different methodology"; total RA
+#              46,169 MW vs 52,646 MW on the 2024 basis), and the report
+#              itself says RA imports "were lower during the summer months
+#              but higher during other periods compared to 2024". A spring-
+#              weighted 60-hour average is a different aggregation from the
+#              summer-day table the 2023/2024 rows come from, so adopting it
+#              literally would make the firm block LESS representative (the
+#              rule 14 [R-ACCURATE] misalignment exception, documented here as
+#              that rule requires). No like-for-like 2025 figure exists in the
+#              report (Figure 16.9 is a chart of peak-hour RA import bids by
+#              price bin); the 2025 quarterlies publish only mixed YoY
+#              bid-volume changes (+256/-6/-28/-37%) off unpublished monthly
+#              bases. STILL OPEN: a reconciled 2025 value needs a same-basis
+#              source (a summer-AAH cut of Table 16.7 or the CPUC RA
+#              compliance filings); until then the 2024 value stands.
 #   2. SPLIT PNW vs DSW = published Maximum Import Capability (MIC) per
 #      branch group (data/raw/capacity-deliverability/caiso/caiso.csv, CAISO
 #      "Maximum RA Import Capability for year YYYY" docs). RA imports require

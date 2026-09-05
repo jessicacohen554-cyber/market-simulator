@@ -4,9 +4,12 @@ The model-/scorer-side consumption seam for the external forecast-corridor
 anchors — 2030/2035/2040 capacity mix, generation (energy) mix, and
 power-sector CO2 by ISO/region, per external source (EIA AEO2025, NREL Standard
 Scenarios, ISO planning documents). Curated by
-``scripts/data/curate_benchmark_corridor.py``; read here through
-:func:`scripts.lib.clean_io.read_clean` (path resolved by
-``market_sim.config.paths``), exactly like every other clean datatype.
+``scripts/data/curate_benchmark_corridor.py`` and read from the clean tree
+through :func:`scripts.lib.clean_io.read_clean` (path resolved by
+``market_sim.config.paths``), exactly like every other clean datatype. This
+module no longer performs that read itself: the ``load_benchmark_corridor``
+wrapper was removed as dead code on 2026-09-05 (677b605a), leaving the
+functions below as pure transforms over a caller-supplied frame.
 
 **Context, never a fit target (CLAUDE.md rule 13).** These anchors feed the
 FC-5 external-corridor check as CONTEXT: a model-vs-benchmark divergence is
@@ -23,7 +26,6 @@ from __future__ import annotations
 import pandas as pd
 
 from scripts.lib import benchmark_corridor as bc
-from scripts.lib import clean_io
 
 DATATYPE = "benchmark-corridor"
 
@@ -57,30 +59,6 @@ _CONTEXT_FIELDS: tuple[str, ...] = (
     "unit",
     "note",
 )
-
-
-def load_benchmark_corridor(
-    *,
-    iso: str | None = None,
-    source: str | None = None,
-    quantity: str | None = None,
-    validate: bool = True,
-) -> pd.DataFrame:
-    """Read the curated benchmark-corridor anchors, optionally filtered.
-
-    Returns the tidy long frame (one row per source/iso/region/scenario/
-    target_year/quantity/tech). Raises ``FileNotFoundError`` with a regenerate
-    hint if the clean partition is absent (the clean tree is gitignored /
-    regenerated from committed raw by ``curate_benchmark_corridor.py``).
-    """
-    df = clean_io.read_clean(DATATYPE, validate=validate)
-    if iso is not None:
-        df = df[df["iso"] == iso]
-    if source is not None:
-        df = df[df["source"] == source]
-    if quantity is not None:
-        df = df[df["quantity"] == quantity]
-    return df.reset_index(drop=True)
 
 
 def iso_totals(df: pd.DataFrame) -> pd.DataFrame:

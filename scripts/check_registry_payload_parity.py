@@ -170,130 +170,34 @@ RECORD_DOC_ROOTS: tuple[tuple[str, str], ...] = (
 # was sidecar-mapped.
 KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
     {
-        # miso-170b independent-replication evidence (2026-08-19): this pair
-        # was solved concurrently with — and verified BIT-IDENTICAL to — the
-        # registered miso170_membership_A/B (probe --identity, max|diff|=0 on
-        # every scored sidecar of every year). Their duplicate registrations
-        # were reconciled away in favour of the canonical ids, but the bundles
-        # are cited by the 2026-08-19-miso-170-sitegrain keeper's promotion
-        # note and RESULT-miso170b-sitegrain-execution-2026-08-19.md as the
-        # replication record (which also proves the intervening merges
-        # MISO-inert), so they legitimately outlive their sidecars.
-        "miso170_layup_A",
-        "miso170_layup_B",
+        # EMPTY since the 2026-09-05 keeper-only prune (owner instruction: on
+        # the backcast side only KEEPER run data is retained). Every full A/B
+        # control / replication bundle formerly enumerated here — the
+        # miso170_layup_A/B replication pair, the caiso224_a0_control /
+        # caiso224_b1_fsno interim pair, and the NYISO same-HEAD bit-identity
+        # controls nyiso150_control, nyiso151_armHC, nyiso151_control,
+        # nyiso152_control, nyiso185_control … nyiso189_control — was deleted
+        # from the tree in that prune together with the other unmapped
+        # solve-output bundles (caiso231_b1_ungrounded, miso198_oom_B,
+        # neiso97_dstrepair_A, nyiso186_astoria_identity,
+        # nyiso192_astoria_panel). Their committed PREREG/RESULT/FINDING
+        # records and the keepers' own committed calibration_attestation.json
+        # files are the surviving evidence; the attestation generators that
+        # re-read a control (G-CONTROL) rotated to scripts/archive/ with their
+        # runs, and the current keepers' generators are no longer
+        # recomputable against a control bundle — they carry the record, not
+        # a live instrument. A NEW entry here needs a case-by-case reason and
+        # a REMOVAL CONDITION, exactly as before; a stale entry is a
+        # re-armable hole in the gate.
+        #
         # RETIRED 2026-09-01 (audit checklist item 10) — the ercot-235
         # 2023-discrete offer-sweep grid points (r1-r9, r11) and the ercot-236
         # h4097 shed-repair points (diag_k30, k24_clip, k27_clip, k30_clip) are
-        # now admitted STRUCTURALLY as class P: each carries a committed
+        # admitted STRUCTURALLY as class P: each carries a committed
         # `*_point_score.json` marker, no solve output at all, and its marker
         # filename is named by the campaign's own committed PRECOMMIT/FINDING.
-        # Their reasons are unchanged; they are simply no longer enumerated.
-        # A future campaign point needs no entry here.
-        # caiso-224 FSNO arc, MID-CONCLUSION (2026-08-30) — INTERIM ENTRIES.
-        # Both dirs are deliberate artifacts of an arc that has not yet reached
-        # its verdict, so they must outlive their absent sidecars until it does.
-        #  * caiso224_a0_control (fd428d8 "A0 control complete: G-CTRL BIT-ZERO
-        #    vs the committed caiso-220 keeper sidecars"; 4213c90 legitimacy
-        #    diagnostics; 183a690 + d112f1e hourly checkpoints) is the G-CTRL
-        #    control arm, reconciled BIT-ZERO against the committed caiso-220
-        #    keeper sidecars. Being bit-identical to an already-registered run,
-        #    it is deliberately NOT registered a second time — the miso170_layup
-        #    precedent above, same reasoning, same class.
-        #  * caiso224_b1_fsno (3ec3549 + 63a5678 hourly checkpoints; completed
-        #    by 7f84d8a "B1 arm complete: bundle slim files + split-witness/
-        #    F1-F2 artifact", PR #4395) is COMPLETE but its verdict and
-        #    registration had not landed when this gate repair was dispatched;
-        #    its falsifier probe was pre-registered at 995eedb.
-        # INTERIM: these two entries are the caiso-224 continuation's to remove.
-        # That session registers or prunes both bundles at arc conclusion and
-        # deletes these lines in the same change — a stale entry here is a
-        # re-armable hole in the gate.
-        "caiso224_a0_control",
-        "caiso224_b1_fsno",
-        # --- NYISO A/B CONTROL BUNDLES (ws6-parity-repair, 2026-08-20) -----
-        # RETIRED 2026-09-01 (audit checklist item 10): the SEVENTEEN one-file
-        # `*_recipe` dirs formerly enumerated here (nyiso-144/146/146b/146c/
-        # 147/148/149/150/151/152/153/154) are now admitted STRUCTURALLY as
-        # class R — their only file is `meta.json`, so they carry no solve
-        # output, and each is named by a committed PREREG/RESULT reproduction
-        # command. This is the structural fix
-        # `FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` §5.1 asked for,
-        # and it is why this list stops growing one arm at a time. Their
-        # justifications are unchanged and live in that finding; a future
-        # recipe dir needs no entry here.
-        #
-        # `nyiso147_control` was ALSO removed — its dir no longer exists on
-        # the tree at all (verified against `origin/main` 2026-09-01), so the
-        # entry was exactly the "re-armable hole in the gate" this list's own
-        # comment warns about.
-        #
-        # WHAT REMAINS is the residue the class deliberately does not admit:
-        # FULL A/B control and replication bundles, which DO carry solve
-        # output (hourly parquet + diagnostics) and so fail conjunct (1) by
-        # design. Each is kept on its own case-by-case justification.
-        #
-        # `nyiso150_control` (session nyiso-150) is the A/B reference arm:
-        # verified byte-identical to the keeper (IDENT gate, max |dprice| =
-        # 0.0 over every zone-hour ×3 years, _nyiso150_ab_gates.json) and
-        # deliberately NOT registered (the nyiso-149 base-replay convention);
-        # its slim files + hourly sidecars + regenerated diagnostics (the D-4
-        # vintage-guard live verification) are committed, and every C-K/W-K
-        # gate is defined vs it.
-        "nyiso150_control",
-        #
-        # session nyiso-151 (PREREG-nyiso151-egrid-identity-hr-and-regate-
-        # 2026-08-22.md). ARM HC is deliberately NOT registered — it is
-        # BIT-IDENTICAL to the registered 2026-08-22-nyiso-150-reserve-rearm
-        # (max |dprice| = 0.0 x3 years, _nyiso151_ab_gates.json) and a second
-        # registration of identical bytes would be a double entry (the
-        # nyiso-149 convention); its committed bundle is the replication
-        # record the RESULT cites. `nyiso151_control` is the IDENT reference
-        # arm at the post-merge HEAD (proven == the 149 keeper), the baseline
-        # every H/HC gate is defined against. REMOVAL CONDITION: the citing
-        # PREREG/RESULT docs are retired or re-pointed at registered bundles.
-        "nyiso151_armHC",
-        "nyiso151_control",
-        #
-        # session nyiso-152 (PREREG-nyiso152-bridge-reserve-duty-exclusion-
-        # 2026-08-22.md). `nyiso152_control` is the IDENT reference arm at the
-        # post-#4203 HEAD (proven == the 151 keeper, max |dprice| = 0.0 x3
-        # years, _nyiso152_ab_gates.json) and deliberately NOT registered (the
-        # nyiso-149 base-replay convention); its slim files + hourly sidecars
-        # + regenerated diagnostics are committed, and every SE-K gate is
-        # defined vs it. REMOVAL CONDITION: the citing PREREG/RESULT docs are
-        # retired or re-pointed at registered bundles.
-        "nyiso152_control",
-        # sessions nyiso-185 / 186 / 187 / 188 (2026-09-04): the same-HEAD
-        # bit-identity controls of the four consecutive Astoria-lane A/Bs
-        # (PREREG-nyiso185-stgas-family-hr-ab, PREREG-nyiso186-cc-regular-
-        # 2024-class, PREREG-nyiso187-ct-steam-merit-position, PREREG-nyiso188-
-        # astoria-footprint-cc-reconcile-bethlehem). Each is the replay of the
-        # then-committed keeper recipe on the committed artifacts, proven
-        # BIT-IDENTICAL to that keeper (0 of 52,560 hourly zonal prices differ
-        # in every year) and deliberately NOT registered (the nyiso-149
-        # base-replay convention: a control identical to a registered run is
-        # never registered twice). Their slim files + hourly sidecars are the
-        # instrument the committed attestation generators RE-READ (G-CONTROL in
-        # scripts/gen_nyiso185_attestation.py, scripts/gen_nyiso186_attestation.py,
-        # scripts/gen_nyiso187_attestation.py and scripts/gen_nyiso188_attestation.py
-        # reads <control>/hourly/system_<year>.parquet against the keeper's), so the
-        # keepers' C6 attestations are recomputable only while these dirs
-        # carry their sidecars. REMOVAL CONDITION: the attestation generators
-        # are retired or re-pointed at registered bundles.
-        "nyiso185_control",
-        "nyiso186_control",
-        "nyiso187_control",
-        "nyiso188_control",
-        # session nyiso-189 (2026-09-05): the same-HEAD bit-identity control of
-        # the B2 steam-collapse identity A/B (PREREG-nyiso189-steam-collapse-
-        # identity-ab.md), the replay of the nyiso-188 keeper recipe on the
-        # committed artifacts, proven BIT-IDENTICAL to that keeper (0 of 52,560
-        # prices differ in every year) and deliberately NOT registered (the
-        # same convention); scripts/gen_nyiso189_attestation.py re-reads its
-        # hourly/system_<year>.parquet (G-CONTROL) and unit_hourly (G-ENGAGE).
-        # REMOVAL CONDITION: the attestation generator is retired or
-        # re-pointed at a registered bundle.
-        "nyiso189_control",
+        # Likewise the seventeen one-file NYISO `*_recipe` dirs (nyiso-144 …
+        # 154) are admitted as class R. Neither class needs an entry here.
     }
 )
 

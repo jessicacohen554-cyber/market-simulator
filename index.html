@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Market Simulator — LP-Based Electricity Dispatch Model</title>
-<meta name="description" content="LP-based electricity market dispatch simulator. Two ISOs, hourly dispatch 2026–2050, parameterized scenarios. Explore results or learn how the model works.">
+<meta name="description" content="LP-based electricity market dispatch simulator for six ISOs — ERCOT, CAISO, PJM, MISO, NYISO and NEISO — at full 8,760-hour resolution. Backcast calibration against 2023–2025 actuals, forecasts 2026–2050. Explore the calibration dashboards, the forecast program, or learn how the model works.">
 
 <link rel="stylesheet" href="frontend/css/style.css">
 </head>
@@ -14,6 +14,13 @@
     <a class="nav-brand" href="index.html">
         <span class="nav-brand-mark">&#9650;</span> Market Simulator
     </a>
+    <ul class="nav-links">
+        <li><a class="nav-link" href="docs/codebase-site/calibration-status.html">Calibration</a></li>
+        <li><a class="nav-link" href="docs/codebase-site/backcast-runs.html">Backcast</a></li>
+        <li><a class="nav-link" href="docs/codebase-site/forecast-status.html">Forecast</a></li>
+        <li><a class="nav-link" href="docs/codebase-site/index.html">Explorer</a></li>
+        <li><a class="nav-link" href="model-updates.html">Updates</a></li>
+    </ul>
     <span class="nav-spacer"></span>
 </nav>
 
@@ -24,21 +31,24 @@
         <h1>An LP grid model, 8,760 hours a year</h1>
         <p>
             A linear-programming electricity market dispatch simulator covering
-            two ISOs (ERCOT and CAISO) at full hourly resolution across the
-            2026&ndash;2050 horizon, with a parameterized scenario system.
+            six ISOs &mdash; ERCOT, CAISO, PJM, MISO, NYISO and NEISO &mdash;
+            on one ISO-agnostic LP at full hourly resolution. It forecasts
+            2026&ndash;2050 through an annual capacity-evolution loop, and runs
+            in backcast mode against 2023&ndash;2025 actuals to calibrate.
+            Prices are the LP&rsquo;s duals; there is no separate pricing model.
             Pick a destination below.
         </p>
     </header>
 
-    <section class="grid grid-2col">
+    <!-- Card order follows the reader's path: understand the model, see how it
+         tracks history, see what it says about the future, then the code and
+         the changelog. The former "Results Dashboard" card (frontend/index.html,
+         the scenario results explorer) was removed 2026-07-25: that app was
+         archived under owner decision D-7 to docs/archive/frontend-scenario-app/
+         and the landing page should not sell a destination the site no longer
+         serves. -->
 
-        <!-- The "Results Dashboard" card pointed at frontend/index.html, the
-             scenario results explorer. That app shipped without data for its
-             whole life (scripts/export_results.py was never run, so it rendered
-             "No scenarios exported yet") and was archived 2026-07-25 under owner
-             decision D-7 to docs/archive/frontend-scenario-app/. Removed rather
-             than relabelled: the landing page should not sell a destination the
-             site no longer serves. -->
+    <section class="grid grid-2col">
 
         <a class="card link-card" href="learning-hub/index.html" style="--card-accent: var(--wind);">
             <div class="card-title">Learning Hub</div>
@@ -46,54 +56,93 @@
             <p class="text-muted">
                 Five scrollytelling explainers that open up the model piece by
                 piece &mdash; LP dispatch, capacity evolution, storage
-                arbitrage, transmission pricing and scenario uncertainty.
+                co-optimization, transmission pricing and scenario uncertainty.
             </p>
             <span class="link-card-cta">Start learning &rarr;</span>
+        </a>
+
+        <a class="card link-card" href="docs/codebase-site/index.html" style="--card-accent: var(--hydro);">
+            <div class="card-title">Codebase Explorer</div>
+            <div class="card-subtitle">Inside the model, visualized</div>
+            <p class="text-muted">
+                An interactive walk through the code &mdash; the data pipeline,
+                fleet binning and offer curves, the LP formulation, solving and
+                pricing, the transmission network, capacity evolution, policy
+                and scarcity, and a searchable reference for every
+                configuration field.
+            </p>
+            <span class="link-card-cta">Open the explorer &rarr;</span>
         </a>
 
         <a class="card link-card" href="docs/codebase-site/calibration-status.html" style="--card-accent: var(--solar);">
             <div class="card-title">Calibration Status</div>
             <div class="card-subtitle">How the model tracks history</div>
             <p class="text-muted">
-                The all-ISO calibration summary &mdash; each market's current
-                keeper run, its determination and the C1&ndash;C6 criteria
-                matrix, with links into the per-run detail.
+                The all-ISO calibration summary &mdash; each market&rsquo;s
+                designated keeper run, its determination under the calibration
+                rubric and its per-criterion scorecard across the 2023&ndash;2025
+                calibration years, with links into the per-run detail.
             </p>
             <span class="link-card-cta">Open the status board &rarr;</span>
         </a>
 
-        <a class="card link-card" href="docs/codebase-site/backcast-runs.html" style="--card-accent: var(--gas-ct, var(--solar));">
+        <a class="card link-card" href="docs/codebase-site/backcast-runs.html" style="--card-accent: var(--gas-ct);">
             <div class="card-title">Backcast Run Explorer</div>
             <div class="card-subtitle">Per-run reports, charts and tables</div>
             <p class="text-muted">
                 Modelled hourly dispatch against EPA CAMPD and EIA actuals, by
                 fuel class, plant and zone &mdash; scorecards, heatmaps and
-                diagnostics for every registered calibration run.
+                diagnostics for each ISO&rsquo;s keeper run. The dashboard
+                retains keepers only; superseded runs live in git history.
             </p>
             <span class="link-card-cta">Explore the runs &rarr;</span>
         </a>
 
+        <a class="card link-card" href="docs/codebase-site/forecast-status.html" style="--card-accent: var(--nuclear);">
+            <div class="card-title">Forecast Program Status</div>
+            <div class="card-subtitle">Where each market stands on the forward path</div>
+            <p class="text-muted">
+                The per-ISO gate board for the forecast program &mdash; the
+                tier reached, the forecast-rubric scorecard and the full-solve
+                gate &mdash; over the hindcast and crossover runs that test the
+                forward-driver methodology against the same actuals.
+            </p>
+            <span class="link-card-cta">Open the gate board &rarr;</span>
+        </a>
+
+        <a class="card link-card" href="docs/codebase-site/forecast-runs.html" style="--card-accent: var(--gas-cc);">
+            <div class="card-title">Forecast Run Explorer</div>
+            <div class="card-subtitle">Hindcasts, crossovers and forward runs</div>
+            <p class="text-muted">
+                Drill into any registered forecast-family run &mdash; rubric
+                verdicts, invariant checks and trajectory sparklines &mdash;
+                filterable by kind, tier and ISO. A separate namespace from the
+                backcast dashboards by design.
+            </p>
+            <span class="link-card-cta">Explore the forecasts &rarr;</span>
+        </a>
+
+        <a class="card link-card" href="docs/codebase-site/mechanism-matrix.html" style="--card-accent: var(--coal);">
+            <div class="card-title">Mechanism Matrix</div>
+            <div class="card-subtitle">The cross-ISO test ledger</div>
+            <p class="text-muted">
+                Every model mechanism against every ISO &mdash; armed in the
+                keeper or the forecast default, tested and rejected, inert,
+                governance-refused, or still untested &mdash; each verdict with
+                its evidence citation, plus the modelling glossary.
+            </p>
+            <span class="link-card-cta">Read the ledger &rarr;</span>
+        </a>
 
         <a class="card link-card" href="model-updates.html" style="--card-accent: var(--storage);">
             <div class="card-title">Model Updates</div>
-            <div class="card-subtitle">What changed and why it matters</div>
+            <div class="card-subtitle">What changed and where it is recorded</div>
             <p class="text-muted">
-                A running log of model improvements &mdash; each entry explains
-                what changed, the reasoning, and the measured impact on the
-                backcast so you can see how the calibration evolves.
+                Where the change record lives &mdash; the dated changelog, the
+                per-ISO calibration logs, and the dashboards that carry each
+                run&rsquo;s measured impact.
             </p>
             <span class="link-card-cta">See what changed &rarr;</span>
-        </a>
-
-        <a class="card link-card" href="docs/codebase-site/index.html" style="--card-accent: var(--hydro);">
-            <div class="card-title">Codebase Explorer</div>
-            <div class="card-subtitle">Explore how the model works &mdash; visualized</div>
-            <p class="text-muted">
-                Ten interactive pages walking through the LP formulation,
-                data pipeline, fleet binning, transmission network, capacity
-                evolution, and policy mechanisms, with D3 visualizations.
-            </p>
-            <span class="link-card-cta">Open the explorer &rarr;</span>
         </a>
 
     </section>
@@ -101,7 +150,8 @@
 </main>
 
 <footer class="page-footer">
-    LP-based electricity market dispatch simulator &middot; Full 8,760-hour resolution &middot; Prices are LP duals
+    LP-based electricity market dispatch simulator &middot; Six ISOs on one LP &middot;
+    Full 8,760-hour resolution &middot; Prices are LP duals
 </footer>
 
 </body>

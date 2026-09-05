@@ -11,27 +11,25 @@ only the directory moved.
 |---------------------|------------------|
 | `scripts/` (top)    | Core entry points and standing tooling: calibration/backcast (`run_calibration_full.py`, `run_calibration.py`, `replay_keeper.py`), hindcast (`run_capacity_hindcast.py`, `register_hindcast.py`), the forecast program (`run_full_horizon.py`, `forecast_verdict.py`, `export_forecast_bands.py`, PB-5 assembly), scoring/verdicts (`calibration_verdict.py`, `score_*.py`, `legitimacy_diagnostics.py`), dashboard/site (`dashboard_add_run.py`, `build_manifest.py`, `build_status.py`, `render_*.py`, `check_site_sri.py`), governance (`build_dof_ledger.py`, `regression_gate.py`, `capture_*_goldens.py`, `verify_holdout_intake.py`, `generate_parameter_registry.py`, `check_mechanism_matrix.py`, `mechanism_matrix_gap_sweep.py`), and per-ISO gate reporters. |
 | `scripts/data/`     | Data fetching and processing — everything between an external source and the model's inputs: `fetch_*` (raw downloads), `curate_*`/`process_*`/`convert_*`/`parse_*` (raw → `data/clean` per the schema contract), `derive_*` (measured-behaviour parameter derivation; CLAUDE.md rule 23 — frozen against residuals), and per-source builders (`build_*_hsl.py`, LMP references, AS withholding, …). Not core engine. |
-| `scripts/archive/`  | Retired one-offs that are no longer part of the backcast, hindcast, or forecast paths: superseded per-run drivers (`run_pjm51`–`98`, `run_ercot_21`–`46`, `run_159`–`166`, …), per-run attestation generators, one-shot diagnostics/probes/analyses, completed intake/landing scripts, dead CI-upload tooling. Kept for the historical record; **not maintained**. See `scripts/archive/README.md`. |
 | `scripts/lib/`      | Shared helpers imported by scripts (`clean_io.py`, `bundle_io.py`, per-datatype registries). One deliberate exception carries an argparse main — see "`keeper_store.py`'s CLI" below. |
-| `scripts/probes/`   | Per-run probe scripts, named `_<iso><run>_*` — the historical record of calibration probes (frozen). |
-| `scripts/probes/artifacts/` | The probes' non-Python repro artifacts (`.patch` / `.xz.b64` chunks, `_<iso><run>_chain.sh` drivers, chunked-patch land dirs), segregated 2026-07-26 so the probe scripts stand alone — same frozen record, content untouched; paths quoted in pre-move records refer to the old flat `probes/` layout. |
+| `scripts/probes/`   | Only the probe scripts that live code still imports or names (`derive_*` data scripts, `scripts/lib`, tests, standing docstrings). The record-only probes (1,229 files) and the whole `scripts/archive/` tree were DELETED 2026-09-05 on owner instruction — superseded per-run scripts are deleted, never archived; `git log` is the record. |
 | `scripts/diagnostics/` | Standing measurement harnesses that profile or diff the engine rather than run the programs: `bench_highs_parallel.py` (HiGHS thread-scaling bench), `profile_lp_memory.py` (LP build-vs-solve peak-RSS split), `diff_warmstart_bundles.py` (per-plant cold-vs-warm bundle diff; invoked by `regression_gate.py`), `repro_eia860_vintage_leak.py` (the 2026-07-27 bisect record + standing regression detector for the EIA-860 vintage process-global leak that was the fast-tier order-dependent pollution family) — plus scratch diagnostics. |
 
 Classification rule used (and to use going forward): a script stays at top
 level if it is part of a *standing* workflow — invoked by CI, a skill, tests,
 the calibration/forecast/hindcast programs, or governance rules. A script tied
-to one specific superseded run belongs in `archive/`; anything that fetches or
+to one specific superseded run is deleted once that run is superseded; anything that fetches or
 transforms data belongs in `data/`.
 
-**Keeper rotation:** a superseded keeper's per-run scripts — its
-`gen_<run>_attestation.py`, its `run_<run>_*` driver, and any
-`<run>_*validate` helper — move to `archive/` when the ISO's next keeper
-registers (`git mv` + mechanical reference rewrite, the PR #2486 discipline;
-repo-root path math re-anchored for the extra directory level). The current
-keeper's and any in-flight run's scripts stay at top level; a rejected
-probe's scripts rotate as soon as the rejection is adjudicated. (First
-applied 2026-07-26: the miso-73 rejected-probe trio rotated; miso-72 — the
-standing keeper — and the in-flight miso-74 stayed.)
+**Keeper rotation (DELETE, since 2026-09-05):** a superseded keeper's per-run
+scripts — its `gen_<run>_attestation.py`, its `run_<run>_*` driver, and any
+`<run>_*validate` helper — are DELETED when the ISO's next keeper registers
+(owner instruction 2026-09-05: "delete what's not needed anymore, don't
+archive"). The current keeper's and any in-flight run's scripts stay at top
+level; a rejected probe's scripts are deleted as soon as the rejection is
+adjudicated. Before 2026-09-05 the rule rotated them into `scripts/archive/`;
+that directory no longer exists and the paragraphs below describing rotations
+into it are history.
 
 **Backlog rotation, 2026-08-15 (BLOAT-B-4, `docs/bloat-removal-plan-2026-08.md`
 §6 items D1/D2).** The rule had accumulated a backlog: 83 top-level
@@ -60,6 +58,23 @@ re-exporting `assert_schedulable` for it. `scripts/data/regen_caiso_bench_cems.p
 needed no action — it was already in `archive/`, which is why
 `scripts/data/derive_caiso_supply_consistent_demand.py` already cites the
 `archive/` path.
+
+**Keeper-only deletion, 2026-09-05.** Owner instruction: on the backcast side
+only KEEPER run data is retained, and nothing is archived. 54 top-level
+`gen_*_attestation.py` generators were deleted (every generator whose run is
+not a current keeper), together with the whole `scripts/archive/` tree (292
+retired one-offs) and the 1,229 probe scripts nothing in live code imports or
+names; `regen_caiso_bench_cems.py` moved to `scripts/data/` and
+`bench_cold_solve.py` to `scripts/diagnostics/` because live scripts still call
+them. The surviving generators are the current keepers': `gen_caiso251`,
+`gen_miso217`, `gen_neiso99`, `gen_nyiso189` and `gen_pjm163_inputclock`
+(writes the pjm-162 keeper's attestation); ERCOT's two-config keeper
+(ercot-248) has none. The same prune deleted every unmapped solve-output
+bundle under `results/calibration/` and emptied
+`check_registry_payload_parity.KEEP_REQUIRED_UNMAPPED_BUNDLES`, so a
+generator's G-CONTROL leg is no longer recomputable against a control bundle —
+the committed `calibration_attestation.json` in each keeper bundle is the
+record.
 
 ## Bootstrap & shared CLI helpers
 
@@ -132,7 +147,7 @@ site that left before the batch conversions was
 batch 1 the seven-file CAISO derive cluster
 (`derive_caiso_import_tranches` / `derive_ordc_overlay` consumers),
 batch 2 the top-level cluster (`dashboard_add_run.py`,
-`build_ffr3a3_scorecard.py`, `generate_parameter_registry.py`, the two
+`generate_parameter_registry.py`, the two
 `*_zonal_sufficiency.py`, `validate_ercot_online_capacity.py`,
 `diagnostics/scratchpad_diag_evening.py`, `score_crossover.py`),
 batch 3 the 19-file ERCOT `scripts/data/` derive/build/fetch web

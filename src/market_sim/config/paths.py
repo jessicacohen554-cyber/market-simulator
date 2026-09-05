@@ -255,7 +255,6 @@ EIA_HOURLY_DIR: Path = RAW_DATA_DIR / "eia-930-hourly"
 # instead of hardcoding a CWD-relative ``inputs/...`` string.
 PLANT_REGISTRY_CSV: Path = REFERENCE_DIR / "master-plant-registry.csv"
 CAMPD_BINS_CSV: Path = REFERENCE_DIR / "custom-bin-assignments.csv"
-TX_UNIT_OUTAGES_CSV: Path = REFERENCE_DIR / "tx-jan-aug23-unit-outages.csv"
 
 # Measured CAISO generator->trading-hub membership crosswalk (caiso-217,
 # FINDING-caiso216 §F.1g): derived by

@@ -94,9 +94,11 @@ def build(dst: Path) -> None:
     )
     d.setdefault("disclosures", {})["miso218_probe"] = DISCLOSURE
     dst.write_text(json.dumps(d, indent=1))
-    print(f"wrote {dst.relative_to(REPO)} "
-          f"(n_entries={d['free_parameters']['n_entries']}, "
-          f"n_residual={d['free_parameters']['n_residual']})")
+    print(
+        f"wrote {dst.relative_to(REPO)} "
+        f"(n_entries={d['free_parameters']['n_entries']}, "
+        f"n_residual={d['free_parameters']['n_residual']})"
+    )
 
 
 if __name__ == "__main__":

@@ -579,7 +579,136 @@ The control solve that had been launched under the old heuristic was **killed mi
 partial bundle deleted**; the keeper is the control.
 
 
-## 9. Rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` — the authorized price-tuning channel (owner ruling, 2026-09-05)
+## 9. Rule 15 `[R-DASHBOARD]` — retention: top-15-per-ISO → KEEPER-ONLY (owner, 2026-09-05)
+
+**Origin.** Owner instruction, **2026-09-05**, given in the session that executed it
+(ercot-248, `docs/calibration-log/ercot.md` "## ercot-248 — 2026-09-05"), verbatim:
+
+> *"Combine the ERCOT calibrated keeper config into one run for the run explorer html page so it
+> should combine the 2023 config that is calibrated plus the 2024/2025 config into one run then
+> remove all the others that aren't that keeper so it's just showing one run. Also prune all the
+> other non keeper runs from there so just show the keeper for each ISO for now."*
+
+**What it replaced.** The former retention was an **age cap**: the dashboard kept the newest 15
+runs per ISO, pruning the displaced oldest at each registration (set 2026-06-21, itself superseding
+a 10-run rule; PJM ran a `pjm N <keyword>` labelling convention on top of it). The cap was a
+*volume* limit — it said nothing about which runs still carried meaning, so a lane's probe and
+control runs survived on the site purely by being recent.
+
+**What changed.** `CLAUDE.md` rule 15's retention sentence, and nothing else in that rule. Each
+ISO's dashboard and `results/calibration/` now carry **only that ISO's designated keeper run(s)** —
+a partitioned keeper's several configs included, whether composed into one registered run or kept
+as the per-config runs the ISO's keeper shard names — plus any bundle still referenced by a
+`results/regression-goldens/*/manifest.json` capture record or by the parity allowlist
+(`check_registry_payload_parity.KEEP_REQUIRED_UNMAPPED_BUNDLES`). Every other run is pruned at the
+next registration, through `scripts/prune_iso_runs.py`, whose citation guard (the
+`calibration-complete.json` + `keepers/<ISO>.json` refusal, `--force-uncite` to override) is what
+keeps a keeper-only site from leaving a governance file asserting a determination against a run
+that no longer exists.
+
+**Execution.** ercot-248 pruned 61 non-keeper runs and took every ISO's dashboard down to its
+keeper. The cleanup lane (#4808, #4816) removed the matching disk residue: 18 unmapped bundles, 36
+hindcast sidecars, 109 hindcast directories, and `scripts/archive/`. The deletions are consistent
+with the delete-not-archive discipline `CLAUDE.md`'s Architecture tree already stated for
+superseded per-run scripts — **git history is the record**.
+
+**What did NOT change.**
+
+- **The registration duty is untouched.** Rule 15's opening clause still binds: every completed
+  run, keeper *or* rejected probe, registers on the dashboard in the session that produced it.
+  Retention governs what *survives*, never whether a run is registered — a probe registers when it
+  finishes and is pruned once superseded. A lane that skips registration because "it will only be
+  pruned" has broken rule 15, not honoured it.
+- **The rule's ordinal and ID.** It remains rule 15 `[R-DASHBOARD]`; ordinals are never renumbered
+  (§1).
+- **The forecast-namespace half** of rule 15, the KEEPER `hourly/` sidecar requirement, and the
+  Pages-deploy generation contract.
+- **No keeper, marker, matrix shard or determination** was touched by the amendment.
+
+**Implementation lag, recorded 2026-09-05.** The keeper-only rule is the norm; the automatic
+retention sweep still implements the old one. `scripts/dashboard_add_run.py` ships
+`KEEP_PER_ISO = 15` and `prune_iso(..., keep=15)`, an age cap run after each registration, so the
+enforced-by-code behaviour is *weaker* than the rule (it retains non-keepers up to the cap; it
+never retains less than the rule requires). `scripts/prune_iso_runs.py` — the owner-directed
+keeper + keep-list clear-out — is the tool that actually implements the amended rule, and is the
+one rule 15 now names. Closing the gap is a calibration-desk change to `dashboard_add_run.py`, not
+a governance one; the G-1 amendment lane corrected the *prose* of both scripts only.
+
+## 10. The bench builder fingerprint — byte hash → AST hash (owner ruling R-AS, 2026-09-05)
+
+**What the instrument is.** `scripts/lib/bench_stamp.builder_fingerprint()` stamps every
+per-(ISO, year) benchmark part under `frontend/data/backcast/bench/` with a 12-hex hash of the
+SOURCE of the four scripts that compute and write it (`BUILDER_SOURCES`). A part whose stamp
+differs from the current one provably was not written by the builder at HEAD, so a C1 verdict
+scored against it is not reproducible from the code that would produce it now.
+`scripts/check_bench_freshness.py` gates on that (HARD tier) and separately REPORTS intervening
+engine commits (SOFT tier, never gates). It exists because of nyiso-148 (2026-08-21): NYISO's
+part went un-refreshed from 2026-08-17, regenerating it moved CC_REGULAR-2024's metered actual
+by ~4 TWh, and every registered NYISO run flipped to `NOT-YET`, the keeper included. **Nothing
+below weakens that guarantee** — the defect it closes was real and expensive.
+
+**Origin.** Owner ruling **R-AS** (card M, verbatim *"Adopt Proposal A"*), **2026-09-05**,
+on `docs/handoffs/FINDING-y10-bench-stamp-instrument-2026-09-05.md` — the Y-10 audit lane's
+finding that the instrument's TRIGGER, not its guarantee, is mis-tuned. Executed by audit lane
+Y-12. R-AS is first recorded here; no prior artifact cites it.
+
+**The defect in the trigger.** The stamp hashed the RAW BYTES of four whole files, so **any**
+edit to any byte moved it and marked all 20 committed parts STALE. Measured over the four
+sources at `49647dd6`, **53.0 % of the hashed surface (84,163 of 158,714 bytes) is comments and
+docstrings**, which cannot change a bench payload under any circumstances. All three fingerprint
+moves of 2026-09-05 were adjudicated payload-inert and each cost a dedicated lane; the third
+(`677b605a`) was a **single reworded comment line** that cost 20 artifacts a re-stamp. The
+instrument had produced **zero true positives and three false alarms** — which is the failure
+mode `check_bench_freshness.py`'s own docstring warns about for the SOFT tier (*"gating on them
+would mark every part stale within a week and train everyone to ignore the signal"*), arriving
+at the HARD tier.
+
+**What changed.** One function body. `builder_fingerprint()` now hashes, per source in
+`BUILDER_SOURCES` order, the path, then the LENGTH of `ast.dump(ast.parse(source))`, then that
+dumped AST — in place of the raw bytes and their length. `ast.dump` at its defaults omits
+line/column attributes, so comments, blank lines and reformatting are inert while every semantic
+edit still fires. A source that will not parse falls back to its raw bytes, which is the
+FAIL-SAFE direction: an unparseable builder can only OVER-fire, never under-fire.
+
+**Why it cannot weaken the guarantee.** Two sources with identical ASTs compile to identical
+behaviour, so a part written under either is byte-identical by construction. The stamp narrows to
+exactly what it was ever able to promise.
+
+**The counterfactual, computed rather than argued** (finding §3, re-measured under the shipped
+construction at Python 3.11; pinned as relations by `tests/scoring/test_bench_stamp_ast.py`):
+
+| revision | what it was | byte hash (old) | AST hash (shipped) |
+|---|---|---|---|
+| `dee6472c^` | — | `dbea7bf45111` | `3fabde12b672` |
+| `dee6472c` | nyiso-192 CHP add-back — a real code change | `4e78c85427bb` | `96e5860ce4ec` — **MOVED, correctly** |
+| `677b605a^` | — | `4e78c85427bb` | `96e5860ce4ec` |
+| `677b605a` | delete-not-archive — **one comment reword** | `b2f21b9a00d3` | `96e5860ce4ec` — **UNCHANGED** |
+
+**STATED LIMIT, not buried.** Docstrings ARE `Expr(Constant(...))` nodes in the parsed tree, so
+`ast.dump` carries them and a docstring edit still moves the stamp. Only comments and whitespace
+go inert. Excluding docstrings would need a tree transform — wider than the Proposal A that R-AS
+adopted, and it would not reproduce the counterfactual digests above, which are the verifiable
+record of what was adopted. Pinned by a test so it is a known property, not a surprise. The
+finding's **Proposal B** (narrowing `BUILDER_SOURCES` to the bench-feeding paths, and dropping
+`bench_stamp.py`'s self-inclusion) is **NOT adopted here** and remains open.
+
+**The one-time re-stamp.** Changing the construction moves the fingerprint by definition, so all
+20 parts read STALE the moment it lands (measured on this branch: 20 STALE, exit 1, before the
+re-stamp). They were re-stamped `b2f21b9a00d3` → `4254168edcfe` **in the same PR** by the Y-8
+method (`a725bfc3`) — each part loaded and rewritten through `backcast_artifacts.write_bench_part`
+with its own `meta`/`bench` — so the gate is green on the head and never red on `main`. Verified
+per part, 20 of 20: **payload sha256 unchanged**, `meta` identical with the stamp removed, meta
+key ORDER identical. The only differing byte content is the 12-hex stamp; the ±1-byte gzip
+deltas are gzip's re-encoding of those characters.
+
+**What did NOT change.** The 12-hex digest length; the path-prefix construction; the missing-file
+behaviour (an absent source still moves the fingerprint); the `BUILDER_SOURCES` membership; the
+HARD/SOFT tier split and `check_bench_freshness.py` entire; `write_bench_part`'s byte-determinism
+(the property that keeps concurrent registrations conflict-free). **No keeper, marker, matrix
+shard, registry sidecar, bench payload or determination was touched**, and no solve was run — the
+re-stamp is a relabelling, which is what the identity checks above are for.
+
+## 11. Rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` — the authorized price-tuning channel (owner ruling, 2026-09-05)
 
 **What changed.** The registered `offer_curve_by_group` band multipliers are now an
 **authorized price-tuning channel**: tuning them on price is no longer the forbidden
@@ -636,11 +765,13 @@ to runs carrying the new declaration, and no committed attestation has one. The 
 to use it is the miso-220 non-steam fossil lift.
 
 
-## 10. Changes to this file
+## 12. Changes to this file
 
 | date | change |
 |---|---|
-| 2026-09-05 | Added §9: the owner's authorized price-tuning carve-out amending rules 1 `[R-STRUCT]` and 13 `[R-MEASURED]`, its five binding conditions, and the machine checks + fail-closed tests that enforce it. "Changes to this file" renumbered §9 → §10 (no external references cited §9). |
+| 2026-09-05 | Added §11: the owner's authorized price-tuning carve-out amending rules 1 `[R-STRUCT]` and 13 `[R-MEASURED]`, its five binding conditions, and the machine checks + fail-closed tests that enforce it. Landed alongside main's same-day §9 (rule 15 retention) and §10 (bench fingerprint); this section took §11 on merge and "Changes to this file" renumbered §11 → §12. The CLAUDE.md rule-1 genealogy pointer was repointed §9 → §11 in the same commit. |
+| 2026-09-05 | Added §10: the bench builder fingerprint's hash narrowed from the RAW BYTES of `BUILDER_SOURCES` to `ast.dump(ast.parse(source))` (owner ruling **R-AS**, card M *"Adopt Proposal A"*, on the Y-10 finding; executed by audit lane Y-12). Records the mis-tuned trigger (53 % of the hashed surface is prose; three false alarms, zero true positives), the computed counterfactual over `dee6472c`/`677b605a`, the stated limit that docstring edits still fire, and the one-time re-stamp of all 20 bench parts `b2f21b9a00d3` → `4254168edcfe` with payload sha256 unchanged on every one. The nyiso-148 guarantee is unchanged; no keeper, marker, shard or determination touched. "Changes to this file" renumbered §10 → §11 (no external reference cited §10). |
+| 2026-09-05 | Added §9: rule 15 `[R-DASHBOARD]` retention amended from the top-15-per-ISO age cap to **KEEPER-ONLY** (owner instruction of 2026-09-05, quoted verbatim; executed by session ercot-248 and the #4808/#4816 cleanup lane). Records what the cap was, what replaced it, that the registration duty for rejected probes is untouched, and the standing implementation lag (`dashboard_add_run.KEEP_PER_ISO` still sweeps by age — a calibration-desk item). "Changes to this file" renumbered §9 → §10 (no external reference cited §9). |
 | 2026-08-30 | §3: indexed rubric **v3.1**'s C7 retirement (owner directive verbatim) and rubric **v3.5** (owner option-(B) decision of 2026-08-25 — diurnal price amplitude added REPORTED-ONLY and BAND-FREE; no CLAUDE.md rule text changed) alongside the rule-20 genealogy they extend. v3.5 re-verified determination-neutral over the 2026-08-30 six-keeper roster. Canonical narratives stay in the rubric §9; index entries only. |
 | 2026-08-17 | §4: recorded rubric **v3.3** — the owner's amendment that a ledgered C3c caveat is REPORTED but no longer DOWNGRADES the determination, withdrawing the "never `CALIBRATED`" half of CLAUDE.md rule 22 guard (d). 6 registered runs re-score `CALIBRATED-WITH-CAVEATS → CALIBRATED`, 2 of them keepers (NYISO, NEISO); holdout tiers untouched. |
 | 2026-08-17 | §4: recorded the first lane RESTED at `NOT-YET` (CAISO, session caiso-201, owner ruling Q1). No rule text changed — the entry exists so the precedent that an exhausted lane with a genuinely failing load-bearing criterion *rests* rather than ledgers or declares is citable. |

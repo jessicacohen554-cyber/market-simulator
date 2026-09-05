@@ -1,6 +1,6 @@
 """Session-score library: class-table build + size-aware pass/fail judge.
 
-The CLI that prints the report lives in ``scripts/session_score.py``; this
+The CLI that prints the report lives in ``session_score.py (retired CLI, deleted 2026-09-05)``; this
 module holds the reusable pieces (``class_table``, ``judge`` and the gate
 constants) so the probes and the CLI share one implementation.
 

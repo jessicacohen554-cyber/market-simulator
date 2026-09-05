@@ -114,7 +114,6 @@ ESTIMATED_CSV_GLOB = "miso_outages_estimated_*.csv"
 # Local-only efficient artifacts the fetch script writes (gitignored; preferred
 # when present because they carry the un-rounded MW + publish_date provenance).
 ESTIMATED_PARQUET = MISO_OUTAGES_DIR / "miso_generation_outages_estimated.parquet"
-FORECAST_PARQUET = MISO_OUTAGES_DIR / "miso_generation_outages_forecast.parquet"
 
 # Fossil-thermal plant groups the aggregate envelope is applied to. Nuclear is
 # excluded (it carries its own measured refuel-availability overlay, and folding

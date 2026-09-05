@@ -12084,3 +12084,85 @@ not promoted (rule 22 D-5(b): a promotion that worsens a `complete` ISO's determ
 and escalates). The fourteen-payload records item is MOOT after the r#38 keeper-only site
 prune. Filed: `docs/INTAKE-SPEC-nyiso193-nyc-steam-delivered-gas-2026-09-05.md` and
 `docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`.
+### 2026-09-05 — nyiso-193 (`backcast-calibration`, PROMOTION, zero new solve): the nyiso-192 Astoria merit-panel arm PROMOTED by owner ruling (nyiso192-Q1 (i)); NOT-YET — `complete` + `frontier` WITHDRAWN under the Q5 uniform rule; next lever ruled
+**Keeper → `2026-09-05-nyiso-192-astoria-panel`** (bundle `nyiso192_astoria_panel`), superseding
+`2026-09-05-nyiso-189-steam-identity`. Owner ruling in session, verbatim: *"Ok promote it ugh how does this keep happening with NYISO? Promote it and then tune the cc regular offer curve up for the duct burner peaking tranche because it's merit order is wrong it runs more often at lower CF and is running hot over 80% CF in all years"*
+**What it is:** the nyiso-189 recipe, ZERO `scenario_config` changes, on the `-perunitmerit-`
+outage extract re-derived after the merit-panel stack-duplicate repair (Astoria 8906's paired flue
+paths priced as one generator at physical SRMC; 106 Astoria windows out, 155 in at fifteen other
+plants — the whole steam fleet's availability moves). The repaired extract is now the COMMITTED
+`data/raw/campd-unit-outages-perunitmerit-NYISO.csv` (+ layup companion, `.meta.json`; sha256
+58799099…), matching the keeper's `resolved_inputs` pin (rule 23: the panel repair is the cited
+data change). **Determination NOT-YET** (artifact-only `calibration_verdict`): grade 6 of 8, fails 2
+— C1-2024 `CC_REGULAR` +3.33 → +3.68 TWh / +2.8 → +3.0 pp (the cell-G fill; the D-5(b) stop FIRED
+and was escalated on the card; the owner chose it with the cost), C3c 3 / 0 / 4 h (unchanged, FAIL
+because no longer lone); C2 / C3a (+4.8 / +3.2 / −7.3 %) / C3b (0.118 / 0.172 / 0.167) / C4 / C6 /
+C8 (`ST_GAS` 17.1 / 23.8 / 18.6 %) PASS. **Records act, one commit:** `keepers/NYISO.json`
+(keeper, promotion / determination notes, `superseded` chain, `frontier` → `frontier_withdrawn_2026_09_05`),
+`calibration-complete.json` (complete.NYISO → withdrawn.NYISO, the D56-R entry nested whole,
+`reentry` clause naming the ruled lever), `program-status.json` (gate (a) pass → fail, keeper
+display, `nyiso193_promotion_withdrawal` block; Q45 campaign footing FLAGGED for the director),
+`status/NYISO.js` rebuilt, matrix shard + §5.5 header re-stamped, sidecar relabelled KEEPER;
+nyiso-189 pruned from the site under the r#38 keeper-only retention (`--force-uncite`, as
+ercot-248). `audit_keepers --iso NYISO` PASS; matrix guard PASS; parity PASS; `check_gate_a_provenance`
+NYISO row PASS (the MISO row fails on a pre-existing miso-217 stamp drift — not this lane's).
+**Also repaired (stop-the-line, rule 27):** six committed JSON files carried unresolved
+rebase-conflict markers on `main` — the arm bundle's `meta.json` / `metrics.json` / `run_config.json`
+(my nyiso-192 rebase paired them with unrelated files by rename detection),
+`results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing{,-headbasis}/run_config.json` and
+`results/calibration/ercot248_two_config_keeper/metrics.json` — each restored byte-for-byte from
+its last legitimate blob (`6c695a57` / `5bb70047` / `4b7a515e`), all six parse. `calibration_verdict`
+could not read the arm at all before this. **Next lever (owner-ruled, top of §5.5 queue):** the
+`CC_REGULAR` duct-burner peaking tranche offer tuned UPWARD from measured duct-firing conduct —
+phase 0 → pre-registration → rule-29 one-year screen (this keeper's committed bundle the control) →
+full span. **Marker consequence at full magnitude:** the third NYISO structure-over-gates promotion
+to take the marker down (07-19, 08-30, today); `complete` = {ERCOT, NEISO, PJM}; nothing spent;
+`final` untouched.
+### 2026-09-05 — nyiso-194 (`backcast-calibration`, phase 0 + TWO one-year screens, rule 29): the owner-ruled `CC_REGULAR` duct-burner peaking-tranche lever — symptom CONFIRMED, both arms KILLED on frozen structural gates, keeper unchanged
+Keeper `2026-09-05-nyiso-192-astoria-panel` unchanged; nothing registered; no full span.
+**Phase 0 (zero LP, `scripts/probes/nyiso194_cc_peak_phase0.py`):** the owner's two claims hold at
+full magnitude — the class's MW-weighted 80–90 % loading share is 27.9 / 33.0 / 26.8 % vs CAMPD
+6.0 / 5.8 / 7.1 %, 90–100 % 18.6 / 19.7 / 16.6 vs 27.6 / 33.9 / 27.1, online plant-hours +20–25 k
+in 2024/2025. But no measurement identifies a HIGHER peak offer (CAMPD top-band incremental HR
+1.0–1.5× base; duct firing appears at the LBMP the model's peak tranche already clears); the band
+SIZE is what disagrees with conduct (860 gap 22.6 / 28.2 / 16.9 % vs CAMPD reach 5.7 / 5.8 / 0.6 %).
+**PREREG pushed `aa3038d1` before the solves; screen year 2024 (largest footprint, 1.15 TWh); control =
+keeper (form 4; G-DRIFT `d5bba63b..HEAD` all INERT).** **Arm S** `cc_duct_peaking_cap_pct=8.0`: S-1/S-2
+PASS, **S-3 FAIL** — class 80–90 % share 33.0 → 36.3 % (plants park under the new 92 % wall).
+**Arm D** peak 2.25 → 2.50 (diagnostic): D-1 PASS, **D-2 shape AWAY from CAMPD** as predicted —
+peak energy 1,253 → 680 GWh, 90–100 % share 19.8 → 17.2 %, `CC_REGULAR` −0.45 TWh (would put
+C1-2024 in band by the wrong shape — rule 1). **What both locate:** the econ ramp's marginal slice
+is the parking point; NYISO's registered `phys_econ_low 0.784 → phys_econ_high 0.925` slopes the
+other way from the registered 0.95 → 1.0. **Next (top of §5.5 queue, U, needs its own PREREG):**
+the econ block at its measured marginal basis. Records: `docs/FINDING-nyiso194-cc-peak-tranche-screens-2026-09-05.md`,
+`results/calibration/PREREG-nyiso194-cc-peak-tranche-screen.md`, `_nyiso194_*.json`,
+`scripts/probes/nyiso194_*.py`; matrix cells `cc_duct_peaking` (cap R) / `offer_curve_by_group`
+(upward-peak direction R) updated. Screen bundles local, never registered.
+
+### 2026-09-05 — nyiso-195 (`backcast-calibration`, phase 0 + ONE one-year screen, rule 29): the `CC_REGULAR` econ ramp at its own measured marginal basis — phase 0 REFUTES the marginal-slice premise, the 2024 screen is KILLED on E-3, C1-2024 WORSENS; keeper unchanged
+Owner (in session): *"Only run 2024 to see if it fixes the c1 gas cc miss. C3c is an acceptable
+caveat and known limitation of this model type."* / *"No control arm just use the last keeper."*
+Keeper `2026-09-05-nyiso-192-astoria-panel` unchanged; nothing registered; no full span; no control solve.
+**Phase 0 (zero LP, `scripts/probes/nyiso195_econ_basis_phase0.py`, keeper committed artifacts only —
+its `dispatch/` is gitignored-absent, so the control is the on-recipe `fleet_only` rebuild + the
+payload-decoded per-plant hourlies + the hourly sidecars):** under the armed `gas_offer_net_revenue_margin`
+the econ ramp is the ONLY `CC_REGULAR` band carrying a markup (a falling 4.03 → 2.10 $/MWh fixed
+margin), and it cancels the rising phys basis so the keeper's ramp is FLAT within $0.25/MWh (the six
+slices carry 2.78–2.80 TWh each). Of the class's 28,778 plant-hours in 80–90 %, 71.8 % sit at the
+top of the AVAILABLE econ ramp, 27.4 % in partial duct dispatch, 0.7 % on a marginal slice — the
+nyiso-194 §3 premise does not hold. CAMPD ramp sign confirmed (10/14 plants rising; cap-weighted
+marginal/avg-full HR 0.833 → 1.056). **PREREG pushed `9a0b80fe` before the solve with the prediction
+written in it (E-3 fails; `CC_REGULAR` +≤0.95 TWh; C1-2024 worsens); G-DRIFT `d5bba63b..HEAD` all
+INERT.** **Screen 2024** (`replay_keeper --offer-curve-json '{"CC_REGULAR": {"econ_low": 0.784,
+"econ_high": 0.925}}'`, `scripts/probes/nyiso195_screen_gates.py`): E-1/E-2 PASS (exactly the 96
+`CC_REGULAR` econ rows change; arm `mc` = keeper `mc` − markup × anchor to 2e-5; nothing else
+moves); **E-3 FAIL** — 80–90 % share 33.0 → 33.5 (CAMPD 16.5), 90–100 % 19.8 → 19.6 (33.9);
+E-4 no flip (C3a-like −0.72 → −1.63 %, NRMSE 0.183 → 0.181, gas family 68.22 → 68.25 TWh).
+**C1-2024 `CC_REGULAR` +3.68 → +4.34 TWh / +3.0 → +3.5 pp (now out on volume AND share)** —
+the owner's question answered: a pure price cut on an over-running class cannot lower its energy.
+Direction R (matrix `offer_curve_by_group`, `gas_offer_net_revenue_margin` annotated; cells K).
+**Next (top of §5.5, U):** the AVAILABILITY side of the wall — the partial-derate / outage series
+at the pile-up CC plants vs CAMPD's hours above 90 % — a rule-14 data question, phase 0 first.
+Records: `docs/FINDING-nyiso195-cc-econ-basis-screen-2026-09-05.md`,
+`results/calibration/PREREG-nyiso195-cc-econ-basis-screen.md`, `_nyiso195_*.json`,
+`scripts/probes/nyiso195_*.py`. Screen bundle `results/calibration/nyiso195_screen_2024` local, never registered.

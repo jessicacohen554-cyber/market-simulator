@@ -1,0 +1,1331 @@
+{
+ "session": "nyiso-195",
+ "screen_bundle": "results/calibration/nyiso195_screen_2024",
+ "control": "keeper committed artifacts (rule 29(b) form 4; no control solve)",
+ "control_sources": [
+  "results/calibration/_nyiso194_screen_gates_S.json",
+  "results/calibration/nyiso192_astoria_panel/hourly/system_2024.parquet",
+  "frontend/data/backcast/runs/2026-09-05-nyiso-192-astoria-panel.js + bench/NYISO/2024.json.gz",
+  "run_year(fleet_only=True) rebuilds of both bundles"
+ ],
+ "gates": {
+  "E1_footprint": {
+   "same_unit_order": true,
+   "units_with_pmax_change": 0,
+   "units_with_heat_rate_change": 96,
+   "heat_rate_change_groups": [
+    "CC_REGULAR"
+   ],
+   "heat_rate_change_tranches": [
+    "econ"
+   ],
+   "units_with_markup_change": 96,
+   "markup_change_groups": [
+    "CC_REGULAR"
+   ],
+   "mc_rows_changed": 96,
+   "mc_rows_changed_all_cc_regular_econ": true,
+   "cc_regular_econ_rows_total": 96,
+   "arm_overrides_CC_REGULAR": {
+    "committed": 0.9,
+    "econ_low": 0.784,
+    "econ_high": 0.925,
+    "peak": 2.25,
+    "phys_committed": 0.964,
+    "phys_econ_low": 0.784,
+    "phys_econ_high": 0.925,
+    "phys_peak": 2.25,
+    "econ_low_share": 0.5,
+    "pct_peaking": 8.0
+   },
+   "other_classes_curves_identical": true,
+   "screen_fleet_parquet_pmax_vs_keeper_rebuild_max_abs": 0.0
+  },
+  "E2_identity": {
+   "arm_econ_markup_hr_max": 0.0,
+   "arm_mc_equals_keeper_minus_fixed_margin_max_abs_err": 2e-05,
+   "arm_econ_hr_equals_phys_x_baseHR_max_abs_err": 0.0,
+   "non_econ_rows_mc_max_abs_delta": 0.0,
+   "fixed_margin_removed_$MWh_capw": {
+    "bottom": 4.217,
+    "top": 2.198
+   }
+  },
+  "E3_direction": {
+   "bins": "0-10 .. 90-100 % of pmax, MW-weighted share of online plant-hours (2500 excluded)",
+   "keeper": [
+    0.5,
+    2.0,
+    5.5,
+    6.4,
+    8.6,
+    4.5,
+    11.8,
+    8.0,
+    33.0,
+    19.8
+   ],
+   "screen": [
+    0.5,
+    1.6,
+    4.1,
+    6.5,
+    8.8,
+    4.8,
+    12.2,
+    8.4,
+    33.5,
+    19.6
+   ],
+   "campd": [
+    0.5,
+    1.6,
+    5.3,
+    8.8,
+    5.4,
+    7.0,
+    15.2,
+    5.8,
+    16.5,
+    33.9
+   ],
+   "share_80_90": {
+    "keeper": 32.96,
+    "screen": 33.54,
+    "campd": 16.51
+   },
+   "share_90_100": {
+    "keeper": 19.76,
+    "screen": 19.58,
+    "campd": 33.88
+   },
+   "share_80_90_fell": false,
+   "moved_toward_campd_80_90": false,
+   "share_90_100_rose": false,
+   "moved_toward_campd_90_100": false,
+   "STOP": true
+  },
+  "plants": [
+   {
+    "plant": 57185,
+    "pmax": 1087,
+    "old_wall_frac": 0.774,
+    "h_above_old_wall": {
+     "keeper": 92,
+     "screen": 97,
+     "campd": 450
+    },
+    "h_gt80": {
+     "keeper": 37,
+     "screen": 37,
+     "campd": 422
+    },
+    "h_gt90": {
+     "keeper": 37,
+     "screen": 37,
+     "campd": 264
+    },
+    "on_h": {
+     "screen": 8760
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 2.0
+    },
+    "share_90_100": {
+     "keeper": 0.4,
+     "screen": 0.4,
+     "campd": 3.4
+    },
+    "energy_gwh": {
+     "keeper": 5037.8,
+     "screen": 5218.2998046875,
+     "campd_gross": 4240.9
+    },
+    "peak_tranche": {
+     "h_keeper": 1321,
+     "h_screen": 1336,
+     "gwh_keeper": 196.95,
+     "gwh_screen": 199.6199951171875
+    }
+   },
+   {
+    "plant": 55405,
+    "pmax": 1065,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 100
+    },
+    "h_gt80": {
+     "keeper": 288,
+     "screen": 318,
+     "campd": 1542
+    },
+    "h_gt90": {
+     "keeper": 270,
+     "screen": 304,
+     "campd": 1317
+    },
+    "on_h": {
+     "screen": 6288
+    },
+    "share_80_90": {
+     "keeper": 0.3,
+     "screen": 0.2,
+     "campd": 3.7
+    },
+    "share_90_100": {
+     "keeper": 4.3,
+     "screen": 4.8,
+     "campd": 21.6
+    },
+    "energy_gwh": {
+     "keeper": 3572.3,
+     "screen": 3729.800048828125,
+     "campd_gross": 4046.2
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 2539,
+    "pmax": 893,
+    "old_wall_frac": 0.91,
+    "h_above_old_wall": {
+     "keeper": 182,
+     "screen": 168,
+     "campd": 2625
+    },
+    "h_gt80": {
+     "keeper": 6242,
+     "screen": 6466,
+     "campd": 5211
+    },
+    "h_gt90": {
+     "keeper": 182,
+     "screen": 168,
+     "campd": 3190
+    },
+    "on_h": {
+     "screen": 8088
+    },
+    "share_80_90": {
+     "keeper": 74.9,
+     "screen": 77.9,
+     "campd": 25.1
+    },
+    "share_90_100": {
+     "keeper": 2.3,
+     "screen": 2.1,
+     "campd": 39.7
+    },
+    "energy_gwh": {
+     "keeper": 6020.2,
+     "screen": 6164.89990234375,
+     "campd_gross": 5539.0
+    },
+    "peak_tranche": {
+     "h_keeper": 1885,
+     "h_screen": 1841,
+     "gwh_keeper": 134.4,
+     "gwh_screen": 131.13999938964844
+    }
+   },
+   {
+    "plant": 56940,
+    "pmax": 696,
+    "old_wall_frac": 0.849,
+    "h_above_old_wall": {
+     "keeper": 189,
+     "screen": 191,
+     "campd": 6833
+    },
+    "h_gt80": {
+     "keeper": 5688,
+     "screen": 5819,
+     "campd": 7114
+    },
+    "h_gt90": {
+     "keeper": 189,
+     "screen": 190,
+     "campd": 4620
+    },
+    "on_h": {
+     "screen": 8280
+    },
+    "share_80_90": {
+     "keeper": 66.4,
+     "screen": 68.0,
+     "campd": 30.0
+    },
+    "share_90_100": {
+     "keeper": 2.3,
+     "screen": 2.3,
+     "campd": 55.7
+    },
+    "energy_gwh": {
+     "keeper": 4336.9,
+     "screen": 4300.7998046875,
+     "campd_gross": 4981.9
+    },
+    "peak_tranche": {
+     "h_keeper": 1624,
+     "h_screen": 1607,
+     "gwh_keeper": 139.8,
+     "gwh_screen": 139.36000061035156
+    }
+   },
+   {
+    "plant": 57664,
+    "pmax": 650,
+    "old_wall_frac": 0.831,
+    "h_above_old_wall": {
+     "keeper": 1987,
+     "screen": 1880,
+     "campd": 4796
+    },
+    "h_gt80": {
+     "keeper": 7041,
+     "screen": 7074,
+     "campd": 5270
+    },
+    "h_gt90": {
+     "keeper": 1979,
+     "screen": 1874,
+     "campd": 3016
+    },
+    "on_h": {
+     "screen": 8232
+    },
+    "share_80_90": {
+     "keeper": 61.5,
+     "screen": 63.2,
+     "campd": 27.3
+    },
+    "share_90_100": {
+     "keeper": 24.0,
+     "screen": 22.8,
+     "campd": 36.6
+    },
+    "energy_gwh": {
+     "keeper": 4298.6,
+     "screen": 4289.2998046875,
+     "campd_gross": 4136.7
+    },
+    "peak_tranche": {
+     "h_keeper": 4337,
+     "h_screen": 4239,
+     "gwh_keeper": 400.73,
+     "gwh_screen": 391.42999267578125
+    }
+   },
+   {
+    "plant": 55375,
+    "pmax": 610,
+    "old_wall_frac": 0.938,
+    "h_above_old_wall": {
+     "keeper": 2387,
+     "screen": 2288,
+     "campd": 3315
+    },
+    "h_gt80": {
+     "keeper": 8261,
+     "screen": 8257,
+     "campd": 5899
+    },
+    "h_gt90": {
+     "keeper": 7635,
+     "screen": 7655,
+     "campd": 4194
+    },
+    "on_h": {
+     "screen": 8280
+    },
+    "share_80_90": {
+     "keeper": 7.6,
+     "screen": 7.3,
+     "campd": 20.4
+    },
+    "share_90_100": {
+     "keeper": 92.2,
+     "screen": 92.5,
+     "campd": 50.3
+    },
+    "energy_gwh": {
+     "keeper": 4633.3,
+     "screen": 4629.2998046875,
+     "campd_gross": 4282.3
+    },
+    "peak_tranche": {
+     "h_keeper": 4734,
+     "h_screen": 4644,
+     "gwh_keeper": 167.07,
+     "gwh_screen": 163.80999755859375
+    }
+   },
+   {
+    "plant": 56196,
+    "pmax": 560,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 140
+    },
+    "h_gt80": {
+     "keeper": 7843,
+     "screen": 7844,
+     "campd": 5992
+    },
+    "h_gt90": {
+     "keeper": 4909,
+     "screen": 4908,
+     "campd": 5149
+    },
+    "on_h": {
+     "screen": 7872
+    },
+    "share_80_90": {
+     "keeper": 37.3,
+     "screen": 37.3,
+     "campd": 10.0
+    },
+    "share_90_100": {
+     "keeper": 62.4,
+     "screen": 62.3,
+     "campd": 65.7
+    },
+    "energy_gwh": {
+     "keeper": 4083.1,
+     "screen": 4083.10009765625,
+     "campd_gross": 3782.4
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 56234,
+    "pmax": 362,
+    "old_wall_frac": 0.909,
+    "h_above_old_wall": {
+     "keeper": 690,
+     "screen": 655,
+     "campd": 2244
+    },
+    "h_gt80": {
+     "keeper": 5899,
+     "screen": 5933,
+     "campd": 4521
+    },
+    "h_gt90": {
+     "keeper": 690,
+     "screen": 655,
+     "campd": 2361
+    },
+    "on_h": {
+     "screen": 6264
+    },
+    "share_80_90": {
+     "keeper": 83.2,
+     "screen": 84.3,
+     "campd": 34.8
+    },
+    "share_90_100": {
+     "keeper": 11.0,
+     "screen": 10.5,
+     "campd": 38.1
+    },
+    "energy_gwh": {
+     "keeper": 1996.7,
+     "screen": 1997.699951171875,
+     "campd_gross": 1913.3
+    },
+    "peak_tranche": {
+     "h_keeper": 2158,
+     "h_screen": 2118,
+     "gwh_keeper": 64.33,
+     "gwh_screen": 63.060001373291016
+    }
+   },
+   {
+    "plant": 2500,
+    "pmax": 268,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 3106
+    },
+    "h_gt80": {
+     "keeper": 5096,
+     "screen": 5098,
+     "campd": 7392
+    },
+    "h_gt90": {
+     "keeper": 5095,
+     "screen": 5097,
+     "campd": 6809
+    },
+    "on_h": {
+     "screen": 8040
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 7.4
+    },
+    "share_90_100": {
+     "keeper": 63.4,
+     "screen": 63.4,
+     "campd": 86.5
+    },
+    "energy_gwh": {
+     "keeper": 1949.0,
+     "screen": 1949.5999755859375,
+     "campd_gross": 2659.2
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 54574,
+    "pmax": 252,
+    "old_wall_frac": 0.833,
+    "h_above_old_wall": {
+     "keeper": 23,
+     "screen": 22,
+     "campd": 163
+    },
+    "h_gt80": {
+     "keeper": 235,
+     "screen": 233,
+     "campd": 171
+    },
+    "h_gt90": {
+     "keeper": 23,
+     "screen": 22,
+     "campd": 135
+    },
+    "on_h": {
+     "screen": 5604
+    },
+    "share_80_90": {
+     "keeper": 3.8,
+     "screen": 3.8,
+     "campd": 0.8
+    },
+    "share_90_100": {
+     "keeper": 0.4,
+     "screen": 0.4,
+     "campd": 3.1
+    },
+    "energy_gwh": {
+     "keeper": 467.9,
+     "screen": 481.20001220703125,
+     "campd_gross": 372.0
+    },
+    "peak_tranche": {
+     "h_keeper": 1710,
+     "h_screen": 1638,
+     "gwh_keeper": 27.59,
+     "gwh_screen": 26.549999237060547
+    }
+   },
+   {
+    "plant": 50292,
+    "pmax": 180,
+    "old_wall_frac": 0.718,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 1143
+    },
+    "h_gt80": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 909
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 485
+    },
+    "on_h": {
+     "screen": 7178
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 6.0
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 6.9
+    },
+    "energy_gwh": {
+     "keeper": 311.8,
+     "screen": 358.29998779296875,
+     "campd_gross": 607.6
+    },
+    "peak_tranche": {
+     "h_keeper": 434,
+     "h_screen": 436,
+     "gwh_keeper": 13.97,
+     "gwh_screen": 14.020000457763672
+    }
+   },
+   {
+    "plant": 7314,
+    "pmax": 108,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 23
+    },
+    "h_gt80": {
+     "keeper": 1046,
+     "screen": 1402,
+     "campd": 1628
+    },
+    "h_gt90": {
+     "keeper": 1020,
+     "screen": 1274,
+     "campd": 454
+    },
+    "on_h": {
+     "screen": 8040
+    },
+    "share_80_90": {
+     "keeper": 0.3,
+     "screen": 1.6,
+     "campd": 28.8
+    },
+    "share_90_100": {
+     "keeper": 13.3,
+     "screen": 15.8,
+     "campd": 11.1
+    },
+    "energy_gwh": {
+     "keeper": 391.1,
+     "screen": 505.0,
+     "campd_gross": 319.1
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 10621,
+    "pmax": 103,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 53,
+     "screen": 53,
+     "campd": 251
+    },
+    "h_gt80": {
+     "keeper": 43,
+     "screen": 43,
+     "campd": 118
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 5
+    },
+    "on_h": {
+     "screen": 53
+    },
+    "share_80_90": {
+     "keeper": 81.1,
+     "screen": 81.1,
+     "campd": 45.0
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 2.0
+    },
+    "energy_gwh": {
+     "keeper": 4.0,
+     "screen": 4.0,
+     "campd_gross": 17.8
+    },
+    "peak_tranche": {
+     "h_keeper": 53,
+     "h_screen": 53,
+     "gwh_keeper": 4.04,
+     "gwh_screen": 4.0
+    }
+   },
+   {
+    "plant": 56188,
+    "pmax": 82,
+    "old_wall_frac": 0.909,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 370
+    },
+    "h_gt80": {
+     "keeper": 583,
+     "screen": 598,
+     "campd": 485
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 431
+    },
+    "on_h": {
+     "screen": 2812
+    },
+    "share_80_90": {
+     "keeper": 23.5,
+     "screen": 21.3,
+     "campd": 3.8
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 30.4
+    },
+    "energy_gwh": {
+     "keeper": 156.2,
+     "screen": 165.39999389648438,
+     "campd_gross": 83.7
+    },
+    "peak_tranche": {
+     "h_keeper": 60,
+     "h_screen": 62,
+     "gwh_keeper": 0.39,
+     "gwh_screen": 0.4000000059604645
+    }
+   },
+   {
+    "plant": 50978,
+    "pmax": 80,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 696
+    },
+    "h_gt80": {
+     "keeper": 3694,
+     "screen": 3650,
+     "campd": 813
+    },
+    "h_gt90": {
+     "keeper": 3627,
+     "screen": 3555,
+     "campd": 763
+    },
+    "on_h": {
+     "screen": 8533
+    },
+    "share_80_90": {
+     "keeper": 0.8,
+     "screen": 1.1,
+     "campd": 1.9
+    },
+    "share_90_100": {
+     "keeper": 45.4,
+     "screen": 41.7,
+     "campd": 27.8
+    },
+    "energy_gwh": {
+     "keeper": 492.3,
+     "screen": 513.9000244140625,
+     "campd_gross": 134.4
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 54034,
+    "pmax": 78,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 278
+    },
+    "h_gt80": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 224
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 209
+    },
+    "on_h": {
+     "screen": 0
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 5.4
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 75.2
+    },
+    "energy_gwh": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd_gross": 19.0
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 10190,
+    "pmax": 71,
+    "old_wall_frac": 0.931,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 331
+    },
+    "h_gt80": {
+     "keeper": 1206,
+     "screen": 1267,
+     "campd": 1108
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 359
+    },
+    "on_h": {
+     "screen": 1805
+    },
+    "share_80_90": {
+     "keeper": 82.9,
+     "screen": 70.2,
+     "campd": 47.7
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 22.9
+    },
+    "energy_gwh": {
+     "keeper": 82.3,
+     "screen": 98.19999694824219,
+     "campd_gross": 89.2
+    },
+    "peak_tranche": {
+     "h_keeper": 9,
+     "h_screen": 9,
+     "gwh_keeper": 0.04,
+     "gwh_screen": 0.03999999910593033
+    }
+   },
+   {
+    "plant": 7784,
+    "pmax": 67,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 1287,
+     "screen": 1198,
+     "campd": null
+    },
+    "h_gt80": {
+     "keeper": 1008,
+     "screen": 931,
+     "campd": null
+    },
+    "h_gt90": {
+     "keeper": 231,
+     "screen": 194,
+     "campd": null
+    },
+    "on_h": {
+     "screen": 1198
+    },
+    "share_80_90": {
+     "keeper": 60.4,
+     "screen": 61.5,
+     "campd": null
+    },
+    "share_90_100": {
+     "keeper": 17.9,
+     "screen": 16.2,
+     "campd": null
+    },
+    "energy_gwh": {
+     "keeper": 68.0,
+     "screen": 63.0,
+     "campd_gross": null
+    },
+    "peak_tranche": {
+     "h_keeper": 1287,
+     "h_screen": 1198,
+     "gwh_keeper": 68.05,
+     "gwh_screen": 63.02000045776367
+    }
+   },
+   {
+    "plant": 10620,
+    "pmax": 54,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 83
+    },
+    "h_gt80": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 59
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 57
+    },
+    "on_h": {
+     "screen": 0
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 2.4
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 69.5
+    },
+    "energy_gwh": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd_gross": 3.5
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   },
+   {
+    "plant": 54592,
+    "pmax": 54,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 329,
+     "screen": 339,
+     "campd": 169
+    },
+    "h_gt80": {
+     "keeper": 1,
+     "screen": 15,
+     "campd": 148
+    },
+    "h_gt90": {
+     "keeper": 1,
+     "screen": 15,
+     "campd": 145
+    },
+    "on_h": {
+     "screen": 339
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 1.8
+    },
+    "share_90_100": {
+     "keeper": 0.3,
+     "screen": 4.4,
+     "campd": 85.8
+    },
+    "energy_gwh": {
+     "keeper": 11.4,
+     "screen": 12.0,
+     "campd_gross": 7.9
+    },
+    "peak_tranche": {
+     "h_keeper": 329,
+     "h_screen": 339,
+     "gwh_keeper": 11.39,
+     "gwh_screen": 12.0
+    }
+   },
+   {
+    "plant": 50744,
+    "pmax": 44,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 594,
+     "screen": 570,
+     "campd": 101
+    },
+    "h_gt80": {
+     "keeper": 441,
+     "screen": 420,
+     "campd": 11
+    },
+    "h_gt90": {
+     "keeper": 42,
+     "screen": 42,
+     "campd": 7
+    },
+    "on_h": {
+     "screen": 570
+    },
+    "share_80_90": {
+     "keeper": 67.2,
+     "screen": 66.3,
+     "campd": 4.0
+    },
+    "share_90_100": {
+     "keeper": 7.1,
+     "screen": 7.4,
+     "campd": 6.9
+    },
+    "energy_gwh": {
+     "keeper": 19.0,
+     "screen": 18.200000762939453,
+     "campd_gross": 2.8
+    },
+    "peak_tranche": {
+     "h_keeper": 594,
+     "h_screen": 570,
+     "gwh_keeper": 19.02,
+     "gwh_screen": 18.229999542236328
+    }
+   },
+   {
+    "plant": 54593,
+    "pmax": 43,
+    "old_wall_frac": 0.0,
+    "h_above_old_wall": {
+     "keeper": 210,
+     "screen": 196,
+     "campd": 106
+    },
+    "h_gt80": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 10
+    },
+    "h_gt90": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": 2
+    },
+    "on_h": {
+     "screen": 196
+    },
+    "share_80_90": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 7.7
+    },
+    "share_90_100": {
+     "keeper": 0.0,
+     "screen": 0.0,
+     "campd": 1.9
+    },
+    "energy_gwh": {
+     "keeper": 5.3,
+     "screen": 4.900000095367432,
+     "campd_gross": 2.7
+    },
+    "peak_tranche": {
+     "h_keeper": 210,
+     "h_screen": 196,
+     "gwh_keeper": 5.32,
+     "gwh_screen": 4.909999847412109
+    }
+   },
+   {
+    "plant": 54808,
+    "pmax": 11,
+    "old_wall_frac": 1.0,
+    "h_above_old_wall": {
+     "keeper": 0,
+     "screen": 0,
+     "campd": null
+    },
+    "h_gt80": {
+     "keeper": 3646,
+     "screen": 3959,
+     "campd": null
+    },
+    "h_gt90": {
+     "keeper": 3602,
+     "screen": 3857,
+     "campd": null
+    },
+    "on_h": {
+     "screen": 8293
+    },
+    "share_80_90": {
+     "keeper": 0.6,
+     "screen": 1.2,
+     "campd": null
+    },
+    "share_90_100": {
+     "keeper": 49.8,
+     "screen": 46.5,
+     "campd": null
+    },
+    "energy_gwh": {
+     "keeper": 56.6,
+     "screen": 65.5,
+     "campd_gross": null
+    },
+    "peak_tranche": {
+     "h_keeper": 0,
+     "h_screen": 0,
+     "gwh_keeper": 0.0,
+     "gwh_screen": 0.0
+    }
+   }
+  ],
+  "wall_plants_direction": {
+   "plants": [
+    57664,
+    56940,
+    54574,
+    50292
+   ],
+   "h_above_old_wall": {
+    "keeper": 2199,
+    "screen": 2093,
+    "campd": 12935
+   },
+   "share_80_90_mean": {
+    "keeper": 32.9,
+    "screen": 33.8,
+    "campd": 16.0
+   }
+  },
+  "class_energy_twh": {
+   "CC_CHP": {
+    "keeper": 19.2,
+    "screen": 18.755,
+    "delta": -0.445
+   },
+   "CC_REGULAR": {
+    "keeper": 37.994,
+    "screen": 38.653,
+    "delta": 0.659
+   },
+   "CT_CHP": {
+    "keeper": 1.076,
+    "screen": 1.033,
+    "delta": -0.043
+   },
+   "CT_PEAKER": {
+    "keeper": 0.385,
+    "screen": 0.382,
+    "delta": -0.003
+   },
+   "OTHER": {
+    "keeper": 2.201,
+    "screen": 2.201,
+    "delta": 0.0
+   },
+   "ST_CHP": {
+    "keeper": 1.045,
+    "screen": 1.001,
+    "delta": -0.044
+   },
+   "ST_GAS": {
+    "keeper": 8.516,
+    "screen": 8.429,
+    "delta": -0.087
+   },
+   "biomass": {
+    "keeper": 0.76,
+    "screen": 0.76,
+    "delta": -0.0
+   },
+   "hydro": {
+    "keeper": 26.739,
+    "screen": 26.739,
+    "delta": 0.0
+   },
+   "import": {
+    "keeper": 20.705,
+    "screen": 20.692,
+    "delta": -0.013
+   },
+   "nuclear": {
+    "keeper": 26.953,
+    "screen": 26.953,
+    "delta": 0.0
+   },
+   "oil": {
+    "keeper": 0.001,
+    "screen": 0.001,
+    "delta": -0.0
+   },
+   "solar": {
+    "keeper": 0.586,
+    "screen": 0.586,
+    "delta": 0.0
+   },
+   "wind": {
+    "keeper": 6.012,
+    "screen": 6.012,
+    "delta": -0.0
+   }
+  },
+  "gas_family_twh": {
+   "keeper": 68.216,
+   "screen": 68.253
+  },
+  "peak_tranche_cc_regular": {
+   "gwh_keeper": 1253.1,
+   "gwh_screen": 1231.6,
+   "tranche_hours_keeper": 20745,
+   "tranche_hours_screen": 20286
+  },
+  "C1_2024_reported_not_gated": {
+   "CC_REGULAR": {
+    "keeper": {
+     "status": "FAIL",
+     "model": 37.738,
+     "actual": 34.06,
+     "share_pp": 3.03,
+     "magnitude": "+3.68 TWh, share +3.0pp (share out of band)"
+    },
+    "screen": {
+     "status": "FAIL",
+     "model": 38.397,
+     "actual": 34.06,
+     "share_pp": 3.53,
+     "magnitude": "+4.34 TWh, share +3.5pp (volume/share out of band)"
+    }
+   },
+   "CC_CHP": {
+    "keeper": {
+     "status": "PASS",
+     "model": 19.118,
+     "actual": 17.017,
+     "share_pp": 1.72,
+     "magnitude": "+2.10 TWh, share +1.7pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 18.673,
+     "actual": 17.017,
+     "share_pp": 1.37,
+     "magnitude": "+1.66 TWh, share +1.4pp"
+    }
+   },
+   "CT_PEAKER": {
+    "keeper": {
+     "status": "PASS",
+     "model": 0.35,
+     "actual": 1.911,
+     "share_pp": -1.17,
+     "magnitude": "-1.56 TWh, share -1.2pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 0.347,
+     "actual": 1.911,
+     "share_pp": -1.18,
+     "magnitude": "-1.56 TWh, share -1.2pp"
+    }
+   },
+   "ST_GAS": {
+    "keeper": {
+     "status": "PASS",
+     "model": 8.484,
+     "actual": 9.913,
+     "share_pp": -1.02,
+     "magnitude": "-1.43 TWh, share -1.0pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 8.397,
+     "actual": 9.913,
+     "share_pp": -1.09,
+     "magnitude": "-1.52 TWh, share -1.1pp"
+    }
+   },
+   "ST_CHP": {
+    "keeper": {
+     "status": "PASS",
+     "model": 1.035,
+     "actual": 0.872,
+     "share_pp": 0.13,
+     "magnitude": "+0.16 TWh, share +0.1pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 0.991,
+     "actual": 0.872,
+     "share_pp": 0.1,
+     "magnitude": "+0.12 TWh, share +0.1pp"
+    }
+   },
+   "construction": "calibration_verdict.score_fuelmix on the keeper's committed payload gmModel with the screen's P1 class-energy deltas applied (approximate: the payload's grid-delivered basis vs the P1 sum differ by a constant per class)",
+   "flips": []
+  },
+  "E4_price_companions_2024": {
+   "screen": {
+    "lw_mean_model": 38.987,
+    "lw_mean_actual_same_weights": 39.634,
+    "c3a_like_pct": -1.63,
+    "c3b_like_monthly_nrmse": 0.1805
+   },
+   "keeper": {
+    "lw_mean_model": 39.347,
+    "lw_mean_actual_same_weights": 39.634,
+    "c3a_like_pct": -0.72,
+    "c3b_like_monthly_nrmse": 0.1826
+   },
+   "nyiso194_keeper_row_reproduced": {
+    "lw_mean_model": 39.347,
+    "lw_mean_actual_same_weights": 39.634,
+    "c3a_like_pct": -0.72,
+    "c3b_like_monthly_nrmse": 0.1826
+   }
+  },
+  "mean_unit_lmp": {
+   "keeper": 37.873,
+   "screen": 37.476
+  }
+ }
+}

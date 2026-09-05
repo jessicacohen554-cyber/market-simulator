@@ -96,7 +96,7 @@ jobs:
           #
           # That is not hypothetical: it is exactly how PR #2866 truncated
           # scripts/render_calibration_html.py 1,911 -> 1 lines with this guard
-          # reporting SUCCESS. The added scripts/backfill_nonfossil_hourly.py
+          # reporting SUCCESS. The added backfill_nonfossil_hourly.py script
           # sorts before it in the diff, killed the loop, and the truncation was
           # never checked. An integrity guard that fails OPEN is worse than none,
           # so this step now also verifies it examined every candidate path.

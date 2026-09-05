@@ -1,5 +1,111 @@
 # Changelog
 
+## 2026-09-05 — capx D64: the CCS retrofit's FOURTH seam adjudicated (Phase 0, zero solves) — both fixed-cost legs are TPC-fractions in their source and scale with the island; PJM's 2029 residual closes on the arithmetic; the capture VOM adder is found uncited and 2.7–3.6× every published basis
+
+Docs + one results JSON. **No `src/` file, no `ScenarioConfig` field, no constant, no matrix cell,
+no forecast surface, no solve.** `docs/handoffs/FINDING-capx-d64-2026-09-05.md` discharges D50 §8
+Disclosure 1 the way D49 §1 adjudicated the first three seams:
+
+- **Basis (§1).** ATB 2024 (fetched from OEDI, sha256 `567dde9d…`) publishes the capture island's
+  Fixed O&M ($/kW-yr) and Variable O&M ($/MWh) for a specific NETL reference plant and states in
+  terms that property taxes & insurance, maintenance labor and maintenance materials "are
+  calculated as a percentage of TPC". NETL Rev 4a (`da0027aa…`) B31A→B31B.90 decomposes to 95.5 %
+  TPC-proportional (fixed) and 100 % island-proportional (variable); the NGCC-retrofit report Rev 3
+  (`e66c0111…`) carries the retrofit's O&M as exactly the capture plant's. Construction: ΔFOM and
+  the VOM adder × `k = captured / captured_ref` — the D50 factor, zero new constants.
+- **Re-screen (§2).** The recovered D50 census instrument, extended and run on six ISOs
+  (`results/calibration/capxd64_fourth_seam_census.json`): every carbon-0 row lost (PJM 2029's two
+  converters fall to 0.633 / 0.638 of the bar — the residual closes), one sub-reference RGGI row
+  gained; NEISO / NYISO / CAISO stay cap-bound at the ceiling, with the hour requirement compressed
+  from 4,900–7,800 h to 6,500–7,700 h (efficient hosts win again).
+- **The VOM level (§2.4).** `ccs_retrofit_vom_adder` = 8.0 $/MWh is `needs-citation`; ATB says 2.95
+  (2026$), NETL 2.23. At the published level the carbon-0 screen reopens on the shipped shape
+  (6–11 GW per ISO at the ceiling) and sits on a 0.1–4 % knife-edge under seam 4 — the shipped
+  carbon-0 closure is carried by the uncited number, and the shape and the level are coupled.
+- **Blast radius (§3)** stated: every forecast bare key re-keys under (b′-1); behaviour can move only
+  in the six live ≥2028 ledgers with CCS rows; ≈ 53 min of marginal solve.
+- **D65 charter (§4):** one default-off field (`ccs_retrofit_fixed_cost_co2_scaling`, requires the
+  D50 field) + the rule-23 re-identification of the VOM adder onto the pinned ATB extract (widened
+  to carry `Variable O&M`), two NEISO t1f arms against the committed keeper, six STOPs (a k = 1 row
+  moving; seam 4 alone opening any carbon-0 row).
+
+## 2026-09-05 — landing-page cleanup: root `index.html` + `model-updates.html` brought to the current model state
+
+Site-only. **No file under `src/`, `scripts/`, `results/` or `frontend/data/` is
+touched; nothing changes a solve, a keeper, a marker or a matrix shard.** Executes
+the two owner-signed SITE dispositions of `docs/model-audit-release-plan-2026-08.md`
+§6 (items 5–6, signed 2026-08-13) that touch the root pages, and the plan's
+standing instruction to remove hard page/ISO counts from prose because they rot.
+Every claim on the edited pages was re-verified against source before writing:
+
+| Claim as written | Source truth | Fix |
+|---|---|---|
+| root `index.html` hero + meta: "two ISOs (ERCOT and CAISO)" | `iso_configs.py::_ISO_BUILDERS` — six entries (ERCOT, CAISO, PJM, MISO, NYISO, NEISO); imported and counted: 37 zones (34 carry load), 46 links | "six ISOs … on one ISO-agnostic LP"; no zone/link counts on the landing page |
+| hero: forecast horizon only | `holdout_policy.CALIBRATION_YEARS = {2023, 2024, 2025}`; forecast 2026–2050 | states both modes: forecast 2026–2050, backcast against 2023–2025 to calibrate |
+| Codebase Explorer card: "Ten interactive pages … with D3 visualizations" | 22 `.html` under `docs/codebase-site/` incl. hub, five data dashboards and a redirect stub; count already contradicted the site's own hero | describes the arc without a count |
+| Backcast Run Explorer card: "for every registered calibration run" | rule 15 retention is KEEPER-ONLY since 2026-09-05 (`frontend/data/backcast/registry/` holds exactly the six keeper sidecars) | "for each ISO's keeper run; the dashboard retains keepers only" |
+| Calibration Status card: "C1–C6 criteria matrix" | `calibration_verdict.py::CRITERIA` runs to C8 under `RUBRIC_VERSION = 3.5` | "per-criterion scorecard", no letter range |
+| no link to the forecast dashboards or the mechanism matrix | `forecast-status.html`, `forecast-runs.html`, `mechanism-matrix.html` are live nav targets on the codebase site | three cards added; a nav row (Calibration · Backcast · Forecast · Explorer · Updates) added, matching `model-updates.html` |
+| `model-updates.html`: two hand-written entries dated 2026-06-04 comparing ERCOT probe runs 27/28 and 31/32, citing `inputs/raw-data/campd-unit-outages.csv` | those runs were pruned (keeper-only retention); the path moved to `data/raw/` in W1; the log had not been extended since | **repositioned as a pointer** per the signed disposition: URL kept, short intro, cards to `CHANGELOG.md`, `docs/calibration-log/`, Calibration Status, the Backcast and Forecast dashboards and the Mechanism Matrix; stale entries removed (git history is the record) |
+| `docs/codebase-site/index.html` hero "Sixteen pages, 19 visualizations" / intro "Ten pages … plus three live dashboards" | `forecast-validation.html` became a redirect stub after the 2026-08-19 count was taken; the Forecast menu has three dashboards | counts removed from both sentences |
+| `docs/codebase-site/index.html` Capacity Evolution card + system-diagram tooltip: "6-step … known retirements → economic retirements → known additions → CCS retrofit → new entry → backstop" | `model/capacity_evolution/`: step 0 confirmed exits, step 1 announced retirements, step 2 CCS retrofit (BEFORE economic retirements since W2-C), step 3 economic retirements, 4 known additions, 5 economic entry, 6 reserve-margin backstop | order corrected, "6-step" dropped |
+| `frontend/css/style.css` `.link-card-cta` coloured by the card's fuel accent | measured contrast on white: `--solar` 1.66:1, `--wind` 2.10, `--gas-ct` 2.24, `--hydro` 2.41, `--storage` 2.85 — all fail WCAG AA for text | CTA text is always `--accent-deep` (5.19:1); the accent stays on the decorative top border |
+
+Also verified, unchanged: the Learning Hub card (five explainers, `learning-hub/index.html`);
+`backcast-results.html` (frozen redirect stub, untouched by design); the `forecast-validation.html
+→ nav` disposition is moot — that page is itself a redirect to `forecast-status.html`, which the
+Forecast dropdown already carries. Both root pages validated for tag balance and every local
+`href` resolved on disk; both rendered headlessly in Chromium.
+
+**Deferred (narrative-page restructure, SITE-A scope, not this cleanup):**
+`docs/codebase-site/capacity-evolution.html` and its `viz-capacity-flow.js` flowchart still
+walk the pre-W2-C six-step order (known → economic retirements → additions → CCS → entry →
+backstop) with no step-0 confirmed-exit channel; the hub card and tooltip now state the code's
+order, the page behind them does not yet.
+
+## 2026-09-05 — keeper-only retention + dead-code sweep (owner instruction: delete, never archive)
+
+**Owner instructions this session:** on the backcast side only KEEPER run data is
+retained; stale forecast runs are not retained either; superseded scripts are
+DELETED, never archived; the branch is refreshed onto main. No solve, no
+mechanism, no determination change anywhere.
+
+- **Backcast (`results/calibration/`):** 20 unmapped solve-output bundles deleted —
+  every same-HEAD A/B control (nyiso-150/151/152/185-189, caiso-224, miso-170) and
+  every superseded arm (caiso-231, miso-198, neiso-97, nyiso-186, nyiso-192, and
+  miso-213 once main promoted miso-217). Kept: the six keeper bundles, the
+  ercot-248 two-config keeper's constituent bundles (ercot234 / ercot236), the
+  class R/P pre-registered artifacts and the `_`-prefixed working dirs.
+  `check_registry_payload_parity.KEEP_REQUIRED_UNMAPPED_BUNDLES` is now EMPTY.
+  The two non-keeper registrations main added (nyiso-192, miso-213) were pruned
+  with `scripts/prune_iso_runs.py`; MISO's forecast gate-(a) stamp re-keyed to
+  miso-217 (R-T step 4, which the promotion had skipped).
+- **Forecast (`frontend/data/hindcast/` + `results/hindcast/`, `results/ff*`):** 36
+  stale sidecars deleted with their results dirs — kept per ISO every run holding
+  a current bare FF-2D verdict key, every run the `program-status.json` board
+  seed cites, the registered crossovers and the T3 goldens (41 sidecars). 109
+  `results/hindcast/` dirs no sidecar referenced and the sidecar-less
+  `ffr3p/3v/4b-4f/ffrsc/arm3arm/ffr-sa-smoke/baselines` lane outputs deleted
+  (their READMEs stay). `VERDICT_MAP` and `invariant-failures.json` drop the
+  pruned runs' lines; `ff-verdicts.json` untouched.
+- **Scripts:** the whole `scripts/archive/` tree (292 files) deleted; 54
+  `gen_*_attestation.py` for non-keeper runs deleted; 1,229 record-only
+  `scripts/probes/` files deleted (the 69 that live code imports or names stay);
+  21 dead top-level/data one-offs deleted (miso-148 helpers, ffr3a2/3a3 scorecard
+  trio, ownership attribution pair, zonal-sufficiency CLIs, bench regens, …).
+  `regen_caiso_bench_cems.py` → `scripts/data/`, `bench_cold_solve.py` →
+  `scripts/diagnostics/` (still called). `scripts/README.md` keeper-rotation rule
+  now reads DELETE; CLAUDE.md tree updated.
+- **`src/market_sim`:** dead modules `results/metrics.py`, `data/som_conduct.py`,
+  `pipeline/result.py` (placeholder `YearSolveResult`) and 7 unreferenced
+  functions / 6 unreferenced constants removed. ScenarioConfig fields with no
+  production reader are REPORTED in the session summary, not removed
+  (rules 24/26/28 govern those).
+- **Verification:** parity, audit_keepers, legitimacy --keepers, golden-manifest,
+  gate-(a), refactor-guards and forecast --reindex all pass; fast pytest tier
+  shows only the failures already red on main (ERCOT golden partition ×3, the
+  miso intermediate cache-key pin, the PJM override test) plus the pre-existing
+  forecast-invariant undeclared-FAIL rows.
 ## 2026-09-05 — DOCS-B (model-audit WS4): methodology spec FINALIZED, user manual FINAL, CHANGELOG catch-up, index refresh
 
 Docs-only. **No file under `src/`, `scripts/`, `frontend/`, `results/` or

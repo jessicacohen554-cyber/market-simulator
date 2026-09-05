@@ -191,6 +191,18 @@ class GoldenManifestSchemaTest(unittest.TestCase):
 
         The whole point of deriving the key from the shard: the entry cannot
         drift into naming a config that was never ruled.
+
+        Y-11 STOP (2026-09-05), left RED deliberately -- there is no literal
+        here to refresh. This compares the LIVE shard designation against the
+        COMMITTED manifest's ``keeper_id``, so the only thing that greens it is
+        changing the manifest -- a capture-lane act under R-AI, out of scope for
+        a pin lane. It is also not a one-line re-key: six capture records carry
+        pre-consolidation ERCOT ids (perfb-stage0, perfb-s2-{after,before,final},
+        perfb-s3-{after,before}), the bare ``ERCOT`` entry is equally stale at
+        2026-08-25-234-eastex-identity, and a manifest ``keeper_id`` records
+        which run's outputs were ACTUALLY captured -- so re-keying without
+        re-capturing would make the provenance record false. Routed to the
+        capture desk as the ercot-248 follow-up.
         """
         found = 0
         for key, entry in self.man["keepers"].items():
@@ -525,16 +537,42 @@ class PartitionCaptureKeyTest(unittest.TestCase):
         self.assertIn("carveout-2023", roles)
 
     def test_partition_run_id_resolves_the_carveout(self):
+        # 2026-09-05, re-pinned by the Y-11 fast-tier pin lane: session
+        # ercot-248 executed the owner's consolidation instruction (verbatim in
+        # keepers/ERCOT.json config_partition.consolidation.ruling) and re-keyed
+        # BOTH partition roles onto the one composed run. This assertion reads
+        # only "the shard designates X for this role", so it restates the
+        # owner-ruled designation and nothing else; the per-role config
+        # distinction is preserved in the shard's source_run_id / source_bundle
+        # (carve-out <- 2026-08-25-236-swcap-clip-k33, forward <-
+        # 2026-08-25-234-eastex-identity), which is why this is a pin refresh
+        # and not a semantic change.
         m = self.mod
         self.assertEqual(
             m.partition_run_id("ERCOT", "carveout-2023"),
-            "2026-08-25-236-swcap-clip-k33",
+            "2026-09-05-ercot248-two-config-keeper",
         )
         self.assertIsNone(m.partition_run_id("ERCOT", "no-such-role"))
         self.assertEqual(self.mod.partition_configs("PJM"), [])
 
     def test_resolve_capture_targets_reaches_the_carveout_bundle(self):
-        """Blocker 1: the carve-out was unreachable through keeper_list()."""
+        """Blocker 1: the carve-out was unreachable through keeper_list().
+
+        Y-11 STOP (2026-09-05), left RED deliberately -- not a stale pin.
+        The ercot-248 consolidation points both roles at one run, so
+        ``resolve_capture_targets`` now returns an IDENTICAL bundle AND an
+        identical span for ``ERCOT__carveout-2023`` and ``ERCOT__forward``:
+        ``years`` is the composed run's registered [2023, 2024, 2025], not the
+        carve-out's [2023]. Repairing this test needs TWO assertions changed,
+        and the ``years`` one would encode that collapse as intended -- it
+        would assert the carve-out golden now replays all three years, which
+        retires the rule-22 guard the line was placed here to hold ("the run's
+        own REGISTERED span, never widened") and makes the two partition
+        captures byte-identical, voiding the Blocker-1 purpose of the key.
+        That is a capture/calibration-desk decision (re-capture? slice on
+        designated years? retire the partition key?), not a pin refresh, so it
+        is routed to the ercot-248 follow-up rather than fitted here.
+        """
         info = self.mod.resolve_capture_targets(["ERCOT__carveout-2023"])[
             "ERCOT__carveout-2023"
         ]

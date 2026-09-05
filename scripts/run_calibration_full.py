@@ -8659,6 +8659,7 @@ def run_replay_bundle(
     campd_outage_merit_order_guard: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
+    caiso_dsw_daytime_evening_trim: bool | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8718,6 +8719,15 @@ def run_replay_bundle(
             from the SAME committed control recipe rather than re-expressing a
             keeper flag-by-flag (caiso-243 §10.4 / caiso-244 §7.7 — a recipe is
             never rebuilt by parameter name).
+        caiso_dsw_daytime_evening_trim: Override the bundle's recorded
+            ``caiso_dsw_daytime_evening_trim`` (the caiso-97 hod 6-21 -> 6-17
+            trim of the daytime WEIM clean-transfer window; ``None`` keeps
+            the recipe's own value). The flag rides the recorded generic
+            override bag (``coal_prb_sigmoid_overrides`` ->
+            ``prb_overrides``), so the edit lands on the SAME channel the
+            keeper set it through and the caiso-252 arm is provably the
+            committed keeper recipe plus this ONE value (caiso-243 §10.4 /
+            caiso-244 §7.7 — a recipe is never rebuilt by parameter name).
         enable_legacy_p2: Unlock the ARCHIVED P2 commitment pass when the
             REPLAYED RECIPE arms it (see :func:`enforce_legacy_p2_kwargs`).
             Without it a bundle recorded with ``commitment=true`` is a hard
@@ -8798,6 +8808,18 @@ def run_replay_bundle(
         # the single-field A/B arm is the keeper's recorded recipe plus exactly
         # this one field.
         kwargs["egrid_steam_collapse_heat_rates"] = egrid_steam_collapse_heat_rates
+    if caiso_dsw_daytime_evening_trim is not None:
+        # caiso-252: the evening-trim flag is not a direct solve_and_persist
+        # kwarg — the keeper carries it in the recorded generic override bag —
+        # so the override edits that bag in place (a COPY, the recipe dict is
+        # never mutated) and the arm is the keeper recipe plus this one value.
+        _bag_key = next(
+            (k for k in ("prb_overrides", "coal_prb_sigmoid_overrides") if k in kwargs),
+            "prb_overrides",
+        )
+        _bag = dict(kwargs.get(_bag_key) or {})
+        _bag["caiso_dsw_daytime_evening_trim"] = bool(caiso_dsw_daytime_evening_trim)
+        kwargs[_bag_key] = _bag
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
         # (the dashboard and audit_keepers pair twins by ablation_of).
@@ -9097,6 +9119,18 @@ def main() -> None:
         "derived anchor hard-fail; ISOs without phys_* keys are inert. "
         "Design: docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md. "
         "Default OFF -> prior keepers byte-identical.",
+    )
+    parser.add_argument(
+        "--caiso-dsw-daytime-evening-trim",
+        dest="caiso_dsw_daytime_evening_trim",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="REPLAY-ONLY override (--replay-bundle) of the recorded "
+        "ScenarioConfig.caiso_dsw_daytime_evening_trim: --no-... restores the "
+        "caiso-94 daytime WEIM clean-transfer window to hod 6-21 with the "
+        "committed untrimmed depth; --... forces the caiso-97 trimmed window. "
+        "Absent (default None) keeps the bundle's own value, so the replay "
+        "path is byte-identical (caiso-252).",
     )
     parser.add_argument(
         "--gas-offer-margin-zonal-anchor",
@@ -12616,6 +12650,7 @@ def main() -> None:
                 or "--no-gas-offer-margin" in sys.argv
                 else None
             ),
+            caiso_dsw_daytime_evening_trim=args.caiso_dsw_daytime_evening_trim,
             nearby_fuel_price_zone_donor_guard=(
                 args.nearby_fuel_price_zone_donor_guard
                 if "--nearby-fuel-price-zone-donor-guard" in sys.argv

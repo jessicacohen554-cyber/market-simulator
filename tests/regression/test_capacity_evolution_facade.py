@@ -258,7 +258,7 @@ class TestPatchSemantics(unittest.TestCase):
             self.assertIs(new_entry_mod._pkg_ns().estimate_expected_revenue, patched)
 
     def test_patch_step_functions_reach_evolve_path(self):
-        # scripts/archive/run_foresight_ab.py / the confirmed-retirement probe wrap the step
+        # run_foresight_ab.py (retired script, deleted 2026-09-05) / the confirmed-retirement probe wrap the step
         # functions on the capacity namespace and rely on evolve_fleet calling
         # the wrappers.
         import market_sim.model.capacity_evolution.evolve as evolve_mod

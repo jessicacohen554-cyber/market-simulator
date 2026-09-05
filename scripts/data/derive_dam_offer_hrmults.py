@@ -1,7 +1,7 @@
 """Derive MEASURED offer-curve heat-rate multipliers from the ERCOT 60-Day DAM.
 
 This is the gated, *measured* successor to the analysis-only
-``scripts/archive/analyze_dam_offer_multipliers.py``. Where the model today prices each
+``analyze_dam_offer_multipliers.py (retired script, deleted 2026-09-05)``. Where the model today prices each
 thermal band as ``MC = VOM + (base_HR x fuel_price) x mult`` with **chosen**
 per-class multipliers (``cc_committed_hr_mult`` = 1.23, ``ct_committed_hr_mult``
 = 1.28, ``coal_committed_hr_mult`` = 1.22, the ``*_econ_hr_mult`` set, and the

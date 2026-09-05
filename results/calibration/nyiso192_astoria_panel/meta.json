@@ -1,11 +1,6 @@
 {
-<<<<<<<< HEAD:results/calibration/miso217_intermphys_B/meta.json
-  "timestamp": "2026-09-05T19:35:42",
-  "iso": "MISO",
-========
   "timestamp": "2026-09-05T19:20:45",
   "iso": "NYISO",
->>>>>>>> origin/main:results/calibration/nyiso192_astoria_panel/meta.json
   "years": [
     2023,
     2024,
@@ -93,13 +88,6 @@
     "hydro_dispatch_envelope": true,
     "hydro_min_flow_floor": true,
     "nuclear_unit_availability": true,
-<<<<<<<< HEAD:results/calibration/miso217_intermphys_B/meta.json
-    "retiree_vintage_status_scope": true,
-    "partial_plant_exit_carry": true,
-    "st_gas_mustrun_oom_level": true,
-    "miso_zonal_gas_basis_skip_923_priced": true,
-    "miso_intermediate_gas_offer_margin": true
-========
     "nyiso_import_sil_retire": true,
     "measured_chp_heat_rates": true,
     "gas_offer_margin_zonal_anchor": true,
@@ -116,7 +104,6 @@
     "nyiso_zonal_loss_surface": true,
     "cc_capacity_reconcile": true,
     "egrid_steam_collapse_heat_rates": true
->>>>>>>> origin/main:results/calibration/nyiso192_astoria_panel/meta.json
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -294,19 +281,11 @@
   "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
   "unit_outage_lp_capacity_basis": null,
-<<<<<<<< HEAD:results/calibration/miso217_intermphys_B/meta.json
-  "unit_outage_mixed_gas_routing": true,
-  "unit_outage_st_capacity_basis": true,
-  "unit_outage_per_unit_clip": true,
-  "campd_per_unit_attribution": null,
-  "campd_outage_merit_order_guard": null,
-========
   "unit_outage_mixed_gas_routing": null,
   "unit_outage_st_capacity_basis": null,
   "unit_outage_per_unit_clip": null,
   "campd_per_unit_attribution": true,
   "campd_outage_merit_order_guard": true,
->>>>>>>> origin/main:results/calibration/nyiso192_astoria_panel/meta.json
   "cc_winter_capability_basis": null,
   "ramp_limits": true,
   "local_capacity_constraints": null,
@@ -337,21 +316,12 @@
   "nyiso_chp_btm_measured": true,
   "cc_reserve_duty_split": true,
   "chp_layup_duty_split": null,
-<<<<<<<< HEAD:results/calibration/miso217_intermphys_B/meta.json
-  "chp_layup_duty_curve": null,
-  "egrid_identity_heat_rates": null,
-  "egrid_family_heat_rates": null,
-  "egrid_steam_collapse_heat_rates": null,
-  "nyiso_gas_bridge_cc_min_run_hours": null,
-  "nyiso_gas_bridge_st_min_run_hours": null,
-========
   "chp_layup_duty_curve": true,
   "egrid_identity_heat_rates": true,
   "egrid_family_heat_rates": true,
   "egrid_steam_collapse_heat_rates": true,
   "nyiso_gas_bridge_cc_min_run_hours": 21.0,
   "nyiso_gas_bridge_st_min_run_hours": 13.0,
->>>>>>>> origin/main:results/calibration/nyiso192_astoria_panel/meta.json
   "nyiso_spin_reserve_online": null,
   "nyiso_spin_headroom_frac": null,
   "nyiso_dynamic_reserve_requirements": true,
@@ -386,21 +356,6 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-<<<<<<<< HEAD:results/calibration/miso217_intermphys_B/meta.json
-    "eia930": "../_shared/MISO/eia930-a257b22934ed.parquet",
-    "eia923": "../_shared/MISO/eia923-fa4995bba15c.parquet",
-    "campd": "../_shared/MISO/campd-0c8c8860e930.parquet",
-    "unit_outages": "../_shared/MISO/unit_outages-5b083f8b739a.parquet",
-    "unit_outages_short": "../_shared/MISO/unit_outages_short-ee95f581732c.parquet",
-    "unit_outages_partial": "../_shared/MISO/unit_outages_partial-b00540584f5f.parquet",
-    "unit_outages_maxgen": "../_shared/MISO/unit_outages_maxgen-886cd2a66556.parquet",
-    "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
-    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
-  },
-  "git_sha": "f3284261",
-  "basis_sha": "32427f82de28cb6484c1f6d62f9103b3e158e4bf",
-  "highspy_version": "1.14.0",
-========
     "eia930": "../_shared/NYISO/eia930-d866a7741788.parquet",
     "eia923": "../_shared/NYISO/eia923-920c8b8bc1b1.parquet",
     "campd": "../_shared/NYISO/campd-c51cde2ea05a.parquet",
@@ -414,17 +369,16 @@
   "git_sha": "d5bba63b",
   "basis_sha": "a00148646ecbc9d31d9f49fea2560ca51d4663b5",
   "highspy_version": "1.15.1",
->>>>>>>> origin/main:results/calibration/nyiso192_astoria_panel/meta.json
   "environment": {
     "python_version": "3.11.15",
     "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
-      "pydantic": "2.13.4"
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "pydantic": "2.13.5"
     }
   }
 }

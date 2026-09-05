@@ -370,7 +370,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.apply:
         # indent=1 + sort_keys is the board file's canonical on-disk format
-        # (scripts/merge_ffr3a2_verdicts.py writes it the same way), so the diff
+        # (the retired merge_ffr3a2_verdicts.py wrote it the same way), so the diff
         # shows only the re-scored entries instead of reflowing all 39.
         VERDICTS.write_text(json.dumps(board, indent=1, sort_keys=True) + "\n")
         print(f"\nwrote {VERDICTS.relative_to(REPO)} ({written} verdict(s) re-scored)")

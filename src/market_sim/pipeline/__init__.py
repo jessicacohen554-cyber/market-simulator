@@ -17,8 +17,6 @@ code yet:
   the untyped cross-year ``prior_results`` dict threaded through ``runner.py``'s
   year loop (audit AR-2). Dict-style ``.get`` / ``__getitem__`` shims keep every
   existing reader working during the migration.
-- :class:`~market_sim.pipeline.result.YearSolveResult` — a placeholder for the
-  shared core's return type, populated in Stages 3-4.
 
 None of these change any solved number; Stage 1 is pure typing + scaffolding.
 
@@ -69,7 +67,6 @@ from market_sim.pipeline.kwargs import (
 from market_sim.pipeline.persist import write_run_config
 from market_sim.pipeline.prior import PriorYearResults
 from market_sim.pipeline.reference import henry_hub_actual, load_reference
-from market_sim.pipeline.result import YearSolveResult
 from market_sim.pipeline.solve import (
     EnergySolveResult,
     apply_bid_max_target,
@@ -93,7 +90,6 @@ __all__ = [
     "ReserveSpec",
     "UNSET",
     "PriorYearResults",
-    "YearSolveResult",
     "EnergySolveResult",
     "build_base_dispatch_kwargs",
     "apply_reserve_coopt",

@@ -227,7 +227,11 @@ code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
     margin-top: auto;
     padding-top: var(--space-md);
     font-weight: 600;
-    color: var(--card-accent, var(--accent-deep));
+    /* Always the deep accent (5.2:1 on white), never the card's fuel-colour
+       accent: --solar / --wind / --gas-ct / --hydro / --storage measure
+       1.7–2.9:1 on white and fail WCAG AA for text. The accent stays on the
+       card's decorative top border only (2026-09-05 landing-page cleanup). */
+    color: var(--accent-deep);
 }
 
 /* ---------------------------------------------------------------------------

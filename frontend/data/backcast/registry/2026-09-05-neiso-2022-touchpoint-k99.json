@@ -1,0 +1,97 @@
+{
+  "id": "2026-09-05-neiso-2022-touchpoint-k99",
+  "label": "neiso 2022 touchpoint k99",
+  "date": "2026-09-05",
+  "shorthand": "neiso-2022-touchpoint-k99",
+  "definition": "NEISO 2022 VALIDATION TOUCHPOINT re-walked on the CURRENT keeper (rule 22 validation tier, freeze scope = locked_test only since the 2026-08-26 owner ruling). Byte-faithful replay of the 2026-08-17-neiso-99-joint-p1 keeper recipe (results/calibration/neiso99_joint_B/meta.json) on the held-out 2022 year. Frozen recipe, zero deltas: no parameter was tuned for, against, or in response to 2022. Supersedes 2026-08-06-neiso-2022-corrected-basis, which measured the neiso-87 recipe and went stale across the neiso-97 SMD-clock and neiso-99 outage-routing repairs. ITERABLE model-SELECTION evidence, NEVER a certified out-of-sample skill number.",
+  "years": [
+    2022
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-09-05-neiso-2022-touchpoint-k99.js",
+  "bundle": "results/calibration/neiso_tp2022_k99",
+  "holdout": {
+    "tier": "validation",
+    "year": 2022,
+    "keeper": "2026-08-17-neiso-99-joint-p1",
+    "keeperDetermination": "CALIBRATED",
+    "keeperYears": [
+      2023,
+      2024,
+      2025
+    ],
+    "holdoutDetermination": "CALIBRATED",
+    "criteria": [
+      {
+        "key": "price_tail",
+        "label": "C3c price tail / scarcity (RT hourly)",
+        "tier": "supporting",
+        "inSample": "CAVEAT",
+        "holdout": "CAVEAT",
+        "verdict": "carried"
+      },
+      {
+        "key": "dispatch_corr",
+        "label": "C4 fleet hourly dispatch correlation",
+        "tier": "supporting",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "forced_share",
+        "label": "C8 forced-energy share (D-2)",
+        "tier": "protective",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "fuelmix",
+        "label": "C1 fuel-mix by class (grid-delivered)",
+        "tier": "load-bearing",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "governance",
+        "label": "C6 governance gate",
+        "tier": "protective",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "price_mean",
+        "label": "C3a mean LMP",
+        "tier": "load-bearing",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "price_shape",
+        "label": "C3b price duration/shape",
+        "tier": "load-bearing",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      },
+      {
+        "key": "sysvol",
+        "label": "C2 system volume (gas/coal families)",
+        "tier": "load-bearing",
+        "inSample": "PASS",
+        "holdout": "PASS",
+        "verdict": "held"
+      }
+    ],
+    "nDegraded": 0,
+    "nCarried": 1,
+    "tierCaveat": "Validation tier: ITERABLE model-SELECTION evidence. This is NOT a certified out-of-sample skill number and must never be quoted as one \u2014 the year may be re-spent after the open availability-envelope defect lands. The touch-once locked test (2019 / H1-2026) is NOT spent here.",
+    "envelopeCaveat": "SAME-ENVELOPE PARITY: 2022 is built from the SAME uniform 2018-2026 CAMPD detector pass as the tuned years and is in family on window count and MW-days, so the over-count behind the locked-test freeze is baked into both sides \u2014 hold ABSOLUTE levels at arm's length, but the DELTA is like-for-like. BENCH VINTAGE IS UNIFORM: every NEISO bench part 2020-2025 rides the builder at HEAD (fingerprint 4254168edcfe); no STALE BENCHMARK warning on this run. ONE STATED LIMIT REMAINS: the keeper's in-sample column was solved at git b7904a1 (2026-08-17) and this rung at 6619fb4a (2026-09-05), with 26 solve kwargs added in between, each verified in this bundle's calibration_attestation.json to sit at its ScenarioConfig default. A rule-30 G-DRIFT hunk audit is not dischargeable (120 files / +119,273 lines across five other ISOs' lanes), so the drift is measured by the same-HEAD in-sample control registered alongside this rung.",
+    "supersedes": "2026-08-06-neiso-2022-corrected-basis",
+    "supersedesNote": "The prior 2022 rung measured the neiso-87 recipe and scored CALIBRATED-WITH-CAVEATS with C3a degraded; it went stale across two measured-input repairs applied to every year (neiso-97 ISO-NE SMD clock, neiso-99 CAMPD unit-outage routing guard) and was pruned from the dashboard on 2026-08-09. This is the first 2022 result that measures the CURRENT frozen keeper recipe, and it reads CALIBRATED with ZERO degraded criteria \u2014 the repairs hold out-of-sample."
+  }
+}

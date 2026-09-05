@@ -1,0 +1,387 @@
+{
+ "_provenance": {
+  "session": "caiso-251 (gas-offer fuel-coupling FORM: arm vs control)",
+  "keeper": "results/calibration/caiso246_b1_spot_coverage",
+  "control": "results/calibration/caiso246_b1_spot_coverage",
+  "arm": "results/calibration/caiso251_arm_nomargin",
+  "delta": "single flag --no-gas-offer-margin on the replayed keeper recipe",
+  "precommit": "PRECOMMIT-caiso251-fuel-coupling-form-2026-09-05.md",
+  "note": "C3a is EXCLUDED from the promotion basis in BOTH directions (PRECOMMIT \u00a70.2, the sixth consecutive favourable direction declared in advance). It is reported because P-6/P-7 are predictions about it, never as evidence for the arm."
+ },
+ "years": {
+  "2023": {
+   "actual_rt_lw": 54.17,
+   "keeper_model_lw": 56.2862,
+   "control_model_lw": 56.2862,
+   "arm_model_lw": 56.7855,
+   "keeper_c3a_pct_committed": 3.9,
+   "control_gap_usd": 2.1162,
+   "control_c3a_pct": 3.907,
+   "arm_gap_usd": 2.6155,
+   "arm_c3a_pct": 4.828,
+   "arm_minus_control_usd": 0.4994,
+   "control_minus_keeper_usd": 0.0,
+   "class_twh": {
+    "CC_CHP": {
+     "keeper": 8.5217,
+     "control": 8.5217,
+     "arm": 8.5056,
+     "arm_minus_control": -0.0161
+    },
+    "CC_REGULAR": {
+     "keeper": 48.7588,
+     "control": 48.7588,
+     "arm": 48.9432,
+     "arm_minus_control": 0.1844
+    },
+    "COAL": {
+     "keeper": 0.0925,
+     "control": 0.0925,
+     "arm": 0.0905,
+     "arm_minus_control": -0.002
+    },
+    "CT_CHP": {
+     "keeper": 1.2486,
+     "control": 1.2486,
+     "arm": 1.2352,
+     "arm_minus_control": -0.0134
+    },
+    "CT_PEAKER": {
+     "keeper": 1.6268,
+     "control": 1.6268,
+     "arm": 1.7062,
+     "arm_minus_control": 0.0794
+    },
+    "OTHER": {
+     "keeper": 9.259,
+     "control": 9.259,
+     "arm": 9.259,
+     "arm_minus_control": 0.0
+    },
+    "ST_GAS": {
+     "keeper": 0.1547,
+     "control": 0.1547,
+     "arm": 0.0999,
+     "arm_minus_control": -0.0548
+    },
+    "biomass": {
+     "keeper": 4.477,
+     "control": 4.477,
+     "arm": 4.477,
+     "arm_minus_control": 0.0
+    },
+    "hydro": {
+     "keeper": 24.3312,
+     "control": 24.3312,
+     "arm": 24.3347,
+     "arm_minus_control": 0.0035
+    },
+    "import": {
+     "keeper": 37.2701,
+     "control": 37.2701,
+     "arm": 37.0575,
+     "arm_minus_control": -0.2126
+    },
+    "nuclear": {
+     "keeper": 17.6263,
+     "control": 17.6263,
+     "arm": 17.6263,
+     "arm_minus_control": 0.0
+    },
+    "oil": {
+     "keeper": 0.0001,
+     "control": 0.0001,
+     "arm": 0.0001,
+     "arm_minus_control": 0.0
+    },
+    "solar": {
+     "keeper": 39.3169,
+     "control": 39.3169,
+     "arm": 39.3309,
+     "arm_minus_control": 0.014
+    },
+    "wind": {
+     "keeper": 16.5545,
+     "control": 16.5545,
+     "arm": 16.5545,
+     "arm_minus_control": 0.0
+    }
+   }
+  },
+  "2024": {
+   "actual_rt_lw": 34.65,
+   "keeper_model_lw": 38.9215,
+   "control_model_lw": 38.9215,
+   "arm_model_lw": 37.9214,
+   "keeper_c3a_pct_committed": 12.3,
+   "control_gap_usd": 4.2715,
+   "control_c3a_pct": 12.327,
+   "arm_gap_usd": 3.2714,
+   "arm_c3a_pct": 9.441,
+   "arm_minus_control_usd": -1.0,
+   "control_minus_keeper_usd": 0.0,
+   "class_twh": {
+    "CC_CHP": {
+     "keeper": 7.6275,
+     "control": 7.6275,
+     "arm": 7.556,
+     "arm_minus_control": -0.0715
+    },
+    "CC_REGULAR": {
+     "keeper": 45.8014,
+     "control": 45.8014,
+     "arm": 46.7479,
+     "arm_minus_control": 0.9465
+    },
+    "COAL": {
+     "keeper": 0.0535,
+     "control": 0.0535,
+     "arm": 0.0461,
+     "arm_minus_control": -0.0074
+    },
+    "CT_CHP": {
+     "keeper": 1.2213,
+     "control": 1.2213,
+     "arm": 1.2293,
+     "arm_minus_control": 0.008
+    },
+    "CT_PEAKER": {
+     "keeper": 0.7442,
+     "control": 0.7442,
+     "arm": 1.4778,
+     "arm_minus_control": 0.7336
+    },
+    "OTHER": {
+     "keeper": 8.0763,
+     "control": 8.0763,
+     "arm": 8.0763,
+     "arm_minus_control": 0.0
+    },
+    "ST_GAS": {
+     "keeper": 0.5521,
+     "control": 0.5521,
+     "arm": 0.216,
+     "arm_minus_control": -0.3361
+    },
+    "biomass": {
+     "keeper": 4.4101,
+     "control": 4.4101,
+     "arm": 4.4101,
+     "arm_minus_control": 0.0
+    },
+    "hydro": {
+     "keeper": 22.5244,
+     "control": 22.5244,
+     "arm": 22.5375,
+     "arm_minus_control": 0.0131
+    },
+    "import": {
+     "keeper": 40.0167,
+     "control": 40.0167,
+     "arm": 38.6237,
+     "arm_minus_control": -1.393
+    },
+    "nuclear": {
+     "keeper": 18.1929,
+     "control": 18.1929,
+     "arm": 18.1929,
+     "arm_minus_control": 0.0
+    },
+    "oil": {
+     "keeper": 0.0,
+     "control": 0.0,
+     "arm": 0.0,
+     "arm_minus_control": 0.0
+    },
+    "solar": {
+     "keeper": 46.7432,
+     "control": 46.7432,
+     "arm": 46.7946,
+     "arm_minus_control": 0.0514
+    },
+    "wind": {
+     "keeper": 20.2896,
+     "control": 20.2896,
+     "arm": 20.2896,
+     "arm_minus_control": 0.0
+    }
+   }
+  },
+  "2025": {
+   "actual_rt_lw": 34.42,
+   "keeper_model_lw": 38.3623,
+   "control_model_lw": 38.3623,
+   "arm_model_lw": 37.6394,
+   "keeper_c3a_pct_committed": 11.4,
+   "control_gap_usd": 3.9423,
+   "control_c3a_pct": 11.453,
+   "arm_gap_usd": 3.2194,
+   "arm_c3a_pct": 9.353,
+   "arm_minus_control_usd": -0.7229,
+   "control_minus_keeper_usd": 0.0,
+   "class_twh": {
+    "CC_CHP": {
+     "keeper": 7.6149,
+     "control": 7.6149,
+     "arm": 7.5844,
+     "arm_minus_control": -0.0305
+    },
+    "CC_REGULAR": {
+     "keeper": 40.8443,
+     "control": 40.8443,
+     "arm": 41.5839,
+     "arm_minus_control": 0.7396
+    },
+    "COAL": {
+     "keeper": 0.0797,
+     "control": 0.0797,
+     "arm": 0.0768,
+     "arm_minus_control": -0.0029
+    },
+    "CT_CHP": {
+     "keeper": 1.2024,
+     "control": 1.2024,
+     "arm": 1.2024,
+     "arm_minus_control": 0.0
+    },
+    "CT_PEAKER": {
+     "keeper": 0.3599,
+     "control": 0.3599,
+     "arm": 0.774,
+     "arm_minus_control": 0.4141
+    },
+    "OTHER": {
+     "keeper": 5.9206,
+     "control": 5.9206,
+     "arm": 5.9206,
+     "arm_minus_control": 0.0
+    },
+    "ST_GAS": {
+     "keeper": 0.1202,
+     "control": 0.1202,
+     "arm": 0.0252,
+     "arm_minus_control": -0.095
+    },
+    "biomass": {
+     "keeper": 3.2329,
+     "control": 3.2329,
+     "arm": 3.2329,
+     "arm_minus_control": 0.0
+    },
+    "hydro": {
+     "keeper": 21.2664,
+     "control": 21.2664,
+     "arm": 21.269,
+     "arm_minus_control": 0.0026
+    },
+    "import": {
+     "keeper": 39.7109,
+     "control": 39.7109,
+     "arm": 38.6276,
+     "arm_minus_control": -1.0833
+    },
+    "nuclear": {
+     "keeper": 17.4847,
+     "control": 17.4847,
+     "arm": 17.4847,
+     "arm_minus_control": 0.0
+    },
+    "oil": {
+     "keeper": 0.0,
+     "control": 0.0,
+     "arm": 0.0,
+     "arm_minus_control": 0.0
+    },
+    "solar": {
+     "keeper": 52.4562,
+     "control": 52.4562,
+     "arm": 52.4708,
+     "arm_minus_control": 0.0146
+    },
+    "wind": {
+     "keeper": 20.098,
+     "control": 20.098,
+     "arm": 20.098,
+     "arm_minus_control": 0.0
+    }
+   }
+  }
+ },
+ "gates": {
+  "G_CTRL": {
+   "form": 4,
+   "basis": "G-DRIFT code audit, PRECOMMIT-caiso251 Addendum B",
+   "control_is": "the committed keeper caiso246_b1_spot_coverage",
+   "control_solve_spent": false,
+   "drift_audit": "git diff 900402b..HEAD over the backcast path: 22 files, +2527/-149, EVERY hunk CAISO-backcast-INERT with its reason cited (forecast-only capacity paths; MISO-only branches; the NYISO-only egrid_steam_collapse artifact; an adaptive-pass guard unreachable with *_storage_adaptive_expectation False; a return-type-only change; timing accounting)",
+   "pass": true
+  },
+  "G_HOLDOUT": {
+   "years": [
+    2023,
+    2024,
+    2025
+   ],
+   "pass": true
+  }
+ },
+ "predictions": {
+  "P-6": {
+   "registered": "at least one of 2024/2025 lands with a NEGATIVE C3a gap",
+   "arm_c3a_pct": {
+    "2023": 4.828,
+    "2024": 9.441,
+    "2025": 9.353
+   },
+   "verdict": "FALSIFIED"
+  },
+  "P-7": {
+   "registered": "2023 C3a gets WORSE than the control and 2023 FAILS its band",
+   "control_2023_c3a_pct": 3.907,
+   "arm_2023_c3a_pct": 4.828,
+   "got_worse": true,
+   "arm_2023_price_mean_status": "PASS",
+   "note": "the FAIL leg is read from the arm's own scored verdict, not recomputed"
+  },
+  "P-8": {
+   "registered": "CT_PEAKER 2025 dispatch rises by >= 0.5 TWh",
+   "control_twh": 0.3599,
+   "arm_twh": 0.774,
+   "delta_twh": 0.4141,
+   "verdict": "FALSIFIED"
+  },
+  "P-9": {
+   "registered": "at least one non-C3a scored criterion regresses",
+   "control_criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "forced_share": "PASS"
+   },
+   "arm_criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "PASS",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "FAIL",
+    "governance": "PASS",
+    "forced_share": "PASS"
+   },
+   "regressed": [
+    "dispatch_corr"
+   ],
+   "verdict": "HOLDS"
+  },
+  "P-10": {
+   "registered": "the determination stays NOT-YET",
+   "control_determination": "NOT-YET",
+   "arm_determination": "NOT-YET",
+   "verdict": "HOLDS"
+  }
+ }
+}

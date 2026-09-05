@@ -43,7 +43,6 @@ for _p in (REPO, REPO / "src"):
 # with its OWN scripts/ namespace — its `scripts/...` paths resolve there, not
 # at this repo root, so scanning it yields only false positives).
 _EXCL_DIRS = (
-    "scripts/archive/",
     "scripts/probes/",
     "results/calibration/",
     "docs/sessions/",

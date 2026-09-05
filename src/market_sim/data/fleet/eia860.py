@@ -2140,11 +2140,6 @@ def _committed_vintage_years_for(base: Path) -> tuple[int, ...]:
     return tuple(sorted(years))
 
 
-def _committed_vintage_years() -> tuple[int, ...]:
-    """The committed vintage years under the canonical EIA-860 root."""
-    return _committed_vintage_years_for(_pkg_ns().EIA_860_DIR)
-
-
 @lru_cache(maxsize=None)
 def _vintage_status_index_for(
     base: Path, vintage_year: int

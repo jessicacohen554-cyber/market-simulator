@@ -87,13 +87,10 @@ file:line.
 > state. If the file goes missing the workflow only *warns*, so its absence
 > silently removes the safety net.
 
-Regenerate the underlying inventory with:
-
-```
-python3 scripts/audit_citation_tokens.py
-```
-
-which classifies **every** hex token in the citation corpora against the object
+The underlying inventory was produced by `audit_citation_tokens.py` (a
+rewrite-prep one-off, deleted 2026-09-05 after the 2026-08-16 rewrite it
+prepared for was executed; recover it from git history if the inventory ever
+needs regenerating), which classified **every** hex token in the citation corpora against the object
 database into: real commit SHA · 16-char runtime cache key · blob/tree hash ·
 other identifier · numeric false positive.
 

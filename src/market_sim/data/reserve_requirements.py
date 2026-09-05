@@ -549,7 +549,7 @@ class ReserveRequirementSpec:
 #: data.{nyiso,neiso,miso}_reserve_requirements modules, now facades). The
 #: solve path (config.reserve_config._{nyiso,neiso,miso}_design) still imports
 #: each loader by name; this table is the registry for data-dictionary /
-#: ISO-add introspection and the :func:`load_reserve_requirements` dispatcher.
+#: ISO-add introspection (the former ``load_reserve_requirements`` dispatcher was deleted 2026-09-05 as dead code).
 RESERVE_REQUIREMENT_SPECS: dict[str, ReserveRequirementSpec] = {
     "NYISO": ReserveRequirementSpec(
         iso="NYISO",
@@ -579,26 +579,3 @@ RESERVE_REQUIREMENT_SPECS: dict[str, ReserveRequirementSpec] = {
         ),
     ),
 }
-
-
-def load_reserve_requirements(iso: str, year: int, hours: int) -> dict[str, np.ndarray]:
-    """Dispatch to the per-ISO measured reserve-requirement loader.
-
-    A thin registry lookup over :data:`RESERVE_REQUIREMENT_SPECS`; the per-ISO
-    ``load_<iso>_reserve_requirements`` functions are the canonical
-    implementations (and what ``config.reserve_config`` imports by name for the
-    solve path). Additive convenience for callers that dispatch by ISO.
-
-    Args:
-        iso: ISO identifier (must be a key of :data:`RESERVE_REQUIREMENT_SPECS`).
-        year: Backcast year (the fleet-clock year the solve runs on).
-        hours: LP horizon length T.
-
-    Returns:
-        ``{name: (hours,) float array of requirement MW}`` — the ISO's measured
-        series (family- or leg-keyed per that ISO's loader).
-
-    Raises:
-        KeyError: ``iso`` has no measured reserve-requirement channel.
-    """
-    return RESERVE_REQUIREMENT_SPECS[iso].loader(int(year), int(hours))

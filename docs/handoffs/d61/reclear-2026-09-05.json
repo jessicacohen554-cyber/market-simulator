@@ -1,0 +1,488 @@
+{
+ "S0": {
+  "2022": {
+   "price": 76.1035,
+   "ratio": 1.52207,
+   "pos": 1.0462317633295564,
+   "dpos": -0.4768236670443571,
+   "uncleared": {
+    "coal": 5367.814000000002,
+    "gas_cc": 2052.0550000000007,
+    "gas_st": 8801.937
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2023": {
+   "price": 82.8112,
+   "ratio": 2.4263463228830937,
+   "pos": 1.045420891281781,
+   "dpos": -0.9779108718218854,
+   "uncleared": {
+    "gas_cc": 2140.8690000000006,
+    "coal": 1124.228,
+    "gas_st": 1981.5950000000007
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2024": {
+   "price": 165.8365,
+   "ratio": 5.734318810511756,
+   "pos": 1.0276066832635733,
+   "dpos": -2.789331673642681,
+   "uncleared": {
+    "coal": 405.92499999999995
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970488,
+   "dpos": -3.877311670295114,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  }
+ },
+ "S1": {
+  "2022": {
+   "price": 69.40639193302891,
+   "ratio": 1.3881278386605782,
+   "pos": 1.0479311229501558,
+   "dpos": -0.3068877049844154,
+   "uncleared": {
+    "coal": 5367.814000000002,
+    "gas_cc": 2052.0550000000007,
+    "gas_st": 8801.937
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2023": {
+   "price": 76.25968123883264,
+   "ratio": 2.234388550800839,
+   "pos": 1.0469885720293177,
+   "dpos": -0.8211427970682195,
+   "uncleared": {
+    "gas_cc": 2140.8690000000006,
+    "coal": 1124.228,
+    "gas_st": 1981.5950000000007
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2024": {
+   "price": 159.28498123883264,
+   "ratio": 5.507779434261156,
+   "pos": 1.029055159428342,
+   "dpos": -2.644484057165819,
+   "uncleared": {
+    "coal": 405.92499999999995
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970488,
+   "dpos": -3.877311670295114,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  }
+ },
+ "S2": {
+  "2022": {
+   "price": 68.71287564016218,
+   "ratio": 1.3742575128032437,
+   "pos": 1.0481070994421788,
+   "dpos": -0.28929005578210987,
+   "uncleared": {
+    "coal": 5367.814000000002,
+    "gas_cc": 2052.0550000000007,
+    "gas_st": 8801.937
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2023": {
+   "price": 75.30024919372998,
+   "ratio": 2.2062774448792846,
+   "pos": 1.0472181498112805,
+   "dpos": -0.7981850188719442,
+   "uncleared": {
+    "gas_cc": 2140.8690000000006,
+    "coal": 1124.228,
+    "gas_st": 1981.5950000000007
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2024": {
+   "price": 156.68391740810384,
+   "ratio": 5.417839467776758,
+   "pos": 1.0296302289807922,
+   "dpos": -2.5869771019207954,
+   "uncleared": {
+    "coal": 405.92499999999995
+   },
+   "how": "curve_sets_price_between_offers"
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970488,
+   "dpos": -3.877311670295114,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  }
+ },
+ "S4": {
+  "2022": {
+   "price": 67.7602,
+   "ratio": 1.3552039999999999,
+   "pos": 1.0483488363976274,
+   "dpos": -0.2651163602372497,
+   "uncleared": {
+    "oil": 3722.8500000000026,
+    "gas_cc": 2052.0550000000007,
+    "gas_st": 8801.937,
+    "coal": 93.848
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2023": {
+   "price": 67.7602,
+   "ratio": 1.9853559917960737,
+   "pos": 1.0490223711510027,
+   "dpos": -0.6177628848997196,
+   "uncleared": {
+    "gas_cc": 2145.1550000000007,
+    "gas_st": 1981.5950000000007,
+    "coal": 93.848
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2024": {
+   "price": 145.67728889823016,
+   "ratio": 5.037250653465773,
+   "pos": 1.0320636859595789,
+   "dpos": -2.3436314040421236,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970485,
+   "dpos": -3.877311670295136,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  }
+ },
+ "S5": {
+  "2022": {
+   "price": 61.09503416581783,
+   "ratio": 1.2219006833163566,
+   "pos": 1.0500400908271428,
+   "dpos": -0.0959909172857154,
+   "uncleared": {
+    "oil": 3722.8500000000026,
+    "gas_cc": 2052.0550000000007,
+    "gas_st": 8801.937,
+    "coal": 93.848
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2023": {
+   "price": 61.11125475314551,
+   "ratio": 1.790543649374319,
+   "pos": 1.0506133646038034,
+   "dpos": -0.45866353961965256,
+   "uncleared": {
+    "gas_cc": 2145.1550000000007,
+    "gas_st": 1981.5950000000007,
+    "coal": 93.848
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2024": {
+   "price": 145.67728889823317,
+   "ratio": 5.037250653465877,
+   "pos": 1.0320636859595782,
+   "dpos": -2.34363140404219,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970488,
+   "dpos": -3.877311670295114,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  }
+ },
+ "S0m": {
+  "2022": {
+   "price": 76.1035,
+   "ratio": 1.52207,
+   "pos": 1.0462317633295564,
+   "dpos": -0.4768236670443571,
+   "uncleared": {
+    "coal": 5367.814000000002,
+    "gas_cc": 2052.0550000000007,
+    "gas_st": 8801.937
+   },
+   "how": "marginal_offer_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2023": {
+   "price": 82.8112,
+   "ratio": 2.4263463228830937,
+   "pos": 1.045420891281781,
+   "dpos": -0.9779108718218854,
+   "uncleared": {
+    "gas_cc": 2140.8690000000006,
+    "coal": 1124.228,
+    "gas_st": 1981.5950000000007
+   },
+   "how": "marginal_offer_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2024": {
+   "price": 165.8365,
+   "ratio": 5.734318810511756,
+   "pos": 1.0276066832635733,
+   "dpos": -2.789331673642681,
+   "uncleared": {
+    "coal": 405.92499999999995
+   },
+   "how": "marginal_offer_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970488,
+   "dpos": -3.877311670295114,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  }
+ },
+ "S6": {
+  "2022": {
+   "price": 53.19144406878461,
+   "ratio": 1.0638288813756922,
+   "pos": 1.052045589578896,
+   "dpos": 0.10455895788961111,
+   "uncleared": {
+    "oil": 3722.8500000000026,
+    "gas_cc": 2052.0550000000007,
+    "gas_st": 8801.937,
+    "coal": 237.84500000000003
+   },
+   "how": "marginal_offer_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2023": {
+   "price": 53.19144406878461,
+   "ratio": 1.5584952847578262,
+   "pos": 1.0525084572054757,
+   "dpos": -0.26915427945242154,
+   "uncleared": {
+    "gas_cc": 2145.1550000000007,
+    "gas_st": 1981.5950000000007,
+    "coal": 237.84500000000003
+   },
+   "how": "marginal_offer_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2024": {
+   "price": 145.67728889823317,
+   "ratio": 5.037250653465877,
+   "pos": 1.0320636859595782,
+   "dpos": -2.34363140404219,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970488,
+   "dpos": -3.877311670295114,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  }
+ },
+ "S7": {
+  "2022": {
+   "price": 33.524738563799076,
+   "ratio": 0.6704947712759816,
+   "pos": 1.0570359234470648,
+   "dpos": 0.6035923447064828,
+   "uncleared": {
+    "oil": 3722.8500000000026,
+    "gas_cc": 2052.0550000000007,
+    "gas_st": 8801.937,
+    "coal": 237.84500000000003
+   },
+   "how": "marginal_offer_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2023": {
+   "price": 33.54095915112676,
+   "ratio": 0.982741258456688,
+   "pos": 1.0572105252309483,
+   "dpos": 0.20105252309483568,
+   "uncleared": {
+    "gas_cc": 2145.1550000000007,
+    "gas_st": 1981.5950000000007,
+    "coal": 237.84500000000003
+   },
+   "how": "marginal_offer_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2024": {
+   "price": 145.67728889823317,
+   "ratio": 5.037250653465877,
+   "pos": 1.0320636859595782,
+   "dpos": -2.34363140404219,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970488,
+   "dpos": -3.877311670295114,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price",
+   "marginal": "None",
+   "marginal_fuel": ""
+  }
+ },
+ "S3a": {
+  "2022": {
+   "price": 93.18344252531269,
+   "ratio": 1.8636688505062537,
+   "pos": 1.0418978083807302,
+   "dpos": -0.9102191619269728,
+   "uncleared": {
+    "gas_st": 8801.937
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2023": {
+   "price": 93.18344252531269,
+   "ratio": 2.730250293739018,
+   "pos": 1.0429389683096466,
+   "dpos": -1.2261031690353308,
+   "uncleared": {
+    "gas_st": 1981.5950000000007
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2024": {
+   "price": 197.84693269803455,
+   "ratio": 6.841180245436879,
+   "pos": 1.0205294923896253,
+   "dpos": -3.497050761037479,
+   "uncleared": {},
+   "how": "marginal_offer_sets_price"
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970498,
+   "dpos": -3.877311670295014,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  }
+ },
+ "S3b": {
+  "2022": {
+   "price": 43.748178373652,
+   "ratio": 0.87496356747304,
+   "pos": 1.054441773759952,
+   "dpos": 0.3441773759952138,
+   "uncleared": {
+    "gas_st": 8801.937
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2023": {
+   "price": 43.748178373652,
+   "ratio": 1.2818100900571932,
+   "pos": 1.05476808987445,
+   "dpos": -0.04319101255498836,
+   "uncleared": {
+    "gas_st": 1981.5950000000007
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2024": {
+   "price": 145.67728889823218,
+   "ratio": 5.0372506534658426,
+   "pos": 1.0320636859595784,
+   "dpos": -2.343631404042168,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970498,
+   "dpos": -3.877311670295014,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  }
+ },
+ "S3c": {
+  "2022": {
+   "price": 43.748178373652,
+   "ratio": 0.87496356747304,
+   "pos": 1.054441773759952,
+   "dpos": 0.3441773759952138,
+   "uncleared": {
+    "gas_st": 8801.937
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2023": {
+   "price": 43.748178373652,
+   "ratio": 1.2818100900571932,
+   "pos": 1.05476808987445,
+   "dpos": -0.04319101255498836,
+   "uncleared": {
+    "gas_st": 1981.5950000000007
+   },
+   "how": "marginal_offer_sets_price"
+  },
+  "2024": {
+   "price": 145.67728889823118,
+   "ratio": 5.037250653465808,
+   "pos": 1.0320636859595786,
+   "dpos": -2.3436314040421458,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.966126883297049,
+   "dpos": -3.8773116702950916,
+   "uncleared": {},
+   "how": "all_offers_clear_curve_sets_price"
+  }
+ }
+}

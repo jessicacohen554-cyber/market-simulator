@@ -86,6 +86,31 @@ exists to keep those goldens from going stale under them.
   freeze on three ISOs. Different scope, different subject, different lifting
   authority; neither implies the other.
 
+**🔵 LIFTED 2026-09-05 — owner ruling R-AR (audit-program sitting, 21:55Z),
+verbatim: *"Lift R-V now for all three."*** The freeze above is **no longer in
+force**: ERCOT, NEISO and PJM promote as normal, like the other three lanes. The
+note is kept rather than deleted because it is the record of what bound these
+lanes between 2026-09-01 and 2026-09-05, and because its stated rationale is
+still the live risk. **R-AR AMENDS R-AN**, which had attached the lift to the G2
+declaration; the lift is **not** conditioned on that declaration, which at the
+time of writing has still not been made (`main` reads `protected: false`).
+**What the lift changes, stated plainly.** The freeze existed *"to keep those
+goldens from going stale under them"*. With it lifted, **stage-0 has no
+protection left**: NEISO and PJM are the only two `perfb-stage0` entries still
+CURRENT, and either can now go stale by promotion. That is a consequence of the
+lift, not an objection to it — the two **ERCOT** entries had already gone stale
+*inside* the freeze when the owner-directed ercot-248 consolidation moved
+ERCOT's `keeper` field at 2026-09-05 19:01:23Z (`4b7a515e`, PR #4808:
+`2026-08-25-234-eastex-identity` → `2026-09-05-ercot248-two-config-keeper`,
+every per-year artifact copied byte-for-byte, zero solve, `complete.ERCOT`
+re-keyed with its rule-22 D-5(b) re-verification reading CALIBRATED and not
+worse). A prose-enforced freeze did not stop the owner's own act, which is
+evidence it was not achieving its purpose. **If you are promoting in one of
+these three lanes, the R-AI stage-0 re-capture obligation is what now applies —
+not this freeze.** Recorded by the audit records lane v31 at pin `fb51bd82`;
+full account in `docs/handoffs/audit-program-director-board-2026-08.md` (v31
+block, R-AR) and `docs/model-audit-release-plan-2026-08.md` §8.
+
 Readers: use `scripts/lib/keeper_store.py` (`load_merged()` returns the old
 monolith shape). The dashboard composes the shards client-side
 (`docs/codebase-site/js/bc-data.js`); the Calibration Status page renders

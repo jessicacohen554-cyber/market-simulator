@@ -26,25 +26,55 @@ from market_sim.data.offer_curves import (
 # The MISO keeper's own registered bands (miso213_layering_B run_config).
 PARENTS = {
     "CT_PEAKER": {
-        "committed": 1.025, "econ_low": 1.0, "econ_high": 1.0, "peak": 4.0,
-        "phys_committed": 1.025, "phys_econ_low": 0.687,
-        "phys_econ_high": 0.691, "phys_peak": 1.0,
+        "committed": 1.025,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 4.0,
+        "phys_committed": 1.025,
+        "phys_econ_low": 0.687,
+        "phys_econ_high": 0.691,
+        "phys_peak": 1.0,
     },
     "CC_REGULAR": {
-        "committed": 1.005, "econ_low": 0.95, "econ_high": 1.08, "peak": 2.25,
-        "phys_committed": 1.005, "phys_econ_low": 0.887,
-        "phys_econ_high": 1.008, "phys_peak": 2.25,
+        "committed": 1.005,
+        "econ_low": 0.95,
+        "econ_high": 1.08,
+        "peak": 2.25,
+        "phys_committed": 1.005,
+        "phys_econ_low": 0.887,
+        "phys_econ_high": 1.008,
+        "phys_peak": 2.25,
     },
     "ST_GAS": {
-        "committed": 1.0, "econ_low": 1.0, "econ_high": 1.0, "peak": 1.0,
-        "phys_committed": 1.079, "phys_econ_low": 0.812,
-        "phys_econ_high": 0.849, "phys_peak": 1.0,
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
+        "phys_committed": 1.079,
+        "phys_econ_low": 0.812,
+        "phys_econ_high": 0.849,
+        "phys_peak": 1.0,
     },
 }
 INTERMEDIATES = {
-    "CT_INTERMEDIATE": {"committed": 1.0, "econ_low": 1.0, "econ_high": 1.2, "peak": 3.0},
-    "CC_INTERMEDIATE": {"committed": 1.005, "econ_low": 0.95, "econ_high": 1.08, "peak": 2.25},
-    "ST_GAS_INTERMEDIATE": {"committed": 1.0, "econ_low": 1.0, "econ_high": 1.15, "peak": 2.2},
+    "CT_INTERMEDIATE": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.2,
+        "peak": 3.0,
+    },
+    "CC_INTERMEDIATE": {
+        "committed": 1.005,
+        "econ_low": 0.95,
+        "econ_high": 1.08,
+        "peak": 2.25,
+    },
+    "ST_GAS_INTERMEDIATE": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.15,
+        "peak": 2.2,
+    },
 }
 
 
@@ -72,7 +102,10 @@ def test_flag_off_markup_is_neutral_zero(key: str) -> None:
     cfg = _cfg()
     inter = _with_intermediate_phys(cfg.offer_curve_by_group[key], key, cfg)
     for suffix, mult in (
-        ("committed", 1.0), ("econlo", 1.0), ("econhi", 1.2), ("peak", 3.0)
+        ("committed", 1.0),
+        ("econlo", 1.0),
+        ("econhi", 1.2),
+        ("peak", 3.0),
     ):
         assert gas_offer_margin_markup_mult(suffix, mult, inter) == 0.0
 
@@ -131,11 +164,16 @@ def test_flag_on_markup_is_the_registered_minus_the_borrowed_physics() -> None:
 def test_a_parent_without_phys_keys_is_a_no_op() -> None:
     """Fail-safe: no parent phys => nothing merged, same object back."""
     cfg = ScenarioConfig(
-        iso="MISO", mode="backcast",
+        iso="MISO",
+        mode="backcast",
         miso_intermediate_gas_offer_margin=True,
         offer_curve_by_group={
-            "CT_PEAKER": {"committed": 1.025, "econ_low": 1.0,
-                          "econ_high": 1.0, "peak": 4.0},
+            "CT_PEAKER": {
+                "committed": 1.025,
+                "econ_low": 1.0,
+                "econ_high": 1.0,
+                "peak": 4.0,
+            },
             "CT_INTERMEDIATE": dict(INTERMEDIATES["CT_INTERMEDIATE"]),
         },
     )
@@ -146,19 +184,22 @@ def test_a_parent_without_phys_keys_is_a_no_op() -> None:
 def test_an_existing_key_is_never_overwritten() -> None:
     """A curve that already declares its own physics keeps it."""
     cfg = ScenarioConfig(
-        iso="MISO", mode="backcast",
+        iso="MISO",
+        mode="backcast",
         miso_intermediate_gas_offer_margin=True,
         offer_curve_by_group={
             "CT_PEAKER": dict(PARENTS["CT_PEAKER"]),
-            "CT_INTERMEDIATE": {**INTERMEDIATES["CT_INTERMEDIATE"],
-                                "phys_econ_low": 0.5},
+            "CT_INTERMEDIATE": {
+                **INTERMEDIATES["CT_INTERMEDIATE"],
+                "phys_econ_low": 0.5,
+            },
         },
     )
     out = _with_intermediate_phys(
         cfg.offer_curve_by_group["CT_INTERMEDIATE"], "CT_INTERMEDIATE", cfg
     )
-    assert out["phys_econ_low"] == 0.5          # its own, kept
-    assert out["phys_econ_high"] == 0.691       # the parent's, borrowed
+    assert out["phys_econ_low"] == 0.5  # its own, kept
+    assert out["phys_econ_high"] == 0.691  # the parent's, borrowed
 
 
 def test_cache_key_is_registered_dropped_at_default() -> None:
@@ -168,7 +209,18 @@ def test_cache_key_is_registered_dropped_at_default() -> None:
     dropped from the hash — the repo-wide pinned default key is unmoved — while
     an armed run keys as a distinct scenario.
     """
-    assert ScenarioConfig().cache_key() == "4c6b03ae098b6e3e"
+    # 2026-09-05: 4c6b03ae098b6e3e -> e5ecd4105ada3e58, capx D60's declared
+    # flip of ccs_retrofit_capex_co2_scaling (owner ruling Q42, director
+    # sitting r#37; execution record FINDING-capx-d60-2026-09-05.md, cause
+    # block in src/market_sim/results/cache.py). Nothing about miso-217's own
+    # registration moved: the field is still in _CACHE_KEY_OPTIONAL_FIELDS,
+    # its frozen declaration is still False, and it still drops at its default
+    # -- measured, ScenarioConfig(ccs_retrofit_capex_co2_scaling=False) still
+    # hashes to 4c6b03ae098b6e3e exactly. The literal was a dated measurement
+    # of the REPO-WIDE pin, advanced by an unrelated owner-ruled default flip;
+    # re-pinned by the Y-11 fast-tier pin lane on the D44 precedent in
+    # tests/unit/model/test_entry_vre_zone_selection.py.
+    assert ScenarioConfig().cache_key() == "e5ecd4105ada3e58"
     assert (
         ScenarioConfig(miso_intermediate_gas_offer_margin=True).cache_key()
         != ScenarioConfig().cache_key()

@@ -3125,7 +3125,11 @@ ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO: dict[str, float] = {
 #   PNW_hydro_base 1,566 + DSW_solar_PV 1,805 = 3,371), so dispatch and adequacy
 #   read the same firm-import quantity. Latest measured year carried forward as
 #   the forward story (RA import contracting is a persistent market structure —
-#   rule 13; the 2025 DMM report is not yet published). NOT the Maximum Import
+#   rule 13). The 2025 DMM report published 2026-06-26; its Table 16.7
+#   "Imports" 1,710 MW is on a CHANGED analysis-hour basis (spring-heavy
+#   AAH, total RA 46,169 vs 52,646 MW) and is NOT adopted — rule 14
+#   misalignment, adjudicated caiso-252 (2026-09-05); full note at
+#   interchange/spec.py IMPORT_TRANCHES_BY_YEAR. NOT the Maximum Import
 #   Capability (16,148 MW) — the MIC is a deliverability LIMIT, not the RA
 #   capacity actually contracted, and crediting it would overstate.
 # * NEISO (FF-2B, 2026-07-19; ARA-3 re-vintage capx-S4b, 2026-08-30): the net

@@ -1,0 +1,313 @@
+{
+ "rt_2022": {
+  "MAD/PR": {
+   "covered_h": 8760.083333333332,
+   "req_mean_mw": 2534.8944190592547,
+   "cleared_mean_mw": 1273.1945681124007,
+   "pool_usd": 39206841.29525,
+   "sum_mcp_usd_per_mw_yr": 32688.59916666667,
+   "mcp_mean": 7.815222480146609
+  },
+  "MAD/SR": {
+   "covered_h": 8760.083333333332,
+   "req_mean_mw": 1753.2623897373244,
+   "cleared_mean_mw": 629.086719609041,
+   "pool_usd": 59466202.35716666,
+   "sum_mcp_usd_per_mw_yr": 89186.72083333334,
+   "mcp_mean": 12.526610384850338
+  },
+  "PJM_RTO/30MIN": {
+   "covered_h": 2204.083333333333,
+   "req_mean_mw": 3204.9994820220045,
+   "cleared_mean_mw": 4174.483023932852,
+   "pool_usd": 2245242.9166666665,
+   "sum_mcp_usd_per_mw_yr": 738.9041666666666,
+   "mcp_mean": 0.3352432984233808
+  },
+  "PJM_RTO/PR": {
+   "covered_h": 8760.083333333332,
+   "req_mean_mw": 2535.278426389737,
+   "cleared_mean_mw": 2295.6446915088577,
+   "pool_usd": 38943840.10524999,
+   "sum_mcp_usd_per_mw_yr": 18030.760833333334,
+   "mcp_mean": 4.20209700671961
+  },
+  "PJM_RTO/REG": {
+   "covered_h": 8760.083333333332,
+   "req_mean_mw": 651.1203420891875,
+   "cleared_mean_mw": 652.0071154551008,
+   "pool_usd": 309891678.3078333,
+   "sum_mcp_usd_per_mw_yr": 447853.925,
+   "mcp_mean": 55.036285400122175
+  },
+  "PJM_RTO/SR": {
+   "covered_h": 8760.083333333332,
+   "req_mean_mw": 1753.5155308491142,
+   "cleared_mean_mw": 1366.3864483811851,
+   "pool_usd": 83359916.94316666,
+   "sum_mcp_usd_per_mw_yr": 67617.10333333333,
+   "mcp_mean": 7.681664263897373
+  }
+ },
+ "rt_2023": {
+  "MAD/PR": {
+   "covered_h": 8736.916666666666,
+   "req_mean_mw": 2551.8522807921245,
+   "cleared_mean_mw": 1570.6885597909038,
+   "pool_usd": 17824099.204916667,
+   "sum_mcp_usd_per_mw_yr": 10490.588333333333,
+   "mcp_mean": 1.200845734126984
+  },
+  "MAD/SR": {
+   "covered_h": 8736.916666666666,
+   "req_mean_mw": 1765.910905067155,
+   "cleared_mean_mw": 974.5702953296703,
+   "pool_usd": 17232497.008083332,
+   "sum_mcp_usd_per_mw_yr": 13616.603333333333,
+   "mcp_mean": 1.5586771214896213
+  },
+  "PJM_RTO/30MIN": {
+   "covered_h": 8736.916666666666,
+   "req_mean_mw": 3370.7624122405377,
+   "cleared_mean_mw": 14630.63728155525,
+   "pool_usd": 0.0,
+   "sum_mcp_usd_per_mw_yr": 0.0,
+   "mcp_mean": 0.0
+  },
+  "PJM_RTO/PR": {
+   "covered_h": 8736.916666666666,
+   "req_mean_mw": 3093.5186174068986,
+   "cleared_mean_mw": 3235.1779027396215,
+   "pool_usd": 34358029.77741666,
+   "sum_mcp_usd_per_mw_yr": 10182.071666666667,
+   "mcp_mean": 1.1655301816239316
+  },
+  "PJM_RTO/REG": {
+   "covered_h": 8736.916666666666,
+   "req_mean_mw": 667.3220009157509,
+   "cleared_mean_mw": 668.3046321733822,
+   "pool_usd": 131184007.60599999,
+   "sum_mcp_usd_per_mw_yr": 184774.91666666666,
+   "mcp_mean": 21.14931805173993
+  },
+  "PJM_RTO/SR": {
+   "covered_h": 8736.916666666666,
+   "req_mean_mw": 2132.836311431624,
+   "cleared_mean_mw": 2295.252938034188,
+   "pool_usd": 37047519.27266666,
+   "sum_mcp_usd_per_mw_yr": 13235.5225,
+   "mcp_mean": 1.5150552312271062
+  }
+ },
+ "rt_2024": {
+  "MAD/PR": {
+   "covered_h": 8760.916666666666,
+   "req_mean_mw": 2564.5445671613393,
+   "cleared_mean_mw": 1776.1803795662101,
+   "pool_usd": 41024837.02775,
+   "sum_mcp_usd_per_mw_yr": 23620.428333333333,
+   "mcp_mean": 2.6963917427701674
+  },
+  "MAD/SR": {
+   "covered_h": 8760.916666666666,
+   "req_mean_mw": 1773.0295462328768,
+   "cleared_mean_mw": 1124.6511482115677,
+   "pool_usd": 33682189.75541667,
+   "sum_mcp_usd_per_mw_yr": 26423.974166666663,
+   "mcp_mean": 3.016431221461187
+  },
+  "PJM_RTO/30MIN": {
+   "covered_h": 8760.916666666666,
+   "req_mean_mw": 3532.1156582952817,
+   "cleared_mean_mw": 20690.790401445967,
+   "pool_usd": 0.0,
+   "sum_mcp_usd_per_mw_yr": 0.0,
+   "mcp_mean": 0.0
+  },
+  "PJM_RTO/PR": {
+   "covered_h": 8760.916666666666,
+   "req_mean_mw": 3422.1078443683414,
+   "cleared_mean_mw": 3521.861699961948,
+   "pool_usd": 75672785.83500001,
+   "sum_mcp_usd_per_mw_yr": 21823.614999999998,
+   "mcp_mean": 2.4912760654490107
+  },
+  "PJM_RTO/REG": {
+   "covered_h": 8760.916666666666,
+   "req_mean_mw": 670.4594748858448,
+   "cleared_mean_mw": 669.9793065068493,
+   "pool_usd": 186376974.40141666,
+   "sum_mcp_usd_per_mw_yr": 261920.17666666664,
+   "mcp_mean": 29.89758371385084
+  },
+  "PJM_RTO/SR": {
+   "covered_h": 8760.916666666666,
+   "req_mean_mw": 2345.616731354642,
+   "cleared_mean_mw": 2618.6671099695586,
+   "pool_usd": 70362664.33291665,
+   "sum_mcp_usd_per_mw_yr": 24482.909999999996,
+   "mcp_mean": 2.7948485540334858
+  }
+ },
+ "rt_2025": {
+  "MAD/PR": {
+   "covered_h": 8760.0,
+   "req_mean_mw": 2598.199489155251,
+   "cleared_mean_mw": 1951.4902349695585,
+   "pool_usd": 57438123.172749996,
+   "sum_mcp_usd_per_mw_yr": 36581.81583333333,
+   "mcp_mean": 4.176006373668189
+  },
+  "MAD/SR": {
+   "covered_h": 8760.0,
+   "req_mean_mw": 1795.4660730593607,
+   "cleared_mean_mw": 1344.5997231735157,
+   "pool_usd": 51703755.7765,
+   "sum_mcp_usd_per_mw_yr": 43537.92916666666,
+   "mcp_mean": 4.970083238203958
+  },
+  "PJM_RTO/30MIN": {
+   "covered_h": 8760.0,
+   "req_mean_mw": 3489.046189117199,
+   "cleared_mean_mw": 19410.88473649163,
+   "pool_usd": 4366210.156333333,
+   "sum_mcp_usd_per_mw_yr": 1384.8549999999998,
+   "mcp_mean": 0.15808847031963472
+  },
+  "PJM_RTO/PR": {
+   "covered_h": 8760.0,
+   "req_mean_mw": 3347.693748097412,
+   "cleared_mean_mw": 3489.016983447488,
+   "pool_usd": 110529531.44233334,
+   "sum_mcp_usd_per_mw_yr": 33005.6175,
+   "mcp_mean": 3.7677645547945207
+  },
+  "PJM_RTO/REG": {
+   "covered_h": 8760.0,
+   "req_mean_mw": 671.8264840182649,
+   "cleared_mean_mw": 690.5358466514458,
+   "pool_usd": 329916104.03566664,
+   "sum_mcp_usd_per_mw_yr": 441207.6725,
+   "mcp_mean": 50.36617265981735
+  },
+  "PJM_RTO/SR": {
+   "covered_h": 8760.0,
+   "req_mean_mw": 2295.1457886225267,
+   "cleared_mean_mw": 2544.2790439497717,
+   "pool_usd": 108771513.63675,
+   "sum_mcp_usd_per_mw_yr": 38687.308333333334,
+   "mcp_mean": 4.416359398782344
+  }
+ },
+ "da_2023": {
+  "Mid-Atlantic/Dominion Reserve Subzone/Primary Reserve": {
+   "req_mean_mw": 2565.4175943991736,
+   "cleared_mean_mw": 1911.4479283828762,
+   "pool_usd": 36800397.92134052,
+   "sum_mcp_usd_per_mw_yr": 19122.86987260415,
+   "mcp_mean": 2.1829760128543554
+  },
+  "Mid-Atlantic/Dominion Reserve Subzone/Synchronized Reserve": {
+   "req_mean_mw": 1774.9583955009755,
+   "cleared_mean_mw": 1187.7760013772524,
+   "pool_usd": 35540838.82092505,
+   "sum_mcp_usd_per_mw_yr": 23396.479054286698,
+   "mcp_mean": 2.6708309422701713
+  },
+  "PJM RTO Reserve Zone/Primary Reserve": {
+   "req_mean_mw": 3212.729966716401,
+   "cleared_mean_mw": 3539.2472856650984,
+   "pool_usd": 66788005.069119714,
+   "sum_mcp_usd_per_mw_yr": 18895.831745667394,
+   "mcp_mean": 2.157058418455182
+  },
+  "PJM RTO Reserve Zone/Synchronized Reserve": {
+   "req_mean_mw": 2212.334649374498,
+   "cleared_mean_mw": 2475.2248249741765,
+   "pool_usd": 67727125.8950855,
+   "sum_mcp_usd_per_mw_yr": 23038.578813267533,
+   "mcp_mean": 2.6299747503730058
+  },
+  "PJM RTO Reserve Zone/Thirty Minutes Reserve": {
+   "req_mean_mw": 3477.0649833582006,
+   "cleared_mean_mw": 16678.66531619419,
+   "pool_usd": 0.0,
+   "sum_mcp_usd_per_mw_yr": 0.0,
+   "mcp_mean": 0.0
+  }
+ },
+ "da_2024": {
+  "Mid-Atlantic/Dominion Reserve Subzone/Primary Reserve": {
+   "req_mean_mw": 2564.9424152494007,
+   "cleared_mean_mw": 1963.484625042803,
+   "pool_usd": 40504899.37203972,
+   "sum_mcp_usd_per_mw_yr": 21202.209656431914,
+   "mcp_mean": 2.420343568085835
+  },
+  "Mid-Atlantic/Dominion Reserve Subzone/Synchronized Reserve": {
+   "req_mean_mw": 1773.2949434996005,
+   "cleared_mean_mw": 1300.2107293687934,
+   "pool_usd": 34710699.333400294,
+   "sum_mcp_usd_per_mw_yr": 23728.981212190392,
+   "mcp_mean": 2.7087878096107754
+  },
+  "PJM RTO Reserve Zone/Primary Reserve": {
+   "req_mean_mw": 3504.335486816574,
+   "cleared_mean_mw": 3705.7913137769656,
+   "pool_usd": 68538432.34704258,
+   "sum_mcp_usd_per_mw_yr": 19460.148521858235,
+   "mcp_mean": 2.2214781417646385
+  },
+  "PJM RTO Reserve Zone/Synchronized Reserve": {
+   "req_mean_mw": 2400.434197009474,
+   "cleared_mean_mw": 2707.3713959593656,
+   "pool_usd": 63038099.536915876,
+   "sum_mcp_usd_per_mw_yr": 21757.136308640565,
+   "mcp_mean": 2.4836913594338546
+  },
+  "PJM RTO Reserve Zone/Thirty Minutes Reserve": {
+   "req_mean_mw": 3582.2766008446524,
+   "cleared_mean_mw": 16668.66905604383,
+   "pool_usd": 0.0,
+   "sum_mcp_usd_per_mw_yr": 0.0,
+   "mcp_mean": 0.0
+  }
+ },
+ "da_2025": {
+  "Mid-Atlantic/Dominion Reserve Subzone/Primary Reserve": {
+   "req_mean_mw": 2617.328728396475,
+   "cleared_mean_mw": 1815.9017626187479,
+   "pool_usd": 76769158.66952044,
+   "sum_mcp_usd_per_mw_yr": 42769.584571363164,
+   "mcp_mean": 4.882372667963831
+  },
+  "Mid-Atlantic/Dominion Reserve Subzone/Synchronized Reserve": {
+   "req_mean_mw": 1808.218129792835,
+   "cleared_mean_mw": 1337.5104269199953,
+   "pool_usd": 74214715.93131739,
+   "sum_mcp_usd_per_mw_yr": 52866.003433672886,
+   "mcp_mean": 6.034931898821105
+  },
+  "PJM RTO Reserve Zone/Primary Reserve": {
+   "req_mean_mw": 3337.0865171111363,
+   "cleared_mean_mw": 3621.773205905917,
+   "pool_usd": 128898673.36187707,
+   "sum_mcp_usd_per_mw_yr": 38169.807531189195,
+   "mcp_mean": 4.357283964747625
+  },
+  "PJM RTO Reserve Zone/Synchronized Reserve": {
+   "req_mean_mw": 2288.074876960055,
+   "cleared_mean_mw": 2630.7086986379763,
+   "pool_usd": 129787160.37742017,
+   "sum_mcp_usd_per_mw_yr": 46907.970195719354,
+   "mcp_mean": 5.354791118232803
+  },
+  "PJM RTO Reserve Zone/Thirty Minutes Reserve": {
+   "req_mean_mw": 3480.251333409637,
+   "cleared_mean_mw": 15108.162035023463,
+   "pool_usd": 0.0,
+   "sum_mcp_usd_per_mw_yr": 0.0,
+   "mcp_mean": 0.0
+  }
+ }
+}
