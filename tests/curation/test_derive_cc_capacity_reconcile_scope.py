@@ -49,9 +49,7 @@ class TestDefaultScopeIsUnchanged(unittest.TestCase):
         """A widened set selects a SUPERSET — it can never drop a screened plant."""
         csv = pd.read_csv(d.CAMPD_BINS_CSV)
         base = set(csv[csv["Plant_Group"].isin(d.DEFAULT_CLASSES)].index)
-        wide = set(
-            csv[csv["Plant_Group"].isin(("CC_REGULAR", "CC_CHP"))].index
-        )
+        wide = set(csv[csv["Plant_Group"].isin(("CC_REGULAR", "CC_CHP"))].index)
         self.assertTrue(base.issubset(wide))
 
 

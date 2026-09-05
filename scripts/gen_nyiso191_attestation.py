@@ -171,11 +171,11 @@ def g_inputs() -> dict:
     for iso in ("CAISO", "MISO", "NEISO", "PJM", "ERCOT"):
         t = pd.read_csv(cc_capacity_reconcile_path(iso))
         other[iso] = (
-            sorted(set(t["plant_group"])) if "plant_group" in t.columns else ["(no col)"]
+            sorted(set(t["plant_group"]))
+            if "plant_group" in t.columns
+            else ["(no col)"]
         )
-    others_narrow = all(
-        v in (["CC_REGULAR"], ["(no col)"]) for v in other.values()
-    )
+    others_narrow = all(v in (["CC_REGULAR"], ["(no col)"]) for v in other.values())
     return {
         "control_table": {
             "path": str(ctrl_path),
@@ -194,7 +194,10 @@ def g_inputs() -> dict:
         "net_mw_change": round(
             float((after_full["reconciled_mw"] - after_full["current_mw"]).sum())
             - float(
-                (pd.read_csv(ctrl_path)["reconciled_mw"] - pd.read_csv(ctrl_path)["current_mw"]).sum()
+                (
+                    pd.read_csv(ctrl_path)["reconciled_mw"]
+                    - pd.read_csv(ctrl_path)["current_mw"]
+                ).sum()
             ),
             1,
         ),
@@ -296,7 +299,8 @@ def g_effect() -> dict:
             "gas_family_control_twh": round(sum(c.get(k, 0.0) for k in fam), 4),
             "gas_family_arm_twh": round(sum(a.get(k, 0.0) for k in fam), 4),
             "abs_delta_twh": round(
-                abs(sum(a.get(k, 0.0) for k in fam) - sum(c.get(k, 0.0) for k in fam)), 4
+                abs(sum(a.get(k, 0.0) for k in fam) - sum(c.get(k, 0.0) for k in fam)),
+                4,
             ),
             "by_class_delta_twh": {
                 k: round(a.get(k, 0.0) - c.get(k, 0.0), 4) for k in fam

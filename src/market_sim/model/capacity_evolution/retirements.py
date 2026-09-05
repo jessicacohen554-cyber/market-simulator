@@ -1138,7 +1138,9 @@ class LocalityPosition:
         }
 
 
-def locality_capacity_curves_armed(config: ScenarioConfig | None, iso: str | None) -> bool:
+def locality_capacity_curves_armed(
+    config: ScenarioConfig | None, iso: str | None
+) -> bool:
     """True when ``iso`` settles capacity on its published LOCALITY demand curves.
 
     The ONE gate predicate (rule 19) behind capx D59: requires the default-OFF
