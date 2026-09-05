@@ -659,3 +659,61 @@ merges only once every ISO it touches has a current stage-0 golden;
 NYISO)**. CAISO/NYISO have a live capture lane; **MISO has none**, and `miso-200` is
 moving that keeper, so a MISO golden captured now would be stale on arrival. That
 sequencing is the director's call, not this lane's.
+
+## WALLCLOCK A-2 — eGRID xlsx off the solve path, measured (2026-09-05)
+
+Executes item **A-2** of `docs/handoffs/wallclock-opportunities-2026-09.md` §2, on
+route **(b)** (the content-addressed mirror), not route (a) (arming the `data/clean`
+seam). Session `wc-a2-egrid-mirror`, branch `claude/wc-a2-egrid-mirror`, merge base
+`5b5af5a`. Conditions as §PERF-B above: determinism pin
+(`MARKET_SIM_HIGHS_THREADS=1`, `WARMSTART=1`, `WARMSTART_XYEAR=0`), 4 vCPU
+container, `uv.lock` env, keeper-recipe replay via `scripts/capture_keeper_goldens.py`.
+
+| Change | Where landed | Measured effect |
+|---|---|---|
+| (g) eGRID sheets served from a content-addressed parquet mirror (`data/egrid_sheets.py::read_egrid_sheet`; both solve-path call sites — `zone_assignment._plnt23`, `fleet/eia860._egrid_boundary_hr_repairs_for`) | branch commit `b0a9bcb` | The three `pd.read_excel` calls against the 21 MB workbook, isolated: **27.80 → 0.219 s (127×)** — PLNT23/zone 11.10→0.086, PLNT23/repairs 11.48→0.067, UNT23 5.22→0.066. In-solve on the NEISO keeper replay, `data_prep` **71.3 → 46.1 s (−25.2 s, −35 %)** in year 1; 2024/2025 unchanged (5.9→6.2, 6.7→6.7 — noise). **The win is once per process, not once per year**, because both readers were already process-cached (`_PLNT23_CACHE`, `lru_cache`) — so it lands in whichever year first touches eGRID and nowhere else. |
+
+**Reach.** Every ISO and every invocation (both call sites are ISO-agnostic), but
+**once per process**: −25 s on a 3-year replay, not −75 s. Against the ≥10 %-wall
+adoption rule: **cleared on `data_prep` year-1** (−35 %); **not** cleared as a share
+of the 3-year NEISO wall (~5 %). On the profile's own arithmetic the same ~26 s comes
+off every ERCOT / CAISO / PJM / MISO / NYISO invocation too, since the eGRID parse is
+fleet-wide and not ISO-scoped — but that is inference from the isolated bench, not a
+per-ISO measurement, and must not be quoted as one.
+
+**Cold-miss cost, stated.** The first process against a *new* workbook still parses
+the xlsx and additionally writes three parquet files: measured 11.24 / 11.27 / (miss)
+vs 11.35 / 10.97 (xlsx) — i.e. the write adds ~0.1–0.3 s, once, and every later
+process pays 0.07–0.09 s. A fresh clone therefore pays the old cost exactly once.
+
+**Frame gate (the item's named gate).** `frame.equals` between the xlsx read and the
+mirror read for all three `(sheet, usecols)` pairs, **True** on the real
+`egrid2023_data_rev2.xlsx`, with `list(columns)` and `dtypes.to_dict()` compared
+explicitly alongside — column order matters here because `read_excel` returns eGRID
+**sheet** order, not the caller's `usecols` order, and the two PLNT23 call sites pass
+different column sets. Same three pairs are asserted in the fast tier against a
+synthetic workbook (`tests/test_egrid_sheets.py`, 8 tests).
+
+**Byte gate.** NEISO full 8760 × 2023–2025, keeper `2026-08-17-neiso-99-joint-p1`,
+**merge-base control** capture (charter §6's instrument, not the stale stage-0
+goldens): `capture_keeper_goldens.py --stage-tag wc-a2-{before,after}` on the
+merge-base tree and the branch tree, then `regression_gate.py --mode byte` → **check
+[1] golden bundle diff PASS** (NEISO: 9 files, 32 numeric columns, atol=rtol=0),
+zero reshuffle in all three years (Σ|hourly Δ| = 0.0 GWh, 0.000 % of total gen),
+check [3] smoke PASS (24 passed). The script's overall `RESULT: FAIL` is check [4],
+proven **pre-existing by control** — *both* its legs fail identically on the
+merge-base tree: `legitimacy(--keepers)` on the NYISO Long Island
+`transfer_security_limit` data gap (same `ValueError`, same line, rc=1 both trees),
+and `audit_keepers` on S1, a stale `frontend/data/backcast/status/NEISO.js`
+(byte-identical output on both trees; a keeper-shard file this lane is forbidden to
+touch). The §PERF-B RESUME note stands and widens: **`regression_gate.py` returns
+FAIL for every change on main right now, on two independent legs.**
+
+**Fast tier.** 8106 passed, 45 skipped, 2 xfailed, 537 subtests passed, 2 failed —
+both in `tests/scoring/test_golden_manifest_provenance.py` (ERCOT `carveout-2023`
+partition vs keeper shard), **confirmed failing identically on the merge-base tree**.
+
+**Not widened, deliberately.** `data/egrid.py::_load_egrid_plant_co2_raw` is a fourth
+`read_excel` over the same workbook family (per-vintage `PLNT<yy>`, for the CO2 rate
+map) and would take the same helper unchanged. It is outside this item's declared
+file scope, so it is left alone and handed forward.
