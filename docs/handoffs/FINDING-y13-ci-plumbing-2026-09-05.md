@@ -181,7 +181,31 @@ at 23:27–23:3xZ. The reference column is the v32 records lane's run 2520 (`339
 
 ### 5.1 Fast test tier — final reading
 
-FAST_TIER_FINAL
+Job `101393530145` completed 23:37:31Z, **failure** — `7 failed, 8129 passed, 45 skipped, 2 xfailed in
+556.62s`. The seven, by owner:
+
+| test | owner | status |
+|---|---|---|
+| `test_golden_manifest_provenance.py::GoldenManifestSchemaTest::test_partition_entries_agree_with_the_keeper_shard[ERCOT__carveout-2023]` — `'2026-09-05-ercot248-two-config-keeper' != '2026-08-25-236-swcap-clip-k33'` | **Y-14** (Y-11 STOP) | expected, untouched |
+| `test_golden_manifest_provenance.py::PartitionCaptureKeyTest::test_resolve_capture_targets_reaches_the_carveout_bundle` — same manifest value | **Y-14** (Y-11 STOP) | expected, untouched |
+| `tests/regression/test_interchange_parity.py::test_caiso_per_hub_parity[0.0]` / `[12.34]`, `test_caiso_reference_seam_parity`, `test_caiso_mode_mutual_exclusion_ladder`, `test_caiso_per_hub_topology_split` — all `AttributeError: '_FakeConfig' object has no attribute 'iso'` | **not this PR's diff; `main`'s since #4860** | reproduced on `origin/main` at `e5ac39f1` (5 failed / 33 passed); repaired in the Y-13 follow-up PR, see below |
+
+**The five interchange-parity failures, explained.** SCN-WS1a item 2 (`1ab91a93`, PR #4860, merged
+`6e5b198d` at ~23:1xZ — after this lane's pin) moved `model/interchange/spec.py`'s WECC border
+carbon adder off `getattr(config, "carbon_price", 0.0)` onto
+`policy.carbon.resolve_carbon_price(config, year)`, which reads the ISO off the config as the
+production `ScenarioConfig` always carries it. The regression test's `_FakeConfig` stand-in
+predates that and carries no `iso`, so every CAISO test whose corridor inventory reaches the adder
+now raises before comparing anything. It is a fixture omission, not a model defect: adding
+`iso: str = "CAISO"` to the stand-in turns the file 38 passed / 0 failed with no other change
+(probed before the fix was committed). The v32 records lane's reference run 2520 carried the same
+five, so this red was on `main` for every PR from #4860's merge on, and it — not only Y-14 — was
+holding the Fast tier off green.
+
+**Follow-up PR (this lane, fresh branch off `main` since #4864 is merged):** the one-field fixture
+addition in `tests/regression/test_interchange_parity.py`, plus this §5.1. After it, the Fast tier
+is red on exactly the two Y-14 tests; §6's arithmetic (5 of 6 now, 6 of 6 after Y-14) holds
+again.
 
 ## 6. Expected flip set after merge
 
