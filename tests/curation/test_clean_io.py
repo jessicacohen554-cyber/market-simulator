@@ -79,8 +79,12 @@ ALL_DATATYPES = [
     # capx D31 (2026-09-02, `89415b60`) registered this in
     # scripts/regenerate_clean.DATATYPES without refreshing this snapshot —
     # the same miss this header names for miso-m2m-flowgates. Snapshot
-    # refreshed 2026-09-02 by the fast-tier repair lane.
+    # refreshed 2026-09-02 by the fast-tier repair lane; 2026-09-05 adding
+    # ra-import-allocations (the caiso-245 intake registered it in DATATYPES
+    # without re-freezing this snapshot; repaired by the capx director desk
+    # r#36 as the orphaned Fast-tier red the audit board v27 recorded).
     "capacity-market-auction-supply",
+    "ra-import-allocations",
     "capacity-market-elcc",
     "capacity-market-avoidable-cost-rate",
     "transfer-constraint-binding",
