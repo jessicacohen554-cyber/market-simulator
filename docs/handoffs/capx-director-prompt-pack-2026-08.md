@@ -4307,7 +4307,7 @@ finding complete through §9 with its close-out line, both pre-declarations grad
 refreshed, and the ledger §0ac.7 stale set marked CLOSED for every key except CAISO's.
 ```
 
-## D48 — the PJM accreditation-design devintage (r#33 amendment 3; D45 §2.3 items 1–2) — **PHASE 0 LANDED (PR #4707), PHASE 1 RUNNING at r#34**; its PREDECL corrects this charter's '2–4 points' premise to 7–11 on a consistent basis — read it before Phase 1
+## D48 — the PJM accreditation-design devintage (r#33 amendment 3; D45 §2.3 items 1–2) — **PHASE 0 LANDED (PR #4707); PHASE 1 LANDED (PRs #4716/#4718, graded r#36 — one sitting late)**: accounting to the MW, FC-3 +1.4 GW via the admission cap, **DO NOT ARM alone — arm WITH the clearing half (§D57)**; its PREDECL corrects this charter's '2–4 points' premise to 7–11 on a consistent basis
 
 ```
 You are the D48 session of the capacity-expansion track — the PJM per-ISO repair lane D45's
@@ -4452,7 +4452,7 @@ rules 13, 14, 21, 22, 25, 27. COLLISION: none — read-only over committed artif
 D48 own the live forecast surfaces.
 ```
 
-## D50 — CCS capex scaled to captured CO2: the D49 half-1 seam repair (r#34)
+## D50 — CCS capex scaled to captured CO2: the D49 half-1 seam repair (r#34) — **CHECKPOINT at r#36** (PR #4728: field built default-off, ERCOT arm 0 conversions vs 2,741.8 MW, NEISO cap still binds; **OWED: the PJM arm, the blast radius, the recommendation and the finding the shards cite** → §D50-R; never re-paste this charter)
 
 ```
 You are the D50 session of the capacity-expansion track. D49 half 1 (FINDING-capx-d49-2026-09-04.md
@@ -4515,7 +4515,7 @@ EXIT: the repair default-off with matrix duties, three suffixed A/B legs registe
 pre-registration graded, the blast radius priced, the finding with the arming recommendation.
 ```
 
-## D51 — the MISO adequacy-accounting ratio re-identified on the dates-ON fleet (r#34; D49 half 2)
+## D51 — the MISO adequacy-accounting ratio re-identified on the dates-ON fleet (r#34; D49 half 2) — **LANDED at r#36** (PR #4729: 0.8546 → 0.8934, the 2024 double-netting closed to 1.5 pts; limb (c) fails by the letter → card C-11; NEISO leg 7: Q30 has no NEISO-side counter-example)
 
 *r#34 amendment 1 (owner rulings Q36/Q37, same sitting): rider (d) is UNCONDITIONAL — leg 7 runs; rider (e) added — the rubric §5 amendment. The charter text below carries both.*
 
@@ -4594,7 +4594,7 @@ EXIT: the re-identified ratio shipped default-off with citation, the A/B registe
 the pre-registration graded, the records rider done, the finding with the recommendation.
 ```
 
-## D52 — the NYISO adequacy devintage: requirement on the published forecast peak + per-year adopted IRM (r#34; D45 §5.2.4 items 1–2)
+## D52 — the NYISO adequacy devintage: requirement on the published forecast peak + per-year adopted IRM (r#34; D45 §5.2.4 items 1–2) — **LANDED at r#36** (PR #4730: positions +9.4/+5.2/+7.3 → −2.6/−1.8/−0.6 pts, LOYO 3/3, FC-3 byte-identical at the default; curve-ON probe P9 1-of-3 → curve stays OFF; recommends ARM BOTH gates → card C-12; the locality half → §D59)
 
 ```
 You are the D52 session of the capacity-expansion track — NYISO's per-ISO repair lane, the
@@ -4666,7 +4666,7 @@ probe run or refused on the stated condition, the pre-registration graded, the f
 both recommendations.
 ```
 
-## D53 — the sector gate: who faces the merchant retirement screen (r#35; D32 C5 / R3)
+## D53 — the sector gate: who faces the merchant retirement screen (r#35; D32 C5 / R3) — **IN FLIGHT at r#36 (branch `claude/capx-d53-sector-gate-redt3y`, design + build + both legs solved, unmerged; all four arming limbs MET on the branch; two template tokens unfilled in finding §6)** — never re-paste; the PJM leg is §D58
 
 ```
 You are the D53 session of the capacity-expansion track. D32 (FINDING-capx-d32-floor-retention-
@@ -4739,7 +4739,7 @@ EXIT: the design doc, the gated field with matrix duties, the suffixed A/B, the 
 the recommendation, the PJM successor named.
 ```
 
-## D54 — the PJM clearing half: design and pre-declaration only (r#35; D45 §2.3 item 3)
+## D54 — the PJM clearing half: design and pre-declaration only (r#35; D45 §2.3 item 3) — **LANDED at r#36** (PR #4746: `DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md` + PREDECL; the zero-solve instrument lands the cleared position within 0.7/1.0/2.6 pts of published and the price 1.7–5.5× because the CT/ST/oil E&AS operand is zero; the build is §D57)
 
 ```
 You are the D54 session of the capacity-expansion track — a DESIGN lane, no code, no solve. D45
@@ -4800,7 +4800,7 @@ EXIT: the design doc + PREDECL pushed; the build is a SEPARATE charter the direc
 D48 lands, unless D48's result changes the design — in which case say what changes.
 ```
 
-## D55 — the retention-key float-noise fix + the release-precision diagnostic (r#35; D32 R2 + R4)
+## D55 — the retention-key float-noise fix + the release-precision diagnostic (r#35; D32 R2 + R4) — **LANDED at r#36** (PR #4747: repair exact, scorer row shipped, `miso-t1h-d55-keyfix` byte-identical to D46 — the exhausted floor makes the order unobservable; stale-golden list EMPTY, correcting this charter's premise)
 
 ```
 You are the D55 session of the capacity-expansion track — a small correctness lane. D32
@@ -4863,7 +4863,7 @@ EXIT: the fix + test + scorer row landed, the suffixed A/B registered, the pre-d
 graded, the stale-golden list routed.
 ```
 
-## D56 — the NYISO `complete` re-declaration on nyiso-188 (r#35 amendment 1; owner ruling Q38)
+## D56 — the NYISO `complete` re-declaration on nyiso-188 (r#35 amendment 1; owner ruling Q38) — **NEVER LAUNCHED (r#36) and its keeper MOVED to nyiso-189 — SUPERSEDED by §D56-R below; never re-paste this charter**
 
 ```
 You are the D56 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero
@@ -4959,4 +4959,408 @@ programme's flip set (R-AE) reads `check_gate_a_provenance` — your edit must l
 
 EXIT: the marker entry, auditor PASS, guard OK, the board re-derived, the finding + log +
 shard stamp, all blob-verified; NYISO reads (a) PASS · (b) PASS on the board.
+```
+
+## D56-R — the NYISO `complete` re-declaration, relaunched on nyiso-189 (r#36; owner ruling Q38 + card C-10)
+
+```
+You are the D56-R session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero
+solves, executing owner ruling Q38 (capx ledger §0af amendment 1, 2026-09-04) on the keeper
+that NOW holds NYISO: `2026-09-05-nyiso-189-steam-identity`. D56 (pack §D56) was issued on
+nyiso-188 and never launched; nyiso-189 superseded 188 on 2026-09-05 (PR #4743, the owner's
+Bethlehem form B2), CALIBRATED → CALIBRATED. This desk re-verified it at `e75250c7`:
+`scripts/calibration_verdict.py --run-id 2026-09-05-nyiso-189-steam-identity` → CALIBRATED,
+C1 14/14 free 10/10, C3a PASS, C3c the lone ledgered caveat (>$300 RT hours 2023 model 3 vs
+actual 10; 2024 0 vs 13; 2025 4 vs 42). The withdrawn block's own `reentry` clause is the
+licence. You write the declaration exactly as the file's conventions record one; you decide
+nothing.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (a marker consequence — the one records act that changes what the
+program may spend).
+BRANCH: claude/capx-d56r-nyiso-redeclaration — FRESH off origin/main, rebase before every push.
+
+READ FIRST: pack §D56 IN FULL — every READ FIRST item, every step, every guardrail of that
+charter binds here verbatim with `2026-09-04-nyiso-188-combined` replaced by
+`2026-09-05-nyiso-189-steam-identity` and `declared` = the date you land. Then:
+docs/handoffs/FINDING-nyiso189-* and results/calibration/FINDING-nyiso189-steam-collapse-
+identity-2026-09-05.md (the keeper's own record; it requested no marker) · the audit board
+docs/handoffs/audit-program-director-board-2026-08.md v27 entry, sections "Z-4" and
+"FOUR-INSTRUMENT ALIGNMENT" (the R-AG ruling and the frontier question) · capx ledger §0ag.5
+(card C-10) and §3 (the R-AG cross-desk record) · frontend/data/backcast/keepers/NYISO.json
+`frontier` history (declared 2026-08-23, withdrawn 2026-08-30 with the marker).
+
+THE WORK: §D56 steps 1–5 unchanged on nyiso-189, PLUS:
+A. THE FRONTIER LIMB — CONDITIONAL ON CARD C-10 (ledger §0ag.5; the ruling, if given, is Q39
+   in ledger §3). Read §3 before you start:
+   - If Q39 rules "both" (option A): re-declare `frontier` on nyiso-189 in keepers/NYISO.json
+     in the exact shape ERCOT/PJM/NEISO carry (the 2026-08-30 withdrawal's inverse — read
+     docs/FINDING-q5w-* for the fields it removed), `frontier_basis` in the marker entry names
+     it, and the four instruments (frontier · complete · gate-(a) · determination) read
+     {ERCOT, NEISO, PJM, NYISO} together; say so in the finding's alignment table.
+   - If Q39 rules `complete` only (option B), or if NO ruling is recorded in §3 when you
+     start: `frontier_basis` = NONE CLAIMED exactly as §D56 wrote it, the keeper shard's
+     `frontier` untouched, and the finding's alignment table states that the frontier leg
+     stays split BY THE OWNER'S CHOICE (or pending it), never silently.
+   - If Q39 declines the re-declaration entirely (option C): STOP before step 2, record the
+     ruling in the finding, land nothing else.
+B. THE R-AG / Q38 RECORD: the finding's §1 states, verbatim from audit board v27, that owner
+   ruling R-AG (2026-09-04 22:20Z) routed this question to the calibration director for a
+   recommendation with no audit-lane marker edit, that Q38 (23:18Z) ruled the execution
+   without sight of it, and that C-10 is the recommendation R-AG asked for — both rulings are
+   the owner's and this lane executes Q38 (+ Q39 if ruled). No re-litigation.
+C. THE STOP CLAUSE, SHARPENED: NYISO promoted five times in two days. Before EVERY push
+   re-read keepers/NYISO.json; if the keeper moved again, re-run step 1 on the new id; if it
+   reads CALIBRATED, re-key per D-5(b) with a dated note and proceed; if NOT-YET, STOP and
+   route — never declare on a NOT-YET keeper (the Q5 uniform rule).
+D. Process seam (desk doctrine from r#36, the audit board's X-6b): no scoring here, but the
+   same rule for provenance stamps — every `derived_at` / `read_live_at` leaf you write names
+   the origin/main sha you actually read at, re-read after your final rebase.
+
+GUARDRAILS, COLLISION, EXIT: as §D56, on nyiso-189. D59 (NYISO forecast t1h suffixed arms)
+and the owner's NYISO backcast lane are the other NYISO writers this window — you touch the
+marker, the board's NYISO gate-(a)/headline rows, the finding, the log, and the shard stamp
+the auditor requires (plus `frontier` only under option A); nothing else.
+```
+
+## D57 — the PJM clearing half: BUILD + A/B (r#36; D54 §7 executed; the D48 §8 configuration)
+
+```
+You are the D57 session of the capacity-expansion track — the BUILD lane for the PJM clearing
+half. The design is written and landed: docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-
+2026-09-05.md (§3 the mechanism stated so you build it without design choices; §4 every
+interaction decided; §7 the seam list, the A/B plan and seven STOP conditions) with its
+pre-declaration docs/handoffs/PREDECL-capx-d54-pjm-clearing-half-2026-09-05.md (§2 the
+zero-solve instrument's per-DY cleared position and price on the committed ledgers; §3 the
+per-leg expectations; §4 the falsifier). D48 Phase 1 (FINDING-capx-d48-2026-09-04.md §8)
+landed with the recommendation that its two fields be armed WITH this mechanism, not alone —
+the admission cap prices a consistent budget at an inconsistent $0 until the market clears.
+The design's own instrument already says what you will measure: the cleared position lands
+within 0.7 / 1.0 / 2.6 pts of the published cleared position, and the clearing price lands
+1.7× / 2.4× / 5.5× the published price BECAUSE the gas-CT / gas-ST / oil fleets carry exactly
+zero E&AS margin in the hindcast prices (D45 §1(i)). You build the mechanism, prove the
+Phase-0 reproduction, solve the two arms, and report the E&AS operand as the object. A build
+that lands on the published price without an operand change is REFUSED (PREDECL §4) — you
+do not touch the operand.
+
+DATA PROFILE: pjm
+MODEL ASSIGNMENT: Fable (the largest arming consequence in the chain; the settlement identity
+§3.5 is a mechanism, and every seam decision in §4 must be honoured, not re-decided).
+BRANCH: claude/capx-d57-pjm-clearing-build — FRESH off origin/main, rebase before every push.
+
+READ FIRST: the DESIGN §0–§9 IN FULL and the PREDECL IN FULL · FINDING-capx-d48-2026-09-04.md
+§3.3 (the admission cap as the second mechanism), §5 item 1, §8 · FINDING-capx-d45-pjm-nyiso-
+curves-2026-09-03.md §2.1–§2.3, §3(a), §6, §9 · docs/handoffs/d45/published-positions-
+2026-09-03.json (VALIDATION OBSERVABLES, never targets) · src/market_sim/config/
+capacity_market.py (`resolve_capacity_market_clearing`, the sibling predicate you add) ·
+src/market_sim/model/capacity_evolution/retirements.py (the screen's capacity leg; D53's
+`retirement_sector_gate` may or may not have merged — read origin/main at your start and
+state which: design §4.7 says the gate needs no design change, gated units enter the stack as
+$0 price-takers) · `_CACHE_KEY_OPTIONAL_FIELDS` / `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` in
+scenarios.py (D24-R's (b′-1) ledger) · scripts/check_cache_key_registration.py ·
+scripts/run_capacity_hindcast.py (the harness flag convention; D48's flags as the template) ·
+the matrix `capacity_market_clearing` rows and the PJM shard's cells · the D53 branch's
+`tests/unit/model/test_capacity.py` if D53 is unmerged (you both add tests to that file —
+put yours beside `TestPjmAccreditationDesignVintage` as §3.6 says, and rebase before every
+push).
+
+THE WORK, in this order:
+1. PHASE 0 — REPRODUCE THE INSTRUMENT IN CODE, zero solves: implement the clearing function
+   per design §3.2–§3.4 and run it on the committed ledgers (`pjm-t1h` D45-R and
+   `pjm-t1h-d48-devintage`) — it must reproduce PREDECL §2's per-DY clearing price to within
+   $1/MW-day and the cleared position to within 0.1 pt (STOP 1 otherwise). Commit the
+   reproduction table BEFORE any solve.
+2. BUILD, default-off, zero DOF: `capacity_market_supply_clearing_by_iso: dict[str, bool] |
+   None = None` exactly as §7.1 (requires the curve gate; `None` ⇒ byte-identical; coerced
+   to `None` in a plain backcast as the curve gate is); registered in the optional-field
+   ledger at `"None"` (rule 24; `check_cache_key_registration.py --base origin/main` green);
+   harness flag; `validate_parameters.py` entry; the invariants §3.6 as tests (I1 census
+   recovered when every offer is $0 or the market is short; I2 cleared ⇔ passing beyond the
+   marginal unit; I3–I5 as written); matrix base row + a cell in EVERY shard (rule 28c), PJM
+   the only one that will carry a measured verdict (rule 25). Prove byte-inert on the bare
+   `pjm-t1h` recipe (the key `c6091bd5b62bbc3f` must not move — STOP 2 if any bare key moves).
+3. PRE-DECLARATION ADDENDUM (docs/handoffs/PREDECL-capx-d57-<date>.md, pushed before any
+   solve): PREDECL-d54 §3 re-stated on the posture you actually found at HEAD (D53 merged or
+   not; D48 fields' HEAD state), the two arm keys resolved through the harness path, the
+   expected FC-3 sign (a faithful clearing pays MORE than $0 where the model sat and RETAINS
+   the +1.4 GW of cap-admitted coal D48 released; 2025 moves only through the entering-fleet
+   consequence), the expected price ratios per DY (1.7× / 2.4× / 5.5× — the E&AS operand's
+   signature), and the STOP-4 falsifier restated: an arm's price within ±20 % of published in
+   a long year means an operand moved — stop and find it.
+4. THE A/B (design §7.6), PJM solo (rule 12; 9.6–9.9 GB measured), years sequential:
+   control = the bare `pjm-t1h` at HEAD (re-solve it FIRST if its key moved since D45-R —
+   D45-R's rule); **arm A** = D48 both fields ON + supply clearing ON → `pjm-t1h-d57-clearing`
+   (the D48 §8 configuration, primary); **arm B** = D48 fields OFF + clearing ON →
+   `pjm-t1h-d57-clearing-headbasis` (the isolating control; with `pjm-t1h-d48-devintage` the
+   2×2 factorial is complete). `--entry-screen-diagnostics` on; suffixed keys ONLY, never the
+   bare key; score `forecast_verdict.py --tier t1h`; register with `register_forecast_run.py
+   --bundle`. Score and register AFTER your final rebase (desk doctrine: an orphaned
+   `scored_at_sha` names a commit that no longer exists — if you must rebase after scoring,
+   re-score artifact-only before merge so the stamp resolves).
+5. FINDING docs/handoffs/FINDING-capx-d57-<date>.md: the Phase-0 reproduction; per DY the
+   design's cleared position / price beside the published pair (both arms); the uncleared set
+   vs the screen's failing set (the §3.5 identity asserted from the ledgers); FC-3 row by row
+   for both arms against the control AND against `pjm-t1h-d48-devintage`; what the admission
+   cap does now that the budget is priced; **the E&AS operand measured** — how many GW of
+   offers sit above the published price by fuel, and what E&AS margin per unit would put the
+   cleared position AND the price on the published pair (a statement about the operand, NOT
+   a fitted value — you change nothing); the pre-declaration graded at full magnitude;
+   the ARMING RECOMMENDATION on the pre-stated condition for the JOINT flip (D48's two fields
+   + this gate for PJM) — NOTHING ARMS in this lane; the owner decides on the card.
+
+GUARDRAILS: rules 1, 5, 6, 12 (PJM solo), 13 (cleared MW and price are observables you
+validate against, never inputs), 14, 19 (one capacity-revenue mechanism per unit — the
+census evaluation is REPLACED for PJM when the gate is on, never stacked), 21 (NO free
+parameter; the E&AS operand is measured and reported, never tuned — PREDECL §4's refusal
+binds), 22 (2021–2025 solve years, 2022 bridged and never scored, nothing outside), 24, 25
+(PJM's own registry; the gate is generic in form and PJM-scoped by data), 27 (retirements.py,
+scenarios.py, capacity_market.py and the test file are ≥300-line files: edit locally, push
+exact bytes, blob-verify), 28 (row + six cells in the build commit). No keeper / shard /
+marker; backcast byte-identical (assert the plain-backcast coercion with a keeper replay of
+the run_config, no LP).
+
+STOP conditions: design §7.7 items 1–7 verbatim, plus: D53 merges mid-lane and moves the
+bare `pjm-t1h` key → re-resolve, re-declare the arm keys, say so.
+
+COLLISION: D53 (`retirements.py` candidate set + `test_capacity.py`; in flight) — keep your
+diff to the clearing function, the predicate, the screen's capacity-leg call site and your
+own test class; rebase before every push. D58 (the PJM sector-gate leg) is HELD until you
+land — you are the only PJM forecast writer. D50-R writes suffixed PJM t1f keys and the PJM
+shard's CCS cell only; disjoint from your row. The owner's backcast lanes never touch PJM
+forecast surfaces.
+
+EXIT: the gated mechanism with matrix duties and tests; the Phase-0 reproduction table; both
+suffixed arms registered; the pre-declaration graded; the E&AS operand measured and stated;
+the joint arming recommendation on the pre-stated condition. Nothing armed.
+```
+
+## D58 — the PJM sector-gate leg (r#36; D53 routed item 1) — **RELEASED-CONDITIONAL: dispatch ONLY after D53 has merged to main AND D57 has landed (both write the PJM shard and PJM forecast surfaces)**
+
+```
+You are the D58 session of the capacity-expansion track — the PJM leg of the sector gate D53
+built and measured on MISO. D53 (FINDING-capx-d53-2026-09-05.md; design DESIGN-capx-d53-
+sector-gate-2026-09-05.md) partitioned the retirement screen's candidate set on the published
+EIA-860 `Sector` attribute (sector 1 = electric utility exits only through the step-0
+instrument and step-1 filed-date channels; every other sector faces the merchant screen);
+on MISO the screen's failing pool fell 76.75 → 17.46 GW with zero sector-1 rows and every
+exit byte-identical. D53 §7 item 1 names PJM as the DISCRIMINATING test: D45 L1 showed
+PJM's 2022 screen failing 111.7 GW of fossil candidates on a merchant-heavy sector mix, so
+the failing pool should shrink by a MINORITY where MISO's shrank by 77 %. You run that leg,
+pre-declared, against your own census.
+
+DATA PROFILE: pjm
+MODEL ASSIGNMENT: Opus (pre-declared execution of a landed mechanism on a second ISO; the
+verdict letter is PJM's own — rule 25).
+BRANCH: claude/capx-d58-pjm-sectorgate — FRESH off origin/main, rebase before every push.
+
+PRECONDITIONS (check at start; STOP and say so if either fails): `retirement_sector_gate` is
+in ScenarioConfig on origin/main (D53 merged); `capacity_market_supply_clearing_by_iso` is on
+origin/main (D57 landed) — you run on the posture D57 leaves, and you state it.
+
+READ FIRST: D53's design §0.2–§0.4 (the MISO census method you reproduce for PJM: fleet by
+sector, the bare recipe's failing set by sector, the real cohort by sector), §1.2–§1.8
+(the partition and every interaction), §2.1 (why the gate cannot move an exit on a
+zero-headroom floor — check whether PJM's floor HAS headroom: D48 §3.3 says the PJM
+admission cap admitted +1.4 GW, so PJM may be the first ISO where the gate's composition
+effect is observable on the PRIMARY leg) · FINDING-capx-d53 §2–§4, §6 · FINDING-capx-d45 §2
+(L1: the 111.7 GW pool) · FINDING-capx-d48 §3 · FINDING-capx-d57 (the posture at HEAD; which
+of D48's fields and the clearing gate are ON in the bare `pjm-t1h` — if the owner armed the
+joint flip, the bare key has moved and your control is the new bare) · the PJM matrix shard
+`economic_retirement_screen` + `retirement_sector_gate` cells · data/raw/eia-860 (the PJM
+plant table at the 2020 vintage, the sector reader D53 added).
+
+THE WORK:
+1. PRE-DECLARE (docs/handoffs/PREDECL-capx-d58-<date>.md, zero solves, before any LP): the
+   PJM fleet by sector at the 2020 vintage; the bare `pjm-t1h` screen's 2022/2023 failing
+   set by sector from the committed ledgers; the real PJM exit cohort 2021–2025 by sector;
+   the expected gated-failing MW and the fraction of the failing pool that leaves (the
+   "minority" claim, in numbers); whether PJM's floor has headroom at the 2022/2023 screens
+   (if yes, pre-declare the composition of the release: merchant plants, plant-grain
+   precision vs the control); the arm's cache key resolved through the harness path; the
+   rule-14 sign (a gate can only REDUCE economic exits — if total exits fall and G3 reads
+   worse that is the expected signature); a P9-style flip condition for PJM.
+2. THE ARM: the bare `pjm-t1h` recipe at HEAD + `--retirement-sector-gate` (D53's harness
+   flag) → suffixed `pjm-t1h-d58-sectorgate`, PJM solo (rule 12), sequential, ~15–25 min.
+   Control = the bare `pjm-t1h` at HEAD (re-solve first if its key moved). Score and
+   register AFTER the final rebase (desk doctrine: no orphaned `scored_at_sha`).
+3. FINDING docs/handoffs/FINDING-capx-d58-<date>.md: the census before/after by sector, the
+   FC-3 rows moved (expected: none on a zero-headroom floor; the composition of any release
+   if PJM's floor has headroom), the pre-declaration graded at full magnitude, the PJM
+   shard's `retirement_sector_gate` cell stamped with PJM's OWN letter (U → the measured
+   verdict; rule 25 — MISO's K/O never fills it), and the arming recommendation for PJM on
+   the pre-stated condition. NOTHING ARMS.
+
+GUARDRAILS: rules 1, 12, 13, 14, 19, 21, 22, 24, 25, 27 (any ≥300-line file), 28d. No
+keeper / shard / marker; no mechanism code (D53 built it; if PJM needs a seam D53 did not
+build, STOP and route — do not extend the gate in this lane).
+
+COLLISION: you are dispatched only when no other PJM forecast writer is open (D57 landed,
+D50-R's PJM t1f leg disjoint by tier). Rebase before every push regardless.
+
+EXIT: the pre-declaration, the suffixed arm registered, the finding with the PJM cell letter
+and the recommendation.
+```
+
+## D59 — the NYISO locality half: the short-locality demand curve (r#36; D45 §5.2.4 item 3, D52 §8 route)
+
+```
+You are the D59 session of the capacity-expansion track. D52 (FINDING-capx-d52-2026-09-04.md)
+closed NYISO's POSITION artifact — with the two requirement gates on, the NYCA position sits
+within ±3 pts of the market in every scored year — and re-ran the curve-ON probe: the 2023
+wave D45 L3 fired at $0 is gone, and what fires instead is 1,801 MW of DOWNSTATE gas_st at
+the 2025/26 NYCA curve's $28.65/kW-yr, where the market paid $51.36 NYCA-wide and Zone J
+(NYC) cleared at $141. D52 §8(2) routes, in order: (1) the LOCALITY half — NYC / LI / G-J as
+the NYISO instance of the locational capacity machinery; (2) the 2025/26 curve-vintage /
+2025 SOM transcription check; (3) THEN the same P9 (a)/(b)/(c) probe re-run. Read the seam
+before you design: the shipped Part-B gate (`capacity_deliverability_limits`,
+docs/capacity-deliverability-wiring.md) COLLAPSES the marginal capacity payment in a LONG
+zone (RA saturated). NYISO's object is the opposite sign — a SHORT locality paid ITS OWN
+published demand curve, which is literally how the NYISO spot market administers price
+(price = curve(supplied UCAP), per locality; D28 §4, D54 §4.9). So the instance is not a
+re-use of the long-zone collapse; it is the per-locality curve evaluated at the per-locality
+position, with a unit in NYC / LI / G-J paid the max over the localities it sits in and the
+NYCA price. Rule 25: NYISO's own mechanism with NYISO's own published rows; rule 1: the
+right market structure first.
+
+DATA PROFILE: nyiso
+MODEL ASSIGNMENT: Fable (mechanism design with an arming consequence; a design decision at
+the seam).
+BRANCH: claude/capx-d59-nyiso-locality — FRESH off origin/main, rebase before every push.
+
+READ FIRST: FINDING-capx-d52 §0, §3–§5, §8 IN FULL · FINDING-capx-d45-pjm-nyiso-curves-
+2026-09-03.md §5.2.4 items 3–4, §5.3 (L3), §6, §9 · FINDING-capx-d28-* §4 and §6.5 (NYISO:
+"the one ISO whose real mechanism IS evaluate the curve at a census quantity") ·
+docs/capacity-deliverability-wiring.md (Part B; the NYISO crosswalk: NYC(J)/LI(K) 1:1, G-J
+aggregate excluded — decide whether G-J is representable on the 5-zone model and say so) ·
+data/raw/capacity-deliverability/nyiso/nyiso.csv + README (the committed LCR / import-limit
+rows: which capability years, which localities) · data/raw/demand-curve/nyiso/ (does it
+carry the NYC / LI / G-J ICAP demand-curve parameters — reference point, zero-crossing,
+net-CONE — per capability year, or NYCA only? If locality curves are NOT committed, the
+intake is your Phase 0: NYISO ICAP Demand Curve filings / the annual reset, fetched,
+sha256'd, curated through the data contract — a data-intake step, not a solve) · the D52
+fields `nyiso_requirement_forecast_peak` / `nyiso_requirement_vintage_factors` and the four
+seam ledger fields D52 added (`screen_*`) · src/market_sim/model/capacity.py
+(`deliverability_headroom_by_zone`, `_zone_is_long`) and the screen's capacity-leg call
+site in retirements.py · the NYISO matrix shard (`capacity_deliverability_limits`,
+`capacity_market_clearing` cells) · the NYISO 2025 SOM capacity section (the $51.36 / $141
+spot figures D52 quotes — the transcription check).
+
+THE WORK, design before code:
+1. DESIGN DOC FIRST (docs/handoffs/DESIGN-capx-d59-nyiso-locality-<date>.md, pushed before
+   any code): (a) the locality set representable on the model's zones (J, K certainly; G-J
+   only if the zone partition supports it — state the rule); (b) per locality: requirement
+   = LCR × the locality's forecast peak (published), supply = in-locality accredited UCAP +
+   the crosswalked import limit, position, the locality's own demand curve at that position;
+   (c) settlement: a unit's capacity revenue = max(NYCA price, the price of every locality it
+   sits in) × accredited MW — cite the ICAP Manual's locality-stacking rule; (d) zero DOF: every
+   number a published curve parameter or requirement; (e) interactions decided: the D52
+   requirement gates (the NYCA half; this design sits on top, never re-derives it), the
+   shipped long-zone collapse (state whether it can co-exist for NYISO or must be superseded
+   per rule 19 — one locational mechanism per ISO), the dates channel, the reliability floor,
+   the entry side (does new downstate entry see the locality price? it must, or the design
+   pulls exits without pulling entry); (f) the 2025/26 vintage / 2025 SOM transcription check
+   (D52 §8 item 2), zero-solve, done here and its result stated; (g) THE PRE-DECLARATION: on
+   D52's committed `nyiso-t1h-d52-curveon` ledger, zero-solve, the locality positions and
+   prices per year beside the published locality clearing prices (validation observables,
+   never targets); the expected FC-3 sign (downstate steam retires HARDER — the 1,801 MW
+   gas_st wave at $28.65 should shrink or vanish under a $141 Zone J price; rule 14); the
+   arm keys; a P9-style flip condition; the falsifier (a design that reproduces the published
+   locality price only by tuning is refused).
+2. BUILD default-off, zero DOF: one gated field (repo convention; per-ISO in form, NYISO in
+   data — rule 25), registered in ScenarioConfig + run_config (rule 24), the optional-field
+   ledger, harness flag, matrix base row + a cell in EVERY shard (rule 28c), byte-inert while
+   off (prove on the bare `nyiso-t1h` recipe, key `91686abe7a744a88` or its HEAD successor).
+   The locality rows enter through the existing curated readers (rule 6), never a dict.
+3. THE A/B on NYISO (rule 12: NYISO solo, ~12 min per leg, sequential): the D52 posture
+   (both requirement gates ON, curve ON — i.e. the `nyiso-t1h-d52-curveon` recipe) + the
+   locality gate → suffixed `nyiso-t1h-d59-locality`; comparator `nyiso-t1h-d52-curveon`
+   (`589f031432b6dc7d`). Then the SAME P9 (a)/(b)/(c) test D45/D52 pre-stated, re-read on
+   this record — the curve question re-opens on it, not before (D52 §8). If the owner has
+   armed D52's gates (card C-12) the bare `nyiso-t1h` key has moved — re-resolve and say so.
+   Score and register AFTER the final rebase (desk doctrine: no orphaned `scored_at_sha`).
+4. FINDING docs/handoffs/FINDING-capx-d59-<date>.md: the locality positions / prices per
+   year vs published; FC-3 row by row vs the comparator; the P9 reading; the pre-declaration
+   graded at full magnitude; the NYISO shard cells stamped; the arming recommendation on the
+   pre-stated condition (the locality gate; and, separately, whether P9 now says the NYCA
+   curve may be consulted — two recommendations, two conditions). NOTHING ARMS.
+
+GUARDRAILS: rules 1, 5, 6, 12, 13 (published curves and requirements only; cleared prices are
+observables), 14, 19, 21, 22 (2021–2025; nothing outside), 24, 25, 27, 28. No keeper / shard
+/ marker; backcast byte-identical (the field coerces off in a plain backcast as the curve gate
+does — assert it).
+
+COLLISION: D56-R writes the marker + the board's NYISO gate-(a)/headline rows — you touch
+NYISO FORECAST surfaces (suffixed t1h keys, FC rows) and the NYISO shard's cells only. The
+owner's NYISO backcast lane owns the keeper shard. No other NYISO forecast writer this window.
+
+EXIT: the design + pre-declaration pushed first; the gated field with matrix duties; the
+suffixed A/B registered; the P9 re-read; the finding with both recommendations; the
+transcription check answered.
+```
+
+## D50-R — the D50 completion: the PJM arm, the blast radius, the finding (r#36; D50 checkpoint)
+
+```
+You are the D50-R session of the capacity-expansion track — a COMPLETION lane. D50 (pack §D50)
+landed as a checkpoint in PR #4728: `ccs_retrofit_capex_co2_scaling` built default-off with
+seam 2 (CHP hosts excluded) and the p55470 flag; the ERCOT t1f arm `ercot-t1f-d50-ccscapex`
+(0 conversions vs the control's 2,741.8 MW; HOLD → HOLD) and the NEISO arm
+`neiso-t1f-d50-ccscapex` (the 3 GW/yr cap still binds under RGGI; who converts changes;
+PROMOTE → PROMOTE) registered and stamped into the ERCOT and NEISO matrix cells. OWED, and
+you deliver: the PJM t1f arm, the §6 blast radius, the §8 arming recommendation, and
+`docs/handoffs/FINDING-capx-d50-2026-09-04.md` ITSELF — which all three ISO shards' cells
+already cite by name and which does not exist on main (write it under that exact filename so
+the citations resolve; date the body honestly as written 2026-09-05+).
+
+DATA PROFILE: pjm (ercot/neiso ledgers are committed; read them, do not re-solve)
+MODEL ASSIGNMENT: Opus (execution of a committed pre-declaration; no new mechanism; the
+arming decision is the owner's, on the card the finding prices).
+BRANCH: claude/capx-d50r-completion — FRESH off origin/main, rebase before every push.
+
+READ FIRST: docs/handoffs/PREDECL-capx-d50-2026-09-04.md IN FULL (§2.2 the PJM expectation —
+0 conversions vs the control's 16 rows / 2,832.6 MW 2028 + 3 / 752.1 2029 = 3,584.7 MW, seam 2
+load-bearing for 722 MW of CHP rows; Addendum A.3 the PJM 2029–2030 residual channel; §3 the
+STOPs; §4 the keys; §5 the FC rows; §6 the blast-radius expectation) · the ERCOT and NEISO
+matrix cell texts for `ccs_retrofit_capex_co2_scaling` (the measured results you carry into
+the finding verbatim) · results/ff-t1f-*/ for the two registered arms' `full_horizon_summary`
+and evolution ledgers · FINDING-capx-d49-2026-09-04.md §1 · FINDING-capx-d41-* §6.2 (the
+blast-radius precedent) · FINDING-capx-d44-* §1 (the b′-1 declared-default-flip mechanics) ·
+frontend/data/forecast/ff-verdicts.json + registry (every committed forecast/hindcast key —
+the blast radius is enumerated from them) · the D45-R measured t1f rates (PJM 28 min / MISO
+65 min / ERCOT 11.8 / NEISO 6.7 / NYISO ~12) and D46/D47b's `c_cost` corrections.
+
+THE WORK:
+1. THE PJM ARM: the bare `pjm-t1f` recipe (`pjm-2026-2030-d45r-remeasure`, key
+   `321f04e9060787f0` — re-resolve at HEAD; if it moved, say so and use the HEAD bare) +
+   `--golden-posture` + the D50 field ON → suffixed `pjm-t1f-d50-ccscapex`, PJM solo (rule
+   12), ~28 min. Score `forecast_verdict.py --tier t1f`; register `--bundle`. Score and
+   register AFTER your final rebase (desk doctrine: no orphaned `scored_at_sha`). Grade
+   PREDECL §2.2 at full magnitude; STOP per §3 if the repaired screen clears MORE MW.
+   MISO t1f (~65 min) ONLY if PJM contradicts §2.2 (PREDECL §2.4's own rule).
+2. THE BLAST RADIUS, measured (charter step 4): every committed forecast/hindcast key whose
+   cache key the default flip would advance (the b′-1 pattern: the field enters the declared-
+   defaults ledger; list keys by ISO and tier, bare and suffixed, goldens included — GOLDEN-2 /
+   GOLDEN-3 carry the CCS screen from 2028), and the solve-minutes to re-measure the BARE keys
+   at the measured rates. That number goes on the owner's card verbatim.
+3. THE FINDING `docs/handoffs/FINDING-capx-d50-2026-09-04.md`: §1 the whole-fleet census
+   (PREDECL §2.5 / A.1); §2 ERCOT (from the cell text + ledgers), §3 NEISO, §4 PJM (yours);
+   §5 the FC rows moved per ISO; §6 the blast radius; §7 the pre-declaration graded (all of
+   P1–P8 and Addendum A); §8 the ARMING RECOMMENDATION on D50's pre-stated condition (state it
+   verbatim from the PREDECL, then grade it) — NOTHING ARMS; §9 governance attestation
+   (rule 27 blob checks; rule 22; the pre-declared-follow-up attestation limb Q37 adopted,
+   since you author for a lane that has closed). Stamp the PJM shard's cell with the measured
+   result in the ERCOT/NEISO cells' exact style; leave the ERCOT/NEISO cell texts byte-identical
+   except to replace "stamped with its measured verdict in FINDING…" wording only if it is
+   false at your landing.
+4. Records: the D46/D47 `t1f_provenance` conventions (D51 rider) apply to the new key;
+   CHANGELOG line; nothing on the backcast side.
+
+GUARDRAILS: rules 12, 13, 14 (fewer conversions is the expected signature), 21, 22, 24, 25,
+27, 28. No keeper / shard / marker; no default flip; no ERCOT/NEISO re-solve.
+
+COLLISION: D57 owns PJM t1h surfaces and the PJM shard's clearing cells — you write the PJM
+t1f suffixed key and the PJM shard's CCS cell only; rebase before every push. D58 is held.
+
+EXIT: `pjm-t1f-d50-ccscapex` registered; the blast radius priced; the finding at the cited
+filename with §8's recommendation; the PJM cell stamped. Nothing armed.
 ```
