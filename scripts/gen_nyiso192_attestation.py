@@ -120,6 +120,24 @@ def g_delta() -> dict:
     """G-DELTA — the scenario config is IDENTICAL; the ONLY delta is the extract."""
     c, a = _cfg(KEEPER), _cfg(ARM)
     diff = {k: (c.get(k), a.get(k)) for k in set(c) | set(a) if c.get(k) != a.get(k)}
+    # A field absent from the keeper's serialised config (None) that the arm
+    # serialises at its DEFAULT is a field added to ScenarioConfig after the
+    # keeper solved, not a config delta: the keeper would carry the same default
+    # if re-serialised at HEAD. Reported separately, never counted as a delta.
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    defaults = {
+        f.name: (f.default if f.default is not dataclasses.MISSING else None)
+        for f in dataclasses.fields(ScenarioConfig)
+    }
+    newly_serialised = sorted(
+        k
+        for k, (kv, av) in diff.items()
+        if kv is None and k in defaults and av == defaults[k]
+    )
+    diff = {k: v for k, v in diff.items() if k not in newly_serialised}
     guard_on = bool(c.get("campd_outage_merit_order_guard")) and bool(
         a.get("campd_outage_merit_order_guard")
     )
@@ -129,6 +147,7 @@ def g_delta() -> dict:
     return {
         "baseline": KEEPER.name,
         "delta_fields": {k: list(v) for k, v in sorted(diff.items())},
+        "newly_serialised_defaults_not_deltas": newly_serialised,
         "guard_true_on_both": guard_on,
         "per_unit_true_on_both": per_unit_on,
         "pass": not diff and guard_on and per_unit_on,
