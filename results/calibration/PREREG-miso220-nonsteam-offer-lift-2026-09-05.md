@@ -258,3 +258,72 @@ narrow: it kills the arm cheaply (~22 min instead of ~65) if the mechanism misbe
 structurally, and otherwise licenses nothing beyond spending the full span. **All of
 §5's predictions and §6's kills remain scored ONLY on the full 2023–2025 bundle**, which
 is the sole basis on which promotion may be considered.
+
+---
+
+# ADDENDUM B — G-DRIFT AUDIT (rule 29(b)), written before any arm number exists
+
+**Timing, stated honestly.** Rule 29(b) asks that the drift audit be recorded before the
+arm is solved. It is being recorded here **after the full-span solve was launched but
+before any of its output exists or has been read** — the rule's purpose, that the audit
+cannot be written to fit the result, is preserved intact; its letter on ordering is not.
+Recorded as a deviation rather than presented as compliance.
+
+**Question.** The control is the keeper's committed bundle (rule 29(b) form 4, no control
+solve). Form 4 is valid only if the solve-path code has not drifted between the keeper's
+`git_sha` (**`f3284261`**) and the arm's base (**`4ce3392d`**).
+
+## B.1 The diff
+
+`git diff f3284261 4ce3392d -- src/market_sim scripts/run_calibration.py
+scripts/run_calibration_full.py scripts/lib data/raw/_validation-source data/raw/reference`
+returns **8 files, +339 / −16**. Every hunk classified:
+
+| file | Δ | class | reason |
+|---|---:|---|---|
+| `data/raw/reference/nyiso-market-solar-capacity.csv` | +65 | **INERT** | another ISO's artifact (rule 25) |
+| `scripts/lib/outage_detect.py` | +17 | **INERT** | CAMPD stack-duplicate merge; the registry holds ONE pair, plant **8906** (Astoria, NYISO) — verified from `campd.CAMPD_STACK_DUPLICATE_UNITS`. Its own clause: "byte-identical for every extract with no registered stack pair". MISO has none |
+| `scripts/run_calibration_full.py` | +17 | **INERT** | adds a `gas_offer_margin` CLI override defaulting to `None` = keep the recipe's value; this replay never passes it |
+| `src/market_sim/config/constants.py` | +3 | **INERT** | adds a **2022** monthly row for the rule-22 validation touchpoint; 2022 is not a solve year here |
+| `src/market_sim/config/iso_configs.py` | +126 | **INERT** | the only MISO hunk adds `adequacy_accounting_ratio_dated_net: True` to MISO's `default_scenario_overrides` — the reserve-margin **adequacy backstop** (capacity-evolution step 6), forecast-only, and `reserve_margin_build_enabled` is `None`. **Verified empirically: the field reads `False` in BOTH bundles' recorded configs**, so the override is not injected by a replay at all |
+| `src/market_sim/config/scenarios.py` | +87 | **see B.2** | one new field, `ccs_retrofit_capex_co2_scaling: bool = True` |
+| `src/market_sim/model/capacity_evolution/ccs.py` | +6 | **INERT** | CCS retrofit is capacity-evolution step 2; a `mode="backcast"` run never enters capacity evolution |
+| `src/market_sim/results/cache.py` | +34 | **INERT** | documentation of the D60 cache-key epoch. The invalidation it declares is scoped to `results/<ISO>/<key>/` **forecast** bundles reaching 2028; backcast calibration bundles are `results/calibration/<name>/` and are not keyed |
+
+## B.2 THE ONE REAL FINDING — the arm carries TWO config differences, not one
+
+`ccs_retrofit_capex_co2_scaling` flipped its default `False → True` on main (capx D60,
+owner ruling Q42) **between the keeper's solve and this arm's**. A replay rebuilds the
+config from the bundle's recorded `scenario_config` but takes new fields at their current
+default, so:
+
+| field | control (keeper) | arm | declared? |
+|---|---|---|---|
+| `offer_curve_by_group` | keeper table | ×1.10 on 11 non-steam fossil classes | **YES — the arm** |
+| `ccs_retrofit_capex_co2_scaling` | `False` | **`True`** | **NO — inherited drift** |
+
+**This is disclosed, not glossed: the A/B is not a literally single-field comparison.**
+It is a single *live* delta, on three independent grounds, each checkable:
+
+1. **`mode = "backcast"` in both bundles** (verified from their recorded configs), and a
+   backcast run never enters capacity evolution, where the field's only consumer lives.
+2. **`ccs_retrofit_available_year = 2028` in both**, and the solve years are 2023–2025 —
+   every year is below the gate.
+3. CLAUDE.md's own statement of the field: *"Inert below `ccs_retrofit_available_year`
+   (2028) by construction, so every backcast, hindcast and crossover horizon is
+   byte-identical."*
+
+**G-DRIFT VERDICT: every hunk INERT for MISO backcast ⇒ form 4 holds and the keeper is
+the control. No control solve is spent.** The `ccs_retrofit_capex_co2_scaling` difference
+is carried in the finding as a declared limitation of the comparison, not omitted from it.
+
+## B.3 Forward note for the next session (does NOT affect this arm)
+
+`4ce3392d → origin/main` (**70 commits**, 23 solve-path files, +80 / −324 — largely a
+dead-code removal PR) touches `data/offer_curves.py`, `data/reserve_requirements.py`,
+`data/outages.py`, `data/floor_mechanisms.py`, `data/som_conduct.py`,
+`results/metrics.py` and `pipeline/result.py`. **This arm is deliberately NOT rebased
+onto it**: pulling changed solve-path code underneath a running A/B would contaminate the
+form-4 control. Committed results are unaffected by a later merge — parquets do not move
+— but **a future session re-solving this recipe on current main must run its own G-DRIFT
+before treating this arm's bundle as a control.**
