@@ -93,7 +93,37 @@ def build(dst: Path) -> None:
         "pass, which _miso220_ab_gates.json adjudicates against kills frozen before "
         "the solve."
     )
+    # THE TWO ASSERTIONS THAT CANNOT BE CARRIED FORWARD, and why they are flipped
+    # rather than copied. The keeper asserts governance.no_fit_to_price_residuals =
+    # true and levers_trace_to_measured_input = true. Neither is factually true of
+    # THIS arm, and the owner's 2026-09-05 ruling does not make them true: the ruling
+    # authorizes the CHANNEL (band multipliers may be tuned on price and may adjust
+    # merit order), it does not license an attestation that asserts the opposite of
+    # what the run did. The 1.10 was chosen to move a price residual and traces to no
+    # measured input, so copying `true` would launder exactly the thing C6 exists to
+    # catch. Both are set FALSE and the ruling is cited as the authorization for the
+    # channel, not as a warrant for the claim. The scoring consequence (C6 is a
+    # PROTECTIVE criterion, so a failure carries a protective caveat and can move the
+    # determination) is accepted and reported, never engineered around.
+    d["governance"]["no_fit_to_price_residuals"] = False
+    d["governance"]["levers_trace_to_measured_input"] = False
+    # UNCHANGED and still true: the arm sets no value to make an output match an
+    # actual (the multiplier is owner-set and uniform across all three years, not
+    # solved for a target), and it touches nothing in the outage/net-load path.
+    d["governance"]["no_pinning_to_actuals"] = True
     d.setdefault("disclosures", {})["miso220_nonsteam_lift"] = DISCLOSURE
+    d["disclosures"]["miso220_governance_flip"] = (
+        "governance.no_fit_to_price_residuals and levers_trace_to_measured_input are "
+        "set FALSE on this arm, against the keeper's true. The owner ruling of "
+        "2026-09-05 authorizes the offer-curve multiplier CHANNEL for tuning on price "
+        "and adjusting merit order; it does not make the two factual assertions true, "
+        "and this run does not claim them. The x1.10 was chosen to move a price "
+        "residual and traces to no measured input. no_pinning_to_actuals REMAINS TRUE: "
+        "the factor is owner-set and uniform across 2023-2025, not solved to land an "
+        "output on an actual, and one config held across all three years is the "
+        "discipline the ruling names. Whatever C6 scores on this basis is reported as "
+        "scored."
+    )
     dst.write_text(json.dumps(d, indent=1))
     print(f"wrote {dst.relative_to(REPO)} "
           f"(n_entries={d['free_parameters']['n_entries']}, "
