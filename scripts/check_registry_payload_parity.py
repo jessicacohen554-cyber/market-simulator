@@ -454,7 +454,12 @@ def check_bundle_retention(
             f"frontend/data/backcast/keepers/README.md). Either register "
             f"it, prune it (dashboard_add_run.prune_iso deletes the three "
             f"stores together), or record why it must outlive its sidecar "
-            f"in KEEP_REQUIRED_UNMAPPED_BUNDLES."
+            f"in KEEP_REQUIRED_UNMAPPED_BUNDLES. A rule-29 [R-SCREEN] screen "
+            f"bundle, or a control bundle a screen earned, has ONE exit: "
+            f"CLAUDE.md rule 29 clause (c) (owner ruling R-AV, 2026-09-05, "
+            f"'Delete before merge') — `git rm -r` it before the PR merges, "
+            f"with its numbers carried by the PRECOMMIT/FINDING doc; it is "
+            f"never registered and never an allowlist candidate."
         )
     return problems, swept
 

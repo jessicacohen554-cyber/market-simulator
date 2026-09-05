@@ -437,6 +437,23 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     written to fit the result. A "files changed, therefore void" heuristic with no audit behind it
     is not a reason to spend an LP.
 
+    **(c) DELETE BEFORE MERGE. A screen bundle, and any control bundle a screen earns under
+    (b)'s LIVE-hunk case, is deleted from `results/calibration/` before its PR merges** *(owner
+    ruling R-AV, audit-program director sitting 2026-09-05, verbatim: "Delete before merge";
+    executed by Y-13, `docs/handoffs/FINDING-y13-ci-plumbing-2026-09-05.md`)*. The PRECOMMIT /
+    FINDING doc carries **every number the session will ever cite** from such a bundle — the
+    gate table with its values, the control differencing, the verdict — so the record is the
+    doc, never the parquet, and git history is the record for the bytes exactly as rule 15
+    `[R-DASHBOARD]` already says of pruned runs. The enforcement is
+    `scripts/check_registry_payload_parity.py`'s bundle-retention sweep (Class-E point 4,
+    `frontend/data/backcast/keepers/README.md`): **an unregistered bundle dir is a gate RED, not
+    an allowlist candidate** — `KEEP_REQUIRED_UNMAPPED_BUNDLES` is not the route for a screen or
+    a control, and neither is registering it (clause (2) above: a screen bundle is never
+    registered). This resolves the collision the v31 second coda recorded (`da99f34b`): a lane
+    that obeyed rule 29 exactly ("never registered on the dashboard") turned the parity gate red
+    *by obeying it*, because the bundle was committed and outlived its PR. The two duties compose
+    only when the bundle does not reach `main` at all.
+
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
