@@ -284,6 +284,16 @@ KEEP_REQUIRED_UNMAPPED_BUNDLES: frozenset[str] = frozenset(
         "nyiso186_control",
         "nyiso187_control",
         "nyiso188_control",
+        # session nyiso-189 (2026-09-05): the same-HEAD bit-identity control of
+        # the B2 steam-collapse identity A/B (PREREG-nyiso189-steam-collapse-
+        # identity-ab.md), the replay of the nyiso-188 keeper recipe on the
+        # committed artifacts, proven BIT-IDENTICAL to that keeper (0 of 52,560
+        # prices differ in every year) and deliberately NOT registered (the
+        # same convention); scripts/gen_nyiso189_attestation.py re-reads its
+        # hourly/system_<year>.parquet (G-CONTROL) and unit_hourly (G-ENGAGE).
+        # REMOVAL CONDITION: the attestation generator is retired or
+        # re-pointed at a registered bundle.
+        "nyiso189_control",
     }
 )
 

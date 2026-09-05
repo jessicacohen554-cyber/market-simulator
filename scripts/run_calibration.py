@@ -737,6 +737,7 @@ def run_year(
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
+    egrid_steam_collapse_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -1695,6 +1696,10 @@ def run_year(
         )
     if egrid_family_heat_rates is not None:
         config = config.with_overrides(egrid_family_heat_rates=egrid_family_heat_rates)
+    if egrid_steam_collapse_heat_rates is not None:
+        config = config.with_overrides(
+            egrid_steam_collapse_heat_rates=egrid_steam_collapse_heat_rates
+        )
     if nyiso_gas_bridge_cc_min_run_hours is not None:
         config = config.with_overrides(
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
@@ -3234,6 +3239,7 @@ def run_year(
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
                 egrid_identity_heat_rates=config.egrid_identity_heat_rates,
                 egrid_family_heat_rates=config.egrid_family_heat_rates,
+                egrid_steam_collapse_heat_rates=config.egrid_steam_collapse_heat_rates,
             )
             + retired_units,
             iso,
