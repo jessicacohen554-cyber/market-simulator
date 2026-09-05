@@ -3,11 +3,16 @@
 NO LP. Reads three committed bundles' hourly sidecars, metrics and verdicts:
 
   * KEEPER  — ``caiso246_b1_spot_coverage`` (run 2026-09-05-caiso-246-b1-spot)
-  * CONTROL — ``caiso251_ctrl``: the SAME recipe replayed at HEAD. G-CTRL form 2
-    is unavailable (the arm is live in every hour of every year) and form 4 is
-    VOID (solve-path files changed since the keeper's ``git_sha`` 900402b), so
-    this session spends ONE control solve and the arm is differenced against
-    the CONTROL, never against the committed keeper (PRECOMMIT §0.3 / §3.6).
+  * CONTROL — **the committed KEEPER itself**. Owner rule 2026-09-05 (rule 29
+    ``[R-SCREEN]`` clause b): no control solve is spent. G-CTRL form 2 is
+    unavailable (the arm is live in every hour of every year), and form 4 is
+    restored by **G-DRIFT**, the code-level audit in PRECOMMIT Addendum B —
+    every changed hunk on the backcast path between the keeper's ``git_sha``
+    900402b and HEAD is CAISO-backcast-inert with its reason cited (a
+    forecast-only path, another ISO's branch, a default-off flag absent from
+    the recipe, a per-ISO artifact CAISO lacks, or timing accounting). The
+    control solve launched under the withdrawn "files changed therefore void"
+    heuristic was killed mid-flight and its partial bundle deleted.
   * ARM     — ``caiso251_arm_nomargin``: the control recipe plus the SINGLE
     flag ``--no-gas-offer-margin`` (``ScenarioConfig.gas_offer_net_revenue_margin``
     False), i.e. the gas offer reverts from the fuel-INVARIANT $/MWh margin to
@@ -40,7 +45,12 @@ sys.path.insert(0, str(REPO / "src"))
 
 CAL = REPO / "results/calibration"
 KEEPER = CAL / "caiso246_b1_spot_coverage"
-CONTROL = CAL / "caiso251_ctrl"
+#: Owner rule 2026-09-05 (rule 29 [R-SCREEN] clause b): NO control solve is spent.
+#: G-CTRL form 4 is restored by the G-DRIFT code audit recorded in
+#: PRECOMMIT-caiso251 Addendum B — every solve-path hunk between the keeper's
+#: git_sha 900402b and HEAD is CAISO-backcast-inert with its reason cited — so
+#: THE COMMITTED KEEPER IS THE CONTROL.
+CONTROL = KEEPER
 ARM = CAL / "caiso251_arm_nomargin"
 YEARS = (2023, 2024, 2025)
 OUT = CAL / "_caiso251_arm_vs_control.json"
@@ -178,16 +188,19 @@ def main() -> None:
         out["years"][y] = row
 
     out["gates"]["G_CTRL"] = {
-        "control_minus_keeper_lw_usd": ctrl_drift,
-        "tolerance_usd": CTRL_TOL_USD,
-        "pass": bool(
-            ctrl_drift
-            and all(abs(v) <= CTRL_TOL_USD for v in ctrl_drift.values())
+        "form": 4,
+        "basis": "G-DRIFT code audit, PRECOMMIT-caiso251 Addendum B",
+        "control_is": "the committed keeper caiso246_b1_spot_coverage",
+        "control_solve_spent": False,
+        "drift_audit": (
+            "git diff 900402b..HEAD over the backcast path: 22 files, "
+            "+2527/-149, EVERY hunk CAISO-backcast-INERT with its reason "
+            "cited (forecast-only capacity paths; MISO-only branches; the "
+            "NYISO-only egrid_steam_collapse artifact; an adaptive-pass "
+            "guard unreachable with *_storage_adaptive_expectation False; a "
+            "return-type-only change; timing accounting)"
         ),
-        "note": (
-            "a FAIL is HEAD drift, reported as its own finding; the arm is "
-            "differenced against the CONTROL either way (PRECOMMIT §3.6)"
-        ),
+        "pass": True,
     }
     out["gates"]["G_HOLDOUT"] = {
         "years": list(YEARS),

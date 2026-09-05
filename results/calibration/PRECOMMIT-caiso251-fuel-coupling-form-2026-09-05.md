@@ -280,3 +280,46 @@ and 2024 is re-solved inside it.
 **Nothing else in this PRECOMMIT changes.** G-COUPLE, G-IDENT, G-FOOTPRINT, G-CTRL, the ten
 predictions, the §0.2 promotion rule (C3a excluded in both directions; structural faithfulness may
 keep the run even if C3a worsens) and the §3 stop rule all stand exactly as registered.
+
+---
+
+## ADDENDUM B — NO CONTROL SOLVE; G-CTRL FORM 4 RESTORED BY A CODE-LEVEL DRIFT AUDIT
+
+**Owner rule, 2026-09-05, mid-session** (rule 29 `[R-SCREEN]` clause (b)): *"stop doing control
+solves … just use the last keeper as the control"*. **Registered before any arm year is solved.**
+
+§0.3 of this PRECOMMIT declared form 4 VOID and budgeted one control solve, on the handoff's
+heuristic *"solve-path files have changed since `900402b`, so G-CTRL form 4 is VOID"*. That
+heuristic is withdrawn. The control solve launched under it was **killed mid-flight (partway
+through 2024) and its partial bundle `caiso251_ctrl` deleted**; no control bundle is produced and
+the **committed keeper `caiso246_b1_spot_coverage` is the control**.
+
+**G-DRIFT — the audit that replaces it, run and recorded BEFORE the arm screen.**
+`git diff 900402b HEAD` over `src/market_sim`, `scripts/run_calibration.py`,
+`scripts/run_calibration_full.py`, `scripts/lib`, `data/raw/_validation-source`,
+`data/raw/reference`: **22 files, +2,527 / −149**. Every changed hunk on the backcast path is
+**INERT for a CAISO backcast**, with its reason:
+
+| change | why it cannot reach this solve |
+|---|---|
+| `config/capacity_market.py` (+332), `model/capacity_evolution/*` (+1,057), `iso_configs.py`'s `retirement_sector_gate` | capacity-market / capacity-evolution paths; `mode = "backcast"` never enters them |
+| `runner.py` (+118) — the locality-capacity block | gated `locality_capacity_curves_armed(config, iso)`; the field is **default `False`** and **absent from the keeper's recipe**; also requires `prior_results` |
+| `model/storage.py` (+28) — `locality_prices_by_zone` | new optional parameter, **default `None`**; the new branch additionally requires `design.capacity_market` (entry value stack, forecast) |
+| `data/fuel/resolve.py`, `basis/miso.py`, `basis/meanzero.py`'s `skip_cells` | gated `config.iso == "MISO"` **and** the default-off `miso_zonal_gas_basis_skip_923_priced`; CAISO takes the unchanged `else` branch |
+| `data/fleet/eia860.py` (+131), `data/fleet/assembly.py` — `egrid_steam_collapse_heat_rates` | **default `False`**, **absent from the keeper's recipe**, and `egrid_steam_collapse_heat_rates_for("CAISO")` returns `{}` — only `..._NYISO.csv` exists (rule 25, per-ISO artifact) |
+| `run_calibration.py` — `_p1_storage_cost_identical` / `_pass2_identical` | an adaptive-expectation **pass-2 skip guard**; reachable only under `ercot_/caiso_storage_adaptive_expectation`, **both `False`** on this keeper, so no pass 2 exists |
+| `data/fuel/plant_prices.py` — `apply_plant_monthly_fuel_prices` | **return type only** (`None` → written-cell mask); "every other caller may ignore the return" |
+| `pipeline/solve.py` (+201), `pipeline/timing.py`, `run_calibration._aggregate_pass_timing` | per-pass **timing accounting**; the module states "Diagnostics only: nothing here is read by a solve" |
+| `config/scenarios.py` (+324), `config/constants.py` (+26) | the new fields and constants behind the gates above, all default-off; `run_calibration_full.py` (+59) is the CLI surface for them **plus this session's own 17-line `gas_offer_margin` replay override** |
+
+**Conclusion: G-CTRL form 4 is VALID for this keeper at this HEAD, and the arm is differenced
+against the committed keeper `caiso246_b1_spot_coverage`.** §1.4's G-CTRL row and §3.6's
+"difference against the CONTROL" clause are amended accordingly: `_caiso251_arm_vs_control.py`
+reads the keeper where it read the control, and its `G_CTRL` row reports the **audit**, not a
+solved drift. This is *stronger* than the control solve it replaces — the audit names the lines,
+where a solve would only have shown whether two numbers moved.
+
+**One residual risk, stated:** the audit is a reading of the code, so it inherits my reading. It is
+falsifiable by anyone re-running the same diff, and every classification above cites the gate,
+default or artifact that makes the hunk unreachable — no hunk is waved through as "looks
+unrelated".

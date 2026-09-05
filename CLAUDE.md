@@ -410,9 +410,31 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
 
     **Where it does not apply:** a mechanism measured INERT in the candidate screen year (screen it
     where it is live, or go straight to the full span — G-CTRL form 2's inert-year logic already
-    depends on that); a re-solve of an existing keeper recipe (a control, a HEAD-drift check, a
-    re-gate), which reproduces its full span by rule 16; and a year-scoped mechanism whose object
-    only exists in one year, which is the screen and the full span at once.
+    depends on that); and a year-scoped mechanism whose object only exists in one year, which is
+    the screen and the full span at once.
+
+    **(b) NO CONTROL SOLVES. The incumbent keeper's COMMITTED bundle IS the control** *(owner rule,
+    2026-09-05: "stop doing control solves … just use the last keeper as the control")*. G-CTRL
+    **form 4** — differencing the arm against the keeper's committed numbers — is the DEFAULT, and
+    a control solve is never spent to establish HEAD drift. The question form 4 was being voided
+    over ("solve-path files changed since the keeper's `git_sha`") is a **code** question, so it is
+    answered with a **code-level drift audit, `G-DRIFT`**, at zero LP cost:
+
+    > `git diff <keeper git_sha> HEAD -- src/market_sim scripts/run_calibration.py
+    > scripts/run_calibration_full.py scripts/lib data/raw/_validation-source data/raw/reference`,
+    > and classify **every** changed hunk on the backcast path as INERT for this ISO with its
+    > reason cited — forecast-only path (capacity evolution / capacity market, which a
+    > `mode="backcast"` run never enters), another ISO's branch, a `ScenarioConfig` flag that is
+    > default-off AND absent from the keeper's recipe, a per-ISO artifact this ISO does not have,
+    > or pure timing/diagnostics accounting — or as **LIVE**.
+
+    **All hunks INERT ⇒ form 4 is valid and the keeper is the control.** A **LIVE** hunk is the
+    only thing that earns a control solve, and then only for the years the screen needs (clause a).
+    G-DRIFT is *stronger* than a control solve for this question, not weaker: a control solve shows
+    that two numbers differ, while the audit says which line did it — and it costs seconds. The
+    audit is recorded in the PRECOMMIT (or its addendum) before the arm is solved, so it cannot be
+    written to fit the result. A "files changed, therefore void" heuristic with no audit behind it
+    is not a reason to spend an LP.
 
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
