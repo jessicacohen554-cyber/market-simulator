@@ -148,18 +148,28 @@ class TestQ42CcsCapexDefaultFlip(unittest.TestCase):
 class TestNothingElseArmed(unittest.TestCase):
     """The batch arms the three rulings and nothing else."""
 
-    OFF_EVERYWHERE = (
-        "locality_capacity_curves",
-        "pjm_accreditation_design_vintage",
-        "pjm_demand_response_supply",
-        "capacity_deliverability_limits",
-    )
+    OFF_EVERYWHERE = ("locality_capacity_curves", "capacity_deliverability_limits")
+
+    # Armed for PJM ALONE by capx D57's own owner ruling (2026-09-05, PR #4786),
+    # which merged while this lane was in flight. D60 neither armed nor disarmed
+    # them; what it asserts is that they stayed PJM-scoped, and that D60's own
+    # flip did not ride in on them. Their live consequence for D60 is recorded
+    # rather than hidden: PJM's bare t1f recipe moved to 09996eca71ee80fd, so
+    # D60's pre-declared `pjm-t1f` rename was REVERSED before pushing (STOP 1)
+    # and the PJM t1f re-solve is routed. See FINDING-capx-d60-2026-09-05.md.
+    PJM_ONLY = ("pjm_accreditation_design_vintage", "pjm_demand_response_supply")
 
     def test_the_named_gates_stay_off_in_every_iso(self):
         for iso in SUPPORTED_ISOS:
             cfg = _forecast(iso)
             for field in self.OFF_EVERYWHERE:
                 self.assertFalse(getattr(cfg, field), (iso, field))
+
+    def test_the_d57_pjm_gates_stay_pjm_only(self):
+        for iso in SUPPORTED_ISOS:
+            cfg = _forecast(iso)
+            for field in self.PJM_ONLY:
+                self.assertEqual(getattr(cfg, field), iso == "PJM", (iso, field))
 
     def test_the_sector_gate_stays_miso_only(self):
         """D53's arming is untouched by D60 (it is the reason miso-t1f's
