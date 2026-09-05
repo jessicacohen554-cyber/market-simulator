@@ -6297,3 +6297,121 @@ your branch when done.
   **`program-status.json`**, every matrix shard, every workflow, every
   bundle/sidecar/registry file, every golden manifest. **No solve, no score, no
   registration.**
+- 2026-09-05 — **AUDIT RECORDS LANE v27** (dispatched at pin `a35c9f9b`, 22:20Z sitting;
+  executed at **`d9f034f0`** — stable across two polls, 00:12Z and 00:20Z; window
+  `a35c9f9b..d9f034f0` = **60 commits, 14 merges #4725–#4738**, all landed 23:12Z–00:10Z).
+  No v27 existed at either poll, so this lane is v27. Board refreshed to **v27** above v26,
+  append-only. **ZERO solves, zero scoring, zero registration.** Where a figure differs from
+  the dispatch's record at `a35c9f9b`, the difference is stated and the record governs.
+  **JOB 0 SKIPPED — ALREADY CURRENT, RE-KEYED BY THE CAPX DIRECTOR DESK.** Commit
+  **`1cbaad95`** (2026-09-04 **22:30:24Z**, ten minutes after the sitting; refresh #35 under
+  owner ruling Q34; merged #4726) moved the MISO gate-(a) row to `2026-09-04-miso-210-clock`
+  and the block's `derived_at_sha` to `a35c9f9b`; five rows byte-unchanged;
+  `check_gate_a_provenance` exits **0** (6 rows) at `d9f034f0`. **Verdict stays fail** — MISO
+  NOT-YET, absent from `complete`. Recorded, not repaired: `corrected_by` names the capx desk
+  (its own "eighth promoter miss since R-T" carries the dispatch's count), and the MISO row's
+  **`read_live_at` leaf still reads `2b0b8796`** (the refresh-#32 pin) beside a `corrected_by`
+  and `derived_at_sha` that say `a35c9f9b` — a leaf the guard does not read; routed to the
+  capx desk. `program-status.json` untouched by this lane.
+  **SEVEN GATES: SIX EXIT 0, ONE EXIT 1** — each under `uv run --frozen`, `$?` read directly.
+  `audit_keepers --check` **0** (PASS 0/0); `check_gate_a_provenance` **0**;
+  `check_mechanism_matrix` **0**; `check_forecast_staleness` **0** but **Δ = unknown** (below);
+  `check_bench_freshness` **0** (20 parts, 0 STALE, 20 engine-drift, 12 engine commits);
+  `check_golden_manifest` **0** (45 manifests, 82 entries, 18 enforced, **3 stale**).
+  `check_registry_payload_parity` **1** — **RE-REDDENED** on a NEW mid-solve checkpoint,
+  `results/calibration/caiso246_b1_spot_coverage` (3 files, `25abe52`, merged #4737 00:02Z), the
+  live CAISO lane's; the same class as `caiso243_b1_f923_fallback_guard`, which cleared by
+  registration. Parity was clear at the dispatch's pin.
+  **FR-21's Δ IS UNKNOWN BECAUSE TWO PROVENANCE STAMPS NAME COMMITS THAT WERE REBASED AWAY.**
+  The clone was deepened 275 → 2,643 commits (trees only) and `b4ded0bba29c`
+  (`ff-verdicts.json → nyiso-t1h-d52-curveon.provenance.scored_at_sha`) and `ec3e4371e92a`
+  (newest hindcast sidecar; CI run 2424's head, now `689972d` on `main`) stay unresolvable: the
+  D51 and D52 lanes rebased after scoring and before merge (D52's own `cf8f96c`: "record the
+  rebase onto f65efaf"). Not the shallow-clone trap; an **orphaned** stamp — L-10's defect in
+  a new form, a process seam. **Routed to the capx director under X-6b.**
+  **CI AT TIP — THE DISPATCH's RED IS FIXED AND THE FLIP SET STILL FELL 5 OF 6 → 3 OF 6.** The
+  dispatch's (f) — Fast tier red on `test_data_dictionary_sync.py` (capx D48), Ruff green —
+  no longer holds on either clause. The data-dictionary red is **FIXED by capx D52 `0c51723`**
+  ("re-render the data dictionary", merged #4730 23:55Z): locally **5 passed / 142 subtests,
+  exit 0**. But at run **2430** (`33931797640`, head `b2c6c9b8`, in `main` via #4729):
+  `Ruff lint + format` **FAIL** (format, `tests/unit/model/test_capacity.py`, last touched by
+  capx D52 `2f12544` after D51 `1dd567a`; local exit 1); `Fast test tier` **FAIL** on a
+  DIFFERENT test — `test_clean_io.py::TestRegenerateEntrypoint::test_datatype_list_matches_schemas`
+  (1 failed / 7,954 passed / 34 skipped / 2 xfailed, 379 s): `regenerate_clean.py` carries
+  `ra-import-allocations` (caiso-245 intake `bebd5d3`, merged #4737) and the test's own roster
+  `ALL_DATATYPES` does not; local exit 1; `Rule-22 quarantine gates` **FAIL** on the caiso-246
+  parity red, `check_golden_manifest` step still **skipped** (Z-2). Pinned cache key,
+  structural guards, cache-key registration: green. All three reds are in-flight lanes'
+  loose ends, none a model defect. **Flip NOT live**: runs **2406–2430 are 25-for-25
+  `failure`** and all 14 PRs merged through them. R-AE's precondition met since 08:26 PT;
+  **Y-1 remains the owner's action** and this cycle is its clearest case.
+  **Z-1 EXTENDED, SECOND TIME:** intake-schema companions are a class of TWO surfaces — the
+  dictionary re-render (D48's miss, fixed) and the regenerate-entrypoint roster (caiso-245's
+  miss, open) — two consecutive fast-tier reds from two intakes inside 26 hours.
+  **FOUR-INSTRUMENT ALIGNMENT BROKEN AT NYISO — CONFIRMED ON SUBSTANCE.** `frontier`
+  {ERCOT, PJM, NEISO} (NYISO declared 08-23, withdrawn 08-30 ⇒ ABSENT); `complete`
+  {ERCOT, NEISO, PJM} (byte-unchanged in the window); gate-(a) pass {ERCOT, NEISO, PJM};
+  **ISO-level CALIBRATED {ERCOT, NEISO, PJM, NYISO}**. Run-level, re-derived on demand
+  (`calibration_verdict.py --run-id 2026-09-04-nyiso-188-combined`, exit 0): **CALIBRATED**,
+  C3c the lone ledgered caveat (>$300 RT hours 2023 3 vs 10; 2024 0 vs 13; 2025 4 vs 42).
+  ISO-level read: ERCOT / PJM / NEISO / **NYISO** CALIBRATED · CAISO / MISO NOT-YET. **`final`
+  EMPTY**; **freeze ACTIVE, `scope.tiers = ["locked_test"]`**; no locked-test year ever
+  solved, scored or registered. **Keeper motion: NONE** (`keepers/` untouched — the first
+  zero-motion cycle since v22); **R-V INTACT**. **Stage-0 4 of 7**, unchanged: CAISO golden
+  231 vs live 243, MISO 198 vs 210, NYISO 186 vs 188.
+  **Z-4 — THE SPLIT WAS RULED TWICE, 58 MINUTES APART, AND THE FIRST RULING IS UNRECORDED.**
+  Q-4: **`R-AG` returns zero files in `docs/`** — the ruling (22:20Z: route the `complete`
+  re-declaration question to the calibration director for a recommendation; no marker edit by
+  any audit lane) exists only in this lane's dispatch; **this entry is its first record**, the
+  R-AF shape one cycle later. And it was overtaken within the hour: the capx director's r#35
+  **amendment 1** (`ef3de28`, **23:18:49Z**, merged #4736) records owner ruling **Q38** on card
+  C-9 — *"RE-DECLARE NOW via a records lane — D56 ISSUED"* — chartering (pack §D56) a Fable
+  records lane to restore `complete.NYISO` on nyiso-188 with gate-(a) FAIL → PASS and
+  **`frontier_basis` = NONE CLAIMED**. The capx desk's own "grep the R-series before serving a
+  card" step could not have found R-AG, because it was never written. Two owner acts on one
+  question, neither citing the other; **this lane adjudicates nothing between them**. Measured:
+  **D56 NOT LAUNCHED** (no `claude/capx-d56-*` head at either poll; Z-3 expiry); the marker
+  is byte-unchanged; and **D56 as chartered would re-split the instruments on the frontier
+  leg** (three instruments to four ISOs, `frontier` left at three) — a director question raised
+  before D56 runs.
+  **R-T: no promotion in the window — tally unchanged, 8 misses / 4 compliant.** The two
+  `program-status.json` commits are the capx desk's job-0 re-key and the D51 records rider
+  (`9ea01d2`, no gate-(a) row touched). Miss #8 (miso-210) is repaired by the desk.
+  **X-2's 48-HOUR LIMB, CLOCKED FROM THE PROMOTING COMMITS:** caiso-243 `4163d4a5` 09-04
+  08:24Z, nyiso-188 `2cc95aa2` 16:30Z, miso-210 `bf8cfb15` 17:27Z → captures due
+  **2026-09-06 08:24Z / 16:30Z / 17:27Z** absent a further promotion, if the limb is 48 h of
+  keeper stability as v26 read it (R-AF's own text remains unrecorded beyond the v26
+  transcription).
+  **DISPATCHES: v27 LAUNCHED (this) — the sitting's non-launch classification inverted within
+  ~2 h, Z-3's fourth proof. PERF-B s3 NOT LAUNCHED** (no branch, **zero open PRs** in the
+  repository at 00:1xZ, no session-3 charter under `docs/`); **D56 NOT LAUNCHED.** Heads on
+  `origin`: `main`, the caiso-244 lane, and — appearing between polls —
+  `claude/caiso-backcast-calibration-wh2iqt`. Both non-launches carry Z-3's expiry; neither is
+  late on a same-day issue; **G-14's tally gains nothing.** Other Q-4 results clean: `R-AF` now
+  resolves to 5 files (v26's gap closed); `Q38`/`D56` to the three capx files; every other
+  label to real references (five — `Y-1`, `Y-3`, `X-2`, `X-3`, `G-14` — also collide with other
+  programmes' item labels, so their bare counts are not reference counts).
+  **QUEUE v27:** **X-2** 4/7, all three on the 48 h limb (clocks above); **X-3** PERF-B s3 not
+  launched; **X-4** per its finding; **X-5** unchanged; **X-6** routed, X-6b widened by the
+  orphaned-stamp finding; **Y-1** owner flip pending, **flip set 3 of 6**; **Y-2** after the
+  flip; **Y-3** R-T 8/4, job 0 discharged by the capx desk, `read_live_at` leaf routed;
+  **Y-4** retired; **Y-5** (i) E11 gone, (ii) parity red is the new caiso-246 checkpoint;
+  **Z-1** extended again; **Z-2** unchanged; **Z-3** applied (fourth inversion); **Z-4 NEW,
+  double-ruled** (R-AG / Q38), D56 unlaunched, frontier-leg residual flagged; **R-AG** now
+  recorded.
+  **Records integrity:** touched **only** this plan and the board. **Verified untouched**
+  (clean tree after `reset --hard origin/main`; closing diff confined to two files): every
+  keeper shard, every `status/<ISO>.js`, `calibration-complete.json`, `holdout-freeze.json`,
+  **`program-status.json`** (job 0 skipped, already current), every matrix shard, every
+  workflow, every bundle/sidecar/registry file, every golden manifest. **No solve, no score, no
+  registration.** *(The clone was deepened, trees only, to test FR-21's reachability claim —
+  read-side git, no working-tree change.)*
+  **POST-CLOSE CODA AT `3cdf1cac`:** one merge landed between poll 2 and the push — **#4739**
+  (`20a47b55`, 00:23:37Z) from the between-polls head `claude/caiso-backcast-calibration-wh2iqt`,
+  deleting exactly the three tracked files of `caiso246_b1_spot_coverage` and nothing else (no
+  protected surface, no records file). Rebased and re-run: `check_registry_payload_parity`
+  **exit 0** (65 runs, 106 dirs), `check_golden_manifest` **exit 0** — **all seven gates exit 0
+  at `3cdf1cac`**. The parity red was a **21-minute transient** (00:02:55Z–00:23:37Z), cleared by
+  deletion rather than registration; **Y-5(ii) discharged**; the flip set at the next CI-covered
+  head should read **4 of 6** (Ruff format + Fast tier still red). Everything else stands at
+  `d9f034f0`. Z-3 generalised: a gate red carries an expiry too.
