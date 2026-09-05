@@ -238,3 +238,130 @@ class ClassBandHourlySidecarTest(unittest.TestCase):
             self.assertIsNone(
                 rcf._write_class_band_hourly_sidecar(run_dir, 2024, ["P1"])
             )
+
+
+class BandCategoricalTest(unittest.TestCase):
+    """``_band_categorical`` == the per-row ``pd.Categorical([...])`` it replaced.
+
+    Wallclock A-3: the band is computed once per distinct ``unit_id`` and
+    indexed by the categorical codes. The gate is element-wise AND
+    category-wise identity with the per-row construction on a frame covering
+    every ``_TRANCHE_BANDS_EXACT`` token, every ``_TRANCHE_BANDS_PREFIX``
+    family (with the numbered / ``peak2`` variants) and non-tranche ids.
+    """
+
+    #: Every exact token, every prefix family, and ids that are NOT tranches.
+    UNIT_IDS = (
+        [f"COAL_West_p3_{tok}" for tok in sorted(rcf._TRANCHE_BANDS_EXACT)]
+        + [
+            "CC_REGULAR_NYC_p2_sync",
+            "CC_REGULAR_NYC_p2_sync1",
+            "CC_REGULAR_NYC_p2_econc00",
+            "CC_REGULAR_NYC_p2_econc12",
+            "CT_PEAKER_NYC_p5_peak",
+            "CC_CHP_NYC_p4_peak2",
+        ]
+        + [
+            "WIND_Upstate_West",
+            "SOLAR_NYC",
+            "NYISO_external_HQ_tie",
+            "hydro_Lower_Hudson",
+            "import_scarcity",
+            "PLANT_GEN1",
+            "WECC_WEST_NET_IMPORT",
+        ]
+    )
+
+    @staticmethod
+    def _per_row(unit_ids: pd.Series) -> pd.Categorical:
+        """The exact pre-A-3 construction, kept verbatim as the oracle."""
+        return pd.Categorical([rcf._tranche_band(u) for u in unit_ids.astype(str)])
+
+    def _assert_identical(self, got: pd.Categorical, want: pd.Categorical):
+        self.assertIsInstance(got, pd.Categorical)
+        self.assertTrue(got.categories.equals(want.categories))
+        self.assertEqual(got.categories.dtype, want.categories.dtype)
+        self.assertEqual(got.ordered, want.ordered)
+        np.testing.assert_array_equal(got.codes, want.codes)
+        self.assertTrue(pd.Series(got).equals(pd.Series(want)))
+
+    def _frame_ids(self, T: int = 3, repeat: int = 2) -> list:
+        # Interleave and repeat so codes are non-monotone and every id recurs.
+        ids = list(self.UNIT_IDS) * repeat
+        return [u for u in ids for _ in range(T)][::-1]
+
+    def test_covers_every_token_and_matches_per_row_on_categorical_input(self):
+        ids = self._frame_ids()
+        col = pd.Series(pd.Categorical(ids))
+        got = rcf._band_categorical(col)
+        want = self._per_row(col)
+        self._assert_identical(got, want)
+        # The frame really exercised the whole vocabulary: every exact token,
+        # every prefix family, and the non-tranche "" bucket.
+        bands = set(got.categories)
+        self.assertTrue(rcf._TRANCHE_BANDS_EXACT <= bands)
+        for prefix in rcf._TRANCHE_BANDS_PREFIX:
+            self.assertTrue(any(b.startswith(prefix) for b in bands), prefix)
+        self.assertIn("", bands)
+
+    def test_matches_per_row_on_plain_string_input(self):
+        col = pd.Series(self._frame_ids())
+        self._assert_identical(rcf._band_categorical(col), self._per_row(col))
+
+    def test_unused_unit_category_does_not_invent_a_band(self):
+        """Categories are the bands the ROWS carry, exactly as before."""
+        cats = list(self.UNIT_IDS) + ["GHOST_p9_mustrun"]
+        rows = [u for u in self.UNIT_IDS if not u.endswith("mustrun")]
+        col = pd.Series(pd.Categorical(rows, categories=cats))
+        got = rcf._band_categorical(col)
+        self._assert_identical(got, self._per_row(col))
+        self.assertNotIn("mustrun", set(got.categories))
+
+    def test_missing_id_maps_to_the_empty_band_like_str_nan_did(self):
+        col = pd.Series(pd.Categorical(["COAL_West_p3_peak", None, "SOLAR_NYC"]))
+        self._assert_identical(rcf._band_categorical(col), self._per_row(col))
+
+    def test_sidecar_band_column_matches_per_row_end_to_end(self):
+        """The sidecar written through the new path equals a per-row rebuild."""
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = Path(tmp)
+            (run_dir / "dispatch").mkdir()
+            rows = []
+            for i, uid in enumerate(self._frame_ids(T=4, repeat=1)):
+                rows.append(
+                    {
+                        "year": 2024,
+                        "pass": "P1",
+                        "unit_id": uid,
+                        "klass": "oil" if i % 7 == 0 else "ST_GAS",
+                        "klass_base": "ST_GAS" if i % 2 else "CC_REGULAR",
+                        "hour": i % 4,
+                        "mw": float(i),
+                    }
+                )
+            d = pd.DataFrame(rows)
+            d["unit_id"] = pd.Categorical(d["unit_id"])
+            d.to_parquet(run_dir / "dispatch" / "2024_P1.parquet", index=False)
+            out = rcf._write_class_band_hourly_sidecar(run_dir, 2024, ["P1"])
+            got = pd.read_parquet(out)
+            # Oracle: the same aggregation with the per-row band construction.
+            d["band"] = self._per_row(d["unit_id"])
+            d["mw_oil"] = np.where(d["klass"].astype(str) == "oil", d["mw"], 0.0)
+            want = (
+                d.groupby(
+                    ["year", "pass", "klass_base", "band", "hour"], observed=True
+                )[["mw", "mw_oil"]]
+                .sum()
+                .reset_index()
+                .rename(columns={"klass_base": "klass"})
+            )
+            want["mw"] = want["mw"].astype(np.float32)
+            want["mw_oil"] = want["mw_oil"].astype(np.float32)
+            for c in ("pass", "klass", "band"):
+                want[c] = want[c].astype(str)
+                got[c] = got[c].astype(str)
+            pd.testing.assert_frame_equal(
+                got.reset_index(drop=True),
+                want.reset_index(drop=True),
+                check_dtype=False,
+            )
