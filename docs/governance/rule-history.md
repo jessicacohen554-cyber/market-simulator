@@ -579,10 +579,66 @@ The control solve that had been launched under the old heuristic was **killed mi
 partial bundle deleted**; the keeper is the control.
 
 
-## 9. Changes to this file
+## 9. Rule 15 `[R-DASHBOARD]` — retention: top-15-per-ISO → KEEPER-ONLY (owner, 2026-09-05)
+
+**Origin.** Owner instruction, **2026-09-05**, given in the session that executed it
+(ercot-248, `docs/calibration-log/ercot.md` "## ercot-248 — 2026-09-05"), verbatim:
+
+> *"Combine the ERCOT calibrated keeper config into one run for the run explorer html page so it
+> should combine the 2023 config that is calibrated plus the 2024/2025 config into one run then
+> remove all the others that aren't that keeper so it's just showing one run. Also prune all the
+> other non keeper runs from there so just show the keeper for each ISO for now."*
+
+**What it replaced.** The former retention was an **age cap**: the dashboard kept the newest 15
+runs per ISO, pruning the displaced oldest at each registration (set 2026-06-21, itself superseding
+a 10-run rule; PJM ran a `pjm N <keyword>` labelling convention on top of it). The cap was a
+*volume* limit — it said nothing about which runs still carried meaning, so a lane's probe and
+control runs survived on the site purely by being recent.
+
+**What changed.** `CLAUDE.md` rule 15's retention sentence, and nothing else in that rule. Each
+ISO's dashboard and `results/calibration/` now carry **only that ISO's designated keeper run(s)** —
+a partitioned keeper's several configs included, whether composed into one registered run or kept
+as the per-config runs the ISO's keeper shard names — plus any bundle still referenced by a
+`results/regression-goldens/*/manifest.json` capture record or by the parity allowlist
+(`check_registry_payload_parity.KEEP_REQUIRED_UNMAPPED_BUNDLES`). Every other run is pruned at the
+next registration, through `scripts/prune_iso_runs.py`, whose citation guard (the
+`calibration-complete.json` + `keepers/<ISO>.json` refusal, `--force-uncite` to override) is what
+keeps a keeper-only site from leaving a governance file asserting a determination against a run
+that no longer exists.
+
+**Execution.** ercot-248 pruned 61 non-keeper runs and took every ISO's dashboard down to its
+keeper. The cleanup lane (#4808, #4816) removed the matching disk residue: 18 unmapped bundles, 36
+hindcast sidecars, 109 hindcast directories, and `scripts/archive/`. The deletions are consistent
+with the delete-not-archive discipline `CLAUDE.md`'s Architecture tree already stated for
+superseded per-run scripts — **git history is the record**.
+
+**What did NOT change.**
+
+- **The registration duty is untouched.** Rule 15's opening clause still binds: every completed
+  run, keeper *or* rejected probe, registers on the dashboard in the session that produced it.
+  Retention governs what *survives*, never whether a run is registered — a probe registers when it
+  finishes and is pruned once superseded. A lane that skips registration because "it will only be
+  pruned" has broken rule 15, not honoured it.
+- **The rule's ordinal and ID.** It remains rule 15 `[R-DASHBOARD]`; ordinals are never renumbered
+  (§1).
+- **The forecast-namespace half** of rule 15, the KEEPER `hourly/` sidecar requirement, and the
+  Pages-deploy generation contract.
+- **No keeper, marker, matrix shard or determination** was touched by the amendment.
+
+**Implementation lag, recorded 2026-09-05.** The keeper-only rule is the norm; the automatic
+retention sweep still implements the old one. `scripts/dashboard_add_run.py` ships
+`KEEP_PER_ISO = 15` and `prune_iso(..., keep=15)`, an age cap run after each registration, so the
+enforced-by-code behaviour is *weaker* than the rule (it retains non-keepers up to the cap; it
+never retains less than the rule requires). `scripts/prune_iso_runs.py` — the owner-directed
+keeper + keep-list clear-out — is the tool that actually implements the amended rule, and is the
+one rule 15 now names. Closing the gap is a calibration-desk change to `dashboard_add_run.py`, not
+a governance one; the G-1 amendment lane corrected the *prose* of both scripts only.
+
+## 10. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-05 | Added §9: rule 15 `[R-DASHBOARD]` retention amended from the top-15-per-ISO age cap to **KEEPER-ONLY** (owner instruction of 2026-09-05, quoted verbatim; executed by session ercot-248 and the #4808/#4816 cleanup lane). Records what the cap was, what replaced it, that the registration duty for rejected probes is untouched, and the standing implementation lag (`dashboard_add_run.KEEP_PER_ISO` still sweeps by age — a calibration-desk item). "Changes to this file" renumbered §9 → §10 (no external reference cited §9). |
 | 2026-08-30 | §3: indexed rubric **v3.1**'s C7 retirement (owner directive verbatim) and rubric **v3.5** (owner option-(B) decision of 2026-08-25 — diurnal price amplitude added REPORTED-ONLY and BAND-FREE; no CLAUDE.md rule text changed) alongside the rule-20 genealogy they extend. v3.5 re-verified determination-neutral over the 2026-08-30 six-keeper roster. Canonical narratives stay in the rubric §9; index entries only. |
 | 2026-08-17 | §4: recorded rubric **v3.3** — the owner's amendment that a ledgered C3c caveat is REPORTED but no longer DOWNGRADES the determination, withdrawing the "never `CALIBRATED`" half of CLAUDE.md rule 22 guard (d). 6 registered runs re-score `CALIBRATED-WITH-CAVEATS → CALIBRATED`, 2 of them keepers (NYISO, NEISO); holdout tiers untouched. |
 | 2026-08-17 | §4: recorded the first lane RESTED at `NOT-YET` (CAISO, session caiso-201, owner ruling Q1). No rule text changed — the entry exists so the precedent that an exhausted lane with a genuinely failing load-bearing criterion *rests* rather than ledgers or declares is citable. |

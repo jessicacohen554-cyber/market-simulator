@@ -1,8 +1,20 @@
 """Prune an ISO's dashboard runs down to the keeper + an explicit keep-list.
 
-``dashboard_add_run.prune_iso`` enforces the standing top-15-per-ISO retention
-by AGE. This is the different operation: an owner-directed clear-out of a
-lane's probe/control runs, keeping only the runs that still carry meaning.
+Retention is KEEPER-ONLY since the owner instruction of 2026-09-05 (CLAUDE.md
+rule 15 ``[R-DASHBOARD]``, amended that day; genealogy in
+``docs/governance/rule-history.md`` §9): an ISO's dashboard and
+``results/calibration/`` carry only that ISO's designated keeper run(s) -- a
+partitioned keeper's several configs included -- plus the bundles a
+``results/regression-goldens/*/manifest.json`` capture record or the parity
+allowlist still references. Every other run is pruned once superseded; a
+rejected probe still REGISTERS when it finishes, as rule 15 requires, and git
+history is the record.
+
+This script is the tool that rule names: an owner-directed clear-out of a lane
+down to the keeper plus an explicit keep-list. ``dashboard_add_run.prune_iso``
+still sweeps only by AGE (``KEEP_PER_ISO``), which retains MORE than the rule
+allows and never less -- closing that gap is a calibration-desk change to that
+script, not this one's job.
 
 The safety rule this adds, and the reason it is not a plain ``rm``: a run id is
 not only a dashboard row, it is a CITATION. The keeper determinations in

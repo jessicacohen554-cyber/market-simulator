@@ -385,9 +385,10 @@ def main() -> int:
     )
     if pruned:
         print(
-            "  note: a pruned provenance run is NOT a failure — top-15 retention is "
-            "correct policy. It is survivable only because each entry carries its "
-            "own keeper_snapshot, which is what this gate enforces."
+            "  note: a pruned provenance run is NOT a failure — keeper-only retention "
+            "is correct policy (rule 15 as amended 2026-09-05). It is "
+            "survivable only because each entry carries its own "
+            "keeper_snapshot, which is what this gate enforces."
         )
 
     if all_fails:
