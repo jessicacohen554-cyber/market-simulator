@@ -13140,4 +13140,86 @@ NEISO 2022 validation-touchpoint runs came off too under the instruction's
 "keeper only" — their results stand in `calibration-complete.json` and the log,
 and any pruned run is restorable from git history.
 
-**Next shorthand: ercot-249** (ercot-199 remains unclaimed)
+## ercot-249 / ercot-250 — 2026-09-05 — THE 2022 VALIDATION TOUCHPOINT, BOTH KEEPER CONFIGS (rule 22 `[R-HOLDOUT]`, first ERCOT holdout spend): both arms read **NOT-YET** on the same three criteria, but **C3a mean LMP PASSES on 2022 — forward −1.5 %, carve-out +0.0 % — against the same forward config's −39.7 % on 2023**, corroborating from outside the training window that the C3a failure is a 2023-regime phenomenon and not a defect in the forward configuration; the new C1 failure is traced to an ABSENT INPUT (no ERCOT HSL 2022 ⇒ unbounded renewables ⇒ +6.4 TWh displacing gas CC −10.6 TWh), and the C3c miss is localised to the ORDC **price function** (the model goes short in **200 hours against an actual tail of 196** and prices them at dual p99 **$0.15**)
+
+**Runs:** `2026-09-05-run249-2022-touchpoint-forward` (bundle
+`ercot249_2022_touchpoint_forward`, from `ercot234_eastex_identity`) and
+`2026-09-05-run250-2022-touchpoint-carveout` (bundle
+`ercot250_2022_touchpoint_carveout`, from `ercot236_k33_clip`). Both replayed
+VERBATIM via `--replay-bundle --holdout-authorized --year 2022`. **Neither is a
+keeper or a keeper candidate**; keeper `2026-09-05-ercot248-two-config-keeper`
+is unchanged and the `complete` marker's `keeper` field is untouched (no
+promotion ⇒ no D-5(b) re-key). Locked test (2019 / H1-2026) not touched.
+Full record: `docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md`.
+
+**(1) The board.** Keeper in-sample (2023–2025) CALIBRATED; both arms on 2022
+NOT-YET on `fuelmix` + `price_shape` + `price_tail`.
+
+| criterion | in-sample | 249 FORWARD 2022 | 250 CARVE-OUT 2022 |
+|---|---|---|---|
+| C1 fuel-mix | PASS | FAIL CC_REGULAR −10.59 TWh | FAIL CC_REGULAR −10.39 TWh |
+| C2 sysvol | PASS | PASS | PASS |
+| **C3a mean LMP** | PASS | **PASS −1.5 %** ($61.38/$62.30) | **PASS +0.0 %** ($62.30/$62.30) |
+| C3b shape | PASS | FAIL NRMSE 0.250 | FAIL NRMSE 0.220 |
+| C3c tail | CAVEAT | FAIL 38 h vs 196 h (0.19×) | FAIL 64 h vs 196 h (0.33×) |
+| C4 / C6 / C8 | PASS | PASS | PASS |
+
+C3c does not reclassify — guard (a) of the standing rule requires it to be the
+lone failure. C5a CO2 (reported-only) +0.2 % / +0.1 %.
+
+**(2) C1 is an input gap, not a model defect.** Standing gap 1 case B applied:
+no `data/raw/ercot-hsl/np6/2022/` archives, so 2022 rode
+`RENEWABLE_BOUND_FORECAST_UNCURTAILED` and BOTH `ercot_gtc_limits_measured` and
+`ercot_wtx_curtailment_driver` self-disabled (logged). Wind +4.85 TWh, solar
++1.57 TWh over actual at r=0.999/1.000 — shape right, level unbounded — and the
+balance closes: gas −10.09, coal +4.31, renewables +6.42, nuclear −0.78 ≈ 0.
+D-10 records both 2022 renewable rows as `forecast_uncurtailed` / **free**,
+where 2023–25 are L1-pinned, so this failure mode cannot arise in-sample. Read
+the 2022 C1/C2 rows as NOT DISCRIMINATING until the archives land.
+
+**(3) C3c is a price-function failure, not a selection failure.** From the
+committed `hourly/reserve_family_2022.parquet`: `ercot_ordc_total` shortfall in
+**200 hours** (max 5,217 MW) against the 196-hour actual tail — selection
+essentially exact — at dual **p99 $0.15 / max $374**, so only 38 h clear $200.
+Reproduces M-3 of `RESEARCH-ercot221prep-2022-regime-point-2026-08-19` on 2022
+itself, and matches that doc's §1 prediction that 2022 tests the physics the
+model already has (2022 tail: PRC p50 3,768 MW, RTORPA p50/p90 $34/$493, adder
+share 15.3 %). The carve-out's pure offer-side lever lifts the tail 0.19× →
+0.33× without moving C1 — the residual is on the price side of those hours.
+ECRS requirement measured at 0 MW mean (correct — launched June 2023). The
+storage adaptive-expectation offer is near-inert in 2022 (1 spike day, P_hat
+max 0.073), so it is not a candidate owner.
+
+**(4) One `*_from_year` gate is stale — RAISED, NOT CHANGED.**
+`ercot_reserve_supply_cap` is `True` at `from_year 2023`, but
+`data/raw/ercot/ercot_2022_ordc_reserves_hourly.parquet` **exists** (as do 2020
+and 2021). The RTOLCAP cap deepens exactly the shortfall §3 finds silent. By
+contrast `ercot_load_resource_reserve` (`as_up_mw`) and
+`ercot_storage_as_deployment` (`storage_as_products_hourly`) have no 2022
+series, so those gates are data-honest; `ercot_ecrs_requirement` is
+structurally correct. Arming the first is an owner recipe decision (zero DOF —
+the series is measured input); rules 14 `[R-ACCURATE]` and 22 both point at it.
+
+**(5) G-DRIFT — form 4 valid, no control solve spent.** 47 `ScenarioConfig`
+fields added since `0207d69`; **zero** in the forward recipe (752 keys), two in
+the carve-out's (both its own). The `results/cache.py` same-key invalidation
+ledger carries four post-2026-08-25 epochs, **all forecast-lane** (the 09-05
+entry states "every BACKCAST … is byte-identical"). Module-level classification
+corroborates. `ERCOT_SCED_INTERVALS_PER_HOUR` / `ERCOT_DC_TIE_CAPABILITY_MW`
+deleted at `677b605a` with zero references.
+
+**(6) Environment.** Rule 12's two-concurrent allowance is unusable here: one
+ERCOT 2022 plant-level solve peaks ~12 GB against a ~14 GB memcg ceiling (three
+OOM kills at an identical 13.95 GB, all in the adaptive-expectation pass-2 P1
+rebuild). Arms ran sequentially with 8 GB swap added. **Scored runs use the
+stock solve path** — `MARKET_SIM_HIGHS_THREADS` was tried and is not the lever
+(same ceiling), and `MARKET_SIM_P1_FLOOR_INPLACE` was deliberately declined
+because warm-solving from the retained P0 basis can move the duals the arms are
+scored on.
+
+**(7) Not done.** No parameter tuned (touchpoint loop steps 1–2 only; re-training
+belongs to a later 2023–2025 session). No mechanism tested ⇒
+`mechanism-matrix/ERCOT.js` untouched (matrix consulted and cited). No keeper
+changed.
+
+**Next shorthand: ercot-251** (ercot-199 remains unclaimed)
