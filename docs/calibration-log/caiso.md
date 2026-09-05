@@ -12877,7 +12877,7 @@ CC-hot/CT-cold mechanism, measured from CAISO's record, not the residual.
 **SUPPORTING**) **PASS → FAIL** on ONE cell — 2025 gas NRMSE **0.298 → 0.305**
 against ≤0.30, r 0.872 → 0.870, with 2023/2024 still PASS; `fuelmix` 12/12 free
 8/8, `sysvol`, `price_shape` PASS unchanged; `price_tail` the single ledgered
-CAVEAT; C6/C8 PASS; **DOF 5 → 5 with the anchor removed**. **Determination
+CAVEAT; C6/C8 PASS; **DOF ledger UNCHANGED at 9 entries / 6 residual** (corrected post-hoc — see below). **Determination
 NOT-YET on both, but the outstanding failure drops from LOAD-BEARING to
 SUPPORTING.** Dispatch: CT_PEAKER **+0.079/+0.734/+0.414 TWh** (the caiso-244
 volume miss narrows **−3.582 → −2.848 TWh** in 2024), CC_REGULAR

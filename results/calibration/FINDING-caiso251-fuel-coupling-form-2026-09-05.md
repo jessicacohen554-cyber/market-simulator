@@ -98,7 +98,7 @@ CT **−8.31**, CT_CHP **−10.44**; 2025 CC **−1.63**, CT **−6.21**.
 | `price_tail` (C3c) | supporting | CAVEAT | CAVEAT |
 | `governance` (C6) | protective | PASS | PASS |
 | `forced_share` (C8) | protective | PASS | PASS |
-| DOF ledger | — | 5 entries | 5 entries (**anchor removed**) |
+| DOF ledger | — | 9 entries / 6 residual | 9 entries / 6 residual (**unchanged**) |
 | **determination** | | **NOT-YET** (load-bearing) | **NOT-YET** (supporting) |
 
 **C3a**, keeper → arm: **+3.91 / +12.33 / +11.45 % → +4.83 / +9.44 / +9.35 %**
@@ -194,7 +194,28 @@ G-COUPLE, the tier of the outstanding failure and the governance gates, and on
 nothing about C3a. A reader who removes C3a from the argument entirely should
 still be able to check the promotion.
 
-### §5.6 — The G-DRIFT audit is a reading of code, and inherits my reading
+### §5.6 — I published a WRONG DOF count and the keeper auditor caught it
+
+My verification read `len(attestation["free_parameters"])` — but that field is a
+**dict**, so the check counted its 5 top-level keys instead of reading
+`n_entries`. I wrote "DOF 5 → 5" into the finding, the keeper shard, the matrix
+shard's `gates` stamp and the cell evidence. **The true figure is 9 entries / 6
+residual, UNCHANGED**, and the `calibration-keeper-auditor` agent found it and
+repaired the three published places; this finding and the calibration-log entry
+are repaired here.
+
+**The correction also retires a claim I made for the arm.** I said the arm
+"removes a free parameter". It does not: `gas_offer_margin_anchor` is DERIVED
+(`scripts/data/derive_gas_offer_margin_anchor.py`), so it was never a ledgered
+DOF row — the ledger's nine entries are unchanged and none of them is the
+anchor. What the arm removes is a **mechanism and its anchor from the recipe**,
+which is a rule-24 `[R-DELETE]` simplification but **not** a reduction in
+identified degrees of freedom. Promotion condition (c) as registered was that
+the residual count must not RISE; 6 → 6 satisfies it, so the promotion is
+unaffected — but one strand of the argument I gave for it was wrong and is
+withdrawn.
+
+### §5.7 — The G-DRIFT audit is a reading of code, and inherits my reading
 
 Addendum B classifies all 22 changed files between `900402b` and HEAD as
 CAISO-backcast-inert. Each classification cites the gate, default, artifact or
@@ -212,12 +233,11 @@ Against the rule registered in PRECOMMIT §0.2 **before any measurement**:
 |---|---|
 | (a) **G-COUPLE passes** | ✓ 6.719, inside the registered band and the measured band |
 | (b) **no LOAD-BEARING criterion regresses to a NEW failure** | ✓ `fuelmix` / `sysvol` / `price_shape` PASS → PASS; `price_mean` FAIL → PASS. The one regression, `dispatch_corr`, is **supporting** tier |
-| (c) **governance holds** | ✓ C6 attested PASS, C8 PASS, DOF 5 → 5 with the anchor removed |
+| (c) **governance holds** | ✓ C6 attested PASS, C8 PASS, DOF ledger **UNCHANGED at 9 entries / 6 residual** — the registered test was that the residual count must not RISE, and 6 → 6 satisfies it |
 
 **PROMOTED.** Both runs read NOT-YET, but the prior keeper's outstanding failure
 is **load-bearing** and this one's is **supporting**, C3a passes in all three
-years, one free parameter is gone, and the fuel coupling matches CAISO's own
-measured record. The registered rule permitted promotion on a supporting-tier
+years, and the fuel coupling matches CAISO's own measured record. The registered rule permitted promotion on a supporting-tier
 regression; it would **not** have permitted it on a load-bearing one, and it
 would have **refused** the run had G-COUPLE failed even with C3a improving.
 
