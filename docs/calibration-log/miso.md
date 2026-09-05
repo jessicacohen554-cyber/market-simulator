@@ -11842,3 +11842,84 @@ movement is presented as closing that class's gap (miso-214 standing result). Re
 `FINDING-miso219-evening-scarcity-tail-2026-09-05.md`.
 
 * Next number: **miso-220**.
+
+---
+
+## miso-220 (2026-09-05) — **PROMOTED. KEEPER → `2026-09-05-miso-220-nonsteam-lift`, DETERMINATION CALIBRATED.** The non-steam fossil ×1.10 offer lift closes the standing C3a-2025 failure with every kill silent — and it is a keeper only because the same-day owner ruling made the offer-curve band multipliers an authorized price-tuning channel.
+
+**Keeper at open `2026-09-05-miso-217-intermphys` (NOT-YET on C3a-2025 alone); at close
+`2026-09-05-miso-220-nonsteam-lift` (CALIBRATED).** C3c the single ledgered caveat,
+ledger 41/2 unchanged, `audit_keepers --iso MISO` PASS 0/0. Rule 22: 2023–2025 only.
+
+| | keeper | arm |
+|---|---:|---:|
+| C3a 2023 / 2024 / 2025 | +1.1 / −2.9 / **−12.3 FAIL** | +7.15 / +3.37 / **−7.00 PASS** |
+| `ST_GAS`\|2024 | −7.155 | **−5.035** |
+| `ST_GAS`\|2023 | −2.402 | **+0.543** |
+| `CT_PEAKER`\|2023 | −5.934 | **−7.985** |
+| `CC_REGULAR`\|2024 | +7.947 | +6.100 |
+| determination | NOT-YET | **CALIBRATED** |
+
+**All five kills silent; all six predictions held.** Pass-through +5.99/+6.44/+6.04 %.
+
+**THE OWNER RULING IS LOAD-BEARING.** miso-218 was rejected on two grounds — rule 1
+`[R-STRUCT]` (a level scalar fitted to a price residual is not a keeper mechanism) and
+a broken load-bearing C1 cell. The owner ruled the first wrong as design intent
+(*"the offer curve multipliers are meant to allow us to tune on price & adjust merit
+order… as long as it's the same config across the 3 years"*), scoped the arm (hold
+steam gas, lift the rest), and — when shown the arm's attestation could not honestly
+carry the keeper's `no_fit_to_price_residuals` claim — **directed that the rule be
+rewritten** rather than leaving text and practice in conflict. Rules 1 and 13 now carve
+out the registered `offer_curve_by_group` band multipliers as an **authorized
+price-tuning channel** under five machine-checked conditions (rule-history §11), with
+eleven fail-closed tests. **C6 PASSES only because the run declares it; without the
+amendment governance FAILS and this reads NOT-YET.**
+
+**PHASE 0 AIMED IT, AND MADE THE HOLD A PREDICTION RATHER THAN A CONCESSION.** Rebuilding
+the keeper's own offer stack against its committed P1 duals at the 15 object hours of
+each year: **`CT_PEAKER` holds the margin in 24 of 45** (`CT_PEAKER|econ` alone in 22),
+**`ST_GAS` in 4**, reconstruction residual ≤ $0.07/$0.48/$1.18. So steam gas does not
+set price in these hours and is the class the model most under-produces — P-3 therefore
+predicted holding it would make it **gain** dispatch, where miso-218's uniform lift sent
+it the wrong way (−7.155 → −8.030, the exit that broke that probe). **It held.**
+
+**THE DELTA.** ×1.10 on the four band multipliers of eleven fossil classes; `ST_GAS` and
+`ST_GAS_INTERMEDIATE` held byte-identical; `phys_*` and the structural shares never
+scaled. No field minted, no matrix row. **S-1 proved the single delta before any LP**:
+the keeper records only one explicit `offer_curve_by_group` row, so a full explicit
+table is a single delta only if its unlifted half reproduces the implicit resolution —
+**max |Δmc| = 0.0 across all 2,923 tranches in each of the three years**; S-2 1,604
+tranches moved, zero in a held class.
+
+**REPORTED AGAINST INTEREST — THIS KEEPER'S FRAGILE EDGE.** P-4 named `CT_PEAKER`-2023 ex
+ante as the likeliest kill, and it landed **−7.985 against a ±8.00 TWh band: 0.015 TWh
+of headroom.** It did not flip, so K-1 is genuinely silent — but the cell is at the
+line, and **any later MISO lever pushing `CT_PEAKER` further negative flips it to FAIL.**
+Also carried: **every 2025 C1 cell is SKIPPED** on a preliminary EIA-923 vintage (68 %
+reporting, verified byte-identical pre/post the same-session main merge), so K-1 could
+only fire on 2023/2024 and **the 2025 fuelmix is untested against this config**. The
+tail is untouched and **no tail claim is made** (P-6 pre-committed): the price sits in a
+~15 GW near-flat `CT_PEAKER|econ` block, the stack tops out near $490 against actuals to
+$1,782, implied multiplier 4.07/7.12/8.28.
+
+**PROCESS, INCLUDING A RULE I SKIPPED.** Rule 29 `[R-SCREEN]` was initially bypassed —
+the arm went straight to the full span. The owner caught it; the run was **killed ~15 min
+in before any year completed** and re-run as a 2025 screen after the precommit was
+pushed (3/3 structural gates PASS: price +6.04 %, `ST_GAS` +2.27 TWh, no non-target
+flip), the screen year chosen on the **measured footprint — identical in all three
+years** — never the residual. Control = the keeper bundle itself (form 4, no control
+solve); **G-DRIFT** classified all 8 changed solve-path files INERT, two verified
+empirically, and **disclosed a second inherited config difference**
+(`ccs_retrofit_capex_co2_scaling` default flipped on main mid-session; inert below its
+2028 gate) — so the comparison is a single *live* delta, not a literally single-field
+one. Main was merged only after the solve, because it rewrites `offer_curves.py` /
+`outages.py` which the solve path lazily imports. **One correction on the record:** I
+briefly read a narrative `reason` field quoting historical numbers as live scoring and
+reported the basis had moved; it had not.
+
+Records: `FINDING-miso220-nonsteam-offer-lift-2026-09-05.md`;
+`PREREG-miso220-nonsteam-offer-lift-2026-09-05.md` @ `e1a2eb01` (BLIND) + ADDENDUM A @
+`a4a72ece` + ADDENDUM B; `_miso220_ab_gates.json`, `_miso220_liveness.json`,
+`_miso220_marginal_class.json`, `_miso220_screen_gates.json`.
+
+* Next number: **miso-221**.
