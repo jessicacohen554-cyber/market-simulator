@@ -5624,7 +5624,7 @@ Everything else in §D60 and Amendment 1 binds unchanged. The order of your rema
 re-score happens AFTER its leg's final rebase.
 ```
 
-## D60-R — the D60 relaunch: the three remaining re-solves, the Q37 attestation rows, the finding (r#39 amendment 1; relaunch protocol — the D60 session is dead, owner-confirmed)
+## D60-R — the D60 relaunch: the three remaining re-solves, the Q37 attestation rows, the finding (r#39 amendment 1; relaunch protocol — the D60 session is dead, owner-confirmed) — **NEVER LAUNCHED (no branch, no commit at `c3addecc`); RE-ISSUED as D60-R2 below with a fresh stem — paste D60-R2, not this**
 
 ```
 You are the D60-R session of the capacity-expansion track — the RELAUNCH of D60 (pack §D60 +
@@ -5681,6 +5681,100 @@ THE WORK, in this order:
    → `forecast_verdict --tier` → `register_forecast_run --bundle`, AFTER that leg's final rebase
    (X-6b: no orphaned `scored_at_sha`). One commit per leg, blob-verified (ff-verdicts.json and
    program-status.json are ≥300 lines).
+4. THE Q37 ROWS + RE-SCORES (Amendment 2 steps 2–4): write the seven rows; re-score
+   artifact-only `nyiso-t1f`, `miso-t1f`, and each of your three legs; register in place (same
+   keys; `-pre-d60` priors untouched); FC-7 the only row that moves — any other movement is a
+   STOP and is routed, not registered.
+5. THE FINDING: fill §5 (five legs, each: key pre-declared/realized, wall/RAM, the FC rows
+   moved with their mechanism attribution, the pre-declaration graded, HOLD/PROMOTE before and
+   after); add §8 "instrument repair" (the Q37 citation, before/after per key, the statement
+   that model rows are unmoved); the §"D57 interaction" Amendment 1 asked for; the board's
+   per-ISO rows before/after; the blast-radius reconciliation against D50 §6.2; the governance
+   attestation with rule-27 blob checks. Close the finding: D60 is COMPLETE when every bare key
+   named in Addendum A §A.2 carries a post-D60 `scored_at_sha` and every `-pre-d60` prior exists.
+
+GUARDRAILS: everything in §D60 — rules 1, 5, 12, 13, 14, 19, 21 (no value changes), 22 (t1f
+2026–2030, t3 2026–2050; nothing against measured H1-2026), 24, 25, 27, 28. No keeper / shard
+promotion field / marker / freeze; no default beyond Q40/Q41/Q42 moves (Q44's PJM posture is
+D57's and already landed — you solve under it, you do not touch it); `locality_capacity_curves`
+and the NYCA curve stay OFF. STOPs: PREDECL §7 verbatim + Amendment 2's "any non-FC-7 row
+moves".
+
+COLLISION: D58 (PJM t1h) and T3-NYISO-GOLDEN are HELD until you land — you are the only writer
+on CAISO / PJM / NEISO forecast surfaces and on `ff-verdicts.json` / `program-status.json`
+this window. D61 is docs-only. The owner's backcast lanes never touch forecast surfaces; the
+pending nyiso-192 promotion (if it merges) moves NYISO's marker and gate-(a) row — rebase
+before every push and keep its edits verbatim.
+
+EXIT: three legs registered on their pre-declared keys with priors preserved; Addendum D and
+the seven rows; every affected bare key re-scored artifact-only; the finding complete and
+closed; all blob-verified. Then the director releases D58 and (marker permitting) the NYISO
+golden.
+```
+
+## D60-R2 — the D60 relaunch, re-issued (r#39 amendment 2; D60-R never launched — audit ruling R-AK's launch-failure class, re-issued on failure)
+
+```
+You are the D60-R2 session of the capacity-expansion track — the RELAUNCH of D60 (pack §D60 +
+Amendments 1 and 2). D60's session died after landing its flip commit, four renames and two of
+five re-solves; the first relaunch (D60-R) never launched. You start FRESH from the committed
+record and finish the owed half. FIRST, before anything else: `git fetch origin --prune` and
+check for any `claude/capx-d60r*` branch or any commit mentioning "D60-R" on origin/main
+newer than `c3addecc`; if one exists, STOP and report it — a twin may be mid-flight and two
+writers on `ff-verdicts.json` is the one collision this program cannot absorb.
+
+Nothing D60 landed is re-done: the flip (Q40/Q41/Q42) is on main, the four renames are on
+main with their `-pre-d60` priors, `miso-t1f` (key `b1a73a087064ffd8`, HOLD) and `nyiso-t1f`
+(key `19a9690bb12c8459`, PROMOTE-WITH-CAVEATS on FC-7 alone — the P10 STOP) are registered,
+and the D60 finding's §§0–4, 6–7 are written. You OWE: (1) the three remaining re-solves —
+`caiso-t1f`, `pjm-t1f`, `neiso-t3` GOLDEN-3; (2) Amendment 2 — the Q37 pre-declared
+attestation rows and the artifact-only re-scores that repair FC-7; (3) the finding's §5 and
+an §8 "instrument repair", and its close.
+
+DATA PROFILE: caiso, pjm, neiso (incremental — hydrate each before its leg; `data/clean`
+regenerated once before the first solve, the D60 discipline).
+MODEL ASSIGNMENT: Opus (execution of pre-declared legs; the one adjudication — the STOP — was
+made by the director in Amendment 2; a NEW surprise is a STOP, not a decision).
+BRANCH: claude/capx-d60r2-completion — FRESH off origin/main, rebase before every push.
+
+READ FIRST, IN THIS ORDER: pack §D60 (the charter), §D60 Amendment 1 (the `pjm-t1f` leg) and
+Amendment 2 (the Q37 rows) · docs/handoffs/PREDECL-capx-d60-2026-09-05.md IN FULL — §5 (the
+class-C re-solve list), §6.3 (`caiso-t1f` expectations, pre-declared from the census), §6.4
+(GOLDEN-3: the FC map should not move), Addendum A (§A.1 the corrected `miso-t1f` key; §A.2
+the authoritative key table — your three keys are THERE: caiso-t1f `29f8eb372810195f`,
+pjm-t1f `09996eca71ee80fd` (Addendum C), neiso-t3 = the GOLDEN-3 recipe's post-flip key —
+re-verify every one through the harness path at your HEAD before its leg and STOP on any
+difference), Addendum B (the GOLDEN-3 attestation's six assertions, fixed in advance), Addendum
+C (the pjm-t1f leg, P21–P25) · docs/handoffs/FINDING-capx-d60-2026-09-05.md (§§0–4, 6–7 as
+landed; §5 is your section) · the two landed leg commits (`e7412237` miso-t1f, `091023a3`
+nyiso-t1f — the attribution and STOP-reporting style you match) · FINDING-capx-d47-golden3-
+attestation-2026-09-04.md (the GOLDEN-3 conventions: preserve-then-overwrite, the FC-5/FC-6
+carry-over, the T3 attestation) · FINDING-capx-d57 §8.1 (the PJM posture the pjm-t1f leg now
+resolves under) · the D8 / D8-V instrument (where curated design-decision rows live for the
+FC-7 ledger; D50's and D52's rows as the template).
+
+THE WORK, in this order:
+1. STATE AT START (first commit, zero solve): re-resolve every bare forecast key through the
+   harness path at your HEAD and diff against Addendum A §A.2 + Addendum C. Any drift since
+   D60's pins is reported before anything runs (D57's posture is already IN those keys; a
+   further owner-track merge — e.g. the pending nyiso-192 promotion — touches only backcast
+   surfaces and must leave every forecast key unmoved: assert it).
+2. ADDENDUM D (Amendment 2 step 1) — pushed BEFORE any row is written and before the first
+   solve: the seven curated rows, the keys whose FC-7 they change, expected before/after,
+   "FC-7 is the only row that may move" stated.
+3. THE THREE RE-SOLVES, sequential (rule 12; one at a time): (i) `caiso-t1f` 2026–2030 on the
+   bare recipe (`--golden-posture`, ~23 min; prior at `caiso-t1f-pre-d60`; PREDECL §6.3 graded
+   at full magnitude — CAISO carries no committed D50 arm, so its CCS rows are the first
+   measurement and the census is your only pre-declaration); (ii) `pjm-t1f` (~28 min; Amendment
+   1 / Addendum C: prior at `pjm-t1f-pre-d60`, P21–P25 graded, three mechanisms attributed from
+   the D45-R control and the D50 PJM arm — never by inference); (iii) `neiso-t3` GOLDEN-3
+   (25 yr, ~33 min / ~3.7 GB; prior at `neiso-t3-pre-d60`; Addendum B's six assertions as the
+   attestation; FC-5 dispositions and FC-6 battery carried per D47 — if the FC map moves where
+   §6.4 said it would not, that is a STOP: report, do not register as bare). Each leg: `score`
+   → `forecast_verdict --tier` → `register_forecast_run --bundle`, AFTER that leg's final rebase
+   (X-6b: no orphaned `scored_at_sha`). One commit per leg, blob-verified (ff-verdicts.json and
+   program-status.json are ≥300 lines). PUSH EACH LEG AS IT LANDS — a session that dies after
+   an unpushed solve loses the solve; a pushed leg is a checkpoint the next relaunch keeps.
 4. THE Q37 ROWS + RE-SCORES (Amendment 2 steps 2–4): write the seven rows; re-score
    artifact-only `nyiso-t1f`, `miso-t1f`, and each of your three legs; register in place (same
    keys; `-pre-d60` priors untouched); FC-7 the only row that moves — any other movement is a
