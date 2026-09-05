@@ -1,0 +1,690 @@
+{
+ "_provenance": {
+  "session": "caiso-251 phase 0 (gas-offer fuel-coupling FORM, ZERO LP)",
+  "bundle": "results/calibration/caiso246_b1_spot_coverage",
+  "keeper_run_id": "2026-09-05-caiso-246-b1-spot",
+  "precommit": "PRECOMMIT-caiso251-fuel-coupling-form-2026-09-05.md",
+  "delta": "single kwarg gas_offer_margin True -> False on the sanctioned recipe",
+  "anchor_usd_per_mmbtu": 4.7964,
+  "note": "NOTHING ARMED, NO SOLVE at this stage."
+ },
+ "years": {
+  "2023": {
+   "G_IDENT": {
+    "n_tranches_touched": 1269,
+    "n_tranches_identity_tested": 1269,
+    "max_within_tranche_spread_of_k_mmbtu_per_mwh": 4e-12,
+    "anchor_usd_per_mmbtu": 4.7964,
+    "pass": true
+   },
+   "G_FOOTPRINT": {
+    "n_tranches_touched": 1269,
+    "keeper_log_count_2025": 1285,
+    "non_gas_groups_touched": [],
+    "by_group": {
+     "CC_CHP": {
+      "n_tranches": 108,
+      "capacity_mw": 1264.9
+     },
+     "CC_REGULAR": {
+      "n_tranches": 168,
+      "capacity_mw": 10279.2
+     },
+     "CT_CHP": {
+      "n_tranches": 195,
+      "capacity_mw": 991.5
+     },
+     "CT_PEAKER": {
+      "n_tranches": 784,
+      "capacity_mw": 6698.6
+     },
+     "ST_GAS": {
+      "n_tranches": 14,
+      "capacity_mw": 642.6
+     }
+    },
+    "pass": true
+   },
+   "G_COUPLE": {
+    "by_class_stat": {
+     "CC_REGULAR:econ": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 5.608,
+       "ci95": [
+        5.569,
+        5.646
+       ],
+       "intercept_usd_per_mwh": 19.207,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.719,
+       "ci95": [
+        6.719,
+        6.719
+       ],
+       "intercept_usd_per_mwh": 13.861,
+       "n_days": 365
+      }
+     },
+     "CC_REGULAR:floor_any_band": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.3,
+       "ci95": [
+        6.3,
+        6.3
+       ],
+       "intercept_usd_per_mwh": 13.861,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.3,
+       "ci95": [
+        6.3,
+        6.3
+       ],
+       "intercept_usd_per_mwh": 13.861,
+       "n_days": 365
+      }
+     },
+     "CT_PEAKER:econ": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 5.717,
+       "ci95": [
+        5.717,
+        5.717
+       ],
+       "intercept_usd_per_mwh": 36.022,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 9.528,
+       "ci95": [
+        9.528,
+        9.528
+       ],
+       "intercept_usd_per_mwh": 17.74,
+       "n_days": 365
+      }
+     },
+     "CT_PEAKER:floor_any_band": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 8.234,
+       "ci95": [
+        8.234,
+        8.234
+       ],
+       "intercept_usd_per_mwh": 17.74,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 8.234,
+       "ci95": [
+        8.234,
+        8.234
+       ],
+       "intercept_usd_per_mwh": 17.74,
+       "n_days": 365
+      }
+     }
+    },
+    "coupling_over_own_base_hr_POST_REGISTRATION": {
+     "CC_REGULAR": {
+      "base_hr_mmbtu_per_mwh": 7.442,
+      "armed_over_base_hr": 0.754,
+      "disarmed_over_base_hr": 0.903
+     },
+     "CT_PEAKER": {
+      "base_hr_mmbtu_per_mwh": 10.862,
+      "armed_over_base_hr": 0.526,
+      "disarmed_over_base_hr": 0.877
+     }
+    },
+    "gate_statistic": "CC_REGULAR:econ disarmed Theil-Sen slope",
+    "gate_band": [
+     6.0,
+     8.0
+    ],
+    "measured_dam_body_coupling": [
+     6.7,
+     7.4
+    ],
+    "caiso229_armed_reference": 2.18,
+    "value": 6.719,
+    "pass": true
+   },
+   "G_HOLDOUT": {
+    "year": 2023,
+    "pass": true
+   },
+   "offer_deltas": {
+    "CC_REGULAR:econ": {
+     "n_tranches": 168,
+     "capacity_mw": 10279.2,
+     "delta_unweighted_usd_per_mwh": 1.4032,
+     "delta_capacity_weighted_usd_per_mwh": 1.4663,
+     "model_dispatch_twh": 3.7548
+    },
+    "CC_CHP:econ": {
+     "n_tranches": 108,
+     "capacity_mw": 1264.9,
+     "delta_unweighted_usd_per_mwh": 1.1412,
+     "delta_capacity_weighted_usd_per_mwh": 1.0781,
+     "model_dispatch_twh": 1.2662
+    },
+    "CT_PEAKER:econ": {
+     "n_tranches": 474,
+     "capacity_mw": 6179.1,
+     "delta_unweighted_usd_per_mwh": 4.4579,
+     "delta_capacity_weighted_usd_per_mwh": 4.1834,
+     "model_dispatch_twh": 0.1607
+    },
+    "CT_PEAKER:peak": {
+     "n_tranches": 310,
+     "capacity_mw": 519.5,
+     "delta_unweighted_usd_per_mwh": 1.6119,
+     "delta_capacity_weighted_usd_per_mwh": 1.5086,
+     "model_dispatch_twh": 0.0
+    },
+    "CT_CHP:committed": {
+     "n_tranches": 48,
+     "capacity_mw": 429.1,
+     "delta_unweighted_usd_per_mwh": 0.2551,
+     "delta_capacity_weighted_usd_per_mwh": 0.2565,
+     "model_dispatch_twh": 0.02
+    },
+    "CT_CHP:econ": {
+     "n_tranches": 132,
+     "capacity_mw": 472.0,
+     "delta_unweighted_usd_per_mwh": 5.2837,
+     "delta_capacity_weighted_usd_per_mwh": 5.2545,
+     "model_dispatch_twh": 0.1151
+    },
+    "CT_CHP:peak": {
+     "n_tranches": 15,
+     "capacity_mw": 90.4,
+     "delta_unweighted_usd_per_mwh": 1.5768,
+     "delta_capacity_weighted_usd_per_mwh": 1.5696,
+     "model_dispatch_twh": 0.0046
+    },
+    "ST_GAS:econ": {
+     "n_tranches": 12,
+     "capacity_mw": 504.9,
+     "delta_unweighted_usd_per_mwh": 5.5564,
+     "delta_capacity_weighted_usd_per_mwh": 6.9367,
+     "model_dispatch_twh": 0.0
+    },
+    "ST_GAS:peak": {
+     "n_tranches": 2,
+     "capacity_mw": 137.7,
+     "delta_unweighted_usd_per_mwh": 2.2199,
+     "delta_capacity_weighted_usd_per_mwh": 2.7713,
+     "model_dispatch_twh": 0.0
+    }
+   },
+   "delta_sign_census": {
+    "share_of_gas_tranche_hours_delta_positive": 0.4493,
+    "share_of_hours_any_touched_tranche_positive": 0.4493,
+    "delivered_gas_median_usd_per_mmbtu": 4.48,
+    "hours_share_gas_above_anchor": 0.4493
+   },
+   "implied_markup_hr_mmbtu_per_mwh": {
+    "median": 2.997,
+    "p90": 5.6005,
+    "max": 12.9825
+   }
+  },
+  "2024": {
+   "G_IDENT": {
+    "n_tranches_touched": 1274,
+    "n_tranches_identity_tested": 1274,
+    "max_within_tranche_spread_of_k_mmbtu_per_mwh": 0.0,
+    "anchor_usd_per_mmbtu": 4.7964,
+    "pass": true
+   },
+   "G_FOOTPRINT": {
+    "n_tranches_touched": 1274,
+    "keeper_log_count_2025": 1285,
+    "non_gas_groups_touched": [],
+    "by_group": {
+     "CC_CHP": {
+      "n_tranches": 108,
+      "capacity_mw": 1264.9
+     },
+     "CC_REGULAR": {
+      "n_tranches": 168,
+      "capacity_mw": 10279.2
+     },
+     "CT_CHP": {
+      "n_tranches": 194,
+      "capacity_mw": 989.4
+     },
+     "CT_PEAKER": {
+      "n_tranches": 790,
+      "capacity_mw": 6705.2
+     },
+     "ST_GAS": {
+      "n_tranches": 14,
+      "capacity_mw": 642.6
+     }
+    },
+    "pass": true
+   },
+   "G_COUPLE": {
+    "by_class_stat": {
+     "CC_REGULAR:econ": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.029,
+       "ci95": [
+        6.029,
+        6.029
+       ],
+       "intercept_usd_per_mwh": 18.775,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.719,
+       "ci95": [
+        6.719,
+        6.719
+       ],
+       "intercept_usd_per_mwh": 15.103,
+       "n_days": 365
+      }
+     },
+     "CC_REGULAR:floor_any_band": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.3,
+       "ci95": [
+        6.3,
+        6.3
+       ],
+       "intercept_usd_per_mwh": 14.903,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.3,
+       "ci95": [
+        6.3,
+        6.3
+       ],
+       "intercept_usd_per_mwh": 14.903,
+       "n_days": 365
+      }
+     },
+     "CT_PEAKER:econ": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.072,
+       "ci95": [
+        6.072,
+        6.072
+       ],
+       "intercept_usd_per_mwh": 36.341,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 10.121,
+       "ci95": [
+        10.121,
+        10.121
+       ],
+       "intercept_usd_per_mwh": 16.921,
+       "n_days": 365
+      }
+     },
+     "CT_PEAKER:floor_any_band": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 8.746,
+       "ci95": [
+        8.746,
+        8.746
+       ],
+       "intercept_usd_per_mwh": 16.921,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 8.746,
+       "ci95": [
+        8.746,
+        8.746
+       ],
+       "intercept_usd_per_mwh": 16.921,
+       "n_days": 365
+      }
+     }
+    },
+    "coupling_over_own_base_hr_POST_REGISTRATION": {
+     "CC_REGULAR": {
+      "base_hr_mmbtu_per_mwh": 7.442,
+      "armed_over_base_hr": 0.81,
+      "disarmed_over_base_hr": 0.903
+     },
+     "CT_PEAKER": {
+      "base_hr_mmbtu_per_mwh": 10.862,
+      "armed_over_base_hr": 0.559,
+      "disarmed_over_base_hr": 0.932
+     }
+    },
+    "gate_statistic": "CC_REGULAR:econ disarmed Theil-Sen slope",
+    "gate_band": [
+     6.0,
+     8.0
+    ],
+    "measured_dam_body_coupling": [
+     6.7,
+     7.4
+    ],
+    "caiso229_armed_reference": 2.18,
+    "value": 6.719,
+    "pass": true
+   },
+   "G_HOLDOUT": {
+    "year": 2024,
+    "pass": true
+   },
+   "offer_deltas": {
+    "CC_REGULAR:econ": {
+     "n_tranches": 168,
+     "capacity_mw": 10279.2,
+     "delta_unweighted_usd_per_mwh": -2.2809,
+     "delta_capacity_weighted_usd_per_mwh": -2.0814,
+     "model_dispatch_twh": 3.4976
+    },
+    "CC_CHP:econ": {
+     "n_tranches": 108,
+     "capacity_mw": 1264.9,
+     "delta_unweighted_usd_per_mwh": -2.3068,
+     "delta_capacity_weighted_usd_per_mwh": -2.1385,
+     "model_dispatch_twh": 1.1093
+    },
+    "CT_PEAKER:econ": {
+     "n_tranches": 480,
+     "capacity_mw": 6185.6,
+     "delta_unweighted_usd_per_mwh": -8.8227,
+     "delta_capacity_weighted_usd_per_mwh": -8.3049,
+     "model_dispatch_twh": 0.0516
+    },
+    "CT_PEAKER:peak": {
+     "n_tranches": 310,
+     "capacity_mw": 519.5,
+     "delta_unweighted_usd_per_mwh": -3.199,
+     "delta_capacity_weighted_usd_per_mwh": -2.9958,
+     "model_dispatch_twh": 0.0
+    },
+    "CT_CHP:committed": {
+     "n_tranches": 47,
+     "capacity_mw": 427.0,
+     "delta_unweighted_usd_per_mwh": -0.5107,
+     "delta_capacity_weighted_usd_per_mwh": -0.5102,
+     "model_dispatch_twh": 0.0129
+    },
+    "CT_CHP:econ": {
+     "n_tranches": 132,
+     "capacity_mw": 472.0,
+     "delta_unweighted_usd_per_mwh": -10.495,
+     "delta_capacity_weighted_usd_per_mwh": -10.437,
+     "model_dispatch_twh": 0.111
+    },
+    "CT_CHP:peak": {
+     "n_tranches": 15,
+     "capacity_mw": 90.4,
+     "delta_unweighted_usd_per_mwh": -3.132,
+     "delta_capacity_weighted_usd_per_mwh": -3.1177,
+     "model_dispatch_twh": 0.0037
+    },
+    "ST_GAS:econ": {
+     "n_tranches": 12,
+     "capacity_mw": 504.9,
+     "delta_unweighted_usd_per_mwh": -7.8997,
+     "delta_capacity_weighted_usd_per_mwh": -7.8997,
+     "model_dispatch_twh": 0.0
+    },
+    "ST_GAS:peak": {
+     "n_tranches": 2,
+     "capacity_mw": 137.7,
+     "delta_unweighted_usd_per_mwh": -3.1561,
+     "delta_capacity_weighted_usd_per_mwh": -3.1561,
+     "model_dispatch_twh": 0.0173
+    }
+   },
+   "delta_sign_census": {
+    "share_of_gas_tranche_hours_delta_positive": 0.0466,
+    "share_of_hours_any_touched_tranche_positive": 0.0466,
+    "delivered_gas_median_usd_per_mmbtu": 2.59,
+    "hours_share_gas_above_anchor": 0.0466
+   },
+   "implied_markup_hr_mmbtu_per_mwh": {
+    "median": 2.997,
+    "p90": 5.5959,
+    "max": 12.9825
+   }
+  },
+  "2025": {
+   "G_IDENT": {
+    "n_tranches_touched": 1279,
+    "n_tranches_identity_tested": 1279,
+    "max_within_tranche_spread_of_k_mmbtu_per_mwh": 1e-12,
+    "anchor_usd_per_mmbtu": 4.7964,
+    "pass": true
+   },
+   "G_FOOTPRINT": {
+    "n_tranches_touched": 1279,
+    "keeper_log_count_2025": 1285,
+    "non_gas_groups_touched": [],
+    "by_group": {
+     "CC_CHP": {
+      "n_tranches": 108,
+      "capacity_mw": 1264.9
+     },
+     "CC_REGULAR": {
+      "n_tranches": 168,
+      "capacity_mw": 10279.2
+     },
+     "CT_CHP": {
+      "n_tranches": 193,
+      "capacity_mw": 988.2
+     },
+     "CT_PEAKER": {
+      "n_tranches": 796,
+      "capacity_mw": 6708.9
+     },
+     "ST_GAS": {
+      "n_tranches": 14,
+      "capacity_mw": 642.6
+     }
+    },
+    "pass": false
+   },
+   "G_COUPLE": {
+    "by_class_stat": {
+     "CC_REGULAR:econ": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.029,
+       "ci95": [
+        6.029,
+        6.029
+       ],
+       "intercept_usd_per_mwh": 15.777,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.719,
+       "ci95": [
+        6.719,
+        6.719
+       ],
+       "intercept_usd_per_mwh": 12.345,
+       "n_days": 365
+      }
+     },
+     "CC_REGULAR:floor_any_band": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.3,
+       "ci95": [
+        6.3,
+        6.3
+       ],
+       "intercept_usd_per_mwh": 12.328,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 6.3,
+       "ci95": [
+        6.3,
+        6.3
+       ],
+       "intercept_usd_per_mwh": 12.328,
+       "n_days": 365
+      }
+     },
+     "CT_PEAKER:econ": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 5.776,
+       "ci95": [
+        5.762,
+        5.795
+       ],
+       "intercept_usd_per_mwh": 34.868,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 9.984,
+       "ci95": [
+        9.984,
+        9.984
+       ],
+       "intercept_usd_per_mwh": 15.01,
+       "n_days": 365
+      }
+     },
+     "CT_PEAKER:floor_any_band": {
+      "armed": {
+       "theilsen_slope_mmbtu_per_mwh": 8.628,
+       "ci95": [
+        8.628,
+        8.628
+       ],
+       "intercept_usd_per_mwh": 15.01,
+       "n_days": 365
+      },
+      "disarmed": {
+       "theilsen_slope_mmbtu_per_mwh": 8.628,
+       "ci95": [
+        8.628,
+        8.628
+       ],
+       "intercept_usd_per_mwh": 15.01,
+       "n_days": 365
+      }
+     }
+    },
+    "coupling_over_own_base_hr_POST_REGISTRATION": {
+     "CC_REGULAR": {
+      "base_hr_mmbtu_per_mwh": 7.442,
+      "armed_over_base_hr": 0.81,
+      "disarmed_over_base_hr": 0.903
+     },
+     "CT_PEAKER": {
+      "base_hr_mmbtu_per_mwh": 10.862,
+      "armed_over_base_hr": 0.532,
+      "disarmed_over_base_hr": 0.919
+     }
+    },
+    "gate_statistic": "CC_REGULAR:econ disarmed Theil-Sen slope",
+    "gate_band": [
+     6.0,
+     8.0
+    ],
+    "measured_dam_body_coupling": [
+     6.7,
+     7.4
+    ],
+    "caiso229_armed_reference": 4.34,
+    "value": 6.719,
+    "pass": true
+   },
+   "G_HOLDOUT": {
+    "year": 2025,
+    "pass": true
+   },
+   "offer_deltas": {
+    "CC_REGULAR:econ": {
+     "n_tranches": 168,
+     "capacity_mw": 10279.2,
+     "delta_unweighted_usd_per_mwh": -1.7121,
+     "delta_capacity_weighted_usd_per_mwh": -1.6274,
+     "model_dispatch_twh": 3.1783
+    },
+    "CC_CHP:econ": {
+     "n_tranches": 108,
+     "capacity_mw": 1264.9,
+     "delta_unweighted_usd_per_mwh": -1.6643,
+     "delta_capacity_weighted_usd_per_mwh": -1.6102,
+     "model_dispatch_twh": 1.1357
+    },
+    "CT_PEAKER:econ": {
+     "n_tranches": 486,
+     "capacity_mw": 6189.3,
+     "delta_unweighted_usd_per_mwh": -6.6059,
+     "delta_capacity_weighted_usd_per_mwh": -6.2047,
+     "model_dispatch_twh": 0.0207
+    },
+    "CT_PEAKER:peak": {
+     "n_tranches": 310,
+     "capacity_mw": 519.5,
+     "delta_unweighted_usd_per_mwh": -2.3864,
+     "delta_capacity_weighted_usd_per_mwh": -2.2379,
+     "model_dispatch_twh": 0.0
+    },
+    "CT_CHP:committed": {
+     "n_tranches": 46,
+     "capacity_mw": 425.8,
+     "delta_unweighted_usd_per_mwh": -0.3817,
+     "delta_capacity_weighted_usd_per_mwh": -0.3813,
+     "model_dispatch_twh": 0.0029
+    },
+    "CT_CHP:econ": {
+     "n_tranches": 132,
+     "capacity_mw": 472.0,
+     "delta_unweighted_usd_per_mwh": -7.8435,
+     "delta_capacity_weighted_usd_per_mwh": -7.8002,
+     "model_dispatch_twh": 0.1099
+    },
+    "CT_CHP:peak": {
+     "n_tranches": 15,
+     "capacity_mw": 90.4,
+     "delta_unweighted_usd_per_mwh": -2.3407,
+     "delta_capacity_weighted_usd_per_mwh": -2.33,
+     "model_dispatch_twh": 0.0009
+    },
+    "ST_GAS:econ": {
+     "n_tranches": 12,
+     "capacity_mw": 504.9,
+     "delta_unweighted_usd_per_mwh": null,
+     "delta_capacity_weighted_usd_per_mwh": null,
+     "model_dispatch_twh": 0.0,
+     "note": "no available hour in the year"
+    },
+    "ST_GAS:peak": {
+     "n_tranches": 2,
+     "capacity_mw": 137.7,
+     "delta_unweighted_usd_per_mwh": null,
+     "delta_capacity_weighted_usd_per_mwh": null,
+     "model_dispatch_twh": 0.0002,
+     "note": "no available hour in the year"
+    }
+   },
+   "delta_sign_census": {
+    "share_of_gas_tranche_hours_delta_positive": 0.0219,
+    "share_of_hours_any_touched_tranche_positive": 0.0219,
+    "delivered_gas_median_usd_per_mmbtu": 3.42,
+    "hours_share_gas_above_anchor": 0.0219
+   },
+   "implied_markup_hr_mmbtu_per_mwh": {
+    "median": 3.0152,
+    "p90": 5.5894,
+    "max": 12.9825
+   }
+  }
+ }
+}
