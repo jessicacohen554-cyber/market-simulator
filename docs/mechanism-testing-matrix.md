@@ -11046,6 +11046,21 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-05 (nyiso-193, records only, ZERO SOLVE; keeper
+`2026-09-05-nyiso-189-steam-identity` UNCHANGED).** Since the nyiso-192 block below was
+written: **Q39 RULED (r#37, card C-10, option A) and executed by D56-R2 — `frontier` is
+DECLARED on nyiso-189** (`docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`);
+r#38 card C-14 (Q45) authorised the §2.1b campaign on that footing. The nyiso-192 arm
+question is re-labelled **nyiso192-Q1** (the ledger's Q40 is MISO's card C-11) and stays
+UNRULED — the arm `2026-09-05-nyiso-192-astoria-panel` is NOT promoted (rule 22 D-5(b)).
+The "fourteen historical payloads" records item is MOOT (the r#38 keeper-only site prune,
+commit `4b7a515e`, removed every non-keeper NYISO payload). Two owner-court records filed:
+`docs/INTAKE-SPEC-nyiso193-nyc-steam-delivered-gas-2026-09-05.md` (the Con Ed / KEDNY
+transport-class intake for Ravenswood / Astoria / Arthur Kill, with the rule-14 test and the
+pre-registered A/B that would follow) and `docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`
+(re-base D-2 / C8 to unit grain across six ISOs — NYISO `ST_GAS` 0.393 / 0.414 / 0.305 at unit
+grain vs 0.30; recommended option C, measure every ISO first). **NO LIVE LANE LEVER.**
+
 **LEVER QUEUE — REWRITTEN 2026-09-05 (nyiso-192 `backcast-calibration` lane,
 frontier adjudication for card C-10 / Q39. TWO SOLVES — the keeper replayed IN
 PLACE as the bit-identical control and ONE arm, `2026-09-05-nyiso-192-astoria-panel`,
@@ -11055,7 +11070,7 @@ ledgered — UNCHANGED; its dashboard PAYLOAD re-rendered under its own id on a
 repaired instrument. `complete` held; `final` empty; freeze active. Frontier NOT
 declared — `results/calibration/ASSESSMENT-nyiso192-frontier-2026-09-05.md` (the
 nyiso-154 successor) and `docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md`
-put Q39 (and the arm, Q40) to the owner with every object since nyiso-154
+put Q39 (and the arm, nyiso192-Q1) to the owner with every object since nyiso-154
 dispositioned on their face.**
 
 * **THE nyiso-191 TOP-OF-QUEUE OBJECT WAS THREE-QUARTERS AN INSTRUMENT ARTIFACT.**
@@ -11099,7 +11114,7 @@ dispositioned on their face.**
   0.183 and the 0.30 cap (nyiso-181 §6's escalation, now a number). Scorer lane,
   cross-ISO; `_nyiso192_c8_unit_grain_keeper.json`.
 * **QUEUE STATUS: NO LIVE LANE LEVER.** Every remaining item is owner-court —
-  Q39 (frontier), Q40 (the arm), the C8 grain, Q1 (C3a-2025), the AORR fetch
+  Q39 (frontier), nyiso192-Q1 (the arm), the C8 grain, Q1 (C3a-2025), the AORR fetch
   (cell G), two identification intakes (NYC steam delivered gas; Sithe's basis /
   a regulation product), the pooled CT-only test (cross-ISO derive lane) — or
   ledgered (C3c). Observations with no admissible lever: Zeltmann's 2024 record

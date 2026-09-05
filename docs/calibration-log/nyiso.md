@@ -12035,7 +12035,7 @@ Record: `docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`.
 grade 7, fails 0, C3c ledgered; re-verified artifact-only after its payload was
 re-rendered). Two solves: the keeper replayed IN PLACE as the control (every
 committed sidecar byte-identical) and ONE arm, `2026-09-05-nyiso-192-astoria-panel`
-— the Astoria merit-panel stack-duplicate repair (nyiso-184 §4.1, the last live lever in the record), which moves the WHOLE steam fleet's availability (106 Astoria windows out, 155 windows at fifteen other plants in; Ravenswood 2024 0.478 → 0.260). Every B2 prediction held; C2 / C3a / C3b / C8 no flip (C3a-2025 −8.3 → −7.3 %); **C1-2024 `CC_REGULAR` flips PASS → FAIL (+3.33 → +3.68 TWh, +3.0 pp)**; NOT-YET; structural integrity better in 2024 / 2025, worse in 2023. Not rejected under the pre-registered rule — OWNER CALL (card Q40); promoting it would put a NOT-YET keeper under `complete` (Q5-W).
+— the Astoria merit-panel stack-duplicate repair (nyiso-184 §4.1, the last live lever in the record), which moves the WHOLE steam fleet's availability (106 Astoria windows out, 155 windows at fifteen other plants in; Ravenswood 2024 0.478 → 0.260). Every B2 prediction held; C2 / C3a / C3b / C8 no flip (C3a-2025 −8.3 → −7.3 %); **C1-2024 `CC_REGULAR` flips PASS → FAIL (+3.33 → +3.68 TWh, +3.0 pp)**; NOT-YET; structural integrity better in 2024 / 2025, worse in 2023. Not rejected under the pre-registered rule — OWNER CALL (card nyiso192-Q1); promoting it would put a NOT-YET keeper under `complete` (Q5-W).
 
 **The instrument defect.** `render_calibration_html`'s model-payload CHP add-back
 used the 35 % sector share while the LP held out the MEASURED share (0 % at Sithe
@@ -12065,10 +12065,22 @@ plant-grain C8 0.197 / 0.236 / 0.183 and the 0.30 cap — the C8 PASS is
 instrument-dependent (scorer lane, cross-ISO; nyiso-181 §6's escalation now
 measured).
 
-**Frontier:** mechanism set EXHAUSTED at the current representation (YES — every object since nyiso-154 dispositioned); a declaration NOT recommended until the owner rules the C8 grain and the Astoria arm (card C-10 / Q39, options A/B/C; Q40). Records:
+**Frontier:** mechanism set EXHAUSTED at the current representation (YES — every object since nyiso-154 dispositioned); a declaration NOT recommended until the owner rules the C8 grain and the Astoria arm (card C-10 / Q39, options A/B/C; nyiso192-Q1). Records:
 `results/calibration/ASSESSMENT-nyiso192-frontier-2026-09-05.md`,
 `docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md`,
 `docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md`,
 `results/calibration/PREREG-nyiso192-frontier-adjudication.md` (+ Amendment 1),
 `_nyiso192_*.json`, probes `scripts/probes/nyiso192_*.py`,
 `scripts/gen_nyiso192_attestation.py`, bundle `nyiso192_astoria_panel`.
+
+### 2026-09-05 — nyiso-193 (`backcast-calibration`, records only, ZERO SOLVE): Q39 found RULED and executed; the arm question re-labelled; two owner-court records filed
+
+Keeper unchanged. **Q39 was ruled at r#37 (card C-10, option A) and executed by D56-R2 —
+`frontier` is DECLARED on `2026-09-05-nyiso-189-steam-identity`**; the nyiso-192 assessment's
+"not recommended now" stands as the lane's record, its two conditions (the D-2 / C8 grain;
+the Astoria-panel arm) now conditions on the declared frontier's durability. The arm question
+is re-labelled **nyiso192-Q1** (the ledger's Q40 is MISO's C-11) and is UNRULED — the arm is
+not promoted (rule 22 D-5(b): a promotion that worsens a `complete` ISO's determination stops
+and escalates). The fourteen-payload records item is MOOT after the r#38 keeper-only site
+prune. Filed: `docs/INTAKE-SPEC-nyiso193-nyc-steam-delivered-gas-2026-09-05.md` and
+`docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`.
