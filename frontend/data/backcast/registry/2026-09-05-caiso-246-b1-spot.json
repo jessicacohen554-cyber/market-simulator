@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-05-caiso-246-b1-spot",
+  "label": "caiso 246 b1 spot",
+  "date": "2026-09-05",
+  "shorthand": "caiso-246-b1-spot",
+  "definition": "caiso-246 B1 ARMED: single-flag delta (caiso_citygate_spot_coverage) on the caiso-243 keeper recipe -- the spot-level hub overlay covers Sep/Oct/Nov 2025 on its own measured daily CA citygate prints where the EIA N3050CA3 survey publishes NA (queue item C of caiso-244/245; the 2025 overlay coverage gap 9/12 -> 12/12). Zero new constants, zero free parameters. Pre-registered PRECOMMIT-caiso246-spot-coverage-2026-09-04.md; G-STRUCT: gas rows x Sep-Nov 2025 only, 0 rows in 2023/2024; G-CTRL form 2 (2023/2024 measured inert). NEVER a C3a lever.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-05-caiso-246-b1-spot.js",
+  "bundle": "results/calibration/caiso246_b1_spot_coverage"
+}
