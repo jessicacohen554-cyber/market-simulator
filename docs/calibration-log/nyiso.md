@@ -11870,3 +11870,52 @@ so no rule-22 D-5(b) re-key applies. C3a-2025 untouched
 `_nyiso190_plant_grain_posthoc.json`, probes
 `scripts/probes/nyiso190_displacement_provenance.py` /
 `nyiso190_plant_grain_posthoc.py`.
+
+## 2026-09-05 — D56-R (capx governance records lane, ZERO SOLVES): NYISO `complete` RE-DECLARED on `2026-09-05-nyiso-189-steam-identity` — owner ruling Q38, executed per the withdrawn block's own `reentry` clause; validation tier returns, nothing spent; `frontier` NOT re-asserted (card C-10 / Q39 pending)
+
+**Keeper:** `2026-09-05-nyiso-189-steam-identity`, untouched (no shard edit;
+`frontier` stays withdrawn 2026-08-30). **Re-verified first, artifact-only**
+(`scripts/calibration_verdict.py --run-id`, at origin/main `921bb4cd`):
+CALIBRATED — C1 14/14 (free 10/10), C2 / C3a (+4.9 / +1.7 / −8.3 %) / C3b
+(0.119 / 0.166 / 0.177) / C4 / C6 / C8 PASS; C3c the lone ledgered caveat
+(RT >$300 h: 3 / 0 / 4 vs 10 / 13 / 42), grade 7, fails 0. **The ruling:**
+Q38 (2026-09-04, capx r#35 card C-9, verbatim option "Re-declare now via a
+records lane", ledger §0af amendment 1 / §3) was made on nyiso-188; D56 never
+launched and the keeper moved to nyiso-189 (CALIBRATED → CALIBRATED), so the
+charter's stop clause re-ran step 1 on the new id before anything was written
+(D56-R, ledger §0ag.3). Cross-desk record: audit ruling R-AG (22:20Z) routed
+the question to the calibration director for a recommendation; Q38 (23:18Z)
+ruled the execution without sight of it; both the owner's, coexisting; card
+C-10 is the recommendation R-AG asked for. **Written:** `complete.NYISO`
+(declared 2026-09-05, keeper = keeper_at_declaration = nyiso-189, `by` = Q38
+verbatim, determination as above, validation-only tier, locked test NOT
+AUTHORIZED, `frontier_basis` NONE CLAIMED pending C-10, D-5(b) re-key policy,
+THIRD-grant genealogy) with the 2026-08-30 withdrawal record moved WHOLE
+beneath it (`prior_withdrawal_2026_08_30`, one dated `superseded` field added,
+nothing deleted); `withdrawn` now holds CAISO alone; dated sentence appended
+to the file note; `final`, `intake_log`, `withdrawn.CAISO`, the three other
+`complete` entries and the freeze file byte-identical (asserted).
+`audit_keepers --iso NYISO` PASS (M1a/M1b hold), `--check` PASS 0/0;
+`holdout_policy.authorized(NYISO, validation)` False → True, locked False
+unchanged, `frozen_tiers` = {locked_test}. **Forecast board:** NYISO gate (a)
+FAIL → PASS on the literal §2.1b(2)(a) test (pass-form detail with the Q38
+citation, derivation stamp `read_live_at`/`corrected_by` — never
+forecast-provenance names), `closed_on` ['a'] → [], `marker_complete` true,
+keeper display re-keyed, gate note / headline / gate_reading rewritten by
+prepend + in-place annotation (the D19 text kept verbatim), two sources,
+`gate_a_provenance` re-stamped (passers {ERCOT, NEISO, NYISO, PJM}),
+`d56r_nyiso_redeclaration` records block; every other ISO's block and NYISO's
+legs (b)/(c)/(d) byte-identical (asserted). `check_gate_a_provenance` OK 6/6;
+`check_forecast_staleness` exit 0; `legitimacy_diagnostics --keepers` D-6/D-9
+PASS. NYISO reads (a) PASS · (b) PASS · (c) PASS · (d) none — its §2.1b
+candidacy re-opens; a campaign is a SEPARATE owner grant (D52 landed, C-12
+arming; D59 issued). **Rule 28d:** NYISO matrix shard keeper/gates stamp
+carries the marker state; no cell verdict moved; the shard's pre-existing
+missing comma at the `egrid_steam_collapse_heat_rates` line (the nyiso-172
+class — the file did not `node --check`, so the NYISO column was not
+rendering) repaired by one character, disclosed. **Test pin moved with the
+marker:** `test_marker_state_reflects_committed_markers` (NYISO withdrawn →
+complete). **Pre-existing, not this lane's:**
+`test_walk_inputs_trivial_single_year` (integration-marked) fails identically
+at HEAD. **Spent: NOTHING. Solved: NOTHING.** Record:
+`docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md`.

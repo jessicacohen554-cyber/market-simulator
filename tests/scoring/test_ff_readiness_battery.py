@@ -262,11 +262,20 @@ def test_marker_state_reflects_committed_markers():
     # in the #4516 merge (2026-08-31); the assertions were corrected 2026-09-02
     # by the fast-tier repair lane. `withdrawn` is kept distinct from `none`
     # for the reason given above.
-    for iso in ("ERCOT", "NEISO", "PJM"):
+    #
+    # NYISO RE-DECLARED `complete` 2026-09-05 (owner ruling Q38, 2026-09-04,
+    # capx ledger §0af amendment 1 / §3; records lane D56-R) on the first NYISO
+    # keeper lineage to read CALIBRATED (2026-09-05-nyiso-189-steam-identity),
+    # exactly per the withdrawn block's own `reentry` clause — its third grant.
+    # The 2026-08-30 withdrawal record is nested WHOLE beneath the new entry
+    # (`complete.NYISO.prior_withdrawal_2026_08_30`), so `withdrawn` now holds
+    # CAISO alone. Same desync class as every move above; the assertion moves
+    # with the marker in the same commit this time
+    # (docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md).
+    for iso in ("ERCOT", "NEISO", "NYISO", "PJM"):
         assert B._marker_state(iso)["marker"] == "complete", iso
     assert B._marker_state("MISO")["marker"] == "none"
-    for iso in ("CAISO", "NYISO"):
-        assert B._marker_state(iso)["marker"] == "withdrawn", iso
+    assert B._marker_state("CAISO")["marker"] == "withdrawn"
 
 
 def test_t1f_verdict_reads_ff2d_hold():
@@ -298,8 +307,12 @@ def test_build_registration_scorecard_no_iso_gate_open():
     # gate B (FF-2D T1-F) reads HOLD for every ISO. That is the invariant worth
     # pinning: a backcast marker alone never opens the forecast gate, and a
     # withdrawn one does not either.
+    # [2026-09-05, D56-R] NYISO RE-DECLARED `complete` (owner ruling Q38 on
+    # 2026-09-05-nyiso-189-steam-identity) — Gate A is GREEN for NEISO and
+    # NYISO; the invariant pinned here is unchanged: gate B still reads HOLD on
+    # the FF-2D key, so neither gate opens.
     assert sc["NEISO"]["gate_a_backcast"]["marker"] == "complete"
-    assert sc["NYISO"]["gate_a_backcast"]["marker"] == "withdrawn"
+    assert sc["NYISO"]["gate_a_backcast"]["marker"] == "complete"
     for iso in ("NEISO", "NYISO"):
         assert sc[iso]["gate_b_t1f"]["determination"] == "HOLD", iso
         assert not sc[iso]["gate_open"], iso
