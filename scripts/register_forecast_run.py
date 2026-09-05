@@ -275,6 +275,10 @@ VERDICT_MAP = {
     "nyiso-2021-2025-realized-t1h-d52-curveon": "nyiso-t1h-d52-curveon",
     # capx D59 (2026-09-05): the NYISO locality-half A/B arm (the D52 curve-ON
     # posture + locality_capacity_curves), suffixed; the bare key is untouched.
+    # The D52 curve-ON recipe replayed at the D59 HEAD (the bare key moved upstream
+    # between the D52 merge and this HEAD, DESIGN-capx-d59 §8.4), field OFF — the
+    # like-for-like comparator and the ledger-level byte-inertness proof.
+    "nyiso-2021-2025-realized-t1h-d59-control": "nyiso-t1h-d59-control",
     "nyiso-2021-2025-realized-t1h-d59-locality": "nyiso-t1h-d59-locality",
     # capx-D45R (2026-09-04), the D45 close-out at HEAD plus D46 Stages 2 and 3
     # (owner rulings Q33 + Q35). The PJM live-posture replay takes the bare key;
