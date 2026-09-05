@@ -11993,3 +11993,39 @@ Evidence: `docs/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md`,
 `scripts/gen_nyiso191_attestation.py`, probes
 `scripts/probes/nyiso191_ccchp_scope_phase0.py` / `nyiso191_stgas_placement.py`,
 `tests/curation/test_derive_cc_capacity_reconcile_scope.py`.
+
+## 2026-09-05 — D56-R2 (capx governance records lane, ZERO SOLVES): NYISO `frontier` RE-DECLARED on `2026-09-05-nyiso-189-steam-identity` — owner ruling Q39 (card C-10), both instruments back as the 2026-08-30 withdrawal removed both; four-instrument alignment reads {ERCOT, NEISO, NYISO, PJM} on every leg; nothing spent
+
+**Keeper:** `2026-09-05-nyiso-189-steam-identity`, untouched (no promotion field
+edited). **Re-verified first, artifact-only** (`scripts/calibration_verdict.py
+--run-id`, at origin/main `ee7754c1` and again at `8342d74d` after the rebase):
+CALIBRATED — C1 14/14 (free 10/10), C2 / C3a (+4.9 / +1.7 / −8.3 %) / C3b
+(0.119 / 0.166 / 0.177) / C4 / C6 / C8 PASS; C3c the lone ledgered caveat
+(model 3 / 0 / 4 h vs RT 10 / 13 / 42 h > $300, rubric v3.3 standing rule, NOT a
+PASS). **The ruling, verbatim** (capx ledger §3 Q39): "RULED 2026-09-05 (r#37) —
+RE-DECLARE FRONTIER ON nyiso-189 (both instruments, as the withdrawal removed
+both)." — card C-10 option A, the recommendation R-AG asked for. **Shard:**
+`keepers/NYISO.json` gets a live `frontier` block (declared 2026-09-05,
+`keeper_at_declaration` nyiso-189, `by` = Q39 verbatim, `basis` = Q39 restoring
+ASSESSMENT-nyiso154-frontier-2026-08-22.md §3/§2/§4, `not_final`, `recorded_by`);
+the reverted 2026-08-23 ratification block (its 2026-08-30 currency annotation
+and `reverted_2026-08-30` inside it) moves WHOLE to `frontier_withdrawn_2026_08_30`
+with one dated `superseded` field appended, nothing deleted; `frontier_cleared`
+(2026-08-06) untouched beneath — the five-layer genealogy declared 07-31 →
+cleared 08-06 → ratified 08-23 → reverted 08-30 → re-declared 09-05. **Marker:**
+`complete.NYISO.frontier_basis` NONE CLAIMED → the declaration (keeper + date +
+Q39 citation), prior text carried as a dated "WAS:" clause; a dated append to the
+file-level note; every other byte of the entry, every other ISO, `withdrawn`,
+`final`, `intake_log` asserted identical. `status/NYISO.js` rebuilt because the
+auditor's S1 check asked (only `keeper.frontier` + timestamp moved).
+**Auditor / guards:** `audit_keepers --iso NYISO` PASS 0/0; `check_gate_a_provenance`
+OK 6/6 with NO gate-(a) leaf moved (frontier is not a gate-(a) input;
+`program-status.json` untouched); `check_mechanism_matrix` OK, no re-stamp
+asked; `legitimacy_diagnostics --keepers` D-6/D-9 PASS; 100 scoring tests pass.
+**Four-instrument alignment at `8342d74d`:** frontier · `complete` · gate-(a) ·
+ISO-level determination ALL read {ERCOT, NEISO, NYISO, PJM} — the split D56-R
+recorded on the frontier leg alone is closed by the owner's choice; stated for
+the audit desk (Z-4), whose board this lane does not edit. **Frontier is NOT
+`final`:** `final` still empty, the freeze untouched (locked tier frozen for
+every ISO), 2019 / H1-2026 never granted. **Spent: NOTHING. Solved: NOTHING.**
+Record: `docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`.
