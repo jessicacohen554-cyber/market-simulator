@@ -8648,6 +8648,7 @@ def run_replay_bundle(
     caiso_st_gas_committed_measured: bool | None = None,
     caiso_st_gas_peak_measured: bool | None = None,
     caiso_ct_peaker_committed_measured: bool | None = None,
+    gas_offer_margin: bool | None = None,
     nearby_fuel_price_zone_donor_guard: bool | None = None,
     fleet_state_from_eia860: bool | None = None,
     caiso_citygate_spot_coverage: bool | None = None,
@@ -8709,6 +8710,14 @@ def run_replay_bundle(
             recipe's own value). Composes exactly like the two overrides above,
             so the miso-200 A/B solves BOTH legs from the same committed keeper
             recipe and the delta is provably the single flag.
+        gas_offer_margin: Override the bundle's setting for the gas-offer
+            NET-REVENUE MARGIN form
+            (``ScenarioConfig.gas_offer_net_revenue_margin``; ``None`` keeps
+            the recipe's own value). Composes exactly like the overrides
+            above, so the caiso-251 fuel-coupling-form A/B solves BOTH arms
+            from the SAME committed control recipe rather than re-expressing a
+            keeper flag-by-flag (caiso-243 §10.4 / caiso-244 §7.7 — a recipe is
+            never rebuilt by parameter name).
         enable_legacy_p2: Unlock the ARCHIVED P2 commitment pass when the
             REPLAYED RECIPE arms it (see :func:`enforce_legacy_p2_kwargs`).
             Without it a bundle recorded with ``commitment=true`` is a hard
@@ -8745,6 +8754,8 @@ def run_replay_bundle(
         kwargs["caiso_ct_peaker_committed_measured"] = (
             caiso_ct_peaker_committed_measured
         )
+    if gas_offer_margin is not None:
+        kwargs["gas_offer_margin"] = gas_offer_margin
     # caiso-243: the two F923 fallback guards compose exactly like the
     # overrides above, so the structural arm is provably the committed keeper
     # recipe plus these flags (``None`` keeps the recipe's own value).
@@ -12597,6 +12608,12 @@ def main() -> None:
                 args.caiso_ct_peaker_committed_measured
                 if "--caiso-ct-peaker-committed-measured" in sys.argv
                 or "--no-caiso-ct-peaker-committed-measured" in sys.argv
+                else None
+            ),
+            gas_offer_margin=(
+                args.gas_offer_margin
+                if "--gas-offer-margin" in sys.argv
+                or "--no-gas-offer-margin" in sys.argv
                 else None
             ),
             nearby_fuel_price_zone_donor_guard=(
