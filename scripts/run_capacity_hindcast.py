@@ -882,10 +882,12 @@ def build_config(
                 "pjm_demand_response_supply": pjm_demand_response_supply,
                 # capx D57: the capacity-market supply-clearing gate (the PJM
                 # clearing half, DESIGN-capx-d54 §7.1) — a {iso: bool} row
-                # for THIS ISO only; default None; None (omit) or an explicit
-                # --no-... inherits the shipped None default (both are the
-                # unarmed posture, one key), True arms the D57 A/B measurement
-                # posture (distinct cache key). Requires the curve gate ON.
+                # for THIS ISO only; default None. None (omit) inherits the
+                # shipped posture (PJM: ARMED via its ISOConfig overrides since
+                # the 2026-09-05 owner ruling; every other ISO off); True arms
+                # it explicitly; an explicit --no-... is passed OUTSIDE this
+                # None-drop dict (below) so it reaches the OFF posture and the
+                # D45-R control key. Requires the curve gate ON.
                 "capacity_market_supply_clearing_by_iso": (
                     {iso: True} if capacity_market_supply_clearing else None
                 ),
@@ -1044,6 +1046,19 @@ def build_config(
                     None if str(ptc_window).lower() == "none" else int(ptc_window)
                 )
             }
+        ),
+        # capx D57: an EXPLICIT ``--no-capacity-market-supply-clearing`` must be
+        # able to reach the clearing-OFF posture for an ISO whose ISOConfig
+        # arms the gate by default (PJM, owner ruling 2026-09-05). ``None`` is
+        # the off value, so it cannot ride the None-drop dict above (it would
+        # read as "not passed" and the ISO override would re-arm it — the MISO
+        # clean-tier caveat class); passed explicitly here it is recorded as a
+        # caller-set field and wins over the override (OVERRIDE-FIX), holding
+        # the D45-R control key c6091bd5b62bbc3f. Omitted flag → inherit.
+        **(
+            {"capacity_market_supply_clearing_by_iso": None}
+            if capacity_market_supply_clearing is False
+            else {}
         ),
     )
 
@@ -1588,10 +1603,13 @@ def main(argv: list[str] | None = None) -> int:
             "installed-fleet census; entry and storage read the clearing "
             "price as price takers. Sets capacity_market_supply_clearing_"
             "by_iso[<iso>]=True; requires the CR-1 curve gate ON for the ISO "
-            "(shipped ON for PJM). OMIT or --no-... inherits the shipped "
-            "default (off, owner-armed only); --capacity-market-supply-"
-            "clearing arms it (distinct cache key). Generic in form, PJM-scoped "
-            "by data (rule 25)."
+            "(shipped ON for PJM). OMIT inherits the shipped posture — ARMED "
+            "for PJM through its ISOConfig default_scenario_overrides (owner "
+            "ruling 2026-09-05, with the two D48 fields; off elsewhere); "
+            "--no-capacity-market-supply-clearing is the explicit OFF control "
+            "(the D45-R bare key c6091bd5b62bbc3f when the D48 fields are also "
+            "passed --no-...); --capacity-market-supply-clearing arms it "
+            "explicitly. Generic in form, PJM-scoped by data (rule 25)."
         ),
     )
     parser.add_argument(

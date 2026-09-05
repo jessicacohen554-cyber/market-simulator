@@ -1192,7 +1192,50 @@ def _pjm_config() -> ISOConfig:
     # Pricing Model (RPM) capacity market provides revenue outside energy,
     # so the energy-only VOLL is lower than ERCOT's.
     # Source: PJM Manual 11 §2.3.1, FERC Order 831.
-    return ISOConfig(name="PJM", zones=zones, links=links, voll=2000.0)
+    return ISOConfig(
+        name="PJM",
+        zones=zones,
+        links=links,
+        voll=2000.0,
+        # THE PJM CAPACITY-MARKET CLEARING CONFIGURATION — ARMED FOR PJM by
+        # OWNER RULING 2026-09-05 (in-session, on the capx D57 A/B:
+        # docs/handoffs/FINDING-capx-d57-2026-09-05.md §8, "if structural
+        # integrity improves but gates regress that may still be a keeper"),
+        # executing D48 §8's JOINT condition — the accreditation-design
+        # devintage and DR-as-supply are never armed alone, and the clearing
+        # half is the mechanism that prices the budget they make consistent.
+        # Three gates, one posture: (i) pjm_accreditation_design_vintage —
+        # UCAP + the published pre-CIFP FPR before DY 2025/26, ELCC class +
+        # post-CIFP FPR from it (capx D48); (ii) pjm_demand_response_supply —
+        # the published OFFERED DR UCAP counted as supply, the peak un-netted
+        # (capx D48); (iii) capacity_market_supply_clearing_by_iso[PJM] — the
+        # fleet's net-ACR sell-offer stack cleared against the published VRR
+        # curve, the screen's failing set the auction's uncleared set (capx
+        # D57, DESIGN-capx-d54). Measured: the cleared position lands within
+        # 0.5 / 1.0 / 2.8 pts of the published BRA cleared position for
+        # 2022/23-2024/25 (the census evaluation sat +8.5 / +4.1 / -4.3 pts
+        # away), the identity holds in every solved screen, the price reads
+        # 1.5-5.7x the published because the CT / ST / oil E&AS operand is zero
+        # in the hindcast prices (the named successor, the D12 scarcity-basis
+        # lane), and FC-3's COMPOSITION reads worse (steam over-exits, coal
+        # under-exits; recall 17 -> 12/20) while the total and the HOLD do not
+        # move — accepted by the owner on rule 1 [R-STRUCT]. Armed HERE, not by
+        # flipping the shared ScenarioConfig defaults, so only PJM's forecast
+        # keys move (the bare pjm-t1h recipe key becomes arm A's
+        # f0e050e820c1159a — the same payload arm A hashed explicitly) and
+        # every other ISO's key and every backcast keeper's key is
+        # byte-identical: the three dataclass defaults STAY off, __post_init__
+        # still coerces them in a plain backcast, and an explicit caller value
+        # (--no-pjm-accreditation-design-vintage etc.) still wins (OVERRIDE-FIX).
+        # Rule 25 [R-ISO-SCOPE]: PJM ONLY — the mechanisms are generic in form
+        # and PJM-scoped by data; every other ISO is byte-identical and arming
+        # one is its own decision on its own evidence (matrix cells stay U/n-a).
+        default_scenario_overrides={
+            "pjm_accreditation_design_vintage": True,
+            "pjm_demand_response_supply": True,
+            "capacity_market_supply_clearing_by_iso": {"PJM": True},
+        },
+    )
 
 
 def _nyiso_config() -> ISOConfig:
