@@ -1600,6 +1600,7 @@ def estimate_capacity_value(
     iso: str,
     reserve_position: float | None = None,
     year: int | None = None,
+    locality_prices_by_zone: dict[str, float] | None = None,
 ) -> float:
     """Resource-adequacy capacity value per MW-yr for the next unit built.
 
@@ -1636,6 +1637,24 @@ def estimate_capacity_value(
     base_price = design.capacity_price_per_firm_mw_yr(
         config, reserve_position, iso=iso, year=year
     )
+    # capx D59 (locality_capacity_curves): storage entry is distributed across
+    # zones by load_share, so the marginal build's expected capacity price is
+    # the load-share-weighted max(NYCA, locality) over zones (ICAP Manual
+    # §5.15.2 per zone; the _deliverability_capacity_factor shape). None /
+    # empty ⇒ byte-identical.
+    if locality_prices_by_zone and design.capacity_market:
+        _iso_cfg = get_iso_config(iso)
+        _num = 0.0
+        _den = 0.0
+        for _z in _iso_cfg.zones:
+            if _z.load_share <= 0.0:
+                continue
+            _den += _z.load_share
+            _num += _z.load_share * max(
+                base_price, float(locality_prices_by_zone.get(_z.name, 0.0))
+            )
+        if _den > 0.0:
+            base_price = _num / _den
     if base_price <= 0.0:
         return 0.0
 
@@ -1824,6 +1843,7 @@ def apply_storage_new_entry(
     deliverability_headroom: dict[str, float] | None = None,
     endogenous_as_revenue_per_mw_yr: float | None = None,
     reserve_position: float | None = None,
+    locality_prices_by_zone: dict[str, float] | None = None,
     entry_reprice=None,
 ) -> list[StorageUnit]:
     """Add storage whose stacked value beats its annualized cost.
@@ -1951,7 +1971,13 @@ def apply_storage_new_entry(
         )
         capacity_value = (
             estimate_capacity_value(
-                tech_name, fleet_mw, config, iso, reserve_position, year=year
+                tech_name,
+                fleet_mw,
+                config,
+                iso,
+                reserve_position,
+                year=year,
+                locality_prices_by_zone=locality_prices_by_zone,
             )
             * deliverability_factor
         )
