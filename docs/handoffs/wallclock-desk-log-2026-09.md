@@ -16,14 +16,14 @@ collision-map files) · `needs-revert` (strayed into another item's file) · `me
 
 | item | lever | prompt issued | model | worker session | branch | PR | gate state | merged sha | measured s/yr |
 |---|---|---|---|---|---|---|---|---|---|
-| A-1 | vectorize `cod_ramp._load_cod_map` | 2026-09-05 22:32 UTC (wave 1a) | claude-opus-5 | `session_01XqXmNuy2TJAAigPy7bAYWq` | `claude/wc-a1-cod-map-vectorize` | — | issued | — | — |
-| A-2 | eGRID parquet mirror (both call sites) | 2026-09-05 22:32 UTC (wave 1b) | claude-opus-5 | `session_01B1av3LGXp9gjSBoqg85iFg` | `claude/wc-a2-egrid-mirror` | — | issued | — | — |
-| A-3 | band-sidecar vectorization + sidecars on the clock | 2026-09-05 22:45 UTC (wave 1c, handed to owner) | claude-fable-5-1 | owner-launched | `claude/wc-a3-band-sidecar-clock` | — | issued | — | — |
-| A-6 | `malloc_trim` at the cold-P1 seam | 2026-09-05 22:45 UTC (wave 1d, handed to owner) | claude-opus-5 | owner-launched | `claude/wc-a6-malloc-trim-p1-seam` | — | issued | — | — |
+| A-1 | vectorize `cod_ramp._load_cod_map` | 2026-09-05 22:32 UTC (wave 1a) | claude-opus-5 | `session_01XqXmNuy2TJAAigPy7bAYWq` | `claude/wc-a1-cod-map-vectorize` (deleted after merge) | #4875 | **merged** (code + unit test only; baseline-doc row + CHANGELOG entry NOT landed — owed, see §2.5) | `fc05c5c3` (commit `be598ead`) | 16.8 → 0.41 s per process on the COD map (assessment §6.2; PR body empty, no phase line on record) |
+| A-2 | eGRID parquet mirror (both call sites) | 2026-09-05 22:32 UTC (wave 1b) | claude-opus-5 | `session_01B1av3LGXp9gjSBoqg85iFg` | `claude/wc-a2-egrid-mirror` | #4876 | **pr-open, CONFLICT** in `CHANGELOG.md` vs main (`mergeable_state: dirty`); gates present (three `frame.equals` True on the real workbook, 8 fast-tier tests, NEISO byte gate check [1] PASS, check [4] pre-existing by control); class BYTE-IDENTICAL; diff confined to the collision map (.gitignore, CHANGELOG, baseline doc, `egrid_sheets.py`, `fleet/eia860.py`, `zone_assignment.py`, test) | — | three `read_excel` calls 27.80 → 0.219 s; NEISO year-1 `data_prep` 71.3 → 46.1 s (−25 s, once per process) |
+| A-3 | band-sidecar vectorization + sidecars on the clock | 2026-09-05 22:45 UTC (wave 1c, handed to owner) | claude-fable-5-1 | owner-launched (`session_016yZoyAbBuop3K2kd8Bbfxo`) | `claude/wc-a3-band-sidecar-clock-hfflwe` | #4858 (code) + #4874 (evidence) | code **merged** via #4858; evidence PR #4874 **pr-open, CONFLICT** vs main (`dirty`, CHANGELOG); gates present (unit test 14/14, NEISO 3-yr byte gate check [1] PASS, 21 sidecars + dispatch frames sha-identical, check [4] pre-existing by control); class BYTE-IDENTICAL; `timing.py` untouched | `2b9e4219` (commit `4d5a59b2`) | band Categorical 15.63 → 0.16 s; writer 16.8 → 4.6 s on the NEISO 2023 frame; phase line now shows `sidecars` 8.0/5.9/7.2 s (2023/24/25) |
+| A-6 | `malloc_trim` at the cold-P1 seam | 2026-09-05 22:45 UTC (wave 1d, handed to owner) | claude-opus-5 | owner-launched | `claude/wc-a6-malloc-trim-p1-seam` | — | issued — **no branch and no PR on origin as of 2026-09-06 00:05 UTC** (not yet launched?) | — | — |
 | A-5 | held CAMPD normalization (PERF-B change f) | desk action 2026-09-05 (wave 1e) | — | — | `claude/perf-b-apply-nabnpi` | #4579 | **merged 2026-09-02** (see §2.1) | `60a6d539` | PJM/MISO `bench` −64–71 % per PR #4579 |
-| B-0 | P1 basis-seed owner memo (+ the missing ERCOT bench) | 2026-09-05 22:45 UTC (wave 1f, handed to owner) | claude-fable-5-1 | owner-launched | `claude/wc-b0-p1-seed-memo` | — | issued | — | n/a (docs) |
-| B | P1 basis seed on the cold-rebuild route | wave 2a — blocked on A-3 merged, A-6 merged, B-0 memo SIGNED | claude-fable-5-1 | — | `claude/wc-b-p1-basis-seed` | — | blocked | — | — |
-| A-4 | on-disk memo for the remaining year-1 caches | wave 2b — blocked on A-1 merged, A-2 merged | claude-opus-5 | — | `claude/wc-a4-year1-memo` | — | blocked | — | — |
+| B-0 | P1 basis-seed owner memo (+ the missing ERCOT bench) | 2026-09-05 22:45 UTC (wave 1f, handed to owner) | claude-fable-5-1 | owner-launched | `claude/wc-b0-p1-seed-memo-9euk97` | #4862 (draft) + #4880 (bench) | **merged**, memo on main with the ERCOT forward-2025 OFF/ON bench and the §3/§6.3 placeholders filled; **UNSIGNED** — the Owner decision block (memo L366–377) has no box ticked and no signature (§2.6) | `8209201c` (commit `2d0900d0`) | bench: seed ON `solve_p1` 287.1 → 139.3 s, P1 iters 273,893 → 78,856, objective identical, total gen Δ 0 MWh, max Δ price 1.1e-12, 0 dual-degenerate hours, 16 unit-hours marginal-tie reshuffle; year total 717.4 → 581.5 s |
+| B | P1 basis seed on the cold-rebuild route | wave 2a — blocked on A-3 merged (✓ code), A-6 merged (✗ not started), B-0 memo SIGNED (✗ unsigned) | claude-fable-5-1 | — | `claude/wc-b-p1-basis-seed` | — | blocked (2 of 3 blockers open) | — | — |
+| A-4 | on-disk memo for the remaining year-1 caches | wave 2b — blocked on A-1 merged (✓), A-2 merged (✗ #4876 conflicted) | claude-opus-5 | — | `claude/wc-a4-year1-memo` | — | blocked (1 of 2 blockers open) | — | — |
 | 3a | re-baseline anchor table on main | wave 3 — after every wave-1/2 PR merged or closed | claude-opus-5 | — | `claude/wc-3a-rebaseline` | — | blocked | — | n/a (docs) |
 
 ## 2. Decisions and findings
@@ -56,11 +56,12 @@ worker measures ERCOT__forward 2025 seed OFF vs ON through a scratch monkeypatch
 plus P1 seconds / iterations, and fills both placeholders in the assessment doc in the same
 docs-only PR. Model raised from "any" to Fable because the driver wraps solver internals.
 
-### 2.3 Wave-2 note for the 2a prompt
+### 2.3 Wave-2 note for the 2a prompt — CORRECTED
 
-`tests/test_xyear_warmstart_default.py`, which prompt 2a says to extend, does not exist at
-HEAD (no `tests/*xyear*` or `tests/*warm*` file). The 2a prompt will say "create it" rather
-than "extend it", covering the existing cross-year switch family as well as the new one.
+The desk first recorded here that `tests/test_xyear_warmstart_default.py` does not exist at
+HEAD. That was a root-path lookup error: the file is
+`tests/unit/pipeline/test_xyear_warmstart_default.py` (10 tests), as the B-0 memo's §8
+checklist points out. Prompt 2a extends that file, as the charter says.
 
 ### 2.4 Desk mechanics
 
@@ -78,6 +79,35 @@ than "extend it", covering the existing cross-year switch family as well as the 
 * The desk does not approve or merge; the owner merges. Wave-2 blockers are checked with
   `git log origin/main`, never PR state.
 
+### 2.5 A-1 landed without its docs
+
+PR #4875 merged with `cod_ramp.py` + `tests/unit/data/test_cod_ramp.py` only; the charter's
+dated baseline-doc row and CHANGELOG entry are not on main and no `wc-a1` branch survives
+on origin. The PR body is empty, so the NEISO phase line and the merge-base byte-gate
+reading exist only in the worker's transcript. Owed: a docs-only follow-up PR carrying the
+row (with the before/after `data_prep`), the CHANGELOG entry and the byte-gate reading.
+
+### 2.6 Wave-1 collision found: CHANGELOG.md
+
+Both evidence PRs (#4876 A-2, #4874 A-3) are `dirty` against main on `CHANGELOG.md` —
+every wave-1 item appends to the same file, and main moved ~30 merges in the hour. The
+collision map listed source files only; CHANGELOG was the one shared file. Fix per PR:
+merge `origin/main` into the branch, keep BOTH entries, push. No rebase (charter: never
+rewrite history on a pushed branch). Wave-2 prompts will say so up front.
+
+### 2.7 B-0 memo is on main and neutral; the signature is the only open blocker for 2a
+
+Measured on ERCOT forward config 2025 (the C-1a two-run year), determinism pin, OFF vs ON:
+`solve_p0` 327.8 vs 335.4 s (same 273,083 iters, same objective); `solve_p1` **287.1 →
+139.3 s**, iters **273,893 → 78,856**, P1 objective identical to 16 digits, total
+generation Δ 0 MWh, served load / slack / dump / `reserve_price` bit-identical, max zonal
+price Δ 1.1e-12 $/MWh, 0 dual-degenerate hours of 61,320, 16 unit-hours of marginal-tie
+reshuffle across 11 of 2,335 units; basis export 16.9 s + apply 3.0 s; year `total`
+717.4 → 581.5 s; maxrss 12.46 → 13.07 GB. That is the neutrality class
+`docs/cross-year-warmstart.md` defines. The memo's §7 offers (A) FLIP / (B) DO NOT FLIP;
+the owner ticks one and signs at memo L371–377. The desk issues 2a only after that AND
+A-6 is on main.
+
 ## 3. Timeline
 
 | when (UTC) | event |
@@ -87,3 +117,4 @@ than "extend it", covering the existing cross-year switch family as well as the 
 | 2026-09-05 22:35 | 1e resolved: PR #4579 already merged (§2.1) |
 | 2026-09-05 22:40 | 1c / 1d / 1f launches held for approval |
 | 2026-09-05 22:44 | owner: desk must not launch sessions — prompts handed over as code blocks instead; 1c/1d/1f issued that way; first PR check-in scheduled +60 min |
+| 2026-09-06 00:05 | sweep #1: A-1 merged (#4875, docs owed); A-3 code merged (#4858), evidence #4874 conflicted; A-2 #4876 open + conflicted; B-0 merged (#4880) unsigned; A-6 not started. Follow-up prompts handed to owner |
