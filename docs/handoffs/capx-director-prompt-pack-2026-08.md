@@ -5907,6 +5907,79 @@ If both preconditions hold, the charter runs unchanged. Note for the finding eit
 NYISO keeper this golden is cut against, by id, and the posture (armed fields) resolved at HEAD.
 ```
 
+## D64 — the D50 FOURTH SEAM: the CCS retrofit fixed-cost legs per captured tonne (r#40; zero-solve Phase 0; D50 §8 Disclosure 1)
+
+```
+You are the D64 session of the capacity-expansion track — a Phase-0 lane, zero solves, docs
+only. D49 named three construction seams in the CCS retrofit screen and D50 built them (capex
+∝ captured CO2 against the ATB reference host; CHP hosts excluded; the p55470 flag), and the
+owner armed the repaired posture as the default (Q42, executed by D60). D50-R's finding §8
+Disclosure 1 states the seam it did NOT close, at the gate: the retrofit's ΔFOM
+(`fixed_om_gas_cc_ccs` − the host's FOM, $35,000/MW-yr on the D41 basis) and the capture VOM
+adder stay REFERENCE-HOST-SIZED per MW, so they dilute per captured tonne as the host's
+emission rate rises — the clearing threshold moves (`er ≥ ~0.46` → `~0.58–0.63` at carbon 0)
+rather than vanishing, and D50's PJM 2029 residual (909.8 MW, two tranches at 1.02–1.03× the
+scaled bar) sits on exactly that dilution. You adjudicate the fourth seam the way D49 §1
+adjudicated the first three: what the ATB / NETL basis says these two legs scale with, what a
+faithful construction is, zero DOF, and what it would do to the committed D50 / D60 ledgers —
+without a solve, without a coefficient.
+
+DATA PROFILE: code
+MODEL ASSIGNMENT: Fable (a construction adjudication; the arming consequence is a re-key of
+every forecast bare key under the (b′-1) pattern if it is ever armed).
+BRANCH: claude/capx-d64-ccs-fixedcost-seam — FRESH off origin/main, rebase before every push.
+
+READ FIRST: FINDING-capx-d50-2026-09-04.md §1 (the census), §4 (PJM: the 2029 converters at
+1.023 / 1.030 of the bar), §8 Disclosure 1 IN FULL · FINDING-capx-d49-2026-09-04.md §1.4–§1.5
+(the three seams and how each was sized to the reference host) · FINDING-capx-d41-* (the ATB
+basis, dollar-year, the two fixed-cost legs' re-identification — the D30 defect and its repair)
+· FINDING-capx-d30-* (the original 45Q-pace question) · src/market_sim/model/capacity_evolution/
+ccs.py::apply_ccs_retrofit (where ΔFOM and the VOM adder enter the margin; how `captured_ref`
+scales capex and does NOT scale these two) · the constants that carry `fixed_om_gas_cc_ccs`,
+the capture VOM adder and `NEW_ENTRY_COSTS["gas_cc"]` (docs/parameter-citations.md rows) · the
+ATB 2024 gas-CC-CCS entries and NETL's capture-plant cost basis (fetch, sha256, cite — the
+question is whether FOM and VOM of a capture island are published per kW or per tonne, and
+what the reference host's captured tonnage was when the per-kW number was formed) · the D60
+`miso-t1f` / `nyiso-t1f` ledgers and (when landed) D60-R2's `pjm-t1f` / `caiso-t1f` / GOLDEN-3
+ledgers (the post-flip CCS rows you re-screen under the fourth-seam construction, zero-solve,
+exactly as D49 §1.2 reconstructed 14 rows and D50 §1 ran the census).
+
+THE WORK (docs/handoffs/FINDING-capx-d64-<date>.md, one document, zero solves):
+1. THE BASIS: for each of the two legs, what the source publishes it as (per kW-yr of host? per
+   tonne captured? per MWh of host output?), at what reference host (heat rate, emission rate,
+   capture rate), and therefore what it SCALES WITH under rule 5 / rule 13 when the host
+   differs from the reference. State the construction that follows — the same shape D50 used
+   for capex (`× captured_t_per_mwh / captured_ref`), or a different one if the source says so
+   — with zero free parameters (every factor a cited constant).
+2. THE ZERO-SOLVE RE-SCREEN: on the committed post-Q42 ledgers (every ISO whose CCS rows exist:
+   NEISO under RGGI — the cap-bound case; PJM 2029's two converters; ERCOT/MISO's zero), the
+   retrofit margin per candidate row under the fourth-seam construction beside the shipped
+   one — how many rows change sign, in which direction (rule 14: a faithful per-tonne sizing
+   makes retrofits HARDER on high-`er` hosts and EASIER on low-`er` hosts — state the expected
+   asymmetry before computing it), and whether the PJM 2029 residual closes. The NEISO cap
+   question (does a per-tonne ΔFOM unbind the 3 GW/yr cap under RGGI, or is the avoided-carbon
+   leg still per-tonne-dominant?) answered from the arithmetic.
+3. THE BLAST RADIUS, stated not measured: which forecast bare keys a default flip would re-key
+   ((b′-1): every key, as D50 §6.1 showed) and which ledgers' behaviour can move (only horizons
+   reaching 2028 with CCS rows — reuse D50 §6.2's census structure, updated for the D60 keys).
+4. THE BUILD CHARTER (for the director to issue as D65 if warranted): the field (repo
+   convention; default-off; one row + six cells), the seam in `ccs.py`, the tests, the A/B plan
+   (a t1f arm on the ISO where the re-screen moves the most rows, ~12–28 min; GOLDEN-3 only if
+   NEISO's cap answer says it can move), the STOPs (any row moving in the rule-14-wrong
+   direction; any capex-seam row moving — the fourth seam must leave D50's three untouched).
+   If the basis says the legs are ALREADY per-tonne-correct at the reference host and the
+   dilution is a second-order effect below the cap-packing unit, say so — a "no build" is a
+   valid Phase-0 result and closes the disclosure.
+
+GUARDRAILS: zero solves; no ScenarioConfig field; no constant changed; rules 5, 13, 14, 21, 25
+(a posture, no ISO's fitted number); rule 27 does not bind (docs only). COLLISION: none — docs
+only; you read D60-R2's ledgers as they land (rebase before every push) and never write a
+forecast surface.
+
+EXIT: the finding with the basis, the construction, the zero-solve re-screen, the blast radius,
+and the D65 build charter draft (or the "no build" closure); pushed.
+```
+
 ## D61 — the PJM CT / ST / oil E&AS operand: Phase 0, zero-solve (r#38; D57 §4's named successor)
 
 ```
