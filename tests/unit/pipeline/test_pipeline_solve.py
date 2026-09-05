@@ -209,3 +209,40 @@ def test_swcap_clip_gates_off_outside_ercot():
     assert _swcap_clip_level(_Cfg()) is None  # default-off path
     lvl = _swcap_clip_level(_ClipCfg())
     assert lvl is not None and 4999.0 < lvl < 5000.0
+
+
+def test_result_totals_count_every_build_and_both_solves(monkeypatch):
+    """C-2 (PERF-B session 3): ``build_s`` is EVERY matrix build of the pass.
+
+    Cold path (WARMSTART=0): two models are built, so ``build_s`` is the sum of
+    both ``build_time``s. Warm path: one model, so ``build_s`` is its build
+    (which ``p1.build_time`` also names). The per-pass log entry carries the
+    same three numbers as the returned result.
+    """
+    from market_sim.pipeline import solve as solve_mod
+
+    gens, fa, demand, mc_base, dk = _trivial_inputs()
+
+    monkeypatch.setenv("MARKET_SIM_WARMSTART", "0")
+    solve_mod.reset_pass_timing_log()
+    cold = run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg())
+    (entry,) = solve_mod.take_pass_timing_log()
+    assert cold.build_s == cold.r0.build_time + cold.p1.build_time
+    assert cold.solve_p0_s == cold.r0.solve_time
+    assert cold.solve_p1_s == cold.p1.solve_time
+    assert (entry["build_s"], entry["solve_p0_s"], entry["solve_p1_s"]) == (
+        cold.build_s,
+        cold.solve_p0_s,
+        cold.solve_p1_s,
+    )
+    assert "p0_build" not in cold.markup_parts
+
+    monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+    solve_mod.reset_pass_timing_log()
+    warm = run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg())
+    (entry,) = solve_mod.take_pass_timing_log()
+    assert warm.build_s == warm.p1.build_time  # the one shared model
+    assert entry["build_s"] == warm.build_s
+    # The interior components plus every build and both solves are the whole
+    # wall the caller brackets, so the residual identity closes by construction.
+    assert sum(warm.markup_parts.values()) >= 0.0

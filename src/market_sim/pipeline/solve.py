@@ -68,17 +68,23 @@ from market_sim.pipeline.basis_cache import persist_year_basis, seed_year1_basis
 
 logger = logging.getLogger(__name__)
 
-# --- Per-pass timing log (PERF-B session 2) ---------------------------------
+# --- Per-pass timing log (PERF-B session 2; the accounting since session 3) --
 # Every ``run_energy_solve`` call appends its build / P0 / P1 solve seconds and
 # its ``markup_parts`` here. The backcast orchestrator needs this because a year
 # is not always ONE energy solve: the ercot-221 adaptive-expectation offer runs
-# a SECOND P1 pass, and ercot-230's fixed point iterates. Its ``markup`` residual
-# subtracts only the LAST pass's build and two solve times (``_timing`` reads the
-# final ``EnergySolveResult``), so every earlier pass's ENTIRE build and both
-# HiGHS runs are booked as ``markup`` — the single largest term on an ERCOT year,
-# and invisible without this log. A bounded deque so a caller that never drains
-# it cannot leak; ``reset_pass_timing_log`` / ``take_pass_timing_log`` are the
-# orchestrators' drain seam. Diagnostics only: nothing here is read by a solve.
+# a SECOND P1 pass, and ercot-230's fixed point iterates. Before PERF-B session 3
+# (charter C-2) the orchestrators' ``markup`` residual subtracted only the LAST
+# pass's ``p1.build_time`` and two solve times, so every earlier pass's ENTIRE
+# build and both HiGHS runs — and, on a cold-P1 year, the P0 model's build —
+# were booked as ``markup`` (91-94 % of an ERCOT year's ``markup`` field;
+# ``docs/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1). The backcast
+# orchestrator now SUMS ``build_s`` / ``solve_p0_s`` / ``solve_p1_s`` over this
+# log (``run_calibration._aggregate_pass_timing``), and each entry's ``build_s``
+# is EVERY matrix build of that pass, so the three fields count every build and
+# every pass and ``markup`` is the genuine non-solve, non-build residual. A
+# bounded deque so a caller that never drains it cannot leak;
+# ``reset_pass_timing_log`` / ``take_pass_timing_log`` are the orchestrators'
+# drain seam. Diagnostics only: nothing here is read by a solve.
 _PASS_TIMING_LOG: "deque[dict]" = deque(maxlen=256)
 
 
@@ -92,9 +98,11 @@ def take_pass_timing_log() -> "list[dict]":
 
     Returns:
         One dict per :func:`run_energy_solve` call since the last reset, each
-        with ``build_s`` / ``solve_p0_s`` / ``solve_p1_s`` (that pass's own
-        ``p1.build_time``, ``r0.solve_time``, ``p1.solve_time``) and ``parts``
-        (that pass's ``markup_parts``).
+        with ``build_s`` (EVERY ``DispatchModel`` matrix build of that pass —
+        the P0 model plus, on the cold-P1 route, the second model),
+        ``solve_p0_s`` / ``solve_p1_s`` (that pass's two ``h.run()`` seconds)
+        and ``parts`` (that pass's ``markup_parts``). Identical to the
+        same-named fields of the :class:`EnergySolveResult` the call returned.
     """
     out = list(_PASS_TIMING_LOG)
     _PASS_TIMING_LOG.clear()
@@ -130,6 +138,15 @@ class EnergySolveResult:
             non-build cost of this function lands in it. See
             :func:`run_energy_solve` for the component definitions and the
             arithmetic that makes them sum to that residual exactly.
+        build_s: EVERY ``DispatchModel`` matrix build this pass performed, in
+            seconds: the P0 model's, plus the second model's when P1
+            cold-rebuilt on a floored fleet / overridden kwargs, plus both
+            under ``MARKET_SIM_WARMSTART=0``. This — not ``p1.build_time``,
+            which names ONE model — is what the orchestrators subtract
+            (PERF-B session 3, charter C-2), so a cold-P1 year's first build
+            is no longer booked as ``markup``.
+        solve_p0_s: ``r0.solve_time`` — this pass's P0 ``h.run()`` seconds.
+        solve_p1_s: ``p1.solve_time`` — this pass's P1 ``h.run()`` seconds.
     """
 
     r0: "DispatchResult"
@@ -138,6 +155,9 @@ class EnergySolveResult:
     markup: np.ndarray
     p1_fleet_arrays: "FleetArrays"
     markup_parts: "dict[str, float]" = field(default_factory=dict)
+    build_s: float = 0.0
+    solve_p0_s: float = 0.0
+    solve_p1_s: float = 0.0
 
 
 def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
@@ -313,8 +333,9 @@ def run_energy_solve(
     model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
     # The matrix build of the model constructed HERE. Captured now because the
     # cold-P1 branch below rebinds ``model`` to None, and because this is the
-    # build the orchestrators' ``_build`` field does NOT account for whenever
-    # P1 cold-rebuilds (they read ``p1.build_time``, i.e. the SECOND model).
+    # build the orchestrators' ``_build`` field did NOT account for whenever
+    # P1 cold-rebuilt (they read ``p1.build_time``, i.e. the SECOND model) —
+    # it is summed into ``build_s`` at the end so every build is counted.
     # ``getattr``, not attribute access: this is a TIMING read, and a timing
     # read must never narrow the contract ``run_energy_solve`` places on the
     # object it was handed. The tests' ``_CapturingDispatchModel`` double
@@ -587,27 +608,28 @@ def run_energy_solve(
         persist_year_basis(xyear_cache, *_basis_key)
     _t6 = time.perf_counter()
 
-    # --- ``markup``-residual attribution (PERF-B session 2) ----------------
+    # --- ``markup``-residual attribution (PERF-B session 2 / 3) ------------
     # Both orchestrators report ``markup`` as a RESIDUAL, not a measured phase:
-    #     markup = energy_solve_wall - p1.build_time - r0.solve_time - p1.solve_time
+    #     markup = energy_solve_wall - build - solve_p0 - solve_p1
     # (``runner.py``, ``scripts/run_calibration_full.py``). Only ``h.run()`` is
     # inside ``solve_time`` (``lp/model.py``) and only ``__init__`` is inside
     # ``build_time``, so the residual absorbs the objective-vector assembly, the
     # HiGHS solution marshalling and ``DispatchResult`` construction of BOTH
-    # passes, ``compute_monthly_markup``, the P0->P1 seam hooks, the basis
-    # seam — and, when P1 cold-rebuilds, one entire matrix build that
-    # ``p1.build_time`` does not cover (it names the SECOND model). The six
-    # interior segments below are disjoint and exhaustive over
-    # ``[_t0, _t6]``, and the three build terms are placed so the components
-    # sum to the residual exactly on all three solve paths:
-    #   * warm P0 + warm/in-place P1 — ``p1.build_time`` IS ``_build_setup_s``,
-    #     so it is removed from ``setup`` and ``p0_build`` is 0;
+    # passes, ``compute_monthly_markup``, the P0->P1 seam hooks and the basis
+    # seam. Since PERF-B session 3 (charter C-2) the ``build`` the orchestrators
+    # subtract is ``build_s`` below — EVERY matrix build of this pass, not
+    # ``p1.build_time``, which names ONE model and left the P0 model's build
+    # inside the residual whenever P1 cold-rebuilt. The six interior segments
+    # below are disjoint and exhaustive over ``[_t0, _t6]`` once every build and
+    # both ``h.run()`` are removed, so they sum to the residual exactly on all
+    # three solve paths:
+    #   * warm P0 + warm/in-place P1 — the one build is ``_build_setup_s``,
+    #     removed from ``setup``;
     #   * warm P0 + cold P1 (a ``p1_fleet_prep`` floor with the in-place path
-    #     off or declined) — ``p1.build_time`` is the second build, sitting in
-    #     ``p1_post``; the first build is the unaccounted one and is reported
-    #     as ``p0_build``;
-    #   * MARKET_SIM_WARMSTART=0 (two cold solves) — same, with the P0 build
-    #     inside ``p0_post`` instead of ``setup``.
+    #     off or declined) — ``_build_setup_s`` removed from ``setup`` AND the
+    #     second model's build removed from ``p1_post``;
+    #   * MARKET_SIM_WARMSTART=0 (two cold solves) — the P0 build removed from
+    #     ``p0_post`` instead of ``setup``, the P1 build from ``p1_post``.
     # An orchestrator's residual also spans its own call/return edges, so its
     # sum(parts) is a hair under the reported ``markup``; the callers book that
     # difference as a trailing ``other`` component (see run_calibration.py).
@@ -616,17 +638,18 @@ def run_energy_solve(
     _build_p1_s = float(getattr(p1, "build_time", 0.0) or 0.0) if _p1_cold else 0.0
     _solve_p0_s = float(getattr(r0, "solve_time", 0.0) or 0.0)
     _solve_p1_s = float(getattr(p1, "solve_time", 0.0) or 0.0)
+    # Every matrix build this pass performed. The three terms are mutually
+    # exclusive by route: ``_build_setup_s`` is the warm P0 model (0 under
+    # WARMSTART=0), ``_build_p0_s`` the cold P0 model (0 when warm),
+    # ``_build_p1_s`` the second model (0 when P1 re-solved the live one).
+    build_s = _build_setup_s + _build_p0_s + _build_p1_s
     markup_parts = {
         # Offer-domain clip, the P0 model construction (its matrix build
         # excluded — see above) and the cross-year/disk basis seed + apply.
         "setup": (_t1 - _t0) - _build_setup_s,
-        # The matrix build the ``_build`` field does not account for. Nonzero
-        # ONLY when P1 cold-rebuilds — the whole second-build cost of an armed
-        # P1-native floor bridge, booked against ``markup`` today.
-        "p0_build": (_build_setup_s + _build_p0_s) if _p1_cold else 0.0,
-        # Everything in the P0 pass that is not ``h.run()``: the cost-vector
-        # build + ``changeColsCost``, then ``getSolution`` and the whole
-        # ``DispatchResult`` extraction (duals, reduced costs, reshapes).
+        # Everything in the P0 pass that is not ``h.run()`` or a build: the
+        # cost-vector build + ``changeColsCost``, then ``getSolution`` and the
+        # whole ``DispatchResult`` extraction (duals, reduced costs, reshapes).
         "p0_post": (_t2 - _t1) - _solve_p0_s - _build_p0_s,
         # ``compute_monthly_markup`` alone — the phase the field is named for.
         "markup": _t3 - _t2,
@@ -644,7 +667,7 @@ def run_energy_solve(
 
     _PASS_TIMING_LOG.append(
         {
-            "build_s": float(getattr(p1, "build_time", 0.0) or 0.0),
+            "build_s": build_s,
             "solve_p0_s": _solve_p0_s,
             "solve_p1_s": _solve_p1_s,
             "parts": markup_parts,
@@ -658,6 +681,9 @@ def run_energy_solve(
         markup=markup,
         p1_fleet_arrays=p1_fleet_arrays,
         markup_parts=markup_parts,
+        build_s=build_s,
+        solve_p0_s=_solve_p0_s,
+        solve_p1_s=_solve_p1_s,
     )
 
 

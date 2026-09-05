@@ -120,6 +120,7 @@ from market_sim.data.renewables import (  # noqa: E402
 from market_sim.data.input_completeness import check_clean_partitions  # noqa: E402
 from market_sim.pipeline import (  # noqa: E402
     DispatchSpec,
+    EnergySolveResult,
     apply_ercot_commitment_posture,
     apply_reserve_coopt,
     backcast_config,
@@ -361,42 +362,63 @@ def p0_commitment_pattern(
     )
 
 
-def _aggregate_markup_parts() -> "dict[str, float]":
-    """Attribute the ``markup`` residual across ALL of a year's energy solves.
+def _aggregate_pass_timing(final: "EnergySolveResult") -> "dict":
+    """Sum a year's build / P0 / P1 solve seconds over EVERY energy-solve pass.
 
     ``markup`` is not a measured phase: ``run_calibration_full.solve_and_persist``
-    derives it as ``energy_solve_s - build_s - solve_p0_s - solve_p1_s``, and the
-    three subtrahends come from the FINAL :class:`EnergySolveResult` alone. A
-    year is not always one energy solve — the ercot-221 adaptive-expectation
-    offer runs a second P1 pass and ercot-230's fixed point iterates — so every
-    EARLIER pass's whole matrix build and both HiGHS runs are inside the
-    residual with nothing subtracting them.
+    derives it as ``energy_solve_s - build_s - solve_p0_s - solve_p1_s``. Before
+    PERF-B session 3 (charter C-2) the three subtrahends came from the FINAL
+    :class:`EnergySolveResult` alone — ``p1.build_time``, ``r0.solve_time``,
+    ``p1.solve_time`` — while ``energy_solve_s`` spans the whole bracket. A year
+    is not always one energy solve (the ercot-221 adaptive-expectation offer runs
+    a second P1 pass; ercot-230's fixed point iterates), so every EARLIER pass's
+    whole matrix build and both HiGHS runs were booked as ``markup``, and so was
+    the P0 model's build whenever P1 cold-rebuilt: 91-94 % of an ERCOT year's
+    ``markup`` was solver and build time under the wrong name
+    (``docs/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1, §4.1).
 
-    This sums each pass's interior components (see
-    ``pipeline.solve.run_energy_solve``) and adds two components naming exactly
-    that: ``prior_build`` and ``prior_solve``, the builds and HiGHS seconds of
-    every pass but the last. The remainder — this frame's call edges and the
-    between-pass adaptive machinery (spike detection, P_hat, floor assembly) —
-    is booked by ``solve_and_persist`` as ``other``, so the emitted clause is
-    exhaustive over ``markup``.
+    This drains the per-pass log ``pipeline.solve.run_energy_solve`` writes and
+    returns the SUMS — ``build_s`` (every ``DispatchModel`` build of every
+    pass), ``solve_p0_s`` and ``solve_p1_s`` (every pass's two ``h.run()``) —
+    plus the summed interior ``markup_parts``. With those as the subtrahends,
+    ``markup`` is the genuine non-solve, non-build residual (both passes'
+    solution marshalling, ``compute_monthly_markup``, the P0→P1 seam) and no
+    ``prior_build`` / ``prior_solve`` component is needed. The remainder — this
+    frame's call edges and the between-pass adaptive machinery (spike detection,
+    P_hat, floor assembly) — is booked by ``solve_and_persist`` as ``other``, so
+    the emitted clause is exhaustive over ``markup``.
+
+    Args:
+        final: The year's last :class:`EnergySolveResult`. Read ONLY when the
+            per-pass log is empty (a caller that bypassed the shared solve, or
+            a test double that never appended), in which case its own per-pass
+            fields are the one pass there is.
 
     Returns:
-        Ordered ``{component: seconds}``; empty when no pass was recorded (a
-        cached/skipped year), which emits no clause at all.
+        ``{"build_s", "solve_p0_s", "solve_p1_s", "markup_parts", "n_passes"}``.
+        ``markup_parts`` is the ordered summed ``{component: seconds}``, empty
+        when nothing was recorded (which emits no clause at all).
     """
     passes = take_pass_timing_log()
     if not passes:
-        return {}
+        return {
+            "build_s": float(getattr(final, "build_s", 0.0) or 0.0),
+            "solve_p0_s": float(getattr(final, "solve_p0_s", 0.0) or 0.0),
+            "solve_p1_s": float(getattr(final, "solve_p1_s", 0.0) or 0.0),
+            "markup_parts": dict(getattr(final, "markup_parts", {}) or {}),
+            "n_passes": 1,
+        }
     parts: dict[str, float] = {}
     for entry in passes:
         for name, seconds in entry["parts"].items():
             parts[name] = parts.get(name, 0.0) + seconds
-    if len(passes) > 1:
-        parts["prior_build"] = sum(e["build_s"] for e in passes[:-1])
-        parts["prior_solve"] = sum(
-            e["solve_p0_s"] + e["solve_p1_s"] for e in passes[:-1]
-        )
-    return parts
+    return {
+        "build_s": float(sum(e["build_s"] for e in passes)),
+        "solve_p0_s": float(sum(e["solve_p0_s"] for e in passes)),
+        "solve_p1_s": float(sum(e["solve_p1_s"] for e in passes)),
+        "markup_parts": parts,
+        "n_passes": len(passes),
+    }
 
 
 def run_year(
@@ -5965,6 +5987,10 @@ def run_year(
                 int((ercot_ordc_realized > 10).sum()),
                 float(ercot_ordc_realized.max()),
             )
+    # Drain this year's per-pass timing log ONCE: every pass's builds and both
+    # HiGHS runs, summed (PERF-B session 3, charter C-2) — read into ``_timing``
+    # below.
+    _pass_timing = _aggregate_pass_timing(energy_solve)
     # Everything the P2 commitment pass needs, kept so P2 can be re-run as a
     # post-process (see _commitment_pass / run_p2) without re-solving P0/P1.
     p2_state = {
@@ -6035,17 +6061,28 @@ def run_year(
             if persist_p0_commitment
             else {}
         ),
+        # ``build_s`` / ``solve_p0_s`` / ``solve_p1_s`` are SUMMED over every
+        # energy-solve pass of this year and over every matrix build of each
+        # pass (PERF-B session 3, charter C-2) — not the final pass's
+        # ``p1.build_time`` / ``r0.solve_time`` / ``p1.solve_time``, which left
+        # every earlier pass and the P0 model's build inside ``markup``.
+        # ``markup_parts`` is the attribution of the ``markup`` RESIDUAL the
+        # caller derives from the four fields (PERF-B session 2);
+        # ``solve_and_persist`` appends the ``other`` remainder covering the
+        # bracket edges and the between-pass adaptive machinery, so the clause
+        # it logs is exhaustive. See _aggregate_pass_timing.
         "_timing": {
             "energy_solve_s": _t_solve_end - _t_solve_start,
-            "build_s": energy_solve.p1.build_time,
-            "solve_p0_s": energy_solve.r0.solve_time,
-            "solve_p1_s": energy_solve.p1.solve_time,
-            # Attribution of the ``markup`` RESIDUAL the caller derives from
-            # the four fields above (PERF-B session 2). ``solve_and_persist``
-            # appends the ``other`` remainder covering the bracket edges and
-            # the between-pass adaptive machinery, so the clause it logs is
-            # exhaustive. See _aggregate_markup_parts.
-            "markup_parts": _aggregate_markup_parts(),
+            **{
+                k: _pass_timing[k]
+                for k in (
+                    "build_s",
+                    "solve_p0_s",
+                    "solve_p1_s",
+                    "markup_parts",
+                    "n_passes",
+                )
+            },
         },
     }
 

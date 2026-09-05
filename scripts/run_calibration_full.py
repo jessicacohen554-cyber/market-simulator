@@ -5831,6 +5831,11 @@ def solve_and_persist(
 
         _t_end = time.perf_counter()
         _ti = p2_state.get("_timing", {})
+        # The three subtrahends are summed by run_year over EVERY energy-solve
+        # pass of the year and EVERY matrix build of each pass (PERF-B session
+        # 3, charter C-2; run_calibration._aggregate_pass_timing). ``markup``
+        # is therefore the genuine non-solve, non-build residual — before that
+        # it carried every earlier adaptive pass's build and both HiGHS runs.
         _solve_p0 = _ti.get("solve_p0_s", 0.0)
         _solve_p1 = _ti.get("solve_p1_s", 0.0)
         _build = _ti.get("build_s", 0.0)
