@@ -92,9 +92,40 @@ evidence already points at, neither of them a parameter:
 
 Neither is diagnosed here, and **nothing was tuned**: this session measured and reported only.
 
-## 3. PJM
+## 3. PJM — 2022 and 2021 on `2026-08-15-pjm-162-inputclock`
 
-*(Section 3 is completed after the PJM solve lands — see §3.2, which is measured and final.)*
+Registered: `2026-09-05-pjm-2022-2021-touchpoints` (bundle `pjm_tp2022_2021_k162`).
+PJM's keeper is `CALIBRATED` in sample with every criterion passing.
+
+| rung | determination | failing criteria |
+|---|---|---|
+| **2022** | **NOT-YET** | **C1** fuel-mix `CC_REGULAR` **+22.26 TWh** (+1.7 pp) · **C3b** price duration/shape **NRMSE 0.250**. C2, C3a, C3c, C4, C6, C8 PASS; C5a CO2 +4.8 %. |
+| **2021** | **NOT-YET** | **C1** (`CC_REGULAR` +28.72 TWh/+2.9 pp, `ST_GAS` +8.07/+1.0 pp, `COAL_BIT` **−9.45**/−1.4 pp) · **C3a** mean LMP **+25.7 %** · **C3b** **NRMSE 0.355** · **C3c** tail **145 model hours vs 23 actual (6.30×)**. C2, C4, C6, C8 PASS. |
+
+### 3.1 The headline: the input-clock repair did NOT reach PJM's 2022 miss
+
+This is the load-bearing negative result of the session, and it is worth stating plainly.
+
+| | stale rung (2026-08-05, pjm-152 recipe) | this rung (pjm-162 recipe) |
+|---|---|---|
+| C1 `CC_REGULAR` | +18.28 TWh | **+22.26 TWh** |
+| C3b NRMSE | 0.206 | **0.250** |
+| everything else | held | held |
+
+The keeper moved from pjm-152 to pjm-162, and **pjm-162 *is* the input-clock repair**. On the
+repaired recipe 2022 fails the **same two criteria**, with the CC over-dispatch ~4 TWh *larger*.
+The rung's named object from `pjm-161`/`pjm-162` — the DA-virtual layer, +11.12 TWh of net
+virtual demand cleared in 2022 — is **not resolved**, and the touchpoint loop for PJM 2022 is
+still at step 2/3. (Part of the C3b move, 0.206 → 0.250, is the basis correction in §3.3 rather
+than the recipe; the C1 move is not.)
+
+**2021 adds a coherent second data point rather than a new mystery.** Its C1 signature —
+`CC_REGULAR` and `ST_GAS` over, `COAL_BIT` under — is the **same direction** as 2022's, on the
+year with the cheapest delivered gas in the span. Gas-over / coal-under in both held-out years,
+against a tuned window where C1 passes cleanly, is a merit-order-position story, and it is the
+object the next PJM session should take to 2023–2025 (rule 22 step 3). 2021's C3c is the
+mirror-image of NEISO's: PJM forms **too many** scarcity hours (145 vs 23), where NEISO forms
+too few.
 
 ### 3.2 PJM 2020 is NOT DATA-READY — three independent blockers, all measured at HEAD
 
@@ -139,6 +170,45 @@ scarcity-formation window C3c gates.
 
 Blockers (b) and (c) are pure data prep on sources already on disk; (a) needs a decision, not
 just a fetch — see §5.
+
+### 3.3 A scoring-basis defect found and repaired — PJM's holdout C3a was on the wrong basis
+
+The rubric-v2.4 C3 basis is the **load-weighted** actual (`rt_lw`/`da_lw` — the hourly actual
+weighted by the same measured load the model dispatches, so both sides of C3a share weights).
+`actual_lmp.json` carried those fields for PJM **2019, 2020, 2023, 2024, 2025** and for **every
+year of every other ISO** — but **not for PJM 2021 or 2022**, precisely the two holdout rungs.
+The prior 2022 touchpoint therefore scored C3a on the legacy equal-hour mean while the keeper it
+was compared against scored load-weighted. That is a basis mismatch across the very boundary a
+touchpoint exists to measure.
+
+Filled with the purpose-built retrofit,
+`derive_actual_lmp.py --lw-retrofit --isos PJM --years 2021 2022`, which re-parses no raw
+archives and only *adds* fields. Verified by record-by-record diff: **2 iso-year records gained
+`_lw` fields, ZERO existing values changed** — no committed keeper number moved. Effect on this
+run: 2022 C3b **0.204 → 0.250**, 2021 C3a **+30.4 % → +25.7 %** (`rt_lw` 38.53 vs legacy 37.14;
+74.07 vs 68.79). Both columns are now on one basis.
+
+### 3.4 An int32 sentinel in the PJM 2021 extract — located, and NOT load-bearing here
+
+The solve report prints `EIA-930 net gen 4939.01 TWh` for PJM 2021 against a real ~832 TWh. The
+cause is exact: **three consecutive hours — 2021-10-18 23:00, 2021-10-19 00:00, 2021-10-19
+01:00 — carry 2,147,480,064 MW (2³¹ − 3,584) in BOTH the `Demand` and `Net generation` columns**
+of `data/raw/eia-930-hourly/PJM hourly.parquet`. It is an int32 overflow in EIA's own upload.
+
+**It does not touch any scored criterion**, which is why the 2021 verdict stands:
+
+* `load_demand` **repairs** those hours (its 2.5× median spike guard fires) *before* the solve,
+  so the dispatch is clean;
+* C1/C2 read the per-fuel `e930` bench block, which is **sane** (gas 311.7 / coal 183.5 /
+  nuclear 273.0 TWh) — the corrupt number appears only in the printed energy-balance line, which
+  recomputes net gen from the raw extract;
+* the committed `EIA930_BALANCE_2021_*.parquet` files carry the **correct** values (833.9 TWh,
+  max 153,417 MW), so a measured repair source is already on disk.
+
+The clean fix is the existing `_fill_hourly_frame_from_long` pattern, today deliberately
+**ERCOT-only** because generalizing it re-renders other ISOs' committed benchmarks. Extending it
+to PJM would move PJM's keeper numbers and is therefore **not** a touchpoint session's change.
+Logged here as a located, fixable defect with its repair route named.
 
 ## 4. Two stated limits on every comparison in this document
 
@@ -192,16 +262,39 @@ depend on the bench vintage either way.
 
 ## 5. What should happen next
 
-1. **Solve PJM's same-HEAD in-sample control** (2023–2025 on the pjm-162 recipe). NEISO's is
-   done and measured INERT (§4 i); PJM's is the one open limit on its touchpoints, and the
-   verdict does not transfer across ISOs.
-2. **Diagnose NEISO 2020's C3a as an object, on 2023–2025** (rule 22 step 3), starting from
-   the compressed-diurnal-amplitude signature in §2.2. Do not tune to 2020.
-3. **Repair the PJM 2020 demand feed** before any 2020 spend is requested — and note the fix
-   is *not* simply tightening the 2.5× spike threshold, which would reach the two hours but
-   not the seven-zone peak inflation behind them. That is its own data lane.
-4. **Backfill PJM 2020's `calibration_reference` block and renewable-capacity file** — pure
-   prep, unrestricted, no marker.
-5. **Do not read any number here as out-of-sample skill.** Validation tier is iterable
+1. **Take PJM's gas-over / coal-under C1 signature back to 2023–2025** (rule 22 step 3). It is
+   now visible on **both** held-out years in the same direction — `CC_REGULAR` +22.26 TWh (2022)
+   and +28.72 TWh (2021), with `COAL_BIT` −9.45 TWh in 2021 — against a tuned window where C1
+   passes clean. Two rungs pointing the same way is a merit-order-position object, and it is a
+   better lead than the DA-virtual layer that pjm-162 was built around and did not close (§3.1).
+2. **Solve PJM's same-HEAD in-sample control** (2023–2025 on the pjm-162 recipe). NEISO's is done
+   and measured INERT (§4 i); PJM's is the one open limit on its touchpoints, and the verdict does
+   not transfer across ISOs (rule 25 `[R-ISO-SCOPE]`).
+3. **Diagnose NEISO 2020's C3a as an object, on 2023–2025**, starting from the compressed
+   diurnal-amplitude signature in §2.2. Do not tune to 2020.
+4. **Repair the PJM 2020 demand feed** before any 2020 spend is requested (§3.2). The fix is *not*
+   simply tightening the 2.5× spike threshold — that reaches the two impossible hours but not the
+   seven-zone peak inflation behind them. Its own data lane.
+5. **Extend `_fill_hourly_frame_from_long` to PJM** to kill the 2021 int32 sentinel at source
+   (§3.4). Not a touchpoint session's change: it re-renders PJM's committed benchmark and would
+   move the keeper's registered numbers, so it needs its own re-render decision.
+6. **Backfill PJM 2020's `calibration_reference` block and renewable-capacity file** — pure prep,
+   unrestricted, no marker.
+7. **Do not read any number here as out-of-sample skill.** Validation tier is iterable
    model-SELECTION evidence by construction. The locked test (2019 / H1-2026) remains
-   never-granted for both ISOs and is untouched.
+   never-granted for both ISOs and is untouched by this session.
+
+## 6. Governance
+
+No mechanism was tested, so no matrix cell moves (rule 28 b) and no `ScenarioConfig` field is
+added (rule 28 c). **Both keepers are UNCHANGED and no marker was re-keyed** — a touchpoint is
+not a promotion, and neither ISO's `complete` entry needs a D-5(b) re-key because its designated
+keeper did not move. Nothing was tuned: every solve is a `replay_keeper` reproduction of a
+committed recipe, and the recipe-identity assertion is machine-checked by
+`scripts/gen_touchpoint_attestation.py` rather than asserted in prose.
+
+One measured-input change landed, and it is disclosed rather than buried: the PJM
+`_lw` retrofit of §3.3, which adds fields to two iso-year records and modifies **zero** existing
+values (verified by record diff). Under rule 22 as amended 2026-08-06 — *what is held out is the
+SCORE, never the DATA* — data prep needs no marker and is applied consistently; here it brings
+PJM 2021/2022 up to the coverage every other ISO-year already had.
