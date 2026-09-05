@@ -200,7 +200,12 @@ def resolve_fuel_prices(
     # dual-fuel min, which must see the final gas price so oil parity caps
     # the blown-out winter hub price.
     if apply_monthly:
-        apply_plant_monthly_fuel_prices(fuel_prices, fleet, config, year)
+        # The overlay returns the mask of cells it WROTE (own print or nearby
+        # pool). The MISO applier below consumes it under
+        # ``miso_zonal_gas_basis_skip_923_priced`` (miso-213, rule 19): a
+        # print-derived cell already carries the regional delivered premium,
+        # so the zonal increment is not layered on top of it.
+        print_cells = apply_plant_monthly_fuel_prices(fuel_prices, fleet, config, year)
         apply_hub_basis_overlay(fuel_prices, fleet, config, year)
         # MISO winter fuel security: in Dec/Jan/Feb, swap the national HH
         # gas_daily_shape for the measured Chicago Citygate daily shape on the
@@ -219,8 +224,23 @@ def resolve_fuel_prices(
         # blowout. Read through the package namespace so replacing an entry on
         # the facade intercepts the dispatch (pre-split patch semantics).
         appliers = _pkg_ns().ZONAL_BASIS_APPLIERS
+        # Only the MISO applier takes the print-derived-cell mask, and only
+        # the flag makes it consume it (rule 25: the mechanism is MISO's; the
+        # other appliers' signatures are untouched and the walk is unchanged
+        # for every other ISO and for a flag-off MISO run).
+        skip_for_miso = (
+            print_cells
+            if config.iso == "MISO"
+            and getattr(config, "miso_zonal_gas_basis_skip_923_priced", False)
+            else None
+        )
         for iso_name in ZONAL_BASIS_ORDER:
-            appliers[iso_name](fuel_prices, fleet, config, year)
+            if iso_name == "MISO" and skip_for_miso is not None:
+                appliers[iso_name](
+                    fuel_prices, fleet, config, year, skip_cells=skip_for_miso
+                )
+            else:
+                appliers[iso_name](fuel_prices, fleet, config, year)
         apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
 
     return fuel_prices

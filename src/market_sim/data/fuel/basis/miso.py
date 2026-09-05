@@ -53,6 +53,7 @@ def apply_miso_zonal_gas_basis(
     config: ScenarioConfig,
     year: int,
     path: Path | None = None,
+    skip_cells: np.ndarray | None = None,
 ) -> None:
     """Shift each MISO gas unit's price by its zone's measured regional gas basis.
 
@@ -65,7 +66,19 @@ def apply_miso_zonal_gas_basis(
 
     Gated on ``config.miso_zonal_gas_basis`` and ``config.iso == "MISO"``.
     Default-off; the calibration harness enables it for MISO.
+
+    ``skip_cells`` (miso-213): the print-derived-cell mask returned by
+    :func:`~..plant_prices.apply_plant_monthly_fuel_prices`. Honoured ONLY
+    when ``config.miso_zonal_gas_basis_skip_923_priced`` is set — a caller
+    may always pass the mask, and the flag decides whether the applier
+    consumes it, so the flag-off behaviour is byte-identical to HEAD whatever
+    the caller does. On masked cells the increment is not added (rule 19
+    ``[R-ONE-MECH]``: the EIA-923 print already carries the regional
+    delivered premium); unmasked (trajectory) cells still receive it.
     """
+    use_skip = skip_cells is not None and bool(
+        getattr(config, "miso_zonal_gas_basis_skip_923_priced", False)
+    )
     _apply_meanzero_zonal_gas_basis(
         fuel_prices,
         fleet,
@@ -75,6 +88,7 @@ def apply_miso_zonal_gas_basis(
         config_field="miso_zonal_gas_basis",
         hub_path=MISO_ZONAL_GAS_HUB_PATH,
         path_override=Path(path) if path else None,
+        skip_cells=skip_cells if use_skip else None,
     )
 
 

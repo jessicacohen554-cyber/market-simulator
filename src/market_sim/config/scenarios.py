@@ -1255,6 +1255,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # so a different dispatch) and hashes distinctly. Registered IN THE SAME
     # COMMIT as the field (the nyiso-119 discipline).
     "miso_offer_spread_anchored",
+    # miso-213 rule-19 scope of the MISO zonal basis (skip print-derived
+    # cells), default off: dropped from the hash at its default so every
+    # existing keeper keeps its key; the armed A/B leg hashes distinctly.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "miso_zonal_gas_basis_skip_923_priced",
     # Hindcast announced-exit verification (owner directive 2026-08-22, the
     # PJM Byron/Dresden false-retire investigation): dropped from the hash at
     # its False default so every pre-existing cache key of all six ISOs stays
@@ -1773,6 +1778,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-175 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_envelope_hour_ending_key": "False",
+    # Added by miso-213 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_zonal_gas_basis_skip_923_priced": "False",
     # Added by miso-170 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_plant_exclusions": "False",
@@ -13993,6 +14001,33 @@ class ScenarioConfig:
     # enables it for MISO. See market_sim.data.fuel.apply_miso_zonal_gas_basis.
     miso_zonal_gas_basis: bool = False
 
+    # miso-213 (2026-09-05), rule 19 [R-ONE-MECH]: SCOPE of the mean-zero MISO
+    # zonal basis above. A gas cell whose delivered price the EIA-923 print path
+    # SET (gas_plant_monthly_fuel_pricing: the plant's own reported month, or
+    # the nearby state/zone pool of other plants' prints) already embeds the
+    # regional delivered premium — the N3045<ST>3 state series the basis rows
+    # are built from is the aggregate of those same receipts — so adding the
+    # zonal increment on top prices one phenomenon twice. With this set the
+    # MISO applier leaves print-derived cells byte-untouched and adds the
+    # increment ONLY to cells still on the Henry-Hub trajectory, where the
+    # basis is the sole regional signal. The capacity-weighted mean is still
+    # taken over ALL gas rows, so the spread VALUES are unchanged (the mask
+    # changes only who receives them). ZERO free parameters: a boolean scope on
+    # an existing measured input; nothing is fitted. Forecast-mode inert by
+    # construction: the print path is a backcast-only overlay, so every forecast
+    # cell is a trajectory cell and the basis fires on all of them as before —
+    # the mechanism's forward story is untouched. Backcast MISO measurement
+    # (miso-213 phase 0, _miso213_basis_layering.json): 100 % of 2024/2025 and
+    # 99.9 % of 2023 gas capacity-hours are print-derived under the keeper's
+    # class-aware state/zone pools, so on the keeper this scope removes the
+    # increment from essentially every gas cell — disclosed, not a motive. Off
+    # by default (every existing keeper byte-identical; in
+    # _CACHE_KEY_OPTIONAL_FIELDS). Consumed by
+    # market_sim.data.fuel.basis.miso.apply_miso_zonal_gas_basis via the
+    # written-cell mask apply_plant_monthly_fuel_prices returns
+    # (resolve_fuel_prices and run_calibration.run_year both thread it).
+    miso_zonal_gas_basis_skip_923_priced: bool = False
+
     # MISO winter fuel-security daily citygate overlay (miso-72). In the winter
     # months (Dec/Jan/Feb) only, for the MISO gas units in the Chicago-hub zones
     # only (MISO-Illinois/Indiana/East, read from miso_zonal_gas_hub.csv), replace
@@ -17095,6 +17130,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_downstate_ct_gas_daily": 3,
     "pjm_zonal_gas_basis": 3,
     "miso_zonal_gas_basis": 3,
+    "miso_zonal_gas_basis_skip_923_priced": 3,
     "miso_winter_citygate_daily": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,

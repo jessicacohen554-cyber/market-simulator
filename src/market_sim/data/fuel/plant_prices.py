@@ -284,8 +284,17 @@ def apply_plant_monthly_fuel_prices(
     config: ScenarioConfig,
     year: int,
     monthly_costs_path: str | Path | None = None,
-) -> None:
+) -> np.ndarray:
     """Overwrite per-generator fuel prices with F923 monthly plant costs.
+
+    Returns the ``(n_gen, T)`` boolean mask of the cells this overlay WROTE
+    (a plant's own reported month or a nearby-pool fill) — all-False when
+    the overlay is a no-op (forecast mode, no table, year outside the
+    window). The mask is the print-derived-cell record consumed by
+    ``miso_zonal_gas_basis_skip_923_priced`` (miso-213): a cell the print
+    path priced already embeds the regional delivered premium the zonal
+    basis would add on top (rule 19 ``[R-ONE-MECH]``), so the MISO applier
+    can leave those cells alone. Every other caller may ignore the return.
 
     For each eligible coal / oil generator whose ``plant_code`` matches a
     plant-month in the EIA-923 monthly cost table for ``year``, the
@@ -365,8 +374,9 @@ def apply_plant_monthly_fuel_prices(
     # realized/asknown pair isolates the GAS trajectory error and shares
     # the delivered-coal channel, so gating one variant would conflate the
     # comparison (owner-approved Option 1, 2026-07-17).
+    written = np.zeros((fleet.n_gen, config.hours), dtype=bool)
     if config.mode != "backcast" and not getattr(config, "hindcast", False):
-        return
+        return written
     # T1-X crossover forward years (FF-0E, plan §2.2): the F923 plant-monthly
     # delivered-cost overlay is a MEASURED backcast/hindcast overlay. A
     # crossover's forward years (>= the boundary) run on forward drivers only —
@@ -375,12 +385,12 @@ def apply_plant_monthly_fuel_prices(
     # to the AEO trajectory coal/gas price. No-op for a plain hindcast or
     # backcast (crossover_forward_year is None → is_crossover_forward_year False).
     if config.is_crossover_forward_year(year):
-        return
+        return written
     costs = _pkg_ns()._load_monthly_cache(
         Path(monthly_costs_path) if monthly_costs_path else None
     )
     if costs is None or year not in available_years(costs):
-        return
+        return written
 
     T = config.hours
     month_idx = _month_index(T)
@@ -443,6 +453,7 @@ def apply_plant_monthly_fuel_prices(
                         fuel_prices[g, mask] = own[m] * gas_daily[mask]
                     else:
                         fuel_prices[g, mask] = own[m]
+                    written[g, mask] = True
             n_overwrites += 1
 
         # 2) Nearby-plant fallback fills the still-unreported months.
@@ -461,6 +472,7 @@ def apply_plant_monthly_fuel_prices(
                         fuel_prices[g, mask] = v * gas_daily[mask]
                     else:
                         fuel_prices[g, mask] = v
+                    written[g, mask] = True
                     applied = True
             if applied:
                 n_nearby += 1
@@ -473,6 +485,7 @@ def apply_plant_monthly_fuel_prices(
             n_overwrites,
             n_nearby,
         )
+    return written
 
 
 class _NearbyFuelPrices:
