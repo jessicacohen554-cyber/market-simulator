@@ -28,13 +28,28 @@ measured phase at all — both orchestrators compute it as the RESIDUAL
 ``energy_solve - build - solve_p0 - solve_p1``, so it absorbs every non-solve,
 non-build cost of ``pipeline.solve.run_energy_solve`` (both passes' objective
 assembly and solution marshalling, ``compute_monthly_markup``, the P0→P1 seam,
-the basis seam, and one whole matrix build whenever P1 cold-rebuilds). Callers
+the basis seam). Callers
 may now pass ``markup_parts`` on the same contract as ``results_write_parts``:
 an *ordered* ``{component: seconds}`` mapping summing to ``markup``, rendered
 as a ``(markup: a=…s b=…s)`` clause. It is emitted **before** the
 ``results_write`` clause so a parser anchored on ``(results_write:`` — or one
 reading that clause to end-of-line — keeps working, and the six frozen fields
 are again untouched.
+
+**What the three subtrahends count (PERF-B session 3, charter C-2).** ``build``
+is EVERY ``DispatchModel`` matrix build of EVERY energy-solve pass of the year,
+and ``solve_p0`` / ``solve_p1`` are every pass's two ``h.run()`` seconds
+(``EnergySolveResult.build_s / solve_p0_s / solve_p1_s``; the backcast
+orchestrator sums them over its per-pass log). Before that they were the FINAL
+pass's ``p1.build_time`` / ``r0.solve_time`` / ``p1.solve_time`` alone, so on an
+ERCOT keeper year — two adaptive-expectation passes, a cold-P1 rebuild on the
+floored fleet — 91-94 % of the reported ``markup`` was an earlier pass's solver
+time and an unaccounted matrix build under the wrong name, and ``data_prep``
+(the complement) under-read by the same amount
+(``docs/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1). The wire format
+is untouched; only what the numbers mean is now what their names say. Builds
+land in ``data_prep`` (the pre-2137 convention, unchanged), and ``markup`` is
+the genuine non-solve, non-build residual.
 """
 
 from __future__ import annotations

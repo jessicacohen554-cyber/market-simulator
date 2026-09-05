@@ -230,6 +230,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key; an armed run carries a different fleet cost and so gets a distinct
     # key.
     "egrid_family_heat_rates",
+    # eGRID steam-collapse identity heat rates (nyiso-189, default off):
+    # dropped from the hash at its default so every pre-existing cached run
+    # keeps its key; an armed run carries a different fleet cost and so gets
+    # a distinct key.
+    "egrid_steam_collapse_heat_rates",
     # Combined-cycle steam-part capacity repair (miso-126, default off):
     # dropped from the hash at its default so every pre-existing cached run
     # keeps its key; an armed run carries a different FLEET and so gets a
@@ -1457,6 +1462,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
+    "egrid_steam_collapse_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
     "crossover_forward_year": "None",
@@ -3906,6 +3912,43 @@ class ScenarioConfig:
     # scripts/data/derive_egrid_family_heat_rates.py), a no-op for an ISO
     # with none. See PREREG-nyiso184-stgas-heat-rate-basis.md §1, §3 R1.
     egrid_family_heat_rates: bool = False
+
+    # eGRID STEAM-COLLAPSE identity heat rates (nyiso-189; owner ruling
+    # 2026-09-05, form B2; default OFF, byte-identical off). eGRID's plant
+    # rate PLHTRT = PLHTIAN / PLNGENAN, and PLNGENAN is the SUM of the
+    # plant's EIA-923 GENERATOR filings. At a combined cycle the heat is
+    # burned by the combustion turbines alone, so when the steam generator's
+    # filed net generation vanishes while the CTs keep running the plant
+    # rate inflates by the steam share: Bethlehem 2539's steam share is
+    # 0.49-0.52 of CT output in 2018-2022, 0.065 in 2023 (the applied
+    # vintage) and 0.000 in 2024 while its three CTs report ~8,000 operating
+    # hours each, and PLHTRT reads 6.87 -> 9.665 -> 10.44 against a block
+    # three independent bases (eGRID 2018-2021, CAMPD 2024-2025 full-block
+    # gross, the CT-heat identity at the plant's own share) put at 6.9-7.0
+    # MMBtu/MWh (+40 %, FINDING-nyiso188 §4). When True, every generator of
+    # a plant whose APPLIED-vintage row in the committed per-ISO artifact
+    # (data/raw/_processed-legacy/egrid_steam_collapse_heat_rates_<ISO>.csv,
+    # scripts/data/derive_egrid_steam_collapse_heat_rates.py) is ADMITTED
+    # takes the CT-heat identity PLHTIAN / sum GENNTAN(CT) / (1 + the median
+    # steam share over the plant's own T1-clean vintages) — arithmetic on
+    # eGRID's published GEN / PLNT fields and the plant's own record, no
+    # external constant. Admission is a POPULATION rule run over every
+    # combined cycle of the ISO with a filed steam generator (rule 24, never
+    # a carve): (T1 — an operating CA generator at exactly zero net
+    # generation while the CTs run — OR the vintage's steam share below the
+    # plant's record by more than the record's own range) AND the heat per
+    # CT-MWh inside the record (the CT filing is intact; a plant that moved
+    # its steam output INTO the CT row already carries the block rate) AND
+    # >= 2 reference vintages. Applied at the identity seam of
+    # load_fleet_from_csv, skipping generators measured_chp_heat_rates or
+    # egrid_identity_heat_rates already repriced and plants the family
+    # construction covers (rule 19, never stacked). Rule 13: regenerates
+    # from any eGRID vintage and responds to changed conditions; rule 25:
+    # per-ISO artifact, a no-op for an ISO with none. NYISO reach at the
+    # applied vintage: Bethlehem 2539 (9.665 -> 6.877) and World Generation
+    # X 54131 (9.807 -> 6.996). See
+    # results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md.
+    egrid_steam_collapse_heat_rates: bool = False
 
     # Combined-cycle STEAM-part capacity repair (miso-126; default OFF,
     # byte-identical off). EIA-860's ``Energy Source 1`` on a ``CA``

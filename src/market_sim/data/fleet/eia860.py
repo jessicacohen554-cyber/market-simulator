@@ -1787,6 +1787,70 @@ def apply_egrid_identity_heat_rates(generators: list, iso: str) -> frozenset[int
     return frozenset(touched)
 
 
+def egrid_steam_collapse_heat_rates_for(iso: str) -> dict[int, float]:
+    """Load the committed eGRID steam-collapse identity heat-rate artifact.
+
+    ``{plant_id: identity_heat_rate}`` for the plants whose APPLIED-vintage
+    row is ADMITTED in
+    ``data/raw/_processed-legacy/egrid_steam_collapse_heat_rates_<ISO>.csv``
+    (``scripts/data/derive_egrid_steam_collapse_heat_rates.py`` — the
+    population rule over every combined cycle of the ISO with a filed steam
+    generator; see the ScenarioConfig ``egrid_steam_collapse_heat_rates``
+    docstring and ``PREREG-nyiso189-steam-collapse-identity-ab.md``). Empty
+    when the ISO has no committed artifact — the mechanism is a no-op there
+    by construction (rule 25: each ISO's lane derives its own artifact).
+    """
+    from market_sim.config.paths import PROCESSED_DIR
+
+    path = PROCESSED_DIR / f"egrid_steam_collapse_heat_rates_{iso}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    need = {"plant_id", "identity_hr", "applied", "admitted"}
+    if df.empty or not need.issubset(df.columns):
+        return {}
+    live = df[df["applied"].astype(bool) & df["admitted"].astype(bool)]
+    return {
+        int(r.plant_id): float(r.identity_hr)
+        for r in live.itertuples()
+        if pd.notna(r.identity_hr) and float(r.identity_hr) > 0.0
+    }
+
+
+def apply_egrid_steam_collapse_heat_rates(
+    generators: list, iso: str, skip_ids: frozenset[int] = frozenset()
+) -> frozenset[int]:
+    """Swap in the CT-heat identity rate where the steam-generator filing
+    collapsed in the applied eGRID vintage.
+
+    In-place, gated by ``ScenarioConfig.egrid_steam_collapse_heat_rates`` at
+    the call site; every unit of an admitted plant takes the plant's identity
+    rate EXCEPT generators in ``skip_ids`` (already on a measured rate from
+    ``measured_chp_heat_rates`` / ``egrid_identity_heat_rates`` on this load
+    — rule 19, one measured rate per plant). Returns the ``id()`` set of
+    repriced generators, mirroring :func:`apply_egrid_identity_heat_rates`.
+    """
+    rates = egrid_steam_collapse_heat_rates_for(iso)
+    if not rates:
+        return frozenset()
+    touched: set[int] = set()
+    for gen in generators:
+        if id(gen) in skip_ids:
+            continue
+        rate = rates.get(int(getattr(gen, "plant_code", 0) or 0))
+        if rate is not None:
+            gen.heat_rate = rate
+            touched.add(id(gen))
+    logger.info(
+        "%s: eGRID steam-collapse identity heat rates applied to %d generator(s) "
+        "across %d plant(s)",
+        iso,
+        len(touched),
+        len(rates),
+    )
+    return frozenset(touched)
+
+
 def load_fleet_from_csv(
     iso: str,
     iso_config: ISOConfig | None = None,
@@ -1800,6 +1864,7 @@ def load_fleet_from_csv(
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
+    egrid_steam_collapse_heat_rates: bool = False,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -1876,6 +1941,16 @@ def load_fleet_from_csv(
             :data:`MIXED_FACILITY_STEAM_HR`'s hand number is skipped there
             (rule 19). See :func:`_apply_egrid_family_heat_rates`. Default
             off and byte-identical off.
+        egrid_steam_collapse_heat_rates: When True (``ScenarioConfig.
+            egrid_steam_collapse_heat_rates``), every generator of a
+            combined cycle whose eGRID steam-generator filing collapsed in
+            the applied vintage (the committed per-ISO artifact's admitted
+            rows) takes the CT-heat identity rate in place of the inflated
+            plant-grain ``PLHTRT``, skipping generators the measured-CHP /
+            identity mechanisms already repriced and plants the family
+            construction covers (rule 19). See
+            :func:`apply_egrid_steam_collapse_heat_rates`. Default off and
+            byte-identical off.
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -1982,8 +2057,27 @@ def load_fleet_from_csv(
     # committed per-ISO artifact) takes its pooled measured rate instead of
     # the HEAT_RATE_BINS vintage class default. Off, the artifact is not read
     # and the fleet is byte-identical.
-    if egrid_identity_heat_rates:
+    identity_touched = (
         apply_egrid_identity_heat_rates(generators, iso)
+        if egrid_identity_heat_rates
+        else frozenset()
+    )
+    # eGRID steam-collapse identity heat rates (config.
+    # egrid_steam_collapse_heat_rates, default off): a combined cycle whose
+    # steam generator's EIA-923 filing collapsed in the applied vintage takes
+    # the CT-heat identity rate in place of the inflated plant-grain PLHTRT.
+    # Same seam class as the identity swap above; never stacked on a plant
+    # another measured mechanism already repriced (rule 19). Off, the
+    # artifact is not read and the fleet is byte-identical.
+    if egrid_steam_collapse_heat_rates:
+        family_covered = _EGRID_FAMILY_COVERED_PLANTS.get(iso, frozenset())
+        skip = set(measured) | set(identity_touched)
+        skip |= {
+            id(g)
+            for g in generators
+            if int(getattr(g, "plant_code", 0) or 0) in family_covered
+        }
+        apply_egrid_steam_collapse_heat_rates(generators, iso, frozenset(skip))
     if not apply_chp_steam_credit_correction:
         # Basis-inspection read only (the CHP derive). Return before the hand
         # factor AND before the cache write, so the committed side cache always

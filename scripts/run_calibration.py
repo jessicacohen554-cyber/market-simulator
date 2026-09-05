@@ -120,6 +120,7 @@ from market_sim.data.renewables import (  # noqa: E402
 from market_sim.data.input_completeness import check_clean_partitions  # noqa: E402
 from market_sim.pipeline import (  # noqa: E402
     DispatchSpec,
+    EnergySolveResult,
     apply_ercot_commitment_posture,
     apply_reserve_coopt,
     backcast_config,
@@ -361,42 +362,122 @@ def p0_commitment_pattern(
     )
 
 
-def _aggregate_markup_parts() -> "dict[str, float]":
-    """Attribute the ``markup`` residual across ALL of a year's energy solves.
+def _aggregate_pass_timing(final: "EnergySolveResult") -> "dict":
+    """Sum a year's build / P0 / P1 solve seconds over EVERY energy-solve pass.
 
     ``markup`` is not a measured phase: ``run_calibration_full.solve_and_persist``
-    derives it as ``energy_solve_s - build_s - solve_p0_s - solve_p1_s``, and the
-    three subtrahends come from the FINAL :class:`EnergySolveResult` alone. A
-    year is not always one energy solve — the ercot-221 adaptive-expectation
-    offer runs a second P1 pass and ercot-230's fixed point iterates — so every
-    EARLIER pass's whole matrix build and both HiGHS runs are inside the
-    residual with nothing subtracting them.
+    derives it as ``energy_solve_s - build_s - solve_p0_s - solve_p1_s``. Before
+    PERF-B session 3 (charter C-2) the three subtrahends came from the FINAL
+    :class:`EnergySolveResult` alone — ``p1.build_time``, ``r0.solve_time``,
+    ``p1.solve_time`` — while ``energy_solve_s`` spans the whole bracket. A year
+    is not always one energy solve (the ercot-221 adaptive-expectation offer runs
+    a second P1 pass; ercot-230's fixed point iterates), so every EARLIER pass's
+    whole matrix build and both HiGHS runs were booked as ``markup``, and so was
+    the P0 model's build whenever P1 cold-rebuilt: 91-94 % of an ERCOT year's
+    ``markup`` was solver and build time under the wrong name
+    (``docs/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1, §4.1).
 
-    This sums each pass's interior components (see
-    ``pipeline.solve.run_energy_solve``) and adds two components naming exactly
-    that: ``prior_build`` and ``prior_solve``, the builds and HiGHS seconds of
-    every pass but the last. The remainder — this frame's call edges and the
-    between-pass adaptive machinery (spike detection, P_hat, floor assembly) —
-    is booked by ``solve_and_persist`` as ``other``, so the emitted clause is
-    exhaustive over ``markup``.
+    This drains the per-pass log ``pipeline.solve.run_energy_solve`` writes and
+    returns the SUMS — ``build_s`` (every ``DispatchModel`` build of every
+    pass), ``solve_p0_s`` and ``solve_p1_s`` (every pass's two ``h.run()``) —
+    plus the summed interior ``markup_parts``. With those as the subtrahends,
+    ``markup`` is the genuine non-solve, non-build residual (both passes'
+    solution marshalling, ``compute_monthly_markup``, the P0→P1 seam) and no
+    ``prior_build`` / ``prior_solve`` component is needed. The remainder — this
+    frame's call edges and the between-pass adaptive machinery (spike detection,
+    P_hat, floor assembly) — is booked by ``solve_and_persist`` as ``other``, so
+    the emitted clause is exhaustive over ``markup``.
+
+    Args:
+        final: The year's last :class:`EnergySolveResult`. Read ONLY when the
+            per-pass log is empty (a caller that bypassed the shared solve, or
+            a test double that never appended), in which case its own per-pass
+            fields are the one pass there is.
 
     Returns:
-        Ordered ``{component: seconds}``; empty when no pass was recorded (a
-        cached/skipped year), which emits no clause at all.
+        ``{"build_s", "solve_p0_s", "solve_p1_s", "markup_parts", "n_passes"}``.
+        ``markup_parts`` is the ordered summed ``{component: seconds}``, empty
+        when nothing was recorded (which emits no clause at all).
     """
     passes = take_pass_timing_log()
     if not passes:
-        return {}
+        return {
+            "build_s": float(getattr(final, "build_s", 0.0) or 0.0),
+            "solve_p0_s": float(getattr(final, "solve_p0_s", 0.0) or 0.0),
+            "solve_p1_s": float(getattr(final, "solve_p1_s", 0.0) or 0.0),
+            "markup_parts": dict(getattr(final, "markup_parts", {}) or {}),
+            "n_passes": 1,
+        }
     parts: dict[str, float] = {}
     for entry in passes:
         for name, seconds in entry["parts"].items():
             parts[name] = parts.get(name, 0.0) + seconds
-    if len(passes) > 1:
-        parts["prior_build"] = sum(e["build_s"] for e in passes[:-1])
-        parts["prior_solve"] = sum(
-            e["solve_p0_s"] + e["solve_p1_s"] for e in passes[:-1]
-        )
-    return parts
+    return {
+        "build_s": float(sum(e["build_s"] for e in passes)),
+        "solve_p0_s": float(sum(e["solve_p0_s"] for e in passes)),
+        "solve_p1_s": float(sum(e["solve_p1_s"] for e in passes)),
+        "markup_parts": parts,
+        "n_passes": len(passes),
+    }
+
+
+def _p1_storage_cost_identical(
+    candidate: np.ndarray,
+    pass1_override: "np.ndarray | None",
+    dispatch_kwargs: dict,
+) -> bool:
+    """Is an adaptive pass's P1 storage discharge cost the one pass 1 solved with?
+
+    The exact-equality guard of PERF-B session 3 charter item C-1a. An
+    adaptive-expectation pass (ercot-221) re-runs :func:`run_energy_solve`
+    with every argument the SAME OBJECT as pass 1's except
+    ``p1_storage_discharge_cost``. That array is the ONLY thing that can
+    differ between the two LPs, and ``lp.costs.build_cost_vector`` writes it
+    into the discharge columns elementwise — a static ``(n_storage,)`` /
+    scalar cost broadcast across hours, an hourly ``(n_storage, T)`` cost
+    transposed — so two costs that are elementwise equal after broadcasting
+    produce the identical cost vector on the identical matrix. When that
+    holds, the pass would hand HiGHS the LP pass 1 already solved and pass 1's
+    result IS the answer; the caller skips the pass.
+
+    Exact ``np.array_equal`` — no tolerance, no ``isclose``: the claim is
+    identity of the LP, not proximity, so the guard must be an equality. NaN
+    anywhere reads as not-identical (``array_equal`` semantics), which is the
+    conservative side.
+
+    Args:
+        candidate: The adaptive pass's ``(n_storage, T)`` discharge cost.
+        pass1_override: Pass 1's own ``p1_storage_discharge_cost`` (the
+            ercot-219 reservation offer) or ``None`` when pass 1 solved on
+            the kwargs default.
+        dispatch_kwargs: The shared LP kwargs; ``storage_discharge_cost`` is
+            what pass 1's P1 used when ``pass1_override`` is ``None`` (the
+            LP default ``0.0`` if the key is absent, mirroring
+            ``solve_dispatch``'s signature default).
+
+    Returns:
+        ``True`` iff ``candidate`` equals pass 1's resolved cost at every
+        ``(unit, hour)``.
+    """
+    cand = np.asarray(candidate, dtype=float)
+    base = (
+        pass1_override
+        if pass1_override is not None
+        else dispatch_kwargs.get("storage_discharge_cost", 0.0)
+    )
+    base = np.asarray(base, dtype=float)
+    try:
+        if base.ndim == 2:
+            ref = base
+        else:
+            # Static per-unit (n_storage,) or scalar: broadcast across hours
+            # exactly as build_cost_vector does (rows = units, cols = hours).
+            ref = np.broadcast_to(
+                base.reshape(-1, 1) if base.ndim == 1 else base, cand.shape
+            )
+    except ValueError:
+        return False
+    return cand.shape == ref.shape and bool(np.array_equal(cand, ref))
 
 
 def run_year(
@@ -656,6 +737,7 @@ def run_year(
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
+    egrid_steam_collapse_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
     nyiso_gas_bridge_st_min_run_hours: float | None = None,
     nyiso_spin_reserve_online: bool | None = None,
@@ -1614,6 +1696,10 @@ def run_year(
         )
     if egrid_family_heat_rates is not None:
         config = config.with_overrides(egrid_family_heat_rates=egrid_family_heat_rates)
+    if egrid_steam_collapse_heat_rates is not None:
+        config = config.with_overrides(
+            egrid_steam_collapse_heat_rates=egrid_steam_collapse_heat_rates
+        )
     if nyiso_gas_bridge_cc_min_run_hours is not None:
         config = config.with_overrides(
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours
@@ -3153,6 +3239,7 @@ def run_year(
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
                 egrid_identity_heat_rates=config.egrid_identity_heat_rates,
                 egrid_family_heat_rates=config.egrid_family_heat_rates,
+                egrid_steam_collapse_heat_rates=config.egrid_steam_collapse_heat_rates,
             )
             + retired_units,
             iso,
@@ -5676,43 +5763,78 @@ def run_year(
 
         _s_m, _p_hat, _floor_t, _settle_t = _ercot_adaptive_floor(energy_solve.p1)
         _adaptive_cost = np.maximum(_vom_s, _floor_t[None, :])
+        # PERF-B session 3, charter C-1a: pass 2 solves the SAME LP as pass 1
+        # — same fleet, demand, kwargs, base cost and hooks (every argument
+        # below is the same object pass 1 received) — and differs ONLY in the
+        # P1 storage discharge objective, ``_adaptive_cost`` against the cost
+        # pass 1's P1 actually solved with (``p1_storage_discharge_cost`` when
+        # set, else the kwargs default ``storage_discharge_cost``, which is
+        # what ``lp.costs.build_cost_vector`` broadcast). When the two are
+        # ELEMENTWISE EQUAL (exact ``np.array_equal``, no tolerance — a unit
+        # whose VOM sits below the fleet-max VOM is why the ``floor > vom``
+        # counter on the log line is a symptom, never the test) pass 2 would
+        # hand HiGHS the identical cost vector on the identical matrix, so
+        # pass 1's EnergySolveResult IS what pass 2 would have produced, and
+        # the pass is skipped. In the ERCOT 2025 keeper year that pass was
+        # 926 s (half the year) for a bit-identical answer
+        # (docs/FINDING-perfb-s2-markup-attribution-2026-09.md §4.4); in 2023
+        # / 2024 the floor rises above VOM in hundreds of window hours and the
+        # guard stays down. The adaptive sidecar (s_model / p_hat / floor_t)
+        # is recorded either way — it describes the floor construction, which
+        # is unchanged by whether the LP had to be re-solved to apply it.
+        _pass2_identical = _p1_storage_cost_identical(
+            _adaptive_cost, p1_storage_discharge_cost, dispatch_kwargs
+        )
         logger.info(
             "ERCOT adaptive-expectation offer (%d): pass-1 model spike days "
-            "%d, P_hat max %.3f, floor > vom in %d of %d window hours; "
-            "re-solving P1 (pass 2, THE scored pass)",
+            "%d, P_hat max %.3f, floor > vom in %d of %d window hours; %s",
             year,
             int(_s_m.sum()),
             float(_p_hat.max()),
             int((_floor_t[_in_win] > float(_vom_s.max())).sum()),
             int(_in_win.sum()),
+            (
+                "pass-2 storage discharge cost is elementwise IDENTICAL to the "
+                "cost pass 1 solved with (max(vom, floor) == vom for every "
+                "unit-hour) — pass 2 SKIPPED, pass 1 IS the scored pass (C-1a)"
+                if _pass2_identical
+                else "re-solving P1 (pass 2, THE scored pass)"
+            ),
         )
         ercot221_adaptive = {
             "s_model": _s_m,
             "p_hat": _p_hat,
             "floor_t": _floor_t,
         }
-        energy_solve = run_energy_solve(
-            fleet,
-            fleet_arrays,
-            demand,
-            mc_base,
-            dispatch_kwargs,
-            config,
-            xyear_cache=xyear_cache,
-            p1_fleet_prep=(
-                ra_p1_prep
-                or ercot_bridge_prep
-                or nyiso_bridge_prep
-                or miso_night_floor_prep
-                or pjm_fleet_prep
-            ),
-            p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
-            mc_bid_adjust=offer_surface_mc_bid_adjust,
-            p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
-            p1_bid_max_target=p1_bid_max_target,
-            startup_run_ratio_t=startup_run_ratio_t,
-            p1_storage_discharge_cost=_adaptive_cost,
-        )
+        if not _pass2_identical:
+            energy_solve = run_energy_solve(
+                fleet,
+                fleet_arrays,
+                demand,
+                mc_base,
+                dispatch_kwargs,
+                config,
+                xyear_cache=xyear_cache,
+                p1_fleet_prep=(
+                    ra_p1_prep
+                    or ercot_bridge_prep
+                    or nyiso_bridge_prep
+                    or miso_night_floor_prep
+                    or pjm_fleet_prep
+                ),
+                p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
+                mc_bid_adjust=offer_surface_mc_bid_adjust,
+                p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
+                p1_bid_max_target=p1_bid_max_target,
+                startup_run_ratio_t=startup_run_ratio_t,
+                p1_storage_discharge_cost=_adaptive_cost,
+                # C-1b (PERF-B session 3): every argument above is the same
+                # object pass 1 received and the discharge cost applies to P1
+                # only, so pass 1's P0 IS this pass's P0 — reuse it instead of
+                # rebuilding and cold-solving the identical LP (honoured only
+                # when pass 1's P1 was cold; see run_energy_solve).
+                reuse_p0_from=energy_solve,
+            )
         # ercot-230 FIXED-POINT ITERATION (PRECOMMIT-ercot230-adaptive-fixed-
         # point-2026-08-23.md §1; the FINDING-ercot221 §4 first named
         # successor, owner-chartered). The incumbent pass-2 floors were
@@ -5812,6 +5934,9 @@ def run_year(
                     p1_bid_max_target=p1_bid_max_target,
                     startup_run_ratio_t=startup_run_ratio_t,
                     p1_storage_discharge_cost=np.maximum(_vom_s, _fl_k[None, :]),
+                    # C-1b: same premise as pass 2 — the previous iteration's
+                    # P0 is this iteration's P0.
+                    reuse_p0_from=energy_solve,
                 )
                 _fp_floors.append(_fl_k)
                 ercot230_iteration["n_adapt_passes"] += 1
@@ -5977,6 +6102,10 @@ def run_year(
                 int((ercot_ordc_realized > 10).sum()),
                 float(ercot_ordc_realized.max()),
             )
+    # Drain this year's per-pass timing log ONCE: every pass's builds and both
+    # HiGHS runs, summed (PERF-B session 3, charter C-2) — read into ``_timing``
+    # below.
+    _pass_timing = _aggregate_pass_timing(energy_solve)
     # Everything the P2 commitment pass needs, kept so P2 can be re-run as a
     # post-process (see _commitment_pass / run_p2) without re-solving P0/P1.
     p2_state = {
@@ -6047,17 +6176,28 @@ def run_year(
             if persist_p0_commitment
             else {}
         ),
+        # ``build_s`` / ``solve_p0_s`` / ``solve_p1_s`` are SUMMED over every
+        # energy-solve pass of this year and over every matrix build of each
+        # pass (PERF-B session 3, charter C-2) — not the final pass's
+        # ``p1.build_time`` / ``r0.solve_time`` / ``p1.solve_time``, which left
+        # every earlier pass and the P0 model's build inside ``markup``.
+        # ``markup_parts`` is the attribution of the ``markup`` RESIDUAL the
+        # caller derives from the four fields (PERF-B session 2);
+        # ``solve_and_persist`` appends the ``other`` remainder covering the
+        # bracket edges and the between-pass adaptive machinery, so the clause
+        # it logs is exhaustive. See _aggregate_pass_timing.
         "_timing": {
             "energy_solve_s": _t_solve_end - _t_solve_start,
-            "build_s": energy_solve.p1.build_time,
-            "solve_p0_s": energy_solve.r0.solve_time,
-            "solve_p1_s": energy_solve.p1.solve_time,
-            # Attribution of the ``markup`` RESIDUAL the caller derives from
-            # the four fields above (PERF-B session 2). ``solve_and_persist``
-            # appends the ``other`` remainder covering the bracket edges and
-            # the between-pass adaptive machinery, so the clause it logs is
-            # exhaustive. See _aggregate_markup_parts.
-            "markup_parts": _aggregate_markup_parts(),
+            **{
+                k: _pass_timing[k]
+                for k in (
+                    "build_s",
+                    "solve_p0_s",
+                    "solve_p1_s",
+                    "markup_parts",
+                    "n_passes",
+                )
+            },
         },
     }
 

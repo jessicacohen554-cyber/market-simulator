@@ -298,6 +298,12 @@ VERDICT_MAP = {
     # -- the owner decides on the pre-stated condition
     # (PREDECL-capx-d51-2026-09-04.md §5).
     "miso-2021-2025-realized-t1h-d51-ratio": "miso-t1h-d51-ratio",
+    # capx-D55 (2026-09-05): the floor-retention key repaired to the class
+    # constant (D32 §3.2 / R2 -- a CODE fix, no field, same key
+    # eff2c890746ec966 as the bare miso-t1h D46) -- the byte-identity A/B
+    # that no second mechanism reads the key. SUFFIXED BY CHARTER; nothing arms
+    # (PREDECL-capx-d55-2026-09-05.md §1).
+    "miso-2021-2025-realized-t1h-d55-keyfix": "miso-t1h-d55-keyfix",
     # capx-D51 rider (d), owner ruling Q36: D45-R's pre-declared leg 7 -- the
     # NEISO dates-OFF paired control at the SHIPPED lever
     # (`--no-fossil-announced-exits`, neiso_net_icr_requirement False), the

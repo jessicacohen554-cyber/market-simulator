@@ -15,6 +15,12 @@ window (plan §1.4). Scored years are 2023-2025 (2021 seeds, 2022 is the bridge 
 never scored, rule 22). A missed band is a **root-cause investigation** (rules
 1/11/14), never a band widening, and NOTHING here tunes a parameter.
 
+Reported-only rows (no band, no verdict, no consumer reads a status off them):
+``unit_recall_gt300.plant_recall_frac`` (plant-exact recall, G-31) and
+``retirements.plant_release_precision`` (plant-grain release precision —
+released MW at real-exit plants ÷ released MW, per window / year / channel;
+capx D55, D32 §7 R4). They annotate the FC-3 verdict and never gate it.
+
 Usage::
 
     python scripts/score_capacity_hindcast.py --bundle results/hindcast/ercot-...-realized
@@ -955,6 +961,76 @@ def classify_exit_reachability(
     return block
 
 
+def plant_release_precision(
+    mod_thermal: pd.DataFrame, act_thermal: pd.DataFrame
+) -> dict:
+    """Plant-grain release precision (capx D55 / D32 §2.3, §7 R4): reported only.
+
+    ``released MW at real-exit plants ÷ released MW`` — of the thermal MW the
+    model retired, the share landing at a plant (same EIA plant code, same
+    fuel) that really retired anywhere in the scoring window. Returned for
+    the window and per model ledger year, each split by channel: ``economic``
+    (the screen-plus-floor release D32 characterised — the selection question)
+    and ``all`` (every channel, incl. the dated/confirmed exits whose plant
+    identity is an input rather than a choice). Timing is deliberately not
+    scored here (a 2024 release at a plant that really left in 2025 counts);
+    the timing band lives in its own metric.
+
+    Model rows whose plant identity was collapsed away (``model_plant_code``
+    → ``None``, legacy zone aggregates) count in the denominator as misses
+    and are reported in ``released_mw_no_plant_identity`` so a low reading
+    on an aggregate fleet is legible as identity loss rather than selection.
+    A channel with no released MW reads ``precision: None`` (never 0). No
+    band is attached and no consumer reads a verdict off this block.
+    """
+    real_plants: set[tuple[str, str]] = set()
+    if "plant_id" in act_thermal.columns:
+        for _, a in act_thermal.iterrows():
+            if pd.notna(a["plant_id"]):
+                real_plants.add((str(int(a["plant_id"])), str(a["fuel"])))
+
+    def _block(rows: pd.DataFrame) -> dict:
+        released = float(rows["mw"].sum()) if len(rows) else 0.0
+        hit = 0.0
+        no_identity = 0.0
+        for _, r in rows.iterrows():
+            pc = model_plant_code(r["unit_id"]) if "unit_id" in rows.columns else None
+            if pc is None:
+                no_identity += float(r["mw"])
+            elif (pc, str(r["fuel"])) in real_plants:
+                hit += float(r["mw"])
+        return {
+            "released_mw": round(released, 3),
+            "released_mw_at_real_exit_plants": round(hit, 3),
+            "released_mw_no_plant_identity": round(no_identity, 3),
+            "precision": round(hit / released, 3) if released > 0.0 else None,
+        }
+
+    reason = (
+        mod_thermal["reason"]
+        if "reason" in mod_thermal.columns
+        else pd.Series([None] * len(mod_thermal), index=mod_thermal.index)
+    )
+    channel = reason.map(channel_of) if len(mod_thermal) else reason
+    econ = mod_thermal[channel == "economic"] if len(mod_thermal) else mod_thermal
+
+    def _both(rows_all: pd.DataFrame, rows_econ: pd.DataFrame) -> dict:
+        return {"economic": _block(rows_econ), "all": _block(rows_all)}
+
+    per_year: dict[str, dict] = {}
+    if "year" in mod_thermal.columns:
+        for y in sorted({int(v) for v in mod_thermal["year"].dropna()}):
+            m_all = mod_thermal[mod_thermal["year"] == y]
+            m_econ = econ[econ["year"] == y] if len(econ) else econ
+            per_year[str(y)] = _both(m_all, m_econ)
+    return {
+        "grain": "plant-code+fuel, window real-exit set; reported only (D32 R4)",
+        "n_real_exit_plants": len(real_plants),
+        "window": _both(mod_thermal, econ),
+        "per_year": per_year,
+    }
+
+
 def score_retirements(
     model: pd.DataFrame, actuals: pd.DataFrame, reachability: dict | None = None
 ) -> dict:
@@ -988,6 +1064,22 @@ def score_retirements(
 
     ``plant_recall_frac`` is reported (not banded) as a stricter diagnostic: the
     share of large actual units whose exact plant the model also retired.
+
+    ``plant_release_precision`` (capx D55, D32 §2.3 / §7 R4 — REPORTED ONLY,
+    no band, no verdict, no consumer reads a status off it) is recall's
+    mirror at plant grain: of the MW the model released, how much sits at a
+    plant that really exited (same plant code AND same fuel, anywhere in the
+    2021–2025 window) — ``released MW at real-exit plants ÷ released MW``.
+    Per fuel-MW excess (``false_retire``) the model can never be "false"
+    while it retires less of a fuel than reality did, whichever plants it
+    lands on; this row is the selection question that grain is blind to
+    (13.5 % on D31's 3.7 GW coal release; 100 % for a perfect selector).
+    Reported for the whole window and per ledger year, and split by channel
+    (``economic`` — the screen-plus-floor release the question is about —
+    against ``all``, which folds in the dated/confirmed channels whose plant
+    identity is an input). Rows whose plant identity was collapsed away
+    (legacy zone aggregates) stay in the denominator and are counted
+    separately; a channel with no released MW reads ``None``, never 0.
 
     **Gate membership (owner decision D-24).** ``reachability`` — the block
     :func:`classify_exit_reachability` returns — redefines the recall
@@ -1065,6 +1157,12 @@ def score_retirements(
                 plant_matched += 1
     plant_recall = plant_matched / len(big) if len(big) else float("nan")
 
+    # capx D55 / D32 R4 — plant-grain RELEASE PRECISION (reported only). The
+    # real-exit plant set is every (plant, fuel) with an actual thermal
+    # retirement row in the window, any size (the selection question is
+    # about where the release LANDS, not the ≥300 MW recall universe).
+    release_precision = plant_release_precision(mod_thermal, act_thermal)
+
     # --- Grain-corrected false-retire (G-31): per-fuel excess -------------- #
     false_gw = 0.0
     for f in set(model_fuel_mw) | set(actual_fuel_mw):
@@ -1109,6 +1207,10 @@ def score_retirements(
             if not np.isnan(recall)
             else "SKIP",
         },
+        # REPORTED ONLY (capx D55, D32 R4): no band, no verdict; see the
+        # docstring. Sits beside plant_recall_frac's block, not inside it, so
+        # no consumer keyed on unit_recall_gt300's schema changes.
+        "plant_release_precision": release_precision,
         "false_retire": {
             "false_gw": round(false_gw, 3),
             "frac_of_model": round(false_frac, 3),
@@ -1987,6 +2089,7 @@ def write_report(
         "over-retirement (screen root-cause, e.g. G-30), not a scoring artifact."
     )
     L.append("")
+    L.extend(render_release_precision_note(ret.get("plant_release_precision")))
     L.extend(render_reachability_section(ret.get("reachability"), rr))
     L.append("Per-fuel retired GW:")
     L.append("")
@@ -2194,6 +2297,7 @@ def render_rescore_section(
     )
     L.append(f"| reversal exposure (GW, §c.5-1) | — | {exp} |")
     L.append("")
+    L.extend(render_release_precision_note(ret.get("plant_release_precision")))
     L.extend(render_reachability_section(ret.get("reachability"), rr))
     # Finding: plant-exact recall above fuel-MW recall means the model retired the
     # right plant(s) but carries a pmax below the EIA nameplate the RD-5 actuals
@@ -2263,6 +2367,53 @@ def render_rescore_section(
         L.append(f"> **Additions (§c.5-2):** {add_is['note']}")
         L.append("")
     return "\n".join(L)
+
+
+def render_release_precision_note(prp: dict | None) -> list[str]:
+    """Render the reported-only plant-grain release-precision block (capx D55).
+
+    One blockquote line: window precision for the economic channel (the
+    selection question) and for all channels, then the per-year economic
+    readings. Absent on a score produced before the row existed → nothing.
+    """
+    if not prp:
+        return []
+
+    def _pct(block: dict) -> str:
+        p = block.get("precision")
+        return "—" if p is None else format(p, ".1%")
+
+    def _mw(block: dict) -> str:
+        return (
+            f"{block.get('released_mw_at_real_exit_plants', 0.0):,.0f} / "
+            f"{block.get('released_mw', 0.0):,.0f} MW"
+        )
+
+    w = prp.get("window", {})
+    econ, alls = w.get("economic", {}), w.get("all", {})
+    per_year = ", ".join(
+        f"{y}: {_pct(v.get('economic', {}))} ({_mw(v.get('economic', {}))})"
+        for y, v in sorted(prp.get("per_year", {}).items())
+    )
+    no_id = float(econ.get("released_mw_no_plant_identity", 0.0) or 0.0)
+    return [
+        "> **Plant-grain release precision (D32 R4, reported only — no band, no "
+        "verdict):** of the MW the model released, the share landing at a plant "
+        "(same plant code + fuel) that really exited in the window. Economic "
+        f"channel **{_pct(econ)}** ({_mw(econ)}); all channels {_pct(alls)} "
+        f"({_mw(alls)}); real-exit plant set {prp.get('n_real_exit_plants', 0)}. "
+        f"Economic by year — {per_year or '—'}."
+        + (
+            f" {no_id:,.0f} MW released without plant identity (zone aggregate) "
+            "counts as a miss."
+            if no_id > 0.0
+            else ""
+        )
+        + " A perfect selector reads 100 %; a random one reads the real exit "
+        "rate of the retained MW (D32 §2.3: 13.5 % released vs 14.1 % retained "
+        "on D31).",
+        "",
+    ]
 
 
 def append_rescore(report_path: Path, section: str) -> None:

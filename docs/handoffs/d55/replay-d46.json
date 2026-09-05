@@ -1,0 +1,46 @@
+{
+  "bundle": "results/hindcast/miso-2021-2025-realized-t1h-d46",
+  "cache_key": "eff2c890746ec966",
+  "iso": "MISO",
+  "n_fleet_units": 2189,
+  "accounting_ratio": 0.8546435044350695,
+  "years": {
+    "2022": {
+      "year": 2022,
+      "n_eligible": 1489,
+      "n_missing_attrs": 8,
+      "missing_attrs": [
+        "planned_61144_1",
+        "planned_10328_GEN7",
+        "planned_10328_GEN8",
+        "planned_10328_GEN9",
+        "planned_1206_R1",
+        "planned_1206_R2",
+        "planned_1206_R3",
+        "planned_63259_DEPS1"
+      ],
+      "n_capped": 1489,
+      "n_decided": 0,
+      "released_mw_committed": 0,
+      "defective_key_reproduces_committed_decision": true,
+      "coal_key1_rounding_buckets_defective": 4,
+      "note": "the floor exhausted the eligible set (every failing unit retained); the retention ORDER is irrelevant and the fixed key releases the same empty set",
+      "predicted_released_fixed": [],
+      "prediction_exact": true
+    },
+    "2023": {
+      "year": 2023,
+      "n_eligible": 948,
+      "n_missing_attrs": 0,
+      "missing_attrs": [],
+      "n_capped": 948,
+      "n_decided": 0,
+      "released_mw_committed": 0,
+      "defective_key_reproduces_committed_decision": true,
+      "coal_key1_rounding_buckets_defective": 4,
+      "note": "the floor exhausted the eligible set (every failing unit retained); the retention ORDER is irrelevant and the fixed key releases the same empty set",
+      "predicted_released_fixed": [],
+      "prediction_exact": true
+    }
+  }
+}

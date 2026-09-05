@@ -155,6 +155,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     measured_chp_heat_rates: { cell: "K", ev: "caiso-147 (results/calibration/FINDING-caiso147-measured-chp-heat-rates-2026-07-31.md)" },
     egrid_identity_heat_rates: { cell: "U" },
     egrid_family_heat_rates: { cell: "U" },
+    egrid_steam_collapse_heat_rates: { cell: "U" },
     da_virtual_bids: { cell: "U" },
     negative_renewable_offers: { cell: "K", ev: "caiso-216 (the armed floor engages only POOLED on the caiso-200 keeper: all four non-pocket zones hit lambda le 0 simultaneously in 314/604/507 h 2023/24/25 at the -$20 solar / -$26 wind floors, zero zonally-separated floor hours; SDGE-only le-0 in 206/194/432 h behind its armed LCT import cap is the lone zonal separation — the rule-1 witness that the machinery separates when a real limit binds; _caiso216_belly_surplus.json B3)" },
     wind_ptc_vintage_offers: { cell: "." },

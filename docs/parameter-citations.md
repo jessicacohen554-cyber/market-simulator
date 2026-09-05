@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1902 parameters registered** (1022 flagged `needs-citation`).
+**1903 parameters registered** (1022 flagged `needs-citation`).
 
 
 ## Calibration
@@ -1612,6 +1612,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.eac_price_gas_cc_ccs` | 0.0 | 1 | $/MWh, CCS-equipped gas CC only (45Q-linked) |  | auto-generated, needs-citation |
 | `scenario.egrid_family_heat_rates` | False | 2 | eGRID PRIME-MOVER-FAMILY heat rates at multi-family plants (nyiso-1… | 2003 | auto-generated |
 | `scenario.egrid_identity_heat_rates` | False | 2 | eGRID IDENTITY-RECONCILED heat rates (nyiso-151; default OFF, byte-… | 2026-08 | auto-generated |
+| `scenario.egrid_steam_collapse_heat_rates` | False | 2 | eGRID STEAM-COLLAPSE identity heat rates (nyiso-189; owner ruling 2… | 2026-09 | auto-generated |
 | `scenario.ercot_as_aware_commitment` | False | 1 | ERCOT: run a P2 commitment screen |  | auto-generated, needs-citation |
 | `scenario.ercot_commitment_posture` | False | 1 | ERCOT COMMITMENT POSTURE (default off, ERCOT-gated — the commitment… | 2026-07 | auto-generated |
 | `scenario.ercot_commitment_posture_min_load_frac` | 0.574 | 2 | Minimum stable load of a postured ERCOT gas-CC pool as a fraction o… | 2023 | auto-generated |

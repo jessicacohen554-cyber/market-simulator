@@ -220,47 +220,55 @@ class TestMarkupBreakdown(TimingLineTestBase):
 class TestMarkupPartsAreExhaustive(unittest.TestCase):
     """``run_energy_solve``'s components sum to the residual the callers report.
 
-    The residual is ``energy_solve_wall - p1.build_time - r0.solve_time -
-    p1.solve_time``. What makes the arithmetic non-obvious is ``build_time``:
-    on the warm path ``p1.build_time`` IS the one model build, but when P1
-    cold-rebuilds it names the SECOND model, leaving the first unaccounted —
-    which is the whole point of the ``p0_build`` component. This pins the
-    identity on both routings with a fake solve, so a future edit to the
-    segment boundaries cannot silently stop summing.
+    The residual is ``energy_solve_wall - build_s - r0.solve_time -
+    p1.solve_time`` where — since PERF-B session 3 (charter C-2) — ``build_s``
+    is EVERY matrix build of the pass, not ``p1.build_time``. That is what
+    makes the identity close on every routing: on the warm path the one build
+    is the P0 model's; when P1 cold-rebuilds there are two, and under
+    ``MARKET_SIM_WARMSTART=0`` the P0 build sits inside the P0 pass instead of
+    the setup. This replays the assembly arithmetic on synthetic segment walls
+    for all three, so a future edit to the segment boundaries cannot silently
+    stop summing — and pins that no ``p0_build`` residual component is needed
+    any more (the build it named is now accounted).
     """
 
-    def _parts(self, *, warm_p1: bool):
+    def _parts(self, *, warm: bool, warm_p1: bool):
         """Replay the assembly arithmetic on synthetic segment walls."""
         # Interior wall segments [_t0.._t6] and the two HiGHS run times.
         t = [0.0, 100.0, 260.0, 265.0, 267.0, 430.0, 431.0]
         s0, s1 = 60.0, 55.0
-        build_setup, build_p1_cold = 96.0, 94.0
-        p1_cold = not warm_p1
-        build_p1 = build_p1_cold if p1_cold else 0.0
+        build_setup = 96.0 if warm else 0.0  # the warm P0 model's build
+        build_p0 = 0.0 if warm else 96.0  # the cold P0 model (WARMSTART=0)
+        p1_cold = not (warm and warm_p1)
+        build_p1 = 94.0 if p1_cold else 0.0  # the second model, cold P1 only
+        build_s = build_setup + build_p0 + build_p1
         parts = {
             "setup": (t[1] - t[0]) - build_setup,
-            "p0_build": build_setup if p1_cold else 0.0,
-            "p0_post": (t[2] - t[1]) - s0,
+            "p0_post": (t[2] - t[1]) - s0 - build_p0,
             "markup": t[3] - t[2],
             "seam": t[4] - t[3],
             "p1_post": (t[5] - t[4]) - s1 - build_p1,
             "tail": t[6] - t[5],
         }
-        # What the orchestrator subtracts: p1.build_time.
-        reported_build = build_p1_cold if p1_cold else build_setup
-        residual = (t[6] - t[0]) - reported_build - s0 - s1
-        return parts, residual
+        # What the orchestrator subtracts: EVERY build, both solves.
+        residual = (t[6] - t[0]) - build_s - s0 - s1
+        return parts, residual, build_s
 
     def test_sums_to_residual_on_the_warm_p1_path(self):
-        parts, residual = self._parts(warm_p1=True)
+        parts, residual, build_s = self._parts(warm=True, warm_p1=True)
         self.assertAlmostEqual(sum(parts.values()), residual, places=9)
-        self.assertEqual(parts["p0_build"], 0.0)
+        self.assertEqual(build_s, 96.0)
 
     def test_sums_to_residual_on_the_cold_p1_rebuild_path(self):
-        parts, residual = self._parts(warm_p1=False)
+        parts, residual, build_s = self._parts(warm=True, warm_p1=False)
         self.assertAlmostEqual(sum(parts.values()), residual, places=9)
-        # The unaccounted first build is surfaced, not hidden in the residual.
-        self.assertGreater(parts["p0_build"], 0.0)
+        # BOTH builds are subtracted — the first is no longer in the residual.
+        self.assertEqual(build_s, 96.0 + 94.0)
+
+    def test_sums_to_residual_on_the_two_cold_solves_path(self):
+        parts, residual, build_s = self._parts(warm=False, warm_p1=False)
+        self.assertAlmostEqual(sum(parts.values()), residual, places=9)
+        self.assertEqual(build_s, 96.0 + 94.0)
 
     def test_solve_module_defines_the_same_component_names(self):
         import inspect
@@ -270,7 +278,6 @@ class TestMarkupPartsAreExhaustive(unittest.TestCase):
         src = inspect.getsource(solve_mod.run_energy_solve)
         for name in (
             "setup",
-            "p0_build",
             "p0_post",
             "markup",
             "seam",
@@ -278,86 +285,146 @@ class TestMarkupPartsAreExhaustive(unittest.TestCase):
             "tail",
         ):
             self.assertIn(f'"{name}":', src, f"markup_parts lost the {name} component")
+        # The unaccounted-build component is retired: the build it named is now
+        # inside ``build_s`` and subtracted by both orchestrators (C-2).
+        self.assertNotIn('"p0_build":', src)
+
+    def test_result_carries_the_pass_totals(self):
+        from dataclasses import fields
+
+        from market_sim.pipeline.solve import EnergySolveResult
+
+        names = {f.name for f in fields(EnergySolveResult)}
+        self.assertTrue({"build_s", "solve_p0_s", "solve_p1_s"} <= names)
 
 
 class TestMultiPassAggregation(unittest.TestCase):
     """A year with more than one energy solve must not lose the earlier passes.
 
-    ``markup`` subtracts the FINAL ``EnergySolveResult``'s build and two solve
-    times only, so on an ercot-221 two-pass year (or an ercot-230 fixed point)
-    every earlier pass's whole matrix build and both HiGHS runs sit inside the
-    residual. ``_aggregate_markup_parts`` names them ``prior_build`` /
-    ``prior_solve``; this pins that the identity still closes.
+    On an ercot-221 two-pass year (or an ercot-230 fixed point) ``energy_solve_s``
+    spans every pass, so the three subtrahends must too. Since PERF-B session 3
+    (charter C-2) ``_aggregate_pass_timing`` SUMS ``build_s`` / ``solve_p0_s`` /
+    ``solve_p1_s`` over the per-pass log, so every pass's build and both HiGHS
+    runs are subtracted and no ``prior_build`` / ``prior_solve`` residual
+    component exists; this pins that the identity still closes.
     """
 
-    def _residual_and_parts(self, n_passes: int):
+    per_pass = dict(
+        build_s=90.0,
+        solve_p0_s=260.0,
+        solve_p1_s=250.0,
+        parts={
+            "setup": 1.0,
+            "p0_post": 40.0,
+            "markup": 0.2,
+            "seam": 3.0,
+            "p1_post": 38.0,
+            "tail": 0.0,
+        },
+    )
+
+    def _fill_log(self, n_passes: int):
         from market_sim.pipeline import solve as solve_mod
 
         solve_mod.reset_pass_timing_log()
-        # Each pass: its own build, two HiGHS runs, and interior components.
-        per_pass = dict(
-            build_s=90.0,
-            solve_p0_s=260.0,
-            solve_p1_s=250.0,
-            parts={
-                "setup": 1.0,
-                "p0_build": 90.0,
-                "p0_post": 40.0,
-                "markup": 0.2,
-                "seam": 3.0,
-                "p1_post": 38.0,
-                "tail": 0.0,
-            },
-        )
         for _ in range(n_passes):
             solve_mod._PASS_TIMING_LOG.append(
-                {**per_pass, "parts": dict(per_pass["parts"])}
+                {**self.per_pass, "parts": dict(self.per_pass["parts"])}
             )
-        passes = solve_mod.take_pass_timing_log()
 
+    def _residual_and_totals(self, n_passes: int):
+        """Replay ``_aggregate_pass_timing`` and the caller's residual."""
+        from market_sim.pipeline import solve as solve_mod
+
+        self._fill_log(n_passes)
+        passes = solve_mod.take_pass_timing_log()
         parts: dict[str, float] = {}
         for entry in passes:
             for name, seconds in entry["parts"].items():
                 parts[name] = parts.get(name, 0.0) + seconds
-        if len(passes) > 1:
-            parts["prior_build"] = sum(e["build_s"] for e in passes[:-1])
-            parts["prior_solve"] = sum(
-                e["solve_p0_s"] + e["solve_p1_s"] for e in passes[:-1]
-            )
-
-        # What the orchestrator sees: the whole bracket wall, minus the LAST
-        # pass's three fields. Interior wall of one pass = its parts + its own
+        totals = {
+            "build_s": sum(e["build_s"] for e in passes),
+            "solve_p0_s": sum(e["solve_p0_s"] for e in passes),
+            "solve_p1_s": sum(e["solve_p1_s"] for e in passes),
+        }
+        # What the orchestrator sees: the whole bracket wall, minus the SUMMED
+        # three fields. Interior wall of one pass = its parts + its own
         # build + its two solves (the parts arithmetic, pinned above).
         one_wall = (
-            sum(per_pass["parts"].values())
-            + per_pass["build_s"]
-            + per_pass["solve_p0_s"]
-            + per_pass["solve_p1_s"]
+            sum(self.per_pass["parts"].values())
+            + self.per_pass["build_s"]
+            + self.per_pass["solve_p0_s"]
+            + self.per_pass["solve_p1_s"]
         )
         bracket = one_wall * n_passes
         residual = (
-            bracket
-            - per_pass["build_s"]
-            - per_pass["solve_p0_s"]
-            - per_pass["solve_p1_s"]
+            bracket - totals["build_s"] - totals["solve_p0_s"] - totals["solve_p1_s"]
         )
-        return residual, parts
+        return residual, parts, totals
 
-    def test_single_pass_needs_no_prior_components(self):
-        residual, parts = self._residual_and_parts(1)
+    def test_single_pass(self):
+        residual, parts, totals = self._residual_and_totals(1)
         self.assertNotIn("prior_build", parts)
         self.assertAlmostEqual(sum(parts.values()), residual, places=9)
+        self.assertEqual(totals["build_s"], 90.0)
 
     def test_two_pass_year_is_still_exhaustive(self):
-        residual, parts = self._residual_and_parts(2)
+        residual, parts, totals = self._residual_and_totals(2)
         self.assertAlmostEqual(sum(parts.values()), residual, places=9)
-        # The extra pass's build and both solves are named, not absorbed.
-        self.assertAlmostEqual(parts["prior_build"], 90.0, places=9)
-        self.assertAlmostEqual(parts["prior_solve"], 510.0, places=9)
+        # The extra pass's build and both solves are in the three fields, so
+        # the residual is the two passes' interiors and nothing else.
+        self.assertAlmostEqual(totals["build_s"], 180.0, places=9)
+        self.assertAlmostEqual(totals["solve_p0_s"], 520.0, places=9)
+        self.assertAlmostEqual(totals["solve_p1_s"], 500.0, places=9)
+        self.assertAlmostEqual(
+            residual, 2 * sum(self.per_pass["parts"].values()), places=9
+        )
 
     def test_four_pass_year_is_still_exhaustive(self):
-        residual, parts = self._residual_and_parts(4)
+        residual, parts, totals = self._residual_and_totals(4)
         self.assertAlmostEqual(sum(parts.values()), residual, places=9)
+
+    def test_the_orchestrator_helper_sums_every_pass(self):
+        """The real ``_aggregate_pass_timing`` returns the summed fields."""
+        import ast
+
+        from market_sim.pipeline import solve as solve_mod
+
+        spec_path = REPO_ROOT / "scripts" / "run_calibration.py"
+        # Importing the 6k-line orchestrator module is heavy; pull the helper's
+        # own source out and exec it against the real pass log instead.
+        tree = ast.parse(spec_path.read_text())
+        fn = next(
+            n
+            for n in tree.body
+            if isinstance(n, ast.FunctionDef) and n.name == "_aggregate_pass_timing"
+        )
+        ns = {"take_pass_timing_log": solve_mod.take_pass_timing_log}
+        exec(compile(ast.Module([fn], type_ignores=[]), str(spec_path), "exec"), ns)
+        self._fill_log(3)
+        out = ns["_aggregate_pass_timing"](final=None)
+        self.assertEqual(out["n_passes"], 3)
+        self.assertAlmostEqual(out["build_s"], 270.0, places=9)
+        self.assertAlmostEqual(out["solve_p0_s"], 780.0, places=9)
+        self.assertAlmostEqual(out["solve_p1_s"], 750.0, places=9)
+        self.assertNotIn("prior_build", out["markup_parts"])
+        self.assertAlmostEqual(
+            sum(out["markup_parts"].values()),
+            3 * sum(self.per_pass["parts"].values()),
+            places=9,
+        )
+        # An empty log falls back to the final result's own fields (one pass).
+        solve_mod.reset_pass_timing_log()
+
+        class _Final:
+            build_s, solve_p0_s, solve_p1_s, markup_parts = 7.0, 8.0, 9.0, {"a": 1.0}
+
+        fallback = ns["_aggregate_pass_timing"](final=_Final())
+        self.assertEqual(
+            (fallback["build_s"], fallback["solve_p0_s"], fallback["solve_p1_s"]),
+            (7.0, 8.0, 9.0),
+        )
+        self.assertEqual(fallback["n_passes"], 1)
 
     def test_take_drains_the_log(self):
         from market_sim.pipeline import solve as solve_mod
@@ -375,13 +442,18 @@ class TestMultiPassAggregation(unittest.TestCase):
         self.assertIsNotNone(solve_mod._PASS_TIMING_LOG.maxlen)
 
     def test_the_backcast_orchestrator_aggregates(self):
-        # The helper lives in the backcast orchestrator; pin that it exists and
-        # names both prior components, so the wiring cannot be dropped silently.
+        # The helper lives in the backcast orchestrator; pin that it exists,
+        # that _timing reads the summed fields from it, and that the retired
+        # residual components are gone, so the wiring cannot be dropped silently.
         text = (REPO_ROOT / "scripts" / "run_calibration.py").read_text()
-        self.assertIn("def _aggregate_markup_parts(", text)
-        self.assertIn('parts["prior_build"]', text)
-        self.assertIn('parts["prior_solve"]', text)
+        self.assertIn("def _aggregate_pass_timing(", text)
+        self.assertIn("_pass_timing = _aggregate_pass_timing(energy_solve)", text)
+        self.assertNotIn('parts["prior_build"]', text)
+        self.assertNotIn("energy_solve.p1.build_time", text)
         self.assertIn("reset_pass_timing_log()", text)
+        runner = (REPO_ROOT / "src" / "market_sim" / "runner.py").read_text()
+        self.assertIn("energy_solve.build_s", runner)
+        self.assertNotIn("energy_solve.p1.build_time", runner)
 
 
 class TestOrchestratorsUseTheHelper(unittest.TestCase):
