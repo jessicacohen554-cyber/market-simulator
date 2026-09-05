@@ -76,10 +76,36 @@ parallel implementation for the nested rows. Sibling entries need neither.
 
 A partition entry additionally carries a ``partition`` block naming its ISO,
 role, the shard's DESIGNATED year span for that config, and the ruling that
-declared the partition. ``designated_years`` and the entry's own ``years``
-(which come from the replayed ``meta.json``, i.e. the run's REGISTERED span) are
-recorded separately and can legitimately differ — the forward config's
-registered span is 3-year while its designated span is {2024, 2025}.
+declared the partition.
+
+**R-AW (owner ruling, audit-program director sitting 2026-09-05, card "ERCOT
+key"), verbatim: "The golden config should be the 2024:2025 one not 2023".**
+Read as: the ERCOT stage-0 golden captures the FORWARD config on its designated
+span {2024, 2025}, and the ``ERCOT__carveout-2023`` capture key is RETIRED.
+Since the ercot-248 consolidation (owner instruction 2026-09-05; both partition
+roles' ``run_id`` now point at the one composed run
+``2026-09-05-ercot248-two-config-keeper``, whose ``meta.json`` carries the
+forward config verbatim), the rules this script applies are:
+
+* **The bare key of a partitioned ISO resolves to its ``forward`` role**
+  (``check_golden_manifest.FORWARD_ROLE``): the shard's designated ``keeper``
+  (which the forward role's ``run_id`` must equal — a mismatch fails loud) is
+  replayed on the forward role's DESIGNATED span, not the run's whole
+  registered span. The composed run's registered span is 3-year because it
+  carries 2023 under the carve-out config; replaying all three years of its
+  forward ``meta.json`` would be a golden of a config the keeper never
+  designates for 2023.
+* **Every capture replays its config on its designated span**, and the entry
+  records the run's REGISTERED span alongside as ``registered_years``. Rule 22
+  holds as a hard assertion: the designated span is never a superset of the
+  registered one (the slice can only narrow — {2024, 2025} ⊂ {2023, 2024,
+  2025}). It never introduces a 2022 or 2026 solve.
+* **A retired capture key is refused** (``check_golden_manifest.RETIRED_CAPTURE_KEYS``).
+  The manifest entries already written under it are historical capture records
+  — a ``keeper_id`` records which run's outputs were actually captured — and are
+  never rewritten; the gate reports them without comparing them to the shard.
+
+Record: ``docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md``.
 
 Each entry also carries a ``keeper_snapshot`` copied from the provenance run's
 registry sidecar at capture time. Top-15-per-ISO registry retention will prune
@@ -100,8 +126,13 @@ Usage:
     # one keeper, in-process (all its years sequentially):
     python scripts/capture_keeper_goldens.py --iso NEISO --stage-tag stage1-before
 
-    # a config-partition member (see above), by its <ISO>__<role> key:
-    python scripts/capture_keeper_goldens.py --iso ERCOT__carveout-2023 \
+    # the ERCOT stage-0 golden: the forward config on {2024, 2025} (R-AW) —
+    # the bare key resolves to the forward role and slices to its span:
+    python scripts/capture_keeper_goldens.py --iso ERCOT --stage-tag perfb-stage0
+
+    # a config-partition member by its <ISO>__<role> key (ERCOT__forward is the
+    # same capture as the bare key; ERCOT__carveout-2023 is RETIRED and refused):
+    python scripts/capture_keeper_goldens.py --iso ERCOT__forward \
         --stage-tag perfb-stage0
 
     # what an ISO's shard designates (no solve):
@@ -112,10 +143,10 @@ Usage:
     # bare ``keeper`` of each shard:
     python scripts/capture_keeper_goldens.py --all --stage-tag stage1-before
 
-Holdout quarantine (CLAUDE.md rule 22): this only ever solves the years already
-recorded in the replayed run's ``meta.json`` (all within 2023-2025) — for a
-partition member, that run's own REGISTERED span, never a widened one. It never
-introduces a 2022 or 2026 solve.
+Holdout quarantine (CLAUDE.md rule 22): this only ever solves years already
+recorded in the replayed run's ``meta.json`` (all within 2023-2025) — a
+partitioned config's DESIGNATED span, asserted to be a subset of that run's
+REGISTERED span, never a widened one. It never introduces a 2022 or 2026 solve.
 """
 
 from __future__ import annotations
@@ -152,15 +183,22 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("capture_keeper_goldens")
 
 
+from scripts.check_golden_manifest import (  # noqa: E402  (after sys.path insert)
+    FORWARD_ROLE,
+    RETIRED_CAPTURE_KEYS,
+)
 from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
 
 REGISTRY_DIR = REPO / "frontend" / "data" / "backcast" / "registry"
 GOLDENS_ROOT = REPO / "results" / "regression-goldens"
 
 # Separator between the ISO and the config-partition role in a capture key
-# (``ERCOT__carveout-2023``). Doubled underscore: it appears in no ISO name and
-# in no ``config_partition.configs[].role`` value, so the split is unambiguous,
-# and it is filesystem-safe because the key is also the golden subdirectory.
+# (``ERCOT__forward``). Doubled underscore: it appears in no ISO name and in no
+# ``config_partition.configs[].role`` value, so the split is unambiguous, and it
+# is filesystem-safe because the key is also the golden subdirectory. The gate
+# (stdlib-only, never imports this solve-side tool) carries its own copy; the
+# retired-key table and the forward-role name are imported FROM the gate so the
+# two scripts cannot disagree about either.
 PARTITION_KEY_SEP = "__"
 
 # ``meta.json`` records four ``solve_and_persist`` parameters under a different
@@ -319,7 +357,13 @@ def _keeper_snapshot(info: dict) -> dict:
         "date": reg.get("date", ""),
         "shorthand": reg.get("shorthand", ""),
         "definition": reg.get("definition", ""),
+        # The span this capture replayed (== the entry's ``years``; the gate
+        # asserts the two agree). The sidecar's own registered span is kept
+        # beside it so a slice (R-AW) stays visible after the sidecar is pruned.
         "years": [int(y) for y in info["years"]],
+        "registered_years": [
+            int(y) for y in info.get("registered_years", info["years"])
+        ],
         "bundle": str(info["bundle"].relative_to(REPO)),
         "sidecar_at_capture": (
             "present"
@@ -394,6 +438,48 @@ def partition_run_id(iso: str, role: str) -> str | None:
     return None
 
 
+def _partition_config(iso: str, role: str) -> dict | None:
+    """Return the shard's ``config_partition.configs[]`` entry for ``role``."""
+    for cfg in partition_configs(iso):
+        if str(cfg.get("role", "")).lower() == role.lower():
+            return cfg
+    return None
+
+
+def slice_to_designated_span(info: dict, cfg: dict, *, what: str) -> dict:
+    """Narrow ``info["years"]`` to the partition config's DESIGNATED span.
+
+    ``info["years"]`` arrives as the run's REGISTERED span (from its sidecar);
+    it is kept as ``registered_years`` and replaced by ``cfg["years"]``. Rule
+    22 as a hard assertion: the designated span must be a subset of the
+    registered one — a partition can only carve a registered run narrower,
+    never solve a year the run never registered (which is how a 2022 or 2026
+    solve would otherwise sneak in through a shard edit).
+
+    Args:
+        info: Resolved bundle info (mutated and returned).
+        cfg: The shard's partition config for this capture.
+        what: Label for error messages (the capture key).
+
+    Raises:
+        ValueError: if the designated span is not a subset of the registered
+            span, or is empty.
+    """
+    registered = sorted(int(y) for y in info["years"])
+    designated = sorted(int(y) for y in cfg.get("years") or [])
+    if not designated:
+        raise ValueError(f"{what}: partition config designates no years")
+    if not set(designated) <= set(registered):
+        raise ValueError(
+            f"{what}: designated span {designated} is not a subset of the run's "
+            f"registered span {registered} — a designated span is never a "
+            f"superset of the registered span (rule 22)"
+        )
+    info["registered_years"] = registered
+    info["years"] = designated
+    return info
+
+
 def resolve_capture_targets(keys: list[str]) -> dict[str, dict]:
     """Resolve capture keys (bare ISO or ``<ISO>__<role>``) to bundle info.
 
@@ -403,8 +489,16 @@ def resolve_capture_targets(keys: list[str]) -> dict[str, dict]:
     ``role`` / ``partition_config`` so the caller can solve the right ISO and
     stamp the entry's ``partition`` block.
 
+    R-AW: for an ISO whose shard carries a ``config_partition`` block, the bare
+    key IS the ``forward`` role — the designated ``keeper`` (which must equal
+    the forward role's ``run_id``) replayed on the forward role's DESIGNATED
+    span, with the run's registered span kept as ``registered_years``. Every
+    ``<ISO>__<role>`` key is likewise sliced to its role's designated span, so
+    ``ERCOT__forward`` and ``ERCOT`` resolve identically. A key in
+    ``check_golden_manifest.RETIRED_CAPTURE_KEYS`` is refused.
+
     Args:
-        keys: Capture keys, e.g. ``["NEISO", "ERCOT__carveout-2023"]``.
+        keys: Capture keys, e.g. ``["NEISO", "ERCOT", "ERCOT__forward"]``.
 
     Returns:
         ``{capture_key: info}``, one entry per requested key.
@@ -412,18 +506,40 @@ def resolve_capture_targets(keys: list[str]) -> dict[str, dict]:
     Raises:
         KeyError: if a partition key names a role the ISO's shard does not
             designate (fail loud — a typo'd role must never write a golden that
-            the CI gate would then report STALE forever).
+            the CI gate would then report STALE forever); if the key is retired;
+            or if a partitioned shard has no forward role / a forward role whose
+            run_id is not the designated keeper (a shard inconsistency).
+        ValueError: if a designated span is not a subset of the registered span.
     """
     out: dict[str, dict] = {}
     for raw in keys:
         iso, role = parse_capture_key(raw)
         key = capture_key(iso, role)
+        if key in RETIRED_CAPTURE_KEYS:
+            raise KeyError(f"{key}: RETIRED capture key — {RETIRED_CAPTURE_KEYS[key]}")
         if role is None:
             bundles = resolve_keeper_bundles(only_isos={iso})
             if iso not in bundles:
                 raise KeyError(f"{iso}: no designated keeper in keepers/{iso}.json")
             info = dict(bundles[iso])
             info.update({"iso": iso, "role": None, "partition_config": None})
+            if partition_configs(iso):
+                fwd = _partition_config(iso, FORWARD_ROLE)
+                if fwd is None:
+                    have = [c.get("role") for c in partition_configs(iso)]
+                    raise KeyError(
+                        f"{key}: keepers/{iso}.json declares a config_partition "
+                        f"with no {FORWARD_ROLE!r} role (roles present: {have}); "
+                        f"the bare key resolves to the forward role (R-AW)"
+                    )
+                if str(fwd["run_id"]) != info["keeper_id"]:
+                    raise KeyError(
+                        f"{key}: keepers/{iso}.json designates keeper "
+                        f"{info['keeper_id']} but its {FORWARD_ROLE!r} role names "
+                        f"{fwd['run_id']} — the two must agree (R-AW)"
+                    )
+                info.update({"role": FORWARD_ROLE, "partition_config": fwd})
+                slice_to_designated_span(info, fwd, what=key)
         else:
             run_id = partition_run_id(iso, role)
             if run_id is None:
@@ -432,13 +548,10 @@ def resolve_capture_targets(keys: list[str]) -> dict[str, dict]:
                     f"{key}: keepers/{iso}.json declares no config_partition "
                     f"role {role!r} (roles present: {have or 'none'})"
                 )
-            cfg = next(
-                c
-                for c in partition_configs(iso)
-                if str(c.get("role", "")).lower() == role.lower()
-            )
+            cfg = _partition_config(iso, role)
             info = _bundle_info(run_id, what=key)
             info.update({"iso": iso, "role": role, "partition_config": cfg})
+            slice_to_designated_span(info, cfg, what=key)
         out[key] = info
     return out
 
@@ -673,12 +786,14 @@ def _fidelity_check(
 def _partition_block(info: dict) -> dict | None:
     """Return the entry's ``partition`` block, or None for a bare-ISO capture.
 
-    ``designated_years`` is the span the ISO's shard assigns to THIS config;
-    the entry's own ``years`` is the replayed run's REGISTERED span. They are
-    recorded separately because they legitimately differ (ERCOT's forward config
-    is registered 3-year but designated {2024, 2025}), and conflating them is
-    exactly the gloss ``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2
-    warns against.
+    ``designated_years`` is the span the ISO's shard assigns to THIS config —
+    since R-AW also the span the capture replays, so it equals the entry's
+    ``years``; the replayed run's REGISTERED span is recorded separately as the
+    entry's ``registered_years``. They legitimately differ (ERCOT's forward
+    config is registered 3-year but designated {2024, 2025}), and conflating
+    them is exactly the gloss ``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md``
+    §2 warns against. Present on a partitioned ISO's bare entry too, since that
+    entry is its forward role.
     """
     cfg = info.get("partition_config")
     if not cfg:
@@ -740,7 +855,17 @@ def capture_one(key: str, stage_tag: str, info: dict) -> dict:
     from scripts.run_calibration_full import solve_and_persist
 
     meta = json.loads((info["bundle"] / "meta.json").read_text())
-    years = [int(y) for y in meta["years"]]
+    registered_years = sorted(int(y) for y in meta["years"])
+    # The span to replay: the resolved info's ``years`` — for a partitioned
+    # config, its DESIGNATED span (R-AW); otherwise the run's registered span.
+    # Rule 22, asserted at the solve site as well as at resolution: never a
+    # year the replayed run's own record does not carry.
+    years = sorted(int(y) for y in info.get("years") or registered_years)
+    if not set(years) <= set(registered_years):
+        raise ValueError(
+            f"{key}: replay span {years} is not a subset of the bundle's recorded "
+            f"span {registered_years} (rule 22: never widened)"
+        )
     hours = int(meta["hours"])
     kwargs, defaulted = build_solve_kwargs(meta, solve_and_persist)
     dropped_dead = drop_dead_config_keys(kwargs)
@@ -820,6 +945,9 @@ def capture_one(key: str, stage_tag: str, info: dict) -> dict:
         "keeper_id": info["keeper_id"],
         "bundle": str(info["bundle"].relative_to(REPO)),
         "years": years,
+        # The replayed run's own recorded span; ``years`` ⊆ this (rule 22),
+        # and the gate re-checks the inclusion on every run.
+        "registered_years": registered_years,
         "hours": hours,
         "recorded_flag_count": len(kwargs),
         "defaulted_unrecorded_params": defaulted,
@@ -893,13 +1021,18 @@ def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
             "basis sha, env pins, timestamp) and the provenance run's identity "
             "are PER ENTRY under keepers.<ISO>.provenance / .keeper_snapshot — "
             "there is deliberately no shared top-level git_sha. An entry keyed "
-            "<ISO>__<role> (e.g. ERCOT__carveout-2023) is a CONFIG-PARTITION "
+            "<ISO>__<role> (e.g. ERCOT__forward) is a CONFIG-PARTITION "
             "member: the role is verbatim that ISO's "
             "keepers/<ISO>.json config_partition.configs[].role, the entry "
             "carries an extra 'partition' block, and it is an ordinary v2 entry "
             "in every other respect — additive, so the bare-ISO entries are "
             "untouched. check_golden_manifest.live_keeper resolves both key "
-            "forms."
+            "forms. A partitioned ISO's BARE entry is its forward config "
+            "replayed on the forward role's designated span (owner ruling "
+            "R-AW, 2026-09-05), with the run's registered span kept in "
+            "registered_years; a capture key retired by ruling "
+            "(check_golden_manifest.RETIRED_CAPTURE_KEYS) keeps its entries as "
+            "historical capture records."
         ),
         "keepers": existing,
     }
@@ -963,14 +1096,25 @@ def main() -> int:
         for iso in keeper_store.iso_list(REPO):
             rec = keeper_store.load_shard(iso, REPO) or {}
             designated = rec.get("keeper")
-            print(f"{iso:6} {designated}   (capture key: {iso})")
+            fwd = (
+                _partition_config(iso, FORWARD_ROLE) if partition_configs(iso) else None
+            )
+            bare = (
+                f"; bare key = {FORWARD_ROLE!r} role on its designated years "
+                f"{fwd.get('years', [])} (R-AW)"
+                if fwd is not None
+                else ""
+            )
+            print(f"{iso:6} {designated}   (capture key: {iso}{bare})")
             for cfg in partition_configs(iso):
                 role = cfg.get("role", "")
+                key = capture_key(iso, role)
                 mark = " [= designated keeper]" if cfg["run_id"] == designated else ""
+                if key in RETIRED_CAPTURE_KEYS:
+                    mark += " [RETIRED capture key — refused]"
                 print(
-                    f"       {cfg['run_id']}   (capture key: "
-                    f"{capture_key(iso, role)}; designated years "
-                    f"{cfg.get('years', [])}){mark}"
+                    f"       {cfg['run_id']}   (capture key: {key}; designated "
+                    f"years {cfg.get('years', [])}){mark}"
                 )
         return 0
 
@@ -986,9 +1130,11 @@ def main() -> int:
                 for iso in keeper_store.iso_list(REPO)
                 for cfg in partition_configs(iso)
                 # A partition member that IS the ISO's designated keeper is
-                # already covered by the bare-ISO key; capturing it twice would
-                # solve the same config into two golden dirs.
+                # already covered by the bare-ISO key (the forward role, R-AW);
+                # capturing it twice would solve the same config into two
+                # golden dirs. A retired key is never captured.
                 if cfg["run_id"] not in designated
+                and capture_key(iso, cfg["role"]) not in RETIRED_CAPTURE_KEYS
             ]
             keys += sorted(extra)
     elif args.iso:

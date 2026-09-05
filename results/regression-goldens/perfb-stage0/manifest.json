@@ -260,6 +260,13 @@
         "source": "stamped-at-capture"
       },
       "recorded_flag_count": 262,
+      "retired": {
+        "declared": "2026-09-05",
+        "effect": "The ERCOT stage-0 golden is the FORWARD config replayed on its designated span [2024, 2025] under the bare ERCOT key (check_golden_manifest.FORWARD_ROLE); this capture key is retired (check_golden_manifest.RETIRED_CAPTURE_KEYS) and capture_keeper_goldens.py refuses it. This entry is preserved unchanged as a historical capture record \u2014 keeper_id 2026-08-25-236-swcap-clip-k33 is the run whose outputs were actually captured on 2026-09-02 (provenance, fidelity and content_hashes as recorded) \u2014 and is no longer compared to the live keeper shard. The shard's designation of the carve-out config for 2023 is untouched (keepers/ERCOT.json config_partition; the consolidated run 2026-09-05-ercot248-two-config-keeper carries 2023 from this same source bundle, composite_provenance.json).",
+        "ruling": "R-AW",
+        "ruling_source": "Owner, audit-program director sitting 2026-09-05 ~23:00Z, card \"ERCOT key\" (off-menu answer). Executed by Y-14; record: docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md.",
+        "ruling_verbatim": "The golden config should be the 2024:2025 one not 2023"
+      },
       "years": [
         2023
       ]
