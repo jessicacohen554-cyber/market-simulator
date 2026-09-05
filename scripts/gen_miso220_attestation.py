@@ -111,6 +111,40 @@ def build(dst: Path) -> None:
     # actual (the multiplier is owner-set and uniform across all three years, not
     # solved for a target), and it touches nothing in the outage/net-load path.
     d["governance"]["no_pinning_to_actuals"] = True
+    # THE DECLARATION THE AMENDED RULE REQUIRES (rule 1 [R-STRUCT] carve-out,
+    # owner ruling 2026-09-05, conditions (a)-(e)). Without a well-formed block
+    # here, the two false assertions above are NOT scoped and C6 FAILs — the
+    # amendment authorizes a declared channel, never silence. Machine-checked by
+    # calibration_verdict._authorized_tuning_finding and audit_keepers.
+    d["governance"]["authorized_price_tuning"] = {
+        # (a) the ONLY authorized channel — not phys_*, not the structural shares
+        "channel": "offer_curve_by_group",
+        "ruling": (
+            "owner ruling 2026-09-05: 'the offer curve multipliers are meant to allow "
+            "us to tune on price & adjust merit order… as long as it's the same config "
+            "across the 3 years'; steam gas scoped to ST_GAS + ST_GAS_INTERMEDIATE by "
+            "the owner's follow-up answer the same day"
+        ),
+        "value": (
+            "x1.10 on committed/econ_low/econ_high/peak for 11 non-steam fossil "
+            "classes; ST_GAS and ST_GAS_INTERMEDIATE held byte-identical; phys_* and "
+            "econ_low_share/pct_peaking untouched in every class"
+        ),
+        # (b) ONE config across EVERY scored year — never a per-year value
+        "years_held": [2023, 2024, 2025],
+        # (c) set ex ante in the PREREG, and never swept against the gates
+        "set_ex_ante": True,
+        "not_swept": True,
+        "prereg": "results/calibration/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md @ e1a2eb01",
+        # (d) merit-order adjustment is an INTENDED effect, measured not hidden
+        "merit_order_effect": (
+            "intended and measured: _miso220_liveness.json S-3 records 121 non-steam "
+            "tranches crossing above the steam-gas median at the mid-year probe hour"
+        ),
+        # (e) carried as a free parameter in the DOF ledger, identified by the
+        # ruling rather than by a measured source
+        "dof_entry": "offer_curve_by_group non-steam fossil lift (1.10), identified by owner ruling",
+    }
     d.setdefault("disclosures", {})["miso220_nonsteam_lift"] = DISCLOSURE
     d["disclosures"]["miso220_governance_flip"] = (
         "governance.no_fit_to_price_residuals and levers_trace_to_measured_input are "
@@ -125,9 +159,11 @@ def build(dst: Path) -> None:
         "scored."
     )
     dst.write_text(json.dumps(d, indent=1))
-    print(f"wrote {dst.relative_to(REPO)} "
-          f"(n_entries={d['free_parameters']['n_entries']}, "
-          f"n_residual={d['free_parameters']['n_residual']})")
+    print(
+        f"wrote {dst.relative_to(REPO)} "
+        f"(n_entries={d['free_parameters']['n_entries']}, "
+        f"n_residual={d['free_parameters']['n_residual']})"
+    )
 
 
 if __name__ == "__main__":
