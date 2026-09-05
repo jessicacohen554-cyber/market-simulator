@@ -1396,6 +1396,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # every pre-existing cache key of all six ISOs is byte-stable; the armed
     # A/B keys distinctly. Registered IN THE SAME COMMIT as the field.
     "locality_capacity_curves",
+    # capx D57: the capacity-market SUPPLY-CLEARING gate (the PJM clearing half,
+    # DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md §7.1; GATED default
+    # None ⇒ every ISO off, byte-identical — the retirement screen's capacity
+    # leg keeps the census evaluation and no stack is built). Dropped from the
+    # hash at its None default so every pre-existing cache key of all six ISOs
+    # is byte-stable (the bare pjm-t1h recipe key c6091bd5b62bbc3f unmoved —
+    # design §7.4 / STOP 2); an armed row keys distinctly. SHARED field — very
+    # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "capacity_market_supply_clearing_by_iso",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1892,6 +1902,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D59: NYISO locality capacity-curve gate, registered at its shipping
     # False default (the armed A/B keys distinctly).
     "locality_capacity_curves": "False",
+    # capx D57: the capacity-market supply-clearing gate, registered at its
+    # shipping None default (an armed {iso: True} row keys distinctly).
+    "capacity_market_supply_clearing_by_iso": "None",
 }
 
 
@@ -15275,6 +15288,66 @@ class ScenarioConfig:
     # forecast-lane mechanism), kept in a hindcast. SCOPE: NYISO-only by
     # construction (every registry holds one ISO and the predicate requires
     # an entry) — rule 25; nothing transfers.
+    capacity_market_supply_clearing_by_iso: dict[str, bool] | None = None
+    # GATED default-OFF (capx D57 2026-09-05, BUILDING DESIGN-capx-d54-pjm-
+    # clearing-half-2026-09-05.md — the PJM clearing half, D45 §2.3 item 3,
+    # the last structural piece of the D6 / D28 chain). A {iso: bool} mapping,
+    # the sibling of capacity_market_clearing_by_iso above, resolved through
+    # ONE predicate (config/capacity_market.py::
+    # resolve_capacity_market_supply_clearing) that also REQUIRES the CR-1
+    # curve gate ON for the ISO — a sell-offer stack cannot clear against a
+    # flat net-CONE anchor. WHAT IT CHANGES: the QUANTITY the published VRR
+    # curve is evaluated at, never the curve. Today the capacity price the
+    # three capacity screens read is the curve at the installed-fleet CENSUS
+    # position, broadcast to every unit; PJM's RPM does not do that — every
+    # existing unit must submit a sell offer capped at its net Avoidable Cost
+    # Rate (Manual 18 §5.4.1 / §5.4.4, Att DD §6.4 / §6.8: gross ACR minus
+    # E&AS net revenue, converted to UCAP), the offers form a supply curve,
+    # the auction clears where it meets the VRR curve, cleared MW earn the
+    # clearing price and uncleared MW earn NOTHING (§5.7.1). Armed, the
+    # retirement screen (model/capacity_evolution/retirements.py::
+    # _settle_capacity_supply_clearing) builds, per screened thermal unit,
+    # offer = max(0, going-forward cost − E&AS net revenue) / (accredited MW
+    # × 365) — its OWN two operands, the bar and the pro-forma margin it
+    # already computes, on the D48 accreditation seam — stacks every other
+    # accredited MW the ledger counts (VRE / hydro / storage / firm imports /
+    # DR / screen-exempt dated plants and retrofits) as a $0 price taker,
+    # clears the stack against the delivery year's vintage curve
+    # (adequacy.py::clear_capacity_supply_stack; price at the intersection,
+    # marginal unit cleared in full — the screen's whole-unit grain), and
+    # settles: cleared units earn price × 365 × accredited MW, uncleared $0.
+    # The screen's failing set is then EXACTLY the auction's uncleared set
+    # (design §3.5, the identity a unit passes iff it cleared); the thermal-
+    # entry and storage-entry screens read the clearing price as PRICE TAKERS
+    # through the same seam (a pre-priced object in the reserve_position
+    # slot, design §4.4). With every offer at $0, or a curve above every
+    # offer (the SHORT market — every forward year on the 2028/29+ collar for
+    # gas and oil), the clearing REDUCES TO the census evaluation exactly
+    # (I1). ZERO free parameters (design §3.7): no offer adder, floor, shading
+    # factor, E&AS haircut or per-fuel cap; the published default gross ACR
+    # table is NOT used. THE MEASUREMENT IT MAKES (pre-declared,
+    # PREDECL-capx-d54 §2 and the D57 addendum): on the committed ledgers the
+    # cleared position lands within 0.7 / 1.0 / 2.6 pts of the published BRA
+    # cleared position (2022/23–2024/25) and the clearing price 1.7× / 2.4× /
+    # 5.5× the published price, BECAUSE the gas-CT / gas-ST / oil fleets carry
+    # exactly zero E&AS margin in the hindcast prices (D45 §1 (i)) and offer
+    # at their full bars — the E&AS operand's signature, reported at full
+    # magnitude, never haircut (rules 13/14/21; a build that lands on the
+    # published price without a named operand change is REFUSED, PREDECL §4).
+    # WHY DEFAULT-OFF: arming is an owner decision on the D57 A/B (suffixed
+    # pjm-t1h-d57-clearing / -headbasis vs the bare pjm-t1h; rules 22/24/28),
+    # recommended as the JOINT flip with the two D48 fields (D48 §8: the
+    # admission cap prices a consistent budget at an inconsistent $0 until
+    # the market clears). Registered in _CACHE_KEY_OPTIONAL_FIELDS at None
+    # (unarmed keys byte-stable; an armed row keys distinctly); coerced to
+    # None in a plain backcast exactly as the curve gate is (forecast-lane
+    # mechanism; keepers byte-identical). Hindcast harness:
+    # run_capacity_hindcast.py --capacity-market-supply-clearing (sets the
+    # invoked ISO's row). SCOPE: generic in form, PJM-scoped by data — PJM is
+    # the only registry ISO whose real mechanism is a sell-offer auction
+    # cleared against a VRR curve (design §4.9: NYISO's spot market literally
+    # evaluates its curve at a census quantity; ISO-NE / MISO would be their
+    # own lanes with their own identification) — rule 25; nothing transfers.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -15922,6 +15995,11 @@ class ScenarioConfig:
         # fixed↔curve pair stays scoreable and existing legs byte-identical.
         if self.mode == "backcast":
             self.capacity_market_clearing_by_iso = None
+            # capx D57: the supply-clearing sibling is coerced exactly as the
+            # curve gate is — a plain backcast runs no capacity evolution, and
+            # a stack cannot clear against the None'd curve gate anyway. Keeps
+            # every backcast keeper's cache_key + run_config.json byte-identical.
+            self.capacity_market_supply_clearing_by_iso = None
 
         # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
         # vintage-seeded capacity-hindcast harness (forecast machinery). A
@@ -17012,6 +17090,7 @@ TIER_TAGS: dict[str, int] = {
     "adequacy_accounting_ratio_dated_net": 1,
     "retirement_sector_gate": 1,
     "locality_capacity_curves": 1,
+    "capacity_market_supply_clearing_by_iso": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

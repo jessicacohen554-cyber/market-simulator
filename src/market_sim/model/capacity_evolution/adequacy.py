@@ -20,8 +20,11 @@ The full pre-split surface stays importable from
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass
 from functools import lru_cache
 
+from market_sim.config.capacity_market import ClearedCapacityPrice
 from market_sim.config.constants import (
     ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
     ADEQUACY_EXTERNAL_TIE_FIRM_MW,
@@ -492,6 +495,295 @@ def curve_convention_position(
         return position
     dr_fraction = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO.get(iso or "", 0.0)
     return dr_fraction + (1.0 - dr_fraction) * position
+
+
+# --------------------------------------------------------------------------- #
+# capx D57 (2026-09-05): the PJM clearing half — DESIGN-capx-d54-pjm-clearing-
+# half-2026-09-05.md §3. Clear the fleet's net-ACR sell-offer stack against the
+# delivery year's published VRR curve; the cleared set earns the clearing price
+# on its accredited MW, the uncleared set earns $0. GATED (default off) behind
+# ScenarioConfig.capacity_market_supply_clearing_by_iso, resolved through
+# config.capacity_market.resolve_capacity_market_supply_clearing. Zero free
+# parameters (design §3.7): every operand is the retirement screen's own bar
+# and E&AS margin, the D48 accreditation seam, and the published curve.
+# --------------------------------------------------------------------------- #
+
+#: One sell offer on the stack: ``(unit_id, fuel, offer $/MW-day on ACCREDITED
+#: MW, accredited MW, nameplate MW)``. The offer is the unit's net Avoidable
+#: Cost Rate proxy — ``max(0, going_forward_cost − E&AS net revenue) /
+#: (accredited_mw × 365)`` (design §3.2) — computed by the retirement screen
+#: from the same two operands its bar test consumes.
+CapacityOffer = tuple[str, str, float, float, float]
+
+#: Bisection depth for the marginal step (design §3.4 rule 4): 60 halvings of a
+#: unit's accredited MW resolve the cleared quantity far below 1e-9 MW.
+_CLEARING_BISECTION_STEPS: int = 60
+
+
+@dataclass(frozen=True)
+class CapacityClearing:
+    """The result of clearing the sell-offer stack against the VRR curve.
+
+    Design §3.4 / §3.5 (capx D54 → D57). ``price_usd_per_mw_day`` is the
+    Resource Clearing Price; ``cleared_mw`` the cleared quantity (price takers
+    plus every cleared offer, the marginal unit counted in full — the
+    whole-unit convention, design §3.4 rule 4); ``cleared_position`` is
+    ``cleared_mw / requirement_mw``; ``census_mw`` is ``price_takers_mw +
+    offered_mw``, i.e. the accredited census the un-gated evaluation prices
+    (invariant I1: with every offer at $0, or a curve above every offer,
+    ``cleared_mw == census_mw`` and the price is the census price).
+    ``how`` names which rule set the price: ``zero_block_past_zero_cross``,
+    ``curve_sets_price_between_offers``, ``marginal_offer_sets_price`` or
+    ``all_offers_clear_curve_sets_price``. Per-unit ``offer_usd_per_mw_day``
+    and ``accredited_mw`` are carried so the screen settles each unit and the
+    ledger records the stack without replaying the solve.
+    """
+
+    price_usd_per_mw_day: float
+    cleared_mw: float
+    cleared_position: float
+    price_takers_mw: float
+    offered_mw: float
+    requirement_mw: float
+    census_mw: float
+    census_position: float
+    how: str
+    marginal_unit_id: str | None
+    cleared_unit_ids: frozenset[str]
+    uncleared_firm_mw_by_fuel: dict[str, float]
+    uncleared_nameplate_mw_by_fuel: dict[str, float]
+    offer_usd_per_mw_day: dict[str, float]
+    accredited_mw: dict[str, float]
+    fuel_by_unit: dict[str, str]
+
+    @property
+    def price_per_firm_mw_yr(self) -> float:
+        """The clearing price in $/firm-MW-yr — the shared seam's unit."""
+        return self.price_usd_per_mw_day * 365.0
+
+    @property
+    def n_offers(self) -> int:
+        """Number of price-forming offers on the stack (screened thermal units)."""
+        return len(self.offer_usd_per_mw_day)
+
+    @property
+    def n_uncleared(self) -> int:
+        """Number of offers the auction did not clear."""
+        return self.n_offers - sum(
+            1 for uid in self.offer_usd_per_mw_day if uid in self.cleared_unit_ids
+        )
+
+    def as_price(self) -> ClearedCapacityPrice:
+        """The pre-priced object the entry / storage price takers consume."""
+        return ClearedCapacityPrice(
+            price_per_firm_mw_yr=self.price_per_firm_mw_yr,
+            cleared_position=self.cleared_position,
+            census_position=self.census_position,
+        )
+
+    def as_ledger(self) -> dict:
+        """The additive, decision-neutral ``evolution_<year>.json`` block
+        (design §3.5 — ``capacity_clearing``). Plain JSON types only."""
+        return {
+            "price_usd_per_mw_day": round(self.price_usd_per_mw_day, 6),
+            "price_per_firm_mw_yr": round(self.price_per_firm_mw_yr, 3),
+            "cleared_mw": round(self.cleared_mw, 3),
+            "cleared_position": round(self.cleared_position, 6),
+            "price_takers_mw": round(self.price_takers_mw, 3),
+            "offered_mw": round(self.offered_mw, 3),
+            "requirement_mw": round(self.requirement_mw, 3),
+            "census_mw": round(self.census_mw, 3),
+            "census_position": round(self.census_position, 6),
+            "uncleared_mw_by_fuel": {
+                k: round(v, 3)
+                for k, v in sorted(self.uncleared_firm_mw_by_fuel.items())
+            },
+            "uncleared_nameplate_mw_by_fuel": {
+                k: round(v, 3)
+                for k, v in sorted(self.uncleared_nameplate_mw_by_fuel.items())
+            },
+            "n_offers": self.n_offers,
+            "n_uncleared": self.n_uncleared,
+            "marginal_unit": self.marginal_unit_id,
+            "how": self.how,
+            # The whole sell-offer stack (sorted ascending by (offer, unit_id)),
+            # so the E&AS-operand measurement — how many firm MW of offers sit
+            # above any price, by fuel — reads off the ledger for CLEARED units
+            # too, which have no pipeline_events row. Output-only.
+            "offer_stack": [
+                [
+                    uid,
+                    self.fuel_by_unit.get(uid, ""),
+                    round(o, 4),
+                    round(self.accredited_mw.get(uid, 0.0), 3),
+                    uid in self.cleared_unit_ids,
+                ]
+                for o, uid in sorted(
+                    (o, uid) for uid, o in self.offer_usd_per_mw_day.items()
+                )
+            ],
+        }
+
+
+def capacity_supply_curve(
+    config: ScenarioConfig, iso: str, year: int | None
+) -> "Callable[[float], float]":
+    """Return the demand side of the clearing as ``position -> $/firm-MW-yr``.
+
+    The SAME curve evaluation the census path prices through —
+    :meth:`~market_sim.config.capacity_market.MarketDesign.
+    capacity_price_per_firm_mw_yr` on the ISO's registry design at the
+    delivery year's vintage, on the ISO's curve x-convention
+    (:func:`curve_convention_position`) — so the clearing and the census
+    evaluation can never read two curves (rule 19; invariant I1 is structural).
+    Flat-extrapolated at the cap below the first published point and at the
+    last point above, exactly as :func:`~market_sim.config.capacity_market.
+    evaluate_demand_curve` does (design §3.3).
+    """
+    design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
+
+    def _price(position: float) -> float:
+        return float(
+            design.capacity_price_per_firm_mw_yr(
+                config,
+                curve_convention_position(config, iso, float(position)),
+                iso=iso,
+                year=year,
+            )
+        )
+
+    return _price
+
+
+def clear_capacity_supply_stack(
+    offers: "Sequence[CapacityOffer]",
+    price_takers_mw: float,
+    requirement_mw: float,
+    curve_price_per_firm_mw_yr: "Callable[[float], float]",
+) -> CapacityClearing:
+    """Clear a sell-offer stack against a capacity demand curve (design §3.4).
+
+    Pure and deterministic — no LP, no iteration beyond one sort and at most
+    one bisection on a monotone segment (rule 10 untouched). ``offers`` are
+    :data:`CapacityOffer` tuples; ``price_takers_mw`` is the $0 block ``Q_0``
+    (every accredited MW the ledger counts that is not a screened thermal
+    unit — VRE / hydro / storage / firm imports / DR / screen-exempt units);
+    ``requirement_mw`` is the shared adequacy requirement ``R``;
+    ``curve_price_per_firm_mw_yr(position)`` is the demand side in
+    $/firm-MW-yr at ratio ``Q / R`` (:func:`capacity_supply_curve`). Prices
+    are compared in $/MW-day (``curve / 365``).
+
+    The walk, with ``q`` the cumulative cleared MW before offer ``g`` and
+    ``D(Q)`` the curve at ``Q``, offers sorted ascending by ``(offer,
+    unit_id)`` (the price-taking block is the first step at $0):
+
+    1. ``D(Q_0) ≤ 0`` — the price takers alone pass the zero-cross: price 0,
+       cleared ``Q_0`` plus every $0 offer (ties at $0 all clear, as the
+       auction does), every positive offer uncleared.
+    2. ``D(q) < offer_g`` — the curve crosses on the vertical rise between the
+       previous offer and this one: price ``D(q)`` (the curve sets it),
+       cleared ``q``, ``g`` and everything above it uncleared.
+    3. ``D(q + A_g) ≥ offer_g`` — ``g`` clears in full; continue.
+    4. otherwise the curve crosses inside ``g``'s step: price ``offer_g`` (the
+       marginal offer sets it), cleared quantity the ``Q ∈ (q, q + A_g]`` with
+       ``D(Q) = offer_g`` (bisection); the marginal unit is CLEARED in full
+       for the screen (whole-unit grain, design §3.4 rule 4) and everything
+       above it is uncleared.
+    5. the walk exhausts the stack (every offer below the curve — a SHORT
+       market): price ``D(Σ)`` at the full accredited quantity, everything
+       cleared — the census evaluation exactly (invariant I1).
+
+    Invariants (design §3.6, asserted by tests): I1 census recovery; I2 the
+    failing set of a screen settled on this result equals the uncleared set
+    (marginal unit excepted); I3 ``0 ≤ price ≤ D(0)`` and ``Q_0 ≤ cleared ≤
+    Q_0 + Σ A_g``; I4 monotone in every offer and in ``R``.
+    """
+    q0 = max(0.0, float(price_takers_mw))
+    req = float(requirement_mw)
+    if req <= 0.0:
+        raise ValueError("clear_capacity_supply_stack: requirement_mw must be > 0")
+
+    def _d(quantity_mw: float) -> float:
+        # $/MW-day at the cumulative quantity, on the position axis.
+        return curve_price_per_firm_mw_yr(quantity_mw / req) / 365.0
+
+    stack = sorted(
+        (
+            (float(o), str(uid), str(fuel), float(a_mw), float(nameplate))
+            for uid, fuel, o, a_mw, nameplate in offers
+        ),
+        key=lambda r: (r[0], r[1]),
+    )
+    offer_by_unit = {uid: o for o, uid, _f, _a, _n in stack}
+    fuel_by_unit = {uid: f for _o, uid, f, _a, _n in stack}
+    accredited_by_unit = {uid: a for _o, uid, _f, a, _n in stack}
+    offered_mw = sum(a for _o, _u, _f, a, _n in stack)
+    census_mw = q0 + offered_mw
+
+    cleared: set[str] = set()
+    marginal: str | None = None
+    q = q0
+    if _d(q0) <= 0.0:
+        # Rule 1: only the $0 steps clear — ties at $0 are inside Q_0's step.
+        for o, uid, _f, a, _n in stack:
+            if o <= 0.0:
+                cleared.add(uid)
+                q += a
+        price, how = 0.0, "zero_block_past_zero_cross"
+    else:
+        price, how = None, ""
+        for o, uid, _f, a, _n in stack:
+            lo_q, hi_q = q, q + a
+            if _d(lo_q) < o:
+                price, how = _d(lo_q), "curve_sets_price_between_offers"
+                break
+            if _d(hi_q) >= o:
+                cleared.add(uid)
+                q = hi_q
+                continue
+            # Rule 4: the curve crosses inside this step — bisection on the
+            # monotone (non-increasing) segment for D(Q) = offer.
+            lo, hi = lo_q, hi_q
+            for _ in range(_CLEARING_BISECTION_STEPS):
+                mid = 0.5 * (lo + hi)
+                if _d(mid) >= o:
+                    lo = mid
+                else:
+                    hi = mid
+            cleared.add(uid)
+            marginal = uid
+            q = lo
+            price, how = o, "marginal_offer_sets_price"
+            break
+        if price is None:
+            # Rule 5: every offer below the curve — the SHORT market; the
+            # clearing IS the census evaluation.
+            price, how = _d(q), "all_offers_clear_curve_sets_price"
+
+    unc_firm: dict[str, float] = {}
+    unc_name: dict[str, float] = {}
+    for _o, uid, fuel, a, nameplate in stack:
+        if uid not in cleared:
+            unc_firm[fuel] = unc_firm.get(fuel, 0.0) + a
+            unc_name[fuel] = unc_name.get(fuel, 0.0) + nameplate
+    return CapacityClearing(
+        price_usd_per_mw_day=float(price),
+        cleared_mw=float(q),
+        cleared_position=float(q) / req,
+        price_takers_mw=q0,
+        offered_mw=offered_mw,
+        requirement_mw=req,
+        census_mw=census_mw,
+        census_position=census_mw / req,
+        how=how,
+        marginal_unit_id=marginal,
+        cleared_unit_ids=frozenset(cleared),
+        uncleared_firm_mw_by_fuel=unc_firm,
+        uncleared_nameplate_mw_by_fuel=unc_name,
+        offer_usd_per_mw_day=offer_by_unit,
+        accredited_mw=accredited_by_unit,
+        fuel_by_unit=fuel_by_unit,
+    )
 
 
 def resolve_reserve_margin_build_enabled(config: ScenarioConfig, iso: str) -> bool:

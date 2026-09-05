@@ -27,6 +27,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+from market_sim.config.capacity_market import resolve_capacity_market_supply_clearing
 from market_sim.config.constants import NONFOSSIL_ANNOUNCED_HORIZON_YEARS
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
@@ -633,8 +634,16 @@ def evolve_fleet(
 
     # 3. Economic retirements (needs the prior-year dispatch). Units
     # retrofitted in step 2 are exempt this year (see above).
+    # capx D57 (DESIGN-capx-d54 §3.5 / §4.4): under the supply-clearing gate
+    # the retirement screen clears the sell-offer stack and hands back the
+    # clearing through its event sink; the thermal-entry screen below then
+    # reads that price as a PRICE TAKER through the same ``reserve_position``
+    # slot (a pre-priced object — one seam, rule 19). Off ⇒ the census
+    # position threads through unchanged, byte-identically.
+    _supply_clearing_armed = resolve_capacity_market_supply_clearing(config, config.iso)
+    entry_reserve_position = reserve_position
     if fleet_arrays is not None and dispatch_result is not None and prices is not None:
-        _econ_sink: dict = {} if _rec else None
+        _econ_sink: dict = {} if (_rec or _supply_clearing_armed) else None
         fleet, loss_tracker, floor_retention_log = _pkg_ns().apply_economic_retirements(
             fleet,
             fleet_arrays,
@@ -662,6 +671,13 @@ def evolve_fleet(
             exogenous_exits=_exogenous_pending,
             locality_prices_by_zone=locality_prices_by_zone,
         )
+        _clearing = (_econ_sink or {}).get("capacity_clearing")
+        if _clearing is not None:
+            # capx D57: entry is a price taker at the clearing price (§4.4);
+            # the ledger block is additive and decision-neutral (§3.5).
+            entry_reserve_position = _clearing.as_price()
+            if _rec:
+                events["capacity_clearing"] = _clearing.as_ledger()
         if _rec:
             events["retirements"].extend(
                 {**e, "reason": "economic"} for e in _econ_sink.get("retired", [])
@@ -862,7 +878,9 @@ def evolve_fleet(
             zone_names=screen_zone_names,
             wind_cf=screen_wind_cf,
             solar_cf=screen_solar_cf,
-            reserve_position=reserve_position,
+            # capx D57: the pre-priced clearing object when the supply gate
+            # is on (price taker, design §4.4); the census position otherwise.
+            reserve_position=entry_reserve_position,
             screen_ledger=_screen_ledger,
             wind_pool_mw=wind_pool_mw,
             solar_pool_mw=solar_pool_mw,

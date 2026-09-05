@@ -63,7 +63,17 @@ from market_sim.model.capacity_evolution.retirements import (
     resolve_thermal_accreditation_basis,
     thermal_accreditation_fraction,
 )
-from market_sim.model.capacity_evolution.adequacy import curve_convention_position
+from market_sim.model.capacity_evolution.adequacy import (
+    CapacityClearing,
+    capacity_supply_curve,
+    clear_capacity_supply_stack,
+    curve_convention_position,
+)
+from market_sim.config.capacity_market import (
+    MARKET_DESIGN,
+    ClearedCapacityPrice,
+    resolve_capacity_market_supply_clearing,
+)
 from market_sim.model.storage import STORAGE_TECHS, compute_storage_annual_cost
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
@@ -6019,6 +6029,386 @@ class TestPjmDemandResponseSupply(unittest.TestCase):
             pjm_accreditation_design_vintage=True,
         )
         self.assertEqual(len({off.cache_key(), on.cache_key(), both.cache_key()}), 3)
+
+
+class TestPjmCapacitySupplyClearing(unittest.TestCase):
+    """capx D57 (2026-09-05) — the PJM clearing half built from
+    DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md: the fleet's net-ACR
+    sell-offer stack cleared against the published VRR curve, the cleared
+    set paid the clearing price, the uncleared set paid $0, the screen's
+    failing set the auction's uncleared set. GATED default-OFF
+    (``capacity_market_supply_clearing_by_iso``); the invariants of design
+    §3.6 (I1–I6), trivial cases first."""
+
+    R = 10_000.0  # requirement, MW
+
+    @staticmethod
+    def _curve(pos):
+        """A linear stand-in for the VRR curve in $/firm-MW-yr: $100k/MW-yr
+        at position 1.0, zero-cross at 1.10, flat-capped below 1.0."""
+        return 100_000.0 * max(0.0, min(1.0, (1.10 - pos) / 0.10))
+
+    @staticmethod
+    def _cfg(supply=None, **kw):
+        return ScenarioConfig(
+            iso="PJM",
+            mode="forecast",
+            hindcast=True,
+            capacity_market_supply_clearing_by_iso=supply,
+            **kw,
+        )
+
+    # --- the gate and the seam -------------------------------------------
+    def test_predicate_requires_row_and_curve_gate(self):
+        self.assertFalse(resolve_capacity_market_supply_clearing(self._cfg(), "PJM"))
+        self.assertFalse(resolve_capacity_market_supply_clearing(None, "PJM"))
+        on = self._cfg({"PJM": True})
+        self.assertTrue(resolve_capacity_market_supply_clearing(on, "PJM"))
+        # Another ISO's row never leaks (rule 25); an absent row is off.
+        self.assertFalse(resolve_capacity_market_supply_clearing(on, "MISO"))
+        self.assertFalse(resolve_capacity_market_supply_clearing(on, None))
+        # The curve gate is the precondition: a supply row over a curve gate
+        # that is off resolves OFF (a stack cannot clear against a flat anchor).
+        no_curve = self._cfg(
+            {"PJM": True}, capacity_market_clearing_by_iso={"PJM": False}
+        )
+        self.assertFalse(resolve_capacity_market_supply_clearing(no_curve, "PJM"))
+        # ERCOT is energy-only and curve-less: never ON.
+        ercot = ScenarioConfig(
+            iso="ERCOT",
+            mode="forecast",
+            hindcast=True,
+            capacity_market_supply_clearing_by_iso={"ERCOT": True},
+        )
+        self.assertFalse(resolve_capacity_market_supply_clearing(ercot, "ERCOT"))
+
+    def test_seam_short_circuits_on_pre_priced_object(self):
+        cfg = self._cfg()
+        priced = ClearedCapacityPrice(
+            price_per_firm_mw_yr=30_231.0, cleared_position=1.0445, census_position=1.14
+        )
+        pjm = MARKET_DESIGN["PJM"]
+        self.assertEqual(
+            pjm.capacity_price_per_firm_mw_yr(cfg, priced, iso="PJM", year=2023),
+            30_231.0,
+        )
+        # A float position still takes the census (curve) path.
+        self.assertNotEqual(
+            pjm.capacity_price_per_firm_mw_yr(cfg, 1.0445, iso="PJM", year=2023),
+            30_231.0,
+        )
+        # Energy-only ERCOT pays nothing whatever object it is handed.
+        self.assertEqual(
+            MARKET_DESIGN["ERCOT"].capacity_price_per_firm_mw_yr(
+                cfg, priced, iso="ERCOT"
+            ),
+            0.0,
+        )
+
+    # --- the clearing rule, trivial cases first ----------------------------
+    def test_i1_census_recovery_all_zero_offers_and_short_market(self):
+        # Every offer $0 (every unit covers its bar): the clearing IS the
+        # census evaluation — price = curve(census / R), cleared = census.
+        offers = [
+            ("A", "coal", 0.0, 1_000.0, 1_100.0),
+            ("B", "gas_cc", 0.0, 500.0, 520.0),
+        ]
+        c = clear_capacity_supply_stack(offers, 9_000.0, self.R, self._curve)
+        self.assertIsInstance(c, CapacityClearing)
+        self.assertAlmostEqual(c.cleared_mw, 10_500.0)
+        self.assertAlmostEqual(c.census_mw, 10_500.0)
+        self.assertAlmostEqual(c.price_per_firm_mw_yr, self._curve(1.05))
+        self.assertEqual(c.cleared_unit_ids, frozenset({"A", "B"}))
+        self.assertEqual(c.n_uncleared, 0)
+        self.assertEqual(c.how, "all_offers_clear_curve_sets_price")
+        # A SHORT market (curve above every offer): identical reduction.
+        offers = [
+            ("A", "coal", 50.0, 1_000.0, 1_100.0),
+            ("B", "gas_cc", 120.0, 500.0, 520.0),
+        ]
+        c = clear_capacity_supply_stack(offers, 7_000.0, self.R, self._curve)
+        self.assertAlmostEqual(c.cleared_mw, 8_500.0)
+        self.assertAlmostEqual(c.price_per_firm_mw_yr, self._curve(0.85))  # the cap
+        self.assertEqual(c.n_uncleared, 0)
+        self.assertEqual(c.how, "all_offers_clear_curve_sets_price")
+
+    def test_rule1_zero_block_past_zero_cross(self):
+        # Q_0 alone is past the zero-cross: price 0; $0 offers clear (ties at
+        # $0 are inside the block), every positive offer is uncleared.
+        offers = [
+            ("Z", "nuclear", 0.0, 800.0, 850.0),
+            ("A", "coal", 1.0, 1_000.0, 1_100.0),
+        ]
+        c = clear_capacity_supply_stack(offers, 11_500.0, self.R, self._curve)
+        self.assertEqual(c.price_usd_per_mw_day, 0.0)
+        self.assertEqual(c.how, "zero_block_past_zero_cross")
+        self.assertEqual(c.cleared_unit_ids, frozenset({"Z"}))
+        self.assertAlmostEqual(c.cleared_mw, 12_300.0)
+        self.assertEqual(c.uncleared_firm_mw_by_fuel, {"coal": 1_000.0})
+        self.assertEqual(c.uncleared_nameplate_mw_by_fuel, {"coal": 1_100.0})
+
+    def test_rule2_curve_sets_price_between_offers(self):
+        # After A clears, the curve at q = 10_800 pays 20k $/MW-yr = 54.79
+        # $/MW-day, below B's 100 $/MW-day offer: the curve sets the price on
+        # the vertical rise and B is uncleared.
+        offers = [
+            ("A", "coal", 10.0, 800.0, 800.0),
+            ("B", "gas_st", 100.0, 500.0, 500.0),
+        ]
+        c = clear_capacity_supply_stack(offers, 10_000.0, self.R, self._curve)
+        self.assertEqual(c.how, "curve_sets_price_between_offers")
+        self.assertAlmostEqual(c.cleared_mw, 10_800.0)
+        self.assertAlmostEqual(c.price_usd_per_mw_day, self._curve(1.08) / 365.0)
+        self.assertEqual(c.cleared_unit_ids, frozenset({"A"}))
+        self.assertEqual(c.marginal_unit_id, None)
+
+    def test_rule4_marginal_offer_sets_price_and_bisection(self):
+        # The curve crosses INSIDE A's step: price = A's offer, the cleared
+        # quantity is the Q with D(Q) = offer, A is cleared in full for the
+        # screen (whole-unit grain) and B is uncleared.
+        offer_a = 40_000.0 / 365.0  # 40k $/MW-yr <-> position 1.06
+        offers = [
+            ("A", "coal", offer_a, 2_000.0, 2_000.0),
+            ("B", "oil", 200.0, 300.0, 300.0),
+        ]
+        c = clear_capacity_supply_stack(offers, 10_000.0, self.R, self._curve)
+        self.assertEqual(c.how, "marginal_offer_sets_price")
+        self.assertAlmostEqual(c.price_usd_per_mw_day, offer_a)
+        self.assertAlmostEqual(c.cleared_mw, 10_600.0, places=3)
+        self.assertAlmostEqual(c.cleared_position, 1.06, places=6)
+        self.assertEqual(c.marginal_unit_id, "A")
+        self.assertEqual(c.cleared_unit_ids, frozenset({"A"}))
+        self.assertEqual(c.n_uncleared, 1)
+        # Deterministic tie order: equal offers sort by unit_id.
+        tie = [
+            ("B", "coal", offer_a, 1_000.0, 1_000.0),
+            ("A", "coal", offer_a, 1_000.0, 1_000.0),
+        ]
+        c2 = clear_capacity_supply_stack(tie, 10_000.0, self.R, self._curve)
+        self.assertEqual(c2.marginal_unit_id, "A")
+        self.assertEqual(c2.cleared_unit_ids, frozenset({"A"}))
+        with self.assertRaises(ValueError):
+            clear_capacity_supply_stack(offers, 1.0, 0.0, self._curve)
+
+    def test_i3_bounds_and_i4_monotonicity(self):
+        base = [
+            ("A", "coal", 5.0, 1_000.0, 1_000.0),
+            ("B", "gas_cc", 60.0, 800.0, 800.0),
+            ("C", "gas_ct", 90.0, 600.0, 600.0),
+        ]
+        cap_day = self._curve(0.0) / 365.0
+        for q0 in (8_000.0, 9_500.0, 10_500.0, 12_000.0):
+            c = clear_capacity_supply_stack(base, q0, self.R, self._curve)
+            self.assertGreaterEqual(c.price_usd_per_mw_day, 0.0)
+            self.assertLessEqual(c.price_usd_per_mw_day, cap_day)
+            self.assertGreaterEqual(c.cleared_mw, q0 - 1e-9)
+            self.assertLessEqual(c.cleared_mw, q0 + 2_400.0 + 1e-9)
+        ref = clear_capacity_supply_stack(base, 9_500.0, self.R, self._curve)
+        # Raising any single offer never lowers the price or raises the
+        # cleared quantity.
+        for i in range(3):
+            raised = list(base)
+            uid, fuel, o, a, n = raised[i]
+            raised[i] = (uid, fuel, o + 30.0, a, n)
+            c = clear_capacity_supply_stack(raised, 9_500.0, self.R, self._curve)
+            self.assertGreaterEqual(
+                c.price_usd_per_mw_day, ref.price_usd_per_mw_day - 1e-9
+            )
+            self.assertLessEqual(c.cleared_mw, ref.cleared_mw + 1e-6)
+        # Raising R never lowers the price.
+        c = clear_capacity_supply_stack(base, 9_500.0, self.R * 1.05, self._curve)
+        self.assertGreaterEqual(c.price_usd_per_mw_day, ref.price_usd_per_mw_day - 1e-9)
+
+    def test_i5_known_answer_committed_ledgers(self):
+        # The pre-declaration instrument's 2022 -> DY 2022/23 row on the D48
+        # basis (PREDECL-capx-d54 §2.1; docs/handoffs/d54/clearing-predecl-
+        # 2026-09-05.json): price 82.81 $/MW-day, cleared position 1.0445, set
+        # by a marginal gas_cc offer — reproduced by the code's own clearing
+        # function and the registry's own vintage curve, to ±$1 / ±0.1 pt.
+        import glob
+        import json
+
+        from market_sim.config.capacity_market import THERMAL_ELCC_CLASS_RATING_BY_ISO
+        from market_sim.config.constants import EFORD
+        from market_sim.config.paths import REPO_ROOT
+
+        ledger = glob.glob(
+            str(
+                REPO_ROOT
+                / "results/hindcast/pjm-2021-2025-realized-t1h-d45r/PJM/*/evolution_2022.json"
+            )
+        )
+        pos_path = (
+            REPO_ROOT / "docs/handoffs/d48/devintage-positions-d45r-2026-09-04.json"
+        )
+        ref_path = REPO_ROOT / "docs/handoffs/d54/clearing-predecl-2026-09-05.json"
+        if not (ledger and pos_path.exists() and ref_path.exists()):
+            self.skipTest("committed D45-R / D48 / D54 artifacts absent")
+        rows = [
+            e
+            for e in json.load(open(ledger[0])).get("pipeline_events", [])
+            if e["event"] in ("decided", "entry_capped", "re_confirmed")
+        ]
+        both = json.load(open(pos_path))["years"]["2022"]["arms"]["BOTH"]
+        ref = json.load(open(ref_path))["control pjm-t1h"]["2022"]
+        elcc = THERMAL_ELCC_CLASS_RATING_BY_ISO["PJM"]
+        offers, fail_firm = [], 0.0
+        for e in rows:
+            a = 1.0 - EFORD.get(e["fuel"], 0.08)  # UCAP through DY 2024/25
+            fmw = e["mw"] * a
+            fail_firm += fmw
+            eas = e["net_revenue_usd"] - e.get("capacity_revenue_usd", 0.0)
+            offers.append(
+                (
+                    e["unit_id"],
+                    e["fuel"],
+                    max(0.0, e["going_forward_cost_usd"] - eas) / (fmw * 365.0),
+                    fmw,
+                    e["mw"],
+                )
+            )
+        self.assertIn("gas_cc", elcc)  # the registry the HEAD basis would use
+        c = clear_capacity_supply_stack(
+            offers,
+            both["firm_mw"] - fail_firm,
+            both["requirement_mw"],
+            capacity_supply_curve(self._cfg(), "PJM", 2022),
+        )
+        self.assertEqual(c.how, "marginal_offer_sets_price")
+        self.assertAlmostEqual(c.price_usd_per_mw_day, ref["price_mw_day"], delta=1.0)
+        self.assertAlmostEqual(
+            100.0 * c.cleared_position, 100.0 * ref["position"], delta=0.1
+        )
+        self.assertAlmostEqual(c.price_usd_per_mw_day, 82.81, delta=0.01)
+        self.assertAlmostEqual(c.cleared_position, 1.0445, delta=0.0001)
+
+    # --- the settlement into the screen ------------------------------------
+    def _screen(self, cfg, peak, year=2023):
+        """Three PJM coal units: A covers its bar on energy (offer $0), B has
+        a small gap, C earns exactly zero margin (offer = its full bar)."""
+        T = 100
+        fleet = [
+            _gen("A", "coal", pmax=1_000.0, eford=0.08),
+            _gen("B", "coal", pmax=1_000.0, eford=0.08),
+            _gen("C", "coal", pmax=1_000.0, eford=0.08),
+        ]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=T)
+        prices = np.full((1, T), 50.0)
+        # margin/MW-yr over 100 h: A 100 $/MWh x 100 h = 10k/MW... scaled so
+        # A clears its 58.5k $/MW-yr bar, B misses it by a little, C by all.
+        mc = np.vstack(
+            [
+                np.full(T, 50.0 - 800.0),  # A: 800 $/MWh x 100 h x avail > 58.5k
+                np.full(T, 50.0 - 500.0),  # B: 50k x avail < 58.5k (a gap)
+                np.full(T, 50.0),  # C: zero margin
+            ]
+        )
+        dispatch = SimpleNamespace(dispatch=np.zeros((3, T)))
+        sink: dict = {}
+        with no_hydro_accreditation():
+            survivors, state, _ = apply_economic_retirements(
+                fleet,
+                arrays,
+                dispatch,
+                prices,
+                cfg,
+                {},
+                peak_demand=peak,
+                mc=mc,
+                year=year,
+                event_sink=sink,
+            )
+        return fleet, survivors, state, sink
+
+    def test_i2_identity_failing_set_is_uncleared_set(self):
+        cfg = self._cfg({"PJM": True}, retirement_rule="pipeline")
+        for peak in (1_500.0, 6_000.0, 40_000.0):
+            fleet, survivors, state, sink = self._screen(cfg, peak)
+            clearing = sink["capacity_clearing"]
+            self.assertIsInstance(clearing, CapacityClearing)
+            rows = {e["unit_id"]: e for e in sink.get("pipeline_events", [])}
+            failing = {
+                uid
+                for uid, e in rows.items()
+                if e["event"] in ("decided", "entry_capped")
+            }
+            uncleared = {g.unit_id for g in fleet} - set(clearing.cleared_unit_ids)
+            # I2: a screened unit fails the bar iff the auction did not clear
+            # it (the marginal unit is cleared and indifferent — it passes).
+            self.assertEqual(failing, uncleared, (peak, clearing.how))
+            # A covers its bar on energy: offer $0, always cleared, never fails.
+            self.assertEqual(clearing.offer_usd_per_mw_day["A"], 0.0)
+            self.assertIn("A", clearing.cleared_unit_ids)
+            # C's offer is its full bar on accredited MW (HEAD's basis: the
+            # ELCC class rating in every year, the devintage OFF); B's the gap.
+            from market_sim.config.capacity_market import (
+                THERMAL_ELCC_CLASS_RATING_BY_ISO,
+            )
+
+            a_frac = THERMAL_ELCC_CLASS_RATING_BY_ISO["PJM"]["coal"]
+            a_mw = 1_000.0 * a_frac
+            bar_day = 58.5 * 1_000.0 * 1_000.0 / (a_mw * 365.0)
+            self.assertAlmostEqual(
+                clearing.offer_usd_per_mw_day["C"], bar_day, places=6
+            )
+            if "B" in rows:  # B failing: its offer is its gap on its firm MW
+                self.assertAlmostEqual(
+                    clearing.offer_usd_per_mw_day["B"],
+                    (rows["B"]["going_forward_cost_usd"] - rows["B"]["net_revenue_usd"])
+                    / (a_mw * 365.0),
+                    places=6,
+                )
+                self.assertAlmostEqual(rows["B"]["capacity_accredited_mw"], a_mw)
+            # Ledger fields on every failing row; settled revenue consistent.
+            for uid in failing:
+                self.assertIs(rows[uid]["capacity_cleared"], False)
+                self.assertEqual(rows[uid]["capacity_revenue_usd"], 0.0)
+                self.assertIn("capacity_offer_usd_per_mw_day", rows[uid])
+                self.assertIn("capacity_accredited_mw", rows[uid])
+            self.assertAlmostEqual(
+                clearing.census_mw, clearing.price_takers_mw + clearing.offered_mw
+            )
+        # The long peak leaves the market past the curve's reach for B and C
+        # (rule 1 or rule 2: the price forms at or before A's $0 step ends):
+        # B and C uncleared and failing.
+        _, _, _, sink = self._screen(cfg, 1_500.0)
+        self.assertIn(
+            sink["capacity_clearing"].how,
+            ("zero_block_past_zero_cross", "curve_sets_price_between_offers"),
+        )
+        self.assertEqual(
+            {g for g in ("B", "C")} - set(sink["capacity_clearing"].cleared_unit_ids),
+            {"B", "C"},
+        )
+        # The short peak clears everything at the cap (rule 5 = census): with
+        # the cap on the unit's firm MW every unit covers its bar, nothing fails.
+        _, _, _, sink = self._screen(cfg, 40_000.0)
+        self.assertEqual(
+            sink["capacity_clearing"].how, "all_offers_clear_curve_sets_price"
+        )
+        self.assertEqual(sink["capacity_clearing"].n_uncleared, 0)
+        self.assertEqual(sink.get("pipeline_events", []), [])
+
+    def test_i6_byte_identity_unarmed_and_backcast_coercion(self):
+        # Cache keys: None (the default) hashes as if the field were absent;
+        # an armed row keys distinctly; a plain backcast coerces to None.
+        bare = ScenarioConfig(iso="PJM", mode="forecast", hindcast=True)
+        self.assertEqual(self._cfg(None).cache_key(), bare.cache_key())
+        self.assertNotEqual(self._cfg({"PJM": True}).cache_key(), bare.cache_key())
+        back = ScenarioConfig(
+            iso="PJM",
+            mode="backcast",
+            capacity_market_supply_clearing_by_iso={"PJM": True},
+        )
+        self.assertIsNone(back.capacity_market_supply_clearing_by_iso)
+        self.assertIsNone(back.capacity_market_clearing_by_iso)
+        # Unarmed screen: no clearing, no ledger fields, the census leg as before.
+        cfg = self._cfg(None, retirement_rule="pipeline")
+        _, _, _, sink = self._screen(cfg, 6_000.0)
+        self.assertNotIn("capacity_clearing", sink)
+        for e in sink.get("pipeline_events", []):
+            self.assertNotIn("capacity_cleared", e)
+            self.assertNotIn("capacity_offer_usd_per_mw_day", e)
 
 
 class TestNyisoRequirementDevintage(unittest.TestCase):

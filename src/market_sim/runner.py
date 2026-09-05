@@ -18,6 +18,7 @@ from dataclasses import asdict
 
 import numpy as np
 
+from market_sim.config.capacity_market import ClearedCapacityPrice
 from market_sim.config.constants import (
     DEFAULT_MARKET_DESIGN,
     MARKET_DESIGN,
@@ -2275,6 +2276,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             storage_screen_prices = prior_results.get("price_signal")
             if storage_screen_prices is None:
                 storage_screen_prices = prior_results["prices"]
+            # capx D57 (DESIGN-capx-d54 §3.5 / §4.4): when the supply-clearing
+            # gate is on, evolve_fleet's retirement screen cleared the
+            # sell-offer stack this year and wrote the ledger block; storage
+            # entry is a PRICE TAKER at that clearing price through the same
+            # ``reserve_position`` slot (a pre-priced object — one seam, rule
+            # 19). Absent (gate off, or no screen ran) ⇒ the census position,
+            # byte-identically.
+            storage_reserve_position: object = curve_reserve_position
+            _cc = evo_events.get("capacity_clearing")
+            if _cc:
+                storage_reserve_position = ClearedCapacityPrice(
+                    price_per_firm_mw_yr=float(_cc["price_per_firm_mw_yr"]),
+                    cleared_position=float(_cc["cleared_position"]),
+                    census_position=float(_cc["census_position"]),
+                )
             storage_units = apply_storage_new_entry(
                 storage_units,
                 storage_screen_prices,
@@ -2286,7 +2302,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 endogenous_as_revenue_per_mw_yr=prior_results.get(
                     "storage_as_revenue_per_mw_yr"
                 ),
-                reserve_position=curve_reserve_position,
+                reserve_position=storage_reserve_position,
                 locality_prices_by_zone=(locality_prices or None),
                 # D11-R: the SAME walk state the thermal screen just walked
                 # (evolve_fleet step 5), so this year's thermal tranches are

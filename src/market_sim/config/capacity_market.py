@@ -13,6 +13,7 @@ renewable/storage/thermal ELCC and accreditation registries, planning reserve
 margins, RPS floors, and interconnection queue caps.
 """
 
+import logging
 from dataclasses import dataclass
 
 # ---------------------------------------------------------------------------
@@ -765,6 +766,21 @@ class MarketDesign:
         """
         if not self.capacity_market:
             return 0.0
+        # capx D57 (2026-09-05, DESIGN-capx-d54 §3.5 / §7.2): the PRE-PRICED
+        # object. When the supply-clearing gate
+        # (:func:`resolve_capacity_market_supply_clearing`) is on, the
+        # retirement screen has already cleared the fleet's net-ACR sell-offer
+        # stack against this delivery year's VRR curve, and the thermal-entry
+        # and storage-entry screens are PRICE TAKERS at that clearing price
+        # (design §4.4: entry does not offer into the same stack, rule 19). The
+        # runner / evolve_fleet thread the clearing result through the SAME
+        # ``reserve_position`` slot every consumer already passes verbatim, so
+        # the seam stays single: a :class:`ClearedCapacityPrice` (duck-typed on
+        # ``price_per_firm_mw_yr``) short-circuits the curve evaluation; a
+        # float position takes the census path below, byte-identically.
+        _cleared = getattr(reserve_position, "price_per_firm_mw_yr", None)
+        if _cleared is not None:
+            return float(_cleared)
         # FFR-4F: CAISO's RA-MPB anchor, gated default-OFF. Resolved BEFORE the
         # curve branch because it replaces CAISO's capacity PRICE outright
         # (rule 19 -- it does not stack on, or re-anchor, a curve). It cannot
@@ -847,6 +863,86 @@ def resolve_capacity_market_clearing(
     if by_iso and iso is not None and iso in by_iso:
         return bool(by_iso[iso])
     return bool(getattr(config, "capacity_market_clearing", False))
+
+
+# capx D57: the ISOs for which the supply-clearing predicate has already
+# logged its "curve gate off" refusal once per process (log-once discipline;
+# the predicate is called per screen year and per consumer).
+_SUPPLY_CLEARING_REFUSED_LOGGED: set[str] = set()
+
+
+def resolve_capacity_market_supply_clearing(
+    config: "object | None", iso: "str | None" = None
+) -> bool:
+    """Return whether the fleet's sell-offer stack CLEARS the curve for ``iso``.
+
+    capx D57 (2026-09-05), building DESIGN-capx-d54-pjm-clearing-half
+    §7.1: the sibling of :func:`resolve_capacity_market_clearing`. The CR-1
+    curve gate decides WHICH curve prices adequacy; this gate decides the
+    QUANTITY it is evaluated at — the auction's cleared quantity (the
+    intersection of the fleet's net-ACR sell-offer stack with the published
+    VRR curve, ``model/capacity_evolution/adequacy.py::
+    clear_capacity_supply_stack``) instead of the installed-fleet census
+    (:func:`~market_sim.model.capacity_evolution.adequacy.
+    capacity_reserve_position`). Resolution:
+
+    * ``config.capacity_market_supply_clearing_by_iso`` (a ``{iso: bool}``
+      mapping, GATED default ``None`` ⇒ every ISO off ⇒ byte-identical) must
+      carry a ``True`` row for ``iso``;
+    * the CR-1 curve gate must ALSO resolve ON for ``iso`` and the ISO must be
+      curve-eligible — a stack cannot clear against a flat net-CONE anchor
+      (the design's stated precondition). A supply row armed over a curve
+      gate that is off returns ``False`` and logs once.
+
+    Generic in form, PJM-scoped by data (rule 25): PJM is the only registry
+    ISO whose real mechanism is a sell-offer auction cleared against a VRR
+    curve (design §4.9 — NYISO's spot market literally evaluates its curve at
+    a census quantity; ISO-NE / MISO would be their own lanes). ``iso=None``
+    or a config without the mapping is ``False`` so every pre-existing call
+    path is byte-identical. Duck-typed via ``getattr`` like its sibling.
+    """
+    if config is None or iso is None:
+        return False
+    by_iso = getattr(config, "capacity_market_supply_clearing_by_iso", None)
+    if not by_iso or not bool(by_iso.get(iso, False)):
+        return False
+    if not (
+        resolve_capacity_market_clearing(config, iso)
+        and resolve_capacity_curve_eligible(iso)
+    ):
+        if iso not in _SUPPLY_CLEARING_REFUSED_LOGGED:
+            _SUPPLY_CLEARING_REFUSED_LOGGED.add(iso)
+            logging.getLogger(__name__).warning(
+                "capacity_market_supply_clearing_by_iso[%s] is armed but the CR-1 "
+                "curve gate is off (or the ISO is curve-ineligible): a sell-offer "
+                "stack cannot clear against a flat anchor — supply clearing "
+                "resolves OFF for this ISO (DESIGN-capx-d54 §7.1)",
+                iso,
+            )
+        return False
+    return True
+
+
+@dataclass(frozen=True)
+class ClearedCapacityPrice:
+    """The PRE-PRICED capacity object a cleared market hands its price takers.
+
+    capx D57 (DESIGN-capx-d54 §3.5 / §7.2): when
+    :func:`resolve_capacity_market_supply_clearing` is on, the retirement
+    screen clears the sell-offer stack once per screen year and the thermal
+    new-entry and storage-entry screens read the resulting clearing price as
+    price takers (design §4.4). It travels through the one ``reserve_position``
+    slot every capacity-price consumer already threads verbatim, and
+    :meth:`MarketDesign.capacity_price_per_firm_mw_yr` short-circuits on its
+    ``price_per_firm_mw_yr`` — one seam, no second price path (rule 19).
+    ``cleared_position`` and ``census_position`` are carried for ledgers and
+    logs only; nothing re-evaluates the curve at either.
+    """
+
+    price_per_firm_mw_yr: float
+    cleared_position: float
+    census_position: float
+    source: str = "supply_clearing"
 
 
 # --- CR-1C curve eligibility (governance gate) ----------------------------

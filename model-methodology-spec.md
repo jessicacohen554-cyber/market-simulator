@@ -1195,9 +1195,64 @@ in `results/plant_financials.py` (`capacity_revenue` +
 `capacity_revenue_source`). **This session lands the mechanism default-off
 only**; flipping the default is gated on the CR-2 auction-history validation
 (`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §3.3).
-Explicitly out of scope for CR-1 (revisit on CR-2 evidence): full supply-curve
-auction clearing with unit offers, CP/PAI penalties, Y-3 forward lag, and
-locational LDA-specific curves (composes later with §5.8 part B).
+Explicitly out of scope for CR-1 (revisit on CR-2 evidence): CP/PAI penalties,
+Y-3 forward lag, and locational LDA-specific curves (composes later with §5.8
+part B). Full supply-curve auction clearing with unit offers — the first of the
+original out-of-scope items — is now the GATED supply-clearing mode below.
+
+**Supply-clearing mode — the clearing half (capx D57, 2026-09-05; GATED
+default-off, `ScenarioConfig.capacity_market_supply_clearing_by_iso`, a
+`{iso: bool}` sibling of the curve gate resolved through
+`config/capacity_market.resolve_capacity_market_supply_clearing`, which also
+REQUIRES the curve gate ON for the ISO).** The curve mode above evaluates the
+published curve at the installed-fleet *census* position and broadcasts that
+price to every unit. PJM's RPM does not: every existing unit must submit a
+sell offer capped at its net Avoidable Cost Rate (gross ACR minus E&AS net
+revenue, on UCAP — Manual 18 Rev. 62 §5.4.1 / §5.4.4 / §5.4.8.4(B), Tariff Att.
+DD §6.4 / §6.8), the offers form a supply curve, the auction clears where it
+meets the VRR curve, cleared MW earn the Resource Clearing Price and uncleared
+MW earn nothing (§5.7.1). Armed, the retirement screen
+(`retirements.py::_settle_capacity_supply_clearing`, once per screen year after
+its margin loop) builds, for every screened thermal unit, `offer_g = max(0,
+GFC_g − EAS_g) / (A_g × 365)` $/MW-day from its OWN two operands — the
+going-forward cost above and the pre-capacity pro-forma margin — on the ISO's
+accreditation seam (`_thermal_firm_mw`, devintaged under §5.9's D48 gate);
+every other accredited MW the ledger counts (VRE / hydro / storage / firm
+imports / DR / screen-exempt dated plants and this-year retrofits) enters as a
+$0 price taker, `Q_0 = accredited_firm_capacity_mw − Σ A_g` on the screen's own
+fleet; the stack clears against the delivery year's vintage curve through the
+SAME `capacity_price_per_firm_mw_yr` seam (`adequacy.py::
+clear_capacity_supply_stack` + `capacity_supply_curve`: price at the
+intersection — the curve between offers, or the marginal offer inside a step
+by bisection; the marginal unit is cleared in full, the screen's whole-unit
+grain); and the capacity leg is settled per unit — cleared: `price × 365 ×
+A_g`, uncleared: $0. Hence a screened unit passes the bar **iff it cleared**:
+the screen's failing set IS the auction's uncleared set (design §3.5), and
+the pipeline's admission cap sizes a cohort the market would not buy instead
+of one priced at $0. The thermal-entry and storage-entry screens read the
+clearing price as PRICE TAKERS through a pre-priced `ClearedCapacityPrice` in
+the same `reserve_position` slot (entry does not offer into the stack — that
+would decide entry twice, rule 19). With every offer at $0, or the curve above
+every offer (a SHORT market — every forward year on the 2028/29+ collar for
+gas and oil), the clearing reduces to the census evaluation exactly (invariant
+I1); the census evaluation is REPLACED, never stacked. Zero free parameters:
+no offer adder, floor, shading factor, E&AS haircut or per-fuel cap, and the
+published default gross ACR table is not used. Ledger: an additive
+`capacity_clearing` block per `evolution_<year>.json` (price, cleared MW and
+position, price takers, uncleared by fuel, the whole offer stack) and per-row
+`capacity_offer_usd_per_mw_day` / `capacity_accredited_mw` /
+`capacity_cleared` on `pipeline_events`. What it measures rather than
+repairs (pre-declared, PREDECL-capx-d54 §2 + the D57 addendum): on the
+committed hindcast operands the cleared position lands within 0.7 / 1.0 / 2.6
+points of the published cleared position for 2022/23–2024/25 while the price
+lands 1.7× / 2.4× / 5.5× the published price, because the gas-CT / gas-ST /
+oil fleets carry zero E&AS margin in the hindcast prices and offer at their
+full bars — the E&AS operand's signature, reported at full magnitude (rules
+13 / 14 / 21). Generic in form, PJM-scoped by data (rule 25; NYISO's spot
+market literally evaluates its curve at a census quantity, so its clearing
+half is a supply-census question). Records: `DESIGN-capx-d54-pjm-clearing-
+half-2026-09-05.md`, `PREDECL-capx-d57-2026-09-05.md`,
+`FINDING-capx-d57-2026-09-05.md`.
 
 -----
 

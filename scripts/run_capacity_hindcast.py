@@ -143,6 +143,7 @@ if str(_ROOT) not in sys.path:
 
 from market_sim.config.capacity_market import (  # noqa: E402
     resolve_capacity_market_clearing,
+    resolve_capacity_market_supply_clearing,
 )
 from market_sim.config.iso_configs import (  # noqa: E402
     apply_iso_scenario_defaults,
@@ -486,6 +487,18 @@ META_RECORD_SPEC = RecordSpec(
         # FromConfig so the record reads the SOLVED gates (FFR-3R).
         "pjm_accreditation_design_vintage": FromConfig(cast=bool),
         "pjm_demand_response_supply": FromConfig(cast=bool),
+        # capx D57: the capacity-market supply-clearing gate (the PJM clearing
+        # half). Derived through the ONE predicate so the record reads the
+        # RESOLVED gate — an armed row over a curve gate that is off resolves
+        # False here exactly as it does in the screen (FFR-3R).
+        "capacity_market_supply_clearing": Derived(
+            lambda cfg, ctx: bool(
+                resolve_capacity_market_supply_clearing(cfg, ctx["iso"])
+            ),
+            "resolve_capacity_market_supply_clearing(cfg, iso): the armed "
+            "row AND the curve gate; the raw mapping is recorded below",
+        ),
+        "capacity_market_supply_clearing_by_iso": FromConfig(),
         # capx D52 NYISO adequacy-requirement devintage gates. FromConfig so
         # the record reads the SOLVED gates (FFR-3R).
         "nyiso_requirement_forecast_peak": FromConfig(cast=bool),
@@ -642,6 +655,7 @@ def build_config(
     neiso_net_icr_requirement: "bool | None" = None,
     pjm_accreditation_design_vintage: "bool | None" = None,
     pjm_demand_response_supply: "bool | None" = None,
+    capacity_market_supply_clearing: "bool | None" = None,
     nyiso_requirement_forecast_peak: "bool | None" = None,
     nyiso_requirement_vintage_factors: "bool | None" = None,
     locality_capacity_curves: "bool | None" = None,
@@ -866,6 +880,15 @@ def build_config(
                 # arms the D48 A/B measurement posture (distinct cache key).
                 "pjm_accreditation_design_vintage": pjm_accreditation_design_vintage,
                 "pjm_demand_response_supply": pjm_demand_response_supply,
+                # capx D57: the capacity-market supply-clearing gate (the PJM
+                # clearing half, DESIGN-capx-d54 §7.1) — a {iso: bool} row
+                # for THIS ISO only; default None; None (omit) or an explicit
+                # --no-... inherits the shipped None default (both are the
+                # unarmed posture, one key), True arms the D57 A/B measurement
+                # posture (distinct cache key). Requires the curve gate ON.
+                "capacity_market_supply_clearing_by_iso": (
+                    {iso: True} if capacity_market_supply_clearing else None
+                ),
                 # capx D52: NYISO adequacy-requirement devintage gates —
                 # default-off; None inherits the shipped default, True arms
                 # the D52 A/B measurement posture (distinct cache key).
@@ -1551,6 +1574,27 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--capacity-market-supply-clearing",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D57 (2026-09-05) arm, building DESIGN-capx-d54 (the PJM "
+            "clearing half): clear the fleet's net-ACR sell-offer stack "
+            "(offer = max(0, going-forward cost - E&AS margin) on accredited "
+            "MW; everything else a $0 price taker) against the delivery year's "
+            "published VRR curve and settle the retirement screen's capacity "
+            "leg from the result — cleared units earn the clearing price, "
+            "uncleared units $0 — instead of evaluating the curve at the "
+            "installed-fleet census; entry and storage read the clearing "
+            "price as price takers. Sets capacity_market_supply_clearing_"
+            "by_iso[<iso>]=True; requires the CR-1 curve gate ON for the ISO "
+            "(shipped ON for PJM). OMIT or --no-... inherits the shipped "
+            "default (off, owner-armed only); --capacity-market-supply-"
+            "clearing arms it (distinct cache key). Generic in form, PJM-scoped "
+            "by data (rule 25)."
+        ),
+    )
+    parser.add_argument(
         "--nyiso-requirement-forecast-peak",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2079,6 +2123,7 @@ def main(argv: list[str] | None = None) -> int:
         neiso_net_icr_requirement=args.neiso_net_icr_requirement,
         pjm_accreditation_design_vintage=args.pjm_accreditation_design_vintage,
         pjm_demand_response_supply=args.pjm_demand_response_supply,
+        capacity_market_supply_clearing=args.capacity_market_supply_clearing,
         nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
         nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,
         locality_capacity_curves=args.locality_capacity_curves,
