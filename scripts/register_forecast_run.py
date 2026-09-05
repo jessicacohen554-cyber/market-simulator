@@ -488,17 +488,25 @@ def classify(run_id: str, meta: dict, has_score: bool) -> tuple[str, str, str]:
     """Return ``(kind, tier, family)`` for a forecast-family run.
 
     ``kind`` is the run family the explorer filters by (t1f/t1x/t1h/ces-poc/
-    adequacy/readiness/t3-golden); ``tier`` places it on the §2.1 ladder
-    (t1f/t1x/t1h/poc/battery/t3); ``family`` distinguishes gate vs baseline
-    within t1f. Of the schema-ready tiers (t2/t3-golden/pb-band), ``t3-golden``
-    is populated by §2.1b-authorized campaigns (the first: the Q13-authorized
-    NEISO 2026–2050 BAU golden, lane T3-NEISO-GOLDEN); t2/pb-band remain
-    unpopulated until their owner-gated waves.
+    adequacy/readiness/t3-golden/scenario); ``tier`` places it on the §2.1
+    ladder (t1f/t1x/t1h/poc/battery/t3/scenario); ``family`` distinguishes gate
+    vs baseline within t1f. Of the schema-ready tiers (t2/t3-golden/pb-band),
+    ``t3-golden`` is populated by §2.1b-authorized campaigns (the first: the
+    Q13-authorized NEISO 2026–2050 BAU golden, lane T3-NEISO-GOLDEN);
+    t2/pb-band remain unpopulated until their owner-gated waves.
+
+    ``scenario`` (SCN-WS0 deliverable 5) is a scenario-campaign arm: one named
+    case of one campaign, carrying the campaign it belongs to and the reference
+    case its deltas are read against, so the explorer can group a ladder
+    together instead of scattering its arms through the t1f list. Its
+    ``family`` IS the campaign tag, which is what the grouping keys on.
     """
     mk = (meta or {}).get("kind")
     label = (meta or {}).get("label") or ""
     if mk == "readiness":
         return "readiness", "battery", "battery"
+    if mk == "scenario":
+        return "scenario", "scenario", (meta or {}).get("campaign") or "scenario"
     if mk == "t3":
         # §2.1b-authorized full-horizon golden campaign (matches the
         # schema_ready kind "t3-golden" / tier "t3" the explorer already maps).
@@ -520,6 +528,40 @@ def classify(run_id: str, meta: dict, has_score: bool) -> tuple[str, str, str]:
     if (meta or {}).get("mode") == "forecast":
         return "t1f", "t1f", "baseline"
     return "t1h", "t1h", "hindcast"
+
+
+def _campaign_block(kind: str, meta: dict, year_summary: list) -> dict:
+    """Return the scenario-campaign index fields for one run.
+
+    Args:
+        kind: The classified run kind.
+        meta: The run's sidecar meta.
+        year_summary: The run's compact per-year rows.
+
+    Returns:
+        ``campaign`` / ``case`` / ``reference_case`` / ``co2_mt``, all ``None``
+        off the ``scenario`` kind so every registry entry carries one shape.
+        ``co2_mt`` is ``[[year, mt], ...]`` from ``year_summary`` — the series
+        the delta sparkline is drawn from.
+    """
+    if kind != "scenario":
+        return {
+            "campaign": None,
+            "case": None,
+            "reference_case": None,
+            "co2_mt": None,
+        }
+    series = [
+        [r.get("year"), r.get("co2_mt")]
+        for r in (year_summary or [])
+        if r.get("year") is not None and r.get("co2_mt") is not None
+    ]
+    return {
+        "campaign": meta.get("campaign"),
+        "case": meta.get("case"),
+        "reference_case": meta.get("reference_case"),
+        "co2_mt": series or None,
+    }
 
 
 def _verdict_key(run_id: str, meta: dict) -> str | None:
@@ -677,6 +719,15 @@ def build_run_artifacts(sidecar: dict, verdicts: dict) -> tuple[dict, dict]:
         "wall_s": meta.get("total_wall_s"),
         "rss_mb": meta.get("global_peak_rss_mb"),
         "capacity_market_clearing": meta.get("capacity_market_clearing"),
+        # Scenario-campaign block (SCN-WS0 deliverable 5): present on every
+        # entry (null off the scenario kind) so the explorer's grouping code
+        # reads one shape. ``co2_mt`` is the per-year CO2 series lifted from
+        # the run's own year_summary — a handful of floats, carried on the
+        # INDEX rather than only in the gzipped payload so the list view can
+        # draw the delta-vs-reference sparkline without unpacking every run.
+        # It is only carried for scenario arms, where a campaign is small and
+        # the comparison is the point.
+        **_campaign_block(kind, meta, year_summary),
         "determination": determination,
         "verdict_key": vkey,
         "fc": fc,
@@ -767,7 +818,15 @@ def write_run(sidecar: dict, verdicts: dict, root: Path = REPO) -> str:
 # --------------------------------------------------------------------------- #
 # Assembly — manifest.js + program-status.js (stdlib-only; the deploy step).
 # --------------------------------------------------------------------------- #
-_TIER_ORDER = {"t1f": 0, "t1x": 1, "t1h": 2, "poc": 3, "battery": 4, "t3": 5}
+_TIER_ORDER = {
+    "t1f": 0,
+    "t1x": 1,
+    "t1h": 2,
+    "poc": 3,
+    "battery": 4,
+    "t3": 5,
+    "scenario": 6,
+}
 _KIND_ORDER = {
     "t1f": 0,
     "t1x": 1,
@@ -776,6 +835,7 @@ _KIND_ORDER = {
     "ces-poc": 4,
     "readiness": 5,
     "t3-golden": 6,
+    "scenario": 7,
 }
 
 
@@ -842,6 +902,43 @@ def _manifest_meta(entries: list[dict]) -> dict:
     }
 
 
+def attach_campaign_deltas(entries: list[dict]) -> None:
+    """Fill each scenario arm's ``co2_delta_mt`` against its campaign reference.
+
+    Assembly-time (SCN-WS0 deliverable 5), in place, stdlib-only: for every
+    ``scenario`` entry naming a ``campaign`` and a ``reference_case``, find that
+    campaign's arm whose ``case`` IS the reference and difference the two CO2
+    series year by year. The reference's own delta series is all zeros, which is
+    what makes the sparkline's baseline visible rather than implied.
+
+    A campaign whose reference arm is not registered (yet, or at all) leaves
+    every arm's ``co2_delta_mt`` at ``None`` — the explorer then shows the CO2
+    LEVEL sparkline and no delta, rather than differencing against whichever
+    arm happened to sort first.
+
+    Args:
+        entries: The registry entries, mutated in place.
+    """
+    refs: dict[str, dict] = {}
+    for e in entries:
+        if e.get("kind") == "scenario" and e.get("campaign"):
+            if e.get("case") and e.get("case") == e.get("reference_case"):
+                refs[e["campaign"]] = e
+    for e in entries:
+        e.setdefault("co2_delta_mt", None)
+        if e.get("kind") != "scenario":
+            continue
+        ref = refs.get(e.get("campaign") or "")
+        if ref is None or not e.get("co2_mt") or not ref.get("co2_mt"):
+            continue
+        ref_by_year = {y: v for y, v in ref["co2_mt"]}
+        e["co2_delta_mt"] = [
+            [y, round(v - ref_by_year[y], 4)]
+            for y, v in e["co2_mt"]
+            if y in ref_by_year
+        ] or None
+
+
 def build_manifest(site_dir: Path) -> int:
     """Assemble ``manifest.js`` from the registry sidecars under ``site_dir``.
 
@@ -854,6 +951,7 @@ def build_manifest(site_dir: Path) -> int:
     entries = _load_registry_entries(_registry_dir(site_dir))
     # Order: tier, then iso, then id — stable and human-scannable.
     entries.sort(key=lambda e: (_TIER_ORDER.get(e["tier"], 9), e["iso"], e["id"]))
+    attach_campaign_deltas(entries)
     meta = _manifest_meta(entries)
     out_dir = site_dir / "frontend" / "data" / "forecast"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1003,7 +1101,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--kind",
         default="t1f",
-        help="Run family for a --summary registration (t1f/ces-poc/adequacy).",
+        help="Run family for a --summary registration "
+        "(t1f/ces-poc/adequacy/scenario). 'scenario' additionally reads "
+        "campaign / case / reference_case out of --extra-meta and groups the "
+        "run with its campaign in the explorer.",
     )
     parser.add_argument(
         "--extra-meta",

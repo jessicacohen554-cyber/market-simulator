@@ -110,6 +110,11 @@ def _summarize_year(result, context, config=None) -> dict:
           **reported only, never inside** ``emissions_mt``.
         * ``import_co2_basis`` — the disclosure string for the line above.
         * ``unserved_mwh`` — annual unserved energy from the slack column.
+        * ``co2_cap_price_usd_per_t`` / ``co2_cap_price_by_cap`` /
+          ``n_co2_caps_binding`` — the endogenous power-sector allowance
+          price(s) on the emissions mass-cap rows, i.e. the read-out a
+          QUANTITY-instrument case exists for. ``0.0`` / ``[]`` / ``0`` when
+          no cap was active.
 
         ``emissions_by_fuel_mt`` and ``emissions_by_zone_mt`` each partition
         ``emissions_mt``: both are the same ``dispatch x emission_rate``
@@ -185,6 +190,29 @@ def _summarize_year(result, context, config=None) -> dict:
     # key-for-key by every downstream delta table.
     for zero_carbon in ("wind", "solar"):
         emissions_by_fuel_t.setdefault(zero_carbon, 0.0)
+
+    # Endogenous allowance price(s) from the emissions mass-cap rows — the
+    # read-out a QUANTITY instrument exists for (SCN-WS1a FINDING §4.3, the
+    # G-E4 rider): a price-instrument case is read off carbon_price_delta,
+    # which is an input, but a cap case's price is an OUTPUT, and it had no
+    # reader anywhere under results/. Reported as the max across active caps so
+    # it is a per-year SCALAR and therefore rides the matrix frame and the
+    # headline delta table on its own (matrix.scalar_metrics), with the full
+    # per-cap list beside it. ``0.0`` / empty when no cap was active, which is
+    # every run at the shipped default.
+    #
+    # This is a POWER-SECTOR, NO-BANK scenario allowance price (the model's own
+    # shadow price on its own cap), NOT the RGGI/CARB market price and not
+    # comparable to a quoted allowance quote — the distinction the
+    # DispatchResult field's own docstring draws.
+    cap_prices = [float(p) for p in (result.co2_cap_price or [])]
+    # A cap binds iff its row dual is positive; at a zero dual the cap is
+    # slack. The TONS of slack are not derivable here — that needs the cap's
+    # per-generator membership vector and its RHS, which live on the solve path
+    # and are not carried by the cached result or its fleet context — so the
+    # count of binding caps is reported instead of a number that would have to
+    # be guessed. See the FINDING for what persisting the slack would take.
+    n_caps_binding = sum(1 for p in cap_prices if p > 0.0)
 
     # Reported-only import-attributed CO2 (G-E3) and unserved energy (G-L4),
     # both beside ``emissions_mt`` and NEVER inside it.
@@ -264,6 +292,9 @@ def _summarize_year(result, context, config=None) -> dict:
         "import_co2_mt_reported": round(import_co2_t / 1e6, 6),
         "import_co2_basis": IMPORT_CO2_DISCLOSURE,
         "unserved_mwh": round(unserved_mwh, 3),
+        "co2_cap_price_usd_per_t": round(max(cap_prices), 4) if cap_prices else 0.0,
+        "co2_cap_price_by_cap": [round(p, 4) for p in cap_prices],
+        "n_co2_caps_binding": n_caps_binding,
         "nox_tonnes": round(nox_tons, 2),
         "so2_tonnes": round(so2_tons, 2),
         "avg_price": round(float(result.prices.mean()), 2),

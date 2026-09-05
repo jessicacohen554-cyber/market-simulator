@@ -1,0 +1,5 @@
+scope,case,year,emissions_mt,emissions_mt_ref,emissions_mt_delta,cumulative_emissions_mt_delta
+NEISO,CARB,2026,13.5987,16.3081,-2.7094000000000005,-2.7094000000000005
+NEISO,REF,2026,16.3081,16.3081,0.0,0.0
+six-ISO modeled system,CARB,2026,13.5987,16.3081,-2.7094000000000005,-2.7094000000000005
+six-ISO modeled system,REF,2026,16.3081,16.3081,0.0,0.0

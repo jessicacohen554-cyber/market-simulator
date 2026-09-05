@@ -770,8 +770,29 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 | 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | **no** | **no** | **no** | — |
 | 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | — | — | yes | — |
 | 5 matrix duty | stamped (`carbon_price_path` + `policy_bundle` rows minted at WS-1a) | stamped | — | — | stamped | — |
-| 6 emissions grain | scalar only | scalar only | — | — | scalar only | **G-E1..E5 open** |
-| 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | — | — | none | — |
+| 6 emissions grain | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | **G-E1..E5 CLOSED** (SCN-WS0) |
+| 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | — | — | none | `scn-ws0-smoke` REF/CARB pair |
+
+**Emissions column, closed by SCN-WS0** (2026-09-05,
+`docs/handoffs/FINDING-scn-ws0-2026-09-05.md`). G-E1: `emissions_by_fuel_mt` /
+`emissions_by_zone_mt` in `_summarize_year`, each partitioning `emissions_mt`. G-E2:
+`scripts/collate_scenario_campaign.py` sums across the ISOs present and labels the sum
+"six-ISO modeled system", never "national". G-E3: `import_co2_mt_reported` +
+`import_co2_basis`, reported beside the total and never inside it. G-E4:
+`build_matrix_frame` carries every per-year scalar, and
+`scripts/report_scenario_deltas.py` emits the case-vs-`--reference-case` delta set.
+G-E5: twelve REF base YAMLs + `configs/scenario_campaign_matrix.yaml`. G-E6 (no marginal
+rate) and G-E7 (NOx/SO2 unexported) stay OPEN and out of scope — both are disclosure
+items the plan already records as such. Criterion 1's harness half is closed with them:
+a case is now one field override, expressible in the campaign YAML or on the command
+line via `--set`.
+
+**The Emissions column's first measured result is a leakage number, not a level.** The
+exercising T0 (NEISO 2026, REF vs `carbon_price_delta=25`) cuts modeled in-ISO CO2 by
+−2.71 Mt and simultaneously raises the reported import-attributed line by +1.85 Mt, all
+of it on one NYISO seam rung — so roughly two thirds of the headline reduction leaves
+the scored basis. Every campaign delta must be read with the import line beside it, and
+§4's caveat block should carry that number per ISO (FINDING §5 item 2).
 
 ---
 
