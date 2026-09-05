@@ -234,3 +234,130 @@ the FINDING. Rule 27: on-disk bytes pushed; every ≥300-line blob verified afte
 each push.
 
 *(nyiso-192, 2026-09-05. Pushed before the control replay and before any payload re-render.)*
+
+---
+
+## §7 — AMENDMENT 1 (pushed BEFORE the arm is solved): the Astoria merit-panel stack-duplicate defect is MEASURED, it is NOT Astoria-only, and it is A/B-solved as the session's ONE arm
+
+**Why the plan changes.** Enumerating the objects opened since nyiso-154 for the
+assessment, the Astoria merit-panel stack-duplicate defect (nyiso-184 §4.1 —
+"sized, not repaired; needs its own A/B on that lane"; carried unbuilt through
+nyiso-185…191) is a **live, admissible, untested measured-input repair** inside
+the NYISO keeper's own availability envelope. Under §4's frontier verdict rule
+that alone forces **NO**, so it is adjudicated here rather than left open.
+
+**The repair (one call site, code already in this branch):**
+`scripts/lib/outage_detect.build_merit_order_panel` read the CAMPD parquets with
+a bare `pd.read_parquet` and never applied the stack-duplicate helpers
+`campd._normalize_campd` applies. Astoria 8906's `31RH`/`32SH` and `51RH`/`52SH`
+pairs therefore entered the panel as two units each carrying the SAME generator
+MW with half the heat — SRMC at half its physical value inside the guard that
+decides mechanical outage vs economic lay-up. The loader now drops the
+duplicate's `grossLoad` copy and re-labels it onto its primary
+(`stack_duplicate_mask` / `merge_stack_duplicate_units`), exactly as
+`_normalize_campd` does; `tests/curation/test_merit_panel_stack_duplicate.py`
+pins it (merged HR 10.33 on the fixture, 5.33 before). The registered stack-pair
+set is `{8906}` (NY only), so every other ISO's panel is **byte-identical by
+construction** — no other ISO's extract is re-derived or touched (rule 25).
+
+**Phase 0 — the extract re-derived under the keeper's committed invocation**
+(`--iso NYISO --years 2019…2026 --per-unit-crosswalk --merit-order-guard`, the
+`.meta.json` flags verbatim; output to a scratch path so the running control
+kept reading the committed file), diffed against the committed extract
+(sha256 `45bc4f7c…`; repaired `sha256` in the arm bundle):
+3,668 → 3,717 rows; **106 windows leave** (all Astoria: the primaries `31RH` /
+`51RH` drop from 226 / 241 → 89 / 0 window-days in 2023, 189 / 219 → 0 / 0 in
+2024) and **155 windows enter at fifteen OTHER plants** — because the panel's
+revealed clearing cost (the capacity-weighted p90 SRMC of the RUNNING units) is
+itself built from Astoria's rows: with its steam priced at its physical SRMC the
+RCC rises in the hours it runs, every other unit reads IN merit more often, and
+fewer of their dead spans clear the `MERIT_OOM_FRAC` bar. **My §0-era assumption
+that this was an "Astoria-only" object was WRONG and is recorded as such.**
+Mean availability, the engine's own builder on each extract
+(`_availability_{keeper,repaired}_extract.json`, 2023 / 2024 / 2025):
+
+| plant | keeper extract | repaired extract |
+|---|---|---|
+| **8906 Astoria `ST_GAS`** | 0.177 / 0.240 / 0.330 | **0.367 / 0.509 / 0.462** |
+| **2500 Ravenswood `ST_GAS`** | 0.786 / 0.478 / 0.309 | 0.786 / **0.260 / 0.121** |
+| 2490 Arthur Kill | 0.855 / 0.907 / 0.527 | 0.829 / **0.453** / 0.527 |
+| 2516 Northport | 0.527 / 0.526 / 0.552 | **0.368** / 0.521 / 0.526 |
+| 2625 Bowline Point | 0.148 / 0.224 / 0.397 | 0.104 / 0.224 / 0.288 |
+| 8006 Roseton | 0.057 / 0.067 / 0.755 | 0.057 / 0.067 / **0.357** |
+| 2480 Danskammer | 0.222 / 0.223 / 0.215 | 0.222 / 0.223 / 0.079 |
+| 2517 Port Jefferson | 0.925 / 1.000 / 1.000 | 0.916 / 0.989 / 0.830 |
+| 2511 Barrett · 2493 East River · 52168 · 50744 | unchanged | unchanged |
+
+**This is a rule-14 `[R-ACCURATE]` licence, stated before the solve**: the
+repair uses no residual, adds no parameter, and applies the SAME measured
+correction the canonical CAMPD normalizer already applies. It re-opens
+Ravenswood's *availability* under the DO-NOT-REDO clause's own exception — NEW
+EVIDENCE: nyiso-183 refuted a mis-BOOKING by the guard on a panel whose INPUT
+was defective; the guard's classification was sound on the evidence it was
+given. Nothing about the guard's rule or thresholds moves.
+
+### §7.1 The arm
+
+**Control** = the in-place same-HEAD replay of §2 (V1). **Arm** =
+`scripts/replay_keeper.py results/calibration/nyiso189_steam_identity --out-dir
+results/calibration/nyiso192_astoria_panel --note "nyiso-192 ARM …"` with the
+repaired extract swapped in at the committed path for the duration of the solve
+and the committed file **restored byte-for-byte afterwards** (git checkout;
+hash verified), the nyiso-191 artifact-swap pattern. Years sequential, one
+bundle (rule 16). **ZERO `ScenarioConfig` changes** — the recipe is the keeper's;
+the delta is the committed artifact the armed `campd_outage_merit_order_guard`
+reads. No new constants, fields or DOF entries.
+
+### §7.2 Bars
+
+* **G-DELTA** — the arm's `run_config.json` scenario config is IDENTICAL to the
+  keeper's (computed: `delta_fields == []`); the ONLY difference is the extract,
+  whose two hashes are recorded. Any config delta is a stop.
+* **B1 — engagement.** The arm's `(2500, ST_GAS)` / `(8906, ST_GAS)` fleet
+  availability equals the repaired-extract column above to ±0.005 (verified by
+  reconstructing the arm's fleet through `bundle_fleet.reconstruct_bundle_fleet`
+  with the repaired file in place). Not engaged ⇒ INERT, never a pass.
+* **B2 — my falsifiable predictions.** (a) Astoria `ST_GAS` model energy RISES
+  in all three years; (b) Ravenswood `ST_GAS` model energy FALLS in 2024 and 2025
+  and is within ±0.15 TWh of the keeper in 2023 (its 2023 envelope is unchanged);
+  (c) Roseton `ST_GAS` 2025 falls. If (a) or (b) fails, my reading of the
+  mechanism was wrong and the FINDING says so before any verdict.
+* **B3 — the rejection rule.** REJECTED iff any of **C2 / C3a / C3b / C8** flips
+  PASS → FAIL. A **C1** flip (any class-year) is NOT an automatic rejection —
+  reported at full magnitude with the structural evidence, the promote / reject
+  call put to the owner under the standing formula.
+* **B4 — structural integrity**, whatever the gates do: the CORRECTED
+  plant-grain post-hoc (`nyiso192_payload_addback_audit`'s corrected table,
+  re-run on the arm's re-rendered payload) control vs arm; the `ST_GAS` zonal
+  placement (`nyiso191_stgas_placement` re-run on the arm); per-plant CF vs
+  measured for the nine downstate steam plants.
+
+### §7.3 Pre-committed outcomes
+
+* B1 engaged, B3 no flip, C1 holds → keeper candidate on rule 14; recommendation
+  under the owner's standing formula; the promotion executed only if the
+  recommendation is *promote*.
+* B3 flip → **REJECTED-AS-ARMED**, at full magnitude, with the structural
+  evidence; the FINDING then says whether the rejection is on a structural
+  collision or on the residual (rule 1 forbids the latter as a reason to drop a
+  correct input — a residual-only regression is reported as a discovered
+  root-cause issue, the repair stays as the accurate input, and the call goes to
+  the owner).
+* C1 flip only → owner call, full magnitude, structural integrity stated.
+* B2 falsified → root-cause before any claim.
+
+Every outcome is registered (rule 15): the arm as `2026-09-05-nyiso-192-astoria-panel`
+(label / verdict in its sidecar), `calibration_verdict --run-id`, the matrix
+cells `campd_outage_merit_order_guard` (the repaired input) and
+`offer_curve_by_group` updated in the NYISO shard (rule 28), the computed
+attestation (`scripts/gen_nyiso192_attestation.py`).
+
+### §7.4 What this amendment does NOT change
+
+§0–§6 stand verbatim: the payload repair, the control replay and its bars, the
+Sithe and `ST_GAS`-basis dispositions, every stop (S1 is narrowed exactly to
+"no arm EXCEPT §7's"; S2–S6 unchanged). No marker, no holdout year, no frontier
+field.
+
+*(Amendment 1, nyiso-192, 2026-09-05 — pushed before the arm is solved; the
+control replay was already running on the committed extract.)*
