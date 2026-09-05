@@ -6566,14 +6566,14 @@
  },
  "pjm-t1h": {
   "schema": "forecast-verdict/v1",
-  "rubric_version": "1.0",
+  "rubric_version": "1.1",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "5b18dc70d45b",
-   "scored_at_date": "2026-09-04T09:29:37Z",
-   "cache_epoch": "c6091bd5b62bbc3f",
-   "run_id": "pjm-2021-2025-realized-t1h-d45r",
-   "session": "capx-D45R"
+   "scored_at_sha": "c5019afaf3f3",
+   "scored_at_date": "2026-09-05T18:32:04Z",
+   "cache_epoch": "f0e050e820c1159a",
+   "run_id": "pjm-2021-2025-realized-t1h-d57-clearing",
+   "session": "capx-D57"
   },
   "tier": "t1h",
   "iso": "PJM",
@@ -6584,9 +6584,7 @@
   "caveats": [
    "FC-7 provenance & DOF"
   ],
-  "notes": [
-   "capx-D45R (2026-09-04), the D45 close-out at HEAD (owner rulings Q33/Q35): the PJM live-posture diagnostics-on T1-H REPLAYED at the post-D44 posture (fossil_announced_exits_enabled=True; keeper 2026-08-15-pjm-162-inputclock; HEAD 334be8c2; cache key c6091bd5b62bbc3f, pre-declared and matched; 23.2 min / 9.6 GB). The ONLY resolved-config difference from the preserved pjm-t1h-pre-d45r (D45 L1, pre-D44) is the dates flip, so this is PJM's own single-axis measurement of the channel (the matrix cell's OPEN HERE). Determination HOLD, unchanged (FC-3 FAIL). The channel armed 33 live rows / 13,169 MW (2021-2028) and RE-ROUTES rather than adds: window exits coal announced 4,551 MW (+1,023 MW derates) / gas_st 833 / gas_cc 75 / oil 51, while the cap-bound ECONOMIC coal cohort SHRINKS 18,137 -> 11,415 MW because every plant carrying a pending filed date (in-window AND 2026-2028-dated) is exempt from the screen (rule 19) and leaves the failing pool. Net: retire.total_gw 18.147 -> 17.958 GW (err +0.205 -> +0.192, FAIL both); coal 18.137 -> 16.990; gas_st / gas_cc / oil OFF exactly zero (0.833 / 0.075 / 0.051; gas_ct stays 0.000); unit_recall_gt300 16/20 -> 17/20 (0.80 -> 0.85, PASS both); false_retire 7.839 -> 6.691 GW (0.432 -> 0.373, FAIL both). LOYO -2024 fold recall 0/19 -> 8/19 (FAIL both), -2025 fold 15/19 -> 16/19 PASS. Additions byte-identical to the decimal (wind 3.0 / solar 9.762 / gas_cc 8.118 / gas_ct 1.013 / storage 0.0) -- the entry side is blind to the channel. Entering CR-1 positions FALL with the dated exits: 1.1706 / 1.1367 / 0.9617 -> 1.1398 / 1.0964 / 0.9617 (2023 / 2024 / 2025), still past the vintage zero-crosses so the curve pays $0 / $0 / cap exactly as D45 measured; first-order restated on the auctions' own UCAP basis (D45 finding section 2.2) the entering screens now sit ~1.06 / ~1.05 -- AT the published CLEARED positions (1.055 / 1.056), which makes the $0 reading a pure basis artifact in 2023-2024. Preserved verbatim: pjm-t1h-pre-d45r. docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md section 4-7."
-  ],
+  "notes": [],
   "categories": {
    "FC-1": {
     "label": "FC-1 structural integrity (I1-I14)",
@@ -6615,7 +6613,7 @@
      {
       "row": "hindcast bands",
       "status": "FAIL",
-      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar']",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_cc', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.solar', 'add.shares.gas_cc']",
       "gating": true
      }
     ]
@@ -6646,7 +6644,7 @@
      {
       "row": "run_config",
       "status": "PASS",
-      "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
+      "detail": "mode=forecast; 791 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -12156,6 +12154,232 @@
       "row": "run_config",
       "status": "PASS",
       "detail": "mode=forecast; 789 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "pjm-t1h-pre-d57": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "5b18dc70d45b",
+   "scored_at_date": "2026-09-04T09:29:37Z",
+   "cache_epoch": "c6091bd5b62bbc3f",
+   "run_id": "pjm-2021-2025-realized-t1h-d45r",
+   "session": "capx-D45R"
+  },
+  "tier": "t1h",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D45R (2026-09-04), the D45 close-out at HEAD (owner rulings Q33/Q35): the PJM live-posture diagnostics-on T1-H REPLAYED at the post-D44 posture (fossil_announced_exits_enabled=True; keeper 2026-08-15-pjm-162-inputclock; HEAD 334be8c2; cache key c6091bd5b62bbc3f, pre-declared and matched; 23.2 min / 9.6 GB). The ONLY resolved-config difference from the preserved pjm-t1h-pre-d45r (D45 L1, pre-D44) is the dates flip, so this is PJM's own single-axis measurement of the channel (the matrix cell's OPEN HERE). Determination HOLD, unchanged (FC-3 FAIL). The channel armed 33 live rows / 13,169 MW (2021-2028) and RE-ROUTES rather than adds: window exits coal announced 4,551 MW (+1,023 MW derates) / gas_st 833 / gas_cc 75 / oil 51, while the cap-bound ECONOMIC coal cohort SHRINKS 18,137 -> 11,415 MW because every plant carrying a pending filed date (in-window AND 2026-2028-dated) is exempt from the screen (rule 19) and leaves the failing pool. Net: retire.total_gw 18.147 -> 17.958 GW (err +0.205 -> +0.192, FAIL both); coal 18.137 -> 16.990; gas_st / gas_cc / oil OFF exactly zero (0.833 / 0.075 / 0.051; gas_ct stays 0.000); unit_recall_gt300 16/20 -> 17/20 (0.80 -> 0.85, PASS both); false_retire 7.839 -> 6.691 GW (0.432 -> 0.373, FAIL both). LOYO -2024 fold recall 0/19 -> 8/19 (FAIL both), -2025 fold 15/19 -> 16/19 PASS. Additions byte-identical to the decimal (wind 3.0 / solar 9.762 / gas_cc 8.118 / gas_ct 1.013 / storage 0.0) -- the entry side is blind to the channel. Entering CR-1 positions FALL with the dated exits: 1.1706 / 1.1367 / 0.9617 -> 1.1398 / 1.0964 / 0.9617 (2023 / 2024 / 2025), still past the vintage zero-crosses so the curve pays $0 / $0 / cap exactly as D45 measured; first-order restated on the auctions' own UCAP basis (D45 finding section 2.2) the entering screens now sit ~1.06 / ~1.05 -- AT the published CLEARED positions (1.055 / 1.056), which makes the $0 reading a pure basis artifact in 2023-2024. Preserved verbatim: pjm-t1h-pre-d45r. docs/handoffs/FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md section 4-7."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 781 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "pjm-t1h-d57-clearing-headbasis": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "c5019afaf3f3",
+   "scored_at_date": "2026-09-05T18:32:59Z",
+   "cache_epoch": "ccee17a4c1563727",
+   "run_id": "pjm-2021-2025-realized-t1h-d57-clearing-headbasis",
+   "session": "capx-D57"
+  },
+  "tier": "t1h",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_cc', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.solar', 'add.shares.gas_cc']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 791 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {

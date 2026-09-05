@@ -3,8 +3,8 @@
   "rubric_version": "1.1",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "a30696a0c678",
-    "scored_at_date": "2026-09-05T05:02:24Z",
+    "scored_at_sha": "c5019afaf3f3",
+    "scored_at_date": "2026-09-05T18:32:04Z",
     "cache_epoch": "f0e050e820c1159a"
   },
   "tier": "t1h",
