@@ -5907,7 +5907,7 @@ If both preconditions hold, the charter runs unchanged. Note for the finding eit
 NYISO keeper this golden is cut against, by id, and the posture (armed fields) resolved at HEAD.
 ```
 
-## D64 — the D50 FOURTH SEAM: the CCS retrofit fixed-cost legs per captured tonne (r#40; zero-solve Phase 0; D50 §8 Disclosure 1)
+## D64 — the D50 FOURTH SEAM: the CCS retrofit fixed-cost legs per captured tonne (r#40; zero-solve Phase 0; D50 §8 Disclosure 1) — **LANDED at r#41 (PR #4847 `1adb0d3c`): both legs TPC-fractions → scale with `k`; PJM 2029 residual closes at zero solves; `ccs_retrofit_vom_adder` 8.0 UNCITED (ATB 2.95) → BUILD: §D65 (Act A) + card C-15/Q47 (Act B)**
 
 ```
 You are the D64 session of the capacity-expansion track — a Phase-0 lane, zero solves, docs
@@ -5980,7 +5980,7 @@ EXIT: the finding with the basis, the construction, the zero-solve re-screen, th
 and the D65 build charter draft (or the "no build" closure); pushed.
 ```
 
-## D61 — the PJM CT / ST / oil E&AS operand: Phase 0, zero-solve (r#38; D57 §4's named successor)
+## D61 — the PJM CT / ST / oil E&AS operand: Phase 0, zero-solve (r#38; D57 §4's named successor) — **LANDED at r#41 (PR #4848 `27a2996e`): the operand is NOT the object — the going-forward BAR (published gross ACR) + the 2024/25 census are → §D62 issued; D66/D67 named; card C-16/Q48 (co-opt arming)**
 
 ```
 You are the D61 session of the capacity-expansion track — a Phase-0 ADJUDICATION lane, zero
@@ -6060,4 +6060,197 @@ only). COLLISION: none — docs only; D58 / D60 / T3-NYISO are solve lanes on ot
 
 EXIT: the finding with the census, the adjudicated home, the arithmetic of what the operand
 would do to D57's price ratio and composition, and the D62 build charter draft; pushed.
+```
+
+## D62 — the PJM going-forward BAR: published default gross ACR + the reactive leg, BUILD + A/B (r#41; D61 §4 executed) — **ISSUED r#41**
+
+```
+You are capx lane D62 for the market-simulator repo — the BUILD + A/B of the object D61 relocated
+the PJM clearing-price ratio to. Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md
+§D62 (this section) and docs/handoffs/FINDING-capx-d61-2026-09-05.md §4 (the construction, the
+vintage rule, the pre-declared signs and STOPs — read it whole first, then §2d for the arithmetic
+you must reproduce). Director ledger: docs/handoffs/capx-director-ledger-2026-08.md §0al.
+DATA PROFILE: pjm
+MODEL: Opus (pre-declared execution; rule 27 core scope is permitted for Opus)
+BRANCH (suggested; the director grades by content): claude/capx-d62-pjm-acr-bar
+Start: git fetch origin main && git checkout -b <branch> origin/main; hydrate: python3 scripts/hydrate_data.py --profile pjm
+
+WHAT D61 FOUND (do not re-adjudicate): the CT/ST/oil E&AS operand is NOT the object — the SOM
+medians are $2–18/kW-yr, mostly uplift/reactive, and adding them at the model's bars moves the D57
+price ratio the WRONG way (1.52× → 1.86×). What moves the ratio toward 1× with ZERO coefficients is
+the going-forward BAR: PJM's own published default gross ACR (Manual 18 §5.4.8.4(B), already intaken
+at data/raw/capacity-market/avoidable-cost-rate/pjm/pjm.csv, two vintage columns) in place of the
+ATB-FOM proxy — 1.52 → 1.06×, 2.43 → 1.56× alone. In 2024/25–2025/26 every offer already clears; the
+residual there is the supply CENSUS (D66, not yours).
+
+MECHANISM (one object, two seams — rule 19 [R-ONE-MECH]):
+ 1. Field: ONE per-ISO gate in the {iso: bool} form the clearing half uses (D57 pattern), e.g.
+    `capacity_going_forward_bar_published_by_iso: dict[str, bool] | None = None`, default None.
+    NO scalar field — the published values are DATA (pjm.csv). Register it in the cache-key
+    optional-fields table with its default so the off path is key-neutral; CLI on run_full_horizon.py
+    (+ the --no- form); recorded in run_config.json. NOT armed in this lane — no _pjm_config
+    override; arming is a later owner card.
+ 2. Seam 1 — THE BAR (retirements.py::apply_economic_retirements, the going_forward_cost line):
+    a `resolve_going_forward_bar(iso, fuel_class, delivery_year)` that returns the published class
+    value on nameplate ($/MW-day × 365 → $/kW-yr) when the gate is on for that ISO, else the ATB path
+    UNCHANGED. Because the clearing's offer_g = max(0, GFC_g − EAS_g)/(A_g × 365) reads the SAME
+    going_forward_cost, offer and exit stay ONE object (design §3.5 identity). Under the published bar
+    `retirement_fom_multiplier_coal` does NOT apply (the published number is already the avoidable
+    cost "assuming the unit would otherwise retire", §5.4.4) — stated in a comment, not tuned.
+ 3. Seam 2 — REACTIVE: the tariff's reactive component ($2,199/MW-yr, PJM's E&AS-offset input) enters
+    net_revenue BEFORE the capacity leg, once, as pmax × reactive_per_mw_yr for every thermal unit —
+    so the offer inherits it exactly as the screen does. The SOLE out-of-market credit: no uplift, no
+    AS annual rate (rule 19).
+ 4. VINTAGE RULE, fixed here before any solve: DY ≤ 2025/26 reads the "through 2025/26" column
+    (2022/23 $, nameplate); DY ≥ 2026/27 the second column; classes "n/a" in the first column (steam
+    oil & gas) read the first published value, with that fact written into the DOF-ledger row. YOU
+    MAY NOT pick between columns by result (rule 21 — the failure mode D61 §3 names).
+ 5. Data intake: pjm.csv is in place; add the reactive-component row(s) with source doc + page via
+    the data-intake skill; extend the capacity_market/avoidable-cost-rate schema if
+    cost_component=reactive_offset is new; tmp-CLEAN_DIR test.
+ 6. Tests (pre-solve): off path byte-identical + cache-neutral (bare keys unmoved with the field
+    absent and explicitly None/False); resolver returns the ATB path for every non-armed ISO; the
+    vintage rule asserted from pjm.csv; offer == screen bar identity on a toy stack; reactive enters
+    once (no double count with the design's EAS_g).
+ 7. Matrix (rule 28c): one base row in docs/codebase-site/data/mechanism-matrix.js + a cell line in
+    all six shards (U/U for the five others; PJM cell stamped from your result), LAST commit, one
+    appended line per shard; check_mechanism_matrix.py green.
+
+PHASE 0 (zero LP, a STOP gate): reproduce S0 (committed clearing) and S6 (published bar) of
+docs/handoffs/d61/reclear-2026-09-05.py THROUGH THE CODE PATH — the new resolver feeding
+clear_capacity_supply_stack — to 0.000 $/MW-day and 0.000 pt on the committed D57 arm-A ledgers
+(results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing/PJM/f0e050e820c1159a/). Mismatch = STOP.
+
+RULE 29 [R-SCREEN] — NO CONTROL SOLVE (clause b): the control is the committed bare `pjm-t1h`
+(`f0e050e820c1159a`, D57 arm A). FIRST run G-DRIFT: `git diff <its git_sha> HEAD -- src/market_sim
+scripts/run_full_horizon.py scripts/lib` and classify EVERY solve-path hunk INERT-with-reason or
+LIVE in the PRECOMMIT before the arm is solved (D58's and D60-R2's hunks, if landed, must read INERT
+for PJM's hindcast path or the control is re-solved — the only thing that earns one). If D58's
+PJM sector-gate ARMING has landed by then, the bare `pjm-t1h` is the new key: take it as the control
+and say so. SCREEN YEAR = DY 2022/23 (the year the bar's footprint is largest: every CT/ST/oil offer
+on the bar plateau, coal's 2.0× gap widest — named here, not chosen by residual); structural STOP
+gate only (direction and order of magnitude per §2d, footprint confined to the bar rows, offer==exit
+identity holds, no non-target load-bearing criterion flips). Then the full T1-H window
+(2021–2025 realized, the D57 recipe) as ONE bundle; register the arm under a suffixed key with its
+`-pre-d62` prior preserved.
+
+PRE-DECLARED SIGNS (write them in the PRECOMMIT verbatim, grade them at full magnitude): 2022/23 ratio
+1.52 → ≈1.06 (0.87–1.06), position −0.48 → +0.1 to +0.3 pt, coal uncleared 5.4 → ≤ 0.2 GW, steam 8.8 GW
+UNCHANGED, oil 3.7 GW uncleared unless reactive+energy clears it; 2023/24 2.43 → ≈1.56 (1.28–1.56),
+position −0.98 → −0.3 to 0; 2024/25 5.73 → 5.04 then FROZEN (all offers clear); 2025/26 unchanged.
+FC-3: economic coal exits UP from 0.44 GW, gas-steam 9.5 GW unchanged, gas-CC 2023 entry below +4 GW,
+retire.total_gw toward 15.06 actual; determination expected to STAY HOLD.
+
+STOPs (kill the arm, never promote it): Phase 0 mismatch · bare `pjm-t1h` key moved by THIS lane ·
+any other ISO's key moved · a residual-selected column or convention (rule 21) · the 2024/25 price
+moving · the price landed through any scalar not in pjm.csv · wall/RSS beyond D57's 14 min / 9.3 GB.
+
+COLLISION CARE: retirements.py beside D57's settlement hunk and D53's sector-gate hunk — rebase
+before every push. D65 (issued alongside) writes ccs.py + the D50 neighbourhood of scenarios.py; put
+your field OUTSIDE that block and outside SCN-WS1a's D34-guard region and SCN-WS2a's federal_ces_*
+block (scenario-desk-ledger-2026-09.md collision register). NOBODY but D60-R2 writes
+frontend/data/forecast/program-status.json or ff-verdicts.json this window: build, test, Phase 0,
+screen and full-window solves are yours now; REGISTRATION + the artifact-only re-score wait until
+D60-R2's finding has merged (git log origin/main --grep=D60-R2) — if it has not by the time your
+solves are done, push everything else as a CHECKPOINT and say exactly what is owed. Score and
+register AFTER the final rebase; a rebase after scoring re-stamps scored_at_sha by an artifact-only
+re-score before merge. Rule 22: no out-of-training solve (2021–2025 realized hindcast only; forecast
+mode). Rule 27: edit locally, push exact bytes, blob-verify every ≥300-line file after push. Rule 28:
+row + six cells in this PR. Rule 25: PJM's data and PJM's cell only.
+
+EXIT: FINDING-capx-d62-<date>.md (Phase 0 reproduction, G-DRIFT table, screen gate table, the
+full-window A/B at full magnitude vs the pre-declared signs, FC-3/FC-2 rows, a §8 recommendation
+ARM / DO-NOT-ARM with the owner card's text drafted, and what the census D66 and the steam
+convention D67 still own); tests green; matrix green; pushed. Nothing arms in this lane.
+```
+
+## D65 — the CCS fourth seam, ACT A: the fixed-cost shape field, BUILD + A/B (r#41; D64 §4 Act A executed; Act B awaits card C-15 / Q47) — **ISSUED r#41**
+
+```
+You are capx lane D65 for the market-simulator repo — the BUILD + A/B of D64's Act A: the gated
+field that makes the CCS retrofit's ΔFOM and capture-VOM legs scale with the capture island (k =
+captured / captured_ref) exactly as D50 already scales its capex. Binding charter: docs/handoffs/
+capx-director-prompt-pack-2026-08.md §D65 (this section) and docs/handoffs/FINDING-capx-d64-
+2026-09-05.md §4 (field, seam, tests, A/B, STOPs — read it whole first; §1.2 for the basis, §2.3
+for the committed converters you will re-rank). Director ledger: capx-director-ledger-2026-08.md §0al.
+DATA PROFILE: neiso
+MODEL: Opus (pre-declared execution; rule 27 core scope permitted for Opus)
+BRANCH (suggested; graded by content): claude/capx-d65-ccs-fourth-seam
+Start: git fetch origin main && git checkout -b <branch> origin/main; hydrate --profile neiso
+
+SCOPE — ACT A ONLY. Act B (re-identifying `ccs_retrofit_vom_adder` 8.0 → 2.95 $/MWh 2026$) is a
+VALUE change that re-keys every bare key unconditionally and is owner card C-15 / Q47 — DO NOT change
+the constant, do not widen the ATB extract for it, do not solve an A2 arm. If §3 of the ledger shows
+Q47 RULED (A) when you start, STOP and tell the director: the charter is re-cut, not improvised.
+
+THE FIELD AND THE SEAM (D64 §4.2, zero DOF):
+ 1. `ccs_retrofit_fixed_cost_co2_scaling: bool = False` in scenarios.py BESIDE the D50 field
+    `ccs_retrofit_capex_co2_scaling`; validator: True REQUIRES the D50 field (no k without seam 1).
+    Registered in _CACHE_KEY_OPTIONAL_FIELDS + _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["…"] = "False";
+    CLI --ccs-retrofit-fixed-cost-co2-scaling / --no- on run_full_horizon.py; in run_config.json.
+ 2. ccs.py::apply_ccs_retrofit: delta_fom_per_mw_yr becomes the REFERENCE value computed once;
+    inside the loop delta_fom = delta_fom_ref × (capex_scale if scale_fixed else 1.0); mc_post uses
+    vom_adder × (capex_scale if scale_fixed else 1.0); the conversion applies the SAME scaled adder to
+    gen.vom (the dispatch VOM of the converted unit must be the VOM the screen priced); the log gains
+    fixed_cost_scale and vom_adder_per_mwh (delta_fom_per_mw_yr now per host). Off path never enters
+    the branch — byte-identical by construction.
+ 3. The converted unit's LATER retirement FOM: director ruling r#41 = D64 option (i) DISCLOSE AND
+    DEFER (one seam per lane); write the disclosure into the finding and the ccs.py comment; option
+    (ii) (Generator.fom_adder_per_kw_yr) is a routed successor, not yours.
+ 4. Matrix (rule 28c): base row `ccs_retrofit_fixed_cost_co2_scaling` in mechanism-matrix.js + a cell
+    in all six shards (U/U; NEISO stamped from your A1), LAST commit, one appended line per shard;
+    check_mechanism_matrix.py green. Act B's note in the existing ccs_retrofit_screen row is C-15's.
+
+TESTS (all pre-solve; tests/unit/model/test_ccs_retrofit.py conventions): off path byte-identical +
+cache-neutral (bare keys unmoved with the field absent AND explicitly False — the D50
+test_off_is_byte_identical_and_cache_neutral shape); REFERENCE-HOST INVARIANCE (a k = 1 host: er =
+6.3 × 0.057, capture 0.9 → identical uplift_window, payback_years, log rows on and off); PER-TONNE
+INVARIANCE at carbon 0 (two hosts, equal hr, er ratio 2:1 → uplift_window / retrofit_capex_per_mw
+differs only by the HR-penalty term, asserted analytically); converted vom carries vom_adder × k;
+validator rejects the field without seam 1.
+
+ZERO-LP PHASE 0 (rule 29 step 0): re-run the D64 census instrument's arithmetic through the CODE
+path on the committed post-Q42 converters (results/calibration/capxd64_fourth_seam_census.json is
+the reference): the seam-4 column must reproduce to the MW — PJM 2029 1.68 GW → 0, MISO 0.53 → 0,
+NEISO/NYISO/CAISO eligible MW unchanged (12.39 / 6.80 / 13.68 GW). Mismatch = STOP.
+
+RULE 29 [R-SCREEN] — NO CONTROL SOLVE (clause b): the control is the committed bare `neiso-t1f`
+(`18515067bf4d2fbe`, the D50 arm = the post-Q42 bare key). FIRST run G-DRIFT from its git_sha to
+HEAD over src/market_sim + scripts/run_full_horizon.py + scripts/lib and classify every hunk INERT-
+with-reason or LIVE in the PRECOMMIT before the arm is solved; a LIVE hunk is the only thing that
+earns a control re-solve. ARM A1 = NEISO t1f, seam 4 alone (~8 min; the ISO where the re-screen
+re-ranks the most rows — 39 committed converters — and the cap-binding question is live). The
+forecast hindcast leg is its own screen. NYISO (12 min) is the second RGGI witness ONLY if A1 moves
+the cap; GOLDEN-3 ONLY if A1 shows the cap unbinding or the composition moving by more than the
+cap-packing unit in any year. PJM is NOT an arm (its bare leg is D60-R2's to land; read the seam's
+PJM effect from that re-solve when it exists). Register A1 under a suffixed key with the `-pre-d65`
+prior preserved.
+
+PRE-REGISTERED EXPECTATIONS (falsifiable, not gates; D64 §4.4 table): NEISO conversions cap-bound
+(2,940–3,000 MW) every year; the MW-weighted er of the 2028 set falls below D50's 0.550 and every
+year's set ranks by hr within the in-merit hosts; ERCOT/MISO (if solved) 0 rows, byte-identical.
+
+STOPs (D64 §4.5 — kill the arm, never promote it): (1) a k = 1 row moving in any ledger or log field;
+(2) seam 4 alone making any carbon-0 row clear that the committed keeper did not, or a k > 1 host
+converting under A1 that did not convert in the control in a non-cap-bound year (rule-14-wrong
+direction); (3) any NEISO/NYISO year converting more than the cap, or ERCOT/MISO gaining a row;
+(4) key drift (a realized key ≠ its pre-declared value, or a collision with a committed key);
+(5) byte-inertness failing on the committed neiso-t1f recipe with the field absent / False.
+
+COLLISION CARE: scenarios.py — your field sits in the D50 block; SCN-WS1a owns the D34-guard region
+of __post_init__ and SCN-WS2a the federal_ces_* block (scenario-desk-ledger-2026-09.md register) —
+touch neither; D62 (issued alongside) adds its own field elsewhere. ccs.py is yours alone this
+window. Six shards: one appended line each, last commit. NOBODY but D60-R2 writes program-status.json
+/ ff-verdicts.json this window: build, tests, Phase 0 and the A1 solve are yours now; REGISTRATION +
+the artifact-only re-score wait until D60-R2's finding has merged (git log origin/main --grep=
+D60-R2); if it has not when A1 is done, push everything else as a CHECKPOINT and state what is owed.
+Score and register AFTER the final rebase; a rebase after scoring re-stamps scored_at_sha by an
+artifact-only re-score before merge. Rule 22: forecast mode only, no holdout year. Rule 27: edit
+locally, exact bytes, blob-verify every ≥300-line file after push (scenarios.py, ccs.py, the shards).
+Rule 25: NEISO's cell from NEISO's arm; five U cells. Rule 28: row + six cells in this PR.
+
+EXIT: FINDING-capx-d65-<date>.md (Phase 0 reproduction, G-DRIFT table, A1 at full magnitude vs the
+expectations, every STOP's reading, the k = 1 invariance evidence, the deferred-FOM disclosure, a §8
+ARM / DO-NOT-ARM recommendation with the owner card drafted, and the exact re-cut D65-B would need if
+Q47 rules A); tests green; matrix green; pushed. Nothing arms in this lane.
 ```

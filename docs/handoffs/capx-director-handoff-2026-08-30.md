@@ -92,33 +92,46 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#40, main HEAD 4d4dc6ce, 2026-09-05 — VERIFY, DON'T TRUST):
-- KEEPERS: ERCOT 2026-09-05-ercot248-two-config-keeper CALIBRATED · NEISO neiso-99-joint-p1
-  CALIBRATED · PJM pjm-162-inputclock CALIBRATED · NYISO 2026-09-05-nyiso-192-astoria-panel
-  NOT-YET (grade 6; Q46 — complete + frontier WITHDRAWN, gate (a) FAIL, validation tier lapsed)
-  · MISO 2026-09-05-miso-217-intermphys NOT-YET {C3a-2025} · CAISO 2026-09-05-caiso-251-b1-
-  nomargin NOT-YET {C4 one cell; C3a passes}. Markers: complete = {ERCOT, NEISO, PJM}; frontier
-  = {ERCOT, NEISO, PJM}; withdrawn = {CAISO, NYISO}; final EMPTY. Guard 6/6; parity 0; ruff
-  green (Y-10). Rule 15 retention is KEEPER-ONLY (text amended, G-1). Rule 29 (a)+(b) live.
-- FORECAST POSTURES ARMED: fossil dates (Q30) · MISO sector gate (Q43) · MISO ratio (Q40) ·
-  NYISO requirement gates (Q41) · CCS capex default (Q42) · PJM joint posture (Q44). Bare keys
-  re-solved: miso-t1f, nyiso-t1f (FC-7 CAVEAT, instrument). D60-R2 RUNNING: state-at-start
-  clean (17 keys unmoved), Addendum D pushed; owes caiso-t1f / pjm-t1f / GOLDEN-3, the rows,
-  the re-scores, finding §5/§8. Pre-declared: miso-t1f's FC-7 will NOT clear (five pre-batch
-  MISO overrides without rows → D63); CAISO keeps its negative_renewable_offers caveat.
-- IN FLIGHT / ISSUED: D60-R2 RUNNING · D58 held on it · T3-NYISO-GOLDEN HELD (Q45 lapsed with
-  the marker; re-served only when a CALIBRATED NYISO keeper re-enters `complete`) · D61 issued
-  (r#38, re-emitted r#40 am.1; Fable, docs-only) · D64 issued (r#40 am.1; the D50 fourth seam,
-  CCS ΔFOM/VOM per captured tonne, zero-solve, Fable) · D63 (MISO/CAISO DOF-row identification
-  records lane) NAMED, issue on D60-R2's landing. Owner track: nyiso-194 killed the owner-named duct-burner lever on its one-year
-  screens (rule 29); caiso-252 named the import DIURNAL shape as the CC_REGULAR C4 object;
-  miso-219 found the evening tail unreachable by any registered field; the audit desk holds
-  the branch-protection flip (owner click-path), the bench-fingerprint proposal, and the
-  path-filter gap on docs/handoffs/FINDING-*.md.
-- OWNER-TIER OPEN: NONE — Q1–Q46 spent. NEXT cards: D58 arming; D62 (from D61); the NYISO
-  campaign re-authorization only when NYISO reads CALIBRATED again.
-- QUEUED-NAMED (§0ak.4): D63; NYISO's empty confirmed-exit channel (owner's track); the NYC
-  steam delivered-gas intake; plus §0ai.4's list unchanged.
+STATE AT HANDOFF (r#41, main HEAD 5cc1e7ce, 2026-09-05 — VERIFY, DON'T TRUST):
+- KEEPERS (unchanged since r#40): ERCOT 2026-09-05-ercot248-two-config-keeper CALIBRATED · NEISO
+  neiso-99-joint-p1 CALIBRATED (its whole validation ladder now walked: 2022 CAL · 2021 CAL ·
+  2020 NOT-YET C3a +13.7 %; two touchpoint runs registered — a rule-15 keeper-only tension routed
+  to the audit/calibration desk) · PJM pjm-162-inputclock CALIBRATED · NYISO 2026-09-05-nyiso-192-
+  astoria-panel NOT-YET (Q46; complete + frontier WITHDRAWN) · MISO 2026-09-05-miso-217-intermphys
+  NOT-YET {C3a-2025} · CAISO 2026-09-05-caiso-251-b1-nomargin NOT-YET {C4 one cell}. Markers:
+  complete = {ERCOT, NEISO, PJM}; withdrawn = {CAISO, NYISO}; final EMPTY. Gate (a) 6/6 · matrix 0 ·
+  bench 0 (AST fingerprint, Y-12) · goldens 0 · ruff green · audit_keepers S1 repaired (NEISO status
+  leaf) · **parity RED on two unmapped bundles (miso220 screen, neiso_headctrl_k99) — the audit
+  board's OPEN rule-29 disposal item; never re-serve it**. R-AR LIFTED the R-V keeper freeze on
+  ERCOT/NEISO/PJM. PR #4855 (owner ruling: band multipliers an AUTHORIZED price channel, rules 1/13
+  + C6 declaration path) is OPEN — backcast desk's; watch only.
+- FORECAST POSTURES ARMED: fossil dates (Q30) · MISO sector gate (Q43) · MISO ratio (Q40) · NYISO
+  requirement gates (Q41) · CCS capex default (Q42) · PJM joint posture (Q44). Board files byte-
+  unchanged since 4d4dc6ce (17 keys unmoved). D60-R2: NO commit / branch since PR #4824 — status
+  ASKED under the relaunch protocol at r#41, NOT graded lost; it still owes caiso-t1f / pjm-t1f /
+  GOLDEN-3, the Q37 rows, the re-scores, finding §5/§8. Pre-declared negatives unchanged (miso-t1f
+  FC-7 will not clear → D63; CAISO keeps its negative_renewable_offers caveat).
+- LANDED r#41: D61 (#4848 — the PJM ratio is the going-forward BAR + the 2024/25 census, not the
+  E&AS operand) · D64 (#4847 — CCS fixed-cost legs are TPC-fractions; the VOM adder 8.0 is UNCITED,
+  ATB 2.95; BUILD).
+- ISSUED r#41 (pack §D62, §D65; Opus; both defer REGISTRATION/re-score until D60-R2's finding
+  merges): D62 (published-ACR bar + reactive leg, build + A/B, screen DY 2022/23, control = committed
+  bare pjm-t1h after G-DRIFT) · D65 Act A (the shape field, A1 = NEISO t1f vs committed neiso-t1f;
+  Act B is card C-15). HELD: D58 + D63 on D60-R2; T3-NYISO-GOLDEN on the marker (Q45 lapsed).
+  QUEUED-NAMED: D66 (PJM 2024/25 supply census, D48 §3.3/D52 object), D67 (below-cap steam offer
+  convention, D54 §2 item 4), D63, plus §0ak.4's list.
+- OWNER-TIER OPEN: **C-15 / Q47** (D65 Act B — authorize ccs_retrofit_vom_adder 8.0 → 2.95 + its
+  unconditional re-key; recommend (A) AUTHORIZE, landed flip-first with Act A's arming decision after
+  D60-R2) · **C-16 / Q48** (D61 (b) — arm the reserve co-opt in the PJM forecast recipe, 15 GB tier,
+  ≤ $1.4/kW-yr; recommend (A) DEFER until D62 lands). Audit board card N is UNTRANSCRIBED — owner
+  asked to confirm neither repeats it. NEXT cards: D58 arming; D62 arming; NYISO campaign
+  re-authorization only when NYISO reads CALIBRATED again.
+- OTHER DESKS: SCN-DESK (scenario readiness; scenario-desk-ledger-2026-09.md; deconflicted by
+  clause — never charters this queue, never touches program-status/ff-verdicts; its WS-1a/WS-2a
+  write policy/*.py + named scenarios.py regions) · wall-clock desk (claude/wc-desk-log, unmerged)
+  · the audit board (v31). Owner track objects watched: CAISO import diurnal shape (caiso-252's
+  full span licensed), MISO ×1.10 band lift (miso-220 full span running; C6 honest-FALSE), NYISO
+  availability side (post nyiso-195 kill).
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,

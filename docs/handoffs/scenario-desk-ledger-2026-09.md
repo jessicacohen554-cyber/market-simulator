@@ -115,7 +115,7 @@ State at r#1 = plan v1, unmoved. Each landing lane updates BOTH this table and t
 
 | Criterion (plan §1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (semantics defect G-C1) | yes | **no** | **no** | partial (no named case) | — |
+| 1 expressible in committed config | yes (semantics defect G-C1) | yes | **no** | **no** | partial — **siting sourced** for ERCOT/PJM/MISO (SCN-WS4a), still **no named case** | — |
 | 2 reaches dispatch + deployment | yes | yes | **no** | **no** | yes | — |
 | 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | **no** | **no** | **no** | — |
 | 4 backcast byte-identity | yes | yes | — | — | yes | — |
@@ -126,7 +126,13 @@ State at r#1 = plan v1, unmoved. Each landing lane updates BOTH this table and t
 **Open lane assignments against the scorecard:** WS-0 → the Emissions column entire (criterion
 6) + criterion 1's harness half; WS-1a → Carbon row 1 (the G-C1 defect) and rows 4/5; WS-1b →
 Carbon rows 3/7; WS-2a → the CES-target column rows 1/2/4/5 and its probe half of row 3; WS-2b →
-CES-premium rows 3/7; WS-3a → nothing (memo); WS-4a → Load-HI row 1 (partial → the siting half).
+CES-premium rows 3/7; WS-3a → nothing (memo); WS-4a → Load-HI row 1 (partial → the siting half)
+— **LANDED 2026-09-05**: MISO populated from the 2026 LTLF regional DC decomposition, ERCOT
+verified already-populated (the plan §2.4 "only for PJM" line was stale and is corrected), NEISO
+`{}` re-confirmed with its arithmetic; the named case remains SCN-WS4b's and is NOT claimed.
+The D-4 gap list is `docs/handoffs/FINDING-scn-ws4a-2026-09-05.md` §4, presentable unedited; that
+FINDING §6 routes one cache-epoch ledger entry (MISO forecast bundles stale at the same key) that
+SCN-WS4a may not write, `results/cache.py` being another lane's region.
 
 ---
 

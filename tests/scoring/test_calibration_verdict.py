@@ -918,6 +918,103 @@ class GovernanceTests(unittest.TestCase):
         self.assertEqual(g["status"], cv.FAIL)
 
 
+class AuthorizedPriceTuningTests(unittest.TestCase):
+    """Rule 1 ``[R-STRUCT]`` carve-out (owner ruling 2026-09-05).
+
+    The registered offer-curve band multipliers are an authorized price-tuning
+    channel, so the two channel-scoped assertions may read false WHEN the run
+    declares the channel. Every test here also pins that the carve-out FAILS
+    CLOSED — it must never become a blanket exemption.
+    """
+
+    CFG = {"scenario_config": {"outage_source": "historic"}}
+    YEARS = [2023, 2024, 2025]
+
+    def _tuned(self, **over):
+        """A clean attestation with both scoped assertions false + a declaration."""
+        att = _clean_attestation()
+        att["governance"]["no_fit_to_price_residuals"] = False
+        att["governance"]["levers_trace_to_measured_input"] = False
+        dec = {
+            "channel": "offer_curve_by_group",
+            "ruling": "owner ruling 2026-09-05",
+            "value": "x1.10 on 11 non-steam fossil classes",
+            "years_held": [2023, 2024, 2025],
+            "set_ex_ante": True,
+            "not_swept": True,
+        }
+        dec.update(over)
+        att["governance"]["authorized_price_tuning"] = dec
+        return att
+
+    def test_declared_channel_scopes_the_two_assertions(self):
+        g = cv.score_governance(self.CFG, self._tuned(), self.YEARS)
+        self.assertEqual(g["status"], cv.PASS)
+        self.assertIn("authorized price tuning declared", g["metric"] + g["magnitude"])
+
+    def test_undeclared_price_fit_still_fails(self):
+        # The amendment authorizes a DECLARED channel, never silence.
+        att = _clean_attestation()
+        att["governance"]["no_fit_to_price_residuals"] = False
+        g = cv.score_governance(self.CFG, att, self.YEARS)
+        self.assertEqual(g["status"], cv.FAIL)
+
+    def test_wrong_channel_fails(self):
+        g = cv.score_governance(
+            self.CFG, self._tuned(channel="magic_adder"), self.YEARS
+        )
+        self.assertEqual(g["status"], cv.FAIL)
+
+    def test_swept_value_fails(self):
+        # Condition (c): selecting a factor by sweeping against the gates stays
+        # forbidden — that is the fitted-mechanism selection rule 1 forbids.
+        g = cv.score_governance(self.CFG, self._tuned(not_swept=False), self.YEARS)
+        self.assertEqual(g["status"], cv.FAIL)
+
+    def test_not_set_ex_ante_fails(self):
+        g = cv.score_governance(self.CFG, self._tuned(set_ex_ante=False), self.YEARS)
+        self.assertEqual(g["status"], cv.FAIL)
+
+    def test_per_year_config_fails(self):
+        # Condition (b): ONE config across EVERY scored year.
+        g = cv.score_governance(self.CFG, self._tuned(years_held=[2025]), self.YEARS)
+        self.assertEqual(g["status"], cv.FAIL)
+
+    def test_incomplete_declaration_fails(self):
+        att = self._tuned()
+        del att["governance"]["authorized_price_tuning"]["ruling"]
+        g = cv.score_governance(self.CFG, att, self.YEARS)
+        self.assertEqual(g["status"], cv.FAIL)
+
+    def test_carve_out_does_not_reach_pinning(self):
+        # The carve-out scopes exactly two assertions. Pinning to actuals is
+        # never scoped, however well the channel is declared.
+        att = self._tuned()
+        att["governance"]["no_pinning_to_actuals"] = False
+        g = cv.score_governance(self.CFG, att, self.YEARS)
+        self.assertEqual(g["status"], cv.FAIL)
+
+    def test_forbidden_flag_machine_check_untouched(self):
+        g = cv.score_governance(
+            {"scenario_config": {"outage_source": "fitted"}}, self._tuned(), self.YEARS
+        )
+        self.assertEqual(g["status"], cv.FAIL)
+
+    def test_clean_keeper_without_declaration_unaffected(self):
+        # The amendment must be a no-op for every existing keeper.
+        g = cv.score_governance(self.CFG, _clean_attestation(), self.YEARS)
+        self.assertEqual(g["status"], cv.PASS)
+
+    def test_malformed_declaration_on_otherwise_clean_run_fails(self):
+        # Declared but malformed, with both assertions true: never silently carried.
+        att = _clean_attestation()
+        att["governance"]["authorized_price_tuning"] = {
+            "channel": "offer_curve_by_group"
+        }
+        g = cv.score_governance(self.CFG, att, self.YEARS)
+        self.assertEqual(g["status"], cv.FAIL)
+
+
 class LedgerTests(unittest.TestCase):
     def test_documented_fail_becomes_caveat(self):
         # v3.1: only C3c (price_tail) is ledgerable at all, so the documented

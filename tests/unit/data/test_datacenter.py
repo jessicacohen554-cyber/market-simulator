@@ -143,19 +143,37 @@ def test_mid_relocation_conserves_energy_all_isos(iso, year):
 # --------------------------------------------------------------------------
 # 3. Zone shares — sum to 1.0, default == load_share, import nodes get 0.
 # --------------------------------------------------------------------------
-@pytest.mark.parametrize("iso", ["ERCOT", "PJM", "CAISO", "NYISO"])
+@pytest.mark.parametrize("iso", ["ERCOT", "PJM", "MISO", "CAISO", "NYISO"])
 def test_default_zone_shares_sum_to_one(iso):
     zones = get_iso_config(iso).zone_names
     shares = datacenter_zone_shares(iso, zones)
     assert shares.sum() == pytest.approx(1.0, abs=1e-6)
 
 
+def test_every_override_table_sums_to_one_on_model_zones():
+    """The sum-to-1.0 invariant, over EVERY override table, keyed on model zones.
+
+    ``datacenter_zone_shares`` raises when an override does not conserve the
+    block energy; this is the constants-side half of that guard, so a
+    mis-entered siting table fails at import-time review rather than in a solve
+    (rule 14 provenance work must never silently rescale the block).
+    """
+    assert DATACENTER_ZONE_SHARE, "at least one ISO carries a published override"
+    for iso, table in DATACENTER_ZONE_SHARE.items():
+        zones = get_iso_config(iso).zone_names
+        assert set(table) == set(zones), f"{iso}: override keys != model zone_names"
+        assert sum(table.values()) == pytest.approx(1.0, abs=1e-6), (
+            f"{iso}: shares do not sum to 1.0"
+        )
+        assert all(v >= 0.0 for v in table.values()), f"{iso}: negative share"
+
+
 def test_default_zone_shares_equal_load_share():
-    # MISO carries no siting override, so its default zone shares equal load_share.
-    # (ERCOT and PJM now carry published overrides — see their dedicated tests.)
-    iso_cfg = get_iso_config("MISO")
+    # CAISO carries no siting override, so its default zone shares equal load_share.
+    # (ERCOT, PJM and MISO now carry published overrides — see their dedicated tests.)
+    iso_cfg = get_iso_config("CAISO")
     zones = iso_cfg.zone_names
-    shares = datacenter_zone_shares("MISO", zones)
+    shares = datacenter_zone_shares("CAISO", zones)
     expected = np.array([z.load_share for z in iso_cfg.zones])
     assert np.allclose(shares, expected)
 
@@ -172,8 +190,9 @@ def test_import_node_zone_gets_zero_block():
 def test_pjm_zone_share_reconciled_dom_anchored():
     """PJM carries a rule-14 reconciled DOM-anchored siting override (2026-07-21):
     Dominion at its published ~0.55 near-2030 DC share, residual by load_share.
-    PJM and ERCOT are overridden; every other ISO keeps its load_share default."""
-    assert set(DATACENTER_ZONE_SHARE) == {"PJM", "ERCOT"}
+    PJM, ERCOT and MISO are overridden; every other ISO keeps its load_share
+    default."""
+    assert set(DATACENTER_ZONE_SHARE) == {"PJM", "ERCOT", "MISO"}
     pjm = DATACENTER_ZONE_SHARE["PJM"]
     zones = get_iso_config("PJM").zone_names
     # Keys match the model zone_names exactly and shares sum to 1.0.
@@ -214,9 +233,47 @@ def test_ercot_zone_share_large_load_anchored():
     assert shares[zones.index("West")] == pytest.approx(ercot["West"], abs=1e-9)
 
 
+def test_miso_zone_share_published_region_anchored():
+    """MISO carries a published-region-anchored siting override (2026-09-05).
+
+    The 2026 LTLF publishes DC net energy split across MISO North / Central /
+    South (0.2347 / 0.5824 / 0.1829) with the region -> LRZ definition on the
+    same slide; the model's six zones are LRZ unions, so the regional split maps
+    onto them with load_share distributing within each region and the one
+    straddling zone (MISO-Plains = LRZ 3 North + LRZ 5 Central) split on the
+    published per-LRZ LRR. The gates below are the published facts, not the
+    arithmetic: South is the published region exactly, and it is DC-LIGHT
+    relative to its load_share while every Central-region zone is DC-heavy.
+    """
+    miso = DATACENTER_ZONE_SHARE["MISO"]
+    iso_cfg = get_iso_config("MISO")
+    zones = iso_cfg.zone_names
+    assert set(miso) == set(zones)
+    assert sum(miso.values()) == pytest.approx(1.0, abs=1e-6)
+    # MISO-South IS the published South region (LRZ 8+9+10), so it carries that
+    # region's share with no reconciliation.
+    assert miso["MISO-South"] == pytest.approx(0.1829, abs=1e-6)
+    load_share = {z.name: z.load_share for z in iso_cfg.zones}
+    # Published direction: the southern LRZs are load-heavy but grow on industrial
+    # / oil-and-gas / hydrogen drivers, not data centers.
+    assert miso["MISO-South"] < load_share["MISO-South"]
+    # Every wholly-Central-region zone is DC-heavier than its load_share.
+    for zone in ("MISO-Illinois", "MISO-Indiana", "MISO-East"):
+        assert miso[zone] > load_share[zone]
+    # The three published region totals are reproduced by the zone table, with
+    # MISO-Plains straddling North (LRZ 3) and Central (LRZ 5).
+    assert miso["MISO-West"] + miso["MISO-Plains"] + miso["MISO-Illinois"] + miso[
+        "MISO-Indiana"
+    ] + miso["MISO-East"] == pytest.approx(0.2347 + 0.5824, abs=1e-6)
+    # The resolved share vector (via the consumer) sums to 1 and matches the table.
+    shares = datacenter_zone_shares("MISO", zones)
+    assert shares.sum() == pytest.approx(1.0, abs=1e-6)
+    assert shares[zones.index("MISO-South")] == pytest.approx(0.1829, abs=1e-9)
+
+
 def test_nonpjm_zone_share_is_load_share_default():
-    """CAISO/NYISO/MISO carry no siting override -> load_share default."""
-    for iso in ("CAISO", "NYISO", "MISO"):
+    """CAISO/NYISO carry no siting override -> load_share default."""
+    for iso in ("CAISO", "NYISO"):
         assert iso not in DATACENTER_ZONE_SHARE
         iso_cfg = get_iso_config(iso)
         zones = iso_cfg.zone_names

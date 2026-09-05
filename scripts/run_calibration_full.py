@@ -599,6 +599,52 @@ def _tranche_band(unit_id: str) -> str:
     return ""
 
 
+def _band_categorical(unit_ids: pd.Series) -> pd.Categorical:
+    """Return the per-row band ``Categorical`` of a ``unit_id`` column.
+
+    Element-wise identical — values AND categories — to
+    ``pd.Categorical([_tranche_band(u) for u in unit_ids.astype(str)])``, the
+    per-row construction this replaces, but computed once per DISTINCT id.
+    The band is a pure function of ``unit_id`` and a unit-hour frame carries
+    ~1–3 k distinct ids against millions of rows (NEISO 2023 P1: 6,718,920
+    rows), so the per-row form spent 6.7 M ``_tranche_band`` calls plus a
+    14 s list comprehension materialising the strings of an already-categorical
+    column. Here the column is read as (or factorised to) a categorical,
+    ``_tranche_band`` runs over its categories only, and the band codes are
+    looked up by the unit codes (wallclock A-3: 12.7 s → 2.2 s on that frame;
+    ``docs/handoffs/wallclock-opportunities-2026-09.md`` §2).
+
+    The categories are the sorted distinct bands PRESENT in the rows — never
+    an unused unit category's band — so the result matches the per-row
+    ``pd.Categorical(list)`` exactly, and a missing id (code ``-1``) maps to
+    ``""`` just as ``str(nan)`` did.
+
+    Args:
+        unit_ids: The ``unit_id`` column (categorical or plain).
+
+    Returns:
+        A ``pd.Categorical`` of band tokens, one per row.
+    """
+    if isinstance(unit_ids.dtype, pd.CategoricalDtype):
+        unit_cats = unit_ids.cat.categories
+        unit_codes = unit_ids.cat.codes.to_numpy()
+    else:
+        as_cat = pd.Categorical(unit_ids.astype(str))
+        unit_cats = as_cat.categories
+        unit_codes = np.asarray(as_cat.codes)
+    # One _tranche_band call per distinct id. The trailing "" slot is where a
+    # missing id (code -1) lands — the non-band ``str(nan)`` produced before.
+    band_per_unit = np.array([_tranche_band(u) for u in unit_cats] + [""], dtype=object)
+    row_unit = np.where(unit_codes >= 0, unit_codes, len(unit_cats))
+    # Categories are the sorted distinct bands the ROWS carry — exactly what
+    # ``pd.Categorical(<per-row list>)`` infers — never an unused unit
+    # category's band.
+    band_cats = sorted(set(band_per_unit[np.unique(row_unit)]))
+    band_pos = {b: i for i, b in enumerate(band_cats)}
+    unit_to_band = np.array([band_pos.get(b, -1) for b in band_per_unit])
+    return pd.Categorical.from_codes(unit_to_band[row_unit], categories=band_cats)
+
+
 def _write_class_band_hourly_sidecar(
     run_dir: Path, year: int, labels: list[str]
 ) -> "Path | None":
@@ -662,7 +708,10 @@ def _write_class_band_hourly_sidecar(
             src,
             columns=["year", "pass", "klass", "klass_base", "unit_id", "hour", "mw"],
         )
-        d["band"] = pd.Categorical([_tranche_band(u) for u in d["unit_id"].astype(str)])
+        # Once per distinct id, indexed by the categorical codes — see
+        # _band_categorical (wallclock A-3); values and categories identical
+        # to the former per-row ``pd.Categorical([...])`` construction.
+        d["band"] = _band_categorical(d["unit_id"])
         d["mw_oil"] = np.where(
             d["klass"].astype(str).to_numpy() == "oil", d["mw"].to_numpy(), 0.0
         )
@@ -5835,62 +5884,14 @@ def solve_and_persist(
             if campd_year is not None:
                 campd_frames.append(campd_year)
 
-        _t_end = time.perf_counter()
-        _ti = p2_state.get("_timing", {})
-        # The three subtrahends are summed by run_year over EVERY energy-solve
-        # pass of the year and EVERY matrix build of each pass (PERF-B session
-        # 3, charter C-2; run_calibration._aggregate_pass_timing). ``markup``
-        # is therefore the genuine non-solve, non-build residual — before that
-        # it carried every earlier adaptive pass's build and both HiGHS runs.
-        _solve_p0 = _ti.get("solve_p0_s", 0.0)
-        _solve_p1 = _ti.get("solve_p1_s", 0.0)
-        _build = _ti.get("build_s", 0.0)
-        _energy = _ti.get("energy_solve_s", 0.0)
-        _markup = max(0.0, _energy - _build - _solve_p0 - _solve_p1)
-        _results_write = _t_end - _t_post_solve
-        _total = _t_end - _t_year
-        _data_prep = _total - _solve_p0 - _markup - _solve_p1 - _results_write
-        # Disjoint, exhaustive segments of the results_write window, so
-        # state + frames + parquet + bench == _results_write exactly:
-        #   state  — p2_state pickle + per-pass min-gen floor arrays
-        #   bench  — CAMPD hourly + the EIA-923/930 benchmark frames (scoring)
-        #   parquet— the per-pass dispatch parquet writes (accumulated in-loop)
-        #   frames — everything else in the per-pass loop (frame construction)
-        _bench_s = (_t_campd_done - _t_state_done) + (_t_end - _t_frames_done)
-        _frames_s = (_t_frames_done - _t_campd_done) - _parquet_s
-        # markup sub-instrumentation (PERF-B session 2): ``markup`` is a
-        # residual, not a phase, so the components come from inside
-        # ``run_energy_solve`` (pipeline/solve.py) and are exhaustive over its
-        # interior. ``other`` books the remainder — this frame's call/return
-        # edges around that function — so the clause sums to ``_markup``
-        # exactly. It reads negative only if the ``max(0.0, ...)`` clamp above
-        # fired, which is itself the signal worth seeing.
-        _markup_parts = dict(_ti.get("markup_parts") or {})
-        if _markup_parts:
-            _markup_parts["other"] = _markup - sum(_markup_parts.values())
-        log_year_phase_timing(
-            logger,
-            year,
-            data_prep=_data_prep,
-            solve_p0=_solve_p0,
-            markup=_markup,
-            solve_p1=_solve_p1,
-            results_write=_results_write,
-            total=_total,
-            markup_parts=_markup_parts,
-            results_write_parts={
-                "state": _t_state_done - _t_post_solve,
-                "frames": _frames_s,
-                "parquet": _parquet_s,
-                "bench": _bench_s,
-            },
-        )
+        _t_bench_done = time.perf_counter()
 
-        # Release this year's solve state before the next year allocates its
-        # own LP. A PJM per-plant year peaks ~13 GB inside HiGHS; carrying the
-        # previous year's result/context/P2-state into the next build pushed a
-        # 3-year backcast past 16 GB and into the OOM killer. Only the compact
-        # per-year frames accumulated above survive the loop.
+        # Committable hourly/ sidecars (class / class-band / storage / unit /
+        # network / reserve-family, plus the opt-in and flag-gated audit
+        # series). They ran AFTER the phase-timing line until wallclock A-3,
+        # so ~28 s/yr (NEISO) sat between one year's ``_t_end`` and the next
+        # year's ``_t_year`` — booked to no phase and no year's ``total``. They
+        # now close the results_write window as its ``sidecars`` part.
         _write_class_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
         _write_class_band_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
         _write_p0_commitment_sidecar(run_dir, year, p2_state)
@@ -5952,6 +5953,66 @@ def solve_and_persist(
             (_fp_dir / f"adaptive_iteration_{year}.json").write_text(
                 json.dumps(_fpj, indent=1) + "\n"
             )
+
+        _t_end = time.perf_counter()
+        _ti = p2_state.get("_timing", {})
+        # The three subtrahends are summed by run_year over EVERY energy-solve
+        # pass of the year and EVERY matrix build of each pass (PERF-B session
+        # 3, charter C-2; run_calibration._aggregate_pass_timing). ``markup``
+        # is therefore the genuine non-solve, non-build residual — before that
+        # it carried every earlier adaptive pass's build and both HiGHS runs.
+        _solve_p0 = _ti.get("solve_p0_s", 0.0)
+        _solve_p1 = _ti.get("solve_p1_s", 0.0)
+        _build = _ti.get("build_s", 0.0)
+        _energy = _ti.get("energy_solve_s", 0.0)
+        _markup = max(0.0, _energy - _build - _solve_p0 - _solve_p1)
+        _results_write = _t_end - _t_post_solve
+        _total = _t_end - _t_year
+        _data_prep = _total - _solve_p0 - _markup - _solve_p1 - _results_write
+        # Disjoint, exhaustive segments of the results_write window, so
+        # state + frames + parquet + bench + sidecars == _results_write exactly:
+        #   state   — p2_state pickle + per-pass min-gen floor arrays
+        #   bench   — CAMPD hourly + the EIA-923/930 benchmark frames (scoring)
+        #   parquet — the per-pass dispatch parquet writes (accumulated in-loop)
+        #   frames  — everything else in the per-pass loop (frame construction)
+        #   sidecars— the committable hourly/ sidecar writes (wallclock A-3)
+        _bench_s = (_t_campd_done - _t_state_done) + (_t_bench_done - _t_frames_done)
+        _frames_s = (_t_frames_done - _t_campd_done) - _parquet_s
+        _sidecars_s = _t_end - _t_bench_done
+        # markup sub-instrumentation (PERF-B session 2): ``markup`` is a
+        # residual, not a phase, so the components come from inside
+        # ``run_energy_solve`` (pipeline/solve.py) and are exhaustive over its
+        # interior. ``other`` books the remainder — this frame's call/return
+        # edges around that function — so the clause sums to ``_markup``
+        # exactly. It reads negative only if the ``max(0.0, ...)`` clamp above
+        # fired, which is itself the signal worth seeing.
+        _markup_parts = dict(_ti.get("markup_parts") or {})
+        if _markup_parts:
+            _markup_parts["other"] = _markup - sum(_markup_parts.values())
+        log_year_phase_timing(
+            logger,
+            year,
+            data_prep=_data_prep,
+            solve_p0=_solve_p0,
+            markup=_markup,
+            solve_p1=_solve_p1,
+            results_write=_results_write,
+            total=_total,
+            markup_parts=_markup_parts,
+            results_write_parts={
+                "state": _t_state_done - _t_post_solve,
+                "frames": _frames_s,
+                "parquet": _parquet_s,
+                "bench": _bench_s,
+                "sidecars": _sidecars_s,
+            },
+        )
+
+        # Release this year's solve state before the next year allocates its
+        # own LP. A PJM per-plant year peaks ~13 GB inside HiGHS; carrying the
+        # previous year's result/context/P2-state into the next build pushed a
+        # 3-year backcast past 16 GB and into the OOM killer. Only the compact
+        # per-year frames accumulated above survive the loop.
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
         del unit_frames, network_frames, reserve_family_frames

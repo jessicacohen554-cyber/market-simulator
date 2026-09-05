@@ -1,0 +1,21 @@
+| import unit | vom @ base (carbon 30.02) | vom @ delta=25 (55.02) | Δvom | hr | MW |
+|---|---|---|---|---|---|
+| WECC_import_PNW_hydro_base | 28.0 | 28.0 | 0.0 | 0.0 | 1566.0 |
+| WECC_import_PNW_midC | 36.0 | 36.0 | 0.0 | 0.0 | 1800.0 |
+| WECC_import_DSW_solar_PV | 48.0 | 48.0 | 0.0 | 0.0 | 1805.0 |
+| WECC_import_DSW_CCGT | 79.109 | 88.359 | 9.25 | 0.0 | 1800.0 |
+| WECC_import_DSW_CT | 126.5133 | 140.2633 | 13.75 | 0.0 | 2200.0 |
+| WECC_import_WECC_scarcity | 192.8504 | 203.5504 | 10.7 | 0.0 | 3000.0 |
+| WECC_import_export_solar | 8.0 | 8.0 | 0.0 | 0.0 | 0.0 |
+| WECC_import_export_curtail | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
+
+RFF path vs program trajectory crossing years (path > program):
+CAISO low years where RFF path exceeds program: none | max gap -30.02
+CAISO mid years where RFF path exceeds program: none | max gap -24.36
+CAISO high years where RFF path exceeds program: none | max gap -5.06
+NYISO low years where RFF path exceeds program: none | max gap -22.96
+NYISO mid years where RFF path exceeds program: none | max gap -15.98
+NYISO high years where RFF path exceeds program: [2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040, 2041, 2042, 2043, 2044, 2045, 2046, 2047] | max gap 9.05
+NEISO low years where RFF path exceeds program: none | max gap -25.83
+NEISO mid years where RFF path exceeds program: none | max gap -19.15
+NEISO high years where RFF path exceeds program: [2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040, 2041, 2042] | max gap 3.32
