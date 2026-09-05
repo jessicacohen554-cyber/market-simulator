@@ -94,6 +94,7 @@ produced is L3.)
 | [`us-gen-ownership.md`](us-gen-ownership.md) | ACTIVE | Data/ownership — US generation ownership (moved from repo root, PR #2551) | — |
 | [`multi-iso/README.md`](multi-iso/README.md) | ACTIVE | Multi-ISO — protocol & reference index (six ISOs) | — |
 | [`forecast-development-plan-2026-07.md`](forecast-development-plan-2026-07.md) | ACTIVE | Forecast — THE forecast program (tiers, lanes, waves, §9 doc ledger) | — |
+| [`handoffs/forecast-scenario-readiness-plan-2026-09.md`](handoffs/forecast-scenario-readiness-plan-2026-09.md) | ACTIVE | Forecast — scenario-readiness lane plan (carbon price, national CES, voluntary clean demand, load growth, system-wide emissions); subordinate to the FF plan | — |
 | [`refactor-consolidation-plan-2026-07.md`](refactor-consolidation-plan-2026-07.md) | ACTIVE | Governance/refactor — consolidation program charter | — |
 | [`refactor-consolidation-prompt-pack-2026-07.md`](refactor-consolidation-prompt-pack-2026-07.md) | ACTIVE | Governance/refactor — companion prompt pack | — |
 | [`gap-register-2026-07.md`](gap-register-2026-07.md) | ACTIVE | Forecast — live gap register | — |
