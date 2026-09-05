@@ -6,7 +6,9 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-05 (refresh #37) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-05 (refresh #38) ·
+**r#38 (HEAD `aa86890e`):** **D57 LANDS AND IS PROMOTED IN-SESSION (Q44)** — the PJM clearing half puts the cleared position within −0.5 / −1.0 / −2.8 pts of the published BRA and the §3.5 identity holds in all eight screens; the price reads 1.5–5.7× published because the CT/ST/oil E&AS operand is ZERO (≥ 3.8 / 18.0 / 8.6 $/kW-yr per unit would land it); the JOINT PJM posture (D48 ×2 + clearing) armed via `_pjm_config` overrides, arm A = the bare `pjm-t1h`, D45-R at `-pre-d57`; composition reads worse (steam over-exits, coal retained) and rule 1 keeps it → **D61 (the E&AS operand, Phase 0) issued** · **D56-R2 LANDED** — NYISO frontier declared; all four instruments read {ERCOT, NEISO, NYISO, PJM} · **D60 = CHECKPOINT, STILL RUNNING (owner-confirmed)** — the flip commit (Q40/Q41/Q42; both pinned default keys advanced by design) and four zero-solve renames landed; the fifth (`pjm-t1f`) REVERSED on a fired STOP because D57's promotion moved PJM's bare t1f key → **§D60 Amendment 1 adds the pjm-t1f leg** (~28 min); the four re-solves + finding owed · **D58 RELEASED** (after D60) · **Q45 (C-14): the NYISO §2.1b campaign AUTHORIZED, dispatch after D60 lands → T3-NYISO-GOLDEN chartered** · owner acts recorded: **rule 29 `[R-SCREEN]`** (one-year screen before the full span; structural STOP gate only), the **site pruned to keepers only** + ERCOT's two configs registered as ONE run (`2026-09-05-ercot248-two-config-keeper`, every surface re-keyed by the lane), audit rulings R-AH…R-AK recorded by v28b · owner track: nyiso-192 (payload CHP add-back instrument repaired; Astoria merit-panel duplicate A/B-armed, unpromoted), miso-215/216/217 (phys_* coverage gap sized; anchor grain NO CHANGE; the arm built blind), caiso-250/251 (the STORAGE cell is caiso-168's object; hydro refuted; the fuel-coupling form pre-registered) · parity red on two in-flight checkpoints; ruff red ×2 (miso-217) (§0ai) ·
+*(previous)* **Last refresh #37:**
 **r#37 (HEAD `182aa74a`):** THE WHOLE r#36 WAVE LANDS IN TEN HOURS — **D56-R** (NYISO `complete` RE-DECLARED on nyiso-189; validation tier returns, nothing spent; frontier left pending C-10) · **D59** (the locality half built the way NYISO's spot market works — NYC/LI on their own published ICAP curves, §5.15.2 max — and on this record DECIDES NOTHING: the model's NYC census sits +0.7–0.8 GW above the Gold Book, so NYC reads 5–9 pts long and its curve pays BELOW NYCA; P9 one-of-three again; cell I; DO NOT ARM, self-executing) · **D50-R** (PJM 3,584.7 → 909.8 MW with STOP 1 fired-and-diagnosed as deferral; MISO 4,631 → 0 MW capacity-identical; blast radius priced at 1.1 h residual; ARM recommended) · **D53 LANDED AND ARMED FOR MISO BY IN-LANE OWNER INSTRUCTION** (the bare `miso-t1h` re-keyed to the gated leg, D46 preserved at `-pre-d53`; PJM untouched) · **D57 IN FLIGHT** (build + Phase-0 reproduction to 0.000 $/0.000 pt; arms pre-declared, not yet solved) · **FOUR CARDS RULED THIS SITTING: Q39 frontier BOTH · Q40 ARM D51's ratio · Q41 ARM BOTH D52 gates · Q42 ARM the CCS capex default + the 1.1 h re-measure**; Q43 records the D53 in-lane arming · six NEW ruff-format reds (D59 ×3, D53 ×1, nyiso-191 ×2) routed (§0ah.4) · ISSUED: D56-R2 (frontier records), D60 (the arming batch) (§0ah) ·
 *(previous)* **Last refresh #36:**
 **r#36 (HEAD `e75250c7`):** the r#35 wave LANDS — **D48 Ph.1** (landed BEFORE the r#35 pin; the r#35 desk graded it "running" — recorded against interest), **D51** (ratio 0.8546 → 0.8934, the 2024 double-netting closed to 1.5 pts; arming limb (c) fails by the LETTER, not the substance → card C-11; NEISO leg 7: Q30 has NO NEISO-side counter-example, C-7 closed), **D52** (NYISO positions +9.4/+5.2/+7.3 → −2.6/−1.8/−0.6 pts, LOYO 3/3, FC-3 byte-identical at the default; curve-ON probe P9 1-of-3 → curve stays OFF self-executing; the over-fire relocates to the 2025/26 vintage + the LOCALITY half → card C-12 + D59), **D54** (the PJM clearing-half DESIGN + zero-solve instrument: cleared position within 0.7/1.0/2.6 pts of published, price 1.7–5.5× because the CT/ST/oil E&AS operand is zero → D57 build issued), **D55** (defect real, repair exact, NO observable on the exhausted-floor recipe; zero stale goldens), **D50 = CHECKPOINT** (ERCOT + NEISO arms registered — ERCOT 0 conversions vs 2,741.8 MW; NEISO cap still binds under RGGI; the PJM arm, the blast radius and the FINDING the matrix cells already cite are OWED → D50-R) · **D53 IN FLIGHT** on its branch with all four arming limbs MET and an ARM recommendation (finding §6 carries two unfilled template tokens) · **D56 NEVER LAUNCHED and its target keeper MOVED** (nyiso-188 → `2026-09-05-nyiso-189-steam-identity`, CALIBRATED → CALIBRATED) → D56-R re-issued on nyiso-189; the audit board's Z-4 (R-AG / Q38 double ruling; the frontier leg) → card C-10 · owner track: **CAISO → caiso-246-b1-spot**, **MISO → miso-213-layering** (stamp NOT re-keyed — the ELEVENTH guard firing, re-keyed here under Q34; the r#35 `read_live_at` leaf repaired), **NYISO → nyiso-189** (re-keyed itself) · two orphaned CI reds measured: the caiso-245 roster miss REPAIRED here (one test-roster line, disclosed), the D51/D52 ruff-format red is FIXED ON D53's BRANCH and clears when it merges · ISSUED: D50-R, D56-R, D57, D58 (released-conditional on D53), D59 (§0ag) ·
@@ -33,6 +35,152 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
 
 ---
+
+## 0ai. Refresh #38 (2026-09-05, main HEAD `aa86890e`) — D57 lands and the owner promotes the PJM clearing half in-session; D60 is a live checkpoint whose fifth rename fired a STOP on D57's own promotion; NYISO's frontier is back and its §2.1b campaign is authorized; a new owner rule (R-SCREEN) and a site-wide prune land on the owner's track
+
+**0. FIRST ACT.** Handoff claim (§0ah = r#37) matched the top entry; this is r#38. Delta
+`182aa74a..aa86890e`: 27 merges (#4761, #4770–#4793), 18:06Z → 19:12Z 09-05 — the fastest
+window yet. My r#37 push merged as **#4774**; branch deleted, recreated off `aa86890e`. Gates:
+`audit_keepers` 0 · `check_gate_a_provenance` **0** (the ERCOT row re-keyed by the ercot-248
+lane itself to `2026-09-05-ercot248-two-config-keeper`) · matrix 0 · goldens 0 (88 entries, 24
+enforced; **15 stale with a PRUNED provenance run** — the site prune, survivable by design via
+`keeper_snapshot`) · **parity 1** (two in-flight checkpoints: `caiso251_ctrl`, `nyiso192_astoria_
+panel` — their lanes' promotion-duty items, the v25/v26 class) · **ruff format RED ×2**
+(`offer_curves.py`, `test_miso_intermediate_gas_offer_margin.py` — miso-217's, branch merged
+and deleted; routed to the owner's MISO track, not `src/`-editable here). Y-7 (#4771) had
+already formatted the six r#37 reds — my r#37 routing to D57/D60 was pre-empted, correctly.
+
+**1. GRADED BY CONTENT — capx lanes:**
+- **D57 — LANDED AND PROMOTED** (PRs #4761/#4775/#4786, `FINDING-capx-d57-2026-09-05.md`):
+  built as designed, gated, zero DOF, byte-inert unarmed (bare `pjm-t1h` `c6091bd5b62bbc3f`
+  unmoved before the ruling; PJM keeper replay byte-identical); **Phase 0 reproduces the D54
+  instrument to 0.000 $/MW-day and 0.000 pt on both bases.** Two arms solved: **cleared position
+  within −0.48 / −0.98 / −2.79 pts of the published BRA cleared position** (arm A; the census
+  evaluation sat +8.5 / +4.1 / −4.3 away); **the §3.5 identity holds in all eight screens** (the
+  failing set IS the uncleared set, to the unit); **price 1.52× / 2.43× / 5.73× published**
+  (arm B 1.92 / 2.81 / 6.35), set by a marginal offer in every long year, never inside the ±20 %
+  falsifier — **the gas-CT (404 units / 24.2 GW), gas-ST (115 / 8.8 GW) and oil (421 / 3.7 GW)
+  fleets carry exactly ZERO E&AS margin in the hindcast prices and offer at their full bars**,
+  a 37 GW plateau at $61–103/MW-day above the published $29–50; **≥ 3.8 / 18.0 / 8.6 $/kW-yr
+  per CT / ST / oil unit (2022/23) would put those offers AT the published price.** Measured,
+  not moved. FC-3 follows the operand: the 2022 cohort shrinks 88.6 GW failing at $0 → the
+  19.2 GW uncleared set; **coal RETAINED** (economic coal 11.4 → 0.44 GW — D48's +1.4 GW and
+  more) while the zero-E&AS **gas-steam fleet exits in full** (9.5 vs 2.7 GW actual); the entry
+  screen, reading $28.7/kW-yr instead of $0, builds +4 GW gas CC in 2023; `retire.total_gw`
+  18.70 (control 17.96, actual 15.06), recall 17 → 12/20, `false_retire` 6.69 → 9.49; HOLD both
+  arms; 14 HIT / 4 SPLIT / 6 MISS. **§8.1 — OWNER RULING IN-SESSION: PROMOTED (recorded here
+  as Q44).** The JOINT flip (`pjm_accreditation_design_vintage` + `pjm_demand_response_supply`
+  + `capacity_market_supply_clearing_by_iso["PJM"]`) via `_pjm_config` `default_scenario_
+  overrides` — the shared defaults stay off, no b′-1 line, no other ISO's key moves, every
+  backcast keeper byte-identical, `--no-…` reaches the D45-R control; arm A's own key
+  `f0e050e820c1159a` IS the bare `pjm-t1h` (no re-solve), D45-R preserved at
+  `pjm-t1h-pre-d57`, arm B keeps `-headbasis`; PJM shard cells K ×3. **What it leaves:** the PJM
+  T1-F bundle (`pjm-t1f`, `321f04e9060787f0`) now carries a SUPERSEDED posture — routed to the
+  batched re-measure, i.e. **D60**; and the named successor, **the CT / ST / oil E&AS operand
+  (§4) → D61.** Rule 1 and rule 14 both applied by the owner exactly as written: a structurally
+  correct mechanism stays in with its worse composition, and the worse fit names the root cause.
+- **D56-R2 — LANDED** (PR #4780, `FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`):
+  `keepers/NYISO.json` carries a live `frontier` block again (declared 2026-09-05 on nyiso-189,
+  Q39 verbatim, the 2026-08-23 ratification and its 08-30 reversion preserved whole beneath);
+  `frontier_basis` rewritten with the prior text as a dated WAS: clause; auditor PASS (S1 asked
+  for `build_status.py --iso NYISO`, run, determination unmoved); guard 6/6 with no gate-(a)
+  leaf moved; **the four-instrument test reads {ERCOT, NEISO, NYISO, PJM} on all four** at
+  `8342d74d`. Spent nothing, solved nothing.
+- **D60 — CHECKPOINT, STILL RUNNING (owner-confirmed at this sitting)** (PRs #4781/#4783/
+  #4792; PREDECL + Addendum A, no finding yet): **the flip commit landed** — Q40 (MISO ratio via
+  `_miso_config`), Q41 (both NYISO gates via `_nyiso_config`, NYISO's first ISO-level
+  overrides), Q42 (`ccs_retrofit_capex_co2_scaling` dataclass default True, the second b′-1
+  line, frozen drop value `False`); **both pinned default keys advanced BY DESIGN and declared**
+  (`ScenarioConfig()` 4c6b03ae → e5ecd410; bare backcast 8211c72b → 6a2845e5; dated cause blocks
+  in `test_persisted_identity.py`, a 2026-09-05 cache-epoch ledger entry) — an explicit `False`
+  still keeps its pre-flip bundle; every backcast and every horizon ending before 2028
+  byte-identical; CLAUDE.md step 2 + spec §5.6 amended; 16-assertion `test_d60_arming_batch.py`;
+  `check_cache_key_registration` 248/248. **Four zero-solve renames landed** with byte-identity
+  ESTABLISHED before each (`miso-t1h` ← the D53 rider; `nyiso-t1h` ← the D52 arm; `ercot-t1f` /
+  `neiso-t1f` ← the D50 arms; priors at `-pre-d60`; no earlier baseline overwritten). **The
+  fifth rename (`pjm-t1f` ← the D50 PJM arm) FIRED STOP 1 and was REVERSED before pushing:**
+  D57 merged between the pre-declaration and the rebase and armed three PJM gates, so the bare
+  `pjm-t1f` recipe now resolves to `09996eca71ee80fd` and the D50 arm is no longer at it —
+  `pjm-t1f` keeps its D45-R record, stale on TWO postures, and only a re-solve at that key
+  fixes it; correctly NOT run (PJM was D57's) and routed here with the key. Addendum A also
+  corrected its own `miso-t1f` post-D60 key (`b1a73a087064ffd8`) and pre-declared a THIRD
+  mechanism on the MISO t1f leg (the sector gate rides it). **OWED: the four re-solves
+  (`miso-t1f`, `nyiso-t1f`, `caiso-t1f`, `neiso-t3` GOLDEN-3), the finding — and now the
+  `pjm-t1f` leg (~28 min), which is free: D57 has landed.** → **§D60 Amendment 1** (the owner's
+  relaunch-protocol answer: still running — amend, do not re-issue).
+- **D58 — RELEASED** (D53 merged, D57 landed). Dispatch **after D60 lands** — both write the PJM
+  shard and the PJM board rows. Its control is the NEW bare `pjm-t1h` (the joint posture).
+- **D53 (Q43), D59, D50-R, D56-R:** no change since r#37.
+
+**2. GRADED — owner track (§2 rows):**
+- **ERCOT — the two-config keeper registered as ONE run** (`2026-09-05-ercot248-two-config-
+  keeper`, `composite_provenance.json`: 2023 from 236-swcap, 2024/25 from 234-eastex, every
+  artifact byte-copied, zero solve; re-verified CALIBRATED on the full span and both designated
+  spans) with every surface re-keyed in one change (shard + `config_partition` run ids, the
+  marker with D-5(b) re-verification, the forecast gate-(a) stamp — R-T honoured — the ERCOT
+  matrix stamp); and **the OWNER DIRECTIVE to prune every ISO's dashboard to its keeper alone**
+  (`prune_iso_runs.py --force-uncite`: ERCOT 15, CAISO 11, PJM 4, MISO 14, NYISO 14, NEISO 3
+  runs off the site; golden-referenced and allowlisted bundles kept on disk; every shard's
+  `site_retention_note` updated — run-id citations in shards, the marker and the matrix may now
+  point at runs no longer on the site, stated in the notes). **A records act with a program-wide
+  consequence: the top-15 retention is superseded by keeper-only for now**, and `prune_iso_runs`
+  gained a golden/allowlist retention guard (`4cacbda1`).
+- **Rule 29 `[R-SCREEN]` landed in CLAUDE.md (owner rule, 2026-09-05):** screen a new config on
+  ONE year (the year the mechanism's own footprint is largest, named in the PRECOMMIT) before
+  spending the full span; a STRUCTURAL STOP gate only — may kill, never promote, never gated on
+  the target residual; rule 16 untouched (the screen bundle is a throwaway probe). Backcast-
+  track scope; this desk's forecast hindcasts are unaffected (their ≤ 25-min legs are their own
+  screen), but every backcast prompt this desk ever offers cites it.
+- **NYISO — nyiso-192** (keeper unchanged at 189): the dashboard payload's CHP behind-the-meter
+  add-back fell through to the 35 % merchant default instead of the measured shares the LP held
+  out — the handed-forward CC_CHP object was inflated THREE-FOLD by the instrument, repaired and
+  the payload re-rendered; the Astoria merit-panel stack-duplicate defect measured (not
+  Astoria-only) and A/B-armed as the session's one arm; bundle `nyiso192_astoria_panel` is the
+  parity-red checkpoint. **MISO — miso-215/216/217** (keeper unchanged at 213): the `phys_*`
+  coverage gap is real and 58.4 % of assembled gas capacity wide, borrowing valid 9/9, but the
+  arm is adverse on the two cohorts that matter → no A/B (miso-215); the gas-offer margin
+  anchor's grain: no grain dominates, ≥ 87.8 % of the distortion is the fixed-margin FORM's own
+  footprint, **recommendation NO CHANGE** with the CT_PEAKER −$10–20 bias carried on the
+  packet's face (miso-216); miso-217 built the `phys_*` arm + scorer blind (its two ruff reds).
+  **CAISO — caiso-250/251** (keeper unchanged at 246): the ranked-first STORAGE object is NOT
+  new — a storage charge column is the marginal buyer and 44–60 % of the cell lies inside
+  caiso-168's adjudicated belly mask; hydro REFUTED (interior 93–96 % of hours); caiso-251
+  pre-registers the gas-offer fuel-coupling form (G-COUPLE passes: the armed fixed-margin form
+  under-couples CT to half its fuel sensitivity); `caiso251_ctrl` is the other parity-red
+  checkpoint; branch `caiso-250-…-7tci3e` open.
+- **Audit v28 + v28b** (#4776/#4782): four owner rulings recorded — **R-AH** (Y-1 branch-
+  protection flip on the first 6-of-6 head), **R-AI** (hold the three stage-0 re-captures until
+  the 09-07 48-hour clocks), **R-AJ** (one `golden-data-tier.yml` dispatch as G2 leg-1 proof,
+  then the R-V keeper-freeze question), **R-AK** (Opus for records/capture/small-repair lanes
+  until the launch-failure class clears; Fable stays for adjudication and rule-27 scope) — and
+  v28b records against interest that v28 wrote "none issued" three hours after R-AH was given.
+  Z-4 CLOSED; X-6b's first leg discharged (Δ = 7). **R-AK is card-adjacent to this desk's model
+  assignments and is ADOPTED**: the T3-NYISO-GOLDEN and D58 lanes below go to Opus; D61 (an
+  operand adjudication) stays Fable.
+
+**3. RULINGS THIS SITTING:**
+- **Q44 (recorded — in-lane, D57 §8.1, 2026-09-05): PROMOTE the joint PJM configuration** as
+  the forecast default via `_pjm_config` overrides. The R-AG shape, recorded the same sitting.
+- **Q45 (C-14, live): AUTHORIZE the NYISO §2.1b full-horizon campaign — dispatch after D60's
+  re-solves land**, so one HEAD carries every armed posture before the 25-year golden is cut.
+  → **T3-NYISO-GOLDEN** chartered (pack), RELEASED-CONDITIONAL on D60's finding.
+- **D60 status (live): STILL RUNNING → §D60 Amendment 1** (the `pjm-t1f` leg added; nothing
+  re-issued).
+- **Owner acts recorded, not numbered:** rule 29 `[R-SCREEN]`; the keeper-only site prune; the
+  ercot-248 consolidation (each cited above).
+
+**4. THE QUEUE, RE-DERIVED:** D60 running (+ Amendment 1) · D58 released, after D60 · T3-NYISO-
+GOLDEN issued, after D60 · **D61 issued** (the PJM CT/ST/oil E&AS operand, Phase 0 zero-solve:
+what real revenue streams the hindcast price denies those fleets, sized against the PJM SOM
+net-revenue tables as validation observables, and whether the D12 scarcity-basis / reserve
+co-opt channel — pjm-164 measured PJM's reserve dual REAL — is the operand's home; rule 21: no
+coefficient) · queued-named: the D50 fourth seam + seam-3 price object; the ARV-annualization
+CR-3 object; D59's NYC census object (the owner's NYISO track — nyiso-192 is already on the
+Astoria footprint); D51's position observability; `co2_rate` in `pipeline_events`; the I7/I12
+seam re-basing lane; D53's additions mirror + CHP-host screen; the D48 DR-convention probes;
+dispersion siblings. **Cards open: none.** Next cards: D58's PJM sector-gate arming (on its
+result); D61's operand (on its Phase 0); the audit desk's R-V keeper-freeze question is the
+audit desk's.
 
 ## 0ah. Refresh #37 (2026-09-05, main HEAD `182aa74a`) — the r#36 wave lands whole inside ten hours; NYISO is `complete` again; the locality half is structurally right and inert on a long NYC census; four cards ruled at once and the arming batch is chartered
 
@@ -3639,11 +3787,13 @@ the gap.
 | **D56 NYISO `complete` RE-DECLARATION (Q38)** | Records lane: restore `complete.NYISO` on `2026-09-04-nyiso-188-combined` (keeper = keeper_at_declaration), determination re-verified artifact-only, withdrawn block preserved beneath, audit_keepers M1 PASS, gate-(a) row FAIL → PASS re-derived, board headline/gate_reading rewritten, byte-identity elsewhere | **NEVER LAUNCHED (r#36: no branch, no commit, marker unchanged) — and the keeper MOVED to nyiso-189 (CALIBRATED → CALIBRATED)** → re-issued as **D56-R** | `claude/capx-d56-nyiso-redeclaration` | **Fable** | §0ag.1. The charter's own STOP clause anticipated the move; the relaunch protocol restarts it fresh. |
 | **D50-R D50 COMPLETION (PJM arm + blast radius + finding)** | The owed half of D50: `pjm-t1f-d50-ccscapex` (pre-declared 0 conversions vs 3,584.7 MW), the §6 blast radius (every key the flip advances + solve-minutes), the §8 arming recommendation, and `FINDING-capx-d50-2026-09-04.md` itself | **LANDED** PR #4768 — PJM 3,584.7 → **909.8 MW** (2028 closed; 2029 +157.7 = deferral, STOP 1 fired-and-diagnosed; the seam-3 price channel LIVE at 1.02–1.03× the bar); **MISO conditional leg 4,631 → 0 MW, capacity-identical**; blast radius: 7 bare keys, 4 already measured, residual **1.1 h**; fourth seam (ΔFOM/VOM) disclosed unbuilt; **ARM recommended → Q42 ARM** | `claude/capx-d50r-completion` | **Opus** | §0ag.3. Pre-declared execution; nothing arms. |
 | **D56-R NYISO `complete` RE-DECLARATION on nyiso-189 (Q38 + C-10)** | D56's charter re-pointed at `2026-09-05-nyiso-189-steam-identity`; the frontier limb conditional on card C-10; R-AG/Q38 coexistence recorded in the finding | **LANDED** PR #4763 — `complete.NYISO` declared 2026-09-05 on nyiso-189, M1a/M1b PASS, validation tier re-authorized (nothing spent), gate (a) FAIL → PASS, guard 6/6, provenance re-stamped after its third rebase; **frontier NOT re-asserted (no Q39 at its pin) → Q39 ruled BOTH at r#37 → D56-R2** | `claude/capx-d56r-nyiso-redeclaration` | **Fable** | §0ag.3/§0ag.5. Records only; validation tier returns, nothing spent. |
-| **D57 PJM CLEARING HALF — BUILD + A/B (D54 §7)** | `capacity_market_supply_clearing_by_iso` built to D54 §3/§7 (zero DOF), Phase-0 reproduction of the instrument, arms A (D48 ON + clearing ON) and B (clearing on HEAD basis) on `pjm-t1h`, seven STOPs, the E&AS operand measured | **IN FLIGHT — graded checkpoint (r#37)**: BUILT (gated field, `adequacy.py`, Phase 0 reproduces the D54 instrument to 0.000 $ / 0.000 pt), PREDECL addendum pushed before any solve (keys `f0e050e8` / `ccee17a4`), the sell-offer stack on the `capacity_clearing` ledger block, spec §5.9; arms not yet solved. Owes: its three ruff-format files (§0ah.4) | `claude/capx-d57-pjm-clearing-build` | **Fable** | §0ag.3. The D48 arming card is served on its result. |
-| **D58 PJM SECTOR-GATE LEG (D53 item 1)** | `pjm-t1h-d58-sectorgate` vs the bare `pjm-t1h`: D45 L1's 111.7 GW 2022 failing pool on a merchant-heavy mix should shrink by a MINORITY; own census, own cell | **ISSUED r#36 — RELEASED-CONDITIONAL: D53 merged ✓ (r#37); dispatch after D57 lands** (both write the PJM shard) | `claude/capx-d58-pjm-sectorgate` | **Opus** | §0ag.3. Confirmatory; pre-declared execution. |
+| **D57 PJM CLEARING HALF — BUILD + A/B (D54 §7)** | `capacity_market_supply_clearing_by_iso` built to D54 §3/§7 (zero DOF), Phase-0 reproduction of the instrument, arms A (D48 ON + clearing ON) and B (clearing on HEAD basis) on `pjm-t1h`, seven STOPs, the E&AS operand measured | **LANDED + PROMOTED (Q44, in-session)** PRs #4761/#4775/#4786 — Phase 0 exact (0.000 $ / 0.000 pt); **cleared position within −0.5 / −1.0 / −2.8 pts of published; §3.5 identity holds in 8/8 screens; price 1.5–5.7× published — the CT/ST/oil E&AS operand is ZERO** (≥ 3.8 / 18.0 / 8.6 $/kW-yr per unit lands it); coal retained, gas-steam over-exits, HOLD both arms; 14 HIT / 4 SPLIT / 6 MISS. **JOINT PJM posture armed via `_pjm_config` overrides**; arm A = bare `pjm-t1h`; D45-R at `-pre-d57`; PJM cells K ×3; `pjm-t1f` left on a superseded posture → D60 | `claude/capx-d57-pjm-clearing-build` | **Fable** | §0ag.3. The D48 arming card is served on its result. |
+| **D58 PJM SECTOR-GATE LEG (D53 item 1)** | `pjm-t1h-d58-sectorgate` vs the bare `pjm-t1h`: D45 L1's 111.7 GW 2022 failing pool on a merchant-heavy mix should shrink by a MINORITY; own census, own cell | **RELEASED (r#38): D53 merged ✓, D57 landed ✓ — dispatch AFTER D60 lands** (D60 writes the PJM board t1f row); control = the NEW bare `pjm-t1h` (the Q44 joint posture, key `f0e050e820c1159a`); Opus per R-AK | `claude/capx-d58-pjm-sectorgate` | **Opus** | §0ag.3. Confirmatory; pre-declared execution. |
 | **D59 NYISO LOCALITY HALF (D45 §5.2.4 item 3 / D52 route)** | Design-first: the per-locality ICAP demand curves (NYC/LI/G-J) evaluated at the locality position on the committed LCR/import-limit rows — the SHORT-locality uplift the shipped Part-B gate does not carry; build default-off on the D52 posture; A/B on `nyiso-t1h`; then the SAME P9 probe re-run; the 2025/26 curve-vintage transcription check as a zero-solve step | **LANDED** PRs #4760/#4764 — `locality_capacity_curves` built (NYC/LI on their own published curves, §5.15.2 max, zero DOF, 15 tests); **A/B BYTE-IDENTICAL on every FC-3 row**: the model's NYC census sits +0.7–0.8 GW above the Gold Book, NYC reads 5–9 pts long, its curve pays BELOW NYCA; P9 one-of-three again → NYCA curve stays OFF; transcription check: intake exact, the 2025 SOM margin row a carry-over; **DO NOT ARM either (self-executing)**; cell **I** | `claude/capx-d59-nyiso-locality-3p7sju` | **Fable** | §0ah.1. Routed: the NYC census object → the owner's NYISO backcast track; the ARV annualization (CR-3) queued-named. |
-| **D56-R2 NYISO FRONTIER RE-DECLARATION (Q39)** | Records lane: re-declare `frontier` on nyiso-189 in keepers/NYISO.json in the ERCOT/PJM/NEISO shape; marker `frontier_basis` names it; four-instrument alignment restored; byte-identity elsewhere | **ISSUED r#37** | `claude/capx-d56r2-nyiso-frontier` | **Fable** | §0ah.3. Zero solves; nothing spent. |
-| **D60 THE ARMING BATCH (Q40 + Q41 + Q42)** | Flip-first: `ccs_retrofit_capex_co2_scaling` default ON (b′-1 line), MISO `adequacy_accounting_ratio_dated_net` + NYISO `nyiso_requirement_forecast_peak` / `_vintage_factors` via `default_scenario_overrides`; every bare key pre-declared; t1h keys as documented byte-identical renames (priors preserved); `miso-t1f`, `nyiso-t1f`, `caiso-t1f`, `neiso-t3` RE-SOLVED with priors at `-pre-d60`; `ercot/neiso/pjm-t1f` = the D50 arms; board + shards + spec/CLAUDE.md/CHANGELOG | **ISSUED r#37** | `claude/capx-d60-arming-batch` | **Opus** | §0ah.3. ≈ 2.2 h sequential; first commit = ruff format on `new_entry.py` + the two nyiso-191 files. |
+| **D56-R2 NYISO FRONTIER RE-DECLARATION (Q39)** | Records lane: re-declare `frontier` on nyiso-189 in keepers/NYISO.json in the ERCOT/PJM/NEISO shape; marker `frontier_basis` names it; four-instrument alignment restored; byte-identity elsewhere | **LANDED** PR #4780 — frontier block live (prior ratification/reversion preserved beneath), `frontier_basis` rewritten with a WAS: clause, auditor PASS, guard 6/6 (no gate-(a) leaf moved), **all four instruments read {ERCOT, NEISO, NYISO, PJM}** | `claude/capx-d56r2-nyiso-frontier` | **Fable** | §0ah.3. Zero solves; nothing spent. |
+| **D60 THE ARMING BATCH (Q40 + Q41 + Q42)** | Flip-first: `ccs_retrofit_capex_co2_scaling` default ON (b′-1 line), MISO `adequacy_accounting_ratio_dated_net` + NYISO `nyiso_requirement_forecast_peak` / `_vintage_factors` via `default_scenario_overrides`; every bare key pre-declared; t1h keys as documented byte-identical renames (priors preserved); `miso-t1f`, `nyiso-t1f`, `caiso-t1f`, `neiso-t3` RE-SOLVED with priors at `-pre-d60`; `ercot/neiso/pjm-t1f` = the D50 arms; board + shards + spec/CLAUDE.md/CHANGELOG | **CHECKPOINT — RUNNING (owner-confirmed r#38)** PRs #4781/#4783/#4792 — PREDECL + Addendum A; **the flip commit landed** (all three rulings; both pinned default keys advanced by design and declared; CLAUDE.md/spec/CHANGELOG/matrix/16 tests); **four renames landed** with byte-identity established (`miso-t1h`, `nyiso-t1h`, `ercot-t1f`, `neiso-t1f`; priors at `-pre-d60`); **the `pjm-t1f` rename REVERSED on STOP 1** — D57's promotion moved the bare key to `09996eca71ee80fd`; **OWED: the four re-solves + finding + the pjm-t1f leg (§D60 Am.1)** | `claude/capx-d60-arming-batch` | **Opus** | §0ah.3. ≈ 2.2 h sequential; first commit = ruff format on `new_entry.py` + the two nyiso-191 files. |
+| **T3-NYISO-GOLDEN (the third §2.1b campaign; Q45)** | NYISO BAU 2026–2050 at HEAD on the armed posture (Q41 gates, Q42 CCS, D-5 frontier), its own FC-5 disposition table + FC-6 battery at its own vintage, registered `nyiso-t3`, full rubric | **ISSUED r#38 — RELEASED-CONDITIONAL: dispatch after D60's finding lands** | `claude/capx-t3-nyiso-golden` | **Opus** (R-AK; pre-declared campaign) | §0ai.3. ~35–60 min / ~4 GB; the GOLDEN-2/3 recipe with NYISO's own registries. |
+| **D61 THE PJM CT/ST/OIL E&AS OPERAND — Phase 0 (D57 §4's successor)** | Zero-solve: which real revenue streams the hindcast price denies the CT / ST / oil fleets (reserves, uplift, black-start, reactive — vs the PJM SOM net-revenue tables as validation observables), whether the D12 scarcity-basis / reserve co-opt channel is the operand's home, the sign and size a faithful operand would carry into the D57 clearing, and a build charter — no coefficient (rule 21) | **ISSUED r#38** | `claude/capx-d61-pjm-eas-operand` | **Fable** | §0ai.4. The price ratio falling toward 1× WITHOUT a coefficient is the test D57 left. |
 | **D37 NEISO T1-H AT ARMED POSTURE** | The armed re-measure + paired control (Q28) | **LANDED** PR #4619 — **post-wave years SCORE; armed positions +0.37/−3.26/+0.14 pts of the real FCAs** (control +21.13/−1.44/−5.34); FC-3 blind to the lever; retirements flip to −27 % under; storage 0.000 GW refutes its own headline by its own falsifier; **P9 flip condition FAILS → default stays OFF, self-executing** | `claude/capx-d37-neiso-t1h-armed-o98iy1` | **Opus** | §0ab.1. The position defect is closed at NEISO; the margin-side error is now the exposed object. |
 | **T16-A T1.6 RE-POINT EXECUTION** | Owner ruling Q27: re-point T1.6 to `entry_rate_limits`, 2 rungs, artifact-only FC-6 re-score | **LANDED** PRs #4555/#4558 — **outcome B, the honesty clause FIRED**: REC dual at the $50 ACP ceiling in all 50 arm-years (VRE 4.1→37.1 GW), series constant, battery row **CAVEAT-measured**; the lever IS live (8/18 metrics move); no third lever tried; one leaf moves, no preserved key needed | `claude/capx-t16a-ladder-repoint-kk4vqy` | **Opus** | §0y.1. The RPS/ACP finding feeds D39. Q27 executed. |
 | **D34 CARBON_PRICE BELOW-BASE GUARD** | Owner ruling Q26: replace semantics + the below-base forecast warning pointing at `carbon_price_delta` | **LANDED** PRs #4534/#4537 — guard in with A/B regression evidence recorded; R4 closed | `claude/capx-d34-carbonprice-guard-lfpeld` | **Opus** | §0x.1. Q26 executed. |
@@ -3661,10 +3811,17 @@ the gap.
 | **NEISO-RC-R REPAIR PHASE** | Execute the Phase-0 finding's routed repairs: R2 FCA-curve re-derivation + R1 registry intake + R3 scorer trio + R4 reporting; R5 deferred, R6 standing refusal; PREREG-first verification pair (one T1-X treatment vs the committed capxd14 control) | **LANDED IN FULL** PR #4467 (R1–R4 + Phase-B prereg + graded verification) — R2 curve leg MISSES (re-derived curve near-inert at the model's long positions), **Mystic-instrument leg HITS** (1,464 MW economic→confirmed, the derate half visible ONLY through R3(iii)), level ≈ control (confirmed exits displace the floor budget ~1:1), **dual basis +24.2 % over vs −27.3 % under**, recall 2/4, Merrimack decided in-window and reversed 2025; `neiso-t1x` re-registered preserve-then-overwrite, HOLD→HOLD, no verdict flipped | `claude/neiso-rc-repair-fymtkz` (NOT the charter stem) | Fable | §0s amendment A. **The branch-stem census is what missed this landing — grade by `--grep=<LANE-ID>` and merged PRs, never by branch name.** |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
-## 2. Backcast-track watch (last seen 2026-09-05 @ `182aa74a`, refresh #37)
+## 2. Backcast-track watch (last seen 2026-09-05 @ `aa86890e`, refresh #38)
 
 | item | state |
 |---|---|
+| **ALL ISOs (r#38) — OWNER DIRECTIVE, SITE PRUNED TO KEEPERS ONLY** | `prune_iso_runs.py --force-uncite` (session ercot-248): ERCOT 15, CAISO 11, PJM 4, MISO 14, NYISO 14, NEISO 3 runs off the site (sidecar + payload + bundle dir); golden-referenced / allowlisted bundles kept on disk; `site_retention_note` in all six shards; run-id citations may now point off-site (stated). Top-15 retention superseded by keeper-only "for now". 15 golden entries carry a pruned provenance run (survivable via `keeper_snapshot`). |
+| **ERCOT (r#38)** | **KEEPER → `2026-09-05-ercot248-two-config-keeper`** — the two configs registered as ONE composite run (2023 from 236-swcap, 2024/25 from 234-eastex; byte-copied, zero solve; CALIBRATED on the full span and both designated spans); shard `config_partition` run ids, the marker (D-5(b) re-verified), the gate-(a) stamp (R-T honoured) and the matrix stamp all re-keyed in one change. Guard 6/6. |
+| **Governance (r#38)** | **Rule 29 `[R-SCREEN]`** (owner, 2026-09-05): screen a new backcast config on ONE pre-named year before the full span; structural STOP gate only; rule 16 untouched. Every backcast prompt this desk offers cites it. |
+| **NYISO (r#38)** | Keeper unchanged at 189; **frontier RE-DECLARED (D56-R2, Q39)**. **nyiso-192**: the payload's CHP add-back instrument defect (35 % default vs the LP's measured hold-out) inflated the CC_CHP object three-fold — repaired, payload re-rendered; the Astoria merit-panel stack-duplicate defect measured (not Astoria-only) and A/B-armed as the one arm; `nyiso192_astoria_panel` = a parity-red checkpoint. |
+| **MISO (r#38)** | Keeper unchanged at 213. **miso-215**: `phys_*` coverage gap real (58.4 % of assembled gas capacity), borrowing valid 9/9, arm adverse where it has magnitude → no A/B. **miso-216**: the gas-offer margin anchor's grain — no grain dominates, ≥ 87.8 % of the distortion is the fixed-margin FORM's; **NO CHANGE** recommended; CT_PEAKER −$10–20 bias on the packet's face. **miso-217**: the `phys_*` arm + scorer built blind (two ruff-format reds left on main). Forecast: sector gate + ratio armed (Q43/Q40). |
+| **CAISO (r#38)** | Keeper unchanged at 246. **caiso-250**: the STORAGE cell is mostly caiso-168's adjudicated belly object (44–60 % inside its mask; Pacific 07–08 carries 9–24 % of the whole gap); HYDRO REFUTED as carrier. **caiso-251**: the gas-offer fuel-coupling form pre-registered; G-COUPLE PASSES (the armed fixed-margin form under-couples CT to half its fuel sensitivity); `caiso251_ctrl` = a parity-red checkpoint; branch `caiso-250-…-7tci3e` open. |
+| **Audit programme (r#38)** | **v28 + v28b**: R-AH (flip on first 6-of-6 head) · R-AI (hold re-captures to the 09-07 clocks) · R-AJ (golden-tier CI proof then declare leg 1; R-V freeze question next) · R-AK (Opus for records/capture/small-repair lanes) — recorded three hours late, against interest; Z-4 CLOSED; X-6b first leg discharged; Y-7 formatted the six r#37 reds. **R-AK ADOPTED by this desk** (§0ai.2). |
 | **NYISO (r#37)** | Keeper unchanged at nyiso-189. **nyiso-190**: the keeper's unmeasured justifying clause measured and REFUTED (keeper stands on its measured record). **nyiso-191**: `cc_capacity_reconcile` CC_CHP scope extension TESTED and REJECTED on rule 19 (artifact reverted). **`complete` RE-DECLARED (D56-R); frontier follows (Q39 → D56-R2).** D59 hands the backcast track the NYC census object: the model's NYC ICAP census sits +0.7–0.8 GW above the Gold Book Zone-J capability (the 2023-24 Peaker-Rule exit set the 2020-vintage fleet still carries). Stage-0 golden STALE vs 189. |
 | **MISO (r#37)** | Keeper unchanged at miso-213. **miso-214** (zero solve): 62–70 % of the missed CT energy was produced BELOW the plant's own delivered cost at the market's price — unreachable by any price/offer mechanism; K-d fires, no A/B; an offer-form coverage gap named for miso-215. Forecast side: the sector gate ARMED for MISO (Q43); the ratio arms next (Q40, D60). |
 | **CAISO (r#37)** | Keeper unchanged at caiso-246. **caiso-247**: the C3a residual is NOT hub-basis (4.0 / 3.6 % of the gap; the acquittal falsifier fires). **caiso-248 STOP-THE-LINE, against interest**: caiso-247's fleet rebuild carried 184 phantom biomass LP units (`inject_biomass_mustrun` from `solve_and_persist` locals, absent from `meta.json`, invisible to `run_year_kwargs`) — the BIOMASS headline WITHDRAWN, results 1–2 bit-identical and standing. **caiso-249**: the STORAGE bucket (43 / 55 % of the gap) is NOT a loss-surface artifact — no thermal unit marginal, price set by inter-temporal duals; the DOM_GAS/STORAGE split unquotable. |
@@ -3773,6 +3930,8 @@ reaches shared solve machinery (S-1), per its charter.
 
 ## 3. Owner-tier questions — THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
 
+**r#38 (2026-09-05): Q44 RECORDED (D57 in-lane: PROMOTE the joint PJM configuration) · Q45 RULED LIVE (C-14: AUTHORIZE the NYISO §2.1b campaign, dispatch after D60 lands) · D60 relaunch-protocol check: STILL RUNNING → §D60 Amendment 1. Owner acts recorded unnumbered: rule 29 [R-SCREEN], the keeper-only site prune, the ercot-248 consolidation. Audit R-AK adopted. §0ai.3.**
+
 **r#37 (2026-09-05): FOUR CARDS RULED LIVE — Q39 (C-10) frontier BOTH · Q40 (C-11) ARM D51's ratio for MISO · Q41 (C-12) ARM BOTH D52 gates · Q42 (C-13) ARM the CCS capex default + schedule the 1.1 h re-measure; Q43 records the D53 in-lane MISO arming instruction (2026-09-05 04:17Z). Execution: D56-R2 (Q39), D60 (Q40–Q42). §0ah.3.**
 
 **r#36 (2026-09-05): Q1–Q38 spent; NO new numbered ruling at the entry's writing. THREE cards presented — C-10 (the frontier leg of the NYISO re-declaration; Z-4; recommend re-declare `complete` + `frontier` together on nyiso-189), C-11 (arm D51's ratio for MISO; recommend ARM), C-12 (arm D52's two NYISO requirement gates; recommend ARM BOTH). Rulings, when given, are Q39–Q41 and go in the table below and in an amendment to §0ag. CROSS-DESK RULING RECORDED: audit ruling R-AG (2026-09-04 22:20Z, the audit sitting) routed the NYISO re-declaration to the calibration director for a RECOMMENDATION with no audit-lane marker edit; Q38 (23:18Z, this desk) ruled the execution 58 minutes later without sight of it (R-AG was unrecorded until audit board v27). Both are the owner's; they coexist; C-10 is the recommendation R-AG asked for.**
@@ -3805,6 +3964,8 @@ Q7–Q9 were ruled via in-session decision cards at r#13 and are recorded here +
 | **Q41** | Card C-12 (r#36/37): D52's two NYISO requirement gates — positions to within ±3 pts, LOYO 3/3, shipped cost zero. Arm as NYISO's default? | **RULED 2026-09-05 (r#37) — ARM BOTH.** The NYCA curve stays OFF (P9 failed on D52 and D59). → D60. §0ah.3. |
 | **Q42** | Card C-13 (r#37): D50/D50-R's `ccs_retrofit_capex_co2_scaling` — ERCOT/MISO closed, PJM −74.6 %, NEISO cap-bound; blast radius 1.1 h residual; fourth seam unbuilt. Arm as the default? | **RULED 2026-09-05 (r#37) — ARM AS DEFAULT AND SCHEDULE THE 1.1 h RE-MEASURE** (CAISO t1f, NYISO t1f, GOLDEN-3; priors preserved). → D60. §0ah.3. |
 | **Q43** | (No card — an owner instruction given IN the D53 lane, 2026-09-05 04:17Z, on the measured A/B with all four limbs MET.) | **RULED IN-LANE — ARM the retirement-screen sector gate for MISO ONLY** (`_miso_config` override; dataclass default unchanged; bare `miso-t1h` → the solved leg; D46 preserved at `-pre-d53`; PJM untouched, D58 the discriminating test). Recorded here at r#37 so it never goes unrecorded (the R-AG lesson). §0ah.1. |
+| **Q44** | (No card — an owner ruling given IN the D57 lane, 2026-09-05, on the measured A/B: the joint PJM flip's §8 recommendation.) | **RULED IN-LANE — PROMOTE the JOINT PJM configuration** (`pjm_accreditation_design_vintage` + `pjm_demand_response_supply` + `capacity_market_supply_clearing_by_iso["PJM"]`) via `_pjm_config` overrides; shared defaults untouched; arm A = bare `pjm-t1h`; D45-R at `-pre-d57`; the E&AS operand named as successor (→ D61); `pjm-t1f` re-measure → D60. Recorded r#38. §0ai.1. |
+| **Q45** | Card C-14 (r#38): NYISO holds (a)+(b)+(c), `complete` + `frontier`, requirement gates armed. Authorize the §2.1b full-horizon campaign? | **RULED 2026-09-05 (r#38) — AUTHORIZE; DISPATCH AFTER D60's RE-SOLVES LAND** (one HEAD carries every armed posture before the golden is cut). → T3-NYISO-GOLDEN (pack), released-conditional. §0ai.3. |
 | **Q30** | D42's A/B: filed EIA-860 fossil retirement dates as an exogenous step-1 input take recall 5/19 → 16/19 with ZERO screen displacement and per-unit published deferral counters. Arm as the default posture? | **RULED 2026-09-02 (r#31) — ARM AS DEFAULT.** The gated channel flips default-on (vintage-gated, reversal registry, screen on the residual fleet); spec §5.1 + CLAUDE.md step-1 amended to match; matrix re-stamped; the stale-bundle consequence joins the batched re-measure decision. Admissibility per rule 13 by the additions-pipeline symmetry — the old rationale was about precision, never admissibility. Execution = **D44**. *(Same sitting, recorded beside it: D37's P9 flip condition FAILED on its own terms — the Net ICR default stays OFF with no discretionary act; the pre-declaration governs.)* |
 | **Q29** | D32's R1-PRIMARY: the floor's exit selection is measured indistinguishable from random, and the one discriminating published per-unit driver (filed retirement dates) is deliberately no-opped for fossil (`forecast_fossil_retirement_economic=True`). Charter the announced-date A/B? | **RULED 2026-09-02 (r#30) — CHARTERED (→ D42)**: the MISO 2021–2025 T1-H A/B, fossil EIA-860 planned dates as an exogenous step-1 input (vintage-gated 2020, reversal registry armed, economic screen residual) vs the shipped posture, LOYO-scored, pre-declared from D32's own numbers; the rule-19 dates-vs-screen reconciliation is designed in the charter; both legs SUFFIXED — **nothing arms until the A/B and the owner both say so.** |
 | **Q28** | D40 built the NEISO Net ICR requirement lever (default-off, LOYO-scored; +21.4 → −2.1 pts at the clean 2023 entry; post-wave years unscoreable until D37). Arm? | **RULED 2026-09-02 (r#30) — ARM FOR D37's MEASUREMENT ONLY**, at D40's recommendation; the shipped default stays OFF pending D37's measured result. D37 carries the lever ON in its run_config plus the `entry_screen_diagnostics` precondition. |
@@ -3992,7 +4153,10 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-05 | **D58 PJM SECTOR-GATE LEG** | `claude/capx-d58-pjm-sectorgate` | **Opus** | pjm | r#36 — **RELEASED-CONDITIONAL**: after D53 merges AND D57 lands (PJM shard collision); D53 routed item 1 |
 | 2026-09-05 | **D59 NYISO LOCALITY HALF** | `claude/capx-d59-nyiso-locality` | **Fable** | nyiso | r#36 — D45 §5.2.4 item 3 / D52 §8 route; design-first (the short-locality curve, not the shipped long-zone collapse); A/B on the D52 posture; the same P9 re-run; the curve-vintage transcription check folded in. **LANDED at r#37 (PRs #4760/#4764): inert on a long NYC census, cell I, DO NOT ARM** |
 | 2026-09-05 | **D56-R2 NYISO FRONTIER RE-DECLARATION** | `claude/capx-d56r2-nyiso-frontier` | **Fable** | code | r#37 — owner ruling Q39; records only; keeper-shard `frontier` + marker `frontier_basis`; four-instrument alignment restored |
-| 2026-09-05 | **D60 THE ARMING BATCH** | `claude/capx-d60-arming-batch` | **Opus** | miso, nyiso, caiso, neiso (incremental) | r#37 — owner rulings Q40/Q41/Q42 executed flip-first; every bare key pre-declared; t1h renames byte-identical by construction; four re-solves with priors at `-pre-d60`; ≈ 2.2 h sequential; ruff-format hygiene commit first |
+| 2026-09-05 | **D60 THE ARMING BATCH** | `claude/capx-d60-arming-batch` | **Opus** | miso, nyiso, caiso, neiso (incremental) | r#37 — owner rulings Q40/Q41/Q42 executed flip-first; every bare key pre-declared; t1h renames byte-identical by construction; four re-solves with priors at `-pre-d60`; ≈ 2.2 h sequential; ruff-format hygiene commit first. **CHECKPOINT at r#38 (flip + 4 renames landed; pjm-t1f STOP); Amendment 1 adds the pjm-t1f leg** |
+| 2026-09-05 | **D60 AMENDMENT 1** | (same session) | **Opus** | + pjm | r#38 — the owner's "still running" answer: the `pjm-t1f` re-solve at `09996eca71ee80fd` (~28 min, PJM now free) added as the fifth re-solve; prior at `pjm-t1f-pre-d60`; nothing re-issued |
+| 2026-09-05 | **T3-NYISO-GOLDEN** | `claude/capx-t3-nyiso-golden` | **Opus** | nyiso | r#38 — owner ruling Q45; **RELEASED-CONDITIONAL on D60's finding landing**; the GOLDEN-2/3 recipe on NYISO's registries; own FC-5 dispositions + FC-6 battery; `nyiso-t3` |
+| 2026-09-05 | **D61 PJM E&AS OPERAND — PHASE 0** | `claude/capx-d61-pjm-eas-operand` | **Fable** | pjm (code first) | r#38 — D57 §4's named successor; zero-solve; the denied revenue streams sized against the SOM tables as observables; the D12 channel adjudicated as the home; a build charter, no coefficient |
 
 ## 5. History (compacted)
 
