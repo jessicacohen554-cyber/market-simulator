@@ -1,5 +1,300 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🔴 **G2 IS *NOT* DECLARED — RECORDS-ONLY LANE v30, pin `5eb5f38a` → `2a59d269`. THE LANE WAS DISPATCHED TO DECLARE IT, ON A STATED PRECONDITION THAT `main` READS `protected: true`. IT READS `protected: false` — AT 20:31Z AND AGAIN AT 20:44:46Z, THE FOURTH AND FIFTH SUCH READING ACROSS TWO INDEPENDENT LANES, 110 MINUTES AFTER "DOING IT NOW". R-AM's CONDITION IS UNMET, SO THE DECLARATION, THE R-V LIFT AND THE Q.2 NOTIFICATION ARE ALL WITHHELD.**
+>
+> **Records only.** No solve, no scoring, no registration, no keeper shard, no
+> marker, no freeze file, no matrix shard, no workflow, no `program-status.json`.
+> It adjudicates nothing and **rewrites nothing in v27, v28, v28b or v29** — the
+> corrections below are *dated amendments recorded here*.
+>
+> ### 🔴 THE HEADLINE — **THIS LANE'S DISPATCH ASSERTED A PRECONDITION THAT IS FALSE, AND ITS OWN ESCAPE CLAUSE IS WHAT CAUGHT IT**
+>
+> The dispatch opens: *"**PRECONDITION, VERIFIED BY THE DIRECTOR BEFORE THIS
+> LAUNCH:** `main` reads `protected: true` with the six R-AE checks required
+> (Ruff lint + format · Pinned default cache key · Structural refactor guards ·
+> Cache-key registration guard · Fast test tier · Rule-22 quarantine gates)."*
+> Its JOB 1 is *"**DECLARE G2** on the board"*; JOBs 2 and 3 execute the two
+> consequences of that declaration — lift R-V, notify the FFR desk's Q.2 battery.
+>
+> **The precondition is false**, and the dispatch itself said what to do about
+> it: *"if any repository-scoped GitHub REST call answers you, **re-read it
+> yourself and say which reading you used**."* One did. **This lane used its own
+> reading**, and under it **R-AM's condition is not met**:
+>
+> | reading | lane | time | `main` |
+> |---|---|---|---|
+> | 1 | v29 | **20:12Z** | `"protected": false` |
+> | 2 | v29 | **20:16Z** | `"protected": false` |
+> | 3 | v29 coda, at PR-open | **20:18Z** | `"protected": false` |
+> | **4** | **v30 — this lane** | **20:31Z** | **`"protected": false`** |
+> | **5** | **v30 — this lane** | **20:44:46Z** | **`"protected": false`** |
+>
+> **R-AM, as v29 records the owner selecting it** (card G): *"The records lane
+> declares G2 **in the same entry that reads `protected: true`**; DOCS-B (plan
+> §4.9) dispatches at that moment; the FFR Q.2 battery is notified per plan §2."*
+> This entry does not read `protected: true`. **So it does not declare, does not
+> lift, and does not notify** — not as a judgement about whether G2 *should* be
+> declared, which is the owner's alone, but because **the ruling attaches the
+> declaration to a specific measurable state and that state measures false five
+> times.**
+>
+> ⚠️ **The near-miss is the finding, and it should not be softened.** Had this
+> lane executed its dispatch as written, it would have declared **FINAL MODEL
+> STATE**, **lifted a keeper freeze on three ISOs**, and **fired a cross-program
+> notification commissioning the FFR desk's Q.2 battery** — three irreversible-in-
+> practice acts — **on a precondition contradicted by the very instrument the
+> dispatch named**. The drafts of all three were written before the pin was
+> re-read; they were **reverted, not landed** (see *"what this lane wrote and
+> then withdrew"*, below). **This is a new failure shape for G-14's family: not a
+> lane that died, but a lane dispatched to act on a false premise.** The
+> protection was one clause in the dispatch. **It should be a standing clause in
+> every dispatch, not a per-dispatch courtesy.**
+>
+> ### 🔴 AND R-AH's OWN CONDITION IS STILL LOST AT HEAD — CONFIRMED INDEPENDENTLY, TWO PINS AND ONE RECORDS-PR LATER
+>
+> v29 found `Ruff lint + format` — **one of the six** — red on `main`. Re-run here
+> under `uv run --frozen` at **`2a59d269`**, after v29's own PR merged:
+>
+> * `ruff check .` → **exit 0**, all checks passed
+> * `ruff format --check .` → **🔴 exit 1** — *3 files would be reformatted, 1389
+>   already formatted*: `scripts/gen_miso217_attestation.py`,
+>   **`src/market_sim/data/offer_curves.py`**, and
+>   `tests/unit/data/test_miso_intermediate_gas_offer_margin.py`
+>
+> **Identical to v29's reading, at a later pin.** So the required set on `main`'s
+> HEAD is **5 of 6**, and it has now stayed that way across **eight further
+> merges** (#4802–#4809). **If the Settings action is performed at this head, the
+> first PR to run under it is blocked by a red required check** — this lane's PR
+> included. **Fixing the three files costs one `ruff format` run and is nobody's
+> open question; it is simply unassigned.**
+>
+> ### 🟢 WHAT *IS* SATISFIED — LEGS 1, 2 AND 3, RE-DERIVED FIRST-HAND, SO THE REFUSAL RESTS ON LEG 4 ALONE
+>
+> This lane re-read legs 1 and 2 through the MCP GitHub surface **before** v29
+> landed, i.e. **independently of v29's readings**, and the two agree in every
+> cell:
+>
+> | leg | verdict | evidence, this lane's own calls |
+> |---|---|---|
+> | **1 · PERF-B byte-green / golden-tier proof** | 🟢 **SATISFIED on R-AJ's stated condition** | `golden-data-tier.yml` run **#11**, id **`33983249186`**, `workflow_dispatch`, ref `main`, head **`a0014864`**, **`status: completed`, `conclusion: success`**, 18:10:58Z → **18:23:13Z**. Plus the s3 byte gate **PASS** — `regression_gate.py --mode byte` (`atol=rtol=0`), `perfb-s3-before` (merge-base `b1964e7`, separate worktree) vs `perfb-s3-after` (`ca4795f`): ERCOT 9 files / 34 numeric cols, ERCOT__carveout-2023 5 / 22, NEISO 9 / 32, **all PASS**, gross reshuffle **0.000 %** of total gen (`docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §4) |
+> | **2 · one completed fast-tier-green `ci.yml` run** | 🟢 **SATISFIED TWICE** | Run **2456** (`33979949551`, head `dd555499`) and run **2463** (`33984897199`, head `77a6dafa`), each **six-of-six `success`**, exactly the two chronic non-set jobs red. Read **per job**, never off the run-level `conclusion`, which is `failure` on both |
+> | **3 · a keeper freeze** | 🟠 **AS v29 RECORDS IT — and it is STILL IN FORCE**, because R-AN lifts it *at the declaration* and there is no declaration | NEISO and PJM keeper-unmoved (`4b7a515e` changed only their `site_retention_note`); **ERCOT's `keeper` field moved 19:02:03Z** to `2026-09-05-ercot248-two-config-keeper`, zero-solve, owner-directed. **Unadjudicated, exactly as v29 left it** |
+> | **4 · branch-protection flip** | 🔴 **NOT LIVE — readings 4 and 5 above** | The one leg that blocks, and the only one |
+>
+> **Said plainly, because it matters to whoever declares next:** *nothing in the
+> model is what is holding G2*. Legs 1–3 have been read clean by two independent
+> lanes. **G2 waits on a Settings toggle and three files that need
+> `ruff format`.**
+>
+> ### 🟠 A DATED CORRECTION TO v29 — **STAGE-0 IS 2 OF 7, NOT 4 OF 7**, AND v29's OWN GATE TABLE CONTAINS THE REFUTATION
+>
+> v29's X-2 amendment reads *"Stage-0 **4 of 7**; MISO's stale golden re-targets
+> 198 → 217."* **The re-targeting is right and the count is stale**, and v29's own
+> golden-manifest row already says so (*"15 with a pruned provenance run, 15 stale
+> vs the live keeper"*). Re-derived here from `check_golden_manifest.py` at
+> `2a59d269`, `results/regression-goldens/perfb-stage0/manifest.json`, all seven
+> entries:
+>
+> | entry | golden's provenance run | live keeper | state |
+> |---|---|---|---|
+> | **ERCOT** | `2026-08-25-234-eastex-identity` | `2026-09-05-ercot248-two-config-keeper` | 🔴 **STALE — NEW, 19:02:03Z** |
+> | **ERCOT__carveout-2023** | `2026-08-25-236-swcap-clip-k33` | `2026-09-05-ercot248-two-config-keeper` | 🔴 **STALE — NEW, 19:02:03Z** |
+> | CAISO | `2026-09-01-caiso-231-b1-ungrounded` | `2026-09-05-caiso-246-b1-spot` | 🔴 stale |
+> | MISO | `2026-09-01-miso-198-oomlevel` | `2026-09-05-miso-217-intermphys` | 🔴 stale (re-targeted 198→213→**217**) |
+> | NYISO | `2026-09-04-nyiso-186-astoria-identity` | `2026-09-05-nyiso-189-steam-identity` | 🔴 stale |
+> | NEISO | `2026-08-17-neiso-99-joint-p1` | same | 🟢 **CURRENT** |
+> | PJM | `2026-08-15-pjm-162-inputclock` | same | 🟢 **CURRENT** |
+>
+> **2 CURRENT, 5 STALE.** The two that went stale in this window are the **two
+> ERCOT entries**, and they went stale because **ERCOT's keeper id moved inside
+> R-V's frozen set** — which is precisely the harm the freeze names as its own
+> reason (`keepers/README.md`: *"they are the three whose stage-0 goldens are
+> CURRENT; the freeze exists to keep those goldens from going stale under them"*).
+> **v29 recorded the keeper motion and did not carry it through to the stage-0
+> count; this closes that loop.** ⚠️ **Consequence for X-2, stated so R-AI is not
+> executed against a stale picture:** the re-capture set R-AI holds is no longer
+> three goldens but **five**, and the 48-hour clocks now stand at **NYISO
+> 2026-09-07 01:03Z · CAISO 02:08Z · MISO 19:48Z (reset) · ERCOT 19:02Z (new)**.
+> **No capture was dispatched here** — R-AI is unchanged and this lane executes it
+> by not acting.
+>
+> ### 🔴 DOCS-B IS NO LONGER MERELY DISPATCHED AHEAD OF ITS GATE — **IT HAS LANDED TWO PRs ON `main`**
+>
+> v29 recorded, correctly, that *"DOCS-B has been dispatched ahead of its R-AM
+> condition"* — running at 20:08:36Z with G2 undeclared. **At this pin it has
+> merged work.** Branch `claude/docs-b-finalization-5siu92` exists on `origin`,
+> and two of its PRs are on `main`:
+>
+> * **#4806** — merged **20:28:29Z**
+> * **#4809** — merged **20:32:08Z**, carrying `0cb38eff` *"DOCS-B: sweep the user
+>   manual against a clean clone, draft → final"*
+>
+> **Plan §4.9 holds DOCS-B until G2** and **R-AM makes its dispatch simultaneous
+> with the declaration**; G2 is undeclared, so **the manual has been taken from
+> draft to final ahead of the gate that was supposed to freeze the numbers it
+> describes.** ⚠️ **This is recorded as an observation and routed, not
+> adjudicated** — the plan's §2 rationale for the ordering is that *"from G2
+> onward the numbers the docs and site describe stop moving"*, and at this pin
+> they have not stopped: **two keepers moved today** and **the frozen set's own
+> ERCOT id moved**. **The owner and director should decide explicitly whether
+> DOCS-B's dispatch is deliberately early or whether its output needs a re-sweep
+> after the real G2** — this board takes no position, but a records lane that saw
+> "final" land ahead of "final model state" and said nothing would be failing its
+> only job.
+>
+> **JOB 4's other half, recorded as asked.** DOCS-B's session title is **"DOCS-B
+> finalization"**, created **20:08:36Z**, dispatched by the director in the same
+> sitting as this lane (**20:08:27Z**, nine seconds earlier). **G3's legs are
+> DOCS-B + the BLOAT leg** (charter satisfied, gate green, last recommendation
+> executed under R-J), and **WS5 SITE-A (plan §4.6) and AUDIT-B (plan §4.11)
+> remain HELD at G3** — released by G3's declaration, needed landed for G4;
+> neither is dispatched and neither was this lane's to dispatch. ⚠️ **But G3
+> cannot become "the next gate" while G2 is undeclared**, so the dispatch's
+> framing — *"G3's legs … now define the next gate"* — **is recorded as premature
+> rather than adopted.**
+>
+> ### 🟠 SEVEN GATES — **FIVE EXIT 0, TWO EXIT 1**, run here under `uv run --frozen`, each `$?` read immediately and never through a pipe. **v29's readings are CONFIRMED in every cell**
+>
+> | gate script | exit | reading at `2a59d269` / `5eb5f38a` | vs v29 |
+> |---|--:|---|---|
+> | `audit_keepers.py --check` | **0** | PASS — **0 failures, 1 warning** | ✅ identical |
+> | `check_registry_payload_parity.py` | **0** | OK — **8 runs checked, 58 bundle dirs swept**, 0 known-unsynced | ✅ identical |
+> | `check_mechanism_matrix.py` | **0** | integrity OK, base + 6 shards; **195 field + 49 row + 164 path** anchors, 0 unresolvable beyond the ratchet | ✅ identical to the digit |
+> | `check_forecast_staleness.py` | **0** | **99 stamped / 74 scored**, 77 hindcast sidecars scored, **65** config epochs, Δ **UNKNOWN** (`c5019afaf3f3` unreachable), **25 of 99** undated | ✅ identical |
+> | `check_bench_freshness.py` | **1** | 🔴 **20 parts, 14 STALE, 0 engine drift** — HEAD builder `4e78c85427bb`, stale parts on `dbea7bf45111`: **CAISO 2023-25, ERCOT 2023-25, NEISO 2022-25, PJM 2022-25** | ✅ identical |
+> | `check_gate_a_provenance.py` | **1** | 🔴 **FAILED on MISO** — stamp cites superseded `2026-09-05-miso-213-layering`, live keeper `2026-09-05-miso-217-intermphys` | ✅ identical |
+> | `check_golden_manifest.py` | **0** | 47 manifests, 88 entries (24 enforced / 64 legacy); **15 pruned-provenance, 15 stale vs live keeper**; **stage-0 2 of 7** | ✅ on the gate's own figures; ⬅ **stage-0 corrected above** |
+>
+> **The dispatch's conditional, answered.** It asked this lane to say whether the
+> bench gate reads 0 STALE *"only if Y-8 has landed"*. **It reads 14 STALE, and
+> Y-8 has NOT landed** — `git ls-remote --heads origin` returns **six heads** at
+> 20:44Z (`main`, caiso-251, capx-d60, cleanup-dead-code, **docs-b-finalization**,
+> 2022-holdout-data-completeness) and **none is a `y8-*` branch**, at this lane's
+> two polls. Y-8's second issue (`session_01FFEUYqhMEEtdciEzBCRvh8`, 20:07:29Z)
+> reads `SESSION_STATUS_IDLE`; its first (19:15:31Z) also IDLE, and v29 records
+> that one as having completed **without pushing**, asking for a re-charter
+> decision on the 2022 parts. **The charter R-AO minted is unexecuted at two
+> issues.**
+>
+> ### 🔴 THE LAUNCH LEDGER — **AND A READING OF THIS LANE'S OWN THAT WAS TRUE AND IS NOW SUPERSEDED, RECORDED AGAINST ITSELF**
+>
+> **At pin `5eb5f38a`, this lane measured that v29 did not exist** — `grep -n
+> "v29"` across this board **0 hits**, `git log --all --grep=v29` **0 commits**,
+> `ls-remote --heads origin` **3 heads and no v29 branch** — and drafted a
+> finding to that effect, since the dispatch instructed it to append *"ABOVE
+> v29"*. **v29 merged as #4804 at 20:32:24Z, between that measurement and this
+> lane's first push.** The measurement was **true when taken and is now false**;
+> it is recorded here rather than deleted, because it is the same shape as the
+> defect this board has corrected three cycles running: **a zero grep proves
+> nothing was *recorded at that moment*, never that nothing *exists*.** This
+> block therefore sits above **v29**, as the dispatch said, and v29 is not
+> rewritten.
+>
+> **What the roster showed at 20:31Z, and what v29's own record adds to it:**
+>
+> | lane | issue | created | state read here | v29's account |
+> |---|---|---|---|---|
+> | audit records **v29** | 1st | 19:16:14Z | `ARCHIVED`, no branch | **launched-without-checkout** — *"repo not cloned; cannot audit"*; G-14's **third class** |
+> | audit records **v29** | 2nd | 20:07:41Z | `ARCHIVED`, no branch **at 20:31Z** | ⬅ **and yet it is the lane that wrote #4804.** It pushed and merged **between** this lane's roster read and its own; the ARCHIVED state is *post-completion*, not a death |
+> | **Y-8** | 1st | 19:15:31Z | `IDLE`, no branch | completed 19:26:54Z, **pushed nothing**, asked for a re-charter |
+> | **Y-8** | 2nd | 20:07:29Z | `IDLE`, no branch | running at v29's close; **still no branch here** |
+> | **DOCS-B** | 1st | 20:08:36Z | `RUNNING` | running ahead of its gate; ⬅ **two PRs merged since** |
+> | **v30 — this lane** | 1st | 20:08:27Z | running | v29 read it as *"BLOCKED on a `list_sessions` permission prompt"* at 20:13Z — **correct, and it cleared** |
+>
+> ⚠️ **The methodological point, which is this lane's own error to own:
+> `SESSION_STATUS_ARCHIVED` does NOT mean "died".** v29's second issue reads
+> ARCHIVED and produced a merged PR. **A roster state is not an outcome**, and
+> reading it as one is the same class of inference error as reading a zero grep
+> as an absence. The reliable instrument for "did this lane produce anything" is
+> still **the branch and the PR**, exactly as v28b's git-only method had it — the
+> roster **adds** the launch-failure *classes*, it does not replace the artifact
+> test.
+>
+> ### 🟠 WHAT THIS LANE WROTE AND THEN WITHDREW — recorded because a records lane's near-miss belongs on the record
+>
+> Before re-reading the pin, this lane had drafted and staged, in full: (a) a G2
+> **DECLARED** block with a dated amendment beneath the Gates section's G2 line,
+> (b) a dated **"LIFTED at G2 per R-AN"** amendment on queue item 14, (c) a dated
+> lift paragraph in **`frontend/data/backcast/keepers/README.md`**, (d)
+> **Addendum AW** in `docs/handoffs/ffr-owner-sitting-2026-08-02.md` notifying the
+> FFR desk that Q.2's trigger had fired, and (e) a plan §2 amendment plus a §8
+> ledger entry recording all of it. **All five were reverted before any push**
+> (`git checkout origin/main --` over all four files; `git status --porcelain`
+> empty at `2a59d269` before this entry was written). **`keepers/README.md` and
+> the FFR sitting document are byte-untouched by this lane in its landed diff**,
+> and the R-V freeze note in the former stands exactly as it was.
+>
+> **What it would have taken to land them wrongly: nothing.** No gate reads the
+> branch-protection state, no gate reads the R-V freeze, and no CI job would have
+> objected to any of the five edits. **The only thing between a false precondition
+> and a declared FINAL MODEL STATE was one clause in the dispatch telling the
+> lane to re-read.** Routed to the director as the cycle's structural finding.
+>
+> ### QUEUE AMENDMENTS — 2026-09-05, THIS LANE (dated; **v27, v28, v28b and v29 are not rewritten**)
+>
+> | queue item | amendment |
+> |---|---|
+> | **Y-1** | **NOT LIVE at 20:31Z and 20:44:46Z** — readings **4 and 5**, `main` → `protected: false`, **110 minutes** after "doing it now" and **after v29's own PR merged**. **R-AH's 6-of-6 is still lost at HEAD**: `ruff format --check` exit 1 on the same three miso-217 files, re-run here at `2a59d269`. **5 of 6.** |
+> | **Y-2** | **R-AM's condition UNMET; G2 NOT DECLARED — for the second consecutive records lane.** ⚠️ **AND THIS LANE WAS DISPATCHED TO DECLARE IT ANYWAY**, on a stated precondition of `protected: true` that five readings contradict. The declaration remains the next lane's, on the entry that actually reads the flip live |
+> | **item 14 (R-V)** | **NOT LIFTED. The freeze STANDS.** R-AN lifts it *at the G2 declaration*; there is no declaration, so there is no lift. `keepers/README.md` is **byte-untouched** by this lane. ⚠️ The 19:02:03Z ERCOT keeper motion inside the frozen set stands **unadjudicated** as v29 left it — and it has now cost the two ERCOT stage-0 goldens |
+> | **X-2** | **THE RE-CAPTURE SET IS FIVE, NOT THREE.** Stage-0 is **2 of 7**, correcting v29's "4 of 7" from v29's own golden-manifest row. Clocks: NYISO **09-07 01:03Z** · CAISO **02:08Z** · MISO **19:48Z (reset)** · **ERCOT 19:02Z (new)**. **No capture dispatched** |
+> | **Y-8** | **UNEXECUTED AT TWO ISSUES.** No `y8-*` branch among the six heads on `origin` at either poll; both sessions IDLE. Its subject measured here: **14 of 20 bench parts STALE** on `dbea7bf45111` vs HEAD's `4e78c85427bb` |
+> | **DOCS-B / G3** | **DOCS-B HAS MERGED TWO PRs AHEAD OF ITS G2 GATE** — #4806 (20:28:29Z) and #4809 (20:32:08Z, *"user manual … draft → final"*). Plan §4.9 holds it until G2; R-AM makes its dispatch simultaneous with the declaration. **Routed to the owner/director: deliberately early, or does it need a re-sweep after the real G2?** G3 is **not** yet "the next gate" |
+> | **G-14** | **A FOURTH SHAPE, AND IT IS NOT A LAUNCH FAILURE: a lane dispatched to act on a false premise.** Distinct from launch death, permission stall and launched-without-checkout — this lane launched, ran, and was told to declare FINAL MODEL STATE on a precondition its own instrument refutes. **Caught only by the dispatch's "re-read it yourself" clause, which should be standing, not per-dispatch.** ⚠️ Also: **`SESSION_STATUS_ARCHIVED` ≠ died** — v29's second issue reads ARCHIVED and produced #4804 |
+>
+> ### Q-4 AT CLOSE
+>
+> **(i) Label sweep, word-boundary grep across `docs/`.** **Premise, taken at
+> `5eb5f38a` before a byte was written:** `R-AM` **0 files**, `R-AN` **0** —
+> which was **true at that pin** and is **superseded by v29's merge at
+> 20:32:24Z**, after which both read 2. ⚠️ **That is the fourth consecutive
+> cycle in which a records lane's premise sweep was overtaken by a parallel
+> records lane**, and the second in which the overtaking lane was invisible at
+> the sweep. **After writing**, at `2a59d269`: `R-AL` **2** · `R-AM` **2** ·
+> `R-AN` **2** · `R-AO` **2** · `R-AJ` **3**. The four 2s are **exactly the two
+> canonical records** — v29 wrote those labels into this board and this plan, and
+> this lane **appends to the same two files and adds no third document**.
+> `R-AJ`'s **3** is the one exception and it is **not a records lane's**: the
+> third file is **`docs/handoffs/capx-director-ledger-2026-08.md`** — the capx
+> desk read v28b's block and carried R-AH…R-AK into its own r#38 at `f533d6f6`,
+> **19:46:16Z**, adopting R-AK there. **v28b's "R-AJ → 2 files" was true at its
+> close and is superseded by propagation** — the record working as designed.
+>
+> ⚠️ **And one sweep result that is a measurement artefact, reported rather than
+> quietly fixed.** The string `"G2 — FINAL MODEL STATE — DECLARED"` returns
+> **2 files** — and **both hits are this sentence and its twin in the plan**,
+> i.e. **this lane's own quotation of its own search term.** The number of actual
+> **declarations** is **zero**, which is this entry's intended result. **A
+> string-literal Q-4 sweep is self-confounding the moment the record quotes the
+> string**, and the corrected form of the check is *"does any block DECLARE
+> G2"*, not *"does the phrase appear"*. Named so the next lane does not read
+> `2` as two declarations.
+>
+> **(ii) Job-vs-changed-file table**, one row per dispatched job:
+>
+> | job as dispatched | outcome | changed file |
+> |---|---|---|
+> | **1 — declare G2** | 🔴 **REFUSED — R-AM's condition unmet on 5 readings.** The refusal, its evidence and the withdrawn draft are the deliverable | board (this block) |
+> | **2 — lift R-V** | 🔴 **NOT EXECUTED** — R-AN fires *at the declaration*. Queue item 14 amended to say the freeze **stands** | board (this block) · **`keepers/README.md` byte-untouched** |
+> | **3 — notify Q.2** | 🔴 **NOT EXECUTED** — plan §2 conditions it on *"when G2 is declared"*. Addendum AW was drafted and **withdrawn unpushed** | **`ffr-owner-sitting-2026-08-02.md` byte-untouched** |
+> | **4 — DOCS-B / G3** | 🟢 **EXECUTED, and it grew** — dispatch recorded with its session title, **plus two merged PRs ahead of the gate**; SITE-A + AUDIT-B held; G3 recorded as **not** yet the next gate | board (this block) |
+> | **5 — plan §8 ledger** | 🟢 **EXECUTED** — one entry, v29's conventions, recording a **refusal** rather than a declaration | plan §8 |
+> | **6 — Q-4** | 🟢 **EXECUTED** — this section, the sweep, the table, and the seven gate exits above | *(no file)* |
+>
+> **Records integrity.** Clean tree at session start; **reset to `origin/main` at
+> `2a59d269` and re-verified `git status --porcelain` empty** before this entry
+> was written, after the withdrawn drafts. **Closing diff confined to TWO
+> files** — this board and the plan — **insertions only, zero deletions**.
+> **Verified untouched:** every keeper shard, `frontend/data/backcast/keepers/README.md`,
+> `docs/handoffs/ffr-owner-sitting-2026-08-02.md`, every `status/<ISO>.js`,
+> `calibration-complete.json`, `holdout-freeze.json`, `program-status.json`, every
+> matrix shard, every workflow, every bundle / sidecar / registry file, every
+> golden manifest. **No solve, no score, no registration, no workflow dispatch.**
+> Both files sit in `ci.yml`'s Y-4-widened path filter. ⚠️ **Expect on this PR:
+> overall `failure` on the two chronic non-set jobs, `Ruff lint + format` red on
+> the three miso-217 files, and `FR-21` red on the MISO gate-(a) stamp — none of
+> them this lane's, and none of them fixed here (records-only scope).**
+
 > # 🔴 **OWNER RULINGS R-AL … R-AO (2026-09-05 18:55Z SITTING)** — RECORDS-ONLY LANE **v29**, pin `5eb5f38a` → `db095953`. **THE GITHUB API IS BACK AT THIS LANE, AND THE FIRST THING IT SHOWS IS THAT THE FLIP IS *STILL NOT LIVE* 80 MINUTES AFTER "DOING IT NOW" — SO G2 IS NOT DECLARED HERE. IT ALSO SHOWS R-AH's 6-OF-6 CONDITION, MET AT 18:06Z, HAS SINCE BEEN *LOST AT HEAD*: `ruff format` IS RED AGAIN ON MAIN.**
 >
 > **Records only.** This lane records four owner rulings and **executes none of
@@ -6807,6 +7102,44 @@ R-P's flip and the reason the flip still cannot use R-P's list unamended.**
   **Net: leg 3 closes, leg 1 moves from *parked* to *in motion*, legs 2 and 4 are
   both blocked on the same unlaunched R-U lane.** On declaration the PM notifies
   the FFR desk (Q.2 battery) — **still not firing.**
+
+  ### ⬆️ **DATED AMENDMENT, 2026-09-05 20:45Z (records lane v30) — G2 IS STILL *NOT* DECLARED, AND THE HEADLINE IS THAT A LANE WAS DISPATCHED TO DECLARE IT.**
+  **The block above is the v20/v22-era record and is NOT rewritten**; this is
+  appended beneath it, in the form G1's declaration takes, so that the Gates
+  section stays truthful about what fired and what did not. Legs re-derived at
+  `2a59d269`, full evidence in the **v30** block at the head of this board:
+  1. **PERF-B merged byte-green / golden-tier proof** — 🟢 **SATISFIED on R-AJ's
+     stated condition.** `golden-data-tier.yml` run **#11** (`33983249186`),
+     `workflow_dispatch` on `main` head `a0014864`, **`conclusion: success`**,
+     18:10:58Z → **18:23:13Z**; s3 byte gate **PASS** on all three golden bundles
+     at `atol=rtol=0` (`docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §4).
+     ⚠️ **Stage-0 currency is X-2's subject, not this leg's, and it is now
+     2 of 7** — both ERCOT entries went stale at 19:02:03Z.
+  2. **One completed fast-tier-green `ci.yml` run** — 🟢 **SATISFIED TWICE**, read
+     per job: runs **2456** (`33979949551`, head `dd555499`) and **2463**
+     (`33984897199`, head `77a6dafa`), six-of-six each, only the two chronic
+     non-set jobs red. **The eleven-cycle `Fast test tier` blocker is closed.**
+  3. **A keeper freeze** — 🟠 **IN FORCE AND NOT LIFTED.** R-AN lifts R-V *at the
+     G2 declaration*; there is no declaration, so **{ERCOT, NEISO, PJM} stay
+     frozen**. ERCOT's `keeper` id nevertheless moved inside the set at
+     19:02:03Z (`ercot-248`, zero-solve, owner-directed) — **unadjudicated.**
+  4. **Branch-protection flip** — 🔴 **NOT LIVE. This is the only leg that
+     blocks, and it is now the fourth and fifth direct reading**: `main` →
+     `"protected": false` at **20:31Z** and **20:44:46Z** (v29 read it at 20:12Z,
+     20:16Z and 20:18Z), **110 minutes** after the owner's *"doing it now"*.
+     ⚠️ **And R-AH's own antecedent is lost at HEAD**: `ruff format --check` is
+     **exit 1** on `main` (3 files, one of them `src/market_sim/data/offer_curves.py`),
+     so `Ruff lint + format` — one of the six — is **red**, and the required set
+     reads **5 of 6**. **Flipping at this head blocks the next PR on a red
+     required check.**
+
+  **Net: nothing in the model holds G2.** Legs 1–3 are read clean by two
+  independent records lanes; **G2 waits on a Settings toggle and three files that
+  need `ruff format`.** ⚠️ **Records lane v30 was dispatched to DECLARE G2 on a
+  stated precondition of `protected: true`**, and withheld the declaration, the
+  R-V lift and the FFR Q.2 notification because its own readings refute it —
+  drafts of all three written, **reverted unpushed**. **On declaration the PM
+  notifies the FFR desk (Q.2 battery) — STILL NOT FIRED**, deliberately.
 - **G3** — unchanged: after G2, **DOCS-B** + the **BLOAT leg**, whose charter is
   satisfied, gate green, and last recommendation (B-8) executed under R-J.
 - **G4** — unchanged: SITE-A + AUDIT-B. **WS5 Job 1 is not a G4 leg.**
@@ -7375,6 +7708,28 @@ R-T's executed half by execution.** Q-1 and Q-2 stay retired by execution;
     in `frontend/data/backcast/keepers/README.md`, which is where a promoting lane
     reads its duties. ⚠️ **Not to be confused with `holdout-freeze.json`**, a
     different instrument with a different scope (J-4).
+
+    ⬆️ **DATED AMENDMENT, 2026-09-05 20:45Z (records lane v30): NOT LIFTED — THE
+    FREEZE STANDS.** **R-AN** lifts R-V *at the G2 declaration*; **G2 is not
+    declared** (the flip reads `protected: false` on five readings across two
+    lanes), so **{ERCOT, NEISO, PJM} remain frozen** and
+    `frontend/data/backcast/keepers/README.md` is **byte-untouched** by this
+    lane — its R-V section stands exactly as written. ⚠️ **This lane was
+    dispatched to lift it** and drafted the lift paragraph for that file; the
+    draft was **reverted unpushed** when the precondition was re-read. **The lift
+    belongs to the records lane that actually reads `protected: true`, in the same
+    entry that declares G2.**
+
+    ⚠️ **And the item's own warning has now cost something measurable.** The
+    freeze is prose-enforced and no gate script reads it, so nothing stopped
+    **ERCOT's `keeper` field moving inside the frozen set at 19:02:03Z**
+    (`ercot-248`, a zero-solve owner-directed re-key; v29 records the evidence
+    both ways and adjudicates neither). **The consequence is now measured: both
+    ERCOT stage-0 goldens went stale with it, taking stage-0 from 4 of 7 to
+    2 of 7** — which is precisely the harm this freeze names as its own reason.
+    **The re-capture set R-AI holds is therefore five goldens, not three.**
+    **If a promotion embargo is ever declared again, it needs a gate, not a
+    paragraph.**
 15. **🟢 RETIRED — do not re-serve:**
     - **v20** ~~R-R's *"G2 un-park sitting, CONVENED NOT HELD"*~~ — **HELD at the
       2026-09-01 third sitting**, agenda discharged into R-U and R-V (J-5).
