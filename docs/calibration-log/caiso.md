@@ -12640,3 +12640,96 @@ correction banners on the caiso-247 finding and log entry, corrected
 registered; keeper unchanged.
 
 **Next number: caiso-249.**
+
+---
+
+## caiso-249 (2026-09-05) — the STORAGE residual bucket is NOT a loss-surface artifact: the delivery-factor correction is decisively material and the bucket does not shrink. ZERO SOLVES, NOTHING ARMED
+
+**Object:** caiso-248 §7 item 1, taken as ranked. Pre-registered in
+`PRECOMMIT-caiso249-ownzone-loss-adjusted-attribution-2026-09-05.md`
+(`3f1b97a8`), pushed before the estimator was coded and before any cell was
+computed. Keeper `2026-09-05-caiso-246-b1-spot` unchanged; no field, no flag,
+no solve, no run registered, no promotion.
+
+**Instrument:** caiso-247/248 matched units against EVERY CA zone's dual inside
+0.05 $/MWh while the keeper runs `caiso_zonal_loss_surface`, whose own relation
+is `λ_y = λ_x·(1+dev_y)/(1+dev_x)` — 0.4–1.5 $/MWh apart with nothing
+congested. Replaced by **own-zone complementarity** (exact; unit and dual in the
+same zone) plus a **delivery-factor import pass** on the measured
+`CAISO_loss_surface.csv`. Gap decomposition, weights and comparator unchanged.
+
+**RESULT — the diagnosis was right about the mechanism and WRONG about the
+consequence.** G-DF: 14,946 (2024) / 10,608 (2025) zone-hours reclassified, and
+in **97.1 %/96.1 %** of them the RAW `|λ_z − λ_z'|` was outside the window while
+the DF-corrected residual was inside — the loss surface WAS the barrier the old
+estimator kept hitting. **But the bucket does not move.** 2025: DOM_GAS
+40.2 → **37.0 %**, STORAGE 53.3 → **55.0 %**, HUB 3.6 → **5.1 %**. 2024:
+DOM_GAS 47.1 → **43.3 %**, STORAGE 43.2 → **43.4 %**, HUB 4.0 → **7.8 %**.
+Own-zone matching is stricter (it removes cross-zone coincidences) and the DF
+pass adds genuine ones back; the two cancel.
+
+**WHAT THE BUCKET IS** (post-registration characterisation, not a labelling
+rule): in STORAGE zone-hours the nearest AVAILABLE own-zone thermal offer sits
+**ABOVE** λ in **64.7/65.7/69.8 %** of the load-weight at a median wedge of only
+**+0.27/+0.21/+0.44 $/MWh**, ~50 % inside ±$0.75, long tail (p90
++18.3/+21.1/+8.8). λ sits **just under the thermal stack** — the signature of a
+price set by an inter-temporal or zero-MC dual (storage discharge opportunity
+cost, hydro water value, import/renewable margin), **not** of a failed match.
+caiso-202 §C called this cell "unmatched (storage/hydro inter-temporal duals)"
+at 22 %/19 %; on this instrument it is **43–55 %**.
+
+**GATES:** G-CONSERVE reproduces caiso-248's `gap_hourly` to the fourth decimal
+in all three years (1.3071/3.7812/3.1507) — proof only the labelling moved;
+G-BENCH, G-RECON, G-DF PASS in all three. **G-FLEET FAILS in 2023** and
+**G-ORDER FAILS in 2024/2025** — both reported, neither re-run to a pass.
+
+**PREDICTIONS: 5 HOLD, 5 FALSIFIED.** P-2/P-6/P-7/P-8/P-10 hold (notably P-6:
+**no new object appears**, registered as a full result; and P-8: the CC-hot /
+CT-cold split survives and is SHARPER — CC_REGULAR +2.82/+2.51, CC_CHP
++4.62/+4.10, CT_PEAKER −5.29/−2.92, CT_CHP −16.22/−14.80). **P-4 FALSIFIED**
+(STORAGE 43.4 %/55.0 % against a registered 5–25 %; the registered meaning —
+*the loss surface was NOT the main barrier and the residual is genuinely
+unattributed* — fires). **P-5 FALSIFIED** (DOM_GAS FELL). **P-9 FALSIFIED**
+badly: the tol-0.75 variant moves the DOM_GAS share **+31.7/+32.7 points**, so
+the registered consequence stands — **no DOM_GAS number may be quoted.**
+**P-1 FALSIFIED** and **P-3 FALSIFIED** (see below).
+
+**DISCLOSED AGAINST INTEREST:** (a) **G-FLEET failed in 2023 on my own
+documented false positive** — the caiso-248 shape detector flags the 2023 `oil`
+klass (65 MWh, 2 levels) as injected; the FLEET is correct (`oil` is not in the
+solver's `_INJECTED_MUSTRUN_CLASSES` and nothing was dropped) but the CHECK
+mislabels, and **I did not re-run it to a pass** — changing a gate to convert
+its own failure is the move pre-registration exists to prevent; the fix is filed
+for a session that registers it in advance. (b) **caiso-247's published HUB CR
+1.026/0.642 is SUPERSEDED by 0.86/0.74** — the reach test is now
+delivery-factor corrected so HUB reaches more zone-hours (weight 3.9→7.5 %,
+5.7→10.9 %); **the acquittal direction is unchanged and firmer** (CR ≤ 1 in both
+failing years under every variant, HUB 7.8 %/5.1 % of the gap) but the numbers
+must not be re-quoted. (c) **Three sessions have now REDUCED the attributed
+share of the gap, not raised it**: ~40 % domestic gas, ~50 % hours where NO
+thermal unit is marginal, ~5 % import seam, with a 32-point tolerance boundary
+between the first two. (d) Both standing month objects are **majority-STORAGE**
+on this instrument — Dec-2025 DOM_GAS +0.296 vs STORAGE +0.373; Apr–Jul
++0.602 vs +0.813 — a different picture from caiso-247's.
+
+**QUEUE:** (1) **NEW, first: what sets λ when no thermal unit is marginal?** —
+reconstruct storage and hydro duals from the committed sidecars and test whether
+λ equals the storage discharge opportunity cost in those hours; zero LP.
+(2) the DOM_GAS/STORAGE boundary stays unquotable until (1) resolves. (3) fix
+G-FLEET's phantom test to key on `_INJECTED_MUSTRUN_CLASSES`, registered in
+advance. (4) the CC-hot / CT-cold split, reconfirmed and sharper. (5) the import
+seam and the two fitted firm prices stay demoted as C3a objects. (6) the C3a
+weight-basis owner ask, carried.
+
+**DO-NOT-REDO adds (FINDING §7):** the STORAGE bucket is NOT a loss-surface
+artifact — never re-propose a delivery-factor repair of the price match to
+resolve it; never quote caiso-247's HUB CR 1.026/0.642; never quote any DOM_GAS
+share from caiso-247/248/249; never quote caiso-247's month-by-regime split.
+
+**Deliverables:** `PRECOMMIT-caiso249-…`, `FINDING-caiso249-ownzone-attribution-2026-09-05.md`,
+`scripts/probes/_caiso249_ownzone_attribution.py` +
+`_caiso249_ownzone_attribution.json`, evidence-only CAISO matrix append. No cell
+verdict moved; no run registered; keeper unchanged.
+
+**Next number: caiso-250.**
+
