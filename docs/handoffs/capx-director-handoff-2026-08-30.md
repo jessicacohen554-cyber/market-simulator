@@ -1,4 +1,4 @@
-# Capacity-Expansion Director — successor handoff (2026-09-05, refresh #38; r#31 REWRITE base)
+# Capacity-Expansion Director — successor handoff (2026-09-05, refresh #39; r#31 REWRITE base)
 
 Supersedes the r#32 revision as the live successor prompt. Paste the block below verbatim
 to open the next director session. The ledger (`capx-director-ledger-2026-08.md`) remains
@@ -31,8 +31,8 @@ the r#35 desk graded D48 Phase 1 "running" when it had merged 13 hours before th
 
 READ ON EVERY REFRESH, IN THIS ORDER:
 1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ag = r#36 is the
-   newest at this writing — §0ai = r#38), §1 scoreboard, §3 the rulings Q1–Q45 (ALL SPENT;
-   Q44 the D57 in-lane promotion, Q45 the NYISO t3 authorization), §4 issuance record, §2 backcast watch.
+   newest at this writing — §0aj = r#39), §1 scoreboard, §3 the rulings Q1–Q45 (ALL SPENT) plus
+   PENDING Q46 (the nyiso192-Q1 in-lane promotion on an unmerged branch), §4 issuance record, §2 backcast watch.
 2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
    EVERY charter you issue is COMMITTED to the pack in the same sitting (the r#24 chat-only
    lesson: unlanded work restarts FRESH from the committed charter, so one must exist).
@@ -82,47 +82,43 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   pre-declared campaigns → Opus; adjudication-class lanes and rule-27 core scope stay Fable.
 - RULE 29 [R-SCREEN] (owner, 2026-09-05): every BACKCAST prompt this desk offers names a one-year
   screen (the mechanism's largest-footprint year, fixed in the PRECOMMIT) before the full span;
-  the screen is a structural STOP gate only. Forecast hindcast legs (≤ 25 min) are their own screen.
+  the screen is a structural STOP gate only. Clause (b): NO CONTROL SOLVES — the committed keeper
+  is the control; a zero-LP G-DRIFT hunk audit replaces them. Forecast hindcast legs (≤ 25 min)
+  are their own screen.
+- Q37's LIMB IS THE ANSWER TO AN FC-7 'UNATTESTED' STOP on a field whose identification is
+  committed: pre-declare the rows, write them, re-score artifact-only (D60 Amendment 2).
 - TRANSPORT: a silent push hang with reads flowing is the proxy's UPLOAD GATE, not transport
   death — rebase fresh, then ONE long-window (~9 min) background push. HTTP/1.1 fixes fast
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#38, main HEAD aa86890e, 2026-09-05 — VERIFY, DON'T TRUST):
-- KEEPERS: ERCOT 2026-09-05-ercot248-two-config-keeper (the two configs as ONE composite run;
-  CALIBRATED) · NEISO neiso-99-joint-p1 CALIBRATED · PJM pjm-162-inputclock CALIBRATED · NYISO
-  2026-09-05-nyiso-189-steam-identity CALIBRATED · MISO 2026-09-05-miso-213-layering NOT-YET
-  {C3a-2025} · CAISO 2026-09-05-caiso-246-b1-spot NOT-YET {C3a}. Markers: complete = {ERCOT,
-  NEISO, NYISO, PJM}; frontier = the same four (NYISO by D56-R2, Q39) — all four instruments
-  aligned; final EMPTY; freeze tier-scoped. Guard 6/6. THE SITE IS PRUNED TO KEEPERS ONLY
-  (owner directive, ercot-248) — top-15 retention superseded "for now"; goldens carry pruned
-  provenance runs by design. Rule 29 [R-SCREEN] is live for backcast lanes.
+STATE AT HANDOFF (r#39, main HEAD cf5425f7, 2026-09-05 — VERIFY, DON'T TRUST):
+- KEEPERS: ERCOT 2026-09-05-ercot248-two-config-keeper CALIBRATED · NEISO neiso-99-joint-p1
+  CALIBRATED · PJM pjm-162-inputclock CALIBRATED · NYISO 2026-09-05-nyiso-189-steam-identity
+  CALIBRATED ON MAIN — an UNMERGED branch (nyiso-192-frontier-adjudication-mo2nrq) promotes the
+  NOT-YET Astoria arm and WITHDRAWS complete + frontier by in-lane owner ruling (pending Q46;
+  check whether it merged FIRST) · MISO 2026-09-05-miso-217-intermphys NOT-YET {C3a-2025} ·
+  CAISO 2026-09-05-caiso-251-b1-nomargin NOT-YET {C4 one cell — C3a PASSES all three years}.
+  Markers on main: complete = {ERCOT, NEISO, NYISO, PJM}, frontier the same four; final EMPTY.
+  Guard 6/6; parity 0 (allowlist emptied by the cleanup). Site pruned to keepers only; the
+  cleanup deleted scripts/archive, 1,229 probes, 18 bundles, 36 forecast sidecars — zero
+  verdict keys lost. Rule 29 (a)+(b) live for backcast lanes.
 - FORECAST POSTURES ARMED: fossil dates (Q30) · MISO sector gate (Q43) · MISO ratio (Q40) ·
-  NYISO requirement gates (Q41) · CCS capex ∝ captured CO2 default (Q42; both pinned default
-  keys advanced by design) · PJM JOINT posture — D48 devintage + DR + the D57 clearing half
-  (Q44, `_pjm_config` overrides; bare `pjm-t1h` = D57 arm A). Every t1h bare key renamed onto
-  its armed leg with `-pre-d60` priors; the t1f re-solves are D60's owed half.
-- D57 ESTABLISHED: the clearing half reproduces the market's cleared QUANTITY (0.5–2.8 pts) and
-  the identity (failing set = uncleared set) exactly; the PRICE reads 1.5–5.7× because the
-  CT/ST/oil E&AS operand is ZERO in hindcast prices — the named successor (D61). Composition
-  reads worse under the joint flip (gas-steam over-exits, coal retained) and stays by rule 1.
-- IN FLIGHT / ISSUED (r#38): D60 RUNNING (owner-confirmed; flip + 4 renames landed; owes
-  miso/nyiso/caiso/pjm-t1f + GOLDEN-3 re-solves + finding — Amendment 1 adds pjm-t1f) · D58
-  RELEASED, dispatch after D60 (Opus) · T3-NYISO-GOLDEN issued, RELEASED-CONDITIONAL on D60's
-  finding (Opus, Q45) · D61 issued (Fable, zero-solve; the PJM E&AS operand's home + a D62 build
-  charter). Grade all by content. Owner track: nyiso-192 (Astoria merit-panel duplicate
-  A/B-armed, unpromoted; payload CHP add-back instrument repaired), miso-215/216/217 (anchor
-  NO CHANGE; phys_* arm built blind), caiso-250/251 (STORAGE cell = caiso-168's object; the
-  fuel-coupling form pre-registered), audit v28/v28b (R-AH..R-AK; Y-1 flip pending on a 6-of-6
-  read the audit lane cannot take — API 403).
-- OWNER-TIER OPEN: NONE — Q1–Q45 spent. NEXT cards: D58 arming (on its result); D61 → D62
-  (on Phase 0); NYISO t3 arming/repair questions (on the golden). Parity red on two in-flight
-  checkpoints (caiso251_ctrl, nyiso192_astoria_panel) and ruff red ×2 (miso-217) are the
-  owner's backcast lanes' loose ends — not this desk's to fix.
-- QUEUED-NAMED, NOT ISSUED (§0ai.4): the D50 fourth seam + seam-3 price object; the ARV
-  annualization (CR-3); D59's NYC census object (owner's NYISO track); D51's position
-  observability; `co2_rate` in `pipeline_events`; the I7/I12 seam re-basing lane; D53's
-  additions mirror + CHP-host screen; the D48 DR-convention probes; dispersion siblings.
+  NYISO requirement gates (Q41) · CCS capex default (Q42) · PJM joint posture (Q44). Bare keys
+  re-solved so far: miso-t1f (HOLD, FC-2 row 4 → CAVEAT), nyiso-t1f (PROMOTE-WITH-CAVEATS on
+  FC-7 only — an instrument gap D60 Am.2 repairs under Q37). Pending: caiso-t1f, pjm-t1f
+  (09996eca), GOLDEN-3, the D60 finding §5.
+- IN FLIGHT / ISSUED: D60 RUNNING (Am.1 + Am.2) · D58 held on D60 · T3-NYISO-GOLDEN held on
+  D60 AND on the marker (Am.1) · D61 issued, unlaunched. Owner track: nyiso-192 promotion
+  pending on its branch (+ the owner-named CC_REGULAR duct-burner tranche lever next), caiso-25x
+  (C3a closed; C4 the object), miso-21x (phys_* armed; the level-scale probe correctly refused),
+  the audit programme (flip NOT live, G2 not declared, R-V keeper freeze on ERCOT/NEISO/PJM in
+  force, stage-0 2 of 7; Y-1 red on five ruff files from miso-217/218 + the cleanup's F401).
+- OWNER-TIER OPEN: NONE. NEXT cards: D58 arming; D62 (from D61); if nyiso-192 merges, the
+  NYISO t3 re-authorization question (Q45 lapses with the marker) and the validation-tier
+  lapse; the D60 finding's FC rows. Every backcast prompt cites rule 29 (a)+(b).
+- QUEUED-NAMED (§0aj.4): NYISO's empty confirmed-exit channel at source (owner's track); the
+  NYC steam delivered-gas intake (nyiso-193, owner-court); plus §0ai.4's list unchanged.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,

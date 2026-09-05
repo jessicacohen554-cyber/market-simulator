@@ -5431,7 +5431,7 @@ EXIT: the frontier block, the marker's `frontier_basis`, auditor PASS, guards OK
 with the alignment table, the log line; all blob-verified.
 ```
 
-## D60 — the arming batch: Q40 (MISO ratio) + Q41 (NYISO requirement gates) + Q42 (CCS capex default), flip-first (r#37) — **CHECKPOINT, RUNNING at r#38** (PRs #4781/#4783/#4792: flip commit + four renames landed; the `pjm-t1f` rename REVERSED on STOP 1 after D57's promotion moved PJM's bare t1f key; owed: the four re-solves + finding + **Amendment 1 below**)
+## D60 — the arming batch: Q40 (MISO ratio) + Q41 (NYISO requirement gates) + Q42 (CCS capex default), flip-first (r#37) — **RUNNING at r#39: flip + four renames + legs 1–2 (`miso-t1f`, `nyiso-t1f` — P10 STOP fired on FC-7) landed; pending `caiso-t1f`, `pjm-t1f`, GOLDEN-3, finding §5; Amendments 1 and 2 below**
 
 ```
 You are the D60 session of the capacity-expansion track — an ARMING EXECUTION lane. Three
@@ -5583,7 +5583,48 @@ D60 AMENDMENT 1 (director r#38, 2026-09-05; read before your next re-solve):
    checks, the arming scope (nothing beyond Q40/Q41/Q42 — and Q44 is D57's, already landed).
 ```
 
-## T3-NYISO-GOLDEN — the THIRD §2.1b full-horizon campaign: NYISO BAU 2026–2050 (r#38; owner ruling Q45 on card C-14) — **RELEASED-CONDITIONAL: paste only after D60's finding has landed on main**
+### D60 — Amendment 2 (r#39; the routed P10 STOP resolved under owner ruling Q37 — appended to the live charter, nothing re-issued)
+
+```
+D60 AMENDMENT 2 (director r#39, 2026-09-05; read before your next commit):
+
+Your leg-2 STOP was correct and its routing was correct. The decision: the FC-7 CAVEAT on
+`nyiso-t1f` is an INSTRUMENT gap, not a model gap, and owner ruling Q37 (r#34; rubric §5 second
+limb) exists for exactly this case — "a follow-up lane may author an attestation iff
+pre-declared before authoring, attestation row only, artifact-only re-score." The
+identification of every field the batch armed is COMMITTED: `nyiso_requirement_forecast_peak`
+(NYSRC IRM Study Appendices Table D.2 forecast peak, vintage-gated — D52 §8(1) / DESIGN §1),
+`nyiso_requirement_vintage_factors` (adopted IRM × (1 − derate) per capability year, Table D.2
+— D52 §8(1)), `adequacy_accounting_ratio_dated_net` (the D31 construction net of the dated
+channel, 0.893436 — D51 §1.3, zero DOF), `ccs_retrofit_capex_co2_scaling` (captured_ref =
+0.90 × 6.3 × 0.057 = 0.32319 t/MWh, composed of cited constants — D50 §1.2, zero DOF), and
+D57's three PJM gates (design §3.7 DOF ledger: zero — every operand the screen's own). So:
+
+1. ADDENDUM D FIRST (docs/handoffs/PREDECL-capx-d60-2026-09-05.md, appended BEFORE any row is
+   written): for each of the seven fields, the curated design-decision row you will write —
+   field, identification source, rule-13 forward-regeneration statement, rule-21 DOF status
+   (zero), citation — and the list of bare keys whose FC-7 the rows will change, with the
+   expected before/after (nyiso-t1f CAVEAT → PASS, PROMOTE-WITH-CAVEATS → PROMOTE; miso-t1f:
+   state what its FC-7 reads now and after; pjm-t1f / GOLDEN-3: pre-state for when their legs
+   land). State plainly that FC-7 is the ONLY row that may move and that any other movement is
+   a STOP.
+2. WRITE THE ROWS — the curated design-decision registry the FC-7 ledger reads (the same place
+   D50's and D52's rows live; the D8/D8-V instrument). Attestation rows only; no run_config, no
+   solve, no verdict edit by hand.
+3. RE-SCORE ARTIFACT-ONLY: `forecast_verdict.py --tier t1f` on the committed `nyiso-t1f` and
+   `miso-t1f` bundles (and `pjm-t1f` / `--tier t3` GOLDEN-3 after their legs land) → register
+   in place (same key; the `-pre-d60` priors are NOT touched — they carry their own posture and
+   their own ledger). Provenance re-stamped at the sha you re-score at (X-6b).
+4. FINDING §5 / a §8 "instrument repair": the before/after per key, the Q37 citation, and the
+   statement that the model rows are unmoved. If any non-FC-7 row moves, STOP: that is a model
+   effect the rows cannot own — report it, route it, do not register.
+
+Everything else in §D60 and Amendment 1 binds unchanged. The order of your remaining legs
+(caiso-t1f, pjm-t1f, GOLDEN-3) is yours; Addendum D may land before or between them, but every
+re-score happens AFTER its leg's final rebase.
+```
+
+## T3-NYISO-GOLDEN — the THIRD §2.1b full-horizon campaign: NYISO BAU 2026–2050 (r#38; owner ruling Q45 on card C-14) — **RELEASED-CONDITIONAL: paste only after D60's finding has landed on main AND `complete.NYISO` is still present (Amendment 1 below, r#39)**
 
 ```
 You are the T3-NYISO-GOLDEN session of the capacity-expansion track — the program's THIRD
@@ -5658,6 +5699,30 @@ owner's NYISO backcast lane (nyiso-19x) owns the keeper shard; you stamp the mat
 
 EXIT: `nyiso-t3` registered with its FC-5 table, FC-6 battery and FC-7 ledger; the finding; the
 board's NYISO t3 row; all blob-verified. The director serves any arming or repair question.
+```
+
+### T3-NYISO-GOLDEN — Amendment 1 (r#39; the marker is a START precondition of Q45)
+
+```
+T3-NYISO-GOLDEN AMENDMENT 1 (director r#39, 2026-09-05; binds with the charter above):
+
+Q45 authorized this campaign on the premise that NYISO holds gate leg (a) — a designated
+full-span keeper AND an entry in `calibration-complete.json`'s `complete` block. At r#39 an
+UNMERGED branch (`claude/nyiso-192-frontier-adjudication-mo2nrq`) carries an in-lane owner
+ruling that promotes a NOT-YET keeper (`2026-09-05-nyiso-192-astoria-panel`) and, under the Q5
+uniform rule, WITHDRAWS `complete.NYISO` and the Q39 frontier. If that has merged when you
+start, Q45's premise no longer holds.
+
+PRECONDITION 2 (checked at start, after precondition 1): `frontend/data/backcast/
+calibration-complete.json` `complete.NYISO` EXISTS and names the live keeper in
+`keepers/NYISO.json`; `program-status.json` `isos.NYISO.gate.a_keeper_marker.status` reads
+`pass`. If either fails: STOP, write nothing but a three-line note in your session output
+(the marker state, the keeper id, the sha you read at), and route to the director. A §2.1b
+campaign on an ISO without the marker is not something Q45 authorized, and re-authorization is
+a NEW owner card the director serves — never an assumption this lane makes.
+
+If both preconditions hold, the charter runs unchanged. Note for the finding either way: the
+NYISO keeper this golden is cut against, by id, and the posture (armed fields) resolved at HEAD.
 ```
 
 ## D61 — the PJM CT / ST / oil E&AS operand: Phase 0, zero-solve (r#38; D57 §4's named successor)
