@@ -268,6 +268,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     nyiso_requirement_vintage_factors: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D52): the NEISO per-vintage requirement axis IS neiso_net_icr_requirement (D40, the pattern this row mirrors); n/a." },
     locality_capacity_curves: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D59): ISO-NE's capacity zones (SENE / NNE / ROP) clear nested zonal FCA prices, the nearest analogue in form, but on the 4-zone model no capacity zone is a union of model zones (the crosswalk's aggregate exclusions), so no instance is representable; an ISO-NE zonal-curve instance would need its own zone partition and its own published zonal MRI parameters (rule 25)." },
     adequacy_accounting_ratio_dated_net: { cell: ".", fc: ".", ev: "ISO-exclusive (capx D51): NEISO carries no D31 accounting ratio to re-identify (that cell is U, D28 R2's NEISO position lane); nothing transfers (rule 25)." },
+    retirement_sector_gate: { cell: ".", fc: "U", ev: "capx D53 (2026-09-05): built default-off, ISO-agnostic by construction; untested on NEISO (rule 25 — MISO's verdict never fills this cell). Note for the NEISO lane: the ISO-NE fleet is sector 2 almost wholesale (restructured 1998-2000; the munis are small), so the gate is expected to be near-inert on the fleet the screen fails; the Mystic-class exits are step-0 instruments either way — its own census first. Backcast cell n/a." },
     capacity_deliverability: { cell: ".", fc: "U" },
     storage_entry_value_stack: { cell: "K", fc: "K" },
     ccs_retrofit_screen: { cell: "K", fc: "K" },

@@ -1677,14 +1677,14 @@
  },
  "miso-t1h": {
   "schema": "forecast-verdict/v1",
-  "rubric_version": "1.0",
+  "rubric_version": "1.1",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "93ca86bde099",
-   "scored_at_date": "2026-09-03T09:27:52Z",
-   "cache_epoch": "eff2c890746ec966",
-   "run_id": "miso-2021-2025-realized-t1h-d46",
-   "session": "capx-D46"
+   "scored_at_sha": "ff84df0ece5d",
+   "scored_at_date": "2026-09-05T01:24:25Z",
+   "cache_epoch": "c306ddc6d28c60c2",
+   "run_id": "miso-2021-2025-realized-t1h-d53-sectorgate",
+   "session": "capx-D53"
   },
   "tier": "t1h",
   "iso": "MISO",
@@ -1695,9 +1695,7 @@
   "caveats": [
    "FC-7 provenance & DOF"
   ],
-  "notes": [
-   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed to an axis, nothing armed. Posture = the bare key's own flag set with only HEAD's defaults moved, plus --entry-screen-diagnostics (D37-verified output-only on the fleet outcome, though cache-keyed, so this is MISO's first diagnostics-on T1-H). Two axes reach this leg: the Q30/D44 fossil-dates flip (channel armed 99 live rows / 28255 MW, 2021-2040) and keeper vintage 198 -> 202; D41's CCS axis is VERIFIED inert (ccs_retrofits empty in every solve year, retrofits opening in 2028, past the window). THE GATE-LEG FLIP OF THE BATCH: retire.unit_recall_gt300 5/19 = 0.263 (FAIL) -> 16/19 = 0.842 (PASS), reproducing capx-D42's own A/B of this exact leg to the unit and LEAVING the FC-3 band-FAIL list. retire.total_gw model 4.469 -> 9.799 GW (err_frac -0.743 -> -0.436, band still FAIL \u2014 the dates channel closes the RECALL half of the retirement problem, not the MAGNITUDE half, which D27/D31 located on the margin side). Window totals by channel, from the evolution ledgers: dates OFF = coal retire:economic 3684.0 MW, the ONLY thermal exit; dates ON = ZERO economic exits of any fuel, everything through the dates channel \u2014 coal 2410.3 retire + 1495.9 derate, gas_st 504.1 retire + 313.8 derate, gas_ct 132.3 derate, oil 153.0 retire. THIS IS RULE 19 WORKING, NOT A DISPLACEMENT: the same coal capacity still exits (3684.0 -> 3906.2 MW) and simply moves out of the economic screen's jurisdiction into the channel that holds its filed date, which is exactly what D42's \"displaces nothing\" claims and what CLAUDE.md's step-1 amendment describes. Verified directly against D42's OWN committed legs, zero solves: its control shows coal retire:economic 3684.0 MW and its armed leg the identical announced breakdown above. false_retire stays 0.000 GW / PASS, so the added exits are real. Band-FAIL list 8 -> 8 rows: retire.unit_recall_gt300 and add.shares.gas_cc drop out, add.by_tech.gas_ct and add.shares.gas_ct enter. Determination HOLD, unchanged. Preserved verbatim: miso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
-  ],
+  "notes": [],
   "categories": {
    "FC-1": {
     "label": "FC-1 structural integrity (I1-I14)",
@@ -1757,7 +1755,7 @@
      {
       "row": "run_config",
       "status": "PASS",
-      "detail": "mode=forecast; 778 config keys; gates ['capacity_market_clearing']",
+      "detail": "mode=forecast; 789 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -11649,6 +11647,232 @@
       "row": "run_config",
       "status": "PASS",
       "detail": "mode=forecast; 791 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "miso-t1h-pre-d53": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.0",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "93ca86bde099",
+   "scored_at_date": "2026-09-03T09:27:52Z",
+   "cache_epoch": "eff2c890746ec966",
+   "run_id": "miso-2021-2025-realized-t1h-d46",
+   "session": "capx-D46"
+  },
+  "tier": "t1h",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx-D46 batched re-measure (director r#30/r#31, owner ruling Q32 STAGED): a BASELINE REFRESH at HEAD, not an A/B \u2014 no control, nothing attributed to an axis, nothing armed. Posture = the bare key's own flag set with only HEAD's defaults moved, plus --entry-screen-diagnostics (D37-verified output-only on the fleet outcome, though cache-keyed, so this is MISO's first diagnostics-on T1-H). Two axes reach this leg: the Q30/D44 fossil-dates flip (channel armed 99 live rows / 28255 MW, 2021-2040) and keeper vintage 198 -> 202; D41's CCS axis is VERIFIED inert (ccs_retrofits empty in every solve year, retrofits opening in 2028, past the window). THE GATE-LEG FLIP OF THE BATCH: retire.unit_recall_gt300 5/19 = 0.263 (FAIL) -> 16/19 = 0.842 (PASS), reproducing capx-D42's own A/B of this exact leg to the unit and LEAVING the FC-3 band-FAIL list. retire.total_gw model 4.469 -> 9.799 GW (err_frac -0.743 -> -0.436, band still FAIL \u2014 the dates channel closes the RECALL half of the retirement problem, not the MAGNITUDE half, which D27/D31 located on the margin side). Window totals by channel, from the evolution ledgers: dates OFF = coal retire:economic 3684.0 MW, the ONLY thermal exit; dates ON = ZERO economic exits of any fuel, everything through the dates channel \u2014 coal 2410.3 retire + 1495.9 derate, gas_st 504.1 retire + 313.8 derate, gas_ct 132.3 derate, oil 153.0 retire. THIS IS RULE 19 WORKING, NOT A DISPLACEMENT: the same coal capacity still exits (3684.0 -> 3906.2 MW) and simply moves out of the economic screen's jurisdiction into the channel that holds its filed date, which is exactly what D42's \"displaces nothing\" claims and what CLAUDE.md's step-1 amendment describes. Verified directly against D42's OWN committed legs, zero solves: its control shows coal retire:economic 3684.0 MW and its armed leg the identical announced breakdown above. false_retire stays 0.000 GW / PASS, so the added exits are real. Band-FAIL list 8 -> 8 rows: retire.unit_recall_gt300 and add.shares.gas_cc drop out, add.by_tech.gas_ct and add.shares.gas_ct enter. Determination HOLD, unchanged. Preserved verbatim: miso-t1h-pre-d46. docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md"
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 778 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "miso-t1h-d53-sectorgate-d51ratio": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "36009c652a67",
+   "scored_at_date": "2026-09-05T02:00:44Z",
+   "cache_epoch": "6ea92547eaa62559",
+   "run_id": "miso-2021-2025-realized-t1h-d53-sectorgate-d51ratio",
+   "session": "capx-D53"
+  },
+  "tier": "t1h",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'add.by_tech.solar', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 789 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {

@@ -1385,6 +1385,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # every pre-existing cache key of all six ISOs is byte-stable; the armed
     # A/B keys distinctly. Registered IN THE SAME COMMIT as the field.
     "adequacy_accounting_ratio_dated_net",
+    # capx D53: the retirement-screen SECTOR GATE (default-off, byte-identical
+    # unarmed — the screen's candidate set is the whole thermal fleet as
+    # before). Dropped from the hash at its False default so every
+    # pre-existing cache key of all six ISOs is byte-stable; the armed A/B
+    # keys distinctly. Registered IN THE SAME COMMIT as the field.
+    "retirement_sector_gate",
     # capx D59: the NYISO locality capacity-curve gate (default-off,
     # byte-identical unarmed). Dropped from the hash at its False default so
     # every pre-existing cache key of all six ISOs is byte-stable; the armed
@@ -1880,6 +1886,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D51: MISO dated-net accounting-ratio gate, registered at its
     # shipping False default (the armed A/B keys distinctly).
     "adequacy_accounting_ratio_dated_net": "False",
+    # capx D53: the retirement-screen sector gate, registered at its
+    # shipping False default (the armed A/B keys distinctly).
+    "retirement_sector_gate": "False",
     # capx D59: NYISO locality capacity-curve gate, registered at its shipping
     # False default (the armed A/B keys distinctly).
     "locality_capacity_curves": "False",
@@ -15149,6 +15158,70 @@ class ScenarioConfig:
     # backcast (forecast-lane mechanism). SCOPE: MISO-only by construction
     # (the dated-net registry holds one ISO; any other ISO resolves the D31
     # registry unchanged) — rule 25; nothing transfers.
+    retirement_sector_gate: bool = False  # GATED default-OFF (capx D53
+    # 2026-09-05, executing D32 C5 / R3 — FINDING-capx-d32-floor-retention-
+    # 2026-09-02.md §4.3–§4.4, §5 C5, §7 R3; design
+    # docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md). WHAT IT
+    # PARTITIONS: which owners face the step-3 economic retirement screen at
+    # all. The screen models a MERCHANT decision — attainable energy + reserve
+    # + capacity margin vs going-forward FOM — and D32 measured on MISO's
+    # 2021–2025 record that 88–92 % of the coal / gas_st / oil MW that actually
+    # exited belonged to REGULATED UTILITIES (EIA-860 Sector 1), whose exits
+    # are IRP / rate-case decisions filed as EIA-860 Schedule-3 dates and
+    # carried by the step-1b fossil-dates channel (owner ruling Q30 / capx
+    # D44), not merchant-margin decisions. Armed (forecast mode, hindcast
+    # included), every unit whose PLANT's EIA-860 ``Sector`` is 1 (Electric
+    # Utility — IOU, muni, co-op, federal; the vintage's plant table, read at
+    # the run's ACTIVE EIA-860 vintage) is EXOGENOUS to the economic screen:
+    # it exits ONLY through step 0 (instrument-bound confirmed exits) and
+    # step 1 / 1b (the owner-filed dates, reversal registry armed). Every
+    # other sector (2 IPP non-CHP, 3 IPP CHP, 4/6 commercial / industrial
+    # non-CHP, 5/7 commercial / industrial CHP) faces the screen exactly as
+    # before, and a unit whose plant is absent from the vintage plant table
+    # (a planned addition's new plant code, a synthesized unit) FAILS OPEN to
+    # the screen. MECHANISM: the sector-1 ids join the screen's existing
+    # ``exempt_unit_ids`` seam (``model.capacity_evolution.retirements.
+    # sector_gated_unit_ids``, the twin of ``dated_plant_unit_ids``) — the
+    # SAME rule-19 [R-ONE-MECH] reconciliation the fossil-dates channel uses:
+    # an exempt unit is never in ``margins``, so it is never decided,
+    # entry-capped, re-confirmed or pipelined, and no unit's exit is decided
+    # twice (a dated sector-1 plant is exempt by both declarations, which
+    # union; neither produces an exit — the exits come from steps 0/1 only).
+    # The reliability floor's admission and execution tests, the R-NEW
+    # admission cap's counterfactual and the reserve-margin backstop are
+    # UNTOUCHED: a gated unit is simply not a candidate, so it stays in the
+    # fleet the floor counts. The evolution ledger records the gated set per
+    # year (``sector_gated``: units / MW by fuel and sector, unknown-sector
+    # MW) so the D-2 attribution can see what left the screen. IDENTIFICATION
+    # (rule 13 [R-MEASURED] forward test): ``Sector`` is a published per-plant
+    # EIA-860 attribute, regenerated every vintage, that responds to changed
+    # conditions (a sale to an IPP re-sectors the plant); it is an owner
+    # attribute, never an outcome. Rule 21 [R-DOF]: a PARTITION on one
+    # published boolean — no weight, threshold, share or fitted value; the
+    # plant ``Regulatory Status`` flag (RE/NR) is NOT consulted (a second
+    # attribute for the same phenomenon, rule 19; at the 2020 vintage the two
+    # agree on 3,587 / 3,587 sector-1 plants). SIGN (rule 14): removing
+    # sector-1 units from the screen can only REDUCE or leave unchanged the
+    # economic exits (fewer candidates, same floor headroom) — if
+    # ``retire.total_gw`` reads worse, that is the signature of a screen that
+    # was retiring utility units for a reason their owners never faced;
+    # composition and ``false_retire`` are where the gate can improve. WHY
+    # DEFAULT-OFF: arming is an owner decision on the suffixed A/B
+    # ``miso-t1h-d53-sectorgate`` vs the bare ``miso-t1h`` (rules 22/24/28;
+    # LOYO within 2021–2025). ARMED FOR MISO ONLY on that A/B by owner
+    # instruction 2026-09-05 (iso_configs MISO default_scenario_overrides,
+    # rule 25 — the finding's §6 condition met on all four limbs); the
+    # dataclass default stays False. Registered in _CACHE_KEY_OPTIONAL_FIELDS at
+    # False (unarmed keys byte-stable; armed keys distinctly); coerced to the
+    # default in a plain backcast (a backcast runs no capacity evolution).
+    # SCOPE: ISO-agnostic by construction (every ISO's EIA-860 plant table
+    # carries ``Sector``), so the field arms in any ISO; MISO alone carries a
+    # measured verdict and every other ISO measures its own cohort before its
+    # cell moves (rule 25 — the PJM leg is the named successor, D45 L1's
+    # 111.7 GW 2022 failing pool). NOT built here, named: the additions
+    # screen's mirror (utility builds are IRP-driven too) and the CHP-host
+    # (sectors 3/5/7) steam-economics screen — separate partitions with
+    # their own evidence.
     locality_capacity_curves: bool = False  # GATED default-OFF (capx D59
     # 2026-09-05, executing FINDING-capx-d52-2026-09-04.md §8(2) route 1 /
     # D45 §5.2.4 item 3; design docs/handoffs/DESIGN-capx-d59-nyiso-locality-
@@ -15590,6 +15663,15 @@ class ScenarioConfig:
                 type(self)
                 .__dataclass_fields__["nyiso_requirement_vintage_factors"]
                 .default
+            )
+
+        # capx D53: the retirement-screen sector gate is a forecast-lane
+        # capacity-evolution mechanism (a backcast runs no capacity
+        # evolution) — coerced to the DATACLASS DEFAULT, never a literal, in
+        # a plain backcast; kept in a hindcast (mode="forecast", hindcast=True).
+        if self.mode == "backcast":
+            self.retirement_sector_gate = (
+                type(self).__dataclass_fields__["retirement_sector_gate"].default
             )
 
         # capx D59: the NYISO locality capacity-curve gate is likewise a
@@ -16928,6 +17010,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_requirement_forecast_peak": 1,
     "nyiso_requirement_vintage_factors": 1,
     "adequacy_accounting_ratio_dated_net": 1,
+    "retirement_sector_gate": 1,
     "locality_capacity_curves": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,

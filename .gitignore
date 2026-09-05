@@ -802,6 +802,13 @@ results/hindcast/*/*/*/evolution_*.json
 # carve-out.
 !results/hindcast/miso-2021-2025-realized-t1h-d51-ratio/*/*/evolution_*.json
 !results/hindcast/neiso-2021-2025-realized-t1h-d45r-datesoff/*/*/evolution_*.json
+# capx D53 (2026-09-05): the retirement-screen sector-gate A/B arm (suffixed
+# miso-t1h-d53-sectorgate) and its composition-observability rider (gate +
+# D51's ratio, suffixed miso-t1h-d53-sectorgate-d51ratio). Their ledgers carry
+# the `sector_gated` census block and the post-gate pipeline screen rows the
+# D53 finding's P1-P7 grading reads against the D46 / D51 ledgers -- same
+# one-bundle carve-out.
+!results/hindcast/miso-2021-2025-realized-t1h-d53-sectorgate*/*/*/evolution_*.json
 results/hindcast/*/*/*/year_*_floor_retentions.json
 results/hindcast/*/*/*/config.yaml
 results/hindcast/*/*/*/*.parquet

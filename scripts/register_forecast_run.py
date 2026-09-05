@@ -311,6 +311,18 @@ VERDICT_MAP = {
     # that no second mechanism reads the key. SUFFIXED BY CHARTER; nothing arms
     # (PREDECL-capx-d55-2026-09-05.md §1).
     "miso-2021-2025-realized-t1h-d55-keyfix": "miso-t1h-d55-keyfix",
+    # capx-D53 (2026-09-05): the retirement-screen SECTOR GATE
+    # (`retirement_sector_gate` ON; D32 C5/R3) against D46's bare `miso-t1h`
+    # (the gate OFF, the shipped posture), plus the composition-observability
+    # rider (gate ON + D51's `adequacy_accounting_ratio_dated_net` ON) against
+    # `miso-t1h-d51-ratio`. SUFFIXED BY CHARTER, never the bare key; nothing
+    # arms -- the owner decides on the pre-stated condition
+    # (DESIGN-capx-d53-sector-gate-2026-09-05.md §6).
+    # ARMED FOR MISO 2026-09-05 (owner instruction on the measured A/B): the
+    # gated leg IS the bare `miso-t1h` recipe now (key c306ddc6d28c60c2), so
+    # it carries the bare verdict key; the D46 record is preserved above.
+    "miso-2021-2025-realized-t1h-d53-sectorgate": "miso-t1h",
+    "miso-2021-2025-realized-t1h-d53-sectorgate-d51ratio": "miso-t1h-d53-sectorgate-d51ratio",
     # capx-D51 rider (d), owner ruling Q36: D45-R's pre-declared leg 7 -- the
     # NEISO dates-OFF paired control at the SHIPPED lever
     # (`--no-fossil-announced-exits`, neiso_net_icr_requirement False), the
@@ -349,7 +361,12 @@ VERDICT_MAP = {
     # key moved on to the shipped-posture leg and this (Q28-armed) record keeps
     # its own verdict, continuing the same preserve-then-overwrite chain.
     "neiso-2021-2025-realized-t1h-d46": "neiso-t1h-pre-d45r",
-    "miso-2021-2025-realized-t1h-d46": "miso-t1h",
+    # RE-POINTED by capx-D53 (2026-09-05) to `miso-t1h-pre-d53`: the bare key
+    # moved on to the sector-gated leg once the owner armed the gate for MISO
+    # (iso_configs default_scenario_overrides); every scored row of this
+    # record and D53's are identical (a pure candidate-set partition), so the
+    # preserved verdict is HOLD on both — the preserve-then-overwrite chain.
+    "miso-2021-2025-realized-t1h-d46": "miso-t1h-pre-d53",
     "caiso-2021-2025-realized-t1h-d46": "caiso-t1h",
     "ercot-2021-2025-realized-t1h-d46": "ercot-t1h",
     # The T1-F legs of the same batch. Run ids are the registrar's derived
