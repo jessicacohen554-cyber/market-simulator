@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-30-miso-191-control",
+  "run_id": "2026-09-05-miso-213-layering",
   "iso": "MISO",
-  "label": "miso 191 control",
+  "label": "miso 213 layering",
   "target_years": [
     2023,
     2024,
@@ -19,7 +19,7 @@
     "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [
-    "C8 2025 ST_GAS: grounded above budget \u2014 34.2% forced (6.6105 of 19.3032 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.977 (\u22650.8) & off-peak CV ratio 1.454 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 20.4% forced (2.195 of 10.7404 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.962 (\u22650.8) & off-peak CV ratio 1.193 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -83,17 +83,17 @@
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-4.7%",
-        "2024": "-4.1%",
+        "2023": "-3.4%",
+        "2024": "-4.0%",
         "2025": "+0.3%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2023": "amplitude 44.9% of measured (hod range $10.04 vs $22.36); peak h16 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.894; 365 complete days",
-        "2024": "amplitude 32.0% of measured (hod range $9.16 vs $28.59); peak h17 vs h16, trough h02 vs h02 \u2014 phase OK; hod r +0.889; 365 complete days",
-        "2025": "amplitude 19.8% of measured (hod range $10.53 vs $53.27); peak h18 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.857; 364 complete days"
+        "2023": "amplitude 34.8% of measured (hod range $7.79 vs $22.36); peak h17 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.880; 365 complete days",
+        "2024": "amplitude 32.0% of measured (hod range $9.14 vs $28.59); peak h17 vs h16, trough h02 vs h02 \u2014 phase OK; hod r +0.878; 365 complete days",
+        "2025": "amplitude 20.4% of measured (hod range $10.84 vs $53.27); peak h18 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.855; 364 complete days"
       }
     }
   },

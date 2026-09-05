@@ -1,0 +1,16 @@
+{
+ "id": "2026-09-05-miso-213-layering",
+ "label": "miso 213 layering",
+ "date": "2026-09-05",
+ "shorthand": "miso-213-layering",
+ "definition": "miso-213 KEEPER (PROMOTED 2026-09-05 on the session's own pre-registered rule, every kill silent, under the owner's standing structural-integrity bar): the miso-210 keeper recipe with ONE ScenarioConfig delta, miso_zonal_gas_basis_skip_923_priced=true \u2014 the MISO mean-zero zonal gas basis no longer layers its per-zone increment on the cells the EIA-923 print path already priced (rule 19 [R-ONE-MECH]; the N3045 state series the basis is built from aggregates the same receipts). Phase 0 measured the print path pricing 100 % of MISO gas capacity-hours, so on this recipe the basis increment is removed from every gas cell; trajectory cells (all forecast-mode cells) still receive it. Zero free parameters. Determination NOT-YET on C3a-2025 alone (-11.8 %, from -12.4 %); C3c the single ledgered caveat; C6 attested (41/2). Control = the miso-210 keeper bundle itself (not re-solved).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-09-05-miso-213-layering.js",
+ "bundle": "results/calibration/miso213_layering_B",
+ "market_story": "Every MISO gas unit now bids the delivered gas its own EIA-923 receipts (or its class-and-state peers') report, with no second regional premium on top. The South fleet loses a +0.29 $/MMBtu surcharge (2025) and the Midwest fleet the -0.04..-0.64 discount the state-series increment had been handing it: CT_PEAKER falls 3.3/2.3/3.6 TWh (2023/2024/2025) as Midwest peakers bid their own delivered cost, ST_GAS rises 1.3/0.7/0.9 TWh toward its 13.9/17.6/15.6 TWh actuals as South steam clears, and coal (+0.9/+0.5/+0.7 PRB) backfills the Midwest. In the real South->North RDT-binding 2025 shoulder hours the South exports 0.73 GW net (measured 2.9), S->N corridor flow doubles to 710 MW, South gas 15.6 -> 16.3 GW against 18.9 measured, and Midwest gas -1.05 GW: the market's own separation, produced by pricing each plant at its own delivered cost rather than by any floor. ST_GAS forced share falls in every year (0.155/0.153/0.271 -> 0.138/0.138/0.212)."
+}
