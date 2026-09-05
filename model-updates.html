@@ -4,29 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Model Updates — Market Simulator</title>
-<meta name="description" content="A running log of model improvements: what changed, why, and the measured impact on the backcast calibration.">
+<meta name="description" content="Where the market simulator's change record lives: the dated changelog, the per-ISO calibration logs, the mechanism test ledger, and the dashboards that carry each run's measured impact.">
 
 <link rel="stylesheet" href="frontend/css/style.css">
 <style>
-/* Scoped layout for the update log — no shared class covers the timeline
-   entry + impact table, so these are page-local only. */
-.upd-list{display:flex;flex-direction:column;gap:var(--space-lg);margin-top:var(--space-lg)}
-.upd{border-left:3px solid var(--card-accent,var(--storage));padding-left:var(--space-lg)}
-.upd-date{font-size:var(--fs-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);font-weight:700}
-.upd h2{font-size:var(--fs-lg);margin:4px 0 2px}
-.upd-tag{display:inline-block;font-size:var(--fs-xs);font-weight:700;color:#fff;background:var(--card-accent,var(--storage));border-radius:12px;padding:2px 10px;margin-left:8px;vertical-align:middle}
-.upd-block{margin:var(--space-md) 0}
-.upd-block h3{font-size:var(--fs-xs);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 4px}
-.upd-block p{margin:0 0 8px}
-.impact-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);margin-top:6px}
-.impact-table th,.impact-table td{text-align:left;padding:7px 11px;border-bottom:1px solid var(--border)}
-.impact-table th{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--ink-muted);background:#f0f3f6}
-.impact-table td.num{text-align:right;font-variant-numeric:tabular-nums}
-.impact-table tr:last-child td{border-bottom:0}
-.verdict{background:#fbfcfd;border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-md);margin-top:var(--space-md)}
-.verdict strong{color:var(--ink)}
-.upd-meta{font-size:var(--fs-xs);color:var(--ink-muted);margin-top:8px}
-.upd-meta code{font-size:.92em}
+/* Page-local: the pointer note above the destination cards. No shared class
+   covers a bordered aside on this design system. */
+.pointer-note{background:var(--bg-surface);border:1px solid var(--border);border-left:4px solid var(--storage);border-radius:var(--radius-md);padding:var(--space-md) var(--space-lg);margin-bottom:var(--space-xl);max-width:80ch}
+.pointer-note p{margin:0 0 var(--space-sm)}
+.pointer-note p:last-child{margin-bottom:0}
+.pointer-note code{font-size:.92em}
 </style>
 </head>
 <body>
@@ -36,10 +23,10 @@
         <span class="nav-brand-mark">&#9650;</span> Market Simulator
     </a>
     <ul class="nav-links">
-        <!-- "Dashboard" -> frontend/index.html removed 2026-07-25: that app is
-             archived under owner decision D-7 (docs/archive/frontend-scenario-app/). -->
         <li><a class="nav-link" href="docs/codebase-site/calibration-status.html">Calibration</a></li>
         <li><a class="nav-link" href="docs/codebase-site/backcast-runs.html">Backcast</a></li>
+        <li><a class="nav-link" href="docs/codebase-site/forecast-status.html">Forecast</a></li>
+        <li><a class="nav-link" href="docs/codebase-site/index.html">Explorer</a></li>
         <li><a class="nav-link active" href="model-updates.html">Updates</a></li>
     </ul>
     <span class="nav-spacer"></span>
@@ -51,216 +38,118 @@
         <div class="eyebrow">Model Changelog</div>
         <h1>Model Updates</h1>
         <p>
-            A running log of model improvements. Each entry explains
-            <strong>what changed</strong>, <strong>why it matters</strong>, and
-            the <strong>measured impact</strong> on the backcast &mdash; so the
-            calibration's evolution is legible, not just a diff. Most recent
-            first.
+            The model&rsquo;s change record is kept where the changes land
+            &mdash; in the repository&rsquo;s dated changelog, the per-ISO
+            calibration logs, and the dashboards that score every run. This
+            page points at each of them.
         </p>
     </header>
 
-    <div class="upd-list">
+    <!-- REPOSITIONED AS A POINTER (owner decision, 2026-08-13:
+         docs/model-audit-release-plan-2026-08.md §6 item 5 — "keep URL; short
+         intro linking dashboards + CHANGELOG; stale entries removed").
+         The hand-written impact log this page used to carry stopped at two
+         entries dated 2026-06-04 (per-unit CAMPD outages; storage RTE +
+         daily-cycling guard). Both compared ERCOT probe runs (27/28, 31/32)
+         that no longer exist on the dashboard — retention is keeper-only since
+         2026-09-05 — and cited the pre-W1 `inputs/raw-data/` path. Their text
+         remains in git history. -->
+    <aside class="pointer-note" aria-label="About this page">
+        <p>
+            <strong>This page used to carry a hand-written impact log.</strong>
+            It stopped in June 2026, and its entries compared probe runs that
+            the dashboard no longer retains &mdash; only each ISO&rsquo;s
+            designated keeper run is kept; everything superseded lives in git
+            history. Rather than let it drift, it now points at the records
+            that are maintained with every change.
+        </p>
+        <p>
+            Measured impact is never narrated separately from the run that
+            produced it: a run&rsquo;s scorecard, diagnostics and determination
+            are on the dashboards, and the reasoning behind each promotion is
+            in that ISO&rsquo;s calibration log.
+        </p>
+    </aside>
 
-        <!-- ============ 2026-06-04: unit-level outages ============ -->
-        <article class="upd" style="--card-accent: var(--coal);">
-            <div class="upd-date">2026-06-04</div>
-            <h2>Outages: per-unit, from CAMPD &mdash; coal units stop hiding<span class="upd-tag">Outages</span></h2>
+    <section class="grid grid-2col">
 
-            <div class="upd-block">
-                <h3>What changed</h3>
-                <p>
-                    The backcast's outage overlay used to work on each
-                    <em>plant's</em> total metered output. That has a structural
-                    blind spot: when one unit at a multi-unit plant trips, the
-                    other units keep the plant's combined CEMS signal alive, so
-                    the outage is invisible. The worst case is a mixed coal/gas
-                    plant like <strong>W&nbsp;A&nbsp;Parish</strong> &mdash; a
-                    coal unit can be down for months while the gas units mask it
-                    completely. A patch existed (a hand-built unit list) but it
-                    only covered <strong>January&ndash;August 2023</strong>.
-                </p>
-                <p>
-                    A new step (<code>scripts/derive_campd_unit_outages.py</code>)
-                    now detects outages on <strong>each generating unit's own</strong>
-                    hourly EPA&nbsp;CAMPD output, for the <strong>full 2023 and
-                    2024</strong>, and removes that unit's capacity (its EIA-860
-                    nameplate) from dispatch during the gap. Coal units &mdash;
-                    which run as baseload &mdash; are flagged whenever output
-                    sags below ~5% for a sustained stretch; load-following gas
-                    and combined-cycle units are flagged only when they go
-                    <em>fully</em> dead, so a CC turbine that is simply idle for
-                    economic reasons is never mistaken for a forced outage.
-                </p>
-            </div>
+        <a class="card link-card" href="https://github.com/jessicacohen554-cyber/market-simulator/blob/main/CHANGELOG.md" style="--card-accent: var(--storage);">
+            <div class="card-title">CHANGELOG.md</div>
+            <div class="card-subtitle">The dated change record, most recent first</div>
+            <p class="text-muted">
+                Every session&rsquo;s changes to the model, its data, the
+                scripts and the governance rules, with the owner instruction
+                behind each and what was verified &mdash; the source this
+                page&rsquo;s old entries were a hand-copy of.
+            </p>
+            <span class="link-card-cta">Read the changelog &rarr;</span>
+        </a>
 
-            <div class="upd-block">
-                <h3>Why it matters</h3>
-                <p>
-                    Real units come offline for maintenance and forced outages;
-                    if the model keeps that capacity available, it dispatches
-                    coal and gas-steam the grid did not actually have, distorting
-                    the merit order and prices. Resolving outages at the unit
-                    level lets the backcast remove exactly the megawatts that
-                    were out &mdash; including the coal-unit outages the
-                    plant-level method could never see &mdash; and extends real
-                    outage coverage to 2024, which previously had <strong>none</strong>
-                    at the unit level (0 derated tranches &rarr; 263).
-                </p>
-            </div>
+        <a class="card link-card" href="https://github.com/jessicacohen554-cyber/market-simulator/tree/main/docs/calibration-log" style="--card-accent: var(--coal);">
+            <div class="card-title">Calibration Logs</div>
+            <div class="card-subtitle">One log per ISO, plus cross-ISO governance</div>
+            <p class="text-muted">
+                The session-by-session calibration history &mdash; what each
+                run tested, what it found, and why a keeper was promoted or a
+                probe rejected &mdash; in
+                <code>docs/calibration-log/&lt;iso&gt;.md</code>, with
+                <code>governance.md</code> for decisions that span markets.
+            </p>
+            <span class="link-card-cta">Open the logs &rarr;</span>
+        </a>
 
-            <div class="upd-block">
-                <h3>Measured impact &mdash; hand list vs. CAMPD unit-level</h3>
-                <p>
-                    Two matched backcasts on the tuned calibration config,
-                    identical except for the outage source:
-                    <strong>run&nbsp;31</strong> (hand list, Jan&ndash;Aug 2023
-                    only) and <strong>run&nbsp;32</strong> (CAMPD unit-level, full
-                    2023&nbsp;&amp;&nbsp;2024). Figures are each class's annual
-                    generation vs. EIA-923.
-                </p>
-                <table class="impact-table">
-                    <thead><tr>
-                        <th>Class &mdash; vs EIA-923</th>
-                        <th>Hand list<br>(run 31)</th>
-                        <th>CAMPD unit<br>(run 32)</th>
-                        <th>Move</th>
-                    </tr></thead>
-                    <tbody>
-                        <tr><td>Gas-steam (ST_GAS), 2023</td><td class="num">+10.2%</td><td class="num">+2.6%</td><td class="num">&minus;7.6&nbsp;pp &#10003;</td></tr>
-                        <tr><td>Coal lignite, 2024</td><td class="num">&minus;7.2%</td><td class="num">&minus;5.3%</td><td class="num">+1.9&nbsp;pp &#10003;</td></tr>
-                        <tr><td>Coal total, 2023</td><td class="num">+5.3%</td><td class="num">+6.2%</td><td class="num">+0.9&nbsp;pp</td></tr>
-                        <tr><td>Coal total, 2024</td><td class="num">+1.1%</td><td class="num">+1.8%</td><td class="num">+0.7&nbsp;pp</td></tr>
-                        <tr><td>CT peakers, 2023</td><td class="num">+18.6%</td><td class="num">+42.5%</td><td class="num">+23.9&nbsp;pp</td></tr>
-                        <tr><td>Unit-outage derates, 2024</td><td class="num">0</td><td class="num">263</td><td class="num">&mdash;</td></tr>
-                    </tbody>
-                </table>
-                <div class="verdict">
-                    <strong>Verdict: the right input, with a re-tune to follow.</strong>
-                    Sourcing outages per-unit fixes the largest gas-steam bias
-                    outright (2023 ST_GAS goes from <strong>+10.2%</strong> to
-                    <strong>+2.6%</strong>) and improves 2024 lignite, because the
-                    model now sheds capacity that was genuinely out rather than
-                    leaving it to run. The energy that capacity was carrying has
-                    to go somewhere, and in this no-commitment config it lands on
-                    <strong>CT peakers</strong> &mdash; a class the config already
-                    over-runs because peaker start-up limits aren't modeled until
-                    the commitment pass. So the unit-level extract is the more
-                    accurate input, but it un-centers the peaker/gas-steam tuning
-                    that was fit around the sparser hand list; the natural
-                    follow-up is a light peaker re-tune (or turning on the
-                    unit-commitment pass for CTs). Coal totals stay close
-                    (2023&nbsp;+6.2%, 2024&nbsp;+1.8%) and the grid energy balance
-                    holds at about&nbsp;+1%.
-                </div>
-            </div>
+        <a class="card link-card" href="docs/codebase-site/calibration-status.html" style="--card-accent: var(--solar);">
+            <div class="card-title">Calibration Status</div>
+            <div class="card-subtitle">Each market&rsquo;s current keeper and determination</div>
+            <p class="text-muted">
+                The all-ISO summary of where calibration stands today &mdash;
+                the designated keeper run, its determination under the
+                calibration rubric and its per-criterion scorecard.
+            </p>
+            <span class="link-card-cta">Open the status board &rarr;</span>
+        </a>
 
-            <div class="upd-meta">
-                Runs: <code>run31_foresightoff</code> (hand list),
-                <code>run32_unitoutage</code> (CAMPD unit-level) &middot; new data
-                <code>inputs/raw-data/campd-unit-outages.csv</code> &middot; see
-                them side by side in the
-                <a href="docs/codebase-site/backcast-runs.html#iso=ERCOT">Backcast Run Explorer</a>.
-            </div>
-        </article>
+        <a class="card link-card" href="docs/codebase-site/backcast-runs.html" style="--card-accent: var(--gas-ct);">
+            <div class="card-title">Backcast Run Explorer</div>
+            <div class="card-subtitle">The measured impact, per run</div>
+            <p class="text-muted">
+                Scorecards, generation-mix and price comparisons against EPA
+                CAMPD and EIA actuals, and the legitimacy diagnostics for each
+                keeper &mdash; the numbers a change is judged on.
+            </p>
+            <span class="link-card-cta">Explore the runs &rarr;</span>
+        </a>
 
-        <!-- ============ 2026-06-04: storage foresight ============ -->
-        <article class="upd" style="--card-accent: var(--storage);">
-            <div class="upd-date">2026-06-04</div>
-            <h2>Storage: efficiency fix + a foresight guard<span class="upd-tag">Storage</span></h2>
+        <a class="card link-card" href="docs/codebase-site/forecast-status.html" style="--card-accent: var(--nuclear);">
+            <div class="card-title">Forecast Program Status</div>
+            <div class="card-subtitle">The forward-methodology gate board</div>
+            <p class="text-muted">
+                Per-ISO progress on the forecast program &mdash; tier reached,
+                rubric scorecard and full-solve gate &mdash; over the hindcast
+                and crossover runs behind it, each drillable in the Forecast
+                Run Explorer it links to.
+            </p>
+            <span class="link-card-cta">Open the gate board &rarr;</span>
+        </a>
 
-            <div class="upd-block">
-                <h3>What changed</h3>
-                <p>
-                    Two storage changes. <strong>(1) Round-trip efficiency
-                    fix:</strong> the backcast battery fleet was hard-coded to
-                    the lithium-ion RTE constant (0.86), so the
-                    <code>storage_rte_4hr</code> calibration knob (set to 0.85)
-                    never actually reached the model &mdash; the lever was
-                    silently disconnected. It now flows through, matching the
-                    forward-entry path. <strong>(2) Daily-cycling toggle:</strong>
-                    a new optional constraint (<code>storage_daily_cycling</code>)
-                    forces each battery's state-of-charge back to its day-start
-                    level every 24&nbsp;hours, so storage can no longer bank
-                    cheap energy across days.
-                </p>
-            </div>
+        <a class="card link-card" href="docs/codebase-site/mechanism-matrix.html" style="--card-accent: var(--hydro);">
+            <div class="card-title">Mechanism Matrix</div>
+            <div class="card-subtitle">Which mechanisms were tried, where, and what happened</div>
+            <p class="text-muted">
+                The cross-ISO test ledger: every mechanism against every
+                market, armed or rejected or untested, each verdict with its
+                evidence citation. The record of what has already been tried
+                so it is not re-tested without new evidence.
+            </p>
+            <span class="link-card-cta">Read the ledger &rarr;</span>
+        </a>
 
-            <div class="upd-block">
-                <h3>Why it matters</h3>
-                <p>
-                    The dispatch solves the whole year as one optimization, which
-                    gives storage <em>perfect foresight</em> over all 8,760
-                    hours &mdash; it charges in the globally-cheapest hours and
-                    discharges in the dearest, a level of clairvoyance no real
-                    operator has (day-ahead markets see ~24&ndash;48&nbsp;hours).
-                    That over-flattens net load and can bias the thermal
-                    parameters we calibrate against history. The daily-cycling
-                    toggle caps storage to <em>within-day</em> arbitrage &mdash;
-                    the realistic limit for the short-duration (4-hour) batteries
-                    that make up the 2023&ndash;2024 fleet, which physically
-                    cannot shift energy across days anyway.
-                </p>
-            </div>
-
-            <div class="upd-block">
-                <h3>Measured impact &mdash; foresight on vs. off</h3>
-                <p>
-                    Two matched backcasts on current code, identical except for
-                    the toggle: <strong>run&nbsp;27</strong> (foresight on,
-                    annual-cyclic) and <strong>run&nbsp;28</strong> (foresight
-                    off, daily cycling), ERCOT 2023&nbsp;&amp;&nbsp;2024,
-                    P0/P1 only.
-                </p>
-                <table class="impact-table">
-                    <thead><tr>
-                        <th>Metric (2023+2024)</th>
-                        <th>Foresight on<br>(run 27)</th>
-                        <th>Foresight off<br>(run 28)</th>
-                        <th>Change</th>
-                    </tr></thead>
-                    <tbody>
-                        <tr><td>Peaker (CT) generation</td><td class="num">24.33 TWh</td><td class="num">24.36 TWh</td><td class="num">+0.12%</td></tr>
-                        <tr><td>Gas CC generation</td><td class="num">347.14 TWh</td><td class="num">347.16 TWh</td><td class="num">+0.01%</td></tr>
-                        <tr><td>Coal generation</td><td class="num">124.09 TWh</td><td class="num">124.06 TWh</td><td class="num">&minus;0.02%</td></tr>
-                        <tr><td>Average LMP</td><td class="num">$31.88</td><td class="num">$31.90</td><td class="num">+$0.01</td></tr>
-                        <tr><td>P99 LMP</td><td class="num">$58.60</td><td class="num">$58.71</td><td class="num">+$0.10</td></tr>
-                        <tr><td>Hours above $200</td><td class="num">318</td><td class="num">318</td><td class="num">0</td></tr>
-                    </tbody>
-                </table>
-                <div class="verdict">
-                    <strong>Verdict: negligible &mdash; and that is the finding.</strong>
-                    Removing storage's perfect foresight changed every fossil
-                    class by less than <strong>0.12%</strong> and nudged the
-                    average price by a single cent, with peak prices and
-                    scarcity hours untouched. The direction is exactly as
-                    expected &mdash; with foresight off, peakers run a hair
-                    <em>more</em> (storage no longer shaves every peak
-                    perfectly) and baseload coal a hair <em>less</em> &mdash;
-                    but the magnitude confirms that the single-LP foresight
-                    assumption is <strong>not distorting the 2023&ndash;2024
-                    backcast</strong>. That holds because the historical fleet
-                    is almost entirely 4-hour batteries, which physically can't
-                    shift energy across days no matter how far ahead they see.
-                    The toggle is kept as a guard: the moment longer-duration
-                    storage (12&nbsp;h+, flow, iron-air) enters a backcast, this
-                    same comparison should be re-run, where the gap is expected
-                    to widen.
-                </div>
-            </div>
-
-            <div class="upd-meta">
-                Runs: <code>run27_foresight_on</code>,
-                <code>run28_foresight_off</code> &middot; see them side by side in
-                the <a href="docs/codebase-site/backcast-runs.html#iso=ERCOT">Backcast Run Explorer</a>.
-            </div>
-        </article>
-
-    </div>
+    </section>
 
 </main>
 
 <footer class="page-footer">
-    Model changelog &middot; Impact measured against EPA CAMPD / EIA actuals &middot;
+    Model change record &middot; Impact measured against EPA CAMPD / EIA actuals &middot;
     <a href="index.html">Project home</a>
 </footer>
 
