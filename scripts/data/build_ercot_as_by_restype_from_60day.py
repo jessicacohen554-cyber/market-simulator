@@ -10,7 +10,7 @@ resource, map the ERCOT ``Resource Type`` code to the model's plant class, and
 total by class on the fixed non-leap 8760-hour clock.
 
 This is **measured** data — it replaces the intensity-transfer ESTIMATE in
-``scripts/archive/build_ercot_storage_as_2023_estimate.py`` for 2023. Crucially, the 60-Day
+``build_ercot_storage_as_2023_estimate.py (retired script, deleted 2026-09-05)`` for 2023. Crucially, the 60-Day
 files are named by *disclosure* date (~60 days after delivery), so a delivery
 year is spread across several files and the year's tail spills into the next
 year's files; we therefore load ALL files and filter on the actual

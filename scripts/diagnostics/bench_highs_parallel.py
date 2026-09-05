@@ -24,7 +24,7 @@ on **>=10 % cold-P0 wall improvement AND identical objective/prices**
 baseline doc so it is not re-run.
 
 Input LPs are the archived captures written by
-``scripts/archive/bench_cold_solve.py capture`` (frozen history — read, never
+``scripts/diagnostics/bench_cold_solve.py capture`` (frozen history — read, never
 edited): ``results/bench_capture_<ISO>_<year>[_coopt].pkl``, holding the real
 ``(fleet, demand, build_kwargs, mc0, mc1)`` off the production
 ``pipeline.solve`` seam.
@@ -35,7 +35,7 @@ vectors across settings.
 
 Usage:
     # capture first (heavy; the archived capture driver):
-    PYTHONPATH=src:. python scripts/archive/bench_cold_solve.py capture \\
+    PYTHONPATH=src:. python scripts/diagnostics/bench_cold_solve.py capture \\
         --iso ERCOT --year 2023
 
     # then bench (spawns one subprocess per setting, sequentially):
@@ -66,7 +66,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent.parent.parent
 RESULTS = ROOT / "results"
 # The archived capture driver's naming, mirrored so this script reads the same
-# files (scripts/archive/bench_cold_solve.py::_cap_path).
+# files (scripts/diagnostics/bench_cold_solve.py::_cap_path).
 CAPTURE_FMT = "bench_capture_{iso}_{year}{coopt}.pkl"
 
 # HiGHS ``parallel`` values swept. ``choose`` is the production default (the
@@ -113,7 +113,7 @@ def run_one(iso: str, year: int, coopt: bool, setting: str, out: Path) -> dict:
     path = _capture_path(iso, year, coopt)
     if not path.exists():
         raise SystemExit(
-            f"no capture at {path} -- run: scripts/archive/bench_cold_solve.py "
+            f"no capture at {path} -- run: scripts/diagnostics/bench_cold_solve.py "
             f"capture --iso {iso} --year {year}{' --coopt' if coopt else ''}"
         )
     with open(path, "rb") as fh:

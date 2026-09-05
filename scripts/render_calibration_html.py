@@ -934,7 +934,7 @@ def _actual_avg_lmp(iso: str, year: int) -> dict | None:
     rec = _actual_lmp_table().get(str(iso), {}).get(str(int(year))) or {}
     # Key order is the bench-part serialization order — the v2.4 lw fields
     # append after the legacy equal-hour fields (matching the committed-part
-    # retrofit in scripts/archive/retrofit_lw_price_bench.py, so re-renders are
+    # retrofit in retrofit_lw_price_bench.py (retired script, deleted 2026-09-05), so re-renders are
     # byte-stable).
     out = {
         k: rec[k]

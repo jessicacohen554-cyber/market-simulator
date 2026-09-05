@@ -1,7 +1,7 @@
 """Zonal-report library helpers (thermal classes + bin-sheet zone map).
 
 The CLI that prints the zonal net-export / thermal-miss-by-zone report for a
-calibration bundle lives in ``scripts/reldeploy_zonal_report.py``; this module
+calibration bundle lives in ``reldeploy_zonal_report.py (retired CLI, deleted 2026-09-05)``; this module
 holds the reusable pieces (``THERMAL`` and ``_zone_map``) that the CLI and the
 probes share.
 """

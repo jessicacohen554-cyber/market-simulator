@@ -130,19 +130,6 @@ def available_years(costs: pd.DataFrame) -> set[int]:
     return {int(y) for y in costs["year"].unique()}
 
 
-def plant_state_map(costs: pd.DataFrame) -> dict[int, str]:
-    """Return ``{plant_id: state}`` from the cost table's ``state`` column.
-
-    Empty when the table predates the ``state`` column (older parquets
-    built before :mod:`scripts.data.process_f923_fuel_costs` carried it), so the
-    state-level fallback simply degrades to the zonal one.
-    """
-    if "state" not in costs.columns:
-        return {}
-    sub = costs[["plant_id", "state"]].dropna()
-    return {int(p): str(s) for p, s in zip(sub["plant_id"], sub["state"]) if str(s)}
-
-
 def state_month_price_grid(
     costs: pd.DataFrame,
     year: int,

@@ -248,7 +248,7 @@ storage`), and EIA-923 coal-rank code.
 - `PLANT_CLASSES` — registry of `PlantClass(key, fuel930, label, fossil)` for all
   classes (COAL*, CC_REGULAR/CC_CHP, CT_PEAKER/CT_CHP, ST_GAS/ST_CHP, nuclear,
   hydro, wind, offshore_wind, solar, oil, biomass, geothermal, storage, OTHER).
-- Lookups: `class_label`, `fuel930_of`, `is_fossil`, `fossil_classes`,
+- Lookups: `class_label`, `fuel930_of`, `fossil_classes`,
   `nonfossil_classes`, `classes_for_fuel930`.
 - Coal-rank chain: `COAL_CODE_TO_SUPPLY` (BIT→bituminous, SUB→prb, LIG→lignite, …)
   → `COAL_SUPPLY_TO_CLASS` → `coal_code_to_class`.

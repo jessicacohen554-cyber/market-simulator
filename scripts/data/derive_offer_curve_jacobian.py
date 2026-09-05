@@ -147,7 +147,7 @@ GAS_NONCHP_CLASSES = ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
 ACTUAL_LMP_JSON = CALIBRATION_DIR / "actual_lmp.json"
 
 # Fixed non-leap dispatch calendar (matches market_sim.data.campd and
-# scripts/archive/analyze_lmp_residual.py).
+# analyze_lmp_residual.py (retired script, deleted 2026-09-05)).
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _MONTH_START_HOUR = tuple(int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(13))
 
@@ -659,7 +659,7 @@ def _load_cache() -> dict:
 def class_totals(b: Bundle, cache: dict) -> pd.DataFrame:
     """Per (year, klass): model TWh (grid + BTM add-back) and EIA-923 TWh.
 
-    Mirrors scripts/archive/compare_runs_classes.py. Thermal response classes are the
+    Mirrors compare_runs_classes.py (retired script, deleted 2026-09-05). Thermal response classes are the
     upper-case klass values in dispatch (excluding OTHER). Bundles without
     btm.parquet (older PJM format) get btm_twh=0 — pair deltas stay valid as
     long as BTM config didn't change inside the pair, which pure pairs satisfy.
