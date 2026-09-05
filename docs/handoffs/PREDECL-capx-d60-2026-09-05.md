@@ -824,3 +824,119 @@ plus an editable install of the package, then one `scripts/regenerate_clean.py` 
 D60 discipline of regenerating `data/clean` **once** before the first solve, not per leg.
 Recorded because the wall-clock figures in §5 of the finding are per-leg solve times and do
 not include it.
+
+---
+
+## Addendum D (2026-09-05) — DIRECTOR AMENDMENT 2 (r#39) absorbed: the seven Q37 attestation rows, pre-declared BEFORE any row is authored and before the first D60-R2 solve
+
+Amendment 2 resolves leg 2's P10 STOP under **owner ruling Q37** (r#34, rubric §5 second
+limb): *a follow-up lane may author an attestation iff pre-declared before authoring,
+attestation row only, artifact-only re-score.* This addendum is that pre-declaration. It is
+pushed **before a single row is written, before `caiso-t1f` is launched, and therefore before
+any of the three outstanding legs' FC-7 rows have been read** — which is the whole point of
+the sequence: D46 refused to author an instrument *after* reading that it failed a row, leg 2
+refused it again, and Q37's limb exists so the fix can be taken in the honest order instead.
+
+**What is being repaired, stated once.** FC-7's DOF-ledger row scores a ledger entry carrying
+the literal token `unattested` **exactly as it scores a missing ledger** — CAVEAT at t1, FAIL
+at t3 (`scripts/forecast_verdict.py::_dof_ledger_row`). `scripts/build_forecast_dof_ledger.py`
+emits that token for any non-default solve-affecting field with **no curated identification
+row**, and it *reports* identification, never supplies it (rule 21). So arming a field whose
+identification is already committed to the repository, without also writing its curated row,
+mechanically degrades FC-7 — a **measurement gap, not a model gap**. The rows below close it.
+
+### D.1 The seven rows, exactly as they will be written
+
+All seven go in **`CURATED_IDENTIFICATIONS` in `scripts/build_forecast_dof_ledger.py`** — the
+D8 / D8-V instrument, the same committed, reviewed surface D50's and D52's rows live in.
+**No `run_config`, no solve, no verdict edited by hand.** Six are new; the seventh
+(`ccs_retrofit_capex_co2_scaling`) is **already committed by D50** and is listed for
+completeness with what the Q42 flip did to it.
+
+Every new row is keyed `(ISO, field)` — never `("*", field)` — so it is **rule 25
+`[R-ISO-SCOPE]`-scoped by construction**: it cannot identify another ISO's value even if that
+ISO later arms the same field. Every new row carries `requires: "iso-registry"`, so the
+builder applies it **only** when the run's value byte-matches the live registered override; a
+run carrying the field from anywhere else stays UNIDENTIFIED and the artifact records the
+refusal.
+
+| # | key | identification | source (what identifies the value) | evidence (committed) | rule-13: does it regenerate forward? | rule-21 DOF |
+|---|---|---|---|---|---|---|
+| 1 | `("NYISO", "nyiso_requirement_forecast_peak")` | `design-decision` | Prices the NYCA requirement on the **NYSRC ICAP-market forecast peak of the capability year** (IRM Study Appendices Table D.2 col. 1) instead of the model's own peak; a capability year outside the published table returns the model's peak **unchanged**, so the forward horizon keeps a forecast peak and never a held-last MW. A published market-design input, not a magnitude. | `_nyiso_config` `default_scenario_overrides` cite block; `FINDING-capx-d52-2026-09-04.md` §8(1); the digitized rows in `data/raw/demand-curve/nyiso/nyiso.csv`, reconciled to source by test | **Yes.** Each capability year's row is published before that year begins and is read in model year Y only (vintage-gated); the identical construction regenerates from the next Gold Book / IRM Study with no re-fit. | **Zero.** A selector, not a magnitude — the peak is read, never chosen. |
+| 2 | `("NYISO", "nyiso_requirement_vintage_factors")` | `design-decision` | Prices the requirement **factor** at that capability year's **EC-adopted IRM × (1 − NYCA derate)** (Table D.2 cols. 2–3) instead of the single mixed vintage 1.244 × (1 − 0.1321); beyond the last published pair it **holds that pair's ratio**, 1.244 × 0.870 = 1.0823. In-table, the requirement IS Table D.2's published NYCA UCAP requirement to under 1 MW. | same cite block; `FINDING-capx-d52-2026-09-04.md` §8(1); LOYO 3/3 with an identical fleet, FC-3 byte-identical at the shipped default | **Yes**, identically vintage-gated; the hold-last limb is the documented behaviour beyond the table, not an extrapolated fit. | **Zero.** Every factor is a published adopted value. |
+| 3 | `("MISO", "adequacy_accounting_ratio_dated_net")` | `design-decision` | Selects **D31's own arithmetic with the denominators net of the step-1b fossil-dates channel's accredited exits** — 0.854600 → **0.893436**, derived from three committed inputs and reconciled by test. The gate chooses *which consistent accounting* is used; it supplies no number. | `_miso_config` `default_scenario_overrides` cite block (owner ruling Q40); `FINDING-capx-d51-2026-09-04.md` §1.3 (construction) and §7 (the four limbs, incl. limb (c) failing by the letter and the owner's decision on the measured cause) | **Yes.** The ratio is recomputed by the same construction from whatever the dated channel holds in a forward year; it responds to a changed fleet by construction. | **Zero free parameters** (D51 §1.3). Note the token: `design-decision` is admissible here because the *gate* is boolean — the builder itself refuses to attach it to a numeric magnitude. |
+| 4 | `("PJM", "pjm_accreditation_design_vintage")` | `design-decision` | Reads the accreditation design **of the delivery year being screened**: UCAP + the published **pre-CIFP FPR** before DY 2025/26, ELCC class + **post-CIFP FPR** from it. A published design vintage, applied by date. | `_pjm_config` `default_scenario_overrides` cite block (owner ruling Q44, in-session on the D57 A/B); `FINDING-capx-d48-*` / `DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md`; `FINDING-capx-d57-2026-09-05.md` §8.1 | **Yes.** A forward delivery year takes the design in force for it; nothing is fitted to a residual. | **Zero.** Published design selection. |
+| 5 | `("PJM", "pjm_demand_response_supply")` | `design-decision` | Counts the **published OFFERED DR UCAP as supply** with the peak un-netted, instead of netting DR off the peak — the accounting PJM's own auction uses. | same cite block; capx D48 | **Yes.** The offered DR UCAP is a published auction quantity available for any forward delivery year. | **Zero.** An accounting-side selection; no MW is invented. |
+| 6 | `("PJM", "capacity_market_supply_clearing_by_iso")` | `design-decision` | Clears the fleet's **net-ACR sell-offer stack** (`offer = max(0, going-forward cost − E&AS margin) / accredited MW`, every other accredited MW a $0 price taker) against the **delivery year's published VRR curve**, so the screen's failing set IS the auction's uncleared set. Every operand is the screen's own. | `_pjm_config` cite block; `DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md` §3.7 (DOF ledger: zero); `FINDING-capx-d57-2026-09-05.md` §8.1 | **Yes.** The VRR curve is published per delivery year; the offer stack is computed from the fleet's own costs. | **Zero** (design §3.7). Value is `{"PJM": True}` — a dict of booleans, **no numeric leaf**, so the builder's magnitude guard is satisfied. |
+| 7 | `("*", "ccs_retrofit_capex_co2_scaling")` | `design-decision` | **ALREADY COMMITTED by D50** — the capture island sized to the host's captured CO2 against the ATB reference host, `captured_ref` = 0.90 × 6.3 × 0.057 = **0.32319 t/MWh**, every term an existing cited constant; CC_CHP hosts excluded on the electric-only ATB/NETL basis. | `ccs.py::ccs_retrofit_captured_ref_t_per_mwh`; `FINDING-capx-d49-2026-09-04.md` §1.4–§1.5; `PREDECL-capx-d50-2026-09-04.md` §1; `FINDING-capx-d50-2026-09-04.md` | Yes (D50). | **Zero** (D50 §1.2). |
+
+**Row 7 needs no edit and gets none** — and D60-R2 states the consequence of its own flip
+rather than letting it pass silently: Q42 made this field the **dataclass default**, and the
+ledger enumerates **non-default** solve-affecting fields, so the field **no longer appears in
+any post-flip bundle's ledger at all** and its curated row is now dormant. It is left in place
+(a run that carries the field explicitly still matches `expected: True`), and this is exactly
+the mechanism P20 pre-declared for GOLDEN-3: the flip adds **no eighth ledger entry**.
+
+**What is NOT written, and why.** Six is the count of new rows, not seven, and the scope is
+the seven fields Amendment 2 enumerated — **nothing else**. In particular the five OTHER
+MISO registry overrides that read `unattested` today (`entry_vre_capacity_revenue`,
+`entry_vre_zone_selection`, `miso_rps_compliance_regions`, `miso_clean_tier_rows`,
+`retirement_sector_gate`) and CAISO's one (`negative_renewable_offers`) are **left
+untouched**. They pre-date this batch, Q37's limb does not reach them, and this lane holds no
+pre-declared identification for them. They are **routed**, not absorbed — and §D.3 states
+plainly what that costs each key.
+
+### D.2 The keys whose FC-7 the rows change — expected before → after, pre-declared
+
+Measured from each bundle's committed `dof_ledger.json` where one exists, and from the ISO's
+live `default_scenario_overrides` where the leg has not run yet. The **only** ledger entries
+any t1f/t3 bundle carries are `forecast_xyear_warmstart` (already `design-decision`) plus that
+ISO's registry overrides.
+
+| bare key | ledger today (or as the leg will emit it) | FC-7 now | after the six rows | determination now → after |
+|---|---|---|---|---|
+| `nyiso-t1f` | 3 entries, **2 unattested** (both Q41 gates) | **CAVEAT** | 3/3 identified → **PASS** | **PROMOTE-WITH-CAVEATS → PROMOTE** |
+| `miso-t1f` | 7 entries, **6 unattested** (the ratio + **five** pre-existing MISO overrides) | **CAVEAT** | ratio identified; **five still unattested** → **CAVEAT** | **HOLD → HOLD** (FC-7 stays a caveat) |
+| `caiso-t1f` (leg 3) | will emit 2 entries, **1 unattested** (`negative_renewable_offers`, pre-existing) | CAVEAT (control reads CAVEAT) | **CAVEAT — unchanged; no row of the six touches CAISO** | **HOLD → HOLD** |
+| `pjm-t1f` (leg 4) | will emit 4 entries, **3 unattested** (exactly D57's three gates) | would read **CAVEAT** | 4/4 identified → **PASS** | pre-declared **HOLD → HOLD** (P24 already pre-declared FC-7 **PASS**, which without these rows it could not have reached) |
+| `neiso-t3` (leg 5) | will emit **7 entries, 0 unattested** (six NEISO ORDC/scarcity rows, all curated `published` by D8, plus warmstart) | **PASS** | **PASS — unchanged; no row of the six touches NEISO** | **HOLD → HOLD** |
+
+Two of these are worth stating as blunt negatives rather than leaving to be inferred:
+
+- **MISO's FC-7 does NOT clear.** The ratio row is written and MISO's ledger still reads
+  CAVEAT, because five MISO overrides outside this batch remain unattested. Writing only the
+  authorized row and reporting the caveat that survives is the honest outcome; widening the
+  scope to make a row read PASS is the thing Q37's limb is narrow in order to prevent.
+- **CAISO's and NEISO's FC-7 are untouched by this work entirely.** CAISO keeps its
+  pre-existing caveat; NEISO already passes.
+
+### D.3 FC-7 is the ONLY row that may move — and anything else is a STOP
+
+A `CURATED_IDENTIFICATIONS` row is read by **one consumer**,
+`build_forecast_dof_ledger._apply_curation`, and it can set only an entry's
+`identification` / `status` / `source` / `evidence` / `provenance`. It **cannot** reach a
+`ScenarioConfig` field, a cache key, a solve, a trajectory, an invariant or any other FC
+category. So the re-scores of Amendment 2 step 3 are **artifact-only** in the strict sense:
+same bundle, same bytes, same key, a re-run of `forecast_verdict.py --tier` over a ledger
+whose *labels* changed.
+
+**Therefore: FC-7 is the only row that may move.** If any other row moves — any FC-1
+invariant, any FC-2 row, FC-3, FC-4, FC-5, FC-6, FC-8, or a determination changing for any
+reason other than FC-7's own status — that is a **model effect the rows cannot own**, and it
+is **STOP-and-route**: reported at full magnitude, escalated, **not registered**. It would
+mean either the ledger builder or the scorer has a side effect neither is supposed to have,
+and no attestation row may be allowed to carry that through to a board determination.
+
+**And the two determinations this is expected to move, stated in advance so neither is a
+surprise at reading time:** `nyiso-t1f` **PROMOTE-WITH-CAVEATS → PROMOTE** (the P10 STOP's
+repair, and the whole reason Amendment 2 exists) and **nothing else**. `miso-t1f`,
+`caiso-t1f`, `pjm-t1f` and `neiso-t3` are pre-declared to hold their determinations across
+the re-score. A determination moving anywhere else is covered by §7 STOP 6.
+
+### D.4 Order
+
+Addendum D lands **now** (before leg 3). The **rows themselves** are written and the
+**re-scores** run after the last leg registers, so that all five bundles are re-scored once,
+at one sha, against one committed table — and so that no leg's FC-7 is read before its
+identification row was pre-declared here. Every re-score happens **after that leg's final
+rebase** (X-6b: no orphaned `scored_at_sha`).
