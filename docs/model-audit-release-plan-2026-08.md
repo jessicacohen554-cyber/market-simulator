@@ -6406,3 +6406,12 @@ your branch when done.
   workflow, every bundle/sidecar/registry file, every golden manifest. **No solve, no score, no
   registration.** *(The clone was deepened, trees only, to test FR-21's reachability claim —
   read-side git, no working-tree change.)*
+  **POST-CLOSE CODA AT `3cdf1cac`:** one merge landed between poll 2 and the push — **#4739**
+  (`20a47b55`, 00:23:37Z) from the between-polls head `claude/caiso-backcast-calibration-wh2iqt`,
+  deleting exactly the three tracked files of `caiso246_b1_spot_coverage` and nothing else (no
+  protected surface, no records file). Rebased and re-run: `check_registry_payload_parity`
+  **exit 0** (65 runs, 106 dirs), `check_golden_manifest` **exit 0** — **all seven gates exit 0
+  at `3cdf1cac`**. The parity red was a **21-minute transient** (00:02:55Z–00:23:37Z), cleared by
+  deletion rather than registration; **Y-5(ii) discharged**; the flip set at the next CI-covered
+  head should read **4 of 6** (Ruff format + Fast tier still red). Everything else stands at
+  `d9f034f0`. Z-3 generalised: a gate red carries an expiry too.

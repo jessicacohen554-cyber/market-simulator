@@ -276,6 +276,28 @@
 > registry file, every golden manifest. **No solve, no score, no registration.**
 > *(Method note: the clone was deepened, trees only, to test the FR-21
 > reachability claim — a read-side git operation, no working-tree change.)*
+>
+> ### 🟢 POST-CLOSE CODA AT `3cdf1cac` — THE PARITY RED WAS A **21-MINUTE TRANSIENT**, AND THE PIN MOVED ONE COMMIT AFTER POLL 2
+>
+> Between poll 2 (00:20Z) and the push, `origin/main` advanced **one merge**:
+> `3cdf1cac`, **#4739** at **00:23:37Z** (`20a47b55`, *"caiso-246: drop the
+> prior session's partial 2023 sidecars before the fresh three-year B1 solve"*),
+> from the new `claude/caiso-backcast-calibration-wh2iqt` head that appeared
+> between the polls. It **deletes exactly the three tracked files** of
+> `results/calibration/caiso246_b1_spot_coverage` and touches nothing else —
+> no keeper shard, marker, status file, freeze file, matrix shard, workflow or
+> records file. This lane rebased onto it and re-ran the two gates it can move:
+> `check_registry_payload_parity.py` → **exit 0** (65 runs, 106 dirs, 0
+> tolerated); `check_golden_manifest.py` → **exit 0**. **So at `3cdf1cac` all
+> seven gates exit 0** (the other five re-derived on surfaces the commit did
+> not touch). The parity red above stood from 00:02:55Z to 00:23:37Z — cleared
+> by **deletion** this time, not registration, because the checkpoint was the
+> prior session's partial output. **Y-5(ii) is discharged**, and the R-AE flip
+> set at the next CI-covered head should read **4 of 6** (Ruff format and the
+> Fast tier still red on the D51/D52 and caiso-245 loose ends; Rule-22's
+> `check_golden_manifest` step will finally run once parity passes). Everything
+> else in this entry is unchanged by the coda and stands at `d9f034f0`. **Z-3
+> generalised**: a gate red carries an expiry too.
 
 > # 🟢 v26 (2026-09-04, pin `8a18e9e1`) — **Y-4 LANDED. THE PATH-FILTER TRAP IS CLOSED — AND IT HAS ALREADY FIRED ON A RECORDS PR. THE FLIP SET IS 5 OF 6, ONE KEEPER-RECIPE DECLARATION FROM DONE. AND R-AF IS RECORDED NOWHERE.**
 >
