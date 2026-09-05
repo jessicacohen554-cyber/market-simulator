@@ -87,6 +87,14 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "CARB_FLOOR_PRICE",
         "CapAndTradeProgram",
         "CapacityDemandCurvePoint",
+        # capx D57 (2026-09-05): the supply-clearing gate's pre-priced
+        # capacity object, its resolver and the resolver's log-once refusal
+        # set — added to capacity_market.py by the D57 build, registered here
+        # (and re-exported from the constants facade) in the same PR, so the
+        # BLOCKING refactor-guards job stays green. Private names are in
+        # scope for both the inventory and the facade (cf. the D59 note
+        # below). No value touched.
+        "ClearedCapacityPrice",
         "DEFAULT_MARKET_DESIGN",
         "ERCOT_AS_REVENUE_PER_KW_YR",
         "ERCOT_AS_SATURATION_EXPONENT",
@@ -230,6 +238,7 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "_PJM_VRR_CURVE",
         "_PJM_VRR_CURVE_2027_2028",
         "_PJM_VRR_CURVE_2028_2029",
+        "_SUPPLY_CLEARING_REFUSED_LOGGED",  # capx D57, see the note above.
         "_neiso_fca_vintage_curve",
         "_nyiso_icap_vintage_curve",
         "evaluate_demand_curve",
@@ -239,6 +248,8 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "resolve_caiso_ra_mpb_anchor",  # FFR-4F, see the note above.
         "resolve_capacity_curve_eligible",
         "resolve_capacity_market_clearing",
+        # capx D57, see the note above.
+        "resolve_capacity_market_supply_clearing",
         "resolve_demand_curve_vintage",
         "resolve_locality_curve_vintage",  # capx D59, see the note above.
         "resolve_locality_gross_cone_ratio",  # capx D59, see the note above.
