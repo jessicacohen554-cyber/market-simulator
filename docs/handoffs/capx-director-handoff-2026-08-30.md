@@ -1,4 +1,4 @@
-# Capacity-Expansion Director — successor handoff (2026-09-05, refresh #40; r#31 REWRITE base)
+# Capacity-Expansion Director — successor handoff (2026-09-05, refresh #40 + am.1; r#31 REWRITE base)
 
 Supersedes the r#32 revision as the live successor prompt. Paste the block below verbatim
 to open the next director session. The ledger (`capx-director-ledger-2026-08.md`) remains
@@ -107,9 +107,10 @@ STATE AT HANDOFF (r#40, main HEAD 4d4dc6ce, 2026-09-05 — VERIFY, DON'T TRUST):
   the re-scores, finding §5/§8. Pre-declared: miso-t1f's FC-7 will NOT clear (five pre-batch
   MISO overrides without rows → D63); CAISO keeps its negative_renewable_offers caveat.
 - IN FLIGHT / ISSUED: D60-R2 RUNNING · D58 held on it · T3-NYISO-GOLDEN HELD (Q45 lapsed with
-  the marker; re-served only when a CALIBRATED NYISO keeper re-enters `complete`) · D61 issued,
-  unlaunched · D63 (MISO/CAISO DOF-row identification records lane) NAMED, issue on D60-R2's
-  landing. Owner track: nyiso-194 killed the owner-named duct-burner lever on its one-year
+  the marker; re-served only when a CALIBRATED NYISO keeper re-enters `complete`) · D61 issued
+  (r#38, re-emitted r#40 am.1; Fable, docs-only) · D64 issued (r#40 am.1; the D50 fourth seam,
+  CCS ΔFOM/VOM per captured tonne, zero-solve, Fable) · D63 (MISO/CAISO DOF-row identification
+  records lane) NAMED, issue on D60-R2's landing. Owner track: nyiso-194 killed the owner-named duct-burner lever on its one-year
   screens (rule 29); caiso-252 named the import DIURNAL shape as the CC_REGULAR C4 object;
   miso-219 found the evening tail unreachable by any registered field; the audit desk holds
   the branch-protection flip (owner click-path), the bench-fingerprint proposal, and the
