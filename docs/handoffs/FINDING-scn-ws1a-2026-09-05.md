@@ -254,9 +254,61 @@ test_interchange_config.py`, `tests/unit/data/test_capacity_deliverability_wirin
 `tests/iso/caiso/test_caiso_per_hub_intertie.py`, `test_caiso_intertie_forward.py`,
 `tests/unit/pipeline/test_runner.py` (62 passed).
 
-### 3.2 The CAISO T0 pair (precommit §0.4)
+### 3.2 The CAISO T0 pair (precommit §0.4) — every gate row PASSES; arm not killed
 
-_(filled by the T0 commit)_
+Solved on this branch's code (post-fix tree) after a full `data/clean` regeneration (55
+datatypes, green): `run_driver_battery.py --iso CAISO --start-year 2026 --end-year 2026
+--paired-arm {base,carbon_plus25}` — the FC-6 construction, `golden_posture=True`, `cmc=False`.
+Records: `docs/handoffs/scn-ws1a/t0/` (both `full_horizon_summary.json` + `run_config.json`,
+the scoring instrument and its JSON, the launch script, the pair log).
+
+| arm | cache key | wall | peak RSS | resolved carbon 2026 | CO2 Mt | load-weighted price $/MWh | max hourly $/MWh |
+|---|---|---|---|---|---|---|---|
+| base | `706eec14f63096e8` | 7.1 min | 4.88 GB | 30.0242 | 30.5116 | 55.32 | 70.7 |
+| carbon_plus25 | `f129fd3720e3e874` | 7.3 min | 4.55 GB | 55.0242 | 29.6034 | 65.141 | 83.3 |
+| **Δ** | | | | **+25.00** | **−0.908 (−3.0 %)** | **+9.82 (+17.8 %)** | +12.6 |
+
+**Precommit gate rows (§0.4), all structural:**
+- Premise `P1.premise` PASS — Δ = +25.00 $/t exactly, the resolver both arms see.
+- Zero-EF tranches' offers unchanged → their dispatch is byte-identical: PNW_hydro_base 13,375
+  GWh and PNW_midC 15,453 GWh in both arms (Δ 0.0).
+- Carbon-bearing WECC import energy does not rise: DSW_CCGT, DSW_CT and the unspecified
+  `WECC_scarcity` block dispatch **0 GWh in BOTH arms** — they are out of merit at $79 / $127 /
+  $193/MWh against a $55 load-weighted price, so the +9.25 / +13.75 / +10.70 $/MWh offer moves
+  (§0.3) act on blocks the LP never clears in 2026. The offer-level claim ("the unspecified
+  block's offer moves by 0.428 × price") is therefore established on the runner's own fleet
+  construction (§0.3, the `vom` table), not on a dispatch change; the dispatch-level gate row
+  holds trivially (0 → 0).
+- CO2 does not rise (falls 0.91 Mt); price does not fall (+$9.82, ≈ Δcarbon × the marginal
+  gas-CC rate 0.37–0.40 t/MWh = $9.3–10.0, i.e. gas-CC is marginal in most hours and the
+  carbon adder passes through at the marginal unit's rate).
+- `P1` (CO2 monotone vs carbon) PASS: 30.51 → 29.60 Mt.
+
+**Footprint (by-fuel generation, GWh, base → arm):** gas_cc 77,579 → 75,351 (**−2,229**);
+import 42,072 → 44,300 (**+2,228**, entirely the zero-carbon DSW_solar_PV tranche: +2,228);
+gas_ct 978 → 1,068 (+90); coal 359 → 351 (−9); gas_st 1 → 3; nuclear / hydro / wind / solar /
+biomass **unchanged to the MWh**. So the response is in-state gas-CC displaced by uncarbonized
+solar import plus a small CC→CT re-ordering — confined to the fossil rows and the import
+substitution the higher in-state carbon cost buys, exactly the claimed footprint. Nothing
+outside it moved.
+
+**G-CTRL, reported not buried.** The base arm reproduces the committed `results/ff-t1f-d46/
+caiso` 2026 row **exactly** — by-fuel generation dict equal, CO2 30.5116 = 30.5116, price
+55.32 = 55.32 — even though the d46 bundle sits on a pre-D60 cache key (`772b1e5abc7fc80c`).
+Under rule 29 clause (b) that committed row was a valid form-4 control for 2026, and the base
+solve-year (7.1 min) was redundant; I spent it because the key difference read as a possible
+drift and I had not run the G-DRIFT audit on the d46 → HEAD delta first. The audit answer,
+now measured rather than argued: every solve-path change between the d46 commit and HEAD is
+INERT for CAISO 2026 (identical output). One solve-year was spent that the rule says to skip.
+
+**What the T0 does not show, as pre-declared:** nothing about `spec.py:1931` — the corridor
+field is dead (§0.3) and the corridor branch is not even entered under CAISO's shipped
+forecast posture (`caiso_per_hub_intertie` / `caiso_reference_price_seam` both off). The
+seam fix is proven at the unit level (§3.1) and is offer-inert by the zero-LP identity.
+
+**Registration.** The pair is a throwaway rule-29 screen (one year, one arm) — NOT registered
+on the forecast dashboard and not quoted as a keeper number. WS-1b's six-ISO paired probe
+(REF vs `carbon_price_path="mid"` post-repair) is the registrable CAISO carbon evidence.
 
 ## 4. Item 4 — the CAP-STATE-TIGHT case, pre-declared (NOT run)
 
@@ -472,7 +524,8 @@ guessing:
 ## 7. Records
 
 - Instruments and outputs: `docs/handoffs/scn-ws1a/` (Phase-0 trajectory `.py/.json/.txt`,
-  G-C2 seam census, import-offer table).
+  G-C2 seam census, import-offer table); `docs/handoffs/scn-ws1a/t0/` (the CAISO T0 pair:
+  summaries, run configs, scoring instrument + JSON, launch script, pair log).
 - Code: `src/market_sim/policy/cap_and_trade.py` (+`carbon_mc_column`), `src/market_sim/
   runner.py` (the `assemble_mc` call site + one import), `src/market_sim/model/interchange/
   spec.py` (the one corridor line), `tests/unit/policy/test_cap_and_trade.py` (+2 classes).

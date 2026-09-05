@@ -1,0 +1,84 @@
+{
+ "arms": {
+  "base": {
+   "run_dir": "/tmp/claude-0/-home-user-market-simulator/b4b6b0f8-d301-514a-ab7b-706ed88e44d3/scratchpad/t0/base/CAISO/706eec14f63096e8",
+   "cache_key": "706eec14f63096e8",
+   "wall_s": 424.4,
+   "co2_mt": 30.5116,
+   "lw_price": 55.32,
+   "import_gwh": {
+    "WECC_import_PNW_hydro_base": 13375.11839999895,
+    "WECC_import_PNW_midC": 15452.64,
+    "WECC_import_DSW_solar_PV": 13244.282176567927,
+    "WECC_import_DSW_CCGT": 0.0,
+    "WECC_import_DSW_CT": 0.0,
+    "WECC_import_WECC_scarcity": 0.0,
+    "WECC_import_export_solar": 0.0,
+    "WECC_import_export_curtail": 0.0
+   },
+   "carbon": 30.0242
+  },
+  "carbon_plus25": {
+   "run_dir": "/tmp/claude-0/-home-user-market-simulator/b4b6b0f8-d301-514a-ab7b-706ed88e44d3/scratchpad/t0/carbon_plus25/CAISO/f129fd3720e3e874",
+   "cache_key": "f129fd3720e3e874",
+   "wall_s": 435.2,
+   "co2_mt": 29.6034,
+   "lw_price": 65.141,
+   "import_gwh": {
+    "WECC_import_PNW_hydro_base": 13375.11839999895,
+    "WECC_import_PNW_midC": 15452.64,
+    "WECC_import_DSW_solar_PV": 15472.17531443588,
+    "WECC_import_DSW_CCGT": 0.0,
+    "WECC_import_DSW_CT": 0.0,
+    "WECC_import_WECC_scarcity": 0.0,
+    "WECC_import_export_solar": 0.0,
+    "WECC_import_export_curtail": 0.0
+   },
+   "carbon": 55.0242
+  }
+ },
+ "delta": {
+  "carbon": 25.0,
+  "co2_mt": -0.9082000000000008,
+  "lw_price": 9.821000000000005,
+  "import_gwh": {
+   "WECC_import_PNW_hydro_base": 0.0,
+   "WECC_import_PNW_midC": 0.0,
+   "WECC_import_DSW_solar_PV": 2227.8931378679536,
+   "WECC_import_DSW_CCGT": 0.0,
+   "WECC_import_DSW_CT": 0.0,
+   "WECC_import_WECC_scarcity": 0.0,
+   "WECC_import_export_solar": 0.0,
+   "WECC_import_export_curtail": 0.0
+  }
+ },
+ "paired_checker": [
+  [
+   "P1",
+   "CO2 monotone vs carbon",
+   "PASS",
+   "cumulative CO2 base 30.51 Mt vs high 29.60 Mt",
+   null
+  ],
+  [
+   "P1.premise",
+   "carbon pair premise",
+   "PASS",
+   "strictly positive delta in all 1 years (min +25.00, max +25.00 $/t)",
+   {
+    "years": [
+     2026
+    ],
+    "base": [
+     30.0242
+    ],
+    "high": [
+     55.0242
+    ],
+    "delta": [
+     25.0
+    ]
+   }
+  ]
+ ]
+}
