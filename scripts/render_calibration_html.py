@@ -1312,6 +1312,17 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             _measured_map = measured_chp_btm_pct_nyiso()
             if _measured_map:
                 _btm_measured = {c: p / 100.0 for c, p in _measured_map.items()}
+        # The MODEL-side add-back must mirror what THIS run's LP held out
+        # (fleet/assembly.py: the measured share under
+        # ``nyiso_chp_btm_measured``, the sector default otherwise). nyiso-192
+        # found the per-plant payload site adding the 35 % sector default on
+        # top of an LP that held out the measured share (0 % at Sithe
+        # Independence 54547): +2.1 TWh/yr of phantom flat energy on one plant,
+        # +6.6 TWh/yr across the NYISO CHP classes, inflating the nyiso-190/191
+        # plant-grain record 3x at its top row. [R-ACCURATE]
+        _btm_run_measured: dict[int, float] | None = (
+            _btm_measured if meta.get("nyiso_chp_btm_measured") else None
+        )
         run_years: dict[int, dict] = {}
         # Non-CEMS gas-class cogen block per rendered year — (grid, full-plant)
         # TWh — for the CEMS-anchor writer (EIA930_NG_CELL_CORRUPT ISOs): a
@@ -1965,7 +1976,10 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 # correlation-invariant (it corrects the level, not the shape).
                 if grp in ("CC_CHP", "CT_CHP", "ST_CHP"):
                     btm_mwh = float(_e13[0]) * _btm_share(
-                        code, grp, meta.get("iso", "ERCOT")
+                        code,
+                        grp,
+                        meta.get("iso", "ERCOT"),
+                        measured=_btm_run_measured,
                     )
                     if btm_mwh > 0.0:
                         mw = mw + btm_mwh / float(_T)
@@ -2283,7 +2297,10 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 # plant, unchanged; a multi-class plant's actual lands in the
                 # measured class instead of the collapsed one).
                 m_mon = _monthly_gwh(mw_p[key])  # grid-LP model GWh
-                _grid_frac = 1.0 - _btm_share(code, grp, _iso)
+                # Actual side: the MEASURED share whenever the artifact exists,
+                # the bench-side convention (nyiso-149) — a physical fact,
+                # independent of the registering run's flag.
+                _grid_frac = 1.0 - _btm_share(code, grp, _iso, measured=_btm_measured)
                 a_mon = (
                     e923_slices.get(code, {}).get(grp, np.zeros(13))[1:] / 1e3
                 )  # EIA-923 GWh

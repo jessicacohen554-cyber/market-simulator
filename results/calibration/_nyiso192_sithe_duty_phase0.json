@@ -1,0 +1,219 @@
+{
+  "session": "nyiso-192",
+  "object": "1 \u2014 Sithe Independence 54547 duty object (phase 0, no LP, no lever)",
+  "run": "2026-09-05-nyiso-189-steam-identity",
+  "census_rule": {
+    "plant_code": "54547",
+    "plant_name": "Independence",
+    "cells": "18",
+    "cells_zero": "0",
+    "pooled_median_mw": "752.0",
+    "observed_hsl_mw": "1187.485",
+    "online_share": "0.8439",
+    "laid_up": "False",
+    "verdict": "operating"
+  },
+  "by_year": {
+    "2023": {
+      "published": {
+        "m_ann_twh": 5.653,
+        "campd_twh": 4.057,
+        "over_twh": 1.596,
+        "hourly_max_mw": 1285.0
+      },
+      "sector_addback_mw": 161.5,
+      "lp_capacity_mw": 1157.8,
+      "lp_avail_max": 0.972,
+      "corrected": {
+        "lp_twh": 4.238,
+        "campd_twh": 4.057,
+        "over_twh": 0.181,
+        "lp_hourly_max_mw": 1124.0,
+        "campd_hourly_max_mw": 1216.0,
+        "lp_cf_on_available_cap": 0.658,
+        "campd_cf_on_available_cap": 0.63,
+        "on_share_lp": 0.734,
+        "on_share_campd": 0.748,
+        "gap_meas_off_lp_on_twh": 0.306,
+        "gap_both_on_level_twh": 0.171,
+        "gap_lp_off_meas_on_twh": -0.296,
+        "loading_when_on_p50_lp": 834.0,
+        "loading_when_on_p50_campd": 672.0
+      },
+      "offer_position": {
+        "mc_mean_committed": 19.5,
+        "mc_mean_econ05": 23.96,
+        "mc_mean_peak": 37.92,
+        "in_merit_econ05_vs_model_uw": 0.554,
+        "in_merit_econ05_vs_actual_zone_c": 0.58,
+        "in_merit_econ05_vs_actual_uw_mean": 0.541,
+        "price_mean_model_uw": 24.64,
+        "price_mean_actual_zone_c": 26.62,
+        "share_hours_actual_c_below_20": 0.296,
+        "share_hours_model_uw_below_20": 0.288,
+        "p05_actual_c": 6.7,
+        "p05_model_uw": 1.4,
+        "trough_flip_hours": 1333,
+        "corrected_gap_in_trough_flip_hours_twh": 0.235,
+        "corrected_gap_in_other_hours_twh": -0.054,
+        "campd_part_load_share_of_on_hours": 0.816,
+        "actual_c_mean_in_part_load_hours": 26.43,
+        "share_part_load_hours_actual_c_above_econ05": 0.606
+      },
+      "campd_conduct": {
+        "hours": 8760,
+        "on_hours": 6573,
+        "heat_rate_pooled": 7.17,
+        "hsl_p995_mw": 1145.0,
+        "units_on_share_of_on_hours": {
+          "1": 0.219,
+          "2": 0.194,
+          "3": 0.09,
+          "4": 0.498
+        },
+        "mean_load_by_units_on_mw": {
+          "1": 155.0,
+          "2": 372.0,
+          "3": 584.0,
+          "4": 921.0
+        },
+        "four_on_hours": 3272,
+        "four_on_share_below_85pct_hsl": 0.607
+      }
+    },
+    "2024": {
+      "published": {
+        "m_ann_twh": 9.472,
+        "campd_twh": 6.287,
+        "over_twh": 3.185,
+        "hourly_max_mw": 1366.0
+      },
+      "sector_addback_mw": 246.0,
+      "lp_capacity_mw": 1157.8,
+      "lp_avail_max": 0.972,
+      "corrected": {
+        "lp_twh": 7.318,
+        "campd_twh": 6.287,
+        "over_twh": 1.03,
+        "lp_hourly_max_mw": 1120.0,
+        "campd_hourly_max_mw": 1193.0,
+        "lp_cf_on_available_cap": 0.879,
+        "campd_cf_on_available_cap": 0.755,
+        "on_share_lp": 0.955,
+        "on_share_campd": 0.915,
+        "gap_meas_off_lp_on_twh": 0.315,
+        "gap_both_on_level_twh": 0.81,
+        "gap_lp_off_meas_on_twh": -0.095,
+        "loading_when_on_p50_lp": 970.0,
+        "loading_when_on_p50_campd": 915.0
+      },
+      "offer_position": {
+        "mc_mean_committed": 21.0,
+        "mc_mean_econ05": 25.23,
+        "mc_mean_peak": 37.77,
+        "in_merit_econ05_vs_model_uw": 0.958,
+        "in_merit_econ05_vs_actual_zone_c": 0.768,
+        "in_merit_econ05_vs_actual_uw_mean": 0.751,
+        "price_mean_model_uw": 34.64,
+        "price_mean_actual_zone_c": 33.69,
+        "share_hours_actual_c_below_20": 0.152,
+        "share_hours_model_uw_below_20": 0.007,
+        "p05_actual_c": 16.7,
+        "p05_model_uw": 23.4,
+        "trough_flip_hours": 1772,
+        "corrected_gap_in_trough_flip_hours_twh": 0.52,
+        "corrected_gap_in_other_hours_twh": 0.51,
+        "campd_part_load_share_of_on_hours": 0.692,
+        "actual_c_mean_in_part_load_hours": 29.68,
+        "share_part_load_hours_actual_c_above_econ05": 0.75
+      },
+      "campd_conduct": {
+        "hours": 8784,
+        "on_hours": 8041,
+        "heat_rate_pooled": 6.999,
+        "hsl_p995_mw": 1171.0,
+        "units_on_share_of_on_hours": {
+          "1": 0.077,
+          "2": 0.162,
+          "3": 0.045,
+          "4": 0.716
+        },
+        "mean_load_by_units_on_mw": {
+          "1": 175.0,
+          "2": 400.0,
+          "3": 587.0,
+          "4": 949.0
+        },
+        "four_on_hours": 5755,
+        "four_on_share_below_85pct_hsl": 0.588
+      }
+    },
+    "2025": {
+      "published": {
+        "m_ann_twh": 9.816,
+        "campd_twh": 6.326,
+        "over_twh": 3.489,
+        "hourly_max_mw": 1378.0
+      },
+      "sector_addback_mw": 247.7,
+      "lp_capacity_mw": 1157.8,
+      "lp_avail_max": 0.972,
+      "corrected": {
+        "lp_twh": 7.648,
+        "campd_twh": 6.326,
+        "over_twh": 1.322,
+        "lp_hourly_max_mw": 1130.0,
+        "campd_hourly_max_mw": 1216.0,
+        "lp_cf_on_available_cap": 0.944,
+        "campd_cf_on_available_cap": 0.781,
+        "on_share_lp": 0.934,
+        "on_share_campd": 0.914,
+        "gap_meas_off_lp_on_twh": 0.232,
+        "gap_both_on_level_twh": 1.203,
+        "gap_lp_off_meas_on_twh": -0.113,
+        "loading_when_on_p50_lp": 968.0,
+        "loading_when_on_p50_campd": 834.0
+      },
+      "offer_position": {
+        "mc_mean_committed": 26.67,
+        "mc_mean_econ05": 32.03,
+        "mc_mean_peak": 51.33,
+        "in_merit_econ05_vs_model_uw": 0.955,
+        "in_merit_econ05_vs_actual_zone_c": 0.928,
+        "in_merit_econ05_vs_actual_uw_mean": 0.921,
+        "price_mean_model_uw": 53.44,
+        "price_mean_actual_zone_c": 56.28,
+        "share_hours_actual_c_below_20": 0.041,
+        "share_hours_model_uw_below_20": 0.024,
+        "p05_actual_c": 21.0,
+        "p05_model_uw": 23.9,
+        "trough_flip_hours": 396,
+        "corrected_gap_in_trough_flip_hours_twh": 0.092,
+        "corrected_gap_in_other_hours_twh": 1.23,
+        "campd_part_load_share_of_on_hours": 0.662,
+        "actual_c_mean_in_part_load_hours": 44.52,
+        "share_part_load_hours_actual_c_above_econ05": 0.952
+      },
+      "campd_conduct": {
+        "hours": 8760,
+        "on_hours": 8013,
+        "heat_rate_pooled": 7.005,
+        "hsl_p995_mw": 1193.2,
+        "units_on_share_of_on_hours": {
+          "1": 0.114,
+          "2": 0.113,
+          "3": 0.052,
+          "4": 0.722
+        },
+        "mean_load_by_units_on_mw": {
+          "1": 178.0,
+          "2": 408.0,
+          "3": 611.0,
+          "4": 958.0
+        },
+        "four_on_hours": 5783,
+        "four_on_share_below_85pct_hsl": 0.533
+      }
+    }
+  }
+}
