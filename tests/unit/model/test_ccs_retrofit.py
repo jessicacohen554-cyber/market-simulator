@@ -101,8 +101,19 @@ _FIXTURE_RETROFIT_CAPEX_KW = 300.0
 
 
 def _fixture_config(**overrides):
-    """``ScenarioConfig`` for the ERCOT screen fixtures, with the capex pin."""
+    """``ScenarioConfig`` for the ERCOT screen fixtures, with the capex pin.
+
+    ``ccs_retrofit_capex_co2_scaling`` is pinned EXPLICITLY ``False`` here
+    unless a caller overrides it. The dataclass default flipped to ``True`` on
+    2026-09-05 (capx D60, owner ruling Q42), and every fixture in this file
+    that predates the flip was written against the flat-per-kW construction
+    with CHP hosts in the candidate set; pinning the fixture keeps each of
+    those tests testing what it was written to test, and the classes that
+    exercise the ARMED construction pass ``True`` explicitly (as they always
+    did). :class:`TestCapexCo2ScalingIsTheDefault` covers the shipped posture.
+    """
     overrides.setdefault("ccs_retrofit_capex_kw", _FIXTURE_RETROFIT_CAPEX_KW)
+    overrides.setdefault("ccs_retrofit_capex_co2_scaling", False)
     return ScenarioConfig(iso="ERCOT", **overrides)
 
 
@@ -845,17 +856,25 @@ class TestCapexCo2Scaling(unittest.TestCase):
             self.assertEqual(
                 entry["retrofit_capex_per_mw"], _FIXTURE_RETROFIT_CAPEX_KW * 1000.0
             )
-        # Registered cache-optional at False: the shipped default keys
-        # identically with the field absent or explicitly False, distinctly on.
+        # Registered cache-optional at a FROZEN "False" declaration, which the
+        # 2026-09-05 default flip (capx D60, owner ruling Q42) deliberately did
+        # NOT touch. So: an EXPLICIT False still drops from the hash and keeps
+        # the pre-flip key, while the armed default enters it and keys apart —
+        # which is the whole point of option (b'-1).
         base = ScenarioConfig()
+        self.assertTrue(base.ccs_retrofit_capex_co2_scaling)
         self.assertEqual(
-            base.cache_key(),
-            ScenarioConfig(ccs_retrofit_capex_co2_scaling=False).cache_key(),
-        )
-        self.assertNotEqual(
             base.cache_key(),
             ScenarioConfig(ccs_retrofit_capex_co2_scaling=True).cache_key(),
         )
+        self.assertNotEqual(
+            base.cache_key(),
+            ScenarioConfig(ccs_retrofit_capex_co2_scaling=False).cache_key(),
+        )
+        self.assertEqual(
+            ScenarioConfig(ccs_retrofit_capex_co2_scaling=False).cache_key(),
+            "4c6b03ae098b6e3e",  # the pre-flip pin, still addressed by an
+        )  # explicit False (measured capx D60, 2026-09-05)
 
     def test_island_scales_with_captured_co2(self):
         cfg = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
@@ -921,6 +940,7 @@ class TestCapexCo2Scaling(unittest.TestCase):
             reg.plant_group = "CC_REGULAR"
             return [chp, reg]
 
+        # The OFF arm is the fixture's explicit False (the pre-D60 posture).
         f_off, log_off = _screen(fleet(), HIGH_PRICES, carbon_price=120.0)
         self.assertEqual({e["unit_id"] for e in log_off}, {"CHP", "REG"})
         f_on, log_on = _screen(
@@ -932,6 +952,45 @@ class TestCapexCo2Scaling(unittest.TestCase):
         self.assertEqual({e["unit_id"] for e in log_on}, {"REG"})
         self.assertEqual({g.unit_id: g.fuel_type for g in f_on}["CHP"], "gas_cc")
         self.assertEqual({g.unit_id: g.fuel_type for g in f_on}["REG"], "gas_cc_ccs")
+
+
+class TestCapexCo2ScalingIsTheDefault(unittest.TestCase):
+    """capx D60 / owner ruling Q42 (2026-09-05): the repair is the SHIPPED posture.
+
+    The classes above pin the pre-flip construction through ``_fixture_config``'s
+    explicit ``False`` so each keeps testing what it was written to test. These
+    two tests are the ones that would fail if the flip were ever reverted by
+    accident, and they exercise the shipped default rather than a fixture.
+    """
+
+    def test_the_dataclass_default_is_armed(self):
+        self.assertTrue(ScenarioConfig().ccs_retrofit_capex_co2_scaling)
+        self.assertTrue(ScenarioConfig(mode="backcast").ccs_retrofit_capex_co2_scaling)
+
+    def test_the_shipped_default_sizes_the_island_and_drops_chp(self):
+        # Same fleet as TestCapexCo2Scaling's CHP case, but on a config that
+        # passes NOTHING: the CHP host must be excluded and the surviving
+        # host's island must be sized to its own CO2 flow.
+        chp = _gas_cc("CHP", heat_rate=7.0, emission_rate=0.55)
+        chp.plant_group = "CC_CHP"
+        reg = _gas_cc("REG", heat_rate=7.0, emission_rate=0.55)
+        reg.plant_group = "CC_REGULAR"
+        cfg = ScenarioConfig(
+            iso="ERCOT", ccs_retrofit_capex_kw=_FIXTURE_RETROFIT_CAPEX_KW
+        )
+        fleet, log = _screen([chp, reg], HIGH_PRICES, config=cfg, carbon_price=120.0)
+        self.assertEqual({e["unit_id"] for e in log}, {"REG"})
+        self.assertEqual({g.unit_id: g.fuel_type for g in fleet}["CHP"], "gas_cc")
+        from market_sim.model.capacity_evolution.ccs import (
+            ccs_retrofit_captured_ref_t_per_mwh,
+        )
+
+        entry = log[0]
+        expected_scale = (
+            cfg.ccs_retrofit_capture_rate * 0.55
+        ) / ccs_retrofit_captured_ref_t_per_mwh(cfg)
+        self.assertAlmostEqual(entry["capex_scale"], expected_scale, places=9)
+        self.assertGreater(entry["capex_scale"], 1.0)
 
 
 if __name__ == "__main__":

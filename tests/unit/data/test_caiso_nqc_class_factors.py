@@ -65,7 +65,7 @@ class TestCaisoNqcGateOffPath(unittest.TestCase):
     def test_unarmed_default_cache_key_is_unmoved(self) -> None:
         # The field is registered in _CACHE_KEY_OPTIONAL_FIELDS at False, so the
         # pinned default key must not have moved when it was added.
-        self.assertEqual(ScenarioConfig().cache_key(), "4c6b03ae098b6e3e")
+        self.assertEqual(ScenarioConfig().cache_key(), "e5ecd4105ada3e58")
 
     def test_armed_run_keys_distinctly(self) -> None:
         self.assertNotEqual(

@@ -1098,6 +1098,32 @@ def _miso_config() -> ISOConfig:
             # c306ddc6d28c60c2 (the solved D53 arm); the D46 record is
             # preserved at `miso-t1h-pre-d53`.
             "retirement_sector_gate": True,
+            # capx D60 (2026-09-05), executing OWNER RULING Q40 (director
+            # sitting r#37, capx ledger §0ah.3 / §3): the MISO internal-supply
+            # accounting ratio RE-IDENTIFIED on the dates-ON fleet ARMS FOR
+            # MISO ONLY (FINDING-capx-d51-2026-09-04.md §7 — 0.854600 ->
+            # 0.893436, D31's own arithmetic with the denominators net of the
+            # step-1b fossil-dates channel's accredited exits; ZERO free
+            # parameters, derived and reconciled by test from three committed
+            # inputs). Limbs (a)/(b)/(d) read MET on the pre-stated condition;
+            # (b) closed the D49 double-netting to 1.5 pts of the market's
+            # offered 2024 position. Limb (c) failed BY THE LETTER and the lane
+            # declined to override its own pre-registration: the owner decided,
+            # on D51 §7's measured cause — every `add.shares` move is the
+            # arithmetic of a total that lost 2.9 GW of gas_ct when the longer
+            # position stopped the BLK-10 backstop, with every `by_tech` MW
+            # outside gas_ct identical to the decimal. Rule 14: exits HARDER,
+            # not easier. Rule 25 [R-ISO-SCOPE]: the ScenarioConfig default
+            # STAYS False, and an ISO absent from the dated-net registry falls
+            # through to D31's value even when armed, so no other ISO's number
+            # moves. Bare-key consequences (PREDECL-capx-d60-2026-09-05.md §2):
+            # `miso-t1h` c306ddc6d28c60c2 -> 687bd75f2828bea1 (renamed to the
+            # committed D53 rider, which carries gate + ratio at
+            # 6ea92547eaa62559 and differs from the bare recipe only in the
+            # flipped CCS default — unreachable below 2028); `miso-t1f`
+            # 8d8bc63a0d4378a9 -> 3f85ecc45d90c248, RE-SOLVED here with the
+            # D45-R record preserved at `miso-t1f-pre-d60`.
+            "adequacy_accounting_ratio_dated_net": True,
         },
     )
 
@@ -1305,7 +1331,60 @@ def _nyiso_config() -> ISOConfig:
     # VOLL is lower than ERCOT's energy-only $5,000 cap.
     # Source: NYISO Tariff §23.3.1.4, Market Administration and Control
     # Area Services Tariff (MST); FERC Order 831.
-    return ISOConfig(name="NYISO", zones=zones, links=links, voll=2000.0)
+    # capx D60 (2026-09-05), executing OWNER RULING Q41 (director sitting r#37,
+    # capx ledger §0ah.3 / §3): NYISO's TWO adequacy-requirement devintage gates
+    # ARM AS THIS ISO'S FORECAST DEFAULT (FINDING-capx-d52-2026-09-04.md §8(1),
+    # recommendation ARM BOTH). NYISO declared no ISO-level overrides before
+    # this; these two are the first.
+    #
+    # WHAT THEY ARE. `nyiso_requirement_forecast_peak` prices the NYCA
+    # requirement on the NYSRC ICAP-market FORECAST peak of the capability year
+    # (Table D.2 col. 1) instead of the model's own peak; a capability year
+    # outside the published table returns the model's peak UNCHANGED, so the
+    # forward horizon keeps a forecast peak and never a held-last MW.
+    # `nyiso_requirement_vintage_factors` prices the requirement FACTOR at that
+    # capability year's EC-adopted IRM x (1 - NYCA derate) (Table D.2 cols. 2-3)
+    # instead of the single mixed vintage 1.244 x (1 - 0.1321); beyond the last
+    # published pair it holds that pair's ratio, 1.244 x 0.870 = 1.0823, +0.24 %
+    # over the shipped composite. Together the IN-TABLE requirement IS Table
+    # D.2's published NYCA UCAP requirement to under 1 MW — the model's peak
+    # drops out, exactly as under the NEISO Net ICR / PJM FPR paths.
+    #
+    # WHY ARMED (rules 1 / 13 / 14 / 21 / 23). Published per-capability-year
+    # market-design parameters on the published forecast peak, digitized into
+    # the committed demand-curve/nyiso/nyiso.csv rows and reconciled to their
+    # source by test; ZERO free parameters; vintage-gated (the row of capability
+    # year Y/Y+1 is read in model year Y only, every parameter in it fixed
+    # before that year begins), so the identical construction regenerates
+    # forward from the Gold Book + the adopted IRM. Measured: the position
+    # artifact D45 §6 named is CLOSED — the model's census moves from +9.4 /
+    # +5.2 / +7.3 pts LONG to 0.6-2.6 pts SHORT of the market's published
+    # position in 2023 / 2024 / 2025, inside the +/-3-point band; the rule-22
+    # LOYO is 3/3 PASS with every fold improving and an identical fleet; and the
+    # shipped-default cost is exactly ZERO (FC-3 byte-identical to the control
+    # in every row). The NYCA ICAP demand curve stays OFF — D52 §8(2)
+    # recommended DO NOT ARM and D59 re-affirmed it; so does
+    # `locality_capacity_curves` (D59). Rule 25 [R-ISO-SCOPE]: both
+    # ScenarioConfig defaults STAY False and the registries are NYISO-keyed, so
+    # no other ISO moves; each is a separate gate so either can be disarmed
+    # alone. Both are coerced to their dataclass default in a plain backcast
+    # (capacity evolution never runs there), so no backcast keeper key can move.
+    # Bare-key consequences (PREDECL-capx-d60-2026-09-05.md §2): `nyiso-t1h`
+    # 91686abe7a744a88 -> 6e70a637b3465542 (renamed to the committed D52 arm,
+    # which carries both gates at 911371a8cf23d5c3 and differs from the bare
+    # recipe only in the flipped CCS default); `nyiso-t1f` cc7d1050a8090c76 ->
+    # 19a9690bb12c8459, RE-SOLVED here with the D45-R record preserved at
+    # `nyiso-t1f-pre-d60`.
+    return ISOConfig(
+        name="NYISO",
+        zones=zones,
+        links=links,
+        voll=2000.0,
+        default_scenario_overrides={
+            "nyiso_requirement_forecast_peak": True,
+            "nyiso_requirement_vintage_factors": True,
+        },
+    )
 
 
 def _neiso_config() -> ISOConfig:

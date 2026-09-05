@@ -25,9 +25,9 @@ from market_sim.config.scenarios import ScenarioConfig
 class TestSectorGateMisoArming(unittest.TestCase):
     def test_default_stays_off_and_pinned_keys_are_unmoved(self):
         self.assertFalse(ScenarioConfig().retirement_sector_gate)
-        self.assertEqual(ScenarioConfig().cache_key(), "4c6b03ae098b6e3e")
+        self.assertEqual(ScenarioConfig().cache_key(), "e5ecd4105ada3e58")
         self.assertEqual(
-            ScenarioConfig(mode="backcast").cache_key(), "8211c72bb1960adc"
+            ScenarioConfig(mode="backcast").cache_key(), "6a2845e50951394e"
         )
 
     def test_miso_forecast_resolves_the_gate_on(self):

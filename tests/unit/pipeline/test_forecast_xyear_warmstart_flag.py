@@ -46,7 +46,7 @@ from tests.unit.pipeline.test_pipeline_solve import _Cfg, _trivial_inputs
 # flip of a REGISTERED field, which under capx D24-R (b'-1) is supposed to move
 # the key (the frozen drop value stays False, so the armed default enters the
 # hash) — rationale and provenance live on the pin in test_persisted_identity.py.)
-_PINNED_DEFAULT_CACHE_KEY = "4c6b03ae098b6e3e"
+_PINNED_DEFAULT_CACHE_KEY = "e5ecd4105ada3e58"
 
 
 class TestFieldRegistration:

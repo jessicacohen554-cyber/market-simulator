@@ -149,7 +149,7 @@ class TestD26Arming:
         base = ScenarioConfig(mode="forecast", iso="MISO")
         armed = dataclasses.replace(base, miso_clean_tier_rows=True)
         assert armed.cache_key() != base.cache_key()
-        assert ScenarioConfig().cache_key() == "4c6b03ae098b6e3e"
+        assert ScenarioConfig().cache_key() == "e5ecd4105ada3e58"
 
     def test_arming_does_not_disturb_the_d2prime_entry(self):
         """The pre-existing D-2' override survives alongside the new one."""

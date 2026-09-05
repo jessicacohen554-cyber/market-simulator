@@ -86,8 +86,15 @@ STAGE_B = {
 # key drops it at its FROZEN "False" declaration (capx D24-R (b'-1)), so the
 # armed default enters every digest and this pole moves with the global pin —
 # the D12-A arming and the "pole unmoved by the fix" property are untouched.
-ERCOT_ARMED_KEY = "1e1002d480fc180d"
-GLOBAL_PINNED_KEY = "4c6b03ae098b6e3e"
+# ADVANCED AGAIN 2026-09-05, 1e1002d480fc180d -> b5ab30d0fae9f8a3, by a third
+# NON-ERCOT cause of the same class: capx D60's declared default flip of
+# ccs_retrofit_capex_co2_scaling (owner ruling Q42), the SECOND entry in
+# _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS. Registered, dropped at its FROZEN
+# "False" declaration, so the armed default enters every digest and this pole
+# moves with the global pin — the D12-A arming and the "pole unmoved by the
+# fix" property are untouched.
+ERCOT_ARMED_KEY = "b5ab30d0fae9f8a3"
+GLOBAL_PINNED_KEY = "e5ecd4105ada3e58"
 
 FIELD_DEFAULTS = {
     f.name: getattr(ScenarioConfig(), f.name)

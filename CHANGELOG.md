@@ -1,5 +1,63 @@
 # Changelog
 
+## 2026-09-05 — capx D60: the three-ruling arming batch (Q40 · Q41 · Q42) — the MISO ratio, both NYISO requirement gates, and the CCS capex repair as the global default
+
+**Execution of three owner rulings** given 2026-09-05 at director sitting r#37 (capx ledger
+§0ah.3 / §3), landed FLIP-FIRST in one commit so every downstream re-solve meets the final
+posture exactly once. No new field, no new parameter value, no keeper, no marker, nothing
+against measured H1-2026. Pre-declaration
+`docs/handoffs/PREDECL-capx-d60-2026-09-05.md` (pushed before any code); execution record
+`docs/handoffs/FINDING-capx-d60-2026-09-05.md`.
+
+- **Q40 — `adequacy_accounting_ratio_dated_net` armed for MISO** through
+  `_miso_config` `default_scenario_overrides` (rule 25 `[R-ISO-SCOPE]`; the dataclass default
+  stays `False`). D31's own arithmetic with the denominators net of the step-1b fossil-dates
+  channel's accredited exits: **0.854600 → 0.893436**, zero DOF
+  (`FINDING-capx-d51-2026-09-04.md` §7). The owner resolved the letter-vs-substance
+  divergence D51 recorded against itself: limb (c) failed by the letter, and its measured
+  cause is arithmetic — every `add.shares` move is the ratio of a total that lost 2.9 GW of
+  `gas_ct` when the longer position stopped the BLK-10 backstop.
+- **Q41 — `nyiso_requirement_forecast_peak` AND `nyiso_requirement_vintage_factors` armed for
+  NYISO** through `_nyiso_config` `default_scenario_overrides`, which NYISO did not have
+  before (rule 25; both dataclass defaults stay `False`). The in-table requirement is now
+  NYSRC Table D.2's published NYCA UCAP requirement to under 1 MW, the model's peak dropping
+  out; the position artifact D45 §6 named is closed (+9.4 / +5.2 / +7.3 pts long → 0.6–2.6
+  pts short of the market's published position), LOYO 3/3, zero free parameters
+  (`FINDING-capx-d52-2026-09-04.md` §8(1)). **The NYCA ICAP demand curve stays OFF** (D52
+  §8(2), re-affirmed D59), and so does `locality_capacity_curves` (D59).
+- **Q42 — `ccs_retrofit_capex_co2_scaling` armed as THE DATACLASS DEFAULT for all six ISOs**,
+  as a **(b′-1) declared flip** — the second entry in
+  `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`, with the frozen drop value left at `"False"`,
+  exactly the D44 pattern (`FINDING-capx-d50-2026-09-04.md` §8). A **posture, not a
+  transfer**: no ISO's fitted number is carried — the island is sized against
+  `captured_ref` = 0.90 × 6.3 × 0.057 = 0.32319 t/MWh, the same reference host
+  `new_entry._emerging_lcoe` charges the ATB increment against.
+
+**Both pinned default keys advance, by design:** `ScenarioConfig()`
+`4c6b03ae098b6e3e` → **`e5ecd4105ada3e58`**, bare backcast `8211c72bb1960adc` →
+**`6a2845e50951394e`**, with dated cause blocks in
+`tests/regression/test_persisted_identity.py` and a new cache-epoch ledger entry
+(2026-09-05) in `src/market_sim/results/cache.py`. An **explicit `False` still drops from
+the hash and still addresses its pre-flip bundle**, which is (b′-1)'s useful inverse and is
+asserted by test. **No committed artifact moves**: no keeper, sidecar, determination or
+dashboard row, because those are files rather than cache lookups — and behaviour is
+byte-identical for every backcast and for every hindcast/crossover horizon ending before
+`ccs_retrofit_available_year` (2028), since `ccs.py::apply_ccs_retrofit` returns at its
+first statement before any read of the flag and that call site is the field's only consumer
+in the source tree.
+
+**Docs, matrix and tests.** CLAUDE.md capacity-evolution step 2 and
+`model-methodology-spec.md` §5.6 carry dated amendments; the three mechanism rows'
+definitions and their cells in all six ISO shards are re-stamped (CCS: `K` on measured
+evidence at ERCOT / NEISO / PJM / MISO, `K`-by-posture at CAISO / NYISO with each ISO's own
+zero-solve ceiling census recorded and its t1f evidence to follow; MISO ratio `K` on the D51
+record; both NYISO gates `K` on the D52 record). New
+`tests/unit/config/test_d60_arming_batch.py` pins that each override reaches exactly its own
+ISO, that every other ISO and every plain backcast still resolve all three fields off, and
+that nothing else armed. `tests/unit/model/test_ccs_retrofit.py` pins the pre-flip
+construction explicitly in its fixture so each pre-D60 test still tests what it was written
+to test, and adds `TestCapexCo2ScalingIsTheDefault` for the shipped posture.
+
 ## 2026-09-05 — capx D50-R: the CCS capex-scaling repair completed — PJM + the conditional MISO arm, the blast radius priced, the arming question returned to the owner (nothing armed)
 
 **The completion of capx D50** (built default-off in PR #4728, ERCOT + NEISO arms

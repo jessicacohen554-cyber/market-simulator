@@ -6967,7 +6967,7 @@ class TestRetirementSectorGate(unittest.TestCase):
         self.assertFalse(ScenarioConfig().retirement_sector_gate)
         # The pinned default key is unmoved by the registration (D24-R option
         # b'-1: dropped at its declared False default); the armed key differs.
-        self.assertEqual(ScenarioConfig().cache_key(), "4c6b03ae098b6e3e")
+        self.assertEqual(ScenarioConfig().cache_key(), "e5ecd4105ada3e58")
         self.assertNotEqual(
             ScenarioConfig(retirement_sector_gate=True).cache_key(),
             ScenarioConfig().cache_key(),

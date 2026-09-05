@@ -262,7 +262,12 @@ VERDICT_MAP = {
     # live-vintage convention.
     "pjm-2021-2025-realized-t1h-d45": "pjm-t1h-pre-d45r",
     "pjm-2021-2025-realized-t1h-d45r-fixed": "pjm-t1h-d45r-fixed",
-    "nyiso-2021-2025-realized-t1h-d45r": "nyiso-t1h",
+    # RE-POINTED by capx D60 (2026-09-05, owner rulings Q40 / Q41 / Q42): the
+    # bare key moved on to the leg that carries the newly-armed posture and
+    # this record keeps its own verdict under `nyiso-t1h-pre-d60` — the
+    # preserve-then-overwrite chain (never overwriting an EARLIER preserved
+    # baseline: -pre-d53, -pre-d46, -pre-d45r ... all stand).
+    "nyiso-2021-2025-realized-t1h-d45r": "nyiso-t1h-pre-d60",
     "nyiso-2021-2025-realized-t1h-d45r-curveon": "nyiso-t1h-d45r-curveon",
     # capx-D52 (2026-09-04), the NYISO per-ISO requirement repair lane D45 §9
     # names: the A/B arm (nyiso_requirement_forecast_peak +
@@ -271,7 +276,11 @@ VERDICT_MAP = {
     # met D45 §6's ±3-point condition). Both register SUFFIXED — each is one
     # or two fields from the bare `nyiso-t1h` and renders a score the bare key
     # would contradict; the bare key is untouched. NOTHING ARMS.
-    "nyiso-2021-2025-realized-t1h-d52-devintage": "nyiso-t1h-d52-devintage",
+    # THE BARE `nyiso-t1h` since capx D60 armed both requirement gates for NYISO
+    # (owner ruling Q41). Same relation as the MISO row above: the bare recipe
+    # resolves to 6e70a637b3465542, this leg was solved at 911371a8cf23d5c3, and
+    # the single difference is the flipped CCS default, unreachable below 2028.
+    "nyiso-2021-2025-realized-t1h-d52-devintage": "nyiso-t1h",
     "nyiso-2021-2025-realized-t1h-d52-curveon": "nyiso-t1h-d52-curveon",
     # capx D59 (2026-09-05): the NYISO locality-half A/B arm (the D52 curve-ON
     # posture + locality_capacity_curves), suffixed; the bare key is untouched.
@@ -347,8 +356,22 @@ VERDICT_MAP = {
     # ARMED FOR MISO 2026-09-05 (owner instruction on the measured A/B): the
     # gated leg IS the bare `miso-t1h` recipe now (key c306ddc6d28c60c2), so
     # it carries the bare verdict key; the D46 record is preserved above.
-    "miso-2021-2025-realized-t1h-d53-sectorgate": "miso-t1h",
-    "miso-2021-2025-realized-t1h-d53-sectorgate-d51ratio": "miso-t1h-d53-sectorgate-d51ratio",
+    # RE-POINTED by capx D60 (2026-09-05, owner rulings Q40 / Q41 / Q42): the
+    # bare key moved on to the leg that carries the newly-armed posture and
+    # this record keeps its own verdict under `miso-t1h-pre-d60` — the
+    # preserve-then-overwrite chain (never overwriting an EARLIER preserved
+    # baseline: -pre-d53, -pre-d46, -pre-d45r ... all stand).
+    "miso-2021-2025-realized-t1h-d53-sectorgate": "miso-t1h-pre-d60",
+    # THE BARE `miso-t1h` since capx D60 armed `adequacy_accounting_ratio_dated_net`
+    # for MISO (owner ruling Q40). The bare recipe now resolves to
+    # 687bd75f2828bea1 (sector gate + ratio + the flipped CCS default); this leg
+    # was solved at 6ea92547eaa62559, which differs from it in
+    # `ccs_retrofit_capex_co2_scaling` ALONE — unreachable on a 2021-2025 horizon
+    # because `ccs.py::apply_ccs_retrofit` returns at
+    # `if year < config.ccs_retrofit_available_year` (2028) before any read of the
+    # flag — so every SCORED row is byte-identical to what the bare recipe would
+    # produce and no re-solve is owed (PREDECL-capx-d60-2026-09-05.md §A.3).
+    "miso-2021-2025-realized-t1h-d53-sectorgate-d51ratio": "miso-t1h",
     # capx-D51 rider (d), owner ruling Q36: D45-R's pre-declared leg 7 -- the
     # NEISO dates-OFF paired control at the SHIPPED lever
     # (`--no-fossil-announced-exits`, neiso_net_icr_requirement False), the
@@ -359,7 +382,18 @@ VERDICT_MAP = {
     # bare key; the d37-control record is untouched.
     "neiso-2021-2025-realized-t1h-d45r-datesoff": "neiso-t1h-d45r-datesoff",
     "neiso-2021-2025-realized-t1h-d45r": "neiso-t1h",
+    # NYISO and MISO are NOT re-pointed here: no D50 arm carries their D60 posture
+    # (MISO's post-flip bare key adds D53's sector gate AND Q40's ratio, NYISO's
+    # adds Q41's two gates), so both bare keys are RE-SOLVED by capx D60 and these
+    # records are preserved at `<iso>-t1f-pre-d60` in that commit.
     "nyiso-2026-2030-d45r-remeasure": "nyiso-t1f",
+    # PJM is NOT re-pointed: capx D60 pre-declared this rename (the D50 arm was
+    # solved AT what would become the post-flip bare key, 167e65187f32056b) and
+    # then REVERSED it before pushing when capx D57 merged and armed three PJM
+    # gates by owner ruling, moving the bare `pjm-t1f` recipe to
+    # 09996eca71ee80fd. D60 STOP 1 fired; the D45-R record keeps the bare key,
+    # the D50 arm keeps its suffixed key, and the PJM t1f re-solve at
+    # 09996eca71ee80fd is ROUTED (FINDING-capx-d60-2026-09-05.md).
     "pjm-2026-2030-d45r-remeasure": "pjm-t1f",
     "miso-2026-2030-d45r-remeasure": "miso-t1f",
     # capx-D46 (2026-09-03), the BATCHED RE-MEASURE (director r#30/r#31, owner
@@ -400,15 +434,33 @@ VERDICT_MAP = {
     # pre-declaration guessed; the ids below are what --summary --label
     # d46-remeasure actually writes, and the finding records the deviation.
     # Each bare t1f key's prior record is preserved verbatim at `<key>-pre-d46`.
-    "ercot-2026-2030-d46-remeasure": "ercot-t1f",
-    "neiso-2026-2030-d46-remeasure": "neiso-t1f",
+    # RE-POINTED by capx D60 (2026-09-05, owner rulings Q40 / Q41 / Q42): the
+    # bare key moved on to the leg that carries the newly-armed posture and
+    # this record keeps its own verdict under `<iso>-t1f-pre-d60` — the
+    # preserve-then-overwrite chain (never overwriting an EARLIER preserved
+    # baseline: -pre-d53, -pre-d46, -pre-d45r ... all stand).
+    "ercot-2026-2030-d46-remeasure": "ercot-t1f-pre-d60",
+    "neiso-2026-2030-d46-remeasure": "neiso-t1f-pre-d60",
+    # CAISO is NOT re-pointed here: no D50 arm exists for it, so its bare key is
+    # re-solved by D60 instead (29f8eb372810195f) and this record is preserved
+    # then, in the re-solve commit.
     "caiso-2026-2030-d46-remeasure": "caiso-t1f",
     # capx D50 (2026-09-04): the CCS retrofit capex-scaling A/B arms
     # (ccs_retrofit_capex_co2_scaling=True, --golden-posture, 2026-2030),
     # SUFFIXED BY CHARTER — never the bare keys, whose D46 / D45-R records are
     # the controls and are untouched. --summary --label d50-ccscapex.
-    "ercot-2026-2030-d50-ccscapex": "ercot-t1f-d50-ccscapex",
-    "neiso-2026-2030-d50-ccscapex": "neiso-t1f-d50-ccscapex",
+    # THE BARE t1f KEYS for ERCOT and NEISO since capx D60 flipped
+    # `ccs_retrofit_capex_co2_scaling` to the default (owner ruling Q42): both
+    # arms were solved AT the post-flip bare key — 0c3e9cd5b5993bdf /
+    # 18515067bf4d2fbe, which the harness path re-resolves to EXACTLY after the
+    # flip — so each is a key-EQUALITY rename with nothing to re-solve, and each
+    # ISO's D46 control is preserved at `<iso>-t1f-pre-d60`.
+    "ercot-2026-2030-d50-ccscapex": "ercot-t1f",
+    "neiso-2026-2030-d50-ccscapex": "neiso-t1f",
+    # PJM STAYS SUFFIXED: the identical rename was pre-declared for it and then
+    # REVERSED before pushing (see the `pjm-2026-2030-d45r-remeasure` row above)
+    # — capx D57 merged mid-lane and armed three PJM gates, so the bare
+    # `pjm-t1f` recipe moved to 09996eca71ee80fd and this arm is no longer at it.
     "pjm-2026-2030-d50-ccscapex": "pjm-t1f-d50-ccscapex",
     # MISO added by capx D50-R (2026-09-05): PREDECL §2.4 made this leg
     # conditional on the PJM arm contradicting §2.2, and it did (P3's 2029 leg
