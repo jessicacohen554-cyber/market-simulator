@@ -553,3 +553,42 @@ the solve**, from D53's own measured record:
 Nothing else in §§1, 3–5, 6.2–6.5 or 7 changes. `miso-t1f`'s prior is still
 preserved at `miso-t1f-pre-d60`; the leg still re-solves; STOP 1 now reads
 against `b1a73a087064ffd8`.
+
+---
+
+## Addendum B (2026-09-05) — written BEFORE the GOLDEN-3 re-solve is launched: the T3 attestation this lane will author, pre-declared
+
+Rubric §5 names the **producing session** as the T3 attestation's author, and D47 §0
+established the discipline that makes such an attestation honest: **pre-declare it before
+the run exists, and record any assertion that turns out false as false, failing FC-7 on it
+at full magnitude.** D60 IS the producing session for `neiso-t3` at `f04fd06348e1623d`, so —
+unlike D47, which had to attest another session's bundle — it can author in the ordinary
+way. What it may not do is decide the assertions after reading the verdict. They are
+therefore fixed here, before the solve.
+
+**The six assertions, and what each will be read from — bytes only, no judgement call at
+authoring time:**
+
+| assertion | true iff |
+|---|---|
+| `dof_ledger_complete` | `dof_ledger.json`, built by the committed `scripts/build_forecast_dof_ledger.py` from THIS bundle's own `run_config.json`, carries **0 UNIDENTIFIED**, **0 unattested** and **0 entries whose identification is `residual`** |
+| `run_config_reproducible` | the bundle's `run_config.json` records `mode=forecast`, a clean git tree at a named sha, and a `cache_key` equal to `f04fd06348e1623d` — the value §A.2 pre-declared and the harness path resolves |
+| `honest_unfit_referenced` | the run's own `full_horizon_summary.json` invariant record is carried into the verdict, and the FC rows that fail are named in the finding against `program-status.json`'s `honest_unfit` block rather than only in the sidecar |
+| `quarantine_attested` | every solved year lies in 2026–2050, i.e. **forecast mode, no measured actuals, no holdout tier touched** (rule 22); asserted from `solved_years` |
+| `no_off_registry_knobs` | every solve-affecting non-default field in `run_config.json` appears in `ScenarioConfig`; no env knob, no per-plant dict, no `getattr` fallback (rule 24) |
+| `registered` | the run is registered through the single `scripts/register_forecast_run.py` path and its verdict key is `neiso-t3` |
+
+**Pre-declared expectation (P20, HIGH):** `dof_ledger_complete` reads **true** with the same
+**7 IDENTIFIED / 0 UNIDENTIFIED** ledger D47 recorded for `bau-d46` — `forecast_xyear_warmstart`
+plus NEISO's six published ORDC/scarcity registry fields. The D60 flip adds **no** eighth
+entry, because `ccs_retrofit_capex_co2_scaling` is now at its **dataclass default** and the
+ledger enumerates non-default solve-affecting fields. *Falsifier: any UNIDENTIFIED entry, or
+an entry for the CCS field.* Should the ledger come back with an UNIDENTIFIED row, the
+assertion is written **false** and FC-7 fails on it — the attestation is not re-scoped to fit.
+
+**And the one thing this attestation will NOT claim:** that the run's FC-5 (external
+corridor) or FC-6 (driver response) rows are satisfied. Both were `SKIPPED` on `bau-d46` for
+want of a committed benchmark-corridor table and a paired driver battery, neither of which
+D60 builds; they stay SKIPPED and are reported as such, exactly as the preserved record has
+them (`neiso-t3` carries them as caveats today). D60 produces no FC-5/FC-6 evidence and
+claims none.
