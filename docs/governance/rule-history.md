@@ -634,10 +634,85 @@ keeper + keep-list clear-out — is the tool that actually implements the amende
 one rule 15 now names. Closing the gap is a calibration-desk change to `dashboard_add_run.py`, not
 a governance one; the G-1 amendment lane corrected the *prose* of both scripts only.
 
-## 10. Changes to this file
+## 10. The bench builder fingerprint — byte hash → AST hash (owner ruling R-AS, 2026-09-05)
+
+**What the instrument is.** `scripts/lib/bench_stamp.builder_fingerprint()` stamps every
+per-(ISO, year) benchmark part under `frontend/data/backcast/bench/` with a 12-hex hash of the
+SOURCE of the four scripts that compute and write it (`BUILDER_SOURCES`). A part whose stamp
+differs from the current one provably was not written by the builder at HEAD, so a C1 verdict
+scored against it is not reproducible from the code that would produce it now.
+`scripts/check_bench_freshness.py` gates on that (HARD tier) and separately REPORTS intervening
+engine commits (SOFT tier, never gates). It exists because of nyiso-148 (2026-08-21): NYISO's
+part went un-refreshed from 2026-08-17, regenerating it moved CC_REGULAR-2024's metered actual
+by ~4 TWh, and every registered NYISO run flipped to `NOT-YET`, the keeper included. **Nothing
+below weakens that guarantee** — the defect it closes was real and expensive.
+
+**Origin.** Owner ruling **R-AS** (card M, verbatim *"Adopt Proposal A"*), **2026-09-05**,
+on `docs/handoffs/FINDING-y10-bench-stamp-instrument-2026-09-05.md` — the Y-10 audit lane's
+finding that the instrument's TRIGGER, not its guarantee, is mis-tuned. Executed by audit lane
+Y-12. R-AS is first recorded here; no prior artifact cites it.
+
+**The defect in the trigger.** The stamp hashed the RAW BYTES of four whole files, so **any**
+edit to any byte moved it and marked all 20 committed parts STALE. Measured over the four
+sources at `49647dd6`, **53.0 % of the hashed surface (84,163 of 158,714 bytes) is comments and
+docstrings**, which cannot change a bench payload under any circumstances. All three fingerprint
+moves of 2026-09-05 were adjudicated payload-inert and each cost a dedicated lane; the third
+(`677b605a`) was a **single reworded comment line** that cost 20 artifacts a re-stamp. The
+instrument had produced **zero true positives and three false alarms** — which is the failure
+mode `check_bench_freshness.py`'s own docstring warns about for the SOFT tier (*"gating on them
+would mark every part stale within a week and train everyone to ignore the signal"*), arriving
+at the HARD tier.
+
+**What changed.** One function body. `builder_fingerprint()` now hashes, per source in
+`BUILDER_SOURCES` order, the path, then the LENGTH of `ast.dump(ast.parse(source))`, then that
+dumped AST — in place of the raw bytes and their length. `ast.dump` at its defaults omits
+line/column attributes, so comments, blank lines and reformatting are inert while every semantic
+edit still fires. A source that will not parse falls back to its raw bytes, which is the
+FAIL-SAFE direction: an unparseable builder can only OVER-fire, never under-fire.
+
+**Why it cannot weaken the guarantee.** Two sources with identical ASTs compile to identical
+behaviour, so a part written under either is byte-identical by construction. The stamp narrows to
+exactly what it was ever able to promise.
+
+**The counterfactual, computed rather than argued** (finding §3, re-measured under the shipped
+construction at Python 3.11; pinned as relations by `tests/scoring/test_bench_stamp_ast.py`):
+
+| revision | what it was | byte hash (old) | AST hash (shipped) |
+|---|---|---|---|
+| `dee6472c^` | — | `dbea7bf45111` | `3fabde12b672` |
+| `dee6472c` | nyiso-192 CHP add-back — a real code change | `4e78c85427bb` | `96e5860ce4ec` — **MOVED, correctly** |
+| `677b605a^` | — | `4e78c85427bb` | `96e5860ce4ec` |
+| `677b605a` | delete-not-archive — **one comment reword** | `b2f21b9a00d3` | `96e5860ce4ec` — **UNCHANGED** |
+
+**STATED LIMIT, not buried.** Docstrings ARE `Expr(Constant(...))` nodes in the parsed tree, so
+`ast.dump` carries them and a docstring edit still moves the stamp. Only comments and whitespace
+go inert. Excluding docstrings would need a tree transform — wider than the Proposal A that R-AS
+adopted, and it would not reproduce the counterfactual digests above, which are the verifiable
+record of what was adopted. Pinned by a test so it is a known property, not a surprise. The
+finding's **Proposal B** (narrowing `BUILDER_SOURCES` to the bench-feeding paths, and dropping
+`bench_stamp.py`'s self-inclusion) is **NOT adopted here** and remains open.
+
+**The one-time re-stamp.** Changing the construction moves the fingerprint by definition, so all
+20 parts read STALE the moment it lands (measured on this branch: 20 STALE, exit 1, before the
+re-stamp). They were re-stamped `b2f21b9a00d3` → `4254168edcfe` **in the same PR** by the Y-8
+method (`a725bfc3`) — each part loaded and rewritten through `backcast_artifacts.write_bench_part`
+with its own `meta`/`bench` — so the gate is green on the head and never red on `main`. Verified
+per part, 20 of 20: **payload sha256 unchanged**, `meta` identical with the stamp removed, meta
+key ORDER identical. The only differing byte content is the 12-hex stamp; the ±1-byte gzip
+deltas are gzip's re-encoding of those characters.
+
+**What did NOT change.** The 12-hex digest length; the path-prefix construction; the missing-file
+behaviour (an absent source still moves the fingerprint); the `BUILDER_SOURCES` membership; the
+HARD/SOFT tier split and `check_bench_freshness.py` entire; `write_bench_part`'s byte-determinism
+(the property that keeps concurrent registrations conflict-free). **No keeper, marker, matrix
+shard, registry sidecar, bench payload or determination was touched**, and no solve was run — the
+re-stamp is a relabelling, which is what the identity checks above are for.
+
+## 11. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-05 | Added §10: the bench builder fingerprint's hash narrowed from the RAW BYTES of `BUILDER_SOURCES` to `ast.dump(ast.parse(source))` (owner ruling **R-AS**, card M *"Adopt Proposal A"*, on the Y-10 finding; executed by audit lane Y-12). Records the mis-tuned trigger (53 % of the hashed surface is prose; three false alarms, zero true positives), the computed counterfactual over `dee6472c`/`677b605a`, the stated limit that docstring edits still fire, and the one-time re-stamp of all 20 bench parts `b2f21b9a00d3` → `4254168edcfe` with payload sha256 unchanged on every one. The nyiso-148 guarantee is unchanged; no keeper, marker, shard or determination touched. "Changes to this file" renumbered §10 → §11 (no external reference cited §10). |
 | 2026-09-05 | Added §9: rule 15 `[R-DASHBOARD]` retention amended from the top-15-per-ISO age cap to **KEEPER-ONLY** (owner instruction of 2026-09-05, quoted verbatim; executed by session ercot-248 and the #4808/#4816 cleanup lane). Records what the cap was, what replaced it, that the registration duty for rejected probes is untouched, and the standing implementation lag (`dashboard_add_run.KEEP_PER_ISO` still sweeps by age — a calibration-desk item). "Changes to this file" renumbered §9 → §10 (no external reference cited §9). |
 | 2026-08-30 | §3: indexed rubric **v3.1**'s C7 retirement (owner directive verbatim) and rubric **v3.5** (owner option-(B) decision of 2026-08-25 — diurnal price amplitude added REPORTED-ONLY and BAND-FREE; no CLAUDE.md rule text changed) alongside the rule-20 genealogy they extend. v3.5 re-verified determination-neutral over the 2026-08-30 six-keeper roster. Canonical narratives stay in the rubric §9; index entries only. |
 | 2026-08-17 | §4: recorded rubric **v3.3** — the owner's amendment that a ledgered C3c caveat is REPORTED but no longer DOWNGRADES the determination, withdrawing the "never `CALIBRATED`" half of CLAUDE.md rule 22 guard (d). 6 registered runs re-score `CALIBRATED-WITH-CAVEATS → CALIBRATED`, 2 of them keepers (NYISO, NEISO); holdout tiers untouched. |
