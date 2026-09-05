@@ -751,6 +751,7 @@ def unit_outage_derate_factors(
     per_unit_crosswalk: bool = False,
     merit_order_guard: bool = False,
     per_unit_clip: bool = False,
+    extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -782,6 +783,12 @@ def unit_outage_derate_factors(
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:
         return {}
+    # Extract-own-basis share (nyiso-196): the bin basis is indexed over the
+    # UNFILTERED extract so every unit at the facility counts toward it,
+    # whatever its own windows' durations. Non-ERCOT only (see the accumulator).
+    basis = (
+        _extract_basis_index(df) if (extract_basis_share and iso != "ERCOT") else None
+    )
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
     return _unit_outage_factors_from_events(
         df,
@@ -795,6 +802,7 @@ def unit_outage_derate_factors(
         per_unit_crosswalk=per_unit_crosswalk,
         st_capacity_basis=st_capacity_basis,
         per_unit_clip=per_unit_clip,
+        extract_basis=basis,
     )
 
 
@@ -834,6 +842,45 @@ def _fleet_status_index(iso: str) -> dict[int, dict[str, str]] | None:
     return out
 
 
+def _extract_basis_index(
+    df: pd.DataFrame,
+) -> dict[tuple[int, str], tuple[bool, float]]:
+    """Return ``{(facility_id, plant_group): (single_group, group_basis_mw)}``.
+
+    The extract's OWN capacity basis for each ``(facility, group)`` bin, built
+    from the UNFILTERED extract (every row, every year) so a unit whose
+    windows all fall below the caller's duration filter still counts toward
+    its bin's basis. ``single_group`` is True when the facility carries exactly
+    one model group in the extract — then the row's own ``plant_capacity_mw``
+    (the deriver's ``fac_cap``, the sum over EVERY CAMPD unit at the facility
+    that year, written on every row) is the exact bin basis and
+    ``unit_capacity_mw / plant_capacity_mw`` is the published
+    ``unit_pct_of_plant``. ``group_basis_mw`` is the fallback for a
+    multi-group facility: the sum over the group's DISTINCT unit ids of each
+    unit's capacity (max over its rows). Consumed by
+    :func:`_unit_outage_factors_from_events` under
+    ``ScenarioConfig.unit_outage_extract_basis_share``.
+    """
+    out: dict[tuple[int, str], tuple[bool, float]] = {}
+    if df is None or df.empty:
+        return out
+    groups_at: dict[int, set[str]] = {}
+    unit_cap: dict[tuple[int, str], dict[str, float]] = {}
+    for r in df.itertuples(index=False):
+        f = int(r.facility_id)
+        g = str(r.plant_group)
+        groups_at.setdefault(f, set()).add(g)
+        ucap = r.unit_capacity_mw
+        if pd.isna(ucap) or float(ucap) <= 0.0:
+            continue
+        d = unit_cap.setdefault((f, g), {})
+        u = str(r.unit_id)
+        d[u] = max(d.get(u, 0.0), float(ucap))
+    for key, d in unit_cap.items():
+        out[key] = (len(groups_at[key[0]]) == 1, float(sum(d.values())))
+    return out
+
+
 def _unit_outage_factors_from_events(
     df: pd.DataFrame,
     year: int,
@@ -846,6 +893,7 @@ def _unit_outage_factors_from_events(
     per_unit_crosswalk: bool = False,
     st_capacity_basis: bool = False,
     per_unit_clip: bool = False,
+    extract_basis: dict[tuple[int, str], tuple[bool, float]] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -897,7 +945,42 @@ def _unit_outage_factors_from_events(
     bin — a ceiling on a sum, not a window-merging heuristic, so it is the
     identity except in the physically impossible case and can only ever remove
     LESS. Zero free parameters (rule 21 ``[R-DOF]``).
+
+    ``extract_basis`` (GATED default-off; nyiso-196,
+    ``ScenarioConfig.unit_outage_extract_basis_share``): take the removed
+    FRACTION on the extract's OWN capacity basis — ``unit_capacity_mw`` over
+    the bin's basis from :func:`_extract_basis_index` (the row's
+    ``plant_capacity_mw`` at a single-group facility, i.e. the published
+    ``unit_pct_of_plant``) — instead of over the fleet's ``cap[bin]``. The
+    numerator and the denominator then come from ONE construction (the
+    deriver's ``build_capacity_index`` / ``fac_cap``), so the fraction no
+    longer depends on how the extract's per-unit capacity relates to the
+    fleet's net-summer bin sum. Measured at Cricket Valley 57185 (NYISO): the
+    CAMPD stack ids ``U001``-``U003`` match EIA-860 generator ids ``U001``-
+    ``U003``, which are the plant's STEAM turbines (prime mover CA, 174.2 MW
+    each) — the id collision skips the CT steam-coupling augmentation, so the
+    extract books each 1x1 block at 174.2 MW (``eia_exact``, plant 522.6) and
+    the LP accumulator divides that by the 1,016.8 MW net-summer bin: one block
+    out removes 17.1 % of the plant against the physical 33.3 %, and all three
+    blocks out leave 48.6 % available at a dark plant. On the extract's own
+    basis the same row reads 174.2 / 522.6 = 33.3 %. COMBINED-CYCLE bins only
+    (:data:`_CC_NAMEPLATE_BASIS_GROUPS`): a CEMS unit at a combined cycle is a
+    1x1 block or a steam-coupled CT whose share of the plant the deriver's
+    ``fac_cap`` states, which is the physics this share encodes; steam bins
+    keep their own numerator alignment (``st_capacity_basis``, whose bins are
+    disjoint from these — rule 19 ``[R-ONE-MECH]``). Non-ERCOT only (the ERCOT
+    branch caps on its CAMPD bin sheet and routes split facilities, a basis the
+    extract's ``facility_id`` does not address); a bin absent from the index
+    keeps ``cap[bin]``. Mutually exclusive with ``cc_nameplate_basis``, which
+    acts on the same CC bins' share (two constructions of one share never
+    stack).
     """
+    if extract_basis is not None and cc_nameplate_basis:
+        raise ValueError(
+            "unit_outage_extract_basis_share is mutually exclusive with "
+            "unit_outage_lp_capacity_basis (rule 19 [R-ONE-MECH]): both act on "
+            "the combined-cycle bins' removed share — arm exactly one construction"
+        )
     if iso == "ERCOT":
         from market_sim.data.fleet import load_campd_bins
 
@@ -974,12 +1057,38 @@ def _unit_outage_factors_from_events(
         mask = outage_hour_mask(w_start, w_stop, year, hours)
         if not mask.any():
             continue
+        # Denominator of the removed share: the fleet bin by default; under
+        # ``extract_basis`` a COMBINED-CYCLE bin's capacity on the extract's
+        # OWN basis (the row's ``plant_capacity_mw`` at a single-group
+        # facility, else the group's distinct-unit sum) — see the docstring.
+        # CC bins only (_CC_NAMEPLATE_BASIS_GROUPS): a CEMS unit at a combined
+        # cycle is a block whose share of the plant the deriver's fac_cap
+        # states; steam bins keep their own numerator alignment
+        # (st_capacity_basis, rule 19). A bin the index does not carry keeps
+        # ``cap[tgt]``.
+        denom = cap[tgt]
+        if extract_basis is not None and tgt[1] in _CC_NAMEPLATE_BASIS_GROUPS:
+            ebasis = extract_basis.get((int(r.facility_id), str(r.plant_group)))
+            if ebasis is not None:
+                single_group, group_basis = ebasis
+                row_pc = getattr(r, "plant_capacity_mw", None)
+                if (
+                    single_group
+                    and row_pc is not None
+                    and not pd.isna(row_pc)
+                    and float(row_pc) > 0.0
+                ):
+                    denom = float(row_pc)
+                elif group_basis > 0.0:
+                    denom = group_basis
         if per_unit_clip:
             # Hold this unit's removed MW apart from the bin so it can be capped
             # at the unit's own capacity below. ``ucap`` is the same value the
-            # unclipped path divides by ``cap[tgt]``, so the two paths differ ONLY
+            # unclipped path divides by ``denom``, so the two paths differ ONLY
             # where a unit's own rows overlap — the boundary-day double-count.
-            slot = per_unit.setdefault((tgt, str(r.unit_id)), [np.zeros(hours), 0.0])
+            slot = per_unit.setdefault(
+                (tgt, str(r.unit_id)), [np.zeros(hours), 0.0, denom]
+            )
             slot[0][mask] += removed_frac * float(ucap)
             # A unit is at most fully out. Rows for one unit can differ in
             # ``ucap`` (a partial plateau carries the same unit capacity but a
@@ -988,14 +1097,15 @@ def _unit_outage_factors_from_events(
             # unit's own rows claim — never a smaller one, which would clip a
             # legitimate single window.
             slot[1] = max(slot[1], float(ucap))
+            slot[2] = denom
             sums.setdefault(tgt, np.zeros(hours))
             continue
         arr = sums.setdefault(tgt, np.zeros(hours))
-        arr[mask] += removed_frac * float(ucap) / cap[tgt]
-    for (tgt, _uid), (removed_mw, unit_cap) in per_unit.items():
+        arr[mask] += removed_frac * float(ucap) / denom
+    for (tgt, _uid), (removed_mw, unit_cap, denom) in per_unit.items():
         if unit_cap <= 0.0:
             continue
-        sums[tgt] += np.minimum(removed_mw, unit_cap) / cap[tgt]
+        sums[tgt] += np.minimum(removed_mw, unit_cap) / denom
     return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}
 
 
@@ -1010,6 +1120,7 @@ def unit_outage_short_derate_factors(
     fleet_status_scope: bool = False,
     st_capacity_basis: bool = False,
     per_unit_clip: bool = False,
+    extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1029,6 +1140,9 @@ def unit_outage_short_derate_factors(
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)
+    basis = (
+        _extract_basis_index(df) if (extract_basis_share and iso != "ERCOT") else None
+    )
     df = df[
         (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"] == "COAL")
     ]
@@ -1043,6 +1157,7 @@ def unit_outage_short_derate_factors(
         fleet_status_scope,
         st_capacity_basis=st_capacity_basis,
         per_unit_clip=per_unit_clip,
+        extract_basis=basis,
     )
 
 
@@ -1075,6 +1190,7 @@ def unit_layup_removed_fractions(
     cc_nameplate_basis: bool = False,
     st_capacity_basis: bool = False,
     per_unit_clip: bool = False,
+    extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) laid-up capacity fraction}``.
 
@@ -1121,6 +1237,15 @@ def unit_layup_removed_fractions(
         # invariant. Phase-0 N-2 measures 197 same-unit overlaps in MISO's
         # lay-up extract, so the layer is not merely eligible — it is live.
         per_unit_clip=per_unit_clip,
+        # nyiso-196: the extract-basis share moves with the standard overlay for
+        # the same additivity contract — the lay-up companion is written by the
+        # same deriver on the same fac_cap basis, so its share must be taken
+        # over the same denominator as the outage share it adds to.
+        extract_basis=(
+            _extract_basis_index(df)
+            if (extract_basis_share and iso != "ERCOT")
+            else None
+        ),
     )
     # The accumulator returns availability multipliers (1 - removed share);
     # this loader's contract is the REMOVED (laid-up) share itself.
@@ -1156,6 +1281,7 @@ def unit_partial_outage_derate_factors(
     fleet_status_scope: bool = False,
     st_capacity_basis: bool = False,
     per_unit_clip: bool = False,
+    extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -1196,6 +1322,11 @@ def unit_partial_outage_derate_factors(
         fleet_status_scope,
         st_capacity_basis=st_capacity_basis,
         per_unit_clip=per_unit_clip,
+        extract_basis=(
+            _extract_basis_index(df)
+            if (extract_basis_share and iso != "ERCOT")
+            else None
+        ),
     )
 
 

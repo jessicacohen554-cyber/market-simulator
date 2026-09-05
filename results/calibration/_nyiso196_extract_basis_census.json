@@ -1,0 +1,326 @@
+{
+ "2023": {
+  "2500:CC_REGULAR": {
+   "off_mean": 0.9068493150684932,
+   "on_mean": 0.921248001382827,
+   "delta_avail_gwh": 28.02663974763408,
+   "hours_moved": 816
+  },
+  "2539:CC_REGULAR": {
+   "off_mean": 0.9568156879402497,
+   "on_mean": 0.9442922374429223,
+   "delta_avail_gwh": -89.15759999999997,
+   "hours_moved": 552
+  },
+  "10725:CC_CHP": {
+   "off_mean": 0.3132995651155636,
+   "on_mean": 0.05299776999044281,
+   "delta_avail_gwh": -1360.3934065116282,
+   "hours_moved": 8616
+  },
+  "50006:CC_CHP": {
+   "off_mean": 0.8662793395084178,
+   "on_mean": 0.9040042976094547,
+   "delta_avail_gwh": 302.4797703529413,
+   "hours_moved": 3864
+  },
+  "50292:CC_REGULAR": {
+   "off_mean": 0.4305741020595204,
+   "on_mean": 0.6089644621603413,
+   "delta_avail_gwh": 201.5726155327868,
+   "hours_moved": 6912
+  },
+  "50368:CC_CHP": {
+   "off_mean": 0.40466394832088703,
+   "on_mean": 0.4081914340211548,
+   "delta_avail_gwh": 0.9239331645569621,
+   "hours_moved": 192
+  },
+  "50450:CC_CHP": {
+   "off_mean": 0.2940396815775649,
+   "on_mean": 0.16712328767123288,
+   "delta_avail_gwh": -75.37919999999997,
+   "hours_moved": 7248
+  },
+  "50451:CC_CHP": {
+   "off_mean": 0.253782737227797,
+   "on_mean": 0.18082191780821918,
+   "delta_avail_gwh": -42.055200000000006,
+   "hours_moved": 7128
+  },
+  "54114:CC_CHP": {
+   "off_mean": 0.7047503045066992,
+   "on_mean": 0.7,
+   "delta_avail_gwh": -5.124600000000012,
+   "hours_moved": 3312
+  },
+  "54547:CC_CHP": {
+   "off_mean": 0.6997156888084777,
+   "on_mean": 0.7205952716181137,
+   "delta_avail_gwh": 182.24668688892737,
+   "hours_moved": 3360
+  },
+  "54574:CC_REGULAR": {
+   "off_mean": 0.17637245526919132,
+   "on_mean": 0.22170274440132773,
+   "delta_avail_gwh": 94.42879453924905,
+   "hours_moved": 3552
+  },
+  "54914:CC_CHP": {
+   "off_mean": 0.9697787144362486,
+   "on_mean": 0.9671232876712329,
+   "delta_avail_gwh": -6.047999999999995,
+   "hours_moved": 288
+  },
+  "55375:CC_REGULAR": {
+   "off_mean": 0.943563116806599,
+   "on_mean": 0.9438356164383561,
+   "delta_avail_gwh": 1.3320000000000003,
+   "hours_moved": 72
+  },
+  "55405:CC_REGULAR": {
+   "off_mean": 0.22282678274228648,
+   "on_mean": 0.2502218961598134,
+   "delta_avail_gwh": 236.23748691834933,
+   "hours_moved": 3048
+  },
+  "56196:CC_REGULAR": {
+   "off_mean": 0.8834001956947163,
+   "on_mean": 0.8876712328767123,
+   "delta_avail_gwh": 20.952000000000023,
+   "hours_moved": 432
+  },
+  "56259:CC_CHP": {
+   "off_mean": 0.7847378365611714,
+   "on_mean": 0.8053966689661969,
+   "delta_avail_gwh": 104.96339568345317,
+   "hours_moved": 1920
+  },
+  "56940:CC_REGULAR": {
+   "off_mean": 0.7860937723467294,
+   "on_mean": 0.7931775310463763,
+   "delta_avail_gwh": 40.594927148604796,
+   "hours_moved": 2160
+  },
+  "57185:CC_REGULAR": {
+   "off_mean": 0.9046512787949628,
+   "on_mean": 0.8146118721461187,
+   "delta_avail_gwh": -801.4439999999998,
+   "hours_moved": 3456
+  },
+  "57664:CC_REGULAR": {
+   "off_mean": 0.9177321156773212,
+   "on_mean": 0.9219178082191781,
+   "delta_avail_gwh": 19.800000000000004,
+   "hours_moved": 360
+  }
+ },
+ "2024": {
+  "2500:CC_REGULAR": {
+   "off_mean": 0.9178082191780822,
+   "on_mean": 0.927660861674085,
+   "delta_avail_gwh": 19.177892744479504,
+   "hours_moved": 720
+  },
+  "2539:CC_REGULAR": {
+   "off_mean": 0.9149272423563599,
+   "on_mean": 0.9159817351598174,
+   "delta_avail_gwh": 7.507200000000009,
+   "hours_moved": 144
+  },
+  "10725:CC_CHP": {
+   "off_mean": 0.35100455090260335,
+   "on_mean": 0.04946352655374857,
+   "delta_avail_gwh": -1575.9185261083746,
+   "hours_moved": 8448
+  },
+  "50006:CC_CHP": {
+   "off_mean": 0.8549588502310044,
+   "on_mean": 0.8956319462393384,
+   "delta_avail_gwh": 326.1180226415095,
+   "hours_moved": 3120
+  },
+  "50292:CC_REGULAR": {
+   "off_mean": 0.5038353828001959,
+   "on_mean": 0.6399455475888415,
+   "delta_avail_gwh": 153.79800736732565,
+   "hours_moved": 6288
+  },
+  "50368:CC_CHP": {
+   "off_mean": 0.3892243551564576,
+   "on_mean": 0.3958383908444599,
+   "delta_avail_gwh": 1.7323746835443041,
+   "hours_moved": 360
+  },
+  "50450:CC_CHP": {
+   "off_mean": 0.33768941689901794,
+   "on_mean": 0.2191780821917808,
+   "delta_avail_gwh": -70.38719999999995,
+   "hours_moved": 6768
+  },
+  "50451:CC_CHP": {
+   "off_mean": 0.18247491360286466,
+   "on_mean": 0.10410958904109589,
+   "delta_avail_gwh": -45.17040000000001,
+   "hours_moved": 7656
+  },
+  "54114:CC_CHP": {
+   "off_mean": 0.7101429930088599,
+   "on_mean": 0.7054794520547946,
+   "delta_avail_gwh": -5.031000000000015,
+   "hours_moved": 3024
+  },
+  "54547:CC_CHP": {
+   "off_mean": 0.8911753545641019,
+   "on_mean": 0.9013869005222469,
+   "delta_avail_gwh": 89.13111128001387,
+   "hours_moved": 1536
+  },
+  "54574:CC_REGULAR": {
+   "off_mean": 0.29268523105637284,
+   "on_mean": 0.3541718555417186,
+   "delta_avail_gwh": 128.0845090909092,
+   "hours_moved": 5520
+  },
+  "55405:CC_REGULAR": {
+   "off_mean": 0.47900062899033136,
+   "on_mean": 0.510504699089174,
+   "delta_avail_gwh": 271.67043386243404,
+   "hours_moved": 4200
+  },
+  "56196:CC_REGULAR": {
+   "off_mean": 0.8969178082191781,
+   "on_mean": 0.8972602739726028,
+   "delta_avail_gwh": 1.68,
+   "hours_moved": 24
+  },
+  "56259:CC_CHP": {
+   "off_mean": 0.8013982050070855,
+   "on_mean": 0.8054794520547945,
+   "delta_avail_gwh": 20.736000000000004,
+   "hours_moved": 576
+  },
+  "56940:CC_REGULAR": {
+   "off_mean": 0.898422539470017,
+   "on_mean": 0.9054917194847679,
+   "delta_avail_gwh": 40.511381014925355,
+   "hours_moved": 1176
+  },
+  "57185:CC_REGULAR": {
+   "off_mean": 0.7820600658170577,
+   "on_mean": 0.5762557077625572,
+   "delta_avail_gwh": -1831.8719999999996,
+   "hours_moved": 7968
+  },
+  "57664:CC_REGULAR": {
+   "off_mean": 0.9067478437341451,
+   "on_mean": 0.9123287671232877,
+   "delta_avail_gwh": 26.400000000000002,
+   "hours_moved": 480
+  }
+ },
+ "2025": {
+  "2500:CC_REGULAR": {
+   "off_mean": 0.9232876712328767,
+   "on_mean": 0.9327254656237846,
+   "delta_avail_gwh": 18.370402523659312,
+   "hours_moved": 672
+  },
+  "2539:CC_REGULAR": {
+   "off_mean": 0.9176167383876845,
+   "on_mean": 0.9223242510913745,
+   "delta_avail_gwh": 33.51396923076932,
+   "hours_moved": 1032
+  },
+  "10725:CC_CHP": {
+   "off_mean": 0.4445235328964589,
+   "on_mean": 0.2284190695149599,
+   "delta_avail_gwh": -1129.4086041958044,
+   "hours_moved": 7032
+  },
+  "50006:CC_CHP": {
+   "off_mean": 0.8506784960092433,
+   "on_mean": 0.8897790543526292,
+   "delta_avail_gwh": 313.5093716129034,
+   "hours_moved": 3480
+  },
+  "50292:CC_REGULAR": {
+   "off_mean": 0.6953817169643607,
+   "on_mean": 0.785240830755634,
+   "delta_avail_gwh": 101.53652129032255,
+   "hours_moved": 4512
+  },
+  "50450:CC_CHP": {
+   "off_mean": 0.5363235947791651,
+   "on_mean": 0.4547945205479452,
+   "delta_avail_gwh": -48.422399999999975,
+   "hours_moved": 4656
+  },
+  "50451:CC_CHP": {
+   "off_mean": 0.36078194612149733,
+   "on_mean": 0.29863013698630136,
+   "delta_avail_gwh": -35.8248,
+   "hours_moved": 6072
+  },
+  "54114:CC_CHP": {
+   "off_mean": 0.8961907463334058,
+   "on_mean": 0.8945205479452055,
+   "delta_avail_gwh": -1.8017999999999983,
+   "hours_moved": 1584
+  },
+  "54547:CC_CHP": {
+   "off_mean": 0.8648355999406081,
+   "on_mean": 0.8760488124619911,
+   "delta_avail_gwh": 97.8741218172396,
+   "hours_moved": 1704
+  },
+  "54574:CC_REGULAR": {
+   "off_mean": 0.3005149947578834,
+   "on_mean": 0.3733491102716971,
+   "delta_avail_gwh": 151.7227853820597,
+   "hours_moved": 4920
+  },
+  "55375:CC_REGULAR": {
+   "off_mean": 0.857927038837335,
+   "on_mean": 0.863013698630137,
+   "delta_avail_gwh": 24.864000000000004,
+   "hours_moved": 1344
+  },
+  "55405:CC_REGULAR": {
+   "off_mean": 0.4019988533450596,
+   "on_mean": 0.44952786274770584,
+   "delta_avail_gwh": 409.8589980582525,
+   "hours_moved": 5376
+  },
+  "56196:CC_REGULAR": {
+   "off_mean": 0.7983170254403131,
+   "on_mean": 0.7986133435693208,
+   "delta_avail_gwh": 1.4536182136602356,
+   "hours_moved": 264
+  },
+  "56259:CC_CHP": {
+   "off_mean": 0.8538734057628721,
+   "on_mean": 0.8561203297740669,
+   "delta_avail_gwh": 11.416171516079645,
+   "hours_moved": 312
+  },
+  "56940:CC_REGULAR": {
+   "off_mean": 0.8473683339870052,
+   "on_mean": 0.8493346252655721,
+   "delta_avail_gwh": 11.268234081765097,
+   "hours_moved": 1416
+  },
+  "57185:CC_REGULAR": {
+   "off_mean": 0.8097722557239404,
+   "on_mean": 0.6301369863013698,
+   "delta_avail_gwh": -1598.9399999999996,
+   "hours_moved": 6552
+  },
+  "57664:CC_REGULAR": {
+   "off_mean": 0.660679857940132,
+   "on_mean": 0.6986301369863014,
+   "delta_avail_gwh": 179.52000000000007,
+   "hours_moved": 3264
+  }
+ }
+}

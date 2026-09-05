@@ -370,6 +370,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
     # pinned default key never moves.
     "unit_outage_per_unit_clip",
+    # nyiso-196 unit-outage removed FRACTION on the extract's own capacity
+    # basis (GATED default-off; every consumer reads it via
+    # ``getattr(config, "unit_outage_extract_basis_share", False)`` in
+    # data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
+    # pinned default key never moves.
+    "unit_outage_extract_basis_share",
     # data/fleet/arrays.py and it selects a SEPARATE companion extract, so the
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 / caiso-186 discipline).
@@ -1563,6 +1570,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-202 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_per_unit_clip": "False",
+    # Added by nyiso-196 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_extract_basis_share": "False",
     # Added by nyiso-176 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_per_unit_attribution": "False",
@@ -12641,6 +12651,80 @@ class ScenarioConfig:
     # identically for a forecast year), eligibility year-independent, and
     # byte-inert while off.
     unit_outage_per_unit_clip: bool = False
+
+    # Unit-outage removed FRACTION on the EXTRACT'S OWN capacity basis
+    # (unit_outage_extract_basis_share, off by default; nyiso-196). The sixth
+    # member of the same consistency-repair family, and the one that makes
+    # the SHARE basis-independent instead of aligning one side of it: the
+    # accumulator divides the row's ``unit_capacity_mw`` by the bin's capacity
+    # on the SAME construction that wrote the numerator — the row's own
+    # ``plant_capacity_mw`` (the deriver's ``fac_cap``, every CAMPD unit at the
+    # facility that year) at a single-group facility, i.e. exactly the
+    # published ``unit_pct_of_plant``; the group's distinct-unit sum at a
+    # multi-group facility — instead of by outages._iso_plant_capacity, the
+    # fleet's net-summer pmax sum.
+    #
+    # THE DEFECT (rule 14 [R-ACCURATE]), measured at Cricket Valley 57185 in
+    # the committed NYISO -perunitmerit- extract: CAMPD's three stack ids
+    # U001-U003 match EIA-860 generator ids U001-U003 EXACTLY — but those
+    # generators are the plant's STEAM turbines (prime mover CA, 174.2 MW
+    # each; the CTs are U004-U006, CT, 263.3 MW). The id collision lands the
+    # deriver's exact-match route on a CA row, so build_capacity_index's CT
+    # steam-coupling augmentation never fires and each 1x1 block is written
+    # at 174.2 MW (capacity_source eia_exact, plant_capacity_mw 522.6) where
+    # its CAMPD gross reaches 374-380 MW. The LP accumulator then divides
+    # 174.2 by the 1,016.8 MW net-summer bin: one block out removes 17.1 % of
+    # the plant against the physical 33.3 %, and with all three blocks out
+    # (Jan 13-24, Feb 29-Mar 8 and Dec 20-27 2024) 48.6 % of the plant stays
+    # available at a plant whose meter reads zero. On the extract's own basis
+    # the same rows read 174.2 / 522.6 = 33.3 % and a full stop lands on
+    # EXACTLY 0.0. The 2024 footprint (keeper 2026-09-05-nyiso-192-astoria-
+    # panel, zero LP): LP-applied minus extract-own-basis availability
+    # +1.960 TWh at 57185 (2023 +0.857, 2025 +1.710 — the plant's 190 / 450 /
+    # 398 unit-outage days), of which the model dispatched 0.512 TWh and was
+    # online 671 h in windows the extract says the plant was dark. The same
+    # mismatch runs the OTHER way at every other NYISO CC bin, whose extract
+    # capacity (observed peak or steam-augmented nameplate) EXCEEDS the
+    # net-summer denominator: Athens 55405 -0.294, Bethpage 50292 -0.154,
+    # Saranac 54574 -0.136 TWh of availability the LP never had.
+    #
+    # WHY THE SHARE, NOT ANOTHER SIDE. unit_outage_lp_capacity_basis raises
+    # the CC DENOMINATOR to nameplate (right where the numerator is nameplate;
+    # at Cricket Valley it would make 174.2 / 1,312.5 = 13.3 %, worse);
+    # unit_outage_st_capacity_basis substitutes the fleet's per-unit pmax as
+    # the STEAM numerator (CC bins are out of its scope by construction).
+    # Taking numerator and denominator from ONE construction is what the
+    # deriver's own docstring promises ("the same basis as the model bin
+    # denominator the derate divides into") and what the extract already
+    # publishes as unit_pct_of_plant; it needs no per-unit fleet roster match
+    # and no knowledge of which EIA generator a CAMPD stack is. Mutually
+    # exclusive with unit_outage_lp_capacity_basis, which acts on the same CC
+    # bins' share (rule 19 [R-ONE-MECH]: two constructions of one share never
+    # stack; the loader raises).
+    #
+    # SCOPE. COMBINED-CYCLE bins only (outages._CC_NAMEPLATE_BASIS_GROUPS =
+    # CC_REGULAR, CC_CHP): a CEMS unit at a combined cycle is a 1x1 block or a
+    # steam-coupled CT whose share of the plant the deriver's fac_cap states —
+    # the physics this share encodes. Steam bins keep their own numerator
+    # alignment (unit_outage_st_capacity_basis, disjoint bins), so the two
+    # flags never touch one bin. Measured blast radius (NYISO 2024, zero LP):
+    # 57185 -1.83 TWh available, Selkirk 10725 CC_CHP -1.58 (three blocks
+    # dark ~340 days each; the LP had it 35 % available against a 0.11 TWh
+    # meter), Linden 50006 +0.33, Athens +0.27, Bethpage +0.15, Saranac +0.13,
+    # Sithe +0.09 — every CC bin toward its extract-stated availability, no
+    # steam bin moves. Non-ERCOT only (the ERCOT branch caps on its CAMPD bin
+    # sheet and routes split facilities by asset class, a basis the extract's
+    # facility_id does not address). Threaded, like st_capacity_basis and
+    # per_unit_clip, into the std >= 5-day, short and partial layers AND the
+    # lay-up loader (the additivity contract: a lay-up share and an outage
+    # share for the same plant sit on one basis), and deliberately NOT into
+    # the declared-event maxgen layer. MEASURED (the extract's own columns),
+    # ZERO fitted scalars and zero free parameters (rule 21 [R-DOF]),
+    # rule-13 forward-regenerable (a property of the accumulator, identical
+    # for a forecast year's extract), byte-inert while off. Evidence:
+    # docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md,
+    # results/calibration/PREREG-nyiso196-cc-outage-share-basis-screen.md.
+    unit_outage_extract_basis_share: bool = False
 
     # CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two
     # CAMPD-derived NYISO solve inputs both attribute a MIXED plant's measured
