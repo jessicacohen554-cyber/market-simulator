@@ -1,0 +1,37 @@
+{
+ "2022": {
+  "arm_how": "curve_sets_price_between_offers",
+  "arm_pos": 1.055069,
+  "arm_price": 41.274451,
+  "arm_uncleared": {
+   "coal": 237.847,
+   "gas_cc": 2052.055,
+   "gas_ct": 24243.606
+  },
+  "class_moved_mw": 12524.787000000122,
+  "ctlP_how": "marginal_offer_sets_price",
+  "ctlP_pos": 1.053672,
+  "ctlP_price": 46.782279,
+  "ctlP_uncleared": {
+   "coal": 237.847,
+   "gas_cc": 2052.055,
+   "gas_ct": 11688.608,
+   "gas_st": 8801.943,
+   "oil": 3722.85
+  },
+  "dpos_arm_vs_reclear": -4.383994798295987e-07,
+  "dprice_arm_vs_reclear": -0.00012621838263982,
+  "q0_arm": 43102.681,
+  "q0_ctlP": 30577.888,
+  "q0_reclear": 43102.674999999814,
+  "reclear_how": "curve_sets_price_between_offers",
+  "reclear_pos": 1.0550694383994799,
+  "reclear_price": 41.27457721838264,
+  "reclear_uncleared": {
+   "coal": 237.8,
+   "gas_cc": 2052.1,
+   "gas_ct": 24243.6
+  },
+  "requirement_mw": 146816.46
+ }
+}
