@@ -14,11 +14,40 @@ second antimode separating an aero-CT mode from a steam mode?
 body probe (0.35), the gas gates, the capacity statistic and ``hr_cut`` = 8.5
 are read from the derive and used as-is.
 
+INSTRUMENT CORRECTION (caiso-254, 2026-09-06 — made by CODE INSPECTION, before
+any statistic of the bid population was scored, and disclosed rather than
+silently applied)
+------------------------------------------------------------------------------
+As first written this probe did not reproduce the derive on three points. All
+three were found by reading ``derive_caiso_offer_surface.py`` against this file
+— never by comparing a number to the 46 CC / 100 CT target, which would have
+made the instrument a thing fitted to its own answer:
+
+1. **``cap``.** The derive computes
+   ``bids.groupby(["resource_seq", "year"]).segment_mw.quantile(0.98)`` — the
+   p98 of EVERY segment row in the resource-year. This probe computed the p98
+   of the HOURLY MAXIMA, which is systematically higher and therefore shifted
+   both the ``cap >= 20 MW`` admission and the ``0.35 x cap`` body rung. (The
+   derive's own module docstring says "p98 of hourly max cumulative bid MW";
+   its code says otherwise, and code is the source of truth.)
+2. **Pooling ``cap`` across years.** The derive takes
+   ``seg.groupby("resource_seq").cap.first()`` on the frame sorted by
+   ``(resource_seq, interval_start_utc, segment_mw)`` — the resource's EARLIEST
+   year's cap. This probe took the MAX across years.
+3. **``min_mw``.** The derive reduces it on the CAP-FILTERED frame; this probe
+   reduced it over the unfiltered store.
+
+The corpus is only ~57 M segment rows (~1.2 GB at these dtypes), so the fix is
+also the simpler construction: load the reduced store as ONE frame and follow
+the derive's own line order. No streaming approximation survives, and P-2 now
+tests the corpus and the construction rather than this file's transcription.
+
 MEMORY: ``curate_dam_public_bids.py`` needs ~14.3 GB for one CAISO year against
 15 GB of RAM (the corpus README's measured limit), so this probe never touches
-the clean tree. It streams ``dam_public_bids.caiso.parse_day`` day-by-day into a
-slim gitignored per-day store (the ``derive_caiso_battery_bid_floor.py``
-precedent) and reduces as it goes. Pass 1 is resumable: re-running skips days
+the clean tree. ``pass1`` streams ``dam_public_bids.caiso.parse_day`` day-by-day
+into a slim gitignored per-day store (the ``derive_caiso_battery_bid_floor.py``
+precedent), applying the derive's three row filters as it goes; only that
+already-slim store is loaded whole. Pass 1 is resumable: re-running skips days
 already reduced, so it can be run against a fetch still in flight.
 
 Output: ``results/calibration/_caiso253b_ct_bucket_bimodality.json``.
@@ -116,74 +145,68 @@ def pass1() -> None:
     )
 
 
-def _cap_by_resource_year() -> dict[int, pd.Series]:
-    """cap = p98 of hourly max cumulative bid MW, per resource per year."""
-    acc: dict[int, dict[int, list]] = {y: {} for y in YEARS}
+def _load_bids() -> pd.DataFrame:
+    """The reduced store as ONE frame, shaped exactly like the derive's.
+
+    Mirrors ``derive_caiso_offer_surface._load_bids``: the same four columns,
+    the same three row filters (applied in ``pass1``), the same ``price``
+    rename, the same ``year`` column and the SAME final sort key. The whole
+    corpus is ~57 M segment rows (~1.2 GB at these dtypes), so it fits in one
+    frame and no streaming approximation is needed anywhere below.
+    """
+    frames = []
     for f in sorted(STORE.glob("*.parquet")):
         y = int(f.stem[:4])
-        if y not in acc:
+        if y not in YEARS:
             continue
-        d = pd.read_parquet(
-            f, columns=["interval_start_utc", "resource_seq", "segment_mw"]
-        )
-        h = d.groupby(
-            ["resource_seq", "interval_start_utc"], sort=False
-        ).segment_mw.max()
-        for rid, vals in h.groupby(level=0):
-            acc[y].setdefault(rid, []).append(vals.to_numpy(float))
-    out = {}
-    for y, per in acc.items():
-        if not per:
-            continue
-        out[y] = pd.Series(
-            {
-                rid: float(np.percentile(np.concatenate(v), CAP_PCTILE))
-                for rid, v in per.items()
-            }
-        )
-    return out
-
-
-def _body_daily(caps: dict[int, pd.Series]) -> pd.DataFrame:
-    """Per (resource, local day) median body price at BODY_FRAC x cap."""
-    rows = []
-    for f in sorted(STORE.glob("*.parquet")):
-        y = int(f.stem[:4])
-        if y not in caps:
-            continue
-        cap = caps[y]
         d = pd.read_parquet(f)
         d = d.rename(columns={"segment_price_usd_per_mwh": "price"})
-        d["cap"] = d.resource_seq.map(cap)
-        d = d.dropna(subset=["cap"])
-        d = d[d.cap >= MIN_CAP_MW]
-        if d.empty:
-            continue
-        d = d.sort_values(["resource_seq", "interval_start_utc", "segment_mw"])
-        below = d[d.segment_mw <= BODY_FRAC * d.cap]
-        p = below.groupby(["resource_seq", "interval_start_utc"]).price.last()
-        first = d.groupby(["resource_seq", "interval_start_utc"]).price.first()
-        body = p.reindex(first.index).fillna(first).rename("p_body").reset_index()
-        body["day"] = (
-            body.interval_start_utc.dt.tz_convert("US/Pacific")
-            .dt.normalize()
-            .dt.tz_localize(None)
-        )
-        rows.append(
-            body.groupby(["resource_seq", "day"], as_index=False).p_body.median()
-        )
-    return pd.concat(rows, ignore_index=True)
+        d["year"] = np.int16(y)
+        d["segment_mw"] = d.segment_mw.astype("float32")
+        d["price"] = d.price.astype("float32")
+        frames.append(d)
+    out = pd.concat(frames, ignore_index=True, copy=False)
+    frames.clear()
+    return out.sort_values(["resource_seq", "interval_start_utc", "segment_mw"])
 
 
-def _min_mw() -> pd.Series:
-    """Per-resource minimum segment MW — the derive's NGR withdrawal exclusion."""
-    acc: dict[int, float] = {}
-    for f in sorted(STORE.glob("*.parquet")):
-        d = pd.read_parquet(f, columns=["resource_seq", "segment_mw"])
-        m = d.groupby("resource_seq").segment_mw.min()
-        for rid, v in m.items():
-            acc[rid] = min(acc.get(rid, np.inf), float(v))
-    return pd.Series(acc)
+def _with_cap(bids: pd.DataFrame) -> pd.DataFrame:
+    """Attach the derive's OWN ``cap`` and apply its ``MIN_CAP_MW`` row filter.
+
+    ``derive_caiso_offer_surface.main``:
+
+        cap_ry = bids.groupby(["resource_seq", "year"]).segment_mw.quantile(0.98)
+        bids   = bids.join(cap_ry.rename("cap"), on=["resource_seq", "year"])
+        bids   = bids[bids.cap >= MIN_CAP_MW]
+
+    i.e. the p98 of **every segment row** in the resource-year — NOT of the
+    hourly maxima. (The derive's module docstring says "p98 of hourly max
+    cumulative bid MW"; its code says the above, and CODE IS THE SOURCE OF
+    TRUTH. See this module's INSTRUMENT CORRECTION note.)
+    """
+    cap_ry = bids.groupby(["resource_seq", "year"]).segment_mw.quantile(
+        CAP_PCTILE / 100.0
+    )
+    bids = bids.join(cap_ry.rename("cap"), on=["resource_seq", "year"])
+    return bids[bids.cap >= MIN_CAP_MW]
+
+
+def _body_daily(bids: pd.DataFrame) -> pd.DataFrame:
+    """Per (resource, local day) median body price — the derive's ``_classify``.
+
+    ``_price_at_frac(seg, BODY_FRAC)`` then a per-(resource, Pacific day)
+    median, reproduced line for line on the cap-filtered frame.
+    """
+    below = bids[bids.segment_mw <= BODY_FRAC * bids.cap]
+    p = below.groupby(["resource_seq", "interval_start_utc"]).price.last()
+    first = bids.groupby(["resource_seq", "interval_start_utc"]).price.first()
+    body = p.reindex(first.index).fillna(first).rename("p_body").reset_index()
+    body["day"] = (
+        body.interval_start_utc.dt.tz_convert("US/Pacific")
+        .dt.normalize()
+        .dt.tz_localize(None)
+    )
+    return body.groupby(["resource_seq", "day"], as_index=False).p_body.median()
 
 
 def _kde(x: np.ndarray, w: np.ndarray, grid: np.ndarray, bw: float) -> np.ndarray:
@@ -192,17 +215,60 @@ def _kde(x: np.ndarray, w: np.ndarray, grid: np.ndarray, bw: float) -> np.ndarra
     return (np.exp(-0.5 * z**2) * w[None, :]).sum(axis=1) / (bw * np.sqrt(2 * np.pi))
 
 
+def _coverage() -> tuple[int, dict[int, int], list[str]]:
+    """(store days, days per year, missing trade dates) over the 2023-25 span."""
+    have = {f.stem for f in STORE.glob("*.parquet") if int(f.stem[:4]) in YEARS}
+    span = pd.date_range(f"{YEARS[0]}-01-01", f"{YEARS[-1]}-12-31", freq="D")
+    want = {d.strftime("%Y%m%d") for d in span}
+    per_year = {y: sum(1 for t in have if int(t[:4]) == y) for y in YEARS}
+    return len(have), per_year, sorted(want - have)
+
+
 def gate() -> None:
-    caps = _cap_by_resource_year()
-    if not caps:
+    """Score G-BIMODAL — but only against a COMPLETE corpus.
+
+    The registered design (PRECOMMIT §5, P-1) is that the gate "REFUSES to
+    score an under-covered corpus rather than reporting a number". As first
+    written the only refusal was the ``GAS_MIN_DAYS`` emptiness check, which a
+    partial corpus clears as soon as ~120 days of ONE year are present — so a
+    mid-fetch run scored and wrote a verdict instead of refusing. That is the
+    defect this guard closes; see the caiso-254 FINDING's disclosure.
+
+    ``MAX_MISSING_DAYS`` is a corpus-adequacy tolerance, not a gate threshold:
+    P-1 registers that exactly one trade date (2023-06-01) is a genuine OASIS
+    archive hole, so the span admits a handful of absences and nothing more.
+    """
+    #: 1,096 calendar days in the 2023-25 span; P-1 expects 1,095 present.
+    MAX_MISSING_DAYS = 6
+
+    store_days, per_year, missing = _coverage()
+    if not store_days:
         raise SystemExit("no reduced days in the store — run --pass1 first")
-    daily = _body_daily(caps)
+    if len(missing) > MAX_MISSING_DAYS or any(per_year[y] == 0 for y in YEARS):
+        raise SystemExit(
+            f"REFUSED: corpus is under-covered — {store_days} reduced day(s), "
+            f"per-year {per_year}, {len(missing)} missing of "
+            f"{store_days + len(missing)} (tolerance {MAX_MISSING_DAYS}). "
+            f"First missing: {missing[:5]}. G-BIMODAL is scored on the POOLED "
+            "2023-25 population only (PRECOMMIT §2.1); a partial corpus is a "
+            "different population and its verdict is not this gate's. Finish "
+            "the fetch, re-run --pass1, then --gate."
+        )
+    bids = _load_bids()
+    bids = _with_cap(bids)
+    daily = _body_daily(bids)
     gas = _gas_staircase()
     daily["gas"] = daily.day.map(gas)
     daily = daily.dropna(subset=["gas"])
 
-    cap_pooled = pd.concat(caps.values(), axis=1).max(axis=1)
-    min_mw = _min_mw()
+    # The derive's own two per-resource reductions, on the CAP-FILTERED frame:
+    #     cap    = seg.groupby("resource_seq").cap.first()
+    #     min_mw = seg.groupby("resource_seq").segment_mw.min()
+    # `.first()` after the (resource_seq, interval_start_utc, segment_mw) sort
+    # is the resource's EARLIEST year's cap — not a max or a mean across years.
+    cap_pooled = bids.groupby("resource_seq").cap.first()
+    min_mw = bids.groupby("resource_seq").segment_mw.min()
+    years_covered = sorted({int(y) for y in bids.year.unique()})
 
     rows = []
     for rid, g in daily.groupby("resource_seq"):
@@ -238,8 +304,10 @@ def gate() -> None:
 
     gasres = res[res.is_gas]
     out: dict = {
-        "store_days": len(list(STORE.glob("*.parquet"))),
-        "years_covered": sorted(caps),
+        "store_days": store_days,
+        "days_per_year": per_year,
+        "missing_trade_dates": missing,
+        "years_covered": years_covered,
         "n_resources_regressed": int(len(res)),
         "buckets": {
             cls: {
