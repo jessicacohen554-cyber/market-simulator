@@ -95,13 +95,18 @@ def plant_series(bundle: Path, year: int, bplants: dict) -> dict[str, dict]:
 
     fossil = [*fossil_classes(), OTHER_FOSSIL_CLASS]
     disp = apply_other_fossil_scoring(
-        pd.read_parquet(bundle / "dispatch" / f"{year}_P1.parquet"), year, plant_col="plant_code"
+        pd.read_parquet(bundle / "dispatch" / f"{year}_P1.parquet"),
+        year,
+        plant_col="plant_code",
     )
     dm = disp[(disp["plant_code"] > 0) & (disp["klass"].isin(fossil))]
     mw_pc: dict[tuple[int, str], np.ndarray] = {}
     for (code, klass), g in dm.groupby(["plant_code", "klass"], observed=True):
         mw_pc[(int(code), str(klass))] = (
-            g.groupby("hour")["mw"].sum().reindex(range(T), fill_value=0.0).to_numpy(float)
+            g.groupby("hour")["mw"]
+            .sum()
+            .reindex(range(T), fill_value=0.0)
+            .to_numpy(float)
         )
     classes_p: dict[int, list[str]] = {}
     for _code, _klass in mw_pc:
@@ -123,7 +128,11 @@ def plant_series(bundle: Path, year: int, bplants: dict) -> dict[str, dict]:
 def class_hourly(bundle: Path, year: int) -> dict[str, np.ndarray]:
     d = pd.read_parquet(bundle / f"hourly/class_hourly_{year}.parquet")
     d = d[d["pass"] == "P1"]
-    piv = d.pivot_table(index="hour", columns="klass", values="mw").reindex(range(T)).fillna(0.0)
+    piv = (
+        d.pivot_table(index="hour", columns="klass", values="mw")
+        .reindex(range(T))
+        .fillna(0.0)
+    )
     return {k: piv[k].to_numpy(float) for k in piv.columns}
 
 
@@ -138,7 +147,10 @@ def _lw(sf: pd.DataFrame) -> float:
 
 def _lw_mon(sf: pd.DataFrame) -> list[float]:
     sf = sf.assign(mo=MOH[sf["hour"].to_numpy()])
-    return [float((x["price"] * x["demand"]).sum() / x["demand"].sum()) for _, x in sf.groupby("mo")]
+    return [
+        float((x["price"] * x["demand"]).sum() / x["demand"].sum())
+        for _, x in sf.groupby("mo")
+    ]
 
 
 def preconditions(bundle: Path, year: int) -> dict:
@@ -146,16 +158,25 @@ def preconditions(bundle: Path, year: int) -> dict:
     kee = json.loads((KEEPER / "run_config.json").read_text())["resolved_inputs"]
     sc = arm["seam_import_cap"]["by_year"][str(year)]
     out = {
-        "seam_cap": {"source": sc.get("source"), "cap_mw": sc.get("cap_mw"),
-                     "pass": sc.get("source") == "mic_partition" and abs(float(sc.get("cap_mw", 0)) - SEAM_CAP[year]) < 0.5},
-        "hydro_partition_present": {"arm": arm["hydro_plant_modes"].get("partition_present"),
-                                    "flag_armed": arm["hydro_plant_modes"].get("flag_armed"),
-                                    "pass": arm["hydro_plant_modes"].get("partition_present") is True
-                                    and arm["hydro_plant_modes"].get("flag_armed") is False},
+        "seam_cap": {
+            "source": sc.get("source"),
+            "cap_mw": sc.get("cap_mw"),
+            "pass": sc.get("source") == "mic_partition"
+            and abs(float(sc.get("cap_mw", 0)) - SEAM_CAP[year]) < 0.5,
+        },
+        "hydro_partition_present": {
+            "arm": arm["hydro_plant_modes"].get("partition_present"),
+            "flag_armed": arm["hydro_plant_modes"].get("flag_armed"),
+            "pass": arm["hydro_plant_modes"].get("partition_present") is True
+            and arm["hydro_plant_modes"].get("flag_armed") is False,
+        },
     }
     for k in ("campd_unit_outages", "thermal_tranches"):
-        out[k] = {"arm_sha": arm[k].get("sha256"), "keeper_sha": kee[k].get("sha256"),
-                  "pass": arm[k].get("sha256") == kee[k].get("sha256")}
+        out[k] = {
+            "arm_sha": arm[k].get("sha256"),
+            "keeper_sha": kee[k].get("sha256"),
+            "pass": arm[k].get("sha256") == kee[k].get("sha256"),
+        }
     out["pass"] = all(v["pass"] for v in out.values() if isinstance(v, dict))
     return out
 
@@ -175,9 +196,12 @@ def main() -> None:
 
     # ---- S-1 ----
     d_ct_gwh = (twh["CT_PEAKER"] - ktwh["CT_PEAKER"]) * 1e3
-    s1 = {"ct_peaker_twh": {"arm": twh["CT_PEAKER"], "keeper": ktwh["CT_PEAKER"]},
-          "rise_gwh": d_ct_gwh, "band_gwh": S1_BAND_GWH,
-          "pass": bool(S1_BAND_GWH[0] <= d_ct_gwh <= S1_BAND_GWH[1])}
+    s1 = {
+        "ct_peaker_twh": {"arm": twh["CT_PEAKER"], "keeper": ktwh["CT_PEAKER"]},
+        "rise_gwh": d_ct_gwh,
+        "band_gwh": S1_BAND_GWH,
+        "pass": bool(S1_BAND_GWH[0] <= d_ct_gwh <= S1_BAND_GWH[1]),
+    }
     # ---- R-3 (ADDENDUM-caiso257 sec 4): reproduce caiso-256's measured rise.
     # A STOP gate, not a tolerance to widen afterwards: the screen bundle
     # caiso-256 produced was deleted under rule 29(c), so this is the only
@@ -186,14 +210,31 @@ def main() -> None:
     r3 = None
     if year == 2023:
         tgt, tol = R3_REPRO_GWH
-        r3 = {"caiso256_rise_gwh": tgt, "measured_rise_gwh": round(d_ct_gwh, 3),
-              "tol_gwh": tol, "abs_diff_gwh": round(abs(d_ct_gwh - tgt), 3),
-              "pass": bool(abs(d_ct_gwh - tgt) <= tol)}
+        r3 = {
+            "caiso256_rise_gwh": tgt,
+            "measured_rise_gwh": round(d_ct_gwh, 3),
+            "tol_gwh": tol,
+            "abs_diff_gwh": round(abs(d_ct_gwh - tgt), 3),
+            "pass": bool(abs(d_ct_gwh - tgt) <= tol),
+        }
     # ---- S-2 ----
-    s2 = {k: {"arm": twh.get(k), "keeper": ktwh.get(k),
-              "frac": (abs(twh.get(k, 0) - ktwh.get(k, 0)) / ktwh[k]) if ktwh.get(k) else None}
-          for k in S2_CLASSES}
-    s2["pass"] = bool(all(v["frac"] is not None and v["frac"] < S2_MAX_FRAC for k, v in s2.items() if k in S2_CLASSES))
+    s2 = {
+        k: {
+            "arm": twh.get(k),
+            "keeper": ktwh.get(k),
+            "frac": (abs(twh.get(k, 0) - ktwh.get(k, 0)) / ktwh[k])
+            if ktwh.get(k)
+            else None,
+        }
+        for k in S2_CLASSES
+    }
+    s2["pass"] = bool(
+        all(
+            v["frac"] is not None and v["frac"] < S2_MAX_FRAC
+            for k, v in s2.items()
+            if k in S2_CLASSES
+        )
+    )
     # ---- S-3: C1 from the keeper's verdict records (same tolerance) ----
     s3 = {"records": [], "flips": []}
     for r in kverdict["criteria"]["fuelmix"]["records"]:
@@ -207,8 +248,15 @@ def main() -> None:
         if k not in twh:
             continue
         ok_twh = abs(twh[k] - float(r["actual"])) <= tol
-        rec = {"key": k, "actual": r["actual"], "keeper_model": r["model"], "arm_model": round(twh[k], 3),
-               "tol_twh": tol, "keeper_status": r["status"], "arm_twh_pass": ok_twh}
+        rec = {
+            "key": k,
+            "actual": r["actual"],
+            "keeper_model": r["model"],
+            "arm_model": round(twh[k], 3),
+            "tol_twh": tol,
+            "keeper_status": r["status"],
+            "arm_twh_pass": ok_twh,
+        }
         s3["records"].append(rec)
         if r["status"] == "PASS" and not ok_twh:
             s3["flips"].append(k)
@@ -216,25 +264,59 @@ def main() -> None:
     # ---- S-4: C4 gas, the scorer's own construction ----
     ps = plant_series(bundle, year, ybench["plants"])
     gas_twh = float(sum(ch[k].sum() for k in GAS_CLASSES if k in ch) / 1e6)
-    ypay = {"plants": {k: {"m": v["m"]} for k, v in ps.items()},
-            "fuelRows": [{"fuel": "gas", "m": round(gas_twh, 2)}]}
+    ypay = {
+        "plants": {k: {"m": v["m"]} for k, v in ps.items()},
+        "fuelRows": [{"fuel": "gas", "m": round(gas_twh, 2)}],
+    }
     fit = _cems_gas_hourly_fit(ypay, ybench, ypay["fuelRows"][0]["m"])
-    kfit = _cems_gas_hourly_fit(kpay, ybench, next(r["m"] for r in kpay["fuelRows"] if r["fuel"] == "gas"))
-    s4 = {"arm_r_nrmse": fit, "keeper_recomputed": kfit, "keeper_head_scored": KEEPER_C4[year],
-          "pass": bool(fit is not None and fit[0] >= S4_R_MIN and fit[1] <= S4_NRMSE_MAX)}
+    kfit = _cems_gas_hourly_fit(
+        kpay, ybench, next(r["m"] for r in kpay["fuelRows"] if r["fuel"] == "gas")
+    )
+    s4 = {
+        "arm_r_nrmse": fit,
+        "keeper_recomputed": kfit,
+        "keeper_head_scored": KEEPER_C4[year],
+        "pass": bool(fit is not None and fit[0] >= S4_R_MIN and fit[1] <= S4_NRMSE_MAX),
+    }
     # ---- reported, never gating ----
     s, ks = system(bundle, year), system(KEEPER, year)
     avg = ybench["avgLMP"]
-    c3a = {"arm_lw": _lw(s), "keeper_lw": _lw(ks), "actual_rt_lw": avg["rt_lw"],
-           "arm_pct": (_lw(s) / avg["rt_lw"] - 1) * 100, "keeper_pct": (_lw(ks) / avg["rt_lw"] - 1) * 100}
-    c3b = {"arm": _nrmse(_lw_mon(s), avg["rt_lw_mon"]), "keeper": _nrmse(_lw_mon(ks), avg["rt_lw_mon"])}
+    c3a = {
+        "arm_lw": _lw(s),
+        "keeper_lw": _lw(ks),
+        "actual_rt_lw": avg["rt_lw"],
+        "arm_pct": (_lw(s) / avg["rt_lw"] - 1) * 100,
+        "keeper_pct": (_lw(ks) / avg["rt_lw"] - 1) * 100,
+    }
+    c3b = {
+        "arm": _nrmse(_lw_mon(s), avg["rt_lw_mon"]),
+        "keeper": _nrmse(_lw_mon(ks), avg["rt_lw_mon"]),
+    }
     res = {
-        "session": "caiso-257", "bundle": str(bundle.relative_to(REPO)), "year": year,
-        "preconditions": pre, "R3_reproduction": r3, "S1": s1, "S2": s2, "S3_C1": s3, "S4_C4": s4,
-        "reported": {"c3a_excluded": c3a, "c3b": c3b,
-                     "class_twh_arm_keeper": {k: [twh.get(k), ktwh.get(k)] for k in sorted(set(twh) | set(ktwh))}},
-        "screen_clears": bool(pre["pass"] and (r3 is None or r3["pass"]) and s1["pass"]
-                             and s2["pass"] and s3["pass"] and s4["pass"]),
+        "session": "caiso-257",
+        "bundle": str(bundle.relative_to(REPO)),
+        "year": year,
+        "preconditions": pre,
+        "R3_reproduction": r3,
+        "S1": s1,
+        "S2": s2,
+        "S3_C1": s3,
+        "S4_C4": s4,
+        "reported": {
+            "c3a_excluded": c3a,
+            "c3b": c3b,
+            "class_twh_arm_keeper": {
+                k: [twh.get(k), ktwh.get(k)] for k in sorted(set(twh) | set(ktwh))
+            },
+        },
+        "screen_clears": bool(
+            pre["pass"]
+            and (r3 is None or r3["pass"])
+            and s1["pass"]
+            and s2["pass"]
+            and s3["pass"]
+            and s4["pass"]
+        ),
     }
     out = REPO / "results/calibration" / f"_caiso257_screen{year}.json"
     out.write_text(json.dumps(res, indent=1, default=float) + "\n")
@@ -242,10 +324,25 @@ def main() -> None:
     print("R-3 reproduction:", json.dumps(r3, default=float))
     print("S1:", json.dumps(s1, default=float))
     print("S2:", json.dumps(s2, default=float))
-    print("S3 flips:", s3["flips"], [(r["key"], r["arm_model"], r["actual"], r["tol_twh"]) for r in s3["records"]])
+    print(
+        "S3 flips:",
+        s3["flips"],
+        [(r["key"], r["arm_model"], r["actual"], r["tol_twh"]) for r in s3["records"]],
+    )
     print("S4:", json.dumps(s4, default=float))
-    print("C3a (excluded):", json.dumps(c3a, default=float), "C3b:", json.dumps(c3b, default=float))
-    print("class TWh arm/keeper:", {k: [round(a or 0, 3), round(b or 0, 3)] for k, (a, b) in res["reported"]["class_twh_arm_keeper"].items()})
+    print(
+        "C3a (excluded):",
+        json.dumps(c3a, default=float),
+        "C3b:",
+        json.dumps(c3b, default=float),
+    )
+    print(
+        "class TWh arm/keeper:",
+        {
+            k: [round(a or 0, 3), round(b or 0, 3)]
+            for k, (a, b) in res["reported"]["class_twh_arm_keeper"].items()
+        },
+    )
     print("SCREEN CLEARS:", res["screen_clears"])
 
 
