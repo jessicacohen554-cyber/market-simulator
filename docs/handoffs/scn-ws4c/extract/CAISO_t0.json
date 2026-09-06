@@ -1,0 +1,285 @@
+{
+ "iso": "CAISO",
+ "arms": {
+  "REF": {
+   "cache_key": "a998110c3dfb4fa7",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 18.1972,
+       "oil": 0.0,
+       "biomass": 6.0081,
+       "gas_ct": 0.9784,
+       "gas_cc": 77.5792,
+       "gas_st": 0.0011,
+       "coal": 0.3594,
+       "import": 42.072,
+       "hydro": 18.8032,
+       "wind": 16.4618,
+       "solar": 56.8047
+      },
+      "emissions_mt": 30.5116,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "oil": 0.0,
+       "biomass": 0.462359,
+       "gas_ct": 0.454712,
+       "gas_cc": 29.392343,
+       "gas_st": 0.000402,
+       "coal": 0.201766,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "ZP26": 4.349492,
+       "NP15": 12.598405,
+       "LA_BASIN": 7.394862,
+       "SDGE": 2.670296,
+       "SP15_rest": 3.498527,
+       "WECC_import": 0.0
+      },
+      "import_co2_mt_reported": 0.0,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 9413.7,
+      "so2_tonnes": 115.34,
+      "avg_price": 54.95,
+      "peak_price": 76.44,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 2.24,
+       "oil": 0.123,
+       "biomass": 0.746,
+       "gas_ct": 9.557,
+       "gas_cc": 16.383,
+       "gas_st": 1.526,
+       "coal": 0.05,
+       "import": 12.171,
+       "hydro": 6.568,
+       "wind": 6.33,
+       "solar": 24.92
+      },
+      "storage_cycles": 35.65,
+      "clean_share": 0.4647,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 6.0081,
+      "coal": 0.3594,
+      "gas_cc": 77.5792,
+      "gas_ct": 0.9784,
+      "gas_st": 0.0011,
+      "hydro": 18.8032,
+      "import": 42.072,
+      "nuclear": 18.1972,
+      "oil": 0.0
+     },
+     "fossil_twh": 78.9181,
+     "import_tranches": [
+      {
+       "unit_id": "WECC_import_PNW_midC",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 15.4526,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_PNW_hydro_base",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 13.3751,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_DSW_solar_PV",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 13.2443,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_DSW_CCGT",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.37,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_DSW_CT",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.55,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_WECC_scarcity",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_export_solar",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_export_curtail",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  },
+  "LOAD-HI": {
+   "cache_key": "cc8af31b3173465e",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 18.1972,
+       "oil": 0.0,
+       "biomass": 6.0081,
+       "gas_ct": 1.8461,
+       "gas_cc": 82.9901,
+       "gas_st": 0.0019,
+       "coal": 0.3594,
+       "import": 42.343,
+       "hydro": 18.8032,
+       "wind": 16.4618,
+       "solar": 56.8047
+      },
+      "emissions_mt": 33.0553,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "oil": 0.0,
+       "biomass": 0.462359,
+       "gas_ct": 0.860354,
+       "gas_cc": 31.530146,
+       "gas_st": 0.000707,
+       "coal": 0.201766,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "ZP26": 4.627749,
+       "NP15": 13.635436,
+       "LA_BASIN": 8.041045,
+       "SDGE": 2.865934,
+       "SP15_rest": 3.885168,
+       "WECC_import": 0.0
+      },
+      "import_co2_mt_reported": 0.0,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 9714.13,
+      "so2_tonnes": 126.1,
+      "avg_price": 56.15,
+      "peak_price": 80.16,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 2.24,
+       "oil": 0.123,
+       "biomass": 0.746,
+       "gas_ct": 9.557,
+       "gas_cc": 16.383,
+       "gas_st": 1.526,
+       "coal": 0.05,
+       "import": 12.171,
+       "hydro": 6.568,
+       "wind": 6.33,
+       "solar": 24.92
+      },
+      "storage_cycles": 37.93,
+      "clean_share": 0.4523,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 6.0081,
+      "coal": 0.3594,
+      "gas_cc": 82.9901,
+      "gas_ct": 1.8461,
+      "gas_st": 0.0019,
+      "hydro": 18.8032,
+      "import": 42.343,
+      "nuclear": 18.1972,
+      "oil": 0.0
+     },
+     "fossil_twh": 85.1976,
+     "import_tranches": [
+      {
+       "unit_id": "WECC_import_PNW_midC",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 15.4526,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_DSW_solar_PV",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 13.5152,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_PNW_hydro_base",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 13.3751,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_DSW_CCGT",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.37,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_DSW_CT",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.55,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_WECC_scarcity",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_export_solar",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "WECC_import_export_curtail",
+       "zone": "WECC_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  }
+ }
+}

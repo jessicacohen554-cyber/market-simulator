@@ -1,0 +1,218 @@
+{
+ "iso": "ERCOT",
+ "arms": {
+  "REF": {
+   "cache_key": "8e01cd28ea757f1a",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 38.354,
+       "gas_cc": 192.9057,
+       "coal": 95.5447,
+       "gas_ct": 16.7828,
+       "gas_st": 5.0434,
+       "hydro": 0.4111,
+       "wind": 122.8726,
+       "solar": 74.3868
+      },
+      "emissions_mt": 189.1666,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_cc": 77.706454,
+       "coal": 100.55788,
+       "gas_ct": 7.975929,
+       "gas_st": 2.926305,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "North": 66.901703,
+       "Houston": 33.75835,
+       "South": 17.381148,
+       "South_Central": 48.489365,
+       "West": 4.171117,
+       "Northeast": 18.464884
+      },
+      "import_co2_mt_reported": 0.0,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 75834.41,
+      "so2_tonnes": 107566.39,
+      "avg_price": 30.57,
+      "peak_price": 68.02,
+      "curtailment_twh": 4.3339,
+      "capacity_gw": {
+       "nuclear": 4.98,
+       "gas_cc": 37.241,
+       "coal": 13.964,
+       "gas_ct": 10.852,
+       "gas_st": 11.296,
+       "hydro": 0.546,
+       "wind": 42.0,
+       "solar": 38.0
+      },
+      "storage_cycles": 52.66,
+      "clean_share": 0.432,
+      "negative_price_hours": 521.86
+     },
+     "gen_by_fuel_twh": {
+      "coal": 95.5447,
+      "gas_cc": 192.9057,
+      "gas_ct": 16.7828,
+      "gas_st": 5.0434,
+      "hydro": 0.4111,
+      "nuclear": 38.354
+     },
+     "fossil_twh": 310.2766,
+     "import_tranches": []
+    }
+   }
+  },
+  "LOAD-HI": {
+   "cache_key": "7172ac611ebbf67c",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 38.354,
+       "gas_cc": 216.8132,
+       "coal": 95.5784,
+       "gas_ct": 21.5003,
+       "gas_st": 7.0185,
+       "hydro": 0.4111,
+       "wind": 122.8726,
+       "solar": 74.387
+      },
+      "emissions_mt": 202.8538,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_cc": 87.742416,
+       "coal": 100.591682,
+       "gas_ct": 10.415488,
+       "gas_st": 4.104171,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "North": 72.187299,
+       "Houston": 36.338428,
+       "South": 19.070059,
+       "South_Central": 51.672159,
+       "West": 4.902758,
+       "Northeast": 18.683054
+      },
+      "import_co2_mt_reported": 0.0,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 79634.95,
+      "so2_tonnes": 107645.39,
+      "avg_price": 32.33,
+      "peak_price": 58.77,
+      "curtailment_twh": 4.3337,
+      "capacity_gw": {
+       "nuclear": 4.98,
+       "gas_cc": 37.241,
+       "coal": 13.964,
+       "gas_ct": 10.852,
+       "gas_st": 11.296,
+       "hydro": 0.546,
+       "wind": 42.0,
+       "solar": 38.0
+      },
+      "storage_cycles": 56.44,
+      "clean_share": 0.4091,
+      "negative_price_hours": 521.86
+     },
+     "gen_by_fuel_twh": {
+      "coal": 95.5784,
+      "gas_cc": 216.8132,
+      "gas_ct": 21.5003,
+      "gas_st": 7.0185,
+      "hydro": 0.4111,
+      "nuclear": 38.354
+     },
+     "fossil_twh": 340.9103,
+     "import_tranches": []
+    }
+   }
+  },
+  "LOAD-HI-ORGANIC": {
+   "cache_key": "e4a9e2dbb5ee5528",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 38.354,
+       "gas_cc": 211.4211,
+       "coal": 95.667,
+       "gas_ct": 22.9669,
+       "gas_st": 10.5827,
+       "hydro": 0.4111,
+       "wind": 122.8726,
+       "solar": 74.387
+      },
+      "emissions_mt": 203.9403,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_cc": 85.680366,
+       "coal": 100.686138,
+       "gas_ct": 11.279112,
+       "gas_st": 6.294684,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "North": 71.642948,
+       "Houston": 37.538154,
+       "South": 19.061739,
+       "South_Central": 51.645721,
+       "West": 5.009876,
+       "Northeast": 19.041862
+      },
+      "import_co2_mt_reported": 0.0,
+      "unserved_mwh": 143390.925,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 82082.44,
+      "so2_tonnes": 107742.11,
+      "avg_price": 64.68,
+      "peak_price": 5000.0,
+      "curtailment_twh": 4.3337,
+      "capacity_gw": {
+       "nuclear": 4.98,
+       "gas_cc": 37.241,
+       "coal": 13.964,
+       "gas_ct": 10.852,
+       "gas_st": 11.296,
+       "hydro": 0.546,
+       "wind": 42.0,
+       "solar": 38.0
+      },
+      "storage_cycles": 51.87,
+      "clean_share": 0.4093,
+      "negative_price_hours": 521.86
+     },
+     "gen_by_fuel_twh": {
+      "coal": 95.667,
+      "gas_cc": 211.4211,
+      "gas_ct": 22.9669,
+      "gas_st": 10.5827,
+      "hydro": 0.4111,
+      "nuclear": 38.354
+     },
+     "fossil_twh": 340.6376,
+     "import_tranches": []
+    }
+   }
+  }
+ }
+}
