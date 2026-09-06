@@ -6,7 +6,8 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #51) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #52) ·
+**r#52 (HEAD `28fb1882`):** **A CONSOLIDATING WINDOW THAT TURNS ON TWO THINGS THIS DESK GOT WRONG** (32 commits, 14 merges, PRs #5245-#5259) · **MY FIRST-ACT BRANCH CENSUS READ ZERO CAPX BRANCHES AND BOTH DISPATCHABLE CHARTERS WERE ALREADY LIVE** — D75-R FACADE FIX pushed 21:40:25Z (PR #5257), D78-R3 21:43:03Z (`e79a4ddd`), both AFTER my fetch; read literally my own charter would have re-emitted two live lanes and bought a second PR #5160 → doctrine RE-FETCH IMMEDIATELY BEFORE GRADING DISPATCH · **MY FACADE CHARTER NAMED THE WRONG HALF OF A TWO-PART FIX** — `RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO` was ALREADY on the facade; only `PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE` was missing, and the red test reads the frozen `MOVED_SURFACE` INVENTORY, so a facade-only edit clears nothing (the lane found it; #5257 blob-verified, recommend MERGE) · **D65-B-R LEG 6 CLEARS: G1' 1.2898-1.3930 inside MISO's OWN D64 band 1.26-1.39, the THIRD ISO in its own band; G4' FIRES and is provably NOT the acts' (I3 fails from 2026; the mechanism is inert before 2028) — which makes THREE OF THREE fired gates in this batch my ADDENDUM-C BASIS, a HEAD solve against a pre-HEAD prior, not the arm** · **D78-R3 pre-registers PER DELIVERY YEAR before opening a value and finds the control-P bundle DELETED *and* THE D78-R2 ARM NEVER REGISTERED — a control-P re-solve is EARNED; the desk's deleted-control doctrine billed exactly where r#51 predicted** · **RULED: neiso-105's rule-29 complaint is a MISUSE of the screen year, not a rule-29 defect — a screen TESTS a mechanism, it never SIZES a coefficient (identification is rules 21/23); the ruling reads identically had the cut landed on target** · D65-B-R has written NO BOARD BYTE (ff-verdicts.json last touched by D63 #5108) so all seven rows are outstanding and D75-R-ARM / D76-P3 keep their STOPs · **TEN OF TEN GREEN WITH NO DESK ACT — gate (a) opened green on its own, a first; no keeper or marker moved, no Q34 re-key owed (count stays 13)** · `main` returned a FORCED update: a sha-rebasing event, content intact, 9 of 11 ledger shas LIVE (`fb0868eb`/`04e6906d` DEAD) · Q56 stays RESERVED — no card on a lane that has not produced its derivation · 1 charter issued (D65-B-R COMPLETION, the critical path) (§0aw)
 **r#51 (HEAD `00cee150`):** **ALL FIVE IN-FLIGHT CAPX LANES LAND IN ONE WINDOW** (102 commits, 25 merges) · **D79 PHASE 1: the solve-surface fingerprint is IN THE KEY at ZERO moves (296/296 declared, 0/148 configs move, `--diff` over SCN-LOAD names the 3 tables / 6 ISOs the design predicted) — CLOSED, the standing instrument** · **D78-R2: W4′ HIT at 9,394.156 MW to the milli-MW, whole-ledger diff ZERO unclassified rows in five years, W5′ FIRED as a falsified per-delivery-year class set (D57 §4 is per DY) → HOLD; D78-R3 chartered** · **D76 PHASE 2: STOP 2 = 0.000 MW every year every ISO; ONE live consumer of six; PJM INERT under D67-ARM; CAISO −2,532 MW phantom CT; arming card SEQUENCED behind D75-R-ARM** · **D75-R: lands on its prediction to 0.001 MW, 26/26 bands byte-identical, FC-3 err 0.199 → 0.148 — Q55 SERVED, RULED ARM; D75-R-ARM chartered (sequenced after D65-B-R's board write)** · **D65-B-R 5/7 legs: G1′ measured in each ISO's OWN band (r#48 §3(a) MEASURED), PJM 2028 408.2 MW vs a 0.41 GW zero-LP ceiling; G5′ FIRED on NEISO + NYISO against its own source — VOIDED as a STOP by this desk (D64 §2.3 verbatim), legs register, GOLDEN-3 leg positively indicated** · **MISO PROMOTED (miso-230, CALIBRATED) and this desk RE-KEYED gate (a) — thirteenth firing** · D83/D84 RESERVED · gates 8/8 green after the re-key · 5 charters issued
 **r#50 (HEAD `5375be8b`):** **THE FOUR "NEVER DISPATCHED" CHARTERS ALL LAND IN ONE SITTING** (33 merges) · **D67-ARM: PJM's published requirement ARMED (Q52), operand exact to 0.000 MW, every pre-declaration HIT, the bare `pjm-t1h` re-solved with ALL 14 INVARIANTS PASS (prior I7 FAIL / I12 WARN), one LIVE hunk (D81) measured in the pre-signed direction; two misses against interest incl. D81's understated epoch radius** · **D78-R: the sector gate is an EXACT candidate-set partition over the full window (decided total falls by exactly the sector-1 decided MW, 9,394.156, to the digit) and still HOLDS on its own mis-derived W4 edge + an E&AS-propagation W5 → D78-R2 chartered with both corrected and `exempt_unit_ids` deleted** · **D81: the pending dated block moves exactly; 2,306.4 MW of it is uncompetitive, so 2,088.8 MW of merchant gas-CC clears that the price-taker reading had shut out; every scored metric unmoved; merged as code** · **D76: phase 0 measures the de-grown seam peak at −15.2 % … +15.4 % across six ISOs; phase 1 ran WITHOUT release and its PJM screen PASSES — the de-grown peak is a contributing cause of the steam over-exit; phase 2 chartered (PJM full span, then 2021–2023 on CAISO/ERCOT/MISO)** · **D79: the hybrid per-name ISO-projected fingerprint at ZERO key moves → CARD C-22/Q54 served, RECOMMEND ADOPT** · a re-pin lane (#5177) finished D65-B's incomplete re-key (my debt) · **CAISO PROMOTED to caiso-257 by the owner's lane without a gate-(a) re-key — RE-KEYED HERE (Q34), gates 8/8** · D65-B-R batch running, D75-R at phase 0/PRECOMMIT · no marker moved (§0au) ·
 **r#49 (HEAD `13ee0c89`):** **D80 LANDS AND THE Y-24 RATCHET READS EXIT 0 ON MAIN** (eight rows declared on the audit lane's Y-19/Y-22/Y-24 readings — my charter's D45/D57/D62 citations were FALSE for the five T1-H rows, corrected by the lane) · **D65-B-R checkpoint: 14/14 keys unmoved, G-DRIFT all-INERT with `constants.py` first, per-ISO gates pre-declared; it found D65-B's screen ran WITHOUT `--golden-posture` (a neighbouring config, not the board row — a charter gap, mine); batch legs running** · **D81 checkpoint: the pending dated block moves EXACTLY (7,246.26 MW, phase 0's tenth), D54 §4.2's bias measures at ZERO (coal-dominated block below the crossing); two instrument-defect misses diagnosed before the window; full window running** · **D78-R dispatched TWICE — #5160 is a duplicate, recommend CLOSE; cite `-s35hos`** · **NYISO PROMOTED to nyiso-202 (CALIBRATED) by the owner's lane, gate (a) re-keyed by that lane; Q51 stays parked** · D67-ARM / D76 / D75-R / D79 STILL undispatched (third emission) · gates 8/8; pins 2 passed; no card (§0at) ·
@@ -55,6 +56,214 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
 
 ---
+
+## 0aw. Refresh #52 (2026-09-06, main HEAD `28fb1882`) — a quiet consolidating window that turns on two things this desk got wrong: the FIRST-ACT branch census read ZERO capx branches and BOTH dispatchable charters were already live minutes later, and the facade charter named the wrong half of a two-part fix; D65-B-R's leg 6 clears the acts and proves its own fired gate is the demand vintage, which makes THREE of three fired gates in that batch my Addendum-C basis rather than the arm; D78-R3 pre-registers per delivery year and finds the D78-R2 arm was never registered at all; all ten checks green and no keeper moved
+
+**0. FIRST ACT.** Handoff claim (§0av = r#51, merged **#5245**) **matched** the ledger's top entry;
+`git fetch origin --prune` moved `main` `ba4da197 → 6f074049 → 28fb1882` (**32 commits, 14 merges**,
+PRs #5245–#5259). Two departures from the handoff's state block, both recorded before any grading:
+
+- **The branch named in the handoff (`…-i5xhop`) is SPENT** — it carried r#51 and merged as #5245,
+  then was deleted. This session's assigned branch is `…-hbwefx` (the system Git requirement), which
+  origin also deleted this window. The charter's own recipe covers exactly this: `git branch
+  --unset-upstream`, plain `git push -u origin <branch>`. Pushed to `…-hbwefx`; `…-i5xhop` is **not**
+  resurrected.
+- **`main` came back as a FORCED update** (`8f98399b → 6f074049`), which is a sha-lineage event and
+  was **classified, not assumed**. The dropped tip is a **Sep-4 lineage of 251 commits** that current
+  `main` contains under no sha (PRs #4716–#4719; `git log --grep` on `main` finds none of their
+  messages) — **but their content is on `main`**: `FINDING-capx-d48-2026-09-04.md` and the whole
+  `docs/handoffs/d48/` instrument set are present, added by `5a910016` (#5081). So it is a
+  **sha-rebasing event, not data loss**. Measured consequence for this ledger rather than assumed: all
+  eleven sha citations in the header were tested — **nine LIVE on `main`, two DEAD** (`fb0868eb` =
+  r#46's HEAD, `04e6906d` = r#43's HEAD). Every sha from r#44 forward resolves. This is the
+  CLAUDE.md-named hazard recurring after 2026-08-16, and it is the standing reason this desk cites by
+  **branch + PR + doc**, never by sha alone.
+
+**Gates at HEAD `28fb1882`, after the re-fetch, no desk act needed:** `audit_keepers --check` 0 ·
+parity 0 (15 runs, 48 bundle dirs, 0 tolerated) · **gate (a) 0** (6 rows; keeper identity + marker
+state match) · matrix 0 (five anchor-drift warnings, pre-existing) · staleness 0 · bench 0 (24 parts,
+**0 STALE**) · goldens 0 (57 manifests, 100 entries) · `check_forecast_invariants --sidecar-dir` 0
+(104 sidecars, 1,456 records, 97 declared FAILs) · `ruff check .` **0** · `ruff format --check .` **0**
+(1,381 formatted). **Ten of ten green, and green without a desk act** — the first sitting where gate
+(a) needed no re-key since the duty was created. The one RED test on `main` that is not a gate,
+`test_constants_facade::test_moved_surface_is_complete`, is **still red at HEAD** and is exactly what
+PR #5257 fixes (below); I reproduced it independently before reading that PR.
+
+**1. GRADED BY CONTENT.**
+
+- **D65-B-R — CHECKPOINT, 6 of 7 legs (leg 6 merged #5250, `46cb32c3`).** `miso-t1f`: key
+  `74359fedbf2eadd6` = the pre-declaration, guard clean, 5/5 years, 53.9 min. **G0′/G2′/G3′/G5′/G6′
+  PASS. G1′ PASS** — all 3 rows inside **MISO's own** D64 §2.4 band 1.26–1.39 (measured
+  **1.2898–1.3930**), the **third ISO to land in its own band** and the second empirical vindication
+  of the r#48 §3(a) adjudication. **G4′ FIRES** (I3 unserved/dump PASS → FAIL, I14 PASS → WARN),
+  reported as fired rather than declared passed — and the lane proves the flip is **not the acts'**
+  on the arm's own arithmetic: I3 fails **starting in 2026**, and the mechanism is inert before 2028
+  (`apply_ccs_retrofit` returns at `year < ccs_retrofit_available_year` **before reading either
+  field**, and G0′ independently measured **0 rows in 2026 and 2027**). *A mechanism that does not
+  execute cannot cause a failure in the years it does not execute in.* Cause = the **demand vintage**,
+  pre-registered as a confound **before the batch ran**: MISO's prior was solved at `2ef4326e`, which
+  D65-B §5's G-DRIFT table names PRE-hunk on SCN-LOAD `d14a7ed0`, and §5 consequence 2 named MISO as
+  one of the four pre-hunk ISOs in advance.
+  **OUTSTANDING:** leg 7 (`neiso-t3` GOLDEN-3, ~33 min — measured: `results/ff-t1f-d65br/` carries
+  six ISOs and no t3 leg), **the board write for all seven legs** (`ff-verdicts.json` last touched by
+  D63 at #5108 — the batch has written **no board byte at all**), and FINDING §0 verdicts + §6
+  governance (§6 currently sits as a stub between §5.1 and §5.2 — a doc-ordering defect to fix on the
+  same pass). **Branch merged and DELETED again**, so completion needs re-dispatch (§4). This is the
+  **critical path**: D75-R-ARM's dispatch STOP is the board write, and D76 phase 3 is behind that.
+
+- **D78-R3 — CHECKPOINT, dispatched, PRECOMMIT pushed before any per-class value was opened**
+  (`e79a4ddd`, branch `claude/capx-d78r3-perdy-set`). It fixes, **in advance**: (a) the declared set
+  per delivery year quoted from **D57 §4's arm-A rows** rather than its headline —
+  {gas_ct, gas_st, oil} / {gas_ct, gas_st} / {oil}, with **DY2025/26 NOT EVALUABLE** because §4
+  tabulates no row for it; (b) the derivation rule verbatim from D78-R2 §9 item 2, with exact float
+  equality as the deciding tolerance, the subset guard, and the pre-stated fact that the rule is
+  **one-sided** so derived ⊊ declared is expected; (c) W5″ per DY with a vacuity convention; (d) both
+  branches of the grade rule written out **so neither can be composed after the fact**. Nothing arms;
+  zero DOF.
+  Its artifact enumeration found **TWO absences, one unanticipated**: the control-P bundle is gone
+  (deleted before merge, rule 29(c)) **and the D78-R2 arm was NEVER REGISTERED** — merge `80c88b76`
+  landed docs and JSON only. A control-P re-solve is therefore **EARNED** as the derivation base; the
+  arm is not re-solved, and W5″ is re-graded on the committed instrument output
+  (`window_compare2.json`'s `offer_diff_by_fuel`) plus the merged FINDING's §5.1 record — which is
+  precisely rule 29(c)'s retention design working. **This is the desk's own doctrine line firing in
+  the wild** — *a deleted control is a deleted derivation base* — and it fires exactly where r#51
+  predicted, on D78-R2's decision to keep sector aggregates only.
+
+- **D75-R FACADE FIX — EXECUTED, open as PR #5257** (`claude/capx-d75r-facade-fix-u1a870`, head
+  `486c115f`). Reproduced red first, fixed, all guards run, blob-verified (`constants.py` 5224 lines,
+  sha256 `77cbd10f…` identical local vs fetched-back; 5223 → 5224, grew, so `file-integrity-guard` is
+  satisfied). `test_constants_facade` 2 passed; the full BLOCKING `refactor-guards` set 99 passed;
+  `check_cache_key_registration --base origin/main` 0 and `solve_surface_register --diff` **0 names
+  moved, 0 added, 0 removed** — as expected, since both names were already declared in
+  `solve_surface_declared.py`, which is keyed by name rather than by module. **It corrected my
+  charter's premise** — see part 2(b). Recommend **MERGE**; it is the only open PR.
+
+- **D75-R-ARM — NOT DISPATCHED, and its precondition is correctly UNMET.** The dispatch STOP is "until
+  D65-B-R's board write merges"; the board write has not happened (measured above). **The STOP is
+  doing its job** — this is not a silent lane and must not be re-emitted as dispatchable.
+
+- **D76 PHASE 3 — HELD**, behind D75-R-ARM. Unchanged.
+
+**2. RECORDED AGAINST INTEREST · desk acts.**
+
+- **(a) The FIRST-ACT branch census is a point-in-time snapshot, and mine was stale by minutes.**
+  `git branch -r | grep capx` at FIRST ACT returned **zero** capx branches. D75-R FACADE FIX was
+  pushed at **21:40:25Z** (PR #5257) and D78-R3 at **21:43:03Z** (`e79a4ddd`) — after my fetch. Read
+  literally, my own charter ("dispatch is unconfirmed until a branch exists … 'silent' usually means
+  never dispatched, so ASK — re-emit the charter whole") would have had me **re-emit two live
+  charters**, and the r#49 duplicate D78-R (PR #5160) is the standing record of what that costs. I
+  caught it only because the open-PR check in step 4 surfaced #5257. **Doctrine adopted (part 5):
+  RE-FETCH IMMEDIATELY BEFORE GRADING DISPATCH.** The FIRST ACT fetch establishes the ledger delta;
+  a second fetch, taken after the findings are read and immediately before any lane is graded
+  NEVER-DISPATCHED, establishes the branch census.
+- **(b) The facade charter named the wrong half of a two-part fix.** My r#51 charter read the defect
+  as a missing `constants.py` re-export for **both** names. Measured at HEAD — independently, before
+  reading #5257 — it is split: `RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO` was **already** on the facade
+  (`constants.py:72`, same object), and only `PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE` was genuinely
+  missing. The red test is `test_moved_surface_is_complete`, which reads the **frozen `MOVED_SURFACE`
+  inventory** (`toplevel - set(names)`) in the test file — so a facade-only edit **does not clear it**,
+  and both names had to be registered in that inventory as well. A charter obeyed to the letter would
+  have left the job red. The lane found this and said so in its PR body; the correction is its credit,
+  and the defect is mine. The re-emitted text (§4) carries the two-part shape and the D67 precedent
+  (`7ffd808b`) that already did exactly this.
+- **(c) Addendum C compares a HEAD solve against a prior that predates HEAD — my charter defect, and
+  it now explains THREE of three fired gates in the batch.** Leg 6 states the general form: *"All
+  three fired gates share one root: Addendum C compares a HEAD solve against a prior that predates
+  HEAD, and two of the three are measuring that gap, not the arm."* G5′ (NEISO, NYISO) I voided at
+  r#51 §3(b) on the narrower ground that the gate contradicted its own source; G4′ (MISO) is the same
+  root reached independently. My r#51 void was right, and it was right for a **narrower reason than
+  the one now available**. The completion charter records this in FINDING §0 as a **basis
+  disclosure**, not as a re-grade: no leg's numbers change, and the corrected priors are named rather
+  than re-solved.
+- **(d) No Q34 re-key was owed.** All six keepers are unchanged from r#51 close and `complete` is
+  still {ERCOT, NEISO, PJM} with `final` empty, so gate (a) opened green on its own. The firing count
+  stays at **thirteen** and the promoter-miss count at **eleven**. Watch item: **neiso-105 registered
+  CALIBRATED but NEISO's keeper shard still reads neiso-99** — if that promotion lands, the duty
+  fires.
+
+**3. RULINGS / DECISIONS.**
+
+**(a) DIRECTOR-TIER — the neiso-105 rule-29 observation is a MISUSE of the screen year, not a defect
+in rule 29.** The NEISO lane (`a61e9b4b`, an owner lane this desk only watches) reported against
+interest that its realized full-span pass-through is **0.764**, not the **0.5247** its 0.93391 scalar
+was sized on, so the cut overshoots to **−1.77 %**; it did **not** resize after the fact. It filed the
+root cause as *rule-29 mechanics*: pass-through is **year-dependent, not depth-dependent** (2023 0.953,
+2024 0.814, 2025 0.527, tracking delivered gas inversely), and rule 29 selects the screen year by
+**largest footprint** — 2025, the **lowest** pass-through year in the record — so "the max-footprint
+screen year gives the least representative coefficient."
+
+The measurement is sound and the honesty is exemplary. The attribution is not. Rule 29's screen year
+is chosen on footprint **precisely so the choice cannot be residual-driven**, and its gate is
+**STOP-only and structural**: it asks whether the mechanism does what its own arithmetic says, and it
+"may kill an arm; it may never promote one." **Identifying a coefficient off the screen year is
+parameter identification**, which rules 21 `[R-DOF]` and 23 `[R-FROZEN-DERIVE]` govern — not rule 29,
+which authorizes no sizing at all. The max-footprint year is the right place to test a mechanism's
+**behaviour** and the wrong place to **measure a coefficient** whenever that coefficient's driver
+varies across the span; those are two different questions, and rule 29 answers only the first.
+Standing consequence for every charter this desk writes: **a charter that asks a screen to size a
+parameter is malformed.** The screen tests; the full span, or the source data, identifies.
+
+**This ruling would read identically had the cut landed on target.** Had 2025's 0.527 happened to
+coincide with the span mean, the sizing basis would still have been a single unrepresentative year
+chosen for a different purpose, and the agreement would have been luck concealing the defect. The
+ruling is on the derivation, not the residual — which is the same reason the desk voided G5′ at r#51
+while its numbers were pointing the other way. Routed to the NEISO lane as an observation; this desk
+does not adjudicate that lane.
+
+**(b) DIRECTOR-TIER — no card is earned this sitting, and Q56 stays reserved.** Q56 was reserved for
+D78-R3's ARM recommendation. D78-R3 is at PRECOMMIT with its control-P re-solve still owed. Serving an
+arming card on a lane that has not produced its derivation would ask the owner to rule on an argument
+that does not yet exist. **No card.**
+
+**4. THE QUEUE.**
+
+| lane | state | blocking |
+|---|---|---|
+| **D65-B-R COMPLETION** | **RE-DISPATCH (§4 charter)** — leg 7 + the board write + FINDING §0/§6 | nothing; **critical path** |
+| **D78-R3** | RUNNING (PRECOMMIT pushed; control-P re-solve earned) | nothing |
+| **PR #5257** (facade) | OPEN — recommend MERGE | nothing |
+| **D75-R-ARM** | HELD, STOP intact | D65-B-R's board write |
+| **D76 PHASE 3** | HELD | D75-R-ARM |
+| **D82 / D83 / D84** | RESERVED, no charter until a design read | D82's input is D78-R3's per-DY set |
+
+**Collision map.** **D65-B-R is the sole writer of `ff-verdicts.json` and `program-status.json`** until
+its board write lands — and since it has written no board byte, that exclusivity is entirely unspent,
+so D67-ARM/D78-R/D81's queued board rows are all still behind it. **D78-R3 writes docs + JSON only**
+(it declares nothing arms, no `ScenarioConfig` field, no `_pjm_config` override) — **no collision**.
+**PR #5257** touches `constants.py` + one test — no collision. The owner lanes (neiso-105, nyiso-207,
+ercot-251, miso-231, SPP-11, SCN r#16) write the **backcast** namespace and their own shards only. The
+one live risk is that a D65-B-R completion session and D78-R3 rebase across each other; the completion
+charter carries the HEAD guard and the rebase-between-legs rule that already covers it.
+
+**Backcast-track watch (read, never edited).** **neiso-105** registered **CALIBRATED** — a full-span
+2023/24/25 replay of the neiso-99 keeper with exactly one delta, a single **0.93391** scalar on 12
+`offer_curve_by_group` markup bands through the rules 1/13 authorized channel, one config across every
+scored year, declared in PREREG before the solve; 0 FAILs, C3c the lone ledgered caveat, C6 PASS on a
+declared `authorized_price_tuning` block. C3a 2023 **+3.13 → −3.36 %**, 2024 **+5.66 → −0.02 %**, 2025
+**+1.65 → −1.89 %**; MAE **3.48 → 1.76 %**. **The keeper shard still reads neiso-99** — a promotion may
+come (Q34 watch). Also live: **nyiso-207** (floor-coefficient basis census, finding, **owner card**,
+matrix shard — the NYISO lane's card, not this desk's), **ercot-251** (the 2023 HSL-withheld ceiling
+screen, whose curtailment gates test the renewable bound's **provenance**, not HSL-file existence),
+**miso-231** (+ a ruff-format repair), **SPP-11** (EPA/EIA fetch + delivered gas for OK/KS/TX/NM
+2023–25; no capx charter touches SPP until it holds a fleet), **SCN-DESK r#16**.
+
+**5. DOCTRINE.** Two lines added, one vindicated.
+
+- **RE-FETCH IMMEDIATELY BEFORE GRADING DISPATCH.** The FIRST-ACT fetch establishes the *ledger*
+  delta; the branch census it carries expires in minutes. Take a second fetch after the findings are
+  read and before any lane is graded NEVER-DISPATCHED. A charter re-emitted onto a live branch buys a
+  duplicate session (PR #5160), and the cost falls on the lane, not the desk. (r#52 part 2(a).)
+- **A SCREEN YEAR TESTS A MECHANISM; IT NEVER SIZES A COEFFICIENT.** Rule 29 picks the screen year on
+  footprint so the choice cannot be residual-driven, and its gate is STOP-only and structural.
+  Identification is rules 21/23 work and belongs to the full span or the source data. A charter that
+  asks a screen to size a parameter is malformed — and the defect is invisible whenever the screen
+  year happens to sit near the span mean. (r#52 §3(a), on neiso-105.)
+- **VINDICATED — A DELETED CONTROL IS A DELETED DERIVATION BASE.** D78-R3's artifact enumeration found
+  the control-P bundle deleted under rule 29(c) *and* the D78-R2 arm never registered, so the successor
+  buys a control-P re-solve. r#51 recorded that D78-R2 named sector aggregates only; this is the bill.
+  The mitigation is unchanged and is the PRECOMMIT's job: **name, before deletion, which committed
+  instrument carries every structure a successor could need.** Rule 29(c) is owner ruling R-AV and is
+  not this desk's to amend.
 
 ## 0av. Refresh #51 (2026-09-06, main HEAD `00cee150`) — all five in-flight capx lanes land inside one window: D79 phase 1 puts the solve-surface fingerprint in the key at ZERO moves; D78-R2 hits its repaired edge to the milli-MW and holds on a falsified per-delivery-year class set; D76 phase 2 finds ONE live consumer of six and PJM inert; D75-R lands on its prediction to 0.001 MW and Q55 ARMS it; D65-B-R's G5′ fires on the two RGGI ISOs against its own source and this desk voids the gate; the owner's lane promotes MISO and this desk re-keys gate (a)
 
@@ -6163,6 +6372,10 @@ the gap.
 | **D9 MISO SOCO FORECAST FALLBACK** | `ba_code="SOCO"` live only in the forecast path | **ADJUDICATED UNREACHABLE at HEAD, ROUTED** (S-123 finding §5 — TVA re-point + data prerequisite named) | — | Fable | Handed in by miso-183; closed as a lane, lives on as a routed intake item. |
 | **D16 ARMED-INTERFACE mc=0 SEAM** | Armed-interface forecast years leave seam rows at their mc=0 build placeholder (S-123 finding §5/§7-5) | **ISSUED r#19** — director mechanism decision: FAIL CLOSED (hard refusal, holdout_policy pattern); fallback-price alternative deliberately not built without its own charter | `claude/capx-d16-seam-guard` | Fable | §0p.2. New defect found on the D9 trace, routed to this track 2026-08-30. |
 | **NEISO-RC-R REPAIR PHASE** | Execute the Phase-0 finding's routed repairs: R2 FCA-curve re-derivation + R1 registry intake + R3 scorer trio + R4 reporting; R5 deferred, R6 standing refusal; PREREG-first verification pair (one T1-X treatment vs the committed capxd14 control) | **LANDED IN FULL** PR #4467 (R1–R4 + Phase-B prereg + graded verification) — R2 curve leg MISSES (re-derived curve near-inert at the model's long positions), **Mystic-instrument leg HITS** (1,464 MW economic→confirmed, the derate half visible ONLY through R3(iii)), level ≈ control (confirmed exits displace the floor budget ~1:1), **dual basis +24.2 % over vs −27.3 % under**, recall 2/4, Merrimack decided in-window and reversed 2025; `neiso-t1x` re-registered preserve-then-overwrite, HOLD→HOLD, no verdict flipped | `claude/neiso-rc-repair-fymtkz` (NOT the charter stem) | Fable | §0s amendment A. **The branch-stem census is what missed this landing — grade by `--grep=<LANE-ID>` and merged PRs, never by branch name.** |
+| **D65-B-R (r#52 checkpoint — 6/7)** | — | **CHECKPOINT (leg 6 merged #5250, `46cb32c3`): `miso-t1f` key `74359fedbf2eadd6` = the pre-declaration, guard clean, 5/5 years, 53.9 min; G0'/G2'/G3'/G5'/G6' PASS; **G1' PASS — 1.2898–1.3930 inside MISO's OWN D64 §2.4 band 1.26–1.39, the THIRD ISO to land in its own band**; **G4' FIRES** (I3 PASS→FAIL, I14 PASS→WARN) and is **provably not the acts'** — I3 fails from 2026, `apply_ccs_retrofit` returns at year < `ccs_retrofit_available_year` before reading either field, G0' measured 0 rows in 2026/2027; cause = the demand vintage, pre-registered as a confound (MISO's prior at `2ef4326e`, named PRE-hunk in D65-B §5 consequence 2). **NO BOARD BYTE WRITTEN** — `ff-verdicts.json` last touched by D63 (#5108), so all seven rows outstanding. Branch merged and DELETED again** | `claude/capx-d65br-batch-nmrwww` (spent) → `claude/capx-d65br-completion` | Opus | all | **CRITICAL PATH** — D75-R-ARM and D76-P3 both wait on the board write. Leg 7 (`neiso-t3` GOLDEN-3) + board write + FINDING §0/§6 re-dispatched r#52. Three of three fired gates share ONE root: **Addendum C compares a HEAD solve against a pre-HEAD prior — the director's charter defect**, disclosed in §0, never a re-grade. |
+| **D78-R3 (r#52 checkpoint)** | — | **CHECKPOINT (`e79a4ddd`): PRECOMMIT pushed BEFORE any per-class value opened — the set declared PER DELIVERY YEAR from D57 §4's arm-A ROWS not its headline ({gas_ct,gas_st,oil} / {gas_ct,gas_st} / {oil}; DY2025/26 NOT EVALUABLE, §4 tabulates no row); derivation rule verbatim from D78-R2 §9 item 2 with exact float equality, the subset guard, and the ONE-SIDEDNESS pre-stated (derived ⊊ declared expected); W5″ per DY with a vacuity convention; BOTH branches of the grade rule written out so neither can be composed after the fact. **Found TWO absences: the control-P bundle deleted under rule 29(c) AND THE D78-R2 ARM NEVER REGISTERED** (merge `80c88b76` landed docs+JSON only) ⇒ a control-P re-solve is EARNED as the derivation base; the arm is not re-solved** | `claude/capx-d78r3-perdy-set` | Opus | pjm | Nothing arms; zero DOF. **The desk's deleted-control doctrine billed exactly where r#51 predicted.** Q56 stays RESERVED until the derivation exists. |
+| **D75-R FACADE FIX (r#52)** | The red `test_moved_surface_is_complete` on `main` | **EXECUTED — PR #5257 OPEN, recommend MERGE** (`486c115f`): reproduced red first; `constants.py` blob-verified 5224 lines / sha256 `77cbd10f…` identical local vs fetched-back, 5223→5224 so no shrink; `test_constants_facade` 2 passed, full BLOCKING `refactor-guards` 99 passed, `check_cache_key_registration --base origin/main` 0, `solve_surface_register --diff` **0 moved / 0 added / 0 removed** (both names already declared in `solve_surface_declared.py`, which keys by name not module) | `claude/capx-d75r-facade-fix-u1a870` | Opus | code | **CORRECTED MY CHARTER'S PREMISE** — the fix is two-part and split: `RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO` was ALREADY on the facade (`constants.py:72`); only `PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE` was missing, and the red test reads the frozen `MOVED_SURFACE` INVENTORY, so a facade-only edit clears nothing. Recorded against interest §0aw.2(b). |
+| **D75-R-ARM / D76 PHASE 3 (r#52)** | — | **HELD, STOPs INTACT AND WORKING** — D75-R-ARM's dispatch STOP is D65-B-R's board write, which has not happened (measured); D76-P3 is behind D75-R-ARM. Neither is a silent lane; **do not re-emit as dispatchable** | as chartered r#51 | Opus | pjm / neiso-nyiso-pjm | The distinction that matters: a lane with an unmet STOP is not a lane that was never dispatched. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
 ## 2. Backcast-track watch (last seen 2026-09-05 @ `b2bd9fdb`, refresh #42)
@@ -6308,7 +6521,7 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51 (2026-09-06) added below; THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51 (2026-09-06) added below; **Q56 RESERVED at r#52 and deliberately NOT served — D78-R3 is at PRECOMMIT with its control-P re-solve owed, and an arming card on a lane that has not produced its derivation asks the owner to rule on an argument that does not yet exist (§0aw.3(b))**; THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
 
 ### Q55 (refresh #51) — arm `pjm_vre_accreditation_vintage` for PJM
 
@@ -6641,6 +6854,9 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-06 | **D65-B-R ADJUDICATION NOTE** | paste into the running D65-B-R session | **Opus** | all | r#51 §3(b) — G5′ void on the cap-bound legs; NEISO/NYISO register; legs 6/7 + board write |
 | 2026-09-06 | **D75-R-ARM (Q55)** | `claude/capx-d75r-arm-pjm` | **Opus** | pjm | r#51 — SEQUENCED after D65-B-R's board write merges |
 | 2026-09-06 | **D76 PHASE 3** | `claude/capx-d76-p3-neiso-nyiso-pjm` | **Opus** | neiso/nyiso/pjm | r#51 — HELD; dispatch STOP until D75-R-ARM merges |
+| 2026-09-06 | **D65-B-R COMPLETION** | `claude/capx-d65br-completion` | **Opus** | all | r#52 — leg 7 (`neiso-t3` GOLDEN-3) + the board write for ALL SEVEN rows + FINDING §0/§6 (with §6 re-ordered) + the Addendum-C basis disclosure; **critical path** |
+| 2026-09-06 | **(no other issuance r#52)** | — | — | — | r#52 — D78-R3 RUNNING, PR #5257 open (merge), D75-R-ARM + D76-P3 held on unmet STOPs; **re-fetched before grading dispatch** after the FIRST-ACT census proved stale by minutes |
+
 ## 5. History (compacted)
 
 - **Refresh #1 (08-23):** charter; first state read; D1 + D2-NYISO issued.
