@@ -12202,3 +12202,63 @@ every year (availability up); Cricket Valley now 0.53 TWh UNDER in 2024; C3a-202
 NOT re-declared — owner court (withdrawn-block re-entry clause). Records:
 `docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md`, `PREREG-nyiso196-cc-outage-share-basis-screen.md`,
 `_nyiso196_*.json`, `scripts/probes/nyiso196_*.py`.
+
+## 2026-09-06 — nyiso-197: the Linden 50006 regression is VOID (a CHP add-back basis mismatch); the real object has the opposite sign; ZERO solves, keeper unchanged
+
+**Keeper unchanged:** `2026-09-06-nyiso-196-extract-basis` (CALIBRATED, grade 7, fails 0, C3c
+ledgered). **Nothing registered, no PREREG, no LP run** — phase 0 only, on committed artifacts
+plus two `fleet_only` rebuilds of the keeper's own `meta.json`.
+
+**The premise is refuted.** The nyiso-196 hand-forward — *"Linden 50006 falls ~1.0 TWh in every
+year away from a 7.2–7.4 TWh meter although its own availability ROSE"* — is not in the committed
+artifacts. Decoding both registered payloads on the same basis, Linden goes **6.325 → 6.549 /
+6.197 → 6.440 / 6.162 → 6.390 TWh: it GAINED +224 / +243 / +227 GWh**, exactly what its own
+availability census (+302 / +326 / +314 GWh available) predicts, and it is the second-largest
+gainer of the energy Cricket Valley released in all three years. The §4.2 row mixed two bases —
+*keeper* column = the prior keeper's **payload** (full plant, carrying the measured 1.25 TWh/yr
+CHP add-back), *arm* column = the arm's **LP grid** series (no add-back). Linden is the only plant
+in that table with a non-zero measured BTM hold-out, so it is the only row the mismatch can move;
+every other row reproduces to the digit, `CC_CHP` control Sithe 54547 (measured share 0.0 %)
+included. Provenance is nyiso-196's own record: `_nyiso196_screen_gates.json`
+`S3_direction.moved_plants[1]` carries `keeper_gwh` 6196.9 (payload) against `screen_gwh` 5235.5
+(LP) — the 5.24 printed in §4.2. The row is self-refuting: an availability RISE producing a 15 %
+energy fall at a plant online 8,760/8,760 h has no mechanism.
+
+**Step 2 — no measured object survives**, so no arm was pre-registered and no LP was spent.
+(a) Availability is the extract's own scale-invariant share and the plant is **not capacity-bound**
+(at its envelope only 896 / 586 h; 416 / 467 GWh of headroom unused). (b) LP `pmax` 757.76 MW is
+within 2.8 % / 1.3 % of NYISO's registered net capability (737.1 / 748.2 MW summer, Gold Book
+Table III-2a), and the 22.21 % hold-out is itself the Gold-Book ÷ 923 measurement;
+`chp_layup_duty_curve` is armed but its census deliberately abstains at Linden. (c) The VFT limb is
+refuted — the Gold Book carries Linden Cogen as an **internal NYCA Zone-J station** (PTID 23786),
+and nyiso-196's I-1 already measured 0 of 8,760 h of binding import capability. (d) Delivered gas
+is a real unrepaired mismatch (a Linden **NJ** plant on Transco Z6 **non-NY** charged the NYC
+citygate, matched 11/12 months in both years) but there is **no committed Z6 non-NY series** to
+swap and the direction is wrong for the residual — an intake ask, not a screen.
+
+**The cell, RE-SPECIFIED with the opposite sign (owner court).** Against NYISO's Gold Book net
+energy for the station (4,390.7 / 4,288.7 GWh, CY2023 / CY2024) the keeper's LP grid dispatch is
+**+904.9 / +901.8 GWh OVER (+20.6 % / +21.0 %)** — the extract-basis repair *increased* it (prior
+keeper +680.9 / +658.8) — and Linden alone is **+0.814 of the `CC_CHP` class's +2.327 TWh** 923
+over-run in 2024. It is an **offer-position** object: the committed band's assembled `mc_base`
+($23.36 / $27.19) clears the modelled NYC LMP in **99.8 % / 98.7 %** of below-envelope hours, and
+the LP runs the plant at **79.8 % / 78.2 %** CF where the market ran the station at
+**68.0 % / 65.4 %**. A `CC_CHP` band multiplier may only be pre-registered on an owner ruling with
+an ex-ante, non-residual ground (rule 1 carve-out (a)–(e)); this session proposes no value.
+
+**Also filed.** (i) A scorer-side card: the run-page plant table compares a 923-net-basis model
+reconstruction to a CEMS-**gross** meter; at Linden the CAMPD series peaks 27–34 % above NYISO's
+registered station capability and the repo's own `parasitic_load_factors.parquet` flags plant
+50006 **`out_of_band`** in every year (net/gross 0.743, 0.97 class default substituted). No LP
+consequence — the shares CAMPD feeds the LP are scale-invariant. (ii) An add-back-basis assertion
+for the screen-gate probe pattern (both sides of a plant-grain comparison must declare their
+basis; `_nyiso192_payload_addback_audit.json` is the mirror defect). (iii) Cricket Valley 57185's
+part-load bucket (b−) is untouched and is now the queue's live plant-grain item.
+
+**Record corrections made (annotated, never rewritten):** `FINDING-nyiso196` §4.2 + §6 item 1;
+`docs/mechanism-testing-matrix.md` §5.5 (new nyiso-197 queue block; the nyiso-196 top-of-queue item
+struck); `docs/codebase-site/data/mechanism-matrix/NYISO.js` (the `gates` stamp and the
+`unit_outage_extract_basis_share` evidence — **cell stays K, no verdict moves, no field touched**).
+Records: `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
+`results/calibration/_nyiso197_linden_phase0.json`, `_nyiso197_linden_rebuild_{2023,2024}.json`,
+`scripts/probes/nyiso197_linden_phase0.py`, `scripts/probes/nyiso197_linden_rebuild.py`.
