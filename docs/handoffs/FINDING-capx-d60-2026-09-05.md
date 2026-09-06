@@ -348,6 +348,204 @@ legs, never during one.** This lane now enforces it mechanically — the leg dri
 `HEAD` before the solve and refuses to score or register if `HEAD` moved during it
 (`exit 90`), so the failure mode cannot recur silently even if the discipline lapses again.
 
+### 5.3 Leg 3 — `caiso-t1f` on `29f8eb372810195f`: every scored row identical, the flip is composition-only
+
+Run `caiso-2026-2030-d60-arm`, `--golden-posture` 2026–2030, **5/5 years, 22.0 min, 4.81 GB**.
+The key was matched on the **realized bundle directory**, not merely on the resolved config.
+ONE substantive mechanism against the control, verified field-by-field before the solve:
+`ccs_retrofit_capex_co2_scaling` absent → `True` — Addendum A.4's "one", confirmed.
+
+**Determination HOLD → HOLD and EVERY SCORED ROW IS IDENTICAL** — FC-1 `FAIL ['I12','I7']` on
+the same three years with the same MW, FC-2 row1 FAIL / row3 PASS / **row4 FAIL at 52.6 % in
+both arms**, FC-5 and FC-6 SKIPPED in both, FC-7 CAVEAT in both, FC-8 PASS in both. **P13 HIT.**
+
+Where the flip *does* show is the retrofit ledger, composition-only exactly as §6.3 pre-declared:
+
+| year | control rows / MW (CHP rows / MW) | arm rows / MW (CHP) |
+|---|---|---|
+| 2028 | 37 / 2,997.1 (26 / 843.1) | 10 / 2,903.1 (**0 / 0.0**) |
+| 2029 | 12 / 2,997.9 (5 / 632.4) | 9 / 2,932.1 (**0 / 0.0**) |
+| 2030 | 11 / 2,857.3 (8 / 567.6) | 3 / 2,787.0 (**0 / 0.0**) |
+| **window** | **60 rows / 8,852.4 MW** (2,043.2 CHP) | **22 rows / 8,622.2 MW** (0 CHP) |
+
+- **P12 HIT on both limbs** — every year inside the pre-declared 2,850–3,000 MW band; window
+  8,622.2 MW inside the pre-declared 8.6–9.0 GW. Falsifier (*any CHP row converting, or a year
+  below 2.5 GW*) does not fire.
+- **P11 HIT** — seam 1, the scaled bar, is **inert on CAISO**: the 3 GW/yr cap still binds in
+  every eligible year, so the entire change is seam 2, the CC_CHP host exclusion, and the cap is
+  refilled by fewer, larger non-CHP hosts (60 rows → 22 for nearly the same MW).
+
+**No STOP fires.** FC-2 row4 did not rise; no CHP row converted; every year's conversion count
+*fell*. FC-7 stays CAVEAT on one **pre-existing** UNIDENTIFIED entry, `negative_renewable_offers`
+— a CAISO override outside this batch that Addendum D.2 pre-declared the Q37 rows would not
+repair. Left untouched and **routed**: writing an identification row this lane holds no
+pre-declaration for is exactly what Q37's limb is narrow to prevent.
+
+### 5.4 Leg 4 — `pjm-t1f` on `09996eca71ee80fd`: a pre-declared STOP fired, and the cause is a requirement P23 assumed would not move
+
+Run `pjm-2026-2030-d60-arm`, **5/5 years, 36.2 min, 8.81 GB**. FOUR mechanisms against the
+control (Addendum C.2's "four"), verified field-by-field before the solve. **Determination
+HOLD → HOLD** (P24 HIT).
+
+**THE STOP.** Addendum C.4 declared *"any I12 year more negative than the control's"* a STOP.
+Every comparable year is:
+
+| I12 | 2027 | 2028 | 2029 | 2030 |
+|---|---|---|---|---|
+| control | −11.2 % | −13.5 % | −13.1 % | −13.0 % |
+| **arm** | **−11.6 %** | **−15.6 %** | **−15.8 %** | **−16.5 %** |
+
+**P23's direction held; its premise did not.** Accredited firm rose exactly as pre-declared —
+**+9,092 / +10,276 / +14,303 / +18,000 MW** in 2027–2030 — but P23 assumed *"an unchanged
+requirement"*, and the requirement is not unchanged: it rose by **more**, +16,220 / +21,607 /
++27,272 / +33,504 MW. Supply lengthened and the position still worsened.
+
+**Attributed, not inferred** (Amendment 1 item 3). The requirement is **byte-identical between
+the control and the committed D50 arm** (145,509 / 150,263 / 153,001 / 155,946 in both), so Q42
+moves it not at all and the entire rise belongs to the D48 + D57 gates. The mechanism is D48's
+own construction: `pjm_demand_response_supply` counts offered DR UCAP as supply **with the peak
+un-netted**, so both sides rise, and `pjm_accreditation_design_vintage` applies the post-CIFP FPR
+from DY 2025/26. **2026–2030 is the first horizon on which that FPR is in force for every
+delivery year**, and this is its first measurement: *D48's accounting is not position-neutral
+forward — it lengthens the requirement faster than it lengthens counted supply.* **Routed to the
+director**; nothing reverted, no gate moved.
+
+- **P21 HIT to the digit** — CCS window 3,584.7 → **909.8 MW**, reproducing the committed D50
+  arm exactly (2029: 2 rows / 909.8 MW; 2028 to zero).
+- **P22 HIT decisively**, mechanism confirmed at ledger grain — FC-2 row4: control **43.9 % FAIL**
+  → D50-arm-alone **48.9 % FAIL** (the CCS half pushes *up*, as pre-declared) → this arm
+  **25.6 % CAVEAT**. The halves oppose and the clearing half dominates, because economic gas_ct
+  entry rises 11,014 → **12,642 MW** (+1,628) and displaces administrative backstop build.
+- **P25 is VACUOUS, and is graded that way.** Every PJM exit on this horizon is **exogenous** —
+  16 announced + 2 confirmed, **zero economic**, `pipeline_events` empty in all five years — and
+  the exit set is byte-identical across the control, the D50 arm and this arm. No mechanism could
+  move the composition: the falsifier's condition is met but its premise is void.
+
+**Two misses against my own pre-declaration**, recorded rather than smoothed: wall **36.2 min**
+against Addendum C's ~28; and Addendum D.2 pre-declared "4 entries, 3 unattested" where the
+ledger emits **3 entries, 2 unattested** — `capacity_market_supply_clearing_by_iso = {"PJM": True}`
+carries no numeric leaf, so `_is_parameterish` skips it entirely and its Q37 row is dormant, as
+row 7's already is.
+
+### 5.5 Leg 5 — `neiso-t3` GOLDEN-3 on `f04fd06348e1623d`: the FC map does not move, and the carried FC-5 table is measured for the first time
+
+Run `neiso-2026-2050-t3-golden3-d60`, `--golden-posture --full-solve-authorized`, **25/25 years,
+3.37 GB**. ONE substantive mechanism against the control. **P16 HIT exactly: determination
+HOLD → HOLD, identical reasons and caveats, and ZERO of the 19 scored rows changes status.**
+One within-row improvement worth naming inside a still-failing row: the FC-2 row3 cobweb goes
+`gas_ct(7); gas_cc(11)` → `gas_cc(13)` — the gas_ct cobweb disappears entirely.
+
+**P14 / P15 on the 25-year retrofit ledger.** Control converts **11,208.9 MW** over 2028–2031
+(17 / 23 / 10 / 10 rows, 377.1 MW of it CHP); the arm converts **10,423.6 MW** over the same four
+years (12 / 11 / 10 / 6 rows) with **zero CHP MW**. **The P15 falsifier does not fire on either
+limb** — 10.42 GW is inside the pre-declared 10.4–11.3 GW band, and conversion still ends in
+**2031**, before the pre-declared 2032 bound. **A miss recorded against myself:** P15 said the
+window would lose *"at most ~0.4 GW"* and it loses **785.3 MW**. The band held; the point
+estimate did not — the same class of miss leg 1 recorded against its own §6.1 upper bound.
+
+**FC-7 PASS on all four rows including the §5 attestation. P20 HIT exactly:** 7 entries, 7
+IDENTIFIED, 0 UNIDENTIFIED, 0 unattested, and **no CCS entry** — Q42 made the field the dataclass
+default and the ledger enumerates non-default fields. The attestation is authored by the
+**producing session** (rubric §5's default author, unlike D47's disclosed deviation) on six
+assertions fixed in advance in Addendum B and pushed before this bundle existed; all six read
+TRUE from committed bytes.
+
+**What the attestation does not claim, stated rather than buried.** FC-5's dispositions and
+FC-6's battery are **carried, not re-measured**. Carrying is the committed practice — D25 authored
+the FC-5 table against `results/ff-t3-neiso-golden/bau`, and D46/D47 carried it unre-authored onto
+`bau-d46`. What this lane adds is the **measurement of the carry that no prior lane took**:
+
+- The carried table is **already stale against the bundle it is attached to**, on **6 of 42
+  computable rows** past the corridor memo's own 15 % explanation threshold. Worst: `co2@2040`,
+  table 4.4883 vs `bau-d46` 9.5792 (**+113.4 %**); `capacity:pumped_storage` **+41.3 %** in all
+  three anchor years.
+- This lane's own marginal movement `bau-d46 → bau-d60` is **smaller than that pre-existing gap**
+  and clears the memo's threshold on every real quantity: 10 rows move > 5 %, the largest being
+  `co2` −9.1 / −12.8 / −10.7 % and `generation:gas` −10.1 / −11.8 / −10.2 % across 2030 / 2035 /
+  2040. The `co2@2040` movement **reduces** the pre-existing table gap rather than widening it.
+
+**Re-authoring the table is routed, not absorbed** — D25 was a dedicated lane for it and this one
+holds no pre-declaration to re-author 54 verdicts. **Addendum B's own premise was wrong** and is
+corrected in §5.0c: it pre-declared FC-5 / FC-6 "SKIPPED", where the committed record reads
+CAVEAT on both.
+
+---
+
+## 8. Instrument repair — the Q37 rows, and what they did and did not move
+
+D60 Amendment 2 resolved leg 2's P10 STOP under **owner ruling Q37** (r#34, rubric §5 second
+limb): *a follow-up lane may author an attestation iff pre-declared before authoring, attestation
+row only, artifact-only re-score.* The pre-declaration is **Addendum D**, on `main` before a
+single row was written and before any of the three outstanding legs' FC-7 rows had been read.
+
+**Six new rows** in `CURATED_IDENTIFICATIONS`, all keyed `(ISO, field)` — never `("*", field)` —
+so each is rule 25 `[R-ISO-SCOPE]`-scoped by construction, and all carrying
+`requires: "iso-registry"` so a run carrying the field from anywhere but the live registered
+override stays UNIDENTIFIED and the artifact records the refusal:
+
+| ISO | field |
+|---|---|
+| NYISO | `nyiso_requirement_forecast_peak`, `nyiso_requirement_vintage_factors` |
+| MISO | `adequacy_accounting_ratio_dated_net` |
+| PJM | `pjm_accreditation_design_vintage`, `pjm_demand_response_supply`, `capacity_market_supply_clearing_by_iso` |
+
+Row 7 (`ccs_retrofit_capex_co2_scaling`) needed no edit and got none: D50 committed it, and Q42
+made it the dataclass default, so it no longer appears in any post-flip bundle's ledger and its
+curated row is **dormant** — exactly the mechanism P20 pre-declared for GOLDEN-3.
+
+**The five artifact-only re-scores — same bundle, same bytes, same key, only the ledger's LABELS
+changed. Every Addendum D.2 prediction HIT:**
+
+| bare key | ledger after | FC-7 | determination |
+|---|---|---|---|
+| `nyiso-t1f` | 3 entries, **3 identified** | **CAVEAT → PASS** | **PROMOTE-WITH-CAVEATS → PROMOTE** |
+| `miso-t1f` | 7 entries, **5 unattested** | CAVEAT → CAVEAT | HOLD → HOLD |
+| `caiso-t1f` | 2 entries, **1 unattested** | CAVEAT → CAVEAT | HOLD → HOLD |
+| `pjm-t1f` | 3 entries, **3 identified** | **CAVEAT → PASS** | HOLD → HOLD |
+| `neiso-t3` | 7 entries, **7 identified** | PASS → PASS | HOLD → HOLD |
+
+**FC-7 was the ONLY row that moved on any of the five — zero non-FC-7 movements**, measured
+row-by-row across all eight categories of all five bundles. That is what Addendum D.3 required
+and what makes the re-score honest: a `CURATED_IDENTIFICATIONS` row is read by one consumer,
+`_apply_curation`, and cannot reach a `ScenarioConfig` field, a cache key, a solve, a trajectory
+or any other FC category. **The model rows are unmoved.**
+
+**The one determination that moves** is `nyiso-t1f` **PROMOTE-WITH-CAVEATS → PROMOTE** — the
+repair of leg 2's P10 STOP, and the entire reason Amendment 2 exists. Nothing else moves.
+
+**Two blunt negatives, pre-declared and honoured rather than quietly widened.** MISO's FC-7 does
+**not** clear: the ratio row is written and MISO still reads CAVEAT, because five MISO overrides
+outside this batch (`entry_vre_capacity_revenue`, `entry_vre_zone_selection`,
+`miso_rps_compliance_regions`, `miso_clean_tier_rows`, `retirement_sector_gate`) remain
+unattested. CAISO's FC-7 is untouched — `negative_renewable_offers` is a pre-existing override
+this batch does not reach. Both are **routed**, not absorbed; widening the scope to make a row
+read PASS is precisely what Q37's limb is narrow to prevent.
+
+### 8.1 The D57 interaction (Amendment 1 item 3)
+
+Two legs carry more than one mechanism, and each moved row is attributed to **one**, from a
+committed single-mechanism record rather than by inference:
+
+- **`miso-t1f`** (leg 1, D60): three mechanisms — D53's sector gate (measured to move nothing:
+  every retirement row byte-identical), Q40's ratio (what moves the board), Q42 (a measured null,
+  0 MW converted).
+- **`pjm-t1f`** (leg 4): four mechanisms. Q42's half is isolated by the committed D50 arm and
+  reproduces it to the digit (909.8 MW); the D48 + D57 half owns the entire requirement rise,
+  established by the requirement being **byte-identical** between the control and that D50 arm.
+
+### 8.2 The board's per-ISO rows, before and after this lane
+
+| ISO · key | before | after |
+|---|---|---|
+| CAISO `t1f` | HOLD (FC-7 CAVEAT) | HOLD (FC-7 CAVEAT — unchanged, routed) |
+| PJM `t1f` | HOLD (FC-7 PASS, 1-entry ledger) | HOLD (FC-7 PASS on a 3-entry ledger; FC-8 CAVEAT) |
+| NEISO `t3` | HOLD (FC-7 PASS) | HOLD (FC-7 PASS) |
+| MISO `t1f` | HOLD (FC-7 CAVEAT) | HOLD (FC-7 CAVEAT — five overrides still unattested) |
+| **NYISO `t1f`** | **PROMOTE-WITH-CAVEATS** | **PROMOTE** |
+
+**One determination moved across the entire lane**, and it is the one Addendum D.3 named in
+advance.
+
 
 ---
 
@@ -512,3 +710,79 @@ magnitude already attached and is the obvious first.
 **29 solve-affecting commits landed since** against a threshold of 10 — the FR-21 WARN. That
 WARN is the same fact this section measures, from the other end.
 
+---
+
+## 9. Close — what D60 is, and what it is not
+
+D60's own close condition: *"D60 is COMPLETE when every bare key named in Addendum A §A.2 carries
+a post-D60 `scored_at_sha` and every `-pre-d60` prior exists."*
+
+**All nine `-pre-d60` priors exist** — `ercot-t1f`, `neiso-t1f`, `miso-t1f`, `nyiso-t1f`,
+`miso-t1h`, `nyiso-t1h` from D60 itself, plus `caiso-t1f`, `pjm-t1f` and `neiso-t3` from this
+lane. No earlier preserved baseline (`-pre-d53`, `-pre-d46`, `-pre-d45r`, `-pre-d47` …) was
+overwritten.
+
+**The `scored_at_sha` half is met for eleven of thirteen keys, and the two exceptions are named
+rather than waved through.** `ercot-t1f` and `neiso-t1f` still carry `9e48ff6820b0` — the sha of
+the D50 bundle each was *renamed onto*, which is pre-D60 by construction, because a Class-A
+rename points a key at a committed bundle and does not re-score it.
+
+Those are **the same two keys §8-blast-radius identifies as PRE-hunk residue**, and the
+coincidence is not one: a key that was never re-solved after D60 is exactly a key that was never
+re-solved after capx D55's `_floor_retention_merit` hunk either. So the honest reading of the
+close is:
+
+> **D60's five re-solves are complete and its instrument repair is complete. Its rename half is
+> complete as a rename and incomplete as a re-measure** — and the residue is `ercot-t1f`,
+> `neiso-t1f` and the five t1h keys, seven in total, all routed to the director as a separate
+> campaign rather than absorbed here.
+
+`neiso-t1f` is the rung with a measured magnitude already attached (D65 §3c: 7 rows, −124.92 MW
+of gas_cc in 2027) and is the obvious first.
+
+**What this lane did not do, stated so it is not assumed.** No keeper, no shard promotion field,
+no `complete` / `final` marker, no freeze, no default, no new `ScenarioConfig` field, no
+parameter value, no mechanism-matrix cell (rule 28: this lane tested no mechanism — the bisect
+names a hunk, it does not adjudicate one), and nothing against measured H1-2026 (rule 22: t1f
+2026–2030, t3 2026–2050, all forecast mode). The D55 hunk was **named and not touched**; the
+FC-5 disposition table was **carried and measured, not re-authored**; the five unattested MISO
+overrides and CAISO's one were **routed, not absorbed**.
+
+### 9.1 Governance attestation
+
+| gate | reading |
+|---|---|
+| rule 22 quarantine | every solved year in 2026–2050, forecast mode, no measured actual touched |
+| rule 24 off-registry knobs | zero — every solve-affecting field in all three `run_config.json` is a declared `ScenarioConfig` field |
+| rule 25 ISO scope | all six new curated rows keyed `(ISO, field)`, none `("*", field)`; no ISO's value can identify another's |
+| rule 21 DOF | no parameter value chosen anywhere in this lane |
+| rule 28 matrix | no cell moved; no mechanism tested |
+| `check_cache_key_registration.py --base origin/main` | **ok** — 798 fields, 253 registered, all resolve |
+| `tests/unit/config/test_d60_arming_batch.py` | **17 passed** |
+| `tests/regression/test_persisted_identity.py` | **14 passed** |
+| `ruff format` / `ruff check` on the edited scorer file | clean |
+| rule 27 blob verification | every push verified: `ff-verdicts.json` (13,175 lines), `program-status.json`, `register_forecast_run.py`, and each bundle's `run_config.json` + `full_horizon_summary.json` — byte-identical local vs remote on all three legs |
+| STOP 1 (key drift) | re-read at **four** separate HEADs as `main` moved under the lane; **17/17 unmoved every time** |
+
+### 9.2 Every prediction, graded
+
+| id | prediction | verdict |
+|---|---|---|
+| P11 | CAISO seam 1 inert, whole change is seam 2 | **HIT** |
+| P12 | CAISO 2,850–3,000 MW/yr, zero CHP, window 8.6–9.0 GW | **HIT** (both limbs) |
+| P13 | CAISO HOLD → HOLD, gated rows capacity-identical | **HIT** |
+| P14 | GOLDEN-3 cap-bound, CHP only 3.4 % of the pool | **HIT** |
+| P15 | window loses "at most ~0.4 GW", ends by 2032, total 10.4–11.3 GW | **falsifier does not fire** (10.42 GW, ends 2031); **point-estimate MISS** — 785.3 MW lost |
+| P16 | GOLDEN-3's FC map does not move | **HIT** (0 of 19 rows) |
+| P20 | GOLDEN-3 ledger 7 IDENTIFIED / 0 UNIDENTIFIED, no CCS entry | **HIT** |
+| P21 | PJM CCS window → 909.8 MW, reproducing the D50 arm | **HIT to the digit** |
+| P22 | PJM FC-2 row4 DOWN against 43.9 %, clearing half dominates | **HIT** (25.6 %) |
+| P23 | PJM I7/I12 improve but do not clear, requirement unchanged | **direction HIT, premise MISS, falsifier FIRES → STOP** |
+| P24 | PJM HOLD → HOLD, FC-8 CAVEAT ~9 GB | **HIT** (FC-7 CAVEAT → PASS via the Q37 rows, as D.2 pre-declared) |
+| P25 | PJM exit composition follows D57's t1h signature | **VACUOUS** — the screen decides nothing on this horizon |
+| D.2 ×5 | the five FC-7 / determination outcomes | **HIT, all five** |
+
+**Four misses recorded against myself**, none smoothed: the leg-4 wall estimate (36.2 vs ~28
+min); P15's "at most ~0.4 GW"; Addendum D.2's "4 entries / 3 unattested" for PJM; and Addendum
+B's false premise that GOLDEN-3's FC-5 / FC-6 were SKIPPED (§5.0c). Plus one **process** defect,
+§5.0e: I rebased under a running solve and killed the leg for it.

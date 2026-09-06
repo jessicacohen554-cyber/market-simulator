@@ -1,7 +1,7 @@
 {
   "schema": "dof-ledger/v1",
   "lane": "forecast",
-  "status": "INSTRUMENT — 1 IDENTIFIED / 6 UNIDENTIFIED",
+  "status": "INSTRUMENT — 2 IDENTIFIED / 5 UNIDENTIFIED",
   "run_id": "miso",
   "iso": "MISO",
   "run_git_sha": "2ef4326e",
@@ -11,9 +11,9 @@
   "scope": "NON-DEFAULT solve-affecting ScenarioConfig fields — the parameters THIS run chose relative to the shipped registry (tuple/list representation normalized). Registry defaults inherited by the run keep their identification burden in the registry citations and the backcast keeper DOF ledger (see registry_identification). Epoch drift is reported separately, never scored.",
   "defaults_available": true,
   "n_entries": 7,
-  "n_identified": 1,
-  "n_unidentified": 6,
-  "n_unattested": 6,
+  "n_identified": 2,
+  "n_unidentified": 5,
+  "n_unattested": 5,
   "n_by_group": {
     "dispatch_mechanism": 2,
     "entry": 2,
@@ -25,13 +25,12 @@
       "name": "adequacy_accounting_ratio_dated_net",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_miso_config)",
       "group": "other",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Selects D31's OWN arithmetic with the denominators net of the step-1b fossil-dates channel's accredited exits -- 0.854600 -> 0.893436, derived from three committed inputs and reconciled by test. The gate chooses WHICH CONSISTENT ACCOUNTING is used; it supplies no number, and the ratio is recomputed by the same construction from whatever the dated channel holds in a forward year, so it responds to a changed fleet by construction",
+      "evidence": "src/market_sim/config/iso_configs.py::_miso_config default_scenario_overrides cite block (owner ruling Q40); docs/handoffs/FINDING-capx-d51-2026-09-04.md section 1.3 (the construction, zero free parameters) and section 7 (the four limbs)",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Ungrouped solve-affecting parameter. Attest individually, or extend GROUPS in scripts/build_forecast_dof_ledger.py if a family emerges."
+      "value": true
     },
     {
       "name": "entry_vre_capacity_revenue",
@@ -105,9 +104,20 @@
       "attestation_question": "Economic-retirement screen thresholds and exogenous exit channels. Attest: which are published instrument rules, which are measured execution lags (EIA-860 announced-to-deactivation), which were chosen against a hindcast recall residual."
     }
   ],
+  "epoch_field_gaps": {
+    "fields_added_since_epoch": [
+      "capacity_adequacy_requirement_published_by_iso",
+      "capacity_going_forward_bar_published_by_iso",
+      "cc_duct_peaking_row_scoped",
+      "ccs_retrofit_fixed_cost_co2_scaling",
+      "federal_ces_acp_usd_per_mwh",
+      "federal_ces_target_by_year",
+      "unit_outage_extract_basis_share"
+    ]
+  },
   "registry_identification": {
     "note": "Registry defaults inherited by this run (offer surfaces, floors, passthrough sigmoids, ...) carry their identification in the registry's rule-5 citations and in the designated backcast keeper's rule-21 DOF ledger (calibration_attestation.json `free_parameters`); they are not re-enumerated per forecast bundle. Whether each identification survives extrapolation forward is the standing question the dispatch_mechanism group's guidance records.",
-    "backcast_keeper_at_build": "2026-09-05-miso-217-intermphys",
+    "backcast_keeper_at_build": "2026-09-05-miso-220-nonsteam-lift",
     "keeper_shard": "frontend/data/backcast/keepers/MISO.json"
   }
 }

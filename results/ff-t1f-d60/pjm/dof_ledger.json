@@ -1,7 +1,7 @@
 {
   "schema": "dof-ledger/v1",
   "lane": "forecast",
-  "status": "INSTRUMENT — 1 IDENTIFIED / 2 UNIDENTIFIED",
+  "status": "INSTRUMENT — ALL 3 ENTRIES IDENTIFIED",
   "run_id": "pjm",
   "iso": "PJM",
   "run_git_sha": "14f860fb",
@@ -11,9 +11,9 @@
   "scope": "NON-DEFAULT solve-affecting ScenarioConfig fields — the parameters THIS run chose relative to the shipped registry (tuple/list representation normalized). Registry defaults inherited by the run keep their identification burden in the registry citations and the backcast keeper DOF ledger (see registry_identification). Epoch drift is reported separately, never scored.",
   "defaults_available": true,
   "n_entries": 3,
-  "n_identified": 1,
-  "n_unidentified": 2,
-  "n_unattested": 2,
+  "n_identified": 3,
+  "n_unidentified": 0,
+  "n_unattested": 0,
   "n_by_group": {
     "dispatch_mechanism": 2,
     "other": 1
@@ -34,27 +34,31 @@
       "name": "pjm_accreditation_design_vintage",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_pjm_config)",
       "group": "dispatch_mechanism",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Reads the accreditation design OF THE DELIVERY YEAR BEING SCREENED: UCAP + the published pre-CIFP FPR before DY 2025/26, ELCC class + post-CIFP FPR from it. A published design vintage applied by date; a forward delivery year takes the design in force for it and nothing is fitted to a residual",
+      "evidence": "src/market_sim/config/iso_configs.py::_pjm_config default_scenario_overrides cite block (owner ruling Q44, in-session on the capx D57 A/B); docs/handoffs/FINDING-capx-d48-*; docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md; docs/handoffs/FINDING-capx-d57-2026-09-05.md section 8.1",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Dispatch/commitment mechanisms inherited from the backcast calibration. MOST WILL ALREADY BE ATTESTED in the ISO's backcast ledger — the forecast attestation should CITE that entry rather than re-derive it, and must state whether the identification survives extrapolation forward (a curve fitted on 2023-2025 conduct is not automatically identified for 2040)."
+      "value": true
     },
     {
       "name": "pjm_demand_response_supply",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_pjm_config)",
       "group": "dispatch_mechanism",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Counts the published OFFERED DR UCAP as SUPPLY with the peak un-netted, instead of netting DR off the peak -- the accounting PJM's own auction uses. An accounting-side selection; no MW is invented, and the offered DR UCAP is a published auction quantity available for any forward delivery year",
+      "evidence": "src/market_sim/config/iso_configs.py::_pjm_config default_scenario_overrides cite block (owner ruling Q44); capx D48 (docs/handoffs/FINDING-capx-d48-*)",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Dispatch/commitment mechanisms inherited from the backcast calibration. MOST WILL ALREADY BE ATTESTED in the ISO's backcast ledger — the forecast attestation should CITE that entry rather than re-derive it, and must state whether the identification survives extrapolation forward (a curve fitted on 2023-2025 conduct is not automatically identified for 2040)."
+      "value": true
     }
   ],
+  "epoch_field_gaps": {
+    "fields_added_since_epoch": [
+      "capacity_adequacy_requirement_published_by_iso",
+      "cc_duct_peaking_row_scoped"
+    ]
+  },
   "registry_identification": {
     "note": "Registry defaults inherited by this run (offer surfaces, floors, passthrough sigmoids, ...) carry their identification in the registry's rule-5 citations and in the designated backcast keeper's rule-21 DOF ledger (calibration_attestation.json `free_parameters`); they are not re-enumerated per forecast bundle. Whether each identification survives extrapolation forward is the standing question the dispatch_mechanism group's guidance records.",
     "backcast_keeper_at_build": "2026-08-15-pjm-162-inputclock",

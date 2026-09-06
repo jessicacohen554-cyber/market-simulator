@@ -1,0 +1,41 @@
+{
+ "schema": "forecast-attestation/v1",
+ "bundle": "results/ff-t3-neiso-golden/bau-d60",
+ "run_id": "neiso-2026-2050-t3-golden3-d60",
+ "attested_by": "capx D60-R3, 2026-09-06 \u2014 THE PRODUCING SESSION, which is rubric \u00a75's default author. Unlike D47 (which had to attest another session's bundle and disclosed that deviation), this lane solved the bundle it attests, so it can author in the ordinary way. The six assertions below were FIXED IN ADVANCE in PREDECL-capx-d60-2026-09-05.md Addendum B, pushed to main before this bundle existed and before any of its FC rows had been read; Addendum B states in terms that an assertion which turns out false is recorded FALSE and FC-7 fails on it at full magnitude, and that the attestation is not re-scoped to fit. Each value below is read from committed bytes, not judged at authoring time.",
+ "predeclaration": "docs/handoffs/PREDECL-capx-d60-2026-09-05.md Addendum B (pushed before the solve)",
+ "assertions": {
+  "dof_ledger_complete": {
+   "value": true,
+   "read_from": "dof_ledger.json built by the committed scripts/build_forecast_dof_ledger.py from this bundle's own run_config.json",
+   "evidence": "7 entries, 7 IDENTIFIED, 0 UNIDENTIFIED, 0 unattested, 0 whose identification is 'residual'"
+  },
+  "run_config_reproducible": {
+   "value": true,
+   "read_from": "run_config.json",
+   "evidence": "mode=forecast; git.dirty=false at sha e9d8263b; cache_key f04fd06348e1623d \u2014 the value Addendum A \u00a7A.2 pre-declared and the harness path resolves"
+  },
+  "honest_unfit_referenced": {
+   "value": true,
+   "read_from": "full_horizon_summary.json invariants + the finding",
+   "evidence": "14 invariants carried into the verdict; the failing FC rows are named in FINDING-capx-d60-2026-09-05.md \u00a75.5 against program-status.json rather than only in the sidecar"
+  },
+  "quarantine_attested": {
+   "value": true,
+   "read_from": "run_config.json solved_years",
+   "evidence": "25 solved years, 2026..2050 inclusive \u2014 forecast mode, no measured actuals, no holdout tier touched (rule 22)"
+  },
+  "no_off_registry_knobs": {
+   "value": true,
+   "read_from": "run_config.json scenario_config vs ScenarioConfig.model_fields",
+   "evidence": "every solve-affecting field in run_config.json is a declared ScenarioConfig field; zero stray keys; no env knob, no per-plant dict, no getattr fallback (rule 24)"
+  },
+  "registered": {
+   "value": true,
+   "read_from": "scripts/register_forecast_run.py",
+   "evidence": "registered through the SINGLE register_forecast_run.py path; verdict key neiso-t3"
+  }
+ },
+ "what_this_attestation_does_not_claim": "It certifies PROVENANCE, not accuracy. It says nothing about whether GOLDEN-3 is right: FC-1 (I3 renewable dump), FC-2 (cobweb), FC-3 (T1-H bands) and FC-4 (T1-X dispatch skill) are measured on instruments this lane never touched and are reported at full magnitude. It ALSO does not claim that FC-5's disposition rows or FC-6's driver battery were re-measured on this bundle: BOTH ARE CARRIED. The FC-5 table was authored by capx D25 against `results/ff-t3-neiso-golden/bau` and was already carried, unre-authored, onto `bau-d46` by D46/D47 \u2014 carrying is the committed practice, not an innovation here \u2014 and the FC-6 battery is D46's four-arm set at its own vintage. What this lane adds is the MEASUREMENT of that carry, disclosed rather than assumed: see FINDING \u00a75.5.",
+ "authored_utc": "2026-09-06T03:55:58Z"
+}

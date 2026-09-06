@@ -1,7 +1,7 @@
 {
   "schema": "dof-ledger/v1",
   "lane": "forecast",
-  "status": "INSTRUMENT — 1 IDENTIFIED / 2 UNIDENTIFIED",
+  "status": "INSTRUMENT — ALL 3 ENTRIES IDENTIFIED",
   "run_id": "nyiso",
   "iso": "NYISO",
   "run_git_sha": "e7412237",
@@ -11,9 +11,9 @@
   "scope": "NON-DEFAULT solve-affecting ScenarioConfig fields — the parameters THIS run chose relative to the shipped registry (tuple/list representation normalized). Registry defaults inherited by the run keep their identification burden in the registry citations and the backcast keeper DOF ledger (see registry_identification). Epoch drift is reported separately, never scored.",
   "defaults_available": true,
   "n_entries": 3,
-  "n_identified": 1,
-  "n_unidentified": 2,
-  "n_unattested": 2,
+  "n_identified": 3,
+  "n_unidentified": 0,
+  "n_unattested": 0,
   "n_by_group": {
     "dispatch_mechanism": 2,
     "other": 1
@@ -34,30 +34,39 @@
       "name": "nyiso_requirement_forecast_peak",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_nyiso_config)",
       "group": "dispatch_mechanism",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Prices the NYCA requirement on the NYSRC ICAP-market FORECAST PEAK of the capability year (IRM Study Appendices Table D.2 col. 1) instead of the model's own peak. A capability year outside the published table returns the model's peak UNCHANGED, so the forward horizon keeps a forecast peak and never a held-last MW. A published market-design input, not a magnitude",
+      "evidence": "src/market_sim/config/iso_configs.py::_nyiso_config default_scenario_overrides cite block (owner ruling Q41); docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1); the digitized rows in data/raw/demand-curve/nyiso/nyiso.csv, reconciled to source by test",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Dispatch/commitment mechanisms inherited from the backcast calibration. MOST WILL ALREADY BE ATTESTED in the ISO's backcast ledger — the forecast attestation should CITE that entry rather than re-derive it, and must state whether the identification survives extrapolation forward (a curve fitted on 2023-2025 conduct is not automatically identified for 2040)."
+      "value": true
     },
     {
       "name": "nyiso_requirement_vintage_factors",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_nyiso_config)",
       "group": "dispatch_mechanism",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Prices the requirement FACTOR at that capability year's EC-adopted IRM x (1 - NYCA derate) (Table D.2 cols. 2-3) instead of the single mixed vintage 1.244 x (1 - 0.1321); beyond the last published pair it HOLDS that pair's ratio, 1.244 x 0.870 = 1.0823. In-table, the requirement IS Table D.2's published NYCA UCAP requirement to under 1 MW. Every factor is a published adopted value",
+      "evidence": "src/market_sim/config/iso_configs.py::_nyiso_config default_scenario_overrides cite block (owner ruling Q41); docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1) (LOYO 3/3 with an identical fleet; FC-3 byte-identical at the shipped default)",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Dispatch/commitment mechanisms inherited from the backcast calibration. MOST WILL ALREADY BE ATTESTED in the ISO's backcast ledger — the forecast attestation should CITE that entry rather than re-derive it, and must state whether the identification survives extrapolation forward (a curve fitted on 2023-2025 conduct is not automatically identified for 2040)."
+      "value": true
     }
   ],
+  "epoch_field_gaps": {
+    "fields_added_since_epoch": [
+      "capacity_adequacy_requirement_published_by_iso",
+      "capacity_going_forward_bar_published_by_iso",
+      "cc_duct_peaking_row_scoped",
+      "ccs_retrofit_fixed_cost_co2_scaling",
+      "federal_ces_acp_usd_per_mwh",
+      "federal_ces_target_by_year",
+      "unit_outage_extract_basis_share"
+    ]
+  },
   "registry_identification": {
     "note": "Registry defaults inherited by this run (offer surfaces, floors, passthrough sigmoids, ...) carry their identification in the registry's rule-5 citations and in the designated backcast keeper's rule-21 DOF ledger (calibration_attestation.json `free_parameters`); they are not re-enumerated per forecast bundle. Whether each identification survives extrapolation forward is the standing question the dispatch_mechanism group's guidance records.",
-    "backcast_keeper_at_build": "2026-09-05-nyiso-189-steam-identity",
+    "backcast_keeper_at_build": "2026-09-06-nyiso-196-extract-basis",
     "keeper_shard": "frontend/data/backcast/keepers/NYISO.json"
   }
 }
