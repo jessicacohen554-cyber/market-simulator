@@ -1,0 +1,168 @@
+{
+  "adequacy_requirement_mw": 31997.524,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": null,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 1000.0,
+    "solar": 1843.4,
+    "wind": 1000.0
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1000.0,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "Upstate_West"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 1000.0,
+      "seq": 1,
+      "tech": "gas_cc",
+      "zone": "Upstate_West"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1843.4,
+      "seq": 2,
+      "tech": "solar",
+      "zone": "Upstate_West"
+    }
+  ],
+  "firm_clean_accredited_mw": 1763.281,
+  "firm_clean_mw": 4587.1,
+  "fleet_by_fuel_after": {
+    "biomass": 384.4,
+    "gas_cc": 11199.04,
+    "gas_ct": 3033.811,
+    "gas_st": 9372.5,
+    "nuclear": 3325.9,
+    "oil": 2904.5
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 392.4,
+    "gas_cc": 11199.04,
+    "gas_ct": 3053.611,
+    "gas_st": 9372.5,
+    "nuclear": 3325.9,
+    "oil": 2904.5
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NYISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 29564.922,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.1224,
+    "wind": 0.1684
+  },
+  "reserve_margin": 0.177361,
+  "retirements": [
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GE10"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GE11"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GE12"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GE13"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GE14"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GEN5"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GEN6"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GEN7"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GEN8"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.8,
+      "reason": "announced",
+      "unit_id": "54782_GEN9"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 18.414,
+      "reason": "announced",
+      "unit_id": "CT_PEAKER_Capital_Hudson_p2487_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 1.386,
+      "reason": "announced",
+      "unit_id": "CT_PEAKER_Capital_Hudson_p2487_peak"
+    }
+  ],
+  "rps_dual": 40.0,
+  "screen_adequacy_requirement_mw": 31997.524,
+  "screen_entering_firm_mw": 34834.546,
+  "screen_peak_demand_mw": 29564.922,
+  "screen_reserve_position": 1.088664,
+  "solar_cap_mw": 1500.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 1306.475,
+  "storage_power_mw": 1470.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 2400.0,
+  "year": 2027
+}

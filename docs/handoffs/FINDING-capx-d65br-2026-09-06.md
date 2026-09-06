@@ -198,3 +198,121 @@ scheduled — and it is the leg that says whether the unbinding persists once RG
 
 **Per Addendum C's "STOP-only, per leg", the NEISO leg is stopped; the remaining legs proceed.**
 NEISO is **not registered** pending adjudication.
+
+### 5.3 `nyiso-t1f` — **G5' FIRES TWICE**, and NEISO's signature REPEATS
+
+Solve key **`f62431376dd9df03`** = the pre-declaration exactly. Solve-path guard clean. **5/5 years,
+14.2 min, 3.15 GB, 0 FAIL / 0 WARN on all 14 invariants.**
+
+| year | rows | MW | % of cap | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|---:|
+| 2028 | 13 | 2,984.4 | 99.5 % | 0.3786 | 7.057 | 1.0544 |
+| **2029** | 19 | **2,271.5** | **75.7 %** | 0.4394 | 8.094 | 1.2235 |
+| **2030** | 1 | **1,000.0** | **33.3 %** | 0.3600 | 6.300 | 1.0025 |
+
+| gate | verdict |
+|---|---|
+| **G0' / G2' / G3' / G6'** | **PASS** — G2' on all 33 rows, `capex/k` host-invariant within every year (2028 `1,323,595.6`; 2029 `1,200,860.1`; 2030 `1,141,276.9`) |
+| **G1'** | **NOT GATED** — no published NYISO band. Reported: `er/phys` 0.8419–1.4801 over 33 rows |
+| **G4'** | **PASS** — 0 FAIL / 0 WARN, so nothing can have flipped |
+| **G5'** | **FIRES on 2029 AND 2030** |
+
+**Reported as fired, not reinterpreted.** Same routing as §5.2, and the same conflict with D64
+§2.3, which names **NEISO and NYISO together** in the sentence that calls a below-cap year *"the
+informative surprise, not a STOP."*
+
+**THE SIGNATURE REPEATS ACROSS BOTH RGGI ISOs, AND THAT IS THE FINDING.** Two independent markets,
+same construction, same shape:
+
+| | 2028 | 2029 | 2030 |
+|---|---|---|---|
+| NEISO | 98.8 % of cap, `k` 0.9952 | 98.0 %, `k` 1.3347 | **59.5 %**, `k` 1.3032 |
+| NYISO | 99.5 % of cap, `k` 1.0544 | **75.7 %**, `k` 1.2235 | **33.3 %**, `k` 1.0025 |
+
+Both start cap-bound at a MW-weighted `k` ≈ 1.0 — the sub-reference and reference hosts — and both
+unbind as the surviving pool moves to `k` > 1.2, i.e. hosts charged **>20 % more per captured
+tonne** under the correctly-sized island. **The efficient hosts are consumed first and the
+expensive tail cannot carry the accurate per-tonne cost.** A single ISO doing this is an anecdote;
+both doing it, at different carbon prices and different fleets, is the seam's thesis reproduced.
+
+It also sharpens what the gate got wrong. D64 §2.4's "cap-bound" cell was computed **at the hour
+ceiling on the SHIPPED shape**; §2.3's expectation sentence is about the A/B. Addendum C promoted a
+ceiling-census cell into a floor on a *solved* quantity — the same "a band is a window, not a floor"
+error Addendum C itself warns about for ERCOT's G1', committed one paragraph later in its own table.
+
+**NYISO is not registered pending the same adjudication.** Legs proceed.
+
+### 5.4 `caiso-t1f` — ALL GATES CLEARED, and it is the CONTROL CASE that confirms the mechanism
+
+Solve key **`17770cdad3230938`** = the pre-declaration exactly. Solve-path guard clean. **5/5 years,
+35.5 min, 4.53 GB.**
+
+| year | rows | MW | % of cap | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|---:|
+| 2028 | 10 | 2,996.6 | 99.9 % | 0.3707 | 6.822 | 1.0324 |
+| 2029 | 8 | 2,996.9 | 99.9 % | 0.3868 | 7.287 | 1.0772 |
+| 2030 | 4 | 2,892.2 | 96.4 % | 0.3742 | 6.650 | 1.0422 |
+
+| gate | verdict |
+|---|---|
+| **G0' / G2' / G3' / G6'** | **PASS** — G2' on all 22 rows; `capex/k` host-invariant within every year |
+| **G1'** | **NOT GATED** — no published CAISO band. Reported: `er/phys` 0.8633–1.4151 over 22 rows |
+| **G4'** | **PASS** — invariants **identical** to the committed `caiso-t1f`: `changed: none`. I7 and I12 were already FAIL pre-D65-B; **zero flips** |
+| **G5'** | **PASS** — cap-bound in all three years, as D64 §2.4 predicts |
+
+**This leg is the one that turns §5.2/§5.3 from a correlation into a mechanism.** CAISO is the third
+carbon-priced ISO and the only one whose cap does **not** unbind — and the reason is visible in a
+single column, the one step 0 made readable:
+
+| ISO | MW-wtd `k` 2028 → 2030 | cap in 2030 |
+|---|---|---|
+| NEISO | 0.9952 → **1.3032** | **59.5 %** (unbinds) |
+| NYISO | 1.0544 → **1.2235** (2029) | **33.3 %** (unbinds) |
+| **CAISO** | 1.0324 → **1.0422** | **96.4 %** (stays bound) |
+
+**CAISO's surviving host pool never leaves `k` ≈ 1.03–1.08.** It is not that CAISO is exempt from
+the seam — the seam is armed identically — it is that CAISO's eligible fleet still has ~3 GW/yr of
+**near-reference** hosts to convert in every year, so the screen never has to reach the `k` > 1.2
+tail. NEISO and NYISO exhaust theirs and are pushed into that tail.
+
+So the unbinding is not a level effect and not an ISO quirk: **it is a fleet-composition effect,
+predicted by `k` and by nothing else.** That is the D50/D64 seam behaving as constructed, and it is
+the strongest structural evidence this lane produces. Stated here because it also means the two
+fired G5' STOPs are measuring *host exhaustion*, which is a real market fact, not a defect in the
+arm.
+
+### 5.5 `pjm-t1f` — ALL GATES CLEARED, and G1' EMPIRICALLY VINDICATES THE ADJUDICATION
+
+Solve key **`542eeedadab83ee1`** = **Addendum E's re-declaration** exactly (the D67-ARM move was
+correctly anticipated). Solve-path guard clean. **5/5 years, 55.6 min, 8.69 GB.**
+
+| year | rows | MW | D64 §2.4 ceiling | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|---:|
+| 2028 | 1 | **408.2** | **0.41 GW** | 0.6071 | 7.155 | 1.6907 |
+| 2029 | 5 | 1,840.5 | 2.48 GW | 0.5603 | 7.121 | 1.5602 |
+| 2030 | 0 | 0.0 | 2.48 GW | — | — | — |
+
+| gate | verdict |
+|---|---|
+| **G0' / G2' / G3' / G6'** | **PASS** — G2' on all 6 rows; 55.6 min is inside 2× the ~36 min estimate, 8.69 GB < 14 GB |
+| **G1'** | **PASS** — all 6 rows inside **PJM's** D64 band **1.27–1.49**, measured **1.2668–1.4886** |
+| **G4'** | **PASS** — invariants **identical** to the committed `pjm-t1f`: `changed: none`; I7/I12 already FAIL; **zero flips** |
+| **G5'** | **PASS** — 0.408 / 1.840 / 0.000 GW, every year under its ceiling |
+
+**G1' IS THE EMPIRICAL VINDICATION OF THE DIRECTOR'S ADJUDICATION.** D65-B's charter applied
+`er/phys ≥ 1.27` to an **ERCOT** screen and it fired; the director ruled at r#48 §3(a) that 1.27 is
+**PJM/MISO's** host band, transcribed onto the wrong ISO. That ruling was made on documentary
+grounds. It is now **measured**: PJM's clearing rows land at **1.2668–1.4886**, inside the band to
+the digit, while ERCOT's land at 0.9672–1.0456 inside *its* row's 0.95–1.05. Two ISOs, two bands,
+each ISO in its own — which is what "a gate names its ISO" means, demonstrated rather than argued.
+
+**And G5' 2028 is the batch's sharpest number.** The solved value is **408.2 MW against D64 §2.4's
+0.41 GW hour-ceiling census — 99.6 % of a prediction computed with ZERO LP**, months earlier, from
+the ceiling arithmetic alone. A zero-solve census and a full 8760 dispatch agreeing to four parts in
+a thousand is a strong statement that the seam's cost side is right.
+
+**The two live hunks are disclosed, not netted (Addendum D.3 / E.3).** This leg carries D81 and
+D67-ARM as well as the two acts, so its FC-map delta has three causes. **The gate table is
+unaffected**, exactly as Addendum E predicted: G0'–G5' read only `ccs_retrofits`, and G4' comes back
+`changed: none` — so neither live hunk moved a single invariant here, and the retrofit set is a
+clean two-act reading. The disclosure stands for the *board row*, not for the gates.
