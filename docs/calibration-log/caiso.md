@@ -13700,3 +13700,113 @@ the DMM 2025 RA-import basis; the stale `program-status.json` stamp (not
 touched). `FINDING-caiso257-ctonly-promotion-2026-09-06.md`.
 
 **Next number: caiso-258.**
+
+## caiso-258 — 2026-09-06
+
+**THE hod 22–23 ENERGY BALANCE, WRITTEN ON BOTH SIDES FOR THE FIRST TIME.
+ZERO LP, NOTHING ARMED, KEEPER UNCHANGED** at `2026-09-06-caiso-257-b1-ctonly`
+(CALIBRATED). Branch `claude/caiso-258-backcast-calibration-b1nal9` off
+`main` `4b4df964`. `PRECOMMIT-caiso258-hod2223-closure-2026-09-06.md` pushed
+**before any cell of the object was computed**;
+`FINDING-caiso258-hod2223-closure-2026-09-06.md`; probe
+`scripts/probes/_caiso258_hod2223_closure.py`; artifact
+`results/calibration/_caiso258_hod2223_closure.json`.
+
+**THE OBJECT** (handoff rank 1): the CC_REGULAR over-run of +1,536 / +1,546 MW
+at hod 22 / 23 in 2025, with import REFUSED as a carrier on admissibility
+(caiso-253) and storage on the WRONG SIDE (caiso-255b / caiso-256). Rather than
+name a third carrier from a mechanism, the session closed the hour on the
+keeper's LP identity and on the EIA-930 balancing-authority identity, on the
+loader clock, with the thermal rows on the scorer's CEMS basis.
+
+**G-REPRO: 8 of 9 checks inside ±100 MW; the ninth (import-2025) misses by
+1.4 MW and the miss is THE CLOCK, decomposed by measurement, not widened.**
+On caiso-253's OWN construction (raw `Local time − 1 h`) the new keeper
+reproduces its published −984 / −1,405 / −1,662 to **−2.2 / −5.0 / −2.7 MW**;
+the caiso-257 arm moved 22–23 import by only −2 / −5 / −3 MW (prior keeper's
+hourlies read from git history at `23bbacd7`). The two constructions are equal
+in the standard-time months and one hour apart March–October: caiso-253's P-5
+was the DST wall clock. **On the model's clock the 22–23 import deficit is
+−972 / −1,467 / −1,763 MW.** Proceeding past the literal FAIL is disclosed as
+a judgment (FINDING §1, §8 #1).
+
+**G-CLOSE: neither identity closes cleanly.** Model side (P-2 FALSIFIED): a
+**+66 / +250 / +261 MW** mean supply excess the committed sidecars do not
+attribute (max 504; +190 / +204 at 22–23 in 2025; 0.24 % → 1.06 % of
+generation) — not exports (the sinks never dispatch, import klass min 0.0),
+not slack/dump, not the WECC nodes, not a loss term. Carried as its own row;
+a sidecar-accounting item. Measured side: the 930 BA residual is +610 / +136 /
++201 MW mean and **+2,068 / +484 / +632 at 22–23** — 2023's `Demand` cell
+exceeds the BA's own supply by 2 GW there, which is almost the whole of the
+model's 2023 "demand gap".
+
+**G-CAT (P-4 FALSIFIED, contaminated-column direction):** `Net generation`
+equals the mapped columns, so geothermal + biomass sit INSIDE `NG: NG`, which
+also carries **+2 to +6 GW of non-gas at mid-day** (2023 → 2025; the scorer's
+"corrupted NG cell"). Every thermal row is therefore on the CEMS basis.
+Post-registration lead for the caiso-247 §4.5 demand-basis ask: the mid-day
+NG excess has the same shape and size as the model-vs-930 demand gap.
+
+**THE CLOSURE, 2025 hod 23 (Δ model − measured, MW):** demand −1,142 | gas
+CEMS +1,268 (CC_REGULAR **+1,546**) | other thermal −541 | nuclear −12 |
+hydro conv +209 | PS net +330 | solar +38 | wind +12 | li_ion **+411** | oil
+−40 | coal +12 | **net import −1,808** | 930 residual +816 | model residual
++204; closes to ≤ 1 MW. **The counterpart is NET IMPORT (117 % of the CC
+over-run; P-5 main leg HOLDS)**; the model is also long PS, li_ion and hydro
+at those hours (same sign as CC), the demand basis cuts the wrong way, and the
+P-5 "< 400 MW" leg is FALSIFIED by hydro+PS (+539 / +567) and other thermal
+(−541 / −558).
+
+**D-2 CAMPD unit conduct (P-6 FALSIFIED in 2025):** 58 % of the positive
+over-run at 22–23 comes from plant-hours where the REAL plant reads OFF
+(< 5 % of nameplate; 35 % in 2023, 48 % in 2024) — and it is NOT an
+evening-shutdown deficit (21→23 shutdowns actual 155 vs model 160 in 2025;
+197 vs 432 in 2023). D-2b (post-registration): half of the OFF over-run is on
+**whole-plant-off days** (649 MW) and half on cycled days (588 MW);
+**Moss Landing 91 whole-plant-off days actual vs 0 model, Otay Mesa 121 vs
+0** — the unit-level outage overlay derates to the remaining unit, never to
+zero. This is the caiso-187/192 mechanical-vs-layup object seen from
+dispatch; re-measured, NOT re-opened (DO-NOT-REDO stands).
+
+**D-3 the armed import stack (P-7 FALSIFIED — a PRICE gap, not a capability
+gap):** at 22–23 in 2025 committed import is **4,438 of 13,459 MW capability
+(33 %) with 8,836 MW priced out** $4–20 above node duals of $43.8 / $44.4 that
+match the measured night price; what runs is the two firm floors (3.6 GW) plus
+$28 hydro-base headroom; both clean rows have zero capability there by window.
+**The model's stack says no more import is worth buying at $44; the market
+moved 1.8 GW more at that price** — caiso-252 §3.2's price-taking volume,
+measured on the stack. Licenses NO price lever (caiso-252 §7 #2) and NO window
+(caiso-253 §7 #1): the next step is a **data intake** for contracted import
+volume beyond the RA showing (DMM §17 native-load-need showings / CPUC RA
+import showings), rule-13 admissibility adjudicated first.
+
+**D-4 (P-8 HOLDS):** hod 22–23 carry 8.0 / 7.9 / **9.4 %** of the gas MSE;
+zeroed, C4-2025 would read 0.285 vs the scored 0.300 — the object sits inside
+the zero-margin cell and closing it would relax it (direction only).
+
+**PREDICTIONS: 4 falsified (P-2, P-4, P-6, P-7), 3 hold (P-3, P-5 main leg,
+P-8), P-1 8/9.** Every falsification moved the object somewhere less
+convenient than registered.
+
+**DO-NOT-REDO adds (FINDING §10):** never cite caiso-253's P-5 numbers as
+model-clock (use −972 / −1,467 / −1,763); never read hourly `NG: NG` as CISO
+gas; never read the 22–23 CC over-run as an evening-shutdown deficit; never
+re-price a priced-out import rung to reach the volume; never attribute the
+sidecar residual to exports.
+
+**QUEUE.** (1) the 22–23 object is **RE-NAMED with a size: the night/evening
+price-taking import volume, ~1.8 GW at 22–23 in 2025 that no armed rung offers
+at λ ≈ $44** — a data-intake question first; (2) the whole-plant-off days
+(Moss Landing / Otay Mesa) under the caiso-187/192 DO-NOT-REDO; (3) the
+sidecar identity residual (per-zone/class sidecar ask E); (4) the 930
+demand-basis lead (caiso-247 §4.5); (5) C4-2025's zero margin; (6) carried,
+raised not granted — the `complete` marker (owner act, raised again), the
+stale `program-status.json` CAISO stamp (not touched), the C3a weight basis,
+the DMM 2025 RA-import basis, Panoche, the borrowed ST_GAS multiplier, S2.
+
+Matrix: evidence appended on `import_hub_pricing` and
+`caiso_firm_selfsched_floor`, NO verdict move. **No run registered (none
+produced), no keeper change, no `ScenarioConfig` field, no `complete`
+declaration.**
+
+**Next number: caiso-259.**
