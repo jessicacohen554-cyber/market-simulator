@@ -1175,3 +1175,83 @@ the global default OFF.
 ### 2. Gates
 
 <!-- WC_B_GATES -->
+## WALLCLOCK A-6 — `malloc_trim` at the cold-P1 seam: MEASURED-NEGATIVE, item closed (2026-09-06)
+
+Wallclock desk item **A-6**, branch `claude/wc-a6-malloc-trim-p1-seam-wghw2k`. The
+hypothesis, from `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §6: the ERCOT year
+peak (12.1–13.4 GB) is the P1-rebuild moment, so calling `malloc_trim(0)` immediately
+after `model = None` on the cold-P1 route in `pipeline/solve.py::run_energy_solve` —
+before the second `DispatchModel` is built — should hand the freed P0 heap back to the
+kernel and drop the peak under the 14 GB cgroup.
+
+**It does not. The item is MEASURED-NEGATIVE.** Conditions: determinism pin,
+4 vCPU / 15 GB, 6 GiB swapfile armed, `MARKET_SIM_MEM_DEBUG=1`, one ERCOT solve at a
+time. Instrument: merge-base control capture (charter §6), both arms
+`capture_keeper_goldens.py --iso ERCOT__carveout-2023` on merge base `2886235c`,
+differing only in the trim. The bundle is registered 2023–2025, so each arm is three
+years / eight `DispatchModel` builds, ~40 min.
+
+**Status of the code, stated plainly.** The trim is **on main** — PR #4893 (merge
+`b2bd9fdb`, commit `c2cb9a78`) was merged 2026-09-06 00:03 UTC carrying the call, the
+new `utils/heap.py` helper and the BEFORE arm's manifest, i.e. ahead of this
+measurement (desk log §2.8, "evidence owed"). This section is that evidence. **The
+desk's recommendation is to remove the call and the helper**: it buys no peak headroom
+and costs a little. That is the owner's call, not this lane's — nothing here reverts
+it, and the change is byte-identical either way, so leaving it carries no correctness
+risk. A one-commit revert is prepared on `wc-a6-backup-with-revert` if wanted.
+
+**Vintage caveat — item B landed on the same seam after this was measured.** Both arms
+ran on merge base `2886235c`, which predates §WALLCLOCK B (the cold-rebuilt P1 seeded
+from the same year's P0 basis, WARM-START CLASS). B changes exactly the code this item
+trims around: it keeps a basis alive across the `model = None` release. The numbers
+below therefore describe the **pre-B** seam. They do not need re-running to support this
+item's verdict — the reasoning that kills the trim is arithmetic about *live* payload,
+and B adds live payload rather than freeing any, so if anything B makes the trim's share
+smaller still. But a future memory measurement at this seam must be taken at post-B HEAD,
+not compared against these numbers.
+
+**Instrument caveat (Y-14 / R-AW).** The `ERCOT__carveout-2023` capture key used here
+was retired by owner ruling R-AW while this measurement was running (desk log §2.9);
+`capture_keeper_goldens.py` now refuses it, and the ERCOT byte instrument from wave 2
+on is `--iso ERCOT` (forward config, {2024, 2025}). Both arms here ran on merge base
+`2886235c`, where the key still resolved, and they used the identical config, so the
+A/B is internally valid and the span (2023–2025) is a superset of the forward
+designation. A re-run at HEAD must use the forward key.
+
+| Change | Where landed | Measured effect (ERCOT carve-out replay, 2023–2025) |
+|---|---|---|
+| (A-6) `malloc_trim(0)` at the cold-P1 seam | on main, commit `c2cb9a78` (PR #4893); **removal recommended, owner's call** | **Process peak VmHWM 13.28 → 13.27 GB (−0.01) — the gate's own target, unmet.** Per-year peak 12.72 → 12.70 (2023), 13.28 → 13.27 (2024/25). Seam recovery 0.05–0.23 GB at `after addRows`; `p1_post` **+0.3 / +0.5 / +0.1 s** (2023/24/25) — inside this box's noise, but the sign is the same in all three years and the trim is the only difference. Byte gate PASS at `atol=rtol=0`. |
+
+**Why the premise was wrong — this is the reusable part.** The seam does show a real
+RSS step: on the control, each cold-P1 model's `after addRows` RSS sits ~1.15 GB above
+the P0 model's *on a byte-identical LP* (2023: 3.99 → 5.21 → 6.00 GB across the three
+models; 2024: 5.45 → 6.65 → 7.44; 2025: 5.40 → 6.56). That step is **not** glibc
+retention. It is live payload that must be alive at that instant: `r0` (`dispatch` +
+`emissions`, ≈340 MB at ~2,400 gens × 8760 h), `markup` and `mc_bid` (≈168 MB each),
+and the floored `p1_fleet_arrays` (`min_gen` + `availability`, ≈336 MB) — ~1.0 GB of
+the 1.15 GB step, arithmetically. `malloc_trim` frees only what the allocator has
+already reclaimed, so there was never more than ~0.1–0.2 GB for it to take. The
+year-end `mallinfo` reads agree: `free_retained` is only 0.58 / 0.74–1.06 / 0.95–1.02 GB
+*after* the whole year's payload is dropped.
+
+**Corollary for whoever attacks the ERCOT peak next.** The peak is set by the *solve*
+that follows the rebuild, not by the rebuild, and the rebuild's starting floor is live
+Python payload. So the lever is **dropping or narrowing what stays alive across the
+seam** — `r0.emissions` (recomputable, ≈168 MB), the P0 `dispatch` array once
+`compute_monthly_markup` has consumed it, or float32 for the markup/bid intermediates —
+not allocator tuning. `M_ARENA_MAX`/`mallopt` are equally beside the point for the same
+reason. Note also that the year-loop `_malloc_trim` in `run_calibration_full.py` is
+**not** redundant with this and is doing real work: it resets the floor between years
+(2024's first build starts at 5.45 GB against 2023's 3.99 GB — a partial reset, but the
+arena reads show it is reclaiming ~0.6–1.0 GB there, where the payload really is dead).
+
+**Byte gate.** `regression_gate.py --mode byte`, `wc-a6-{before,after}`: **check [1]
+golden bundle diff PASS** (9 files, 34 numeric columns, `atol=rtol=0`), 0.000 %
+reshuffle in 2023/2024/2025, total annual gen identical to 4 dp in each year
+(446064.7 / 462847.6 / 488450.0 GWh), smoke PASS, manifest pre-screen **10/10** content
+hashes identical. Overall `RESULT: FAIL` is checks [4] only, both proven **pre-existing
+by merge-base control**: `legitimacy(--keepers)` on the same NYISO Long Island
+`transfer_security_limit` gap §PERF-B RESUME already records, and `audit_keepers` on
+`S1: stale vs the current verdicts — frontend/data/backcast/status/NEISO.js`. Identical
+failures, same exceptions, exit 1 both times on a merge-base tree with the trim
+removed. Manifests committed under `results/regression-goldens/wc-a6-{before,after}/`.
