@@ -7262,6 +7262,197 @@ your branch when done.
   tier` red** on the five R-AT pins — **none this lane's, none fixed here.** Both
   `docs/` files sit in `ci.yml`'s Y-4-widened path filter; **`keepers/README.md` does
   not — itself an instance of the DOCS-B / Y-9 path-filter gap.**
+- 2026-09-06 — **RECORDS-ONLY LANE v33. TWO OWNER RULINGS RECORDED — `R-AY`, `R-AZ`
+  (audit-program director sitting ~00:15Z, cards "DOF / C6" and "Marker gate", both
+  answered). `G-3` (rule-amendment series), `Y-15` and `Y-16` CHARTERED. G2 IS NOT
+  DECLARED — leg 4 reads `protected: false` at a TWELFTH reading.** Director pin
+  `a22afd02` (00:08Z), main read `eb8ae4db` (#4876) at 00:12Z; **this lane's pin
+  `144eabe3`** (PR #4904). **Window `a22afd02..144eabe3`: 34 commits, 14 merges**;
+  `origin/main` moved three further times mid-session (`bd0fbefd` #4907, `4c3b09c1`
+  #4908, `fabd3169` #4909) — **motion, not a correction of the director.** One merge
+  per ~30 s is the ambient rate this cycle, and it is why three of the dispatch's
+  readings had already moved before this lane took its own. Full block: the director
+  board, appended **above v32**.
+  **`R-AY`** (card "DOF / C6") → *"Count them in the DOF ledger, C6 passes under the
+  declaration"*. Each price-tuned `offer_curve_by_group` band multiplier — the rules
+  1/13 channel opened at the MISO desk 2026-09-05 (`4545300d`, #4855, rule-history
+  §11) — is a **ledgered free parameter**, identification source **the ruling**,
+  reported at full magnitude; **no gate moves**; rule 21 `[R-DOF]` gains a
+  cross-reference clause (`G-3`, Fable). **VERIFIED, AND IT NARROWS THE RULING:**
+  `CLAUDE.md` line 61, rule 1 condition **(e)**, ALREADY requires the DOF entry
+  verbatim, so the duty already bound from the rule-1 side; what R-AY adds is the
+  **rubric** side (C6 passes under the declaration) and the back-reference from rule
+  21, which at line 113 carries none. **R-AY is a confirmation plus a
+  cross-reference, not a new duty.**
+  **`R-AZ`** (card "Marker gate", **`Z-6`**) → *"Re-check at registration"*: the
+  register path refuses an out-of-training year whose ISO lacks that tier's marker at
+  registration time, reusing `holdout_policy.authorized` (`Y-16`, Fable). **Z-6's
+  PREMISE RE-VERIFIED BY GREP AT THIS PIN:** `holdout_policy.authorized` has exactly
+  three call sites — `audit_keepers.py:161`, `legitimacy_diagnostics.py:2191`,
+  `run_calibration_full.py:8570` (the SOLVE entry point) — and
+  **`scripts/dashboard_add_run.py` contains no `holdout`, no `tier_for_year` and no
+  marker read of any kind.** The gap is real and one file wide; Y-16's scope is one
+  call site. **Z-6 stays OPEN and closes on Y-16's merge** — no PR number, Y-16 is
+  chartered by this dispatch and unmerged at this pin (`Y-16` word-boundary → 0 files
+  in `docs/`).
+  **⚠️ `Y-15` IS ALREADY TWO-THIRDS OBE, VERIFIED NOT ASSUMED.** Of the three items
+  the director chartered under R-AU: **(1) the MISO gate-(a) re-key was executed on
+  `main` by the capx director r#42** (`4d1ed3ad`, standing duty Q34), and **(2) the
+  `ruff format` of `tests/unit/model/test_ccs_retrofit.py` was executed by the same
+  desk** (`a802936c`) — `ruff format --check .` now exits **0** across 1336 files.
+  **A NEW INSTANCE OF ITEM (1) OPENED IN THEIR PLACE:** the `nyiso-196` promotion
+  (`7f63a4b9`, 00:11:25Z) moved the NYISO keeper without the `keepers/README.md`
+  step-4 re-key, so `check_gate_a_provenance` still exits 1 — **same gate, different
+  ISO.** The re-key is in flight in another desk's PR #4908; nothing chartered here.
+  The pattern, recorded and not adjudicated: **the gate-(a) re-key is a
+  per-promotion duty, not a burn-down item.**
+  **🔴 `Y-15` ITEM (3) RESOLVED BY MEASUREMENT, AND ITS CONDITION IS VOIDED.** The
+  dispatch conditions the ERCOT/2022 bench re-stamp on "an AST-equality check"; that
+  check **cannot be run, because the two values are not commensurable.** The part
+  carries `b2f21b9a00d3`; ERCOT/2023-25 and `builder_fingerprint()` at HEAD all read
+  `4254168edcfe`; and `scripts/lib/bench_stamp.py`'s own docstring names
+  `b2f21b9a00d3` as **the retired BYTE-era hash** (the R-AS counterfactual it
+  computes). Decisively: **the part was ADDED (`--diff-filter=A`) by `f1561c2d` at
+  2026-09-05 23:24:54Z — 50 minutes AFTER R-AS landed** (`3d0fd19d` / `404f1908`,
+  22:34:10Z). So this is **not a stale part left un-refreshed**: it is a *freshly
+  written* part stamped by a tree predating R-AS, which Y-12's 20-part re-stamp could
+  not have covered because it did not yet exist. **The remedy is REGENERATION through
+  HEAD's bench path, not a re-stamp.** Until then every ERCOT C1 verdict scored
+  against 2022 is, in the gate's own words, *"not reproducible from the builder at
+  HEAD"*. **This lane changed no bench part, no bundle and no registration.**
+  **NINE-GATE LEDGER re-run at `144eabe3`** (`uv run --frozen`, `$?` read directly),
+  **three differences from the director's, none of them this lane's doing:**
+  `audit_keepers --check` **0** · `check_registry_payload_parity` **0** (14 runs, **47
+  bundle dirs swept** — R-AV holding) · `check_gate_a_provenance` **1 — but on
+  NYISO, not MISO** · `check_mechanism_matrix` **0** (+6 `scenarios.py` anchor
+  warnings) · `check_forecast_staleness` **0** (3 WARNs) · `check_bench_freshness`
+  **1** (24 parts, 1 STALE = ERCOT/2022, 23 engine-drift) · `check_golden_manifest`
+  **0** (50 manifests / 91 entries / 27 enforced / 15 pruned-provenance / 9 stale vs
+  live keeper / 7 under the retired `ERCOT__carveout-2023` key) · `ruff check` **0** ·
+  **`ruff format --check` 0 — FIXED on main.**
+  **🔴 FLIP SET 4 OF 6, UNMOVED — measured on THIS LANE'S OWN newest completed
+  `ci.yml` run whose head is in `main`: run 2545, id `34000645268`, head `7f63a4b9`
+  (PR #4894, the nyiso-196 promotion), newer than the director's run 2541.** Per-job:
+  **Ruff lint + format FAILURE** (the *format* step; *lint* SUCCESS) · Pinned default
+  cache key SUCCESS · Structural refactor guards SUCCESS · Cache-key registration
+  guard SUCCESS · **Fast test tier FAILURE** · **Rule-22 quarantine gates SUCCESS —
+  all four steps, the SECOND consecutive green.** Non-set: **Rule-28 matrix guard
+  SUCCESS here**, so the director's FAILURE at 2541 was **PR-head-local** (D65
+  fix-anchors) and the merged tree's anchors were always right —
+  `check_mechanism_matrix` exits 0 on `main` at both pins. Chronic non-set reds
+  unchanged (FR-22 parity, FR-21 staleness, forecast-invariant).
+  **🔵 BOTH REMAINING REDS ARE NAMED, AND NEITHER IS A CODE DEFECT.** Red 1 (Ruff
+  format) was **fixed on `main` at `a802936c`, which is NEWER than run 2545's base**
+  — expect green on the first PR run based ≥ that sha; nothing owed. Red 2: the Fast
+  tier's log tail reads, verbatim, `FAILED
+  tests/scoring/test_gate_a_provenance.py::test_live_board_passes - assert 1 == 0` /
+  `= 1 failed, 8305 passed, 45 skipped, 2 xfailed`. **ONE test — and it calls
+  `check_gate_a_provenance.main` and asserts exit 0, so THE FAST-TIER RED AND THE
+  FR-21 GATE-(a) RED ARE ONE OBJECT, NOT TWO**, and both clear on the same records
+  act. **Consequence for R-AU, recorded and not adjudicated:** the flip set is one
+  already-landed code fix plus one records act from 6 of 6 — **but that records act
+  RE-OPENS ON EVERY KEEPER PROMOTION**, and this cycle saw four promotions in six
+  hours (ercot-248, miso-220, caiso-252, nyiso-196). A 6-of-6 head is a **window
+  between promotions, not a state the repo settles into.** This lane neither
+  re-sequences R-AU nor proposes a mechanism.
+  **LEG 4 — READING TWELVE.** `mcp__github__list_branches` at ~00:24Z, this lane's
+  own call: **`main` → `protected: false`** (sha `bd0fbefd`), and all six open
+  branches likewise. ~285 minutes after the owner's *"doing it now"*; **R-AM's
+  condition unmet for the FIFTH consecutive records lane.** Legs 1-3 unmoved (leg 1
+  🟢 `golden-data-tier.yml` run #11 `33983249186` success 18:23Z, still newest; leg 2
+  🟢 historical, still not reproducible at HEAD; leg 3 🔵 lifted at R-AR).
+  **KEEPERS / MARKERS / STAGE-0 / R-AI, all re-derived here.** **ONE KEEPER MOVED
+  since the dispatch: NYISO → `2026-09-06-nyiso-196-extract-basis`** (`7f63a4b9`, PR
+  #4894 — that lane's act, recorded with its citation and NOT adjudicated: NOT-YET
+  grade 6 fails 2 → **CALIBRATED** grade 7 fails 0, C3c the lone ledgered caveat,
+  single delta `unit_outage_extract_basis_share=true`, `complete` **not**
+  re-declared). Others unchanged: ERCOT `ercot248-two-config-keeper`, CAISO
+  `caiso-252-b1-notrim`, MISO `miso-220-nonsteam-lift`, NEISO `neiso-99-joint-p1`,
+  PJM `pjm-162-inputclock`. **`complete` = {ERCOT, NEISO, PJM}; `final` EMPTY; freeze
+  `active` with `scope.tiers=["locked_test"]`; three-instrument alignment {ERCOT,
+  NEISO, PJM}. Stage-0 2 of 7** (NEISO, PJM) — count unchanged, **NYISO's stale
+  target moved 186 → 196.** **R-AI clocks** (committer date on the shard-touching
+  commit, the v32 convention): ERCOT `4b7a515e` → **09-07 19:02Z**; MISO `743b3dc0` →
+  **09-07 23:35Z**; CAISO `e2412b82` → **09-07 23:44Z**; **NYISO `7f63a4b9` → 09-08
+  00:11Z, RESET** (was 09-07 21:28Z). ERCOT re-capture command verified verbatim at
+  `FINDING-y14…§7:241`; **QUEUED for the clock, NOT CHARTERED, NOT RUN.**
+  **🟠 ROSTER — THIS LANE'S READING CONTRADICTS THE DISPATCH'S; G-14 RECURRED.** The
+  dispatch instructs that the three sessions appear in the roster and that the
+  instrument be recorded complete. Under the STANDING TEST this lane opened it. The
+  three ids are read from the **primary source** — the `Claude-Session` trailers of
+  the landed commits (`89d2067c` → `01GTENGKMBExeLcabVUFDhza`; `62144f2a` →
+  `01CdBoNqCi3x6wEkxNZCJoyL`; `18dadeb1` → `0136oMppo5pPih56h9qZrcZy`) — and **the
+  dispatch's ids are exactly right.** But: `list_sessions(mine=true)` pages 1 and 2
+  (**60 rows**, page 1 spanning 09-04 23:57Z → 09-06 00:23Z, a window that CONTAINS
+  all three) return **none of them**, and `get_session` on two of the three returns
+  **"failed to get session: the requested resource was not found"**. The control that
+  makes this a finding rather than a guess: **`session_013kYk23DzQwhi9SY4vv7sZJ`,
+  ARCHIVED, created 2026-09-05T23:25:26Z — the same minute as Y-13 — resolves
+  normally and in full.** So the not-found is **specific to these ids**, not
+  pagination and not a property of archived sessions. **RECORDED AS: the roster
+  instrument is INCOMPLETE at this reading.** It does **not** say the work is
+  unevidenced — all three landings are verified in `main` by sha — and it does
+  **not** correct the director, whose reading was taken 23:55-00:12Z and stands as
+  theirs. It refuses only to write "complete" on a reading this lane could not
+  reproduce. **Launch state continues to be read from PRs and commits; NO NON-LAUNCH
+  IS CLASSIFIED FROM THE ROSTER ALONE.**
+  **LANDINGS, all three verified in `main` by sha:** v32 #4866 (`89d2067c`); Y-13
+  #4864 (`62144f2a`, merge `e68af00e`) + follow-up #4878 (`7f12463c`, `60b0fe5c`);
+  Y-14 #4872 (`18dadeb1`, `0db93bb2`). **R-AV executed in full**, each commit opened:
+  `01565ca7` (rule 29 clause (c)), `6edbb066` (two orphan bundle dirs deleted),
+  `70acec77` (guard allowlist), `a49cf291` (**file-integrity guard diffs from the
+  merge-base** — the v31 false-positive fix), `0983cf26` (NEISO status). **R-AW
+  executed**: forward key, carve-out key retired (the golden gate now reports 7
+  entries under it as *"historical, not compared"*), 57 tests.
+  **OTHER DESKS' ACTS, recorded with citations and never adjudicated.** The rules
+  1/13 amendment (`4545300d`, #4855) is **the program's protective-rule surface
+  moving by another desk's owner ruling**; R-AY is the audit rubric's response and
+  the only thing this desk adds. **Validation touchpoints** (rule-22 spends, all
+  authorized by `complete`, every figure re-read from the cited artifact): **ERCOT
+  2022 both configs NOT-YET** — C1 `CC_REGULAR` −10.59 / −10.39 TWh, C3b 0.250 /
+  0.220, C3c 38 / 64 h vs 196, **C3a PASS**, and C3c does *not* reclassify because
+  guard (a) requires it to be the lone failure
+  (`docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md`, #4868); **PJM 2022
+  NOT-YET** (C1 +22.26 TWh, C3b 0.250) and **2021 NOT-YET** (C1, C3a +25.7 %, C3b
+  0.355, C3c 145 h vs 23); **NEISO 2022 and 2021 CALIBRATED, 2020 NOT-YET** (lone C3a
+  +13.7 %) — `ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §2-§3
+  (#4852, #4884). **THE FACT, STATED WITHOUT A VERDICT** (it belongs to the holdout
+  section, not this desk): **all three `complete` ISOs have now spent their 2022
+  touchpoint and two of the three read NOT-YET out of sample**; PJM's assessment adds
+  the sharper form in its own words — *"pjm-162 IS the input-clock repair … 2022 fails
+  the same two criteria, with the CC over-dispatch ~4 TWh larger"* — i.e. the
+  touchpoint loop's step 3 did not resolve PJM's step 2.
+  **QUEUE AMENDED:** the flip item reads **"at the first 6-of-6 head after Y-15
+  (R-AU)"** — with Y-15 now ONE item and the condition resting on an already-landed
+  code fix plus a per-promotion records duty · the **G2 declaration prompt stays
+  HELD** until `protected` reads true (**R-AM unchanged**) · **`Z-6` → CHARTERED as
+  `Y-16`, not closed** · **the rule-29 collision item is CLOSED** — verified before
+  writing it: Y-13 merged at `62144f2a` (#4864), clause (c) live at `01565ca7`, and
+  `check_registry_payload_parity` exits 0 with 47 bundle dirs swept · the **rules
+  1/13 amendment entered as a WATCH item** paired with R-AY · **ERCOT stage-0
+  re-capture QUEUED, NOT CHARTERED** (R-AI clock 09-07 19:02Z) · **ERCOT/2022 bench
+  part OPEN with its condition VOIDED** — regeneration, not a re-stamp · **NYISO
+  gate-(a) re-key IN FLIGHT, another desk's** (#4908), not chartered here.
+  **Q-4 AT CLOSE. (i) Sweep before minting**, word-boundary across `docs/`: **`R-AY`,
+  `R-AZ`, `Y-15`, `Y-16` → 0** — four clean, all minted here. **(ii) 🟡 ONE REAL
+  COLLISION, and the dispatch anticipated it: `G-3` → 14 files, and it is already a
+  BOARD SECTION ANCHOR** — board **6627** (*"### G-3 · RULING R-L — 'JUST NEISO AND
+  ERCOT'"*), cited at this plan **4787** and board **6014 / 8126 / 8130**, plus `G-3`
+  as a per-session A/B **gate label** in five further unrelated docs
+  (`mechanism-matrix/MISO.js` ×2, `rule-history.md` 610, `ercot-g22-offer-surface`
+  ×2, `miso-140-bench-refresh`, `ercot-as-coopt-plan`). **This is the SAME class v32
+  recorded for `G-2` — two series share one glyph — pre-existing and systemic, not
+  introduced by this sitting.** The dispatch mints it with the disambiguation
+  attached, so **`G-3` is minted as `G-3` (rule-amendment series)** and **board §G-3
+  (ruling R-L) is left standing, untouched.** **(iii) Nothing rewritten**: v28 … v32
+  untouched, both files insertion-only.
+  **SCOPE HELD:** no solve, no score, no registration, no keeper shard, no marker, no
+  freeze file, no matrix shard, no workflow, no `program-status.json`, no
+  `status/*.js`, no `results/calibration/`, no `CLAUDE.md`. Diff = the board, this
+  plan, and one FINDING under `docs/handoffs/`. ⚠️ **Expect on this PR:** overall
+  `failure` on the chronic non-set jobs, and **`Fast test tier` red on the NYISO
+  gate-(a) pin** — not this lane's, not fixed here. **`Ruff lint + format` should be
+  GREEN** for the first time this cycle, since `a802936c` is in this branch's base.
 - 2026-09-05 — **RECORDS-ONLY LANE v32. FOUR OWNER RULINGS RECORDED — `R-AU`, `R-AV`,
   `R-AW`, `R-AX` (audit-program director sitting ~23:00Z, cards "Flip", "Rule 29",
   "ERCOT key", "Card N", all four answered). `G-2` (the rule-29 amendment) CHARTERED
