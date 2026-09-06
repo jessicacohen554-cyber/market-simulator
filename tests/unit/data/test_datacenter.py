@@ -407,9 +407,11 @@ def test_miso_block_sourced_from_ltlf():
     assert resolve_datacenter_mw(low, "MISO", 2030) > 0.0
     # The band never crosses across the horizon.
     for year in (2030, 2035, 2040, 2046, 2050):
-        assert resolve_datacenter_mw(low, "MISO", year) <= resolve_datacenter_mw(
-            mid, "MISO", year
-        ) <= resolve_datacenter_mw(high, "MISO", year)
+        assert (
+            resolve_datacenter_mw(low, "MISO", year)
+            <= resolve_datacenter_mw(mid, "MISO", year)
+            <= resolve_datacenter_mw(high, "MISO", year)
+        )
 
 
 def test_unsourced_isos_ship_zero():

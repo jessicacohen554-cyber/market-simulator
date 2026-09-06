@@ -121,6 +121,22 @@ KNOWN_DANGLING: dict[str, str] = {
     # repo (same class as the file-integrity-guard fixture paths above). Found
     # reddening `Structural refactor guards` on main at 5cc1e7ce (Y-13).
     "scripts/fake_builder.py": "test_bench_stamp_ast.py tmp_path fixture path (Y-12, 3d0fd19d), not a reference",
+    # Not a reference either: the path is the EXPECTED SUBSTRING of an error
+    # message, inside `pytest.raises(ValueError, match=...)` at
+    # tests/curation/test_curate_load_forecast.py::
+    # test_unknown_iso_names_the_missing_module. The load-forecast registry
+    # answers an unregistered ISO by naming the module a contributor would
+    # have to add, and that test pins the message. SPP is deliberately NOT a
+    # module of this repo — the sibling test test_every_model_iso_is_registered
+    # pins the registry to exactly the six model ISOs — so the target can never
+    # "land" and the allowlist entry is permanent, unlike the deletion entries
+    # above. Allowlisted rather than reworded (the exact path IS the assertion's
+    # content) and rather than satisfied by adding a stub spp.py (that would add
+    # an unregistered seventh ISO to placate a lint). Landed with SCN-LOAD
+    # (d14a7ed0, PR #4970) and had been reddening `Structural refactor guards`
+    # on main for every PR since; found 2026-09-06 by Y-21, same class and same
+    # route as the fake_builder.py entry above.
+    "scripts/lib/load_forecast/spp.py": "pytest.raises match-string in test_curate_load_forecast.py (SCN-LOAD d14a7ed0), not a reference",
 }
 
 

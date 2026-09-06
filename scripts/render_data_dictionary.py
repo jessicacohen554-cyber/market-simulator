@@ -467,7 +467,7 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "measured outcome and never a fit target \u2014 the historical rows "
             "a publication prints beside its forecast are carried only to anchor "
             "a CAGR on the publisher's own base year and are labelled "
-            "`scenario=\"actual\"`. CONSUMED by "
+            '`scenario="actual"`. CONSUMED by '
             "`constants.DEMAND_GROWTH_RATES`, `DATACENTER_ADDITIONS_MW`, "
             "`DATACENTER_ZONE_SHARE` and `ELECTRIFICATION_LAYERS`, which are "
             "derived from these rows rather than hand-transcribed."

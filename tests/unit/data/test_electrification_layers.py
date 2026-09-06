@@ -147,7 +147,10 @@ def test_neiso_heat_pump_anchor_interpolation():
     assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2030) == 2464.0
     assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2035) == 7165.0
     # Convex, i.e. materially below the straight line the former anchors implied.
-    assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2030) < 7165.0 * 4.0 / 9.0
+    assert (
+        resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2030)
+        < 7165.0 * 4.0 / 9.0
+    )
     # Published years interpolate piecewise-linearly between the anchors...
     assert resolve_electrification_gwh(
         cfg, "NEISO", "heat_pump", 2032

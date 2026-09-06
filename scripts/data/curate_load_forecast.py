@@ -65,7 +65,9 @@ def curate(
     for iso in wanted:
         df = lf.parse_iso(iso, raw_root)
         if df.empty:
-            print(f"[skip] {iso}: no raw rows under {_rel(lf.raw_dir_for(iso, raw_root))}")
+            print(
+                f"[skip] {iso}: no raw rows under {_rel(lf.raw_dir_for(iso, raw_root))}"
+            )
             continue
         source = _rel(lf.raw_dir_for(iso, raw_root))
         path = clean_io.write_clean(df, lf.DATATYPE, iso=iso, year=None, source=source)

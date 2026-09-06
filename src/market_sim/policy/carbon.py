@@ -168,7 +168,22 @@ def resolved_base_trajectory_price(config: ScenarioConfig, year: int) -> float:
     from market_sim.policy.cap_and_trade import resolve_carbon_program
 
     resolution = resolve_carbon_program(config, year)
-    program = float(resolution.price_adder) if resolution is not None else 0.0
+    # ``or 0.0`` is the ROW-PATH guard, not a defensive None-swallow. A
+    # resolution carrying a mass-cap row has ``price_adder is None`` by the
+    # two-source invariant (``CarbonProgramResolution.__post_init__``: exactly
+    # one of ``price_adder`` / ``cap_spec`` is set), because the allowance
+    # price there is ENDOGENOUS — the LP dual of the cap row — and does not
+    # exist at config-resolution time. The program therefore contributes no
+    # *exogenous* price to this floor and the ``max`` correctly reduces to the
+    # federal path alone; the row's own price reaches marginal cost through the
+    # LP, not through here. Restores the pre-S2 truthy test
+    # (``and resolution.price_adder``), which fell through to the path on both
+    # ``None`` (row path) and ``0.0`` (no program price that year); the S2
+    # rewrite to an existence test dropped that guard and made ``float(None)``
+    # reachable for every ``mass_cap_enabled`` run (y21, 2026-09-06). Same
+    # idiom as every other ``price_adder`` consumer — ``carbon_mc_column`` and
+    # ``run_calibration.py``'s per-generator membership column.
+    program = float(resolution.price_adder or 0.0) if resolution is not None else 0.0
     return max(program, rff_path_price(config.carbon_price_path, year))
 
 
@@ -377,7 +392,15 @@ def carbon_path_below_program_warning(config: ScenarioConfig) -> str | None:
     breaches = []
     for year in range(int(start), int(end) + 1):
         resolution = resolve_carbon_program(config, year)
-        program = float(resolution.price_adder) if resolution is not None else 0.0
+        # Row-path guard, as in resolved_base_trajectory_price above: a
+        # mass-cap resolution has price_adder None (endogenous dual), so there
+        # is no exogenous program trajectory for a named path to resolve below
+        # and the year is skipped by the `not program` continue. Without the
+        # `or 0.0` this raised at ScenarioConfig.__post_init__ (which wires
+        # this guard) for any forecast mass-cap run naming a non-"zero" path.
+        program = (
+            float(resolution.price_adder or 0.0) if resolution is not None else 0.0
+        )
         if not program:
             continue
         resolved = resolved_base_trajectory_price(config, year)

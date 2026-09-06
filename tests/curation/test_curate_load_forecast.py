@@ -118,14 +118,20 @@ class TestCurateLoadForecast(RawFixtureTestCase):
     def test_unknown_component_is_rejected(self) -> None:
         _write_miso(self.raw_root)
         path = lf.raw_dir_for("MISO", self.raw_root) / "miso.csv"
-        path.write_text(_MISO_CSV.replace(",total,energy_gwh,2026", ",hydrogen,energy_gwh,2026"))
+        path.write_text(
+            _MISO_CSV.replace(",total,energy_gwh,2026", ",hydrogen,energy_gwh,2026")
+        )
         with pytest.raises(ValueError, match="component"):
             curate_lf.curate(raw_root=self.raw_root, isos=["MISO"])
 
     def test_metric_unit_disagreement_is_rejected(self) -> None:
         _write_miso(self.raw_root)
         path = lf.raw_dir_for("MISO", self.raw_root) / "miso.csv"
-        path.write_text(_MISO_CSV.replace("energy_gwh,2026,677700.0,gwh", "energy_gwh,2026,677700.0,mw"))
+        path.write_text(
+            _MISO_CSV.replace(
+                "energy_gwh,2026,677700.0,gwh", "energy_gwh,2026,677700.0,mw"
+            )
+        )
         with pytest.raises(ValueError, match="metric/unit"):
             curate_lf.curate(raw_root=self.raw_root, isos=["MISO"])
 

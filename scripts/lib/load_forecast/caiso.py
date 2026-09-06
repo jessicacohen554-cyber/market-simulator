@@ -60,7 +60,9 @@ DATACENTER_SHEETS: dict[str, tuple[str, str]] = {
     "Form 1.1c DC Local Reliability": ("Local Reliability Scenario", "high"),
 }
 
-_DOC = "CEC California Energy Demand 2025-2045 (2025 IEPR), data/raw/load-forecast/caiso/"
+_DOC = (
+    "CEC California Energy Demand 2025-2045 (2025 IEPR), data/raw/load-forecast/caiso/"
+)
 
 
 def _energy_and_peak(raw_dir: Path) -> list[dict]:
