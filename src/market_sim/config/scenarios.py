@@ -1476,6 +1476,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field (the nyiso-119 discipline).
     "capacity_adequacy_requirement_published_by_iso",
+    # capx D74: the NO-DEFAULT-CAP price-taker CONVENTION gate (the PJM "Steam
+    # Oil & Gas" limb of the published default-ACR table,
+    # DESIGN-capx-d74-pjm-steam-oil-convention-2026-09-06.md §3; GATED default
+    # None ⇒ every ISO off, byte-identical — no class leaves the screen and
+    # no unit moves into the price-taking block). Dropped from the hash at its
+    # None default so every pre-existing cache key of all six ISOs is
+    # byte-stable (the bare pjm-t1h recipe key aef81c84c4609c76 and the D62
+    # arm key b98060898fceb3da at the D74 base 2eb65038 unmoved — PRECOMMIT
+    # §8 STOP 2); an armed row keys distinctly. SHARED field — very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "capacity_no_default_cap_convention_by_iso",
     # SCN-WS2a: the endogenous federal CES TARGET row (readiness plan 2026-09
     # §3 WS-2 item 2). Both default None (no row, no escape) and dropped from
     # the hash there, so every pre-existing cache key of all six ISOs — every
@@ -2014,6 +2026,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D67: the published adequacy-requirement gate, registered at its
     # shipping None default (an armed {iso: True} row keys distinctly).
     "capacity_adequacy_requirement_published_by_iso": "None",
+    # capx D74: the no-default-cap price-taker convention gate, registered at
+    # its shipping None default (an armed {iso: True} row keys distinctly).
+    "capacity_no_default_cap_convention_by_iso": "None",
     # SCN-WS2a: the endogenous federal CES TARGET row, registered at its two
     # shipping defaults (None = no row / no escape declared; an armed row keys
     # distinctly). Registered IN THE SAME COMMIT as the fields.
@@ -16078,6 +16093,63 @@ class ScenarioConfig:
     # [R-ISO-SCOPE]; NEISO's published Net ICR is the same idea already built
     # as its own resolver under its own gate, capx D40, because the two series
     # are different published quantities on different bases).
+    capacity_no_default_cap_convention_by_iso: dict[str, bool] | None = None
+    # GATED default-OFF (capx D74 2026-09-06, executing FINDING-capx-d61-
+    # 2026-09-05.md §4 card (c) as widened by FINDING-capx-d62 §9 item 2;
+    # design DESIGN-capx-d74-pjm-steam-oil-convention-2026-09-06.md). A
+    # {iso: bool} mapping, the FIFTH member of the per-ISO capacity-gate
+    # family, resolved through ONE predicate (config/capacity_market.py::
+    # resolve_capacity_no_default_cap_convention), which REQUIRES the D62
+    # published-bar gate ON for the ISO — the convention is a LIMB of the
+    # published default-gross-ACR table, and over the ATB proxy there is no
+    # such cell. WHAT IT CHANGES: what the retirement screen does with a
+    # resource class whose published default-ACR table carries NO value for
+    # the delivery year the screen prices — PJM Manual 18 Rev 62 §5.4.8.4(B)
+    # prints "NA" for Steam Oil & Gas through DY 2025/26 (data/raw/capacity-
+    # market/avoidable-cost-rate/pjm/pjm.csv), and §5.4.1 lets a seller offer
+    # above $0 only on a unit-specific ACR filing "or ... an offer cap based on
+    # the default gross Avoidable Cost Rate of the applicable resource type,
+    # IF AVAILABLE". So through DY 2025/26 the class had NO default cap: absent
+    # a unit-specific filing — an owner-specific, confidential operand the
+    # model does not carry and may not (rule 24, no per-plant dicts) — the
+    # class's published default offer is $0, a PRICE TAKER. Armed, a screened
+    # unit whose class has no published default for the delivery year
+    # (data/avoidable_cost_rate.py::no_default_cap_class — exactly the limb
+    # the D62 vintage rule reports as basis "first_published") is EXEMPT from
+    # the merchant screen in that year (it joins the exempt seam by class x
+    # delivery year: its exit is its owner's filing, steps 0 / 1b, decided
+    # nowhere else) and its accredited MW sits in the D57 stack's price-taking
+    # block Q_0 at $0, exactly as every screen-exempt unit does (DESIGN-capx-
+    # d54 §3.2) — so the D54 §3.5 identity holds by construction: a price
+    # taker clears, a cleared unit passes. D62's own vintage rule filled the
+    # "NA" cell with the first PUBLISHED value (the 2026/27 column's $64/MW-
+    # day) and D62 §5.3 found that limb is exactly where the published table
+    # "does not repair" the class (gas-steam 8,801.9 MW uncleared and 9.464 GW
+    # exited in BOTH D62 arms, oil 4.137 GW over-exited under the bar). This
+    # gate replaces that ONE limb with what the table says; from DY 2026/27,
+    # where the class has a published default, it takes the ordinary
+    # published-bar path — the mechanism regenerates per delivery year from
+    # the intaken table (rule 13's forward test) and is inert wherever every
+    # class has a default. NOT an ownership partition (PJM's uncleared steam
+    # is 86 % merchant, so the D53 sector gate — D58's lane — reaches ~8 % of
+    # the object) and NOT a level: one published boolean per class x delivery
+    # year, no weight, share, adder or haircut. ZERO free parameters and NO
+    # scalar field exists or may be added (rule 24 [R-REGISTRY]); a different
+    # reach is a change to pjm.csv with a source page. WHY DEFAULT-OFF: arming
+    # is an owner decision on the D74 A/B (suffixed pjm-t1h-d74-nodefaultcap
+    # vs same-HEAD controls; rules 22/24/28/29), graded against the PRECOMMIT's
+    # pre-declared signs — which say the 2022/23 clearing price and position
+    # do NOT move (the CT plateau at the clearing price absorbs the 12.5 GW
+    # that leaves the offer stack) and the uncleared set moves from steam/oil
+    # onto CT. Registered in _CACHE_KEY_OPTIONAL_FIELDS at None (unarmed keys
+    # byte-stable; an armed row keys distinctly); coerced to None in a plain
+    # backcast exactly as the four gates above are (a forecast-lane
+    # mechanism — a backcast runs no capacity evolution). Hindcast harness:
+    # run_capacity_hindcast.py --capacity-no-default-cap-convention (sets the
+    # invoked ISO's row); full horizon: run_full_horizon.py's flag of the same
+    # name. SCOPE: generic in form, PJM-scoped by DATA — an ISO with no intaken
+    # default-ACR table has no "NA" cell, so the gate is inert by construction
+    # (rule 25 [R-ISO-SCOPE]; nothing transfers).
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -16916,6 +16988,11 @@ class ScenarioConfig:
             # Keeps every backcast keeper's cache_key + run_config.json
             # byte-identical.
             self.capacity_adequacy_requirement_published_by_iso = None
+            # capx D74: the no-default-cap convention gate, coerced for the same
+            # reason — it is a limb of the RETIREMENT SCREEN's published bar,
+            # and a plain backcast runs no capacity evolution at all. Keeps
+            # every backcast keeper's cache_key + run_config.json byte-identical.
+            self.capacity_no_default_cap_convention_by_iso = None
 
         # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
         # vintage-seeded capacity-hindcast harness (forecast machinery). A
@@ -18035,6 +18112,7 @@ TIER_TAGS: dict[str, int] = {
     "capacity_market_supply_clearing_by_iso": 1,
     "capacity_going_forward_bar_published_by_iso": 1,
     "capacity_adequacy_requirement_published_by_iso": 1,
+    "capacity_no_default_cap_convention_by_iso": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

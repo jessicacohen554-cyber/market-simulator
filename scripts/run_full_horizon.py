@@ -228,6 +228,7 @@ def reference_config(
     ccs_retrofit_fixed_cost_co2_scaling: "bool | None" = None,
     capacity_going_forward_bar_published: "bool | None" = None,
     capacity_adequacy_requirement_published: "bool | None" = None,
+    capacity_no_default_cap_convention: "bool | None" = None,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -361,6 +362,16 @@ def reference_config(
             {iso.upper(): True}
             if capacity_adequacy_requirement_published
             else (None if capacity_adequacy_requirement_published is False else None)
+        ),
+        # capx D74: the no-default-cap price-taker convention gate — a
+        # {iso: bool} mapping, so the flag arms the INVOKED ISO's row and
+        # nothing else. GATED default None (every ISO off, cache-neutral);
+        # requires the D62 bar gate. ``None`` = not passed = the shipped
+        # posture, ``--no-`` passes an explicit None.
+        "capacity_no_default_cap_convention_by_iso": (
+            {iso.upper(): True}
+            if capacity_no_default_cap_convention
+            else (None if capacity_no_default_cap_convention is False else None)
         ),
     }
     return ScenarioConfig(
@@ -1280,6 +1291,37 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     ap.add_argument(
+        "--capacity-no-default-cap-convention",
+        dest="capacity_no_default_cap_convention",
+        action="store_true",
+        default=None,
+        help=(
+            "capx D74 arm (GATED default OFF for every ISO; arms the INVOKED "
+            "ISO's row only; REQUIRES --capacity-going-forward-bar-published): "
+            "a screened thermal unit whose PUBLISHED resource class carries NO "
+            "default gross Avoidable Cost Rate for the delivery year the screen "
+            "prices (PJM Manual 18 Rev 62 §5.4.8.4(B): 'Steam Oil & Gas' is 'NA' "
+            "through DY 2025/26) is a $0 PRICE TAKER in the D57 stack and EXEMPT "
+            "from the merchant screen in that year — its exit is its owner's "
+            "filing (steps 0/1b). Inert from DY 2026/27, where the class has a "
+            "published default, and for any ISO with no intaken table (rule "
+            "25). ZERO free parameters — one published boolean per class x "
+            "delivery year. Solve-affecting, distinct cache key; omitting the "
+            "flag leaves the field UNSET (the shipped posture)."
+        ),
+    )
+    ap.add_argument(
+        "--no-capacity-no-default-cap-convention",
+        dest="capacity_no_default_cap_convention",
+        action="store_false",
+        help=(
+            "Pass the capx D74 no-default-cap convention gate an EXPLICIT off "
+            "(the control arm). The field is registered in "
+            "_CACHE_KEY_OPTIONAL_FIELDS at None, so the explicit-off arm still "
+            "holds its recipe key."
+        ),
+    )
+    ap.add_argument(
         "--capacity-adequacy-requirement-published",
         dest="capacity_adequacy_requirement_published",
         action="store_true",
@@ -1404,6 +1446,7 @@ def main(argv: list[str] | None = None) -> int:
         capacity_adequacy_requirement_published=(
             args.capacity_adequacy_requirement_published
         ),
+        capacity_no_default_cap_convention=args.capacity_no_default_cap_convention,
     )
     config = apply_set_overrides(config, set_overrides)
     summary = solve_and_summarize(

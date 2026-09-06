@@ -121,6 +121,7 @@ from market_sim.config.capacity_market import (
     _PJM_VRR_CURVE,
     _PJM_VRR_CURVE_2027_2028,
     _PJM_VRR_CURVE_2028_2029,
+    _NO_DEFAULT_CAP_REFUSED_LOGGED,
     _SUPPLY_CLEARING_REFUSED_LOGGED,
     _neiso_fca_vintage_curve,
     _nyiso_icap_vintage_curve,
@@ -133,6 +134,7 @@ from market_sim.config.capacity_market import (
     resolve_capacity_going_forward_bar_published,
     resolve_capacity_market_clearing,
     resolve_capacity_market_supply_clearing,
+    resolve_capacity_no_default_cap_convention,
     resolve_demand_curve_vintage,
     seasonal_rbdc_price_per_firm_mw_yr,
 )

@@ -344,6 +344,17 @@ VERDICT_MAP = {
     # failed — against a 2022/23 clearing price that goes 1.52x -> 0.936x the
     # published RCP at zero free parameters. FINDING-capx-d62-2026-09-06.md.
     "pjm-2021-2025-realized-t1h-d62-pubbar": "pjm-t1h-d62-pubbar",
+    # capx-D74 (2026-09-06): the PJM "Steam Oil & Gas" NO-DEFAULT-CAP
+    # price-taker CONVENTION (`capacity_no_default_cap_convention_by_iso[PJM]`
+    # ON, over the D62 published bar): a class the published default-ACR table
+    # prints "NA" for (Manual 18 §5.4.8.4(B), through DY 2025/26) has no
+    # default cap to elect, offers at $0 and is exempt from the merchant screen
+    # (its exit is its owner's filing). ONE arm, SUFFIXED BY CHARTER, never the
+    # bare key; controls solved at HEAD (rule 29(b), form 4 void on the SCN-LOAD
+    # growth-rate hunk) and never registered. NOTHING ARMS — the owner decides
+    # on the PRECOMMIT's pre-stated condition
+    # (PRECOMMIT-capx-d74-pjm-steam-oil-convention-2026-09-06.md §7).
+    "pjm-2021-2025-realized-t1h-d74-nodefaultcap": "pjm-t1h-d74-nodefaultcap",
     # capx-D51 (2026-09-04): the MISO internal-supply accounting ratio
     # RE-IDENTIFIED on the dates-ON fleet (`adequacy_accounting_ratio_dated_net`
     # ON; D49 §2.6, rule 23) against D46's bare `miso-t1h` (the gate OFF, the

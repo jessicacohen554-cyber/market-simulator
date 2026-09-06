@@ -247,3 +247,43 @@ line), `scripts/run_capacity_hindcast.py` + `run_full_horizon.py` (the flag pair
 cells, one new test file, the docs under `docs/handoffs/`. D58 (`retirement_sector_gate`, PJM shard
 cell) and D75 (`RENEWABLE_ELCC_CURVES_BY_ISO`) are live on other seams — rebase before every push,
 never drop another lane's hunk.
+
+---
+
+## Addendum A — recorded in the build commit, BEFORE the first solve
+
+**A.1 Cache keys**, resolved through `run_capacity_hindcast.build_config` →
+`apply_iso_scenario_defaults` → `cache_key()` with the field in place; repo-wide collision scan
+(`results/`, `frontend/`, `docs/`, `src/`, `scripts/`, `tests/`) empty for every new key:
+
+| leg | span | key |
+|---|---|---|
+| control-B (bare `pjm-t1h` recipe) | 2021–2025 | **`aef81c84c4609c76`** (unmoved) |
+| control-P (+ published bar) | 2021–2025 | **`b98060898fceb3da`** (unmoved = the committed D62 arm) |
+| **arm** (+ published bar + this gate) | 2021–2025 | **`b88464cb413789af`** |
+| explicit `--no-` of this gate over the bar | 2021–2025 | `b98060898fceb3da` (drops at `None`, as registered) |
+| control-B | 2021–2022 (screen) | **`fdba733e592eb425`** |
+| control-P | 2021–2022 (screen) | **`efc626966c2b5892`** |
+| **arm** | 2021–2022 (screen) | **`cfa43af80d3b4923`** |
+
+**A.2 STOPs 2 and 3, measured** — every key below is identical at HEAD with the field and at
+`origin/main` `2eb65038` without it: `ScenarioConfig()` `e5ecd4105ada3e58`; bare backcast ERCOT
+`6a2845e50951394e` / CAISO `f7d05fc51e9bc861` / PJM `6f61207df8f4b398` / MISO `9d11af0c1bf5cc5a` /
+NYISO `b791330712d6c2fe` / NEISO `7a1ca5f8884a1dd5`; bare T1-H ERCOT `82b27751be747552` / CAISO
+`7da58199acd362ee` / PJM `aef81c84c4609c76` / MISO `687bd75f2828bea1` / NYISO `6e70a637b3465542` /
+NEISO `f3988df3068020d1`. **NOT FIRED.** `check_cache_key_registration.py --base origin/main`:
+"1 new field(s), all registered"; `check_mechanism_matrix.py --base origin/main`: exit 0
+(pre-existing anchor-digit warnings only, not this PR's).
+
+**A.3 The one hunk §2 deferred.** `data/datacenter.py` (+31) adds a new read-only helper
+`datacenter_block_energy_mwh` (SCN-WS3b's voluntary-row volume operand) and changes nothing in
+`add_load_layers`; the hindcast runs with the data-center path `"off"` besides. **INERT.** The
+§2 verdict stands: LIVE on the SCN-LOAD hunk only, controls at HEAD.
+
+**A.4 Build as pre-registered.** Field + three registrations + backcast coercion in
+`scenarios.py`; resolver + refused-log set in `capacity_market.py` (re-exported through the
+`constants` facade, as its four siblings are); `no_default_cap_class` in `avoidable_cost_rate.py`;
+the candidate-loop exemption + ledger block in `retirements.py`; one ledger line in `evolve.py`;
+the flag pair on both harnesses; the `VERDICT_MAP` entry; the matrix base row + six shard cells;
+`tests/unit/model/test_d74_no_default_cap_convention.py` (25 tests) — all green with the D62 tests
+and the constants-facade regression.

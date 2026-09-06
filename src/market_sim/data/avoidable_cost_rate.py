@@ -289,3 +289,36 @@ def reactive_offset_per_mw_yr(iso: str) -> "float | None":
             f"{iso}: reactive_offset is in {unit!r}; this seam reads usd_per_mw_yr only"
         )
     return float(row["value"])
+
+
+def no_default_cap_class(iso: str, fuel_type: str, delivery_year: int) -> bool:
+    """Whether ``fuel_type``'s published class has NO default cap for ``delivery_year``.
+
+    capx D74 (``DESIGN-capx-d74-pjm-steam-oil-convention-2026-09-06.md`` §3):
+    the ONE predicate behind
+    :func:`~market_sim.config.capacity_market.resolve_capacity_no_default_cap_convention`.
+    ``True`` iff the ISO publishes a default-gross-ACR table, the fuel has a
+    published class in it, and that class carries NO value in the column the
+    fixed vintage rule (:func:`_vintage_column_for`) selects for the delivery
+    year — i.e. exactly the limb :func:`_row_for` reports as basis
+    ``"first_published"`` (PJM's "Steam Oil & Gas" through DY 2025/26, printed
+    "NA" in Manual 18 Rev 62 §5.4.8.4(B)). ``False`` for an ISO with no table,
+    for a fuel with no published class (``gas_cc_ccs``), and for every class ×
+    year the table carries a value for — so from DY 2026/27, where the class
+    reads $64/MW-day, the predicate is ``False`` and the class takes the
+    ordinary published-bar path. Reads the same clean partition, the same
+    crosswalk and the same vintage rule as :func:`published_bar_per_kw_yr`;
+    adds no number (rule 21 [R-DOF]).
+
+    Raises :class:`PublishedBarUnavailable` (through :func:`_row_for`) when the
+    ISO's table should exist but cannot be read — an armed gate must never
+    degrade silently.
+    """
+    classes = PUBLISHED_ACR_CLASS_BY_FUEL.get(iso.upper())
+    if not classes:
+        return False
+    technology_class = classes.get(fuel_type)
+    if technology_class is None:
+        return False
+    _value, basis = _row_for(iso, technology_class, int(delivery_year))
+    return basis == "first_published"

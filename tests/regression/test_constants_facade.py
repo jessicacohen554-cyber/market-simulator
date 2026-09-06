@@ -252,6 +252,7 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "_PJM_VRR_CURVE",
         "_PJM_VRR_CURVE_2027_2028",
         "_PJM_VRR_CURVE_2028_2029",
+        "_NO_DEFAULT_CAP_REFUSED_LOGGED",
         "_SUPPLY_CLEARING_REFUSED_LOGGED",  # capx D57, see the note above.
         "_neiso_fca_vintage_curve",
         "_nyiso_icap_vintage_curve",
@@ -275,6 +276,7 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "resolve_capacity_market_clearing",
         # capx D57, see the note above.
         "resolve_capacity_market_supply_clearing",
+        "resolve_capacity_no_default_cap_convention",
         "resolve_demand_curve_vintage",
         "resolve_locality_curve_vintage",  # capx D59, see the note above.
         "resolve_locality_gross_cone_ratio",  # capx D59, see the note above.
