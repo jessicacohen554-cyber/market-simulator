@@ -282,23 +282,138 @@ differencing on the three program ISOs, which this lane cannot supply because th
 there; or a decomposition of Δprice by marginal-fuel hour, which needs the hourly duals rather
 than the annual scalars these T0 bundles export.
 
+### 3.8 The INERT pairs — NEISO and NYISO, exact identity confirmed
+
+The floor makes `carbon_price_path="mid"` a no-op on the state-program ISOs, so ADDENDUM §(f.2)
+re-specified **G4 for these pairs as an exact-identity test** rather than a band: a **non-zero**
+delta would be the failure, because it would mean something other than carbon moved between two
+configs that resolve to the same carbon price in every hour.
+
+| ISO | resolved $/t (both arms) | `emissions_mt` | lw price $/MWh | Δ on **every** metric |
+|---|---|---|---|---|
+| **NEISO** | 27.8783 | 17.1691 | 50.8530 | **0.000000** |
+| **NYISO** | 25.2908 | 24.5911 | 49.1840 | **0.000000** |
+
+**8/8 PASS on both.** Δ CO2 and Δ lw_price are `0.000000` to six decimals; every by-fuel and
+by-zone row is identical; `unserved_mwh` 0.0 in all four arms. **This is §1's arithmetic converted
+into a measurement.** It also exercises the harness: two runs differing in one field that the
+resolver is supposed to neutralise produce byte-equal dispatch, which is a real (if narrow) check
+that the S2 floor is wired where it claims to be.
+
+**These two are also the cleanest runs of the lane** — REF and CARB each score **0 FAIL / 0 WARN**
+across all 14 forecast invariants, against ERCOT's 1 FAIL/2 WARN, PJM's 1/1 and MISO's 2/1.
+
+**What they are NOT evidence of.** They say a *federal RFF `mid`* price is a no-op where a state
+program already charges more (RGGI $27.88 and $25.29 vs the path's $3.75 at 2027). They say
+**nothing** about whether carbon pricing works in New England or New York — those ISOs are already
+carbon-priced, at roughly **7×** the federal path's 2027 level. Quoting "no effect" from these
+rows would invert their meaning.
+
+### 3.9 A LEVEL result the zero deltas would otherwise hide
+
+The leakage duty asks for `import_co2_mt_reported` **beside** `emissions_mt` as a number. On the
+two RGGI ISOs the *delta* is zero — but the *level* is large:
+
+| ISO | in-ISO `emissions_mt` | reported import CO2 | **import as % of scored in-ISO** |
+|---|---|---|---|
+| **NYISO** | 24.5911 | **10.1556** | **41.3 %** |
+| **NEISO** | 17.1691 | **4.3493** | **25.3 %** |
+| PJM | 393.6225 | 0.9141 | 0.2 % |
+| ERCOT / MISO | 255.97 / 370.48 | 0.0000 | 0.0 % (no seam exists) |
+
+**A campaign that reports only `emissions_mt` understates NYISO's carbon footprint by roughly two
+fifths and NEISO's by a quarter**, before any policy is applied. This is a *standing* disclosure
+property of the two import-heavy ISOs, not something a carbon arm creates — and it is exactly why
+SCN-WS0's duty is to print the import line beside every headline rather than only when it moves.
+It is reported here because a reader scanning §3.8's zero deltas would otherwise conclude these
+ISOs have nothing to disclose.
+
 ## 4. LEAKAGE — `import_co2_mt_reported` beside `emissions_mt`, per ISO, as a number
 
 <!-- FILL: completed as each ISO lands. ERCOT row below. -->
 
 | ISO | Δ `emissions_mt` (Mt) | Δ `import_co2_mt_reported` (Mt) | % of headline displaced | tranche that moves |
 |---|---|---|---|---|
+| **NYISO** | **0.0000** (arm inert) | **0.0000** | n/a — no headline to displace | 6 carbon-bearing tranches exist and carry a **standing 10.1556 Mt**, but the arm does not move them: the RGGI program ($25.29/t at 2027) already exceeds the RFF mid path ($3.75), so `max()` returns the program and nothing in the ISO changes. **Level ≠ delta** (§3.9). |
+| **NEISO** | **0.0000** (arm inert) | **0.0000** | n/a | 4 carbon-bearing tranches, **standing 4.3493 Mt**; inert for the same reason. |
 | **MISO** | **−6.6414** | **0.0000** | **0.0 %** | **none built.** `IMPORT_ZONE` names `MISO_external` but `IMPORT_TRANCHES` has no MISO entry, so no tranche exists. **This zero is a MODEL-BOUNDARY artifact, not a physical claim** — MISO trades heavily with PJM and SPP in reality; the model has no seam for it. MISO's −6.64 Mt therefore carries **no leakage disclosure at all** and must be read as an **upper bound**. Flagged in the PRECOMMIT before the solve precisely so this null is not read as "MISO does not leak". |
 | **PJM** | **−13.4381** | **+0.4336** | **3.2 %** | **the 2-tranche scarcity block** — import generation +2.0495 TWh. Predicted +0.03 to +0.23 Mt; **measured +0.4336, nearly 2× the top of my band** (§5). The tranches pay **no border carbon** while PJM coal's `mc` rises ~$3.98/MWh, so they get relatively cheaper. `emissions_by_fuel_mt["import"]` stays **0.0** in both arms — the import MWh never enters the scored in-ISO total (G6), it is disclosed beside it. |
 | **ERCOT** | **−0.9280** | **0.0000** | **0.0 %** | **none — ERCOT has no import node at all** (0 import pseudo-generators; PRECOMMIT §2.2). The zero is a **construction fact, not a measurement**: there is no seam across which leakage could be observed, so ERCOT's headline cut carries **no leakage disclosure** and must be read as an **upper bound** on the real reduction. |
 
 ## 5. My misses, reported at full magnitude
 
-<!-- FILL -->
+Nine pre-declared numbers across the three LIVE ISOs (ADDENDUM §(d.2) for price and CO2,
+PRECOMMIT §3.4 for leakage). **Six hit, three missed.** Every band below is quoted as pushed
+before the solve; **none was revised after a result.**
 
-## 6. Wall / RSS per solve-year
+| ISO | quantity | pre-declared | measured | verdict |
+|---|---|---|---|---|
+| ERCOT | Δ CO2 % | −0.2 to −0.8 % | **−0.36 %** | **HIT** |
+| ERCOT | Δ lw price | $0.9 – 1.5 | **$1.934** | **MISS — 1.29× the top** |
+| ERCOT | Δ import CO2 | exactly 0.0000 | **0.0000** | **HIT** |
+| PJM | Δ CO2 % | −0.6 to −1.5 % | **−3.41 %** | **MISS — 2.27× the top** |
+| PJM | Δ lw price | $1.5 – 2.7 | **$2.149** | **HIT** |
+| PJM | Δ import CO2 | +0.03 to +0.23 Mt | **+0.4336** | **MISS — 1.89× the top** |
+| MISO | Δ CO2 % | −0.8 to −1.8 % | **−1.79 %** | **HIT** (just inside) |
+| MISO | Δ lw price | $1.8 – 3.3 | **$2.411** | **HIT** |
+| MISO | Δ import CO2 | exactly 0.0000 | **0.0000** | **HIT** |
 
-<!-- FILL -->
+**Every miss is in the same direction: I under-predicted the response.** That is the useful
+pattern in my own errors, and it has three distinct causes rather than one:
+
+1. **PJM's CO2 miss (the largest) — I assumed the wrong elasticity.** My band came from scaling a
+   $25/t prediction down by 0.15, which implicitly assumes the response is roughly linear in the
+   carbon price. It is not, where a fleet has coal and gas-CC near parity: what matters is how much
+   MWh sits inside the **$2.44/MWh relative shift**, and PJM's does. A carbon price acts on the
+   *spread distribution*, not on a fleet-average rate — a mechanism my band's construction had no
+   way to express.
+2. **ERCOT's price miss — I banded the wrong regime.** §3.3: with 641 scarcity hours and a −6.5 %
+   reserve margin, ERCOT 2027 is not the fossil-marginal market my band assumed. The measured
+   0.5157 t/MWh is a *lower bound* on its fossil-marginal rate, not a central estimate.
+3. **PJM's leakage miss — I mis-scaled a threshold effect.** I rescaled WS-0's $25/t leakage
+   linearly to $3.75/t. But import tranches are **priced blocks**: they clear or they do not, and
+   the fraction of hours in which a $3.98/MWh coal adder pushes a $46–60 block into merit is not a
+   linear function of the adder. Rescaling a step response linearly under-predicts it.
+
+**The honest summary of my prediction skill: direction 9/9, magnitude 6/9, and all three magnitude
+errors are under-predictions.** The charter asked that misses be reported with the reasoning that
+produced them; the reasoning above is what I would change, not the numbers I wrote.
+
+**A prediction that was NOT mine and did better in one place, worse in another:** SCN-WS4c's
+measured marginal rates (ADDENDUM §(g)) implied ERCOT $1.68, PJM $1.91, MISO $1.82. Measured:
+$1.934, $2.149, $2.411. **WS-4c's points under-predict all three as well**, by 15 %, 12 % and
+33 % — the same direction as my own error and the reason §3.7 treats the gap as a real result
+rather than as noise.
+
+## 6. Wall clock and peak RSS, per solve-year
+
+Every arm ran **2 solve-years** (2026 as 2027's capacity-evolution prior; 2027 scored). Years
+sequential within an invocation, always (rule 12 `[R-PARALLEL]`).
+
+| ISO | arm | 2026 wall / RSS | 2027 wall / RSS |
+|---|---|---|---|
+| ERCOT | REF | 153.4 s / 3.50 GB | 127.0 s / 3.33 GB |
+| ERCOT | CARB | 154.3 s / 3.50 GB | 128.4 s / 3.72 GB |
+| PJM | REF | 389.3 s / **9.03 GB** | 201.1 s / 6.57 GB |
+| PJM | CARB | 382.0 s / 8.97 GB | 185.6 s / 6.53 GB |
+| MISO | REF | 446.2 s / **9.87 GB** | 211.1 s / 7.92 GB |
+| MISO | CARB | 393.0 s / **9.90 GB** | 197.8 s / 7.95 GB |
+| NEISO | REF | 112.5 s / 3.17 GB | 85.6 s / 3.04 GB |
+| NEISO | CARB | 110.6 s / 3.25 GB | 78.6 s / 3.07 GB |
+| NYISO | REF | 139.8 s / 3.24 GB | 121.1 s / 2.75 GB |
+| NYISO | CARB | 140.1 s / 3.28 GB | 125.3 s / 2.74 GB |
+
+**Twenty solve-years, 3,883 s = 64.7 min of LP** for the ten arms above (CAISO's pair is reported
+in §6.1 when it lands). **Peak RSS 9.90 GB (MISO CARB 2026) on a 15 GB box.**
+
+**That peak is why rule 12 `[R-PARALLEL]`'s one-invocation limit for per-plant multi-zone ISOs is
+load-bearing rather than cautionary**: two concurrent MISO arms would have needed ~19.8 GB and
+OOM-ed. The small ISOs (ERCOT / NEISO / NYISO, ~3.5 GB) ran both arms concurrently with no
+contention, which is exactly the split the rule draws.
+
+**2026 costs roughly 2× 2027 in every ISO** — the first horizon year builds the fleet and
+capacity-evolution state that the second reuses. A lane budgeting T0 work from a per-solve-year
+average will therefore under-budget a 2-year run by ~25 %.
 
 ## 7. LEG 2 IS HELD BY RULING S5
 
