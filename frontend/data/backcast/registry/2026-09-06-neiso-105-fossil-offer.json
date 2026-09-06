@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-06-neiso-105-fossil-offer",
+  "label": "neiso 105 fossil offer",
+  "date": "2026-09-06",
+  "shorthand": "neiso-105-fossil-offer",
+  "definition": "neiso-105 full span: fossil offer-level scalar 0.93391 on 12 markup bands, owner-directed, PREREG-neiso105-offer-level-resized-2026-09-06.md",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-09-06-neiso-105-fossil-offer.js",
+  "bundle": "results/calibration/neiso105_offerlevel"
+}
