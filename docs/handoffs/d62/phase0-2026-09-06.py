@@ -35,6 +35,7 @@ from market_sim.model.capacity_evolution.adequacy import (
     clear_capacity_supply_stack,
 )
 from market_sim.config.constants import EFORD
+from market_sim.data.avoidable_cost_rate import reactive_offset_per_mw_yr
 from market_sim.model.capacity_evolution.retirements import (
     resolve_going_forward_bar_per_kw_yr,
     thermal_accreditation_fraction,
@@ -106,7 +107,7 @@ def _accreditation_fraction(config, fuel: str, year: int) -> float:
     return _AF_CACHE[key]
 
 
-def reclear(cfg_source, cfg_target, label, censored="d61"):
+def reclear(cfg_source, cfg_target, label, censored="d61", reactive=0.0):
     """Re-clear every screen year's committed stack on ``cfg_target``'s bars.
 
     ``cfg_source`` supplies the bars the committed offers were BUILT from (so
@@ -166,6 +167,11 @@ def reclear(cfg_source, cfg_target, label, censored="d61"):
             else:
                 gfc_src = src_bar * pmax * 1000.0
                 eas = gfc_src - offer * a_mw * 365.0
+                # capx D62 seam 2: the published reactive component enters the
+                # unit's pre-capacity E&AS once, as ``pmax x rate``, exactly as
+                # the screen credits it -- so the re-offered stack is the arm's
+                # own arithmetic, not the bar alone.
+                eas += float(reactive) * pmax
                 gfc_tgt = tgt_bar * pmax * 1000.0
                 new_offer = max(0.0, gfc_tgt - eas) / (a_mw * 365.0)
             offers.append((uid, fuel, new_offer, a_mw, pmax))
@@ -240,6 +246,14 @@ def main() -> int:
     result["S0"] = reclear(off, off, "S0 -- committed arm-A clearing, re-cleared on the SAME (ATB) bars")
     result["S6"] = reclear(
         off, on, "S6 -- every class bar at PJM's PUBLISHED default gross ACR"
+    )
+    result["S6R"] = reclear(
+        off,
+        on,
+        "S6R -- THE ARM's OWN ARITHMETIC: published bars PLUS the published "
+        "reactive component ($2,199/MW-yr), the pre-solve prediction the screen "
+        "gate G1 grades the solve's direction and magnitude against",
+        reactive=reactive_offset_per_mw_yr("PJM") or 0.0,
     )
     result["S6_censored_bound"] = reclear(
         off,
