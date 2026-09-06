@@ -302,6 +302,23 @@ frontend/data/forecast/program-status.js
 /results/scn-ws1-probe/*/*/NEISO/
 /results/scn-ws1-probe/*/*.log
 /results/scn-ws1-ladder/*/*.log
+# SCN-WS4c LOAD-HI probe (results/scn-ws4-probe/, scn-ws4-probe-t1f/): same
+# class as the three smoke/probe trees above. The slim artifacts ARE committed —
+# each arm's summary + run_config, each ISO's matrix bundle, and the
+# delta-report tables that are the evidence behind
+# docs/handoffs/FINDING-scn-ws4c-2026-09-06.md — while the nested per-ISO LP
+# cache each arm writes is transient and regenerable from config. Six ISOs, so
+# the pattern is per-ISO.
+/results/scn-ws4-probe/*/*/ERCOT/
+/results/scn-ws4-probe/*/*/CAISO/
+/results/scn-ws4-probe/*/*/PJM/
+/results/scn-ws4-probe/*/*/MISO/
+/results/scn-ws4-probe/*/*/NYISO/
+/results/scn-ws4-probe/*/*/NEISO/
+/results/scn-ws4-probe/*/*.log
+/results/scn-ws4-probe-t1f/*/*/ERCOT/
+/results/scn-ws4-probe-t1f/*/*/NEISO/
+/results/scn-ws4-probe-t1f/*/*.log
 # Full-horizon forecast runs and ad-hoc forecast probes: disposable diagnostic
 # cache, never committed (forecast probes are not dashboard-registered —
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their

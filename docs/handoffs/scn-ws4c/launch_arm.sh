@@ -25,7 +25,11 @@ case "$CASE" in
 esac
 
 echo "[$(date -u +%H:%M:%S)] START $ISO $CASE $START-$END"
-/usr/bin/time -v env PYTHONPATH=. .venv/bin/python scripts/run_full_horizon.py \
+# Wall/RSS come from the runner's OWN sampler (per-year "peak_rss_mb" and
+# "global_peak_rss_mb" in full_horizon_summary.json) -- the instrument plan
+# section 2.4 asks every session to report, and no external timing binary is
+# needed (this container has no /usr/bin/time).
+env PYTHONPATH=. .venv/bin/python scripts/run_full_horizon.py \
   --iso "$ISO" --start-year "$START" --end-year "$END" \
   --out-dir "$OUT" "${SETS[@]}" > "$OUT/../${CASE}.log" 2>&1
 RC=$?
