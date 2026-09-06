@@ -316,13 +316,13 @@ the entry screen as an attribute price exactly the way the RPS dual does today.
 - **G-L3 (coherence of the high case).** `demand_growth_path=high` and
   `datacenter_load_path=high` are independent axes; ERCOT `high` DC (122 GW by 2030)
   exceeds the grown energy and drops into the additive tail regime
-  (`datacenter.py:318-320`). The high-load scenario needs a *declared* pairing (§3.4).
+  (`datacenter.py:318-320`). The high-load scenario needs a *declared* pairing (§3.4). **DECLARED 2026-09-06 by SCN-WS4b**: `LOAD-HI` / `LOAD-HI-ORGANIC` in the campaign YAML, with the tail-regime arithmetic in the case comment — under `high` ERCOT stays in the relocate regime through 2029 (block 52–95 % of energy, peak *below* REF) and flips to the tail regime in 2030 alone (E 800 → 1,800 TWh, peak 94 → 267 GW in one year); the ORGANIC companion is byte-identical to `LOAD-HI` on PJM/CAISO/NEISO through 2030 (`FINDING-scn-ws4b-2026-09-06.md` §3).
 - **G-L4 (adequacy response).** At `mid` load the T1-F FC-1 fail sets already read
   ERCOT {I12, I3} · CAISO {I12, I3, I7} · PJM {I7, I12} · MISO {I3} (board `gate_reading`,
   2026-09-05). Higher load pushes the same invariants harder: in ERCOT (no backstop) it
   shows up as **unserved-energy slack**, in curve-ON ISOs as backstop gas_ct. A CO2 number
   read under binding slack is understated by the shed energy — WS-0 reports unserved
-  energy beside CO2 and WS-4 pre-declares how each ISO's high case is read.
+  energy beside CO2 and WS-4 pre-declares how each ISO's high case is read. **PRE-DECLARED 2026-09-06 (SCN-WS4b, `load-hi-adequacy-reading-2026-09-06.md` §5)**; at that pin the bare `ff-verdicts.json` keys read ERCOT {I12, I3} · CAISO {I12, I7} · PJM {I12, I7} · MISO {I12, I7} · NEISO {} · NYISO {} — the CAISO/MISO sets differ from the board's `gate_reading` prose quoted above (routed, FINDING §5 item 1). The report's headline frame now carries `backstop_built_mw` / `backstop_built_mwh` beside `unserved_mwh`.
 - **G-L5.** `datacenter_percentile` / `electrification_percentile` are documented as
   sampler levers but `uncertainty.py:264-270, 425-448` never draws them. Records only.
 
@@ -765,7 +765,7 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 
 | Criterion (§1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — repair gated on D-1; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **yes** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; illustrative level, D-2 open) | **no** | partial — **siting sourced** for ERCOT/PJM/MISO (SCN-WS4a), still **no named case** | — |
+| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — repair gated on D-1; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **yes** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; illustrative level, D-2 open) | **no** | **yes** — named cases `LOAD-HI` / `LOAD-HI-ORGANIC` live in `configs/scenario_campaign_matrix.yaml` with the ERCOT tail-regime arithmetic and the six-ISO adequacy reading pre-declared in the case comment (SCN-WS4b 2026-09-06, `FINDING-scn-ws4b-2026-09-06.md` §2, `load-hi-adequacy-reading-2026-09-06.md`); siting sourced for ERCOT/PJM/MISO (SCN-WS4a) | — |
 | 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider to WS-0) | yes | **yes** (SCN-WS2a: the row → dispatch; dual → the existing `max()` screen seam; deployment leg not exercised by the 1-yr T0) | **no** | yes | — |
 | 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | NEISO only, escape regime (dual = ACP $50 exactly; CO2 +2e-4 reported not smoothed — `FINDING-scn-ws2a-2026-09-05.md` §4.3) | **no** | **no** | — |
 | 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | yes (SCN-WS2a: six keeper keys byte-identical, FINDING §5) | — | yes | — |
@@ -786,6 +786,13 @@ rate) and G-E7 (NOx/SO2 unexported) stay OPEN and out of scope — both are disc
 items the plan already records as such. Criterion 1's harness half is closed with them:
 a case is now one field override, expressible in the campaign YAML or on the command
 line via `--set`.
+
+**Load-HI row 1, closed by SCN-WS4b** (2026-09-06, `docs/handoffs/FINDING-scn-ws4b-2026-09-06.md`).
+The named case is the two live keys SCN-WS0 shipped, now with their disclosure: `electrification_path`
+as-is is `off` in all six ISOs (REF is the ScenarioConfig default; no `iso_configs` override); the
+ERCOT `high` DC anchor drives the tail regime in 2030 only, and the ORGANIC companion attributes a
+*shape* share in ERCOT/MISO/NYISO and nothing in PJM/CAISO/NEISO through 2030 (three solves WS-4c
+need not spend). Rows 3 and 7 stay with SCN-WS4c.
 
 **The Emissions column's first measured result is a leakage number, not a level.** The
 exercising T0 (NEISO 2026, REF vs `carbon_price_delta=25`) cuts modeled in-ISO CO2 by
