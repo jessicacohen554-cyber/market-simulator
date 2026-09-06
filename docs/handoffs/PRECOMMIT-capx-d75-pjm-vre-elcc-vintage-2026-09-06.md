@@ -44,17 +44,27 @@ own Table 3 is titled *"Comparison of ELCC Class Ratings, 2024/2025 BRA vs 2023/
 **2023/24 is in scope**; only 2022/23 and earlier are genuinely pre-ELCC, and those stay out of
 scope exactly as chartered.
 
-**(c) The delivery year ↔ model year mapping in D66 §4.5 is off by one, and its pools are frozen.**
-The model's own resolver is authoritative: `capacity_deliverability.resolve_delivery_year("PJM", Y)
-== f"{Y}/{Y+1}"`, and every D48 call site passes `accreditation_year=year` (the model calendar
-year). So **model year 2024 is DY 2024/2025**, with pools wind **11,653.9** / solar **6,990.4** MW
-— not the 10,153.9 / 4,549.8 D66 §4.5 calls "2024/25's own pools". Those are the **2021 base-year**
-pools: D66's instrument reads them once from `evolution_2021.json` and reuses them for every
-delivery year (`supply-census-2026-09-06.py` L139–L163), although its own comment states the pool
-"is the base year's pool plus every addition decided in 2021..Y-1" — the additions are never added.
-D66's §1.4 table is unaffected (it reads `capacity_clearing` per year and maps model year Y → DY
-Y/Y+1 correctly); the defect is confined to the pinned VRE/storage rows §3.2/§3.3 and §4.5 read.
-Consequence for this card is stated at §4 and routed at §6.
+**(c) ~~The delivery year ↔ model year mapping in D66 §4.5 is off by one, and its pools are
+frozen.~~ — WITHDRAWN, 2026-09-06, before any solve or build. D66's pools are CORRECT.**
+
+This PRECOMMIT as first pushed (commit `1cd1fc95`) asserted that DY 2024/25's pools are model year
+2024's ledger values (11,653.9 / 6,990.4 MW) rather than D66's 10,153.9 / 4,549.8, on the reading
+that D66's instrument froze its pools at the 2021 base year. **That was wrong on both halves and is
+withdrawn in full.** D66's instrument does roll its pools forward
+(`supply-census-2026-09-06.py` L182–L185, after the `pinned` dict this lane had stopped reading),
+and — decisively — the census is accredited on `prior_results`, not on the current year's ledger:
+`runner.py` L2037–2039 / L2116–2124 pass `prior_results["wind_cap_mw"]` / `["solar_cap_mw"]` with
+`accreditation_year=year`, and `retirements.py` L3567 threads those same pools into
+`_settle_capacity_supply_clearing` → `accredited_firm_capacity_mw`. So
+
+> delivery year Y/Y+1 ⟸ model year Y ⟸ the pools recorded in `evolution_{Y-1}`
+
+and D66's roll-forward reconstructs exactly that. The instrument now reproduces D66's pinned Wind /
+Solar rows to **0.021 MW** (DY 2024/25 4,163.099 / 484.099 against its 4,163.1 / 484.1; DY 2025/26
+4,778.099 / 743.779 against its 4,778.1 / 743.8) — recorded as `instrument_check` in the phase-0
+JSON, and it is the charter's own step-1 discipline. **D66 §3.2/§3.3/§4.5 need no correction on this
+point, and none is proposed.** Corrections (a) and (b) are unaffected: both are primary-document
+facts about which ratings PJM published for which delivery year, and neither depends on the pools.
 
 ---
 
@@ -128,55 +138,38 @@ sign and magnitude can be stated without choosing a weight.**
 
 ## 4. Phase 0 — the measurement, and the pre-declared band test
 
-Zero LP. Read from the D57 arm-A committed ledgers, whose `wind_cap_mw` / `solar_cap_mw` /
-`renewable_credit_applied` are written from the *same* arrays that feed
-`accredited_firm_capacity_mw(..., accreditation_year=year)` (`runner.py` L4694 and L4796), so a
-ledger's pools × its credits **is** the accredited VRE that year counted. PJM's persistent fleet
-carries no wind or solar units, and PJM has no internal-supply accounting ratio, so
-Δ accredited VRE flows 1:1 into `census_mw`.
+Zero LP. Pools are `evolution_{Y-1}`'s, per §0(c) — the quantity the census actually accredits — and
+the instrument reproduces D66's pinned rows to 0.021 MW. PJM's persistent fleet carries no wind or
+solar units and PJM has no internal-supply accounting ratio, so Δ accredited VRE flows 1:1 into
+`census_mw`.
 
-| model yr | DY | regime | wind pool | solar pool | published W / F / T | **Δ net, full mix bracket** | **Δ net @ PJM's own Table-5 mix** |
-|---:|---|---|---:|---:|---|---:|---:|
-| 2021 | 2021/22 | pre-ELCC | 10,153.9 | 4,549.8 | — | — | out of scope |
-| 2022 | 2022/23 | pre-ELCC | *(ledger omits the pool fields)* | | — | — | out of scope |
-| 2023 | 2023/24 | class-avg | 10,153.9 | 4,549.8 | 15 / 38 / 54 % | −1,395.2 … −667.2 | **−754.6** |
-| 2024 | **2024/25** | class-avg | 11,653.9 | 6,990.4 | **21 / 33 / 50 %** | −767.7 … **+420.6** | **+277.9** |
-| 2025 | 2025/26 | marginal | 11,653.9 | 9,431.0 | 38 / 10 / 14 % | −410.0 … −32.7 | −78.0 |
+| DY | model yr | regime | wind pool | solar pool | published W / F / T | **Δ net, full bracket** | **Δ @ PJM Table-5 mix** |
+|---|---:|---|---:|---:|---|---:|---:|
+| 2022/23 | 2022 | pre-ELCC | 10,153.9 | 4,549.8 | — | — | out of scope |
+| **2023/24** | 2023 | class-avg | 10,153.9 | 4,549.8 | 15 / 38 / 54 % | −1,395.2 … −667.2 | **−754.6** |
+| **2024/25** | 2024 | class-avg | 10,153.9 | 4,549.8 | **21 / 33 / 50 %** | −1,013.4 … −240.0 | **−332.9** |
+| **2025/26** | 2025 | marginal | 11,653.9 | 6,990.4 | 38 / 10 / 14 % | −394.4 … −114.7 | **−148.3** |
+| | | | | | **window total** | −2,803.0 … −1,021.9 | **−1,235.8** |
 
-**The chartered phase-0 gate — "the delta must land inside the pre-declared band (DOWN 0.6–1.4 GW)
-before any solve" — FAILS on DY 2024/25, on both legs.** Measured range −767.7 … +420.6 MW; the
-sign is **not** DOWN at any PJM-published mix. Under the charter that is where the card stops.
+**The pre-declared SIGN HOLDS, unconditionally.** DOWN in every year at every candidate mix. DY
+2024/25's delta cannot be made positive by any fixed-tilt share: the break-even blend is 0.5527,
+above PJM's own tracking rating of 0.50, so the implied fixed share is **negative (−0.310)** — i.e.
+outside the admissible range entirely.
 
-**Why the pre-declaration read DOWN 0.6–1.4 GW, decomposed exactly** (at PJM's 2026/27 Table-5 mix;
-the instrument reports every mix):
+**The pre-declared MAGNITUDE band (0.6–1.4 GW) is missed on DY 2024/25**, at −240 … −1,013 MW
+(−332.9 at PJM's published mix), and the reason is correction (a) alone — the pools are not in
+dispute:
 
-| basis | Δ net MW | leg |
-|---|---:|---:|
-| D66 §4.5 / the charter — 2021 base pools + Dec-2021 ratings | **−664.0** | — |
-| + correct DY 2024/25 pools (§0(c)) | −33.5 | **+630.5** |
-| + operative Dec-2023 ratings (§0(a)) | **+277.9** | **+311.5** |
+| basis (DY 2024/25, same pools, PJM's 2026/27 Table-5 mix) | Δ net MW |
+|---|---:|
+| D66 §4.5 / the charter — **superseded** Dec-2021 ratings | **−664.0** |
+| PJM's **operative** Dec-2023 ratings | **−332.9** |
+| *rating-vintage leg* | *+331.2* |
 
-The charter's basis reproduces D66 §4.5's bracket to the MW (−1,384.6 … −565.7 vs its
-"−1,384.7 … −565.7"), which is the check that this reconstruction is theirs and not a straw man.
-**Both corrections push the same way, and the pool-year leg is the larger.** The pre-declared band
-is not wrong arithmetic — it is the right answer to **DY 2023/24**, which is precisely where the
-table above still lands it (−667 … −1,395 MW, DOWN at every mix).
-
-**The charter's bug-test cannot be applied as written.** It says *"a lane that finds the census
-moving UP has a bug, not a result."* The UP direction here survives the strongest available check:
-both classes move **toward** PJM's published accreditation, not away from it. On DY 2024/25, against
-PJM's cleared UCAP (2024/25 BRA Report Table 9, p.14) —
-
-| class | model, incumbent | model, vintaged | PJM published | |
-|---|---:|---:|---:|---|
-| Wind | 4,778.1 | **2,447.3** | 1,396 | 3.42× → **1.75×** |
-| Solar | 743.8 | **3,352.4** | 4,232 | 0.18× → **0.79×** |
-
-The census rises because the solar leg was under-credited by more than the wind leg was
-over-credited **once the right pools are used**. That is rule 14's signal working normally, not an
-arithmetic error.
-
----
+The charter's basis reproduces D66 §4.5's bracket to the MW (−1,384.6 … −565.7 against its
+"−1,384.7 to −565.7"), the check that this is their arithmetic and not a straw man. **The operative
+ratings halve the effect.** And the year the band actually fits is **DY 2023/24** — in scope per
+correction (b), largest footprint of the three, and inside 0.6–1.4 GW at *every* mix.
 
 ## 5. STOP — what this lane does NOT do
 
@@ -196,13 +189,12 @@ arithmetic error.
 
 Recorded here for whichever lane the director charters next, before that lane measures anything:
 
-* On PJM's **operative** ratings, DY 2024/25's accredited VRE moves **UP** at both of PJM's own
-  published Table-5 mixes (**+277.9** and **+285.2 MW**) and at the EIA-860 footprint proxy
-  (+149.5 MW). It turns DOWN only above a **35.4 % fixed-tilt** share (the exact break-even:
-  11,653.9 × (0.21 − 0.41) + 6,990.4 × (b − 0.1064) = 0 ⟹ b = 0.43983 ⟹ f = 0.354), which is
-  three times PJM's own published fixed share and half again the EIA-860 proxy's.
-* DY 2023/24 moves **DOWN** at every mix (−667 … −1,395 MW).
-* DY 2025/26 moves **DOWN** at every mix, and is **small** (−33 … −410 MW).
-* Summed over the three in-scope delivery years the net is **negative at every candidate mix**, so
-  D66 §8 card B's headline — the accurate input widens the position residual on balance — survives
-  the corrections. What does not survive is its per-year sign and its magnitude.
+* **DOWN in all three in-scope delivery years, at every candidate mix**, and DY 2024/25's sign is
+  not mix-contingent at all (break-even fixed share −0.310, outside the admissible range).
+* Magnitudes at PJM's own published solar mix: **2023/24 −754.6**, **2024/25 −332.9**,
+  **2025/26 −148.3 MW**; window total **−1,235.8 MW** (bracket −2,803.0 … −1,021.9).
+* **The position residual WIDENS in 2024/25 and 2025/26** — the two years where the model's census
+  position sits *below* PJM's published — and **NARROWS in 2023/24**, where it sits above. Card B's
+  rule-14 point stands in the years the card is about.
+* The effect is roughly **half** what the charter pre-declared, and the whole of that difference is
+  the superseded rating set (§0(a)).
