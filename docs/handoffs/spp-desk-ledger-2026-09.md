@@ -10,6 +10,25 @@ that finds them (§6).
 
 ## 0. Sittings (newest first)
 
+### 0b. r#1 — first sitting, W1 issued (2026-09-06, main HEAD `b22b91c3`; charter commit `45055ba0` on `claude/spp-iso-model-plan-pf6ygd`)
+
+- Owner instruction, verbatim: *"Commit the plan and then you turn into the desk and issue wave 1."*
+  The charter commit was pushed and blob-verified (plan 808 lines, handoff 177 lines — local and
+  origin sha256 MATCH; `git diff HEAD origin/<branch>` empty).
+- Gates run at the pin, all exit 0: `audit_keepers --check`, `check_registry_payload_parity`
+  (15 runs / 48 bundle dirs), `check_gate_a_provenance` (6 rows), `check_bench_freshness` (24 parts,
+  0 stale), `check_golden_manifest`, `ci_refactor_guards`, `check_mechanism_matrix --base origin/main`
+  (two PRE-EXISTING anchor warnings on `entry_lookahead_reprice` / `startup_co2_reporting`, not this
+  desk's — routed, not repaired).
+- **ISSUED: SPP-10, SPP-11, SPP-12** (plan §8 W1, verbatim; stems in §5). Three parallel Opus lanes,
+  DATA PROFILE shared, disjoint files. Dispatch is unconfirmed until a branch exists.
+- **HELD: SPP-21** (the early-issue option). The matrix base file
+  `docs/codebase-site/data/mechanism-matrix.js` was last written by capx D78-R2 at 18:36 UTC, 30 min
+  before this pin, and the shards by nyiso-204b at 18:26 — active writers. SPP-21 is issued at
+  sitting #2 beside SPP-20 after a fresh collision check (§4 hold recorded).
+- Cards: none served (P1–P8 are due at sitting #2 with W1's evidence — ruling O-1).
+- Nothing else moved. No src/, scripts/, configs/, tests/ or frontend/ file touched by this desk.
+
 ### 0a. r#0 — charter (2026-09-06, main HEAD `b22b91c3`)
 
 - Program chartered by the owner in session `claude/spp-iso-model-plan-pf6ygd`. Three owner answers
@@ -31,11 +50,11 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 
 | Lane | Wave | Model | Profile | Status | Branch realised | PR | FINDING |
 |---|---|---|---|---|---|---|---|
-| SPP-10 audit + doc 00 fix | W1 | Opus | shared | CHARTERED | — | — | — |
-| SPP-11 EPA CAMPD + EIA fetch | W1 | Opus | shared | CHARTERED | — | — | — |
-| SPP-12 portal.spp.org + spp.org fetch | W1 | Opus | shared | CHARTERED | — | — | — |
+| SPP-10 audit + doc 00 fix | W1 | Opus | shared | ISSUED r#1 | — (stem `claude/spp-10-audit-k7wq`) | — | — |
+| SPP-11 EPA CAMPD + EIA fetch | W1 | Opus | shared | ISSUED r#1 | — (stem `claude/spp-11-fetch-epa-eia-m3rd`) | — | — |
+| SPP-12 portal.spp.org + spp.org fetch | W1 | Opus | shared | ISSUED r#1 | — (stem `claude/spp-12-fetch-portal-x9cn`) | — | — |
 | SPP-20 register (pin flip) | W2 | Fable | shared→spp | CHARTERED · blocked on P1–P8 + G12 | — | — | — |
-| SPP-21 matrix shard + §5.7 | W2 | Opus | code | CHARTERED · issuable when the base file is not mid-edit | — | — | — |
+| SPP-21 matrix shard + §5.7 | W2 | Opus | code | HELD r#1 (base file written by capx D78-R2 30 min before the pin) · issue at sitting #2 | — | — | — |
 | SPP-30 outages + tranches | W3 | Opus | spp | CHARTERED · blocked on SPP-20, SPP-11 | — | — | — |
 | SPP-31 benchmarks | W3 | Opus | spp | CHARTERED · blocked on SPP-20, SPP-12 | — | — | — |
 | SPP-32 zonal + wind shape + gas hub | W3 | Opus | spp | CHARTERED · blocked on SPP-20, SPP-11 | — | — | — |
@@ -85,7 +104,7 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | `results/cache.py`, `ScenarioConfig` fields | capx D77/D79 (cache fingerprint) | none | never touched by any SPP lane through W4 (plan §7 G8) |
 | Per-plant solve slots | capx / SCN campaigns, per-ISO calibration lanes | SPP-40, SPP-5x | advisory: confirm no other per-plant solve before the SPP leg (rule 12, ≤ 2 concurrent) |
 
-Holds recorded: none.
+Holds recorded: **r#1 — SPP-21 held**; `mechanism-matrix.js` last written by capx D78-R2 (`8e68a471`, 18:36 UTC) and the shards by nyiso-204b (`330e3cac`, 18:26 UTC) within the hour before the pin. Re-check at sitting #2.
 
 ---
 
@@ -93,7 +112,9 @@ Holds recorded: none.
 
 | Sitting | Lane | Stem issued | Branch realised | Charter location | Note |
 |---|---|---|---|---|---|
-| — | — | — | — | — | nothing issued at r#0 |
+| r#1 | SPP-10 | `claude/spp-10-audit-k7wq` | — | plan §8 W1 · SPP-10 | issued verbatim |
+| r#1 | SPP-11 | `claude/spp-11-fetch-epa-eia-m3rd` | — | plan §8 W1 · SPP-11 | issued verbatim |
+| r#1 | SPP-12 | `claude/spp-12-fetch-portal-x9cn` | — | plan §8 W1 · SPP-12 | issued verbatim |
 
 ---
 
